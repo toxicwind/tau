@@ -83,6 +83,8 @@ const CONTEXT_OVERFLOW_EVIDENCE_PATTERNS = [
 	/maximum prompt length is \d+/i, // xAI (Grok)
 	/reduce the length of the messages/i, // Groq
 	/maximum context length is \d+ tokens/i, // OpenRouter (all backends)
+	/maximum context length/i, // Mistral
+	/invalid_request_prompt_too_long/i, // Mistral
 	/exceeds the available context size/i, // llama.cpp server
 	/requested tokens?.*exceed.*context (window|length|size)/i, // llama.cpp / OpenAI-compatible local servers
 	/context (window|length|size).*(exceeded|overflow|too small)/i, // Generic local server variants
