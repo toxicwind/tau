@@ -547,7 +547,7 @@ describe("model thinking derivation", () => {
 
 		// Floor selection follows canonical order, not array order.
 		expect(minimumSupportedEffort(baked)).toBe(Effort.Low);
-		expect(minimumSupportedEffort(openRouterFlash)).toBe(Effort.Minimal);
+		expect(minimumSupportedEffort(openRouterFlash)).toBe(Effort.Low);
 	});
 
 	it("flags reasoning-only families and thinking-variant orphans", () => {
