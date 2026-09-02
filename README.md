@@ -171,3 +171,29 @@ See `CHANGELOG.md` + `docs/` + `upstream-changes/log/`. Roadmap: herd fleet auto
 
 ---
 *τ — the full circle. Built on pi, tuned for herd, open to upstream, sovereign by default. 2026-09-02 full-grade revision.*
+
+## ⏳ Retry-After — Per-Provider Cap
+
+The tau retry pipeline has two independent ceilings on `retry-after-ms` / `Retry-After`. Both share the same disabling semantics: `<= 0` turns the cap off and the upstream header is honored verbatim. **Transport cap** lives in `fetchWithRetry.maxDelayMs` and defaults to `60_000` (60 s); the Anthropic transport override is also pinned to 60 s. **Session cap** lives in `retry.maxDelayMs` on the provider definition and defaults to `300_000` (5 min). On a 429 / 503 with a longer hint than the configured ceiling, the call is failed fast inside `TurnRecovery` instead of being slept on — preventing a single bad retry hint from stalling a turn for hours.
+
+The default 5-minute session cap is wrong for one class of upstream: **free-tier daily-quota gateways**. `opencode-zen` and `opencode-go` both return `429` with `retry-after-ms: 21431000` (≈ 6 hours, the time until the daily quota resets) once the per-day request budget is exhausted. The two-layer cap converts that signal into a hard fail-fast at the second layer, which is correct for paid providers — but for these free gateways the right behavior is to actually wait until the daily reset.
+
+Per-provider opt-out: `ProviderDefinition.retry: { unboundedRetryAfter: true }` lifts **both** caps for the named provider, so the upstream header is honored as-is. Concrete additions:
+
+- `packages/ai/src/registry/opencode-zen.ts` — `{ retry: { unboundedRetryAfter: true } }` on the Zen provider definition
+- `packages/ai/src/registry/opencode-go.ts` — same flag on the Go provider definition
+
+The companion user setting lives under the **providers tab → Retry** group: `providers.unboundedRetryAfter` (string array, default `["opencode-go", "opencode-zen"]`). Users can add or remove providers without touching code:
+
+```yaml
+# ~/.tau/config.yml
+providers:
+  unboundedRetryAfter:
+    - opencode-go
+    - opencode-zen
+    # - some-other-provider   # opt back into the 5-minute cap by removing
+```
+
+Test coverage: `packages/ai/test/retry-config.test.ts` (7 cases covering the cap ladder, default values, `<= 0` disable semantics, and the `providers.unboundedRetryAfter` user setting merge) and `packages/ai/test/openai-http-retry-cap.test.ts` (3 cases covering transport-cap enforcement against mocked `retry-after-ms`). All 126 pre-existing retry-related tests continue to pass; the change is strictly additive on the retry surface.
+
+Full implementation file list and rationale: [`docs/non-compaction-retry-policy.md#per-provider-unbounded-retry-after`](docs/non-compaction-retry-policy.md#per-provider-unbounded-retry-after).

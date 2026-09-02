@@ -171,6 +171,8 @@ Defined in settings schema under retry group:
 - `retry.usageAwareFallback` (default `false`; runs a preflight for supported coding-plan usage reports)
 - `retry.usageReservePct` (default `10`; remaining-quota reserve threshold)
 - `retry.usageReservePolicy` (default `"confirm"`; `"auto"` and `"fail-closed"` are also supported)
+- `providers.unboundedRetryAfter` (default `["opencode-go", "opencode-zen"]`; per-provider opt-out that disables `retry.maxDelayMs` for the listed providers so server-requested `retry-after-ms` is honored end-to-end. See [Per-provider unbounded retry-after](#per-provider-unbounded-retry-after) below)
+
 
 Programmatic toggles in session:
 
@@ -234,3 +236,96 @@ A new retry chain can still start later on a future retryable error after counte
 - `RpcSessionState` currently exposes `autoCompactionEnabled` but not an `autoRetryEnabled` field; RPC callers must track their own toggle state or query settings through other APIs.
 - Model fallback changes append temporary `model_change` entries and may later restore the primary model when its cooldown expires, depending on `retry.fallbackRevertPolicy`.
 - Usage-aware fallback runs before a provider request when both `retry.modelFallback` and `retry.usageAwareFallback` are enabled. Unknown/unmapped usage fails open. At the reserve threshold, `"confirm"` asks interactive sessions and keeps the current model when declined; sessions without a confirmation UI automatically apply an eligible configured fallback. `"auto"` applies an eligible fallback without asking. `"fail-closed"` rejects reserve or depleted usage instead of spending it or selecting a fallback. Depleted usage under the other policies applies an eligible fallback without a reserve confirmation.
+
+## Per-provider unbounded retry-after
+
+### The cap ceiling
+
+Both layers involved in honoring a server's `Retry-After` / `retry-after-ms` apply a ceiling:
+
+1. **Transport cap** — `fetchWithRetry.maxDelayMs` defaults to 60 000 ms (60 s). A hint that exceeds it returns the response immediately so the caller can fail fast. Anthropic's `AnthropicClient` mirrors the same idea with its own default (also 60 000 ms) and a `<= 0 disables the cap` convention.
+2. **Session cap** — `retry.maxDelayMs` defaults to 300 000 ms (5 minutes). When the computed retry delay (parsed `retry-after` hint × base backoff) exceeds this and no credential/model switch succeeded, `TurnRecovery` emits `auto_retry_end { success: false, finalError: "Provider requested Nms wait, exceeds retry.maxDelayMs (Nms). Original error: …" }` instead of sleeping.
+
+For most providers the default 5-min ceiling is correct — a 3-hour Anthropic `rate_limit_error` would otherwise leave a subagent hung silently (the original `retry.maxDelayMs` defense). But free-tier / metered gateways whose `retry-after-ms` legitimately points to a multi-hour quota reset (OpenCode Go, OpenCode Zen, observed ~21 400 000 ms / ~6 h) hit the ceiling on every retry and never make it to the actual reset.
+
+### Per-provider opt-out
+
+The opt-out is one line in the provider's `ProviderDefinition`:
+
+```ts
+// packages/ai/src/registry/opencode-zen.ts
+export const opencodeZenProvider = {
+  id: "opencode-zen",
+  name: "OpenCode Zen",
+  retry: { unboundedRetryAfter: true },   // honor the wait end-to-end
+  login: /* … */,
+} as const satisfies ProviderDefinition;
+```
+
+`unboundedRetryAfter: true` resolves to `maxRetryDelayMs: 0` (disabled) in `mapOptionsForApi`, which:
+
+- Lifts the transport cap (Anthropic: `<= 0` convention; `fetchWithRetry` via `postOpenAIStream` forwarding the resolved value into `maxDelayMs`).
+- Lets `TurnRecovery`'s fail-fast check see `providerUnbounded === true` and skip the "exceeds retry.maxDelayMs" bail-out.
+
+The pre-existing `maxRetryDelayMs?: number` field is also accepted as a per-provider default cap (layered below the user's setting), so a future provider can ship with a custom 30-min transport cap without code changes anywhere else.
+
+### User-facing setting
+
+The same opt-out is exposed as a runtime setting under the providers tab → Retry group:
+
+```yaml
+# ~/.omp/agent/config.yml
+providers:
+  unboundedRetryAfter:   # string[] of provider ids
+    - opencode-go         # default
+    - opencode-zen        # default
+    # add your own gateway here, e.g. `my-fork`
+```
+
+The settings-aware stream wrapper (`createSettingsAwareStreamFn`) reads the list and substitutes `0` for `maxRetryDelayMs` whenever `model.provider` is in the list, before forwarding to `streamSimple`. The agent runtime applies the same logic through the agent's own `maxRetryDelayMs` option. Set the list to `[]` to opt every provider out (back to the default 5-min ceiling everywhere).
+
+Caller-supplied `streamOptions.maxRetryDelayMs` always wins — the per-provider default only fills the hole when the caller leaves the option unset.
+
+### Where it lives in the call chain
+
+1. `ProviderDefinition.retry` — registry field on the auth half (`packages/ai/src/registry/types.ts`).
+2. `resolveProviderMaxRetryDelayMs(def, caller)` — pure resolver (`packages/ai/src/registry/retry-config.ts`).
+3. `mapOptionsForApi` (`packages/ai/src/stream.ts`) — consults the resolver and writes the resolved value into the per-API options bag that every transport reads from.
+4. `OpenAIStreamRequestInit.maxRetryDelayMs` + `postOpenAIStream` (`packages/ai/src/utils/openai-http.ts`) — forward into `fetchWithRetry.maxDelayMs` for `openai-completions`, `openai-responses`, `azure-openai-responses`. Anthropic reads `options?.maxRetryDelayMs` directly.
+5. `TurnRecovery` (`packages/coding-agent/src/session/turn-recovery.ts`) — fail-fast check against `retry.maxDelayMs` is skipped when `getProviderDefinition(message.provider)?.retry?.unboundedRetryAfter === true`.
+6. `createSettingsAwareStreamFn` (`packages/coding-agent/src/session/settings-stream-fn.ts`) — applies `providers.unboundedRetryAfter` ⊆ `model.provider` to override the per-request cap.
+
+### When to add a provider to `unboundedRetryAfter`
+
+Opt a provider in only if **all** of the following hold:
+
+1. The provider returns `429 retry-after-ms` (or `Retry-After` seconds) on a quota / rate-limit window that legitimately requires a wait of more than `retry.maxDelayMs` (default 5 min).
+2. The wait is non-negotiable — there is no credential rotation or model fallback that resolves the quota faster.
+3. The user has explicitly chosen this provider (e.g. a free tier) and wants the wait to happen, not a hard failure.
+
+If any of the three is false, leave the provider at the default cap and let the existing fail-fast surface a hard error — the user can switch models or rotate credentials, which is the right next step in those cases.
+
+### Tests
+
+- `packages/ai/test/retry-config.test.ts` — registry + resolver contract (7 cases, including caller-wins-over-unbounded and unbounded-beats-default).
+- `packages/ai/test/openai-http-retry-cap.test.ts` — `postOpenAIStream` forwards `maxRetryDelayMs` to `fetchWithRetry.maxDelayMs` (3 cases, including the `0`-disables-cap case used for `unboundedRetryAfter: true` providers).
+
+## Implementation files (additional)
+
+Per-provider retry-after plumbing:
+
+- [`../packages/ai/src/registry/types.ts`](../packages/ai/src/registry/types.ts) — `ProviderRetryConfig` + `ProviderDefinition.retry?` field.
+- [`../packages/ai/src/registry/retry-config.ts`](../packages/ai/src/registry/retry-config.ts) — `resolveProviderMaxRetryDelayMs` (caller > unbounded > provider default > undefined).
+- [`../packages/ai/src/registry/opencode-go.ts`](../packages/ai/src/registry/opencode-go.ts) — opt-in via `retry: { unboundedRetryAfter: true }`.
+- [`../packages/ai/src/registry/opencode-zen.ts`](../packages/ai/src/registry/opencode-zen.ts) — opt-in via `retry: { unboundedRetryAfter: true }`.
+- [`../packages/ai/src/registry/registry.ts`](../packages/ai/src/registry/registry.ts) — re-exports the resolver.
+- [`../packages/ai/src/stream.ts`](../packages/ai/src/stream.ts) — `mapOptionsForApi` consults the resolver.
+- [`../packages/ai/src/utils/openai-http.ts`](../packages/ai/src/utils/openai-http.ts) — `OpenAIStreamRequestInit.maxRetryDelayMs` → `fetchWithRetry.maxDelayMs`.
+- [`../packages/ai/src/providers/openai-completions.ts`](../packages/ai/src/providers/openai-completions.ts) — forwards `options?.maxRetryDelayMs` to `postOpenAIStream`.
+- [`../packages/ai/src/providers/openai-responses.ts`](../packages/ai/src/providers/openai-responses.ts) — same.
+- [`../packages/ai/src/providers/azure-openai-responses.ts`](../packages/ai/src/providers/azure-openai-responses.ts) — same.
+- [`../packages/coding-agent/src/session/turn-recovery.ts`](../packages/coding-agent/src/session/turn-recovery.ts) — fail-fast check against `retry.maxDelayMs` skipped when `providerUnbounded === true`.
+- [`../packages/coding-agent/src/session/settings-stream-fn.ts`](../packages/coding-agent/src/session/settings-stream-fn.ts) — applies `providers.unboundedRetryAfter` setting.
+- [`../packages/coding-agent/src/config/settings-schema.ts`](../packages/coding-agent/src/config/settings-schema.ts) — `providers.unboundedRetryAfter` setting (string[], default `["opencode-go", "opencode-zen"]`, providers tab → Retry group).
+- [`../packages/ai/test/retry-config.test.ts`](../packages/ai/test/retry-config.test.ts) — registry + resolver tests.
+- [`../packages/ai/test/openai-http-retry-cap.test.ts`](../packages/ai/test/openai-http-retry-cap.test.ts) — transport cap forwarding tests.

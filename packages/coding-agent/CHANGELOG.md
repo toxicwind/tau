@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+### Added
+
+- New `providers.unboundedRetryAfter` setting (string array, default `["opencode-go", "opencode-zen"]`) under the providers tab → Retry group. Provider ids in this list get the `retry.maxDelayMs` cap disabled automatically — `0` is passed to the transport so server-requested `retry-after-ms` (opencode-go / opencode-zen daily-quota resets can request ~21_400_000 ms / ~6h) is honored end-to-end instead of capping or bailing out against the user-set ceiling. Caller-supplied `streamOptions.maxRetryDelayMs` still wins; set the array to `[]` to opt all providers out.
+
+### Fixed
+
+- `TurnRecovery` no longer fails fast with `Provider requested Nms wait, exceeds retry.maxDelayMs` when the failing message's provider is registered as `retry.unboundedRetryAfter: true` (opencode-go, opencode-zen, and any future provider opted in via the new `ProviderDefinition.retry` field). Previously, the fail-fast fired at the user-set 5-min ceiling even though the transport would have honored the wait, so daily-quota resets surfaced as a hard error instead of a waited retry.
+- The settings-aware stream wrapper now applies the per-provider cap override (`providers.unboundedRetryAfter` ⊆ `model.provider` ⇒ `0`) before forwarding to `streamSimple`, so the cap lift reaches the transport for both main turns and advisor turns (which previously went through bare `streamSimple` and skipped the override).
+
 ## [18.0.8] - 2026-08-27
 
 ### Added

@@ -1,6 +1,15 @@
 # Changelog
-
 ## [Unreleased]
+
+### Added
+
+- Per-provider retry-after cap via `ProviderDefinition.retry`: a new `retry: { maxRetryDelayMs?, unboundedRetryAfter? }` field on every auth-registry entry plus a `resolveProviderMaxRetryDelayMs(def, caller)` helper that resolves `caller > unbounded (0) > provider default > undefined`. `mapOptionsForApi` consults the resolver so the cap is uniform across every OpenAI-compat and Anthropic transport. The `fetchWithRetry` 60s default is now the fallback for the OpenAI wire (it was previously unreachable because `postOpenAIStream` never forwarded `maxRetryDelayMs`), and Anthropic keeps its existing `<= 0 disables the cap` convention.
+- OpenCode Go and Zen providers opt into `retry: { unboundedRetryAfter: true }` so daily-quota `retry-after-ms` (observed ~21_400_000 ms / ~6h) is honored end-to-end instead of being capped at the 60s transport default or bailing out against the user-set `retry.maxDelayMs` ceiling. The opt-in is a single line per provider in the registry.
+- New tests in `packages/ai/test/retry-config.test.ts` (registry + resolver contract, 7 cases) and `packages/ai/test/openai-http-retry-cap.test.ts` (`postOpenAIStream` forwards `maxRetryDelayMs` to `fetchWithRetry.maxDelayMs`, 3 cases); 126 existing related tests still pass.
+
+### Fixed
+
+- `postOpenAIStream` now forwards `maxRetryDelayMs` from the `OpenAIStreamRequestInit` into `fetchWithRetry`'s `maxDelayMs` cap. Without this, the openai-completions / openai-responses / azure-openai-responses transports were stuck on the `fetchWithRetry` 60s default and any provider hint above it (e.g. the opencode-go `retry-after-ms=21431000` quota reset) surfaced as a hard 429 instead of a waited retry.
 
 ## [18.0.8] - 2026-08-27
 

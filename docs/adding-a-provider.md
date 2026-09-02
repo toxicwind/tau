@@ -114,3 +114,40 @@ from the catalog table and `OAuthProvider` from the registry.
 - A `ProviderDefinition` may also be registered at runtime by an extension via
   `registerOAuthProvider` (the `AuthStorage.login` dispatcher handles built-ins
   and extensions through the same path).
+
+## Per-provider retry-after cap
+
+On the auth half, `ProviderDefinition` carries a `retry` field for per-provider transport/backoff knobs. The registry derives nothing from it; it's purely a hint to the resolver in `mapOptionsForApi` and the fail-fast check in `TurnRecovery`.
+
+**Shape.** `retry?: { readonly maxRetryDelayMs?: number; readonly unboundedRetryAfter?: boolean }`. Both fields are optional and default to the global `retry.maxDelayMs` (currently 5 minutes).
+
+**Resolver precedence** (most-specific wins):
+
+1. Caller-supplied override (always wins).
+2. `unboundedRetryAfter: true` on the provider — disables the transport cap (resolves to `0`).
+3. Provider-declared `maxRetryDelayMs` (provider default).
+4. `undefined` — falls back to the global `retry.maxDelayMs`.
+
+A value of `<= 0` on `maxRetryDelayMs` likewise disables the cap, matching the Anthropic SDK convention where `retry.maxDelayMs = 0` means "wait however long the server asks."
+
+**Example.** `registry/opencode-zen.ts` opts in for its free-tier quota with one line:
+
+```ts
+retry: { unboundedRetryAfter: true }
+```
+
+`mapOptionsForApi` does the rest; no registry wiring changes.
+
+**Opt a provider in when ALL THREE hold:**
+
+- The provider returns `429 retry-after-ms` on a quota / rate-limit window that legitimately requires a wait longer than `retry.maxDelayMs` (default 5 min).
+- The wait is non-negotiable — no credential rotation or model fallback resolves the quota faster.
+- The user has explicitly chosen this provider (e.g. free tier) and wants the wait to happen, not a hard failure.
+
+**Do NOT opt a provider in** when ANY of these is true (default cap is correct):
+
+- The `retry-after-ms` is a server-load cool-down rather than a quota reset (backoff should still cap).
+- A shorter delay would be acceptable if the user knew — let `TurnRecovery` fail fast and surface the option to switch provider/model.
+- The user has not affirmatively chosen the provider; default behaviour is correct.
+
+See [Per-provider unbounded retry-after](non-compaction-retry-policy.md#per-provider-unbounded-retry-after) in `docs/non-compaction-retry-policy.md` for the full implementation file list and resolver call sites.
