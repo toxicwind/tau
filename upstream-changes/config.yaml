@@ -1,0 +1,37 @@
+# upstream-changes/config.yaml — single source of truth for ingestion
+upstreams:
+  pi:
+    url: https://github.com/earendil-works/pi.git
+    branch: main
+    local_mirror: modules/pi
+    remote_name: upstream
+  pi-mono:
+    url: https://github.com/badlogic/pi-mono.git
+    branch: main
+    local_mirror: modules/pi-mono
+    remote_name: upstream-mono
+  can1357-pi:
+    url: https://github.com/can1357/oh-my-pi.git
+    branch: main
+    local_mirror: modules/can1357
+    remote_name: upstream-can1357
+
+policy:
+  auto_merge: false
+  # sovereign-owned paths — ingestion warns but never auto-patches these
+  keep_sovereign:
+    - "packages/ai/src/registry/cloudflare*"
+    - "packages/ai/src/registry/cloudflare-ai-gateway-workers.ts"
+    - "AGENTS.md"
+    - "sovereign/**"
+    - ".github/workflows/benchmark.yml"
+  # files that are safe to auto-apply (docs, non-sovereign utils)
+  auto_safe:
+    - "docs/**"
+    - "packages/tui/**"
+
+ingest:
+  log_dir: log
+  patches_dir: patches
+  # keep last N ingestion logs
+  retain_logs: 30

@@ -1,0 +1,30 @@
+name: benchmark
+on: [push]
+jobs:
+  bench:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lock', '**/package.json') }}
+          restore-keys: ${{ runner.os }}-bun-
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+      - name: Build native addons (if needed)
+        run: bun --cwd packages/natives run build || echo "Native build optional"
+      - name: Run benchmark
+        run: bun run --cwd packages/metaharness bench:edit -- --model openai/gpt-4o-mini 2>&1 | tee bench-output.txt
+      - name: Upload benchmark report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-report-${{ github.run_id }}
+          path: |
+            packages/metaharness/bench-output.txt
+            tau/runs/*.md

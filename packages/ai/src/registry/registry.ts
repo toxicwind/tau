@@ -10,6 +10,7 @@ import { basetenProvider } from "./baseten";
 import { bedrockMantleProvider } from "./bedrock-mantle";
 import { cerebrasProvider } from "./cerebras";
 import { cloudflareAiGatewayProvider } from "./cloudflare-ai-gateway";
+import { cloudflareAiGatewayWorkersProvider } from "./cloudflare-ai-gateway-workers";
 import { coreWeaveProvider } from "./coreweave";
 import { cursorProvider } from "./cursor";
 import { deepinfraProvider } from "./deepinfra";
@@ -140,6 +141,7 @@ const ALL = [
 	coreWeaveProvider,
 	vercelAiGatewayProvider,
 	cloudflareAiGatewayProvider,
+	cloudflareAiGatewayWorkersProvider,
 	litellmProvider,
 	kiloProvider,
 	zenmuxProvider,
