@@ -170,6 +170,7 @@ const ALL = [
 
 export type RegistryDef = (typeof ALL)[number];
 export const PROVIDER_REGISTRY: readonly ProviderDefinition[] = ALL;
+export { resolveProviderMaxRetryDelayMs } from "./retry-config";
 
 const BY_ID = new Map<string, ProviderDefinition>(ALL.map(p => [p.id, p] as [string, ProviderDefinition]));
 

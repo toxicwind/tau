@@ -70,6 +70,13 @@ export interface OpenAIStreamRequestInit {
 	fetch?: FetchImpl;
 	/** Raw wire-frame observer (`onSseEvent` debug pipeline). */
 	onSseEvent?: SseEventObserver;
+	/**
+	 * Cap on server-requested `Retry-After` / `retry-after-ms` waits (in ms).
+	 * Negative or zero disables the cap and lets `fetchWithRetry` honour the
+	 * server hint verbatim; used by `ProviderDefinition.retry.unboundedRetryAfter`
+	 * to let free-tier quota windows wait end-to-end instead of failing fast.
+	 */
+	maxRetryDelayMs?: number;
 }
 
 export interface OpenAIStreamHandle<TEvent> {
@@ -94,6 +101,7 @@ export async function postOpenAIStream<TEvent>(init: OpenAIStreamRequestInit): P
 		body: JSON.stringify(init.body),
 		signal: init.signal,
 		fetch: init.fetch,
+		maxDelayMs: init.maxRetryDelayMs,
 		maxAttempts: DEFAULT_MAX_ATTEMPTS,
 		// A proxy concurrency-admission 429 (`rate_limit_type: max_parallel_requests`)
 		// surfaces immediately instead of being slept-and-retried here; session

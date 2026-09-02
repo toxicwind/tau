@@ -227,7 +227,7 @@ export const TAB_GROUPS: Record<SettingTab, readonly string[]> = {
 		"Developer",
 	],
 	tasks: ["Modes", "Subagents", "Isolation", "Commands & Skills"],
-	providers: ["Services", "Fireworks", "Tiny Model", "Protocol", "Timeouts", "Privacy"],
+	providers: ["Services", "Fireworks", "Tiny Model", "Protocol", "Timeouts", "Privacy", "Retry"],
 };
 
 /** Status line segment identifiers */
@@ -5704,6 +5704,30 @@ export const SETTINGS_SCHEMA = {
 		},
 	},
 
+	/**
+	 * Provider ids whose server-requested `retry-after` / `retry-after-ms`
+	 * waits are honoured verbatim end-to-end (transport cap disabled and the
+	 * `retry.maxDelayMs` fail-fast in `TurnRecovery` skipped). The default
+	 * list covers OpenCode Go / Zen whose free-tier daily-quota resets can
+	 * request `retry-after-ms=21431000` (~6h) and would otherwise bail out
+	 * at the user-set 5-min ceiling. Set to an empty array to opt out, or
+	 * add provider ids to extend the behaviour.
+	 */
+	"providers.unboundedRetryAfter": {
+		type: "array",
+		default: ["opencode-go", "opencode-zen"] as const,
+		ui: {
+			tab: "providers",
+			group: "Retry",
+			label: "Unbounded Retry-After Providers",
+			description:
+				"Provider ids allowed to wait the full server-requested `retry-after` without hitting the cap",
+			options: [
+				{ value: "opencode-go", label: "OpenCode Go", description: "Daily-quota resets can request multi-hour waits" },
+				{ value: "opencode-zen", label: "OpenCode Zen", description: "Subscription daily-quota resets can request multi-hour waits" },
+			],
+		},
+	},
 	"providers.openrouterVariant": {
 		type: "enum",
 		values: ["default", "nitro", "floor", "online", "exacto"] as const,

@@ -18,7 +18,7 @@ import type {
 	ThinkingContent,
 	ToolChoice,
 } from "@oh-my-pi/pi-ai";
-import { calculateRateLimitBackoffMs, parseRateLimitReason } from "@oh-my-pi/pi-ai";
+import { calculateRateLimitBackoffMs, getProviderDefinition, parseRateLimitReason } from "@oh-my-pi/pi-ai";
 import * as AIError from "@oh-my-pi/pi-ai/error";
 import { isFireworksFastModelId, toFireworksBaseModelId } from "@oh-my-pi/pi-catalog/fireworks-model-id";
 import { modelsAreEqual } from "@oh-my-pi/pi-catalog/models";
@@ -2155,8 +2155,20 @@ export class TurnRecovery {
 		// subagent (or interactive session) silently hung. The original
 		// assistant error message is preserved in agent state so the caller
 		// can act on it.
+		//
+		// Providers with `retry.unboundedRetryAfter: true` in their
+		// `ProviderDefinition` (e.g. opencode-zen / opencode-go whose free
+		// tier requests `retry-after-ms=21431000`) opt out of this cap so the
+		// wait actually happens end-to-end instead of failing fast.
 		const maxDelayMs = retrySettings.maxDelayMs;
-		if (maxDelayMs > 0 && delayMs > maxDelayMs && !switchedCredential && !switchedModel) {
+		const providerUnbounded = getProviderDefinition(message.provider)?.retry?.unboundedRetryAfter === true;
+		if (
+			maxDelayMs > 0 &&
+			delayMs > maxDelayMs &&
+			!providerUnbounded &&
+			!switchedCredential &&
+			!switchedModel
+		) {
 			await this.persistTerminalEmptyErrorTurn(message);
 			const attempt = this.#retryAttempt;
 			this.#retryAttempt = 0;

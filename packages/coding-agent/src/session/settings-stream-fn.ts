@@ -69,7 +69,15 @@ export function createSettingsAwareStreamFn(settings: Settings, base: StreamFn =
 			cacheRetention: streamOptions?.cacheRetention ?? cacheRetention,
 			streamFirstEventTimeoutMs: streamOptions?.streamFirstEventTimeoutMs ?? streamFirstEventTimeoutMs,
 			streamIdleTimeoutMs: streamOptions?.streamIdleTimeoutMs ?? streamIdleTimeoutMs,
-			maxRetryDelayMs: streamOptions?.maxRetryDelayMs ?? settings.get("retry.maxDelayMs"),
+			// Per-provider `retry.maxDelayMs` override: provider ids in
+		// `providers.unboundedRetryAfter` get the cap disabled (0) so the
+		// transport honours long free-tier quota waits (e.g. opencode-zen
+		// `retry-after-ms=21431000`). Caller-supplied value still wins.
+		maxRetryDelayMs:
+			streamOptions?.maxRetryDelayMs ??
+			(((settings.get("providers.unboundedRetryAfter") as readonly string[] | undefined) ?? []).includes(model.provider)
+				? 0
+				: settings.get("retry.maxDelayMs")),
 			maxInFlightRequests: validateProviderMaxInFlightRequests(
 				streamOptions?.maxInFlightRequests ?? settings.get("providers.maxInFlightRequests"),
 			),

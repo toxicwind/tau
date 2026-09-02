@@ -172,6 +172,10 @@ const streamAzureOpenAIResponsesOnce = (
 						body: params,
 						signal: requestSignal,
 						fetch: options?.fetch,
+						// Per-provider retry-after cap (0 = unbounded, e.g. opencode-zen/go
+						// daily-quota `retry-after-ms=21431000`). mapOptionsForApi fills
+						// the default from `ProviderDefinition.retry` when unset.
+						maxRetryDelayMs: options?.maxRetryDelayMs,
 						// Transient 408/429/5xx get Retry-After-aware transport retries;
 						// the first-event watchdog aborts `requestSignal`, so retries
 						// cannot extend the caller's deadline.

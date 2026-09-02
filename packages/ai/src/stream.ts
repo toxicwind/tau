@@ -61,6 +61,7 @@ import {
 } from "./providers/register-builtins";
 import { isSyntheticModel, streamSynthetic } from "./providers/synthetic";
 import { getProviderDefinition, PROVIDER_REGISTRY } from "./registry";
+import { resolveProviderMaxRetryDelayMs } from "./registry/retry-config";
 import type {
 	Api,
 	AssistantMessage,
@@ -1950,7 +1951,10 @@ function mapOptionsForApi<TApi extends Api>(
 		cacheRetention: options?.cacheRetention,
 		headers: options?.headers,
 		initiatorOverride: options?.initiatorOverride,
-		maxRetryDelayMs: options?.maxRetryDelayMs,
+		maxRetryDelayMs: resolveProviderMaxRetryDelayMs(
+			getProviderDefinition(model.provider),
+			options?.maxRetryDelayMs,
+		),
 		metadata: options?.metadata,
 		taskBudget: options?.taskBudget,
 		sessionId: options?.sessionId,

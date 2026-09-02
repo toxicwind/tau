@@ -14,6 +14,39 @@ import type { Api, FetchImpl, Model, SimpleStreamOptions, StreamOptions } from "
 import type { OAuthCredentials, OAuthLoginCallbacks } from "./oauth/types";
 
 /**
+ * Provider-owned retry-after backoff knobs.
+ *
+ * Both Anthropic and the OpenAI-compat transport (`fetchWithRetry`) honor
+ * `maxRetryDelayMs` as a ceiling on server-requested `retry-after` / quota
+ * hints. `unboundedRetryAfter: true` is the explicit opt-in that lifts that
+ * ceiling (semantically equivalent to passing `maxRetryDelayMs <= 0` through
+ * the option) for providers whose free-tier / subscription daily quotas
+ * legitimately request multi-hour waits (e.g. OpenCode Go/Zen
+ * `retry-after-ms=21431000`). Used at three layers: the transport cap
+ * (`postOpenAIStream` ⇒ `fetchWithRetry`, Anthropic client), the agent
+ * `maxRetryDelayMs` forwarding, and the `TurnRecovery` fail-fast against
+ * `retry.maxDelayMs` so a long quota hint is not surfaced as a hard error
+ * before any waiting actually happens.
+ *
+ * `maxRetryDelayMs` here is the *default* cap, layered with caller-supplied
+ * options at the call site (caller wins when it sets `maxRetryDelayMs`
+ * explicitly; an `unbounded` provider opt-out makes the cap effectively
+ * `0` / disabled so `fetchWithRetry` honors the hint verbatim).
+ */
+export interface ProviderRetryConfig {
+	/** Per-provider default for the transport `maxRetryDelayMs` cap. */
+	readonly maxRetryDelayMs?: number;
+	/**
+	 * Treat the provider as willing to ask for arbitrarily long retry-after
+	 * waits (free-tier daily quotas, multi-hour backend resets, …) and let
+	 * the wait happen end-to-end instead of failing fast. The user's
+	 * `retry.maxDelayMs` ceiling still applies in `TurnRecovery` unless
+	 * `resolveProviderMaxRetryDelayMs` is also consulted there.
+	 */
+	readonly unboundedRetryAfter?: boolean;
+}
+
+/**
  * API-key environment fallback: either a single env var name (e.g.
  * `"OPENAI_API_KEY"`) or a resolver that inspects several env vars / probes
  * the host (Vertex ADC, Bedrock credential chains, …).
@@ -51,6 +84,9 @@ export type ProviderModelDiscoveryPreparer = (config: ProviderModelDiscoveryConf
  *   (unless `showInLoginList === false`) and dispatchable via `AuthStorage.login`.
  * - `callbackPort` present ⇒ entry in the auth-broker `CALLBACK_PORTS` map.
  * - `pasteCodeFlow` ⇒ member of `PASTE_CODE_LOGIN_PROVIDERS`.
+ * - `retry` present ⇒ per-provider transport/backoff knobs
+ *   (`maxRetryDelayMs` ceiling, `unboundedRetryAfter` opt-out). See
+ *   {@link resolveProviderMaxRetryDelayMs}.
  *
  * Heavy OAuth flow modules MUST be reached through dynamic-import thunks in
  * `login`/`refreshToken` so they stay out of the eager startup graph.
@@ -72,6 +108,8 @@ export interface ProviderDefinition {
 	readonly mapSimpleOptions?: ProviderSimpleOptionsMapper;
 	/** Provider-owned authentication and endpoint setup for model discovery. */
 	readonly prepareModelDiscovery?: ProviderModelDiscoveryPreparer;
+	/** Provider-owned retry/backoff knobs. See {@link ProviderRetryConfig}. */
+	readonly retry?: ProviderRetryConfig;
 	// --- interactive login (OAuthProviderInterface-compatible) ---
 	readonly login?: (callbacks: OAuthLoginCallbacks) => Promise<OAuthCredentials | string>;
 	/** Refresh a stored grant; the signal bounds provider network work to refresh ownership. */
