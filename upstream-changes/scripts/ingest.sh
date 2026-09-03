@@ -36,13 +36,13 @@ echo "### Changed files" | tee -a "$LOG"
 git -C "$ROOT" diff --name-only "$BASE"..upstream/main 2>/dev/null | head -100 | tee -a "$LOG" || echo "(none)" | tee -a "$LOG"
 
 echo "" | tee -a "$LOG"
-echo "### Sovereign overlap warning" | tee -a "$LOG"
-SOV_OVERLAP="$(git -C "$ROOT" diff --name-only "$BASE"..upstream/main 2>/dev/null | grep -E 'packages/ai/src/registry/cloudflare|AGENTS.md|sovereign/' || true)"
+echo "### Tau overlap warning" | tee -a "$LOG"
+SOV_OVERLAP="$(git -C "$ROOT" diff --name-only "$BASE"..upstream/main 2>/dev/null | grep -E 'packages/ai/src/registry/cloudflare|AGENTS.md|tau/' || true)"
 if [ -n "$SOV_OVERLAP" ]; then
-  echo "⚠️ Upstream touches sovereign files:" | tee -a "$LOG"
+  echo "⚠️ Upstream touches tau files:" | tee -a "$LOG"
   echo "$SOV_OVERLAP" | tee -a "$LOG"
 else
-  echo "No sovereign overlap." | tee -a "$LOG"
+  echo "No tau overlap." | tee -a "$LOG"
 fi
 
 # generate patches for new commits (one per commit, into patches/)

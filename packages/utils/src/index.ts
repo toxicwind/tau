@@ -38,6 +38,7 @@ export * from "./tls-fetch";
 export * from "./type-guards";
 export * from "./version";
 export * from "./which";
+export * from "./tabs";
 
 function isPlainObject(val: object): val is Record<string, unknown> {
 	return Object.getPrototypeOf(val) === Object.prototype || Array.isArray(val);

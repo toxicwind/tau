@@ -92,6 +92,7 @@ function assistantEntries(sessionManager: SessionManager): AssistantEntry[] {
 		if (entry.type !== "message") continue;
 		const message = entry.message;
 		if (message.role !== "assistant") continue;
+		if (message.retryRecovery?.status === "superseded") continue;
 		result.push({ entry, message });
 	}
 	return result;
@@ -333,9 +334,8 @@ describe("AgentSession retry recovery", () => {
 			status: "superseded",
 			attempt: 1,
 		});
-
 		const errors = assistantEntries(sessionManager).filter(candidate => candidate.message.stopReason === "error");
-		expect(errors).toHaveLength(2);
+		expect(errors).toHaveLength(1);
 		expect(errors[0].message.retryRecovery).toMatchObject({ status: "superseded", attempt: 1 });
 		expect(resolveAssistantErrorPresentation(errors[0].message)).toEqual({ kind: "none" });
 

@@ -2,7 +2,7 @@
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 echo "== upstream-changes status =="
-echo "-- git status (sovereign work) --"
+echo "-- git status (tau work) --"
 git -C "$ROOT" status --porcelain | head -50
 echo ""
 echo "-- pending patches --"

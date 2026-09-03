@@ -18,14 +18,14 @@ upstreams:
 
 policy:
   auto_merge: false
-  # sovereign-owned paths — ingestion warns but never auto-patches these
-  keep_sovereign:
+  # tau-owned paths — ingestion warns but never auto-patches these
+  keep_tau:
     - "packages/ai/src/registry/cloudflare*"
     - "packages/ai/src/registry/cloudflare-ai-gateway-workers.ts"
     - "AGENTS.md"
-    - "sovereign/**"
+    - "tau/**"
     - ".github/workflows/benchmark.yml"
-  # files that are safe to auto-apply (docs, non-sovereign utils)
+  # files that are safe to auto-apply (docs, non-tau utils)
   auto_safe:
     - "docs/**"
     - "packages/tui/**"

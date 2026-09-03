@@ -382,6 +382,7 @@ export type ReadonlySessionManager = Pick<
 	| "getUsageStatistics"
 	| "putBlob"
 	| "putBlobSync"
+	| "getBlobStore"
 >;
 
 interface SessionManagerStateSnapshot {
@@ -468,6 +469,8 @@ export class SessionManager {
 	readonly #persist: boolean;
 	readonly #storage: SessionStorage;
 	readonly #blobs: BlobStore;
+	getBlobStore(): BlobStore { return this.#blobs; }
+
 
 	#sessionId = "";
 	#sessionName: string | undefined;

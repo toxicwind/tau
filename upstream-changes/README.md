@@ -1,8 +1,8 @@
 # upstream-changes — Modular Upstream Ingestion
 
-> **Keep sovereign work isolated from upstream churn.** Every `git fetch upstream` lands here first, not in `main`.
+> **Keep tau work isolated from upstream churn.** Every `git fetch upstream` lands here first, not in `main`.
 
-Upstream: `earendil-works/pi` (→ `can1357/oh-my-pi` + `badlogic/pi-mono`) is the moving target. Tau tracks it but never lets it overwrite sovereign deltas. This folder is the **airlock**.
+Upstream: `earendil-works/pi` (→ `can1357/oh-my-pi` + `badlogic/pi-mono`) is the moving target. Tau tracks it but never lets it overwrite tau deltas. This folder is the **airlock**.
 
 ## Layout
 ```
@@ -35,7 +35,7 @@ upstreams:
     local_mirror: modules/pi-mono
 policy:
   auto_merge: false   # never — human promotes
-  keep_sovereign: [packages/ai/src/registry/*, packages/ai/src/providers/anthropic*]
+  keep_tau: [packages/ai/src/registry/*, packages/ai/src/providers/anthropic*]
 ```
 
 ## Workflow — 3 commands, no surprises
@@ -44,13 +44,13 @@ policy:
 ```bash
 ./upstream-changes/scripts/ingest.sh
 # -> fetches pi/main into modules/pi, writes log/ingestion-YYYY-MM-DD.md
-#    with: new commits, file-list, conflict risk, sovereign-overlap
+#    with: new commits, file-list, conflict risk, tau-overlap
 ```
 
 **2) Review**
 ```bash
 ./upstream-changes/scripts/status.sh
-# shows: pending patches in patches/, unapplied commits, overlap with sovereign files
+# shows: pending patches in patches/, unapplied commits, overlap with tau files
 # open log/ingestion-*.md and patches/*.patch — decide keep / adapt / drop
 ```
 
@@ -63,7 +63,7 @@ policy:
 ## Rules (modular, not monolithic)
 - **No direct `git merge upstream/main` into `main`.** Always via `modules/pi` + `patches/`.
 - **One upstream commit = one patch** in `patches/` (or a squashed logical group with `Co-authored-by: upstream`).
-- **Sovereign files never auto-overwritten**: `packages/ai/src/registry/cloudflare*`, `AGENTS.md`, `sovereign/` etc. are in `policy.keep_sovereign`.
+- **Tau files never auto-overwritten**: `packages/ai/src/registry/cloudflare*`, `AGENTS.md`, `tau/` etc. are in `policy.keep_tau`.
 - **Every promotion has a log** in `log/` — what changed, why kept/dropped, test result.
 - **Full tasks stay visible**: ingestion does NOT hide local work — `git status` + `status.sh` surface both.
 

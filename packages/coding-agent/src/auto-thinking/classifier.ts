@@ -77,7 +77,7 @@ const LOCAL_REASONING_MAX_TOKENS = 1024;
  * `maxTokens` is a hard cap — non-thinking completions still return in a handful
  * of tokens.
  */
-const ONLINE_REASONING_SAFE_MAX_TOKENS = 4096;
+const ONLINE_REASONING_SAFE_MAX_TOKENS = 8192;
 
 export interface ClassifyDifficultyDeps {
 	settings: Settings;

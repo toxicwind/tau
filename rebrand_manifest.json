@@ -1,0 +1,22 @@
+{
+  "generated_at": "2026-09-02T17:34:54Z",
+  "mode": "dry-run",
+  "rules": [
+    "Oh My Pi -> tau (user-facing, comments)",
+    "oh-my-pi -> tau (bare, non-scoped)",
+    "pi-agent -> tau-agent",
+    "pi-mono -> tau-mono (docs only)",
+    "omp -> tau (guarded, skip llama-swap/comp)"
+  ],
+  "files_would_change": 19,
+  "files_changed": 0,
+  "replacements": [],
+  "skipped": [
+    {"reason": "npm scope @oh-my-pi/* preserved", "count": 11420, "note": "package.json name fields invariant"},
+    {"reason": "upstream-changes/ untouched", "count": 0},
+    {"reason": "README.md untouched", "count": 0},
+    {"reason": "git remotes preserved", "count": 2}
+  ],
+  "verified_at": "2026-09-02T17:34:54Z",
+  "dry_run_preview": ["packages/catalog/scripts/proto-parser.ts","packages/catalog/src/discovery/cursor-proto.ts","packages/catalog/src/discovery/devin-proto.ts","packages/coding-agent/src/blob-broker/uploaders-cloud-drives.ts","packages/coding-agent/src/cli/command-help.ts","packages/coding-agent/src/commands/acp.ts","packages/coding-agent/src/dap/session.ts","packages/coding-agent/src/debug/index.ts","packages/coding-agent/src/modes/acp/acp-agent.ts","packages/coding-agent/src/modes/controllers/event-controller.ts","packages/coding-agent/src/session/agent-session.ts","packages/coding-agent/src/tools/ask.ts","packages/coding-agent/test/acp-initialize-conformance.test.ts","packages/coding-agent/test/blob-uploaders-cloud-drives.test.ts","packages/coding-agent/test/hook-selector-overflow.test.ts","packages/coding-agent/test/tools/web-search-tavily.test.ts","packages/tui/src/desktop-notify.ts","packages/tui/src/terminal-capabilities.ts","packages/tui/test/desktop-notify.test.ts"]
+}

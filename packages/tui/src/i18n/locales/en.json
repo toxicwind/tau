@@ -1,0 +1,8 @@
+{
+  "app.name": "tau",
+  "notification.cmuxTitle": "tau",
+  "notification.osc99AppName": "tau",
+  "notification.testBody": "Terminal protocol test",
+  "notification.errorBody": "Stopped with error",
+  "notification.completeBody": "Complete"
+}

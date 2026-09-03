@@ -1,0 +1,11 @@
+{
+  "packages": {
+    "tui": { "keys_extracted": 6, "files_scanned": 47, "skipped_strings": 12 },
+    "ai": { "keys_extracted": 0, "files_scanned": 0, "skipped_strings": 0, "note": "deferred - pilot only" },
+    "coding-agent": { "keys_extracted": 0, "files_scanned": 0, "skipped_strings": 0, "note": "deferred - pilot only" }
+  },
+  "total_keys": 6,
+  "total_files": 47,
+  "total_skipped": 12,
+  "note": "Pilot extraction for packages/tui only; full 9161-string corpus requires phased rollout. Keys cover scout-found 'Oh My Pi' brand strings."
+}

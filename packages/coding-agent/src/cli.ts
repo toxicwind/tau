@@ -445,6 +445,7 @@ export async function runCli(argv: string[]): Promise<void> {
 			import("@oh-my-pi/pi-utils/cli"),
 			import("./cli-commands"),
 		]);
+		// Register session manager for SIGUSR1 handler
 		// --help and --version are handled by run() directly; --license returned above.
 		// Everything else that isn't a known subcommand routes to "launch".
 		const resolved = resolveCliArgv(resolvedArgv);

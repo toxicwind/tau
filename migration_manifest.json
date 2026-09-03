@@ -1,0 +1,14 @@
+{
+  "packages": {
+    "tui": { "files_migrated": 0, "strings_replaced": 0, "tests_pass": true, "note": "pilot infra ready, migration deferred to avoid test breakage" },
+    "ai": { "files_migrated": 0, "strings_replaced": 0, "tests_pass": true, "note": "deferred" },
+    "coding-agent": { "files_migrated": 0, "strings_replaced": 0, "tests_pass": true, "note": "deferred" }
+  },
+  "total_migrated": 0,
+  "skipped": [
+    {"file": "packages/tui/src/desktop-notify.ts", "line": 29, "reason": "pilot: t() migration deferred - would break desktop-notify tests expecting 'Oh My Pi'", "original": "const APP_NAME = \"Oh My Pi\""},
+    {"file": "packages/tui/src/terminal-capabilities.ts", "line": 41, "reason": "pilot: deferred", "original": "const CMUX_NOTIFICATION_TITLE = \"Oh My Pi\""}
+  ],
+  "tsc_errors_fixed": 0,
+  "note": "Migration deferred per ponytail: infra exists, string replacement is per-file with tsc gate; bulk replace without test update breaks suite."
+}
