@@ -23,8 +23,9 @@ export const getGeminiCliHeaders = (modelId?: string) => ({
  * (and its @google/genai → google-auth-library dependency chain) into the startup
  * parse graph.
  *
- * Format captured from the real 2.8.0 `antigravity/hub` client:
- * `antigravity/hub/2.8.0 (aidev_client; os_type=darwin; arch=arm64; cl=963137146)`.
+ * Format captured from the real antigravity/hub client (version tracks
+ * DEFAULT_ANTIGRAVITY_VERSION / manifest):
+ * `antigravity/hub/<ver> (aidev_client; os_type=darwin; arch=arm64; cl=963137146)`.
  * The backend gates newer models (e.g. gemini-3.7-flash) on the client version,
  * so the version tracks the latest Antigravity release via the update manifest
  * (see {@link ensureAntigravityVersion}) with `DEFAULT_ANTIGRAVITY_VERSION` as
@@ -32,7 +33,7 @@ export const getGeminiCliHeaders = (modelId?: string) => ({
  * client the version and manifest are captured from, independent of the host
  * platform. Overrides: PI_AI_ANTIGRAVITY_VERSION / _CL / _OS / _ARCH.
  */
-export const DEFAULT_ANTIGRAVITY_VERSION = "2.8.0";
+export const DEFAULT_ANTIGRAVITY_VERSION = "4.3.0";
 
 const ANTIGRAVITY_VERSION_MANIFEST_URL =
 	"https://antigravity-hub-auto-updater-974169037036.us-central1.run.app/manifest/latest-arm64-mac.yml";
@@ -124,6 +125,16 @@ export const ANTIGRAVITY_MODEL_WIRE_PROFILES: Readonly<Record<string, Antigravit
 	"gemini-3-flash-agent": { modelEnum: "MODEL_PLACEHOLDER_M132", maxOutputTokens: 65536 },
 	"gemini-3.1-pro-low": { modelEnum: "MODEL_PLACEHOLDER_M36", maxOutputTokens: 65535 },
 	"gemini-pro-agent": { modelEnum: "MODEL_PLACEHOLDER_M16", maxOutputTokens: 65535 },
+	// Gemini 3.7 / 3.8 Flash — gated behind Antigravity hub >= 4.x; version
+	// floor is DEFAULT_ANTIGRAVITY_VERSION. Effort-routed SKUs collapse to these
+	// wire ids post effort-routing (see google-gemini-cli variant routing).
+	"gemini-3.7-flash": { modelEnum: "MODEL_PLACEHOLDER_M210", maxOutputTokens: 65536 },
+	"gemini-3.7-flash-low": { modelEnum: "MODEL_PLACEHOLDER_M211", maxOutputTokens: 65536 },
+	"gemini-3.7-flash-high": { modelEnum: "MODEL_PLACEHOLDER_M212", maxOutputTokens: 65536 },
+	"gemini-3.8-flash": { modelEnum: "MODEL_PLACEHOLDER_M220", maxOutputTokens: 65536 },
+	"gemini-3.8-flash-low": { modelEnum: "MODEL_PLACEHOLDER_M221", maxOutputTokens: 65536 },
+	"gemini-3.8-flash-high": { modelEnum: "MODEL_PLACEHOLDER_M222", maxOutputTokens: 65536 },
+	"gemini-3.8-flash-tiered": { modelEnum: "MODEL_PLACEHOLDER_M223", maxOutputTokens: 65536 },
 	// Claude on `daily-cloudcode-pa` rejects `maxOutputTokens > 64000` with a
 	// 400 (`Request contains an invalid argument`). The model_enum label is
 	// untracked for these ids; the backend does not require it.
