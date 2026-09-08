@@ -95,6 +95,17 @@ export class StreamMarkupHealing {
 	/** Feed a chunk and return cleaned text/thinking/tool-call events in stream order. */
 	feedEvents(text: string): StreamMarkupHealingEvent[] {
 		if (text.length === 0) return [];
+		// Groq / OpenRouter / vLLM sometimes HTML-escape quotes inside leaked
+		// tool-call markup (`"` etc). Decode before scanners so argument
+		// JSON parse and tag matching see real quotes.
+		text = text
+			.replace(/"/g, '"')
+			.replace(/&#34;/g, '"')
+			.replace(/'/g, "'")
+			.replace(/&#39;/g, "'")
+			.replace(/&/g, "&")
+			.replace(/</g, "<")
+			.replace(/>/g, ">");
 		this.#markSectionClosed(text);
 		if (!this.#toolScanner) return this.#convertScannerEvents(this.#thinkingScanner.feed(text));
 		return this.#convertScannerEvents(this.#healThinking(this.#toolScanner.feed(text)));
