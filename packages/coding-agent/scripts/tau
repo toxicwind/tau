@@ -1,0 +1,12 @@
+#!/bin/sh
+set -e
+self=$0
+while [ -L "$self" ]; do
+	link=$(readlink "$self")
+	case $link in
+	/*) self=$link ;;
+	*) self=$(dirname "$self")/$link ;;
+	esac
+done
+scripts_dir=$(CDPATH= cd -- "$(dirname -- "$self")" && pwd -P)
+exec "$scripts_dir/../dist/tau" "$@"

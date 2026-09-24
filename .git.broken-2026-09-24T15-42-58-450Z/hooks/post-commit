@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+/home/toxic/sovereign/helpers/push-build.sh || true
+exit 0
