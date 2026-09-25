@@ -94,3 +94,21 @@ packages/coding-agent/bench/boot-baseline.json
 /.bazelrc.user
 
 .parity/
+
+# Sovereign standard sensitive & ephemeral patterns added by auditor
+.secrets
+*.key
+*.pat
+github_*_pat.json
+*.env.local
+*.jsonl
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+*.sock
+*.pcap
+node_modules/
+.cache/
+.bun/
