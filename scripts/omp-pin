@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+FORK_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+REAL="$FORK_ROOT/packages/coding-agent/scripts/omp"
+if [ ! -x "$REAL" ]; then echo "omp-pin: missing $REAL" >&2; exit 127; fi
+RESOLVED="$(realpath "$REAL")"
+case "$RESOLVED" in "$FORK_ROOT"/*) : ;; *) echo "escapes root $RESOLVED" >&2; exit 127 ;; esac
+exec "$RESOLVED" "$@"
