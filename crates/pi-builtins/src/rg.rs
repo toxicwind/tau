@@ -1854,7 +1854,8 @@ impl Utility for Rg {
 
 	fn run(self, host: &mut Host) -> i32 {
 		let cli = self;
-	let mut opts = search_options(&cli);
+
+		let mut opts = search_options(&cli);
 	match parse_path_separator(cli.path_separator.as_deref()) {
 		Ok(separator) => opts.path_separator = separator,
 		Err(error) => {

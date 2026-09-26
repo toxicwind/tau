@@ -37,7 +37,7 @@ export const KNOWN_HOSTS = {
 	deepseekDirect: { providers: ["deepseek"], urlMarkers: ["api.deepseek.com"] },
 	/** Any DeepSeek-operated host (first-party API, web-chat fronts). Wider than `deepseekDirect` on purpose. */
 	deepseekFamily: { providers: ["deepseek"], urlMarkers: ["deepseek.com"] },
-	cerebras: { providers: ["cerebras"], urlMarkers: ["cerebras.ai"] },
+	cerebras: { providers: ["cerebras"], urlMarkers: ["api.cerebras.ai", "cerebras.ai"] },
 	zai: { providers: ["zai"], urlMarkers: ["api.z.ai"] },
 	zhipu: { providers: ["zhipu-coding-plan"], urlMarkers: ["open.bigmodel.cn"] },
 	kilo: { providers: ["kilo"], urlMarkers: ["api.kilo.ai"] },
@@ -49,20 +49,20 @@ export const KNOWN_HOSTS = {
 	xiaomi: { providers: ["xiaomi"], providerPrefixes: ["xiaomi-token-plan-"], urlMarkers: ["xiaomimimo.com"] },
 	xai: { providers: ["xai", "xai-oauth"], urlMarkers: ["api.x.ai"] },
 	mistral: { providers: ["mistral"], urlMarkers: ["mistral.ai"] },
-	together: { providers: ["together"], urlMarkers: ["api.together.xyz"] },
+	together: { providers: ["together"], urlMarkers: ["api.together.xyz", "together.ai"] },
 	baseten: { providers: ["baseten"], urlMarkers: ["baseten.co"] },
 	/** URL-only on purpose: the `fireworks`/`firepass` providers route per-model and not every model is Fireworks-shaped. */
-	fireworks: { urlMarkers: ["fireworks.ai"] },
-	groq: { providers: ["groq"], urlMarkers: ["api.groq.com"] },
+	fireworks: { providers: ["fireworks"], urlMarkers: ["api.fireworks.ai", "fireworks.ai"] },
+	groq: { providers: ["groq"], urlMarkers: ["api.groq.com", "groq.com"] },
 	minimax: {
 		providers: ["minimax", "minimax-code", "minimax-code-cn"],
 		urlMarkers: ["api.minimax.io", "api.minimaxi.com"],
 	},
 	qwenPortal: { providers: ["qwen-portal"], urlMarkers: ["portal.qwen.ai"] },
 	/** NVIDIA NIM (`integrate.api.nvidia.com`). Qwen NIM endpoints take `chat_template_kwargs.enable_thinking`, never top-level `enable_thinking`. */
-	nvidia: { providers: ["nvidia"], urlMarkers: ["integrate.api.nvidia.com"] },
+	nvidia: { providers: ["nvidia"], urlMarkers: ["integrate.api.nvidia.com", "api.nvidia.com"] },
 	/** Venice AI (`api.venice.ai`). OpenAI-compatible; drives reasoning via top-level `reasoning_effort` (and `venice_parameters.disable_thinking`), and rejects DashScope's top-level `enable_thinking` with a 400 (`additionalProperties: false` request schema). */
-	venice: { providers: ["venice"], urlMarkers: ["api.venice.ai"] },
+	venice: { providers: ["venice"], urlMarkers: ["api.venice.ai", "venice.ai"] },
 	moonshotNative: { providers: ["moonshot", "kimi-code"], urlMarkers: ["api.moonshot.ai", "api.kimi.com"] },
 	/** Google AI Studio's OpenAI-compatible shim (`/v1beta/openai`) — a subset of chat-completions; rejects `store` with a 400. Native Gemini uses `google-generative-ai` api instead. */
 	googleAistudio: { providers: [], urlMarkers: ["generativelanguage.googleapis.com"] },

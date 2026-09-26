@@ -421,7 +421,7 @@ function parseRemoteServer(name: string, cfg: Record<string, unknown>, transport
 			name,
 			transport,
 			url,
-			...(headers !== undefined && { headers: headers as Record<string, string> }),
+			...(headers !== undefined && isStringRecord(headers) && { headers }),
 		},
 	};
 }
@@ -568,4 +568,12 @@ export async function pluginUsesClaudeModelDialect(rootPath: string): Promise<bo
 	const status = await classifyAgentPluginRoot(rootPath);
 	if (status.kind === "standard") return false;
 	return (await readFile(path.join(rootPath, ".claude-plugin", "plugin.json"))) !== null;
+}
+
+// [tau-fix] runtime-validated env record
+function isStringRecord(v: unknown): v is Record<string, string> {
+  if (!v || typeof v !== "object" || Array.isArray(v)) return false;
+  const o = v as Record<string, unknown>;
+  for (const k in o) if (typeof o[k] !== "string") return false;
+  return true;
 }
