@@ -476,3 +476,11 @@ tree-sitter-zig = "1.1"
 # ──────────────────────────────────────────────────────────────────────────────
 # Unsorted (added by `cargo add` - move into a section above)
 # ──────────────────────────────────────────────────────────────────────────────
+
+[profile.release-fast]
+inherits = "release"
+lto = "thin"
+codegen-units = 16
+opt-level = 2
+debug = 0
+strip = true
