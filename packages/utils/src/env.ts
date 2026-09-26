@@ -52,22 +52,37 @@ export function isWsl(platform: NodeJS.Platform = process.platform, env: NodeJS.
 
 // [tau-fix] dangerous env denylist
 const DANGEROUS_ENV_NAMES = new Set<string>([
-  "NODE_OPTIONS", "NODE_PATH", "BUN_INSPECT", "BUN_OPTIONS",
-  "LD_PRELOAD", "LD_LIBRARY_PATH", "DYLD_INSERT_LIBRARIES", "DYLD_LIBRARY_PATH",
-  "PYTHONSTARTUP", "PYTHONPATH", "PYTHONHOME",
-  "PERL5OPT", "PERL5LIB", "RUBYOPT", "RUBYLIB",
-  "JAVA_TOOL_OPTIONS", "_JAVA_OPTIONS",
-  "GIT_CONFIG_GLOBAL", "GIT_CONFIG_SYSTEM",
-  "SSH_AUTH_SOCK", "SSH_AGENT_PID", ]);
+	"NODE_OPTIONS",
+	"NODE_PATH",
+	"BUN_INSPECT",
+	"BUN_OPTIONS",
+	"LD_PRELOAD",
+	"LD_LIBRARY_PATH",
+	"DYLD_INSERT_LIBRARIES",
+	"DYLD_LIBRARY_PATH",
+	"PYTHONSTARTUP",
+	"PYTHONPATH",
+	"PYTHONHOME",
+	"PERL5OPT",
+	"PERL5LIB",
+	"RUBYOPT",
+	"RUBYLIB",
+	"JAVA_TOOL_OPTIONS",
+	"_JAVA_OPTIONS",
+	"GIT_CONFIG_GLOBAL",
+	"GIT_CONFIG_SYSTEM",
+	"SSH_AUTH_SOCK",
+	"SSH_AGENT_PID",
+]);
 const DOTENV_FORBIDDEN_NAMES = new Set<string>(["PATH"]);
 export function isDotenvForbiddenName(name: string): boolean {
-  if (DOTENV_FORBIDDEN_NAMES.has(name)) return true;
-  return process.platform === "win32" && DOTENV_FORBIDDEN_NAMES.has(name.toUpperCase());
+	if (DOTENV_FORBIDDEN_NAMES.has(name)) return true;
+	return process.platform === "win32" && DOTENV_FORBIDDEN_NAMES.has(name.toUpperCase());
 }
 
 export function isDangerousEnvName(name: string): boolean {
-  if (DANGEROUS_ENV_NAMES.has(name)) return true;
-  return process.platform === "win32" && DANGEROUS_ENV_NAMES.has(name.toUpperCase());
+	if (DANGEROUS_ENV_NAMES.has(name)) return true;
+	return process.platform === "win32" && DANGEROUS_ENV_NAMES.has(name.toUpperCase());
 }
 
 export function filterProcessEnv(env: Record<string, string | undefined>): Record<string, string> {
@@ -75,7 +90,8 @@ export function filterProcessEnv(env: Record<string, string | undefined>): Recor
 	for (const key in env) {
 		const value = env[key];
 		if (
-			!isSafeEnvName(key) || isDangerousEnvName(key) ||
+			!isSafeEnvName(key) ||
+			isDangerousEnvName(key) ||
 			isMacosMallocStackLoggingEnvName(key) ||
 			value === undefined ||
 			!isSafeEnvValue(value)
@@ -156,7 +172,9 @@ function readLaunchEnv(): ReadonlyMap<string, string> | undefined {
 const launchEnvValues = readLaunchEnv();
 const projectEnvNamesLoadedByOmp = new Set<string>();
 const __projectEnvIdentity = new WeakSet<object>();
-function __isProjectEnv(file: object): boolean { return __projectEnvIdentity.has(file); }
+function __isProjectEnv(file: object): boolean {
+	return __projectEnvIdentity.has(file);
+}
 
 function expandDotenvValues(values: Record<string, string>, env: Record<string, string>): Record<string, string> {
 	const expanded: Record<string, string> = {};
@@ -165,10 +183,10 @@ function expandDotenvValues(values: Record<string, string>, env: Record<string, 
 			/(\\)?\$(?:\{([A-Za-z_][A-Za-z0-9_]*)\}|([A-Za-z_][A-Za-z0-9_]*))/g,
 			(match, escaped: string | undefined, braced: string | undefined, bare: string | undefined) => {
 				if (escaped) {
-				const dollarIdx = match.indexOf("$");
-				if (dollarIdx === 1) return match.slice(1);
-				// double-escape: leave as-is so \\$FOO stays \\$FOO
-			}
+					const dollarIdx = match.indexOf("$");
+					if (dollarIdx === 1) return match.slice(1);
+					// double-escape: leave as-is so \\$FOO stays \\$FOO
+				}
 				const name = braced ?? bare;
 				if (!name) return match;
 				return env[name] ?? expanded[name] ?? "";
@@ -296,7 +314,11 @@ export function parseEnvFile(filePath: string): Record<string, string> {
 	// Memoize on (path, mtime). filterChildShellEnvInternal reads 4 dotenv files per
 	// child-shell spawn; without this, every subprocess pays 4 synchronous reads.
 	let mtime = 0;
-	try { mtime = statSync(filePath).mtimeMs; } catch { /* missing -> empty */ }
+	try {
+		mtime = statSync(filePath).mtimeMs;
+	} catch {
+		/* missing -> empty */
+	}
 	const cached = __parseEnvFileCache.get(filePath);
 	if (cached && cached.mtime === mtime) return cached.data;
 	const result: Record<string, string> = {};
@@ -304,7 +326,14 @@ export function parseEnvFile(filePath: string): Record<string, string> {
 		const parsed = parseEnv(fs.readFileSync(filePath, "utf-8"));
 		for (const key in parsed) {
 			const value = parsed[key];
-			if (value !== undefined && isValidEnvName(key) && !isDangerousEnvName(key) && !isDotenvForbiddenName(key) && isSafeEnvValue(value)) result[key] = value;
+			if (
+				value !== undefined &&
+				isValidEnvName(key) &&
+				!isDangerousEnvName(key) &&
+				!isDotenvForbiddenName(key) &&
+				isSafeEnvValue(value)
+			)
+				result[key] = value;
 		}
 	} catch {
 		// File doesn't exist or can't be read - return empty result
@@ -330,7 +359,13 @@ __projectEnvIdentity.add(projectEnv);
 
 for (const key of Object.keys(Bun.env)) {
 	const value = Bun.env[key];
-	if (!isSafeEnvName(key) || isDangerousEnvName(key) || isMacosMallocStackLoggingEnvName(key) || value === undefined || !isSafeEnvValue(value)) {
+	if (
+		!isSafeEnvName(key) ||
+		isDangerousEnvName(key) ||
+		isMacosMallocStackLoggingEnvName(key) ||
+		value === undefined ||
+		!isSafeEnvValue(value)
+	) {
 		delete Bun.env[key];
 	}
 }
@@ -366,15 +401,12 @@ refreshDirsFromEnv();
  * Rather than a mass signature change, we proxy the underlying object so
  * reading an unset name returns "" instead of undefined.
  */
-export const $env: Record<string, string> = new Proxy(
-	Bun.env as Record<string, string | undefined>,
-	{
-		get(target, prop: string) {
-			const v = target[prop];
-			return v === undefined ? "" : v;
-		},
+export const $env: Record<string, string> = new Proxy(Bun.env as Record<string, string | undefined>, {
+	get(target, prop: string) {
+		const v = target[prop];
+		return v === undefined ? "" : v;
 	},
-) as Record<string, string>;
+}) as Record<string, string>;
 
 /**
  * Resolve the first environment variable value from the given keys.

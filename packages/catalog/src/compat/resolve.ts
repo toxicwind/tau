@@ -467,8 +467,12 @@ function detectOpenAICompat(
 				? "openrouter"
 				: isQwen && hostMatchesUrl(baseUrl, "nvidia")
 					? "qwen-chat-template"
-					/* p1:groq-cerebras-thinking-format */
-					: isQwen && (isFireworks || hostMatchesUrl(baseUrl, "venice") || hostMatchesUrl(baseUrl, "groq") || hostMatchesUrl(baseUrl, "cerebras"))
+					: /* p1:groq-cerebras-thinking-format */
+						isQwen &&
+						  (isFireworks ||
+								hostMatchesUrl(baseUrl, "venice") ||
+								hostMatchesUrl(baseUrl, "groq") ||
+								hostMatchesUrl(baseUrl, "cerebras"))
 						? "openai"
 						: hostMatchesUrl(baseUrl, "alibabaDashscope") || isQwen
 							? "qwen"

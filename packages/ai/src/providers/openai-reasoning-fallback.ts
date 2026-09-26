@@ -397,14 +397,14 @@ export function resolveOpenAIReasoningEffortFallback(
 	options?: { explicitDisable?: boolean },
 ): OpenAIReasoningEffortFallback | undefined {
 	/* p3:supported-values-re */
-  if (typeof error === "string" || (error && typeof (error as any).message === "string")) {
-    const _msg = typeof error === "string" ? error : (error as any).message;
-    if (/supported values are|must be one of/i.test(_msg)) {
-      delete (params as any)?.enable_thinking;
-      delete (params as any)?.chat_template_kwargs;
-    }
-  }
-  const strip = resolveStripTemplateKwargFallback(error, captured, params);
+	if (typeof error === "string" || (error && typeof (error as any).message === "string")) {
+		const _msg = typeof error === "string" ? error : (error as any).message;
+		if (/supported values are|must be one of/i.test(_msg)) {
+			delete (params as any)?.enable_thinking;
+			delete (params as any)?.chat_template_kwargs;
+		}
+	}
+	const strip = resolveStripTemplateKwargFallback(error, captured, params);
 	if (strip !== undefined) return strip;
 	const currentEffort = readOpenAIReasoningEffort(params);
 	if (!currentEffort || !KNOWN_REASONING_VALUE[currentEffort.toLowerCase()]) return undefined;

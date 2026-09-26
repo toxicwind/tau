@@ -153,7 +153,11 @@ async function startServer(): Promise<BridgeServer> {
 	const server = Bun.serve({
 		hostname: "127.0.0.1",
 		port: 0,
-		async fetch(req){ if(new URL(req.url).pathname==="/health") return new Response(JSON.stringify({ok:true, ts:Date.now()}),{headers:{"content-type":"application/json"}});
+		async fetch(req) {
+			if (new URL(req.url).pathname === "/health")
+				return new Response(JSON.stringify({ ok: true, ts: Date.now() }), {
+					headers: { "content-type": "application/json" },
+				});
 			const url = new URL(req.url);
 			if (req.method !== "POST" || url.pathname !== "/v1/tool") {
 				return new Response("Not Found", { status: 404 });

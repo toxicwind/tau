@@ -376,7 +376,11 @@ function createDashboardServer(port: number, hostname: string): Server<undefined
 	const server = Bun.serve({
 		port,
 		hostname,
-		async fetch(req){ if(new URL(req.url).pathname==="/health") return new Response(JSON.stringify({ok:true, ts:Date.now()}),{headers:{"content-type":"application/json"}});
+		async fetch(req) {
+			if (new URL(req.url).pathname === "/health")
+				return new Response(JSON.stringify({ ok: true, ts: Date.now() }), {
+					headers: { "content-type": "application/json" },
+				});
 			const url = new URL(req.url);
 			const path = url.pathname;
 

@@ -640,11 +640,10 @@ registerProvider<SystemPrompt>(systemPromptCapability.id, {
 	load: loadSystemPrompts,
 });
 
-
 // [tau-fix] runtime-validated env record
 function isStringRecord(v: unknown): v is Record<string, string> {
-  if (!v || typeof v !== "object" || Array.isArray(v)) return false;
-  const o = v as Record<string, unknown>;
-  for (const k in o) if (typeof o[k] !== "string") return false;
-  return true;
+	if (!v || typeof v !== "object" || Array.isArray(v)) return false;
+	const o = v as Record<string, unknown>;
+	for (const k in o) if (typeof o[k] !== "string") return false;
+	return true;
 }
