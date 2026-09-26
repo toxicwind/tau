@@ -170,10 +170,10 @@ async function loadMCPServers(ctx: LoadContext): Promise<LoadResult<MCPServer>> 
 				requestIdFormat,
 				command: serverConfig.command as string | undefined,
 				args: serverConfig.args as string[] | undefined,
-				env: serverConfig.env as Record<string, string> | undefined,
+				env: isStringRecord(serverConfig.env) ? serverConfig.env : undefined,
 				cwd: serverConfig.cwd as string | undefined,
 				url: serverConfig.url as string | undefined,
-				headers: serverConfig.headers as Record<string, string> | undefined,
+				headers: isStringRecord(serverConfig.headers) ? serverConfig.headers : undefined,
 				auth: serverConfig.auth as
 					| {
 							type: "oauth" | "apikey";
@@ -942,3 +942,11 @@ registerProvider<ContextFile>(contextFileCapability.id, {
 	priority: PRIORITY,
 	load: loadContextFiles,
 });
+
+// [tau-fix] runtime-validated env record
+function isStringRecord(v: unknown): v is Record<string, string> {
+  if (!v || typeof v !== "object" || Array.isArray(v)) return false;
+  const o = v as Record<string, unknown>;
+  for (const k in o) if (typeof o[k] !== "string") return false;
+  return true;
+}

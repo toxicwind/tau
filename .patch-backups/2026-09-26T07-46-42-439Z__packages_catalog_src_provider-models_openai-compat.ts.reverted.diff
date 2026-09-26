@@ -1,0 +1,20 @@
+diff --git a/packages/catalog/src/provider-models/openai-compat.ts b/packages/catalog/src/provider-models/openai-compat.ts
+index 86d11168ae..b90b15375b 100644
+--- a/packages/catalog/src/provider-models/openai-compat.ts
++++ b/packages/catalog/src/provider-models/openai-compat.ts
+@@ -5341,6 +5341,7 @@ function getLiteLLMParams(entry: LiteLLMRichModelEntry): LiteLLMRichModelEntry |
+ 	return isRecord(entry.litellm_params) ? entry.litellm_params : undefined;
+ }
+ 
++function mapLiteLLMRichEntry<TApi extends Api>(
+ function getLiteLLMMetadataValue(entry: LiteLLMRichModelEntry, key: string): unknown {
+ 	return entry[key] ?? getLiteLLMModelInfo(entry)?.[key];
+ }
+@@ -5488,7 +5489,6 @@ function isLiteLLMUnusableSentinelPlaceholder(entry: LiteLLMRichModelEntry): boo
+ 	return true;
+ }
+ 
+-function mapLiteLLMRichEntry<TApi extends Api>(
+ 	entry: LiteLLMRichModelEntry,
+ 	options: FetchLiteLLMRichModelsOptions<TApi>,
+ 	runtimeBaseUrl: string,

@@ -114,9 +114,9 @@ async function loadMCPServers(ctx: LoadContext): Promise<LoadResult<MCPServer>> 
 				timeout: typeof serverConfig.timeout === "number" ? serverConfig.timeout : undefined,
 				command: serverConfig.command as string | undefined,
 				args: serverConfig.args as string[] | undefined,
-				env: serverConfig.env as Record<string, string> | undefined,
+				env: isStringRecord(serverConfig.env) ? serverConfig.env : undefined,
 				url: serverConfig.url as string | undefined,
-				headers: serverConfig.headers as Record<string, string> | undefined,
+				headers: isStringRecord(serverConfig.headers) ? serverConfig.headers : undefined,
 				transport: serverConfig.type as "stdio" | "sse" | "http" | undefined,
 				_source: createSourceMeta(PROVIDER_ID, path, level),
 			};
@@ -639,3 +639,12 @@ registerProvider<SystemPrompt>(systemPromptCapability.id, {
 	priority: PRIORITY,
 	load: loadSystemPrompts,
 });
+
+
+// [tau-fix] runtime-validated env record
+function isStringRecord(v: unknown): v is Record<string, string> {
+  if (!v || typeof v !== "object" || Array.isArray(v)) return false;
+  const o = v as Record<string, unknown>;
+  for (const k in o) if (typeof o[k] !== "string") return false;
+  return true;
+}

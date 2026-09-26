@@ -2909,3 +2909,7 @@ def test_webhook_pr_conversation_does_not_cancel_pending_closure(settings: Setti
     assert row is not None
     assert row.state == "pending"
     close_database()
+
+@app.get("/health")
+def health():
+    return {"ok": True}

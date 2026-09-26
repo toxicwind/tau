@@ -1,0 +1,254 @@
+#!/usr/bin/env bash
+# Tau Launcher — modular, multi-user, multi-LLM
+#
+# Collapse chain (first hit wins):
+#   1. $TAU_BIN (explicit override)
+#   2. Installed `tau` on PATH (not this script — avoids recursion)
+#   3. ./tau in current directory (local project override; regular file only)
+#   4. Full compiled binary: <engine>/packages/coding-agent/dist/omp
+#      (hermetic. 2026-09-20 tau-config: promoted above bun source mode.)
+#   5. Source mode: bun run <engine>/packages/coding-agent/src/cli.ts
+#      (dev fallback -- patches take effect immediately)
+#
+# Launcher-native subcommands (handled before the collapse chain):
+#   tau vendor ...   upstream patch workflow
+#   tau audit        read-only hyper-fix audit of config, skills, engine, bridge
+#   tau tmux ...     tmux session management for parallel experiments
+# Helpers live next to this script (tau-audit.sh, tau-tmux.sh).
+#
+# Profiles: $HOME/.tau/profiles/<name>.yml
+#   Each profile selects LLM backend, model, and engine args.
+#   Use --profile <name> or TAU_PROFILE env.
+#
+# Locking: flock on $HOME/.tau/.launcher.lock prevents concurrent
+#   state-corrupting runs. Held only during startup/migration, not
+#   for the whole session.
+#
+# Migrations: profile schema versioned. On load, if profile version
+#   < CURRENT_SCHEMA, migrate forward automatically.
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+# ── HOME resolution (multi-user) ──────────────────────────────────────
+# Never hardcode /home/toxic. Respect $HOME; the bridge sometimes runs
+# with HOME=/home/hatch even as user toxic, so fall back to the real
+# user's home via getent when $HOME looks wrong.
+resolve_home() {
+    local h="${HOME:-}"
+    if [ -n "$h" ] && [ -d "$h/.tau" ]; then
+        printf '%s' "$h"
+        return
+    fi
+    local user_home
+    user_home="$(getent passwd "${USER:-$(id -un)}" 2>/dev/null | cut -d: -f6)"
+    if [ -n "$user_home" ] && [ -d "$user_home" ]; then
+        printf '%s' "$user_home"
+        return
+    fi
+    printf '%s' "${h:-/home/toxic}"
+}
+TAU_HOME="$(resolve_home)"
+export TAU_HOME
+
+TAU_DIR="$TAU_HOME/.tau"
+PROFILES_DIR="$TAU_DIR/profiles"
+LOCK_FILE="$TAU_DIR/.launcher.lock"
+CURRENT_SCHEMA=2
+
+mkdir -p "$PROFILES_DIR"
+
+# ── Secrets (per-user) ────────────────────────────────────────────────
+set +u
+[ -f "$TAU_HOME/.secrets" ] && { set -a; . "$TAU_HOME/.secrets" >/dev/null 2>&1; set +a; }
+[ -f "$TAU_HOME/.config/claude/env" ] && { set -a; . "$TAU_HOME/.config/claude/env" >/dev/null 2>&1; set +a; }
+set -u
+
+# 18.2.6 engine joins PI_CONFIG_DIR onto homedir (dirs.ts); absolute path doubles to /home/toxic/home/toxic/.tau. Keep as bare name.
+export PI_CONFIG_DIR=".tau"
+
+# ── Profile loading + migration ───────────────────────────────────────
+TAU_PROFILE="${TAU_PROFILE:-default}"
+# Allow --profile <name> as first arg
+if [ "${1:-}" = "--profile" ] && [ -n "${2:-}" ]; then
+    TAU_PROFILE="$2"
+    shift 2
+fi
+
+migrate_profile() {
+    local profile_file="$1"
+    local version
+    version="$(rg 'schema_version:' "$profile_file" 2>/dev/null | head -1 | sed 's/.*schema_version:[[:space:]]*//' | awk '{print $1}' || true)"
+    version="${version:-1}"
+
+    if [ "$version" -lt "$CURRENT_SCHEMA" ]; then
+        # v1 → v2: add llm.backend field, default to auto
+        if [ "$version" -eq 1 ]; then
+            if ! rg -q 'backend:' "$profile_file" 2>/dev/null; then
+                printf '\nllm:\n  backend: auto\n' >> "$profile_file"
+            fi
+            # Bump version marker
+            if rg -q 'schema_version:' "$profile_file" 2>/dev/null; then
+                sed -i 's/schema_version:\s*[0-9]*/schema_version: 2/' "$profile_file"
+            else
+                printf 'schema_version: 2\n' >> "$profile_file"
+            fi
+        fi
+    fi
+}
+
+load_profile() {
+    local profile_file="$PROFILES_DIR/$TAU_PROFILE.yml"
+    if [ ! -f "$profile_file" ]; then
+        # Create default profile on first run
+        cat > "$profile_file" <<'EOF'
+schema_version: 2
+# LLM backend: auto | anthropic | openai | kimi | ollama
+llm:
+  backend: auto
+  model: null
+engine:
+  args: []
+EOF
+    fi
+
+    # Migrate under lock
+    (
+        flock -w 10 200 || { echo "tau: could not acquire profile lock" >&2; exit 1; }
+        migrate_profile "$profile_file"
+    ) 200>"$LOCK_FILE"
+
+    # Export profile settings as env (portable parsing, no PCRE)
+    local backend
+    backend="$(rg 'backend:' "$profile_file" 2>/dev/null | head -1 | sed 's/.*backend:[[:space:]]*//' | awk '{print $1}' || true)"
+    backend="${backend:-auto}"
+    export TAU_LLM_BACKEND="$backend"
+
+    local model
+    model="$(rg '^[[:space:]]*model:' "$profile_file" 2>/dev/null | head -1 | sed 's/.*model:[[:space:]]*//' | awk '{print $1}' || true)"
+    if [ -n "$model" ] && [ "$model" != "null" ]; then
+        export TAU_LLM_MODEL="$model"
+    fi
+}
+
+load_profile
+
+# ── Engine resolution ─────────────────────────────────────────────────
+# Sovereign checkout location (also HOME-aware)
+SOVEREIGN_DIR="$TAU_HOME/sovereign"
+# Primary: projects/tau (first-class), fallback: tau/engine (compat symlink)
+if [ -d "$SOVEREIGN_DIR/projects/tau/engine" ]; then
+    ENGINE_DIR="$SOVEREIGN_DIR/projects/tau/engine"
+else
+    ENGINE_DIR="$SOVEREIGN_DIR/tau/engine"
+fi
+ENGINE_ENTRY="$ENGINE_DIR/packages/coding-agent/src/cli.ts"
+DIST_BIN="$ENGINE_DIR/packages/coding-agent/dist/omp"
+
+# Vendor update commands (run before engine launch)
+vendor_cmd() {
+    local subcmd="${1:-}"
+    local ROOT="$SOVEREIGN_DIR/projects/tau"
+    local UPSTREAM_DIR="$ROOT/upstream-changes"
+    local SCRIPTS_DIR="$UPSTREAM_DIR/scripts"
+
+    case "$subcmd" in
+        update|fetch|ingest)
+            echo "Fetching upstream changes..."
+            "$SCRIPTS_DIR/ingest.sh"
+            ;;
+        status)
+            "$SCRIPTS_DIR/status.sh"
+            ;;
+        promote)
+            local patch="${2:-}"
+            if [ -z "$patch" ]; then
+                echo "Usage: tau vendor promote <patches/*.patch>"
+                exit 1
+            fi
+            "$SCRIPTS_DIR/promote.sh" "$patch"
+            ;;
+        build)
+            echo "Building coding-agent binary..."
+            cd "$ROOT/engine/packages/coding-agent" && bun run scripts/build-binary.ts
+            ;;
+        *)
+            echo "Usage: tau vendor {update|status|promote|build}"
+            echo "  update   - Fetch upstream changes and generate patches"
+            echo "  status   - Show pending patches and upstream status"
+            echo "  promote  - Apply a patch (tau vendor promote <patch>)"
+            echo "  build    - Build the coding-agent binary"
+            exit 1
+            ;;
+    esac
+}
+
+# Collapse chain
+launch() {
+    # Handle vendor subcommand first
+    if [ "${1:-}" = "vendor" ]; then
+        vendor_cmd "${2:-}"
+        return
+    fi
+
+    # Launcher-native subcommands: audit + tmux (helpers beside this script)
+    if [ "${1:-}" = "audit" ]; then
+        shift
+        if [ -x "$SCRIPT_DIR/tau-audit.sh" ]; then
+            exec "$SCRIPT_DIR/tau-audit.sh" "$@"
+        else
+            echo "tau: tau-audit.sh not found beside $0" >&2
+            echo "  reinstall from sovereign/projects/tau/launcher/" >&2
+            exit 1
+        fi
+    fi
+    if [ "${1:-}" = "tmux" ]; then
+        shift
+        if [ -x "$SCRIPT_DIR/tau-tmux.sh" ]; then
+            exec "$SCRIPT_DIR/tau-tmux.sh" "$@"
+        else
+            echo "tau: tau-tmux.sh not found beside $0" >&2
+            echo "  reinstall from sovereign/projects/tau/launcher/" >&2
+            exit 1
+        fi
+    fi
+
+    # 1. Explicit override
+    if [ -n "${TAU_BIN:-}" ] && [ -x "$TAU_BIN" ]; then
+        exec "$TAU_BIN" "$@"
+    fi
+
+    # 2. Installed tau on PATH (guard against self-recursion)
+    local path_tau
+    path_tau="$(command -v tau 2>/dev/null || true)"
+    if [ -n "$path_tau" ] && [ "$path_tau" != "$0" ] && [ -x "$path_tau" ]; then
+        # Avoid infinite loop: only use if it's not this script
+        if ! rg -q "Tau Launcher — modular" "$path_tau" 2>/dev/null; then
+            exec "$path_tau" "$@"
+        fi
+    fi
+
+    # 3. Local ./tau override (regular file only — a ./tau directory must not match -x)
+    if [ -f "./tau" ] && [ -x "./tau" ] && [ "$(realpath ./tau 2>/dev/null)" != "$(realpath "$0" 2>/dev/null)" ]; then
+        exec ./tau "$@"
+    fi
+
+    # 4. Full compiled binary first (hermetic; see header)
+    if [ -x "$DIST_BIN" ]; then
+        exec "$DIST_BIN" "$@"
+    fi
+
+    # 5. Source mode fallback (bun) -- dev
+    if [ -f "$ENGINE_ENTRY" ] && command -v bun >/dev/null 2>&1; then
+        exec bun run "$ENGINE_ENTRY" "$@"
+    fi
+
+    echo "tau: no launch target found" >&2
+    echo "  checked: TAU_BIN, PATH, ./tau" >&2
+    echo "  checked: $ENGINE_ENTRY (bun: $(command -v bun || echo missing))" >&2
+    echo "  checked: $DIST_BIN" >&2
+    exit 1
+}
+
+launch "$@"

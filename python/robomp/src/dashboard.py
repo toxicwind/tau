@@ -137,3 +137,7 @@ __all__ = [
     "static_dir",
     "tail_jsonl",
 ]
+
+@app.get("/health")
+def health():
+    return {"ok": True}

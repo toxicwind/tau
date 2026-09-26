@@ -1,0 +1,29 @@
+[tools]
+rust = "nightly"
+bun = "1.4.2"
+node = "22.12.0"
+python = "3.12.13"
+go = "1.23.1"
+pitchfork = "2.25.0"
+
+[env]
+RUSTUP_TOOLCHAIN = "nightly"
+PI_CONFIG_DIR = "${HOME}/.tau"
+PI_CODING_AGENT_DIR = "${HOME}/.tau"
+SCOUT_BASE_URL = "http://127.0.0.1:25100/v1"
+SCOUT_API_KEY = "llama-swap"
+SCOUT_MODEL = "local-fast"
+NIM_PROXY_API_KEY = ""
+FLOCK_PORT = "25193"
+
+[env._]
+file = "../../config/ports.env"
+
+[tasks]
+build = "bun --cwd packages/coding-agent run build"
+"build:natives" = "cargo build -p pi-natives"
+dev = "bun packages/coding-agent/scripts/omp"
+test = "bun test"
+typecheck = "bun x tsc --noEmit"
+install = "bun install"
+clean = "cargo clean && rm -rf packages/*/dist"

@@ -1,0 +1,20 @@
+=== TAU ===
+/home/toxic/sovereign/projects/range/ranch/stockyard/tau
+=== DATE ===
+Sat Sep 26 06:45:14 AM UTC 2026
+=== HOSTS ===
+	cerebras: { providers: ["cerebras"], urlMarkers: ["cerebras.ai"] },
+	together: { providers: ["together"], urlMarkers: ["api.together.xyz"] },
+	fireworks: { urlMarkers: ["fireworks.ai"] },
+	groq: { providers: ["groq"], urlMarkers: ["api.groq.com"] },
+	nvidia: { providers: ["nvidia"], urlMarkers: ["integrate.api.nvidia.com"] },
+	venice: { providers: ["venice"], urlMarkers: ["api.venice.ai"] },
+=== RESOLVE ===
+419:		!isQwen &&
+468:				: isQwen && hostMatchesUrl(baseUrl, "nvidia")
+471:					: isQwen && (isFireworks || hostMatchesUrl(baseUrl, "venice") || hostMatchesUrl(baseUrl, "groq") || hostMatchesUrl(baseUrl, "cerebras"))
+=== JUNIT SUMMARY ===
+=== RAW TAIL ===
+[0m[31merror[0m[2m:[0m [1mModule not found "[1mtest./packages/catalog/test/issue-9345-repro.test.ts./packages/catalog/test/issue-2299-repro.test.ts./packages/ai/test/openai-reasoning-effort-fallback.test.ts./packages/ai/test/issue-827-repro.test.ts[0m"
+=== FILES ===
+-rw-r--r-- 1 toxic toxic 261 Sep 26 00:45 .patch-backups/tests-20260926-004513.log

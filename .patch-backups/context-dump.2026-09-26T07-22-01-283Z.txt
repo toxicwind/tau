@@ -1,0 +1,645 @@
+══ context dump @ 2026-09-26T07-22-01-283Z ══
+
+── gemini-cli-first-event-timeout :: packages/ai/src/providers/google-gemini-cli.ts:305-345 ──
+  305 | 		existing = {
+  306 | 			close: () => {},
+  307 | 		};
+  308 | 		providerSessionState.set(ANTIGRAVITY_PROVIDER_SESSION_STATE_KEY, existing);
+  309 | 	}
+  310 | 	return existing;
+  311 | }
+  312 | 
+  313 | const DEFAULT_ENDPOINT = "https://cloudcode-pa.googleapis.com";
+  314 | const ANTIGRAVITY_DAILY_ENDPOINT = "https://daily-cloudcode-pa.googleapis.com";
+  315 | const ANTIGRAVITY_SANDBOX_ENDPOINT = "https://daily-cloudcode-pa.sandbox.googleapis.com";
+  316 | const ANTIGRAVITY_ENDPOINT_FALLBACKS = [ANTIGRAVITY_DAILY_ENDPOINT, ANTIGRAVITY_SANDBOX_ENDPOINT] as const;
+  317 | 
+  318 | // Retry configuration
+  319 | const MAX_RETRIES = 3;
+  320 | const BASE_DELAY_MS = 1000;
+  321 | const DEFAULT_FIRST_EVENT_TIMEOUT_MS = 300_000;
+  322 | const FIRST_EVENT_TIMEOUT_ERROR = "Cloud Code Assist stream timed out while waiting for the first event";
+  323 | const RATE_LIMIT_BUDGET_MS = 5 * 60 * 1000;
+  324 | const CLAUDE_THINKING_BETA_HEADER = "interleaved-thinking-2025-05-14";
+  325 | const GOOGLE_GEMINI_REFRESH_SKEW_MS = 60_000;
+  326 | const ANTIGRAVITY_REFRESH_SKEW_MS = 60_000;
+  327 | 
+  328 | const optionalCredentialString = type("unknown").pipe(raw => {
+  329 | 	const out = type("string")(raw);
+  330 | 	return out instanceof type.errors ? undefined : out;
+  331 | });
+  332 | 
+  333 | const innerCredentialsSchema = type({
+  334 | 	"token?": optionalCredentialString,
+  335 | 	"projectId?": optionalCredentialString,
+  336 | 	"project_id?": optionalCredentialString,
+  337 | 	"refreshToken?": optionalCredentialString,
+  338 | 	"refresh?": optionalCredentialString,
+  339 | 	"email?": optionalCredentialString,
+  340 | 	"expiresAt?": "unknown",
+  341 | 	"expires?": "unknown",
+  342 | });
+  343 | 
+  344 | const geminiCliCredentialsSchema = type("unknown").pipe(raw => {
+  345 | 	const out = innerCredentialsSchema(raw);
+
+── dirs-empty-catches-1 :: packages/utils/src/dirs.ts:130-220 ──
+  130 | }
+  131 | 
+  132 | function isProfileDerivedAgentDir(profile: string | undefined, agentDirEnv: string | undefined): boolean {
+  133 | 	return profile !== undefined && agentDirEnv === getProfileAgentDir(profile);
+  134 | }
+  135 | // =============================================================================
+  136 | // Project directory
+  137 | // =============================================================================
+  138 | 
+  139 | /**
+  140 |  * On macOS, strip /private prefix only when both paths resolve to the same location.
+  141 |  * This preserves aliases like /private/tmp -> /tmp without rewriting unrelated paths.
+  142 |  */
+  143 | function standardizeMacOSPath(p: string): string {
+  144 | 	if (process.platform !== "darwin" || !p.startsWith("/private/")) return p;
+  145 | 	const stripped = p.slice("/private".length);
+  146 | 	try {
+  147 | 		if (fs.realpathSync(p) === fs.realpathSync(stripped)) {
+  148 | 			return stripped;
+  149 | 		}
+  150 | 	} catch {}
+  151 | 	return p;
+  152 | }
+  153 | 
+  154 | export function resolveEquivalentPath(inputPath: string): string {
+  155 | 	const resolvedPath = path.resolve(inputPath);
+  156 | 	try {
+  157 | 		return fs.realpathSync(resolvedPath);
+  158 | 	} catch {
+  159 | 		return resolvedPath;
+  160 | 	}
+  161 | }
+  162 | 
+  163 | export function normalizePathForComparison(inputPath: string): string {
+  164 | 	const resolvedPath = resolveEquivalentPath(inputPath);
+  165 | 	return process.platform === "win32" ? resolvedPath.toLowerCase() : resolvedPath;
+  166 | }
+  167 | 
+  168 | /**
+  169 |  * Compare paths already normalized by {@link normalizePathForComparison}.
+  170 |  *
+  171 |  * Returns the relative path (an empty string when the paths are equal), or
+  172 |  * `null` when the candidate is outside the root. Callers classifying one
+  173 |  * candidate against several static roots can normalize each side once and
+  174 |  * reuse the public helpers' containment semantics without repeating realpath
+  175 |  * work.
+  176 |  */
+  177 | export function relativePathWithinNormalizedRoot(normalizedRoot: string, normalizedCandidate: string): string | null {
+  178 | 	const relative = path.relative(normalizedRoot, normalizedCandidate);
+  179 | 	if (relative !== "" && (relative.startsWith("..") || path.isAbsolute(relative))) return null;
+  180 | 	return relative;
+  181 | }
+  182 | 
+  183 | export function pathIsWithin(root: string, candidate: string): boolean {
+  184 | 	const normalizedRoot = normalizePathForComparison(root);
+  185 | 	const normalizedCandidate = normalizePathForComparison(candidate);
+  186 | 	return relativePathWithinNormalizedRoot(normalizedRoot, normalizedCandidate) !== null;
+  187 | }
+  188 | 
+  189 | export function relativePathWithinRoot(root: string, candidate: string): string | null {
+  190 | 	const normalizedRoot = normalizePathForComparison(root);
+  191 | 	const normalizedCandidate = normalizePathForComparison(candidate);
+  192 | 	return relativePathWithinNormalizedRoot(normalizedRoot, normalizedCandidate) || null;
+  193 | }
+  194 | 
+  195 | let projectDir: string | undefined;
+  196 | 
+  197 | /** Get the project directory. */
+  198 | export function getProjectDir(): string {
+  199 | 	if (projectDir === undefined) {
+  200 | 		try {
+  201 | 			projectDir = standardizeMacOSPath(process.cwd());
+  202 | 		} catch {
+  203 | 			const candidates = [process.env.PWD, os.homedir(), os.tmpdir()];
+  204 | 			for (const candidate of candidates) {
+  205 | 				if (!candidate || !path.isAbsolute(candidate)) continue;
+  206 | 				try {
+  207 | 					process.chdir(candidate);
+  208 | 					projectDir = standardizeMacOSPath(candidate);
+  209 | 					break;
+  210 | 				} catch {}
+  211 | 			}
+  212 | 			if (projectDir === undefined) {
+  213 | 				throw new Error("Unable to determine an accessible working directory");
+  214 | 			}
+  215 | 		}
+  216 | 	}
+  217 | 	return projectDir;
+  218 | }
+  219 | 
+  220 | /** Set the project directory. */
+
+── dirs-empty-catches-2 :: packages/utils/src/dirs.ts:270-380 ──
+  270 | 
+  271 | /** Whether `dir` is enterable, synchronous variant. See {@link directoryIsEnterable}. */
+  272 | export function directoryIsEnterableSync(dir: string): boolean {
+  273 | 	try {
+  274 | 		fs.accessSync(dir, fs.constants.X_OK);
+  275 | 		return fs.statSync(dir).isDirectory();
+  276 | 	} catch {
+  277 | 		return false;
+  278 | 	}
+  279 | }
+  280 | 
+  281 | /**
+  282 |  * Project directory when it is enterable, otherwise a safe fallback.
+  283 |  * Used by spawns that must preserve project-relative behavior when healthy.
+  284 |  */
+  285 | export function getSafeProjectCwd(): string {
+  286 | 	try {
+  287 | 		const dir = getProjectDir();
+  288 | 		if (directoryIsEnterableSync(dir)) return dir;
+  289 | 	} catch {}
+  290 | 	return os.homedir();
+  291 | }
+  292 | 
+  293 | /** Get the config directory name relative to home (e.g. ".omp" or PI_CONFIG_DIR override). */
+  294 | export function getConfigDirName(): string {
+  295 | 	return process.env.PI_CONFIG_DIR || CONFIG_DIR_NAME;
+  296 | }
+  297 | 
+  298 | /** Get the config agent directory name relative to home (e.g. ".omp/agent" or PI_CONFIG_DIR + "/agent"). */
+  299 | export function getConfigAgentDirName(): string {
+  300 | 	const profile = getActiveProfile();
+  301 | 	return profile ? path.join(getConfigDirName(), "profiles", profile, "agent") : `${getConfigDirName()}/agent`;
+  302 | }
+  303 | 
+  304 | // =============================================================================
+  305 | // DirResolver — cached, XDG-aware path resolution
+  306 | // =============================================================================
+  307 | 
+  308 | type XdgCategory = "data" | "state" | "cache";
+  309 | 
+  310 | /**
+  311 |  * Resolves and caches all omp directory paths. On Linux, when XDG environment
+  312 |  * variables are set, paths are redirected under $XDG_*_HOME/omp/. A new
+  313 |  * instance is created whenever the agent directory changes, which naturally
+  314 |  * invalidates all cached paths.
+  315 |  */
+  316 | class DirResolver {
+  317 | 	readonly configRoot: string;
+  318 | 	readonly agentDir: string;
+  319 | 
+  320 | 	// Per-category base dirs. Without XDG, all three equal configRoot / agentDir.
+  321 | 	// With XDG on Linux, they point to $XDG_*_HOME/omp/.
+  322 | 	readonly #rootDirs: Record<XdgCategory, string>;
+  323 | 	readonly #agentDirs: Record<XdgCategory, string>;
+  324 | 
+  325 | 	readonly #rootCache = new Map<string, string>();
+  326 | 	readonly #agentCache = new Map<string, string>();
+  327 | 
+  328 | 	constructor(options: { agentDirOverride?: string; profile?: string } = {}) {
+  329 | 		const profile = normalizeProfileName(options.profile);
+  330 | 		this.configRoot = getProfileConfigRoot(profile);
+  331 | 
+  332 | 		const defaultAgent = path.join(this.configRoot, "agent");
+  333 | 		const agentDirOverride = profile ? undefined : options.agentDirOverride;
+  334 | 		this.agentDir = agentDirOverride ? path.resolve(agentDirOverride) : defaultAgent;
+  335 | 		const isDefault = this.agentDir === defaultAgent;
+  336 | 
+  337 | 		// XDG is a Linux convention. On supported platforms, default profile state
+  338 | 		// resolves under $XDG_*_HOME/omp once `omp config init-xdg` has migrated
+  339 | 		// the user's data. Named profiles follow a stricter rule: the XDG choice
+  340 | 		// is keyed on the profile-specific XDG path, never the base app root.
+  341 | 		//
+  342 | 		// Why: if we consulted the base app root for named profiles too, the same
+  343 | 		// profile could resolve to `~/.omp/profiles/<name>` on first activation
+  344 | 		// (when no $XDG_*_HOME/omp exists yet) and then silently move to
+  345 | 		// `$XDG_*_HOME/omp/profiles/<name>` the moment the base appeared, orphaning
+  346 | 		// the earlier state. Pinning on the profile path means a profile's location
+  347 | 		// is decided at first activation and stays put until the user explicitly
+  348 | 		// migrates it (e.g. by mkdir'ing the XDG profile dir).
+  349 | 		let xdgData: string | undefined;
+  350 | 		let xdgState: string | undefined;
+  351 | 		let xdgCache: string | undefined;
+  352 | 		if ((process.platform === "linux" || process.platform === "darwin") && isDefault) {
+  353 | 			const resolveIf = (envVar: string) => {
+  354 | 				const value = process.env[envVar];
+  355 | 				if (!value) return undefined;
+  356 | 				try {
+  357 | 					const appRoot = path.join(value, APP_NAME);
+  358 | 					if (profile) {
+  359 | 						const profilePath = path.join(appRoot, "profiles", profile);
+  360 | 						if (fs.existsSync(profilePath)) {
+  361 | 							return profilePath;
+  362 | 						}
+  363 | 						return undefined;
+  364 | 					}
+  365 | 					if (fs.existsSync(appRoot)) {
+  366 | 						return appRoot;
+  367 | 					}
+  368 | 				} catch {}
+  369 | 				return undefined;
+  370 | 			};
+  371 | 			xdgData = resolveIf("XDG_DATA_HOME");
+  372 | 			xdgState = resolveIf("XDG_STATE_HOME");
+  373 | 			xdgCache = resolveIf("XDG_CACHE_HOME");
+  374 | 		}
+  375 | 
+  376 | 		this.#rootDirs = {
+  377 | 			data: xdgData ?? this.configRoot,
+  378 | 			state: xdgState ?? this.configRoot,
+  379 | 			cache: xdgCache ?? this.configRoot,
+  380 | 		};
+
+── dirs-empty-catches-3 :: packages/utils/src/dirs.ts:1090-1140 ──
+ 1090 | 	if (cachedInstallId) return cachedInstallId;
+ 1091 | 	const filePath = path.join(getBaseConfigRoot(), INSTALL_ID_FILE);
+ 1092 | 
+ 1093 | 	let observedInvalid = false;
+ 1094 | 	try {
+ 1095 | 		const existing = fs.readFileSync(filePath, "utf8").trim();
+ 1096 | 		if (UUID_RE.test(existing)) {
+ 1097 | 			cachedInstallId = existing;
+ 1098 | 			return existing;
+ 1099 | 		}
+ 1100 | 		// File present but unparseable — fall through and overwrite below.
+ 1101 | 		observedInvalid = existing.length > 0;
+ 1102 | 	} catch {}
+ 1103 | 
+ 1104 | 	const next = crypto.randomUUID();
+ 1105 | 	try {
+ 1106 | 		fs.mkdirSync(path.dirname(filePath), { recursive: true });
+ 1107 | 		// If we already saw garbage in the file, unlink first so O_EXCL doesn't
+ 1108 | 		// trip on it. Ignored if the unlink races against another writer.
+ 1109 | 		if (observedInvalid) {
+ 1110 | 			try {
+ 1111 | 				fs.unlinkSync(filePath);
+ 1112 | 			} catch {}
+ 1113 | 		}
+ 1114 | 		const fd = fs.openSync(filePath, fs.constants.O_WRONLY | fs.constants.O_CREAT | fs.constants.O_EXCL, 0o600);
+ 1115 | 		try {
+ 1116 | 			fs.writeSync(fd, `${next}\n`);
+ 1117 | 		} finally {
+ 1118 | 			fs.closeSync(fd);
+ 1119 | 		}
+ 1120 | 	} catch (err) {
+ 1121 | 		// Lost the create race — re-read whatever the winner wrote.
+ 1122 | 		if ((err as NodeJS.ErrnoException).code === "EEXIST") {
+ 1123 | 			try {
+ 1124 | 				const existing = fs.readFileSync(filePath, "utf8").trim();
+ 1125 | 				if (UUID_RE.test(existing)) {
+ 1126 | 					cachedInstallId = existing;
+ 1127 | 					return existing;
+ 1128 | 				}
+ 1129 | 			} catch {}
+ 1130 | 		}
+ 1131 | 		// Any other failure: keep the generated id in-memory so the rest of
+ 1132 | 		// this process has a stable value; future processes will retry.
+ 1133 | 	}
+ 1134 | 
+ 1135 | 	cachedInstallId = next;
+ 1136 | 	return next;
+ 1137 | }
+ 1138 | 
+ 1139 | /** Test-only: clear cached install id. Never call from production code. */
+ 1140 | export function __resetInstallIdCacheForTests(): void {
+
+── vscode-cast :: packages/coding-agent/src/discovery/vscode.ts:80-100 ──
+   80 | 
+   81 | 		// Expand environment variables
+   82 | 		const expanded = expandEnvVarsDeep(raw);
+   83 | 
+   84 | 		const server: MCPServer = {
+   85 | 			name,
+   86 | 			enabled: typeof expanded.enabled === "boolean" ? expanded.enabled : undefined,
+   87 | 			command: typeof expanded.command === "string" ? expanded.command : undefined,
+   88 | 			args: Array.isArray(expanded.args) ? (expanded.args as string[]) : undefined,
+   89 | 			env: expanded.env && typeof expanded.env === "object" ? (expanded.env as Record<string, string>) : undefined,
+   90 | 			url: typeof expanded.url === "string" ? expanded.url : undefined,
+   91 | 			headers:
+   92 | 				expanded.headers && typeof expanded.headers === "object"
+   93 | 					? (expanded.headers as Record<string, string>)
+   94 | 					: undefined,
+   95 | 			transport: ["stdio", "sse", "http"].includes(expanded.transport as string)
+   96 | 				? (expanded.transport as "stdio" | "sse" | "http")
+   97 | 				: undefined,
+   98 | 			timeout: typeof expanded.timeout === "number" ? expanded.timeout : undefined,
+   99 | 			_source: createSourceMeta(PROVIDER_ID, path, level),
+  100 | 		};
+
+── windsurf-cast :: packages/coding-agent/src/discovery/windsurf.ts:45-65 ──
+   45 | 	}
+   46 | 
+   47 | 	const server = expandEnvVarsDeep(serverConfig as Record<string, unknown>);
+   48 | 	return {
+   49 | 		server: {
+   50 | 			name,
+   51 | 			enabled: typeof server.enabled === "boolean" ? server.enabled : undefined,
+   52 | 			command: server.command as string | undefined,
+   53 | 			args: server.args as string[] | undefined,
+   54 | 			env: server.env as Record<string, string> | undefined,
+   55 | 			url: server.url as string | undefined,
+   56 | 			headers: server.headers as Record<string, string> | undefined,
+   57 | 			transport: server.type as "stdio" | "sse" | "http" | undefined,
+   58 | 			timeout: typeof server.timeout === "number" ? server.timeout : undefined,
+   59 | 			_source: createSourceMeta(PROVIDER_ID, path, scope),
+   60 | 		},
+   61 | 	};
+   62 | }
+   63 | 
+   64 | async function loadMCPServers(ctx: LoadContext): Promise<LoadResult<MCPServer>> {
+   65 | 	const items: MCPServer[] = [];
+
+── claude-cast :: packages/coding-agent/src/discovery/claude.ts:108-130 ──
+  108 | 		const mcpServers = expandEnvVarsDeep(json.mcpServers);
+  109 | 		return Object.entries(mcpServers).map(([name, config]) => {
+  110 | 			const serverConfig = config as Record<string, unknown>;
+  111 | 			return {
+  112 | 				name,
+  113 | 				enabled: typeof serverConfig.enabled === "boolean" ? serverConfig.enabled : undefined,
+  114 | 				timeout: typeof serverConfig.timeout === "number" ? serverConfig.timeout : undefined,
+  115 | 				command: serverConfig.command as string | undefined,
+  116 | 				args: serverConfig.args as string[] | undefined,
+  117 | 				env: serverConfig.env as Record<string, string> | undefined,
+  118 | 				url: serverConfig.url as string | undefined,
+  119 | 				headers: serverConfig.headers as Record<string, string> | undefined,
+  120 | 				transport: serverConfig.type as "stdio" | "sse" | "http" | undefined,
+  121 | 				_source: createSourceMeta(PROVIDER_ID, path, level),
+  122 | 			};
+  123 | 		});
+  124 | 	};
+  125 | 
+  126 | 	// Load project entries before user entries so a project `enabled: false`
+  127 | 	// claims its dedupe key before a same-named user server can survive (#7654).
+  128 | 	const projectOffset = userPaths.length;
+  129 | 	for (let i = 0; i < projectPaths.length; i++) {
+  130 | 		const servers = parseMcpServers(contents[projectOffset + i], projectPaths[i].path, projectPaths[i].level);
+
+── gemini-discovery-cast :: packages/coding-agent/src/discovery/gemini.ts:100-125 ──
+  100 | 			continue;
+  101 | 		}
+  102 | 
+  103 | 		const raw = config as Record<string, unknown>;
+  104 | 
+  105 | 		items.push({
+  106 | 			name,
+  107 | 			enabled: typeof raw.enabled === "boolean" ? raw.enabled : undefined,
+  108 | 			command: typeof raw.command === "string" ? raw.command : undefined,
+  109 | 			args: Array.isArray(raw.args) ? (raw.args as string[]) : undefined,
+  110 | 			env: raw.env && typeof raw.env === "object" ? (raw.env as Record<string, string>) : undefined,
+  111 | 			url: typeof raw.url === "string" ? raw.url : undefined,
+  112 | 			headers: raw.headers && typeof raw.headers === "object" ? (raw.headers as Record<string, string>) : undefined,
+  113 | 			transport: ["stdio", "sse", "http"].includes(raw.type as string)
+  114 | 				? (raw.type as "stdio" | "sse" | "http")
+  115 | 				: undefined,
+  116 | 			timeout: typeof raw.timeout === "number" ? raw.timeout : undefined,
+  117 | 			_source: createSourceMeta(PROVIDER_ID, path, level),
+  118 | 		} as MCPServer);
+  119 | 	}
+  120 | 
+  121 | 	return { items, warnings };
+  122 | }
+  123 | 
+  124 | // =============================================================================
+  125 | // Context Files
+
+── cursor-cast :: packages/coding-agent/src/discovery/cursor.ts:55-75 ──
+   55 | 	const servers = expandEnvVarsDeep(parsed.mcpServers);
+   56 | 	for (const [name, config] of Object.entries(servers)) {
+   57 | 		const serverConfig = config as Record<string, unknown>;
+   58 | 		items.push({
+   59 | 			name,
+   60 | 			enabled: typeof serverConfig.enabled === "boolean" ? serverConfig.enabled : undefined,
+   61 | 			command: serverConfig.command as string | undefined,
+   62 | 			args: serverConfig.args as string[] | undefined,
+   63 | 			env: serverConfig.env as Record<string, string> | undefined,
+   64 | 			url: serverConfig.url as string | undefined,
+   65 | 			headers: serverConfig.headers as Record<string, string> | undefined,
+   66 | 			transport: ["stdio", "sse", "http"].includes(serverConfig.type as string)
+   67 | 				? (serverConfig.type as "stdio" | "sse" | "http")
+   68 | 				: undefined,
+   69 | 			timeout: typeof serverConfig.timeout === "number" ? serverConfig.timeout : undefined,
+   70 | 			_source: createSourceMeta(PROVIDER_ID, path, level),
+   71 | 		});
+   72 | 	}
+   73 | 
+   74 | 	return { items };
+   75 | }
+
+── procmgr-cast :: packages/utils/src/procmgr.ts:25-55 ──
+   25 | /**
+   26 |  * Build the spawn environment (cached).
+   27 |  */
+   28 | function buildSpawnEnv(shell: string): Record<string, string> {
+   29 | 	const noCI = $env.PI_BASH_NO_CI || $env.CLAUDE_BASH_NO_CI;
+   30 | 	return {
+   31 | 		...filterChildShellEnv(Bun.env),
+   32 | 		SHELL: shell,
+   33 | 		GIT_EDITOR: "true",
+   34 | 		GPG_TTY: "not a tty",
+   35 | 		OMPCODE: "1",
+   36 | 		CLAUDECODE: "1",
+   37 | 		...(noCI ? {} : { CI: "true" }),
+   38 | 	} as Record<string, string>;
+   39 | }
+   40 | 
+   41 | /**
+   42 |  * Get shell args for the resolved shell.
+   43 |  * cmd.exe takes `/c`; PowerShell (powershell.exe / pwsh) takes
+   44 |  * `-NoLogo -Command`, with `-NoProfile` when PI_BASH_NO_LOGIN /
+   45 |  * CLAUDE_BASH_NO_LOGIN is set (profile scripts are PowerShell's login-shell
+   46 |  * analog); POSIX shells take `-c`, with `-l` unless the same env is set.
+   47 |  *
+   48 |  * Exported for tests; `env` overrides the process env gate.
+   49 |  */
+   50 | export function getShellArgs(shell: string, env: Record<string, string | undefined> = $env): string[] {
+   51 | 	if (isCmdShell(shell)) return ["/c"];
+   52 | 	const noLogin = env.PI_BASH_NO_LOGIN || env.CLAUDE_BASH_NO_LOGIN;
+   53 | 	if (isPowerShell(shell)) {
+   54 | 		return noLogin ? ["-NoLogo", "-NoProfile", "-Command"] : ["-NoLogo", "-Command"];
+   55 | 	}
+
+── ptree-catch-1 :: packages/utils/src/ptree.ts:40-55 ──
+   40 | 			},
+   41 | 			waitpid: {
+   42 | 				args: [FFIType.i32, FFIType.ptr, FFIType.i32],
+   43 | 				returns: FFIType.i32,
+   44 | 			},
+   45 | 		});
+   46 | 		break;
+   47 | 	} catch {}
+   48 | }
+   49 | if (!libc) throw new Error("failed to load libc for Linux child supervision");
+   50 | 
+   51 | if (libc.symbols.prctl(36, 1, 0, 0, 0) !== 0) {
+   52 | 	throw new Error("failed to become a Linux child subreaper");
+   53 | }
+   54 | 
+   55 | const commandJson = Bun.env.${LINUX_SUBREAPER_COMMAND_ENV};
+
+── ptree-catch-2 :: packages/utils/src/ptree.ts:240-260 ──
+  240 | 						pipeCutoff.then(() => ({ cutoff: true as const })),
+  241 | 					]);
+  242 | 					if (chunk.cutoff) {
+  243 | 						await reader.cancel().catch(() => {});
+  244 | 						break;
+  245 | 					}
+  246 | 					if (chunk.r.done) break;
+  247 | 					this.#stderrChunks?.push(chunk.r.value);
+  248 | 					this.#stderrTail += dec.decode(chunk.r.value, { stream: true });
+  249 | 					trim();
+  250 | 				}
+  251 | 			} catch {}
+  252 | 			this.#openPipeReaders--;
+  253 | 			this.#stderrTail += dec.decode();
+  254 | 			trim();
+  255 | 		})();
+  256 | 
+  257 | 		proc.exited
+  258 | 			.catch(() => null)
+  259 | 			.then(async exitCode => {
+  260 | 				if (this.#exitReasonPending) {
+
+── ptree-catch-3 :: packages/utils/src/ptree.ts:370-385 ──
+  370 | 			process.platform !== "win32"
+  371 | 		) {
+  372 | 			// Bun detached children are POSIX session/process-group leaders. If
+  373 | 			// the leader has exited, the native Process handle cannot rediscover
+  374 | 			// its PGID, but a pipe-holding descendant keeps that exact group alive.
+  375 | 			try {
+  376 | 				process.kill(-this.proc.pid, "SIGKILL");
+  377 | 			} catch {}
+  378 | 			this.#terminating = Promise.resolve();
+  379 | 			return;
+  380 | 		}
+  381 | 		if (this.proc.exitCode !== null && this.#windowsRootProcess && this.#openPipeReaders > 0) {
+  382 | 			// The retained handle keeps the dead root PID reserved, making the
+  383 | 			// Windows Toolhelp descendant walk identity-safe after root exit.
+  384 | 			this.#windowsRootProcess.killTree();
+  385 | 			this.#terminating = Promise.resolve();
+
+── stream-client-timeouts :: packages/coding-agent/src/stream/server-client.ts:1-40 ──
+    1 | import {
+    2 | 	STREAM_CLOSE_BAD_CHANNEL,
+    3 | 	STREAM_CLOSE_FORBIDDEN,
+    4 | 	STREAM_CLOSE_HOST_CONFLICT,
+    5 | 	STREAM_CLOSE_PROTO_MISMATCH,
+    6 | 	STREAM_CLOSE_UNAUTHORIZED,
+    7 | 	STREAM_PROTO,
+    8 | 	type StreamChatMessage,
+    9 | 	type StreamHostFrame,
+   10 | 	type StreamPaneFrame,
+   11 | 	type StreamServerToHost,
+   12 | } from "@oh-my-pi/pi-wire";
+   13 | 
+   14 | const INITIAL_RECONNECT_MS = 1_000;
+   15 | const MAX_RECONNECT_MS = 30_000;
+   16 | 
+   17 | export interface StreamServerFatalError {
+   18 | 	code: number;
+   19 | 	message: string;
+   20 | }
+   21 | 
+   22 | export interface StreamServerClientOptions {
+   23 | 	url: string;
+   24 | 	title: string;
+   25 | 	/** Bearer token for the host socket, resolved before every dial; null aborts with an unauthorized fatal. */
+   26 | 	token: () => Promise<string | null>;
+   27 | 	/** Current pane snapshots, emitted immediately after every host hello. */
+   28 | 	replay: () => Iterable<StreamPaneFrame>;
+   29 | 	onFrame: (frame: StreamServerToHost) => void;
+   30 | 	onFatal: (error: StreamServerFatalError) => void;
+   31 | 	/** Non-fatal drop; `delayMs` is the wait before the next dial. */
+   32 | 	onDisconnect?: (delayMs: number) => void;
+   33 | 	/** Test seam; production uses capped exponential backoff with jitter. */
+   34 | 	reconnectDelay?: (attempt: number) => number;
+   35 | }
+   36 | 
+   37 | /** Reconnecting host-side link to the public stream server. Live deltas are never queued. */
+   38 | export class StreamServerClient {
+   39 | 	readonly #options: StreamServerClientOptions;
+   40 | 	#socket: WebSocket | null = null;
+
+── hindsight-timeouts :: packages/coding-agent/src/hindsight/client.ts:1-40 ──
+    1 | /**
+    2 |  * Minimal fetch-based client for the Hindsight HTTP API.
+    3 |  *
+    4 |  * Replaces the `@vectorize-io/hindsight-client` SDK with hand-rolled fetch
+    5 |  * calls so we depend on nothing more than the API endpoints we actually use:
+    6 |  * `retain`, `retainBatch`, `recall`, `reflect`, bank + document management,
+    7 |  * and bulk listing. Centralising construction here keeps a single seam for
+    8 |  * tests to spy on.
+    9 |  */
+   10 | 
+   11 | import { USER_AGENT } from "@oh-my-pi/pi-utils";
+   12 | import { isTimeoutError, withTimeoutSignal } from "../utils/fetch-timeout";
+   13 | import type { HindsightConfig } from "./config";
+   14 | 
+   15 | const DEFAULT_USER_AGENT = USER_AGENT;
+   16 | /** Fallback deadlines (ms) applied when the caller supplies no override. */
+   17 | const DEFAULT_REQUEST_TIMEOUT_MS = 30_000;
+   18 | const DEFAULT_REFLECT_TIMEOUT_MS = 120_000;
+   19 | const DEFAULT_RECALL_TIMEOUT_MS = 30_000;
+   20 | const DEFAULT_RETAIN_TIMEOUT_MS = 60_000;
+   21 | 
+   22 | export type Budget = "low" | "mid" | "high" | string;
+   23 | export type TagsMatch = "any" | "all" | "any_strict" | "all_strict";
+   24 | export type UpdateMode = "replace" | "append";
+   25 | export type ConsolidationState = "failed" | "pending" | "done";
+   26 | 
+   27 | /** Per-operation request deadlines (ms). Each falls back to a built-in default. */
+   28 | export interface HindsightTimeouts {
+   29 | 	/** Default deadline for ops without a specific override. */
+   30 | 	request?: number;
+   31 | 	reflect?: number;
+   32 | 	recall?: number;
+   33 | 	retain?: number;
+   34 | }
+   35 | 
+   36 | export interface HindsightApiOptions {
+   37 | 	baseUrl: string;
+   38 | 	apiKey?: string;
+   39 | 	userAgent?: string;
+   40 | 	/** Per-op deadlines; unset entries fall back to built-in defaults. */
+
+── gitlab-duo-timeouts :: packages/ai/src/providers/gitlab-duo-workflow.ts:40-80 ──
+   40 | );
+   41 | const GITLAB_DUO_WORKFLOW_CLIENT_TYPE = "node-websocket";
+   42 | /**
+   43 |  * Idle deadline for the workflow WebSocket. The socket has no server-side
+   44 |  * keepalive contract OMP can rely on, so a connection silently going half-open
+   45 |  * (proxy/LB drops the TCP link without delivering FIN/RST) would otherwise leave
+   46 |  * `runGitLabDuoWorkflowSocket` waiting forever. If no frame arrives within this
+   47 |  * window — before open or between checkpoints — the socket is aborted and the
+   48 |  * run reconnects once on the same `workflowID` (server-side resume).
+   49 |  */
+   50 | const GITLAB_DUO_WORKFLOW_IDLE_TIMEOUT_MS = 90_000;
+   51 | /**
+   52 |  * Absolute deadline (ms) for each REST setup fetch (`ensureGitLabDuoWorkflowSettings`,
+   53 |  * `discoverGitLabDuoWorkflowProject`, `resolveGitLabDuoWorkflowNumericProjectId`,
+   54 |  * `requestGitLabDuoWorkflowDirectAccess`, `createGitLabDuoWorkflow`,
+   55 |  * `fetchGitLabDuoWorkflowAvailableModels`, `stopGitLabDuoWorkflow`).
+   56 |  *
+   57 |  * `streamGitLabDuoWorkflow` pushes its `start` event before these calls run and the
+   58 |  * `gitlab-duo-agent` bypass in `streamSimple` skips the `register-builtins`
+   59 |  * `iterateWithIdleTimeout` wrapper, so a stalled setup fetch would otherwise leave
+   60 |  * the stream with no terminal event. 30s covers healthy p99 for every REST endpoint
+   61 |  * the workflow touches while still surfacing a real stall as a provider error;
+   62 |  * matches the OAuth `TOKEN_REQUEST_TIMEOUT_MS` used by sibling GitLab flows.
+   63 |  */
+   64 | const GITLAB_DUO_WORKFLOW_REST_TIMEOUT_MS = 30_000;
+   65 | /**
+   66 |  * How many times a single stream may restart on a FRESH workflow after the server
+   67 |  * reports its per-workflow step (graph-recursion) limit. Long OMP tool-call loops
+   68 |  * legitimately overrun the cap; each restart resets the budget. Bounded so a task
+   69 |  * that perpetually overruns degrades to a graceful stop instead of looping on quota.
+   70 |  */
+   71 | const GITLAB_DUO_WORKFLOW_MAX_STEP_LIMIT_RESTARTS = 4;
+   72 | /**
+   73 |  * How many times a single stream may restart on a FRESH workflow after the server
+   74 |  * returns its de-identified catch-all FAILED (transient upstream fault wrapper).
+   75 |  * Kept low because, unlike the step limit, a generic failure that repeats is more
+   76 |  * likely deterministic; one bounded retry covers the common transient case without
+   77 |  * looping on quota.
+   78 |  */
+   79 | const GITLAB_DUO_WORKFLOW_MAX_GENERIC_ERROR_RETRIES = 1;
+   80 | /**
+

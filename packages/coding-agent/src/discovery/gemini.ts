@@ -107,9 +107,9 @@ async function loadMCPFromSettings(
 			enabled: typeof raw.enabled === "boolean" ? raw.enabled : undefined,
 			command: typeof raw.command === "string" ? raw.command : undefined,
 			args: Array.isArray(raw.args) ? (raw.args as string[]) : undefined,
-			env: raw.env && typeof raw.env === "object" ? (raw.env as Record<string, string>) : undefined,
+			env: isStringRecord(raw.env) ? raw.env : undefined,
 			url: typeof raw.url === "string" ? raw.url : undefined,
-			headers: raw.headers && typeof raw.headers === "object" ? (raw.headers as Record<string, string>) : undefined,
+			headers: isStringRecord(raw.headers) ? raw.headers : undefined,
 			transport: ["stdio", "sse", "http"].includes(raw.type as string)
 				? (raw.type as "stdio" | "sse" | "http")
 				: undefined,
@@ -371,3 +371,12 @@ registerProvider(settingsCapability.id, {
 	priority: PRIORITY,
 	load: loadSettings,
 });
+
+
+// [tau-fix] runtime-validated env record
+function isStringRecord(v: unknown): v is Record<string, string> {
+  if (!v || typeof v !== "object" || Array.isArray(v)) return false;
+  const o = v as Record<string, unknown>;
+  for (const k in o) if (typeof o[k] !== "string") return false;
+  return true;
+}

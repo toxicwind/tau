@@ -1,0 +1,60 @@
+=== TAU ===
+/home/toxic/sovereign/projects/range/ranch/stockyard/tau
+=== DATE ===
+Sat Sep 26 06:46:04 AM UTC 2026
+=== HOSTS ===
+	cerebras: { providers: ["cerebras"], urlMarkers: ["cerebras.ai"] },
+	together: { providers: ["together"], urlMarkers: ["api.together.xyz"] },
+	fireworks: { urlMarkers: ["fireworks.ai"] },
+	groq: { providers: ["groq"], urlMarkers: ["api.groq.com"] },
+	nvidia: { providers: ["nvidia"], urlMarkers: ["integrate.api.nvidia.com"] },
+	venice: { providers: ["venice"], urlMarkers: ["api.venice.ai"] },
+=== RESOLVE ===
+419:		!isQwen &&
+468:				: isQwen && hostMatchesUrl(baseUrl, "nvidia")
+471:					: isQwen && (isFireworks || hostMatchesUrl(baseUrl, "venice") || hostMatchesUrl(baseUrl, "groq") || hostMatchesUrl(baseUrl, "cerebras"))
+=== JUNIT SUMMARY ===
+=== RAW TAIL ===
+[0m[32m✓[0m [0missue #9345 — Venice qwen thinking format[2m >[0m[1m emits Venice's explicit disable flag when reasoning is off[0m [0m[2m[[1m1505.70ms[0m[2m][0m
+[0m
+packages/catalog/test/issue-2299-repro.test.ts:
+[0m[32m✓[0m [0missue #2299 — NVIDIA NIM qwen thinking format[2m >[0m[1m resolves NVIDIA-hosted qwen models to the chat_template_kwargs thinking format[0m [0m[2m[0.42ms[0m[2m][0m
+[0m[32m✓[0m [0missue #2299 — NVIDIA NIM qwen thinking format[2m >[0m[1m keeps non-NVIDIA qwen models on the top-level enable_thinking format[0m [0m[2m[0.23ms[0m[2m][0m
+[0m[32m✓[0m [0missue #2299 — NVIDIA NIM qwen thinking format[2m >[0m[1m emits chat_template_kwargs.enable_thinking — never top-level enable_thinking — on the wire[0m [0m[2m[[1m1503.06ms[0m[2m][0m
+[0m[32m✓[0m [0missue #2299-adj — Fireworks Qwen thinking format[2m >[0m[1m resolves the bundled Fireworks Qwen model to the openai thinking format (reasoning_effort)[0m [0m[2m[0.15ms[0m[2m][0m
+[0m
+packages/ai/test/openai-reasoning-effort-fallback.test.ts:
+[0m[32m✓[0m [0mOpenAI reasoning effort fallback retry[2m >[0m[1m retries Chat Completions xhigh as provider max[0m [0m[2m[5.82ms[0m[2m][0m
+[0m[32m✓[0m [0mOpenAI reasoning effort fallback retry[2m >[0m[1m retries CamelCase ReasoningEffort rejections with the nearest supported tier[0m [0m[2m[1.17ms[0m[2m][0m
+[0m[32m✓[0m [0mOpenAI reasoning effort fallback retry[2m >[0m[1m does not apply a cached enabled-effort fallback to tool-suppressed Azure Astra requests[0m [0m[2m[4.91ms[0m[2m][0m
+[0m[32m✓[0m [0mOpenAI reasoning effort fallback retry[2m >[0m[1m retries Responses xhigh as provider max and stores the successful fallback params[0m [0m[2m[9.75ms[0m[2m][0m
+[0m[32m✓[0m [0mOpenAI reasoning effort fallback retry[2m >[0m[1m retries pipe-delimited reasoning.effort errors with the nearest supported tier[0m [0m[2m[1.12ms[0m[2m][0m
+[0m[32m✓[0m [0mOpenAI reasoning effort fallback retry[2m >[0m[1m retries medium as high when medium is missing and high is the closest upper tier[0m [0m[2m[1.02ms[0m[2m][0m
+[0m[32m✓[0m [0mOpenAI reasoning effort fallback retry[2m >[0m[1m retries Azure Responses xhigh as provider max[0m [0m[2m[3.18ms[0m[2m][0m
+[0m[32m✓[0m [0mOpenAI reasoning effort fallback retry[2m >[0m[1m clamps a rejected reasoning-off request to the lowest level the gateway allows[0m [0m[2m[1.27ms[0m[2m][0m
+[0m[32m✓[0m [0mOpenAI reasoning effort fallback retry[2m >[0m[1m clamps a Copilot Supported-values rejection of reasoning-off to the lowest allowed level[0m [0m[2m[0.99ms[0m[2m][0m
+[0m[32m✓[0m [0mOpenAI reasoning effort fallback retry[2m >[0m[1m does not retry when the error param names another none-valued field[0m [0m[2m[5.02ms[0m[2m][0m
+[0m[32m✓[0m [0mOpenAI reasoning effort fallback retry[2m >[0m[1m does not leak an explicit-disable fallback into later normal turns[0m [0m[2m[1.57ms[0m[2m][0m
+[0m[32m✓[0m [0mOpenAI reasoning effort fallback retry[2m >[0m[1m retries a disabled-with-effort none rejection at lowest without poisoning later turns[0m [0m[2m[1.89ms[0m[2m][0m
+[0m[32m✓[0m [0mOpenAI reasoning effort fallback retry[2m >[0m[1m does not retry a Supported-values rejection aimed at another field[0m [0m[2m[0.91ms[0m[2m][0m
+[0m[32m✓[0m [0mOpenAI reasoning effort fallback retry[2m >[0m[1m still remaps a fieldless levels-list rejection for a real effort tier[0m [0m[2m[0.89ms[0m[2m][0m
+[0m[32m✓[0m [0mOpenAI reasoning effort fallback retry[2m >[0m[1m does not retry unrelated reasoning parameter errors[0m [0m[2m[0.70ms[0m[2m][0m
+[0m[32m✓[0m [0mOpenAI reasoning effort fallback retry[2m >[0m[1m strips a rejected chat_template_kwargs.reasoning_effort, keeps the top-level twin, and remembers it[0m [0m[2m[1.85ms[0m[2m][0m
+[0m[32m✓[0m [0mOpenAI reasoning effort fallback retry[2m >[0m[1m hoists the effort onto the top-level field when the kwargs-only dialect is rejected[0m [0m[2m[1.22ms[0m[2m][0m
+[0m[32m✓[0m [0mOpenAI reasoning effort fallback retry[2m >[0m[1m remaps a rejected kwargs effort value in both spellings when the error lists allowed levels[0m [0m[2m[0.91ms[0m[2m][0m
+[0m
+packages/ai/test/issue-827-repro.test.ts:
+[0m[32m✓[0m [0missue #827 — kimi reasoning models drop reasoning under forced tool_choice[2m >[0m[1m strips reasoning_effort when toolChoice is forced on direct Kimi (Moonshot-style id)[0m [0m[2m[3.37ms[0m[2m][0m
+[0m[32m✓[0m [0missue #827 — kimi reasoning models drop reasoning under forced tool_choice[2m >[0m[1m preserves reasoning_effort when toolChoice is auto[0m [0m[2m[0.65ms[0m[2m][0m
+[0m[32m✓[0m [0missue #827 — kimi reasoning models drop reasoning under forced tool_choice[2m >[0m[1m strips OpenRouter-shaped reasoning object on forced toolChoice for Kimi via OpenRouter[0m [0m[2m[1.28ms[0m[2m][0m
+[0m[32m✓[0m [0missue #827 — kimi reasoning models drop reasoning under forced tool_choice[2m >[0m[1m sends explicit thinking disabled for Moonshot Kimi K2.6 when a named tool is forced[0m [0m[2m[0.80ms[0m[2m][0m
+[0m[32m✓[0m [0missue #827 — kimi reasoning models drop reasoning under forced tool_choice[2m >[0m[1m strips reasoning_effort for Anthropic Claude models served via openai-completions (e.g. LiteLLM/OpenRouter proxies)[0m [0m[2m[0.67ms[0m[2m][0m
+[0m[32m✓[0m [0missue #827 — kimi reasoning models drop reasoning under forced tool_choice[2m >[0m[1m does not strip reasoning on non-Kimi models even with forced tool_choice[0m [0m[2m[0.84ms[0m[2m][0m
+
+[0m[32m 33 pass[0m
+[0m[2m 0 fail[0m
+ 103 expect() calls
+Ran 33 tests across 4 files. [0m[2m[[1m4.80s[0m[2m][0m
+=== FILES ===
+-rw-r--r-- 1 toxic toxic  11K Sep 26 00:46 .patch-backups/junit-20260926-004559.xml
+-rw-r--r-- 1 toxic toxic 6.7K Sep 26 00:46 .patch-backups/tests-20260926-004559.log

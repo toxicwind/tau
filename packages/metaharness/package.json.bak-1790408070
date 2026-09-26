@@ -33,7 +33,7 @@
     "@oh-my-pi/pi-agent-core": "catalog:",
     "@oh-my-pi/pi-ai": "catalog:",
     "@oh-my-pi/pi-catalog": "catalog:",
-    "@oh-my-pi/pi-coding-agent": "file:../coding-agent",
+    "@oh-my-pi/pi-coding-agent": "workspace:*",
     "@oh-my-pi/pi-utils": "catalog:",
     "@oh-my-pi/typescript-edit-benchmark": "workspace:*",
     "@stencil-hq/vibemon": "^0.3.2",

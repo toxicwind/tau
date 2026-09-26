@@ -242,3 +242,12 @@ export async function onProcessExit(proc: Subprocess | number, abortSignal?: Abo
 
 	return (await Process.fromPid(proc)?.waitForExit({ signal: abortSignal })) ?? true;
 }
+
+
+// [tau-fix] runtime-validated env record
+export function isStringRecord(v: unknown): v is Record<string, string> {
+  if (!v || typeof v !== "object" || Array.isArray(v)) return false;
+  const o = v as Record<string, unknown>;
+  for (const k in o) if (typeof o[k] !== "string") return false;
+  return true;
+}

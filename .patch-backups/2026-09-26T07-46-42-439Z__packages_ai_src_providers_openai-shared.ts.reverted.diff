@@ -1,0 +1,32 @@
+diff --git a/packages/ai/src/providers/openai-shared.ts b/packages/ai/src/providers/openai-shared.ts
+index 14ae4bbe2f..8d6ee1ea86 100644
+--- a/packages/ai/src/providers/openai-shared.ts
++++ b/packages/ai/src/providers/openai-shared.ts
+@@ -1050,7 +1050,10 @@ function encodeChatCompletionsDisabledReasoning(
+ 	params: OpenAICompletionsParams,
+ 	disableMode: OpenAIReasoningDisableMode,
+ ): void {
+-	delete params.reasoning_effort;
++	/* p7:k3-keep-effort */
++  if (!(typeof params.model === "string" && /kimi[-_]?k3|moonshot.*k3/i.test(params.model))) {
++    delete params.reasoning_effort;
++  }
+ 	switch (disableMode) {
+ 		case "none-effort":
+ 			params.reasoning_effort = "none";
+@@ -1142,7 +1145,14 @@ export function applyChatCompletionsCompatPolicy(params: OpenAICompletionsParams
+ 				params.thinking = { type: "enabled" };
+ 				if (policy.compat.thinkingKeep) params.thinking.keep = policy.compat.thinkingKeep;
+ 				if (policy.compat.supportsReasoningEffort && reasoning.wireEffort !== undefined) {
+-					params.reasoning_effort = reasoning.wireEffort as Effort;
++					/* p2:strip-ctk-groq */
++  const _h = String(baseUrl ?? "").toLowerCase();
++  if (_h.includes("groq.com") || _h.includes("cerebras")) {
++    delete (params as any).enable_thinking;
++    delete (params as any).chat_template_kwargs;
++    if ((params as any).reasoning_effort === "none") delete (params as any).reasoning_effort;
++  }
++  params.reasoning_effort = reasoning.wireEffort as Effort;
+ 				}
+ 				break;
+ 			case "qwen-enable-thinking-false":

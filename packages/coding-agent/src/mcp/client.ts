@@ -104,29 +104,57 @@ async function initializeConnection(
 		clientInfo: CLIENT_INFO,
 	};
 
-	const result = await transport.request<MCPInitializeResult>(
-		"initialize",
-		params as unknown as Record<string, unknown>,
-		{ signal: options?.signal },
-	);
+	try {
+		const result = await transport.request<MCPInitializeResult>(
+			"initialize",
+			params as unknown as Record<string, unknown>,
+			{ signal: options?.signal },
+		);
 
-	if (options?.signal?.aborted) {
-		throw options.signal.reason instanceof Error ? options.signal.reason : new Error("Aborted");
+		if (options?.signal?.aborted) {
+			throw options.signal.reason instanceof Error ? options.signal.reason : new Error("Aborted");
+		}
+
+		// Echo the negotiated protocol version on every subsequent request. The MCP
+		// Streamable HTTP spec requires the MCP-Protocol-Version header after
+		// initialize; transports that don't need it ignore this.
+		transport.setProtocolVersion?.(result.protocolVersion);
+
+		// Send initialized before opening the optional GET SSE stream.
+		try {
+			await transport.notify("notifications/initialized");
+		} catch {
+			// Stateless servers or minimal handlers may safely ignore notifications/initialized
+		}
+
+		await options?.onInitialized?.();
+
+		return result;
+	} catch (err: unknown) {
+		// If the server rejects `initialize` with method not found (-32601), try stateless `server/discover`
+		const errObj = err as Record<string, unknown> | undefined;
+		if (errObj?.code === -32601) {
+			try {
+				const discoverResult = await transport.request<{
+					protocolVersion?: string;
+					capabilities?: MCPInitializeResult["capabilities"];
+					serverInfo?: MCPInitializeResult["serverInfo"];
+				}>("server/discover", {}, { signal: options?.signal });
+
+				const synthResult: MCPInitializeResult = {
+					protocolVersion: discoverResult?.protocolVersion ?? MCP_PROTOCOL_VERSION,
+					capabilities: discoverResult?.capabilities ?? { tools: { listChanged: false } },
+					serverInfo: discoverResult?.serverInfo ?? { name: "stateless-mcp-server", version: "1.0.0" },
+				};
+				transport.setProtocolVersion?.(synthResult.protocolVersion);
+				await options?.onInitialized?.();
+				return synthResult;
+			} catch {
+				// Fall through to throw original initialize error
+			}
+		}
+		throw err;
 	}
-
-	// Echo the negotiated protocol version on every subsequent request. The MCP
-	// Streamable HTTP spec requires the MCP-Protocol-Version header after
-	// initialize; transports that don't need it ignore this.
-	transport.setProtocolVersion?.(result.protocolVersion);
-
-	// Send initialized before opening the optional GET SSE stream. Servers may
-	// reject or terminate sessions that receive session traffic before this
-	// notification; POST response streams already carry messages during setup.
-	await transport.notify("notifications/initialized");
-
-	await options?.onInitialized?.();
-
-	return result;
 }
 
 /** Identifies an MCP server whose initial handshake exceeded its configured timeout. */

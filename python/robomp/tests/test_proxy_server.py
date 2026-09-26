@@ -1412,3 +1412,7 @@ async def test_git_fetch_ref_allows_slashy_branch_name(proxy_settings: Settings,
             headers={**_signed("POST", "/gh/v1/git/fetch_ref", body), "Content-Type": "application/json"},
         )
     assert resp.status_code == 200, resp.text
+
+@app.get("/health")
+def health():
+    return {"ok": True}

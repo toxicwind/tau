@@ -86,12 +86,10 @@ async function loadMCPConfig(
 			enabled: typeof expanded.enabled === "boolean" ? expanded.enabled : undefined,
 			command: typeof expanded.command === "string" ? expanded.command : undefined,
 			args: Array.isArray(expanded.args) ? (expanded.args as string[]) : undefined,
-			env: expanded.env && typeof expanded.env === "object" ? (expanded.env as Record<string, string>) : undefined,
+			env: isStringRecord(expanded.env) ? expanded.env : undefined,
 			url: typeof expanded.url === "string" ? expanded.url : undefined,
 			headers:
-				expanded.headers && typeof expanded.headers === "object"
-					? (expanded.headers as Record<string, string>)
-					: undefined,
+				isStringRecord(expanded.headers) ? expanded.headers : undefined,
 			transport: ["stdio", "sse", "http"].includes(expanded.transport as string)
 				? (expanded.transport as "stdio" | "sse" | "http")
 				: undefined,
@@ -103,4 +101,13 @@ async function loadMCPConfig(
 	}
 
 	return { items, warnings };
+}
+
+
+// [tau-fix] runtime-validated env record
+function isStringRecord(v: unknown): v is Record<string, string> {
+  if (!v || typeof v !== "object" || Array.isArray(v)) return false;
+  const o = v as Record<string, unknown>;
+  for (const k in o) if (typeof o[k] !== "string") return false;
+  return true;
 }

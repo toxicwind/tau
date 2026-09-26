@@ -1,0 +1,108 @@
+=== TAU ===
+/home/toxic/sovereign/projects/range/ranch/stockyard/tau
+Sat Sep 26 06:58:54 AM UTC 2026
+=== JUNIT ===
+=== FAILS FROM XML ===
+=== RAW TAIL ===
+[0m
+packages/coding-agent/test/mcp-command-reload-status.test.ts:
+[0m[32m✓[0m [0m/mcp reload status[2m >[0m[1m reports servers still connecting after the bounded reload window[0m [0m[2m[[1m479.04ms[0m[2m][0m
+[0m
+packages/coding-agent/test/mcp-command-toggle.test.ts:
+[0m[32m✓[0m [0m/mcp enable and disable[2m >[0m[1m disabling one configured server does not reload other MCP servers[0m [0m[2m[2.16ms[0m[2m][0m
+[0m[32m✓[0m [0m/mcp enable and disable[2m >[0m[1m enabling one configured server connects only that MCP server[0m [0m[2m[3.94ms[0m[2m][0m
+[0m
+packages/coding-agent/test/mcp-config-scope-dedup.test.ts:
+[0m[32m✓[0m [0mMCP scope filtering precedes connection-equivalence deduplication[2m >[0m[1m keeps the user server when project config is disabled[0m [0m[2m[2.68ms[0m[2m][0m
+[0m[32m✓[0m [0mMCP scope filtering precedes connection-equivalence deduplication[2m >[0m[1m collapses the equivalent alias to the higher-priority project name when enabled[0m [0m[2m[2.75ms[0m[2m][0m
+[0m[32m✓[0m [0mMCP scope filtering precedes connection-equivalence deduplication[2m >[0m[1m keeps the enabled alias when an equivalent higher-priority server is disabled[0m [0m[2m[2.30ms[0m[2m][0m
+[0m[32m✓[0m [0mMCP scope filtering precedes connection-equivalence deduplication[2m >[0m[1m project-disabled server keeps a same-named enabled user server disabled[0m [0m[2m[1.92ms[0m[2m][0m
+[0m[32m✓[0m [0mMCP scope filtering precedes connection-equivalence deduplication[2m >[0m[1m same-named user server survives when project config is scope-disabled[0m [0m[2m[1.76ms[0m[2m][0m
+[0m[32m✓[0m [0mMCP scope filtering precedes connection-equivalence deduplication[2m >[0m[1m effective extension roots survive scopeless MCP rediscovery[0m [0m[2m[2.84ms[0m[2m][0m
+[0m
+packages/coding-agent/test/mcp-connection-status-events.test.ts:
+[0m[32m✓[0m [0mMCPManager connection status events[2m >[0m[1m emits connecting, connected, and failed updates for startup status[0m [0m[2m[[1m27.70ms[0m[2m][0m
+[0m[32m✓[0m [0mMCPManager connection status events[2m >[0m[1m includes the originating config path when a discovered server fails to start[0m [0m[2m[1.19ms[0m[2m][0m
+[0m
+packages/coding-agent/test/mcp-discovered-server-reauth.test.ts:
+[0m[32m✓[0m [0mMCP discovered-server reauth[2m > [0mmanager surfaces discovered configs for unconnected servers[2m >[0m[1m exposes config + source for a discovered server that failed to connect[0m [0m[2m[9.07ms[0m[2m][0m
+[0m[32m✓[0m [0mMCP discovered-server reauth[2m > [0mmanager surfaces discovered configs for unconnected servers[2m >[0m[1m returns undefined for an unknown server[0m [0m[2m[0.05ms[0m[2m][0m
+[0m[32m✓[0m [0mMCP discovered-server reauth[2m > [0mconfig writer persists namespaced plugin server names[2m >[0m[1m validateServerName accepts a colon-namespaced name[0m [0m[2m[0.05ms[0m[2m][0m
+[0m[32m✓[0m [0mMCP discovered-server reauth[2m > [0mconfig writer persists namespaced plugin server names[2m >[0m[1m updateMCPServer round-trips a namespaced HTTP server with an oauth auth block[0m [0m[2m[1.02ms[0m[2m][0m
+[0m
+packages/coding-agent/test/mcp-dispose-disconnect-bounded.test.ts:
+[0m[32m✓[0m [0mowned-manager dispose disconnect is bounded (PR #2839)[2m >[0m[1m bounds the owned disconnect when a transport close stalls[0m [0m[2m[[1m279.07ms[0m[2m][0m
+[0m
+packages/coding-agent/test/mcp-env-policy.test.ts:
+[0m[32m✓[0m [0mstdio env value resolution policy[2m >[0m[1m keeps literal-policy env values byte-for-byte and never executes commands[0m [0m[2m[0.36ms[0m[2m][0m
+[0m[32m✓[0m [0mstdio env value resolution policy[2m >[0m[1m keeps legacy env-name expansion for servers without the literal policy[0m [0m[2m[0.25ms[0m[2m][0m
+[0m
+packages/coding-agent/test/mcp-exa-filter.test.ts:
+[0m[32m✓[0m [0mbrowser prelude MCP filtering[2m >[0m[1m filters only when unrestricted browser and Eval are all active[0m [0m[2m[0.08ms[0m[2m][0m
+[0m[32m✓[0m [0mExa MCP filtering[2m >[0m[1m filters an exa server restricted to the native web_search_exa tool[0m [0m[2m[0.40ms[0m[2m][0m
+[0m[32m✓[0m [0mExa MCP filtering[2m >[0m[1m keeps an exa server that requests tools beyond the native integration[0m [0m[2m[0.08ms[0m[2m][0m
+[0m[32m✓[0m [0mExa MCP filtering[2m >[0m[1m filters an exa server with no tools restriction[0m [0m[2m[0.03ms[0m[2m][0m
+[0m[32m✓[0m [0mExa MCP filtering[2m >[0m[1m keeps a stdio exa server that requests extra tools[0m [0m[2m[0.10ms[0m[2m][0m
+[0m[32m✓[0m [0mExa MCP filtering[2m >[0m[1m keeps a stdio exa server with a separate tools argument[0m [0m[2m[0.05ms[0m[2m][0m
+[0m
+packages/coding-agent/test/mcp-header-policy.test.ts:
+[0m[32m✓[0m [0mmergeMCPHeaders[2m >[0m[1m gives generated headers case-insensitive precedence over configured ones[0m [0m[2m[0.18ms[0m[2m][0m
+[0m[32m✓[0m [0mmergeMCPHeaders[2m >[0m[1m setGeneratedHeader replaces case-variant entries[0m [0m[2m[0.04ms[0m[2m][0m
+[0m[32m✓[0m [0mMCP transport header policy[2m >[0m[1m keeps generated protocol headers when configured headers collide by casing[0m [0m[2m[7.09ms[0m[2m][0m
+[0m[32m✓[0m [0mMCP transport header policy[2m >[0m[1m follows same-origin redirects with configured headers when origin-locked[0m [0m[2m[5.94ms[0m[2m][0m
+[0m[32m✓[0m [0mMCP transport header policy[2m >[0m[1m strips configured headers on cross-origin redirects when origin-locked[0m [0m[2m[5.82ms[0m[2m][0m
+[0m[32m✓[0m [0mMCP transport header policy[2m >[0m[1m refuses method-changing redirects of POST requests when origin-locked[0m [0m[2m[5.75ms[0m[2m][0m
+[0m
+packages/coding-agent/test/mcp-http-transport.test.ts:
+[0m[32m✓[0m [0mMCP Streamable HTTP initialization[2m >[0m[1m sends initialized before opening the optional GET SSE stream[0m [0m[2m[8.73ms[0m[2m][0m
+[0m[32m✓[0m [0mMCP Streamable HTTP failure diagnostics[2m >[0m[1m classifies an abrupt socket reset without leaking Bun fetch advice[0m [0m[2m[0.61ms[0m[2m][0m
+[0m[32m✓[0m [0mMCP Streamable HTTP failure diagnostics[2m >[0m[1m distinguishes connection refusal from a reset[0m [0m[2m[0.37ms[0m[2m][0m
+[0m[32m✓[0m [0mMCP Streamable HTTP failure diagnostics[2m >[0m[1m classifies malformed JSON-RPC responses at the decode stage[0m [0m[2m[5.69ms[0m[2m][0m
+[0m[32m✓[0m [0mMCP Streamable HTTP failure diagnostics[2m >[0m[1m preserves bounded redacted JSON-RPC data and a response trace ID[0m [0m[2m[6.12ms[0m[2m][0m
+[0m[1m233 |[0m 				})[0m[2m;[0m
+[0m[1m234 |[0m 			},
+[0m[1m235 |[0m 		})[0m[2m;[0m
+[0m[1m236 |[0m 		[0m[35mconst[0m transport = [0m[35mawait[0m connectedTransport()[0m[2m;[0m
+[0m[1m237 |[0m 
+[0m[1m238 |[0m 		[0m[35mawait[0m expect(withPendingGuard(transport[0m[3m[1m.request[0m([0m[32m"tools/list"[0m), [0m[32m"request"[0m)).rejects[0m[3m[1m.toMatchObject[0m({
+                                                                                           [31m[1m^[0m
+[0m[31merror[0m[2m:[0m [1m[2mexpect([0m[31mreceived[0m[2m).[0mtoMatchObject[2m([0m[32mexpected[0m[2m)[0m
+
+[32m- [0m[32m{[0m
+[32m- [0m[32m  "failure": "timeout",[0m
+[32m- [0m[32m  "message": "Request timeout after 50ms",[0m
+[32m- [0m[32m  "retryable": false,[0m
+[32m- [0m[32m  "stage": "decode",[0m
+[32m- [0m[32m  "transport": "http",[0m
+[32m- [0m[32m}[0m
+[31m+ [0m[31m[Error: request stayed pending past 500ms][0m
+
+[32m- Expected  - 7[0m
+[31m+ Received  + 1[0m
+[0m
+[0m      [2mat [0m[0m[2m<anonymous>[0m[2m ([0m[0m[36m[2m/home/toxic/sovereign/projects/range/ranch/stockyard/tau/[0m[36mpackages/coding-agent/test/mcp-http-transport.test.ts[0m[2m:[0m[33m238[0m[2m:[33m86[0m[2m)[0m
+[0m[31m✗[0m [0mMCP Streamable HTTP transport timeouts[2m >[0m[1m keeps the request timeout active until a JSON response body is fully read[0m [0m[2m[[1m505.38ms[0m[2m][0m
+[0m[1m260 |[0m 		})[0m[2m;[0m
+[0m[1m261 |[0m 		[0m[35mconst[0m transport = [0m[35mawait[0m connectedTransport(timeoutMs)[0m[2m;[0m
+[0m[1m262 |[0m 		[0m[35mconst[0m startedAt = performance[0m[3m[1m.now[0m()[0m[2m;[0m
+[0m[1m263 |[0m 
+[0m[1m264 |[0m 		[0m[35mtry[0m {
+[0m[1m265 |[0m 			[0m[35mawait[0m expect(withPendingGuard(transport[0m[3m[1m.request[0m([0m[32m"tools/list"[0m), [0m[32m"SSE request"[0m)).rejects[0m[3m[1m.toMatchObject[0m({
+                                                                                                [31m[1m^[0m
+[0m[31merror[0m[2m:[0m [1m[2mexpect([0m[31mreceived[0m[2m).[0mtoMatchObject[2m([0m[32mexpected[0m[2m)[0m
+
+[32m- [0m[32m{[0m
+[32m- [0m[32m  "failure": "timeout",[0m
+[32m- [0m[32m  "retryable": false,[0m
+[32m- [0m[32m  "stage": "receive",[0m
+[32m- [0m[32m  "transport": "http",[0m
+[32m- [0m[32m}[0m
+[31m+ [0m[31m[Error: SSE request stayed pending past 500ms][0m
+
+[32m- Expected  - 6[0m
+[31m+ Received  + 1[0m
+[0m
+[0m      [2mat [0m[0m[2m<anonymous>[0m[2m ([0m[0m[36m[2m/home/toxic/sovereign/projects/range/ranch/stockyard/tau/[0m[36mpackages/coding-agent/test/mcp-http-transport.test.ts[0m[2m:[0m[33m265[0m[2m:[33m91[0m[2m)[0m
+[0m[31m✗[0m [0mMCP Streamable HTTP transport timeouts[2m >[0m[1m uses one deadline across delayed SSE headers and a stalled response body[0m [0m[2m[[1m501.44ms[0m[2m][0m
+=== FILES ===
+-rw-r--r-- 1 toxic toxic 2.0M Sep 26 00:54 .patch-backups/tests-ALL-20260926-004633.log

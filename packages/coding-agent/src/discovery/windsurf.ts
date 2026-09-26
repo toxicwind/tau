@@ -51,9 +51,9 @@ function parseServerConfig(
 			enabled: typeof server.enabled === "boolean" ? server.enabled : undefined,
 			command: server.command as string | undefined,
 			args: server.args as string[] | undefined,
-			env: server.env as Record<string, string> | undefined,
+			env: isStringRecord(server.env) ? server.env : undefined,
 			url: server.url as string | undefined,
-			headers: server.headers as Record<string, string> | undefined,
+			headers: isStringRecord(server.headers) ? server.headers : undefined,
 			transport: server.type as "stdio" | "sse" | "http" | undefined,
 			timeout: typeof server.timeout === "number" ? server.timeout : undefined,
 			_source: createSourceMeta(PROVIDER_ID, path, scope),
@@ -150,3 +150,12 @@ registerProvider<Rule>(ruleCapability.id, {
 	priority: PRIORITY,
 	load: loadRules,
 });
+
+
+// [tau-fix] runtime-validated env record
+function isStringRecord(v: unknown): v is Record<string, string> {
+  if (!v || typeof v !== "object" || Array.isArray(v)) return false;
+  const o = v as Record<string, unknown>;
+  for (const k in o) if (typeof o[k] !== "string") return false;
+  return true;
+}
