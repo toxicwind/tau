@@ -1,0 +1,60 @@
+[daemons.tau]
+# omp acp exposed as TCP daemon via chute (stdio→TCP + mcpServers normalization)
+port = 25111
+run = "exec /home/toxic/sovereign/projects/range/ranch/barn/chute/chute.mjs --port 25111 -- /home/toxic/sovereign/projects/range/ranch/stockyard/tau/packages/coding-agent/dist/omp acp -e /home/toxic/.tau/extensions/vansrouter.ts"
+dir = "/home/toxic"
+mise = false
+retry = true
+--
+env = { PI_CONFIG_DIR = "/home/toxic/.tau", PI_AGENT_DIR = "/home/toxic/.tau/agent", PI_CODING_AGENT = "true", PI_REASONING_LEVEL = "high", PI_SUBAGENT_MODEL = "thinkingmachines/inkling", PI_OPENAI_STREAM_IDLE_TIMEOUT_MS = "120000", VANSROUTER_API_KEY = "local-sovereign" }
+auto = ["start"]
+[daemons.mesh-hub]
+port = 25115
+--
+[daemons.kimi-code]
+port = 25126
+run = "exec /home/toxic/sovereign/bin/claim-port 25126 /home/toxic/kimi-code-npm/node_modules/@moonshot-ai/kimi-code/dist/main.mjs web --no-open --port 25126" # 25126 == $KIMI_CODE_PORT (SSOT); literal: ${} not expanded in run lines
+dir = "/home/toxic/kimi-code-npm"
+mise = true
+retry = true
+ready_http = "http://127.0.0.1:25126/health"
+--
+[daemons.vansrouter]
+port = 20128
+run = "exec /home/toxic/sovereign/stack/services/vansrouter.sh"
+dir = "."
+mise = false
+retry = true
+--
+daemons = ["shep", "mesh-hub", "herd", "vansrouter", "coyote", "yote", "search-api", "search-ui", "openfang-front", "rust-web", "hf-downloader", "null-g-proxy", "byte-vision", "hindsight", "kimi-code", "nginx"]
+
+[groups.core]
+daemons = ["qdrant", "redis", "kafka", "dnsmasq", "prometheus", "grafana", "flock", "matter-server"]
+--
+daemons = ["shep", "mesh-hub", "herd", "vansrouter", "coyote", "yote", "search-api", "search-ui", "openfang-front", "rust-web", "hf-downloader", "null-g-proxy", "byte-vision", "hindsight", "kimi-code", "nginx", "qdrant", "redis", "kafka", "dnsmasq", "prometheus", "grafana", "flock", "matter-server", "tau", "kimi-auto-shim", "squawk-relay-sink", "squawk-relay-forward", "squawk-feed", "squawk-ws", "buildsrv", "buildsrv-watchdog", "ml-serve", "stash-guard", "bench-radar", "files", "keypool", "boundless", "kimi-audit-dash"]
+
+
+[daemons.kimi-auto-shim]
+--
+# buildsrv - fleet continuous-modification engine (2026-09-14): disk-backed
+# job queue, streaming logs, content-hash artifact cache. Source:
+# tools/buildsrv in toxicwind/sovereign-projects. Submit via the buildsrv CLI.
+# NOTE: pitchfork.toml is hand-edited (generator retired 2026-09-14, never run it).
+[daemons.buildsrv]
+port = 25148
+run = "exec /usr/bin/python3 /home/toxic/sovereign/tools/buildsrv/buildsrvd.py"
+dir = "/home/toxic/sovereign/tools/buildsrv"
+mise = false
+retry = true
+boot_start = true
+--
+# Build-cache env (2026-09-21): every buildsrv job inherits these. sccache/ccache/uv caches live on NVMe.
+# CARGO_INCREMENTAL=0 because sccache refuses incremental compilation outright.
+# CC/CXX intentionally NOT set: BASH_ENV rewrites them to clang for bash -lc jobs,
+# so CMAKE compiler launchers are the robust ccache path for CMake builds.
+--
+env = { BUILDSRV_ROOT = "/home/toxic/buildsrv", BUILDSRV_PORT = "25148", BUILDSRV_WORKERS = "2", RUSTC_WRAPPER = "sccache", SCCACHE_DIR = "/home/toxic/.cache/sccache", CCACHE_DIR = "/home/toxic/.cache/ccache", CMAKE_C_COMPILER_LAUNCHER = "ccache", CMAKE_CXX_COMPILER_LAUNCHER = "ccache", UV_CACHE_DIR = "/home/toxic/.cache/uv", CARGO_INCREMENTAL = "0" }
+auto = ["start"]
+
+# buildsrv-watchdog - external liveness guard for buildsrv (2026-09-14):
+# polls /health every 20s; `pitchfork restart buildsrv` after 3 consecutive
