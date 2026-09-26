@@ -153,16 +153,6 @@ function readLaunchEnv(): ReadonlyMap<string, string> | undefined {
 }
 
 // [tau-fix] mtime memo
-const fileReadCache = new Map<string, { mtime: number; data: string }>();
-function readFileCached(p: string): string {
-  const mtime = (() => { try { return fs.statSync(p).mtimeMs; } catch { return 0; } })();
-  const hit = fileReadCache.get(p);
-  if (hit && hit.mtime === mtime) return hit.data;
-  const data = (() => { try { return fs.readFileSync(p, "utf8"); } catch { return ""; } })();
-  fileReadCache.set(p, { mtime, data });
-  return data;
-}
-
 const launchEnvValues = readLaunchEnv();
 const projectEnvNamesLoadedByOmp = new Set<string>();
 const __projectEnvIdentity = new WeakSet<object>();
