@@ -202,7 +202,10 @@ export function getProjectDir(): string {
 		try {
 			projectDir = standardizeMacOSPath(process.cwd());
 		} catch {
-			const candidates = [process.env.PWD, os.homedir(), os.tmpdir()];
+			// No os.tmpdir() here: a project dir of /tmp is never a real project.
+			// Silently landing there makes every relative path — agent config,
+			// project plugins, scratch files — resolve into a shared temp dir.
+			const candidates = [process.env.PWD, os.homedir()];
 			for (const candidate of candidates) {
 				if (!candidate || !path.isAbsolute(candidate)) continue;
 				try {
