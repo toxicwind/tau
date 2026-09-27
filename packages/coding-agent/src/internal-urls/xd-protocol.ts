@@ -1,6 +1,12 @@
 import { parseXdTopicUrl, parseXdUrl } from "@oh-my-pi/pi-tui/tools/xd-url";
 import type { InternalResource, InternalUrl, ProtocolHandler, ResolveContext, WriteContext } from "./types";
 
+// Re-exported so extensions can parse `xd://` targets through the module that
+// owns the protocol. `omp-semantic-policy` imports `parseXdUrl` from here to
+// decide whether a `write` path is a device; without the re-export the import
+// dies with "Export named 'parseXdUrl' not found" at extension load.
+export { parseXdTopicUrl, parseXdUrl };
+
 /** Routes session-bound virtual tool devices through `xd://` URLs. */
 export class XdProtocolHandler implements ProtocolHandler {
 	readonly scheme = "xd";

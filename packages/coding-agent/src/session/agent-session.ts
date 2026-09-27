@@ -780,6 +780,11 @@ export class AgentSession {
 
 	// Model registry for API key resolution
 	#modelRegistry: ModelRegistry;
+	/**
+	 * Cancellation for the command context built without an extension runner.
+	 * Aborted on session disposal, mirroring the runner's session signal.
+	 */
+	#commandContextAbort = new AbortController();
 	#usageFallbackConfirmer: UsageFallbackConfirmer | undefined;
 	#usagePreflightAbortControllers = new Set<AbortController>();
 	#queuedMessageDrainBlocked = false;
@@ -4888,6 +4893,7 @@ export class AgentSession {
 	}
 
 	async #doDispose(options: AgentSessionDisposeOptions = {}): Promise<void> {
+		this.#commandContextAbort.abort(new DOMException("Agent session disposed", "AbortError"));
 		this.beginDispose();
 		this.#recordSessionExit(options.reason ?? "dispose");
 		this.#cancelExitRecorder?.();
@@ -7129,6 +7135,7 @@ export class AgentSession {
 			cwd: this.sessionManager.getCwd(),
 			sessionManager: this.sessionManager,
 			modelRegistry: this.#modelRegistry,
+			signal: this.#commandContextAbort.signal,
 			isProjectTrusted: () => true,
 
 			model: this.model ?? undefined,

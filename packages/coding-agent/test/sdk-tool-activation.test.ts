@@ -1372,7 +1372,7 @@ describe("createAgentSession defaultInactive tool activation", () => {
 			await runner.emit({ type: "session_start" });
 			unsubscribe();
 
-			expect(errors).toContain("handler timed out after 10ms");
+			expect(errors).toContain("session_start handler timed out after 10ms");
 			expect(session.getToolByName("stalled_registration_tool")).toBeUndefined();
 			expect(session.getToolByName("recovered_registration_tool")?.label).toBe("recovered_registration_tool");
 			expect(session.getEnabledToolNames()).toContain("recovered_registration_tool");

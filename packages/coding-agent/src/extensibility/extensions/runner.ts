@@ -136,6 +136,22 @@ interface HandlerTimeoutBudget {
 	resume(): void;
 }
 
+/**
+ * Why a handler budget expired, carried out-of-band so the diagnostic can name
+ * the blocked call site instead of reporting a bare duration.
+ *
+ * `abortReason` is the rejection the handler settles with *after* the engine
+ * aborts `handlerSignal`. For a handler parked in `fetch` that is the
+ * `AbortError` raised at the await that never returned, which is the only
+ * thing that separates "blocked on a dead endpoint" from "spinning in a loop".
+ * It is written by the handler's own catch when the abort lands, so it is
+ * absent for a handler that never settles — hence a live object the timeout
+ * report reads after the fact rather than a returned value.
+ */
+interface HandlerTimeoutDetail {
+	abortReason?: string;
+}
+
 function attachHandlerSignal(
 	dialogOptions: ExtensionUIDialogOptions | undefined,
 	handlerSignal: AbortSignal,
@@ -232,6 +248,14 @@ function createHandlerContext(
 		enumerable: true,
 		configurable: true,
 	});
+	// Handlers that do their own I/O need the signal to be cancellable at all;
+	// without it the engine's abort stops nothing and a stalled `fetch` just
+	// burns the budget in silence.
+	Object.defineProperty(scoped, "signal", {
+		value: handlerSignal,
+		enumerable: true,
+		configurable: true,
+	});
 	return scoped;
 }
 
@@ -309,6 +333,11 @@ async function raceHandlerWithTimeout<T>(
 		const workPromise = Promise.resolve(work(handlerSignal, timeoutBudget));
 		const result = await Promise.race([workPromise, interruptPromise]);
 		if (result === EXTENSION_HANDLER_TIMEOUT) {
+			// Give an abort-driven handler one tick to unwind so its rejection
+			// reaches the caller's `catch` (which records the reason) before the
+			// timeout report is built. `workPromise` itself never rejects — the
+			// work function catches handler errors and resolves — so this is a
+			// window, not a source of the reason.
 			await Promise.race([
 				workPromise.then(
 					() => undefined,
@@ -464,6 +493,13 @@ export class ExtensionRunner {
 	#reloadHandler: () => Promise<void> = async () => {};
 	#shutdownHandler: ShutdownHandler = () => {};
 	#getMemoryFn?: () => MemoryRuntimeContext | undefined;
+	/**
+	 * Session-lifetime cancellation for the base context. `createContext` hands
+	 * out a context outside any handler run, so it has no per-handler budget —
+	 * this signal is aborted when the session shuts down, which is the only
+	 * cancellation such a context can meaningfully observe.
+	 */
+	#sessionAbort = new AbortController();
 	#commandDiagnostics: Array<{ type: string; message: string; path: string }> = [];
 	#toolRegistrationScope = new AsyncLocalStorage<ToolRegistrationScope>();
 	#toolRegistrationBarrier: Promise<void> | undefined;
@@ -1192,6 +1228,7 @@ export class ExtensionRunner {
 			ui: this.#uiContext,
 			mode: this.#mode,
 			getContextUsage: () => this.#getContextUsageFn(),
+			signal: this.#sessionAbort.signal,
 			compact: instructionsOrOptions => this.#compactFn(instructionsOrOptions),
 			getAsyncJobSnapshot: () => this.#getAsyncJobSnapshotFn(),
 			hasUI: this.hasUI(),
@@ -1259,6 +1296,7 @@ export class ExtensionRunner {
 	 * Request a graceful shutdown. Called by extension tools and event handlers.
 	 */
 	shutdown(): void {
+		this.#sessionAbort.abort(new DOMException("Extension runner shut down", "AbortError"));
 		this.#shutdownHandler();
 	}
 
@@ -1328,6 +1366,7 @@ export class ExtensionRunner {
 		const signal = signals.length === 0 ? undefined : signals.length === 1 ? signals[0] : AbortSignal.any(signals);
 		if (signal?.aborted) return undefined;
 		const registrationScope: ToolRegistrationScope = { pending: new Set(), closed: false };
+		const timeoutDetail: HandlerTimeoutDetail = {};
 		let handlerResult: R | typeof EXTENSION_HANDLER_TIMEOUT | typeof EXTENSION_HANDLER_ABORTED | undefined;
 		let handlerFailure: { error: unknown } | undefined;
 		try {
@@ -1346,6 +1385,14 @@ export class ExtensionRunner {
 								handler(event, handlerContext),
 							);
 						} catch (error) {
+							// When the budget expires the engine aborts `handlerSignal`, so a
+							// handler parked on cancellable I/O rejects HERE with the error
+							// raised at its stalled await. That rejection is the only artifact
+							// naming the blocked call site, and this catch is where it was
+							// being swallowed — which is why a 30s stall could only report a
+							// duration. Record it so the timeout report can name the block.
+							timeoutDetail.abortReason ??=
+								error instanceof Error ? `${error.name}: ${error.message}` : String(error);
 							handlerFailure = { error };
 						} finally {
 							registrationScope.closed = true;
@@ -1368,11 +1415,19 @@ export class ExtensionRunner {
 		}
 		if (handlerResult === EXTENSION_HANDLER_ABORTED) return undefined;
 		if (handlerResult === EXTENSION_HANDLER_TIMEOUT) {
-			const error = `handler timed out after ${timeoutMs}ms`;
+			// A bare duration sent us hunting: the message named neither the event
+			// nor the extension, so a 30s stall arrived with nothing to act on. Name
+			// the event (print mode prints `error` alone, dropping the structured
+			// fields) and, when the handler produced a rejection on abort, what it
+			// was blocked on. The reason is best-effort by construction: a handler
+			// that never settles yields none, so it stays optional.
+			const { abortReason } = timeoutDetail;
+			const error = `${event.type} handler timed out after ${timeoutMs}ms${abortReason === undefined ? "" : `; blocked on ${abortReason}`}`;
 			logger.warn("Extension handler timed out", {
 				extensionPath: ext.path,
 				event: event.type,
 				timeoutMs,
+				...(abortReason === undefined ? null : { abortReason }),
 			});
 			this.emitError({
 				extensionPath: ext.path,

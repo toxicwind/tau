@@ -12,12 +12,27 @@ interface BundledPackage {
 	readonly dir: string;
 	readonly identifier: string;
 	readonly rootShim: string | null;
+	/**
+	 * Previously published package name, registered alongside `manifest.name`.
+	 * A rebrand changes what the manifest is called, not what the extension
+	 * ecosystem imports: the runtime shim only ever looks up `@oh-my-pi/*`
+	 * keys (see `PI_PACKAGE_NAMES` in legacy-pi-compat.ts), so dropping the
+	 * old name from this registry makes every legacy extension importing it
+	 * fail with "no bundled module registered".
+	 */
+	readonly legacyName?: string;
 }
 
 const BUNDLED_PACKAGES: readonly BundledPackage[] = [
 	{ dir: "agent", identifier: "PiAgentCore", rootShim: null },
 	{ dir: "ai", identifier: "PiAi", rootShim: "legacy-pi-ai-shim.ts" },
-	{ dir: "coding-agent", identifier: "PiCodingAgent", rootShim: "legacy-pi-coding-agent-shim.ts" },
+	{
+		dir: "coding-agent",
+		identifier: "PiCodingAgent",
+		rootShim: "legacy-pi-coding-agent-shim.ts",
+		// Renamed to `tau` in the omp->tau rebrand; the published scope did not move with it.
+		legacyName: "@oh-my-pi/pi-coding-agent",
+	},
 	{ dir: "natives", identifier: "PiNatives", rootShim: null },
 	{ dir: "tui", identifier: "PiTui", rootShim: "legacy-pi-tui-shim.ts" },
 	{ dir: "utils", identifier: "PiUtils", rootShim: null },
@@ -103,14 +118,21 @@ function shimSpecifier(file: string): string {
 export async function collectBundledPiEntries(): Promise<BundledPiEntry[]> {
 	const entries: BundledPiEntry[] = [];
 	const seenKeys = new Set<string>();
-	const seenBindings = new Set<string>();
+	// Static-shaped lookup: binding -> the one import target it may load. Also
+	// serves as the "binding already emitted" test.
+	const importSpecifierByBinding: Record<string, string> = {};
 	function addEntry(key: string, binding: string, importSpecifier: string): void {
 		if (seenKeys.has(key)) return;
-		if (seenBindings.has(binding)) {
+		// One binding backs several registry keys (a rebranded package is
+		// reachable under both names), so a repeat is only legal when it agrees
+		// on the import target. The generated loader emits one `const` per
+		// binding, and two different targets would collide on it.
+		const claimed = importSpecifierByBinding[binding];
+		if (claimed !== undefined && claimed !== importSpecifier) {
 			throw new Error(`Duplicate bundled Pi binding ${binding} for ${key}`);
 		}
 		seenKeys.add(key);
-		seenBindings.add(binding);
+		importSpecifierByBinding[binding] = importSpecifier;
 		entries.push({ key, binding, importSpecifier });
 	}
 
@@ -123,13 +145,15 @@ export async function collectBundledPiEntries(): Promise<BundledPiEntry[]> {
 		}
 		const exportsField = isRecord(manifest.exports) ? manifest.exports : {};
 		const rootSpecifier = pkg.rootShim ? shimSpecifier(pkg.rootShim) : manifest.name;
-		addEntry(manifest.name, `bundled${pkg.identifier}`, rootSpecifier);
 
+		// Enumerate the package's subpath surface once, then register it under
+		// every name the package answers to. Registry keys are what extensions
+		// import; import specifiers stay on the real package name, so a rebrand
+		// can never strand a subpath that only resolves under the new name.
+		const subpaths: string[] = [];
 		for (const exportKey in exportsField) {
 			if (!exportKey.startsWith("./") || exportKey === "." || exportKey.includes("*")) continue;
-			const subpath = exportKey.slice(2);
-			const key = `${manifest.name}/${subpath}`;
-			addEntry(key, bindingForSubpath(pkg.identifier, subpath), key);
+			subpaths.push(exportKey.slice(2));
 		}
 
 		for (const exportKey in exportsField) {
@@ -165,12 +189,22 @@ export async function collectBundledPiEntries(): Promise<BundledPiEntry[]> {
 					// hidden folder is no more exported than a private file.
 					if (segments.some(segment => segment.startsWith(".") || segment.startsWith("_"))) continue;
 					if (!isSafeWildcardBasename(segments.at(-1) ?? "")) continue;
-					const subpath = `${pattern.exportPrefix}${basename}${pattern.exportSuffix}`;
-					const key = `${manifest.name}/${subpath}`;
-					addEntry(key, bindingForSubpath(pkg.identifier, subpath), key);
+					subpaths.push(`${pattern.exportPrefix}${basename}${pattern.exportSuffix}`);
 				}
 			} catch (error) {
 				if (!isEnoent(error)) throw error;
+			}
+		}
+
+		const registryNames = pkg.legacyName ? [manifest.name, pkg.legacyName] : [manifest.name];
+		for (const registryName of registryNames) {
+			addEntry(registryName, `bundled${pkg.identifier}`, rootSpecifier);
+			for (const subpath of subpaths) {
+				addEntry(
+					`${registryName}/${subpath}`,
+					bindingForSubpath(pkg.identifier, subpath),
+					`${manifest.name}/${subpath}`,
+				);
 			}
 		}
 	}
@@ -181,9 +215,15 @@ export async function collectBundledPiEntries(): Promise<BundledPiEntry[]> {
 
 /** Render the lazy loader registry; exported so tests can execute the generated module. */
 export function __renderLegacyPiVirtualModule(entries: readonly BundledPiEntry[]): string {
-	const loaders = entries.map(
-		entry => `const ${entry.binding} = () => import(${JSON.stringify(entry.importSpecifier)});`,
-	);
+	// One `const` per binding: aliased registry keys share their binding, so
+	// emitting per entry would redeclare the same identifier.
+	const loaders: string[] = [];
+	const emittedBindings = new Set<string>();
+	for (const entry of entries) {
+		if (emittedBindings.has(entry.binding)) continue;
+		emittedBindings.add(entry.binding);
+		loaders.push(`const ${entry.binding} = () => import(${JSON.stringify(entry.importSpecifier)});`);
+	}
 	const modules = entries.map(entry => `\t${JSON.stringify(entry.key)}: ${entry.binding},`);
 	return [...loaders, "", "export const BUNDLED_PI_MODULE_LOADERS = {", ...modules, "};", ""].join("\n");
 }

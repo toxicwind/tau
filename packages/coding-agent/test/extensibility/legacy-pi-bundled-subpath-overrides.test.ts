@@ -228,4 +228,46 @@ export const observed = [
 		// from `y/index.ts`, which Node would not resolve either.
 		expect(bundledModuleKeys.has("@oh-my-pi/pi-tui/theme/defaults/index")).toBe(false);
 	});
+
+	it("registers the rebranded package under its previously published name", () => {
+		// The omp->tau rebrand renamed the coding-agent manifest to `tau`, but the
+		// extension ecosystem still imports `@oh-my-pi/pi-coding-agent` and the
+		// runtime shim only ever looks up `@oh-my-pi/*` keys (PI_PACKAGE_NAMES in
+		// legacy-pi-compat.ts). Dropping the old name from the generated registry
+		// made every such extension fail with
+		// `omp:legacy-pi-shim: no bundled module registered for
+		// @oh-my-pi/pi-coding-agent`. Both names must map to the same bindings.
+		const legacyPrefix = "@oh-my-pi/pi-coding-agent";
+		const canonicalPrefix = "tau";
+		const legacySubpaths = bundledEntries
+			.filter(entry => entry.key.startsWith(`${legacyPrefix}/`))
+			.map(entry => entry.key.slice(legacyPrefix.length + 1));
+		const canonicalSubpaths = bundledEntries
+			.filter(entry => entry.key.startsWith(`${canonicalPrefix}/`))
+			.map(entry => entry.key.slice(canonicalPrefix.length + 1));
+
+		expect(bundledModuleKeys.has(legacyPrefix)).toBe(true);
+		expect(legacySubpaths).toEqual(canonicalSubpaths);
+		expect(legacySubpaths.length).toBeGreaterThan(0);
+
+		// Alias keys load through the real package name, so a subpath that only
+		// resolves under the new name can never be stranded by the rebrand.
+		const byKey = new Map(bundledEntries.map(entry => [entry.key, entry]));
+		for (const subpath of legacySubpaths) {
+			const legacy = byKey.get(`${legacyPrefix}/${subpath}`);
+			const canonical = byKey.get(`${canonicalPrefix}/${subpath}`);
+			expect(legacy?.importSpecifier).toBe(`${canonicalPrefix}/${subpath}`);
+			expect(legacy?.binding).toBe(canonical?.binding);
+		}
+		expect(byKey.get(legacyPrefix)?.binding).toBe(byKey.get(canonicalPrefix)?.binding);
+
+		// The generated module emits one `const` per binding; an alias that
+		// redeclared its shared binding would not parse.
+		const source = __renderLegacyPiVirtualModule(bundledEntries);
+		const declarations = source.split("\n").filter(line => line.startsWith("const "));
+		expect(new Set(declarations).size).toBe(declarations.length);
+
+		const overrides = __buildLegacyPiPackageRootOverrides(true, bundledModuleKeys);
+		expect(overrides[`${legacyPrefix}/tools`]).toBe(`omp-legacy-pi-bundled:${legacyPrefix}/tools`);
+	});
 });

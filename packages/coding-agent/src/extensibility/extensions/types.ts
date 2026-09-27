@@ -453,6 +453,14 @@ export interface ExtensionContext {
 	models: ExtensionModelQuery;
 	/** Whether the agent is idle (not streaming) */
 	isIdle(): boolean;
+	/**
+	 * Aborted when the engine cancels this handler, and when its time budget
+	 * expires. Handlers doing their own cancellable I/O (a `fetch`, a model call)
+	 * must pass this through, or the engine can neither stop the work nor report
+	 * what it was blocked on — the stall then surfaces as a bare duration.
+	 * Cancels independently of {@link abort}, which ends the agent's turn.
+	 */
+	readonly signal: AbortSignal;
 	/** Abort the current agent operation */
 	abort(): void;
 	/** Whether there are queued messages waiting */

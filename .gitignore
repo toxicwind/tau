@@ -8,6 +8,8 @@ packages/*/dist/
 packages/*/dist-chrome/
 packages/*/dist-firefox/
 target/
+# Materialized package shims from scripts/fix-external-deps.mjs
+.resolved-*/
 .xwin-cache/
 *.tsbuildinfo
 *.node

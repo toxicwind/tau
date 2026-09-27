@@ -1061,7 +1061,7 @@ describe("ExtensionRunner", () => {
 				{
 					extensionPath,
 					event: "session_stop",
-					error: "handler timed out after 10ms",
+					error: "session_stop handler timed out after 10ms",
 				},
 			]);
 		});
@@ -1508,9 +1508,101 @@ describe("ExtensionRunner", () => {
 				{
 					extensionPath: hangExtensionPath,
 					event: "session_start",
-					error: "handler timed out after 10ms",
+					error: "session_start handler timed out after 10ms",
 				},
 			]);
+
+			warnSpy.mockRestore();
+		});
+
+		it("names the event in the timeout error so print mode identifies the stall", async () => {
+			// A bare "handler timed out after 30000ms" arrived with nothing to act
+			// on: print mode prints `error` alone, so the structured event/extension
+			// fields never reached the operator. The message must stand alone.
+			const hangExtensionPath = path.join(tempDir.path(), "hang-before-agent-start.ts");
+			fs.writeFileSync(
+				hangExtensionPath,
+				`
+					export default function(pi) {
+						pi.on("before_agent_start", async () => {
+							await Promise.withResolvers().promise;
+						});
+					}
+				`,
+			);
+
+			const result = await loadTestExtensions([hangExtensionPath]);
+			const runner = new ExtensionRunner(
+				result.extensions,
+				result.runtime,
+				tempDir.path(),
+				sessionManager,
+				modelRegistry,
+			);
+			const warnSpy = vi.spyOn(logger, "warn").mockImplementation(() => {});
+			const errors: Array<{ extensionPath: string; event: string; error: string }> = [];
+			runner.onError(err => {
+				errors.push(err);
+			});
+			testSetExtensionHandlerTimeoutMs(10);
+
+			await runner.emitBeforeAgentStart("hi", undefined, []);
+
+			expect(errors).toHaveLength(1);
+			expect(errors[0]?.extensionPath).toBe(hangExtensionPath);
+			// The event is the part that was missing: the operator can grep the
+			// session log for it and find the stall, and can tell a start-of-turn
+			// hook from a tool gate.
+			expect(errors[0]?.error).toBe("before_agent_start handler timed out after 10ms");
+
+			warnSpy.mockRestore();
+		});
+
+		it("distinguishes a cancellable stall from a deadlocked handler", async () => {
+			// A bare "timed out after 30000ms" cannot say whether the handler was
+			// parked on cancellable I/O or wedged in a loop. `ctx.signal` lets the
+			// engine stop the former, and the rejection that follows is what tells
+			// the two apart in the report. No wall-clock timer: the engine's own
+			// abort drives it, so the test cannot lose a timing race.
+			const hangExtensionPath = path.join(tempDir.path(), "hang-on-signal.ts");
+			fs.writeFileSync(
+				hangExtensionPath,
+				`
+					export default function(pi) {
+						pi.on("session_start", async (_event, ctx) => {
+							// Rejects the instant the engine's budget expires, standing in for
+							// a stalled model call. No wall-clock timer: the engine's own abort
+							// drives it, so the test cannot lose a timing race.
+							await new Promise((_resolve, reject) => {
+								ctx.signal.addEventListener("abort", () => reject(ctx.signal.reason), { once: true });
+							});
+						});
+					}
+				`,
+			);
+
+			const result = await loadTestExtensions([hangExtensionPath]);
+			const runner = new ExtensionRunner(
+				result.extensions,
+				result.runtime,
+				tempDir.path(),
+				sessionManager,
+				modelRegistry,
+			);
+			const warnSpy = vi.spyOn(logger, "warn").mockImplementation(() => {});
+			const errors: Array<{ extensionPath: string; event: string; error: string }> = [];
+			runner.onError(err => {
+				errors.push(err);
+			});
+			testSetExtensionHandlerTimeoutMs(10);
+
+			await runner.emit({ type: "session_start" });
+
+			expect(errors).toHaveLength(1);
+			// A duration alone says the handler was slow; the reason says the engine
+			// cancelled it and why, which is the actionable half.
+			expect(errors[0]?.error).toContain("session_start handler timed out after 10ms");
+			expect(errors[0]?.error).toMatch(/; blocked on \w+: .+/);
 
 			warnSpy.mockRestore();
 		});
@@ -1559,7 +1651,7 @@ describe("ExtensionRunner", () => {
 			expect(errors).toContainEqual({
 				extensionPath,
 				event: "session_shutdown",
-				error: "handler timed out after 10ms",
+				error: "session_shutdown handler timed out after 10ms",
 			});
 		});
 
@@ -1625,7 +1717,7 @@ describe("ExtensionRunner", () => {
 				{
 					extensionPath: hangExtensionPath,
 					event: "tool_call",
-					error: "handler timed out after 10ms",
+					error: "tool_call handler timed out after 10ms",
 				},
 			]);
 
