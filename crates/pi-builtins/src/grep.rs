@@ -43,11 +43,17 @@ pub(crate) fn pcre2_jit_enabled(host: &Host) -> bool {
 )]
 struct GrepArgs {
 	/// Use PATTERN for matching (may be repeated; all patterns are OR-ed).
-	#[arg(short = 'e', long = "regexp", value_name = "PATTERN")]
+	///
+	/// `allow_hyphen_values` with an explicit `num_args = 1` is what GNU
+	/// does: the token after `-e` is the pattern even when it starts with
+	/// `-`, so `grep -q -e -apple FILE` finds `-apple` instead of failing
+	/// with a usage error. `num_args = 1` keeps the option from swallowing
+	/// the flags that follow it.
+	#[arg(short = 'e', long = "regexp", value_name = "PATTERN", num_args = 1, allow_hyphen_values = true)]
 	patterns: Vec<String>,
 
 	/// Read patterns from FILE, one per line.
-	#[arg(short = 'f', long = "file", value_name = "FILE")]
+	#[arg(short = 'f', long = "file", value_name = "FILE", num_args = 1, allow_hyphen_values = true)]
 	pattern_files: Vec<OsString>,
 
 	/// Interpret PATTERN as a strict extended regular expression.
@@ -179,7 +185,9 @@ struct GrepArgs {
 	devices: Option<DeviceAction>,
 
 	/// Choose how directory operands are handled.
-	#[arg(short = 'd', long = "directories", value_name = "ACTION")]
+	// Long-form only: GNU grep has no `-d`, and accepting the short spelling
+	// turned a mangled word like `-apple` into a valid flag cluster.
+	#[arg(long = "directories", value_name = "ACTION")]
 	directories: Option<DirectoryAction>,
 
 	/// Search files matching GLOB.
@@ -211,15 +219,20 @@ struct GrepArgs {
 	dereference_recursive: bool,
 
 	/// Follow symbolic links named as command-line operands.
-	#[arg(short = 'O')]
+	//
+	// Long-form only, like the other BSD-ism spellings here: GNU grep has no
+	// `-O`, so honouring the short form let `grep -apple FILE` parse as a
+	// cluster, consume FILE as the pattern, and report a match that GNU
+	// rejects with "invalid option -- 'p'".
+	#[arg(long = "follow")]
 	follow_command_line: bool,
 
 	/// Do not follow symbolic links during recursive searches.
-	#[arg(short = 'p')]
+	#[arg(long = "no-follow")]
 	no_follow: bool,
 
 	/// Follow every symbolic link during recursive searches.
-	#[arg(short = 'S')]
+	#[arg(long = "follow-all")]
 	follow_all: bool,
 
 	/// Flush standard output after each output record.
@@ -234,10 +247,6 @@ struct GrepArgs {
 	#[arg(short = 'z', long = "null-data")]
 	null_data: bool,
 
-	/// Request memory-mapped input where supported.
-	#[allow(dead_code, reason = "accepted BSD grep compatibility option")]
-	#[arg(long = "mmap")]
-	mmap: bool,
 
 	/// Accepted compatibility option with no effect.
 	#[allow(dead_code, reason = "accepted GNU grep compatibility option")]
@@ -342,6 +351,7 @@ struct Options {
 	group_separator:     Option<Vec<u8>>,
 	line_buffered:       bool,
 	binary_files:        BinaryFiles,
+	max_count:           Option<u64>,
 }
 
 enum CompiledMatcher {
@@ -417,13 +427,29 @@ fn choose_latest<T>(selected: &mut (usize, T), index: Option<usize>, value: T) {
 	}
 }
 
-fn resolve_match_mode(matches: &ArgMatches) -> MatchMode {
+/// GNU rejects two DIFFERENT matcher selections outright: `grep -E -P` exits 2
+/// with "conflicting matchers specified". Resolving the conflict by taking the
+/// last flag turned a flag mistake into a confident, silently wrong search, so
+/// the conflict is now a usage error. Repeating the SAME matcher stays legal.
+fn resolve_match_mode(matches: &ArgMatches) -> Result<MatchMode, String> {
 	let mut selected = (0, MatchMode::Default);
-	choose_latest(&mut selected, last_index(matches, "basic"), MatchMode::Default);
-	choose_latest(&mut selected, last_index(matches, "extended"), MatchMode::Extended);
-	choose_latest(&mut selected, last_index(matches, "fixed"), MatchMode::Fixed);
-	choose_latest(&mut selected, last_index(matches, "perl"), MatchMode::Perl);
-	selected.1
+	let mut distinct: Vec<MatchMode> = Vec::new();
+	for (id, mode) in [
+		("basic", MatchMode::Default),
+		("extended", MatchMode::Extended),
+		("fixed", MatchMode::Fixed),
+		("perl", MatchMode::Perl),
+	] {
+		let Some(index) = last_index(matches, id) else { continue };
+		if !distinct.contains(&mode) {
+			distinct.push(mode);
+		}
+		choose_latest(&mut selected, Some(index), mode);
+	}
+	if distinct.len() > 1 {
+		return Err("conflicting matchers specified".to_owned());
+	}
+	Ok(selected.1)
 }
 
 fn resolve_ignore_case(matches: &ArgMatches) -> bool {
@@ -548,20 +574,56 @@ fn resolve_binary_files(cli: &GrepArgs, matches: &ArgMatches) -> BinaryFiles {
 
 fn resolve_max_count(cli: &GrepArgs) -> Result<Option<u64>, String> {
 	match cli.max_count {
-		None | Some(-1) => Ok(None),
-		Some(value) if value >= 0 => u64::try_from(value)
+		// GNU reads the count as an unsigned quantity, so a negative value
+		// wraps to a limit no file can ever reach and `-m -5` behaves as no
+		// limit at all. Rejecting it turned a working search into a usage
+		// failure, i.e. a match reported as an error.
+		Some(value) if value < 0 => Ok(None),
+		None => Ok(None),
+		Some(value) => u64::try_from(value)
 			.map(Some)
 			.map_err(|_| format!("invalid max count: {value}")),
-		Some(value) => Err(format!("invalid max count: {value}")),
 	}
 }
 
 fn option_takes_next_value(arg: &str) -> bool {
-	matches!(arg, "-e" | "-f" | "-m" | "-A" | "-B" | "-C" | "-D" | "-d"
+	// Only spellings this builtin actually accepts. `-d` is gone along with
+	// its short flag, so it must not be treated as value-taking here either.
+	matches!(arg, "-e" | "-f" | "-m" | "-A" | "-B" | "-C" | "-D"
 		| "--regexp" | "--file" | "--max-count" | "--after-context" | "--before-context"
 		| "--context" | "--label" | "--group-separator" | "--binary-files" | "--devices"
 		| "--directories" | "--include" | "--exclude" | "--exclude-from" | "--exclude-dir"
 		| "--include-dir")
+}
+
+/// `--color` is honoured only where ignoring it is already faithful: `never`,
+/// `none`, and `auto` all leave a redirected stream uncolored. A request for
+/// real color is a usage error rather than a silent no-op, which is the rule
+/// every other unimplemented option in this struct now follows.
+fn check_color(cli: &GrepArgs) -> Result<(), String> {
+	let Some(when) = &cli.color else { return Ok(()) };
+	match when.as_str() {
+		"never" | "none" | "auto" => Ok(()),
+		other => Err(format!(
+			"option '--color={other}' is not supported: this grep builtin does not colorize output"
+		)),
+	}
+}
+
+/// GNU omits the filename prefix when a recursive search is handed exactly one
+/// operand and that operand is not a directory: `grep -r PAT FILE` prints bare
+/// records, and so does `grep -r PAT -` for standard input, while `grep -r PAT
+/// DIR` and every multi-operand form prefix them. Prefixing regardless changed
+/// the shape of output that callers split on.
+fn recursing_needs_prefix(host: &Host, files: &[OsString]) -> bool {
+	if files.len() != 1 {
+		return true;
+	}
+	let operand = &files[0];
+	if operand == OsStr::new("-") {
+		return false;
+	}
+	!host.resolve(operand).is_file()
 }
 
 fn normalize_context_args(argv: Vec<OsString>) -> Vec<OsString> {
@@ -923,6 +985,13 @@ impl<M: Matcher, W: Write> Sink for GrepSink<'_, M, W> {
 				self.write_path_record()?;
 			}
 		} else if self.opts.count {
+			// GNU reads `-m 0` as "select nothing" and then prints no count
+			// record at all, rather than a misleading zero. `-l` and `-L`
+			// need no special case: they are driven by `any_match`, which is
+			// false for every file under a zero limit.
+			if self.opts.max_count == Some(0) {
+				return Ok(());
+			}
 			if self.opts.prefix_filename {
 				self.out.write_all(self.display)?;
 				if self.opts.null_paths {
@@ -1329,27 +1398,51 @@ fn execute_search<M: Matcher>(
 		match std::fs::metadata(&resolved) {
 			Ok(metadata) if metadata.is_dir() => match directory_action {
 				DirectoryAction::Recurse => {
-					if rules.allows_dir(Path::new(operand)) {
-						match search_dir(
-							host,
-							operand.as_os_str(),
-							&resolved,
-							matcher,
-							&mut searcher,
-							opts,
-							rules,
-							follow_links,
-							&mut out,
-							&mut had_error,
-						) {
-							Ok(matched) => any_match |= matched,
-							Err(_) => return crate::host::SIGPIPE_EXIT_CODE,
-						}
+					// A directory named on the command line is always descended
+					// into; `--include-dir` / `--exclude-dir` filter what the walk
+					// descends INTO, not the root the caller asked for. Applying
+					// the rule to the root made `grep -r --include-dir=keep PAT .`
+					// match nothing at all and report "no match" — a silent wrong
+					// answer, and the exact class this builtin must not have. The
+					// asymmetry was visible next to `--exclude-dir`, whose rules
+					// default to allowing, so the root survived there.
+					match search_dir(
+						host,
+						operand.as_os_str(),
+						&resolved,
+						matcher,
+						&mut searcher,
+						opts,
+						rules,
+						follow_links,
+						&mut out,
+						&mut had_error,
+					) {
+						Ok(matched) => any_match |= matched,
+						Err(_) => return crate::host::SIGPIPE_EXIT_CODE,
 					}
 				},
 				DirectoryAction::Skip => {},
 				DirectoryAction::Read => {
 					had_error = true;
+					// A directory operand is still a file that selected no
+					// lines, and GNU reports it in the file-list modes before
+					// it fails: `-L` lists the directory, `-c` counts it as
+					// zero. Printing nothing made `grep -L PAT DIR`
+					// indistinguishable from a tree with no non-matching
+					// files.
+					if opts.files_without_match {
+						let _ = out.write_all(operand.as_encoded_bytes());
+						let _ = out
+							.write_all(&[if opts.null_paths { 0 } else { opts.record_terminator }]);
+					} else if opts.count {
+						if opts.prefix_filename {
+							let _ = out.write_all(operand.as_encoded_bytes());
+							let _ = out.write_all(if opts.null_paths { b"\0" } else { b":" });
+						}
+						let _ = out.write_all(b"0");
+						let _ = out.write_all(&[opts.record_terminator]);
+					}
 					let _ = writeln!(
 						host.stderr,
 						"grep: {}: Is a directory",
@@ -1457,11 +1550,22 @@ impl Utility for Grep {
 			return 2;
 		},
 	};
+	if let Err(error) = check_color(&cli) {
+		let _ = writeln!(host.stderr, "grep: {error}");
+		return 2;
+	}
+	let match_mode = match resolve_match_mode(&matches) {
+		Ok(mode) => mode,
+		Err(error) => {
+			let _ = writeln!(host.stderr, "grep: {error}");
+			return 2;
+		},
+	};
 	let matcher = match build_matcher(
 		host,
 		&patterns,
 		&cli,
-		resolve_match_mode(&matches),
+		match_mode,
 		resolve_ignore_case(&matches),
 	) {
 		Ok(matcher) => matcher,
@@ -1480,8 +1584,13 @@ impl Utility for Grep {
 	} else {
 		resolve_context(&cli, &matches)
 	};
-	let prefix_filename = resolve_filename_prefix(&matches)
-		.unwrap_or(directory_action == DirectoryAction::Recurse || files.len() > 1);
+	let prefix_filename = resolve_filename_prefix(&matches).unwrap_or(
+		if directory_action == DirectoryAction::Recurse {
+			recursing_needs_prefix(host, &files)
+		} else {
+			files.len() > 1
+		},
+	);
 	let opts = Options {
 		line_number: cli.line_number,
 		byte_offset: cli.byte_offset,
@@ -1500,6 +1609,7 @@ impl Utility for Grep {
 		group_separator: resolve_group_separator(&cli, &matches),
 		line_buffered: cli.line_buffered,
 		binary_files: resolve_binary_files(&cli, &matches),
+		max_count,
 	};
 	let follow_links = resolve_follow_links(&cli, &matches);
 
@@ -1742,10 +1852,15 @@ mod tests {
 		let (code, out, err) = run(&["-c", r"tools.xdev\|tools.toolbox"], input);
 		assert_eq!(code, 0, "{err}");
 		assert_eq!(out, "2\n");
-		for color in ["--color=auto", "--color=always", "--color=never", "--color"] {
+		// The spellings that leave redirected output uncolored stay accepted,
+		// `--colour` included. `--color=always` is deliberately absent: this
+		// builtin does not colorize, and an unimplemented option must fail
+		// rather than quietly do nothing — see
+		// `unimplemented_options_are_hard_errors_not_silent_no_ops`.
+		for color in ["--color=auto", "--color=never", "--color", "--colour=never", "--colour"] {
 			let (code, out, err) = run(&[color, "foo"], "foo\nbar\n");
 			assert_eq!(code, 0, "{err}");
-			assert_eq!(out, "foo\n");
+			assert_eq!(out, "foo\n", "{color}");
 		}
 	}
 
@@ -1941,6 +2056,285 @@ mod tests {
 			let (code, out, _) = run(&["-Ec", pattern], input);
 			assert_eq!(code, 2, "-E {pattern} must stay an error, got {out:?}");
 		}
+	}
+
+	/// Two different matcher selections are a usage error, the way GNU reports
+	/// them. Failure mode defended: a caller who typed `-E -P` got exit 0 with
+	/// matches printed from a silently chosen matcher, so a flag mistake became
+	/// a confident, wrong answer.
+	#[test]
+	fn conflicting_matcher_selections_are_rejected() {
+		for (first, second) in
+			[("-E", "-P"), ("-P", "-E"), ("-G", "-E"), ("-F", "-E"), ("-F", "-P"), ("-E", "-G"), ("-E", "-F")]
+		{
+			let (code, out, err) = run(&[first, second, "hit"], "hit\n");
+			assert_eq!(code, 2, "{first} {second} must be rejected, got {out:?}");
+			assert!(err.contains("conflicting matchers"), "{first} {second}: {err}");
+		}
+
+		// Repeating one matcher is legal, and every single mode still works.
+		for args in [
+			&["hit"][..],
+			&["-E", "hit"][..],
+			&["-E", "-E", "hit"][..],
+			&["-P", "hit"][..],
+			&["-F", "hit"][..],
+			&["-G", "hit"][..],
+		] {
+			let (code, out, err) = run(args, "hit\n");
+			assert_eq!(code, 0, "{args:?}: {err}");
+			assert_eq!(out, "hit\n", "{args:?}");
+		}
+	}
+
+	/// A pattern that starts with `-` is a pattern, not a missing option value.
+	/// Failure mode defended: `grep -q -e -apple FILE` exited 2 while GNU exits
+	/// 0, so every needle beginning with a dash silently read as "not found".
+	#[test]
+	fn patterns_beginning_with_a_hyphen_are_searched() {
+		let stdin = "-apple\n--\n-1\nplain\n";
+		for (label, args, want) in [
+			("-e -apple", &["-e", "-apple"][..], "-apple\n"),
+			("--regexp=--", &["--regexp=--"][..], "--\n"),
+			("-e -1", &["-e", "-1"][..], "-1\n"),
+			("-F -e -apple", &["-F", "-e", "-apple"][..], "-apple\n"),
+			("-e -apple -e --", &["-e", "-apple", "-e", "--"][..], "-apple\n--\n"),
+		] {
+			let (code, out, err) = run(args, stdin);
+			assert_eq!(code, 0, "{label}: {err}");
+			assert_eq!(out, want, "{label}");
+		}
+	}
+
+	/// A flag-taking option must not swallow the flags that follow it.
+	/// Failure mode defended: if `-e` accepted a hyphen value by consuming
+	/// greedily, `-e -apple -i` would search for `-apple -i` and report no
+	/// match, instead of matching `-apple` case-insensitively.
+	#[test]
+	fn hyphen_valued_options_do_not_swallow_following_flags() {
+		let (code, out, err) = run(&["-e", "-apple", "-i"], "-APPLE\n");
+		assert_eq!(code, 0, "{err}");
+		assert_eq!(out, "-APPLE\n");
+
+		let (code, out, err) = run(&["-e", "-apple", "-c"], "-apple\nplain\n");
+		assert_eq!(code, 0, "{err}");
+		assert_eq!(out, "1\n");
+	}
+
+	/// A word GNU rejects as an invalid option must not become a valid flag
+	/// cluster here. Failure mode defended: `-apple` parsed as `-a -p -p -l -e`,
+	/// which made the following FILE the pattern and reported a match (exit 0)
+	/// where GNU exits 2.
+	#[test]
+	fn mangled_flag_words_are_rejected_rather_than_reinterpreted() {
+		for word in ["-apple", "-nofile"] {
+			let (code, out, err) = run(&[word, "hit"], "-apple\nhit\n");
+			assert_eq!(code, 2, "{word} must be rejected, got {out:?} ({err})");
+			assert!(out.is_empty(), "{word} must not report a search: {out:?}");
+		}
+	}
+
+	/// A negative count is "no limit", the way GNU reads it. Failure mode
+	/// defended: `--max-count=-5` exited 2 while GNU exits 0, so a working
+	/// search was reported as an error.
+	#[test]
+	fn negative_max_count_is_treated_as_no_limit() {
+		let (code, out, err) = run(&["--max-count=-5", "hit"], "hit\nhit\nhit\n");
+		assert_eq!(code, 0, "{err}");
+		assert_eq!(out, "hit\nhit\nhit\n");
+
+		let (code, out, err) = run(&["-m", "-5", "hit"], "hit\nhit\n");
+		assert_eq!(code, 0, "{err}");
+		assert_eq!(out, "hit\nhit\n");
+
+		// A bare negative number is still the compact `-C` spelling, not a count.
+		let (code, out, err) = run(&["hit", "-1"], "hit\nfar\nhit\n");
+		assert_eq!(code, 0, "{err}");
+		assert_eq!(out, "hit\nfar\nhit\n");
+	}
+
+	/// `-m 0` selects nothing, and GNU then prints no count record at all.
+	/// Failure mode defended: a misleading `0` count was emitted for a search
+	/// that had selected no lines.
+	#[test]
+	fn zero_max_count_selects_nothing_and_prints_no_count_record() {
+		let (code, out, err) = run(&["-m0", "-c", "hit"], "hit\nhit\n");
+		assert_eq!(code, 1, "{err}");
+		assert_eq!(out, "", "`-m 0 -c` prints no record, not a zero count");
+	}
+
+	/// A directory operand is still a file that selected no lines, and GNU
+	/// reports it in the file-list modes. Failure mode defended: `grep -L PAT
+	/// DIR` printed nothing, which was indistinguishable from a directory that
+	/// contained no non-matching files.
+	#[test]
+	fn files_without_match_reports_a_directory_operand() {
+		let tree = tempfile::tempdir().unwrap();
+		std::fs::create_dir(tree.path().join("d")).unwrap();
+		std::fs::write(tree.path().join("d/hit"), "hit\n").unwrap();
+
+		let (code, capture) = run_util::<Grep>(&["-L", "absent", "d"], "", tree.path());
+		assert_eq!(code, 2, "a directory operand stays an error: {}", capture.err());
+		assert_eq!(capture.out(), "d\n");
+
+		let (code, capture) = run_util::<Grep>(&["-c", "absent", "d"], "", tree.path());
+		assert_eq!(code, 2, "{}", capture.err());
+		assert_eq!(capture.out(), "0\n");
+
+		// `-l` selects files that DID match, so a directory never belongs.
+		let (code, capture) = run_util::<Grep>(&["-l", "absent", "d"], "", tree.path());
+		assert_eq!(code, 2, "{}", capture.err());
+		assert_eq!(capture.out(), "");
+	}
+
+	/// Recursive search over a lone regular file is not prefixed. Failure mode
+	/// defended: `grep -r PAT FILE` emitted `FILE:line`, so anything splitting
+	/// that output on the first colon silently changed shape.
+	#[test]
+	fn recursive_single_file_operand_is_not_prefixed() {
+		let tree = tempfile::tempdir().unwrap();
+		std::fs::write(tree.path().join("one"), "hit\n").unwrap();
+		std::fs::create_dir(tree.path().join("d")).unwrap();
+		std::fs::write(tree.path().join("d/one"), "hit\n").unwrap();
+
+		let (code, capture) = run_util::<Grep>(&["-r", "hit", "one"], "", tree.path());
+		assert_eq!(code, 0, "{}", capture.err());
+		assert_eq!(capture.out(), "hit\n");
+
+		let (code, capture) = run_util::<Grep>(&["-r", "hit", "d"], "", tree.path());
+		assert_eq!(code, 0, "{}", capture.err());
+		assert_eq!(capture.out(), "d/one:hit\n");
+
+		let (code, capture) = run_util::<Grep>(&["-r", "hit", "one", "d"], "", tree.path());
+		assert_eq!(code, 0, "{}", capture.err());
+		assert_eq!(capture.out(), "one:hit\nd/one:hit\n");
+
+		// Standard input is a lone, unprefixed stream in GNU too.
+		let (code, out, err) = run(&["-r", "hit", "-"], "hit\nmiss\n");
+		assert_eq!(code, 0, "{err}");
+		assert_eq!(out, "hit\n");
+
+		// An explicit `-H` still forces the prefix GNU would not print.
+		let (code, capture) = run_util::<Grep>(&["-r", "-H", "hit", "one"], "", tree.path());
+		assert_eq!(code, 0, "{}", capture.err());
+		assert_eq!(capture.out(), "one:hit\n");
+	}
+
+	/// An option this builtin does not implement must fail loudly. Failure mode
+	/// defended: a declared-and-ignored option means the caller believes a
+	/// filter was applied when it was not — the single most untrustworthy
+	/// behaviour a shadowing builtin can have.
+	#[test]
+	fn unimplemented_options_are_hard_errors_not_silent_no_ops() {
+		// `--mmap` was accepted and ignored. It is not a GNU grep option, so
+		// rejecting it is the only faithful outcome.
+		let (code, out, _) = run(&["--mmap", "hit"], "hit\n");
+		assert_eq!(code, 2, "--mmap must be rejected, got {out:?}");
+
+		// `--color` is honoured only where ignoring it is already faithful:
+		// a redirected stream is uncolored under never/none/auto either way.
+		for when in ["always", "force", "ansi", "16"] {
+			let arg = format!("--color={when}");
+			let (code, out, err) = run(&[arg.as_str(), "hit"], "hit\n");
+			assert_eq!(code, 2, "--color={when} must be rejected, got {out:?}: {err}");
+			assert!(err.contains("not supported"), "--color={when}: {err}");
+		}
+		for when in ["never", "none", "auto"] {
+			let arg = format!("--color={when}");
+			let (code, out, err) = run(&[arg.as_str(), "hit"], "hit\n");
+			assert_eq!(code, 0, "--color={when} must stay accepted: {err}");
+			assert_eq!(out, "hit\n", "--color={when}");
+		}
+
+		// `-u` stays accepted and inert: GNU also no-ops it on this platform,
+		// so honouring it as a no-op is faithful rather than a silent gap.
+		let (code, out, err) = run(&["-u", "hit"], "hit\n");
+		assert_eq!(code, 0, "{err}");
+		assert_eq!(out, "hit\n");
+	}
+
+
+	/// `--include-dir` is a real filter, not a declared-and-ignored option.
+	/// Failure mode defended: an audit flagged it as silently ignored, which
+	/// would have been the worst possible defect for a shadowing builtin. It
+	/// is in fact applied, so pin that: restricting the walk to one subtree
+	/// must actually restrict it.
+	#[test]
+	fn include_dir_restricts_the_recursive_walk() {
+		let tree = tempfile::tempdir().unwrap();
+		std::fs::create_dir_all(tree.path().join("keep/deeper")).unwrap();
+		std::fs::create_dir_all(tree.path().join("skip/deeper")).unwrap();
+		std::fs::write(tree.path().join("keep/one"), "hit\n").unwrap();
+		std::fs::write(tree.path().join("keep/deeper/two"), "hit\n").unwrap();
+		std::fs::write(tree.path().join("skip/one"), "hit\n").unwrap();
+		std::fs::write(tree.path().join("skip/deeper/two"), "hit\n").unwrap();
+
+		let (code, capture) = run_util::<Grep>(&["-rL", "hit", "."], "", tree.path());
+		assert_eq!(code, 0, "{}", capture.err());
+		assert_eq!(capture.out(), "");
+
+		// `--include-dir=keep` descends into `keep` and no further: `deeper`
+		// does not match the glob, so it is pruned. The important part is that
+		// the root `.` the caller named is still searched at all — before the
+		// fix the include rule filtered the root too and the search silently
+		// matched nothing.
+		let (code, capture) =
+			run_util::<Grep>(&["-r", "--include-dir=keep", "hit", "."], "", tree.path());
+		assert_eq!(code, 0, "{}", capture.err());
+		assert_eq!(capture.out(), "./keep/one:hit\n");
+
+		// An exclude rule is the mirror image and prunes only the subtree.
+		let (code, capture) =
+			run_util::<Grep>(&["-r", "--exclude-dir=skip", "hit", "."], "", tree.path());
+		assert_eq!(code, 0, "{}", capture.err());
+		assert_eq!(capture.out(), "./keep/one:hit\n./keep/deeper/two:hit\n");
+
+		// Naming the subtree directly searches it even under an include rule
+		// that the root would not satisfy. The rule still prunes `deeper`,
+		// because `--include-dir` decides what the walk descends INTO.
+		let (code, capture) =
+			run_util::<Grep>(&["-r", "--include-dir=keep", "hit", "keep"], "", tree.path());
+		assert_eq!(code, 0, "{}", capture.err());
+		assert_eq!(capture.out(), "keep/one:hit\n");
+	}
+
+	/// Recursive `-L` lists the files that selected no lines. Failure mode
+	/// defended: `-L` and `-rL` had no test at all, so a semantic change in
+	/// either file-list mode would have gone unnoticed.
+	#[test]
+	fn recursive_files_without_match_lists_only_non_matching_files() {
+		let tree = tempfile::tempdir().unwrap();
+		std::fs::write(tree.path().join("hit"), "hit\n").unwrap();
+		std::fs::write(tree.path().join("miss"), "absent\n").unwrap();
+
+		let (code, capture) = run_util::<Grep>(&["-rL", "hit", "."], "", tree.path());
+		assert_eq!(code, 0, "{}", capture.err());
+		assert_eq!(capture.out(), "./miss\n");
+
+		let (code, capture) = run_util::<Grep>(&["-rl", "hit", "."], "", tree.path());
+		assert_eq!(code, 0, "{}", capture.err());
+		assert_eq!(capture.out(), "./hit\n");
+	}
+
+	/// `--` ends option parsing for both patterns and operands. Failure mode
+	/// defended: the hyphen-value work on `-e`/`-f` could have broken the
+	/// literal-operand form, turning a real match into a usage error.
+	#[test]
+	fn double_dash_ends_option_parsing() {
+		let (code, out, err) = run(&["--", "-apple"], "-apple\nplain\n");
+		assert_eq!(code, 0, "{err}");
+		assert_eq!(out, "-apple\n");
+
+		// `-e` consumes the next token even when it is `--`, so the pattern is
+		// the literal `--` and the operand is stdin.
+		let (code, out, err) = run(&["-e", "--", "-"], "--\nplain\n");
+		assert_eq!(code, 0, "{err}");
+		assert_eq!(out, "--\n");
+
+		// ...and that same pattern correctly finds nothing in other input.
+		let (code, out, _) = run(&["-e", "--", "-"], "-hit\n");
+		assert_eq!(code, 1);
+		assert_eq!(out, "");
 	}
 }
 
