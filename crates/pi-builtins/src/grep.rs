@@ -247,13 +247,6 @@ struct GrepArgs {
 	#[arg(short = 'z', long = "null-data")]
 	null_data: bool,
 
-	/// Accepted and inert. This is the ONE deliberate no-op left in this
-	/// struct, and it is deliberate: GNU grep also treats `-u` as having no
-	/// effect on this platform, so ignoring it is faithful rather than a
-	/// silent gap. Every other unimplemented option is now rejected.
-	#[allow(dead_code, reason = "accepted GNU grep compatibility option")]
-	#[arg(short = 'u')]
-	unix_byte_offsets: bool,
 
 	/// Print a help message.
 	#[allow(dead_code, reason = "clap consumes help before options are inspected")]
@@ -2248,11 +2241,20 @@ mod tests {
 			assert_eq!(out, "hit\n", "--color={when}");
 		}
 
-		// `-u` stays accepted and inert: GNU also no-ops it on this platform,
-		// so honouring it as a no-op is faithful rather than a silent gap.
-		let (code, out, err) = run(&["-u", "hit"], "hit\n");
-		assert_eq!(code, 0, "{err}");
-		assert_eq!(out, "hit\n");
+		// `-u` was long accepted and inert on the belief that GNU no-ops it.
+		// It does not: this GNU build rejects both `-u` and
+		// `--unix-byte-offsets` with exit 2, and neither appears in its
+		// `--help`. An inert accepted flag is exactly the silent no-op this
+		// builtin must not have, so it is rejected like any other unknown
+		// short option.
+		let (code, out, _) = run(&["-u", "hit"], "hit\n");
+		assert_eq!(code, 2, "-u must be rejected, got {out:?}");
+
+		// Nothing is left accepted-but-inert in the option table.
+		for flag in ["-u", "--mmap", "--unix-byte-offsets"] {
+			let (code, out, _) = run(&[flag, "hit"], "hit\n");
+			assert_eq!(code, 2, "{flag} must be rejected, got {out:?}");
+		}
 	}
 
 
