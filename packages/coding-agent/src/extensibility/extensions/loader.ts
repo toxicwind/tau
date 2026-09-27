@@ -594,8 +594,8 @@ export async function discoverExtensionPaths(
 		try {
 			key = await fs.realpath(resolved);
 		} catch {
-			// A path that does not exist yet cannot be deduped by inode; keep the
-			// resolved string so the later load reports the real error.
+			// A path that does not exist has no real path to compare, so fall
+			// back to the resolved string and let the later load report why.
 		}
 		if (!seen.has(key)) {
 			seen.add(key);
