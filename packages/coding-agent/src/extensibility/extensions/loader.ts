@@ -582,18 +582,31 @@ export async function discoverExtensionPaths(
 
 	const isDisabledName = (name: string): boolean => disabled.has(`extension-module:${name}`);
 
-	const addPath = (extPath: string): void => {
+	const addPath = async (extPath: string): Promise<void> => {
 		const resolved = path.resolve(extPath);
-		if (!seen.has(resolved)) {
-			seen.add(resolved);
+		// Dedup on the real path, not the literal string. `~/.tau` and `~/.omp`
+		// are symlinks to the same directory, so the same file reached through
+		// both roots produced two distinct resolved strings, both survived
+		// dedup, and the module body ran twice per session — every hook fired
+		// twice. The original path string is still what we hand downstream, so
+		// labels and error messages keep naming the path the user configured.
+		let key = resolved;
+		try {
+			key = await fs.realpath(resolved);
+		} catch {
+			// A path that does not exist yet cannot be deduped by inode; keep the
+			// resolved string so the later load reports the real error.
+		}
+		if (!seen.has(key)) {
+			seen.add(key);
 			allPaths.push(extPath);
 		}
 	};
 
-	const addPaths = (paths: string[]) => {
+	const addPaths = async (paths: string[]): Promise<void> => {
 		for (const extPath of paths) {
 			if (isDisabledName(getExtensionNameFromPath(extPath))) continue;
-			addPath(extPath);
+			await addPath(extPath);
 		}
 	};
 
@@ -610,7 +623,7 @@ export async function discoverExtensionPaths(
 			providers: ["native"],
 		});
 		for (const ext of discovered.items) {
-			addPath(ext.path);
+			await addPath(ext.path);
 		}
 	}
 
@@ -624,18 +637,18 @@ export async function discoverExtensionPaths(
 			for (const hookPath of hooks.items
 				.map(hook => hook.path)
 				.filter(hookPath => isExtensionFile(path.basename(hookPath)))) {
-				addPath(hookPath);
+				await addPath(hookPath);
 			}
 		}
 	} else {
 		for (const configuredPath of configuredPaths) {
-			addPaths(await discoverHooksInPackageRoot(resolvePath(configuredPath, cwd)));
+			await addPaths(await discoverHooksInPackageRoot(resolvePath(configuredPath, cwd)));
 		}
 	}
 
 	// 3. Discover extension entry points from installed plugins.
 	if (ambient) {
-		addPaths(await getAllPluginExtensionPaths(cwd));
+		await addPaths(await getAllPluginExtensionPaths(cwd));
 	}
 
 	// 4. Explicitly configured paths
@@ -650,11 +663,11 @@ export async function discoverExtensionPaths(
 		}
 
 		if (stat?.isDirectory()) {
-			addPaths(resolveExtensionDirectory(resolved, CONFIGURED_EXTENSION_DIRECTORY_OPTIONS).files);
+			await addPaths(resolveExtensionDirectory(resolved, CONFIGURED_EXTENSION_DIRECTORY_OPTIONS).files);
 			continue;
 		}
 
-		addPath(resolved);
+		await addPath(resolved);
 	}
 
 	return allPaths;
