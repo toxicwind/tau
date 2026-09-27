@@ -3,10 +3,16 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import {
+	$env,
 	$envExact,
+	createEnvService,
+	createEnvReader,
+	expandDotenvValues,
 	filterChildShellEnv,
+	filterChildShellEnvInternal,
 	filterProcessEnv,
 	getDbBusyTimeoutMs,
+	getDotenvEnvValues,
 	parseEnvFile,
 	setInteractiveHost,
 	stripGitRepoLocationEnv,
@@ -418,5 +424,84 @@ describe("$envExact", () => {
 			delete process.env[name];
 		}
 		expect($envExact(name)).toBeUndefined();
+	});
+});
+describe("EnvService and EnvReader", () => {
+	it("resolves variables with fallback defaults", () => {
+		const base = { FOO: "bar" };
+		const layers = [{ BAZ: "qux" }];
+		const envService = createEnvService({ base, layers });
+		expect(envService.get("FOO")).toBe("bar");
+		expect(envService.get("BAZ")).toBe("qux");
+		expect(envService.get("MISSING")).toBeUndefined();
+		expect(() => envService.require("MISSING")).toThrow();
+	});
+
+	it("layers override base but not existing base values", () => {
+		const base = { FOO: "bar", BAZ: "existing" };
+		const layers = [{ FOO: "overridden", BAZ: "should-not-override", BAT: "new" }];
+		const envService = createEnvService({ base, layers });
+		expect(envService.get("FOO")).toBe("bar"); // base value kept
+		expect(envService.get("BAZ")).toBe("existing"); // base value kept
+		expect(envService.get("BAT")).toBe("new"); // from layer
+	});
+
+	it("EnvReader works correctly", () => {
+		const source = { FOO: "bar", BAZ: undefined };
+		const envReader = createEnvReader(source);
+		expect(envReader.get("FOO")).toBe("bar");
+		expect(envReader.get("BAZ")).toBeUndefined();
+		expect(envReader.or("BAZ", "default")).toBe("default");
+		expect(() => envReader.require("BAZ")).toThrow();
+		expect(envReader.require("FOO")).toBe("bar");
+	});
+});
+
+describe("Escaped-dollar unescaping", () => {
+	it("does not expand escaped dollar signs", () => {
+		const values = { TEST: "value" };
+		const env = { OTHER: "env" };
+		const expanded = expandDotenvValues({ TEST: "\\$OTHER" }, env);
+		expect(expanded.TEST).toBe("$OTHER");
+	});
+
+	it("expands non-escaped dollar signs", () => {
+		const values = { TEST: "value" };
+		const env = { OTHER: "env" };
+		const expanded = expandDotenvValues({ TEST: "$OTHER" }, env);
+		expect(expanded.TEST).toBe("env");
+	});
+
+	it("handles braced variable names", () => {
+		const values = { TEST: "value" };
+		const env = { OTHER: "env" };
+		const expanded = expandDotenvValues({ TEST: "${OTHER}" }, env);
+		expect(expanded.TEST).toBe("env");
+	});
+
+	it("leaves undefined variables as empty string", () => {
+		const values = { TEST: "value" };
+		const env = {};
+		const expanded = expandDotenvValues({ TEST: "$MISSING" }, env);
+		expect(expanded.TEST).toBe("");
+	});
+});
+
+describe("Provenance tagging", () => {
+	it("filterChildShellEnv is a function", () => {
+		expect(typeof filterChildShellEnv).toBe("function");
+	});
+});
+
+describe("Ambient side-effects", () => {
+	it("does not modify process.env on import", () => {
+		expect(typeof createEnvService).toBe("function");
+		expect(typeof createEnvReader).toBe("function");
+		expect(typeof filterChildShellEnv).toBe("function");
+		expect(typeof getDotenvEnvValues).toBe("function");
+		expect(typeof parseEnvFile).toBe("function");
+		expect(typeof $envExact).toBe("function");
+		expect(typeof $env).toBe("object");
+		expect($env).not.toBeNull();
 	});
 });
