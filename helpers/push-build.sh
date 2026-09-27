@@ -6,7 +6,7 @@ REPO_NAME="$(basename "$REPO_DIR")"
 BUILDSRV_ROOT="${BUILDSRV_ROOT:-/home/toxic/buildsrv}"
 QUEUE_DIR="$BUILDSRV_ROOT/queue"
 
-mkdir -p "$QUEUE_DIR"
+mkdir -p "$QUEUE_DIR" mkdir -p "$QUEUE_DIR"mkdir -p "$QUEUE_DIR" mkdir -p "$(dirname "$QUEUE_DIR/${JOB_ID}.json")"
 
 COMMIT_SHA="$(git rev-parse HEAD 2>/dev/null || echo "manual")"
 

@@ -56,6 +56,7 @@ export interface Args {
 	fromCodex?: boolean;
 	help?: boolean;
 	version?: boolean;
+	tauVersion?: boolean;
 	mode?: Mode;
 	noSession?: boolean;
 	sessionDir?: string;
@@ -227,6 +228,8 @@ export function parseArgs(inputArgs: string[], extensionFlags?: Map<string, { ty
 			result.help = true;
 		} else if (arg === "--version" || arg === "-v") {
 			result.version = true;
+		} else if (arg === "--tau-version") {
+			result.tauVersion = true;
 		} else if (arg === "--allow-home") {
 			result.allowHome = true;
 		} else if (arg === "--profile" && i + 1 < args.length) {

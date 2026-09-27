@@ -296,6 +296,7 @@ export const PROFILE_BOOTSTRAP_BOUNDARY_ARG = "--omp-profile-boundary";
 export const VALUELESS_FLAGS: ReadonlySet<string> = new Set([
 	"--help",
 	"--version",
+	"--tau-version",
 	"--allow-home",
 	"--continue",
 	"--from-claude",

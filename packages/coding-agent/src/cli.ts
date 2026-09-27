@@ -563,11 +563,17 @@ export async function runCli(argv: string[]): Promise<void> {
 		resolvedArgv[0] === "-h" ||
 		resolvedArgv[0] === "--version" ||
 		resolvedArgv[0] === "-v" ||
+		resolvedArgv[0] === "--tau-version" ||
 		resolvedArgv[0] === "help";
 	await Promise.all([setFullProcessName(), helpOrVersion ? Promise.resolve() : installNetworkBootstrap()]);
 
 	if (resolvedArgv[0] === "--smoke-test") {
 		await runSmokeTest();
+		return;
+	}
+
+	if (resolvedArgv[0] === "--tau-version") {
+		console.log(VERSION);
 		return;
 	}
 

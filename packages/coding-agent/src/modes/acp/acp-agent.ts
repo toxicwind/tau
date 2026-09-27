@@ -637,7 +637,7 @@ export class AcpAgent implements Agent {
 			{
 				id: "agent",
 				name: "Use existing local credentials",
-				description: "Authenticate via the provider keys/OAuth state already configured under ~/.omp.",
+				description: "Authenticate via the provider keys/OAuth state already configured under ~/.tau.",
 			},
 		];
 		if (params.clientCapabilities?.auth?.terminal === true) {
@@ -652,8 +652,8 @@ export class AcpAgent implements Agent {
 		return {
 			protocolVersion: PROTOCOL_VERSION,
 			agentInfo: {
-				name: "oh-my-pi",
-				title: "omp",
+				name: "tau",
+				title: "tau",
 				version: VERSION,
 			},
 			authMethods,

@@ -9,4 +9,4 @@ while [ -L "$self" ]; do
 	esac
 done
 scripts_dir=$(CDPATH= cd -- "$(dirname -- "$self")" && pwd -P)
-exec "$scripts_dir/../dist/tau" "$@"
+exec "$scripts_dir/../dist/omp" "$@"

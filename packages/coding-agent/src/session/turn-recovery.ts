@@ -1320,6 +1320,22 @@ export class TurnRecovery {
 			this.#unexecutedToolCallsReplaySafe(message);
 		if (this.#hasReplayUnsafeOutput(message) && !replaySafeUnexecutedTools) return false;
 		if (AIError.is(id, AIError.Flag.AccountPolicy) || this.isClassifierRefusal(message)) return true;
+		if (
+			message.errorStatus === 404 ||
+			/\b(?:404|unavailable for free|use this slug instead|model not found|no such model)\b/i.test(
+				message.errorMessage ?? "",
+			)
+		) {
+			return true;
+		}
+		if (
+			message.errorStatus === 404 ||
+			/\b(?:404|unavailable for free|use this slug instead|model not found|no such model)\b/i.test(
+				message.errorMessage ?? "",
+			)
+		) {
+			return true;
+		}
 		return AIError.retriable(id);
 	}
 

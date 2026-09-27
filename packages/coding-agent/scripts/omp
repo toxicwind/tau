@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # First-class sovereign omp runner — prefers compiled maximal binary (dist/omp), falls back to dev runner
 set -euo pipefail
-FORK_ROOT="$HOME/sovereign/projects/tau/packages/coding-agent"
+FORK_ROOT="$HOME/sovereign/projects/range/ranch/stockyard/tau/packages/coding-agent"
 COMPILED="$FORK_ROOT/dist/omp"
 DEV_SCRIPT="$FORK_ROOT/scripts/omp"
 
