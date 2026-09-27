@@ -247,8 +247,10 @@ struct GrepArgs {
 	#[arg(short = 'z', long = "null-data")]
 	null_data: bool,
 
-
-	/// Accepted compatibility option with no effect.
+	/// Accepted and inert. This is the ONE deliberate no-op left in this
+	/// struct, and it is deliberate: GNU grep also treats `-u` as having no
+	/// effect on this platform, so ignoring it is faithful rather than a
+	/// silent gap. Every other unimplemented option is now rejected.
 	#[allow(dead_code, reason = "accepted GNU grep compatibility option")]
 	#[arg(short = 'u')]
 	unix_byte_offsets: bool,
