@@ -15,6 +15,7 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import { engines, version } from "../package.json" with { type: "json" };
+import versionJson from "../../coding-agent/src/generated/version.json" with { type: "json" };
 import { isEnoent, isEnotdir } from "./fs-error";
 
 /** App name (e.g. "omp") */
@@ -26,8 +27,9 @@ export const CONFIG_DIR_NAME: string = ".omp";
 /** Ordered main settings filenames: canonical write target first, legacy-compatible YAML fallback second. */
 export const MAIN_CONFIG_FILENAMES = ["config.yml", "config.yaml"] as const;
 
-/** Version (e.g. "1.0.0") */
-export const VERSION: string = version;
+export const SEMVER_VERSION = version;
+export const CANONICAL_VERSION = versionJson.canonical || versionJson.npm || version;
+export const VERSION = CANONICAL_VERSION;
 
 /** Default User-Agent header string (e.g. "omp/17.2.12") */
 export const USER_AGENT = `omp/${VERSION}`;
@@ -290,9 +292,21 @@ export function getSafeProjectCwd(): string {
 	return os.homedir();
 }
 
-/** Get the config directory name relative to home (e.g. ".omp" or PI_CONFIG_DIR override). */
+/**
+ * Get the config directory name relative to home (e.g. ".omp" or PI_CONFIG_DIR override).
+ *
+ * `PI_CONFIG_DIR` names a directory *relative to home* — callers join the result
+ * onto `homedir()` (see `getPluginsDir`, `getConfigAgentDirName`). An absolute
+ * value would therefore be joined onto home a second time and resolve to
+ * `/home/u/home/u/...`, silently forking the whole config tree: plugins,
+ * sessions, and the lockfile all land in a doubled path that nothing else reads.
+ * Reduce an absolute override to its final segment so the documented contract
+ * holds no matter how the variable was set.
+ */
 export function getConfigDirName(): string {
-	return process.env.PI_CONFIG_DIR || CONFIG_DIR_NAME;
+	const configured = process.env.PI_CONFIG_DIR?.trim();
+	if (!configured) return CONFIG_DIR_NAME;
+	return path.isAbsolute(configured) ? path.basename(configured) : configured;
 }
 
 /** Get the config agent directory name relative to home (e.g. ".omp/agent" or PI_CONFIG_DIR + "/agent"). */
