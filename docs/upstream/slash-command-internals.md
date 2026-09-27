@@ -237,6 +237,25 @@ TUI and ACP/RPC dispatch the shared built-in registry before `session.prompt(...
 
 `buildAvailableSlashCommands(...)` publishes commands first-wins in this order: text-capable built-ins, optional skill commands, extension commands, TypeScript/MCP custom commands, then discovered file commands. Built-in primary names and aliases are reserved; extension names such as `model:foo`, whose prefix parses as a built-in, are filtered from ACP availability. The same file-command load updates the session expansion set.
 
+### The TUI-only built-ins (never advertised over ACP)
+
+`buildAvailableSlashCommands` skips any spec with no text-mode `handle`
+(`src/slash-commands/available-commands.ts:47`, `if (!command.handle) continue;`),
+so the following are reachable in the TUI only. On an ACP/RPC client they are
+not listed, not dispatched, and not reserved, so their names stay available to
+an extension, custom, or file command that declares one.
+
+    settings, setup, plan, plan-review, vibe, goal, guided-goal, loop, queue,
+    collab, join, leave, copy, open, hotkeys, extensions, agents, git, hub,
+    branch, fork, tree, login, logout, new, clear, delete, resume, btw, tan,
+    omfg, cleanse, debug, exit, restart, skills, live, record, pause, quit
+
+Each of these needs a TUI surface to do its job, which is why none carries a
+text-mode `handle`. `/btw` and `/omfg` are the usual surprises: both are real
+and working in the TUI, and both are invisible over ACP. Before concluding a
+built-in is missing, check which surface you are on and whether the process is
+older than the current `dist/`.
+
 ## 8) Streaming-time differences vs idle
 
 ## Idle path
