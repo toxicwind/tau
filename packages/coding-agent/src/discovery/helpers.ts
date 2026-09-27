@@ -425,12 +425,34 @@ export interface ScanSkillsFromDirOptions {
 	 */
 	includeSelf?: boolean;
 	/**
+	 * Discover skills at any depth below `dir` instead of only its direct children.
+	 *
+	 * The Agent Skills spec defines a skill as a directory containing `SKILL.md`, and puts
+	 * organization *inside* a skill (`scripts/`, `references/`, `assets/`) rather than between
+	 * the root and the skill. So this walk treats "contains SKILL.md" as terminal: a skill
+	 * directory's own subdirectories are that skill's bundled resources and are never rescanned.
+	 * Without that rule `references/other/SKILL.md` would be promoted to a phantom second skill.
+	 *
+	 * Collections that group skills under a category layer (a repo of `<category>/<skill>/`)
+	 * become registrable with a single directory entry instead of one entry per category.
+	 * Default `false` preserves the strict depth-1 semantics.
+	 */
+	recursive?: boolean;
+	/** Depth limit applied when `recursive` is set. Defaults to {@link DEFAULT_SKILL_SCAN_DEPTH}. */
+	maxDepth?: number;
+	/**
 	 * Registry/CLI origin of the plugin root supplying these skills, forwarded
 	 * to {@link SourceMeta.origin} so user-scope gating can tell omp's own
 	 * installs (`omp`, `plugin-dir`) from the foreign Claude tree (`claude`).
 	 */
 	origin?: string;
 }
+
+/** How deep a `recursive` scan descends when no explicit `maxDepth` is given. */
+export const DEFAULT_SKILL_SCAN_DEPTH = 5;
+
+/** Directory names never descended into during a `recursive` scan. */
+const SKILL_SCAN_PRUNED_DIRS: Record<string, true> = { ".git": true, node_modules: true };
 
 // Stable ordering used for skill lists in prompts: name (case-insensitive), then name, then path.
 export function compareSkillOrder(aName: string, aPath: string, bName: string, bPath: string): number {
@@ -493,12 +515,49 @@ export async function scanSkillsFromDir(
 			work.push(loadSkill(selfSkillPath));
 		}
 	}
-	for (const entry of entries) {
-		if (entry.name.startsWith(".")) continue;
-		if (!entry.isDirectory() && !entry.isSymbolicLink()) continue;
-		const skillPath = path.join(dir, entry.name, "SKILL.md");
-		if (fs.existsSync(skillPath)) {
+	/**
+	 * Collect every `<dir>/<name>/SKILL.md`, descending past category directories but stopping
+	 * at the first ancestor that is itself a skill. Returns absolute paths in discovery order.
+	 */
+	const collectSkillPaths = async (root: string, maxDepth: number): Promise<string[]> => {
+		const found: string[] = [];
+		let frontier: Array<{ dir: string; depth: number }> = [{ dir: root, depth: 0 }];
+		while (frontier.length > 0) {
+			const next: Array<{ dir: string; depth: number }> = [];
+			for (const { dir: currentDir, depth } of frontier) {
+				if (depth > maxDepth) continue;
+				const children = await fs.promises.readdir(currentDir, { withFileTypes: true });
+				for (const child of children) {
+					if (child.name.startsWith(".") || SKILL_SCAN_PRUNED_DIRS[child.name]) continue;
+					if (!child.isDirectory() && !child.isSymbolicLink()) continue;
+					const childDir = path.join(currentDir, child.name);
+					const skillPath = path.join(childDir, "SKILL.md");
+					if (fs.existsSync(skillPath)) {
+						found.push(skillPath);
+						// A skill directory's subdirectories are its own bundled resources.
+						continue;
+					}
+					next.push({ dir: childDir, depth: depth + 1 });
+				}
+			}
+			frontier = next;
+		}
+		return found;
+	};
+
+	if (options.recursive) {
+		const maxDepth = options.maxDepth ?? DEFAULT_SKILL_SCAN_DEPTH;
+		for (const skillPath of await collectSkillPaths(dir, maxDepth)) {
 			work.push(loadSkill(skillPath));
+		}
+	} else {
+		for (const entry of entries) {
+			if (entry.name.startsWith(".")) continue;
+			if (!entry.isDirectory() && !entry.isSymbolicLink()) continue;
+			const skillPath = path.join(dir, entry.name, "SKILL.md");
+			if (fs.existsSync(skillPath)) {
+				work.push(loadSkill(skillPath));
+			}
 		}
 	}
 	await Promise.all(work);

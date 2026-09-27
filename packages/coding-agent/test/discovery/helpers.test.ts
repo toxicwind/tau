@@ -4,7 +4,7 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { clearCache } from "@oh-my-pi/pi-coding-agent/capability/fs";
 import type { LoadContext } from "@oh-my-pi/pi-coding-agent/capability/types";
-import { loadFilesFromDir } from "@oh-my-pi/pi-coding-agent/discovery/helpers";
+import { loadFilesFromDir, scanSkillsFromDir } from "@oh-my-pi/pi-coding-agent/discovery/helpers";
 import { parseFrontmatter, removeSyncWithRetries } from "@oh-my-pi/pi-utils";
 
 describe("parseFrontmatter", () => {
@@ -200,6 +200,79 @@ describe("loadFilesFromDir recursion", () => {
 		expect(await names(tempDir, true)).toEqual([
 			path.join("mineru", "Lib", "site-packages", "gradio", "assets", "svelte", "media-query-D37ajmZt.js"),
 			"my-tool.ts",
+		]);
+	});
+});
+
+describe("scanSkillsFromDir recursion", () => {
+	let tempDir!: string;
+	let ctx!: LoadContext;
+
+	const write = (rel: string) => {
+		const full = path.join(tempDir, rel);
+		fs.mkdirSync(path.dirname(full), { recursive: true });
+		fs.writeFileSync(
+			full,
+			`---\nname: ${path.basename(rel)}\ndescription: A skill used by the recursion tests.\n---\n# Body\n`,
+		);
+	};
+
+	beforeEach(() => {
+		clearCache();
+		tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "pi-scanskills-recursion-"));
+		ctx = { cwd: tempDir, home: tempDir, repoRoot: tempDir };
+		write(path.join("top-level", "SKILL.md"));
+		write(path.join("web", "frontend", "SKILL.md"));
+		write(path.join("web", "backend", "SKILL.md"));
+		// A skill's own subdirectories are bundled resources, not nested skills.
+		write(path.join("top-level", "references", "inner", "SKILL.md"));
+		write(path.join(".hidden", "SKILL.md"));
+		write(path.join("node_modules", "vendored", "SKILL.md"));
+	});
+
+	afterEach(() => {
+		clearCache();
+		removeSyncWithRetries(tempDir);
+	});
+
+	const names = (recursive?: boolean, maxDepth?: number) =>
+		scanSkillsFromDir(ctx, {
+			dir: tempDir,
+			providerId: "test",
+			level: "user",
+			recursive,
+			maxDepth,
+		}).then(r => r.items.map(i => path.relative(tempDir, i.path)).sort());
+
+	test("the default scan stays at depth 1", async () => {
+		expect(await names()).toEqual([path.join("top-level", "SKILL.md")]);
+	});
+
+	test("recursive:true descends past category directories", async () => {
+		expect(await names(true)).toEqual([
+			path.join("top-level", "SKILL.md"),
+			path.join("web", "backend", "SKILL.md"),
+			path.join("web", "frontend", "SKILL.md"),
+		]);
+	});
+
+	test("a skill directory is terminal, so bundled references are not phantom skills", async () => {
+		const found = await names(true);
+		expect(found.some(p => p.includes("references"))).toBe(false);
+	});
+
+	test("dot directories and node_modules are pruned", async () => {
+		const found = await names(true);
+		expect(found.some(p => p.startsWith(".hidden") || p.includes("node_modules"))).toBe(false);
+	});
+	test("maxDepth bounds how many directory levels get read", async () => {
+		// `maxDepth` counts the directories the scan opens. Reading only the
+		// root finds `top-level` and queues `web` unread, so 0 stops above it.
+		expect(await names(true, 0)).toEqual([path.join("top-level", "SKILL.md")]);
+		expect(await names(true, 1)).toEqual([
+			path.join("top-level", "SKILL.md"),
+			path.join("web", "backend", "SKILL.md"),
+			path.join("web", "frontend", "SKILL.md"),
 		]);
 	});
 });
