@@ -1,37 +1,20 @@
-# Upstream Merge Workflow — tau ↔ tau
+# Upstream Merge Workflow — tau ↔ oh-my-pi
 
-**Upstream:** https://github.com/can1357/oh-my-pi (`upstream` remote)
-**Fork point:** base `e16ba790b90fbdaf286da0a46b78291cc7088d92` (upstream 18.3.0-era, 2026-09-24)
-**Our HEAD:** see `.upstream-sync.json` + `packages/coding-agent/src/generated/version.json`
-**Upstream HEAD:** `b91db66e9b0` (upstream 18.10.4, as of 2026-10-14)
-
-> Live SHAs are pinned in `.upstream-sync.json`; the values above are the
-> snapshot that produced the current merge plan. Re-run `bun scripts/upstream-pull.ts`
-> to refresh them.
+**Upstream:** https://github.com/can1357/oh-my-pi
+**Fork point:** upstream tag `v18.3.0` (`62bc57be1b03ef0802a33cf7f5f530e534527531`)
+**Our HEAD:** `f46cc8d` (2026-09-30)
+**Upstream HEAD:** `2b023d1b80` (upstream 18.4.4, as of 2026-09-30)
 
 > **Correction (2026-09-30):** `MIRROR-DIFF-vs-upstream.md` (2026-09-19) names
 > `v18.1.18` as the fork point. This is wrong. Our initial commit
 > (`141e270e2c`, "Initial commit: Tau 18.3.0 monorepo") is a squash-import of
-> upstream `v18.3.0`. The true estate-scripts delta is **234 paths** (+2,111/−2,197
+> upstream `v18.3.0`. The true sovereign delta is **234 paths** (+2,111/−2,197
 > lines, excluding docs), not 398.
->
-> **Refinement (2026-10-14):** the exact seed commit is `e16ba790b9`
-> (2026-09-24), proven by lockfile-blob intersection (`Cargo.lock`,
-> `MODULE.bazel.lock`, `flake.lock`, `.bazelversion`, `rust-toolchain.toml`
-> all byte-identical, minimum tree distance 109 files vs 900–1,500 for
-> rivals). The lineage is welded with
-> `git replace --graft 141e270e2c e16ba790b9` — merge-base exists again, so
-> tooling that assumes ancestry (including this script's plan phase) works.
-> The replace ref is local; push it to origin if you ever rebuild the clone.
 
 ## Why `git merge` doesn't work
 
 This fork was created by **squashing upstream into a single commit** — there is
 no shared git history. `git merge-base origin/main upstream/main` returns empty.
-
-**(2026-10-14):** with the graft above, `git merge-base` returns `e16ba790b9`.
-Naked `git merge upstream/main` is still forbidden — the fork slimmed ~730k
-lines the seed carried; only `scripts/upstream-pull.ts` knows the path map.
 
 ```
 $ git merge-base origin/main upstream/main
@@ -53,7 +36,7 @@ It performs an ancestry-free three-way merge using the fork point as base.
    Pass `--record-base` to pin it in `.upstream-sync.json` for determinism.
 
 2. **Realign / Replay** — Our tree renames upstream packages
-   (`@tau/tau-coding-agent` → `tau`, 1,137 imports). The script rewrites our
+   (`@oh-my-pi/pi-coding-agent` → `tau`, 1,137 imports). The script rewrites our
    names back to upstream's in a staging copy, merges, then replays ours forward.
    The rename becomes invisible to the merge engine.
 
@@ -70,7 +53,7 @@ It performs an ancestry-free three-way merge using the fork point as base.
 
 ```bash
 # 1. Add the upstream remote (one-time)
-git remote add upstream https://github.com/toxicwind/tau.git
+git remote add upstream https://github.com/can1357/oh-my-pi.git
 
 # 2. Fetch upstream
 git fetch upstream
@@ -108,13 +91,13 @@ below for merging without them.
 ```
 Upstream pull plan
   base    dacdef24a3 (upstream 18.3.0)
-  ours    9c7643f91
-  theirs  40e9368ef (upstream 18.8.4)
+  ours    f46cc8d
+  theirs  2b023d1b (upstream 18.4.4)
   ancestry UNRELATED — git merge impossible, entity merge in use
 
 Manifest coherence:
   - packages/coding-agent/package.json: non-semver version
-    "tau/main-18.3.0-estate-scripts-tau-d83c686" breaks catalog: ranges
+    "tau/main-18.3.0-sovereign-tau-d83c686" breaks catalog: ranges
   - packages/metaharness/package.json: link: spec bypasses workspace
   - packages/typescript-edit-benchmark/package.json: link: spec bypasses workspace
 ```
@@ -135,7 +118,7 @@ If the merge tools aren't available, pull upstream changes manually:
 
 2. **For each upstream change**, decide:
    - **Security/bug fix** → cherry-pick the specific commit's changes manually
-   - **Feature we want** → port it, adapting to our renames (`tau` vs `@tau/...`)
+   - **Feature we want** → port it, adapting to our renames (`tau` vs `@oh-my-pi/...`)
    - **Feature we don't need** → skip, note in `.upstream-sync.json`
 
 3. **Our protected areas** (never overwrite with upstream):
@@ -158,7 +141,7 @@ If the merge tools aren't available, pull upstream changes manually:
 |----------|-------|---------|
 | New files (ours) | 23 | `tack.ts`, `tau` launcher, `sm86-moe-bench.ts`, scripts, assets, docs |
 | Modified files | 128 | Our patches to upstream code (+2,111/−2,197 lines) |
-| Dropped | ~1 | `crates/tau-natives/tools/cache` (build artifact) |
+| Dropped | ~1 | `crates/pi-natives/tools/cache` (build artifact) |
 | Docs (ours, not tracked upstream) | ~82 | We maintain our own `docs/` |
 
 Full file lists: run the diff yourself —
@@ -174,24 +157,6 @@ diff -r -q . /tmp/upstream-base --exclude=.git --exclude=node_modules \
 - **Don't chase every patch release** — our delta is small and stable
 - **Always dry-run first**, review the plan, then `--apply` on a feature branch
 - **Never merge directly to main** — use a `upstream-merge-YYYYMMDD` branch, test, then merge
-
-## Session log (2026-10-14): engines restored, base truthed
-
-- **Botched weave incident:** an undocumented naked merge staged 4,795 files of
-  line-soup; archived at `refs/archive/weave-botched-20261014`, tree reset.
-  Root causes: `.upstream-sync.json` recorded base `dacdef24` while our bytes
-  descend from `e16ba790b9` → every suture patch digest-mismatched (5,198
-  refusals). Lesson: **the recorded base must be the true content ancestor,
-  not the aspirational version tag.** Re-record with
-  `bun scripts/upstream-pull.ts --base <sha> --record-base`.
-- **Engines:** `weave-driver` (PATH) + `suture` v0.3.0 (`cargo install suture
-  --features cli` — the CLI hides behind the feature flag) both verified.
-- **fuse** (provasign, v0.13.3) evaluated as complementary entity merger;
-  config in `fuse.yaml`, agent bridge `scripts/fuse-agent.sh` → local
-  beellama endpoint (port SSOT). Synthetic TS conflict auto-merged at 0.95
-  confidence.
-- **git-mutator** gained scoped `commit "<msg>" [paths...]` (audit → stage
-  paths → commit, no push) after a commit-push swept 9 unrelated staged files.
 
 ## Files
 
