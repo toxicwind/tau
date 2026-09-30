@@ -16,9 +16,6 @@
 // passes there and 400s here; `medium` is the reverse, both measured live
 // 2026-09-22) and neither key works on the other host.
 provider "singularityapi-dev" {
-	default-model "deepseek-v4-flash"
-	env "SINGULARITYAPI_DEV_API_KEY"
-	dynamic-models-authoritative #true
 
 	// Gateway-wide request shape, from the OpenAI-compatibility contract
 	// (docs.singularityapi.dev/get-started/open-ai-compatibility): chat

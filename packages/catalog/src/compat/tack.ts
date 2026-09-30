@@ -811,6 +811,53 @@ const DEEPINFRA_SEED: CompiledSeed = {
 	],
 };
 
+
+/**
+ * firepass: authored seed rows, transcribed from compiled rules.json
+ * (sourced from providers/firepass.kdl seed block).
+ * bundle="fallback" precedence="upstream".
+ */
+const FIREPASS_SEED: CompiledSeed = {
+	bundle: "fallback",
+	precedence: "upstream",
+	models: [
+		{
+			id: "glm-5.2-fast",
+			name: "GLM 5.2 Fast (Fire Pass)",
+			api: "openai-completions",
+			provider: "firepass",
+			baseUrl: "https://api.fireworks.ai/inference/v1",
+			reasoning: true,
+			input: ["text"],
+			cost: {
+				input: 2.1,
+				output: 6.6,
+				cacheRead: 0.21,
+				cacheWrite: 0,
+			},
+			contextWindow: 1048576,
+			maxTokens: 131072,
+		},
+		{
+			id: "kimi-k3-fast",
+			name: "Kimi K3 Fast (Fire Pass)",
+			api: "openai-completions",
+			provider: "firepass",
+			baseUrl: "https://api.fireworks.ai/inference/v1",
+			reasoning: true,
+			input: ["text", "image"],
+			cost: {
+				input: 4.5,
+				output: 22.5,
+				cacheRead: 0.45,
+				cacheWrite: 0,
+			},
+			contextWindow: 1048576,
+			maxTokens: 131072,
+		},
+	],
+};
+
 /**
  * gmi-cloud: authored seed rows, transcribed from compiled rules.json
  * (sourced from providers/gmi-cloud.kdl `seed` block).
@@ -1564,6 +1611,10 @@ const TAU_PROVIDER_POLICY: Readonly<Record<string, TauProviderPolicy>> = {
 			label: "DeepSeek",
 		},
 	},
+	firepass: {
+		defaultModel: "glm-5.2-fast",
+		seed: FIREPASS_SEED,
+	},
 	fireworks: {
 		defaultModel: "kimi-k2.7-code",
 		discovery: {
@@ -1650,6 +1701,14 @@ const TAU_PROVIDER_POLICY: Readonly<Record<string, TauProviderPolicy>> = {
 	},
 	"siliconflow-cn": {
 		defaultModel: "deepseek-ai/DeepSeek-V4-Pro",
+		dynamicModelsAuthoritative: true,
+	},
+	"singularityapi-dev": {
+		defaultModel: "deepseek-v4-flash",
+		dynamicModelsAuthoritative: true,
+	},
+	"singularityapi-tech": {
+		defaultModel: "deepseek-ai/DeepSeek-V4.1-Flash",
 		dynamicModelsAuthoritative: true,
 	},
 	stepfun: {

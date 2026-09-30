@@ -18,9 +18,6 @@
 // authoritative cache on both the resolved credential and the endpoint;
 // `dynamic-models-authoritative` prunes stale rows.
 provider "singularityapi-tech" {
-	default-model "deepseek-ai/DeepSeek-V4.1-Flash"
-	env "SINGULARITYAPI_TECH_API_KEY"
-	dynamic-models-authoritative #true
 
 	// Gateway-wide request shape. The deployment fronts DeepSeek lanes only and
 	// its front end takes `max_tokens`, returning reasoning as top-level
