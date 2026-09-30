@@ -19,12 +19,16 @@ const authIdsPath = path.join(import.meta.dir, "../src/compat/auth-ids.ts");
 const providerIdsPath = path.join(import.meta.dir, "../src/compat/provider-ids.ts");
 
 const compiled = await compileCompatRules(rulesDir);
+// Resolve tack BEFORE any writes: tackProviderEntries() is the fallible step
+// (module resolution + drift checks), and writing outputs first would leave a
+// partially updated tree (fresh rules.json, stale provider-ids.ts) on failure.
+const tackEntries = tackProviderEntries();
 await Bun.write(outPath, JSON.stringify(compiled));
 await Bun.write(authIdsPath, renderAuthIds(compiled.auth));
 // KnownProvider is the union of KDL-compiled and tack-sourced catalog
 // provider ids — tack is the data authority for its providers.
 const providersForIds: Record<string, CompiledProvider> = { ...compiled.providers };
-for (const [id, entry] of Object.entries(tackProviderEntries())) providersForIds[id] = entry;
+for (const [id, entry] of Object.entries(tackEntries)) providersForIds[id] = entry;
 await Bun.write(providerIdsPath, renderProviderIds(providersForIds));
 console.log(
 	`wrote ${path.relative(process.cwd(), outPath)} (${compiled.cascade.rules.length} rules, ${compiled.taxonomy.classes.length} classes, ${Object.keys(providersForIds).length} catalog providers (${TACK_PROVIDER_IDS.length} tack-sourced), ${compiled.auth.providers.length} auth providers, ${compiled.files.length} files)`,

@@ -31,11 +31,48 @@
  * Import path note: tau is its own repo (`toxicwind/tau`) nested inside the
  * ranch monorepo, so this reaches tack via a relative import — the same
  * pattern the sovereign router uses (`tools/sovereign-router/
- * sovereign-router-ts/router_live_models.ts`).
+ * sovereign-router-ts/router_live_models.ts`). A standalone `toxicwind/tau`
+ * checkout cannot resolve that path, so `resolveTackModule()` below falls
+ * back to the `@ranch/tack` package and finally to an actionable error
+ * naming both candidates (instead of a bare "Cannot find module").
  */
-import { PROVIDER_DEFS } from "../../../../../tack/src/index.ts";
 import type { Api, KindApiKind } from "../types";
 import type { CompiledProvider, CompiledProviderDiscovery, CompiledSeed, CompiledSeedModel } from "./types";
+
+/** Minimal structural view of a tack provider definition (the fields this module reads). */
+interface TackProviderDef {
+	name: string;
+	keyEnv: string;
+	keyEnvAlt?: string;
+	auth?: string;
+}
+
+/**
+ * Resolves tack's provider definitions through a fallback chain (a fallback,
+ * not a rollback — every candidate is tack, the authority; there is no legacy
+ * duplicate to fall back to):
+ * 1. ranch monorepo layout (`ranch/tau/` alongside `ranch/tack/`) — production.
+ * 2. the `@ranch/tack` package — standalone `toxicwind/tau` checkouts.
+ * Otherwise throws an actionable error naming both candidates.
+ */
+async function resolveTackModule(): Promise<{ PROVIDER_DEFS: TackProviderDef[] }> {
+	const candidates = ["../../../../../tack/src/index.ts", "@ranch/tack"];
+	const failures: string[] = [];
+	for (const specifier of candidates) {
+		try {
+			return (await import(specifier)) as { PROVIDER_DEFS: TackProviderDef[] };
+		} catch (err) {
+			failures.push(`${specifier} (${err instanceof Error ? err.message : String(err)})`);
+		}
+	}
+	throw new Error(
+		`[tack] provider definitions not found — tried ${failures.join("; ")}. ` +
+			`Check out tau nested inside the ranch monorepo (ranch/tau alongside ranch/tack), ` +
+			`or install the @ranch/tack package.`,
+	);
+}
+
+const { PROVIDER_DEFS } = await resolveTackModule();
 
 /** Tau-side catalog policy for one tack-sourced provider. */
 interface TauProviderPolicy {
@@ -1805,7 +1842,16 @@ export function tackProviderEntries(): Record<string, CompiledProvider> {
 	for (const id of TACK_PROVIDER_IDS) {
 		const def = defs.get(id);
 		if (!def) {
-			throw new Error(`tack provider policy for "${id}" has no PROVIDER_DEFS definition — tack is the authority`);
+			// Fallback, not rollback: skip the drifted provider with a loud
+			// warning instead of killing the entire catalog (or restoring
+			// duplicated KDL authority). Tack is the source of truth — the
+			// provider stays absent until tack defines it or the policy entry
+			// is removed.
+			console.error(
+				`[tack] DRIFT: provider policy for "${id}" has no PROVIDER_DEFS definition — skipping. ` +
+					`Add the definition to ranch/tack or remove the entry from TAU_PROVIDER_POLICY.`,
+			);
+			continue;
 		}
 		const policy = TAU_PROVIDER_POLICY[id]!;
 		const envVars = [def.keyEnv, ...(def.keyEnvAlt ? [def.keyEnvAlt] : [])];
