@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Tau Launcher — modular, multi-user, multi-LLM
 #
-# Canonical engine: sovereign/projects/range/ranch/stockyard/tau
+# Canonical engine: sovereign/projects/range/ranch/tau
 # Collapse chain (first hit wins):
 #   1. $TAU_BIN (explicit override)
 #   2. Installed `tau` on PATH (not this script — avoids recursion)
@@ -23,7 +23,7 @@
 set -euo pipefail
 
 # Resolve symlinks so the launcher works when invoked via a symlink
-# (e.g. sovereign/bin/tau -> stockyard/tau/launcher/tau); helpers like
+# (e.g. sovereign/bin/tau -> ranch/tau/launcher/tau); helpers like
 # tau-tmux.sh and tau-audit.sh live beside the REAL script, not the link.
 _TAU_SRC="$0"
 while [ -L "$_TAU_SRC" ]; do
@@ -62,11 +62,12 @@ set -u
 # PI_CONFIG_DIR stays bare: engine joins onto homedir internally.
 export PI_CONFIG_DIR=".tau"
 
-# ── Engine resolution (stockyard is canonical) ────────────────────────
+# ── Engine resolution (ranch/tau is canonical post-flatten) ───────────────
 SOVEREIGN_DIR="$TAU_HOME/sovereign"
 
 resolve_engine() {
     local candidates=(
+        "$SOVEREIGN_DIR/projects/range/ranch/tau"
         "$SOVEREIGN_DIR/projects/range/ranch/stockyard/tau"
         "$SOVEREIGN_DIR/projects/tau/engine"
         "$SOVEREIGN_DIR/tau/engine"
@@ -82,6 +83,7 @@ resolve_engine() {
 ENGINE_DIR="$(resolve_engine || true)"
 if [ -z "${ENGINE_DIR:-}" ]; then
     echo "tau: no engine found. Checked:" >&2
+    echo "  $SOVEREIGN_DIR/projects/range/ranch/tau" >&2
     echo "  $SOVEREIGN_DIR/projects/range/ranch/stockyard/tau" >&2
     echo "  $SOVEREIGN_DIR/projects/tau/engine" >&2
     echo "  $SOVEREIGN_DIR/tau/engine" >&2

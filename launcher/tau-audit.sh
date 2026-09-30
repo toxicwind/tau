@@ -20,8 +20,8 @@ BIN=""
 if [ -n "${TAU_BIN:-}" ] && [ -x "$TAU_BIN" ]; then BIN="$TAU_BIN (TAU_BIN)"; fi
 SOV="$TAU_HOME/sovereign"
 if [ -z "$BIN" ]; then
-  # Candidate order mirrors the launcher's resolve_engine (stockyard is canonical).
-  for d in "$SOV/projects/range/ranch/stockyard/tau" "$SOV/projects/tau/engine" "$SOV/tau/engine"; do
+  # Candidate order mirrors the launcher's resolve_engine (ranch/tau is canonical).
+  for d in "$SOV/projects/range/ranch/tau" "$SOV/projects/range/ranch/stockyard/tau" "$SOV/projects/tau/engine" "$SOV/tau/engine"; do
     if [ -x "$d/packages/coding-agent/dist/omp" ]; then BIN="$d/packages/coding-agent/dist/omp"; break; fi
   done
 fi
@@ -29,7 +29,7 @@ if [ -n "$BIN" ]; then
   ver="$($BIN --version 2>/dev/null | head -1 || echo '?')"
   ok "engine resolves: $BIN [$ver]"
 else
-  fail "no engine binary found (checked TAU_BIN, stockyard/tau, projects/tau/engine, tau/engine)"
+  fail "no engine binary found (checked TAU_BIN, ranch/tau, stockyard/tau, projects/tau/engine, tau/engine)"
 fi
 
 # 2. config.yml parses ---------------------------------------------------------
@@ -96,20 +96,22 @@ if [ -f "$TAU_HOME/.tau/profiles/default.yml" ]; then ok "default profile presen
 if [ -n "$BIN" ] && [[ "$BIN" == *sovereign* ]]; then
   engdir="$(echo "$BIN" | sed 's|/packages/coding-agent/dist/omp||')"
   if git -C "$engdir" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-    br="$(git -C "$SOV" rev-parse --abbrev-ref HEAD 2>/dev/null)"
-    behind="$(git -C "$SOV" rev-list --count HEAD..origin/main 2>/dev/null || echo '?')"
-    dirty="$(git -C "$SOV" status --porcelain -- projects/tau 2>/dev/null | wc -l)"
+    br="$(git -C "$engdir" rev-parse --abbrev-ref HEAD 2>/dev/null)"
+    behind="$(git -C "$engdir" rev-list --count HEAD..origin/main 2>/dev/null || echo '?')"
+    dirty="$(git -C "$engdir" status --porcelain 2>/dev/null | wc -l)"
     [ "$behind" = "0" ] && ok "engine tree on $br, at origin/main" || warn "engine tree on $br, $behind behind origin/main (shared tree — informational)"
-    [ "$dirty" = "0" ] && ok "engine tree clean" || warn "$dirty dirty files under projects/tau (other workers' WIP — left alone)"
+    [ "$dirty" = "0" ] && ok "engine tree clean" || warn "$dirty dirty files in engine tree (other workers' WIP — left alone)"
   fi
 fi
 
 # 6. launcher drift: live vs repo canonical ------------------------------------
-LIVE="$HOME/.local/bin/tau"
-REPO_LAUNCHER="$SOV/projects/tau/launcher/tau"
+# Live launcher = sovereign/bin/tau (resolves to ranch/tau/launcher/tau).
+LIVE="$(readlink -f "$SOV/bin/tau" 2>/dev/null || echo "$HOME/.local/bin/tau")"
+REPO_LAUNCHER="$SOV/projects/range/ranch/tau/launcher/tau"
 if [ -f "$REPO_LAUNCHER" ]; then
-  if cmp -s "$LIVE" "$REPO_LAUNCHER"; then ok "live launcher matches repo canonical"
-  else warn "live launcher differs from repo canonical (drift — reinstall from projects/tau/launcher/)"; fi
+  if [ "$LIVE" = "$REPO_LAUNCHER" ]; then ok "live launcher is repo canonical ($LIVE)"
+  elif [ -f "$LIVE" ] && cmp -s "$LIVE" "$REPO_LAUNCHER"; then ok "live launcher matches repo canonical"
+  else warn "live launcher ($LIVE) differs from repo canonical — reinstall from ranch/tau/launcher/"; fi
 else
   warn "repo canonical launcher not found at $REPO_LAUNCHER"
 fi
