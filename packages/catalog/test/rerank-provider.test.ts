@@ -3,7 +3,7 @@ import * as path from "node:path";
 import { buildModel } from "@oh-my-pi/pi-catalog/build";
 import type { ModelSpec } from "@oh-my-pi/pi-catalog/types";
 import { compileCompatRules } from "../scripts/compat-compiler";
-import { remudaProviderEntries } from "../src/compat/remuda";
+import { tackProviderEntries } from "../src/compat/tack";
 
 const RULES_DIR = path.join(import.meta.dir, "../src/compat/rules");
 
@@ -11,8 +11,8 @@ describe("rerank catalog policy", () => {
 	test("OpenRouter's documented rerank seed resolves onto the rerank runner", async () => {
 		const rules = await compileCompatRules(RULES_DIR);
 		// openrouter's entry (kindApis + seed rows) now comes from
-		// `@ranch/remuda` via `src/compat/remuda.ts`; remuda wins on conflict.
-		const provider = remudaProviderEntries()["openrouter"] ?? rules.providers.openrouter;
+		// `@ranch/tack` via `src/compat/tack.ts`; tack wins on conflict.
+		const provider = tackProviderEntries()["openrouter"] ?? rules.providers.openrouter;
 		if (!provider?.seed) throw new Error("openrouter has no catalog seed");
 		expect(provider.kindApis?.rerank).toBe("openrouter-rerank");
 		const models = provider.seed.models

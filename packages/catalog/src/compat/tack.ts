@@ -1,42 +1,43 @@
 /**
- * remuda — tau's provider-data authority.
+ * tack — tau's provider-data authority.
  *
- * `@ranch/remuda` (`ranch/remuda`) is the single source of truth for provider
- * wire data across the sovereign estate: base URLs, key env vars, auth
- * schemes, `/models` endpoint adapters, aliases, and cold-start seeds. Tau
- * consumes it here and projects each definition onto the `CompiledProvider`
- * shape the catalog engine (`provider-models/descriptors.ts`,
- * `scripts/generate-models.ts`) already understands.
+ * `@ranch/tack` (`ranch/tack`, contract `ranch-tack/live-catalog/v1`) is the
+ * single source of truth for provider wire data across the sovereign estate:
+ * base URLs, key env vars, auth schemes, `/models` endpoint adapters,
+ * aliases, and cold-start seeds. Tau consumes it here and projects each
+ * definition onto the `CompiledProvider` shape the catalog engine
+ * (`provider-models/descriptors.ts`, `scripts/generate-models.ts`)
+ * already understands.
  *
  * What lives where:
- * - `ranch/remuda` `PROVIDER_DEFS` — provider wire data (`baseUrl`, `keyEnv`,
+ * - `ranch/tack` `PROVIDER_DEFS` — provider wire data (`baseUrl`, `keyEnv`,
  *   `keyEnvAlt`, `auth`, `adapter`, `modelsPath`, `seeds`). The authority;
- *   never duplicated here. A provider remuda drops stops being a tau catalog
+ *   never duplicated here. A provider tack drops stops being a tau catalog
  *   provider — the builder below throws on drift.
- * - `TAU_PROVIDER_POLICY` — tau-side catalog policy for remuda-sourced
+ * - `TAU_PROVIDER_POLICY` — tau-side catalog policy for tack-sourced
  *   providers: default model, kind→API mapping, discovery flags, and the
  *   authored seed rows (model metadata: cost/limits/input). Transcribed
  *   verbatim from the retired KDL catalog nodes; the
  *   `src/compat/rules/providers/<id>.kdl` files keep only their cascade
  *   wire-compat rules.
  * - `src/compat/rules/providers/*.kdl` — cascade (wire-compat) rules for every
- *   provider, plus catalog entries for providers remuda does not cover yet
- *   (legacy rump, shrinking as remuda curates them).
+ *   provider, plus catalog entries for providers tack does not cover yet
+ *   (legacy rump, shrinking as tack curates them).
  *
  * `src/compat/providers.ts` merges these entries over the KDL-compiled ones;
- * remuda wins on id conflict (there are none by construction — the KDL
+ * tack wins on id conflict (there are none by construction — the KDL
  * catalog nodes for covered providers were deleted).
  *
  * Import path note: tau is its own repo (`toxicwind/tau`) nested inside the
- * ranch monorepo, so this reaches remuda via a relative import — the same
+ * ranch monorepo, so this reaches tack via a relative import — the same
  * pattern the sovereign router uses (`tools/sovereign-router/
  * sovereign-router-ts/router_live_models.ts`).
  */
-import { PROVIDER_DEFS } from "../../../../../remuda/src/index.ts";
+import { PROVIDER_DEFS } from "../../../../../tack/src/index.ts";
 import type { Api, KindApiKind } from "../types";
 import type { CompiledProvider, CompiledProviderDiscovery, CompiledSeed, CompiledSeedModel } from "./types";
 
-/** Tau-side catalog policy for one remuda-sourced provider. */
+/** Tau-side catalog policy for one tack-sourced provider. */
 interface TauProviderPolicy {
 	/** Preferred model id when no explicit selection is made (tau UX policy). */
 	defaultModel: string;
@@ -231,10 +232,10 @@ const OPENROUTER_SEED: CompiledSeed = {
 };
 
 /**
- * Tau catalog policy for remuda-sourced providers, keyed by provider id.
- * Every key MUST name a definition in remuda's `PROVIDER_DEFS` (checked at
- * build time below); every other remuda definition (llama-swap, nim-local,
- * kimi-auto — sovereign-router-local concepts remuda itself flags
+ * Tau catalog policy for tack-sourced providers, keyed by provider id.
+ * Every key MUST name a definition in tack's `PROVIDER_DEFS` (checked at
+ * build time below); every other tack definition (llama-swap, nim-local,
+ * kimi-auto — sovereign-router-local concepts tack itself flags
  * `routerLocal`) stays out of tau's catalog by design.
  *
  * Values transcribed verbatim from the retired KDL catalog nodes
@@ -274,24 +275,22 @@ const TAU_PROVIDER_POLICY: Readonly<Record<string, TauProviderPolicy>> = {
 	},
 };
 
-/** Provider ids whose catalog entries are sourced from remuda (sorted). */
-export const REMUDA_PROVIDER_IDS: readonly string[] = Object.keys(TAU_PROVIDER_POLICY).sort();
+/** Provider ids whose catalog entries are sourced from tack (sorted). */
+export const TACK_PROVIDER_IDS: readonly string[] = Object.keys(TAU_PROVIDER_POLICY).sort();
 
 /**
- * Projects remuda's provider definitions onto tau's `CompiledProvider` shape.
- * Wire data (env vars, auth posture, discovery label seed) comes from remuda;
+ * Projects tack's provider definitions onto tau's `CompiledProvider` shape.
+ * Wire data (env vars, auth posture, discovery label seed) comes from tack;
  * tau catalog policy (default model, kind APIs, discovery flags, seed rows)
  * comes from `TAU_PROVIDER_POLICY`.
  */
-export function remudaProviderEntries(): Record<string, CompiledProvider> {
+export function tackProviderEntries(): Record<string, CompiledProvider> {
 	const defs = new Map(PROVIDER_DEFS.map(def => [def.name, def]));
 	const entries: Record<string, CompiledProvider> = {};
-	for (const id of REMUDA_PROVIDER_IDS) {
+	for (const id of TACK_PROVIDER_IDS) {
 		const def = defs.get(id);
 		if (!def) {
-			throw new Error(
-				`remuda provider policy for "${id}" has no PROVIDER_DEFS definition — remuda is the authority`,
-			);
+			throw new Error(`tack provider policy for "${id}" has no PROVIDER_DEFS definition — tack is the authority`);
 		}
 		const policy = TAU_PROVIDER_POLICY[id]!;
 		const envVars = [def.keyEnv, ...(def.keyEnvAlt ? [def.keyEnvAlt] : [])];

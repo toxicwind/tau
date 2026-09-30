@@ -1,8 +1,8 @@
 /**
  * Runtime model-manager factories for catalog providers. Everything else a
  * provider entry carries — default model, env keys, discovery wiring, seed
- * rows — comes from `@ranch/remuda` for remuda-sourced providers
- * (`src/compat/remuda.ts`), from `src/compat/rules/providers/<id>.kdl` for the
+ * rows — comes from `@ranch/tack` for tack-sourced providers
+ * (`src/compat/tack.ts`), from `src/compat/rules/providers/<id>.kdl` for the
  * remaining KDL-catalog providers, and is read from the merged entry
  * (`src/compat/providers.ts`); this table holds only the code half.
  * Providers without a factory (`amazon-bedrock`, `azure`,
