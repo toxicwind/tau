@@ -1,201 +1,156 @@
+<div align="right">
+
+[![tau 18.3.0](https://img.shields.io/badge/tau-18.3.0-CB3837?style=for-the-badge)](https://github.com/toxicwind/tau)
+![Sovereign Ranch fork](https://img.shields.io/badge/fork-Sovereign%20Ranch-E05735?style=for-the-badge)
+![Bun runtime](https://img.shields.io/badge/runtime-Bun-f472b6?style=for-the-badge&logo=bun&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![Rust](https://img.shields.io/badge/Rust-DEA584?style=for-the-badge&logo=rust&logoColor=white)
+![MIT license](https://img.shields.io/badge/license-MIT-58A6FF?style=for-the-badge)
+
+</div>
+
+# tau
+
+> **τ — the Sovereign Ranch coding agent.** A terminal coding agent with the ranch wired in: an interactive CLI + SDK, a multi-provider LLM brain, a native Rust hot path, zero hardcoded ports, supervised daemons, and a source-owned model router.
+
 <p align="center">
   <img src="./assets/tau-hero.png" alt="tau" width="600">
 </p>
 
-<h1 align="center">tau</h1>
-<p align="center">
-  <strong>τ — the Sovereign Ranch runtime. A coding agent with the herd wired in.</strong><br/>
-  <em>Fork of <a href="https://github.com/can1357/oh-my-pi">can1357/oh-my-pi</a> • v18.3.0 • 60+ providers • 31 tools • ~80k Rust</em>
-</p>
+**What it is:** tau is a coding agent that lives in your terminal — `read`, `bash`, `edit`, `write` tools, session management, subagents, LSP-aware editing, a real debugger, web search, and GitHub integration. It speaks to 69 providers through a compiled model catalog with per-role model routing, and it does the fast work in-process through N-API native bindings instead of fork/exec.
 
-<p align="center">
-  <a href="https://www.npmjs.com/package/@oh-my-pi/pi-coding-agent"><img src="https://img.shields.io/badge/npm-tau%2018.3.0-CB3837?style=flat&colorA=222222" alt="tau version"></a>
-  <img src="https://img.shields.io/badge/fork-Sovereign%20Ranch-E05735?style=flat&colorA=222222" alt="Sovereign Ranch">
-  <img src="https://img.shields.io/badge/runtime-Bun-f472b6?style=flat&colorA=222222" alt="Bun">
-  <img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat&colorA=222222&logo=typescript&logoColor=white" alt="TS">
-  <img src="https://img.shields.io/badge/Rust-DEA584?style=flat&colorA=222222&logo=rust&logoColor=white" alt="Rust">
-  <img src="https://img.shields.io/badge/license-MIT-58A6FF?style=flat&colorA=222222" alt="MIT">
-</p>
+**Why the fork exists:** upstream [oh-my-pi](https://github.com/can1357/oh-my-pi) gives you a coding agent. Tau gives you a **ranch** — an immutable pinned launcher that auto-update can't clobber, a single source of truth for ports (`config/ports.env`, zero hardcoded ports in code), pitchfork-supervised daemons, a source-owned OpenAI-compatible router (VansRouter on `:20128`), and a build queue that fires from a git hook.
 
-<p align="center">
-  <code>~/sovereign/projects/range/ranch/stockyard/tau</code> • <code>forge/gate-r:main</code> • built by toxic @ awrawr-pc
-</p>
+**Who it's for:** Sovereign Ranch operators who want the agent wired into their own mesh — and anyone who runs oh-my-pi and wants the ranch batteries.
 
 ---
 
-### Sovereign / Ranch — What Makes Tau Tau
+## Features
 
-> Upstream gives you a coding agent. Tau gives you a **ranch** — immutable binaries, port SSOT, mesh-aware daemons, and source-owned model routing.
+- **Interactive CLI + SDK** — the `tau` package (`packages/coding-agent`) ships the `omp` binary (`src/cli.ts`) plus a programmatic SDK: "Coding agent CLI with read, bash, edit, write tools and session management."
+- **Multi-provider LLM client** — `packages/ai` with role-based model routing: `smol`, `slow`, `plan`, `vision`, `task`, `advisor`, `tiny` (plus the base role); CLI flags `--smol`, `--slow`, `--plan`.
+- **69 providers, compiled catalog** — `packages/catalog` holds the provider census (`models.json`) and KDL compat/auth rules (`src/compat/rules/**/*.kdl`) compiled to `rules.json`; the fork's sovereign delta flips the NVIDIA default model to `openai/gpt-oss-20b`.
+- **30+ documented tools** — one doc per tool under `docs/tools/`: `bash`, `read`, `write`, `edit`, `grep`, `glob`, `task`, `lsp`, `debug`, `browser`, `computer`, `web_search`, `github`, `tts`, `memory_edit`, `checkpoint`, `rewind`, `ask`, `learn`, `eval`, `ast-grep`, `ast-edit`, `security_scan`, `todo`, and more.
+- **First-class subagents** — `task` fans out into isolated worktrees with typed results back (`packages/agent`).
+- **Native hot path** — `crates/pi-natives` N-API bindings (prebuilt `pi_natives.linux-x64-{baseline,modern}.node` addons), `pi-shell` in-process shell runtime, `pi-builtins` (`grep`, `sed`, `cat`, `find`, `fd`, `rg`, `head`, `tail`, `tee`, `cut`, `date`, `ps`, `top`, `seq`, `yes`) — no fork/exec on the hot path.
+- **AST-native editing** — `pi-ast` syntax layer with `pi-edit`/`pi-diff` surgical application; `ast-grep`/`ast-edit` tools.
+- **Git + jj, native** — `crates/pi-vcs` drives both `git` and `jj` (diff, mutate, patch, read ops).
+- **Copy-on-write file ops** — `crates/pi-iso` (`apfs.rs`, `linux_reflink.rs`, `windows_block_clone.rs`): reflinks where the filesystem allows.
+- **Voice I/O** — `crates/pi-voice` for speech device handling.
+- **Hedged streaming** — `packages/ai/src/utils/hedged-stream.ts`: if the leading request stalls past `hedgeStallMs`, a duplicate of the *same* request fires in parallel; first completion wins, losers abort. Never falls back to another model or provider. Kill switch: `PI_STREAM_HEDGE_ENABLED=0`.
+- **Refactored auth storage** — `packages/ai/src/auth/`: OAuth refresh leases (`oauth-refresh-support.ts`), the credential storage contract (`storage-contract.ts`), a usage-metering cache (`usage-cache-impl.ts`), and usage metrics/ranking (`usage-metrics.ts`).
+- **Collab links** — `packages/collab-web`: `/collab` → link + QR, join via `omp join` or browser, read-write or view-only; Kimi transport lets the UI drive Moonshot's `kimi-code` backend (`KIMI_TRANSPORT.md`).
+- **No monkey patching, ever** — the Sovereign pre-release integration engine resolves hotfixes through `hotfixRegistry.resolve(target, default)` + `patches/*.ts` persistent overrides + `fs.watch` live reload (see `docs/PRE_RELEASE_INTEGRATION_ENGINE.md`).
+- **VansRouter integration** — `config/tau/extensions/vansrouter.ts`: source-owned OpenAI-compatible router on `:20128`, canonical `.secrets` loading (`VANSROUTER_API_KEY` / `API_KEY_SECRET`), collapses `nvidia/nvidia/foo` → `nvidia/foo`.
+- **Immutable binary pinning** — `bin/omp-pin` (→ `scripts/omp-pin`): hardened launcher that resolves the fork root via `git rev-parse --show-toplevel`, `realpath`-checks it stays inside, and refuses to fall through to PATH. Auto-update can't clobber it.
+- **CI/CD push-building** — `scripts/push-build.sh`: git hook detects the toolchain (bun/rust/go/python), extracts the version, and queues `v18.3.0-<repo>-<sha>.json` to the buildsrv queue (`:25148`).
+- **Port SSOT** — `config/ports.env`: `LLAMA_SWAP=25100`, `QDRANT=25133`, `KIMI_CODE=25126`, `VANSROUTER=20128`, `BUILDSRV=25148`, `FLOCK=25193`. Zero hardcoded ports in code.
+- **Daemon supervision** — `pitchfork.toml`: `tau`, `mesh-hub`, `kimi-code`, `vansrouter`, `kimi-auto-shim`, `buildsrv` all pitchfork-tracked.
 
-| Enhancement | File | Port | What it does |
-| :--- | :--- | :---: | :--- |
-| **VansRouter Integration** | `config/tau/extensions/vansrouter.ts` | `20128` | Source-owned OpenAI-compatible router. Canonical `.secrets` loading (`VANSROUTER_API_KEY` / `API_KEY_SECRET`), collapses `nvidia/nvidia/foo` → `nvidia/foo`, seed `oc/jev-1.13-free` + live `/models` sync on `session_start`. |
-| **Kimi Code Daemon** | `pitchfork.toml` + `config/ports.env` | `25126` | Bundled `@moonshot-ai/kimi-code` via `bin/claim-port`. `[daemons.kimi-code]` run = `.../kimi-code/dist/main.mjs web --no-open --port 25126`. Supervised by Pitchfork, audited via `kimi-audit-dash:25116`. |
-| **Immutable Binary Pinning** | `scripts/omp-pin` → `bin/omp-pin` | — | Hardened launcher. `git rev-parse --show-toplevel` → `packages/coding-agent/scripts/omp`, `realpath` check stays inside fork root, refuses to fall through to PATH. Prevents auto-update clobber. |
-| **Mesh & Port SSOT** | `config/ports.env` | `25xxx` | Single source of truth. `LLAMA_SWAP=25100`, `KIMI_CODE=25126`, `VANSROUTER=20128`, `BUILDSRV=25148`, `QDRANT=25133`, etc. Zero hardcoded ports in code — extensions read `VANSROUTER_URL` / env. |
-| **CI/CD Push-Building** | `scripts/push-build.sh` | `25148` | Git hook → buildsrv queue. Detects toolchain (bun/rust/go/python), extracts version from `packages/coding-agent/package.json`, writes `v18.3.0-<repo>-<sha>.json` to `$BUILDSRV_ROOT/queue`. |
-| **Engine Migration Audit** | `docs/PRE_RELEASE_INTEGRATION_ENGINE.md` | — | Sovereign hotfix pattern: `hotfixRegistry.resolve(target, default)` + `patches/*.ts` persistent overrides + `fs.watch` live reload. No monkey patching. |
+---
+
+## Architecture
 
 ```mermaid
-flowchart LR
-    subgraph Sovereign Stack
-        Ports[config/ports.env<br/>25xxx SSOT]
-        Pitchfork[pitchfork.toml<br/>daemons: kimi-code, vansrouter,<br/>buildsrv, herd, shep...]
-        Secrets[~/.secrets / .config/vansrouter/env]
+flowchart TB
+    subgraph TS["TypeScript / Bun — the agent brain"]
+        CLI["packages/coding-agent<br/>CLI + SDK · bin: omp"]
+        AI["packages/ai<br/>multi-provider LLM client<br/>hedged streaming · auth storage"]
+        TUI["packages/tui<br/>terminal UI"]
+        CAT["packages/catalog<br/>69 providers · KDL compat rules"]
+        TASK["packages/agent<br/>subagents · task runtime"]
+        COLLAB["packages/collab-web<br/>collab links · kimi transport"]
+        MEM["packages/mnemopi<br/>memory backend"]
+        NATPKG["packages/natives<br/>N-API addon packaging"]
     end
-    subgraph Tau
-        VRExt[config/tau/extensions/vansrouter.ts<br/>:20128/v1]
-        OMPin[scripts/omp-pin<br/>immutable binary]
-        PushBuild[scripts/push-build.sh<br/>→ buildsrv:25148 queue]
+    subgraph RS["Rust — the native hot path"]
+        NAT["crates/pi-natives<br/>N-API bindings"]
+        SH["crates/pi-shell<br/>shell runtime"]
+        BI["crates/pi-builtins<br/>in-process coreutils"]
+        WK["crates/pi-walker<br/>fast fs walker"]
+        VCS["crates/pi-vcs<br/>git + jj"]
+        AST["crates/pi-ast<br/>syntax layer"]
+        ED["crates/pi-edit · pi-diff<br/>surgical apply"]
+        ISO["crates/pi-iso<br/>copy-on-write"]
+        VOI["crates/pi-voice<br/>speech I/O"]
     end
-    Ports --> VRExt
-    Ports --> Pitchfork
-    Secrets --> VRExt
-    Pitchfork -->|supervises| KimiCode[kimi-code :25126]
-    Pitchfork -->|supervises| BuildSrv[buildsrv :25148]
-    PushBuild --> BuildSrv
+    subgraph SV["Sovereign layer — this fork"]
+        VRO["config/tau/extensions/vansrouter.ts<br/>OpenAI router · :20128"]
+        PORTS["config/ports.env<br/>port SSOT"]
+        PF["pitchfork.toml<br/>daemon supervision"]
+        PIN["bin/omp-pin<br/>immutable launcher"]
+        PB["scripts/push-build.sh<br/>build queue · :25148"]
+    end
+    CLI --> AI
+    CLI --> TUI
+    CLI --> CAT
+    CLI --> TASK
+    CLI --> COLLAB
+    AI --> NAT
+    CLI --> SH
+    CLI --> BI
+    CLI --> WK
+    CLI --> VCS
+    NATPKG --> NAT
+    MEM -.-> AI
+    AST --> ED
+    PORTS --> VRO
+    PORTS --> PF
+    PIN -.-> CLI
+    PB -->|queues| SV
 ```
+
+**Fork lineage (stated honestly):** tau is a fork/mirror of [can1357/oh-my-pi](https://github.com/can1357/oh-my-pi) with local changes. Fork point: upstream tag `v18.1.18` (2026-09-11). Upstream `v18.3.0` (`62bc57be1b03ef0802a33cf7f5f530e534527531`) was merged on 2026-09-24 — see [`FORK_MANIFEST.tsv`](./FORK_MANIFEST.tsv). The full sovereign delta is documented in [`MIRROR-DIFF-vs-upstream.md`](./MIRROR-DIFF-vs-upstream.md): +8,878/−4,669 lines across 398 changed paths at the fork point. Re-sync is diff-and-apply by hand (the tree was committed without upstream git history); the manual procedure lives in §8 of that doc. Permanent deliberate divergences: `crates/pi-builtins` ships no `bre.rs` (BRE handling is inlined into `grep.rs`/`sed.rs` — never copy upstream's versions verbatim), and the four-module auth split in `packages/ai/src/auth/` must be preserved across rebases.
+
+| Layer | Crates / packages | What it owns |
+| :--- | :--- | :--- |
+| CLI + SDK | `packages/coding-agent` | `omp` binary, interactive mode, task runtime, tools |
+| LLM client | `packages/ai` | providers, streaming, hedged-stream, auth, usage metering |
+| TUI | `packages/tui` | differential terminal rendering |
+| Catalog | `packages/catalog` | 69 providers, KDL rules → `rules.json` |
+| Natives | `crates/pi-natives`, `packages/natives` | N-API bindings + prebuilt `.node` addons |
+| Shell | `crates/pi-shell`, `crates/pi-builtins`, `crates/pi-walker` | shell runtime, in-process coreutils, fs walker |
+| Edit | `crates/pi-ast`, `crates/pi-edit`, `crates/pi-diff` | syntax layer, surgical patch application |
+| VCS | `crates/pi-vcs` | git + jj operations |
+| Platform | `crates/pi-iso`, `crates/pi-voice` | copy-on-write, speech I/O |
+| Ranch | `config/`, `scripts/`, `pitchfork.toml`, `bin/` | router, ports, daemons, pinning, build queue |
 
 ---
 
-## Install — Tau flavor
-
-**From source (recommended for Ranch):**
+## Quick start
 
 ```sh
-git clone ~/sovereign/projects/range/ranch/stockyard/tau
-cd tau
-bun setup          # installs workspaces + builds @oh-my-pi/pi-natives
-bun dev            # runs tau cli from source
-
-# use the pinned launcher (never clobbers)
-./bin/omp-pin --version
-./scripts/push-build.sh   # queues v18.3.0 build to buildsrv:25148
+bun setup             # installs workspaces + builds @oh-my-pi/pi-natives
+bun dev               # runs the tau CLI from source
+./bin/omp-pin --version   # pinned launcher — never clobbered by auto-update
 ```
 
-**Bun global (upstream binary):**
-
-```sh
-bun install -g @oh-my-pi/pi-coding-agent
-```
-
-**Verify Sovereign integration:**
-
-```sh
-cat config/ports.env | grep -E "VANSROUTER|KIMI_CODE|BUILDSRV"
-# VANSROUTER_PORT=20128
-# KIMI_CODE_PORT=25126
-# BUILDSRV_PORT=25148
-
-cat pitchfork.toml | grep -A2 "\[daemons.kimi-code\]"
-ls -lh config/tau/extensions/vansrouter.ts scripts/omp-pin scripts/push-build.sh
-```
+Three commands, then you're talking to the agent. Prefer the upstream binary untouched? `bun install -g @oh-my-pi/pi-coding-agent` — but you'll lose the ranch layer (pinned launcher, ports SSOT, VansRouter, supervised daemons).
 
 ---
 
-## The Pi you love, with ranch batteries
+## Config & optional services
 
-<details>
-<summary><strong>01 · Code execution w/ tool-calling</strong></summary>
+Config lives in `~/.tau` (`PI_CONFIG_DIR=${HOME}/.tau`). The model catalog is compiled from `packages/catalog/src/compat/rules/**/*.kdl` → `rules.json`; regenerate it after any KDL edit.
 
-Persistent Python + Bun worker, loopback bridge to `read`, `grep`, `task`. Load CSV in Python, chart in JS, never leave the cell.
-</details>
+**Port SSOT** (`config/ports.env`) — the only place ports are defined:
 
-<details>
-<summary><strong>02 · LSP wired into every write</strong></summary>
+| Service | Port | Notes |
+| :--- | :---: | :--- |
+| `LLAMA_SWAP` | 25100 | local model mesh; `SCOUT_BASE_URL=http://127.0.0.1:25100/v1` in `mise.toml` |
+| `VANSROUTER` | 20128 | source-owned OpenAI-compatible router (`config/tau/extensions/vansrouter.ts`) |
+| `KIMI_CODE` | 25126 | bundled `@moonshot-ai/kimi-code` web UI |
+| `BUILDSRV` | 25148 | build queue fed by `scripts/push-build.sh` |
+| `QDRANT` | 25133 | vector memory backend |
+| `FLOCK` | 25193 | flock coordination |
 
-`workspace/willRenameFiles` — re-exports, barrels, aliased imports update before file moves.
-</details>
+**Pitchfork daemons** (`pitchfork.toml`): `tau`, `mesh-hub`, `kimi-code`, `vansrouter`, `kimi-auto-shim`, `buildsrv`.
 
-<details>
-<summary><strong>03 · Drives a real debugger</strong></summary>
-
-lldb, dlv, debugpy — attach, step, inspect. Not print statements.
-</details>
-
-<details>
-<summary><strong>04 · Time-traveling stream rules</strong></summary>
-
-Regex aborts stream mid-token, injects rule, retries from same point. Survives compaction.
-</details>
-
-<details>
-<summary><strong>05 · First-class subagents</strong></summary>
-
-`task` fans out into isolated worktrees, typed results back. No prose parsing.
-</details>
-
-<details>
-<summary><strong>06 · Advisor model</strong></summary>
-
-Second model watches every turn, injects notes inline — quiet aside, concern, or hard blocker.
-</details>
-
-<details>
-<summary><strong>07 · Collab links</strong></summary>
-
-`/collab` → link + QR. `omp join` or browser. Read-write or view-only.
-</details>
-
-<details>
-<summary><strong>08 · web_search 23 backends</strong></summary>
-
-`perplexity`, `gemini`, `kimi`, `exa`, `tavily`, `firecrawl`, `brave`... Arxiv PDFs → structured markdown with anchors.
-</details>
-
-<details>
-<summary><strong>09 · Unapologetically native</strong></summary>
-
-`pi-shell` 38k LoC, `pi-natives` 25k LoC, `pi-walker` 5.2k — ripgrep, glob, jq in-process. No fork/exec on hot path. macOS/Linux/Windows.
-</details>
+**Toolchain** (`mise.toml`): rust `nightly` · bun `1.4.2` · node `22.12.0` · python `3.12.13` · go `1.23.1` · pitchfork `2.25.0`. Mise tasks: `build`, `build:natives` (`cargo build -p pi-natives`), `dev`, `test`, `typecheck`, `install`, `clean`.
 
 ---
 
-## Providers & Models
-
-**60+ providers, 1000 models, one `/model` away.**
-
-Nine roles: `default`, `smol`, `slow`, `plan`, `commit`, `vision`, `task`, `advisor`, `tiny`. Override with `--smol`, `--slow`, `--plan`, cycle `Ctrl+P`.
-
-**Frontier:** Anthropic `oauth` · OpenAI · OpenAI Codex `oauth` · Google Gemini · xAI · DeepSeek · Groq · Cerebras · Together · NVIDIA · etc.
-
-**Coding plans:** Cursor `oauth` · Copilot `oauth` · Kimi Code `plan` · Moonshot · MiniMax `plan` · Qwen `oauth` · Z.AI `plan` · etc.
-
-**Self-hosted:** Ollama `local` · LM Studio `local` · vLLM `local` · LiteLLM
-
-**Custom (tau):** `vansrouter` provider
-
-```yaml
-# ~/.omp/agent/models.yml
-providers:
-  vansrouter:
-    baseUrl: http://127.0.0.1:20128/v1
-    api: openai-completions
-    apiKey: ${VANSROUTER_API_KEY}
-    models:
-      - id: oc/jev-1.13-free
-      - id: mmf/mimo-auto
-```
-
----
-
-## Monorepo Packages
-
-| Package | Description |
-| :--- | :--- |
-| `@oh-my-pi/pi-ai` | Multi-provider LLM client, Kimi + VansRouter |
-| `@oh-my-pi/pi-coding-agent` | Interactive CLI + SDK, Ranch extensions |
-| `@oh-my-pi/pi-tui` | Terminal UI, differential rendering |
-| `@oh-my-pi/pi-natives` | N-API bindings: grep, shell, image, etc. |
-| `config/ports.env` | **Sovereign SSOT — 25xxx + 20128** |
-| `config/tau/extensions/vansrouter.ts` | **Source-owned router integration** |
-| `scripts/omp-pin` / `bin/omp-pin` | **Immutable binary pin** |
-| `scripts/push-build.sh` | **CI/CD buildsrv:25148 queue** |
-| `pitchfork.toml` | **Daemon supervision: kimi-code:25126, buildsrv, etc.** |
-
----
-
-## Development
+## Dev & contributing
 
 ```sh
 bun setup
@@ -205,26 +160,37 @@ bun dev -- --version
 bun run check:ts
 bun run lint
 
+# tests (TS + Rust + Python)
+bun test          # test:ts && test:rs && test:py
+
 # ranch ops
 ./bin/omp-pin --help
 ./scripts/push-build.sh
 cat config/ports.env
 ```
 
-Debug: `/debug` — profiling, reporting.
+Debug: `/debug` in the CLI — profiling, reporting. For coding-agent development commands and repo structure, see [`packages/coding-agent/DEVELOPMENT.md`](packages/coding-agent/DEVELOPMENT.md).
 
-See `packages/coding-agent/DEVELOPMENT.md`.
+The repo's [`CONTRIBUTING.md`](CONTRIBUTING.md) (titled "Contributing to omp") sets the rules:
+
+- **Pull requests are welcome** — temporarily open to everyone as a trial (a vouch requirement may return).
+- **Major changes first go to [Discord](https://discord.gg/4NMW9cdXZa)** — new subsystems, large UI changes, new dependencies, cross-package changes. A GitHub issue is not a substitute, and prior discussion doesn't guarantee a merge.
+- **Don't open an issue for work you're about to submit** — actionable issues are treated as pickup work; you'll duplicate effort in parallel.
+- **AI-assisted contributions are tools, not unattended contributors.** Constrain the agent to the agreed scope, review every changed file, run the checks, exercise the changed behavior yourself. You are responsible for the code regardless of what generated it.
+- **Every PR body must include at least one sentence in your own words** explaining what changed and why. A generated summary alone doesn't count.
+- **You must verify the change works as intended.** `bun check` passing is expected but not sufficient — reproduce the bug and confirm it's gone, or launch the product and use the feature end to end.
+- Keep each PR to one logical change. No drive-by refactors or generated noise.
+- Contributions are licensed under MIT; no CLA or DCO to sign.
 
 ---
 
-## License
+## License & security
 
-MIT — upstream © 2025 Mario Zechner, © 2025-2026 Can Bölük, © 2026 Stencil Labs, Inc.
+**MIT License** — upstream © 2025 Mario Zechner, © 2025-2026 Can Bölük, © 2026 Stencil Labs, Inc. (see [`LICENSE`](./LICENSE); third-party notices in [`THIRD-PARTY-NOTICES.txt`](./THIRD-PARTY-NOTICES.txt)). Contributions are licensed under MIT with no CLA/DCO.
 
-Tau fork © 2026 Sovereign Ranch — `projects/range/ranch/stockyard/tau` • v18.3.0 • `forge/gate-r:main`
+**Security:** only the latest release is supported with security updates. To report a vulnerability, email can1357 directly or open a [private security advisory](https://github.com/can1357/oh-my-pi/security/advisories/new) — never a public issue. Reports are handled best-effort with an initial acknowledgment within a few days. (This is the inherited upstream policy in `.github/SECURITY.md`; the fork has not published its own yet.)
+
+- Upstream: [github.com/can1357/oh-my-pi](https://github.com/can1357/oh-my-pi) · [omp.sh](https://omp.sh) · [npm `@oh-my-pi/pi-coding-agent`](https://www.npmjs.com/package/@oh-my-pi/pi-coding-agent)
+- This fork: [github.com/toxicwind/tau](https://github.com/toxicwind/tau) · `projects/range/ranch/stockyard/tau` · v18.3.0
 
 _made for terminals that stay open on the ranch_
-
-- [omp.sh](https://omp.sh)
-- [Tau: ~/sovereign/projects/range/ranch/stockyard/tau](../../)
-- [Sovereign: ~/sovereign/config/ports.env](../../config/ports.env)
