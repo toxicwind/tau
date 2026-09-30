@@ -20,7 +20,8 @@ BIN=""
 if [ -n "${TAU_BIN:-}" ] && [ -x "$TAU_BIN" ]; then BIN="$TAU_BIN (TAU_BIN)"; fi
 SOV="$TAU_HOME/sovereign"
 if [ -z "$BIN" ]; then
-  for d in "$SOV/projects/tau/engine" "$SOV/tau/engine"; do
+  # Candidate order mirrors the launcher's resolve_engine (stockyard is canonical).
+  for d in "$SOV/projects/range/ranch/stockyard/tau" "$SOV/projects/tau/engine" "$SOV/tau/engine"; do
     if [ -x "$d/packages/coding-agent/dist/omp" ]; then BIN="$d/packages/coding-agent/dist/omp"; break; fi
   done
 fi
@@ -28,7 +29,7 @@ if [ -n "$BIN" ]; then
   ver="$($BIN --version 2>/dev/null | head -1 || echo '?')"
   ok "engine resolves: $BIN [$ver]"
 else
-  fail "no engine binary found (checked TAU_BIN, projects/tau/engine, tau/engine)"
+  fail "no engine binary found (checked TAU_BIN, stockyard/tau, projects/tau/engine, tau/engine)"
 fi
 
 # 2. config.yml parses ---------------------------------------------------------

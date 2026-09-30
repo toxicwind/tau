@@ -22,7 +22,17 @@
 
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+# Resolve symlinks so the launcher works when invoked via a symlink
+# (e.g. sovereign/bin/tau -> stockyard/tau/launcher/tau); helpers like
+# tau-tmux.sh and tau-audit.sh live beside the REAL script, not the link.
+_TAU_SRC="$0"
+while [ -L "$_TAU_SRC" ]; do
+    _TAU_DIR="$(cd -P "$(dirname "$_TAU_SRC")" >/dev/null 2>&1 && pwd)"
+    _TAU_SRC="$(readlink "$_TAU_SRC")"
+    case "$_TAU_SRC" in /*) ;; *) _TAU_SRC="$_TAU_DIR/$_TAU_SRC" ;; esac
+done
+SCRIPT_DIR="$(cd -P "$(dirname "$_TAU_SRC")" >/dev/null 2>&1 && pwd)"
+unset _TAU_SRC _TAU_DIR
 
 # ── HOME resolution (multi-user aware) ────────────────────────────────
 resolve_home() {
