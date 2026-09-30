@@ -6,7 +6,7 @@ There are three ownership strata:
 
 - `taxonomy/*.kdl` defines identity: class membership, product families, revision extraction, reviewed exact corrections, and suffix collapse.
 - `classes/*.kdl` defines model-lineage truths: behavior inherent to a model line, optionally scoped to the providers or request adapters where the census established it.
-- `providers/<id>.kdl` is a provider's entry: its catalog identity (default model, env keys, discovery wiring, optional authored seed rows — see [Provider catalog grammar](#provider-catalog-grammar)) plus its deployment contract: behavior imposed by the host and documented per-model residue that taxonomy cannot express exactly.
+- `providers/<id>.kdl` is a provider's entry: its deployment contract (behavior imposed by the host and documented per-model residue that taxonomy cannot express exactly). Catalog identity (default model, env keys, discovery wiring, optional authored seed rows — see [Provider catalog grammar](#provider-catalog-grammar)) lives here only for providers `@ranch/remuda` does not cover yet; remuda-sourced providers (cerebras, google, groq, mistral, nvidia, openrouter) carry their wire data in `@ranch/remuda` and their tau catalog policy in `src/compat/remuda.ts`, and their KDL files keep cascade rules only.
 - `runtime/behavior.kdl` defines heuristics used before or outside exact model lookup: responses routing, API routes, quota tiers, plan requirements, model limits, roster exclusions, hosted defaults, pricing peers.
 - `auth/<provider>.kdl` defines the provider's auth contract: display name, env-var fallback, credential storage/format, and the declarative login / refresh flow that `@oh-my-pi/pi-ai`'s registry engines interpret (see [Auth grammar](#auth-grammar)).
 

@@ -17,7 +17,7 @@
   <img src="./assets/tau-hero.png" alt="tau" width="600">
 </p>
 
-**What it is:** tau is a coding agent that lives in your terminal — `read`, `bash`, `edit`, `write` tools, session management, subagents, LSP-aware editing, a real debugger, web search, and GitHub integration. It speaks to 69 providers through a compiled model catalog with per-role model routing, and it does the fast work in-process through N-API native bindings instead of fork/exec.
+**What it is:** tau is a coding agent that lives in your terminal — `read`, `bash`, `edit`, `write` tools, session management, subagents, LSP-aware editing, a real debugger, web search, and GitHub integration. It speaks to 82 providers through a compiled model catalog with per-role model routing (provider wire data sourced from `@ranch/remuda`, the ranch's single provider-data authority), and it does the fast work in-process through N-API native bindings instead of fork/exec.
 
 **Why the fork exists:** upstream [oh-my-pi](https://github.com/can1357/oh-my-pi) gives you a coding agent. Tau gives you a **ranch** — an immutable pinned launcher that auto-update can't clobber, a single source of truth for ports (`config/ports.env`, zero hardcoded ports in code), pitchfork-supervised daemons, a source-owned OpenAI-compatible router (VansRouter on `:20128`), and a build queue that fires from a git hook.
 
@@ -29,7 +29,7 @@
 
 - **Interactive CLI + SDK** — the `tau` package (`packages/coding-agent`) ships the `omp` binary (`src/cli.ts`) plus a programmatic SDK: "Coding agent CLI with read, bash, edit, write tools and session management."
 - **Multi-provider LLM client** — `packages/ai` with role-based model routing: `smol`, `slow`, `plan`, `vision`, `task`, `advisor`, `tiny` (plus the base role); CLI flags `--smol`, `--slow`, `--plan`.
-- **69 providers, compiled catalog** — `packages/catalog` holds the provider census (`models.json`) and KDL compat/auth rules (`src/compat/rules/**/*.kdl`) compiled to `rules.json`; the fork's sovereign delta flips the NVIDIA default model to `openai/gpt-oss-20b`.
+- **82 providers, remuda-sourced catalog** — `packages/catalog` holds the provider census (`models.json`); provider wire data (base URLs, key env vars, auth schemes, `/models` adapters) comes from `@ranch/remuda` (`ranch/remuda`, projected onto the catalog shape by `packages/catalog/src/compat/remuda.ts`), while KDL compat/auth rules (`src/compat/rules/**/*.kdl`) compile to `rules.json`; the fork's sovereign delta flips the NVIDIA default model to `openai/gpt-oss-20b`.
 - **30+ documented tools** — one doc per tool under `docs/tools/`: `bash`, `read`, `write`, `edit`, `grep`, `glob`, `task`, `lsp`, `debug`, `browser`, `computer`, `web_search`, `github`, `tts`, `memory_edit`, `checkpoint`, `rewind`, `ask`, `learn`, `eval`, `ast-grep`, `ast-edit`, `security_scan`, `todo`, and more.
 - **First-class subagents** — `task` fans out into isolated worktrees with typed results back (`packages/agent`).
 - **Native hot path** — `crates/pi-natives` N-API bindings (prebuilt `pi_natives.linux-x64-{baseline,modern}.node` addons), `pi-shell` in-process shell runtime, `pi-builtins` (`grep`, `sed`, `cat`, `find`, `fd`, `rg`, `head`, `tail`, `tee`, `cut`, `date`, `ps`, `top`, `seq`, `yes`) — no fork/exec on the hot path.
@@ -57,7 +57,7 @@ flowchart TB
         CLI["packages/coding-agent<br/>CLI + SDK · bin: omp"]
         AI["packages/ai<br/>multi-provider LLM client<br/>hedged streaming · auth storage"]
         TUI["packages/tui<br/>terminal UI"]
-        CAT["packages/catalog<br/>69 providers · KDL compat rules"]
+        CAT["packages/catalog<br/>82 providers · remuda data · KDL compat rules"]
         TASK["packages/agent<br/>subagents · task runtime"]
         COLLAB["packages/collab-web<br/>collab links · kimi transport"]
         MEM["packages/mnemopi<br/>memory backend"]
@@ -107,7 +107,7 @@ flowchart TB
 | CLI + SDK | `packages/coding-agent` | `omp` binary, interactive mode, task runtime, tools |
 | LLM client | `packages/ai` | providers, streaming, hedged-stream, auth, usage metering |
 | TUI | `packages/tui` | differential terminal rendering |
-| Catalog | `packages/catalog` | 69 providers, KDL rules → `rules.json` |
+| Catalog | `packages/catalog` | 82 providers; remuda wire data + KDL rules → `rules.json` |
 | Natives | `crates/pi-natives`, `packages/natives` | N-API bindings + prebuilt `.node` addons |
 | Shell | `crates/pi-shell`, `crates/pi-builtins`, `crates/pi-walker` | shell runtime, in-process coreutils, fs walker |
 | Edit | `crates/pi-ast`, `crates/pi-edit`, `crates/pi-diff` | syntax layer, surgical patch application |

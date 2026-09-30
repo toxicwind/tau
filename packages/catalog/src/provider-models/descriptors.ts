@@ -1,12 +1,14 @@
 /**
  * Runtime model-manager factories for catalog providers. Everything else a
  * provider entry carries — default model, env keys, discovery wiring, seed
- * rows — is authored in `src/compat/rules/providers/<id>.kdl` and read from
- * the compiled entry (`src/compat/providers.ts`); this table holds only the
- * code half. Providers without a factory (`amazon-bedrock`, `azure`,
+ * rows — comes from `@ranch/remuda` for remuda-sourced providers
+ * (`src/compat/remuda.ts`), from `src/compat/rules/providers/<id>.kdl` for the
+ * remaining KDL-catalog providers, and is read from the merged entry
+ * (`src/compat/providers.ts`); this table holds only the code half.
+ * Providers without a factory (`amazon-bedrock`, `azure`,
  * `gitlab-duo`, MiniMax, and the bespoke OAuth-driven managers
  * `google-antigravity` / `google-gemini-cli` / `openai-codex` built by the
- * coding-agent runtime) still have a KDL entry but no runtime discovery here.
+ * coding-agent runtime) still have a catalog entry but no runtime discovery here.
  */
 import type { KnownProvider } from "../compat/provider-ids";
 import { providerEntries, providerEntry } from "../compat/providers";

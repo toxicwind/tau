@@ -3,12 +3,18 @@ import * as path from "node:path";
 import { buildModel } from "@oh-my-pi/pi-catalog/build";
 import type { ModelSpec } from "@oh-my-pi/pi-catalog/types";
 import { compileCompatRules } from "../scripts/compat-compiler";
+import { remudaProviderEntries } from "../src/compat/remuda";
 
 const RULES_DIR = path.join(import.meta.dir, "../src/compat/rules");
 
 async function resolvedSeedModels(providerId: "openai" | "openrouter") {
 	const rules = await compileCompatRules(RULES_DIR);
-	const seed = rules.providers[providerId]?.seed;
+	// Catalog entries are KDL-compiled plus remuda-sourced: openrouter's entry
+	// (including these seed rows) now comes from `@ranch/remuda` via
+	// `src/compat/remuda.ts`. Remuda wins on id conflict, mirroring
+	// `src/compat/providers.ts`.
+	const providers = { ...rules.providers, ...remudaProviderEntries() };
+	const seed = providers[providerId]?.seed;
 	if (!seed) throw new Error(`${providerId} has no catalog seed`);
 	return seed.models.filter(row => row.api === "openai-transcriptions").map(row => buildModel(row as ModelSpec));
 }
