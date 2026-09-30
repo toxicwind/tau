@@ -1,3 +1,13 @@
+> **CORRECTION (2026-09-30, Cartographer):** This document names `v18.1.18` as
+> the fork point. This is **wrong**. Our initial commit (`141e270e2c`,
+> "Initial commit: Tau 18.3.0 monorepo (fork of can1357/oh-my-pi)", 2026-09-24)
+> is a squash-import of upstream **`v18.3.0`**
+> (`62bc57be1b03ef0802a33cf7f5f530e534527531`). The true sovereign delta is
+> **234 paths** (+2,111/-2,197 lines, excluding docs): 23 new files, 128
+> modified files, ~1 dropped build artifact. See `docs/UPSTREAM-MERGE.md` for
+> the current workflow. The section 3a numbers below (398 paths vs v18.1.18)
+> conflate our delta with upstream's own 18.1.18 to 18.3.0 evolution.
+
 # Tau engine/ — manual mirror-diff vs upstream oh-my-pi
 
 Date: 2026-09-19 (MDT). Author: Hatch (subagent task 2/3).
