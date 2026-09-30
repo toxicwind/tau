@@ -1,23 +1,8 @@
 // Provider-wire compat for "xai"; regenerated from the frozen census using deployment contract selectors.
 
 provider "xai" {
-	default-model "grok-4.6"
-	env "XAI_API_KEY"
-	kind-apis {
-		image "openai-images"
-		tts "xai-tts"
-	}
 	web-search "xai"
 
-	seed api="xai-tts" base-url="https://api.x.ai/v1" bundle="always" {
-		model "grok-tts" name="Grok TTS" {
-			reasoning #false
-			input "text"
-			cost input=0 output=0 cache-read=0 cache-write=0
-			limits
-			supports-tools #false
-		}
-	}
 
 	models "grok-imagine-image" {
 		kind "image"

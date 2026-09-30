@@ -15,6 +15,7 @@
  * row's API); catalog axes are rejected because they stay rule-owned.
  */
 import { API_COMPAT_RECORDS } from "../../src/compat/axes";
+import { tackProviderSeed } from "../../src/compat/tack";
 import type {
 	CompiledProvider,
 	CompiledProviderDiscovery,
@@ -414,14 +415,19 @@ export function compileProviders(sources: readonly { file: string; text: string 
 		const seed = entry.seed;
 		if (seed?.modelsFrom === undefined) continue;
 		const source = parsed.find(other => other.provider.id === seed.modelsFrom);
-		if (!source?.seed || source.seed.modelsFrom !== undefined) {
+		// Tack-sourced providers carry their seed in TAU_PROVIDER_POLICY, not KDL.
+		const sourceModels =
+			source?.seed && source.seed.modelsFrom === undefined
+				? source.seed.seed.models
+				: tackProviderSeed(seed.modelsFrom)?.models;
+		if (!sourceModels) {
 			throw new CompatCompileError(
 				seed.node.file,
 				seed.node.line,
 				`models-from \`${seed.modelsFrom}\` must name a provider seed with its own model rows`,
 			);
 		}
-		for (const model of source.seed.seed.models) {
+		for (const model of sourceModels) {
 			if (seed.seed.models.some(own => own.id === model.id)) {
 				throw new CompatCompileError(
 					seed.node.file,

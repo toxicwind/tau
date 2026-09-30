@@ -1,9 +1,6 @@
 // Provider-wire compat for "huggingface"; regenerated from the frozen census using deployment contract selectors.
 
 provider "huggingface" {
-	default-model "deepseek-ai/DeepSeek-R1"
-	env "HUGGINGFACE_HUB_TOKEN" "HF_TOKEN"
-	discovery label="Hugging Face"
 
 	thinking-mode "effort"
 	class "unknown" {

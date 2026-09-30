@@ -1,10 +1,6 @@
 // Provider-wire compat for "novita"; regenerated from the frozen census using deployment contract selectors.
 
 provider "novita" {
-	default-model "moonshotai/kimi-k2.7-code"
-	env "NOVITA_API_KEY"
-	dynamic-models-authoritative #true
-	discovery label="Novita" allow-unauthenticated=#true
 
 	thinking-mode "effort"
 	class "glm" {
