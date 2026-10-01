@@ -55,12 +55,15 @@ interface TackProviderDef {
  * 2. the `@ranch/tack` package — standalone `toxicwind/tau` checkouts.
  * Otherwise throws an actionable error naming both candidates.
  */
-async function resolveTackModule(): Promise<{ PROVIDER_DEFS: TackProviderDef[] }> {
+function resolveTackModule(): { PROVIDER_DEFS: TackProviderDef[] } {
 	const candidates = ["../../../../../tack/src/index.ts", "@ranch/tack"];
 	const failures: string[] = [];
 	for (const specifier of candidates) {
 		try {
-			return (await import(specifier)) as { PROVIDER_DEFS: TackProviderDef[] };
+			// Sync require keeps this module free of top-level await so the
+			// binary bundler can include it through require() chains.
+			// eslint-disable-next-line @typescript-eslint/no-require-imports
+			return require(specifier) as { PROVIDER_DEFS: TackProviderDef[] };
 		} catch (err) {
 			failures.push(`${specifier} (${err instanceof Error ? err.message : String(err)})`);
 		}
@@ -72,7 +75,7 @@ async function resolveTackModule(): Promise<{ PROVIDER_DEFS: TackProviderDef[] }
 	);
 }
 
-const { PROVIDER_DEFS } = await resolveTackModule();
+const { PROVIDER_DEFS } = resolveTackModule();
 
 /** Tau-side catalog policy for one tack-sourced provider. */
 interface TauProviderPolicy {
