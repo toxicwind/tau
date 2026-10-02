@@ -1,15 +1,27 @@
 #!/usr/bin/env bash
-# First-class sovereign omp runner — prefers compiled maximal binary (dist/omp), falls back to dev runner
+# First-class sovereign omp runner — prefers the compiled estate binary
+# (packages/coding-agent/dist/omp), falls back to running the TypeScript
+# CLI directly with bun. Fork root resolves dynamically from this script's
+# location (or git), never from a hardcoded path.
 set -euo pipefail
-FORK_ROOT="$HOME/sovereign/projects/range/ranch/stockyard/tau/packages/coding-agent"
-COMPILED="$FORK_ROOT/dist/omp"
-DEV_SCRIPT="$FORK_ROOT/scripts/omp"
+
+_SCRIPT_DIR="$(cd -P -- "$(dirname -- "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+FORK_ROOT="$(git -C "$_SCRIPT_DIR" rev-parse --show-toplevel 2>/dev/null || true)"
+if [ -z "$FORK_ROOT" ]; then
+  # <root>/packages/coding-agent/scripts/omp -> <root>
+  FORK_ROOT="$(cd -P -- "$_SCRIPT_DIR/../.." >/dev/null 2>&1 && pwd)"
+fi
+PKG_DIR="$FORK_ROOT/packages/coding-agent"
+COMPILED="$PKG_DIR/dist/omp"
 
 if [ -x "$COMPILED" ] && [ -z "${OMP_DEV_MODE:-}" ]; then
   exec "$COMPILED" "$@"
-elif [ -x "$DEV_SCRIPT" ]; then
-  exec "$DEV_SCRIPT" "$@"
-else
-  echo "omp: no executable compiled binary or dev script found" >&2
-  exit 127
 fi
+
+# Dev fallback: run the TypeScript CLI straight through bun.
+if command -v bun >/dev/null 2>&1 && [ -f "$PKG_DIR/src/cli.ts" ]; then
+  exec bun "$PKG_DIR/src/cli.ts" "$@"
+fi
+
+echo "omp: no compiled dist/omp and no bun + src/cli.ts fallback under $PKG_DIR" >&2
+exit 127

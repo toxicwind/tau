@@ -144,7 +144,6 @@
         "@oh-my-pi/pi-agent-core": "catalog:",
         "@oh-my-pi/pi-ai": "catalog:",
         "@oh-my-pi/pi-catalog": "catalog:",
-        "@oh-my-pi/pi-coding-agent": "catalog:",
         "@oh-my-pi/pi-natives": "catalog:",
         "@oh-my-pi/pi-utils": "catalog:",
         "@oh-my-pi/typescript-edit-benchmark": "workspace:*",
@@ -157,6 +156,7 @@
         "react": "^19.1.0",
         "react-dom": "^19.1.0",
         "tailwind-merge": "^3.3.0",
+        "tau": "workspace:*",
       },
       "devDependencies": {
         "@types/bun": "catalog:",
@@ -287,13 +287,13 @@
         "@babel/types": "catalog:",
         "@oh-my-pi/pi-agent-core": "catalog:",
         "@oh-my-pi/pi-ai": "catalog:",
-        "@oh-my-pi/pi-coding-agent": "catalog:",
         "@oh-my-pi/pi-natives": "catalog:",
         "@oh-my-pi/pi-tui": "catalog:",
         "@oh-my-pi/pi-utils": "catalog:",
         "diff": "catalog:",
         "prettier": "catalog:",
         "regexp-tree": "catalog:",
+        "tau": "workspace:*",
       },
       "devDependencies": {
         "@types/babel__generator": "catalog:",
@@ -723,8 +723,6 @@
     "@oh-my-pi/pi-ai": ["@oh-my-pi/pi-ai@workspace:packages/ai"],
 
     "@oh-my-pi/pi-catalog": ["@oh-my-pi/pi-catalog@workspace:packages/catalog"],
-
-    "@oh-my-pi/pi-coding-agent": ["@oh-my-pi/pi-coding-agent@18.3.0", "", { "dependencies": { "@babel/parser": "^7.29.7", "@oh-my-pi/omp-stats": "18.3.0", "@oh-my-pi/omptype": "18.3.0", "@oh-my-pi/pi-agent-core": "18.3.0", "@oh-my-pi/pi-ai": "18.3.0", "@oh-my-pi/pi-catalog": "18.3.0", "@oh-my-pi/pi-mnemopi": "18.3.0", "@oh-my-pi/pi-natives": "18.3.0", "@oh-my-pi/pi-tui": "18.3.0", "@oh-my-pi/pi-utils": "18.3.0", "@oh-my-pi/pi-wire": "18.3.0", "@oh-my-pi/snapcompact": "18.3.0", "@opentelemetry/api": "^1.9.1", "@opentelemetry/api-logs": "^0.220.0", "@opentelemetry/context-async-hooks": "^2.9.0", "@opentelemetry/exporter-logs-otlp-proto": "^0.220.0", "@opentelemetry/exporter-metrics-otlp-proto": "^0.220.0", "@opentelemetry/exporter-trace-otlp-proto": "^0.220.0", "@opentelemetry/resources": "^2.9.0", "@opentelemetry/sdk-logs": "^0.220.0", "@opentelemetry/sdk-metrics": "^2.9.0", "@opentelemetry/sdk-trace-base": "^2.9.0", "@opentelemetry/sdk-trace-node": "^2.9.0", "axe-core": "4.13.0", "puppeteer-core": "25.3.0" }, "optionalDependencies": { "@huggingface/transformers": "^4.2.0", "sherpa-onnx-node": "1.13.2" }, "bin": { "omp": "dist/cli.js" } }, "sha512-JxSqrB74gsnSj4awED0mz7Wzr7Z6u+WN7hG44m7WmAWzoIXTIt2uKoINaLFAzBx5KXSyzKJ22pBgw1DjFXu7MA=="],
 
     "@oh-my-pi/pi-metaharness": ["@oh-my-pi/pi-metaharness@workspace:packages/metaharness"],
 

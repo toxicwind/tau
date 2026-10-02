@@ -7,7 +7,7 @@
  */
 import type { AgentEvent, AgentMessage, ResolvedThinkingLevel, ThinkingLevel } from "@oh-my-pi/pi-agent-core";
 import type { Model, ToolExample } from "@oh-my-pi/pi-ai";
-import type { AgentSession, AgentSessionEvent, AuthStorage, SessionStats } from "@oh-my-pi/pi-coding-agent";
+import type { AgentSession, AgentSessionEvent, AuthStorage, SessionStats } from "tau";
 import {
 	AgentRegistry,
 	type CreateAgentSessionResult,
@@ -16,7 +16,7 @@ import {
 	ModelRegistry,
 	SessionManager,
 	Settings,
-} from "@oh-my-pi/pi-coding-agent";
+} from "tau";
 
 export type InProcessEventListener = (event: AgentEvent) => void;
 
