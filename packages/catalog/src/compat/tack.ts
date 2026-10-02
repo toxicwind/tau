@@ -1,7 +1,7 @@
 /**
  * tack — tau's provider-data authority.
  *
- * `@ranch/tack` (`ranch/tack`, contract `ranch-tack/live-catalog/v1`) is the
+ * `@ranch/roost` (`flock/roost`, contract `ranch-roost/live-catalog/v1`) is the
  * single source of truth for provider wire data across the sovereign estate:
  * base URLs, key env vars, auth schemes, `/models` endpoint adapters,
  * aliases, and cold-start seeds. Tau consumes it here and projects each
@@ -10,7 +10,7 @@
  * already understands.
  *
  * What lives where:
- * - `ranch/tack` `PROVIDER_DEFS` — provider wire data (`baseUrl`, `keyEnv`,
+ * - `flock/roost` `PROVIDER_DEFS` — provider wire data (`baseUrl`, `keyEnv`,
  *   `keyEnvAlt`, `auth`, `adapter`, `modelsPath`, `seeds`). The authority;
  *   never duplicated here. A provider tack drops stops being a tau catalog
  *   provider — the builder below throws on drift.
@@ -33,7 +33,7 @@
  * pattern the sovereign router uses (`tools/sovereign-router/
  * sovereign-router-ts/router_live_models.ts`). A standalone `toxicwind/tau`
  * checkout cannot resolve that path, so `resolveTackModule()` below falls
- * back to the `@ranch/tack` package and finally to an actionable error
+ * back to the `@ranch/roost` package and finally to an actionable error
  * naming both candidates (instead of a bare "Cannot find module").
  */
 import type { Api, KindApiKind } from "../types";
@@ -52,29 +52,30 @@ interface TackProviderDef {
  * not a rollback — every candidate is tack, the authority; there is no legacy
  * duplicate to fall back to):
  * 1. `TACK_PATH` env — explicit override, wins over everything.
- * 2. The estate checkout at `$HOME/estate/ranch/tack` — relocatable across
+ * 2. The estate checkout at `$HOME/estate/ranch/flock/roost` — relocatable across
  *    users and machines; never a hardcoded personal path.
  * 3. Relative source paths — dev checkout nested inside the ranch monorepo.
- * 4. The `@ranch/tack` package — standalone `toxicwind/tau` checkouts.
- * 5. Embedded snapshot below — generated from `ranch/tack/src/index.ts`;
+ * 4. The `@ranch/roost` package — standalone `toxicwind/tau` checkouts.
+ * 5. Embedded snapshot below — generated from `flock/roost/src/index.ts`;
  *    guarantees the compiled binary never crashes at boot when no tack
  *    checkout is present. Regenerate from the live source when tack changes:
- *    copy the PROVIDER_DEFS array verbatim from ranch/tack/src/index.ts.
+ *    copy the PROVIDER_DEFS array verbatim from flock/roost/src/index.ts.
  */
 function resolveTackModule(): { PROVIDER_DEFS: TackProviderDef[] } {
 	const candidates: string[] = [];
-	if (process.env.TACK_PATH) candidates.push(process.env.TACK_PATH);
+	if (process.env.ROOST_PATH) candidates.push(process.env.ROOST_PATH);
+	if (process.env.TACK_PATH) candidates.push(process.env.TACK_PATH); // legacy
 	try {
 		// eslint-disable-next-line @typescript-eslint/no-require-imports
 		const os = require("node:os");
 		// eslint-disable-next-line @typescript-eslint/no-require-imports
 		const path = require("node:path");
-		candidates.push(path.join(os.homedir(), "estate/ranch/tack/src/index.ts"));
+		candidates.push(path.join(os.homedir(), "estate/ranch/flock/roost/src/index.ts"));
 	} catch {}
 	candidates.push(
-		"../../../../../tack/src/index.ts",
-		"../../../../tack/src/index.ts",
-		"@ranch/tack",
+		"../../../../../flock/roost/src/index.ts",
+		"../../../../flock/roost/src/index.ts",
+		"@ranch/roost",
 	);
 	const failures: string[] = [];
 	for (const specifier of candidates) {
@@ -1909,7 +1910,7 @@ export function tackProviderEntries(): Record<string, CompiledProvider> {
 			// provider stays absent until tack defines it or the policy entry
 			// is removed.
 			console.error(
-				`[tack] DRIFT: provider policy for "${id}" has no PROVIDER_DEFS definition — skipping. ` +
+				`[roost] DRIFT: provider policy for "${id}" has no PROVIDER_DEFS definition — skipping. ` +
 					`Add the definition to ranch/tack or remove the entry from TAU_PROVIDER_POLICY.`,
 			);
 			continue;
