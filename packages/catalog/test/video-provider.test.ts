@@ -3,7 +3,7 @@ import * as path from "node:path";
 import { buildModel } from "@tau/tau-catalog/build";
 import type { ModelSpec } from "@tau/tau-catalog/types";
 import { compileCompatRules } from "../scripts/compat-compiler";
-import { tackProviderEntries } from "../src/compat/tack";
+import { roostProviderEntries } from "../src/compat/roost";
 
 const RULES_DIR = path.join(import.meta.dir, "../src/compat/rules");
 
@@ -11,8 +11,8 @@ describe("video catalog policy", () => {
 	test("OpenRouter's bundled video fallbacks resolve onto the video runner", async () => {
 		const rules = await compileCompatRules(RULES_DIR);
 		// openrouter's entry (kindApis + seed rows) now comes from
-		// `@ranch/tack` via `src/compat/tack.ts`; tack wins on conflict.
-		const provider = tackProviderEntries()["openrouter"] ?? rules.providers.openrouter;
+		// `@ranch/tack` via `src/compat/roost.ts`; tack wins on conflict.
+		const provider = roostProviderEntries()["openrouter"] ?? rules.providers.openrouter;
 		if (!provider?.seed) throw new Error("openrouter has no catalog seed");
 		expect(provider.kindApis?.video).toBe("openrouter-video");
 		const models = provider.seed.models

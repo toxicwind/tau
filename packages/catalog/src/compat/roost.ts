@@ -1,5 +1,5 @@
 /**
- * tack — tau's provider-data authority.
+ * roost — tau's provider-data authority.
  *
  * `@ranch/roost` (`flock/roost`, contract `ranch-roost/live-catalog/v1`) is the
  * single source of truth for provider wire data across the sovereign estate:
@@ -12,35 +12,35 @@
  * What lives where:
  * - `flock/roost` `PROVIDER_DEFS` — provider wire data (`baseUrl`, `keyEnv`,
  *   `keyEnvAlt`, `auth`, `adapter`, `modelsPath`, `seeds`). The authority;
- *   never duplicated here. A provider tack drops stops being a tau catalog
+ *   never duplicated here. A provider roost drops stops being a tau catalog
  *   provider — the builder below throws on drift.
- * - `TAU_PROVIDER_POLICY` — tau-side catalog policy for tack-sourced
+ * - `TAU_PROVIDER_POLICY` — tau-side catalog policy for roost-sourced
  *   providers: default model, kind→API mapping, discovery flags, and the
  *   authored seed rows (model metadata: cost/limits/input). Transcribed
  *   verbatim from the retired KDL catalog nodes; the
  *   `src/compat/rules/providers/<id>.kdl` files keep only their cascade
  *   wire-compat rules.
  * - `src/compat/rules/providers/*.kdl` — cascade (wire-compat) rules for every
- *   provider, plus catalog entries for providers tack does not cover yet
- *   (legacy rump, shrinking as tack curates them).
+ *   provider, plus catalog entries for providers roost does not cover yet
+ *   (legacy rump, shrinking as roost curates them).
  *
  * `src/compat/providers.ts` merges these entries over the KDL-compiled ones;
- * tack wins on id conflict (there are none by construction — the KDL
+ * roost wins on id conflict (there are none by construction — the KDL
  * catalog nodes for covered providers were deleted).
  *
  * Import path note: tau is its own repo (`toxicwind/tau`) nested inside the
- * ranch monorepo, so this reaches tack via a relative import — the same
+ * ranch monorepo, so this reaches roost via a relative import — the same
  * pattern the sovereign router uses (`tools/sovereign-router/
  * sovereign-router-ts/router_live_models.ts`). A standalone `toxicwind/tau`
- * checkout cannot resolve that path, so `resolveTackModule()` below falls
+ * checkout cannot resolve that path, so `resolveRoostModule()` below falls
  * back to the `@ranch/roost` package and finally to an actionable error
  * naming both candidates (instead of a bare "Cannot find module").
  */
 import type { Api, KindApiKind } from "../types";
 import type { CompiledProvider, CompiledProviderDiscovery, CompiledSeed, CompiledSeedModel } from "./types";
 
-/** Minimal structural view of a tack provider definition (the fields this module reads). */
-interface TackProviderDef {
+/** Minimal structural view of a roost provider definition (the fields this module reads). */
+interface RoostProviderDef {
 	name: string;
 	keyEnv: string;
 	keyEnvAlt?: string;
@@ -48,23 +48,21 @@ interface TackProviderDef {
 }
 
 /**
- * Resolves tack's provider definitions through a fallback chain (a fallback,
- * not a rollback — every candidate is tack, the authority; there is no legacy
+ * Resolves roost's provider definitions through a fallback chain (a fallback,
+ * not a rollback — every candidate is roost, the authority; there is no legacy
  * duplicate to fall back to):
- * 1. `TACK_PATH` env — explicit override, wins over everything.
  * 2. The estate checkout at `$HOME/estate/ranch/flock/roost` — relocatable across
  *    users and machines; never a hardcoded personal path.
  * 3. Relative source paths — dev checkout nested inside the ranch monorepo.
  * 4. The `@ranch/roost` package — standalone `toxicwind/tau` checkouts.
  * 5. Embedded snapshot below — generated from `flock/roost/src/index.ts`;
- *    guarantees the compiled binary never crashes at boot when no tack
- *    checkout is present. Regenerate from the live source when tack changes:
+ *    guarantees the compiled binary never crashes at boot when no roost
+ *    checkout is present. Regenerate from the live source when roost changes:
  *    copy the PROVIDER_DEFS array verbatim from flock/roost/src/index.ts.
  */
-function resolveTackModule(): { PROVIDER_DEFS: TackProviderDef[] } {
+function resolveRoostModule(): { PROVIDER_DEFS: RoostProviderDef[] } {
 	const candidates: string[] = [];
 	if (process.env.ROOST_PATH) candidates.push(process.env.ROOST_PATH);
-	if (process.env.TACK_PATH) candidates.push(process.env.TACK_PATH); // legacy
 	try {
 		// eslint-disable-next-line @typescript-eslint/no-require-imports
 		const os = require("node:os");
@@ -83,7 +81,7 @@ function resolveTackModule(): { PROVIDER_DEFS: TackProviderDef[] } {
 			// Sync require keeps this module free of top-level await so the
 			// binary bundler can include it through require() chains.
 			// eslint-disable-next-line @typescript-eslint/no-require-imports
-			const mod = require(specifier) as { PROVIDER_DEFS: TackProviderDef[] };
+			const mod = require(specifier) as { PROVIDER_DEFS: RoostProviderDef[] };
 			if (mod && Array.isArray(mod.PROVIDER_DEFS)) {
 				return mod;
 			}
@@ -94,49 +92,49 @@ function resolveTackModule(): { PROVIDER_DEFS: TackProviderDef[] } {
 	// Embedded fallback snapshot ensures standalone/compiled binary never crashes at boot
 	return {
 		PROVIDER_DEFS: [
-			{ name: "cerebras", keyEnv: "CEREBRAS_API_KEY" },
-			{ name: "google", keyEnv: "GEMINI_API_KEY", keyEnvAlt: "GOOGLE_API_KEY" },
-			{ name: "groq", keyEnv: "GROQ_API_KEY" },
-			{ name: "mistral", keyEnv: "MISTRAL_API_KEY" },
-			{ name: "nvidia", keyEnv: "NVIDIA_API_KEY" },
-			{ name: "openrouter", keyEnv: "OPENROUTER_API_KEY" },
-			{ name: "abliteration", keyEnv: "ABLITERATION_API_KEY" },
-			{ name: "aiand", keyEnv: "AIAND_API_KEY" },
-			{ name: "aimlapi", keyEnv: "AIMLAPI_API_KEY" },
-			{ name: "anthropic", keyEnv: "ANTHROPIC_API_KEY" },
-			{ name: "baseten", keyEnv: "BASETEN_API_KEY" },
-			{ name: "commandcode", keyEnv: "COMMANDCODE_API_KEY" },
-			{ name: "coreweave", keyEnv: "COREWEAVE_API_KEY" },
-			{ name: "deepinfra", keyEnv: "DEEPINFRA_API_KEY" },
-			{ name: "deepseek", keyEnv: "DEEPSEEK_API_KEY" },
-			{ name: "firepass", keyEnv: "FIREPASS_API_KEY" },
-			{ name: "fireworks", keyEnv: "FIREWORKS_API_KEY" },
-			{ name: "huggingface", keyEnv: "HF_TOKEN", keyEnvAlt: "HUGGINGFACE_API_KEY" },
-			{ name: "meta", keyEnv: "META_API_KEY" },
-			{ name: "minimax", keyEnv: "MINIMAX_API_KEY" },
-			{ name: "moonshot", keyEnv: "MOONSHOT_API_KEY" },
-			{ name: "nanogpt", keyEnv: "NANOGPT_API_KEY" },
-			{ name: "novita", keyEnv: "NOVITA_API_KEY" },
-			{ name: "openai", keyEnv: "OPENAI_API_KEY" },
-			{ name: "qianfan", keyEnv: "QIANFAN_API_KEY" },
-			{ name: "sakana", keyEnv: "SAKANA_API_KEY" },
-			{ name: "siliconflow", keyEnv: "SILICONFLOW_API_KEY" },
-			{ name: "stepfun", keyEnv: "STEPFUN_API_KEY" },
-			{ name: "synthetic", keyEnv: "SYNTHETIC_API_KEY" },
-			{ name: "together", keyEnv: "TOGETHER_API_KEY" },
-			{ name: "typesafe", keyEnv: "TYPESAFE_API_KEY" },
-			{ name: "venice", keyEnv: "VENICE_API_KEY" },
-			{ name: "xai", keyEnv: "XAI_API_KEY" },
-			{ name: "xiaomi", keyEnv: "XIAOMI_API_KEY" },
-			{ name: "zai", keyEnv: "ZAI_API_KEY" },
-			{ name: "zenmux", keyEnv: "ZENMUX_API_KEY" },
+		{ name: "cerebras", keyEnv: "CEREBRAS_API_KEY" },
+		{ name: "google", keyEnv: "", auth: "none" },
+		{ name: "groq", keyEnv: "GROQ_API_KEY" },
+		{ name: "mistral", keyEnv: "MISTRAL_API_KEY" },
+		{ name: "nvidia", keyEnv: "NVIDIA_API_KEY", keyEnvAlt: "NVIDIA_API_KEYS" },
+		{ name: "openrouter", keyEnv: "OPENROUTER_API_KEY" },
+		{ name: "abliteration", keyEnv: "ABLITERATION_API_KEY", keyEnvAlt: "ABLIT_KEY" },
+		{ name: "aiand", keyEnv: "AIAND_API_KEY" },
+		{ name: "aimlapi", keyEnv: "AIMLAPI_API_KEY" },
+		{ name: "anthropic", keyEnv: "ANTHROPIC_API_KEY", auth: "x-api-key" },
+		{ name: "baseten", keyEnv: "BASETEN_API_KEY" },
+		{ name: "commandcode", keyEnv: "COMMAND_CODE_API_KEY", keyEnvAlt: "COMMANDCODE_API_KEY" },
+		{ name: "coreweave", keyEnv: "COREWEAVE_API_KEY", keyEnvAlt: "WANDB_API_KEY" },
+		{ name: "deepinfra", keyEnv: "DEEPINFRA_API_KEY" },
+		{ name: "deepseek", keyEnv: "DEEPSEEK_API_KEY" },
+		{ name: "firepass", keyEnv: "FIREPASS_API_KEY" },
+		{ name: "fireworks", keyEnv: "FIREWORKS_API_KEY" },
+		{ name: "huggingface", keyEnv: "HUGGINGFACE_HUB_TOKEN", keyEnvAlt: "HF_TOKEN" },
+		{ name: "meta", keyEnv: "MODEL_API_KEY", keyEnvAlt: "META_API_KEY" },
+		{ name: "minimax", keyEnv: "MINIMAX_API_KEY" },
+		{ name: "moonshot", keyEnv: "MOONSHOT_API_KEY", keyEnvAlt: "KIMI_API_KEY" },
+		{ name: "nanogpt", keyEnv: "NANO_GPT_API_KEY", keyEnvAlt: "NANOGPT_API_KEY" },
+		{ name: "novita", keyEnv: "NOVITA_API_KEY" },
+		{ name: "openai", keyEnv: "OPENAI_API_KEY" },
+		{ name: "qianfan", keyEnv: "QIANFAN_API_KEY" },
+		{ name: "sakana", keyEnv: "SAKANA_API_KEY", keyEnvAlt: "FUGU_API_KEY" },
+		{ name: "siliconflow", keyEnv: "SILICONFLOW_API_KEY" },
+		{ name: "stepfun", keyEnv: "STEPFUN_API_KEY" },
+		{ name: "synthetic", keyEnv: "SYNTHETIC_API_KEY" },
+		{ name: "together", keyEnv: "TOGETHER_API_KEY" },
+		{ name: "typesafe", keyEnv: "TYPESAFE_API_KEY" },
+		{ name: "venice", keyEnv: "VENICE_API_KEY" },
+		{ name: "xai", keyEnv: "XAI_API_KEY" },
+		{ name: "xiaomi", keyEnv: "XIAOMI_API_KEY" },
+		{ name: "zai", keyEnv: "ZAI_API_KEY" },
+		{ name: "zenmux", keyEnv: "ZENMUX_API_KEY" },
 		],
 	};
 }
 
-const { PROVIDER_DEFS } = resolveTackModule();
+const { PROVIDER_DEFS } = resolveRoostModule();
 
-/** Tau-side catalog policy for one tack-sourced provider. */
+/** Tau-side catalog policy for one roost-sourced provider. */
 interface TauProviderPolicy {
 	/** Preferred model id when no explicit selection is made (tau UX policy). */
 	defaultModel: string;
@@ -337,10 +335,10 @@ const OPENROUTER_SEED: CompiledSeed = {
 };
 
 /**
- * Tau catalog policy for tack-sourced providers, keyed by provider id.
- * Every key MUST name a definition in tack's `PROVIDER_DEFS` (checked at
- * build time below); every other tack definition (llama-swap, nim-local,
- * kimi-auto — sovereign-router-local concepts tack itself flags
+ * Tau catalog policy for roost-sourced providers, keyed by provider id.
+ * Every key MUST name a definition in roost's `PROVIDER_DEFS` (checked at
+ * build time below); every other roost definition (llama-swap, nim-local,
+ * kimi-auto — sovereign-router-local concepts roost itself flags
  * `routerLocal`) stays out of tau's catalog by design.
  *
  * Values transcribed verbatim from the retired KDL catalog nodes
@@ -1889,29 +1887,29 @@ const TAU_PROVIDER_POLICY: Readonly<Record<string, TauProviderPolicy>> = {
 	},
 };
 
-/** Provider ids whose catalog entries are sourced from tack (sorted). */
-export const TACK_PROVIDER_IDS: readonly string[] = Object.keys(TAU_PROVIDER_POLICY).sort();
+/** Provider ids whose catalog entries are sourced from roost (sorted). */
+export const ROOST_PROVIDER_IDS: readonly string[] = Object.keys(TAU_PROVIDER_POLICY).sort();
 
 /**
- * Projects tack's provider definitions onto tau's `CompiledProvider` shape.
- * Wire data (env vars, auth posture, discovery label seed) comes from tack;
+ * Projects roost's provider definitions onto tau's `CompiledProvider` shape.
+ * Wire data (env vars, auth posture, discovery label seed) comes from roost;
  * tau catalog policy (default model, kind APIs, discovery flags, seed rows)
  * comes from `TAU_PROVIDER_POLICY`.
  */
-export function tackProviderEntries(): Record<string, CompiledProvider> {
+export function roostProviderEntries(): Record<string, CompiledProvider> {
 	const defs = new Map(PROVIDER_DEFS.map(def => [def.name, def]));
 	const entries: Record<string, CompiledProvider> = {};
-	for (const id of TACK_PROVIDER_IDS) {
+	for (const id of ROOST_PROVIDER_IDS) {
 		const def = defs.get(id);
 		if (!def) {
 			// Fallback, not rollback: skip the drifted provider with a loud
 			// warning instead of killing the entire catalog (or restoring
 			// duplicated KDL authority). Tack is the source of truth — the
-			// provider stays absent until tack defines it or the policy entry
+			// provider stays absent until roost defines it or the policy entry
 			// is removed.
 			console.error(
 				`[roost] DRIFT: provider policy for "${id}" has no PROVIDER_DEFS definition — skipping. ` +
-					`Add the definition to ranch/tack or remove the entry from TAU_PROVIDER_POLICY.`,
+					`Add the definition to ranch/roost or remove the entry from TAU_PROVIDER_POLICY.`,
 			);
 			continue;
 		}
@@ -1936,11 +1934,11 @@ export function tackProviderEntries(): Record<string, CompiledProvider> {
 }
 
 /**
- * Bundled seed rows for a tack-sourced provider, for KDL `models-from`
+ * Bundled seed rows for a roost-sourced provider, for KDL `models-from`
  * references. Providers like `muse-code` inherit their seed rows from a
  * converted provider (`meta`); the compiler resolves those references
  * against this instead of the (retired) KDL seed block.
  */
-export function tackProviderSeed(id: string): CompiledSeed | undefined {
+export function roostProviderSeed(id: string): CompiledSeed | undefined {
 	return TAU_PROVIDER_POLICY[id]?.seed;
 }

@@ -15,7 +15,7 @@
  * row's API); catalog axes are rejected because they stay rule-owned.
  */
 import { API_COMPAT_RECORDS } from "../../src/compat/axes";
-import { tackProviderSeed } from "../../src/compat/tack";
+import { roostProviderSeed } from "../../src/compat/roost";
 import type {
 	CompiledProvider,
 	CompiledProviderDiscovery,
@@ -77,7 +77,7 @@ const DISCOVERY_PROPS = ["label", "oauth-provider", "allow-unauthenticated"] as 
  * Provider-root catalog node names. The KDL tree keeps these only for providers
  * `@ranch/tack` does not cover yet (a shrinking legacy rump); tack-sourced
  * providers carry their wire data in `@ranch/tack` and their tau catalog policy
- * in src/compat/tack.ts. The cascade compiler skips these nodes.
+ * in src/compat/roost.ts. The cascade compiler skips these nodes.
  */
 export const PROVIDER_CATALOG_NODES: ReadonlySet<string> = new Set([
 	"default-model",
@@ -419,7 +419,7 @@ export function compileProviders(sources: readonly { file: string; text: string 
 		const sourceModels =
 			source?.seed && source.seed.modelsFrom === undefined
 				? source.seed.seed.models
-				: tackProviderSeed(seed.modelsFrom)?.models;
+				: roostProviderSeed(seed.modelsFrom)?.models;
 		if (!sourceModels) {
 			throw new CompatCompileError(
 				seed.node.file,
@@ -447,7 +447,7 @@ export function compileProviders(sources: readonly { file: string; text: string 
 /**
  * Source of the committed `src/compat/provider-ids.ts`: the `KnownProvider`
  * union derived from the compiled catalog entries PLUS the tack-sourced
- * provider ids (merged by scripts/compile-compat.ts; see src/compat/tack.ts),
+ * provider ids (merged by scripts/compile-compat.ts; see src/compat/roost.ts),
  * so the descriptor table and `@tau/tau-ai`'s registry keep typed provider
  * ids without importing the JSON as a const.
  */

@@ -5,11 +5,11 @@
  * regenerate + commit together with rule changes.
  *
  * `rules.json` carries the KDL-compiled providers; provider ids sourced from
- * `@ranch/tack` (see `src/compat/tack.ts`) are merged in for
+ * `@ranch/tack` (see `src/compat/roost.ts`) are merged in for
  * `provider-ids.ts` so `KnownProvider` covers every catalog provider.
  */
 import * as path from "node:path";
-import { TACK_PROVIDER_IDS, tackProviderEntries } from "../src/compat/tack";
+import { ROOST_PROVIDER_IDS, roostProviderEntries } from "../src/compat/roost";
 import type { CompiledProvider } from "../src/compat/types";
 import { compileCompatRules, renderAuthIds, renderProviderIds } from "./compat-compiler";
 
@@ -19,10 +19,10 @@ const authIdsPath = path.join(import.meta.dir, "../src/compat/auth-ids.ts");
 const providerIdsPath = path.join(import.meta.dir, "../src/compat/provider-ids.ts");
 
 const compiled = await compileCompatRules(rulesDir);
-// Resolve tack BEFORE any writes: tackProviderEntries() is the fallible step
+// Resolve tack BEFORE any writes: roostProviderEntries() is the fallible step
 // (module resolution + drift checks), and writing outputs first would leave a
 // partially updated tree (fresh rules.json, stale provider-ids.ts) on failure.
-const tackEntries = tackProviderEntries();
+const tackEntries = roostProviderEntries();
 await Bun.write(outPath, JSON.stringify(compiled));
 await Bun.write(authIdsPath, renderAuthIds(compiled.auth));
 // KnownProvider is the union of KDL-compiled and tack-sourced catalog
@@ -31,5 +31,5 @@ const providersForIds: Record<string, CompiledProvider> = { ...compiled.provider
 for (const [id, entry] of Object.entries(tackEntries)) providersForIds[id] = entry;
 await Bun.write(providerIdsPath, renderProviderIds(providersForIds));
 console.log(
-	`wrote ${path.relative(process.cwd(), outPath)} (${compiled.cascade.rules.length} rules, ${compiled.taxonomy.classes.length} classes, ${Object.keys(providersForIds).length} catalog providers (${TACK_PROVIDER_IDS.length} tack-sourced), ${compiled.auth.providers.length} auth providers, ${compiled.files.length} files)`,
+	`wrote ${path.relative(process.cwd(), outPath)} (${compiled.cascade.rules.length} rules, ${compiled.taxonomy.classes.length} classes, ${Object.keys(providersForIds).length} catalog providers (${ROOST_PROVIDER_IDS.length} tack-sourced), ${compiled.auth.providers.length} auth providers, ${compiled.files.length} files)`,
 );

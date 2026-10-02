@@ -1,17 +1,17 @@
 /**
  * Typed accessors over the catalog-provider entries.
  *
- * Provider data has ONE authority: `@ranch/tack` (`ranch/tack`),
- * projected onto the `CompiledProvider` shape by `./tack`. The KDL tree
+ * Provider data has ONE authority: `@ranch/roost` (`ranch/roost`),
+ * projected onto the `CompiledProvider` shape by `./roost`. The KDL tree
  * (`rules/providers/<id>.kdl`) still compiles catalog entries for providers
- * tack does not cover yet — a shrinking legacy rump, never a competing
- * inventory: tack wins every id conflict (there are none by construction).
+ * roost does not cover yet — a shrinking legacy rump, never a competing
+ * inventory: roost wins every id conflict (there are none by construction).
  *
  * `provider-models/descriptors.ts` pairs these entries with the per-provider
  * model-manager factories; the generator bundles seed rows per each entry's
  * `bundle` policy.
  */
-import { tackProviderEntries } from "./tack";
+import { roostProviderEntries } from "./roost";
 import rules from "./rules.json";
 import type { Api, ModelSpec } from "../types";
 import type { CompiledProvider } from "./types";
@@ -20,11 +20,11 @@ const EMPTY: readonly ModelSpec<Api>[] = [];
 
 let merged: Readonly<Record<string, CompiledProvider>> | undefined;
 
-/** Every catalog provider entry keyed by id (sorted; tack-sourced first-class). */
+/** Every catalog provider entry keyed by id (sorted; roost-sourced first-class). */
 export function providerEntries(): Readonly<Record<string, CompiledProvider>> {
 	if (!merged) {
 		const kdl = rules.providers as Readonly<Record<string, CompiledProvider>>;
-		const fromTack = tackProviderEntries();
+		const fromTack = roostProviderEntries();
 		const ids = [...new Set([...Object.keys(fromTack), ...Object.keys(kdl)])].sort();
 		const out: Record<string, CompiledProvider> = {};
 		for (const id of ids) out[id] = fromTack[id] ?? kdl[id]!;
