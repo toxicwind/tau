@@ -4,17 +4,17 @@
  * Commands are sent as JSON lines on stdin.
  * Responses and events are emitted as JSON lines on stdout.
  */
-import type { AgentMessage, AgentToolResult, ThinkingLevel, ToolLoadMode } from "@oh-my-pi/pi-agent-core";
-import type { CompactionResult } from "@oh-my-pi/pi-agent-core/compaction";
-import type { Effort, ImageContent, Model, ToolExample } from "@oh-my-pi/pi-ai";
+import type { AgentMessage, AgentToolResult, ThinkingLevel, ToolLoadMode } from "@tau/tau-agent-core";
+import type { CompactionResult } from "@tau/tau-agent-core/compaction";
+import type { Effort, ImageContent, Model, ToolExample } from "@tau/tau-ai";
 import type { BashResult } from "../../exec/bash-executor";
 import type { ContextUsage } from "../../extensibility/extensions/types";
 import type { AgentSessionEvent, SessionStats } from "../../session/agent-session";
 import type { FileEntry, SessionEntry, SessionTreeNode } from "../../session/session-entries";
 import type { AvailableSlashCommandSource } from "../../slash-commands/available-commands";
-import type { AgentProgress } from "@oh-my-pi/pi-tui/tools/task";
+import type { AgentProgress } from "@tau/tau-tui/tools/task";
 import type { SubagentEventPayload, SubagentLifecyclePayload, SubagentProgressPayload } from "../../task";
-import type { TodoPhase } from "@oh-my-pi/pi-tui/tools/todo";
+import type { TodoPhase } from "@tau/tau-tui/tools/todo";
 import type { RpcMessagesPage } from "./rpc-messages";
 
 // ============================================================================

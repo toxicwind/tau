@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { TempDir } from "@tau/tau-utils";
 
 const tempDirs: TempDir[] = [];
 
@@ -17,7 +17,7 @@ afterEach(async () => {
 
 describe("SessionManager.open with throwIfMissing", () => {
 	it("rejects a missing file without creating it", async () => {
-		const root = makeTempDir("@pi-open-throw-missing-");
+		const root = makeTempDir("@tau-open-throw-missing-");
 		const missing = path.join(root, "missing.jsonl");
 
 		await expect(SessionManager.open(missing, undefined, undefined, { throwIfMissing: true })).rejects.toThrow(
@@ -28,7 +28,7 @@ describe("SessionManager.open with throwIfMissing", () => {
 	});
 
 	it("still mints at a missing path when the flag is omitted, keeping --session working", async () => {
-		const root = makeTempDir("@pi-open-mint-default-");
+		const root = makeTempDir("@tau-open-mint-default-");
 		const fresh = path.join(root, "fresh.jsonl");
 
 		const manager = await SessionManager.open(fresh, undefined, undefined, { initialCwd: root });
@@ -38,7 +38,7 @@ describe("SessionManager.open with throwIfMissing", () => {
 	});
 
 	it("rejects an existing but empty file instead of rewriting it", async () => {
-		const root = makeTempDir("@pi-open-throw-empty-");
+		const root = makeTempDir("@tau-open-throw-empty-");
 		const empty = path.join(root, "empty.jsonl");
 		await Bun.write(empty, "");
 

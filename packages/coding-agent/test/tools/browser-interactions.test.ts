@@ -2,11 +2,11 @@ import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { disposeAllVmContexts } from "@oh-my-pi/pi-coding-agent/eval/js/context-manager";
-import { createBrowserPrelude } from "@oh-my-pi/pi-coding-agent/tools/browser";
-import { releaseAllTabs } from "@oh-my-pi/pi-coding-agent/tools/browser/tab-supervisor";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools/index";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { disposeAllVmContexts } from "@tau/tau-coding-agent/eval/js/context-manager";
+import { createBrowserPrelude } from "@tau/tau-coding-agent/tools/browser";
+import { releaseAllTabs } from "@tau/tau-coding-agent/tools/browser/tab-supervisor";
+import type { ToolSession } from "@tau/tau-coding-agent/tools/index";
 import { chromiumAvailable } from "./chromium-probe";
 
 const CHROMIUM_AVAILABLE = await chromiumAvailable();
@@ -62,7 +62,7 @@ function makeSession(): ToolSession {
 }
 
 beforeAll(async () => {
-	tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "omp-browser-interactions-"));
+	tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-browser-interactions-"));
 	uploadPath = path.join(tempDir, "drop-fixture.txt");
 	await Bun.write(uploadPath, "drop contents");
 });
@@ -126,10 +126,10 @@ describe.skipIf(!CHROMIUM_AVAILABLE)("browser interaction parity", () => {
 				code: `const pending = tab.highlight("#highlight", { duration: 1000 });
 // The overlay is injected asynchronously and removed once the helper's
 // host-side hold elapses, so wait for the node instead of sampling the count.
-await tab.waitForSelector("[data-omp-highlight-overlay]", { timeout: 5000 });
-const during = await tab.evaluate(() => document.querySelectorAll("[data-omp-highlight-overlay]").length);
+await tab.waitForSelector("[data-tau-highlight-overlay]", { timeout: 5000 });
+const during = await tab.evaluate(() => document.querySelectorAll("[data-tau-highlight-overlay]").length);
 await pending;
-const after = await tab.evaluate(() => document.querySelectorAll("[data-omp-highlight-overlay]").length);
+const after = await tab.evaluate(() => document.querySelectorAll("[data-tau-highlight-overlay]").length);
 return { during, after };`,
 			});
 			expect(valueFrom<{ during: number; after: number }>(highlight)).toEqual({ during: 1, after: 0 });

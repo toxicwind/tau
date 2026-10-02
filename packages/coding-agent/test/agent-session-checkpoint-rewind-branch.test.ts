@@ -1,25 +1,25 @@
 import { afterEach, describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import { Agent, type AgentMessage, type AgentTool } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, Message, ThinkingContent } from "@oh-my-pi/pi-ai";
+import { type } from "@tau/tautype";
+import { Agent, type AgentMessage, type AgentTool } from "@tau/tau-agent-core";
+import type { AssistantMessage, Message, ThinkingContent } from "@tau/tau-ai";
 import {
 	createMockModel,
 	type MockContent,
 	type MockModel,
 	type MockResponseSource,
-} from "@oh-my-pi/pi-ai/providers/mock";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { ExtensionRuntime, loadExtensionFromFactory } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
-import { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { convertToLlm } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { CheckpointTool, RewindTool, type ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-import { TempDir } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-ai/providers/mock";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { ExtensionRuntime, loadExtensionFromFactory } from "@tau/tau-coding-agent/extensibility/extensions/loader";
+import { ExtensionRunner } from "@tau/tau-coding-agent/extensibility/extensions/runner";
+import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { convertToLlm } from "@tau/tau-coding-agent/session/messages";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { CheckpointTool, RewindTool, type ToolSession } from "@tau/tau-coding-agent/tools";
+import { EventBus } from "@tau/tau-coding-agent/utils/event-bus";
+import { TempDir } from "@tau/tau-utils";
 
 const checkpointSchema = type({ goal: type("string") });
 const rewindSchema = type({ report: type("string") });
@@ -117,7 +117,7 @@ async function createHarness(
 		resolveFallbackTool?: (name: string) => AgentTool | undefined;
 	},
 ): Promise<Harness & { mock: MockModel }> {
-	const tempDir = TempDir.createSync("@pi-checkpoint-rewind-branch-");
+	const tempDir = TempDir.createSync("@tau-checkpoint-rewind-branch-");
 	const authStorage = await AuthStorage.create(":memory:");
 	authStorage.keys.setRuntime("mock", "test-key");
 

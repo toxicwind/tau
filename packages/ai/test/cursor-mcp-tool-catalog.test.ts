@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test";
-import { buildMcpToolDefinitions } from "@oh-my-pi/pi-ai/providers/cursor";
-import type { Tool, TSchema } from "@oh-my-pi/pi-ai/types";
-import { isJsonSchemaValueValid, sanitizeSchemaForCursor, toolWireSchema } from "@oh-my-pi/pi-ai/utils/schema";
-import { decodeJsonValue } from "@oh-my-pi/pi-catalog/discovery/protobuf";
+import { buildMcpToolDefinitions } from "@tau/tau-ai/providers/cursor";
+import type { Tool, TSchema } from "@tau/tau-ai/types";
+import { isJsonSchemaValueValid, sanitizeSchemaForCursor, toolWireSchema } from "@tau/tau-ai/utils/schema";
+import { decodeJsonValue } from "@tau/tau-catalog/discovery/protobuf";
 
 const tool = (name: string, parameters: TSchema = { type: "object", properties: {} }): Tool => ({
 	name,
@@ -35,14 +35,14 @@ describe("cursor buildMcpToolDefinitions", () => {
 		expect(names).not.toContain("bash");
 		expect(names).not.toContain("todo");
 
-		// The forwarded write must be a routable pi-agent MCP tool, so Cursor
+		// The forwarded write must be a routable tau-agent MCP tool, so Cursor
 		// dispatches it back through the coding-agent write tool's xd:// handler.
 		const writeDef = defs.find(def => def.name === "write");
-		expect(writeDef?.providerIdentifier).toBe("pi-agent");
+		expect(writeDef?.providerIdentifier).toBe("tau-agent");
 		expect(writeDef?.toolName).toBe("write");
 	});
 
-	it("keeps write out when only native tools are advertised (no pi-agent device needs resolution)", () => {
+	it("keeps write out when only native tools are advertised (no tau-agent device needs resolution)", () => {
 		const names = buildMcpToolDefinitions([tool("read"), tool("write"), tool("bash")]).map(def => def.name);
 		expect(names).toEqual([]);
 	});
@@ -55,7 +55,7 @@ describe("cursor buildMcpToolDefinitions", () => {
 
 		const lspDef = defs.find(def => def.name === "lsp");
 		expect(lspDef).toBeDefined();
-		expect(lspDef?.providerIdentifier).toBe("pi-agent");
+		expect(lspDef?.providerIdentifier).toBe("tau-agent");
 		expect(lspDef?.toolName).toBe("lsp");
 	});
 
@@ -65,7 +65,7 @@ describe("cursor buildMcpToolDefinitions", () => {
 		const defs = buildMcpToolDefinitions([tool("read"), tool("bash"), tool("edit")]);
 		const editDef = defs.find(def => def.name === "edit");
 		expect(editDef).toBeDefined();
-		expect(editDef?.providerIdentifier).toBe("pi-agent");
+		expect(editDef?.providerIdentifier).toBe("tau-agent");
 		expect(editDef?.toolName).toBe("edit");
 		expect(defs.map(def => def.name)).not.toContain("read");
 	});

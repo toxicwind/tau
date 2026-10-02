@@ -1,14 +1,14 @@
 import { afterEach, describe, expect, it } from "bun:test";
-import { clearCustomApis } from "@oh-my-pi/pi-ai/api-registry";
-import { createMockModel, registerMockApi } from "@oh-my-pi/pi-ai/providers/mock";
-import { streamSimple } from "@oh-my-pi/pi-ai/stream";
-import type { AssistantMessage, Context, CursorExecHandlers, ToolCall, ToolResultMessage } from "@oh-my-pi/pi-ai/types";
-import { getStreamingPartialJson, setStreamingPartialJson } from "@oh-my-pi/pi-ai/utils/block-symbols";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { applyGlyphCodec, decodeGlyphText, encodeGlyphText } from "@oh-my-pi/pi-ai/utils/glyph-codec";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { PiEditExecArgsSchema, PiEditReplacementSchema } from "@oh-my-pi/pi-catalog/discovery/cursor-proto";
-import { create } from "@oh-my-pi/pi-catalog/discovery/protobuf";
+import { clearCustomApis } from "@tau/tau-ai/api-registry";
+import { createMockModel, registerMockApi } from "@tau/tau-ai/providers/mock";
+import { streamSimple } from "@tau/tau-ai/stream";
+import type { AssistantMessage, Context, CursorExecHandlers, ToolCall, ToolResultMessage } from "@tau/tau-ai/types";
+import { getStreamingPartialJson, setStreamingPartialJson } from "@tau/tau-ai/utils/block-symbols";
+import { AssistantMessageEventStream } from "@tau/tau-ai/utils/event-stream";
+import { applyGlyphCodec, decodeGlyphText, encodeGlyphText } from "@tau/tau-ai/utils/glyph-codec";
+import { buildModel } from "@tau/tau-catalog/build";
+import { PiEditExecArgsSchema, PiEditReplacementSchema } from "@tau/tau-catalog/discovery/cursor-proto";
+import { create } from "@tau/tau-catalog/discovery/protobuf";
 
 const ZERO_USAGE: AssistantMessage["usage"] = {
 	input: 0,

@@ -1,12 +1,12 @@
 import { afterAll, describe, expect, it } from "bun:test";
 import { createContext, runInContext } from "node:vm";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { disposeAllVmContexts } from "@oh-my-pi/pi-coding-agent/eval/js/context-manager";
-import { executeJs } from "@oh-my-pi/pi-coding-agent/eval/js/executor";
-import type { EvalPreludeDefinition } from "@oh-my-pi/pi-coding-agent/eval/preludes";
-import { disposeAllKernelSessions, executePython } from "@oh-my-pi/pi-coding-agent/eval/py/executor";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import { createBrowserPrelude } from "@oh-my-pi/pi-coding-agent/tools/browser";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { disposeAllVmContexts } from "@tau/tau-coding-agent/eval/js/context-manager";
+import { executeJs } from "@tau/tau-coding-agent/eval/js/executor";
+import type { EvalPreludeDefinition } from "@tau/tau-coding-agent/eval/preludes";
+import { disposeAllKernelSessions, executePython } from "@tau/tau-coding-agent/eval/py/executor";
+import type { ToolSession } from "@tau/tau-coding-agent/sdk";
+import { createBrowserPrelude } from "@tau/tau-coding-agent/tools/browser";
 import { chromiumAvailable } from "../tools/chromium-probe";
 
 interface FacadeResponse {

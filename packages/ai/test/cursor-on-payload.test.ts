@@ -5,11 +5,11 @@
 // buildGrpcRequest is exercised directly (the transport is HTTP/2), and the
 // serialized run request is decoded back from the wire bytes.
 import { describe, expect, it } from "bun:test";
-import { buildGrpcRequest } from "@oh-my-pi/pi-ai/providers/cursor";
-import type { Context, Model } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { AgentClientMessageSchema } from "@oh-my-pi/pi-catalog/discovery/cursor-proto";
-import { fromBinary } from "@oh-my-pi/pi-catalog/discovery/protobuf";
+import { buildGrpcRequest } from "@tau/tau-ai/providers/cursor";
+import type { Context, Model } from "@tau/tau-ai/types";
+import { buildModel } from "@tau/tau-catalog/build";
+import { AgentClientMessageSchema } from "@tau/tau-catalog/discovery/cursor-proto";
+import { fromBinary } from "@tau/tau-catalog/discovery/protobuf";
 
 const model: Model<"cursor-agent"> = buildModel({
 	id: "cursor-composer-2.5",

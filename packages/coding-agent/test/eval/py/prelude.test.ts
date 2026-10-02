@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { $which, TempDir } from "@oh-my-pi/pi-utils";
+import { $which, TempDir } from "@tau/tau-utils";
 import { PYTHON_PRELUDE } from "../../../src/eval/py/prelude";
 const pythonPath = Bun.env.PYTHON ?? ($which("python3") ? "python3" : "python");
 
@@ -14,7 +14,7 @@ async function runPrelude(
 	const script = `${prelude}\n${code}`;
 	// The full prelude exceeds Windows' ~32k `python -c` command-line limit
 	// (ENAMETOOLONG); a script file behaves identically on every platform.
-	const dir = await TempDir.create("omp-py-prelude-");
+	const dir = await TempDir.create("tau-py-prelude-");
 	try {
 		const scriptPath = dir.join("script.py");
 		await Bun.write(scriptPath, script);

@@ -4,16 +4,16 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import { stripVTControlCharacters } from "node:util";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { writeModelCache } from "@oh-my-pi/pi-catalog/model-cache";
-import type { ModelRegistry, ProviderDiscoveryState } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { ModelRegistry as ModelRegistryImpl } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { ModelHubComponent } from "@oh-my-pi/pi-tui/overlays/model-hub";
-import { getThemeByName, setThemeInstance } from "@oh-my-pi/pi-tui/theme";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import type { TUI } from "@oh-my-pi/pi-tui";
-import { removeSyncWithRetries, Snowflake } from "@oh-my-pi/pi-utils";
+import { buildModel } from "@tau/tau-catalog/build";
+import { writeModelCache } from "@tau/tau-catalog/model-cache";
+import type { ModelRegistry, ProviderDiscoveryState } from "@tau/tau-coding-agent/config/model-registry";
+import { ModelRegistry as ModelRegistryImpl } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { ModelHubComponent } from "@tau/tau-tui/overlays/model-hub";
+import { getThemeByName, setThemeInstance } from "@tau/tau-tui/theme";
+import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import type { TUI } from "@tau/tau-tui";
+import { removeSyncWithRetries, Snowflake } from "@tau/tau-utils";
 
 function normalizeRenderedText(text: string): string {
 	return stripVTControlCharacters(text).replace(/\s+/g, " ").trim();
@@ -67,7 +67,7 @@ describe("issue #970 custom provider discovery", () => {
 	});
 
 	beforeEach(async () => {
-		tempDir = path.join(os.tmpdir(), `pi-test-issue-970-${Snowflake.next()}`);
+		tempDir = path.join(os.tmpdir(), `tau-test-issue-970-${Snowflake.next()}`);
 		fs.mkdirSync(tempDir, { recursive: true });
 		modelsPath = path.join(tempDir, "models.yml");
 		authStorage = await AuthStorage.create(path.join(tempDir, "auth.db"));

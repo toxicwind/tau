@@ -1,4 +1,4 @@
-import { untilAborted } from "@oh-my-pi/pi-utils";
+import { untilAborted } from "@tau/tau-utils";
 import type { Page } from "puppeteer-core";
 
 /** Navigation lifecycle accepted by history traversal and reload helpers. */

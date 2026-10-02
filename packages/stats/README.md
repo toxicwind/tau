@@ -1,10 +1,10 @@
-# @oh-my-pi/omp-stats
+# @tau/tau-stats
 
 Local observability dashboard for AI usage statistics.
 
 ## Features
 
-- **Session log parsing**: Reads JSONL session logs from `~/.omp/agent/sessions/`
+- **Session log parsing**: Reads JSONL session logs from `~/.tau/agent/sessions/`
 - **SQLite aggregation**: Efficient stats storage and querying using `bun:sqlite`
 - **Web dashboard**: Real-time metrics visualization with Chart.js
 - **Incremental sync**: Only processes new/modified log entries
@@ -29,22 +29,22 @@ Subscription-backed models use matching public API prices when an exact public m
 
 ```bash
 # Start dashboard server (default: http://localhost:3847)
-omp stats
+tau stats
 
 # Custom port
-omp stats --port 8080
+tau stats --port 8080
 
 # Print summary to console
-omp stats --summary
+tau stats --summary
 
 # Output as JSON (for scripting)
-omp stats --json
+tau stats --json
 ```
 
 ### Programmatic
 
 ```typescript
-import { getDashboardStats, syncAllSessions } from "@oh-my-pi/omp-stats";
+import { getDashboardStats, syncAllSessions } from "@tau/tau-stats";
 
 // Sync session logs to database
 const { processed, files } = await syncAllSessions();
@@ -67,8 +67,8 @@ console.log(stats.byModel[0].avgTokensPerSecond);
 
 ## Data Storage
 
-- **Session logs**: `~/.omp/agent/sessions/` (JSONL files)
-- **Stats database**: `~/.omp/stats.db` (SQLite)
+- **Session logs**: `~/.tau/agent/sessions/` (JSONL files)
+- **Stats database**: `~/.tau/stats.db` (SQLite)
 
 ## Dashboard
 

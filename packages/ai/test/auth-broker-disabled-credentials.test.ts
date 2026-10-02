@@ -8,13 +8,13 @@ import {
 	registerOAuthProvider,
 	SqliteAuthCredentialStore,
 	unregisterOAuthProviders,
-} from "@oh-my-pi/pi-ai";
+} from "@tau/tau-ai";
 import {
 	AuthBrokerClient,
 	type AuthBrokerServerHandle,
 	RemoteAuthCredentialStore,
 	startAuthBroker,
-} from "@oh-my-pi/pi-ai/auth-broker";
+} from "@tau/tau-ai/auth-broker";
 import { removeWithRetries } from "../../utils/src/temp";
 
 const DISABLE_CAUSE =

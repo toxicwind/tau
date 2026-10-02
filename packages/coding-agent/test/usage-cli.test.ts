@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test";
 import * as path from "node:path";
 import { stripVTControlCharacters } from "node:util";
-import type { UsageReport } from "@oh-my-pi/pi-ai";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import type { UsageReport } from "@tau/tau-ai";
+import { TempDir } from "@tau/tau-utils";
 import {
 	buildRedactionMap,
 	collectUnreportedAccounts,
@@ -11,7 +11,7 @@ import {
 	formatUsageHistory,
 	type UsageAccountIdentity,
 	type UsagePolicyDiagnosticsOptions,
-} from "@oh-my-pi/pi-coding-agent/cli/usage-cli";
+} from "@tau/tau-coding-agent/cli/usage-cli";
 
 const HOUR = 3_600_000;
 const FIVE_HOURS = 5 * HOUR;
@@ -863,7 +863,7 @@ describe("formatUsageHistory", () => {
 
 describe("usage command configuration", () => {
 	it("uses PI_CONFIG_FILES account policies during auth discovery", async () => {
-		using tempDir = TempDir.createSync("@omp-usage-overlay-");
+		using tempDir = TempDir.createSync("@tau-usage-overlay-");
 		const overlayPath = tempDir.join("overlay.yml");
 		await Promise.all([
 			Bun.write(

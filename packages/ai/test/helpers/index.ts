@@ -1,10 +1,10 @@
 import { afterEach, beforeEach } from "bun:test";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { Model } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import type { ModelSpec } from "@oh-my-pi/pi-catalog/types";
-import { isEnoent } from "@oh-my-pi/pi-utils";
+import type { Model } from "@tau/tau-ai/types";
+import { buildModel } from "@tau/tau-catalog/build";
+import type { ModelSpec } from "@tau/tau-catalog/types";
+import { isEnoent } from "@tau/tau-utils";
 
 export async function withEnv(
 	overrides: Record<string, string | undefined>,
@@ -81,9 +81,9 @@ export interface AuthGatewayE2EStatus {
 	reason?: string;
 }
 
-export const AUTH_GATEWAY_E2E_URL = Bun.env.OMP_E2E_GATEWAY_URL ?? "http://127.0.0.1:4000";
+export const AUTH_GATEWAY_E2E_URL = Bun.env.TAU_E2E_GATEWAY_URL ?? "http://127.0.0.1:4000";
 
-const AUTH_GATEWAY_TOKEN_PATH = path.join(os.homedir(), ".omp", "auth-gateway.token");
+const AUTH_GATEWAY_TOKEN_PATH = path.join(os.homedir(), ".tau", "auth-gateway.token");
 const AUTH_GATEWAY_HEALTH_TIMEOUT_MS = 500;
 
 let authGatewayE2EStatus: Promise<AuthGatewayE2EStatus> | undefined;

@@ -1,11 +1,11 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { KeybindingsManager as AppKeybindingsManager, setKeyHintPlatform } from "@oh-my-pi/pi-tui/app-keybindings";
-import type { ModelBrowserItem } from "@oh-my-pi/pi-tui/overlays/model-browser";
-import { setInternalUrlCompletionHost } from "@oh-my-pi/pi-tui/prompt/internal-url-autocomplete";
-import { createPromptActionAutocompleteProvider } from "@oh-my-pi/pi-tui/prompt/prompt-action-autocomplete";
-import { getSelectListTheme, initTheme, theme } from "@oh-my-pi/pi-tui/theme";
-import { KeybindingsManager, SelectList, setKeybindings, TUI_KEYBINDINGS } from "@oh-my-pi/pi-tui";
+import { buildModel } from "@tau/tau-catalog/build";
+import { KeybindingsManager as AppKeybindingsManager, setKeyHintPlatform } from "@tau/tau-tui/app-keybindings";
+import type { ModelBrowserItem } from "@tau/tau-tui/overlays/model-browser";
+import { setInternalUrlCompletionHost } from "@tau/tau-tui/prompt/internal-url-autocomplete";
+import { createPromptActionAutocompleteProvider } from "@tau/tau-tui/prompt/prompt-action-autocomplete";
+import { getSelectListTheme, initTheme, theme } from "@tau/tau-tui/theme";
+import { KeybindingsManager, SelectList, setKeybindings, TUI_KEYBINDINGS } from "@tau/tau-tui";
 
 function modelMentionItem(provider: string, id: string, name: string): ModelBrowserItem {
 	return {
@@ -33,8 +33,8 @@ describe("prompt action autocomplete", () => {
 		// The coding-agent internal-url router installs the real host; here a stub
 		// proves the fall-through contract without the router.
 		setInternalUrlCompletionHost({
-			completionSchemes: () => ["omp"],
-			resolveCompletions: async scheme => (scheme === "omp" ? [{ value: "docs", label: "docs" }] : null),
+			completionSchemes: () => ["tau"],
+			resolveCompletions: async scheme => (scheme === "tau" ? [{ value: "docs", label: "docs" }] : null),
 		});
 	});
 
@@ -237,11 +237,11 @@ describe("prompt action autocomplete", () => {
 			moveCursorToLineEnd: () => {},
 		});
 
-		const line = "/btw omp://";
+		const line = "/btw tau://";
 		const suggestions = await provider.getSuggestions([line], 0, line.length);
 
 		expect(suggestions).not.toBeNull();
-		expect(suggestions?.prefix).toBe("omp://");
+		expect(suggestions?.prefix).toBe("tau://");
 		expect(suggestions?.items.length).toBeGreaterThan(0);
 	});
 
@@ -266,11 +266,11 @@ describe("prompt action autocomplete", () => {
 			moveCursorToLineEnd: () => {},
 		});
 
-		const line = "/mcp omp://";
+		const line = "/mcp tau://";
 		const suggestions = await provider.getSuggestions([line], 0, line.length);
 
 		expect(suggestions).not.toBeNull();
-		expect(suggestions?.prefix).toBe("omp://");
+		expect(suggestions?.prefix).toBe("tau://");
 		expect(suggestions?.items.length).toBeGreaterThan(0);
 	});
 

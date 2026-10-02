@@ -1,10 +1,10 @@
 import { describe, expect, it } from "bun:test";
-import type { Api, Model } from "@oh-my-pi/pi-ai";
-import type { ModelSpec } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { resolveImageQuestionModel } from "@oh-my-pi/pi-coding-agent/utils/image-question";
+import type { Api, Model } from "@tau/tau-ai";
+import type { ModelSpec } from "@tau/tau-ai/types";
+import { buildModel } from "@tau/tau-catalog/build";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import type { ToolSession } from "@tau/tau-coding-agent/tools";
+import { resolveImageQuestionModel } from "@tau/tau-coding-agent/utils/image-question";
 
 function makeProxyModel(id: string, compat?: ModelSpec["compat"]): Model<Api> {
 	return buildModel({

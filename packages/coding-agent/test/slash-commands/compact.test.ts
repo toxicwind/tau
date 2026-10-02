@@ -1,12 +1,12 @@
 import { describe, expect, it, vi } from "bun:test";
-import { CompactionCancelledError } from "@oh-my-pi/pi-agent-core/compaction";
-import type { CompactOptions } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/types";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import type { CompactMode } from "@oh-my-pi/pi-coding-agent/session/compact-modes";
-import { USER_INTERRUPT_LABEL } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { executeAcpBuiltinSlashCommand } from "@oh-my-pi/pi-coding-agent/slash-commands/acp-builtins";
-import { executeBuiltinSlashCommand } from "@oh-my-pi/pi-coding-agent/slash-commands/builtin-registry";
-import type { SlashCommandRuntime } from "@oh-my-pi/pi-coding-agent/slash-commands/types";
+import { CompactionCancelledError } from "@tau/tau-agent-core/compaction";
+import type { CompactOptions } from "@tau/tau-coding-agent/extensibility/extensions/types";
+import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
+import type { CompactMode } from "@tau/tau-coding-agent/session/compact-modes";
+import { USER_INTERRUPT_LABEL } from "@tau/tau-coding-agent/session/messages";
+import { executeAcpBuiltinSlashCommand } from "@tau/tau-coding-agent/slash-commands/acp-builtins";
+import { executeBuiltinSlashCommand } from "@tau/tau-coding-agent/slash-commands/builtin-registry";
+import type { SlashCommandRuntime } from "@tau/tau-coding-agent/slash-commands/types";
 
 function acpRuntime() {
 	const compact = vi.fn(async (_instructions?: string, _options?: CompactOptions) => {});

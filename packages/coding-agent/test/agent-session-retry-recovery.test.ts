@@ -1,19 +1,19 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { Agent, AgentBusyError } from "@oh-my-pi/pi-agent-core";
-import type { ApiKey, AssistantMessage, AssistantRetryRecovery, Usage } from "@oh-my-pi/pi-ai";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import * as aiStream from "@oh-my-pi/pi-ai/stream";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { resolveAssistantErrorPresentation } from "@oh-my-pi/pi-tui/chat/transcript-render-helpers";
-import { AgentSession, type AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SILENT_ABORT_MARKER } from "@oh-my-pi/pi-coding-agent/session/messages";
-import type { SessionMessageEntry } from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent, AgentBusyError } from "@tau/tau-agent-core";
+import type { ApiKey, AssistantMessage, AssistantRetryRecovery, Usage } from "@tau/tau-ai";
+import { createMockModel } from "@tau/tau-ai/providers/mock";
+import * as aiStream from "@tau/tau-ai/stream";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { resolveAssistantErrorPresentation } from "@tau/tau-tui/chat/transcript-render-helpers";
+import { AgentSession, type AgentSessionEvent } from "@tau/tau-coding-agent/session/agent-session";
+import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { SILENT_ABORT_MARKER } from "@tau/tau-coding-agent/session/messages";
+import type { SessionMessageEntry } from "@tau/tau-coding-agent/session/session-entries";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { TempDir } from "@tau/tau-utils";
 import { mockSchedulerWaitWithClock } from "./helpers/mock-scheduler-clock";
 
 type AutoRetryEndEvent = Extract<AgentSessionEvent, { type: "auto_retry_end" }>;
@@ -126,13 +126,13 @@ describe("AgentSession retry recovery", () => {
 	let managers: SessionManager[];
 
 	beforeAll(async () => {
-		fixtureDir = TempDir.createSync("@pi-retry-recovery-fixture-");
+		fixtureDir = TempDir.createSync("@tau-retry-recovery-fixture-");
 		authStorage = await AuthStorage.create(path.join(fixtureDir.path(), "testauth.db"));
 		modelRegistry = new ModelRegistry(authStorage, path.join(fixtureDir.path(), "models.yml"));
 	});
 
 	beforeEach(async () => {
-		tempDir = TempDir.createSync("@pi-retry-recovery-");
+		tempDir = TempDir.createSync("@tau-retry-recovery-");
 		vi.spyOn(aiStream, "getEnvApiKey").mockReturnValue(undefined);
 		await authStorage.credentials.remove("anthropic");
 		authStorage.keys.removeRuntime("anthropic");

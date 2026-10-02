@@ -1,7 +1,7 @@
 [daemons.tau]
-# omp acp exposed as TCP daemon via chute (stdio→TCP + mcpServers normalization)
+# tau acp exposed as TCP daemon via chute (stdio→TCP + mcpServers normalization)
 port = 25111
-run = "exec /home/toxic/sovereign/projects/range/ranch/barn/chute/chute.mjs --port 25111 -- /home/toxic/sovereign/projects/range/ranch/stockyard/tau/packages/coding-agent/dist/omp acp -e /home/toxic/.tau/extensions/vansrouter.ts"
+run = "exec /home/toxic/sovereign/projects/range/ranch/barn/chute/chute.mjs --port 25111 -- /home/toxic/sovereign/projects/range/ranch/stockyard/tau/packages/coding-agent/dist/tau acp -e /home/toxic/.tau/extensions/vansrouter.ts"
 dir = "/home/toxic"
 mise = false
 retry = true

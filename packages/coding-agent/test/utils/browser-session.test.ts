@@ -2,9 +2,9 @@ import { afterEach, describe, expect, it, vi } from "bun:test";
 import { EventEmitter } from "node:events";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { LoginCancelledError } from "@oh-my-pi/pi-ai/error";
-import * as launchModule from "@oh-my-pi/pi-coding-agent/tools/browser/launch";
-import { captureBrowserSession } from "@oh-my-pi/pi-coding-agent/utils/browser-session";
+import { LoginCancelledError } from "@tau/tau-ai/error";
+import * as launchModule from "@tau/tau-coding-agent/tools/browser/launch";
+import { captureBrowserSession } from "@tau/tau-coding-agent/utils/browser-session";
 import type { Browser, LaunchOptions, PuppeteerNode } from "puppeteer-core";
 
 const request = {

@@ -1,9 +1,9 @@
 import { describe, expect, it } from "bun:test";
-import { streamOpenAICompletions } from "@oh-my-pi/pi-ai/providers/openai-completions";
-import type { Context, FetchImpl, Model, Tool, Usage } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+import { streamOpenAICompletions } from "@tau/tau-ai/providers/openai-completions";
+import type { Context, FetchImpl, Model, Tool, Usage } from "@tau/tau-ai/types";
+import { buildModel } from "@tau/tau-catalog/build";
+import { Effort } from "@tau/tau-catalog/effort";
+import { getBundledModel } from "@tau/tau-catalog/models";
 
 /**
  * Mirrors what `fetchClinePassModels` produces for a free-bucket entry with a

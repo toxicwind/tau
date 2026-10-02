@@ -1,6 +1,6 @@
 import * as path from "node:path";
-import { DEFAULT_STREAM_URL, STREAM_TITLE_MAX } from "@oh-my-pi/pi-wire";
-import { CliUsageError, Command, Flags } from "@oh-my-pi/pi-utils/cli";
+import { DEFAULT_STREAM_URL, STREAM_TITLE_MAX } from "@tau/tau-wire";
+import { CliUsageError, Command, Flags } from "@tau/tau-utils/cli";
 import { streamHelp as commandHelp } from "../cli/command-help";
 import { Settings } from "../config/settings";
 import { StencilCredential } from "../stencil/credential";
@@ -16,9 +16,9 @@ export default class Stream extends Command {
 	};
 
 	static examples = [
-		"omp stream",
-		'omp stream --title "Building a parser"',
-		"omp stream --server https://live.example.com",
+		"tau stream",
+		'tau stream --title "Building a parser"',
+		"tau stream --server https://live.example.com",
 	];
 
 	async run(): Promise<void> {

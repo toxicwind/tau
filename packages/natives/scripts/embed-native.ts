@@ -115,8 +115,8 @@ export async function embedNativeAddon({
 		const bytes = await fs.readFile(addon.path);
 		if (!containsVersionSentinel(bytes, versionSentinel)) {
 			throw new Error(
-				`Native addon ${addon.path} does not contain the @oh-my-pi/pi-natives@${version} version sentinel ` +
-					`\`${versionSentinel}\`. Rebuild it or fetch @oh-my-pi/pi-natives-${platformTag}@${version} before embedding.`,
+				`Native addon ${addon.path} does not contain the @tau/tau-natives@${version} version sentinel ` +
+					`\`${versionSentinel}\`. Rebuild it or fetch @tau/tau-natives-${platformTag}@${version} before embedding.`,
 			);
 		}
 		archiveEntries[addon.filename] = bytes;

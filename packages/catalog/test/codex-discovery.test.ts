@@ -3,15 +3,15 @@ import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { fetchCodexModels } from "@oh-my-pi/pi-catalog/discovery/codex";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { writeModelCache } from "@oh-my-pi/pi-catalog/model-cache";
-import { resolveProviderModels } from "@oh-my-pi/pi-catalog/model-manager";
-import { getSupportedEfforts } from "@oh-my-pi/pi-catalog/model-thinking";
-import { openaiCodexModelManagerOptions } from "@oh-my-pi/pi-catalog/provider-models/special";
-import { modelKind, type ModelSpec } from "@oh-my-pi/pi-catalog/types";
-import { resolveProviderModelReference } from "@oh-my-pi/pi-coding-agent/config/model-resolver";
+import { buildModel } from "@tau/tau-catalog/build";
+import { fetchCodexModels } from "@tau/tau-catalog/discovery/codex";
+import { Effort } from "@tau/tau-catalog/effort";
+import { writeModelCache } from "@tau/tau-catalog/model-cache";
+import { resolveProviderModels } from "@tau/tau-catalog/model-manager";
+import { getSupportedEfforts } from "@tau/tau-catalog/model-thinking";
+import { openaiCodexModelManagerOptions } from "@tau/tau-catalog/provider-models/special";
+import { modelKind, type ModelSpec } from "@tau/tau-catalog/types";
+import { resolveProviderModelReference } from "@tau/tau-coding-agent/config/model-resolver";
 
 describe("Codex model discovery", () => {
 	it("normalizes optional maximum context windows separately from the default window", async () => {
@@ -358,7 +358,7 @@ describe("Codex model discovery", () => {
 	});
 
 	it("keeps account-listed API-unsupported models while pruning hidden and absent models", async () => {
-		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "pi-catalog-codex-authoritative-"));
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-catalog-codex-authoritative-"));
 		const staticOnlyModel: ModelSpec<"openai-codex-responses"> = {
 			id: "unsupported-static",
 			name: "Unsupported static model",
@@ -432,7 +432,7 @@ describe("Codex model discovery", () => {
 	});
 
 	it("unions models across every configured Codex OAuth account (#6265)", async () => {
-		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "pi-catalog-codex-union-"));
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-catalog-codex-union-"));
 		// Codex `/models` is account-scoped: account 1 lacks gpt-5.6-sol, account 2
 		// exposes it. Keyed off the chatgpt-account-id header the discovery flow
 		// sends per account.
@@ -484,7 +484,7 @@ describe("Codex model discovery", () => {
 	});
 
 	it("keeps per-account Codex cyber entitlements on shared and exclusive models", async () => {
-		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "pi-catalog-codex-access-"));
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-catalog-codex-access-"));
 		const fetchFn: typeof fetch = Object.assign(
 			async (_input: string | URL | Request, init?: RequestInit) => {
 				const accountId = new Headers(init?.headers).get("chatgpt-account-id");
@@ -536,7 +536,7 @@ describe("Codex model discovery", () => {
 	});
 
 	it("keeps bundled Codex models when any account catalog fetch fails (#6265)", async () => {
-		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "pi-catalog-codex-union-fail-"));
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-catalog-codex-union-fail-"));
 		const bundled: ModelSpec<"openai-codex-responses"> = {
 			id: "gpt-5.6-terra",
 			name: "GPT-5.6 Terra",
@@ -588,7 +588,7 @@ describe("Codex model discovery", () => {
 	});
 
 	it("skips an account whose credential the backend rejects and unions the rest", async () => {
-		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "pi-catalog-codex-union-revoked-"));
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-catalog-codex-union-revoked-"));
 		const bundled: ModelSpec<"openai-codex-responses"> = {
 			id: "gpt-5.6-terra",
 			name: "GPT-5.6 Terra",
@@ -645,7 +645,7 @@ describe("Codex model discovery", () => {
 	});
 
 	it("keeps bundled Codex models when every account credential is rejected", async () => {
-		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "pi-catalog-codex-union-all-revoked-"));
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-catalog-codex-union-all-revoked-"));
 		const bundled: ModelSpec<"openai-codex-responses"> = {
 			id: "gpt-5.6-terra",
 			name: "GPT-5.6 Terra",
@@ -678,7 +678,7 @@ describe("Codex model discovery", () => {
 	});
 
 	it("ignores pre-V2 Codex discovery cache rows", async () => {
-		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "pi-catalog-codex-v7-cache-"));
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-catalog-codex-v7-cache-"));
 		const dbPath = path.join(tempDir, "models.db");
 		const cachedModel: ModelSpec<"openai-codex-responses"> = {
 			id: "gpt-5.5",
@@ -738,7 +738,7 @@ describe("Codex model discovery", () => {
 	});
 
 	it("does not silently promote legacy v2 Codex cache rows to the current schema", async () => {
-		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "pi-catalog-codex-v2-cache-"));
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-catalog-codex-v2-cache-"));
 		const dbPath = path.join(tempDir, "models.db");
 		try {
 			// Seed a v2 row directly, mirroring the shape written by very old
@@ -833,7 +833,7 @@ describe("Codex model discovery", () => {
 	});
 
 	it("keeps the plain route through authoritative discovery that advertises only the `-wm` slug", async () => {
-		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "pi-catalog-codex-luna-wm-"));
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-catalog-codex-luna-wm-"));
 		const fetchFn: typeof fetch = Object.assign(
 			async () =>
 				new Response(

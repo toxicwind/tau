@@ -6,12 +6,12 @@ import {
 	ImageInputTooLargeError,
 	InvalidImageDataError,
 	imageDecodeFailureReason,
-} from "@oh-my-pi/pi-tui/chat/image-loading";
+} from "@tau/tau-tui/chat/image-loading";
 import * as path from "node:path";
-import type { Context, ImageContent, Message, Model, ProviderPayload, TextContent } from "@oh-my-pi/pi-ai";
-import { rasterizeSvg } from "@oh-my-pi/pi-natives";
-import { isRecord, logger, readImageMetadata } from "@oh-my-pi/pi-utils";
-import { LRUCache } from "@oh-my-pi/pi-utils/lru";
+import type { Context, ImageContent, Message, Model, ProviderPayload, TextContent } from "@tau/tau-ai";
+import { rasterizeSvg } from "@tau/tau-natives";
+import { isRecord, logger, readImageMetadata } from "@tau/tau-utils";
+import { LRUCache } from "@tau/tau-utils/lru";
 import { resolveReadPath } from "../tools/path-utils";
 import { formatDimensionNote, type ImageResizeOptions, resizeImage } from "./image-resize";
 
@@ -147,7 +147,7 @@ export interface LoadImageInputOptions {
 	maxBytes?: number;
 	resolvedPath?: string;
 	detectedMimeType?: string;
-	/** Force non-WebP output (e.g. for Ollama). Leave unset to honor `OMP_NO_WEBP`. */
+	/** Force non-WebP output (e.g. for Ollama). Leave unset to honor `TAU_NO_WEBP`. */
 	excludeWebP?: boolean;
 }
 
@@ -158,7 +158,7 @@ export interface LoadImageAttachmentInputOptions {
 	uri: string;
 	autoResize: boolean;
 	maxBytes?: number;
-	/** Force non-WebP output (e.g. for Ollama). Leave unset to honor `OMP_NO_WEBP`. */
+	/** Force non-WebP output (e.g. for Ollama). Leave unset to honor `TAU_NO_WEBP`. */
 	excludeWebP?: boolean;
 }
 

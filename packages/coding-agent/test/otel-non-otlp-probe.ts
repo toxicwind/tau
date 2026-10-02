@@ -8,8 +8,8 @@ import {
 	flushTelemetryExport,
 	initTelemetryExport,
 	isTelemetryExportEnabled,
-} from "@oh-my-pi/pi-coding-agent/telemetry-export";
-import { logger } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-coding-agent/telemetry-export";
+import { logger } from "@tau/tau-utils";
 import { metrics, trace } from "@opentelemetry/api";
 
 const received = new Set<string>();
@@ -40,10 +40,10 @@ process.env.OTEL_METRICS_EXPORTER = "console";
 await initTelemetryExport();
 const enabled = isTelemetryExportEnabled();
 
-const span = trace.getTracer("@oh-my-pi/pi-agent-core").startSpan("non-otlp-probe");
+const span = trace.getTracer("@tau/tau-agent-core").startSpan("non-otlp-probe");
 span.end();
 logger.error("non-OTLP probe");
-metrics.getMeter("@oh-my-pi/pi-coding-agent").createCounter("non_otlp_probe").add(1);
+metrics.getMeter("@tau/tau-coding-agent").createCounter("non_otlp_probe").add(1);
 await flushTelemetryExport();
 await server.stop(true);
 

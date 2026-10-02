@@ -13,9 +13,9 @@
  * 4. Every emitted line respects the render width (sanitized, truncated).
  */
 import { beforeAll, describe, expect, it } from "bun:test";
-import { getThemeByName, setThemeInstance, type Theme } from "@oh-my-pi/pi-tui/theme";
-import { createVibeToolRenderer, type VibeToolDetails } from "@oh-my-pi/pi-tui/tools/vibe";
-import type { VibeScreenSnapshot } from "@oh-my-pi/pi-tui/tools/vibe";
+import { getThemeByName, setThemeInstance, type Theme } from "@tau/tau-tui/theme";
+import { createVibeToolRenderer, type VibeToolDetails } from "@tau/tau-tui/tools/vibe";
+import type { VibeScreenSnapshot } from "@tau/tau-tui/tools/vibe";
 
 const strip = (lines: readonly string[]): string[] =>
 	lines.map(line => line.replace(/\x1b\]8;[^\x1b\x07]*(?:\x07|\x1b\\)/g, "").replace(/\x1b\[[0-9;]*m/g, ""));

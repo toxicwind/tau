@@ -14,10 +14,10 @@ import {
 	hasResolvableTranscript,
 	registerArtifactsDir,
 	resetRegisteredArtifactDirsForTests,
-} from "@oh-my-pi/pi-coding-agent/internal-urls/registry-helpers";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-coding-agent/internal-urls/registry-helpers";
+import { AgentRegistry } from "@tau/tau-coding-agent/registry/agent-registry";
+import type { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import { removeWithRetries } from "@tau/tau-utils";
 
 function fakeLiveSession(): AgentSession {
 	return { messages: [] } as unknown as AgentSession;

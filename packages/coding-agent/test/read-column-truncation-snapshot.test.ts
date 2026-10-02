@@ -13,14 +13,14 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { AgentToolResult } from "@oh-my-pi/pi-agent-core";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { EditTool } from "@oh-my-pi/pi-coding-agent/edit";
-import { getEditStore } from "@oh-my-pi/pi-coding-agent/edit/store";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import type { ReadToolDetails } from "@oh-my-pi/pi-tui/tools/read";
-import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+import type { AgentToolResult } from "@tau/tau-agent-core";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { EditTool } from "@tau/tau-coding-agent/edit";
+import { getEditStore } from "@tau/tau-coding-agent/edit/store";
+import type { ToolSession } from "@tau/tau-coding-agent/tools";
+import type { ReadToolDetails } from "@tau/tau-tui/tools/read";
+import { ReadTool } from "@tau/tau-coding-agent/tools/read";
+import { removeWithRetries } from "@tau/tau-utils";
 
 const HASHLINE_HEADER_LINE = /^\[([^#\r\n]+)#([0-9A-F]{4})\]$/m;
 const COLUMN_CAP = 64;

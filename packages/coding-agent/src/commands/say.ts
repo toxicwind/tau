@@ -9,9 +9,9 @@
  * model into the worker's cache.
  */
 
-import { getProjectDir } from "@oh-my-pi/pi-utils";
-import chalk from "@oh-my-pi/pi-utils/chalk";
-import { Args, Command, Flags } from "@oh-my-pi/pi-utils/cli";
+import { getProjectDir } from "@tau/tau-utils";
+import chalk from "@tau/tau-utils/chalk";
+import { Args, Command, Flags } from "@tau/tau-utils/cli";
 import { sayHelp as commandHelp } from "../cli/command-help";
 import { ModelRegistry } from "../config/model-registry";
 import { Settings } from "../config/settings";
@@ -37,9 +37,9 @@ export default class Say extends Command {
 	};
 
 	static examples = [
-		'omp say "hello world"',
-		"omp say --file notes.md --voice bm_fable",
-		'omp say "hello world" --out /tmp/hello.wav',
+		'tau say "hello world"',
+		"tau say --file notes.md --voice bm_fable",
+		'tau say "hello world" --out /tmp/hello.wav',
 	];
 
 	async run(): Promise<void> {
@@ -152,7 +152,7 @@ export default class Say extends Command {
 	#synthesisFailed(model: string): void {
 		process.stderr.write(
 			chalk.red(
-				`error: could not synthesize with local TTS model "${model}". Run \`omp setup speech\` to install it.\n`,
+				`error: could not synthesize with local TTS model "${model}". Run \`tau setup speech\` to install it.\n`,
 			),
 		);
 	}

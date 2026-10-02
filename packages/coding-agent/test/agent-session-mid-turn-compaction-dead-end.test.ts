@@ -1,19 +1,19 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import { Agent, type AgentTool } from "@oh-my-pi/pi-agent-core";
-import * as compactionModule from "@oh-my-pi/pi-agent-core/compaction";
-import { createMockModel, type MockHandler, type MockResponse } from "@oh-my-pi/pi-ai/providers/mock";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { loadExtensions } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
-import { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { convertToLlm } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { getProjectAgentDir, TempDir } from "@oh-my-pi/pi-utils";
+import { type } from "@tau/tautype";
+import { Agent, type AgentTool } from "@tau/tau-agent-core";
+import * as compactionModule from "@tau/tau-agent-core/compaction";
+import { createMockModel, type MockHandler, type MockResponse } from "@tau/tau-ai/providers/mock";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { loadExtensions } from "@tau/tau-coding-agent/extensibility/extensions/loader";
+import { ExtensionRunner } from "@tau/tau-coding-agent/extensibility/extensions/runner";
+import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { convertToLlm } from "@tau/tau-coding-agent/session/messages";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { getProjectAgentDir, TempDir } from "@tau/tau-utils";
 
 const noopSchema = type({});
 const noopTool: AgentTool<typeof noopSchema, undefined> = {
@@ -55,7 +55,7 @@ describe("AgentSession mid-turn compaction dead-end", () => {
 		/** Delay message-end hooks so the turn is absent until the persistence barrier resolves. */
 		delayMessageEndPersistence?: boolean;
 	}): Promise<{ notices: string[]; compactionStarts: number[]; compactionResults: number }> {
-		tempDir = TempDir.createSync("@pi-mid-turn-compaction-dead-end-");
+		tempDir = TempDir.createSync("@tau-mid-turn-compaction-dead-end-");
 		authStorage = await AuthStorage.create(path.join(tempDir.path(), "auth.db"));
 		authStorage.keys.setRuntime("mock", "test-key");
 		const modelRegistry = new ModelRegistry(authStorage, path.join(tempDir.path(), "models.yml"));

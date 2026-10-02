@@ -8,16 +8,16 @@
  * (see issues #3389 and #4963).
  */
 import { afterAll, afterEach, describe, expect, it, vi } from "bun:test";
-import { type } from "@oh-my-pi/omptype";
-import { Agent, type AgentMessage, type AgentTool } from "@oh-my-pi/pi-agent-core";
-import { createMockModel, type MockModel, type MockResponse } from "@oh-my-pi/pi-ai/providers/mock";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { IrcMessage } from "@oh-my-pi/pi-tui/tools/irc";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { convertToLlm } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { type } from "@tau/tautype";
+import { Agent, type AgentMessage, type AgentTool } from "@tau/tau-agent-core";
+import { createMockModel, type MockModel, type MockResponse } from "@tau/tau-ai/providers/mock";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import type { IrcMessage } from "@tau/tau-tui/tools/irc";
+import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import { convertToLlm } from "@tau/tau-coding-agent/session/messages";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { TempDir } from "@tau/tau-utils";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 import { mockSchedulerWaitWithClock } from "./helpers/mock-scheduler-clock";
 
@@ -86,7 +86,7 @@ async function createHarness(
 	responses: MockResponse[],
 	options?: { retryEnabled?: boolean },
 ): Promise<Harness & { mock: MockModel }> {
-	const tempDir = TempDir.createSync("@pi-yield-empty-stop-");
+	const tempDir = TempDir.createSync("@tau-yield-empty-stop-");
 
 	const mock = createMockModel({ responses });
 	const modelRegistry = sharedModelRegistry;

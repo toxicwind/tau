@@ -1,5 +1,5 @@
-import { executeShell } from "@oh-my-pi/pi-natives";
-import { $envExact, directoryIsEnterable, getProjectDir, logger, ptree, untilAborted } from "@oh-my-pi/pi-utils";
+import { executeShell } from "@tau/tau-natives";
+import { $envExact, directoryIsEnterable, getProjectDir, logger, ptree, untilAborted } from "@tau/tau-utils";
 
 const COMMAND_FAILURE_RETRY_MS = 30_000;
 const commandResultCache = new Map<string, string>();

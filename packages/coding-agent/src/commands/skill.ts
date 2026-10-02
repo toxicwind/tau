@@ -1,8 +1,8 @@
 /**
- * Install, publish, and manage skills on a Skillshare registry (skills.omp.sh).
+ * Install, publish, and manage skills on a Skillshare registry (skills.tau.sh).
  */
-import { Args, Command, Flags } from "@oh-my-pi/pi-utils/cli";
-import type { SkillSearchSort } from "@oh-my-pi/pi-wire/skillshare";
+import { Args, Command, Flags } from "@tau/tau-utils/cli";
+import type { SkillSearchSort } from "@tau/tau-wire/skillshare";
 import { skillHelp as commandHelp } from "../cli/command-help";
 import { runSkillCommand, SKILL_ACTIONS, SKILL_USAGE, type SkillAction } from "../cli/skill-cli";
 
@@ -35,14 +35,14 @@ export default class Skill extends Command {
 	};
 
 	static examples = [
-		"omp skill install @alice/pdf-tools",
-		"omp skill install -g @alice/pdf-tools@^1.2",
-		'omp skill search "pdf" --sort downloads',
-		"omp skill version minor && omp skill publish",
-		"omp skill publish ./skills/pdf-tools --dry-run",
-		"omp skill tag @alice/pdf-tools@2.0.0-beta.1 next",
-		'omp skill deprecate @alice/pdf-tools@"<1.0.0" "use 1.x"',
-		"omp skill token create ci --package @alice/pdf-tools --expires 90",
+		"tau skill install @alice/pdf-tools",
+		"tau skill install -g @alice/pdf-tools@^1.2",
+		'tau skill search "pdf" --sort downloads',
+		"tau skill version minor && tau skill publish",
+		"tau skill publish ./skills/pdf-tools --dry-run",
+		"tau skill tag @alice/pdf-tools@2.0.0-beta.1 next",
+		'tau skill deprecate @alice/pdf-tools@"<1.0.0" "use 1.x"',
+		"tau skill token create ci --package @alice/pdf-tools --expires 90",
 	];
 
 	async run(): Promise<void> {

@@ -2,12 +2,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { listAllSessions, resolveResumableSession } from "@oh-my-pi/pi-coding-agent/session/session-listing";
-import { computeDefaultSessionDir } from "@oh-my-pi/pi-coding-agent/session/session-paths";
-import { FileSessionStorage } from "@oh-my-pi/pi-coding-agent/session/session-storage";
-import { executeBuiltinSlashCommand } from "@oh-my-pi/pi-coding-agent/slash-commands/builtin-registry";
-import { getConfigRootDir, refreshDirsFromEnv, setAgentDir } from "@oh-my-pi/pi-utils";
+import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
+import { listAllSessions, resolveResumableSession } from "@tau/tau-coding-agent/session/session-listing";
+import { computeDefaultSessionDir } from "@tau/tau-coding-agent/session/session-paths";
+import { FileSessionStorage } from "@tau/tau-coding-agent/session/session-storage";
+import { executeBuiltinSlashCommand } from "@tau/tau-coding-agent/slash-commands/builtin-registry";
+import { getConfigRootDir, refreshDirsFromEnv, setAgentDir } from "@tau/tau-utils";
 
 let tempDir: string;
 const originalAgentDir = process.env.PI_CODING_AGENT_DIR;
@@ -15,7 +15,7 @@ const fallbackAgentDir = path.join(getConfigRootDir(), "agent");
 const storage = new FileSessionStorage();
 
 beforeEach(async () => {
-	tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "omp-resume-command-"));
+	tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-resume-command-"));
 	setAgentDir(path.join(tempDir, "agent"));
 });
 
@@ -172,7 +172,7 @@ describe("/resume slash command", () => {
 
 	it.skipIf(process.platform === "win32")("lists and resumes sessions stored in XDG_DATA_HOME", async () => {
 		const xdgDataDir = path.join(tempDir, "xdg-data");
-		const xdgOmpDir = path.join(xdgDataDir, "omp");
+		const xdgOmpDir = path.join(xdgDataDir, "tau");
 		await fs.mkdir(xdgOmpDir, { recursive: true });
 
 		const originalXdgData = process.env.XDG_DATA_HOME;

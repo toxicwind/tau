@@ -1,5 +1,5 @@
 import { describe, expect, it, spyOn } from "bun:test";
-import { sanitizeText } from "@oh-my-pi/pi-utils/sanitize-text";
+import { sanitizeText } from "@tau/tau-utils/sanitize-text";
 import {
 	ConcatSink,
 	parseJsonlLenient,
@@ -9,7 +9,7 @@ import {
 	readSseJson,
 	readSseJsonOrText,
 	type ServerSentEvent,
-} from "@oh-my-pi/pi-utils/stream";
+} from "@tau/tau-utils/stream";
 
 const encoder = new TextEncoder();
 

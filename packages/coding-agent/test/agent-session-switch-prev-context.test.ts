@@ -1,15 +1,15 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import type { Model } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import type { BuildSessionContextOptions, SessionContext } from "@oh-my-pi/pi-coding-agent/session/session-context";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent } from "@tau/tau-agent-core";
+import type { Model } from "@tau/tau-ai";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import type { ExtensionRunner } from "@tau/tau-coding-agent/extensibility/extensions";
+import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import type { BuildSessionContextOptions, SessionContext } from "@tau/tau-coding-agent/session/session-context";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { TempDir } from "@tau/tau-utils";
 
 /**
  * Regression for issue #3846: in-TUI `/resume` rebuilt the *previous*
@@ -100,7 +100,7 @@ describe("AgentSession.switchSession previous-context build", () => {
 	}
 
 	it("skips building the previous display context when switching to a different session", async () => {
-		const tempDir = TempDir.createSync("@pi-switch-prev-ctx-different-");
+		const tempDir = TempDir.createSync("@tau-switch-prev-ctx-different-");
 		tempDirs.push(tempDir);
 
 		const { session, sessionManager } = buildSession(tempDir);
@@ -132,7 +132,7 @@ describe("AgentSession.switchSession previous-context build", () => {
 	});
 
 	it("builds the previous display context for same-session reloads", async () => {
-		const tempDir = TempDir.createSync("@pi-switch-prev-ctx-reload-");
+		const tempDir = TempDir.createSync("@tau-switch-prev-ctx-reload-");
 		tempDirs.push(tempDir);
 
 		const { session, sessionManager } = buildSession(tempDir);
@@ -159,8 +159,8 @@ describe("AgentSession.switchSession previous-context build", () => {
 	});
 
 	it("restores the previous session when cwd adoption is rejected", async () => {
-		const sourceDir = TempDir.createSync("@pi-switch-cwd-source-");
-		const targetDir = TempDir.createSync("@pi-switch-cwd-target-");
+		const sourceDir = TempDir.createSync("@tau-switch-cwd-source-");
+		const targetDir = TempDir.createSync("@tau-switch-cwd-target-");
 		tempDirs.push(sourceDir, targetDir);
 
 		const { session, sessionManager } = buildSession(sourceDir);
@@ -185,8 +185,8 @@ describe("AgentSession.switchSession previous-context build", () => {
 		expect(sessionManager.getCwd()).toBe(sourceDir.path());
 	});
 	it("rejects callback-free switches across project directories", async () => {
-		const sourceDir = TempDir.createSync("@pi-switch-no-callback-source-");
-		const targetDir = TempDir.createSync("@pi-switch-no-callback-target-");
+		const sourceDir = TempDir.createSync("@tau-switch-no-callback-source-");
+		const targetDir = TempDir.createSync("@tau-switch-no-callback-target-");
 		tempDirs.push(sourceDir, targetDir);
 
 		const { session, sessionManager } = buildSession(sourceDir);
@@ -208,9 +208,9 @@ describe("AgentSession.switchSession previous-context build", () => {
 		expect(sessionManager.getCwd()).toBe(sourceDir.path());
 	});
 	it("adopts a foreign replica without changing the local cwd", async () => {
-		const sourceDir = TempDir.createSync("@pi-switch-collab-source-");
-		const targetDir = TempDir.createSync("@pi-switch-collab-target-");
-		const extraDir = TempDir.createSync("@pi-switch-collab-extra-");
+		const sourceDir = TempDir.createSync("@tau-switch-collab-source-");
+		const targetDir = TempDir.createSync("@tau-switch-collab-target-");
+		const extraDir = TempDir.createSync("@tau-switch-collab-extra-");
 		tempDirs.push(sourceDir, targetDir, extraDir);
 
 		const { session, sessionManager } = buildSession(sourceDir);
@@ -244,8 +244,8 @@ describe("AgentSession.switchSession previous-context build", () => {
 	});
 
 	it("fails closed when cwd rollback throws after changing it", async () => {
-		const sourceDir = TempDir.createSync("@pi-switch-cwd-error-source-");
-		const targetDir = TempDir.createSync("@pi-switch-cwd-error-target-");
+		const sourceDir = TempDir.createSync("@tau-switch-cwd-error-source-");
+		const targetDir = TempDir.createSync("@tau-switch-cwd-error-target-");
 		tempDirs.push(sourceDir, targetDir);
 
 		const { session, sessionManager } = buildSession(sourceDir);
@@ -278,7 +278,7 @@ describe("AgentSession.switchSession previous-context build", () => {
 		expect(session.isDisposed).toBe(true);
 	});
 	it("rejects reload when the session-before-switch hook cancels", async () => {
-		const tempDir = TempDir.createSync("@pi-switch-reload-cancel-");
+		const tempDir = TempDir.createSync("@tau-switch-reload-cancel-");
 		tempDirs.push(tempDir);
 
 		const emit = vi.fn(async () => ({ cancel: true }));

@@ -1,9 +1,9 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, spyOn } from "bun:test";
-import { resetSettingsForTest, Settings, settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { LoginDialogComponent } from "@oh-my-pi/pi-tui/overlays/login-dialog";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import * as openModule from "@oh-my-pi/pi-coding-agent/utils/open";
-import type { TUI } from "@oh-my-pi/pi-tui";
+import { resetSettingsForTest, Settings, settings } from "@tau/tau-coding-agent/config/settings";
+import { LoginDialogComponent } from "@tau/tau-tui/overlays/login-dialog";
+import { initTheme } from "@tau/tau-tui/theme";
+import * as openModule from "@tau/tau-coding-agent/utils/open";
+import type { TUI } from "@tau/tau-tui";
 
 beforeAll(async () => {
 	resetSettingsForTest();

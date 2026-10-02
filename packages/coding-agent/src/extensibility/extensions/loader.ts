@@ -4,9 +4,9 @@
 import type * as fs1 from "node:fs";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import * as zod from "@oh-my-pi/omptype/zod";
-import type { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
+import { type } from "@tau/tautype";
+import * as zod from "@tau/tautype/zod";
+import type { ThinkingLevel } from "@tau/tau-agent-core";
 import type {
 	ImageContent,
 	Model,
@@ -15,9 +15,9 @@ import type {
 	ServiceTierFamily,
 	TextContent,
 	TSchema,
-} from "@oh-my-pi/pi-ai";
-import { isBuiltinComposerStyle, type KeyId } from "@oh-my-pi/pi-tui";
-import { hasFsCode, isEacces, isEnoent, logger } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-ai";
+import { isBuiltinComposerStyle, type KeyId } from "@tau/tau-tui";
+import { hasFsCode, isEacces, isEnoent, logger } from "@tau/tau-utils";
 import { type ExtensionModule, extensionModuleCapability } from "../../capability/extension-module";
 import { type Hook, hookCapability } from "../../capability/hook";
 import { isServiceTierFamily, isServiceTierForFamily } from "../../config/service-tier";
@@ -34,11 +34,11 @@ import { isFilesystemSourcePath } from "../../tools/path-utils";
 import { EventBus } from "../../utils/event-bus";
 import * as TypeBox from "../legacy-typebox";
 import { resolveExtensionDirectory } from "./directory-resolution";
-import { installLegacyPiSpecifierShim, loadLegacyPiModule } from "../plugins/legacy-pi-compat";
+import { installLegacyPiSpecifierShim, loadLegacyPiModule } from "../plugins/legacy-tau-compat";
 import { getAllPluginExtensionPaths } from "../plugins/loader";
 
 import { resolvePath, withHostGuard } from "../utils";
-import type { ComposerShapeDefinition } from "@oh-my-pi/pi-tui/overlays/composer-shape-registry";
+import type { ComposerShapeDefinition } from "@tau/tau-tui/overlays/composer-shape-registry";
 import type {
 	AssistantThinkingRenderer,
 	Extension,
@@ -68,7 +68,7 @@ function getExtensionFactory(module: LoadedExtensionModule): ExtensionFactory | 
 
 /**
  * Upstream-shaped provenance for an extension-registered tool. Consumers that
- * read `sourceInfo` off `getAllRegisteredTools()` (e.g. pi-fabric) receive an
+ * read `sourceInfo` off `getAllRegisteredTools()` (e.g. tau-fabric) receive an
  * absolute on-disk path: the tool's own `sourcePath` when it is filesystem-
  * absolute, otherwise the extension's resolved entry (`fallbackPath`). A tool
  * with no absolute origin at all falls back to the synthetic `<extension:name>`.
@@ -555,7 +555,7 @@ async function discoverHooksInPackageRoot(root: string): Promise<string[]> {
 /**
  * Discover absolute paths of extensions to load, without importing or
  * binding factories. Hot path on session startup — the scan walks native
- * `.omp`/`.pi` extension capabilities, JS/TS hook factories, the
+ * `.tau`/`.pi` extension capabilities, JS/TS hook factories, the
  * installed-plugin tree, and any configured paths.
  *
  * The root session imports these paths once and forwards prepared factories to
@@ -584,7 +584,7 @@ export async function discoverExtensionPaths(
 
 	const addPath = async (extPath: string): Promise<void> => {
 		const resolved = path.resolve(extPath);
-		// Dedup on the real path, not the literal string. `~/.tau` and `~/.omp`
+		// Dedup on the real path, not the literal string. `~/.tau` and `~/.tau`
 		// are symlinks to the same directory, so the same file reached through
 		// both roots produced two distinct resolved strings, both survived
 		// dedup, and the module body ran twice per session — every hook fired
@@ -612,7 +612,7 @@ export async function discoverExtensionPaths(
 
 	const ambient = options.ambient !== false;
 	if (ambient) {
-		// 1. Discover extension modules via capability API (native .omp/.pi only).
+		// 1. Discover extension modules via capability API (native .tau/.pi only).
 		// Scope the load to the native provider — the extension-module capability
 		// also has claude/codex/gemini/opencode providers, and their items were
 		// discarded here anyway (see #4198). The provider filter skips the walk

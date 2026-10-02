@@ -38,31 +38,31 @@
 
 ### Added
 
-- Added optional queued-message preparation with cancellation-safe delivery and appended context ([#11835](https://github.com/can1357/oh-my-pi/pull/11835) by [@andrebrait](https://github.com/andrebrait)).
+- Added optional queued-message preparation with cancellation-safe delivery and appended context ([#11835](https://github.com/toxicwind/tau/pull/11835) by [@andrebrait](https://github.com/andrebrait)).
 
 ### Fixed
 
-- Fixed streaming CPU blowup on long turns: per-delta `message_update` snapshots now deep-clone only the blocks the stream actually touched instead of the entire accumulated message, eliminating the quadratic cloning work that could freeze the TUI for tens of seconds to minutes while a subagent streams ([#10605](https://github.com/can1357/oh-my-pi/issues/10605)).
-- Native compaction now carries an existing local summary into the first provider-native request instead of losing the summarized history. ([#11525](https://github.com/can1357/oh-my-pi/pull/11525) by [@rpie9](https://github.com/rpie9))
-- Subsequent native compactions preserve messages appended between a speculative snapshot and its commit, while honoring `/clear` boundaries. ([#11525](https://github.com/can1357/oh-my-pi/pull/11525) by [@rpie9](https://github.com/rpie9))
-- Native replay compatibility checks the active provider and Responses API independently of whether future native compaction is enabled. ([#11525](https://github.com/can1357/oh-my-pi/pull/11525) by [@rpie9](https://github.com/rpie9))
-- Fixed compaction retaining oversized older steps beyond the recent-history budget and skipping previously retained history on later passes, preventing long tool loops from freeing enough context ([#11365](https://github.com/can1357/oh-my-pi/issues/11365)).
+- Fixed streaming CPU blowup on long turns: per-delta `message_update` snapshots now deep-clone only the blocks the stream actually touched instead of the entire accumulated message, eliminating the quadratic cloning work that could freeze the TUI for tens of seconds to minutes while a subagent streams ([#10605](https://github.com/toxicwind/tau/issues/10605)).
+- Native compaction now carries an existing local summary into the first provider-native request instead of losing the summarized history. ([#11525](https://github.com/toxicwind/tau/pull/11525) by [@rpie9](https://github.com/rpie9))
+- Subsequent native compactions preserve messages appended between a speculative snapshot and its commit, while honoring `/clear` boundaries. ([#11525](https://github.com/toxicwind/tau/pull/11525) by [@rpie9](https://github.com/rpie9))
+- Native replay compatibility checks the active provider and Responses API independently of whether future native compaction is enabled. ([#11525](https://github.com/toxicwind/tau/pull/11525) by [@rpie9](https://github.com/rpie9))
+- Fixed compaction retaining oversized older steps beyond the recent-history budget and skipping previously retained history on later passes, preventing long tool loops from freeing enough context ([#11365](https://github.com/toxicwind/tau/issues/11365)).
 - Fixed Codex remote compaction retries for both Bun and proxy socket-closure messages and stopped falling back to the unsupported `/responses/compact` endpoint after V2 failures.
 
 ## [18.1.19] - 2026-09-12
 
 ### Added
 
-- Added `Agent.getPendingToolResults()` for reconstructing live displays before buffered tool results are persisted ([#11868](https://github.com/can1357/oh-my-pi/pull/11868) by [@serverinspector](https://github.com/serverinspector)).
+- Added `Agent.getPendingToolResults()` for reconstructing live displays before buffered tool results are persisted ([#11868](https://github.com/toxicwind/tau/pull/11868) by [@serverinspector](https://github.com/serverinspector)).
 - Added opt-in host authorization and exact-once streamed child execution for discard-safe local reads.
 
 ### Changed
 
-- `Tool <name> not found` now also suggests mounted `xd://` devices, not just the advertised tool set, via the new `suggestFallbackToolNames` option ([#11516](https://github.com/can1357/oh-my-pi/issues/11516), [#10109](https://github.com/can1357/oh-my-pi/issues/10109) by [@oldschoola](https://github.com/oldschoola)).
+- `Tool <name> not found` now also suggests mounted `xd://` devices, not just the advertised tool set, via the new `suggestFallbackToolNames` option ([#11516](https://github.com/toxicwind/tau/issues/11516), [#10109](https://github.com/toxicwind/tau/issues/10109) by [@oldschoola](https://github.com/oldschoola)).
 
 ### Fixed
 
-- Speculative stream sessions are now discarded when a hook or argument transform replaces a call's arguments while keeping its ID, instead of releasing deferred work planned from the original code ([#11889](https://github.com/can1357/oh-my-pi/pull/11889) by [@h4vc](https://github.com/h4vc)).
+- Speculative stream sessions are now discarded when a hook or argument transform replaces a call's arguments while keeping its ID, instead of releasing deferred work planned from the original code ([#11889](https://github.com/toxicwind/tau/pull/11889) by [@h4vc](https://github.com/h4vc)).
 
 ## [18.1.18] - 2026-09-11
 
@@ -78,7 +78,7 @@
 
 ### Changed
 
-- `Tool <name> not found` now names a plausible intended target when the advertised set contains one, e.g. `Tool mcp__abc123__xyz789_read not found. Did you mean read?`. A model that mis-transcribes a long opaque tool name reliably keeps the trailing segment, which is the only part carrying meaning, so the miss becomes recoverable in the same turn instead of costing a round trip. Purely advisory — the suggestion is only ever a string in the error, never a dispatch target, so an unrecognized name still fails ([#10109](https://github.com/can1357/oh-my-pi/issues/10109) by [@oldschoola](https://github.com/oldschoola)).
+- `Tool <name> not found` now names a plausible intended target when the advertised set contains one, e.g. `Tool mcp__abc123__xyz789_read not found. Did you mean read?`. A model that mis-transcribes a long opaque tool name reliably keeps the trailing segment, which is the only part carrying meaning, so the miss becomes recoverable in the same turn instead of costing a round trip. Purely advisory — the suggestion is only ever a string in the error, never a dispatch target, so an unrecognized name still fails ([#10109](https://github.com/toxicwind/tau/issues/10109) by [@oldschoola](https://github.com/oldschoola)).
 
 ### Fixed
 
@@ -92,7 +92,7 @@
 ### Fixed
 
 - Fixed Codex V2 remote compaction ignoring explicit thinking-off.
-- Fixed Codex V2 remote compaction rebuilding the request prefix differently from normal turns, restoring prompt-cache reuse ([#10786](https://github.com/can1357/oh-my-pi/issues/10786)).
+- Fixed Codex V2 remote compaction rebuilding the request prefix differently from normal turns, restoring prompt-cache reuse ([#10786](https://github.com/toxicwind/tau/issues/10786)).
 
 ## [18.1.6] - 2026-09-03
 
@@ -185,10 +185,10 @@
 
 ### Fixed
 
-- Fixed `/compact` (and automatic compaction) resurrecting pre-`/clear` conversation turns: `prepareCompaction` now honors the latest `reset_boundary`, so a compaction after an in-place `/clear` only summarizes messages created after the reset ([#8718](https://github.com/can1357/oh-my-pi/issues/8718)).
-- Hardened compaction summarization against prompt injection: conversation history and previous summaries are now treated as untrusted, and embedded `<conversation>`/`<previous-summary>` boundary tags are neutralized before prompt assembly ([#8727](https://github.com/can1357/oh-my-pi/pull/8727) by [@koopmannleon19977-cmyk](https://github.com/koopmannleon19977-cmyk)).
+- Fixed `/compact` (and automatic compaction) resurrecting pre-`/clear` conversation turns: `prepareCompaction` now honors the latest `reset_boundary`, so a compaction after an in-place `/clear` only summarizes messages created after the reset ([#8718](https://github.com/toxicwind/tau/issues/8718)).
+- Hardened compaction summarization against prompt injection: conversation history and previous summaries are now treated as untrusted, and embedded `<conversation>`/`<previous-summary>` boundary tags are neutralized before prompt assembly ([#8727](https://github.com/toxicwind/tau/pull/8727) by [@koopmannleon19977-cmyk](https://github.com/koopmannleon19977-cmyk)).
 - Compaction summarization input is now bounded to the summary model's context (windowed fold for oversized spans) and deterministic context-overflow 400s are no longer retried up to the full retry budget; artifact ids containing `503` no longer misclassify hard 400s as transient.
-- Fixed remote compaction mirroring the #8789 Responses shape: `buildOpenAiNativeHistory` now hoists an assistant `message` wedged between a tool-call batch and its outputs ahead of the batch, so compaction requests to strict opencode-go gateways match the canonical `message(s) → calls → outputs` order ([#8789](https://github.com/can1357/oh-my-pi/issues/8789)).
+- Fixed remote compaction mirroring the #8789 Responses shape: `buildOpenAiNativeHistory` now hoists an assistant `message` wedged between a tool-call batch and its outputs ahead of the batch, so compaction requests to strict opencode-go gateways match the canonical `message(s) → calls → outputs` order ([#8789](https://github.com/toxicwind/tau/issues/8789)).
 
 ## [17.3.5] - 2026-08-16
 
@@ -204,7 +204,7 @@
 
 ### Fixed
 
-- Fixed Codex-compatible V2 remote compaction with an explicit `v2Endpoint` by sending the required feature-negotiation header ([#8524](https://github.com/can1357/oh-my-pi/issues/8524)).
+- Fixed Codex-compatible V2 remote compaction with an explicit `v2Endpoint` by sending the required feature-negotiation header ([#8524](https://github.com/toxicwind/tau/issues/8524)).
 
 ## [17.3.0] - 2026-08-13
 
@@ -253,8 +253,8 @@
 
 ### Fixed
 
-- Fixed Codex V2 remote compaction bypassing the provider's live WebSocket transport before trying SSE ([#7198](https://github.com/can1357/oh-my-pi/issues/7198)).
-- Tool calls skipped mid-batch to service queued steering/peer input now distinguish calls that never entered `tool.execute` (`SyntheticToolResultDetails`, `executed: false`) from in-flight calls that may have performed partial work (`execution: "started"`), allowing UI/telemetry consumers to render normal steering control flow without misreporting execution state ([#7199](https://github.com/can1357/oh-my-pi/issues/7199)).
+- Fixed Codex V2 remote compaction bypassing the provider's live WebSocket transport before trying SSE ([#7198](https://github.com/toxicwind/tau/issues/7198)).
+- Tool calls skipped mid-batch to service queued steering/peer input now distinguish calls that never entered `tool.execute` (`SyntheticToolResultDetails`, `executed: false`) from in-flight calls that may have performed partial work (`execution: "started"`), allowing UI/telemetry consumers to render normal steering control flow without misreporting execution state ([#7199](https://github.com/toxicwind/tau/issues/7199)).
 
 ## [17.2.2] - 2026-07-31
 
@@ -279,17 +279,17 @@
 
 ### Added
 
-- Added a pre-model-call gate: `AgentLoopConfig.beforeModelCall` receives the finalized provider context and run abort signal, and may return `{ stop: true, reason? }` to end the run before the provider is called, so a host can refuse a request it has decided not to pay for (prompt no longer fits, budget boundary crossed, session should hand off). `Agent.setBeforeModelCall` installs the host callback; `Agent.addBeforeModelCall` registers an additional one without displacing it and returns a disposer. A gate-stopped run retains pending soft tool reminders/escalations and an unserved hard tool choice for the next admitted request; deferred choices are revalidated against active tools and cleared with queued session state ([#6543](https://github.com/can1357/oh-my-pi/pull/6543) by [@paralin](https://github.com/paralin)).
+- Added a pre-model-call gate: `AgentLoopConfig.beforeModelCall` receives the finalized provider context and run abort signal, and may return `{ stop: true, reason? }` to end the run before the provider is called, so a host can refuse a request it has decided not to pay for (prompt no longer fits, budget boundary crossed, session should hand off). `Agent.setBeforeModelCall` installs the host callback; `Agent.addBeforeModelCall` registers an additional one without displacing it and returns a disposer. A gate-stopped run retains pending soft tool reminders/escalations and an unserved hard tool choice for the next admitted request; deferred choices are revalidated against active tools and cleared with queued session state ([#6543](https://github.com/toxicwind/tau/pull/6543) by [@paralin](https://github.com/paralin)).
 
 ### Changed
 
-- Input message events (prompt, steering, soft reminders) are now emitted once provider-context preparation succeeds, so a pre-model gate can veto the request before any turn opens; gate-stopped and failed runs still commit their accepted inputs ([#6543](https://github.com/can1357/oh-my-pi/pull/6543) by [@paralin](https://github.com/paralin)).
+- Input message events (prompt, steering, soft reminders) are now emitted once provider-context preparation succeeds, so a pre-model gate can veto the request before any turn opens; gate-stopped and failed runs still commit their accepted inputs ([#6543](https://github.com/toxicwind/tau/pull/6543) by [@paralin](https://github.com/paralin)).
 
 ## [17.1.5] - 2026-07-27
 
 ### Fixed
 
-- Fixed proxy-stream clients dropping finalized provider-only content blocks, including Anthropic native web-search history, by allowing `done` and `error` events to carry terminal assistant content while retaining delta-reconstructed content from older proxy servers that omit it ([#6703](https://github.com/can1357/oh-my-pi/issues/6703)).
+- Fixed proxy-stream clients dropping finalized provider-only content blocks, including Anthropic native web-search history, by allowing `done` and `error` events to carry terminal assistant content while retaining delta-reconstructed content from older proxy servers that omit it ([#6703](https://github.com/toxicwind/tau/issues/6703)).
 
 ## [17.1.4] - 2026-07-26
 
@@ -434,12 +434,12 @@
 
 ### Added
 
-- Added per-tool abort metadata so stream-wide aborts can label matching tool-call placeholders separately from unaffected sibling calls ([#2783](https://github.com/can1357/oh-my-pi/issues/2783)).
+- Added per-tool abort metadata so stream-wide aborts can label matching tool-call placeholders separately from unaffected sibling calls ([#2783](https://github.com/toxicwind/tau/issues/2783)).
 
 ### Fixed
 
-- Fixed handoff generation retrying with `toolChoice: "auto"` when custom OpenAI-compatible providers reject `toolChoice: "none"` with an auto-only 400. ([#4715](https://github.com/can1357/oh-my-pi/issues/4715))
-- Fixed generic remote compaction against OpenAI-compatible `/chat/completions` endpoints (for example llama.cpp `openai-completions`) by sending chat messages instead of the custom `{ systemPrompt, prompt }` summarizer payload. ([#4630](https://github.com/can1357/oh-my-pi/issues/4630))
+- Fixed handoff generation retrying with `toolChoice: "auto"` when custom OpenAI-compatible providers reject `toolChoice: "none"` with an auto-only 400. ([#4715](https://github.com/toxicwind/tau/issues/4715))
+- Fixed generic remote compaction against OpenAI-compatible `/chat/completions` endpoints (for example llama.cpp `openai-completions`) by sending chat messages instead of the custom `{ systemPrompt, prompt }` summarizer payload. ([#4630](https://github.com/toxicwind/tau/issues/4630))
 
 ## [16.3.7] - 2026-07-05
 
@@ -528,13 +528,13 @@
 
 ### Fixed
 
-- Fixed stale snapcompact archive frames leaking into context-full compaction after `compaction.strategy` was switched from `snapcompact` to `context-full`. Switching strategy left the latest compaction entry's `preserveData.snapcompact` in place, so context-full kept rebuilding context with old image frames attached — inflating context/token usage and making sessions appear to compact early (around ~60% apparent window use). The first context-full compaction after the switch now folds the prior archive's plaintext into the LLM summary input and strips `preserveData.snapcompact` from the new entry; legacy frame-only archives (no plaintext to migrate) are stripped outright. ([#3561](https://github.com/can1357/oh-my-pi/pull/3561) by [@serverinspector](https://github.com/serverinspector))
+- Fixed stale snapcompact archive frames leaking into context-full compaction after `compaction.strategy` was switched from `snapcompact` to `context-full`. Switching strategy left the latest compaction entry's `preserveData.snapcompact` in place, so context-full kept rebuilding context with old image frames attached — inflating context/token usage and making sessions appear to compact early (around ~60% apparent window use). The first context-full compaction after the switch now folds the prior archive's plaintext into the LLM summary input and strips `preserveData.snapcompact` from the new entry; legacy frame-only archives (no plaintext to migrate) are stripped outright. ([#3561](https://github.com/toxicwind/tau/pull/3561) by [@serverinspector](https://github.com/serverinspector))
 
 ## [16.1.18] - 2026-06-25
 
 ### Fixed
 
-- Fixed `AppendOnlyContextManager.syncMessages` clearing the entire log on any in-place rewrite of an already-synced message. Per-turn tool-output pruning, image stripping, or any `transformContext` re-render that touched a single message used to drop every prior turn out of the append-only log and re-send the conversation from scratch, forcing local backends (llama.cpp / Ollama / LM Studio) to re-prefill tens of thousands of tokens every few turns. `syncMessages` now finds the longest byte-stable prefix between the previously-synced messages and the new ones, truncates the log to that prefix, and only re-appends the diverged tail — so the provider's KV cache stays warm up to the divergence point. ([#3406](https://github.com/can1357/oh-my-pi/issues/3406))
+- Fixed `AppendOnlyContextManager.syncMessages` clearing the entire log on any in-place rewrite of an already-synced message. Per-turn tool-output pruning, image stripping, or any `transformContext` re-render that touched a single message used to drop every prior turn out of the append-only log and re-send the conversation from scratch, forcing local backends (llama.cpp / Ollama / LM Studio) to re-prefill tens of thousands of tokens every few turns. `syncMessages` now finds the longest byte-stable prefix between the previously-synced messages and the new ones, truncates the log to that prefix, and only re-appends the diverged tail — so the provider's KV cache stays warm up to the divergence point. ([#3406](https://github.com/toxicwind/tau/issues/3406))
 
 ## [16.1.17] - 2026-06-24
 
@@ -546,7 +546,7 @@
 
 ### Added
 
-- Added `generateHandoffFromContext(context, model, options)` to `@oh-my-pi/pi-agent-core/compaction`: runs the handoff oneshot against a fully-built provider `Context` (system prompt, normalized tools, transformed history, trailing handoff prompt) with `streamOptions` mirroring the live turn's cache routing, so a host that owns the transform pipeline can make the handoff request share the prompt cache the main turn populated. `generateHandoff(messages, …)` is unchanged and now delegates to it.
+- Added `generateHandoffFromContext(context, model, options)` to `@tau/tau-agent-core/compaction`: runs the handoff oneshot against a fully-built provider `Context` (system prompt, normalized tools, transformed history, trailing handoff prompt) with `streamOptions` mirroring the live turn's cache routing, so a host that owns the transform pipeline can make the handoff request share the prompt cache the main turn populated. `generateHandoff(messages, …)` is unchanged and now delegates to it.
 - Added an optional `systemPrompt` argument to `Agent.buildSideRequestContext(llmMessages, systemPrompt?)`, defaulting to the live agent prompt; callers can pin a different prompt (e.g. handoff generation, which uses the base prompt rather than a per-turn `before_agent_start` hook override).
 
 ### Changed
@@ -578,7 +578,7 @@
 
 ### Fixed
 
-- Wire-encoded `normalizeTools` parameters unconditionally so tools whose `intent` resolves to `"omit"` (function intent or `intent: "omit"`, e.g. builtin `eval` / `resolve`) no longer leak raw arktype/zod schema objects in `parameters` ([#3074](https://github.com/can1357/oh-my-pi/issues/3074))
+- Wire-encoded `normalizeTools` parameters unconditionally so tools whose `intent` resolves to `"omit"` (function intent or `intent: "omit"`, e.g. builtin `eval` / `resolve`) no longer leak raw arktype/zod schema objects in `parameters` ([#3074](https://github.com/toxicwind/tau/issues/3074))
 
 ## [16.1.2] - 2026-06-19
 
@@ -630,18 +630,18 @@
 
 ### Changed
 
-- Changed Gemini repetition-loop detection to live in the pi-ai stream layer instead of the agent loop. The agent no longer runs its own Gemini-gated verbatim repetition check (`detectRepetition`/`truncateRepetition`); loops now surface as a retryable transient stream error that the standard auto-retry path discards and re-samples, rather than a committed contentful error message.
+- Changed Gemini repetition-loop detection to live in the tau-ai stream layer instead of the agent loop. The agent no longer runs its own Gemini-gated verbatim repetition check (`detectRepetition`/`truncateRepetition`); loops now surface as a retryable transient stream error that the standard auto-retry path discards and re-samples, rather than a committed contentful error message.
 
 ### Fixed
 
-- Fixed `PI_DIALECT=minimax` being ignored by the owned tool-calling env selector. ([#2759](https://github.com/can1357/oh-my-pi/issues/2759))
+- Fixed `PI_DIALECT=minimax` being ignored by the owned tool-calling env selector. ([#2759](https://github.com/toxicwind/tau/issues/2759))
 
 ## [16.0.1] - 2026-06-15
 
 ### Fixed
 
-- Fixed transient provider errors after streamed tool-call arguments so incomplete tool calls are marked as interrupted output instead of eligible for automatic retry ([#2683](https://github.com/can1357/oh-my-pi/issues/2683)).
-- Fixed `@oh-my-pi/pi-agent-core` telemetry content capture crashing every chat turn with `TypeError: systemPrompt.map is not a function` when `captureMessageContent` is enabled (`OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=true`). `ChatRequestSnapshot.systemPrompt` now accepts `string | readonly string[]` and the telemetry serializers normalize a bare string to a single-element array — previously the full-system serializer called `.map` on a string (the `.length` guard passed, so it threw) and the request-message serializer iterated the string into one `system` message per character.
+- Fixed transient provider errors after streamed tool-call arguments so incomplete tool calls are marked as interrupted output instead of eligible for automatic retry ([#2683](https://github.com/toxicwind/tau/issues/2683)).
+- Fixed `@tau/tau-agent-core` telemetry content capture crashing every chat turn with `TypeError: systemPrompt.map is not a function` when `captureMessageContent` is enabled (`OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=true`). `ChatRequestSnapshot.systemPrompt` now accepts `string | readonly string[]` and the telemetry serializers normalize a bare string to a single-element array — previously the full-system serializer called `.map` on a string (the `.length` guard passed, so it threw) and the request-message serializer iterated the string into one `system` message per character.
 
 ## [16.0.0] - 2026-06-15
 
@@ -676,13 +676,13 @@
 
 ### Breaking Changes
 
-- Removed `harmony-leak` exports from the `@oh-my-pi/pi-agent-core` package entrypoint
+- Removed `harmony-leak` exports from the `@tau/tau-agent-core` package entrypoint
 - Replaced the experimental `promptToolCalls` agent/loop option with `toolCallSyntax`, selecting an explicit in-band tool-call grammar instead of a boolean GLM-only mode.
 
 ### Added
 
 - Added support for selecting owned in-band tool-call syntax via `PI_OWNED_TOOLS=<syntax>` (for example `hermes` or `qwen3`) while preserving legacy `PI_OWNED_TOOLS=1/true` as GLM mode
-- Added owned in-band tool calling for multiple syntaxes (`glm`, `hermes`, `kimi`, `xml`, `anthropic`, `deepseek`, `harmony`, `pi-native`, `qwen3`). Owned mode sends no native provider tools, appends a syntax-specific prompt/catalog, re-encodes prior tool calls/results as grammar-owned text, and parses streamed model output back into canonical tool calls.
+- Added owned in-band tool calling for multiple syntaxes (`glm`, `hermes`, `kimi`, `xml`, `anthropic`, `deepseek`, `harmony`, `tau-native`, `qwen3`). Owned mode sends no native provider tools, appends a syntax-specific prompt/catalog, re-encodes prior tool calls/results as grammar-owned text, and parses streamed model output back into canonical tool calls.
 - Added tool-example folding to `normalizeTools`: when given a model's affinity syntax (resolved via `preferredToolSyntax`), it renders each tool's `examples` into an `<examples>` block in that native syntax and appends it to the wire description. Wired through both context paths (fresh build and append-only `takeSnapshot`/`build` via a new `exampleSyntax` build option), with the `_i` intent-field placeholder added to examples when intent tracing injects it.
 - Added the `abortOnFabricatedToolResult` option to `AgentOptions`/`AgentLoopConfig` (default `true`): when owned tool calling is active and the model fabricates a tool result mid-turn, `true` aborts the provider request immediately while `false` lets it finish and discards the fabricated continuation.
 
@@ -700,7 +700,7 @@
 
 ### Added
 
-- Added repetition-loop detection to the streaming agent loop for Gemini-family providers. A runaway run of a repeated text or thinking unit is detected mid-stream from a bounded rolling tail (O(1) per delta), the provider request is aborted, the repeated tail is collapsed to a single representative copy, and the turn ends gracefully with an `error` stop reason. Legitimate all-numeric/whitespace/punctuation runs (hexdumps, zero-fills, numeric tables) are not misclassified as loops ([#2549](https://github.com/can1357/oh-my-pi/pull/2549) by [@usr-bin-roygbiv](https://github.com/usr-bin-roygbiv)).
+- Added repetition-loop detection to the streaming agent loop for Gemini-family providers. A runaway run of a repeated text or thinking unit is detected mid-stream from a bounded rolling tail (O(1) per delta), the provider request is aborted, the repeated tail is collapsed to a single representative copy, and the turn ends gracefully with an `error` stop reason. Legitimate all-numeric/whitespace/punctuation runs (hexdumps, zero-fills, numeric tables) are not misclassified as loops ([#2549](https://github.com/toxicwind/tau/pull/2549) by [@usr-bin-roygbiv](https://github.com/usr-bin-roygbiv)).
 
 ### Fixed
 
@@ -712,7 +712,7 @@
 
 ### Fixed
 
-- Fixed dynamic forced tool choices from queue hooks being filtered against the active per-turn tool set before provider dispatch. ([#1701](https://github.com/can1357/oh-my-pi/issues/1701))
+- Fixed dynamic forced tool choices from queue hooks being filtered against the active per-turn tool set before provider dispatch. ([#1701](https://github.com/toxicwind/tau/issues/1701))
 
 ## [15.12.4] - 2026-06-13
 
@@ -748,7 +748,7 @@
 - Changed steering handling so queued steering messages are now dequeued only at injection boundaries, with immediate mid-batch interrupt polling using `hasSteeringMessages`. Consumers constructing `AgentLoopConfig` directly with only `getSteeringMessages` no longer get mid-batch interrupts — steering degrades to boundary-only delivery until they also supply `hasSteeringMessages`
 - Compaction, handoff, short-summary, and branch-summarization helpers now accept an `ApiKey` (static string or resolver) instead of a pre-resolved string, so a 401 mid-compaction force-refreshes and rotates the credential through the central auth-retry policy before any model-level fallback. The remote OpenAI compaction request is wrapped in `withAuth` and its HTTP failures now carry `.status`, so the retry classifier actually fires on remote-compaction 401s.
 - `transformProviderContext` now receives the dispatch model as a second argument (`(context, model) => Context`), so per-request transforms can gate on model capabilities (vision input, provider, API family). Existing single-argument implementations keep working unchanged.
-- Remote-compaction and summarization failures now throw pi-ai's typed `ProviderHttpError` instead of mutating plain `Error`s with a `.status` property; the generic `requestRemoteCompaction` error now carries `.status` (and response headers) too.
+- Remote-compaction and summarization failures now throw tau-ai's typed `ProviderHttpError` instead of mutating plain `Error`s with a `.status` property; the generic `requestRemoteCompaction` error now carries `.status` (and response headers) too.
 
 ### Fixed
 
@@ -768,7 +768,7 @@
 
 ### Breaking Changes
 
-- Removed `compaction/index.ts` re-export of snapcompact helpers, so snapcompact utilities are no longer available from the agent compaction barrel and should be imported from `@oh-my-pi/snapcompact`
+- Removed `compaction/index.ts` re-export of snapcompact helpers, so snapcompact utilities are no longer available from the agent compaction barrel and should be imported from `@tau/snapcompact`
 - Removed the `convertToLlm` alias export from `compaction/messages` — it duplicated `defaultConvertToLlm` under a second name. Import `defaultConvertToLlm` (array form) or the new `convertMessageToLlm` (single-message form) instead
 
 ### Added
@@ -776,7 +776,7 @@
 - Added `convertMessageToLlm()`: the single-message core transformer behind `defaultConvertToLlm()`. Embedders with app-specific message roles should handle their own roles and delegate every core role (`user`/`developer`/`assistant`/`toolResult`/`custom`/`hookMessage`/`branchSummary`/`compactionSummary`) to it instead of duplicating the conversion — a duplicated `compactionSummary` case is how snapcompact frames once silently dropped off provider requests
 - Added `pruneSupersededToolResults()` and the opt-in `PruneConfig.supersedeKey` hook so harnesses can prune stale tool results superseded by a newer read of the same file; superseded results are pruned ahead of age-based victims during overflow pruning and replaced with a `[Superseded by a newer read of this file]` placeholder. Without the new config, `pruneToolOutputs()` behavior is unchanged.
 - Added `readToolSupersedeKey()` implementing the read-tool path/selector grammar (selector-free reads supersede range reads of the same file; URL-scheme paths exempt). Pruning honors prompt-cache economics: per-turn prunes only fire when the post-candidate suffix is small or the cache is cold (idle gap).
-- Added the `snapcompact` compaction strategy via `@oh-my-pi/snapcompact`: instead of an LLM summary, discarded history is printed onto dense bitmap frames and re-attached to the compaction summary message as image blocks. `CompactionSummaryMessage` gains an optional `images` field, `estimateTokens()` charges per attached frame, and frames persist under `preserveData.snapcompact` with an 8-frame middle-out eviction budget.
+- Added the `snapcompact` compaction strategy via `@tau/snapcompact`: instead of an LLM summary, discarded history is printed onto dense bitmap frames and re-attached to the compaction summary message as image blocks. `CompactionSummaryMessage` gains an optional `images` field, `estimateTokens()` charges per attached frame, and frames persist under `preserveData.snapcompact` with an 8-frame middle-out eviction budget.
 - Snapcompact frames are now rendered in a provider-aware shape (`SNAPCOMPACT_SHAPES` + `resolveSnapcompactShape(api)`), following the snapcompact 200k-token monolithic evals: Anthropic-family and unknown APIs get `8x8r-bw` (unscii-8 square cells, black ink, every line printed twice with the copy on a pale highlight band — read at F1 parity with raw text at ~2x lower cost and the most refusal-robust), Google gets `8x8r-sent` (sentence-hue ink, ~2.9x cheaper), and OpenAI gets `6x6u-sent` (unscii Lanczos-stretched to 6x6 cells — OpenAI bills a flat ~2.9k tokens per image, so frame count is the only cost lever) with `detail: "original"` on the frame images. `snapcompactCompact()` accepts `model`/`shape` options, frames persist their shape metadata, mixed-shape archives (provider switches, legacy 5x8 frames) are flagged in the reading instructions, and `snapcompactGeometry()`/`renderSnapcompactFrame()` now take a shape
 
 ### Changed
@@ -787,7 +787,7 @@
 
 - Fixed queued steering messages being drained into an externally aborted run: interrupting mid-tool execution (e.g. Enter with a pending steer) dequeued the steer into the dying run — it landed in history without a response and the post-abort resume saw an empty queue, so the agent stopped instead of continuing. Steering/follow-up/aside queue polls are now skipped once the run's abort signal fires, leaving the queue intact for `Agent.continue()`.
 - Fixed `<read-files>` compaction lists recording the same file once per line-range/raw selector (`src/foo.ts:50-200`, `:raw`, `:1-50:raw`, …): read-tool selectors are now stripped before tracking, so reads dedupe to the base path and match their write/edit path when splitting read-only vs modified lists. Selector-polluted lists stored by earlier compactions self-heal on the next compaction. `readToolSupersedeKey()` now shares the same splitter (`splitReadSelector()`), gaining the `..` range alias and `L`-prefix forms it previously missed.
-- Fixed `estimateTokens()` undercounting thinking-heavy assistant messages on replay: `thinkingSignature` payloads (OpenAI Responses encrypted reasoning items, Anthropic signed thinking blocks, etc.) and `redactedThinking.data` are now charged alongside the visible thinking text, so the local estimate tracks provider-reported usage instead of straddling the threshold on every turn ([#2275](https://github.com/can1357/oh-my-pi/issues/2275)).
+- Fixed `estimateTokens()` undercounting thinking-heavy assistant messages on replay: `thinkingSignature` payloads (OpenAI Responses encrypted reasoning items, Anthropic signed thinking blocks, etc.) and `redactedThinking.data` are now charged alongside the visible thinking text, so the local estimate tracks provider-reported usage instead of straddling the threshold on every turn ([#2275](https://github.com/toxicwind/tau/issues/2275)).
 
 ## [15.10.12] - 2026-06-10
 
@@ -805,7 +805,7 @@
 ### Changed
 
 - Editorial pass over the compaction prompts: fixed garbled grammar and missing articles, RFC-keyed prohibitions, deduped restated instructions; parsed markers (`<read-files>`/`<modified-files>`/`<previous-summary>`) and all output-format headings left byte-identical
-- Catalog imports moved to the new `@oh-my-pi/pi-catalog` package: subpath imports (`calculateCost`, Codex wire constants) plus catalog values previously taken from the `@oh-my-pi/pi-ai` root (`getBundledModel`, `clampThinkingLevelForModel`), which pi-ai no longer re-exports; type-only `Model`/`Api`/`Effort` imports from pi-ai are unchanged
+- Catalog imports moved to the new `@tau/tau-catalog` package: subpath imports (`calculateCost`, Codex wire constants) plus catalog values previously taken from the `@tau/tau-ai` root (`getBundledModel`, `clampThinkingLevelForModel`), which tau-ai no longer re-exports; type-only `Model`/`Api`/`Effort` imports from tau-ai are unchanged
 
 ## [15.10.8] - 2026-06-09
 
@@ -889,8 +889,8 @@
 
 ### Added
 
-- Added `getReadToolPath(context)` to `@oh-my-pi/pi-agent-core/compaction/tool-protection` to extract a paired `read` tool call's `path` for embedders building read-targeted protection matchers
-- Added `getReadToolPath(context)` to `@oh-my-pi/pi-agent-core/compaction/tool-protection`: the shared primitive that extracts a paired `read` tool call's `path` argument, so embedders can build their own read-targeted compaction protection matchers (e.g. plan-file reads) the same way `isSkillReadToolResult` does.
+- Added `getReadToolPath(context)` to `@tau/tau-agent-core/compaction/tool-protection` to extract a paired `read` tool call's `path` for embedders building read-targeted protection matchers
+- Added `getReadToolPath(context)` to `@tau/tau-agent-core/compaction/tool-protection`: the shared primitive that extracts a paired `read` tool call's `path` argument, so embedders can build their own read-targeted compaction protection matchers (e.g. plan-file reads) the same way `isSkillReadToolResult` does.
 
 ## [15.8.2] - 2026-06-03
 
@@ -900,7 +900,7 @@
 
 ### Fixed
 
-- Fixed the agent loop wedging the model when a `write`/`edit` tool call is truncated by `stop_reason: length` (e.g. an OpenCode Zen / Claude-3.5-Haiku turn that emits >~1000 lines of code, blowing past the 8K `max_tokens` output cap). The skipped tool result now surfaces an actionable hint — naming `stop_reason: length` and telling the model to split the payload into multiple smaller calls — instead of the generic "Tool call was not executed because the assistant ended its turn" placeholder, which left the auto-continue loop re-emitting the same oversized payload until the user gave up. Tools are still NOT executed when the arguments are truncated. ([#1785](https://github.com/can1357/oh-my-pi/issues/1785))
+- Fixed the agent loop wedging the model when a `write`/`edit` tool call is truncated by `stop_reason: length` (e.g. an OpenCode Zen / Claude-3.5-Haiku turn that emits >~1000 lines of code, blowing past the 8K `max_tokens` output cap). The skipped tool result now surfaces an actionable hint — naming `stop_reason: length` and telling the model to split the payload into multiple smaller calls — instead of the generic "Tool call was not executed because the assistant ended its turn" placeholder, which left the auto-continue loop re-emitting the same oversized payload until the user gave up. Tools are still NOT executed when the arguments are truncated. ([#1785](https://github.com/toxicwind/tau/issues/1785))
 
 ## [15.8.0] - 2026-06-02
 
@@ -918,7 +918,7 @@
 
 ### Added
 
-- Added `shake` compaction primitives (`collectShakeRegions`, `applyShakeRegion`, `applyShakeRegions`, `summarizeShakeRegions`, `DEFAULT_SHAKE_CONFIG`, `AGGRESSIVE_SHAKE_CONFIG`, plus the `ShakeRegion`/`ShakeConfig`/`ShakeSummaryItem`/`ShakeSummaryComplete`/`ProtectedToolMatcher` types) under `@oh-my-pi/pi-agent-core/compaction`. These detect heavy context regions — whole tool-call results plus large fenced/XML blocks — and either elide them with placeholders or extractively compress them through an injected completion backend (no LLM summary cut-point). The compressor is provider-agnostic: callers wire it to a local on-device model. Pure detection/mutation; no I/O.
+- Added `shake` compaction primitives (`collectShakeRegions`, `applyShakeRegion`, `applyShakeRegions`, `summarizeShakeRegions`, `DEFAULT_SHAKE_CONFIG`, `AGGRESSIVE_SHAKE_CONFIG`, plus the `ShakeRegion`/`ShakeConfig`/`ShakeSummaryItem`/`ShakeSummaryComplete`/`ProtectedToolMatcher` types) under `@tau/tau-agent-core/compaction`. These detect heavy context regions — whole tool-call results plus large fenced/XML blocks — and either elide them with placeholders or extractively compress them through an injected completion backend (no LLM summary cut-point). The compressor is provider-agnostic: callers wire it to a local on-device model. Pure detection/mutation; no I/O.
 
 ### Fixed
 
@@ -944,7 +944,7 @@
 
 ### Fixed
 
-- Fixed compaction summarizer throws losing the provider's HTTP status. `generateSummary`, `generateHandoff`, `generateShortSummary`, and `generateTurnPrefixSummary` now route their `stopReason === "error"` throws through a `createSummarizationError` helper that copies `AssistantMessage.errorStatus` onto the thrown `Error` as `.status`, letting downstream consumers (e.g. `AgentSession.#isCompactionAuthFailure` in `@oh-my-pi/pi-coding-agent`) branch on real provider 401/403s without regex-scraping the message body.
+- Fixed compaction summarizer throws losing the provider's HTTP status. `generateSummary`, `generateHandoff`, `generateShortSummary`, and `generateTurnPrefixSummary` now route their `stopReason === "error"` throws through a `createSummarizationError` helper that copies `AssistantMessage.errorStatus` onto the thrown `Error` as `.status`, letting downstream consumers (e.g. `AgentSession.#isCompactionAuthFailure` in `@tau/tau-coding-agent`) branch on real provider 401/403s without regex-scraping the message body.
 
 ## [15.5.0] - 2026-05-26
 
@@ -990,12 +990,12 @@
 
 ### Breaking Changes
 
-- Removed the `@oh-my-pi/pi-agent-core/compaction/handoff` exports from the package surface, including `extractHandoffDocument`, `createHandoffContext`, and `createHandoffFileName`
+- Removed the `@tau/tau-agent-core/compaction/handoff` exports from the package surface, including `extractHandoffDocument`, `createHandoffContext`, and `createHandoffFileName`
 - Removed legacy telemetry constants from the public enum surface (including `AGGREGATE_ATTR`, `GenAIAttr.System`, and old `gen_ai.*` extension keys such as `gen_ai.request.service_tier`/cost/tool status/handoff fields) and replaced them with `OpenAIAttr`, `PiGenAIAttr`, and `PiGenAIAggregateAttr`
 
 ### Added
 
-- Added `generateHandoff(messages, model, apiKey, options)` to `@oh-my-pi/pi-agent-core/compaction` to generate a handoff document by calling the model directly, using live system/tool context and optional metadata
+- Added `generateHandoff(messages, model, apiKey, options)` to `@tau/tau-agent-core/compaction` to generate a handoff document by calling the model directly, using live system/tool context and optional metadata
 - Added generation filtering so the returned handoff document now includes only text content blocks from the model output
 - Added support for defining `AgentTool` schemas with Zod, with legacy TypeBox schemas still supported when generating tool schemas for model calls
 - Added `OpenAIAttr`, `PiGenAIAttr`, and `PiGenAIAggregateAttr` exports so consumers can reference the new `openai.*` and `pi.gen_ai.*` telemetry attribute keys directly
@@ -1012,7 +1012,7 @@
 - Added `AgentTelemetryConfig` hooks (`onSpanStart`, `onSpanEnd`, `costEstimator`), `agent` identity, `attributes` envelope merged onto every span, `captureMessageContent` toggle (defaults to the `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT` env var) emitting OTEL-shaped `gen_ai.input.messages` / `gen_ai.output.messages` / `gen_ai.system_instructions` / `gen_ai.tool.call.arguments` / `gen_ai.tool.call.result`, and tracer/tracerName override surfaces.
 - Added `Agent#setTelemetry(config)` so consumers can swap or disable instrumentation between invocations.
 - Added `@opentelemetry/api` as a runtime dependency; SDK setup (exporters, samplers, processors) remains the host's responsibility per standard OTEL conventions. When no SDK is registered, helpers fall through to no-op spans with zero overhead.
-- Added compaction APIs under `@oh-my-pi/pi-agent-core/compaction`, including context compaction, branch summarization, handoff prompt/context helpers, pruning, token budgeting, prompt templates, and OpenAI `/responses/compact` helpers.
+- Added compaction APIs under `@tau/tau-agent-core/compaction`, including context compaction, branch summarization, handoff prompt/context helpers, pruning, token budgeting, prompt templates, and OpenAI `/responses/compact` helpers.
 
 ### Changed
 
@@ -1359,7 +1359,7 @@
 
 ### Changed
 
-- Switched from local `@oh-my-pi/pi-ai` to upstream `@mariozechner/pi-ai` package
+- Switched from local `@tau/tau-ai` to upstream `@mariozechner/tau-ai` package
 
 ### Added
 
@@ -1406,17 +1406,17 @@
 
 ### Changed
 
-- Forked to @oh-my-pi scope with unified versioning across all packages
+- Forked to @tau scope with unified versioning across all packages
 
 ## [1.337.0] - 2026-01-02
 
-Initial release under @oh-my-pi scope. See previous releases at [badlogic/pi-mono](https://github.com/badlogic/pi-mono).
+Initial release under @tau scope. See previous releases at [badlogic/tau-mono](https://github.com/badlogic/tau-mono).
 
 ## [0.38.0] - 2026-01-08
 
 ### Added
 
-- `thinkingBudgets` option on `Agent` and `AgentOptions` to customize token budgets per thinking level ([#529](https://github.com/badlogic/pi-mono/pull/529) by [@melihmucuk](https://github.com/melihmucuk))
+- `thinkingBudgets` option on `Agent` and `AgentOptions` to customize token budgets per thinking level ([#529](https://github.com/badlogic/tau-mono/pull/529) by [@melihmucuk](https://github.com/melihmucuk))
 
 ## [0.37.3] - 2026-01-06
 
@@ -1434,7 +1434,7 @@ Initial release under @oh-my-pi scope. See previous releases at [badlogic/pi-mon
 
 ### Breaking Changes
 
-- **Queue API replaced with steer/followUp**: The `queueMessage()` method has been split into two methods with different delivery semantics ([#403](https://github.com/badlogic/pi-mono/issues/403)):
+- **Queue API replaced with steer/followUp**: The `queueMessage()` method has been split into two methods with different delivery semantics ([#403](https://github.com/badlogic/tau-mono/issues/403)):
   - `steer(msg)`: Interrupts the agent mid-run. Delivered after current tool execution, skips remaining tools.
   - `followUp(msg)`: Waits until the agent finishes. Delivered only when there are no more tool calls or steering messages.
 - **Queue mode renamed**: `queueMode` option renamed to `steeringMode`. Added new `followUpMode` option. Both control whether messages are delivered one-at-a-time or all at once.
@@ -1460,11 +1460,11 @@ Initial release under @oh-my-pi scope. See previous releases at [badlogic/pi-mon
 - **`AppMessage` renamed to `AgentMessage`**: All references to `AppMessage` have been renamed to `AgentMessage` for consistency.
 - **`CustomMessages` renamed to `CustomAgentMessages`**: The declaration merging interface has been renamed.
 - **`UserMessageWithAttachments` and `Attachment` types removed**: Attachment handling is now the responsibility of the `convertToLlm` function.
-- **Agent loop moved from `@oh-my-pi/pi-ai`**: The `agentLoop`, `agentLoopContinue`, and related types have moved to this package. Import from `@oh-my-pi/pi-agent` instead.
+- **Agent loop moved from `@tau/tau-ai`**: The `agentLoop`, `agentLoopContinue`, and related types have moved to this package. Import from `@tau/tau-agent` instead.
 
 ### Added
 
-- `streamFn` option on `Agent` for custom stream implementations. Default uses `streamSimple` from pi-ai.
+- `streamFn` option on `Agent` for custom stream implementations. Default uses `streamSimple` from tau-ai.
 - `streamProxy()` utility function for browser apps that need to proxy LLM calls through a backend server. Replaces the removed `AppTransport`.
 - `getApiKey` option for dynamic API key resolution (useful for expiring OAuth tokens like GitHub Copilot).
 - `agentLoop()` and `agentLoopContinue()` low-level functions for running the agent loop without the `Agent` class wrapper.

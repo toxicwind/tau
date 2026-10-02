@@ -1,15 +1,15 @@
 import { describe, expect, it } from "bun:test";
-import { Effort } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import { Effort } from "@tau/tau-ai";
+import { buildModel } from "@tau/tau-catalog/build";
 import {
 	resolveAgentModelPatterns,
 	resolveAgentModelSelection,
 	resolveModelOverride,
-} from "@oh-my-pi/pi-coding-agent/config/model-resolver";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { getBundledAgent } from "@oh-my-pi/pi-coding-agent/task/agents";
-import { buildOutputValidator } from "@oh-my-pi/pi-coding-agent/tools/output-schema-validator";
-import { AUTO_THINKING } from "@oh-my-pi/pi-tui/thinking";
+} from "@tau/tau-coding-agent/config/model-resolver";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { getBundledAgent } from "@tau/tau-coding-agent/task/agents";
+import { buildOutputValidator } from "@tau/tau-coding-agent/tools/output-schema-validator";
+import { AUTO_THINKING } from "@tau/tau-tui/thinking";
 
 describe("bundled agent parsing", () => {
 	it("defaults the task agent to the auto thinking selector", () => {

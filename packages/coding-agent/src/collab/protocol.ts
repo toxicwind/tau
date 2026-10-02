@@ -7,7 +7,7 @@
  * control messages that carry no session data.
  */
 
-import type { ImageContent } from "@oh-my-pi/pi-ai";
+import type { ImageContent } from "@tau/tau-ai";
 import type {
 	BusChannel,
 	CollabUiRequest,
@@ -15,15 +15,15 @@ import type {
 	ParsedCollabLink,
 	Participant,
 	AgentSnapshot as WireAgentSnapshot,
-} from "@oh-my-pi/pi-wire";
+} from "@tau/tau-wire";
 import {
 	DEFAULT_RELAY_URL,
 	ENVELOPE_HEADER_LENGTH,
 	ROOM_ID_BYTES,
 	ROOM_KEY_BYTES,
 	WRITE_TOKEN_BYTES,
-} from "@oh-my-pi/pi-wire";
-import type { CollabSessionState } from "@oh-my-pi/pi-tui/status-line/types";
+} from "@tau/tau-wire";
+import type { CollabSessionState } from "@tau/tau-tui/status-line/types";
 import type { AgentSessionEvent } from "../session/agent-session";
 import type { SessionEntry, SessionHeader } from "../session/session-entries";
 
@@ -37,8 +37,8 @@ export type {
 	RelayControlMessage,
 	RelayControlToGuest,
 	RelayControlToHost,
-} from "@oh-my-pi/pi-wire";
-export { COLLAB_PROMPT_MESSAGE_TYPE, COLLAB_PROTO } from "@oh-my-pi/pi-wire";
+} from "@tau/tau-wire";
+export { COLLAB_PROMPT_MESSAGE_TYPE, COLLAB_PROTO } from "@tau/tau-wire";
 export { DEFAULT_RELAY_URL, ENVELOPE_HEADER_LENGTH, ROOM_ID_BYTES };
 
 export type CollabParticipant = Participant;

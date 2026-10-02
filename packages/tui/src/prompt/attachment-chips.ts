@@ -1,4 +1,4 @@
-import type { ImageContent } from "@oh-my-pi/pi-ai";
+import type { ImageContent } from "@tau/tau-ai";
 import {
 	type Component,
 	getImageDimensions,
@@ -18,7 +18,7 @@ import { cachedImageDimensions, setCachedImageDimensions } from "./image-referen
 import { theme } from "../theme/theme";
 import type { ComposerChipDescriptor, CustomEditor, TextAttachment } from "./custom-editor";
 
-/** Chip card geometry (mirrors omp2): a 12x4 content area inside a 1-cell rounded border. */
+/** Chip card geometry (mirrors tau2): a 12x4 content area inside a 1-cell rounded border. */
 const INNER_COLS = 12;
 const INNER_ROWS = 4;
 const CARD_COLS = INNER_COLS + 2;
@@ -28,7 +28,7 @@ const RESET_FG = "\x1b[39m";
  *  probe cache): Kitty's `f=100` transmit accepts only PNG, so non-PNG attachments
  *  (pastes are usually re-encoded JPEG/WebP) convert before transmit — the same pipeline
  *  the transcript uses. `null` = conversion in flight or failed. */
-const kImagePng = Symbol("omp.imagePng");
+const kImagePng = Symbol("tau.imagePng");
 
 interface ImageContentWithPng extends ImageContent {
 	[kImagePng]?: ImageContent | null;

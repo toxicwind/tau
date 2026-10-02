@@ -1,4 +1,4 @@
-import { formatDistanceToNow } from "@oh-my-pi/pi-utils/dates";
+import { formatDistanceToNow } from "@tau/tau-utils/dates";
 import type { MessageStats } from "../types";
 
 export function formatInteger(value: number): string {

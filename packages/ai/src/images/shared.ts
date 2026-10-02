@@ -1,5 +1,5 @@
-import type { FetchImpl, Model, Usage } from "@oh-my-pi/pi-catalog/types";
-import { parseImageMetadata, USER_AGENT } from "@oh-my-pi/pi-utils";
+import type { FetchImpl, Model, Usage } from "@tau/tau-catalog/types";
+import { parseImageMetadata, USER_AGENT } from "@tau/tau-utils";
 import type { ApiKey } from "../auth-retry";
 import { withAuth } from "../auth-retry";
 import * as AIError from "../error";

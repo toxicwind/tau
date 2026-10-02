@@ -1,18 +1,18 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
-import type { Model } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { Skill } from "@oh-my-pi/pi-coding-agent/extensibility/skills";
-import { getMemoryRoot } from "@oh-my-pi/pi-coding-agent/memories";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import { createAgentSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import type { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { sharpshooterMemoryFilePath } from "@oh-my-pi/pi-coding-agent/sharpshooter/paths";
-import { getAgentDir, setAgentDir, TempDir } from "@oh-my-pi/pi-utils";
+import type { Model } from "@tau/tau-ai";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import type { Skill } from "@tau/tau-coding-agent/extensibility/skills";
+import { getMemoryRoot } from "@tau/tau-coding-agent/memories";
+import { AgentRegistry } from "@tau/tau-coding-agent/registry/agent-registry";
+import { createAgentSession } from "@tau/tau-coding-agent/sdk";
+import type { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import type { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { sharpshooterMemoryFilePath } from "@tau/tau-coding-agent/sharpshooter/paths";
+import { getAgentDir, setAgentDir, TempDir } from "@tau/tau-utils";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
 describe("advisor memory context", () => {
@@ -55,10 +55,10 @@ describe("advisor memory context", () => {
 			"advisor.enabled": true,
 			"compaction.enabled": false,
 			"memory.backend": backend,
-			"mnemopi.noEmbeddings": true,
-			"mnemopi.llmMode": "none",
-			"mnemopi.autoRecall": false,
-			"mnemopi.autoRetain": false,
+			"mnemotau.noEmbeddings": true,
+			"mnemotau.llmMode": "none",
+			"mnemotau.autoRecall": false,
+			"mnemotau.autoRetain": false,
 		});
 		settings.setModelRole("advisor", `${model.provider}/${model.id}`);
 		await settings.reloadForCwd(tempDir.path());
@@ -91,7 +91,7 @@ describe("advisor memory context", () => {
 	}
 
 	it("injects the sharpshooter summary into main and advisor prompts without a recall tool", async () => {
-		tempDir = TempDir.createSync("@pi-advisor-memory-");
+		tempDir = TempDir.createSync("@tau-advisor-memory-");
 		const decision = "Keep storage project-scoped for advisor memory test.";
 		const memoryFile = sharpshooterMemoryFilePath(tempDir.path(), tempDir.path(), "architecture.md");
 		await fs.mkdir(memoryFile.slice(0, memoryFile.lastIndexOf("/")), { recursive: true });
@@ -112,7 +112,7 @@ describe("advisor memory context", () => {
 	});
 
 	it("grants the default advisor roster a recall tool when the backend builds one", async () => {
-		tempDir = TempDir.createSync("@pi-advisor-memory-");
+		tempDir = TempDir.createSync("@tau-advisor-memory-");
 		// Hindsight without apiUrl is inert at runtime but still builds the recall
 		// tool (MemoryRecallTool.createIf gates on the setting alone), which is
 		// exactly what the advisor roster filter consumes.
@@ -128,7 +128,7 @@ describe("advisor memory context", () => {
 	});
 
 	it("keeps the advisor read hint tracking the primary snapshot", async () => {
-		tempDir = TempDir.createSync("@pi-advisor-hint-");
+		tempDir = TempDir.createSync("@tau-advisor-hint-");
 		session = await createAdvisedSession(
 			"sharpshooter",
 			undefined,
@@ -158,8 +158,8 @@ describe("advisor memory context", () => {
 		expect(schema()).toContain("skill://");
 	});
 
-	it.each(["hindsight", "mnemopi"])("keeps in-memory advisor URL tools bound to the %s session", async backend => {
-		tempDir = TempDir.createSync("@pi-advisor-memory-urls-");
+	it.each(["hindsight", "mnemotau"])("keeps in-memory advisor URL tools bound to the %s session", async backend => {
+		tempDir = TempDir.createSync("@tau-advisor-memory-urls-");
 		const previousAgentDir = getAgentDir();
 		setAgentDir(tempDir.path());
 		try {
@@ -188,11 +188,11 @@ describe("advisor memory context", () => {
 				await expect(glob.execute("advisor-root-glob", { path })).rejects.toThrow(unavailableRoot);
 			}
 
-			if (backend === "mnemopi") {
-				for (let attempt = 0; !session.getMnemopiSessionState() && attempt < 100; attempt++) {
+			if (backend === "mnemotau") {
+				for (let attempt = 0; !session.getMnemotauSessionState() && attempt < 100; attempt++) {
 					await Bun.sleep(10);
 				}
-				const id = session.getMnemopiSessionState()?.rememberInScope("Advisor scoped memory marker.");
+				const id = session.getMnemotauSessionState()?.rememberInScope("Advisor scoped memory marker.");
 				if (!id) throw new Error("Expected a stored memory id");
 				const row = await read.execute("advisor-memory-read", { path: `memory://${id}` });
 				expect(JSON.stringify(row.content)).toContain("Advisor scoped memory marker.");

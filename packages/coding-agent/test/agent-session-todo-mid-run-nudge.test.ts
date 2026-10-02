@@ -1,14 +1,14 @@
 import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import { Agent, type AgentTool, type AsideMessage } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, TextContent, ToolCall } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession, type AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import type { CustomMessage } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TodoTool, type ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent, type AgentTool, type AsideMessage } from "@tau/tau-agent-core";
+import type { AssistantMessage, TextContent, ToolCall } from "@tau/tau-ai";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { AgentSession, type AgentSessionEvent } from "@tau/tau-coding-agent/session/agent-session";
+import type { CustomMessage } from "@tau/tau-coding-agent/session/messages";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { TodoTool, type ToolSession } from "@tau/tau-coding-agent/tools";
+import { TempDir } from "@tau/tau-utils";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
 /**
@@ -132,7 +132,7 @@ describe("AgentSession mid-run todo reconciliation nudge", () => {
 	}
 
 	beforeEach(() => {
-		tempDir = TempDir.createSync("@pi-todo-mid-run-nudge-");
+		tempDir = TempDir.createSync("@tau-todo-mid-run-nudge-");
 		sessionManager = SessionManager.inMemory(tempDir.path());
 
 		const model = getBundledModel("anthropic", "claude-sonnet-4-5");

@@ -1,6 +1,6 @@
 import { Database } from "bun:sqlite";
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { TempDir } from "@tau/tau-utils";
 import { AuthStorage, SqliteAuthCredentialStore } from "../src/session/auth-storage";
 import { credentialPinHash, recordCredentialPin, seedCredentialPins } from "../src/session/credential-pin";
 import { SessionManager } from "../src/session/session-manager";
@@ -49,7 +49,7 @@ describe("credential pins", () => {
 			savedEnv[key] = process.env[key];
 			delete process.env[key];
 		}
-		tempDir = TempDir.createSync("@pi-credential-pin-");
+		tempDir = TempDir.createSync("@tau-credential-pin-");
 		const store = new SqliteAuthCredentialStore(new Database(":memory:"));
 		await store.saveOAuth("anthropic", mintOAuthCredential("a"));
 		await store.saveOAuth("anthropic", mintOAuthCredential("b"));

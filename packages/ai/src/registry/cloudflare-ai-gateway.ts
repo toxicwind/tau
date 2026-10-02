@@ -1,13 +1,13 @@
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { apiRouteFor } from "@oh-my-pi/pi-catalog/compat/behavior";
+import { buildModel } from "@tau/tau-catalog/build";
+import { apiRouteFor } from "@tau/tau-catalog/compat/behavior";
 import {
 	CLOUDFLARE_AI_GATEWAY_ANTHROPIC_BASE_URL,
 	CLOUDFLARE_AI_GATEWAY_BASE_URL,
 	CLOUDFLARE_AI_GATEWAY_COMPAT_BASE_URL,
 	CLOUDFLARE_AI_GATEWAY_OPENAI_BASE_URL,
 	parseCloudflareAiGatewayCredential,
-} from "@oh-my-pi/pi-catalog/wire/cloudflare-ai-gateway";
-import { $env } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-catalog/wire/cloudflare-ai-gateway";
+import { $env } from "@tau/tau-utils";
 import { NO_AUTH_SENTINEL } from "../auth-retry";
 import * as AIError from "../error";
 import type { ProviderTransport } from "./build";

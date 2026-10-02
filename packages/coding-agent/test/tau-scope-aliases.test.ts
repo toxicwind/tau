@@ -1,0 +1,135 @@
+/**
+ * Regression: plugin extensions must resolve `tau-*` imports across every scope
+ * that has ever been used to publish or alias the internal packages —
+ * `@mariozechner` (original), `@earendil-works` (fork), and `@tau`
+ * (canonical). The shim in `legacy-tau-compat.ts` remaps all three to the same
+ * in-process bundled copy so that plugins observe a single module registry
+ * regardless of which scope name their peerDependencies happened to declare.
+ *
+ * Reported failures the test covers:
+ *   - `@juicesharp/rpiv-ask-user-question` ⇒ `@earendil-works/tau-tui`
+ *   - `@plannotator/tau-extension`         ⇒ `@tau/tau-agent-core`
+ *   - `@runfusion/fusion`                 ⇒ `@tau/tau-coding-agent/...`
+ *
+ * Plus the two upstream-only surfaces that turned up via real-plugin E2E:
+ *   - `Key` runtime helper from `tau-tui` (used by plannotator + rpiv-*).
+ *   - `tau-ai/oauth` subpath (used by runfusion's bundled extension).
+ */
+import { afterEach, beforeEach, describe, expect, it } from "bun:test";
+import * as fs from "node:fs";
+import * as path from "node:path";
+import { loadExtensions } from "@tau/tau-coding-agent/extensibility/extensions/loader";
+import { TempDir } from "@tau/tau-utils";
+
+const canonicalCodingAgent = Bun.resolveSync("@tau/tau-coding-agent", import.meta.dir);
+const canonicalCodingAgentExtensions = Bun.resolveSync(
+	"@tau/tau-coding-agent/extensibility/extensions",
+	import.meta.dir,
+);
+const canonicalUtils = Bun.resolveSync("@tau/tau-utils", import.meta.dir);
+const canonicalTui = Bun.resolveSync("@tau/tau-tui", import.meta.dir);
+// Subpath: upstream `tau-ai/oauth` re-exported `utils/oauth/index`; our tau-ai now
+// exposes the same surface at the real `@tau/tau-ai/oauth` export, so the
+// legacy `@mariozechner/tau-ai/oauth` specifier canonicalizes straight to it.
+const canonicalAiOauth = Bun.resolveSync("@tau/tau-ai/oauth", import.meta.dir);
+
+interface AliasCase {
+	id: string;
+	aliasSpecifier: string;
+	canonicalPath: string;
+	symbol: string;
+}
+
+const CASES: readonly AliasCase[] = [
+	// @earendil-works fork — used by @juicesharp/rpiv-* plugins.
+	{
+		id: "earendil-tui",
+		aliasSpecifier: "@earendil-works/tau-tui",
+		canonicalPath: canonicalTui,
+		symbol: "visibleWidth",
+	},
+	// @tau self-import — canonical scope must still flow through the shim
+	// so a duplicate copy is never dragged in from a plugin's own node_modules.
+	{ id: "ohmypi-utils", aliasSpecifier: "@tau/tau-utils", canonicalPath: canonicalUtils, symbol: "logger" },
+	{
+		id: "ohmypi-coding-agent",
+		aliasSpecifier: "@tau/tau-coding-agent",
+		canonicalPath: canonicalCodingAgent,
+		symbol: "isToolCallEventType",
+	},
+	// @mariozechner — defends the original remap (regression: issue #973).
+	{
+		id: "mariozechner-extensions",
+		aliasSpecifier: "@mariozechner/tau-coding-agent/extensibility/extensions",
+		canonicalPath: canonicalCodingAgentExtensions,
+		symbol: "isToolCallEventType",
+	},
+	// Subpath: legacy `tau-ai/oauth` resolves to the real `@tau/tau-ai/oauth`.
+	{
+		id: "mariozechner-ai-oauth",
+		aliasSpecifier: "@mariozechner/tau-ai/oauth",
+		canonicalPath: canonicalAiOauth,
+		// `refreshOAuthToken` is exported by our `oauth/index` and by upstream's
+		// `oauth.d.ts`; it makes a stable probe across both layouts.
+		symbol: "refreshOAuthToken",
+	},
+	// `Key` runtime helper restored on tau-tui (plannotator + rpiv-* import it).
+	{
+		id: "earendil-tui-key",
+		aliasSpecifier: "@earendil-works/tau-tui",
+		canonicalPath: canonicalTui,
+		symbol: "Key",
+	},
+];
+
+describe("tau-* scope aliases", () => {
+	let projectDir: TempDir;
+	let extensionPath: string;
+
+	beforeEach(() => {
+		projectDir = TempDir.createSync("@tau-scope-aliases-");
+		const pluginDir = path.join(projectDir.path(), "alias-probe-plugin");
+		extensionPath = path.join(pluginDir, "dist", "extension.ts");
+		fs.mkdirSync(path.dirname(extensionPath), { recursive: true });
+		fs.writeFileSync(
+			path.join(pluginDir, "package.json"),
+			JSON.stringify({
+				name: "alias-probe-plugin",
+				version: "1.0.0",
+				pi: { extensions: ["./dist/extension.ts"] },
+			}),
+		);
+
+		// Each case imports the same symbol via the aliased scope and via the
+		// resolved canonical absolute path. The default factory throws unless the
+		// two are object-identical, proving they came from a single module
+		// instance.
+		const lines: string[] = [];
+		const checks: string[] = [];
+		for (const [idx, c] of CASES.entries()) {
+			lines.push(`import { ${c.symbol} as alias${idx} } from "${c.aliasSpecifier}";`);
+			lines.push(`import { ${c.symbol} as canonical${idx} } from ${JSON.stringify(c.canonicalPath)};`);
+			checks.push(
+				`if (alias${idx} !== canonical${idx}) throw new Error(${JSON.stringify(
+					`${c.aliasSpecifier} did not remap to the bundled copy (case ${c.id})`,
+				)});`,
+			);
+		}
+
+		fs.writeFileSync(
+			extensionPath,
+			[...lines, "", ...checks, "", "export default function(pi) {", "\t/* no-op */", "}"].join("\n"),
+		);
+	});
+
+	afterEach(() => {
+		projectDir.removeSync();
+	});
+
+	it("remaps every aliased tau-* scope and known upstream subpath to the bundled in-process copy", async () => {
+		const result = await loadExtensions([extensionPath], projectDir.path());
+		expect(result.errors).toEqual([]);
+		const extension = result.extensions.find(ext => ext.path === extensionPath);
+		expect(extension).toBeDefined();
+	});
+});

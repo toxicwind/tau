@@ -10,17 +10,17 @@ import type {
 	AgentToolExecFn,
 	AgentToolResult,
 	AgentToolUpdateCallback,
-} from "@oh-my-pi/pi-agent-core";
-import type { ImageContent, TextContent } from "@oh-my-pi/pi-ai";
-import { isRecord, logger } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-agent-core";
+import type { ImageContent, TextContent } from "@tau/tau-ai";
+import { isRecord, logger } from "@tau/tau-utils";
 import { getDefault, type Settings } from "../config/settings";
 import {
 	type OutputSummary,
 	type TruncationResult,
 	truncateMiddle,
 	truncateTail,
-} from "@oh-my-pi/pi-tui/tools/streaming-output";
-import { formatOutputNotice, type OutputMeta, type TruncationMeta } from "@oh-my-pi/pi-tui/tools/output-meta";
+} from "@tau/tau-tui/tools/streaming-output";
+import { formatOutputNotice, type OutputMeta, type TruncationMeta } from "@tau/tau-tui/tools/output-meta";
 import { renderError } from "./tool-errors";
 
 /** Input for {@link OutputMetaBuilder.limits}. `columnUnit` defaults to `chars`. */

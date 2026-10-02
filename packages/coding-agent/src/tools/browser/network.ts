@@ -1,15 +1,15 @@
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
 
-import { untilAborted } from "@oh-my-pi/pi-utils";
+import { untilAborted } from "@tau/tau-utils";
 import type { HTTPRequest, HTTPResponse, Page } from "puppeteer-core";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 
 const REQUEST_LOG_LIMIT = 200;
 const RESPONSE_BODY_LIMIT_BYTES = 1024 * 1024;
 const ROUTE_INTERCEPT_PRIORITY = 10;
 const PASS_THROUGH_INTERCEPT_PRIORITY = 0;
-const REQUEST_RECORD = Symbol("omp.browser.requestRecord");
+const REQUEST_RECORD = Symbol("tau.browser.requestRecord");
 
 /** URL pattern accepted by persistent tab routes and request filters. */
 export type NetworkPattern = string | RegExp;
@@ -354,7 +354,7 @@ export class BrowserNetworkManager {
 		const har = {
 			log: {
 				version: "1.2",
-				creator: { name: "omp-browser", version: "1" },
+				creator: { name: "tau-browser", version: "1" },
 				pages: [],
 				entries,
 			},

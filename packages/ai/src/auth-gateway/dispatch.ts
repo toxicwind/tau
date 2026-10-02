@@ -1,13 +1,13 @@
 /**
  * Per-request plumbing shared by every auth-gateway route.
  *
- * A route module (`server.ts` chat/pi-native handlers, `routes/*.ts` for
+ * A route module (`server.ts` chat/tau-native handlers, `routes/*.ts` for
  * judgments, images, speech, transcription, …) owns only its wire format:
- * parse the body, pick a model, call the pi-ai client, encode the reply.
+ * parse the body, pick a model, call the tau-ai client, encode the reply.
  * Everything credential-shaped lives here so each route drives the same
  * broker-backed rotation policy and the same usage ledger.
  */
-import { extractHttpStatusFromError, logger } from "@oh-my-pi/pi-utils";
+import { extractHttpStatusFromError, logger } from "@tau/tau-utils";
 import type { ApiKeyResolver } from "../auth-retry";
 import type { AuthApiKeyOptions, AuthStorage } from "../auth-storage";
 import * as AIError from "../error";
@@ -24,9 +24,9 @@ export interface AuthGatewayBootOptions extends AuthGatewayServerOptions {
 	/** Source of credentials. Caller wires this to a broker-backed AuthStorage. */
 	storage: AuthStorage;
 	/**
-	 * Resolve a client-requested model id to a pi-ai Model. Caller supplies
+	 * Resolve a client-requested model id to a tau-ai Model. Caller supplies
 	 * this from a ModelRegistry (lives in `coding-agent` to avoid an inverse
-	 * dependency in `pi-ai`).
+	 * dependency in `tau-ai`).
 	 */
 	resolveModel: ModelResolver;
 	/** Optional supplier for `/v1/models` listing. Returns the full model array. */
@@ -77,7 +77,7 @@ export function resolveGatewayAccount(
 /**
  * Resolve the credential for one request from broker-backed storage.
  *
- * pi-ai clients never consult `AuthStorage`; the gateway resolves the bearer
+ * tau-ai clients never consult `AuthStorage`; the gateway resolves the bearer
  * (an OAuth access token refreshed through the broker when needed) and hands
  * it to the client. Returns the key, or the error classification the route
  * should encode in its own envelope: storage failures map through
@@ -107,7 +107,7 @@ export async function resolveGatewayApiKey(
 }
 
 /**
- * Hook fired by a pi-ai client when the upstream request fails in a way
+ * Hook fired by a tau-ai client when the upstream request fails in a way
  * that's rotatable — today that's HTTP 401 (credential is bad) and
  * usage-limit phrasing matched by {@link isUsageLimitError} (Codex's
  * `usage_limit_reached`, Anthropic's `usage_limit_reached`, Google's
@@ -179,7 +179,7 @@ function modelKeyOptions(model: Model<Api>, signal: AbortSignal): AuthApiKeyOpti
 }
 
 /**
- * Build the {@link ApiKeyResolver} handed to a pi-ai client for a gateway
+ * Build the {@link ApiKeyResolver} handed to a tau-ai client for a gateway
  * request. Drives the central a/b/c auth-retry policy server-side:
  *
  * - initial resolve → the credential already resolved for this request.

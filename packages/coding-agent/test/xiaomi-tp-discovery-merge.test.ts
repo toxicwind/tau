@@ -2,10 +2,10 @@ import { describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { Model } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { invalidateCommandConfig } from "@oh-my-pi/pi-coding-agent/config/resolve-config-value";
-import { mergeDiscoveredModel } from "@oh-my-pi/pi-coding-agent/config/model-registry";
+import type { Model } from "@tau/tau-ai";
+import { buildModel } from "@tau/tau-catalog/build";
+import { invalidateCommandConfig } from "@tau/tau-coding-agent/config/resolve-config-value";
+import { mergeDiscoveredModel } from "@tau/tau-coding-agent/config/model-registry";
 
 /**
  * Regression for v15.2.4 tp- key bug: when Xiaomi `tp-` token-plan keys hit
@@ -79,23 +79,23 @@ describe("mergeDiscoveredModel", () => {
 	});
 
 	test("preserves provider override transport on rediscovery (#2555 openrouter gateway regression)", async () => {
-		// Bundled openrouter entry carries transport=pi-native after
+		// Bundled openrouter entry carries transport=tau-native after
 		// applying providerOverride at boot (#loadBuiltInModels). Discovery
 		// refetched the same model from /v1/models — provider catalogs
 		// never set transport in defaults, so the discovered model has no
 		// transport hint of its own.
 		const existing: Model<"openai-completions"> = {
 			...bundled("http://localhost:4000"),
-			transport: "pi-native",
+			transport: "tau-native",
 			headers: { Authorization: "Bearer gateway-token" },
 		};
 		const discovered = bundled("http://localhost:4000");
 		const merged = mergeDiscoveredModel(discovered, existing, {
 			baseUrl: "http://localhost:4000",
-			transport: "pi-native",
+			transport: "tau-native",
 			headers: { Authorization: "Bearer gateway-token" },
 		});
-		expect(merged.transport).toBe("pi-native");
+		expect(merged.transport).toBe("tau-native");
 		expect(merged.baseUrl).toBe("http://localhost:4000");
 		expect(await merged.resolveHeaders?.()).toEqual({ Authorization: "Bearer gateway-token" });
 	});
@@ -104,9 +104,9 @@ describe("mergeDiscoveredModel", () => {
 		const discovered = bundled("http://localhost:4000");
 		const merged = mergeDiscoveredModel(discovered, undefined, {
 			baseUrl: "http://localhost:4000",
-			transport: "pi-native",
+			transport: "tau-native",
 		});
-		expect(merged.transport).toBe("pi-native");
+		expect(merged.transport).toBe("tau-native");
 	});
 
 	test("returns model untouched when no existing entry and no override", () => {
@@ -136,7 +136,7 @@ describe("mergeDiscoveredModel", () => {
 	});
 
 	test("raw provider `!command` headers win over the discovery snapshot and re-resolve on rotation (#10458)", async () => {
-		const tokenFile = path.join(os.tmpdir(), `omp-rot-${Date.now()}-${Math.random().toString(36).slice(2)}.txt`);
+		const tokenFile = path.join(os.tmpdir(), `tau-rot-${Date.now()}-${Math.random().toString(36).slice(2)}.txt`);
 		// Cross-platform + space-safe: re-invoke the running Bun to print the
 		// token file's contents. All paths are JSON-quoted so a temp dir with
 		// spaces survives both `/bin/sh -c` and `cmd.exe /c`, and the eval body
@@ -170,7 +170,7 @@ describe("mergeDiscoveredModel", () => {
 	});
 
 	test("authHeader+apiKey provider (no explicit headers) re-derives Authorization live on rotation (#10551)", async () => {
-		const tokenFile = path.join(os.tmpdir(), `omp-ah-${Date.now()}-${Math.random().toString(36).slice(2)}.txt`);
+		const tokenFile = path.join(os.tmpdir(), `tau-ah-${Date.now()}-${Math.random().toString(36).slice(2)}.txt`);
 		const readScript = "process.stdout.write(await Bun.file(Bun.argv[1]).text())";
 		const apiKey = `!${JSON.stringify(process.execPath)} -e "${readScript}" ${JSON.stringify(tokenFile)}`;
 		await Bun.write(tokenFile, "token-A");

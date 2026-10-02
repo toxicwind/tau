@@ -1,14 +1,14 @@
 import { afterEach, beforeAll, describe, expect, it } from "bun:test";
-import { agentPauseGate } from "@oh-my-pi/pi-agent-core";
-import type { Component } from "@oh-my-pi/pi-tui";
+import { agentPauseGate } from "@tau/tau-agent-core";
+import type { Component } from "@tau/tau-tui";
 import { Settings } from "../../../src/config/settings";
 import {
 	PauseScreenComponent,
 	type PauseScreenHost,
 	renderPauseScreen,
 	runPauseScreen,
-} from "@oh-my-pi/pi-tui/overlays/pause-screen";
-import { getThemeByName, setThemeInstance } from "@oh-my-pi/pi-tui/theme";
+} from "@tau/tau-tui/overlays/pause-screen";
+import { getThemeByName, setThemeInstance } from "@tau/tau-tui/theme";
 
 // Strip SGR colors so assertions see visible text only.
 const stripAnsi = (text: string): string => text.replace(/\x1b\[[0-9;]*m/g, "");

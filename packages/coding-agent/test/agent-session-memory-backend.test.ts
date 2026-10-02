@@ -1,23 +1,23 @@
 import { Database } from "bun:sqlite";
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import { Agent, type AgentTool } from "@oh-my-pi/pi-agent-core";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { rebindMemoryBackendForCwd } from "@oh-my-pi/pi-coding-agent/hindsight/backend";
-import { MEMORY_BACKEND_TOOL_NAMES } from "@oh-my-pi/pi-coding-agent/memory-backend/tool-names";
-import { computeMnemopiBankScope } from "@oh-my-pi/pi-coding-agent/mnemopi/config";
-import { getMnemopiSessionState } from "@oh-my-pi/pi-coding-agent/mnemopi/state";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import type { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { executeAcpBuiltinSlashCommand } from "@oh-my-pi/pi-coding-agent/slash-commands/acp-builtins";
-import { BUILTIN_TOOLS, type ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { resetMemoryForTests } from "@oh-my-pi/pi-mnemopi";
-import { getProjectAgentDir, getProjectDir, setProjectDir, TempDir } from "@oh-my-pi/pi-utils";
+import { type } from "@tau/tautype";
+import { Agent, type AgentTool } from "@tau/tau-agent-core";
+import { createMockModel } from "@tau/tau-ai/providers/mock";
+import { buildModel } from "@tau/tau-catalog/build";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { rebindMemoryBackendForCwd } from "@tau/tau-coding-agent/hindsight/backend";
+import { MEMORY_BACKEND_TOOL_NAMES } from "@tau/tau-coding-agent/memory-backend/tool-names";
+import { computeMnemotauBankScope } from "@tau/tau-coding-agent/mnemotau/config";
+import { getMnemotauSessionState } from "@tau/tau-coding-agent/mnemotau/state";
+import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import type { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { executeAcpBuiltinSlashCommand } from "@tau/tau-coding-agent/slash-commands/acp-builtins";
+import { BUILTIN_TOOLS, type ToolSession } from "@tau/tau-coding-agent/tools";
+import { resetMemoryForTests } from "@tau/tau-mnemotau";
+import { getProjectAgentDir, getProjectDir, setProjectDir, TempDir } from "@tau/tau-utils";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
 function createTool(name: string): AgentTool {
@@ -45,8 +45,8 @@ describe("AgentSession memory backend lifecycle", () => {
 		settings = Settings.isolated({
 			"compaction.enabled": false,
 			"memory.backend": "off",
-			"mnemopi.noEmbeddings": true,
-			"mnemopi.llmMode": "none",
+			"mnemotau.noEmbeddings": true,
+			"mnemotau.llmMode": "none",
 		});
 	});
 
@@ -131,33 +131,33 @@ describe("AgentSession memory backend lifecycle", () => {
 
 	it("switches runtime state, memory tools, and prompt in one apply", async () => {
 		const current = createSession(async () =>
-			settings.get("memory.backend") === "mnemopi" ? [createTool("retain"), createTool("memory_edit")] : [],
+			settings.get("memory.backend") === "mnemotau" ? [createTool("retain"), createTool("memory_edit")] : [],
 		);
 
-		settings.override("memory.backend", "mnemopi");
+		settings.override("memory.backend", "mnemotau");
 		await current.applyMemoryBackend();
 
-		expect(getMnemopiSessionState(current)).toBeDefined();
+		expect(getMnemotauSessionState(current)).toBeDefined();
 		expect(current.getActiveToolNames()).toEqual(expect.arrayContaining(["read", "retain", "memory_edit"]));
-		expect(current.systemPrompt).toEqual(["backend:mnemopi;tools:memory_edit,read,retain"]);
+		expect(current.systemPrompt).toEqual(["backend:mnemotau;tools:memory_edit,read,retain"]);
 
 		settings.override("memory.backend", "off");
 		await current.applyMemoryBackend();
 
-		expect(getMnemopiSessionState(current)).toBeUndefined();
+		expect(getMnemotauSessionState(current)).toBeUndefined();
 		expect(current.getActiveToolNames()).toEqual(["read"]);
 		expect(current.getAllToolNames()).toEqual(["read"]);
 		expect(current.systemPrompt).toEqual(["backend:off;tools:read"]);
 	});
 	it.each([
-		["mnemopi", "mnemopi"],
-		["mnemopi", "off"],
-		["off", "mnemopi"],
+		["mnemotau", "mnemotau"],
+		["mnemotau", "off"],
+		["off", "mnemotau"],
 	] as const)("rebinds %s to %s on a cwd move without Hindsight", async (source, destination) => {
 		settings.override("memory.backend", source);
 		await settings.reloadForCwd(path.join(tempDir.path(), "source"));
 		const current = createSession(async () =>
-			settings.get("memory.backend") === "mnemopi" ? [createTool("retain")] : [],
+			settings.get("memory.backend") === "mnemotau" ? [createTool("retain")] : [],
 		);
 		await current.applyMemoryBackend();
 
@@ -167,17 +167,17 @@ describe("AgentSession memory backend lifecycle", () => {
 		await settings.reloadForCwd(destinationCwd);
 		await rebindMemoryBackendForCwd(current);
 
-		const state = getMnemopiSessionState(current);
-		if (destination === "mnemopi") {
-			const scope = computeMnemopiBankScope(
-				settings.get("mnemopi.bank"),
+		const state = getMnemotauSessionState(current);
+		if (destination === "mnemotau") {
+			const scope = computeMnemotauBankScope(
+				settings.get("mnemotau.bank"),
 				destinationCwd,
-				settings.get("mnemopi.scoping"),
+				settings.get("mnemotau.scoping"),
 			);
 			expect(state?.config.retainBank).toBe(scope.retainBank);
 			expect(state?.config.recallBanks).toEqual(scope.recallBanks);
 			expect(current.getActiveToolNames()).toEqual(["read", "retain"]);
-			expect(current.systemPrompt).toEqual(["backend:mnemopi;tools:read,retain"]);
+			expect(current.systemPrompt).toEqual(["backend:mnemotau;tools:read,retain"]);
 		} else {
 			expect(state).toBeUndefined();
 			expect(current.getActiveToolNames()).toEqual(["read"]);
@@ -194,8 +194,8 @@ describe("AgentSession memory backend lifecycle", () => {
 				Bun.write(
 					path.join(getProjectAgentDir(cwd), "config.yml"),
 					Bun.YAML.stringify({
-						memory: { backend: "mnemopi" },
-						mnemopi: {
+						memory: { backend: "mnemotau" },
+						mnemotau: {
 							scoping: "per-project",
 							autoRetain: true,
 							noEmbeddings: true,
@@ -213,7 +213,7 @@ describe("AgentSession memory backend lifecycle", () => {
 			content: "The source project uses a dedicated release branch for production deployments.",
 			timestamp: Date.now(),
 		});
-		const sourceDbPath = getMnemopiSessionState(current)!.memory.dbPath!;
+		const sourceDbPath = getMnemotauSessionState(current)!.memory.dbPath!;
 		let destinationDbPath: string | undefined;
 		const output: string[] = [];
 		const originalProjectDir = getProjectDir();
@@ -229,7 +229,7 @@ describe("AgentSession memory backend lifecycle", () => {
 				refreshCommands: () => {},
 				reloadPlugins: async () => {
 					if (current.sessionManager.getCwd() !== destinationCwd) return;
-					destinationDbPath = getMnemopiSessionState(current)!.memory.dbPath!;
+					destinationDbPath = getMnemotauSessionState(current)!.memory.dbPath!;
 					if (rollback) throw new Error("destination plugin rescope failed");
 				},
 			});
@@ -265,26 +265,26 @@ describe("AgentSession memory backend lifecycle", () => {
 		expect(transcriptRows(destinationDbPath!)).toEqual(rollback ? [] : [{ cwd: destinationCwd }]);
 	});
 
-	it.each(["mnemopi", "hindsight"] as const)(
-		"headless /move rolls back from %s when destination Mnemopi cannot open its database",
+	it.each(["mnemotau", "hindsight"] as const)(
+		"headless /move rolls back from %s when destination Mnemotau cannot open its database",
 		async source => {
 			const sourceCwd = tempDir.path();
 			const destinationCwd = path.join(sourceCwd, "destination");
 			const sourceDbPath = path.join(sourceCwd, "source.db");
 			const destinationConfig = path.join(getProjectAgentDir(destinationCwd), "config.yml");
-			const mnemopi = { scoping: "global", autoRetain: false, noEmbeddings: true, llmMode: "none" };
+			const mnemotau = { scoping: "global", autoRetain: false, noEmbeddings: true, llmMode: "none" };
 			await Bun.write(
 				path.join(getProjectAgentDir(sourceCwd), "config.yml"),
 				Bun.YAML.stringify({
 					memory: { backend: source },
-					mnemopi: { ...mnemopi, dbPath: sourceDbPath },
+					mnemotau: { ...mnemotau, dbPath: sourceDbPath },
 					hindsight: { apiUrl: "http://127.0.0.1:1", mentalModelsEnabled: false },
 				}),
 			);
 			// An existing directory is not a SQLite database, regardless of filesystem permissions.
 			await Bun.write(
 				destinationConfig,
-				Bun.YAML.stringify({ memory: { backend: "mnemopi" }, mnemopi: { ...mnemopi, dbPath: sourceCwd } }),
+				Bun.YAML.stringify({ memory: { backend: "mnemotau" }, mnemotau: { ...mnemotau, dbPath: sourceCwd } }),
 			);
 			settings = await Settings.loadIsolated({ cwd: sourceCwd, agentDir: path.join(sourceCwd, "agent") });
 			const toolSession = {
@@ -292,7 +292,7 @@ describe("AgentSession memory backend lifecycle", () => {
 				hasUI: false,
 				settings,
 				getHindsightSessionState: () => session?.getHindsightSessionState(),
-				getMnemopiSessionState: () => session?.getMnemopiSessionState(),
+				getMnemotauSessionState: () => session?.getMnemotauSessionState(),
 			} as ToolSession;
 			const current = createSession(async () => {
 				const tools = await Promise.all(MEMORY_BACKEND_TOOL_NAMES.map(name => BUILTIN_TOOLS[name](toolSession)));
@@ -317,13 +317,13 @@ describe("AgentSession memory backend lifecycle", () => {
 			const originalProjectDir = getProjectDir();
 			try {
 				await executeAcpBuiltinSlashCommand("/move " + destinationCwd, runtime);
-				expect(output).toContainEqual(expect.stringMatching(/Move failed:.*Mnemopi/));
+				expect(output).toContainEqual(expect.stringMatching(/Move failed:.*Mnemotau/));
 				expect(current.sessionManager.getCwd()).toBe(sourceCwd);
 				expect(settings.get("memory.backend")).toBe(source);
 				expect(current.getActiveToolNames()).toEqual(sourceTools);
 				expect(current.systemPrompt).toEqual(sourcePrompt);
-				if (source === "mnemopi") {
-					expect(current.getMnemopiSessionState()?.memory.dbPath).toBe(sourceDbPath);
+				if (source === "mnemotau") {
+					expect(current.getMnemotauSessionState()?.memory.dbPath).toBe(sourceDbPath);
 				} else {
 					expect(current.getHindsightSessionState()?.bankId).toBe(sourceBank);
 				}
@@ -333,8 +333,8 @@ describe("AgentSession memory backend lifecycle", () => {
 				await Bun.write(
 					destinationConfig,
 					Bun.YAML.stringify({
-						memory: { backend: "mnemopi" },
-						mnemopi: { ...mnemopi, dbPath: destinationDbPath },
+						memory: { backend: "mnemotau" },
+						mnemotau: { ...mnemotau, dbPath: destinationDbPath },
 					}),
 				);
 				await executeAcpBuiltinSlashCommand("/move " + destinationCwd, runtime);

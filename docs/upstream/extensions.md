@@ -19,7 +19,7 @@ For packaged user-facing extension CLIs/features, see [`user-facing-packages.md`
 An extension is a TS/JS module exporting a default factory. Factories may initialize synchronously or return a promise:
 
 ```ts
-import type { ExtensionAPI } from "@oh-my-pi/pi-coding-agent";
+import type { ExtensionAPI } from "@tau/tau-coding-agent";
 
 export default function myExtension(pi: ExtensionAPI) {
   // register handlers/tools/commands/renderers
@@ -67,7 +67,7 @@ Important constraint from `loader.ts`:
 ## Quick start
 
 ```ts
-import type { ExtensionAPI } from "@oh-my-pi/pi-coding-agent";
+import type { ExtensionAPI } from "@tau/tau-coding-agent";
 
 export default function (pi: ExtensionAPI) {
   const z = pi.zod;
@@ -134,7 +134,7 @@ Core methods:
 ### Provider registration
 
 `pi.registerProvider(name, config)` can include an optional `usage` field containing a
-`UsageProvider` imported from `@oh-my-pi/pi-ai`. Its `fetchUsage` implementation receives the
+`UsageProvider` imported from `@tau/tau-ai`. Its `fetchUsage` implementation receives the
 normalized credential and returns a normalized `UsageReport`; the result is then handled
 by the host's AuthStorage cache, history, and usage displays just like built-in provider
 usage.
@@ -197,8 +197,8 @@ In interactive mode, `input` handlers run before the built-in first-message auto
 Also exposed:
 
 - `pi.logger`
-- `pi.arktype` (the omptype `type(...)` schema builder)
-- `pi.zod` (Zod-compatible builder backed by omptype)
+- `pi.arktype` (the tautype `type(...)` schema builder)
+- `pi.zod` (Zod-compatible builder backed by tautype)
 - `pi.typebox` (legacy TypeBox-compatible shim)
 - `pi.pi` (package exports)
 
@@ -418,7 +418,7 @@ Current runtime note: `ExtensionRunner.emitResourcesDiscover(...)` is implemente
 
 ## Tool authoring details
 
-`registerTool` uses `ToolDefinition` from `types.ts`. Its `parameters` field accepts omptype schemas; the injected TypeBox compatibility shim remains available for legacy extensions.
+`registerTool` uses `ToolDefinition` from `types.ts`. Its `parameters` field accepts tautype schemas; the injected TypeBox compatibility shim remains available for legacy extensions.
 
 Current `execute` signature:
 
@@ -496,7 +496,7 @@ with a permission error (`EPERM`/`EACCES`/`EROFS` — every other error, such as
 via `pi.registerFileWriteFallback` before giving up:
 
 ```ts
-import type { FileWriteFallbackHandler } from "@oh-my-pi/pi-coding-agent";
+import type { FileWriteFallbackHandler } from "@tau/tau-coding-agent";
 
 const writeThroughBroker: FileWriteFallbackHandler = async (req, ctx) => {
   // req: { dst: string; content: string; cause: unknown }
@@ -759,8 +759,8 @@ for (const entry of ctx.sessionManager.getBranch()) {
 `registerComposerShape` adds an extension-owned input-editor layout to **Appearance → Composer Shape**. Register it from the extension factory; the renderer is used by the live editor and its settings preview.
 
 ```ts
-import type { ExtensionAPI } from "@oh-my-pi/pi-coding-agent";
-import type { ComposerStyle } from "@oh-my-pi/pi-tui";
+import type { ExtensionAPI } from "@tau/tau-coding-agent";
+import type { ComposerStyle } from "@tau/tau-tui";
 
 const dockStyle: ComposerStyle = {
   id: "acme-dock",
@@ -833,7 +833,7 @@ The built-in implementations in `packages/tui/src/components/composer/` are the 
 
 ```ts
 pi.registerMessageRenderer("my-type", (message, { expanded }, theme) => {
-  // return pi-tui Component
+  // return tau-tui Component
 });
 ```
 
@@ -842,7 +842,7 @@ Used by interactive rendering when custom messages are displayed.
 ## Assistant thinking renderer
 
 ```ts
-import { Container, Text } from "@oh-my-pi/pi-tui";
+import { Container, Text } from "@tau/tau-tui";
 
 pi.registerAssistantThinkingRenderer((context, theme) => {
   const container = new Container();

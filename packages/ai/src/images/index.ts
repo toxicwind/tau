@@ -1,4 +1,4 @@
-import type { Api, Model } from "@oh-my-pi/pi-catalog/types";
+import type { Api, Model } from "@tau/tau-catalog/types";
 import * as AIError from "../error";
 import { generateAntigravityImage } from "./google-antigravity";
 import { generateGoogleImage } from "./google-generative-ai";
@@ -23,7 +23,7 @@ export type ImageGenerationApi =
 	| "openai-responses"
 	| "openai-codex-responses";
 
-/** Whether a catalog API generates images through one of the pi-ai image clients. */
+/** Whether a catalog API generates images through one of the tau-ai image clients. */
 export function isImageGenerationApi(api: Api): api is ImageGenerationApi {
 	return (
 		api === "openai-images" ||

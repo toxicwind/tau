@@ -1,13 +1,13 @@
 import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { getToolDashboardStats, syncAllSessions } from "@oh-my-pi/omp-stats/aggregator";
-import { getToolStats, getToolStatsByModel } from "@oh-my-pi/omp-stats/db";
-import type { ToolUsageStats } from "@oh-my-pi/omp-stats/types";
-import { getSessionsDir } from "@oh-my-pi/pi-utils";
+import { getToolDashboardStats, syncAllSessions } from "@tau/tau-stats/aggregator";
+import { getToolStats, getToolStatsByModel } from "@tau/tau-stats/db";
+import type { ToolUsageStats } from "@tau/tau-stats/types";
+import { getSessionsDir } from "@tau/tau-utils";
 import { installStatsTestIsolation } from "./helpers/temp-agent";
 
-installStatsTestIsolation("@pi-stats-tool-stats-");
+installStatsTestIsolation("@tau-stats-tool-stats-");
 
 const FOLDER_SLUG = "--tmp--tool-stats";
 const MODEL = "gpt-5.4";

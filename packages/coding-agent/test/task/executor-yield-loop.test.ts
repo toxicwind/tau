@@ -1,17 +1,17 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import { AsyncJobManager } from "@oh-my-pi/pi-coding-agent/async";
-import type { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { LoadExtensionsResult } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/types";
-import { AgentLifecycleManager } from "@oh-my-pi/pi-coding-agent/registry/agent-lifecycle";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import type { CreateAgentSessionResult } from "@oh-my-pi/pi-coding-agent/sdk";
-import * as sdkModule from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AgentSession, AgentSessionEvent, PromptOptions } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { runSubprocess } from "@oh-my-pi/pi-coding-agent/task/executor";
-import type { AgentDefinition } from "@oh-my-pi/pi-coding-agent/task/types";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { AsyncJobManager } from "@tau/tau-coding-agent/async";
+import type { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import type { LoadExtensionsResult } from "@tau/tau-coding-agent/extensibility/extensions/types";
+import { AgentLifecycleManager } from "@tau/tau-coding-agent/registry/agent-lifecycle";
+import { AgentRegistry } from "@tau/tau-coding-agent/registry/agent-registry";
+import type { CreateAgentSessionResult } from "@tau/tau-coding-agent/sdk";
+import * as sdkModule from "@tau/tau-coding-agent/sdk";
+import type { AgentSession, AgentSessionEvent, PromptOptions } from "@tau/tau-coding-agent/session/agent-session";
+import { runSubprocess } from "@tau/tau-coding-agent/task/executor";
+import type { AgentDefinition } from "@tau/tau-coding-agent/task/types";
+import { EventBus } from "@tau/tau-coding-agent/utils/event-bus";
+import { TempDir } from "@tau/tau-utils";
 import { createSessionDefaults } from "../helpers/session-defaults";
 
 /**
@@ -129,7 +129,7 @@ describe("runSubprocess incremental yield loops", () => {
 		AgentRegistry.resetGlobalForTests();
 		AgentLifecycleManager.resetGlobalForTests();
 		AsyncJobManager.resetForTests();
-		tempDir = TempDir.createSync("@pi-yield-loop-");
+		tempDir = TempDir.createSync("@tau-yield-loop-");
 	});
 	afterEach(() => {
 		vi.restoreAllMocks();

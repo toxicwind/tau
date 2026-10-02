@@ -9,15 +9,15 @@
  * chain and vibe children silently retry on the `default` role's chain.
  */
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { AsyncJobManager } from "@oh-my-pi/pi-coding-agent/async/job-manager";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import type { ExecutorOptions } from "@oh-my-pi/pi-coding-agent/task/executor";
-import * as executorModule from "@oh-my-pi/pi-coding-agent/task/executor";
-import type { SingleResult } from "@oh-my-pi/pi-tui/tools/task";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import type { VibeCli } from "@oh-my-pi/pi-tui/tools/vibe";
-import { VibeSessionRegistry } from "@oh-my-pi/pi-coding-agent/vibe/runtime";
+import { AsyncJobManager } from "@tau/tau-coding-agent/async/job-manager";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { AgentRegistry } from "@tau/tau-coding-agent/registry/agent-registry";
+import type { ExecutorOptions } from "@tau/tau-coding-agent/task/executor";
+import * as executorModule from "@tau/tau-coding-agent/task/executor";
+import type { SingleResult } from "@tau/tau-tui/tools/task";
+import type { ToolSession } from "@tau/tau-coding-agent/tools";
+import type { VibeCli } from "@tau/tau-tui/tools/vibe";
+import { VibeSessionRegistry } from "@tau/tau-coding-agent/vibe/runtime";
 
 function makeParentSession(settings: Settings): ToolSession {
 	return {

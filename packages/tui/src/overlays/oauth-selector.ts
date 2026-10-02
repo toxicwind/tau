@@ -1,6 +1,6 @@
-import type { CredentialsApi, KeysApi } from "@oh-my-pi/pi-ai";
-import { getOAuthProviders } from "@oh-my-pi/pi-ai/oauth";
-import type { OAuthProviderInfo } from "@oh-my-pi/pi-ai/oauth/types";
+import type { CredentialsApi, KeysApi } from "@tau/tau-ai";
+import { getOAuthProviders } from "@tau/tau-ai/oauth";
+import type { OAuthProviderInfo } from "@tau/tau-ai/oauth/types";
 import {
 	Container,
 	extractPrintableText,

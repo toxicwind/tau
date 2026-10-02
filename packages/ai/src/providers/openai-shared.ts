@@ -1,8 +1,8 @@
-import { toClinePassWireModelId } from "@oh-my-pi/pi-catalog/cline-pass-model-id";
-import type { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { toFirepassWireModelId, toFireworksWireModelId } from "@oh-my-pi/pi-catalog/fireworks-model-id";
-import { getSupportedEfforts } from "@oh-my-pi/pi-catalog/model-thinking";
-import { calculateCost } from "@oh-my-pi/pi-catalog/models";
+import { toClinePassWireModelId } from "@tau/tau-catalog/cline-pass-model-id";
+import type { Effort } from "@tau/tau-catalog/effort";
+import { toFirepassWireModelId, toFireworksWireModelId } from "@tau/tau-catalog/fireworks-model-id";
+import { getSupportedEfforts } from "@tau/tau-catalog/model-thinking";
+import { calculateCost } from "@tau/tau-catalog/models";
 import type {
 	OpenAICompat,
 	OpenAIReasoningDisableMode,
@@ -12,15 +12,15 @@ import type {
 	ResolvedOpenAIResponsesCompat,
 	ResolvedOpenAISharedCompat,
 	VercelGatewayRouting,
-} from "@oh-my-pi/pi-catalog/types";
-import { parseAlibabaTokenPlanCredential } from "@oh-my-pi/pi-catalog/wire/alibaba-token-plan";
+} from "@tau/tau-catalog/types";
+import { parseAlibabaTokenPlanCredential } from "@tau/tau-catalog/wire/alibaba-token-plan";
 import {
 	COREWEAVE_PROJECT_HEADER,
 	coreWeaveProjectHeaders,
 	hasCoreWeaveProjectHeader,
 	removeBlankCoreWeaveProjectHeaders,
-} from "@oh-my-pi/pi-catalog/wire/coreweave";
-import { parseGitHubCopilotApiKey } from "@oh-my-pi/pi-catalog/wire/github-copilot";
+} from "@tau/tau-catalog/wire/coreweave";
+import { parseGitHubCopilotApiKey } from "@tau/tau-catalog/wire/github-copilot";
 import {
 	$env,
 	classifyJsonPrefix,
@@ -33,7 +33,7 @@ import {
 	stringifyJson,
 	structuredCloneJSON,
 	USER_AGENT,
-} from "@oh-my-pi/pi-utils";
+} from "@tau/tau-utils";
 import { NO_AUTH_SENTINEL } from "../auth-retry";
 import * as AIError from "../error";
 import {
@@ -326,7 +326,7 @@ export function resolveOpenAIRequestSetup(
 	if (options.defaultBaseUrl !== undefined) {
 		baseUrl = baseUrl ?? ($env.OPENAI_BASE_URL?.trim() || options.defaultBaseUrl);
 	}
-	// Attribute xAI traffic as omp unless a User-Agent is already set.
+	// Attribute xAI traffic as tau unless a User-Agent is already set.
 	if (model.provider === "xai" || model.provider === "xai-oauth") {
 		setHeaderIfAbsent(headers, "User-Agent", USER_AGENT);
 	}
@@ -1778,7 +1778,7 @@ export function convertResponsesInputContent(
 /**
  * Map freeform custom-tool wire names back to the internal tool name for
  * providers that only accept function_call / function_call_output.
- * Built once per request; `apply_patch` → `edit` is the OMP default.
+ * Built once per request; `apply_patch` → `edit` is the TAU default.
  */
 function buildCustomToolWireNameMap(tools: readonly Tool[] | undefined): ReadonlyMap<string, string> | undefined {
 	if (!tools?.length) return undefined;
@@ -2936,7 +2936,7 @@ export async function processResponsesStream<TApi extends Api>(
 
 	// Multiple items (parallel function_calls in particular) can be open at the same
 	// time. OpenAI's spec routes every per-item event by `output_index`/`item_id`;
-	// see https://github.com/can1357/oh-my-pi/issues/1880 — llama.cpp emits parallel
+	// see https://github.com/toxicwind/tau/issues/1880 — llama.cpp emits parallel
 	// function_call deltas interleaved, and a singleton `current` reference would
 	// fold them into the wrong block and drop arguments on every call but the last.
 	//

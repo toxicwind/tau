@@ -16,18 +16,18 @@ import {
 	generateBranchSummary,
 	generateHandoff,
 	generateSummary,
-} from "@oh-my-pi/pi-agent-core/compaction";
+} from "@tau/tau-agent-core/compaction";
 import {
 	type AgentTelemetryConfig,
 	GenAIAttr,
 	GenAIOperation,
 	PiGenAIAttr,
 	resolveTelemetry,
-} from "@oh-my-pi/pi-agent-core/telemetry";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core/types";
-import type { AssistantMessage, Model, Usage } from "@oh-my-pi/pi-ai";
-import * as ai from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+} from "@tau/tau-agent-core/telemetry";
+import type { AgentMessage } from "@tau/tau-agent-core/types";
+import type { AssistantMessage, Model, Usage } from "@tau/tau-ai";
+import * as ai from "@tau/tau-ai";
+import { buildModel } from "@tau/tau-catalog/build";
 import { SpanStatusCode } from "@opentelemetry/api";
 import {
 	BasicTracerProvider,

@@ -1,11 +1,11 @@
 import { describe, expect, it } from "bun:test";
-import { type AgentToolCall, Tokenizer } from "@oh-my-pi/pi-agent-core";
-import type { SessionMessageEntry } from "@oh-my-pi/pi-agent-core/compaction/entries";
-import { DEFAULT_PRUNE_CONFIG, pruneToolOutputs } from "@oh-my-pi/pi-agent-core/compaction/pruning";
-import { AGGRESSIVE_SHAKE_CONFIG, collectShakeRegions } from "@oh-my-pi/pi-agent-core/compaction/shake";
-import type { ProtectedToolContext } from "@oh-my-pi/pi-agent-core/compaction/tool-protection";
-import type { AssistantMessage, TextContent, ToolResultMessage, Usage } from "@oh-my-pi/pi-ai";
-import { createPlanReadMatcher } from "@oh-my-pi/pi-coding-agent/plan-mode/plan-protection";
+import { type AgentToolCall, Tokenizer } from "@tau/tau-agent-core";
+import type { SessionMessageEntry } from "@tau/tau-agent-core/compaction/entries";
+import { DEFAULT_PRUNE_CONFIG, pruneToolOutputs } from "@tau/tau-agent-core/compaction/pruning";
+import { AGGRESSIVE_SHAKE_CONFIG, collectShakeRegions } from "@tau/tau-agent-core/compaction/shake";
+import type { ProtectedToolContext } from "@tau/tau-agent-core/compaction/tool-protection";
+import type { AssistantMessage, TextContent, ToolResultMessage, Usage } from "@tau/tau-ai";
+import { createPlanReadMatcher } from "@tau/tau-coding-agent/plan-mode/plan-protection";
 
 const tokenizer = new Tokenizer();
 

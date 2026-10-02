@@ -10,11 +10,11 @@
  * which can be cheaper/faster than the main conversation model.
  *
  * Usage:
- *   omp --hook examples/hooks/custom-compaction.ts
+ *   tau --hook examples/hooks/custom-compaction.ts
  */
-import { complete, getModel } from "@oh-my-pi/pi-ai";
-import type { HookAPI } from "@oh-my-pi/pi-coding-agent";
-import { convertToLlm, serializeConversation } from "@oh-my-pi/pi-coding-agent";
+import { complete, getModel } from "@tau/tau-ai";
+import type { HookAPI } from "@tau/tau-coding-agent";
+import { convertToLlm, serializeConversation } from "@tau/tau-coding-agent";
 
 export default function (pi: HookAPI) {
 	pi.on("session_before_compact", async (event, ctx) => {

@@ -1,5 +1,5 @@
-import type { AgentMessage, ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { Model } from "@oh-my-pi/pi-ai";
+import type { AgentMessage, ThinkingLevel } from "@tau/tau-agent-core";
+import type { Model } from "@tau/tau-ai";
 
 /** Identity of the ambient main session in the agent roster. */
 export const MAIN_AGENT_ID = "Main";

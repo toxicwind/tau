@@ -1,5 +1,5 @@
-import { calculateCost } from "@oh-my-pi/pi-catalog/models";
-import { logger } from "@oh-my-pi/pi-utils";
+import { calculateCost } from "@tau/tau-catalog/models";
+import { logger } from "@tau/tau-utils";
 import { classifyGatewayError } from "../../error/gateway";
 import { generateImage } from "../../images";
 import * as imagesServer from "../../providers/images-server";

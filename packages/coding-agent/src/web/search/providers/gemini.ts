@@ -16,10 +16,10 @@ import {
 	type OAuthAccess,
 	withAuth,
 	withOAuthAccess,
-} from "@oh-my-pi/pi-ai";
-import { parseCloudflareAiGatewayCredential } from "@oh-my-pi/pi-catalog/wire/cloudflare-ai-gateway";
-import { getAntigravityUserAgent, getGeminiCliHeaders } from "@oh-my-pi/pi-catalog/wire/gemini-headers";
-import { fetchWithRetry, USER_AGENT } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-ai";
+import { parseCloudflareAiGatewayCredential } from "@tau/tau-catalog/wire/cloudflare-ai-gateway";
+import { getAntigravityUserAgent, getGeminiCliHeaders } from "@tau/tau-catalog/wire/gemini-headers";
+import { fetchWithRetry, USER_AGENT } from "@tau/tau-utils";
 
 import type { SearchCitation, SearchResponse, SearchSource } from "../types";
 import type { ModelRegistry } from "../../../config/model-registry";
@@ -397,7 +397,7 @@ async function callGeminiSearch(
 			}
 		: {
 				userAgent: USER_AGENT,
-				requestId: `omp-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`,
+				requestId: `tau-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`,
 			};
 
 	const normalizedSystemPrompt = systemPrompt?.toWellFormed();

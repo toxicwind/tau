@@ -5,8 +5,8 @@ import {
 	type UsageLimit,
 	type UsageReport,
 	type UsageResetCredit,
-} from "@oh-my-pi/pi-ai";
-import { claudeRankingStrategy } from "@oh-my-pi/pi-ai/usage/claude";
+} from "@tau/tau-ai";
+import { claudeRankingStrategy } from "@tau/tau-ai/usage/claude";
 import {
 	ATTEMPT_COOLDOWN_MS,
 	DEBOUNCE_BUCKET_MS,

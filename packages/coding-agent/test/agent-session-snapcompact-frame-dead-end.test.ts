@@ -1,19 +1,19 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { Agent, RESCUE_SHAKE_CONFIG } from "@oh-my-pi/pi-agent-core";
-import * as compactionModule from "@oh-my-pi/pi-agent-core/compaction";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { loadExtensions } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
-import { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import type { CompactionEntry } from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { getProjectAgentDir, TempDir } from "@oh-my-pi/pi-utils";
-import * as snapcompact from "@oh-my-pi/snapcompact";
+import { Agent, RESCUE_SHAKE_CONFIG } from "@tau/tau-agent-core";
+import * as compactionModule from "@tau/tau-agent-core/compaction";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { loadExtensions } from "@tau/tau-coding-agent/extensibility/extensions/loader";
+import { ExtensionRunner } from "@tau/tau-coding-agent/extensibility/extensions/runner";
+import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import type { CompactionEntry } from "@tau/tau-coding-agent/session/session-entries";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { getProjectAgentDir, TempDir } from "@tau/tau-utils";
+import * as snapcompact from "@tau/snapcompact";
 
 /**
  * Regression test for the snapcompact frame dead-end.
@@ -81,7 +81,7 @@ describe("AgentSession snapcompact frame dead-end rescue", () => {
 		 *  re-emitted by buildSessionContext, so the rescue budget must charge it. */
 		preArchiveKeptText?: string;
 	}): Promise<void> {
-		tempDir = TempDir.createSync("@pi-snapcompact-frame-dead-end-");
+		tempDir = TempDir.createSync("@tau-snapcompact-frame-dead-end-");
 		sessionManager = SessionManager.inMemory(tempDir.path());
 
 		let extensionRunner: ExtensionRunner | undefined;

@@ -1,10 +1,10 @@
 import * as path from "node:path";
-import type { ApiKeyResolver, FetchImpl, ResolvedApiKey, UsageProvider } from "@oh-my-pi/pi-ai";
-import { registerCustomApi, unregisterCustomApis } from "@oh-my-pi/pi-ai/api-registry";
-import { registerOAuthProvider, unregisterOAuthProvider, unregisterOAuthProviders } from "@oh-my-pi/pi-ai/oauth";
-import type { OAuthCredentials, OAuthLoginCallbacks } from "@oh-my-pi/pi-ai/oauth/types";
-import { setCodexAttestationProvider } from "@oh-my-pi/pi-ai/providers/openai-codex-attestation";
-import { getProviderDefinition } from "@oh-my-pi/pi-ai/registry";
+import type { ApiKeyResolver, FetchImpl, ResolvedApiKey, UsageProvider } from "@tau/tau-ai";
+import { registerCustomApi, unregisterCustomApis } from "@tau/tau-ai/api-registry";
+import { registerOAuthProvider, unregisterOAuthProvider, unregisterOAuthProviders } from "@tau/tau-ai/oauth";
+import type { OAuthCredentials, OAuthLoginCallbacks } from "@tau/tau-ai/oauth/types";
+import { setCodexAttestationProvider } from "@tau/tau-ai/providers/openai-codex-attestation";
+import { getProviderDefinition } from "@tau/tau-ai/registry";
 import type {
 	Api,
 	Context,
@@ -13,24 +13,24 @@ import type {
 	RemoteCompactionConfig,
 	SimpleStreamOptions,
 	ThinkingConfig,
-} from "@oh-my-pi/pi-ai/types";
-import type { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { buildDiscoveredModel, buildModel } from "@oh-my-pi/pi-catalog/build";
-import { collapseBuiltVariants } from "@oh-my-pi/pi-catalog/compat/collapse";
+} from "@tau/tau-ai/types";
+import type { AssistantMessageEventStream } from "@tau/tau-ai/utils/event-stream";
+import { buildDiscoveredModel, buildModel } from "@tau/tau-catalog/build";
+import { collapseBuiltVariants } from "@tau/tau-catalog/compat/collapse";
 import {
 	clampCodexContextWindow,
 	clampsContextOverride,
 	resolveMaxContextWindow,
-} from "@oh-my-pi/pi-catalog/compat/context-window";
-import { applyCatalogMetrics, CatalogMetricsIndex } from "@oh-my-pi/pi-catalog/identity/metrics";
-import { readModelCache } from "@oh-my-pi/pi-catalog/model-cache";
+} from "@tau/tau-catalog/compat/context-window";
+import { applyCatalogMetrics, CatalogMetricsIndex } from "@tau/tau-catalog/identity/metrics";
+import { readModelCache } from "@tau/tau-catalog/model-cache";
 import {
 	createModelManager,
 	fingerprintStaticModels,
 	type ModelManagerOptions,
 	type ModelRefreshStrategy,
-} from "@oh-my-pi/pi-catalog/model-manager";
-import { getBundledModels, getBundledProviders } from "@oh-my-pi/pi-catalog/models";
+} from "@tau/tau-catalog/model-manager";
+import { getBundledModels, getBundledProviders } from "@tau/tau-catalog/models";
 import {
 	googleAntigravityModelManagerOptions,
 	googleGeminiCliModelManagerOptions,
@@ -41,10 +41,10 @@ import {
 	PROVIDER_DESCRIPTORS,
 	resolveModelCacheProviderId,
 	resolveOllamaModelCacheProviderId,
-} from "@oh-my-pi/pi-catalog/provider-models";
-import { toModelSpec } from "@oh-my-pi/pi-catalog/provider-models/bundled-references";
-import { modelKind, type ModelKind } from "@oh-my-pi/pi-catalog/types";
-import { getAgentDir, isBunTestRuntime, logger, wrapFetchForExtraCa } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-catalog/provider-models";
+import { toModelSpec } from "@tau/tau-catalog/provider-models/bundled-references";
+import { modelKind, type ModelKind } from "@tau/tau-catalog/types";
+import { getAgentDir, isBunTestRuntime, logger, wrapFetchForExtraCa } from "@tau/tau-utils";
 import { resolveProviderModelReference } from "../config/model-resolver";
 import { generateCodexAttestation } from "../live/attestation";
 import type { AuthStorage } from "../session/auth-storage";
@@ -128,7 +128,7 @@ import type { ModelOverride, ModelsConfig, ProviderAuthMode } from "./models-con
 import { type Settings, settings } from "./settings";
 
 // DeviceCheck attestation (`x-oai-attestation`) for ChatGPT-OAuth Codex
-// requests; the pi-ai provider resolves it just-in-time per request.
+// requests; the tau-ai provider resolves it just-in-time per request.
 setCodexAttestationProvider(generateCodexAttestation);
 
 const BUILT_IN_MODEL_MANAGER_PROVIDER_IDS: Readonly<Record<string, true>> = Object.freeze(
@@ -217,7 +217,7 @@ function isExtendedContextEnabledFromSettings(settingsInstance?: Settings): bool
  * Online discovery (`strategy: "online"`) is independent of credential minting:
  * opening `/models` and hovering a provider fetch catalogs without re-running
  * `!command` helpers. Pass `refreshCommandCredentials` only for explicit user
- * refresh (`omp models refresh`, TUI F5).
+ * refresh (`tau models refresh`, TUI F5).
  */
 export interface ModelRegistryRefreshOptions {
 	refreshCommandCredentials?: boolean;
@@ -611,7 +611,7 @@ export class ModelRegistry {
 	 *
 	 * Unlike {@link refreshProvider}, this does no static reload and never
 	 * re-fetches the other runtime managers, so restoring a saved
-	 * discovery-backed model (e.g. on `omp --resume`) cannot wait on — or
+	 * discovery-backed model (e.g. on `tau --resume`) cannot wait on — or
 	 * duplicate — an unrelated provider's network/OAuth work. Ids that are not
 	 * configured discovery providers are ignored by the underlying filter.
 	 */
@@ -1479,7 +1479,7 @@ export class ModelRegistry {
 		// routing that MUST NOT reach a broker-backed gateway — applying them would
 		// send broker bearers to a configured endpoint, install config keys that
 		// shadow broker credentials (bypassing account pooling/refresh/accounting),
-		// or route a pi-native gateway back into itself.
+		// or route a tau-native gateway back into itself.
 		if (this.#ignoreLocalModelConfig) {
 			return {
 				models: [],
@@ -2623,7 +2623,7 @@ export class ModelRegistry {
 	/**
 	 * Check whether auth is configured for a model's provider.
 	 *
-	 * Mirrors the upstream `@mariozechner/pi-coding-agent` API surface so that
+	 * Mirrors the upstream `@mariozechner/tau-coding-agent` API surface so that
 	 * external plugins/extensions and downstream wrappers (e.g. subagent launch
 	 * paths that pre-flight auth before model resolution) can probe a model
 	 * without resolving an API key. Returns true for keyless providers as well
@@ -2711,7 +2711,7 @@ export class ModelRegistry {
 
 	/**
 	 * Whether a config-declared discovery provider has not yet produced a
-	 * catalog in this process. A cold discovery cache (e.g. after `omp update`
+	 * catalog in this process. A cold discovery cache (e.g. after `tau update`
 	 * bumps the cache namespace) leaves the provider in its initial `idle`
 	 * state with no models, so a selector the provider will supply looks
 	 * unknown until background discovery lands (#10048).
@@ -2745,7 +2745,7 @@ export class ModelRegistry {
 	 * discovered model that defines one.
 	 *
 	 * The overrides lead because a model-derived answer is only available once
-	 * discovery has populated the registry. `omp usage` builds a `ModelRegistry`
+	 * discovery has populated the registry. `tau usage` builds a `ModelRegistry`
 	 * and probes credentials immediately, and providers whose roster is
 	 * discovery-only (no bundled rows) have no model to read a URL from at that
 	 * point — so deriving solely from models returned `undefined` cache-cold and

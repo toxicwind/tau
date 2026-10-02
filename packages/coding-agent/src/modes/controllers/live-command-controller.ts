@@ -1,14 +1,14 @@
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { logger } from "@oh-my-pi/pi-utils";
+import type { AssistantMessage } from "@tau/tau-ai";
+import { logger } from "@tau/tau-utils";
 import { LiveSessionController, type LiveSessionControllerOptions, type LiveTranscript } from "../../live/controller";
 import { LIVE_MODEL } from "../../live/protocol";
-import { LiveVisualizer } from "@oh-my-pi/pi-tui/apps/live-visualizer";
+import { LiveVisualizer } from "@tau/tau-tui/apps/live-visualizer";
 import { vocalizer } from "../../tts/vocalizer";
-import type { AssistantMessageComponent } from "@oh-my-pi/pi-tui/chat/assistant-message";
-import type { CustomEditor } from "@oh-my-pi/pi-tui/prompt/custom-editor";
-import { theme } from "@oh-my-pi/pi-tui/theme";
+import type { AssistantMessageComponent } from "@tau/tau-tui/chat/assistant-message";
+import type { CustomEditor } from "@tau/tau-tui/prompt/custom-editor";
+import { theme } from "@tau/tau-tui/theme";
 import type { InteractiveModeContext } from "../types";
-import { createAssistantMessageComponent } from "@oh-my-pi/pi-tui/prompt/interactive-context-helpers";
+import { createAssistantMessageComponent } from "@tau/tau-tui/prompt/interactive-context-helpers";
 
 const ANIMATION_INTERVAL_MS = 80;
 type LiveSessionFactory = (options: LiveSessionControllerOptions) => LiveSessionController;

@@ -2,11 +2,11 @@ import { afterEach, describe, expect, it, type Mock, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { TodoCommandController } from "@oh-my-pi/pi-coding-agent/modes/controllers/todo-command-controller";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { type TodoPhase } from "@oh-my-pi/pi-tui/tools/todo";
-import { USER_TODO_EDIT_CUSTOM_TYPE } from "@oh-my-pi/pi-coding-agent/tools";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+import { TodoCommandController } from "@tau/tau-coding-agent/modes/controllers/todo-command-controller";
+import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
+import { type TodoPhase } from "@tau/tau-tui/tools/todo";
+import { USER_TODO_EDIT_CUSTOM_TYPE } from "@tau/tau-coding-agent/tools";
+import { removeWithRetries } from "@tau/tau-utils";
 
 function createContext(cwd: string, phases: TodoPhase[]): InteractiveModeContext {
 	return {
@@ -39,7 +39,7 @@ describe("TodoCommandController", () => {
 	});
 
 	it("exports the default TODO.md under the active session cwd", async () => {
-		tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "pi-tui-todo-export-"));
+		tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "tau-tui-todo-export-"));
 		const phases: TodoPhase[] = [{ name: "Work", tasks: [{ content: "Ship it", status: "pending" }] }];
 		const ctx = createContext(tempRoot, phases);
 		const controller = new TodoCommandController(ctx);
@@ -53,7 +53,7 @@ describe("TodoCommandController", () => {
 	});
 
 	it("exports a quoted path with spaces", async () => {
-		tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "pi-tui-todo-export-quoted-"));
+		tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "tau-tui-todo-export-quoted-"));
 		const phases: TodoPhase[] = [{ name: "Work", tasks: [{ content: "Ship it", status: "pending" }] }];
 		const target = path.join(tempRoot, "todo file.md");
 		const ctx = createContext(tempRoot, phases);
@@ -67,7 +67,7 @@ describe("TodoCommandController", () => {
 	});
 
 	it("imports the default TODO.md under the active session cwd", async () => {
-		tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "pi-tui-todo-import-"));
+		tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "tau-tui-todo-import-"));
 		const target = path.join(tempRoot, "TODO.md");
 		await fs.writeFile(target, "# Imported\n- [ ] From cwd\n", "utf8");
 		const ctx = createContext(tempRoot, []);
@@ -88,7 +88,7 @@ describe("TodoCommandController", () => {
 	});
 
 	it("imports a quoted path with spaces", async () => {
-		tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "pi-tui-todo-import-quoted-"));
+		tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "tau-tui-todo-import-quoted-"));
 		const target = path.join(tempRoot, "todo file.md");
 		await fs.writeFile(target, "# Quoted\n- [ ] From quoted path\n", "utf8");
 		const ctx = createContext(tempRoot, []);
@@ -105,7 +105,7 @@ describe("TodoCommandController", () => {
 	});
 
 	it("reports import parse errors without committing", async () => {
-		tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "pi-tui-todo-import-invalid-"));
+		tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "tau-tui-todo-import-invalid-"));
 		const target = path.join(tempRoot, "TODO.md");
 		await fs.writeFile(target, "# Imported\nnot a todo\n", "utf8");
 		const ctx = createContext(tempRoot, []);
@@ -119,7 +119,7 @@ describe("TodoCommandController", () => {
 	});
 
 	it("reports invalid internal-scheme import paths without committing", async () => {
-		tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "pi-tui-todo-import-scheme-"));
+		tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "tau-tui-todo-import-scheme-"));
 		const ctx = createContext(tempRoot, []);
 		const controller = new TodoCommandController(ctx);
 
@@ -132,7 +132,7 @@ describe("TodoCommandController", () => {
 	});
 
 	it("reports invalid internal-scheme export paths", async () => {
-		tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "pi-tui-todo-export-invalid-"));
+		tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "tau-tui-todo-export-invalid-"));
 		const phases: TodoPhase[] = [{ name: "Work", tasks: [{ content: "Ship it", status: "pending" }] }];
 		const ctx = createContext(tempRoot, phases);
 		const controller = new TodoCommandController(ctx);
@@ -150,7 +150,7 @@ describe("TodoCommandController", () => {
 	}
 
 	it("tells the model not to recreate the list after /todo rm (all)", async () => {
-		tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "pi-tui-todo-rm-all-"));
+		tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "tau-tui-todo-rm-all-"));
 		const phases: TodoPhase[] = [
 			{ name: "Foundation", tasks: [{ content: "Scaffold crate", status: "in_progress" }] },
 		];
@@ -166,7 +166,7 @@ describe("TodoCommandController", () => {
 	});
 
 	it("tells the model not to re-add a removed phase after /todo rm <phase>", async () => {
-		tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "pi-tui-todo-rm-phase-"));
+		tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "tau-tui-todo-rm-phase-"));
 		const phases: TodoPhase[] = [
 			{ name: "Foundation", tasks: [{ content: "Scaffold crate", status: "completed" }] },
 			{ name: "Auth", tasks: [{ content: "Port credential store", status: "pending" }] },
@@ -180,7 +180,7 @@ describe("TodoCommandController", () => {
 	});
 
 	it("keeps status-mutation reminders neutral (no do-not-recreate directive)", async () => {
-		tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "pi-tui-todo-done-"));
+		tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "tau-tui-todo-done-"));
 		const phases: TodoPhase[] = [
 			{ name: "Foundation", tasks: [{ content: "Scaffold crate", status: "in_progress" }] },
 		];

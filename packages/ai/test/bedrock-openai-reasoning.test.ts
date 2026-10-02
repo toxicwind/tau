@@ -1,9 +1,9 @@
 import { describe, expect, test } from "bun:test";
-import { streamBedrock } from "@oh-my-pi/pi-ai/providers/amazon-bedrock";
-import { setBedrockProviderModule } from "@oh-my-pi/pi-ai/providers/register-builtins";
-import type { Context, Model } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
+import { streamBedrock } from "@tau/tau-ai/providers/amazon-bedrock";
+import { setBedrockProviderModule } from "@tau/tau-ai/providers/register-builtins";
+import type { Context, Model } from "@tau/tau-ai/types";
+import { buildModel } from "@tau/tau-catalog/build";
+import { Effort } from "@tau/tau-catalog/effort";
 import { streamSimple } from "../src/stream";
 
 // Bedrock hosts the GPT-5.x SKUs behind OpenAI's own request schema. It rejects

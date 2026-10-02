@@ -1,4 +1,4 @@
-import type { AskToolDetails, QuestionResult } from "@oh-my-pi/pi-tui/tools/ask";
+import type { AskToolDetails, QuestionResult } from "@tau/tau-tui/tools/ask";
 /**
  * Ask Tool - Interactive user prompting during execution
  *
@@ -16,14 +16,14 @@ import type { AskToolDetails, QuestionResult } from "@oh-my-pi/pi-tui/tools/ask"
  *   - Questions may time out and auto-select the recommended option (configurable, disabled in plan mode)
  */
 
-import { type as arkType } from "@oh-my-pi/omptype";
-import type { AgentTool, AgentToolContext, AgentToolResult, AgentToolUpdateCallback } from "@oh-my-pi/pi-agent-core";
-import type { ToolExample } from "@oh-my-pi/pi-ai";
-import { Ellipsis, replaceTabs, TERMINAL, truncateToWidth, visibleWidth } from "@oh-my-pi/pi-tui";
-import { prompt, untilAborted } from "@oh-my-pi/pi-utils";
+import { type as arkType } from "@tau/tautype";
+import type { AgentTool, AgentToolContext, AgentToolResult, AgentToolUpdateCallback } from "@tau/tau-agent-core";
+import type { ToolExample } from "@tau/tau-ai";
+import { Ellipsis, replaceTabs, TERMINAL, truncateToWidth, visibleWidth } from "@tau/tau-tui";
+import { prompt, untilAborted } from "@tau/tau-utils";
 
 import type { ExtensionUISelectItem } from "../extensibility/extensions";
-import { theme } from "@oh-my-pi/pi-tui/theme";
+import { theme } from "@tau/tau-tui/theme";
 import askDescription from "../prompts/tools/ask.md" with { type: "text" };
 import { vocalizer } from "../tts/vocalizer";
 
@@ -32,7 +32,7 @@ import {
 	disambiguateDisplayLabels,
 	sanitizeCarriageReturns,
 	TRUNCATE_LENGTHS,
-} from "@oh-my-pi/pi-tui/render/render-utils";
+} from "@tau/tau-tui/render/render-utils";
 import { ToolAbortError } from "./tool-errors";
 
 // =============================================================================
@@ -789,7 +789,7 @@ export class AskTool implements AgentTool<typeof askSchema, AskToolDetails> {
 		const method = this.session.settings.get("ask.notify");
 		if (method === "off") return;
 		TERMINAL.sendNotification({
-			title: "omp",
+			title: "tau",
 			body: "Waiting for input",
 			type: "ask",
 			urgency: "normal",

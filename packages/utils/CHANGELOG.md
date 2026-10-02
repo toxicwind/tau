@@ -45,16 +45,16 @@
 
 ### Added
 
-- Added the public `postmortem.exitProcess()` utility for host-owned hard exits that must bypass temporary process-exit guards ([#11789](https://github.com/can1357/oh-my-pi/issues/11789)).
+- Added the public `postmortem.exitProcess()` utility for host-owned hard exits that must bypass temporary process-exit guards ([#11789](https://github.com/toxicwind/tau/issues/11789)).
 - Added `readSseJsonOrText`: like `readSseJson`, but a `data:` frame that is not valid JSON is yielded as its raw text instead of raising a `SyntaxError`, so a consumer can classify a reverse proxy's plain-text throttle page (`429 Too Many Requests`) that arrives after the stream headers were already sent. `readSseJson` is unchanged and shares the framing with it.
 
 ### Fixed
 
-- Reading an EPUB, PPTX or XLSX whose XML has a mismatched or stray end tag no longer hangs the session forever; the parser recovers and the document converts ([#12018](https://github.com/can1357/oh-my-pi/pull/12018) by [@kaluli123123](https://github.com/kaluli123123)).
+- Reading an EPUB, PPTX or XLSX whose XML has a mismatched or stray end tag no longer hangs the session forever; the parser recovers and the document converts ([#12018](https://github.com/toxicwind/tau/pull/12018) by [@kaluli123123](https://github.com/kaluli123123)).
 - Fixed `filterChildShellEnv` forwarding the host process's `GIT_DIR`, `GIT_WORK_TREE`, and related repo-location overrides to child shells, where `git` would ignore the command's `cwd`.
-- ACP JSON-RPC now drains accepted inbound requests on clean stdin EOF before resolving `closed`, so in-flight methods such as `session/new` still receive a success or explicit error response instead of being dropped on exit 0 ([#11567](https://github.com/can1357/oh-my-pi/issues/11567)).
-- Fixed provider-local usage-limit reset timestamps making `waitForUsageReset` sessions resume up to eight hours late while preserving longest-window semantics for naive UTC timestamps ([#11014](https://github.com/can1357/oh-my-pi/issues/11014)).
-- `registerStdioDisconnectHandling()` now drives graceful shutdown from `process.stdout`'s own `error` event, so a closed stdout consumer exits cleanly while an unrelated write EPIPE (subprocess stdin, socket) stays fatal ([#10930](https://github.com/can1357/oh-my-pi/issues/10930)).
+- ACP JSON-RPC now drains accepted inbound requests on clean stdin EOF before resolving `closed`, so in-flight methods such as `session/new` still receive a success or explicit error response instead of being dropped on exit 0 ([#11567](https://github.com/toxicwind/tau/issues/11567)).
+- Fixed provider-local usage-limit reset timestamps making `waitForUsageReset` sessions resume up to eight hours late while preserving longest-window semantics for naive UTC timestamps ([#11014](https://github.com/toxicwind/tau/issues/11014)).
+- `registerStdioDisconnectHandling()` now drives graceful shutdown from `process.stdout`'s own `error` event, so a closed stdout consumer exits cleanly while an unrelated write EPIPE (subprocess stdin, socket) stays fatal ([#10930](https://github.com/toxicwind/tau/issues/10930)).
 - Fixed Linux `ptree` timeout cleanup occasionally leaving session-escaped descendants running during subreaper adoption.
 
 ## [18.2.0] - 2026-09-15
@@ -76,7 +76,7 @@
 
 ### Fixed
 
-- Fixed `extractRetryHint` dropping OpenCode Go's `Resets in …` quota window (`45min`, `2hr 15min`, `3 days`): the `reset in` pattern now accepts `Resets` phrasing, `hr`/`day` units, and compound `2hr 15min` remainders, so exhausted Go credentials block for the server-stated window instead of the 60s heuristic guess. ([#12091](https://github.com/can1357/oh-my-pi/pull/12091) by [@H4vC](https://github.com/H4vC))
+- Fixed `extractRetryHint` dropping OpenCode Go's `Resets in …` quota window (`45min`, `2hr 15min`, `3 days`): the `reset in` pattern now accepts `Resets` phrasing, `hr`/`day` units, and compound `2hr 15min` remainders, so exhausted Go credentials block for the server-stated window instead of the 60s heuristic guess. ([#12091](https://github.com/toxicwind/tau/pull/12091) by [@H4vC](https://github.com/H4vC))
 - Async file-peek callbacks now receive stable `Uint8Array` windows with copying `slice()` semantics.
 - Dotenv loading now handles multiline values and escapes consistently with Bun, preventing project values from leaking into child-shell environments.
 - SSE readers now support lone-CR line endings and CRLF split across chunks without merging or delaying events.
@@ -85,13 +85,13 @@
 
 ### Fixed
 
-- Fixed `extractRetryHint` sleeping hours past the provider's stated wait when a timezone-naive `reset at` timestamp overshoots the relative retry hint: the skewed stamp is now ignored instead of winning longest-wins ([#12070](https://github.com/can1357/oh-my-pi/pull/12070) by [@H4vC](https://github.com/H4vC)).
+- Fixed `extractRetryHint` sleeping hours past the provider's stated wait when a timezone-naive `reset at` timestamp overshoots the relative retry hint: the skewed stamp is now ignored instead of winning longest-wins ([#12070](https://github.com/toxicwind/tau/pull/12070) by [@H4vC](https://github.com/H4vC)).
 
 ## [18.1.21] - 2026-09-14
 
 ### Added
 
-- Added `getBrowserProfilesDir()` (`~/.omp/browser-profiles`; XDG: `$XDG_STATE_HOME/omp/browser-profiles`) for profiles of Chromium browsers spawned by the browser tool.
+- Added `getBrowserProfilesDir()` (`~/.tau/browser-profiles`; XDG: `$XDG_STATE_HOME/tau/browser-profiles`) for profiles of Chromium browsers spawned by the browser tool.
 
 ### Fixed
 
@@ -106,7 +106,7 @@
 
 ### Fixed
 
-- Child-shell environment filtering now tolerates a removed process working directory by retaining the resolved project directory ([#11828](https://github.com/can1357/oh-my-pi/issues/11828)).
+- Child-shell environment filtering now tolerates a removed process working directory by retaining the resolved project directory ([#11828](https://github.com/toxicwind/tau/issues/11828)).
 
 ## [18.1.16] - 2026-09-09
 
@@ -118,7 +118,7 @@
 
 ### Fixed
 
-- Fixed `filterChildShellEnv` applying the omp process's own launch-environment provenance (the pre-dotenv `NODE_ENV` and launcher-owned names read from `/proc/self/environ`) to caller-supplied environment objects; launch provenance now only applies when filtering the live `process.env`/`Bun.env`, and an explicit env resolves its dotenv mode from its own `NODE_ENV`.
+- Fixed `filterChildShellEnv` applying the tau process's own launch-environment provenance (the pre-dotenv `NODE_ENV` and launcher-owned names read from `/proc/self/environ`) to caller-supplied environment objects; launch provenance now only applies when filtering the live `process.env`/`Bun.env`, and an explicit env resolves its dotenv mode from its own `NODE_ENV`.
 
 ## [18.1.11] - 2026-09-05
 
@@ -130,7 +130,7 @@
 
 ### Added
 
-- Added the public `getTinyWorkerRuntimeDir()` utility, which returns the standard `~/.omp/run/tiny` directory for tiny-worker runtime data.
+- Added the public `getTinyWorkerRuntimeDir()` utility, which returns the standard `~/.tau/run/tiny` directory for tiny-worker runtime data.
 
 ### Fixed
 
@@ -140,7 +140,7 @@
 
 ### Added
 
-- Added `IncomingDoc` (`@oh-my-pi/pi-utils/incoming-json`) for incrementally reading path-addressed JSON data as text arrives, including string chunks and lines, array elements, and keyed object values, with structured errors for missing, incomplete, aborted, malformed, or mismatched data.
+- Added `IncomingDoc` (`@tau/tau-utils/incoming-json`) for incrementally reading path-addressed JSON data as text arrives, including string chunks and lines, array elements, and keyed object values, with structured errors for missing, incomplete, aborted, malformed, or mismatched data.
 - Added `Serial` for running asynchronous operations sequentially in call order.
 
 ### Fixed
@@ -151,13 +151,13 @@
 
 ### Added
 
-- Added `TerminalQueryResponder` to `@oh-my-pi/pi-utils/vterm`, enabling headless PTY consumers to answer common terminal queries for cursor position, device status and attributes, and foreground/background colors without maintaining a screen buffer.
+- Added `TerminalQueryResponder` to `@tau/tau-utils/vterm`, enabling headless PTY consumers to answer common terminal queries for cursor position, device status and attributes, and foreground/background colors without maintaining a screen buffer.
 
 ## [18.1.3] - 2026-09-02
 
 ### Fixed
 
-- Fixed retry-hint extraction for body-level millisecond hints and absolute quota-reset timestamps ([#10325](https://github.com/can1357/oh-my-pi/pull/10325) by [@usr-bin-roygbiv](https://github.com/usr-bin-roygbiv)).
+- Fixed retry-hint extraction for body-level millisecond hints and absolute quota-reset timestamps ([#10325](https://github.com/toxicwind/tau/pull/10325) by [@usr-bin-roygbiv](https://github.com/usr-bin-roygbiv)).
 
 ## [18.1.0] - 2026-09-01
 
@@ -169,7 +169,7 @@
 
 - Fixed sub-second duration formatting so it no longer exposes floating-point precision noise.
 - Managed Chrome-for-Testing downloads now reject unsupported Linux ARM64 hosts instead of installing an incompatible x86_64 browser.
-- Fixed Markdown reference-link labels that match built-in `Object.prototype` names, such as `constructor` and `__proto__`, so they are no longer misidentified as definitions or emitted with an undefined URL ([#10283](https://github.com/can1357/oh-my-pi/issues/10283)).
+- Fixed Markdown reference-link labels that match built-in `Object.prototype` names, such as `constructor` and `__proto__`, so they are no longer misidentified as definitions or emitted with an undefined URL ([#10283](https://github.com/toxicwind/tau/issues/10283)).
 
 ## [18.0.11] - 2026-08-29
 
@@ -218,7 +218,7 @@
 
 ### Fixed
 
-- Fixed OMP sessions unexpectedly exiting during socket cleanup or optional-worker communication on Bun.
+- Fixed TAU sessions unexpectedly exiting during socket cleanup or optional-worker communication on Bun.
 
 ## [18.0.6] - 2026-08-26
 
@@ -246,20 +246,20 @@
 
 ### Fixed
 
-- Fixed the Mermaid ASCII renderer throwing on left-to-right diagrams containing a `subgraph`, which made the fenced block fall back to raw source in the terminal. `offsetDrawingForSubgraphs` shifts every drawing coordinate to make room for subgraph borders that extend past the origin, but the canvas had already been sized from the pre-shift grid extents, so edges routed to the outermost column wrote past the allocation and `drawLine` threw on the missing column. The canvas and role canvas now grow by the same shift. ([#9340](https://github.com/can1357/oh-my-pi/issues/9340))
-- Fixed child shell environments inheriting Bun-autoloaded `.env.<mode>.local` values from the launch directory. ([#9290](https://github.com/can1357/oh-my-pi/issues/9290))
+- Fixed the Mermaid ASCII renderer throwing on left-to-right diagrams containing a `subgraph`, which made the fenced block fall back to raw source in the terminal. `offsetDrawingForSubgraphs` shifts every drawing coordinate to make room for subgraph borders that extend past the origin, but the canvas had already been sized from the pre-shift grid extents, so edges routed to the outermost column wrote past the allocation and `drawLine` threw on the missing column. The canvas and role canvas now grow by the same shift. ([#9340](https://github.com/toxicwind/tau/issues/9340))
+- Fixed child shell environments inheriting Bun-autoloaded `.env.<mode>.local` values from the launch directory. ([#9290](https://github.com/toxicwind/tau/issues/9290))
 
 ## [17.4.2] - 2026-08-21
 
 ### Fixed
 
-- Made malformed advanced-serialization frames from a worker subprocess non-fatal: Bun surfaces an undecodable IPC frame as a process-level `uncaughtException` in the parent (oven-sh/bun#37287), which the postmortem handler treated as fatal and tore down every active session and subagent. The handler now recognizes the decode failure and, keeping the session alive, faults the active advanced-IPC worker subsystems so their clients reject in-flight requests and recycle the subprocess instead of awaiting forever — mirroring the existing ipc-send EPIPE containment. ([#9158](https://github.com/can1357/oh-my-pi/issues/9158))
+- Made malformed advanced-serialization frames from a worker subprocess non-fatal: Bun surfaces an undecodable IPC frame as a process-level `uncaughtException` in the parent (oven-sh/bun#37287), which the postmortem handler treated as fatal and tore down every active session and subagent. The handler now recognizes the decode failure and, keeping the session alive, faults the active advanced-IPC worker subsystems so their clients reject in-flight requests and recycle the subprocess instead of awaiting forever — mirroring the existing ipc-send EPIPE containment. ([#9158](https://github.com/toxicwind/tau/issues/9158))
 
 ## [17.4.1] - 2026-08-21
 
 ### Added
 
-- New unified archive API `@oh-my-pi/pi-utils/ar`, providing an `openArchive`/`ArchiveReader` interface across formats (including ZIP/ZIP64, tar with gz/bz2/xz/zst compression, ASAR, RAR 4/5, 7z, ISO 9660, CAB, cpio, RPM, Unix ar, Debian packages, LZH, ARJ, and single-stream compressed files) with lazy ranged reads for local files or HTTP range requests via `httpByteSource`, size limits, symlink-safe extraction, and deterministic archive creation for zip, tar, tar.gz, tar.zst, and asar.
+- New unified archive API `@tau/tau-utils/ar`, providing an `openArchive`/`ArchiveReader` interface across formats (including ZIP/ZIP64, tar with gz/bz2/xz/zst compression, ASAR, RAR 4/5, 7z, ISO 9660, CAB, cpio, RPM, Unix ar, Debian packages, LZH, ARJ, and single-stream compressed files) with lazy ranged reads for local files or HTTP range requests via `httpByteSource`, size limits, symlink-safe extraction, and deterministic archive creation for zip, tar, tar.gz, tar.zst, and asar.
 
 ## [17.3.8] - 2026-08-19
 
@@ -277,7 +277,7 @@
 
 ### Fixed
 
-- Fixed `fetchWithRetry()` aborts during retry backoff to preserve the documented `"Request was aborted"` error contract ([#8450](https://github.com/can1357/oh-my-pi/issues/8450)).
+- Fixed `fetchWithRetry()` aborts during retry backoff to preserve the documented `"Request was aborted"` error contract ([#8450](https://github.com/toxicwind/tau/issues/8450)).
 
 ## [17.3.0] - 2026-08-13
 
@@ -297,7 +297,7 @@
 ### Changed
 
 - Changed stale process-log retention from the newest five files globally to one newest file per completed process and day within the current and previous four local calendar days. This preserves bounded daily diagnostic coverage while continuing to remove one-use audit files.
-- Changed outbound User-Agent consumers to share the versioned `USER_AGENT` constant (`omp/<version>`).
+- Changed outbound User-Agent consumers to share the versioned `USER_AGENT` constant (`tau/<version>`).
 
 ### Fixed
 
@@ -317,7 +317,7 @@
 
 ### Added
 
-- Introduced zero-dependency in-house modules replacing external packages, importable via `@oh-my-pi/pi-utils/<module>`: `acp` (Agent Client Protocol), `browsers` (Chrome for Testing discovery/install), `chalk` (ANSI styling), `dates` (date formatting), `dom` (HTML parser, WHATWG DOM subset, and CSS selectors), `docx` (DOCX to HTML), `headers` (browser header generation), `lru` (LRU cache), `marked` (GFM markdown lexer/parser), `readability` (article extraction), `template` (Handlebars-compatible templating), `turndown` (HTML to Markdown), `vterm` (headless terminal emulator), and `xml` (XML parser).
+- Introduced zero-dependency in-house modules replacing external packages, importable via `@tau/tau-utils/<module>`: `acp` (Agent Client Protocol), `browsers` (Chrome for Testing discovery/install), `chalk` (ANSI styling), `dates` (date formatting), `dom` (HTML parser, WHATWG DOM subset, and CSS selectors), `docx` (DOCX to HTML), `headers` (browser header generation), `lru` (LRU cache), `marked` (GFM markdown lexer/parser), `readability` (article extraction), `template` (Handlebars-compatible templating), `turndown` (HTML to Markdown), `vterm` (headless terminal emulator), and `xml` (XML parser).
 - Added postmortem fatal recovery hint providers to allow applications to print actionable recovery commands before cleanup starts.
 
 ### Changed
@@ -338,7 +338,7 @@
 
 ### Added
 
-- Added a public `compareVersions` utility (`@oh-my-pi/pi-utils`) that compares two version strings with SemVer-2.0 prerelease ordering, build-metadata stripping, and numeric segment comparison without float overflow; never throws.
+- Added a public `compareVersions` utility (`@tau/tau-utils`) that compares two version strings with SemVer-2.0 prerelease ordering, build-metadata stripping, and numeric segment comparison without float overflow; never throws.
 
 ### Fixed
 
@@ -366,7 +366,7 @@
 ### Added
 
 - Added `getSecretPlaceholderKeyPath()`, `getDaemonRuntimeDir()`, `getProviderInFlightRoot()`, and `getMarketplacesRegistryPath()` to resolve secret key, daemon runtime, provider in-flight, and marketplace registry paths under their respective XDG categories (state, data) instead of the config root.
-- Existing installs enabling XDG keep their data: a legacy `~/.omp/agent/secret-placeholder.key` or `~/.omp/marketplaces.json` is copied to its XDG location on first resolution, so persisted transcripts still deobfuscate and added marketplaces survive the move.
+- Existing installs enabling XDG keep their data: a legacy `~/.tau/agent/secret-placeholder.key` or `~/.tau/marketplaces.json` is copied to its XDG location on first resolution, so persisted transcripts still deobfuscate and added marketplaces survive the move.
 
 ### Changed
 
@@ -374,14 +374,14 @@
 
 ### Fixed
 
-- Fixed Bun test-runtime detection treating application-owned `NODE_ENV=test` and `BUN_ENV=test` values as test-runner signals ([#7261](https://github.com/can1357/oh-my-pi/issues/7261)).
+- Fixed Bun test-runtime detection treating application-owned `NODE_ENV=test` and `BUN_ENV=test` values as test-runner signals ([#7261](https://github.com/toxicwind/tau/issues/7261)).
 
 ## [17.2.1] - 2026-07-30
 
 ### Added
 
 - Added a `postmortem.quit` configuration option to safely handle shutdown paths when the terminal output has already disconnected.
-- Added project-keyed OMP security-state directory helpers under the user state root.
+- Added project-keyed TAU security-state directory helpers under the user state root.
 
 ## [17.1.8] - 2026-07-28
 
@@ -403,9 +403,9 @@
 
 ### Fixed
 
-- Fixed postmortem signal and fatal shutdown exits being intercepted by temporary `process.exit` guards during extension startup ([#6488](https://github.com/can1357/oh-my-pi/issues/6488)).
-- Corrected Windows shell resolution errors to identify the active global, project, overlay, or runtime source for `shellPath` instead of directing every user to the retired `settings.json` file ([#6579](https://github.com/can1357/oh-my-pi/issues/6579)).
-- Contained timed-out child lifecycle rejections so `ptree` callers cannot leak an unhandled `TimeoutError` after settling ([#6635](https://github.com/can1357/oh-my-pi/issues/6635)).
+- Fixed postmortem signal and fatal shutdown exits being intercepted by temporary `process.exit` guards during extension startup ([#6488](https://github.com/toxicwind/tau/issues/6488)).
+- Corrected Windows shell resolution errors to identify the active global, project, overlay, or runtime source for `shellPath` instead of directing every user to the retired `settings.json` file ([#6579](https://github.com/toxicwind/tau/issues/6579)).
+- Contained timed-out child lifecycle rejections so `ptree` callers cannot leak an unhandled `TimeoutError` after settling ([#6635](https://github.com/toxicwind/tau/issues/6635)).
 - Fixed an invalid configured `shellPath` being silently masked whenever an earlier caller had already resolved a shell in the same process; the guidance error now surfaces regardless of cache state.
 
 ## [17.0.9] - 2026-07-23
@@ -440,7 +440,7 @@
 
 ### Fixed
 
-- Added scoped graceful handling for stdio-write EPIPE rejections so protocol servers can await postmortem cleanup when their peer disconnects ([#4788](https://github.com/can1357/oh-my-pi/issues/4788)).
+- Added scoped graceful handling for stdio-write EPIPE rejections so protocol servers can await postmortem cleanup when their peer disconnects ([#4788](https://github.com/toxicwind/tau/issues/4788)).
 
 ## [17.0.0] - 2026-07-15
 
@@ -486,7 +486,7 @@
 
 ### Fixed
 
-- Fixed child shell environment filtering to drop launch-directory `.env.local` values that Bun auto-loaded before OMP starts command shells. ([#4723](https://github.com/can1357/oh-my-pi/issues/4723))
+- Fixed child shell environment filtering to drop launch-directory `.env.local` values that Bun auto-loaded before TAU starts command shells. ([#4723](https://github.com/toxicwind/tau/issues/4723))
 
 ## [16.3.10] - 2026-07-06
 
@@ -576,7 +576,7 @@
 
 ### Fixed
 
-- Made EPIPE rejections from IPC `send()` to worker subprocesses (`syscall: "send"`) non-fatal: the global `unhandledRejection` handler now logs and continues instead of terminating the session when an optional subsystem's pipe breaks. A broken optional subsystem (TTS/STT/tiny-title/MCP) can no longer crash the whole agent session mid-task. ([#2997](https://github.com/can1357/oh-my-pi/issues/2997))
+- Made EPIPE rejections from IPC `send()` to worker subprocesses (`syscall: "send"`) non-fatal: the global `unhandledRejection` handler now logs and continues instead of terminating the session when an optional subsystem's pipe breaks. A broken optional subsystem (TTS/STT/tiny-title/MCP) can no longer crash the whole agent session mid-task. ([#2997](https://github.com/toxicwind/tau/issues/2997))
 
 ## [16.1.2] - 2026-06-19
 
@@ -586,7 +586,7 @@
 
 ### Removed
 
-- Removed the public `createAbortableStream` API from `@oh-my-pi/pi-utils`. Consumers should use the lighter, direct-reader `abortableSource` async generator inside `@oh-my-pi/pi-utils/stream` to avoid the extra ReadableStream wrapper layer and per-chunk enqueue overhead.
+- Removed the public `createAbortableStream` API from `@tau/tau-utils`. Consumers should use the lighter, direct-reader `abortableSource` async generator inside `@tau/tau-utils/stream` to avoid the extra ReadableStream wrapper layer and per-chunk enqueue overhead.
 
 ## [16.0.11] - 2026-06-19
 
@@ -615,18 +615,18 @@
 
 ### Added
 
-- Added `installWorkerInbox(port)` / `consumeWorkerInbox()` to `@oh-my-pi/pi-utils/worker-host`. A self-dispatching CLI host that imports a Bun worker module dynamically attaches the worker's real `message` listener after Bun flushes the messages the parent posted before spawn, dropping a synchronously-posted `init`. The host installs this buffering inbox synchronously in the entry's sync prefix so a listener exists at flush time; the worker module consumes it and binds the real handler, replaying anything buffered.
+- Added `installWorkerInbox(port)` / `consumeWorkerInbox()` to `@tau/tau-utils/worker-host`. A self-dispatching CLI host that imports a Bun worker module dynamically attaches the worker's real `message` listener after Bun flushes the messages the parent posted before spawn, dropping a synchronously-posted `init`. The host installs this buffering inbox synchronously in the entry's sync prefix so a listener exists at flush time; the worker module consumes it and binds the real handler, replaying anything buffered.
 
 ## [15.13.1] - 2026-06-15
 
 ### Added
 
 - Added profile-aware directory helpers and isolated profile state roots, while keeping the install ID shared across profiles.
-- Added a named-profile API to the `dirs` module — `setProfile()`, `getActiveProfile()`, `getProfileRootDir()`, and `normalizeProfileName()` — plus `resolveProfileEnv()`, which selects the active profile from `OMP_PROFILE` (canonical; takes precedence) then `PI_PROFILE` (legacy fallback, consulted only when `OMP_PROFILE` is unset).
+- Added a named-profile API to the `dirs` module — `setProfile()`, `getActiveProfile()`, `getProfileRootDir()`, and `normalizeProfileName()` — plus `resolveProfileEnv()`, which selects the active profile from `TAU_PROFILE` (canonical; takes precedence) then `PI_PROFILE` (legacy fallback, consulted only when `TAU_PROFILE` is unset).
 - Added support for a runtime `overrides` map in `RuntimeInstallSpec`, which is now written into generated runtime `package.json` manifests to force dependency pins (including transitive ones) across the runtime tree
-- Added a lightweight loop-phase breadcrumb stack (`pushLoopPhase`/`popLoopPhase`/`currentLoopPhase`, plus `takeRecentLoopPhase` which returns the live phase or the most recently popped one and clears it) so the TUI event-loop watchdog can attribute a main-thread block to the phase that caused it — including a synchronous phase already popped before the watchdog's delayed tick runs ([#2485](https://github.com/can1357/oh-my-pi/issues/2485))
-- Added `FetchWithRetryOptions.timeout` (forwarded to the underlying `fetch` call). `false` disables Bun's native ~300s pre-response timeout; a positive number overrides the ceiling. Bare browser/Node fetch ignores it ([#2422](https://github.com/can1357/oh-my-pi/issues/2422))
-- Added the side-effect-free `@oh-my-pi/pi-utils/worker-host` module (`declareWorkerHostEntry()` / `workerHostEntry()`), extracted from `env` (still re-exported there) so worker spawn sites can resolve the self-dispatching CLI host entry without importing `env`'s side-effecting module graph.
+- Added a lightweight loop-phase breadcrumb stack (`pushLoopPhase`/`popLoopPhase`/`currentLoopPhase`, plus `takeRecentLoopPhase` which returns the live phase or the most recently popped one and clears it) so the TUI event-loop watchdog can attribute a main-thread block to the phase that caused it — including a synchronous phase already popped before the watchdog's delayed tick runs ([#2485](https://github.com/toxicwind/tau/issues/2485))
+- Added `FetchWithRetryOptions.timeout` (forwarded to the underlying `fetch` call). `false` disables Bun's native ~300s pre-response timeout; a positive number overrides the ceiling. Bare browser/Node fetch ignores it ([#2422](https://github.com/toxicwind/tau/issues/2422))
+- Added the side-effect-free `@tau/tau-utils/worker-host` module (`declareWorkerHostEntry()` / `workerHostEntry()`), extracted from `env` (still re-exported there) so worker spawn sites can resolve the self-dispatching CLI host entry without importing `env`'s side-effecting module graph.
 
 ### Fixed
 
@@ -644,26 +644,26 @@
 
 ### Added
 
-- Added `runtime-install`: shared on-demand runtime dependency support — `ensureRuntimeInstalled()` (locked, idempotent `bun install` of a pinned dependency set into a cache dir) and a multi-root `installRuntimeModuleResolver()`/`resolveRuntimeModule()` for loading those graphs inside compiled binaries (Bun #1763). Extracted from the coding-agent tiny-model worker; now also backs Mnemopi's on-demand fastembed runtime ([#2389](https://github.com/can1357/oh-my-pi/issues/2389))
-- Added `getFastembedRuntimeDir()` (~/.omp/cache/fastembed-runtime) alongside `getFastembedCacheDir()`
+- Added `runtime-install`: shared on-demand runtime dependency support — `ensureRuntimeInstalled()` (locked, idempotent `bun install` of a pinned dependency set into a cache dir) and a multi-root `installRuntimeModuleResolver()`/`resolveRuntimeModule()` for loading those graphs inside compiled binaries (Bun #1763). Extracted from the coding-agent tiny-model worker; now also backs Mnemotau's on-demand fastembed runtime ([#2389](https://github.com/toxicwind/tau/issues/2389))
+- Added `getFastembedRuntimeDir()` (~/.tau/cache/fastembed-runtime) alongside `getFastembedCacheDir()`
 
 ## [15.11.4] - 2026-06-12
 
 ### Added
 
-- Added `getEditorConfigFormatting(file)`: returns the `.editorconfig`-pinned `tabSize`/`insertSpaces` (both optional, no fallback) so LSP-format callers can layer per-file defaults under it without paving over silence with the renderer's display tab width ([#2329](https://github.com/can1357/oh-my-pi/issues/2329)).
+- Added `getEditorConfigFormatting(file)`: returns the `.editorconfig`-pinned `tabSize`/`insertSpaces` (both optional, no fallback) so LSP-format callers can layer per-file defaults under it without paving over silence with the renderer's display tab width ([#2329](https://github.com/toxicwind/tau/issues/2329)).
 
 ## [15.11.3] - 2026-06-11
 
 ### Added
 
-- Added `getEditorConfigFormatting(file)`: returns the `.editorconfig`-pinned `tabSize`/`insertSpaces` (both optional, no fallback) so LSP-format callers can layer per-file defaults under it without paving over silence with the renderer's display tab width ([#2329](https://github.com/can1357/oh-my-pi/issues/2329)).
+- Added `getEditorConfigFormatting(file)`: returns the `.editorconfig`-pinned `tabSize`/`insertSpaces` (both optional, no fallback) so LSP-format callers can layer per-file defaults under it without paving over silence with the renderer's display tab width ([#2329](https://github.com/toxicwind/tau/issues/2329)).
 
 ## [15.11.1] - 2026-06-11
 
 ### Fixed
 
-- Fixed cleanup reentry noise during fatal shutdown: recursive cleanup requests now no-op idempotently instead of logging repeated `Cleanup invoked recursively` errors ([#2284](https://github.com/can1357/oh-my-pi/issues/2284)).
+- Fixed cleanup reentry noise during fatal shutdown: recursive cleanup requests now no-op idempotently instead of logging repeated `Cleanup invoked recursively` errors ([#2284](https://github.com/toxicwind/tau/issues/2284)).
 
 ## [15.11.0] - 2026-06-10
 
@@ -694,7 +694,7 @@
 
 - Fixed `prompt.format()` so ASCII symbol replacements such as `-->` and `!=` still run on lines containing a closing HTML comment token when not inside a comment
 - `isCompiledBinary()` now also honors a define-folded `process.env.PI_COMPILED` (only `Bun.env` was checked), so builds that constant-fold `process.env` keep compiled-binary detection without relying on `import.meta.url` bunfs markers
-- `omp <cmd> --help` now loads only the requested command module instead of the entire command table, so an unrelated command whose import graph hangs or crashes can no longer take down every per-command help invocation.
+- `tau <cmd> --help` now loads only the requested command module instead of the entire command table, so an unrelated command whose import graph hangs or crashes can no longer take down every per-command help invocation.
 
 ## [15.10.8] - 2026-06-09
 
@@ -713,14 +713,14 @@
 
 ### Added
 
-- Added `getAuthBrokerSnapshotCachePath()` with `OMP_AUTH_BROKER_SNAPSHOT_CACHE` override support for isolating the encrypted broker snapshot cache.
+- Added `getAuthBrokerSnapshotCachePath()` with `TAU_AUTH_BROKER_SNAPSHOT_CACHE` override support for isolating the encrypted broker snapshot cache.
 
 ## [15.9.1] - 2026-06-04
 
 ### Fixed
 
-- Hardened `getIndentation` against malformed paths: any filesystem error from the `.editorconfig` probe (e.g. `ENAMETOOLONG` on oversized garbage path segments) is now swallowed and cached as a miss instead of escaping and crashing the TUI mid-render ([#1871](https://github.com/can1357/oh-my-pi/issues/1871)).
-- Fixed `getIndentation` (and the edit renderer's `replaceTabs` callers) crashing with `ENAMETOOLONG`/`ENOTDIR`/etc. when handed a path with an overlong component or a non-directory in its parent chain. Editorconfig discovery now short-circuits to the default tab width on any path component above `NAME_MAX` (255 bytes) and absorbs any `FsError` while walking the editorconfig chain — best-effort discovery must never escape as an uncaught exception ([#1872](https://github.com/can1357/oh-my-pi/issues/1872)).
+- Hardened `getIndentation` against malformed paths: any filesystem error from the `.editorconfig` probe (e.g. `ENAMETOOLONG` on oversized garbage path segments) is now swallowed and cached as a miss instead of escaping and crashing the TUI mid-render ([#1871](https://github.com/toxicwind/tau/issues/1871)).
+- Fixed `getIndentation` (and the edit renderer's `replaceTabs` callers) crashing with `ENAMETOOLONG`/`ENOTDIR`/etc. when handed a path with an overlong component or a non-directory in its parent chain. Editorconfig discovery now short-circuits to the default tab width on any path component above `NAME_MAX` (255 bytes) and absorbs any `FsError` while walking the editorconfig chain — best-effort discovery must never escape as an uncaught exception ([#1872](https://github.com/toxicwind/tau/issues/1872)).
 
 ## [15.9.0] - 2026-06-04
 
@@ -734,7 +734,7 @@
 
 ### Added
 
-- Added `getFastembedCacheDir` to return the FastEmbed model cache directory under ~/.omp/cache/fastembed
+- Added `getFastembedCacheDir` to return the FastEmbed model cache directory under ~/.tau/cache/fastembed
 
 ### Fixed
 

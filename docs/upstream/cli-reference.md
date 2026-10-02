@@ -1,46 +1,46 @@
 # CLI reference
 
-`omp` is invoked as:
+`tau` is invoked as:
 
 ```sh
-omp [command] [flags] [messages...]
+tau [command] [flags] [messages...]
 ```
 
-When the first non-flag argument is **not** a registered subcommand, `omp`
+When the first non-flag argument is **not** a registered subcommand, `tau`
 routes to the default [`launch`](#launch-the-default-command) command and treats
-the arguments as the initial prompt. So `omp "fix the build"` launches a session
-with that message, while `omp models` runs the `models` subcommand.
+the arguments as the initial prompt. So `tau "fix the build"` launches a session
+with that message, while `tau models` runs the `models` subcommand.
 
 Runtime help is also available:
 
-- `omp --help` lists user-facing subcommands and common launch flags.
-- `omp <command> --help` prints that command's public flags and examples.
+- `tau --help` lists user-facing subcommands and common launch flags.
+- `tau <command> --help` prints that command's public flags and examples.
 
 This page is the consolidated reference for the shared **launch surface** (the
-flags accepted by `omp` / `omp launch`) and every top-level **subcommand**.
-Per-subcommand flags (for example `omp auth-broker --json`) are documented by
+flags accepted by `tau` / `tau launch`) and every top-level **subcommand**.
+Per-subcommand flags (for example `tau auth-broker --json`) are documented by
 each command's `--help`.
 
 ## Launch (the default command)
 
-`omp` and `omp launch` start a coding session. Positional arguments become the
+`tau` and `tau launch` start a coding session. Positional arguments become the
 initial message(s):
 
 ```sh
 # Interactive session
-omp
+tau
 
 # Interactive session with an initial prompt
-omp "List all .ts files in src/"
+tau "List all .ts files in src/"
 
 # Attach files/images to the initial message (prefix with @)
-omp @prompt.md @image.png "What color is the sky?"
+tau @prompt.md @image.png "What color is the sky?"
 
 # Non-interactive: process the prompt and exit (headless / print mode)
-omp -p "List all .ts files in src/"
+tau -p "List all .ts files in src/"
 
 # Continue the previous session
-omp --continue "What did we discuss?"
+tau --continue "What did we discuss?"
 ```
 
 Argument handling:
@@ -73,8 +73,8 @@ Argument handling:
 | `--continue`, `-c` | Continue the previous session. |
 | `--resume [id]`, `-r`, `--session [id]` | Resume a session by ID prefix or path, or open the picker when no value is given. |
 | `--fork <session>` | Fork a saved session (by ID prefix or path) into a new session. See [session operations](./session-operations-export-share-fork-resume.md). |
-| `--from-claude` | Import a Claude Code session into OMP. |
-| `--from-codex` | Import a Codex session into OMP. |
+| `--from-claude` | Import a Claude Code session into TAU. |
+| `--from-codex` | Import a Codex session into TAU. |
 | `--export <session>` | Export a session file to HTML and exit. |
 | `--no-title` | Disable title auto-generation (equivalent to the `PI_NO_TITLE` [environment variable](./environment-variables.md)). |
 
@@ -158,27 +158,27 @@ See [providers](./providers.md) and [models](./models.md) for model resolution.
 
 | Flag | Description |
 | --- | --- |
-| `--help`, `-h` | Show help for `omp` or a subcommand and exit. |
+| `--help`, `-h` | Show help for `tau` or a subcommand and exit. |
 | `--version`, `-v` | Print the installed version and exit. |
 
 ### Headless / print mode
 
-`--print` / `-p` runs `omp` non-interactively: it processes the prompt, streams
+`--print` / `-p` runs `tau` non-interactively: it processes the prompt, streams
 the result to stdout, and exits without entering the TUI. This is the entry point
 for scripting and automation.
 
 ```sh
 # Print the answer and exit
-omp -p "Summarize the changes in the last commit"
+tau -p "Summarize the changes in the last commit"
 
 # Include the model's thinking blocks in the printed text
-omp -p --print-thoughts "Explain your reasoning for this refactor"
+tau -p --print-thoughts "Explain your reasoning for this refactor"
 
 # Machine-readable output for pipelines
-omp -p --mode json "List every TODO in src/" > todos.json
+tau -p --mode json "List every TODO in src/" > todos.json
 
 # Pipe a prompt via stdin
-echo "review this diff" | omp -p
+echo "review this diff" | tau -p
 ```
 
 Related flags for headless runs:
@@ -203,13 +203,13 @@ print-mode disposal semantics when the advisor runtime is enabled.
 
 ## Subcommands
 
-Run `omp <command> --help` for each command's own flags and examples.
+Run `tau <command> --help` for each command's own flags and examples.
 
 | Command | Purpose | See also |
 | --- | --- | --- |
 | `launch` | Start a coding session (the default command). | [Launch flags](#launch-flags) |
-| `acp` | Run omp as an ACP (Agent Client Protocol) server over stdio. | [approval mode](./approval-mode.md#acp-sessions) |
-| `auth-broker` | Manage the omp auth-broker (credential vault). | [auth broker / gateway](./auth-broker-gateway.md) |
+| `acp` | Run tau as an ACP (Agent Client Protocol) server over stdio. | [approval mode](./approval-mode.md#acp-sessions) |
+| `auth-broker` | Manage the tau auth-broker (credential vault). | [auth broker / gateway](./auth-broker-gateway.md) |
 | `auth-gateway` | Run an auth-gateway forward proxy backed by the configured broker. | [auth broker / gateway](./auth-broker-gateway.md) |
 | `agents` | Manage bundled task agents. | [task agent discovery](./task-agent-discovery.md) |
 | `bench` | Benchmark models: TTFT/prefill vs decode throughput with p50/p95 across chat, prefill, generation, and prompt-cache workloads, rendered in a live dashboard (`--prefill-bytes` sizes the synthetic prefill input). | |
@@ -245,7 +245,7 @@ Run `omp <command> --help` for each command's own flags and examples.
 | `tiny-models` | Download tiny local models (session titles + memory). | [local models](./local-models.md) |
 | `token` | Get the API key or OAuth token for a provider. | [secrets](./secrets.md) |
 | `ttsr` | Inspect and test Time-Traveling Stream Rules (TTSR). (Covers the CLI command; the [TTSR feature](./ttsr-injection-lifecycle.md) is documented separately.) | |
-| `worktree`, `wt` | List or clear agent-managed git worktrees (`~/.omp/wt`). | |
+| `worktree`, `wt` | List or clear agent-managed git worktrees (`~/.tau/wt`). | |
 | `search`, `q`, `web-search` | Test web search providers from the CLI. | [web_search tool](./tools/web_search.md) |
 
 > `install`, `join`, `browser-relay`, `auth-gateway`, and `tiny-models` are also

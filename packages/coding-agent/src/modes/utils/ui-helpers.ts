@@ -1,47 +1,47 @@
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, ImageContent, Usage } from "@oh-my-pi/pi-ai";
-import { getStreamingPartialJson } from "@oh-my-pi/pi-ai/utils/block-symbols";
-import { type Component, Spacer, Text, TruncatedText } from "@oh-my-pi/pi-tui";
-import { logger } from "@oh-my-pi/pi-utils";
+import type { AgentMessage } from "@tau/tau-agent-core";
+import type { AssistantMessage, ImageContent, Usage } from "@tau/tau-ai";
+import { getStreamingPartialJson } from "@tau/tau-ai/utils/block-symbols";
+import { type Component, Spacer, Text, TruncatedText } from "@tau/tau-tui";
+import { logger } from "@tau/tau-utils";
 import type { AdvisorMessageDetails } from "../../advisor";
 import { COLLAB_PROMPT_MESSAGE_TYPE, type CollabPromptDetails } from "../../collab/protocol";
 import { settings } from "../../config/settings";
-import { createAdvisorMessageCard } from "@oh-my-pi/pi-tui/chat/advisor-message";
-import { AssistantMessageComponent } from "@oh-my-pi/pi-tui/chat/assistant-message";
-import { createBackgroundTanDispatchBlock } from "@oh-my-pi/pi-tui/chat/background-tan-message";
-import { BashExecutionComponent } from "@oh-my-pi/pi-tui/chat/bash-execution";
-import { detectCacheInvalidation } from "@oh-my-pi/pi-tui/chat/cache-invalidation-marker";
-import { ServedModelTracker } from "@oh-my-pi/pi-tui/chat/served-model-marker";
-import { CollabPromptMessageComponent } from "@oh-my-pi/pi-tui/chat/collab-prompt-message";
+import { createAdvisorMessageCard } from "@tau/tau-tui/chat/advisor-message";
+import { AssistantMessageComponent } from "@tau/tau-tui/chat/assistant-message";
+import { createBackgroundTanDispatchBlock } from "@tau/tau-tui/chat/background-tan-message";
+import { BashExecutionComponent } from "@tau/tau-tui/chat/bash-execution";
+import { detectCacheInvalidation } from "@tau/tau-tui/chat/cache-invalidation-marker";
+import { ServedModelTracker } from "@tau/tau-tui/chat/served-model-marker";
+import { CollabPromptMessageComponent } from "@tau/tau-tui/chat/collab-prompt-message";
 import {
 	BranchSummaryMessageComponent,
 	CompactionSummaryMessageComponent,
 	createHandoffSummaryMessageComponent,
-} from "@oh-my-pi/pi-tui/chat/compaction-summary-message";
-import { CustomMessageComponent } from "@oh-my-pi/pi-tui/chat/custom-message";
-import { DynamicBorder } from "@oh-my-pi/pi-tui/chrome/dynamic-border";
-import { EvalExecutionComponent } from "@oh-my-pi/pi-tui/chat/eval-execution";
+} from "@tau/tau-tui/chat/compaction-summary-message";
+import { CustomMessageComponent } from "@tau/tau-tui/chat/custom-message";
+import { DynamicBorder } from "@tau/tau-tui/chrome/dynamic-border";
+import { EvalExecutionComponent } from "@tau/tau-tui/chat/eval-execution";
 import {
 	type LateDiagnosticsFile,
 	LateDiagnosticsMessageComponent,
-} from "@oh-my-pi/pi-tui/chat/late-diagnostics-message";
+} from "@tau/tau-tui/chat/late-diagnostics-message";
 import {
 	groupedReadUsageCallIds,
 	ReadToolGroupComponent,
 	readArgsCollapseIntoGroup,
-} from "@oh-my-pi/pi-tui/chat/read-tool-group";
-import { SkillMessageComponent } from "@oh-my-pi/pi-tui/chat/skill-message";
-import { StrippedToolCallsPlaceholder } from "@oh-my-pi/pi-tui/chat/stripped-tool-calls-placeholder";
-import { textContent } from "@oh-my-pi/pi-tui/chat/transcript-entry";
-import { ToolActivityContainer } from "@oh-my-pi/pi-tui/chrome/tool-activity";
-import { ToolExecutionComponent, type ToolExecutionHandle, toolRenderName } from "@oh-my-pi/pi-tui/chat/tool-execution";
-import { TranscriptBlock, TranscriptContainer } from "@oh-my-pi/pi-tui/chrome/transcript-container";
-import { createUsageRowBlock, turnElapsedMs } from "@oh-my-pi/pi-tui/overlays/usage-row";
-import { UserMessageComponent } from "@oh-my-pi/pi-tui/chat/user-message";
+} from "@tau/tau-tui/chat/read-tool-group";
+import { SkillMessageComponent } from "@tau/tau-tui/chat/skill-message";
+import { StrippedToolCallsPlaceholder } from "@tau/tau-tui/chat/stripped-tool-calls-placeholder";
+import { textContent } from "@tau/tau-tui/chat/transcript-entry";
+import { ToolActivityContainer } from "@tau/tau-tui/chrome/tool-activity";
+import { ToolExecutionComponent, type ToolExecutionHandle, toolRenderName } from "@tau/tau-tui/chat/tool-execution";
+import { TranscriptBlock, TranscriptContainer } from "@tau/tau-tui/chrome/transcript-container";
+import { createUsageRowBlock, turnElapsedMs } from "@tau/tau-tui/overlays/usage-row";
+import { UserMessageComponent } from "@tau/tau-tui/chat/user-message";
 import { decodeStreamedToolArgs, streamingStringKeysForTool } from "../../modes/controllers/tool-args-reveal";
-import { materializeImageReferenceLinksSync } from "@oh-my-pi/pi-tui/prompt/image-references";
-import { imageAttachmentSource } from "@oh-my-pi/pi-tui/prompt/image-source";
-import { theme } from "@oh-my-pi/pi-tui/theme";
+import { materializeImageReferenceLinksSync } from "@tau/tau-tui/prompt/image-references";
+import { imageAttachmentSource } from "@tau/tau-tui/prompt/image-source";
+import { theme } from "@tau/tau-tui/theme";
 import type { CompactionQueuedMessage, InteractiveModeContext, RenderSessionContextOptions } from "../../modes/types";
 import { LAUNCH_COMPLETION_MESSAGE_TYPE } from "../../session/launch-completion";
 import {
@@ -53,13 +53,13 @@ import {
 	type SkillPromptDetails,
 } from "../../session/messages";
 import type { SessionContext, StrippedToolCallsMarker } from "../../session/session-context";
-import { replaceTabs } from "@oh-my-pi/pi-tui/render/render-utils";
+import { replaceTabs } from "@tau/tau-tui/render/render-utils";
 import { buildSkillCommandPrompt, invokeSkillCommandFromText, isKnownSkillCommand } from "../skill-command";
 import {
 	createAssistantMessageComponent,
 	getAssistantMessageLinkTargets,
 	refreshAssistantMessageLinkTargets,
-} from "@oh-my-pi/pi-tui/prompt/interactive-context-helpers";
+} from "@tau/tau-tui/prompt/interactive-context-helpers";
 import {
 	assistantHasVisibleContent,
 	assistantUsageIsBilled,
@@ -70,7 +70,7 @@ import {
 	normalizeToolArgs,
 	resolveAssistantErrorPresentation,
 	splitAssistantMessageToolTimeline,
-} from "@oh-my-pi/pi-tui/chat/transcript-render-helpers";
+} from "@tau/tau-tui/chat/transcript-render-helpers";
 
 interface RenderInitialMessagesOptions {
 	preserveExistingChat?: boolean;
@@ -1060,7 +1060,7 @@ export class UiHelpers {
 		block.addChild(new DynamicBorder(text => theme.fg("warning", text)));
 		const title = "Update Available";
 		const prefix = `New version ${newVersion} is available. Run: `;
-		const command = "omp update";
+		const command = "tau update";
 		block.addChild(
 			new Text(`${title}\n${prefix}${command}`, 1, 0).setStyleFn(
 				() =>

@@ -2,15 +2,15 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, spyOn
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Agent, type AgentMessage, type AgentTool } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { removeSyncWithRetries, Snowflake, TempDir } from "@oh-my-pi/pi-utils";
+import { Agent, type AgentMessage, type AgentTool } from "@tau/tau-agent-core";
+import type { AssistantMessage } from "@tau/tau-ai";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { removeSyncWithRetries, Snowflake, TempDir } from "@tau/tau-utils";
 import { createAssistantMessage } from "./helpers/agent-session-setup";
 
 describe("AgentSession persistence-keys cache", () => {
@@ -22,7 +22,7 @@ describe("AgentSession persistence-keys cache", () => {
 	let modelRegistry: ModelRegistry;
 
 	beforeAll(async () => {
-		authDir = TempDir.createSync("@pi-cache-auth-");
+		authDir = TempDir.createSync("@tau-cache-auth-");
 		authStorage = await AuthStorage.create(authDir.join("auth.db"));
 		modelRegistry = new ModelRegistry(authStorage, authDir.join("models.yml"));
 	});
@@ -33,7 +33,7 @@ describe("AgentSession persistence-keys cache", () => {
 	});
 
 	beforeEach(() => {
-		tempDir = path.join(os.tmpdir(), `pi-cache-test-${Snowflake.next()}`);
+		tempDir = path.join(os.tmpdir(), `tau-cache-test-${Snowflake.next()}`);
 		fs.mkdirSync(tempDir, { recursive: true });
 
 		const tools: AgentTool[] = [];

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, Judge, JudgmentRequest, NoulAnswer, Usage } from "@oh-my-pi/pi-ai";
-import type { Rule } from "@oh-my-pi/pi-coding-agent/capability/rule";
+import type { AgentMessage } from "@tau/tau-agent-core";
+import type { AssistantMessage, Judge, JudgmentRequest, NoulAnswer, Usage } from "@tau/tau-ai";
+import type { Rule } from "@tau/tau-coding-agent/capability/rule";
 import {
 	historyOutputs,
 	type ParsedGeneratedRule,
@@ -9,8 +9,8 @@ import {
 	sanitizeRuleName,
 	validateParsedRuleAgainstAssistantHistory,
 	validateRuleAgainstAssistantHistory,
-} from "@oh-my-pi/pi-coding-agent/modes/controllers/omfg-rule";
-import { TtsrToolInspector } from "@oh-my-pi/pi-coding-agent/session/ttsr-outputs";
+} from "@tau/tau-coding-agent/modes/controllers/omfg-rule";
+import { TtsrToolInspector } from "@tau/tau-coding-agent/session/ttsr-outputs";
 
 const usage: Usage = {
 	input: 0,

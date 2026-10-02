@@ -1,6 +1,6 @@
 """Repository rule detecting the Swift toolchain for the Apple Foundation Models bridge.
 
-Runs `crates/pi-natives/src/applefm/build-bridge.sh detect` on the host and
+Runs `crates/tau-natives/src/applefm/build-bridge.sh detect` on the host and
 materializes the result so the `applefm_bridge` genrule and link step see the
 toolchain as an input:
 
@@ -9,7 +9,7 @@ toolchain as an input:
                     built from stub.c)
     defs.bzl        APPLEFM_LINKOPTS for the bridge's Swift runtime and weak
                     FoundationModels link (mirrors `applefm_link_args` in
-                    crates/pi-natives/build.rs)
+                    crates/tau-natives/build.rs)
 
 Caching: the fingerprint (compiler version + SDK build) is part of the
 genrule's inputs, so action and remote caches never reuse a bridge built by a
@@ -18,7 +18,7 @@ re-runs when the selection env vars (tracked through `getenv`) or the watched
 compiler/SDK files change, and on `bazel fetch --configure`.
 """
 
-_ENV = ["OMP_APPLEFM_SWIFTC", "SDKROOT", "DEVELOPER_DIR"]
+_ENV = ["TAU_APPLEFM_SWIFTC", "SDKROOT", "DEVELOPER_DIR"]
 
 _CANDIDATE_SDK_SETTINGS = [
     "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/SDKSettings.plist",
@@ -36,7 +36,7 @@ def _applefm_swift_repository_impl(rctx):
             value = rctx.getenv(name)
             if value:
                 environment[name] = value
-        script = rctx.path(Label("//crates/pi-natives:src/applefm/build-bridge.sh"))
+        script = rctx.path(Label("//crates/tau-natives:src/applefm/build-bridge.sh"))
         result = rctx.execute(["/bin/sh", str(script), "detect"], environment = environment)
         if result.return_code == 0:
             line = result.stdout.strip()

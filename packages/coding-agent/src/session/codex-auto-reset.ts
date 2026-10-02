@@ -60,7 +60,7 @@ import type {
 	UsageLimit,
 	UsageReport,
 	UsageResetCreditDetail,
-} from "@oh-my-pi/pi-ai";
+} from "@tau/tau-ai";
 import type { ResetAutoRedeemMode } from "../config/settings-schema";
 import { reportMatchesActiveAccount } from "../slash-commands/helpers/active-oauth-account";
 

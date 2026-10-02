@@ -1,11 +1,11 @@
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import { createGallerySegmentContext } from "../../../../src/cli/gallery-fixtures/segments";
 import { Settings } from "../../../../src/config/settings";
-import { StatusLineComponent } from "@oh-my-pi/pi-tui/status-line/component";
-import { statusLineHost } from "@oh-my-pi/pi-coding-agent/modes/status-line-host";
-import { renderSegment } from "@oh-my-pi/pi-tui/status-line/segments";
-import { loadTheme } from "@oh-my-pi/pi-tui/theme/loader";
-import { getThemeByName, setThemeInstance, theme } from "@oh-my-pi/pi-tui/theme";
+import { StatusLineComponent } from "@tau/tau-tui/status-line/component";
+import { statusLineHost } from "@tau/tau-coding-agent/modes/status-line-host";
+import { renderSegment } from "@tau/tau-tui/status-line/segments";
+import { loadTheme } from "@tau/tau-tui/theme/loader";
+import { getThemeByName, setThemeInstance, theme } from "@tau/tau-tui/theme";
 import type { AgentSession } from "../../../../src/session/agent-session";
 import { StatusLineTestComponents } from "../../../helpers/status-line";
 
@@ -173,7 +173,7 @@ describe("StatusLineComponent", () => {
 		expect(text).toContain("+…");
 		expect(text).toContain("?…");
 		expect(text).not.toContain("Sonnet 4.5");
-		expect(text).not.toContain("/workspace/oh-my-pi");
+		expect(text).not.toContain("/workspace/tau");
 		expect(text).not.toContain("gallery/reference");
 		expect(model.content).toContain(theme.getFgAnsi("statusLineModel"));
 		expect(path.content).toContain(theme.getFgAnsi("statusLinePath"));

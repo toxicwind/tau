@@ -1,12 +1,12 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import * as ai from "@oh-my-pi/pi-ai";
-import { Effort, type Model } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { classifyDifficulty } from "@oh-my-pi/pi-coding-agent/auto-thinking/classifier";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import { ThinkingLevel } from "@tau/tau-agent-core";
+import * as ai from "@tau/tau-ai";
+import { Effort, type Model } from "@tau/tau-ai";
+import { buildModel } from "@tau/tau-catalog/build";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import { classifyDifficulty } from "@tau/tau-coding-agent/auto-thinking/classifier";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
 import {
 	AUTO_THINKING,
 	clampAutoThinkingEffort,
@@ -16,9 +16,9 @@ import {
 	parseThinkingLevel,
 	resolveProvisionalAutoLevel,
 	resolveTaskEffortLevel,
-} from "@oh-my-pi/pi-tui/thinking";
-import type { TinyMemoryLocalModelKey } from "@oh-my-pi/pi-coding-agent/tiny/models";
-import { tinyModelClient } from "@oh-my-pi/pi-coding-agent/tiny/title-client";
+} from "@tau/tau-tui/thinking";
+import type { TinyMemoryLocalModelKey } from "@tau/tau-coding-agent/tiny/models";
+import { tinyModelClient } from "@tau/tau-coding-agent/tiny/title-client";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
 describe("auto thinking classifier helpers", () => {
@@ -365,7 +365,7 @@ describe("auto thinking classifier helpers", () => {
 	});
 
 	it("returns undefined for reasoning models without controllable efforts (devin-agent shape)", () => {
-		// Repro for https://github.com/can1357/oh-my-pi/issues/3356 — Devin
+		// Repro for https://github.com/toxicwind/tau/issues/3356 — Devin
 		// models report `reasoning: true` but expose no `thinking.efforts` (Cascade
 		// selects effort by routing to sibling model ids). `auto` must not invent
 		// a concrete effort here, or `requireSupportedEffort` throws in stream.ts.

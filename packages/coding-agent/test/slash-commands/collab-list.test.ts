@@ -1,14 +1,14 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
-import { CollabController } from "@oh-my-pi/pi-coding-agent/collab/controller";
-import type { CollabHostSnapshot } from "@oh-my-pi/pi-coding-agent/collab/registry";
-import * as registry from "@oh-my-pi/pi-coding-agent/collab/registry";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
+import { CollabController } from "@tau/tau-coding-agent/collab/controller";
+import type { CollabHostSnapshot } from "@tau/tau-coding-agent/collab/registry";
+import * as registry from "@tau/tau-coding-agent/collab/registry";
+import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import { initTheme } from "@tau/tau-tui/theme";
+import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
 import {
 	type BuiltinSlashCommandRuntime,
 	executeBuiltinSlashCommand,
-} from "@oh-my-pi/pi-coding-agent/slash-commands/builtin-registry";
+} from "@tau/tau-coding-agent/slash-commands/builtin-registry";
 
 beforeAll(async () => {
 	resetSettingsForTest();

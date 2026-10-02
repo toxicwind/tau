@@ -1,13 +1,13 @@
 import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { createMockModel, registerMockApi } from "@oh-my-pi/pi-ai/providers/mock";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { createAgentSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { createMockModel, registerMockApi } from "@tau/tau-ai/providers/mock";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { createAgentSession } from "@tau/tau-coding-agent/sdk";
+import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { TempDir } from "@tau/tau-utils";
 
 registerMockApi();
 

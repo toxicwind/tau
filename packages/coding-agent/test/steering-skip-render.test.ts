@@ -1,9 +1,9 @@
 import { beforeAll, describe, expect, it } from "bun:test";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { ToolExecutionComponent } from "@oh-my-pi/pi-tui/chat/tool-execution";
-import { getThemeByName, initTheme } from "@oh-my-pi/pi-tui/theme";
-import { formatStatusIcon } from "@oh-my-pi/pi-tui/render/render-utils";
-import { TUI } from "@oh-my-pi/pi-tui";
+import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import { ToolExecutionComponent } from "@tau/tau-tui/chat/tool-execution";
+import { getThemeByName, initTheme } from "@tau/tau-tui/theme";
+import { formatStatusIcon } from "@tau/tau-tui/render/render-utils";
+import { TUI } from "@tau/tau-tui";
 import { VirtualTerminal } from "../../tui/test/virtual-terminal";
 
 beforeAll(async () => {

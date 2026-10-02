@@ -7,9 +7,9 @@
  * focused view, or `/export` writes the main session instead of the viewed one.
  */
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { CommandController } from "@oh-my-pi/pi-coding-agent/modes/controllers/command-controller";
-import { InputController } from "@oh-my-pi/pi-coding-agent/modes/controllers/input-controller";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
+import { CommandController } from "@tau/tau-coding-agent/modes/controllers/command-controller";
+import { InputController } from "@tau/tau-coding-agent/modes/controllers/input-controller";
+import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
 
 function createFocusedContext() {
 	let editorText = "";

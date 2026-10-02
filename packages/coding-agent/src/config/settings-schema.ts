@@ -1,10 +1,10 @@
-import { type AuthAccountPolicies, DEFAULT_USAGE_RESERVE_PCT } from "@oh-my-pi/pi-ai/auth-storage";
+import { type AuthAccountPolicies, DEFAULT_USAGE_RESERVE_PCT } from "@tau/tau-ai/auth-storage";
 import { ADVISOR_DEFAULT_BUDGET_PER_UPDATE } from "../advisor/emission-guard";
-import { THINKING_EFFORTS } from "@oh-my-pi/pi-catalog/effort";
-import { DEFAULT_SHARE_URL, DEFAULT_STREAM_URL } from "@oh-my-pi/pi-wire";
-import { DEFAULT_SKILLS_URL } from "@oh-my-pi/pi-wire/skillshare";
-import { TREE_FILTER_MODES } from "@oh-my-pi/pi-tui/overlays/tree-selector";
-import { SHAPE_VARIANT_NAMES } from "@oh-my-pi/snapcompact";
+import { THINKING_EFFORTS } from "@tau/tau-catalog/effort";
+import { DEFAULT_SHARE_URL, DEFAULT_STREAM_URL } from "@tau/tau-wire";
+import { DEFAULT_SKILLS_URL } from "@tau/tau-wire/skillshare";
+import { TREE_FILTER_MODES } from "@tau/tau-tui/overlays/tree-selector";
+import { SHAPE_VARIANT_NAMES } from "@tau/snapcompact";
 import {
 	type BlobDestinationId,
 	type BlobDestinationMetadata,
@@ -13,14 +13,14 @@ import {
 import { DEFAULT_RELAY_URL } from "../collab/protocol";
 import { DEFAULT_LIVE_VOICE, LIVE_VOICE_OPTIONS, LIVE_VOICE_VALUES } from "../live/voices";
 import { MAGIC_KEYWORDS, type MagicKeywordId } from "../modes/magic-keywords";
-import type { AnyUiMetadata, SettingTab, SubmenuOption, UiBase } from "@oh-my-pi/pi-tui/overlays/settings-defs";
+import type { AnyUiMetadata, SettingTab, SubmenuOption, UiBase } from "@tau/tau-tui/overlays/settings-defs";
 import {
 	COMPACTION_METHOD_CHOICES,
 	type CompactionMethod,
 	DEFAULT_COMPACTION_METHOD_ORDER,
 } from "../session/compaction-methods";
 import { STT_SUBMIT_TRIGGER_OPTIONS, STT_SUBMIT_TRIGGER_VALUES } from "../stt/submit-trigger";
-import { AUTO_THINKING, getConfiguredThinkingLevelMetadata, getThinkingLevelMetadata } from "@oh-my-pi/pi-tui/thinking";
+import { AUTO_THINKING, getConfiguredThinkingLevelMetadata, getThinkingLevelMetadata } from "@tau/tau-tui/thinking";
 import {
 	TINY_MODEL_DEVICE_DEFAULT,
 	TINY_MODEL_DEVICE_SETTING_OPTIONS,
@@ -89,7 +89,7 @@ import {
 	type StatusLinePreset,
 	type StatusLineSegmentId,
 	type StatusLineSeparatorStyle,
-} from "@oh-my-pi/pi-tui/status-line/schema";
+} from "@tau/tau-tui/status-line/schema";
 export {
 	CONTEXT_LINE_MODE_VALUES,
 	CUSTOM_STATUS_LINE_DEFAULTS,
@@ -98,7 +98,7 @@ export {
 	type StatusLinePreset,
 	type StatusLineSegmentId,
 	type StatusLineSeparatorStyle,
-} from "@oh-my-pi/pi-tui/status-line/schema";
+} from "@tau/tau-tui/status-line/schema";
 
 interface UiBoolean extends UiBase {}
 
@@ -303,9 +303,9 @@ export const SETTINGS_SCHEMA = {
 	// ────────────────────────────────────────────────────────────────────────
 	setupVersion: { type: "number", default: 0 },
 
-	// Auth broker — credentials proxied through a remote `omp auth-broker serve`
+	// Auth broker — credentials proxied through a remote `tau auth-broker serve`
 	// host. Hidden from the UI; populate via env vars or hand-edited config.yml.
-	// Env (`OMP_AUTH_BROKER_URL` / `OMP_AUTH_BROKER_TOKEN`) takes precedence so
+	// Env (`TAU_AUTH_BROKER_URL` / `TAU_AUTH_BROKER_TOKEN`) takes precedence so
 	// per-machine overrides remain trivial.
 	"auth.broker.url": { type: "string", default: undefined },
 	"auth.broker.token": { type: "string", default: undefined, credential: true },
@@ -460,7 +460,7 @@ export const SETTINGS_SCHEMA = {
 			group: "Services",
 			label: "Max In-Flight Requests",
 			description:
-				'Maximum concurrent LLM requests per provider id (for example "openai" or "anthropic"), shared across local OMP processes with this config root. Omitted providers are unlimited.',
+				'Maximum concurrent LLM requests per provider id (for example "openai" or "anthropic"), shared across local TAU processes with this config root. Omitted providers are unlimited.',
 		},
 	},
 
@@ -509,7 +509,7 @@ export const SETTINGS_SCHEMA = {
 				{
 					value: "project",
 					label: "Per-project",
-					description: "Save project role models in .omp/config.yml; missing project roles use global defaults",
+					description: "Save project role models in .tau/config.yml; missing project roles use global defaults",
 				},
 			],
 		},
@@ -2145,7 +2145,7 @@ export const SETTINGS_SCHEMA = {
 			tab: "interaction",
 			group: "Startup & Updates",
 			label: "Check for Updates",
-			description: "Check for omp updates on startup",
+			description: "Check for tau updates on startup",
 		},
 	},
 	"update.channel": {
@@ -2156,7 +2156,7 @@ export const SETTINGS_SCHEMA = {
 			tab: "interaction",
 			group: "Startup & Updates",
 			label: "Update Channel",
-			description: "Update channel used by omp update and the startup update check",
+			description: "Update channel used by tau update and the startup update check",
 			options: [
 				{ value: "stable", label: "Stable" },
 				{ value: "canary", label: "Canary" },
@@ -2350,13 +2350,13 @@ export const SETTINGS_SCHEMA = {
 			group: "Collab",
 			label: "Auto Start",
 			description:
-				"Host every interactive session via collab.relayUrl as it starts and publish it to the local registry (omp collab list); rooms rotate on session switch",
+				"Host every interactive session via collab.relayUrl as it starts and publish it to the local registry (tau collab list); rooms rotate on session switch",
 			options: [
 				{ value: "off", label: "Off", description: "Share only when /collab is run" },
 				{
 					value: "view",
 					label: "View",
-					description: "Auto-host; the registry hands out view-only links (omp collab link --view)",
+					description: "Auto-host; the registry hands out view-only links (tau collab link --view)",
 				},
 				{
 					value: "control",
@@ -2414,7 +2414,7 @@ export const SETTINGS_SCHEMA = {
 		},
 	},
 
-	// Live streaming (omp stream)
+	// Live streaming (tau stream)
 	"stream.serverUrl": {
 		type: "string",
 		default: DEFAULT_STREAM_URL,
@@ -2423,7 +2423,7 @@ export const SETTINGS_SCHEMA = {
 			group: "Stream",
 			label: "Stream Server",
 			description:
-				"Live stream server used by `omp stream` (https://host[:port]); viewers watch at <base>/<your Stencil username>",
+				"Live stream server used by `tau stream` (https://host[:port]); viewers watch at <base>/<your Stencil username>",
 		},
 	},
 
@@ -2439,7 +2439,7 @@ export const SETTINGS_SCHEMA = {
 		},
 	},
 
-	// Skill registry (omp skill)
+	// Skill registry (tau skill)
 	"skills.registryUrl": {
 		type: "string",
 		default: DEFAULT_SKILLS_URL,
@@ -2448,7 +2448,7 @@ export const SETTINGS_SCHEMA = {
 			group: "Skills",
 			label: "Skill Registry",
 			description:
-				"Skillshare registry used by `omp skill` to install, search, and publish skills (https://host[:port])",
+				"Skillshare registry used by `tau skill` to install, search, and publish skills (https://host[:port])",
 		},
 	},
 
@@ -2978,25 +2978,25 @@ export const SETTINGS_SCHEMA = {
 	"memories.summaryInjectionTokenLimit": { type: "number", default: 5000 },
 
 	// Memory backend selector — picks between local memories pipeline,
-	// Mnemopi local SQLite, Hindsight remote memory, Sharpshooter project
+	// Mnemotau local SQLite, Hindsight remote memory, Sharpshooter project
 	// decisions, or off. The legacy
 	// `memories.enabled` flag is migration input only; see config/settings.ts.
 	"memory.backend": {
 		type: "enum",
-		values: ["off", "local", "hindsight", "mnemopi", "sharpshooter"] as const,
+		values: ["off", "local", "hindsight", "mnemotau", "sharpshooter"] as const,
 		default: "off",
 		ui: {
 			tab: "memory",
 			group: "General",
 			label: "Memory Backend",
-			description: "Off, local summary pipeline, Mnemopi SQLite, Hindsight remote memory, or Sharpshooter",
+			description: "Off, local summary pipeline, Mnemotau SQLite, Hindsight remote memory, or Sharpshooter",
 			options: [
 				{ value: "off", label: "Off", description: "No memory subsystem runs" },
 				{ value: "local", label: "Local", description: "Local rollout summarisation pipeline (memory_summary.md)" },
 				{ value: "hindsight", label: "Hindsight", description: "Vectorize Hindsight remote memory service" },
 				{
-					value: "mnemopi",
-					label: "Mnemopi",
+					value: "mnemotau",
+					label: "Mnemotau",
 					description: "Local SQLite recall/retain backend with optional embeddings",
 				},
 				{
@@ -3022,7 +3022,7 @@ export const SETTINGS_SCHEMA = {
 	"sharpshooter.injectionTokenLimit": { type: "number", default: 15000 },
 
 	// Auto-Learn (experimental): post-stop nudge to capture lessons to memory
-	// and mint/enhance isolated managed skills under ~/.omp/agent/managed-skills.
+	// and mint/enhance isolated managed skills under ~/.tau/agent/managed-skills.
 	// Master flag is default-off → zero footprint; sub-flags gate behaviour.
 	"autolearn.enabled": {
 		type: "boolean",
@@ -3050,49 +3050,49 @@ export const SETTINGS_SCHEMA = {
 	// Config-file-only knob (numbers without `options` are hidden from the UI).
 	"autolearn.minToolCalls": { type: "number", default: 5 },
 
-	// Mnemopi local SQLite memory backend.
-	"mnemopi.dbPath": {
+	// Mnemotau local SQLite memory backend.
+	"mnemotau.dbPath": {
 		type: "string",
 		default: undefined,
 		ui: {
 			tab: "memory",
-			group: "Mnemopi",
-			label: "Mnemopi DB Path",
+			group: "Mnemotau",
+			label: "Mnemotau DB Path",
 			description: "Optional SQLite DB path. Defaults to the agent memories directory.",
-			condition: "mnemopiActive",
+			condition: "mnemotauActive",
 		},
 	},
-	"mnemopi.bank": {
+	"mnemotau.bank": {
 		type: "string",
 		default: undefined,
 		ui: {
 			tab: "memory",
-			group: "Mnemopi",
-			label: "Mnemopi Bank",
+			group: "Mnemotau",
+			label: "Mnemotau Bank",
 			description: "Optional shared bank base name. Per-project modes derive project-local banks from it.",
-			condition: "mnemopiActive",
+			condition: "mnemotauActive",
 		},
 	},
-	"mnemopi.scoping": {
+	"mnemotau.scoping": {
 		type: "enum",
 		values: ["global", "per-project", "per-project-tagged"] as const,
 		default: "per-project",
 		ui: {
 			tab: "memory",
-			group: "Mnemopi",
-			label: "Mnemopi Scoping",
+			group: "Mnemotau",
+			label: "Mnemotau Scoping",
 			description:
 				"global = one shared bank; per-project = isolated bank per cwd; per-project-tagged = project-local writes plus global recall visibility",
 			options: [
 				{
 					value: "global",
 					label: "Global",
-					description: "One shared Mnemopi bank for every project",
+					description: "One shared Mnemotau bank for every project",
 				},
 				{
 					value: "per-project",
 					label: "Per project",
-					description: "Project-local Mnemopi bank per cwd basename",
+					description: "Project-local Mnemotau bank per cwd basename",
 				},
 				{
 					value: "per-project-tagged",
@@ -3100,16 +3100,16 @@ export const SETTINGS_SCHEMA = {
 					description: "Write to a project-local bank but merge project + shared recall results",
 				},
 			],
-			condition: "mnemopiActive",
+			condition: "mnemotauActive",
 		},
 	},
-	"mnemopi.embeddingVariant": {
+	"mnemotau.embeddingVariant": {
 		type: "enum",
 		values: ["en", "multilingual"] as const,
 		default: "en",
 		ui: {
 			tab: "memory",
-			group: "Mnemopi",
+			group: "Mnemotau",
 			label: "Embedding variant",
 			description:
 				"Local embedding model family. en = stronger English model; multilingual = cross-language model. Changing this rebuilds existing memory embeddings on next start.",
@@ -3125,173 +3125,173 @@ export const SETTINGS_SCHEMA = {
 					description: "intfloat/multilingual-e5-large (1024d), cross-language recall",
 				},
 			],
-			condition: "mnemopiActive",
+			condition: "mnemotauActive",
 		},
 	},
-	"mnemopi.autoRecall": {
+	"mnemotau.autoRecall": {
 		type: "boolean",
 		default: true,
 		ui: {
 			tab: "memory",
-			group: "Mnemopi",
-			label: "Mnemopi Auto Recall",
+			group: "Mnemotau",
+			label: "Mnemotau Auto Recall",
 			description: "Recall local memories into the first turn of each session",
-			condition: "mnemopiActive",
+			condition: "mnemotauActive",
 		},
 	},
-	"mnemopi.autoRetain": {
+	"mnemotau.autoRetain": {
 		type: "boolean",
 		default: true,
 		ui: {
 			tab: "memory",
-			group: "Mnemopi",
-			label: "Mnemopi Auto Retain",
-			description: "Retain completed conversation turns into local Mnemopi memory",
-			condition: "mnemopiActive",
+			group: "Mnemotau",
+			label: "Mnemotau Auto Retain",
+			description: "Retain completed conversation turns into local Mnemotau memory",
+			condition: "mnemotauActive",
 		},
 	},
-	"mnemopi.polyphonicRecall": {
+	"mnemotau.polyphonicRecall": {
 		type: "boolean",
 		default: false,
 		ui: {
 			tab: "memory",
-			group: "Mnemopi",
-			label: "Mnemopi Polyphonic Recall",
+			group: "Mnemotau",
+			label: "Mnemotau Polyphonic Recall",
 			description: "Enable 4-voice recall (vector, graph, fact, temporal) fused with reciprocal rank fusion",
-			condition: "mnemopiActive",
+			condition: "mnemotauActive",
 		},
 	},
-	"mnemopi.enhancedRecall": {
+	"mnemotau.enhancedRecall": {
 		type: "boolean",
 		default: false,
 		ui: {
 			tab: "memory",
-			group: "Mnemopi",
-			label: "Mnemopi Enhanced Recall",
+			group: "Mnemotau",
+			label: "Mnemotau Enhanced Recall",
 			description: "Enable the tiered query result cache for repeated and similar recall queries",
-			condition: "mnemopiActive",
+			condition: "mnemotauActive",
 		},
 	},
-	"mnemopi.proactiveLinking": {
+	"mnemotau.proactiveLinking": {
 		type: "boolean",
 		default: false,
 		ui: {
 			tab: "memory",
-			group: "Mnemopi",
-			label: "Mnemopi Proactive Linking",
+			group: "Mnemotau",
+			label: "Mnemotau Proactive Linking",
 			description:
 				"Ingest new memories into the episodic graph as they are stored, linking them to related entities and memories",
-			condition: "mnemopiActive",
+			condition: "mnemotauActive",
 		},
 	},
-	"mnemopi.noEmbeddings": {
+	"mnemotau.noEmbeddings": {
 		type: "boolean",
 		default: false,
 		ui: {
 			tab: "memory",
-			group: "Mnemopi",
-			label: "Mnemopi Disable Embeddings",
+			group: "Mnemotau",
+			label: "Mnemotau Disable Embeddings",
 			description: "Force deterministic FTS-only recall instead of vector embeddings",
-			condition: "mnemopiActive",
+			condition: "mnemotauActive",
 		},
 	},
-	"mnemopi.embeddingModel": {
+	"mnemotau.embeddingModel": {
 		type: "string",
 		default: undefined,
 		ui: {
 			tab: "memory",
-			group: "Mnemopi",
-			label: "Mnemopi Embedding Model",
+			group: "Mnemotau",
+			label: "Mnemotau Embedding Model",
 			description:
-				"Advanced: explicit embedding model id that overrides the variant. Leave empty to use mnemopi.embeddingVariant.",
-			condition: "mnemopiActive",
+				"Advanced: explicit embedding model id that overrides the variant. Leave empty to use mnemotau.embeddingVariant.",
+			condition: "mnemotauActive",
 		},
 	},
-	"mnemopi.embeddingApiUrl": {
+	"mnemotau.embeddingApiUrl": {
 		type: "string",
 		default: undefined,
 		ui: {
 			tab: "memory",
-			group: "Mnemopi",
-			label: "Mnemopi Embedding API URL",
-			description: "Optional OpenAI-compatible embedding endpoint passed to Mnemopi",
-			condition: "mnemopiActive",
+			group: "Mnemotau",
+			label: "Mnemotau Embedding API URL",
+			description: "Optional OpenAI-compatible embedding endpoint passed to Mnemotau",
+			condition: "mnemotauActive",
 		},
 	},
-	"mnemopi.embeddingApiKey": {
+	"mnemotau.embeddingApiKey": {
 		type: "string",
 		credential: true,
 		default: undefined,
 		ui: {
 			tab: "memory",
-			group: "Mnemopi",
-			label: "Mnemopi Embedding API Key",
-			description: "Optional embedding API key passed to Mnemopi",
-			condition: "mnemopiActive",
+			group: "Mnemotau",
+			label: "Mnemotau Embedding API Key",
+			description: "Optional embedding API key passed to Mnemotau",
+			condition: "mnemotauActive",
 		},
 	},
-	"mnemopi.llmMode": {
+	"mnemotau.llmMode": {
 		type: "enum",
 		values: ["none", "smol", "remote"] as const,
 		default: "smol",
 		ui: {
 			tab: "memory",
-			group: "Mnemopi",
-			label: "Mnemopi LLM Mode",
+			group: "Mnemotau",
+			label: "Mnemotau LLM Mode",
 			description:
 				"Use no LLM, the online tiny model (the TINY role from /models, else @smol), or a remote OpenAI-compatible endpoint",
-			condition: "mnemopiActive",
+			condition: "mnemotauActive",
 			options: [
-				{ value: "none", label: "None", description: "Disable Mnemopi LLM-backed extraction" },
+				{ value: "none", label: "None", description: "Disable Mnemotau LLM-backed extraction" },
 				{
 					value: "smol",
 					label: "Online (tiny)",
 					description: "Use the online tiny model (the TINY role from /models, else @smol)",
 				},
-				{ value: "remote", label: "Remote", description: "Use the Mnemopi remote LLM settings below" },
+				{ value: "remote", label: "Remote", description: "Use the Mnemotau remote LLM settings below" },
 			],
 		},
 	},
-	"mnemopi.llmBaseUrl": {
+	"mnemotau.llmBaseUrl": {
 		type: "string",
 		default: undefined,
 		ui: {
 			tab: "memory",
-			group: "Mnemopi",
-			label: "Mnemopi LLM Base URL",
-			description: "Optional OpenAI-compatible LLM endpoint for Mnemopi remote mode",
-			condition: "mnemopiActive",
+			group: "Mnemotau",
+			label: "Mnemotau LLM Base URL",
+			description: "Optional OpenAI-compatible LLM endpoint for Mnemotau remote mode",
+			condition: "mnemotauActive",
 		},
 	},
-	"mnemopi.llmApiKey": {
+	"mnemotau.llmApiKey": {
 		type: "string",
 		credential: true,
 		default: undefined,
 		ui: {
 			tab: "memory",
-			group: "Mnemopi",
-			label: "Mnemopi LLM API Key",
-			description: "Optional LLM API key for Mnemopi remote mode",
-			condition: "mnemopiActive",
+			group: "Mnemotau",
+			label: "Mnemotau LLM API Key",
+			description: "Optional LLM API key for Mnemotau remote mode",
+			condition: "mnemotauActive",
 		},
 	},
-	"mnemopi.llmModel": {
+	"mnemotau.llmModel": {
 		type: "string",
 		default: undefined,
 		ui: {
 			tab: "memory",
-			group: "Mnemopi",
-			label: "Mnemopi LLM Model",
-			description: "Optional LLM model name for Mnemopi remote mode",
-			condition: "mnemopiActive",
+			group: "Mnemotau",
+			label: "Mnemotau LLM Model",
+			description: "Optional LLM model name for Mnemotau remote mode",
+			condition: "mnemotauActive",
 		},
 	},
-	"mnemopi.retainEveryNTurns": { type: "number", default: 4 },
-	"mnemopi.recallLimit": { type: "number", default: 8 },
-	"mnemopi.recallContextTurns": { type: "number", default: 3 },
-	"mnemopi.recallMaxQueryChars": { type: "number", default: 4000 },
-	"mnemopi.injectionTokenLimit": { type: "number", default: 5000 },
-	"mnemopi.debug": { type: "boolean", default: false },
+	"mnemotau.retainEveryNTurns": { type: "number", default: 4 },
+	"mnemotau.recallLimit": { type: "number", default: 8 },
+	"mnemotau.recallContextTurns": { type: "number", default: 3 },
+	"mnemotau.recallMaxQueryChars": { type: "number", default: 4000 },
+	"mnemotau.injectionTokenLimit": { type: "number", default: 5000 },
+	"mnemotau.debug": { type: "boolean", default: false },
 
 	// Hindsight (https://hindsight.vectorize.io)
 	"hindsight.apiUrl": {
@@ -3411,7 +3411,7 @@ export const SETTINGS_SCHEMA = {
 	},
 	"hindsight.retainEveryNTurns": { type: "number", default: 3 },
 	"hindsight.retainOverlapTurns": { type: "number", default: 2 },
-	"hindsight.retainContext": { type: "string", default: "omp" },
+	"hindsight.retainContext": { type: "string", default: "tau" },
 
 	"hindsight.recallBudget": {
 		type: "enum",
@@ -3844,7 +3844,7 @@ export const SETTINGS_SCHEMA = {
 			group: "LSP",
 			label: "Shared Language Servers",
 			description:
-				"Share one language server per project across omp instances via the daemon broker (falls back to private servers when unavailable)",
+				"Share one language server per project across tau instances via the daemon broker (falls back to private servers when unavailable)",
 		},
 	},
 
@@ -4489,7 +4489,7 @@ export const SETTINGS_SCHEMA = {
 			tab: "tools",
 			group: "GitHub",
 			label: "GitHub View Cache",
-			description: "Cache rendered issue/PR view output in ~/.omp/cache/github-cache.db so repeated reads are free",
+			description: "Cache rendered issue/PR view output in ~/.tau/cache/github-cache.db so repeated reads are free",
 		},
 	},
 
@@ -4536,7 +4536,7 @@ export const SETTINGS_SCHEMA = {
 			group: "Available Tools",
 			label: "Security",
 			description:
-				"Enable OMP-native security scan planning, execution, and the read-only security:// resource namespace",
+				"Enable TAU-native security scan planning, execution, and the read-only security:// resource namespace",
 		},
 	},
 
@@ -4582,7 +4582,7 @@ export const SETTINGS_SCHEMA = {
 			group: "Grep & Browser",
 			label: "Browser Relay",
 			description:
-				"Drive your own Chrome tabs through the omp browser relay. Install the extension once (`omp browser-relay install`); the relay server auto-starts when the browser prelude needs it. Takes precedence over Browser CDP URL; set PI_BROWSER_RELAY=0 or PI_BROWSER_RELAY=1 to override.",
+				"Drive your own Chrome tabs through the tau browser relay. Install the extension once (`tau browser-relay install`); the relay server auto-starts when the browser prelude needs it. Takes precedence over Browser CDP URL; set PI_BROWSER_RELAY=0 or PI_BROWSER_RELAY=1 to override.",
 		},
 	},
 
@@ -4593,7 +4593,7 @@ export const SETTINGS_SCHEMA = {
 			tab: "tools",
 			group: "Grep & Browser",
 			label: "Browser Relay URL",
-			description: "omp browser relay endpoint (default http://127.0.0.1:9224).",
+			description: "tau browser relay endpoint (default http://127.0.0.1:9224).",
 		},
 	},
 
@@ -4627,7 +4627,7 @@ export const SETTINGS_SCHEMA = {
 			group: "Grep & Browser",
 			label: "Freeze Browser Tabs On Turn End",
 			description:
-				"Freeze OMP-owned headless browser tabs when a turn settles so animated pages stop burning CPU/GPU while idle. Tabs unfreeze automatically on next use; pass persist:true on open to opt a tab out.",
+				"Freeze TAU-owned headless browser tabs when a turn settles so animated pages stop burning CPU/GPU while idle. Tabs unfreeze automatically on next use; pass persist:true on open to opt a tab out.",
 		},
 	},
 	"browser.idleCloseSec": {
@@ -4638,7 +4638,7 @@ export const SETTINGS_SCHEMA = {
 			group: "Grep & Browser",
 			label: "Browser Idle Close Timeout",
 			description:
-				"Close OMP-owned headless browser tabs idle longer than this many seconds (0 = never; session dispose still reaps). Applies only to OMP-launched headless tabs, never relay/CDP/spawned browsers or other sessions' tabs.",
+				"Close TAU-owned headless browser tabs idle longer than this many seconds (0 = never; session dispose still reaps). Applies only to TAU-launched headless tabs, never relay/CDP/spawned browsers or other sessions' tabs.",
 			options: [
 				{ value: "0", label: "Never" },
 				{ value: "900", label: "15 minutes" },
@@ -4903,7 +4903,7 @@ export const SETTINGS_SCHEMA = {
 			group: "Modes",
 			label: "Autosave Directory",
 			description:
-				"Directory for autosaved plans. Supports ~, absolute, and cwd-relative paths. Empty uses <project>/.omp/plans/.",
+				"Directory for autosaved plans. Supports ~, absolute, and cwd-relative paths. Empty uses <project>/.tau/plans/.",
 			condition: "planAutosaveEnabled",
 		},
 	},
@@ -5075,7 +5075,7 @@ export const SETTINGS_SCHEMA = {
 			group: "Isolation",
 			label: "Worktree Base Directory",
 			description:
-				"Base directory for agent-managed worktrees — task-isolation copies, `github` PR checkouts, and `omp worktree` cleanup all live here. Unset uses ~/.omp/wt. Must be an absolute or ~-relative path; relative paths are ignored. The OMP_WORKTREE_DIR env var overrides this.",
+				"Base directory for agent-managed worktrees — task-isolation copies, `github` PR checkouts, and `tau worktree` cleanup all live here. Unset uses ~/.tau/wt. Must be an absolute or ~-relative path; relative paths are ignored. The TAU_WORKTREE_DIR env var overrides this.",
 		},
 	},
 
@@ -6001,7 +6001,7 @@ export const SETTINGS_SCHEMA = {
 			group: "Extensions",
 			label: "Tool Call Handler Timeout (ms)",
 			description:
-				"Positive finite active-work timeout for extension tool_call handlers; invalid values use 30000ms, and time awaiting OMP-owned dialogs does not count",
+				"Positive finite active-work timeout for extension tool_call handlers; invalid values use 30000ms, and time awaiting TAU-owned dialogs does not count",
 		},
 	},
 
@@ -6019,12 +6019,12 @@ export const SETTINGS_SCHEMA = {
 
 	"dev.autoqaPush.endpoint": {
 		type: "string",
-		default: "https://qa.omp.sh/v1/grievances" as const,
+		default: "https://qa.tau.sh/v1/grievances" as const,
 		ui: {
 			tab: "tools",
 			group: "Developer",
 			label: "Auto QA Push Endpoint",
-			description: "Full URL receiving Auto QA JSON reports (default https://qa.omp.sh/v1/grievances)",
+			description: "Full URL receiving Auto QA JSON reports (default https://qa.tau.sh/v1/grievances)",
 		},
 	},
 
@@ -6165,7 +6165,7 @@ export function getEnumValues(path: SettingPath): readonly string[] | undefined 
 // Derived Types from Schema
 // ═══════════════════════════════════════════════════════════════════════════
 
-export type { TreeFilterMode } from "@oh-my-pi/pi-tui/overlays/tree-selector";
+export type { TreeFilterMode } from "@tau/tau-tui/overlays/tree-selector";
 
 /** Personality preset - derived from schema */
 export type Personality = SettingValue<"personality">;
@@ -6262,7 +6262,7 @@ export interface SkillsSettings {
 	ignoredSkills?: string[];
 	includeSkills?: string[];
 	disabledExtensions?: string[];
-	/** Skillshare registry base URL (`omp skill`). */
+	/** Skillshare registry base URL (`tau skill`). */
 	registryUrl?: string;
 }
 

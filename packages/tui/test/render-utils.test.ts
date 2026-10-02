@@ -1,9 +1,9 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
 import * as os from "node:os";
 import * as path from "node:path";
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import { KeybindingsManager, setKeyHintPlatform } from "@oh-my-pi/pi-tui/app-keybindings";
-import { getThemeByName, initTheme, type Theme, theme } from "@oh-my-pi/pi-tui/theme";
+import { ThinkingLevel } from "@tau/tau-agent-core";
+import { KeybindingsManager, setKeyHintPlatform } from "@tau/tau-tui/app-keybindings";
+import { getThemeByName, initTheme, type Theme, theme } from "@tau/tau-tui/theme";
 import {
 	dedupeParseErrors,
 	expandKeyHint,
@@ -24,13 +24,13 @@ import {
 	shortenPath,
 	TRUNCATE_LENGTHS,
 	truncateDiffByHunk,
-} from "@oh-my-pi/pi-tui/render/render-utils";
+} from "@tau/tau-tui/render/render-utils";
 import {
 	DEFAULT_TAB_WIDTH,
 	getKeybindings,
 	setKeybindings,
 	type KeybindingsManager as TuiKeybindingsManager,
-} from "@oh-my-pi/pi-tui";
+} from "@tau/tau-tui";
 
 describe("resolveImageOptions", () => {
 	const originalRows = Object.getOwnPropertyDescriptor(process.stdout, "rows");
@@ -447,10 +447,10 @@ describe("sanitizeDisplayLines", () => {
 
 describe("sanitizeDisplayWarning", () => {
 	it("strips terminal controls, expands tabs, flattens lines, and shortens home paths", () => {
-		const filePath = path.join(os.homedir(), ".omp", "WATCHDOG.yml");
+		const filePath = path.join(os.homedir(), ".tau", "WATCHDOG.yml");
 		const warning = sanitizeDisplayWarning(`${filePath}: advisor "\x1b[31mBad\tName\x1b[0m\nfollow-up" dropped`);
 
-		expect(warning).toContain("~/.omp/WATCHDOG.yml");
+		expect(warning).toContain("~/.tau/WATCHDOG.yml");
 		expect(warning).toContain('advisor "Bad   Name follow-up" dropped');
 		expect(warning).not.toContain(filePath);
 		expect(warning).not.toContain("\x1b");
@@ -461,14 +461,14 @@ describe("sanitizeDisplayWarning", () => {
 
 describe("shortenEmbeddedPaths", () => {
 	it("shortens home paths containing spaces before tokenizing", () => {
-		expect(shortenEmbeddedPaths("/Users/Jane Smith/.omp/WATCHDOG.yml: failed", "/Users/Jane Smith")).toBe(
-			"~/.omp/WATCHDOG.yml: failed",
+		expect(shortenEmbeddedPaths("/Users/Jane Smith/.tau/WATCHDOG.yml: failed", "/Users/Jane Smith")).toBe(
+			"~/.tau/WATCHDOG.yml: failed",
 		);
 	});
 
 	it("preserves sibling paths outside the home boundary", () => {
 		const home = "/Users/Jane";
-		const sibling = "/Users/Jane2/.omp/WATCHDOG.yml: failed";
+		const sibling = "/Users/Jane2/.tau/WATCHDOG.yml: failed";
 		expect(shortenEmbeddedPaths(sibling, home)).toBe(sibling);
 	});
 

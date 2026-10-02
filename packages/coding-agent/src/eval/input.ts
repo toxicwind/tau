@@ -1,4 +1,4 @@
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 import { InternalUrlRouter } from "../internal-urls";
 import type { ToolSession } from "../tools";
 import { isInternalUrlPath, isSshUrl, normalizeLocalScheme, resolveReadPathAsync } from "../tools/path-utils";

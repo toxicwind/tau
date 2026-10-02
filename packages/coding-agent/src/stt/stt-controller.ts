@@ -1,9 +1,9 @@
-import type { ApiKeyResolver } from "@oh-my-pi/pi-ai";
-import { transcribeAudio } from "@oh-my-pi/pi-ai/transcription";
-import type { Api, Model } from "@oh-my-pi/pi-catalog/types";
-import { AudioCapture } from "@oh-my-pi/pi-natives";
-import type { ModelBrowserRegistry } from "@oh-my-pi/pi-tui/overlays/model-browser";
-import { logger } from "@oh-my-pi/pi-utils";
+import type { ApiKeyResolver } from "@tau/tau-ai";
+import { transcribeAudio } from "@tau/tau-ai/transcription";
+import type { Api, Model } from "@tau/tau-catalog/types";
+import { AudioCapture } from "@tau/tau-natives";
+import type { ModelBrowserRegistry } from "@tau/tau-tui/overlays/model-browser";
+import { logger } from "@tau/tau-utils";
 import { resolveRoleChain } from "../config/model-resolver";
 import { roleCandidatePool } from "../config/model-roles";
 import { type Settings, settings } from "../config/settings";

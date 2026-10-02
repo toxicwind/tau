@@ -1,7 +1,7 @@
 /**
  * Apple Foundation Models: Apple's on-device system language model (macOS 27+,
- * Apple silicon), driven in-process through the pi-natives Swift bridge
- * (`crates/pi-natives/src/applefm/bridge.swift`).
+ * Apple silicon), driven in-process through the tau-natives Swift bridge
+ * (`crates/tau-natives/src/applefm/bridge.swift`).
  *
  * Every request lowers the full conversation into a Foundation Models
  * `Transcript` — instructions with tool definitions, prompts, responses, tool
@@ -9,9 +9,9 @@
  * Tool calls are returned, not executed, so the agent loop runs them and
  * resumes by sending their outputs in the next request.
  */
-import type { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { appleFmAvailability, appleFmCancel, appleFmGenerate } from "@oh-my-pi/pi-natives";
-import { parseStreamingJson } from "@oh-my-pi/pi-utils";
+import type { Effort } from "@tau/tau-catalog/effort";
+import { appleFmAvailability, appleFmCancel, appleFmGenerate } from "@tau/tau-natives";
+import { parseStreamingJson } from "@tau/tau-utils";
 import * as AIError from "../error";
 import type {
 	AssistantMessage,

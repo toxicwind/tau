@@ -4,27 +4,27 @@
  * Providers learn sticky lessons about an endpoint from rejections: Anthropic's
  * `fastModeDisabled` / `strictToolsDisabled` / `replayUnsignedThinkingDisabled`
  * flags, OpenAI's strict-tools and reasoning-effort fallbacks. The map holding
- * them is non-serializable, so `pi-native-client` strips it from the wire and
- * `pi-native-server` refuses it — a gateway client cannot supply one. Without a
- * server-side owner, every containerized / robomp turn re-pays the rejected
+ * them is non-serializable, so `tau-native-client` strips it from the wire and
+ * `tau-native-server` refuses it — a gateway client cannot supply one. Without a
+ * server-side owner, every containerized / robtau turn re-pays the rejected
  * upstream round-trip that already taught the lesson.
  */
 import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { clearCustomApis } from "@oh-my-pi/pi-ai/api-registry";
+import { clearCustomApis } from "@tau/tau-ai/api-registry";
 import {
 	AUTH_GATEWAY_MAX_SESSION_STATES,
 	AuthGatewaySessionStateStore,
 	startAuthGateway,
-} from "@oh-my-pi/pi-ai/auth-gateway";
-import type { AuthGatewayServerHandle, AuthGatewaySessionStateRequest } from "@oh-my-pi/pi-ai/auth-gateway";
-import { AuthStorage } from "@oh-my-pi/pi-ai/auth-storage";
-import { ProviderHttpError } from "@oh-my-pi/pi-ai/error";
-import { createMockModel, registerMockApi } from "@oh-my-pi/pi-ai/providers/mock";
-import type { Api, Context, Model, ProviderSessionState } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+} from "@tau/tau-ai/auth-gateway";
+import type { AuthGatewayServerHandle, AuthGatewaySessionStateRequest } from "@tau/tau-ai/auth-gateway";
+import { AuthStorage } from "@tau/tau-ai/auth-storage";
+import { ProviderHttpError } from "@tau/tau-ai/error";
+import { createMockModel, registerMockApi } from "@tau/tau-ai/providers/mock";
+import type { Api, Context, Model, ProviderSessionState } from "@tau/tau-ai/types";
+import { buildModel } from "@tau/tau-catalog/build";
 import { withOfficialAnthropicEndpoint } from "./helpers";
 
 function makeAnthropicModel(baseUrl: string): Model<"anthropic-messages"> {
@@ -181,7 +181,7 @@ function stateRequest(clientKey: string, account = "key:test-account"): AuthGate
 }
 
 /**
- * One priority-tier turn through the pi-native route. Returns the status plus
+ * One priority-tier turn through the tau-native route. Returns the status plus
  * the decoded envelope so a failed turn reports the upstream reason instead of
  * a bare number.
  */

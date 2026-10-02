@@ -22,7 +22,7 @@ export interface InitializeExtensionsOptions {
 	reportRuntimeError: (error: ExtensionError) => void;
 	/** Optional shutdown hook (rpc mode signals its loop; print mode is a no-op). */
 	onShutdown?: () => void;
-	/** Pi-compatible mode exposed to extension contexts. Defaults to `"print"`. */
+	/** Tau-compatible mode exposed to extension contexts. Defaults to `"print"`. */
 	mode?: ExtensionMode;
 	/** Optional UI context (rpc supplies one; print runs headless). */
 	uiContext?: ExtensionUIContext;

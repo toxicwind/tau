@@ -31,17 +31,17 @@
  * that also import the module-level `settings` need the global initialized.
  */
 import { vi } from "bun:test";
-import { isSettingsInitialized, Settings, settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { MCPManager } from "@oh-my-pi/pi-coding-agent/mcp/manager";
-import type { MCPServerConnection } from "@oh-my-pi/pi-coding-agent/mcp/types";
-import { ServedModelTracker } from "@oh-my-pi/pi-tui/chat/served-model-marker";
-import { TranscriptContainer } from "@oh-my-pi/pi-tui/chrome/transcript-container";
-import { OAuthManualInputManager } from "@oh-my-pi/pi-coding-agent/modes/oauth-manual-input";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TokenRateMeter } from "@oh-my-pi/pi-coding-agent/utils/token-rate";
-import { type Component, Container } from "@oh-my-pi/pi-tui";
+import { isSettingsInitialized, Settings, settings } from "@tau/tau-coding-agent/config/settings";
+import type { MCPManager } from "@tau/tau-coding-agent/mcp/manager";
+import type { MCPServerConnection } from "@tau/tau-coding-agent/mcp/types";
+import { ServedModelTracker } from "@tau/tau-tui/chat/served-model-marker";
+import { TranscriptContainer } from "@tau/tau-tui/chrome/transcript-container";
+import { OAuthManualInputManager } from "@tau/tau-coding-agent/modes/oauth-manual-input";
+import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
+import type { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { TokenRateMeter } from "@tau/tau-coding-agent/utils/token-rate";
+import { type Component, Container } from "@tau/tau-tui";
 
 type AnyFn = (...args: never[]) => unknown;
 

@@ -10,9 +10,9 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { PluginManager } from "@oh-my-pi/pi-coding-agent/extensibility/plugins/manager";
-import * as piUtils from "@oh-my-pi/pi-utils";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+import { PluginManager } from "@tau/tau-coding-agent/extensibility/plugins/manager";
+import * as piUtils from "@tau/tau-utils";
+import { removeWithRetries } from "@tau/tau-utils";
 import type { Subprocess } from "bun";
 
 function emptyStream(): ReadableStream<Uint8Array> {
@@ -30,7 +30,7 @@ describe("PluginManager.install npm idempotency", () => {
 	let pluginsPkgJson: string;
 
 	beforeEach(async () => {
-		tmpRoot = await fs.mkdtemp(path.join(os.tmpdir(), "omp-plugin-npm-dedupe-"));
+		tmpRoot = await fs.mkdtemp(path.join(os.tmpdir(), "tau-plugin-npm-dedupe-"));
 		pluginsDir = path.join(tmpRoot, "plugins");
 		pluginsNodeModules = path.join(pluginsDir, "node_modules");
 		pluginsPkgJson = path.join(pluginsDir, "package.json");
@@ -39,7 +39,7 @@ describe("PluginManager.install npm idempotency", () => {
 		vi.spyOn(piUtils, "getPluginsDir").mockReturnValue(pluginsDir);
 		vi.spyOn(piUtils, "getPluginsNodeModules").mockReturnValue(pluginsNodeModules);
 		vi.spyOn(piUtils, "getPluginsPackageJson").mockReturnValue(pluginsPkgJson);
-		vi.spyOn(piUtils, "getPluginsLockfile").mockReturnValue(path.join(tmpRoot, "omp-plugins.lock.json"));
+		vi.spyOn(piUtils, "getPluginsLockfile").mockReturnValue(path.join(tmpRoot, "tau-plugins.lock.json"));
 		vi.spyOn(piUtils, "getProjectDir").mockReturnValue(tmpRoot);
 		vi.spyOn(piUtils, "getProjectPluginOverridesPath").mockReturnValue(path.join(tmpRoot, "plugin-overrides.json"));
 	});
@@ -63,16 +63,16 @@ describe("PluginManager.install npm idempotency", () => {
 				const edges = Object.entries(current.dependencies ?? {}).map(
 					([key, value]) => `    ${JSON.stringify(key)}: ${JSON.stringify(value)}`,
 				);
-				edges.push(`    "pi-lens": "npm:pi-lens@4.2.0"`);
+				edges.push(`    "tau-lens": "npm:tau-lens@4.2.0"`);
 				await Bun.write(
 					pluginsPkgJson,
-					`{\n  "name": "omp-plugins",\n  "private": true,\n  "dependencies": {\n${edges.join(",\n")}\n  }\n}\n`,
+					`{\n  "name": "tau-plugins",\n  "private": true,\n  "dependencies": {\n${edges.join(",\n")}\n  }\n}\n`,
 				);
-				const installedDir = path.join(pluginsNodeModules, "pi-lens");
+				const installedDir = path.join(pluginsNodeModules, "tau-lens");
 				await fs.mkdir(installedDir, { recursive: true });
 				await Bun.write(
 					path.join(installedDir, "package.json"),
-					JSON.stringify({ name: "pi-lens", version: "4.2.0" }),
+					JSON.stringify({ name: "tau-lens", version: "4.2.0" }),
 				);
 			})();
 			return {
@@ -85,34 +85,34 @@ describe("PluginManager.install npm idempotency", () => {
 	}
 
 	function keyCount(raw: string): number {
-		return raw.split('"pi-lens":').length - 1;
+		return raw.split('"tau-lens":').length - 1;
 	}
 
 	test("reinstalling the same npm spec leaves exactly one manifest key", async () => {
 		await Bun.write(
 			pluginsPkgJson,
-			JSON.stringify({ name: "omp-plugins", private: true, dependencies: { "pi-lens": "v4.1.6" } }, null, 2),
+			JSON.stringify({ name: "tau-plugins", private: true, dependencies: { "tau-lens": "v4.1.6" } }, null, 2),
 		);
 		mockAppendingBunInstall();
 
 		const mgr = new PluginManager(tmpRoot);
-		const result = await mgr.install("npm:pi-lens@4.2.0");
+		const result = await mgr.install("npm:tau-lens@4.2.0");
 
-		expect(result.name).toBe("pi-lens");
+		expect(result.name).toBe("tau-lens");
 		const raw = await Bun.file(pluginsPkgJson).text();
 		expect(keyCount(raw)).toBe(1);
-		expect(JSON.parse(raw).dependencies["pi-lens"]).toBe("npm:pi-lens@4.2.0");
+		expect(JSON.parse(raw).dependencies["tau-lens"]).toBe("npm:tau-lens@4.2.0");
 	});
 
 	test("a pre-duplicated manifest collapses to one key", async () => {
 		await Bun.write(
 			pluginsPkgJson,
-			'{\n  "name": "omp-plugins",\n  "private": true,\n  "dependencies": {\n    "pi-lens": "npm:pi-lens",\n    "pi-lens": "v4.1.6"\n  }\n}\n',
+			'{\n  "name": "tau-plugins",\n  "private": true,\n  "dependencies": {\n    "tau-lens": "npm:tau-lens",\n    "tau-lens": "v4.1.6"\n  }\n}\n',
 		);
 		mockAppendingBunInstall();
 
 		const mgr = new PluginManager(tmpRoot);
-		await mgr.install("npm:pi-lens@4.2.0");
+		await mgr.install("npm:tau-lens@4.2.0");
 
 		const raw = await Bun.file(pluginsPkgJson).text();
 		expect(keyCount(raw)).toBe(1);
@@ -123,11 +123,11 @@ describe("PluginManager.install npm idempotency", () => {
 			pluginsPkgJson,
 			JSON.stringify(
 				{
-					name: "omp-plugins",
+					name: "tau-plugins",
 					private: true,
 					dependencies: {
-						"npm:pi-lens@4.1.6": "npm:pi-lens@4.1.6",
-						"pi-lens": "npm:pi-lens@4.1.6",
+						"npm:tau-lens@4.1.6": "npm:tau-lens@4.1.6",
+						"tau-lens": "npm:tau-lens@4.1.6",
 					},
 				},
 				null,
@@ -137,9 +137,9 @@ describe("PluginManager.install npm idempotency", () => {
 		mockAppendingBunInstall();
 
 		const mgr = new PluginManager(tmpRoot);
-		await mgr.install("npm:pi-lens@4.2.0");
+		await mgr.install("npm:tau-lens@4.2.0");
 
 		const dependencies = (await Bun.file(pluginsPkgJson).json()).dependencies;
-		expect(dependencies).toEqual({ "pi-lens": "npm:pi-lens@4.2.0" });
+		expect(dependencies).toEqual({ "tau-lens": "npm:tau-lens@4.2.0" });
 	});
 });

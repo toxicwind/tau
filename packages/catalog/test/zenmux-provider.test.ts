@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, test, vi } from "bun:test";
-import { getEnvApiKey } from "@oh-my-pi/pi-ai/stream";
-import { zenmuxModelManagerOptions } from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import type { FetchImpl } from "@oh-my-pi/pi-catalog/types";
+import { getEnvApiKey } from "@tau/tau-ai/stream";
+import { zenmuxModelManagerOptions } from "@tau/tau-catalog/provider-models/openai-compat";
+import type { FetchImpl } from "@tau/tau-catalog/types";
 
 const originalZenMuxApiKey = Bun.env.ZENMUX_API_KEY;
 

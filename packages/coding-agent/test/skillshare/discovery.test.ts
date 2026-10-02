@@ -2,18 +2,18 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import "@oh-my-pi/pi-coding-agent/discovery";
-import { clearCache as clearFsCache } from "@oh-my-pi/pi-coding-agent/capability/fs";
-import { loadSkillshareSkills } from "@oh-my-pi/pi-coding-agent/discovery/skillshare";
-import { loadSkills } from "@oh-my-pi/pi-coding-agent/extensibility/skills";
+import "@tau/tau-coding-agent/discovery";
+import { clearCache as clearFsCache } from "@tau/tau-coding-agent/capability/fs";
+import { loadSkillshareSkills } from "@tau/tau-coding-agent/discovery/skillshare";
+import { loadSkills } from "@tau/tau-coding-agent/extensibility/skills";
 import {
 	getSkillStorePath,
 	STORE_INTEGRITY_FILE,
 	type SkillsLock,
 	writeSkillsLock,
-} from "@oh-my-pi/pi-coding-agent/skillshare/manifest";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
-import { getAgentDir, setAgentDir } from "@oh-my-pi/pi-utils/dirs";
+} from "@tau/tau-coding-agent/skillshare/manifest";
+import { removeWithRetries } from "@tau/tau-utils";
+import { getAgentDir, setAgentDir } from "@tau/tau-utils/dirs";
 
 function lockEntry(scope: string, name: string, version: string) {
 	return {
@@ -39,11 +39,11 @@ describe("skillshare discovery provider", () => {
 
 	beforeEach(async () => {
 		originalAgentDir = getAgentDir();
-		tempHome = await fs.mkdtemp(path.join(os.tmpdir(), "omp-skillshare-disco-"));
+		tempHome = await fs.mkdtemp(path.join(os.tmpdir(), "tau-skillshare-disco-"));
 		project = path.join(tempHome, "work", "proj");
 		await fs.mkdir(path.join(project, ".git"), { recursive: true });
 		vi.spyOn(os, "homedir").mockReturnValue(tempHome);
-		setAgentDir(path.join(tempHome, ".omp", "agent"));
+		setAgentDir(path.join(tempHome, ".tau", "agent"));
 	});
 
 	afterEach(async () => {
@@ -62,7 +62,7 @@ describe("skillshare discovery provider", () => {
 			},
 		};
 		const userLock: SkillsLock = { version: 1, skills: { "@bob/review": lockEntry("bob", "review", "2.0.0") } };
-		await writeSkillsLock(path.join(project, ".omp", "skills.lock.json"), projectLock);
+		await writeSkillsLock(path.join(project, ".tau", "skills.lock.json"), projectLock);
 		await writeSkillsLock(path.join(getAgentDir(), "skills.lock.json"), userLock);
 		const pdfDir = await storeSkill("alice", "pdf-tools", "1.2.0", "PDF helpers");
 		await storeSkill("bob", "review", "2.0.0", "Code review");
@@ -95,12 +95,12 @@ describe("skillshare discovery provider", () => {
 	});
 
 	it("lets an authored project skill win a name collision", async () => {
-		await writeSkillsLock(path.join(project, ".omp", "skills.lock.json"), {
+		await writeSkillsLock(path.join(project, ".tau", "skills.lock.json"), {
 			version: 1,
 			skills: { "@alice/pdf-tools": lockEntry("alice", "pdf-tools", "1.2.0") },
 		});
 		await storeSkill("alice", "pdf-tools", "1.2.0", "Registry PDF helpers");
-		const authored = path.join(project, ".omp", "skills", "pdf-tools", "SKILL.md");
+		const authored = path.join(project, ".tau", "skills", "pdf-tools", "SKILL.md");
 		await fs.mkdir(path.dirname(authored), { recursive: true });
 		await Bun.write(authored, "---\nname: pdf-tools\ndescription: Local PDF helpers\n---\n# local\n");
 

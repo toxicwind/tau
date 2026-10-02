@@ -160,12 +160,12 @@
   290 | 	return os.homedir();
   291 | }
   292 | 
-  293 | /** Get the config directory name relative to home (e.g. ".omp" or PI_CONFIG_DIR override). */
+  293 | /** Get the config directory name relative to home (e.g. ".tau" or PI_CONFIG_DIR override). */
   294 | export function getConfigDirName(): string {
   295 | 	return process.env.PI_CONFIG_DIR || CONFIG_DIR_NAME;
   296 | }
   297 | 
-  298 | /** Get the config agent directory name relative to home (e.g. ".omp/agent" or PI_CONFIG_DIR + "/agent"). */
+  298 | /** Get the config agent directory name relative to home (e.g. ".tau/agent" or PI_CONFIG_DIR + "/agent"). */
   299 | export function getConfigAgentDirName(): string {
   300 | 	const profile = getActiveProfile();
   301 | 	return profile ? path.join(getConfigDirName(), "profiles", profile, "agent") : `${getConfigDirName()}/agent`;
@@ -178,8 +178,8 @@
   308 | type XdgCategory = "data" | "state" | "cache";
   309 | 
   310 | /**
-  311 |  * Resolves and caches all omp directory paths. On Linux, when XDG environment
-  312 |  * variables are set, paths are redirected under $XDG_*_HOME/omp/. A new
+  311 |  * Resolves and caches all tau directory paths. On Linux, when XDG environment
+  312 |  * variables are set, paths are redirected under $XDG_*_HOME/tau/. A new
   313 |  * instance is created whenever the agent directory changes, which naturally
   314 |  * invalidates all cached paths.
   315 |  */
@@ -188,7 +188,7 @@
   318 | 	readonly agentDir: string;
   319 | 
   320 | 	// Per-category base dirs. Without XDG, all three equal configRoot / agentDir.
-  321 | 	// With XDG on Linux, they point to $XDG_*_HOME/omp/.
+  321 | 	// With XDG on Linux, they point to $XDG_*_HOME/tau/.
   322 | 	readonly #rootDirs: Record<XdgCategory, string>;
   323 | 	readonly #agentDirs: Record<XdgCategory, string>;
   324 | 
@@ -205,14 +205,14 @@
   335 | 		const isDefault = this.agentDir === defaultAgent;
   336 | 
   337 | 		// XDG is a Linux convention. On supported platforms, default profile state
-  338 | 		// resolves under $XDG_*_HOME/omp once `omp config init-xdg` has migrated
+  338 | 		// resolves under $XDG_*_HOME/tau once `tau config init-xdg` has migrated
   339 | 		// the user's data. Named profiles follow a stricter rule: the XDG choice
   340 | 		// is keyed on the profile-specific XDG path, never the base app root.
   341 | 		//
   342 | 		// Why: if we consulted the base app root for named profiles too, the same
-  343 | 		// profile could resolve to `~/.omp/profiles/<name>` on first activation
-  344 | 		// (when no $XDG_*_HOME/omp exists yet) and then silently move to
-  345 | 		// `$XDG_*_HOME/omp/profiles/<name>` the moment the base appeared, orphaning
+  343 | 		// profile could resolve to `~/.tau/profiles/<name>` on first activation
+  344 | 		// (when no $XDG_*_HOME/tau exists yet) and then silently move to
+  345 | 		// `$XDG_*_HOME/tau/profiles/<name>` the moment the base appeared, orphaning
   346 | 		// the earlier state. Pinning on the profile path means a profile's location
   347 | 		// is decided at first activation and stays put until the user explicitly
   348 | 		// migrates it (e.g. by mkdir'ing the XDG profile dir).
@@ -435,7 +435,7 @@
    32 | 		SHELL: shell,
    33 | 		GIT_EDITOR: "true",
    34 | 		GPG_TTY: "not a tty",
-   35 | 		OMPCODE: "1",
+   35 | 		TAUCODE: "1",
    36 | 		CLAUDECODE: "1",
    37 | 		...(noCI ? {} : { CI: "true" }),
    38 | 	} as Record<string, string>;
@@ -528,7 +528,7 @@
     9 | 	type StreamHostFrame,
    10 | 	type StreamPaneFrame,
    11 | 	type StreamServerToHost,
-   12 | } from "@oh-my-pi/pi-wire";
+   12 | } from "@tau/tau-wire";
    13 | 
    14 | const INITIAL_RECONNECT_MS = 1_000;
    15 | const MAX_RECONNECT_MS = 30_000;
@@ -569,7 +569,7 @@
     8 |  * tests to spy on.
     9 |  */
    10 | 
-   11 | import { USER_AGENT } from "@oh-my-pi/pi-utils";
+   11 | import { USER_AGENT } from "@tau/tau-utils";
    12 | import { isTimeoutError, withTimeoutSignal } from "../utils/fetch-timeout";
    13 | import type { HindsightConfig } from "./config";
    14 | 
@@ -605,7 +605,7 @@
    41 | const GITLAB_DUO_WORKFLOW_CLIENT_TYPE = "node-websocket";
    42 | /**
    43 |  * Idle deadline for the workflow WebSocket. The socket has no server-side
-   44 |  * keepalive contract OMP can rely on, so a connection silently going half-open
+   44 |  * keepalive contract TAU can rely on, so a connection silently going half-open
    45 |  * (proxy/LB drops the TCP link without delivering FIN/RST) would otherwise leave
    46 |  * `runGitLabDuoWorkflowSocket` waiting forever. If no frame arrives within this
    47 |  * window — before open or between checkpoints — the socket is aborted and the
@@ -628,7 +628,7 @@
    64 | const GITLAB_DUO_WORKFLOW_REST_TIMEOUT_MS = 30_000;
    65 | /**
    66 |  * How many times a single stream may restart on a FRESH workflow after the server
-   67 |  * reports its per-workflow step (graph-recursion) limit. Long OMP tool-call loops
+   67 |  * reports its per-workflow step (graph-recursion) limit. Long TAU tool-call loops
    68 |  * legitimately overrun the cap; each restart resets the budget. Bounded so a task
    69 |  * that perpetually overruns degrades to a graceful stop instead of looping on quota.
    70 |  */

@@ -8,10 +8,10 @@
 //    input on the stored content block and drop the transient `partialJson`
 //    accumulation buffer, mirroring the function_call branch.
 import { describe, expect, test } from "bun:test";
-import type { ResponseStreamEvent } from "@oh-my-pi/pi-ai/providers/openai-responses-wire";
-import { processResponsesStream } from "@oh-my-pi/pi-ai/providers/openai-shared";
-import type { AssistantMessage, Model } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import type { ResponseStreamEvent } from "@tau/tau-ai/providers/openai-responses-wire";
+import { processResponsesStream } from "@tau/tau-ai/providers/openai-shared";
+import type { AssistantMessage, Model } from "@tau/tau-ai/types";
+import { buildModel } from "@tau/tau-catalog/build";
 
 function makeModel(): Model<"openai-responses"> {
 	return buildModel({

@@ -16,7 +16,7 @@ It covers runtime behavior as implemented today, including precedence, invalid-d
 - [`src/prompts/agents/task.md`](../packages/coding-agent/src/prompts/agents/task.md)
 - [`src/prompts/tools/task.md`](../packages/coding-agent/src/prompts/tools/task.md)
 - [`src/discovery/helpers.ts`](../packages/coding-agent/src/discovery/helpers.ts)
-- [`src/discovery/omp-extension-roots.ts`](../packages/coding-agent/src/discovery/omp-extension-roots.ts)
+- [`src/discovery/tau-extension-roots.ts`](../packages/coding-agent/src/discovery/tau-extension-roots.ts)
 - [`src/config.ts`](../packages/coding-agent/src/config.ts)
 - [`src/task/executor.ts`](../packages/coding-agent/src/task/executor.ts)
 
@@ -40,7 +40,7 @@ Parsing comes from frontmatter via `parseAgentFields()` (`src/discovery/helpers.
 - `output` is passed through as opaque schema data
 - `read-summarize: false` (normalized to `readSummarize`) forces the subagent's `read` tool to return verbatim file content instead of structural summaries — `runSubprocess` applies it as a `read.summarize.enabled: false` override on the subagent's isolated settings (`src/task/executor.ts`). `scout` ships with it disabled. Defaults to enabled when the field is absent.
 - `model` accepts one selector, CSV, or an array. Entries are tried in order after role aliases are expanded.
-- `thinking-level` / `thinking` selects the agent's configured effort. When `task.enableEffort` (default `false`) exposes it, a task item's coarse `effort` (`lo`, `med`, `hi`) takes precedence at launch. OMP maps that hint to the selected model's lowest, middle, or highest supported effort, then clamps it to `task.maxEffort` (default `max`). The ceiling is carried across retry-fallback model switches. If the selected model has no supported effort at or below the ceiling, the spawn fails; models without a controllable effort surface instead fall back to their normal selector.
+- `thinking-level` / `thinking` selects the agent's configured effort. When `task.enableEffort` (default `false`) exposes it, a task item's coarse `effort` (`lo`, `med`, `hi`) takes precedence at launch. TAU maps that hint to the selected model's lowest, middle, or highest supported effort, then clamps it to `task.maxEffort` (default `max`). The ceiling is carried across retry-fallback model switches. If the selected model has no supported effort at or below the ceiling, the spawn fails; models without a controllable effort surface instead fall back to their normal selector.
 - `blocking: true` makes the parent wait for that agent even when async task execution is enabled
 - `autoloadSkills` names skills from the parent session to inject before the first child prompt; unknown names are ignored
 - `prewalk: true` starts the subagent on its resolved model and hands off to the default prewalk target (the `smol` role) at its first edit/write, exactly like the session-level `--prewalk`; a string value (e.g. `prewalk: "@smol"` or `prewalk: "openai/gpt-5-mini"`) picks a custom target. The `task.agentPrewalk` settings record (agent name → `"on"` / `"off"` / pattern, configured per agent from the `/agents` hub via its prewalk strip) overrides the frontmatter. Resolution happens in `runSubprocess` (`src/task/executor.ts`). An unavailable target is skipped instead of failing the spawn. A resolved target is skipped only when both its model identity and its effective thinking mode/level match the starting selection after model clamping; a same-model effort downgrade is a real hand-off and still arms and switches at the first edit/write.
@@ -48,11 +48,11 @@ Parsing comes from frontmatter via `parseAgentFields()` (`src/discovery/helpers.
 
 ## Role-backed custom agents
 
-OMP discovers user agents from `~/.omp/agent/agents/*.md` and project agents from `.omp/agents/*.md`.
+TAU discovers user agents from `~/.tau/agent/agents/*.md` and project agents from `.tau/agents/*.md`.
 
 Give the agent a role alias in frontmatter, then dispatch it by name. For model routing, task dispatch sets only `agent`; it does not set a worker model:
 
-`~/.omp/agent/agents/reviewer.md`:
+`~/.tau/agent/agents/reviewer.md`:
 
 ```md
 ---
@@ -64,7 +64,7 @@ model: "@review"
 Review the assigned change and report concrete findings.
 ```
 
-Set the role mapping in `~/.omp/agent/config.yml`:
+Set the role mapping in `~/.tau/agent/config.yml`:
 
 ```yaml
 modelRoles:
@@ -137,13 +137,13 @@ Because bundled parsing uses `level: "fatal"`, malformed bundled frontmatter thr
 
 ## Filesystem and plugin discovery
 
-`discoverAgents(cwd, home)` (`src/task/discovery.ts`) merges agents from OMP-native roots, OMP extension packages, and Claude marketplace plugin roots before appending bundled definitions. Direct cross-harness roots such as `.claude/agents`, `.codex/agents`, and `.gemini/agents` are intentionally skipped — their frontmatter schema is not the OMP task-agent contract (`TASK_AGENT_CONFIG_SOURCE = ".omp"` filters the native config-dir lists).
+`discoverAgents(cwd, home)` (`src/task/discovery.ts`) merges agents from TAU-native roots, TAU extension packages, and Claude marketplace plugin roots before appending bundled definitions. Direct cross-harness roots such as `.claude/agents`, `.codex/agents`, and `.gemini/agents` are intentionally skipped — their frontmatter schema is not the TAU task-agent contract (`TASK_AGENT_CONFIG_SOURCE = ".tau"` filters the native config-dir lists).
 
 ### Discovery inputs and precedence
 
-1. Nearest project `.omp/agents` dir from `findAllNearestProjectConfigDirs("agents", cwd)` (first `.omp` hit only)
-2. User `.omp/agents` dir from `getConfigDirs("agents", { project: false })` (first `.omp` hit only)
-3. `<extension-root>/agents` for every enabled OMP extension package returned by `listOmpExtensionRoots(...)`, in this order:
+1. Nearest project `.tau/agents` dir from `findAllNearestProjectConfigDirs("agents", cwd)` (first `.tau` hit only)
+2. User `.tau/agents` dir from `getConfigDirs("agents", { project: false })` (first `.tau` hit only)
+3. `<extension-root>/agents` for every enabled TAU extension package returned by `listOmpExtensionRoots(...)`, in this order:
    - CLI `--extension` roots
    - project `extensions:` settings
    - user `extensions:` settings
@@ -151,7 +151,7 @@ Because bundled parsing uses `level: "fatal"`, malformed bundled frontmatter thr
 4. Claude marketplace plugin roots (`listClaudePluginRoots(home, cwd)`) with `agents/` subdirs — only when `isProviderEnabled("claude-plugins")`; project-scope plugins sort before user-scope
 5. Bundled agents (`loadBundledAgents()`)
 
-The OMP extension-package surface is disabled when the `omp-plugins` capability provider is disabled. Marketplace roots are excluded from `listOmpExtensionRoots` and enter only through the separately gated Claude-plugin path.
+The TAU extension-package surface is disabled when the `tau-plugins` capability provider is disabled. Marketplace roots are excluded from `listOmpExtensionRoots` and enter only through the separately gated Claude-plugin path.
 
 ## Merge and collision rules
 
@@ -163,7 +163,7 @@ Discovery uses first-wins dedup by exact `agent.name`:
 
 Implications:
 
-- Project `.omp` overrides user `.omp`.
+- Project `.tau` overrides user `.tau`.
 - Earlier extension roots override later extension roots, Claude marketplace plugins, and bundled agents.
 - Non-bundled agents override bundled agents with the same name.
 - Name matching is case-sensitive (`Task` and `task` are distinct).

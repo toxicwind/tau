@@ -1,14 +1,14 @@
 import { afterEach, describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { isBlobRef } from "@oh-my-pi/pi-coding-agent/session/blob-store";
-import type { SessionEntry } from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { isBlobRef } from "@tau/tau-coding-agent/session/blob-store";
+import type { SessionEntry } from "@tau/tau-coding-agent/session/session-entries";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { TempDir } from "@tau/tau-utils";
 
 const tempDirs: TempDir[] = [];
 
 function makeManager(): { manager: SessionManager; cwd: string } {
-	const dir = TempDir.createSync("@pi-collab-repl-");
+	const dir = TempDir.createSync("@tau-collab-repl-");
 	tempDirs.push(dir);
 	const cwd = dir.path();
 	return { manager: SessionManager.create(cwd, path.join(cwd, "sessions")), cwd };

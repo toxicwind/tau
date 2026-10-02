@@ -2,11 +2,11 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { type ContextFile, contextFileCapability } from "@oh-my-pi/pi-coding-agent/capability/context-file";
-import type { LoadContext } from "@oh-my-pi/pi-coding-agent/capability/types";
-import { loadCapability } from "@oh-my-pi/pi-coding-agent/discovery";
-import { loadClaudeMd } from "@oh-my-pi/pi-coding-agent/discovery/claude-md";
-import { removeSyncWithRetries } from "@oh-my-pi/pi-utils";
+import { type ContextFile, contextFileCapability } from "@tau/tau-coding-agent/capability/context-file";
+import type { LoadContext } from "@tau/tau-coding-agent/capability/types";
+import { loadCapability } from "@tau/tau-coding-agent/discovery";
+import { loadClaudeMd } from "@tau/tau-coding-agent/discovery/claude-md";
+import { removeSyncWithRetries } from "@tau/tau-utils";
 
 function writeClaude(filePath: string, content: string): void {
 	fs.mkdirSync(path.dirname(filePath), { recursive: true });
@@ -17,7 +17,7 @@ describe("standalone CLAUDE.md discovery", () => {
 	let tempDir!: string;
 
 	beforeEach(() => {
-		tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "pi-claude-md-"));
+		tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "tau-claude-md-"));
 	});
 
 	afterEach(() => {
@@ -138,7 +138,7 @@ describe("claude-md final registration and precedence", () => {
 	let tempDir!: string;
 
 	beforeEach(() => {
-		tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "pi-claude-md-reg-"));
+		tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "tau-claude-md-reg-"));
 	});
 
 	afterEach(() => {

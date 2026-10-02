@@ -1,5 +1,5 @@
-import { authPolicyFor } from "@oh-my-pi/pi-catalog/compat/auth";
-import { $pickenv, logger } from "@oh-my-pi/pi-utils";
+import { authPolicyFor } from "@tau/tau-catalog/compat/auth";
+import { $pickenv, logger } from "@tau/tau-utils";
 import * as AIError from "../error";
 import { getEnvApiKey } from "../stream";
 import type { OAuthCredentials } from "../registry/oauth/types";

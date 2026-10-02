@@ -7,8 +7,8 @@
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import { isEnoent, logger } from "@oh-my-pi/pi-utils";
+import * as vcs from "@tau/tau-natives/vcs";
+import { isEnoent, logger } from "@tau/tau-utils";
 
 import {
 	isValidNameSegment,
@@ -203,10 +203,10 @@ export function parseMarketplaceCatalog(content: string, filePath: string): Mark
 // ── fetchMarketplace ──────────────────────────────────────────────────
 
 /**
- * Catalog paths tried in priority order: omp-namespaced override first, then
+ * Catalog paths tried in priority order: tau-namespaced override first, then
  * the Claude Code-compatible fallback so existing marketplaces keep loading.
  */
-const CATALOG_RELATIVE_PATHS: readonly string[] = [".omp-plugin/marketplace.json", ".claude-plugin/marketplace.json"];
+const CATALOG_RELATIVE_PATHS: readonly string[] = [".tau-plugin/marketplace.json", ".claude-plugin/marketplace.json"];
 
 async function readMarketplaceCatalog(
 	root: string,

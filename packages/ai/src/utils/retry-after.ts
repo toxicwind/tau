@@ -1,5 +1,5 @@
-import { retryResetTimezoneOffsetFor } from "@oh-my-pi/pi-catalog/compat/behavior";
-import { extractRetryHint } from "@oh-my-pi/pi-utils";
+import { retryResetTimezoneOffsetFor } from "@tau/tau-catalog/compat/behavior";
+import { extractRetryHint } from "@tau/tau-utils";
 
 export type HeadersLike = Headers | Record<string, string | undefined> | undefined | null;
 

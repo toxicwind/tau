@@ -1,12 +1,12 @@
 # Settings
 
-`omp` resolves settings from built-in defaults, a persistent global config file, optional project-local config, one-shot CLI overlays, and in-memory runtime overrides. Reach for project settings when one repository needs a different provider set, model role, tool policy, memory backend, or UI behavior than your global defaults — without touching your machine-wide configuration.
+`tau` resolves settings from built-in defaults, a persistent global config file, optional project-local config, one-shot CLI overlays, and in-memory runtime overrides. Reach for project settings when one repository needs a different provider set, model role, tool policy, memory backend, or UI behavior than your global defaults — without touching your machine-wide configuration.
 
-Settings are stored as plain YAML mappings. Every key, its type, default, and enum values come from the settings schema. `omp config` exposes the complete schema; the interactive `/settings` panel exposes the schema entries that have UI metadata.
+Settings are stored as plain YAML mappings. Every key, its type, default, and enum values come from the settings schema. `tau config` exposes the complete schema; the interactive `/settings` panel exposes the schema entries that have UI metadata.
 
 - For model/provider credentials, `.env` files, and the env-var table that resolves API keys, see [Providers](./providers.md).
 - For custom model definitions in `models.yml`, see [Models](./models.md).
-- For instruction files discovered into the agent context (`AGENTS.md`, `.omp/`, etc.), see [Context files](./context-files.md).
+- For instruction files discovered into the agent context (`AGENTS.md`, `.tau/`, etc.), see [Context files](./context-files.md).
 - For the full catalog of environment variables, see [Environment variables](./environment-variables.md).
 - For prompt words that activate specialized per-turn behavior, see [Magic keywords](./magic-keywords.md).
 
@@ -14,16 +14,16 @@ Settings are stored as plain YAML mappings. Every key, its type, default, and en
 
 | Scope             | Path                                                  | Read behavior                                                                                                                            | Write behavior                                                                                                                                                                   |
 | ----------------- | ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Global            | `~/.omp/agent/config.yml` (or existing `config.yaml`) | The main persistent settings file. `config.yml` is the canonical write target; an existing `config.yaml` is loaded and updated in place. | `/settings`, `omp config set`, and `omp config reset` write here.                                                                                                                |
-| Global legacy     | `~/.omp/agent/settings.json`                          | Migrated into `config.yml` once, only when neither main YAML filename exists.                                                            | Not written after migration; the original is renamed to `settings.json.bak`.                                                                                                     |
-| Project           | `<cwd>/.omp/config.yml` (plus `.omp/settings.json`)   | Loaded when the process working directory has a non-empty `.omp/`.                                                                       | Settings commands do not write arbitrary project keys. With `modelRoleStorage: project`, model-selector role assignments update only `modelRoles` here; edit other keys by hand. |
-| Project legacy    | `<cwd>/.omp/settings.json`                            | Still read; project `config.yml` is merged on top of it.                                                                                 | Not written by settings commands.                                                                                                                                                |
+| Global            | `~/.tau/agent/config.yml` (or existing `config.yaml`) | The main persistent settings file. `config.yml` is the canonical write target; an existing `config.yaml` is loaded and updated in place. | `/settings`, `tau config set`, and `tau config reset` write here.                                                                                                                |
+| Global legacy     | `~/.tau/agent/settings.json`                          | Migrated into `config.yml` once, only when neither main YAML filename exists.                                                            | Not written after migration; the original is renamed to `settings.json.bak`.                                                                                                     |
+| Project           | `<cwd>/.tau/config.yml` (plus `.tau/settings.json`)   | Loaded when the process working directory has a non-empty `.tau/`.                                                                       | Settings commands do not write arbitrary project keys. With `modelRoleStorage: project`, model-selector role assignments update only `modelRoles` here; edit other keys by hand. |
+| Project legacy    | `<cwd>/.tau/settings.json`                            | Still read; project `config.yml` is merged on top of it.                                                                                 | Not written by settings commands.                                                                                                                                                |
 | CLI overlay       | Any file passed with `--config <file>`                | Loaded after global and project settings, for that one process. Repeatable.                                                              | Never persisted.                                                                                                                                                                 |
 | Runtime overrides | In-memory only                                        | Set by dedicated CLI flags (`--model`, `--approval-mode`, …) and feature env vars.                                                       | Never persisted.                                                                                                                                                                 |
 
-`PI_CODING_AGENT_DIR` relocates the `~/.omp/agent` base directory. When it is set, the global `config.yml`, the auth store (`agent.db`), and everything else under the agent directory move with it. Use `omp config path` to print the active agent directory.
+`PI_CODING_AGENT_DIR` relocates the `~/.tau/agent` base directory. When it is set, the global `config.yml`, the auth store (`agent.db`), and everything else under the agent directory move with it. Use `tau config path` to print the active agent directory.
 
-Native project settings are intentionally scoped to the process working directory's `.omp/` folder — settings discovery does **not** walk ancestor directories looking for the nearest `.omp/`. Other discovery providers (Claude, Codex, Gemini, Cursor, OpenCode) can also contribute project-level settings from their own files; those are read-only from `omp` settings commands and can be turned off by provider id (see [Provider and source disabling](#provider-and-source-disabling)).
+Native project settings are intentionally scoped to the process working directory's `.tau/` folder — settings discovery does **not** walk ancestor directories looking for the nearest `.tau/`. Other discovery providers (Claude, Codex, Gemini, Cursor, OpenCode) can also contribute project-level settings from their own files; those are read-only from `tau` settings commands and can be turned off by provider id (see [Provider and source disabling](#provider-and-source-disabling)).
 
 ## Config file formats
 
@@ -31,27 +31,27 @@ The canonical global file is YAML at `config.yml`; `config.yaml` is accepted as 
 
 - When a `.yml`/`.yaml` path is requested and only a sibling `.json` exists, it is migrated to YAML automatically (idempotent, once per process).
 - `.json` and `.jsonc` configs are read as-is, with no migration.
-- A settings YAML file whose top level is not a mapping is invalid. On writable startup, `omp` moves an invalid persistent settings file to a uniquely named `.broken-*` backup and exits with the original error and backup path. A `--config` overlay with a bare array/scalar is also a hard error, but is not moved.
+- A settings YAML file whose top level is not a mapping is invalid. On writable startup, `tau` moves an invalid persistent settings file to a uniquely named `.broken-*` backup and exits with the original error and backup path. A `--config` overlay with a bare array/scalar is also a hard error, but is not moved.
 
 ## Reading and writing settings
 
-Use the interactive `/settings` panel inside a session, or the `omp config` command from a shell. Both read merged effective settings. Ordinary persistent writes land in the **global** file; model-selector role changes are the exception when `modelRoleStorage: project` (see [Where writes go](#where-writes-go)).
+Use the interactive `/settings` panel inside a session, or the `tau config` command from a shell. Both read merged effective settings. Ordinary persistent writes land in the **global** file; model-selector role changes are the exception when `modelRoleStorage: project` (see [Where writes go](#where-writes-go)).
 
 ```bash
-omp config list                 # all settings with current effective values
-omp config list --json          # same, machine-readable
-omp config get theme.dark       # one value
-omp config get theme.dark --json
-omp config set compaction.enabled false
-omp config set defaultThinkingLevel medium
-omp config reset steeringMode   # restore a key to its schema default
-omp config path                 # print the active agent directory
+tau config list                 # all settings with current effective values
+tau config list --json          # same, machine-readable
+tau config get theme.dark       # one value
+tau config get theme.dark --json
+tau config set compaction.enabled false
+tau config set defaultThinkingLevel medium
+tau config reset steeringMode   # restore a key to its schema default
+tau config path                 # print the active agent directory
 ```
 
 For users who want the full first-run animation on normal launches, set `startup.showSplash`:
 
 ```bash
-omp config set startup.showSplash true
+tau config set startup.showSplash true
 ```
 
 This only controls the startup splash animation. It does not rerun setup or change setup state, and `startup.quiet: true` still suppresses all startup chrome including the splash.
@@ -60,18 +60,18 @@ This only controls the startup splash animation. It does not rerun setup or chan
 
 | Command                        | Effect                                                                                                                                                                                                                                                                                            |
 | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `omp config list`              | Print every setting grouped by tab, with its current value and type. `--json` emits an object keyed by setting path with `{ value, type, description }`. Configured credential fields are masked as `********` in human output; in JSON their `value` is omitted and `redacted: true` is emitted. |
-| `omp config get <key>`         | Print the effective value of one key. Unknown keys exit non-zero. `--json` emits `{ key, value, type, description }`. This is an explicit single-key request, so credential values are returned unmasked.                                                                                         |
-| `omp config set <key> <value>` | Parse `<value>` against the key's schema type and write it to the global main YAML file.                                                                                                                                                                                                          |
-| `omp config reset <key>`       | Write the key's schema **default** back to the global config (this persists the default, it does not delete the key).                                                                                                                                                                             |
-| `omp config path`              | Print the active agent directory (honors `PI_CODING_AGENT_DIR`).                                                                                                                                                                                                                                  |
-| `omp config init-xdg`          | On Linux and macOS, create the `omp` directories under the effective XDG data, state, and cache homes. It does not move existing files or set the XDG environment variables. Other platforms exit non-zero.                                                                                       |
+| `tau config list`              | Print every setting grouped by tab, with its current value and type. `--json` emits an object keyed by setting path with `{ value, type, description }`. Configured credential fields are masked as `********` in human output; in JSON their `value` is omitted and `redacted: true` is emitted. |
+| `tau config get <key>`         | Print the effective value of one key. Unknown keys exit non-zero. `--json` emits `{ key, value, type, description }`. This is an explicit single-key request, so credential values are returned unmasked.                                                                                         |
+| `tau config set <key> <value>` | Parse `<value>` against the key's schema type and write it to the global main YAML file.                                                                                                                                                                                                          |
+| `tau config reset <key>`       | Write the key's schema **default** back to the global config (this persists the default, it does not delete the key).                                                                                                                                                                             |
+| `tau config path`              | Print the active agent directory (honors `PI_CODING_AGENT_DIR`).                                                                                                                                                                                                                                  |
+| `tau config init-xdg`          | On Linux and macOS, create the `tau` directories under the effective XDG data, state, and cache homes. It does not move existing files or set the XDG environment variables. Other platforms exit non-zero.                                                                                       |
 
-`omp config` with no subcommand, `--help`, or `-h` lists settings. The `--json` flag is accepted by `list`, `get`, `set`, and `reset`.
+`tau config` with no subcommand, `--help`, or `-h` lists settings. The `--json` flag is accepted by `list`, `get`, `set`, and `reset`.
 
 ### Value parsing
 
-`omp config set` parses the value string according to the target key's schema type. The string is trimmed first.
+`tau config set` parses the value string according to the target key's schema type. The string is trimmed first.
 
 | Type    | Accepted input                                      | Notes                                                             |
 | ------- | --------------------------------------------------- | ----------------------------------------------------------------- |
@@ -86,7 +86,7 @@ Keys must match a real schema path exactly. There is no shorthand — set `theme
 
 ### Where writes go
 
-`omp config set`, `omp config reset`, `/settings`, and ordinary runtime settings changes write the global main YAML file under the active agent directory. They do not write arbitrary keys to `<cwd>/.omp/config.yml`. The one supported project write path is a model-selector role assignment when `modelRoleStorage` is `project`; it updates only that role under `<cwd>/.omp/config.yml`, and missing project roles continue to fall back to global roles. To create any other project-local override, edit the project file directly (see [Project-local config](#project-local-config)). Saves are debounced and re-read the file under a lock, so external edits made while a session is open are preserved.
+`tau config set`, `tau config reset`, `/settings`, and ordinary runtime settings changes write the global main YAML file under the active agent directory. They do not write arbitrary keys to `<cwd>/.tau/config.yml`. The one supported project write path is a model-selector role assignment when `modelRoleStorage` is `project`; it updates only that role under `<cwd>/.tau/config.yml`, and missing project roles continue to fall back to global roles. To create any other project-local override, edit the project file directly (see [Project-local config](#project-local-config)). Saves are debounced and re-read the file under a lock, so external edits made while a session is open are preserved.
 
 ## Precedence
 
@@ -100,8 +100,8 @@ From highest to lowest:
 
 1. **Runtime overrides** — dedicated CLI flags and feature env vars applied in memory for the current process: `--model`, `--smol`, `--slow`, `--plan`, `--approval-mode`, `--auto-approve`/`--yolo`, `--hide-thinking`, `--advisor`, `--no-pty`, `--api-key`, and protocol-mode defaults. Never persisted.
 2. **CLI config overlays** — each `--config <file>`; later overlay files override earlier ones.
-3. **Project settings** — `<cwd>/.omp/settings.json` then `<cwd>/.omp/config.yml` (and contributions from other discovery providers at project level).
-4. **Global settings** — `~/.omp/agent/config.yml`.
+3. **Project settings** — `<cwd>/.tau/settings.json` then `<cwd>/.tau/config.yml` (and contributions from other discovery providers at project level).
+4. **Global settings** — `~/.tau/agent/config.yml`.
 5. **Built-in defaults** — from the settings schema.
 
 A key that is unset at every layer resolves to its schema default at read time.
@@ -120,8 +120,8 @@ Environment variables are **not** a single settings layer. Each is read by the f
 | `PI_JS`                 | `eval.js`                   | `PI_JS=0` disables the JavaScript eval backend.                                                   |
 | `PI_TINY_DEVICE`        | `providers.tinyModelDevice` | ONNX execution provider or `mlx` backend for local tiny models.                                   |
 | `PI_TINY_DTYPE`         | `providers.tinyModelDtype`  | ONNX precision for local tiny models.                                                             |
-| `OMP_AUTH_BROKER_URL`   | `auth.broker.url`           | Env value takes precedence over config.                                                           |
-| `OMP_AUTH_BROKER_TOKEN` | `auth.broker.token`         | Env value takes precedence over config.                                                           |
+| `TAU_AUTH_BROKER_URL`   | `auth.broker.url`           | Env value takes precedence over config.                                                           |
+| `TAU_AUTH_BROKER_TOKEN` | `auth.broker.token`         | Env value takes precedence over config.                                                           |
 | `PI_CODING_AGENT_DIR`   | (relocates agent dir)       | Moves `config.yml`, `agent.db`, and the whole agent base.                                         |
 | `PI_CONFIG_FILES`       | CLI config overlays         | Platform path-list (`:` on Unix, `;` on Windows); files load in order before `--config` overlays. |
 
@@ -167,7 +167,7 @@ bash:
       approval: allow
 ```
 
-With this configuration, `cmp tmp/result.json artifacts/result.json && rm -f tmp/result.json` can run without a prompt. OMP resolves the ordered rules independently for each original segment: `rm` is explicitly allowed, while the unmatched `cmp` segment inherits the normal standalone bash policy. When any segment is unmatched, the command retains the `exec` tier with no explicit policy, so the generic resolver applies `tools.approval.bash` and then the active approval mode. An unmatched segment therefore prompts only if that tool-wide policy or mode requires it.
+With this configuration, `cmp tmp/result.json artifacts/result.json && rm -f tmp/result.json` can run without a prompt. TAU resolves the ordered rules independently for each original segment: `rm` is explicitly allowed, while the unmatched `cmp` segment inherits the normal standalone bash policy. When any segment is unmatched, the command retains the `exec` tier with no explicit policy, so the generic resolver applies `tools.approval.bash` and then the active approval mode. An unmatched segment therefore prompts only if that tool-wide policy or mode requires it.
 
 Explicit restrictions are combined conservatively across the chain: a resolved `deny` wins, otherwise a resolved `prompt` wins. A `deny` or `prompt` rule that matches the complete chain but no individual segment remains a whole-chain restriction (for example, `cmp * && rm *`). All matching whole-chain restrictions are considered: a later whole-chain `deny` overrides an earlier whole-chain `prompt`. Otherwise, segment rules retain first-match ordering: an earlier `git status` allow is not overridden by a later `git *` deny when evaluating `git status && git status`.
 
@@ -199,7 +199,7 @@ The named replacement tool must be available in the current session or the inter
 ### Worked example: global vs. project
 
 ```yaml
-# ~/.omp/agent/config.yml
+# ~/.tau/agent/config.yml
 tools:
   approvalMode: write
   approval:
@@ -210,7 +210,7 @@ disabledProviders:
   - openai
   - google
 
-# <repo>/.omp/config.yml
+# <repo>/.tau/config.yml
 tools:
   approval:
     bash: allow
@@ -234,10 +234,10 @@ Array replacement is the most common surprise: the project's `disabledProviders`
 
 ## Project-local config
 
-Create `<repo>/.omp/config.yml` when a repository needs its own settings:
+Create `<repo>/.tau/config.yml` when a repository needs its own settings:
 
 ```yaml
-# <repo>/.omp/config.yml
+# <repo>/.tau/config.yml
 modelRoles:
   default: anthropic/claude-sonnet-4-5
   smol: openai/gpt-4.1-mini
@@ -263,8 +263,8 @@ Keep secrets out of committed project config unless your repository policy allow
 Use `--config` for a temporary layer that should not persist:
 
 ```bash
-omp --config ./local/ci-settings.yml "check this failure"
-omp --config ./base.yml --config ./experiment.yml "try this model"
+tau --config ./local/ci-settings.yml "check this failure"
+tau --config ./base.yml --config ./experiment.yml "try this model"
 ```
 
 `--config` is accepted by the default launch command, `acp`, and `models`.
@@ -307,7 +307,7 @@ Only string values are kept; malformed scoped entries are ignored. Path scoping 
 
 ## Provider and source disabling
 
-`enabledProviders` opts foreign user-level configuration sources into discovery. Its default is empty, so user roots from Cursor, Codex, Claude, Claude marketplace plugins, Gemini, OpenCode, Windsurf, and GitHub do not load until their provider id is listed (or `*`/`all` is listed). Project roots remain enabled. Native OMP roots—including marketplace plugins registered under `~/.omp/plugins`—are not foreign and do not require an entry.
+`enabledProviders` opts foreign user-level configuration sources into discovery. Its default is empty, so user roots from Cursor, Codex, Claude, Claude marketplace plugins, Gemini, OpenCode, Windsurf, and GitHub do not load until their provider id is listed (or `*`/`all` is listed). Project roots remain enabled. Native TAU roots—including marketplace plugins registered under `~/.tau/plugins`—are not foreign and do not require an entry.
 
 `disabledProviders` is a single shared id namespace that gates two different subsystems, before any credential check:
 
@@ -321,12 +321,12 @@ Most provider-control use cases list model provider ids. Disabling the `claude` 
 Because arrays replace rather than append, a project that sets `disabledProviders` must list the complete desired set:
 
 ```yaml
-# ~/.omp/agent/config.yml
+# ~/.tau/agent/config.yml
 disabledProviders:
   - anthropic
   - openai
 
-# <repo>/.omp/config.yml — inside this repo ONLY groq is disabled
+# <repo>/.tau/config.yml — inside this repo ONLY groq is disabled
 disabledProviders:
   - groq
 ```
@@ -335,7 +335,7 @@ The default is an empty array (nothing disabled). For the two subsystems' provid
 
 ## Settings catalog
 
-The catalog below highlights common settings; it is not the complete schema. `omp config list` is the authoritative reference for every key, current value, type, and description. Defaults and enum values shown here come from the schema. Settings that accept an env or flag override are noted; those overrides are process-local and not persisted.
+The catalog below highlights common settings; it is not the complete schema. `tau config list` is the authoritative reference for every key, current value, type, and description. Defaults and enum values shown here come from the schema. Settings that accept an env or flag override are noted; those overrides are process-local and not persisted.
 
 ### Models
 
@@ -394,11 +394,11 @@ enabledModels:
 
 Built-in chat roles are `default`, `smol`, `slow`, `vision`, `plan`, `commit`, `tiny`, `memory`, `task`, and `advisor`. The `tiny` and `memory` roles accept both `tiny` catalog models and ordinary chat models. Built-in model-kind roles are `image`, `web`, `speech`, `dictation`, and `judge`; they select image, search/grounded-chat, TTS, STT, and judgment runners respectively. `judge` also accepts tiny and chat models, which is why aliases such as `@tiny` are valid fallbacks. Catalog kinds are `chat`, `tiny`, `image`, `tts`, `stt`, `search`, and `judge`; a custom model with no `kind` remains a chat model.
 
-Open `/model` and enter the **Roles** view to assign roles and edit their fallback rows. Chat roles and model-kind roles appear in separate capability sections, and the picker filters assignments to models accepted by the selected role. List the same catalog directly with `omp models --kind chat`, `omp models --kind tiny`, `omp models --kind image`, `omp models --kind tts`, `omp models --kind stt`, `omp models --kind search`, or `omp models --kind judge`; use `--kind all` for everything.
+Open `/model` and enter the **Roles** view to assign roles and edit their fallback rows. Chat roles and model-kind roles appear in separate capability sections, and the picker filters assignments to models accepted by the selected role. List the same catalog directly with `tau models --kind chat`, `tau models --kind tiny`, `tau models --kind image`, `tau models --kind tts`, `tau models --kind stt`, `tau models --kind search`, or `tau models --kind judge`; use `--kind all` for everything.
 
 For a role, `modelRoles.<role>` is the primary and `retry.fallbackChains.<role>` is the fallback list. For model-kind roles, an unset chain uses that role's built-in priority list; `[]` explicitly means **no fallbacks**. The `retry.fallbackChains.default` chain is for chat-role/session fallback and never replaces a model-kind role's own chain. Explicit search entries such as `web/parallel`, `web/perplexity`, `web/exa`, and `web/firecrawl` are attempted as configured candidates, including their supported anonymous modes; missing required credentials still produce an availability error for that explicit entry.
 
-For one-shot searches, `omp search`, `omp q`, and `omp web-search` accept a catalog selector through `--model`, for example `omp web-search --model web/duckduckgo "current Bun release"`. The in-session `web_search` tool has no per-call model override: it follows `modelRoles.web` and `retry.fallbackChains.web`.
+For one-shot searches, `tau search`, `tau q`, and `tau web-search` accept a catalog selector through `--model`, for example `tau web-search --model web/duckduckgo "current Bun release"`. The in-session `web_search` tool has no per-call model override: it follows `modelRoles.web` and `retry.fallbackChains.web`.
 
 Image selection likewise uses full catalog model selectors, not provider names: set `modelRoles.image`, its fallback chain, or the `generate_image` request's optional `model`. OpenRouter image models run through OpenRouter's native images API.
 
@@ -407,7 +407,7 @@ Existing configs are migrated automatically when loaded. Retired backend selecto
 | Key                    | Type    | Default                     | Notes                                                                                                                                                                                                                                                                                                                                                                                                            |
 | ---------------------- | ------- | --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `modelRoles`           | record  | `{}`                        | Map of role name to primary model selector. Built-in roles are listed above; custom chat roles can be introduced through assignments or `modelTags`. Per-role env/flags exist only for `--model`/`--smol`/`--slow`/`--plan`.                                                                                                                                                                                       |
-| `modelRoleStorage`     | enum    | `global`                    | `global` saves model-selector role assignments in the active global/profile config; `project` saves only those role assignments in `<cwd>/.omp/config.yml`. Missing project roles fall back to global roles.                                                                                                                                                                                                     |
+| `modelRoleStorage`     | enum    | `global`                    | `global` saves model-selector role assignments in the active global/profile config; `project` saves only those role assignments in `<cwd>/.tau/config.yml`. Missing project roles fall back to global roles.                                                                                                                                                                                                     |
 | `modelTags`            | record  | `{}`                        | Custom role/tag metadata; can introduce additional chat roles.                                                                                                                                                                                                                                                                                                                                                   |
 | `modelProviderOrder`   | array   | `[]`                        | Preferred provider order when a model id is ambiguous.                                                                                                                                                                                                                                                                                                                                                           |
 | `cycleOrder`           | array   | `["smol","default","slow"]` | Chat roles cycled by the model switcher.                                                                                                                                                                                                                                                                                                                                                                         |
@@ -460,7 +460,7 @@ thinkingBudgets:
 
 ### Sampling
 
-A value of `-1` means "use the provider/model default" — `omp` does not send that parameter.
+A value of `-1` means "use the provider/model default" — `tau` does not send that parameter.
 
 | Key                 | Type   | Default   | Notes                                                                                                                                                                                                                                                                          |
 | ------------------- | ------ | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -554,7 +554,7 @@ tools:
 | ------------------------------ | ------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `tools.format`                 | enum    | `auto`  | Tool wire format: `auto`, `native`, `glm`, `hermes`, `kimi`, `xml`, `anthropic`, `deepseek`, `harmony`, `qwen3`, `gemini`, `gemma`, or `minimax`. `native` always uses provider-native tool calls. `auto` also uses native calls unless the selected model explicitly has `supportsTools: false`; then it selects the model-family owned dialect, falling back to GLM when no specific family dialect is known. Other values force that owned in-band dialect. `xml` is the [generic XML format](./toolconv/xml.md); `minimax` is the [MiniMax format](./toolconv/minimax.md). Applies on session start. See [GLM](./toolconv/glm-4.5.md), [Qwen3/Hermes](./toolconv/qwen3.md), [Kimi](./toolconv/kimi-k2.md), [Anthropic](./toolconv/anthropic.md), [DeepSeek](./toolconv/deepseek.md), [Harmony](./toolconv/harmony.md), [Gemini](./toolconv/gemini.md), and [Gemma](./toolconv/gemma.md). |
 | `tools.approvalMode`           | enum    | `yolo`  | `always-ask` (auto-approve read-only), `write` (auto-approve read + workspace-write), `yolo` (auto-approve all tiers). `--approval-mode` and `--auto-approve`/`--yolo` override per run.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| `tools.approval`               | record  | `{}`    | Per-tool policy keyed by tool name; each value is `allow`, `deny`, or `prompt`. e.g. `omp config set tools.approval '{"bash":"prompt"}'`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| `tools.approval`               | record  | `{}`    | Per-tool policy keyed by tool name; each value is `allow`, `deny`, or `prompt`. e.g. `tau config set tools.approval '{"bash":"prompt"}'`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | `tools.maxTimeout`             | number  | `0`     | Max tool runtime in seconds; `0` = no cap.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | `tools.intentTracing`          | boolean | `true`  | Record per-call intent strings.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | `tools.outputMaxColumns`       | number  | `768`   | Per-line byte cap for streaming output; `0` disables.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
@@ -628,7 +628,7 @@ lsp:
 | `python.interpreter`              | string  | `""`      | Path to a Python interpreter; empty = auto-detect.                                                                                                          |
 | `lsp.enabled`                     | boolean | `true`    | Language-server integration. `--no-lsp` disables for the run.                                                                                               |
 | `lsp.lazy`                        | boolean | `true`    | Start servers on demand.                                                                                                                                    |
-| `lsp.shared`                      | boolean | `true`    | Share one language server per project across local `omp` processes through the daemon broker; falls back to private servers when the broker is unavailable. |
+| `lsp.shared`                      | boolean | `true`    | Share one language server per project across local `tau` processes through the daemon broker; falls back to private servers when the broker is unavailable. |
 | `lsp.diagnosticsOnWrite`          | boolean | `true`    | Run diagnostics after a write.                                                                                                                              |
 | `lsp.diagnosticsOnEdit`           | boolean | `false`   | Run diagnostics after an edit.                                                                                                                              |
 | `lsp.formatOnWrite`               | boolean | `false`   | Format files on write.                                                                                                                                      |
@@ -693,7 +693,7 @@ compaction:
   thresholdPercent: -1 # -1 = default reserve-based behavior
   thresholdTokens: -1 # fixed token limit when > 0
 memory:
-  backend: off # off, local, hindsight, mnemopi
+  backend: off # off, local, hindsight, mnemotau
 ```
 
 | Key                           | Type    | Default                                  | Notes                                                                                                                                                                                                                                     |
@@ -709,12 +709,12 @@ memory:
 | `compaction.reserveTokens`    | number  | _(unset)_                                | Absolute reserve floor. When unset, the effective reserve is the larger of `16384` and 15% of the context window; if that default would leave no practical small-window budget, it falls back to the 15% reserve.                         |
 | `compaction.keepRecentTokens` | number  | `20000`                                  | Recent tokens always preserved.                                                                                                                                                                                                           |
 | `compaction.autoContinue`     | boolean | `true`                                   | Continue automatically after compaction.                                                                                                                                                                                                  |
-| `memory.backend`              | enum    | `off`                                    | `off`, `local`, `hindsight`, `mnemopi`. Each backend has its own `hindsight.*` / `mnemopi.*` / `memories.*` tuning keys.                                                                                                                  |
-| `autolearn.enabled`           | boolean | `false`       | Experimental: after the agent stops, nudge it to capture lessons to memory and create/enhance isolated managed skills under `~/.omp/agent/managed-skills`. Enables the `manage_skill` tool (and `learn` when a memory backend is active). |
+| `memory.backend`              | enum    | `off`                                    | `off`, `local`, `hindsight`, `mnemotau`. Each backend has its own `hindsight.*` / `mnemotau.*` / `memories.*` tuning keys.                                                                                                                  |
+| `autolearn.enabled`           | boolean | `false`       | Experimental: after the agent stops, nudge it to capture lessons to memory and create/enhance isolated managed skills under `~/.tau/agent/managed-skills`. Enables the `manage_skill` tool (and `learn` when a memory backend is active). |
 | `autolearn.autoContinue`      | boolean | `false`       | When `autolearn.enabled`, auto-run one capture turn at stop (uses extra tokens). Off = a passive reminder rides your next turn.                                                                                                           |
 | `autolearn.minToolCalls`      | number  | `5`           | Only nudge after a turn that used at least this many tools.                                                                                                                                                                               |
 
-`compaction` has additional tuning keys (idle compaction, supersede/drop heuristics) visible in `omp config list`. See [Compaction](./compaction.md) for the full strategy reference.
+`compaction` has additional tuning keys (idle compaction, supersede/drop heuristics) visible in `tau config list`. See [Compaction](./compaction.md) for the full strategy reference.
 
 ### Appearance and terminal
 
@@ -824,7 +824,7 @@ searxng:
 | `providers.webSearchTimeoutSeconds` | number  | `60`      | Per-candidate web-search transport timeout. Values above `300` are capped at five minutes. This is not a whole-chain deadline; the `web` role advances to its next candidate after a timeout.                                                                                                                                                                                                                                                                                                         |
 | `providers.fetch`                   | enum    | `auto`    | `auto`, `native`, `trafilatura`, `lynx`, `parallel`, `firecrawl`, `jina`.                                                                                                                                                                                                                                                                                                                                                              |
 | `providers.tinyModelDevice`         | enum    | `default` | ONNX execution provider, or `mlx` (Apple silicon, via mlx-lm), for local tiny models. Overridden by `PI_TINY_DEVICE`.                                                                                                                                                                                                                                                                                                                                                         |
-| `providers.maxInFlightRequests`     | record  | `{}`      | Positive per-provider concurrency limits for LLM HTTP requests, shared across local `omp` processes using the same config root. Omitted providers are unlimited. `omp config set` rejects non-positive or non-numeric values.                                                                                                                                                                                                          |
+| `providers.maxInFlightRequests`     | record  | `{}`      | Positive per-provider concurrency limits for LLM HTTP requests, shared across local `tau` processes using the same config root. Omitted providers are unlimited. `tau config set` rejects non-positive or non-numeric values.                                                                                                                                                                                                          |
 | `providers.tinyModelDtype`          | enum    | `default` | ONNX precision for local tiny models. Overridden by `PI_TINY_DTYPE`.                                                                                                                                                                                                                                                                                                                                                                   |
 | `tts.localVoice`                    | enum    | `af_heart` | Voice used by the local Kokoro TTS runner. Available local voices remain configurable independently of `modelRoles.speech`.                                                                                                                                                                                                                                                                                                           |
 | `speech.voice`                      | enum    | `af_heart` | Kokoro voice used when assistant-output vocalization is enabled.                                                                                                                                                                                                                                                                                                                                                                     |
@@ -840,15 +840,15 @@ searxng:
 | `exa.searchDelayMs`                 | number  | `1000`    | Minimum delay between Exa web search requests in milliseconds; set `0` to disable pacing.                                                                                                                                                                                                                                                                                                                                               |
 | `searxng.endpoint`                  | string  | _(unset)_ | SearXNG instance URL.                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | `searxng.token`                     | string  | _(unset)_ | SearXNG token; also `searxng.basicUsername`/`searxng.basicPassword`/`searxng.categories`/`searxng.language`/`searxng.engines` (comma-separated engine names or bang shortcuts, e.g. `ddg, br, startpage`, sent as the API's `engines=` parameter)/`searxng.safesearch`.                                                                                                                                                                                                                                                                                                 |
-| `auth.broker.url`                   | string  | _(unset)_ | Auth-broker URL. Overridden by `OMP_AUTH_BROKER_URL`.                                                                                                                                                                                                                                                                                                                                                                                  |
-| `auth.broker.token`                 | string  | _(unset)_ | Auth-broker token. Overridden by `OMP_AUTH_BROKER_TOKEN`.                                                                                                                                                                                                                                                                                                                                                                              |
+| `auth.broker.url`                   | string  | _(unset)_ | Auth-broker URL. Overridden by `TAU_AUTH_BROKER_URL`.                                                                                                                                                                                                                                                                                                                                                                                  |
+| `auth.broker.token`                 | string  | _(unset)_ | Auth-broker token. Overridden by `TAU_AUTH_BROKER_TOKEN`.                                                                                                                                                                                                                                                                                                                                                                              |
 | `secrets.enabled`                   | boolean | `false`   | Enable configured secret obfuscation and built-in credential-shaped token redaction before provider requests. See [Secret obfuscation](./secrets.md).                                                                                                                                                                                                                                                                                  |
 
 Provider credentials and custom model definitions are configured separately — see [Providers](./providers.md) and [Models](./models.md).
 
 ### Other groups
 
-Every schema path not individually tabulated in this catalog is explicitly deferred to `omp config list`. Additional groups include:
+Every schema path not individually tabulated in this catalog is explicitly deferred to `tau config list`. Additional groups include:
 
 - Agent behavior and safety: `ask.*`, `eval.*`, `features.*`, `goal.*`, `loop.*`, `model.loopGuard.*`, `model.toolCallLoopGuard.*`, `prewalk.*`, `recap.*`, `tools.*`, and `vault.*`.
 - Execution and content: `commit.*`, `completion.*`, `edit.*`, `error.*`, `extensionHandlers.*`, `generate_image.*`, `git.*`, `images.*`, `live.*`, `paste.*`, `power.*`, `read.*`, `shellMinimizer.*`, `speech.*`, `terminal.*`, and `title.*`.
@@ -859,13 +859,13 @@ These settings follow the same schema-defined type and default rules shown above
 
 ## Legacy migration
 
-`omp` migrates older config shapes automatically. None of these require action; they are listed so you know what changes you may see in `config.yml`.
+`tau` migrates older config shapes automatically. None of these require action; they are listed so you know what changes you may see in `config.yml`.
 
 ### Startup migration to `config.yml`
 
-When neither `~/.omp/agent/config.yml` nor the compatible `config.yaml` exists, startup builds canonical `config.yml` once from legacy sources, then writes the result:
+When neither `~/.tau/agent/config.yml` nor the compatible `config.yaml` exists, startup builds canonical `config.yml` once from legacy sources, then writes the result:
 
-1. `~/.omp/agent/settings.json` (renamed to `settings.json.bak` after a successful parse).
+1. `~/.tau/agent/settings.json` (renamed to `settings.json.bak` after a successful parse).
 2. Settings persisted in `agent.db`.
 
 After either main YAML file exists, these legacy sources are no longer consulted. The generic config loader also performs `.json` -> `.yml` migration for other config files when only the `.json` form is present.
@@ -890,10 +890,10 @@ Applied whenever raw settings are loaded (global, project, overlays, and runtime
 
 ### A project setting is not taking effect
 
-- Start `omp` from the directory that contains `.omp/config.yml`. Settings discovery only checks the current working directory's `.omp/`, not ancestor directories.
-- Ensure `.omp/` is non-empty; empty config directories are ignored.
+- Start `tau` from the directory that contains `.tau/config.yml`. Settings discovery only checks the current working directory's `.tau/`, not ancestor directories.
+- Ensure `.tau/` is non-empty; empty config directories are ignored.
 - Confirm the file is valid YAML and its top level is a mapping.
-- Run `omp config get <key>` from that directory to see the effective value.
+- Run `tau config get <key>` from that directory to see the effective value.
 - Remember that `--config` overlays and runtime flags override project config.
 
 ### A global array disappeared in a project
@@ -907,13 +907,13 @@ Arrays replace; they do not append. If a project sets `disabledProviders`, `enab
 - Credentials can still come from environment variables, `.env`, OAuth, stored auth, or `models.yml`; disabling a provider blocks selection regardless, but verify you edited the right layer. See [Providers](./providers.md).
 - Restart the session if the model list was already initialized.
 
-### `omp config set` changed the wrong file
+### `tau config set` changed the wrong file
 
-`omp config set` and `omp config reset` always write the global `config.yml` under the active agent directory. Run `omp config path` to print it. For project-local settings, edit `<repo>/.omp/config.yml` directly.
+`tau config set` and `tau config reset` always write the global `config.yml` under the active agent directory. Run `tau config path` to print it. For project-local settings, edit `<repo>/.tau/config.yml` directly.
 
-### `omp config reset` did not remove my key
+### `tau config reset` did not remove my key
 
-`reset` writes the schema **default** value into the global config — it persists the default rather than deleting the key. To stop overriding a project value from global config, delete the key from `~/.omp/agent/config.yml` by hand.
+`reset` writes the schema **default** value into the global config — it persists the default rather than deleting the key. To stop overriding a project value from global config, delete the key from `~/.tau/agent/config.yml` by hand.
 
 ### A `--config` overlay fails at startup
 
@@ -923,6 +923,6 @@ Arrays replace; they do not append. If a project sets `disabledProviders`, `enab
 
 Some settings (model roles, eval backends, tiny-model device/precision, auth broker, PTY) are overridable by env vars or CLI flags for per-machine convenience, and those take precedence over `config.yml`. Unset the variable or drop the flag to let the persisted value win. See [Environment overrides](#environment-overrides) and [Environment variables](./environment-variables.md).
 
-### `omp config set <key>` says "Unknown setting"
+### `tau config set <key>` says "Unknown setting"
 
-Keys must match a schema path exactly, with no shorthand. Use `theme.dark`, not `theme`. Run `omp config list` to see every valid key.
+Keys must match a schema path exactly, with no shorthand. Use `theme.dark`, not `theme`. Run `tau config list` to see every valid key.

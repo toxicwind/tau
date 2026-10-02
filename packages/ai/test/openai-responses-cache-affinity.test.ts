@@ -2,19 +2,19 @@ import { afterEach, describe, expect, it, vi } from "bun:test";
 import {
 	type AzureOpenAIResponsesOptions,
 	streamAzureOpenAIResponses,
-} from "@oh-my-pi/pi-ai/providers/azure-openai-responses";
+} from "@tau/tau-ai/providers/azure-openai-responses";
 import {
 	buildParams,
 	type OpenAIResponsesOptions,
 	streamOpenAIResponses,
-} from "@oh-my-pi/pi-ai/providers/openai-responses";
-import { stream as streamModel, streamSimple } from "@oh-my-pi/pi-ai/stream";
-import type { Context, FetchImpl, Model, ProviderSessionState, SimpleStreamOptions } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { resolveModelPolicy } from "@oh-my-pi/pi-catalog/compat/resolve";
-import { classifyModel } from "@oh-my-pi/pi-catalog/compat/taxonomy";
+} from "@tau/tau-ai/providers/openai-responses";
+import { stream as streamModel, streamSimple } from "@tau/tau-ai/stream";
+import type { Context, FetchImpl, Model, ProviderSessionState, SimpleStreamOptions } from "@tau/tau-ai/types";
+import { buildModel } from "@tau/tau-catalog/build";
+import { resolveModelPolicy } from "@tau/tau-catalog/compat/resolve";
+import { classifyModel } from "@tau/tau-catalog/compat/taxonomy";
 
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+import { getBundledModel } from "@tau/tau-catalog/models";
 import { withEnv } from "./helpers";
 
 interface ResponsesCompatTestSpec {
@@ -540,13 +540,13 @@ describe("OpenAI Responses explicit prompt cache policy", () => {
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
-	it("defers explicit policy validation to the gateway-resolved model for pi-native transport", async () => {
+	it("defers explicit policy validation to the gateway-resolved model for tau-native transport", async () => {
 		const sidecarModel: Model<"openai-responses"> = {
 			...openAI56ResponsesModel,
 			id: "gateway-model",
 			identity: classifyModel("openai", "gateway-model"),
 			baseUrl: "http://gateway.internal",
-			transport: "pi-native",
+			transport: "tau-native",
 			compat: buildOpenAIResponsesCompat({
 				id: "gpt-5.5",
 				name: "Gateway model",

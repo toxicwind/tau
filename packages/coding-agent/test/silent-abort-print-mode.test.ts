@@ -6,15 +6,15 @@
  * (and exit with code 1). This test verifies the guard skips silent-abort.
  */
 import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from "bun:test";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { runPrintMode } from "@oh-my-pi/pi-coding-agent/modes/print-mode";
+import type { AssistantMessage } from "@tau/tau-ai";
+import * as AIError from "@tau/tau-ai/error";
+import { runPrintMode } from "@tau/tau-coding-agent/modes/print-mode";
 import {
 	type AgentSession,
 	type AgentSessionDisposeOptions,
 	SHUTDOWN_CONSOLIDATE_BUDGET_MS,
-} from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { SILENT_ABORT_MARKER } from "@oh-my-pi/pi-coding-agent/session/messages";
+} from "@tau/tau-coding-agent/session/agent-session";
+import { SILENT_ABORT_MARKER } from "@tau/tau-coding-agent/session/messages";
 
 function makeAssistantMessage(overrides: Partial<AssistantMessage> = {}): AssistantMessage {
 	return {
@@ -115,7 +115,7 @@ describe("Print-mode silent-abort regression", () => {
 
 		await runPrintMode(session, { mode: "text" });
 
-		expect(disposeOptions?.mnemopiConsolidateTimeoutMs).toBe(SHUTDOWN_CONSOLIDATE_BUDGET_MS);
+		expect(disposeOptions?.mnemotauConsolidateTimeoutMs).toBe(SHUTDOWN_CONSOLIDATE_BUDGET_MS);
 	});
 
 	it("does not write bit-classified silent aborts to stderr or exit non-zero", async () => {
@@ -152,7 +152,7 @@ describe("Print-mode silent-abort regression", () => {
 		// The caller terminates with the returned code; runPrintMode never exits itself
 		expect(exitCode).toBe(1);
 		expect(exitSpy).not.toHaveBeenCalled();
-		expect(disposeOptions?.mnemopiConsolidateTimeoutMs).toBe(SHUTDOWN_CONSOLIDATE_BUDGET_MS);
+		expect(disposeOptions?.mnemotauConsolidateTimeoutMs).toBe(SHUTDOWN_CONSOLIDATE_BUDGET_MS);
 	});
 
 	it("prints thinking blocks only when printThoughts is enabled", async () => {

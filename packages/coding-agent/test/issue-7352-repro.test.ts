@@ -1,9 +1,9 @@
 /**
- * Regression for https://github.com/can1357/oh-my-pi/issues/7352
+ * Regression for https://github.com/toxicwind/tau/issues/7352
  *
- * A headless `omp --mode json --no-session -p @<file>` run with
- * `memory.backend: mnemopi` hung after its turn completed and left an
- * unreaped `__omp_worker_mnemopi_embed` child. The embed-worker IPC request
+ * A headless `tau --mode json --no-session -p @<file>` run with
+ * `memory.backend: mnemotau` hung after its turn completed and left an
+ * unreaped `__omp_worker_mnemotau_embed` child. The embed-worker IPC request
  * (`embed`) had no timeout, so a wedged native runtime (fastembed /
  * onnxruntime hanging, cf. #4792) blocked whatever awaited the embed — the
  * turn's memory recall or the shutdown consolidation — forever. #5753 only
@@ -17,19 +17,19 @@
  * exercised without fastembed/onnxruntime.
  */
 import { describe, expect, it, vi } from "bun:test";
-import { MnemopiEmbedClient, type MnemopiEmbedWorkerHandle } from "@oh-my-pi/pi-coding-agent/mnemopi/embed-client";
+import { MnemotauEmbedClient, type MnemotauEmbedWorkerHandle } from "@tau/tau-coding-agent/mnemotau/embed-client";
 import type {
-	MnemopiEmbedWorkerInbound,
-	MnemopiEmbedWorkerOutbound,
-} from "@oh-my-pi/pi-coding-agent/mnemopi/embed-protocol";
+	MnemotauEmbedWorkerInbound,
+	MnemotauEmbedWorkerOutbound,
+} from "@tau/tau-coding-agent/mnemotau/embed-protocol";
 
 /** A fake worker that answers `init` but never answers `embed`. */
-function silentEmbedWorker(state: { spawns: number; terminated: number }): () => MnemopiEmbedWorkerHandle {
+function silentEmbedWorker(state: { spawns: number; terminated: number }): () => MnemotauEmbedWorkerHandle {
 	return () => {
 		state.spawns += 1;
-		let handler: ((message: MnemopiEmbedWorkerOutbound) => void) | undefined;
+		let handler: ((message: MnemotauEmbedWorkerOutbound) => void) | undefined;
 		return {
-			send(message: MnemopiEmbedWorkerInbound) {
+			send(message: MnemotauEmbedWorkerInbound) {
 				// Reply to init/ping so the model handle resolves, but stay silent
 				// on `embed` to simulate a wedged native runtime.
 				queueMicrotask(() => {
@@ -56,10 +56,10 @@ function silentEmbedWorker(state: { spawns: number; terminated: number }): () =>
 	};
 }
 
-describe("issue #7352 — mnemopi embed requests are bounded and reap a wedged worker", () => {
+describe("issue #7352 — mnemotau embed requests are bounded and reap a wedged worker", () => {
 	it("fails a wedged embed within the budget instead of hanging forever", async () => {
 		const state = { spawns: 0, terminated: 0 };
-		const client = new MnemopiEmbedClient(silentEmbedWorker(state), 50);
+		const client = new MnemotauEmbedClient(silentEmbedWorker(state), 50);
 		try {
 			const model = await client.initialize("fast-bge-base-en-v1.5", "/tmp/cache");
 			expect(model).not.toBeNull();
@@ -86,7 +86,7 @@ describe("issue #7352 — mnemopi embed requests are bounded and reap a wedged w
 
 	it("respawns a fresh worker for the next request after reaping a wedged one", async () => {
 		const state = { spawns: 0, terminated: 0 };
-		const client = new MnemopiEmbedClient(silentEmbedWorker(state), 50);
+		const client = new MnemotauEmbedClient(silentEmbedWorker(state), 50);
 		try {
 			const model = await client.initialize("fast-bge-base-en-v1.5", "/tmp/cache");
 			const spawnsAfterInit = state.spawns;
@@ -120,9 +120,9 @@ describe("issue #7352 — mnemopi embed requests are bounded and reap a wedged w
 		const state = { spawns: 0, terminated: 0 };
 		const { promise: initStarted, resolve: markInitStarted } = Promise.withResolvers<void>();
 		let completeInit: (() => void) | undefined;
-		const client = new MnemopiEmbedClient(() => {
+		const client = new MnemotauEmbedClient(() => {
 			state.spawns += 1;
-			let handler: ((message: MnemopiEmbedWorkerOutbound) => void) | undefined;
+			let handler: ((message: MnemotauEmbedWorkerOutbound) => void) | undefined;
 			return {
 				send(message) {
 					if (message.type !== "init") return;

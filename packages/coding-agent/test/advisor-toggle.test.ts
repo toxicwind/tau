@@ -1,22 +1,22 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { Agent, type AgentMessage } from "@oh-my-pi/pi-agent-core";
-import * as compactionModule from "@oh-my-pi/pi-agent-core/compaction";
-import type { AssistantMessage, Model } from "@oh-my-pi/pi-ai";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { loadAdvisorTranscriptCosts } from "@oh-my-pi/pi-coding-agent/advisor/transcript-recorder";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
-import { createAgentSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AgentStorage } from "@oh-my-pi/pi-coding-agent/session/agent-storage";
-import type { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { __resetDirsFromEnvForTests, getProjectAgentDir, setAgentDir, TempDir } from "@oh-my-pi/pi-utils";
+import { Agent, type AgentMessage } from "@tau/tau-agent-core";
+import * as compactionModule from "@tau/tau-agent-core/compaction";
+import type { AssistantMessage, Model } from "@tau/tau-ai";
+import * as AIError from "@tau/tau-ai/error";
+import { createMockModel } from "@tau/tau-ai/providers/mock";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import { loadAdvisorTranscriptCosts } from "@tau/tau-coding-agent/advisor/transcript-recorder";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import type { ExtensionRunner } from "@tau/tau-coding-agent/extensibility/extensions";
+import { createAgentSession } from "@tau/tau-coding-agent/sdk";
+import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import { AgentStorage } from "@tau/tau-coding-agent/session/agent-storage";
+import type { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { __resetDirsFromEnvForTests, getProjectAgentDir, setAgentDir, TempDir } from "@tau/tau-utils";
 
 function restoreEnv(key: string, value: string | undefined): void {
 	if (value === undefined) {
@@ -36,7 +36,7 @@ describe("AgentSession advisor toggle", () => {
 
 	const originalAgentDir = process.env.PI_CODING_AGENT_DIR;
 	const originalPiProfile = process.env.PI_PROFILE;
-	const originalOmpProfile = process.env.OMP_PROFILE;
+	const originalOmpProfile = process.env.TAU_PROFILE;
 
 	beforeAll(() => {
 		authStorage = createInMemoryAuthStorage();
@@ -56,7 +56,7 @@ describe("AgentSession advisor toggle", () => {
 		authStorage.close();
 		restoreEnv("PI_CODING_AGENT_DIR", originalAgentDir);
 		restoreEnv("PI_PROFILE", originalPiProfile);
-		restoreEnv("OMP_PROFILE", originalOmpProfile);
+		restoreEnv("TAU_PROFILE", originalOmpProfile);
 		__resetDirsFromEnvForTests();
 	});
 
@@ -65,7 +65,7 @@ describe("AgentSession advisor toggle", () => {
 	let sessionManager: SessionManager;
 
 	beforeEach(async () => {
-		tempDir = TempDir.createSync("@pi-advisor-toggle-");
+		tempDir = TempDir.createSync("@tau-advisor-toggle-");
 		const testAgentDir = path.join(tempDir.path(), "agent");
 		await fs.mkdir(testAgentDir, { recursive: true });
 		setAgentDir(testAgentDir);
@@ -94,7 +94,7 @@ describe("AgentSession advisor toggle", () => {
 		} finally {
 			restoreEnv("PI_CODING_AGENT_DIR", originalAgentDir);
 			restoreEnv("PI_PROFILE", originalPiProfile);
-			restoreEnv("OMP_PROFILE", originalOmpProfile);
+			restoreEnv("TAU_PROFILE", originalOmpProfile);
 			__resetDirsFromEnvForTests();
 			try {
 				await tempDir?.remove();
@@ -945,7 +945,7 @@ describe("AgentSession advisor toggle", () => {
 			hasHandlers: (eventType: string) => eventType === "session_before_branch",
 			emit: async () => ({ skipConversationRestore: true }),
 		} as unknown as ExtensionRunner;
-		const branchDir = TempDir.createSync("@pi-advisor-branch-");
+		const branchDir = TempDir.createSync("@tau-advisor-branch-");
 		const branchManager = SessionManager.create(branchDir.path(), branchDir.path());
 		const branchSession = new AgentSession({
 			agent: new Agent({
@@ -988,7 +988,7 @@ describe("AgentSession advisor toggle", () => {
 				return undefined;
 			},
 		} as unknown as ExtensionRunner;
-		const branchDir = TempDir.createSync("@pi-advisor-branch-fail-");
+		const branchDir = TempDir.createSync("@tau-advisor-branch-fail-");
 		const branchManager = SessionManager.create(branchDir.path(), branchDir.path());
 		const branchSession = new AgentSession({
 			agent: new Agent({

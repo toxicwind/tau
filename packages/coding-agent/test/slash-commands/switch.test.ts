@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "bun:test";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { executeBuiltinSlashCommand } from "@oh-my-pi/pi-coding-agent/slash-commands/builtin-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
+import { executeBuiltinSlashCommand } from "@tau/tau-coding-agent/slash-commands/builtin-registry";
 
 const MODELS = [
 	{ provider: "anthropic", id: "claude-opus-4-5", contextWindow: 200_000 },

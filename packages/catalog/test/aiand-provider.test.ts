@@ -1,11 +1,11 @@
 import { afterEach, describe, expect, test, vi } from "bun:test";
-import { getOAuthProviders } from "@oh-my-pi/pi-ai/registry/oauth";
-import { getEnvApiKey } from "@oh-my-pi/pi-ai/stream";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { getBundledModels } from "@oh-my-pi/pi-catalog/models";
-import { DEFAULT_MODEL_PER_PROVIDER, PROVIDER_DESCRIPTORS } from "@oh-my-pi/pi-catalog/provider-models/descriptors";
-import { aiandModelManagerOptions } from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import type { FetchImpl } from "@oh-my-pi/pi-catalog/types";
+import { getOAuthProviders } from "@tau/tau-ai/registry/oauth";
+import { getEnvApiKey } from "@tau/tau-ai/stream";
+import { Effort } from "@tau/tau-catalog/effort";
+import { getBundledModels } from "@tau/tau-catalog/models";
+import { DEFAULT_MODEL_PER_PROVIDER, PROVIDER_DESCRIPTORS } from "@tau/tau-catalog/provider-models/descriptors";
+import { aiandModelManagerOptions } from "@tau/tau-catalog/provider-models/openai-compat";
+import type { FetchImpl } from "@tau/tau-catalog/types";
 
 const ORIGINAL_ENV = {
 	AIAND_API_KEY: Bun.env.AIAND_API_KEY,

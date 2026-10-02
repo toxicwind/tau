@@ -1,9 +1,9 @@
 import { describe, expect, it } from "bun:test";
-import { streamCursor } from "@oh-my-pi/pi-ai/providers/cursor";
-import type { Context, Model } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import type { AgentRunRequest } from "@oh-my-pi/pi-catalog/discovery/cursor-proto";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
+import { streamCursor } from "@tau/tau-ai/providers/cursor";
+import type { Context, Model } from "@tau/tau-ai/types";
+import { buildModel } from "@tau/tau-catalog/build";
+import type { AgentRunRequest } from "@tau/tau-catalog/discovery/cursor-proto";
+import { Effort } from "@tau/tau-catalog/effort";
 
 function cursorModel(id: string, overrides?: Partial<Model<"cursor-agent">>): Model<"cursor-agent"> {
 	return {

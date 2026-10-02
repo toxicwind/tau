@@ -14,16 +14,16 @@
  *    background ("running") finalizes and untracks it.
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import type { AssistantMessage, ToolResultMessage } from "@oh-my-pi/pi-ai";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { ToolExecutionComponent } from "@oh-my-pi/pi-tui/chat/tool-execution";
-import { EventController } from "@oh-my-pi/pi-coding-agent/modes/controllers/event-controller";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { UiHelpers } from "@oh-my-pi/pi-coding-agent/modes/utils/ui-helpers";
-import type { SessionContext } from "@oh-my-pi/pi-coding-agent/session/session-context";
-import type { TaskToolDetails } from "@oh-my-pi/pi-tui/tools/task";
-import { type BashToolDetails, formatBackgroundNotice } from "@oh-my-pi/pi-tui/tools/bash";
-import type { CoordinationDetails } from "@oh-my-pi/pi-tui/tools/wait";
+import type { AssistantMessage, ToolResultMessage } from "@tau/tau-ai";
+import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import { ToolExecutionComponent } from "@tau/tau-tui/chat/tool-execution";
+import { EventController } from "@tau/tau-coding-agent/modes/controllers/event-controller";
+import { initTheme } from "@tau/tau-tui/theme";
+import { UiHelpers } from "@tau/tau-coding-agent/modes/utils/ui-helpers";
+import type { SessionContext } from "@tau/tau-coding-agent/session/session-context";
+import type { TaskToolDetails } from "@tau/tau-tui/tools/task";
+import { type BashToolDetails, formatBackgroundNotice } from "@tau/tau-tui/tools/bash";
+import type { CoordinationDetails } from "@tau/tau-tui/tools/wait";
 import { createInteractiveModeContext } from "../../helpers/interactive-mode-context";
 
 function taskResult(asyncState: "running" | "completed" | "failed" | undefined, text: string) {

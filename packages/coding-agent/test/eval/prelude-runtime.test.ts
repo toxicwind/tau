@@ -1,10 +1,10 @@
 import { afterAll, describe, expect, it } from "bun:test";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { EvalPreludeDefinition } from "@oh-my-pi/pi-coding-agent/eval/preludes";
-import { executeJs } from "@oh-my-pi/pi-coding-agent/eval/js/executor";
-import { disposeAllVmContexts } from "@oh-my-pi/pi-coding-agent/eval/js/context-manager";
-import { disposeAllKernelSessions, executePython } from "@oh-my-pi/pi-coding-agent/eval/py/executor";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import type { EvalPreludeDefinition } from "@tau/tau-coding-agent/eval/preludes";
+import { executeJs } from "@tau/tau-coding-agent/eval/js/executor";
+import { disposeAllVmContexts } from "@tau/tau-coding-agent/eval/js/context-manager";
+import { disposeAllKernelSessions, executePython } from "@tau/tau-coding-agent/eval/py/executor";
+import type { ToolSession } from "@tau/tau-coding-agent/tools";
 
 const IMAGE_DATA = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]).toString("base64");
 

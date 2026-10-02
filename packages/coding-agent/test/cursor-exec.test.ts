@@ -2,12 +2,12 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import type { AgentEvent, AgentTool, AgentToolContext } from "@oh-my-pi/pi-agent-core";
-import { type BlockState, handleServerMessage, type ToolCallState } from "@oh-my-pi/pi-ai/providers/cursor";
-import { piTruncation } from "@oh-my-pi/pi-ai/providers/cursor/exec-modern";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai/types";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
+import { type } from "@tau/tautype";
+import type { AgentEvent, AgentTool, AgentToolContext } from "@tau/tau-agent-core";
+import { type BlockState, handleServerMessage, type ToolCallState } from "@tau/tau-ai/providers/cursor";
+import { piTruncation } from "@tau/tau-ai/providers/cursor/exec-modern";
+import type { AssistantMessage } from "@tau/tau-ai/types";
+import { AssistantMessageEventStream } from "@tau/tau-ai/utils/event-stream";
 import {
 	AgentClientMessageSchema,
 	AgentServerMessageSchema,
@@ -16,25 +16,25 @@ import {
 	McpArgsSchema,
 	ReadArgsSchema,
 	ShellArgsSchema,
-} from "@oh-my-pi/pi-catalog/discovery/cursor-proto";
-import { create, fromBinary } from "@oh-my-pi/pi-catalog/discovery/protobuf";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { CursorExecHandlers } from "@oh-my-pi/pi-coding-agent/cursor";
+} from "@tau/tau-catalog/discovery/cursor-proto";
+import { create, fromBinary } from "@tau/tau-catalog/discovery/protobuf";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { CursorExecHandlers } from "@tau/tau-coding-agent/cursor";
 import {
 	bridgeToolMap,
 	createBridgeEditTool,
 	createBridgeGrepFactory,
 	cursorMcpPrefersReplaceEdit,
 	normalizeCursorReplaceArgs,
-} from "@oh-my-pi/pi-coding-agent/cursor-bridge-tools";
+} from "@tau/tau-coding-agent/cursor-bridge-tools";
 
-import { EditTool } from "@oh-my-pi/pi-coding-agent/edit";
-import type { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
-import { ExtensionToolWrapper } from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
-import { BUILTIN_TOOLS, GrepTool, ReadTool, type Tool, type ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { BashTool } from "@oh-my-pi/pi-coding-agent/tools/bash";
-import type { TruncationMeta } from "@oh-my-pi/pi-tui/tools/output-meta";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+import { EditTool } from "@tau/tau-coding-agent/edit";
+import type { ExtensionRunner } from "@tau/tau-coding-agent/extensibility/extensions";
+import { ExtensionToolWrapper } from "@tau/tau-coding-agent/extensibility/extensions";
+import { BUILTIN_TOOLS, GrepTool, ReadTool, type Tool, type ToolSession } from "@tau/tau-coding-agent/tools";
+import { BashTool } from "@tau/tau-coding-agent/tools/bash";
+import type { TruncationMeta } from "@tau/tau-tui/tools/output-meta";
+import { removeWithRetries } from "@tau/tau-utils";
 import { AdviseTool } from "../src/advisor/advise-tool";
 
 function yoloToolContext(): AgentToolContext {
@@ -235,7 +235,7 @@ describe("pi_bash truncation reaches the wire from a real BashTool result", () =
 	});
 
 	it("translates the metadata BashTool actually emits, not a hand-built shape", async () => {
-		// Producer/consumer contract. `piTruncation` lives in `pi-ai`, which
+		// Producer/consumer contract. `piTruncation` lives in `tau-ai`, which
 		// cannot import `BashTool`, so every test there must hand-build the
 		// details bag — and a bag built from the same assumption as the code
 		// stays green when `BashTool`'s real shape moves. This runs the actual
@@ -627,7 +627,7 @@ describe("Cursor MCP StrReplace fallback", () => {
 
 		const result = await handlers.mcp({
 			name: "edit",
-			providerIdentifier: "pi-agent",
+			providerIdentifier: "tau-agent",
 			toolName: "edit",
 			toolCallId: "e-mix",
 			args: { path: target, old_text: "beta", new_text: "gamma" },
@@ -654,7 +654,7 @@ describe("Cursor MCP StrReplace fallback", () => {
 
 		await handlers.mcp({
 			name: "edit",
-			providerIdentifier: "pi-agent",
+			providerIdentifier: "tau-agent",
 			toolName: "edit",
 			toolCallId: "e-hl",
 			args: { input: "[missing.txt]\nPUT 1.=1:\n+x\n" },
@@ -883,7 +883,7 @@ describe("CursorExecHandlers mounted tool bridge", () => {
 
 		const result = await handlers.mcp({
 			name: mountedTool.name,
-			providerIdentifier: "pi-agent",
+			providerIdentifier: "tau-agent",
 			toolName: mountedTool.name,
 			toolCallId: "call-mounted",
 			args: {},
@@ -924,7 +924,7 @@ describe("CursorExecHandlers mounted tool bridge", () => {
 
 		const result = await handlers.mcp({
 			name: device.name,
-			providerIdentifier: "pi-agent",
+			providerIdentifier: "tau-agent",
 			toolName: device.name,
 			toolCallId: "call-denied",
 			args: {},
@@ -1391,7 +1391,7 @@ describe("CursorExecHandlers advise routing (issue #5680)", () => {
 							name: "advise",
 							toolName: "advise",
 							toolCallId: "call-advise-1",
-							providerIdentifier: "pi-agent",
+							providerIdentifier: "tau-agent",
 							args: { note: new TextEncoder().encode(JSON.stringify(note)) },
 						}),
 					},
@@ -1729,7 +1729,7 @@ describe("CursorExecHandlers Pi frame translation", () => {
 	let cwd: string;
 
 	beforeEach(async () => {
-		cwd = await fs.mkdtemp(path.join(os.tmpdir(), "cursor-pi-test-"));
+		cwd = await fs.mkdtemp(path.join(os.tmpdir(), "cursor-tau-test-"));
 	});
 
 	afterEach(async () => {

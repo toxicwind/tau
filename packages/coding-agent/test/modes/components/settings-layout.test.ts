@@ -1,11 +1,11 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { SETTINGS_SCHEMA, type SettingPath } from "@oh-my-pi/pi-coding-agent/config/settings-schema";
-import { getSettingsForTab, SETTING_TABS, type SettingTab, TAB_GROUPS } from "@oh-my-pi/pi-tui/overlays/settings-defs";
-import { createSettingsHost } from "@oh-my-pi/pi-coding-agent/config/settings-ui";
-import { createPluginSettingsHost } from "@oh-my-pi/pi-coding-agent/extensibility/plugins/settings-host";
-import { SettingsSelectorComponent } from "@oh-my-pi/pi-tui/overlays/settings-selector";
-import { initTheme, setTheme } from "@oh-my-pi/pi-tui/theme";
+import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import { SETTINGS_SCHEMA, type SettingPath } from "@tau/tau-coding-agent/config/settings-schema";
+import { getSettingsForTab, SETTING_TABS, type SettingTab, TAB_GROUPS } from "@tau/tau-tui/overlays/settings-defs";
+import { createSettingsHost } from "@tau/tau-coding-agent/config/settings-ui";
+import { createPluginSettingsHost } from "@tau/tau-coding-agent/extensibility/plugins/settings-host";
+import { SettingsSelectorComponent } from "@tau/tau-tui/overlays/settings-selector";
+import { initTheme, setTheme } from "@tau/tau-tui/theme";
 
 beforeAll(async () => {
 	await initTheme();

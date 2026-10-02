@@ -21,8 +21,8 @@ file = "../../config/ports.env"
 
 [tasks]
 build = "bun --cwd packages/coding-agent run build"
-"build:natives" = "cargo build -p pi-natives"
-dev = "bun packages/coding-agent/scripts/omp"
+"build:natives" = "cargo build -p tau-natives"
+dev = "bun packages/coding-agent/scripts/tau"
 test = "bun test"
 typecheck = "bun x tsc --noEmit"
 install = "bun install"

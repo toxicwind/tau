@@ -5,8 +5,8 @@
  * Eliminates ~2-3s CLI startup overhead per task by creating sessions
  * in-process and sharing auth/model infrastructure across tasks.
  */
-import type { AgentEvent, AgentMessage, ResolvedThinkingLevel, ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { Model, ToolExample } from "@oh-my-pi/pi-ai";
+import type { AgentEvent, AgentMessage, ResolvedThinkingLevel, ThinkingLevel } from "@tau/tau-agent-core";
+import type { Model, ToolExample } from "@tau/tau-ai";
 import type { AgentSession, AgentSessionEvent, AuthStorage, SessionStats } from "tau";
 import {
 	AgentRegistry,

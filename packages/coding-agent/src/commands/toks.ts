@@ -1,13 +1,13 @@
 /**
  * Count a file or text through every embedded offline tokenizer and print a
- * per-encoding stats table (see `crates/pi-natives/src/utok`).
+ * per-encoding stats table (see `crates/tau-natives/src/utok`).
  */
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import * as natives from "@oh-my-pi/pi-natives";
-import { formatBytes, pluralize } from "@oh-my-pi/pi-utils";
-import chalk from "@oh-my-pi/pi-utils/chalk";
-import { Args, CliUsageError, Command, Flags } from "@oh-my-pi/pi-utils/cli";
+import * as natives from "@tau/tau-natives";
+import { formatBytes, pluralize } from "@tau/tau-utils";
+import chalk from "@tau/tau-utils/chalk";
+import { Args, CliUsageError, Command, Flags } from "@tau/tau-utils/cli";
 import { toksHelp as commandHelp } from "../cli/command-help";
 
 /** Display name and served model lines per native encoding; `Record` keeps it exhaustive. */
@@ -71,9 +71,9 @@ export default class Toks extends Command {
 	};
 
 	static examples = [
-		"omp toks README.md",
-		'omp toks "The quick brown fox jumps over the lazy dog"',
-		"omp toks src/main.ts --json",
+		"tau toks README.md",
+		'tau toks "The quick brown fox jumps over the lazy dog"',
+		"tau toks src/main.ts --json",
 	];
 
 	async run(): Promise<void> {

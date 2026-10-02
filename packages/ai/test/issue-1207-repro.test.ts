@@ -1,10 +1,10 @@
 import { describe, expect, it } from "bun:test";
-import { type } from "@oh-my-pi/omptype";
-import { streamOpenAICompletions } from "@oh-my-pi/pi-ai/providers/openai-completions";
-import type { Context, Model, ModelSpec, Tool } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+import { type } from "@tau/tautype";
+import { streamOpenAICompletions } from "@tau/tau-ai/providers/openai-completions";
+import type { Context, Model, ModelSpec, Tool } from "@tau/tau-ai/types";
+import { buildModel } from "@tau/tau-catalog/build";
+import { Effort } from "@tau/tau-catalog/effort";
+import { getBundledModel } from "@tau/tau-catalog/models";
 
 const echoTool: Tool = {
 	name: "echo",

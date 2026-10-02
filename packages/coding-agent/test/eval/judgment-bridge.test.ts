@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as vm from "node:vm";
-import type { Api, AssistantMessage, Model } from "@oh-my-pi/pi-ai";
-import * as ai from "@oh-my-pi/pi-ai";
+import type { Api, AssistantMessage, Model } from "@tau/tau-ai";
+import * as ai from "@tau/tau-ai";
 import { ModelRegistry } from "../../src/config/model-registry";
 import { Settings } from "../../src/config/settings";
 import { runEvalJudgment } from "../../src/eval/judgment-bridge";

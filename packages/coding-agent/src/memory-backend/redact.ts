@@ -3,7 +3,7 @@
  *
  * `recall` puts stored memories back into the prompt, so a stored credential reaches
  * every provider on every later turn. The `local` and `sharpshooter` backends each
- * carried a private copy of this pattern list. `mnemopi` carried none.
+ * carried a private copy of this pattern list. `mnemotau` carried none.
  */
 
 // Fixed-prefix provider tokens. Each is anchored on a literal, so it matches in one
@@ -149,7 +149,7 @@ export function redactMemorySecrets(input: string): string {
 }
 
 /**
- * Text-bearing fields a memory write can carry. The mnemopi facade accepts camelCase
+ * Text-bearing fields a memory write can carry. The mnemotau facade accepts camelCase
  * and snake_case for the extraction and embedding overrides, and writes each to its own
  * column, so clearing `content` alone would leave a credential in `embed_text`.
  */
@@ -166,7 +166,7 @@ const TEXT_FIELDS = [
 
 /**
  * `metadata` is serialized whole into `working_memory.metadata_json`, and callers put
- * free text in it (`mnemopi/backend.ts` copies `MemoryBackendSaveInput.context` to
+ * free text in it (`mnemotau/backend.ts` copies `MemoryBackendSaveInput.context` to
  * `metadata.context`), so its strings need the same treatment as `content`.
  */
 function redactNested(value: unknown): unknown {

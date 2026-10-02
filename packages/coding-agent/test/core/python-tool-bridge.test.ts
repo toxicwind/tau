@@ -1,15 +1,15 @@
 import { afterAll, describe, expect, it } from "bun:test";
-import type { AgentTool, AgentToolResult } from "@oh-my-pi/pi-agent-core";
-import { PYTHON_PRELUDE } from "@oh-my-pi/pi-coding-agent/eval/py/prelude";
+import type { AgentTool, AgentToolResult } from "@tau/tau-agent-core";
+import { PYTHON_PRELUDE } from "@tau/tau-coding-agent/eval/py/prelude";
 import {
 	disposePyToolBridge,
 	ensurePyToolBridge,
 	registerPyToolBridge,
-} from "@oh-my-pi/pi-coding-agent/eval/py/tool-bridge";
-import type { EvalShadowCellSession } from "@oh-my-pi/pi-coding-agent/eval/speculation/cell-session";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { $which, isRecord } from "@oh-my-pi/pi-utils";
-import { INTENT_FIELD } from "@oh-my-pi/pi-wire";
+} from "@tau/tau-coding-agent/eval/py/tool-bridge";
+import type { EvalShadowCellSession } from "@tau/tau-coding-agent/eval/speculation/cell-session";
+import type { ToolSession } from "@tau/tau-coding-agent/tools";
+import { $which, isRecord } from "@tau/tau-utils";
+import { INTENT_FIELD } from "@tau/tau-wire";
 
 interface FakeCall {
 	id: string;

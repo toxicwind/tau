@@ -1,12 +1,12 @@
 import { describe, expect, it, vi } from "bun:test";
-import type { Agent, AgentEvent } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, Judge, JudgmentRequest, NoulAnswer } from "@oh-my-pi/pi-ai";
-import type { Rule } from "@oh-my-pi/pi-coding-agent/capability/rule";
-import type { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { JUDGED_CONTENT_MAX_TOKENS, TtsrManager } from "@oh-my-pi/pi-coding-agent/export/ttsr";
-import type { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TtsrCoordinator, type TtsrCoordinatorHost } from "@oh-my-pi/pi-coding-agent/session/ttsr-coordinator";
-import { countTokens, Encoding } from "@oh-my-pi/pi-natives";
+import type { Agent, AgentEvent } from "@tau/tau-agent-core";
+import type { AssistantMessage, Judge, JudgmentRequest, NoulAnswer } from "@tau/tau-ai";
+import type { Rule } from "@tau/tau-coding-agent/capability/rule";
+import type { Settings } from "@tau/tau-coding-agent/config/settings";
+import { JUDGED_CONTENT_MAX_TOKENS, TtsrManager } from "@tau/tau-coding-agent/export/ttsr";
+import type { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { TtsrCoordinator, type TtsrCoordinatorHost } from "@tau/tau-coding-agent/session/ttsr-coordinator";
+import { countTokens, Encoding } from "@tau/tau-natives";
 
 function judgedRule(name: string, fields: Partial<Rule>): Rule {
 	return {

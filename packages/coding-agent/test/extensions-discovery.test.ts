@@ -2,16 +2,16 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as fsPromises from "node:fs/promises";
 import * as path from "node:path";
-import { type ExtensionModule, extensionModuleCapability } from "@oh-my-pi/pi-coding-agent/capability/extension-module";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { getCapability, initializeWithSettings } from "@oh-my-pi/pi-coding-agent/discovery";
+import { type ExtensionModule, extensionModuleCapability } from "@tau/tau-coding-agent/capability/extension-module";
+import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import { getCapability, initializeWithSettings } from "@tau/tau-coding-agent/discovery";
 import {
 	discoverAndLoadExtensions,
 	discoverExtensionPaths,
 	loadExtensions,
-} from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
-import { discoverSessionExtensionPaths } from "@oh-my-pi/pi-coding-agent/sdk";
-import { getProjectAgentDir, TempDir } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-coding-agent/extensibility/extensions/loader";
+import { discoverSessionExtensionPaths } from "@tau/tau-coding-agent/sdk";
+import { getProjectAgentDir, TempDir } from "@tau/tau-utils";
 import { filterUserScoped } from "./utils/filter-user-extensions";
 
 describe("extensions discovery", () => {
@@ -19,7 +19,7 @@ describe("extensions discovery", () => {
 	let extensionsDir: string;
 
 	beforeEach(() => {
-		tempDir = TempDir.createSync("@pi-ext-test-");
+		tempDir = TempDir.createSync("@tau-ext-test-");
 		extensionsDir = path.join(getProjectAgentDir(tempDir.path()), "extensions");
 		fs.mkdirSync(extensionsDir, { recursive: true });
 		resetSettingsForTest();
@@ -161,7 +161,7 @@ describe("extensions discovery", () => {
 			path.join(packageDir, "package.json"),
 			JSON.stringify({
 				name: "explicit-package",
-				omp: {
+				tau: {
 					extensions: ["./src/main.ts"],
 				},
 			}),
@@ -250,7 +250,7 @@ describe("extensions discovery", () => {
 			path.join(packageDir, "package.json"),
 			JSON.stringify({
 				name: "explicit-package",
-				omp: {
+				tau: {
 					extensions: ["./src/main.ts"],
 				},
 			}),
@@ -453,7 +453,7 @@ describe("extensions discovery", () => {
 		fs.writeFileSync(path.join(realDir, "index.ts"), extensionCodeWithTool("ctk-tool"));
 		fs.writeFileSync(
 			path.join(realDir, "package.json"),
-			JSON.stringify({ name: "ctk", omp: { extensions: ["./index.ts"] } }),
+			JSON.stringify({ name: "ctk", tau: { extensions: ["./index.ts"] } }),
 		);
 		fs.symlinkSync(realDir, path.join(extensionsDir, "ctk"), "dir");
 
@@ -538,7 +538,7 @@ describe("extensions discovery", () => {
 		fs.writeFileSync(path.join(configuredDir, "index.ts"), extensionCodeWithTool("decoy-index"));
 		fs.writeFileSync(
 			path.join(configuredDir, "package.json"),
-			JSON.stringify({ omp: { extensions: ["./missing.ts"] } }),
+			JSON.stringify({ tau: { extensions: ["./missing.ts"] } }),
 		);
 
 		const paths = await discoverExtensionPaths([configuredDir], tempDir.path(), undefined, { ambient: false });
@@ -609,10 +609,10 @@ describe("extensions discovery", () => {
 		fs.writeFileSync(
 			path.join(extDir, "package.json"),
 			JSON.stringify({
-				name: "pi-extension-with-deps",
+				name: "tau-extension-with-deps",
 				version: "1.0.0",
 				type: "module",
-				omp: { extensions: ["./index.ts"] },
+				tau: { extensions: ["./index.ts"] },
 			}),
 		);
 

@@ -1,4 +1,4 @@
-import type { Model } from "@oh-my-pi/pi-ai";
+import type { Model } from "@tau/tau-ai";
 import type { SgrMouseEvent } from "../../mouse";
 import { Text } from "../../components/text";
 import { WizardStep } from "../../components/wizard-step";

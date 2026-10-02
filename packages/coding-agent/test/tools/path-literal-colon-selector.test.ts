@@ -2,22 +2,22 @@ import { afterEach, beforeEach, describe, expect, it, spyOn } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { EditTool } from "@oh-my-pi/pi-coding-agent/edit";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
+import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import { EditTool } from "@tau/tau-coding-agent/edit";
+import type { ToolSession } from "@tau/tau-coding-agent/tools";
 import {
 	expandPath,
 	probeLiteralPathExists,
 	resolveToCwd,
 	splitPathAndSelPreferringLiteral,
 	splitPathAndSelPreferringLiteralSync,
-} from "@oh-my-pi/pi-coding-agent/tools/path-utils";
-import { splitPathAndSel } from "@oh-my-pi/pi-tui/tools/read";
-import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
-import { GrepOutputMode } from "@oh-my-pi/pi-natives";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-coding-agent/tools/path-utils";
+import { splitPathAndSel } from "@tau/tau-tui/tools/read";
+import { ReadTool } from "@tau/tau-coding-agent/tools/read";
+import { GrepOutputMode } from "@tau/tau-natives";
+import { removeWithRetries } from "@tau/tau-utils";
 import { runGrepCommand } from "../../src/cli/grep-cli";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
+import { initTheme } from "@tau/tau-tui/theme";
 import { GrepTool } from "../../src/tools/grep";
 
 function getText(result: { content: Array<{ type: string; text?: string }> }): string {
@@ -427,7 +427,7 @@ describe("leading-colon path recovery (issue #5508)", () => {
 	}
 
 	it("strips a leading colon before an absolute path in resolveToCwd", () => {
-		expect(resolveToCwd(":/tmp/omp-colon-test.txt", tmpDir)).toBe("/tmp/omp-colon-test.txt");
+		expect(resolveToCwd(":/tmp/tau-colon-test.txt", tmpDir)).toBe("/tmp/tau-colon-test.txt");
 	});
 
 	it("strips a leading colon before `./` and `../` relative paths in resolveToCwd", () => {
@@ -510,7 +510,7 @@ describe("leading-colon path recovery (issue #5508)", () => {
 	});
 });
 
-// Regression: the `omp grep` CLI subcommand resolved its path argument with a
+// Regression: the `tau grep` CLI subcommand resolved its path argument with a
 // bare `path.resolve`, bypassing `expandPath`, so the leading-colon strip from
 // #5529 never reached it — see issue #5624.
 describe("grep CLI subcommand leading-colon path (issue #5624)", () => {

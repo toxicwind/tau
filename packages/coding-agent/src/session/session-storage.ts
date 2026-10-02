@@ -1,13 +1,13 @@
 import * as fs from "node:fs";
 import * as fsp from "node:fs/promises";
 import * as path from "node:path";
-import { FileLock as NativeFileLock } from "@oh-my-pi/pi-natives";
-import { withFileLockSync } from "@oh-my-pi/pi-utils/file-lock";
-import { hasFsCode, isEnoent } from "@oh-my-pi/pi-utils/fs-error";
-import * as logger from "@oh-my-pi/pi-utils/logger";
-import { peekFileEnds } from "@oh-my-pi/pi-utils/peek-file";
-import { Snowflake } from "@oh-my-pi/pi-utils/snowflake";
-import { toError } from "@oh-my-pi/pi-utils/type-guards";
+import { FileLock as NativeFileLock } from "@tau/tau-natives";
+import { withFileLockSync } from "@tau/tau-utils/file-lock";
+import { hasFsCode, isEnoent } from "@tau/tau-utils/fs-error";
+import * as logger from "@tau/tau-utils/logger";
+import { peekFileEnds } from "@tau/tau-utils/peek-file";
+import { Snowflake } from "@tau/tau-utils/snowflake";
+import { toError } from "@tau/tau-utils/type-guards";
 import { isAssistantMessageLine } from "./session-entries";
 import { overlayTitleSlotContent, type SessionTitleUpdate, serializeTitleSlot } from "./session-title-slot";
 

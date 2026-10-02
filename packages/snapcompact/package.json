@@ -1,18 +1,18 @@
 {
   "type": "module",
-  "name": "@oh-my-pi/snapcompact",
+  "name": "@tau/snapcompact",
   "version": "18.3.0",
   "description": "Bitmap-frame context compression for vision-capable LLMs",
-  "homepage": "https://omp.sh",
+  "homepage": "https://tau.sh",
   "author": { "name": "Stencil Labs, Inc.", "url": "https://stencil.so" },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/can1357/oh-my-pi.git",
+    "url": "git+https://github.com/toxicwind/tau.git",
     "directory": "packages/snapcompact"
   },
   "bugs": {
-    "url": "https://github.com/can1357/oh-my-pi/issues"
+    "url": "https://github.com/toxicwind/tau/issues"
   },
   "keywords": [
     "context-compression",
@@ -31,11 +31,11 @@
     "fmt": "oxfmt --no-error-on-unmatched-pattern 'src/**/*.{ts,tsx}' '{test,bench,examples,scripts}/**/*.ts' '*.ts'"
   },
   "dependencies": {
-    "@oh-my-pi/pi-ai": "catalog:",
-    "@oh-my-pi/pi-catalog": "catalog:",
-    "@oh-my-pi/pi-natives": "catalog:",
-    "@oh-my-pi/pi-utils": "catalog:",
-    "@oh-my-pi/pi-wire": "catalog:"
+    "@tau/tau-ai": "catalog:",
+    "@tau/tau-catalog": "catalog:",
+    "@tau/tau-natives": "catalog:",
+    "@tau/tau-utils": "catalog:",
+    "@tau/tau-wire": "catalog:"
   },
   "devDependencies": {
     "@types/bun": "catalog:"

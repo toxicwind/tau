@@ -1,11 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import * as evalIndex from "@oh-my-pi/pi-coding-agent/eval";
-import * as pyKernel from "@oh-my-pi/pi-coding-agent/eval/py/kernel";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { EvalTool } from "@oh-my-pi/pi-coding-agent/tools/eval";
-import { resolveEvalBackends } from "@oh-my-pi/pi-coding-agent/tools/eval-backends";
-import { ToolAbortError } from "@oh-my-pi/pi-coding-agent/tools/tool-errors";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import * as evalIndex from "@tau/tau-coding-agent/eval";
+import * as pyKernel from "@tau/tau-coding-agent/eval/py/kernel";
+import type { ToolSession } from "@tau/tau-coding-agent/tools";
+import { EvalTool } from "@tau/tau-coding-agent/tools/eval";
+import { resolveEvalBackends } from "@tau/tau-coding-agent/tools/eval-backends";
+import { ToolAbortError } from "@tau/tau-coding-agent/tools/tool-errors";
 
 let originalPiPy: string | undefined;
 let originalPiJs: string | undefined;

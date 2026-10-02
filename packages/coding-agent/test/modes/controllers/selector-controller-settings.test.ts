@@ -1,17 +1,17 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import type { Model } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { SelectorController } from "@oh-my-pi/pi-coding-agent/modes/controllers/selector-controller";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { SecretObfuscator } from "@oh-my-pi/pi-coding-agent/secrets";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent } from "@tau/tau-agent-core";
+import type { Model } from "@tau/tau-ai";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { SelectorController } from "@tau/tau-coding-agent/modes/controllers/selector-controller";
+import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
+import { SecretObfuscator } from "@tau/tau-coding-agent/secrets";
+import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { TempDir } from "@tau/tau-utils";
 
 describe("SelectorController prompt-affecting settings", () => {
 	it("refreshes the active prompt when xdev docs mode changes", async () => {
@@ -38,7 +38,7 @@ describe("SelectorController prompt-affecting settings", () => {
 		let configPath: string;
 
 		beforeEach(async () => {
-			tempDir = TempDir.createSync("@pi-selector-queue-");
+			tempDir = TempDir.createSync("@tau-selector-queue-");
 			const agentDir = tempDir.path();
 			configPath = path.join(agentDir, "config.yml");
 

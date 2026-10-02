@@ -1,4 +1,4 @@
-import { type } from "@oh-my-pi/omptype";
+import { type } from "@tau/tautype";
 import { TOOL_TIMEOUTS } from "../tools/tool-timeouts";
 
 // =============================================================================

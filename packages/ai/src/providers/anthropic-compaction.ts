@@ -1,4 +1,4 @@
-import { isOfficialAnthropicApiUrl } from "@oh-my-pi/pi-catalog/compat/anthropic";
+import { isOfficialAnthropicApiUrl } from "@tau/tau-catalog/compat/anthropic";
 import type { Model } from "../types";
 import type { AnthropicMessagesClientLike } from "./anthropic-client";
 import { normalizeAnthropicBaseUrl, resolveDirectAnthropicBaseUrl } from "./anthropic-state";
@@ -35,7 +35,7 @@ export function resolvesToOfficialAnthropicEndpoint(model: Model<"anthropic-mess
 export function supportsAnthropicCompaction(model: Model<"anthropic-messages">, effectiveBaseUrl?: string): boolean {
 	if (!isCompactionCapableModel(model)) return false;
 	if (
-		model.transport === "pi-native" &&
+		model.transport === "tau-native" &&
 		model.compat.firstPartyProvider === true &&
 		(effectiveBaseUrl === undefined || effectiveBaseUrl === normalizeAnthropicBaseUrl(model.baseUrl))
 	) {

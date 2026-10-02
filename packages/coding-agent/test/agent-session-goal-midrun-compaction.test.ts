@@ -1,22 +1,22 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import { Agent, type AgentMessage, type AgentTool } from "@oh-my-pi/pi-agent-core";
-import * as compactionModule from "@oh-my-pi/pi-agent-core/compaction";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { ExtensionRuntime, loadExtensionFromFactory } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
-import { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
-import type { GoalModeState } from "@oh-my-pi/pi-coding-agent/goals/state";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { convertToLlm } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { type } from "@tau/tautype";
+import { Agent, type AgentMessage, type AgentTool } from "@tau/tau-agent-core";
+import * as compactionModule from "@tau/tau-agent-core/compaction";
+import { AssistantMessageEventStream } from "@tau/tau-ai/utils/event-stream";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { ExtensionRuntime, loadExtensionFromFactory } from "@tau/tau-coding-agent/extensibility/extensions/loader";
+import { ExtensionRunner } from "@tau/tau-coding-agent/extensibility/extensions/runner";
+import type { GoalModeState } from "@tau/tau-coding-agent/goals/state";
+import { AgentRegistry } from "@tau/tau-coding-agent/registry/agent-registry";
+import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { convertToLlm } from "@tau/tau-coding-agent/session/messages";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { EventBus } from "@tau/tau-coding-agent/utils/event-bus";
+import { TempDir } from "@tau/tau-utils";
 
 function activeGoalState(): GoalModeState {
 	const now = Date.now();
@@ -66,7 +66,7 @@ describe("AgentSession mid-run threshold compaction", () => {
 	const cleanups: Array<() => Promise<void>> = [];
 
 	beforeAll(async () => {
-		sharedDir = TempDir.createSync("@pi-agent-goal-midrun-compaction-shared-");
+		sharedDir = TempDir.createSync("@tau-agent-goal-midrun-compaction-shared-");
 		sharedAuthStorage = await AuthStorage.create(path.join(sharedDir.path(), "auth.db"));
 		sharedAuthStorage.keys.setRuntime("anthropic", "test-key");
 		sharedModelRegistry = new ModelRegistry(sharedAuthStorage, path.join(sharedDir.path(), "models.yml"));
@@ -78,7 +78,7 @@ describe("AgentSession mid-run threshold compaction", () => {
 	});
 
 	beforeEach(() => {
-		tempDir = TempDir.createSync("@pi-agent-goal-midrun-compaction-");
+		tempDir = TempDir.createSync("@tau-agent-goal-midrun-compaction-");
 		cleanups.length = 0;
 	});
 

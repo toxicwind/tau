@@ -1,18 +1,18 @@
 import { afterEach, describe, expect, test, vi } from "bun:test";
-import { type } from "@oh-my-pi/omptype";
-import type { AgentMessage, AgentTool } from "@oh-my-pi/pi-agent-core";
+import { type } from "@tau/tautype";
+import type { AgentMessage, AgentTool } from "@tau/tau-agent-core";
 import {
 	createCompactionSummaryMessage,
 	defaultConvertToLlm,
 	generateHandoff,
 	generateHandoffFromContext,
 	renderHandoffPrompt,
-} from "@oh-my-pi/pi-agent-core/compaction";
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core/thinking";
-import type { AssistantMessage, Model, ToolCall } from "@oh-my-pi/pi-ai";
-import * as ai from "@oh-my-pi/pi-ai";
-import { Effort } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+} from "@tau/tau-agent-core/compaction";
+import { ThinkingLevel } from "@tau/tau-agent-core/thinking";
+import type { AssistantMessage, Model, ToolCall } from "@tau/tau-ai";
+import * as ai from "@tau/tau-ai";
+import { Effort } from "@tau/tau-ai";
+import { getBundledModel } from "@tau/tau-catalog/models";
 
 function createAssistantMessage(content: AssistantMessage["content"]): AssistantMessage {
 	return {

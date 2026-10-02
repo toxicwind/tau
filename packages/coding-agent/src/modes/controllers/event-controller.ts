@@ -1,27 +1,27 @@
-import type { AssistantMessage, ImageContent } from "@oh-my-pi/pi-ai";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { getStreamingPartialJson } from "@oh-my-pi/pi-ai/utils/block-symbols";
-import { type Component, Loader, TERMINAL } from "@oh-my-pi/pi-tui";
-import { formatDuration, isRecord, logger, prompt, sanitizeText } from "@oh-my-pi/pi-utils";
-import { INTENT_FIELD } from "@oh-my-pi/pi-wire";
+import type { AssistantMessage, ImageContent } from "@tau/tau-ai";
+import * as AIError from "@tau/tau-ai/error";
+import { getStreamingPartialJson } from "@tau/tau-ai/utils/block-symbols";
+import { type Component, Loader, TERMINAL } from "@tau/tau-tui";
+import { formatDuration, isRecord, logger, prompt, sanitizeText } from "@tau/tau-utils";
+import { INTENT_FIELD } from "@tau/tau-wire";
 import { extractTextContent } from "../../commit/utils";
 import { settings } from "../../config/settings";
-import { AssistantMessageComponent } from "@oh-my-pi/pi-tui/chat/assistant-message";
-import { detectCacheInvalidation } from "@oh-my-pi/pi-tui/chat/cache-invalidation-marker";
+import { AssistantMessageComponent } from "@tau/tau-tui/chat/assistant-message";
+import { detectCacheInvalidation } from "@tau/tau-tui/chat/cache-invalidation-marker";
 import {
 	groupedReadUsageCallIds,
 	ReadToolGroupComponent,
 	readArgsCollapseIntoGroup,
 	readArgsHaveTarget,
-} from "@oh-my-pi/pi-tui/chat/read-tool-group";
-import { TodoReminderComponent } from "@oh-my-pi/pi-tui/chat/todo-reminder";
-import { textContent } from "@oh-my-pi/pi-tui/chat/transcript-entry";
-import { ToolExecutionComponent, type ToolExecutionHandle, toolRenderName } from "@oh-my-pi/pi-tui/chat/tool-execution";
-import { TtsrNotificationComponent } from "@oh-my-pi/pi-tui/chat/ttsr-notification";
-import { createUsageRowBlock, turnElapsedMs } from "@oh-my-pi/pi-tui/overlays/usage-row";
-import { getSymbolTheme, theme } from "@oh-my-pi/pi-tui/theme";
+} from "@tau/tau-tui/chat/read-tool-group";
+import { TodoReminderComponent } from "@tau/tau-tui/chat/todo-reminder";
+import { textContent } from "@tau/tau-tui/chat/transcript-entry";
+import { ToolExecutionComponent, type ToolExecutionHandle, toolRenderName } from "@tau/tau-tui/chat/tool-execution";
+import { TtsrNotificationComponent } from "@tau/tau-tui/chat/ttsr-notification";
+import { createUsageRowBlock, turnElapsedMs } from "@tau/tau-tui/overlays/usage-row";
+import { getSymbolTheme, theme } from "@tau/tau-tui/theme";
 import type { InteractiveModeContext } from "../../modes/types";
-import type { TodoPhase } from "@oh-my-pi/pi-tui/tools/todo";
+import type { TodoPhase } from "@tau/tau-tui/tools/todo";
 import idleRecapPrompt from "../../prompts/system/recap-user.md" with { type: "text" };
 import type { AgentSessionEvent } from "../../session/agent-session";
 import {
@@ -32,24 +32,24 @@ import {
 	resolveAbortLabel,
 } from "../../session/messages";
 import { type ApprovalMode, resolveApproval } from "../../tools/approval";
-import { previewLine, PREVIEW_LIMITS, TRUNCATE_LENGTHS } from "@oh-my-pi/pi-tui/render/render-utils";
-import { PROPOSE_DEVICE_NAME } from "@oh-my-pi/pi-tui/tools/resolve";
+import { previewLine, PREVIEW_LIMITS, TRUNCATE_LENGTHS } from "@tau/tau-tui/render/render-utils";
+import { PROPOSE_DEVICE_NAME } from "@tau/tau-tui/tools/resolve";
 import { writeDeviceDispatch } from "../../tools/resolve";
 import { nextActionableTask } from "../../tools/todo";
 import { SpeechEnhancer } from "../../tts/speech-enhancer";
 import { vocalizer } from "../../tts/vocalizer";
-import { canonicalizeMessage } from "@oh-my-pi/pi-tui/chat/thinking-display";
+import { canonicalizeMessage } from "@tau/tau-tui/chat/thinking-display";
 import { setTerminalTitleState } from "../../utils/title-generator";
 import {
 	assistantMessageLinkTargets,
 	createAssistantMessageComponent,
 	refreshAssistantMessageLinkTargets,
-} from "@oh-my-pi/pi-tui/prompt/interactive-context-helpers";
+} from "@tau/tau-tui/prompt/interactive-context-helpers";
 import {
 	assistantHasVisibleContent,
 	assistantUsageIsBilled,
 	splitAssistantMessageToolTimeline,
-} from "@oh-my-pi/pi-tui/chat/transcript-render-helpers";
+} from "@tau/tau-tui/chat/transcript-render-helpers";
 import { isWarpCliAgentProtocolActive } from "../warp-events";
 import { StreamingRevealController } from "./streaming-reveal";
 import { streamingStringKeysForTool, ToolArgsRevealController } from "./tool-args-reveal";
@@ -2544,7 +2544,7 @@ export class EventController {
 
 		const sessionName = this.ctx.sessionManager.getSessionName();
 		TERMINAL.sendNotification({
-			title: sessionName || "omp",
+			title: sessionName || "tau",
 			body: "Stopped with error",
 			type: "error",
 			actions: "focus",
@@ -2569,7 +2569,7 @@ export class EventController {
 
 		const sessionName = this.ctx.sessionManager.getSessionName();
 		TERMINAL.sendNotification({
-			title: sessionName || "omp",
+			title: sessionName || "tau",
 			body: "Complete",
 			type: "completion",
 			actions: "focus",

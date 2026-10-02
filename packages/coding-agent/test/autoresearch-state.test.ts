@@ -1,29 +1,29 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import { createAutoresearchExtension } from "@oh-my-pi/pi-coding-agent/autoresearch";
+import { createAutoresearchExtension } from "@tau/tau-coding-agent/autoresearch";
 import {
 	buildExperimentState,
 	computeConfidence,
 	findBestKeptMetric,
 	reconstructControlState,
-} from "@oh-my-pi/pi-coding-agent/autoresearch/state";
-import { AutoresearchStorage, closeAllAutoresearchStorages } from "@oh-my-pi/pi-coding-agent/autoresearch/storage";
-import type { ExperimentResult } from "@oh-my-pi/pi-tui/tools/autoresearch";
-import { findBaselineMetric, findBaselineRunNumber } from "@oh-my-pi/pi-tui/apps/autoresearch-data";
+} from "@tau/tau-coding-agent/autoresearch/state";
+import { AutoresearchStorage, closeAllAutoresearchStorages } from "@tau/tau-coding-agent/autoresearch/storage";
+import type { ExperimentResult } from "@tau/tau-tui/tools/autoresearch";
+import { findBaselineMetric, findBaselineRunNumber } from "@tau/tau-tui/apps/autoresearch-data";
 import type {
 	ExtensionAPI,
 	ExtensionCommandContext,
 	RegisteredCommand,
-} from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
-import type { VcsGitRepo, VcsGitRepoInfo } from "@oh-my-pi/pi-natives";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import { TempDir } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-coding-agent/extensibility/extensions";
+import type { VcsGitRepo, VcsGitRepoInfo } from "@tau/tau-natives";
+import * as vcs from "@tau/tau-natives/vcs";
+import { TempDir } from "@tau/tau-utils";
 
 afterEach(() => {
 	vi.restoreAllMocks();
 });
 
 function makeTempDir(): TempDir {
-	return TempDir.createSync("@pi-autoresearch-test-");
+	return TempDir.createSync("@tau-autoresearch-test-");
 }
 
 function makeResult(partial: Partial<ExperimentResult>): ExperimentResult {
@@ -521,13 +521,13 @@ describe("autoresearch slash command", () => {
 	let dbOverride: TempDir | undefined;
 
 	beforeEach(() => {
-		dbOverride = TempDir.createSync("@pi-autoresearch-cmd-");
-		process.env.OMP_AUTORESEARCH_DB_DIR = dbOverride.path();
+		dbOverride = TempDir.createSync("@tau-autoresearch-cmd-");
+		process.env.TAU_AUTORESEARCH_DB_DIR = dbOverride.path();
 		cleanups.push(dbOverride);
 	});
 
 	afterEach(() => {
-		delete process.env.OMP_AUTORESEARCH_DB_DIR;
+		delete process.env.TAU_AUTORESEARCH_DB_DIR;
 		closeAllAutoresearchStorages();
 		for (const dir of cleanups.splice(0)) {
 			dir.removeSync();
@@ -588,13 +588,13 @@ describe("autoresearch tool-call hook", () => {
 	let dbOverride: TempDir;
 
 	beforeEach(() => {
-		dbOverride = TempDir.createSync("@pi-autoresearch-hook-");
-		process.env.OMP_AUTORESEARCH_DB_DIR = dbOverride.path();
+		dbOverride = TempDir.createSync("@tau-autoresearch-hook-");
+		process.env.TAU_AUTORESEARCH_DB_DIR = dbOverride.path();
 		cleanups.push(dbOverride);
 	});
 
 	afterEach(() => {
-		delete process.env.OMP_AUTORESEARCH_DB_DIR;
+		delete process.env.TAU_AUTORESEARCH_DB_DIR;
 		closeAllAutoresearchStorages();
 		for (const dir of cleanups.splice(0)) {
 			dir.removeSync();

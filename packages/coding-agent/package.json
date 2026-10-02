@@ -10,9 +10,9 @@
 		"llm",
 		"tui"
 	],
-	"homepage": "https://omp.sh",
+	"homepage": "https://tau.sh",
 	"bugs": {
-		"url": "https://github.com/can1357/oh-my-pi/issues"
+		"url": "https://github.com/toxicwind/tau/issues"
 	},
 	"license": "MIT",
 	"author": { "name": "Stencil Labs, Inc.", "url": "https://stencil.so" },
@@ -21,11 +21,11 @@
 	],
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/can1357/oh-my-pi.git",
+		"url": "git+https://github.com/toxicwind/tau.git",
 		"directory": "packages/coding-agent"
 	},
 	"bin": {
-		"omp": "src/cli.ts"
+		"tau": "src/cli.ts"
 	},
 	"files": [
 		"src",
@@ -527,17 +527,17 @@
 	},
 	"dependencies": {
 		"@babel/parser": "catalog:",
-		"@oh-my-pi/omp-stats": "catalog:",
-		"@oh-my-pi/omptype": "catalog:",
-		"@oh-my-pi/pi-agent-core": "catalog:",
-		"@oh-my-pi/pi-ai": "catalog:",
-		"@oh-my-pi/pi-catalog": "catalog:",
-		"@oh-my-pi/pi-mnemopi": "catalog:",
-		"@oh-my-pi/pi-natives": "catalog:",
-		"@oh-my-pi/pi-tui": "catalog:",
-		"@oh-my-pi/pi-utils": "catalog:",
-		"@oh-my-pi/pi-wire": "catalog:",
-		"@oh-my-pi/snapcompact": "catalog:",
+		"@tau/tau-stats": "catalog:",
+		"@tau/tautype": "catalog:",
+		"@tau/tau-agent-core": "catalog:",
+		"@tau/tau-ai": "catalog:",
+		"@tau/tau-catalog": "catalog:",
+		"@tau/tau-mnemotau": "catalog:",
+		"@tau/tau-natives": "catalog:",
+		"@tau/tau-tui": "catalog:",
+		"@tau/tau-utils": "catalog:",
+		"@tau/tau-wire": "catalog:",
+		"@tau/snapcompact": "catalog:",
 		"@opentelemetry/api": "catalog:",
 		"@opentelemetry/api-logs": "catalog:",
 		"@opentelemetry/context-async-hooks": "catalog:",

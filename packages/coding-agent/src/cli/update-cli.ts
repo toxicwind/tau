@@ -1,20 +1,20 @@
 /**
  * Update CLI command handler.
  *
- * Handles `omp update` to check for and install updates.
- * Uses the installer that owns the active omp executable when it can be detected.
+ * Handles `tau update` to check for and install updates.
+ * Uses the installer that owns the active tau executable when it can be detected.
  */
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import { Transform } from "node:stream";
 import { pipeline } from "node:stream/promises";
-import { $env, $which, APP_NAME, compareVersions, isEnoent, VERSION } from "@oh-my-pi/pi-utils";
-import chalk from "@oh-my-pi/pi-utils/chalk";
-import { withFileLock } from "@oh-my-pi/pi-utils/file-lock";
+import { $env, $which, APP_NAME, compareVersions, isEnoent, VERSION } from "@tau/tau-utils";
+import chalk from "@tau/tau-utils/chalk";
+import { withFileLock } from "@tau/tau-utils/file-lock";
 import { $ } from "bun";
 import { settings } from "../config/settings";
-import { theme } from "@oh-my-pi/pi-tui/theme";
+import { theme } from "@tau/tau-tui/theme";
 import {
 	isTimeoutError,
 	isUnsupportedProxyError,
@@ -22,10 +22,10 @@ import {
 	withTimeoutSignal,
 } from "../utils/fetch-timeout";
 
-const REPO = "can1357/oh-my-pi";
-const PACKAGE = "@oh-my-pi/pi-coding-agent";
-const HOMEBREW_FORMULA = "can1357/tap/omp";
-const MISE_TOOL = "github:can1357/oh-my-pi";
+const REPO = "can1357/tau";
+const PACKAGE = "@tau/tau-coding-agent";
+const HOMEBREW_FORMULA = "can1357/tap/tau";
+const MISE_TOOL = "github:can1357/tau";
 const NIX_STORE_DIR = "/nix/store";
 /**
  * Official npm registry origin.
@@ -49,11 +49,11 @@ const BINARY_DOWNLOAD_TIMEOUT_MS = 15 * 60_000;
  * disk; see {@link buildBunInstallArgs} for why this must be installed
  * explicitly rather than inherited as a transitive dependency.
  */
-const NATIVES_PACKAGE = "@oh-my-pi/pi-natives";
+const NATIVES_PACKAGE = "@tau/tau-natives";
 
 /**
  * Platform tags the release pipeline publishes as
- * `@oh-my-pi/pi-natives-<tag>` leaves. Mirrors `SUPPORTED_PLATFORMS` in
+ * `@tau/tau-natives-<tag>` leaves. Mirrors `SUPPORTED_PLATFORMS` in
  * `packages/natives/native/loader-state.js` and `LEAF_TARGETS` in
  * `packages/natives/scripts/gen-npm-packages.ts`; kept here as the local
  * source of truth so the update path stays free of cross-package imports.
@@ -81,7 +81,7 @@ export interface ReleasePackages {
 	natives: string;
 }
 
-/** Parsed `omp.rename` pointer: the new agent package name and optional new natives name. */
+/** Parsed `tau.rename` pointer: the new agent package name and optional new natives name. */
 export interface ReleaseRename {
 	pkg: string;
 	natives?: string;
@@ -92,9 +92,9 @@ const CURRENT_PACKAGES: ReleasePackages = { pkg: PACKAGE, natives: NATIVES_PACKA
 export interface ReleaseInfo {
 	tag: string;
 	version: string;
-	/** Parsed `omp.dist` from the registry manifest; undefined when absent. */
+	/** Parsed `tau.dist` from the registry manifest; undefined when absent. */
 	dist?: ReleaseDist;
-	/** npm names to install, resolved after following any `omp.rename` pointers. */
+	/** npm names to install, resolved after following any `tau.rename` pointers. */
 	packages: ReleasePackages;
 }
 
@@ -151,28 +151,28 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 /**
- * Parse the `omp.dist` field from a published package manifest.
+ * Parse the `tau.dist` field from a published package manifest.
  *
  * Forward-compatibility contract with future releases: a release that is not
  * installable as an npm package (e.g. a native rewrite) publishes
- * `"omp": { "dist": "binary" }` in its package.json. Any value other than
+ * `"tau": { "dist": "binary" }` in its package.json. Any value other than
  * "npm" — including values this updater does not know yet — maps to "binary"
  * so already-deployed updaters never run a package-manager install against a
  * release that no longer supports it.
  */
 export function resolveReleaseDist(manifest: unknown): ReleaseDist | undefined {
-	if (!isRecord(manifest) || !isRecord(manifest.omp)) return undefined;
-	const dist = manifest.omp.dist;
+	if (!isRecord(manifest) || !isRecord(manifest.tau)) return undefined;
+	const dist = manifest.tau.dist;
 	if (dist === undefined) return undefined;
 	return dist === "npm" ? "npm" : "binary";
 }
 
 /**
- * Parse the `omp.rename` pointer from a published package manifest.
+ * Parse the `tau.rename` pointer from a published package manifest.
  *
  * Forward-compatibility contract for renaming the npm package: the final
  * version published under an old name is a stub whose manifest carries
- * `"omp": { "rename": { "package": "<new-agent-pkg>", "natives": "<new-natives-pkg>" }, "dist": "binary" }`.
+ * `"tau": { "rename": { "package": "<new-agent-pkg>", "natives": "<new-natives-pkg>" }, "dist": "binary" }`.
  * Updaters that understand `rename` follow the pointer and resolve the
  * release from the renamed package instead ({@link getLatestRelease});
  * older deployed updaters ignore it and take the `dist: "binary"` escape
@@ -185,8 +185,8 @@ export function resolveReleaseDist(manifest: unknown): ReleaseDist | undefined {
  * "already up to date" against the running build).
  */
 export function resolveReleaseRename(manifest: unknown): ReleaseRename | undefined {
-	if (!isRecord(manifest) || !isRecord(manifest.omp)) return undefined;
-	const rename = manifest.omp.rename;
+	if (!isRecord(manifest) || !isRecord(manifest.tau)) return undefined;
+	const rename = manifest.tau.rename;
 	if (!isRecord(rename) || typeof rename.package !== "string" || rename.package.length === 0) return undefined;
 	const natives = rename.natives;
 	return {
@@ -203,10 +203,10 @@ function majorVersion(version: string): number {
 /**
  * Whether the update must bypass bun/npm and install the release binary.
  *
- * An explicit `omp.dist` wins in both directions. Without one, a release with
+ * An explicit `tau.dist` wins in both directions. Without one, a release with
  * a higher major than the running build is assumed not npm-installable: the
  * runtime may have changed out from under the package layout, and the pinned
- * `@oh-my-pi/pi-natives*` companions ({@link buildBunInstallArgs}) may not
+ * `@tau/tau-natives*` companions ({@link buildBunInstallArgs}) may not
  * exist at that version, which would strand bun/npm-managed installs behind a
  * hard install failure. Homebrew and mise installs are unaffected — both
  * already pull GitHub release binaries.
@@ -543,10 +543,10 @@ function isPathInDirectory(filePath: string, directoryPath: string): boolean {
 	if (isPathInDirectoryLexical(filePath, directoryPath)) return true;
 	// Layer realpath resolution on top of the lexical guard. On Windows, ~/.bun
 	// is a junction when Bun is installed via Scoop, so `bun pm bin -g` and the
-	// PATH-resolved omp path can refer to the same directory through different
+	// PATH-resolved tau path can refer to the same directory through different
 	// strings. path.resolve does not traverse junctions/symlinks; realpath does.
 	// Resolve both the file and its parent directory: the file catches manager
-	// links like Homebrew's `bin/omp -> Cellar/.../bin/omp`; the parent fallback
+	// links like Homebrew's `bin/tau -> Cellar/.../bin/tau`; the parent fallback
 	// still tolerates fresh install paths where the file does not exist yet.
 	const dirReal = tryRealpath(path.resolve(directoryPath));
 	if (!dirReal) return false;
@@ -589,17 +589,17 @@ interface UpdateMethodResolutionOptions {
 	/** Bun's configured global package directory, independent of its bin directory. */
 	bunGlobalDir?: string;
 	/**
-	 * Whether the resolved omp path is a plain file (the standalone binary)
+	 * Whether the resolved tau path is a plain file (the standalone binary)
 	 * rather than a package-manager symlink. Stops a binary install from being
 	 * misrouted to npm/bun when the global bin dir overlaps the installer's
 	 * target directory.
 	 */
-	ompIsRegularFile?: boolean;
+	tauIsRegularFile?: boolean;
 	/**
 	 * Absolute path named by the bin entry's first symlink hop. This deliberately
 	 * preserves a global package symlink instead of resolving into its checkout.
 	 */
-	ompLinkTarget?: string;
+	tauLinkTarget?: string;
 	/**
 	 * Whether bun's launcher metadata (`<name>.bunx`) sits beside the resolved
 	 * launcher. Bun writes that sidecar next to every `.exe` shim it installs, so
@@ -626,7 +626,7 @@ type UpdateTarget =
 	| { method: "binary"; path: string; replacesSymlink: boolean; validateExistingTarget: boolean };
 
 function resolveUpdateMethod(
-	ompPath: string,
+	tauPath: string,
 	bunBinDir: string | undefined,
 	options: UpdateMethodResolutionOptions = {},
 ): UpdateMethod {
@@ -638,15 +638,15 @@ function resolveUpdateMethod(
 		miseBinDirs = [],
 		miseDataDir,
 		npmBinDir,
-		ompIsRegularFile = false,
-		ompLinkTarget,
+		tauIsRegularFile = false,
+		tauLinkTarget,
 	} = options;
-	const launcherExtension = path.extname(ompPath).toLowerCase();
-	const isWindowsScriptLauncher = isWindowsScriptLauncherPath(ompPath);
-	if (isPathInDirectory(ompPath, NIX_STORE_DIR)) return "nix";
-	if (homebrewPrefix && isPathInDirectory(ompPath, path.join(homebrewPrefix, "bin"))) return "brew";
-	if (miseBinDirs.some(dir => isPathInDirectory(ompPath, dir))) return "mise";
-	if (miseDataDir && isPathInDirectory(ompPath, path.join(miseDataDir, "shims"))) return "mise";
+	const launcherExtension = path.extname(tauPath).toLowerCase();
+	const isWindowsScriptLauncher = isWindowsScriptLauncherPath(tauPath);
+	if (isPathInDirectory(tauPath, NIX_STORE_DIR)) return "nix";
+	if (homebrewPrefix && isPathInDirectory(tauPath, path.join(homebrewPrefix, "bin"))) return "brew";
+	if (miseBinDirs.some(dir => isPathInDirectory(tauPath, dir))) return "mise";
+	if (miseDataDir && isPathInDirectory(tauPath, path.join(miseDataDir, "shims"))) return "mise";
 	// A plain executable file in a package-manager bin dir is the standalone
 	// binary the installer placed there, not an npm/bun-managed install (those
 	// symlink into node_modules on POSIX). When the global bin dir overlaps the
@@ -654,15 +654,15 @@ function resolveUpdateMethod(
 	// a binary install through npm/bun, whose reinstall then collides with the
 	// existing file (npm EEXIST). Fall through to binary replacement instead.
 	// On Windows every launcher is a regular file, so ownership keys off the
-	// manager's own artifacts instead: npm's script shims (`omp`, `omp.cmd`,
-	// `omp.ps1`) and bun's `omp.bunx` sidecar. A bare `.exe` with neither is the
+	// manager's own artifacts instead: npm's script shims (`tau`, `tau.cmd`,
+	// `tau.ps1`) and bun's `tau.bunx` sidecar. A bare `.exe` with neither is the
 	// standalone binary a binary-only release installed over the launcher —
 	// routing that back through bun reinstalls a package which no longer owns
 	// the launcher, and bun silently tolerates failing to overwrite the running
 	// `.exe` (EBUSY), so the install would stay pinned to the old version.
 	const isWindowsManagedLauncher =
 		process.platform === "win32" && (isWindowsScriptLauncher || launcherExtension === "" || bunShimMarker);
-	const isStandaloneRegularFile = ompIsRegularFile && !isWindowsManagedLauncher;
+	const isStandaloneRegularFile = tauIsRegularFile && !isWindowsManagedLauncher;
 	const bunNodeModulesDir = resolveBunGlobalNodeModulesDirFromLocations({
 		globalDir: bunGlobalDir,
 		globalBinDir: bunBinDir,
@@ -670,9 +670,9 @@ function resolveUpdateMethod(
 	if (
 		allowPackageManagers &&
 		bunBinDir &&
-		isPathInDirectory(ompPath, bunBinDir) &&
+		isPathInDirectory(tauPath, bunBinDir) &&
 		!isStandaloneRegularFile &&
-		isManagerOwnedBinEntry(ompLinkTarget, bunNodeModulesDir)
+		isManagerOwnedBinEntry(tauLinkTarget, bunNodeModulesDir)
 	) {
 		return "bun";
 	}
@@ -680,9 +680,9 @@ function resolveUpdateMethod(
 	if (
 		allowPackageManagers &&
 		npmBinDir &&
-		isPathInDirectory(ompPath, npmBinDir) &&
+		isPathInDirectory(tauPath, npmBinDir) &&
 		!isStandaloneRegularFile &&
-		isManagerOwnedBinEntry(ompLinkTarget, npmNodeModulesDir)
+		isManagerOwnedBinEntry(tauLinkTarget, npmNodeModulesDir)
 	) {
 		return "npm";
 	}
@@ -691,41 +691,41 @@ function resolveUpdateMethod(
 }
 
 export function resolveUpdateMethodForTest(
-	ompPath: string,
+	tauPath: string,
 	bunBinDir: string | undefined,
 	options: UpdateMethodResolutionOptions = {},
 ): UpdateMethod {
-	return resolveUpdateMethod(ompPath, bunBinDir, options);
+	return resolveUpdateMethod(tauPath, bunBinDir, options);
 }
 
 /** Resolve an update target from the concrete PATH entry selected by the shell. */
 export function resolveUpdateTargetFromPath(
-	ompPath: string,
+	tauPath: string,
 	bunBinDir: string | undefined,
 	options: UpdateMethodResolutionOptions & { allowPackageManagers: boolean },
 ): UpdateTarget {
-	let ompIsRegularFile = false;
-	let ompIsSymlink = false;
-	let ompLinkTarget: string | undefined;
-	let ompRealpath: string | undefined;
-	const bunShimMarker = process.platform === "win32" && fs.existsSync(bunShimMarkerPath(ompPath));
+	let tauIsRegularFile = false;
+	let tauIsSymlink = false;
+	let tauLinkTarget: string | undefined;
+	let tauRealpath: string | undefined;
+	const bunShimMarker = process.platform === "win32" && fs.existsSync(bunShimMarkerPath(tauPath));
 	try {
-		const stat = fs.lstatSync(ompPath);
-		ompIsRegularFile = stat.isFile() && !stat.isSymbolicLink();
-		ompIsSymlink = stat.isSymbolicLink();
-		if (ompIsSymlink) {
-			const rawTarget = fs.readlinkSync(ompPath);
-			const linkDir = path.dirname(ompPath);
-			ompLinkTarget = path.resolve(tryRealpath(linkDir) ?? linkDir, rawTarget);
-			ompRealpath = tryRealpath(ompPath);
+		const stat = fs.lstatSync(tauPath);
+		tauIsRegularFile = stat.isFile() && !stat.isSymbolicLink();
+		tauIsSymlink = stat.isSymbolicLink();
+		if (tauIsSymlink) {
+			const rawTarget = fs.readlinkSync(tauPath);
+			const linkDir = path.dirname(tauPath);
+			tauLinkTarget = path.resolve(tryRealpath(linkDir) ?? linkDir, rawTarget);
+			tauRealpath = tryRealpath(tauPath);
 		}
 	} catch {}
 
-	const method = resolveUpdateMethod(ompPath, bunBinDir, {
+	const method = resolveUpdateMethod(tauPath, bunBinDir, {
 		...options,
 		bunShimMarker,
-		ompIsRegularFile,
-		ompLinkTarget,
+		tauIsRegularFile,
+		tauLinkTarget,
 	});
 	if (method === "binary") {
 		// A symlinked launcher created by bun/npm is taken over in place on a
@@ -738,24 +738,24 @@ export function resolveUpdateTargetFromPath(
 		// releases (EACCES on a root-owned link dir, or a stale split-brain copy
 		// of the binary shadowing the shared install).
 		const managerLauncher =
-			ompIsSymlink &&
+			tauIsSymlink &&
 			!options.allowPackageManagers &&
-			resolveUpdateMethod(ompPath, bunBinDir, {
+			resolveUpdateMethod(tauPath, bunBinDir, {
 				...options,
 				allowPackageManagers: true,
 				bunShimMarker,
-				ompIsRegularFile,
-				ompLinkTarget,
+				tauIsRegularFile,
+				tauLinkTarget,
 			}) !== "binary";
-		const binaryPath = ompIsSymlink && !managerLauncher ? (ompRealpath ?? ompPath) : ompPath;
+		const binaryPath = tauIsSymlink && !managerLauncher ? (tauRealpath ?? tauPath) : tauPath;
 		return {
 			method,
 			path: binaryPath,
-			replacesSymlink: ompIsSymlink && binaryPath === ompPath,
-			validateExistingTarget: ompIsSymlink && !managerLauncher,
+			replacesSymlink: tauIsSymlink && binaryPath === tauPath,
+			validateExistingTarget: tauIsSymlink && !managerLauncher,
 		};
 	}
-	if (method === "bun" || method === "npm") return { method, path: ompPath };
+	if (method === "bun" || method === "npm") return { method, path: tauPath };
 	return { method };
 }
 /**
@@ -774,19 +774,19 @@ async function resolveUpdateTarget(options: { allowPackageManagers: boolean }): 
 	const miseAvailable = $which("mise") !== undefined;
 	const miseBinDirs = miseAvailable ? await getMiseBinDirs() : [];
 	const miseDataDir = miseAvailable ? getMiseDataDir() : undefined;
-	const ompPath = resolveOmpPath();
+	const tauPath = resolveOmpPath();
 
 	// Binary-only releases skip package-manager routing, but a symlinked
 	// launcher still needs the manager bin dirs to tell a bun/npm launcher
 	// (taken over in place) from a foreign symlink (resolved to its real
 	// binary). A plain-file install never needs the distinction, so the common
 	// case stays probe-free.
-	const probeManagers = options.allowPackageManagers || (ompPath !== undefined && isSymlinkPath(ompPath));
+	const probeManagers = options.allowPackageManagers || (tauPath !== undefined && isSymlinkPath(tauPath));
 	const bunBinDir = probeManagers ? await getBunGlobalBinDir() : undefined;
 	const npmBinDir = probeManagers ? await getNpmGlobalBinDir() : undefined;
 
-	if (ompPath) {
-		return resolveUpdateTargetFromPath(ompPath, bunBinDir, {
+	if (tauPath) {
+		return resolveUpdateTargetFromPath(tauPath, bunBinDir, {
 			allowPackageManagers: options.allowPackageManagers,
 			bunGlobalDir: probeManagers ? process.env.BUN_INSTALL_GLOBAL_DIR : undefined,
 			homebrewPrefix,
@@ -801,7 +801,7 @@ async function resolveUpdateTarget(options: { allowPackageManagers: boolean }): 
 	throw new Error(`Could not resolve ${APP_NAME} binary path in PATH`);
 }
 
-/** Bound on `omp.rename` hops so a broken pointer chain cannot loop forever. */
+/** Bound on `tau.rename` hops so a broken pointer chain cannot loop forever. */
 const MAX_RENAME_HOPS = 3;
 
 async function fetchLatestManifest(
@@ -838,7 +838,7 @@ async function fetchLatestManifest(
 }
 
 /**
- * Get the latest release info from the npm registry, following `omp.rename`
+ * Get the latest release info from the npm registry, following `tau.rename`
  * pointers ({@link resolveReleaseRename}) when the package has moved to a new
  * npm name. Version, dist, and install names all come from the final manifest
  * in the chain. Uses npm instead of GitHub API to avoid unauthenticated rate
@@ -990,7 +990,7 @@ async function removeCacheEntries(paths: string[]): Promise<number> {
  *
  * Bun stores package cache entries as both a package marker directory
  * (`react/19.2.6@@@1`) and a materialized package directory
- * (`react@19.2.6@@@1`). Global `omp` updates can leave one full copy per
+ * (`react@19.2.6@@@1`). Global `tau` updates can leave one full copy per
  * release. The marker and materialized entries are removed together so the
  * cache stays internally consistent.
  */
@@ -1091,7 +1091,7 @@ async function pruneBunCacheAfterGlobalInstall(): Promise<BunInstallCachePruneRe
 	const packageNames = globalNodeModulesDir
 		? await collectInstalledPackageNames(globalNodeModulesDir)
 		: new Set<string>();
-	if (packageNames.size === 0 && !path.basename(cacheDir).toLowerCase().includes("omp")) return undefined;
+	if (packageNames.size === 0 && !path.basename(cacheDir).toLowerCase().includes("tau")) return undefined;
 	return await pruneBunInstallCache(cacheDir, packageNames.size === 0 ? undefined : packageNames);
 }
 
@@ -1168,15 +1168,15 @@ function getBinaryName(): string {
 }
 
 /**
- * Resolve the path that `omp` maps to in the user's PATH.
+ * Resolve the path that `tau` maps to in the user's PATH.
  */
 function resolveOmpPath(): string | undefined {
 	return $which(APP_NAME) ?? undefined;
 }
 
 /**
- * Parse the version a launcher reports from `omp --version` output
- * (`omp/X.Y.Z`, or a prerelease such as `omp/X.Y.Z-canary.1`).
+ * Parse the version a launcher reports from `tau --version` output
+ * (`tau/X.Y.Z`, or a prerelease such as `tau/X.Y.Z-canary.1`).
  *
  * The prerelease suffix is preserved so a correctly installed canary build
  * verifies as up to date instead of appearing to report a stale `X.Y.Z` and
@@ -1214,20 +1214,20 @@ async function validateExistingUpdateTarget(targetPath: string): Promise<void> {
 	if (!hasShebang && (await reportedVersionAtPath(targetPath)) !== undefined) return;
 
 	const reason = hasShebang
-		? "is a shebang script, not an OMP binary"
-		: "does not report an OMP version when run directly";
+		? "is a shebang script, not an TAU binary"
+		: "does not report an TAU version when run directly";
 	throw new Error(
-		`Refusing to replace ${targetPath}: the resolved foreign symlink target ${reason}. Point PATH directly at the OMP binary you want to update, or reinstall with: ${installerHint()}`,
+		`Refusing to replace ${targetPath}: the resolved foreign symlink target ${reason}. Point PATH directly at the TAU binary you want to update, or reinstall with: ${installerHint()}`,
 	);
 }
 
 /**
- * Run the PATH-resolved omp binary and check if it reports the expected version.
+ * Run the PATH-resolved tau binary and check if it reports the expected version.
  */
 async function verifyInstalledVersion(expectedVersion: string): Promise<InstalledVersionVerification> {
-	const ompPath = resolveOmpPath();
-	if (!ompPath) return { ok: false };
-	const binaryPath = tryRealpath(ompPath) ?? ompPath;
+	const tauPath = resolveOmpPath();
+	if (!tauPath) return { ok: false };
+	const binaryPath = tryRealpath(tauPath) ?? tauPath;
 	return await verifyBinaryAtPath(binaryPath, expectedVersion);
 }
 
@@ -1422,7 +1422,7 @@ function buildVersionedPackageInstallArgs(
 }
 
 /**
- * Build the bun argv used to globally install a specific omp version.
+ * Build the bun argv used to globally install a specific tau version.
  *
  * The version is selected by hitting {@link NPM_REGISTRY} directly in
  * {@link getLatestRelease}, so the install MUST observe the same catalog:
@@ -1434,15 +1434,15 @@ function buildVersionedPackageInstallArgs(
  * - `--no-cache` tells bun to ignore its on-disk manifest snapshot so it
  *   re-fetches metadata from that registry on every invocation.
  *
- * Together these two flags make `omp update` produce exactly the registry
+ * Together these two flags make `tau update` produce exactly the registry
  * lookup the version check just performed. See #1686.
  *
  * Also pins {@link NATIVES_PACKAGE} and the platform-specific
- * `@oh-my-pi/pi-natives-<tag>` leaf to `expectedVersion`. `bun install -g`
+ * `@tau/tau-natives-<tag>` leaf to `expectedVersion`. `bun install -g`
  * does not reliably refresh transitive `optionalDependencies` when the
  * top-level package is the only one bumped, so the native addon and its
  * version sentinel can drift out of sync with the freshly installed
- * `@oh-my-pi/pi-coding-agent` and the loader aborts at
+ * `@tau/tau-coding-agent` and the loader aborts at
  * `validateLoadedBindings` on the next launch
  * (`The .node file on disk is from a different release than this loader`).
  * Listing the natives explicitly forces bun to replace them in lock-step.
@@ -1468,10 +1468,10 @@ export function buildBunInstallArgs(
 /**
  * Build the npm argv used to update npm-managed global installs.
  *
- * `force` is set only for rename migrations: npm refuses to write the `omp`
+ * `force` is set only for rename migrations: npm refuses to write the `tau`
  * bin while the old package still owns it (`EEXIST`), and the migration
  * installs the new package BEFORE removing the old one so a failed install
- * never leaves the user without a working `omp`.
+ * never leaves the user without a working `tau`.
  */
 export function buildNpmInstallArgs(
 	expectedVersion: string,
@@ -1539,11 +1539,11 @@ export function buildRenameCleanupPackages(
 
 /** Injectable shell steps for {@link migrateRenamedInstall}; commands return process exit codes. */
 export interface RenameMigrationSteps {
-	/** Globally install the new package names. MUST be idempotent: re-running re-links the `omp` bin. */
+	/** Globally install the new package names. MUST be idempotent: re-running re-links the `tau` bin. */
 	install(): Promise<number>;
 	/** Remove the old-name globals. */
 	removeOld(): Promise<number>;
-	/** Check the PATH-resolved `omp` against the expected version. */
+	/** Check the PATH-resolved `tau` against the expected version. */
 	verify(): Promise<InstalledVersionVerification>;
 }
 
@@ -1578,14 +1578,14 @@ function packageManagerMigrationSteps(manager: "bun" | "npm", release: ReleaseIn
 }
 
 /**
- * Migrate a package-manager install across an `omp.rename` hop without a
- * window where no working `omp` exists:
+ * Migrate a package-manager install across an `tau.rename` hop without a
+ * window where no working `tau` exists:
  *
  * 1. Install the new package FIRST. Nothing has been removed yet, so a
  *    failure here leaves the old install fully functional.
  * 2. Remove the old-name globals. Failure is non-fatal: a stale package
  *    wastes disk, but the bin already points at the new install.
- * 3. Verify the PATH-resolved `omp`. If the removal deleted the shared bin
+ * 3. Verify the PATH-resolved `tau`. If the removal deleted the shared bin
  *    link (manager-dependent), re-run the idempotent install to restore it
  *    and verify again; only a repeated failure aborts, with a recovery hint.
  */
@@ -1820,14 +1820,14 @@ export async function updateViaBinaryAt(
 		fetchImpl?: Fetch;
 		githubToken?: string;
 		allowPrerelease?: boolean;
-		/** Refuse replacement unless the existing path is a non-script OMP executable. */
+		/** Refuse replacement unless the existing path is a non-script TAU executable. */
 		validateExistingTarget?: boolean;
 		verifyInstalledVersion?: typeof verifyInstalledVersion;
 	} = {},
 ): Promise<void> {
 	if (options.validateExistingTarget) await validateExistingUpdateTarget(targetPath);
 	const binaryName = options.binaryName ?? getBinaryName();
-	// Unique per attempt so two overlapping `omp update` runs never share a temp
+	// Unique per attempt so two overlapping `tau update` runs never share a temp
 	// or backup path. A fixed temp name (`<binary>.new`) let the second run's
 	// pre-download unlink delete the first run's still-downloading temp file; the
 	// first kept writing to its open fd (size + digest still passed), then chmod
@@ -1857,7 +1857,7 @@ export async function updateViaBinaryAt(
 	console.log(chalk.dim(`Verified ${asset.digest}`));
 
 	// Serialize the target swap and stale-artifact sweep per target so two
-	// overlapping `omp update` runs never replace the same binary concurrently
+	// overlapping `tau update` runs never replace the same binary concurrently
 	// or reclaim each other's live backup/temp files. The download above writes
 	// to a unique temp path and is safe to overlap; only the swap is shared.
 	const verification = await withFileLock(targetPath, async () => {
@@ -1890,7 +1890,7 @@ export async function updateViaBinaryAt(
 /**
  * In-place forwarder bodies, by shim extension, for launchers that cannot be
  * renamed aside during a script-shim takeover; each execs the sibling
- * `omp.exe`. Rewriting matters for the shims that outrank `.exe` at command
+ * `tau.exe`. Rewriting matters for the shims that outrank `.exe` at command
  * resolution: PowerShell prefers `.ps1` and Git Bash resolves the
  * extensionless sh shim first, so leaving the old body behind would keep
  * launching the replaced install.
@@ -1906,8 +1906,8 @@ const SHIM_FORWARDERS: Record<string, string> = {
  * Take over a Windows script-launcher install for a binary-only release.
  *
  * npm-managed Windows installs are launched through script shims
- * (`omp`/`omp.cmd`/`omp.ps1`) that cannot be overwritten with a native
- * executable. The release binary is installed as `omp.exe` beside them and
+ * (`tau`/`tau.cmd`/`tau.ps1`) that cannot be overwritten with a native
+ * executable. The release binary is installed as `tau.exe` beside them and
  * the shims are then renamed aside: cmd.exe would already prefer `.exe` via
  * PATHEXT, but PowerShell resolves `.ps1` first, so the takeover only sticks
  * once the shims are out of the way. A working launcher exists at every
@@ -2034,8 +2034,8 @@ export async function updateViaShimTakeover(
  */
 function installerHint(): string {
 	return process.platform === "win32"
-		? "& ([scriptblock]::Create((irm https://omp.sh/install.ps1))) -Binary"
-		: "curl -fsSL https://omp.sh/install | sh -s -- --binary";
+		? "& ([scriptblock]::Create((irm https://tau.sh/install.ps1))) -Binary"
+		: "curl -fsSL https://tau.sh/install | sh -s -- --binary";
 }
 
 /** Persisted channel, or undefined when settings are unavailable (SDK/test embedding without `Settings.init()`). */
@@ -2107,7 +2107,7 @@ export async function runUpdateCommand(opts: {
 		return;
 	}
 
-	// Choose update method based on the prioritized omp binary in PATH. For
+	// Choose update method based on the prioritized tau binary in PATH. For
 	// binary-only releases the package managers are never consulted: a bun/npm
 	// symlink resolves to method "binary" and is replaced in place, keeping the
 	// same PATH entry live.
@@ -2121,7 +2121,7 @@ export async function runUpdateCommand(opts: {
 		}
 		if (target.method === "nix") {
 			console.log(chalk.yellow("This installation is managed by Nix and cannot update itself."));
-			console.log(chalk.dim("Update the flake input or profile that provides omp, then rebuild."));
+			console.log(chalk.dim("Update the flake input or profile that provides tau, then rebuild."));
 			return;
 		} else if (target.method === "brew") {
 			await updateViaHomebrew(release.version, opts.force);

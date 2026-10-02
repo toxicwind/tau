@@ -1,11 +1,11 @@
 import { afterEach, beforeAll, describe, expect, it } from "bun:test";
-import type { AgentTool } from "@oh-my-pi/pi-agent-core";
-import { type Component, Text } from "@oh-my-pi/pi-tui";
+import type { AgentTool } from "@tau/tau-agent-core";
+import { type Component, Text } from "@tau/tau-tui";
 import { Settings, settings } from "../../../src/config/settings";
-import { renderMCPResult } from "@oh-my-pi/pi-tui/tools/mcp";
-import type { MCPToolDetails } from "@oh-my-pi/pi-tui/tools/mcp";
-import { ToolExecutionComponent, type ToolExecutionUi } from "@oh-my-pi/pi-tui/chat/tool-execution";
-import { getThemeByName, setThemeInstance, theme } from "@oh-my-pi/pi-tui/theme";
+import { renderMCPResult } from "@tau/tau-tui/tools/mcp";
+import type { MCPToolDetails } from "@tau/tau-tui/tools/mcp";
+import { ToolExecutionComponent, type ToolExecutionUi } from "@tau/tau-tui/chat/tool-execution";
+import { getThemeByName, setThemeInstance, theme } from "@tau/tau-tui/theme";
 
 class BoldTypeErrorComponent implements Component {
 	render(_width: number): readonly string[] {

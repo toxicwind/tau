@@ -1,12 +1,12 @@
 import { beforeAll, describe, expect, it } from "bun:test";
-import { AttachmentChipsBand } from "@oh-my-pi/pi-tui/prompt/attachment-chips";
-import { CustomEditor } from "@oh-my-pi/pi-tui/prompt/custom-editor";
-import { chipLabel } from "@oh-my-pi/pi-tui/prompt/composer-attachments";
-import { getEditorTheme, initTheme } from "@oh-my-pi/pi-tui/theme";
-import { ImageBudget } from "@oh-my-pi/pi-tui";
-import { setKittyGraphics } from "@oh-my-pi/pi-tui/kitty-graphics";
-import { getCellDimensions, ImageProtocol, setCellDimensions, TERMINAL } from "@oh-my-pi/pi-tui/terminal-capabilities";
-import { visibleWidth } from "@oh-my-pi/pi-tui/utils";
+import { AttachmentChipsBand } from "@tau/tau-tui/prompt/attachment-chips";
+import { CustomEditor } from "@tau/tau-tui/prompt/custom-editor";
+import { chipLabel } from "@tau/tau-tui/prompt/composer-attachments";
+import { getEditorTheme, initTheme } from "@tau/tau-tui/theme";
+import { ImageBudget } from "@tau/tau-tui";
+import { setKittyGraphics } from "@tau/tau-tui/kitty-graphics";
+import { getCellDimensions, ImageProtocol, setCellDimensions, TERMINAL } from "@tau/tau-tui/terminal-capabilities";
+import { visibleWidth } from "@tau/tau-tui/utils";
 
 // 2x2 red PNG — real header so the band's dimension probe decodes 2x2.
 const TINY_PNG =

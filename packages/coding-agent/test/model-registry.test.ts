@@ -3,24 +3,24 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, spyOn, te
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Effort, type FetchImpl, type Model, type OpenAICompat, type ThinkingConfig } from "@oh-my-pi/pi-ai";
-import { streamOpenAICompletions } from "@oh-my-pi/pi-ai/providers/openai-completions";
-import { streamSimple } from "@oh-my-pi/pi-ai/stream";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { resolveMaxContextWindow } from "@oh-my-pi/pi-catalog/compat/context-window";
-import { writeModelCache } from "@oh-my-pi/pi-catalog/model-cache";
-import { fingerprintStaticModels } from "@oh-my-pi/pi-catalog/model-manager";
-import * as catalogModels from "@oh-my-pi/pi-catalog/models";
-import { calculateUsageCost, getBundledModels } from "@oh-my-pi/pi-catalog/models";
-import { modelKind } from "@oh-my-pi/pi-catalog/types";
-import { finalizeCustomModel } from "@oh-my-pi/pi-coding-agent/config/custom-models";
-import { applyModelPatch, mergeDiscoveredModel } from "@oh-my-pi/pi-coding-agent/config/model-patch";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { resolveRoleChain } from "@oh-my-pi/pi-coding-agent/config/model-resolver";
-import { roleCandidatePool } from "@oh-my-pi/pi-coding-agent/config/model-roles";
-import { resetSettingsForTest, Settings, settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { removeSyncWithRetries, Snowflake } from "@oh-my-pi/pi-utils";
+import { Effort, type FetchImpl, type Model, type OpenAICompat, type ThinkingConfig } from "@tau/tau-ai";
+import { streamOpenAICompletions } from "@tau/tau-ai/providers/openai-completions";
+import { streamSimple } from "@tau/tau-ai/stream";
+import { buildModel } from "@tau/tau-catalog/build";
+import { resolveMaxContextWindow } from "@tau/tau-catalog/compat/context-window";
+import { writeModelCache } from "@tau/tau-catalog/model-cache";
+import { fingerprintStaticModels } from "@tau/tau-catalog/model-manager";
+import * as catalogModels from "@tau/tau-catalog/models";
+import { calculateUsageCost, getBundledModels } from "@tau/tau-catalog/models";
+import { modelKind } from "@tau/tau-catalog/types";
+import { finalizeCustomModel } from "@tau/tau-coding-agent/config/custom-models";
+import { applyModelPatch, mergeDiscoveredModel } from "@tau/tau-coding-agent/config/model-patch";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { resolveRoleChain } from "@tau/tau-coding-agent/config/model-resolver";
+import { roleCandidatePool } from "@tau/tau-coding-agent/config/model-roles";
+import { resetSettingsForTest, Settings, settings } from "@tau/tau-coding-agent/config/settings";
+import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { removeSyncWithRetries, Snowflake } from "@tau/tau-utils";
 
 describe("ModelRegistry", () => {
 	let tempDir: string;
@@ -51,7 +51,7 @@ describe("ModelRegistry", () => {
 		delete Bun.env.OLLAMA_BASE_URL;
 		delete Bun.env.OLLAMA_HOST;
 		delete Bun.env.OLLAMA_CONTEXT_LENGTH;
-		tempDir = path.join(os.tmpdir(), `pi-test-model-registry-${Snowflake.next()}`);
+		tempDir = path.join(os.tmpdir(), `tau-test-model-registry-${Snowflake.next()}`);
 		fs.mkdirSync(tempDir, { recursive: true });
 		modelsJsonPath = path.join(tempDir, "models.json");
 		// In-memory auth DB: tests need a fresh, isolated credential store per case but
@@ -95,7 +95,7 @@ describe("ModelRegistry", () => {
 		delete Bun.env.OLLAMA_HOST;
 		delete Bun.env.OLLAMA_CONTEXT_LENGTH;
 		sharedAuth = await AuthStorage.create(":memory:");
-		sharedDir = fs.mkdtempSync(path.join(os.tmpdir(), "pi-test-mr-shared-"));
+		sharedDir = fs.mkdtempSync(path.join(os.tmpdir(), "tau-test-mr-shared-"));
 		// Unmodified bundled catalog (no custom config); reused by built-in-only
 		// read-only assertions across describe blocks. Exercising the read paths
 		// here pays one-time lazy query/grammar init off every test's body clock.
@@ -635,11 +635,11 @@ describe("ModelRegistry", () => {
 		});
 
 		test("refresh keeps transport override on built-in provider (#2555 openrouter gateway)", async () => {
-			// Reporter ran `omp` with the auth-gateway broker proxying OpenRouter.
+			// Reporter ran `tau` with the auth-gateway broker proxying OpenRouter.
 			// Default model worked; switching via `/model` produced
 			// `404 No route: POST /chat/completions` until restart. Root cause:
 			// background discovery refresh re-fetched the openrouter catalog and
-			// `mergeDiscoveredModel` dropped `transport: pi-native` (raw catalog
+			// `mergeDiscoveredModel` dropped `transport: tau-native` (raw catalog
 			// rows carry no transport), so the next stream went out as plain
 			// openai-completions to `${baseUrl}/chat/completions` instead of the
 			// gateway's `/v1/pi/stream`.
@@ -647,7 +647,7 @@ describe("ModelRegistry", () => {
 				openrouter: {
 					baseUrl: "http://localhost:4000",
 					apiKey: "gateway-token",
-					transport: "pi-native",
+					transport: "tau-native",
 				},
 			});
 
@@ -674,18 +674,18 @@ describe("ModelRegistry", () => {
 			// Pre-refresh: every bundled openrouter model already carries the override.
 			const preRefresh = getModelsForProvider(registry, "openrouter");
 			expect(preRefresh.length).toBeGreaterThan(0);
-			expect(preRefresh.every(m => m.transport === "pi-native")).toBe(true);
+			expect(preRefresh.every(m => m.transport === "tau-native")).toBe(true);
 			expect(preRefresh.every(m => m.baseUrl === "http://localhost:4000")).toBe(true);
 
 			await registry.refreshProvider("openrouter", "online");
 			expect(requestedUrls).toContain("http://localhost:4000/models");
 
 			// Post-refresh: every openrouter model — bundled or freshly
-			// discovered — must still route through the pi-native transport.
+			// discovered — must still route through the tau-native transport.
 			const postRefresh = getModelsForProvider(registry, "openrouter");
 			expect(postRefresh.length).toBeGreaterThan(0);
 			for (const model of postRefresh) {
-				expect(model.transport).toBe("pi-native");
+				expect(model.transport).toBe("tau-native");
 				expect(model.baseUrl).toBe("http://localhost:4000");
 			}
 		});
@@ -1141,13 +1141,13 @@ describe("ModelRegistry", () => {
 			expect(flash).toMatchObject({ baseUrl: "https://api.z.ai/api/anthropic" });
 		});
 
-		test("refresh keeps pi-native gateway baseUrl across APIs", async () => {
+		test("refresh keeps tau-native gateway baseUrl across APIs", async () => {
 			writeRawModelsJson({
 				zai: {
 					baseUrl: "http://localhost:4000",
 					apiKey: "gateway-token",
 					api: "anthropic-messages",
-					transport: "pi-native",
+					transport: "tau-native",
 					models: [
 						{
 							id: "glm-anthropic",
@@ -1169,7 +1169,7 @@ describe("ModelRegistry", () => {
 			expect(flash).toMatchObject({
 				api: "openai-completions",
 				baseUrl: "http://localhost:4000",
-				transport: "pi-native",
+				transport: "tau-native",
 			});
 			const glmAnthropic = registry.find("zai", "glm-anthropic");
 			expect(glmAnthropic).toMatchObject({
@@ -1354,7 +1354,7 @@ describe("ModelRegistry", () => {
 				headers: { "X-Route": "model" },
 			};
 
-			async function loadRegistry(transport?: "pi-native", modelBaseUrl?: string): Promise<ModelRegistry> {
+			async function loadRegistry(transport?: "tau-native", modelBaseUrl?: string): Promise<ModelRegistry> {
 				const modelsPath = path.join(tempDir, "models.yml");
 				await Bun.write(
 					modelsPath,
@@ -1430,7 +1430,7 @@ describe("ModelRegistry", () => {
 			}
 
 			test("new custom model uses native gateway routing instead of /chat/completions on lazy find", async () => {
-				const registry = await loadRegistry("pi-native");
+				const registry = await loadRegistry("tau-native");
 				const { request, body, result } = await requestModel(
 					registry,
 					registry.find("openai", customModel.id),
@@ -1459,7 +1459,7 @@ describe("ModelRegistry", () => {
 						provider === "openai" ? [bundledModel] : originalGetBundledModels(provider),
 					),
 				);
-				const registry = await loadRegistry("pi-native", "https://model.example/v1");
+				const registry = await loadRegistry("tau-native", "https://model.example/v1");
 				// A fresh full snapshot must not reuse a model already composed by find().
 				const model = registry.getAll().find(model => model.provider === "openai" && model.id === customModel.id);
 				const { request, body, result } = await requestModel(registry, model, true);
@@ -2741,7 +2741,7 @@ describe("ModelRegistry", () => {
 			const transportOverride = readonlyRegistry({
 				providers: {
 					"amazon-bedrock": {
-						transport: "pi-native",
+						transport: "tau-native",
 						headers: { "X-Custom-Header": "custom-value" },
 						guardrailIdentifier: "arn:aws:bedrock:eu-west-2:123456789012:guardrail/abcd1234",
 					},
@@ -2750,7 +2750,7 @@ describe("ModelRegistry", () => {
 			const profileArn = "arn:aws:bedrock:us-east-2:123456789012:application-inference-profile/company-opus-48";
 			const model = transportOverride.find("amazon-bedrock", profileArn);
 			expect(model).toBeDefined();
-			expect(model?.transport).toBe("pi-native");
+			expect(model?.transport).toBe("tau-native");
 			expect(model && (await transportOverride.resolveModelHeaders(model))).toEqual({
 				"X-Custom-Header": "custom-value",
 			});

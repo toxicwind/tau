@@ -10,9 +10,9 @@ import {
 	type ToolCall,
 	type ToolResultMessage,
 	type Usage,
-} from "@oh-my-pi/pi-ai";
-import { classifyModel } from "@oh-my-pi/pi-catalog/compat/taxonomy";
-import { getSessionsDir, isEnoent, readLines } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-ai";
+import { classifyModel } from "@tau/tau-catalog/compat/taxonomy";
+import { getSessionsDir, isEnoent, readLines } from "@tau/tau-utils";
 import type {
 	AgentType,
 	MessageStatsInput,
@@ -55,14 +55,14 @@ export function classifyAgentType(sessionPath: string): AgentType {
 
 /**
  * Extract folder name from session filename.
- * Session files are named like: --work--pi--/timestamp_uuid.jsonl
+ * Session files are named like: --work--tau--/timestamp_uuid.jsonl
  * The folder part uses -- as path separator.
  */
 export function extractFolderFromPath(sessionPath: string): string {
 	const sessionsDir = getSessionsDir();
 	const rel = path.relative(sessionsDir, sessionPath);
 	const projectDir = rel.split(path.sep)[0];
-	// Convert --work--pi-- to /work/pi
+	// Convert --work--tau-- to /work/pi
 	return projectDir.replace(/^--/, "/").replace(/--/g, "/");
 }
 

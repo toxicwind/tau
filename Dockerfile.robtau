@@ -1,0 +1,82 @@
+# syntax=docker/dockerfile:1.7-labs
+###############################################################################
+# robtau — GitHub triage+fix bot orchestrator.
+#
+# Extends `tau-base` (from /Dockerfile, default target tau/pi:dev) and adds
+# the robtau Python package + a Vite-built SolidJS dashboard bundle. The pi
+# toolchain (python + bun + rustup launcher + tau-natives + tau_rpc wheel +
+# /usr/local/bin/tau shim) all comes from PI_BASE; this file only layers what's
+# robtau-specific.
+#
+# Build (from pi root):
+#     bun run pi:image                              # build tau/pi:dev first
+#     docker build -f Dockerfile.robtau -t robtau:dev .
+#
+# Compose (recommended):
+#     docker compose --project-directory python/robtau build
+###############################################################################
+
+ARG PI_BASE=tau/pi:dev
+ARG BUN_VERSION=1.4.2
+
+############################
+# 1) web-builder — Bun + Vite, builds the SolidJS dashboard bundle.
+############################
+FROM oven/bun:${BUN_VERSION}-slim AS web-builder
+WORKDIR /work
+# Root manifests + the web workspace manifest are enough for `bun install
+# --filter robtau-web` to hydrate just the dashboard's node_modules.
+COPY package.json bun.lock ./
+COPY python/robtau/web/package.json ./python/robtau/web/package.json
+# Root package.json declares patchedDependencies, so the patch file must be
+# present before any root-level `bun install` (even a filtered one).
+COPY patches/*.patch ./patches/
+RUN bun install --filter robtau-web
+COPY --exclude=node_modules --exclude=dist python/robtau/web/ ./python/robtau/web/
+RUN bun --cwd=python/robtau/web run build
+
+############################
+# 2) runtime — tau-base + robtau src + web bundle + pip install
+############################
+FROM ${PI_BASE} AS runtime
+
+# robtau runs against the host pi checkout mounted at /work/pi read-only.
+ENV PI_ROOT=/work/pi
+
+WORKDIR /app
+
+# robtau is an MIT product; TAU's dual-license payload remains available from
+# the inherited base image under /usr/share/doc/tau.
+COPY LICENSE THIRD-PARTY-NOTICES.txt /usr/share/doc/robtau/
+
+# robtau itself. Drop the Vite-built dashboard into the package tree before
+# `pip install` so it lands in the installed wheel (`static/**/*` is declared
+# as package-data in pyproject.toml).
+COPY python/robtau/pyproject.toml ./
+COPY python/robtau/src/ ./src/
+COPY --from=web-builder /work/python/robtau/web/dist/ ./src/static/
+
+RUN pip install --no-cache-dir \
+        "fastapi>=0.112" "uvicorn[standard]>=0.30" "httpx>=0.27" \
+        "pydantic>=2.6" "pydantic-settings>=2.2" "python-dotenv>=1.0" \
+        "click>=8.1" \
+    && pip install --no-cache-dir --no-deps .
+
+# Host agent config is mounted read-only under /srv/agent-home-stage with
+# host-controlled permissions. The entrypoint copies it into root-owned
+# world-readable files under /srv/agent-home; the agent subprocess runs with
+# HOME=/srv/agent-home, so ~/.tau and ~/.agent resolve there without exposing
+# mutable host mounts.
+RUN mkdir -p /srv/agent-home/.agent /srv/agent-home/.tau/agent \
+    && mkdir -p /srv/agent-home-stage/.agent /srv/agent-home-stage/.tau/agent \
+    && printf '[install]\nbackend = "copyfile"\n' > /srv/agent-home/.bunfig.toml
+
+COPY python/robtau/entrypoint.sh /usr/local/bin/robtau-entrypoint
+RUN chmod +x /usr/local/bin/robtau-entrypoint
+
+VOLUME ["/data"]
+EXPOSE 8080
+EXPOSE 8081
+
+ENTRYPOINT ["/usr/bin/tini", "--", "/usr/local/bin/robtau-entrypoint"]
+CMD ["python", "-m", "robtau", "serve"]

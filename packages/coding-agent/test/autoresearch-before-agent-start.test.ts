@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import { createAutoresearchExtension } from "@oh-my-pi/pi-coding-agent/autoresearch";
-import { closeAllAutoresearchStorages } from "@oh-my-pi/pi-coding-agent/autoresearch/storage";
+import { createAutoresearchExtension } from "@tau/tau-coding-agent/autoresearch";
+import { closeAllAutoresearchStorages } from "@tau/tau-coding-agent/autoresearch/storage";
 import type {
 	BeforeAgentStartEvent,
 	BeforeAgentStartEventResult,
@@ -8,10 +8,10 @@ import type {
 	ExtensionContext,
 	ExtensionHandler,
 	SessionStartEvent,
-} from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
-import type { VcsGitRepo } from "@oh-my-pi/pi-natives";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import { TempDir } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-coding-agent/extensibility/extensions";
+import type { VcsGitRepo } from "@tau/tau-natives";
+import * as vcs from "@tau/tau-natives/vcs";
+import { TempDir } from "@tau/tau-utils";
 
 // Reproduces issue #3665: when the upstream system prompt resolution leaves
 // `event.systemPrompt` unset, the autoresearch handler must still render its
@@ -71,9 +71,9 @@ describe("autoresearch before_agent_start handler", () => {
 	let cwdDir: TempDir;
 
 	beforeEach(() => {
-		dbDir = TempDir.createSync("@pi-autoresearch-bas-test-");
-		process.env.OMP_AUTORESEARCH_DB_DIR = dbDir.path();
-		cwdDir = TempDir.createSync("@pi-autoresearch-bas-cwd-");
+		dbDir = TempDir.createSync("@tau-autoresearch-bas-test-");
+		process.env.TAU_AUTORESEARCH_DB_DIR = dbDir.path();
+		cwdDir = TempDir.createSync("@tau-autoresearch-bas-cwd-");
 		vi.spyOn(vcs, "git").mockReturnValue({
 			currentBranch: async () => "autoresearch/test",
 		} as unknown as VcsGitRepo);
@@ -88,7 +88,7 @@ describe("autoresearch before_agent_start handler", () => {
 	});
 
 	afterEach(() => {
-		delete process.env.OMP_AUTORESEARCH_DB_DIR;
+		delete process.env.TAU_AUTORESEARCH_DB_DIR;
 		closeAllAutoresearchStorages();
 		cwdDir.removeSync();
 		dbDir.removeSync();

@@ -1,9 +1,9 @@
 import { afterAll, describe, expect, it } from "bun:test";
-import type { FetchImpl } from "@oh-my-pi/pi-ai";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import type { SearchParams } from "@oh-my-pi/pi-coding-agent/web/search/providers/base";
-import { searchPublicWeb } from "@oh-my-pi/pi-coding-agent/web/search/providers/public";
-import { SearchProviderError } from "@oh-my-pi/pi-coding-agent/web/search/types";
+import type { FetchImpl } from "@tau/tau-ai";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import type { SearchParams } from "@tau/tau-coding-agent/web/search/providers/base";
+import { searchPublicWeb } from "@tau/tau-coding-agent/web/search/providers/public";
+import { SearchProviderError } from "@tau/tau-coding-agent/web/search/types";
 import { createInMemoryAuthStorage } from "../helpers/agent-session-setup";
 
 const authStorage = createInMemoryAuthStorage();

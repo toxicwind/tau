@@ -1,21 +1,21 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import { scheduler } from "node:timers/promises";
-import { Agent, AgentBusyError } from "@oh-my-pi/pi-agent-core";
-import { CompactionCancelledError } from "@oh-my-pi/pi-agent-core/compaction";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { ExtensionRuntime, loadExtensionFromFactory } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
-import { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
-import type { CompactOptions } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/types";
-import { AgentSession, type AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import * as unexpectedStopClassifier from "@oh-my-pi/pi-coding-agent/session/unexpected-stop-classifier";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-import { TempDir, withTimeout } from "@oh-my-pi/pi-utils";
-import * as logger from "@oh-my-pi/pi-utils/logger";
+import { Agent, AgentBusyError } from "@tau/tau-agent-core";
+import { CompactionCancelledError } from "@tau/tau-agent-core/compaction";
+import { createMockModel } from "@tau/tau-ai/providers/mock";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { ExtensionRuntime, loadExtensionFromFactory } from "@tau/tau-coding-agent/extensibility/extensions/loader";
+import { ExtensionRunner } from "@tau/tau-coding-agent/extensibility/extensions/runner";
+import type { CompactOptions } from "@tau/tau-coding-agent/extensibility/extensions/types";
+import { AgentSession, type AgentSessionEvent } from "@tau/tau-coding-agent/session/agent-session";
+import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import * as unexpectedStopClassifier from "@tau/tau-coding-agent/session/unexpected-stop-classifier";
+import { EventBus } from "@tau/tau-coding-agent/utils/event-bus";
+import { TempDir, withTimeout } from "@tau/tau-utils";
+import * as logger from "@tau/tau-utils/logger";
 import { mockSchedulerWaitWithClock } from "./helpers/mock-scheduler-clock";
 
 const runtimeSignalStoreKey = "__ompRuntimeSignals";
@@ -47,7 +47,7 @@ describe("AgentSession auto-compaction queue resume", () => {
 	let authStorage: AuthStorage;
 	let modelRegistry: ModelRegistry;
 	beforeAll(async () => {
-		tempDir = TempDir.createSync("@pi-auto-compaction-queue-");
+		tempDir = TempDir.createSync("@tau-auto-compaction-queue-");
 		authStorage = await AuthStorage.create(":memory:");
 		authStorage.keys.setRuntime("anthropic", "test-key");
 		authStorage.keys.setRuntime("mock", "test-key");

@@ -1,5 +1,5 @@
 import fs from "fs";
-import type { ExtensionAPI, ProviderConfig, ProviderModelConfig } from "@oh-my-pi/pi-coding-agent";
+import type { ExtensionAPI, ProviderConfig, ProviderModelConfig } from "@tau/tau-coding-agent";
 
 const KNOWN_PROVIDERS = new Set([
   "oc", "mmf", "nvidia", "openai", "anthropic", "google", "groq",

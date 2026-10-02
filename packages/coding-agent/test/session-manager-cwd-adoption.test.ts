@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { FileSessionStorage } from "@oh-my-pi/pi-coding-agent/session/session-storage";
-import { __resetDirsFromEnvForTests, removeWithRetries, setAgentDir, TempDir } from "@oh-my-pi/pi-utils";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { FileSessionStorage } from "@tau/tau-coding-agent/session/session-storage";
+import { __resetDirsFromEnvForTests, removeWithRetries, setAgentDir, TempDir } from "@tau/tau-utils";
 
 const tempDirs: TempDir[] = [];
 
@@ -14,7 +14,7 @@ function makeTempDir(prefix: string): string {
 
 const originalAgentDir = process.env.PI_CODING_AGENT_DIR;
 const originalPiProfile = process.env.PI_PROFILE;
-const originalOmpProfile = process.env.OMP_PROFILE;
+const originalOmpProfile = process.env.TAU_PROFILE;
 
 function restoreEnv(key: string, value: string | undefined): void {
 	if (value === undefined) {
@@ -25,13 +25,13 @@ function restoreEnv(key: string, value: string | undefined): void {
 }
 
 beforeEach(() => {
-	setAgentDir(path.join(makeTempDir("@pi-cwd-agent-dir-"), "agent"));
+	setAgentDir(path.join(makeTempDir("@tau-cwd-agent-dir-"), "agent"));
 });
 
 afterEach(async () => {
 	restoreEnv("PI_CODING_AGENT_DIR", originalAgentDir);
 	restoreEnv("PI_PROFILE", originalPiProfile);
-	restoreEnv("OMP_PROFILE", originalOmpProfile);
+	restoreEnv("TAU_PROFILE", originalOmpProfile);
 	__resetDirsFromEnvForTests();
 	await Promise.all(tempDirs.splice(0).map(dir => dir.remove()));
 });
@@ -51,8 +51,8 @@ async function writeSession(cwd: string, sessionDir: string): Promise<string> {
 
 describe("SessionManager cwd adoption on resume", () => {
 	it("adopts the resumed session's own cwd and session directory", async () => {
-		const projectA = makeTempDir("@pi-cwd-a-");
-		const projectB = makeTempDir("@pi-cwd-b-");
+		const projectA = makeTempDir("@tau-cwd-a-");
+		const projectB = makeTempDir("@tau-cwd-b-");
 		const sessionsB = path.join(projectB, "sessions");
 		const fileB = await writeSession(projectB, sessionsB);
 
@@ -69,8 +69,8 @@ describe("SessionManager cwd adoption on resume", () => {
 	});
 
 	it("leaves cwd untouched when the resumed session has no recorded cwd", async () => {
-		const projectA = makeTempDir("@pi-cwd-a-");
-		const projectB = makeTempDir("@pi-cwd-b-");
+		const projectA = makeTempDir("@tau-cwd-a-");
+		const projectB = makeTempDir("@tau-cwd-b-");
 		const sessionsB = path.join(projectB, "sessions");
 		const fileB = await writeSession(projectB, sessionsB);
 
@@ -100,8 +100,8 @@ describe("SessionManager cwd adoption on resume", () => {
 	});
 
 	it("restores cwd and session directory when a switch is rolled back", async () => {
-		const projectA = makeTempDir("@pi-cwd-a-");
-		const projectB = makeTempDir("@pi-cwd-b-");
+		const projectA = makeTempDir("@tau-cwd-a-");
+		const projectB = makeTempDir("@tau-cwd-b-");
 		const sessionsA = path.join(projectA, "sessions");
 		const sessionsB = path.join(projectB, "sessions");
 		const fileB = await writeSession(projectB, sessionsB);
@@ -117,9 +117,9 @@ describe("SessionManager cwd adoption on resume", () => {
 		expect(manager.getSessionDir()).toBe(path.resolve(sessionsA));
 	});
 	it("clears fallback persistence after adopting an accessible session", async () => {
-		const launch = makeTempDir("@pi-cwd-fallback-launch-");
-		const deniedProject = makeTempDir("@pi-cwd-fallback-denied-");
-		const store = makeTempDir("@pi-cwd-fallback-store-");
+		const launch = makeTempDir("@tau-cwd-fallback-launch-");
+		const deniedProject = makeTempDir("@tau-cwd-fallback-denied-");
+		const store = makeTempDir("@tau-cwd-fallback-store-");
 		const launchSessions = path.join(launch, "sessions");
 		const deniedFile = await writeSession(deniedProject, store);
 		const accessibleFile = await writeSession(launch, launchSessions);
@@ -140,10 +140,10 @@ describe("SessionManager cwd adoption on resume", () => {
 	});
 
 	it("keeps the current cwd when the resumed session's project directory is gone", async () => {
-		const launch = makeTempDir("@pi-cwd-launch-");
-		const store = makeTempDir("@pi-cwd-store-");
-		const goneProject = makeTempDir("@pi-cwd-gone-");
-		// The session file survives in `store` (like ~/.omp), but its header cwd
+		const launch = makeTempDir("@tau-cwd-launch-");
+		const store = makeTempDir("@tau-cwd-store-");
+		const goneProject = makeTempDir("@tau-cwd-gone-");
+		// The session file survives in `store` (like ~/.tau), but its header cwd
 		// points at a project directory that we then delete.
 		const file = await writeSession(goneProject, store);
 		await removeWithRetries(goneProject);
@@ -159,9 +159,9 @@ describe("SessionManager cwd adoption on resume", () => {
 	});
 
 	it("falls back to the launch cwd with one full read when the recorded project directory is gone", async () => {
-		const launch = makeTempDir("@pi-cwd-launch-");
-		const store = makeTempDir("@pi-cwd-store-");
-		const goneProject = makeTempDir("@pi-cwd-gone-");
+		const launch = makeTempDir("@tau-cwd-launch-");
+		const store = makeTempDir("@tau-cwd-store-");
+		const goneProject = makeTempDir("@tau-cwd-gone-");
 		const file = await writeSession(goneProject, store);
 		await removeWithRetries(goneProject);
 		class CountingFileSessionStorage extends FileSessionStorage {

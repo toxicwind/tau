@@ -6,15 +6,15 @@ import {
 	type Model,
 	type SimpleStreamOptions,
 	type Usage,
-} from "@oh-my-pi/pi-ai";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { registerCustomApi } from "@oh-my-pi/pi-ai/api-registry";
+} from "@tau/tau-ai";
+import { AssistantMessageEventStream } from "@tau/tau-ai/utils/event-stream";
+import { registerCustomApi } from "@tau/tau-ai/api-registry";
 import { isTinyLocalModelKey } from "./models";
 import { tinyModelClient } from "./title-client";
 import type { TinyChatMessage } from "./title-protocol";
 
 const LOCAL_INFERENCE_API = "local-inference";
-const LOCAL_INFERENCE_SOURCE = "omp/local-inference";
+const LOCAL_INFERENCE_SOURCE = "tau/local-inference";
 const LOCAL_INFERENCE_NO_OUTPUT = "Local inference returned no output.";
 const LOCAL_INFERENCE_ABORTED = "Local inference request aborted.";
 

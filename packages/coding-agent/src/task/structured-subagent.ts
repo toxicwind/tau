@@ -7,7 +7,7 @@
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import path from "node:path";
-import { $env, prompt, Snowflake } from "@oh-my-pi/pi-utils";
+import { $env, prompt, Snowflake } from "@tau/tau-utils";
 import { resolveAgentModelSelection, resolveConfiguredModelPatterns } from "../config/model-resolver";
 import { type ServiceTierInheritSettingValue, validateAgentServiceTierOverrides } from "../config/service-tier";
 import type { CustomTool } from "../extensibility/custom-tools/types";
@@ -19,7 +19,7 @@ import planModeSubagentPrompt from "../prompts/system/plan-mode-subagent.md" wit
 import subagentUserPromptTemplate from "../prompts/system/subagent-user-prompt.md" with { type: "text" };
 import isolationRecoveryHintTemplate from "../prompts/tools/isolation-recovery-hint.md" with { type: "text" };
 import { MAIN_AGENT_ID } from "../registry/agent-registry";
-import type { TaskEffort } from "@oh-my-pi/pi-tui/thinking";
+import type { TaskEffort } from "@tau/tau-tui/thinking";
 import type { ToolSession } from "../tools";
 import { isIrcEnabled } from "../irc/messaging";
 import { buildOutputValidator } from "../tools/output-schema-validator";
@@ -46,7 +46,7 @@ import type {
 	StructuredSubagentOutput,
 	StructuredSubagentSchemaMode,
 	StructuredSubagentSchemaSource,
-} from "@oh-my-pi/pi-tui/tools/task";
+} from "@tau/tau-tui/tools/task";
 import type { WorkPoolYieldItem } from "./workpool-yield";
 import { parseIsolationBackend } from "./worktree";
 
@@ -421,7 +421,7 @@ async function leaseArtifacts(
 	}
 	const artifactsDir = path.join(
 		os.tmpdir(),
-		`${invocationKind === "eval" ? "omp-eval-agent" : "omp-task"}-${Snowflake.next()}`,
+		`${invocationKind === "eval" ? "tau-eval-agent" : "tau-task"}-${Snowflake.next()}`,
 	);
 	await fs.mkdir(artifactsDir, { recursive: true });
 	return { sessionFile: null, artifactsDir, temporary: true, unregister: registerArtifactsDir(artifactsDir) };
@@ -519,7 +519,7 @@ function buildExecutorOptions(
 		localProtocolOptions,
 		parentArtifactManager: session.getArtifactManager?.() ?? undefined,
 		parentHindsightSessionState: session.getHindsightSessionState?.(),
-		parentMnemopiSessionState: session.getMnemopiSessionState?.(),
+		parentMnemotauSessionState: session.getMnemotauSessionState?.(),
 		parentTelemetry: session.getTelemetry?.(),
 		parentEvalSessionId: request.shareEvalSession === false ? undefined : (session.getEvalSessionId?.() ?? undefined),
 		parentAgentId: session.getAgentId?.() ?? MAIN_AGENT_ID,

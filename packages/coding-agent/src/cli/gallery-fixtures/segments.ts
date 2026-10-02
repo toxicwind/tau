@@ -1,8 +1,8 @@
-import { truncateToWidth } from "@oh-my-pi/pi-tui";
-import type { StatusLineSegmentId } from "@oh-my-pi/pi-tui/status-line/schema";
-import { ALL_SEGMENT_IDS, renderSegment } from "@oh-my-pi/pi-tui/status-line/segments";
-import type { SegmentContext } from "@oh-my-pi/pi-tui/status-line/types";
-import { theme } from "@oh-my-pi/pi-tui/theme";
+import { truncateToWidth } from "@tau/tau-tui";
+import type { StatusLineSegmentId } from "@tau/tau-tui/status-line/schema";
+import { ALL_SEGMENT_IDS, renderSegment } from "@tau/tau-tui/status-line/segments";
+import type { SegmentContext } from "@tau/tau-tui/status-line/types";
+import { theme } from "@tau/tau-tui/theme";
 import type { GallerySessionOptions } from "./preview-session";
 import { createGallerySession, GALLERY_CONTEXT_WINDOW } from "./preview-session";
 import type { GalleryPreviewEntry } from "./types";
@@ -28,9 +28,9 @@ export function createGallerySegmentContext(sessionOptions?: GallerySessionOptio
 		hostname: "gallery-host",
 		sessionAccent: false,
 		activeRepo: {
-			cwd: "/workspace/oh-my-pi",
-			repoRoot: "/workspace/oh-my-pi",
-			relativeRepoRoot: "oh-my-pi",
+			cwd: "/workspace/tau",
+			repoRoot: "/workspace/tau",
+			relativeRepoRoot: "tau",
 			source: "single-direct-child-repo",
 		},
 		width: 100,
@@ -76,7 +76,7 @@ export function createGallerySegmentContext(sessionOptions?: GallerySessionOptio
 		git: {
 			branch: "gallery/reference",
 			status: { staged: 2, unstaged: 3, untracked: 1 },
-			pr: { number: 1842, url: "https://github.com/can1357/oh-my-pi/pull/1842" },
+			pr: { number: 1842, url: "https://github.com/toxicwind/tau/pull/1842" },
 		},
 		worktree: null,
 		usage: {
@@ -161,7 +161,7 @@ function variantsFor(id: StatusLineSegmentId): readonly SegmentVariantSpec[] {
 					label: "linked worktree",
 					context: {
 						options: { path: { stripWorkPrefix: true } },
-						worktree: { projectName: "oh-my-pi", worktreeName: "gallery-reference" },
+						worktree: { projectName: "tau", worktreeName: "gallery-reference" },
 						git: { branch: "gallery-reference", status: null, pr: null },
 					},
 				},

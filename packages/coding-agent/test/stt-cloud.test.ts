@@ -1,12 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import * as transcription from "@oh-my-pi/pi-ai/transcription";
-import type { TranscriptionResult } from "@oh-my-pi/pi-ai/transcription";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import type { Model } from "@oh-my-pi/pi-catalog/types";
-import { Settings, settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import * as asrClient from "@oh-my-pi/pi-coding-agent/stt/asr-client";
-import * as downloader from "@oh-my-pi/pi-coding-agent/stt/downloader";
-import { STTController } from "@oh-my-pi/pi-coding-agent/stt/stt-controller";
+import * as transcription from "@tau/tau-ai/transcription";
+import type { TranscriptionResult } from "@tau/tau-ai/transcription";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import type { Model } from "@tau/tau-catalog/types";
+import { Settings, settings } from "@tau/tau-coding-agent/config/settings";
+import * as asrClient from "@tau/tau-coding-agent/stt/asr-client";
+import * as downloader from "@tau/tau-coding-agent/stt/downloader";
+import { STTController } from "@tau/tau-coding-agent/stt/stt-controller";
 import { beginSettingsTest, restoreSettingsTestState, type SettingsTestState } from "./helpers/settings-test-state";
 
 const ZERO_USAGE = {

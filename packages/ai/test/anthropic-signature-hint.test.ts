@@ -3,9 +3,9 @@ import {
 	isInvalidThinkingSignatureError,
 	isThinkingPrefixBindingError,
 	maybeAddReplayUnsignedThinkingHint,
-} from "@oh-my-pi/pi-ai/providers/anthropic";
-import type { Model, ModelSpec } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+} from "@tau/tau-ai/providers/anthropic";
+import type { Model, ModelSpec } from "@tau/tau-ai/types";
+import { buildModel } from "@tau/tau-catalog/build";
 
 /**
  * Regression for #4297 — an unmarked custom `anthropic-messages` signing proxy

@@ -1,14 +1,14 @@
 import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { AsyncJobManager } from "@oh-my-pi/pi-coding-agent/async";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
-import { AgentSession, type AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent } from "@tau/tau-agent-core";
+import type { AssistantMessage } from "@tau/tau-ai";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import { AsyncJobManager } from "@tau/tau-coding-agent/async";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import type { ExtensionRunner } from "@tau/tau-coding-agent/extensibility/extensions";
+import { AgentSession, type AgentSessionEvent } from "@tau/tau-coding-agent/session/agent-session";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { TempDir } from "@tau/tau-utils";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
 /**
@@ -112,7 +112,7 @@ describe("AgentSession todo reminder async-job deferral", () => {
 	}
 
 	beforeEach(() => {
-		tempDir = TempDir.createSync("@pi-todo-reminder-async-jobs-");
+		tempDir = TempDir.createSync("@tau-todo-reminder-async-jobs-");
 		sessionManager = SessionManager.inMemory(tempDir.path());
 		manager = new AsyncJobManager({});
 		gates = [];

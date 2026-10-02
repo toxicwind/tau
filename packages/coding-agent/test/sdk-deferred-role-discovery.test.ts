@@ -2,14 +2,14 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { FetchImpl } from "@oh-my-pi/pi-ai";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { createAgentSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { removeSyncWithRetries, Snowflake } from "@oh-my-pi/pi-utils";
+import type { FetchImpl } from "@tau/tau-ai";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { createAgentSession } from "@tau/tau-coding-agent/sdk";
+import type { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { removeSyncWithRetries, Snowflake } from "@tau/tau-utils";
 
 // Regression for #8863: a deferred `--model @<role>` whose role maps to a model
 // on a discovery-backed provider (ollama/oMLX/llama-swap) must trigger the
@@ -28,7 +28,7 @@ describe("createAgentSession deferred role alias on discoverable provider (#8863
 			savedOllamaEnv[key] = Bun.env[key];
 			delete Bun.env[key];
 		}
-		tempDir = path.join(os.tmpdir(), `pi-test-sdk-deferred-role-${Snowflake.next()}`);
+		tempDir = path.join(os.tmpdir(), `tau-test-sdk-deferred-role-${Snowflake.next()}`);
 		fs.mkdirSync(tempDir, { recursive: true });
 		modelsJsonPath = path.join(tempDir, "models.json");
 		authStorage = await AuthStorage.create(":memory:");

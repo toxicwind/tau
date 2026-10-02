@@ -1,5 +1,5 @@
-import type * as XtermModule from "@oh-my-pi/pi-utils/vterm";
-import type { Terminal as XtermTerminalType } from "@oh-my-pi/pi-utils/vterm";
+import type * as XtermModule from "@tau/tau-utils/vterm";
+import type { Terminal as XtermTerminalType } from "@tau/tau-utils/vterm";
 import type { Component } from "../tui";
 import { extractPrintableText, matchesKey, parseKey, parseKittySequence } from "../keys";
 import { padding, truncateToWidth, visibleWidth } from "../utils";

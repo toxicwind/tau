@@ -1,5 +1,5 @@
-import { postmortem } from "@oh-my-pi/pi-utils";
-import { Args, Command, Flags } from "@oh-my-pi/pi-utils/cli";
+import { postmortem } from "@tau/tau-utils";
+import { Args, Command, Flags } from "@tau/tau-utils/cli";
 import { runCleanseCommand } from "../cleanse";
 import { cleanseHelp as commandHelp } from "../cli/command-help";
 import { CliUsageError } from "../cli/usage-error";
@@ -36,13 +36,13 @@ export default class Cleanse extends Command {
 	};
 
 	static examples = [
-		"omp cleanse",
-		"omp cleanse --all",
-		'omp cleanse "ts errors"',
-		"omp cleanse -n 8",
-		"omp cleanse -m opus",
-		"omp cleanse -t",
-		"omp cleanse --agents 12 --model anthropic/claude-opus-4-6",
+		"tau cleanse",
+		"tau cleanse --all",
+		'tau cleanse "ts errors"',
+		"tau cleanse -n 8",
+		"tau cleanse -m opus",
+		"tau cleanse -t",
+		"tau cleanse --agents 12 --model anthropic/claude-opus-4-6",
 	];
 
 	async run(): Promise<void> {

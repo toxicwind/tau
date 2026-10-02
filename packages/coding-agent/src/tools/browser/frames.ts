@@ -2,11 +2,11 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 
-import { Snowflake, untilAborted } from "@oh-my-pi/pi-utils";
+import { Snowflake, untilAborted } from "@tau/tau-utils";
 import type { ElementHandle, ElementScreenshotOptions, Frame, KeyInput, Page } from "puppeteer-core";
 import { formatScreenshot, resizeImage } from "../../utils/image-resize";
 import { throwIfAborted } from "../tool-errors";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 import { type AriaSnapshotOptions, buildAriaSnapshotScript } from "./aria/aria-snapshot";
 import { clickElement, fillViaHandle } from "./interactions";
 import { RunOutput } from "./run-output";
@@ -393,7 +393,7 @@ export async function captureFrameScreenshot(
 				session.browserScreenshotDir,
 				`frame-screenshot-${new Date().toISOString().replace(/[:.]/g, "-").slice(0, -1)}.${ext}`,
 			)
-		: path.join(os.tmpdir(), `omp-frame-sshots-${Snowflake.next()}.${ext}`);
+		: path.join(os.tmpdir(), `tau-frame-sshots-${Snowflake.next()}.${ext}`);
 	await fs.promises.mkdir(path.dirname(dest), { recursive: true });
 	await Bun.write(dest, savedBuffer);
 	screenshots.push({

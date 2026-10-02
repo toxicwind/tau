@@ -8,23 +8,23 @@ import {
 	type BrowserHandle,
 	holdBrowser,
 	releaseBrowser,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/registry";
-import type { ReadyInfo, WorkerInbound, WorkerOutbound } from "@oh-my-pi/pi-coding-agent/tools/browser/tab-protocol";
+} from "@tau/tau-coding-agent/tools/browser/registry";
+import type { ReadyInfo, WorkerInbound, WorkerOutbound } from "@tau/tau-coding-agent/tools/browser/tab-protocol";
 import {
 	acquireTab,
 	initializeTabWorkerForTest,
 	releaseTab,
 	runInTab,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/tab-supervisor";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools/index";
+} from "@tau/tau-coding-agent/tools/browser/tab-supervisor";
+import type { ToolSession } from "@tau/tau-coding-agent/tools/index";
 import { chromiumAvailable, visibleBrowserAvailable } from "./chromium-probe";
 
 const CHROMIUM_AVAILABLE = await chromiumAvailable();
 // Headful launches additionally need a display; `CHROMIUM_AVAILABLE` only
 // checks headless CDP on Linux, which does not require an X server.
 // Never open a desktop window during ordinary test runs; exercise this manual
-// viewport smoke test only with OMP_TEST_VISIBLE_BROWSER=1.
-const VISIBLE_BROWSER_AVAILABLE = process.env.OMP_TEST_VISIBLE_BROWSER === "1" && (await visibleBrowserAvailable());
+// viewport smoke test only with TAU_TEST_VISIBLE_BROWSER=1.
+const VISIBLE_BROWSER_AVAILABLE = process.env.TAU_TEST_VISIBLE_BROWSER === "1" && (await visibleBrowserAvailable());
 
 class FakeStartupWorker {
 	#errorHandlers = new Set<(error: Error) => void>();
@@ -67,7 +67,7 @@ class FakeStartupWorker {
 const initPayload = {
 	mode: "headless" as const,
 	browserWSEndpoint: "ws://127.0.0.1/devtools/browser/test",
-	safeDir: "/tmp/omp-puppeteer",
+	safeDir: "/tmp/tau-puppeteer",
 	timeoutMs: 1_000,
 };
 
@@ -224,7 +224,7 @@ describe("browser init deadline carry-over", () => {
 	);
 });
 
-describe("OMP-owned browser evaluation", () => {
+describe("TAU-owned browser evaluation", () => {
 	it.skipIf(!CHROMIUM_AVAILABLE)(
 		"adopts isolated element arguments into the main world without consuming caller handles",
 		async () => {
@@ -317,7 +317,7 @@ describe("OMP-owned browser evaluation", () => {
 	);
 });
 
-describe("OMP-owned browser input", () => {
+describe("TAU-owned browser input", () => {
 	it.skipIf(!CHROMIUM_AVAILABLE)(
 		"clicks background tabs through selector, observed handle, and raw Puppeteer actions",
 		async () => {
@@ -363,7 +363,7 @@ describe("OMP-owned browser input", () => {
 	);
 });
 
-describe("visible OMP-owned browser tabs", () => {
+describe("visible TAU-owned browser tabs", () => {
 	it.skipIf(!VISIBLE_BROWSER_AVAILABLE)(
 		"creates independent pages without pinning the resizable window viewport",
 		async () => {
@@ -379,7 +379,7 @@ describe("visible OMP-owned browser tabs", () => {
 				names.push(firstName);
 
 				// Shared broker launches use --no-startup-window. Mirror that
-				// OMP-owned-only target set, but only after the owned page exists:
+				// TAU-owned-only target set, but only after the owned page exists:
 				// a headful Chromium quits when its last window closes, so closing
 				// every page first would kill the browser this test still needs.
 				for (const page of await browser.browser.pages()) {

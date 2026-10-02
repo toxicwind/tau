@@ -1,4 +1,4 @@
-import type { Api, AuthStorage, FetchImpl, Model } from "@oh-my-pi/pi-ai";
+import type { Api, AuthStorage, FetchImpl, Model } from "@tau/tau-ai";
 import type { ModelRegistry } from "../../../config/model-registry";
 import type { StructuredQuery } from "../query";
 import type { SearchProviderId, SearchResponse } from "../types";

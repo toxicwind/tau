@@ -21,10 +21,10 @@ import type {
 	Question,
 	Questions,
 	ScoreQuestion,
-} from "@oh-my-pi/pi-ai";
-import { isRecord } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-ai";
+import { isRecord } from "@tau/tau-utils";
 import { type ChainJudge, type JudgmentUsage, journalJudgmentUsage, resolveJudge } from "../judgment";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 import { withBridgeTimeoutPause } from "./bridge-timeout";
 import { type EvalCompletionBridgeOptions, evalRequestSlots } from "./completion-bridge";
 

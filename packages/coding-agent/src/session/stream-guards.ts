@@ -4,11 +4,11 @@ import {
 	type AgentMessage,
 	type AgentTurnEndContext,
 	createToolScopedAbortReason,
-} from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, AssistantMessageEvent, Model } from "@oh-my-pi/pi-ai";
-import { GeminiHeaderRunDetector } from "@oh-my-pi/pi-ai/utils/thinking-loop";
-import { type RepeatedToolCallDetection, ToolCallLoopGuard } from "@oh-my-pi/pi-ai/utils/tool-call-loop-guard";
-import { logger, prompt } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-agent-core";
+import type { AssistantMessage, AssistantMessageEvent, Model } from "@tau/tau-ai";
+import { GeminiHeaderRunDetector } from "@tau/tau-ai/utils/thinking-loop";
+import { type RepeatedToolCallDetection, ToolCallLoopGuard } from "@tau/tau-ai/utils/tool-call-loop-guard";
+import { logger, prompt } from "@tau/tau-utils";
 import type { Settings } from "../config/settings";
 import geminiToolReminderTemplate from "../prompts/system/gemini-tool-call-reminder.md" with { type: "text" };
 import type { SecretObfuscator } from "../secrets/obfuscator";
@@ -24,7 +24,7 @@ const GEMINI_HEADER_INTERRUPT_REASON = "Interrupted: emit a tool call instead of
 const GEMINI_TOOL_REMINDER_TYPE = "gemini-tool-call-reminder";
 // Prefix of the native no-op diagnostic emitted by the Rust edit engine when a
 // preview produces byte-identical content. Kept in sync with
-// crates/pi-edit/src/modes/replace.rs and crates/pi-edit/src/hashline/preview.rs
+// crates/tau-edit/src/modes/replace.rs and crates/tau-edit/src/hashline/preview.rs
 // ("No changes would be made to <path>..."). Prefix match (not equality)
 // because the Rust messages append the path and mode-specific suffixes.
 const NO_CHANGES_PREVIEW_PREFIX = "No changes would be made";

@@ -1,10 +1,10 @@
 /**
  * Projects one compiled auth policy (`rules/auth/<id>.kdl`) plus the
  * provider's optional TypeScript transport hooks into the
- * {@link ProviderDefinition} the rest of `@oh-my-pi/pi-ai` consumes.
+ * {@link ProviderDefinition} the rest of `@tau/tau-ai` consumes.
  */
-import type { CompiledAuthProvider } from "@oh-my-pi/pi-catalog/compat/types";
-import { $pickenv } from "@oh-my-pi/pi-utils";
+import type { CompiledAuthProvider } from "@tau/tau-catalog/compat/types";
+import { $pickenv } from "@tau/tau-utils";
 import * as AIError from "../error";
 import { createApiKeyLogin } from "./engine/api-key";
 import { loadLoginHook } from "./engine/common";

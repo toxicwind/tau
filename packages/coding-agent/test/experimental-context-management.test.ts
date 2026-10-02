@@ -1,32 +1,32 @@
 import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import { Agent, CompactionCancelledError, type AgentTool } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, UserMessage } from "@oh-my-pi/pi-ai";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession, type AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { CONTEXT_NOTES_ENTRY_TYPE, getContextNotes } from "@oh-my-pi/pi-coding-agent/session/context-notes";
+import { Agent, CompactionCancelledError, type AgentTool } from "@tau/tau-agent-core";
+import type { AssistantMessage, UserMessage } from "@tau/tau-ai";
+import { createMockModel } from "@tau/tau-ai/providers/mock";
+import { AssistantMessageEventStream } from "@tau/tau-ai/utils/event-stream";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { AgentSession, type AgentSessionEvent } from "@tau/tau-coding-agent/session/agent-session";
+import { CONTEXT_NOTES_ENTRY_TYPE, getContextNotes } from "@tau/tau-coding-agent/session/context-notes";
 import {
 	createCustomMessage,
 	convertToLlm,
 	SKILL_PROMPT_MESSAGE_TYPE,
-} from "@oh-my-pi/pi-coding-agent/session/messages";
-import type { CompactionEntry } from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import { ExtensionRuntime, loadExtensionFromFactory } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
-import { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
-import { computeNonMessageTokens } from "@oh-my-pi/pi-tui/status-line/context-usage";
-import { mnemopiBackend } from "@oh-my-pi/pi-coding-agent/mnemopi/backend";
-import type { Tool, ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { ContextNotesTool, NewContextTool } from "@oh-my-pi/pi-coding-agent/tools/context-notes";
-import { BUILTIN_TOOL_NAMES } from "@oh-my-pi/pi-coding-agent/tools/builtin-names";
-import { GrepTool } from "@oh-my-pi/pi-coding-agent/tools/grep";
-import { EvalTool } from "@oh-my-pi/pi-coding-agent/tools/eval";
-import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
+} from "@tau/tau-coding-agent/session/messages";
+import type { CompactionEntry } from "@tau/tau-coding-agent/session/session-entries";
+import { ExtensionRuntime, loadExtensionFromFactory } from "@tau/tau-coding-agent/extensibility/extensions/loader";
+import { ExtensionRunner } from "@tau/tau-coding-agent/extensibility/extensions/runner";
+import { EventBus } from "@tau/tau-coding-agent/utils/event-bus";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { TempDir } from "@tau/tau-utils";
+import { computeNonMessageTokens } from "@tau/tau-tui/status-line/context-usage";
+import { mnemotauBackend } from "@tau/tau-coding-agent/mnemotau/backend";
+import type { Tool, ToolSession } from "@tau/tau-coding-agent/tools";
+import { ContextNotesTool, NewContextTool } from "@tau/tau-coding-agent/tools/context-notes";
+import { BUILTIN_TOOL_NAMES } from "@tau/tau-coding-agent/tools/builtin-names";
+import { GrepTool } from "@tau/tau-coding-agent/tools/grep";
+import { EvalTool } from "@tau/tau-coding-agent/tools/eval";
+import { ReadTool } from "@tau/tau-coding-agent/tools/read";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
 const authStorage = createInMemoryAuthStorage();
@@ -576,7 +576,7 @@ describe("experimental context management", () => {
 	});
 
 	it("skips built-in remote memory recall during local rollover while preserving the boundary", async () => {
-		const recallSpy = vi.spyOn(mnemopiBackend, "preCompactionContext").mockResolvedValue("recalled context");
+		const recallSpy = vi.spyOn(mnemotauBackend, "preCompactionContext").mockResolvedValue("recalled context");
 		try {
 			const model = getBundledModel("anthropic", "claude-sonnet-4-5");
 			if (!model) throw new Error("Expected bundled model");
@@ -591,7 +591,7 @@ describe("experimental context management", () => {
 			const settings = Settings.isolated({
 				"compaction.experimentalContextManagement": true,
 				"compaction.keepRecentTokens": 1,
-				"memory.backend": "mnemopi",
+				"memory.backend": "mnemotau",
 			});
 			const { tools } = createRolloverTools(manager, settings);
 			const agent = new Agent({ initialState: { model, systemPrompt: ["test"], messages: seed, tools } });
@@ -612,7 +612,7 @@ describe("experimental context management", () => {
 	});
 
 	it("commits no boundary when the run aborts mid-rollover while the compaction hook is parked", async () => {
-		const tempDir = TempDir.createSync("@pi-experimental-abort-");
+		const tempDir = TempDir.createSync("@tau-experimental-abort-");
 		try {
 			const model = getBundledModel("anthropic", "claude-sonnet-4-5");
 			if (!model) throw new Error("Expected bundled model");

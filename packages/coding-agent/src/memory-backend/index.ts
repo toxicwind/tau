@@ -1,11 +1,11 @@
-export type { MnemopiBackendConfig, MnemopiLlmMode, MnemopiProviderOptions, MnemopiScoping } from "../mnemopi/config";
+export type { MnemotauBackendConfig, MnemotauLlmMode, MnemotauProviderOptions, MnemotauScoping } from "../mnemotau/config";
 export type {
-	MnemopiMemoryEditOperation,
-	MnemopiMemoryEditOptions,
-	MnemopiMemoryEditResult,
-	MnemopiSessionState,
-	MnemopiSessionStateOptions,
-} from "../mnemopi/state";
+	MnemotauMemoryEditOperation,
+	MnemotauMemoryEditOptions,
+	MnemotauMemoryEditResult,
+	MnemotauSessionState,
+	MnemotauSessionStateOptions,
+} from "../mnemotau/state";
 export * from "./local-backend";
 export * from "./messages";
 export * from "./off-backend";

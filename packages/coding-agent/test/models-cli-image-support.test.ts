@@ -1,12 +1,12 @@
 import { afterEach, describe, expect, it, spyOn, vi } from "bun:test";
-import type { Api, Model, ModelSpec } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { MODEL_KINDS, modelKind, type ModelKind } from "@oh-my-pi/pi-catalog/types";
-import { renderProviderModels } from "@oh-my-pi/pi-coding-agent/cli/models-cli";
-import Models from "@oh-my-pi/pi-coding-agent/commands/models";
-import type { CliConfig } from "@oh-my-pi/pi-utils/cli";
+import type { Api, Model, ModelSpec } from "@tau/tau-ai/types";
+import { buildModel } from "@tau/tau-catalog/build";
+import { MODEL_KINDS, modelKind, type ModelKind } from "@tau/tau-catalog/types";
+import { renderProviderModels } from "@tau/tau-coding-agent/cli/models-cli";
+import Models from "@tau/tau-coding-agent/commands/models";
+import type { CliConfig } from "@tau/tau-utils/cli";
 
-const TEST_CONFIG: CliConfig = { bin: "omp", version: "test", commands: new Map() };
+const TEST_CONFIG: CliConfig = { bin: "tau", version: "test", commands: new Map() };
 
 afterEach(() => {
 	vi.restoreAllMocks();
@@ -41,7 +41,7 @@ function makeModel(spec: {
 	} as ModelSpec);
 }
 
-/** Render one model through `omp models ls` and return its `images` cell. */
+/** Render one model through `tau models ls` and return its `images` cell. */
 function imagesCell(model: Model<Api>): string {
 	const output: string[] = [];
 	spyOn(process.stdout, "write").mockImplementation((chunk: string | Uint8Array) => {
@@ -62,7 +62,7 @@ function imagesCell(model: Model<Api>): string {
 	return cells.at(-1) ?? "";
 }
 
-describe("omp models kind filtering", () => {
+describe("tau models kind filtering", () => {
 	it("accepts every advertised kind and rejects invalid values", async () => {
 		for (const kind of [...MODEL_KINDS, "all"]) {
 			const command = new Models(["--kind", kind], TEST_CONFIG);
@@ -119,7 +119,7 @@ describe("omp models kind filtering", () => {
 	});
 });
 
-describe("omp models image support column", () => {
+describe("tau models image support column", () => {
 	it("reports wire truth for a DeepSeek-class id served by a proxy that accepts images", () => {
 		// The catalog strips images for the DeepSeek class on any provider, so the
 		// listing must not advertise the declared `input: [text, image]`.
@@ -190,18 +190,18 @@ describe("omp models image support column", () => {
 			else Bun.env.PI_OPENROUTER_RESPONSES = previous;
 		}
 	});
-	it("forwards declared images on the pi-native transport despite the strip rule", () => {
-		// pi-native short-circuits to streamPiNative before the Chat Completions
+	it("forwards declared images on the tau-native transport despite the strip rule", () => {
+		// tau-native short-circuits to streamPiNative before the Chat Completions
 		// encoder, so compat.stripImageInput never runs client-side.
 		expect(
-			imagesCell(makeModel({ id: "deepseek-v4-flash", api: "openai-completions", transport: "pi-native" })),
+			imagesCell(makeModel({ id: "deepseek-v4-flash", api: "openai-completions", transport: "tau-native" })),
 		).toBe("yes");
 	});
 
-	it("keeps declared text-only pi-native models at no", () => {
+	it("keeps declared text-only tau-native models at no", () => {
 		expect(
 			imagesCell(
-				makeModel({ id: "text-only-model", api: "openai-completions", input: ["text"], transport: "pi-native" }),
+				makeModel({ id: "text-only-model", api: "openai-completions", input: ["text"], transport: "tau-native" }),
 			),
 		).toBe("no");
 	});

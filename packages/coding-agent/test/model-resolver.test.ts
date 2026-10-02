@@ -1,9 +1,9 @@
 import { describe, expect, test } from "bun:test";
-import { type Api, Effort, type Model, type ModelSpec } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { DEFAULT_MODEL_PER_PROVIDER } from "@oh-my-pi/pi-catalog/provider-models";
-import { parseModelString } from "@oh-my-pi/pi-tui/overlays/model-selector";
+import { type Api, Effort, type Model, type ModelSpec } from "@tau/tau-ai";
+import { buildModel } from "@tau/tau-catalog/build";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import { DEFAULT_MODEL_PER_PROVIDER } from "@tau/tau-catalog/provider-models";
+import { parseModelString } from "@tau/tau-tui/overlays/model-selector";
 import {
 	expandRoleAlias,
 	extractExplicitThinkingSelector,
@@ -26,9 +26,9 @@ import {
 	resolveRoleChain,
 	rolePriorityDefaults,
 	resolveProviderModelReference,
-} from "@oh-my-pi/pi-coding-agent/config/model-resolver";
-import { DEFAULT_MODEL_ROLE_ALIAS, LEGACY_MODEL_ROLE_ALIAS_PREFIX } from "@oh-my-pi/pi-coding-agent/config/model-roles";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+} from "@tau/tau-coding-agent/config/model-resolver";
+import { DEFAULT_MODEL_ROLE_ALIAS, LEGACY_MODEL_ROLE_ALIAS_PREFIX } from "@tau/tau-coding-agent/config/model-roles";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
 
 // Mock models for testing
 const mockModels: Model<"anthropic-messages">[] = [
@@ -1912,7 +1912,7 @@ describe("resolveCliModel", () => {
 
 	test("inherits provider-scoped guardrail, transport, and header overrides onto an ARN model, but not the template's prompt-cache checkpoints", () => {
 		const templateModel = createBedrockDefaultModel({
-			transport: "pi-native",
+			transport: "tau-native",
 			headers: { "X-Custom-Header": "custom-value" },
 			guardrailIdentifier: "arn:aws:bedrock:eu-west-2:123456789012:guardrail/abcd1234",
 			guardrailVersion: "1",
@@ -1928,7 +1928,7 @@ describe("resolveCliModel", () => {
 
 		expect(result.error).toBeUndefined();
 		expect(result.model?.id).toBe(profileArn);
-		expect(result.model?.transport).toBe("pi-native");
+		expect(result.model?.transport).toBe("tau-native");
 		expect(result.model?.headers).toEqual({ "X-Custom-Header": "custom-value" });
 		expect(result.model?.guardrailIdentifier).toBe("arn:aws:bedrock:eu-west-2:123456789012:guardrail/abcd1234");
 		expect(result.model?.guardrailVersion).toBe("1");

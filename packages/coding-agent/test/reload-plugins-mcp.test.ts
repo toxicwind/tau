@@ -7,14 +7,14 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { EffectiveExtensionRoots } from "@oh-my-pi/pi-coding-agent/capability/types";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { executeBuiltinSlashCommand } from "@oh-my-pi/pi-coding-agent/slash-commands/builtin-registry";
-import type { TuiSlashCommandRuntime } from "@oh-my-pi/pi-coding-agent/slash-commands/types";
-import { TaskTool } from "@oh-my-pi/pi-coding-agent/task";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { getProjectDir, removeWithRetries, setProjectDir } from "@oh-my-pi/pi-utils";
+import type { EffectiveExtensionRoots } from "@tau/tau-coding-agent/capability/types";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
+import { executeBuiltinSlashCommand } from "@tau/tau-coding-agent/slash-commands/builtin-registry";
+import type { TuiSlashCommandRuntime } from "@tau/tau-coding-agent/slash-commands/types";
+import { TaskTool } from "@tau/tau-coding-agent/task";
+import type { ToolSession } from "@tau/tau-coding-agent/tools";
+import { getProjectDir, removeWithRetries, setProjectDir } from "@tau/tau-utils";
 
 const originalProjectDir = getProjectDir();
 const TEST_EXTENSION_ROOTS: EffectiveExtensionRoots = {
@@ -69,7 +69,7 @@ describe("/reload-plugins runtime refresh", () => {
 	let projectDir = "";
 
 	beforeEach(async () => {
-		projectDir = await fs.mkdtemp(path.join(os.tmpdir(), "omp-reload-plugins-mcp-"));
+		projectDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-reload-plugins-mcp-"));
 		setProjectDir(projectDir);
 	});
 
@@ -106,7 +106,7 @@ describe("/reload-plugins runtime refresh", () => {
 	});
 
 	test("republishes edited agents to an existing task tool", async () => {
-		const agentDir = path.join(projectDir, ".omp", "agents");
+		const agentDir = path.join(projectDir, ".tau", "agents");
 		const agentFile = path.join(agentDir, "reload-agent.md");
 		await fs.mkdir(agentDir, { recursive: true });
 		await Bun.write(agentFile, agentDefinition("VERSION_ONE"));

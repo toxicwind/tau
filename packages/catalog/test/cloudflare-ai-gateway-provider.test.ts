@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { modelsDevCatalogFallback } from "@oh-my-pi/pi-catalog/provider-models";
-import { CLOUDFLARE_AI_GATEWAY_COMPAT_BASE_URL } from "@oh-my-pi/pi-catalog/wire/cloudflare-ai-gateway";
+import { modelsDevCatalogFallback } from "@tau/tau-catalog/provider-models";
+import { CLOUDFLARE_AI_GATEWAY_COMPAT_BASE_URL } from "@tau/tau-catalog/wire/cloudflare-ai-gateway";
 
 describe("Cloudflare AI Gateway shared catalog", () => {
 	test("mirrors active Workers AI chat models into the gateway provider", () => {

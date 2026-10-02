@@ -1,15 +1,15 @@
-import { type ElidedRange, formatSingleLine } from "@oh-my-pi/pi-tui/tools/read";
+import { type ElidedRange, formatSingleLine } from "@tau/tau-tui/tools/read";
 import * as path from "node:path";
-import type { AgentToolResult } from "@oh-my-pi/pi-agent-core";
-import { countNewlines } from "@oh-my-pi/pi-utils";
+import type { AgentToolResult } from "@tau/tau-agent-core";
+import { countNewlines } from "@tau/tau-utils";
 import { getEditStore } from "../edit/store";
 import {
 	formatHashlineHeader,
 	formatNumberedLines,
 	splitAddressableFileLines,
-} from "@oh-my-pi/pi-tui/tools/hashline-format";
+} from "@tau/tau-tui/tools/hashline-format";
 import { normalizeToLF } from "../edit/normalize";
-import { isMarkdownPath } from "@oh-my-pi/pi-tui/theme";
+import { isMarkdownPath } from "@tau/tau-tui/theme";
 import type { ToolSession } from "../sdk";
 import {
 	DEFAULT_MAX_BYTES,
@@ -17,15 +17,15 @@ import {
 	type TruncationResult,
 	truncateHead,
 	truncateHeadBytes,
-} from "@oh-my-pi/pi-tui/tools/streaming-output";
+} from "@tau/tau-tui/tools/streaming-output";
 import { buildLineEntriesWithBlockContext, type LineEntry, lineEntriesToPlainText } from "../utils/block-context";
 import { resolveFileDisplayMode } from "../utils/file-display-mode";
 import { formatPathRelativeToCwd } from "./path-utils";
-import { type LineRange } from "@oh-my-pi/pi-tui/tools/line-ranges";
-import type { ReadToolDetails, ReadTruncationStats } from "@oh-my-pi/pi-tui/tools/read";
+import { type LineRange } from "@tau/tau-tui/tools/line-ranges";
+import type { ReadToolDetails, ReadTruncationStats } from "@tau/tau-tui/tools/read";
 import { isRawSelector, type ParsedSelector, resolveTailSelector, selToOffsetLimit } from "./read-selector";
-import { formatBytes, shortenPath } from "@oh-my-pi/pi-tui/render/render-utils";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { formatBytes, shortenPath } from "@tau/tau-tui/render/render-utils";
+import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 import { toolResult } from "./tool-result";
 
 export function toReadTruncationStats(result: TruncationResult): ReadTruncationStats {

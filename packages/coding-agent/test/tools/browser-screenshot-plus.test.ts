@@ -1,11 +1,11 @@
 import { afterAll, describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { disposeAllVmContexts } from "@oh-my-pi/pi-coding-agent/eval/js/context-manager";
-import { createBrowserPrelude } from "@oh-my-pi/pi-coding-agent/tools/browser";
-import { releaseAllTabs } from "@oh-my-pi/pi-coding-agent/tools/browser/tab-supervisor";
-import type { ScreenshotResult } from "@oh-my-pi/pi-coding-agent/tools/browser/tab-protocol";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools/index";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { disposeAllVmContexts } from "@tau/tau-coding-agent/eval/js/context-manager";
+import { createBrowserPrelude } from "@tau/tau-coding-agent/tools/browser";
+import { releaseAllTabs } from "@tau/tau-coding-agent/tools/browser/tab-supervisor";
+import type { ScreenshotResult } from "@tau/tau-coding-agent/tools/browser/tab-protocol";
+import type { ToolSession } from "@tau/tau-coding-agent/tools/index";
 import { chromiumAvailable } from "./chromium-probe";
 
 const CHROMIUM_AVAILABLE = await chromiumAvailable();

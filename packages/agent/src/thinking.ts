@@ -1,4 +1,4 @@
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
+import { Effort } from "@tau/tau-catalog/effort";
 
 /**
  * Agent-local thinking selector.

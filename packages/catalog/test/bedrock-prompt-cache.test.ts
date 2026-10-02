@@ -1,8 +1,8 @@
 import { describe, expect, test } from "bun:test";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { classifyModel, compareRevision, parseRevision } from "@oh-my-pi/pi-catalog/identity";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import type { ModelSpec } from "@oh-my-pi/pi-catalog/types";
+import { buildModel } from "@tau/tau-catalog/build";
+import { classifyModel, compareRevision, parseRevision } from "@tau/tau-catalog/identity";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import type { ModelSpec } from "@tau/tau-catalog/types";
 
 function bedrockSpec(
 	overrides: Partial<ModelSpec<"bedrock-converse-stream">> = {},

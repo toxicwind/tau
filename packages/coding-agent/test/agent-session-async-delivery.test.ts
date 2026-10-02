@@ -7,32 +7,32 @@
  */
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import type { ImageContent } from "@oh-my-pi/pi-ai";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { AsyncJobManager } from "@oh-my-pi/pi-coding-agent/async";
-import type { AsyncJob } from "@oh-my-pi/pi-coding-agent/async/job-manager";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { DaemonCompletionNotification } from "@oh-my-pi/pi-coding-agent/launch/protocol";
-import { buildAsyncResultBlock } from "@oh-my-pi/pi-tui/chat/transcript-render-helpers";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { ArtifactManager } from "@oh-my-pi/pi-coding-agent/session/artifacts";
+import { Agent } from "@tau/tau-agent-core";
+import type { ImageContent } from "@tau/tau-ai";
+import { createMockModel } from "@tau/tau-ai/providers/mock";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import { AsyncJobManager } from "@tau/tau-coding-agent/async";
+import type { AsyncJob } from "@tau/tau-coding-agent/async/job-manager";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import type { DaemonCompletionNotification } from "@tau/tau-coding-agent/launch/protocol";
+import { buildAsyncResultBlock } from "@tau/tau-tui/chat/transcript-render-helpers";
+import { initTheme } from "@tau/tau-tui/theme";
+import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import { ArtifactManager } from "@tau/tau-coding-agent/session/artifacts";
 import {
 	buildAsyncResultBatchMessage,
 	type AsyncResultEntry,
-} from "@oh-my-pi/pi-coding-agent/session/async-job-delivery";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { convertToLlm, type CustomMessage } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
+} from "@tau/tau-coding-agent/session/async-job-delivery";
+import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { convertToLlm, type CustomMessage } from "@tau/tau-coding-agent/session/messages";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
 
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { type OutputMeta } from "@oh-my-pi/pi-tui/tools/output-meta";
-import { formatOutputNotice } from "@oh-my-pi/pi-tui/tools/output-meta";
-import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import type { ToolSession } from "@tau/tau-coding-agent/tools";
+import { type OutputMeta } from "@tau/tau-tui/tools/output-meta";
+import { formatOutputNotice } from "@tau/tau-tui/tools/output-meta";
+import { ReadTool } from "@tau/tau-coding-agent/tools/read";
+import { TempDir } from "@tau/tau-utils";
 function observeAsyncResultEnqueue(session: AgentSession): Promise<void> {
 	const queued = Promise.withResolvers<void>();
 	const enqueue = session.yieldQueue.enqueueWithReceipt.bind(session.yieldQueue);

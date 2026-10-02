@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test";
-import { streamBedrock } from "@oh-my-pi/pi-ai/providers/amazon-bedrock";
-import type { AssistantMessage, Context, Model, ToolResultMessage } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+import { streamBedrock } from "@tau/tau-ai/providers/amazon-bedrock";
+import type { AssistantMessage, Context, Model, ToolResultMessage } from "@tau/tau-ai/types";
+import { buildModel } from "@tau/tau-catalog/build";
+import { getBundledModel } from "@tau/tau-catalog/models";
 
 const PNG_DATA = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGP4z8AAAAMBAQDJ/pLvAAAAAElFTkSuQmCC";
 

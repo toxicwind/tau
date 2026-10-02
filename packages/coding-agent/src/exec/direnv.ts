@@ -1,6 +1,6 @@
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { $which, logger } from "@oh-my-pi/pi-utils";
+import { $which, logger } from "@tau/tau-utils";
 
 /** Default cap on a single `direnv` invocation. The first export for a devenv
  *  `.envrc` can build a shell; callers may raise this via `bash.direnvLoadTimeoutMs`. */
@@ -164,7 +164,7 @@ async function runDirenv(
  * allow list, or the export fails/times out.
  *
  * direnv's own allow list is honored — an `.envrc` the user has not
- * `direnv allow`ed is NEVER executed or auto-allowed. This keeps OMP's trust
+ * `direnv allow`ed is NEVER executed or auto-allowed. This keeps TAU's trust
  * boundary identical to the user's own shell: cloning a repo with a poisoned
  * `.envrc` grants it nothing until the user explicitly allows it.
  *

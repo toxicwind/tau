@@ -1,6 +1,6 @@
 /**
  * Tests for `AuthStorage.health.check()` — the per-credential auth probe
- * that powers `omp auth-gateway check`. Contract under test:
+ * that powers `tau auth-gateway check`. Contract under test:
  *
  *   1. A working credential reports `ok: true` and surfaces the probe's
  *      `email`/`accountId` (so the user can identify the row).
@@ -31,10 +31,10 @@ import {
 	type CompletionProbeInput,
 	REMOTE_REFRESH_SENTINEL,
 	type StoredAuthCredential,
-} from "@oh-my-pi/pi-ai/auth-storage";
-import type { UsageProvider } from "@oh-my-pi/pi-ai/usage";
-import * as claudeUsage from "@oh-my-pi/pi-ai/usage/claude";
-import { ollamaCloudUsageProvider } from "@oh-my-pi/pi-ai/usage/ollama";
+} from "@tau/tau-ai/auth-storage";
+import type { UsageProvider } from "@tau/tau-ai/usage";
+import * as claudeUsage from "@tau/tau-ai/usage/claude";
+import { ollamaCloudUsageProvider } from "@tau/tau-ai/usage/ollama";
 
 function oauthRow(id: number, email: string, opts?: { expired?: boolean }): StoredAuthCredential {
 	const credential: AuthCredential = {

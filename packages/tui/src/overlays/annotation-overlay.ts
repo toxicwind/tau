@@ -12,7 +12,7 @@ import {
 	wrapTextWithAnsi,
 } from "../index";
 import { type KeybindingsManager } from "../app-keybindings";
-import { sanitizeText } from "@oh-my-pi/pi-utils";
+import { sanitizeText } from "@tau/tau-utils";
 import { type Theme } from "../theme/theme";
 import type {
 	CodeReviewAnnotation,
@@ -131,7 +131,7 @@ function isTextSource(value: readonly ReviewDiffFile[] | TextReviewSource): valu
 	return !Array.isArray(value);
 }
 
-/** A fullscreen, annotated diff picker that only relies on public OMP APIs. */
+/** A fullscreen, annotated diff picker that only relies on public TAU APIs. */
 export class AnnotationOverlay implements Component {
 	#scrollView: ScrollView;
 	#editor: Editor;

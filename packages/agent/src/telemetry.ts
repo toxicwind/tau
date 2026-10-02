@@ -38,7 +38,7 @@ import {
 	shouldSendServiceTier,
 	type ToolChoice,
 	type Usage,
-} from "@oh-my-pi/pi-ai";
+} from "@tau/tau-ai";
 import {
 	type Attributes,
 	type AttributeValue,
@@ -54,7 +54,7 @@ import type { AgentTool } from "./types";
 import { EventLoopKeepalive } from "./utils/yield";
 
 /** Default tracer name. Override via {@link AgentTelemetryConfig.tracerName}. */
-export const DEFAULT_TRACER_NAME = "@oh-my-pi/pi-agent-core";
+export const DEFAULT_TRACER_NAME = "@tau/tau-agent-core";
 
 /** Env var matching the OTEL semconv content-capture toggle. */
 const CONTENT_CAPTURE_ENV = "OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT";
@@ -631,14 +631,14 @@ export function recordTelemetryWarning(telemetry: AgentTelemetry | undefined, wa
 function emitTelemetryWarning(telemetry: AgentTelemetry | undefined, warning: AgentTelemetryWarning): void {
 	const hook = telemetry?.config.onTelemetryWarning;
 	if (!hook) {
-		if (warning.error === undefined) console.warn(`[pi-agent] ${warning.message}`);
-		else console.warn(`[pi-agent] ${warning.message}`, warning.error);
+		if (warning.error === undefined) console.warn(`[tau-agent] ${warning.message}`);
+		else console.warn(`[tau-agent] ${warning.message}`, warning.error);
 		return;
 	}
 	try {
 		hook(warning);
 	} catch (err) {
-		console.warn("[pi-agent] onTelemetryWarning threw; swallowing:", err);
+		console.warn("[tau-agent] onTelemetryWarning threw; swallowing:", err);
 	}
 }
 
@@ -1657,7 +1657,7 @@ export interface InstrumentedChatSpanOptions {
 	readonly attributes?: Attributes;
 	/**
 	 * Override for the underlying {@link completeSimple} call. Defaults to
-	 * `completeSimple` from `@oh-my-pi/pi-ai`. Use to retain a test injection
+	 * `completeSimple` from `@tau/tau-ai`. Use to retain a test injection
 	 * seam while still going through the chat-span lifecycle.
 	 */
 	readonly completeImpl?: <TApi extends Api>(

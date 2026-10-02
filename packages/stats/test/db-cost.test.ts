@@ -10,13 +10,13 @@ import {
 	getStatsByProvider,
 	initDb,
 	insertMessageStats,
-} from "@oh-my-pi/omp-stats/db";
-import type { MessageStats } from "@oh-my-pi/omp-stats/types";
-import { getBundledModel, getBundledModels } from "@oh-my-pi/pi-catalog/models";
-import { getStatsDbPath } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-stats/db";
+import type { MessageStats } from "@tau/tau-stats/types";
+import { getBundledModel, getBundledModels } from "@tau/tau-catalog/models";
+import { getStatsDbPath } from "@tau/tau-utils";
 import { installStatsTestIsolation } from "./helpers/temp-agent";
 
-installStatsTestIsolation("@pi-stats-db-");
+installStatsTestIsolation("@tau-stats-db-");
 
 function selectCodexReferenceModel() {
 	const model = getBundledModels("openai")

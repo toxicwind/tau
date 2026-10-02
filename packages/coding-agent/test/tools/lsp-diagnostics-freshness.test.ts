@@ -1,16 +1,16 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { createLspWritethrough } from "@oh-my-pi/pi-coding-agent/lsp";
-import { type FileDiagnosticsResult, FileFormatResult } from "@oh-my-pi/pi-tui/tools/lsp";
-import * as lspClient from "@oh-my-pi/pi-coding-agent/lsp/client";
-import * as lspConfig from "@oh-my-pi/pi-coding-agent/lsp/config";
-import { formatContent, INLINE_DIAGNOSTICS_WAIT_TIMEOUT_MS } from "@oh-my-pi/pi-coding-agent/lsp/diagnostics";
-import type { Diagnostic, LinterClient, LspClient, ServerConfig } from "@oh-my-pi/pi-coding-agent/lsp/types";
-import { EquivalentUriMap, fileToUri } from "@oh-my-pi/pi-coding-agent/lsp/utils";
-import type { DeferredDiagnosticsEntry, ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { WriteTool } from "@oh-my-pi/pi-coding-agent/tools/write";
-import { type ptree, TempDir } from "@oh-my-pi/pi-utils";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { createLspWritethrough } from "@tau/tau-coding-agent/lsp";
+import { type FileDiagnosticsResult, FileFormatResult } from "@tau/tau-tui/tools/lsp";
+import * as lspClient from "@tau/tau-coding-agent/lsp/client";
+import * as lspConfig from "@tau/tau-coding-agent/lsp/config";
+import { formatContent, INLINE_DIAGNOSTICS_WAIT_TIMEOUT_MS } from "@tau/tau-coding-agent/lsp/diagnostics";
+import type { Diagnostic, LinterClient, LspClient, ServerConfig } from "@tau/tau-coding-agent/lsp/types";
+import { EquivalentUriMap, fileToUri } from "@tau/tau-coding-agent/lsp/utils";
+import type { DeferredDiagnosticsEntry, ToolSession } from "@tau/tau-coding-agent/tools";
+import { WriteTool } from "@tau/tau-coding-agent/tools/write";
+import { type ptree, TempDir } from "@tau/tau-utils";
 
 const TEST_SERVER: ServerConfig = {
 	command: "test-lsp",
@@ -123,7 +123,7 @@ describe("LSP diagnostics freshness", () => {
 	let tempDir: TempDir;
 
 	beforeEach(() => {
-		tempDir = TempDir.createSync("@omp-lsp-freshness-");
+		tempDir = TempDir.createSync("@tau-lsp-freshness-");
 	});
 
 	afterEach(() => {
@@ -792,7 +792,7 @@ describe("LSP diagnostics freshness", () => {
 			...TEST_SERVER,
 			rootMarkers: ["package.json", "tsconfig.json", "jsconfig.json"],
 		};
-		const orphanDir = TempDir.createSync("@omp-lsp-orphan-");
+		const orphanDir = TempDir.createSync("@tau-lsp-orphan-");
 		try {
 			const filePath = path.join(orphanDir.path(), "scratch.ts");
 			const uri = fileToUri(filePath);

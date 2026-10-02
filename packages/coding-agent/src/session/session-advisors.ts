@@ -10,7 +10,7 @@ import {
 	type StreamFn,
 	ThinkingLevel,
 	type Tokenizer,
-} from "@oh-my-pi/pi-agent-core";
+} from "@tau/tau-agent-core";
 import {
 	canReplayRemoteCompaction,
 	type CompactionResult,
@@ -25,7 +25,7 @@ import {
 	type SessionMessageEntry,
 	shouldCompact,
 	shouldUseProviderNativeCompaction,
-} from "@oh-my-pi/pi-agent-core/compaction";
+} from "@tau/tau-agent-core/compaction";
 import type {
 	AssistantMessage,
 	CodexCompactionContext,
@@ -35,13 +35,13 @@ import type {
 	ProviderSessionState,
 	ServiceTier,
 	SimpleStreamOptions,
-} from "@oh-my-pi/pi-ai";
-import { isUsageLimitOutcome, resolveModelServiceTier, streamSimple } from "@oh-my-pi/pi-ai";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { extractProviderRetryHint } from "@oh-my-pi/pi-ai/utils/retry-after";
-import { modelsAreEqual } from "@oh-my-pi/pi-catalog/models";
-import { extractHttpStatusFromError, logger, prompt } from "@oh-my-pi/pi-utils";
-import type { AdvisorConfig } from "@oh-my-pi/pi-tui/overlays/advisor-config";
+} from "@tau/tau-ai";
+import { isUsageLimitOutcome, resolveModelServiceTier, streamSimple } from "@tau/tau-ai";
+import * as AIError from "@tau/tau-ai/error";
+import { extractProviderRetryHint } from "@tau/tau-ai/utils/retry-after";
+import { modelsAreEqual } from "@tau/tau-catalog/models";
+import { extractHttpStatusFromError, logger, prompt } from "@tau/tau-utils";
+import type { AdvisorConfig } from "@tau/tau-tui/overlays/advisor-config";
 import {
 	ADVISOR_DEFAULT_TOOL_NAMES,
 	ADVISOR_DEFAULT_BUDGET_PER_UPDATE,
@@ -79,7 +79,7 @@ import { serviceTierForAllFamilies, serviceTierSettingToTier } from "../config/s
 import type { Settings } from "../config/settings";
 import { CursorExecHandlers, type CursorMcpResourceAdapter } from "../cursor";
 import { bridgeToolMap } from "../cursor-bridge-tools";
-import { estimateToolSchemaTokens } from "@oh-my-pi/pi-tui/status-line/context-usage";
+import { estimateToolSchemaTokens } from "@tau/tau-tui/status-line/context-usage";
 import type { PlanModeState } from "../plan-mode/state";
 import advisorSystemPrompt from "../prompts/advisor/system.md" with { type: "text" };
 import type { SecretObfuscator } from "../secrets/obfuscator";
@@ -88,7 +88,7 @@ import {
 	resolveThinkingLevelForModel,
 	shouldDisableReasoning,
 	toReasoningEffort,
-} from "@oh-my-pi/pi-tui/thinking";
+} from "@tau/tau-tui/thinking";
 import type { AgentSessionEvent } from "./agent-session-events";
 import type { ClientBridge } from "./client-bridge";
 import { resolveCompactionMethodOrder, resolveMethodSettings } from "./compaction-methods";
@@ -1010,7 +1010,7 @@ export class SessionAdvisors {
 			if (config.instructions?.trim()) systemPrompt.push(config.instructions.trim());
 
 			// The default roster additionally gets `recall` when the active memory
-			// backend built it (MemoryRecallTool.createIf — hindsight/mnemopi only;
+			// backend built it (MemoryRecallTool.createIf — hindsight/mnemotau only;
 			// sharpshooter/local expose no recall tool, so the extra name filters
 			// nothing there). The advisor's instance reads the same bank as the
 			// primary. Explicit `tools` lists stay user-owned and are not widened.
@@ -2213,7 +2213,7 @@ export class SessionAdvisors {
 	/**
 	 * Store the memory backend's developer instructions for advisor system
 	 * prompts. Unlike {@link setContextPrompt} this never rebuilds live
-	 * runtimes: hindsight/mnemopi refresh their instructions on every turn
+	 * runtimes: hindsight/mnemotau refresh their instructions on every turn
 	 * (per-turn recall snippets), and tearing the advisor down each time would
 	 * drop its append-only context and prompt cache. Live advisors pick the new
 	 * value up at the next natural runtime build (compaction, reset, toggle).

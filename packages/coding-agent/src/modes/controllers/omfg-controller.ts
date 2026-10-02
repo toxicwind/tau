@@ -1,11 +1,11 @@
 import * as path from "node:path";
-import { CONFIG_DIR_NAME, prompt } from "@oh-my-pi/pi-utils";
+import { CONFIG_DIR_NAME, prompt } from "@tau/tau-utils";
 import { invalidate as invalidateCapabilityCache } from "../../capability";
 import type { Rule } from "../../capability/rule";
 import omfgUserPrompt from "../../prompts/system/omfg-user.md" with { type: "text" };
 import { TtsrToolInspector } from "../../session/ttsr-outputs";
-import { shortenPath } from "@oh-my-pi/pi-tui/render/render-utils";
-import { OmfgPanelComponent } from "@oh-my-pi/pi-tui/overlays/omfg-panel";
+import { shortenPath } from "@tau/tau-tui/render/render-utils";
+import { OmfgPanelComponent } from "@tau/tau-tui/overlays/omfg-panel";
 import type { InteractiveModeContext } from "../types";
 import {
 	buildOmfgRuleForPath,
@@ -35,8 +35,8 @@ interface GenerateCandidateOptions {
 type SaveCandidateResult = { kind: "saved" | "aborted" | "rejected" } | { kind: "amend"; feedback: string };
 
 const MAX_ATTEMPTS = 3;
-const PROJECT_OPTION = "This project (.omp/rules)";
-const GLOBAL_OPTION = "Global — all projects (~/.omp/agent/rules)";
+const PROJECT_OPTION = "This project (.tau/rules)";
+const GLOBAL_OPTION = "Global — all projects (~/.tau/agent/rules)";
 const AMEND_OPTION = "Amend with feedback…";
 
 export class OmfgController {
@@ -257,7 +257,7 @@ export class OmfgController {
 			// a stale listing that would make `replaceTtsrRules` evict the live rule
 			// registered below (issue #10940 review). Invalidating the file clears its
 			// parent (rules dir); invalidating that dir clears its parent (the config dir)
-			// so a first-ever rule in a freshly created `.omp/rules` is still discovered.
+			// so a first-ever rule in a freshly created `.tau/rules` is still discovered.
 			invalidateCapabilityCache(target.filePath);
 			invalidateCapabilityCache(path.dirname(target.filePath));
 			if (!this.#isActiveRequest(request)) return { kind: "aborted" };

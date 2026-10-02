@@ -1,8 +1,8 @@
 import { beforeAll, describe, expect, it } from "bun:test";
-import { visibleWidth } from "@oh-my-pi/pi-tui";
+import { visibleWidth } from "@tau/tau-tui";
 import { Settings } from "../../../src/config/settings";
-import { PlanSaveOverlay, type PlanSaveOverlayResult } from "@oh-my-pi/pi-tui/overlays/plan-save-overlay";
-import { getThemeByName, setThemeInstance, type Theme, theme } from "@oh-my-pi/pi-tui/theme";
+import { PlanSaveOverlay, type PlanSaveOverlayResult } from "@tau/tau-tui/overlays/plan-save-overlay";
+import { getThemeByName, setThemeInstance, type Theme, theme } from "@tau/tau-tui/theme";
 
 const stripAnsi = (text: string): string => text.replace(/\x1b\[[0-9;]*m/g, "");
 

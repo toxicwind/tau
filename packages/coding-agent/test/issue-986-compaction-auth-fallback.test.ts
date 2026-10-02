@@ -1,15 +1,15 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import * as compactionModule from "@oh-my-pi/pi-agent-core/compaction";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent } from "@tau/tau-agent-core";
+import * as compactionModule from "@tau/tau-agent-core/compaction";
+import * as AIError from "@tau/tau-ai/error";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { TempDir } from "@tau/tau-utils";
 import { mockSchedulerWaitWithClock } from "./helpers/mock-scheduler-clock";
 import { assistantMsg, userMsg } from "./utilities";
 
@@ -20,7 +20,7 @@ describe("issue #986 compaction auth fallback", () => {
 	let modelRegistry: ModelRegistry;
 
 	beforeEach(() => {
-		tempDir = TempDir.createSync("@pi-issue-986-");
+		tempDir = TempDir.createSync("@tau-issue-986-");
 	});
 
 	afterEach(async () => {
@@ -503,7 +503,7 @@ describe("issue #986 compaction auth fallback", () => {
 
 	it("falls back when the current provider returns a real HTTP 401 from the compaction call", async () => {
 		// Companion to the auth_unavailable test above: that case exercises the
-		// pi-native gateway synthetic ("no credential configured"), this one
+		// tau-native gateway synthetic ("no credential configured"), this one
 		// exercises a configured-but-rejected credential (rotated/revoked
 		// Anthropic key, expired OAuth token, wrong workspace). Before the
 		// status-aware detector landed, only the synthetic was caught — a real

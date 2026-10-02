@@ -4,7 +4,7 @@
  * its strongest verified line ranges with a verbatim snippet.
  */
 import * as path from "node:path";
-import { formatDuration, formatNumber } from "@oh-my-pi/pi-utils";
+import { formatDuration, formatNumber } from "@tau/tau-utils";
 import { renderProgressBar } from "../components/progress-bar";
 import { Text } from "../components/text";
 import {
@@ -39,7 +39,7 @@ export interface FindRange {
 
 /** A file whose verified passages cleared the threshold; `ranges` are merged positive spans, strongest first. */
 export interface FindHit {
-	/** Display path relative to {@link FindToolDetails.cwd}, or an `omp://` doc URL for docs scopes. */
+	/** Display path relative to {@link FindToolDetails.cwd}, or an `tau://` doc URL for docs scopes. */
 	rel: string;
 	/** Filename judgment, when the name batch answered. */
 	nameScore?: number;
@@ -124,9 +124,9 @@ function gauge(p: number, theme: Theme): string {
 }
 
 function renderHit(hit: FindHit, rangeLimit: number, cwd: string | undefined, theme: Theme): string[] {
-	// `omp://` hits are virtual docs, not files under `cwd`: link the URL
+	// `tau://` hits are virtual docs, not files under `cwd`: link the URL
 	// itself instead of joining it onto a filesystem base.
-	const isOmpHit = /^omp:\/\//i.test(hit.rel);
+	const isOmpHit = /^tau:\/\//i.test(hit.rel);
 	const link = (text: string, line?: number): string => {
 		if (isOmpHit) return uriHyperlink(line === undefined ? hit.rel : `${hit.rel}:${line}`, text);
 		const absPath = cwd === undefined ? undefined : path.join(cwd, hit.rel);

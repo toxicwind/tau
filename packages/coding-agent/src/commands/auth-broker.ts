@@ -1,8 +1,8 @@
 /**
- * `omp auth-broker` — manage the omp credential vault.
+ * `tau auth-broker` — manage the tau credential vault.
  */
 
-import { Args, Command, Flags, renderCommandHelp } from "@oh-my-pi/pi-utils/cli";
+import { Args, Command, Flags, renderCommandHelp } from "@tau/tau-utils/cli";
 import {
 	AUTH_BROKER_ACTIONS,
 	type AuthBrokerAction,
@@ -10,7 +10,7 @@ import {
 	runAuthBrokerCommand,
 } from "../cli/auth-broker-cli";
 import { authBrokerHelp as commandHelp } from "../cli/command-help";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
+import { initTheme } from "@tau/tau-tui/theme";
 
 export default class AuthBroker extends Command {
 	static description = commandHelp.description;
@@ -53,26 +53,26 @@ export default class AuthBroker extends Command {
 	};
 
 	static examples = [
-		"# Boot the broker against the local SQLite store\n  omp auth-broker serve",
-		"# Boot on a non-default port\n  omp auth-broker serve --bind=127.0.0.1:9000",
-		"# Print the bearer token\n  omp auth-broker token",
-		"# Rotate the bearer token\n  omp auth-broker token --regenerate",
-		"# List supported OAuth providers\n  omp auth-broker list",
-		"# Local login (run on the broker host)\n  omp auth-broker login anthropic",
-		"# Interactive provider selection\n  omp auth-broker login",
-		"# Remote login over SSH tunnel\n  omp auth-broker login anthropic --via=user@broker",
-		"# Log out of a provider (interactive without provider arg)\n  omp auth-broker logout anthropic",
-		"# Import a CLIProxyAPI auth dump\n  omp auth-broker import ~/.cliproxy/auth",
-		"# Import a single CLIProxyAPI JSON, overriding the provider mapping\n  omp auth-broker import ~/.cliproxy/auth/claude-foo.json --provider anthropic",
-		"# Preview a migration from local store + env vars to the configured broker\n  omp auth-broker migrate --from-local --include-env --dry-run",
-		"# Apply the migration\n  omp auth-broker migrate --from-local --include-env",
-		"# Health-check the configured remote broker\n  omp auth-broker status",
+		"# Boot the broker against the local SQLite store\n  tau auth-broker serve",
+		"# Boot on a non-default port\n  tau auth-broker serve --bind=127.0.0.1:9000",
+		"# Print the bearer token\n  tau auth-broker token",
+		"# Rotate the bearer token\n  tau auth-broker token --regenerate",
+		"# List supported OAuth providers\n  tau auth-broker list",
+		"# Local login (run on the broker host)\n  tau auth-broker login anthropic",
+		"# Interactive provider selection\n  tau auth-broker login",
+		"# Remote login over SSH tunnel\n  tau auth-broker login anthropic --via=user@broker",
+		"# Log out of a provider (interactive without provider arg)\n  tau auth-broker logout anthropic",
+		"# Import a CLIProxyAPI auth dump\n  tau auth-broker import ~/.cliproxy/auth",
+		"# Import a single CLIProxyAPI JSON, overriding the provider mapping\n  tau auth-broker import ~/.cliproxy/auth/claude-foo.json --provider anthropic",
+		"# Preview a migration from local store + env vars to the configured broker\n  tau auth-broker migrate --from-local --include-env --dry-run",
+		"# Apply the migration\n  tau auth-broker migrate --from-local --include-env",
+		"# Health-check the configured remote broker\n  tau auth-broker status",
 	];
 
 	async run(): Promise<void> {
 		const { args, flags } = await this.parse(AuthBroker);
 		if (!args.action) {
-			renderCommandHelp("omp", "auth-broker", AuthBroker);
+			renderCommandHelp("tau", "auth-broker", AuthBroker);
 			return;
 		}
 		const action = args.action as AuthBrokerAction;

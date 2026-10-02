@@ -16,7 +16,7 @@ import {
 	Spacer,
 	Text,
 } from "../index";
-import { logger } from "@oh-my-pi/pi-utils";
+import { logger } from "@tau/tau-utils";
 import { getSelectListTheme, getSettingsListTheme, theme } from "../theme/theme";
 import { shortenPath } from "../render/render-utils";
 import { OverlayPanel } from "../chrome/overlay-box";
@@ -237,9 +237,9 @@ export class PluginListComponent extends OverlayPanel {
 		if (entries.length === 0) {
 			this.addChild(new Text(theme.fg("muted", "No plugins installed"), 0, 0));
 			this.addChild(new Spacer(1));
-			this.addChild(new Text(theme.fg("dim", "Install npm plugins:        omp plugin install <package>"), 0, 0));
+			this.addChild(new Text(theme.fg("dim", "Install npm plugins:        tau plugin install <package>"), 0, 0));
 			this.addChild(
-				new Text(theme.fg("dim", "Install marketplace plugins: omp plugin install <name>@<marketplace>"), 0, 0),
+				new Text(theme.fg("dim", "Install marketplace plugins: tau plugin install <name>@<marketplace>"), 0, 0),
 			);
 			this.addChild(new Spacer(1));
 

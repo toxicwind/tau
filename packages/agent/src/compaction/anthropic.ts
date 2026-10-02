@@ -15,10 +15,10 @@ import type {
 	SimpleStreamOptions,
 	Tool,
 	Usage,
-} from "@oh-my-pi/pi-ai";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { supportsAnthropicCompaction } from "@oh-my-pi/pi-ai/providers/anthropic-compaction";
-import { isRecord, prompt } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-ai";
+import * as AIError from "@tau/tau-ai/error";
+import { supportsAnthropicCompaction } from "@tau/tau-ai/providers/anthropic-compaction";
+import { isRecord, prompt } from "@tau/tau-utils";
 import { type InstrumentedChatSpanOptions, instrumentedCompleteSimple } from "../telemetry";
 import type { AgentMessage } from "../types";
 import anthropicCompactionInstructionsPrompt from "./prompts/anthropic-compaction-instructions.md" with { type: "text" };

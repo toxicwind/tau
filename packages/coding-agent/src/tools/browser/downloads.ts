@@ -2,7 +2,7 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import type { Browser, CDPSession, Page } from "puppeteer-core";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 
 /** Completed download metadata returned by tab download helpers. */
 export interface BrowserDownload {
@@ -53,7 +53,7 @@ export class DownloadManager {
 	constructor(browser: Browser, page: Page, tabId: string) {
 		this.#browser = browser;
 		this.#page = page;
-		this.#defaultDirectory = path.join(os.tmpdir(), `omp-downloads-${tabId}`);
+		this.#defaultDirectory = path.join(os.tmpdir(), `tau-downloads-${tabId}`);
 	}
 
 	/** Enable downloads into an absolute directory, replacing the previous destination. */

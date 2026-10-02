@@ -72,13 +72,13 @@ import { execSync } from "node:child_process";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { complete } from "@oh-my-pi/pi-ai/stream";
-import type { Api, Context, ImageContent, Model, OptionsForApi, UserMessage } from "@oh-my-pi/pi-ai/types";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { $which, removeSyncWithRetries } from "@oh-my-pi/pi-utils";
+import { complete } from "@tau/tau-ai/stream";
+import type { Api, Context, ImageContent, Model, OptionsForApi, UserMessage } from "@tau/tau-ai/types";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import { $which, removeSyncWithRetries } from "@tau/tau-utils";
 import { e2eApiKey } from "./oauth";
 
-const TEMP_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omp-temp-images-"));
+const TEMP_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "tau-temp-images-"));
 
 /**
  * Generate a valid PNG image of specified dimensions using ImageMagick

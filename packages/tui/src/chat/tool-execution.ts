@@ -1,4 +1,4 @@
-import type { AgentTool } from "@oh-my-pi/pi-agent-core";
+import type { AgentTool } from "@tau/tau-agent-core";
 import { Box } from "../components/box";
 import { SPINNER_ADVANCE_MS } from "../components/loader";
 import { Image } from "../components/image";
@@ -7,7 +7,7 @@ import { Text } from "../components/text";
 import { getImageDimensions, ImageProtocol, imageFallback, TERMINAL } from "../terminal-capabilities";
 import { type Component, Container, type TUI } from "../tui";
 import { truncateToWidth } from "../utils";
-import { getProjectDir, isRecord, logger, sanitizeText } from "@oh-my-pi/pi-utils";
+import { getProjectDir, isRecord, logger, sanitizeText } from "@tau/tau-utils";
 import type { Theme } from "../theme/theme";
 import { ensureThemeSync, getThemeEpoch, theme } from "../theme/theme";
 import {

@@ -1,12 +1,12 @@
 /**
  * Grep CLI command handlers.
  *
- * Handles `omp grep` subcommand for testing grep tool on Windows.
+ * Handles `tau grep` subcommand for testing grep tool on Windows.
  */
 import * as path from "node:path";
-import { GrepOutputMode, grep } from "@oh-my-pi/pi-natives";
-import { APP_NAME } from "@oh-my-pi/pi-utils";
-import chalk from "@oh-my-pi/pi-utils/chalk";
+import { GrepOutputMode, grep } from "@tau/tau-natives";
+import { APP_NAME } from "@tau/tau-utils";
+import chalk from "@tau/tau-utils/chalk";
 import { expandPath } from "../tools/path-utils";
 
 export interface GrepCommandArgs {

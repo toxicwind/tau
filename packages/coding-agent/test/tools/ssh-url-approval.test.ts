@@ -1,10 +1,10 @@
 import { beforeAll, describe, expect, it } from "bun:test";
 import * as os from "node:os";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { GrepTool } from "@oh-my-pi/pi-coding-agent/tools/grep";
-import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
-import { WriteTool } from "@oh-my-pi/pi-coding-agent/tools/write";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import type { ToolSession } from "@tau/tau-coding-agent/tools";
+import { GrepTool } from "@tau/tau-coding-agent/tools/grep";
+import { ReadTool } from "@tau/tau-coding-agent/tools/read";
+import { WriteTool } from "@tau/tau-coding-agent/tools/write";
 
 // Minimal ToolSession stub (block-images.test.ts shape). Approval functions are
 // pure over their args, and the write-execute selector reject throws before any

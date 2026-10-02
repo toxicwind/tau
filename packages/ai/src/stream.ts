@@ -3,19 +3,19 @@ import * as fsSync from "node:fs";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import { scheduler } from "node:timers/promises";
-import { isOfficialAnthropicApiUrl } from "@oh-my-pi/pi-catalog/compat/anthropic";
-import type { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { isVertexExpressOpenAIUrl, isVertexRawPredictUrl, resolveVertexEndpointHost } from "@oh-my-pi/pi-catalog/hosts";
+import { isOfficialAnthropicApiUrl } from "@tau/tau-catalog/compat/anthropic";
+import type { Effort } from "@tau/tau-catalog/effort";
+import { isVertexExpressOpenAIUrl, isVertexRawPredictUrl, resolveVertexEndpointHost } from "@tau/tau-catalog/hosts";
 import {
 	defaultSupportedEffort,
 	mapEffortToAnthropicAdaptiveEffort,
 	mapEffortToGoogleThinkingLevel,
 	requireSupportedEffort,
 	resolveWireModelId,
-} from "@oh-my-pi/pi-catalog/model-thinking";
-import { providerEntries } from "@oh-my-pi/pi-catalog/compat/providers";
-import { CODEX_BASE_URL } from "@oh-my-pi/pi-catalog/wire/codex";
-import { $env, $pickenv, getProviderInFlightRoot, isEnoent, logger, untilAborted } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-catalog/model-thinking";
+import { providerEntries } from "@tau/tau-catalog/compat/providers";
+import { CODEX_BASE_URL } from "@tau/tau-catalog/wire/codex";
+import { $env, $pickenv, getProviderInFlightRoot, isEnoent, logger, untilAborted } from "@tau/tau-utils";
 import { getCustomApi } from "./api-registry";
 import { createAuthRetryKeyState, isApiKeyResolver, resolvedApiKeyBearer, resolveNextAuthRetryKey } from "./auth-retry";
 import * as AIError from "./error";
@@ -36,7 +36,7 @@ import type { GoogleVertexOptions } from "./providers/google-vertex";
 import { streamKimi } from "./providers/kimi";
 import type { OllamaChatOptions } from "./providers/ollama";
 import type { OpenAICompletionsOptions } from "./providers/openai-completions";
-import { streamPiNative } from "./providers/pi-native-client";
+import { streamPiNative } from "./providers/tau-native-client";
 import { streamSynthetic } from "./providers/synthetic";
 import {
 	streamAnthropic,
@@ -876,7 +876,7 @@ export function getEnvApiKeyName(provider: string): string | undefined {
 
 /**
  * Enumerate every provider that has an env-var fallback for `getEnvApiKey`.
- * Used by `omp auth-broker migrate --include-env` to discover env-sourced keys
+ * Used by `tau auth-broker migrate --include-env` to discover env-sourced keys
  * that should be uploaded to the broker.
  */
 export function listProvidersWithEnvKey(): string[] {
@@ -1293,7 +1293,7 @@ function supportsAnthropicCacheRefresh<TApi extends Api>(model: Model<TApi>): bo
 	return (
 		model.api === "anthropic-messages" &&
 		model.provider === "anthropic" &&
-		model.transport !== "pi-native" &&
+		model.transport !== "tau-native" &&
 		isLeakedThinkingHealExempt(model)
 	);
 }
@@ -1513,10 +1513,10 @@ export function streamSimple<TApi extends Api>(
 }
 
 /**
- * Forward a model-configured `User-Agent` override across the pi-native wire.
+ * Forward a model-configured `User-Agent` override across the tau-native wire.
  * The model itself never crosses the wire — the client sends only `modelId`
  * and the gateway resolves its own model — so without this the gateway's
- * resolved Bedrock model always sends the default `omp/<version>` UA even
+ * resolved Bedrock model always sends the default `tau/<version>` UA even
  * when the client's local model config set an override. Only the single
  * header is forwarded, not the rest of `model.headers` (which may carry
  * unrelated local config), and only when the caller hasn't already set their
@@ -1680,13 +1680,13 @@ function streamSimpleRequest<TApi extends Api>(
 		);
 	}
 
-	// Pi-native transport short-circuits the per-provider dispatch entirely:
+	// Tau-native transport short-circuits the per-provider dispatch entirely:
 	// the gateway resolves provider + credential server-side, so we don't
 	// need an `apiKey` from `getEnvApiKey` here — `options.apiKey` carries
 	// the gateway bearer instead. Comes BEFORE the custom-API check so
 	// extension-registered APIs can't accidentally override a configured
-	// pi-native transport.
-	if (model.transport === "pi-native") {
+	// tau-native transport.
+	if (model.transport === "tau-native") {
 		return withThinkingLoopGuard(model, requestOptions, opts =>
 			withProviderInFlightLimit(model, opts, () => {
 				const nativeOptions =
@@ -2040,7 +2040,7 @@ function assertExplicitOpenAIResponsesPromptCacheSupport<TApi extends Api>(
 	options?: StreamOptions,
 ): void {
 	if (
-		model.transport === "pi-native" ||
+		model.transport === "tau-native" ||
 		resolveCacheRetention(options?.cacheRetention) === "none" ||
 		options?.promptCache?.mode !== "explicit" ||
 		!isOpenAIResponsesPromptCacheSurface(model) ||

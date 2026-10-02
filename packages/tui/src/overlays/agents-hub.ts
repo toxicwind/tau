@@ -10,7 +10,7 @@
  * every per-agent knob is picked instead of memorized.
  */
 
-import type { Model } from "@oh-my-pi/pi-ai";
+import type { Model } from "@tau/tau-ai";
 import {
 	type Component,
 	Editor,

@@ -1,13 +1,13 @@
 import { afterEach, beforeAll, describe, expect, it } from "bun:test";
-import { Markdown } from "@oh-my-pi/pi-tui";
+import { Markdown } from "@tau/tau-tui";
 import { Settings } from "../../../src/config/settings";
-import { createTheme, getBuiltinThemes } from "@oh-my-pi/pi-tui/theme/loader";
+import { createTheme, getBuiltinThemes } from "@tau/tau-tui/theme/loader";
 import {
 	getMarkdownTheme,
 	getThemeByName,
 	setMarkdownMermaidRendering,
 	setThemeInstance,
-} from "@oh-my-pi/pi-tui/theme";
+} from "@tau/tau-tui/theme";
 import { buildSystemPrompt } from "../../../src/system-prompt";
 
 const workspaceTree = {

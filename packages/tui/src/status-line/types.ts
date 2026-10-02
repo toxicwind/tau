@@ -1,5 +1,5 @@
-import type { Model } from "@oh-my-pi/pi-ai";
-import type { SessionState } from "@oh-my-pi/pi-wire";
+import type { Model } from "@tau/tau-ai";
+import type { SessionState } from "@tau/tau-wire";
 import type { ContextLineMode, StatusLinePreset, StatusLineSegmentId, StatusLineSeparatorStyle } from "./schema";
 import type { ActiveRepoContext, StatusLineSession } from "./host";
 import type { LoopConditionConfig, LoopLimitRuntime } from "./loop";
@@ -167,7 +167,7 @@ export interface SegmentContext {
 	turnElapsedMs: number | null;
 	/**
 	 * Sampled foreground ANSI for the `pi` brand segment — tweened between dim
-	 * gray (idle) and the accent (working) across turn edges (rust omp's
+	 * gray (idle) and the accent (working) across turn edges (rust tau's
 	 * status-band brand fade). Absent in direct-segment fixtures and previews,
 	 * which fall back to the static dim color.
 	 */

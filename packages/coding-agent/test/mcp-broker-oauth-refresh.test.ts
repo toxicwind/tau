@@ -1,7 +1,7 @@
 /**
  * End-to-end regression for broker-backed MCP OAuth refresh (issue #8933).
  *
- * Topology mirrors `omp auth-broker serve` fronting a sandboxed client:
+ * Topology mirrors `tau auth-broker serve` fronting a sandboxed client:
  *   client (RemoteAuthCredentialStore) → broker (SqliteAuthCredentialStore
  *   + refreshBrokerOAuthCredential override) → MCP token endpoint.
  *
@@ -19,18 +19,18 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { AuthStorage, type OAuthCredential, REMOTE_REFRESH_SENTINEL, SqliteAuthCredentialStore } from "@oh-my-pi/pi-ai";
+import { AuthStorage, type OAuthCredential, REMOTE_REFRESH_SENTINEL, SqliteAuthCredentialStore } from "@tau/tau-ai";
 import {
 	AuthBrokerClient,
 	type AuthBrokerServerHandle,
 	RemoteAuthCredentialStore,
 	startAuthBroker,
-} from "@oh-my-pi/pi-ai/auth-broker";
-import { refreshBrokerOAuthCredential } from "@oh-my-pi/pi-coding-agent/cli/auth-broker-cli";
-import { MCPManager } from "@oh-my-pi/pi-coding-agent/mcp/manager";
-import { mcpOAuthCredentialId } from "@oh-my-pi/pi-coding-agent/mcp/oauth-flow";
-import type { MCPServerConfig } from "@oh-my-pi/pi-coding-agent/mcp/types";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-ai/auth-broker";
+import { refreshBrokerOAuthCredential } from "@tau/tau-coding-agent/cli/auth-broker-cli";
+import { MCPManager } from "@tau/tau-coding-agent/mcp/manager";
+import { mcpOAuthCredentialId } from "@tau/tau-coding-agent/mcp/oauth-flow";
+import type { MCPServerConfig } from "@tau/tau-coding-agent/mcp/types";
+import { removeWithRetries } from "@tau/tau-utils";
 import type { Server } from "bun";
 
 const SERVER_URL = "https://mcp.granola.ai/mcp";
@@ -56,7 +56,7 @@ describe("broker-backed MCP OAuth refresh", () => {
 	let manager: MCPManager | undefined;
 
 	beforeEach(async () => {
-		tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "omp-broker-mcp-refresh-"));
+		tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-broker-mcp-refresh-"));
 		tokenRequests = [];
 		const server = Bun.serve({
 			port: 0,

@@ -2,7 +2,7 @@ import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import { buildModel } from "@tau/tau-catalog/build";
 import {
 	collapseBuiltVariants,
 	collapseVariants,
@@ -13,22 +13,22 @@ import {
 	resolveVariantSelector,
 	reviewedCollapseTable,
 	type VariantCollapseTable,
-} from "@oh-my-pi/pi-catalog/compat/collapse";
-import { stripThinkingVariantSuffix } from "@oh-my-pi/pi-catalog/compat/taxonomy";
+} from "@tau/tau-catalog/compat/collapse";
+import { stripThinkingVariantSuffix } from "@tau/tau-catalog/compat/taxonomy";
 import {
 	ANTIGRAVITY_PRIMARY_ENDPOINT,
 	fetchAntigravityDiscoveryModels,
-} from "@oh-my-pi/pi-catalog/discovery/antigravity";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { resolveProviderModels } from "@oh-my-pi/pi-catalog/model-manager";
+} from "@tau/tau-catalog/discovery/antigravity";
+import { Effort } from "@tau/tau-catalog/effort";
+import { resolveProviderModels } from "@tau/tau-catalog/model-manager";
 import {
 	defaultSupportedEffort,
 	mapEffortToGoogleThinkingLevel,
 	resolveWireModelId,
-} from "@oh-my-pi/pi-catalog/model-thinking";
-import { getBundledModel, getBundledModels } from "@oh-my-pi/pi-catalog/models";
-import { googleGeminiCliModelManagerOptions } from "@oh-my-pi/pi-catalog/provider-models/google";
-import type { ModelSpec } from "@oh-my-pi/pi-catalog/types";
+} from "@tau/tau-catalog/model-thinking";
+import { getBundledModel, getBundledModels } from "@tau/tau-catalog/models";
+import { googleGeminiCliModelManagerOptions } from "@tau/tau-catalog/provider-models/google";
+import type { ModelSpec } from "@tau/tau-catalog/types";
 
 function requireReviewedTable(provider: string): VariantCollapseTable {
 	const table = reviewedCollapseTable(provider);

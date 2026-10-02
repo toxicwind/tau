@@ -1,4 +1,4 @@
-import { classifyModel } from "@oh-my-pi/pi-catalog/identity";
+import { classifyModel } from "@tau/tau-catalog/identity";
 
 /**
  * Resolves whether full tool descriptors should be inlined into the system

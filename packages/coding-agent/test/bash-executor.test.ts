@@ -2,21 +2,21 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { ImageContent } from "@oh-my-pi/pi-ai";
-import { resetSettingsForTest, Settings, type ShellMinimizerSettings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import type { ImageContent } from "@tau/tau-ai";
+import { resetSettingsForTest, Settings, type ShellMinimizerSettings } from "@tau/tau-coding-agent/config/settings";
 import {
 	applyDirenvPreflight,
 	buildMinimizerOptions,
 	executeBash,
 	isPersistentShellCdCommand,
-} from "@oh-my-pi/pi-coding-agent/exec/bash-executor";
-import * as direnvModule from "@oh-my-pi/pi-coding-agent/exec/direnv";
-import { DEFAULT_MAX_BYTES } from "@oh-my-pi/pi-tui/tools/streaming-output";
-import * as shellSnapshot from "@oh-my-pi/pi-coding-agent/utils/shell-snapshot";
-import { encodeTerminalImage } from "@oh-my-pi/pi-coding-agent/utils/terminal-graphics";
-import type { Shell, ShellRunResult } from "@oh-my-pi/pi-natives";
-import * as piNatives from "@oh-my-pi/pi-natives";
-import { removeSyncWithRetries } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-coding-agent/exec/bash-executor";
+import * as direnvModule from "@tau/tau-coding-agent/exec/direnv";
+import { DEFAULT_MAX_BYTES } from "@tau/tau-tui/tools/streaming-output";
+import * as shellSnapshot from "@tau/tau-coding-agent/utils/shell-snapshot";
+import { encodeTerminalImage } from "@tau/tau-coding-agent/utils/terminal-graphics";
+import type { Shell, ShellRunResult } from "@tau/tau-natives";
+import * as piNatives from "@tau/tau-natives";
+import { removeSyncWithRetries } from "@tau/tau-utils";
 
 // Matches the schema default for `tools.artifactHeadBytes` (20 KB) used by
 // OutputSink when bash-executor pulls settings via resolveOutputSinkHeadBytes.
@@ -32,7 +32,7 @@ const KILL_SETTLE_MS = 25; // let the kill signal land before we touch `release`
 const KILL_REACT_MS = 50; // > one poll interval: a survivor would write its marker
 
 function makeTempDir(): string {
-	return fs.mkdtempSync(path.join(os.tmpdir(), "omp-bash-exec-"));
+	return fs.mkdtempSync(path.join(os.tmpdir(), "tau-bash-exec-"));
 }
 
 function shellQuote(value: string): string {
@@ -275,7 +275,7 @@ describe("executeBash", () => {
 			return;
 		}
 
-		const shellDir = fs.mkdtempSync(path.join(os.tmpdir(), "omp-shellpath-"));
+		const shellDir = fs.mkdtempSync(path.join(os.tmpdir(), "tau-shellpath-"));
 		const marker = path.join(shellDir, "fake-shell-ran");
 		const markerEscaped = marker.replace(/'/g, "'\\''");
 		const fakeShell = path.join(shellDir, "fake-shell");
@@ -326,7 +326,7 @@ exit 64
 	it("persists cd, bare cd, and cd - when shortcut commands use a non-bash user shell", async () => {
 		if (process.platform === "win32") return;
 
-		const shellDir = fs.mkdtempSync(path.join(os.tmpdir(), "omp-cd-shellpath-"));
+		const shellDir = fs.mkdtempSync(path.join(os.tmpdir(), "tau-cd-shellpath-"));
 		const marker = path.join(shellDir, "fake-shell-ran");
 		const fakeShell = path.join(shellDir, "fake-shell");
 		const childDir = path.join(tempDir, "child");
@@ -411,7 +411,7 @@ exit 64
 		}
 
 		const originalShell = Bun.env.SHELL;
-		const shellDir = fs.mkdtempSync(path.join(os.tmpdir(), "omp-env-shell-"));
+		const shellDir = fs.mkdtempSync(path.join(os.tmpdir(), "tau-env-shell-"));
 		const marker = path.join(shellDir, "env-shell-ran");
 		const markerEscaped = marker.replace(/'/g, "'\\''");
 		const fakeShell = path.join(shellDir, "fish");
@@ -480,7 +480,7 @@ exit 64
 			return;
 		}
 
-		const shellDir = fs.mkdtempSync(path.join(os.tmpdir(), "omp-zsh-shellpath-"));
+		const shellDir = fs.mkdtempSync(path.join(os.tmpdir(), "tau-zsh-shellpath-"));
 		fs.writeFileSync(path.join(shellDir, ".zshrc"), "alias pi_shell_alias='printf zsh-alias-ok\\\\n'\n");
 		Settings.instance.set("shellPath", zshPath);
 
@@ -529,13 +529,13 @@ exit 64
 			return;
 		}
 
-		const shellDir = fs.mkdtempSync(path.join(os.tmpdir(), "omp-fish-shellpath-"));
+		const shellDir = fs.mkdtempSync(path.join(os.tmpdir(), "tau-fish-shellpath-"));
 		const configDir = path.join(shellDir, ".config", "fish");
 		fs.mkdirSync(path.join(configDir, "conf.d"), { recursive: true });
 		fs.writeFileSync(path.join(configDir, "config.fish"), "function pi_fish_fn; echo fish-fn-ok; end\n");
 		// Login-gated snippet: fires only when the spawned fish is a login shell.
 		fs.writeFileSync(
-			path.join(configDir, "conf.d", "pi-login.fish"),
+			path.join(configDir, "conf.d", "tau-login.fish"),
 			"if status is-login; echo fish-login-side-effect; end\n",
 		);
 		Settings.instance.set("shellPath", fishPath);
@@ -580,7 +580,7 @@ exit 64
 			return;
 		}
 
-		const shellDir = fs.mkdtempSync(path.join(os.tmpdir(), "omp-zsh-pty-"));
+		const shellDir = fs.mkdtempSync(path.join(os.tmpdir(), "tau-zsh-pty-"));
 		fs.writeFileSync(path.join(shellDir, ".zshrc"), "alias pi_pty_alias='printf pty-alias-ok'\n");
 		Settings.instance.set("shellPath", zshPath);
 

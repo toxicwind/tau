@@ -1,13 +1,13 @@
 /**
- * Discovery integration tests for OMP plugin registry reading.
+ * Discovery integration tests for TAU plugin registry reading.
  *
  * NOTE: listClaudePluginRoots() lives in discovery/helpers.ts which imports
- * @oh-my-pi/pi-natives (native Rust addon via glob). We cannot call it here.
+ * @tau/tau-natives (native Rust addon via glob). We cannot call it here.
  *
  * Instead these tests validate the structural contract that listClaudePluginRoots
  * depends on:
- *   1. OMP registry lives at path.join(home, ".omp", "plugins", "installed_plugins.json")
- *      (matches getConfigDirName() == ".omp")
+ *   1. TAU registry lives at path.join(home, ".tau", "plugins", "installed_plugins.json")
+ *      (matches getConfigDirName() == ".tau")
  *   2. The registry format passes the same validator that parseClaudePluginsRegistry uses
  *   3. readInstalledPluginsRegistry / writeInstalledPluginsRegistry produce files that
  *      satisfy that validator
@@ -19,19 +19,19 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { InstalledPluginEntry } from "@oh-my-pi/pi-coding-agent/extensibility/plugins/marketplace";
+import type { InstalledPluginEntry } from "@tau/tau-coding-agent/extensibility/plugins/marketplace";
 import {
 	addInstalledPlugin,
 	buildPluginId,
 	readInstalledPluginsRegistry,
 	writeInstalledPluginsRegistry,
-} from "@oh-my-pi/pi-coding-agent/extensibility/plugins/marketplace";
-import { removeSyncWithRetries } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-coding-agent/extensibility/plugins/marketplace";
+import { removeSyncWithRetries } from "@tau/tau-utils";
 
 // ── Inline validator ───────────────────────────────────────────────────────────
 //
 // Mirrors parseClaudePluginsRegistry() in discovery/helpers.ts exactly.
-// Kept here to avoid importing helpers.ts (which pulls in @oh-my-pi/pi-natives).
+// Kept here to avoid importing helpers.ts (which pulls in @tau/tau-natives).
 function validateClaudeRegistryFormat(content: string): Record<string, unknown> | null {
 	let data: Record<string, unknown>;
 	try {
@@ -52,10 +52,10 @@ function validateClaudeRegistryFormat(content: string): Record<string, unknown> 
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
-// Matches getConfigDirName() — single source of truth is in @oh-my-pi/pi-utils,
-// but we know the value is ".omp" and hardcoding it here keeps tests free of
+// Matches getConfigDirName() — single source of truth is in @tau/tau-utils,
+// but we know the value is ".tau" and hardcoding it here keeps tests free of
 // native-addon transitive imports.
-const OMP_CONFIG_DIR = ".omp";
+const TAU_CONFIG_DIR = ".tau";
 
 function makeEntry(installPath: string, version = "1.0.0"): InstalledPluginEntry {
 	return {
@@ -70,13 +70,13 @@ function makeEntry(installPath: string, version = "1.0.0"): InstalledPluginEntry
 // ── Fixtures ──────────────────────────────────────────────────────────────────
 
 let tmpHome: string;
-/** ~/.omp/plugins/installed_plugins.json inside tmpHome */
-let ompRegistryPath: string;
+/** ~/.tau/plugins/installed_plugins.json inside tmpHome */
+let tauRegistryPath: string;
 
 beforeEach(() => {
-	tmpHome = fs.mkdtempSync(path.join(os.tmpdir(), "omp-discovery-test-"));
-	ompRegistryPath = path.join(tmpHome, OMP_CONFIG_DIR, "plugins", "installed_plugins.json");
-	fs.mkdirSync(path.dirname(ompRegistryPath), { recursive: true });
+	tmpHome = fs.mkdtempSync(path.join(os.tmpdir(), "tau-discovery-test-"));
+	tauRegistryPath = path.join(tmpHome, TAU_CONFIG_DIR, "plugins", "installed_plugins.json");
+	fs.mkdirSync(path.dirname(tauRegistryPath), { recursive: true });
 });
 
 afterEach(() => {
@@ -87,11 +87,11 @@ afterEach(() => {
 
 // ── Format compatibility ───────────────────────────────────────────────────────
 
-describe("OMP registry format compatibility with Claude parser", () => {
+describe("TAU registry format compatibility with Claude parser", () => {
 	it("empty registry written by writeInstalledPluginsRegistry passes validator", async () => {
-		await writeInstalledPluginsRegistry(ompRegistryPath, { version: 2, plugins: {} });
+		await writeInstalledPluginsRegistry(tauRegistryPath, { version: 2, plugins: {} });
 
-		const content = fs.readFileSync(ompRegistryPath, "utf8");
+		const content = fs.readFileSync(tauRegistryPath, "utf8");
 		const parsed = validateClaudeRegistryFormat(content);
 		expect(parsed).not.toBeNull();
 		expect((parsed as Record<string, unknown>).version).toBe(2);
@@ -101,11 +101,11 @@ describe("OMP registry format compatibility with Claude parser", () => {
 		const pluginId = buildPluginId("quality-review", "example-marketplace");
 		const entry = makeEntry(path.join(tmpHome, "plugins", "cache", "example-marketplace--quality-review--1.0.0"));
 
-		let reg = await readInstalledPluginsRegistry(ompRegistryPath);
+		let reg = await readInstalledPluginsRegistry(tauRegistryPath);
 		reg = addInstalledPlugin(reg, pluginId, entry);
-		await writeInstalledPluginsRegistry(ompRegistryPath, reg);
+		await writeInstalledPluginsRegistry(tauRegistryPath, reg);
 
-		const content = fs.readFileSync(ompRegistryPath, "utf8");
+		const content = fs.readFileSync(tauRegistryPath, "utf8");
 		const parsed = validateClaudeRegistryFormat(content);
 		expect(parsed).not.toBeNull();
 
@@ -133,16 +133,16 @@ describe("OMP registry format compatibility with Claude parser", () => {
 
 // ── Round-trip ────────────────────────────────────────────────────────────────
 
-describe("OMP registry round-trip", () => {
+describe("TAU registry round-trip", () => {
 	it("reads back what was written — single plugin", async () => {
 		const id = buildPluginId("hello-plugin", "test-marketplace");
 		const entry = makeEntry("/tmp/fake-plugin-path");
 
-		let reg = await readInstalledPluginsRegistry(ompRegistryPath);
+		let reg = await readInstalledPluginsRegistry(tauRegistryPath);
 		reg = addInstalledPlugin(reg, id, entry);
-		await writeInstalledPluginsRegistry(ompRegistryPath, reg);
+		await writeInstalledPluginsRegistry(tauRegistryPath, reg);
 
-		const readBack = await readInstalledPluginsRegistry(ompRegistryPath);
+		const readBack = await readInstalledPluginsRegistry(tauRegistryPath);
 		expect(readBack.plugins[id]).toBeDefined();
 		expect(readBack.plugins[id]?.[0]?.installPath).toBe(entry.installPath);
 		expect(readBack.plugins[id]?.[0]?.version).toBe("1.0.0");
@@ -155,12 +155,12 @@ describe("OMP registry round-trip", () => {
 		const entry1 = makeEntry("/tmp/fake-a", "1.0.0");
 		const entry2 = makeEntry("/tmp/fake-b", "2.0.0");
 
-		let reg = await readInstalledPluginsRegistry(ompRegistryPath);
+		let reg = await readInstalledPluginsRegistry(tauRegistryPath);
 		reg = addInstalledPlugin(reg, id1, entry1);
 		reg = addInstalledPlugin(reg, id2, entry2);
-		await writeInstalledPluginsRegistry(ompRegistryPath, reg);
+		await writeInstalledPluginsRegistry(tauRegistryPath, reg);
 
-		const readBack = await readInstalledPluginsRegistry(ompRegistryPath);
+		const readBack = await readInstalledPluginsRegistry(tauRegistryPath);
 		expect(Object.keys(readBack.plugins)).toHaveLength(2);
 		expect(readBack.plugins[id1]?.[0]?.version).toBe("1.0.0");
 		expect(readBack.plugins[id2]?.[0]?.version).toBe("2.0.0");
@@ -176,11 +176,11 @@ describe("OMP registry round-trip", () => {
 			lastUpdated: "2025-01-15T10:30:00.000Z",
 		};
 
-		let reg = await readInstalledPluginsRegistry(ompRegistryPath);
+		let reg = await readInstalledPluginsRegistry(tauRegistryPath);
 		reg = addInstalledPlugin(reg, id, entry);
-		await writeInstalledPluginsRegistry(ompRegistryPath, reg);
+		await writeInstalledPluginsRegistry(tauRegistryPath, reg);
 
-		const readBack = await readInstalledPluginsRegistry(ompRegistryPath);
+		const readBack = await readInstalledPluginsRegistry(tauRegistryPath);
 		expect(readBack.plugins[id]?.[0]?.scope).toBe("project");
 	});
 
@@ -195,20 +195,20 @@ describe("OMP registry round-trip", () => {
 
 // ── Precedence contract (structural) ─────────────────────────────────────────
 //
-// listClaudePluginRoots must replace Claude entries with OMP entries when the same
+// listClaudePluginRoots must replace Claude entries with TAU entries when the same
 // plugin ID appears in both registries. We cannot call that function here, but we
 // can verify the data shapes that the replacement logic reads are correct.
 
-describe("OMP precedence contract (registry structure)", () => {
-	it("same plugin ID in both registries — OMP entry has required fields for deduplication", () => {
+describe("TAU precedence contract (registry structure)", () => {
+	it("same plugin ID in both registries — TAU entry has required fields for deduplication", () => {
 		// The replacement logic: roots.filter(r => r.id !== pluginId) keyed by id.
-		// OMP entries must have installPath so they can be added to roots[].
+		// TAU entries must have installPath so they can be added to roots[].
 		const id = buildPluginId("shared-plugin", "common-mkt");
-		const ompEntry = makeEntry("/omp/cached/path");
+		const tauEntry = makeEntry("/tau/cached/path");
 
-		// OMP registry entry has installPath (required by listClaudePluginRoots)
-		expect(ompEntry.installPath).toBeTruthy();
-		expect(typeof ompEntry.installPath).toBe("string");
+		// TAU registry entry has installPath (required by listClaudePluginRoots)
+		expect(tauEntry.installPath).toBeTruthy();
+		expect(typeof tauEntry.installPath).toBe("string");
 		// ID parses correctly with lastIndexOf("@")
 		const atIndex = id.lastIndexOf("@");
 		expect(atIndex).toBeGreaterThan(0);

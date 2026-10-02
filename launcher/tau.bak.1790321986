@@ -5,7 +5,7 @@
 #   1. $TAU_BIN (explicit override)
 #   2. Installed `tau` on PATH (not this script — avoids recursion)
 #   3. ./tau in current directory (local project override; regular file only)
-#   4. Full compiled binary: <engine>/packages/coding-agent/dist/omp
+#   4. Full compiled binary: <engine>/packages/coding-agent/dist/tau
 #      (hermetic. 2026-09-20 tau-config: promoted above bun source mode.)
 #   5. Source mode: bun run <engine>/packages/coding-agent/src/cli.ts
 #      (dev fallback -- patches take effect immediately)
@@ -144,7 +144,7 @@ else
     ENGINE_DIR="$SOVEREIGN_DIR/tau/engine"
 fi
 ENGINE_ENTRY="$ENGINE_DIR/packages/coding-agent/src/cli.ts"
-DIST_BIN="$ENGINE_DIR/packages/coding-agent/dist/omp"
+DIST_BIN="$ENGINE_DIR/packages/coding-agent/dist/tau"
 
 # Vendor update commands (run before engine launch)
 vendor_cmd() {

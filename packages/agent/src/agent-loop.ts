@@ -23,22 +23,22 @@ import {
 	type TSchema,
 	toolWireSchema,
 	validateToolArguments,
-} from "@oh-my-pi/pi-ai";
+} from "@tau/tau-ai";
 import {
 	type Dialect,
 	encodeInbandToolHistory,
 	renderInbandToolPrompt,
 	renderToolExamples,
 	wrapInbandToolStream,
-} from "@oh-my-pi/pi-ai/dialect";
-import * as AIError from "@oh-my-pi/pi-ai/error";
+} from "@tau/tau-ai/dialect";
+import * as AIError from "@tau/tau-ai/error";
 import {
 	type CursorExecResolvedCarrier,
 	copyCursorExecResolved,
 	getStreamingPartialJson,
 	kCursorExecResolved,
-} from "@oh-my-pi/pi-ai/utils/block-symbols";
-import { stamp } from "@oh-my-pi/pi-ai/utils/schema/stamps";
+} from "@tau/tau-ai/utils/block-symbols";
+import { stamp } from "@tau/tau-ai/utils/schema/stamps";
 import {
 	createHarmonyAuditEvent,
 	detectHarmonyLeakInAssistantMessage,
@@ -48,9 +48,9 @@ import {
 	isHarmonyLeakMitigationTarget,
 	recoverHarmonyToolCall,
 	signalListLabel,
-} from "@oh-my-pi/pi-ai/utils/harmony-leak";
-import { logger, sanitizeText, structuredCloneJSON } from "@oh-my-pi/pi-utils";
-import { INTENT_FIELD } from "@oh-my-pi/pi-wire";
+} from "@tau/tau-ai/utils/harmony-leak";
+import { logger, sanitizeText, structuredCloneJSON } from "@tau/tau-utils";
+import { INTENT_FIELD } from "@tau/tau-wire";
 import { agentPauseGate } from "./pause";
 import { type AgentRunCoverage, type AgentRunSummary, ToolCallBlockedError } from "./run-collector";
 import { SpeculativeOperationCoordinator } from "./speculative-execution";
@@ -163,14 +163,14 @@ export function createToolScopedAbortReason(
  * current run. External/user aborts still synthesize an aborted assistant
  * boundary; this reason stops after persisting the completed tool batch.
  */
-export const TERMINAL_TOOL_RESULT_ABORT_REASON = Symbol.for("pi-agent-core.terminal-tool-result");
+export const TERMINAL_TOOL_RESULT_ABORT_REASON = Symbol.for("tau-agent-core.terminal-tool-result");
 
 /**
  * Abort reason carried by an interruptible tool's signal when queued steering,
  * a peer IRC, or a background completion cut it short. Lets a wait tell the
  * designed wake path apart from an external/user abort of the run.
  */
-export const TOOL_INTERRUPT_ABORT_REASON = Symbol.for("pi-agent-core.tool-interrupt");
+export const TOOL_INTERRUPT_ABORT_REASON = Symbol.for("tau-agent-core.tool-interrupt");
 
 const STEERING_INTERRUPT_POLL_MS = 250;
 

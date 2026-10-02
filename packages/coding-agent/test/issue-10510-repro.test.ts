@@ -1,17 +1,17 @@
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import { Agent, type AgentMessage, type AgentTool } from "@oh-my-pi/pi-agent-core";
-import { type Api, Effort, type Model } from "@oh-my-pi/pi-ai";
-import { createMockModel, type MockResponse } from "@oh-my-pi/pi-ai/providers/mock";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import type { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { convertToLlm } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { type } from "@tau/tautype";
+import { Agent, type AgentMessage, type AgentTool } from "@tau/tau-agent-core";
+import { type Api, Effort, type Model } from "@tau/tau-ai";
+import { createMockModel, type MockResponse } from "@tau/tau-ai/providers/mock";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import type { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { convertToLlm } from "@tau/tau-coding-agent/session/messages";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { TempDir } from "@tau/tau-utils";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
 /**
@@ -27,7 +27,7 @@ describe("issue #10510: prewalk + eager-todo conflict", () => {
 	let modelRegistry: ModelRegistry;
 
 	beforeAll(() => {
-		tempDir = TempDir.createSync("@pi-issue-10510-");
+		tempDir = TempDir.createSync("@tau-issue-10510-");
 		authStorage = createInMemoryAuthStorage();
 		authStorage.keys.setRuntime("anthropic", "test-key");
 		modelRegistry = new ModelRegistry(authStorage, path.join(tempDir.path(), "models.yml"));

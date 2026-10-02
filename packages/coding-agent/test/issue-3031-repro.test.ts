@@ -1,16 +1,16 @@
 /**
- * Regression for https://github.com/can1357/oh-my-pi/issues/3031
+ * Regression for https://github.com/toxicwind/tau/issues/3031
  *
- * Mnemopi's local embedding provider used to `import("onnxruntime-node")` and
+ * Mnemotau's local embedding provider used to `import("onnxruntime-node")` and
  * `import("fastembed")` directly inside `fastembed-runtime.ts`. With
- * `memory.backend: mnemopi` enabled on Windows that crashed Bun in two ways:
+ * `memory.backend: mnemotau` enabled on Windows that crashed Bun in two ways:
  *   - Standalone binary: NAPI `process.dlopen` constructor segfault at
  *     session start, before any prompt rendered.
  *   - NPM install: NAPI finalizer segfault at process teardown.
  *
  * The fix relocates the embeddings stack into a Bun.spawn child process. The
- * agent's main process hands `mnemopi.setLocalModelInitializer` a wrapper that
- * round-trips through `__omp_worker_mnemopi_embed`, and `SIGKILL`s the child
+ * agent's main process hands `mnemotau.setLocalModelInitializer` a wrapper that
+ * round-trips through `__omp_worker_mnemotau_embed`, and `SIGKILL`s the child
  * on dispose so the destructor never runs in either address space. These tests
  * pin the three pieces of that contract so a future refactor cannot quietly
  * re-introduce the crash.
@@ -18,24 +18,24 @@
 import { describe, expect, it } from "bun:test";
 import * as path from "node:path";
 import {
-	createMnemopiEmbedSubprocess,
-	MnemopiEmbedClient,
-	type MnemopiEmbedWorkerHandle,
-} from "@oh-my-pi/pi-coding-agent/mnemopi/embed-client";
+	createMnemotauEmbedSubprocess,
+	MnemotauEmbedClient,
+	type MnemotauEmbedWorkerHandle,
+} from "@tau/tau-coding-agent/mnemotau/embed-client";
 import type {
-	MnemopiEmbedWorkerInbound,
-	MnemopiEmbedWorkerOutbound,
-} from "@oh-my-pi/pi-coding-agent/mnemopi/embed-protocol";
+	MnemotauEmbedWorkerInbound,
+	MnemotauEmbedWorkerOutbound,
+} from "@tau/tau-coding-agent/mnemotau/embed-protocol";
 
-describe("issue #3031 — mnemopi embeddings live in an isolated subprocess", () => {
+describe("issue #3031 — mnemotau embeddings live in an isolated subprocess", () => {
 	it("ping/pongs through the spawned worker subprocess and tears it down cleanly", async () => {
-		// `smokeTestMnemopiEmbedWorker` is the runtime probe wired into
-		// `omp --smoke-test`. Run it in a child Bun process instead of this
+		// `smokeTestMnemotauEmbedWorker` is the runtime probe wired into
+		// `tau --smoke-test`. Run it in a child Bun process instead of this
 		// Bun-test worker: the test runner owns its own IPC channel and can
 		// starve nested Bun subprocess IPC on some Bun builds.
 		const repoRoot = path.resolve(import.meta.dir, "../../..");
 		const script =
-			'const { smokeTestMnemopiEmbedWorker } = await import("@oh-my-pi/pi-coding-agent/mnemopi/embed-client"); await smokeTestMnemopiEmbedWorker({ timeoutMs: 15000 });';
+			'const { smokeTestMnemotauEmbedWorker } = await import("@tau/tau-coding-agent/mnemotau/embed-client"); await smokeTestMnemotauEmbedWorker({ timeoutMs: 15000 });';
 		const proc = Bun.spawn([process.execPath, "-e", script], {
 			cwd: repoRoot,
 			stdout: "pipe",
@@ -57,7 +57,7 @@ describe("issue #3031 — mnemopi embeddings live in an isolated subprocess", ()
 		// — the subprocess wrapper must fault every in-flight request via
 		// the `errors` channel. Without this contract a `TinyTitleClient`-
 		// style swallow would leave callers waiting forever on `await embed`.
-		const sub = createMnemopiEmbedSubprocess();
+		const sub = createMnemotauEmbedSubprocess();
 		try {
 			const { promise, resolve } = Promise.withResolvers<Error>();
 			sub.errors.add(resolve);
@@ -78,7 +78,7 @@ describe("issue #3031 — mnemopi embeddings live in an isolated subprocess", ()
 		// shutdown path and the worker handle is already torn down by then.
 		// Regression guard against an over-eager fix that surfaces every
 		// signal exit indiscriminately.
-		const sub = createMnemopiEmbedSubprocess();
+		const sub = createMnemotauEmbedSubprocess();
 		let errored = false;
 		sub.errors.add(() => {
 			errored = true;
@@ -96,17 +96,17 @@ describe("issue #3031 — mnemopi embeddings live in an isolated subprocess", ()
 	}, 10_000);
 
 	it("carries (model, cacheDir) on every embed so a respawned worker can self-init", async () => {
-		// Without this contract: after `shutdownMnemopiEmbedClient()` runs on
-		// session dispose, mnemopi still holds the cached `LocalEmbeddingModel`
+		// Without this contract: after `shutdownMnemotauEmbedClient()` runs on
+		// session dispose, mnemotau still holds the cached `LocalEmbeddingModel`
 		// wrapper. The next embed re-spawns a fresh subprocess that has never
 		// seen `init`, and a bare `embed` request would trip the "embed before
 		// init" guard and break local embeddings for the rest of the process.
 		// Drive the protocol with a fake worker so the assertion runs without
 		// fastembed/onnxruntime; we only care about the IPC the client emits.
-		const sentMessages: MnemopiEmbedWorkerInbound[] = [];
-		let messageHandler: ((message: MnemopiEmbedWorkerOutbound) => void) | undefined;
+		const sentMessages: MnemotauEmbedWorkerInbound[] = [];
+		let messageHandler: ((message: MnemotauEmbedWorkerOutbound) => void) | undefined;
 		const spawnCount = { value: 0 };
-		const spawn = (): MnemopiEmbedWorkerHandle => {
+		const spawn = (): MnemotauEmbedWorkerHandle => {
 			spawnCount.value += 1;
 			return {
 				send(message) {
@@ -138,7 +138,7 @@ describe("issue #3031 — mnemopi embeddings live in an isolated subprocess", ()
 			};
 		};
 
-		const client = new MnemopiEmbedClient(spawn);
+		const client = new MnemotauEmbedClient(spawn);
 		const wrapper = await client.initialize("fast-bge-base-en-v1.5", "/tmp/cache");
 		expect(wrapper).not.toBeNull();
 
@@ -156,7 +156,7 @@ describe("issue #3031 — mnemopi embeddings live in an isolated subprocess", ()
 
 		expect(spawnCount.value).toBe(2);
 		const embeds = sentMessages.filter(
-			(m): m is Extract<MnemopiEmbedWorkerInbound, { type: "embed" }> => m.type === "embed",
+			(m): m is Extract<MnemotauEmbedWorkerInbound, { type: "embed" }> => m.type === "embed",
 		);
 		expect(embeds.length).toBe(2);
 		for (const embed of embeds) {

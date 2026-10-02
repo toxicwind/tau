@@ -1,9 +1,9 @@
 import * as path from "node:path";
-import type { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { Api, ApiKey, Model } from "@oh-my-pi/pi-ai";
-import type { VcsNumstatEntry } from "@oh-my-pi/pi-natives";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import { logger } from "@oh-my-pi/pi-utils";
+import type { ThinkingLevel } from "@tau/tau-agent-core";
+import type { Api, ApiKey, Model } from "@tau/tau-ai";
+import type { VcsNumstatEntry } from "@tau/tau-natives";
+import * as vcs from "@tau/tau-natives/vcs";
+import { logger } from "@tau/tau-utils";
 import { CHANGELOG_CATEGORIES } from "../../commit/types";
 import { detectChangelogBoundaries } from "./detect";
 import { generateChangelogEntries } from "./generate";

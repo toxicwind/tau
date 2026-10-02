@@ -1,7 +1,7 @@
 import * as net from "node:net";
-import { streamCursor } from "@oh-my-pi/pi-ai/providers/cursor";
-import type { Context, Model } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import { streamCursor } from "@tau/tau-ai/providers/cursor";
+import type { Context, Model } from "@tau/tau-ai/types";
+import { buildModel } from "@tau/tau-catalog/build";
 
 // Fake HTTP CONNECT proxy: record the CONNECT target of the first request, then
 // reset. The run fails afterwards regardless — the recorded target is the proof

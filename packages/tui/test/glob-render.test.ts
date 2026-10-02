@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
-import { getThemeByName } from "@oh-my-pi/pi-tui/theme";
-import { sanitizeText } from "@oh-my-pi/pi-utils";
-import { globToolRenderer } from "@oh-my-pi/pi-tui/tools/glob";
+import { getThemeByName } from "@tau/tau-tui/theme";
+import { sanitizeText } from "@tau/tau-utils";
+import { globToolRenderer } from "@tau/tau-tui/tools/glob";
 
 describe("globToolRenderer", () => {
 	it("indents inline glob output and avoids accent-colored success headers", async () => {

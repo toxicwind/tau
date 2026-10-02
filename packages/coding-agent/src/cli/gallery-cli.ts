@@ -1,5 +1,5 @@
 /**
- * `omp gallery` — render every built-in tool's renderer across its lifecycle.
+ * `tau gallery` — render every built-in tool's renderer across its lifecycle.
  *
  * For each tool with a registered renderer, the gallery drives a real
  * {@link ToolExecutionComponent} through four states — streaming arguments,
@@ -7,13 +7,13 @@
  * rendered output to stdout. It exists for visual QA of tool renderers without
  * having to provoke each state through a live agent session.
  */
-import type { AgentTool } from "@oh-my-pi/pi-agent-core";
-import type { TUI } from "@oh-my-pi/pi-tui";
-import { getProjectDir } from "@oh-my-pi/pi-utils";
+import type { AgentTool } from "@tau/tau-agent-core";
+import type { TUI } from "@tau/tau-tui";
+import { getProjectDir } from "@tau/tau-utils";
 import { Settings } from "../config/settings";
-import { ToolExecutionComponent } from "@oh-my-pi/pi-tui/chat/tool-execution";
-import { initTheme, theme } from "@oh-my-pi/pi-tui/theme";
-import { toolRenderers } from "@oh-my-pi/pi-tui/tools";
+import { ToolExecutionComponent } from "@tau/tau-tui/chat/tool-execution";
+import { initTheme, theme } from "@tau/tau-tui/theme";
+import { toolRenderers } from "@tau/tau-tui/tools";
 import {
 	type GalleryFixture,
 	type GalleryPreviewEntry,

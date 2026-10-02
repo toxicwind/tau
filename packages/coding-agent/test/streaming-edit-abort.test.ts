@@ -2,14 +2,14 @@ import { describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { Agent, AgentEvent } from "@oh-my-pi/pi-agent-core";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { EditTool, getEditStore } from "@oh-my-pi/pi-coding-agent/edit";
-import { StreamingEditGuard } from "@oh-my-pi/pi-coding-agent/session/stream-guards";
-import { formatHashlineHeader } from "@oh-my-pi/pi-tui/tools/hashline-format";
-import type { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+import type { Agent, AgentEvent } from "@tau/tau-agent-core";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { EditTool, getEditStore } from "@tau/tau-coding-agent/edit";
+import { StreamingEditGuard } from "@tau/tau-coding-agent/session/stream-guards";
+import { formatHashlineHeader } from "@tau/tau-tui/tools/hashline-format";
+import type { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import type { ToolSession } from "@tau/tau-coding-agent/tools";
+import { removeWithRetries } from "@tau/tau-utils";
 
 function createGuard(
 	streamingAbort: boolean,

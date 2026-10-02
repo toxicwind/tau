@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it } from "bun:test";
-import { getThemeByName } from "@oh-my-pi/pi-tui/theme";
-import { findToolRenderer, type FindToolDetails } from "@oh-my-pi/pi-tui/tools/find";
-import { sanitizeText } from "@oh-my-pi/pi-utils";
+import { getThemeByName } from "@tau/tau-tui/theme";
+import { findToolRenderer, type FindToolDetails } from "@tau/tau-tui/tools/find";
+import { sanitizeText } from "@tau/tau-utils";
 import { applyHyperlinkSetting } from "../src/render/hyperlink";
 
 function extractLinkUris(text: string): string[] {
@@ -71,15 +71,15 @@ describe("findToolRenderer", () => {
 		expect(uris.filter(uri => uri.endsWith("/repo/src/other.ts"))).toHaveLength(2);
 	});
 
-	it("links omp hits to their doc URL instead of joining them onto cwd", async () => {
+	it("links tau hits to their doc URL instead of joining them onto cwd", async () => {
 		applyHyperlinkSetting("always");
 		const uiTheme = (await getThemeByName("dark"))!;
-		const ompDetails: FindToolDetails = {
+		const tauDetails: FindToolDetails = {
 			...details,
-			scopePath: "omp://",
+			scopePath: "tau://",
 			hits: [
 				{
-					rel: "omp://tools/read.md",
+					rel: "tau://tools/read.md",
 					contentScore: 0.9,
 					linesSeen: 40,
 					truncated: false,
@@ -89,16 +89,16 @@ describe("findToolRenderer", () => {
 		};
 		const lines = findToolRenderer
 			.renderResult(
-				{ content: [{ type: "text", text: "" }], details: ompDetails },
+				{ content: [{ type: "text", text: "" }], details: tauDetails },
 				{ expanded: true, isPartial: false },
 				uiTheme,
 				args,
 			)
 			.render(200);
 		const uris = extractLinkUris(lines.join("\n"));
-		expect(uris).toContain("omp://tools/read.md");
-		expect(uris).toContain("omp://tools/read.md:10");
-		expect(uris.every(uri => !uri.endsWith("/repo/omp://tools/read.md"))).toBe(true);
+		expect(uris).toContain("tau://tools/read.md");
+		expect(uris).toContain("tau://tools/read.md:10");
+		expect(uris.every(uri => !uri.endsWith("/repo/tau://tools/read.md"))).toBe(true);
 	});
 
 	it("shows one range per hit collapsed and all ranges plus failures expanded", async () => {

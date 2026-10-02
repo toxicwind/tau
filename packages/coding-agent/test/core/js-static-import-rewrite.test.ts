@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
 
-import { rewriteImports, wrapCode } from "@oh-my-pi/pi-coding-agent/eval/js/context-manager";
-import { indirectEval } from "@oh-my-pi/pi-coding-agent/eval/js/shared/indirect-eval";
+import { rewriteImports, wrapCode } from "@tau/tau-coding-agent/eval/js/context-manager";
+import { indirectEval } from "@tau/tau-coding-agent/eval/js/shared/indirect-eval";
 
 // Test fixtures embed user-supplied `import(...)` syntax that the rewriter must
 // transform. The strings are split so static-analysis heuristics don't read them
@@ -191,48 +191,48 @@ describe("wrapCode cross-cell persistence", () => {
 	it("publishes top-level function declarations and their sibling consts from async-wrapped cells", async () => {
 		const globals = globalThis as Record<string, unknown>;
 		const wrapped = await wrapCode(
-			"async function ompPersistedFn(n) { return (await Promise.resolve(n)) + 1; }\nconst ompPersistedTotal = await ompPersistedFn(41);",
+			"async function tauPersistedFn(n) { return (await Promise.resolve(n)) + 1; }\nconst tauPersistedTotal = await tauPersistedFn(41);",
 		);
 		expect(wrapped.asyncWrapped).toBe(true);
 		try {
 			await indirectEval(wrapped.source);
-			const fn = globals.ompPersistedFn as (n: number) => Promise<number>;
+			const fn = globals.tauPersistedFn as (n: number) => Promise<number>;
 			expect(typeof fn).toBe("function");
 			expect(await fn(1)).toBe(2);
-			expect(globals.ompPersistedTotal).toBe(42);
+			expect(globals.tauPersistedTotal).toBe(42);
 		} finally {
-			delete globals.ompPersistedFn;
-			delete globals.ompPersistedTotal;
+			delete globals.tauPersistedFn;
+			delete globals.tauPersistedTotal;
 		}
 	});
 
 	it("keeps async-cell function closures attached to retained global bindings", async () => {
 		const globals = globalThis as Record<string, unknown>;
 		const wrapped = await wrapCode(
-			"await Promise.resolve();\nvar ompClosureTotal = 42;\nfunction ompClosureAnswer() { return ompClosureTotal; }",
+			"await Promise.resolve();\nvar tauClosureTotal = 42;\nfunction tauClosureAnswer() { return tauClosureTotal; }",
 		);
 		expect(wrapped.asyncWrapped).toBe(true);
 		try {
 			await indirectEval(wrapped.source);
-			expect((globals.ompClosureAnswer as () => number)()).toBe(42);
-			indirectEval("ompClosureTotal += 1;");
-			expect(globals.ompClosureTotal).toBe(43);
-			expect((globals.ompClosureAnswer as () => number)()).toBe(43);
+			expect((globals.tauClosureAnswer as () => number)()).toBe(42);
+			indirectEval("tauClosureTotal += 1;");
+			expect(globals.tauClosureTotal).toBe(43);
+			expect((globals.tauClosureAnswer as () => number)()).toBe(43);
 		} finally {
-			delete globals.ompClosureAnswer;
-			delete globals.ompClosureTotal;
+			delete globals.tauClosureAnswer;
+			delete globals.tauClosureTotal;
 		}
 	});
 
 	it("publishes explicit top-level var declarations from async-wrapped cells", async () => {
 		const globals = globalThis as Record<string, unknown>;
-		const wrapped = await wrapCode("await Promise.resolve();\nvar ompPersistedVar = 5;");
+		const wrapped = await wrapCode("await Promise.resolve();\nvar tauPersistedVar = 5;");
 		expect(wrapped.asyncWrapped).toBe(true);
 		try {
 			await indirectEval(wrapped.source);
-			expect(globals.ompPersistedVar).toBe(5);
+			expect(globals.tauPersistedVar).toBe(5);
 		} finally {
-			delete globals.ompPersistedVar;
+			delete globals.tauPersistedVar;
 		}
 	});
 });

@@ -1,6 +1,6 @@
-import { calculateCost } from "@oh-my-pi/pi-catalog/models";
-import type { Api, FetchImpl, Model, Usage } from "@oh-my-pi/pi-catalog/types";
-import { type } from "@oh-my-pi/omptype";
+import { calculateCost } from "@tau/tau-catalog/models";
+import type { Api, FetchImpl, Model, Usage } from "@tau/tau-catalog/types";
+import { type } from "@tau/tautype";
 import { type ApiKey, withAuth } from "../auth-retry";
 import * as AIError from "../error";
 import type { EmbeddingRequest, EmbeddingResult } from "./types";

@@ -1,12 +1,12 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import type { Api, Model } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { kNoAuth } from "@oh-my-pi/pi-coding-agent/config/model-registry";
+import type { Api, Model } from "@tau/tau-ai";
+import { buildModel } from "@tau/tau-catalog/build";
+import { kNoAuth } from "@tau/tau-coding-agent/config/model-registry";
 import {
 	type ModelLookupRegistry,
 	resolveModelOverrideWithAuthFallback,
-} from "@oh-my-pi/pi-coding-agent/config/model-resolver";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+} from "@tau/tau-coding-agent/config/model-resolver";
+import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
 
 /**
  * Regression test for #985.

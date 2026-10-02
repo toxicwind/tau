@@ -1,4 +1,4 @@
-import { VERSION } from "@oh-my-pi/pi-utils";
+import { VERSION } from "@tau/tau-utils";
 import { buildModel } from "./build";
 import { collapseBuiltVariants } from "./compat/collapse";
 import { applyCatalogMetrics, CatalogMetricsIndex } from "./identity/metrics";

@@ -13,19 +13,19 @@
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import { type AsyncJob, AsyncJobManager } from "@oh-my-pi/pi-coding-agent/async/job-manager";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentLifecycleManager } from "@oh-my-pi/pi-coding-agent/registry/agent-lifecycle";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import { TaskTool } from "@oh-my-pi/pi-coding-agent/task";
-import * as discoveryModule from "@oh-my-pi/pi-coding-agent/task/discovery";
-import * as executorModule from "@oh-my-pi/pi-coding-agent/task/executor";
-import * as isolationRunner from "@oh-my-pi/pi-coding-agent/task/isolation-runner";
-import type { AgentDefinition } from "@oh-my-pi/pi-coding-agent/task/types";
-import type { AgentProgress, SingleResult, TaskParams } from "@oh-my-pi/pi-tui/tools/task";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { snapshotJobs } from "@oh-my-pi/pi-coding-agent/async/job-control";
+import { ThinkingLevel } from "@tau/tau-agent-core";
+import { type AsyncJob, AsyncJobManager } from "@tau/tau-coding-agent/async/job-manager";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { AgentLifecycleManager } from "@tau/tau-coding-agent/registry/agent-lifecycle";
+import { AgentRegistry } from "@tau/tau-coding-agent/registry/agent-registry";
+import { TaskTool } from "@tau/tau-coding-agent/task";
+import * as discoveryModule from "@tau/tau-coding-agent/task/discovery";
+import * as executorModule from "@tau/tau-coding-agent/task/executor";
+import * as isolationRunner from "@tau/tau-coding-agent/task/isolation-runner";
+import type { AgentDefinition } from "@tau/tau-coding-agent/task/types";
+import type { AgentProgress, SingleResult, TaskParams } from "@tau/tau-tui/tools/task";
+import type { ToolSession } from "@tau/tau-coding-agent/tools";
+import { snapshotJobs } from "@tau/tau-coding-agent/async/job-control";
 
 const taskAgent: AgentDefinition = {
 	name: "task",
@@ -196,7 +196,7 @@ describe("task spawn routing", () => {
 			label: "does not claim the worktree is gone when the runner retained it",
 			runnerOverrides: {
 				patchPath: undefined,
-				error: "Patch capture failed: EACCES. Isolation workspace retained at /wt/sandboxed/m — recover the changes from it; `omp worktree clear` reclaims it once this session has exited.",
+				error: "Patch capture failed: EACCES. Isolation workspace retained at /wt/sandboxed/m — recover the changes from it; `tau worktree clear` reclaims it once this session has exited.",
 			},
 			expectRetained: true,
 		},

@@ -2,15 +2,15 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, mock,
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { AuthStorage } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { createAgentSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { USER_APPEND_HEADING } from "@oh-my-pi/pi-coding-agent/system-prompt";
-import { removeSyncWithRetries, Snowflake } from "@oh-my-pi/pi-utils";
-import { getAgentDir, setAgentDir } from "@oh-my-pi/pi-utils/dirs";
+import { AuthStorage } from "@tau/tau-ai";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { createAgentSession } from "@tau/tau-coding-agent/sdk";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { USER_APPEND_HEADING } from "@tau/tau-coding-agent/system-prompt";
+import { removeSyncWithRetries, Snowflake } from "@tau/tau-utils";
+import { getAgentDir, setAgentDir } from "@tau/tau-utils/dirs";
 import {
 	BOUNDED_GUIDANCE_MODE,
 	CONTEXT_MODE_NO_INSTRUCTIONS_MODE,
@@ -45,9 +45,9 @@ describe("createAgentSession MCP server instructions (deferred UI)", () => {
 	let isolatedAgentDir: string;
 
 	beforeAll(async () => {
-		isolatedHome = path.join(os.tmpdir(), `pi-sdk-mcp-instr-home-${Snowflake.next()}`);
+		isolatedHome = path.join(os.tmpdir(), `tau-sdk-mcp-instr-home-${Snowflake.next()}`);
 		fs.mkdirSync(isolatedHome, { recursive: true });
-		isolatedAgentDir = path.join(isolatedHome, ".omp", "agent");
+		isolatedAgentDir = path.join(isolatedHome, ".tau", "agent");
 		fs.mkdirSync(isolatedAgentDir, { recursive: true });
 		originalAgentDir = getAgentDir();
 		setAgentDir(isolatedAgentDir);
@@ -66,7 +66,7 @@ describe("createAgentSession MCP server instructions (deferred UI)", () => {
 	});
 
 	beforeEach(() => {
-		tempDir = path.join(os.tmpdir(), `pi-sdk-mcp-instr-${Snowflake.next()}`);
+		tempDir = path.join(os.tmpdir(), `tau-sdk-mcp-instr-${Snowflake.next()}`);
 		fs.mkdirSync(tempDir, { recursive: true });
 		spyOn(os, "homedir").mockReturnValue(isolatedHome);
 		fs.writeFileSync(

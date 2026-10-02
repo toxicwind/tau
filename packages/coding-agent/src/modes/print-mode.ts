@@ -2,12 +2,12 @@
  * Print mode (single-shot): Send prompts, output result, exit.
  *
  * Used for:
- * - `omp -p "prompt"` - text output
- * - `omp --mode json "prompt"` - JSON event stream
+ * - `tau -p "prompt"` - text output
+ * - `tau --mode json "prompt"` - JSON event stream
  */
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { ImageContent } from "@oh-my-pi/pi-ai";
-import { $flag, logger, postmortem, sanitizeText } from "@oh-my-pi/pi-utils";
+import type { AgentMessage } from "@tau/tau-agent-core";
+import type { ImageContent } from "@tau/tau-ai";
+import { $flag, logger, postmortem, sanitizeText } from "@tau/tau-utils";
 import type { MCPManager } from "../mcp/manager";
 import { resolveMCPTimeoutMs } from "../mcp/timeout";
 import { type AgentSession, type AgentSessionEvent, SHUTDOWN_CONSOLIDATE_BUDGET_MS } from "../session/agent-session";
@@ -109,7 +109,7 @@ export async function runPrintMode(session: AgentSession, options: PrintModeOpti
 	let signalReason: postmortem.Reason | undefined;
 	const cancelSignalTeardown = postmortem.register("print-mode-session", reason => {
 		signalReason = reason;
-		return session.dispose({ reason, mnemopiConsolidateTimeoutMs: SHUTDOWN_CONSOLIDATE_BUDGET_MS });
+		return session.dispose({ reason, mnemotauConsolidateTimeoutMs: SHUTDOWN_CONSOLIDATE_BUDGET_MS });
 	});
 	try {
 		return await runPrintModeCore(session, options, () => signalReason !== undefined);
@@ -248,7 +248,7 @@ async function runPrintModeCore(
 				`Warning: MCP server "${server}" failed to connect: ${singleLine(error)}; its tools are unavailable for this run.`,
 			);
 		}
-		if ($flag("OMP_MCP_REQUIRE_READY") && unavailable.length > 0) {
+		if ($flag("TAU_MCP_REQUIRE_READY") && unavailable.length > 0) {
 			writeStderrLine(`Error: MCP servers not ready: ${unavailable.join(", ")}`);
 			strictMCPFailure = true;
 		}
@@ -338,13 +338,13 @@ async function runPrintModeCore(
 	await stdoutTail;
 	// Dispose before returning the status instead of hard-exiting ahead of it:
 	// the awaited `dispose()` runs the browser reaper (releaseTabsForOwner), so
-	// an OMP-owned Chromium cannot survive the exit (issue #5643).
+	// an TAU-owned Chromium cannot survive the exit (issue #5643).
 	//
 	// A latched store failure rethrows from `dispose()`; report it as lost
 	// durability rather than letting it escape as a raw fatal dump.
 	let durabilityFailure = false;
 	try {
-		await session.dispose({ mnemopiConsolidateTimeoutMs: SHUTDOWN_CONSOLIDATE_BUDGET_MS });
+		await session.dispose({ mnemotauConsolidateTimeoutMs: SHUTDOWN_CONSOLIDATE_BUDGET_MS });
 	} catch (error) {
 		if (!persistenceFailure || error !== persistenceFailure) throw error;
 		durabilityFailure = true;

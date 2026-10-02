@@ -1,9 +1,9 @@
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { StatusLineComponent } from "@oh-my-pi/pi-tui/status-line";
-import { statusLineHost } from "@oh-my-pi/pi-coding-agent/modes/status-line-host";
-import { initTheme, theme } from "@oh-my-pi/pi-tui/theme";
-import { getProjectDir, setProjectDir } from "@oh-my-pi/pi-utils";
+import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import { StatusLineComponent } from "@tau/tau-tui/status-line";
+import { statusLineHost } from "@tau/tau-coding-agent/modes/status-line-host";
+import { initTheme, theme } from "@tau/tau-tui/theme";
+import { getProjectDir, setProjectDir } from "@tau/tau-utils";
 import { StatusLineTestComponents } from "./helpers/status-line";
 
 const originalProjectDir = getProjectDir();

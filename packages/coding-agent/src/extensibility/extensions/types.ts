@@ -14,7 +14,7 @@ import {
 	type ExtensionWidgetContent,
 	type MessageRenderer,
 	type AssistantThinkingRenderer,
-} from "@oh-my-pi/pi-tui/chat/extension-types";
+} from "@tau/tau-tui/chat/extension-types";
 export {
 	type ExtensionUiComponent,
 	type ExtensionUiComponentFactory,
@@ -23,10 +23,10 @@ export {
 	type MessageRenderer,
 	type AssistantThinkingRenderContext,
 	type AssistantThinkingRenderer,
-} from "@oh-my-pi/pi-tui/chat/extension-types";
-import type { type as ArkType } from "@oh-my-pi/omptype";
-import type * as TypeBox from "@oh-my-pi/omptype/typebox";
-import type * as zod from "@oh-my-pi/omptype/zod";
+} from "@tau/tau-tui/chat/extension-types";
+import type { type as ArkType } from "@tau/tautype";
+import type * as TypeBox from "@tau/tautype/typebox";
+import type * as zod from "@tau/tautype/zod";
 import type {
 	AgentMessage,
 	AgentToolResult,
@@ -34,9 +34,9 @@ import type {
 	ThinkingLevel,
 	ToolApproval,
 	ToolLoadMode,
-} from "@oh-my-pi/pi-agent-core";
-import type { CompactionResult } from "@oh-my-pi/pi-agent-core/compaction";
-import type { ContextUsage } from "@oh-my-pi/pi-tui/status-line/types";
+} from "@tau/tau-agent-core";
+import type { CompactionResult } from "@tau/tau-agent-core/compaction";
+import type { ContextUsage } from "@tau/tau-tui/status-line/types";
 import type {
 	Api,
 	AssistantMessageEvent,
@@ -54,8 +54,8 @@ import type {
 	TextContent,
 	TSchema,
 	UsageProvider,
-} from "@oh-my-pi/pi-ai";
-import type { OAuthCredentials, OAuthLoginCallbacks } from "@oh-my-pi/pi-ai/oauth/types";
+} from "@tau/tau-ai";
+import type { OAuthCredentials, OAuthLoginCallbacks } from "@tau/tau-ai/oauth/types";
 import type {
 	AutocompleteItem,
 	AutocompleteProvider,
@@ -65,32 +65,32 @@ import type {
 	OverlayHandle,
 	OverlayOptions,
 	TUI,
-} from "@oh-my-pi/pi-tui";
-import type { logger as PiLogger } from "@oh-my-pi/pi-utils";
-import type { KeybindingsManager } from "@oh-my-pi/pi-tui/app-keybindings";
-import type { ComposerShapeDefinition } from "@oh-my-pi/pi-tui/overlays/composer-shape-registry";
-export type { ComposerShapeDefinition } from "@oh-my-pi/pi-tui/overlays/composer-shape-registry";
+} from "@tau/tau-tui";
+import type { logger as PiLogger } from "@tau/tau-utils";
+import type { KeybindingsManager } from "@tau/tau-tui/app-keybindings";
+import type { ComposerShapeDefinition } from "@tau/tau-tui/overlays/composer-shape-registry";
+export type { ComposerShapeDefinition } from "@tau/tau-tui/overlays/composer-shape-registry";
 import type { ModelRegistry } from "../../config/model-registry";
-import type { EditToolDetails } from "@oh-my-pi/pi-tui/tools/edit";
+import type { EditToolDetails } from "@tau/tau-tui/tools/edit";
 import type { PythonResult } from "../../eval/py/executor";
 import type { BashResult } from "../../exec/bash-executor";
 import type { ExecOptions, ExecResult } from "../../exec/exec";
 import type * as PiCodingAgent from "../../index";
 import type { LocalProtocolOptions } from "../../internal-urls/local-protocol";
 import type { MemoryRuntimeContext } from "../../memory-backend";
-import type { CustomEditor } from "@oh-my-pi/pi-tui/prompt/custom-editor";
-import type { Theme } from "@oh-my-pi/pi-tui/theme";
+import type { CustomEditor } from "@tau/tau-tui/prompt/custom-editor";
+import type { Theme } from "@tau/tau-tui/theme";
 import type { AsyncJobSnapshot, SendUserMessageOptions } from "../../session/agent-session";
 import type { EphemeralTurnOptions, EphemeralTurnResult } from "../../session/agent-session-types";
 import type { CompactMode } from "../../session/compact-modes";
 import type { CustomMessagePayload } from "../../session/messages";
 import type { ReadonlySessionManager, SessionManager } from "../../session/session-manager";
 import type { BashToolInput, GlobToolInput, GrepToolInput, ReadToolInput, WriteToolInput } from "../../tools";
-import type { GlobToolDetails } from "@oh-my-pi/pi-tui/tools/glob";
-import type { GrepToolDetails } from "@oh-my-pi/pi-tui/tools/grep";
-import type { ReadToolDetails } from "@oh-my-pi/pi-tui/tools/read";
+import type { GlobToolDetails } from "@tau/tau-tui/tools/glob";
+import type { GrepToolDetails } from "@tau/tau-tui/tools/grep";
+import type { ReadToolDetails } from "@tau/tau-tui/tools/read";
 import type { ApprovalMode } from "../../tools/approval";
-import type { BashToolDetails } from "@oh-my-pi/pi-tui/tools/bash";
+import type { BashToolDetails } from "@tau/tau-tui/tools/bash";
 import type { FileDeleteFallbackHandler, FileWriteFallbackHandler } from "../../tools/file-write-fallback";
 import type { EventBus } from "../../utils/event-bus";
 import type {
@@ -132,8 +132,8 @@ import type {
 } from "../shared-events";
 import type { SlashCommandInfo } from "../slash-commands";
 
-export type { OverlayHandle, OverlayOptions } from "@oh-my-pi/pi-tui";
-export type { AppKeybinding, KeybindingsManager } from "@oh-my-pi/pi-tui/app-keybindings";
+export type { OverlayHandle, OverlayOptions } from "@tau/tau-tui";
+export type { AppKeybinding, KeybindingsManager } from "@tau/tau-tui/app-keybindings";
 export type { ExecOptions, ExecResult } from "../../exec/exec";
 export type { AgentToolResult, AgentToolUpdateCallback };
 
@@ -148,7 +148,7 @@ export interface ExtensionUISelectOption {
 
 export type ExtensionUISelectItem = string | ExtensionUISelectOption;
 
-import type { ExtensionAskDialogQuestion, ExtensionAskDialogResult } from "@oh-my-pi/pi-tui/overlays/ask-dialog";
+import type { ExtensionAskDialogQuestion, ExtensionAskDialogResult } from "@tau/tau-tui/overlays/ask-dialog";
 export type {
 	ExtensionAskDialogOption,
 	ExtensionAskDialogQuestion,
@@ -156,7 +156,7 @@ export type {
 	ExtensionAskDialogSubmitResult,
 	ExtensionAskDialogChatResult,
 	ExtensionAskDialogResult,
-} from "@oh-my-pi/pi-tui/overlays/ask-dialog";
+} from "@tau/tau-tui/overlays/ask-dialog";
 
 export function getExtensionUISelectOptionLabel(option: ExtensionUISelectItem): string {
 	return typeof option === "string" ? option : option.label;
@@ -220,7 +220,7 @@ export interface ExtensionCustomOptions {
 	signal?: AbortSignal;
 }
 
-/** Wrap the current autocomplete provider with additional behavior (pi-compatible). */
+/** Wrap the current autocomplete provider with additional behavior (tau-compatible). */
 export type AutocompleteProviderFactory = (current: AutocompleteProvider) => AutocompleteProvider;
 
 /**
@@ -313,7 +313,7 @@ export interface ExtensionUIContext {
 
 	/**
 	 * Stack additional autocomplete behavior on top of the built-in provider
-	 * (pi-compatible). Interactive mode rebuilds the editor's provider through
+	 * (tau-compatible). Interactive mode rebuilds the editor's provider through
 	 * every registered factory, in registration order; headless modes (print,
 	 * RPC, ACP, subagents) accept and ignore the factory.
 	 */
@@ -423,7 +423,7 @@ export interface ExtensionModelQuery {
 	family(model: Model): string;
 }
 
-/** Runtime host mode exposed to Pi-compatible extensions. */
+/** Runtime host mode exposed to Tau-compatible extensions. */
 export type ExtensionMode = "tui" | "rpc" | "json" | "print";
 
 export interface ExtensionContext {
@@ -468,7 +468,7 @@ export interface ExtensionContext {
 	/** Gracefully shutdown and exit. */
 	shutdown(): void;
 	/**
-	 * Whether the current project/workspace is trusted. OMP performs no
+	 * Whether the current project/workspace is trusted. TAU performs no
 	 * project-trust gating — project-level settings and extensions load
 	 * unconditionally — so this always returns `true`. Exposed for
 	 * compatibility with extensions authored against upstream Pi, whose
@@ -523,16 +523,16 @@ export interface ExtensionContext {
 
 	/**
 	 * Whether project-local inputs for the current working directory (extensions, settings,
-	 * skills, resources) are trusted. Upstream `@earendil-works/pi-coding-agent` (>=0.79) asks the
+	 * skills, resources) are trusted. Upstream `@earendil-works/tau-coding-agent` (>=0.79) asks the
 	 * user once per directory before loading project-local inputs and exposes the saved decision
 	 * here; extensions written against that API (e.g. Plannotator) feature-detect this method to
 	 * decide whether project-local config is safe to load, and warn when it is absent.
 	 *
-	 * OMP has no equivalent per-directory trust gate: `.omp/extensions`, `.omp/config.yml`, and
+	 * TAU has no equivalent per-directory trust gate: `.tau/extensions`, `.tau/config.yml`, and
 	 * other project-local inputs are already discovered and loaded unconditionally (see
 	 * `docs/extension-loading.md`). This method exists for compatibility with that upstream surface
-	 * and always returns `true`, truthfully reflecting that OMP already trusts project-local inputs
-	 * by default -- it does not narrow or widen OMP's own security model.
+	 * and always returns `true`, truthfully reflecting that TAU already trusts project-local inputs
+	 * by default -- it does not narrow or widen TAU's own security model.
 	 */
 	isProjectTrusted(): boolean;
 }
@@ -678,7 +678,7 @@ export type SourceOrigin = "package" | "top-level";
 
 /**
  * Provenance metadata describing where a registered tool came from. Mirrors the
- * `@earendil-works/pi-coding-agent` `SourceInfo` contract so extensions authored
+ * `@earendil-works/tau-coding-agent` `SourceInfo` contract so extensions authored
  * against upstream pi (e.g. gentle-pi) can read `sourceInfo.source` unchanged.
  */
 export interface SourceInfo {
@@ -1232,13 +1232,13 @@ export interface ExtensionAPI {
 	/** Injected TypeBox shim for legacy `Type.Object(...)` parameter authoring. */
 	typebox: typeof TypeBox;
 
-	/** Injected omptype schema builder for extension tools. */
+	/** Injected tautype schema builder for extension tools. */
 	arktype: typeof ArkType;
 
-	/** Injected Zod-compatible omptype builder for extension tools. */
+	/** Injected Zod-compatible tautype builder for extension tools. */
 	zod: typeof zod;
 
-	/** Injected pi-coding-agent exports for accessing SDK utilities */
+	/** Injected tau-coding-agent exports for accessing SDK utilities */
 	pi: typeof PiCodingAgent;
 
 	// =========================================================================
@@ -1636,7 +1636,7 @@ export interface RegisteredTool<TParams extends TSchema = TSchema, TDetails = un
 	extensionPath: string;
 	/**
 	 * Upstream-shaped provenance mirroring {@link SourceInfo}. Extensions authored
-	 * against `@earendil-works/pi-coding-agent` — whose registered tools expose
+	 * against `@earendil-works/tau-coding-agent` — whose registered tools expose
 	 * `sourceInfo` — read `sourceInfo.path` off `getAllRegisteredTools()` entries,
 	 * so it carries the same value `SessionTools.getAllToolInfos()` synthesizes.
 	 */

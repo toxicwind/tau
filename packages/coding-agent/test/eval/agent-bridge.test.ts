@@ -1,22 +1,22 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { AsyncJobManager } from "@oh-my-pi/pi-coding-agent/async";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import { AsyncJobManager } from "@tau/tau-coding-agent/async";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
 import {
 	runEvalAgent,
 	type EvalAgentBridgeOptions,
 	type EvalAgentResult,
-} from "@oh-my-pi/pi-coding-agent/eval/agent-bridge";
-import { runEvalWait } from "@oh-my-pi/pi-coding-agent/eval/handle-bridge";
-import type { LocalProtocolOptions } from "@oh-my-pi/pi-coding-agent/internal-urls";
-import type { MCPManager } from "@oh-my-pi/pi-coding-agent/mcp";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import * as taskDiscovery from "@oh-my-pi/pi-coding-agent/task/discovery";
-import * as taskExecutor from "@oh-my-pi/pi-coding-agent/task/executor";
-import * as isolationRunner from "@oh-my-pi/pi-coding-agent/task/isolation-runner";
-import { runStructuredSubagent } from "@oh-my-pi/pi-coding-agent/task/structured-subagent";
-import type { AgentDefinition } from "@oh-my-pi/pi-coding-agent/task/types";
-import type { SingleResult, StructuredSubagentOutput } from "@oh-my-pi/pi-tui/tools/task";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
+} from "@tau/tau-coding-agent/eval/agent-bridge";
+import { runEvalWait } from "@tau/tau-coding-agent/eval/handle-bridge";
+import type { LocalProtocolOptions } from "@tau/tau-coding-agent/internal-urls";
+import type { MCPManager } from "@tau/tau-coding-agent/mcp";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import * as taskDiscovery from "@tau/tau-coding-agent/task/discovery";
+import * as taskExecutor from "@tau/tau-coding-agent/task/executor";
+import * as isolationRunner from "@tau/tau-coding-agent/task/isolation-runner";
+import { runStructuredSubagent } from "@tau/tau-coding-agent/task/structured-subagent";
+import type { AgentDefinition } from "@tau/tau-coding-agent/task/types";
+import type { SingleResult, StructuredSubagentOutput } from "@tau/tau-tui/tools/task";
+import type { ToolSession } from "@tau/tau-coding-agent/tools";
 
 const jobManagers = new Set<AsyncJobManager>();
 

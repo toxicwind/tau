@@ -1,15 +1,15 @@
 import { beforeAll, describe, expect, it } from "bun:test";
-import { Container } from "@oh-my-pi/pi-tui";
+import { Container } from "@tau/tau-tui";
 import {
 	pickRecentFocusableAgentId,
 	SessionFocusController,
-} from "@oh-my-pi/pi-coding-agent/modes/controllers/session-focus-controller";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { AgentLifecycleManager } from "@oh-my-pi/pi-coding-agent/registry/agent-lifecycle";
-import { AgentRegistry, MAIN_AGENT_ID, type AgentRef } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import type { AgentSession, AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { UiHelpers } from "@oh-my-pi/pi-coding-agent/modes/utils/ui-helpers";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
+} from "@tau/tau-coding-agent/modes/controllers/session-focus-controller";
+import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
+import { AgentLifecycleManager } from "@tau/tau-coding-agent/registry/agent-lifecycle";
+import { AgentRegistry, MAIN_AGENT_ID, type AgentRef } from "@tau/tau-coding-agent/registry/agent-registry";
+import type { AgentSession, AgentSessionEvent } from "@tau/tau-coding-agent/session/agent-session";
+import { UiHelpers } from "@tau/tau-coding-agent/modes/utils/ui-helpers";
+import { initTheme } from "@tau/tau-tui/theme";
 
 interface SessionStub {
 	session: AgentSession;

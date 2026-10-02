@@ -14,7 +14,7 @@ import {
 	type SkillToken,
 	type SkillTokenCreated,
 	type SkillVersionManifest,
-} from "@oh-my-pi/pi-wire/skillshare";
+} from "@tau/tau-wire/skillshare";
 import { Settings } from "../config/settings";
 import { StencilCredential } from "../stencil/credential";
 
@@ -89,7 +89,7 @@ function normalizeRegistryUrl(raw: string): string {
 	return `${url.origin}${url.pathname.replace(/\/+$/, "")}`;
 }
 
-/** HTTP client for a Skillshare registry (`skills.omp.sh`). */
+/** HTTP client for a Skillshare registry (`skills.tau.sh`). */
 export class SkillshareClient {
 	/** Normalized registry base URL (no trailing slash). */
 	readonly registryUrl: string;

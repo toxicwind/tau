@@ -1,5 +1,5 @@
-import { quotaTierFor } from "@oh-my-pi/pi-catalog/compat/behavior";
-import { getGeminiCliHeaders } from "@oh-my-pi/pi-catalog/wire/gemini-headers";
+import { quotaTierFor } from "@tau/tau-catalog/compat/behavior";
+import { getGeminiCliHeaders } from "@tau/tau-catalog/wire/gemini-headers";
 import type {
 	UsageAmount,
 	UsageFetchContext,

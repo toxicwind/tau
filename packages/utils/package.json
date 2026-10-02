@@ -1,5 +1,5 @@
 {
-	"name": "@oh-my-pi/pi-utils",
+	"name": "@tau/tau-utils",
 	"version": "18.3.0",
 	"description": "Shared utilities for pi packages",
 	"keywords": [
@@ -8,15 +8,15 @@
 		"streams",
 		"utilities"
 	],
-	"homepage": "https://omp.sh",
+	"homepage": "https://tau.sh",
 	"bugs": {
-		"url": "https://github.com/can1357/oh-my-pi/issues"
+		"url": "https://github.com/toxicwind/tau/issues"
 	},
 	"license": "MIT",
 	"author": { "name": "Stencil Labs, Inc.", "url": "https://stencil.so" },
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/can1357/oh-my-pi.git",
+		"url": "git+https://github.com/toxicwind/tau.git",
 		"directory": "packages/utils"
 	},
 	"files": [
@@ -51,7 +51,7 @@
 		"fmt": "oxfmt --no-error-on-unmatched-pattern 'src/**/*.{ts,tsx}' '{test,bench,examples,scripts}/**/*.ts' '*.ts'"
 	},
 	"dependencies": {
-		"@oh-my-pi/pi-natives": "catalog:"
+		"@tau/tau-natives": "catalog:"
 	},
 	"devDependencies": {
 		"@types/bun": "catalog:"

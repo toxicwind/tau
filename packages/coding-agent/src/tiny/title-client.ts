@@ -12,7 +12,7 @@ import * as fs from "node:fs";
 import type * as net from "node:net";
 import * as path from "node:path";
 import type { Subprocess } from "bun";
-import { $env, getTinyWorkerRuntimeDir, logger, prompt } from "@oh-my-pi/pi-utils";
+import { $env, getTinyWorkerRuntimeDir, logger, prompt } from "@tau/tau-utils";
 import packageJson from "../../package.json" with { type: "json" };
 import { settings } from "../config/settings";
 import { stageRunnerScript } from "../eval/runner-cache";
@@ -114,7 +114,7 @@ function readTinyModelSetting(path: "providers.tinyModelDevice" | "providers.tin
 		const value = settings.get(path);
 		return typeof value === "string" ? value : undefined;
 	} catch {
-		// Settings may be uninitialized (e.g. `omp --smoke-test`); fall back to env/default.
+		// Settings may be uninitialized (e.g. `tau --smoke-test`); fall back to env/default.
 		return undefined;
 	}
 }
@@ -346,7 +346,7 @@ export interface WorkerLaunch {
 	spawn(endpoint: string, logPath: string): Promise<SpawnedWorker>;
 }
 
-/** Detach a worker so it outlives this omp process; its output goes to a per-worker log file. */
+/** Detach a worker so it outlives this tau process; its output goes to a per-worker log file. */
 function spawnDetached(
 	cmd: string[],
 	cwd: string | undefined,
@@ -402,7 +402,7 @@ function mlxLaunch(modelKey: TinyLocalModelKey, emitProgress: (event: TinyTitleP
 			const python = await ensureTinyMlxRuntime(phase =>
 				emitProgress({ modelKey, status: phase, name: `mlx-lm@${MLX_LM_VERSION}` }),
 			);
-			const script = await stageRunnerScript("omp-tiny-mlx", "py", MLX_SERVER_SCRIPT);
+			const script = await stageRunnerScript("tau-tiny-mlx", "py", MLX_SERVER_SCRIPT);
 			const env = inferenceWorkerEnv({
 				PYTHONUNBUFFERED: "1",
 				PYTHONIOENCODING: "utf-8",
@@ -447,7 +447,7 @@ async function logTail(logPath: string): Promise<string> {
 		const text = await Bun.file(logPath).text();
 		return text
 			.split("\n")
-			.filter(line => !line.startsWith("omp tiny worker listening on "))
+			.filter(line => !line.startsWith("tau tiny worker listening on "))
 			.join("\n")
 			.trim()
 			.slice(-500);
@@ -458,7 +458,7 @@ async function logTail(logPath: string): Promise<string> {
 
 /**
  * Connect to the worker serving `modelKey`, spawning it when absent or
- * replacing it when its launch tag is stale. A concurrent omp process may win
+ * replacing it when its launch tag is stale. A concurrent tau process may win
  * the spawn race; our child then fails to bind and exits while the probe
  * adopts the winner.
  */
@@ -479,7 +479,7 @@ export async function connectTinyWorker(
 		const result = await probeTinyWorker(endpoint, launch.tag);
 		if (result.kind === "live") return createSocketWorkerHandle(result.socket, logPath);
 		if (spawned.proc.exitCode !== null) {
-			// Our child is gone: either it lost the bind race to a sibling omp
+			// Our child is gone: either it lost the bind race to a sibling tau
 			// (already adopted above if so) or it crashed.
 			const tail = await logTail(spawned.logPath);
 			throw new Error(

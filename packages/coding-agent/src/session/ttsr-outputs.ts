@@ -5,9 +5,9 @@
  * validates generated rules against conversation history the same way.
  */
 import * as path from "node:path";
-import type { AgentTool } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, ToolCall } from "@oh-my-pi/pi-ai";
-import { isRecord } from "@oh-my-pi/pi-utils";
+import type { AgentTool } from "@tau/tau-agent-core";
+import type { AssistantMessage, ToolCall } from "@tau/tau-ai";
+import { isRecord } from "@tau/tau-utils";
 import type { TtsrMatchContext, TtsrOutput } from "../export/ttsr";
 
 /** Tool surface TTSR reads: identity plus the optional matcher hooks. */

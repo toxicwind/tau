@@ -1,9 +1,9 @@
 import { expect, it } from "bun:test";
-import { discoverAuthStorage } from "@oh-my-pi/pi-coding-agent/sdk";
-import { parseArgs } from "@oh-my-pi/pi-coding-agent/cli/args";
-import { resetSettingsForTest } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { runRootCommand } from "@oh-my-pi/pi-coding-agent/main";
-import { getDbBusyTimeoutMs, setInteractiveHost, TempDir } from "@oh-my-pi/pi-utils";
+import { discoverAuthStorage } from "@tau/tau-coding-agent/sdk";
+import { parseArgs } from "@tau/tau-coding-agent/cli/args";
+import { resetSettingsForTest } from "@tau/tau-coding-agent/config/settings";
+import { runRootCommand } from "@tau/tau-coding-agent/main";
+import { getDbBusyTimeoutMs, setInteractiveHost, TempDir } from "@tau/tau-utils";
 
 it("classifies an interactive host before opening auth storage", async () => {
 	const previous = setInteractiveHost(false);
@@ -29,7 +29,7 @@ it("classifies an interactive host before opening auth storage", async () => {
 });
 
 it("standalone auth discovery routes by PI_CONFIG_FILES policy over main config", async () => {
-	using tempDir = TempDir.createSync("@omp-standalone-policy-");
+	using tempDir = TempDir.createSync("@tau-standalone-policy-");
 	const overlayPath = tempDir.join("policy.yml");
 	await Bun.write(
 		tempDir.join("config.yml"),

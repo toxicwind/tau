@@ -1,4 +1,4 @@
-import type { Api, Model } from "@oh-my-pi/pi-ai";
+import type { Api, Model } from "@tau/tau-ai";
 import { formatModelStringWithRouting, resolveModelOverride, resolveRoleSelection } from "../config/model-resolver";
 import type { Settings } from "../config/settings";
 import {

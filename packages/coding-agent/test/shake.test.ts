@@ -1,17 +1,17 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
 import { scheduler } from "node:timers/promises";
-import { Agent, type AgentMessage, RESCUE_SHAKE_CONFIG, Tokenizer } from "@oh-my-pi/pi-agent-core";
-import * as compactionModule from "@oh-my-pi/pi-agent-core/compaction";
-import type { AssistantMessage, ImageContent, ToolResultMessage } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession, type AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { formatShakeSummary } from "@oh-my-pi/pi-coding-agent/session/shake-types";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent, type AgentMessage, RESCUE_SHAKE_CONFIG, Tokenizer } from "@tau/tau-agent-core";
+import * as compactionModule from "@tau/tau-agent-core/compaction";
+import type { AssistantMessage, ImageContent, ToolResultMessage } from "@tau/tau-ai";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { AgentSession, type AgentSessionEvent } from "@tau/tau-coding-agent/session/agent-session";
+import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { formatShakeSummary } from "@tau/tau-coding-agent/session/shake-types";
+import { TempDir } from "@tau/tau-utils";
 
 const usage = {
 	input: 16,
@@ -32,7 +32,7 @@ describe("AgentSession shake", () => {
 	let apiInfo: { api: AssistantMessage["api"]; provider: AssistantMessage["provider"]; model: string };
 
 	beforeEach(async () => {
-		tempDir = TempDir.createSync("@pi-shake-");
+		tempDir = TempDir.createSync("@tau-shake-");
 		authStorage = await AuthStorage.create(path.join(tempDir.path(), "testauth.db"));
 		authStorage.keys.setRuntime("anthropic", "test-key");
 		modelRegistry = new ModelRegistry(authStorage);

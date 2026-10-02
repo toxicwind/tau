@@ -7,7 +7,7 @@
  * User directory: ~/.codex
  */
 import * as path from "node:path";
-import { logger, parseFrontmatter } from "@oh-my-pi/pi-utils";
+import { logger, parseFrontmatter } from "@tau/tau-utils";
 import { isUserSourceEnabled, registerProvider } from "../capability";
 import type { ContextFile } from "../capability/context-file";
 import { contextFileCapability } from "../capability/context-file";
@@ -26,7 +26,7 @@ import type { Skill } from "../capability/skill";
 import { skillCapability } from "../capability/skill";
 import { type SlashCommand, slashCommandCapability } from "../capability/slash-command";
 import { type SystemPrompt, systemPromptCapability } from "../capability/system-prompt";
-import { slashCommandFrontmatterDisplay } from "@oh-my-pi/pi-tui/overlays/extensions/inspector-model";
+import { slashCommandFrontmatterDisplay } from "@tau/tau-tui/overlays/extensions/inspector-model";
 import type { CustomTool } from "../capability/tool";
 import { toolCapability } from "../capability/tool";
 import type { LoadContext, LoadResult, SourceMeta } from "../capability/types";
@@ -402,8 +402,8 @@ async function loadHooks(ctx: LoadContext): Promise<LoadResult<Hook>> {
 	const codexDir = getProjectCodexDir(ctx);
 	const projectHooksDir = path.join(codexDir, "hooks");
 
-	// OMP hooks must be named `pre-<tool>.<ts|js>` or `post-<tool>.<ts|js>`.
-	// Files without that prefix are not OMP hooks (e.g. the standalone Codex
+	// TAU hooks must be named `pre-<tool>.<ts|js>` or `post-<tool>.<ts|js>`.
+	// Files without that prefix are not TAU hooks (e.g. the standalone Codex
 	// hook scripts users keep alongside) — silently dropping the prefix and
 	// defaulting to `pre:<basename>` caused those scripts to be imported as
 	// extension factories and any top-level `process.exit()` killed startup

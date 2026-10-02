@@ -1,7 +1,7 @@
 import * as crypto from "node:crypto";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { getSecretPlaceholderKeyPath, isEnoent, logger } from "@oh-my-pi/pi-utils";
+import { getSecretPlaceholderKeyPath, isEnoent, logger } from "@tau/tau-utils";
 import { YAML } from "bun";
 import { type SecretEntry, SecretObfuscator } from "./obfuscator";
 import { CREDENTIAL_PATTERNS } from "./patterns";
@@ -17,7 +17,7 @@ const cachedPlaceholderKeys = new Map<string, string>();
  * and never sent to a provider, so model-visible placeholders cannot be reversed
  * by dictionary-hashing candidate secrets. Stable across sessions so persisted
  * transcripts deobfuscate consistently. Defaults to `getSecretPlaceholderKeyPath()`
- * — `$XDG_STATE_HOME/omp/secret-placeholder.key` (or `~/.omp/agent/secret-placeholder.key`
+ * — `$XDG_STATE_HOME/tau/secret-placeholder.key` (or `~/.tau/agent/secret-placeholder.key`
  * without XDG), per docs/secrets.md.
  */
 export async function getSecretPlaceholderKey(keyDir?: string): Promise<string> {
@@ -164,7 +164,7 @@ export { secretEntriesNeedPlaceholderKey, secretEntryNeedsPlaceholderKey } from 
  * Project-local entries override global entries with matching content.
  */
 export async function loadSecrets(cwd: string, agentDir: string): Promise<SecretEntry[]> {
-	const projectPath = path.join(cwd, ".omp", "secrets.yml");
+	const projectPath = path.join(cwd, ".tau", "secrets.yml");
 	const globalPath = path.join(agentDir, "secrets.yml");
 
 	const globalEntries = await loadSecretsFile(globalPath);
@@ -226,13 +226,13 @@ export function collectEnvSecrets(): SecretEntry[] {
  * Built-in entries covering the credential-shaped tokens declared in
  * `patterns.ts` (GitHub/GitLab/OpenAI-style API keys and other vendor-prefixed
  * credentials) that are NOT configured via secrets.yml or the environment. Without
- * these, such a token in a tool result falls through to pi-ai's irreversible
+ * these, such a token in a tool result falls through to tau-ai's irreversible
  * provider-boundary redaction (`[openai_token_redacted]`); the model then echoes
  * that placeholder into edit-tool `old_string`, which can never match the real
  * bytes on disk (issue #6968). Routing the same shapes through the obfuscator
  * mints reversible keyed placeholders that `deobfuscateToolArguments` restores
  * before tool execution, keeping exact-match edits working while the credential
- * bytes still never reach the provider. Unlike the pi-ai redaction there is no
+ * bytes still never reach the provider. Unlike the tau-ai redaction there is no
  * entropy gate here — a false positive only over-obfuscates, which stays
  * transparent because the round trip is lossless.
  */

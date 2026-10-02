@@ -6,9 +6,9 @@
  * internals, which massively overcounts.
  */
 import { describe, expect, it } from "bun:test";
-import { type } from "@oh-my-pi/omptype";
-import { Tokenizer } from "@oh-my-pi/pi-agent-core";
-import { arkToWireSchema } from "@oh-my-pi/pi-ai/utils/schema";
+import { type } from "@tau/tautype";
+import { Tokenizer } from "@tau/tau-agent-core";
+import { arkToWireSchema } from "@tau/tau-ai/utils/schema";
 import {
 	type ContextBreakdown,
 	computeNonMessageBreakdown,

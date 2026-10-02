@@ -2,16 +2,16 @@ import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { clearCustomApis } from "@oh-my-pi/pi-ai/api-registry";
-import { startAuthGateway } from "@oh-my-pi/pi-ai/auth-gateway";
-import { AuthStorage } from "@oh-my-pi/pi-ai/auth-storage";
-import { createMockModel, registerMockApi } from "@oh-my-pi/pi-ai/providers/mock";
-import { encodeResponse, encodeStream, parseRequest } from "@oh-my-pi/pi-ai/providers/openai-responses-server";
-import { buildResponsesInput } from "@oh-my-pi/pi-ai/providers/openai-shared";
-import type { AssistantMessage, Context, ModelSpec } from "@oh-my-pi/pi-ai/types";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
+import { clearCustomApis } from "@tau/tau-ai/api-registry";
+import { startAuthGateway } from "@tau/tau-ai/auth-gateway";
+import { AuthStorage } from "@tau/tau-ai/auth-storage";
+import { createMockModel, registerMockApi } from "@tau/tau-ai/providers/mock";
+import { encodeResponse, encodeStream, parseRequest } from "@tau/tau-ai/providers/openai-responses-server";
+import { buildResponsesInput } from "@tau/tau-ai/providers/openai-shared";
+import type { AssistantMessage, Context, ModelSpec } from "@tau/tau-ai/types";
+import { AssistantMessageEventStream } from "@tau/tau-ai/utils/event-stream";
+import { buildModel } from "@tau/tau-catalog/build";
+import { Effort } from "@tau/tau-catalog/effort";
 
 function zeroUsage(): AssistantMessage["usage"] {
 	return {
@@ -173,7 +173,7 @@ describe("openai-responses parseRequest", () => {
 		// case (only "none" toggles hideThinkingSummary).
 		expect(parsed.options.hideThinkingSummary).toBeUndefined();
 		// `store` and `previous_response_id` are accepted by the schema but not
-		// plumbed through pi-ai — they no longer leak into options.extra.
+		// plumbed through tau-ai — they no longer leak into options.extra.
 		expect(parsed.options.extra).toBeUndefined();
 	});
 

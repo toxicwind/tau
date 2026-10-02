@@ -1,8 +1,8 @@
 import { stripVTControlCharacters } from "node:util";
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
+import { ThinkingLevel } from "@tau/tau-agent-core";
+import * as vcs from "@tau/tau-natives/vcs";
 import { type Component, padding, truncateToWidth, visibleWidth } from "../index";
-import { formatNumber, getProjectDir } from "@oh-my-pi/pi-utils";
+import { formatNumber, getProjectDir } from "@tau/tau-utils";
 import { theme } from "../theme";
 import type { FooterHost, FooterSession } from "./host";
 import { shortenPath } from "../render/render-utils";

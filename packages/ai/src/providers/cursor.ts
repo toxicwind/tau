@@ -1,13 +1,13 @@
 import * as fs from "node:fs/promises";
 import http2 from "node:http2";
-import { isCursorMaxModeWireId } from "@oh-my-pi/pi-catalog/compat/collapse";
-import { classifyModel, collapseVariantId } from "@oh-my-pi/pi-catalog/compat/taxonomy";
+import { isCursorMaxModeWireId } from "@tau/tau-catalog/compat/collapse";
+import { classifyModel, collapseVariantId } from "@tau/tau-catalog/compat/taxonomy";
 import type {
 	ConversationStep,
 	CursorRule,
 	McpToolDefinition,
 	RequestedModel_ModelParameterbytes,
-} from "@oh-my-pi/pi-catalog/discovery/cursor-proto";
+} from "@tau/tau-catalog/discovery/cursor-proto";
 import {
 	AgentClientMessageSchema,
 	AgentConversationTurnStructureSchema,
@@ -148,7 +148,7 @@ import {
 	WriteShellStdinErrorSchema,
 	WriteShellStdinResultSchema,
 	WriteSuccessSchema,
-} from "@oh-my-pi/pi-catalog/discovery/cursor-proto";
+} from "@tau/tau-catalog/discovery/cursor-proto";
 import {
 	create,
 	decodeJsonValue,
@@ -157,9 +157,9 @@ import {
 	type JsonValue,
 	toBinary,
 	toJson,
-} from "@oh-my-pi/pi-catalog/discovery/protobuf";
-import { THINKING_EFFORTS } from "@oh-my-pi/pi-catalog/effort";
-import { calculateCost } from "@oh-my-pi/pi-catalog/models";
+} from "@tau/tau-catalog/discovery/protobuf";
+import { THINKING_EFFORTS } from "@tau/tau-catalog/effort";
+import { calculateCost } from "@tau/tau-catalog/models";
 import {
 	$env,
 	isRecord,
@@ -168,7 +168,7 @@ import {
 	parseStreamingJson,
 	parseStreamingJsonThrottled,
 	sanitizeText,
-} from "@oh-my-pi/pi-utils";
+} from "@tau/tau-utils";
 import * as AIError from "../error";
 import type {
 	Api,
@@ -1691,7 +1691,7 @@ async function handleExecServerMessage(
 			const args = execMsg.message.value;
 			if (!args.toolCallId) args.toolCallId = crypto.randomUUID();
 			// Bridge maps `ls` onto the coding-agent `read` tool (see
-			// `CursorExecHandlers.ls` in `pi-coding-agent/src/cursor.ts`); mirror
+			// `CursorExecHandlers.ls` in `tau-coding-agent/src/cursor.ts`); mirror
 			// that here so the synthesized block matches the toolResult's `toolName`.
 			synthesizeCursorExecToolCall(output, stream, state, args.toolCallId, "read", { path: args.path });
 			const { execResult } = await resolveExecHandler(
@@ -4608,13 +4608,13 @@ function readCursorBlob(blobStore: Map<string, Uint8Array>, blobId: Uint8Array):
 /**
  * Cursor AgentService reconstructs the model prompt from `requestContext.rules`,
  * not from the client-supplied `rootPromptMessagesJson` system blobs. Map each
- * OMP system-prompt entry to a global CursorRule so always-apply rules survive
+ * TAU system-prompt entry to a global CursorRule so always-apply rules survive
  * that reconstruction.
  */
 export function buildCursorRequestContextRules(systemPrompt: readonly string[] | undefined): CursorRule[] {
 	return normalizeSystemPrompts(systemPrompt).map((content, index) =>
 		create(CursorRuleSchema, {
-			fullPath: `/omp/system-prompt/${index}.mdc`,
+			fullPath: `/tau/system-prompt/${index}.mdc`,
 			content,
 			source: CursorRuleSource.USER,
 			type: create(CursorRuleTypeSchema, {
@@ -4667,7 +4667,7 @@ export function buildMcpToolDefinitions(
 	// The `write` tool doubles as the xd:// transport: forwarded devices such as
 	// `ast_edit` stage previews finalized only by writing a reason to xd://resolve
 	// or xd://reject. Cursor's native catalog may expose no write path, so
-	// re-include the built-in `write` (dropped as native above) whenever pi-agent
+	// re-include the built-in `write` (dropped as native above) whenever tau-agent
 	// devices are advertised — otherwise a staged preview can never be resolved
 	// and the SoftToolRequirement('write') escalation aborts the turn.
 	const writeTool = tools.find(tool => tool.name === "write");
@@ -4684,7 +4684,7 @@ export function buildMcpToolDefinitions(
 		return create(McpToolDefinitionSchema, {
 			name: tool.name,
 			description: tool.description || "",
-			providerIdentifier: "pi-agent",
+			providerIdentifier: "tau-agent",
 			toolName: tool.name,
 			inputSchema,
 		});
@@ -5049,7 +5049,7 @@ function createCursorToolCallStep(toolCall: ToolCall, result: ToolResultMessage 
 			name: toolCall.name,
 			args: encodeCursorMcpArguments(toolCall),
 			toolCallId,
-			providerIdentifier: "pi-agent",
+			providerIdentifier: "tau-agent",
 			toolName: toolCall.name,
 		}),
 		...(result ? { result: createCursorMcpResult(result) } : {}),
@@ -5280,7 +5280,7 @@ function resolveCursorMaxMode(model: Model<"cursor-agent">, wireModelId: string)
  * Resolve the Cursor Run wire model id and its parameter list.
  *
  * Cursor's `GetUsableModels` lists reasoning models as per-effort sibling
- * slugs (`gpt-5.4-mini-low`, `gpt-5.6-sol-high`), and OMP copies those ids 1:1.
+ * slugs (`gpt-5.4-mini-low`, `gpt-5.6-sol-high`), and TAU copies those ids 1:1.
  * The Run endpoint rejects a sibling slug as the wire `model_id` with
  * `resource_exhausted` (errorId 528384); the official `cursor-agent` splits the
  * slug into its base model id plus a `reasoning` effort parameter. Mirror that
@@ -5328,7 +5328,7 @@ function resolveCursorWireModel(
 		}
 	}
 	// A bare `composer-2.5` id resolves to the Fast variant server-side
-	// (can1357/oh-my-pi#9012). Pin the Standard tier explicitly; `-fast`
+	// (can1357/tau#9012). Pin the Standard tier explicitly; `-fast`
 	// selections keep the Fast lane by omitting the parameter.
 	if (wireModelId === "composer-2.5") {
 		return {

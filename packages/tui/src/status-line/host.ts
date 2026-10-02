@@ -1,6 +1,6 @@
-import type { AgentMessage, ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { Tool, UsageLimit, UsageReport } from "@oh-my-pi/pi-ai";
-import type { Model } from "@oh-my-pi/pi-catalog/types";
+import type { AgentMessage, ThinkingLevel } from "@tau/tau-agent-core";
+import type { Tool, UsageLimit, UsageReport } from "@tau/tau-ai";
+import type { Model } from "@tau/tau-catalog/types";
 import type { CompactionBoundaries } from "./context-usage";
 import type { StatusLineSettings } from "./types";
 

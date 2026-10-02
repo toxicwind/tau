@@ -7,23 +7,23 @@
  * compaction item as replacement history.
  */
 
-import type { Api, CodexCompactionContext, FetchImpl, Model, ProviderSessionState } from "@oh-my-pi/pi-ai";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { createOpenAICodexCompactionRequestContext } from "@oh-my-pi/pi-ai/providers/openai-codex-compaction";
-import { applyCodexResponsesLiteShape } from "@oh-my-pi/pi-ai/providers/openai-codex/request-transformer";
+import type { Api, CodexCompactionContext, FetchImpl, Model, ProviderSessionState } from "@tau/tau-ai";
+import * as AIError from "@tau/tau-ai/error";
+import { createOpenAICodexCompactionRequestContext } from "@tau/tau-ai/providers/openai-codex-compaction";
+import { applyCodexResponsesLiteShape } from "@tau/tau-ai/providers/openai-codex/request-transformer";
 import {
 	createOpenAICodexCompatibilityMetadata,
 	openCodexCompactionEventStream,
 	type OpenAICodexCompactionBody,
 	type OpenAICodexCompatibilityMetadata,
-} from "@oh-my-pi/pi-ai/providers/openai-codex-responses";
+} from "@tau/tau-ai/providers/openai-codex-responses";
 import {
 	getOpenAIPromptCacheKey,
 	getOpenAIResponsesRoutingSessionId,
 	parseAzureDeploymentNameMap,
 	resolveOpenAIRequestSetup,
-} from "@oh-my-pi/pi-ai/providers/openai-shared";
-import { captureOpenAIHttpError } from "@oh-my-pi/pi-ai/utils/openai-http";
+} from "@tau/tau-ai/providers/openai-shared";
+import { captureOpenAIHttpError } from "@tau/tau-ai/utils/openai-http";
 import {
 	applyCodexResidencyHeader,
 	CODEX_BASE_URL,
@@ -31,8 +31,8 @@ import {
 	getCodexAccountId,
 	OPENAI_HEADER_VALUES,
 	OPENAI_HEADERS,
-} from "@oh-my-pi/pi-catalog/wire/codex";
-import { $env, isUnexpectedSocketCloseMessage, logger, stringifyJson } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-catalog/wire/codex";
+import { $env, isUnexpectedSocketCloseMessage, logger, stringifyJson } from "@tau/tau-utils";
 
 // ============================================================================
 // Types & Configuration

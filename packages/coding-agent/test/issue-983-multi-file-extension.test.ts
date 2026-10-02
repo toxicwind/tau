@@ -2,8 +2,8 @@ import { afterEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { discoverAndLoadExtensions } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+import { discoverAndLoadExtensions } from "@tau/tau-coding-agent/extensibility/extensions/loader";
+import { removeWithRetries } from "@tau/tau-utils";
 
 const TOOL_NAME = "legacy-multi-file-tool";
 
@@ -15,16 +15,16 @@ describe("issue #983: multi-file legacy Pi extensions", () => {
 	});
 
 	it("loads legacy Pi extensions whose sibling TypeScript files import each other via relative paths", async () => {
-		const projectDir = await fs.mkdtemp(path.join(os.tmpdir(), "omp-issue-983-project-"));
+		const projectDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-issue-983-project-"));
 		tempDirs.push(projectDir);
-		const extensionDir = path.join(projectDir, "legacy-pi-multi-file-extension");
+		const extensionDir = path.join(projectDir, "legacy-tau-multi-file-extension");
 
 		await fs.mkdir(extensionDir, { recursive: true });
 		await Bun.write(
 			path.join(extensionDir, "package.json"),
 			JSON.stringify(
 				{
-					name: "legacy-pi-multi-file-extension",
+					name: "legacy-tau-multi-file-extension",
 					version: "1.0.0",
 					pi: {
 						extensions: ["./index.ts"],

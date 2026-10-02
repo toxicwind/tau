@@ -1,7 +1,7 @@
 /**
  * Usage CLI command handler.
  *
- * Handles `omp usage` — fetches provider usage reports for every
+ * Handles `tau usage` — fetches provider usage reports for every
  * authenticated account and prints a detailed per-account breakdown
  * (limits, windows, reset times, plan metadata). Accounts whose
  * credentials produced no usage report are listed too, so the output
@@ -18,17 +18,17 @@ import {
 	type UsageLimit,
 	type UsageReport,
 	type UsageUnit,
-} from "@oh-my-pi/pi-ai";
-import { AuthBrokerClient } from "@oh-my-pi/pi-ai/auth-broker";
-import type { ClientUsageClientSummary } from "@oh-my-pi/pi-ai/usage";
-import { formatProviderName } from "@oh-my-pi/pi-tui/chrome/format";
-import { formatDuration, formatNumber, sanitizeText } from "@oh-my-pi/pi-utils";
-import chalk from "@oh-my-pi/pi-utils/chalk";
+} from "@tau/tau-ai";
+import { AuthBrokerClient } from "@tau/tau-ai/auth-broker";
+import type { ClientUsageClientSummary } from "@tau/tau-ai/usage";
+import { formatProviderName } from "@tau/tau-tui/chrome/format";
+import { formatDuration, formatNumber, sanitizeText } from "@tau/tau-utils";
+import chalk from "@tau/tau-utils/chalk";
 import { ModelRegistry } from "../config/model-registry";
 import { Settings } from "../config/settings";
 import { discoverAuthStorage } from "../sdk";
 import { resolveAuthBrokerConfig } from "../session/auth-broker-config";
-import { collapseSharedUsageReports, summarizeUsageResetCredits } from "@oh-my-pi/pi-tui/overlays/usage-display";
+import { collapseSharedUsageReports, summarizeUsageResetCredits } from "@tau/tau-tui/overlays/usage-display";
 
 const BAR_WIDTH = 28;
 
@@ -581,7 +581,7 @@ function formatReloginDeadline(
 }
 
 /**
- * Tombstones worth a row in `omp usage`: OAuth credentials torn down
+ * Tombstones worth a row in `tau usage`: OAuth credentials torn down
  * automatically (refresh failure, upstream invalidation). Rows the user
  * replaced or deleted deliberately are lifecycle noise, not lost capacity.
  */
@@ -695,7 +695,7 @@ function formatPolicyLine(
 	const inherited = configuredReservePct === undefined;
 	const reservePct = Math.max(0, Math.min(100, configuredReservePct ?? options.globalReservePct));
 	const reserveLabel = `${reservePct}% ${inherited ? "(global)" : "(override)"}`;
-	// `omp usage` has no model/session context, so report the conservative
+	// `tau usage` has no model/session context, so report the conservative
 	// account-wide state from the most-consumed visible window. Actual routing
 	// still scopes limits and selection in AuthStorage.
 	const usedFractions = (limits ?? [])
@@ -1006,7 +1006,7 @@ function collectStoredAccounts(authStorage: AuthStorage): UsageAccountIdentity[]
  * `hasUsageProvider` is injected (in practice {@link AuthStorage.usage.providerFor})
  * so custom/broker resolvers stay authoritative — no provider list is duplicated
  * here. An explicit `--provider` request bypasses the cull, so
- * `omp usage --provider xai` can still confirm the stored credential has no
+ * `tau usage --provider xai` can still confirm the stored credential has no
  * usage endpoint.
  */
 export function selectReportableAccounts(
@@ -1156,7 +1156,7 @@ export async function runUsageCommand(cmd: UsageCommandArgs): Promise<void> {
 			if (clients.length === 0) {
 				process.stderr.write(
 					chalk.yellow(
-						"No per-client usage recorded yet. Broker-connected clients and the auth-gateway report token burn automatically; set OMP_AUTH_BROKER_URL (or run this on the broker host).\n",
+						"No per-client usage recorded yet. Broker-connected clients and the auth-gateway report token burn automatically; set TAU_AUTH_BROKER_URL (or run this on the broker host).\n",
 					),
 				);
 				process.exitCode = 1;
@@ -1187,7 +1187,7 @@ export async function runUsageCommand(cmd: UsageCommandArgs): Promise<void> {
 				const scope = cmd.provider ? ` for provider "${cmd.provider}"` : "";
 				process.stderr.write(
 					chalk.yellow(
-						`No usage history recorded${scope} yet. Snapshots accumulate whenever usage is fetched (TUI footer, /usage, omp usage).\n`,
+						`No usage history recorded${scope} yet. Snapshots accumulate whenever usage is fetched (TUI footer, /usage, tau usage).\n`,
 					),
 				);
 				process.exitCode = 1;
@@ -1292,7 +1292,7 @@ export async function runUsageCommand(cmd: UsageCommandArgs): Promise<void> {
 			const message =
 				storedAccounts.length > 0
 					? `No usage data${scope}. Stored credentials are for providers without a usage endpoint.\n`
-					: `No credentials found${scope}. Run \`omp\` and use /login to add accounts.\n`;
+					: `No credentials found${scope}. Run \`tau\` and use /login to add accounts.\n`;
 			process.stderr.write(chalk.yellow(message));
 			process.exitCode = 1;
 			return;

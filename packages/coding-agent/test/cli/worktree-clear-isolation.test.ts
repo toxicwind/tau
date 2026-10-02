@@ -2,37 +2,37 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import * as natives from "@oh-my-pi/pi-natives";
-import { clearWorktrees } from "@oh-my-pi/pi-coding-agent/cli/worktree-cli";
+import * as natives from "@tau/tau-natives";
+import { clearWorktrees } from "@tau/tau-coding-agent/cli/worktree-cli";
 import {
 	ISOLATION_OWNER_FILE,
 	RETAINED_BACKEND_FILE,
 	writeIsolationOwner,
 	writeRetainedBackend,
-} from "@oh-my-pi/pi-coding-agent/task/isolation-ownership";
-import { setWorktreesDir } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-coding-agent/task/isolation-ownership";
+import { setWorktreesDir } from "@tau/tau-utils";
 
 /**
- * Regression for #6761: `omp worktree clear` (no `--all`) must delete only
+ * Regression for #6761: `tau worktree clear` (no `--all`) must delete only
  * task-isolation sandboxes whose owner process is gone. A sandbox owned by a
- * live omp process holds a running subagent's uncaptured work and must survive.
+ * live tau process holds a running subagent's uncaptured work and must survive.
  */
 describe("worktree clear task-isolation ownership", () => {
 	let base: string;
 	let savedEnv: string | undefined;
 
 	beforeEach(async () => {
-		base = await fs.mkdtemp(path.join(os.tmpdir(), "omp-wt-clear-"));
-		savedEnv = process.env.OMP_WORKTREE_DIR;
-		delete process.env.OMP_WORKTREE_DIR;
+		base = await fs.mkdtemp(path.join(os.tmpdir(), "tau-wt-clear-"));
+		savedEnv = process.env.TAU_WORKTREE_DIR;
+		delete process.env.TAU_WORKTREE_DIR;
 		setWorktreesDir(base);
 		vi.spyOn(console, "log").mockImplementation(() => {});
 	});
 
 	afterEach(async () => {
 		setWorktreesDir(undefined);
-		if (savedEnv === undefined) delete process.env.OMP_WORKTREE_DIR;
-		else process.env.OMP_WORKTREE_DIR = savedEnv;
+		if (savedEnv === undefined) delete process.env.TAU_WORKTREE_DIR;
+		else process.env.TAU_WORKTREE_DIR = savedEnv;
 		vi.restoreAllMocks();
 		await fs.rm(base, { recursive: true, force: true });
 	});

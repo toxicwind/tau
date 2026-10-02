@@ -1,9 +1,9 @@
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
+import { ThinkingLevel } from "@tau/tau-agent-core";
 import { Ellipsis, visibleWidth } from "../utils";
 import { formatMetricRow } from "../components/metric";
 import { renderProgressBar } from "../components/progress-bar";
 import { renderTableRow } from "../components/table";
-import { formatDuration, formatNumber } from "@oh-my-pi/pi-utils";
+import { formatDuration, formatNumber } from "@tau/tau-utils";
 import type { ThemeColor } from "../theme/theme";
 import { type AgentRecordLike, MAIN_AGENT_ID } from "./agent-hub-types";
 import { parseThinkingLevel } from "../thinking";

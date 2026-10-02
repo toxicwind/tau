@@ -1,18 +1,18 @@
-# @oh-my-pi/pi-agent
+# @tau/tau-agent
 
-Stateful agent with tool execution and event streaming. Built on `@oh-my-pi/pi-ai`.
+Stateful agent with tool execution and event streaming. Built on `@tau/tau-ai`.
 
 ## Installation
 
 ```bash
-npm install @oh-my-pi/pi-agent
+npm install @tau/tau-agent
 ```
 
 ## Quick Start
 
 ```typescript
-import { Agent } from "@oh-my-pi/pi-agent";
-import { getModel } from "@oh-my-pi/pi-ai";
+import { Agent } from "@tau/tau-agent";
+import { getModel } from "@tau/tau-ai";
 
 const agent = new Agent({
 	initialState: {
@@ -255,7 +255,7 @@ steering until the current turn completes.
 Extend `AgentMessage` via declaration merging:
 
 ```typescript
-declare module "@oh-my-pi/pi-agent" {
+declare module "@tau/tau-agent" {
 	interface CustomAgentMessages {
 		notification: { role: "notification"; text: string; timestamp: number };
 	}
@@ -279,10 +279,10 @@ const agent = new Agent({
 
 ## Tools
 
-Define tools using `AgentTool` with an omptype parameter schema.
+Define tools using `AgentTool` with an tautype parameter schema.
 
 ```typescript
-import { type } from "@oh-my-pi/omptype";
+import { type } from "@tau/tautype";
 
 const readFileTool: AgentTool = {
 	name: "read_file",
@@ -328,7 +328,7 @@ Thrown errors are caught by the agent and reported to the LLM as tool errors wit
 For browser apps that proxy through a backend:
 
 ```typescript
-import { Agent, streamProxy } from "@oh-my-pi/pi-agent";
+import { Agent, streamProxy } from "@tau/tau-agent";
 
 const agent = new Agent({
 	streamFn: (model, context, options) =>
@@ -345,7 +345,7 @@ const agent = new Agent({
 For direct control without the Agent class:
 
 ```typescript
-import { agentLoop, agentLoopContinue } from "@oh-my-pi/pi-agent";
+import { agentLoop, agentLoopContinue } from "@tau/tau-agent";
 
 const context: AgentContext = {
 	systemPrompt: ["You are helpful."],
@@ -445,7 +445,7 @@ fold N summaries with `aggregateAgentRunSummaries` / `aggregateAgentRunCoverage`
 import {
 	aggregateAgentRunSummaries,
 	aggregateAgentRunCoverage,
-} from "@oh-my-pi/pi-agent";
+} from "@tau/tau-agent";
 
 const summaries: AgentRunSummary[] = [];
 const coverages: AgentRunCoverage[] = [];

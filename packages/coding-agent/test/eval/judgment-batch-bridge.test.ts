@@ -1,9 +1,9 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
 import * as vm from "node:vm";
-import type { Api, AssistantMessage, Model } from "@oh-my-pi/pi-ai";
-import * as ai from "@oh-my-pi/pi-ai";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import type { Api, AssistantMessage, Model } from "@tau/tau-ai";
+import * as ai from "@tau/tau-ai";
+import { TempDir } from "@tau/tau-utils";
 import { $ } from "bun";
 import { AsyncJobManager } from "../../src/async";
 import { ModelRegistry } from "../../src/config/model-registry";
@@ -518,7 +518,7 @@ process.exit(0);
 
 describe("judge_batch() Python prelude", () => {
 	it("drains across cells and re-attaches by id", async () => {
-		const tempDir = TempDir.createSync("@omp-eval-judge-batch-py-");
+		const tempDir = TempDir.createSync("@tau-eval-judge-batch-py-");
 		try {
 			const result = await runPythonJudgeBatchInSubprocess(tempDir);
 			expect(result.exitCode).toBe(0);

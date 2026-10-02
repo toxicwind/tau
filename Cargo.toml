@@ -1,19 +1,19 @@
 [workspace]
-# Explicit, not `crates/pi-*`: a glob member that resolves to a directory
+# Explicit, not `crates/tau-*`: a glob member that resolves to a directory
 # without a Cargo.toml (a deleted crate whose dir survives `git reset --hard`
 # because an ignored file stayed behind) is a hard error that fails the whole
 # workspace, not a skipped entry.
 members = [
-   "crates/pi-ast",
-   "crates/pi-builtins",
-   "crates/pi-diff",
-   "crates/pi-edit",
-   "crates/pi-iso",
-   "crates/pi-natives",
-   "crates/pi-shell",
-   "crates/pi-vcs",
-   "crates/pi-voice",
-   "crates/pi-walker",
+   "crates/tau-ast",
+   "crates/tau-builtins",
+   "crates/tau-diff",
+   "crates/tau-edit",
+   "crates/tau-iso",
+   "crates/tau-natives",
+   "crates/tau-shell",
+   "crates/tau-vcs",
+   "crates/tau-voice",
+   "crates/tau-walker",
    "crates/vendor/brush-core",
    "crates/vendor/cfg_aliases",
 ]
@@ -24,8 +24,8 @@ version = "18.3.0"
 edition = "2024"
 license = "MIT"
 authors = ["Stencil Labs, Inc."]
-homepage = "https://omp.sh/"
-repository = "https://github.com/can1357/oh-my-pi"
+homepage = "https://tau.sh/"
+repository = "https://github.com/toxicwind/tau"
 
 [patch.crates-io]
 brush-core = { path = "crates/vendor/brush-core" }
@@ -40,8 +40,8 @@ codegen-units = 1
 strip = true
 # Unwind (not abort) so panics inside vendored code and native tasks stay
 # recoverable at the appropriate boundary: the uutils boundary
-# (pi-shell coreutils) turns a panic into a failed command, and the
-# `task::blocking` wrapper in `crates/pi-natives/src/task.rs` catches unwinds
+# (tau-shell coreutils) turns a panic into a failed command, and the
+# `task::blocking` wrapper in `crates/tau-natives/src/task.rs` catches unwinds
 # inside `Blocking::compute` before they cross napi-rs's async-work
 # `extern "C"` callback (napi `src/async_work.rs:109`) so they surface as
 # rejected JS Promises instead of forced process aborts under Rust's C-unwind
@@ -49,7 +49,7 @@ strip = true
 # per-call `catch_unwind` on the `Task`/`AsyncTask` path; the tokio-future
 # path (`env.spawn_future`) is guarded upstream. Recoverable uutils panics
 # are kept out of the crash report by the crash hook
-# (see crates/pi-natives/src/crash_handler.rs).
+# (see crates/tau-natives/src/crash_handler.rs).
 panic = "unwind"
 
 [profile.ci]
@@ -214,16 +214,16 @@ too_many_lines = "allow"     # Arbitrary limits don't account for necessary comp
 # ──────────────────────────────────────────────────────────────────────────────
 # Internal Libraries
 # ──────────────────────────────────────────────────────────────────────────────
-pi-ast = { path = "crates/pi-ast" }
-pi-diff = { path = "crates/pi-diff" }
-pi-edit = { path = "crates/pi-edit" }
-pi-iso = { path = "crates/pi-iso" }
-pi-shell = { path = "crates/pi-shell" }
-pi-voice = { path = "crates/pi-voice" }
-pi-walker = { path = "crates/pi-walker" }
-pi-vcs = { path = "crates/pi-vcs" }
+tau-ast = { path = "crates/tau-ast" }
+tau-diff = { path = "crates/tau-diff" }
+tau-edit = { path = "crates/tau-edit" }
+tau-iso = { path = "crates/tau-iso" }
+tau-shell = { path = "crates/tau-shell" }
+tau-voice = { path = "crates/tau-voice" }
+tau-walker = { path = "crates/tau-walker" }
+tau-vcs = { path = "crates/tau-vcs" }
 brush-core = { path = "crates/vendor/brush-core" }
-pi-builtins = { path = "crates/pi-builtins" }
+tau-builtins = { path = "crates/tau-builtins" }
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Async Runtime & Concurrency
@@ -307,7 +307,7 @@ windows-sys = { version = "0.61", features = [
    "Win32_System_Ioctl",
    "Win32_System_Threading",
 ] }
-# Transitive-only pin (wired through crates/pi-natives build-deps so the
+# Transitive-only pin (wired through crates/tau-natives build-deps so the
 # constraint participates in resolution): cc 1.2.x passes
 # FILE_ATTRIBUTE_TEMPORARY to OpenOptionsExt::custom_flags as u32, but
 # find-msvc-tools 0.1.13 retyped that constant to i32, breaking every Windows

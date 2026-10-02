@@ -2,22 +2,22 @@ import { afterAll, afterEach, beforeAll, describe, expect, it, spyOn, vi } from 
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import type { Rule } from "@oh-my-pi/pi-coding-agent/capability/rule";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { LocalProtocolHandler } from "@oh-my-pi/pi-coding-agent/internal-urls/local-protocol";
-import { AgentLifecycleManager } from "@oh-my-pi/pi-coding-agent/registry/agent-lifecycle";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import { createAgentSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import * as secrets from "@oh-my-pi/pi-coding-agent/secrets";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { VibeSessionRegistry } from "@oh-my-pi/pi-coding-agent/vibe/runtime";
-import { getSessionsDir, removeSyncWithRetries, Snowflake } from "@oh-my-pi/pi-utils";
-import { getActiveProfile, getConfigRootDir, setProfile } from "@oh-my-pi/pi-utils/dirs";
+import type { AssistantMessage } from "@tau/tau-ai";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import type { Rule } from "@tau/tau-coding-agent/capability/rule";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { LocalProtocolHandler } from "@tau/tau-coding-agent/internal-urls/local-protocol";
+import { AgentLifecycleManager } from "@tau/tau-coding-agent/registry/agent-lifecycle";
+import { AgentRegistry } from "@tau/tau-coding-agent/registry/agent-registry";
+import { createAgentSession } from "@tau/tau-coding-agent/sdk";
+import * as secrets from "@tau/tau-coding-agent/secrets";
+import type { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { VibeSessionRegistry } from "@tau/tau-coding-agent/vibe/runtime";
+import { getSessionsDir, removeSyncWithRetries, Snowflake } from "@tau/tau-utils";
+import { getActiveProfile, getConfigRootDir, setProfile } from "@tau/tau-utils/dirs";
 
 function createTtsrRule(name: string): Rule {
 	return {
@@ -58,7 +58,7 @@ async function withTempConfigRoot<T>(run: () => Promise<T>): Promise<T> {
 	const originalProfile = getActiveProfile();
 	const originalConfigDir = process.env.PI_CONFIG_DIR;
 	const originalAgentDir = process.env.PI_CODING_AGENT_DIR;
-	const configDirName = `.omp-sdk-session-${Snowflake.next()}`;
+	const configDirName = `.tau-sdk-session-${Snowflake.next()}`;
 	const configRoot = path.join(os.homedir(), configDirName);
 	try {
 		process.env.PI_CONFIG_DIR = configDirName;
@@ -118,7 +118,7 @@ describe("createAgentSession session storage isolation", () => {
 	});
 
 	it("uses the provided agentDir for the default persistent session root", async () => {
-		const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), `pi-sdk-session-isolation-${Snowflake.next()}-`));
+		const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), `tau-sdk-session-isolation-${Snowflake.next()}-`));
 		tempDirs.push(tempDir);
 		const cwd = path.join(tempDir, `project-${Snowflake.next()}`);
 		const agentDir = path.join(tempDir, "agent");
@@ -151,7 +151,7 @@ describe("createAgentSession session storage isolation", () => {
 		}
 	});
 	it("keeps subagent local:// mappings from replacing the process-global override", async () => {
-		const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), `pi-sdk-local-override-${Snowflake.next()}-`));
+		const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), `tau-sdk-local-override-${Snowflake.next()}-`));
 		tempDirs.push(tempDir);
 		const cwd = path.join(tempDir, "project");
 		fs.mkdirSync(cwd, { recursive: true });
@@ -194,7 +194,7 @@ describe("createAgentSession session storage isolation", () => {
 	});
 
 	it("does not replace a newer registry generation when creation expected the id to be absent", async () => {
-		const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), `pi-sdk-generation-cas-${Snowflake.next()}-`));
+		const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), `tau-sdk-generation-cas-${Snowflake.next()}-`));
 		tempDirs.push(tempDir);
 		const cwd = path.join(tempDir, "project");
 		fs.mkdirSync(cwd, { recursive: true });
@@ -235,7 +235,7 @@ describe("createAgentSession session storage isolation", () => {
 	});
 
 	it("reclaims an unrevivable parked generation before a fresh same-id spawn", async () => {
-		const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), `pi-sdk-generation-corpse-${Snowflake.next()}-`));
+		const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), `tau-sdk-generation-corpse-${Snowflake.next()}-`));
 		tempDirs.push(tempDir);
 		const cwd = path.join(tempDir, "project");
 		fs.mkdirSync(cwd, { recursive: true });
@@ -288,7 +288,7 @@ describe("createAgentSession session storage isolation", () => {
 	});
 
 	it("reuses the exact parked ref authorized for revival", async () => {
-		const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), `pi-sdk-generation-revive-${Snowflake.next()}-`));
+		const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), `tau-sdk-generation-revive-${Snowflake.next()}-`));
 		tempDirs.push(tempDir);
 		const cwd = path.join(tempDir, "project");
 		fs.mkdirSync(cwd, { recursive: true });
@@ -338,7 +338,7 @@ describe("createAgentSession session storage isolation", () => {
 
 	it("suspends the exact Vibe owner scope before global lifecycle teardown", async () => {
 		VibeSessionRegistry.resetGlobalForTests();
-		const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), `pi-sdk-vibe-dispose-${Snowflake.next()}-`));
+		const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), `tau-sdk-vibe-dispose-${Snowflake.next()}-`));
 		tempDirs.push(tempDir);
 		const cwd = path.join(tempDir, "project");
 		fs.mkdirSync(cwd, { recursive: true });
@@ -372,7 +372,7 @@ describe("createAgentSession session storage isolation", () => {
 	});
 
 	it("wires the discovered TTSR manager into the created session", async () => {
-		const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), `pi-sdk-ttsr-${Snowflake.next()}-`));
+		const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), `tau-sdk-ttsr-${Snowflake.next()}-`));
 		tempDirs.push(tempDir);
 		const cwd = path.join(tempDir, `project-${Snowflake.next()}`);
 		const agentDir = path.join(tempDir, "agent");
@@ -405,7 +405,7 @@ describe("createAgentSession session storage isolation", () => {
 	});
 	it("loads configured secrets per session alongside built-in credential redaction", async () => {
 		await withClearedSecretEnv(async () => {
-			const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), `pi-sdk-secrets-${Snowflake.next()}-`));
+			const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), `tau-sdk-secrets-${Snowflake.next()}-`));
 			tempDirs.push(tempDir);
 			const cwd = path.join(tempDir, "project");
 			const agentDir = path.join(tempDir, "agent");
@@ -442,8 +442,8 @@ describe("createAgentSession session storage isolation", () => {
 				existingKeySpy.mockRestore();
 			}
 
-			fs.mkdirSync(path.join(cwd, ".omp"), { recursive: true });
-			fs.writeFileSync(path.join(cwd, ".omp", "secrets.yml"), `- type: plain\n  content: ${configuredSecret}\n`);
+			fs.mkdirSync(path.join(cwd, ".tau"), { recursive: true });
+			fs.writeFileSync(path.join(cwd, ".tau", "secrets.yml"), `- type: plain\n  content: ${configuredSecret}\n`);
 
 			const withSecrets = await createAgentSession(commonOptions);
 			try {
@@ -459,13 +459,13 @@ describe("createAgentSession session storage isolation", () => {
 	it("restores keyed assistant placeholders across reloads", async () => {
 		await withClearedSecretEnv(async () => {
 			await withTempConfigRoot(async () => {
-				const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), `pi-sdk-session-secrets-${Snowflake.next()}-`));
+				const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), `tau-sdk-session-secrets-${Snowflake.next()}-`));
 				tempDirs.push(tempDir);
 				const cwd = path.join(tempDir, "project");
 				const agentDir = path.join(tempDir, "agent");
-				fs.mkdirSync(path.join(cwd, ".omp"), { recursive: true });
+				fs.mkdirSync(path.join(cwd, ".tau"), { recursive: true });
 				fs.writeFileSync(
-					path.join(cwd, ".omp", "secrets.yml"),
+					path.join(cwd, ".tau", "secrets.yml"),
 					"- type: plain\n  content: sdk-secret-token-123456\n",
 				);
 
@@ -533,11 +533,11 @@ describe("createAgentSession session storage isolation", () => {
 
 	it("creates the placeholder key only when an obfuscate-mode secret is configured", async () => {
 		await withClearedSecretEnv(async () => {
-			const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), `pi-sdk-secrets-key-${Snowflake.next()}-`));
+			const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), `tau-sdk-secrets-key-${Snowflake.next()}-`));
 			tempDirs.push(tempDir);
 			const cwd = path.join(tempDir, "project");
 			const agentDir = path.join(tempDir, "agent");
-			fs.mkdirSync(path.join(cwd, ".omp"), { recursive: true });
+			fs.mkdirSync(path.join(cwd, ".tau"), { recursive: true });
 
 			const commonOptions = {
 				cwd,
@@ -575,7 +575,7 @@ describe("createAgentSession session storage isolation", () => {
 				// Replace-mode secrets never build a reversible keyed placeholder, so
 				// startup must not create the key file; an existing key is still redacted.
 				fs.writeFileSync(
-					path.join(cwd, ".omp", "secrets.yml"),
+					path.join(cwd, ".tau", "secrets.yml"),
 					"- type: plain\n  mode: replace\n  content: replace-only-secret-123456\n",
 				);
 				const replaceOnly = await createAgentSession(commonOptions);
@@ -594,7 +594,7 @@ describe("createAgentSession session storage isolation", () => {
 				keySpy.mockClear();
 				existingKeySpy.mockClear();
 				fs.writeFileSync(
-					path.join(cwd, ".omp", "secrets.yml"),
+					path.join(cwd, ".tau", "secrets.yml"),
 					"- type: plain\n  content: obfuscate-secret-123456\n",
 				);
 				const withObfuscate = await createAgentSession(commonOptions);
@@ -613,15 +613,15 @@ describe("createAgentSession session storage isolation", () => {
 
 	it("redacts a pre-existing placeholder key when only ignored short secrets remain", async () => {
 		await withClearedSecretEnv(async () => {
-			const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), `pi-sdk-secrets-stale-key-${Snowflake.next()}-`));
+			const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), `tau-sdk-secrets-stale-key-${Snowflake.next()}-`));
 			tempDirs.push(tempDir);
 			const cwd = path.join(tempDir, "project");
 			const agentDir = path.join(tempDir, "agent");
-			fs.mkdirSync(path.join(cwd, ".omp"), { recursive: true });
+			fs.mkdirSync(path.join(cwd, ".tau"), { recursive: true });
 			// Only an ignored short (<8 char) plain obfuscate secret: it never becomes an
 			// active secret, but a previously-created key file must still be redacted and
 			// no new key must be created.
-			fs.writeFileSync(path.join(cwd, ".omp", "secrets.yml"), "- type: plain\n  content: abc\n");
+			fs.writeFileSync(path.join(cwd, ".tau", "secrets.yml"), "- type: plain\n  content: abc\n");
 
 			const keySpy = spyOn(secrets, "getSecretPlaceholderKey").mockImplementation(
 				async () => "test-placeholder-key",
@@ -663,13 +663,13 @@ describe("createAgentSession session storage isolation", () => {
 	it("stores placeholder keys under the configured agentDir", async () => {
 		await withClearedSecretEnv(async () => {
 			await withTempConfigRoot(async () => {
-				const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), `pi-sdk-secrets-agent-key-${Snowflake.next()}-`));
+				const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), `tau-sdk-secrets-agent-key-${Snowflake.next()}-`));
 				tempDirs.push(tempDir);
 				const cwd = path.join(tempDir, "project");
 				const agentDir = path.join(tempDir, "agent");
-				fs.mkdirSync(path.join(cwd, ".omp"), { recursive: true });
+				fs.mkdirSync(path.join(cwd, ".tau"), { recursive: true });
 				fs.writeFileSync(
-					path.join(cwd, ".omp", "secrets.yml"),
+					path.join(cwd, ".tau", "secrets.yml"),
 					"- type: plain\n  content: agent-dir-secret-123456\n",
 				);
 

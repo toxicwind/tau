@@ -18,12 +18,12 @@
  * - isKittyProtocolActive() - Query global Kitty protocol state
  */
 
-import type { KeyEventType } from "@oh-my-pi/pi-natives";
+import type { KeyEventType } from "@tau/tau-natives";
 import {
 	matchesKey as matchesKeyNative,
 	parseKey as parseKeyNative,
 	parseKittySequence as parseKittySequenceNative,
-} from "@oh-my-pi/pi-natives";
+} from "@tau/tau-natives";
 import { isInsideTerminalMultiplexer } from "./terminal-capabilities";
 
 // =============================================================================
@@ -197,8 +197,8 @@ export type KeyId = BaseKey | ModifiedKeyId<BaseKey>;
  * that each property is typed to the exact `KeyId` literal it produces and the
  * modifier methods return precisely-typed concatenations (e.g. `Key.ctrl("c")`
  * is `"ctrl+c"`, not just `string`). This mirrors the upstream
- * `@mariozechner/pi-tui` `Key` export verbatim so plugins built against any
- * scope alias (`@mariozechner`, `@earendil-works`, `@oh-my-pi`) keep working
+ * `@mariozechner/tau-tui` `Key` export verbatim so plugins built against any
+ * scope alias (`@mariozechner`, `@earendil-works`, `@tau`) keep working
  * once the specifier shim remaps them to this package.
  */
 export const Key = {

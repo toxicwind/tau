@@ -3,17 +3,17 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { disposeAllVmContexts } from "@oh-my-pi/pi-coding-agent/eval/js/context-manager";
-import { createBrowserPrelude } from "@oh-my-pi/pi-coding-agent/tools/browser";
-import { releaseAllTabs } from "@oh-my-pi/pi-coding-agent/tools/browser/tab-supervisor";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools/index";
-import { $which } from "@oh-my-pi/pi-utils/which";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { disposeAllVmContexts } from "@tau/tau-coding-agent/eval/js/context-manager";
+import { createBrowserPrelude } from "@tau/tau-coding-agent/tools/browser";
+import { releaseAllTabs } from "@tau/tau-coding-agent/tools/browser/tab-supervisor";
+import type { ToolSession } from "@tau/tau-coding-agent/tools/index";
+import { $which } from "@tau/tau-utils/which";
 import { chromiumAvailable } from "./chromium-probe";
 
 const CHROMIUM_AVAILABLE = await chromiumAvailable();
 const FFMPEG_AVAILABLE = Boolean($which("ffmpeg") && $which("ffprobe"));
-const root = await fs.mkdtemp(path.join(os.tmpdir(), "omp-browser-recording-"));
+const root = await fs.mkdtemp(path.join(os.tmpdir(), "tau-browser-recording-"));
 const session: ToolSession = {
 	cwd: root,
 	hasUI: false,
@@ -146,7 +146,7 @@ return { overlay: true, transform };`,
 				transform: "translate(121px, 87px)",
 			});
 			const aria = await value<string>("ariaSnapshot");
-			expect(aria).not.toContain("OMP recording cursor overlay");
+			expect(aria).not.toContain("TAU recording cursor overlay");
 
 			const stoppedCall = await call("recordStop");
 			const stopped = valueFrom<StopResult>(stoppedCall);

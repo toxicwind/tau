@@ -10,9 +10,9 @@
  * delivers a yes as a non-interrupting warning.
  */
 import * as path from "node:path";
-import type { Judge, JudgeOptions, NoulQuestion } from "@oh-my-pi/pi-ai";
-import { AstMatchStrictness, astMatch, countTokens, Encoding } from "@oh-my-pi/pi-natives";
-import { logger } from "@oh-my-pi/pi-utils";
+import type { Judge, JudgeOptions, NoulQuestion } from "@tau/tau-ai";
+import { AstMatchStrictness, astMatch, countTokens, Encoding } from "@tau/tau-natives";
+import { logger } from "@tau/tau-utils";
 import { compileRuleCondition, type Rule } from "../capability/rule";
 import type { TtsrSettings } from "../config/settings";
 

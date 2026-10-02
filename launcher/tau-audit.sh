@@ -22,7 +22,7 @@ SOV="$TAU_HOME/sovereign"
 if [ -z "$BIN" ]; then
   # Candidate order mirrors the launcher's resolve_engine (ranch/tau is canonical).
   for d in "$SOV/projects/range/ranch/tau" "$SOV/projects/range/ranch/stockyard/tau" "$SOV/projects/tau/engine" "$SOV/tau/engine"; do
-    if [ -x "$d/packages/coding-agent/dist/omp" ]; then BIN="$d/packages/coding-agent/dist/omp"; break; fi
+    if [ -x "$d/packages/coding-agent/dist/tau" ]; then BIN="$d/packages/coding-agent/dist/tau"; break; fi
   done
 fi
 if [ -n "$BIN" ]; then
@@ -94,7 +94,7 @@ if [ -f "$TAU_HOME/.tau/profiles/default.yml" ]; then ok "default profile presen
 
 # 5. engine git hookup (warn-only; shared tree, never touch) --------------------
 if [ -n "$BIN" ] && [[ "$BIN" == *sovereign* ]]; then
-  engdir="$(echo "$BIN" | sed 's|/packages/coding-agent/dist/omp||')"
+  engdir="$(echo "$BIN" | sed 's|/packages/coding-agent/dist/tau||')"
   if git -C "$engdir" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
     br="$(git -C "$engdir" rev-parse --abbrev-ref HEAD 2>/dev/null)"
     behind="$(git -C "$engdir" rev-list --count HEAD..origin/main 2>/dev/null || echo '?')"

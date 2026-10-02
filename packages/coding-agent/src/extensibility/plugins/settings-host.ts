@@ -1,4 +1,4 @@
-import type { PluginSettingsHost } from "@oh-my-pi/pi-tui/overlays/plugin-settings";
+import type { PluginSettingsHost } from "@tau/tau-tui/overlays/plugin-settings";
 import { clearPluginRootsAndCaches, resolveOrDefaultProjectRegistryPath } from "../../discovery/helpers";
 import { PluginManager } from "./manager";
 import {

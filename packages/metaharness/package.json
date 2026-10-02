@@ -1,10 +1,10 @@
 {
   "type": "module",
   "private": true,
-  "name": "@oh-my-pi/pi-metaharness",
+  "name": "@tau/tau-metaharness",
   "version": "0.0.1",
   "description": "Unified benchmark runners plus Harbor run storage, REST/SSE APIs, and a live web dashboard",
-  "homepage": "https://omp.sh",
+  "homepage": "https://tau.sh",
   "author": {
     "name": "Stencil Labs, Inc.",
     "url": "https://stencil.so"
@@ -12,7 +12,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/can1357/oh-my-pi.git",
+    "url": "git+https://github.com/toxicwind/tau.git",
     "directory": "packages/metaharness"
   },
   "bin": {
@@ -30,18 +30,18 @@
     "test": "bun test"
   },
   "dependencies": {
-    "@oh-my-pi/pi-agent-core": "catalog:",
-    "@oh-my-pi/pi-ai": "catalog:",
-    "@oh-my-pi/pi-catalog": "catalog:",
+    "@tau/tau-agent-core": "catalog:",
+    "@tau/tau-ai": "catalog:",
+    "@tau/tau-catalog": "catalog:",
     "tau": "workspace:*",
-    "@oh-my-pi/pi-utils": "catalog:",
-    "@oh-my-pi/typescript-edit-benchmark": "workspace:*",
+    "@tau/tau-utils": "catalog:",
+    "@tau/typescript-edit-benchmark": "workspace:*",
     "@stencil-hq/vibemon": "^0.3.2",
     "clsx": "^2.1.1",
     "d3-scale": "^4.0.2",
     "d3-shape": "^3.2.0",
     "diff": "catalog:",
-    "@oh-my-pi/pi-natives": "catalog:",
+    "@tau/tau-natives": "catalog:",
     "motion": "^12.15.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

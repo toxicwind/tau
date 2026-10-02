@@ -7,31 +7,31 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import { scheduler } from "node:timers/promises";
-import { type } from "@oh-my-pi/omptype";
-import { Agent, type AgentMessage, type AgentTool } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, AssistantMessageEvent, ToolCall } from "@oh-my-pi/pi-ai";
+import { type } from "@tau/tautype";
+import { Agent, type AgentMessage, type AgentTool } from "@tau/tau-agent-core";
+import type { AssistantMessage, AssistantMessageEvent, ToolCall } from "@tau/tau-ai";
 import {
 	accumulateToolCallArgumentsDelta,
 	finalizeToolCallArgumentsDone,
-} from "@oh-my-pi/pi-ai/providers/openai-shared";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { kStreamingPartialJson } from "@oh-my-pi/pi-ai/utils/block-symbols";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { AsyncJobManager } from "@oh-my-pi/pi-coding-agent/async";
-import type { Rule } from "@oh-my-pi/pi-coding-agent/capability/rule";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { TtsrManager } from "@oh-my-pi/pi-coding-agent/export/ttsr";
-import { ExtensionRuntime, loadExtensionFromFactory } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
-import { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
-import { GoalRuntime } from "@oh-my-pi/pi-coding-agent/goals/runtime";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { convertToLlm, shouldRenderAbortReason } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-import { removeSyncWithRetries, Snowflake } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-ai/providers/openai-shared";
+import { createMockModel } from "@tau/tau-ai/providers/mock";
+import { kStreamingPartialJson } from "@tau/tau-ai/utils/block-symbols";
+import { AssistantMessageEventStream } from "@tau/tau-ai/utils/event-stream";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import { AsyncJobManager } from "@tau/tau-coding-agent/async";
+import type { Rule } from "@tau/tau-coding-agent/capability/rule";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { TtsrManager } from "@tau/tau-coding-agent/export/ttsr";
+import { ExtensionRuntime, loadExtensionFromFactory } from "@tau/tau-coding-agent/extensibility/extensions/loader";
+import { ExtensionRunner } from "@tau/tau-coding-agent/extensibility/extensions/runner";
+import { GoalRuntime } from "@tau/tau-coding-agent/goals/runtime";
+import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { convertToLlm, shouldRenderAbortReason } from "@tau/tau-coding-agent/session/messages";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { EventBus } from "@tau/tau-coding-agent/utils/event-bus";
+import { removeSyncWithRetries, Snowflake } from "@tau/tau-utils";
 
 // Mock stream that mimics AssistantMessageEventStream
 
@@ -52,7 +52,7 @@ let sharedAuthStorage: AuthStorage;
 let sharedModelRegistry: ModelRegistry;
 
 beforeAll(async () => {
-	sharedDir = path.join(os.tmpdir(), `pi-concurrent-shared-${Snowflake.next()}`);
+	sharedDir = path.join(os.tmpdir(), `tau-concurrent-shared-${Snowflake.next()}`);
 	fs.mkdirSync(sharedDir, { recursive: true });
 	sharedAuthStorage = await AuthStorage.create(path.join(sharedDir, "auth.db"));
 	sharedAuthStorage.keys.setRuntime("anthropic", "test-key");
@@ -73,7 +73,7 @@ describe("AgentSession concurrent prompt guard", () => {
 		// Collapse scheduler settle delays so the post-abort auto-continue and
 		// dispose teardown are deterministic instead of racing the wall clock.
 		collapseSchedulerSettleDelays();
-		tempDir = path.join(os.tmpdir(), `pi-concurrent-test-${Snowflake.next()}`);
+		tempDir = path.join(os.tmpdir(), `tau-concurrent-test-${Snowflake.next()}`);
 		fs.mkdirSync(tempDir, { recursive: true });
 	});
 
@@ -781,7 +781,7 @@ describe("AgentSession concurrent prompt guard", () => {
 	// agent's own `isStreaming` had flipped, but #promptWithMessage's finally had
 	// not yet decremented the prompt-in-flight counter), and the next prompt
 	// threw AgentBusyError. Surfaced as `RpcCommandError: prompt: Agent is
-	// already processing` from omp-rpc clients (robomp triage reminder path).
+	// already processing` from tau-rpc clients (robtau triage reminder path).
 
 	it("does not let extension notifications block public agent_end", async () => {
 		const model = getBundledModel("anthropic", "claude-sonnet-4-5")!;
@@ -885,7 +885,7 @@ describe("AgentSession TTSR resume gate", () => {
 	let tempDir: string;
 
 	beforeEach(() => {
-		tempDir = path.join(os.tmpdir(), `pi-ttsr-gate-test-${Snowflake.next()}`);
+		tempDir = path.join(os.tmpdir(), `tau-ttsr-gate-test-${Snowflake.next()}`);
 		fs.mkdirSync(tempDir, { recursive: true });
 	});
 
@@ -1627,7 +1627,7 @@ describe("AgentSession TTSR resume gate", () => {
 
 		const sessionManager = SessionManager.inMemory();
 		const cwd = sessionManager.getCwd();
-		const ruleAbsPath = path.join(cwd, ".omp", "rules", "no-unwrap.md");
+		const ruleAbsPath = path.join(cwd, ".tau", "rules", "no-unwrap.md");
 		const expectedRel = path.relative(cwd, ruleAbsPath);
 		const rule: Rule = {
 			name: "no-unwrap",

@@ -6,15 +6,15 @@
 
 import * as fs from "node:fs/promises";
 import path from "node:path";
-import type { AgentEvent, AgentIdentity, AgentMessage, AgentTelemetryConfig } from "@oh-my-pi/pi-agent-core";
-import { AgentBusyError, EventLoopKeepalive, recordHandoff, resolveTelemetry } from "@oh-my-pi/pi-agent-core";
-import type { Api, Model, ServiceTierByFamily, Usage } from "@oh-my-pi/pi-ai";
-import { logger, popLoopPhase, prompt, pushLoopPhase, untilAborted } from "@oh-my-pi/pi-utils";
+import type { AgentEvent, AgentIdentity, AgentMessage, AgentTelemetryConfig } from "@tau/tau-agent-core";
+import { AgentBusyError, EventLoopKeepalive, recordHandoff, resolveTelemetry } from "@tau/tau-agent-core";
+import type { Api, Model, ServiceTierByFamily, Usage } from "@tau/tau-ai";
+import { logger, popLoopPhase, prompt, pushLoopPhase, untilAborted } from "@tau/tau-utils";
 import { ASYNC_JOB_MANAGER_SHUTDOWN_REASON, AsyncJobError, AsyncJobManager, type AsyncJobRunResult } from "../async";
 import type { Rule } from "../capability/rule";
 import type { EffectiveExtensionRoots } from "../capability/types";
 import { ModelRegistry } from "../config/model-registry";
-import { formatModelSelectorValue } from "@oh-my-pi/pi-tui/overlays/model-selector";
+import { formatModelSelectorValue } from "@tau/tau-tui/overlays/model-selector";
 import {
 	formatModelStringWithRouting,
 	resolveAgentAdvisorSelection,
@@ -43,7 +43,7 @@ import type { HindsightSessionState } from "../hindsight/state";
 import type { LocalProtocolOptions } from "../internal-urls";
 import { IrcBus } from "../irc/bus";
 import type { MCPManager } from "../mcp/manager";
-import type { MnemopiSessionState } from "../mnemopi/state";
+import type { MnemotauSessionState } from "../mnemotau/state";
 import { initializeExtensions } from "../modes/runtime-init";
 import subagentAsyncPendingTemplate from "../prompts/system/subagent-async-pending.md" with { type: "text" };
 import subagentSystemPromptTemplate from "../prompts/system/subagent-system-prompt.md" with { type: "text" };
@@ -58,18 +58,18 @@ import { ASYNC_RESULT_MESSAGE_TYPE } from "../session/async-job-delivery";
 import type { AuthStorage } from "../session/auth-storage";
 import { SKILL_PROMPT_MESSAGE_TYPE, USER_INTERRUPT_LABEL } from "../session/messages";
 import { hasConversationalHistory, SessionManager } from "../session/session-manager";
-import { truncateTail } from "@oh-my-pi/pi-tui/tools/streaming-output";
+import { truncateTail } from "@tau/tau-tui/tools/streaming-output";
 import {
 	type ConfiguredThinkingLevel,
 	prewalkWouldBeNoop,
 	resolveTaskEffortLevel,
 	type TaskEffort,
-} from "@oh-my-pi/pi-tui/thinking";
+} from "@tau/tau-tui/thinking";
 import type { ContextFileEntry, ToolSession } from "../tools";
 import { resolveEvalBackends } from "../tools/eval-backends";
 import { isIrcEnabled } from "../irc/messaging";
-import { LIST_STATUS_ORDER } from "@oh-my-pi/pi-tui/tools/irc";
-import { DEFAULT_PEER_ROSTER_LIMIT } from "@oh-my-pi/pi-tui/tools/irc";
+import { LIST_STATUS_ORDER } from "@tau/tau-tui/tools/irc";
+import { DEFAULT_PEER_ROSTER_LIMIT } from "@tau/tau-tui/tools/irc";
 import { normalizeSchema } from "../tools/jtd-to-json-schema";
 import { buildOutputValidator, summarizeValidationFailure } from "../tools/output-schema-validator";
 import { ToolAbortError } from "../tools/tool-errors";
@@ -101,11 +101,11 @@ import {
 	type StructuredSubagentSchemaSource,
 	type TaskToolDetails,
 	type YieldItem,
-} from "@oh-my-pi/pi-tui/tools/task";
+} from "@tau/tau-tui/tools/task";
 import { arrayValuedLabels } from "./yield-assembly";
-import { assembleYieldResult } from "@oh-my-pi/pi-tui/tools/task-yield-assembly";
+import { assembleYieldResult } from "@tau/tau-tui/tools/task-yield-assembly";
 
-export type { YieldItem } from "@oh-my-pi/pi-tui/tools/task";
+export type { YieldItem } from "@tau/tau-tui/tools/task";
 
 const MCP_CALL_TIMEOUT_MS = 60_000;
 const TASK_ABORT_CLEANUP_GRACE_MS = 10_000;
@@ -521,7 +521,7 @@ export interface ExecutorOptions {
 	preloadedPreparedExtensions?: readonly PreparedExtension[];
 	/**
 	 * Parent's discovered custom-tool source paths. Forwarded to skip the
-	 * `.omp/tools/` FS scan in the subagent; the subagent then re-binds each
+	 * `.tau/tools/` FS scan in the subagent; the subagent then re-binds each
 	 * tool against its own `CustomToolAPI` (cwd, exec, pushPendingAction, UI).
 	 */
 	preloadedCustomToolPaths?: ToolPathWithSource[];
@@ -551,7 +551,7 @@ export interface ExecutorOptions {
 	 */
 	parentArtifactManager?: ArtifactManager;
 	parentHindsightSessionState?: HindsightSessionState;
-	parentMnemopiSessionState?: MnemopiSessionState;
+	parentMnemotauSessionState?: MnemotauSessionState;
 	/** Parent agent's eval executor session id. Subagents reuse it so eval state is shared. */
 	parentEvalSessionId?: string;
 	/**
@@ -3835,7 +3835,7 @@ export async function runSubprocess(options: ExecutorOptions): Promise<SingleRes
 				// without leaking into another root session's traffic.
 				subagentEventBus: options.subagentEventBus,
 				parentHindsightSessionState: options.parentHindsightSessionState,
-				parentMnemopiSessionState: options.parentMnemopiSessionState,
+				parentMnemotauSessionState: options.parentMnemotauSessionState,
 				parentTaskPrefix: id,
 				parentAgentId: options.parentAgentId,
 				agentId: id,

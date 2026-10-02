@@ -1,10 +1,10 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import { stripVTControlCharacters } from "node:util";
-import { KeybindingsManager } from "@oh-my-pi/pi-tui/app-keybindings";
-import type { HookSelectorSlider } from "@oh-my-pi/pi-tui/overlays/hook-selector";
-import { PlanReviewOverlay } from "@oh-my-pi/pi-tui/overlays/plan-review-overlay";
-import { getThemeByName, setThemeInstance, theme } from "@oh-my-pi/pi-tui/theme";
-import { setKeybindings } from "@oh-my-pi/pi-tui";
+import { KeybindingsManager } from "@tau/tau-tui/app-keybindings";
+import type { HookSelectorSlider } from "@tau/tau-tui/overlays/hook-selector";
+import { PlanReviewOverlay } from "@tau/tau-tui/overlays/plan-review-overlay";
+import { getThemeByName, setThemeInstance, theme } from "@tau/tau-tui/theme";
+import { setKeybindings } from "@tau/tau-tui";
 
 const UP = "\x1b[A";
 const DOWN = "\x1b[B";

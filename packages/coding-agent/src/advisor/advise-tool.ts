@@ -1,6 +1,6 @@
-import { type } from "@oh-my-pi/omptype";
-import { type AdvisorSeverity, type AdvisorNote } from "@oh-my-pi/pi-tui/chat/messages";
-export { type AdvisorSeverity, type AdvisorNote, type AdvisorMessageDetails } from "@oh-my-pi/pi-tui/chat/messages";
+import { type } from "@tau/tautype";
+import { type AdvisorSeverity, type AdvisorNote } from "@tau/tau-tui/chat/messages";
+export { type AdvisorSeverity, type AdvisorNote, type AdvisorMessageDetails } from "@tau/tau-tui/chat/messages";
 import type {
 	AgentIdentity,
 	AgentTelemetryConfig,
@@ -8,8 +8,8 @@ import type {
 	AgentToolContext,
 	AgentToolResult,
 	AgentToolUpdateCallback,
-} from "@oh-my-pi/pi-agent-core";
-import { escapeXmlAttribute, escapeXmlText, logger } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-agent-core";
+import { escapeXmlAttribute, escapeXmlText, logger } from "@tau/tau-utils";
 import adviseDescription from "../prompts/advisor/advise-tool.md" with { type: "text" };
 import { AdvisorEmissionGuard, type AdvisorSuppressionReason, normalizeAdvisorNote } from "./emission-guard";
 
@@ -147,7 +147,7 @@ export function deriveAdvisorTelemetry(
  * read-only investigative set. The full available pool is every built tool the
  * session has (the advisor is a full agent); a config's `tools` selects from it.
  * The runtime build additionally admits `recall` into the default set when the
- * active memory backend built it (hindsight/mnemopi).
+ * active memory backend built it (hindsight/mnemotau).
  */
 export const ADVISOR_DEFAULT_TOOL_NAMES: ReadonlySet<string> = new Set(["read", "grep", "glob"]);
 

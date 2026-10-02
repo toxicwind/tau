@@ -1,11 +1,11 @@
 import { describe, expect, test, vi } from "bun:test";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { getSupportedEfforts } from "@oh-my-pi/pi-catalog/model-thinking";
-import { xaiOAuthModelManagerOptions } from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import type { FetchImpl } from "@oh-my-pi/pi-catalog/types";
+import { buildModel } from "@tau/tau-catalog/build";
+import { Effort } from "@tau/tau-catalog/effort";
+import { getSupportedEfforts } from "@tau/tau-catalog/model-thinking";
+import { xaiOAuthModelManagerOptions } from "@tau/tau-catalog/provider-models/openai-compat";
+import type { FetchImpl } from "@tau/tau-catalog/types";
 
-// Regression for https://github.com/can1357/oh-my-pi/issues/12697: xAI's
+// Regression for https://github.com/toxicwind/tau/issues/12697: xAI's
 // OAuth /v1/models returns bare `{id}` rows with no reasoning, limits, or
 // modality metadata. Without a curated seed, grok-4.7 refreshes into a sparse
 // entry (reasoning false, null limits) whose thinking picker offers only

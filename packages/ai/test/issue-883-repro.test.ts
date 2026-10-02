@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test";
-import { convertMessages } from "@oh-my-pi/pi-ai/providers/openai-completions";
-import type { AssistantMessage, Model, ModelSpec } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+import { convertMessages } from "@tau/tau-ai/providers/openai-completions";
+import type { AssistantMessage, Model, ModelSpec } from "@tau/tau-ai/types";
+import { buildModel } from "@tau/tau-catalog/build";
+import { getBundledModel } from "@tau/tau-catalog/models";
 
 interface OpenAICompletionAssistantWireMessage {
 	role: "assistant";

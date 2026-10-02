@@ -2,14 +2,14 @@ import { afterAll, beforeAll, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { StreamRedactor } from "@oh-my-pi/pi-coding-agent/stream/redactor";
-import { logger } from "@oh-my-pi/pi-utils";
+import { StreamRedactor } from "@tau/tau-coding-agent/stream/redactor";
+import { logger } from "@tau/tau-utils";
 
 let redactor: StreamRedactor;
 let cwd: string;
 
 beforeAll(async () => {
-	cwd = await fs.mkdtemp(path.join(os.tmpdir(), "omp-stream-redactor-"));
+	cwd = await fs.mkdtemp(path.join(os.tmpdir(), "tau-stream-redactor-"));
 	redactor = await StreamRedactor.load(cwd, []);
 });
 

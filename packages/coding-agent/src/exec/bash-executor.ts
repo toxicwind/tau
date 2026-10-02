@@ -3,13 +3,13 @@
  *
  * Uses brush-core via native bindings for shell execution.
  */
-import { ExponentialYield } from "@oh-my-pi/pi-agent-core/utils/yield";
-import type { ImageContent } from "@oh-my-pi/pi-ai";
-import { type MinimizerOptions, PtySession, Shell, type ShellRunResult } from "@oh-my-pi/pi-natives";
-import { $env } from "@oh-my-pi/pi-utils/env";
-import { isCmdShell, isExecutable, type ShellConfig } from "@oh-my-pi/pi-utils/procmgr";
+import { ExponentialYield } from "@tau/tau-agent-core/utils/yield";
+import type { ImageContent } from "@tau/tau-ai";
+import { type MinimizerOptions, PtySession, Shell, type ShellRunResult } from "@tau/tau-natives";
+import { $env } from "@tau/tau-utils/env";
+import { isCmdShell, isExecutable, type ShellConfig } from "@tau/tau-utils/procmgr";
 import { Settings, type ShellMinimizerSettings } from "../config/settings";
-import { type OutputArtifactError, OutputSink, type OutputSummary } from "@oh-my-pi/pi-tui/tools/streaming-output";
+import { type OutputArtifactError, OutputSink, type OutputSummary } from "@tau/tau-tui/tools/streaming-output";
 import { resolveOutputMaxColumns, resolveOutputSinkHeadBytes } from "../tools/output-meta";
 import { getOrCreateSnapshot } from "../utils/shell-snapshot";
 import { TerminalGraphicsDecoder } from "../utils/terminal-graphics";
@@ -630,7 +630,7 @@ export async function executeBash(command: string, options?: BashExecutorOptions
 			? deadlineTimeoutMs + NATIVE_TIMEOUT_FALLBACK_GRACE_MS
 			: deadlineTimeoutMs;
 		timeoutTimer = setTimeout(() => {
-			// Explicit timeouts are enforced inside pi-natives via `timeoutMs`.
+			// Explicit timeouts are enforced inside tau-natives via `timeoutMs`.
 			// Give native cancellation time to flush pipeline output and drain the
 			// N-API bridge before this result-only watchdog quarantines the run.
 			if (!nativeOwnsTimeout) {

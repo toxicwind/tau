@@ -1,11 +1,11 @@
 import { describe, expect, it } from "bun:test";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import MODELS_JSON from "@oh-my-pi/pi-catalog/models.json" with { type: "json" };
+import { Effort } from "@tau/tau-catalog/effort";
+import MODELS_JSON from "@tau/tau-catalog/models.json" with { type: "json" };
 import {
 	MODELS_DEV_PROVIDER_DESCRIPTORS,
 	mapModelsDevToModels,
-} from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import type { ModelSpec } from "@oh-my-pi/pi-catalog/types";
+} from "@tau/tau-catalog/provider-models/openai-compat";
+import type { ModelSpec } from "@tau/tau-catalog/types";
 import { applyGeneratedModelPolicies } from "../scripts/generated-policies";
 
 const XAI_MODELS_DEV_FIXTURE = {

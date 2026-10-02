@@ -1,9 +1,9 @@
-import { truncateHeadBytes } from "@oh-my-pi/pi-tui/tools/streaming-output";
+import { truncateHeadBytes } from "@tau/tau-tui/tools/streaming-output";
 import type { CDPSession, Frame, NewDocumentScriptEvaluation, Page, Realm, WebMCPTool } from "puppeteer-core";
 
 declare module "puppeteer-core" {
 	interface Frame {
-		/** Puppeteer's page-main JavaScript realm, retained by omp's pinned runtime patch. */
+		/** Puppeteer's page-main JavaScript realm, retained by tau's pinned runtime patch. */
 		mainRealm(): Realm;
 	}
 }

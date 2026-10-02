@@ -1,13 +1,13 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import type { Model } from "@oh-my-pi/pi-ai";
-import { createMockModel, type MockResponseSource } from "@oh-my-pi/pi-ai/providers/mock";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { convertToLlm } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
+import { Agent } from "@tau/tau-agent-core";
+import type { Model } from "@tau/tau-ai";
+import { createMockModel, type MockResponseSource } from "@tau/tau-ai/providers/mock";
+import { buildModel } from "@tau/tau-catalog/build";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import type { ExtensionRunner } from "@tau/tau-coding-agent/extensibility/extensions";
+import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import { convertToLlm } from "@tau/tau-coding-agent/session/messages";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
 
 // Contract: a per-turn system prompt returned by `before_agent_start`
 // ("Replace the system prompt for this turn") must reach the provider for the

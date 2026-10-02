@@ -1,11 +1,11 @@
 import { describe, expect, it } from "bun:test";
-import { Tokenizer } from "@oh-my-pi/pi-agent-core";
-import { computeNonMessageBreakdown, estimateToolSchemaTokens } from "@oh-my-pi/pi-tui/status-line/context-usage";
+import { Tokenizer } from "@tau/tau-agent-core";
+import { computeNonMessageBreakdown, estimateToolSchemaTokens } from "@tau/tau-tui/status-line/context-usage";
 import { applyToolProxy } from "../../src/extensibility/tool-proxy";
 
 const tokenizer = new Tokenizer();
 
-/** External arktype copies expose bind on callable schemas, unlike omptype. */
+/** External arktype copies expose bind on callable schemas, unlike tautype. */
 function bindCapableSchema() {
 	return Object.assign((value: unknown) => value, {
 		toJsonSchema: () => ({ type: "object", properties: { a: { type: "string" } } }),

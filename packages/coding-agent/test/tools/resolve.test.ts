@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { getThemeByName } from "@oh-my-pi/pi-tui/theme";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { getThemeByName } from "@tau/tau-tui/theme";
+import type { ToolSession } from "@tau/tau-coding-agent/tools";
 import {
 	dispatchResolutionDevice,
 	isPreviewResolutionToolCall,
@@ -11,14 +11,14 @@ import {
 	REJECT_DEVICE_PATH,
 	RESOLVE_DEVICE_PATH,
 	writeDeviceDispatch,
-} from "@oh-my-pi/pi-coding-agent/tools/resolve";
+} from "@tau/tau-coding-agent/tools/resolve";
 import {
 	PROPOSE_DEVICE_NAME,
 	REJECT_DEVICE_NAME,
 	RESOLVE_DEVICE_NAME,
 	resolveRenderer,
-} from "@oh-my-pi/pi-tui/tools/resolve";
-import { sanitizeText } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-tui/tools/resolve";
+import { sanitizeText } from "@tau/tau-utils";
 
 function createSession(
 	options: {

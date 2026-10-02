@@ -1,7 +1,7 @@
 /**
- * CLI handler for `omp worktree` — list and clean up agent-managed worktrees.
+ * CLI handler for `tau worktree` — list and clean up agent-managed worktrees.
  *
- * Layout under `~/.omp/wt/`:
+ * Layout under `~/.tau/wt/`:
  *
  *   - **PR-checkout worktrees** (`tools/gh.ts`): a regular git worktree dir
  *     containing a `.git` *file* that points back at
@@ -9,7 +9,7 @@
  *   - **Task-isolation dirs** (`task/worktree.ts`): a wrapper dir with a
  *     compact `m` subdir mounted/cloned by `natives.isoStart`. Legacy `merged`
  *     subdirs are still recognized. `ensureIsolation` writes an ownership
- *     marker naming the live omp process; a
+ *     marker naming the live tau process; a
  *     sandbox whose owner is still running is reported `live` and never
  *     removed without `--all`, so `clear` reclaims only crashed leftovers.
  *
@@ -18,10 +18,10 @@
  */
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import * as natives from "@oh-my-pi/pi-natives";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import { getWorktreesDir, isEnoent } from "@oh-my-pi/pi-utils";
-import chalk from "@oh-my-pi/pi-utils/chalk";
+import * as natives from "@tau/tau-natives";
+import * as vcs from "@tau/tau-natives/vcs";
+import { getWorktreesDir, isEnoent } from "@tau/tau-utils";
+import chalk from "@tau/tau-utils/chalk";
 import { Settings } from "../config/settings";
 import { hasLiveIsolationOwner, ISOLATION_OWNER_FILE, readRetainedMountBackend } from "../task/isolation-ownership";
 import { formatIsolationBackend, parseIsolationBackend } from "../task/worktree";
@@ -31,7 +31,7 @@ type WorktreeKind = "pr-checkout" | "task-isolation" | "empty" | "stray";
 const TASK_ISOLATION_MOUNT_DIRS = ["m", "merged"] as const;
 
 export interface WorktreeEntry {
-	/** Absolute path to the worktree dir (or stray container) under `~/.omp/wt/`. */
+	/** Absolute path to the worktree dir (or stray container) under `~/.tau/wt/`. */
 	path: string;
 	/** Classification of what we found on disk. */
 	kind: WorktreeKind;
@@ -39,7 +39,7 @@ export interface WorktreeEntry {
 	parentRepo?: string;
 	/** Branch name extracted from the parent's tracking file, when available. */
 	branch?: string;
-	/** When set, the entry is unhealthy and `omp worktree clear` will remove it. */
+	/** When set, the entry is unhealthy and `tau worktree clear` will remove it. */
 	orphanReason?: string;
 }
 
@@ -288,7 +288,7 @@ async function scanWorktrees(): Promise<WorktreeEntry[]> {
 			continue;
 		}
 
-		// Legacy nesting: ~/.omp/wt/<encoded-project>/<branch-or-id>
+		// Legacy nesting: ~/.tau/wt/<encoded-project>/<branch-or-id>
 		let children: string[];
 		try {
 			children = await fs.readdir(dir);

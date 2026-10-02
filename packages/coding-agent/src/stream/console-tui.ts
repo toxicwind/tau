@@ -9,9 +9,9 @@ import {
 	type Component,
 	type Focusable,
 	TUI,
-} from "@oh-my-pi/pi-tui";
-import chalk from "@oh-my-pi/pi-utils/chalk";
-import type { StreamChatMessage } from "@oh-my-pi/pi-wire";
+} from "@tau/tau-tui";
+import chalk from "@tau/tau-utils/chalk";
+import type { StreamChatMessage } from "@tau/tau-wire";
 import type { StreamConsoleEvent, StreamMuxHost } from "./streamer";
 
 const HISTORY_LIMIT = 50;

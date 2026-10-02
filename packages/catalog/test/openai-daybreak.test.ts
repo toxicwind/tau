@@ -1,10 +1,10 @@
 import { describe, expect, test } from "bun:test";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { getSupportedEfforts } from "@oh-my-pi/pi-catalog/model-thinking";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { seedModels } from "@oh-my-pi/pi-catalog/compat/providers";
-import type { Api, ModelSpec } from "@oh-my-pi/pi-catalog/types";
+import { buildModel } from "@tau/tau-catalog/build";
+import { Effort } from "@tau/tau-catalog/effort";
+import { getSupportedEfforts } from "@tau/tau-catalog/model-thinking";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import { seedModels } from "@tau/tau-catalog/compat/providers";
+import type { Api, ModelSpec } from "@tau/tau-catalog/types";
 import { applyGeneratedModelPolicies } from "../scripts/generated-policies";
 
 const DAYBREAK_EFFORTS = [Effort.Low, Effort.Medium, Effort.High, Effort.XHigh, Effort.Max];

@@ -11,7 +11,7 @@ function buildSpawnEnv(shell:string): Record<string,string> {
   const raw = {
    ...filterChildShellEnv(Bun.env),
     SHELL: shell, GIT_EDITOR:"true", GPG_TTY:"not a tty",
-    OMPCODE:"1", CLAUDECODE:"1",
+    TAUCODE:"1", CLAUDECODE:"1",
    ...(noCI?{}:{CI:"true"})
   };
   return Object.fromEntries(

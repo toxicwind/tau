@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
-import { configureCredentialRedaction, transformMessages } from "@oh-my-pi/pi-ai/providers/transform-messages";
-import type { AssistantMessage, Message, Model, ToolCall, ToolResultMessage } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import { configureCredentialRedaction, transformMessages } from "@tau/tau-ai/providers/transform-messages";
+import type { AssistantMessage, Message, Model, ToolCall, ToolResultMessage } from "@tau/tau-ai/types";
+import { buildModel } from "@tau/tau-catalog/build";
 
 function makeModel(): Model<"openai-responses"> {
 	return buildModel({

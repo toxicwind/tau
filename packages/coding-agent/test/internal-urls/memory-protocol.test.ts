@@ -2,28 +2,28 @@ import { afterAll, afterEach, beforeEach, describe, expect, it } from "bun:test"
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { InternalUrlRouter } from "@oh-my-pi/pi-coding-agent/internal-urls";
-import { splitMemoryGlobPattern } from "@oh-my-pi/pi-coding-agent/internal-urls/memory-protocol";
-import { getMemoryRoot } from "@oh-my-pi/pi-coding-agent/memories";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { InternalUrlRouter } from "@tau/tau-coding-agent/internal-urls";
+import { splitMemoryGlobPattern } from "@tau/tau-coding-agent/internal-urls/memory-protocol";
+import { getMemoryRoot } from "@tau/tau-coding-agent/memories";
 import {
-	loadMnemopi,
-	loadMnemopiCore,
-	MnemopiSessionState,
-	setMnemopiSessionState,
-} from "@oh-my-pi/pi-coding-agent/mnemopi/state";
-import { getInternalUrlSuggestions } from "@oh-my-pi/pi-tui/prompt/internal-url-autocomplete";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { GlobTool } from "@oh-my-pi/pi-coding-agent/tools/glob";
-import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
-import { getAgentDir, removeWithRetries, setAgentDir, TempDir } from "@oh-my-pi/pi-utils";
+	loadMnemotau,
+	loadMnemotauCore,
+	MnemotauSessionState,
+	setMnemotauSessionState,
+} from "@tau/tau-coding-agent/mnemotau/state";
+import { getInternalUrlSuggestions } from "@tau/tau-tui/prompt/internal-url-autocomplete";
+import { AgentRegistry } from "@tau/tau-coding-agent/registry/agent-registry";
+import type { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import type { ToolSession } from "@tau/tau-coding-agent/tools";
+import { GlobTool } from "@tau/tau-coding-agent/tools/glob";
+import { ReadTool } from "@tau/tau-coding-agent/tools/read";
+import { getAgentDir, removeWithRetries, setAgentDir, TempDir } from "@tau/tau-utils";
 
-// Mnemopi state is loaded lazily; preload so `new MnemopiSessionState(...)` can
+// Mnemotau state is loaded lazily; preload so `new MnemotauSessionState(...)` can
 // resolve the module synchronously in the fixtures below.
-await Promise.all([loadMnemopi(), loadMnemopiCore()]);
+await Promise.all([loadMnemotau(), loadMnemotauCore()]);
 interface MemoryFixture {
 	cwd: string;
 	memoryRoot: string;
@@ -380,7 +380,7 @@ describe("MemoryProtocolHandler", () => {
 		}
 	});
 
-	it("throws for unknown memory namespace when no mnemopi backend is active", async () => {
+	it("throws for unknown memory namespace when no mnemotau backend is active", async () => {
 		await withMemoryFixture(async () => {
 			const router = InternalUrlRouter.instance();
 			await expect(router.resolve("memory://other/memory_summary.md")).rejects.toThrow(
@@ -516,19 +516,19 @@ describe("MemoryProtocolHandler", () => {
 	});
 });
 
-interface MnemopiFixture {
-	state: MnemopiSessionState;
+interface MnemotauFixture {
+	state: MnemotauSessionState;
 	dbDir: TempDir;
 	session: AgentSession;
 }
 
-let sharedMnemopiFixture: MnemopiFixture | undefined;
+let sharedMnemotauFixture: MnemotauFixture | undefined;
 
-async function withMnemopiSession(fn: (fixture: MnemopiFixture) => Promise<void>): Promise<void> {
-	if (!sharedMnemopiFixture) {
-		const dbDir = TempDir.createSync("memory-protocol-mnemopi-");
+async function withMnemotauSession(fn: (fixture: MnemotauFixture) => Promise<void>): Promise<void> {
+	if (!sharedMnemotauFixture) {
+		const dbDir = TempDir.createSync("memory-protocol-mnemotau-");
 		const config = {
-			dbPath: dbDir.join("mnemopi.db"),
+			dbPath: dbDir.join("mnemotau.db"),
 			bank: "test-bank",
 			autoRecall: false,
 			autoRetain: false,
@@ -546,28 +546,28 @@ async function withMnemopiSession(fn: (fixture: MnemopiFixture) => Promise<void>
 				llm: false,
 			},
 			llmMode: "none" as const,
-		} as unknown as ConstructorParameters<typeof MnemopiSessionState>[0]["config"];
+		} as unknown as ConstructorParameters<typeof MnemotauSessionState>[0]["config"];
 		const session = {
-			sessionId: "test-mnemopi",
+			sessionId: "test-mnemotau",
 			sessionManager: {
 				getEntries: () => [],
 				getCwd: () => dbDir.path(),
 				getArtifactsDir: () => null,
-				getSessionId: () => "test-mnemopi",
+				getSessionId: () => "test-mnemotau",
 			},
 			emitNotice: () => {},
 			getHindsightSessionState: () => undefined,
-			settings: Settings.isolated({ "memory.backend": "mnemopi" }),
+			settings: Settings.isolated({ "memory.backend": "mnemotau" }),
 		} as unknown as AgentSession;
-		const state = new MnemopiSessionState({ sessionId: "test-mnemopi", config, session });
-		setMnemopiSessionState(session, state);
-		sharedMnemopiFixture = { state, dbDir, session };
+		const state = new MnemotauSessionState({ sessionId: "test-mnemotau", config, session });
+		setMnemotauSessionState(session, state);
+		sharedMnemotauFixture = { state, dbDir, session };
 	}
 
-	const fixture = sharedMnemopiFixture;
+	const fixture = sharedMnemotauFixture;
 	AgentRegistry.global().register({
-		id: "test-mnemopi",
-		displayName: "test-mnemopi",
+		id: "test-mnemotau",
+		displayName: "test-mnemotau",
 		kind: "main",
 		session: fixture.session,
 		sessionFile: null,
@@ -576,13 +576,13 @@ async function withMnemopiSession(fn: (fixture: MnemopiFixture) => Promise<void>
 }
 
 afterAll(async () => {
-	if (!sharedMnemopiFixture) return;
-	await sharedMnemopiFixture.state.dispose({ consolidate: false });
-	await sharedMnemopiFixture.dbDir.remove();
-	sharedMnemopiFixture = undefined;
+	if (!sharedMnemotauFixture) return;
+	await sharedMnemotauFixture.state.dispose({ consolidate: false });
+	await sharedMnemotauFixture.dbDir.remove();
+	sharedMnemotauFixture = undefined;
 });
 
-describe("MemoryProtocolHandler — mnemopi bridge (issue #4443)", () => {
+describe("MemoryProtocolHandler — mnemotau bridge (issue #4443)", () => {
 	beforeEach(() => {
 		AgentRegistry.resetGlobalForTests();
 		InternalUrlRouter.resetForTests();
@@ -593,8 +593,8 @@ describe("MemoryProtocolHandler — mnemopi bridge (issue #4443)", () => {
 		InternalUrlRouter.resetForTests();
 	});
 
-	it("resolves memory://<id> to the full mnemopi memory row", async () => {
-		await withMnemopiSession(async ({ state }) => {
+	it("resolves memory://<id> to the full mnemotau memory row", async () => {
+		await withMnemotauSession(async ({ state }) => {
 			const head = "Decision record: the deploy pipeline uses blue-green cutover. ";
 			const body = "Detail sentence about rollout invariants. ".repeat(20);
 			const tail = "CRITICAL-TAIL: rollback requires restoring the previous DNS weight map first.";
@@ -613,17 +613,17 @@ describe("MemoryProtocolHandler — mnemopi bridge (issue #4443)", () => {
 		});
 	});
 
-	it("throws a clear error when the mnemopi id is not stored in any scoped bank", async () => {
-		await withMnemopiSession(async () => {
+	it("throws a clear error when the mnemotau id is not stored in any scoped bank", async () => {
+		await withMnemotauSession(async () => {
 			const router = InternalUrlRouter.instance();
 			await expect(router.resolve("memory://deadbeefdeadbeef")).rejects.toThrow(
-				/Mnemopi memory deadbeefdeadbeef not found/,
+				/Mnemotau memory deadbeefdeadbeef not found/,
 			);
 		});
 	});
 
 	it("resolves memory://<fact-id> to a read-only fact row (issue #4725)", async () => {
-		await withMnemopiSession(async ({ state }) => {
+		await withMnemotauSession(async ({ state }) => {
 			const beam = state.memory.beam;
 			beam.db
 				.prepare(
@@ -649,7 +649,7 @@ describe("MemoryProtocolHandler — mnemopi bridge (issue #4443)", () => {
 	});
 
 	it("reports not_editable (not not_found) for memory_edit ops on a fact id (issue #4725)", async () => {
-		await withMnemopiSession(async ({ state }) => {
+		await withMnemotauSession(async ({ state }) => {
 			const beam = state.memory.beam;
 			beam.db
 				.prepare(
@@ -675,8 +675,8 @@ describe("MemoryProtocolHandler — mnemopi bridge (issue #4443)", () => {
 		});
 	});
 
-	it("routes memory://root to the file-backed summary even when mnemopi is active", async () => {
-		await withMnemopiSession(async () => {
+	it("routes memory://root to the file-backed summary even when mnemotau is active", async () => {
+		await withMnemotauSession(async () => {
 			const router = InternalUrlRouter.instance();
 			await expect(router.resolve("memory://root")).rejects.toThrow(
 				"Memory artifacts are not available for this project yet. Run a session with memories enabled first.",
@@ -685,30 +685,30 @@ describe("MemoryProtocolHandler — mnemopi bridge (issue #4443)", () => {
 	});
 
 	it("binds memory://<id> to the calling session's own bank", async () => {
-		await withMnemopiSession(async ({ state, dbDir }) => {
-			const peerDbDir = TempDir.createSync("memory-protocol-mnemopi-peer-");
-			let peerState: MnemopiSessionState | undefined;
+		await withMnemotauSession(async ({ state, dbDir }) => {
+			const peerDbDir = TempDir.createSync("memory-protocol-mnemotau-peer-");
+			let peerState: MnemotauSessionState | undefined;
 			try {
 				const peerSession = {
-					sessionId: "peer-mnemopi",
+					sessionId: "peer-mnemotau",
 					sessionManager: {
 						getEntries: () => [],
 						getCwd: () => peerDbDir.path(),
 						getArtifactsDir: () => null,
-						getSessionId: () => "peer-mnemopi",
+						getSessionId: () => "peer-mnemotau",
 					},
 					emitNotice: () => {},
-					settings: Settings.isolated({ "memory.backend": "mnemopi" }),
+					settings: Settings.isolated({ "memory.backend": "mnemotau" }),
 				} as unknown as AgentSession;
-				peerState = new MnemopiSessionState({
-					sessionId: "peer-mnemopi",
-					config: { ...state.config, dbPath: peerDbDir.join("mnemopi.db"), bank: "peer-bank" },
+				peerState = new MnemotauSessionState({
+					sessionId: "peer-mnemotau",
+					config: { ...state.config, dbPath: peerDbDir.join("mnemotau.db"), bank: "peer-bank" },
 					session: peerSession,
 				});
-				setMnemopiSessionState(peerSession, peerState);
+				setMnemotauSessionState(peerSession, peerState);
 				AgentRegistry.global().register({
-					id: "peer-mnemopi",
-					displayName: "peer-mnemopi",
+					id: "peer-mnemotau",
+					displayName: "peer-mnemotau",
 					kind: "main",
 					session: peerSession,
 					sessionFile: null,
@@ -716,7 +716,7 @@ describe("MemoryProtocolHandler — mnemopi bridge (issue #4443)", () => {
 
 				const ownId = state.rememberInScope("caller bank row");
 				const peerId = peerState.rememberInScope("peer bank row");
-				if (!ownId || !peerId) throw new Error("Expected both mnemopi fixtures to store a memory id");
+				if (!ownId || !peerId) throw new Error("Expected both mnemotau fixtures to store a memory id");
 
 				const router = InternalUrlRouter.instance();
 				await expect(router.resolve(`memory://${ownId}`, { cwd: dbDir.path() })).resolves.toMatchObject({
@@ -736,10 +736,10 @@ describe("MemoryProtocolHandler — mnemopi bridge (issue #4443)", () => {
 	});
 
 	it("keeps peer banks unreachable when a cwd names two live sessions", async () => {
-		await withMnemopiSession(async ({ state, dbDir }) => {
-			const twinDir = TempDir.createSync("memory-protocol-mnemopi-twin-");
+		await withMnemotauSession(async ({ state, dbDir }) => {
+			const twinDir = TempDir.createSync("memory-protocol-mnemotau-twin-");
 			const previousAgentDir = getAgentDir();
-			let twinState: MnemopiSessionState | undefined;
+			let twinState: MnemotauSessionState | undefined;
 			try {
 				const sharedCwd = dbDir.path();
 				setAgentDir(twinDir.join("agent"));
@@ -748,40 +748,40 @@ describe("MemoryProtocolHandler — mnemopi bridge (issue #4443)", () => {
 				await Bun.write(path.join(memoryRoot, "memory_summary.md"), "shared cwd summary");
 
 				const twinSession = {
-					sessionId: "twin-mnemopi",
+					sessionId: "twin-mnemotau",
 					sessionManager: {
 						getEntries: () => [],
 						getCwd: () => sharedCwd,
 						getArtifactsDir: () => null,
-						getSessionId: () => "twin-mnemopi",
+						getSessionId: () => "twin-mnemotau",
 					},
 					emitNotice: () => {},
-					settings: Settings.isolated({ "memory.backend": "mnemopi" }),
+					settings: Settings.isolated({ "memory.backend": "mnemotau" }),
 				} as unknown as AgentSession;
-				twinState = new MnemopiSessionState({
-					sessionId: "twin-mnemopi",
-					config: { ...state.config, dbPath: twinDir.join("mnemopi.db"), bank: "twin-bank" },
+				twinState = new MnemotauSessionState({
+					sessionId: "twin-mnemotau",
+					config: { ...state.config, dbPath: twinDir.join("mnemotau.db"), bank: "twin-bank" },
 					session: twinSession,
 				});
-				setMnemopiSessionState(twinSession, twinState);
+				setMnemotauSessionState(twinSession, twinState);
 				AgentRegistry.global().register({
-					id: "twin-mnemopi",
-					displayName: "twin-mnemopi",
+					id: "twin-mnemotau",
+					displayName: "twin-mnemotau",
 					kind: "main",
 					session: twinSession,
 					sessionFile: null,
 				});
 				const twinId = twinState.rememberInScope("twin bank row");
-				if (!twinId) throw new Error("Expected the twin mnemopi fixture to store a memory id");
+				if (!twinId) throw new Error("Expected the twin mnemotau fixture to store a memory id");
 
 				// Two live sessions share this cwd, so it names no single caller.
-				const context = { cwd: sharedCwd, settings: Settings.isolated({ "memory.backend": "mnemopi" }) };
+				const context = { cwd: sharedCwd, settings: Settings.isolated({ "memory.backend": "mnemotau" }) };
 				const router = InternalUrlRouter.instance();
 				await expect(router.resolve(`memory://${twinId}`, context)).rejects.toThrow(
 					/not found in the calling session's scoped bank/,
 				);
 				await expect(router.resolve("memory://root", context)).rejects.toThrow(
-					"File-backed memory artifacts only exist with memory.backend=local (active backend: mnemopi).",
+					"File-backed memory artifacts only exist with memory.backend=local (active backend: mnemotau).",
 				);
 			} finally {
 				setAgentDir(previousAgentDir);
@@ -792,7 +792,7 @@ describe("MemoryProtocolHandler — mnemopi bridge (issue #4443)", () => {
 	});
 
 	it("offers the calling session's own memory id to prompt autocomplete when a child shares its cwd", async () => {
-		await withMnemopiSession(async ({ dbDir }) => {
+		await withMnemotauSession(async ({ dbDir }) => {
 			const sharedCwd = dbDir.path();
 			const childSessionFile = path.join(sharedCwd, "autocomplete-child.jsonl");
 			const childSession = {
@@ -808,7 +808,7 @@ describe("MemoryProtocolHandler — mnemopi bridge (issue #4443)", () => {
 				id: "autocomplete-child",
 				displayName: "autocomplete-child",
 				kind: "sub",
-				parentId: "test-mnemopi",
+				parentId: "test-mnemotau",
 				session: childSession,
 				sessionFile: childSessionFile,
 			});
@@ -820,7 +820,7 @@ describe("MemoryProtocolHandler — mnemopi bridge (issue #4443)", () => {
 			// Naming the session that will resolve the URL offers its own bank again.
 			const bound = await getInternalUrlSuggestions("memory://", undefined, undefined, () => ({
 				cwd: sharedCwd,
-				sessionId: "test-mnemopi",
+				sessionId: "test-mnemotau",
 			}));
 			expect(bound?.items.map(item => item.value)).toContain("memory://<memory-id>");
 
@@ -843,8 +843,8 @@ describe("MemoryProtocolHandler — mnemopi bridge (issue #4443)", () => {
 		});
 	});
 
-	it("answers a same-cwd hindsight caller from its own backend, not the mnemopi peer", async () => {
-		await withMnemopiSession(async ({ state, dbDir }) => {
+	it("answers a same-cwd hindsight caller from its own backend, not the mnemotau peer", async () => {
+		await withMnemotauSession(async ({ state, dbDir }) => {
 			const childSessionFile = path.join(dbDir.path(), "hindsight-child.jsonl");
 			const childSession = {
 				sessionFile: childSessionFile,
@@ -859,13 +859,13 @@ describe("MemoryProtocolHandler — mnemopi bridge (issue #4443)", () => {
 				id: "hindsight-child",
 				displayName: "hindsight-child",
 				kind: "sub",
-				parentId: "test-mnemopi",
+				parentId: "test-mnemotau",
 				session: childSession,
 				sessionFile: childSessionFile,
 			});
 
-			const id = state.rememberInScope("mnemopi peer row");
-			if (!id) throw new Error("Expected the mnemopi fixture to store a memory id");
+			const id = state.rememberInScope("mnemotau peer row");
+			if (!id) throw new Error("Expected the mnemotau fixture to store a memory id");
 
 			await expect(
 				InternalUrlRouter.instance().resolve(`memory://${id}`, {
@@ -877,14 +877,14 @@ describe("MemoryProtocolHandler — mnemopi bridge (issue #4443)", () => {
 	});
 
 	it("fails closed when the named caller is no longer registered", async () => {
-		await withMnemopiSession(async ({ state, dbDir }) => {
+		await withMnemotauSession(async ({ state, dbDir }) => {
 			const id = state.rememberInScope("row of a live peer");
-			if (!id) throw new Error("Expected the mnemopi fixture to store a memory id");
+			if (!id) throw new Error("Expected the mnemotau fixture to store a memory id");
 			const context = {
 				cwd: dbDir.path(),
 				sessionId: "retired-session",
 				sessionFile: path.join(dbDir.path(), "retired.jsonl"),
-				settings: Settings.isolated({ "memory.backend": "mnemopi" }),
+				settings: Settings.isolated({ "memory.backend": "mnemotau" }),
 			};
 
 			const router = InternalUrlRouter.instance();
@@ -896,7 +896,7 @@ describe("MemoryProtocolHandler — mnemopi bridge (issue #4443)", () => {
 
 /**
  * Register a live session simulating memory.backend=hindsight: it exposes a
- * Hindsight state but no mnemopi state, so the handler must treat memory://<id>
+ * Hindsight state but no mnemotau state, so the handler must treat memory://<id>
  * as unaddressable and return a corrective pointer (issue #7587).
  */
 function withHindsightSession(fn: () => Promise<void>): Promise<void> {
@@ -933,8 +933,8 @@ describe("MemoryProtocolHandler — hindsight (issue #7587)", () => {
 		});
 	});
 
-	it("uses the calling session backend when hindsight and mnemopi sessions coexist", async () => {
-		await withMnemopiSession(async () => {
+	it("uses the calling session backend when hindsight and mnemotau sessions coexist", async () => {
+		await withMnemotauSession(async () => {
 			await withHindsightSession(async () => {
 				const router = InternalUrlRouter.instance();
 				const settings = Settings.isolated({ "memory.backend": "hindsight" });

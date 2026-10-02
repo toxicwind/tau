@@ -1,9 +1,9 @@
 import { describe, expect, it } from "bun:test";
-import { Effort, type FetchImpl } from "@oh-my-pi/pi-ai";
-import { streamSimple } from "@oh-my-pi/pi-ai/stream";
-import type { Context, Model, SimpleStreamOptions } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import type { ModelSpec } from "@oh-my-pi/pi-catalog/types";
+import { Effort, type FetchImpl } from "@tau/tau-ai";
+import { streamSimple } from "@tau/tau-ai/stream";
+import type { Context, Model, SimpleStreamOptions } from "@tau/tau-ai/types";
+import { buildModel } from "@tau/tau-catalog/build";
+import type { ModelSpec } from "@tau/tau-catalog/types";
 
 interface CapturedPayload {
 	reasoning?: { effort?: string; enabled?: boolean };

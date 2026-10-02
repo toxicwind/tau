@@ -1,11 +1,11 @@
 import { describe, expect, it } from "bun:test";
-import { getDashboardStats, getFolderStats } from "@oh-my-pi/omp-stats/aggregator";
-import { initDb, insertMessageStats } from "@oh-my-pi/omp-stats/db";
-import type { FolderStats, MessageStats } from "@oh-my-pi/omp-stats/types";
+import { getDashboardStats, getFolderStats } from "@tau/tau-stats/aggregator";
+import { initDb, insertMessageStats } from "@tau/tau-stats/db";
+import type { FolderStats, MessageStats } from "@tau/tau-stats/types";
 import { handleApi } from "../src/server";
 import { installStatsTestIsolation } from "./helpers/temp-agent";
 
-installStatsTestIsolation("@pi-stats-db-range-");
+installStatsTestIsolation("@tau-stats-db-range-");
 
 function makeMessage(timestamp: number, entryId: string, folder = "/tmp/project"): MessageStats {
 	return {

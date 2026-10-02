@@ -1,8 +1,8 @@
-import { parseXdTopicUrl, parseXdUrl } from "@oh-my-pi/pi-tui/tools/xd-url";
+import { parseXdTopicUrl, parseXdUrl } from "@tau/tau-tui/tools/xd-url";
 import type { InternalResource, InternalUrl, ProtocolHandler, ResolveContext, WriteContext } from "./types";
 
 // Re-exported so extensions can parse `xd://` targets through the module that
-// owns the protocol. `omp-semantic-policy` imports `parseXdUrl` from here to
+// owns the protocol. `tau-semantic-policy` imports `parseXdUrl` from here to
 // decide whether a `write` path is a device; without the re-export the import
 // dies with "Export named 'parseXdUrl' not found" at extension load.
 export { parseXdTopicUrl, parseXdUrl };

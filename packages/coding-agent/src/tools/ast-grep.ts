@@ -1,14 +1,14 @@
-import type { AstGrepToolDetails } from "@oh-my-pi/pi-tui/tools/ast-grep";
+import type { AstGrepToolDetails } from "@tau/tau-tui/tools/ast-grep";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import type { AgentTool, AgentToolContext, AgentToolResult, AgentToolUpdateCallback } from "@oh-my-pi/pi-agent-core";
-import type { ToolExample } from "@oh-my-pi/pi-ai";
-import { type AstFindMatch, astGrep } from "@oh-my-pi/pi-natives";
+import { type } from "@tau/tautype";
+import type { AgentTool, AgentToolContext, AgentToolResult, AgentToolUpdateCallback } from "@tau/tau-agent-core";
+import type { ToolExample } from "@tau/tau-ai";
+import { type AstFindMatch, astGrep } from "@tau/tau-natives";
 
-import { prompt, untilAborted } from "@oh-my-pi/pi-utils";
+import { prompt, untilAborted } from "@tau/tau-utils";
 import { getEditStore } from "../edit/store";
 
-import { formatHashlineHeader } from "@oh-my-pi/pi-tui/tools/hashline-format";
+import { formatHashlineHeader } from "@tau/tau-tui/tools/hashline-format";
 
 import astGrepDescription from "../prompts/tools/ast-grep.md" with { type: "text" };
 import { sessionDelegationBias } from "../task/prompt-policy";
@@ -18,14 +18,14 @@ import { resolveFileDisplayMode } from "../utils/file-display-mode";
 import type { ToolSession } from ".";
 import { materializeReadUrlToFile, parseReadUrlTarget } from "./fetch";
 import { createFileRecorder, formatResultPath } from "./file-recorder";
-import { formatGroupedFiles } from "@oh-my-pi/pi-tui/tools/grouped-file-output";
-import { formatMatchLine } from "@oh-my-pi/pi-tui/tools/match-line-format";
+import { formatGroupedFiles } from "@tau/tau-tui/tools/grouped-file-output";
+import { formatMatchLine } from "@tau/tau-tui/tools/match-line-format";
 
 import { resolveToolSearchScope } from "./path-utils";
-import { toPathList } from "@oh-my-pi/pi-tui/render/render-utils";
+import { toPathList } from "@tau/tau-tui/render/render-utils";
 import { isRawSelector } from "./read-selector";
-import { capParseErrors, formatCodeFrameLine, formatParseErrors } from "@oh-my-pi/pi-tui/render/render-utils";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { capParseErrors, formatCodeFrameLine, formatParseErrors } from "@tau/tau-tui/render/render-utils";
+import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 import { toolResult } from "./tool-result";
 
 const astGrepSchema = type({

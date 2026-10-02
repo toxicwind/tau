@@ -6,8 +6,8 @@ The critical distinction: **notebook support is file conversion/editing, not not
 
 ## Implementation files
 
-- [`crates/pi-edit/src/notebook.rs`](../crates/pi-edit/src/notebook.rs)
-- [`crates/pi-edit/src/files.rs`](../crates/pi-edit/src/files.rs)
+- [`crates/tau-edit/src/notebook.rs`](../crates/tau-edit/src/notebook.rs)
+- [`crates/tau-edit/src/files.rs`](../crates/tau-edit/src/files.rs)
 - [`src/tools/read.ts`](../packages/coding-agent/src/tools/read.ts)
 - [`src/tools/eval.ts`](../packages/coding-agent/src/tools/eval.ts)
 - [`src/eval/py/executor.ts`](../packages/coding-agent/src/eval/py/executor.ts)
@@ -16,7 +16,7 @@ The critical distinction: **notebook support is file conversion/editing, not not
 
 ## 1) Runtime boundary: editing vs executing
 
-## `.ipynb` file conversion (`crates/pi-edit/src/notebook.rs`)
+## `.ipynb` file conversion (`crates/tau-edit/src/notebook.rs`)
 
 - `read` treats `.ipynb` files as notebooks unless the selector is `:raw`.
 - The default notebook view is editable text with markers:
@@ -143,7 +143,7 @@ Structured outputs captured separately include:
 
 - `application/json` -> JSON display output
 - `image/png` / `image/jpeg` -> image output
-- `application/x-omp-status` -> status event
+- `application/x-tau-status` -> status event
 
 Cancellation/timeout:
 

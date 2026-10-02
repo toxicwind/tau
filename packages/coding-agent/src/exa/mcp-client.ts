@@ -1,5 +1,5 @@
-import type { TSchema } from "@oh-my-pi/pi-ai";
-import { $env, isRecord, logger } from "@oh-my-pi/pi-utils";
+import type { TSchema } from "@tau/tau-ai";
+import { $env, isRecord, logger } from "@tau/tau-utils";
 import type { CustomTool, CustomToolResult } from "../extensibility/custom-tools/types";
 import { type CallMcpOptions, callMCP } from "../mcp/json-rpc";
 import type { ExaSearchResponse, MCPTool, MCPToolWrapperConfig } from "./types";

@@ -1,11 +1,11 @@
 import { describe, expect, it, vi } from "bun:test";
-import { streamAnthropic } from "@oh-my-pi/pi-ai/providers/anthropic";
-import { transformRequestBody } from "@oh-my-pi/pi-ai/providers/openai-codex/request-transformer";
-import { streamOpenAICompletions } from "@oh-my-pi/pi-ai/providers/openai-completions";
-import { streamOpenAIResponses } from "@oh-my-pi/pi-ai/providers/openai-responses";
-import type { Context, FetchImpl, Model } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
+import { streamAnthropic } from "@tau/tau-ai/providers/anthropic";
+import { transformRequestBody } from "@tau/tau-ai/providers/openai-codex/request-transformer";
+import { streamOpenAICompletions } from "@tau/tau-ai/providers/openai-completions";
+import { streamOpenAIResponses } from "@tau/tau-ai/providers/openai-responses";
+import type { Context, FetchImpl, Model } from "@tau/tau-ai/types";
+import { buildModel } from "@tau/tau-catalog/build";
+import { Effort } from "@tau/tau-catalog/effort";
 import { createCodexModel } from "./helpers";
 
 // End-to-end guard for the first-class `max` reasoning tier: a user-requested

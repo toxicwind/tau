@@ -3,19 +3,19 @@ import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { buildDiscoveredModel, buildModel } from "@oh-my-pi/pi-catalog/build";
-import { isOfficialAnthropicApiUrl } from "@oh-my-pi/pi-catalog/compat/anthropic";
-import { resolveModelPolicy } from "@oh-my-pi/pi-catalog/compat/resolve";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { readModelCache, writeModelCache } from "@oh-my-pi/pi-catalog/model-cache";
-import { fingerprintStaticModels, resolveProviderModels } from "@oh-my-pi/pi-catalog/model-manager";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { toModelSpec } from "@oh-my-pi/pi-catalog/provider-models/bundled-references";
+import { buildDiscoveredModel, buildModel } from "@tau/tau-catalog/build";
+import { isOfficialAnthropicApiUrl } from "@tau/tau-catalog/compat/anthropic";
+import { resolveModelPolicy } from "@tau/tau-catalog/compat/resolve";
+import { Effort } from "@tau/tau-catalog/effort";
+import { readModelCache, writeModelCache } from "@tau/tau-catalog/model-cache";
+import { fingerprintStaticModels, resolveProviderModels } from "@tau/tau-catalog/model-manager";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import { toModelSpec } from "@tau/tau-catalog/provider-models/bundled-references";
 import {
 	deepinfraModelManagerOptions,
 	openrouterModelManagerOptions,
-} from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import type { Api, Model, ModelSpec } from "@oh-my-pi/pi-catalog/types";
+} from "@tau/tau-catalog/provider-models/openai-compat";
+import type { Api, Model, ModelSpec } from "@tau/tau-catalog/types";
 
 function completionsSpec(overrides: Partial<ModelSpec<"openai-completions">> = {}): ModelSpec<"openai-completions"> {
 	return {
@@ -1074,7 +1074,7 @@ describe("Responses configuration_update compat", () => {
 
 describe("OpenRouter model discovery", () => {
 	it("keeps refreshed OpenRouter models on the OpenRouter pseudo API", async () => {
-		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "pi-catalog-openrouter-refresh-"));
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-catalog-openrouter-refresh-"));
 		const dbPath = path.join(tempDir, "models.db");
 		const routing = { only: ["anthropic"], order: ["anthropic"] };
 		const staticModel = openrouterSpec({ compat: { openRouterRouting: routing } });
@@ -1161,7 +1161,7 @@ describe("OpenRouter model discovery", () => {
 	});
 
 	it("ignores legacy OpenRouter chat-completions cache rows", async () => {
-		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "pi-catalog-openrouter-legacy-cache-"));
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-catalog-openrouter-legacy-cache-"));
 		const dbPath = path.join(tempDir, "models.db");
 		const legacyModel = buildModel(
 			completionsSpec({
@@ -1202,7 +1202,7 @@ describe("model cache materialized round trip", () => {
 	});
 
 	it("uses generator-materialized bundled rows without rebuilding them", async () => {
-		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "pi-catalog-bundled-models-"));
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-catalog-bundled-models-"));
 		const bundled = getBundledModel("anthropic", "claude-fable-5-1");
 		try {
 			const offline = await resolveProviderModels(
@@ -1216,7 +1216,7 @@ describe("model cache materialized round trip", () => {
 	});
 
 	it("persists and directly restores fully resolved models", async () => {
-		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "pi-catalog-model-cache-"));
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-catalog-model-cache-"));
 		const dbPath = path.join(tempDir, "models.db");
 		const sparse = { supportsDeveloperRole: true } as const;
 		const spec = completionsSpec({ provider: "spec-cache-test", compat: sparse });
@@ -1270,7 +1270,7 @@ describe("model cache materialized round trip", () => {
 	});
 
 	it("keeps bundled runner models when authoritative chat discovery collides or empties", async () => {
-		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "pi-catalog-kind-discovery-"));
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-catalog-kind-discovery-"));
 		const providerId = "kind-discovery-test";
 		const image: ModelSpec = {
 			...completionsSpec({ id: "image-collision", provider: providerId }),
@@ -1332,7 +1332,7 @@ describe("model cache materialized round trip", () => {
 	});
 
 	it("keeps a DeepInfra image runner when the chat roster repeats its id", async () => {
-		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "pi-catalog-deepinfra-runner-collision-"));
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-catalog-deepinfra-runner-collision-"));
 		try {
 			const resolved = await resolveProviderModels(
 				{
@@ -1367,7 +1367,7 @@ describe("model cache materialized round trip", () => {
 	});
 
 	it("preserves static long-context pricing through dynamic refresh and cache restore", async () => {
-		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "pi-catalog-tiered-cost-"));
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-catalog-tiered-cost-"));
 		const dbPath = path.join(tempDir, "models.db");
 		const staticModel = completionsSpec({
 			id: "tiered-model",
@@ -1413,7 +1413,7 @@ describe("model cache materialized round trip", () => {
 	});
 
 	it("invalidates rows materialized under a stale build or rules policy", async () => {
-		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "pi-catalog-stale-policy-cache-"));
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-catalog-stale-policy-cache-"));
 		const dbPath = path.join(tempDir, "models.db");
 		const model = buildModel(completionsSpec({ provider: "stale-policy-cache-test" }));
 		try {
@@ -1436,7 +1436,7 @@ describe("model cache materialized round trip", () => {
 	});
 
 	it("invalidates schema-v10 rows that predate computer-use capability provenance", async () => {
-		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "pi-catalog-legacy-computer-cache-"));
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-catalog-legacy-computer-cache-"));
 		const dbPath = path.join(tempDir, "models.db");
 		const model = buildModel({
 			id: "legacy-inferred-computer",
@@ -1467,7 +1467,7 @@ describe("model cache materialized round trip", () => {
 	});
 
 	it("preserves computer-use provenance across cache restarts and endpoint reroutes", async () => {
-		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "pi-catalog-computer-use-cache-"));
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-catalog-computer-use-cache-"));
 		const dbPath = path.join(tempDir, "models.db");
 		const common = {
 			name: "GPT-5.4",
@@ -1541,7 +1541,7 @@ describe("model cache materialized round trip", () => {
 	});
 
 	it("uses current static limits for same-id cache rows when the static fingerprint changed", async () => {
-		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "pi-catalog-static-fingerprint-"));
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-catalog-static-fingerprint-"));
 		const dbPath = path.join(tempDir, "models.db");
 		const staleSameId = buildModel(
 			completionsSpec({
@@ -1600,7 +1600,7 @@ describe("model cache materialized round trip", () => {
 		}
 	});
 	it("retries an empty discovery result after the short interval and caches recovery", async () => {
-		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "pi-catalog-empty-discovery-"));
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-catalog-empty-discovery-"));
 		const dbPath = path.join(tempDir, "models.db");
 		const recoveredModel = completionsSpec({ id: "recovered-model", provider: "empty-discovery-test" });
 		let discoveredModels: readonly ModelSpec<"openai-completions">[] = [];
@@ -1655,7 +1655,7 @@ describe("model cache materialized round trip", () => {
 	});
 
 	it("refreshes an existing empty cache row when discovery fails to preserve retry backoff", async () => {
-		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "pi-catalog-empty-failure-backoff-"));
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-catalog-empty-failure-backoff-"));
 		const dbPath = path.join(tempDir, "models.db");
 		const recoveredModel = completionsSpec({ id: "recovered-model", provider: "empty-failure-backoff-test" });
 		let discoveredModels: readonly ModelSpec<"openai-completions">[] | null = [];
@@ -1699,7 +1699,7 @@ describe("model cache materialized round trip", () => {
 		}
 	});
 	it("does not cache an empty row when discovery fails, so the next launch retries immediately (#10964)", async () => {
-		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "pi-catalog-failed-discovery-"));
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-catalog-failed-discovery-"));
 		const dbPath = path.join(tempDir, "models.db");
 		const recoveredModel = completionsSpec({ id: "vendor-7/model-7", provider: "failed-discovery-test" });
 		let fetches = 0;
@@ -1738,7 +1738,7 @@ describe("model cache materialized round trip", () => {
 		}
 	});
 	it("reports an authoritative catalog emptying as non-stale so removed models prune", async () => {
-		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "pi-catalog-empty-transition-"));
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-catalog-empty-transition-"));
 		const dbPath = path.join(tempDir, "models.db");
 		const model = completionsSpec({ id: "going-away", provider: "empty-transition-test" });
 		let discoveredModels: readonly ModelSpec<"openai-completions">[] = [model];
@@ -1772,7 +1772,7 @@ describe("model cache materialized round trip", () => {
 		}
 	});
 	it("restores static model headers on fresh cache reads", async () => {
-		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "pi-catalog-static-headers-"));
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-catalog-static-headers-"));
 		const dbPath = path.join(tempDir, "models.db");
 		const staticModel = completionsSpec({
 			id: "header-static-model",
@@ -1807,7 +1807,7 @@ describe("model cache materialized round trip", () => {
 	});
 
 	it("refetches dynamic-only models whose headers cannot be restored", async () => {
-		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "pi-catalog-dynamic-headers-"));
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-catalog-dynamic-headers-"));
 		const dbPath = path.join(tempDir, "models.db");
 		const dynamicModel = completionsSpec({
 			id: "header-dynamic-model",
@@ -1849,7 +1849,7 @@ describe("model cache materialized round trip", () => {
 		// pointing at a same-provider base. Their headers are omitted from the
 		// cache but recoverable from the base's static headers, so they must NOT
 		// be flagged unrestorable and dropped on the next offline read.
-		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "pi-catalog-request-model-variant-"));
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-catalog-request-model-variant-"));
 		const dbPath = path.join(tempDir, "models.db");
 		const headers = { "X-GitHub-Api-Version": "2026-06-01" };
 		const base = completionsSpec({ id: "sol", provider: "variant-cache-test", headers });
@@ -1886,7 +1886,7 @@ describe("model cache materialized round trip", () => {
 	});
 
 	it("refetches a current request-model alias whose headers differ from its static base", async () => {
-		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "pi-catalog-custom-alias-"));
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-catalog-custom-alias-"));
 		const dbPath = path.join(tempDir, "models.db");
 		const baseHeaders = { "X-Route": "static" };
 		const customHeaders = { "X-Route": "tenant-specific" };
@@ -1926,7 +1926,7 @@ describe("model cache materialized round trip", () => {
 		// Legacy cache rows (written by the old id-only writer) flag `-1m`
 		// variants unrestorable because it never matched their base's headers.
 		// The restore path must still recover them through `requestModelId`.
-		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "pi-catalog-legacy-variant-"));
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-catalog-legacy-variant-"));
 		const dbPath = path.join(tempDir, "models.db");
 		const headers = { "X-GitHub-Api-Version": "2026-06-01" };
 		const base = completionsSpec({ id: "sol", provider: "variant-cache-test", headers });

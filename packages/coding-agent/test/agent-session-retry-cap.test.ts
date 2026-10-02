@@ -1,8 +1,8 @@
 import { Database } from "bun:sqlite";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import { Agent, type AgentTool } from "@oh-my-pi/pi-agent-core";
+import { type } from "@tau/tautype";
+import { Agent, type AgentTool } from "@tau/tau-agent-core";
 import type {
 	ApiKey,
 	AssistantMessage,
@@ -10,24 +10,24 @@ import type {
 	ThinkingContent,
 	ToolCall,
 	ToolResultMessage,
-} from "@oh-my-pi/pi-ai";
-import { unregisterCustomApis } from "@oh-my-pi/pi-ai/api-registry";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { createMockModel, type MockResponse, registerMockApi } from "@oh-my-pi/pi-ai/providers/mock";
-import * as aiStream from "@oh-my-pi/pi-ai/stream";
-import { kCursorExecResolved, kStreamingPartialJson } from "@oh-my-pi/pi-ai/utils/block-symbols";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { SqliteAuthCredentialStore } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { opencodeGoUsageProvider } from "@oh-my-pi/pi-ai/usage/opencode-go";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import type { Model } from "@oh-my-pi/pi-catalog/types";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
-import { AgentSession, type AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-ai";
+import { unregisterCustomApis } from "@tau/tau-ai/api-registry";
+import * as AIError from "@tau/tau-ai/error";
+import { createMockModel, type MockResponse, registerMockApi } from "@tau/tau-ai/providers/mock";
+import * as aiStream from "@tau/tau-ai/stream";
+import { kCursorExecResolved, kStreamingPartialJson } from "@tau/tau-ai/utils/block-symbols";
+import { AssistantMessageEventStream } from "@tau/tau-ai/utils/event-stream";
+import { SqliteAuthCredentialStore } from "@tau/tau-coding-agent/session/auth-storage";
+import { opencodeGoUsageProvider } from "@tau/tau-ai/usage/opencode-go";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import type { Model } from "@tau/tau-catalog/types";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import type { ExtensionRunner } from "@tau/tau-coding-agent/extensibility/extensions";
+import { AgentSession, type AgentSessionEvent } from "@tau/tau-coding-agent/session/agent-session";
+import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { TempDir } from "@tau/tau-utils";
 import { mockSchedulerWaitWithClock } from "./helpers/mock-scheduler-clock";
 
 type AutoRetryEndEvent = Extract<AgentSessionEvent, { type: "auto_retry_end" }>;
@@ -80,7 +80,7 @@ describe("AgentSession retry delay cap", () => {
 	let session: AgentSession | undefined;
 
 	beforeAll(async () => {
-		tempDir = TempDir.createSync("@pi-retry-cap-");
+		tempDir = TempDir.createSync("@tau-retry-cap-");
 		authStorage = await AuthStorage.create(path.join(tempDir.path(), "testauth.db"));
 		modelRegistry = new ModelRegistry(authStorage, path.join(tempDir.path(), "models.yml"));
 	});
@@ -2614,9 +2614,9 @@ describe("AgentSession retry delay cap", () => {
 			undefined,
 		],
 		[
-			"pi-native premature close",
+			"tau-native premature close",
 			"error",
-			"pi-native stream read error: stream closed before a terminal response event",
+			"tau-native stream read error: stream closed before a terminal response event",
 			undefined,
 		],
 		[
@@ -3233,7 +3233,7 @@ describe("AgentSession retry delay cap", () => {
 	it.each([
 		["verbose socket close", "The socket connection was closed unexpectedly"],
 		["bare socket close", "Socket is closed"],
-		["pi-native premature close", "pi-native stream read error: stream closed before a terminal response event"],
+		["tau-native premature close", "tau-native stream read error: stream closed before a terminal response event"],
 		["gateway 500", "auth-gateway 500: <none>"],
 		["gateway 524", "auth-gateway 524: <none>"],
 	])("retries a transient %s after partial text and thinking", async (_label, errorMessage) => {

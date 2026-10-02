@@ -1,19 +1,19 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
 import { scheduler } from "node:timers/promises";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import * as compactionModule from "@oh-my-pi/pi-agent-core/compaction";
-import { type CompactionPreparation, resolveThresholdTokens, shouldCompact } from "@oh-my-pi/pi-agent-core/compaction";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { TempDir } from "@oh-my-pi/pi-utils";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import type { CompactionEntry } from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { INCOMPLETE_RECOVERY_MAX_RETRIES } from "@oh-my-pi/pi-coding-agent/session/session-maintenance";
+import { Agent } from "@tau/tau-agent-core";
+import * as compactionModule from "@tau/tau-agent-core/compaction";
+import { type CompactionPreparation, resolveThresholdTokens, shouldCompact } from "@tau/tau-agent-core/compaction";
+import type { AssistantMessage } from "@tau/tau-ai";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import { TempDir } from "@tau/tau-utils";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import type { CompactionEntry } from "@tau/tau-coding-agent/session/session-entries";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { INCOMPLETE_RECOVERY_MAX_RETRIES } from "@tau/tau-coding-agent/session/session-maintenance";
 
 it("clamps a reserve exceeding the window for small-window threshold recovery bands", () => {
 	const settings = {
@@ -951,7 +951,7 @@ describe("AgentSession auto-compaction progress guard", () => {
 		// to shake-retry, which re-entered the same empty turn ~once/second for 20
 		// minutes and persisted hundreds of empty assistant turns until manual abort.
 		await session.dispose();
-		const tempDir = TempDir.createSync("@pi-incomplete-recovery-cap-");
+		const tempDir = TempDir.createSync("@tau-incomplete-recovery-cap-");
 		tempDirs.push(tempDir);
 		const cwd = tempDir.path();
 		const sessionDir = path.join(cwd, "sessions");

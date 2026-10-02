@@ -1,19 +1,19 @@
-import { type Type, type } from "@oh-my-pi/omptype";
-import type { AgentToolResult, ToolApprovalDecision } from "@oh-my-pi/pi-agent-core";
-import type { Model } from "@oh-my-pi/pi-ai";
-import { classifyModel } from "@oh-my-pi/pi-catalog/identity";
-import type { DesktopCapabilities } from "@oh-my-pi/pi-natives";
-import { once } from "@oh-my-pi/pi-utils";
+import { type Type, type } from "@tau/tautype";
+import type { AgentToolResult, ToolApprovalDecision } from "@tau/tau-agent-core";
+import type { Model } from "@tau/tau-ai";
+import { classifyModel } from "@tau/tau-catalog/identity";
+import type { DesktopCapabilities } from "@tau/tau-natives";
+import { once } from "@tau/tau-utils";
 import { callSessionTool } from "../eval/js/tool-bridge";
 import type { EvalPreludeContext, EvalPreludeDefinition } from "../eval/preludes";
-import { enforceInlineByteCap } from "@oh-my-pi/pi-tui/tools/streaming-output";
+import { enforceInlineByteCap } from "@tau/tau-tui/tools/streaming-output";
 import { type ComputerCallStep, isReadOnlyComputerCall, renderComputerCall } from "./computer/call";
 import type { ComputerScreenshot, ComputerSessionSnapshot } from "./computer/protocol";
 import { type ComputerController, ComputerSupervisor, registerComputerController } from "./computer/supervisor";
 import type { ToolSession } from "./index";
 import { renderCallChain, renderFunctionRun } from "./run-code";
 import { throwIfAborted } from "./tool-errors";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 import { clampTimeout } from "./tool-timeouts";
 
 // Image transports that cannot preserve native screenshot detail resize frames

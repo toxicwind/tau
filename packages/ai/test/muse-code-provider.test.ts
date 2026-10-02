@@ -1,12 +1,12 @@
 import { Database } from "bun:sqlite";
 import { describe, expect, test } from "bun:test";
-import { type } from "@oh-my-pi/omptype";
-import { AuthStorage, SqliteAuthCredentialStore } from "@oh-my-pi/pi-ai/auth-storage";
-import { mapOpenAIResponsesToolChoiceForTools } from "@oh-my-pi/pi-ai/providers/openai-responses";
-import { getProviderDefinition } from "@oh-my-pi/pi-ai/registry/registry";
-import type { Tool, ToolChoice } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { seedModels } from "@oh-my-pi/pi-catalog/compat/providers";
+import { type } from "@tau/tautype";
+import { AuthStorage, SqliteAuthCredentialStore } from "@tau/tau-ai/auth-storage";
+import { mapOpenAIResponsesToolChoiceForTools } from "@tau/tau-ai/providers/openai-responses";
+import { getProviderDefinition } from "@tau/tau-ai/registry/registry";
+import type { Tool, ToolChoice } from "@tau/tau-ai/types";
+import { buildModel } from "@tau/tau-catalog/build";
+import { seedModels } from "@tau/tau-catalog/compat/providers";
 
 const encodedMuseCredential = JSON.stringify({
 	oauthAccessToken: "meta-account-access",

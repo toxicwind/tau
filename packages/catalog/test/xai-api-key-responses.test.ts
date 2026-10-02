@@ -2,13 +2,13 @@ import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { resolveProviderModels } from "@oh-my-pi/pi-catalog/model-manager";
-import { calculateCost, getBundledModels } from "@oh-my-pi/pi-catalog/models";
-import { providerEntry } from "@oh-my-pi/pi-catalog/compat/providers";
-import { DEFAULT_MODEL_PER_PROVIDER } from "@oh-my-pi/pi-catalog/provider-models/descriptors";
-import { applyXaiCatalogPricing, xaiModelManagerOptions } from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import { type ModelSpec, type Usage } from "@oh-my-pi/pi-catalog/types";
+import { buildModel } from "@tau/tau-catalog/build";
+import { resolveProviderModels } from "@tau/tau-catalog/model-manager";
+import { calculateCost, getBundledModels } from "@tau/tau-catalog/models";
+import { providerEntry } from "@tau/tau-catalog/compat/providers";
+import { DEFAULT_MODEL_PER_PROVIDER } from "@tau/tau-catalog/provider-models/descriptors";
+import { applyXaiCatalogPricing, xaiModelManagerOptions } from "@tau/tau-catalog/provider-models/openai-compat";
+import { type ModelSpec, type Usage } from "@tau/tau-catalog/types";
 
 const XAI_RESPONSES_SPEC: ModelSpec<"openai-responses"> = {
 	id: "grok-4.5",
@@ -54,7 +54,7 @@ describe("paid xai (XAI_API_KEY) Responses contract", () => {
 	});
 
 	it("keeps the image runner transport when the live chat roster repeats its id", async () => {
-		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "pi-catalog-xai-runner-collision-"));
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-catalog-xai-runner-collision-"));
 		try {
 			const resolved = await resolveProviderModels(
 				{
@@ -178,7 +178,7 @@ describe("paid xai (XAI_API_KEY) Responses contract", () => {
 	});
 
 	it("drops stale Chat Completions cache rows so Responses takes effect immediately", async () => {
-		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "pi-catalog-xai-completions-cache-"));
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-catalog-xai-completions-cache-"));
 		const dbPath = path.join(tempDir, "models.db");
 		try {
 			await resolveProviderModels(

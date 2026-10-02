@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { streamAnthropic } from "@oh-my-pi/pi-ai/providers/anthropic";
-import { AnthropicMessagesClient, type AnthropicMessagesClientLike } from "@oh-my-pi/pi-ai/providers/anthropic-client";
-import type { Context, FetchImpl, Model } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import * as AIError from "@tau/tau-ai/error";
+import { streamAnthropic } from "@tau/tau-ai/providers/anthropic";
+import { AnthropicMessagesClient, type AnthropicMessagesClientLike } from "@tau/tau-ai/providers/anthropic-client";
+import type { Context, FetchImpl, Model } from "@tau/tau-ai/types";
+import { buildModel } from "@tau/tau-catalog/build";
 import { waitForDelayOrAbort } from "./helpers";
 
 const model: Model<"anthropic-messages"> = buildModel({

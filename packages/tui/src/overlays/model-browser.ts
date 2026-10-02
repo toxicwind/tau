@@ -7,11 +7,11 @@
  * state, while the advisor config overlay embeds it as a plain "pick one
  * model" list.
  */
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { Model } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { modelsAreEqual } from "@oh-my-pi/pi-catalog/models";
-import type { ModelKind } from "@oh-my-pi/pi-catalog/types";
+import { ThinkingLevel } from "@tau/tau-agent-core";
+import type { Model } from "@tau/tau-ai";
+import { buildModel } from "@tau/tau-catalog/build";
+import { modelsAreEqual } from "@tau/tau-catalog/models";
+import type { ModelKind } from "@tau/tau-catalog/types";
 import type { Component } from "../tui";
 import { fuzzyRank } from "../fuzzy";
 import { Input } from "../components/input";
@@ -19,7 +19,7 @@ import { ScrollView } from "../components/scroll-view";
 import { matchesKey } from "../keys";
 import type { SgrMouseEvent } from "../mouse";
 import { replaceTabs, truncateToWidth, visibleWidth } from "../utils";
-import { formatNumber, sanitizeText } from "@oh-my-pi/pi-utils";
+import { formatNumber, sanitizeText } from "@tau/tau-utils";
 import { type ConfiguredThinkingLevel, parseConfiguredThinkingLevel } from "../thinking";
 import { thinkingLevelGlyph } from "../render/render-utils";
 import { type ThemeColor, theme } from "../theme/theme";

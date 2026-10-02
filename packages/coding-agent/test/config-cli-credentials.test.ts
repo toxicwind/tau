@@ -1,11 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { runConfigCommand } from "@oh-my-pi/pi-coding-agent/cli/config-cli";
-import { resetSettingsForTest } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentStorage } from "@oh-my-pi/pi-coding-agent/session/agent-storage";
-import { getConfigRootDir, setAgentDir, TempDir } from "@oh-my-pi/pi-utils";
+import { runConfigCommand } from "@tau/tau-coding-agent/cli/config-cli";
+import { resetSettingsForTest } from "@tau/tau-coding-agent/config/settings";
+import { AgentStorage } from "@tau/tau-coding-agent/session/agent-storage";
+import { getConfigRootDir, setAgentDir, TempDir } from "@tau/tau-utils";
 import { isCredential, SETTINGS_SCHEMA, type SettingPath } from "../src/config/settings-schema";
-import { getSettingDef } from "@oh-my-pi/pi-tui/overlays/settings-defs";
+import { getSettingDef } from "@tau/tau-tui/overlays/settings-defs";
 import { createSettingsHost } from "../src/config/settings-ui";
 
 const paths = Object.keys(SETTINGS_SCHEMA) as SettingPath[];
@@ -26,7 +26,7 @@ describe("credential settings", () => {
 	it("classifies UI-visible credentials through the same marker", () => {
 		// One field, not two: there is no separate UI-only masking flag that could
 		// drift away from this classification.
-		for (const path of ["mnemopi.embeddingApiKey", "mnemopi.llmApiKey"] as const) {
+		for (const path of ["mnemotau.embeddingApiKey", "mnemotau.llmApiKey"] as const) {
 			expect(isCredential(path)).toBe(true);
 		}
 	});
@@ -51,7 +51,7 @@ describe("credential masking reaches every surface", () => {
 		// The panel derives masking from the same classification the CLI uses, so
 		// a credential cannot render as plain text on one surface and dots on the
 		// other.
-		for (const path of ["hindsight.apiToken", "mnemopi.embeddingApiKey", "mnemopi.llmApiKey"] as const) {
+		for (const path of ["hindsight.apiToken", "mnemotau.embeddingApiKey", "mnemotau.llmApiKey"] as const) {
 			const def = getSettingDef(createSettingsHost().entries, path);
 			expect(def?.type).toBe("text");
 			expect(def && "secret" in def ? def.secret : undefined).toBe(true);
@@ -83,7 +83,7 @@ describe("config list output", () => {
 
 	beforeEach(() => {
 		resetSettingsForTest();
-		agentDir = TempDir.createSync("@omp-config-credentials-");
+		agentDir = TempDir.createSync("@tau-config-credentials-");
 		setAgentDir(agentDir.path());
 	});
 

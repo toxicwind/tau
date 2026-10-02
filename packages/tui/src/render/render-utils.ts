@@ -7,9 +7,9 @@
 
 import * as os from "node:os";
 import * as path from "node:path";
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { Ellipsis } from "@oh-my-pi/pi-natives";
-import { pluralize, sanitizeText } from "@oh-my-pi/pi-utils";
+import { ThinkingLevel } from "@tau/tau-agent-core";
+import type { Ellipsis } from "@tau/tau-natives";
+import { pluralize, sanitizeText } from "@tau/tau-utils";
 import { formatKeyHints, type KeyId } from "../app-keybindings";
 import { getKeybindings } from "../keybindings";
 import type { Theme } from "../theme/theme";
@@ -17,7 +17,7 @@ import type { Component } from "../tui";
 import { replaceTabs, sliceByColumn, truncateToWidth, visibleWidth } from "../utils";
 import { Hasher } from "./utils";
 
-export { Ellipsis } from "@oh-my-pi/pi-natives";
+export { Ellipsis } from "@tau/tau-natives";
 export { replaceTabs, truncateToWidth, wrapTextWithAnsi } from "../utils";
 
 /** A thinking selector configured as a concrete level or automatic selection. */
@@ -263,7 +263,7 @@ export function getDomain(url: string): string {
 // Formatting Utilities
 // =============================================================================
 
-export { formatAge, formatBytes, formatCount, formatDuration, formatNumber, pluralize } from "@oh-my-pi/pi-utils";
+export { formatAge, formatBytes, formatCount, formatDuration, formatNumber, pluralize } from "@tau/tau-utils";
 
 // =============================================================================
 // Theme Helper Utilities
@@ -1066,7 +1066,7 @@ export function createCachedComponent(
  * one string value-compare (engines short-circuit on length) and a miss never
  * allocates a key. Comparing the {@link Theme} by reference is sound because
  * theme switches replace the instance wholesale (`setTheme`/`previewTheme`/
- * `setSymbolPreset` in pi-tui theme/theme.ts) — themes are never mutated in
+ * `setSymbolPreset` in tau-tui theme/theme.ts) — themes are never mutated in
  * place.
  */
 export interface RenderedStringCache {

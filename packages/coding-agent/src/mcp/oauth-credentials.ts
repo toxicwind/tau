@@ -1,7 +1,7 @@
-import { REMOTE_REFRESH_SENTINEL, type StoredOAuthRefreshResult } from "@oh-my-pi/pi-ai";
-import { isDefinitiveOAuthFailure } from "@oh-my-pi/pi-ai/error";
-import type { OAuthCredentials } from "@oh-my-pi/pi-ai/oauth/types";
-import { getActiveProfile } from "@oh-my-pi/pi-utils/dirs";
+import { REMOTE_REFRESH_SENTINEL, type StoredOAuthRefreshResult } from "@tau/tau-ai";
+import { isDefinitiveOAuthFailure } from "@tau/tau-ai/error";
+import type { OAuthCredentials } from "@tau/tau-ai/oauth/types";
+import { getActiveProfile } from "@tau/tau-utils/dirs";
 import { expandEnvVarsDeep } from "../discovery/helpers";
 import type { AuthStorage } from "../session/auth-storage";
 import {
@@ -91,7 +91,7 @@ export function selectMcpOAuthRefreshMaterial(
  * Refresh material is taken from the credential itself (self-contained modern
  * credentials embed `tokenUrl`/`clientId`/`clientSecret`/`resource`) or, for
  * legacy credentials that carry none, the server's `auth` block. Shared by the
- * local MCP manager and the `omp auth-broker serve` refresh path so a broker
+ * local MCP manager and the `tau auth-broker serve` refresh path so a broker
  * with no access to the MCP config can still refresh `mcp_oauth:*` credentials
  * from the vault.
  *
@@ -153,7 +153,7 @@ async function refreshBrokeredMcpOAuthCredential(
  * `serverUrl` supplies the RFC 8707 fallback resource indicator; the manager passes
  * the configured server URL for http/sse servers and `undefined` for stdio servers,
  * whose refresh must NOT advertise a resource. Standalone consumers that hold only
- * the credential id (`omp token`) set `recoverServerUrlFromCredentialId` to derive
+ * the credential id (`tau token`) set `recoverServerUrlFromCredentialId` to derive
  * the same fallback resource the http/sse client would use.
  */
 export async function refreshStoredManagedMcpOAuthCredential(

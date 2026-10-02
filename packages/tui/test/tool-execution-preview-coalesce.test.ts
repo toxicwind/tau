@@ -1,8 +1,8 @@
 import { beforeAll, describe, expect, test } from "bun:test";
-import type { AgentTool } from "@oh-my-pi/pi-agent-core";
-import { ToolExecutionComponent } from "@oh-my-pi/pi-tui/chat/tool-execution";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { TUI } from "@oh-my-pi/pi-tui";
+import type { AgentTool } from "@tau/tau-agent-core";
+import { ToolExecutionComponent } from "@tau/tau-tui/chat/tool-execution";
+import { initTheme } from "@tau/tau-tui/theme";
+import type { TUI } from "@tau/tau-tui";
 
 describe("native streaming edit previews", () => {
 	beforeAll(async () => {

@@ -1,10 +1,10 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
-import { TOOL_INTERRUPT_ABORT_REASON } from "@oh-my-pi/pi-agent-core";
-import { AsyncJobManager } from "@oh-my-pi/pi-coding-agent/async/job-manager";
-import { IrcBus } from "@oh-my-pi/pi-coding-agent/irc/bus";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { WaitTool } from "@oh-my-pi/pi-coding-agent/tools/wait";
+import { TOOL_INTERRUPT_ABORT_REASON } from "@tau/tau-agent-core";
+import { AsyncJobManager } from "@tau/tau-coding-agent/async/job-manager";
+import { IrcBus } from "@tau/tau-coding-agent/irc/bus";
+import { AgentRegistry } from "@tau/tau-coding-agent/registry/agent-registry";
+import type { ToolSession } from "@tau/tau-coding-agent/tools";
+import { WaitTool } from "@tau/tau-coding-agent/tools/wait";
 
 function session(manager?: AsyncJobManager): ToolSession {
 	return {

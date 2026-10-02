@@ -1,6 +1,6 @@
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { createCustomMessage } from "@oh-my-pi/pi-agent-core/compaction/messages";
-import type { MessageAttribution } from "@oh-my-pi/pi-ai";
+import type { AgentMessage } from "@tau/tau-agent-core";
+import { createCustomMessage } from "@tau/tau-agent-core/compaction/messages";
+import type { MessageAttribution } from "@tau/tau-ai";
 import {
 	type CustomMessage,
 	type CustomMessageContent,

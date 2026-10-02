@@ -1,7 +1,7 @@
 import * as path from "node:path";
-import { CLIP_DESCRIPTION_MAX, DEFAULT_STREAM_URL, STREAM_TITLE_MAX } from "@oh-my-pi/pi-wire";
-import { isEnoent } from "@oh-my-pi/pi-utils";
-import { Args, CliUsageError, Command, Flags } from "@oh-my-pi/pi-utils/cli";
+import { CLIP_DESCRIPTION_MAX, DEFAULT_STREAM_URL, STREAM_TITLE_MAX } from "@tau/tau-wire";
+import { isEnoent } from "@tau/tau-utils";
+import { Args, CliUsageError, Command, Flags } from "@tau/tau-utils/cli";
 import { clipHelp as commandHelp } from "../cli/command-help";
 import { Settings } from "../config/settings";
 import { StencilCredential } from "../stencil/credential";
@@ -22,9 +22,9 @@ export default class Clip extends Command {
 	};
 
 	static examples = [
-		"omp clip",
-		'omp clip -t "Streaming the lexer" -d "Rewrote the tokenizer live"',
-		"omp clip /tmp/omp-recordings/2026-09-22T10-00-00-1a2b3c4d.ompcast",
+		"tau clip",
+		'tau clip -t "Streaming the lexer" -d "Rewrote the tokenizer live"',
+		"tau clip /tmp/tau-recordings/2026-09-22T10-00-00-1a2b3c4d.taucast",
 	];
 
 	async run(): Promise<void> {

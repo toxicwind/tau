@@ -1,6 +1,6 @@
-import { type } from "@oh-my-pi/omptype";
-import type { VcsNumstatEntry } from "@oh-my-pi/pi-natives";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
+import { type } from "@tau/tautype";
+import type { VcsNumstatEntry } from "@tau/tau-natives";
+import * as vcs from "@tau/tau-natives/vcs";
 import type { CommitAgentState, GitOverviewSnapshot } from "../../../commit/agentic/state";
 import { DEFAULT_CONVENTIONAL_GENERATION_CONFIG } from "../../../commit/conventional/config";
 import { extractScopeCandidates } from "../../../commit/conventional/scope";

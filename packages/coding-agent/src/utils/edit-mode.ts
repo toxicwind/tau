@@ -1,7 +1,7 @@
-import { classifyModel } from "@oh-my-pi/pi-catalog/identity";
-import { $env, $flag } from "@oh-my-pi/pi-utils";
+import { classifyModel } from "@tau/tau-catalog/identity";
+import { $env, $flag } from "@tau/tau-utils";
 
-import type { EditMode } from "@oh-my-pi/pi-tui/tools/edit";
+import type { EditMode } from "@tau/tau-tui/tools/edit";
 
 export const DEFAULT_EDIT_MODE: EditMode = "hashline";
 

@@ -11,7 +11,7 @@ import {
 	resolveApiKeyOnce,
 	seedApiKeyResolver,
 	withAuth,
-} from "@oh-my-pi/pi-ai";
+} from "@tau/tau-ai";
 import type { SearchResponse, SearchSource } from "../types";
 import { SearchProviderError } from "../../../web/search/types";
 import { resolveFirecrawlUrl } from "../../firecrawl";

@@ -8,8 +8,8 @@ import type {
 	AgentToolContext,
 	AgentToolResult,
 	AgentToolUpdateCallback,
-} from "@oh-my-pi/pi-agent-core";
-import type { Model, ToolExample } from "@oh-my-pi/pi-ai";
+} from "@tau/tau-agent-core";
+import type { Model, ToolExample } from "@tau/tau-ai";
 import {
 	EditSession,
 	editDescription,
@@ -20,12 +20,12 @@ import {
 	type EditPolicy,
 	type EditWriteRequest,
 	type EditWriteResponse,
-} from "@oh-my-pi/pi-natives";
-import { isEnoent, logger, prompt } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-natives";
+import { isEnoent, logger, prompt } from "@tau/tau-utils";
 import { resolveLocalRoot } from "../internal-urls";
 import { cachedVaultRoots, isVaultEnabled } from "../internal-urls/vault-protocol";
 import { createLspWritethrough, flushLspWritethroughBatch, type WritethroughCallback, writethroughNoop } from "../lsp";
-import { type FileDiagnosticsResult } from "@oh-my-pi/pi-tui/tools/lsp";
+import { type FileDiagnosticsResult } from "@tau/tau-tui/tools/lsp";
 import { FileChangeType, notifyWorkspaceWatchedFiles } from "../lsp/client";
 import { DeferredDiagnostics } from "../lsp/deferred-diagnostics";
 import { getDiagnosticsLedger } from "../lsp/diagnostics-ledger";
@@ -46,14 +46,14 @@ import {
 import { outputMeta } from "../tools/output-meta";
 import { resolveFileWriteApprovalTier } from "../tools/path-utils";
 import { planLocalProtocolOptions } from "../tools/plan-mode-guard";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
-import { type EditMode } from "@oh-my-pi/pi-tui/tools/edit";
+import { ToolError } from "@tau/tau-tui/tools/tool-errors";
+import { type EditMode } from "@tau/tau-tui/tools/edit";
 import { normalizeEditMode, resolveEditMode } from "../utils/edit-mode";
 import { attemptEditAutoRepair, type EditAutoRepairOutcome } from "./auto-repair";
 import { type AppliedEditSnapshot, createEditBlackboxRecorder } from "./blackbox";
 import hashlineCompactPrompt from "./hashline-compact.md" with { type: "text" };
 import { getLspBatchRequest } from "../lsp/batch";
-import { type EditToolDetails, type EditToolPerFileResult, type Operation } from "@oh-my-pi/pi-tui/tools/edit";
+import { type EditToolDetails, type EditToolPerFileResult, type Operation } from "@tau/tau-tui/tools/edit";
 import {
 	type ApplyPatchParams,
 	applyPatchSchema,
@@ -75,11 +75,11 @@ export type {
 	EditToolPerFileResult,
 	Operation,
 	PerFileDiffPreview,
-} from "@oh-my-pi/pi-tui/tools/edit";
+} from "@tau/tau-tui/tools/edit";
 export * from "./schemas";
 export * from "./store";
 export { DEFAULT_EDIT_MODE, normalizeEditMode } from "../utils/edit-mode";
-export { type EditMode } from "@oh-my-pi/pi-tui/tools/edit";
+export { type EditMode } from "@tau/tau-tui/tools/edit";
 
 type TInput =
 	| typeof replaceEditSchema

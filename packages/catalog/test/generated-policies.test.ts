@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import type { Api, Model, ModelSpec, Provider } from "@oh-my-pi/pi-catalog/types";
+import { Effort } from "@tau/tau-catalog/effort";
+import type { Api, Model, ModelSpec, Provider } from "@tau/tau-catalog/types";
 import {
 	applyAntigravityPricingFallback,
 	applyGeneratedModelPolicies,

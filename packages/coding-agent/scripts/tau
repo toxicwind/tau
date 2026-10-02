@@ -1,12 +1,27 @@
-#!/bin/sh
-set -e
-self=$0
-while [ -L "$self" ]; do
-	link=$(readlink "$self")
-	case $link in
-	/*) self=$link ;;
-	*) self=$(dirname "$self")/$link ;;
-	esac
-done
-scripts_dir=$(CDPATH= cd -- "$(dirname -- "$self")" && pwd -P)
-exec "$scripts_dir/../dist/omp" "$@"
+#!/usr/bin/env bash
+# First-class sovereign tau runner — prefers the compiled estate binary
+# (packages/coding-agent/dist/tau), falls back to running the TypeScript
+# CLI directly with bun. Fork root resolves dynamically from this script's
+# location (or git), never from a hardcoded path.
+set -euo pipefail
+
+_SCRIPT_DIR="$(cd -P -- "$(dirname -- "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+FORK_ROOT="$(git -C "$_SCRIPT_DIR" rev-parse --show-toplevel 2>/dev/null || true)"
+if [ -z "$FORK_ROOT" ]; then
+  # <root>/packages/coding-agent/scripts/tau -> <root>
+  FORK_ROOT="$(cd -P -- "$_SCRIPT_DIR/../.." >/dev/null 2>&1 && pwd)"
+fi
+PKG_DIR="$FORK_ROOT/packages/coding-agent"
+COMPILED="$PKG_DIR/dist/tau"
+
+if [ -x "$COMPILED" ] && [ -z "${TAU_DEV_MODE:-}" ]; then
+  exec "$COMPILED" "$@"
+fi
+
+# Dev fallback: run the TypeScript CLI straight through bun.
+if command -v bun >/dev/null 2>&1 && [ -f "$PKG_DIR/src/cli.ts" ]; then
+  exec bun "$PKG_DIR/src/cli.ts" "$@"
+fi
+
+echo "tau: no compiled dist/tau and no bun + src/cli.ts fallback under $PKG_DIR" >&2
+exit 127

@@ -1,33 +1,33 @@
 /**
  * Issue #4919: a pi extension calling `ctx.ui.addAutocompleteProvider(...)` in its
- * `session_start` handler crashed at load under omp — the method was absent from
+ * `session_start` handler crashed at load under tau — the method was absent from
  * `ExtensionUIContext`, so the call threw `TypeError: ... is not a function` and
- * (for extensions that wrap init in try/catch, e.g. @ff-labs/pi-fff) aborted the
+ * (for extensions that wrap init in try/catch, e.g. @ff-labs/tau-fff) aborted the
  * extension's entire initialization.
  *
- * These tests pin the pi-compatible contract:
+ * These tests pin the tau-compatible contract:
  * - headless contexts accept the factory as a no-op instead of throwing, and
  * - interactive mode stacks each factory on top of the built-in editor provider.
  *
  * NOTE: imports are relative (`../src/...`) so the tests exercise this checkout
- * even when `node_modules/@oh-my-pi/pi-coding-agent` resolves elsewhere.
+ * even when `node_modules/@tau/tau-coding-agent` resolves elsewhere.
  */
 
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import { Agent, type AgentTool } from "@oh-my-pi/pi-agent-core";
-import { type Api, Effort, type Model } from "@oh-my-pi/pi-ai";
-import type { AutocompleteProvider } from "@oh-my-pi/pi-tui";
-import { logger, TempDir } from "@oh-my-pi/pi-utils";
+import { type } from "@tau/tautype";
+import { Agent, type AgentTool } from "@tau/tau-agent-core";
+import { type Api, Effort, type Model } from "@tau/tau-ai";
+import type { AutocompleteProvider } from "@tau/tau-tui";
+import { logger, TempDir } from "@tau/tau-utils";
 import { ModelRegistry } from "../src/config/model-registry";
 import { resetSettingsForTest, Settings } from "../src/config/settings";
 import { loadExtensions } from "../src/extensibility/extensions/loader";
 import { ExtensionRunner } from "../src/extensibility/extensions/runner";
 import { InteractiveMode } from "../src/modes/interactive-mode";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
+import { initTheme } from "@tau/tau-tui/theme";
 import { AgentSession } from "../src/session/agent-session";
 import { AuthStorage } from "../src/session/auth-storage";
 import { SessionManager } from "../src/session/session-manager";
@@ -83,7 +83,7 @@ describe("extension autocomplete provider API (#4919)", () => {
 		// One empty temp dir doubles as the project cwd and the (isolated) home
 		// directory, keeping `refreshSlashCommandState`'s capability scan off the
 		// real home dir (mirrors the prompt-template autocomplete harness).
-		tempDir = TempDir.createSync("@pi-ext-autocomplete-");
+		tempDir = TempDir.createSync("@tau-ext-autocomplete-");
 		originalHome = process.env.HOME;
 		process.env.HOME = tempDir.path();
 		await Settings.init({ inMemory: true, cwd: tempDir.path() });
@@ -150,7 +150,7 @@ describe("extension autocomplete provider API (#4919)", () => {
 	}
 
 	it("does not abort a session_start handler that registers a provider without UI", async () => {
-		// Mimics @ff-labs/pi-fff: registerAutocompleteProvider(ctx) runs first and
+		// Mimics @ff-labs/tau-fff: registerAutocompleteProvider(ctx) runs first and
 		// unconditionally inside the try/catch that guards the whole init routine.
 		const extensionsDir = path.join(tempDir.path(), "runner-extensions");
 		fs.mkdirSync(extensionsDir, { recursive: true });

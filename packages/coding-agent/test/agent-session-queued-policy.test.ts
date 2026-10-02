@@ -1,34 +1,34 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import { setImmediate } from "node:timers/promises";
-import { Type } from "@oh-my-pi/omptype/typebox";
-import { Agent, type AgentMessage, type AgentTool } from "@oh-my-pi/pi-agent-core";
-import type { Context, ImageContent } from "@oh-my-pi/pi-ai";
-import { createMockModel, type MockResponseSource } from "@oh-my-pi/pi-ai/providers/mock";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import type { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { ExtensionRuntime } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
-import { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
-import type { BeforeAgentStartEvent, Extension } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/types";
-import { HindsightApi } from "@oh-my-pi/pi-coding-agent/hindsight/client";
-import { loadHindsightConfig } from "@oh-my-pi/pi-coding-agent/hindsight/config";
-import { HindsightSessionState } from "@oh-my-pi/pi-coding-agent/hindsight/state";
-import * as memoryBackend from "@oh-my-pi/pi-coding-agent/memory-backend";
-import type { MemoryBackend } from "@oh-my-pi/pi-coding-agent/memory-backend/types";
-import { loadMnemopiConfig } from "@oh-my-pi/pi-coding-agent/mnemopi/config";
+import { Type } from "@tau/tautype/typebox";
+import { Agent, type AgentMessage, type AgentTool } from "@tau/tau-agent-core";
+import type { Context, ImageContent } from "@tau/tau-ai";
+import { createMockModel, type MockResponseSource } from "@tau/tau-ai/providers/mock";
+import { buildModel } from "@tau/tau-catalog/build";
+import type { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { ExtensionRuntime } from "@tau/tau-coding-agent/extensibility/extensions/loader";
+import { ExtensionRunner } from "@tau/tau-coding-agent/extensibility/extensions/runner";
+import type { BeforeAgentStartEvent, Extension } from "@tau/tau-coding-agent/extensibility/extensions/types";
+import { HindsightApi } from "@tau/tau-coding-agent/hindsight/client";
+import { loadHindsightConfig } from "@tau/tau-coding-agent/hindsight/config";
+import { HindsightSessionState } from "@tau/tau-coding-agent/hindsight/state";
+import * as memoryBackend from "@tau/tau-coding-agent/memory-backend";
+import type { MemoryBackend } from "@tau/tau-coding-agent/memory-backend/types";
+import { loadMnemotauConfig } from "@tau/tau-coding-agent/mnemotau/config";
 import {
-	getMnemopiSessionState,
-	loadMnemopi,
-	loadMnemopiCore,
-	MnemopiSessionState,
-	setMnemopiSessionState,
-} from "@oh-my-pi/pi-coding-agent/mnemopi/state";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import type { AgentSessionConfig } from "@oh-my-pi/pi-coding-agent/session/agent-session-types";
-import { convertToLlm } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { SessionProviderBoundary } from "@oh-my-pi/pi-coding-agent/session/session-provider-boundary";
-import { TempDir } from "@oh-my-pi/pi-utils";
+	getMnemotauSessionState,
+	loadMnemotau,
+	loadMnemotauCore,
+	MnemotauSessionState,
+	setMnemotauSessionState,
+} from "@tau/tau-coding-agent/mnemotau/state";
+import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import type { AgentSessionConfig } from "@tau/tau-coding-agent/session/agent-session-types";
+import { convertToLlm } from "@tau/tau-coding-agent/session/messages";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { SessionProviderBoundary } from "@tau/tau-coding-agent/session/session-provider-boundary";
+import { TempDir } from "@tau/tau-utils";
 import { createAssistantMessage } from "./helpers/agent-session-setup";
 
 const BASE = ["base identity", "base tools"];
@@ -147,23 +147,23 @@ describe("queued user delivery policy", () => {
 	}
 
 	async function setupMemory(
-		backendId: "mnemopi" | "hindsight",
+		backendId: "mnemotau" | "hindsight",
 		recall: (query: string) => Promise<string | undefined>,
 		policy = false,
 	) {
-		const dir = TempDir.createSync("@pi-queued-memory-");
+		const dir = TempDir.createSync("@tau-queued-memory-");
 		tempDirs.push(dir);
 		const settings = Settings.isolated({
 			"compaction.enabled": false,
 			"todo.enabled": false,
 			"tools.xdev": false,
 			"memory.backend": backendId,
-			"mnemopi.dbPath": dir.join("memory.db"),
-			"mnemopi.scoping": "global",
-			"mnemopi.noEmbeddings": true,
-			"mnemopi.llmMode": "none",
-			"mnemopi.autoRetain": false,
-			"mnemopi.autoRecall": true,
+			"mnemotau.dbPath": dir.join("memory.db"),
+			"mnemotau.scoping": "global",
+			"mnemotau.noEmbeddings": true,
+			"mnemotau.llmMode": "none",
+			"mnemotau.autoRetain": false,
+			"mnemotau.autoRecall": true,
 			"hindsight.apiUrl": "http://unused.invalid",
 			"hindsight.autoRetain": false,
 			"hindsight.autoRecall": true,
@@ -188,14 +188,14 @@ describe("queued user delivery policy", () => {
 			}),
 			{ settings, tools, policy },
 		);
-		if (backendId === "mnemopi") {
-			await Promise.all([loadMnemopi(), loadMnemopiCore()]);
-			const state = new MnemopiSessionState({
+		if (backendId === "mnemotau") {
+			await Promise.all([loadMnemotau(), loadMnemotauCore()]);
+			const state = new MnemotauSessionState({
 				sessionId: session.sessionId,
 				session,
-				config: loadMnemopiConfig(settings, dir.path()),
+				config: loadMnemotauConfig(settings, dir.path()),
 			});
-			setMnemopiSessionState(session, state);
+			setMnemotauSessionState(session, state);
 			state.attachSessionListeners();
 			vi.spyOn(state.memory, "recallEnhanced").mockImplementation(async query => {
 				const content = await recall(query);
@@ -221,7 +221,7 @@ describe("queued user delivery policy", () => {
 		return fixture;
 	}
 
-	it.each(["mnemopi", "hindsight"] as const)(
+	it.each(["mnemotau", "hindsight"] as const)(
 		"retries cancelled real %s recall and keeps one committed copy on later turns",
 		async backendId => {
 			let recalls = 0;
@@ -266,7 +266,7 @@ describe("queued user delivery policy", () => {
 		},
 	);
 
-	it.each(["mnemopi", "hindsight"] as const)(
+	it.each(["mnemotau", "hindsight"] as const)(
 		"consumes an empty successful real %s recall only when delivery commits",
 		async backendId => {
 			let recalls = 0;
@@ -295,7 +295,7 @@ describe("queued user delivery policy", () => {
 		},
 	);
 
-	it.each(["mnemopi", "hindsight"] as const)(
+	it.each(["mnemotau", "hindsight"] as const)(
 		"retries failed real %s recall on the next committed turn",
 		async backendId => {
 			let recalls = 0;
@@ -312,7 +312,7 @@ describe("queued user delivery policy", () => {
 		},
 	);
 
-	it.each(["mnemopi", "hindsight"] as const)(
+	it.each(["mnemotau", "hindsight"] as const)(
 		"delivers real %s recall with the winning tool policy in the same request",
 		async backendId => {
 			let recalls = 0;
@@ -336,7 +336,7 @@ describe("queued user delivery policy", () => {
 		},
 	);
 
-	it.each(["mnemopi", "hindsight"] as const)(
+	it.each(["mnemotau", "hindsight"] as const)(
 		"discards late real %s recall after the queue is replaced",
 		async backendId => {
 			const started = Promise.withResolvers<void>();
@@ -363,7 +363,7 @@ describe("queued user delivery policy", () => {
 		},
 	);
 
-	it.each(["mnemopi", "hindsight"] as const)(
+	it.each(["mnemotau", "hindsight"] as const)(
 		"does not carry pending real %s recall into a replacement session",
 		async backendId => {
 			const started = Promise.withResolvers<void>();
@@ -388,8 +388,8 @@ describe("queued user delivery policy", () => {
 	);
 
 	it.each([
-		["mnemopi", "reset"],
-		["mnemopi", "rekey"],
+		["mnemotau", "reset"],
+		["mnemotau", "rekey"],
 		["hindsight", "reset"],
 		["hindsight", "rekey"],
 	] as const)(
@@ -401,7 +401,7 @@ describe("queued user delivery policy", () => {
 				async () => `owned-recall-${++recalls}`,
 				true,
 			);
-			const state = backendId === "mnemopi" ? getMnemopiSessionState(session) : session.getHindsightSessionState();
+			const state = backendId === "mnemotau" ? getMnemotauSessionState(session) : session.getHindsightSessionState();
 			if (!state) throw new Error("Real memory state was not installed");
 			const basePrompt = session.systemPrompt;
 			pausePreparation(async () => {
@@ -426,11 +426,11 @@ describe("queued user delivery policy", () => {
 		},
 	);
 
-	it("discards older real mnemopi background recall when a tool-tail user preparation takes ownership", async () => {
+	it("discards older real mnemotau background recall when a tool-tail user preparation takes ownership", async () => {
 		const backgroundStarted = Promise.withResolvers<void>();
 		const releaseBackground = Promise.withResolvers<void>();
 		let recalls = 0;
-		const { agent, manager, requests, pausePreparation } = await setupMemory("mnemopi", async () => {
+		const { agent, manager, requests, pausePreparation } = await setupMemory("mnemotau", async () => {
 			const attempt = ++recalls;
 			if (attempt === 1) {
 				backgroundStarted.resolve();
@@ -479,13 +479,13 @@ describe("queued user delivery policy", () => {
 		expect(prompt).not.toContain("overlap-recall-2");
 	});
 
-	it.each([64, 512])("bounds real mnemopi staged recall at an injection limit of %s", async limit => {
+	it.each([64, 512])("bounds real mnemotau staged recall at an injection limit of %s", async limit => {
 		let recalls = 0;
-		const { requests } = await setupMemory("mnemopi", async () => {
+		const { requests } = await setupMemory("mnemotau", async () => {
 			recalls++;
 			return `recall prefix ${"memory detail ".repeat(500)}recall overflow`;
 		});
-		session.settings.set("mnemopi.injectionTokenLimit", limit);
+		session.settings.set("mnemotau.injectionTokenLimit", limit);
 		await session.refreshBaseSystemPrompt();
 		await session.prompt("bounded first recall");
 		// The fixture's base/tool blocks precede the backend-owned instruction blocks.
@@ -498,7 +498,7 @@ describe("queued user delivery policy", () => {
 			expect(memoryPrompt).toContain("recall prefix");
 		}
 
-		session.settings.set("mnemopi.injectionTokenLimit", 6000);
+		session.settings.set("mnemotau.injectionTokenLimit", 6000);
 		await session.refreshBaseSystemPrompt();
 		await session.prompt("use the committed full recall");
 		expect(recalls).toBe(1);
@@ -964,7 +964,7 @@ describe("queued user delivery policy", () => {
 			);
 			if (phase === "extension hook" || phase === "extension hook after rebuild") pausePreparation(pause);
 			const backend: MemoryBackend = {
-				id: "mnemopi",
+				id: "mnemotau",
 				async start() {},
 				async buildDeveloperInstructions() {
 					return "";

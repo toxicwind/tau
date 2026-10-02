@@ -1,5 +1,5 @@
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, ImageContent } from "@oh-my-pi/pi-ai";
+import type { AgentMessage } from "@tau/tau-agent-core";
+import type { AssistantMessage, ImageContent } from "@tau/tau-ai";
 import { MAGIC_KEYWORDS } from "../modes/magic-keywords";
 import type { RestoredQueuedMessage } from "./agent-session-types";
 import { type CustomMessage, readQueueChipText } from "./messages";

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import TurndownService, { gfm, type TurndownNode } from "@oh-my-pi/pi-utils/turndown";
+import TurndownService, { gfm, type TurndownNode } from "@tau/tau-utils/turndown";
 
 type ListParent = {
 	nodeName: string;

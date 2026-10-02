@@ -6,9 +6,9 @@
 // the tok/s figure is computed over an unknown window for every turn that
 // ends in toolUse.
 import { describe, expect, it } from "bun:test";
-import { streamOpenAICompletions } from "@oh-my-pi/pi-ai/providers/openai-completions";
-import type { Context, FetchImpl, Model } from "@oh-my-pi/pi-ai/types";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+import { streamOpenAICompletions } from "@tau/tau-ai/providers/openai-completions";
+import type { Context, FetchImpl, Model } from "@tau/tau-ai/types";
+import { getBundledModel } from "@tau/tau-catalog/models";
 
 const completionsModel = {
 	...(getBundledModel("openai", "gpt-4o-mini") as Model<"openai-completions">),

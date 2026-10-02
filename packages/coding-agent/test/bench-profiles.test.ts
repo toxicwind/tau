@@ -8,10 +8,10 @@ import type {
 	Context,
 	Model,
 	SimpleStreamOptions,
-} from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { runBenchCommand } from "@oh-my-pi/pi-coding-agent/cli/bench-cli";
-import type { BenchModelRegistry } from "@oh-my-pi/pi-coding-agent/cli/bench-runtime";
+} from "@tau/tau-ai";
+import { buildModel } from "@tau/tau-catalog/build";
+import { runBenchCommand } from "@tau/tau-coding-agent/cli/bench-cli";
+import type { BenchModelRegistry } from "@tau/tau-coding-agent/cli/bench-runtime";
 
 const model: Model<Api> = buildModel({
 	provider: "acme",

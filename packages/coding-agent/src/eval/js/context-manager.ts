@@ -1,5 +1,5 @@
 import * as path from "node:path";
-import { logger, Snowflake, workerHostEntry } from "@oh-my-pi/pi-utils";
+import { logger, Snowflake, workerHostEntry } from "@tau/tau-utils";
 import {
 	createWorkerHandle,
 	createWorkerSubprocess,
@@ -8,7 +8,7 @@ import {
 } from "../../subprocess/worker-client";
 import type { ToolSession } from "../../tools";
 import { ToolAbortError } from "../../tools/tool-errors";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 import { safeSend as safeSendIpc } from "../../utils/ipc";
 import { EVAL_TIMEOUT_PAUSE_OP, EVAL_TIMEOUT_RESUME_OP } from "../bridge-timeout";
 import { getEnabledEvalPreludes } from "../preludes";
@@ -472,7 +472,7 @@ export async function disposeVmContextsByOwner(ownerId: string): Promise<void> {
  * fallback). Catches silent process-load and init-message regressions
  * that otherwise strand every cell on the init timeout in a distribution build —
  * the failure mode that motivated `installWorkerInbox`. Wired into
- * `omp --smoke-test` so binary / source / tarball installs all exercise it.
+ * `tau --smoke-test` so binary / source / tarball installs all exercise it.
  */
 export async function smokeTestJsEvalWorker(): Promise<void> {
 	const worker = spawnJsWorker();

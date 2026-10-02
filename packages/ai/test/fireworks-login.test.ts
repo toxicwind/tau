@@ -11,9 +11,9 @@
  */
 import { describe, expect, it } from "bun:test";
 
-import { getProviderDefinition } from "@oh-my-pi/pi-ai/registry";
-import type { OAuthController } from "@oh-my-pi/pi-ai/registry/oauth/types";
-import type { FetchImpl } from "@oh-my-pi/pi-catalog/types";
+import { getProviderDefinition } from "@tau/tau-ai/registry";
+import type { OAuthController } from "@tau/tau-ai/registry/oauth/types";
+import type { FetchImpl } from "@tau/tau-catalog/types";
 
 const loginFireworks = getProviderDefinition("fireworks")?.login;
 if (!loginFireworks) throw new Error("Fireworks login is not registered");

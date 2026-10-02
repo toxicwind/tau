@@ -6,14 +6,14 @@
  * state they create in `start()` and tear it down on `clear()`.
  */
 
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
+import type { AgentMessage } from "@tau/tau-agent-core";
 import type { ModelRegistry } from "../config/model-registry";
 import type { Settings } from "../config/settings";
 import type { HindsightSessionState } from "../hindsight/state";
-import type { MnemopiSessionState } from "../mnemopi/state";
+import type { MnemotauSessionState } from "../mnemotau/state";
 import type { AgentSession } from "../session/agent-session";
 
-export type MemoryBackendId = "off" | "local" | "hindsight" | "mnemopi" | "sharpshooter";
+export type MemoryBackendId = "off" | "local" | "hindsight" | "mnemotau" | "sharpshooter";
 
 export interface MemoryBackendStatus {
 	backend: MemoryBackendId;
@@ -89,7 +89,7 @@ export interface MemoryBackendStartOptions {
 	agentDir: string;
 	taskDepth: number;
 	parentHindsightSessionState?: HindsightSessionState;
-	parentMnemopiSessionState?: MnemopiSessionState;
+	parentMnemotauSessionState?: MnemotauSessionState;
 }
 
 /** A successful recall, including an empty result, staged until user-turn delivery. */

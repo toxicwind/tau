@@ -1,5 +1,5 @@
-import type { ToolTier } from "@oh-my-pi/pi-agent-core";
-import { parseStreamingJson } from "@oh-my-pi/pi-utils";
+import type { ToolTier } from "@tau/tau-agent-core";
+import { parseStreamingJson } from "@tau/tau-utils";
 import { type Component, Container, Text } from "../index";
 import type { Theme } from "../theme/theme";
 import { replaceTabs } from "../render/render-utils";

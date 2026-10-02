@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import * as path from "node:path";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import type { ModelSpec } from "@oh-my-pi/pi-catalog/types";
+import { buildModel } from "@tau/tau-catalog/build";
+import type { ModelSpec } from "@tau/tau-catalog/types";
 import { compileCompatRules } from "../scripts/compat-compiler";
 import { tackProviderEntries } from "../src/compat/tack";
 

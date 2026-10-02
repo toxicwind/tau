@@ -1,10 +1,10 @@
 import { afterEach, beforeAll, describe, expect, it, type Mock, vi } from "bun:test";
-import { KeybindingsManager } from "@oh-my-pi/pi-tui/app-keybindings";
-import { HookEditorComponent } from "@oh-my-pi/pi-tui/overlays/hook-editor";
-import { ExtensionUiController } from "@oh-my-pi/pi-coding-agent/modes/controllers/extension-ui-controller";
-import { getThemeByName, setThemeInstance } from "@oh-my-pi/pi-tui/theme";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { CURSOR_MARKER, isFocusable, setKeybindings, type TUI } from "@oh-my-pi/pi-tui";
+import { KeybindingsManager } from "@tau/tau-tui/app-keybindings";
+import { HookEditorComponent } from "@tau/tau-tui/overlays/hook-editor";
+import { ExtensionUiController } from "@tau/tau-coding-agent/modes/controllers/extension-ui-controller";
+import { getThemeByName, setThemeInstance } from "@tau/tau-tui/theme";
+import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
+import { CURSOR_MARKER, isFocusable, setKeybindings, type TUI } from "@tau/tau-tui";
 
 beforeAll(async () => {
 	const theme = await getThemeByName("dark");

@@ -1,21 +1,21 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import { Agent, type AgentTool, ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import { type Api, Effort, type Model } from "@oh-my-pi/pi-ai";
-import { createMockModel, type MockResponse } from "@oh-my-pi/pi-ai/providers/mock";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import type { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { convertToLlm } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { executeBuiltinSlashCommand } from "@oh-my-pi/pi-coding-agent/slash-commands/builtin-registry";
-import type { TuiSlashCommandRuntime } from "@oh-my-pi/pi-coding-agent/slash-commands/types";
-import { AUTO_THINKING } from "@oh-my-pi/pi-tui/thinking";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { type } from "@tau/tautype";
+import { Agent, type AgentTool, ThinkingLevel } from "@tau/tau-agent-core";
+import { type Api, Effort, type Model } from "@tau/tau-ai";
+import { createMockModel, type MockResponse } from "@tau/tau-ai/providers/mock";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
+import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import type { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { convertToLlm } from "@tau/tau-coding-agent/session/messages";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { executeBuiltinSlashCommand } from "@tau/tau-coding-agent/slash-commands/builtin-registry";
+import type { TuiSlashCommandRuntime } from "@tau/tau-coding-agent/slash-commands/types";
+import { AUTO_THINKING } from "@tau/tau-tui/thinking";
+import { TempDir } from "@tau/tau-utils";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
 /**
@@ -34,7 +34,7 @@ describe("AgentSession prewalk", () => {
 	let session: AgentSession | undefined;
 
 	beforeAll(() => {
-		tempDir = TempDir.createSync("@pi-prewalk-");
+		tempDir = TempDir.createSync("@tau-prewalk-");
 		authStorage = createInMemoryAuthStorage();
 		authStorage.keys.setRuntime("anthropic", "test-key");
 		modelRegistry = new ModelRegistry(authStorage, path.join(tempDir.path(), "models.yml"));
@@ -616,7 +616,7 @@ describe("AgentSession prewalk", () => {
 		const sessionManager = SessionManager.inMemory();
 		sessionManager.appendCustomMessageEntry(
 			"prewalk-plan",
-			"legacy plan nudge written by an older OMP version",
+			"legacy plan nudge written by an older TAU version",
 			false,
 			undefined,
 			"agent",

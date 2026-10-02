@@ -1,5 +1,5 @@
-import { getOAuthProviders } from "@oh-my-pi/pi-ai/oauth";
-import type { OAuthPrompt } from "@oh-my-pi/pi-ai/oauth/types";
+import { getOAuthProviders } from "@tau/tau-ai/oauth";
+import type { OAuthPrompt } from "@tau/tau-ai/oauth/types";
 import { Container, getKeybindings, Spacer, Text, type TUI, wrapTextWithAnsi } from "../index";
 import { theme } from "../theme/theme";
 import { urlHyperlinkAlways, WidthAwareText } from "../render/index";
@@ -76,7 +76,7 @@ export class LoginDialogComponent extends OverlayPanel {
 	/**
 	 * Called by the OAuth `onAuth` callback. Renders the full authorization URL
 	 * as the primary copy target — that works from any machine, including
-	 * SSH/WSL/headless sessions where the OMP-hosted `launchUrl` would resolve
+	 * SSH/WSL/headless sessions where the TAU-hosted `launchUrl` would resolve
 	 * against the user's local browser and fail. When `launchUrl` is present it
 	 * is offered as an additional local shortcut so narrow local terminals still
 	 * have a truncation-safe copy target (viewport clipping on a long authorize

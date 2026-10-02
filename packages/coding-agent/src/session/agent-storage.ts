@@ -6,7 +6,7 @@ import {
 	type AuthCredentialStore,
 	SqliteAuthCredentialStore,
 	type StoredAuthCredential,
-} from "@oh-my-pi/pi-ai";
+} from "@tau/tau-ai";
 import {
 	AsyncDrain,
 	checkpointWal,
@@ -17,7 +17,7 @@ import {
 	logger,
 	openSqliteDatabase,
 	postmortem,
-} from "@oh-my-pi/pi-utils";
+} from "@tau/tau-utils";
 import type { RawSettings as Settings } from "../config/settings";
 
 /** Row shape for settings table queries */
@@ -42,7 +42,7 @@ type ModelPerfRow = {
 	ttft_ms: number;
 };
 
-/** Row shape read from an `omp stats` messages table during backfill. */
+/** Row shape read from an `tau stats` messages table during backfill. */
 type StatsMessageRow = {
 	rowid: number;
 	timestamp: number;
@@ -134,7 +134,7 @@ let cancelExitCleanup: (() => void) | undefined;
 
 /**
  * Unified SQLite storage for agent settings, model usage, and auth credentials.
- * Delegates auth credential operations to AuthCredentialStore from @oh-my-pi/pi-ai.
+ * Delegates auth credential operations to AuthCredentialStore from @tau/tau-ai.
  * Uses singleton pattern per database path; access via AgentStorage.open().
  */
 export class AgentStorage {
@@ -565,12 +565,12 @@ FROM model_usage_legacy
 
 	/**
 	 * One-time, non-blocking import of historical request timings from the
-	 * `omp stats` database (`~/.omp/stats.db`) into model_perf. Fire-and-forget:
+	 * `tau stats` database (`~/.tau/stats.db`) into model_perf. Fire-and-forget:
 	 * the walk runs in bounded chunks with event-loop yields between them
 	 * (bun:sqlite is synchronous — an unbounded scan here froze the TUI for
 	 * ~30s on multi-million-row stats databases), and the persistent meta
 	 * marker is only set on success so a crash or error retries next process.
-	 * A missing stats.db leaves the marker unset so a later `omp stats` run
+	 * A missing stats.db leaves the marker unset so a later `tau stats` run
 	 * still gets imported. No-op for non-default db paths.
 	 */
 	#kickModelPerfBackfill(): void {
@@ -597,7 +597,7 @@ FROM model_usage_legacy
 	}
 
 	/**
-	 * Imports recent measurable request rows from an `omp stats` database
+	 * Imports recent measurable request rows from an `tau stats` database
 	 * (`messages` table) into the model_perf aggregates. Walks newest-first
 	 * over the timestamp index in {@link MODEL_PERF_BACKFILL_CHUNK}-row chunks,
 	 * yielding to the event loop between chunks, and keeps at most
@@ -697,7 +697,7 @@ ON CONFLICT(model_key) DO UPDATE SET
 
 	/**
 	 * Returns the underlying {@link AuthCredentialStore} so callers that need
-	 * the lower-level pi-ai abstraction (e.g. `findAnthropicAuth(store)`) can
+	 * the lower-level tau-ai abstraction (e.g. `findAnthropicAuth(store)`) can
 	 * reuse this storage's open database connection instead of opening their
 	 * own.
 	 */

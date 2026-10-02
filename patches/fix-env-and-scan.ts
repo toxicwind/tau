@@ -42,18 +42,18 @@ export function parseEnvFile(filePath: string): Record<string, string> {
   if (env.includes(HEADER) && !env.includes("__parseEnvFileCache")) {
     env = env.replace(HEADER, MEMO);
     // cache before the final return of parseEnvFile
-    const oldRet = `	// OMP_ overrides PI_
+    const oldRet = `	// TAU_ overrides PI_
 	for (const k in result) {
-		if (k.startsWith("OMP_")) {
+		if (k.startsWith("TAU_")) {
 			result[\`PI_\${k.slice(4)}\`] = result[k];
 		}
 	}
 
 	return result;
 }`;
-    const newRet = `	// OMP_ overrides PI_
+    const newRet = `	// TAU_ overrides PI_
 	for (const k in result) {
-		if (k.startsWith("OMP_")) {
+		if (k.startsWith("TAU_")) {
 			result[\`PI_\${k.slice(4)}\`] = result[k];
 		}
 	}

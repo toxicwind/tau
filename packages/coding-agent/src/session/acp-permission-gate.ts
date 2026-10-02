@@ -1,5 +1,5 @@
-import { editInspect } from "@oh-my-pi/pi-natives";
-import { isRecord, stringProperty } from "@oh-my-pi/pi-utils";
+import { editInspect } from "@tau/tau-natives";
+import { isRecord, stringProperty } from "@tau/tau-utils";
 import { resolveToCwd } from "../tools/path-utils";
 import type { ClientBridgePermissionOption } from "./client-bridge";
 

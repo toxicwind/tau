@@ -1,15 +1,15 @@
-import type { Api, Model, ModelSpec, RemoteCompactionConfig } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { getVariantAliasSources, resolveVariantSelector } from "@oh-my-pi/pi-catalog/compat/collapse";
+import type { Api, Model, ModelSpec, RemoteCompactionConfig } from "@tau/tau-ai/types";
+import { buildModel } from "@tau/tau-catalog/build";
+import { getVariantAliasSources, resolveVariantSelector } from "@tau/tau-catalog/compat/collapse";
 import {
 	getBundledModelReferenceIndex,
 	inheritReferenceThinking,
 	resolveModelReference,
-} from "@oh-my-pi/pi-catalog/identity";
-import { logger } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-catalog/identity";
+import { logger } from "@tau/tau-utils";
 import { type ConfigHeaderResolver, type ConfigHeaderSource, createConfigHeaderResolver } from "./resolve-config-value";
 import { type ModelPatch, mergeCompat, mergeRemoteCompactionConfig } from "./model-patch";
-import { parseModelString } from "@oh-my-pi/pi-tui/overlays/model-selector";
+import { parseModelString } from "@tau/tau-tui/overlays/model-selector";
 import type { ModelOverride, ProviderAuthMode } from "./models-config-schema";
 export interface CustomModelDefinitionLike extends ModelPatch {
 	id: string;

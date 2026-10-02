@@ -1,4 +1,4 @@
-import { logger } from "@oh-my-pi/pi-utils";
+import { logger } from "@tau/tau-utils";
 import { collapseVariants, type EffortVariantFamily } from "../compat/collapse";
 import { Effort, THINKING_EFFORTS } from "../effort";
 import type { DevinCompat, FetchImpl, ModelCost, ModelSpec } from "../types";
@@ -227,7 +227,7 @@ function collectDevinFamilyLane(lanes: Map<string, DevinFamilyLane>, config: Cli
 	// effort label; its explicit Thinking axis decides whether the route is off.
 	if (thinking === false) effort = "off";
 
-	// Family label as an OMP id: "GPT-5.6 Sol" -> "gpt-5-6-sol".
+	// Family label as an TAU id: "GPT-5.6 Sol" -> "gpt-5-6-sol".
 	const baseId = label
 		.toLowerCase()
 		.replace(/[^a-z0-9]+/g, "-")
@@ -406,7 +406,7 @@ export async function fetchDevinModels(
  * image was attached, while SWE-1.7, SWE-1.7 Lightning, and every proxied
  * frontier model (Claude/Gemini/GPT/Kimi) read the same field correctly.
  * Declaring text-only lets clients use their image fallback path instead of
- * silently losing attachments ([#6072](https://github.com/can1357/oh-my-pi/issues/6072)).
+ * silently losing attachments ([#6072](https://github.com/toxicwind/tau/issues/6072)).
  * Remove entries if Devin ever wires SWE-1.6 vision up.
  */
 const DEVIN_IMAGE_BLIND_UIDS = new Set(["swe-1-6", "swe-1-6-fast"]);

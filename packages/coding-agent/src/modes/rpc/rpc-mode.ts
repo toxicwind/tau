@@ -10,10 +10,10 @@
  * - Events: AgentSessionEvent objects streamed as they occur
  * - Extension UI: Extension UI requests are emitted, client responds with extension_ui_response
  */
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import { getOAuthProviders } from "@oh-my-pi/pi-ai/oauth";
-import { toolWireSchema } from "@oh-my-pi/pi-ai/utils/schema";
-import { $env, isRecord, logger, Snowflake } from "@oh-my-pi/pi-utils";
+import { ThinkingLevel } from "@tau/tau-agent-core";
+import { getOAuthProviders } from "@tau/tau-ai/oauth";
+import { toolWireSchema } from "@tau/tau-ai/utils/schema";
+import { $env, isRecord, logger, Snowflake } from "@tau/tau-utils";
 import { reset as resetCapabilities } from "../../capability";
 import { clearPluginRootsAndCaches, resolveActiveProjectRegistryPath } from "../../discovery/helpers";
 import {
@@ -31,7 +31,7 @@ import {
 	type SkillPromptInput,
 } from "../../extensibility/skills";
 import { loadSlashCommands } from "../../extensibility/slash-commands";
-import { type Theme, theme } from "@oh-my-pi/pi-tui/theme";
+import { type Theme, theme } from "@tau/tau-tui/theme";
 import type { AgentSession } from "../../session/agent-session";
 import { SKILL_PROMPT_MESSAGE_TYPE, USER_INTERRUPT_LABEL } from "../../session/messages";
 import { executeAcpBuiltinSlashCommand } from "../../slash-commands/acp-builtins";
@@ -1468,10 +1468,10 @@ export async function runRpcMode(
 			}
 
 			case "get_available_thinking_levels": {
-				// Pi-compatible discovery: the selectable levels for the live model,
+				// Tau-compatible discovery: the selectable levels for the live model,
 				// including `off` (which `set_thinking_level` accepts but the
-				// effort-only helper excludes). OMP-only `auto`/`inherit` are
-				// intentionally omitted — that selector stays an OMP dialect.
+				// effort-only helper excludes). TAU-only `auto`/`inherit` are
+				// intentionally omitted — that selector stays an TAU dialect.
 				return success(id, "get_available_thinking_levels", {
 					levels: [ThinkingLevel.Off, ...session.getAvailableThinkingLevels()],
 				});
@@ -1709,7 +1709,7 @@ export async function runRpcMode(
 			// reaper (releaseTabsForOwner) and other bounded teardown run before
 			// the process exits. dispose() also emits `session_shutdown`, so we
 			// must NOT emit it separately here or the event fires twice. Skipping
-			// dispose left OMP-owned Chromium alive after RPC shutdown (#5643).
+			// dispose left TAU-owned Chromium alive after RPC shutdown (#5643).
 			await disposeAndExit();
 		},
 	});

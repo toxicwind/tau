@@ -1,23 +1,23 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import type { ImageContent, Model } from "@oh-my-pi/pi-ai";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { GoalTool } from "@oh-my-pi/pi-coding-agent/goals/tools/goal-tool";
-import { InteractiveMode } from "@oh-my-pi/pi-coding-agent/modes/interactive-mode";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { SubmittedUserInput } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { normalizeCustomMessagePayload } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { executeBuiltinSlashCommand } from "@oh-my-pi/pi-coding-agent/slash-commands/builtin-registry";
-import { createTools, type Tool, type ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import type { TodoPhase } from "@oh-my-pi/pi-tui/tools/todo";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent } from "@tau/tau-agent-core";
+import type { ImageContent, Model } from "@tau/tau-ai";
+import { AssistantMessageEventStream } from "@tau/tau-ai/utils/event-stream";
+import * as vcs from "@tau/tau-natives/vcs";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import { GoalTool } from "@tau/tau-coding-agent/goals/tools/goal-tool";
+import { InteractiveMode } from "@tau/tau-coding-agent/modes/interactive-mode";
+import { initTheme } from "@tau/tau-tui/theme";
+import type { SubmittedUserInput } from "@tau/tau-coding-agent/modes/types";
+import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { normalizeCustomMessagePayload } from "@tau/tau-coding-agent/session/messages";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { executeBuiltinSlashCommand } from "@tau/tau-coding-agent/slash-commands/builtin-registry";
+import { createTools, type Tool, type ToolSession } from "@tau/tau-coding-agent/tools";
+import type { TodoPhase } from "@tau/tau-tui/tools/todo";
+import { TempDir } from "@tau/tau-utils";
 
 function createToolSession(cwd: string, settings: Settings, overrides: Partial<ToolSession> = {}): ToolSession {
 	return {
@@ -54,7 +54,7 @@ type SharedFixture = {
 };
 
 async function createSharedFixture(): Promise<SharedFixture> {
-	const baseDir = TempDir.createSync("@pi-goal-mode-shared-");
+	const baseDir = TempDir.createSync("@tau-goal-mode-shared-");
 	const authStorage = await AuthStorage.create(path.join(baseDir.path(), "testauth.db"));
 	// The real prompt path gates on a resolvable key; never rely on ambient env.
 	authStorage.keys.setRuntime("anthropic", "test-key");
@@ -68,7 +68,7 @@ async function createSharedFixture(): Promise<SharedFixture> {
 
 async function createGoalHarness(shared: SharedFixture): Promise<GoalHarness> {
 	resetSettingsForTest();
-	const tempDir = TempDir.createSync("@pi-goal-mode-");
+	const tempDir = TempDir.createSync("@tau-goal-mode-");
 	await Settings.init({ inMemory: true, cwd: tempDir.path() });
 	const { modelRegistry, model } = shared;
 

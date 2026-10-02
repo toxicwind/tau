@@ -1,9 +1,9 @@
 {
   "type": "module",
-  "name": "@oh-my-pi/pi-tui",
+  "name": "@tau/tau-tui",
   "version": "18.3.0",
   "description": "Terminal User Interface library with differential rendering for efficient text-based applications",
-  "homepage": "https://omp.sh",
+  "homepage": "https://tau.sh",
   "author": { "name": "Stencil Labs, Inc.", "url": "https://stencil.so" },
   "contributors": [
     "Mario Zechner"
@@ -11,11 +11,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/can1357/oh-my-pi.git",
+    "url": "git+https://github.com/toxicwind/tau.git",
     "directory": "packages/tui"
   },
   "bugs": {
-    "url": "https://github.com/can1357/oh-my-pi/issues"
+    "url": "https://github.com/toxicwind/tau/issues"
   },
   "keywords": [
     "tui",
@@ -37,14 +37,14 @@
     "fmt": "oxfmt --no-error-on-unmatched-pattern 'src/**/*.{ts,tsx}' '{test,bench,examples,scripts}/**/*.ts' '*.ts'"
   },
   "dependencies": {
-    "@oh-my-pi/omptype": "catalog:",
-    "@oh-my-pi/pi-agent-core": "catalog:",
-    "@oh-my-pi/pi-ai": "catalog:",
-    "@oh-my-pi/pi-catalog": "catalog:",
-    "@oh-my-pi/pi-natives": "catalog:",
-    "@oh-my-pi/pi-utils": "catalog:",
-    "@oh-my-pi/pi-wire": "catalog:",
-    "@oh-my-pi/snapcompact": "catalog:"
+    "@tau/tautype": "catalog:",
+    "@tau/tau-agent-core": "catalog:",
+    "@tau/tau-ai": "catalog:",
+    "@tau/tau-catalog": "catalog:",
+    "@tau/tau-natives": "catalog:",
+    "@tau/tau-utils": "catalog:",
+    "@tau/tau-wire": "catalog:",
+    "@tau/snapcompact": "catalog:"
   },
   "devDependencies": {
     "kitty-vt-wasm": "catalog:"

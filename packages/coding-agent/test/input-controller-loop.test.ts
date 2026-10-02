@@ -1,6 +1,6 @@
 import { describe, expect, it, type Mock, vi } from "bun:test";
-import { InputController } from "@oh-my-pi/pi-coding-agent/modes/controllers/input-controller";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
+import { InputController } from "@tau/tau-coding-agent/modes/controllers/input-controller";
+import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
 type Spy = Mock<(...args: unknown[]) => unknown>;
 
 function createLoopContext(options: {

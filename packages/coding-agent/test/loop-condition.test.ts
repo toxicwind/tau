@@ -1,18 +1,18 @@
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
 import {
 	describeLoopCondition,
 	evaluateLoopCondition,
 	type LoopConditionVerdict,
-} from "@oh-my-pi/pi-coding-agent/modes/loop-condition";
-import { TempDir } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-coding-agent/modes/loop-condition";
+import { TempDir } from "@tau/tau-utils";
 
 describe("evaluateLoopCondition", () => {
 	let tempDir: TempDir;
 
 	beforeAll(async () => {
 		resetSettingsForTest();
-		tempDir = TempDir.createSync("@pi-loop-condition-");
+		tempDir = TempDir.createSync("@tau-loop-condition-");
 		await Settings.init({ inMemory: true, cwd: tempDir.path() });
 	});
 

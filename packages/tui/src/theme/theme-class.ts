@@ -1,6 +1,6 @@
-import { colorLuma, relativeLuminance } from "@oh-my-pi/pi-utils/color";
-import * as logger from "@oh-my-pi/pi-utils/logger";
-import chalk from "@oh-my-pi/pi-utils/chalk";
+import { colorLuma, relativeLuminance } from "@tau/tau-utils/color";
+import * as logger from "@tau/tau-utils/logger";
+import chalk from "@tau/tau-utils/chalk";
 import { bgAnsi, colorToAnsi, fgAnsi, resolveToHex } from "./color";
 import { type ColorMode, isValidThemeColor, type ThemeBg, type ThemeColor } from "./schema";
 import type { SessionAccentTheme } from "./session-color";
@@ -591,7 +591,7 @@ export class Theme {
 			advisor: this.#symbols["icon.advisor"],
 			advisorClosed: this.#symbols["icon.advisorClosed"],
 			time: this.#symbols["icon.time"],
-			omp: this.#symbols["icon.omp"],
+			tau: this.#symbols["icon.tau"],
 			esc: this.#symbols["icon.esc"],
 			ghost: this.#symbols["icon.ghost"],
 			agents: this.#symbols["icon.agents"],

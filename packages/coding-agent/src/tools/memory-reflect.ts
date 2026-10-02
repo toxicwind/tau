@@ -1,6 +1,6 @@
-import { type } from "@oh-my-pi/omptype";
-import type { AgentTool, AgentToolResult } from "@oh-my-pi/pi-agent-core";
-import { logger, untilAborted } from "@oh-my-pi/pi-utils";
+import { type } from "@tau/tautype";
+import type { AgentTool, AgentToolResult } from "@tau/tau-agent-core";
+import { logger, untilAborted } from "@tau/tau-utils";
 import { isHindsightConfigured, loadHindsightConfig } from "../hindsight/config";
 import { ensureBankExists } from "../hindsight/bank";
 import reflectDescription from "../prompts/tools/reflect.md" with { type: "text" };
@@ -27,7 +27,7 @@ export class MemoryReflectTool implements AgentTool<typeof memoryReflectSchema> 
 
 	static createIf(session: ToolSession): MemoryReflectTool | null {
 		const backend = session.settings.get("memory.backend");
-		if (backend !== "hindsight" && backend !== "mnemopi") return null;
+		if (backend !== "hindsight" && backend !== "mnemotau") return null;
 		if (backend === "hindsight" && !isHindsightConfigured(loadHindsightConfig(session.settings))) return null;
 		return new MemoryReflectTool(session);
 	}
@@ -35,10 +35,10 @@ export class MemoryReflectTool implements AgentTool<typeof memoryReflectSchema> 
 	async execute(_id: string, params: MemoryReflectParams, signal?: AbortSignal): Promise<AgentToolResult> {
 		return untilAborted(signal, async () => {
 			const backend = this.session.settings.get("memory.backend");
-			if (backend === "mnemopi") {
-				const state = this.session.getMnemopiSessionState?.();
+			if (backend === "mnemotau") {
+				const state = this.session.getMnemotauSessionState?.();
 				if (!state) {
-					throw new Error("Mnemopi backend is not initialised for this session.");
+					throw new Error("Mnemotau backend is not initialised for this session.");
 				}
 
 				try {
@@ -58,7 +58,7 @@ export class MemoryReflectTool implements AgentTool<typeof memoryReflectSchema> 
 						details: {},
 					};
 				} catch (err) {
-					logger.warn("reflect failed", { backend: "mnemopi", bank: state.config.bank, error: String(err) });
+					logger.warn("reflect failed", { backend: "mnemotau", bank: state.config.bank, error: String(err) });
 					throw err instanceof Error ? err : new Error(String(err));
 				}
 			}

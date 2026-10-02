@@ -1,10 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import * as ai from "@oh-my-pi/pi-ai";
-import { type Api, Effort, type Model } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { generateCommitMessage } from "@oh-my-pi/pi-coding-agent/utils/commit-message-generator";
-import { generateSessionTitle } from "@oh-my-pi/pi-coding-agent/utils/title-generator";
+import * as ai from "@tau/tau-ai";
+import { type Api, Effort, type Model } from "@tau/tau-ai";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { generateCommitMessage } from "@tau/tau-coding-agent/utils/commit-message-generator";
+import { generateSessionTitle } from "@tau/tau-coding-agent/utils/title-generator";
 
 function getModelOrThrow(id: string) {
 	const model = getBundledModel("anthropic", id);

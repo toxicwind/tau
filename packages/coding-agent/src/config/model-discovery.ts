@@ -3,18 +3,18 @@
  * llama.cpp, lm-studio, openai-models-list, and new-api/one-api-style proxies.
  * `ModelRegistry` owns the orchestration (status, state, caching) and calls
  * `discoverModelsByProviderType` with a `DiscoveryContext`; built-in provider
- * discovery lives in pi-catalog's provider-models.
+ * discovery lives in tau-catalog's provider-models.
  */
-import { type ApiKey, withAuth } from "@oh-my-pi/pi-ai/auth-retry";
-import { getAppleFoundationModelsAvailability } from "@oh-my-pi/pi-ai/providers/apple-foundation-models";
-import type { Api, FetchImpl, Model, RemoteCompactionConfig } from "@oh-my-pi/pi-ai/types";
-import { buildDiscoveredModel, buildModel } from "@oh-my-pi/pi-catalog/build";
+import { type ApiKey, withAuth } from "@tau/tau-ai/auth-retry";
+import { getAppleFoundationModelsAvailability } from "@tau/tau-ai/providers/apple-foundation-models";
+import type { Api, FetchImpl, Model, RemoteCompactionConfig } from "@tau/tau-ai/types";
+import { buildDiscoveredModel, buildModel } from "@tau/tau-catalog/build";
 import {
 	getBundledModelReferenceIndex,
 	inheritReferenceThinking,
 	resolveModelReference,
 	stripBracketedModelIdAffixes,
-} from "@oh-my-pi/pi-catalog/identity";
+} from "@tau/tau-catalog/identity";
 import {
 	fetchLiteLLMRichModels,
 	fetchLmStudioNativeModelMetadata,
@@ -22,9 +22,9 @@ import {
 	OPENAI_COMPAT_DISCOVERY_DEFAULT_CONTEXT_WINDOW,
 	OPENAI_COMPAT_DISCOVERY_DEFAULT_MAX_TOKENS,
 	resolveLiteLLMApi,
-} from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import type { KindApiKind, ModelSpec, OpenAICompat } from "@oh-my-pi/pi-catalog/types";
-import { isRecord } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-catalog/provider-models/openai-compat";
+import type { KindApiKind, ModelSpec, OpenAICompat } from "@tau/tau-catalog/types";
+import { isRecord } from "@tau/tau-utils";
 import type { ProviderDiscovery } from "./models-config-schema";
 
 // Default cap on `max_tokens` for auto-discovered models that do not advertise
@@ -447,7 +447,7 @@ export function discoverModelsByProviderType(
 
 /**
  * Offers Apple's on-device model when the in-process bridge reports it usable;
- * an ineligible device, disabled Apple Intelligence, or an omp build without
+ * an ineligible device, disabled Apple Intelligence, or an tau build without
  * the bridge yields no models.
  */
 async function discoverAppleFoundationModels(providerConfig: DiscoveryProviderConfig): Promise<Model<Api>[]> {

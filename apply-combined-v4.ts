@@ -16,10 +16,10 @@ console.log("apply-combined-v4.ts — DUAL MARKERS + Z.AI max preserved");
 console.log(`TAU: ${TAU}`);
 
 // Clean
-for(const d of [join(HOME,".tau/logs/http-400-requests"), join(HOME,".omp/logs/http-400-requests")]){
+for(const d of [join(HOME,".tau/logs/http-400-requests"), join(HOME,".tau/logs/http-400-requests")]){
   try{ if(existsSync(d)) for(const f of readdirSync(d)) try{ unlinkSync(join(d,f)); }catch{} }catch{}
 }
-try{ execSync("rm -rf ~/scratch/oh-my-pi-upstream", {stdio:"ignore"}); console.log("[CLEAN] scratch removed"); }catch{}
+try{ execSync("rm -rf ~/scratch/tau-upstream", {stdio:"ignore"}); console.log("[CLEAN] scratch removed"); }catch{}
 
 // 1. HOSTS dual markers
 {

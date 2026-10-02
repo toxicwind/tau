@@ -1,12 +1,12 @@
 import * as fs from "node:fs";
 import { scheduler } from "node:timers/promises";
 import * as tls from "node:tls";
-import { isAnthropicSigningProxyUrl, isOfficialAnthropicApiUrl } from "@oh-my-pi/pi-catalog/compat/anthropic";
-import { hostMatchesUrl, isVertexRawPredictUrl } from "@oh-my-pi/pi-catalog/hosts";
-import { mapEffortToAnthropicAdaptiveEffort } from "@oh-my-pi/pi-catalog/model-thinking";
-import { calculateCost, getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { isAnthropicOAuthToken } from "@oh-my-pi/pi-catalog/utils";
-import { parseGitHubCopilotApiKey } from "@oh-my-pi/pi-catalog/wire/github-copilot";
+import { isAnthropicSigningProxyUrl, isOfficialAnthropicApiUrl } from "@tau/tau-catalog/compat/anthropic";
+import { hostMatchesUrl, isVertexRawPredictUrl } from "@tau/tau-catalog/hosts";
+import { mapEffortToAnthropicAdaptiveEffort } from "@tau/tau-catalog/model-thinking";
+import { calculateCost, getBundledModel } from "@tau/tau-catalog/models";
+import { isAnthropicOAuthToken } from "@tau/tau-catalog/utils";
+import { parseGitHubCopilotApiKey } from "@tau/tau-catalog/wire/github-copilot";
 import {
 	$env,
 	isEnoent,
@@ -14,7 +14,7 @@ import {
 	parseJsonWithRepair,
 	parseStreamingJsonThrottled,
 	readSseEvents,
-} from "@oh-my-pi/pi-utils";
+} from "@tau/tau-utils";
 import { renderDemotedThinking } from "../dialect/demotion";
 import * as AIError from "../error";
 import { getEnvApiKey, OUTPUT_FALLBACK_BUFFER } from "../stream";
@@ -1915,7 +1915,7 @@ export function maybeAddReplayUnsignedThinkingHint(model: Model<"anthropic-messa
 	if (!isInvalidThinkingSignatureError(message) || isThinkingPrefixBindingError(message)) return message;
 	if (model.compat.officialEndpoint) return message;
 	if (model.compatConfig?.replayUnsignedThinking !== undefined) return message;
-	const hint = `Provider "${model.provider}" looks like an Anthropic-compatible signing proxy: it rejected a replayed unsigned thinking block. Set \`compat.replayUnsignedThinking: false\` under \`providers.${model.provider}\` in your models.yml and retry. See https://github.com/can1357/oh-my-pi/issues/4297.`;
+	const hint = `Provider "${model.provider}" looks like an Anthropic-compatible signing proxy: it rejected a replayed unsigned thinking block. Set \`compat.replayUnsignedThinking: false\` under \`providers.${model.provider}\` in your models.yml and retry. See https://github.com/toxicwind/tau/issues/4297.`;
 	return `${hint}\n\n${message}`;
 }
 
@@ -4646,7 +4646,7 @@ function toWellFormedDeep(value: unknown): unknown {
 }
 
 /**
- * Serialize omp {@link Message}s to Anthropic wire messages.
+ * Serialize tau {@link Message}s to Anthropic wire messages.
  *
  * `opts.serverSideFallbackEnabled` — when the CURRENT request itself
  * opts into the server-side-fallback beta chain. Only then may a persisted

@@ -1,12 +1,12 @@
 import { describe, expect, test } from "bun:test";
-import { Tokenizer } from "@oh-my-pi/pi-agent-core";
+import { Tokenizer } from "@tau/tau-agent-core";
 import {
 	estimateTranscriptTokens,
 	findTranscriptUsageAnchor,
 	isTranscriptUsageAnchor,
-} from "@oh-my-pi/pi-agent-core/compaction";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core/types";
-import type { AssistantMessage, Usage } from "@oh-my-pi/pi-ai";
+} from "@tau/tau-agent-core/compaction";
+import type { AgentMessage } from "@tau/tau-agent-core/types";
+import type { AssistantMessage, Usage } from "@tau/tau-ai";
 
 const tokenizer = new Tokenizer();
 

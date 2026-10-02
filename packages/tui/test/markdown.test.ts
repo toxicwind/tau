@@ -7,12 +7,12 @@ import {
 	Markdown,
 	renderInlineMarkdown,
 	urlTokenPossible,
-} from "@oh-my-pi/pi-tui/components/markdown";
-import { setTerminalTextSizing, TERMINAL } from "@oh-my-pi/pi-tui/terminal-capabilities";
-import { type Component, TUI } from "@oh-my-pi/pi-tui/tui";
-import { visibleWidth } from "@oh-my-pi/pi-tui/utils";
-import { Chalk } from "@oh-my-pi/pi-utils/chalk";
-import { mathStartIndex } from "@oh-my-pi/pi-utils/math-delimiters";
+} from "@tau/tau-tui/components/markdown";
+import { setTerminalTextSizing, TERMINAL } from "@tau/tau-tui/terminal-capabilities";
+import { type Component, TUI } from "@tau/tau-tui/tui";
+import { visibleWidth } from "@tau/tau-tui/utils";
+import { Chalk } from "@tau/tau-utils/chalk";
+import { mathStartIndex } from "@tau/tau-utils/math-delimiters";
 import { defaultMarkdownTheme } from "./test-themes.js";
 import { VirtualTerminal } from "./virtual-terminal.js";
 
@@ -1451,7 +1451,7 @@ bar`,
 		});
 
 		it("should isolate wrapped OSC 8 links from adjacent table cells", () => {
-			const issueUrl = "https://github.com/can1357/oh-my-pi/issues/5860";
+			const issueUrl = "https://github.com/toxicwind/tau/issues/5860";
 			const markdown = new Markdown(
 				`| Issue | Title |
 |---|---|
@@ -1497,7 +1497,7 @@ bar`,
 		});
 
 		it("should balance OSC 8 links across explicit newlines in a table cell", () => {
-			const issueUrl = "https://github.com/can1357/oh-my-pi/issues/5860";
+			const issueUrl = "https://github.com/toxicwind/tau/issues/5860";
 			const markdown = new Markdown(
 				`| Issue | Title |
 |---|---|

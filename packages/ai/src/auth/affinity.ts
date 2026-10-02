@@ -1,4 +1,4 @@
-import { logger } from "@oh-my-pi/pi-utils";
+import { logger } from "@tau/tau-utils";
 import { getEnvApiKey } from "../stream";
 import type { AuthCredential, OAuthCredential, SessionsApi } from "./types";
 import type { AuthCredentialStore } from "./store";

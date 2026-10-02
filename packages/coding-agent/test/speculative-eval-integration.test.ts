@@ -9,20 +9,20 @@ import {
 	agentLoop,
 	type SpeculativeOperationSink,
 	type SpeculativePhysicalOutcome,
-} from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, Context, Message } from "@oh-my-pi/pi-ai";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { setStreamingPartialJson } from "@oh-my-pi/pi-ai/utils/block-symbols";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import * as jsContextManager from "@oh-my-pi/pi-coding-agent/eval/js/context-manager";
-import { disposeAllKernelSessions } from "@oh-my-pi/pi-coding-agent/eval/py/executor";
-import { EvalShadowCellSession } from "@oh-my-pi/pi-coding-agent/eval/speculation/cell-session";
-import { CodingAgentSpeculativeExecutionHost } from "@oh-my-pi/pi-coding-agent/speculation/host";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { EvalTool } from "@oh-my-pi/pi-coding-agent/tools/eval";
-import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-agent-core";
+import type { AssistantMessage, Context, Message } from "@tau/tau-ai";
+import { createMockModel } from "@tau/tau-ai/providers/mock";
+import { setStreamingPartialJson } from "@tau/tau-ai/utils/block-symbols";
+import { AssistantMessageEventStream } from "@tau/tau-ai/utils/event-stream";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import * as jsContextManager from "@tau/tau-coding-agent/eval/js/context-manager";
+import { disposeAllKernelSessions } from "@tau/tau-coding-agent/eval/py/executor";
+import { EvalShadowCellSession } from "@tau/tau-coding-agent/eval/speculation/cell-session";
+import { CodingAgentSpeculativeExecutionHost } from "@tau/tau-coding-agent/speculation/host";
+import type { ToolSession } from "@tau/tau-coding-agent/tools";
+import { EvalTool } from "@tau/tau-coding-agent/tools/eval";
+import { ReadTool } from "@tau/tau-coding-agent/tools/read";
+import { removeWithRetries } from "@tau/tau-utils";
 
 const temporaryDirectories: string[] = [];
 const pythonIt = process.env.PI_PYTHON_INTEGRATION === "1" ? it : it.skip;

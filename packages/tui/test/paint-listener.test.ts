@@ -5,7 +5,7 @@ import {
 	TUI,
 	type TuiPaint,
 	type ViewportSize,
-} from "@oh-my-pi/pi-tui";
+} from "@tau/tau-tui";
 import { VirtualTerminal } from "./virtual-terminal";
 
 class Provider implements TerminalFrameProvider {

@@ -1,8 +1,8 @@
-import { type } from "@oh-my-pi/omptype";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { completeSimple, Effort, type Model, retryTransientCompletion } from "@oh-my-pi/pi-ai";
-import { clampThinkingLevelForModel } from "@oh-my-pi/pi-catalog/model-thinking";
-import { logger, prompt } from "@oh-my-pi/pi-utils";
+import { type } from "@tau/tautype";
+import type { AgentMessage } from "@tau/tau-agent-core";
+import { completeSimple, Effort, type Model, retryTransientCompletion } from "@tau/tau-ai";
+import { clampThinkingLevelForModel } from "@tau/tau-catalog/model-thinking";
+import { logger, prompt } from "@tau/tau-utils";
 import type { ModelRegistry } from "../config/model-registry";
 import { getModelMatchPreferences, resolveModelRoleValue, resolveRoleSelection } from "../config/model-resolver";
 import type { Settings } from "../config/settings";

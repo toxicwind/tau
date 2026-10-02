@@ -2,19 +2,19 @@ import { Database } from "bun:sqlite";
 import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { getProviderDashboardStats } from "@oh-my-pi/omp-stats/aggregator";
-import { initDb, insertMessageStats } from "@oh-my-pi/omp-stats/db";
-import type { MessageStats } from "@oh-my-pi/omp-stats/types";
+import { getProviderDashboardStats } from "@tau/tau-stats/aggregator";
+import { initDb, insertMessageStats } from "@tau/tau-stats/db";
+import type { MessageStats } from "@tau/tau-stats/types";
 import {
 	computeUsageWindowStats,
 	readUsageSnapshots,
 	sumFleetTokens,
 	type UsageSnapshotRow,
-} from "@oh-my-pi/omp-stats/usage-windows";
-import { getAgentDbPath } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-stats/usage-windows";
+import { getAgentDbPath } from "@tau/tau-utils";
 import { installStatsTestIsolation } from "./helpers/temp-agent";
 
-installStatsTestIsolation("@pi-stats-providers-");
+installStatsTestIsolation("@tau-stats-providers-");
 
 const T0 = Date.UTC(2026, 6, 20, 10, 0, 0);
 const MINUTE = 60_000;

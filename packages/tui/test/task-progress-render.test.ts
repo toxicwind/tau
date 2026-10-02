@@ -1,13 +1,13 @@
 import { setFeedModelBadgeEnabled } from "../src/render/render-utils";
 import { setShimmerMode } from "../src/theme/shimmer";
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import { type RenderResultOptions, ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import { getThemeByName, setThemeInstance } from "@oh-my-pi/pi-tui/theme";
-import { taskToolRenderer } from "@oh-my-pi/pi-tui/tools/task";
-import { getSubprocessToolRenderer } from "@oh-my-pi/pi-tui/tools/subprocess";
-import type { AgentProgress, SingleResult, TaskToolDetails } from "@oh-my-pi/pi-tui/tools/task";
-import { FEED_MODEL_BADGE_WIDTH } from "@oh-my-pi/pi-tui/render/render-utils";
-import { visibleWidth } from "@oh-my-pi/pi-tui";
+import { type RenderResultOptions, ThinkingLevel } from "@tau/tau-agent-core";
+import { getThemeByName, setThemeInstance } from "@tau/tau-tui/theme";
+import { taskToolRenderer } from "@tau/tau-tui/tools/task";
+import { getSubprocessToolRenderer } from "@tau/tau-tui/tools/subprocess";
+import type { AgentProgress, SingleResult, TaskToolDetails } from "@tau/tau-tui/tools/task";
+import { FEED_MODEL_BADGE_WIDTH } from "@tau/tau-tui/render/render-utils";
+import { visibleWidth } from "@tau/tau-tui";
 
 function runningProgress(overrides: Partial<AgentProgress> = {}): AgentProgress {
 	return {

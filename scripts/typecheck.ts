@@ -2,7 +2,7 @@
  * Run a package's typecheck from its real path.
  *
  * This checkout is reachable through a symlink (`projects/tau` →
- * `projects/range/ranch/stockyard/tau`) and `node_modules/@oh-my-pi/*` are
+ * `projects/range/ranch/stockyard/tau`) and `node_modules/@tau/*` are
  * symlinks back into `packages/*`. A typechecker started from the symlinked
  * path resolves `include: ["src"]` to that spelling while resolving imports to
  * the realpath, so one source file is loaded twice as two distinct modules.

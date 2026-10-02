@@ -1,10 +1,10 @@
-import type { AssistantMessage, ImageContent, MessageAttribution, TextContent } from "@oh-my-pi/pi-ai";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { COLLAB_PROMPT_MESSAGE_TYPE } from "@oh-my-pi/pi-wire";
+import type { AssistantMessage, ImageContent, MessageAttribution, TextContent } from "@tau/tau-ai";
+import * as AIError from "@tau/tau-ai/error";
+import { COLLAB_PROMPT_MESSAGE_TYPE } from "@tau/tau-wire";
 import type { OutputMeta } from "../tools/output-meta";
-import type { BranchSummaryMessage, CompactionSummaryMessage } from "@oh-my-pi/pi-agent-core/compaction/messages";
+import type { BranchSummaryMessage, CompactionSummaryMessage } from "@tau/tau-agent-core/compaction/messages";
 
-declare module "@oh-my-pi/pi-agent-core" {
+declare module "@tau/tau-agent-core" {
 	interface CustomAgentMessages {
 		bashExecution: BashExecutionMessage;
 		pythonExecution: PythonExecutionMessage;
@@ -15,8 +15,8 @@ declare module "@oh-my-pi/pi-agent-core" {
 		fileMention: FileMentionMessage;
 	}
 }
-export { COLLAB_PROMPT_MESSAGE_TYPE, type CollabPromptDetails } from "@oh-my-pi/pi-wire";
-export type { BranchSummaryMessage, CompactionSummaryMessage } from "@oh-my-pi/pi-agent-core/compaction/messages";
+export { COLLAB_PROMPT_MESSAGE_TYPE, type CollabPromptDetails } from "@tau/tau-wire";
+export type { BranchSummaryMessage, CompactionSummaryMessage } from "@tau/tau-agent-core/compaction/messages";
 
 export const SKILL_PROMPT_MESSAGE_TYPE = "skill-prompt";
 

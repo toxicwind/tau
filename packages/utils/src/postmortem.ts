@@ -53,7 +53,7 @@ const CLEANUP_DEADLINE_MS = 10_000;
  * terminates cleanly (#7393). `Symbol.for` so it survives duplicate module
  * instances across bundles/realms.
  */
-export const NATIVE_PROCESS_EXIT = Symbol.for("omp.postmortem.nativeProcessExit");
+export const NATIVE_PROCESS_EXIT = Symbol.for("tau.postmortem.nativeProcessExit");
 
 type HardExitFn = (code?: number) => never;
 
@@ -277,7 +277,7 @@ export function isInternalSocketClosedError(err: unknown): boolean {
  * swallowed.
  *
  * Every advanced-serialization channel in this process is an optional worker
- * subsystem (TTS, STT, tiny-title, mnemopi embeddings, JS eval), so one
+ * subsystem (TTS, STT, tiny-title, mnemotau embeddings, JS eval), so one
  * worker's bad frame must fault only that worker — via its own `onExit`/error
  * path — never tear down the whole session. Callers log-and-continue instead of
  * taking the fatal path. Mirrors {@link classifyBrokenPipe} for the send side
@@ -326,7 +326,7 @@ function faultWorkerIpcChannels(err: Error): void {
 /**
  * Graceful shutdown driven by `process.stdout`'s own `error` event.
  *
- * A closed stdout consumer (`omp --help | head`, an ACP client dropping the
+ * A closed stdout consumer (`tau --help | head`, an ACP client dropping the
  * pipe) delivers the broken-pipe write here — attributable to stdout by
  * construction, unlike a process-wide `syscall: "write"` match that a closed
  * subprocess stdin or socket would also satisfy — so it runs cleanup and exits
@@ -371,7 +371,7 @@ export function registerStdioDisconnectHandling(): () => void {
 // Well-known key marking an error as an *expected* teardown artifact (e.g. a
 // browser run-scope abort at normal run end). `Symbol.for` so the marker
 // survives duplicate module instances across bundles/realms.
-const EXPECTED_CLEANUP = Symbol.for("omp.expectedCleanupError");
+const EXPECTED_CLEANUP = Symbol.for("tau.expectedCleanupError");
 
 /**
  * Mark an error as expected cleanup fallout so the global fatal handlers

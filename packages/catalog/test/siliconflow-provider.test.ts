@@ -1,14 +1,14 @@
 import { describe, expect, test } from "bun:test";
-import { getEnvApiKey } from "@oh-my-pi/pi-ai/stream";
-import { getBundledModelReferenceIndex } from "@oh-my-pi/pi-catalog/identity/bundled";
-import { resolveModelReference } from "@oh-my-pi/pi-catalog/identity/reference";
-import { providerEntry } from "@oh-my-pi/pi-catalog/compat/providers";
+import { getEnvApiKey } from "@tau/tau-ai/stream";
+import { getBundledModelReferenceIndex } from "@tau/tau-catalog/identity/bundled";
+import { resolveModelReference } from "@tau/tau-catalog/identity/reference";
+import { providerEntry } from "@tau/tau-catalog/compat/providers";
 import {
 	MODELS_DEV_PROVIDER_DESCRIPTORS,
 	siliconflowCnModelManagerOptions,
 	siliconflowModelManagerOptions,
-} from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import type { FetchImpl } from "@oh-my-pi/pi-catalog/types";
+} from "@tau/tau-catalog/provider-models/openai-compat";
+import type { FetchImpl } from "@tau/tau-catalog/types";
 
 function withEnv(key: string, value: string, run: () => void): void {
 	const previous = Bun.env[key];

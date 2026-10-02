@@ -5,7 +5,7 @@
  * scripts/bazel-natives.ts); release addons build through Bazel with explicit
  * //:natives-* targets. Host target only — no cross-compilation.
  *
- * `OMP_NATIVE_CARGO_PROFILE` selects the cargo profile (default `local`:
+ * `TAU_NATIVE_CARGO_PROFILE` selects the cargo profile (default `local`:
  * incremental, unstripped). Image builds set `ci` for a stripped addon.
  */
 
@@ -55,7 +55,7 @@ if (process.platform === "win32" && (!Bun.which("cmake") || !Bun.which("ninja"))
 }
 
 const repoRoot = path.join(import.meta.dir, "../../..");
-const rustDir = path.join(repoRoot, "crates/pi-natives");
+const rustDir = path.join(repoRoot, "crates/tau-natives");
 const nativeDir = path.join(import.meta.dir, "../native");
 const packageJsonPath = path.join(import.meta.dir, "../package.json");
 
@@ -177,7 +177,7 @@ async function installGeneratedBindings(outputDir: string): Promise<void> {
 const canonicalAddonFilename = localAddon.filename;
 const canonicalAddonPath = path.join(nativeDir, canonicalAddonFilename);
 
-console.log(`Building pi-natives bindings for ${process.platform}-${process.arch}${variantSuffix} (local)…`);
+console.log(`Building tau-natives bindings for ${process.platform}-${process.arch}${variantSuffix} (local)…`);
 
 await fs.mkdir(nativeDir, { recursive: true });
 await cleanupStaleTemps(nativeDir);
@@ -211,7 +211,7 @@ const napiBin = path.join(path.dirname(napiManifestPath), napiBinEntry);
 
 // Profiles live in the root Cargo.toml; `local` trades size for iteration
 // speed, `ci` strips and drops incremental state.
-const cargoProfile = Bun.env.OMP_NATIVE_CARGO_PROFILE?.trim() || "local";
+const cargoProfile = Bun.env.TAU_NATIVE_CARGO_PROFILE?.trim() || "local";
 
 const napiArgs = [
 	"build",

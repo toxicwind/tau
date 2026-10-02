@@ -1,19 +1,19 @@
-import type { GlobToolDetails } from "@oh-my-pi/pi-tui/tools/glob";
+import type { GlobToolDetails } from "@tau/tau-tui/tools/glob";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import type { AgentTool, AgentToolContext, AgentToolResult, AgentToolUpdateCallback } from "@oh-my-pi/pi-agent-core";
-import * as natives from "@oh-my-pi/pi-natives";
-import { formatGroupedPaths, hasFsCode, isEnoent, prompt, untilAborted } from "@oh-my-pi/pi-utils";
+import { type } from "@tau/tautype";
+import type { AgentTool, AgentToolContext, AgentToolResult, AgentToolUpdateCallback } from "@tau/tau-agent-core";
+import * as natives from "@tau/tau-natives";
+import { formatGroupedPaths, hasFsCode, isEnoent, prompt, untilAborted } from "@tau/tau-utils";
 import { InternalUrlRouter } from "../internal-urls";
 import { splitMemoryGlobPattern } from "../internal-urls/memory-protocol";
 import globDescription from "../prompts/tools/glob.md" with { type: "text" };
-import { truncateHead } from "@oh-my-pi/pi-tui/tools/streaming-output";
+import { truncateHead } from "@tau/tau-tui/tools/streaming-output";
 import { sessionDelegationBias } from "../task/prompt-policy";
 import { isScoutSpawnable } from "../task/spawn-policy";
 import type { ToolSession } from ".";
 import { isFindEnabled } from "./jfind";
-import { applyListLimit } from "@oh-my-pi/pi-tui/tools/list-limit";
+import { applyListLimit } from "@tau/tau-tui/tools/list-limit";
 import {
 	expandDelimitedPathEntries,
 	formatPathRelativeToCwd,
@@ -25,9 +25,9 @@ import {
 	resolveExplicitFindPatterns,
 	resolveToCwd,
 } from "./path-utils";
-import { toPathList } from "@oh-my-pi/pi-tui/render/render-utils";
+import { toPathList } from "@tau/tau-tui/render/render-utils";
 import { ToolAbortError, throwIfAborted } from "./tool-errors";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 import { toolResult } from "./tool-result";
 
 const findSchema = type({

@@ -8,8 +8,8 @@ import type {
 	ServiceTierByFamily,
 	TextContent,
 	Usage,
-} from "@oh-my-pi/pi-ai";
-import { createSyntheticToolResultMessage } from "@oh-my-pi/pi-agent-core";
+} from "@tau/tau-ai";
+import { createSyntheticToolResultMessage } from "@tau/tau-agent-core";
 import {
 	directoryIsEnterable,
 	getBlobsDir,
@@ -24,8 +24,8 @@ import {
 	pathIsWithin,
 	stringifyJson,
 	toError,
-} from "@oh-my-pi/pi-utils";
-import type { StructuredSubagentSchemaMode } from "@oh-my-pi/pi-tui/tools/task";
+} from "@tau/tau-utils";
+import type { StructuredSubagentSchemaMode } from "@tau/tau-tui/tools/task";
 import { moveFileAcrossDevices } from "../utils/atomic-file";
 import { ArtifactManager } from "./artifacts";
 import { type BlobPutOptions, type BlobPutResult, BlobStore, lazyImageDataSync } from "./blob-store";
@@ -2120,7 +2120,7 @@ export class SessionManager {
 		await this.#rewriteAtomically();
 	}
 
-	/** Persist this session's transcript as a newly identified OMP session. */
+	/** Persist this session's transcript as a newly identified TAU session. */
 	async persistCopy(
 		options?: { sessionDir?: string; suppressBreadcrumb?: boolean },
 		storage: SessionStorage = new FileSessionStorage(),

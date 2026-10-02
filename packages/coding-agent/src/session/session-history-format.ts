@@ -6,10 +6,10 @@
  * result pairs collapsed to single lines, thinking elided, custom messages
  * as one-liners. No system prompt, no tool catalog, no config sections.
  */
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, ImageContent, TextContent, ToolResultMessage } from "@oh-my-pi/pi-ai";
-import { escapeXmlText } from "@oh-my-pi/pi-utils";
-import { INTENT_FIELD } from "@oh-my-pi/pi-wire";
+import type { AgentMessage } from "@tau/tau-agent-core";
+import type { AssistantMessage, ImageContent, TextContent, ToolResultMessage } from "@tau/tau-ai";
+import { escapeXmlText } from "@tau/tau-utils";
+import { INTENT_FIELD } from "@tau/tau-wire";
 import type {
 	BashExecutionMessage,
 	BranchSummaryMessage,
@@ -19,7 +19,7 @@ import type {
 	HookMessage,
 	PythonExecutionMessage,
 } from "./messages";
-import { truncateMiddle } from "@oh-my-pi/pi-tui/tools/streaming-output";
+import { truncateMiddle } from "@tau/tau-tui/tools/streaming-output";
 
 export interface HistoryFormatOptions {
 	/** Optional H1 prepended to the transcript. */

@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# tau-pin: pinned launcher for the tau/tau/pi commands.
+# Resolves the estate tau repo root from THIS script's location (follows the
+# bin/tau-pin symlink), never from cwd, and never falls through to PATH —
+# so a stray or hostile tau on PATH can never shadow the estate install.
+set -euo pipefail
+
+_SRC="${BASH_SOURCE[0]}"
+while [ -L "$_SRC" ]; do
+  _DIR="$(cd -P -- "$(dirname -- "$_SRC")" >/dev/null 2>&1 && pwd)"
+  _SRC="$_DIR/$(readlink "$_SRC")"
+done
+_SCRIPT_DIR="$(cd -P -- "$(dirname -- "$_SRC")" >/dev/null 2>&1 && pwd)"
+# scripts/ -> repo root
+FORK_ROOT="$(cd -P -- "$_SCRIPT_DIR/.." >/dev/null 2>&1 && pwd)"
+
+REAL="$FORK_ROOT/packages/coding-agent/scripts/tau"
+
+if [ ! -x "$REAL" ]; then
+  echo "tau-pin: pinned runner missing or not executable: $REAL" >&2
+  echo "tau-pin: refusing to fall through to any other tau on PATH." >&2
+  exit 127
+fi
+
+RESOLVED="$(realpath "$REAL")"
+case "$RESOLVED" in
+  "$FORK_ROOT"/*) ;;
+  *)
+    echo "tau-pin: resolved runner escapes the estate repo root: $RESOLVED" >&2
+    exit 127
+    ;;
+esac
+
+exec "$RESOLVED" "$@"

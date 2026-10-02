@@ -1,5 +1,5 @@
 /**
- * Live status board for `omp cleanse`.
+ * Live status board for `tau cleanse`.
  *
  * Interactive terminals get a transient board repainted in place: a phase
  * spinner (model resolution, checker discovery), one row per running checker,
@@ -10,7 +10,7 @@
  * Non-TTY output keeps the original plain-line protocol
  * (`[start]`/`[done]`/`[fail]`), so scripted callers see unchanged output.
  */
-import { formatDuration, formatNumber } from "@oh-my-pi/pi-utils";
+import { formatDuration, formatNumber } from "@tau/tau-utils";
 import { sanitizeDisplaySingleLine } from "../overlays/extensions/display-text";
 import { truncateToWidth } from "../utils";
 import { renderProgressBar, type ProgressBarStyle } from "../components/progress-bar";
@@ -55,7 +55,7 @@ const REPAIR_BAR_STYLE: ProgressBarStyle = {
 	styleEmpty: text => fgOrPlain("dim", text),
 };
 
-/** Rendering surface for one `omp cleanse` run. */
+/** Rendering surface for one `tau cleanse` run. */
 export interface CleanseStatusBoard {
 	readonly interactive: boolean;
 	/** Print a permanent line above the live area (plain write when non-TTY). */

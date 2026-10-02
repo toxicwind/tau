@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
+import { Agent } from "@tau/tau-agent-core";
+import { createMockModel } from "@tau/tau-ai/providers/mock";
 
 /**
  * Regression: a `steer` (or follow-up) queued on an empty transcript must be

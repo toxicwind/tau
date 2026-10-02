@@ -1,7 +1,7 @@
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { logger, postmortem, Snowflake, untilAborted } from "@oh-my-pi/pi-utils";
+import { logger, postmortem, Snowflake, untilAborted } from "@tau/tau-utils";
 import { JsRuntime, type RuntimeHooks } from "../../../eval/js/shared/runtime";
 import { callSessionTool } from "../../../eval/js/tool-bridge";
 import { formatScreenshot, resizeImage } from "../../../utils/image-resize";
@@ -18,7 +18,7 @@ import {
 	withBrowserPromiseCombinatorTracking,
 } from "../../run-scope";
 import { ToolAbortError, throwIfAborted } from "../../tool-errors";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 import {
 	type BrowserCaptureResult,
 	type BrowserConsoleEntry,
@@ -1067,7 +1067,7 @@ export class CmuxTab {
 		if (!Number.isFinite(duration) || duration < 0) {
 			throw new ToolError("highlight duration must be a non-negative number");
 		}
-		const id = `omp-highlight-${crypto.randomUUID()}`;
+		const id = `tau-highlight-${crypto.randomUUID()}`;
 		await this.#selectorAction(selector, "highlight", { id });
 		await untilAborted(this.#runContext?.signal, () => Bun.sleep(duration));
 		await this.#evalScript(`document.getElementById(${JSON.stringify(id)})?.remove()`);
@@ -1196,7 +1196,7 @@ export class CmuxTab {
 					context.session.browserScreenshotDir,
 					`screenshot-${new Date().toISOString().replace(/[:.]/g, "-").slice(0, -1)}.${ext}`,
 				)
-			: path.join(os.tmpdir(), `omp-sshots-${Snowflake.next()}.${ext}`);
+			: path.join(os.tmpdir(), `tau-sshots-${Snowflake.next()}.${ext}`);
 		await fs.promises.mkdir(path.dirname(dest), { recursive: true });
 		await Bun.write(dest, savedBuffer);
 		const info: ScreenshotResult = {
@@ -1234,7 +1234,7 @@ export class CmuxTab {
 		const changed = diff.pixelChangeRatio > threshold;
 		const diffPath = opts.output
 			? resolveToCwd(opts.output, context.session.cwd)
-			: path.join(os.tmpdir(), `omp-screenshot-diff-${Snowflake.next()}.png`);
+			: path.join(os.tmpdir(), `tau-screenshot-diff-${Snowflake.next()}.png`);
 		await fs.promises.mkdir(path.dirname(diffPath), { recursive: true });
 		await Bun.write(diffPath, diff.png);
 		const resized = await resizeImage(
@@ -2003,7 +2003,7 @@ export class CmuxTab {
 					const rect = element.getBoundingClientRect();
 					const overlay = document.createElement("div");
 					overlay.id = String(args.id);
-					overlay.dataset.ompHighlightOverlay = "";
+					overlay.dataset.tauHighlightOverlay = "";
 					overlay.setAttribute("aria-hidden", "true");
 					overlay.setAttribute("role", "presentation");
 					overlay.inert = true;

@@ -41,13 +41,13 @@ Open `/settings` and use **Interaction → Magic Keywords**, or change the setti
 
 ```bash
 # Disable every magic keyword
-omp config set magicKeywords.enabled false
+tau config set magicKeywords.enabled false
 
 # Disable one keyword while leaving the others enabled
-omp config set magicKeywords.ultrathink false
-omp config set magicKeywords.orchestrate false
-omp config set magicKeywords.workflow false
-omp config set magicKeywords.jevify false
+tau config set magicKeywords.ultrathink false
+tau config set magicKeywords.orchestrate false
+tau config set magicKeywords.workflow false
+tau config set magicKeywords.jevify false
 ```
 
-The global switch and four per-keyword switches default to `true`. The global switch gates every hidden notice; a per-keyword switch gates only that notice (and ultrathink's maximum-auto-thinking override). These settings do not currently disable the editor/message gradient. Run `omp config list` to inspect every setting and its current value. See [Settings](./settings.md) for configuration scopes, precedence, and project-local overrides.
+The global switch and four per-keyword switches default to `true`. The global switch gates every hidden notice; a per-keyword switch gates only that notice (and ultrathink's maximum-auto-thinking override). These settings do not currently disable the editor/message gradient. Run `tau config list` to inspect every setting and its current value. See [Settings](./settings.md) for configuration scopes, precedence, and project-local overrides.

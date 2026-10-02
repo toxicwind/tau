@@ -1,20 +1,20 @@
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
-import type { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { Api, AuthStorage, Model } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { parseArgs } from "@oh-my-pi/pi-coding-agent/cli/args";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { resolveModelScope } from "@oh-my-pi/pi-coding-agent/config/model-resolver";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import type { ThinkingLevel } from "@tau/tau-agent-core";
+import type { Api, AuthStorage, Model } from "@tau/tau-ai";
+import { buildModel } from "@tau/tau-catalog/build";
+import { parseArgs } from "@tau/tau-coding-agent/cli/args";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { resolveModelScope } from "@tau/tau-coding-agent/config/model-resolver";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
 import {
 	buildSessionOptions,
 	rebuildScopedModelsAfterDiscovery,
 	resolveScopedModels,
 	type ScopedModelSink,
 	toSessionScopedModels,
-} from "@oh-my-pi/pi-coding-agent/main";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-coding-agent/main";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { TempDir } from "@tau/tau-utils";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
 function model(id: string): Model<Api> {

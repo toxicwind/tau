@@ -97,7 +97,7 @@ function resolveHyperlinkMode(mode: HyperlinkMode): boolean {
 
 /**
  * Push the resolved `tui.hyperlinks` policy into {@link TERMINAL}.hyperlinks, the
- * effective flag that pi-tui renderers gating on it directly — the Markdown
+ * effective flag that tau-tui renderers gating on it directly — the Markdown
  * component's `[text](url)`/bare-URL links and the status-line PR link — consult.
  *
  * Detection stays immutable in {@link DETECTED_TERMINAL_HYPERLINKS}, so this only

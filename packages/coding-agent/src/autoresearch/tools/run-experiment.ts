@@ -1,10 +1,10 @@
-import { runExperimentToolRenderer } from "@oh-my-pi/pi-tui/tools/autoresearch";
+import { runExperimentToolRenderer } from "@tau/tau-tui/tools/autoresearch";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
+import { type } from "@tau/tautype";
+import * as vcs from "@tau/tau-natives/vcs";
 
-import { formatBytes } from "@oh-my-pi/pi-utils";
+import { formatBytes } from "@tau/tau-utils";
 import { executeBash } from "../../exec/bash-executor";
 import type { ToolDefinition } from "../../extensibility/extensions";
 
@@ -13,7 +13,7 @@ import {
 	DEFAULT_MAX_LINES,
 	TailBuffer,
 	truncateTail,
-} from "@oh-my-pi/pi-tui/tools/streaming-output";
+} from "@tau/tau-tui/tools/streaming-output";
 
 import { parseWorkDirDirtyPaths } from "../git";
 import {
@@ -24,13 +24,13 @@ import {
 	tryGitPrefix,
 	tryGitStatus,
 } from "../helpers";
-import { formatNum } from "@oh-my-pi/pi-tui/tools/autoresearch";
-import { formatElapsed } from "@oh-my-pi/pi-tui/apps/autoresearch-data";
+import { formatNum } from "@tau/tau-tui/tools/autoresearch";
+import { formatElapsed } from "@tau/tau-tui/apps/autoresearch-data";
 import { buildExperimentState } from "../state";
 import { openAutoresearchStorageIfExists } from "../storage";
 import type { AutoresearchToolFactoryOptions } from "../types";
-import type { RunDetails, RunExperimentProgressDetails } from "@oh-my-pi/pi-tui/tools/autoresearch";
-import { DEFAULT_HARNESS_COMMAND } from "@oh-my-pi/pi-tui/tools/autoresearch";
+import type { RunDetails, RunExperimentProgressDetails } from "@tau/tau-tui/tools/autoresearch";
+import { DEFAULT_HARNESS_COMMAND } from "@tau/tau-tui/tools/autoresearch";
 
 const runExperimentSchema = type({
 	"timeout_seconds?": type("number").describe("timeout in seconds (default 600)"),

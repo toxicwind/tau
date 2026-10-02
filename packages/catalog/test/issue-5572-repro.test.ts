@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test";
-import { buildAnthropicClientOptions, streamAnthropic } from "@oh-my-pi/pi-ai/providers/anthropic";
-import type { Context, TJsonSchema, Tool } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import type { ModelSpec } from "@oh-my-pi/pi-catalog/types";
+import { buildAnthropicClientOptions, streamAnthropic } from "@tau/tau-ai/providers/anthropic";
+import type { Context, TJsonSchema, Tool } from "@tau/tau-ai/types";
+import { buildModel } from "@tau/tau-catalog/build";
+import type { ModelSpec } from "@tau/tau-catalog/types";
 
 const CUSTOM_MODEL_SPEC: ModelSpec<"anthropic-messages"> = {
 	id: "claude-haiku-4.5",

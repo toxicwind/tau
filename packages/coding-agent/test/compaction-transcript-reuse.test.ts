@@ -1,9 +1,9 @@
 import { beforeAll, describe, expect, it, vi } from "bun:test";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { TranscriptContainer } from "@oh-my-pi/pi-tui/chrome/transcript-container";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { UiHelpers } from "@oh-my-pi/pi-coding-agent/modes/utils/ui-helpers";
+import type { AgentMessage } from "@tau/tau-agent-core";
+import { TranscriptContainer } from "@tau/tau-tui/chrome/transcript-container";
+import { initTheme } from "@tau/tau-tui/theme";
+import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
+import { UiHelpers } from "@tau/tau-coding-agent/modes/utils/ui-helpers";
 
 function buildContext(): InteractiveModeContext {
 	const chatContainer = new TranscriptContainer();

@@ -2,8 +2,8 @@
  * Log in to a model provider from the terminal.
  */
 
-import { APP_NAME } from "@oh-my-pi/pi-utils";
-import { Args, Command } from "@oh-my-pi/pi-utils/cli";
+import { APP_NAME } from "@tau/tau-utils";
+import { Args, Command } from "@tau/tau-utils/cli";
 import { loginHelp as commandHelp } from "../cli/command-help";
 import { runLoginCommand } from "../cli/login-cli";
 

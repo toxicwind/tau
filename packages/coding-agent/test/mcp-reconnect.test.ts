@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "bun:test";
-import { createMCPJsonRpcError, MCPTransportError } from "@oh-my-pi/pi-coding-agent/mcp/errors";
-import type { MCPReconnect } from "@oh-my-pi/pi-coding-agent/mcp/tool-bridge";
+import { createMCPJsonRpcError, MCPTransportError } from "@tau/tau-coding-agent/mcp/errors";
+import type { MCPReconnect } from "@tau/tau-coding-agent/mcp/tool-bridge";
 import {
 	createLegacyMCPToolName,
 	createMCPToolName,
@@ -8,11 +8,11 @@ import {
 	deduplicateMCPToolsByName,
 	isRetriableConnectionError,
 	MCPTool,
-} from "@oh-my-pi/pi-coding-agent/mcp/tool-bridge";
-import type { MCPImageContent } from "@oh-my-pi/pi-tui/tools/mcp";
-import type { MCPServerConnection, MCPToolCallResult, MCPTransport } from "@oh-my-pi/pi-coding-agent/mcp/types";
-import { ToolAbortError } from "@oh-my-pi/pi-coding-agent/tools/tool-errors";
-import { logger } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-coding-agent/mcp/tool-bridge";
+import type { MCPImageContent } from "@tau/tau-tui/tools/mcp";
+import type { MCPServerConnection, MCPToolCallResult, MCPTransport } from "@tau/tau-coding-agent/mcp/types";
+import { ToolAbortError } from "@tau/tau-coding-agent/tools/tool-errors";
+import { logger } from "@tau/tau-utils";
 
 // ---------------------------------------------------------------------------
 // Helpers

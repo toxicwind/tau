@@ -8,28 +8,28 @@ import type {
 	AgentToolContext,
 	AgentToolResult,
 	AgentToolUpdateCallback,
-} from "@oh-my-pi/pi-agent-core";
-import type { CredentialDisabledEvent, ImageContent, Model, ProviderResponseMetadata } from "@oh-my-pi/pi-ai";
+} from "@tau/tau-agent-core";
+import type { CredentialDisabledEvent, ImageContent, Model, ProviderResponseMetadata } from "@tau/tau-ai";
 import {
 	clearContextHistoryIndex,
 	getContextHistoryIndex,
 	markPerCallContextMessage,
 	setContextHistoryIndex,
-} from "@oh-my-pi/pi-ai/utils/block-symbols";
-import type { KeyId } from "@oh-my-pi/pi-tui";
-import { logger } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-ai/utils/block-symbols";
+import type { KeyId } from "@tau/tau-tui";
+import { logger } from "@tau/tau-utils";
 import type { ModelRegistry } from "../../config/model-registry";
 import { type Settings, withActiveSettings } from "../../config/settings";
 import type { LocalProtocolOptions } from "../../internal-urls/local-protocol";
 import type { MemoryRuntimeContext } from "../../memory-backend";
-import { type Theme, theme } from "@oh-my-pi/pi-tui/theme";
+import { type Theme, theme } from "@tau/tau-tui/theme";
 import type { AsyncJobSnapshot } from "../../session/agent-session";
 import type { SessionManager } from "../../session/session-manager";
 import { addFileDeleteFallback, addFileWriteFallback } from "../../tools/file-write-fallback";
 import type { BranchHandler, NavigateTreeHandler, NewSessionHandler } from "../session-handler-types";
 import { ManagedTimers } from "./managed-timers";
 import { createExtensionModelQuery } from "./model-api";
-import type { ComposerShapeDefinition } from "@oh-my-pi/pi-tui/overlays/composer-shape-registry";
+import type { ComposerShapeDefinition } from "@tau/tau-tui/overlays/composer-shape-registry";
 import type {
 	AfterProviderResponseEvent,
 	AssistantThinkingRenderer,
@@ -828,7 +828,7 @@ export class ExtensionRunner {
 		}
 
 		// Drain events buffered by emitCredentialDisabled() before initialize ran. The
-		// spread adds the `type` discriminator — `event` is the pi-ai shape (no `type`).
+		// spread adds the `type` discriminator — `event` is the tau-ai shape (no `type`).
 		// Deferred by one microtask so callers that register an onError listener
 		// synchronously after initialize() see handler errors routed through it.
 		const pending = this.#pendingCredentialDisabled.splice(0);

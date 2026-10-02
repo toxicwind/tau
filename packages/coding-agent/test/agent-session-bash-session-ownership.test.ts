@@ -1,18 +1,18 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import * as bashExecutor from "@oh-my-pi/pi-coding-agent/exec/bash-executor";
-import type { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
-import { createBashTool } from "@oh-my-pi/pi-coding-agent/extensibility/legacy-pi-coding-agent-shim";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import type { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent } from "@tau/tau-agent-core";
+import { createMockModel } from "@tau/tau-ai/providers/mock";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import * as bashExecutor from "@tau/tau-coding-agent/exec/bash-executor";
+import type { ExtensionRunner } from "@tau/tau-coding-agent/extensibility/extensions";
+import { createBashTool } from "@tau/tau-coding-agent/extensibility/legacy-tau-coding-agent-shim";
+import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import type { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { TempDir } from "@tau/tau-utils";
 import { createAssistantMessage, createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
 const bashResult = {
@@ -34,7 +34,7 @@ describe("AgentSession bash session ownership", () => {
 
 	beforeEach(async () => {
 		resetSettingsForTest();
-		tempDir = TempDir.createSync("@pi-bash-session-owner-");
+		tempDir = TempDir.createSync("@tau-bash-session-owner-");
 		await Settings.init({ inMemory: true, cwd: tempDir.path() });
 		authStorage = createInMemoryAuthStorage();
 		authStorage.keys.setRuntime("anthropic", "test-key");
@@ -130,7 +130,7 @@ describe("AgentSession bash session ownership", () => {
 		});
 		const spawnHook = vi.fn(spawn => ({
 			...spawn,
-			env: { ...spawn.env, OMP_USER_SHELL_ENV: "extension-value" },
+			env: { ...spawn.env, TAU_USER_SHELL_ENV: "extension-value" },
 		}));
 		const definition = createBashTool(tempDir.path(), { spawnHook });
 		const extensionRunner = {
@@ -141,14 +141,14 @@ describe("AgentSession bash session ownership", () => {
 		} as unknown as ExtensionRunner;
 		createSession(undefined, extensionRunner);
 
-		const result = await session.executeBash('printf "%s" "$OMP_USER_SHELL_ENV"', undefined, {
+		const result = await session.executeBash('printf "%s" "$TAU_USER_SHELL_ENV"', undefined, {
 			useUserShell: true,
 		});
 
 		expect(result.output).toBe("extension-value");
 		expect(spawnHook).toHaveBeenCalledWith(
 			expect.objectContaining({
-				command: 'printf "%s" "$OMP_USER_SHELL_ENV"',
+				command: 'printf "%s" "$TAU_USER_SHELL_ENV"',
 				cwd: tempDir.path(),
 			}),
 		);
@@ -170,12 +170,12 @@ describe("AgentSession bash session ownership", () => {
 			env: { PATH: Bun.env.PATH ?? "", HOME: tempDir.path(), SHELL: shell },
 			prefix: undefined,
 		});
-		const previousMirror = process.env.OMP_USER_SHELL_MIRROR;
-		process.env.OMP_USER_SHELL_MIRROR = "mirrored-value";
+		const previousMirror = process.env.TAU_USER_SHELL_MIRROR;
+		process.env.TAU_USER_SHELL_MIRROR = "mirrored-value";
 		try {
 			const spawnHook = vi.fn(spawn => ({
 				...spawn,
-				env: { ...spawn.env, OMP_USER_SHELL_MIRROR: "mirrored-value" },
+				env: { ...spawn.env, TAU_USER_SHELL_MIRROR: "mirrored-value" },
 			}));
 			const definition = createBashTool(tempDir.path(), { spawnHook });
 			const extensionRunner = {
@@ -186,14 +186,14 @@ describe("AgentSession bash session ownership", () => {
 			} as unknown as ExtensionRunner;
 			createSession(undefined, extensionRunner);
 
-			const result = await session.executeBash('printf "%s" "$OMP_USER_SHELL_MIRROR"', undefined, {
+			const result = await session.executeBash('printf "%s" "$TAU_USER_SHELL_MIRROR"', undefined, {
 				useUserShell: true,
 			});
 
 			expect(result.output).toBe("mirrored-value");
 		} finally {
-			if (previousMirror === undefined) delete process.env.OMP_USER_SHELL_MIRROR;
-			else process.env.OMP_USER_SHELL_MIRROR = previousMirror;
+			if (previousMirror === undefined) delete process.env.TAU_USER_SHELL_MIRROR;
+			else process.env.TAU_USER_SHELL_MIRROR = previousMirror;
 		}
 	});
 
@@ -217,7 +217,7 @@ describe("AgentSession bash session ownership", () => {
 		};
 		vi.spyOn(Settings.prototype, "getShellConfig").mockReturnValue(cachedShellConfig);
 		const spawnHook = vi.fn(context => {
-			context.env.OMP_INJECTED_TOKEN = "injected-value";
+			context.env.TAU_INJECTED_TOKEN = "injected-value";
 			return context;
 		});
 		const definition = createBashTool(tempDir.path(), { spawnHook });
@@ -234,9 +234,9 @@ describe("AgentSession bash session ownership", () => {
 		await session.executeBash("true", undefined, { useUserShell: true });
 
 		expect(executeBashSpy).toHaveBeenCalledTimes(2);
-		expect(executeBashSpy.mock.calls[0]?.[1]?.env).toEqual({ OMP_INJECTED_TOKEN: "injected-value" });
-		expect(executeBashSpy.mock.calls[1]?.[1]?.env).toEqual({ OMP_INJECTED_TOKEN: "injected-value" });
-		expect(cachedShellConfig.env).not.toHaveProperty("OMP_INJECTED_TOKEN");
+		expect(executeBashSpy.mock.calls[0]?.[1]?.env).toEqual({ TAU_INJECTED_TOKEN: "injected-value" });
+		expect(executeBashSpy.mock.calls[1]?.[1]?.env).toEqual({ TAU_INJECTED_TOKEN: "injected-value" });
+		expect(cachedShellConfig.env).not.toHaveProperty("TAU_INJECTED_TOKEN");
 	});
 
 	it("does not run the shell environment hook when a user_bash handler replaces the result", async () => {

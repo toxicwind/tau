@@ -5,11 +5,11 @@ import {
 	type TodoPhase,
 	type TodoCompletionTransition,
 	type TodoToolDetails,
-} from "@oh-my-pi/pi-tui/tools/todo";
-import { type } from "@oh-my-pi/omptype";
-import type { AgentTool, AgentToolContext, AgentToolResult, AgentToolUpdateCallback } from "@oh-my-pi/pi-agent-core";
+} from "@tau/tau-tui/tools/todo";
+import { type } from "@tau/tautype";
+import type { AgentTool, AgentToolContext, AgentToolResult, AgentToolUpdateCallback } from "@tau/tau-agent-core";
 
-import { isRecord, prompt } from "@oh-my-pi/pi-utils";
+import { isRecord, prompt } from "@tau/tau-utils";
 
 import todoDescription from "../prompts/tools/todo.md" with { type: "text" };
 import type { ToolSession } from "../sdk";

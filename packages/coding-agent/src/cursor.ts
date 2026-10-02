@@ -7,7 +7,7 @@ import type {
 	AgentToolContext,
 	AgentToolResult,
 	AgentToolUpdateCallback,
-} from "@oh-my-pi/pi-agent-core";
+} from "@tau/tau-agent-core";
 import type {
 	CursorMcpCall,
 	CursorMcpResource,
@@ -16,7 +16,7 @@ import type {
 	CursorTodoSnapshot,
 	CursorExecHandlers as ICursorExecHandlers,
 	ToolResultMessage,
-} from "@oh-my-pi/pi-ai";
+} from "@tau/tau-ai";
 import {
 	omitUndefinedArgs,
 	piEscapeRegexLiteral,
@@ -26,13 +26,13 @@ import {
 	piLsPath,
 	piReadPath,
 	piTimeout,
-} from "@oh-my-pi/pi-ai/providers/cursor-pi-args";
-import { sanitizeText } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-ai/providers/cursor-tau-args";
+import { sanitizeText } from "@tau/tau-utils";
 import { cursorMcpPrefersReplaceEdit, normalizeCursorReplaceArgs } from "./cursor-bridge-tools";
 import type { MCPResourceReadResult } from "./mcp/types";
 import { resolveApproval, resolveApprovalFromContext } from "./tools/approval";
 import { confineToWorkspace, resolveToCwd } from "./tools/path-utils";
-import type { TodoPhase, TodoStatus } from "@oh-my-pi/pi-tui/tools/todo";
+import type { TodoPhase, TodoStatus } from "@tau/tau-tui/tools/todo";
 
 /** Phase used for Cursor-owned tasks with no local phase grouping. */
 const CURSOR_TODO_PHASE = "Tasks";

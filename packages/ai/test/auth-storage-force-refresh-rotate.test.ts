@@ -2,13 +2,13 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { resolvedApiKeyBearer, withAuth } from "@oh-my-pi/pi-ai";
-import { type AuthCredentialStore, AuthStorage, SqliteAuthCredentialStore } from "@oh-my-pi/pi-ai/auth-storage";
-import { ProviderHttpError } from "@oh-my-pi/pi-ai/error";
-import * as oauthUtils from "@oh-my-pi/pi-ai/registry/oauth";
-import { registerOAuthProvider, unregisterOAuthProviders } from "@oh-my-pi/pi-ai/registry/oauth";
-import type { OAuthCredentials } from "@oh-my-pi/pi-ai/registry/oauth/types";
-import type { CredentialRankingStrategy, UsageProvider } from "@oh-my-pi/pi-ai/usage";
+import { resolvedApiKeyBearer, withAuth } from "@tau/tau-ai";
+import { type AuthCredentialStore, AuthStorage, SqliteAuthCredentialStore } from "@tau/tau-ai/auth-storage";
+import { ProviderHttpError } from "@tau/tau-ai/error";
+import * as oauthUtils from "@tau/tau-ai/registry/oauth";
+import { registerOAuthProvider, unregisterOAuthProviders } from "@tau/tau-ai/registry/oauth";
+import type { OAuthCredentials } from "@tau/tau-ai/registry/oauth/types";
+import type { CredentialRankingStrategy, UsageProvider } from "@tau/tau-ai/usage";
 import { removeWithRetries } from "../../utils/src/temp";
 
 const PROVIDER = "unit-rotate-oauth";
@@ -50,7 +50,7 @@ describe("AuthStorage forceRefresh + rotateSessionCredential", () => {
 	let authStorage: AuthStorage | undefined;
 
 	beforeEach(async () => {
-		tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "pi-ai-rotate-"));
+		tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-ai-rotate-"));
 		store = await SqliteAuthCredentialStore.open(path.join(tempDir, "agent.db"));
 		authStorage = new AuthStorage(store);
 	});

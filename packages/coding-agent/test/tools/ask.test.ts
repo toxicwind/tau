@@ -1,19 +1,19 @@
 import { beforeAll, describe, expect, it, spyOn, vi } from "bun:test";
 import { stripVTControlCharacters } from "node:util";
-import { type } from "@oh-my-pi/omptype";
-import type { AgentToolContext } from "@oh-my-pi/pi-agent-core";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import { type } from "@tau/tautype";
+import type { AgentToolContext } from "@tau/tau-agent-core";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
 import type {
 	ExtensionAskDialogQuestion,
 	ExtensionAskDialogResult,
 	ExtensionUISelectItem,
-} from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
-import { getThemeByName, initTheme, theme, type Theme } from "@oh-my-pi/pi-tui/theme";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { AskTool } from "@oh-my-pi/pi-coding-agent/tools/ask";
-import { askToolRenderer } from "@oh-my-pi/pi-tui/tools/ask";
-import { ToolAbortError } from "@oh-my-pi/pi-coding-agent/tools/tool-errors";
-import { TERMINAL } from "@oh-my-pi/pi-tui";
+} from "@tau/tau-coding-agent/extensibility/extensions";
+import { getThemeByName, initTheme, theme, type Theme } from "@tau/tau-tui/theme";
+import type { ToolSession } from "@tau/tau-coding-agent/tools";
+import { AskTool } from "@tau/tau-coding-agent/tools/ask";
+import { askToolRenderer } from "@tau/tau-tui/tools/ask";
+import { ToolAbortError } from "@tau/tau-coding-agent/tools/tool-errors";
+import { TERMINAL } from "@tau/tau-tui";
 
 function createSession(overrides: Partial<ToolSession> = {}): ToolSession {
 	return {
@@ -419,7 +419,7 @@ describe("AskTool option descriptions", () => {
 		const select = vi.fn(async (_prompt: string, options: ExtensionUISelectItem[]) => {
 			expect(options[0]).toEqual({
 				label: "Use local credentials",
-				description: "Authenticate with provider keys already configured under ~/.omp.",
+				description: "Authenticate with provider keys already configured under ~/.tau.",
 			});
 			expect(options[1]).toEqual({
 				label: "Set up in terminal",
@@ -440,7 +440,7 @@ describe("AskTool option descriptions", () => {
 						options: [
 							{
 								label: "Use local credentials",
-								description: "Authenticate with provider keys already configured under ~/.omp.",
+								description: "Authenticate with provider keys already configured under ~/.tau.",
 							},
 							{
 								label: "Set up in terminal",
@@ -473,7 +473,7 @@ describe("AskTool option descriptions", () => {
 				options: [
 					{
 						label: "Use local credentials",
-						description: "Authenticate with provider keys already configured under ~/.omp.",
+						description: "Authenticate with provider keys already configured under ~/.tau.",
 					},
 					{
 						label: "Set up in terminal",

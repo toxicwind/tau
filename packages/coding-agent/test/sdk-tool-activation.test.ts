@@ -2,34 +2,34 @@ import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "bun:te
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import type { AgentTool, StreamFn } from "@oh-my-pi/pi-agent-core";
-import type { Model, ToolResultMessage } from "@oh-my-pi/pi-ai";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { CursorExecHandlers } from "@oh-my-pi/pi-coding-agent/cursor";
+import { type } from "@tau/tautype";
+import type { AgentTool, StreamFn } from "@tau/tau-agent-core";
+import type { Model, ToolResultMessage } from "@tau/tau-ai";
+import { createMockModel } from "@tau/tau-ai/providers/mock";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import type { CursorExecHandlers } from "@tau/tau-coding-agent/cursor";
 import {
 	EXTENSION_HANDLER_TIMEOUT_MS,
 	testSetExtensionHandlerTimeoutMs,
-} from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
-import { ExtensionToolWrapper } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/wrapper";
-import type { MCPManager } from "@oh-my-pi/pi-coding-agent/mcp/manager";
-import * as memoryBackendModule from "@oh-my-pi/pi-coding-agent/memory-backend";
-import { initializeExtensions } from "@oh-my-pi/pi-coding-agent/modes/runtime-init";
+} from "@tau/tau-coding-agent/extensibility/extensions/runner";
+import { ExtensionToolWrapper } from "@tau/tau-coding-agent/extensibility/extensions/wrapper";
+import type { MCPManager } from "@tau/tau-coding-agent/mcp/manager";
+import * as memoryBackendModule from "@tau/tau-coding-agent/memory-backend";
+import { initializeExtensions } from "@tau/tau-coding-agent/modes/runtime-init";
 import {
 	type CreateAgentSessionOptions,
 	type CustomTool,
 	createAgentSession,
 	discoverAuthStorage,
 	type ExtensionFactory,
-} from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { VIBE_TOOL_NAMES } from "@oh-my-pi/pi-coding-agent/tools/vibe";
-import { resetYieldTurnState } from "@oh-my-pi/pi-coding-agent/tools/yield";
-import { logger, removeSyncWithRetries, Snowflake, untilAborted } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-coding-agent/sdk";
+import type { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { VIBE_TOOL_NAMES } from "@tau/tau-coding-agent/tools/vibe";
+import { resetYieldTurnState } from "@tau/tau-coding-agent/tools/yield";
+import { logger, removeSyncWithRetries, Snowflake, untilAborted } from "@tau/tau-utils";
 
 const toolActivationExtension: ExtensionFactory = pi => {
 	pi.registerTool({
@@ -76,14 +76,14 @@ describe("createAgentSession defaultInactive tool activation", () => {
 	let registryAuthDir: string;
 
 	const makeTempDir = (): string => {
-		const tempDir = path.join(os.tmpdir(), `pi-sdk-tool-activation-${Snowflake.next()}`);
+		const tempDir = path.join(os.tmpdir(), `tau-sdk-tool-activation-${Snowflake.next()}`);
 		tempDirs.push(tempDir);
 		fs.mkdirSync(tempDir, { recursive: true });
 		return tempDir;
 	};
 
 	beforeAll(async () => {
-		registryAuthDir = path.join(os.tmpdir(), `pi-sdk-tool-activation-auth-${Snowflake.next()}`);
+		registryAuthDir = path.join(os.tmpdir(), `tau-sdk-tool-activation-auth-${Snowflake.next()}`);
 		fs.mkdirSync(registryAuthDir, { recursive: true });
 		modelRegistry = new ModelRegistry(await discoverAuthStorage(registryAuthDir));
 	});

@@ -2,8 +2,8 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import { AuthStorage, REMOTE_REFRESH_SENTINEL, SqliteAuthCredentialStore } from "@oh-my-pi/pi-ai";
+import { type } from "@tau/tautype";
+import { AuthStorage, REMOTE_REFRESH_SENTINEL, SqliteAuthCredentialStore } from "@tau/tau-ai";
 import {
 	AuthBrokerClient,
 	type AuthBrokerServerHandle,
@@ -12,11 +12,11 @@ import {
 	RemoteAuthCredentialStore,
 	type SnapshotResponse,
 	startAuthBroker,
-} from "@oh-my-pi/pi-ai/auth-broker";
-import { snapshotResponseSchema } from "@oh-my-pi/pi-ai/auth-broker/wire-schemas";
-import * as oauthUtils from "@oh-my-pi/pi-ai/registry/oauth";
-import type { UsageLimit, UsageProvider, UsageReport } from "@oh-my-pi/pi-ai/usage";
-import * as claudeUsage from "@oh-my-pi/pi-ai/usage/claude";
+} from "@tau/tau-ai/auth-broker";
+import { snapshotResponseSchema } from "@tau/tau-ai/auth-broker/wire-schemas";
+import * as oauthUtils from "@tau/tau-ai/registry/oauth";
+import type { UsageLimit, UsageProvider, UsageReport } from "@tau/tau-ai/usage";
+import * as claudeUsage from "@tau/tau-ai/usage/claude";
 import { removeWithRetries } from "../../utils/src/temp";
 
 function requireLimit(report: UsageReport, id: string): UsageLimit {

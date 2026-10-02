@@ -1,14 +1,14 @@
 import { describe, expect, it } from "bun:test";
-import * as geminiCliProvider from "@oh-my-pi/pi-ai/providers/google-gemini-cli";
+import * as geminiCliProvider from "@tau/tau-ai/providers/google-gemini-cli";
 import {
 	buildRequest,
 	parseGeminiCliCredentials,
 	shouldRefreshGeminiCliCredentials,
 	streamGoogleGeminiCli,
-} from "@oh-my-pi/pi-ai/providers/google-gemini-cli";
-import { getOAuthApiKey } from "@oh-my-pi/pi-ai/registry/oauth";
-import type { AssistantMessageEvent, Context, FetchImpl, Model, TJsonSchema } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+} from "@tau/tau-ai/providers/google-gemini-cli";
+import { getOAuthApiKey } from "@tau/tau-ai/registry/oauth";
+import type { AssistantMessageEvent, Context, FetchImpl, Model, TJsonSchema } from "@tau/tau-ai/types";
+import { buildModel } from "@tau/tau-catalog/build";
 
 function createModel(
 	provider: "google-gemini-cli" | "google-antigravity",

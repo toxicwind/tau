@@ -187,7 +187,7 @@ Choose the setting by the desired outcome:
   - May allocate and write artifact files for full local output (`bash`) and minimizer-preserved raw output (`bash-original`).
   - `expandInternalUrls(..., { ensureLocalParentDirs: true })` creates parent directories for `local://` paths before execution.
 - Subprocesses / native bindings / client terminal
-  - Non-PTY local execution uses native shell execution via `@oh-my-pi/pi-natives` (`Shell.run()` or `executeShell()`).
+  - Non-PTY local execution uses native shell execution via `@tau/tau-natives` (`Shell.run()` or `executeShell()`).
   - PTY uses native `PtySession.start()`.
   - Client-terminal mode delegates process execution to the connected client terminal capability.
   - Named services run in the project-scoped launch broker and retain logs/status for `proc://`.

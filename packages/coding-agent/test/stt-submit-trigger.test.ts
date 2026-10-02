@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+import { getBundledModel } from "@tau/tau-catalog/models";
 import { Settings, settings } from "../src/config/settings";
 import * as asrClient from "../src/stt/asr-client";
 import * as downloader from "../src/stt/downloader";

@@ -6,19 +6,19 @@
  */
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import type { AgentTool, AgentToolResult, AgentToolUpdateCallback } from "@oh-my-pi/pi-agent-core";
-import type { FindToolDetails } from "@oh-my-pi/pi-tui/tools/find";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
-import { formatBytes, formatDuration, formatNumber, isEnoent } from "@oh-my-pi/pi-utils";
+import { type } from "@tau/tautype";
+import type { AgentTool, AgentToolResult, AgentToolUpdateCallback } from "@tau/tau-agent-core";
+import type { FindToolDetails } from "@tau/tau-tui/tools/find";
+import { ToolError } from "@tau/tau-tui/tools/tool-errors";
+import { formatBytes, formatDuration, formatNumber, isEnoent } from "@tau/tau-utils";
 import { hasNativeJudge, journalJudgmentUsage, resolveJudge } from "../../judgment";
 import findDescription from "../../prompts/tools/find.md" with { type: "text" };
 import type { ToolSession } from "..";
 import { formatPathRelativeToCwd, normalizePathLikeInput, resolveToCwd } from "../path-utils";
 import { toolResult } from "../tool-result";
-import { isOmpDocsScope } from "../../internal-urls/omp-scope";
+import { isOmpDocsScope } from "../../internal-urls/tau-scope";
 import { runCascade } from "./cascade";
-import { materializeOmpScope, type OmpScope } from "./omp-scope";
+import { materializeOmpScope, type TauScope } from "./tau-scope";
 import { rankedHeat } from "./passages";
 
 const findSchema = type({
@@ -69,16 +69,16 @@ export class FindTool implements AgentTool<typeof findSchema, FindToolDetails> {
 		const rawScopeInput = params.path === undefined ? "" : normalizePathLikeInput(params.path);
 		// Harness docs are virtual (no `sourcePath`), so the directory-walking
 		// cascade cannot read them in place: search a temp materialization and
-		// remap hits back to `omp://` URLs, the same shape `grep` uses for archives.
-		let ompScope: OmpScope | undefined;
+		// remap hits back to `tau://` URLs, the same shape `grep` uses for archives.
+		let tauScope: TauScope | undefined;
 		if (isOmpDocsScope(rawScopeInput)) {
-			onUpdate?.({ content: [{ type: "text", text: "materializing omp:// docs" }] });
-			ompScope = await materializeOmpScope(rawScopeInput, { cwd, signal });
+			onUpdate?.({ content: [{ type: "text", text: "materializing tau:// docs" }] });
+			tauScope = await materializeOmpScope(rawScopeInput, { cwd, signal });
 		}
 		try {
-			const root = ompScope?.dir ?? (await this.#resolveRoot(params.path, cwd));
+			const root = tauScope?.dir ?? (await this.#resolveRoot(params.path, cwd));
 			const scopePath =
-				ompScope?.scopePath ??
+				tauScope?.scopePath ??
 				(root === path.resolve(cwd) ? undefined : formatPathRelativeToCwd(root, cwd, { trailingSlash: true }));
 			const registry = this.session.modelRegistry;
 			if (!registry) throw new ToolError("find has no model registry to resolve a judge from");
@@ -103,10 +103,10 @@ export class FindTool implements AgentTool<typeof findSchema, FindToolDetails> {
 			// Cascade paths are root-relative; the model and renderer want
 			// resolvable paths (`read`-relative for files, URLs for docs) without
 			// knowing the scope.
-			const toRel = ompScope?.toOmpRel ?? ((rel: string) => formatPathRelativeToCwd(path.join(root, rel), cwd));
+			const toRel = tauScope?.toOmpRel ?? ((rel: string) => formatPathRelativeToCwd(path.join(root, rel), cwd));
 			const hits = result.hits.map(hit => ({ ...hit, rel: toRel(hit.rel) }));
 			const details: FindToolDetails = { query, keywords, threshold, hits, stats, elapsedMs, cwd, scopePath };
-			// `omp://` hits are URLs, not cwd-relative paths — they resolve through
+			// `tau://` hits are URLs, not cwd-relative paths — they resolve through
 			// the `read` tool, including with `:start-end` selectors.
 			const where = scopePath === undefined ? "" : ` in ${scopePath}`;
 			const out: string[] = [];
@@ -140,7 +140,7 @@ export class FindTool implements AgentTool<typeof findSchema, FindToolDetails> {
 			else if (hits.length === 0) builder.useless();
 			return builder.done();
 		} finally {
-			await ompScope?.cleanup();
+			await tauScope?.cleanup();
 		}
 	}
 

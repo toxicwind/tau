@@ -1,8 +1,8 @@
 import { describe, expect, test } from "bun:test";
-import { buildParams } from "@oh-my-pi/pi-ai/providers/openai-responses";
-import type { Context, Model } from "@oh-my-pi/pi-ai/types";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+import { buildParams } from "@tau/tau-ai/providers/openai-responses";
+import type { Context, Model } from "@tau/tau-ai/types";
+import { Effort } from "@tau/tau-catalog/effort";
+import { getBundledModel } from "@tau/tau-catalog/models";
 
 const context: Context = { messages: [{ role: "user", content: "hello", timestamp: 0 }] };
 

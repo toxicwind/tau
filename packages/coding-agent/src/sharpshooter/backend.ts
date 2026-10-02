@@ -1,7 +1,7 @@
 import { rm } from "node:fs/promises";
-import { logger } from "@oh-my-pi/pi-utils";
+import { logger } from "@tau/tau-utils";
 import type { MemoryBackend, MemoryBackendSearchItem, MemoryBackendStatus } from "../memory-backend/types";
-import { truncateApproxTokens } from "../mnemopi/config";
+import { truncateApproxTokens } from "../mnemotau/config";
 import type { AgentSession } from "../session/agent-session";
 import { runSharpshooterConsolidation } from "./consolidate";
 import { maybeStartSharpshooterExtraction, resolveSharpshooterModel } from "./extract";

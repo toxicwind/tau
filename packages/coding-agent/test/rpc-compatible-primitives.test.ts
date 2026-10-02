@@ -1,17 +1,17 @@
 import { describe, expect, test } from "bun:test";
 import * as path from "node:path";
-import { isRecord, readJsonl, TempDir } from "@oh-my-pi/pi-utils";
-import { selectRpcEntries } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-compat";
-import { readRpcInputFrames } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-input";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { FileSessionStorage } from "@oh-my-pi/pi-coding-agent/session/session-storage";
-import type { SessionEntry, SessionTreeNode } from "@oh-my-pi/pi-coding-agent/session/session-entries";
+import { isRecord, readJsonl, TempDir } from "@tau/tau-utils";
+import { selectRpcEntries } from "@tau/tau-coding-agent/modes/rpc/rpc-compat";
+import { readRpcInputFrames } from "@tau/tau-coding-agent/modes/rpc/rpc-input";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { FileSessionStorage } from "@tau/tau-coding-agent/session/session-storage";
+import type { SessionEntry, SessionTreeNode } from "@tau/tau-coding-agent/session/session-entries";
 
 function customEntry(id: string, parentId: string | null): SessionEntry {
 	return { type: "custom", id, parentId, timestamp: new Date().toISOString(), customType: "probe" };
 }
 
-describe("RPC Pi-compatible get_entries slice", () => {
+describe("RPC Tau-compatible get_entries slice", () => {
 	test("no since returns all entries in append order with leafId", () => {
 		const entries = [customEntry("e1", null), customEntry("e2", "e1"), customEntry("e3", "e2")];
 		const result = selectRpcEntries(entries, "e3");
@@ -216,7 +216,7 @@ async function withRpcServer<T>(
 	}
 }
 
-describe("RPC Pi-compatible primitives (live server)", () => {
+describe("RPC Tau-compatible primitives (live server)", () => {
 	test("get_entries, get_tree, thinking levels, and command-discovery dialect", async () => {
 		await withRpcServer(async (send, next) => {
 			send({ type: "get_entries", id: "entries-base" });
@@ -243,7 +243,7 @@ describe("RPC Pi-compatible primitives (live server)", () => {
 			expect(levels.command).toBe("get_available_thinking_levels");
 			expect(levels.success).toBe(true);
 			const discovered = (levels.data as { levels: unknown[] }).levels;
-			// Pi-compatible discovery: selectable levels with `off` first.
+			// Tau-compatible discovery: selectable levels with `off` first.
 			expect(discovered.length).toBeGreaterThan(0);
 			expect(discovered[0]).toBe("off");
 			for (const level of discovered) expect(typeof level).toBe("string");
@@ -257,7 +257,7 @@ describe("RPC Pi-compatible primitives (live server)", () => {
 			const stateOff = await next();
 			expect((stateOff.data as { thinkingLevel: unknown }).thinkingLevel).toBe("off");
 
-			// Command discovery stays an OMP dialect: the Pi-spelled alias is
+			// Command discovery stays an TAU dialect: the Tau-spelled alias is
 			// intentionally not served (see issue #6).
 			send({ type: "get_available_commands", id: "cmds-a" });
 			const available = await next();

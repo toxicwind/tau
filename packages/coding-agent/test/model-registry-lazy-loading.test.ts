@@ -1,13 +1,13 @@
 import { afterEach, describe, expect, spyOn, test } from "bun:test";
 import * as path from "node:path";
-import type { Api, Model } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { writeModelCache } from "@oh-my-pi/pi-catalog/model-cache";
-import { litellmModelManagerOptions } from "@oh-my-pi/pi-catalog/provider-models";
-import { modelKind } from "@oh-my-pi/pi-catalog/types";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import type { Api, Model } from "@tau/tau-ai";
+import { buildModel } from "@tau/tau-catalog/build";
+import { writeModelCache } from "@tau/tau-catalog/model-cache";
+import { litellmModelManagerOptions } from "@tau/tau-catalog/provider-models";
+import { modelKind } from "@tau/tau-catalog/types";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { TempDir } from "@tau/tau-utils";
 
 const probePath = path.join(import.meta.dir, "fixtures", "model-registry-construction-build-probe.ts");
 

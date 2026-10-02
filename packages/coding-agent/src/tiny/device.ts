@@ -1,5 +1,5 @@
 import type { DeviceType } from "@huggingface/transformers";
-import { $env } from "@oh-my-pi/pi-utils";
+import { $env } from "@tau/tau-utils";
 
 /** ONNX Runtime execution provider accepted by transformers.js pipelines. */
 export type TinyOnnxDevice = DeviceType;

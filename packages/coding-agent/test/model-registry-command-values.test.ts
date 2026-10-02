@@ -2,15 +2,15 @@ import { afterEach, beforeEach, describe, expect, spyOn, test } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { streamSimple } from "@oh-my-pi/pi-ai";
-import { withAuth } from "@oh-my-pi/pi-ai/auth-retry";
-import type { Api, Context, FetchImpl, Model } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { invalidateAllCommandConfigs, resolveConfigValue } from "@oh-my-pi/pi-coding-agent/config/resolve-config-value";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import * as piUtils from "@oh-my-pi/pi-utils";
-import { removeSyncWithRetries, Snowflake } from "@oh-my-pi/pi-utils";
+import { streamSimple } from "@tau/tau-ai";
+import { withAuth } from "@tau/tau-ai/auth-retry";
+import type { Api, Context, FetchImpl, Model } from "@tau/tau-ai/types";
+import { buildModel } from "@tau/tau-catalog/build";
+import { invalidateAllCommandConfigs, resolveConfigValue } from "@tau/tau-coding-agent/config/resolve-config-value";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import * as piUtils from "@tau/tau-utils";
+import { removeSyncWithRetries, Snowflake } from "@tau/tau-utils";
 
 function shellQuote(value: string): string {
 	return `'${value.replaceAll("'", "'\\''")}'`;
@@ -99,7 +99,7 @@ describe("ModelRegistry command-resolved models.yml values", () => {
 	let modelsPath = "";
 
 	beforeEach(async () => {
-		tempDir = path.join(os.tmpdir(), `pi-test-model-command-values-${Snowflake.next()}`);
+		tempDir = path.join(os.tmpdir(), `tau-test-model-command-values-${Snowflake.next()}`);
 		fs.mkdirSync(tempDir, { recursive: true });
 		modelsPath = path.join(tempDir, "models.json");
 		authStorage = await AuthStorage.create(":memory:");
@@ -550,7 +550,7 @@ describe("ModelRegistry command-resolved models.yml values", () => {
 		expect(await registry.getApiKey(model)).toBe("stale-key");
 		expect(fs.readFileSync(counterFile, "utf8")).toBe("1");
 
-		// User-facing recovery: `omp models refresh`, TUI F5.
+		// User-facing recovery: `tau models refresh`, TUI F5.
 		await registry.refresh("online", { refreshCommandCredentials: true });
 		expect(await registry.getApiKey(model)).toBe("fresh-key");
 		expect(fs.readFileSync(counterFile, "utf8")).toBe("11");

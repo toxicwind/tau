@@ -1,4 +1,4 @@
-import { type } from "@oh-my-pi/omptype";
+import { type } from "@tau/tautype";
 
 export const replaceEditSchema = type({
 	path: "string",

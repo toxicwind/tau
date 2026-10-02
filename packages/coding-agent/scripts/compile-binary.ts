@@ -1,9 +1,9 @@
-// Deep import: the pi-utils barrel loads the host native addon, which is
+// Deep import: the tau-utils barrel loads the host native addon, which is
 // absent on cross-compiling release runners.
-import { USER_AGENT } from "@oh-my-pi/pi-utils/dirs";
+import { USER_AGENT } from "@tau/tau-utils/dirs";
 import { buildDocsIndexPayload } from "./generate-docs-index";
 import { createJsonParsePlugin } from "./json-parse-plugin";
-import { createLegacyPiVirtualModulePlugin } from "./legacy-pi-virtual-module";
+import { createLegacyPiVirtualModulePlugin } from "./legacy-tau-virtual-module";
 
 /** Native runtime dependencies always resolved from the on-demand install instead of embedded into compiled binaries. */
 export const COMPILED_EXTERNAL_DEPENDENCIES: readonly string[] = Object.freeze(["fastembed", "onnxruntime-node"]);
@@ -48,7 +48,7 @@ export async function compileCodingAgent(options: CodingAgentCompileOptions): Pr
 				"process.env.PI_DOCS_EMBED": JSON.stringify((await buildDocsIndexPayload()).payload),
 			},
 			// Precompiled bytecode skips parsing the ~20 MB bundle at boot:
-			// `omp --version` 256 ms -> 30 ms on M4 Max (+52 MB binary).
+			// `tau --version` 256 ms -> 30 ms on M4 Max (+52 MB binary).
 			// Keep import.meta.resolve in bundled dependencies valid under bytecode.
 			format: "esm",
 			bytecode: true,

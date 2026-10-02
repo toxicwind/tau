@@ -1,12 +1,12 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
 import { stripVTControlCharacters } from "node:util";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import type { Model } from "@oh-my-pi/pi-catalog/types";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { StatusLineComponent } from "@oh-my-pi/pi-tui/status-line";
-import { statusLineHost } from "@oh-my-pi/pi-coding-agent/modes/status-line-host";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import type { Model } from "@tau/tau-catalog/types";
+import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import { StatusLineComponent } from "@tau/tau-tui/status-line";
+import { statusLineHost } from "@tau/tau-coding-agent/modes/status-line-host";
+import { initTheme } from "@tau/tau-tui/theme";
+import type { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
 
 beforeAll(async () => {
 	resetSettingsForTest();

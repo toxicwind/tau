@@ -1,4 +1,4 @@
-import { prompt } from "@oh-my-pi/pi-utils";
+import { prompt } from "@tau/tau-utils";
 import jevifyNotice from "../prompts/system/jevify-notice.md" with { type: "text" };
 import orchestrateNotice from "../prompts/system/orchestrate-notice.md" with { type: "text" };
 import ultrathinkNotice from "../prompts/system/ultrathink-notice.md" with { type: "text" };
@@ -11,7 +11,7 @@ import workflowNotice from "../prompts/system/workflow-notice.md" with { type: "
  * This table is the single source of truth. Every downstream surface derives
  * from it: the `magicKeywords.<id>` settings (settings-schema), the notice
  * injection and `<id>-notice` message types (agent-session, queued-messages),
- * and the editor/bubble gradients (`setMagicKeywords` in pi-tui). Adding a
+ * and the editor/bubble gradients (`setMagicKeywords` in tau-tui). Adding a
  * keyword means one row here plus its notice template under `prompts/system/`.
  */
 

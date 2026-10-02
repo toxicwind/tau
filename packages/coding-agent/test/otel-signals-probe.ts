@@ -6,20 +6,20 @@
  *
  * Stands up a loopback OTLP/proto receiver, points the standard env vars at it,
  * registers the providers, drives a log record through the bridged
- * `@oh-my-pi/pi-utils` logger and metric instruments through the agent
+ * `@tau/tau-utils` logger and metric instruments through the agent
  * telemetry hooks, flushes, and exits 0 only if the receiver got a non-empty
  * protobuf POST at both /v1/logs and /v1/metrics.
  */
 
-import type { AgentRunCoverage, AgentRunSummary, ChatUsageEvent } from "@oh-my-pi/pi-agent-core";
-import { emptyAgentRunCoverage, emptyAgentRunSummary } from "@oh-my-pi/pi-agent-core";
+import type { AgentRunCoverage, AgentRunSummary, ChatUsageEvent } from "@tau/tau-agent-core";
+import { emptyAgentRunCoverage, emptyAgentRunSummary } from "@tau/tau-agent-core";
 import {
 	createTelemetryExportConfig,
 	flushTelemetryExport,
 	initTelemetryExport,
 	isTelemetryExportEnabled,
-} from "@oh-my-pi/pi-coding-agent/telemetry-export";
-import { logger } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-coding-agent/telemetry-export";
+import { logger } from "@tau/tau-utils";
 
 const seen = new Set<string>();
 const metricPayloads: Uint8Array[] = [];
@@ -122,7 +122,7 @@ const server = Bun.serve({
 const base = `http://localhost:${server.port}`;
 process.env.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT = `${base}/v1/logs`;
 process.env.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT = `${base}/v1/metrics`;
-process.env.OTEL_SERVICE_NAME = "oh-my-pi-signals-probe";
+process.env.OTEL_SERVICE_NAME = "tau-signals-probe";
 
 await initTelemetryExport();
 if (!isTelemetryExportEnabled()) {
@@ -193,9 +193,9 @@ const coverage: AgentRunCoverage = {
 config.onRunEnd?.(summary, coverage);
 
 await flushTelemetryExport();
-assertSingleMetricPoint("pi.omp.agent.chat.calls");
-assertSingleMetricPoint("pi.omp.agent.tool.calls");
-assertSingleMetricPoint("pi.omp.agent.tool.duration");
+assertSingleMetricPoint("pi.tau.agent.chat.calls");
+assertSingleMetricPoint("pi.tau.agent.tool.calls");
+assertSingleMetricPoint("pi.tau.agent.tool.duration");
 await server.stop(true);
 
 const ok = seen.has("logs") && seen.has("metrics");

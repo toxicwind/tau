@@ -15,13 +15,13 @@ import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { LoadExtensionsResult } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/types";
-import { createAgentSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { removeSyncWithRetries } from "@oh-my-pi/pi-utils";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import type { LoadExtensionsResult } from "@tau/tau-coding-agent/extensibility/extensions/types";
+import { createAgentSession } from "@tau/tau-coding-agent/sdk";
+import type { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { removeSyncWithRetries } from "@tau/tau-utils";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
 describe("createAgentSession preloadedExtensions isolation (issue #2190)", () => {
@@ -30,7 +30,7 @@ describe("createAgentSession preloadedExtensions isolation (issue #2190)", () =>
 	let modelRegistry: ModelRegistry;
 
 	beforeAll(() => {
-		sharedDir = fs.mkdtempSync(path.join(os.tmpdir(), "pi-preloaded-ext-"));
+		sharedDir = fs.mkdtempSync(path.join(os.tmpdir(), "tau-preloaded-ext-"));
 		authStorage = createInMemoryAuthStorage();
 		modelRegistry = new ModelRegistry(authStorage, path.join(sharedDir, "models.yml"));
 	});

@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "bun:test";
-import { USER_INTERRUPT_LABEL } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { executeAcpBuiltinSlashCommand } from "@oh-my-pi/pi-coding-agent/slash-commands/acp-builtins";
-import type { SlashCommandRuntime } from "@oh-my-pi/pi-coding-agent/slash-commands/types";
+import { USER_INTERRUPT_LABEL } from "@tau/tau-coding-agent/session/messages";
+import { executeAcpBuiltinSlashCommand } from "@tau/tau-coding-agent/slash-commands/acp-builtins";
+import type { SlashCommandRuntime } from "@tau/tau-coding-agent/slash-commands/types";
 
 function acpRuntime({
 	isStreaming = false,

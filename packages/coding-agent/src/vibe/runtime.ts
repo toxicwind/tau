@@ -5,7 +5,7 @@ import {
 	type VibeSendOutcome,
 	type VibeKillOutcome,
 	type VibeWaitOutcome,
-} from "@oh-my-pi/pi-tui/tools/vibe";
+} from "@tau/tau-tui/tools/vibe";
 /**
  * Vibe mode worker-session runtime.
  *
@@ -24,7 +24,7 @@ import {
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { logger, prompt, Snowflake } from "@oh-my-pi/pi-utils";
+import { logger, prompt, Snowflake } from "@tau/tau-utils";
 import type { AsyncJob, AsyncJobManager } from "../async/job-manager";
 import { resolveAgentModelSelection } from "../config/model-resolver";
 import type { LocalProtocolOptions } from "../internal-urls";
@@ -39,10 +39,10 @@ import { type ExecutorOptions, runSubagentFollowUpTurn, runSubprocess } from "..
 import { generateTaskName } from "../task/name-generator";
 import { AgentOutputManager } from "../task/output-manager";
 import { type AgentDefinition } from "../task/types";
-import { type AgentProgress, oneLineLabel, type SingleResult } from "@oh-my-pi/pi-tui/tools/task";
+import { type AgentProgress, oneLineLabel, type SingleResult } from "@tau/tau-tui/tools/task";
 import type { ToolSession } from "../tools";
-import { formatDuration } from "@oh-my-pi/pi-tui/render/render-utils";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { formatDuration } from "@tau/tau-tui/render/render-utils";
+import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 import { calculateTokensPerSecond } from "../utils/token-rate";
 
 import {
@@ -54,7 +54,7 @@ import {
 	type VibeSpawnLifecycleEvent,
 	type VibeTombstoneReason,
 } from "./lifecycle";
-import { type VibeCli } from "@oh-my-pi/pi-tui/tools/vibe";
+import { type VibeCli } from "@tau/tau-tui/tools/vibe";
 /**
  * CLI flavor → bundled agent type. This IS the model-tier mapping: `sonic`
  * carries `model: "@smol"` (the configured fast/low-latency role) and `task`
@@ -1265,7 +1265,7 @@ export class VibeSessionRegistry {
 	): Promise<ExecutorOptions> {
 		const sessionFile = session.getSessionFile();
 		const sessionArtifactsDir = sessionFile ? sessionFile.slice(0, -6) : null;
-		const artifactsDir = sessionArtifactsDir ?? path.join(os.tmpdir(), `omp-vibe-${Snowflake.next()}`);
+		const artifactsDir = sessionArtifactsDir ?? path.join(os.tmpdir(), `tau-vibe-${Snowflake.next()}`);
 		await fs.mkdir(artifactsDir, { recursive: true });
 		if (!sessionArtifactsDir) registerArtifactsDir(artifactsDir);
 		const localProtocolOptions: LocalProtocolOptions = session.localProtocolOptions ?? {
@@ -1309,7 +1309,7 @@ export class VibeSessionRegistry {
 			localProtocolOptions,
 			parentArtifactManager: session.getArtifactManager?.() ?? undefined,
 			parentHindsightSessionState: session.getHindsightSessionState?.(),
-			parentMnemopiSessionState: session.getMnemopiSessionState?.(),
+			parentMnemotauSessionState: session.getMnemotauSessionState?.(),
 			parentTelemetry: session.getTelemetry?.(),
 			parentEvalSessionId: session.getEvalSessionId?.() ?? undefined,
 			parentAgentId: session.getAgentId?.() ?? MAIN_AGENT_ID,

@@ -2,12 +2,12 @@ import { describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { clearAwsCredentialCache } from "@oh-my-pi/pi-ai/providers/aws-credentials";
-import type { BedrockMantleOptions } from "@oh-my-pi/pi-ai/providers/bedrock-mantle";
-import { getProviderDefinition } from "@oh-my-pi/pi-ai/registry";
-import { stream, streamSimple } from "@oh-my-pi/pi-ai/stream";
-import type { Context, FetchImpl, Model, SimpleStreamOptions } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import { clearAwsCredentialCache } from "@tau/tau-ai/providers/aws-credentials";
+import type { BedrockMantleOptions } from "@tau/tau-ai/providers/bedrock-mantle";
+import { getProviderDefinition } from "@tau/tau-ai/registry";
+import { stream, streamSimple } from "@tau/tau-ai/stream";
+import type { Context, FetchImpl, Model, SimpleStreamOptions } from "@tau/tau-ai/types";
+import { buildModel } from "@tau/tau-catalog/build";
 import { removeWithRetries } from "../../utils/src/temp";
 import { withEnv } from "./helpers";
 
@@ -227,12 +227,12 @@ describe("Bedrock Mantle authentication", () => {
 		expect(capture.authorization).toContain("/us-east-2/bedrock-mantle/aws4_request");
 	});
 
-	test("pi-native transport wins over local Mantle authentication", async () => {
+	test("tau-native transport wins over local Mantle authentication", async () => {
 		const capture: Capture = {};
 		const gatewayModel = {
 			...mantleModel,
 			baseUrl: "http://gateway.internal",
-			transport: "pi-native" as const,
+			transport: "tau-native" as const,
 		};
 		await expect(
 			streamSimple(gatewayModel, context, {

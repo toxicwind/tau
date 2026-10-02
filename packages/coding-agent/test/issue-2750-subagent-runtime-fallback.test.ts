@@ -1,15 +1,15 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { Api, AssistantMessage, Model } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import * as sdkModule from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import type { ServingModel } from "@oh-my-pi/pi-coding-agent/session/retry-fallback-chains";
-import { TurnRecovery, type TurnRecoveryHost } from "@oh-my-pi/pi-coding-agent/session/turn-recovery";
-import { runSubprocess } from "@oh-my-pi/pi-coding-agent/task/executor";
-import type { AgentDefinition } from "@oh-my-pi/pi-coding-agent/task/types";
-import type { AgentProgress } from "@oh-my-pi/pi-tui/tools/task";
+import { ThinkingLevel } from "@tau/tau-agent-core";
+import type { Api, AssistantMessage, Model } from "@tau/tau-ai";
+import { buildModel } from "@tau/tau-catalog/build";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import * as sdkModule from "@tau/tau-coding-agent/sdk";
+import type { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import type { ServingModel } from "@tau/tau-coding-agent/session/retry-fallback-chains";
+import { TurnRecovery, type TurnRecoveryHost } from "@tau/tau-coding-agent/session/turn-recovery";
+import { runSubprocess } from "@tau/tau-coding-agent/task/executor";
+import type { AgentDefinition } from "@tau/tau-coding-agent/task/types";
+import type { AgentProgress } from "@tau/tau-tui/tools/task";
 import { createSessionDefaults } from "./helpers/session-defaults";
 
 function model(provider: string, id: string): Model<Api> {

@@ -2,8 +2,8 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { getAgentDir, getConfigDirName, getPythonGatewayDir, setAgentDir } from "@oh-my-pi/pi-utils/dirs";
-import { Snowflake } from "@oh-my-pi/pi-utils/snowflake";
+import { getAgentDir, getConfigDirName, getPythonGatewayDir, setAgentDir } from "@tau/tau-utils/dirs";
+import { Snowflake } from "@tau/tau-utils/snowflake";
 
 describe("python gateway directory", () => {
 	let tempRoot = "";
@@ -15,7 +15,7 @@ describe("python gateway directory", () => {
 		originalAgentDir = getAgentDir();
 		originalConfigDir = process.env.PI_CONFIG_DIR;
 		originalXdgStateHome = process.env.XDG_STATE_HOME;
-		tempRoot = path.join(os.tmpdir(), "pi-utils-python-gateway", Snowflake.next());
+		tempRoot = path.join(os.tmpdir(), "tau-utils-python-gateway", Snowflake.next());
 		await fs.mkdir(tempRoot, { recursive: true });
 	});
 
@@ -37,21 +37,21 @@ describe("python gateway directory", () => {
 	it("uses XDG state for the default agent profile", async () => {
 		if (process.platform === "win32") return;
 
-		process.env.PI_CONFIG_DIR = `.omp-test-${Snowflake.next()}`;
+		process.env.PI_CONFIG_DIR = `.tau-test-${Snowflake.next()}`;
 		process.env.XDG_STATE_HOME = path.join(tempRoot, "state");
-		await fs.mkdir(path.join(process.env.XDG_STATE_HOME, "omp"), { recursive: true });
+		await fs.mkdir(path.join(process.env.XDG_STATE_HOME, "tau"), { recursive: true });
 
 		const defaultAgentDir = path.join(os.homedir(), getConfigDirName(), "agent");
 		setAgentDir(defaultAgentDir);
 
-		expect(getPythonGatewayDir()).toBe(path.join(process.env.XDG_STATE_HOME, "omp", "python-gateway"));
+		expect(getPythonGatewayDir()).toBe(path.join(process.env.XDG_STATE_HOME, "tau", "python-gateway"));
 	});
 
 	it("keeps custom agent profiles isolated from XDG shared state", async () => {
 		if (process.platform === "win32") return;
 
 		process.env.XDG_STATE_HOME = path.join(tempRoot, "state");
-		await fs.mkdir(path.join(process.env.XDG_STATE_HOME, "omp"), { recursive: true });
+		await fs.mkdir(path.join(process.env.XDG_STATE_HOME, "tau"), { recursive: true });
 		const customAgentDir = path.join(tempRoot, "custom-agent");
 
 		setAgentDir(customAgentDir);

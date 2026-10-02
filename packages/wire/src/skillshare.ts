@@ -1,6 +1,6 @@
 /**
- * Wire contract for Skillshare (`skills.omp.sh`): an npm-style registry for
- * omp skills. Shared by the omp CLI (`omp skill …`), the Go server
+ * Wire contract for Skillshare (`skills.tau.sh`): an npm-style registry for
+ * tau skills. Shared by the tau CLI (`tau skill …`), the Go server
  * (`stencil/apps/skills`), and its web UI (which mirrors this file).
  *
  * Packages are scoped: `@scope/name`. A scope is a Stencil username claimed on
@@ -15,7 +15,7 @@
  */
 
 /** Default registry; `skills.registryUrl` overrides it. */
-export const DEFAULT_SKILLS_URL = "https://skills.omp.sh";
+export const DEFAULT_SKILLS_URL = "https://skills.tau.sh";
 
 /** Scopes are Stencil usernames (or registry orgs): lowercase letters, digits, underscores; 3–32 chars. */
 export const SKILL_SCOPE_RE = /^[a-z0-9][a-z0-9_]{2,31}$/;
@@ -69,7 +69,7 @@ export const SKILL_HEADERS = {
 } as const;
 
 /** Audience CI must request for GitHub Actions OIDC tokens. */
-export const SKILLS_OIDC_AUDIENCE = "skills.omp.sh";
+export const SKILLS_OIDC_AUDIENCE = "skills.tau.sh";
 
 /** Env var holding a registry publish token for CI (`sks_…`); wins over the Stencil login. */
 export const SKILLS_TOKEN_ENV = "SKILLS_TOKEN";
@@ -82,7 +82,7 @@ export interface SkillUser {
 }
 
 export interface SkillReportedProvenance {
-	ompVersion: string;
+	tauVersion: string;
 	gitRemote?: string;
 	gitCommit?: string;
 }

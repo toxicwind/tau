@@ -11,11 +11,11 @@ import {
 	type Message,
 	type Model,
 	retryTransientCompletion,
-} from "@oh-my-pi/pi-ai";
-import { StreamMarkupHealing } from "@oh-my-pi/pi-ai/utils/stream-markup-healing";
-import { writeThroughActiveTerminal } from "@oh-my-pi/pi-tui";
-import { SPINNER_FRAMES } from "@oh-my-pi/pi-tui/theme/symbols";
-import { $env, isTerminalHeadless, isWsl, logger, prompt } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-ai";
+import { StreamMarkupHealing } from "@tau/tau-ai/utils/stream-markup-healing";
+import { writeThroughActiveTerminal } from "@tau/tau-tui";
+import { SPINNER_FRAMES } from "@tau/tau-tui/theme/symbols";
+import { $env, isTerminalHeadless, isWsl, logger, prompt } from "@tau/tau-utils";
 import type { ModelRegistry } from "../config/model-registry";
 
 import { roleCandidatePool } from "../config/model-roles";
@@ -31,7 +31,7 @@ import { tinyTitleClient } from "../tiny/title-client";
 const TITLE_SYSTEM_PROMPT = prompt.render(titleSystemPrompt);
 const TITLE_MARKER_INSTRUCTION = prompt.render(titleMarkerInstruction);
 
-// Plain π, not the nerd-font `icon.omp` glyph: window/tab titles render in the
+// Plain π, not the nerd-font `icon.tau` glyph: window/tab titles render in the
 // OS UI font, which has no nerd-font PUA coverage.
 const DEFAULT_TERMINAL_TITLE = "π";
 const TERMINAL_TITLE_CONTROL_CHARS = /[\u0000-\u001f\u007f-\u009f]/g;

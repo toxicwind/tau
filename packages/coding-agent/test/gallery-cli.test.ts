@@ -7,16 +7,16 @@ import {
 	renderGalleryState,
 	renderGallerySurfaceSections,
 	resolveFixture,
-} from "@oh-my-pi/pi-coding-agent/cli/gallery-cli";
+} from "@tau/tau-coding-agent/cli/gallery-cli";
 import {
 	type GalleryFixture,
 	getComposerGalleryInventory,
 	getSegmentGalleryInventory,
-} from "@oh-my-pi/pi-coding-agent/cli/gallery-fixtures";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { initTheme, theme } from "@oh-my-pi/pi-tui/theme";
-import { toolRenderers } from "@oh-my-pi/pi-tui/tools";
-import { writeToolRenderer } from "@oh-my-pi/pi-tui/tools/write";
+} from "@tau/tau-coding-agent/cli/gallery-fixtures";
+import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import { initTheme, theme } from "@tau/tau-tui/theme";
+import { toolRenderers } from "@tau/tau-tui/tools";
+import { writeToolRenderer } from "@tau/tau-tui/tools/write";
 
 beforeAll(async () => {
 	resetSettingsForTest();

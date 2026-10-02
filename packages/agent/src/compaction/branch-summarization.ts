@@ -5,9 +5,9 @@
  * a summary of the branch being left so context isn't lost.
  */
 
-import type { Api, ApiKey, AssistantMessage, Context, Model, SimpleStreamOptions } from "@oh-my-pi/pi-ai";
-import { preferredDialect } from "@oh-my-pi/pi-catalog/identity";
-import { prompt } from "@oh-my-pi/pi-utils";
+import type { Api, ApiKey, AssistantMessage, Context, Model, SimpleStreamOptions } from "@tau/tau-ai";
+import { preferredDialect } from "@tau/tau-catalog/identity";
+import { prompt } from "@tau/tau-utils";
 import { type AgentTelemetry, instrumentedCompleteSimple } from "../telemetry";
 import { Tokenizer } from "../tokenizer";
 import type { AgentMessage } from "../types";
@@ -245,7 +245,7 @@ export function prepareBranchEntries(
 
 	// First pass: collect file ops from ALL entries (even if they don't fit in token budget)
 	// This ensures we capture cumulative file tracking from nested branch summaries
-	// Only extract from pi-generated summaries (fromExtension !== true), not extension-generated ones
+	// Only extract from tau-generated summaries (fromExtension !== true), not extension-generated ones
 	for (const entry of entries) {
 		if (entry.type === "branch_summary" && !entry.fromExtension && entry.details) {
 			const details = entry.details as BranchSummaryDetails;

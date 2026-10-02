@@ -3,19 +3,19 @@ import {
 	formatBackgroundNotice,
 	formatWallTimeNotice,
 	formatExitCodeNotice,
-} from "@oh-my-pi/pi-tui/tools/bash";
+} from "@tau/tau-tui/tools/bash";
 import * as fs from "node:fs";
-import { type } from "@oh-my-pi/omptype";
+import { type } from "@tau/tautype";
 import type {
 	AgentTool,
 	AgentToolContext,
 	AgentToolResult,
 	AgentToolUpdateCallback,
 	ToolApprovalDecision,
-} from "@oh-my-pi/pi-agent-core";
-import type { ImageContent } from "@oh-my-pi/pi-ai";
-import { isEnoent, logger, prompt } from "@oh-my-pi/pi-utils";
-import { isPosixShell } from "@oh-my-pi/pi-utils/procmgr";
+} from "@tau/tau-agent-core";
+import type { ImageContent } from "@tau/tau-ai";
+import { isEnoent, logger, prompt } from "@tau/tau-utils";
+import { isPosixShell } from "@tau/tau-utils/procmgr";
 import { DEFAULT_AUTO_BACKGROUND_THRESHOLD_MS, raceJobSettlement, resolveAutoBackgroundWaitMs } from "../async";
 import type { Settings } from "../config/settings";
 import { applyDirenvPreflight, type BashResult, executeBash } from "../exec/bash-executor";
@@ -31,7 +31,7 @@ import {
 	enforceInlineByteCap,
 	streamTailUpdates,
 	TailBuffer,
-} from "@oh-my-pi/pi-tui/tools/streaming-output";
+} from "@tau/tau-tui/tools/streaming-output";
 import { resolveCliEntryCmd } from "../subprocess/worker-client";
 import { TerminalGraphicsDecoder } from "../utils/terminal-graphics";
 import type { ToolSession } from ".";
@@ -45,13 +45,13 @@ import { resolveEvalBackends } from "./eval-backends";
 import { invalidateGithubCacheForBashCommand } from "./gh-cache-invalidation";
 import { startService, type ServiceReady } from "../launch/services";
 import { isFindEnabled } from "./jfind";
-import { formatArtifactErrorNotice } from "@oh-my-pi/pi-tui/tools/output-meta";
-import { formatOutputNotice } from "@oh-my-pi/pi-tui/tools/output-meta";
+import { formatArtifactErrorNotice } from "@tau/tau-tui/tools/output-meta";
+import { formatOutputNotice } from "@tau/tau-tui/tools/output-meta";
 import { resolveInlineByteCapBudget } from "./output-meta";
 import { resolveToCwd } from "./path-utils";
 import { extractLeadingCdTarget, extractLiteralAndChainSegments, tokenizeShellSegments } from "./shell-tokenize";
 import { ToolAbortError } from "./tool-errors";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 import { toolResult } from "./tool-result";
 import { clampTimeout, TOOL_TIMEOUTS } from "./tool-timeouts";
 
@@ -134,7 +134,7 @@ const BASH_PATTERN_APPROVAL_VALUES = new Set(["allow", "deny", "prompt"]);
  * preserves `bash` tool semantics (`$VAR`, `$(...)`, `source`, POSIX quoting,
  * `-l`) wherever a POSIX shell is available. The agent host's shell path is
  * used as a proxy for the client's, matching the near-universal ACP
- * deployment shape of an editor spawning omp as a co-hosted subprocess.
+ * deployment shape of an editor spawning tau as a co-hosted subprocess.
  */
 export function wrapShellLineForClientTerminal(
 	line: string,
@@ -145,7 +145,7 @@ export function wrapShellLineForClientTerminal(
 }
 
 /**
- * Mirrors pi-shell's `uutils_env_disabled` gate for `PI_DISABLE_UUTILS_BUILTINS`:
+ * Mirrors tau-shell's `uutils_env_disabled` gate for `PI_DISABLE_UUTILS_BUILTINS`:
  * session shell env first, then process env; truthy = present and not "", "0",
  * or "false". Controls whether the prompt advertises the in-process builtins.
  */
@@ -1012,7 +1012,7 @@ export class BashTool implements AgentTool<BashToolSchema, BashToolDetails> {
 		}
 
 		// A timeout of 0 is an explicit long-running-command contract: the user
-		// must still cancel the call or job, but OMP does not impose a deadline.
+		// must still cancel the call or job, but TAU does not impose a deadline.
 		const requestedTimeoutSec = rawTimeout ?? 300;
 		const timeoutDisabled = requestedTimeoutSec === 0;
 		const maxTimeout = this.session.settings.get("tools.maxTimeout");

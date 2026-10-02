@@ -5,7 +5,7 @@ import type {
 	AgentToolContext,
 	StreamFn,
 	ThinkingLevel,
-} from "@oh-my-pi/pi-agent-core";
+} from "@tau/tau-agent-core";
 import type {
 	AssistantMessage,
 	Context,
@@ -18,16 +18,16 @@ import type {
 	ServiceTierByFamily,
 	SimpleStreamOptions,
 	ToolChoice,
-} from "@oh-my-pi/pi-ai";
-import type { postmortem } from "@oh-my-pi/pi-utils";
-import type { AdvisorConfig } from "@oh-my-pi/pi-tui/overlays/advisor-config";
+} from "@tau/tau-ai";
+import type { postmortem } from "@tau/tau-utils";
+import type { AdvisorConfig } from "@tau/tau-tui/overlays/advisor-config";
 import type { AsyncJob, AsyncJobDeliveryState, AsyncJobManager } from "../async";
 import type { EffectiveExtensionRoots } from "../capability/types";
 import type { ModelRegistry } from "../config/model-registry";
 import type { PromptTemplate } from "../config/prompt-templates";
 import type { Settings, SkillsSettings } from "../config/settings";
 import type { CursorMcpResourceAdapter } from "../cursor";
-import type { RawSseDebugBuffer } from "@oh-my-pi/pi-tui/apps/debug/raw-sse-buffer";
+import type { RawSseDebugBuffer } from "@tau/tau-tui/apps/debug/raw-sse-buffer";
 import type { EvalPreludeDefinition } from "../eval/preludes";
 import type { TtsrManager } from "../export/ttsr";
 import type { LoadedCustomCommand } from "../extensibility/custom-commands";
@@ -38,18 +38,18 @@ import type { SkillDescriptionCatalog } from "../extensibility/skill-description
 import type { Skill, SkillWarning } from "../extensibility/skills";
 import type { FileSlashCommand } from "../extensibility/slash-commands";
 import type { SecretObfuscator } from "../secrets/obfuscator";
-import type { ConfiguredThinkingLevel } from "@oh-my-pi/pi-tui/thinking";
+import type { ConfiguredThinkingLevel } from "@tau/tau-tui/thinking";
 import type { ToolSession } from "../tools";
 import type { XdevState } from "../tools/xdev";
 import type { CodexAutoRedeemCoordinator } from "./codex-auto-reset";
 import type { SessionManager } from "./session-manager";
 
-/** Maximum time the interactive shutdown path waits for Mnemopi consolidation. */
+/** Maximum time the interactive shutdown path waits for Mnemotau consolidation. */
 export const SHUTDOWN_CONSOLIDATE_BUDGET_MS = 1_500;
 
 /** Options controlling session disposal. */
 export interface AgentSessionDisposeOptions {
-	mnemopiConsolidateTimeoutMs?: number;
+	mnemotauConsolidateTimeoutMs?: number;
 	/**
 	 * Deadline for the settle/drain wait before the terminal memory release
 	 * (default 5s). The bounded-teardown paths (signal handlers, tests) may
@@ -424,8 +424,8 @@ export interface RoleModelCycleResult {
 	role: string;
 }
 
-import type { ResolvedRoleModel } from "@oh-my-pi/pi-tui/overlays/model-picker";
-export type { ResolvedRoleModel } from "@oh-my-pi/pi-tui/overlays/model-picker";
+import type { ResolvedRoleModel } from "@tau/tau-tui/overlays/model-picker";
+export type { ResolvedRoleModel } from "@tau/tau-tui/overlays/model-picker";
 
 /** Resolvable role models and the currently active index. */
 export interface RoleModelCycle {

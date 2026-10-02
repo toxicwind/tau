@@ -3,11 +3,11 @@ import { Database } from "bun:sqlite";
 import * as fs from "node:fs";
 import * as fsp from "node:fs/promises";
 import * as path from "node:path";
-import { Effort } from "@oh-my-pi/pi-ai";
-import { clearCustomApis } from "@oh-my-pi/pi-ai/api-registry";
-import { createMockModel, registerMockApi } from "@oh-my-pi/pi-ai/providers/mock";
-import { __providerInFlightForTesting, streamSimple } from "@oh-my-pi/pi-ai/stream";
-import type { Context } from "@oh-my-pi/pi-ai/types";
+import { Effort } from "@tau/tau-ai";
+import { clearCustomApis } from "@tau/tau-ai/api-registry";
+import { createMockModel, registerMockApi } from "@tau/tau-ai/providers/mock";
+import { __providerInFlightForTesting, streamSimple } from "@tau/tau-ai/stream";
+import type { Context } from "@tau/tau-ai/types";
 import {
 	__physicalTargetSegmentsForTesting,
 	onAppendOnlyModeChanged,
@@ -17,13 +17,13 @@ import {
 	resetSettingsForTest,
 	type SettingPath,
 	Settings,
-} from "@oh-my-pi/pi-coding-agent/config/settings";
-import { SETTINGS_SCHEMA } from "@oh-my-pi/pi-coding-agent/config/settings-schema";
-import * as discovery from "@oh-my-pi/pi-coding-agent/discovery";
+} from "@tau/tau-coding-agent/config/settings";
+import { SETTINGS_SCHEMA } from "@tau/tau-coding-agent/config/settings-schema";
+import * as discovery from "@tau/tau-coding-agent/discovery";
 import MODEL_PRIO from "../src/priority.json" with { type: "json" };
-import { AgentStorage } from "@oh-my-pi/pi-coding-agent/session/agent-storage";
-import { getAgentDbPath, getProjectAgentDir, logger, TempDir } from "@oh-my-pi/pi-utils";
-import * as fileLock from "@oh-my-pi/pi-utils/file-lock";
+import { AgentStorage } from "@tau/tau-coding-agent/session/agent-storage";
+import { getAgentDbPath, getProjectAgentDir, logger, TempDir } from "@tau/tau-utils";
+import * as fileLock from "@tau/tau-utils/file-lock";
 import { YAML } from "bun";
 import { beginSettingsTest, restoreSettingsTestState, type SettingsTestState } from "./helpers/settings-test-state";
 
@@ -54,7 +54,7 @@ describe("Settings", () => {
 
 		// Use TempDir for Windows-safe cleanup (retries on EBUSY from SQLite
 		// file handle release delays).
-		tempDir = TempDir.createSync("@pi-settings-test-");
+		tempDir = TempDir.createSync("@tau-settings-test-");
 		agentDir = tempDir.join("agent");
 		projectDir = tempDir.join("project");
 
@@ -357,7 +357,7 @@ describe("Settings", () => {
 
 		it("backs up a corrupted project config and retains the pending project role for retry", async () => {
 			await writeSettings({});
-			const projectConfigPath = path.join(projectDir, ".omp", "config.yml");
+			const projectConfigPath = path.join(projectDir, ".tau", "config.yml");
 			await Bun.write(
 				projectConfigPath,
 				YAML.stringify({ modelRoles: { default: "keep/default" }, custom: { keep: true } }, null, 2),
@@ -969,7 +969,7 @@ describe("Settings", () => {
 
 		it("leaves an unreadable project config untouched and retains its pending role", async () => {
 			await writeSettings({});
-			const projectConfigPath = path.join(projectDir, ".omp", "config.yml");
+			const projectConfigPath = path.join(projectDir, ".tau", "config.yml");
 			const original = YAML.stringify({ modelRoles: { default: "keep/default" }, custom: { keep: true } }, null, 2);
 			await Bun.write(projectConfigPath, original);
 			const settings = await Settings.init({ cwd: projectDir, agentDir });
@@ -995,7 +995,7 @@ describe("Settings", () => {
 			const malformed = 'modelRoles:\n  default: "unterminated\n';
 			await Promise.all([
 				Bun.write(getConfigPath(), malformed),
-				Bun.write(path.join(projectDir, ".omp", "config.yml"), malformed),
+				Bun.write(path.join(projectDir, ".tau", "config.yml"), malformed),
 			]);
 			const unhandled: unknown[] = [];
 			const onUnhandled = (reason: unknown): void => {
@@ -1007,7 +1007,7 @@ describe("Settings", () => {
 				expect(unhandled).toEqual([]);
 				expect(fs.readdirSync(agentDir).some(name => name.startsWith("config.yml.broken-"))).toBe(true);
 				expect(
-					fs.readdirSync(path.join(projectDir, ".omp")).some(name => name.startsWith("config.yml.broken-")),
+					fs.readdirSync(path.join(projectDir, ".tau")).some(name => name.startsWith("config.yml.broken-")),
 				).toBe(true);
 			} finally {
 				process.removeListener("unhandledRejection", onUnhandled);
@@ -1017,7 +1017,7 @@ describe("Settings", () => {
 
 	describe("live persisted reload", () => {
 		it("rejects malformed live configs without moving them aside or replacing effective settings", async () => {
-			const projectConfigPath = path.join(projectDir, ".omp", "config.yml");
+			const projectConfigPath = path.join(projectDir, ".tau", "config.yml");
 			await writeSettings({
 				setupVersion: 1,
 				modelRoles: { global_role: "openai/global" },
@@ -1613,7 +1613,7 @@ describe("Settings", () => {
 			// Process loads its #global snapshot.
 			const settings = await Settings.init({ cwd: projectDir, agentDir });
 
-			// External edit (another omp instance / manual edit): changes advisor,
+			// External edit (another tau instance / manual edit): changes advisor,
 			// adds vision. This process's #global is now stale.
 			await writeSettings({
 				modelRoles: {
@@ -2223,7 +2223,7 @@ describe("Settings", () => {
 			expect(settings.get("hindsight.bankId")).toBe("ada-cli");
 		});
 
-		it("migrates the legacy mnemosyne memory backend to mnemopi", async () => {
+		it("migrates the legacy mnemosyne memory backend to mnemotau", async () => {
 			await writeSettings({
 				memory: { backend: "mnemosyne" },
 				mnemosyne: { dbPath: "/tmp/old.db", scoping: "global" },
@@ -2231,20 +2231,20 @@ describe("Settings", () => {
 
 			const settings = await Settings.init({ cwd: projectDir, agentDir });
 
-			expect(settings.get("memory.backend")).toBe("mnemopi");
-			expect(settings.get("mnemopi.dbPath")).toBe("/tmp/old.db");
-			expect(settings.get("mnemopi.scoping")).toBe("global");
+			expect(settings.get("memory.backend")).toBe("mnemotau");
+			expect(settings.get("mnemotau.dbPath")).toBe("/tmp/old.db");
+			expect(settings.get("mnemotau.scoping")).toBe("global");
 		});
 
-		it("does not clobber an explicit mnemopi block when the legacy mnemosyne block is also present", async () => {
+		it("does not clobber an explicit mnemotau block when the legacy mnemosyne block is also present", async () => {
 			await writeSettings({
 				mnemosyne: { dbPath: "/tmp/old.db" },
-				mnemopi: { dbPath: "/tmp/new.db" },
+				mnemotau: { dbPath: "/tmp/new.db" },
 			});
 
 			const settings = await Settings.init({ cwd: projectDir, agentDir });
 
-			expect(settings.get("mnemopi.dbPath")).toBe("/tmp/new.db");
+			expect(settings.get("mnemotau.dbPath")).toBe("/tmp/new.db");
 		});
 
 		it("migrates boolean task.eager/todo.eager true to always", async () => {

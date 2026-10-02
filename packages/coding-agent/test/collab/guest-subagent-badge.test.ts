@@ -1,19 +1,19 @@
 import { afterEach, beforeEach, describe, expect, it, spyOn } from "bun:test";
-import { generateRoomKey, importRoomKey } from "@oh-my-pi/pi-coding-agent/collab/crypto";
-import { CollabGuestLink } from "@oh-my-pi/pi-coding-agent/collab/guest";
+import { generateRoomKey, importRoomKey } from "@tau/tau-coding-agent/collab/crypto";
+import { CollabGuestLink } from "@tau/tau-coding-agent/collab/guest";
 import {
 	type AgentSnapshot,
 	COLLAB_PROTO,
 	type CollabFrame,
 	formatCollabLink,
-} from "@oh-my-pi/pi-coding-agent/collab/protocol";
-import { CollabSocket } from "@oh-my-pi/pi-coding-agent/collab/relay-client";
+} from "@tau/tau-coding-agent/collab/protocol";
+import { CollabSocket } from "@tau/tau-coding-agent/collab/relay-client";
 import {
 	getRunningSubagentBadgeAgentIds,
 	getRunningSubagentBadgeRegistry,
-} from "@oh-my-pi/pi-tui/overlays/running-subagent-badge";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
+} from "@tau/tau-tui/overlays/running-subagent-badge";
+import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
+import { AgentRegistry } from "@tau/tau-coding-agent/registry/agent-registry";
 import { installInMemoryRelay, uninstallInMemoryRelay } from "./helpers/in-memory-relay";
 
 // In-memory transport: shared FakeWebSocket + InMemoryRelay harness (see

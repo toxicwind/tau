@@ -1,4 +1,4 @@
-import type { Api, Model } from "@oh-my-pi/pi-catalog/types";
+import type { Api, Model } from "@tau/tau-catalog/types";
 import {
 	applyCodexResidencyHeader,
 	CODEX_BASE_URL,
@@ -6,8 +6,8 @@ import {
 	OPENAI_HEADER_VALUES,
 	OPENAI_HEADERS,
 	URL_PATHS,
-} from "@oh-my-pi/pi-catalog/wire/codex";
-import { parseImageMetadata, readSseJson, USER_AGENT } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-catalog/wire/codex";
+import { parseImageMetadata, readSseJson, USER_AGENT } from "@tau/tau-utils";
 import { withAuth } from "../auth-retry";
 import * as AIError from "../error";
 import { errorMessage, ImageApiError, modelHeaders, resolveOpenAIImageSize, toDataUrl, usageFromWire } from "./shared";

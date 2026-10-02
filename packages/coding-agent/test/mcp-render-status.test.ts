@@ -1,17 +1,17 @@
 import { beforeAll, describe, expect, it } from "bun:test";
-import type { AgentTool } from "@oh-my-pi/pi-agent-core";
-import type { TSchema } from "@oh-my-pi/pi-ai";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { renderMCPResult } from "@oh-my-pi/pi-tui/tools/mcp";
-import { DeferredMCPTool, MCPTool } from "@oh-my-pi/pi-coding-agent/mcp/tool-bridge";
-import { type MCPToolDetails } from "@oh-my-pi/pi-tui/tools/mcp";
-import type { MCPServerConnection, MCPToolDefinition, MCPTransport } from "@oh-my-pi/pi-coding-agent/mcp/types";
-import { ToolExecutionComponent } from "@oh-my-pi/pi-tui/chat/tool-execution";
-import { theme as activeTheme, getThemeByName, initTheme } from "@oh-my-pi/pi-tui/theme";
-import { type OutputMeta } from "@oh-my-pi/pi-tui/tools/output-meta";
-import { formatOutputNotice } from "@oh-my-pi/pi-tui/tools/output-meta";
-import { formatStatusIcon } from "@oh-my-pi/pi-tui/render/render-utils";
-import { TUI } from "@oh-my-pi/pi-tui";
+import type { AgentTool } from "@tau/tau-agent-core";
+import type { TSchema } from "@tau/tau-ai";
+import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import { renderMCPResult } from "@tau/tau-tui/tools/mcp";
+import { DeferredMCPTool, MCPTool } from "@tau/tau-coding-agent/mcp/tool-bridge";
+import { type MCPToolDetails } from "@tau/tau-tui/tools/mcp";
+import type { MCPServerConnection, MCPToolDefinition, MCPTransport } from "@tau/tau-coding-agent/mcp/types";
+import { ToolExecutionComponent } from "@tau/tau-tui/chat/tool-execution";
+import { theme as activeTheme, getThemeByName, initTheme } from "@tau/tau-tui/theme";
+import { type OutputMeta } from "@tau/tau-tui/tools/output-meta";
+import { formatOutputNotice } from "@tau/tau-tui/tools/output-meta";
+import { formatStatusIcon } from "@tau/tau-tui/render/render-utils";
+import { TUI } from "@tau/tau-tui";
 import { VirtualTerminal } from "../../tui/test/virtual-terminal";
 
 beforeAll(async () => {

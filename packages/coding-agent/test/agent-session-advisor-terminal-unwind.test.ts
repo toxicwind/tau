@@ -1,14 +1,14 @@
 import { afterEach, expect, it } from "bun:test";
-import { type } from "@oh-my-pi/omptype";
-import { Agent, type AgentMessage, type AgentTool } from "@oh-my-pi/pi-agent-core";
-import { createMockModel, type MockResponse } from "@oh-my-pi/pi-ai/providers/mock";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { type } from "@tau/tautype";
+import { Agent, type AgentMessage, type AgentTool } from "@tau/tau-agent-core";
+import { createMockModel, type MockResponse } from "@tau/tau-ai/providers/mock";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { TempDir } from "@tau/tau-utils";
 
 type BoundaryTool = AgentTool<any, any, any>;
 
@@ -54,7 +54,7 @@ afterEach(async () => {
 it.each(["concern", "nit", "blocker"] as const)(
 	"routes late terminal %s correctly before a real next run",
 	async severity => {
-		const temp = TempDir.createSync("@pi-advisor-terminal-unwind-");
+		const temp = TempDir.createSync("@tau-advisor-terminal-unwind-");
 		const auth = await AuthStorage.create(":memory:");
 		auth.keys.setRuntime("anthropic", "test-key");
 		const model = getBundledModel("anthropic", "claude-sonnet-4-5");

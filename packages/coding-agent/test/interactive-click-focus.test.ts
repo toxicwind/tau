@@ -1,19 +1,19 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { resetSettingsForTest, Settings, settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { ToolExecutionComponent } from "@oh-my-pi/pi-tui/chat/tool-execution";
-import { Composer } from "@oh-my-pi/pi-tui/prompt/composer";
-import { InteractiveMode } from "@oh-my-pi/pi-coding-agent/modes/interactive-mode";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import type { AgentProgress } from "@oh-my-pi/pi-tui/tools/task";
-import { TASK_SUBAGENT_LIFECYCLE_CHANNEL } from "@oh-my-pi/pi-coding-agent/task";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent } from "@tau/tau-agent-core";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { resetSettingsForTest, Settings, settings } from "@tau/tau-coding-agent/config/settings";
+import { ToolExecutionComponent } from "@tau/tau-tui/chat/tool-execution";
+import { Composer } from "@tau/tau-tui/prompt/composer";
+import { InteractiveMode } from "@tau/tau-coding-agent/modes/interactive-mode";
+import { initTheme } from "@tau/tau-tui/theme";
+import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import type { AgentProgress } from "@tau/tau-tui/tools/task";
+import { TASK_SUBAGENT_LIFECYCLE_CHANNEL } from "@tau/tau-coding-agent/task";
+import { EventBus } from "@tau/tau-coding-agent/utils/event-bus";
+import { TempDir } from "@tau/tau-utils";
 import { VirtualTerminal } from "../../tui/test/virtual-terminal";
 
 function plainRows(rows: readonly string[]): string[] {
@@ -34,7 +34,7 @@ describe("inline click-to-focus geometry", () => {
 
 	beforeEach(async () => {
 		resetSettingsForTest();
-		tempDir = TempDir.createSync("@pi-click-focus-e2e-");
+		tempDir = TempDir.createSync("@tau-click-focus-e2e-");
 		await Settings.init({ inMemory: true, cwd: tempDir.path() });
 		authStorage = await AuthStorage.create(path.join(tempDir.path(), "testauth.db"));
 		const modelRegistry = new ModelRegistry(authStorage);

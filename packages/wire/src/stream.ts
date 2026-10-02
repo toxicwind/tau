@@ -1,9 +1,9 @@
 /**
- * Wire types for `omp stream`: Twitch-style live screen sharing at
- * `live.omp.sh/<username>`.
+ * Wire types for `tau stream`: Twitch-style live screen sharing at
+ * `live.tau.sh/<username>`.
  *
- * Independent from collab. A publisher (`omp stream`) sends plaintext JSON
- * screen deltas for one or more panes (one pane per omp session attached in
+ * Independent from collab. A publisher (`tau stream`) sends plaintext JSON
+ * screen deltas for one or more panes (one pane per tau session attached in
  * the same working directory); the stream server materializes each pane
  * (viewport + bounded history) so late viewers receive a snapshot without
  * touching the publisher, fans frames out to viewers, and hosts chat.
@@ -14,7 +14,7 @@
  */
 
 /** Default stream server; its host route derives the channel from the bearer identity. */
-export const DEFAULT_STREAM_URL = "https://live.omp.sh";
+export const DEFAULT_STREAM_URL = "https://live.tau.sh";
 
 /** Protocol version carried in `hello`/`snapshot`; the server rejects mismatches. */
 export const STREAM_PROTO = 1;
@@ -145,7 +145,7 @@ export const STREAM_AUTH_ENV = "STENCIL_API_KEY";
 export const CLIP_DESCRIPTION_MAX = 5000;
 
 /**
- * `POST /api/clips` answer. The body is an `.ompcast` recording (optionally
+ * `POST /api/clips` answer. The body is an `.taucast` recording (optionally
  * `Content-Encoding: gzip`) whose header may carry `title` and `description`;
  * the bearer identifies the uploading Stencil account.
  */

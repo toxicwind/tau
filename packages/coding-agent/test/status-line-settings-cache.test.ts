@@ -3,14 +3,14 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import { stripVTControlCharacters } from "node:util";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { StatusLineComponent, type StatusLineSettings } from "@oh-my-pi/pi-tui/status-line";
-import { statusLineHost } from "@oh-my-pi/pi-coding-agent/modes/status-line-host";
-import { STATUS_LINE_PRESETS } from "@oh-my-pi/pi-tui/status-line/presets";
-import { initTheme, theme } from "@oh-my-pi/pi-tui/theme";
-import { visibleWidth } from "@oh-my-pi/pi-tui";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import { removeSyncWithRetries, setProjectDir } from "@oh-my-pi/pi-utils";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { StatusLineComponent, type StatusLineSettings } from "@tau/tau-tui/status-line";
+import { statusLineHost } from "@tau/tau-coding-agent/modes/status-line-host";
+import { STATUS_LINE_PRESETS } from "@tau/tau-tui/status-line/presets";
+import { initTheme, theme } from "@tau/tau-tui/theme";
+import { visibleWidth } from "@tau/tau-tui";
+import * as vcs from "@tau/tau-natives/vcs";
+import { removeSyncWithRetries, setProjectDir } from "@tau/tau-utils";
 import { beginSettingsTest, restoreSettingsTestState, type SettingsTestState } from "./helpers/settings-test-state";
 import { StatusLineTestComponents } from "./helpers/status-line";
 
@@ -20,7 +20,7 @@ const statusLines = new StatusLineTestComponents();
 
 beforeEach(async () => {
 	settingsState = beginSettingsTest();
-	projectDir = fs.mkdtempSync(path.join(os.tmpdir(), "omp-status-line-settings-cache-"));
+	projectDir = fs.mkdtempSync(path.join(os.tmpdir(), "tau-status-line-settings-cache-"));
 	setProjectDir(projectDir);
 	await Settings.init({ inMemory: true, cwd: projectDir });
 	await initTheme();

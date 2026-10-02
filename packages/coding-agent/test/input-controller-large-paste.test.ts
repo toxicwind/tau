@@ -1,4 +1,4 @@
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+import { removeWithRetries } from "@tau/tau-utils";
 /**
  * Large-paste menu: when a paste reaches the configured `paste.largeMenuThreshold` line count,
  * the editor's `onLargePaste` hook routes through `InputController.handleLargePaste`, which offers
@@ -10,10 +10,10 @@ import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { CustomEditor } from "@oh-my-pi/pi-tui/prompt/custom-editor";
-import { InputController } from "@oh-my-pi/pi-coding-agent/modes/controllers/input-controller";
-import { getEditorTheme } from "@oh-my-pi/pi-tui/theme";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
+import { CustomEditor } from "@tau/tau-tui/prompt/custom-editor";
+import { InputController } from "@tau/tau-coding-agent/modes/controllers/input-controller";
+import { getEditorTheme } from "@tau/tau-tui/theme";
+import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
 
 function createContext(options?: {
 	threshold?: number;
@@ -191,7 +191,7 @@ describe("InputController.presentLargePasteMenu file attachment", () => {
 	});
 
 	it("saves the paste to local:// and inserts a clean local://paste reference", async () => {
-		dir = await fs.mkdtemp(path.join(os.tmpdir(), "omp-paste-test-"));
+		dir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-paste-test-"));
 		const { controller, spies } = createContext({ choice: "Attach as local file", artifactsDir: dir });
 
 		await controller.presentLargePasteMenu("line one\nline two", 2);
@@ -204,7 +204,7 @@ describe("InputController.presentLargePasteMenu file attachment", () => {
 	});
 
 	it("does not overwrite an existing paste file", async () => {
-		dir = await fs.mkdtemp(path.join(os.tmpdir(), "omp-paste-test-"));
+		dir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-paste-test-"));
 		await Bun.write(path.join(dir, "local", "paste-1.md"), "previous");
 		const { controller, spies } = createContext({ choice: "Attach as local file", artifactsDir: dir });
 
@@ -216,7 +216,7 @@ describe("InputController.presentLargePasteMenu file attachment", () => {
 	});
 
 	it("recalls a paste-file reference without deleting or overwriting its content", async () => {
-		dir = await fs.mkdtemp(path.join(os.tmpdir(), "omp-paste-recall-"));
+		dir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-paste-recall-"));
 		const editor = new CustomEditor(getEditorTheme());
 		const { controller } = createContext({ choice: "Attach as local file", artifactsDir: dir, editor });
 		await controller.presentLargePasteMenu("first file\nsecond line", 2);

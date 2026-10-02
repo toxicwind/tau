@@ -1,9 +1,9 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { streamSimple } from "@oh-my-pi/pi-ai/stream";
-import type { FetchImpl } from "@oh-my-pi/pi-ai/types";
-import { type Context, type Model, type ModelSpec, OPENAI_MAX_OUTPUT_TOKENS } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+import { streamSimple } from "@tau/tau-ai/stream";
+import type { FetchImpl } from "@tau/tau-ai/types";
+import { type Context, type Model, type ModelSpec, OPENAI_MAX_OUTPUT_TOKENS } from "@tau/tau-ai/types";
+import { buildModel } from "@tau/tau-catalog/build";
+import { getBundledModel } from "@tau/tau-catalog/models";
 
 // Output-token wire policy for OpenAI-family providers:
 //   - Non-aggregator completions + non-OpenRouter responses: clamp to

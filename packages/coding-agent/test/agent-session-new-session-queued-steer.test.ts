@@ -1,13 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import { createMockModel, type MockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { Snowflake, TempDir } from "@oh-my-pi/pi-utils";
+import { Agent } from "@tau/tau-agent-core";
+import { createMockModel, type MockModel } from "@tau/tau-ai/providers/mock";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { Snowflake, TempDir } from "@tau/tau-utils";
 
 const OLD_USER = "OLD_SESSION_USER_SENTINEL";
 const OLD_ASSISTANT = "OLD_SESSION_ASSISTANT_SENTINEL";
@@ -42,7 +42,7 @@ describe("newSession() atomic boundary vs queued hidden steer", () => {
 	const authStorages: AuthStorage[] = [];
 
 	beforeEach(() => {
-		tempDir = TempDir.createSync("@pi-new-session-steer-");
+		tempDir = TempDir.createSync("@tau-new-session-steer-");
 	});
 
 	afterEach(async () => {

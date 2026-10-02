@@ -1,6 +1,6 @@
-import { renderComposerShapePreview } from "@oh-my-pi/pi-tui/overlays/composer-shape-preview";
-import { getComposerShapeOptions } from "@oh-my-pi/pi-tui/overlays/composer-shape-registry";
-import { StatusLineComponent } from "@oh-my-pi/pi-tui/status-line";
+import { renderComposerShapePreview } from "@tau/tau-tui/overlays/composer-shape-preview";
+import { getComposerShapeOptions } from "@tau/tau-tui/overlays/composer-shape-registry";
+import { StatusLineComponent } from "@tau/tau-tui/status-line";
 import { statusLineHost } from "../../modes/status-line-host";
 import { createGallerySession } from "./preview-session";
 import type { GalleryPreviewEntry } from "./types";

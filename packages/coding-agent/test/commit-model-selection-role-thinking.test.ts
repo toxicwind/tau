@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
-import { Effort } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { resolvePrimaryModel, resolveSmolModel } from "@oh-my-pi/pi-coding-agent/commit/model-selection";
+import { Effort } from "@tau/tau-ai";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import { resolvePrimaryModel, resolveSmolModel } from "@tau/tau-coding-agent/commit/model-selection";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
 function getModelOrThrow(id: string) {

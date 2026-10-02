@@ -1,9 +1,9 @@
 import { describe, expect, it } from "bun:test";
-import type { FetchImpl } from "@oh-my-pi/pi-ai";
-import { streamGoogle } from "@oh-my-pi/pi-ai/providers/google";
-import { streamSimple } from "@oh-my-pi/pi-ai/stream";
-import type { AssistantMessageEvent, Context, Model } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import type { FetchImpl } from "@tau/tau-ai";
+import { streamGoogle } from "@tau/tau-ai/providers/google";
+import { streamSimple } from "@tau/tau-ai/stream";
+import type { AssistantMessageEvent, Context, Model } from "@tau/tau-ai/types";
+import { buildModel } from "@tau/tau-catalog/build";
 
 // Regression for #12784: the Gemini API (public, Vertex, and Cloud Code
 // Assist) has no `minP`/`repetitionPenalty` fields in `generationConfig`, so

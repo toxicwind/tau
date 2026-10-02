@@ -1,12 +1,12 @@
-import { type ClipUploadResponse, STREAM_ROUTES } from "@oh-my-pi/pi-wire";
+import { type ClipUploadResponse, STREAM_ROUTES } from "@tau/tau-wire";
 import { parseRecording, type RecordingHeader } from "./recording";
 
 export interface ClipUploadOptions {
-	/** Stream server base URL (`stream.serverUrl`), e.g. https://live.omp.sh. */
+	/** Stream server base URL (`stream.serverUrl`), e.g. https://live.tau.sh. */
 	serverUrl: string;
 	/** Stencil bearer (see `StencilCredential`); the clip belongs to its account. */
 	token: string;
-	/** `.ompcast` file contents. */
+	/** `.taucast` file contents. */
 	recording: string;
 	/** Replaces the recording's title. */
 	title?: string;

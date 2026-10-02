@@ -42,8 +42,8 @@ for (const pkgName of fs.readdirSync(packagesDir)) {
     if (!pkg[field]) continue;
     for (const [dep, spec] of Object.entries(pkg[field])) {
       if (typeof spec === 'string' && (spec.includes('.resolved-') || spec.startsWith('file:'))) {
-        // If it targets an internal @oh-my-pi or workspace package, reset to workspace:*
-        if (dep.startsWith('@oh-my-pi/')) {
+        // If it targets an internal @tau or workspace package, reset to workspace:*
+        if (dep.startsWith('@tau/')) {
           console.log(`[${pkgName}] Resetting ${dep}: ${spec} -> workspace:*`);
           pkg[field][dep] = 'workspace:*';
           mutated = true;

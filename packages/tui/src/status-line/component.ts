@@ -1,14 +1,14 @@
 import * as path from "node:path";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, UsageLimit, UsageReport } from "@oh-my-pi/pi-ai";
+import type { AgentMessage } from "@tau/tau-agent-core";
+import type { AssistantMessage, UsageLimit, UsageReport } from "@tau/tau-ai";
 import {
 	getAntigravityCounterKeyForModel,
 	scopeAntigravityLimitsForModel,
-} from "@oh-my-pi/pi-ai/usage/google-antigravity";
-import { getNextTimeBasedPricingTransition } from "@oh-my-pi/pi-catalog/models";
-import type { Model, ModelCost } from "@oh-my-pi/pi-catalog/types";
-import type { VcsRepo } from "@oh-my-pi/pi-natives";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
+} from "@tau/tau-ai/usage/google-antigravity";
+import { getNextTimeBasedPricingTransition } from "@tau/tau-catalog/models";
+import type { Model, ModelCost } from "@tau/tau-catalog/types";
+import type { VcsRepo } from "@tau/tau-natives";
+import * as vcs from "@tau/tau-natives/vcs";
 import {
 	type Component,
 	type ComposerStyle,
@@ -18,7 +18,7 @@ import {
 	truncateToWidth,
 	visibleWidth,
 } from "../index";
-import { adjustHsv, formatNumber, getProjectDir, hexToRgb, rgbToHex } from "@oh-my-pi/pi-utils";
+import { adjustHsv, formatNumber, getProjectDir, hexToRgb, rgbToHex } from "@tau/tau-utils";
 import type {
 	ActiveRepoContext,
 	StatusAccountIdentity as OAuthAccountIdentity,
@@ -50,9 +50,9 @@ import type {
 const JJ_REFRESH_TTL_MS = 5000;
 const JJ_COMMAND_TIMEOUT_MS = 5_000;
 const WATCHER_FAILURE_POLL_TTL_MS = 5000;
-/** Brand-color fade duration across working-state edges (rust omp's `BRAND_FADE`). */
+/** Brand-color fade duration across working-state edges (rust tau's `BRAND_FADE`). */
 const BRAND_FADE_MS = 450;
-/** Repaint cadence while the brand fade is in flight (rust omp's `FADE_FRAME`). */
+/** Repaint cadence while the brand fade is in flight (rust tau's `FADE_FRAME`). */
 const BRAND_FADE_FRAME_MS = 40;
 
 /**
@@ -1055,7 +1055,7 @@ export class StatusLineComponent<TSession extends StatusLineSession = StatusLine
 	/**
 	 * Foreground ANSI for the `pi` brand segment: dim gray while idle, fading
 	 * to the accent (session accent when enabled, else theme accent) while a
-	 * turn runs — a port of rust omp's status-band brand fade (450ms cubic
+	 * turn runs — a port of rust tau's status-band brand fade (450ms cubic
 	 * ease-in-out). A working-state edge retargets the tween from the color
 	 * currently on screen, so interrupting a running fade never jumps, and arms
 	 * a 40ms frame timer so the fade keeps animating after the working loader
@@ -1095,7 +1095,7 @@ export class StatusLineComponent<TSession extends StatusLineSession = StatusLine
 			this.#brandFade = null;
 			return settledHex;
 		}
-		// Cubic ease-in-out, matching rust omp's Easing::EaseInOut.
+		// Cubic ease-in-out, matching rust tau's Easing::EaseInOut.
 		const eased = t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2;
 		const from = hexToRgb(fade.fromHex);
 		const to = hexToRgb(fade.toHex);
@@ -2643,7 +2643,7 @@ export class StatusLineComponent<TSession extends StatusLineSession = StatusLine
 		const leftCapWidth = separatorDef.endCaps && !transparentBg ? visibleWidth(separatorDef.endCaps.right) : 0;
 		const rightCapWidth = separatorDef.endCaps && !transparentBg ? visibleWidth(separatorDef.endCaps.left) : 0;
 		// The band layout opens flush against the terminal edge with a soft cap
-		// (rust omp's status band). Like the other caps it needs an opaque
+		// (rust tau's status band). Like the other caps it needs an opaque
 		// background to bridge, and only powerline separator styles carry caps.
 		const bandCap = layout === "band" && separatorDef.endCaps && !transparentBg ? theme.sep.powerlineCapLeft : "";
 		const bandCapWidth = visibleWidth(bandCap);

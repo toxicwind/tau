@@ -1,4 +1,4 @@
-import { USER_AGENT, getInstallId } from "@oh-my-pi/pi-utils";
+import { USER_AGENT, getInstallId } from "@tau/tau-utils";
 import { ProviderHttpError } from "../error";
 import type {
 	CredentialRankingStrategy,
@@ -179,7 +179,7 @@ async function fetchOpenCodeGoUsage(params: UsageFetchParams, ctx: UsageFetchCon
 
 export const opencodeGoUsageProvider: UsageProvider = {
 	id: OPENCODE_GO_PROVIDER,
-	// v2: retires cached reports from the OMP-observed spend estimator (dollar
+	// v2: retires cached reports from the TAU-observed spend estimator (dollar
 	// units) now that limits come from the upstream percent-based `/usage`
 	// endpoint; the 24h last-good retention would otherwise keep serving them.
 	cacheVersion: 2,
@@ -196,7 +196,7 @@ export const opencodeGoUsageProvider: UsageProvider = {
  * enabled, and the usage endpoint does not report that flag — blocking on it
  * would bench a working key until the subscription anniversary. Hard monthly
  * failures still rotate credentials via the `401 Insufficient balance`
- * usage-limit classification ([#3169](https://github.com/can1357/oh-my-pi/issues/3169)).
+ * usage-limit classification ([#3169](https://github.com/toxicwind/tau/issues/3169)).
  */
 export const opencodeGoRankingStrategy: CredentialRankingStrategy = {
 	findWindowLimits: report => ({

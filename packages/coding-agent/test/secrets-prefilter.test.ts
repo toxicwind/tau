@@ -8,8 +8,8 @@
  * and the regex pass was the dominant synchronous cost in a long session.
  */
 import { describe, expect, it } from "bun:test";
-import { builtinCredentialSecretEntries } from "@oh-my-pi/pi-coding-agent/secrets";
-import { type SecretEntry, SecretObfuscator } from "@oh-my-pi/pi-coding-agent/secrets/obfuscator";
+import { builtinCredentialSecretEntries } from "@tau/tau-coding-agent/secrets";
+import { type SecretEntry, SecretObfuscator } from "@tau/tau-coding-agent/secrets/obfuscator";
 
 const KEY = "prefilter-test-key";
 

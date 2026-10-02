@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 
 /**
- * Pull upstream (can1357/oh-my-pi) into this fork without a git merge.
+ * Pull upstream (can1357/tau) into this fork without a git merge.
  *
  * WHY NOT `git merge upstream/main`
  * ---------------------------------
@@ -23,7 +23,7 @@
  * ------------------------------------------
  * 1. REALIGN / REPLAY. A renamed package is a repository-wide refactoring, and
  *    refactorings obscure semantic correspondence: upstream still says
- *    `@oh-my-pi/pi-coding-agent` in 1137 imports while our tree says `tau`, so
+ *    `@tau/tau-coding-agent` in 1137 imports while our tree says `tau`, so
  *    a merge engine sees a conflict on every one of those lines even though
  *    both sides mean the same thing. Ogenrwot & Businge measure this exact
  *    failure mode on divergent forks — "Git cherry-pick fails in 64.4% of cases
@@ -49,7 +49,7 @@
  * 3. MANIFEST COHERENCE. A manifest can merge *cleanly* and still leave the
  *    workspace broken, because each side is a perfectly good JSON document on
  *    its own. That is exactly how this repo ended up with
- *    `@oh-my-pi/pi-coding-agent` deleted from the catalog while 1137 files
+ *    `@tau/tau-coding-agent` deleted from the catalog while 1137 files
  *    still import it, and with two consumers on `file:` specs that make bun
  *    COPY the sources so TypeScript loads coding-agent twice as two distinct
  *    modules. No text merge sees that. The coherence pass does.
@@ -276,7 +276,7 @@ function rewriteTree(root: string, rels: string[], map: Record<string, string>):
 /**
  * Derive ours -> upstream identifier renames by comparing member names across
  * the fork point. This is how `tau` is discovered as the upstream name
- * `@oh-my-pi/pi-coding-agent` without anyone maintaining the list.
+ * `@tau/tau-coding-agent` without anyone maintaining the list.
  */
 function deriveRenames(baseRoot: string, oursRoot: string): Record<string, string> {
 	const names = (root: string): Record<string, string> => {

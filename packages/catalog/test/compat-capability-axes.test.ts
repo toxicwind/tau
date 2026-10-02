@@ -1,8 +1,8 @@
 import { expect, test } from "bun:test";
-import { supportsOutputTokenLimit } from "@oh-my-pi/pi-catalog/compat/output-limits";
-import { requiresNativeTools, requiresToolFreeHistoryForToolOptOut } from "@oh-my-pi/pi-catalog/compat/tools";
-import { getBundledModel, getBundledModels, type GeneratedProvider } from "@oh-my-pi/pi-catalog/models";
-import type { Model } from "@oh-my-pi/pi-catalog/types";
+import { supportsOutputTokenLimit } from "@tau/tau-catalog/compat/output-limits";
+import { requiresNativeTools, requiresToolFreeHistoryForToolOptOut } from "@tau/tau-catalog/compat/tools";
+import { getBundledModel, getBundledModels, type GeneratedProvider } from "@tau/tau-catalog/models";
+import type { Model } from "@tau/tau-catalog/types";
 
 function fixture(provider: GeneratedProvider, predicate?: (candidate: Model) => boolean): Model {
 	const models = getBundledModels(provider);

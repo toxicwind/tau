@@ -3,17 +3,17 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import * as url from "node:url";
-import { resetSettingsForTest, Settings, settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { editToolRenderer } from "@oh-my-pi/pi-tui/tools/edit";
-import { getThemeByName, initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { astGrepToolRenderer } from "@oh-my-pi/pi-tui/tools/ast-grep";
-import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
-import { readToolRenderer } from "@oh-my-pi/pi-tui/tools/read";
-import { WriteTool } from "@oh-my-pi/pi-coding-agent/tools/write";
-import { writeToolRenderer } from "@oh-my-pi/pi-tui/tools/write";
-import { removeSyncWithRetries } from "@oh-my-pi/pi-utils";
-import { grepToolRenderer } from "@oh-my-pi/pi-tui/tools/grep";
+import { resetSettingsForTest, Settings, settings } from "@tau/tau-coding-agent/config/settings";
+import { editToolRenderer } from "@tau/tau-tui/tools/edit";
+import { getThemeByName, initTheme } from "@tau/tau-tui/theme";
+import type { ToolSession } from "@tau/tau-coding-agent/tools";
+import { astGrepToolRenderer } from "@tau/tau-tui/tools/ast-grep";
+import { ReadTool } from "@tau/tau-coding-agent/tools/read";
+import { readToolRenderer } from "@tau/tau-tui/tools/read";
+import { WriteTool } from "@tau/tau-coding-agent/tools/write";
+import { writeToolRenderer } from "@tau/tau-tui/tools/write";
+import { removeSyncWithRetries } from "@tau/tau-utils";
+import { grepToolRenderer } from "@tau/tau-tui/tools/grep";
 
 // 1x1 PNG so the read tool takes its image branch.
 const TINY_PNG_BASE64 =
@@ -51,7 +51,7 @@ describe("tool output OSC 8 file:// hyperlinks", () => {
 	it("links plain text and image read titles to the resolved filesystem path", async () => {
 		settings.override("tui.hyperlinks", "always");
 		const theme = (await getThemeByName("dark"))!;
-		const dir = fs.mkdtempSync(path.join(os.tmpdir(), "omp-link-read-"));
+		const dir = fs.mkdtempSync(path.join(os.tmpdir(), "tau-link-read-"));
 		try {
 			const textPath = path.join(dir, "task.txt");
 			fs.writeFileSync(textPath, "hello\nworld\n");
@@ -91,7 +91,7 @@ describe("tool output OSC 8 file:// hyperlinks", () => {
 	it("links the write header to the absolute path it wrote", async () => {
 		settings.override("tui.hyperlinks", "always");
 		const theme = (await getThemeByName("dark"))!;
-		const dir = fs.mkdtempSync(path.join(os.tmpdir(), "omp-link-write-"));
+		const dir = fs.mkdtempSync(path.join(os.tmpdir(), "tau-link-write-"));
 		try {
 			const filePath = path.join(dir, "out.ts");
 			const tool = new WriteTool(createTestToolSession(dir));
@@ -117,7 +117,7 @@ describe("tool output OSC 8 file:// hyperlinks", () => {
 		// Scoped search: scope dir (`searchPath`) is below cwd, and the grouped
 		// display paths are cwd-relative. Resolving against searchPath would double
 		// the `src` prefix (`/proj/src/src/...`).
-		const projectRoot = path.resolve("/tmp/omp-project");
+		const projectRoot = path.resolve("/tmp/tau-project");
 		const srcRoot = path.join(projectRoot, "src");
 		const interactiveModePath = path.join(srcRoot, "interactive-mode.ts");
 		const result = {
@@ -144,7 +144,7 @@ describe("tool output OSC 8 file:// hyperlinks", () => {
 	it("resolves scoped ast-grep links against cwd, not the (sub)scope path", async () => {
 		settings.override("tui.hyperlinks", "always");
 		const theme = (await getThemeByName("dark"))!;
-		const projectRoot = path.resolve("/tmp/omp-project");
+		const projectRoot = path.resolve("/tmp/tau-project");
 		const srcRoot = path.join(projectRoot, "src");
 		const interactiveModePath = path.join(srcRoot, "interactive-mode.ts");
 		const result = {
@@ -173,7 +173,7 @@ describe("tool output OSC 8 file:// hyperlinks", () => {
 	it("links the edit header to the absolute details.path even when the arg path is relative", async () => {
 		settings.override("tui.hyperlinks", "always");
 		const theme = (await getThemeByName("dark"))!;
-		const editPath = path.resolve("/tmp/omp-project/src/a.ts");
+		const editPath = path.resolve("/tmp/tau-project/src/a.ts");
 		const rendered = editToolRenderer
 			.renderResult(
 				{

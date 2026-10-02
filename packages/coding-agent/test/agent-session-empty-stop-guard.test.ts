@@ -1,17 +1,17 @@
 import { afterAll, afterEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import { Agent, type AgentMessage, type AgentTool } from "@oh-my-pi/pi-agent-core";
-import type { ThinkingContent } from "@oh-my-pi/pi-ai";
-import { createMockModel, type MockModel, type MockResponse } from "@oh-my-pi/pi-ai/providers/mock";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { type SettingPath, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
-import { AgentSession, type AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { convertToLlm } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir, withTimeout } from "@oh-my-pi/pi-utils";
+import { type } from "@tau/tautype";
+import { Agent, type AgentMessage, type AgentTool } from "@tau/tau-agent-core";
+import type { ThinkingContent } from "@tau/tau-ai";
+import { createMockModel, type MockModel, type MockResponse } from "@tau/tau-ai/providers/mock";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { type SettingPath, Settings } from "@tau/tau-coding-agent/config/settings";
+import type { ExtensionRunner } from "@tau/tau-coding-agent/extensibility/extensions/runner";
+import { AgentSession, type AgentSessionEvent } from "@tau/tau-coding-agent/session/agent-session";
+import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { convertToLlm } from "@tau/tau-coding-agent/session/messages";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { TempDir, withTimeout } from "@tau/tau-utils";
 import { mockSchedulerWaitWithClock } from "./helpers/mock-scheduler-clock";
 
 const recordToolSchema = type({ value: type("string") });
@@ -23,7 +23,7 @@ type Harness = {
 type SettingsOverrides = Partial<Record<SettingPath, unknown>>;
 
 const activeHarnesses: Harness[] = [];
-const sharedDir = TempDir.createSync("@pi-empty-stop-guard-shared-");
+const sharedDir = TempDir.createSync("@tau-empty-stop-guard-shared-");
 const sharedAuthStorage = await AuthStorage.create(path.join(sharedDir.path(), "auth.db"));
 sharedAuthStorage.keys.setRuntime("mock", "test-key");
 const sharedModelRegistry = new ModelRegistry(sharedAuthStorage, path.join(sharedDir.path(), "models.yml"));
@@ -123,7 +123,7 @@ async function createHarness(
 		id?: string;
 	} = {},
 ): Promise<Harness & { mock: MockModel }> {
-	const tempDir = TempDir.createSync("@pi-empty-stop-guard-");
+	const tempDir = TempDir.createSync("@tau-empty-stop-guard-");
 	const authStorage = sharedAuthStorage;
 
 	const mock = createMockModel({ provider: options.provider, id: options.id, responses });

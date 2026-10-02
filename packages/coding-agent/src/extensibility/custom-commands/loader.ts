@@ -1,14 +1,14 @@
 /**
  * Custom command loader - loads TypeScript command modules using native Bun import.
  *
- * Dependencies (the arktype validation and pi-coding-agent) are injected via the
+ * Dependencies (the arktype validation and tau-coding-agent) are injected via the
  * CustomCommandAPI to avoid import resolution issues with custom commands loaded from user directories.
  */
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import * as zod from "@oh-my-pi/omptype/zod";
-import { getAgentDir, getProjectDir, isEnoent, logger } from "@oh-my-pi/pi-utils";
+import { type } from "@tau/tautype";
+import * as zod from "@tau/tautype/zod";
+import { getAgentDir, getProjectDir, isEnoent, logger } from "@tau/tau-utils";
 import { getConfigDirs } from "../../config";
 
 import { execCommand } from "../../exec/exec";
@@ -150,7 +150,7 @@ export interface LoadCustomCommandsOptions {
 }
 
 /**
- * Load bundled commands (shipped with pi-coding-agent).
+ * Load bundled commands (shipped with tau-coding-agent).
  */
 function loadBundledCommands(sharedApi: CustomCommandAPI): LoadedCustomCommand[] {
 	const bundled: LoadedCustomCommand[] = [];

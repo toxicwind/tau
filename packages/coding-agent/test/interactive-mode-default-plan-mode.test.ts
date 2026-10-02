@@ -1,14 +1,14 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import { Agent, type AgentTool } from "@oh-my-pi/pi-agent-core";
-import { type Api, Effort, type Model } from "@oh-my-pi/pi-ai";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { type } from "@tau/tautype";
+import { Agent, type AgentTool } from "@tau/tau-agent-core";
+import { type Api, Effort, type Model } from "@tau/tau-ai";
+import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import { initTheme } from "@tau/tau-tui/theme";
+import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { TempDir } from "@tau/tau-utils";
 import { ModelRegistry } from "../src/config/model-registry";
 import type { CustomTool } from "../src/extensibility/custom-tools/types";
 import { resolveLocalUrlToPath } from "../src/internal-urls";
@@ -65,7 +65,7 @@ describe("InteractiveMode plan.defaultOnStartup", () => {
 
 	beforeEach(async () => {
 		resetSettingsForTest();
-		tempDir = TempDir.createSync("@pi-default-plan-");
+		tempDir = TempDir.createSync("@tau-default-plan-");
 		await Settings.init({ inMemory: true, cwd: tempDir.path() });
 		Settings.instance.set("startup.quiet", true);
 		authStorage = await AuthStorage.create(path.join(tempDir.path(), "testauth.db"));

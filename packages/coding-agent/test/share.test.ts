@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import * as path from "node:path";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { TempDir } from "@tau/tau-utils";
 import type { SessionData } from "../src/export/html";
 import {
 	buildShareSnapshot,
@@ -546,10 +546,10 @@ describe("buildShareSnapshot", () => {
 
 describe("normalizeShareServerUrl", () => {
 	test("strips trailing slashes and falls back to the default", () => {
-		expect(normalizeShareServerUrl("https://my.omp.sh/s/")).toBe("https://my.omp.sh/s");
+		expect(normalizeShareServerUrl("https://my.tau.sh/s/")).toBe("https://my.tau.sh/s");
 		expect(normalizeShareServerUrl("https://example.com/s///")).toBe("https://example.com/s");
-		expect(normalizeShareServerUrl(undefined)).toBe("https://my.omp.sh/s");
-		expect(normalizeShareServerUrl("   ")).toBe("https://my.omp.sh/s");
+		expect(normalizeShareServerUrl(undefined)).toBe("https://my.tau.sh/s");
+		expect(normalizeShareServerUrl("   ")).toBe("https://my.tau.sh/s");
 	});
 });
 
@@ -597,7 +597,7 @@ describe("shareSession", () => {
 
 describe("share command", () => {
 	test("rejects a missing path without creating or uploading a session", async () => {
-		using tempDir = TempDir.createSync("@omp-share-missing-");
+		using tempDir = TempDir.createSync("@tau-share-missing-");
 		const sessionArg = "./ghost.jsonl";
 		const missingSession = path.join(tempDir.path(), "ghost.jsonl");
 		const proc = Bun.spawn([process.execPath, CLI_ENTRY, "share", sessionArg], {

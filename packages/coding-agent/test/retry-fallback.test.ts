@@ -1,15 +1,15 @@
 import { describe, expect, it } from "bun:test";
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { Model, ModelKind } from "@oh-my-pi/pi-catalog/types";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+import { ThinkingLevel } from "@tau/tau-agent-core";
+import type { Model, ModelKind } from "@tau/tau-catalog/types";
+import { getBundledModel } from "@tau/tau-catalog/models";
 import {
 	expandDefaultRetryFallbackChains,
 	findRetryFallbackCandidates,
 	type RetryFallbackResolutionContext,
 	resolveRetryFallbackChainKey,
 	validateRetryFallbackChains,
-} from "@oh-my-pi/pi-coding-agent/session/retry-fallback-chains";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+} from "@tau/tau-coding-agent/session/retry-fallback-chains";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
 
 function createContext(
 	chains: RetryFallbackResolutionContext["chains"],

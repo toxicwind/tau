@@ -1,5 +1,5 @@
-import type { MermaidRenderOptions } from "@oh-my-pi/pi-natives";
-import * as mermaidAscii from "@oh-my-pi/pi-utils/mermaid-ascii";
+import type { MermaidRenderOptions } from "@tau/tau-natives";
+import * as mermaidAscii from "@tau/tau-utils/mermaid-ascii";
 
 /**
  * Options controlling how fenced Mermaid source is resolved to terminal ASCII.

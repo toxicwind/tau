@@ -1,4 +1,4 @@
-import { logger } from "@oh-my-pi/pi-utils";
+import { logger } from "@tau/tau-utils";
 import { classifyGatewayError } from "../../error/gateway";
 import * as speechWire from "../../providers/speech-server";
 import { isSpeechApi, synthesizeSpeech } from "../../speech";

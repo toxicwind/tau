@@ -2,19 +2,19 @@ import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { AgentToolContext } from "@oh-my-pi/pi-agent-core";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import * as evalIndex from "@oh-my-pi/pi-coding-agent/eval";
-import type { EvalToolDetails } from "@oh-my-pi/pi-tui/tools/eval";
-import { getThemeByName } from "@oh-my-pi/pi-tui/theme";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { EvalTool } from "@oh-my-pi/pi-coding-agent/tools/eval";
-import { evalToolRenderer } from "@oh-my-pi/pi-tui/tools/eval";
-import { stripOutputNotice } from "@oh-my-pi/pi-tui/tools/output-meta";
-import { formatOutputNotice } from "@oh-my-pi/pi-tui/tools/output-meta";
-import { wrapToolWithMetaNotice } from "@oh-my-pi/pi-coding-agent/tools/output-meta";
-import { removeWithRetries, sanitizeText } from "@oh-my-pi/pi-utils";
+import type { AgentToolContext } from "@tau/tau-agent-core";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import * as evalIndex from "@tau/tau-coding-agent/eval";
+import type { EvalToolDetails } from "@tau/tau-tui/tools/eval";
+import { getThemeByName } from "@tau/tau-tui/theme";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import type { ToolSession } from "@tau/tau-coding-agent/tools";
+import { EvalTool } from "@tau/tau-coding-agent/tools/eval";
+import { evalToolRenderer } from "@tau/tau-tui/tools/eval";
+import { stripOutputNotice } from "@tau/tau-tui/tools/output-meta";
+import { formatOutputNotice } from "@tau/tau-tui/tools/output-meta";
+import { wrapToolWithMetaNotice } from "@tau/tau-coding-agent/tools/output-meta";
+import { removeWithRetries, sanitizeText } from "@tau/tau-utils";
 
 function makeSession(settings = Settings.isolated()): ToolSession {
 	return {

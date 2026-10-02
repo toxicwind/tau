@@ -2,7 +2,7 @@ import type { ExtensionAPI, ExtensionContext } from "tau";
 import { existsSync, readFileSync } from "node:fs";
 
 // ============================================================================
-// IN-PROCESS MITM MOBILE AUTOCORRECT ENGINE (OH-MY-PI / TAU RUNTIME)
+// IN-PROCESS MITM MOBILE AUTOCORRECT ENGINE (TAU / TAU RUNTIME)
 // ============================================================================
 // Solves Android terminal emulator (Termux, ConnectBot) virtual keyboard
 // NO_SUGGESTIONS limitation by providing an in-process, sub-5ms, domain-aware
@@ -59,7 +59,7 @@ const PROTECTED_DEV_TERMS: Record<string, true> = {
   url: true, uri: true, jwt: true, env: true, json: true, yaml: true, yml: true,
   toml: true, diff: true, npm: true, pnpm: true, bun: true, bunx: true, tsc: true,
   pip: true, cargo: true, docker: true, sudo: true, curl: true, ssh: true,
-  tau: true, omp: true, vim: true, sed: true, awk: true, zsh: true, bash: true,
+  tau: true, tau: true, vim: true, sed: true, awk: true, zsh: true, bash: true,
   tar: true, zip: true, gzip: true, grep: true, glob: true, ast: true, nix: true, bazel: true,
 };
 
@@ -83,7 +83,7 @@ const VOCABULARY = [
   "will", "with", "would", "write",
   // Sovereign estate, agents & infrastructure
   "sovereign", "estate", "ranch", "stockyard", "barn", "flock", "herd",
-  "yote", "openfang", "tau", "omp", "kimi", "pitchfork", "mise", "cell",
+  "yote", "openfang", "tau", "tau", "kimi", "pitchfork", "mise", "cell",
   "bridge", "hatch", "quill", "shrew", "trailboss", "effusion", "oracle",
   "market", "btrfs", "fclones", "flicker", "telemetry", "runtime", "harness",
   "gatehouse", "sentinel", "smithers", "somasays", "corral", "router",
@@ -462,7 +462,7 @@ export function autocorrectText(rawInput: string): AutocorrectResult {
 }
 
 // ============================================================================
-// 6. IN-PROCESS MITM OH-MY-PI HOOK REGISTRATION
+// 6. IN-PROCESS MITM TAU HOOK REGISTRATION
 // ============================================================================
 
 export default function mobileAutocorrectExtension(pi: ExtensionAPI): void {

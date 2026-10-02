@@ -1,11 +1,11 @@
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
-import type { AgentEvent } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { CursorExecHandlers } from "@oh-my-pi/pi-coding-agent/cursor";
-import { initTheme, theme } from "@oh-my-pi/pi-tui/theme";
-import { getLatestTodoPhasesFromEntries, USER_TODO_EDIT_CUSTOM_TYPE } from "@oh-my-pi/pi-coding-agent/tools/todo";
-import { type TodoPhase, todoToolRenderer } from "@oh-my-pi/pi-tui/tools/todo";
+import type { AgentEvent } from "@tau/tau-agent-core";
+import type { AssistantMessage } from "@tau/tau-ai";
+import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import { CursorExecHandlers } from "@tau/tau-coding-agent/cursor";
+import { initTheme, theme } from "@tau/tau-tui/theme";
+import { getLatestTodoPhasesFromEntries, USER_TODO_EDIT_CUSTOM_TYPE } from "@tau/tau-coding-agent/tools/todo";
+import { type TodoPhase, todoToolRenderer } from "@tau/tau-tui/tools/todo";
 import { buildSessionContext } from "../src/session/session-context";
 import type { SessionEntry } from "../src/session/session-entries";
 

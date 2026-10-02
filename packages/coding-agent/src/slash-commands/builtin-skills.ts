@@ -15,7 +15,7 @@ import { errorMessage, parseSubcommand } from "./helpers/parse";
 import type { SlashCommandSpec } from "./types";
 
 const USAGE = [
-	"Skill registry (skills.omp.sh) commands:",
+	"Skill registry (skills.tau.sh) commands:",
 	"  /skills search <query>                        Search the registry",
 	"  /skills install <@scope/name[@range]>… [-g]   Install into this project (-g: user-global)",
 	"  /skills installed                             List installed registry skills",
@@ -64,7 +64,7 @@ export const BUILTIN_SKILLS_SLASH_COMMANDS: ReadonlyArray<SlashCommandSpec> = [
 	{
 		name: "skills",
 		icon: "skill",
-		description: "Search, install, and update skills from the skills.omp.sh registry",
+		description: "Search, install, and update skills from the skills.tau.sh registry",
 		subcommands: [
 			{ name: "search", description: "Search the skill registry", usage: "<query>" },
 			{ name: "install", description: "Install registry skills", usage: "<@scope/name[@range]>… [--global]" },

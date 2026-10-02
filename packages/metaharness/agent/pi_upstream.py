@@ -1,6 +1,6 @@
-"""Harbor agent that runs the upstream `@earendil-works/pi-coding-agent` npm package.
+"""Harbor agent that runs the upstream `@earendil-works/tau-coding-agent` npm package.
 
-Comparison baseline for `omp_local.py`: same task containers, same host auth
+Comparison baseline for `tau_local.py`: same task containers, same host auth
 gateway, same output/usage accounting, but the agent under test is upstream pi
 installed from npm on top of a downloaded Node runtime.
 
@@ -14,14 +14,14 @@ else uses `openai-responses` (`/v1/responses`).
 The default upstream system prompt names pi and links its docs, which Anthropic
 classifies as a third-party client on OAuth accounts (billed to extra usage).
 `~/.pi/agent/SYSTEM.md` replaces it with the same text minus the identity line
-and the docs section (`OMP_BENCH_PI_SYSTEM_PROMPT` supplies the template; the
+and the docs section (`TAU_BENCH_PI_SYSTEM_PROMPT` supplies the template; the
 `{{CWD}}` placeholder is rendered per trial).
 
-Env knobs (set by the runner; `OMP_BENCH_*` are shared with `omp_local.py`):
-`OMP_BENCH_GATEWAY_URL`, `OMP_BENCH_GATEWAY_TOKEN`, `OMP_BENCH_PI_MODELS`
-(JSON array of model specs), `OMP_BENCH_PI_SYSTEM_PROMPT` (host path),
-`OMP_BENCH_PI_VERSION`, `OMP_BENCH_NODE_VERSION`, `OMP_BENCH_THINKING`,
-`OMP_BENCH_TOOLS`, `OMP_BENCH_AGENT_ARGS`, `OMP_BENCH_FORWARD_ENV`.
+Env knobs (set by the runner; `TAU_BENCH_*` are shared with `tau_local.py`):
+`TAU_BENCH_GATEWAY_URL`, `TAU_BENCH_GATEWAY_TOKEN`, `TAU_BENCH_PI_MODELS`
+(JSON array of model specs), `TAU_BENCH_PI_SYSTEM_PROMPT` (host path),
+`TAU_BENCH_PI_VERSION`, `TAU_BENCH_NODE_VERSION`, `TAU_BENCH_THINKING`,
+`TAU_BENCH_TOOLS`, `TAU_BENCH_AGENT_ARGS`, `TAU_BENCH_FORWARD_ENV`.
 
 Selected via `harbor run --agent-import-path pi_upstream:PiUpstream`.
 """
@@ -38,11 +38,11 @@ from harbor.agents.installed.base import BaseInstalledAgent, with_prompt_templat
 from harbor.environments.base import BaseEnvironment
 from harbor.models.agent.context import AgentContext
 
-from omp_local import _Usage, _env, _loads
+from tau_local import _Usage, _env, _loads
 
 _OUTPUT_FILENAME = "pi.txt"
-_MODELS_DST = "/tmp/pi-models.json"
-_SYSTEM_DST = "/tmp/pi-SYSTEM.md"
+_MODELS_DST = "/tmp/tau-models.json"
+_SYSTEM_DST = "/tmp/tau-SYSTEM.md"
 _NODE_DIST = "https://nodejs.org/dist"
 
 
@@ -56,26 +56,26 @@ class PiUpstream(BaseInstalledAgent):
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self._pkg_version = _env("OMP_BENCH_PI_VERSION", "latest")
-        self._node_version = _env("OMP_BENCH_NODE_VERSION", "22.14.0")
-        self._gateway_url = _env("OMP_BENCH_GATEWAY_URL", "http://host.docker.internal:4000")
-        self._gateway_token = _env("OMP_BENCH_GATEWAY_TOKEN", "no-auth")
-        self._model_specs = json.loads(_env("OMP_BENCH_PI_MODELS", "[]"))
-        self._system_prompt_path = _env("OMP_BENCH_PI_SYSTEM_PROMPT")
-        self._thinking = _env("OMP_BENCH_THINKING")
-        self._tools = [t for t in _env("OMP_BENCH_TOOLS", "").split(",") if t]
-        raw_args = _env("OMP_BENCH_AGENT_ARGS")
+        self._pkg_version = _env("TAU_BENCH_PI_VERSION", "latest")
+        self._node_version = _env("TAU_BENCH_NODE_VERSION", "22.14.0")
+        self._gateway_url = _env("TAU_BENCH_GATEWAY_URL", "http://host.docker.internal:4000")
+        self._gateway_token = _env("TAU_BENCH_GATEWAY_TOKEN", "no-auth")
+        self._model_specs = json.loads(_env("TAU_BENCH_PI_MODELS", "[]"))
+        self._system_prompt_path = _env("TAU_BENCH_PI_SYSTEM_PROMPT")
+        self._thinking = _env("TAU_BENCH_THINKING")
+        self._tools = [t for t in _env("TAU_BENCH_TOOLS", "").split(",") if t]
+        raw_args = _env("TAU_BENCH_AGENT_ARGS")
         self._agent_args = [str(a) for a in json.loads(raw_args)] if raw_args else []
-        raw_env = _env("OMP_BENCH_FORWARD_ENV")
+        raw_env = _env("TAU_BENCH_FORWARD_ENV")
         self._forward_env = {str(k): str(v) for k, v in json.loads(raw_env).items()} if raw_env else {}
         self._home = "/root"
-        self._node_dir = "/root/.pi-bench/node"
-        self._app_dir = "/root/.pi-bench/app"
+        self._node_dir = "/root/.tau-bench/node"
+        self._app_dir = "/root/.tau-bench/app"
 
     @staticmethod
     @override
     def name() -> str:
-        return "pi-upstream"
+        return "tau-upstream"
 
     @override
     def version(self) -> str | None:
@@ -90,7 +90,7 @@ class PiUpstream(BaseInstalledAgent):
         return stdout.strip().splitlines()[-1].strip() if stdout.strip() else self._pkg_version
 
     def _pi(self) -> str:
-        return f"node {shlex.quote(self._app_dir + '/node_modules/@earendil-works/pi-coding-agent/dist/bundle/cli.js')}"
+        return f"node {shlex.quote(self._app_dir + '/node_modules/@earendil-works/tau-coding-agent/dist/bundle/cli.js')}"
 
     def _wrap(self, command: str) -> str:
         return f'export PATH="{self._node_dir}/bin:$PATH"; {command}'
@@ -101,8 +101,8 @@ class PiUpstream(BaseInstalledAgent):
     async def install(self, environment: BaseEnvironment) -> None:
         home = (await self.exec_as_agent(environment, command='printf %s "$HOME"')).stdout
         self._home = (home or "/root").strip() or "/root"
-        self._node_dir = f"{self._home}/.pi-bench/node"
-        self._app_dir = f"{self._home}/.pi-bench/app"
+        self._node_dir = f"{self._home}/.tau-bench/node"
+        self._app_dir = f"{self._home}/.tau-bench/app"
 
         await self.exec_as_root(
             environment,
@@ -129,7 +129,7 @@ class PiUpstream(BaseInstalledAgent):
                 f"| tar -xJ -C {q(self._node_dir)} --strip-components=1; "
                 f'export PATH="{self._node_dir}/bin:$PATH"; node --version; '
                 f"cd {q(self._app_dir)}; printf '{{}}' > package.json; "
-                f"npm install --silent --no-audit --no-fund {q('@earendil-works/pi-coding-agent@' + self._pkg_version)}; "
+                f"npm install --silent --no-audit --no-fund {q('@earendil-works/tau-coding-agent@' + self._pkg_version)}; "
                 f"{self._pi()} --version"
             ),
             timeout_sec=900,

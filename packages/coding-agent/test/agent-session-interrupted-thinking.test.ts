@@ -1,24 +1,24 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import type { Api, AssistantMessage, Model, ThinkingContent } from "@oh-my-pi/pi-ai";
-import { type GeneratedProvider, getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { ExtensionRuntime, loadExtensionFromFactory } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
-import { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import type { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
+import { Agent } from "@tau/tau-agent-core";
+import type { Api, AssistantMessage, Model, ThinkingContent } from "@tau/tau-ai";
+import { type GeneratedProvider, getBundledModel } from "@tau/tau-catalog/models";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { ExtensionRuntime, loadExtensionFromFactory } from "@tau/tau-coding-agent/extensibility/extensions/loader";
+import { ExtensionRunner } from "@tau/tau-coding-agent/extensibility/extensions/runner";
+import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import type { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
 import {
 	type CustomMessage,
 	convertToLlm,
 	INTERRUPTED_THINKING_MESSAGE_TYPE,
 	USER_INTERRUPT_LABEL,
-} from "@oh-my-pi/pi-coding-agent/session/messages";
-import type { SessionEntry } from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-import { TempDir } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-coding-agent/session/messages";
+import type { SessionEntry } from "@tau/tau-coding-agent/session/session-entries";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { EventBus } from "@tau/tau-coding-agent/utils/event-bus";
+import { TempDir } from "@tau/tau-utils";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
 const REASONING_TEXT = "I have partly reasoned through the implementation and should preserve this.";
@@ -127,7 +127,7 @@ describe("AgentSession interrupted thinking persistence", () => {
 	let session: AgentSession | undefined;
 
 	beforeEach(() => {
-		tempDir = TempDir.createSync("@pi-interrupted-thinking-");
+		tempDir = TempDir.createSync("@tau-interrupted-thinking-");
 		authStorage = createInMemoryAuthStorage();
 		authStorage.keys.setRuntime("anthropic", "anthropic-test-key");
 	});
@@ -249,7 +249,7 @@ describe("AgentSession interrupted thinking persistence", () => {
 
 		const messages = harness.session.agent.state.messages;
 		// Thinking stays on the assistant for display/reload; the provider transform
-		// drops the unsigned run from replay (pi-ai anthropic-prior-turn-thinking suite).
+		// drops the unsigned run from replay (tau-ai anthropic-prior-turn-thinking suite).
 		expect(messages.find(isAssistantMessage)?.content.some(block => block.type === "thinking")).toBe(true);
 		expect(messages.some(isInterruptedThinkingMessage)).toBe(false);
 		expect(

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import type { AssistantMessage, Model, ToolCall, Usage } from "@oh-my-pi/pi-ai";
+import type { AssistantMessage, Model, ToolCall, Usage } from "@tau/tau-ai";
 import {
 	createHarmonyAuditEvent,
 	detectHarmonyLeak,
@@ -8,9 +8,9 @@ import {
 	isHarmonyLeakMitigationTarget,
 	recoverHarmonyToolCall,
 	signalListLabel,
-} from "@oh-my-pi/pi-ai/utils/harmony-leak";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import type { ModelSpec } from "@oh-my-pi/pi-catalog/types";
+} from "@tau/tau-ai/utils/harmony-leak";
+import { buildModel } from "@tau/tau-catalog/build";
+import type { ModelSpec } from "@tau/tau-catalog/types";
 import corpus from "./fixtures/harmony-leak-corpus.json" with { type: "json" };
 
 interface CorpusPositive {

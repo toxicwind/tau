@@ -4,10 +4,10 @@
  * consumer-facing stream single and ordered.
  */
 
-import type { StreamFn } from "@oh-my-pi/pi-agent-core";
-import type { Context } from "@oh-my-pi/pi-ai";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { logger } from "@oh-my-pi/pi-utils";
+import type { StreamFn } from "@tau/tau-agent-core";
+import type { Context } from "@tau/tau-ai";
+import { AssistantMessageEventStream } from "@tau/tau-ai/utils/event-stream";
+import { logger } from "@tau/tau-utils";
 import { contextHasImageUrls, contextHasProviderFiles } from "./context-images";
 import type { ImageUrlService } from "./service";
 

@@ -2,24 +2,24 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import * as capability from "@oh-my-pi/pi-coding-agent/capability";
-import type { CapabilityResult } from "@oh-my-pi/pi-coding-agent/capability/types";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { resetActiveSkillsForTests, setActiveSkills } from "@oh-my-pi/pi-coding-agent/extensibility/skills";
+import * as capability from "@tau/tau-coding-agent/capability";
+import type { CapabilityResult } from "@tau/tau-coding-agent/capability/types";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { resetActiveSkillsForTests, setActiveSkills } from "@tau/tau-coding-agent/extensibility/skills";
 import {
 	type InternalResource,
 	type InternalUrl,
 	InternalUrlRouter,
 	LocalProtocolHandler,
 	type ProtocolHandler,
-} from "@oh-my-pi/pi-coding-agent/internal-urls";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import type { SessionEntry } from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import * as sshFileTransfer from "@oh-my-pi/pi-coding-agent/ssh/file-transfer";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { formatOutputNotice } from "@oh-my-pi/pi-tui/tools/output-meta";
-import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-coding-agent/internal-urls";
+import { AgentRegistry } from "@tau/tau-coding-agent/registry/agent-registry";
+import type { SessionEntry } from "@tau/tau-coding-agent/session/session-entries";
+import * as sshFileTransfer from "@tau/tau-coding-agent/ssh/file-transfer";
+import type { ToolSession } from "@tau/tau-coding-agent/tools";
+import { formatOutputNotice } from "@tau/tau-tui/tools/output-meta";
+import { ReadTool } from "@tau/tau-coding-agent/tools/read";
+import { removeWithRetries } from "@tau/tau-utils";
 import { GlobTool } from "../../src/tools/glob";
 import { GrepTool } from "../../src/tools/grep";
 
@@ -375,31 +375,31 @@ describe("GrepTool internal URL resolution", () => {
 		);
 	});
 
-	it("expands omp:// root to grep embedded documentation files", async () => {
+	it("expands tau:// root to grep embedded documentation files", async () => {
 		const session = createSession();
 		const tool = new GrepTool(session);
 
 		const result = await tool.execute("test-call", {
 			pattern: "Grep file contents with a regex across files",
-			path: "omp://",
+			path: "tau://",
 		});
 
 		const text = getResultText(result);
-		expect(text).toContain("# omp://tools/grep.md");
+		expect(text).toContain("# tau://tools/grep.md");
 		expect(text).toContain("Grep file contents with a regex across files");
 	});
 
-	it("expands omp://docs to grep embedded documentation files", async () => {
+	it("expands tau://docs to grep embedded documentation files", async () => {
 		const session = createSession();
 		const tool = new GrepTool(session);
 
 		const result = await tool.execute("test-call", {
 			pattern: "Read files, directories, archives",
-			path: "omp://docs",
+			path: "tau://docs",
 		});
 
 		const text = getResultText(result);
-		expect(text).toContain("# omp://tools/read.md");
+		expect(text).toContain("# tau://tools/read.md");
 		expect(text).toContain("Read files, directories, archives");
 	});
 

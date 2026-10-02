@@ -5,10 +5,10 @@
  */
 
 import { isPromise } from "node:util/types";
-import type { AgentEvent, AgentMessage, AgentToolResult, ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { CompactionResult } from "@oh-my-pi/pi-agent-core/compaction";
-import type { ImageContent, Model } from "@oh-my-pi/pi-ai";
-import { isRecord, ptree, readJsonl } from "@oh-my-pi/pi-utils";
+import type { AgentEvent, AgentMessage, AgentToolResult, ThinkingLevel } from "@tau/tau-agent-core";
+import type { CompactionResult } from "@tau/tau-agent-core/compaction";
+import type { ImageContent, Model } from "@tau/tau-ai";
+import { isRecord, ptree, readJsonl } from "@tau/tau-utils";
 import type { FileSink } from "bun";
 import type { BashResult } from "../../exec/bash-executor";
 import type { AgentSessionEvent, SessionStats } from "../../session/agent-session";
@@ -729,7 +729,7 @@ export class RpcClient {
 	}
 
 	/**
-	 * Pi-compatible append-history read. Delegates to the canonical
+	 * Tau-compatible append-history read. Delegates to the canonical
 	 * `SessionManager` on the server: no `since` returns all entries in append
 	 * order, `since` returns entries strictly after the matching durable entry.
 	 */
@@ -739,7 +739,7 @@ export class RpcClient {
 	}
 
 	/**
-	 * Pi-compatible raw session tree plus the current leaf id.
+	 * Tau-compatible raw session tree plus the current leaf id.
 	 */
 	async getTree(): Promise<{ tree: SessionTreeNode[]; leafId: string | null }> {
 		const response = await this.#send({ type: "get_tree" });
@@ -748,7 +748,7 @@ export class RpcClient {
 
 	/**
 	 * Selectable thinking levels for the live model, with `off` first.
-	 * OMP-only `auto`/`inherit` selectors are omitted from discovery.
+	 * TAU-only `auto`/`inherit` selectors are omitted from discovery.
 	 */
 	async getAvailableThinkingLevels(): Promise<ThinkingLevel[]> {
 		const response = await this.#send({ type: "get_available_thinking_levels" });

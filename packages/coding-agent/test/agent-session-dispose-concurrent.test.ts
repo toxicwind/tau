@@ -1,17 +1,17 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ASYNC_JOB_MANAGER_SHUTDOWN_REASON, AsyncJobManager } from "@oh-my-pi/pi-coding-agent/async";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { HindsightSessionState } from "@oh-my-pi/pi-coding-agent/hindsight/state";
-import { MnemopiSessionState, setMnemopiSessionState } from "@oh-my-pi/pi-coding-agent/mnemopi/state";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import type { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { logger, TempDir } from "@oh-my-pi/pi-utils";
+import { Agent } from "@tau/tau-agent-core";
+import { createMockModel } from "@tau/tau-ai/providers/mock";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import { ASYNC_JOB_MANAGER_SHUTDOWN_REASON, AsyncJobManager } from "@tau/tau-coding-agent/async";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { HindsightSessionState } from "@tau/tau-coding-agent/hindsight/state";
+import { MnemotauSessionState, setMnemotauSessionState } from "@tau/tau-coding-agent/mnemotau/state";
+import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import type { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { logger, TempDir } from "@tau/tau-utils";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
 async function flushMicrotasks(): Promise<void> {
@@ -26,7 +26,7 @@ describe("AgentSession concurrent disposal", () => {
 	let session: AgentSession | undefined;
 
 	beforeEach(() => {
-		tempDir = TempDir.createSync("@omp-dispose-concurrent-");
+		tempDir = TempDir.createSync("@tau-dispose-concurrent-");
 		authStorage = createInMemoryAuthStorage();
 		authStorage.keys.setRuntime("anthropic", "test-key");
 	});
@@ -144,7 +144,7 @@ describe("AgentSession concurrent disposal", () => {
 		const owned = new AsyncJobManager({ maxRunningJobs: 1, retentionMs: 1_000, onJobComplete: () => {} });
 		const asyncGate = Promise.withResolvers<void>();
 		const hindsightGate = Promise.withResolvers<void>();
-		const mnemopiGate = Promise.withResolvers<void>();
+		const mnemotauGate = Promise.withResolvers<void>();
 		const asyncStarted = Promise.withResolvers<void>();
 		const order: string[] = [];
 		vi.spyOn(owned, "dispose").mockImplementation(async () => {
@@ -165,13 +165,13 @@ describe("AgentSession concurrent disposal", () => {
 		vi.spyOn(hindsight, "dispose").mockImplementation(() => {});
 		current.setHindsightSessionState(hindsight);
 
-		const mnemopi: MnemopiSessionState = Object.create(MnemopiSessionState.prototype);
-		vi.spyOn(mnemopi, "dispose").mockImplementation(async () => {
-			order.push("mnemopi:start");
-			await mnemopiGate.promise;
-			order.push("mnemopi:end");
+		const mnemotau: MnemotauSessionState = Object.create(MnemotauSessionState.prototype);
+		vi.spyOn(mnemotau, "dispose").mockImplementation(async () => {
+			order.push("mnemotau:start");
+			await mnemotauGate.promise;
+			order.push("mnemotau:end");
 		});
-		setMnemopiSessionState(current, mnemopi);
+		setMnemotauSessionState(current, mnemotau);
 
 		let persistenceClosed = false;
 		vi.spyOn(current.sessionManager, "close").mockImplementation(async () => {
@@ -184,15 +184,15 @@ describe("AgentSession concurrent disposal", () => {
 			await asyncStarted.promise;
 			await Promise.resolve();
 			expect(order).toContain("hindsight:start");
-			expect(order).toContain("mnemopi:start");
+			expect(order).toContain("mnemotau:start");
 			expect(order).not.toContain("async:end");
 			expect(order).not.toContain("hindsight:end");
-			expect(order).not.toContain("mnemopi:end");
+			expect(order).not.toContain("mnemotau:end");
 			expect(persistenceClosed).toBe(false);
 		} finally {
 			asyncGate.resolve();
 			hindsightGate.resolve();
-			mnemopiGate.resolve();
+			mnemotauGate.resolve();
 		}
 		await dispose;
 		session = undefined;
@@ -200,7 +200,7 @@ describe("AgentSession concurrent disposal", () => {
 		const closeAt = order.indexOf("session:close");
 		expect(closeAt).toBeGreaterThan(order.indexOf("async:end"));
 		expect(closeAt).toBeGreaterThan(order.indexOf("hindsight:end"));
-		expect(closeAt).toBeGreaterThan(order.indexOf("mnemopi:end"));
+		expect(closeAt).toBeGreaterThan(order.indexOf("mnemotau:end"));
 	});
 
 	it("bounds post-prompt work that ignores abort", async () => {

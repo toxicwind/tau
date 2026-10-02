@@ -11,7 +11,7 @@ import {
 	TextJudge,
 	TypeSafeApiError,
 	TypeSafeJudge,
-} from "@oh-my-pi/pi-ai";
+} from "@tau/tau-ai";
 
 const LEVELS = ["low", "medium", "high", "xhigh", "max"] as const;
 

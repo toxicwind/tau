@@ -1,5 +1,5 @@
-import { isAnthropicServerToolHistoryBlock } from "@oh-my-pi/pi-ai/providers/anthropic-wire";
-import { countNewlines } from "@oh-my-pi/pi-utils";
+import { isAnthropicServerToolHistoryBlock } from "@tau/tau-ai/providers/anthropic-wire";
+import { countNewlines } from "@tau/tau-utils";
 import {
 	type BlobStore,
 	externalizeImageDataSync,

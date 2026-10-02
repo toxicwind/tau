@@ -1,6 +1,6 @@
-import { type } from "@oh-my-pi/omptype";
+import { type } from "@tau/tautype";
 import { describe, expect, test } from "bun:test";
-import { OpenAICompatSchema } from "@oh-my-pi/pi-coding-agent/config/models-config-schema";
+import { OpenAICompatSchema } from "@tau/tau-coding-agent/config/models-config-schema";
 
 // Regression for #11697: `stripImageInput` is the documented per-model opt-out
 // for endpoints that really accept `image_url`, consumed by the transport

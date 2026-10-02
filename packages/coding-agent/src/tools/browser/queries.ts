@@ -1,5 +1,5 @@
-import { untilAborted } from "@oh-my-pi/pi-utils";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { untilAborted } from "@tau/tau-utils";
+import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 import type { ElementHandle, Page } from "puppeteer-core";
 
 /** Default computed-style properties returned by `tab.styles()`. */

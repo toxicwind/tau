@@ -1,17 +1,17 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, spyOn } from "bun:test";
 import * as path from "node:path";
-import { Agent, AppendOnlyContextManager } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { ExtensionRuntime, loadExtensionFromFactory } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
-import { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
-import type { ExtensionAPI } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/types";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent, AppendOnlyContextManager } from "@tau/tau-agent-core";
+import type { AssistantMessage } from "@tau/tau-ai";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { ExtensionRuntime, loadExtensionFromFactory } from "@tau/tau-coding-agent/extensibility/extensions/loader";
+import { ExtensionRunner } from "@tau/tau-coding-agent/extensibility/extensions/runner";
+import type { ExtensionAPI } from "@tau/tau-coding-agent/extensibility/extensions/types";
+import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { EventBus } from "@tau/tau-coding-agent/utils/event-bus";
+import { TempDir } from "@tau/tau-utils";
 import { assistantMsg } from "./utilities";
 
 const cleanup: Array<() => Promise<void>> = [];
@@ -20,7 +20,7 @@ let authStorage: AuthStorage;
 let modelRegistry: ModelRegistry;
 
 async function setup(): Promise<void> {
-	sharedDir = TempDir.createSync("@pi-new-session-boundary-shared-");
+	sharedDir = TempDir.createSync("@tau-new-session-boundary-shared-");
 	authStorage = await AuthStorage.create(path.join(sharedDir.path(), "auth.db"));
 	modelRegistry = new ModelRegistry(authStorage, path.join(sharedDir.path(), "models.yml"));
 }
@@ -36,7 +36,7 @@ async function createHarness(options?: {
 		register: (api: ExtensionAPI) => void;
 	};
 }): Promise<{ agent: Agent; session: AgentSession; sessionManager: SessionManager }> {
-	const tempDir = TempDir.createSync("@pi-new-session-boundary-");
+	const tempDir = TempDir.createSync("@tau-new-session-boundary-");
 	const cwd = tempDir.path();
 	const sessionManager = SessionManager.create(cwd, path.join(cwd, "sessions"));
 	const agent = new Agent({

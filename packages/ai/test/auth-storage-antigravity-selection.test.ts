@@ -13,10 +13,10 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { type AuthCredentialStore, AuthStorage, SqliteAuthCredentialStore } from "@oh-my-pi/pi-ai/auth-storage";
-import * as oauthUtils from "@oh-my-pi/pi-ai/registry/oauth";
-import type { OAuthCredentials } from "@oh-my-pi/pi-ai/registry/oauth/types";
-import type { UsageLimit, UsageProvider, UsageReport } from "@oh-my-pi/pi-ai/usage";
+import { type AuthCredentialStore, AuthStorage, SqliteAuthCredentialStore } from "@tau/tau-ai/auth-storage";
+import * as oauthUtils from "@tau/tau-ai/registry/oauth";
+import type { OAuthCredentials } from "@tau/tau-ai/registry/oauth/types";
+import type { UsageLimit, UsageProvider, UsageReport } from "@tau/tau-ai/usage";
 import { removeWithRetries } from "../../utils/src/temp";
 
 const HOUR_MS = 60 * 60 * 1000;
@@ -113,7 +113,7 @@ describe("AuthStorage google-antigravity oauth ranking", () => {
 	};
 
 	beforeEach(async () => {
-		tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "pi-ai-auth-antigravity-selection-"));
+		tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-ai-auth-antigravity-selection-"));
 		dbPath = path.join(tempDir, "agent.db");
 		store = await SqliteAuthCredentialStore.open(dbPath);
 		authStorage = new AuthStorage(store, {

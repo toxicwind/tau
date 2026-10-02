@@ -1,6 +1,6 @@
-import { type Api, type AuthStorage, type Model, withAuth } from "@oh-my-pi/pi-ai";
+import { type Api, type AuthStorage, type Model, withAuth } from "@tau/tau-ai";
 import type { SearchCitation, SearchResponse, SearchSource, SearchUsage } from "../types";
-import { asRecord } from "@oh-my-pi/pi-utils";
+import { asRecord } from "@tau/tau-utils";
 import { SearchProviderError } from "../../../web/search/types";
 import type { SearchParams } from "./base";
 import { SearchProvider } from "./base";

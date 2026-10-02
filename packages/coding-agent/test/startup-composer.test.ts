@@ -1,17 +1,17 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { parseArgs } from "@oh-my-pi/pi-coding-agent/cli/args";
-import { importRoomKey } from "@oh-my-pi/pi-coding-agent/collab/crypto";
-import { COLLAB_PROTO, type CollabFrame, parseCollabLink } from "@oh-my-pi/pi-coding-agent/collab/protocol";
-import * as registry from "@oh-my-pi/pi-coding-agent/collab/registry";
-import { CollabSocket } from "@oh-my-pi/pi-coding-agent/collab/relay-client";
-import { KeybindingsManager } from "@oh-my-pi/pi-tui/app-keybindings";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import * as pluginHelpers from "@oh-my-pi/pi-coding-agent/discovery/helpers";
-import { runRootCommand } from "@oh-my-pi/pi-coding-agent/main";
-import { Composer, type ComposerPreferences } from "@oh-my-pi/pi-tui/prompt/composer";
-import { InteractiveMode } from "@oh-my-pi/pi-coding-agent/modes/interactive-mode";
+import { parseArgs } from "@tau/tau-coding-agent/cli/args";
+import { importRoomKey } from "@tau/tau-coding-agent/collab/crypto";
+import { COLLAB_PROTO, type CollabFrame, parseCollabLink } from "@tau/tau-coding-agent/collab/protocol";
+import * as registry from "@tau/tau-coding-agent/collab/registry";
+import { CollabSocket } from "@tau/tau-coding-agent/collab/relay-client";
+import { KeybindingsManager } from "@tau/tau-tui/app-keybindings";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import * as pluginHelpers from "@tau/tau-coding-agent/discovery/helpers";
+import { runRootCommand } from "@tau/tau-coding-agent/main";
+import { Composer, type ComposerPreferences } from "@tau/tau-tui/prompt/composer";
+import { InteractiveMode } from "@tau/tau-coding-agent/modes/interactive-mode";
 import {
 	applyStartupComposerPreferences,
 	beginStartupComposer,
@@ -19,11 +19,11 @@ import {
 	setStartupComposerLspServers,
 	stopPendingStartupComposer,
 	takeStartupComposerLease,
-} from "@oh-my-pi/pi-coding-agent/modes/startup-composer";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { AgentLifecycleManager } from "@oh-my-pi/pi-coding-agent/registry/agent-lifecycle";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { getProjectDir, setProjectDir } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-coding-agent/modes/startup-composer";
+import { initTheme } from "@tau/tau-tui/theme";
+import { AgentLifecycleManager } from "@tau/tau-coding-agent/registry/agent-lifecycle";
+import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { getProjectDir, setProjectDir } from "@tau/tau-utils";
 import { VirtualTerminal } from "../../tui/test/virtual-terminal";
 import { installInMemoryRelay, uninstallInMemoryRelay } from "./collab/helpers/in-memory-relay";
 import { createTestSession } from "./utilities";
@@ -453,7 +453,7 @@ describe("Composer prepaint", () => {
 		try {
 			await mode.init({ suppressWelcomeIntro: true });
 
-			// The `omp "prompt"` launch shape: the CLI message is dispatched after
+			// The `tau "prompt"` launch shape: the CLI message is dispatched after
 			// init and its first turn is still in flight when the user types. The
 			// input loop has not reached getUserInput yet.
 			prompt.mockReturnValueOnce(turn.promise);
@@ -535,7 +535,7 @@ describe("Composer prepaint", () => {
 			expect(mode.editor.getExpandedText()).toBe(draft);
 			expect(draft.split("\n")).toHaveLength(18);
 			expect(mode.editor.render(80).length).toBeLessThanOrEqual(4);
-			expect(terminal.getViewport().join("\n")).not.toContain("Starting OMP");
+			expect(terminal.getViewport().join("\n")).not.toContain("Starting TAU");
 		} finally {
 			mode.stop();
 			lease.dispose();
@@ -618,10 +618,10 @@ describe("Composer prepaint", () => {
 			.map(r => Bun.stripANSI(r))
 			.join("\n");
 		expect(output).toContain("Welcome back!");
-		expect(output).toContain("omp");
+		expect(output).toContain("tau");
 		expect(output).toContain("9.9.9");
 		expect(output).toContain("prior work");
-		expect(output).not.toContain("Starting OMP");
+		expect(output).not.toContain("Starting TAU");
 		expect(output).toContain("╭");
 		const initialEditorRow = terminal
 			.getViewport()

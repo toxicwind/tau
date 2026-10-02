@@ -1,15 +1,15 @@
 import { beforeAll, beforeEach, describe, expect, afterEach, it } from "bun:test";
 import { stripVTControlCharacters } from "node:util";
-import { KeybindingsManager } from "@oh-my-pi/pi-tui/app-keybindings";
-import { getKeybindings, setKeybindings, type TUI } from "@oh-my-pi/pi-tui";
-import { getThemeByName, setThemeInstance, type Theme } from "@oh-my-pi/pi-tui/theme";
-import { AnnotationOverlay, type AnnotationOverlayCallbacks } from "@oh-my-pi/pi-tui/overlays/annotation-overlay";
+import { KeybindingsManager } from "@tau/tau-tui/app-keybindings";
+import { getKeybindings, setKeybindings, type TUI } from "@tau/tau-tui";
+import { getThemeByName, setThemeInstance, type Theme } from "@tau/tau-tui/theme";
+import { AnnotationOverlay, type AnnotationOverlayCallbacks } from "@tau/tau-tui/overlays/annotation-overlay";
 import type {
 	CodeReviewOverlayResult,
 	ReviewDiffFile,
 	TextReviewOverlayResult,
 	TextReviewSource,
-} from "@oh-my-pi/pi-tui/overlays/annotation-types";
+} from "@tau/tau-tui/overlays/annotation-types";
 
 const ENTER = "\r";
 const TAB = "\t";

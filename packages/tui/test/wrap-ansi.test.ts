@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { visibleWidth, wrapTextWithAnsi } from "@oh-my-pi/pi-tui/utils";
+import { visibleWidth, wrapTextWithAnsi } from "@tau/tau-tui/utils";
 
 describe("wrapTextWithAnsi", () => {
 	describe("underline styling", () => {

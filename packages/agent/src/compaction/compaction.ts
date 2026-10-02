@@ -22,22 +22,22 @@ import {
 	type Tool,
 	type Usage,
 	withAuth,
-} from "@oh-my-pi/pi-ai";
-import type { Dialect } from "@oh-my-pi/pi-ai/dialect";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { createOpenAICodexCompactionRequestContext } from "@oh-my-pi/pi-ai/providers/openai-codex-compaction";
+} from "@tau/tau-ai";
+import type { Dialect } from "@tau/tau-ai/dialect";
+import * as AIError from "@tau/tau-ai/error";
+import { createOpenAICodexCompactionRequestContext } from "@tau/tau-ai/providers/openai-codex-compaction";
 import {
 	buildTransformedCodexRequestBody,
 	type OpenAICodexCompactionBody,
-} from "@oh-my-pi/pi-ai/providers/openai-codex-responses";
-import type { InputItem as CodexInputItem } from "@oh-my-pi/pi-ai/providers/openai-codex/request-transformer";
-import { convertTools } from "@oh-my-pi/pi-ai/providers/openai-responses";
-import { buildResponsesInput, resolveOpenAICompatPolicy } from "@oh-my-pi/pi-ai/providers/openai-shared";
-import { stripOpenAIResponsesOutputOnlyStatusesForReplay } from "@oh-my-pi/pi-ai/utils";
-import { preferredDialect } from "@oh-my-pi/pi-catalog/identity";
-import { clampThinkingLevelForModel } from "@oh-my-pi/pi-catalog/model-thinking";
-import { isRecord, logger, prompt } from "@oh-my-pi/pi-utils";
-import * as snapcompact from "@oh-my-pi/snapcompact";
+} from "@tau/tau-ai/providers/openai-codex-responses";
+import type { InputItem as CodexInputItem } from "@tau/tau-ai/providers/openai-codex/request-transformer";
+import { convertTools } from "@tau/tau-ai/providers/openai-responses";
+import { buildResponsesInput, resolveOpenAICompatPolicy } from "@tau/tau-ai/providers/openai-shared";
+import { stripOpenAIResponsesOutputOnlyStatusesForReplay } from "@tau/tau-ai/utils";
+import { preferredDialect } from "@tau/tau-catalog/identity";
+import { clampThinkingLevelForModel } from "@tau/tau-catalog/model-thinking";
+import { isRecord, logger, prompt } from "@tau/tau-utils";
+import * as snapcompact from "@tau/snapcompact";
 import { type AgentTelemetry, instrumentedCompleteSimple } from "../telemetry";
 import { ThinkingLevel } from "../thinking";
 import { Tokenizer } from "../tokenizer";
@@ -118,7 +118,7 @@ function extractFileOperations(
 ): FileOperations {
 	const fileOps = createFileOps();
 
-	// Collect from previous compaction's details (if pi-generated)
+	// Collect from previous compaction's details (if tau-generated)
 	if (prevCompactionIndex >= 0) {
 		const prevCompaction = entries[prevCompactionIndex] as CompactionEntry;
 		if (!prevCompaction.fromExtension && prevCompaction.details) {
@@ -646,7 +646,7 @@ function resolveCompactionEffort(model: Model, level: ThinkingLevel | undefined)
  * onto a top-level `.status` field so callers (notably
  * `AgentSession.#isCompactionAuthFailure`) can branch on 401/403 without
  * regex-scraping `error.message`. The `auth_unavailable` synthetic
- * (pi-native gateway) does not populate `errorStatus`, hence the legacy
+ * (tau-native gateway) does not populate `errorStatus`, hence the legacy
  * message-based check is still required upstream — see issue #986.
  */
 function createSummarizationError(prefix: string, response: AssistantMessage): Error {

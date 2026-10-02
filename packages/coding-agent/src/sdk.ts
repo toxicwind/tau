@@ -9,7 +9,7 @@ import {
 	AppendOnlyContextManager,
 	filterProviderReplayMessages,
 	type ThinkingLevel,
-} from "@oh-my-pi/pi-agent-core";
+} from "@tau/tau-agent-core";
 import type {
 	Context,
 	CredentialDisabledEvent,
@@ -21,21 +21,21 @@ import type {
 	ServiceTier,
 	ServiceTierByFamily,
 	SimpleStreamOptions,
-} from "@oh-my-pi/pi-ai";
-import { resolveApiKeyOnce } from "@oh-my-pi/pi-ai/auth-retry";
-import type { DiscoverAuthStorageOptions } from "@oh-my-pi/pi-ai/auth-broker/discover";
-import type { Dialect } from "@oh-my-pi/pi-ai/dialect";
-import { prewarmOpenAICodexResponses } from "@oh-my-pi/pi-ai/providers/openai-codex-responses";
-import { isOpenAICodexWebSocketPreferred } from "@oh-my-pi/pi-ai/providers/openai-codex-transport";
-import { FALLBACK_DIALECT, preferredDialect } from "@oh-my-pi/pi-catalog/identity";
-import type { Component } from "@oh-my-pi/pi-tui";
-import { $env, $flag } from "@oh-my-pi/pi-utils/env";
-import { getAgentDir, getModelDbPath, getProjectDir } from "@oh-my-pi/pi-utils/dirs";
-import * as logger from "@oh-my-pi/pi-utils/logger";
-import * as postmortem from "@oh-my-pi/pi-utils/postmortem";
-import * as prompt from "@oh-my-pi/pi-utils/prompt";
-import { Snowflake } from "@oh-my-pi/pi-utils/snowflake";
-import { INTENT_FIELD } from "@oh-my-pi/pi-wire";
+} from "@tau/tau-ai";
+import { resolveApiKeyOnce } from "@tau/tau-ai/auth-retry";
+import type { DiscoverAuthStorageOptions } from "@tau/tau-ai/auth-broker/discover";
+import type { Dialect } from "@tau/tau-ai/dialect";
+import { prewarmOpenAICodexResponses } from "@tau/tau-ai/providers/openai-codex-responses";
+import { isOpenAICodexWebSocketPreferred } from "@tau/tau-ai/providers/openai-codex-transport";
+import { FALLBACK_DIALECT, preferredDialect } from "@tau/tau-catalog/identity";
+import type { Component } from "@tau/tau-tui";
+import { $env, $flag } from "@tau/tau-utils/env";
+import { getAgentDir, getModelDbPath, getProjectDir } from "@tau/tau-utils/dirs";
+import * as logger from "@tau/tau-utils/logger";
+import * as postmortem from "@tau/tau-utils/postmortem";
+import * as prompt from "@tau/tau-utils/prompt";
+import { Snowflake } from "@tau/tau-utils/snowflake";
+import { INTENT_FIELD } from "@tau/tau-wire";
 import {
 	discoverAdvisorConfigs,
 	discoverWatchdogFiles,
@@ -70,7 +70,7 @@ import {
 	resolveConfiguredModelPatterns,
 	resolveModelRoleValue,
 } from "./config/model-resolver";
-import { formatModelSelectorValue, parseModelString } from "@oh-my-pi/pi-tui/overlays/model-selector";
+import { formatModelSelectorValue, parseModelString } from "@tau/tau-tui/overlays/model-selector";
 import { loadPromptTemplates as loadPromptTemplatesInternal, type PromptTemplate } from "./config/prompt-templates";
 import { buildServiceTierByFamily } from "./config/service-tier";
 import { Settings, type SkillsSettings } from "./config/settings";
@@ -80,12 +80,12 @@ import "./discovery";
 import { createImageUrlServiceFromSettings } from "./blob-broker/service";
 import { wrapStreamFnWithBlobUrlFallback } from "./blob-broker/stream-fallback";
 import { initializeWithSettings } from "./discovery";
-import { setInvocationConfiguredExtensions, withOmpExtensionRootScope } from "./discovery/omp-extension-roots";
+import { setInvocationConfiguredExtensions, withOmpExtensionRootScope } from "./discovery/tau-extension-roots";
 import { disposeVmContextsByOwner } from "./eval/js/context-manager";
 import { getEnabledEvalPreludes, type EvalPreludeDefinition } from "./eval/preludes";
 import { disposeAllKernelSessions, disposeKernelSessionsByOwner } from "./eval/py/executor";
 import { defaultEvalSessionId } from "./eval/session-id";
-import type { EditMode } from "@oh-my-pi/pi-tui/tools/edit";
+import type { EditMode } from "@tau/tau-tui/tools/edit";
 import {
 	type CustomCommandsLoadResult,
 	type LoadedCustomCommand,
@@ -122,7 +122,7 @@ import {
 import { type FileSlashCommand, loadSlashCommands as loadSlashCommandsInternal } from "./extensibility/slash-commands";
 import type { HindsightSessionState } from "./hindsight/state";
 import { LocalProtocolHandler, type LocalProtocolOptions } from "./internal-urls";
-import { stripXdUrlPrefix } from "@oh-my-pi/pi-tui/tools/xd-url";
+import { stripXdUrlPrefix } from "@tau/tau-tui/tools/xd-url";
 import { setSharedLspEnabled } from "./lsp/client";
 import { LSP_STARTUP_EVENT_CHANNEL, type LspStartupEvent } from "./lsp/startup-events";
 import {
@@ -135,12 +135,12 @@ import {
 	type MCPToolsLoadResult,
 	shouldFilterBrowserMCPForPrelude,
 } from "./mcp";
-import { parseMCPToolName } from "@oh-my-pi/pi-tui/tools/mcp";
+import { parseMCPToolName } from "@tau/tau-tui/tools/mcp";
 import { MCP_CONNECTION_STATUS_EVENT_CHANNEL, type McpConnectionStatusEvent } from "./mcp/startup-events";
 import { resolveMCPToolAlias } from "./mcp/tool-bridge";
 import { createSessionMemoryRuntimeContext, resolveMemoryBackend } from "./memory-backend";
 import { MEMORY_BACKEND_TOOL_NAMES } from "./memory-backend/tool-names";
-import type { MnemopiSessionState } from "./mnemopi/state";
+import type { MnemotauSessionState } from "./mnemotau/state";
 import mcpXdevGuidanceTemplate from "./prompts/system/mcp-xdev-guidance.md" with { type: "text" };
 import lateDiagnosticTemplate from "./prompts/tools/lsp-late-diagnostic.md" with { type: "text" };
 import { AgentLifecycleManager } from "./registry/agent-lifecycle";
@@ -199,7 +199,7 @@ import { AgentOutputManager } from "./task/output-manager";
 import { wrapStreamFnWithProviderConcurrency } from "./task/provider-concurrency";
 import { sessionDelegationBias } from "./task/prompt-policy";
 import { isScoutSpawnable } from "./task/spawn-policy";
-import type { StructuredSubagentSchemaMode } from "@oh-my-pi/pi-tui/tools/task";
+import type { StructuredSubagentSchemaMode } from "@tau/tau-tui/tools/task";
 import {
 	AUTO_THINKING,
 	type ConfiguredThinkingLevel,
@@ -210,7 +210,7 @@ import {
 	resolveThinkingLevelForModel,
 	shouldDisableReasoning,
 	toReasoningEffort,
-} from "@oh-my-pi/pi-tui/thinking";
+} from "@tau/tau-tui/thinking";
 import {
 	BashTool,
 	BUILTIN_TOOLS,
@@ -254,7 +254,7 @@ import { ttsTool } from "./tools/tts";
 import { resolveActiveRepoContext } from "./utils/active-repo-context";
 import { EventBus } from "./utils/event-bus";
 import { normalizeProviderContextImagesForModel } from "./utils/image-loading";
-import { formatLocalCalendarDate } from "@oh-my-pi/pi-tui/chrome/local-date";
+import { formatLocalCalendarDate } from "@tau/tau-tui/chrome/local-date";
 import { normalizePromptPath } from "./utils/prompt-path";
 import { buildNamedToolChoice } from "./utils/tool-choice";
 import { VibeSessionRegistry } from "./vibe/runtime";
@@ -384,7 +384,7 @@ export interface CreateAgentSessionOptions {
 	cwd?: string;
 	/** Additional workspace directories beyond cwd (multi-root), absolute or cwd-relative. */
 	additionalDirectories?: string[];
-	/** Global config directory. Default: ~/.omp/agent */
+	/** Global config directory. Default: ~/.tau/agent */
 	agentDir?: string;
 	/** Spawns to allow. Default: "*" */
 	spawns?: string;
@@ -523,7 +523,7 @@ export interface CreateAgentSessionOptions {
 	 */
 	preloadedPreparedExtensions?: readonly PreparedExtension[];
 	/**
-	 * Pre-discovered custom-tool source paths from `.omp/tools/`, `.claude/tools/`,
+	 * Pre-discovered custom-tool source paths from `.tau/tools/`, `.claude/tools/`,
 	 * plugins, etc. When provided, the filesystem-scan inside
 	 * `discoverCustomToolPaths()` is skipped — subagents inherit the parent's
 	 * scan result and call `loadCustomTools()` themselves so each session binds
@@ -553,7 +553,7 @@ export interface CreateAgentSessionOptions {
 	contextFiles?: Array<{ path: string; content: string }>;
 	/** Pre-built workspace tree (skips re-scanning; passed by parents to subagents). */
 	workspaceTree?: WorkspaceTree;
-	/** Prompt templates. Default: discovered from cwd/.omp/prompts/ + agentDir/prompts/ */
+	/** Prompt templates. Default: discovered from cwd/.tau/prompts/ + agentDir/prompts/ */
 	promptTemplates?: PromptTemplate[];
 	/** File-based slash commands. Default: discovered from commands/ directories */
 	slashCommands?: FileSlashCommand[];
@@ -596,8 +596,8 @@ export interface CreateAgentSessionOptions {
 	taskDepth?: number;
 	/** Parent Hindsight state to alias for subagent memory tools. */
 	parentHindsightSessionState?: HindsightSessionState;
-	/** Parent Mnemopi state to alias for subagent memory tools. */
-	parentMnemopiSessionState?: MnemopiSessionState;
+	/** Parent Mnemotau state to alias for subagent memory tools. */
+	parentMnemotauSessionState?: MnemotauSessionState;
 	/** Pre-allocated agent identity for IRC routing. Default: "Main" for top-level, parentTaskPrefix-derived for sub. */
 	agentId?: string;
 	/** Display name for the agent in IRC. Default: "main" or "sub". */
@@ -763,7 +763,7 @@ export {
  *
  * Default: local SQLite store at `<agentDir>/agent.db`.
  *
- * Broker mode: when `OMP_AUTH_BROKER_URL` is set, credentials are pulled from
+ * Broker mode: when `TAU_AUTH_BROKER_URL` is set, credentials are pulled from
  * a remote auth-broker over the wire. Refresh tokens never leave the broker;
  * the client receives access tokens with `refresh = "__remote__"` and calls
  * back into the broker through the {@link AuthStorageOptions.refreshOAuthCredential}
@@ -855,11 +855,11 @@ export async function loadSessionExtensions(
 /**
  * Load discovered/configured extensions and register their providers into
  * `modelRegistry`, then discover the dynamic provider catalogs. One-shot CLIs
- * (`omp bench`, dry-balance) build a bare {@link ModelRegistry} that only knows
+ * (`tau bench`, dry-balance) build a bare {@link ModelRegistry} that only knows
  * built-in catalog providers; without this, providers contributed by an
  * extension (e.g. a custom OpenAI-compatible provider under
- * `~/.omp/agent/extensions/`) never reach model resolution. Mirrors the
- * session / `omp models` path: drain the queued provider registrations, then
+ * `~/.tau/agent/extensions/`) never reach model resolution. Mirrors the
+ * session / `tau models` path: drain the queued provider registrations, then
  * `refreshRuntimeProviders` so dynamically-discovered models exist before
  * selectors are resolved.
  */
@@ -1332,7 +1332,7 @@ export function createAutoLearnCaptureRunner(
  * const { session } = await createAgentSession();
  *
  * // With explicit model
- * import { getModel } from '@oh-my-pi/pi-ai';
+ * import { getModel } from '@tau/tau-ai';
  * const { session } = await createAgentSession({
  *   model: getModel('anthropic', 'claude-opus-4-5'),
  *   thinkingLevel: 'high',
@@ -1911,7 +1911,7 @@ async function createAgentSessionScoped(options: CreateAgentSessionOptions): Pro
 			getSessionId: () => sessionManager.getSessionId?.() ?? null,
 			isDisposed: () => session?.isDisposed ?? false,
 			getHindsightSessionState: () => session?.getHindsightSessionState(),
-			getMnemopiSessionState: () => session?.getMnemopiSessionState(),
+			getMnemotauSessionState: () => session?.getMnemotauSessionState(),
 			getAgentId: () => resolvedAgentId,
 			getToolByName: name => session?.getToolByName(name),
 			getToolForEvalBridge: name => session?.getToolForEvalBridge(name),
@@ -2186,7 +2186,7 @@ async function createAgentSessionScoped(options: CreateAgentSessionOptions): Pro
 				customTools.push(ttsTool as unknown as CustomTool);
 			}
 
-			// Discover custom tools from `.omp/tools/`, `.claude/tools/`, plugins, etc.
+			// Discover custom tools from `.tau/tools/`, `.claude/tools/`, plugins, etc.
 			// Subagents reuse the parent's scan via `preloadedCustomToolPaths` to skip
 			// the FS walk, but ALWAYS re-call `loadCustomTools` here so factories bind
 			// to THIS session's `CustomToolAPI` (cwd, exec, pushPendingAction, UI).
@@ -2335,7 +2335,7 @@ async function createAgentSessionScoped(options: CreateAgentSessionOptions): Pro
 		// Hydrate cached runtime (extension) provider catalogs before model
 		// resolution. Dynamic-only providers have no synchronous registration side
 		// effect, so a cold --model/provider resume must see the same fresh SQLite
-		// cache that `omp models find` uses before the online refresh continues in
+		// cache that `tau models find` uses before the online refresh continues in
 		// the background.
 		await modelRegistry.refreshRuntimeProviders("offline");
 		// Online runtime discovery must not steal the event loop from the first UI
@@ -2819,7 +2819,7 @@ async function createAgentSessionScoped(options: CreateAgentSessionOptions): Pro
 				// so on a cache-cold boot the configured default stays unresolved
 				// and `pick` silently degrades to an unrelated authed provider's
 				// default (#6162) or "No models available" (#6114) — even though
-				// `omp models` (which awaits discovery) lists the model. Await one
+				// `tau models` (which awaits discovery) lists the model. Await one
 				// cache-aware discovery pass and retry when a default role is
 				// configured (must win over `pick`) or nothing resolved at all.
 				// The common path — role already resolved, or a `pick` with no
@@ -3247,7 +3247,7 @@ async function createAgentSessionScoped(options: CreateAgentSessionOptions): Pro
 			}
 			// Re-discover rules from disk on every session-scoped rebuild, mirroring the
 			// context-file refresh above. The rule buckets are otherwise frozen at
-			// session creation, so a `RULES.md` (or any rule) created or edited while omp
+			// session creation, so a `RULES.md` (or any rule) created or edited while tau
 			// runs never reaches the prompt on /clear or /new until restart (issue #10940).
 			// resetCapabilities() clears the fs cache at those boundaries, so this observes
 			// the current file. TTSR registrations are replaced from the new snapshot while
@@ -3280,7 +3280,7 @@ async function createAgentSessionScoped(options: CreateAgentSessionOptions): Pro
 			const memoryInstructions = memoryBackend
 				? await memoryBackend.buildDeveloperInstructions(agentDir, settings, session)
 				: undefined;
-			// Advisors get the same memory block (sharpshooter decisions, mnemopi/
+			// Advisors get the same memory block (sharpshooter decisions, mnemotau/
 			// hindsight instructions) wrapped as shared background knowledge; the
 			// tool-availability caveat lives in the wrapper template.
 			advisorMemoryPrompt = formatAdvisorMemoryPrompt(memoryInstructions);
@@ -4056,7 +4056,7 @@ async function createAgentSessionScoped(options: CreateAgentSessionOptions): Pro
 		// advisor transcript size (issue #9553).
 		session.beginInitialAdvisorCostRestore();
 		// Extension factories normally register tools before session construction,
-		// but Pi-compatible extensions may discover them asynchronously from a
+		// but Tau-compatible extensions may discover them asynchronously from a
 		// session_start handler. Install those late registrations into the live
 		// registry and serialize activation so no update can overwrite a sibling.
 		const scheduledToolRegistrations = new WeakMap<RegisteredTool, Promise<void>>();
@@ -4269,7 +4269,7 @@ async function createAgentSessionScoped(options: CreateAgentSessionOptions): Pro
 		}
 
 		// Broker-shared language servers: one server per project, multiplexed
-		// across omp instances by the LSP mux daemon. Session-level because the
+		// across tau instances by the LSP mux daemon. Session-level because the
 		// flag lives in module state consulted on every client cold-start.
 		setSharedLspEnabled(enableLsp && settings.get("lsp.shared"));
 
@@ -4329,7 +4329,7 @@ async function createAgentSessionScoped(options: CreateAgentSessionOptions): Pro
 				agentDir,
 				taskDepth,
 				parentHindsightSessionState: options.parentHindsightSessionState,
-				parentMnemopiSessionState: options.parentMnemopiSessionState,
+				parentMnemotauSessionState: options.parentMnemotauSessionState,
 			});
 		};
 

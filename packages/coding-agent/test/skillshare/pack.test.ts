@@ -1,14 +1,14 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { TempDir } from "@tau/tau-utils";
 import { bumpVersion, packSkill } from "../../src/skillshare/pack";
 import { readTar } from "../../src/skillshare/tar";
 
 let tempDir: TempDir;
 
 beforeEach(async () => {
-	tempDir = await TempDir.create("@pi-skillshare-pack-");
+	tempDir = await TempDir.create("@tau-skillshare-pack-");
 });
 
 afterEach(async () => {

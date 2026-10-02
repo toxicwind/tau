@@ -7,8 +7,8 @@
  * owner instead of a parallel session-id registry.
  */
 
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { logger } from "@oh-my-pi/pi-utils";
+import type { AgentMessage } from "@tau/tau-agent-core";
+import { logger } from "@tau/tau-utils";
 import { onHindsightScopeChanged, type Settings } from "../config/settings";
 import type { MemoryBackend, MemoryBackendStartOptions, MemoryPromptPreparation } from "../memory-backend/types";
 import type { AgentSession } from "../session/agent-session";
@@ -224,7 +224,7 @@ export async function rebindMemoryBackendForCwd(session: AgentSession): Promise<
 		// The manager already has the new cwd, and this may also be rollback
 		// from a destination that never committed. Drain existing writes without
 		// capturing the transcript under either transient scope.
-		await session.applyMemoryBackend({ retainMnemopi: false });
+		await session.applyMemoryBackend({ retainMnemotau: false });
 	}
 
 	let task: PrimaryRebuildTask | undefined = schedulePrimaryStateRebuild(session);
@@ -237,8 +237,8 @@ export async function rebindMemoryBackendForCwd(session: AgentSession): Promise<
 	}
 
 	// Startup is best-effort, but a move must not commit an unusable memory backend.
-	if (session.settings.get("memory.backend") === "mnemopi" && !session.getMnemopiSessionState()) {
-		throw new Error("Mnemopi backend failed to initialise for the destination cwd.");
+	if (session.settings.get("memory.backend") === "mnemotau" && !session.getMnemotauSessionState()) {
+		throw new Error("Mnemotau backend failed to initialise for the destination cwd.");
 	}
 }
 

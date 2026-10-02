@@ -1,7 +1,7 @@
 /**
  * Types for the internal URL routing system.
  *
- * Internal URLs (`agent://`, `artifact://`, `history://`, `issue://`, `local://`, `mcp://`, `memory://`, `omp://`, `pr://`, `proc://`, `rule://`, `security://`, `skill://`, `ssh://`, `vault://`, and `xd://`) are resolved by tools like read,
+ * Internal URLs (`agent://`, `artifact://`, `history://`, `issue://`, `local://`, `mcp://`, `memory://`, `tau://`, `pr://`, `proc://`, `rule://`, `security://`, `skill://`, `ssh://`, `vault://`, and `xd://`) are resolved by tools like read,
  * providing access to agent outputs and server resources without exposing filesystem paths.
  */
 
@@ -11,8 +11,8 @@ import type { AgentRegistry } from "../registry/agent-registry";
 import type { LocalProtocolOptions } from "./local-protocol";
 import type { SessionEntry } from "../session/session-entries";
 import type { ToolSession } from "../tools";
-import type { CoordinationDetails } from "@oh-my-pi/pi-tui/tools/wait";
-import type { ProcReadDetails, ProcWriteDetails } from "@oh-my-pi/pi-tui/tools/proc-render";
+import type { CoordinationDetails } from "@tau/tau-tui/tools/wait";
+import type { ProcReadDetails, ProcWriteDetails } from "@tau/tau-tui/tools/proc-render";
 
 export interface InternalWriteDetails {
 	message?: CoordinationDetails;
@@ -150,7 +150,7 @@ export interface ResolveContext {
 	 * Required for correctness in multi-session hosts (cmux/ACP, embedded SDK
 	 * consumers) where multiple sessions are registered as `main` and the
 	 * "first one wins" lookup picks the wrong artifacts directory — see
-	 * [#1608](https://github.com/can1357/oh-my-pi/issues/1608).
+	 * [#1608](https://github.com/toxicwind/tau/issues/1608).
 	 */
 	localProtocolOptions?: LocalProtocolOptions;
 	/** Calling session's loaded skills. Prefer this over process-global skill state. */

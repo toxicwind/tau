@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
-import { relativeLuminance } from "@oh-my-pi/pi-utils";
-import { resolveVarRefs } from "@oh-my-pi/pi-tui/theme/color";
-import { loadTheme, loadThemeJson } from "@oh-my-pi/pi-tui/theme/loader";
+import { relativeLuminance } from "@tau/tau-utils";
+import { resolveVarRefs } from "@tau/tau-tui/theme/color";
+import { loadTheme, loadThemeJson } from "@tau/tau-tui/theme/loader";
 
 const MIN_TEXT_CONTRAST = 4.5;
 

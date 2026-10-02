@@ -1,4 +1,4 @@
-import type { AuthStorage } from "@oh-my-pi/pi-ai";
+import type { AuthStorage } from "@tau/tau-ai";
 import type { SearchProviderId, SearchResponse, SearchSource } from "../types";
 import { SearchProviderError } from "../types";
 import { clampNumResults } from "../utils";

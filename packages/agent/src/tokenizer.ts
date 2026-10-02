@@ -1,8 +1,8 @@
-import type { Model } from "@oh-my-pi/pi-ai";
-import type { ModelTokenizer } from "@oh-my-pi/pi-catalog/types";
-import * as natives from "@oh-my-pi/pi-natives";
-import { stringifyJson } from "@oh-my-pi/pi-utils";
-import * as snapcompact from "@oh-my-pi/snapcompact";
+import type { Model } from "@tau/tau-ai";
+import type { ModelTokenizer } from "@tau/tau-catalog/types";
+import * as natives from "@tau/tau-natives";
+import { stringifyJson } from "@tau/tau-utils";
+import * as snapcompact from "@tau/snapcompact";
 import { isEstimateCacheable, messageEstimateVersion } from "./compaction/message-cache";
 import type { AgentMessage } from "./types";
 

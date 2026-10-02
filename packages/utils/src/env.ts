@@ -341,7 +341,7 @@ export function parseEnvFile(filePath: string): Record<string, string> {
 				isSafeEnvValue(value)
 			) {
 				result[key] = value;
-				if (key.startsWith("OMP_")) result[`PI_${key.slice(4)}`] = value;
+				if (key.startsWith("TAU_")) result[`PI_${key.slice(4)}`] = value;
 			}
 		}
 	} catch {}

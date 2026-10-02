@@ -1,16 +1,16 @@
-import { type } from "@oh-my-pi/omptype";
-import type { AgentTool, AgentToolContext, AgentToolResult, AgentToolUpdateCallback } from "@oh-my-pi/pi-agent-core";
+import { type } from "@tau/tautype";
+import type { AgentTool, AgentToolContext, AgentToolResult, AgentToolUpdateCallback } from "@tau/tau-agent-core";
 
-import { prompt } from "@oh-my-pi/pi-utils";
+import { prompt } from "@tau/tau-utils";
 
 import goalDescription from "../../prompts/tools/goal.md" with { type: "text" };
 
 import type { ToolSession } from "../../tools";
 
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 
 import { completionBudgetReport, remainingTokens } from "../runtime";
-import type { Goal, GoalToolDetails } from "@oh-my-pi/pi-tui/tools/goal";
+import type { Goal, GoalToolDetails } from "@tau/tau-tui/tools/goal";
 
 const goalSchema = type({
 	op: type("'create' | 'get' | 'complete' | 'resume' | 'drop'").describe("goal operation"),

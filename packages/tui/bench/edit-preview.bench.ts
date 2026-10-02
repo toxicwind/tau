@@ -9,7 +9,7 @@
  *
  * Run: bun packages/tui/bench/edit-preview.bench.ts
  */
-import { editInspect } from "@oh-my-pi/pi-natives";
+import { editInspect } from "@tau/tau-natives";
 
 const patch = `*** Begin Patch\n${"+".repeat(50_000)}\n*** End Patch`;
 

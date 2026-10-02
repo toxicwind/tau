@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
-import { streamBedrock } from "@oh-my-pi/pi-ai/providers/amazon-bedrock";
-import type { Context, Model } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import { streamBedrock } from "@tau/tau-ai/providers/amazon-bedrock";
+import type { Context, Model } from "@tau/tau-ai/types";
+import { buildModel } from "@tau/tau-catalog/build";
 
 // Amazon Nova streams reasoningContent natively (with no signature — Nova never
 // sends one), but rejects that same unsigned reasoningContent when it is echoed

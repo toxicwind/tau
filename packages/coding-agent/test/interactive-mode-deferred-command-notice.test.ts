@@ -1,11 +1,11 @@
 import { afterAll, afterEach, describe, expect, it, vi } from "bun:test";
-import { resetSettingsForTest, Settings, settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { InteractiveMode } from "@oh-my-pi/pi-coding-agent/modes/interactive-mode";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { Text } from "@oh-my-pi/pi-tui";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { resetSettingsForTest, Settings, settings } from "@tau/tau-coding-agent/config/settings";
+import { InteractiveMode } from "@tau/tau-coding-agent/modes/interactive-mode";
+import { initTheme } from "@tau/tau-tui/theme";
+import type { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { Text } from "@tau/tau-tui";
+import { TempDir } from "@tau/tau-utils";
 
 type Harness = {
 	mode: InteractiveMode;
@@ -23,7 +23,7 @@ async function createHarness(): Promise<Harness> {
 		return harness;
 	}
 
-	const tempDir = TempDir.createSync("@pi-deferred-notice-");
+	const tempDir = TempDir.createSync("@tau-deferred-notice-");
 	await Settings.init({ inMemory: true, cwd: tempDir.path() });
 	await initTheme(false);
 	const sessionManager = SessionManager.inMemory(tempDir.path());

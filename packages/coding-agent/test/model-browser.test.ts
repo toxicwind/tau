@@ -1,9 +1,9 @@
 import { createModelBrowserSource } from "../src/modes/model-browser-source";
 import { beforeAll, describe, expect, test } from "bun:test";
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { Model } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import { ThinkingLevel } from "@tau/tau-agent-core";
+import type { Model } from "@tau/tau-ai";
+import { buildModel } from "@tau/tau-catalog/build";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
 import {
 	buildBrowserItems,
 	buildSearchAffinity,
@@ -12,8 +12,8 @@ import {
 	type RoleAssignments,
 	resolveRoleAssignments,
 	sortModelItems,
-} from "@oh-my-pi/pi-tui/overlays/model-browser";
-import { initTheme, theme } from "@oh-my-pi/pi-tui/theme";
+} from "@tau/tau-tui/overlays/model-browser";
+import { initTheme, theme } from "@tau/tau-tui/theme";
 
 /** Optional presentation metadata a catalog or discovery source may attach. */
 type NativeMetadata = Pick<Model, "description" | "isNew" | "isBeta" | "isRecommended" | "int" | "tps"> &

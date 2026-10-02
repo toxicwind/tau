@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
-import { streamAnthropic } from "@oh-my-pi/pi-ai/providers/anthropic";
-import type { AssistantMessage, Context, ImageContent, Model, TextContent, Usage } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import { streamAnthropic } from "@tau/tau-ai/providers/anthropic";
+import type { AssistantMessage, Context, ImageContent, Model, TextContent, Usage } from "@tau/tau-ai/types";
+import { buildModel } from "@tau/tau-catalog/build";
 
 const RED_1X1_PNG_BASE64 =
 	"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGP4z8AAAAMBAQDJ/pLvAAAAAElFTkSuQmCC";

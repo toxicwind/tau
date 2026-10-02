@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import { buildCoordinationAdvisory, composeSpawnAdvisory } from "@oh-my-pi/pi-coding-agent/task";
-import type { TaskItem } from "@oh-my-pi/pi-tui/tools/task";
+import { buildCoordinationAdvisory, composeSpawnAdvisory } from "@tau/tau-coding-agent/task";
+import type { TaskItem } from "@tau/tau-tui/tools/task";
 
 const item = (): TaskItem => ({ task: "do the thing" });
 

@@ -6,13 +6,13 @@
  * their blocks.
  */
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { KeybindingsManager } from "@oh-my-pi/pi-tui/app-keybindings";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { CopySelectorComponent, type CopyPickSource } from "@oh-my-pi/pi-tui/overlays/copy-selector";
-import { initTheme, theme } from "@oh-my-pi/pi-tui/theme";
-import type { SessionMessageEntry } from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import { setKeybindings, type TUI } from "@oh-my-pi/pi-tui";
+import type { AgentMessage } from "@tau/tau-agent-core";
+import { KeybindingsManager } from "@tau/tau-tui/app-keybindings";
+import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import { CopySelectorComponent, type CopyPickSource } from "@tau/tau-tui/overlays/copy-selector";
+import { initTheme, theme } from "@tau/tau-tui/theme";
+import type { SessionMessageEntry } from "@tau/tau-coding-agent/session/session-entries";
+import { setKeybindings, type TUI } from "@tau/tau-tui";
 
 const UP = "\x1b[A";
 const LEFT = "\x1b[D";
@@ -21,7 +21,7 @@ const ENTER = "\r";
 const ESC = "\x1b";
 
 const CODE = "const answer = 42;\nconsole.log(answer);";
-const LINK = "https://github.com/can1357/oh-my-pi/pull/10503";
+const LINK = "https://github.com/toxicwind/tau/pull/10503";
 const ASSISTANT_TEXT = `Here is the fix:\n\`\`\`ts\n${CODE}\n\`\`\`\nDone. See [the PR](${LINK}).`;
 
 function entry(id: string, parentId: string | null, message: AgentMessage): SessionMessageEntry {

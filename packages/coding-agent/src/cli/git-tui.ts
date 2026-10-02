@@ -1,10 +1,10 @@
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import type { TUI } from "@oh-my-pi/pi-tui";
+import * as vcs from "@tau/tau-natives/vcs";
+import type { TUI } from "@tau/tau-tui";
 import {
 	type GitTuiHost,
 	runGitTui as runView,
 	showGitOverlay as showOverlay,
-} from "@oh-my-pi/pi-tui/apps/git/git-tui";
+} from "@tau/tau-tui/apps/git/git-tui";
 import { generateGitCommit } from "../commit/conventional/service";
 import { aiStage } from "./git-tui/ai-stage";
 import { AvatarLoader } from "./git-tui/avatar";

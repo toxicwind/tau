@@ -1,6 +1,6 @@
 import * as path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import { isPidRunning } from "@oh-my-pi/pi-utils/procmgr";
+import { isPidRunning } from "@tau/tau-utils/procmgr";
 import { runCli } from "../src/cli";
 import * as computerWorkerEntry from "../src/tools/computer/worker-entry";
 

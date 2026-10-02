@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from "bun:test";
-import { KeybindingsManager, setKeyHintPlatform } from "@oh-my-pi/pi-tui/app-keybindings";
-import { buildHotkeysMarkdown } from "@oh-my-pi/pi-tui/hotkeys-markdown";
+import { KeybindingsManager, setKeyHintPlatform } from "@tau/tau-tui/app-keybindings";
+import { buildHotkeysMarkdown } from "@tau/tau-tui/hotkeys-markdown";
 
 /** Exit-row wiring for stubs that only care about display strings: no key claims the
  *  forward-delete role, so the exit row renders its plain "Exit" wording. */

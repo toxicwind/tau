@@ -1,6 +1,6 @@
 # Natives Build, Release, and Debugging Runbook
 
-This runbook describes how `@oh-my-pi/pi-natives` produces `.node` addons, generated declarations, and compiled-binary embedded payloads, and how to debug loader/build failures.
+This runbook describes how `@tau/tau-natives` produces `.node` addons, generated declarations, and compiled-binary embedded payloads, and how to debug loader/build failures.
 
 Release addons are built by Bazel (`rules_rust` + `crate_universe` + hermetic cc toolchains) except `win32-arm64`, which is built natively through Cargo/N-API on GitHub's Windows ARM64 runner. The cargo workspace stays authoritative for local Rust iteration (rust-analyzer, `cargo nextest`) and host builds. Runtime loading and embedding are unchanged.
 
@@ -22,7 +22,7 @@ Build side:
 - `bazel/clippy.bazelrc` — generated from `[workspace.lints]` in `Cargo.toml`
 - `MODULE.bazel`, `MODULE.bazel.lock`, `.bazelrc`, `.bazelversion` (Bazel 9.2.0)
 - `scripts/bazel-natives.ts` — the canonical driver (build + locate + install)
-- `crates/pi-natives/BUILD.bazel`, `crates/pi-natives/Cargo.toml`
+- `crates/tau-natives/BUILD.bazel`, `crates/tau-natives/Cargo.toml`
 
 Package side (unchanged runtime/packaging):
 
@@ -56,7 +56,7 @@ Notes:
 
 ### 2) `native_addon` rule (`bazel/defs.bzl`)
 
-`native_addon` wraps `//crates/pi-natives:pi_natives` (a `rust_shared_library`) in a configuration transition that pins, per target:
+`native_addon` wraps `//crates/tau-natives:pi_natives` (a `rust_shared_library`) in a configuration transition that pins, per target:
 
 - `--platforms=<the addon's platform>`
 - `--compilation_mode=opt`
@@ -65,7 +65,7 @@ Notes:
 
 This mirrors the old cargo `ci` profile. Because the profile lives **in the transition**, a bare `bazel build //:natives-<t>` is always release-grade regardless of `-c`, and every addon shares one cache entry per (platform, source) pair. The rule then symlinks the produced shared library to the loader's canonical `pi_natives.<platform>-<arch>[-<variant>].node` name, scoped under the rule name (`bazel-bin/natives-<t>/…`) so gnu/musl outputs with identical basenames cannot collide at the package level.
 
-Per-target codegen that is not part of the transition lives in `crates/pi-natives/BUILD.bazel` `rustc_flags` selects: `-Ctarget-cpu=x86-64-v2` (baseline) / `x86-64-v3` (modern) via `//bazel/variants`, the napi link args (`-Wl,-undefined,dynamic_lookup` on macOS, `-Wl,-z,nodelete` on linux — `build.rs`/`napi_build::setup()` is deliberately not wired in), `-Ctarget-feature=-crt-static` for musl, and `-Ctarget-feature=+crt-static` for win32-x64 msvc (paired with the `static_link_msvcrt` cc feature enabled in the `native_addon` transition so the C deps compile `/MT` in lock-step — the shipped `.node` then imports no `VCRUNTIME140.dll` from the VC++ Redistributable). The Cargo host path applies the same `+crt-static` policy to Windows ARM64 in `build-bindings.ts`.
+Per-target codegen that is not part of the transition lives in `crates/tau-natives/BUILD.bazel` `rustc_flags` selects: `-Ctarget-cpu=x86-64-v2` (baseline) / `x86-64-v3` (modern) via `//bazel/variants`, the napi link args (`-Wl,-undefined,dynamic_lookup` on macOS, `-Wl,-z,nodelete` on linux — `build.rs`/`napi_build::setup()` is deliberately not wired in), `-Ctarget-feature=-crt-static` for musl, and `-Ctarget-feature=+crt-static` for win32-x64 msvc (paired with the `static_link_msvcrt` cc feature enabled in the `native_addon` transition so the C deps compile `/MT` in lock-step — the shipped `.node` then imports no `VCRUNTIME140.dll` from the VC++ Redistributable). The Cargo host path applies the same `+crt-static` policy to Windows ARM64 in `build-bindings.ts`.
 
 ### 3) Platforms and toolchains
 
@@ -93,7 +93,7 @@ The root module intentionally omits `crate_universe`'s optional rendering lock. 
 # Addon for the current host (x64 hosts pick modern vs baseline via AVX2
 # detection), installed into packages/natives/native/. The host target builds
 # through the local cargo/napi-rs backend by default; set
-# OMP_NATIVE_BUILD_BACKEND=bazel (or pass bazel args after `--`) for bazel:
+# TAU_NATIVE_BUILD_BACKEND=bazel (or pass bazel args after `--`) for bazel:
 bun --cwd=packages/natives run build          # = bun ../../scripts/bazel-natives.ts host --dest native
 # same, from the repo root:
 bun run build:native
@@ -109,7 +109,7 @@ bazelisk build //:natives-darwin-arm64
 bazelisk build //:natives-linux-all
 ```
 
-The driver builds `host` through the local cargo/napi-rs path (`packages/natives/scripts/build-bindings.ts`) unless bazel is requested via `OMP_NATIVE_BUILD_BACKEND=bazel` or extra bazel args. For explicit targets it runs one `bazel build` for all requested targets, locates outputs via `bazel cquery --output=files` (falling back to the `bazel-bin/natives-<t>/<canonical>.node` path convention), and copies them dereferenced into `--dest` (default `packages/natives/native`). Extra args after `--` go to bazel verbatim. It resolves `bazelisk` (or `bazel`) from `PATH` and honors an `OMP_BAZEL_RC` env var as a `--bazelrc=` startup option (that's how CI injects cache wiring).
+The driver builds `host` through the local cargo/napi-rs path (`packages/natives/scripts/build-bindings.ts`) unless bazel is requested via `TAU_NATIVE_BUILD_BACKEND=bazel` or extra bazel args. For explicit targets it runs one `bazel build` for all requested targets, locates outputs via `bazel cquery --output=files` (falling back to the `bazel-bin/natives-<t>/<canonical>.node` path convention), and copies them dereferenced into `--dest` (default `packages/natives/native`). Extra args after `--` go to bazel verbatim. It resolves `bazelisk` (or `bazel`) from `PATH` and honors an `TAU_BAZEL_RC` env var as a `--bazelrc=` startup option (that's how CI injects cache wiring).
 
 Building `linux-all` into one dest would clobber gnu addons with musl ones (shared basenames) — the driver refuses; use separate invocations with separate `--dest` dirs.
 
@@ -121,7 +121,7 @@ Building `linux-all` into one dest would clobber gnu addons with musl ones (shar
 bun --cwd=packages/natives run build:bindings   # = bun scripts/build-bindings.ts
 ```
 
-This runs the napi CLI (host-only, local cargo profile) against `crates/pi-natives`, installs the regenerated `index.d.ts`, normalizes the addon filename, and re-renders the explicit ESM exports + runtime enum objects via `gen-enums.ts`. Commit the resulting `index.js`/`index.d.ts` changes.
+This runs the napi CLI (host-only, local cargo profile) against `crates/tau-natives`, installs the regenerated `index.d.ts`, normalizes the addon filename, and re-renders the explicit ESM exports + runtime enum objects via `gen-enums.ts`. Commit the resulting `index.js`/`index.d.ts` changes.
 
 ### Opt-in remote cache (`.bazelrc.user`)
 
@@ -142,17 +142,17 @@ build --tls_certificate=infra/bazel-remote/ca.crt
 
 `.github/workflows/ci.yml` separates `rust_validate` from `native_addons`; TypeScript jobs depend only on `native_addons`.
 
-**Pull requests never build or validate Rust.** Native-affecting PRs are rare enough that they don't warrant a PR-side bazel build: `rust_validate` is skipped entirely (`if: github.event_name != 'pull_request'`), and `native_addons` fetches the latest release's Linux x64 addon pair from the `@oh-my-pi/pi-natives-linux-x64` npm leaf, smoke-loads both, and uploads them as the `natives-linux-x64` workflow artifact. The loader skips its version sentinel for workspace loads, so release-versioned addons load fine under a newer checkout; a symbol added after that release is a throwing stub that names the addon and the rebuild command, rather than `undefined`. A PR whose TypeScript tests depend on changed native behavior fails visibly (and CI emits a notice on any native-touching PR); the Rust side is validated post-merge on main and again at release.
+**Pull requests never build or validate Rust.** Native-affecting PRs are rare enough that they don't warrant a PR-side bazel build: `rust_validate` is skipped entirely (`if: github.event_name != 'pull_request'`), and `native_addons` fetches the latest release's Linux x64 addon pair from the `@tau/tau-natives-linux-x64` npm leaf, smoke-loads both, and uploads them as the `natives-linux-x64` workflow artifact. The loader skips its version sentinel for workspace loads, so release-versioned addons load fine under a newer checkout; a symbol added after that release is a throwing stub that names the addon and the rebuild command, rather than `undefined`. A PR whose TypeScript tests depend on changed native behavior fails visibly (and CI emits a notice on any native-touching PR); the Rust side is validated post-merge on main and again at release.
 
-On non-PR events both jobs run on `omp-kata` pods against the cluster remote cache. `rust_validate` runs:
+On non-PR events both jobs run on `tau-kata` pods against the cluster remote cache. `rust_validate` runs:
 
 ```bash
 bazelisk --bazelrc="$rc" test //crates/...                 # full Rust suite
 # clippy scope mirrors `cargo clippy --workspace` (libraries only), split by
 # lint policy via a query kind filter:
-bazelisk query "kind('rust_library|rust_shared_library', //crates/pi-ast/... + //crates/pi-iso/... + //crates/pi-natives/... + //crates/pi-shell/... + //crates/pi-voice/... + //crates/pi-walker/...)" \
+bazelisk query "kind('rust_library|rust_shared_library', //crates/tau-ast/... + //crates/tau-iso/... + //crates/tau-natives/... + //crates/tau-shell/... + //crates/tau-voice/... + //crates/tau-walker/...)" \
   | xargs bazelisk --bazelrc="$rc" build --config=clippy-strict --
-bazelisk query "kind('rust_library|rust_shared_library', //crates/... - (…strict set…) - //crates/vendor/brush-core/... - //crates/pi-builtins/...)" \
+bazelisk query "kind('rust_library|rust_shared_library', //crates/... - (…strict set…) - //crates/vendor/brush-core/... - //crates/tau-builtins/...)" \
   | xargs bazelisk --bazelrc="$rc" build --config=clippy --
 bazelisk --bazelrc="$rc" build --config=rustfmt //crates/...
 ```
@@ -170,22 +170,22 @@ Bazel native jobs need no toolchain setup: bazelisk is on the GitHub images and 
 
 ### `bazel-cache` action (`.github/actions/bazel-cache`)
 
-Single source of truth for cache wiring, emitted as a bazelrc fragment (its `rc` output) that consumers pass via `bazelisk --bazelrc=...` or `OMP_BAZEL_RC`. Two modes are selected via `BAZEL_REMOTE_USER`/`BAZEL_REMOTE_PASSWORD`:
+Single source of truth for cache wiring, emitted as a bazelrc fragment (its `rc` output) that consumers pass via `bazelisk --bazelrc=...` or `TAU_BAZEL_RC`. Two modes are selected via `BAZEL_REMOTE_USER`/`BAZEL_REMOTE_PASSWORD`:
 
 | Runner        | Fragment contents                                                                                                                                                                                            |
 | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| omp-kata pod  | A temporary output root, `--config=ci`, the PVC-backed repository/xwin caches, `--config=cache-rw`, the in-cluster TLS remote-cache endpoint and masked Basic-auth header, plus `--remote_download_toplevel` |
-| GitHub-hosted | `--config=ci`, `--disk_cache=$HOME/.cache/omp-bazel-disk`, and `--repository_cache=$HOME/.cache/omp-bazel-repo`                                                                                              |
+| tau-kata pod  | A temporary output root, `--config=ci`, the PVC-backed repository/xwin caches, `--config=cache-rw`, the in-cluster TLS remote-cache endpoint and masked Basic-auth header, plus `--remote_download_toplevel` |
+| GitHub-hosted | `--config=ci`, `--disk_cache=$HOME/.cache/tau-bazel-disk`, and `--repository_cache=$HOME/.cache/tau-bazel-repo`                                                                                              |
 
 Hosted disk caches use `bazel-disk-v3-<scope>-<os>-<arch>-<config-hash>-<source-hash>`. The config hash covers Cargo/Bazel/toolchain settings; the source hash covers `crates/**` and root `BUILD.bazel`. Restores fall back from the exact key to the config-scoped prefix, then to a bare `<scope>-<os>-<arch>` prefix — the bare fallback is what keeps release version bumps (which rewrite `Cargo.toml`/`Cargo.lock` and thus the config hash) from rebuilding cold; bazel's content-addressed action keys make a stale archive a partial hit, never a wrong output. An inexact restore permits one refreshed exact-key save, and only on `main`: cache entries are scoped to the saving ref, so a tag- or branch-scoped archive is unreadable by later releases yet still counts against the 10 GB quota (a tag-dispatched v18.2.10 release saved a 5 GB darwin archive and evicted main's). The bun store saves follow the same main-only rule. Before a hosted build, disk-cache files untouched for 14 days are pruned; repository-cache contents are deliberately not age-pruned because extracted files retain upstream mtimes. The remote endpoint resolves only inside the cluster.
 
 ### Native artifact actions
 
-`.github/actions/bazel-natives` is the direct builder: `bazel-cache` → `OMP_BAZEL_RC=<rc> bun scripts/bazel-natives.ts <targets> --dest <dest>`, followed by a disk-cache save after a hosted miss. `.github/actions/native-artifacts` is the no-build consumer: download `natives-linux-x64` (plus `native-addons` for any other target) → run the same driver with `--source`.
+`.github/actions/bazel-natives` is the direct builder: `bazel-cache` → `TAU_BAZEL_RC=<rc> bun scripts/bazel-natives.ts <targets> --dest <dest>`, followed by a disk-cache save after a hosted miss. `.github/actions/native-artifacts` is the no-build consumer: download `natives-linux-x64` (plus `native-addons` for any other target) → run the same driver with `--source`.
 
 ### Release binary builds and publishing
 
-Binary builds are build-only and run in parallel with the test fan-out. `release_binary` (Linux plus cross-built win32-x64) needs only `native_addons`, whose workflow artifact supplies its addons. `release_binary_hosted` needs only `release_metadata` and starts when a release is detected: each Darwin leg builds through `bazel-natives` with scope `release-<target_id>` (seeded near HEAD by the warm workflow), while the `windows-11-arm` leg builds its native addon through Cargo/N-API. Every leg then runs `bun run ci:release:build-binaries` and smoke-tests the executable on its target architecture. Publishing is held behind `release_gate`: `release_native_leaves` downloads all built addons and publishes the six `@oh-my-pi/pi-natives-<tag>` leaves from one Linux runner, and the GitHub release / verify / core npm chain runs beside it.
+Binary builds are build-only and run in parallel with the test fan-out. `release_binary` (Linux plus cross-built win32-x64) needs only `native_addons`, whose workflow artifact supplies its addons. `release_binary_hosted` needs only `release_metadata` and starts when a release is detected: each Darwin leg builds through `bazel-natives` with scope `release-<target_id>` (seeded near HEAD by the warm workflow), while the `windows-11-arm` leg builds its native addon through Cargo/N-API. Every leg then runs `bun run ci:release:build-binaries` and smoke-tests the executable on its target architecture. Publishing is held behind `release_gate`: `release_native_leaves` downloads all built addons and publishes the six `@tau/tau-natives-<tag>` leaves from one Linux runner, and the GitHub release / verify / core npm chain runs beside it.
 
 ## Debugging playbook
 
@@ -197,7 +197,7 @@ bazelisk cquery --output=files //:natives-linux-x64-baseline
 
 # What actions/flags a target produces (add the same --config flags as the build):
 bazelisk aquery 'outputs(".*\.node", deps(//:natives-linux-arm64))'
-bazelisk aquery 'mnemonic("Rustc", deps(//crates/pi-natives:pi_natives))'
+bazelisk aquery 'mnemonic("Rustc", deps(//crates/tau-natives:pi_natives))'
 
 # Which toolchain resolved (e.g. confirm @msvc_cc, not host cc, for win32):
 bazelisk cquery 'deps(//:natives-win32-x64-baseline)' | grep msvc_cc
@@ -215,7 +215,7 @@ bazelisk build --nobuild //:natives-win32-x64-baseline
 
 | Symptom                                                                                        | Cause                                                                                                | Fix (in tree)                                                                                                                                                                  |
 | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| musl build "succeeds" but emits no `.node`                                                     | musl defaults to `+crt-static`; rustc silently emits no cdylib                                       | `-Ctarget-feature=-crt-static` select in `crates/pi-natives/BUILD.bazel`                                                                                                       |
+| musl build "succeeds" but emits no `.node`                                                     | musl defaults to `+crt-static`; rustc silently emits no cdylib                                       | `-Ctarget-feature=-crt-static` select in `crates/tau-natives/BUILD.bazel`                                                                                                       |
 | Opus objects pull the host UBSan runtime                                                       | zig cc enables UBSan by default                                                                      | `CFLAGS=-fno-sanitize=undefined` in the `opusic-sys` annotation (`MODULE.bazel`)                                                                                              |
 | `tree-sitter-just` scanner.c `#error` under opt                                                | scanner hard-errors when `NDEBUG` is set (opt-mode cc default)                                       | `CFLAGS=-UNDEBUG` annotation (cc-rs appends env CFLAGS last, so `-U` wins)                                                                                                     |
 | rstest macro: "Cargo.toml not found" in a vendored test                                        | rstest verifies `Cargo.toml` exists in the manifest dir                                              | `compile_data = ["Cargo.toml"]` on the `rust_test` (see `crates/vendor/uu-tail/BUILD.bazel`)                                                                                   |
@@ -228,7 +228,7 @@ bazelisk build --nobuild //:natives-win32-x64-baseline
 
 ### Cache behavior
 
-- **omp-kata:** read-write gRPC to the in-cluster bazel-remote (`grpcs://bazel-remote.bazel-cache.svc.cluster.local:9092`, TLS via the committed `infra/bazel-remote/ca.crt`, htpasswd user `ci`). `--remote_local_fallback` plus retries make an outage degrade to local execution rather than fail the build.
+- **tau-kata:** read-write gRPC to the in-cluster bazel-remote (`grpcs://bazel-remote.bazel-cache.svc.cluster.local:9092`, TLS via the committed `infra/bazel-remote/ca.crt`, htpasswd user `ci`). `--remote_local_fallback` plus retries make an outage degrade to local execution rather than fail the build.
 - **GitHub-hosted:** no cluster access; only the darwin release/warm jobs build with bazel here. The v3 `actions/cache` disk key separates config and source generations with prefix + bare fallbacks (see the `bazel-cache` action section above); `.github/workflows/bazel-cache-warm.yml` publishes the `release-darwin-*` archives from the same macOS images as the release consumers.
 - **msvc repos:** the ~2 GiB LLVM download is sha256-pinned and repository-cache backed; the ~1 GiB xwin CRT/SDK splat is fetched from the Microsoft CDN inside the repo rule and is **not** repo-cache backed — a cold output base re-downloads it. Microsoft advances the VS channel payload over time, so remote-cache hit rates for win32 actions degrade gracefully after an MS bump (same property the previous cross toolchain had). Win32 link actions also don't share cache entries across host OSes (linux vs mac clang binaries).
 - Server-side operations (deploy, TLS/auth, egress, poisoning boundary): `infra/docs/04-arc-and-caching.md` §5.
@@ -282,7 +282,7 @@ Runtime x64 candidate order also includes the unsuffixed default filename after 
 Typical local loop:
 
 1. Build addon: `bun --cwd=packages/natives run build`.
-2. Loader resolves platform npm leaf-package candidates (`@oh-my-pi/pi-natives-<platform>-<arch>`, when resolvable), then package-local `native/` and executable-dir fallback candidates.
+2. Loader resolves platform npm leaf-package candidates (`@tau/tau-natives-<platform>-<arch>`, when resolvable), then package-local `native/` and executable-dir fallback candidates.
 3. Generated declarations in `native/index.d.ts` describe the public TS API (regenerate with `build:bindings` only when the Rust API surface changes).
 4. On Windows package installs, the loader first copies a `node_modules` addon into the versioned cache so a running process does not lock the file Bun must replace during a later global update.
 5. After a successful load, older semver-shaped version cache directories are removed best-effort; cleanup failures never abort startup.
@@ -296,7 +296,7 @@ In compiled mode (`PI_COMPILED`, Bun embedded URL markers, or populated embedded
 3. Runtime candidate order includes:
    - extracted versioned cache path, if available,
    - versioned cache dir,
-   - legacy compiled-binary dir (`%LOCALAPPDATA%/omp` on Windows, `~/.local/bin` elsewhere),
+   - legacy compiled-binary dir (`%LOCALAPPDATA%/tau` on Windows, `~/.local/bin` elsewhere),
    - package/executable directories.
 4. First successfully loaded addon with the expected version sentinel is returned.
 
@@ -308,7 +308,7 @@ Generated declarations currently include exports from these Rust modules:
 
 | Area                   | Representative JS exports                                                                                                               | Rust source                                                                  |
 | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| Search/workspace       | `grep`, `search`, `hasMatch`, `fuzzyFind`, `glob`, `listWorkspace`, `invalidateFsScanCache`                                             | `grep.rs`, `fd.rs`, `glob.rs`, `workspace.rs`, `iofs.rs` (cache in `pi-walker`) |
+| Search/workspace       | `grep`, `search`, `hasMatch`, `fuzzyFind`, `glob`, `listWorkspace`, `invalidateFsScanCache`                                             | `grep.rs`, `fd.rs`, `glob.rs`, `workspace.rs`, `iofs.rs` (cache in `tau-walker`) |
 | AST/block/summary      | `astGrep`, `astEdit`, `blockRangeAt`, `summarizeCode`                                                                                   | `ast.rs`, `block.rs`, `summary.rs`                                           |
 | Text/highlight/tokens  | `visibleWidth`, `truncateToWidth`, `highlightCode`, `countTokens`                                                                       | `text.rs`, `highlight.rs`, `tokens.rs`                                       |
 | Shell/PTY/process/keys | `executeShell`, `Shell`, `PtySession`, `Process`, `parseKey`                                                                            | `shell.rs`, `pty.rs`, `ps.rs`, `keys.rs`                                     |
@@ -365,9 +365,9 @@ bun run gen:native
 bun run gen:native:reset
 ```
 
-## Orchestrator-side content-addressed build cache (robomp)
+## Orchestrator-side content-addressed build cache (robtau)
 
-When `pi-natives` is built inside the robomp orchestrator (`python/robomp/`), workspaces share built artifacts through a content-addressed cache instead of rebuilding from scratch in every per-issue worktree. The cache is **orchestrator-side only** — `bun --cwd=packages/natives run build` itself is unchanged; the cache lives outside the build pipeline and is populated/captured around `ensure_workspace` and post-task success in `python/robomp/src/natives_cache.py`.
+When `tau-natives` is built inside the robtau orchestrator (`python/robtau/`), workspaces share built artifacts through a content-addressed cache instead of rebuilding from scratch in every per-issue worktree. The cache is **orchestrator-side only** — `bun --cwd=packages/natives run build` itself is unchanged; the cache lives outside the build pipeline and is populated/captured around `ensure_workspace` and post-task success in `python/robtau/src/natives_cache.py`.
 
 ### What is cached
 
@@ -385,7 +385,7 @@ An entry is only considered a hit when the `.node` glob matches AND every compan
 
 The key is `sha256` over `(path \t git-tree-hash \n)` pairs for the following inputs, in this order (order is significant), followed by the target triple:
 
-1. `crates` (whole subtree — pi-natives transitively depends on other workspace crates)
+1. `crates` (whole subtree — tau-natives transitively depends on other workspace crates)
 2. `Cargo.lock`
 3. `Cargo.toml`
 4. `rust-toolchain.toml`
@@ -397,7 +397,7 @@ Anything outside this input set (Bazel definition files such as `MODULE.bazel`/`
 
 ### Layout and ownership
 
-- Root: `/data/cache/pi-natives` (provisioned by `entrypoint.sh` alongside the cargo caches, owned `root:omp`, mode `02770` setgid so cached files inherit `gid=omp` and stay readable by every slot user).
+- Root: `/data/cache/tau-natives` (provisioned by `entrypoint.sh` alongside the cargo caches, owned `root:tau`, mode `02770` setgid so cached files inherit `gid=tau` and stay readable by every slot user).
 - Per-repo subdirectory: `<root>/<repo-slug>/` where the slug is `owner__repo` (mirrors `SandboxManager.pool_path`).
 - Per-entry directory: `<root>/<repo-slug>/<sha256-key>/` containing the cached files plus `manifest.json`.
 - Per-repo lockfile: `<root>/<repo-slug>/.lock` (advisory `fcntl.flock`, exclusive on capture and GC).
@@ -406,7 +406,7 @@ Anything outside this input set (Bazel definition files such as `MODULE.bazel`/`
 ### Populate and capture semantics
 
 - **Populate** (workspace ← cache) runs inside `ensure_workspace`. On a key hit the `.node` is **hardlinked** into the workspace (zero-copy, shared inode); the companion `index.d.ts` / `index.js` / `embedded-addon.js` are **copied** (independent inodes) because the bindings regeneration flow (`build-bindings.ts`'s `installGeneratedBindings` and `gen-enums.ts`) rewrites those files via `open(..., 'w')` — an in-place truncate that would otherwise propagate through a hardlink and corrupt the cache. Cross-device hardlink failures (`EXDEV`) fall back to copy.
-- **Capture** (cache ← workspace) runs from the post-task success path when the build produced a complete artifact set. Capture uses **copy**, not hardlink: hardlinking a slot-owned workspace file would preserve slot UID ownership on the cached inode and defeat the shared-group model. Copying creates a fresh root-owned, `gid=omp` inode via the setgid cache root. Capture is idempotent under the per-repo flock: a concurrent capture for the same key returns the existing entry.
+- **Capture** (cache ← workspace) runs from the post-task success path when the build produced a complete artifact set. Capture uses **copy**, not hardlink: hardlinking a slot-owned workspace file would preserve slot UID ownership on the cached inode and defeat the shared-group model. Copying creates a fresh root-owned, `gid=tau` inode via the setgid cache root. Capture is idempotent under the per-repo flock: a concurrent capture for the same key returns the existing entry.
 
 ### Garbage collection
 
@@ -417,21 +417,21 @@ A periodic GC loop runs in `WorkerPool` with two caps per repo. When either cap 
 
 Workspaces that hardlinked a `.node` before GC retain access via the kernel inode refcount — `rmtree` of the cache entry does not delete the file from the workspace.
 
-### Configuration (settings on `robomp.config.Settings`)
+### Configuration (settings on `robtau.config.Settings`)
 
 | Env var                                     | Default                  | Effect                                                                                              |
 | ------------------------------------------- | ------------------------ | --------------------------------------------------------------------------------------------------- |
-| `ROBOMP_NATIVES_CACHE_ENABLED`              | `true`                   | Master switch. When false the populate/capture hooks no-op and every workspace builds from scratch. |
-| `ROBOMP_NATIVES_CACHE_ROOT`                 | `/data/cache/pi-natives` | Cache root directory. Must be `root:omp 02770` for cross-slot reads.                                |
-| `ROBOMP_NATIVES_CACHE_MAX_ENTRIES_PER_REPO` | `8`                      | LRU entry-count cap, per repo slug.                                                                 |
-| `ROBOMP_NATIVES_CACHE_MAX_BYTES`            | `4294967296` (4 GiB)     | LRU byte cap, per repo slug.                                                                        |
-| `ROBOMP_NATIVES_CACHE_GC_INTERVAL_SECONDS`  | `3600`                   | Period of the background GC loop in `WorkerPool`.                                                   |
+| `ROBTAU_NATIVES_CACHE_ENABLED`              | `true`                   | Master switch. When false the populate/capture hooks no-op and every workspace builds from scratch. |
+| `ROBTAU_NATIVES_CACHE_ROOT`                 | `/data/cache/tau-natives` | Cache root directory. Must be `root:tau 02770` for cross-slot reads.                                |
+| `ROBTAU_NATIVES_CACHE_MAX_ENTRIES_PER_REPO` | `8`                      | LRU entry-count cap, per repo slug.                                                                 |
+| `ROBTAU_NATIVES_CACHE_MAX_BYTES`            | `4294967296` (4 GiB)     | LRU byte cap, per repo slug.                                                                        |
+| `ROBTAU_NATIVES_CACHE_GC_INTERVAL_SECONDS`  | `3600`                   | Period of the background GC loop in `WorkerPool`.                                                   |
 
 ### Manual invalidation
 
-- One key: `rm -rf /data/cache/pi-natives/<repo-slug>/<sha256>`.
-- One repo: `rm -rf /data/cache/pi-natives/<repo-slug>`.
-- Everything: `rm -rf /data/cache/pi-natives/*` (preserve the root so its setgid mode survives).
-- Stuck lock: `rm /data/cache/pi-natives/<repo-slug>/.lock` (only when no orchestrator process is touching the repo).
+- One key: `rm -rf /data/cache/tau-natives/<repo-slug>/<sha256>`.
+- One repo: `rm -rf /data/cache/tau-natives/<repo-slug>`.
+- Everything: `rm -rf /data/cache/tau-natives/*` (preserve the root so its setgid mode survives).
+- Stuck lock: `rm /data/cache/tau-natives/<repo-slug>/.lock` (only when no orchestrator process is touching the repo).
 
 For a fixed target suffix, a committed `HEAD` change under `crates/`, `Cargo.lock`, `Cargo.toml`, `rust-toolchain.toml`, or `packages/natives/` produces an automatic miss. Changing platform/architecture, or `TARGET_VARIANT` on x64, also selects a different key. Merely editing an uncommitted worktree changes neither the `HEAD` hashes nor the key.

@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, test } from "bun:test";
-import { type EditRenderContext, editToolRenderer, type PerFileDiffPreview } from "@oh-my-pi/pi-tui/tools/edit";
-import * as themeModule from "@oh-my-pi/pi-tui/theme";
+import { type EditRenderContext, editToolRenderer, type PerFileDiffPreview } from "@tau/tau-tui/tools/edit";
+import * as themeModule from "@tau/tau-tui/theme";
 
 let uiTheme: themeModule.Theme;
 

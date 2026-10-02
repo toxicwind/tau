@@ -9,7 +9,7 @@ import { embeddedAddon } from "./embedded-addon.js";
 import { containsVersionSentinel, versionSentinelFor } from "./version-sentinel.js";
 
 /**
- * Native addon loader for `@oh-my-pi/pi-natives`.
+ * Native addon loader for `@tau/tau-natives`.
  *
  * Owns every step between "Node imports `native/index.js`" and "the right
  * `pi_natives.<platform>-<arch>*.node` is required, validated, and returned":
@@ -43,7 +43,7 @@ const SUPPORTED_PLATFORMS = [
 
 /**
  * Streaming startup marker, enabled by `PI_DEBUG_STARTUP`. Local copy of the
- * pi-utils helper (this loader cannot depend on pi-utils). Synchronous on
+ * tau-utils helper (this loader cannot depend on tau-utils). Synchronous on
  * purpose: extraction/dlopen hangs must still leave the `:start` marker.
  * @param {string} text
  */
@@ -58,16 +58,16 @@ function startupMarker(text) {
 
 function getNativesDir() {
 	const xdgDataHome = process.env.XDG_DATA_HOME;
-	if (xdgDataHome && fs.existsSync(path.join(xdgDataHome, "omp"))) {
-		return path.join(xdgDataHome, "omp", "natives");
+	if (xdgDataHome && fs.existsSync(path.join(xdgDataHome, "tau"))) {
+		return path.join(xdgDataHome, "tau", "natives");
 	}
-	return path.join(os.homedir(), ".omp", "natives");
+	return path.join(os.homedir(), ".tau", "natives");
 }
 
 function resolveLeafPackageDir(platformTag) {
 	try {
 		const require_ = createRequire(import.meta.url);
-		return path.dirname(require_.resolve(`@oh-my-pi/pi-natives-${platformTag}/package.json`));
+		return path.dirname(require_.resolve(`@tau/tau-natives-${platformTag}/package.json`));
 	} catch {
 		return null;
 	}
@@ -112,14 +112,14 @@ export function getAddonFilenames({ tag, arch, variant }) {
 
 /**
  * Decide whether the loader should mirror the package's `native/<filename>.node`
- * into the per-version cache directory (`~/.omp/natives/<version>/`) before loading.
+ * into the per-version cache directory (`~/.tau/natives/<version>/`) before loading.
  *
- * Windows-only safety net for `bun install -g` updates: when a previous `omp`
+ * Windows-only safety net for `bun install -g` updates: when a previous `tau`
  * process is running, bun cannot overwrite the locked `.node` inside
- * `node_modules/@oh-my-pi/pi-natives/native/`, leaving an old binary next to a
+ * `node_modules/@tau/tau-natives/native/`, leaving an old binary next to a
  * newer `index.js` and producing `<sym> is not a function` crashes on the next
  * launch. Staging into the version-pinned cache:
- *   1. Gives every package version its own filesystem path, so concurrent omp
+ *   1. Gives every package version its own filesystem path, so concurrent tau
  *      processes never collide on the same file.
  *   2. Makes the running process keep its handle on the cache copy, freeing bun
  *      to overwrite the `node_modules` copy on subsequent updates.
@@ -203,7 +203,7 @@ function isOlderReleaseVersion(candidate, current) {
 	return false;
 }
 
-// A concurrently starting older OMP binary creates or refreshes this directory
+// A concurrently starting older TAU binary creates or refreshes this directory
 // before extracting its addon. Keep fresh directories long enough for that
 // startup to finish; a later launch can reclaim them once they are genuinely
 // stale.
@@ -728,16 +728,16 @@ export function validateLoadedBindings(ctx, bindings, candidate) {
 	if (residentSentinel && diskHasExpectedSentinel) {
 		const residentVersion = sentinelVersion(residentSentinel);
 		throw new Error(
-			`Loaded ${candidate}, which exposes the @oh-my-pi/pi-natives@${residentVersion} version ` +
+			`Loaded ${candidate}, which exposes the @tau/tau-natives@${residentVersion} version ` +
 				`sentinel \`${residentSentinel}\` but not the @${ctx.packageVersion} sentinel ` +
-				`\`${ctx.versionSentinelExport}\` this loader expects. omp was upgraded to ` +
+				`\`${ctx.versionSentinelExport}\` this loader expects. tau was upgraded to ` +
 				`${ctx.packageVersion} while this session was running; the ${residentVersion} addon is ` +
-				"still resident in this process. Disk is already consistent — restart omp to pick up " +
+				"still resident in this process. Disk is already consistent — restart tau to pick up " +
 				`${ctx.packageVersion} (reinstalling changes nothing).`,
 		);
 	}
 	throw new Error(
-		`Loaded ${candidate} but it does not expose the @oh-my-pi/pi-natives@${ctx.packageVersion} ` +
+		`Loaded ${candidate} but it does not expose the @tau/tau-natives@${ctx.packageVersion} ` +
 			`version sentinel \`${ctx.versionSentinelExport}\`. The .node file on disk is from a different ` +
 			"release than this loader — reinstall to re-sync.",
 	);
@@ -769,7 +769,7 @@ function describeLoadedAddon(bindings, candidate, ctx) {
 }
 
 /**
- * The addon behind this process's `@oh-my-pi/pi-natives` exports.
+ * The addon behind this process's `@tau/tau-natives` exports.
  * @returns {{ path: string; sentinel: string | null; expectedSentinel: string; packageVersion: string; stale: boolean } | null}
  */
 export function nativeAddonStatus() {
@@ -811,15 +811,15 @@ export function missingNativeExport(symbolName, addon = loadedAddon) {
  */
 export function missingNativeExportMessage(symbolName, addon = loadedAddon) {
 	const rebuild = "rebuild it with `bun run build:native`";
-	if (!addon) return `@oh-my-pi/pi-natives does not export \`${symbolName}\`; ${rebuild}.`;
+	if (!addon) return `@tau/tau-natives does not export \`${symbolName}\`; ${rebuild}.`;
 	if (!addon.stale) {
-		return `@oh-my-pi/pi-natives export \`${symbolName}\` is missing from ${addon.path}; ${rebuild}.`;
+		return `@tau/tau-natives export \`${symbolName}\` is missing from ${addon.path}; ${rebuild}.`;
 	}
 	const loaded = addon.sentinel
-		? `the @oh-my-pi/pi-natives@${sentinelVersion(addon.sentinel)} addon`
+		? `the @tau/tau-natives@${sentinelVersion(addon.sentinel)} addon`
 		: "an addon built before version sentinels existed";
 	return (
-		`@oh-my-pi/pi-natives export \`${symbolName}\` is missing: ${addon.path} is ${loaded}, not ` +
+		`@tau/tau-natives export \`${symbolName}\` is missing: ${addon.path} is ${loaded}, not ` +
 		`@${addon.packageVersion} (\`${addon.expectedSentinel}\`) — ${rebuild}.`
 	);
 }
@@ -849,7 +849,7 @@ function buildHelpMessage(ctx) {
 		const expectedPaths = ctx.addonFilenames.map(filename => `  ${path.join(ctx.versionedDir, filename)}`).join("\n");
 		const downloadHints = ctx.addonFilenames
 			.map(filename => {
-				const downloadUrl = `https://github.com/can1357/oh-my-pi/releases/latest/download/${filename}`;
+				const downloadUrl = `https://github.com/toxicwind/tau/releases/latest/download/${filename}`;
 				const targetPath = path.join(ctx.versionedDir, filename);
 				return `  curl -fsSL "${downloadUrl}" -o "${targetPath}"`;
 			})
@@ -860,7 +860,7 @@ function buildHelpMessage(ctx) {
 		);
 	}
 	return (
-		"If installed via npm/bun, try reinstalling: bun install @oh-my-pi/pi-natives\n" +
+		"If installed via npm/bun, try reinstalling: bun install @tau/tau-natives\n" +
 		"If developing locally, build with: bun --cwd=packages/natives run build\n" +
 		"Explicit targets: bun scripts/bazel-natives.ts <target> --dest packages/natives/native"
 	);
@@ -885,7 +885,7 @@ export function initLoaderContext(overrides = {}) {
 	const versionedDir = path.join(nativesDir, packageVersion);
 	const userDataDir =
 		platform === "win32"
-			? path.join(process.env.LOCALAPPDATA || path.join(os.homedir(), "AppData", "Local"), "omp")
+			? path.join(process.env.LOCALAPPDATA || path.join(os.homedir(), "AppData", "Local"), "tau")
 			: path.join(os.homedir(), ".local", "bin");
 
 	const isCompiledBinary =
@@ -929,7 +929,7 @@ export function initLoaderContext(overrides = {}) {
 
 	// Version sentinel emitted by the Rust addon under a `js_name` that encodes
 	// the package version (`__piNativesV{major}_{minor}_{patch}`).
-	// `scripts/release.ts` bumps the name in `crates/pi-natives/src/lib.rs` in
+	// `scripts/release.ts` bumps the name in `crates/tau-natives/src/lib.rs` in
 	// lock-step with the version, so a `.node` from a different release
 	// physically cannot expose the symbol this loader is looking for. That
 	// turns the silent `<sym> is not a function` crash from a Windows

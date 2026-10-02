@@ -661,22 +661,22 @@
     url = "https://registry.npmjs.org/@octokit/types/-/types-18.0.0.tgz";
     hash = "sha512-l6bAF43PNxkJp6g+W4PjoUSSkxHomXw2nOum5CTftJz1NlV3vu93NImgOYtLf6CbBUb5j+fiuzW0PPQ5JTSvZA==";
   };
-  "@oh-my-pi/browser-relay" = copyPathToStore ../packages/browser-relay;
-  "@oh-my-pi/collab-web" = copyPathToStore ../packages/collab-web;
-  "@oh-my-pi/omp-stats" = copyPathToStore ../packages/stats;
-  "@oh-my-pi/omptype" = copyPathToStore ../packages/omptype;
-  "@oh-my-pi/pi-agent-core" = copyPathToStore ../packages/agent;
-  "@oh-my-pi/pi-ai" = copyPathToStore ../packages/ai;
-  "@oh-my-pi/pi-catalog" = copyPathToStore ../packages/catalog;
-  "@oh-my-pi/pi-coding-agent" = copyPathToStore ../packages/coding-agent;
-  "@oh-my-pi/pi-metaharness" = copyPathToStore ../packages/metaharness;
-  "@oh-my-pi/pi-mnemopi" = copyPathToStore ../packages/mnemopi;
-  "@oh-my-pi/pi-natives" = copyPathToStore ../packages/natives;
-  "@oh-my-pi/pi-tui" = copyPathToStore ../packages/tui;
-  "@oh-my-pi/pi-utils" = copyPathToStore ../packages/utils;
-  "@oh-my-pi/pi-wire" = copyPathToStore ../packages/wire;
-  "@oh-my-pi/snapcompact" = copyPathToStore ../packages/snapcompact;
-  "@oh-my-pi/typescript-edit-benchmark" = copyPathToStore ../packages/typescript-edit-benchmark;
+  "@tau/browser-relay" = copyPathToStore ../packages/browser-relay;
+  "@tau/collab-web" = copyPathToStore ../packages/collab-web;
+  "@tau/tau-stats" = copyPathToStore ../packages/stats;
+  "@tau/tautype" = copyPathToStore ../packages/tautype;
+  "@tau/tau-agent-core" = copyPathToStore ../packages/agent;
+  "@tau/tau-ai" = copyPathToStore ../packages/ai;
+  "@tau/tau-catalog" = copyPathToStore ../packages/catalog;
+  "@tau/tau-coding-agent" = copyPathToStore ../packages/coding-agent;
+  "@tau/tau-metaharness" = copyPathToStore ../packages/metaharness;
+  "@tau/tau-mnemotau" = copyPathToStore ../packages/mnemotau;
+  "@tau/tau-natives" = copyPathToStore ../packages/natives;
+  "@tau/tau-tui" = copyPathToStore ../packages/tui;
+  "@tau/tau-utils" = copyPathToStore ../packages/utils;
+  "@tau/tau-wire" = copyPathToStore ../packages/wire;
+  "@tau/snapcompact" = copyPathToStore ../packages/snapcompact;
+  "@tau/typescript-edit-benchmark" = copyPathToStore ../packages/typescript-edit-benchmark;
   "@opentelemetry/api-logs@0.220.0" = fetchurl {
     url = "https://registry.npmjs.org/@opentelemetry/api-logs/-/api-logs-0.220.0.tgz";
     hash = "sha512-CmVa4ImJ+ynfrPMNaAXHET6Bhb44SwzmfyVJFq9ni2jgXJR/l7C6gfVFddNmHP+ZOkP9cf4f9DBe68qVLTHc9w==";
@@ -2037,7 +2037,7 @@
     url = "https://registry.npmjs.org/roarr/-/roarr-2.15.4.tgz";
     hash = "sha512-CHhPh+UNHD2GTXNYhPWLnU8ONHdI+5DI+4EYIAOaiD63rHeYlZvyh8P+in5999TTSFgUYuKUAjzRI4mdh/p+2A==";
   };
-  "robomp-web" = copyPathToStore ../python/robomp/web;
+  "robtau-web" = copyPathToStore ../python/robtau/web;
   "rolldown@1.2.9" = fetchurl {
     url = "https://registry.npmjs.org/rolldown/-/rolldown-1.2.9.tgz";
     hash = "sha512-hx/Pv0N1haXRb11qkfnK5MXB/iqr7i0yjWQqmO9uHqZpBgQSqzc8UsSnEpalsh+j1I8qQ2CkXAkJC8Br3dKSlg==";

@@ -1,7 +1,7 @@
-import * as native from "@oh-my-pi/pi-natives";
+import * as native from "@tau/tau-natives";
 import { TERMINAL } from "../index";
 import type { EditorInlineReplacement, EditorTextAssistProvider, EditorWordReplacements } from "../components/editor";
-import { logger } from "@oh-my-pi/pi-utils";
+import { logger } from "@tau/tau-utils";
 import { isMagicKeyword } from "./magic-keywords";
 import { maskNonProse } from "./markdown-prose";
 

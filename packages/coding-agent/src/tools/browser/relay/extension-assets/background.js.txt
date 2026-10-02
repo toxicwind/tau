@@ -28,7 +28,7 @@ function snapshot(tab) {
     groupId: tab.groupId
   };
 }
-var ompGroupTitle = null;
+var tauGroupTitle = null;
 var groupOps = Promise.resolve();
 function enqueueGroupOp(fn) {
   const result = groupOps.then(fn, fn);
@@ -36,8 +36,8 @@ function enqueueGroupOp(fn) {
   return result;
 }
 async function groupTabs(tabIds, title, color) {
-  ompGroupTitle = title;
-  chrome.storage.session.set({ ompGroupTitle: title });
+  tauGroupTitle = title;
+  chrome.storage.session.set({ tauGroupTitle: title });
   const byWindow = new Map;
   for (const tabId of tabIds) {
     try {
@@ -72,13 +72,13 @@ async function groupTabs(tabIds, title, color) {
   return { grouped };
 }
 async function restoreGroups() {
-  if (!ompGroupTitle) {
-    const stored = await chrome.storage.session.get({ ompGroupTitle: "" }).catch(() => ({ ompGroupTitle: "" }));
-    ompGroupTitle = typeof stored.ompGroupTitle === "string" && stored.ompGroupTitle ? stored.ompGroupTitle : null;
+  if (!tauGroupTitle) {
+    const stored = await chrome.storage.session.get({ tauGroupTitle: "" }).catch(() => ({ tauGroupTitle: "" }));
+    tauGroupTitle = typeof stored.tauGroupTitle === "string" && stored.tauGroupTitle ? stored.tauGroupTitle : null;
   }
-  if (!ompGroupTitle)
+  if (!tauGroupTitle)
     return;
-  const groups = await chrome.tabGroups.query({ title: ompGroupTitle }).catch(() => []);
+  const groups = await chrome.tabGroups.query({ title: tauGroupTitle }).catch(() => []);
   for (const group of groups) {
     const tabs = await chrome.tabs.query({ groupId: group.id }).catch(() => []);
     const ids = tabs.map((tab) => tab.id).filter((id) => id !== undefined);
@@ -233,9 +233,9 @@ chrome.tabs.onUpdated.addListener((_tabId, _changeInfo, tab) => {
 chrome.tabs.onRemoved.addListener((tabId) => {
   post({ t: "tabRemoved", tabId });
 });
-chrome.alarms.create("omp-relay-keepalive", { periodInMinutes: 0.5 });
+chrome.alarms.create("tau-relay-keepalive", { periodInMinutes: 0.5 });
 chrome.alarms.onAlarm.addListener((alarm) => {
-  if (alarm.name === "omp-relay-keepalive")
+  if (alarm.name === "tau-relay-keepalive")
     connect();
 });
 chrome.storage.onChanged.addListener((_changes, areaName) => {

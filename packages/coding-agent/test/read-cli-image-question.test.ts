@@ -1,16 +1,16 @@
 /**
- * `omp read <image>?q=<question>` delegates to a vision model, which requires a
+ * `tau read <image>?q=<question>` delegates to a vision model, which requires a
  * model registry to resolve modelRoles.vision / @default and fetch credentials.
  * The read CLI built a lightweight session with no registry, so the read tool
  * aborted with "Model registry is unavailable for image questions." before any
- * resolution (issue #11338). This drives the real `omp read` command in an
+ * resolution (issue #11338). This drives the real `tau read` command in an
  * isolated agent dir carrying a custom vision provider and asserts it reaches
  * the completion attempt instead of the registry guard.
  */
 import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { TempDir } from "@tau/tau-utils";
 
 // 1x1 PNG so the read tool's image loader accepts the file.
 const PNG_1X1 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==";
@@ -41,19 +41,19 @@ const MODELS_YML = `providers:
 
 const READ_CLI_URL = new URL("../src/cli/read-cli.ts", import.meta.url).href;
 
-describe("omp read <image>?q=", () => {
+describe("tau read <image>?q=", () => {
 	it("resolves a vision model instead of failing with the registry guard", async () => {
-		const tempDir = TempDir.createSync("@pi-read-cli-imgq-");
+		const tempDir = TempDir.createSync("@tau-read-cli-imgq-");
 		try {
 			const agentDir = tempDir.join("agent");
 			const home = tempDir.join("home");
 			const project = tempDir.join("project");
 			fs.mkdirSync(agentDir, { recursive: true });
 			fs.mkdirSync(home, { recursive: true });
-			fs.mkdirSync(path.join(project, ".omp"), { recursive: true });
+			fs.mkdirSync(path.join(project, ".tau"), { recursive: true });
 			// Bound the completion attempt so a dead endpoint aborts quickly instead
 			// of running the provider SDK's full connection backoff.
-			fs.writeFileSync(path.join(project, ".omp", "config.yml"), "images:\n  questionTimeoutMs: 3000\n");
+			fs.writeFileSync(path.join(project, ".tau", "config.yml"), "images:\n  questionTimeoutMs: 3000\n");
 			fs.writeFileSync(path.join(agentDir, "models.yml"), MODELS_YML);
 			const pngPath = path.join(project, "test.png");
 			fs.writeFileSync(pngPath, Buffer.from(PNG_1X1, "base64"));

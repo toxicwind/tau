@@ -1,10 +1,10 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
-import type { AuthStorage } from "@oh-my-pi/pi-ai";
-import type { OAuthLoginCallbacks, OAuthProviderId } from "@oh-my-pi/pi-ai/oauth/types";
-import { SignInTab } from "@oh-my-pi/pi-tui/setup/scenes/sign-in";
-import type { SetupSceneHost } from "@oh-my-pi/pi-tui/setup/scenes/types";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { Component } from "@oh-my-pi/pi-tui";
+import type { AuthStorage } from "@tau/tau-ai";
+import type { OAuthLoginCallbacks, OAuthProviderId } from "@tau/tau-ai/oauth/types";
+import { SignInTab } from "@tau/tau-tui/setup/scenes/sign-in";
+import type { SetupSceneHost } from "@tau/tau-tui/setup/scenes/types";
+import { initTheme } from "@tau/tau-tui/theme";
+import type { Component } from "@tau/tau-tui";
 
 beforeAll(async () => {
 	await initTheme();
@@ -16,7 +16,7 @@ afterEach(() => {
 
 describe("SignInTab", () => {
 	it("masks secret input and keeps the OSC8 login link and manual-code prompt above clipped rows", async () => {
-		const url = `https://example.com/oauth/authorize?client_id=omp&redirect_uri=http%3A%2F%2Flocalhost%3A45454%2Fcallback&state=${"a".repeat(96)}`;
+		const url = `https://example.com/oauth/authorize?client_id=tau&redirect_uri=http%3A%2F%2Flocalhost%3A45454%2Fcallback&state=${"a".repeat(96)}`;
 		const loginGate = Promise.withResolvers<void>();
 		const secretReceived = Promise.withResolvers<string>();
 		const secretValue = crypto.randomUUID();
@@ -100,7 +100,7 @@ describe("SignInTab", () => {
 	});
 
 	it("clears manual input after a native callback path settles", async () => {
-		const url = "https://example.com/oauth/authorize?client_id=omp&state=native";
+		const url = "https://example.com/oauth/authorize?client_id=tau&state=native";
 		const loginCompleted = Promise.withResolvers<void>();
 		const copySpy = vi.fn(async (_text: string): Promise<void> => {});
 		const authStorage = {
@@ -145,7 +145,7 @@ describe("SignInTab", () => {
 	});
 
 	it("copies the active login URL from the keyboard while the setup TUI owns selection", async () => {
-		const url = "https://example.com/oauth/authorize?client_id=omp&state=copy";
+		const url = "https://example.com/oauth/authorize?client_id=tau&state=copy";
 		const loginGate = Promise.withResolvers<void>();
 		const copySpy = vi.fn(async (_text: string): Promise<void> => {});
 

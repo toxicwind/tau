@@ -1,4 +1,4 @@
-import type { Model } from "@oh-my-pi/pi-catalog/types";
+import type { Model } from "@tau/tau-catalog/types";
 import { withAuth } from "../auth-retry";
 import * as AIError from "../error";
 import { errorMessage, ImageApiError, imageBaseUrl, modelHeaders, usageFromWire } from "./shared";

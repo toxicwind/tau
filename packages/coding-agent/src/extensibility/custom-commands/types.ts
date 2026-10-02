@@ -5,12 +5,12 @@
  * Unlike markdown commands which expand to prompts, custom commands can execute
  * arbitrary logic with full access to the hook context.
  */
-import type { type as ArkType } from "@oh-my-pi/omptype";
-import type * as TypeBox from "@oh-my-pi/omptype/typebox";
-import type * as zod from "@oh-my-pi/omptype/zod";
+import type { type as ArkType } from "@tau/tautype";
+import type * as TypeBox from "@tau/tautype/typebox";
+import type * as zod from "@tau/tautype/zod";
 import type { ExtensionUIContext } from "../extensions/types";
 import type { ExecOptions, ExecResult, HookCommandContext } from "../../extensibility/hooks/types";
-import type { AutocompleteItem } from "@oh-my-pi/pi-tui";
+import type { AutocompleteItem } from "@tau/tau-tui";
 import type * as PiCodingAgent from "../../index";
 
 // Re-export for custom commands to use
@@ -32,11 +32,11 @@ export interface CustomCommandAPI {
 	exec(command: string, args: string[], options?: ExecOptions): Promise<ExecResult>;
 	/** Injected TypeBox shim (legacy/compat). */
 	typebox: typeof TypeBox;
-	/** Injected omptype schema builder for custom commands. */
+	/** Injected tautype schema builder for custom commands. */
 	arktype: typeof ArkType & { type: typeof ArkType };
-	/** Injected Zod-compatible omptype builder for custom commands. */
+	/** Injected Zod-compatible tautype builder for custom commands. */
 	zod: typeof zod;
-	/** Injected pi-coding-agent exports */
+	/** Injected tau-coding-agent exports */
 	pi: typeof PiCodingAgent;
 }
 

@@ -1,7 +1,7 @@
-import type { AgentOptions, AgentTelemetryConfig, AgentTool, AgentToolContext } from "@oh-my-pi/pi-agent-core";
-import type { EditStore } from "@oh-my-pi/pi-natives";
-import type { FetchImpl, ImageContent, Model, ServiceTierByFamily, ToolChoice } from "@oh-my-pi/pi-ai";
-import { logger } from "@oh-my-pi/pi-utils";
+import type { AgentOptions, AgentTelemetryConfig, AgentTool, AgentToolContext } from "@tau/tau-agent-core";
+import type { EditStore } from "@tau/tau-natives";
+import type { FetchImpl, ImageContent, Model, ServiceTierByFamily, ToolChoice } from "@tau/tau-ai";
+import { logger } from "@tau/tau-utils";
 import type { AsyncJobManager } from "../async/job-manager";
 import type { Rule } from "../capability/rule";
 import type { EffectiveExtensionRoots } from "../capability/types";
@@ -24,7 +24,7 @@ import type { LocalProtocolOptions } from "../internal-urls";
 import type { DaemonCompletionNotification } from "../launch/protocol";
 import { LspTool } from "../lsp";
 import type { MCPManager } from "../mcp";
-import type { MnemopiSessionState } from "../mnemopi/state";
+import type { MnemotauSessionState } from "../mnemotau/state";
 import type { PlanModeState } from "../plan-mode/state";
 import type { AgentLifecycleManager } from "../registry/agent-lifecycle";
 import type { AgentRegistry } from "../registry/agent-registry";
@@ -37,7 +37,7 @@ import type { ToolChoiceQueue } from "../session/tool-choice-queue";
 import { TaskTool } from "../task";
 import type { AgentOutputManager } from "../task/output-manager";
 import { type AgentDefinition, canSpawnAtDepth } from "../task/types";
-import { type StructuredSubagentSchemaMode } from "@oh-my-pi/pi-tui/tools/task";
+import { type StructuredSubagentSchemaMode } from "@tau/tau-tui/tools/task";
 import type { WorkPoolYieldItem } from "../task/workpool-yield";
 import type { EventBus } from "../utils/event-bus";
 import { WebSearchTool } from "../web/search";
@@ -68,7 +68,7 @@ import { ReadTool } from "./read";
 import type { PlanProposalHandler } from "./resolve";
 import { SecurityScanTool } from "./security-scan";
 import { supportsExternalThinking, ThinkTool } from "./think";
-import { type TodoPhase } from "@oh-my-pi/pi-tui/tools/todo";
+import { type TodoPhase } from "@tau/tau-tui/tools/todo";
 import { TodoTool } from "./todo";
 import { WriteTool } from "./write";
 import { WaitTool } from "./wait";
@@ -78,7 +78,7 @@ import { YieldTool } from "./yield";
 export * from "../edit";
 export * from "../goals";
 export * from "../lsp";
-export * from "@oh-my-pi/pi-tui/tools/streaming-output";
+export * from "@tau/tau-tui/tools/streaming-output";
 export * from "../task";
 export * from "../web/search";
 export * from "./ask";
@@ -90,7 +90,7 @@ export type {
 	BashRenderArgs,
 	BashRenderContext,
 	ShellRendererConfig,
-} from "@oh-my-pi/pi-tui/tools/bash";
+} from "@tau/tau-tui/tools/bash";
 export * from "./browser";
 export * from "./checkpoint";
 export * from "./computer";
@@ -105,7 +105,7 @@ export * from "./gh";
 export * from "./glob";
 export * from "./grep";
 export * from "./jfind";
-export type { AgentActivitySnapshot, CoordinationDetails, JobSnapshot } from "@oh-my-pi/pi-tui/tools/wait";
+export type { AgentActivitySnapshot, CoordinationDetails, JobSnapshot } from "@tau/tau-tui/tools/wait";
 export * from "./image-gen";
 export * from "./learn";
 export * from "./manage-skill";
@@ -121,19 +121,19 @@ export type {
 	FindingPriorityInfo,
 	FindingDetails,
 	SubmitReviewDetails,
-} from "@oh-my-pi/pi-tui/tools/task";
+} from "@tau/tau-tui/tools/task";
 export * from "./security-scan";
 export * from "./think";
 export * from "./todo";
 export * from "./tts";
 export * from "./vibe";
 export * from "./wait";
-export type { VibeToolDetails } from "@oh-my-pi/pi-tui/tools/vibe";
+export type { VibeToolDetails } from "@tau/tau-tui/tools/vibe";
 export * from "./write";
 export * from "./xdev";
 export * from "./yield";
 
-/** Tool type (AgentTool from pi-ai) */
+/** Tool type (AgentTool from tau-ai) */
 export type Tool = AgentTool<any, any, any>;
 
 export type ContextFileEntry = {
@@ -247,7 +247,7 @@ export interface ToolSession {
 	 */
 	effectiveExtensionRoots?(): EffectiveExtensionRoots;
 	/**
-	 * Pre-discovered custom-tool source paths from `.omp/tools/`, `.claude/tools/`,
+	 * Pre-discovered custom-tool source paths from `.tau/tools/`, `.claude/tools/`,
 	 * plugins, etc. Forwarded to subagents so they skip the FS scan but still
 	 * re-bind tools to their own session-scoped `CustomToolAPI`.
 	 */
@@ -312,8 +312,8 @@ export interface ToolSession {
 	getSessionId?: () => string | null;
 	/** Get Hindsight runtime state for this agent session. */
 	getHindsightSessionState?: () => HindsightSessionState | undefined;
-	/** Get Mnemopi runtime state for this agent session. */
-	getMnemopiSessionState?: () => MnemopiSessionState | undefined;
+	/** Get Mnemotau runtime state for this agent session. */
+	getMnemotauSessionState?: () => MnemotauSessionState | undefined;
 	/** Agent identity used for IRC routing. Returns the registry id (e.g. "Main", "AuthLoader"). */
 	getAgentId?: () => string | null;
 	/** Look up a registered tool by name (used by the eval js backend's tool bridge). */
@@ -648,12 +648,12 @@ export async function createTools(session: ToolSession, toolNames?: string[]): P
 		) {
 			requestedTools.push("ast_edit");
 		}
-		if (["hindsight", "mnemopi"].includes(session.settings.get("memory.backend") ?? "")) {
+		if (["hindsight", "mnemotau"].includes(session.settings.get("memory.backend") ?? "")) {
 			for (const name of ["recall", "retain", "reflect"]) {
 				if (!requestedTools.includes(name)) requestedTools.push(name);
 			}
 		}
-		if (session.settings.get("memory.backend") === "mnemopi" && !requestedTools.includes("memory_edit")) {
+		if (session.settings.get("memory.backend") === "mnemotau" && !requestedTools.includes("memory_edit")) {
 			requestedTools.push("memory_edit");
 		}
 		if (externalThinkingActive && !requestedTools.includes("think")) {
@@ -668,7 +668,7 @@ export async function createTools(session: ToolSession, toolNames?: string[]): P
 		if (session.settings.get("autolearn.enabled") && (session.taskDepth ?? 0) === 0) {
 			if (!requestedTools.includes("manage_skill")) requestedTools.push("manage_skill");
 			if (
-				["hindsight", "mnemopi", "local"].includes(session.settings.get("memory.backend") ?? "") &&
+				["hindsight", "mnemotau", "local"].includes(session.settings.get("memory.backend") ?? "") &&
 				!requestedTools.includes("learn")
 			) {
 				requestedTools.push("learn");
@@ -719,9 +719,9 @@ export async function createTools(session: ToolSession, toolNames?: string[]): P
 			);
 		}
 		if (name === "retain" || name === "recall" || name === "reflect") {
-			return ["hindsight", "mnemopi"].includes(session.settings.get("memory.backend") ?? "");
+			return ["hindsight", "mnemotau"].includes(session.settings.get("memory.backend") ?? "");
 		}
-		if (name === "memory_edit") return session.settings.get("memory.backend") === "mnemopi";
+		if (name === "memory_edit") return session.settings.get("memory.backend") === "mnemotau";
 		if (name === "manage_skill")
 			return (
 				session.settings.get("autolearn.enabled") &&
@@ -731,7 +731,7 @@ export async function createTools(session: ToolSession, toolNames?: string[]): P
 			return (
 				session.settings.get("autolearn.enabled") &&
 				((session.taskDepth ?? 0) === 0 || requestedTools !== undefined) &&
-				["hindsight", "mnemopi", "local"].includes(session.settings.get("memory.backend") ?? "")
+				["hindsight", "mnemotau", "local"].includes(session.settings.get("memory.backend") ?? "")
 			);
 		}
 		if (name === "task") {
@@ -860,11 +860,11 @@ export async function createTools(session: ToolSession, toolNames?: string[]): P
 	return tools;
 }
 
-export type { AskToolDetails, QuestionResult } from "@oh-my-pi/pi-tui/tools/ask";
+export type { AskToolDetails, QuestionResult } from "@tau/tau-tui/tools/ask";
 // Issue #12680: extensions that shadow the built-in ask tool reach the native
 // renderer through the injected pi.pi namespace (the root barrel of this
-// package). Re-export it so the pi-tui renderer migration doesn't drop it.
-export { askToolRenderer } from "@oh-my-pi/pi-tui/tools/ask";
+// package). Re-export it so the tau-tui renderer migration doesn't drop it.
+export { askToolRenderer } from "@tau/tau-tui/tools/ask";
 export type {
 	TodoStatus,
 	TodoOperation,
@@ -873,9 +873,9 @@ export type {
 	TodoCompletionTransition,
 	TodoToolDetails,
 	CollapsedTodoSelection,
-} from "@oh-my-pi/pi-tui/tools/todo";
-export type { ThinkRenderArgs } from "@oh-my-pi/pi-tui/tools/think";
-export type { ResolutionDeviceName, ResolveDetails } from "@oh-my-pi/pi-tui/tools/resolve";
+} from "@tau/tau-tui/tools/todo";
+export type { ThinkRenderArgs } from "@tau/tau-tui/tools/think";
+export type { ResolutionDeviceName, ResolveDetails } from "@tau/tau-tui/tools/resolve";
 export type {
 	GhToolDetails,
 	GhPrCheckoutSummary,
@@ -883,4 +883,4 @@ export type {
 	GhRunWatchRunDetails,
 	GhRunWatchFailedLogDetails,
 	GhRunWatchViewDetails,
-} from "@oh-my-pi/pi-tui/tools/github";
+} from "@tau/tau-tui/tools/github";

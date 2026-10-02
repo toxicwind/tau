@@ -6,12 +6,12 @@ import type {
 	ToolCallContent,
 	ToolCallLocation,
 	ToolKind,
-} from "@oh-my-pi/pi-utils/acp";
-import { parseXdUrl } from "@oh-my-pi/pi-tui/tools/xd-url";
+} from "@tau/tau-utils/acp";
+import { parseXdUrl } from "@tau/tau-tui/tools/xd-url";
 import type { AgentSessionEvent } from "../../session/agent-session";
 import { resolveToCwd, splitPathAndSelPreferringLiteralSync } from "../../tools/path-utils";
-import type { TodoStatus } from "@oh-my-pi/pi-tui/tools/todo";
-import { canonicalizeMessage } from "@oh-my-pi/pi-tui/chat/thinking-display";
+import type { TodoStatus } from "@tau/tau-tui/tools/todo";
+import { canonicalizeMessage } from "@tau/tau-tui/chat/thinking-display";
 
 interface MessageProgress {
 	textEmitted: boolean;

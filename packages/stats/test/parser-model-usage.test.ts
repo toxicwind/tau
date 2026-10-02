@@ -1,12 +1,12 @@
 import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { getRecentRequests, initDb, insertMessageStats } from "@oh-my-pi/omp-stats/db";
-import { parseSessionFile } from "@oh-my-pi/omp-stats/parser";
-import { getSessionsDir } from "@oh-my-pi/pi-utils";
+import { getRecentRequests, initDb, insertMessageStats } from "@tau/tau-stats/db";
+import { parseSessionFile } from "@tau/tau-stats/parser";
+import { getSessionsDir } from "@tau/tau-utils";
 import { installStatsTestIsolation } from "./helpers/temp-agent";
 
-installStatsTestIsolation("@pi-stats-model-usage-");
+installStatsTestIsolation("@tau-stats-model-usage-");
 
 describe("model usage session entries", () => {
 	it("parses and aggregates non-transcript model calls", async () => {

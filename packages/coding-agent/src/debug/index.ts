@@ -5,7 +5,7 @@
  */
 import * as fs from "node:fs/promises";
 import * as url from "node:url";
-import { getWorkProfile } from "@oh-my-pi/pi-natives";
+import { getWorkProfile } from "@tau/tau-natives";
 import {
 	isNotificationSuppressed,
 	Loader,
@@ -16,25 +16,25 @@ import {
 	TERMINAL,
 	type TerminalNotification,
 	Text,
-} from "@oh-my-pi/pi-tui";
-import { getSessionsDir } from "@oh-my-pi/pi-utils";
-import { DynamicBorder } from "@oh-my-pi/pi-tui/chrome/dynamic-border";
-import { OverlayPanel } from "@oh-my-pi/pi-tui/chrome/overlay-box";
-import { TranscriptBlock } from "@oh-my-pi/pi-tui/chrome/transcript-container";
-import { getSelectListTheme, getSymbolTheme, theme } from "@oh-my-pi/pi-tui/theme";
+} from "@tau/tau-tui";
+import { getSessionsDir } from "@tau/tau-utils";
+import { DynamicBorder } from "@tau/tau-tui/chrome/dynamic-border";
+import { OverlayPanel } from "@tau/tau-tui/chrome/overlay-box";
+import { TranscriptBlock } from "@tau/tau-tui/chrome/transcript-container";
+import { getSelectListTheme, getSymbolTheme, theme } from "@tau/tau-tui/theme";
 import type { InteractiveModeContext } from "../modes/types";
-import { formatBytes } from "@oh-my-pi/pi-tui/render/render-utils";
+import { formatBytes } from "@tau/tau-tui/render/render-utils";
 import { openPath } from "../utils/open";
 import { copyToClipboard } from "../utils/clipboard";
-import { DebugLogViewerComponent } from "@oh-my-pi/pi-tui/apps/debug/log-viewer";
+import { DebugLogViewerComponent } from "@tau/tau-tui/apps/debug/log-viewer";
 import { collectMemoryStats, type ProfilerSession, startCpuProfile } from "./profiler";
-import { buildSampleImage, ProtocolProbeComponent } from "@oh-my-pi/pi-tui/apps/debug/protocol-probe";
-import { RawSseViewerComponent } from "@oh-my-pi/pi-tui/apps/debug/raw-sse";
-import { resolveRawSseDebugBuffer } from "@oh-my-pi/pi-tui/apps/debug/raw-sse-buffer";
+import { buildSampleImage, ProtocolProbeComponent } from "@tau/tau-tui/apps/debug/protocol-probe";
+import { RawSseViewerComponent } from "@tau/tau-tui/apps/debug/raw-sse";
+import { resolveRawSseDebugBuffer } from "@tau/tau-tui/apps/debug/raw-sse-buffer";
 import { getRemoteDebugger, type RemoteDebuggerInfo, startRemoteDebuggerServer } from "./remote-debugger";
 import { clearArtifactCache, createDebugLogSource, createReportBundle, getArtifactCacheStats } from "./report-bundle";
 import { collectSystemInfo, formatSystemInfo } from "./system-info";
-import { collectTerminalState, formatTerminalState } from "@oh-my-pi/pi-tui/apps/debug/terminal-info";
+import { collectTerminalState, formatTerminalState } from "@tau/tau-tui/apps/debug/terminal-info";
 
 /** Debug menu options */
 const DEBUG_MENU_ITEMS: SelectItem[] = [
@@ -471,7 +471,7 @@ export class DebugSelectorComponent extends OverlayPanel {
 		if (!suppressed) {
 			const sessionName = this.ctx.sessionManager.getSessionName();
 			const notification: TerminalNotification = {
-				title: sessionName || "omp",
+				title: sessionName || "tau",
 				body: "Terminal protocol test",
 				type: "test",
 				actions: "focus",

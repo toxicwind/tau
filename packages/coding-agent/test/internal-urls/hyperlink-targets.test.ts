@@ -4,17 +4,17 @@ import * as os from "node:os";
 import * as path from "node:path";
 import * as url from "node:url";
 import { stripVTControlCharacters } from "node:util";
-import { resetSettingsForTest, Settings, settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { LocalProtocolHandler } from "@oh-my-pi/pi-coding-agent/internal-urls/local-protocol";
+import { resetSettingsForTest, Settings, settings } from "@tau/tau-coding-agent/config/settings";
+import { LocalProtocolHandler } from "@tau/tau-coding-agent/internal-urls/local-protocol";
 import {
 	resolveMarkdownLinkTargets,
 	tryResolveInternalUrlSync,
-} from "@oh-my-pi/pi-coding-agent/internal-urls/hyperlink-targets";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import { getMarkdownTheme, initTheme } from "@oh-my-pi/pi-tui/theme";
-import * as terminalCaps from "@oh-my-pi/pi-tui";
-import { isHyperlinkEnabled } from "@oh-my-pi/pi-tui/render/hyperlink";
-import { isFeedModelBadgeEnabled, resolveImageOptions } from "@oh-my-pi/pi-tui/render/render-utils";
+} from "@tau/tau-coding-agent/internal-urls/hyperlink-targets";
+import { AgentRegistry } from "@tau/tau-coding-agent/registry/agent-registry";
+import { getMarkdownTheme, initTheme } from "@tau/tau-tui/theme";
+import * as terminalCaps from "@tau/tau-tui";
+import { isHyperlinkEnabled } from "@tau/tau-tui/render/hyperlink";
+import { isFeedModelBadgeEnabled, resolveImageOptions } from "@tau/tau-tui/render/render-utils";
 
 function extractAnyTerminatorLinkUri(text: string): string | undefined {
 	return text.match(/\x1b\]8;[^;]*;([^\x1b\x07]+)(?:\x1b\\|\x07)/)?.[1];
@@ -56,7 +56,7 @@ describe("tryResolveInternalUrlSync", () => {
 		expect(tryResolveInternalUrlSync("artifact://123")).toBeUndefined();
 		expect(tryResolveInternalUrlSync("agent://abc")).toBeUndefined();
 		expect(tryResolveInternalUrlSync("skill://foo")).toBeUndefined();
-		expect(tryResolveInternalUrlSync("omp://docs.md")).toBeUndefined();
+		expect(tryResolveInternalUrlSync("tau://docs.md")).toBeUndefined();
 	});
 
 	it("returns undefined when local:// resolution has no session options", () => {
@@ -134,7 +134,7 @@ describe("resource links in chat markdown", () => {
 	let originalHyperlinks: boolean;
 
 	beforeEach(async () => {
-		tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "omp-markdown-links-"));
+		tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-markdown-links-"));
 		originalHyperlinks = terminalCaps.TERMINAL.hyperlinks;
 		terminalCaps.setTerminalHyperlinks(true);
 		await initTheme();
@@ -261,8 +261,8 @@ describe("applyHyperlinkSetting on project-scoped reload", () => {
 	// value while path links already track the new one (#10196 review).
 	it("reapplies the effective policy so the runtime flag tracks the reloaded setting", async () => {
 		const origHyperlinks = terminalCaps.TERMINAL.hyperlinks;
-		const dirA = path.join(os.tmpdir(), "omp-hyperlink-reload-a");
-		const dirB = path.join(os.tmpdir(), "omp-hyperlink-reload-b");
+		const dirA = path.join(os.tmpdir(), "tau-hyperlink-reload-a");
+		const dirB = path.join(os.tmpdir(), "tau-hyperlink-reload-b");
 		try {
 			terminalCaps.setTerminalHyperlinks(false);
 			settings.override("tui.hyperlinks", "always");

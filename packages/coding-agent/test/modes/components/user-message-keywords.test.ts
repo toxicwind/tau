@@ -1,18 +1,18 @@
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import * as path from "node:path";
 import * as url from "node:url";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { MAGIC_KEYWORDS } from "@oh-my-pi/pi-coding-agent/modes/magic-keywords";
-import { CustomEditor } from "@oh-my-pi/pi-tui/prompt/custom-editor";
-import { UserMessageComponent } from "@oh-my-pi/pi-tui/chat/user-message";
-import { chipLabel, modelChipStyle, modelMentionChipLabel } from "@oh-my-pi/pi-tui/prompt/composer-attachments";
-import { imageReferenceHyperlink } from "@oh-my-pi/pi-tui/prompt/image-references";
-import { setMagicKeywords } from "@oh-my-pi/pi-tui/prompt/magic-keywords";
-import { getEditorTheme, initTheme, theme } from "@oh-my-pi/pi-tui/theme";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { UiHelpers } from "@oh-my-pi/pi-coding-agent/modes/utils/ui-helpers";
-import { Container } from "@oh-my-pi/pi-tui";
+import type { AgentMessage } from "@tau/tau-agent-core";
+import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import { MAGIC_KEYWORDS } from "@tau/tau-coding-agent/modes/magic-keywords";
+import { CustomEditor } from "@tau/tau-tui/prompt/custom-editor";
+import { UserMessageComponent } from "@tau/tau-tui/chat/user-message";
+import { chipLabel, modelChipStyle, modelMentionChipLabel } from "@tau/tau-tui/prompt/composer-attachments";
+import { imageReferenceHyperlink } from "@tau/tau-tui/prompt/image-references";
+import { setMagicKeywords } from "@tau/tau-tui/prompt/magic-keywords";
+import { getEditorTheme, initTheme, theme } from "@tau/tau-tui/theme";
+import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
+import { UiHelpers } from "@tau/tau-coding-agent/modes/utils/ui-helpers";
+import { Container } from "@tau/tau-tui";
 
 beforeAll(async () => {
 	resetSettingsForTest();
@@ -105,7 +105,7 @@ describe("UserMessageComponent magic-keyword highlighting", () => {
 	});
 
 	it("wraps image references in file hyperlinks when a blob path is available", () => {
-		const imagePath = path.resolve("/tmp/omp-image.png");
+		const imagePath = path.resolve("/tmp/tau-image.png");
 		const imageUri = url.pathToFileURL(path.resolve(imagePath)).href;
 		const raw = new UserMessageComponent("please inspect [Image #1]", { imageLinks: [imagePath] })
 			.render(80)
@@ -116,7 +116,7 @@ describe("UserMessageComponent magic-keyword highlighting", () => {
 	});
 
 	it("renders a video marker as a video chip linked to its source", () => {
-		const videoPath = path.resolve("/tmp/omp-video.mp4");
+		const videoPath = path.resolve("/tmp/tau-video.mp4");
 		const videoUri = url.pathToFileURL(videoPath).href;
 		const raw = new UserMessageComponent("please inspect [Video #1, 960x480]", { imageLinks: [videoPath] })
 			.render(80)
@@ -130,7 +130,7 @@ describe("UserMessageComponent magic-keyword highlighting", () => {
 	it("wraps draft editor image references in file hyperlinks when a blob path is available", () => {
 		const editor = new CustomEditor(getEditorTheme());
 		editor.imageReferenceHyperlink = imageReferenceHyperlink;
-		const imagePath = path.resolve("/tmp/omp-image.png");
+		const imagePath = path.resolve("/tmp/tau-image.png");
 		const imageUri = url.pathToFileURL(path.resolve(imagePath)).href;
 		editor.imageLinks = [imagePath];
 		editor.setText("please inspect [Image #1]");
@@ -193,7 +193,7 @@ describe("UserMessageComponent magic-keyword highlighting", () => {
 	it("hyperlinks the metadata-bearing image marker format", () => {
 		const editor = new CustomEditor(getEditorTheme());
 		editor.imageReferenceHyperlink = imageReferenceHyperlink;
-		const imagePath = path.resolve("/tmp/omp-image.png");
+		const imagePath = path.resolve("/tmp/tau-image.png");
 		const imageUri = url.pathToFileURL(path.resolve(imagePath)).href;
 		editor.imageLinks = [imagePath];
 		editor.setText("see [Image #1, 800x600] now");

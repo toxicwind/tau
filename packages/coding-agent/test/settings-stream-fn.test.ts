@@ -5,14 +5,14 @@
  * `model.loopGuard.*`, `textVerbosity` for Responses-family requests)
  * options win — the same wiring the main agent and the advisor agent share so
  * OpenRouter sticky-routing / response caching behaves the same on advisor turns
- * (can1357/oh-my-pi#3639).
+ * (can1357/tau#3639).
  */
 import { describe, expect, it } from "bun:test";
-import type { StreamFn } from "@oh-my-pi/pi-agent-core";
-import type { Context, Model, SimpleStreamOptions } from "@oh-my-pi/pi-ai";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { createSettingsAwareStreamFn } from "@oh-my-pi/pi-coding-agent/session/settings-stream-fn";
+import type { StreamFn } from "@tau/tau-agent-core";
+import type { Context, Model, SimpleStreamOptions } from "@tau/tau-ai";
+import { AssistantMessageEventStream } from "@tau/tau-ai/utils/event-stream";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { createSettingsAwareStreamFn } from "@tau/tau-coding-agent/session/settings-stream-fn";
 
 function captureBase(): { fn: StreamFn; calls: Array<{ options?: SimpleStreamOptions }> } {
 	const calls: Array<{ options?: SimpleStreamOptions }> = [];

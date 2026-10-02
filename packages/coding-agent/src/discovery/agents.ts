@@ -6,7 +6,7 @@
  * Project-level discovery walks up from cwd to repoRoot.
  */
 import * as path from "node:path";
-import { isWsl, windowsPathToWslMount } from "@oh-my-pi/pi-utils";
+import { isWsl, windowsPathToWslMount } from "@tau/tau-utils";
 import { registerProvider } from "../capability";
 import { type ContextFile, contextFileCapability } from "../capability/context-file";
 import { readFile } from "../capability/fs";
@@ -52,7 +52,7 @@ const HOST_PROBE_TIMEOUT_MS = 500;
  * `undefined` when the command fails, produces no output, or exceeds the
  * timeout. On timeout the child is killed with SIGKILL so a wedged interop pipe
  * cannot hang startup; the killed/non-zero exit is then reported as
- * "unavailable" and discovery falls back to the Linux `$HOME`/`~/.omp`
+ * "unavailable" and discovery falls back to the Linux `$HOME`/`~/.tau`
  * candidates.
  */
 export function runHostProbe(cmd: string[], timeoutMs = HOST_PROBE_TIMEOUT_MS): string | undefined {
@@ -135,7 +135,7 @@ export function getUserPathCandidates(ctx: LoadContext, ...segments: string[]): 
  * user-level config and is already enumerated by {@link getUserPathCandidates}.
  * Without this guard, any cwd under `$HOME` (with no closer git repoRoot) would
  * walk up to home and yield duplicate project+user entries for the same
- * directory — see https://github.com/can1357/oh-my-pi/issues/1116.
+ * directory — see https://github.com/toxicwind/tau/issues/1116.
  */
 export function getProjectPathCandidates(ctx: LoadContext, ...segments: string[]): string[] {
 	const paths: string[] = [];

@@ -1,9 +1,9 @@
 import { afterEach, describe, expect, it } from "bun:test";
-import { clearCustomApis, registerCustomApi } from "@oh-my-pi/pi-ai/api-registry";
-import { type OpenAICompletionsOptions, streamOpenAICompletions } from "@oh-my-pi/pi-ai/providers/openai-completions";
-import { streamSimple } from "@oh-my-pi/pi-ai/stream";
-import type { Api, Context, FetchImpl, Model, ModelSpec } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import { clearCustomApis, registerCustomApi } from "@tau/tau-ai/api-registry";
+import { type OpenAICompletionsOptions, streamOpenAICompletions } from "@tau/tau-ai/providers/openai-completions";
+import { streamSimple } from "@tau/tau-ai/stream";
+import type { Api, Context, FetchImpl, Model, ModelSpec } from "@tau/tau-ai/types";
+import { buildModel } from "@tau/tau-catalog/build";
 
 const CUSTOM_OPENAI_API = "issue-12562-openai-wrapper";
 

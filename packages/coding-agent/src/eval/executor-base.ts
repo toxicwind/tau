@@ -1,7 +1,7 @@
-import { logger } from "@oh-my-pi/pi-utils";
+import { logger } from "@tau/tau-utils";
 import { Settings } from "../config/settings";
-import { type OutputArtifactError, OutputSink } from "@oh-my-pi/pi-tui/tools/streaming-output";
-import { statusEventKey } from "@oh-my-pi/pi-tui/tools/eval";
+import { type OutputArtifactError, OutputSink } from "@tau/tau-tui/tools/streaming-output";
+import { statusEventKey } from "@tau/tau-tui/tools/eval";
 import type { ToolSession } from "../tools";
 import { resolveOutputMaxColumns, resolveOutputSinkHeadBytes } from "../tools/output-meta";
 import { EVAL_TIMEOUT_PAUSE_OP, EVAL_TIMEOUT_RESUME_OP, isEvalTimeoutControlEvent } from "./bridge-timeout";

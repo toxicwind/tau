@@ -1,12 +1,12 @@
-import type { Agent, AgentMessage, AgentTool } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, Message, Model, TextContent, ToolChoice } from "@oh-my-pi/pi-ai";
-import { isRecord, logger, prompt, stringProperty } from "@oh-my-pi/pi-utils";
+import type { Agent, AgentMessage, AgentTool } from "@tau/tau-agent-core";
+import type { AssistantMessage, Message, Model, TextContent, ToolChoice } from "@tau/tau-ai";
+import { isRecord, logger, prompt, stringProperty } from "@tau/tau-utils";
 import type { Settings } from "../config/settings";
 import eagerTaskPrompt from "../prompts/system/eager-task.md" with { type: "text" };
 import eagerTodoPrompt from "../prompts/system/eager-todo.md" with { type: "text" };
 import midRunTodoNudgePrompt from "../prompts/system/mid-run-todo-nudge.md" with { type: "text" };
 import { getLatestTodoPhasesFromEntries, isTodoPhase } from "../tools/todo";
-import { type TodoItem, type TodoPhase } from "@oh-my-pi/pi-tui/tools/todo";
+import { type TodoItem, type TodoPhase } from "@tau/tau-tui/tools/todo";
 import { buildNamedToolChoice } from "../utils/tool-choice";
 import type { AgentSessionEvent } from "./agent-session-events";
 import type { SessionManager } from "./session-manager";

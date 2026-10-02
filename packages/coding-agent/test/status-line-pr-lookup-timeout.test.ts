@@ -12,15 +12,15 @@
  * rejection so the segment never wedges after a single failure.
  */
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { StatusLineSettings } from "@oh-my-pi/pi-tui/status-line";
-import { StatusLineComponent } from "@oh-my-pi/pi-tui/status-line";
-import { statusLineHost } from "@oh-my-pi/pi-coding-agent/modes/status-line-host";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { github } from "@oh-my-pi/pi-coding-agent/utils/github";
-import type { VcsGitRepo, VcsGitRepoInfo, VcsHeadState, VcsRepo } from "@oh-my-pi/pi-natives";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import { getProjectDir, setProjectDir } from "@oh-my-pi/pi-utils";
+import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import type { StatusLineSettings } from "@tau/tau-tui/status-line";
+import { StatusLineComponent } from "@tau/tau-tui/status-line";
+import { statusLineHost } from "@tau/tau-coding-agent/modes/status-line-host";
+import { initTheme } from "@tau/tau-tui/theme";
+import { github } from "@tau/tau-coding-agent/utils/github";
+import type { VcsGitRepo, VcsGitRepoInfo, VcsHeadState, VcsRepo } from "@tau/tau-natives";
+import * as vcs from "@tau/tau-natives/vcs";
+import { getProjectDir, setProjectDir } from "@tau/tau-utils";
 
 const originalProjectDir = getProjectDir();
 

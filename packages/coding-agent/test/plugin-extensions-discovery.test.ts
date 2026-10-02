@@ -2,11 +2,11 @@ import { afterEach, beforeEach, describe, expect, it, spyOn } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { discoverAndLoadExtensions } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
-import { getAgentDir, getPluginsDir, removeSyncWithRetries, setAgentDir, TempDir } from "@oh-my-pi/pi-utils";
+import { discoverAndLoadExtensions } from "@tau/tau-coding-agent/extensibility/extensions/loader";
+import { getAgentDir, getPluginsDir, removeSyncWithRetries, setAgentDir, TempDir } from "@tau/tau-utils";
 
-const currentPiCodingAgentPath = Bun.resolveSync("@oh-my-pi/pi-coding-agent", import.meta.dir);
-const currentPiExtensionsPath = Bun.resolveSync("@oh-my-pi/pi-coding-agent/extensibility/extensions", import.meta.dir);
+const currentPiCodingAgentPath = Bun.resolveSync("@tau/tau-coding-agent", import.meta.dir);
+const currentPiExtensionsPath = Bun.resolveSync("@tau/tau-coding-agent/extensibility/extensions", import.meta.dir);
 
 describe("plugin extension discovery", () => {
 	let projectDir: TempDir;
@@ -16,27 +16,27 @@ describe("plugin extension discovery", () => {
 	const originalXdg = new Map<string, string | undefined>();
 
 	beforeEach(() => {
-		projectDir = TempDir.createSync("@pi-plugin-ext-");
+		projectDir = TempDir.createSync("@tau-plugin-ext-");
 		// Redirect the whole config root to an isolated temp home so plugin discovery
-		// resolves into `<tempHome>/.omp/plugins` on every platform. Two things are needed:
-		//  - mock os.homedir() so configRoot = `<tempHome>/.omp` (the previous
+		// resolves into `<tempHome>/.tau/plugins` on every platform. Two things are needed:
+		//  - mock os.homedir() so configRoot = `<tempHome>/.tau` (the previous
 		//    XDG_DATA_HOME redirect was a no-op on Windows, where these tests then wrote
-		//    into and rm'd the developer's real `~/.omp/plugins`);
+		//    into and rm'd the developer's real `~/.tau/plugins`);
 		//  - clear the XDG_* vars, because on Linux/macOS the resolver prefers
-		//    `$XDG_DATA_HOME/omp` over the home config root when that dir exists, so an
+		//    `$XDG_DATA_HOME/tau` over the home config root when that dir exists, so an
 		//    XDG-migrated environment would otherwise still resolve the real plugins dir.
-		tempHome = fs.mkdtempSync(path.join(os.tmpdir(), "pi-plugin-home-"));
+		tempHome = fs.mkdtempSync(path.join(os.tmpdir(), "tau-plugin-home-"));
 		for (const key of xdgVars) {
 			originalXdg.set(key, process.env[key]);
 			delete process.env[key];
 		}
 		spyOn(os, "homedir").mockReturnValue(tempHome);
-		setAgentDir(path.join(tempHome, ".omp", "agent"));
+		setAgentDir(path.join(tempHome, ".tau", "agent"));
 
 		const pluginsDir = getPluginsDir();
 		// Safety gate: never write fixtures outside the temp home. This is the exact
 		// failure mode being fixed — a resolver/mock regression that resolves to the real
-		// ~/.omp must fail loudly here instead of clobbering the developer's plugins.
+		// ~/.tau must fail loudly here instead of clobbering the developer's plugins.
 		if (!pluginsDir.startsWith(tempHome + path.sep)) {
 			throw new Error(`plugin isolation failed: getPluginsDir() resolved outside the temp home: ${pluginsDir}`);
 		}
@@ -45,7 +45,7 @@ describe("plugin extension discovery", () => {
 		fs.writeFileSync(
 			path.join(pluginsDir, "package.json"),
 			JSON.stringify({
-				name: "omp-plugins",
+				name: "tau-plugins",
 				private: true,
 				dependencies: {
 					"@demo/plugin": "1.0.0",
@@ -57,7 +57,7 @@ describe("plugin extension discovery", () => {
 			JSON.stringify({
 				name: "@demo/plugin",
 				version: "1.0.0",
-				omp: {
+				tau: {
 					extensions: ["./dist/extension.ts"],
 				},
 			}),
@@ -114,24 +114,24 @@ describe("plugin extension discovery", () => {
 
 	it("loads installed legacy Pi plugin extensions from Windows drive-letter paths", async () => {
 		const pluginsDir = getPluginsDir();
-		const pluginDir = path.join(pluginsDir, "node_modules", "legacy-pi-plugin");
+		const pluginDir = path.join(pluginsDir, "node_modules", "legacy-tau-plugin");
 		const extensionPath = path.join(pluginDir, "dist", "extension.ts");
 		removeSyncWithRetries(path.join(pluginsDir, "node_modules"));
 		fs.mkdirSync(path.dirname(extensionPath), { recursive: true });
 		fs.writeFileSync(
 			path.join(pluginsDir, "package.json"),
 			JSON.stringify({
-				name: "omp-plugins",
+				name: "tau-plugins",
 				private: true,
 				dependencies: {
-					"legacy-pi-plugin": "1.0.0",
+					"legacy-tau-plugin": "1.0.0",
 				},
 			}),
 		);
 		fs.writeFileSync(
 			path.join(pluginDir, "package.json"),
 			JSON.stringify({
-				name: "legacy-pi-plugin",
+				name: "legacy-tau-plugin",
 				version: "1.0.0",
 				pi: {
 					extensions: ["./dist/extension.ts"],
@@ -143,8 +143,8 @@ describe("plugin extension discovery", () => {
 			[
 				'import * as nodePath from "path";',
 				'if (false) import("./optional-missing.js");',
-				'import { isToolCallEventType as legacyRoot } from "@mariozechner/pi-coding-agent";',
-				'import { isToolCallEventType as legacyExtensions } from "@mariozechner/pi-coding-agent/extensibility/extensions";',
+				'import { isToolCallEventType as legacyRoot } from "@mariozechner/tau-coding-agent";',
+				'import { isToolCallEventType as legacyExtensions } from "@mariozechner/tau-coding-agent/extensibility/extensions";',
 				`import { isToolCallEventType as modernRoot } from ${JSON.stringify(currentPiCodingAgentPath)};`,
 				`import { isToolCallEventType as modernExtensions } from ${JSON.stringify(currentPiExtensionsPath)};`,
 				"",
@@ -155,7 +155,7 @@ describe("plugin extension discovery", () => {
 				"export default function(pi) {",
 				"\tconst { Type } = pi.typebox;",
 				"\tpi.registerTool({",
-				'\t\tname: "legacy-pi-ext",',
+				'\t\tname: "legacy-tau-ext",',
 				'\t\tdescription: "Legacy Pi extension smoke test",',
 				"\t\tparameters: Type.Object({}),",
 				'\t\texecute: async () => ({ content: [{ type: "text", text: "ok" }] }),',
@@ -172,7 +172,7 @@ describe("plugin extension discovery", () => {
 		}
 		expect(result.errors).toHaveLength(0);
 		expect(extension).toBeDefined();
-		expect(extension?.tools.has("legacy-pi-ext")).toBe(true);
+		expect(extension?.tools.has("legacy-tau-ext")).toBe(true);
 	});
 
 	it("loads installed legacy Pi plugin extensions that use package imports", async () => {
@@ -184,7 +184,7 @@ describe("plugin extension discovery", () => {
 		fs.writeFileSync(
 			path.join(pluginsDir, "package.json"),
 			JSON.stringify({
-				name: "omp-plugins",
+				name: "tau-plugins",
 				private: true,
 				dependencies: {
 					"package-import-plugin": "1.0.0",
@@ -217,7 +217,7 @@ describe("plugin extension discovery", () => {
 		fs.writeFileSync(
 			path.join(pluginDir, "src", "feature", "command.ts"),
 			[
-				'import { isToolCallEventType as legacyExtensions } from "@earendil-works/pi-coding-agent/extensibility/extensions";',
+				'import { isToolCallEventType as legacyExtensions } from "@earendil-works/tau-coding-agent/extensibility/extensions";',
 				`import { isToolCallEventType as modernExtensions } from ${JSON.stringify(currentPiExtensionsPath)};`,
 				"",
 				'if (legacyExtensions !== modernExtensions) throw new Error("legacy extension import did not remap");',
@@ -243,7 +243,7 @@ describe("plugin extension discovery", () => {
 		fs.writeFileSync(
 			path.join(pluginsDir, "package.json"),
 			JSON.stringify({
-				name: "omp-plugins",
+				name: "tau-plugins",
 				private: true,
 				dependencies: {
 					"conditional-import-plugin": "1.0.0",
@@ -304,7 +304,7 @@ describe("plugin extension discovery", () => {
 		fs.writeFileSync(
 			path.join(pluginsDir, "package.json"),
 			JSON.stringify({
-				name: "omp-plugins",
+				name: "tau-plugins",
 				private: true,
 				dependencies: {
 					"json-import-plugin": "1.0.0",
@@ -353,7 +353,7 @@ describe("plugin extension discovery", () => {
 		fs.writeFileSync(
 			path.join(pluginsDir, "package.json"),
 			JSON.stringify({
-				name: "omp-plugins",
+				name: "tau-plugins",
 				private: true,
 				dependencies: {
 					"null-exact-import-plugin": "1.0.0",
@@ -403,7 +403,7 @@ describe("plugin extension discovery", () => {
 		fs.writeFileSync(
 			path.join(pluginsDir, "package.json"),
 			JSON.stringify({
-				name: "omp-plugins",
+				name: "tau-plugins",
 				private: true,
 				dependencies: {
 					"null-conditional-import-plugin": "1.0.0",
@@ -455,7 +455,7 @@ describe("plugin extension discovery", () => {
 		fs.writeFileSync(
 			path.join(pluginsDir, "package.json"),
 			JSON.stringify({
-				name: "omp-plugins",
+				name: "tau-plugins",
 				private: true,
 				dependencies: {
 					"side-effect-plugin": "1.0.0",
@@ -481,7 +481,7 @@ describe("plugin extension discovery", () => {
 				// Side-effect imports — no `from`, no dynamic `import()`. The
 				// regex matchers must walk and rewrite both shapes so the legacy
 				// `@earendil-works` import inside `register.ts` resolves to the
-				// host `@oh-my-pi` package.
+				// host `@tau` package.
 				'import "#src/register";',
 				'import "./marker";',
 				"",
@@ -496,7 +496,7 @@ describe("plugin extension discovery", () => {
 		fs.writeFileSync(
 			path.join(pluginDir, "src", "register.ts"),
 			[
-				'import { isToolCallEventType as legacyExtensions } from "@earendil-works/pi-coding-agent/extensibility/extensions";',
+				'import { isToolCallEventType as legacyExtensions } from "@earendil-works/tau-coding-agent/extensibility/extensions";',
 				`import { isToolCallEventType as modernExtensions } from ${JSON.stringify(currentPiExtensionsPath)};`,
 				"",
 				'if (legacyExtensions !== modernExtensions) throw new Error("legacy side-effect import did not remap");',
@@ -535,7 +535,7 @@ describe("plugin extension discovery", () => {
 		fs.writeFileSync(
 			path.join(pluginsDir, "package.json"),
 			JSON.stringify({
-				name: "omp-plugins",
+				name: "tau-plugins",
 				private: true,
 				dependencies: {
 					"dir-entry-plugin": "1.0.0",
@@ -581,7 +581,7 @@ describe("plugin extension discovery", () => {
 		fs.writeFileSync(
 			path.join(pluginsDir, "package.json"),
 			JSON.stringify({
-				name: "omp-plugins",
+				name: "tau-plugins",
 				private: true,
 				dependencies: {
 					"subdir-entry-plugin": "1.0.0",
@@ -628,7 +628,7 @@ describe("plugin extension discovery", () => {
 		fs.writeFileSync(
 			path.join(pluginsDir, "package.json"),
 			JSON.stringify({
-				name: "omp-plugins",
+				name: "tau-plugins",
 				private: true,
 				dependencies: {
 					"nested-manifest-plugin": "1.0.0",
@@ -647,7 +647,7 @@ describe("plugin extension discovery", () => {
 		// is a decoy that must NOT win (manifest takes precedence, like the -e scanner).
 		fs.writeFileSync(
 			path.join(featureDir, "package.json"),
-			JSON.stringify({ name: "feature-ext", version: "1.0.0", omp: { extensions: ["./dist/real-ext.ts"] } }),
+			JSON.stringify({ name: "feature-ext", version: "1.0.0", tau: { extensions: ["./dist/real-ext.ts"] } }),
 		);
 		fs.writeFileSync(
 			realEntry,
@@ -686,7 +686,7 @@ describe("plugin extension discovery", () => {
 		fs.writeFileSync(
 			path.join(pluginsDir, "package.json"),
 			JSON.stringify({
-				name: "omp-plugins",
+				name: "tau-plugins",
 				private: true,
 				dependencies: {
 					"missing-decl-plugin": "1.0.0",
@@ -705,7 +705,7 @@ describe("plugin extension discovery", () => {
 		// not exist (e.g. unbuilt). The leftover index.ts must NOT be loaded as a fallback.
 		fs.writeFileSync(
 			path.join(featureDir, "package.json"),
-			JSON.stringify({ name: "feature-ext", version: "1.0.0", omp: { extensions: ["./dist/real-ext.ts"] } }),
+			JSON.stringify({ name: "feature-ext", version: "1.0.0", tau: { extensions: ["./dist/real-ext.ts"] } }),
 		);
 		fs.writeFileSync(
 			path.join(featureDir, "index.ts"),
@@ -732,7 +732,7 @@ describe("plugin extension discovery", () => {
 		fs.writeFileSync(
 			path.join(pluginsDir, "package.json"),
 			JSON.stringify({
-				name: "omp-plugins",
+				name: "tau-plugins",
 				private: true,
 				dependencies: {
 					"dts-plugin": "1.0.0",
@@ -744,7 +744,7 @@ describe("plugin extension discovery", () => {
 			JSON.stringify({
 				name: "dts-plugin",
 				version: "1.0.0",
-				omp: { extensions: ["./extensions"] },
+				tau: { extensions: ["./extensions"] },
 			}),
 		);
 		fs.writeFileSync(

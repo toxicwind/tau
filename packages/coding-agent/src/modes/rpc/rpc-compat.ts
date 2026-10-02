@@ -1,7 +1,7 @@
 import type { SessionEntry } from "../../session/session-entries";
 
 /**
- * Slice canonical append-history for the Pi-compatible `get_entries` command.
+ * Slice canonical append-history for the Tau-compatible `get_entries` command.
  *
  * Delegates to the canonical `SessionManager` entry list (append order) and
  * applies only the `since` cursor — never a second history/indexing layer.

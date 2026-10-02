@@ -19,16 +19,16 @@
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { AgentMessage, AgentState } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, ImageContent, TextContent } from "@oh-my-pi/pi-ai";
-import { $which, logger } from "@oh-my-pi/pi-utils";
-import { DEFAULT_SHARE_URL } from "@oh-my-pi/pi-wire";
+import type { AgentMessage, AgentState } from "@tau/tau-agent-core";
+import type { AssistantMessage, ImageContent, TextContent } from "@tau/tau-ai";
+import { $which, logger } from "@tau/tau-utils";
+import { DEFAULT_SHARE_URL } from "@tau/tau-wire";
 import { $ } from "bun";
 import { obfuscateToolArguments } from "../secrets/message-transform";
 import type { SecretObfuscator } from "../secrets/obfuscator";
 import { type SessionEntry, type SessionHeader, TITLE_CHANGE_ENTRY_TYPE } from "../session/session-entries";
 import type { SessionManager } from "../session/session-manager";
-import type { OutputMeta } from "@oh-my-pi/pi-tui/tools/output-meta";
+import type { OutputMeta } from "@tau/tau-tui/tools/output-meta";
 import { buildSessionData, type SessionData, type SubSession } from "./html";
 
 export { DEFAULT_SHARE_URL };
@@ -41,7 +41,7 @@ const GIST_MAX_SEALED_BYTES = 5_000_000;
 const IV_LENGTH = 12;
 const SHARE_KEY_BYTES = 32;
 /** The viewer picks the gist file by this suffix. */
-const GIST_FILENAME = "session.ompshare.txt";
+const GIST_FILENAME = "session.taushare.txt";
 /** Gist ids are hex; the relay never issues pure-hex ids, so the viewer can route on shape. */
 const GIST_ID_RE = /^[0-9a-f]{20,64}$/;
 
@@ -618,7 +618,7 @@ async function tryCreateGist(sealed: Uint8Array): Promise<{ id: string; url: str
 		return null;
 	}
 
-	const dir = await fs.mkdtemp(path.join(os.tmpdir(), "omp-share-"));
+	const dir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-share-"));
 	try {
 		const file = path.join(dir, GIST_FILENAME);
 		await Bun.write(file, Buffer.from(sealed).toString("base64"));

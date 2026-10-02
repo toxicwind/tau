@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { loadExtensions } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
-import { __resetDirsFromEnvForTests, setAgentDir, TempDir } from "@oh-my-pi/pi-utils";
+import { loadExtensions } from "@tau/tau-coding-agent/extensibility/extensions/loader";
+import { __resetDirsFromEnvForTests, setAgentDir, TempDir } from "@tau/tau-utils";
 
 describe("issue #5879: legacy provider compatibility", () => {
 	it("creates a fresh agent database while loading historical auth exports", async () => {
@@ -9,15 +9,15 @@ describe("issue #5879: legacy provider compatibility", () => {
 		const freshAgentDir = projectDir.join("fresh", "agent");
 		const originalDirEnv: Record<string, string | undefined> = {
 			PI_CODING_AGENT_DIR: process.env.PI_CODING_AGENT_DIR,
-			OMP_PROFILE: process.env.OMP_PROFILE,
+			TAU_PROFILE: process.env.TAU_PROFILE,
 			PI_PROFILE: process.env.PI_PROFILE,
 		};
-		const extensionPath = path.join(projectDir.path(), "pi-provider-like-plugin", "index.ts");
+		const extensionPath = path.join(projectDir.path(), "tau-provider-like-plugin", "index.ts");
 		await Bun.write(
 			extensionPath,
 			[
-				'import { createAssistantMessageEventStream } from "@earendil-works/pi-ai";',
-				'import { AuthStorage } from "@earendil-works/pi-coding-agent";',
+				'import { createAssistantMessageEventStream } from "@earendil-works/tau-ai";',
+				'import { AuthStorage } from "@earendil-works/tau-coding-agent";',
 				"",
 				"export default function() {",
 				"\tconst stream = createAssistantMessageEventStream();",

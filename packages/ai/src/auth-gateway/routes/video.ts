@@ -1,5 +1,5 @@
-import type { Api, Model } from "@oh-my-pi/pi-catalog/types";
-import { logger } from "@oh-my-pi/pi-utils";
+import type { Api, Model } from "@tau/tau-catalog/types";
+import { logger } from "@tau/tau-utils";
 import { classifyGatewayError } from "../../error/gateway";
 import * as videoServer from "../../providers/video-server";
 import { downloadVideo, pollVideo, submitVideo } from "../../video";

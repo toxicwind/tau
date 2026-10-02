@@ -14,13 +14,13 @@ import {
 	shouldUseAnthropicNativeCompaction,
 	shouldUseProviderNativeCompaction,
 	withAnthropicCompactionPreserveData,
-} from "@oh-my-pi/pi-agent-core/compaction";
-import * as ai from "@oh-my-pi/pi-ai";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import type { AssistantMessage, Context, Message, Model, SimpleStreamOptions, Usage } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import type { ModelSpec } from "@oh-my-pi/pi-catalog/types";
-import * as snapcompact from "@oh-my-pi/snapcompact";
+} from "@tau/tau-agent-core/compaction";
+import * as ai from "@tau/tau-ai";
+import * as AIError from "@tau/tau-ai/error";
+import type { AssistantMessage, Context, Message, Model, SimpleStreamOptions, Usage } from "@tau/tau-ai/types";
+import { buildModel } from "@tau/tau-catalog/build";
+import type { ModelSpec } from "@tau/tau-catalog/types";
+import * as snapcompact from "@tau/snapcompact";
 
 const ZERO_USAGE: Usage = {
 	input: 0,

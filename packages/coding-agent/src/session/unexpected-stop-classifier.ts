@@ -3,8 +3,8 @@
  * text-only assistant turn promised to act and then ended. The judge comes
  * from the live `judge` role chain resolved by {@link resolveJudge}.
  */
-import type { AssistantMessage, Model, NoulQuestion } from "@oh-my-pi/pi-ai";
-import { logger } from "@oh-my-pi/pi-utils";
+import type { AssistantMessage, Model, NoulQuestion } from "@tau/tau-ai";
+import { logger } from "@tau/tau-utils";
 import type { ModelRegistry } from "../config/model-registry";
 import type { Settings } from "../config/settings";
 import { resolveJudge } from "../judgment";

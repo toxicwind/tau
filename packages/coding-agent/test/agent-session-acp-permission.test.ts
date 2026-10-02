@@ -6,26 +6,26 @@
  * behavior they have in the TUI.
  */
 import { afterAll, afterEach, beforeAll, expect, it, spyOn } from "bun:test";
-import { type } from "@oh-my-pi/omptype";
-import { Agent, type AgentTool } from "@oh-my-pi/pi-agent-core";
-import { createMockModel, type MockModelOptions } from "@oh-my-pi/pi-ai/providers/mock";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { type SettingPath, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { EditTool } from "@oh-my-pi/pi-coding-agent/edit";
-import type { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
-import { ExtensionToolWrapper } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/wrapper";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
+import { type } from "@tau/tautype";
+import { Agent, type AgentTool } from "@tau/tau-agent-core";
+import { createMockModel, type MockModelOptions } from "@tau/tau-ai/providers/mock";
+import { AssistantMessageEventStream } from "@tau/tau-ai/utils/event-stream";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import { type SettingPath, Settings } from "@tau/tau-coding-agent/config/settings";
+import { EditTool } from "@tau/tau-coding-agent/edit";
+import type { ExtensionRunner } from "@tau/tau-coding-agent/extensibility/extensions/runner";
+import { ExtensionToolWrapper } from "@tau/tau-coding-agent/extensibility/extensions/wrapper";
+import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
 import type {
 	ClientBridge,
 	ClientBridgePermissionOutcome,
 	ClientBridgePermissionToolCall,
-} from "@oh-my-pi/pi-coding-agent/session/client-bridge";
-import { convertToLlm } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { dispatchXdevTool, resolveMountedXdevExecutable, type XdevState } from "@oh-my-pi/pi-coding-agent/tools/xdev";
-import { TempDir } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-coding-agent/session/client-bridge";
+import { convertToLlm } from "@tau/tau-coding-agent/session/messages";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import type { ToolSession } from "@tau/tau-coding-agent/tools";
+import { dispatchXdevTool, resolveMountedXdevExecutable, type XdevState } from "@tau/tau-coding-agent/tools/xdev";
+import { TempDir } from "@tau/tau-utils";
 
 // ---------------------------------------------------------------------------
 // Shared setup
@@ -159,7 +159,7 @@ async function createSessionWithMockModel(
 }
 
 beforeAll(() => {
-	tempDir = TempDir.createSync("@pi-acp-permission-test-");
+	tempDir = TempDir.createSync("@tau-acp-permission-test-");
 });
 
 afterEach(async () => {

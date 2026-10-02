@@ -12,9 +12,9 @@ import type {
 	DesktopSessionOptions,
 	DesktopWindow,
 	PointerOptions,
-} from "@oh-my-pi/pi-natives";
-import * as postmortem from "@oh-my-pi/pi-utils/postmortem";
-import { Snowflake } from "@oh-my-pi/pi-utils/snowflake";
+} from "@tau/tau-natives";
+import * as postmortem from "@tau/tau-utils/postmortem";
+import { Snowflake } from "@tau/tau-utils/snowflake";
 import { JsRuntime, type RuntimeHooks } from "../../eval/js/shared/runtime";
 import { cloneSafe, RunOutput } from "../browser/run-output";
 import {
@@ -25,7 +25,7 @@ import {
 	waitForRun,
 } from "../run-scope";
 import { ToolAbortError, throwIfAborted } from "../tool-errors";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 import type {
 	ComputerScreenshot,
 	ComputerSessionSnapshot,
@@ -193,7 +193,7 @@ async function captureScreenshot(
 			maxHeight: context.snapshot.captureMaxHeight,
 		}),
 	);
-	const destination = path.join(os.tmpdir(), `omp-computer-${Snowflake.next()}.png`);
+	const destination = path.join(os.tmpdir(), `tau-computer-${Snowflake.next()}.png`);
 	await Bun.write(destination, frame.data);
 	const scaled = frame.width !== frame.sourceWidth || frame.height !== frame.sourceHeight;
 	context.screenshots.push({
@@ -472,7 +472,7 @@ export class ComputerWorkerCore {
 				// The worker must answer its readiness handshake without loading the native
 				// addon; normal CLI startup and selector pings never execute desktop code.
 				const createSession =
-					this.#createSession ?? (await import("@oh-my-pi/pi-natives/desktop")).createDesktopSession;
+					this.#createSession ?? (await import("@tau/tau-natives/desktop")).createDesktopSession;
 				const session = await createSession({ display: snapshot.display });
 				this.#session = session;
 				return session;

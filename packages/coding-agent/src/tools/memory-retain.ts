@@ -1,6 +1,6 @@
-import type { MemoryRetainDetails } from "@oh-my-pi/pi-tui/tools/memory";
-import { type } from "@oh-my-pi/omptype";
-import type { AgentTool, AgentToolResult } from "@oh-my-pi/pi-agent-core";
+import type { MemoryRetainDetails } from "@tau/tau-tui/tools/memory";
+import { type } from "@tau/tautype";
+import type { AgentTool, AgentToolResult } from "@tau/tau-agent-core";
 import { isHindsightConfigured, loadHindsightConfig } from "../hindsight/config";
 import retainDescription from "../prompts/tools/retain.md" with { type: "text" };
 import type { ToolSession } from ".";
@@ -30,17 +30,17 @@ export class MemoryRetainTool implements AgentTool<typeof memoryRetainSchema, Me
 
 	static createIf(session: ToolSession): MemoryRetainTool | null {
 		const backend = session.settings.get("memory.backend");
-		if (backend !== "hindsight" && backend !== "mnemopi") return null;
+		if (backend !== "hindsight" && backend !== "mnemotau") return null;
 		if (backend === "hindsight" && !isHindsightConfigured(loadHindsightConfig(session.settings))) return null;
 		return new MemoryRetainTool(session);
 	}
 
 	async execute(_id: string, params: MemoryRetainParams): Promise<AgentToolResult<MemoryRetainDetails>> {
 		const backend = this.session.settings.get("memory.backend");
-		if (backend === "mnemopi") {
-			const state = this.session.getMnemopiSessionState?.();
+		if (backend === "mnemotau") {
+			const state = this.session.getMnemotauSessionState?.();
 			if (!state) {
-				throw new Error("Mnemopi backend is not initialised for this session.");
+				throw new Error("Mnemotau backend is not initialised for this session.");
 			}
 
 			for (const item of params.items) {

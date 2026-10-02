@@ -1,13 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentLifecycleManager } from "@oh-my-pi/pi-coding-agent/registry/agent-lifecycle";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import { buildSpecializationAdvisory, TaskTool } from "@oh-my-pi/pi-coding-agent/task";
-import * as discoveryModule from "@oh-my-pi/pi-coding-agent/task/discovery";
-import * as executorModule from "@oh-my-pi/pi-coding-agent/task/executor";
-import type { AgentDefinition } from "@oh-my-pi/pi-coding-agent/task/types";
-import type { SingleResult } from "@oh-my-pi/pi-tui/tools/task";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { AgentLifecycleManager } from "@tau/tau-coding-agent/registry/agent-lifecycle";
+import { AgentRegistry } from "@tau/tau-coding-agent/registry/agent-registry";
+import { buildSpecializationAdvisory, TaskTool } from "@tau/tau-coding-agent/task";
+import * as discoveryModule from "@tau/tau-coding-agent/task/discovery";
+import * as executorModule from "@tau/tau-coding-agent/task/executor";
+import type { AgentDefinition } from "@tau/tau-coding-agent/task/types";
+import type { SingleResult } from "@tau/tau-tui/tools/task";
+import type { ToolSession } from "@tau/tau-coding-agent/tools";
 
 // Contract: the task tool appends an advisory (never a rejection) steering the
 // spawner toward more specific agent types when one call resolves ≥2 items to

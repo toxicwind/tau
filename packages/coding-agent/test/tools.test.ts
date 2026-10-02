@@ -4,20 +4,20 @@ import * as os from "node:os";
 import * as path from "node:path";
 import * as url from "node:url";
 import * as zlib from "node:zlib";
-import type { AgentTool, AgentToolContext } from "@oh-my-pi/pi-agent-core";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { AsyncJobManager } from "@oh-my-pi/pi-coding-agent/async";
-import { DEFAULT_BASH_INTERCEPTOR_RULES, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { EditTool } from "@oh-my-pi/pi-coding-agent/edit";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { BashTool } from "@oh-my-pi/pi-coding-agent/tools/bash";
-import { wrapToolWithMetaNotice } from "@oh-my-pi/pi-coding-agent/tools/output-meta";
-import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
-import * as toolTimeouts from "@oh-my-pi/pi-coding-agent/tools/tool-timeouts";
-import { WriteTool } from "@oh-my-pi/pi-coding-agent/tools/write";
-import { $which, removeSyncWithRetries, Snowflake } from "@oh-my-pi/pi-utils";
-import { openArchive, readArchiveEntries } from "@oh-my-pi/pi-utils/ar";
+import type { AgentTool, AgentToolContext } from "@tau/tau-agent-core";
+import { createMockModel } from "@tau/tau-ai/providers/mock";
+import { AsyncJobManager } from "@tau/tau-coding-agent/async";
+import { DEFAULT_BASH_INTERCEPTOR_RULES, Settings } from "@tau/tau-coding-agent/config/settings";
+import { EditTool } from "@tau/tau-coding-agent/edit";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import type { ToolSession } from "@tau/tau-coding-agent/tools";
+import { BashTool } from "@tau/tau-coding-agent/tools/bash";
+import { wrapToolWithMetaNotice } from "@tau/tau-coding-agent/tools/output-meta";
+import { ReadTool } from "@tau/tau-coding-agent/tools/read";
+import * as toolTimeouts from "@tau/tau-coding-agent/tools/tool-timeouts";
+import { WriteTool } from "@tau/tau-coding-agent/tools/write";
+import { $which, removeSyncWithRetries, Snowflake } from "@tau/tau-utils";
+import { openArchive, readArchiveEntries } from "@tau/tau-utils/ar";
 import { GlobTool } from "../src/tools/glob";
 import { DEFAULT_FILE_LIMIT, GrepTool, MULTI_FILE_PER_FILE_MATCHES } from "../src/tools/grep";
 
@@ -194,7 +194,7 @@ function createBase256TarArchive(entry: Base256TarEntry): Buffer {
 }
 
 function createPaxHeader(typeFlag: "g" | "x", body: Buffer): Buffer {
-	return tarRecord(createTarHeader("./PaxHeaders/omp", body.byteLength, typeFlag), body);
+	return tarRecord(createTarHeader("./PaxHeaders/tau", body.byteLength, typeFlag), body);
 }
 
 function paxRecord(key: string, value: string): Buffer {

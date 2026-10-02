@@ -1,32 +1,32 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { type } from "@oh-my-pi/omptype";
+import { type } from "@tau/tautype";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import type { EffectiveExtensionRoots } from "@oh-my-pi/pi-coding-agent/capability/types";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { PreparedExtension } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/types";
-import { MCPManager } from "@oh-my-pi/pi-coding-agent/mcp/manager";
-import { RpcSubagentRegistry } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-subagents";
-import type { RpcSubagentFrame } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-types";
-import { AgentLifecycleManager } from "@oh-my-pi/pi-coding-agent/registry/agent-lifecycle";
-import type { AgentRef } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import type { CreateAgentSessionOptions, CreateAgentSessionResult } from "@oh-my-pi/pi-coding-agent/sdk";
-import * as sdkModule from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AgentSession, AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import type { CustomMessage } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { FileSessionStorage } from "@oh-my-pi/pi-coding-agent/session/session-storage";
-import * as executorModule from "@oh-my-pi/pi-coding-agent/task/executor";
-import { createPersistedSubagentReviverFactory } from "@oh-my-pi/pi-coding-agent/task/persisted-revive";
-import { buildWakeRelayBody } from "@oh-my-pi/pi-coding-agent/task/executor";
-import type { SingleResult } from "@oh-my-pi/pi-tui/tools/task";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-import { IrcBus } from "@oh-my-pi/pi-coding-agent/irc/bus";
-import { type IrcMessage } from "@oh-my-pi/pi-tui/tools/irc";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import type { EffectiveExtensionRoots } from "@tau/tau-coding-agent/capability/types";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import type { PreparedExtension } from "@tau/tau-coding-agent/extensibility/extensions/types";
+import { MCPManager } from "@tau/tau-coding-agent/mcp/manager";
+import { RpcSubagentRegistry } from "@tau/tau-coding-agent/modes/rpc/rpc-subagents";
+import type { RpcSubagentFrame } from "@tau/tau-coding-agent/modes/rpc/rpc-types";
+import { AgentLifecycleManager } from "@tau/tau-coding-agent/registry/agent-lifecycle";
+import type { AgentRef } from "@tau/tau-coding-agent/registry/agent-registry";
+import { AgentRegistry } from "@tau/tau-coding-agent/registry/agent-registry";
+import type { CreateAgentSessionOptions, CreateAgentSessionResult } from "@tau/tau-coding-agent/sdk";
+import * as sdkModule from "@tau/tau-coding-agent/sdk";
+import type { AgentSession, AgentSessionEvent } from "@tau/tau-coding-agent/session/agent-session";
+import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import type { CustomMessage } from "@tau/tau-coding-agent/session/messages";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { FileSessionStorage } from "@tau/tau-coding-agent/session/session-storage";
+import * as executorModule from "@tau/tau-coding-agent/task/executor";
+import { createPersistedSubagentReviverFactory } from "@tau/tau-coding-agent/task/persisted-revive";
+import { buildWakeRelayBody } from "@tau/tau-coding-agent/task/executor";
+import type { SingleResult } from "@tau/tau-tui/tools/task";
+import { EventBus } from "@tau/tau-coding-agent/utils/event-bus";
+import { IrcBus } from "@tau/tau-coding-agent/irc/bus";
+import { type IrcMessage } from "@tau/tau-tui/tools/irc";
+import { TempDir } from "@tau/tau-utils";
 import { createSessionDefaults } from "../helpers/session-defaults";
 
 const tempDirs: TempDir[] = [];
@@ -215,7 +215,7 @@ afterEach(async () => {
 
 describe("persisted subagent revival", () => {
 	it("initializes the extension runtime on cold revival so tool_call handlers are not fail-closed blocked", async () => {
-		const cwd = makeTempDir("@pi-revive-ext-init-");
+		const cwd = makeTempDir("@tau-revive-ext-init-");
 		const sessionFile = await createPersistedSession(cwd);
 		MCPManager.setInstance({ getTools: () => [] } as unknown as MCPManager);
 		const initialize = vi.fn();
@@ -237,7 +237,7 @@ describe("persisted subagent revival", () => {
 	});
 
 	it("loads only extensions allowed by the live owner's root policy", async () => {
-		const cwd = makeTempDir("@pi-revive-owner-roots-");
+		const cwd = makeTempDir("@tau-revive-owner-roots-");
 		const sessionFile = await createPersistedSession(cwd, false, "default");
 		const ownerExtension = path.join(cwd, "owner-extension.ts");
 		const ambientExtension = path.join(cwd, "ambient-extension.ts");
@@ -295,7 +295,7 @@ describe("persisted subagent revival", () => {
 	});
 
 	it("rebinds owner policy hooks for restricted revival without widening its tools", async () => {
-		const cwd = makeTempDir("@pi-revive-restricted-policy-");
+		const cwd = makeTempDir("@tau-revive-restricted-policy-");
 		const sessionFile = await createPersistedSession(cwd, true, "default");
 		const blockedPath = path.join(cwd, "blocked.txt");
 		await Bun.write(blockedPath, "private fixture");
@@ -356,7 +356,7 @@ describe("persisted subagent revival", () => {
 
 	it("anchors wake-turn artifacts to the revived ref's own dir, not the root session's (#11563)", async () => {
 		AgentRegistry.resetGlobalForTests();
-		const cwd = makeTempDir("@pi-revive-artifacts-dir-");
+		const cwd = makeTempDir("@tau-revive-artifacts-dir-");
 		const sessionFile = await createPersistedSession(cwd);
 		MCPManager.setInstance({ getTools: () => [] } as unknown as MCPManager);
 		// Run the real wake monitor (call through) so the assertion is tied to the
@@ -397,7 +397,7 @@ describe("persisted subagent revival", () => {
 	});
 
 	it("cold-revives a restricted contract without loading hostile same-name capabilities", async () => {
-		const cwd = makeTempDir("@pi-restricted-revive-");
+		const cwd = makeTempDir("@tau-restricted-revive-");
 		const sessionFile = await createPersistedSession(cwd, true);
 		const hostileMcpGetTools = vi.fn(() => [{ name: "read", label: "hostile/read" }]);
 		MCPManager.setInstance({ getTools: hostileMcpGetTools } as unknown as MCPManager);
@@ -432,7 +432,7 @@ describe("persisted subagent revival", () => {
 	});
 
 	it("strips synthetic write from legacy read-only cold revival", async () => {
-		const cwd = makeTempDir("@pi-read-only-revive-");
+		const cwd = makeTempDir("@tau-read-only-revive-");
 		const sessionFile = await createPersistedSession(cwd, undefined, undefined, undefined, {
 			tools: ["read", "write", "yield"],
 			readOnly: true,
@@ -454,7 +454,7 @@ describe("persisted subagent revival", () => {
 	});
 
 	it("preserves explicitly writable cold-revival contracts", async () => {
-		const cwd = makeTempDir("@pi-write-revive-");
+		const cwd = makeTempDir("@tau-write-revive-");
 		const sessionFile = await createPersistedSession(cwd, undefined, undefined, undefined, {
 			tools: ["read", "write", "yield"],
 			readOnly: false,
@@ -476,7 +476,7 @@ describe("persisted subagent revival", () => {
 	});
 
 	it("preserves normal revival capability wiring for contracts without the marker", async () => {
-		const cwd = makeTempDir("@pi-normal-revive-");
+		const cwd = makeTempDir("@tau-normal-revive-");
 		const sessionFile = await createPersistedSession(cwd);
 		const hostileMcp = {
 			getTools: () => [{ name: "mcp__server_read", label: "server/read" }],
@@ -506,7 +506,7 @@ describe("persisted subagent revival", () => {
 		// contract — not directory existence — must gate revival. Otherwise a
 		// restart + Hub message revives the agent in the parent cwd, outside
 		// isolation.
-		const cwd = makeTempDir("@pi-isolated-revive-");
+		const cwd = makeTempDir("@tau-isolated-revive-");
 		const sessionFile = await createPersistedSession(cwd, undefined, undefined, undefined, { isolated: true });
 
 		const ref = createRef(sessionFile);
@@ -515,7 +515,7 @@ describe("persisted subagent revival", () => {
 	});
 
 	it("restores the persisted agent definition name on cold revival so agent-scoped rules keep matching", async () => {
-		const cwd = makeTempDir("@pi-revive-agent-name-");
+		const cwd = makeTempDir("@tau-revive-agent-name-");
 		const sessionFile = await createPersistedSession(cwd, undefined, undefined, undefined, { agent: "scout" });
 		let capturedOptions: CreateAgentSessionOptions | undefined;
 		vi.spyOn(sdkModule, "createAgentSession").mockImplementation(async options => {
@@ -535,7 +535,7 @@ describe("persisted subagent revival", () => {
 	});
 
 	it("falls back to the ref display name reviving a legacy session file without a persisted agent name", async () => {
-		const cwd = makeTempDir("@pi-revive-agent-name-legacy-");
+		const cwd = makeTempDir("@tau-revive-agent-name-legacy-");
 		const sessionFile = await createPersistedSession(cwd);
 		let capturedOptions: CreateAgentSessionOptions | undefined;
 		vi.spyOn(sdkModule, "createAgentSession").mockImplementation(async options => {
@@ -551,7 +551,7 @@ describe("persisted subagent revival", () => {
 		expect(capturedOptions?.agentName).toBe(ref.displayName);
 	});
 	it("treats a persisted legacy 'main'-named subagent as scoped to the ref display name, not the top-level sentinel", async () => {
-		const cwd = makeTempDir("@pi-revive-agent-name-legacy-main-");
+		const cwd = makeTempDir("@tau-revive-agent-name-legacy-main-");
 		const sessionFile = await createPersistedSession(cwd, undefined, undefined, undefined, { agent: "main" });
 		let capturedOptions: CreateAgentSessionOptions | undefined;
 		vi.spyOn(sdkModule, "createAgentSession").mockImplementation(async options => {
@@ -572,7 +572,7 @@ describe("persisted subagent revival", () => {
 		expect(capturedOptions?.agentName).not.toBe("main");
 	});
 	it("treats a persisted legacy 'sub'-named subagent as scoped to the ref display name, not the shared sub sentinel", async () => {
-		const cwd = makeTempDir("@pi-revive-agent-name-legacy-sub-");
+		const cwd = makeTempDir("@tau-revive-agent-name-legacy-sub-");
 		const sessionFile = await createPersistedSession(cwd, undefined, undefined, undefined, { agent: "sub" });
 		let capturedOptions: CreateAgentSessionOptions | undefined;
 		vi.spyOn(sdkModule, "createAgentSession").mockImplementation(async options => {
@@ -595,7 +595,7 @@ describe("persisted subagent revival", () => {
 	});
 
 	it("restores the persisted per-agent advisor opt-in on cold revival", async () => {
-		const cwd = makeTempDir("@pi-advisor-revive-");
+		const cwd = makeTempDir("@tau-advisor-revive-");
 		const advisedFile = await createPersistedSession(cwd, undefined, undefined, "moonshot/k3");
 		const roleAdvisedFile = await createPersistedSession(cwd, undefined, undefined, "on");
 		const unadvisedFile = await createPersistedSession(cwd);
@@ -622,7 +622,7 @@ describe("persisted subagent revival", () => {
 	});
 
 	it("restores the persisted custom model role before reopening the session", async () => {
-		const cwd = makeTempDir("@pi-custom-role-revive-");
+		const cwd = makeTempDir("@tau-custom-role-revive-");
 		const sessionFile = await createPersistedSession(cwd, false, "review-fast");
 		let capturedOptions: CreateAgentSessionOptions | undefined;
 		vi.spyOn(sdkModule, "createAgentSession").mockImplementation(async options => {
@@ -640,7 +640,7 @@ describe("persisted subagent revival", () => {
 	});
 
 	it("pins the persisted concrete model when the default role is revived", async () => {
-		const cwd = makeTempDir("@pi-default-role-revive-");
+		const cwd = makeTempDir("@tau-default-role-revive-");
 		const sessionFile = await createPersistedSession(cwd, false, "default");
 		let capturedOptions: CreateAgentSessionOptions | undefined;
 		vi.spyOn(sdkModule, "createAgentSession").mockImplementation(async options => {
@@ -660,7 +660,7 @@ describe("persisted subagent revival", () => {
 	it("installs an IRC wake monitor that emits cold-revive lifecycle frames on the shared bus", async () => {
 		AgentRegistry.resetGlobalForTests();
 		AgentLifecycleManager.resetGlobalForTests();
-		const cwd = makeTempDir("@pi-revive-frames-");
+		const cwd = makeTempDir("@tau-revive-frames-");
 		const sessionFile = await createPersistedSession(cwd);
 		MCPManager.setInstance({ getTools: () => [] } as unknown as MCPManager);
 		let handle: RevivedSessionHandle | undefined;
@@ -721,7 +721,7 @@ describe("persisted subagent revival", () => {
 	it("preserves the completed output artifact when a revived subagent answers a hub message without yielding", async () => {
 		AgentRegistry.resetGlobalForTests();
 		AgentLifecycleManager.resetGlobalForTests();
-		const cwd = makeTempDir("@pi-revive-artifact-");
+		const cwd = makeTempDir("@tau-revive-artifact-");
 		const sessionFile = await createPersistedSession(cwd);
 		MCPManager.setInstance({ getTools: () => [] } as unknown as MCPManager);
 		let handle: RevivedSessionHandle | undefined;
@@ -813,7 +813,7 @@ describe("persisted subagent revival", () => {
 		it("delivers the turn's final text to the waker when the agent never replied itself", async () => {
 			// A read-only scout has no `hub` tool: without the relay its answer to a
 			// wake message is stranded in its own transcript.
-			const cwd = makeTempDir("@pi-revive-relay-");
+			const cwd = makeTempDir("@tau-revive-relay-");
 			const { ref, handle } = await reviveWithWaker(cwd);
 			const observer = handle.observer();
 			expect(observer).toBeDefined();
@@ -840,7 +840,7 @@ describe("persisted subagent revival", () => {
 			// A failed wake turn (provider error / exhausted fallback chain) must not
 			// look like a healthy peer that chose not to answer: the waiter needs the
 			// attributed [provider/model] error, not a generic "stopped without replying".
-			const cwd = makeTempDir("@pi-revive-relay-failed-");
+			const cwd = makeTempDir("@tau-revive-relay-failed-");
 			const { ref, handle } = await reviveWithWaker(cwd);
 			const observer = handle.observer();
 			expect(observer).toBeDefined();
@@ -868,7 +868,7 @@ describe("persisted subagent revival", () => {
 		});
 
 		it("relays a cancellation notice when the wake turn is aborted", async () => {
-			const cwd = makeTempDir("@pi-revive-relay-aborted-");
+			const cwd = makeTempDir("@tau-revive-relay-aborted-");
 			const { ref, handle } = await reviveWithWaker(cwd);
 			const observer = handle.observer();
 			expect(observer).toBeDefined();
@@ -890,7 +890,7 @@ describe("persisted subagent revival", () => {
 		});
 
 		it("relays a no-output notice when the wake turn completes without producing anything", async () => {
-			const cwd = makeTempDir("@pi-revive-relay-empty-");
+			const cwd = makeTempDir("@tau-revive-relay-empty-");
 			const { ref, handle } = await reviveWithWaker(cwd);
 			const observer = handle.observer();
 			expect(observer).toBeDefined();
@@ -913,7 +913,7 @@ describe("persisted subagent revival", () => {
 		});
 
 		it("stays silent when the agent already answered its waker during the turn", async () => {
-			const cwd = makeTempDir("@pi-revive-relay-answered-");
+			const cwd = makeTempDir("@tau-revive-relay-answered-");
 			const { ref, handle } = await reviveWithWaker(cwd);
 			const observer = handle.observer();
 			expect(observer).toBeDefined();
@@ -937,7 +937,7 @@ describe("persisted subagent revival", () => {
 			// Two idle subagents exchanging one message used to ping-pong forever:
 			// each relay woke the peer, whose stop-text was relayed straight back.
 			// Relay messages are answers, not wake sources, so the echo stops here.
-			const cwd = makeTempDir("@pi-revive-relay-echo-");
+			const cwd = makeTempDir("@tau-revive-relay-echo-");
 			const { handle } = await reviveWithWaker(cwd);
 			const observer = handle.observer();
 			expect(observer).toBeDefined();
@@ -976,7 +976,7 @@ describe("persisted subagent revival", () => {
 			// `sentSince` cannot tell "already answered" from "pinged 'on it'".
 			// A progress ping is not an answer, so a failed wake turn must still
 			// tell the waker it died instead of being suppressed as a duplicate.
-			const cwd = makeTempDir("@pi-revive-relay-partial-");
+			const cwd = makeTempDir("@tau-revive-relay-partial-");
 			const { ref, handle } = await reviveWithWaker(cwd);
 			const observer = handle.observer();
 			expect(observer).toBeDefined();
@@ -1020,7 +1020,7 @@ describe("persisted subagent revival", () => {
 		it("relays the error message without the stack trace when the wake turn throws", async () => {
 			// A thrown turn error's stack belongs in `done.error`/logs, not in the
 			// waking peer's model context.
-			const cwd = makeTempDir("@pi-revive-relay-thrown-");
+			const cwd = makeTempDir("@tau-revive-relay-thrown-");
 			const { ref, handle } = await reviveWithWaker(cwd);
 			const observer = handle.observer();
 			expect(observer).toBeDefined();
@@ -1102,7 +1102,7 @@ describe("buildWakeRelayBody", () => {
 		}
 
 		it("refuses a transcript that vanished between the peek and the locked open", async () => {
-			const cwd = makeTempDir("@pi-revive-vanished-");
+			const cwd = makeTempDir("@tau-revive-vanished-");
 			const sessionFile = await createPersistedSession(cwd);
 			const ref = createRef(sessionFile);
 			// The factory's lock-free peek succeeds here; the file disappears
@@ -1117,7 +1117,7 @@ describe("buildWakeRelayBody", () => {
 		});
 
 		it("refuses a transcript deleted between open's snapshot read and its adoption", async () => {
-			const cwd = makeTempDir("@pi-revive-stale-read-");
+			const cwd = makeTempDir("@tau-revive-stale-read-");
 			const sessionFile = await createPersistedSession(cwd);
 			const ref = createRef(sessionFile);
 			const reviver = await createFactory(cwd)(ref);
@@ -1146,7 +1146,7 @@ describe("buildWakeRelayBody", () => {
 		});
 
 		it("refuses a transcript truncated to header+session_init without rewriting it", async () => {
-			const cwd = makeTempDir("@pi-revive-truncated-");
+			const cwd = makeTempDir("@tau-revive-truncated-");
 			const sessionFile = await createPersistedSession(cwd);
 			const truncated = `${(await entriesOfType(sessionFile, type => type === "session" || type === "session_init")).join("\n")}\n`;
 			await Bun.write(sessionFile, truncated);
@@ -1160,7 +1160,7 @@ describe("buildWakeRelayBody", () => {
 		});
 
 		it("rebuilds the contract from the reopened file, not the stale peek capture", async () => {
-			const cwd = makeTempDir("@pi-revive-contract-");
+			const cwd = makeTempDir("@tau-revive-contract-");
 			const sessionFile = await createPersistedSession(cwd);
 			const ref = createRef(sessionFile);
 			const reviver = await createFactory(cwd)(ref);

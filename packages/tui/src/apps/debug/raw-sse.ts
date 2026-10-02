@@ -206,7 +206,7 @@ export class RawSseViewerComponent implements Component {
 			lines.push(
 				theme.fg(
 					"warning",
-					`: omp-debug-dropped records=${snapshot.droppedRecords} chars=${snapshot.droppedChars}`,
+					`: tau-debug-dropped records=${snapshot.droppedRecords} chars=${snapshot.droppedChars}`,
 				),
 			);
 			lines.push("");
@@ -217,7 +217,7 @@ export class RawSseViewerComponent implements Component {
 				lines.push(truncateToWidth(sanitizeDisplayText(line), innerWidth));
 			}
 			if (record.kind === "event" && record.truncated) {
-				lines.push(theme.fg("warning", `: omp-debug-event-truncated originalChars=${record.originalChars}`));
+				lines.push(theme.fg("warning", `: tau-debug-event-truncated originalChars=${record.originalChars}`));
 			}
 			lines.push("");
 		}

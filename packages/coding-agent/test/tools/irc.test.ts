@@ -1,15 +1,15 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { SettingPath } from "@oh-my-pi/pi-coding-agent/config/settings-schema";
-import { IrcBus } from "@oh-my-pi/pi-coding-agent/irc/bus";
-import { type IrcMessage } from "@oh-my-pi/pi-tui/tools/irc";
-import { AgentLifecycleManager } from "@oh-my-pi/pi-coding-agent/registry/agent-lifecycle";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import { AgentSession, type AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { IrcBridge } from "@oh-my-pi/pi-coding-agent/session/irc-bridge";
-import type { CustomMessage } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
+import { Agent } from "@tau/tau-agent-core";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import type { SettingPath } from "@tau/tau-coding-agent/config/settings-schema";
+import { IrcBus } from "@tau/tau-coding-agent/irc/bus";
+import { type IrcMessage } from "@tau/tau-tui/tools/irc";
+import { AgentLifecycleManager } from "@tau/tau-coding-agent/registry/agent-lifecycle";
+import { AgentRegistry } from "@tau/tau-coding-agent/registry/agent-registry";
+import { AgentSession, type AgentSessionEvent } from "@tau/tau-coding-agent/session/agent-session";
+import { IrcBridge } from "@tau/tau-coding-agent/session/irc-bridge";
+import type { CustomMessage } from "@tau/tau-coding-agent/session/messages";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
 
 interface FakeSession {
 	session: AgentSession;

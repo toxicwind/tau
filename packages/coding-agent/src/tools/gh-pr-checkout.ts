@@ -1,15 +1,15 @@
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { AgentToolResult } from "@oh-my-pi/pi-agent-core";
-import type { IsoBackendKind, VcsGitRepo, VcsWorktreeEntry } from "@oh-my-pi/pi-natives";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import { getWorktreeDir, hashPath, isEnoent, logger } from "@oh-my-pi/pi-utils";
+import type { AgentToolResult } from "@tau/tau-agent-core";
+import type { IsoBackendKind, VcsGitRepo, VcsWorktreeEntry } from "@tau/tau-natives";
+import * as vcs from "@tau/tau-natives/vcs";
+import { getWorktreeDir, hashPath, isEnoent, logger } from "@tau/tau-utils";
 import { github } from "../utils/github";
 import { formatIsolationBackend, parseIsolationBackend } from "../task/worktree";
 import { withRepoLock } from "../utils/repo-lock";
 import type { ToolSession } from ".";
-import type { GhPrCheckoutSummary, GhToolDetails } from "@oh-my-pi/pi-tui/tools/github";
+import type { GhPrCheckoutSummary, GhToolDetails } from "@tau/tau-tui/tools/github";
 import {
 	appendRepoFlag,
 	buildTextResult,
@@ -24,13 +24,13 @@ import {
 	requireCurrentGitBranch,
 	requireNonEmpty,
 } from "./gh-common";
-import { pushLine } from "@oh-my-pi/pi-tui/tools/gh-format";
-import { formatShortSha } from "@oh-my-pi/pi-tui/tools/gh-format";
+import { pushLine } from "@tau/tau-tui/tools/gh-format";
+import { formatShortSha } from "@tau/tau-tui/tools/gh-format";
 import type { GhPrViewData, GhRepoViewData, GithubInput } from "./gh-types";
 import { GH_PR_FIELDS_NO_COMMENTS } from "./gh-view";
 import { invalidateAllForNumber } from "./github-cache";
 import { throwIfAborted } from "./tool-errors";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 
 export const GH_REPO_CLONE_FIELDS = ["nameWithOwner", "sshUrl", "url"];
 export const GH_PR_CHECKOUT_FIELDS = [
@@ -221,12 +221,12 @@ export async function resolvePrBranchPushTarget(
 	const repository = vcs.requireGit(repoRoot);
 	const configPrefix = `branch.${localBranch}.`;
 	const [headRef, pushRemote, remote, prUrl, maintainerCanModifyValue, isCrossRepositoryValue] = await Promise.all([
-		repository.configGet(`${configPrefix}ompPrHeadRef`, signal),
+		repository.configGet(`${configPrefix}tauPrHeadRef`, signal),
 		repository.configGet(`${configPrefix}pushRemote`, signal),
 		repository.configGet(`${configPrefix}remote`, signal),
-		repository.configGet(`${configPrefix}ompPrUrl`, signal),
-		repository.configGet(`${configPrefix}ompPrMaintainerCanModify`, signal),
-		repository.configGet(`${configPrefix}ompPrIsCrossRepository`, signal),
+		repository.configGet(`${configPrefix}tauPrUrl`, signal),
+		repository.configGet(`${configPrefix}tauPrMaintainerCanModify`, signal),
+		repository.configGet(`${configPrefix}tauPrIsCrossRepository`, signal),
 	]);
 	if (!headRef) {
 		throw new ToolError(`branch ${localBranch} has no PR push metadata; check it out via op: pr_checkout first`);
@@ -477,15 +477,15 @@ export async function checkoutPullRequest(
 			await repository.configSet(`${configPrefix}remote`, remote.name, signal);
 			await repository.configSet(`${configPrefix}merge`, `refs/heads/${headRefName}`, signal);
 			await repository.configSet(`${configPrefix}pushRemote`, remote.name, signal);
-			await repository.configSet(`${configPrefix}ompPrHeadRef`, headRefName, signal);
-			await repository.configSet(`${configPrefix}ompPrUrl`, data.url ?? "", signal);
+			await repository.configSet(`${configPrefix}tauPrHeadRef`, headRefName, signal);
+			await repository.configSet(`${configPrefix}tauPrUrl`, data.url ?? "", signal);
 			await repository.configSet(
-				`${configPrefix}ompPrIsCrossRepository`,
+				`${configPrefix}tauPrIsCrossRepository`,
 				String(Boolean(data.isCrossRepository)),
 				signal,
 			);
 			await repository.configSet(
-				`${configPrefix}ompPrMaintainerCanModify`,
+				`${configPrefix}tauPrMaintainerCanModify`,
 				String(Boolean(data.maintainerCanModify)),
 				signal,
 			);

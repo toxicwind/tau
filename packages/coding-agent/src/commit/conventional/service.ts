@@ -1,8 +1,8 @@
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import type { VcsNumstatEntry } from "@oh-my-pi/pi-natives";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import { getCommitCacheDbPath } from "@oh-my-pi/pi-utils";
+import type { VcsNumstatEntry } from "@tau/tau-natives";
+import * as vcs from "@tau/tau-natives/vcs";
+import { getCommitCacheDbPath } from "@tau/tau-utils";
 import { ModelRegistry } from "../../config/model-registry";
 import { Settings } from "../../config/settings";
 import { discoverAuthStorage, loadCliExtensionProviders } from "../../sdk";
@@ -16,7 +16,7 @@ import {
 	type CommitInferenceRequest,
 	type CommitInferenceResponse,
 	type CommitProgress,
-	OmpCommitInference,
+	TauCommitInference,
 } from "./inference";
 import { detectRepositoryContext, formatRepositoryContext } from "./repo-context";
 
@@ -100,7 +100,7 @@ async function createOmpInference(
 	options: GenerateGitCommitOptions,
 	settings: Settings,
 	config: ConventionalGenerationConfig,
-): Promise<OmpCommitInference> {
+): Promise<TauCommitInference> {
 	options.signal?.throwIfAborted();
 	const authStorage = await discoverAuthStorage(undefined, { settings });
 	try {
@@ -114,7 +114,7 @@ async function createOmpInference(
 		const cache = config.cacheEnabled
 			? await CommitInferenceCache.open(getCommitCacheDbPath(), config.cacheTtlDays)
 			: null;
-		return new OmpCommitInference({
+		return new TauCommitInference({
 			primary,
 			smol,
 			forcePrimaryForEveryRole: options.modelOverride !== undefined,
@@ -177,10 +177,10 @@ async function projectNames(cwd: string): Promise<string[]> {
 }
 
 class LazyCommitInference implements CommitInference {
-	readonly #create: () => Promise<OmpCommitInference>;
-	#instance: Promise<OmpCommitInference> | undefined;
+	readonly #create: () => Promise<TauCommitInference>;
+	#instance: Promise<TauCommitInference> | undefined;
 
-	constructor(create: () => Promise<OmpCommitInference>) {
+	constructor(create: () => Promise<TauCommitInference>) {
 		this.#create = create;
 	}
 

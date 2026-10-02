@@ -35,7 +35,7 @@ import "./gemini";
 import "./opencode";
 import "./github";
 import "./mcp-json";
-import "./omp-plugins";
+import "./tau-plugins";
 import "./skillshare";
 import "./ssh";
 import "./vscode";

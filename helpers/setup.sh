@@ -15,7 +15,7 @@ if [ -d "$HOME/.tau" ] && [ ! -L "$HOME/.tau" ]; then
 fi
 rm -rf "$HOME/.tau" 2>/dev/null || true
 ln -sfn "$CONFIG/tau" "$HOME/.tau"
-ln -sfn "$HOME/.tau" "$HOME/.omp"
+ln -sfn "$HOME/.tau" "$HOME/.tau"
 
 # 2. .secrets master setup
 if [ -f "$HOME/.secrets" ] && [ ! -L "$HOME/.secrets" ]; then

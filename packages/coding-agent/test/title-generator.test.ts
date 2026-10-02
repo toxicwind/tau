@@ -1,11 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, spyOn, vi } from "bun:test";
-import type { Api, Model } from "@oh-my-pi/pi-ai";
-import * as ai from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { type GeneratedProvider, getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { formatModelStringWithRouting, resolveModelOverride } from "@oh-my-pi/pi-coding-agent/config/model-resolver";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { tinyTitleClient } from "@oh-my-pi/pi-coding-agent/tiny/title-client";
+import type { Api, Model } from "@tau/tau-ai";
+import * as ai from "@tau/tau-ai";
+import { buildModel } from "@tau/tau-catalog/build";
+import { type GeneratedProvider, getBundledModel } from "@tau/tau-catalog/models";
+import { formatModelStringWithRouting, resolveModelOverride } from "@tau/tau-coding-agent/config/model-resolver";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { tinyTitleClient } from "@tau/tau-coding-agent/tiny/title-client";
 import {
 	disposeTerminalTitleState,
 	generateSessionTitle,
@@ -15,8 +15,8 @@ import {
 	setTerminalTitle,
 	setTerminalTitleSpinnerStyle,
 	setTerminalTitleState,
-} from "@oh-my-pi/pi-coding-agent/utils/title-generator";
-import { isWsl, logger, setTerminalHeadless } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-coding-agent/utils/title-generator";
+import { isWsl, logger, setTerminalHeadless } from "@tau/tau-utils";
 import { mockWindowsConsoleTitle, type WindowsConsoleTitleMock } from "./terminal-title-test-utils";
 
 function getModelOrThrow(id: string): Model<Api> {

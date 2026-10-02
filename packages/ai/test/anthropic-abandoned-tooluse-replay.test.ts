@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { convertAnthropicMessages } from "@oh-my-pi/pi-ai/providers/anthropic";
+import { convertAnthropicMessages } from "@tau/tau-ai/providers/anthropic";
 import type {
 	AssistantMessage,
 	Message,
@@ -7,8 +7,8 @@ import type {
 	ModelSpec,
 	ToolResultMessage,
 	UserMessage,
-} from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+} from "@tau/tau-ai/types";
+import { buildModel } from "@tau/tau-catalog/build";
 
 // These tests pin the wire-validity contract that was verified end-to-end against the
 // live Anthropic Messages API (claude-opus-4-8):

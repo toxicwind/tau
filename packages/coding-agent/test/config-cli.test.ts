@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { runConfigCommand } from "@oh-my-pi/pi-coding-agent/cli/config-cli";
-import { resetSettingsForTest } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentStorage } from "@oh-my-pi/pi-coding-agent/session/agent-storage";
-import { getConfigRootDir, setAgentDir, TempDir } from "@oh-my-pi/pi-utils";
+import { runConfigCommand } from "@tau/tau-coding-agent/cli/config-cli";
+import { resetSettingsForTest } from "@tau/tau-coding-agent/config/settings";
+import { AgentStorage } from "@tau/tau-coding-agent/session/agent-storage";
+import { getConfigRootDir, setAgentDir, TempDir } from "@tau/tau-utils";
 
 let testAgentDir: TempDir | undefined;
 const originalAgentDir = process.env.PI_CODING_AGENT_DIR;
@@ -30,7 +30,7 @@ async function runCliProcess(args: string[], env: NodeJS.ProcessEnv): Promise<Cl
 
 beforeEach(() => {
 	resetSettingsForTest();
-	testAgentDir = TempDir.createSync("@omp-config-cli-");
+	testAgentDir = TempDir.createSync("@tau-config-cli-");
 	setAgentDir(testAgentDir.path());
 });
 

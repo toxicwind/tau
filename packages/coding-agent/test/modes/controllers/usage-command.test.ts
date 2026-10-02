@@ -1,8 +1,8 @@
 import { beforeAll, describe, expect, it } from "bun:test";
 import { stripVTControlCharacters } from "node:util";
-import type { UsageReport } from "@oh-my-pi/pi-ai";
-import { renderUsageReports } from "@oh-my-pi/pi-coding-agent/modes/controllers/command-controller";
-import { getThemeByName, setThemeInstance, theme } from "@oh-my-pi/pi-tui/theme";
+import type { UsageReport } from "@tau/tau-ai";
+import { renderUsageReports } from "@tau/tau-coding-agent/modes/controllers/command-controller";
+import { getThemeByName, setThemeInstance, theme } from "@tau/tau-tui/theme";
 
 describe("renderUsageReports content", () => {
 	beforeAll(async () => {

@@ -1,5 +1,5 @@
 import * as path from "node:path";
-import * as utils from "@oh-my-pi/pi-utils";
+import * as utils from "@tau/tau-utils";
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import { resolveCliEntryCmd, resolveExecutablePath, resolveWorkerSpawnCmd } from "../src/subprocess/worker-client";
 
@@ -40,15 +40,15 @@ describe("executable fallback on unlinked binary", () => {
 
 	it("prefers original absolute launcher path over generic PATH match when executable", () => {
 		vi.spyOn(utils, "isCompiledBinary").mockReturnValue(true);
-		const missingPath = "/opt/homebrew/Cellar/omp/18.1.8/bin/omp";
-		const originalLauncher = "/opt/homebrew/bin/omp";
-		const otherOmpInPath = "/usr/local/bin/omp";
+		const missingPath = "/opt/homebrew/Cellar/tau/18.1.8/bin/tau";
+		const originalLauncher = "/opt/homebrew/bin/tau";
+		const otherOmpInPath = "/usr/local/bin/tau";
 
 		setProcessProp("execPath", missingPath);
 		setProcessProp("argv0", originalLauncher);
 
 		vi.spyOn(utils, "$which").mockImplementation((cmd: string) => {
-			if (cmd === "omp") return otherOmpInPath;
+			if (cmd === "tau") return otherOmpInPath;
 			return null;
 		});
 		vi.spyOn(utils, "isExecutable").mockImplementation((p: string) => {
@@ -63,15 +63,15 @@ describe("executable fallback on unlinked binary", () => {
 
 	it("falls back to PATH when original absolute launcher exists but is not executable", () => {
 		vi.spyOn(utils, "isCompiledBinary").mockReturnValue(true);
-		const missingPath = "/opt/homebrew/Cellar/omp/18.1.8/bin/omp";
-		const originalLauncher = "/opt/homebrew/bin/omp";
-		const otherOmpInPath = "/usr/local/bin/omp";
+		const missingPath = "/opt/homebrew/Cellar/tau/18.1.8/bin/tau";
+		const originalLauncher = "/opt/homebrew/bin/tau";
+		const otherOmpInPath = "/usr/local/bin/tau";
 
 		setProcessProp("execPath", missingPath);
 		setProcessProp("argv0", originalLauncher);
 
 		vi.spyOn(utils, "$which").mockImplementation((cmd: string) => {
-			if (cmd === "omp") return otherOmpInPath;
+			if (cmd === "tau") return otherOmpInPath;
 			return null;
 		});
 		vi.spyOn(utils, "isExecutable").mockImplementation((p: string) => {
@@ -87,11 +87,11 @@ describe("executable fallback on unlinked binary", () => {
 
 	it("does not resolve relative argv0 against the working tree", () => {
 		vi.spyOn(utils, "isCompiledBinary").mockReturnValue(true);
-		const missingPath = "/opt/homebrew/Cellar/omp/18.1.8/bin/omp";
+		const missingPath = "/opt/homebrew/Cellar/tau/18.1.8/bin/tau";
 		setProcessProp("execPath", missingPath);
-		setProcessProp("argv0", "./omp");
+		setProcessProp("argv0", "./tau");
 
-		const cwdRogueBinary = path.resolve("./omp");
+		const cwdRogueBinary = path.resolve("./tau");
 		vi.spyOn(utils, "$which").mockReturnValue(null);
 		vi.spyOn(utils, "isExecutable").mockImplementation((p: string) => {
 			return p === cwdRogueBinary;
@@ -101,11 +101,11 @@ describe("executable fallback on unlinked binary", () => {
 		expect(resolveExecutablePath()).toBe(missingPath);
 	});
 
-	it("does not treat Windows drive-relative paths (e.g. C:omp) as bare commands", () => {
+	it("does not treat Windows drive-relative paths (e.g. C:tau) as bare commands", () => {
 		vi.spyOn(utils, "isCompiledBinary").mockReturnValue(true);
-		const missingPath = "C:\\Tools\\omp.exe";
+		const missingPath = "C:\\Tools\\tau.exe";
 		setProcessProp("execPath", missingPath);
-		setProcessProp("argv0", "C:omp");
+		setProcessProp("argv0", "C:tau");
 
 		let whichCalledWith: string | undefined;
 		vi.spyOn(utils, "$which").mockImplementation((cmd: string) => {
@@ -116,19 +116,19 @@ describe("executable fallback on unlinked binary", () => {
 
 		resolveExecutablePath();
 
-		// Should not pass "C:omp" to which as a bare name; only "omp" generic fallback is queried
-		expect(whichCalledWith).toBe("omp");
+		// Should not pass "C:tau" to which as a bare name; only "tau" generic fallback is queried
+		expect(whichCalledWith).toBe("tau");
 	});
 
-	it("falls back to $which('omp') when original execPath was unlinked and argv0 has no path", () => {
+	it("falls back to $which('tau') when original execPath was unlinked and argv0 has no path", () => {
 		vi.spyOn(utils, "isCompiledBinary").mockReturnValue(true);
-		const missingPath = "/opt/homebrew/Cellar/omp/18.1.8/bin/omp";
+		const missingPath = "/opt/homebrew/Cellar/tau/18.1.8/bin/tau";
 		setProcessProp("execPath", missingPath);
-		setProcessProp("argv0", "omp");
+		setProcessProp("argv0", "tau");
 
-		const mockUpgradedPath = "/opt/homebrew/bin/omp";
+		const mockUpgradedPath = "/opt/homebrew/bin/tau";
 		vi.spyOn(utils, "$which").mockImplementation((cmd: string) => {
-			if (cmd === "omp") return mockUpgradedPath;
+			if (cmd === "tau") return mockUpgradedPath;
 			return null;
 		});
 		vi.spyOn(utils, "isExecutable").mockImplementation((p: string) => {
@@ -141,15 +141,15 @@ describe("executable fallback on unlinked binary", () => {
 		});
 	});
 
-	it("falls back to process.argv0 when $which('omp') is unavailable", () => {
+	it("falls back to process.argv0 when $which('tau') is unavailable", () => {
 		vi.spyOn(utils, "isCompiledBinary").mockReturnValue(true);
-		const missingPath = "/custom/install/bin/omp";
+		const missingPath = "/custom/install/bin/tau";
 		setProcessProp("execPath", missingPath);
-		setProcessProp("argv0", "my-omp");
+		setProcessProp("argv0", "my-tau");
 
-		const mockCustomPath = "/usr/local/bin/my-omp";
+		const mockCustomPath = "/usr/local/bin/my-tau";
 		vi.spyOn(utils, "$which").mockImplementation((cmd: string) => {
-			if (cmd === "my-omp") return mockCustomPath;
+			if (cmd === "my-tau") return mockCustomPath;
 			return null;
 		});
 		vi.spyOn(utils, "isExecutable").mockImplementation((p: string) => {
@@ -161,7 +161,7 @@ describe("executable fallback on unlinked binary", () => {
 
 	it("does not perform fallback lookup when isCompiledBinary is false", () => {
 		vi.spyOn(utils, "isCompiledBinary").mockReturnValue(false);
-		const missingPath = "/opt/homebrew/Cellar/omp/18.1.8/bin/omp";
+		const missingPath = "/opt/homebrew/Cellar/tau/18.1.8/bin/tau";
 		setProcessProp("execPath", missingPath);
 
 		const whichSpy = vi.spyOn(utils, "$which");
@@ -174,7 +174,7 @@ describe("executable fallback on unlinked binary", () => {
 
 	it("returns original execPath gracefully if no fallback candidate exists", () => {
 		vi.spyOn(utils, "isCompiledBinary").mockReturnValue(true);
-		const missingPath = "/nonexistent/omp";
+		const missingPath = "/nonexistent/tau";
 		setProcessProp("execPath", missingPath);
 		vi.spyOn(utils, "$which").mockReturnValue(null);
 		vi.spyOn(utils, "isExecutable").mockReturnValue(false);

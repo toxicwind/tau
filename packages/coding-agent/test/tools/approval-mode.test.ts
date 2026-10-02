@@ -2,13 +2,13 @@ import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { AgentToolContext } from "@oh-my-pi/pi-agent-core";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { createAgentSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { removeSyncWithRetries, Snowflake } from "@oh-my-pi/pi-utils";
+import type { AgentToolContext } from "@tau/tau-agent-core";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { createAgentSession } from "@tau/tau-coding-agent/sdk";
+import type { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { removeSyncWithRetries, Snowflake } from "@tau/tau-utils";
 
 const BASE_SETTINGS = {
 	"async.enabled": false,
@@ -39,7 +39,7 @@ describe("tools.approvalMode setting", () => {
 	let session: AgentSession;
 
 	beforeAll(async () => {
-		tempDir = fs.mkdtempSync(path.join(os.tmpdir(), `pi-approval-mode-${Snowflake.next()}-`));
+		tempDir = fs.mkdtempSync(path.join(os.tmpdir(), `tau-approval-mode-${Snowflake.next()}-`));
 		const cwd = path.join(tempDir, "cwd");
 		fs.mkdirSync(cwd, { recursive: true });
 		const sessionManager = SessionManager.create(cwd, path.join(tempDir, "sessions"));

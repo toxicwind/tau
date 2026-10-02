@@ -1,14 +1,14 @@
-import { activityOneLine, compareActivityRows } from "@oh-my-pi/pi-tui/overlays/agent-activity";
+import { activityOneLine, compareActivityRows } from "@tau/tau-tui/overlays/agent-activity";
 import type { Stats } from "node:fs";
 import * as fs from "node:fs/promises";
-import type { AgentActivityRow, AgentActivityQuery } from "@oh-my-pi/pi-tui/overlays/agent-activity";
+import type { AgentActivityRow, AgentActivityQuery } from "@tau/tau-tui/overlays/agent-activity";
 export type {
 	AgentActivityRow,
 	AgentActivityQuery,
 	AgentActivityKind,
 	AgentActivityStatus,
-} from "@oh-my-pi/pi-tui/overlays/agent-activity";
-export { activityRowsFromProgress } from "@oh-my-pi/pi-tui/overlays/agent-activity";
+} from "@tau/tau-tui/overlays/agent-activity";
+export { activityRowsFromProgress } from "@tau/tau-tui/overlays/agent-activity";
 
 export interface AgentActivityTranscript {
 	text: string;

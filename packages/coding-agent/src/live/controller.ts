@@ -1,8 +1,8 @@
 import * as os from "node:os";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { AudioCapture } from "@oh-my-pi/pi-natives";
-import { prompt } from "@oh-my-pi/pi-utils";
+import type { AgentMessage } from "@tau/tau-agent-core";
+import type { AssistantMessage } from "@tau/tau-ai";
+import { AudioCapture } from "@tau/tau-natives";
+import { prompt } from "@tau/tau-utils";
 import type { AgentSession } from "../session/agent-session";
 import type { AgentSessionEvent } from "../session/agent-session-events";
 import { LIVE_DELEGATION_MESSAGE_TYPE } from "../session/messages";
@@ -16,7 +16,7 @@ import {
 	type LiveServerEvent,
 } from "./protocol";
 import { CodexLiveTransport } from "./transport";
-import type { LivePhase } from "@oh-my-pi/pi-tui/apps/live-visualizer";
+import type { LivePhase } from "@tau/tau-tui/apps/live-visualizer";
 import { DEFAULT_LIVE_VOICE } from "./voices";
 
 const OUTPUT_ACTIVE_LEVEL = 0.015;

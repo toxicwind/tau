@@ -1,5 +1,5 @@
-import { $which } from "@oh-my-pi/pi-utils";
-import { isBunTestRuntime } from "@oh-my-pi/pi-utils/env";
+import { $which } from "@tau/tau-utils";
+import { isBunTestRuntime } from "@tau/tau-utils/env";
 
 /** Whether the process is running inside a tmux session. */
 export function isInsideTmux(env: NodeJS.ProcessEnv = Bun.env): boolean {

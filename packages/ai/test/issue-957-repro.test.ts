@@ -2,9 +2,9 @@ import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { AuthStorage, SqliteAuthCredentialStore } from "@oh-my-pi/pi-ai/auth-storage";
-import { getProviderDefinition } from "@oh-my-pi/pi-ai/registry";
-import * as kimiOauth from "@oh-my-pi/pi-ai/registry/oauth/kimi";
+import { AuthStorage, SqliteAuthCredentialStore } from "@tau/tau-ai/auth-storage";
+import { getProviderDefinition } from "@tau/tau-ai/registry";
+import * as kimiOauth from "@tau/tau-ai/registry/oauth/kimi";
 import { removeWithRetries } from "../../utils/src/temp";
 
 afterEach(() => {
@@ -87,7 +87,7 @@ describe("issue #957 - Kimi OAuth refresh", () => {
 			),
 		);
 
-		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "pi-ai-issue-957-"));
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-ai-issue-957-"));
 		const store = await SqliteAuthCredentialStore.open(path.join(tempDir, "agent.db"));
 		const authStorage = new AuthStorage(store);
 		try {

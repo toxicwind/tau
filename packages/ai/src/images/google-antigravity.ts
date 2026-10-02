@@ -2,10 +2,10 @@ import {
 	ANTIGRAVITY_PRIMARY_ENDPOINT,
 	ANTIGRAVITY_SANDBOX_ENDPOINT,
 	fetchAntigravityImageModel,
-} from "@oh-my-pi/pi-catalog/discovery/antigravity";
-import type { Model } from "@oh-my-pi/pi-catalog/types";
-import { getAntigravityUserAgent } from "@oh-my-pi/pi-catalog/wire/gemini-headers";
-import { readSseJson } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-catalog/discovery/antigravity";
+import type { Model } from "@tau/tau-catalog/types";
+import { getAntigravityUserAgent } from "@tau/tau-catalog/wire/gemini-headers";
+import { readSseJson } from "@tau/tau-utils";
 import { withAuth } from "../auth-retry";
 import * as AIError from "../error";
 import { errorMessage, ImageApiError, usageFromWire } from "./shared";

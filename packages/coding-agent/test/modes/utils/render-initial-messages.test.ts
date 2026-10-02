@@ -5,26 +5,26 @@
  * `sessionManager.buildSessionContext()` — the LLM-context builder — must not be
  * consulted for display.
  *
- * Also guards the cold-launch terminal cleanup: `omp` / `omp -c` leave the
+ * Also guards the cold-launch terminal cleanup: `tau` / `tau -c` leave the
  * previous run's transcript in native scrollback because the TUI's initial
  * paint preserves it, so the cold-launch render must request a
  * scrollback-clearing repaint (`clearTerminalHistory`).
  */
 
 import { afterEach, beforeAll, beforeEach, describe, expect, it, type Mock, vi } from "bun:test";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, ImageContent, Usage } from "@oh-my-pi/pi-ai";
-import { kStreamingPartialJson } from "@oh-my-pi/pi-ai/utils/block-symbols";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AssistantMessageComponent } from "@oh-my-pi/pi-tui/chat/assistant-message";
-import { TranscriptContainer } from "@oh-my-pi/pi-tui/chrome/transcript-container";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { InteractiveModeContext, RenderSessionContextOptions } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { UiHelpers } from "@oh-my-pi/pi-coding-agent/modes/utils/ui-helpers";
-import type { SessionContext, StrippedToolCallsMarker } from "@oh-my-pi/pi-coding-agent/session/session-context";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { type Component, Container, Image, ImageProtocol, setTerminalImageProtocol, TERMINAL } from "@oh-my-pi/pi-tui";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import type { AgentMessage } from "@tau/tau-agent-core";
+import type { AssistantMessage, ImageContent, Usage } from "@tau/tau-ai";
+import { kStreamingPartialJson } from "@tau/tau-ai/utils/block-symbols";
+import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import { AssistantMessageComponent } from "@tau/tau-tui/chat/assistant-message";
+import { TranscriptContainer } from "@tau/tau-tui/chrome/transcript-container";
+import { initTheme } from "@tau/tau-tui/theme";
+import type { InteractiveModeContext, RenderSessionContextOptions } from "@tau/tau-coding-agent/modes/types";
+import { UiHelpers } from "@tau/tau-coding-agent/modes/utils/ui-helpers";
+import type { SessionContext, StrippedToolCallsMarker } from "@tau/tau-coding-agent/session/session-context";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { type Component, Container, Image, ImageProtocol, setTerminalImageProtocol, TERMINAL } from "@tau/tau-tui";
+import { TempDir } from "@tau/tau-utils";
 
 beforeAll(() => {
 	initTheme();
@@ -490,7 +490,7 @@ describe("UiHelpers.renderInitialMessages — image replay", () => {
 	it("replays reopened session image blocks through the cold-start rebuild path", async () => {
 		await Settings.init({ inMemory: true, overrides: { "terminal.showImages": true } });
 		setTerminalImageProtocol(ImageProtocol.Sixel);
-		using tempDir = TempDir.createSync("@pi-render-initial-image-replay-");
+		using tempDir = TempDir.createSync("@tau-render-initial-image-replay-");
 		const session = SessionManager.create(tempDir.path(), tempDir.path());
 		session.appendMessage(assistantToolCall("read-reopened", "read", { path: "reopened.png" }));
 		session.appendMessage({

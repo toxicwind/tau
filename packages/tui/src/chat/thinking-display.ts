@@ -1,4 +1,4 @@
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
+import type { AgentMessage } from "@tau/tau-agent-core";
 import { FENCE_RE } from "../render/render-utils";
 
 // Single-slot-per-mode memo for formatThinkingForDisplay. During a streaming

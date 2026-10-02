@@ -1,5 +1,5 @@
-import { authPolicyFor } from "@oh-my-pi/pi-catalog/compat/auth";
-import { $env, $envExact } from "@oh-my-pi/pi-utils";
+import { authPolicyFor } from "@tau/tau-catalog/compat/auth";
+import { $env, $envExact } from "@tau/tau-utils";
 import type { ApiKeyResolver, ResolvedApiKey } from "../auth-retry";
 import * as AIError from "../error";
 import { isUsageLimitOutcome } from "../error/rate-limit";
@@ -12,7 +12,7 @@ import type { AuthApiKeyOptions, AuthCredential, AuthSource, AuthSourceOptions, 
 
 /**
  * Default config value resolver that checks env vars and treats as literal.
- * Does NOT support "!command" syntax (that requires pi-natives).
+ * Does NOT support "!command" syntax (that requires tau-natives).
  */
 async function defaultConfigValueResolver(config: string): Promise<string | undefined> {
 	const envValue = $envExact(config);

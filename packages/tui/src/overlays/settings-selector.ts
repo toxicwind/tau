@@ -1,5 +1,5 @@
-import type { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { Effort } from "@oh-my-pi/pi-ai";
+import type { ThinkingLevel } from "@tau/tau-agent-core";
+import type { Effort } from "@tau/tau-ai";
 import {
 	type Component,
 	Container,
@@ -22,7 +22,7 @@ import {
 	truncateToWidth,
 	visibleWidth,
 } from "../index";
-import type { ShapeTarget } from "@oh-my-pi/snapcompact";
+import type { ShapeTarget } from "@tau/snapcompact";
 import type {
 	ContextLineMode,
 	StatusLinePreset,

@@ -1,11 +1,11 @@
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import { stripVTControlCharacters } from "node:util";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { StatusLineComponent } from "@oh-my-pi/pi-tui/status-line";
-import { statusLineHost } from "@oh-my-pi/pi-coding-agent/modes/status-line-host";
-import { renderSegment } from "@oh-my-pi/pi-tui/status-line/segments";
-import type { SegmentContext } from "@oh-my-pi/pi-tui/status-line/types";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
+import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import { StatusLineComponent } from "@tau/tau-tui/status-line";
+import { statusLineHost } from "@tau/tau-coding-agent/modes/status-line-host";
+import { renderSegment } from "@tau/tau-tui/status-line/segments";
+import type { SegmentContext } from "@tau/tau-tui/status-line/types";
+import { initTheme } from "@tau/tau-tui/theme";
 import { StatusLineTestComponents } from "./helpers/status-line";
 
 const statusLines = new StatusLineTestComponents();

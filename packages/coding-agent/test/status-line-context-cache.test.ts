@@ -14,14 +14,14 @@
  * redraw — that per-event recompute is what previously froze large sessions.
  */
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
-import { resetSettingsForTest, Settings, settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ContextUsage } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/types";
-import { StatusLineComponent } from "@oh-my-pi/pi-tui/status-line";
-import { statusLineHost } from "@oh-my-pi/pi-coding-agent/modes/status-line-host";
-import { initTheme, setSymbolPreset, theme } from "@oh-my-pi/pi-tui/theme";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { getSessionAccentAnsi } from "@oh-my-pi/pi-tui/theme/session-color";
-import { adjustHsv } from "@oh-my-pi/pi-utils";
+import { resetSettingsForTest, Settings, settings } from "@tau/tau-coding-agent/config/settings";
+import type { ContextUsage } from "@tau/tau-coding-agent/extensibility/extensions/types";
+import { StatusLineComponent } from "@tau/tau-tui/status-line";
+import { statusLineHost } from "@tau/tau-coding-agent/modes/status-line-host";
+import { initTheme, setSymbolPreset, theme } from "@tau/tau-tui/theme";
+import type { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import { getSessionAccentAnsi } from "@tau/tau-tui/theme/session-color";
+import { adjustHsv } from "@tau/tau-utils";
 import { StatusLineTestComponents } from "./helpers/status-line";
 
 const statusLines = new StatusLineTestComponents();

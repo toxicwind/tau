@@ -2,10 +2,10 @@
  * Manage bundled task agents.
  */
 
-import { Args, Command, Flags, renderCommandHelp } from "@oh-my-pi/pi-utils/cli";
+import { Args, Command, Flags, renderCommandHelp } from "@tau/tau-utils/cli";
 import { type AgentsAction, type AgentsCommandArgs, runAgentsCommand } from "../cli/agents-cli";
 import { agentsHelp as commandHelp } from "../cli/command-help";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
+import { initTheme } from "@tau/tau-tui/theme";
 
 const ACTIONS: AgentsAction[] = ["unpack"];
 
@@ -23,21 +23,21 @@ export default class Agents extends Command {
 		force: Flags.boolean({ char: "f", description: "Overwrite existing agent files" }),
 		json: Flags.boolean({ description: "Output JSON" }),
 		dir: Flags.string({ description: "Output directory (overrides --user/--project)" }),
-		user: Flags.boolean({ description: "Write to ~/.omp/agent/agents (default)" }),
-		project: Flags.boolean({ description: "Write to ./.omp/agents" }),
+		user: Flags.boolean({ description: "Write to ~/.tau/agent/agents (default)" }),
+		project: Flags.boolean({ description: "Write to ./.tau/agents" }),
 	};
 
 	static examples = [
-		"# Export bundled agents into user config (default)\n  omp agents unpack",
-		"# Export bundled agents into project config\n  omp agents unpack --project",
-		"# Overwrite existing local agent files\n  omp agents unpack --project --force",
-		"# Export into a custom directory\n  omp agents unpack --dir ./tmp/agents --json",
+		"# Export bundled agents into user config (default)\n  tau agents unpack",
+		"# Export bundled agents into project config\n  tau agents unpack --project",
+		"# Overwrite existing local agent files\n  tau agents unpack --project --force",
+		"# Export into a custom directory\n  tau agents unpack --dir ./tmp/agents --json",
 	];
 
 	async run(): Promise<void> {
 		const { args, flags } = await this.parse(Agents);
 		if (!args.action) {
-			renderCommandHelp("omp", "agents", Agents);
+			renderCommandHelp("tau", "agents", Agents);
 			return;
 		}
 

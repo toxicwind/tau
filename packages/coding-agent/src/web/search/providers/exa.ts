@@ -6,8 +6,8 @@
  * Requests per-result summaries via `contents.summary` and synthesizes
  * them into a combined `answer` string on the SearchResponse.
  */
-import { type ApiKey, type AuthStorage, type FetchImpl, getEnvApiKey, withAuth } from "@oh-my-pi/pi-ai";
-import { isRecord } from "@oh-my-pi/pi-utils";
+import { type ApiKey, type AuthStorage, type FetchImpl, getEnvApiKey, withAuth } from "@tau/tau-ai";
+import { isRecord } from "@tau/tau-utils";
 import { getDefault, settings } from "../../../config/settings";
 import { findApiKey, isSearchResponse } from "../../../exa/mcp-client";
 import { readMcpJsonRpcResponse } from "../../../mcp/json-rpc";
@@ -21,7 +21,7 @@ import { classifyProviderHttpError, withHardTimeout } from "./utils";
 
 const EXA_API_URL = "https://api.exa.ai/search";
 const EXA_MCP_URL = "https://mcp.exa.ai/mcp";
-const EXA_MCP_SOURCE = "oh-my-pi";
+const EXA_MCP_SOURCE = "tau";
 const MAX_EXA_SNIPPET_CHARS = 500;
 const DEFAULT_EXA_SEARCH_DELAY_MS = getDefault("exa.searchDelayMs");
 

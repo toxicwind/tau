@@ -1,20 +1,20 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import { Agent, type AgentMessage, type AgentTool } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, TextContent, ToolCall } from "@oh-my-pi/pi-ai";
-import * as ai from "@oh-my-pi/pi-ai";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession, type AgentSessionConfig } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { convertToLlm } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { TodoTool } from "@oh-my-pi/pi-coding-agent/tools";
-import { setInteractiveHost, TempDir } from "@oh-my-pi/pi-utils";
+import { type } from "@tau/tautype";
+import { Agent, type AgentMessage, type AgentTool } from "@tau/tau-agent-core";
+import type { AssistantMessage, TextContent, ToolCall } from "@tau/tau-ai";
+import * as ai from "@tau/tau-ai";
+import { AssistantMessageEventStream } from "@tau/tau-ai/utils/event-stream";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { AgentSession, type AgentSessionConfig } from "@tau/tau-coding-agent/session/agent-session";
+import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { convertToLlm } from "@tau/tau-coding-agent/session/messages";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import type { ToolSession } from "@tau/tau-coding-agent/tools";
+import { TodoTool } from "@tau/tau-coding-agent/tools";
+import { setInteractiveHost, TempDir } from "@tau/tau-utils";
 import { createAssistantMessage } from "./helpers/agent-session-setup";
 
 type ObservedPromptCall = {
@@ -215,7 +215,7 @@ describe("AgentSession eager todo enforcement", () => {
 	}
 
 	beforeAll(async () => {
-		sharedDir = TempDir.createSync("@pi-agent-session-eager-todo-shared-");
+		sharedDir = TempDir.createSync("@tau-agent-session-eager-todo-shared-");
 		sharedAuthStorage = await AuthStorage.create(path.join(sharedDir.path(), "auth.db"));
 		sharedAuthStorage.keys.setRuntime("anthropic", "test-key");
 		sharedModelRegistry = new ModelRegistry(sharedAuthStorage, path.join(sharedDir.path(), "models.yml"));
@@ -229,7 +229,7 @@ describe("AgentSession eager todo enforcement", () => {
 	beforeEach(async () => {
 		previousNoTitle = Bun.env.PI_NO_TITLE;
 		delete Bun.env.PI_NO_TITLE;
-		tempDir = TempDir.createSync("@pi-agent-session-eager-todo-");
+		tempDir = TempDir.createSync("@tau-agent-session-eager-todo-");
 		streamCallCount = 0;
 		scriptedResponses = [];
 		observedCalls.length = 0;

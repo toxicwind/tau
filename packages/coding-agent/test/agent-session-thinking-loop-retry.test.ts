@@ -1,5 +1,5 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
-import { Agent } from "@oh-my-pi/pi-agent-core";
+import { Agent } from "@tau/tau-agent-core";
 import type {
 	Api,
 	AssistantMessage,
@@ -8,17 +8,17 @@ import type {
 	SimpleStreamOptions,
 	TextContent,
 	ThinkingContent,
-} from "@oh-my-pi/pi-ai";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { withThinkingLoopGuard } from "@oh-my-pi/pi-ai/utils/thinking-loop";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession, type AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { type CustomMessage, convertToLlm } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
+} from "@tau/tau-ai";
+import * as AIError from "@tau/tau-ai/error";
+import { createMockModel } from "@tau/tau-ai/providers/mock";
+import { AssistantMessageEventStream } from "@tau/tau-ai/utils/event-stream";
+import { withThinkingLoopGuard } from "@tau/tau-ai/utils/thinking-loop";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { AgentSession, type AgentSessionEvent } from "@tau/tau-coding-agent/session/agent-session";
+import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { type CustomMessage, convertToLlm } from "@tau/tau-coding-agent/session/messages";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
 import { mockSchedulerWaitWithClock } from "./helpers/mock-scheduler-clock";
 
 const LOOP_PARAGRAPHS = [

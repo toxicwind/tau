@@ -1,7 +1,7 @@
-import type { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { Model } from "@oh-my-pi/pi-ai";
+import type { ThinkingLevel } from "@tau/tau-agent-core";
+import type { Model } from "@tau/tau-ai";
 import type { ModelRegistry } from "../config/model-registry";
-import { formatModelSelectorValue, parseModelString } from "@oh-my-pi/pi-tui/overlays/model-selector";
+import { formatModelSelectorValue, parseModelString } from "@tau/tau-tui/overlays/model-selector";
 import {
 	extractExplicitThinkingSelector,
 	getModelMatchPreferences,

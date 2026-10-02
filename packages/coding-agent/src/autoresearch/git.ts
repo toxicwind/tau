@@ -1,5 +1,5 @@
-import type { VcsGitRepo } from "@oh-my-pi/pi-natives";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
+import type { VcsGitRepo } from "@tau/tau-natives";
+import * as vcs from "@tau/tau-natives/vcs";
 import type { ExtensionAPI } from "../extensibility/extensions";
 import { normalizePathSpec } from "./helpers";
 

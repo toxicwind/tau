@@ -2,16 +2,16 @@ import { afterEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { rebindMemoryBackendForCwd } from "@oh-my-pi/pi-coding-agent/hindsight/backend";
-import { createAgentSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { executeAcpBuiltinSlashCommand } from "@oh-my-pi/pi-coding-agent/slash-commands/acp-builtins";
-import { getProjectAgentDir, getProjectDir, setProjectDir, removeSyncWithRetries, Snowflake } from "@oh-my-pi/pi-utils";
+import { createMockModel } from "@tau/tau-ai/providers/mock";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { rebindMemoryBackendForCwd } from "@tau/tau-coding-agent/hindsight/backend";
+import { createAgentSession } from "@tau/tau-coding-agent/sdk";
+import type { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { executeAcpBuiltinSlashCommand } from "@tau/tau-coding-agent/slash-commands/acp-builtins";
+import { getProjectAgentDir, getProjectDir, setProjectDir, removeSyncWithRetries, Snowflake } from "@tau/tau-utils";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
 function textContent(result: { content?: Array<{ type: string; text?: string }> }): string {
@@ -37,7 +37,7 @@ describe("createAgentSession cwd after /move", () => {
 	it.each(["disabled", "empty", "failed"] as const)(
 		"drops source Hindsight context after cwd rebind when destination recall is %s",
 		async destinationRecall => {
-			const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "pi-sdk-memory-prompt-move-"));
+			const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "tau-sdk-memory-prompt-move-"));
 			tempDirs.push(tempDir);
 			const cwdA = path.join(tempDir, "cwd-a");
 			const cwdB = path.join(tempDir, "cwd-b");
@@ -142,7 +142,7 @@ describe("createAgentSession cwd after /move", () => {
 	);
 
 	it("runs tools from the moved session directory", async () => {
-		const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), `pi-sdk-move-cwd-${Snowflake.next()}-`));
+		const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), `tau-sdk-move-cwd-${Snowflake.next()}-`));
 		tempDirs.push(tempDir);
 		const cwdA = path.join(tempDir, "cwd-a");
 		const cwdB = path.join(tempDir, "cwd-b");
@@ -193,8 +193,8 @@ describe("createAgentSession cwd after /move", () => {
 			}
 		}
 	});
-	it.each(["hindsight", "mnemopi"] as const)("keeps %s disabled in restricted sessions after /move", async backend => {
-		const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "pi-sdk-restricted-memory-move-"));
+	it.each(["hindsight", "mnemotau"] as const)("keeps %s disabled in restricted sessions after /move", async backend => {
+		const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "tau-sdk-restricted-memory-move-"));
 		tempDirs.push(tempDir);
 		const cwdA = path.join(tempDir, "cwd-a");
 		const cwdB = path.join(tempDir, "cwd-b");
@@ -206,7 +206,7 @@ describe("createAgentSession cwd after /move", () => {
 					Bun.YAML.stringify({
 						memory: { backend },
 						hindsight: { apiUrl: "http://127.0.0.1:1", mentalModelsEnabled: false },
-						mnemopi: { noEmbeddings: true, llmMode: "none" },
+						mnemotau: { noEmbeddings: true, llmMode: "none" },
 					}),
 				),
 			),
@@ -238,7 +238,7 @@ describe("createAgentSession cwd after /move", () => {
 		const originalProjectDir = getProjectDir();
 		try {
 			expect(session.getHindsightSessionState()).toBeUndefined();
-			expect(session.getMnemopiSessionState()).toBeUndefined();
+			expect(session.getMnemotauSessionState()).toBeUndefined();
 			const output: string[] = [];
 			await executeAcpBuiltinSlashCommand("/move " + cwdB, {
 				session,
@@ -254,11 +254,11 @@ describe("createAgentSession cwd after /move", () => {
 			expect(output.join("\n")).toContain("Moved to ");
 			expect(sessionManager.getCwd()).toBe(cwdB);
 			expect(session.getHindsightSessionState()).toBeUndefined();
-			expect(session.getMnemopiSessionState()).toBeUndefined();
+			expect(session.getMnemotauSessionState()).toBeUndefined();
 			// Explicit backend reapplication must preserve the same startup policy.
 			await session.applyMemoryBackend();
 			expect(session.getHindsightSessionState()).toBeUndefined();
-			expect(session.getMnemopiSessionState()).toBeUndefined();
+			expect(session.getMnemotauSessionState()).toBeUndefined();
 			expect(session.getActiveToolNames()).toEqual(["read"]);
 		} finally {
 			setProjectDir(originalProjectDir);

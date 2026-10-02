@@ -1,22 +1,22 @@
 import { describe, expect, it } from "bun:test";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+import { getBundledModel } from "@tau/tau-catalog/models";
 import {
 	IndexedSessionStorage,
 	type SessionStorageBackend,
-} from "@oh-my-pi/pi-coding-agent/session/indexed-session-storage";
+} from "@tau/tau-coding-agent/session/indexed-session-storage";
 import {
 	SessionManager,
 	SessionPersistenceIndeterminateError,
-} from "@oh-my-pi/pi-coding-agent/session/session-manager";
+} from "@tau/tau-coding-agent/session/session-manager";
 import {
 	FileSessionStorage,
 	MemorySessionStorage,
 	type SessionStorageWriter,
 	SessionWriteConflictError,
 	type WriteTextAtomicOptions,
-} from "@oh-my-pi/pi-coding-agent/session/session-storage";
-import { TempDir } from "@oh-my-pi/pi-utils";
-import type { SessionTitleUpdate } from "@oh-my-pi/pi-coding-agent/session/session-title-slot";
+} from "@tau/tau-coding-agent/session/session-storage";
+import { TempDir } from "@tau/tau-utils";
+import type { SessionTitleUpdate } from "@tau/tau-coding-agent/session/session-title-slot";
 
 interface DetachableWriter extends SessionStorageWriter {
 	detach(): void;
@@ -329,7 +329,7 @@ describe("SessionManager atomic rewrite race", () => {
 });
 describe("SessionManager cross-process rewrite freshness", () => {
 	it("refuses to erase a durable turn appended by another manager", async () => {
-		const tempDir = TempDir.createSync("@omp-session-rewrite-conflict-");
+		const tempDir = TempDir.createSync("@tau-session-rewrite-conflict-");
 		try {
 			const first = SessionManager.create(tempDir.path(), tempDir.path(), new FileSessionStorage());
 			await first.ensureOnDisk();

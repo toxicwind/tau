@@ -3,22 +3,22 @@ import { $ } from "bun";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import { type AssistantMessage, createAssistantMessageEventStream, getCustomApi, type ToolCall } from "@oh-my-pi/pi-ai";
-import { runCommitAgentSession } from "@oh-my-pi/pi-coding-agent/commit/agentic/agent";
-import * as commitTools from "@oh-my-pi/pi-coding-agent/commit/agentic/tools";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { initializeExtensions } from "@oh-my-pi/pi-coding-agent/modes/runtime-init";
+import { type } from "@tau/tautype";
+import { type AssistantMessage, createAssistantMessageEventStream, getCustomApi, type ToolCall } from "@tau/tau-ai";
+import { runCommitAgentSession } from "@tau/tau-coding-agent/commit/agentic/agent";
+import * as commitTools from "@tau/tau-coding-agent/commit/agentic/tools";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { initializeExtensions } from "@tau/tau-coding-agent/modes/runtime-init";
 import {
 	type CreateAgentSessionOptions,
 	createAgentSession,
 	type ExtensionFactory,
-} from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { __resetDirsFromEnvForTests, removeSyncWithRetries, setAgentDir, Snowflake } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-coding-agent/sdk";
+import type { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import type { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { __resetDirsFromEnvForTests, removeSyncWithRetries, setAgentDir, Snowflake } from "@tau/tau-utils";
 
 function restoreEnv(key: string, value: string | undefined): void {
 	if (value === undefined) {
@@ -43,10 +43,10 @@ describe("restricted sessions sharing extension providers", () => {
 
 	const originalAgentDir = process.env.PI_CODING_AGENT_DIR;
 	const originalPiProfile = process.env.PI_PROFILE;
-	const originalOmpProfile = process.env.OMP_PROFILE;
+	const originalOmpProfile = process.env.TAU_PROFILE;
 
 	beforeEach(() => {
-		tempDir = path.join(os.tmpdir(), `pi-sdk-restricted-provider-${Snowflake.next()}`);
+		tempDir = path.join(os.tmpdir(), `tau-sdk-restricted-provider-${Snowflake.next()}`);
 		const testAgentDir = path.join(tempDir, "agent");
 		fs.mkdirSync(testAgentDir, { recursive: true });
 		setAgentDir(testAgentDir);
@@ -65,7 +65,7 @@ describe("restricted sessions sharing extension providers", () => {
 		} finally {
 			restoreEnv("PI_CODING_AGENT_DIR", originalAgentDir);
 			restoreEnv("PI_PROFILE", originalPiProfile);
-			restoreEnv("OMP_PROFILE", originalOmpProfile);
+			restoreEnv("TAU_PROFILE", originalOmpProfile);
 			__resetDirsFromEnvForTests();
 			removeSyncWithRetries(tempDir);
 		}
@@ -74,7 +74,7 @@ describe("restricted sessions sharing extension providers", () => {
 	afterAll(() => {
 		restoreEnv("PI_CODING_AGENT_DIR", originalAgentDir);
 		restoreEnv("PI_PROFILE", originalPiProfile);
-		restoreEnv("OMP_PROFILE", originalOmpProfile);
+		restoreEnv("TAU_PROFILE", originalOmpProfile);
 		__resetDirsFromEnvForTests();
 	});
 

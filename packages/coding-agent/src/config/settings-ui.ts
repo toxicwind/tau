@@ -1,5 +1,5 @@
-import { TERMINAL } from "@oh-my-pi/pi-tui";
-import { SETTING_TABS, type SettingsDisplayEntry, type SettingsHost } from "@oh-my-pi/pi-tui/overlays/settings-defs";
+import { TERMINAL } from "@tau/tau-tui";
+import { SETTING_TABS, type SettingsDisplayEntry, type SettingsHost } from "@tau/tau-tui/overlays/settings-defs";
 import {
 	normalizeProviderMaxInFlightRequests,
 	Settings,
@@ -40,9 +40,9 @@ const CONDITIONS: Record<string, () => boolean> = {
 			return false;
 		}
 	},
-	mnemopiActive: () => {
+	mnemotauActive: () => {
 		try {
-			return Settings.instance.get("memory.backend") === "mnemopi";
+			return Settings.instance.get("memory.backend") === "mnemotau";
 		} catch {
 			return false;
 		}

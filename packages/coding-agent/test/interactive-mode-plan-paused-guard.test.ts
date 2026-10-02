@@ -8,16 +8,16 @@
  * "Exit plan mode first." wording.
  */
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { InteractiveMode } from "@oh-my-pi/pi-coding-agent/modes/interactive-mode";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import type { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent } from "@tau/tau-agent-core";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import { InteractiveMode } from "@tau/tau-coding-agent/modes/interactive-mode";
+import { initTheme } from "@tau/tau-tui/theme";
+import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import type { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { EventBus } from "@tau/tau-coding-agent/utils/event-bus";
+import { TempDir } from "@tau/tau-utils";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
 describe("InteractiveMode paused-plan guard message", () => {
@@ -29,7 +29,7 @@ describe("InteractiveMode paused-plan guard message", () => {
 
 	beforeAll(async () => {
 		await initTheme();
-		tempDir = TempDir.createSync("@pi-plan-paused-guard-");
+		tempDir = TempDir.createSync("@tau-plan-paused-guard-");
 		authStorage = createInMemoryAuthStorage();
 		modelRegistry = new ModelRegistry(authStorage);
 	});

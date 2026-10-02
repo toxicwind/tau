@@ -1,6 +1,6 @@
 import { gunzipSync, gzipSync } from "node:zlib";
 
-import { classifyModel } from "@oh-my-pi/pi-catalog/compat/taxonomy";
+import { classifyModel } from "@tau/tau-catalog/compat/taxonomy";
 import {
 	AssignModelRequestSchema,
 	AssignModelResponseSchema,
@@ -25,12 +25,12 @@ import {
 	type ModelAssignment,
 	PromptCacheOptionsSchema,
 	StopReason,
-} from "@oh-my-pi/pi-catalog/discovery/devin-proto";
-import { create, fromBinary, toBinary } from "@oh-my-pi/pi-catalog/discovery/protobuf";
-import { calculateCost } from "@oh-my-pi/pi-catalog/models";
-import { DEVIN_DEFAULT_BASE_URL, devinCliMetadata } from "@oh-my-pi/pi-catalog/wire/devin";
-import { decodeDevinUnaryMessage } from "@oh-my-pi/pi-catalog/wire/devin-proto";
-import { isRecord, logger, parseStreamingJson, parseStreamingJsonThrottled, sanitizeText } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-catalog/discovery/devin-proto";
+import { create, fromBinary, toBinary } from "@tau/tau-catalog/discovery/protobuf";
+import { calculateCost } from "@tau/tau-catalog/models";
+import { DEVIN_DEFAULT_BASE_URL, devinCliMetadata } from "@tau/tau-catalog/wire/devin";
+import { decodeDevinUnaryMessage } from "@tau/tau-catalog/wire/devin-proto";
+import { isRecord, logger, parseStreamingJson, parseStreamingJsonThrottled, sanitizeText } from "@tau/tau-utils";
 import * as AIError from "../error";
 
 import type {
@@ -705,7 +705,7 @@ function buildUserPrompt(msg: UserMessage | DeveloperMessage, messageId: string)
 	return create(ChatMessagePromptSchema, { messageId, source: ChatMessageSource.USER, prompt, images });
 }
 
-/** Map omp `Message` history onto Cascade `ChatMessagePrompt`s (USER / SYSTEM / TOOL channels). */
+/** Map tau `Message` history onto Cascade `ChatMessagePrompt`s (USER / SYSTEM / TOOL channels). */
 function buildChatMessagePrompts(
 	messages: Message[],
 	cascadeId: string,

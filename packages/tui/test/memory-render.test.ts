@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
-import { getThemeByName } from "@oh-my-pi/pi-tui/theme";
-import { recallToolRenderer, reflectToolRenderer, retainToolRenderer } from "@oh-my-pi/pi-tui/tools/memory";
-import { sanitizeText } from "@oh-my-pi/pi-utils";
+import { getThemeByName } from "@tau/tau-tui/theme";
+import { recallToolRenderer, reflectToolRenderer, retainToolRenderer } from "@tau/tau-tui/tools/memory";
+import { sanitizeText } from "@tau/tau-utils";
 
 const themePromise = getThemeByName("dark");
 

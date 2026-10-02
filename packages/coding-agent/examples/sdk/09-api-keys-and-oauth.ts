@@ -10,10 +10,10 @@ import {
 	discoverModels,
 	ModelRegistry,
 	SessionManager,
-} from "@oh-my-pi/pi-coding-agent";
+} from "@tau/tau-coding-agent";
 
-// Default: discoverAuthStorage() uses ~/.omp/agent/agent.db
-// discoverModels() loads built-in + custom models from ~/.omp/agent/models.json
+// Default: discoverAuthStorage() uses ~/.tau/agent/agent.db
+// discoverModels() loads built-in + custom models from ~/.tau/agent/models.json
 const authStorage = await discoverAuthStorage();
 const modelRegistry = await discoverModels(authStorage);
 

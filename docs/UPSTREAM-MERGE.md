@@ -1,6 +1,6 @@
-# Upstream Merge Workflow — tau ↔ oh-my-pi
+# Upstream Merge Workflow — tau ↔ tau
 
-**Upstream:** https://github.com/can1357/oh-my-pi
+**Upstream:** https://github.com/toxicwind/tau
 **Fork point:** upstream tag `v18.3.0` (`62bc57be1b03ef0802a33cf7f5f530e534527531`)
 **Our HEAD:** `f46cc8d` (2026-09-30)
 **Upstream HEAD:** `2b023d1b80` (upstream 18.4.4, as of 2026-09-30)
@@ -36,7 +36,7 @@ It performs an ancestry-free three-way merge using the fork point as base.
    Pass `--record-base` to pin it in `.upstream-sync.json` for determinism.
 
 2. **Realign / Replay** — Our tree renames upstream packages
-   (`@oh-my-pi/pi-coding-agent` → `tau`, 1,137 imports). The script rewrites our
+   (`@tau/tau-coding-agent` → `tau`, 1,137 imports). The script rewrites our
    names back to upstream's in a staging copy, merges, then replays ours forward.
    The rename becomes invisible to the merge engine.
 
@@ -53,7 +53,7 @@ It performs an ancestry-free three-way merge using the fork point as base.
 
 ```bash
 # 1. Add the upstream remote (one-time)
-git remote add upstream https://github.com/can1357/oh-my-pi.git
+git remote add upstream https://github.com/toxicwind/tau.git
 
 # 2. Fetch upstream
 git fetch upstream
@@ -118,7 +118,7 @@ If the merge tools aren't available, pull upstream changes manually:
 
 2. **For each upstream change**, decide:
    - **Security/bug fix** → cherry-pick the specific commit's changes manually
-   - **Feature we want** → port it, adapting to our renames (`tau` vs `@oh-my-pi/...`)
+   - **Feature we want** → port it, adapting to our renames (`tau` vs `@tau/...`)
    - **Feature we don't need** → skip, note in `.upstream-sync.json`
 
 3. **Our protected areas** (never overwrite with upstream):
@@ -141,7 +141,7 @@ If the merge tools aren't available, pull upstream changes manually:
 |----------|-------|---------|
 | New files (ours) | 23 | `tack.ts`, `tau` launcher, `sm86-moe-bench.ts`, scripts, assets, docs |
 | Modified files | 128 | Our patches to upstream code (+2,111/−2,197 lines) |
-| Dropped | ~1 | `crates/pi-natives/tools/cache` (build artifact) |
+| Dropped | ~1 | `crates/tau-natives/tools/cache` (build artifact) |
 | Docs (ours, not tracked upstream) | ~82 | We maintain our own `docs/` |
 
 Full file lists: run the diff yourself —

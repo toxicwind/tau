@@ -4,7 +4,7 @@ import {
 	splitThinkingSuffix,
 	parseModelString,
 	splitUpstreamRouting,
-} from "@oh-my-pi/pi-tui/overlays/model-selector";
+} from "@tau/tau-tui/overlays/model-selector";
 /**
  * Model resolution, scoping, and initial selection.
  *
@@ -22,27 +22,27 @@ import {
  *   CLI flags, scope globs — onto that pipeline.
  */
 
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { ModelRoleLookup } from "@oh-my-pi/pi-tui/overlays/model-browser";
-import type { Api, Effort, KnownProvider, Model, ModelSpec } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { resolveBareVariantSelector, resolveVariantSelector } from "@oh-my-pi/pi-catalog/compat/collapse";
-import { collapseVariantId, stripThinkingVariantSuffix } from "@oh-my-pi/pi-catalog/compat/taxonomy";
-import { modelMatchesHost } from "@oh-my-pi/pi-catalog/hosts";
-import { buildModelProviderPriorityRank } from "@oh-my-pi/pi-catalog/identity";
-import { clampThinkingLevelForModel } from "@oh-my-pi/pi-catalog/model-thinking";
-import { type GeneratedProvider, getBundledModels, modelsAreEqual } from "@oh-my-pi/pi-catalog/models";
-import { DEFAULT_MODEL_PER_PROVIDER } from "@oh-my-pi/pi-catalog/provider-models";
-import { fuzzyMatch } from "@oh-my-pi/pi-tui";
-import { logger } from "@oh-my-pi/pi-utils";
-import chalk from "@oh-my-pi/pi-utils/chalk";
+import { ThinkingLevel } from "@tau/tau-agent-core";
+import type { ModelRoleLookup } from "@tau/tau-tui/overlays/model-browser";
+import type { Api, Effort, KnownProvider, Model, ModelSpec } from "@tau/tau-ai";
+import { buildModel } from "@tau/tau-catalog/build";
+import { resolveBareVariantSelector, resolveVariantSelector } from "@tau/tau-catalog/compat/collapse";
+import { collapseVariantId, stripThinkingVariantSuffix } from "@tau/tau-catalog/compat/taxonomy";
+import { modelMatchesHost } from "@tau/tau-catalog/hosts";
+import { buildModelProviderPriorityRank } from "@tau/tau-catalog/identity";
+import { clampThinkingLevelForModel } from "@tau/tau-catalog/model-thinking";
+import { type GeneratedProvider, getBundledModels, modelsAreEqual } from "@tau/tau-catalog/models";
+import { DEFAULT_MODEL_PER_PROVIDER } from "@tau/tau-catalog/provider-models";
+import { fuzzyMatch } from "@tau/tau-tui";
+import { logger } from "@tau/tau-utils";
+import chalk from "@tau/tau-utils/chalk";
 import MODEL_PRIO from "../priority.json" with { type: "json" };
 import {
 	AUTO_THINKING,
 	type ConfiguredThinkingLevel,
 	concreteThinkingLevel,
 	resolveThinkingLevelForModel,
-} from "@oh-my-pi/pi-tui/thinking";
+} from "@tau/tau-tui/thinking";
 import { isAuthenticated, kNoAuth, type ModelRegistry } from "./model-registry";
 import {
 	DEFAULT_MODEL_ROLE_ALIAS,
@@ -1967,7 +1967,7 @@ export function resolveCliModel(options: {
 			model: undefined,
 			selector: undefined,
 			warning: undefined,
-			error: `Unknown provider "${cliProvider}". Run "omp models" to see available providers/models.`,
+			error: `Unknown provider "${cliProvider}". Run "tau models" to see available providers/models.`,
 		};
 	}
 
@@ -2052,7 +2052,7 @@ export function resolveCliModel(options: {
 					selector: undefined,
 					thinkingLevel: undefined,
 					warning: resolved.warning,
-					error: `Model "${trimmedModel}" not found. Run "omp models" to see available models.`,
+					error: `Model "${trimmedModel}" not found. Run "tau models" to see available models.`,
 				};
 			}
 		}
@@ -2112,7 +2112,7 @@ export function resolveCliModel(options: {
 			selector: undefined,
 			thinkingLevel: undefined,
 			warning,
-			error: `Model "${display}" not found. Run "omp models" to see available models.`,
+			error: `Model "${display}" not found. Run "tau models" to see available models.`,
 		};
 	}
 

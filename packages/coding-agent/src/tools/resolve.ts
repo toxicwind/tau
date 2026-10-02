@@ -6,7 +6,7 @@ import {
 	type ResolveAction,
 	type ResolveDetails,
 	type ResolveInvocation,
-} from "@oh-my-pi/pi-tui/tools/resolve";
+} from "@tau/tau-tui/tools/resolve";
 /**
  * Resolution devices: staged work is finalized through plain-text writes to
  * always-available `xd://` URLs — no tool schema, no JSON protocol.
@@ -23,17 +23,17 @@ import {
  * resolve renderer under `resolve` and `reject` so device writes and legacy
  * `resolve` tool transcripts draw the same block.
  */
-import type { AgentToolResult, CustomMessage } from "@oh-my-pi/pi-agent-core";
+import type { AgentToolResult, CustomMessage } from "@tau/tau-agent-core";
 
-import { prompt } from "@oh-my-pi/pi-utils";
+import { prompt } from "@tau/tau-utils";
 
-import { parseXdUrl, XD_URL_PREFIX } from "@oh-my-pi/pi-tui/tools/xd-url";
+import { parseXdUrl, XD_URL_PREFIX } from "@tau/tau-tui/tools/xd-url";
 
 import resolveReminderPrompt from "../prompts/system/resolve-device-reminder.md" with { type: "text" };
 
 import type { ToolSession } from ".";
 
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 import type { XdevDispatch } from "./xdev";
 
 /** The plain-text resolution device URLs (`xd://resolve`, …). */

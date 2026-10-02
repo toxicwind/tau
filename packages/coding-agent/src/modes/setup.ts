@@ -1,6 +1,6 @@
-import type { WebSearchGrounding } from "@oh-my-pi/pi-catalog/types";
-import { runProviderSetupWizard as runProviderWizard } from "@oh-my-pi/pi-tui/setup/lazy";
-import type { SetupHost, SetupScene } from "@oh-my-pi/pi-tui/setup/scenes/types";
+import type { WebSearchGrounding } from "@tau/tau-catalog/types";
+import { runProviderSetupWizard as runProviderWizard } from "@tau/tau-tui/setup/lazy";
+import type { SetupHost, SetupScene } from "@tau/tau-tui/setup/scenes/types";
 import {
 	ALL_SCENES,
 	CURRENT_SETUP_VERSION,
@@ -8,7 +8,7 @@ import {
 	type RunSetupWizardOptions,
 	selectSetupScenes as selectScenes,
 	type SetupSceneSelectionOptions,
-} from "@oh-my-pi/pi-tui/setup/wizard";
+} from "@tau/tau-tui/setup/wizard";
 import { formatModelString, resolveModelRoleValue, rolePriorityDefaults } from "../config/model-resolver";
 import { getRoleInfo } from "../config/model-roles";
 import type { Settings } from "../config/settings";
@@ -20,8 +20,8 @@ import { createModelBrowserSource } from "./model-browser-source";
 import type { InteractiveModeContext } from "./types";
 
 export { ALL_SCENES, CURRENT_SETUP_VERSION };
-export type { SetupScene, SetupSceneHost } from "@oh-my-pi/pi-tui/setup/scenes/types";
-export { runStartupSplash } from "@oh-my-pi/pi-tui/setup/startup-splash";
+export type { SetupScene, SetupSceneHost } from "@tau/tau-tui/setup/scenes/types";
+export { runStartupSplash } from "@tau/tau-tui/setup/startup-splash";
 
 const WEB_SEARCH_GROUNDINGS: Readonly<Record<WebSearchGrounding, true>> = {
 	gemini: true,

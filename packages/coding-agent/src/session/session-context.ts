@@ -1,13 +1,13 @@
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { customMessageEntryMessage, isUserRequestEntry } from "@oh-my-pi/pi-tui/chat/transcript-entry";
-import { getAnthropicCompactionPayload, isTurnStartEntry } from "@oh-my-pi/pi-agent-core/compaction";
+import type { AgentMessage } from "@tau/tau-agent-core";
+import { customMessageEntryMessage, isUserRequestEntry } from "@tau/tau-tui/chat/transcript-entry";
+import { getAnthropicCompactionPayload, isTurnStartEntry } from "@tau/tau-agent-core/compaction";
 import {
 	coerceServiceTierByFamily,
 	type OpenAIResponsesHistoryPayload,
 	type ServiceTierByFamily,
-} from "@oh-my-pi/pi-ai";
-import * as snapcompact from "@oh-my-pi/snapcompact";
-import { isRecord } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-ai";
+import * as snapcompact from "@tau/snapcompact";
+import { isRecord } from "@tau/tau-utils";
 import {
 	createBranchSummaryMessage,
 	createCompactionSummaryMessage,

@@ -1,11 +1,11 @@
 import { describe, expect, test, vi } from "bun:test";
-import { streamOllama } from "@oh-my-pi/pi-ai/providers/ollama";
-import type { Context, Tool } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { clampThinkingLevelForModel } from "@oh-my-pi/pi-catalog/model-thinking";
-import { ollamaModelManagerOptions } from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import type { FetchImpl, ModelSpec } from "@oh-my-pi/pi-catalog/types";
+import { streamOllama } from "@tau/tau-ai/providers/ollama";
+import type { Context, Tool } from "@tau/tau-ai/types";
+import { buildModel } from "@tau/tau-catalog/build";
+import { Effort } from "@tau/tau-catalog/effort";
+import { clampThinkingLevelForModel } from "@tau/tau-catalog/model-thinking";
+import { ollamaModelManagerOptions } from "@tau/tau-catalog/provider-models/openai-compat";
+import type { FetchImpl, ModelSpec } from "@tau/tau-catalog/types";
 
 interface OllamaRequestBody {
 	tools?: Array<{ function: { name: string } }>;

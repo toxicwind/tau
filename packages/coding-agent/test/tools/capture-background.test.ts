@@ -1,15 +1,15 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { AsyncJobManager } from "@oh-my-pi/pi-coding-agent/async";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import * as evalIndex from "@oh-my-pi/pi-coding-agent/eval";
-import * as bashExecutor from "@oh-my-pi/pi-coding-agent/exec/bash-executor";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { BashTool } from "@oh-my-pi/pi-coding-agent/tools/bash";
-import { EvalTool } from "@oh-my-pi/pi-coding-agent/tools/eval";
-import { ToolAbortError } from "@oh-my-pi/pi-coding-agent/tools/tool-errors";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { AsyncJobManager } from "@tau/tau-coding-agent/async";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import * as evalIndex from "@tau/tau-coding-agent/eval";
+import * as bashExecutor from "@tau/tau-coding-agent/exec/bash-executor";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import type { ToolSession } from "@tau/tau-coding-agent/tools";
+import { BashTool } from "@tau/tau-coding-agent/tools/bash";
+import { EvalTool } from "@tau/tau-coding-agent/tools/eval";
+import { ToolAbortError } from "@tau/tau-coding-agent/tools/tool-errors";
+import { TempDir } from "@tau/tau-utils";
 
 function sessionFor(root: string, manager?: AsyncJobManager): ToolSession {
 	return {

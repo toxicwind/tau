@@ -4,15 +4,15 @@ import {
 	getDialectDefinition,
 	type InbandScanEvent,
 	ThinkingInbandScanner,
-} from "@oh-my-pi/pi-ai/dialect";
-import { streamGoogleGeminiCli } from "@oh-my-pi/pi-ai/providers/google-gemini-cli";
-import { streamOpenAICompletions } from "@oh-my-pi/pi-ai/providers/openai-completions";
-import { stream } from "@oh-my-pi/pi-ai/stream";
-import type { Context, FetchImpl, Model, TextContent, ThinkingContent, Tool, ToolCall } from "@oh-my-pi/pi-ai/types";
-import { getStreamMarkupHealingPattern, StreamMarkupHealing } from "@oh-my-pi/pi-ai/utils/stream-markup-healing";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { INTENT_FIELD } from "@oh-my-pi/pi-wire";
+} from "@tau/tau-ai/dialect";
+import { streamGoogleGeminiCli } from "@tau/tau-ai/providers/google-gemini-cli";
+import { streamOpenAICompletions } from "@tau/tau-ai/providers/openai-completions";
+import { stream } from "@tau/tau-ai/stream";
+import type { Context, FetchImpl, Model, TextContent, ThinkingContent, Tool, ToolCall } from "@tau/tau-ai/types";
+import { getStreamMarkupHealingPattern, StreamMarkupHealing } from "@tau/tau-ai/utils/stream-markup-healing";
+import { buildModel } from "@tau/tau-catalog/build";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import { INTENT_FIELD } from "@tau/tau-wire";
 
 interface SseToolCallDelta {
 	index: number;

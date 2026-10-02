@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
-import { startAuthGateway, type AuthGatewayServerHandle } from "@oh-my-pi/pi-ai/auth-gateway";
-import { AuthStorage } from "@oh-my-pi/pi-ai/auth-storage";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import type { FetchImpl, Model } from "@oh-my-pi/pi-catalog/types";
+import { startAuthGateway, type AuthGatewayServerHandle } from "@tau/tau-ai/auth-gateway";
+import { AuthStorage } from "@tau/tau-ai/auth-storage";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import type { FetchImpl, Model } from "@tau/tau-catalog/types";
 
 interface UpstreamCall {
 	url: string;

@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, mock, test } from "bun:test";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { CompactionQueuedMessage, InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { UiHelpers } from "@oh-my-pi/pi-coding-agent/modes/utils/ui-helpers";
+import { initTheme } from "@tau/tau-tui/theme";
+import type { CompactionQueuedMessage, InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
+import { UiHelpers } from "@tau/tau-coding-agent/modes/utils/ui-helpers";
 
 beforeAll(() => {
 	initTheme();

@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
-import { keyText } from "@oh-my-pi/pi-coding-agent/extensibility/legacy-pi-coding-agent-shim";
-import { getKeybindings, setKeybindings, type KeybindingsManager as TuiKeybindingsManager } from "@oh-my-pi/pi-tui";
-import { KeybindingsManager, setKeyHintPlatform } from "@oh-my-pi/pi-tui/app-keybindings";
+import { keyText } from "@tau/tau-coding-agent/extensibility/legacy-tau-coding-agent-shim";
+import { getKeybindings, setKeybindings, type KeybindingsManager as TuiKeybindingsManager } from "@tau/tau-tui";
+import { KeybindingsManager, setKeyHintPlatform } from "@tau/tau-tui/app-keybindings";
 
 describe("legacy keyText", () => {
 	let previous: TuiKeybindingsManager;

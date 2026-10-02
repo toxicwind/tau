@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import { streamOpenAICodexResponses } from "@oh-my-pi/pi-ai/providers/openai-codex-responses";
-import type { Context, FetchImpl } from "@oh-my-pi/pi-ai/types";
-import * as piUtils from "@oh-my-pi/pi-utils";
+import { streamOpenAICodexResponses } from "@tau/tau-ai/providers/openai-codex-responses";
+import type { Context, FetchImpl } from "@tau/tau-ai/types";
+import * as piUtils from "@tau/tau-utils";
 import { createCodexModel } from "./helpers";
 
 beforeEach(() => {

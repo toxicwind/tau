@@ -1,7 +1,7 @@
 import { deflateSync, inflateSync } from "node:zlib";
 
-import { untilAborted } from "@oh-my-pi/pi-utils";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { untilAborted } from "@tau/tau-utils";
+import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 import type { ElementHandle, ElementScreenshotOptions, Page } from "puppeteer-core";
 
 /** Options accepted by tab.screenshot(). */
@@ -181,14 +181,14 @@ export async function installScreenshotAnnotations(
 	targets: readonly ScreenshotAnnotationTarget[],
 	signal: AbortSignal | undefined,
 ): Promise<() => Promise<void>> {
-	const token = `omp-screenshot-${crypto.randomUUID()}`;
+	const token = `tau-screenshot-${crypto.randomUUID()}`;
 	await untilAborted(signal, () =>
 		page.evaluate(
 			(payload: { token: string; targets: ScreenshotAnnotationTarget[] }) => {
 				const pageGlobal = globalThis as unknown as { document: AnnotationDocument };
 				const doc = pageGlobal.document;
 				const root = doc.createElement("div");
-				root.setAttribute("data-omp-screenshot-annotations", payload.token);
+				root.setAttribute("data-tau-screenshot-annotations", payload.token);
 				root.style.cssText = "position:absolute;left:0;top:0;z-index:2147483647;pointer-events:none";
 				for (const target of payload.targets) {
 					const outline = doc.createElement("div");
@@ -210,7 +210,7 @@ export async function installScreenshotAnnotations(
 			.evaluate((marker: string) => {
 				const pageGlobal = globalThis as unknown as { document: AnnotationDocument };
 				const doc = pageGlobal.document;
-				doc.querySelector(`[data-omp-screenshot-annotations="${marker}"]`)?.remove();
+				doc.querySelector(`[data-tau-screenshot-annotations="${marker}"]`)?.remove();
 			}, token)
 			.catch(() => undefined);
 	};

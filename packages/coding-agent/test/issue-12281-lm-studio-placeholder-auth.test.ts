@@ -27,9 +27,9 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test } fr
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { FetchImpl } from "@oh-my-pi/pi-ai/types";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
+import type { FetchImpl } from "@tau/tau-ai/types";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
 
 const LM_KEY = "sk-lm-12281-test-key";
 const LM_MODEL = { id: "qwen3-8b", object: "model", owned_by: "local" };
@@ -136,7 +136,7 @@ beforeEach(() => {
 	wire.length = 0;
 	vllmProbeAuth.length = 0;
 	authRequired = true;
-	tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "omp-12281-"));
+	tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "tau-12281-"));
 });
 
 afterEach(() => {

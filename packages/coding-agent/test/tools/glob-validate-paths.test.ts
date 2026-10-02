@@ -2,17 +2,17 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { RenderResultOptions } from "@oh-my-pi/pi-coding-agent/extensibility/custom-tools/types";
-import { getThemeByName, initTheme, type Theme } from "@oh-my-pi/pi-tui/theme";
+import type { RenderResultOptions } from "@tau/tau-coding-agent/extensibility/custom-tools/types";
+import { getThemeByName, initTheme, type Theme } from "@tau/tau-tui/theme";
 import {
 	expandDelimitedPathEntries,
 	parseFindPattern,
 	resolveToolSearchScope,
 	splitDelimitedPathEntry,
-} from "@oh-my-pi/pi-coding-agent/tools/path-utils";
-import type { Component } from "@oh-my-pi/pi-tui";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
-import { globToolRenderer } from "@oh-my-pi/pi-tui/tools/glob";
+} from "@tau/tau-coding-agent/tools/path-utils";
+import type { Component } from "@tau/tau-tui";
+import { removeWithRetries } from "@tau/tau-utils";
+import { globToolRenderer } from "@tau/tau-tui/tools/glob";
 
 let uiTheme: Theme;
 

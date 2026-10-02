@@ -1,4 +1,4 @@
-import type { WebSearchGrounding } from "@oh-my-pi/pi-catalog/types";
+import type { WebSearchGrounding } from "@tau/tau-catalog/types";
 
 export const SEARCH_PROVIDER_OPTIONS = [
 	{ value: "auto", label: "Auto", description: "Automatically uses the first configured web-search provider" },

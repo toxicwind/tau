@@ -1,28 +1,28 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { Agent, AgentBusyError, ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, Usage } from "@oh-my-pi/pi-ai";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { KeybindingsManager } from "@oh-my-pi/pi-tui/app-keybindings";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { resolveLocalUrlToPath } from "@oh-my-pi/pi-coding-agent/internal-urls";
-import { AssistantMessageComponent } from "@oh-my-pi/pi-tui/chat/assistant-message";
-import type { HookSelectorSlider } from "@oh-my-pi/pi-tui/overlays/hook-selector";
-import { type PlanReviewAnnotationState, PlanReviewOverlay } from "@oh-my-pi/pi-tui/overlays/plan-review-overlay";
-import { InteractiveMode } from "@oh-my-pi/pi-coding-agent/modes/interactive-mode";
-import { planSaveFileName } from "@oh-my-pi/pi-coding-agent/plan-mode/plan-autosave";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { SubmittedUserInput } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SILENT_ABORT_MARKER, USER_INTERRUPT_LABEL } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { AUTO_THINKING } from "@oh-my-pi/pi-tui/thinking";
-import * as clipboard from "@oh-my-pi/pi-coding-agent/utils/clipboard";
-import { setKeybindings } from "@oh-my-pi/pi-tui";
-import { formatNumber, TempDir } from "@oh-my-pi/pi-utils";
+import { Agent, AgentBusyError, ThinkingLevel } from "@tau/tau-agent-core";
+import type { AssistantMessage, Usage } from "@tau/tau-ai";
+import * as AIError from "@tau/tau-ai/error";
+import { KeybindingsManager } from "@tau/tau-tui/app-keybindings";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import { resolveLocalUrlToPath } from "@tau/tau-coding-agent/internal-urls";
+import { AssistantMessageComponent } from "@tau/tau-tui/chat/assistant-message";
+import type { HookSelectorSlider } from "@tau/tau-tui/overlays/hook-selector";
+import { type PlanReviewAnnotationState, PlanReviewOverlay } from "@tau/tau-tui/overlays/plan-review-overlay";
+import { InteractiveMode } from "@tau/tau-coding-agent/modes/interactive-mode";
+import { planSaveFileName } from "@tau/tau-coding-agent/plan-mode/plan-autosave";
+import { initTheme } from "@tau/tau-tui/theme";
+import type { SubmittedUserInput } from "@tau/tau-coding-agent/modes/types";
+import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { SILENT_ABORT_MARKER, USER_INTERRUPT_LABEL } from "@tau/tau-coding-agent/session/messages";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { AUTO_THINKING } from "@tau/tau-tui/thinking";
+import * as clipboard from "@tau/tau-coding-agent/utils/clipboard";
+import { setKeybindings } from "@tau/tau-tui";
+import { formatNumber, TempDir } from "@tau/tau-utils";
 
 /**
  * Matches the plan-approved synthetic-prompt dispatch. `#approvePlan` calls
@@ -81,7 +81,7 @@ describe("InteractiveMode plan review rendering", () => {
 	beforeAll(async () => {
 		initTheme();
 		resetSettingsForTest();
-		sharedTempDir = TempDir.createSync("@pi-plan-review-shared-");
+		sharedTempDir = TempDir.createSync("@tau-plan-review-shared-");
 		await Settings.init({ inMemory: true, cwd: sharedTempDir.path() });
 		authStorage = await AuthStorage.create(path.join(sharedTempDir.path(), "testauth.db"));
 		authStorage.keys.setRuntime("anthropic", "test-key");
@@ -94,7 +94,7 @@ describe("InteractiveMode plan review rendering", () => {
 	});
 
 	beforeEach(() => {
-		tempDir = TempDir.createSync("@pi-plan-review-");
+		tempDir = TempDir.createSync("@tau-plan-review-");
 		const model = modelRegistry.find("anthropic", "claude-sonnet-4-5");
 		if (!model) {
 			throw new Error("Expected claude-sonnet-4-5 to exist in registry");
@@ -1664,7 +1664,7 @@ describe("InteractiveMode plan review rendering", () => {
 			title: "AUTOSAVE",
 		});
 
-		const saved = path.join(tempDir.path(), ".omp", "plans", "AUTOSAVE_PLAN.md");
+		const saved = path.join(tempDir.path(), ".tau", "plans", "AUTOSAVE_PLAN.md");
 		expect(await Bun.file(saved).text()).toBe("# Plan\n\nAutosave me.");
 		expect(status).toHaveBeenCalledWith(expect.stringContaining("Saved plan to"));
 	});

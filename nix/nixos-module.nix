@@ -6,17 +6,17 @@
   ...
 }:
 let
-  cfg = config.programs.omp;
+  cfg = config.programs.tau;
 in
 {
-  options.programs.omp = {
-    enable = lib.mkEnableOption "OMP coding agent";
+  options.programs.tau = {
+    enable = lib.mkEnableOption "TAU coding agent";
 
     package = lib.mkOption {
       type = lib.types.package;
       default = self.packages.${pkgs.stdenv.hostPlatform.system}.default;
-      defaultText = lib.literalExpression "inputs.omp.packages.${pkgs.stdenv.hostPlatform.system}.default";
-      description = "OMP package to install system-wide.";
+      defaultText = lib.literalExpression "inputs.tau.packages.${pkgs.stdenv.hostPlatform.system}.default";
+      description = "TAU package to install system-wide.";
     };
   };
 

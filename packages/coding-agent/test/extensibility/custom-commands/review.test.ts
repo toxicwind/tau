@@ -2,15 +2,15 @@ import { afterAll, afterEach, beforeAll, describe, expect, it, spyOn, vi } from 
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { ReviewCommand } from "@oh-my-pi/pi-coding-agent/extensibility/custom-commands/bundled/review";
-import type { CustomCommandAPI } from "@oh-my-pi/pi-coding-agent/extensibility/custom-commands/types";
-import type { HookCommandContext } from "@oh-my-pi/pi-coding-agent/extensibility/hooks/types";
-import type { SessionEntry } from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import type { PrDiffPayload, ViewLookupResult } from "@oh-my-pi/pi-coding-agent/tools/gh";
-import * as gh from "@oh-my-pi/pi-coding-agent/tools/gh";
-import type { VcsGitRepo, VcsRepo } from "@oh-my-pi/pi-natives";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+import { ReviewCommand } from "@tau/tau-coding-agent/extensibility/custom-commands/bundled/review";
+import type { CustomCommandAPI } from "@tau/tau-coding-agent/extensibility/custom-commands/types";
+import type { HookCommandContext } from "@tau/tau-coding-agent/extensibility/hooks/types";
+import type { SessionEntry } from "@tau/tau-coding-agent/session/session-entries";
+import type { PrDiffPayload, ViewLookupResult } from "@tau/tau-coding-agent/tools/gh";
+import * as gh from "@tau/tau-coding-agent/tools/gh";
+import type { VcsGitRepo, VcsRepo } from "@tau/tau-natives";
+import * as vcs from "@tau/tau-natives/vcs";
+import { removeWithRetries } from "@tau/tau-utils";
 import { $ } from "bun";
 
 const SAMPLE_JJ_DIFF = `diff --git a/src/workspace.ts b/src/workspace.ts
@@ -86,7 +86,7 @@ describe("ReviewCommand", () => {
 	let tmpDir: string;
 
 	beforeAll(async () => {
-		tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "omp-review-command-"));
+		tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-review-command-"));
 	});
 
 	afterEach(() => {
@@ -612,7 +612,7 @@ describe("ReviewCommand", () => {
 	});
 
 	it("resolves base-branch review against a real repo without a range revspec", async () => {
-		const dir = await fs.mkdtemp(path.join(os.tmpdir(), "omp-review-real-"));
+		const dir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-review-real-"));
 		try {
 			await $`git init -q -b main`.cwd(dir).quiet();
 			await $`git config user.email test@example.com`.cwd(dir).quiet();
@@ -664,7 +664,7 @@ describe("ReviewCommand", () => {
 	});
 
 	it("rejects base-branch review when histories share no merge base", async () => {
-		const dir = await fs.mkdtemp(path.join(os.tmpdir(), "omp-review-orphan-"));
+		const dir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-review-orphan-"));
 		try {
 			await $`git init -q -b main`.cwd(dir).quiet();
 			await $`git config user.email test@example.com`.cwd(dir).quiet();

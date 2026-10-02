@@ -7,9 +7,9 @@ import {
 	type AgentEvent,
 	type AgentMessage,
 	createToolScopedAbortReason,
-} from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, Judge, ToolCall } from "@oh-my-pi/pi-ai";
-import { logger, prompt, relativePathWithinRoot, withTimeout } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-agent-core";
+import type { AssistantMessage, Judge, ToolCall } from "@tau/tau-ai";
+import { logger, prompt, relativePathWithinRoot, withTimeout } from "@tau/tau-utils";
 import type { Rule } from "../capability/rule";
 import type { Settings } from "../config/settings";
 import { judgeRules, type TtsrManager, type TtsrMatchContext, type TtsrOutput } from "../export/ttsr";

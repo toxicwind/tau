@@ -7,8 +7,8 @@
  * close codes (host conflict, room full) and guest decryption failures never
  * reconnect. Hosts discard undecryptable guest frames without closing the room.
  */
-import { getProxyForUrl } from "@oh-my-pi/pi-ai/utils/proxy";
-import { logger } from "@oh-my-pi/pi-utils";
+import { getProxyForUrl } from "@tau/tau-ai/utils/proxy";
+import { logger } from "@tau/tau-utils";
 import { open, sealSerialized } from "./crypto";
 import type { CollabFrame, RelayControlMessage } from "./protocol";
 import { packEnvelope, unpackEnvelope } from "./protocol";

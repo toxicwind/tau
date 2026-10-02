@@ -1,7 +1,7 @@
-import type { AgentMessage, AgentTurnEndContext } from "@oh-my-pi/pi-agent-core";
-import type { UserMessage } from "@oh-my-pi/pi-ai";
-import { ToolCallLoopGuard } from "@oh-my-pi/pi-ai/utils/tool-call-loop-guard";
-import { logger } from "@oh-my-pi/pi-utils";
+import type { AgentMessage, AgentTurnEndContext } from "@tau/tau-agent-core";
+import type { UserMessage } from "@tau/tau-ai";
+import { ToolCallLoopGuard } from "@tau/tau-ai/utils/tool-call-loop-guard";
+import { logger } from "@tau/tau-utils";
 import type { Settings } from "../config/settings";
 import { renderToolCallLoopRedirect } from "../session/tool-call-loop-redirect";
 

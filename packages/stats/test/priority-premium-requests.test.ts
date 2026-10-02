@@ -2,13 +2,13 @@ import { Database } from "bun:sqlite";
 import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { syncAllSessions } from "@oh-my-pi/omp-stats/aggregator";
-import { closeDb, getOverallStats, getRecentRequests } from "@oh-my-pi/omp-stats/db";
-import { parseSessionFile } from "@oh-my-pi/omp-stats/parser";
-import { getSessionsDir, getStatsDbPath } from "@oh-my-pi/pi-utils";
+import { syncAllSessions } from "@tau/tau-stats/aggregator";
+import { closeDb, getOverallStats, getRecentRequests } from "@tau/tau-stats/db";
+import { parseSessionFile } from "@tau/tau-stats/parser";
+import { getSessionsDir, getStatsDbPath } from "@tau/tau-utils";
 import { installStatsTestIsolation } from "./helpers/temp-agent";
 
-installStatsTestIsolation("@pi-stats-priority-");
+installStatsTestIsolation("@tau-stats-priority-");
 
 interface SessionLines {
 	lines: Array<Record<string, unknown>>;

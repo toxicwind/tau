@@ -2,14 +2,14 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { clearCustomApis } from "@oh-my-pi/pi-ai/api-registry";
-import { createMockModel, registerMockApi } from "@oh-my-pi/pi-ai/providers/mock";
+import { clearCustomApis } from "@tau/tau-ai/api-registry";
+import { createMockModel, registerMockApi } from "@tau/tau-ai/providers/mock";
 import {
 	__providerInFlightForTesting,
 	configureProviderMaxInFlightRequests,
 	streamSimple,
-} from "@oh-my-pi/pi-ai/stream";
-import type { Context } from "@oh-my-pi/pi-ai/types";
+} from "@tau/tau-ai/stream";
+import type { Context } from "@tau/tau-ai/types";
 
 function context(): Context {
 	return {
@@ -37,7 +37,7 @@ afterEach(async () => {
 });
 
 async function useIsolatedLimiterRoot(): Promise<void> {
-	limiterRoot = await fs.mkdtemp(path.join(os.tmpdir(), "omp-provider-inflight-test-"));
+	limiterRoot = await fs.mkdtemp(path.join(os.tmpdir(), "tau-provider-inflight-test-"));
 	__providerInFlightForTesting.setRoot(limiterRoot);
 }
 

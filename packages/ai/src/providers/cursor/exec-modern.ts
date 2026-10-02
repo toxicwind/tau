@@ -63,12 +63,12 @@ import {
 	StopRequestResponseSchema,
 	SubagentStartRequestResponseSchema,
 	SubagentStopRequestResponseSchema,
-} from "@oh-my-pi/pi-catalog/discovery/cursor-proto";
-import { create } from "@oh-my-pi/pi-catalog/discovery/protobuf";
+} from "@tau/tau-catalog/discovery/cursor-proto";
+import { create } from "@tau/tau-catalog/discovery/protobuf";
 import type { ToolResultMessage } from "../../types";
 
 /**
- * The pure arg translation lives in `../cursor-pi-args` so the legacy pi shim
+ * The pure arg translation lives in `../cursor-tau-args` so the legacy pi shim
  * can share it without pulling this module's protobuf graph into the bundled
  * virtual registry. Re-exported here because this is where the frame builders
  * and their translation are consumed together.
@@ -86,7 +86,7 @@ export {
 	piReadPath,
 	piReadPathHasRange,
 	piTimeout,
-} from "../cursor-pi-args";
+} from "../cursor-tau-args";
 
 /** Flatten a tool result's content into the single `output` string the Pi frames carry. */
 export function piOutputText(toolResult: ToolResultMessage): string {
@@ -382,7 +382,7 @@ export function buildPiLsError(error: string): PiLsExecResult {
  * `RequestContext.tools`.
  *
  * This client hosts no MCP servers of its own: every forwarded tool is a local
- * pi-agent tool published under a synthetic `providerIdentifier`. Regrouping
+ * tau-agent tool published under a synthetic `providerIdentifier`. Regrouping
  * the same list keeps the server's view of "which servers exist and what do
  * they expose" consistent with what it was told at context time, instead of
  * claiming zero servers while tool calls for them keep arriving.

@@ -1,5 +1,5 @@
-import type { Usage } from "@oh-my-pi/pi-ai";
-import { formatNumber } from "@oh-my-pi/pi-utils";
+import type { Usage } from "@tau/tau-ai";
+import { formatNumber } from "@tau/tau-utils";
 import { MessageDividerComponent } from "../chrome/message-divider";
 import { theme } from "../theme";
 

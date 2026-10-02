@@ -1,25 +1,25 @@
 # syntax=docker/dockerfile:1.7-labs
 ###############################################################################
-# oh-my-pi — pi image
+# tau — pi image
 #
 # Stages:
 #   natives-builder — Rust + Bun → pi_natives.linux-<arch>.node
-#   wheel-builder   — omp_rpc Python wheel
-#   pi-base         — python + bun + rustup launcher + natives + omp_rpc
-#                     + /usr/local/bin/omp shim
-#   pi-runtime      — pi-base + pi source + bun install      (DEFAULT, runnable)
+#   wheel-builder   — tau_rpc Python wheel
+#   tau-base         — python + bun + rustup launcher + natives + tau_rpc
+#                     + /usr/local/bin/tau shim
+#   tau-runtime      — tau-base + pi source + bun install      (DEFAULT, runnable)
 #
 # Build:
-#     docker build -t oh-my-pi/pi:dev .                          # default = pi-runtime
-#     docker build --target pi-base -t oh-my-pi/pi-base:dev .    # base for derived images
+#     docker build -t tau/pi:dev .                          # default = tau-runtime
+#     docker build --target tau-base -t tau/tau-base:dev .    # base for derived images
 #
 # Run:
-#     docker run --rm oh-my-pi/pi:dev --help
-#     docker run --rm -it -v "$PWD":/work oh-my-pi/pi:dev cli    # interactive omp
+#     docker run --rm tau/pi:dev --help
+#     docker run --rm -it -v "$PWD":/work tau/pi:dev cli    # interactive tau
 #
-# Consume as a base in another Dockerfile (see Dockerfile.robomp):
-#     ARG PI_BASE=oh-my-pi/pi:dev
-#     FROM ${PI_BASE} AS pi-base
+# Consume as a base in another Dockerfile (see Dockerfile.robtau):
+#     ARG PI_BASE=tau/pi:dev
+#     FROM ${PI_BASE} AS tau-base
 ###############################################################################
 
 ARG BUN_VERSION=1.4.2
@@ -39,7 +39,7 @@ ARG BUN_VERSION
 ENV BUN_INSTALL=/opt/bun \
     PATH=/opt/bun/bin:/usr/local/cargo/bin:/usr/local/bin:/usr/bin:/bin \
     CARGO_TERM_COLOR=never \
-    OMP_NATIVE_CARGO_PROFILE=ci
+    TAU_NATIVE_CARGO_PROFILE=ci
 
 # clang/libclang-dev: bindgen for pipewire-sys/libspa-sys (Linux desktop capture);
 # cmake/make/ninja-build: opusic-sys builds bundled libopus via CMake.
@@ -69,7 +69,7 @@ COPY --parents \
     Cargo.toml Cargo.lock rust-toolchain.toml \
     packages/*/package.json \
     packages/tsconfig.workspace.json \
-    python/robomp/web/package.json \
+    python/robtau/web/package.json \
     crates/*/Cargo.toml \
     /pi/
 
@@ -81,7 +81,7 @@ RUN bun install --frozen-lockfile --ignore-scripts
 # is preserved across this COPY because it's never in the build context.
 COPY . /pi/
 
-# Layer 4 — compile pi-natives to a Linux N-API addon. Persistent caches keep
+# Layer 4 — compile tau-natives to a Linux N-API addon. Persistent caches keep
 # repeat builds incremental: cargo's package index + git-deps (CARGO_HOME is
 # /usr/local/cargo in the rust image, not ~/.cargo) + the workspace target dir.
 RUN --mount=type=cache,target=/usr/local/cargo/registry \
@@ -93,7 +93,7 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
     cp packages/natives/native/pi_natives.linux-*.node /out/
 
 ############################
-# 2) wheel-builder — omp-rpc wheel
+# 2) wheel-builder — tau-rpc wheel
 ############################
 FROM python:3.12-slim-bookworm AS wheel-builder
 
@@ -104,18 +104,18 @@ RUN apt-get update \
 RUN pip install --upgrade pip build
 
 WORKDIR /src
-COPY python/omp-rpc /src
+COPY python/tau-rpc /src
 RUN python -m build --wheel --outdir /out
 
 ############################
-# 3) pi-base — python + bun + rustup + natives + omp_rpc + omp shim
+# 3) tau-base — python + bun + rustup + natives + tau_rpc + tau shim
 #
-# Sharable runtime base. Derived images (pi-runtime below, Dockerfile.robomp)
+# Sharable runtime base. Derived images (tau-runtime below, Dockerfile.robtau)
 # extend this and overlay their own source tree. Default PI_ROOT=/work/pi is
-# friendly to derived images that mount a host pi checkout there; pi-runtime
+# friendly to derived images that mount a host pi checkout there; tau-runtime
 # overrides it to /pi because its source is baked in.
 ############################
-FROM python:3.12-slim-bookworm AS pi-base
+FROM python:3.12-slim-bookworm AS tau-base
 
 ARG BUN_VERSION
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -148,17 +148,17 @@ RUN curl -fsSL https://sh.rustup.rs -o /tmp/rustup-init.sh \
     && rm -rf /usr/local/rustup-bootstrap \
     && /usr/local/cargo/bin/rustup --version
 
-# pi-natives addon: pi's loader probes /opt/bun/bin as a fallback path.
+# tau-natives addon: pi's loader probes /opt/bun/bin as a fallback path.
 COPY --from=natives-builder /out/pi_natives.linux-*.node /opt/bun/bin/
 
-# omp-rpc Python wheel.
+# tau-rpc Python wheel.
 COPY --from=wheel-builder /out/*.whl /tmp/wheels/
-RUN pip install /tmp/wheels/omp_rpc-*.whl && rm -rf /tmp/wheels
+RUN pip install /tmp/wheels/tau_rpc-*.whl && rm -rf /tmp/wheels
 
-# Legal payload for the reusable SDKs and the OMP product installed in this image.
-COPY LICENSE  THIRD-PARTY-NOTICES.txt /usr/share/doc/omp/
+# Legal payload for the reusable SDKs and the TAU product installed in this image.
+COPY LICENSE  THIRD-PARTY-NOTICES.txt /usr/share/doc/tau/
 
-# `omp` shim — runs the coding-agent CLI against $PI_ROOT via Bun. Derived
+# `tau` shim — runs the coding-agent CLI against $PI_ROOT via Bun. Derived
 # images override PI_ROOT to point at wherever their pi source lives.
 RUN printf '%s\n' \
     '#!/usr/bin/env bash' \
@@ -169,16 +169,16 @@ RUN printf '%s\n' \
     '  exit 127' \
     'fi' \
     'exec bun "$PI_ROOT/packages/coding-agent/src/cli.ts" "$@"' \
-    > /usr/local/bin/omp \
-    && chmod +x /usr/local/bin/omp
+    > /usr/local/bin/tau \
+    && chmod +x /usr/local/bin/tau
 
 ############################
-# 4) pi-runtime — pi-base + pi source + bun install (DEFAULT)
+# 4) tau-runtime — tau-base + pi source + bun install (DEFAULT)
 #
-# A self-contained, runnable omp image. `docker run oh-my-pi/pi:dev --help`
+# A self-contained, runnable tau image. `docker run tau/pi:dev --help`
 # Just Works without a host checkout.
 ############################
-FROM pi-base AS pi-runtime
+FROM tau-base AS tau-runtime
 
 ENV PI_ROOT=/pi
 WORKDIR /pi
@@ -191,7 +191,7 @@ COPY --parents \
     tsconfig.base.json tsconfig.json \
     packages/*/package.json \
     packages/tsconfig.workspace.json \
-    python/robomp/web/package.json \
+    python/robtau/web/package.json \
     /pi/
 
 RUN bun install --frozen-lockfile --ignore-scripts
@@ -205,5 +205,5 @@ COPY . /pi/
 # package.json's `prepare` script normally handles these on a vanilla install.
 RUN bun --cwd=packages/coding-agent run gen:tool-views
 
-ENTRYPOINT ["/usr/bin/tini", "--", "/usr/local/bin/omp"]
+ENTRYPOINT ["/usr/bin/tini", "--", "/usr/local/bin/tau"]
 CMD ["--help"]

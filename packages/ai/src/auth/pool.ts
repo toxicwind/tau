@@ -1,4 +1,4 @@
-import { logger } from "@oh-my-pi/pi-utils";
+import { logger } from "@tau/tau-utils";
 import { resolveCredentialIdentityKey, serializeCredential } from "./sqlite-credential-store";
 import type { BlockStoreHealth } from "./blocks";
 import type { AccountPolicies } from "./policy";
@@ -162,10 +162,10 @@ export class CredentialPool implements CredentialsApi {
 	/**
 	 * Adopt credentials another process committed before selecting or rotating.
 	 *
-	 * The store is shared across every omp process, but the pool is an
+	 * The store is shared across every tau process, but the pool is an
 	 * in-process cache refreshed only by this process's own writes. Without
 	 * this a long-running session ranks a stale pool for its whole lifetime:
-	 * `omp auth` in another terminal is invisible, rotation reports no usable
+	 * `tau auth` in another terminal is invisible, rotation reports no usable
 	 * sibling while a freshly added account sits unblocked in SQLite, and the
 	 * turn degrades to the fallback chain. The auth-broker path already polls;
 	 * direct-store sessions had no equivalent.
@@ -687,7 +687,7 @@ export class CredentialPool implements CredentialsApi {
 	}
 
 	/**
-	 * Disabled credential tombstones for display surfaces (`omp usage`,
+	 * Disabled credential tombstones for display surfaces (`tau usage`,
 	 * broker `GET /v1/credentials/disabled`). Empty when the backing store
 	 * keeps no tombstones or the remote broker predates the endpoint.
 	 */
@@ -700,7 +700,7 @@ export class CredentialPool implements CredentialsApi {
 	 * Force the backing store to revalidate its credential snapshot, then
 	 * reload. Remote broker stores re-fetch the snapshot; local stores are
 	 * always current, so only the reload runs. Callers that pair live
-	 * per-credential data with stored identities (`omp usage`) use this so a
+	 * per-credential data with stored identities (`tau usage`) use this so a
 	 * disk-cached snapshot cannot misattribute fresh reports.
 	 */
 	async revalidate(): Promise<void> {

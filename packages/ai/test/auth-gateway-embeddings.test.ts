@@ -2,11 +2,11 @@ import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { startAuthGateway } from "@oh-my-pi/pi-ai/auth-gateway";
-import type { AuthGatewayServerHandle } from "@oh-my-pi/pi-ai/auth-gateway/types";
-import { AuthStorage } from "@oh-my-pi/pi-ai/auth-storage";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import type { Api, FetchImpl, Model, ModelSpec } from "@oh-my-pi/pi-catalog/types";
+import { startAuthGateway } from "@tau/tau-ai/auth-gateway";
+import type { AuthGatewayServerHandle } from "@tau/tau-ai/auth-gateway/types";
+import { AuthStorage } from "@tau/tau-ai/auth-storage";
+import { buildModel } from "@tau/tau-catalog/build";
+import type { Api, FetchImpl, Model, ModelSpec } from "@tau/tau-catalog/types";
 
 interface UpstreamRequest {
 	url: string;
@@ -113,7 +113,7 @@ describe("auth-gateway POST /v1/embeddings", () => {
 		vi.spyOn(harness.storage.usage, "observe").mockImplementation(entry => observed.push(entry));
 		const response = await fetch(`${harness.url}/v1/embeddings`, {
 			method: "POST",
-			headers: { ...HEADERS, "x-omp-app": "vector-client" },
+			headers: { ...HEADERS, "x-tau-app": "vector-client" },
 			body: JSON.stringify({
 				model: "openai/text-embedding-3-small",
 				input: "hello embeddings",

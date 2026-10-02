@@ -1,33 +1,33 @@
 /**
- * Regression for https://github.com/can1357/oh-my-pi/issues/12067
+ * Regression for https://github.com/toxicwind/tau/issues/12067
  *
- * Headless `omp -p` could exit successfully with no output while first-turn
- * mnemopi recall awaited an embedding response. The embeddings subprocess was
+ * Headless `tau -p` could exit successfully with no output while first-turn
+ * mnemotau recall awaited an embedding response. The embeddings subprocess was
  * unref'd while idle, and a pending Promise is not an event-loop handle. Keep
  * the worker referenced for the exact lifetime of each pending request so the
  * caller can receive its result, then unref it again for interactive/daemon
  * shutdown behavior.
  */
 import { describe, expect, it } from "bun:test";
-import { MnemopiEmbedClient, type MnemopiEmbedWorkerHandle } from "@oh-my-pi/pi-coding-agent/mnemopi/embed-client";
+import { MnemotauEmbedClient, type MnemotauEmbedWorkerHandle } from "@tau/tau-coding-agent/mnemotau/embed-client";
 import type {
-	MnemopiEmbedWorkerInbound,
-	MnemopiEmbedWorkerOutbound,
-} from "@oh-my-pi/pi-coding-agent/mnemopi/embed-protocol";
+	MnemotauEmbedWorkerInbound,
+	MnemotauEmbedWorkerOutbound,
+} from "@tau/tau-coding-agent/mnemotau/embed-protocol";
 
-class DelayedEmbedWorker implements MnemopiEmbedWorkerHandle {
-	readonly firstRequest = Promise.withResolvers<MnemopiEmbedWorkerInbound>();
-	readonly secondRequest = Promise.withResolvers<MnemopiEmbedWorkerInbound>();
+class DelayedEmbedWorker implements MnemotauEmbedWorkerHandle {
+	readonly firstRequest = Promise.withResolvers<MnemotauEmbedWorkerInbound>();
+	readonly secondRequest = Promise.withResolvers<MnemotauEmbedWorkerInbound>();
 	refCalls = 0;
 	unrefCalls = 0;
 	#requestCount = 0;
-	#messageHandler: ((message: MnemopiEmbedWorkerOutbound) => void) | undefined;
+	#messageHandler: ((message: MnemotauEmbedWorkerOutbound) => void) | undefined;
 
-	send(message: MnemopiEmbedWorkerInbound): void {
+	send(message: MnemotauEmbedWorkerInbound): void {
 		(this.#requestCount++ === 0 ? this.firstRequest : this.secondRequest).resolve(message);
 	}
 
-	onMessage(handler: (message: MnemopiEmbedWorkerOutbound) => void): () => void {
+	onMessage(handler: (message: MnemotauEmbedWorkerOutbound) => void): () => void {
 		this.#messageHandler = handler;
 		return () => {
 			if (this.#messageHandler === handler) this.#messageHandler = undefined;
@@ -46,7 +46,7 @@ class DelayedEmbedWorker implements MnemopiEmbedWorkerHandle {
 		this.unrefCalls += 1;
 	}
 
-	emit(message: MnemopiEmbedWorkerOutbound): void {
+	emit(message: MnemotauEmbedWorkerOutbound): void {
 		this.#messageHandler?.(message);
 	}
 
@@ -55,10 +55,10 @@ class DelayedEmbedWorker implements MnemopiEmbedWorkerHandle {
 	}
 }
 
-describe("issue #12067 — pending mnemopi requests keep print mode alive", () => {
+describe("issue #12067 — pending mnemotau requests keep print mode alive", () => {
 	it("references the embed worker until first-turn recall receives its result", async () => {
 		const worker = new DelayedEmbedWorker();
-		const client = new MnemopiEmbedClient(() => worker);
+		const client = new MnemotauEmbedClient(() => worker);
 
 		try {
 			const initializing = client.initialize("fast-bge-base-en-v1.5", "/tmp/cache");

@@ -11,10 +11,10 @@ import * as executor from "../../src/task/executor";
 import type { EffectiveSubagentPolicy, StructuredSubagentResult } from "../../src/task/structured-subagent";
 import * as structured from "../../src/task/structured-subagent";
 import type { AgentDefinition } from "../../src/task/types";
-import type { SingleResult } from "@oh-my-pi/pi-tui/tools/task";
+import type { SingleResult } from "@tau/tau-tui/tools/task";
 import { WorkPool, WorkPoolRegistry } from "../../src/task/workpool";
 import type { ToolSession } from "../../src/tools";
-import { prompt } from "@oh-my-pi/pi-utils";
+import { prompt } from "@tau/tau-utils";
 
 const AGENT: AgentDefinition = {
 	name: "scout",

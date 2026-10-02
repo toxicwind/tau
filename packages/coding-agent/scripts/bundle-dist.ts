@@ -2,10 +2,10 @@
 
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { isEnoent } from "@oh-my-pi/pi-utils";
+import { isEnoent } from "@tau/tau-utils";
 import { buildDocsIndexPayload } from "./generate-docs-index";
 import { createJsonParsePlugin } from "./json-parse-plugin";
-import { createLegacyPiVirtualModulePlugin } from "./legacy-pi-virtual-module";
+import { createLegacyPiVirtualModulePlugin } from "./legacy-tau-virtual-module";
 
 const packageDir = path.join(import.meta.dir, "..");
 const defaultOutDir = path.join(packageDir, "dist");
@@ -13,7 +13,7 @@ const shebang = "#!/usr/bin/env bun\n";
 const legacyHtmlExportAssetPattern = /^(?:template-[^.]+\.(?:css|html|js)|tool-views\.generated-[^.]+\.js)$/;
 
 // Native / optional / platform-specific deps are loaded from installed files.
-const ALWAYS_EXTERNAL = ["@oh-my-pi/pi-natives", "@huggingface/transformers", "fastembed", "onnxruntime-node"];
+const ALWAYS_EXTERNAL = ["@tau/tau-natives", "@huggingface/transformers", "fastembed", "onnxruntime-node"];
 
 // Heavy, lazily-used third-party leaf deps. Each is a declared `dependency`, so the
 // published package resolves it from node_modules at runtime; bundling only embeds a
@@ -47,7 +47,7 @@ function formatBytes(bytes: number): string {
 }
 
 async function cleanBundleOutputs(outDir: string): Promise<void> {
-	// dist/ is shared with the dev binary (dist/omp); only remove assets
+	// dist/ is shared with the dev binary (dist/tau); only remove assets
 	// emitted by this script.
 	let entries: string[];
 	try {
@@ -82,8 +82,8 @@ export async function bundleDist(outDir: string = defaultOutDir): Promise<void> 
 	await runCommand(["bun", "--cwd=../stats", "run", "gen:stats"]);
 	// One payload for both consumers: inlined into dist/cli.js via `--define` for
 	// the bundled CLI entrypoint, and written to dist/docs-index.generated.txt so
-	// SDK consumers importing `@oh-my-pi/pi-coding-agent/*` (TypeScript source, no
-	// build-time embed) can still resolve omp:// docs (see src/internal-urls/docs-index.ts).
+	// SDK consumers importing `@tau/tau-coding-agent/*` (TypeScript source, no
+	// build-time embed) can still resolve tau:// docs (see src/internal-urls/docs-index.ts).
 	try {
 		const docsPayload = await buildDocsIndexPayload();
 		// Build in-process: the docs embed payload is far larger than Linux's

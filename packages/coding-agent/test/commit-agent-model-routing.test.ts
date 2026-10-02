@@ -1,17 +1,17 @@
 import { Database } from "bun:sqlite";
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { AuthStorage, Effort, SqliteAuthCredentialStore } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { runAgenticCommit } from "@oh-my-pi/pi-coding-agent/commit/agentic";
-import * as agentModule from "@oh-my-pi/pi-coding-agent/commit/agentic/agent";
-import type { CommitAgentInput } from "@oh-my-pi/pi-coding-agent/commit/agentic/agent";
-import type { CommitAgentState } from "@oh-my-pi/pi-coding-agent/commit/agentic/state";
-import * as modelSelection from "@oh-my-pi/pi-coding-agent/commit/model-selection";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import * as sdkModule from "@oh-my-pi/pi-coding-agent/sdk";
-import type { VcsGitRepo } from "@oh-my-pi/pi-natives";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
+import { AuthStorage, Effort, SqliteAuthCredentialStore } from "@tau/tau-ai";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import { runAgenticCommit } from "@tau/tau-coding-agent/commit/agentic";
+import * as agentModule from "@tau/tau-coding-agent/commit/agentic/agent";
+import type { CommitAgentInput } from "@tau/tau-coding-agent/commit/agentic/agent";
+import type { CommitAgentState } from "@tau/tau-coding-agent/commit/agentic/state";
+import * as modelSelection from "@tau/tau-coding-agent/commit/model-selection";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import * as sdkModule from "@tau/tau-coding-agent/sdk";
+import type { VcsGitRepo } from "@tau/tau-natives";
+import * as vcs from "@tau/tau-natives/vcs";
 
 let authStorage: AuthStorage | undefined;
 

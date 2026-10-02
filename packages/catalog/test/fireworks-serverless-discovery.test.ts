@@ -9,10 +9,10 @@
  * surface automatically with no catalog edits.
  */
 import { describe, expect, it } from "bun:test";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { fireworksModelManagerOptions } from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import type { FetchImpl, ModelSpec } from "@oh-my-pi/pi-catalog/types";
+import { buildModel } from "@tau/tau-catalog/build";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import { fireworksModelManagerOptions } from "@tau/tau-catalog/provider-models/openai-compat";
+import type { FetchImpl, ModelSpec } from "@tau/tau-catalog/types";
 
 function jsonResponse(body: unknown): Response {
 	return new Response(JSON.stringify(body), {

@@ -1,4 +1,4 @@
-import type { SummaryResult } from "@oh-my-pi/pi-natives";
+import type { SummaryResult } from "@tau/tau-natives";
 import { formatNumberedLine } from "./hashline-format";
 import { LINE_RANGE_CHUNK_SOURCE, parseLineRanges } from "./line-ranges";
 import * as path from "node:path";
@@ -91,7 +91,7 @@ const INTERNAL_SCHEMES_WITH_SELECTORS: Record<string, true> = {
 	history: true,
 	local: true,
 	memory: true,
-	omp: true,
+	tau: true,
 	pr: true,
 	proc: true,
 	rule: true,

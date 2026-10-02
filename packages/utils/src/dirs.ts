@@ -1,14 +1,14 @@
 /**
- * Centralized path helpers for omp config directories.
+ * Centralized path helpers for tau config directories.
  *
- * Uses PI_CONFIG_DIR (default ".omp") for the config root and
+ * Uses PI_CONFIG_DIR (default ".tau") for the config root and
  * PI_CODING_AGENT_DIR to override the agent directory.
  *
  * On Linux, if XDG_DATA_HOME / XDG_STATE_HOME / XDG_CACHE_HOME environment
  * variables are set, paths are redirected to XDG-compliant locations under
- * $XDG_*_HOME/omp/. This requires running `omp config migrate` first to
+ * $XDG_*_HOME/tau/. This requires running `tau config migrate` first to
  * move data to the new locations. No filesystem existence checks are performed
- * — if the env var is set, omp trusts that the migration has been done.
+ * — if the env var is set, tau trusts that the migration has been done.
  */
 
 import * as fs from "node:fs";
@@ -18,11 +18,11 @@ import { engines, version } from "../package.json" with { type: "json" };
 import versionJson from "../../coding-agent/src/generated/version.json" with { type: "json" };
 import { isEnoent, isEnotdir } from "./fs-error";
 
-/** App name (e.g. "omp") */
-export const APP_NAME: string = "omp";
+/** App name (e.g. "tau") */
+export const APP_NAME: string = "tau";
 
-/** Config directory name (e.g. ".omp") */
-export const CONFIG_DIR_NAME: string = ".omp";
+/** Config directory name (e.g. ".tau") */
+export const CONFIG_DIR_NAME: string = ".tau";
 
 /** Ordered main settings filenames: canonical write target first, legacy-compatible YAML fallback second. */
 export const MAIN_CONFIG_FILENAMES = ["config.yml", "config.yaml"] as const;
@@ -31,14 +31,14 @@ export const SEMVER_VERSION = version;
 export const CANONICAL_VERSION = versionJson.canonical || versionJson.npm || version;
 export const VERSION = CANONICAL_VERSION;
 
-/** Default User-Agent header string (e.g. "omp/17.2.12") */
-export const USER_AGENT = `omp/${VERSION}`;
+/** Default User-Agent header string (e.g. "tau/17.2.12") */
+export const USER_AGENT = `tau/${VERSION}`;
 
 /** Minimum Bun version */
 export const MIN_BUN_VERSION: string = engines.bun.replace(/[^0-9.]/g, "");
 
 const PROFILE_NAME_RE = /^[a-z0-9][a-z0-9._-]{0,63}$/;
-const PROFILE_ENV_KEYS = ["OMP_PROFILE", "PI_PROFILE"] as const;
+const PROFILE_ENV_KEYS = ["TAU_PROFILE", "PI_PROFILE"] as const;
 
 /**
  * Names Windows treats as reserved device aliases. Matches the basename
@@ -55,7 +55,7 @@ const WINDOWS_RESERVED_BASENAME_RE = /^(?:CON|PRN|AUX|NUL|COM[0-9]|LPT[0-9])(?:\
  * default (empty string, whitespace, or the explicit "default" sentinel) and
  * throws for syntactically invalid or platform-reserved names.
  *
- * Exported so consumers of `@oh-my-pi/pi-utils/dirs` (CLI bootstrap, tests,
+ * Exported so consumers of `@tau/tau-utils/dirs` (CLI bootstrap, tests,
  * downstream tools) can validate user input without re-deriving the rules.
  */
 export function normalizeProfileName(profile: string | undefined): string | undefined {
@@ -69,7 +69,7 @@ export function normalizeProfileName(profile: string | undefined): string | unde
 		WINDOWS_RESERVED_BASENAME_RE.test(normalized)
 	) {
 		throw new Error(
-			`Invalid OMP profile "${profile}". Profile names must match ${PROFILE_NAME_RE.source}, ` +
+			`Invalid TAU profile "${profile}". Profile names must match ${PROFILE_NAME_RE.source}, ` +
 				`cannot be "." or "..", cannot end with ".", and cannot be a Windows reserved device name ` +
 				`(CON, PRN, AUX, NUL, COM0-9, LPT0-9, or any of those with an extension).`,
 		);
@@ -78,28 +78,28 @@ export function normalizeProfileName(profile: string | undefined): string | unde
 }
 
 /**
- * Resolve the active profile from the two profile env vars. `OMP_PROFILE` is the
+ * Resolve the active profile from the two profile env vars. `TAU_PROFILE` is the
  * canonical variable and takes precedence; `PI_PROFILE` is the legacy
- * compatibility fallback, consulted only when `OMP_PROFILE` is undefined. An
- * explicitly-empty `OMP_PROFILE` therefore selects the default profile rather
+ * compatibility fallback, consulted only when `TAU_PROFILE` is undefined. An
+ * explicitly-empty `TAU_PROFILE` therefore selects the default profile rather
  * than silently inheriting `PI_PROFILE`. Delegates validation/normalization to
  * {@link normalizeProfileName} (which throws on a syntactically invalid value).
  */
-export function resolveProfileEnv(omp: string | undefined, pi: string | undefined): string | undefined {
-	return normalizeProfileName(omp !== undefined ? omp : pi);
+export function resolveProfileEnv(tau: string | undefined, pi: string | undefined): string | undefined {
+	return normalizeProfileName(tau !== undefined ? tau : pi);
 }
 
 function getProfileFromEnv(): string | undefined {
-	return resolveProfileEnv(process.env.OMP_PROFILE, process.env.PI_PROFILE);
+	return resolveProfileEnv(process.env.TAU_PROFILE, process.env.PI_PROFILE);
 }
 
 /**
  * Module-load profile resolution. Unlike {@link getProfileFromEnv}, an invalid
- * OMP_PROFILE/PI_PROFILE value does NOT throw here — a bad env var must not
+ * TAU_PROFILE/PI_PROFILE value does NOT throw here — a bad env var must not
  * crash a bare `import` of this module with an uncaught stack trace before the
  * CLI's error handling is in scope. The default profile is used instead; the
  * CLI re-validates the env (see `runCli` in coding-agent/src/cli.ts) so the
- * user still gets a clean "Invalid OMP profile" message.
+ * user still gets a clean "Invalid TAU profile" message.
  */
 function readProfileFromEnvSafe(): string | undefined {
 	try {
@@ -109,7 +109,7 @@ function readProfileFromEnvSafe(): string | undefined {
 	}
 }
 
-/** Profile-independent config root (~/.omp), shared by every omp profile. */
+/** Profile-independent config root (~/.tau), shared by every tau profile. */
 export function getBaseConfigRoot(): string {
 	return path.join(os.homedir(), getConfigDirName());
 }
@@ -296,7 +296,7 @@ export function getSafeProjectCwd(): string {
 }
 
 /**
- * Get the config directory name relative to home (e.g. ".omp" or PI_CONFIG_DIR override).
+ * Get the config directory name relative to home (e.g. ".tau" or PI_CONFIG_DIR override).
  *
  * `PI_CONFIG_DIR` names a directory *relative to home* — callers join the result
  * onto `homedir()` (see `getPluginsDir`, `getConfigAgentDirName`). An absolute
@@ -312,7 +312,7 @@ export function getConfigDirName(): string {
 	return path.isAbsolute(configured) ? path.basename(configured) : configured;
 }
 
-/** Get the config agent directory name relative to home (e.g. ".omp/agent" or PI_CONFIG_DIR + "/agent"). */
+/** Get the config agent directory name relative to home (e.g. ".tau/agent" or PI_CONFIG_DIR + "/agent"). */
 export function getConfigAgentDirName(): string {
 	const profile = getActiveProfile();
 	return profile ? path.join(getConfigDirName(), "profiles", profile, "agent") : `${getConfigDirName()}/agent`;
@@ -325,8 +325,8 @@ export function getConfigAgentDirName(): string {
 type XdgCategory = "data" | "state" | "cache";
 
 /**
- * Resolves and caches all omp directory paths. On Linux, when XDG environment
- * variables are set, paths are redirected under $XDG_*_HOME/omp/. A new
+ * Resolves and caches all tau directory paths. On Linux, when XDG environment
+ * variables are set, paths are redirected under $XDG_*_HOME/tau/. A new
  * instance is created whenever the agent directory changes, which naturally
  * invalidates all cached paths.
  */
@@ -335,7 +335,7 @@ class DirResolver {
 	readonly agentDir: string;
 
 	// Per-category base dirs. Without XDG, all three equal configRoot / agentDir.
-	// With XDG on Linux, they point to $XDG_*_HOME/omp/.
+	// With XDG on Linux, they point to $XDG_*_HOME/tau/.
 	readonly #rootDirs: Record<XdgCategory, string>;
 	readonly #agentDirs: Record<XdgCategory, string>;
 
@@ -352,14 +352,14 @@ class DirResolver {
 		const isDefault = this.agentDir === defaultAgent;
 
 		// XDG is a Linux convention. On supported platforms, default profile state
-		// resolves under $XDG_*_HOME/omp once `omp config init-xdg` has migrated
+		// resolves under $XDG_*_HOME/tau once `tau config init-xdg` has migrated
 		// the user's data. Named profiles follow a stricter rule: the XDG choice
 		// is keyed on the profile-specific XDG path, never the base app root.
 		//
 		// Why: if we consulted the base app root for named profiles too, the same
-		// profile could resolve to `~/.omp/profiles/<name>` on first activation
-		// (when no $XDG_*_HOME/omp exists yet) and then silently move to
-		// `$XDG_*_HOME/omp/profiles/<name>` the moment the base appeared, orphaning
+		// profile could resolve to `~/.tau/profiles/<name>` on first activation
+		// (when no $XDG_*_HOME/tau exists yet) and then silently move to
+		// `$XDG_*_HOME/tau/profiles/<name>` the moment the base appeared, orphaning
 		// the earlier state. Pinning on the profile path means a profile's location
 		// is decided at first activation and stays put until the user explicitly
 		// migrates it (e.g. by mkdir'ing the XDG profile dir).
@@ -395,7 +395,7 @@ class DirResolver {
 			state: xdgState ?? this.configRoot,
 			cache: xdgCache ?? this.configRoot,
 		};
-		// XDG flattens the agent/ prefix: ~/.omp/agent/sessions → $XDG_DATA_HOME/omp/sessions
+		// XDG flattens the agent/ prefix: ~/.tau/agent/sessions → $XDG_DATA_HOME/tau/sessions
 		this.#agentDirs = {
 			data: xdgData ?? this.agentDir,
 			state: xdgState ?? this.agentDir,
@@ -433,9 +433,9 @@ class DirResolver {
  * (propagated by a parent's `setProfile`), so it must NOT be snapshotted as the
  * default-mode baseline — otherwise default mode would resolve to the profile's
  * agent dir. The profile source can be the active profile or a lower-priority
- * `PI_PROFILE` that was bypassed because `OMP_PROFILE` explicitly selected the
+ * `PI_PROFILE` that was bypassed because `TAU_PROFILE` explicitly selected the
  * default profile. Returns `undefined` in those cases so reset falls back to the
- * standard `~/.omp/agent`.
+ * standard `~/.tau/agent`.
  */
 function resolvePreProfileAgentDir(
 	profile: string | undefined,
@@ -470,7 +470,7 @@ let dirs = new DirResolver({
  * unconditionally deleting the env var. Without the snapshot, a process started
  * with `PI_CODING_AGENT_DIR=/custom` then `setProfile("work")` then
  * `setProfile(undefined)` would silently lose `/custom` and fall back to
- * `~/.omp/agent`. Captured at module load — ignoring a profile-derived value
+ * `~/.tau/agent`. Captured at module load — ignoring a profile-derived value
  * inherited from a parent's `setProfile` (see {@link resolvePreProfileAgentDir})
  * — and refreshed on `setAgentDir`, since that call is the user explicitly
  * redefining the baseline.
@@ -507,7 +507,7 @@ export function refreshDirsFromEnv(): void {
 // Root directories
 // =============================================================================
 
-/** Get the config root directory (~/.omp). */
+/** Get the config root directory (~/.tau). */
 export function getConfigRootDir(): string {
 	return dirs.configRoot;
 }
@@ -569,7 +569,7 @@ export function setProfile(profile: string | undefined): void {
 	activeProfile = next;
 	if (activeProfile) {
 		dirs = new DirResolver({ profile: activeProfile });
-		process.env.OMP_PROFILE = activeProfile;
+		process.env.TAU_PROFILE = activeProfile;
 		process.env.PI_PROFILE = activeProfile;
 		process.env.PI_CODING_AGENT_DIR = dirs.agentDir;
 	} else {
@@ -594,37 +594,37 @@ export function getActiveProfile(): string | undefined {
 export function getProfileRootDir(profile: string | undefined): string {
 	return getProfileConfigRoot(normalizeProfileName(profile));
 }
-/** Get the agent config directory (~/.omp/agent). */
+/** Get the agent config directory (~/.tau/agent). */
 export function getAgentDir(): string {
 	return dirs.agentDir;
 }
 
-/** Get the project-local config directory (.omp). */
+/** Get the project-local config directory (.tau). */
 export function getProjectAgentDir(cwd: string = getProjectDir()): string {
 	return path.join(cwd, CONFIG_DIR_NAME);
 }
 
 // =============================================================================
-// Config-root subdirectories (~/.omp/*)
+// Config-root subdirectories (~/.tau/*)
 // =============================================================================
 
-/** Get the reports directory (~/.omp/reports). */
+/** Get the reports directory (~/.tau/reports). */
 export function getReportsDir(): string {
 	return dirs.rootSubdir("reports", "state");
 }
 
-/** Get the logs directory (~/.omp/logs). */
+/** Get the logs directory (~/.tau/logs). */
 export function getLogsDir(): string {
 	return dirs.rootSubdir("logs", "state");
 }
 
-/** Get this process's dated log path (~/.omp/logs/omp.YYYY-MM-DD.PID.log). */
+/** Get this process's dated log path (~/.tau/logs/tau.YYYY-MM-DD.PID.log). */
 export function getLogPath(date = new Date(), pid = process.pid): string {
 	return path.join(getLogsDir(), `${APP_NAME}.${date.toISOString().slice(0, 10)}.${pid}.log`);
 }
 
 /**
- * Get the plugins directory (~/.omp/plugins or its XDG equivalent).
+ * Get the plugins directory (~/.tau/plugins or its XDG equivalent).
  *
  * No-arg form (production callers) goes through the XDG-aware DirResolver so
  * reads and writes always agree. The optional `home` parameter is for test
@@ -640,22 +640,22 @@ export function getPluginsDir(home?: string): string {
 	return dirs.rootSubdir("plugins", "data");
 }
 
-/** Where npm installs packages (~/.omp/plugins/node_modules). */
+/** Where npm installs packages (~/.tau/plugins/node_modules). */
 export function getPluginsNodeModules(home?: string): string {
 	return path.join(getPluginsDir(home), "node_modules");
 }
 
-/** Plugin manifest (~/.omp/plugins/package.json). */
+/** Plugin manifest (~/.tau/plugins/package.json). */
 export function getPluginsPackageJson(home?: string): string {
 	return path.join(getPluginsDir(home), "package.json");
 }
 
-/** Plugin lock file (~/.omp/plugins/omp-plugins.lock.json). */
+/** Plugin lock file (~/.tau/plugins/tau-plugins.lock.json). */
 export function getPluginsLockfile(home?: string): string {
-	return path.join(getPluginsDir(home), "omp-plugins.lock.json");
+	return path.join(getPluginsDir(home), "tau-plugins.lock.json");
 }
 
-/** Get the remote mount directory (~/.omp/remote). */
+/** Get the remote mount directory (~/.tau/remote). */
 export function getRemoteDir(): string {
 	return dirs.rootSubdir("remote", "data");
 }
@@ -665,8 +665,8 @@ export function getRemoteDir(): string {
  * empty/whitespace input or a path that is still relative after expansion.
  *
  * A worktree base is process-global and consumed by both creation
- * (PR checkout, task isolation) and cleanup (`omp worktree`). A relative value
- * would resolve against whatever cwd happened to launch `omp`, so checkout and
+ * (PR checkout, task isolation) and cleanup (`tau worktree`). A relative value
+ * would resolve against whatever cwd happened to launch `tau`, so checkout and
  * cleanup could disagree — we refuse it rather than silently bind it to cwd.
  */
 function resolveWorktreeBase(value: string | undefined): string | undefined {
@@ -682,9 +682,9 @@ let worktreesDirOverride: string | undefined;
 
 /**
  * Relocate the base directory for agent-managed worktrees (PR checkouts, task
- * isolation, and `omp worktree` cleanup all read the same base). Driven by the
+ * isolation, and `tau worktree` cleanup all read the same base). Driven by the
  * `worktree.base` setting in coding-agent; pass `undefined`/empty to clear and
- * fall back to `OMP_WORKTREE_DIR` or the `~/.omp/wt` default.
+ * fall back to `TAU_WORKTREE_DIR` or the `~/.tau/wt` default.
  *
  * `~` is expanded and a relative path is rejected (see {@link resolveWorktreeBase}).
  * Returns the absolute path that took effect, or `undefined` if the input was
@@ -698,46 +698,46 @@ export function setWorktreesDir(dir: string | undefined): string | undefined {
 
 /**
  * Get the agent-managed worktrees directory. Resolution order: the
- * `OMP_WORKTREE_DIR` env var, then the {@link setWorktreesDir} override (the
- * `worktree.base` setting), then the `~/.omp/wt` default. The env var and the
+ * `TAU_WORKTREE_DIR` env var, then the {@link setWorktreesDir} override (the
+ * `worktree.base` setting), then the `~/.tau/wt` default. The env var and the
  * override are both `~`-expanded and must be absolute; a relative value is
  * ignored and resolution falls through.
  */
 export function getWorktreesDir(): string {
-	return resolveWorktreeBase(process.env.OMP_WORKTREE_DIR) ?? worktreesDirOverride ?? dirs.rootSubdir("wt", "data");
+	return resolveWorktreeBase(process.env.TAU_WORKTREE_DIR) ?? worktreesDirOverride ?? dirs.rootSubdir("wt", "data");
 }
 
-/** Get the SSH control socket directory (~/.omp/ssh-control). */
+/** Get the SSH control socket directory (~/.tau/ssh-control). */
 export function getSshControlDir(): string {
 	return dirs.rootSubdir("ssh-control", "state");
 }
 
-/** Get the remote host info directory (~/.omp/remote-host). */
+/** Get the remote host info directory (~/.tau/remote-host). */
 export function getRemoteHostDir(): string {
 	return dirs.rootSubdir("remote-host", "data");
 }
 
-/** Get the managed Python venv directory (~/.omp/python-env). */
+/** Get the managed Python venv directory (~/.tau/python-env). */
 export function getPythonEnvDir(): string {
 	return dirs.rootSubdir("python-env", "data");
 }
 
-/** Get the shared Python gateway state directory (~/.omp/agent/python-gateway; XDG default: $XDG_STATE_HOME/omp/python-gateway). */
+/** Get the shared Python gateway state directory (~/.tau/agent/python-gateway; XDG default: $XDG_STATE_HOME/tau/python-gateway). */
 export function getPythonGatewayDir(): string {
 	return dirs.agentSubdir(undefined, "python-gateway", "state");
 }
 
-/** Get the puppeteer sandbox directory (~/.omp/puppeteer). */
+/** Get the puppeteer sandbox directory (~/.tau/puppeteer). */
 export function getPuppeteerDir(): string {
 	return dirs.rootSubdir("puppeteer", "cache");
 }
 
-/** Get the browser relay extension install directory (~/.omp/browser-relay). */
+/** Get the browser relay extension install directory (~/.tau/browser-relay). */
 export function getBrowserRelayDir(): string {
 	return dirs.rootSubdir("browser-relay", "data");
 }
 
-/** Get the profile root for Chromium browsers the browser tool spawns via `app.path` (~/.omp/browser-profiles). */
+/** Get the profile root for Chromium browsers the browser tool spawns via `app.path` (~/.tau/browser-profiles). */
 export function getBrowserProfilesDir(): string {
 	return dirs.rootSubdir("browser-profiles", "state");
 }
@@ -747,7 +747,7 @@ export function getDocsRsCacheDir(): string {
 	return dirs.rootSubdir("webcache", "cache");
 }
 
-/** Get the auto-QA grievances SQLite database path (~/.omp/autoqa.db; XDG: $XDG_DATA_HOME/omp/autoqa.db). */
+/** Get the auto-QA grievances SQLite database path (~/.tau/autoqa.db; XDG: $XDG_DATA_HOME/tau/autoqa.db). */
 export function getAutoQaDbPath(): string {
 	return dirs.rootSubdir("autoqa.db", "data");
 }
@@ -755,7 +755,7 @@ export function getAutoQaDbPath(): string {
  * Stable 7-character hex digest of an absolute filesystem path.
  *
  * Used to pack the project identity into a single short fs-safe segment
- * (e.g. PR-checkout and task-isolation worktree dirs under `~/.omp/wt/`).
+ * (e.g. PR-checkout and task-isolation worktree dirs under `~/.tau/wt/`).
  * Bun.hash is non-cryptographic — collision space is ~2^28, which is fine
  * for naming a handful of repos on a single machine. Same input on the
  * same Bun runtime yields the same output.
@@ -764,104 +764,104 @@ export function hashPath(absPath: string): string {
 	return Bun.hash(path.resolve(absPath)).toString(16).padStart(16, "0").slice(-7);
 }
 
-/** Get the path to a single worktree directory (~/.omp/wt/<segment>). */
+/** Get the path to a single worktree directory (~/.tau/wt/<segment>). */
 export function getWorktreeDir(segment: string): string {
 	return path.join(getWorktreesDir(), segment);
 }
 
 /**
- * Get the GitHub view cache database path (~/.omp/cache/github-cache.db).
- * Honors the `OMP_GITHUB_CACHE_DB` env var when set so tests can isolate the
+ * Get the GitHub view cache database path (~/.tau/cache/github-cache.db).
+ * Honors the `TAU_GITHUB_CACHE_DB` env var when set so tests can isolate the
  * cache file without touching the rest of the config root.
  */
 export function getGithubCacheDbPath(): string {
-	const override = process.env.OMP_GITHUB_CACHE_DB;
+	const override = process.env.TAU_GITHUB_CACHE_DB;
 	if (override) return override;
 	return dirs.rootSubdir(path.join("cache", "github-cache.db"), "cache");
 }
 /**
- * Get the conventional commit inference cache database path (~/.omp/cache/commit-inference.db).
- * Honors `OMP_COMMIT_CACHE_DB` so tests and operators can isolate the cache.
+ * Get the conventional commit inference cache database path (~/.tau/cache/commit-inference.db).
+ * Honors `TAU_COMMIT_CACHE_DB` so tests and operators can isolate the cache.
  */
 export function getCommitCacheDbPath(): string {
-	const override = process.env.OMP_COMMIT_CACHE_DB;
+	const override = process.env.TAU_COMMIT_CACHE_DB;
 	if (override) return override;
 	return dirs.rootSubdir(path.join("cache", "commit-inference.db"), "cache");
 }
 
 /** Get the legacy Pi extension parse cache database path. */
 export function getLegacyPiExtensionCacheDbPath(): string {
-	return dirs.rootSubdir(path.join("cache", "legacy-pi-extension-cache.db"), "cache");
+	return dirs.rootSubdir(path.join("cache", "legacy-tau-extension-cache.db"), "cache");
 }
 
 /**
- * Get the encrypted auth-broker snapshot cache path (~/.omp/cache/auth-broker-snapshot.enc).
- * Honors the `OMP_AUTH_BROKER_SNAPSHOT_CACHE` env var when set so tests and
+ * Get the encrypted auth-broker snapshot cache path (~/.tau/cache/auth-broker-snapshot.enc).
+ * Honors the `TAU_AUTH_BROKER_SNAPSHOT_CACHE` env var when set so tests and
  * operators can isolate or relocate the cache file.
  */
 export function getAuthBrokerSnapshotCachePath(): string {
-	const override = process.env.OMP_AUTH_BROKER_SNAPSHOT_CACHE;
+	const override = process.env.TAU_AUTH_BROKER_SNAPSHOT_CACHE;
 	if (override) return override;
 	return dirs.rootSubdir(path.join("cache", "auth-broker-snapshot.enc"), "cache");
 }
 
-/** Get the commit-author avatar cache directory (~/.omp/cache/avatars). */
+/** Get the commit-author avatar cache directory (~/.tau/cache/avatars). */
 export function getAvatarCacheDir(): string {
 	return dirs.rootSubdir(path.join("cache", "avatars"), "cache");
 }
 
-/** Get the local FastEmbed model cache directory (~/.omp/cache/fastembed). */
+/** Get the local FastEmbed model cache directory (~/.tau/cache/fastembed). */
 export function getFastembedCacheDir(): string {
 	return dirs.rootSubdir(path.join("cache", "fastembed"), "cache");
 }
 
-/** Get the on-demand fastembed runtime install root (~/.omp/cache/fastembed-runtime). */
+/** Get the on-demand fastembed runtime install root (~/.tau/cache/fastembed-runtime). */
 export function getFastembedRuntimeDir(): string {
 	return dirs.rootSubdir(path.join("cache", "fastembed-runtime"), "cache");
 }
 
-/** Get the natives directory (~/.omp/natives). */
+/** Get the natives directory (~/.tau/natives). */
 export function getNativesDir(): string {
 	return dirs.rootSubdir("natives", "cache");
 }
 
-/** Get the stats database path (~/.omp/stats.db). */
+/** Get the stats database path (~/.tau/stats.db). */
 export function getStatsDbPath(): string {
 	return dirs.rootSubdir("stats.db", "data");
 }
 
-/** Get the autoresearch state directory (~/.omp/autoresearch). */
+/** Get the autoresearch state directory (~/.tau/autoresearch). */
 export function getAutoresearchDir(): string {
 	return dirs.rootSubdir("autoresearch", "state");
 }
 
-/** Get the per-project autoresearch state directory (~/.omp/autoresearch/<encoded-project>). */
+/** Get the per-project autoresearch state directory (~/.tau/autoresearch/<encoded-project>). */
 export function getAutoresearchProjectDir(encodedProject: string): string {
 	return path.join(getAutoresearchDir(), encodedProject);
 }
 
-/** Get the per-project autoresearch SQLite database path (~/.omp/autoresearch/<encoded-project>.db). */
+/** Get the per-project autoresearch SQLite database path (~/.tau/autoresearch/<encoded-project>.db). */
 export function getAutoresearchDbPath(encodedProject: string): string {
 	return path.join(getAutoresearchDir(), `${encodedProject}.db`);
 }
 
-/** Get the per-run artifact directory (~/.omp/autoresearch/<encoded-project>/runs/<runId>). */
+/** Get the per-run artifact directory (~/.tau/autoresearch/<encoded-project>/runs/<runId>). */
 export function getAutoresearchRunDir(encodedProject: string, runId: number): string {
 	return path.join(getAutoresearchProjectDir(encodedProject), "runs", String(runId).padStart(4, "0"));
 }
 
-/** Get the security-analysis state directory (~/.omp/security). */
+/** Get the security-analysis state directory (~/.tau/security). */
 export function getSecurityDir(): string {
 	return dirs.rootSubdir("security", "state");
 }
 
-/** Get one project's security-analysis state directory (~/.omp/security/<project-key>). */
+/** Get one project's security-analysis state directory (~/.tau/security/<project-key>). */
 export function getSecurityProjectDir(projectKey: string): string {
 	return path.join(getSecurityDir(), projectKey);
 }
 
 // =============================================================================
-// Agent subdirectories (~/.omp/agent/*)
+// Agent subdirectories (~/.tau/agent/*)
 // =============================================================================
 
 /** Get the path to agent.db (SQLite database for settings and auth storage). */
@@ -869,7 +869,7 @@ export function getAgentDbPath(agentDir?: string): string {
 	return dirs.agentSubdir(agentDir, "agent.db", "data");
 }
 
-/** Get the last-seen-changelog-version marker file (~/.omp/agent/last-changelog-version). */
+/** Get the last-seen-changelog-version marker file (~/.tau/agent/last-changelog-version). */
 export function getLastChangelogVersionPath(agentDir?: string): string {
 	return dirs.agentSubdir(agentDir, "last-changelog-version", "state");
 }
@@ -884,68 +884,68 @@ export function getModelDbPath(agentDir?: string): string {
 	return dirs.agentSubdir(agentDir, "models.db", "data");
 }
 
-/** Get the tiny title model cache directory (~/.omp/agent/cache/tiny-models). */
+/** Get the tiny title model cache directory (~/.tau/agent/cache/tiny-models). */
 export function getTinyModelsCacheDir(agentDir?: string): string {
 	return dirs.agentSubdir(agentDir, path.join("cache", "tiny-models"), "cache");
 }
 
-/** Get the document conversion cache directory (~/.omp/agent/cache/document-conversions; XDG default: $XDG_CACHE_HOME/omp/cache/document-conversions). */
+/** Get the document conversion cache directory (~/.tau/agent/cache/document-conversions; XDG default: $XDG_CACHE_HOME/tau/cache/document-conversions). */
 export function getDocumentConversionCacheDir(agentDir?: string): string {
 	return dirs.agentSubdir(agentDir, path.join("cache", "document-conversions"), "cache");
 }
-/** Get the per-project composer speculative cache directory (~/.omp/agent/cache/composer; XDG default: $XDG_CACHE_HOME/omp/cache/composer). */
+/** Get the per-project composer speculative cache directory (~/.tau/agent/cache/composer; XDG default: $XDG_CACHE_HOME/tau/cache/composer). */
 export function getComposerCacheDir(agentDir?: string): string {
 	return dirs.agentSubdir(agentDir, path.join("cache", "composer"), "cache");
 }
 
-/** Get the sessions directory (~/.omp/agent/sessions). */
+/** Get the sessions directory (~/.tau/agent/sessions). */
 export function getSessionsDir(agentDir?: string): string {
 	return dirs.agentSubdir(agentDir, "sessions", "data");
 }
 
-/** Get the content-addressed blob store directory (~/.omp/agent/blobs). */
+/** Get the content-addressed blob store directory (~/.tau/agent/blobs). */
 export function getBlobsDir(agentDir?: string): string {
 	return dirs.agentSubdir(agentDir, "blobs", "data");
 }
 
-/** Get the custom themes directory (~/.omp/agent/themes). */
+/** Get the custom themes directory (~/.tau/agent/themes). */
 export function getCustomThemesDir(agentDir?: string): string {
 	return dirs.agentSubdir(agentDir, "themes");
 }
 
-/** Get the tools directory (~/.omp/agent/tools). */
+/** Get the tools directory (~/.tau/agent/tools). */
 export function getToolsDir(agentDir?: string): string {
 	return dirs.agentSubdir(agentDir, "tools");
 }
 
-/** Get the slash commands directory (~/.omp/agent/commands). */
+/** Get the slash commands directory (~/.tau/agent/commands). */
 export function getCommandsDir(agentDir?: string): string {
 	return dirs.agentSubdir(agentDir, "commands");
 }
 
-/** Get the prompts directory (~/.omp/agent/prompts). */
+/** Get the prompts directory (~/.tau/agent/prompts). */
 export function getPromptsDir(agentDir?: string): string {
 	return dirs.agentSubdir(agentDir, "prompts");
 }
 
-/** Get the user-level Python modules directory (~/.omp/agent/modules). */
+/** Get the user-level Python modules directory (~/.tau/agent/modules). */
 export function getAgentModulesDir(agentDir?: string): string {
 	return dirs.agentSubdir(agentDir, "modules");
 }
 
-/** Get the memories directory (~/.omp/agent/memories). */
+/** Get the memories directory (~/.tau/agent/memories). */
 export function getMemoriesDir(agentDir?: string): string {
 	return dirs.agentSubdir(agentDir, "memories", "state");
 }
 
-/** Get the terminal sessions directory (~/.omp/agent/terminal-sessions). */
+/** Get the terminal sessions directory (~/.tau/agent/terminal-sessions). */
 export function getTerminalSessionsDir(agentDir?: string): string {
 	return dirs.agentSubdir(agentDir, "terminal-sessions", "state");
 }
 
 /**
  * Get the persistent registry of custom session files
- * (~/.omp/agent/custom-session-files). Each `--session-dir`/`--session`
+ * (~/.tau/agent/custom-session-files). Each `--session-dir`/`--session`
  * transcript is recorded here as one marker file so storage GC can scan its
  * exact path after its terminal breadcrumb is overwritten by a later session.
  */
@@ -953,12 +953,12 @@ export function getCustomSessionFilesDir(agentDir?: string): string {
 	return dirs.agentSubdir(agentDir, "custom-session-files", "state");
 }
 
-/** Get the crash log path (~/.omp/agent/omp-crash.log). */
+/** Get the crash log path (~/.tau/agent/tau-crash.log). */
 export function getCrashLogPath(agentDir?: string): string {
-	return dirs.agentSubdir(agentDir, "omp-crash.log", "state");
+	return dirs.agentSubdir(agentDir, "tau-crash.log", "state");
 }
 
-/** Get the debug log path (~/.omp/agent/omp-debug.log). */
+/** Get the debug log path (~/.tau/agent/tau-debug.log). */
 export function getDebugLogPath(agentDir?: string): string {
 	return dirs.agentSubdir(agentDir, `${APP_NAME}-debug.log`, "state");
 }
@@ -967,7 +967,7 @@ export function getDebugLogPath(agentDir?: string): string {
  * Best-effort one-time copy of a legacy config-root file to its redirected XDG
  * location. Existing installs that enable XDG after the file was created keep
  * their data (e.g. a placeholder key whose loss would break deobfuscation of
- * persisted transcripts). The legacy file is left in place for older omp
+ * persisted transcripts). The legacy file is left in place for older tau
  * versions sharing the profile.
  */
 function adoptLegacyFile(legacyPath: string, targetPath: string): void {
@@ -982,24 +982,24 @@ function adoptLegacyFile(legacyPath: string, targetPath: string): void {
 	}
 }
 
-/** Get the secret placeholder key path (~/.omp/agent/secret-placeholder.key; XDG default: $XDG_STATE_HOME/omp/secret-placeholder.key). Adopts a legacy key on first XDG resolution. */
+/** Get the secret placeholder key path (~/.tau/agent/secret-placeholder.key; XDG default: $XDG_STATE_HOME/tau/secret-placeholder.key). Adopts a legacy key on first XDG resolution. */
 export function getSecretPlaceholderKeyPath(): string {
 	const keyPath = dirs.agentSubdir(undefined, "secret-placeholder.key", "state");
 	adoptLegacyFile(path.join(dirs.agentDir, "secret-placeholder.key"), keyPath);
 	return keyPath;
 }
 
-/** Directory holding the per-model tiny-worker sockets and logs (~/.omp/run/tiny; XDG default: $XDG_STATE_HOME/omp/run/tiny). */
+/** Directory holding the per-model tiny-worker sockets and logs (~/.tau/run/tiny; XDG default: $XDG_STATE_HOME/tau/run/tiny). */
 export function getTinyWorkerRuntimeDir(): string {
 	return dirs.rootSubdir(path.join("run", "tiny"), "state");
 }
 
-/** Root directory containing every per-project daemon runtime scope (~/.omp/run/daemons; XDG default: $XDG_STATE_HOME/omp/run/daemons). */
+/** Root directory containing every per-project daemon runtime scope (~/.tau/run/daemons; XDG default: $XDG_STATE_HOME/tau/run/daemons). */
 export function getDaemonRuntimeRoot(): string {
 	return dirs.rootSubdir(path.join("run", "daemons"), "state");
 }
 
-/** Get the daemon runtime directory for a project (~/.omp/run/daemons/<hash>; XDG default: $XDG_STATE_HOME/omp/run/daemons/<hash>). */
+/** Get the daemon runtime directory for a project (~/.tau/run/daemons/<hash>; XDG default: $XDG_STATE_HOME/tau/run/daemons/<hash>). */
 export function getDaemonRuntimeDir(projectDir: string): string {
 	const key = Bun.hash.wyhash(path.resolve(projectDir)).toString(16).padStart(16, "0");
 	return path.join(getDaemonRuntimeRoot(), key);
@@ -1018,12 +1018,12 @@ export function getGlobalDaemonRuntimeDir(service: string): string {
 	return path.join(getGlobalDaemonRuntimeRoot(), service);
 }
 
-/** Get the provider in-flight root directory (~/.omp/run/provider-inflight; XDG default: $XDG_STATE_HOME/omp/run/provider-inflight). */
+/** Get the provider in-flight root directory (~/.tau/run/provider-inflight; XDG default: $XDG_STATE_HOME/tau/run/provider-inflight). */
 export function getProviderInFlightRoot(): string {
 	return dirs.rootSubdir(path.join("run", "provider-inflight"), "state");
 }
 
-/** Get the marketplaces registry path (~/.omp/marketplaces.json; XDG default: $XDG_DATA_HOME/omp/marketplaces.json). Adopts a legacy registry on first XDG resolution. */
+/** Get the marketplaces registry path (~/.tau/marketplaces.json; XDG default: $XDG_DATA_HOME/tau/marketplaces.json). Adopts a legacy registry on first XDG resolution. */
 export function getMarketplacesRegistryPath(): string {
 	const registryPath = dirs.rootSubdir("marketplaces.json", "data");
 	adoptLegacyFile(path.join(dirs.configRoot, "marketplaces.json"), registryPath);
@@ -1031,20 +1031,20 @@ export function getMarketplacesRegistryPath(): string {
 }
 
 // =============================================================================
-// Project subdirectories (.omp/*)
+// Project subdirectories (.tau/*)
 // =============================================================================
 
-/** Get the project-level Python modules directory (.omp/modules). */
+/** Get the project-level Python modules directory (.tau/modules). */
 export function getProjectModulesDir(cwd: string = getProjectDir()): string {
 	return path.join(getProjectAgentDir(cwd), "modules");
 }
 
-/** Get the project-level prompts directory (.omp/prompts). */
+/** Get the project-level prompts directory (.tau/prompts). */
 export function getProjectPromptsDir(cwd: string = getProjectDir()): string {
 	return path.join(getProjectAgentDir(cwd), "prompts");
 }
 
-/** Get the project-level plugin overrides path (.omp/plugin-overrides.json). */
+/** Get the project-level plugin overrides path (.tau/plugin-overrides.json). */
 export function getProjectPluginOverridesPath(cwd: string = getProjectDir()): string {
 	return path.join(getProjectAgentDir(cwd), "plugin-overrides.json");
 }
@@ -1077,28 +1077,28 @@ let cachedInstallId: string | null = null;
 
 const INSTALL_ID_FILE = "install-id";
 /**
- * Application label for usage attribution (`OMP_APP_NAME`), defaulting to
- * `omp`. Embedders that drive omp programmatically (robomp, CI bots, …) set
+ * Application label for usage attribution (`TAU_APP_NAME`), defaulting to
+ * `tau`. Embedders that drive tau programmatically (robtau, CI bots, …) set
  * the env var so broker-side per-client burn tracking can answer "what did
  * app X use" instead of folding everything into one install-wide bucket.
  */
 export function getAppName(): string {
-	const value = process.env.OMP_APP_NAME?.trim();
-	return value ? value : "omp";
+	const value = process.env.TAU_APP_NAME?.trim();
+	return value ? value : "tau";
 }
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 /**
- * Persistent per-install UUID stored at `~/.omp/install-id`.
+ * Persistent per-install UUID stored at `~/.tau/install-id`.
  *
  * Generated lazily on first call and persisted with `O_CREAT|O_EXCL` so
  * concurrent first-call races don't clobber each other (loser re-reads the
  * winner's id). Survives independently of agent state: deleting
- * `~/.omp/agent/` does not regenerate it. Server-side dedup for grievance
+ * `~/.tau/agent/` does not regenerate it. Server-side dedup for grievance
  * pushes (and similar telemetry) keys on this id.
  *
- * Anchored to the base config root (`~/.omp/install-id`) regardless of the
+ * Anchored to the base config root (`~/.tau/install-id`) regardless of the
  * active profile: install identity is per-install, not per-profile, so every
  * profile shares one id and the global cache stays correct no matter the
  * profile / `getInstallId` call order.

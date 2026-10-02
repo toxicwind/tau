@@ -1,10 +1,10 @@
-import type { ResolvedThinkingLevel } from "@oh-my-pi/pi-agent-core/thinking";
+import type { ResolvedThinkingLevel } from "@tau/tau-agent-core/thinking";
 import type { ConfiguredThinkingLevel } from "./render/render-utils";
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core/thinking";
-import { Effort, THINKING_EFFORTS } from "@oh-my-pi/pi-catalog/effort";
-import { clampThinkingLevelForModel, getSupportedEfforts } from "@oh-my-pi/pi-catalog/model-thinking";
-import { modelsAreEqual } from "@oh-my-pi/pi-catalog/models";
-import type { Model } from "@oh-my-pi/pi-catalog/types";
+import { ThinkingLevel } from "@tau/tau-agent-core/thinking";
+import { Effort, THINKING_EFFORTS } from "@tau/tau-catalog/effort";
+import { clampThinkingLevelForModel, getSupportedEfforts } from "@tau/tau-catalog/model-thinking";
+import { modelsAreEqual } from "@tau/tau-catalog/models";
+import type { Model } from "@tau/tau-catalog/types";
 /** Thinking selectors accepted by CLI inputs, in display order. */
 export const CLI_THINKING_LEVELS: readonly string[] = ["off", ...THINKING_EFFORTS, "auto"];
 

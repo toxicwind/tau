@@ -3,8 +3,8 @@ import {
 	MAGIC_KEYWORDS,
 	renderOrchestrateNotice,
 	renderWorkflowNotice,
-} from "@oh-my-pi/pi-coding-agent/modes/magic-keywords";
-import { clearBundledCommandsCache, loadBundledCommands } from "@oh-my-pi/pi-coding-agent/task/commands";
+} from "@tau/tau-coding-agent/modes/magic-keywords";
+import { clearBundledCommandsCache, loadBundledCommands } from "@tau/tau-coding-agent/task/commands";
 
 describe("magic keyword registry", () => {
 	it("keeps ids and words unique so notice types and settings keys cannot collide", () => {

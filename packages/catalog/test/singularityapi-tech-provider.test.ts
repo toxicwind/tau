@@ -1,17 +1,17 @@
 import { afterEach, describe, expect, test, vi } from "bun:test";
-import { getOAuthProviders } from "@oh-my-pi/pi-ai/registry/oauth";
-import { getProviderDefinition } from "@oh-my-pi/pi-ai/registry";
-import { getEnvApiKey } from "@oh-my-pi/pi-ai/stream";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { isCatalogDescriptor, resolveModelCacheProviderId } from "@oh-my-pi/pi-catalog/provider-models";
-import { DEFAULT_MODEL_PER_PROVIDER, PROVIDER_DESCRIPTORS } from "@oh-my-pi/pi-catalog/provider-models/descriptors";
-import { singularityApiTechModelManagerOptions } from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import type { FetchImpl, ModelSpec } from "@oh-my-pi/pi-catalog/types";
+import { getOAuthProviders } from "@tau/tau-ai/registry/oauth";
+import { getProviderDefinition } from "@tau/tau-ai/registry";
+import { getEnvApiKey } from "@tau/tau-ai/stream";
+import { buildModel } from "@tau/tau-catalog/build";
+import { isCatalogDescriptor, resolveModelCacheProviderId } from "@tau/tau-catalog/provider-models";
+import { DEFAULT_MODEL_PER_PROVIDER, PROVIDER_DESCRIPTORS } from "@tau/tau-catalog/provider-models/descriptors";
+import { singularityApiTechModelManagerOptions } from "@tau/tau-catalog/provider-models/openai-compat";
+import type { FetchImpl, ModelSpec } from "@tau/tau-catalog/types";
 import {
 	SINGULARITYAPI_DEV_API_BASE_URL,
 	SINGULARITYAPI_TECH_API_BASE_URL,
 	normalizeSingularityApiBaseUrl,
-} from "@oh-my-pi/pi-catalog/wire/singularityapi";
+} from "@tau/tau-catalog/wire/singularityapi";
 
 const originalKey = Bun.env.SINGULARITYAPI_TECH_API_KEY;
 

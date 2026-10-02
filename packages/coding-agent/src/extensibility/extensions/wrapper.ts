@@ -7,10 +7,10 @@ import type {
 	AgentToolResult,
 	AgentToolUpdateCallback,
 	ToolLoadMode,
-} from "@oh-my-pi/pi-agent-core";
-import type { ComputerSafetyCheck, ImageContent, Static, TextContent, TSchema } from "@oh-my-pi/pi-ai";
-import { sanitizeText, untilAborted } from "@oh-my-pi/pi-utils";
-import type { Theme } from "@oh-my-pi/pi-tui/theme";
+} from "@tau/tau-agent-core";
+import type { ComputerSafetyCheck, ImageContent, Static, TextContent, TSchema } from "@tau/tau-ai";
+import { sanitizeText, untilAborted } from "@tau/tau-utils";
+import type { Theme } from "@tau/tau-tui/theme";
 import {
 	denyError,
 	formatApprovalPrompt,

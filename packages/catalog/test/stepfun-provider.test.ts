@@ -2,15 +2,15 @@ import { afterEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { getOAuthProviders } from "@oh-my-pi/pi-ai/registry/oauth";
-import { getEnvApiKey } from "@oh-my-pi/pi-ai/stream";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { resolveProviderModels } from "@oh-my-pi/pi-catalog/model-manager";
-import { providerEntry } from "@oh-my-pi/pi-catalog/compat/providers";
-import type { FetchImpl, ResolvedOpenAICompat } from "@oh-my-pi/pi-catalog/types";
-import { DEFAULT_MODEL_PER_PROVIDER, PROVIDER_DESCRIPTORS } from "@oh-my-pi/pi-catalog/provider-models/descriptors";
-import { isStepfunChatModelId, stepfunModelManagerOptions } from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import { getBundledModels } from "@oh-my-pi/pi-catalog/models";
+import { getOAuthProviders } from "@tau/tau-ai/registry/oauth";
+import { getEnvApiKey } from "@tau/tau-ai/stream";
+import { Effort } from "@tau/tau-catalog/effort";
+import { resolveProviderModels } from "@tau/tau-catalog/model-manager";
+import { providerEntry } from "@tau/tau-catalog/compat/providers";
+import type { FetchImpl, ResolvedOpenAICompat } from "@tau/tau-catalog/types";
+import { DEFAULT_MODEL_PER_PROVIDER, PROVIDER_DESCRIPTORS } from "@tau/tau-catalog/provider-models/descriptors";
+import { isStepfunChatModelId, stepfunModelManagerOptions } from "@tau/tau-catalog/provider-models/openai-compat";
+import { getBundledModels } from "@tau/tau-catalog/models";
 
 /** StepFun's documented three-tier ladder; the relay-host default spans minimal…xhigh. */
 const STEPFUN_LADDER = [Effort.Low, Effort.Medium, Effort.High];
@@ -78,7 +78,7 @@ describe("StepFun provider support", () => {
 		expect(byId.get("step-3.7-flash")?.cost).toEqual({ input: 0.2, output: 1.15, cacheRead: 0.04, cacheWrite: 0 });
 		expect(byId.get("step-3.5-flash")?.cost).toEqual({ input: 0.1, output: 0.3, cacheRead: 0.02, cacheWrite: 0 });
 
-		// Multimodal SKUs must carry image input so omp attaches screenshots.
+		// Multimodal SKUs must carry image input so tau attaches screenshots.
 		expect(byId.get("step-5-preview")?.input).toEqual(["text", "image"]);
 		expect(byId.get("step-3.7-flash")?.input).toEqual(["text", "image"]);
 		expect(byId.get("step-3.5-flash")?.input).toEqual(["text"]);
@@ -169,7 +169,7 @@ describe("StepFun provider support", () => {
 	});
 
 	test("a retired model is pruned through the manager options, not just the descriptor", async () => {
-		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "pi-catalog-stepfun-prune-"));
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-catalog-stepfun-prune-"));
 		const dbPath = path.join(tempDir, "models.db");
 		// The live roster no longer lists step-3.5-flash; the bundled seed still does.
 		const liveRoster = getBundledModels("stepfun").filter(model => model.id !== "step-3.5-flash");

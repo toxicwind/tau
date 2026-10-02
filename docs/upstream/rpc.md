@@ -16,7 +16,7 @@ Primary implementation:
 ## Startup
 
 ```bash
-omp --mode rpc [regular CLI options]
+tau --mode rpc [regular CLI options]
 ```
 
 Behavior notes:
@@ -64,7 +64,7 @@ After the success response, oversized stdout objects are emitted losslessly as a
 }
 ```
 
-Clients MUST validate `chunkId`, `index`, `count`, and `byteLength`, reject interleaved or interrupted sequences, enforce the advertised reassembly limit, concatenate decoded bytes in index order, decode them as strict UTF-8, and parse the result as one JSON object. The TypeScript `RpcFrameDecoder`, exported from `@oh-my-pi/pi-coding-agent/modes/rpc/rpc-frame`, implements this validation. The bundled TypeScript and Python `RpcClient` implementations negotiate v2 automatically when the ready frame advertises it.
+Clients MUST validate `chunkId`, `index`, `count`, and `byteLength`, reject interleaved or interrupted sequences, enforce the advertised reassembly limit, concatenate decoded bytes in index order, decode them as strict UTF-8, and parse the result as one JSON object. The TypeScript `RpcFrameDecoder`, exported from `@tau/tau-coding-agent/modes/rpc/rpc-frame`, implements this validation. The bundled TypeScript and Python `RpcClient` implementations negotiate v2 automatically when the ready frame advertises it.
 
 Legacy clients may ignore the added ready fields and remain on v1. V1 retains its bounded fallback behavior for oversized output. Frames above the v2 reassembly ceiling still fail explicitly; large history APIs should use pagination rather than depending on arbitrarily large logical frames.
 
@@ -477,7 +477,7 @@ Schemes are case-insensitive on the wire and normalized to lowercase before
 the response is sent. Re-sending `set_host_uri_schemes` replaces the entire
 previous set — schemes missing from the new list are unregistered.
 
-`security://` is reserved for OMP's producer-neutral software-security resource
+`security://` is reserved for TAU's producer-neutral software-security resource
 store. RPC hosts cannot register or shadow that scheme.
 
 ## Event Stream Schema
@@ -533,18 +533,18 @@ in `available_commands_update` frames at startup and after command metadata
 changes. Each command has `name`, `source`, and optional `aliases`,
 `description`, `input.hint`, and `subcommands`.
 
-Command discovery is intentionally an OMP dialect: Pi's `get_commands` (a
+Command discovery is intentionally an TAU dialect: Pi's `get_commands` (a
 `RpcSlashCommand[]` projection over extensions → prompt templates → skills) is
-not served because OMP's richer catalog (builtins/custom/MCP/file commands,
+not served because TAU's richer catalog (builtins/custom/MCP/file commands,
 broader `source` enum, no Pi `sourceInfo`) is not wire-compatible with it.
 
-### Pi-compatible history/tree commands with OMP-native entry payloads
+### Tau-compatible history/tree commands with TAU-native entry payloads
 
-The commands and reconciliation semantics below are Pi-compatible, but the
-returned `SessionEntry` payload union is OMP-native, not wire-identical to
-Pi. Concretely: Pi `model_change` carries `provider` + `modelId` while OMP
+The commands and reconciliation semantics below are Tau-compatible, but the
+returned `SessionEntry` payload union is TAU-native, not wire-identical to
+Pi. Concretely: Pi `model_change` carries `provider` + `modelId` while TAU
 carries a combined `model` plus role/fallback metadata; Pi uses a `usage`
-entry where OMP uses `model_usage`; and OMP has additional entry types (for
+entry where TAU uses `model_usage`; and TAU has additional entry types (for
 example service-tier, title, mode, credential, and reset records). A
 permissive client that consumes the common structural subset
 (`id`/`parentId` plus message entries) can share one durable-history
@@ -560,13 +560,13 @@ durable entry id. An unknown `since` fails explicitly with
 
 `get_available_thinking_levels` returns `{ levels }`: the selectable levels
 for the live model with `"off"` first (it is accepted by
-`set_thinking_level` but excluded from the effort-only model helper). OMP-only
+`set_thinking_level` but excluded from the effort-only model helper). TAU-only
 `auto`/`inherit` selectors are intentionally omitted from discovery.
 
-Lifecycle stays OMP: terminal settle is `agent_end` with
+Lifecycle stays TAU: terminal settle is `agent_end` with
 `isTerminal !== false`, not Pi's `agent_settled`; `prompt_result`/
 `agentInvoked`, `ready`, negotiation, chunking, host tools, and subagents are
-OMP extensions a Pi-family adapter must dialect around.
+TAU extensions a Tau-family adapter must dialect around.
 
 ### Subagent subscriptions
 
@@ -912,10 +912,10 @@ Current helper characteristics:
 
 ### Python package
 
-The bundled [`omp-rpc`](../python/omp-rpc/pyproject.toml) distribution provides the process-backed Python client. Its import package is `omp_rpc`; the package API, typed commands and events, host-tool/host-URI helpers, and orchestration examples are maintained in the [`omp-rpc` README](../python/omp-rpc/README.md).
+The bundled [`tau-rpc`](../python/tau-rpc/pyproject.toml) distribution provides the process-backed Python client. Its import package is `tau_rpc`; the package API, typed commands and events, host-tool/host-URI helpers, and orchestration examples are maintained in the [`tau-rpc` README](../python/tau-rpc/README.md).
 
 ```python
-from omp_rpc import RpcClient
+from tau_rpc import RpcClient
 
 with RpcClient(provider="anthropic", model="claude-sonnet-4-5") as client:
     state = client.get_state()
@@ -923,4 +923,4 @@ with RpcClient(provider="anthropic", model="claude-sonnet-4-5") as client:
     print(turn.require_assistant_text())
 ```
 
-By default, `RpcClient` starts `omp --mode rpc`; pass `command=[...]` to own the exact child command. It handles request correlation, typed notifications, v2 negotiation and chunk reassembly, message pagination, extension UI, and host-owned tools and URI schemes. The Python package owns that client API and process lifecycle; this document and `rpc-types.ts` remain the canonical wire contract. Use raw protocol frames when a client library does not wrap the surface you need.
+By default, `RpcClient` starts `tau --mode rpc`; pass `command=[...]` to own the exact child command. It handles request correlation, typed notifications, v2 negotiation and chunk reassembly, message pagination, extension UI, and host-owned tools and URI schemes. The Python package owns that client API and process lifecycle; this document and `rpc-types.ts` remain the canonical wire contract. Use raw protocol frames when a client library does not wrap the surface you need.

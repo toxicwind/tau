@@ -2,8 +2,8 @@ import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import type { AgentSideConnection, SessionNotification } from "@oh-my-pi/pi-utils/acp";
+import { type } from "@tau/tautype";
+import type { AgentSideConnection, SessionNotification } from "@tau/tau-utils/acp";
 
 const arkSessionNotification = type({
 	sessionId: "string",
@@ -13,17 +13,17 @@ const arkSessionNotification = type({
 	},
 });
 
-import type { Model } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { AcpAgent } from "@oh-my-pi/pi-coding-agent/modes/acp/acp-agent";
+import type { Model } from "@tau/tau-ai";
+import { buildModel } from "@tau/tau-catalog/build";
+import { AcpAgent } from "@tau/tau-coding-agent/modes/acp/acp-agent";
 import {
 	buildToolCallStartUpdate,
 	mapAgentSessionEventToAcpSessionUpdates,
 	mapToolKind,
 	normalizeReplayToolArguments,
-} from "@oh-my-pi/pi-coding-agent/modes/acp/acp-event-mapper";
-import type { AgentSession, AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
+} from "@tau/tau-coding-agent/modes/acp/acp-event-mapper";
+import type { AgentSession, AgentSessionEvent } from "@tau/tau-coding-agent/session/agent-session";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
 import { expectAcpStructure, expectAcpStructureRejects } from "./helpers/acp-schema";
 
 function makeAssistantMessage(text: string) {
@@ -882,7 +882,7 @@ describe("ACP event mapper", () => {
 	});
 
 	it("replays assistant tool_use input through the ACP dispatcher without wrapping", async () => {
-		const root = await fs.promises.mkdtemp(path.join(os.tmpdir(), "omp-acp-replay-contract-"));
+		const root = await fs.promises.mkdtemp(path.join(os.tmpdir(), "tau-acp-replay-contract-"));
 		const cwd = path.join(root, "cwd");
 		const sessionDir = path.join(root, "sessions");
 		const initialSessionDir = path.join(root, "initial-session");

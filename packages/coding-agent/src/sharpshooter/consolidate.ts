@@ -1,14 +1,14 @@
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import { completeSimple, Effort, retryTransientCompletion } from "@oh-my-pi/pi-ai";
-import { clampThinkingLevelForModel } from "@oh-my-pi/pi-catalog/model-thinking";
-import { prompt, withFileLock } from "@oh-my-pi/pi-utils";
+import { type } from "@tau/tautype";
+import { completeSimple, Effort, retryTransientCompletion } from "@tau/tau-ai";
+import { clampThinkingLevelForModel } from "@tau/tau-catalog/model-thinking";
+import { prompt, withFileLock } from "@tau/tau-utils";
 
 import type { ModelRegistry } from "../config/model-registry";
 import type { Settings } from "../config/settings";
 import { redactMemorySecrets as redactSecrets } from "../memory-backend/redact";
-import { truncateApproxTokens } from "../mnemopi/config";
+import { truncateApproxTokens } from "../mnemotau/config";
 import consolidateInputTemplate from "../prompts/memories/sharpshooter-consolidate-input.md" with { type: "text" };
 import consolidateSystemTemplate from "../prompts/memories/sharpshooter-consolidate-system.md" with { type: "text" };
 import { resolveSharpshooterModel } from "./extract";

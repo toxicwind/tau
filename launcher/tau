@@ -7,7 +7,7 @@
 #   2. Installed `tau` on PATH (not this script — avoids recursion)
 #   3. ./tau in current directory (local project override; regular file only)
 #   4. Full compiled binary: <engine>/packages/coding-agent/dist/tau
-#   5. Fallback binary:      <engine>/packages/coding-agent/dist/omp
+#   5. Fallback binary:      <engine>/packages/coding-agent/dist/tau
 #   6. Source mode: bun run <engine>/packages/coding-agent/src/cli.ts
 #
 # Launcher-native subcommands:
@@ -91,9 +91,9 @@ if [ -z "${ENGINE_DIR:-}" ]; then
 fi
 export ENGINE_DIR
 
-# Binary priority: dist/tau > dist/omp. Source mode is the last resort.
+# Binary priority: dist/tau > dist/tau. Source mode is the last resort.
 DIST_TAU="$ENGINE_DIR/packages/coding-agent/dist/tau"
-DIST_OMP="$ENGINE_DIR/packages/coding-agent/dist/omp"
+DIST_OMP="$ENGINE_DIR/packages/coding-agent/dist/tau"
 ENGINE_ENTRY="$ENGINE_DIR/packages/coding-agent/src/cli.ts"
 
 # ── Profile handling ──────────────────────────────────────────────────
@@ -278,7 +278,7 @@ launch() {
         fi
     fi
 
-    # 4. Compiled binary: tau first, then omp
+    # 4. Compiled binary: tau first, then tau
     if [ -x "$DIST_TAU" ]; then exec "$DIST_TAU" "$@"; fi
     if [ -x "$DIST_OMP" ]; then exec "$DIST_OMP" "$@"; fi
 

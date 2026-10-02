@@ -7,28 +7,28 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } 
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import type { Usage } from "@oh-my-pi/pi-ai";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { resetSettingsForTest, Settings, settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
-import { ChatTranscriptBuilder } from "@oh-my-pi/pi-tui/chat/chat-transcript-builder";
-import { formatUsageRow } from "@oh-my-pi/pi-tui/overlays/usage-row";
-import { EventController } from "@oh-my-pi/pi-coding-agent/modes/controllers/event-controller";
-import { initTheme, theme } from "@oh-my-pi/pi-tui/theme";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { UiHelpers } from "@oh-my-pi/pi-coding-agent/modes/utils/ui-helpers";
-import type { AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { convertToLlm } from "@oh-my-pi/pi-coding-agent/session/messages";
-import type { SessionContext } from "@oh-my-pi/pi-coding-agent/session/session-context";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { Container, type TUI } from "@oh-my-pi/pi-tui";
-import { removeSyncWithRetries, Snowflake } from "@oh-my-pi/pi-utils";
+import type { AgentMessage } from "@tau/tau-agent-core";
+import { Agent } from "@tau/tau-agent-core";
+import type { Usage } from "@tau/tau-ai";
+import { createMockModel } from "@tau/tau-ai/providers/mock";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { resetSettingsForTest, Settings, settings } from "@tau/tau-coding-agent/config/settings";
+import type { ExtensionRunner } from "@tau/tau-coding-agent/extensibility/extensions/runner";
+import { ChatTranscriptBuilder } from "@tau/tau-tui/chat/chat-transcript-builder";
+import { formatUsageRow } from "@tau/tau-tui/overlays/usage-row";
+import { EventController } from "@tau/tau-coding-agent/modes/controllers/event-controller";
+import { initTheme, theme } from "@tau/tau-tui/theme";
+import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
+import { UiHelpers } from "@tau/tau-coding-agent/modes/utils/ui-helpers";
+import type { AgentSessionEvent } from "@tau/tau-coding-agent/session/agent-session";
+import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { convertToLlm } from "@tau/tau-coding-agent/session/messages";
+import type { SessionContext } from "@tau/tau-coding-agent/session/session-context";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { Container, type TUI } from "@tau/tau-tui";
+import { removeSyncWithRetries, Snowflake } from "@tau/tau-utils";
 import { createInteractiveModeContext } from "./helpers/interactive-mode-context";
 
 // 60s of elapsed: 30s between the prompt and the final response's creation,
@@ -454,7 +454,7 @@ describe("AgentSession synthetic follow-up marking", () => {
 	let modelRegistry: ModelRegistry;
 
 	beforeAll(async () => {
-		sharedDir = path.join(os.tmpdir(), `pi-turn-time-shared-${Snowflake.next()}`);
+		sharedDir = path.join(os.tmpdir(), `tau-turn-time-shared-${Snowflake.next()}`);
 		fs.mkdirSync(sharedDir, { recursive: true });
 		authStorage = await AuthStorage.create(path.join(sharedDir, "auth.db"));
 		authStorage.keys.setRuntime("anthropic", "test-key");

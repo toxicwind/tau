@@ -1,5 +1,5 @@
-import { Args, Command } from "@oh-my-pi/pi-utils/cli";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
+import { Args, Command } from "@tau/tau-utils/cli";
+import { initTheme } from "@tau/tau-tui/theme";
 
 export default class Pwd extends Command {
 	static description = "Print the current working directory";

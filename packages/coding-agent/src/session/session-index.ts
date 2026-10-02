@@ -10,7 +10,7 @@
  * - `session_recaps`: append-only journal of idle recaps
  *   ({@link SessionManager.recordRecap}). Recaps are side-channel output that
  *   never enters the session JSONL or LLM context; this table is their only
- *   durable record. `omp gc` drops rows of archived sessions.
+ *   durable record. `tau gc` drops rows of archived sessions.
  *
  * Holds its own lazily-opened connection instead of {@link HistoryStorage}'s
  * path-pinned singleton: the db path is re-resolved on every call so
@@ -21,9 +21,9 @@
 import { Database, type Statement } from "bun:sqlite";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { getHistoryDbPath } from "@oh-my-pi/pi-utils/dirs";
-import { getDbBusyTimeoutMs } from "@oh-my-pi/pi-utils/env";
-import * as logger from "@oh-my-pi/pi-utils/logger";
+import { getHistoryDbPath } from "@tau/tau-utils/dirs";
+import { getDbBusyTimeoutMs } from "@tau/tau-utils/env";
+import * as logger from "@tau/tau-utils/logger";
 
 const SESSION_INDEX_DDL = `
 CREATE TABLE IF NOT EXISTS session_titles (

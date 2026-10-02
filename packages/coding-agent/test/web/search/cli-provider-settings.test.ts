@@ -1,11 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import { stripVTControlCharacters } from "node:util";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { __resetDirsFromEnvForTests, setAgentDir, TempDir } from "@oh-my-pi/pi-utils";
+import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import { __resetDirsFromEnvForTests, setAgentDir, TempDir } from "@tau/tau-utils";
 import { runSearchCommand } from "../../../src/cli/web-search-cli";
 
 const originalAgentDir = process.env.PI_CODING_AGENT_DIR;
-const originalOmpProfile = process.env.OMP_PROFILE;
+const originalOmpProfile = process.env.TAU_PROFILE;
 const originalPiProfile = process.env.PI_PROFILE;
 
 let tempAgentDir: TempDir | undefined;
@@ -48,7 +48,7 @@ beforeEach(async () => {
 	originalExitCode = process.exitCode;
 	process.exitCode = undefined;
 	resetSettingsForTest();
-	tempAgentDir = TempDir.createSync("@omp-search-cli-");
+	tempAgentDir = TempDir.createSync("@tau-search-cli-");
 	setAgentDir(tempAgentDir.path());
 	const settings = await Settings.init({ inMemory: true, cwd: tempAgentDir.path() });
 	settings.setModelRole("web", "web/startpage");
@@ -60,7 +60,7 @@ afterEach(async () => {
 	resetSettingsForTest();
 	process.exitCode = originalExitCode;
 	restoreEnv("PI_CODING_AGENT_DIR", originalAgentDir);
-	restoreEnv("OMP_PROFILE", originalOmpProfile);
+	restoreEnv("TAU_PROFILE", originalOmpProfile);
 	restoreEnv("PI_PROFILE", originalPiProfile);
 	__resetDirsFromEnvForTests();
 	if (tempAgentDir) {

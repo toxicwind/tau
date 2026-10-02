@@ -14,18 +14,18 @@
  */
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, TextContent } from "@oh-my-pi/pi-ai";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { SecretObfuscator } from "@oh-my-pi/pi-coding-agent/secrets/obfuscator";
-import { AgentSession, type AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SILENT_ABORT_MARKER } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent } from "@tau/tau-agent-core";
+import type { AssistantMessage, TextContent } from "@tau/tau-ai";
+import * as AIError from "@tau/tau-ai/error";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { SecretObfuscator } from "@tau/tau-coding-agent/secrets/obfuscator";
+import { AgentSession, type AgentSessionEvent } from "@tau/tau-coding-agent/session/agent-session";
+import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { SILENT_ABORT_MARKER } from "@tau/tau-coding-agent/session/messages";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { TempDir } from "@tau/tau-utils";
 
 function makeAbortedAssistantMessage(text = "partial draft"): AssistantMessage {
 	return {
@@ -92,7 +92,7 @@ describe("AgentSession silent-abort marker stamping", () => {
 	let modelRegistry: ModelRegistry;
 
 	beforeAll(async () => {
-		fixtureDir = TempDir.createSync("@pi-silent-abort-fixture-");
+		fixtureDir = TempDir.createSync("@tau-silent-abort-fixture-");
 		authStorage = await AuthStorage.create(path.join(fixtureDir.path(), "testauth.db"));
 		authStorage.keys.setRuntime("anthropic", "test-key");
 		modelRegistry = new ModelRegistry(authStorage);

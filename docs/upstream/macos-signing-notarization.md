@@ -1,9 +1,9 @@
 # macOS signing & notarization
 
-The compiled macOS `omp` binaries shipped on GitHub Releases can be signed with a
+The compiled macOS `tau` binaries shipped on GitHub Releases can be signed with a
 **Developer ID Application** certificate and **notarized** by Apple. This makes
 them Gatekeeper-acceptable and is the prerequisite for an official Homebrew
-submission (see [#776](https://github.com/can1357/oh-my-pi/issues/776)).
+submission (see [#776](https://github.com/toxicwind/tau/issues/776)).
 
 Signing happens in CI in the Darwin legs of the `release_binary_hosted` matrix
 (`.github/workflows/ci.yml`), via `scripts/ci-macos-sign.sh`. The workflow step
@@ -35,7 +35,7 @@ bridge, so the hardened runtime needs:
 | `com.apple.security.cs.allow-jit`                        | JavaScriptCore JITs at runtime.                                                                                                                                                                                                                                                                                               |
 | `com.apple.security.cs.allow-unsigned-executable-memory` | JSC executable memory pages.                                                                                                                                                                                                                                                                                                  |
 | `com.apple.security.automation.apple-events`             | Allows macOS to prompt for Automation permission when `xcrun mcpbridge` connects to Xcode; without it, first-time Xcode MCP initialization hangs until timeout.                                                                                                                                                                |
-| `com.apple.security.cs.disable-library-validation`       | omp extracts its native addon (`pi_natives.<triple>.node`) and other optional dylibs to a runtime cache and `dlopen()`s them. They do not share the main binary's Team ID, so without this the hardened runtime aborts with _"mapping process and mapped file have different Team IDs"_ — breaking effectively every command. |
+| `com.apple.security.cs.disable-library-validation`       | tau extracts its native addon (`pi_natives.<triple>.node`) and other optional dylibs to a runtime cache and `dlopen()`s them. They do not share the main binary's Team ID, so without this the hardened runtime aborts with _"mapping process and mapped file have different Team IDs"_ — breaking effectively every command. |
 
 Without `disable-library-validation`, a signed+notarized binary signs and
 notarizes fine but **fails at first real use**. `scripts/ci-macos-sign.sh` runs
@@ -54,7 +54,7 @@ signing or credential failure.
 
 What this means in practice:
 
-- `curl https://omp.sh/install | sh` — `curl` sets no quarantine bit, so
+- `curl https://tau.sh/install | sh` — `curl` sets no quarantine bit, so
   Gatekeeper is not consulted.
 - Homebrew **formula** installs — Homebrew does not quarantine formula files, so
   Gatekeeper is not consulted.
@@ -80,7 +80,7 @@ signing to engage.
 
 ### Producing the credential files
 
-Drop these into a working directory (default `~/omp-signing`):
+Drop these into a working directory (default `~/tau-signing`):
 
 | File                 | How                                                                                                                                                                                                                                     |
 | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -101,9 +101,9 @@ your password, sanity-checks the `.p8`) and pipes each value to `gh secret set`
 over stdin — no secret is ever printed to the terminal, argv, or shell history:
 
 ```sh
-scripts/ci-macos-upload-secrets.sh ~/omp-signing --dry-run   # validate first
-scripts/ci-macos-upload-secrets.sh ~/omp-signing             # upload all five
-gh secret list --repo can1357/oh-my-pi                       # confirm
+scripts/ci-macos-upload-secrets.sh ~/tau-signing --dry-run   # validate first
+scripts/ci-macos-upload-secrets.sh ~/tau-signing             # upload all five
+gh secret list --repo can1357/tau                       # confirm
 ```
 
 Re-run it whenever the certificate is renewed.
@@ -127,5 +127,5 @@ exporting the five env vars and running:
 RELEASE_TARGETS=darwin-arm64 bun run ci:release:build-binaries
 APPLE_CERTIFICATE_P12=… APPLE_CERTIFICATE_PASSWORD=… \
 APPLE_API_KEY_ID=… APPLE_API_ISSUER_ID=… APPLE_API_KEY=… \
-  bash scripts/ci-macos-sign.sh packages/coding-agent/binaries/omp-darwin-arm64
+  bash scripts/ci-macos-sign.sh packages/coding-agent/binaries/tau-darwin-arm64
 ```

@@ -11,7 +11,7 @@
  *      user), and either decision tool resets the counter.
  */
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
-import { type } from "@oh-my-pi/omptype";
+import { type } from "@tau/tautype";
 import {
 	Agent,
 	type AgentMessage,
@@ -19,19 +19,19 @@ import {
 	type StreamFn,
 	type ToolApproval,
 	type ToolLoadMode,
-} from "@oh-my-pi/pi-agent-core";
-import { createMockModel, type MockModel, type MockResponse } from "@oh-my-pi/pi-ai/providers/mock";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { CustomTool } from "@oh-my-pi/pi-coding-agent/extensibility/custom-tools/types";
-import { resolveLocalUrlToPath } from "@oh-my-pi/pi-coding-agent/internal-urls";
-import { type IrcMessage } from "@oh-my-pi/pi-tui/tools/irc";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import type { XdevState } from "@oh-my-pi/pi-coding-agent/tools/xdev";
-import { TempDir } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-agent-core";
+import { createMockModel, type MockModel, type MockResponse } from "@tau/tau-ai/providers/mock";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import type { CustomTool } from "@tau/tau-coding-agent/extensibility/custom-tools/types";
+import { resolveLocalUrlToPath } from "@tau/tau-coding-agent/internal-urls";
+import { type IrcMessage } from "@tau/tau-tui/tools/irc";
+import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import type { XdevState } from "@tau/tau-coding-agent/tools/xdev";
+import { TempDir } from "@tau/tau-utils";
 import planModeReminderPrompt from "../src/prompts/system/plan-mode-tool-decision-reminder.md" with { type: "text" };
 
 /** A stable, literal (non-templated) line of the reminder prompt, so the test
@@ -108,7 +108,7 @@ describe("AgentSession plan-mode convergence", () => {
 	let modelRegistry: ModelRegistry;
 
 	beforeAll(async () => {
-		authDir = TempDir.createSync("@pi-plan-converge-auth-");
+		authDir = TempDir.createSync("@tau-plan-converge-auth-");
 		authStorage = await AuthStorage.create(authDir.join("auth.db"));
 		authStorage.keys.setRuntime("anthropic", "test-key");
 		modelRegistry = new ModelRegistry(authStorage, authDir.join("models.yml"));
@@ -120,7 +120,7 @@ describe("AgentSession plan-mode convergence", () => {
 	});
 
 	beforeEach(() => {
-		tempDir = TempDir.createSync("@pi-plan-converge-");
+		tempDir = TempDir.createSync("@tau-plan-converge-");
 	});
 
 	afterEach(async () => {

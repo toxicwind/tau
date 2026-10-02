@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { Terminal as VirtualTerminal } from "@oh-my-pi/pi-utils/vterm";
+import { Terminal as VirtualTerminal } from "@tau/tau-utils/vterm";
 
 const COLUMNS = 120;
 const ROWS = 30;
@@ -36,7 +36,7 @@ describe.skipIf(process.platform === "win32")("fatal stderr terminal handoff", (
 			// (ci-test-ts children inherit PI_TEST_RUNTIME=1).
 			env: {
 				...process.env,
-				OMP_TUI_DEBUG: undefined,
+				TAU_TUI_DEBUG: undefined,
 				PI_TEST_RUNTIME: undefined,
 				BUN_ENV: undefined,
 				NODE_ENV: undefined,

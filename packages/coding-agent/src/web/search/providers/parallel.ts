@@ -1,5 +1,5 @@
-import { type ApiKey, type AuthStorage, type FetchImpl, withAuth } from "@oh-my-pi/pi-ai";
-import { isRecord, USER_AGENT } from "@oh-my-pi/pi-utils";
+import { type ApiKey, type AuthStorage, type FetchImpl, withAuth } from "@tau/tau-ai";
+import { isRecord, USER_AGENT } from "@tau/tau-utils";
 import { callMCP } from "../../../mcp/json-rpc";
 import type { SearchResponse } from "../types";
 import { SearchProviderError } from "../../../web/search/types";

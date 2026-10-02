@@ -1,22 +1,22 @@
-# Native Rust task execution and cancellation (`pi-natives`)
+# Native Rust task execution and cancellation (`tau-natives`)
 
-This document describes how `crates/pi-natives` schedules native work and how cancellation flows from JS options (`timeoutMs`, `AbortSignal`) into Rust execution.
+This document describes how `crates/tau-natives` schedules native work and how cancellation flows from JS options (`timeoutMs`, `AbortSignal`) into Rust execution.
 
 ## Implementation files
 
-- `crates/pi-natives/src/task.rs`
-- `crates/pi-natives/src/grep.rs`
-- `crates/pi-natives/src/glob.rs`
-- `crates/pi-natives/src/fd.rs`
-- `crates/pi-natives/src/ast.rs`
-- `crates/pi-natives/src/workspace.rs`
-- `crates/pi-natives/src/shell.rs`
-- `crates/pi-natives/src/pty.rs`
-- `crates/pi-natives/src/html.rs`
-- `crates/pi-natives/src/sixel.rs`
-- `crates/pi-natives/src/clipboard.rs`
-- `crates/pi-natives/src/text.rs`
-- `crates/pi-natives/src/ps.rs`
+- `crates/tau-natives/src/task.rs`
+- `crates/tau-natives/src/grep.rs`
+- `crates/tau-natives/src/glob.rs`
+- `crates/tau-natives/src/fd.rs`
+- `crates/tau-natives/src/ast.rs`
+- `crates/tau-natives/src/workspace.rs`
+- `crates/tau-natives/src/shell.rs`
+- `crates/tau-natives/src/pty.rs`
+- `crates/tau-natives/src/html.rs`
+- `crates/tau-natives/src/sixel.rs`
+- `crates/tau-natives/src/clipboard.rs`
+- `crates/tau-natives/src/text.rs`
+- `crates/tau-natives/src/ps.rs`
 
 ## Core primitives (`task.rs`)
 
@@ -39,7 +39,7 @@ This document describes how `crates/pi-natives` schedules native work and how ca
    - `CancelToken::heartbeat()` is cooperative cancellation for blocking loops.
    - `CancelToken::wait()` asynchronously waits for signal or timeout.
    - `CancelToken::abort_token()` returns an abort handle backed by the shared flag when one already exists; without a flag, the handle is inert. `emplace_abort_token()` lazily installs the flag and returns a live handle. `CancelToken::new` uses the latter to bridge a JS `AbortSignal` to `AbortReason::Signal`.
-   - `CancelToken::aborted()` provides a non-blocking signal/deadline check, and `into_core()` transfers the token to `pi-shell`.
+   - `CancelToken::aborted()` provides a non-blocking signal/deadline check, and `into_core()` transfers the token to `tau-shell`.
    - `AbortToken::abort(reason)` lets external code request abort. Reasons are `Unknown`, `Timeout`, `Signal`, and `User`.
 
 ## `blocking` vs `future`: execution model and selection
@@ -129,7 +129,7 @@ Aborted
 
 Observed patterns:
 
-- `glob` and `fuzzyFind` pass heartbeat callbacks into `pi-walker` traversal and also check result-processing loops.
+- `glob` and `fuzzyFind` pass heartbeat callbacks into `tau-walker` traversal and also check result-processing loops.
 - `grep` checks before and during expensive search and passes the token through its scan/search workers.
 - `run_pty_sync` checks every loop tick with a maximum 16ms wait cadence.
 - `listWorkspace` checks during traversal.

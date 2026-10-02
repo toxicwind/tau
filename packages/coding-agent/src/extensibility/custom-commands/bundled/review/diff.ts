@@ -1,4 +1,4 @@
-import type { ReviewDiffFile, ReviewDiffRow } from "@oh-my-pi/pi-tui/overlays/annotation-types";
+import type { ReviewDiffFile, ReviewDiffRow } from "@tau/tau-tui/overlays/annotation-types";
 
 export interface ExcludedReviewFile {
 	path: string;

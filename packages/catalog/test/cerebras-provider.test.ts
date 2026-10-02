@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { cerebrasModelManagerOptions } from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import type { FetchImpl } from "@oh-my-pi/pi-catalog/types";
+import { cerebrasModelManagerOptions } from "@tau/tau-catalog/provider-models/openai-compat";
+import type { FetchImpl } from "@tau/tau-catalog/types";
 
 describe("Cerebras provider discovery", () => {
 	test("discovers gemma-4-31b as image-capable", async () => {

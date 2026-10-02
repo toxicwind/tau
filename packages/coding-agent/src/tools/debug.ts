@@ -1,15 +1,15 @@
-import { type DebugToolDetails, formatLocation, formatSessionSnapshot } from "@oh-my-pi/pi-tui/tools/debug";
+import { type DebugToolDetails, formatLocation, formatSessionSnapshot } from "@tau/tau-tui/tools/debug";
 import * as fs from "node:fs/promises";
-import { type } from "@oh-my-pi/omptype";
+import { type } from "@tau/tautype";
 import type {
 	AgentTool,
 	AgentToolContext,
 	AgentToolResult,
 	AgentToolUpdateCallback,
 	ToolApprovalDecision,
-} from "@oh-my-pi/pi-agent-core";
-import type { ToolExample } from "@oh-my-pi/pi-ai";
-import { isEnoent, prompt } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-agent-core";
+import type { ToolExample } from "@tau/tau-ai";
+import { isEnoent, prompt } from "@tau/tau-utils";
 import {
 	type DapBreakpointRecord,
 	type DapCapabilities,
@@ -40,10 +40,10 @@ import {
 import debugDescription from "../prompts/tools/debug.md" with { type: "text" };
 import type { ToolSession } from ".";
 import { truncateForPrompt } from "./approval";
-import type { OutputMeta } from "@oh-my-pi/pi-tui/tools/output-meta";
+import type { OutputMeta } from "@tau/tau-tui/tools/output-meta";
 import { formatPathRelativeToCwd, resolveToCwd } from "./path-utils";
-import { replaceTabs, shortenPath, TRUNCATE_LENGTHS, truncateToWidth } from "@oh-my-pi/pi-tui/render/render-utils";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { replaceTabs, shortenPath, TRUNCATE_LENGTHS, truncateToWidth } from "@tau/tau-tui/render/render-utils";
+import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 import { toolResult } from "./tool-result";
 import { clampTimeout } from "./tool-timeouts";
 

@@ -1,7 +1,7 @@
 import { afterAll, describe, expect, it } from "bun:test";
-import type { FetchImpl } from "@oh-my-pi/pi-ai";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { searchZai, ZaiProvider } from "@oh-my-pi/pi-coding-agent/web/search/providers/zai";
+import type { FetchImpl } from "@tau/tau-ai";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { searchZai, ZaiProvider } from "@tau/tau-coding-agent/web/search/providers/zai";
 import { createInMemoryAuthStorage } from "../../helpers/agent-session-setup";
 
 const authStorage = createInMemoryAuthStorage();
@@ -88,7 +88,7 @@ describe("Z.AI web search provider", () => {
 			);
 		};
 		const response = await searchZai({
-			query: "omp z.ai search",
+			query: "tau z.ai search",
 			authStorage,
 			fetch: fetchImpl,
 			sessionId: "session-zai-test",

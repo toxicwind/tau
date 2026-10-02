@@ -1,4 +1,4 @@
-import { initTheme, theme } from "@oh-my-pi/pi-tui/theme";
+import { initTheme, theme } from "@tau/tau-tui/theme";
 
 // Initialize with dark theme explicitly
 Bun.env.COLORTERM = "truecolor";

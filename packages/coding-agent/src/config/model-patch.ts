@@ -1,10 +1,10 @@
-import type { Api, Model, ModelSpec, RemoteCompactionConfig, ThinkingConfig } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { isVertexExpressOpenAIUrl } from "@oh-my-pi/pi-catalog/hosts";
-import { PROVIDER_DESCRIPTORS } from "@oh-my-pi/pi-catalog/provider-models";
-import { toModelSpec } from "@oh-my-pi/pi-catalog/provider-models/bundled-references";
-import { modelKind, type ModelKind } from "@oh-my-pi/pi-catalog/types";
-import { isRecord } from "@oh-my-pi/pi-utils";
+import type { Api, Model, ModelSpec, RemoteCompactionConfig, ThinkingConfig } from "@tau/tau-ai/types";
+import { buildModel } from "@tau/tau-catalog/build";
+import { isVertexExpressOpenAIUrl } from "@tau/tau-catalog/hosts";
+import { PROVIDER_DESCRIPTORS } from "@tau/tau-catalog/provider-models";
+import { toModelSpec } from "@tau/tau-catalog/provider-models/bundled-references";
+import { modelKind, type ModelKind } from "@tau/tau-catalog/types";
+import { isRecord } from "@tau/tau-utils";
 import { createConfigHeaderResolver } from "./resolve-config-value";
 import type { ModelOverride } from "./models-config-schema";
 /** Provider override config (baseUrl, headers, apiKey, compat, transport). */
@@ -31,10 +31,10 @@ export interface ProviderOverride {
  * composition path (built-in load, cached load, discovery merge, runtime
  * overrides). `undefined` `baseUrlApis` keeps the historical provider-wide
  * override; an explicit scope applies only to models whose API it covers.
- * `transport: "pi-native"` is provider-wide by documented contract
+ * `transport: "tau-native"` is provider-wide by documented contract
  * (docs/models.md): every model under the provider rides the auth-gateway,
  * so the gateway `baseUrl` follows the transport regardless of the model's
- * own API — a model must never end up pi-native on a catalog upstream host
+ * own API — a model must never end up tau-native on a catalog upstream host
  * (#2555).
  */
 export function resolveProviderBaseUrl<TApi extends Api>(
@@ -43,7 +43,7 @@ export function resolveProviderBaseUrl<TApi extends Api>(
 	override: Pick<ProviderOverride, "baseUrl" | "baseUrlApis" | "transport"> | undefined,
 ): string | undefined {
 	if (override?.baseUrl === undefined) return modelBaseUrl;
-	if (override.transport === "pi-native") return override.baseUrl;
+	if (override.transport === "tau-native") return override.baseUrl;
 	if (override.baseUrlApis !== undefined && !override.baseUrlApis.includes(modelApi)) return modelBaseUrl;
 	return override.baseUrl;
 }
@@ -59,7 +59,7 @@ export function resolveProviderBaseUrl<TApi extends Api>(
  *   3. Existing bundled baseUrl (the host baked into `models.json`)
  *
  * `transport` resolution priority:
- *   1. `providerOverride.transport` (e.g. `pi-native` for auth-gateway users)
+ *   1. `providerOverride.transport` (e.g. `tau-native` for auth-gateway users)
  *   2. `existing.transport` (carried over from boot-time override application)
  *   3. `model.transport` (rarely set — discovery defaults omit it)
  *
@@ -67,7 +67,7 @@ export function resolveProviderBaseUrl<TApi extends Api>(
  * preferred over (3), the bundled `api.xiaomimimo.com` would shadow the
  * tp- token-plan host and produce 401s on the first stream call.
  * Without explicit transport propagation, an openrouter (or any) entry
- * marked `transport: pi-native` in models.yml silently reverts to the
+ * marked `transport: tau-native` in models.yml silently reverts to the
  * default openai-completions transport after the background catalog
  * refresh — so the first `/model` switch after boot hits the raw OpenAI
  * chat-completions URL instead of the gateway's `/v1/pi/stream` (#2555).

@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "bun:test";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { executeBuiltinSlashCommand } from "@oh-my-pi/pi-coding-agent/slash-commands/builtin-registry";
+import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
+import { executeBuiltinSlashCommand } from "@tau/tau-coding-agent/slash-commands/builtin-registry";
 
 function createRuntime() {
 	const handleMoveCommand = vi.fn(async () => {});

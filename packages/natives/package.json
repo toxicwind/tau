@@ -1,18 +1,18 @@
 {
-  "name": "@oh-my-pi/pi-natives",
+  "name": "@tau/tau-natives",
   "version": "18.3.0",
   "description": "Native Rust bindings for PDF conversion, audio, WebRTC, grep, clipboard, image processing, syntax highlighting, PTY, and shell operations via N-API",
   "type": "module",
-  "homepage": "https://omp.sh",
+  "homepage": "https://tau.sh",
   "author": { "name": "Stencil Labs, Inc.", "url": "https://stencil.so" },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/can1357/oh-my-pi.git",
+    "url": "git+https://github.com/toxicwind/tau.git",
     "directory": "packages/natives"
   },
   "bugs": {
-    "url": "https://github.com/can1357/oh-my-pi/issues"
+    "url": "https://github.com/toxicwind/tau/issues"
   },
   "keywords": [
     "napi",

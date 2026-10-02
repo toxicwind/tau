@@ -5,7 +5,7 @@ import {
 	type AgentTool,
 	AppendOnlyContextManager,
 	type StreamFn,
-} from "@oh-my-pi/pi-agent-core";
+} from "@tau/tau-agent-core";
 import {
 	type Api,
 	type Context,
@@ -18,33 +18,33 @@ import {
 	type SimpleStreamOptions,
 	type TextContent,
 	type ToolCall,
-} from "@oh-my-pi/pi-ai";
-import { streamSimple } from "@oh-my-pi/pi-ai/stream";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { ExtensionRuntime, loadExtensionFromFactory } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
+} from "@tau/tau-ai";
+import { streamSimple } from "@tau/tau-ai/stream";
+import { AssistantMessageEventStream } from "@tau/tau-ai/utils/event-stream";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import { buildModel } from "@tau/tau-catalog/build";
+import { Effort } from "@tau/tau-catalog/effort";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { ExtensionRuntime, loadExtensionFromFactory } from "@tau/tau-coding-agent/extensibility/extensions/loader";
 import {
 	ExtensionRunner,
 	EXTENSION_HANDLER_TIMEOUT_MS,
 	testSetExtensionHandlerTimeoutMs,
-} from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
-import { RegisteredToolAdapter } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/wrapper";
-import { initializeExtensions } from "@oh-my-pi/pi-coding-agent/modes/runtime-init";
-import * as memoryBackend from "@oh-my-pi/pi-coding-agent/memory-backend";
-import type { MemoryBackend } from "@oh-my-pi/pi-coding-agent/memory-backend/types";
-import { type MnemopiSessionState, setMnemopiSessionState } from "@oh-my-pi/pi-coding-agent/mnemopi/state";
-import { createAgentSession, type ExtensionContext, type ExtensionFactory } from "@oh-my-pi/pi-coding-agent/sdk";
-import { obfuscateProviderContext, SecretObfuscator } from "@oh-my-pi/pi-coding-agent/secrets";
-import { AgentSession, type AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { convertToLlm, wrapSteeringForModel } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-import { TempDir } from "@oh-my-pi/pi-utils";
+} from "@tau/tau-coding-agent/extensibility/extensions/runner";
+import { RegisteredToolAdapter } from "@tau/tau-coding-agent/extensibility/extensions/wrapper";
+import { initializeExtensions } from "@tau/tau-coding-agent/modes/runtime-init";
+import * as memoryBackend from "@tau/tau-coding-agent/memory-backend";
+import type { MemoryBackend } from "@tau/tau-coding-agent/memory-backend/types";
+import { type MnemotauSessionState, setMnemotauSessionState } from "@tau/tau-coding-agent/mnemotau/state";
+import { createAgentSession, type ExtensionContext, type ExtensionFactory } from "@tau/tau-coding-agent/sdk";
+import { obfuscateProviderContext, SecretObfuscator } from "@tau/tau-coding-agent/secrets";
+import { AgentSession, type AgentSessionEvent } from "@tau/tau-coding-agent/session/agent-session";
+import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { convertToLlm, wrapSteeringForModel } from "@tau/tau-coding-agent/session/messages";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { EventBus } from "@tau/tau-coding-agent/utils/event-bus";
+import { TempDir } from "@tau/tau-utils";
 import { createAssistantMessage } from "./helpers/agent-session-setup";
 
 function createAgent(): Agent {
@@ -746,7 +746,7 @@ describe("AgentSession message pipeline", () => {
 	});
 
 	it("normalizes historical WebP on the main provider request path", async () => {
-		using tempDir = TempDir.createSync("@pi-stb-main-path-");
+		using tempDir = TempDir.createSync("@tau-stb-main-path-");
 		const api = "test-stb-main-path";
 		const contexts: Context[] = [];
 		registerCustomApi(api, (_model, context) => {
@@ -837,7 +837,7 @@ describe("AgentSession message pipeline", () => {
 	});
 
 	it("continues a user turn when an attached WebP is undecodable by an STB model", async () => {
-		using tempDir = TempDir.createSync("@pi-stb-corrupt-attachment-");
+		using tempDir = TempDir.createSync("@tau-stb-corrupt-attachment-");
 		const api = "test-stb-corrupt-attachment";
 		const contexts: Context[] = [];
 		registerCustomApi(api, (_model, context) => {
@@ -1879,7 +1879,7 @@ describe("AgentSession message pipeline", () => {
 		let remembered = false;
 		const injected = "<memories>remember blue</memories>";
 		const fakeBackend: MemoryBackend = {
-			id: "mnemopi",
+			id: "mnemotau",
 			async start() {},
 			async buildDeveloperInstructions() {
 				return remembered ? `static memory instructions\n\n${injected}` : "static memory instructions";
@@ -1953,7 +1953,7 @@ describe("AgentSession message pipeline", () => {
 	});
 
 	it("preserves append-only prefixes in subagent sessions when context handlers rewrite prior turns", async () => {
-		using tempDir = TempDir.createSync("@pi-subagent-append-only-");
+		using tempDir = TempDir.createSync("@tau-subagent-append-only-");
 		const api = "test-subagent-append-only-cache";
 		const contexts: Context[] = [];
 		registerCustomApi(api, (_model, context) => {
@@ -2045,7 +2045,7 @@ describe("AgentSession message pipeline", () => {
 		// own emission is suppressed via the runner marker), the revision is what
 		// tool_execution_start reports, what bash executes, and what the
 		// assistant message persists.
-		using tempDir = TempDir.createSync("@pi-tool-call-revision-");
+		using tempDir = TempDir.createSync("@tau-tool-call-revision-");
 		const api = "test-tool-call-revision";
 		let requests = 0;
 		registerCustomApi(api, () => {
@@ -2147,7 +2147,7 @@ describe("AgentSession message pipeline", () => {
 	it("exposes ctx.invokeTool to a re-registered built-in so it can delegate to the native tool", async () => {
 		// End-to-end for the extension path: a tool that re-registers `bash` receives ctx.invokeTool
 		// (bound to its own name), delegates to the native bash, and the native output flows back.
-		using tempDir = TempDir.createSync("@pi-invoke-tool-");
+		using tempDir = TempDir.createSync("@tau-invoke-tool-");
 		const api = "test-invoke-tool";
 		let requests = 0;
 		registerCustomApi(api, () => {
@@ -2251,7 +2251,7 @@ describe("AgentSession message pipeline", () => {
 	});
 
 	it("uses an extension web_search implementation when the built-in is enabled", async () => {
-		using tempDir = TempDir.createSync("@pi-web-search-override-");
+		using tempDir = TempDir.createSync("@tau-web-search-override-");
 		const api: Api = "test-web-search-override";
 		let requests = 0;
 		registerCustomApi(api, () => {
@@ -2346,7 +2346,7 @@ describe("AgentSession message pipeline", () => {
 	});
 
 	it("clears promoted memory from the base prompt when switching sessions", async () => {
-		using tempDir = TempDir.createSync("@pi-injected-memory-switch-");
+		using tempDir = TempDir.createSync("@tau-injected-memory-switch-");
 		const sessionManager = SessionManager.create(tempDir.path(), tempDir.join("sessions"));
 		const firstSessionFile = sessionManager.getSessionFile();
 		expect(firstSessionFile).toBeString();
@@ -2362,7 +2362,7 @@ describe("AgentSession message pipeline", () => {
 		let recallAvailable = true;
 		const injected = "<memories>session A only</memories>";
 		const fakeBackend: MemoryBackend = {
-			id: "mnemopi",
+			id: "mnemotau",
 			async start() {},
 			async buildDeveloperInstructions() {
 				return remembered ? `static memory instructions\n\n${injected}` : "static memory instructions";
@@ -2417,7 +2417,7 @@ describe("AgentSession message pipeline", () => {
 			sessionManager,
 			settings: Settings.isolated({
 				"compaction.enabled": false,
-				"memory.backend": "mnemopi",
+				"memory.backend": "mnemotau",
 				"provider.appendOnlyContext": "on",
 			}),
 			modelRegistry: createModelRegistryStub() as never,
@@ -2428,14 +2428,14 @@ describe("AgentSession message pipeline", () => {
 			}),
 		});
 		sessions.push(session);
-		setMnemopiSessionState(session, {
+		setMnemotauSessionState(session, {
 			aliasOf: undefined,
 			setSessionId(_sessionId: string) {},
 			resetConversationTracking() {
 				remembered = false;
 			},
 			async dispose() {},
-		} as unknown as MnemopiSessionState);
+		} as unknown as MnemotauSessionState);
 
 		await session.sendUserMessage("first");
 		expect(session.systemPrompt.join("\n")).toContain(injected);
@@ -2456,7 +2456,7 @@ describe("AgentSession message pipeline", () => {
 		let recallAvailable = true;
 		const injected = "<memories>previous session only</memories>";
 		const fakeBackend: MemoryBackend = {
-			id: "mnemopi",
+			id: "mnemotau",
 			async start() {},
 			async buildDeveloperInstructions() {
 				return remembered ? `static memory instructions\n\n${injected}` : "static memory instructions";
@@ -2511,7 +2511,7 @@ describe("AgentSession message pipeline", () => {
 			sessionManager: SessionManager.inMemory(),
 			settings: Settings.isolated({
 				"compaction.enabled": false,
-				"memory.backend": "mnemopi",
+				"memory.backend": "mnemotau",
 				"provider.appendOnlyContext": "on",
 			}),
 			modelRegistry: createModelRegistryStub() as never,
@@ -2522,14 +2522,14 @@ describe("AgentSession message pipeline", () => {
 			}),
 		});
 		sessions.push(session);
-		setMnemopiSessionState(session, {
+		setMnemotauSessionState(session, {
 			aliasOf: undefined,
 			setSessionId(_sessionId: string) {},
 			resetConversationTracking() {
 				remembered = false;
 			},
 			async dispose() {},
-		} as unknown as MnemopiSessionState);
+		} as unknown as MnemotauSessionState);
 
 		await session.sendUserMessage("first");
 		expect(session.systemPrompt.join("\n")).toContain(injected);
@@ -2544,7 +2544,7 @@ describe("AgentSession message pipeline", () => {
 	});
 
 	it("does not duplicate promoted memory in the base prompt when forking", async () => {
-		using tempDir = TempDir.createSync("@pi-injected-memory-fork-");
+		using tempDir = TempDir.createSync("@tau-injected-memory-fork-");
 		const sessionManager = SessionManager.create(tempDir.path(), tempDir.join("sessions"));
 		expect(sessionManager.getSessionFile()).toBeString();
 		await sessionManager.flush();
@@ -2554,7 +2554,7 @@ describe("AgentSession message pipeline", () => {
 		let remembered = false;
 		const injected = "<memories>forked recall</memories>";
 		const fakeBackend: MemoryBackend = {
-			id: "mnemopi",
+			id: "mnemotau",
 			async start() {},
 			async buildDeveloperInstructions() {
 				return remembered ? `static memory instructions\n\n${injected}` : "static memory instructions";
@@ -2609,7 +2609,7 @@ describe("AgentSession message pipeline", () => {
 			sessionManager,
 			settings: Settings.isolated({
 				"compaction.enabled": false,
-				"memory.backend": "mnemopi",
+				"memory.backend": "mnemotau",
 				"provider.appendOnlyContext": "on",
 			}),
 			modelRegistry: createModelRegistryStub() as never,
@@ -2620,14 +2620,14 @@ describe("AgentSession message pipeline", () => {
 			}),
 		});
 		sessions.push(session);
-		setMnemopiSessionState(session, {
+		setMnemotauSessionState(session, {
 			aliasOf: undefined,
 			setSessionId(_sessionId: string) {},
 			resetConversationTracking() {
 				remembered = false;
 			},
 			async dispose() {},
-		} as unknown as MnemopiSessionState);
+		} as unknown as MnemotauSessionState);
 
 		await session.sendUserMessage("first");
 		expect(session.systemPrompt.join("\n")).toContain(injected);

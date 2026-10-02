@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it } from "bun:test";
-import { TreeSelectorComponent } from "@oh-my-pi/pi-tui/overlays/tree-selector";
-import * as themeModule from "@oh-my-pi/pi-tui/theme";
-import type { SessionTreeNode } from "@oh-my-pi/pi-coding-agent/session/session-entries";
+import { TreeSelectorComponent } from "@tau/tau-tui/overlays/tree-selector";
+import * as themeModule from "@tau/tau-tui/theme";
+import type { SessionTreeNode } from "@tau/tau-coding-agent/session/session-entries";
 
 interface AdvisorNoteFixture {
 	note: string;

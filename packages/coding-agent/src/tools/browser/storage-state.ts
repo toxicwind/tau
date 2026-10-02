@@ -1,8 +1,8 @@
 import * as os from "node:os";
 import * as path from "node:path";
 
-import { isRecord, untilAborted } from "@oh-my-pi/pi-utils";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { isRecord, untilAborted } from "@tau/tau-utils";
+import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 import type { Cookie, CookieParam, Page } from "puppeteer-core";
 import { resolveToCwd } from "../path-utils";
 import { throwIfAborted } from "../tool-errors";
@@ -72,7 +72,7 @@ export interface ClearCookiesOptions {
 	names?: string[];
 }
 
-/** One origin's Web Storage entries in an omp storage state file. */
+/** One origin's Web Storage entries in an tau storage state file. */
 export interface StorageStateOrigin {
 	/** Serialized origin. */
 	origin: string;
@@ -82,7 +82,7 @@ export interface StorageStateOrigin {
 	sessionStorage?: Array<{ name: string; value: string }>;
 }
 
-/** Playwright-compatible browser state with sessionStorage as an omp extension. */
+/** Playwright-compatible browser state with sessionStorage as an tau extension. */
 export interface BrowserStorageState {
 	/** Serialized browser cookies. */
 	cookies: BrowserCookie[];
@@ -472,7 +472,7 @@ export async function saveStorageState(
 	const fileName = safeName === "." || safeName === ".." ? "_" : safeName || "main";
 	const destination = requestedPath
 		? resolveToCwd(requestedPath, cwd)
-		: path.join(os.homedir(), ".omp", "browser-state", `${fileName}.json`);
+		: path.join(os.homedir(), ".tau", "browser-state", `${fileName}.json`);
 	const [browserCookies, origin] = await Promise.all([
 		untilAborted(signal, () => page.browserContext().cookies()),
 		readOriginStorage(page, signal),

@@ -18,7 +18,7 @@
  * await auth.credentials.reload();
  * const apiKey = await auth.keys.get("anthropic", sessionId, { modelId });
  */
-import { logger } from "@oh-my-pi/pi-utils";
+import { logger } from "@tau/tau-utils";
 import { SessionAffinity } from "./auth/affinity";
 import { BlockStoreHealth, CredentialBlocks } from "./auth/blocks";
 import { KeyCascade, KeyOverrides } from "./auth/cascade";
@@ -162,7 +162,7 @@ export class AuthStorage {
 		if (options.onCredentialDisabled) pool.onDisabled(options.onCredentialDisabled);
 	}
 
-	/** Open the SQLite store at `dbPath` and wrap it (standalone use, e.g. the pi-ai CLI). */
+	/** Open the SQLite store at `dbPath` and wrap it (standalone use, e.g. the tau-ai CLI). */
 	static async create(dbPath: string, options: AuthStorageOptions = {}): Promise<AuthStorage> {
 		const store = await SqliteAuthCredentialStore.open(dbPath);
 		return new AuthStorage(store, options);

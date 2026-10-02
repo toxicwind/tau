@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { type AgentMessage, Tokenizer } from "@oh-my-pi/pi-agent-core";
-import type { SessionMessageEntry } from "@oh-my-pi/pi-agent-core/compaction";
+import { type AgentMessage, Tokenizer } from "@tau/tau-agent-core";
+import type { SessionMessageEntry } from "@tau/tau-agent-core/compaction";
 import {
 	applyShakeRegion,
 	collectShakeRegions,
@@ -8,8 +8,8 @@ import {
 	invalidateMessageCache,
 	isEstimateCacheable,
 	pruneToolOutputs,
-} from "@oh-my-pi/pi-agent-core/compaction";
-import type { AssistantMessage, ToolResultMessage, Usage } from "@oh-my-pi/pi-ai";
+} from "@tau/tau-agent-core/compaction";
+import type { AssistantMessage, ToolResultMessage, Usage } from "@tau/tau-ai";
 
 const tokenizer = new Tokenizer();
 

@@ -2,16 +2,16 @@ import { beforeAll, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { AgentTool } from "@oh-my-pi/pi-agent-core";
-import { editDiffString } from "@oh-my-pi/pi-natives";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { editToolRenderer, renderStreamingFallback } from "@oh-my-pi/pi-tui/tools/edit";
-import { renderDiff } from "@oh-my-pi/pi-tui/chrome/diff";
-import { ToolExecutionComponent } from "@oh-my-pi/pi-tui/chat/tool-execution";
-import * as themeModule from "@oh-my-pi/pi-tui/theme";
-import { type TUI, visibleWidth } from "@oh-my-pi/pi-tui";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
-import chalk from "@oh-my-pi/pi-utils/chalk";
+import type { AgentTool } from "@tau/tau-agent-core";
+import { editDiffString } from "@tau/tau-natives";
+import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import { editToolRenderer, renderStreamingFallback } from "@tau/tau-tui/tools/edit";
+import { renderDiff } from "@tau/tau-tui/chrome/diff";
+import { ToolExecutionComponent } from "@tau/tau-tui/chat/tool-execution";
+import * as themeModule from "@tau/tau-tui/theme";
+import { type TUI, visibleWidth } from "@tau/tau-tui";
+import { removeWithRetries } from "@tau/tau-utils";
+import chalk from "@tau/tau-utils/chalk";
 
 beforeAll(async () => {
 	resetSettingsForTest();
@@ -206,7 +206,7 @@ describe("editToolRenderer", () => {
 			{
 				input: [
 					"*** Begin Patch",
-					"[crates/pi-natives/src/shell.rs]",
+					"[crates/tau-natives/src/shell.rs]",
 					"PUT >$:",
 					"+pub fn streaming_preview() {",
 				].join("\n"),
@@ -217,7 +217,7 @@ describe("editToolRenderer", () => {
 		);
 
 		const rendered = Bun.stripANSI(component.render(160).join("\n"));
-		expect(rendered).toContain("crates/pi-natives/src/shell.rs");
+		expect(rendered).toContain("crates/tau-natives/src/shell.rs");
 		expect(rendered).not.toContain("PUT >$:");
 		expect(rendered).not.toContain("+pub fn streaming_preview() {");
 		expect(rendered).not.toContain("*** Begin Patch");

@@ -1,8 +1,8 @@
 import { describe, expect, test } from "bun:test";
-import { getOAuthProviders } from "@oh-my-pi/pi-ai/registry/oauth";
-import { getEnvApiKey } from "@oh-my-pi/pi-ai/stream";
-import { MODELS_DEV_PROVIDER_DESCRIPTORS } from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import type { OpenAICompat } from "@oh-my-pi/pi-catalog/types";
+import { getOAuthProviders } from "@tau/tau-ai/registry/oauth";
+import { getEnvApiKey } from "@tau/tau-ai/stream";
+import { MODELS_DEV_PROVIDER_DESCRIPTORS } from "@tau/tau-catalog/provider-models/openai-compat";
+import type { OpenAICompat } from "@tau/tau-catalog/types";
 
 describe("deepseek built-in provider (issue #830)", () => {
 	test("registers DeepSeek as an API-key login provider", () => {

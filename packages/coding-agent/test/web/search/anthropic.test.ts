@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from "bun:test";
-import type { FetchImpl } from "@oh-my-pi/pi-ai";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { searchAnthropic } from "@oh-my-pi/pi-coding-agent/web/search/providers/anthropic";
+import type { FetchImpl } from "@tau/tau-ai";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { buildModel } from "@tau/tau-catalog/build";
+import { searchAnthropic } from "@tau/tau-coding-agent/web/search/providers/anthropic";
 import { createInMemoryAuthStorage } from "../../helpers/agent-session-setup";
 
 const SELECTED_BASE_URL = "https://anthropic-grounding.example.test/v1";

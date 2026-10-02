@@ -1,4 +1,4 @@
-import { paletteToRgb, rgbToHex } from "@oh-my-pi/pi-utils/color";
+import { paletteToRgb, rgbToHex } from "@tau/tau-utils/color";
 import { detectTerminalId, getTerminalInfo } from "../terminal-capabilities";
 import type { ColorMode, ColorValue } from "./schema";
 

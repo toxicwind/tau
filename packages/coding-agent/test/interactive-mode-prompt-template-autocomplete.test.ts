@@ -1,5 +1,5 @@
 /**
- * Issue #2462: prompt templates discovered from `cwd/.omp/prompts/` were never
+ * Issue #2462: prompt templates discovered from `cwd/.tau/prompts/` were never
  * surfaced in the slash-command autocomplete picker. The runtime expansion in
  * `AgentSession.prompt()` worked, but `InteractiveMode.refreshSlashCommandState`
  * never passed `session.promptTemplates` into the autocomplete provider.
@@ -8,19 +8,19 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as os from "node:os";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import { Agent, type AgentTool } from "@oh-my-pi/pi-agent-core";
-import { type Api, Effort, type Model } from "@oh-my-pi/pi-ai";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import type { PromptTemplate } from "@oh-my-pi/pi-coding-agent/config/prompt-templates";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { InteractiveMode } from "@oh-my-pi/pi-coding-agent/modes/interactive-mode";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import type { AutocompleteProvider } from "@oh-my-pi/pi-tui";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { type } from "@tau/tautype";
+import { Agent, type AgentTool } from "@tau/tau-agent-core";
+import { type Api, Effort, type Model } from "@tau/tau-ai";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import type { PromptTemplate } from "@tau/tau-coding-agent/config/prompt-templates";
+import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import { InteractiveMode } from "@tau/tau-coding-agent/modes/interactive-mode";
+import { initTheme } from "@tau/tau-tui/theme";
+import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import type { AutocompleteProvider } from "@tau/tau-tui";
+import { TempDir } from "@tau/tau-utils";
 
 function makeTool(name: string): AgentTool {
 	return {
@@ -52,7 +52,7 @@ describe("InteractiveMode prompt-template autocomplete (#2462)", () => {
 		// scan off the real home dir — that scan was the per-test latency and a source
 		// of nondeterminism (it picked up whatever slash commands / plugins happened to
 		// live in the developer's or CI's home).
-		tempDir = TempDir.createSync("@pi-prompt-template-autocomplete-");
+		tempDir = TempDir.createSync("@tau-prompt-template-autocomplete-");
 		originalHome = process.env.HOME;
 		process.env.HOME = tempDir.path();
 		await Settings.init({ inMemory: true, cwd: tempDir.path() });

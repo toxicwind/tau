@@ -8,7 +8,7 @@
  * target against at startup is empty; the online discovery pass runs only
  * later. The main `--model` path already defers to post-discovery resolution,
  * but the prewalk block gave up synchronously and printed
- * `prewalk disabled — Model "…" not found` for ids `omp models` lists. It now
+ * `prewalk disabled — Model "…" not found` for ids `tau models` lists. It now
  * refreshes only the provider named by the selector, then retries after that
  * provider's cache-aware discovery completes.
  */
@@ -16,15 +16,15 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { FetchImpl } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { parseArgs } from "@oh-my-pi/pi-coding-agent/cli/args";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { buildSessionOptions } from "@oh-my-pi/pi-coding-agent/main";
-import type { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { removeSyncWithRetries, Snowflake } from "@oh-my-pi/pi-utils";
+import type { FetchImpl } from "@tau/tau-ai";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import { parseArgs } from "@tau/tau-coding-agent/cli/args";
+import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { buildSessionOptions } from "@tau/tau-coding-agent/main";
+import type { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { removeSyncWithRetries, Snowflake } from "@tau/tau-utils";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
 describe("issue #11820 prewalk into a models.yml discovery provider target", () => {
@@ -33,7 +33,7 @@ describe("issue #11820 prewalk into a models.yml discovery provider target", () 
 	let requestedUrls: string[];
 
 	beforeEach(() => {
-		tempDir = path.join(os.tmpdir(), `pi-prewalk-discovery-${Snowflake.next()}`);
+		tempDir = path.join(os.tmpdir(), `tau-prewalk-discovery-${Snowflake.next()}`);
 		fs.mkdirSync(tempDir, { recursive: true });
 		requestedUrls = [];
 	});

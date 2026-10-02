@@ -1,12 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
-import type { AgentTool } from "@oh-my-pi/pi-agent-core";
-import type { Tool as AiTool } from "@oh-my-pi/pi-ai";
-import { toolWireSchema } from "@oh-my-pi/pi-ai/utils/schema";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { EvalPreludeDefinition } from "@oh-my-pi/pi-coding-agent/eval/preludes";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { EvalTool, getEvalDocTopics, getEvalToolDescription } from "@oh-my-pi/pi-coding-agent/tools/eval";
-import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
+import type { AgentTool } from "@tau/tau-agent-core";
+import type { Tool as AiTool } from "@tau/tau-ai";
+import { toolWireSchema } from "@tau/tau-ai/utils/schema";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import type { EvalPreludeDefinition } from "@tau/tau-coding-agent/eval/preludes";
+import type { ToolSession } from "@tau/tau-coding-agent/tools";
+import { EvalTool, getEvalDocTopics, getEvalToolDescription } from "@tau/tau-coding-agent/tools/eval";
+import { ReadTool } from "@tau/tau-coding-agent/tools/read";
 
 function makeSession(opts: {
 	spawns?: string | null;

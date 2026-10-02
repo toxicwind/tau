@@ -2,13 +2,13 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import { afterAll, describe, expect, it } from "bun:test";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { disposeAllVmContexts } from "@oh-my-pi/pi-coding-agent/eval/js/context-manager";
-import { createBrowserPrelude } from "@oh-my-pi/pi-coding-agent/tools/browser";
-import { applyIgnoreHttpsErrors, resolveInitScriptSources } from "@oh-my-pi/pi-coding-agent/tools/browser/open-options";
-import { buildHeadlessLaunchArgs } from "@oh-my-pi/pi-coding-agent/tools/browser/launch";
-import { releaseAllTabs } from "@oh-my-pi/pi-coding-agent/tools/browser/tab-supervisor";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools/index";
+import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { disposeAllVmContexts } from "@tau/tau-coding-agent/eval/js/context-manager";
+import { createBrowserPrelude } from "@tau/tau-coding-agent/tools/browser";
+import { applyIgnoreHttpsErrors, resolveInitScriptSources } from "@tau/tau-coding-agent/tools/browser/open-options";
+import { buildHeadlessLaunchArgs } from "@tau/tau-coding-agent/tools/browser/launch";
+import { releaseAllTabs } from "@tau/tau-coding-agent/tools/browser/tab-supervisor";
+import type { ToolSession } from "@tau/tau-coding-agent/tools/index";
 import type { Page } from "puppeteer-core";
 import { chromiumAvailable } from "./chromium-probe";
 
@@ -81,7 +81,7 @@ describe("browser open options CDP helpers", () => {
 	});
 
 	it("loads existing init-script files and preserves inline source", async () => {
-		const directory = await fs.mkdtemp(path.join(os.tmpdir(), "omp-browser-init-test-"));
+		const directory = await fs.mkdtemp(path.join(os.tmpdir(), "tau-browser-init-test-"));
 		tempDirs.push(directory);
 		await Bun.write(path.join(directory, "init.js"), "globalThis.fromFile = true;");
 		expect(await resolveInitScriptSources(["init.js", "globalThis.inline = true;"], directory)).toEqual([
@@ -171,7 +171,7 @@ describe.skipIf(!CHROMIUM_AVAILABLE)("browser open options", () => {
 		try {
 			const invoke = browserHost();
 			const name = `ua-${crypto.randomUUID()}`;
-			await invoke({ action: "open", name, url: server.url.href, user_agent: "omp-open-options/1.0" });
+			await invoke({ action: "open", name, url: server.url.href, user_agent: "tau-open-options/1.0" });
 			expect(
 				returnedValue(
 					await invoke({
@@ -180,8 +180,8 @@ describe.skipIf(!CHROMIUM_AVAILABLE)("browser open options", () => {
 						code: "return await tab.evaluate(() => navigator.userAgent);",
 					}),
 				),
-			).toBe("omp-open-options/1.0");
-			expect(await seen.promise).toBe("omp-open-options/1.0");
+			).toBe("tau-open-options/1.0");
+			expect(await seen.promise).toBe("tau-open-options/1.0");
 		} finally {
 			server.stop(true);
 		}
@@ -205,7 +205,7 @@ describe.skipIf(!CHROMIUM_AVAILABLE)("browser open options", () => {
 				});
 			},
 		});
-		const directory = await fs.mkdtemp(path.join(os.tmpdir(), "omp-browser-download-test-"));
+		const directory = await fs.mkdtemp(path.join(os.tmpdir(), "tau-browser-download-test-"));
 		tempDirs.push(directory);
 		try {
 			const invoke = browserHost();

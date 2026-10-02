@@ -1,12 +1,12 @@
 /**
- * Internal URL router for internal protocols (`agent://`, `artifact://`, `history://`, `issue://`, `local://`, `mcp://`, `memory://`, `omp://`, `pr://`, `proc://`, `rule://`, `security://`, `skill://`, `ssh://`, `vault://`, and `xd://`).
+ * Internal URL router for internal protocols (`agent://`, `artifact://`, `history://`, `issue://`, `local://`, `mcp://`, `memory://`, `tau://`, `pr://`, `proc://`, `rule://`, `security://`, `skill://`, `ssh://`, `vault://`, and `xd://`).
  *
  * One process-global router with one handler per scheme. Access via
  * `InternalUrlRouter.instance()`. Handlers are stateless; per-session and
  * shared state lives in `./state.ts`.
  */
-import { setInternalUrlCompletionHost } from "@oh-my-pi/pi-tui/prompt/internal-url-autocomplete";
-import { setInternalReadTargetPredicate } from "@oh-my-pi/pi-tui/chat/read-target";
+import { setInternalUrlCompletionHost } from "@tau/tau-tui/prompt/internal-url-autocomplete";
+import { setInternalReadTargetPredicate } from "@tau/tau-tui/chat/read-target";
 import { AgentProtocolHandler } from "./agent-protocol";
 import { ArtifactProtocolHandler } from "./artifact-protocol";
 import { HistoryProtocolHandler } from "./history-protocol";
@@ -14,7 +14,7 @@ import { IssueProtocolHandler, PrProtocolHandler } from "./issue-pr-protocol";
 import { LocalProtocolHandler } from "./local-protocol";
 import { McpProtocolHandler } from "./mcp-protocol";
 import { MemoryProtocolHandler } from "./memory-protocol";
-import { OmpProtocolHandler } from "./omp-protocol";
+import { TauProtocolHandler } from "./tau-protocol";
 import { extractUriScheme, parseInternalUrl } from "./parse";
 import { ProcProtocolHandler } from "./proc-protocol";
 import { RuleProtocolHandler } from "./rule-protocol";
@@ -46,7 +46,7 @@ export class InternalUrlRouter {
 	#handlers = new Map<string, ProtocolHandler>();
 
 	constructor() {
-		this.register(new OmpProtocolHandler());
+		this.register(new TauProtocolHandler());
 		this.register(new AgentProtocolHandler());
 		this.register(new ArtifactProtocolHandler());
 		this.register(new MemoryProtocolHandler());
@@ -54,7 +54,7 @@ export class InternalUrlRouter {
 		this.register(new VaultProtocolHandler());
 		this.register(new SkillProtocolHandler());
 		this.register(new RuleProtocolHandler());
-		// Reserved OMP-owned security-analysis namespace; vendor adapters normalize into its store.
+		// Reserved TAU-owned security-analysis namespace; vendor adapters normalize into its store.
 		this.register(new SecurityProtocolHandler());
 		this.register(new McpProtocolHandler());
 		this.register(new IssueProtocolHandler());

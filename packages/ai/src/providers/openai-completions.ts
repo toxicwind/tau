@@ -1,10 +1,10 @@
-import { resolveModelPolicy } from "@oh-my-pi/pi-catalog/compat/resolve";
-import type { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { resolveWireModelId } from "@oh-my-pi/pi-catalog/model-thinking";
-import { calculateCost } from "@oh-my-pi/pi-catalog/models";
-import type { ResolvedOpenAICompat } from "@oh-my-pi/pi-catalog/types";
-import { clinePassClientHeaders } from "@oh-my-pi/pi-catalog/wire/cline-pass";
-import { $env, logger, parseStreamingJson, parseStreamingJsonThrottled } from "@oh-my-pi/pi-utils";
+import { resolveModelPolicy } from "@tau/tau-catalog/compat/resolve";
+import type { Effort } from "@tau/tau-catalog/effort";
+import { resolveWireModelId } from "@tau/tau-catalog/model-thinking";
+import { calculateCost } from "@tau/tau-catalog/models";
+import type { ResolvedOpenAICompat } from "@tau/tau-catalog/types";
+import { clinePassClientHeaders } from "@tau/tau-catalog/wire/cline-pass";
+import { $env, logger, parseStreamingJson, parseStreamingJsonThrottled } from "@tau/tau-utils";
 import { renderDemotedThinking } from "../dialect/demotion";
 import * as AIError from "../error";
 import { getKimiCommonHeaders } from "../registry/oauth/kimi";

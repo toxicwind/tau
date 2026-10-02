@@ -2,10 +2,10 @@ import {
 	type ClipboardImage,
 	copyToClipboard as nativeCopyToClipboard,
 	readImageFromClipboard as nativeReadImageFromClipboard,
-} from "@oh-my-pi/pi-natives/clipboard";
-import { isWsl } from "@oh-my-pi/pi-utils";
-import * as logger from "@oh-my-pi/pi-utils/logger";
-import { SUPPORTED_IMAGE_MIME_TYPES } from "@oh-my-pi/pi-utils/mime";
+} from "@tau/tau-natives/clipboard";
+import { isWsl } from "@tau/tau-utils";
+import * as logger from "@tau/tau-utils/logger";
+import { SUPPORTED_IMAGE_MIME_TYPES } from "@tau/tau-utils/mime";
 import MAC_FILE_URL_SCRIPT from "./mac-file-urls.applescript" with { type: "text" };
 
 type SpawnCaptureOptions = { input?: string; timeoutMs?: number; env?: Record<string, string | undefined> };
