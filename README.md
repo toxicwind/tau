@@ -191,6 +191,6 @@ The repo's [`CONTRIBUTING.md`](CONTRIBUTING.md) (titled "Contributing to omp") s
 **Security:** only the latest release is supported with security updates. To report a vulnerability, email can1357 directly or open a [private security advisory](https://github.com/can1357/oh-my-pi/security/advisories/new) — never a public issue. Reports are handled best-effort with an initial acknowledgment within a few days. (This is the inherited upstream policy in `.github/SECURITY.md`; the fork has not published its own yet.)
 
 - Upstream: [github.com/can1357/oh-my-pi](https://github.com/can1357/oh-my-pi) · [omp.sh](https://omp.sh) · [npm `@oh-my-pi/pi-coding-agent`](https://www.npmjs.com/package/@oh-my-pi/pi-coding-agent)
-- This fork: [github.com/toxicwind/tau](https://github.com/toxicwind/tau) · `projects/range/ranch/stockyard/tau` · v18.3.0
+- This fork: [github.com/toxicwind/tau](https://github.com/toxicwind/tau) · `tau/` · v18.3.0
 
 _made for terminals that stay open on the ranch_
