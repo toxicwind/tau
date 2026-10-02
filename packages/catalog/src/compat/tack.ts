@@ -51,24 +51,27 @@ interface TackProviderDef {
  * Resolves tack's provider definitions through a fallback chain (a fallback,
  * not a rollback — every candidate is tack, the authority; there is no legacy
  * duplicate to fall back to):
- * 1. ranch monorepo layout (`ranch/tau/` alongside `ranch/tack/`) — production.
- * 2. the `@ranch/tack` package — standalone `toxicwind/tau` checkouts.
- * Otherwise throws an actionable error naming both candidates.
+ * 1. `TACK_PATH` env — explicit override, wins over everything.
+ * 2. The estate checkout at `$HOME/estate/ranch/tack` — relocatable across
+ *    users and machines; never a hardcoded personal path.
+ * 3. Relative source paths — dev checkout nested inside the ranch monorepo.
+ * 4. The `@ranch/tack` package — standalone `toxicwind/tau` checkouts.
+ * 5. Embedded snapshot below — generated from `ranch/tack/src/index.ts`;
+ *    guarantees the compiled binary never crashes at boot when no tack
+ *    checkout is present. Regenerate from the live source when tack changes:
+ *    copy the PROVIDER_DEFS array verbatim from ranch/tack/src/index.ts.
  */
 function resolveTackModule(): { PROVIDER_DEFS: TackProviderDef[] } {
 	const candidates: string[] = [];
 	if (process.env.TACK_PATH) candidates.push(process.env.TACK_PATH);
 	try {
-		const fs = require("node:fs");
+		// eslint-disable-next-line @typescript-eslint/no-require-imports
+		const os = require("node:os");
+		// eslint-disable-next-line @typescript-eslint/no-require-imports
 		const path = require("node:path");
-		const realExec = fs.realpathSync(process.execPath);
-		candidates.push(
-			path.resolve(path.dirname(realExec), "../../../../tack/src/index.ts"),
-			path.resolve(path.dirname(realExec), "../../../../../tack/src/index.ts"),
-		);
+		candidates.push(path.join(os.homedir(), "estate/ranch/tack/src/index.ts"));
 	} catch {}
 	candidates.push(
-		"/home/toxic/estate/ranch/tack/src/index.ts",
 		"../../../../../tack/src/index.ts",
 		"../../../../tack/src/index.ts",
 		"@ranch/tack",

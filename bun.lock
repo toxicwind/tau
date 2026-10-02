@@ -10,7 +10,6 @@
         "sherpa-onnx-node": "1.13.2",
       },
       "devDependencies": {
-        "@oh-my-pi/pi-natives-linux-x64": "18.3.0",
         "@types/bun": "catalog:",
         "@typescript/native-preview": "catalog:",
         "bun-types": "^1.1.0",
@@ -24,40 +23,40 @@
       },
     },
     "packages/agent": {
-      "name": "@oh-my-pi/pi-agent-core",
+      "name": "@tau/tau-agent-core",
       "version": "18.3.0",
       "dependencies": {
-        "@oh-my-pi/pi-ai": "catalog:",
-        "@oh-my-pi/pi-catalog": "catalog:",
-        "@oh-my-pi/pi-natives": "catalog:",
-        "@oh-my-pi/pi-utils": "catalog:",
-        "@oh-my-pi/pi-wire": "catalog:",
-        "@oh-my-pi/snapcompact": "catalog:",
         "@opentelemetry/api": "catalog:",
+        "@tau/snapcompact": "catalog:",
+        "@tau/tau-ai": "catalog:",
+        "@tau/tau-catalog": "catalog:",
+        "@tau/tau-natives": "catalog:",
+        "@tau/tau-utils": "catalog:",
+        "@tau/tau-wire": "catalog:",
       },
       "devDependencies": {
-        "@oh-my-pi/omptype": "catalog:",
         "@opentelemetry/context-async-hooks": "catalog:",
         "@opentelemetry/sdk-trace-base": "catalog:",
+        "@tau/tautype": "catalog:",
         "@types/bun": "catalog:",
       },
     },
     "packages/ai": {
-      "name": "@oh-my-pi/pi-ai",
+      "name": "@tau/tau-ai",
       "version": "18.3.0",
       "dependencies": {
-        "@oh-my-pi/omptype": "catalog:",
-        "@oh-my-pi/pi-catalog": "catalog:",
-        "@oh-my-pi/pi-natives": "catalog:",
-        "@oh-my-pi/pi-utils": "catalog:",
-        "@oh-my-pi/pi-wire": "catalog:",
+        "@tau/tau-catalog": "catalog:",
+        "@tau/tau-natives": "catalog:",
+        "@tau/tau-utils": "catalog:",
+        "@tau/tau-wire": "catalog:",
+        "@tau/tautype": "catalog:",
       },
       "devDependencies": {
         "@types/bun": "catalog:",
       },
     },
     "packages/browser-relay": {
-      "name": "@oh-my-pi/browser-relay",
+      "name": "@tau/browser-relay",
       "version": "0.1.0",
       "devDependencies": {
         "@types/bun": "catalog:",
@@ -65,36 +64,25 @@
       },
     },
     "packages/catalog": {
-      "name": "@oh-my-pi/pi-catalog",
+      "name": "@tau/tau-catalog",
       "version": "18.3.0",
       "dependencies": {
-        "@oh-my-pi/omptype": "catalog:",
-        "@oh-my-pi/pi-utils": "catalog:",
+        "@tau/tau-utils": "catalog:",
+        "@tau/tautype": "catalog:",
       },
       "devDependencies": {
         "@bgotink/kdl": "0.4.0",
-        "@oh-my-pi/pi-ai": "catalog:",
+        "@tau/tau-ai": "catalog:",
         "@types/bun": "catalog:",
       },
     },
     "packages/coding-agent": {
       "name": "tau",
       "bin": {
-        "omp": "src/cli.ts",
+        "tau": "src/cli.ts",
       },
       "dependencies": {
         "@babel/parser": "catalog:",
-        "@oh-my-pi/omp-stats": "catalog:",
-        "@oh-my-pi/omptype": "catalog:",
-        "@oh-my-pi/pi-agent-core": "catalog:",
-        "@oh-my-pi/pi-ai": "catalog:",
-        "@oh-my-pi/pi-catalog": "catalog:",
-        "@oh-my-pi/pi-mnemopi": "catalog:",
-        "@oh-my-pi/pi-natives": "catalog:",
-        "@oh-my-pi/pi-tui": "catalog:",
-        "@oh-my-pi/pi-utils": "catalog:",
-        "@oh-my-pi/pi-wire": "catalog:",
-        "@oh-my-pi/snapcompact": "catalog:",
         "@opentelemetry/api": "catalog:",
         "@opentelemetry/api-logs": "catalog:",
         "@opentelemetry/context-async-hooks": "catalog:",
@@ -106,6 +94,17 @@
         "@opentelemetry/sdk-metrics": "catalog:",
         "@opentelemetry/sdk-trace-base": "catalog:",
         "@opentelemetry/sdk-trace-node": "catalog:",
+        "@tau/snapcompact": "catalog:",
+        "@tau/tau-agent-core": "catalog:",
+        "@tau/tau-ai": "catalog:",
+        "@tau/tau-catalog": "catalog:",
+        "@tau/tau-mnemotau": "catalog:",
+        "@tau/tau-natives": "catalog:",
+        "@tau/tau-stats": "catalog:",
+        "@tau/tau-tui": "catalog:",
+        "@tau/tau-utils": "catalog:",
+        "@tau/tau-wire": "catalog:",
+        "@tau/tautype": "catalog:",
         "axe-core": "4.13.0",
         "puppeteer-core": "catalog:",
       },
@@ -118,11 +117,11 @@
       },
     },
     "packages/collab-web": {
-      "name": "@oh-my-pi/collab-web",
+      "name": "@tau/collab-web",
       "version": "16.3.6",
       "dependencies": {
-        "@oh-my-pi/pi-utils": "catalog:",
-        "@oh-my-pi/pi-wire": "catalog:",
+        "@tau/tau-utils": "catalog:",
+        "@tau/tau-wire": "catalog:",
         "katex": "catalog:",
         "lucide-react": "catalog:",
         "react": "catalog:",
@@ -135,19 +134,19 @@
       },
     },
     "packages/metaharness": {
-      "name": "@oh-my-pi/pi-metaharness",
+      "name": "@tau/tau-metaharness",
       "version": "0.0.1",
       "bin": {
         "metaharness": "src/server.ts",
       },
       "dependencies": {
-        "@oh-my-pi/pi-agent-core": "catalog:",
-        "@oh-my-pi/pi-ai": "catalog:",
-        "@oh-my-pi/pi-catalog": "catalog:",
-        "@oh-my-pi/pi-natives": "catalog:",
-        "@oh-my-pi/pi-utils": "catalog:",
-        "@oh-my-pi/typescript-edit-benchmark": "workspace:*",
         "@stencil-hq/vibemon": "^0.3.2",
+        "@tau/tau-agent-core": "catalog:",
+        "@tau/tau-ai": "catalog:",
+        "@tau/tau-catalog": "catalog:",
+        "@tau/tau-natives": "catalog:",
+        "@tau/tau-utils": "catalog:",
+        "@tau/typescript-edit-benchmark": "workspace:*",
         "clsx": "^2.1.1",
         "d3-scale": "^4.0.2",
         "d3-shape": "^3.2.0",
@@ -167,17 +166,17 @@
         "react-refresh": "^0.18.0",
       },
     },
-    "packages/mnemopi": {
-      "name": "@oh-my-pi/pi-mnemopi",
+    "packages/mnemotau": {
+      "name": "@tau/tau-mnemotau",
       "version": "18.3.0",
       "bin": {
-        "mnemopi": "src/cli.ts",
+        "mnemotau": "src/cli.ts",
       },
       "dependencies": {
-        "@oh-my-pi/pi-ai": "catalog:",
-        "@oh-my-pi/pi-catalog": "catalog:",
-        "@oh-my-pi/pi-natives": "catalog:",
-        "@oh-my-pi/pi-utils": "catalog:",
+        "@tau/tau-ai": "catalog:",
+        "@tau/tau-catalog": "catalog:",
+        "@tau/tau-natives": "catalog:",
+        "@tau/tau-utils": "catalog:",
       },
       "devDependencies": {
         "@types/bun": "catalog:",
@@ -194,7 +193,7 @@
       ],
     },
     "packages/natives": {
-      "name": "@oh-my-pi/pi-natives",
+      "name": "@tau/tau-natives",
       "version": "18.3.0",
       "devDependencies": {
         "@napi-rs/cli": "catalog:",
@@ -208,44 +207,31 @@
         "wrap-ansi": "10.0.0",
       },
     },
-    "packages/omptype": {
-      "name": "@oh-my-pi/omptype",
-      "version": "18.3.0",
-      "devDependencies": {
-        "@ark/attest": "0.56.3",
-        "@ark/schema": "0.56.2",
-        "@ark/util": "0.56.2",
-        "@sinclair/typebox": "^0.34.0",
-        "@types/bun": "catalog:",
-        "arkregex": "0.0.8",
-        "arktype": "2.2.3",
-      },
-    },
     "packages/snapcompact": {
-      "name": "@oh-my-pi/snapcompact",
+      "name": "@tau/snapcompact",
       "version": "18.3.0",
       "dependencies": {
-        "@oh-my-pi/pi-ai": "catalog:",
-        "@oh-my-pi/pi-catalog": "catalog:",
-        "@oh-my-pi/pi-natives": "catalog:",
-        "@oh-my-pi/pi-utils": "catalog:",
-        "@oh-my-pi/pi-wire": "catalog:",
+        "@tau/tau-ai": "catalog:",
+        "@tau/tau-catalog": "catalog:",
+        "@tau/tau-natives": "catalog:",
+        "@tau/tau-utils": "catalog:",
+        "@tau/tau-wire": "catalog:",
       },
       "devDependencies": {
         "@types/bun": "catalog:",
       },
     },
     "packages/stats": {
-      "name": "@oh-my-pi/omp-stats",
+      "name": "@tau/tau-stats",
       "version": "18.3.0",
       "bin": {
-        "omp-stats": "./src/index.ts",
+        "tau-stats": "./src/index.ts",
       },
       "dependencies": {
-        "@oh-my-pi/pi-ai": "catalog:",
-        "@oh-my-pi/pi-catalog": "catalog:",
-        "@oh-my-pi/pi-utils": "catalog:",
         "@tailwindcss/node": "catalog:",
+        "@tau/tau-ai": "catalog:",
+        "@tau/tau-catalog": "catalog:",
+        "@tau/tau-utils": "catalog:",
         "chart.js": "catalog:",
         "lucide-react": "catalog:",
         "react": "catalog:",
@@ -260,36 +246,49 @@
         "postcss": "catalog:",
       },
     },
+    "packages/tautype": {
+      "name": "@tau/tautype",
+      "version": "18.3.0",
+      "devDependencies": {
+        "@ark/attest": "0.56.3",
+        "@ark/schema": "0.56.2",
+        "@ark/util": "0.56.2",
+        "@sinclair/typebox": "^0.34.0",
+        "@types/bun": "catalog:",
+        "arkregex": "0.0.8",
+        "arktype": "2.2.3",
+      },
+    },
     "packages/tui": {
-      "name": "@oh-my-pi/pi-tui",
+      "name": "@tau/tau-tui",
       "version": "18.3.0",
       "dependencies": {
-        "@oh-my-pi/omptype": "catalog:",
-        "@oh-my-pi/pi-agent-core": "catalog:",
-        "@oh-my-pi/pi-ai": "catalog:",
-        "@oh-my-pi/pi-catalog": "catalog:",
-        "@oh-my-pi/pi-natives": "catalog:",
-        "@oh-my-pi/pi-utils": "catalog:",
-        "@oh-my-pi/pi-wire": "catalog:",
-        "@oh-my-pi/snapcompact": "catalog:",
+        "@tau/snapcompact": "catalog:",
+        "@tau/tau-agent-core": "catalog:",
+        "@tau/tau-ai": "catalog:",
+        "@tau/tau-catalog": "catalog:",
+        "@tau/tau-natives": "catalog:",
+        "@tau/tau-utils": "catalog:",
+        "@tau/tau-wire": "catalog:",
+        "@tau/tautype": "catalog:",
       },
       "devDependencies": {
         "kitty-vt-wasm": "catalog:",
       },
     },
     "packages/typescript-edit-benchmark": {
-      "name": "@oh-my-pi/typescript-edit-benchmark",
+      "name": "@tau/typescript-edit-benchmark",
       "version": "0.0.1",
       "dependencies": {
         "@babel/generator": "catalog:",
         "@babel/parser": "catalog:",
         "@babel/traverse": "catalog:",
         "@babel/types": "catalog:",
-        "@oh-my-pi/pi-agent-core": "catalog:",
-        "@oh-my-pi/pi-ai": "catalog:",
-        "@oh-my-pi/pi-natives": "catalog:",
-        "@oh-my-pi/pi-tui": "catalog:",
-        "@oh-my-pi/pi-utils": "catalog:",
+        "@tau/tau-agent-core": "catalog:",
+        "@tau/tau-ai": "catalog:",
+        "@tau/tau-natives": "catalog:",
+        "@tau/tau-tui": "catalog:",
+        "@tau/tau-utils": "catalog:",
         "diff": "catalog:",
         "prettier": "catalog:",
         "regexp-tree": "catalog:",
@@ -302,24 +301,24 @@
       },
     },
     "packages/utils": {
-      "name": "@oh-my-pi/pi-utils",
+      "name": "@tau/tau-utils",
       "version": "18.3.0",
       "dependencies": {
-        "@oh-my-pi/pi-natives": "catalog:",
+        "@tau/tau-natives": "catalog:",
       },
       "devDependencies": {
         "@types/bun": "catalog:",
       },
     },
     "packages/wire": {
-      "name": "@oh-my-pi/pi-wire",
+      "name": "@tau/tau-wire",
       "version": "18.3.0",
       "devDependencies": {
         "@types/bun": "catalog:",
       },
     },
-    "python/robomp/web": {
-      "name": "robomp-web",
+    "python/robtau/web": {
+      "name": "robtau-web",
       "version": "0.1.0",
       "dependencies": {
         "solid-js": "catalog:",
@@ -348,18 +347,6 @@
     "@babel/types": "^7.29.7",
     "@huggingface/transformers": "^4.2.0",
     "@napi-rs/cli": "3.7.2",
-    "@oh-my-pi/omp-stats": "18.3.0",
-    "@oh-my-pi/omptype": "18.3.0",
-    "@oh-my-pi/pi-agent-core": "18.3.0",
-    "@oh-my-pi/pi-ai": "18.3.0",
-    "@oh-my-pi/pi-catalog": "18.3.0",
-    "@oh-my-pi/pi-coding-agent": "18.3.0",
-    "@oh-my-pi/pi-mnemopi": "18.3.0",
-    "@oh-my-pi/pi-natives": "18.3.0",
-    "@oh-my-pi/pi-tui": "18.3.0",
-    "@oh-my-pi/pi-utils": "18.3.0",
-    "@oh-my-pi/pi-wire": "18.3.0",
-    "@oh-my-pi/snapcompact": "18.3.0",
     "@opentelemetry/api": "^1.9.1",
     "@opentelemetry/api-logs": "^0.220.0",
     "@opentelemetry/context-async-hooks": "^2.9.0",
@@ -373,6 +360,18 @@
     "@opentelemetry/sdk-trace-node": "^2.9.0",
     "@tailwindcss/node": "^4.3.2",
     "@tailwindcss/vite": "^4.3.2",
+    "@tau/snapcompact": "workspace:*",
+    "@tau/tau-agent-core": "workspace:*",
+    "@tau/tau-ai": "workspace:*",
+    "@tau/tau-catalog": "workspace:*",
+    "@tau/tau-coding-agent": "workspace:*",
+    "@tau/tau-mnemotau": "workspace:*",
+    "@tau/tau-natives": "workspace:*",
+    "@tau/tau-stats": "workspace:*",
+    "@tau/tau-tui": "workspace:*",
+    "@tau/tau-utils": "workspace:*",
+    "@tau/tau-wire": "workspace:*",
+    "@tau/tautype": "workspace:*",
     "@types/babel__generator": "^7.27.0",
     "@types/babel__traverse": "^7.28.0",
     "@types/bun": "^1.3.14",
@@ -710,38 +709,6 @@
 
     "@octokit/types": ["@octokit/types@18.0.0", "", { "dependencies": { "@octokit/openapi-types": "^29.0.1" } }, "sha512-l6bAF43PNxkJp6g+W4PjoUSSkxHomXw2nOum5CTftJz1NlV3vu93NImgOYtLf6CbBUb5j+fiuzW0PPQ5JTSvZA=="],
 
-    "@oh-my-pi/browser-relay": ["@oh-my-pi/browser-relay@workspace:packages/browser-relay"],
-
-    "@oh-my-pi/collab-web": ["@oh-my-pi/collab-web@workspace:packages/collab-web"],
-
-    "@oh-my-pi/omp-stats": ["@oh-my-pi/omp-stats@workspace:packages/stats"],
-
-    "@oh-my-pi/omptype": ["@oh-my-pi/omptype@workspace:packages/omptype"],
-
-    "@oh-my-pi/pi-agent-core": ["@oh-my-pi/pi-agent-core@workspace:packages/agent"],
-
-    "@oh-my-pi/pi-ai": ["@oh-my-pi/pi-ai@workspace:packages/ai"],
-
-    "@oh-my-pi/pi-catalog": ["@oh-my-pi/pi-catalog@workspace:packages/catalog"],
-
-    "@oh-my-pi/pi-metaharness": ["@oh-my-pi/pi-metaharness@workspace:packages/metaharness"],
-
-    "@oh-my-pi/pi-mnemopi": ["@oh-my-pi/pi-mnemopi@workspace:packages/mnemopi"],
-
-    "@oh-my-pi/pi-natives": ["@oh-my-pi/pi-natives@workspace:packages/natives"],
-
-    "@oh-my-pi/pi-natives-linux-x64": ["@oh-my-pi/pi-natives-linux-x64@18.3.0", "", { "os": "linux", "cpu": "x64" }, "sha512-ZSsqlgKMGhv8wAUrN8uzzjbCBeHvbtLElyVlt0HKAK6gWkfpPA0dzBAp3g2OOalWIAfGYrydr9yhSYSQ+2OiqQ=="],
-
-    "@oh-my-pi/pi-tui": ["@oh-my-pi/pi-tui@workspace:packages/tui"],
-
-    "@oh-my-pi/pi-utils": ["@oh-my-pi/pi-utils@workspace:packages/utils"],
-
-    "@oh-my-pi/pi-wire": ["@oh-my-pi/pi-wire@workspace:packages/wire"],
-
-    "@oh-my-pi/snapcompact": ["@oh-my-pi/snapcompact@workspace:packages/snapcompact"],
-
-    "@oh-my-pi/typescript-edit-benchmark": ["@oh-my-pi/typescript-edit-benchmark@workspace:packages/typescript-edit-benchmark"],
-
     "@opentelemetry/api": ["@opentelemetry/api@1.9.1", "", {}, "sha512-gLyJlPHPZYdAk1JENA9LeHejZe1Ti77/pTeFm/nMXmQH/HFZlcS/O2XJB+L8fkbrNSqhdtlvjBVjxwUYanNH5Q=="],
 
     "@opentelemetry/api-logs": ["@opentelemetry/api-logs@0.220.0", "", { "dependencies": { "@opentelemetry/api": "^1.3.0" } }, "sha512-CmVa4ImJ+ynfrPMNaAXHET6Bhb44SwzmfyVJFq9ni2jgXJR/l7C6gfVFddNmHP+ZOkP9cf4f9DBe68qVLTHc9w=="],
@@ -941,6 +908,36 @@
     "@tailwindcss/oxide-win32-x64-msvc": ["@tailwindcss/oxide-win32-x64-msvc@4.3.3", "", { "os": "win32", "cpu": "x64" }, "sha512-yJ0pwIVc/nYeGoV02WtsN8KYyLQv7kyI2wDnkezyJlGGjkd4QLwDGAwl47YpPJeuI0M0ObaXGSPjvWDPeTPggw=="],
 
     "@tailwindcss/vite": ["@tailwindcss/vite@4.3.3", "", { "dependencies": { "@tailwindcss/node": "4.3.3", "@tailwindcss/oxide": "4.3.3", "tailwindcss": "4.3.3" }, "peerDependencies": { "vite": "^5.2.0 || ^6 || ^7 || ^8" } }, "sha512-yYU8cogLeSh/ms2jh8Fj7jaba/EWa7Ja6GoUqYZaraEuCI5YS6ms6ObZgjjedm+jm6XZjdNRWBpPP6Z86oOxcw=="],
+
+    "@tau/browser-relay": ["@tau/browser-relay@workspace:packages/browser-relay"],
+
+    "@tau/collab-web": ["@tau/collab-web@workspace:packages/collab-web"],
+
+    "@tau/snapcompact": ["@tau/snapcompact@workspace:packages/snapcompact"],
+
+    "@tau/tau-agent-core": ["@tau/tau-agent-core@workspace:packages/agent"],
+
+    "@tau/tau-ai": ["@tau/tau-ai@workspace:packages/ai"],
+
+    "@tau/tau-catalog": ["@tau/tau-catalog@workspace:packages/catalog"],
+
+    "@tau/tau-metaharness": ["@tau/tau-metaharness@workspace:packages/metaharness"],
+
+    "@tau/tau-mnemotau": ["@tau/tau-mnemotau@workspace:packages/mnemotau"],
+
+    "@tau/tau-natives": ["@tau/tau-natives@workspace:packages/natives"],
+
+    "@tau/tau-stats": ["@tau/tau-stats@workspace:packages/stats"],
+
+    "@tau/tau-tui": ["@tau/tau-tui@workspace:packages/tui"],
+
+    "@tau/tau-utils": ["@tau/tau-utils@workspace:packages/utils"],
+
+    "@tau/tau-wire": ["@tau/tau-wire@workspace:packages/wire"],
+
+    "@tau/tautype": ["@tau/tautype@workspace:packages/tautype"],
+
+    "@tau/typescript-edit-benchmark": ["@tau/typescript-edit-benchmark@workspace:packages/typescript-edit-benchmark"],
 
     "@ts-morph/common": ["@ts-morph/common@0.29.0", "", { "dependencies": { "minimatch": "^10.0.1", "path-browserify": "^1.0.1", "tinyglobby": "^0.2.14" } }, "sha512-35oUmphHbJvQ/+UTwFNme/t2p3FoKiGJ5auTjjpNTop2dyREspirjMy82PLSC1pnDJ8ah1GU98hwpVt64YXQsg=="],
 
@@ -1366,7 +1363,7 @@
 
     "roarr": ["roarr@2.15.4", "", { "dependencies": { "boolean": "^3.0.1", "detect-node": "^2.0.4", "globalthis": "^1.0.1", "json-stringify-safe": "^5.0.1", "semver-compare": "^1.0.0", "sprintf-js": "^1.1.2" } }, "sha512-CHhPh+UNHD2GTXNYhPWLnU8ONHdI+5DI+4EYIAOaiD63rHeYlZvyh8P+in5999TTSFgUYuKUAjzRI4mdh/p+2A=="],
 
-    "robomp-web": ["robomp-web@workspace:python/robomp/web"],
+    "robtau-web": ["robtau-web@workspace:python/robtau/web"],
 
     "rolldown": ["rolldown@1.2.12", "", { "dependencies": { "@oxc-project/types": "=0.152.0", "@rolldown/pluginutils": "^1.0.0" }, "optionalDependencies": { "@rolldown/binding-android-arm-eabi": "1.2.12", "@rolldown/binding-android-arm64": "1.2.12", "@rolldown/binding-darwin-arm64": "1.2.12", "@rolldown/binding-darwin-x64": "1.2.12", "@rolldown/binding-freebsd-x64": "1.2.12", "@rolldown/binding-linux-arm-gnueabihf": "1.2.12", "@rolldown/binding-linux-arm64-gnu": "1.2.12", "@rolldown/binding-linux-arm64-musl": "1.2.12", "@rolldown/binding-linux-ppc64-gnu": "1.2.12", "@rolldown/binding-linux-s390x-gnu": "1.2.12", "@rolldown/binding-linux-x64-gnu": "1.2.12", "@rolldown/binding-linux-x64-musl": "1.2.12", "@rolldown/binding-openharmony-arm64": "1.2.12", "@rolldown/binding-win32-arm64-msvc": "1.2.12", "@rolldown/binding-win32-x64-msvc": "1.2.12" }, "bin": { "rolldown": "./bin/cli.mjs" } }, "sha512-8wafseiaG80xmXSfqidUNqZcylTlhmPZZt+za2m+js2sFZ8dTNlhIOV2WcbIPx2hgwPBJpEUGFAMZ9bgBBLTSQ=="],
 
