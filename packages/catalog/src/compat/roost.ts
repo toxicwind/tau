@@ -10,10 +10,10 @@
  * already understands.
  *
  * What lives where:
- * - `flock/roost` `PROVIDER_DEFS` — provider wire data (`baseUrl`, `keyEnv`,
- *   `keyEnvAlt`, `auth`, `adapter`, `modelsPath`, `seeds`). The authority;
- *   never duplicated here. A provider roost drops stops being a tau catalog
- *   provider — the builder below throws on drift.
+ * - `ranch/mesh/catalog` `PROVIDER_DEFS` — provider wire data (`baseUrl`,
+ *   `keyEnv`, `keyEnvAlt`, `auth`, `adapter`, `modelsPath`, `seeds`). The
+ *   authority; never duplicated here. A provider catalog drop stops being a
+ *   tau catalog provider — the builder below throws on drift.
  * - `TAU_PROVIDER_POLICY` — tau-side catalog policy for roost-sourced
  *   providers: default model, kind→API mapping, discovery flags, and the
  *   authored seed rows (model metadata: cost/limits/input). Transcribed
@@ -51,14 +51,14 @@ interface RoostProviderDef {
  * Resolves roost's provider definitions through a fallback chain (a fallback,
  * not a rollback — every candidate is roost, the authority; there is no legacy
  * duplicate to fall back to):
- * 2. The estate checkout at `$HOME/estate/ranch/flock/roost` — relocatable across
- *    users and machines; never a hardcoded personal path.
+ * 2. The estate checkout at `$HOME/estate/ranch/mesh/catalog` — relocatable
+ *    across users and machines; never a hardcoded personal path.
  * 3. Relative source paths — dev checkout nested inside the ranch monorepo.
  * 4. The `@ranch/roost` package — standalone `toxicwind/tau` checkouts.
- * 5. Embedded snapshot below — generated from `flock/roost/src/index.ts`;
- *    guarantees the compiled binary never crashes at boot when no roost
- *    checkout is present. Regenerate from the live source when roost changes:
- *    copy the PROVIDER_DEFS array verbatim from flock/roost/src/index.ts.
+ * 5. Embedded snapshot below — generated from `mesh/catalog/src/data.ts`;
+ *    guarantees the compiled binary never crashes at boot when no catalog
+ *    checkout is present. Regenerate from the live source when the catalog
+ *    changes: copy the PROVIDER_DEFS array verbatim from mesh/catalog/src/data.ts.
  */
 function resolveRoostModule(): { PROVIDER_DEFS: RoostProviderDef[] } {
 	const candidates: string[] = [];
@@ -68,11 +68,11 @@ function resolveRoostModule(): { PROVIDER_DEFS: RoostProviderDef[] } {
 		const os = require("node:os");
 		// eslint-disable-next-line @typescript-eslint/no-require-imports
 		const path = require("node:path");
-		candidates.push(path.join(os.homedir(), "estate/ranch/flock/roost/src/index.ts"));
+		candidates.push(path.join(os.homedir(), "estate/ranch/mesh/catalog/src/index.ts"));
 	} catch {}
 	candidates.push(
-		"../../../../../flock/roost/src/index.ts",
-		"../../../../flock/roost/src/index.ts",
+		"../../../../../mesh/catalog/src/index.ts",
+		"../../../../mesh/catalog/src/index.ts",
 		"@ranch/roost",
 	);
 	const failures: string[] = [];
@@ -1909,7 +1909,7 @@ export function roostProviderEntries(): Record<string, CompiledProvider> {
 			// is removed.
 			console.error(
 				`[roost] DRIFT: provider policy for "${id}" has no PROVIDER_DEFS definition — skipping. ` +
-					`Add the definition to ranch/roost or remove the entry from TAU_PROVIDER_POLICY.`,
+					`Add the definition to ranch/mesh/catalog or remove the entry from TAU_PROVIDER_POLICY.`,
 			);
 			continue;
 		}
