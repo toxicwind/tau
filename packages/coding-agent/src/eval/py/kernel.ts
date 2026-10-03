@@ -56,7 +56,7 @@ const STARTUP_TIMEOUT_MS = 10_000;
 const INTERRUPT_ESCALATION_MS = 5_000;
 
 const PYTHON_RESERVED_PRELUDE_EXPORTS: Record<string, true> = {
-	__omp_tools__: true,
+	__tau_tools__: true,
 	_omp_prelude: true,
 	AgentHandle: true,
 	CompletionHandle: true,

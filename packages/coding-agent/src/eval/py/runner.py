@@ -2035,7 +2035,7 @@ def _handle_tool_request(req: dict) -> None:
     status = "ok"
     _emit({"type": "started", "id": rid})
     try:
-        tools = _STATE.user_ns.get("__omp_tools__") or {}
+        tools = _STATE.user_ns.get("__tau_tools__") or {}
         op = req.get("op")
         if op == "describe":
             requested = req.get("names") or list(tools)

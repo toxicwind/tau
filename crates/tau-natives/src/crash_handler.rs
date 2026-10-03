@@ -447,7 +447,7 @@ mod tests {
 	}
 
 	#[test]
-	fn resolve_logs_dir_defaults_under_dot_omp() {
+	fn resolve_logs_dir_defaults_under_dot_tau() {
 		let dir = resolve_logs_dir(Path::new("/tmp/tau-natives-test-home"), None, None);
 		assert_eq!(dir, PathBuf::from("/tmp/tau-natives-test-home/.tau/logs"));
 	}
@@ -531,7 +531,7 @@ mod tests {
 
 	#[cfg(any(target_os = "linux", target_os = "macos"))]
 	#[test]
-	fn xdg_state_logs_skipped_when_omp_dir_missing() {
+	fn xdg_state_logs_skipped_when_tau_dir_missing() {
 		let dir = xdg_state_logs(
 			Some(OsStr::new("/xdg/state")),
 			None,
@@ -578,7 +578,7 @@ mod tests {
 
 	#[cfg(any(target_os = "linux", target_os = "macos"))]
 	#[test]
-	fn default_agent_dir_uses_dot_omp_by_default() {
+	fn default_agent_dir_uses_dot_tau_by_default() {
 		let dir = default_agent_dir(Path::new("/tmp/tau-natives-test-home"), None);
 		assert_eq!(dir, PathBuf::from("/tmp/tau-natives-test-home/.tau/agent"));
 	}

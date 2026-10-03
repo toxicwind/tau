@@ -66,7 +66,7 @@ if (!globalThis.__omp_js_prelude_loaded__) {
 	const env = (key, value) => callHelper("env", key, value);
 
 	const __tools = new Map();
-	globalThis.__omp_tools__ = __tools;
+	globalThis.__tau_tools__ = __tools;
 	const registerTool = (fn, opts = {}) => {
 		if (typeof fn !== "function") throw new TypeError("tool() expects a function");
 		if (!isPlainObject(opts)) throw new TypeError("tool() options must be a plain object");

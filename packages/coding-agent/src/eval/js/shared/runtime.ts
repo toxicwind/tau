@@ -90,7 +90,7 @@ const DECIMAL_CSV_RE = /^\d{1,3}(?:,\d{1,3})*$/;
 
 const PRELUDE_GLOBAL_KEYS = [
 	"__omp_js_prelude_loaded__",
-	"__omp_tools__",
+	"__tau_tools__",
 	"console",
 	"print",
 	"display",

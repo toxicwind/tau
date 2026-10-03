@@ -620,8 +620,8 @@ if "__omp_prelude_loaded__" not in globals():
                 "parameters": self.parameters,
             }
 
-    __omp_tools__: dict[str, _EvalTool] = {}
-    globals()["__omp_tools__"] = __omp_tools__
+    __tau_tools__: dict[str, _EvalTool] = {}
+    globals()["__tau_tools__"] = __tau_tools__
     _TOOL_NAME_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]{0,63}$")
 
     class _ToolProxy:
@@ -656,7 +656,7 @@ if "__omp_prelude_loaded__" not in globals():
                 if isinstance(description, str) and description
                 else inspect.getdoc(fn) or f"Python tool {resolved_name}"
             )
-            __omp_tools__[resolved_name] = _EvalTool(
+            __tau_tools__[resolved_name] = _EvalTool(
                 resolved_name,
                 fn,
                 resolved_description,
@@ -670,10 +670,10 @@ if "__omp_prelude_loaded__" not in globals():
             return fn
 
         def defined(self) -> list[str]:
-            return list(__omp_tools__)
+            return list(__tau_tools__)
 
         def undefine(self, name) -> bool:
-            return __omp_tools__.pop(name, None) is not None
+            return __tau_tools__.pop(name, None) is not None
 
         def __getattr__(self, name: str) -> _ToolCallable:
             if name.startswith("_"):

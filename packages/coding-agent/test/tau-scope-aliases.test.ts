@@ -50,9 +50,9 @@ const CASES: readonly AliasCase[] = [
 	},
 	// @tau self-import — canonical scope must still flow through the shim
 	// so a duplicate copy is never dragged in from a plugin's own node_modules.
-	{ id: "ohmypi-utils", aliasSpecifier: "@tau/tau-utils", canonicalPath: canonicalUtils, symbol: "logger" },
+	{ id: "tau-utils", aliasSpecifier: "@tau/tau-utils", canonicalPath: canonicalUtils, symbol: "logger" },
 	{
-		id: "ohmypi-coding-agent",
+		id: "tau-coding-agent",
 		aliasSpecifier: "@tau/tau-coding-agent",
 		canonicalPath: canonicalCodingAgent,
 		symbol: "isToolCallEventType",
