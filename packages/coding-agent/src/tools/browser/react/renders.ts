@@ -26,8 +26,8 @@ interface ReactRendersEnvelope {
 
 const RENDERS_SOURCE_PREFIX = `(() => {
 	const hook = globalThis.__REACT_DEVTOOLS_GLOBAL_HOOK__;
-	if (!hook || !hook.__ompReact) return { missingHook: true };
-	const recording = hook.__ompReact.recording;
+	if (!hook || !hook.__tauReact) return { missingHook: true };
+	const recording = hook.__tauReact.recording;
 	const action = `;
 
 const RENDERS_SOURCE_SUFFIX = `;

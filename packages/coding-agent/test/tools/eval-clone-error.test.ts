@@ -1,8 +1,8 @@
 import { afterAll, describe, expect, it } from "bun:test";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { disposeAllVmContexts } from "@tau/tau-coding-agent/eval/js/context-manager";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
-import { EvalTool } from "@tau/tau-coding-agent/tools/eval";
+import { Settings } from "tau/config/settings";
+import { disposeAllVmContexts } from "tau/eval/js/context-manager";
+import type { ToolSession } from "tau/tools";
+import { EvalTool } from "tau/tools/eval";
 
 function makeSession(): ToolSession {
 	return {
@@ -47,7 +47,7 @@ describe("EvalTool non-serializable tool args", () => {
 			language: "js",
 			code: [
 				"try {",
-				'\tawait __omp_call_tool__("read", { path: () => "x" });',
+				'\tawait __tau_call_tool__("read", { path: () => "x" });',
 				'\tconsole.log("no-throw");',
 				"} catch (error) {",
 				'\tconsole.log("caught " + error.name);',

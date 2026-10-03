@@ -29,7 +29,7 @@ export interface VitalsResult {
 
 const VITALS_INIT_SOURCE = `(() => {
 	const root = globalThis;
-	if (root.__ompBrowserVitals) return root.__ompBrowserVitals;
+	if (root.__tauBrowserVitals) return root.__tauBrowserVitals;
 	const round = value => Math.round(value * 100) / 100;
 	const state = {
 		fromDocumentStart: document.readyState === "loading" && performance.now() < 50,
@@ -40,7 +40,7 @@ const VITALS_INIT_SOURCE = `(() => {
 		longTasks: 0,
 		hydration: undefined,
 	};
-	root.__ompBrowserVitals = state;
+	root.__tauBrowserVitals = state;
 	const observe = (type, callback, options) => {
 		try {
 			const observer = new PerformanceObserver(list => callback(list.getEntries()));
@@ -74,7 +74,7 @@ const VITALS_INIT_SOURCE = `(() => {
 })()`;
 
 const VITALS_READ_SOURCE = `(() => {
-	const state = globalThis.__ompBrowserVitals;
+	const state = globalThis.__tauBrowserVitals;
 	if (!state) return { installed: false, fromDocumentStart: false };
 	const round = value => Math.round((Number(value) || 0) * 100) / 100;
 	const nav = performance.getEntriesByType("navigation")[0];

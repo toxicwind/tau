@@ -7,17 +7,17 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { loadExtensions } from "@tau/tau-coding-agent/extensibility/extensions/loader";
+import { loadExtensions } from "tau/extensibility/extensions/loader";
 import { TempDir } from "@tau/tau-utils";
 
-const EVENTS_KEY = "__ompExtensionLoaderConcurrencyEvents";
-const RELEASE_KEY = "__ompExtensionLoaderConcurrencyRelease";
-const FAST_EVALUATED_KEY = "__ompExtensionLoaderConcurrencyFastEvaluated";
+const EVENTS_KEY = "__tauExtensionLoaderConcurrencyEvents";
+const RELEASE_KEY = "__tauExtensionLoaderConcurrencyRelease";
+const FAST_EVALUATED_KEY = "__tauExtensionLoaderConcurrencyFastEvaluated";
 
 interface EventsGlobal {
-	__ompExtensionLoaderConcurrencyEvents?: string[];
-	__ompExtensionLoaderConcurrencyRelease?: Promise<void>;
-	__ompExtensionLoaderConcurrencyFastEvaluated?: () => void;
+	__tauExtensionLoaderConcurrencyEvents?: string[];
+	__tauExtensionLoaderConcurrencyRelease?: Promise<void>;
+	__tauExtensionLoaderConcurrencyFastEvaluated?: () => void;
 }
 
 const eventsGlobal = globalThis as EventsGlobal;

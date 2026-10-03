@@ -4,21 +4,21 @@ import { Agent, AgentBusyError } from "@tau/tau-agent-core";
 import { CompactionCancelledError } from "@tau/tau-agent-core/compaction";
 import { createMockModel } from "@tau/tau-ai/providers/mock";
 import { getBundledModel } from "@tau/tau-catalog/models";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { ExtensionRuntime, loadExtensionFromFactory } from "@tau/tau-coding-agent/extensibility/extensions/loader";
-import { ExtensionRunner } from "@tau/tau-coding-agent/extensibility/extensions/runner";
-import type { CompactOptions } from "@tau/tau-coding-agent/extensibility/extensions/types";
-import { AgentSession, type AgentSessionEvent } from "@tau/tau-coding-agent/session/agent-session";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import * as unexpectedStopClassifier from "@tau/tau-coding-agent/session/unexpected-stop-classifier";
-import { EventBus } from "@tau/tau-coding-agent/utils/event-bus";
+import { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
+import { ExtensionRuntime, loadExtensionFromFactory } from "tau/extensibility/extensions/loader";
+import { ExtensionRunner } from "tau/extensibility/extensions/runner";
+import type { CompactOptions } from "tau/extensibility/extensions/types";
+import { AgentSession, type AgentSessionEvent } from "tau/session/agent-session";
+import { AuthStorage } from "tau/session/auth-storage";
+import { SessionManager } from "tau/session/session-manager";
+import * as unexpectedStopClassifier from "tau/session/unexpected-stop-classifier";
+import { EventBus } from "tau/utils/event-bus";
 import { TempDir, withTimeout } from "@tau/tau-utils";
 import * as logger from "@tau/tau-utils/logger";
 import { mockSchedulerWaitWithClock } from "./helpers/mock-scheduler-clock";
 
-const runtimeSignalStoreKey = "__ompRuntimeSignals";
+const runtimeSignalStoreKey = "__tauRuntimeSignals";
 
 type RuntimeSignalGlobal = typeof globalThis & { [runtimeSignalStoreKey]?: string[] };
 
@@ -34,7 +34,7 @@ function getRuntimeSignals(): string[] {
 type AgentStartGate = { entered: PromiseWithResolvers<void>; release: PromiseWithResolvers<void> };
 
 /** Hooks for the `/park` fixture command: run `action` synchronously, then await `gate` (if set). */
-type ParkCommandGlobals = typeof globalThis & { __ompParkGate?: Promise<void>; __ompParkAction?: () => void };
+type ParkCommandGlobals = typeof globalThis & { __tauParkGate?: Promise<void>; __tauParkAction?: () => void };
 
 /**
  * Regression test: auto-compaction completion should resume the agent loop when
@@ -64,11 +64,11 @@ describe("AgentSession auto-compaction queue resume", () => {
 			pi => {
 				pi.on("session_before_compact", async event => {
 					getRuntimeSignals().push("before_compact:enter");
-					const gate = (globalThis as typeof globalThis & { __ompManualCompactGate?: Promise<void> })
-						.__ompManualCompactGate;
+					const gate = (globalThis as typeof globalThis & { __tauManualCompactGate?: Promise<void> })
+						.__tauManualCompactGate;
 					if (gate) await gate;
 					if (
-						(globalThis as typeof globalThis & { __ompManualCompactCancel?: boolean }).__ompManualCompactCancel
+						(globalThis as typeof globalThis & { __tauManualCompactCancel?: boolean }).__tauManualCompactCancel
 					) {
 						return { cancel: true };
 					}
@@ -83,8 +83,8 @@ describe("AgentSession auto-compaction queue resume", () => {
 					};
 				});
 				pi.on("before_agent_start", async () => {
-					const gate = (globalThis as typeof globalThis & { __ompAgentStartGate?: AgentStartGate })
-						.__ompAgentStartGate;
+					const gate = (globalThis as typeof globalThis & { __tauAgentStartGate?: AgentStartGate })
+						.__tauAgentStartGate;
 					if (!gate) return;
 					gate.entered.resolve();
 					await gate.release.promise;
@@ -110,8 +110,8 @@ describe("AgentSession auto-compaction queue resume", () => {
 				pi.registerCommand("park", {
 					handler: async () => {
 						const globals = globalThis as ParkCommandGlobals;
-						globals.__ompParkAction?.();
-						if (globals.__ompParkGate) await globals.__ompParkGate;
+						globals.__tauParkAction?.();
+						if (globals.__tauParkGate) await globals.__tauParkGate;
 						getRuntimeSignals().push("command:park");
 					},
 				});
@@ -174,13 +174,13 @@ describe("AgentSession auto-compaction queue resume", () => {
 				await Bun.sleep(0);
 			} finally {
 				getRuntimeSignals().length = 0;
-				(globalThis as typeof globalThis & { __ompManualCompactGate?: Promise<void> }).__ompManualCompactGate =
+				(globalThis as typeof globalThis & { __tauManualCompactGate?: Promise<void> }).__tauManualCompactGate =
 					undefined;
-				(globalThis as typeof globalThis & { __ompAgentStartGate?: AgentStartGate }).__ompAgentStartGate =
+				(globalThis as typeof globalThis & { __tauAgentStartGate?: AgentStartGate }).__tauAgentStartGate =
 					undefined;
-				(globalThis as ParkCommandGlobals).__ompParkGate = undefined;
-				(globalThis as ParkCommandGlobals).__ompParkAction = undefined;
-				(globalThis as typeof globalThis & { __ompManualCompactCancel?: boolean }).__ompManualCompactCancel =
+				(globalThis as ParkCommandGlobals).__tauParkGate = undefined;
+				(globalThis as ParkCommandGlobals).__tauParkAction = undefined;
+				(globalThis as typeof globalThis & { __tauManualCompactCancel?: boolean }).__tauManualCompactCancel =
 					undefined;
 				vi.restoreAllMocks();
 			}
@@ -351,7 +351,7 @@ describe("AgentSession auto-compaction queue resume", () => {
 		// Park compaction inside its awaited hook so we can queue a follow-up while
 		// the session is disconnected and abort has already run its finally.
 		const gate = Promise.withResolvers<void>();
-		(globalThis as typeof globalThis & { __ompManualCompactGate?: Promise<void> }).__ompManualCompactGate =
+		(globalThis as typeof globalThis & { __tauManualCompactGate?: Promise<void> }).__tauManualCompactGate =
 			gate.promise;
 
 		const compactPromise = session.compact();
@@ -486,7 +486,7 @@ describe("AgentSession auto-compaction queue resume", () => {
 		// Park the prompt inside its awaited before_agent_start hook: in-flight, but
 		// the message has not reached the agent.
 		const gate: AgentStartGate = { entered: Promise.withResolvers<void>(), release: Promise.withResolvers<void>() };
-		(globalThis as typeof globalThis & { __ompAgentStartGate?: AgentStartGate }).__ompAgentStartGate = gate;
+		(globalThis as typeof globalThis & { __tauAgentStartGate?: AgentStartGate }).__tauAgentStartGate = gate;
 		const pending = session.prompt("new request");
 		await gate.entered.promise;
 		expect(session.isStreaming).toBe(true);
@@ -580,7 +580,7 @@ describe("AgentSession auto-compaction queue resume", () => {
 		// Park the compaction inside its awaited hook so the prompt below arrives
 		// while it is in flight.
 		const gate = Promise.withResolvers<void>();
-		(globalThis as typeof globalThis & { __ompManualCompactGate?: Promise<void> }).__ompManualCompactGate =
+		(globalThis as typeof globalThis & { __tauManualCompactGate?: Promise<void> }).__tauManualCompactGate =
 			gate.promise;
 		const compacted = session.compact();
 		while (!getRuntimeSignals().includes("before_compact:enter")) {
@@ -636,7 +636,7 @@ describe("AgentSession auto-compaction queue resume", () => {
 		});
 
 		const gate = Promise.withResolvers<void>();
-		(globalThis as typeof globalThis & { __ompManualCompactGate?: Promise<void> }).__ompManualCompactGate =
+		(globalThis as typeof globalThis & { __tauManualCompactGate?: Promise<void> }).__tauManualCompactGate =
 			gate.promise;
 		const compacted = session.compact();
 		while (!getRuntimeSignals().includes("before_compact:enter")) {
@@ -699,7 +699,7 @@ describe("AgentSession auto-compaction queue resume", () => {
 		});
 
 		const gate = Promise.withResolvers<void>();
-		(globalThis as typeof globalThis & { __ompManualCompactGate?: Promise<void> }).__ompManualCompactGate =
+		(globalThis as typeof globalThis & { __tauManualCompactGate?: Promise<void> }).__tauManualCompactGate =
 			gate.promise;
 		const compacted = session.compact();
 		while (!getRuntimeSignals().includes("before_compact:enter")) {
@@ -750,7 +750,7 @@ describe("AgentSession auto-compaction queue resume", () => {
 		});
 
 		const gate = Promise.withResolvers<void>();
-		(globalThis as typeof globalThis & { __ompManualCompactGate?: Promise<void> }).__ompManualCompactGate =
+		(globalThis as typeof globalThis & { __tauManualCompactGate?: Promise<void> }).__tauManualCompactGate =
 			gate.promise;
 		const compacted = session.compact();
 		while (!getRuntimeSignals().includes("before_compact:enter")) {
@@ -814,13 +814,13 @@ describe("AgentSession auto-compaction queue resume", () => {
 			});
 
 		const compactGate = Promise.withResolvers<void>();
-		(globalThis as typeof globalThis & { __ompManualCompactGate?: Promise<void> }).__ompManualCompactGate =
+		(globalThis as typeof globalThis & { __tauManualCompactGate?: Promise<void> }).__tauManualCompactGate =
 			compactGate.promise;
 		const startGate: AgentStartGate = {
 			entered: Promise.withResolvers<void>(),
 			release: Promise.withResolvers<void>(),
 		};
-		(globalThis as typeof globalThis & { __ompAgentStartGate?: AgentStartGate }).__ompAgentStartGate = startGate;
+		(globalThis as typeof globalThis & { __tauAgentStartGate?: AgentStartGate }).__tauAgentStartGate = startGate;
 		const compacted = session.compact();
 		while (!getRuntimeSignals().includes("before_compact:enter")) {
 			await Promise.resolve();
@@ -907,7 +907,7 @@ describe("AgentSession auto-compaction queue resume", () => {
 			session.agent.state.isStreaming = false;
 		});
 		const promptSpy = vi.spyOn(session.agent, "prompt").mockImplementation(async () => {});
-		(globalThis as typeof globalThis & { __ompManualCompactCancel?: boolean }).__ompManualCompactCancel = true;
+		(globalThis as typeof globalThis & { __tauManualCompactCancel?: boolean }).__tauManualCompactCancel = true;
 
 		await expect(session.compact()).rejects.toBeInstanceOf(CompactionCancelledError);
 		await session.waitForIdle();
@@ -952,10 +952,10 @@ describe("AgentSession auto-compaction queue resume", () => {
 		});
 
 		const compactGate = Promise.withResolvers<void>();
-		(globalThis as typeof globalThis & { __ompManualCompactGate?: Promise<void> }).__ompManualCompactGate =
+		(globalThis as typeof globalThis & { __tauManualCompactGate?: Promise<void> }).__tauManualCompactGate =
 			compactGate.promise;
 		const parkGate = Promise.withResolvers<void>();
-		(globalThis as ParkCommandGlobals).__ompParkGate = parkGate.promise;
+		(globalThis as ParkCommandGlobals).__tauParkGate = parkGate.promise;
 		const compacted = session.compact();
 		while (!getRuntimeSignals().includes("before_compact:enter")) {
 			await Promise.resolve();
@@ -970,7 +970,7 @@ describe("AgentSession auto-compaction queue resume", () => {
 		// Second manual pass while the command is still pending. Nothing is
 		// streaming, so it interrupts nothing of its own; the branch already ends
 		// in a compaction entry, so it may also reject as already compacted.
-		(globalThis as typeof globalThis & { __ompManualCompactGate?: Promise<void> }).__ompManualCompactGate = undefined;
+		(globalThis as typeof globalThis & { __tauManualCompactGate?: Promise<void> }).__tauManualCompactGate = undefined;
 		await session.compact().catch(() => undefined);
 		await session.waitForIdle();
 		expect(prompted).toHaveLength(0);
@@ -1026,10 +1026,10 @@ describe("AgentSession auto-compaction queue resume", () => {
 		});
 
 		const compactGate = Promise.withResolvers<void>();
-		(globalThis as typeof globalThis & { __ompManualCompactGate?: Promise<void> }).__ompManualCompactGate =
+		(globalThis as typeof globalThis & { __tauManualCompactGate?: Promise<void> }).__tauManualCompactGate =
 			compactGate.promise;
 		const parkGate = Promise.withResolvers<void>();
-		(globalThis as ParkCommandGlobals).__ompParkGate = parkGate.promise;
+		(globalThis as ParkCommandGlobals).__tauParkGate = parkGate.promise;
 		const compacted = session.compact();
 		while (!getRuntimeSignals().includes("before_compact:enter")) {
 			await Promise.resolve();
@@ -1043,8 +1043,8 @@ describe("AgentSession auto-compaction queue resume", () => {
 		// Give the second pass something to compact so it reaches the hook, then
 		// veto it there.
 		appendAssistant("next answer");
-		(globalThis as typeof globalThis & { __ompManualCompactGate?: Promise<void> }).__ompManualCompactGate = undefined;
-		(globalThis as typeof globalThis & { __ompManualCompactCancel?: boolean }).__ompManualCompactCancel = true;
+		(globalThis as typeof globalThis & { __tauManualCompactGate?: Promise<void> }).__tauManualCompactGate = undefined;
+		(globalThis as typeof globalThis & { __tauManualCompactCancel?: boolean }).__tauManualCompactCancel = true;
 		await expect(session.compact(undefined, options)).rejects.toBeInstanceOf(CompactionCancelledError);
 		await session.waitForIdle();
 		expect(prompted).toHaveLength(0);
@@ -1112,10 +1112,10 @@ describe("AgentSession auto-compaction queue resume", () => {
 		});
 
 		const compactGate = Promise.withResolvers<void>();
-		(globalThis as typeof globalThis & { __ompManualCompactGate?: Promise<void> }).__ompManualCompactGate =
+		(globalThis as typeof globalThis & { __tauManualCompactGate?: Promise<void> }).__tauManualCompactGate =
 			compactGate.promise;
 		const parkGate = Promise.withResolvers<void>();
-		(globalThis as ParkCommandGlobals).__ompParkGate = parkGate.promise;
+		(globalThis as ParkCommandGlobals).__tauParkGate = parkGate.promise;
 		const compacted = session.compact();
 		while (!getRuntimeSignals().includes("before_compact:enter")) {
 			await Promise.resolve();
@@ -1173,14 +1173,14 @@ describe("AgentSession auto-compaction queue resume", () => {
 		});
 
 		let sent: Promise<boolean> | undefined;
-		(globalThis as ParkCommandGlobals).__ompParkAction = () => {
+		(globalThis as ParkCommandGlobals).__tauParkAction = () => {
 			sent = session.sendCustomMessage(
 				{ customType: "extension-directive", content: "carry on with the new plan", display: false },
 				{ triggerTurn: true },
 			);
 		};
 		const compactGate = Promise.withResolvers<void>();
-		(globalThis as typeof globalThis & { __ompManualCompactGate?: Promise<void> }).__ompManualCompactGate =
+		(globalThis as typeof globalThis & { __tauManualCompactGate?: Promise<void> }).__tauManualCompactGate =
 			compactGate.promise;
 		const compacted = session.compact();
 		while (!getRuntimeSignals().includes("before_compact:enter")) {
@@ -1226,7 +1226,7 @@ describe("AgentSession auto-compaction queue resume", () => {
 		// #autoCompactionAbortController stays installed across the manual /compact
 		// startup abort below.
 		const gate = Promise.withResolvers<void>();
-		(globalThis as typeof globalThis & { __ompManualCompactGate?: Promise<void> }).__ompManualCompactGate =
+		(globalThis as typeof globalThis & { __tauManualCompactGate?: Promise<void> }).__tauManualCompactGate =
 			gate.promise;
 
 		const appendCompactionSpy = vi.spyOn(sessionManager, "appendCompaction");

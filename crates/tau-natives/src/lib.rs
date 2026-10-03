@@ -7,7 +7,7 @@
 //!
 //! # Example
 //! ```ignore
-//! use pi_natives::text::visible_width;
+//! use tau_natives::text::visible_width;
 //!
 //! let width = visible_width("hello");
 //! assert_eq!(width, 5);
@@ -54,7 +54,7 @@ pub mod spelling;
 pub mod svg;
 pub mod utok;
 pub mod vcs;
-pub use pi_ast::language;
+pub use tau_ast::language;
 
 pub mod power;
 
@@ -214,12 +214,12 @@ fn configure_rayon_pool() {
 			.num_threads(threads)
 			.build_global(),
 		RayonPoolPlan::SkipGlobalPool => {
-			pi_shell::set_rayon_global_pool_available(false);
+			tau_shell::set_rayon_global_pool_available(false);
 			return;
 		},
 	};
 	if result.is_ok() {
-		pi_shell::set_rayon_global_pool_available(true);
+		tau_shell::set_rayon_global_pool_available(true);
 	}
 }
 
@@ -268,7 +268,7 @@ fn create_windows_napi_tokio_runtime() -> Option<tokio::runtime::Runtime> {
 /// `packages/natives/native/index.js` (which derives the name from
 /// `package.json#version`).
 #[napi(js_name = "__piNativesV18_3_0")]
-pub const fn pi_natives_version_sentinel() {}
+pub const fn tau_natives_version_sentinel() {}
 
 /// Native module entry point: install crash diagnostics before any tool can
 /// invoke a panicking or allocating native call. This runs during `.node`
@@ -315,7 +315,7 @@ static TOKIO_RUNTIME_INSTALLED: AtomicBool = AtomicBool::new(false);
 /// spawnable, patched Rayon callsites stay sequential rather than registering a
 /// current-thread-only global pool that cannot steal work from later native
 /// calls. Idempotent.
-#[napi(js_name = "__ompInstallTokioRuntime")]
+#[napi(js_name = "__tauInstallTokioRuntime")]
 #[allow(clippy::missing_const_for_fn, reason = "napi macro is incompatible with const fn")]
 pub fn tau_install_tokio_runtime() {
 	#[cfg(target_os = "windows")]

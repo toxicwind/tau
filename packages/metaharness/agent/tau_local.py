@@ -45,7 +45,7 @@ def _patch_harbor_cleanup_cancellation() -> None:
     """Keep Harbor's Docker cleanup alive when trial cancellation interrupts it."""
     from harbor.trial.trial import Trial
 
-    if getattr(Trial, "_omp_cleanup_cancellation_patch", False):
+    if getattr(Trial, "_tau_cleanup_cancellation_patch", False):
         return
 
     async def _stop_agent_environment(self) -> None:
@@ -85,7 +85,7 @@ def _patch_harbor_cleanup_cancellation() -> None:
             self._record_exception(exc)
 
     Trial._stop_agent_environment = _stop_agent_environment
-    Trial._omp_cleanup_cancellation_patch = True
+    Trial._tau_cleanup_cancellation_patch = True
 
 
 def _patch_apple_container_dns() -> None:
@@ -100,7 +100,7 @@ def _patch_apple_container_dns() -> None:
         return
     from harbor.environments.apple_container import AppleContainerEnvironment
 
-    if getattr(AppleContainerEnvironment, "_omp_dns_patch", False):
+    if getattr(AppleContainerEnvironment, "_tau_dns_patch", False):
         return
     original = AppleContainerEnvironment._run_container_command
 
@@ -110,7 +110,7 @@ def _patch_apple_container_dns() -> None:
         return await original(self, args, *pargs, **kwargs)
 
     AppleContainerEnvironment._run_container_command = _run_with_dns
-    AppleContainerEnvironment._omp_dns_patch = True
+    AppleContainerEnvironment._tau_dns_patch = True
 
 
 _patch_harbor_cleanup_cancellation()

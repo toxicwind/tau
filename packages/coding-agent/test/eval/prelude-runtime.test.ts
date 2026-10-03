@@ -1,10 +1,10 @@
 import { afterAll, describe, expect, it } from "bun:test";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import type { EvalPreludeDefinition } from "@tau/tau-coding-agent/eval/preludes";
-import { executeJs } from "@tau/tau-coding-agent/eval/js/executor";
-import { disposeAllVmContexts } from "@tau/tau-coding-agent/eval/js/context-manager";
-import { disposeAllKernelSessions, executePython } from "@tau/tau-coding-agent/eval/py/executor";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
+import { Settings } from "tau/config/settings";
+import type { EvalPreludeDefinition } from "tau/eval/preludes";
+import { executeJs } from "tau/eval/js/executor";
+import { disposeAllVmContexts } from "tau/eval/js/context-manager";
+import { disposeAllKernelSessions, executePython } from "tau/eval/py/executor";
+import type { ToolSession } from "tau/tools";
 
 const IMAGE_DATA = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]).toString("base64");
 
@@ -15,14 +15,14 @@ function definition(version: string, calls: unknown[]): EvalPreludeDefinition {
 		javascript: `{
 			globalThis.fixture = {
 				version: ${JSON.stringify(version)},
-				invoke: parameters => __omp_prelude__("fixture", parameters),
+				invoke: parameters => __tau_prelude__("fixture", parameters),
 			};
 		}`,
 		python: `class _FixturePrelude:
     version = ${JSON.stringify(version)}
 
     async def invoke(self, **parameters):
-        return await _omp_prelude("fixture", parameters)
+        return await _tau_prelude("fixture", parameters)
 
 fixture = _FixturePrelude()
 del _FixturePrelude`,
@@ -96,7 +96,7 @@ describe("eval prelude runtime", () => {
 		expect(captured.output).toContain('Eval prelude "fixture" is not enabled');
 		expect(calls).toHaveLength(2);
 
-		const missing = await executeJs("await __omp_prelude__('missing', {})", options);
+		const missing = await executeJs("await __tau_prelude__('missing', {})", options);
 		expect(missing.exitCode).toBe(1);
 		expect(missing.output).toContain('Eval prelude "missing" is not enabled');
 	});
@@ -140,7 +140,7 @@ describe("eval prelude runtime", () => {
 		expect(captured.output).toContain('Eval prelude "fixture" is not enabled');
 		expect(calls).toHaveLength(2);
 
-		const missing = await executePython("await _omp_prelude('missing', {})", options);
+		const missing = await executePython("await _tau_prelude('missing', {})", options);
 		expect(missing.exitCode).toBe(1);
 		expect(missing.output).toContain('Eval prelude "missing" is not enabled');
 	});

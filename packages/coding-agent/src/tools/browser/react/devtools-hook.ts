@@ -13,7 +13,7 @@ export const REACT_HOOK_REQUIRED_MESSAGE = "React DevTools hook not installed â€
 
 const REACT_HOOK_INIT_SOURCE = `(() => {
 	const existing = globalThis.__REACT_DEVTOOLS_GLOBAL_HOOK__;
-	if (existing && existing.__ompReact) return true;
+	if (existing && existing.__tauReact) return true;
 	const renderers = new Map();
 	const roots = new Map();
 	const fiberIds = new WeakMap();
@@ -133,7 +133,7 @@ const REACT_HOOK_INIT_SOURCE = `(() => {
 			this.getFiberRoots(rendererId).add(root);
 			walkCommit(root && root.current);
 			if (recording.active) recording.commits += 1;
-			const vitals = globalThis.__ompBrowserVitals;
+			const vitals = globalThis.__tauBrowserVitals;
 			if (vitals && !vitals.hydration) vitals.hydration = { framework: "React", hydratedAt: performance.now() };
 		},
 		onCommitFiberUnmount(_rendererId, fiber) {
@@ -141,7 +141,7 @@ const REACT_HOOK_INIT_SOURCE = `(() => {
 			if (id !== undefined) fibersById.delete(id);
 		},
 	};
-	Object.defineProperty(hook, "__ompReact", {
+	Object.defineProperty(hook, "__tauReact", {
 		value: {
 			roots,
 			fiberIds,
@@ -166,7 +166,7 @@ const REACT_HOOK_INIT_SOURCE = `(() => {
 
 const REACT_ENABLE_READ_SOURCE = `(() => {
 	const hook = globalThis.__REACT_DEVTOOLS_GLOBAL_HOOK__;
-	if (!hook || !hook.__ompReact) return { installed: false };
+	if (!hook || !hook.__tauReact) return { installed: false };
 	let reactVersion;
 	for (const renderer of hook.renderers.values()) {
 		if (renderer && typeof renderer.version === "string") {

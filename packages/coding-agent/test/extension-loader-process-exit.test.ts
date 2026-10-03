@@ -9,9 +9,9 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { loadExtensions } from "@tau/tau-coding-agent/extensibility/extensions/loader";
-import { loadHooks } from "@tau/tau-coding-agent/extensibility/hooks/loader";
-import { ExtensionExitError, withHostGuard } from "@tau/tau-coding-agent/extensibility/utils";
+import { loadExtensions } from "tau/extensibility/extensions/loader";
+import { loadHooks } from "tau/extensibility/hooks/loader";
+import { ExtensionExitError, withHostGuard } from "tau/extensibility/utils";
 import { TempDir } from "@tau/tau-utils";
 
 describe("extension/hook loader process.exit guard (#3680)", () => {
@@ -67,7 +67,7 @@ describe("extension/hook loader process.exit guard (#3680)", () => {
 				: 'void Promise.reject(new Error("probe fatal"));';
 		return runProbe(`
 import { postmortem } from "@tau/tau-utils";
-import { withHostGuard } from "@tau/tau-coding-agent/extensibility/utils";
+import { withHostGuard } from "tau/extensibility/utils";
 
 postmortem.register("probe-cleanup", reason => {
 	process.stdout.write(\`cleanup:\${reason}\\n\`);
@@ -152,7 +152,7 @@ void withHostGuard(async () => {
 	it("keeps postmortem.quit behind the extension exit guard", async () => {
 		const { exitCode, stdout, stderr } = await runProbe(`
 import { postmortem } from "@tau/tau-utils";
-import { withHostGuard } from "@tau/tau-coding-agent/extensibility/utils";
+import { withHostGuard } from "tau/extensibility/utils";
 
 try {
 	await withHostGuard(() => postmortem.quit(37));
@@ -195,14 +195,14 @@ try {
 		// instead of looping on ExtensionExitError.
 		const preload = writeModule(
 			"guard-init-preload.ts",
-			"globalThis.__ompNativeReallyExit = process.reallyExit;\n" +
+			"globalThis.__tauNativeReallyExit = process.reallyExit;\n" +
 				'process.reallyExit = (() => { throw new Error("guarded during init"); });\n',
 		);
 		const { exitCode, stdout, stderr } = await runProbe(
 			`
 import { postmortem } from "@tau/tau-utils";
 postmortem.register("probe", reason => process.stdout.write(\`cleanup:\${reason}\\n\`));
-process.reallyExit = globalThis.__ompNativeReallyExit;
+process.reallyExit = globalThis.__tauNativeReallyExit;
 process.stdout.write("armed\\n");
 process.kill(process.pid, "SIGHUP");
 // Keep the real child event loop alive so the platform can deliver SIGHUP;

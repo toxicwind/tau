@@ -46,7 +46,7 @@ Release builds use Bazel targets and publish `.node` files in platform leaf pack
 - Use `task::blocking(tag, cancel_token, work)` for CPU-heavy or blocking work. It returns an `AsyncTask`, profiles the work, and catches panics before they cross the async-work FFI boundary.
 - Use `task::future(env, tag, future)` for Tokio async I/O. It returns a `PromiseRaw` through `Env::spawn_future`.
 - When the public options expose `timeoutMs` or `AbortSignal`, build `task::CancelToken::new(timeout_ms, signal)` and call `heartbeat()` at meaningful intervals in blocking loops. Cancellation is cooperative; a token that is never checked does not stop work.
-- Do not create runtimes or worker pools in module initialization. The JS loader performs the optional `__ompInstallTokioRuntime` post-load step after the dynamic-loader lock is released.
+- Do not create runtimes or worker pools in module initialization. The JS loader performs the optional `__tauInstallTokioRuntime` post-load step after the dynamic-loader lock is released.
 
 Match an existing export with the same scheduling/error shape rather than introducing a second convention.
 

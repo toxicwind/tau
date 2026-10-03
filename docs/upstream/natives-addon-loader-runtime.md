@@ -106,7 +106,7 @@ For each candidate:
 1. Emit a startup marker when enabled.
 2. `require(candidate)`.
 3. Unless this is workspace development, require the expected package-version sentinel function.
-4. Call `__ompInstallTokioRuntime()` if the addon provides it.
+4. Call `__tauInstallTokioRuntime()` if the addon provides it.
 5. Best-effort remove valid semantic-version cache directories older than the current version.
 6. Return the bindings.
 

@@ -1,13 +1,13 @@
 import { afterAll, describe, expect, it } from "bun:test";
 import type { AgentTool, AgentToolResult } from "@tau/tau-agent-core";
-import { PYTHON_PRELUDE } from "@tau/tau-coding-agent/eval/py/prelude";
+import { PYTHON_PRELUDE } from "tau/eval/py/prelude";
 import {
 	disposePyToolBridge,
 	ensurePyToolBridge,
 	registerPyToolBridge,
-} from "@tau/tau-coding-agent/eval/py/tool-bridge";
-import type { EvalShadowCellSession } from "@tau/tau-coding-agent/eval/speculation/cell-session";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
+} from "tau/eval/py/tool-bridge";
+import type { EvalShadowCellSession } from "tau/eval/speculation/cell-session";
+import type { ToolSession } from "tau/tools";
 import { $which, isRecord } from "@tau/tau-utils";
 import { INTENT_FIELD } from "@tau/tau-wire";
 
@@ -128,10 +128,10 @@ describe("Python tool bridge HTTP server", () => {
 		try {
 			const prelude = PYTHON_PRELUDE.replace(
 				"from __future__ import annotations",
-				"from __future__ import annotations\n__omp_display = lambda *args, **kwargs: None",
+				"from __future__ import annotations\n__tau_display = lambda *args, **kwargs: None",
 			);
 			const script = `${prelude}
-__omp_run_id__ = "run"
+__tau_run_id__ = "run"
 async def check_intent():
     print(await tool.constrained())
     print(await tool.constrained(i=None))
@@ -326,15 +326,15 @@ asyncio.run(check_intent())
 		try {
 			const prelude = PYTHON_PRELUDE.replace(
 				"from __future__ import annotations",
-				"from __future__ import annotations\n__omp_display = lambda *args, **kwargs: None",
+				"from __future__ import annotations\n__tau_display = lambda *args, **kwargs: None",
 			);
 			// Mirror the runner rewrite shape: `await tool.read({...})` becomes
-			// `await __omp_with_call_site__(siteId, tool.read, {...})`.
+			// `await __tau_with_call_site__(siteId, tool.read, {...})`.
 			const script = `${prelude}
-__omp_run_id__ = "run"
+__tau_run_id__ = "run"
 async def check_identity():
-    print(await __omp_with_call_site__("py:0", tool.read, {"path": "foo.txt"}))
-    print(await __omp_with_call_site__("py:0", tool.read, {"path": "foo.txt"}))
+    print(await __tau_with_call_site__("py:0", tool.read, {"path": "foo.txt"}))
+    print(await __tau_with_call_site__("py:0", tool.read, {"path": "foo.txt"}))
 asyncio.run(check_identity())
 `;
 			const child = Bun.spawn([Bun.env.PYTHON ?? ($which("python3") ? "python3" : "python"), "-"], {

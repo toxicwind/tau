@@ -50,7 +50,7 @@ interface CursorPageGlobal {
 	readonly document: CursorDocument;
 	readonly innerWidth: number;
 	readonly innerHeight: number;
-	__ompRecordingCursorCleanup?: () => void;
+	__tauRecordingCursorCleanup?: () => void;
 	addEventListener(type: string, listener: (event: CursorMouseEvent) => void, capture: boolean): void;
 	removeEventListener(type: string, listener: (event: CursorMouseEvent) => void, capture: boolean): void;
 }
@@ -189,7 +189,7 @@ function recordingError(error: unknown, action: string): BrowserRecordingError {
 function installCursorOverlay(): void {
 	const state = globalThis as unknown as CursorPageGlobal;
 	const document = state.document;
-	state.__ompRecordingCursorCleanup?.();
+	state.__tauRecordingCursorCleanup?.();
 	let root: CursorElement | undefined;
 	let pointer: CursorElement | undefined;
 	const onMove = (event: CursorMouseEvent): void => {
@@ -205,9 +205,9 @@ function installCursorOverlay(): void {
 		ripple.addEventListener("animationend", () => ripple.remove(), { once: true });
 	};
 	const mount = (): void => {
-		if (document.getElementById("__omp_recording_cursor__")) return;
+		if (document.getElementById("__tau_recording_cursor__")) return;
 		root = document.createElement("div");
-		root.id = "__omp_recording_cursor__";
+		root.id = "__tau_recording_cursor__";
 		root.setAttribute("aria-label", "TAU recording cursor overlay");
 		root.setAttribute("aria-hidden", "true");
 		root.setAttribute("inert", "");
@@ -225,20 +225,20 @@ function installCursorOverlay(): void {
 	else document.addEventListener("DOMContentLoaded", mount, { once: true });
 	state.addEventListener("mousemove", onMove, true);
 	state.addEventListener("mousedown", onDown, true);
-	state.__ompRecordingCursorCleanup = () => {
+	state.__tauRecordingCursorCleanup = () => {
 		document.removeEventListener("DOMContentLoaded", mount);
 		state.removeEventListener("mousemove", onMove, true);
 		state.removeEventListener("mousedown", onDown, true);
 		root?.remove();
-		document.getElementById("__omp_recording_cursor__")?.remove();
-		delete state.__ompRecordingCursorCleanup;
+		document.getElementById("__tau_recording_cursor__")?.remove();
+		delete state.__tauRecordingCursorCleanup;
 	};
 }
 
 function removeCursorOverlay(): void {
 	const state = globalThis as unknown as CursorPageGlobal;
-	state.__ompRecordingCursorCleanup?.();
-	state.document.getElementById("__omp_recording_cursor__")?.remove();
+	state.__tauRecordingCursorCleanup?.();
+	state.document.getElementById("__tau_recording_cursor__")?.remove();
 }
 
 function concatPath(filePath: string): string {

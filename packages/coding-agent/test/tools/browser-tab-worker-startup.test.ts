@@ -8,15 +8,15 @@ import {
 	type BrowserHandle,
 	holdBrowser,
 	releaseBrowser,
-} from "@tau/tau-coding-agent/tools/browser/registry";
-import type { ReadyInfo, WorkerInbound, WorkerOutbound } from "@tau/tau-coding-agent/tools/browser/tab-protocol";
+} from "tau/tools/browser/registry";
+import type { ReadyInfo, WorkerInbound, WorkerOutbound } from "tau/tools/browser/tab-protocol";
 import {
 	acquireTab,
 	initializeTabWorkerForTest,
 	releaseTab,
 	runInTab,
-} from "@tau/tau-coding-agent/tools/browser/tab-supervisor";
-import type { ToolSession } from "@tau/tau-coding-agent/tools/index";
+} from "tau/tools/browser/tab-supervisor";
+import type { ToolSession } from "tau/tools/index";
 import { chromiumAvailable, visibleBrowserAvailable } from "./chromium-probe";
 
 const CHROMIUM_AVAILABLE = await chromiumAvailable();
@@ -244,7 +244,7 @@ describe("TAU-owned browser evaluation", () => {
 				});
 				const result = await runInTab(name, {
 					code: `
-						await tab.evaluate("globalThis.__ompPageMarker = 'main-world'");
+						await tab.evaluate("globalThis.__tauPageMarker = 'main-world'");
 						const first = await tab.waitForSelector("#first");
 						const second = await tab.waitForSelector("#second");
 						if (!first || !second) throw new Error("Expected both buttons");
@@ -261,7 +261,7 @@ describe("TAU-owned browser evaluation", () => {
 
 						const evaluated = await tab.evaluate(
 							(firstElement, secondElement, existingMainElement, existingMainObject, data) => ({
-								marker: globalThis.__ompPageMarker,
+								marker: globalThis.__tauPageMarker,
 								texts: [firstElement.textContent, secondElement.textContent],
 								mainText: existingMainElement.textContent,
 								mainValue: existingMainObject.value,
@@ -283,7 +283,7 @@ describe("TAU-owned browser evaluation", () => {
 							callbackFailure = error instanceof Error ? error.message : String(error);
 						}
 
-						const stringMarker = await tab.evaluate("globalThis.__ompPageMarker", first, second);
+						const stringMarker = await tab.evaluate("globalThis.__tauPageMarker", first, second);
 						const handlesAfterward = [
 							await first.evaluate(element => element.textContent),
 							await second.evaluate(element => element.textContent),

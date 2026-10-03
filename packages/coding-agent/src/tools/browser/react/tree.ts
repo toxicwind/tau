@@ -51,8 +51,8 @@ interface ReactPageEnvelope<T> {
 
 const TREE_SOURCE_PREFIX = `(() => {
 	const hook = globalThis.__REACT_DEVTOOLS_GLOBAL_HOOK__;
-	if (!hook || !hook.__ompReact) return { missingHook: true };
-	const internals = hook.__ompReact;
+	if (!hook || !hook.__tauReact) return { missingHook: true };
+	const internals = hook.__tauReact;
 	const options = `;
 
 const TREE_SOURCE_SUFFIX = `;
@@ -111,8 +111,8 @@ const TREE_SOURCE_SUFFIX = `;
 
 const INSPECT_SOURCE_PREFIX = `(() => {
 	const hook = globalThis.__REACT_DEVTOOLS_GLOBAL_HOOK__;
-	if (!hook || !hook.__ompReact) return { missingHook: true };
-	const internals = hook.__ompReact;
+	if (!hook || !hook.__tauReact) return { missingHook: true };
+	const internals = hook.__tauReact;
 	const fiber = internals.fibersById.get(`;
 
 const INSPECT_SOURCE_SUFFIX = `);

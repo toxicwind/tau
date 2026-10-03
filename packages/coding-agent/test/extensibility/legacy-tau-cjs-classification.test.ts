@@ -2,7 +2,7 @@ import { afterAll, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { loadLegacyPiModule } from "@tau/tau-coding-agent/extensibility/plugins/legacy-tau-compat";
+import { loadLegacyPiModule } from "tau/extensibility/plugins/legacy-tau-compat";
 import { removeWithRetries } from "@tau/tau-utils";
 
 const tempRoots: string[] = [];
@@ -108,7 +108,7 @@ describe("isCommonJsModulePath CJS classification (inheritedKind override fix)",
 				exports: { ".": { import: "./index.mjs", require: "./index.cjs" } },
 			}),
 			"node_modules/ambiguous-esm-pkg/index.mjs":
-				"import './shim.js'; export default globalThis.__ompLegacyPiAmbiguousValue;",
+				"import './shim.js'; export default globalThis.__tauLegacyPiAmbiguousValue;",
 			"node_modules/ambiguous-esm-pkg/index.cjs": "module.exports = 'cjs';",
 			"node_modules/ambiguous-esm-pkg/shim.js": [
 				"const marker = 'module.exports';",
@@ -117,13 +117,13 @@ describe("isCommonJsModulePath CJS classification (inheritedKind override fix)",
 				"\trequire('shadowed'); module.exports = {}; exports.value = true;",
 				"}",
 				"await Promise.resolve();",
-				"globalThis.__ompLegacyPiAmbiguousValue = marker;",
+				"globalThis.__tauLegacyPiAmbiguousValue = marker;",
 			].join("\n"),
 		});
 
 		const mod = (await loadLegacyPiModule(path.join(dir, "consumer.mjs"))) as { result: string };
 		expect(mod.result).toBe("module.exports");
-		Reflect.deleteProperty(globalThis, "__ompLegacyPiAmbiguousValue");
+		Reflect.deleteProperty(globalThis, "__tauLegacyPiAmbiguousValue");
 	});
 
 	it("detects CJS patterns outside comments", async () => {

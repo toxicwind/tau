@@ -3,11 +3,11 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { disposeAllVmContexts } from "@tau/tau-coding-agent/eval/js/context-manager";
-import { createBrowserPrelude } from "@tau/tau-coding-agent/tools/browser";
-import { releaseAllTabs } from "@tau/tau-coding-agent/tools/browser/tab-supervisor";
-import type { ToolSession } from "@tau/tau-coding-agent/tools/index";
+import { Settings } from "tau/config/settings";
+import { disposeAllVmContexts } from "tau/eval/js/context-manager";
+import { createBrowserPrelude } from "tau/tools/browser";
+import { releaseAllTabs } from "tau/tools/browser/tab-supervisor";
+import type { ToolSession } from "tau/tools/index";
 import { $which } from "@tau/tau-utils/which";
 import { chromiumAvailable } from "./chromium-probe";
 
@@ -136,7 +136,7 @@ describe.skipIf(!CHROMIUM_AVAILABLE || !FFMPEG_AVAILABLE)("browser video recordi
 await page.mouse.down();
 await page.mouse.up();
 await wait(1550);
-const root = await page.$('#__omp_recording_cursor__');
+const root = await page.$('#__tau_recording_cursor__');
 if (!root) return { overlay: false };
 const transform = await root.evaluate(el => el.shadowRoot?.querySelector('.pointer')?.style.transform ?? '');
 return { overlay: true, transform };`,
@@ -156,7 +156,7 @@ return { overlay: true, transform };`,
 			expect(stopped.bytes).toBeGreaterThan(0);
 			expect(stoppedCall.content.some(block => block.type === "image")).toBe(true);
 			expect(
-				await value<boolean>("evaluate", ["document.getElementById('__omp_recording_cursor__') === null"]),
+				await value<boolean>("evaluate", ["document.getElementById('__tau_recording_cursor__') === null"]),
 			).toBe(true);
 
 			const webmProbe = await probeVideo(stopped.path);

@@ -2,9 +2,9 @@ import { afterEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { bindPreparedExtensions, loadExtensions } from "@tau/tau-coding-agent/extensibility/extensions/loader";
-import type { ExtensionAPI } from "@tau/tau-coding-agent/extensibility/extensions/types";
-import { EventBus } from "@tau/tau-coding-agent/utils/event-bus";
+import { bindPreparedExtensions, loadExtensions } from "tau/extensibility/extensions/loader";
+import type { ExtensionAPI } from "tau/extensibility/extensions/types";
+import { EventBus } from "tau/utils/event-bus";
 
 const temporaryDirectories: string[] = [];
 
@@ -22,7 +22,7 @@ describe("prepared extension rebinding", () => {
 		const childDirectory = path.join(directory, "child");
 		await Promise.all([fs.mkdir(parentDirectory), fs.mkdir(childDirectory)]);
 		const extensionPath = path.join(directory, "counter.ts");
-		const counterKey = `__omp_prepared_extension_${crypto.randomUUID().replaceAll("-", "")}`;
+		const counterKey = `__tau_prepared_extension_${crypto.randomUUID().replaceAll("-", "")}`;
 		const bindingsKey = `${counterKey}_bindings`;
 		await Bun.write(
 			extensionPath,

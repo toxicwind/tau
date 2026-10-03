@@ -1,15 +1,15 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import * as PiCodingAgent from "@tau/tau-coding-agent";
-import { loadCustomCommands } from "@tau/tau-coding-agent/extensibility/custom-commands/loader";
-import { loadCustomTools } from "@tau/tau-coding-agent/extensibility/custom-tools/loader";
-import { loadExtensions } from "@tau/tau-coding-agent/extensibility/extensions/loader";
-import { loadHooks } from "@tau/tau-coding-agent/extensibility/hooks/loader";
+import * as PiCodingAgent from "tau";
+import { loadCustomCommands } from "tau/extensibility/custom-commands/loader";
+import { loadCustomTools } from "tau/extensibility/custom-tools/loader";
+import { loadExtensions } from "tau/extensibility/extensions/loader";
+import { loadHooks } from "tau/extensibility/hooks/loader";
 import { TempDir } from "@tau/tau-utils";
 
 declare global {
-	var __ompHostPiForLoaderIdentityTest: typeof PiCodingAgent | undefined;
+	var __tauHostPiForLoaderIdentityTest: typeof PiCodingAgent | undefined;
 }
 
 describe("extension loader host runtime binding", () => {
@@ -17,13 +17,13 @@ describe("extension loader host runtime binding", () => {
 
 	beforeEach(() => {
 		projectDir = TempDir.createSync("@loader-host-runtime-");
-		globalThis.__ompHostPiForLoaderIdentityTest = PiCodingAgent;
+		globalThis.__tauHostPiForLoaderIdentityTest = PiCodingAgent;
 	});
 
 	afterEach(() => {
 		projectDir?.removeSync();
 		projectDir = undefined;
-		globalThis.__ompHostPiForLoaderIdentityTest = undefined;
+		globalThis.__tauHostPiForLoaderIdentityTest = undefined;
 	});
 
 	function writeModule(relativePath: string, source: string): string {
@@ -35,7 +35,7 @@ describe("extension loader host runtime binding", () => {
 	}
 
 	const identityGuard = `
-		const expectedPi = globalThis.__ompHostPiForLoaderIdentityTest;
+		const expectedPi = globalThis.__tauHostPiForLoaderIdentityTest;
 		if (!expectedPi) throw new Error("missing host pi module");
 		if (api.pi !== expectedPi) throw new Error("injected pi module did not match host module");
 	`;

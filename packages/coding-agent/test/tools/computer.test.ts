@@ -1,23 +1,23 @@
 import { afterAll, describe, expect, it } from "bun:test";
 import { createContext, runInContext } from "node:vm";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import type { EvalPreludeDefinition } from "@tau/tau-coding-agent/eval/preludes";
-import { disposeAllKernelSessions, executePython } from "@tau/tau-coding-agent/eval/py/executor";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
-import { computerApproval, createComputerPrelude } from "@tau/tau-coding-agent/tools/computer";
-import { isReadOnlyComputerCall, renderComputerCall } from "@tau/tau-coding-agent/tools/computer/call";
+import { Settings } from "tau/config/settings";
+import type { EvalPreludeDefinition } from "tau/eval/preludes";
+import { disposeAllKernelSessions, executePython } from "tau/eval/py/executor";
+import type { ToolSession } from "tau/tools";
+import { computerApproval, createComputerPrelude } from "tau/tools/computer";
+import { isReadOnlyComputerCall, renderComputerCall } from "tau/tools/computer/call";
 import type {
 	ComputerSessionSnapshot,
 	ComputerWorkerInbound,
 	ComputerWorkerOutbound,
 	ComputerWorkerTransport,
-} from "@tau/tau-coding-agent/tools/computer/protocol";
+} from "tau/tools/computer/protocol";
 import {
 	type ComputerController,
 	ComputerSupervisor,
 	type ComputerWorkerHandle,
-} from "@tau/tau-coding-agent/tools/computer/supervisor";
-import { ComputerWorkerCore, type NativeDesktopSession } from "@tau/tau-coding-agent/tools/computer/worker";
+} from "tau/tools/computer/supervisor";
+import { ComputerWorkerCore, type NativeDesktopSession } from "tau/tools/computer/worker";
 import type {
 	AxNode,
 	AxQuery,
@@ -454,8 +454,8 @@ describe("computer prelude", () => {
 			"clipboard.read": "copied",
 		};
 		const realm = createContext({
-			__omp_display__: (value: unknown) => displays.push(value),
-			__omp_prelude__: async (name: unknown, parameters: unknown) => {
+			__tau_display__: (value: unknown) => displays.push(value),
+			__tau_prelude__: async (name: unknown, parameters: unknown) => {
 				expect(name).toBe("computer");
 				calls.push(parameters);
 				if (parameters === null || typeof parameters !== "object" || !("action" in parameters)) return undefined;
@@ -511,7 +511,7 @@ describe("computer prelude", () => {
 			{
 				action: "run",
 				fn: String(fn),
-				args: [7, { __omp_re: { source: "save", flags: "gi" } }, { __omp_fn: String(argFn) }],
+				args: [7, { __tau_re: { source: "save", flags: "gi" } }, { __tau_fn: String(argFn) }],
 				read_only: true,
 				timeout: 5,
 			},

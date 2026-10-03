@@ -8,7 +8,7 @@ import {
 	__collectLegacyPiExtensionSourcesForTests,
 	__rewriteLegacyExtensionSourceForTests,
 	loadLegacyPiModule,
-} from "@tau/tau-coding-agent/extensibility/plugins/legacy-tau-compat";
+} from "tau/extensibility/plugins/legacy-tau-compat";
 import { isRecord, removeWithRetries } from "@tau/tau-utils";
 
 // Issue #1674: legacy Pi extensions load browser-UI assets (HTML/CSS) at module
@@ -1331,7 +1331,7 @@ describe("legacy-pi in-place module loading (issue #1674)", () => {
 			}),
 			"node_modules/dual/esm.js": 'import "./shared.js"; export const mode = "esm";',
 			"node_modules/dual/cjs.js": 'if (false) require("./shared.js"); module.exports = { mode: "cjs" };',
-			"node_modules/dual/shared.js": "globalThis.__ompDualGraphLoaded = true;",
+			"node_modules/dual/shared.js": "globalThis.__tauDualGraphLoaded = true;",
 			"node_modules/dual-consumer/package.json": JSON.stringify({
 				name: "dual-consumer",
 				version: "1.0.0",

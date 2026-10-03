@@ -57,9 +57,9 @@ interface RenderedTextAnnotation {
 
 function exactPlaceholder(label: string, index: number, values: readonly string[]): string {
 	let suffix = 0;
-	let placeholder = `__OMP_ANNOTATE_${label}_${index}_${suffix}__`;
+	let placeholder = `__TAU_ANNOTATE_${label}_${index}_${suffix}__`;
 	while (values.some(value => value.includes(placeholder))) {
-		placeholder = `__OMP_ANNOTATE_${label}_${index}_${++suffix}__`;
+		placeholder = `__TAU_ANNOTATE_${label}_${index}_${++suffix}__`;
 	}
 	return placeholder;
 }

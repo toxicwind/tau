@@ -8,7 +8,7 @@ declare module "puppeteer-core" {
 	}
 }
 
-const BRIDGE_KEY = "__ompWebMcpBridge_v1";
+const BRIDGE_KEY = "__tauWebMcpBridge_v1";
 const MAX_RESULT_BYTES = 64 * 1024;
 const MAX_SUMMARY_BYTES = 4 * 1024;
 const MAX_SUMMARY_DESCRIPTION_BYTES = 160;

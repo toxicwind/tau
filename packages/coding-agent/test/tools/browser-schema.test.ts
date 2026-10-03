@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test";
 import { createContext, runInContext } from "node:vm";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import type { ToolSession } from "@tau/tau-coding-agent/sdk";
-import { createBrowserPrelude } from "@tau/tau-coding-agent/tools/browser";
+import { Settings } from "tau/config/settings";
+import type { ToolSession } from "tau/sdk";
+import { createBrowserPrelude } from "tau/tools/browser";
 
 function makeSession(settings = Settings.isolated({ "browser.enabled": true })): ToolSession {
 	return {
@@ -79,8 +79,8 @@ describe("browser prelude", () => {
 		const calls: unknown[] = [];
 		const displayed: unknown[] = [];
 		const context = createContext({
-			__omp_display__: (value: unknown) => displayed.push(value),
-			__omp_prelude__: async (name: string, parameters: unknown) => {
+			__tau_display__: (value: unknown) => displayed.push(value),
+			__tau_prelude__: async (name: string, parameters: unknown) => {
 				calls.push({ name, parameters });
 				if (parameters === null || typeof parameters !== "object") return { text: "", details: {} };
 				const action = Reflect.get(parameters, "action");

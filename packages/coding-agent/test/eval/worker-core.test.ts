@@ -3,14 +3,14 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import { pathToFileURL } from "node:url";
-import { shadowSnapshotDigest } from "@tau/tau-coding-agent/eval/js/shared/runtime";
-import { WorkerCore } from "@tau/tau-coding-agent/eval/js/worker-core";
+import { shadowSnapshotDigest } from "tau/eval/js/shared/runtime";
+import { WorkerCore } from "tau/eval/js/worker-core";
 import type {
 	SessionSnapshot,
 	Transport,
 	WorkerInbound,
 	WorkerOutbound,
-} from "@tau/tau-coding-agent/eval/js/worker-protocol";
+} from "tau/eval/js/worker-protocol";
 import { postmortem } from "@tau/tau-utils";
 
 interface WorkerHarness {
@@ -322,7 +322,7 @@ describe("WorkerCore", () => {
 			first.send({
 				type: "run",
 				runId: "hold-for-first-init",
-				code: "globalThis.__tau_worker_core_gate.entered(); await globalThis.__tau_worker_core_gate.wait; __omp_session__.sessionId;",
+				code: "globalThis.__tau_worker_core_gate.entered(); await globalThis.__tau_worker_core_gate.wait; __tau_session__.sessionId;",
 				filename: "[first-init-live-first].js",
 				snapshot: { cwd, sessionId: "first-init-live-first", localRoots: {} },
 			});

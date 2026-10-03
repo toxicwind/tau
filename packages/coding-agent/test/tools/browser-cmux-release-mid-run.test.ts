@@ -32,16 +32,16 @@ import { afterEach, describe, expect, it, spyOn, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { CmuxKind } from "@tau/tau-coding-agent/tools/browser/cmux/rpc";
-import { CmuxSocketClient } from "@tau/tau-coding-agent/tools/browser/cmux/socket-client";
-import { acquireBrowser } from "@tau/tau-coding-agent/tools/browser/registry";
+import type { CmuxKind } from "tau/tools/browser/cmux/rpc";
+import { CmuxSocketClient } from "tau/tools/browser/cmux/socket-client";
+import { acquireBrowser } from "tau/tools/browser/registry";
 import {
 	acquireTab,
 	getTabsMapForTest,
 	releaseTab,
 	runInTab,
-} from "@tau/tau-coding-agent/tools/browser/tab-supervisor";
-import type { ToolSession } from "@tau/tau-coding-agent/tools/index";
+} from "tau/tools/browser/tab-supervisor";
+import type { ToolSession } from "tau/tools/index";
 import * as logger from "@tau/tau-utils/logger";
 
 function makeKind(socketSuffix: string): CmuxKind {
@@ -294,11 +294,11 @@ describe("browser tab-supervisor — cmux tab close mid-run (#4499)", () => {
 		const continuationStarted = Promise.withResolvers<void>();
 		const continuationGate = Promise.withResolvers<void>();
 		const globals = globalThis as typeof globalThis & {
-			__ompLateRejectionStarted?: () => void;
-			__ompLateRejectionGate?: Promise<void>;
+			__tauLateRejectionStarted?: () => void;
+			__tauLateRejectionGate?: Promise<void>;
 		};
-		globals.__ompLateRejectionStarted = continuationStarted.resolve;
-		globals.__ompLateRejectionGate = continuationGate.promise;
+		globals.__tauLateRejectionStarted = continuationStarted.resolve;
+		globals.__tauLateRejectionGate = continuationGate.promise;
 
 		try {
 			spyOn(CmuxSocketClient.prototype, "request").mockImplementation(
@@ -332,8 +332,8 @@ describe("browser tab-supervisor — cmux tab close mid-run (#4499)", () => {
 					const guestStarted = Promise.withResolvers();
 					void tab.title().then(async () => {
 						guestStarted.resolve();
-						globalThis.__ompLateRejectionStarted();
-						await globalThis.__ompLateRejectionGate;
+						globalThis.__tauLateRejectionStarted();
+						await globalThis.__tauLateRejectionGate;
 						throw new Error("late cmux continuation failed");
 					});
 					await guestStarted.promise;
@@ -353,8 +353,8 @@ describe("browser tab-supervisor — cmux tab close mid-run (#4499)", () => {
 			});
 		} finally {
 			continuationGate.resolve();
-			delete globals.__ompLateRejectionStarted;
-			delete globals.__ompLateRejectionGate;
+			delete globals.__tauLateRejectionStarted;
+			delete globals.__tauLateRejectionGate;
 		}
 	});
 

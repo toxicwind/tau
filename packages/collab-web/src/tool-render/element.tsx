@@ -4,7 +4,7 @@
  *
  * Payload sources, in priority order:
  * 1. `el.data = {...}` property assignment.
- * 2. `data-key` attribute → lookup in `globalThis.__OMP_TOOL_VIEW_DATA`
+ * 2. `data-key` attribute → lookup in `globalThis.__TAU_TOOL_VIEW_DATA`
  *    (a Map populated by the host before inserting markup via innerHTML;
  *    survives `cloneNode` since only the key attribute is copied).
  * 3. `payload` attribute → inline JSON.
@@ -41,7 +41,7 @@ export class TauToolViewElement extends HTMLElement {
 		if (this.#data) return this.#data;
 		const key = this.getAttribute("data-key");
 		if (key) {
-			const store = (globalThis as { __OMP_TOOL_VIEW_DATA?: PayloadStore }).__OMP_TOOL_VIEW_DATA;
+			const store = (globalThis as { __TAU_TOOL_VIEW_DATA?: PayloadStore }).__TAU_TOOL_VIEW_DATA;
 			const props = store?.get(key);
 			if (props) return props;
 		}

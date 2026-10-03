@@ -11,17 +11,17 @@ import { streamAnthropic } from "@tau/tau-ai/providers/anthropic";
 import type { MessageCreateParams } from "@tau/tau-ai/providers/anthropic-wire";
 import type { ImageContent, TextContent } from "@tau/tau-ai";
 import { getBundledModel } from "@tau/tau-catalog/models";
-import { convertToLlm, wrapSteeringForModel } from "@tau/tau-coding-agent/session/messages";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { ExtensionRuntime, loadExtensions } from "@tau/tau-coding-agent/extensibility/extensions/loader";
+import { convertToLlm, wrapSteeringForModel } from "tau/session/messages";
+import { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
+import { ExtensionRuntime, loadExtensions } from "tau/extensibility/extensions/loader";
 import {
 	EXTENSION_HANDLER_TIMEOUT_MS,
 	ExtensionRunner,
 	SESSION_SHUTDOWN_HANDLER_TIMEOUT_MS,
 	testSetExtensionHandlerTimeoutMs,
 	testSetSessionShutdownHandlerTimeoutMs,
-} from "@tau/tau-coding-agent/extensibility/extensions/runner";
+} from "tau/extensibility/extensions/runner";
 import type {
 	Extension,
 	ExtensionError,
@@ -30,10 +30,10 @@ import type {
 	InputEvent,
 	InputEventResult,
 	ProviderModelConfig,
-} from "@tau/tau-coding-agent/extensibility/extensions/types";
-import { ExtensionToolWrapper } from "@tau/tau-coding-agent/extensibility/extensions/wrapper";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+} from "tau/extensibility/extensions/types";
+import { ExtensionToolWrapper } from "tau/extensibility/extensions/wrapper";
+import { AuthStorage } from "tau/session/auth-storage";
+import { SessionManager } from "tau/session/session-manager";
 import { getProjectAgentDir, logger, TempDir } from "@tau/tau-utils";
 
 describe("ExtensionRunner", () => {
@@ -2146,14 +2146,14 @@ describe("ExtensionRunner", () => {
 			const extCode = `
 				export default function(pi) {
 					pi.on("session_start", async (_event, ctx) => {
-						globalThis.__ompMemoryStatus = await ctx.memory.status();
+						globalThis.__tauMemoryStatus = await ctx.memory.status();
 					});
 				}
 			`;
 			const explicitExtensionPath = path.join(tempDir.path(), "memory-context.ts");
 			fs.writeFileSync(explicitExtensionPath, extCode);
-			const globalState = globalThis as typeof globalThis & { __ompMemoryStatus?: unknown };
-			delete globalState.__ompMemoryStatus;
+			const globalState = globalThis as typeof globalThis & { __tauMemoryStatus?: unknown };
+			delete globalState.__tauMemoryStatus;
 
 			const result = await loadTestExtensions([explicitExtensionPath]);
 			const runner = new ExtensionRunner(
@@ -2203,12 +2203,12 @@ describe("ExtensionRunner", () => {
 
 			await runner.emit({ type: "session_start" });
 
-			expect(globalState.__ompMemoryStatus).toMatchObject({
+			expect(globalState.__tauMemoryStatus).toMatchObject({
 				backend: "mnemotau",
 				active: true,
 				searchable: true,
 			});
-			delete globalState.__ompMemoryStatus;
+			delete globalState.__tauMemoryStatus;
 		});
 	});
 

@@ -946,7 +946,7 @@ def sync_reference_fixtures(fixtures_dir: Path) -> None:
         (fixtures_dir / name).write_text(content)
 
 
-def resolve_omp_bin(raw: str | None) -> str:
+def resolve_tau_bin(raw: str | None) -> str:
     if raw:
         return raw
     found = shutil.which("tau")
@@ -1448,7 +1448,7 @@ def parse_args() -> argparse.Namespace:
 
 
 async def run_all(args: argparse.Namespace) -> int:
-    tau_bin = resolve_omp_bin(args.tau_bin)
+    tau_bin = resolve_tau_bin(args.tau_bin)
 
     if args.rerun or args.rerun_oracle:
         rerun_path = args.rerun_oracle or args.rerun

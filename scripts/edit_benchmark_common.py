@@ -626,17 +626,17 @@ class VerbosePrinter:
             sys.stderr.flush()
 
 
-def resolve_repo_omp_bin() -> str | None:
+def resolve_repo_tau_bin() -> str | None:
     cli_path = REPO_ROOT / "packages/coding-agent" / "src/cli.ts"
     if not cli_path.exists():
         return None
     return str(cli_path)
 
 
-def resolve_omp_bin(raw: str | None) -> str:
+def resolve_tau_bin(raw: str | None) -> str:
     if raw:
         return raw
-    repo_bin = resolve_repo_omp_bin()
+    repo_bin = resolve_repo_tau_bin()
     if repo_bin:
         return repo_bin
     found = shutil.which("tau")
@@ -841,7 +841,7 @@ def run_benchmark_for_model(
 async def run_all(
     spec: BenchmarkSpec, args: argparse.Namespace
 ) -> dict[str, dict[str, Any]]:
-    tau_bin = resolve_omp_bin(args.tau_bin)
+    tau_bin = resolve_tau_bin(args.tau_bin)
 
     timestamp = time.strftime("%Y%m%d-%H%M%S")
     workspace_root = (

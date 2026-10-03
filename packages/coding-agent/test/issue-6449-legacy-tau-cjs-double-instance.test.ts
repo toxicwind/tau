@@ -1,10 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
-import { ensureGraphCommonJsRequireRegistered } from "@tau/tau-coding-agent/extensibility/plugins/legacy-tau-compat";
+import { ensureGraphCommonJsRequireRegistered } from "tau/extensibility/plugins/legacy-tau-compat";
 
 // The global key the host bundle and every re-instantiated shim copy share to
 // hand graph-owned CommonJS modules to whichever instance owns the populated
 // graph state.
-const COMMONJS_REQUIRE_GLOBAL = "__ompLegacyPiRequireGraphModule";
+const COMMONJS_REQUIRE_GLOBAL = "__tauLegacyPiRequireGraphModule";
 
 describe("issue #6449: legacy pi CommonJS graph registration is first-wins", () => {
 	let original: unknown;
