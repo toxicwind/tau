@@ -7,13 +7,13 @@ import { type CompactionPreparation, resolveThresholdTokens, shouldCompact } fro
 import type { AssistantMessage } from "@tau/tau-ai";
 import { getBundledModel } from "@tau/tau-catalog/models";
 import { TempDir } from "@tau/tau-utils";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
-import type { CompactionEntry } from "@tau/tau-coding-agent/session/session-entries";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import { INCOMPLETE_RECOVERY_MAX_RETRIES } from "@tau/tau-coding-agent/session/session-maintenance";
+import { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
+import { AgentSession } from "tau/session/agent-session";
+import { AuthStorage } from "tau/session/auth-storage";
+import type { CompactionEntry } from "tau/session/session-entries";
+import { SessionManager } from "tau/session/session-manager";
+import { INCOMPLETE_RECOVERY_MAX_RETRIES } from "tau/session/session-maintenance";
 
 it("clamps a reserve exceeding the window for small-window threshold recovery bands", () => {
 	const settings = {

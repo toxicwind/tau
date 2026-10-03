@@ -4,29 +4,29 @@ import type { AssistantMessage, UserMessage } from "@tau/tau-ai";
 import { createMockModel } from "@tau/tau-ai/providers/mock";
 import { AssistantMessageEventStream } from "@tau/tau-ai/utils/event-stream";
 import { getBundledModel } from "@tau/tau-catalog/models";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { AgentSession, type AgentSessionEvent } from "@tau/tau-coding-agent/session/agent-session";
-import { CONTEXT_NOTES_ENTRY_TYPE, getContextNotes } from "@tau/tau-coding-agent/session/context-notes";
+import { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
+import { AgentSession, type AgentSessionEvent } from "tau/session/agent-session";
+import { CONTEXT_NOTES_ENTRY_TYPE, getContextNotes } from "tau/session/context-notes";
 import {
 	createCustomMessage,
 	convertToLlm,
 	SKILL_PROMPT_MESSAGE_TYPE,
-} from "@tau/tau-coding-agent/session/messages";
-import type { CompactionEntry } from "@tau/tau-coding-agent/session/session-entries";
-import { ExtensionRuntime, loadExtensionFromFactory } from "@tau/tau-coding-agent/extensibility/extensions/loader";
-import { ExtensionRunner } from "@tau/tau-coding-agent/extensibility/extensions/runner";
-import { EventBus } from "@tau/tau-coding-agent/utils/event-bus";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+} from "tau/session/messages";
+import type { CompactionEntry } from "tau/session/session-entries";
+import { ExtensionRuntime, loadExtensionFromFactory } from "tau/extensibility/extensions/loader";
+import { ExtensionRunner } from "tau/extensibility/extensions/runner";
+import { EventBus } from "tau/utils/event-bus";
+import { SessionManager } from "tau/session/session-manager";
 import { TempDir } from "@tau/tau-utils";
 import { computeNonMessageTokens } from "@tau/tau-tui/status-line/context-usage";
-import { mnemotauBackend } from "@tau/tau-coding-agent/mnemotau/backend";
-import type { Tool, ToolSession } from "@tau/tau-coding-agent/tools";
-import { ContextNotesTool, NewContextTool } from "@tau/tau-coding-agent/tools/context-notes";
-import { BUILTIN_TOOL_NAMES } from "@tau/tau-coding-agent/tools/builtin-names";
-import { GrepTool } from "@tau/tau-coding-agent/tools/grep";
-import { EvalTool } from "@tau/tau-coding-agent/tools/eval";
-import { ReadTool } from "@tau/tau-coding-agent/tools/read";
+import { mnemotauBackend } from "tau/mnemotau/backend";
+import type { Tool, ToolSession } from "tau/tools";
+import { ContextNotesTool, NewContextTool } from "tau/tools/context-notes";
+import { BUILTIN_TOOL_NAMES } from "tau/tools/builtin-names";
+import { GrepTool } from "tau/tools/grep";
+import { EvalTool } from "tau/tools/eval";
+import { ReadTool } from "tau/tools/read";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
 const authStorage = createInMemoryAuthStorage();
