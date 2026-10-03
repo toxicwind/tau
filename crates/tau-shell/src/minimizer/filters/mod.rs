@@ -820,7 +820,7 @@ mod tests {
 	}
 
 	#[test]
-	fn pi_cli_names_are_not_supported() {
+	fn tau_cli_names_are_not_supported() {
 		assert!(!supports("rtk", None));
 		assert!(!supports("pi", None));
 	}

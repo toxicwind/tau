@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it, vi } from "bun:test";
 import { stripVTControlCharacters } from "node:util";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { Settings } from "tau/config/settings";
 import { ToolExecutionComponent } from "@tau/tau-tui/chat/tool-execution";
 import { initTheme } from "@tau/tau-tui/theme";
 import type { AgentProgress, SingleResult, TaskToolDetails } from "@tau/tau-tui/tools/task";

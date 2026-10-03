@@ -160,12 +160,12 @@
   290 | 	return os.homedir();
   291 | }
   292 | 
-  293 | /** Get the config directory name relative to home (e.g. ".tau" or PI_CONFIG_DIR override). */
+  293 | /** Get the config directory name relative to home (e.g. ".tau" or TAU_CONFIG_DIR override). */
   294 | export function getConfigDirName(): string {
-  295 | 	return process.env.PI_CONFIG_DIR || CONFIG_DIR_NAME;
+  295 | 	return process.env.TAU_CONFIG_DIR || CONFIG_DIR_NAME;
   296 | }
   297 | 
-  298 | /** Get the config agent directory name relative to home (e.g. ".tau/agent" or PI_CONFIG_DIR + "/agent"). */
+  298 | /** Get the config agent directory name relative to home (e.g. ".tau/agent" or TAU_CONFIG_DIR + "/agent"). */
   299 | export function getConfigAgentDirName(): string {
   300 | 	const profile = getActiveProfile();
   301 | 	return profile ? path.join(getConfigDirName(), "profiles", profile, "agent") : `${getConfigDirName()}/agent`;

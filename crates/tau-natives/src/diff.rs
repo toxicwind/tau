@@ -1,8 +1,8 @@
 //! N-API wrappers and streaming support for jsdiff-compatible diff primitives.
 //!
 //! The Myers, line, word, and structured-patch implementation lives in
-//! `tau-diff`. This module preserves JavaScript's UTF-16 code units at the N-API
-//! boundary and owns the incremental [`DiffStream`] state.
+//! `tau-diff`. This module preserves JavaScript's UTF-16 code units at the
+//! N-API boundary and owns the incremental [`DiffStream`] state.
 //!
 //! # Example
 //! ```ignore
@@ -120,7 +120,7 @@ pub fn diff_lines(old_text: JsString, new_text: JsString) -> Result<Vec<DiffChan
 }
 
 fn diff_lines_impl(old_text: &[u16], new_text: &[u16]) -> Vec<DiffChange> {
-	pi_diff::diff_lines_u16(old_text, new_text)
+	tau_diff::diff_lines_u16(old_text, new_text)
 		.into_iter()
 		.map(|change| DiffChange {
 			value:   change.value.into(),
@@ -147,8 +147,8 @@ pub fn diff_line_runs(old_text: JsString, new_text: JsString) -> Result<Vec<Diff
 fn diff_line_runs_impl(old_text: &[u16], new_text: &[u16]) -> Vec<DiffRun> {
 	let old_tokens: Vec<&[u16]> = old_text.split(|&unit| unit == LF).collect();
 	let new_tokens: Vec<&[u16]> = new_text.split(|&unit| unit == LF).collect();
-	let (old_ids, new_ids) = pi_diff::intern(&old_tokens, &new_tokens);
-	pi_diff::myers_diff(&old_ids, &new_ids)
+	let (old_ids, new_ids) = tau_diff::intern(&old_tokens, &new_tokens);
+	tau_diff::myers_diff(&old_ids, &new_ids)
 		.into_iter()
 		.map(|run| DiffRun { count: run.count, added: run.added, removed: run.removed })
 		.collect()
@@ -513,15 +513,15 @@ fn read_file_into_stream(
 }
 
 fn stream_result(old_text: &[u16], new_text: &[u16], context: Option<u32>) -> DiffStreamResult {
-	let old_tokens = pi_diff::line_tokens_u16(old_text);
-	let new_tokens = pi_diff::line_tokens_u16(new_text);
-	let runs = pi_diff::line_runs_u16(old_text, new_text);
+	let old_tokens = tau_diff::line_tokens_u16(old_text);
+	let new_tokens = tau_diff::line_tokens_u16(new_text);
+	let runs = tau_diff::line_runs_u16(old_text, new_text);
 	let exposed_runs = runs
 		.iter()
 		.map(|run| DiffRun { count: run.count, added: run.added, removed: run.removed })
 		.collect();
 	let hunks =
-		pi_diff::structured_patch_hunks_from_runs_u16(context, &old_tokens, &new_tokens, &runs)
+		tau_diff::structured_patch_hunks_from_runs_u16(context, &old_tokens, &new_tokens, &runs)
 			.into_iter()
 			.map(patch_hunk)
 			.collect();
@@ -556,13 +556,13 @@ fn structured_patch_hunks_impl(
 	new_text: &[u16],
 	context: Option<u32>,
 ) -> Vec<PatchHunk> {
-	pi_diff::structured_patch_hunks_u16(old_text, new_text, context)
+	tau_diff::structured_patch_hunks_u16(old_text, new_text, context)
 		.into_iter()
 		.map(patch_hunk)
 		.collect()
 }
 
-fn patch_hunk(hunk: pi_diff::Hunk) -> PatchHunk {
+fn patch_hunk(hunk: tau_diff::Hunk) -> PatchHunk {
 	PatchHunk {
 		old_start: hunk.old_start,
 		old_lines: hunk.old_lines,
@@ -589,7 +589,7 @@ pub fn diff_words(old_text: JsString, new_text: JsString) -> Result<Vec<DiffChan
 }
 
 fn diff_words_impl(old_text: &[u16], new_text: &[u16]) -> Vec<DiffChange> {
-	pi_diff::diff_words_u16(old_text, new_text)
+	tau_diff::diff_words_u16(old_text, new_text)
 		.into_iter()
 		.map(|change| DiffChange {
 			value:   change.value.into(),

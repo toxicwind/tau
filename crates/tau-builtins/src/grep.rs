@@ -525,28 +525,28 @@ fn resolve_directory_action(cli: &GrepArgs, matches: &ArgMatches) -> DirectoryAc
 	selected.1
 }
 
-fn resolve_follow_links(cli: &GrepArgs, matches: &ArgMatches) -> pi_walker::FollowLinks {
-	let mut selected = (0, pi_walker::FollowLinks::Roots);
-	choose_latest(&mut selected, last_index(matches, "recursive"), pi_walker::FollowLinks::Roots);
+fn resolve_follow_links(cli: &GrepArgs, matches: &ArgMatches) -> tau_walker::FollowLinks {
+	let mut selected = (0, tau_walker::FollowLinks::Roots);
+	choose_latest(&mut selected, last_index(matches, "recursive"), tau_walker::FollowLinks::Roots);
 	choose_latest(
 		&mut selected,
 		last_index(matches, "dereference_recursive"),
-		pi_walker::FollowLinks::Always,
+		tau_walker::FollowLinks::Always,
 	);
 	if cli.directories == Some(DirectoryAction::Recurse) {
 		choose_latest(
 			&mut selected,
 			last_index(matches, "directories"),
-			pi_walker::FollowLinks::Roots,
+			tau_walker::FollowLinks::Roots,
 		);
 	}
 	choose_latest(
 		&mut selected,
 		last_index(matches, "follow_command_line"),
-		pi_walker::FollowLinks::Roots,
+		tau_walker::FollowLinks::Roots,
 	);
-	choose_latest(&mut selected, last_index(matches, "no_follow"), pi_walker::FollowLinks::Never);
-	choose_latest(&mut selected, last_index(matches, "follow_all"), pi_walker::FollowLinks::Always);
+	choose_latest(&mut selected, last_index(matches, "no_follow"), tau_walker::FollowLinks::Never);
+	choose_latest(&mut selected, last_index(matches, "follow_all"), tau_walker::FollowLinks::Always);
 	selected.1
 }
 
@@ -1074,22 +1074,22 @@ fn search_file_path<M: Matcher, W: Write>(
 	}
 }
 
-fn grep_walk_request(root: &Path, follow_links: pi_walker::FollowLinks) -> pi_walker::WalkRequest {
-	pi_walker::WalkRequest::new(root)
+fn grep_walk_request(root: &Path, follow_links: tau_walker::FollowLinks) -> tau_walker::WalkRequest {
+	tau_walker::WalkRequest::new(root)
 		.hidden(true)
 		.gitignore(false)
 		.skip_git(false)
 		.skip_node_modules(false)
 		.follow_links(follow_links)
-		.detail(pi_walker::WalkDetail::Minimal)
-		.order(pi_walker::WalkOrder::Unordered)
+		.detail(tau_walker::WalkDetail::Minimal)
+		.order(tau_walker::WalkOrder::Unordered)
 		.emit_root(true)
 		.depth(0, usize::MAX)
-		.visit_order(pi_walker::VisitOrder::PreOrder)
-		.directory_errors(pi_walker::DirectoryErrorMode::Visit)
+		.visit_order(tau_walker::VisitOrder::PreOrder)
+		.directory_errors(tau_walker::DirectoryErrorMode::Visit)
 		.same_file_system(false)
 		.cache(false)
-		.filter(pi_walker::WalkFilter::all())
+		.filter(tau_walker::WalkFilter::all())
 }
 
 /// Recursively search a directory operand while pruning excluded directories.
@@ -1102,7 +1102,7 @@ fn search_dir<M: Matcher, W: Write>(
 	searcher: &mut Searcher,
 	opts: &Options,
 	rules: &PathRules,
-	follow_links: pi_walker::FollowLinks,
+	follow_links: tau_walker::FollowLinks,
 	out: &mut W,
 	had_error: &mut bool,
 ) -> io::Result<bool> {
@@ -1119,20 +1119,20 @@ fn search_dir<M: Matcher, W: Write>(
 				Ok::<(), io::Error>(())
 			}
 		},
-		|entry: pi_walker::EntryMeta<'_>| {
+		|entry: tau_walker::EntryMeta<'_>| {
 			if opts.quiet && any {
-				return Ok(pi_walker::WalkDecision::Stop);
+				return Ok(tau_walker::WalkDecision::Stop);
 			}
-			if entry.file_type == pi_walker::FileType::Dir {
+			if entry.file_type == tau_walker::FileType::Dir {
 				if entry.depth > 0 && !rules.allows_dir(Path::new(entry.relative_path)) {
-					return Ok(pi_walker::WalkDecision::SkipDescend);
+					return Ok(tau_walker::WalkDecision::SkipDescend);
 				}
-				return Ok(pi_walker::WalkDecision::Include);
+				return Ok(tau_walker::WalkDecision::Include);
 			}
-			if entry.file_type != pi_walker::FileType::File
+			if entry.file_type != tau_walker::FileType::File
 				|| !rules.allows_file(Path::new(entry.relative_path))
 			{
-				return Ok(pi_walker::WalkDecision::Skip);
+				return Ok(tau_walker::WalkDecision::Skip);
 			}
 			let mut entry_had_error = had_error_state.get();
 			let matched = search_file_path(
@@ -1149,12 +1149,12 @@ fn search_dir<M: Matcher, W: Write>(
 			had_error_state.set(entry_had_error);
 			any |= matched;
 			if opts.quiet && any {
-				Ok(pi_walker::WalkDecision::Stop)
+				Ok(tau_walker::WalkDecision::Stop)
 			} else {
-				Ok(pi_walker::WalkDecision::Include)
+				Ok(tau_walker::WalkDecision::Include)
 			}
 		},
-		|error: pi_walker::DirectoryError<'_>| {
+		|error: tau_walker::DirectoryError<'_>| {
 			had_error_state.set(true);
 			if !opts.no_messages {
 				let display_path = display_path_for_operand(operand, resolved, error.path);
@@ -1165,31 +1165,31 @@ fn search_dir<M: Matcher, W: Write>(
 					error.error
 				);
 			}
-			Ok(pi_walker::WalkDecision::Include)
+			Ok(tau_walker::WalkDecision::Include)
 		},
 	);
 	*had_error |= had_error_state.get();
 	match walk {
-		Ok(pi_walker::WalkStatus::Complete | pi_walker::WalkStatus::Stopped) => Ok(any),
+		Ok(tau_walker::WalkStatus::Complete | tau_walker::WalkStatus::Stopped) => Ok(any),
 		// Propagate BrokenPipe to stop the walk; the host maps its status.
-		Err(pi_walker::WalkError::Interrupted(error))
+		Err(tau_walker::WalkError::Interrupted(error))
 			if error.kind() == io::ErrorKind::BrokenPipe =>
 		{
 			Err(error)
 		},
-		Err(pi_walker::WalkError::Interrupted(_)) if host.is_cancelled() => {
+		Err(tau_walker::WalkError::Interrupted(_)) if host.is_cancelled() => {
 			// The shell wrapper owns the user-visible cancellation status.
 			*had_error = true;
 			Ok(any)
 		},
-		Err(pi_walker::WalkError::Interrupted(error)) => {
+		Err(tau_walker::WalkError::Interrupted(error)) => {
 			*had_error = true;
 			if !opts.no_messages {
 				let _ = writeln!(host.stderr, "grep: {error}");
 			}
 			Ok(any)
 		},
-		Err(pi_walker::WalkError::InvalidData { path, message }) => {
+		Err(tau_walker::WalkError::InvalidData { path, message }) => {
 			*had_error = true;
 			if !opts.no_messages {
 				let display_path = display_path_for_operand(operand, resolved, &path);
@@ -1335,7 +1335,7 @@ fn execute_search<M: Matcher>(
 	matcher: &M,
 	files: &[OsString],
 	directory_action: DirectoryAction,
-	follow_links: pi_walker::FollowLinks,
+	follow_links: tau_walker::FollowLinks,
 	rules: &PathRules,
 	opts: &Options,
 	max_count: Option<u64>,

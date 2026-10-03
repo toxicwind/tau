@@ -1,8 +1,8 @@
 import { afterAll, describe, expect, it } from "bun:test";
 import type { FetchImpl } from "@tau/tau-ai";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { localeToKl, searchDuckDuckGo } from "@tau/tau-coding-agent/web/search/providers/duckduckgo";
-import { parseSearchQuery } from "@tau/tau-coding-agent/web/search/query";
+import { ModelRegistry } from "tau/config/model-registry";
+import { localeToKl, searchDuckDuckGo } from "tau/web/search/providers/duckduckgo";
+import { parseSearchQuery } from "tau/web/search/query";
 import { createInMemoryAuthStorage } from "../../helpers/agent-session-setup";
 
 const authStorage = createInMemoryAuthStorage();

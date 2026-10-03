@@ -1,11 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { createLspWritethrough } from "@tau/tau-coding-agent/lsp";
+import { createLspWritethrough } from "tau/lsp";
 import { FileFormatResult } from "@tau/tau-tui/tools/lsp";
-import * as lspConfig from "@tau/tau-coding-agent/lsp/config";
-import type { LinterClient, ServerConfig } from "@tau/tau-coding-agent/lsp/types";
-import { addFileWriteFallback } from "@tau/tau-coding-agent/tools/file-write-fallback";
+import * as lspConfig from "tau/lsp/config";
+import type { LinterClient, ServerConfig } from "tau/lsp/types";
+import { addFileWriteFallback } from "tau/tools/file-write-fallback";
 import { TempDir } from "@tau/tau-utils";
 
 function createFormatter(format: (filePath: string, content: string) => Promise<string>): ServerConfig {

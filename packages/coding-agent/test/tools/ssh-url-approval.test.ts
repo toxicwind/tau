@@ -1,10 +1,10 @@
 import { beforeAll, describe, expect, it } from "bun:test";
 import * as os from "node:os";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
-import { GrepTool } from "@tau/tau-coding-agent/tools/grep";
-import { ReadTool } from "@tau/tau-coding-agent/tools/read";
-import { WriteTool } from "@tau/tau-coding-agent/tools/write";
+import { Settings } from "tau/config/settings";
+import type { ToolSession } from "tau/tools";
+import { GrepTool } from "tau/tools/grep";
+import { ReadTool } from "tau/tools/read";
+import { WriteTool } from "tau/tools/write";
 
 // Minimal ToolSession stub (block-images.test.ts shape). Approval functions are
 // pure over their args, and the write-execute selector reject throws before any

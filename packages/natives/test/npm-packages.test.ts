@@ -6,7 +6,7 @@ import { buildLeafManifest, generateNpmPackages } from "../scripts/gen-npm-packa
 
 describe("generated native npm leaf packages", () => {
 	it("builds an x64 leaf manifest that exposes all addon files without package exports", () => {
-		const addonFiles = ["pi_natives.linux-x64-baseline.node", "pi_natives.linux-x64-modern.node"];
+		const addonFiles = ["tau_natives.linux-x64-baseline.node", "tau_natives.linux-x64-modern.node"];
 		const manifest = buildLeafManifest({
 			tag: "linux-x64",
 			os: "linux",
@@ -32,7 +32,7 @@ describe("generated native npm leaf packages", () => {
 	});
 
 	it("uses the default addon as the main entry for non-x64 leaves", () => {
-		const addonFiles = ["pi_natives.darwin-arm64.node"];
+		const addonFiles = ["tau_natives.darwin-arm64.node"];
 		const manifest = buildLeafManifest({
 			tag: "darwin-arm64",
 			os: "darwin",
@@ -44,7 +44,7 @@ describe("generated native npm leaf packages", () => {
 		expect(manifest.name).toBe("@tau/tau-natives-darwin-arm64");
 		expect(manifest.os).toEqual(["darwin"]);
 		expect(manifest.cpu).toEqual(["arm64"]);
-		expect(manifest.main).toBe("./pi_natives.darwin-arm64.node");
+		expect(manifest.main).toBe("./tau_natives.darwin-arm64.node");
 		expect(addonFiles).toContain(manifest.main.slice("./".length));
 		expect("exports" in manifest).toBe(false);
 	});
@@ -59,13 +59,13 @@ describe("generated native npm leaf packages", () => {
 				Bun.write(path.join(packageDir, "THIRD-PARTY-NOTICES.txt"), "Notice payload\n"),
 			]);
 			const addonFiles = [
-				"pi_natives.linux-x64-baseline.node",
-				"pi_natives.linux-x64-modern.node",
-				"pi_natives.linux-arm64.node",
-				"pi_natives.darwin-x64-baseline.node",
-				"pi_natives.darwin-arm64.node",
-				"pi_natives.win32-x64-baseline.node",
-				"pi_natives.win32-arm64.node",
+				"tau_natives.linux-x64-baseline.node",
+				"tau_natives.linux-x64-modern.node",
+				"tau_natives.linux-arm64.node",
+				"tau_natives.darwin-x64-baseline.node",
+				"tau_natives.darwin-arm64.node",
+				"tau_natives.win32-x64-baseline.node",
+				"tau_natives.win32-arm64.node",
 			];
 			for (const file of addonFiles) {
 				await Bun.write(path.join(packageDir, "native", file), file);
@@ -81,12 +81,12 @@ describe("generated native npm leaf packages", () => {
 				"win32-arm64",
 			]);
 			const linuxX64 = leaves.find(leaf => leaf.tag === "linux-x64");
-			expect(linuxX64?.files).toEqual(["pi_natives.linux-x64-baseline.node", "pi_natives.linux-x64-modern.node"]);
-			expect(await Bun.file(path.join(packageDir, "npm/linux-x64/pi_natives.linux-x64-modern.node")).text()).toBe(
-				"pi_natives.linux-x64-modern.node",
+			expect(linuxX64?.files).toEqual(["tau_natives.linux-x64-baseline.node", "tau_natives.linux-x64-modern.node"]);
+			expect(await Bun.file(path.join(packageDir, "npm/linux-x64/tau_natives.linux-x64-modern.node")).text()).toBe(
+				"tau_natives.linux-x64-modern.node",
 			);
 			const manifest = await Bun.file(path.join(packageDir, "npm/linux-x64/package.json")).json();
-			expect(manifest.main).toBe("./pi_natives.linux-x64-baseline.node");
+			expect(manifest.main).toBe("./tau_natives.linux-x64-baseline.node");
 			expect(manifest.files).toEqual(["*.node", "README.md", "LICENSE", "THIRD-PARTY-NOTICES.txt"]);
 			expect(await Bun.file(path.join(packageDir, "npm/linux-x64/LICENSE")).text()).toBe("MIT payload\n");
 			expect(await Bun.file(path.join(packageDir, "npm/linux-x64/THIRD-PARTY-NOTICES.txt")).text()).toBe(
@@ -105,7 +105,7 @@ describe("generated native npm leaf packages", () => {
 			await fs.mkdir(path.join(packageDir, "native"), { recursive: true });
 			await Promise.all([
 				Bun.write(path.join(packageDir, "package.json"), JSON.stringify({ version: "15.5.15" })),
-				Bun.write(path.join(packageDir, "native/pi_natives.darwin-arm64.node"), "darwin"),
+				Bun.write(path.join(packageDir, "native/tau_natives.darwin-arm64.node"), "darwin"),
 				Bun.write(path.join(packageDir, "LICENSE"), "MIT payload\n"),
 				Bun.write(path.join(root, "THIRD-PARTY-NOTICES.txt"), "Repository notice\n"),
 			]);
@@ -125,7 +125,7 @@ describe("generated native npm leaf packages", () => {
 		try {
 			await fs.mkdir(path.join(packageDir, "native"));
 			await Bun.write(path.join(packageDir, "package.json"), JSON.stringify({ version: "15.5.15" }));
-			await Bun.write(path.join(packageDir, "native/pi_natives.darwin-arm64.node"), "darwin");
+			await Bun.write(path.join(packageDir, "native/tau_natives.darwin-arm64.node"), "darwin");
 
 			const leaves = await generateNpmPackages({ packageDir, dryRun: true });
 			expect(leaves.filter(leaf => leaf.missing).map(leaf => leaf.tag)).toEqual([

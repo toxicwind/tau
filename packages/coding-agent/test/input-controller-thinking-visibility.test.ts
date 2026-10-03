@@ -1,7 +1,7 @@
 import { describe, expect, it, type Mock, vi } from "bun:test";
 import { AssistantMessageComponent } from "@tau/tau-tui/chat/assistant-message";
-import { InputController } from "@tau/tau-coding-agent/modes/controllers/input-controller";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
+import { InputController } from "tau/modes/controllers/input-controller";
+import type { InteractiveModeContext } from "tau/modes/types";
 
 function createAssistant(): AssistantMessageComponent {
 	const assistant = Object.create(AssistantMessageComponent.prototype) as AssistantMessageComponent;

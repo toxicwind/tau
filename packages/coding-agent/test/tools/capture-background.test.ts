@@ -1,14 +1,14 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { AsyncJobManager } from "@tau/tau-coding-agent/async";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import * as evalIndex from "@tau/tau-coding-agent/eval";
-import * as bashExecutor from "@tau/tau-coding-agent/exec/bash-executor";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
-import { BashTool } from "@tau/tau-coding-agent/tools/bash";
-import { EvalTool } from "@tau/tau-coding-agent/tools/eval";
-import { ToolAbortError } from "@tau/tau-coding-agent/tools/tool-errors";
+import { AsyncJobManager } from "tau/async";
+import { Settings } from "tau/config/settings";
+import * as evalIndex from "tau/eval";
+import * as bashExecutor from "tau/exec/bash-executor";
+import { SessionManager } from "tau/session/session-manager";
+import type { ToolSession } from "tau/tools";
+import { BashTool } from "tau/tools/bash";
+import { EvalTool } from "tau/tools/eval";
+import { ToolAbortError } from "tau/tools/tool-errors";
 import { TempDir } from "@tau/tau-utils";
 
 function sessionFor(root: string, manager?: AsyncJobManager): ToolSession {

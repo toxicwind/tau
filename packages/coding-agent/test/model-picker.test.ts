@@ -3,12 +3,12 @@ import { beforeAll, describe, expect, type Mock, test, vi } from "bun:test";
 import { stripVTControlCharacters } from "node:util";
 import type { Model } from "@tau/tau-ai";
 import { buildModel } from "@tau/tau-catalog/build";
-import type { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
+import type { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
 import { ModelPickerComponent, type ModelPickerOptions } from "@tau/tau-tui/overlays/model-picker";
 import { resolveSegmentPalette } from "@tau/tau-tui/chrome/segment-track";
 import { getThemeByName, setThemeInstance, theme } from "@tau/tau-tui/theme";
-import type { ResolvedRoleModel } from "@tau/tau-coding-agent/session/agent-session";
+import type { ResolvedRoleModel } from "tau/session/agent-session";
 import type { TUI } from "@tau/tau-tui";
 
 function normalize(lines: readonly string[]): string {

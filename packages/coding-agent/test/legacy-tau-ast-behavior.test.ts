@@ -3,7 +3,7 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import * as url from "node:url";
-import { __rewriteLegacyExtensionSourceForTests } from "@tau/tau-coding-agent/extensibility/plugins/legacy-tau-compat";
+import { __rewriteLegacyExtensionSourceForTests } from "tau/extensibility/plugins/legacy-tau-compat";
 import { removeWithRetries } from "@tau/tau-utils";
 
 interface RewriteCase {

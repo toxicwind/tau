@@ -3,8 +3,8 @@ import * as nodeFs from "node:fs";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import * as pluginCli from "@tau/tau-coding-agent/cli/plugin-cli";
-import * as updateCli from "@tau/tau-coding-agent/cli/update-cli";
+import * as pluginCli from "tau/cli/plugin-cli";
+import * as updateCli from "tau/cli/update-cli";
 import {
 	buildBunInstallArgs,
 	buildHomebrewUpdateArgs,
@@ -36,8 +36,8 @@ import {
 	updateViaBinaryAt,
 	updateViaManager,
 	updateViaShimTakeover,
-} from "@tau/tau-coding-agent/cli/update-cli";
-import Update from "@tau/tau-coding-agent/commands/update";
+} from "tau/cli/update-cli";
+import Update from "tau/commands/update";
 import { $which, removeWithRetries } from "@tau/tau-utils";
 import type { CliConfig } from "@tau/tau-utils/cli";
 import { getThemeByName, setThemeInstance } from "@tau/tau-tui/theme";
@@ -631,7 +631,7 @@ describe("update-cli package manager commands", () => {
 
 		expect(args.slice(0, 2)).toEqual(["install", "-g"]);
 		expect(args).toContain("--registry=https://registry.npmjs.org/");
-		expect(args).toContain("@tau/tau-coding-agent@16.3.15");
+		expect(args).toContain("tau@16.3.15");
 		expect(args).toContain("@tau/tau-natives@16.3.15");
 		expect(args).toContain("@tau/tau-natives-win32-x64@16.3.15");
 	});
@@ -674,20 +674,20 @@ describe("update-cli npm rename contract", () => {
 	it("removes the old agent package and its natives companions when both names moved", () => {
 		const packages = { pkg: "@new/tau", natives: "@new/natives" };
 		expect(buildRenameCleanupPackages(packages, "darwin-arm64")).toEqual([
-			"@tau/tau-coding-agent",
+			"tau",
 			"@tau/tau-natives",
 			"@tau/tau-natives-darwin-arm64",
 		]);
 		expect(buildRenameCleanupPackages(packages, "linux-arm")).toEqual([
-			"@tau/tau-coding-agent",
+			"tau",
 			"@tau/tau-natives",
 		]);
 	});
 
 	it("keeps the natives packages on an agent-only rename so cleanup cannot strip the addon the new install pinned", () => {
 		const packages = { pkg: "@new/tau", natives: "@tau/tau-natives" };
-		expect(buildRenameCleanupPackages(packages, "darwin-arm64")).toEqual(["@tau/tau-coding-agent"]);
-		expect(buildRenameCleanupPackages(packages, "linux-arm")).toEqual(["@tau/tau-coding-agent"]);
+		expect(buildRenameCleanupPackages(packages, "darwin-arm64")).toEqual(["tau"]);
+		expect(buildRenameCleanupPackages(packages, "linux-arm")).toEqual(["tau"]);
 	});
 });
 
@@ -802,7 +802,7 @@ describe("update-cli bun install command", () => {
 			"-g",
 			"--no-cache",
 			"--registry=https://registry.npmjs.org/",
-			"@tau/tau-coding-agent@15.7.6",
+			"tau@15.7.6",
 		]);
 	});
 
@@ -1788,7 +1788,7 @@ describe("update-cli manager update recovery", () => {
 	const release: ReleaseInfo = {
 		tag: "v18.0.1",
 		version: "18.0.1",
-		packages: { pkg: "@tau/tau-coding-agent", natives: "@tau/tau-natives" },
+		packages: { pkg: "tau", natives: "@tau/tau-natives" },
 	};
 	const launcherPath = "C:/Users/test/AppData/Roaming/npm/tau.cmd";
 

@@ -3,10 +3,10 @@ import type { FetchImpl } from "@tau/tau-ai/types";
 import { resolveCodexResponsesUrl } from "@tau/tau-ai/providers/openai-codex-responses";
 import { CODEX_BASE_URL } from "@tau/tau-catalog/wire/codex";
 import { buildModel } from "@tau/tau-catalog/build";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { AgentStorage } from "@tau/tau-coding-agent/session/agent-storage";
-import type { SearchParams } from "@tau/tau-coding-agent/web/search/providers/base";
-import { searchCodex } from "@tau/tau-coding-agent/web/search/providers/codex";
+import { ModelRegistry } from "tau/config/model-registry";
+import { AgentStorage } from "tau/session/agent-storage";
+import type { SearchParams } from "tau/web/search/providers/base";
+import { searchCodex } from "tau/web/search/providers/codex";
 import { createInMemoryAuthStorage } from "../../helpers/agent-session-setup";
 
 function makeSseResponse(): string {

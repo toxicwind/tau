@@ -17,10 +17,10 @@
  */
 
 import { afterEach, describe, expect, it, spyOn, vi } from "bun:test";
-import type { CmuxKind } from "@tau/tau-coding-agent/tools/browser/cmux/rpc";
-import { CmuxSocketClient } from "@tau/tau-coding-agent/tools/browser/cmux/socket-client";
-import { acquireBrowser } from "@tau/tau-coding-agent/tools/browser/registry";
-import type { BrowserHandle } from "@tau/tau-coding-agent/tools/browser/registry";
+import type { CmuxKind } from "tau/tools/browser/cmux/rpc";
+import { CmuxSocketClient } from "tau/tools/browser/cmux/socket-client";
+import { acquireBrowser } from "tau/tools/browser/registry";
+import type { BrowserHandle } from "tau/tools/browser/registry";
 import {
 	acquireTab,
 	armIdleCloseForOwner,
@@ -37,10 +37,10 @@ import {
 	runInTab,
 	setTabFrozenForTest,
 	unfreezeTabSessionForTest,
-} from "@tau/tau-coding-agent/tools/browser/tab-supervisor";
-import { ToolAbortError } from "@tau/tau-coding-agent/tools/tool-errors";
-import type { PendingRun, TabSession } from "@tau/tau-coding-agent/tools/browser/tab-supervisor";
-import type { ToolSession } from "@tau/tau-coding-agent/tools/index";
+} from "tau/tools/browser/tab-supervisor";
+import { ToolAbortError } from "tau/tools/tool-errors";
+import type { PendingRun, TabSession } from "tau/tools/browser/tab-supervisor";
+import type { ToolSession } from "tau/tools/index";
 import { chromiumAvailable } from "./chromium-probe";
 
 const CHROMIUM_AVAILABLE = await chromiumAvailable();

@@ -1,9 +1,9 @@
 import { Agent } from "@tau/tau-agent-core";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { MCPTool } from "@tau/tau-coding-agent/mcp/tool-bridge";
-import type { MCPServerConnection, MCPToolDefinition } from "@tau/tau-coding-agent/mcp/types";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import { SessionTools, type SessionToolsHost } from "@tau/tau-coding-agent/session/session-tools";
+import { Settings } from "tau/config/settings";
+import { MCPTool } from "tau/mcp/tool-bridge";
+import type { MCPServerConnection, MCPToolDefinition } from "tau/mcp/types";
+import { SessionManager } from "tau/session/session-manager";
+import { SessionTools, type SessionToolsHost } from "tau/session/session-tools";
 
 interface V8HeapSnapshot {
 	snapshot: {

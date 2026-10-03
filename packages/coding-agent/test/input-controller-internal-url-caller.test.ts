@@ -1,11 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { KeybindingsManager } from "@tau/tau-tui/app-keybindings";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { InternalUrlRouter } from "@tau/tau-coding-agent/internal-urls/router";
-import { InputController } from "@tau/tau-coding-agent/modes/controllers/input-controller";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
-import { AgentRegistry } from "@tau/tau-coding-agent/registry/agent-registry";
-import type { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import { Settings } from "tau/config/settings";
+import { InternalUrlRouter } from "tau/internal-urls/router";
+import { InputController } from "tau/modes/controllers/input-controller";
+import type { InteractiveModeContext } from "tau/modes/types";
+import { AgentRegistry } from "tau/registry/agent-registry";
+import type { AgentSession } from "tau/session/agent-session";
 
 const SHARED_CWD = "/tmp/input-controller-internal-url-caller";
 

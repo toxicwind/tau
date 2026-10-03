@@ -8,9 +8,9 @@
 
 import { describe, expect, it } from "bun:test";
 import type { Usage } from "@tau/tau-ai";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import { SqlSessionStorage } from "@tau/tau-coding-agent/session/sql-session-storage";
-import { SessionWriteConflictError } from "@tau/tau-coding-agent/session/session-storage";
+import { SessionManager } from "tau/session/session-manager";
+import { SqlSessionStorage } from "tau/session/sql-session-storage";
+import { SessionWriteConflictError } from "tau/session/session-storage";
 import { SQL } from "bun";
 
 function fakeUsage(input: number, output: number): Usage {

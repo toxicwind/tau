@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { handleOllama } from "@tau/tau-coding-agent/web/scrapers/ollama";
-import * as scrapers from "@tau/tau-coding-agent/web/scrapers/types";
+import { handleOllama } from "tau/web/scrapers/ollama";
+import * as scrapers from "tau/web/scrapers/types";
 
 describe("handleOllama URL parsing & route rejection", () => {
 	afterEach(() => {

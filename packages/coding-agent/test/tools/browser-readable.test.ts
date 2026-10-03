@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { extractReadableFromHtml } from "@tau/tau-coding-agent/tools/browser";
+import { extractReadableFromHtml } from "tau/tools/browser";
 
 describe("browser readable extraction", () => {
 	it("extracts markdown content from article-style pages", async () => {

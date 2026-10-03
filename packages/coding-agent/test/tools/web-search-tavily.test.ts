@@ -1,8 +1,8 @@
 import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import type { FetchImpl } from "@tau/tau-ai";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { searchTavily } from "@tau/tau-coding-agent/web/search/providers/tavily";
-import type { SearchProviderError } from "@tau/tau-coding-agent/web/search/types";
+import { ModelRegistry } from "tau/config/model-registry";
+import { searchTavily } from "tau/web/search/providers/tavily";
+import type { SearchProviderError } from "tau/web/search/types";
 import { createInMemoryAuthStorage } from "../helpers/agent-session-setup";
 
 const authStorage = createInMemoryAuthStorage();

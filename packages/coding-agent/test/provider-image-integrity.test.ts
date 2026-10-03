@@ -18,7 +18,7 @@ import type {
 	UserMessage,
 } from "@tau/tau-ai";
 import { buildModel } from "@tau/tau-catalog/build";
-import { dropUnreadableContextImages } from "@tau/tau-coding-agent/session/provider-image-budget";
+import { dropUnreadableContextImages } from "tau/session/provider-image-budget";
 
 /**
  * 1x1 PNG whose chunk framing does not land exactly on `IEND`, yet every

@@ -6,12 +6,12 @@ import { type } from "@tau/tautype";
 import type { AgentTool } from "@tau/tau-agent-core";
 import { AuthStorage } from "@tau/tau-ai";
 import { getBundledModel } from "@tau/tau-catalog/models";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import type { CustomTool } from "@tau/tau-coding-agent/extensibility/custom-tools/types";
-import { createAgentSession } from "@tau/tau-coding-agent/sdk";
-import type { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
+import type { CustomTool } from "tau/extensibility/custom-tools/types";
+import { createAgentSession } from "tau/sdk";
+import type { AgentSession } from "tau/session/agent-session";
+import { SessionManager } from "tau/session/session-manager";
 import { removeSyncWithRetries, Snowflake } from "@tau/tau-utils";
 
 // Regression for issue #5305: image-gen is registered as a custom tool, and

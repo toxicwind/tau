@@ -2,8 +2,8 @@ import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { parseArgs } from "@tau/tau-coding-agent/cli/args";
-import { applyStartupCwd } from "@tau/tau-coding-agent/cli/startup-cwd";
+import { parseArgs } from "tau/cli/args";
+import { applyStartupCwd } from "tau/cli/startup-cwd";
 import * as utils from "@tau/tau-utils";
 
 const originalProjectDir = utils.getProjectDir();

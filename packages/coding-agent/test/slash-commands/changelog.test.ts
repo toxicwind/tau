@@ -1,14 +1,14 @@
 import { describe, expect, it, vi } from "bun:test";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
-import { executeAcpBuiltinSlashCommand } from "@tau/tau-coding-agent/slash-commands/acp-builtins";
-import { executeBuiltinSlashCommand } from "@tau/tau-coding-agent/slash-commands/builtin-registry";
-import type { SlashCommandRuntime } from "@tau/tau-coding-agent/slash-commands/types";
+import type { InteractiveModeContext } from "tau/modes/types";
+import { executeAcpBuiltinSlashCommand } from "tau/slash-commands/acp-builtins";
+import { executeBuiltinSlashCommand } from "tau/slash-commands/builtin-registry";
+import type { SlashCommandRuntime } from "tau/slash-commands/types";
 import {
 	CHANGELOG_COMMAND_USAGE,
 	getChangelogPath,
 	parseChangelog,
 	RECENT_CHANGELOG_ENTRY_LIMIT,
-} from "@tau/tau-coding-agent/utils/changelog";
+} from "tau/utils/changelog";
 
 function versionHeadings(markdown: string): string[] {
 	return markdown.match(/^## \[[^\]]+\]/gm) ?? [];

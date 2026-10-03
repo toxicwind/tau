@@ -1,14 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { applyDirenvPreflight, executeBash } from "@tau/tau-coding-agent/exec/bash-executor";
+import { applyDirenvPreflight, executeBash } from "tau/exec/bash-executor";
 import {
 	cleanSpawnEnvForTests,
 	clearDirenvCachesForTests,
 	findEnvrc,
 	loadDirenvEnv,
 	parseDirenvExport,
-} from "@tau/tau-coding-agent/exec/direnv";
+} from "tau/exec/direnv";
 import { $which, TempDir } from "@tau/tau-utils";
 
 /** Real-direnv cases need the binary on PATH; skip cleanly when it's absent so

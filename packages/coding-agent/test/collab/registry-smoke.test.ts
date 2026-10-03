@@ -10,8 +10,8 @@ import { afterEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { CollabListJsonOutput } from "@tau/tau-coding-agent/cli/collab-cli";
-import { COLLAB_REGISTRY_VERSION, listCollabHosts } from "@tau/tau-coding-agent/collab/registry";
+import type { CollabListJsonOutput } from "tau/cli/collab-cli";
+import { COLLAB_REGISTRY_VERSION, listCollabHosts } from "tau/collab/registry";
 
 const HELPER_PATH = path.resolve(import.meta.dir, "helpers/registry-host-process.ts");
 const CLI_PATH = path.resolve(import.meta.dir, "../../src/cli.ts");
@@ -136,6 +136,7 @@ describe("collab host registry (two-process smoke)", () => {
 			TAU_SMOKE_MARKER: marker,
 			TAU_SMOKE_INSTANCE_ID: instanceId,
 		};
+		delete env.TAU_CONFIG_DIR;
 		delete env.PI_CONFIG_DIR;
 		delete env.PI_PROFILE;
 		delete env.TAU_PROFILE;

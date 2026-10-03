@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from "bun:test";
 import type { FetchImpl } from "@tau/tau-ai";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { ModelRegistry } from "tau/config/model-registry";
 import { buildModel } from "@tau/tau-catalog/build";
-import { searchAnthropic } from "@tau/tau-coding-agent/web/search/providers/anthropic";
+import { searchAnthropic } from "tau/web/search/providers/anthropic";
 import { createInMemoryAuthStorage } from "../../helpers/agent-session-setup";
 
 const SELECTED_BASE_URL = "https://anthropic-grounding.example.test/v1";

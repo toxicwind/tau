@@ -6,8 +6,8 @@ import {
 	resolvePluginExtensionPaths,
 	resolvePluginManifestEntries,
 	resolvePluginToolPaths,
-} from "@tau/tau-coding-agent/extensibility/plugins/loader";
-import type { InstalledPlugin, PluginManifest } from "@tau/tau-coding-agent/extensibility/plugins/types";
+} from "tau/extensibility/plugins/loader";
+import type { InstalledPlugin, PluginManifest } from "tau/extensibility/plugins/types";
 import { removeSyncWithRetries } from "@tau/tau-utils";
 
 function makePlugin(pluginPath: string, manifest: PluginManifest): InstalledPlugin {

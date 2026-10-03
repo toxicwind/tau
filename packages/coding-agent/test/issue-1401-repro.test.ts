@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { processFileArguments } from "@tau/tau-coding-agent/cli/file-processor";
+import { processFileArguments } from "tau/cli/file-processor";
 import { removeSyncWithRetries } from "@tau/tau-utils";
 
 function createPdfWithText(text: string): string {

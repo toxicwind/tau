@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
-import { createMemoryRuntimeContext, resolveMemoryBackend } from "@tau/tau-coding-agent/memory-backend";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
+import { createMemoryRuntimeContext, resolveMemoryBackend } from "tau/memory-backend";
 
 describe("resolveMemoryBackend", () => {
 	beforeEach(() => {

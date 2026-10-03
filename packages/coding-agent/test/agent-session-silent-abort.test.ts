@@ -18,13 +18,13 @@ import { Agent } from "@tau/tau-agent-core";
 import type { AssistantMessage, TextContent } from "@tau/tau-ai";
 import * as AIError from "@tau/tau-ai/error";
 import { getBundledModel } from "@tau/tau-catalog/models";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { SecretObfuscator } from "@tau/tau-coding-agent/secrets/obfuscator";
-import { AgentSession, type AgentSessionEvent } from "@tau/tau-coding-agent/session/agent-session";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
-import { SILENT_ABORT_MARKER } from "@tau/tau-coding-agent/session/messages";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
+import { SecretObfuscator } from "tau/secrets/obfuscator";
+import { AgentSession, type AgentSessionEvent } from "tau/session/agent-session";
+import { AuthStorage } from "tau/session/auth-storage";
+import { SILENT_ABORT_MARKER } from "tau/session/messages";
+import { SessionManager } from "tau/session/session-manager";
 import { TempDir } from "@tau/tau-utils";
 
 function makeAbortedAssistantMessage(text = "partial draft"): AssistantMessage {

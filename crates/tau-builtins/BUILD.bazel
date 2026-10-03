@@ -139,7 +139,7 @@ rust_library(
         "util.yes",
         "utils",
     ],
-    crate_name = "pi_builtins",
+    crate_name = "tau_builtins",
     edition = "2024",
     proc_macro_deps = all_crate_deps(proc_macro = True),
     version = "0.2.0",

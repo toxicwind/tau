@@ -1,24 +1,24 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
 import * as ai from "@tau/tau-ai";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
 import {
 	renderSharpshooterSessions,
 	runSharpshooterConsolidation,
-} from "@tau/tau-coding-agent/sharpshooter/consolidate";
+} from "tau/sharpshooter/consolidate";
 import {
 	readSharpshooterState,
 	sharpshooterBankDir,
 	sharpshooterMemoryFilePath,
 	writeSharpshooterState,
-} from "@tau/tau-coding-agent/sharpshooter/paths";
+} from "tau/sharpshooter/paths";
 import {
 	appendSharpshooterDelta,
 	listSharpshooterDeltas,
 	type SharpshooterSessionDeltas,
-} from "@tau/tau-coding-agent/sharpshooter/queue";
-import type { SharpshooterDelta } from "@tau/tau-coding-agent/sharpshooter/types";
+} from "tau/sharpshooter/queue";
+import type { SharpshooterDelta } from "tau/sharpshooter/types";
 import { TempDir } from "@tau/tau-utils";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 

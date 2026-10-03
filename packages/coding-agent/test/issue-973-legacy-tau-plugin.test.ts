@@ -1,11 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { loadExtensions } from "@tau/tau-coding-agent/extensibility/extensions/loader";
+import { loadExtensions } from "tau/extensibility/extensions/loader";
 import { TempDir } from "@tau/tau-utils";
 
-const currentPiCodingAgentPath = Bun.resolveSync("@tau/tau-coding-agent", import.meta.dir);
-const currentPiExtensionsPath = Bun.resolveSync("@tau/tau-coding-agent/extensibility/extensions", import.meta.dir);
+const currentPiCodingAgentPath = Bun.resolveSync("tau", import.meta.dir);
+const currentPiExtensionsPath = Bun.resolveSync("tau/extensibility/extensions", import.meta.dir);
 
 describe("issue #973: legacy Pi plugin imports", () => {
 	let projectDir: TempDir;

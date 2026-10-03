@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
-import { handleReddit } from "@tau/tau-coding-agent/web/scrapers/reddit";
-import { handleStackOverflow } from "@tau/tau-coding-agent/web/scrapers/stackoverflow";
-import { handleTwitter } from "@tau/tau-coding-agent/web/scrapers/twitter";
+import { handleReddit } from "tau/web/scrapers/reddit";
+import { handleStackOverflow } from "tau/web/scrapers/stackoverflow";
+import { handleTwitter } from "tau/web/scrapers/twitter";
 
 const SKIP = !Bun.env.WEB_FETCH_INTEGRATION;
 

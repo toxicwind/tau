@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it } from "bun:test";
 import {
 	createConfigHeaderResolver,
 	invalidateAllCommandConfigs,
-} from "@tau/tau-coding-agent/config/resolve-config-value";
+} from "tau/config/resolve-config-value";
 
 const TEMP_ENV_KEYS: string[] = [];
 

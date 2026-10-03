@@ -2,15 +2,15 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { disableProvider, enableProvider } from "@tau/tau-coding-agent/capability";
-import { clearCache as clearFsCache } from "@tau/tau-coding-agent/capability/fs";
-import { clearAgentPluginRootCache } from "@tau/tau-coding-agent/discovery/agent-plugin-format";
+import { disableProvider, enableProvider } from "tau/capability";
+import { clearCache as clearFsCache } from "tau/capability/fs";
+import { clearAgentPluginRootCache } from "tau/discovery/agent-plugin-format";
 import {
 	clearOmpExtensionCliRoots,
 	injectOmpExtensionCliRoots,
-} from "@tau/tau-coding-agent/discovery/tau-extension-roots";
-import { clearClaudePluginRootsCache, injectPluginDirRoots } from "@tau/tau-coding-agent/discovery/helpers";
-import { discoverAgents } from "@tau/tau-coding-agent/task/discovery";
+} from "tau/discovery/tau-extension-roots";
+import { clearClaudePluginRootsCache, injectPluginDirRoots } from "tau/discovery/helpers";
+import { discoverAgents } from "tau/task/discovery";
 import { removeWithRetries } from "@tau/tau-utils";
 
 const TAU_AGENT_MD = [

@@ -9,13 +9,13 @@
  * in-memory transport, so the suite stays fast and time-independent.
  */
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "bun:test";
-import { importRoomKey } from "@tau/tau-coding-agent/collab/crypto";
-import { CollabHost } from "@tau/tau-coding-agent/collab/host";
-import { COLLAB_PROTO, type CollabFrame, parseCollabLink } from "@tau/tau-coding-agent/collab/protocol";
-import { CollabSocket } from "@tau/tau-coding-agent/collab/relay-client";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
-import { AgentRegistry } from "@tau/tau-coding-agent/registry/agent-registry";
-import type { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import { importRoomKey } from "tau/collab/crypto";
+import { CollabHost } from "tau/collab/host";
+import { COLLAB_PROTO, type CollabFrame, parseCollabLink } from "tau/collab/protocol";
+import { CollabSocket } from "tau/collab/relay-client";
+import type { InteractiveModeContext } from "tau/modes/types";
+import { AgentRegistry } from "tau/registry/agent-registry";
+import type { AgentSession } from "tau/session/agent-session";
 import { TempDir } from "@tau/tau-utils";
 import { installInMemoryRelay, uninstallInMemoryRelay } from "./helpers/in-memory-relay";
 

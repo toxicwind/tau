@@ -26,9 +26,9 @@ import {
 	resolveRoleChain,
 	rolePriorityDefaults,
 	resolveProviderModelReference,
-} from "@tau/tau-coding-agent/config/model-resolver";
-import { DEFAULT_MODEL_ROLE_ALIAS, LEGACY_MODEL_ROLE_ALIAS_PREFIX } from "@tau/tau-coding-agent/config/model-roles";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
+} from "tau/config/model-resolver";
+import { DEFAULT_MODEL_ROLE_ALIAS, LEGACY_MODEL_ROLE_ALIAS_PREFIX } from "tau/config/model-roles";
+import { Settings } from "tau/config/settings";
 
 // Mock models for testing
 const mockModels: Model<"anthropic-messages">[] = [

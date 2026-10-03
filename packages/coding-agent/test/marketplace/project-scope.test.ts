@@ -16,14 +16,14 @@ import {
 	clearClaudePluginRootsCache,
 	listClaudePluginRoots,
 	resolveActiveProjectRegistryPath,
-} from "@tau/tau-coding-agent/discovery/helpers";
-import type { InstalledPluginEntry } from "@tau/tau-coding-agent/extensibility/plugins/marketplace";
+} from "tau/discovery/helpers";
+import type { InstalledPluginEntry } from "tau/extensibility/plugins/marketplace";
 import {
 	addInstalledPlugin,
 	buildPluginId,
 	readInstalledPluginsRegistry,
 	writeInstalledPluginsRegistry,
-} from "@tau/tau-coding-agent/extensibility/plugins/marketplace";
+} from "tau/extensibility/plugins/marketplace";
 import { removeSyncWithRetries } from "@tau/tau-utils";
 
 // ── Fixtures ──────────────────────────────────────────────────────────────────

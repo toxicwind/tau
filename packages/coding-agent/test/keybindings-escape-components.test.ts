@@ -2,12 +2,12 @@ import { createModelBrowserSource } from "../src/modes/model-browser-source";
 import { afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
 import { getBundledModel } from "@tau/tau-catalog/models";
 import { KeybindingsManager } from "@tau/tau-tui/app-keybindings";
-import type { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
+import type { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
 import { ModelHubComponent } from "@tau/tau-tui/overlays/model-hub";
 import { SessionSelectorComponent } from "@tau/tau-tui/overlays/session-selector";
 import { initTheme } from "@tau/tau-tui/theme";
-import type { SessionInfo } from "@tau/tau-coding-agent/session/session-listing";
+import type { SessionInfo } from "tau/session/session-listing";
 import { setKeybindings, type TUI } from "@tau/tau-tui";
 
 beforeAll(() => {

@@ -31,7 +31,7 @@ const BUNDLED_PACKAGES: readonly BundledPackage[] = [
 		identifier: "PiCodingAgent",
 		rootShim: "legacy-tau-coding-agent-shim.ts",
 		// Renamed to `tau` in the tau->tau rebrand; the published scope did not move with it.
-		legacyName: "@tau/tau-coding-agent",
+		legacyName: "tau",
 	},
 	{ dir: "natives", identifier: "PiNatives", rootShim: null },
 	{ dir: "tui", identifier: "PiTui", rootShim: "legacy-tau-tui-shim.ts" },

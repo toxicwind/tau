@@ -1,11 +1,11 @@
 import { beforeAll, describe, expect, it } from "bun:test";
 import type { AgentTool } from "@tau/tau-agent-core";
 import type { TSchema } from "@tau/tau-ai";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
 import { renderMCPResult } from "@tau/tau-tui/tools/mcp";
-import { DeferredMCPTool, MCPTool } from "@tau/tau-coding-agent/mcp/tool-bridge";
+import { DeferredMCPTool, MCPTool } from "tau/mcp/tool-bridge";
 import { type MCPToolDetails } from "@tau/tau-tui/tools/mcp";
-import type { MCPServerConnection, MCPToolDefinition, MCPTransport } from "@tau/tau-coding-agent/mcp/types";
+import type { MCPServerConnection, MCPToolDefinition, MCPTransport } from "tau/mcp/types";
 import { ToolExecutionComponent } from "@tau/tau-tui/chat/tool-execution";
 import { theme as activeTheme, getThemeByName, initTheme } from "@tau/tau-tui/theme";
 import { type OutputMeta } from "@tau/tau-tui/tools/output-meta";

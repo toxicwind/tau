@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import { executePythonWithKernel } from "@tau/tau-coding-agent/eval/py/executor";
-import type { KernelDisplayOutput } from "@tau/tau-coding-agent/eval/py/kernel";
+import { executePythonWithKernel } from "tau/eval/py/executor";
+import type { KernelDisplayOutput } from "tau/eval/py/kernel";
 import { FakeKernel } from "./helpers";
 
 describe("executePythonWithKernel display outputs", () => {

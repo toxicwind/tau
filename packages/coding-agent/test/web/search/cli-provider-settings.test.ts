@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import { stripVTControlCharacters } from "node:util";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
 import { __resetDirsFromEnvForTests, setAgentDir, TempDir } from "@tau/tau-utils";
 import { runSearchCommand } from "../../../src/cli/web-search-cli";
 

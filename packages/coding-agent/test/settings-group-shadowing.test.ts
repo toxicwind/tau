@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { dropSettingsGroupShadows } from "@tau/tau-coding-agent/config/settings";
+import { dropSettingsGroupShadows } from "tau/config/settings";
 
 describe("dropSettingsGroupShadows", () => {
 	it("drops a non-object leaf that would shadow a settings group", () => {

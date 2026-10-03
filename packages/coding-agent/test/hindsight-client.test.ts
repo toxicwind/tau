@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { HindsightApi } from "@tau/tau-coding-agent/hindsight/client";
+import { HindsightApi } from "tau/hindsight/client";
 
 function captureRequestBodies(): string[] {
 	const bodies: string[] = [];

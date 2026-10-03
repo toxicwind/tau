@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
 import { ToolExecutionComponent } from "@tau/tau-tui/chat/tool-execution";
 import * as themeModule from "@tau/tau-tui/theme";
 import { toolRenderers } from "@tau/tau-tui/tools";

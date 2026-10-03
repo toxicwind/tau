@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { parseInternalUrl } from "@tau/tau-coding-agent/internal-urls/parse";
+import { parseInternalUrl } from "tau/internal-urls/parse";
 
 // ── Basic parsing (URLs that new URL() handles fine) ─────────────────
 

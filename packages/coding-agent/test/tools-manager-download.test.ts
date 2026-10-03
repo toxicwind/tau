@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { downloadFile } from "@tau/tau-coding-agent/utils/tools-manager";
+import { downloadFile } from "tau/utils/tools-manager";
 import { TempDir } from "@tau/tau-utils";
 
 function mockDownloadResponse(response: Response): void {

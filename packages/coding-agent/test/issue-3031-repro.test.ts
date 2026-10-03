@@ -21,11 +21,11 @@ import {
 	createMnemotauEmbedSubprocess,
 	MnemotauEmbedClient,
 	type MnemotauEmbedWorkerHandle,
-} from "@tau/tau-coding-agent/mnemotau/embed-client";
+} from "tau/mnemotau/embed-client";
 import type {
 	MnemotauEmbedWorkerInbound,
 	MnemotauEmbedWorkerOutbound,
-} from "@tau/tau-coding-agent/mnemotau/embed-protocol";
+} from "tau/mnemotau/embed-protocol";
 
 describe("issue #3031 — mnemotau embeddings live in an isolated subprocess", () => {
 	it("ping/pongs through the spawned worker subprocess and tears it down cleanly", async () => {
@@ -35,7 +35,7 @@ describe("issue #3031 — mnemotau embeddings live in an isolated subprocess", (
 		// starve nested Bun subprocess IPC on some Bun builds.
 		const repoRoot = path.resolve(import.meta.dir, "../../..");
 		const script =
-			'const { smokeTestMnemotauEmbedWorker } = await import("@tau/tau-coding-agent/mnemotau/embed-client"); await smokeTestMnemotauEmbedWorker({ timeoutMs: 15000 });';
+			'const { smokeTestMnemotauEmbedWorker } = await import("tau/mnemotau/embed-client"); await smokeTestMnemotauEmbedWorker({ timeoutMs: 15000 });';
 		const proc = Bun.spawn([process.execPath, "-e", script], {
 			cwd: repoRoot,
 			stdout: "pipe",

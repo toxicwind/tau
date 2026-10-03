@@ -1,7 +1,7 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
-import { CommandController } from "@tau/tau-coding-agent/modes/controllers/command-controller";
+import { CommandController } from "tau/modes/controllers/command-controller";
 import { getThemeByName, setThemeInstance } from "@tau/tau-tui/theme";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
+import type { InteractiveModeContext } from "tau/modes/types";
 
 function createContainer() {
 	return {

@@ -1,12 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { IrcBus } from "@tau/tau-coding-agent/irc/bus";
-import { AgentProtocolHandler } from "@tau/tau-coding-agent/internal-urls/agent-protocol";
-import { AgentLifecycleManager } from "@tau/tau-coding-agent/registry/agent-lifecycle";
-import { AgentRegistry } from "@tau/tau-coding-agent/registry/agent-registry";
-import type { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
-import { WriteTool } from "@tau/tau-coding-agent/tools/write";
+import { Settings } from "tau/config/settings";
+import { IrcBus } from "tau/irc/bus";
+import { AgentProtocolHandler } from "tau/internal-urls/agent-protocol";
+import { AgentLifecycleManager } from "tau/registry/agent-lifecycle";
+import { AgentRegistry } from "tau/registry/agent-registry";
+import type { AgentSession } from "tau/session/agent-session";
+import type { ToolSession } from "tau/tools";
+import { WriteTool } from "tau/tools/write";
 import type { IrcMessage } from "@tau/tau-tui/tools/irc";
 
 const received = new Map<string, IrcMessage[]>();

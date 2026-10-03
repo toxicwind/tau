@@ -2,23 +2,23 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import * as capability from "@tau/tau-coding-agent/capability";
-import type { CapabilityResult } from "@tau/tau-coding-agent/capability/types";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { resetActiveSkillsForTests, setActiveSkills } from "@tau/tau-coding-agent/extensibility/skills";
+import * as capability from "tau/capability";
+import type { CapabilityResult } from "tau/capability/types";
+import { Settings } from "tau/config/settings";
+import { resetActiveSkillsForTests, setActiveSkills } from "tau/extensibility/skills";
 import {
 	type InternalResource,
 	type InternalUrl,
 	InternalUrlRouter,
 	LocalProtocolHandler,
 	type ProtocolHandler,
-} from "@tau/tau-coding-agent/internal-urls";
-import { AgentRegistry } from "@tau/tau-coding-agent/registry/agent-registry";
-import type { SessionEntry } from "@tau/tau-coding-agent/session/session-entries";
-import * as sshFileTransfer from "@tau/tau-coding-agent/ssh/file-transfer";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
+} from "tau/internal-urls";
+import { AgentRegistry } from "tau/registry/agent-registry";
+import type { SessionEntry } from "tau/session/session-entries";
+import * as sshFileTransfer from "tau/ssh/file-transfer";
+import type { ToolSession } from "tau/tools";
 import { formatOutputNotice } from "@tau/tau-tui/tools/output-meta";
-import { ReadTool } from "@tau/tau-coding-agent/tools/read";
+import { ReadTool } from "tau/tools/read";
 import { removeWithRetries } from "@tau/tau-utils";
 import { GlobTool } from "../../src/tools/glob";
 import { GrepTool } from "../../src/tools/grep";

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { EnhancedPasteController } from "@tau/tau-coding-agent/utils/enhanced-paste";
+import { EnhancedPasteController } from "tau/utils/enhanced-paste";
 
 /**
  * Regression for https://github.com/toxicwind/tau/issues/2127

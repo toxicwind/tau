@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { computeEditorMaxHeight } from "@tau/tau-coding-agent/modes/interactive-mode";
+import { computeEditorMaxHeight } from "tau/modes/interactive-mode";
 
 describe("computeEditorMaxHeight", () => {
 	it("caps the editor within the comfortable band on roomy terminals", () => {

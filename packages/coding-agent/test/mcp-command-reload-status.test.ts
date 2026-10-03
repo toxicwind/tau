@@ -1,9 +1,9 @@
 import { beforeAll, describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { callTool } from "@tau/tau-coding-agent/mcp/client";
-import { MCPManager } from "@tau/tau-coding-agent/mcp/manager";
-import type { MCPStdioServerConfig } from "@tau/tau-coding-agent/mcp/types";
-import { MCPCommandController } from "@tau/tau-coding-agent/modes/controllers/mcp-command-controller";
+import { callTool } from "tau/mcp/client";
+import { MCPManager } from "tau/mcp/manager";
+import type { MCPStdioServerConfig } from "tau/mcp/types";
+import { MCPCommandController } from "tau/modes/controllers/mcp-command-controller";
 import { initTheme } from "@tau/tau-tui/theme";
 import { createInteractiveModeContext } from "./helpers/interactive-mode-context";
 import { TOOL_NAME, TOOL_RESULT } from "./fixtures/delayed-tool-mcp";

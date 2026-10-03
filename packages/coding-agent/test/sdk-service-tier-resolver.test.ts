@@ -1,11 +1,11 @@
 import { afterEach, describe, expect, it } from "bun:test";
 import * as path from "node:path";
 import type { Model } from "@tau/tau-ai";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { createAgentSession, type ExtensionFactory } from "@tau/tau-coding-agent/sdk";
-import type { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
+import { createAgentSession, type ExtensionFactory } from "tau/sdk";
+import type { AuthStorage } from "tau/session/auth-storage";
+import { SessionManager } from "tau/session/session-manager";
 import { TempDir } from "@tau/tau-utils";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 

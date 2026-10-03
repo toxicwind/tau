@@ -1,6 +1,6 @@
 import { Database } from "bun:sqlite";
 import { afterEach, beforeEach, expect, it } from "bun:test";
-import { HistoryStorage } from "@tau/tau-coding-agent/session/history-storage";
+import { HistoryStorage } from "tau/session/history-storage";
 import { TempDir } from "@tau/tau-utils";
 import { readTableSql } from "./helpers/sqlite-inspect";
 

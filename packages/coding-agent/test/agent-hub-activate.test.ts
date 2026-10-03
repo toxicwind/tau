@@ -1,4 +1,4 @@
-import { createAgentHubRuntime } from "@tau/tau-coding-agent/modes/agent-hub-runtime";
+import { createAgentHubRuntime } from "tau/modes/agent-hub-runtime";
 /**
  * Hub Enter contract: activating a non-remote agent row delegates to the
  * `focusAgent` dep (session focus proxy) and closes the hub on success; a
@@ -7,18 +7,18 @@ import { createAgentHubRuntime } from "@tau/tau-coding-agent/modes/agent-hub-run
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
-import { IrcBus } from "@tau/tau-coding-agent/irc/bus";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
+import { IrcBus } from "tau/irc/bus";
 import { AgentHubOverlayComponent } from "@tau/tau-tui/overlays/agent-hub";
-import { SelectorController } from "@tau/tau-coding-agent/modes/controllers/selector-controller";
+import { SelectorController } from "tau/modes/controllers/selector-controller";
 import { SessionObserverRegistry } from "@tau/tau-tui/overlays/session-observer-registry";
 import { initTheme } from "@tau/tau-tui/theme";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
-import { AgentRegistry } from "@tau/tau-coding-agent/registry/agent-registry";
-import type { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
-import { visitEntriesFromFileStream } from "@tau/tau-coding-agent/session/session-loader";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import { getBundledAgent } from "@tau/tau-coding-agent/task/agents";
+import type { InteractiveModeContext } from "tau/modes/types";
+import { AgentRegistry } from "tau/registry/agent-registry";
+import type { AgentSession } from "tau/session/agent-session";
+import { visitEntriesFromFileStream } from "tau/session/session-loader";
+import { SessionManager } from "tau/session/session-manager";
+import { getBundledAgent } from "tau/task/agents";
 import { TempDir } from "@tau/tau-utils";
 
 const AGENT_ID = "Worker";

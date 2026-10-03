@@ -9,7 +9,7 @@ import {
 	sanitizeSkillName,
 	toSkillFrontmatter,
 	writeManagedSkill,
-} from "@tau/tau-coding-agent/autolearn/managed-skills";
+} from "tau/autolearn/managed-skills";
 import { parseFrontmatter, removeWithRetries } from "@tau/tau-utils";
 import { getAgentDir, setAgentDir } from "@tau/tau-utils/dirs";
 

@@ -62,7 +62,7 @@ export const impl: ServiceDef = {
   autoStart: true,
   mise: true,
   env: {
-    PI_CONFIG_DIR: "/home/toxic/.tau",
+    TAU_CONFIG_DIR: "/home/toxic/.tau",
     PI_AGENT_DIR: "/home/toxic/.tau/agent",
     PI_CODING_AGENT: "true",
     PI_REASONING_LEVEL: "high",

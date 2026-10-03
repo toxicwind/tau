@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
-import { CommandController } from "@tau/tau-coding-agent/modes/controllers/command-controller";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
+import { CommandController } from "tau/modes/controllers/command-controller";
+import type { InteractiveModeContext } from "tau/modes/types";
 
 function createMemoryContext(backend: string) {
 	const showWarning = vi.fn();

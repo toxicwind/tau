@@ -1,4 +1,4 @@
-import { createAgentHubRuntime } from "@tau/tau-coding-agent/modes/agent-hub-runtime";
+import { createAgentHubRuntime } from "tau/modes/agent-hub-runtime";
 /**
  * Regression: the agent hub row order must be stable while the hub is open.
  *
@@ -8,13 +8,13 @@ import { createAgentHubRuntime } from "@tau/tau-coding-agent/modes/agent-hub-run
  */
 import { afterEach, beforeAll, describe, expect, it, setSystemTime, vi } from "bun:test";
 import { ThinkingLevel } from "@tau/tau-agent-core";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { IrcBus } from "@tau/tau-coding-agent/irc/bus";
+import { Settings } from "tau/config/settings";
+import { IrcBus } from "tau/irc/bus";
 import { type AgentHubDeps, AgentHubOverlayComponent } from "@tau/tau-tui/overlays/agent-hub";
 import { SessionObserverRegistry } from "@tau/tau-tui/overlays/session-observer-registry";
 import { initTheme, theme } from "@tau/tau-tui/theme";
-import { AgentRegistry } from "@tau/tau-coding-agent/registry/agent-registry";
-import type { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import { AgentRegistry } from "tau/registry/agent-registry";
+import type { AgentSession } from "tau/session/agent-session";
 import { visibleWidth } from "@tau/tau-tui/utils";
 import { AgentActivityIndex, type AgentActivityRow } from "../src/activity";
 

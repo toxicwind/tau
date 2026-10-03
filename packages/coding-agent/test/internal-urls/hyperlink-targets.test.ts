@@ -4,13 +4,13 @@ import * as os from "node:os";
 import * as path from "node:path";
 import * as url from "node:url";
 import { stripVTControlCharacters } from "node:util";
-import { resetSettingsForTest, Settings, settings } from "@tau/tau-coding-agent/config/settings";
-import { LocalProtocolHandler } from "@tau/tau-coding-agent/internal-urls/local-protocol";
+import { resetSettingsForTest, Settings, settings } from "tau/config/settings";
+import { LocalProtocolHandler } from "tau/internal-urls/local-protocol";
 import {
 	resolveMarkdownLinkTargets,
 	tryResolveInternalUrlSync,
-} from "@tau/tau-coding-agent/internal-urls/hyperlink-targets";
-import { AgentRegistry } from "@tau/tau-coding-agent/registry/agent-registry";
+} from "tau/internal-urls/hyperlink-targets";
+import { AgentRegistry } from "tau/registry/agent-registry";
 import { getMarkdownTheme, initTheme } from "@tau/tau-tui/theme";
 import * as terminalCaps from "@tau/tau-tui";
 import { isHyperlinkEnabled } from "@tau/tau-tui/render/hyperlink";

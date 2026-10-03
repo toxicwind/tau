@@ -2,9 +2,9 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
-import { ReadTool } from "@tau/tau-coding-agent/tools/read";
+import { Settings } from "tau/config/settings";
+import type { ToolSession } from "tau/tools";
+import { ReadTool } from "tau/tools/read";
 import { removeSyncWithRetries, Snowflake } from "@tau/tau-utils";
 
 function getTextOutput(result: { content: Array<{ type: string; text?: string }> }): string {

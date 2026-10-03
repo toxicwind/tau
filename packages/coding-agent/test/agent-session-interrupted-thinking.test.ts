@@ -3,21 +3,21 @@ import * as path from "node:path";
 import { Agent } from "@tau/tau-agent-core";
 import type { Api, AssistantMessage, Model, ThinkingContent } from "@tau/tau-ai";
 import { type GeneratedProvider, getBundledModel } from "@tau/tau-catalog/models";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { ExtensionRuntime, loadExtensionFromFactory } from "@tau/tau-coding-agent/extensibility/extensions/loader";
-import { ExtensionRunner } from "@tau/tau-coding-agent/extensibility/extensions/runner";
-import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
-import type { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
+import { ExtensionRuntime, loadExtensionFromFactory } from "tau/extensibility/extensions/loader";
+import { ExtensionRunner } from "tau/extensibility/extensions/runner";
+import { AgentSession } from "tau/session/agent-session";
+import type { AuthStorage } from "tau/session/auth-storage";
 import {
 	type CustomMessage,
 	convertToLlm,
 	INTERRUPTED_THINKING_MESSAGE_TYPE,
 	USER_INTERRUPT_LABEL,
-} from "@tau/tau-coding-agent/session/messages";
-import type { SessionEntry } from "@tau/tau-coding-agent/session/session-entries";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import { EventBus } from "@tau/tau-coding-agent/utils/event-bus";
+} from "tau/session/messages";
+import type { SessionEntry } from "tau/session/session-entries";
+import { SessionManager } from "tau/session/session-manager";
+import { EventBus } from "tau/utils/event-bus";
 import { TempDir } from "@tau/tau-utils";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 

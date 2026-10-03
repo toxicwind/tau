@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import type { AgentMessage } from "@tau/tau-agent-core";
-import { IrcBridge, type IrcBridgeHost } from "@tau/tau-coding-agent/session/irc-bridge";
-import type { CustomMessage } from "@tau/tau-coding-agent/session/messages";
+import { IrcBridge, type IrcBridgeHost } from "tau/session/irc-bridge";
+import type { CustomMessage } from "tau/session/messages";
 
 function makeBridge() {
 	const woken: AgentMessage[][] = [];

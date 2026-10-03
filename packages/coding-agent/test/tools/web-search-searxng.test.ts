@@ -3,9 +3,9 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import type { FetchImpl } from "@tau/tau-ai/types";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
-import { searchSearXNG } from "@tau/tau-coding-agent/web/search/providers/searxng";
-import { SearchProviderError } from "@tau/tau-coding-agent/web/search/types";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
+import { searchSearXNG } from "tau/web/search/providers/searxng";
+import { SearchProviderError } from "tau/web/search/types";
 import { removeWithRetries } from "@tau/tau-utils";
 
 describe("SearXNG web search provider", () => {

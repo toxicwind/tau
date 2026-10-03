@@ -16,8 +16,8 @@ import { afterAll, beforeAll, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import { AuthStorage } from "@tau/tau-ai";
-import { runModelsListing } from "@tau/tau-coding-agent/cli/models-cli";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { runModelsListing } from "tau/cli/models-cli";
+import { ModelRegistry } from "tau/config/model-registry";
 import { getProjectAgentDir, TempDir } from "@tau/tau-utils";
 
 let tmp: TempDir;

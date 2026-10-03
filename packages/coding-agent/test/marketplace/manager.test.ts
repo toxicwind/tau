@@ -3,16 +3,16 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 
-import { listOmpExtensionRoots } from "@tau/tau-coding-agent/discovery/tau-extension-roots";
-import { getEnabledPlugins } from "@tau/tau-coding-agent/extensibility/plugins/loader";
-import { PluginManager } from "@tau/tau-coding-agent/extensibility/plugins/manager";
+import { listOmpExtensionRoots } from "tau/discovery/tau-extension-roots";
+import { getEnabledPlugins } from "tau/extensibility/plugins/loader";
+import { PluginManager } from "tau/extensibility/plugins/manager";
 import {
 	getCachedPluginPath,
 	MarketplaceManager,
 	readInstalledPluginsRegistry,
 	readMarketplacesRegistry,
 	writeMarketplacesRegistry,
-} from "@tau/tau-coding-agent/extensibility/plugins/marketplace";
+} from "tau/extensibility/plugins/marketplace";
 import * as piUtils from "@tau/tau-utils";
 import { removeSyncWithRetries } from "@tau/tau-utils";
 

@@ -14,7 +14,7 @@ import {
 	flushTelemetryExport,
 	initTelemetryExport,
 	isTelemetryExportEnabled,
-} from "@tau/tau-coding-agent/telemetry-export";
+} from "tau/telemetry-export";
 import { trace } from "@opentelemetry/api";
 
 let body: Buffer | undefined;

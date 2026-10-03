@@ -12,21 +12,21 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { InternalUrlRouter } from "@tau/tau-coding-agent/internal-urls";
+import { Settings } from "tau/config/settings";
+import { InternalUrlRouter } from "tau/internal-urls";
 import {
 	formatCurrentBranchFullHistory,
 	HistoryProtocolHandler,
-} from "@tau/tau-coding-agent/internal-urls/history-protocol";
+} from "tau/internal-urls/history-protocol";
 import {
 	registerArtifactsDir,
 	resetRegisteredArtifactDirsForTests,
-} from "@tau/tau-coding-agent/internal-urls/registry-helpers";
-import { AgentRegistry } from "@tau/tau-coding-agent/registry/agent-registry";
-import type { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
-import { CURRENT_SESSION_VERSION, type SessionEntry } from "@tau/tau-coding-agent/session/session-entries";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
-import { ReadTool } from "@tau/tau-coding-agent/tools/read";
+} from "tau/internal-urls/registry-helpers";
+import { AgentRegistry } from "tau/registry/agent-registry";
+import type { AgentSession } from "tau/session/agent-session";
+import { CURRENT_SESSION_VERSION, type SessionEntry } from "tau/session/session-entries";
+import type { ToolSession } from "tau/tools";
+import { ReadTool } from "tau/tools/read";
 import { removeWithRetries } from "@tau/tau-utils";
 
 async function withTempDir<T>(fn: (dir: string) => Promise<T>): Promise<T> {

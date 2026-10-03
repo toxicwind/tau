@@ -4,9 +4,9 @@ import * as ai from "@tau/tau-ai";
 import { Effort, type Model } from "@tau/tau-ai";
 import { buildModel } from "@tau/tau-catalog/build";
 import { getBundledModel } from "@tau/tau-catalog/models";
-import { classifyDifficulty } from "@tau/tau-coding-agent/auto-thinking/classifier";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { classifyDifficulty } from "tau/auto-thinking/classifier";
+import { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
 import {
 	AUTO_THINKING,
 	clampAutoThinkingEffort,
@@ -17,8 +17,8 @@ import {
 	resolveProvisionalAutoLevel,
 	resolveTaskEffortLevel,
 } from "@tau/tau-tui/thinking";
-import type { TinyMemoryLocalModelKey } from "@tau/tau-coding-agent/tiny/models";
-import { tinyModelClient } from "@tau/tau-coding-agent/tiny/title-client";
+import type { TinyMemoryLocalModelKey } from "tau/tiny/models";
+import { tinyModelClient } from "tau/tiny/title-client";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
 describe("auto thinking classifier helpers", () => {

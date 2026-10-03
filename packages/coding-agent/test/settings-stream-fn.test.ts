@@ -11,8 +11,8 @@ import { describe, expect, it } from "bun:test";
 import type { StreamFn } from "@tau/tau-agent-core";
 import type { Context, Model, SimpleStreamOptions } from "@tau/tau-ai";
 import { AssistantMessageEventStream } from "@tau/tau-ai/utils/event-stream";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { createSettingsAwareStreamFn } from "@tau/tau-coding-agent/session/settings-stream-fn";
+import { Settings } from "tau/config/settings";
+import { createSettingsAwareStreamFn } from "tau/session/settings-stream-fn";
 
 function captureBase(): { fn: StreamFn; calls: Array<{ options?: SimpleStreamOptions }> } {
 	const calls: Array<{ options?: SimpleStreamOptions }> = [];

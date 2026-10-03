@@ -5,19 +5,19 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { type } from "@tau/tautype";
 import { type AssistantMessage, createAssistantMessageEventStream, getCustomApi, type ToolCall } from "@tau/tau-ai";
-import { runCommitAgentSession } from "@tau/tau-coding-agent/commit/agentic/agent";
-import * as commitTools from "@tau/tau-coding-agent/commit/agentic/tools";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { initializeExtensions } from "@tau/tau-coding-agent/modes/runtime-init";
+import { runCommitAgentSession } from "tau/commit/agentic/agent";
+import * as commitTools from "tau/commit/agentic/tools";
+import { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
+import { initializeExtensions } from "tau/modes/runtime-init";
 import {
 	type CreateAgentSessionOptions,
 	createAgentSession,
 	type ExtensionFactory,
-} from "@tau/tau-coding-agent/sdk";
-import type { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
-import type { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+} from "tau/sdk";
+import type { AuthStorage } from "tau/session/auth-storage";
+import type { AgentSession } from "tau/session/agent-session";
+import { SessionManager } from "tau/session/session-manager";
 import { __resetDirsFromEnvForTests, removeSyncWithRetries, setAgentDir, Snowflake } from "@tau/tau-utils";
 
 function restoreEnv(key: string, value: string | undefined): void {

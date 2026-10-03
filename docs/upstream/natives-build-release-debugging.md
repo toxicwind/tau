@@ -39,31 +39,31 @@ Root `BUILD.bazel` instantiates one `native_addon` per Bazel-built `(platform, a
 
 | Target                               | Platform                                    | Canonical output                      |
 | ------------------------------------ | ------------------------------------------- | ------------------------------------- |
-| `//:natives-linux-x64-baseline`      | `//bazel/platforms:linux-x64-baseline`      | `pi_natives.linux-x64-baseline.node`  |
-| `//:natives-linux-x64-modern`        | `//bazel/platforms:linux-x64-modern`        | `pi_natives.linux-x64-modern.node`    |
-| `//:natives-linux-arm64`             | `//bazel/platforms:linux-arm64`             | `pi_natives.linux-arm64.node`         |
-| `//:natives-linux-musl-x64-baseline` | `//bazel/platforms:linux-musl-x64-baseline` | `pi_natives.linux-x64-baseline.node`  |
-| `//:natives-linux-musl-arm64`        | `//bazel/platforms:linux-musl-arm64`        | `pi_natives.linux-arm64.node`         |
-| `//:natives-darwin-x64-baseline`     | `//bazel/platforms:darwin-x64-baseline`     | `pi_natives.darwin-x64-baseline.node` |
-| `//:natives-darwin-arm64`            | `//bazel/platforms:darwin-arm64`            | `pi_natives.darwin-arm64.node`        |
-| `//:natives-win32-x64-baseline`      | `//bazel/platforms:win32-x64-baseline`      | `pi_natives.win32-x64-baseline.node`  |
+| `//:natives-linux-x64-baseline`      | `//bazel/platforms:linux-x64-baseline`      | `tau_natives.linux-x64-baseline.node`  |
+| `//:natives-linux-x64-modern`        | `//bazel/platforms:linux-x64-modern`        | `tau_natives.linux-x64-modern.node`    |
+| `//:natives-linux-arm64`             | `//bazel/platforms:linux-arm64`             | `tau_natives.linux-arm64.node`         |
+| `//:natives-linux-musl-x64-baseline` | `//bazel/platforms:linux-musl-x64-baseline` | `tau_natives.linux-x64-baseline.node`  |
+| `//:natives-linux-musl-arm64`        | `//bazel/platforms:linux-musl-arm64`        | `tau_natives.linux-arm64.node`         |
+| `//:natives-darwin-x64-baseline`     | `//bazel/platforms:darwin-x64-baseline`     | `tau_natives.darwin-x64-baseline.node` |
+| `//:natives-darwin-arm64`            | `//bazel/platforms:darwin-arm64`            | `tau_natives.darwin-arm64.node`        |
+| `//:natives-win32-x64-baseline`      | `//bazel/platforms:win32-x64-baseline`      | `tau_natives.win32-x64-baseline.node`  |
 
 Notes:
 
-- Windows ARM64 has no Bazel target: the release matrix builds `host` through Cargo/N-API on `windows-11-arm`, producing `pi_natives.win32-arm64.node`.
+- Windows ARM64 has no Bazel target: the release matrix builds `host` through Cargo/N-API on `windows-11-arm`, producing `tau_natives.win32-arm64.node`.
 - musl addons **intentionally reuse** the plain `linux-<arch>` filenames — the loader never sees gnu and musl side by side; release jobs keep them in separate invocations/dest dirs (`scripts/bazel-natives.ts` hard-errors on a basename collision within one run).
 - Aggregates: `//:natives-linux-all` (all linux targets + the msvc cross build, i.e. everything buildable from a linux-x64 host) and `//:natives-darwin-all` (mac hosts only).
 
 ### 2) `native_addon` rule (`bazel/defs.bzl`)
 
-`native_addon` wraps `//crates/tau-natives:pi_natives` (a `rust_shared_library`) in a configuration transition that pins, per target:
+`native_addon` wraps `//crates/tau-natives:tau_natives` (a `rust_shared_library`) in a configuration transition that pins, per target:
 
 - `--platforms=<the addon's platform>`
 - `--compilation_mode=opt`
 - `@rules_rust//rust/settings:lto=thin`
 - extra rustc flags `-Ccodegen-units=16 -Cstrip=symbols`
 
-This mirrors the old cargo `ci` profile. Because the profile lives **in the transition**, a bare `bazel build //:natives-<t>` is always release-grade regardless of `-c`, and every addon shares one cache entry per (platform, source) pair. The rule then symlinks the produced shared library to the loader's canonical `pi_natives.<platform>-<arch>[-<variant>].node` name, scoped under the rule name (`bazel-bin/natives-<t>/…`) so gnu/musl outputs with identical basenames cannot collide at the package level.
+This mirrors the old cargo `ci` profile. Because the profile lives **in the transition**, a bare `bazel build //:natives-<t>` is always release-grade regardless of `-c`, and every addon shares one cache entry per (platform, source) pair. The rule then symlinks the produced shared library to the loader's canonical `tau_natives.<platform>-<arch>[-<variant>].node` name, scoped under the rule name (`bazel-bin/natives-<t>/…`) so gnu/musl outputs with identical basenames cannot collide at the package level.
 
 Per-target codegen that is not part of the transition lives in `crates/tau-natives/BUILD.bazel` `rustc_flags` selects: `-Ctarget-cpu=x86-64-v2` (baseline) / `x86-64-v3` (modern) via `//bazel/variants`, the napi link args (`-Wl,-undefined,dynamic_lookup` on macOS, `-Wl,-z,nodelete` on linux — `build.rs`/`napi_build::setup()` is deliberately not wired in), `-Ctarget-feature=-crt-static` for musl, and `-Ctarget-feature=+crt-static` for win32-x64 msvc (paired with the `static_link_msvcrt` cc feature enabled in the `native_addon` transition so the C deps compile `/MT` in lock-step — the shipped `.node` then imports no `VCRUNTIME140.dll` from the VC++ Redistributable). The Cargo host path applies the same `+crt-static` policy to Windows ARM64 in `build-bindings.ts`.
 
@@ -192,12 +192,12 @@ Binary builds are build-only and run in parallel with the test fan-out. `release
 ### Where things land / how to inspect
 
 ```bash
-# Outputs (workspace-relative): bazel-bin/natives-<target>/pi_natives.<...>.node
+# Outputs (workspace-relative): bazel-bin/natives-<target>/tau_natives.<...>.node
 bazelisk cquery --output=files //:natives-linux-x64-baseline
 
 # What actions/flags a target produces (add the same --config flags as the build):
 bazelisk aquery 'outputs(".*\.node", deps(//:natives-linux-arm64))'
-bazelisk aquery 'mnemonic("Rustc", deps(//crates/tau-natives:pi_natives))'
+bazelisk aquery 'mnemonic("Rustc", deps(//crates/tau-natives:tau_natives))'
 
 # Which toolchain resolved (e.g. confirm @msvc_cc, not host cc, for win32):
 bazelisk cquery 'deps(//:natives-win32-x64-baseline)' | grep msvc_cc
@@ -252,8 +252,8 @@ Non-x64 uses a single default artifact with no variant suffix. There is no build
 
 ### Output filenames
 
-- x64: `pi_natives.<platform>-<arch>-modern.node` or `...-baseline.node`
-- non-x64: `pi_natives.<platform>-<arch>.node`
+- x64: `tau_natives.<platform>-<arch>-modern.node` or `...-baseline.node`
+- non-x64: `tau_natives.<platform>-<arch>.node`
 
 Runtime x64 candidate order also includes the unsuffixed default filename after the selected variant candidates.
 
@@ -351,7 +351,7 @@ bun --cwd=packages/natives run build
 # Explicit targets (x64 variants are separate targets, not env switches)
 bun scripts/bazel-natives.ts linux-x64-modern linux-x64-baseline --dest packages/natives/native
 
-# Raw bazel (output: bazel-bin/natives-<t>/pi_natives.<...>.node)
+# Raw bazel (output: bazel-bin/natives-<t>/tau_natives.<...>.node)
 bazelisk build //:natives-darwin-arm64
 
 # Regenerate TS typedefs + enum exports (napi CLI, only on Rust API changes)
@@ -373,7 +373,7 @@ When `tau-natives` is built inside the robtau orchestrator (`python/robtau/`), w
 
 The cache captures the following files from `packages/natives/native/` under the computed key. Correct reuse assumes the worktree contents of keyed paths match committed `HEAD`; because the key ignores uncommitted changes, a build from a dirty keyed path can otherwise be captured under and later reused from the unchanged key:
 
-- `pi_natives.<platform>-<arch>[-variant].node` (glob `pi_natives.*.node`)
+- `tau_natives.<platform>-<arch>[-variant].node` (glob `tau_natives.*.node`)
 - `index.d.ts`
 - `index.js`
 - `embedded-addon.js`

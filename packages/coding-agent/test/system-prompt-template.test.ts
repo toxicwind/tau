@@ -8,7 +8,7 @@ import {
 	loadSystemPromptFiles,
 	type BuildSystemPromptOptions,
 	type BuildSystemPromptResult,
-} from "@tau/tau-coding-agent/system-prompt";
+} from "tau/system-prompt";
 import eagerTasksTemplate from "./fixtures/system-prompt-template/eager-tasks.md" with { type: "text" };
 import literalDataTemplate from "./fixtures/system-prompt-template/literal-data.md" with { type: "text" };
 import liveDataTemplate from "./fixtures/system-prompt-template/live-data.md" with { type: "text" };

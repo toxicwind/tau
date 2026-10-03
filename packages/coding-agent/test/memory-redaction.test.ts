@@ -3,7 +3,7 @@ import {
 	redactMemorySecrets,
 	redactMemoryTextFields,
 	redactRememberWrite,
-} from "@tau/tau-coding-agent/memory-backend/redact";
+} from "tau/memory-backend/redact";
 
 const NPM_TOKEN = `npm_${"a1B2c3D4e5F6g7H8i9J0kLmNoPqRsTuVwXy".slice(0, 36)}`;
 const AWS_KEY = "AKIAIOSFODNN7EXAMPLE";

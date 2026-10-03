@@ -1,9 +1,9 @@
 import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import type { CustomToolContext } from "@tau/tau-coding-agent/extensibility/custom-tools";
-import { DeferredMCPTool, MCPTool, type MCPToolDefinition } from "@tau/tau-coding-agent/mcp";
-import type { MCPServerConnection } from "@tau/tau-coding-agent/mcp/types";
+import type { CustomToolContext } from "tau/extensibility/custom-tools";
+import { DeferredMCPTool, MCPTool, type MCPToolDefinition } from "tau/mcp";
+import type { MCPServerConnection } from "tau/mcp/types";
 import { TempDir } from "@tau/tau-utils";
 import { INTENT_FIELD } from "@tau/tau-wire";
 import { createMockConnection, createMockTransport } from "./mcp-test-utils";

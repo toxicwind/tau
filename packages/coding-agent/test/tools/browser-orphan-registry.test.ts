@@ -15,7 +15,7 @@
 import { afterEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { daemonRuntimeDir } from "@tau/tau-coding-agent/launch/paths";
+import { daemonRuntimeDir } from "tau/launch/paths";
 import {
 	collectOrphanTargets,
 	forgetSharedTarget,
@@ -23,7 +23,7 @@ import {
 	recordSharedTarget,
 	resetOrphanRegistryForTest,
 	type SharedTargetScope,
-} from "@tau/tau-coding-agent/tools/browser/orphan-registry";
+} from "tau/tools/browser/orphan-registry";
 import type { Browser } from "puppeteer-core";
 
 const DAEMON_NAME = "tau.browser.headless";

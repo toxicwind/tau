@@ -21,8 +21,8 @@
 import { beforeAll, describe, expect, mock, test } from "bun:test";
 import { AgentBusyError } from "@tau/tau-agent-core";
 import { initTheme } from "@tau/tau-tui/theme";
-import type { CompactionQueuedMessage, InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
-import { UiHelpers } from "@tau/tau-coding-agent/modes/utils/ui-helpers";
+import type { CompactionQueuedMessage, InteractiveModeContext } from "tau/modes/types";
+import { UiHelpers } from "tau/modes/utils/ui-helpers";
 
 beforeAll(() => {
 	initTheme();

@@ -1,9 +1,9 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
-import { SETTINGS_SCHEMA, type SettingPath } from "@tau/tau-coding-agent/config/settings-schema";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
+import { SETTINGS_SCHEMA, type SettingPath } from "tau/config/settings-schema";
 import { getSettingsForTab, SETTING_TABS, type SettingTab, TAB_GROUPS } from "@tau/tau-tui/overlays/settings-defs";
-import { createSettingsHost } from "@tau/tau-coding-agent/config/settings-ui";
-import { createPluginSettingsHost } from "@tau/tau-coding-agent/extensibility/plugins/settings-host";
+import { createSettingsHost } from "tau/config/settings-ui";
+import { createPluginSettingsHost } from "tau/extensibility/plugins/settings-host";
 import { SettingsSelectorComponent } from "@tau/tau-tui/overlays/settings-selector";
 import { initTheme, setTheme } from "@tau/tau-tui/theme";
 

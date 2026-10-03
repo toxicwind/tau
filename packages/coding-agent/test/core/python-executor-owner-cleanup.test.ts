@@ -3,14 +3,14 @@ import {
 	disposeAllKernelSessions,
 	disposeKernelSessionsByOwner,
 	executePython,
-} from "@tau/tau-coding-agent/eval/py/executor";
+} from "tau/eval/py/executor";
 import type {
 	KernelExecuteResult,
 	KernelShutdownResult,
 	PythonKernel as PythonKernelInstance,
-} from "@tau/tau-coding-agent/eval/py/kernel";
-import * as pythonKernel from "@tau/tau-coding-agent/eval/py/kernel";
-import { PythonKernel } from "@tau/tau-coding-agent/eval/py/kernel";
+} from "tau/eval/py/kernel";
+import * as pythonKernel from "tau/eval/py/kernel";
+import { PythonKernel } from "tau/eval/py/kernel";
 
 const OK_RESULT: KernelExecuteResult = {
 	status: "ok",

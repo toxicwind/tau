@@ -5,8 +5,8 @@ import { getOAuthProvider } from "@tau/tau-ai/oauth";
 import { buildModel } from "@tau/tau-catalog/build";
 import { writeModelCache } from "@tau/tau-catalog/model-cache";
 import { resolveModelCacheProviderId, resolveOllamaModelCacheProviderId } from "@tau/tau-catalog/provider-models";
-import { ModelRegistry, type ProviderConfigInput } from "@tau/tau-coding-agent/config/model-registry";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { ModelRegistry, type ProviderConfigInput } from "tau/config/model-registry";
+import { AuthStorage } from "tau/session/auth-storage";
 import { TempDir } from "@tau/tau-utils";
 
 describe("ModelRegistry runtime source cleanup", () => {

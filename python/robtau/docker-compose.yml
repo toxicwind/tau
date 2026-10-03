@@ -18,9 +18,9 @@ services:
       context: ../..
       dockerfile: Dockerfile.robtau
       args:
-        # Tag of the pre-built tau-base image produced by `bun run pi:image`
+        # Tag of the pre-built tau-base image produced by `bun run tau:image`
         # (sources: pi root /Dockerfile). Override per-environment as needed.
-        PI_BASE: tau/pi:dev
+        TAU_BASE: tau/tau:dev
     image: robtau:dev
     container_name: robtau
     # Stable hostname: os.hostname() inside the container feeds usage

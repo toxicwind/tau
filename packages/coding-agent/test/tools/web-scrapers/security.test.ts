@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import { handleNvd } from "@tau/tau-coding-agent/web/scrapers/nvd";
-import { handleOsv } from "@tau/tau-coding-agent/web/scrapers/osv";
+import { handleNvd } from "tau/web/scrapers/nvd";
+import { handleOsv } from "tau/web/scrapers/osv";
 
 const SKIP = !Bun.env.WEB_FETCH_INTEGRATION;
 

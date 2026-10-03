@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import { parseTurnBudget } from "@tau/tau-coding-agent/modes/turn-budget";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { parseTurnBudget } from "tau/modes/turn-budget";
+import { SessionManager } from "tau/session/session-manager";
 
 describe("parseTurnBudget", () => {
 	it("parses k/m multipliers, plain counts, and decimals", () => {

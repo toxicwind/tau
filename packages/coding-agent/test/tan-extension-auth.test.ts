@@ -12,12 +12,12 @@
  */
 import { describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import type { ExtensionFactory } from "@tau/tau-coding-agent/extensibility/extensions";
-import { createAgentSession } from "@tau/tau-coding-agent/sdk";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
+import type { ExtensionFactory } from "tau/extensibility/extensions";
+import { createAgentSession } from "tau/sdk";
+import { AuthStorage } from "tau/session/auth-storage";
+import { SessionManager } from "tau/session/session-manager";
 import { TempDir } from "@tau/tau-utils";
 
 const PROVIDER = "tan-fixture-gw";

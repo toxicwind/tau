@@ -1,7 +1,7 @@
 import { afterAll, describe, expect, it } from "bun:test";
 import type { FetchImpl } from "@tau/tau-ai";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { searchZai, ZaiProvider } from "@tau/tau-coding-agent/web/search/providers/zai";
+import { ModelRegistry } from "tau/config/model-registry";
+import { searchZai, ZaiProvider } from "tau/web/search/providers/zai";
 import { createInMemoryAuthStorage } from "../../helpers/agent-session-setup";
 
 const authStorage = createInMemoryAuthStorage();

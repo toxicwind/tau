@@ -4,7 +4,7 @@ import * as os from "node:os";
 import * as path from "node:path";
 import type { AgentTool } from "@tau/tau-agent-core";
 import { editDiffString } from "@tau/tau-natives";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
 import { editToolRenderer, renderStreamingFallback } from "@tau/tau-tui/tools/edit";
 import { renderDiff } from "@tau/tau-tui/chrome/diff";
 import { ToolExecutionComponent } from "@tau/tau-tui/chat/tool-execution";

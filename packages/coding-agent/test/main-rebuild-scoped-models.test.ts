@@ -2,18 +2,18 @@ import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import type { ThinkingLevel } from "@tau/tau-agent-core";
 import type { Api, AuthStorage, Model } from "@tau/tau-ai";
 import { buildModel } from "@tau/tau-catalog/build";
-import { parseArgs } from "@tau/tau-coding-agent/cli/args";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { resolveModelScope } from "@tau/tau-coding-agent/config/model-resolver";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { parseArgs } from "tau/cli/args";
+import { ModelRegistry } from "tau/config/model-registry";
+import { resolveModelScope } from "tau/config/model-resolver";
+import { Settings } from "tau/config/settings";
 import {
 	buildSessionOptions,
 	rebuildScopedModelsAfterDiscovery,
 	resolveScopedModels,
 	type ScopedModelSink,
 	toSessionScopedModels,
-} from "@tau/tau-coding-agent/main";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+} from "tau/main";
+import { SessionManager } from "tau/session/session-manager";
 import { TempDir } from "@tau/tau-utils";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 

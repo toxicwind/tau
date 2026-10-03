@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { dedupeContainedContextFiles } from "@tau/tau-coding-agent/system-prompt";
+import { dedupeContainedContextFiles } from "tau/system-prompt";
 
 interface ContextFile {
 	path: string;

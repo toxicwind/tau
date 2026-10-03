@@ -7,15 +7,15 @@ import type { AssistantMessage, Model } from "@tau/tau-ai";
 import * as AIError from "@tau/tau-ai/error";
 import { createMockModel } from "@tau/tau-ai/providers/mock";
 import { getBundledModel } from "@tau/tau-catalog/models";
-import { loadAdvisorTranscriptCosts } from "@tau/tau-coding-agent/advisor/transcript-recorder";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import type { ExtensionRunner } from "@tau/tau-coding-agent/extensibility/extensions";
-import { createAgentSession } from "@tau/tau-coding-agent/sdk";
-import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
-import { AgentStorage } from "@tau/tau-coding-agent/session/agent-storage";
-import type { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { loadAdvisorTranscriptCosts } from "tau/advisor/transcript-recorder";
+import { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
+import type { ExtensionRunner } from "tau/extensibility/extensions";
+import { createAgentSession } from "tau/sdk";
+import { AgentSession } from "tau/session/agent-session";
+import { AgentStorage } from "tau/session/agent-storage";
+import type { AuthStorage } from "tau/session/auth-storage";
+import { SessionManager } from "tau/session/session-manager";
 import { __resetDirsFromEnvForTests, getProjectAgentDir, setAgentDir, TempDir } from "@tau/tau-utils";
 
 function restoreEnv(key: string, value: string | undefined): void {

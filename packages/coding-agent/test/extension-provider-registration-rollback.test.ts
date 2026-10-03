@@ -1,13 +1,13 @@
 import { describe, expect, test } from "bun:test";
 import type { UsageProvider, UsageReport } from "@tau/tau-ai";
 import { unregisterOAuthProvider } from "@tau/tau-ai/oauth";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { ExtensionRuntime, loadExtensionFromFactory } from "@tau/tau-coding-agent/extensibility/extensions/loader";
-import { ExtensionRunner } from "@tau/tau-coding-agent/extensibility/extensions/runner";
-import type { ProviderConfig } from "@tau/tau-coding-agent/extensibility/extensions/types";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import { EventBus } from "@tau/tau-coding-agent/utils/event-bus";
+import { ModelRegistry } from "tau/config/model-registry";
+import { ExtensionRuntime, loadExtensionFromFactory } from "tau/extensibility/extensions/loader";
+import { ExtensionRunner } from "tau/extensibility/extensions/runner";
+import type { ProviderConfig } from "tau/extensibility/extensions/types";
+import { AuthStorage } from "tau/session/auth-storage";
+import { SessionManager } from "tau/session/session-manager";
+import { EventBus } from "tau/utils/event-bus";
 import { TempDir } from "@tau/tau-utils";
 
 const testProviderConfig: ProviderConfig = {

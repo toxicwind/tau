@@ -100,7 +100,7 @@ pub struct FileOutcome {
 	pub warnings:           Vec<String>,
 	/// Rendered model-facing text for this file.
 	pub text:               String,
-	/// `before` parsed and `after` does not (`pi_ast` summary).
+	/// `before` parsed and `after` does not (`tau_ast` summary).
 	pub parse_regressed:    bool,
 }
 
@@ -418,7 +418,7 @@ fn prune_snapshots(
 /// errors. Unknown languages never "parse", so they never regress.
 pub fn source_parses(code: &str, path: &str) -> bool {
 	let code = if code.is_empty() { "\n" } else { code };
-	pi_ast::summary::summarize_code(pi_ast::summary::SummaryOptions {
+	tau_ast::summary::summarize_code(tau_ast::summary::SummaryOptions {
 		code:               code.to_owned(),
 		lang:               None,
 		path:               Some(path.to_owned()),

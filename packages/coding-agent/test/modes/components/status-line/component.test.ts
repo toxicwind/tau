@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import { createGallerySegmentContext } from "../../../../src/cli/gallery-fixtures/segments";
 import { Settings } from "../../../../src/config/settings";
 import { StatusLineComponent } from "@tau/tau-tui/status-line/component";
-import { statusLineHost } from "@tau/tau-coding-agent/modes/status-line-host";
+import { statusLineHost } from "tau/modes/status-line-host";
 import { renderSegment } from "@tau/tau-tui/status-line/segments";
 import { loadTheme } from "@tau/tau-tui/theme/loader";
 import { getThemeByName, setThemeInstance, theme } from "@tau/tau-tui/theme";

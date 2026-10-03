@@ -2,11 +2,11 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import type { AgentTool } from "@tau/tau-agent-core";
 import type { Tool as AiTool } from "@tau/tau-ai";
 import { toolWireSchema } from "@tau/tau-ai/utils/schema";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import type { EvalPreludeDefinition } from "@tau/tau-coding-agent/eval/preludes";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
-import { EvalTool, getEvalDocTopics, getEvalToolDescription } from "@tau/tau-coding-agent/tools/eval";
-import { ReadTool } from "@tau/tau-coding-agent/tools/read";
+import { Settings } from "tau/config/settings";
+import type { EvalPreludeDefinition } from "tau/eval/preludes";
+import type { ToolSession } from "tau/tools";
+import { EvalTool, getEvalDocTopics, getEvalToolDescription } from "tau/tools/eval";
+import { ReadTool } from "tau/tools/read";
 
 function makeSession(opts: {
 	spawns?: string | null;

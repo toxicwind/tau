@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { type SettingPath, Settings } from "@tau/tau-coding-agent/config/settings";
-import { createTools, type ToolSession } from "@tau/tau-coding-agent/tools";
+import { type SettingPath, Settings } from "tau/config/settings";
+import { createTools, type ToolSession } from "tau/tools";
 
 Bun.env.PI_PYTHON_SKIP_CHECK = "1";
 
@@ -111,7 +111,7 @@ describe("createTools", () => {
 	it("still exposes eval when python kernel is unavailable (dispatches to js)", async () => {
 		const session = createTestSession();
 		vi.spyOn(
-			await import("@tau/tau-coding-agent/eval/py/kernel"),
+			await import("tau/eval/py/kernel"),
 			"checkPythonKernelAvailability",
 		).mockResolvedValue({
 			ok: false,

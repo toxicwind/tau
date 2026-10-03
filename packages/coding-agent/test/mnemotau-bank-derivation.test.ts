@@ -3,7 +3,7 @@ import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import { mkdirSync } from "node:fs";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { computeMnemotauBankScope, extendRecallWithLegacyBanks } from "@tau/tau-coding-agent/mnemotau/config";
+import { computeMnemotauBankScope, extendRecallWithLegacyBanks } from "tau/mnemotau/config";
 import { removeWithRetries, TempDir } from "@tau/tau-utils";
 
 // Set up a fixture filesystem we can reuse across the two regression

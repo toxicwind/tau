@@ -10,7 +10,7 @@
 import { describe, expect, it } from "bun:test";
 import { type } from "@tau/tautype";
 import type { Model, Usage } from "@tau/tau-ai";
-import { formatSessionDumpText } from "@tau/tau-coding-agent/session/session-dump-format";
+import { formatSessionDumpText } from "tau/session/session-dump-format";
 import { INTENT_FIELD } from "@tau/tau-wire";
 
 const ZERO_USAGE: Usage = {

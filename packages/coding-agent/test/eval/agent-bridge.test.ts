@@ -1,22 +1,22 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { AsyncJobManager } from "@tau/tau-coding-agent/async";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { AsyncJobManager } from "tau/async";
+import { Settings } from "tau/config/settings";
 import {
 	runEvalAgent,
 	type EvalAgentBridgeOptions,
 	type EvalAgentResult,
-} from "@tau/tau-coding-agent/eval/agent-bridge";
-import { runEvalWait } from "@tau/tau-coding-agent/eval/handle-bridge";
-import type { LocalProtocolOptions } from "@tau/tau-coding-agent/internal-urls";
-import type { MCPManager } from "@tau/tau-coding-agent/mcp";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import * as taskDiscovery from "@tau/tau-coding-agent/task/discovery";
-import * as taskExecutor from "@tau/tau-coding-agent/task/executor";
-import * as isolationRunner from "@tau/tau-coding-agent/task/isolation-runner";
-import { runStructuredSubagent } from "@tau/tau-coding-agent/task/structured-subagent";
-import type { AgentDefinition } from "@tau/tau-coding-agent/task/types";
+} from "tau/eval/agent-bridge";
+import { runEvalWait } from "tau/eval/handle-bridge";
+import type { LocalProtocolOptions } from "tau/internal-urls";
+import type { MCPManager } from "tau/mcp";
+import { SessionManager } from "tau/session/session-manager";
+import * as taskDiscovery from "tau/task/discovery";
+import * as taskExecutor from "tau/task/executor";
+import * as isolationRunner from "tau/task/isolation-runner";
+import { runStructuredSubagent } from "tau/task/structured-subagent";
+import type { AgentDefinition } from "tau/task/types";
 import type { SingleResult, StructuredSubagentOutput } from "@tau/tau-tui/tools/task";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
+import type { ToolSession } from "tau/tools";
 
 const jobManagers = new Set<AsyncJobManager>();
 

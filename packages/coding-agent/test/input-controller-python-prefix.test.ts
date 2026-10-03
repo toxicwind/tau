@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "bun:test";
 import type { ImageContent } from "@tau/tau-ai";
-import { InputController } from "@tau/tau-coding-agent/modes/controllers/input-controller";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
+import { InputController } from "tau/modes/controllers/input-controller";
+import type { InteractiveModeContext } from "tau/modes/types";
 
 type FakeEditor = {
 	onSubmit?: (text: string) => Promise<void>;

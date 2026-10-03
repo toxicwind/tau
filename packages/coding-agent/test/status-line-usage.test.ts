@@ -1,8 +1,8 @@
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import { stripVTControlCharacters } from "node:util";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
 import { StatusLineComponent } from "@tau/tau-tui/status-line";
-import { statusLineHost } from "@tau/tau-coding-agent/modes/status-line-host";
+import { statusLineHost } from "tau/modes/status-line-host";
 import { renderSegment } from "@tau/tau-tui/status-line/segments";
 import type { SegmentContext } from "@tau/tau-tui/status-line/types";
 import { initTheme } from "@tau/tau-tui/theme";

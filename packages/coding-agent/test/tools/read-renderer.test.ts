@@ -1,4 +1,4 @@
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import { ToolExecutionComponent } from "@tau/tau-tui/chat/tool-execution";
 import type { TUI } from "@tau/tau-tui";

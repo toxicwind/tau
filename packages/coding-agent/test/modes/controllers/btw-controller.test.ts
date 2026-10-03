@@ -4,13 +4,13 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import { BtwHistoryPanel } from "@tau/tau-tui/overlays/btw-history-panel";
-import { BtwHistoryStore } from "@tau/tau-coding-agent/session/btw-history";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { BtwHistoryStore } from "tau/session/btw-history";
+import { SessionManager } from "tau/session/session-manager";
 import { BtwPanelComponent } from "@tau/tau-tui/overlays/btw-panel";
-import { BtwController } from "@tau/tau-coding-agent/modes/controllers/btw-controller";
+import { BtwController } from "tau/modes/controllers/btw-controller";
 import { initTheme } from "@tau/tau-tui/theme";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
-import * as clipboard from "@tau/tau-coding-agent/utils/clipboard";
+import type { InteractiveModeContext } from "tau/modes/types";
+import * as clipboard from "tau/utils/clipboard";
 import { Container, replaceTabs, type TUI } from "@tau/tau-tui";
 
 const usage: Usage = {

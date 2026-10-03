@@ -2,8 +2,8 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { LoadContext } from "@tau/tau-coding-agent/capability/types";
-import { loadAgentsMd } from "@tau/tau-coding-agent/discovery/agents-md";
+import type { LoadContext } from "tau/capability/types";
+import { loadAgentsMd } from "tau/discovery/agents-md";
 import { removeSyncWithRetries } from "@tau/tau-utils";
 
 function writeAgents(filePath: string, content: string): void {

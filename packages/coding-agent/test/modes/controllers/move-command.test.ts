@@ -2,10 +2,10 @@ import { afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { CommandController } from "@tau/tau-coding-agent/modes/controllers/command-controller";
+import { CommandController } from "tau/modes/controllers/command-controller";
 import { getThemeByName, setThemeInstance } from "@tau/tau-tui/theme";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
-import * as sessionWorktree from "@tau/tau-coding-agent/session/session-worktree";
+import type { InteractiveModeContext } from "tau/modes/types";
+import * as sessionWorktree from "tau/session/session-worktree";
 import { Container } from "@tau/tau-tui";
 
 function createMoveContext(sourceDir: string, settingsFlush?: () => Promise<void>) {

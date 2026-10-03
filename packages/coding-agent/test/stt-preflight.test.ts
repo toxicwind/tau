@@ -3,10 +3,10 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import { getBundledModel } from "@tau/tau-catalog/models";
-import { Settings, settings } from "@tau/tau-coding-agent/config/settings";
-import * as asrClient from "@tau/tau-coding-agent/stt/asr-client";
-import * as downloader from "@tau/tau-coding-agent/stt/downloader";
-import { STTController, type STTControllerDependencies } from "@tau/tau-coding-agent/stt/stt-controller";
+import { Settings, settings } from "tau/config/settings";
+import * as asrClient from "tau/stt/asr-client";
+import * as downloader from "tau/stt/downloader";
+import { STTController, type STTControllerDependencies } from "tau/stt/stt-controller";
 import { getTinyModelsCacheDir, removeWithRetries, setAgentDir } from "@tau/tau-utils";
 import { beginSettingsTest, restoreSettingsTestState, type SettingsTestState } from "./helpers/settings-test-state";
 

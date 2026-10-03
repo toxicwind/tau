@@ -11,7 +11,7 @@ import {
 	openMemoryDb,
 	tryClaimGlobalPhase2Job,
 	upsertThreads,
-} from "@tau/tau-coding-agent/memories/storage";
+} from "tau/memories/storage";
 
 const CWD_A = "/projects/alpha";
 const CWD_B = "/projects/beta";

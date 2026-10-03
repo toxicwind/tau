@@ -10,12 +10,12 @@
  */
 import { afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
 import type { AssistantMessage } from "@tau/tau-ai";
-import { resetSettingsForTest, Settings, settings } from "@tau/tau-coding-agent/config/settings";
+import { resetSettingsForTest, Settings, settings } from "tau/config/settings";
 import { AssistantMessageComponent } from "@tau/tau-tui/chat/assistant-message";
 import { ToolExecutionComponent } from "@tau/tau-tui/chat/tool-execution";
-import { EventController } from "@tau/tau-coding-agent/modes/controllers/event-controller";
+import { EventController } from "tau/modes/controllers/event-controller";
 import { initTheme } from "@tau/tau-tui/theme";
-import type { AgentSessionEvent } from "@tau/tau-coding-agent/session/agent-session";
+import type { AgentSessionEvent } from "tau/session/agent-session";
 import type { Component } from "@tau/tau-tui";
 import { createInteractiveModeContext } from "../../helpers/interactive-mode-context";
 

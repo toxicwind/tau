@@ -1,9 +1,9 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
-import { resetSettingsForTest, Settings, settings } from "@tau/tau-coding-agent/config/settings";
-import { loadHindsightConfig } from "@tau/tau-coding-agent/hindsight/config";
+import { resetSettingsForTest, Settings, settings } from "tau/config/settings";
+import { loadHindsightConfig } from "tau/hindsight/config";
 import { SettingsSelectorComponent } from "@tau/tau-tui/overlays/settings-selector";
-import { createSettingsHost } from "@tau/tau-coding-agent/config/settings-ui";
-import { createPluginSettingsHost } from "@tau/tau-coding-agent/extensibility/plugins/settings-host";
+import { createSettingsHost } from "tau/config/settings-ui";
+import { createPluginSettingsHost } from "tau/extensibility/plugins/settings-host";
 import { initTheme } from "@tau/tau-tui/theme";
 
 beforeAll(async () => {

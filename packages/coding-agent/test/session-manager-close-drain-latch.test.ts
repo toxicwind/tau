@@ -3,8 +3,8 @@ import {
 	IndexedSessionStorage,
 	type SessionStorageBackend,
 	type SessionStorageIndexEntry,
-} from "@tau/tau-coding-agent/session/indexed-session-storage";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+} from "tau/session/indexed-session-storage";
+import { SessionManager } from "tau/session/session-manager";
 
 /**
  * Backend that accepts every lookup but fails the fire-and-forget publish.

@@ -5,7 +5,7 @@ import * as path from "node:path";
 import type { Model } from "@tau/tau-ai";
 import { buildModel } from "@tau/tau-catalog/build";
 import { RawSseDebugBuffer } from "@tau/tau-tui/apps/debug/raw-sse-buffer";
-import { createReportBundle } from "@tau/tau-coding-agent/debug/report-bundle";
+import { createReportBundle } from "tau/debug/report-bundle";
 import { getConfigRootDir, removeWithRetries, setAgentDir } from "@tau/tau-utils";
 
 const model: Model<"anthropic-messages"> = buildModel({

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
-import { compileRuleCondition } from "@tau/tau-coding-agent/capability/rule";
-import { buildRuleFromMarkdown, createSourceMeta } from "@tau/tau-coding-agent/discovery/helpers";
-import { TtsrManager } from "@tau/tau-coding-agent/export/ttsr";
+import { compileRuleCondition } from "tau/capability/rule";
+import { buildRuleFromMarkdown, createSourceMeta } from "tau/discovery/helpers";
+import { TtsrManager } from "tau/export/ttsr";
 
 /**
  * Regression coverage for issue #4796: a rule with a leading `(?i)` inline regex

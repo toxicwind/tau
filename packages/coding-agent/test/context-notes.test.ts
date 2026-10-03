@@ -1,16 +1,16 @@
 import { describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { Settings } from "tau/config/settings";
 import {
 	CONTEXT_NOTES_ENTRY_TYPE,
 	getContextNotes,
 	MAX_CONTEXT_NOTES_BYTES,
-} from "@tau/tau-coding-agent/session/context-notes";
-import type { ContextNotesEntry } from "@tau/tau-coding-agent/session/context-notes";
-import type { CustomEntry, ResetBoundaryEntry, SessionEntry } from "@tau/tau-coding-agent/session/session-entries";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import { ContextNotesTool, NewContextTool } from "@tau/tau-coding-agent/tools/context-notes";
-import type { ToolSession } from "@tau/tau-coding-agent/tools/index";
+} from "tau/session/context-notes";
+import type { ContextNotesEntry } from "tau/session/context-notes";
+import type { CustomEntry, ResetBoundaryEntry, SessionEntry } from "tau/session/session-entries";
+import { SessionManager } from "tau/session/session-manager";
+import { ContextNotesTool, NewContextTool } from "tau/tools/context-notes";
+import type { ToolSession } from "tau/tools/index";
 import { TempDir } from "@tau/tau-utils";
 
 const NOW = "2026-09-04T00:00:00.000Z";

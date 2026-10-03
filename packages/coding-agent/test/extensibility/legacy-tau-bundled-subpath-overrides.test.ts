@@ -2,7 +2,7 @@ import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import * as url from "node:url";
-import { __buildLegacyPiPackageRootOverrides } from "@tau/tau-coding-agent/extensibility/plugins/legacy-tau-compat";
+import { __buildLegacyPiPackageRootOverrides } from "tau/extensibility/plugins/legacy-tau-compat";
 import { TempDir } from "@tau/tau-utils";
 import { __renderLegacyPiVirtualModule, collectBundledPiEntries } from "../../scripts/legacy-tau-virtual-module";
 
@@ -127,10 +127,10 @@ export const observed = [
 	it("expands web search provider wildcard exports for compiled plugin imports", () => {
 		const overrides = __buildLegacyPiPackageRootOverrides(true, bundledModuleKeys);
 		const providerKeys = [
-			"@tau/tau-coding-agent/web/search/providers/xai",
-			"@tau/tau-coding-agent/web/search/providers/tinyfish",
-			"@tau/tau-coding-agent/web/search/providers/firecrawl",
-			"@tau/tau-coding-agent/web/search/providers/duckduckgo",
+			"tau/web/search/providers/xai",
+			"tau/web/search/providers/tinyfish",
+			"tau/web/search/providers/firecrawl",
+			"tau/web/search/providers/duckduckgo",
 		] as const;
 
 		for (const key of providerKeys) {
@@ -140,7 +140,7 @@ export const observed = [
 	});
 
 	it("serves coding-agent registry wildcard exports in compiled mode", () => {
-		const key = "@tau/tau-coding-agent/registry/agent-registry";
+		const key = "tau/registry/agent-registry";
 		const overrides = __buildLegacyPiPackageRootOverrides(true, bundledModuleKeys);
 		expect(bundledModuleKeys.has(key)).toBe(true);
 		expect(overrides[key]).toBe(`tau-legacy-tau-bundled:${key}`);
@@ -151,9 +151,9 @@ export const observed = [
 		// like the package's own `cli.ts` and explode the bundle through the
 		// binary entry's transitive graph. Plugins almost never import top-level
 		// tau-* files directly, so we keep those routed via `Bun.resolveSync`.
-		// Concrete check: `@tau/tau-coding-agent/cli` is NOT bundled.
-		expect(bundledModuleKeys.has("@tau/tau-coding-agent/cli")).toBe(false);
-		expect(bundledModuleKeys.has("@tau/tau-coding-agent/main")).toBe(false);
+		// Concrete check: `tau/cli` is NOT bundled.
+		expect(bundledModuleKeys.has("tau/cli")).toBe(false);
+		expect(bundledModuleKeys.has("tau/main")).toBe(false);
 	});
 
 	it("does not bundle main-thread-unsafe worker entrypoints", () => {
@@ -161,7 +161,7 @@ export const observed = [
 		// The compiled legacy registry is imported on the main thread while
 		// validating plugin extensions, so enumerating these files recreates the
 		// `js worker-entry: missing parentPort` failure from #3508.
-		expect(bundledModuleKeys.has("@tau/tau-coding-agent/eval/js/worker-entry")).toBe(false);
+		expect(bundledModuleKeys.has("tau/eval/js/worker-entry")).toBe(false);
 	});
 
 	it("maps every bundled key (minus shimmed roots + typebox) to its virtual specifier in compiled mode", () => {
@@ -174,7 +174,7 @@ export const observed = [
 			// TYPEBOX_SHIM_PATH.
 			if (
 				key === "@tau/tau-ai" ||
-				key === "@tau/tau-coding-agent" ||
+				key === "tau" ||
 				key === "@tau/tau-tui" ||
 				key === "typebox"
 			)
@@ -195,14 +195,14 @@ export const observed = [
 		const overrides = __buildLegacyPiPackageRootOverrides(true, bundledModuleKeys);
 		expect(overrides["@tau/tau-ai"]).toBeDefined();
 		expect(overrides["@tau/tau-ai"]).not.toBe("tau-legacy-tau-bundled:@tau/tau-ai/oauth");
-		expect(overrides["@tau/tau-coding-agent"]).toBeDefined();
+		expect(overrides["tau"]).toBeDefined();
 		expect(overrides["@tau/tau-tui"]).toBeDefined();
 	});
 
 	it("does not register subpath overrides in dev/install mode", () => {
 		const overrides = __buildLegacyPiPackageRootOverrides(false);
 		expect(overrides).not.toHaveProperty("@tau/tau-ai/oauth");
-		expect(overrides).not.toHaveProperty("@tau/tau-coding-agent/tools");
+		expect(overrides).not.toHaveProperty("tau/tools");
 		// Dev keeps only the historical shim entries so canonical subpath
 		// imports continue to flow through `Bun.resolveSync` against the live
 		// monorepo / installed `node_modules` tree.
@@ -223,7 +223,7 @@ export const observed = [
 		// top level left every nested key out of the compiled registry, so the
 		// import resolved from source and failed inside a binary — which is how
 		// a real extension (`quota-hud.ts`) broke on this exact specifier.
-		expect(bundledModuleKeys.has("@tau/tau-coding-agent/slash-commands/helpers/active-oauth-account")).toBe(true);
+		expect(bundledModuleKeys.has("tau/slash-commands/helpers/active-oauth-account")).toBe(true);
 		// Directory index modules stay excluded: `./x/*` must not serve `x/y`
 		// from `y/index.ts`, which Node would not resolve either.
 		expect(bundledModuleKeys.has("@tau/tau-tui/theme/defaults/index")).toBe(false);
@@ -231,13 +231,13 @@ export const observed = [
 
 	it("registers the rebranded package under its previously published name", () => {
 		// The tau->tau rebrand renamed the coding-agent manifest to `tau`, but the
-		// extension ecosystem still imports `@tau/tau-coding-agent` and the
+		// extension ecosystem still imports `tau` and the
 		// runtime shim only ever looks up `@tau/*` keys (PI_PACKAGE_NAMES in
 		// legacy-tau-compat.ts). Dropping the old name from the generated registry
 		// made every such extension fail with
 		// `tau:legacy-tau-shim: no bundled module registered for
-		// @tau/tau-coding-agent`. Both names must map to the same bindings.
-		const legacyPrefix = "@tau/tau-coding-agent";
+		// tau`. Both names must map to the same bindings.
+		const legacyPrefix = "tau";
 		const canonicalPrefix = "tau";
 		const legacySubpaths = bundledEntries
 			.filter(entry => entry.key.startsWith(`${legacyPrefix}/`))

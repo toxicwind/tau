@@ -2,9 +2,9 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
-import { createTools, type ToolSession } from "@tau/tau-coding-agent/tools";
-import { ConflictHistory } from "@tau/tau-coding-agent/tools/conflict-detect";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
+import { createTools, type ToolSession } from "tau/tools";
+import { ConflictHistory } from "tau/tools/conflict-detect";
 import { removeWithRetries } from "@tau/tau-utils";
 
 function createTestSession(cwd: string, overrides: Partial<ToolSession> = {}): ToolSession {

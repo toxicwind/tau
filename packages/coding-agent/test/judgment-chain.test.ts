@@ -2,11 +2,11 @@ import { afterEach, describe, expect, it, vi } from "bun:test";
 import type { Api, AssistantMessage, ChoiceQuestion, Model } from "@tau/tau-ai";
 import * as ai from "@tau/tau-ai";
 import { getBundledModel } from "@tau/tau-catalog/models";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { ChainJudge, journalJudgmentUsage } from "@tau/tau-coding-agent/judgment";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import { tinyModelClient } from "@tau/tau-coding-agent/tiny/title-client";
+import { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
+import { ChainJudge, journalJudgmentUsage } from "tau/judgment";
+import { SessionManager } from "tau/session/session-manager";
+import { tinyModelClient } from "tau/tiny/title-client";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 import { asGlobalFetch } from "./helpers/fetch-mock";
 

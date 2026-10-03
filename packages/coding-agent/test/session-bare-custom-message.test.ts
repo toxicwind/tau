@@ -1,9 +1,9 @@
 import { describe, expect, it } from "bun:test";
 import type { AgentMessage } from "@tau/tau-agent-core";
-import { convertToLlm, normalizeCustomMessagePayload } from "@tau/tau-coding-agent/session/messages";
-import { buildSessionContext } from "@tau/tau-coding-agent/session/session-context";
-import type { CustomMessageEntry, SessionEntry } from "@tau/tau-coding-agent/session/session-entries";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { convertToLlm, normalizeCustomMessagePayload } from "tau/session/messages";
+import { buildSessionContext } from "tau/session/session-context";
+import type { CustomMessageEntry, SessionEntry } from "tau/session/session-entries";
+import { SessionManager } from "tau/session/session-manager";
 
 describe("bare custom_message recovery", () => {
 	it("drops poisoned custom messages before LLM conversion", () => {

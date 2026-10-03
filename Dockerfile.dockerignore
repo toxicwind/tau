@@ -1,4 +1,4 @@
-# Build context for the tau-root `Dockerfile` (tau/pi:dev). Shadows
+# Build context for the tau-root `Dockerfile` (tau/tau:dev). Shadows
 # .dockerignore for this file only. Robtau uses Dockerfile.robtau +
 # Dockerfile.robtau.dockerignore alongside.
 

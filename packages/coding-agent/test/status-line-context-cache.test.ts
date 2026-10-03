@@ -14,12 +14,12 @@
  * redraw — that per-event recompute is what previously froze large sessions.
  */
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
-import { resetSettingsForTest, Settings, settings } from "@tau/tau-coding-agent/config/settings";
-import type { ContextUsage } from "@tau/tau-coding-agent/extensibility/extensions/types";
+import { resetSettingsForTest, Settings, settings } from "tau/config/settings";
+import type { ContextUsage } from "tau/extensibility/extensions/types";
 import { StatusLineComponent } from "@tau/tau-tui/status-line";
-import { statusLineHost } from "@tau/tau-coding-agent/modes/status-line-host";
+import { statusLineHost } from "tau/modes/status-line-host";
 import { initTheme, setSymbolPreset, theme } from "@tau/tau-tui/theme";
-import type { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import type { AgentSession } from "tau/session/agent-session";
 import { getSessionAccentAnsi } from "@tau/tau-tui/theme/session-color";
 import { adjustHsv } from "@tau/tau-utils";
 import { StatusLineTestComponents } from "./helpers/status-line";

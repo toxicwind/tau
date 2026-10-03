@@ -1,11 +1,11 @@
 import { describe, expect, it } from "bun:test";
-import { parseArgs } from "@tau/tau-coding-agent/cli/args";
-import { applyExtensionFlags, type ExtensionFlagSink } from "@tau/tau-coding-agent/cli/extension-flags";
-import { buildInitialMessage } from "@tau/tau-coding-agent/cli/initial-message";
-import { ExtensionRuntime, loadExtensionFromFactory } from "@tau/tau-coding-agent/extensibility/extensions/loader";
-import { ExtensionRunner } from "@tau/tau-coding-agent/extensibility/extensions/runner";
-import { normalizeContinueSessionArgs } from "@tau/tau-coding-agent/main";
-import { EventBus } from "@tau/tau-coding-agent/utils/event-bus";
+import { parseArgs } from "tau/cli/args";
+import { applyExtensionFlags, type ExtensionFlagSink } from "tau/cli/extension-flags";
+import { buildInitialMessage } from "tau/cli/initial-message";
+import { ExtensionRuntime, loadExtensionFromFactory } from "tau/extensibility/extensions/loader";
+import { ExtensionRunner } from "tau/extensibility/extensions/runner";
+import { normalizeContinueSessionArgs } from "tau/main";
+import { EventBus } from "tau/utils/event-bus";
 
 // Regression coverage for extension-registered flags leaking into the initial
 // prompt. The CLI parses argv twice: once at startup (before extensions load,

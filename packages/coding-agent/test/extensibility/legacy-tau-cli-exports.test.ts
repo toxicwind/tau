@@ -6,8 +6,8 @@ import {
 	CONFIG_DIR_NAME,
 	createReadToolDefinition,
 	parseArgs,
-} from "@tau/tau-coding-agent/extensibility/legacy-tau-coding-agent-shim";
-import { toolReadsSkillUris } from "@tau/tau-coding-agent/system-prompt";
+} from "tau/extensibility/legacy-tau-coding-agent-shim";
+import { toolReadsSkillUris } from "tau/system-prompt";
 
 describe("legacy shim CLI exports", () => {
 	it("re-exports parseArgs and CONFIG_DIR_NAME from the legacy package root", () => {

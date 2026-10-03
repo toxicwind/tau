@@ -18,10 +18,10 @@ import {
 	type GuestSnapshotActivityReconcilerCtx,
 	reconcileGuestIdleHostState,
 	reconcileGuestSnapshotHostState,
-} from "@tau/tau-coding-agent/collab/guest";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+} from "tau/collab/guest";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
 import { StatusLineComponent } from "@tau/tau-tui/status-line";
-import { statusLineHost } from "@tau/tau-coding-agent/modes/status-line-host";
+import { statusLineHost } from "tau/modes/status-line-host";
 import { StatusLineTestComponents } from "../helpers/status-line";
 
 const statusLines = new StatusLineTestComponents();

@@ -59,8 +59,8 @@ set +u
 [ -f "$TAU_HOME/.config/claude/env" ] && { set -a; . "$TAU_HOME/.config/claude/env" >/dev/null 2>&1; set +a; }
 set -u
 
-# PI_CONFIG_DIR stays bare: engine joins onto homedir internally.
-export PI_CONFIG_DIR=".tau"
+# TAU_CONFIG_DIR stays bare: engine joins onto homedir internally (legacy PI_CONFIG_DIR still honored).
+export TAU_CONFIG_DIR=".tau"
 
 # ── Engine resolution (ranch/tau is canonical post-flatten) ───────────────
 SOVEREIGN_DIR="$TAU_HOME/sovereign"

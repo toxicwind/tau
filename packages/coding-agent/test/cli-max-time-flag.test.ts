@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from "bun:test";
-import { parseArgs } from "@tau/tau-coding-agent/cli/args";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { runRootCommand } from "@tau/tau-coding-agent/main";
-import type { CreateAgentSessionOptions } from "@tau/tau-coding-agent/sdk";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { parseArgs } from "tau/cli/args";
+import { Settings } from "tau/config/settings";
+import { runRootCommand } from "tau/main";
+import type { CreateAgentSessionOptions } from "tau/sdk";
+import { AuthStorage } from "tau/session/auth-storage";
 import { TempDir } from "@tau/tau-utils";
 import { runCli } from "../src/cli";
 

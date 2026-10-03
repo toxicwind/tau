@@ -13,17 +13,17 @@
  */
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import type { AuthStorage, FetchImpl } from "@tau/tau-ai";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
-import { ToolAbortError } from "@tau/tau-coding-agent/tools/tool-errors";
-import { runSearchQuery } from "@tau/tau-coding-agent/web/search";
-import * as provider from "@tau/tau-coding-agent/web/search/provider";
-import { searchAnthropic } from "@tau/tau-coding-agent/web/search/providers/anthropic";
-import type { SearchParams } from "@tau/tau-coding-agent/web/search/providers/base";
-import { searchBrave } from "@tau/tau-coding-agent/web/search/providers/brave";
-import { withHardTimeout } from "@tau/tau-coding-agent/web/search/providers/utils";
-import { SearchProviderError } from "@tau/tau-coding-agent/web/search/types";
-import { type SearchProviderId, type SearchResponse } from "@tau/tau-coding-agent/web/search/types";
+import { ModelRegistry } from "tau/config/model-registry";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
+import { ToolAbortError } from "tau/tools/tool-errors";
+import { runSearchQuery } from "tau/web/search";
+import * as provider from "tau/web/search/provider";
+import { searchAnthropic } from "tau/web/search/providers/anthropic";
+import type { SearchParams } from "tau/web/search/providers/base";
+import { searchBrave } from "tau/web/search/providers/brave";
+import { withHardTimeout } from "tau/web/search/providers/utils";
+import { SearchProviderError } from "tau/web/search/types";
+import { type SearchProviderId, type SearchResponse } from "tau/web/search/types";
 import { createInMemoryAuthStorage } from "../../helpers/agent-session-setup";
 
 const openAuthStorages: AuthStorage[] = [];

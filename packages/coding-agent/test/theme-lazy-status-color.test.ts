@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as themeModule from "@tau/tau-tui/theme";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
-import { UiHelpers } from "@tau/tau-coding-agent/modes/utils/ui-helpers";
+import type { InteractiveModeContext } from "tau/modes/types";
+import { UiHelpers } from "tau/modes/utils/ui-helpers";
 import type { Component } from "@tau/tau-tui";
 import { Text } from "@tau/tau-tui";
 

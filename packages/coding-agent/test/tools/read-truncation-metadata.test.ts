@@ -4,13 +4,13 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import type { AgentToolResult } from "@tau/tau-agent-core";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { Settings } from "tau/config/settings";
 import { getThemeByName, initTheme, type Theme } from "@tau/tau-tui/theme";
 import { DEFAULT_MAX_BYTES, DEFAULT_MAX_LINES } from "@tau/tau-tui/tools/streaming-output";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
+import type { ToolSession } from "tau/tools";
 import type { ReadToolDetails, ReadTruncationStats } from "@tau/tau-tui/tools/read";
 import { formatTruncationMetaNotice } from "@tau/tau-tui/tools/output-meta";
-import { ReadTool } from "@tau/tau-coding-agent/tools/read";
+import { ReadTool } from "tau/tools/read";
 import { readToolRenderer } from "@tau/tau-tui/tools/read";
 import { writeArchive } from "@tau/tau-utils/ar";
 

@@ -2,8 +2,8 @@ import { afterEach, describe, expect, it, spyOn, vi } from "bun:test";
 import type { Api, Model, ModelSpec } from "@tau/tau-ai/types";
 import { buildModel } from "@tau/tau-catalog/build";
 import { MODEL_KINDS, modelKind, type ModelKind } from "@tau/tau-catalog/types";
-import { renderProviderModels } from "@tau/tau-coding-agent/cli/models-cli";
-import Models from "@tau/tau-coding-agent/commands/models";
+import { renderProviderModels } from "tau/cli/models-cli";
+import Models from "tau/commands/models";
 import type { CliConfig } from "@tau/tau-utils/cli";
 
 const TEST_CONFIG: CliConfig = { bin: "tau", version: "test", commands: new Map() };

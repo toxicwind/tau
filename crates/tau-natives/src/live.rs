@@ -2,7 +2,7 @@
 //!
 //! The TypeScript host owns authenticated signaling and the sideband protocol;
 //! the realtime peer, Opus media, and speaker playback live in
-//! `pi_voice::live`. This class adapts its callbacks to non-blocking
+//! `tau_voice::live`. This class adapts its callbacks to non-blocking
 //! threadsafe functions and its PCM input to `Float32Array`.
 
 use std::sync::Arc;
@@ -12,7 +12,7 @@ use napi::{
 	threadsafe_function::{ThreadsafeFunction, ThreadsafeFunctionCallMode, UnknownReturnValue},
 };
 use napi_derive::napi;
-use pi_voice::live::{DEFAULT_OPEN_TIMEOUT_MS, LiveCallbacks, LivePeerCore};
+use tau_voice::live::{DEFAULT_OPEN_TIMEOUT_MS, LiveCallbacks, LivePeerCore};
 
 type StringCallback = ThreadsafeFunction<String, UnknownReturnValue>;
 type LevelCallback = ThreadsafeFunction<f64, UnknownReturnValue>;

@@ -2,13 +2,13 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { disableUserSource, enableUserSource, loadCapability } from "@tau/tau-coding-agent/capability";
-import { clearCache as clearFsCache } from "@tau/tau-coding-agent/capability/fs";
-import { clearClaudePluginRootsCache } from "@tau/tau-coding-agent/discovery/helpers";
+import { disableUserSource, enableUserSource, loadCapability } from "tau/capability";
+import { clearCache as clearFsCache } from "tau/capability/fs";
+import { clearClaudePluginRootsCache } from "tau/discovery/helpers";
 import { removeWithRetries } from "@tau/tau-utils";
 import { restoreEnvValue } from "./helpers/settings-test-state";
-import "@tau/tau-coding-agent/discovery/claude-plugins";
-import type { MCPServer } from "@tau/tau-coding-agent/capability/mcp";
+import "tau/discovery/claude-plugins";
+import type { MCPServer } from "tau/capability/mcp";
 
 describe("issue-851: claude-plugins loads flat .mcp.json shape", () => {
 	let tempDir: string;

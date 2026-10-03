@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { FileSessionStorage } from "@tau/tau-coding-agent/session/session-storage";
+import { FileSessionStorage } from "tau/session/session-storage";
 
 describe("FileSessionStorage.deleteSessionWithArtifacts", () => {
 	let tmpRoot = "";

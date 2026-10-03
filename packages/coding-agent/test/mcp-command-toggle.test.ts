@@ -2,9 +2,9 @@ import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "bu
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { SourceMeta } from "@tau/tau-coding-agent/capability/types";
-import type { MCPServerConfig } from "@tau/tau-coding-agent/mcp/types";
-import { MCPCommandController } from "@tau/tau-coding-agent/modes/controllers/mcp-command-controller";
+import type { SourceMeta } from "tau/capability/types";
+import type { MCPServerConfig } from "tau/mcp/types";
+import { MCPCommandController } from "tau/modes/controllers/mcp-command-controller";
 import { initTheme } from "@tau/tau-tui/theme";
 import {
 	getConfigRootDir,

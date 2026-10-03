@@ -2,10 +2,10 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { type ContextFile, contextFileCapability } from "@tau/tau-coding-agent/capability/context-file";
-import type { LoadContext } from "@tau/tau-coding-agent/capability/types";
-import { loadCapability } from "@tau/tau-coding-agent/discovery";
-import { loadClaudeMd } from "@tau/tau-coding-agent/discovery/claude-md";
+import { type ContextFile, contextFileCapability } from "tau/capability/context-file";
+import type { LoadContext } from "tau/capability/types";
+import { loadCapability } from "tau/discovery";
+import { loadClaudeMd } from "tau/discovery/claude-md";
 import { removeSyncWithRetries } from "@tau/tau-utils";
 
 function writeClaude(filePath: string, content: string): void {

@@ -3,9 +3,9 @@ import type { ImageContent } from "@tau/tau-ai";
 import { CustomEditor } from "@tau/tau-tui/prompt/custom-editor";
 import { chipLabel } from "@tau/tau-tui/prompt/composer-attachments";
 import { getEditorTheme, initTheme } from "@tau/tau-tui/theme";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { UiHelpers } from "@tau/tau-coding-agent/modes/utils/ui-helpers";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
+import { Settings } from "tau/config/settings";
+import { UiHelpers } from "tau/modes/utils/ui-helpers";
+import type { InteractiveModeContext } from "tau/modes/types";
 
 const image: ImageContent = { type: "image", data: "aGVsbG8=", mimeType: "image/png" };
 

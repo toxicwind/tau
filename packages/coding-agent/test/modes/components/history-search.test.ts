@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it } from "bun:test";
 import { HistorySearchComponent } from "@tau/tau-tui/overlays/history-search";
 import { initTheme, theme } from "@tau/tau-tui/theme";
-import type { HistoryEntry, HistoryStorage } from "@tau/tau-coding-agent/session/history-storage";
+import type { HistoryEntry, HistoryStorage } from "tau/session/history-storage";
 
 beforeAll(async () => {
 	await initTheme();

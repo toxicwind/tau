@@ -6,7 +6,7 @@ import * as path from "node:path";
 import {
 	resolveActiveRepoContext,
 	resolveActiveRepoContextSync,
-} from "@tau/tau-coding-agent/utils/active-repo-context";
+} from "tau/utils/active-repo-context";
 import type { ActiveRepoContext } from "@tau/tau-tui/status-line/host";
 
 const itWithSymlinkPrivilege = process.platform === "win32" ? it.skip : it;

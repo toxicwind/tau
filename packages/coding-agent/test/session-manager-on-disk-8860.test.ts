@@ -8,8 +8,8 @@
  */
 import { describe, expect, it } from "bun:test";
 import { join } from "node:path";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import { MemorySessionStorage } from "@tau/tau-coding-agent/session/session-storage";
+import { SessionManager } from "tau/session/session-manager";
+import { MemorySessionStorage } from "tau/session/session-storage";
 
 function freshSession(): SessionManager {
 	const cwd = join("/tmp", `tau-on-disk-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);

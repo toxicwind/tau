@@ -1,16 +1,16 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
 import * as os from "node:os";
-import * as capability from "@tau/tau-coding-agent/capability";
-import type { SSHHost } from "@tau/tau-coding-agent/capability/ssh";
-import type { CapabilityResult } from "@tau/tau-coding-agent/capability/types";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { parseInternalUrl } from "@tau/tau-coding-agent/internal-urls/parse";
-import { InternalUrlRouter } from "@tau/tau-coding-agent/internal-urls/router";
-import { SshProtocolHandler } from "@tau/tau-coding-agent/internal-urls/ssh-protocol";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
-import { GrepTool } from "@tau/tau-coding-agent/tools/grep";
-import { ReadTool } from "@tau/tau-coding-agent/tools/read";
-import { WriteTool } from "@tau/tau-coding-agent/tools/write";
+import * as capability from "tau/capability";
+import type { SSHHost } from "tau/capability/ssh";
+import type { CapabilityResult } from "tau/capability/types";
+import { Settings } from "tau/config/settings";
+import { parseInternalUrl } from "tau/internal-urls/parse";
+import { InternalUrlRouter } from "tau/internal-urls/router";
+import { SshProtocolHandler } from "tau/internal-urls/ssh-protocol";
+import type { ToolSession } from "tau/tools";
+import { GrepTool } from "tau/tools/grep";
+import { ReadTool } from "tau/tools/read";
+import { WriteTool } from "tau/tools/write";
 
 // Live integration against `ssh localhost`. Skips automatically where key-based
 // localhost SSH is unavailable (CI without sshd). Capability lookup is mocked

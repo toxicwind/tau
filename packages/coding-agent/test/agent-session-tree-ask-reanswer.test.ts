@@ -16,11 +16,11 @@
 import { describe, expect, it, vi } from "bun:test";
 import { Agent, AgentBusyError, type AgentToolResult } from "@tau/tau-agent-core";
 import { getBundledModel } from "@tau/tau-catalog/models";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import type { ExtensionRunner, ExtensionUIContext } from "@tau/tau-coding-agent/extensibility/extensions";
-import { SecretObfuscator } from "@tau/tau-coding-agent/secrets/obfuscator";
-import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { Settings } from "tau/config/settings";
+import type { ExtensionRunner, ExtensionUIContext } from "tau/extensibility/extensions";
+import { SecretObfuscator } from "tau/secrets/obfuscator";
+import { AgentSession } from "tau/session/agent-session";
+import { SessionManager } from "tau/session/session-manager";
 import type { AskToolDetails } from "@tau/tau-tui/tools/ask";
 
 const TEST_MODEL = getBundledModel("anthropic", "claude-sonnet-4-5")!;

@@ -1,8 +1,8 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
 import * as url from "node:url";
-import { resetSettingsForTest, Settings, settings } from "@tau/tau-coding-agent/config/settings";
-import { getDefault } from "@tau/tau-coding-agent/config/settings-schema";
+import { resetSettingsForTest, Settings, settings } from "tau/config/settings";
+import { getDefault } from "tau/config/settings-schema";
 import { ReadToolGroupComponent, readArgsCollapseIntoGroup } from "@tau/tau-tui/chat/read-tool-group";
 import * as themeModule from "@tau/tau-tui/theme";
 

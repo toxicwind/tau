@@ -62,8 +62,8 @@ const NATIVE_LEAF_LEGAL_FILES = ["LICENSE", "THIRD-PARTY-NOTICES.txt"] as const;
 
 function expectedAddonFilenames(tag: string): string[] {
 	return tag.endsWith("-x64")
-		? [`pi_natives.${tag}-baseline.node`, `pi_natives.${tag}-modern.node`, `pi_natives.${tag}.node`]
-		: [`pi_natives.${tag}.node`];
+		? [`tau_natives.${tag}-baseline.node`, `tau_natives.${tag}-modern.node`, `tau_natives.${tag}.node`]
+		: [`tau_natives.${tag}.node`];
 }
 
 function discoverAddonFiles(nativeDir: string, tag: string): Promise<string[]> {
@@ -75,9 +75,9 @@ function discoverAddonFiles(nativeDir: string, tag: string): Promise<string[]> {
 }
 
 function selectPrimaryAddonFile(tag: string, files: readonly string[]): string {
-	const baseline = `pi_natives.${tag}-baseline.node`;
+	const baseline = `tau_natives.${tag}-baseline.node`;
 	if (files.includes(baseline)) return baseline;
-	const defaultFile = `pi_natives.${tag}.node`;
+	const defaultFile = `tau_natives.${tag}.node`;
 	if (files.includes(defaultFile)) return defaultFile;
 	return files[0];
 }

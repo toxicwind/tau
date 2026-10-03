@@ -12,9 +12,9 @@
  * `__`-prefixed fields not in the allowlist) is preserved verbatim.
  */
 import { describe, expect, it } from "bun:test";
-import { type SkillPromptDetails, stripInternalDetailsFields } from "@tau/tau-coding-agent/session/messages";
-import type { CustomMessageEntry } from "@tau/tau-coding-agent/session/session-entries";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { type SkillPromptDetails, stripInternalDetailsFields } from "tau/session/messages";
+import type { CustomMessageEntry } from "tau/session/session-entries";
+import { SessionManager } from "tau/session/session-manager";
 
 const SKILL_TYPE = "skill-prompt";
 

@@ -1,12 +1,12 @@
 import { describe, expect, it } from "bun:test";
 import { getBundledModel } from "@tau/tau-catalog/models";
-import { getRoleInfo } from "@tau/tau-coding-agent/config/model-roles";
-import { formatModelStringWithRouting } from "@tau/tau-coding-agent/config/model-resolver";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { getRoleInfo } from "tau/config/model-roles";
+import { formatModelStringWithRouting } from "tau/config/model-resolver";
+import { Settings } from "tau/config/settings";
 import {
 	collectOnlineTinyCandidates,
 	expandOnlineTinyModelFallbacks,
-} from "@tau/tau-coding-agent/tiny/online-candidates";
+} from "tau/tiny/online-candidates";
 
 const localTiny = getBundledModel("local", "lfm2.5-230m")!;
 const primary = getBundledModel("google", "gemini-2.5-flash")!;

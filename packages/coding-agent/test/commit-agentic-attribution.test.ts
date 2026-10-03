@@ -1,11 +1,11 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import { getBundledModel } from "@tau/tau-catalog/models";
-import { runCommitAgentSession } from "@tau/tau-coding-agent/commit/agentic/agent";
-import * as toolsModule from "@tau/tau-coding-agent/commit/agentic/tools";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import type { CreateAgentSessionResult } from "@tau/tau-coding-agent/sdk";
-import * as sdkModule from "@tau/tau-coding-agent/sdk";
-import type { PromptOptions } from "@tau/tau-coding-agent/session/agent-session";
+import { runCommitAgentSession } from "tau/commit/agentic/agent";
+import * as toolsModule from "tau/commit/agentic/tools";
+import { Settings } from "tau/config/settings";
+import type { CreateAgentSessionResult } from "tau/sdk";
+import * as sdkModule from "tau/sdk";
+import type { PromptOptions } from "tau/session/agent-session";
 
 describe("commit agent prompt attribution", () => {
 	afterEach(() => {

@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { parseFileDiffs } from "@tau/tau-coding-agent/commit/git/diff";
+import { parseFileDiffs } from "tau/commit/git/diff";
 import * as vcs from "@tau/tau-natives/vcs";
 
 describe("joinPatch", () => {

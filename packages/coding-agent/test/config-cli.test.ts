@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { runConfigCommand } from "@tau/tau-coding-agent/cli/config-cli";
-import { resetSettingsForTest } from "@tau/tau-coding-agent/config/settings";
-import { AgentStorage } from "@tau/tau-coding-agent/session/agent-storage";
+import { runConfigCommand } from "tau/cli/config-cli";
+import { resetSettingsForTest } from "tau/config/settings";
+import { AgentStorage } from "tau/session/agent-storage";
 import { getConfigRootDir, setAgentDir, TempDir } from "@tau/tau-utils";
 
 let testAgentDir: TempDir | undefined;

@@ -1,12 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import * as capability from "@tau/tau-coding-agent/capability";
-import type { Rule } from "@tau/tau-coding-agent/capability/rule";
-import { resetActiveRulesForTests, setActiveRules } from "@tau/tau-coding-agent/capability/rule";
-import type { SSHHost } from "@tau/tau-coding-agent/capability/ssh";
-import type { CapabilityResult } from "@tau/tau-coding-agent/capability/types";
-import type { Skill } from "@tau/tau-coding-agent/extensibility/skills";
-import { resetActiveSkillsForTests, setActiveSkills } from "@tau/tau-coding-agent/extensibility/skills";
-import { InternalUrlRouter } from "@tau/tau-coding-agent/internal-urls/router";
+import * as capability from "tau/capability";
+import type { Rule } from "tau/capability/rule";
+import { resetActiveRulesForTests, setActiveRules } from "tau/capability/rule";
+import type { SSHHost } from "tau/capability/ssh";
+import type { CapabilityResult } from "tau/capability/types";
+import type { Skill } from "tau/extensibility/skills";
+import { resetActiveSkillsForTests, setActiveSkills } from "tau/extensibility/skills";
+import { InternalUrlRouter } from "tau/internal-urls/router";
 import {
 	applyInternalUrlCompletion,
 	extractInternalUrlContext,

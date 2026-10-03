@@ -2,12 +2,12 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { clearCache as clearFsCache } from "@tau/tau-coding-agent/capability/fs";
-import { type CustomTool, toolCapability } from "@tau/tau-coding-agent/capability/tool";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
-import { initializeWithSettings, loadCapability } from "@tau/tau-coding-agent/discovery";
-import { clearClaudePluginRootsCache } from "@tau/tau-coding-agent/discovery/helpers";
-import { discoverCustomToolPaths, loadCustomTools } from "@tau/tau-coding-agent/extensibility/custom-tools/loader";
+import { clearCache as clearFsCache } from "tau/capability/fs";
+import { type CustomTool, toolCapability } from "tau/capability/tool";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
+import { initializeWithSettings, loadCapability } from "tau/discovery";
+import { clearClaudePluginRootsCache } from "tau/discovery/helpers";
+import { discoverCustomToolPaths, loadCustomTools } from "tau/extensibility/custom-tools/loader";
 import { __resetDirsFromEnvForTests, removeWithRetries, setAgentDir } from "@tau/tau-utils";
 import { restoreEnvValue } from "../helpers/settings-test-state";
 

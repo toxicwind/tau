@@ -9,11 +9,11 @@
  * shutdown behavior.
  */
 import { describe, expect, it } from "bun:test";
-import { MnemotauEmbedClient, type MnemotauEmbedWorkerHandle } from "@tau/tau-coding-agent/mnemotau/embed-client";
+import { MnemotauEmbedClient, type MnemotauEmbedWorkerHandle } from "tau/mnemotau/embed-client";
 import type {
 	MnemotauEmbedWorkerInbound,
 	MnemotauEmbedWorkerOutbound,
-} from "@tau/tau-coding-agent/mnemotau/embed-protocol";
+} from "tau/mnemotau/embed-protocol";
 
 class DelayedEmbedWorker implements MnemotauEmbedWorkerHandle {
 	readonly firstRequest = Promise.withResolvers<MnemotauEmbedWorkerInbound>();

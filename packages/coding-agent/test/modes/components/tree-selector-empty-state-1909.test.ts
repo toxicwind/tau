@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it } from "bun:test";
 import { TreeSelectorComponent } from "@tau/tau-tui/overlays/tree-selector";
 import { initTheme } from "@tau/tau-tui/theme";
-import type { SessionEntry, SessionTreeNode } from "@tau/tau-coding-agent/session/session-entries";
+import type { SessionEntry, SessionTreeNode } from "tau/session/session-entries";
 
 beforeAll(async () => {
 	await initTheme(false, undefined, undefined, "dark", "light");

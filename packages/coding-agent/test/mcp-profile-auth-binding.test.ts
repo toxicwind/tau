@@ -11,11 +11,11 @@
 import { Database } from "bun:sqlite";
 import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
 import { AuthStorage, SqliteAuthCredentialStore } from "@tau/tau-ai";
-import { MCPManager } from "@tau/tau-coding-agent/mcp/manager";
-import { removeManagedMcpOAuthCredential } from "@tau/tau-coding-agent/mcp/oauth-credentials";
-import * as oauthFlow from "@tau/tau-coding-agent/mcp/oauth-flow";
-import { mcpOAuthCredentialId } from "@tau/tau-coding-agent/mcp/oauth-flow";
-import type { MCPServerConfig } from "@tau/tau-coding-agent/mcp/types";
+import { MCPManager } from "tau/mcp/manager";
+import { removeManagedMcpOAuthCredential } from "tau/mcp/oauth-credentials";
+import * as oauthFlow from "tau/mcp/oauth-flow";
+import { mcpOAuthCredentialId } from "tau/mcp/oauth-flow";
+import type { MCPServerConfig } from "tau/mcp/types";
 import { getActiveProfile, setProfile } from "@tau/tau-utils/dirs";
 
 const SERVER_URL = "https://mcp.example.com/mcp";

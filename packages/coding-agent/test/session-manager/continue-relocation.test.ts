@@ -3,10 +3,10 @@ import * as fs from "node:fs";
 import * as fsp from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { SessionHeader } from "@tau/tau-coding-agent/session/session-entries";
-import { loadEntriesFromFile } from "@tau/tau-coding-agent/session/session-loader";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import { writeTerminalBreadcrumb } from "@tau/tau-coding-agent/session/session-paths";
+import type { SessionHeader } from "tau/session/session-entries";
+import { loadEntriesFromFile } from "tau/session/session-loader";
+import { SessionManager } from "tau/session/session-manager";
+import { writeTerminalBreadcrumb } from "tau/session/session-paths";
 import { getTerminalId } from "@tau/tau-tui";
 import { getConfigRootDir, getTerminalSessionsDir, setAgentDir } from "@tau/tau-utils";
 

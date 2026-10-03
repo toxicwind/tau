@@ -3,18 +3,18 @@ import type { Model } from "@tau/tau-ai";
 import { Agent } from "@tau/tau-agent-core";
 import { createMockModel } from "@tau/tau-ai/providers/mock";
 import { buildModel } from "@tau/tau-catalog/build";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
+import { AgentSession } from "tau/session/agent-session";
+import { AuthStorage } from "tau/session/auth-storage";
 import { expandModelMentionTags } from "@tau/tau-tui/prompt/model-mention-syntax";
 import {
 	MODEL_MENTION_ENTRY_TYPE,
 	ModelMentionRegistry,
 	readModelMentions,
-} from "@tau/tau-coding-agent/session/model-mentions";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import { getBundledAgent } from "@tau/tau-coding-agent/task/agents";
+} from "tau/session/model-mentions";
+import { SessionManager } from "tau/session/session-manager";
+import { getBundledAgent } from "tau/task/agents";
 
 function model(provider: string, id: string, name: string): Model {
 	return buildModel({

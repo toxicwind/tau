@@ -1,16 +1,16 @@
 import { beforeAll, describe, expect, it } from "bun:test";
 import * as path from "node:path";
 import { type } from "@tau/tautype";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { Settings } from "tau/config/settings";
 import { initTheme, theme } from "@tau/tau-tui/theme";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
+import type { ToolSession } from "tau/tools";
 import {
 	markdownToPhases,
 	nextActionableTask,
 	phasesToMarkdown,
 	resolveTodoMarkdownPath,
 	TodoTool,
-} from "@tau/tau-coding-agent/tools";
+} from "tau/tools";
 import {
 	selectCollapsedTodos,
 	TODO_STRIKE_HOLD_FRAMES,

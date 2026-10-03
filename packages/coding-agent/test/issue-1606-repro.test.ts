@@ -23,7 +23,7 @@ import {
 	onnxLaunch,
 	smokeTestTinyTitleWorker,
 	TINY_WORKER_CLOSED,
-} from "@tau/tau-coding-agent/tiny/title-client";
+} from "tau/tiny/title-client";
 
 describe("issue #1606 — tiny model lives in an isolated process", () => {
 	it("ping/pongs through the spawned worker process and tears it down cleanly", async () => {

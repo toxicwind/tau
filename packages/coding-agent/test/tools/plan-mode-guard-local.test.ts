@@ -2,9 +2,9 @@ import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { PlanModeState } from "@tau/tau-coding-agent/plan-mode/state";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
-import { enforcePlanModeWrite, resolvePlanPath } from "@tau/tau-coding-agent/tools/plan-mode-guard";
+import type { PlanModeState } from "tau/plan-mode/state";
+import type { ToolSession } from "tau/tools";
+import { enforcePlanModeWrite, resolvePlanPath } from "tau/tools/plan-mode-guard";
 import { removeWithRetries } from "@tau/tau-utils";
 
 const ARTIFACTS_DIR = path.join(os.tmpdir(), "agent-artifacts");

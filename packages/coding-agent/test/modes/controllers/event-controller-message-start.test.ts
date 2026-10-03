@@ -1,9 +1,9 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
 import type { ImageContent, UserMessage } from "@tau/tau-ai";
-import { EventController } from "@tau/tau-coding-agent/modes/controllers/event-controller";
+import { EventController } from "tau/modes/controllers/event-controller";
 import { initTheme } from "@tau/tau-tui/theme";
-import { UiHelpers } from "@tau/tau-coding-agent/modes/utils/ui-helpers";
-import type { CustomMessage } from "@tau/tau-coding-agent/session/messages";
+import { UiHelpers } from "tau/modes/utils/ui-helpers";
+import type { CustomMessage } from "tau/session/messages";
 import type { Component } from "@tau/tau-tui";
 import { createInteractiveModeContext } from "../../helpers/interactive-mode-context";
 

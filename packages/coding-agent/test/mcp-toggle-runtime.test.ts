@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import type { CustomTool } from "@tau/tau-coding-agent/extensibility/custom-tools/types";
-import { applyMcpToggleRuntime } from "@tau/tau-coding-agent/modes/components/extensions/mcp-runtime";
+import type { CustomTool } from "tau/extensibility/custom-tools/types";
+import { applyMcpToggleRuntime } from "tau/modes/components/extensions/mcp-runtime";
 
 function stubCustomTool(name: string): CustomTool {
 	return {

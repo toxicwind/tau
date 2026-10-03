@@ -7,28 +7,28 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
 import { Agent, ThinkingLevel } from "@tau/tau-agent-core";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import { ModelRegistry } from "tau/config/model-registry";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
 import { PINNED_HUD_TOGGLE_ID } from "@tau/tau-tui/prompt/composer";
 import {
 	InteractiveMode,
 	layoutPinnedHud,
 	renderSubagentHudLines,
 	SubagentHudComponent,
-} from "@tau/tau-coding-agent/modes/interactive-mode";
+} from "tau/modes/interactive-mode";
 import { type ObservableSession, SessionObserverRegistry } from "@tau/tau-tui/overlays/session-observer-registry";
 import { initTheme, theme } from "@tau/tau-tui/theme";
-import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { AgentSession } from "tau/session/agent-session";
+import { AuthStorage } from "tau/session/auth-storage";
+import { SessionManager } from "tau/session/session-manager";
 import { type AgentProgress } from "@tau/tau-tui/tools/task";
 import {
 	type SubagentLifecyclePayload,
 	type SubagentProgressPayload,
 	TASK_SUBAGENT_LIFECYCLE_CHANNEL,
 	TASK_SUBAGENT_PROGRESS_CHANNEL,
-} from "@tau/tau-coding-agent/task";
-import { EventBus } from "@tau/tau-coding-agent/utils/event-bus";
+} from "tau/task";
+import { EventBus } from "tau/utils/event-bus";
 import { TempDir } from "@tau/tau-utils";
 
 function makeSession(overrides: Partial<ObservableSession> & { id: string }): ObservableSession {

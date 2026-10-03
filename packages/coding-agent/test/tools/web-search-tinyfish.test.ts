@@ -1,8 +1,8 @@
 import { afterAll, describe, expect, it, vi } from "bun:test";
 import type { AuthStorage, FetchImpl } from "@tau/tau-ai";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { searchTinyFish } from "@tau/tau-coding-agent/web/search/providers/tinyfish";
-import { SearchProviderError } from "@tau/tau-coding-agent/web/search/types";
+import { ModelRegistry } from "tau/config/model-registry";
+import { searchTinyFish } from "tau/web/search/providers/tinyfish";
+import { SearchProviderError } from "tau/web/search/types";
 import { createInMemoryAuthStorage } from "../helpers/agent-session-setup";
 
 const TEST_KEY = "test-tinyfish-key";

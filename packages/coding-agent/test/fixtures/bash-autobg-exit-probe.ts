@@ -6,9 +6,9 @@
  * the event loop alive until the threshold expires; the fix clears it, so the
  * process must exit promptly. The parent test measures wall-clock exit time.
  */
-import { AsyncJobManager } from "@tau/tau-coding-agent/async";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
-import { BashTool } from "@tau/tau-coding-agent/tools/bash";
+import { AsyncJobManager } from "tau/async";
+import type { ToolSession } from "tau/tools";
+import { BashTool } from "tau/tools/bash";
 
 const THRESHOLD_MS = 30_000;
 

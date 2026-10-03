@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from "bun:test";
-import { mergeMCPHeaders, setGeneratedHeader } from "@tau/tau-coding-agent/mcp/transports/header-policy";
-import { HttpTransport } from "@tau/tau-coding-agent/mcp/transports/http";
+import { mergeMCPHeaders, setGeneratedHeader } from "tau/mcp/transports/header-policy";
+import { HttpTransport } from "tau/mcp/transports/http";
 
 const REQUEST_TIMEOUT_MS = 1_000;
 

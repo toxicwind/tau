@@ -1,4 +1,4 @@
-//! N-API surface for the Rust edit engine (`pi_edit`).
+//! N-API surface for the Rust edit engine (`tau_edit`).
 //!
 //! # Overview
 //! One [`EditSession`] per edit tool call: the agent loop feeds raw streamed
@@ -27,7 +27,7 @@ use napi::{
 	threadsafe_function::{ThreadsafeFunction, UnknownReturnValue},
 };
 use napi_derive::napi;
-use pi_edit::{
+use tau_edit::{
 	EditError, EditMode, EditResult, PathPolicy, Session,
 	diff_string::{BlockContextSource, generate_diff_string},
 	modes::{hashline, sloppy},
@@ -223,7 +223,7 @@ pub struct EditApplyOutcome {
 #[napi]
 #[derive(Default)]
 pub struct EditStore {
-	inner: pi_edit::EditStore,
+	inner: tau_edit::EditStore,
 }
 
 #[napi]
@@ -243,7 +243,7 @@ impl EditStore {
 		seen_lines: Option<Vec<u32>>,
 	) -> String {
 		let key = canonical_key(Path::new(&absolute_path));
-		let (_, body) = pi_edit::text::strip_bom(&text);
+		let (_, body) = tau_edit::text::strip_bom(&text);
 		self
 			.inner
 			.record(&key, &normalize_to_lf(body), seen_lines.as_deref())
@@ -603,7 +603,7 @@ pub struct EditInspection {
 pub fn edit_inspect(mode: String, args_json: String) -> Result<EditInspection> {
 	let mode = parse_mode(&mode)?;
 	let snapshot = snapshot_from_text(&args_json, false, true);
-	let engine = pi_edit::modes::engine_for(mode, true, 0.95, false);
+	let engine = tau_edit::modes::engine_for(mode, true, 0.95, false);
 	let inspection = engine.inspect(&snapshot);
 	Ok(EditInspection {
 		paths:    inspection.paths,
@@ -616,10 +616,10 @@ pub fn edit_inspect(mode: String, args_json: String) -> Result<EditInspection> {
 			.file_ops
 			.into_iter()
 			.map(|op| match op {
-				pi_edit::FileOpIntent::Delete { path } => {
+				tau_edit::FileOpIntent::Delete { path } => {
 					EditFileOpIntent { kind: "delete".into(), path, to: None }
 				},
-				pi_edit::FileOpIntent::Move { from, to } => {
+				tau_edit::FileOpIntent::Move { from, to } => {
 					EditFileOpIntent { kind: "move".into(), path: from, to: Some(to) }
 				},
 			})
@@ -651,13 +651,13 @@ pub fn edit_diff_string(
 /// Tool description markdown for `mode`.
 #[napi]
 pub fn edit_description(mode: String) -> Result<String> {
-	Ok(pi_edit::description(parse_mode(&mode)?).to_owned())
+	Ok(tau_edit::description(parse_mode(&mode)?).to_owned())
 }
 
 /// Lark grammar for `mode`, when it has a custom wire format.
 #[napi]
 pub fn edit_grammar(mode: String) -> Result<Option<String>> {
-	Ok(pi_edit::grammar(parse_mode(&mode)?).map(str::to_owned))
+	Ok(tau_edit::grammar(parse_mode(&mode)?).map(str::to_owned))
 }
 
 /// Auto-generated-file guard: the rejection message when `absolutePath`
@@ -718,7 +718,7 @@ pub fn extract_inline_sloppy_regions(text: String) -> Vec<InlineSloppyRegion> {
 /// 4-hex hashline content tag for `text`.
 #[napi]
 pub fn hashline_file_hash(text: String) -> String {
-	let (_, body) = pi_edit::text::strip_bom(&text);
+	let (_, body) = tau_edit::text::strip_bom(&text);
 	store::file_hash(&normalize_to_lf(body))
 }
 
@@ -770,5 +770,5 @@ pub fn hashline_count_ops(input: String) -> Vec<HashlineOpCount> {
 /// Decode notebook JSON into the editable cell-marker text.
 #[napi]
 pub fn notebook_to_editable_text(json: String, display_path: String) -> Result<String> {
-	pi_edit::notebook::notebook_to_editable_text(&json, &display_path).map_err(reason)
+	tau_edit::notebook::notebook_to_editable_text(&json, &display_path).map_err(reason)
 }

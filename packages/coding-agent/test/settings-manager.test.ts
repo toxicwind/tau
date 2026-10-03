@@ -17,11 +17,11 @@ import {
 	resetSettingsForTest,
 	type SettingPath,
 	Settings,
-} from "@tau/tau-coding-agent/config/settings";
-import { SETTINGS_SCHEMA } from "@tau/tau-coding-agent/config/settings-schema";
-import * as discovery from "@tau/tau-coding-agent/discovery";
+} from "tau/config/settings";
+import { SETTINGS_SCHEMA } from "tau/config/settings-schema";
+import * as discovery from "tau/discovery";
 import MODEL_PRIO from "../src/priority.json" with { type: "json" };
-import { AgentStorage } from "@tau/tau-coding-agent/session/agent-storage";
+import { AgentStorage } from "tau/session/agent-storage";
 import { getAgentDbPath, getProjectAgentDir, logger, TempDir } from "@tau/tau-utils";
 import * as fileLock from "@tau/tau-utils/file-lock";
 import { YAML } from "bun";

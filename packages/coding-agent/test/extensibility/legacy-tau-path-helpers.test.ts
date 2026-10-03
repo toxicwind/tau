@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, spyOn, vi } from "bun:test";
 import * as path from "node:path";
-import * as configModule from "@tau/tau-coding-agent/config";
-import * as shim from "@tau/tau-coding-agent/extensibility/legacy-tau-coding-agent-shim";
+import * as configModule from "tau/config";
+import * as shim from "tau/extensibility/legacy-tau-coding-agent-shim";
 import * as utils from "@tau/tau-utils";
 
 // Issue #5968: pi extensions import the SDK path helpers (`getAgentDir`,

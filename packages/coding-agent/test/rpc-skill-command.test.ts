@@ -6,8 +6,8 @@ import {
 	dispatchRpcSkillPrompt,
 	RpcExtensionUserMessageTracker,
 	tryRunRpcSkillCommand,
-} from "@tau/tau-coding-agent/modes/rpc/rpc-mode";
-import { type CustomMessage, SKILL_PROMPT_MESSAGE_TYPE } from "@tau/tau-coding-agent/session/messages";
+} from "tau/modes/rpc/rpc-mode";
+import { type CustomMessage, SKILL_PROMPT_MESSAGE_TYPE } from "tau/session/messages";
 import { removeWithRetries, Snowflake } from "@tau/tau-utils";
 
 describe("tryRunRpcSkillCommand", () => {

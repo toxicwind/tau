@@ -2,12 +2,12 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { SessionInfo } from "@tau/tau-coding-agent/session/session-listing";
+import type { SessionInfo } from "tau/session/session-listing";
 import {
 	loadPinnedSessionIds,
 	sortPinnedFirst,
 	toggleSessionPin,
-} from "@tau/tau-coding-agent/session/session-pins";
+} from "tau/session/session-pins";
 
 describe("session-pins", () => {
 	let tempDir: string;

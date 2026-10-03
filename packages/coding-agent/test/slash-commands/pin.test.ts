@@ -2,11 +2,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
-import { computeDefaultSessionDir } from "@tau/tau-coding-agent/session/session-paths";
-import { loadPinnedSessionIds } from "@tau/tau-coding-agent/session/session-pins";
-import { FileSessionStorage } from "@tau/tau-coding-agent/session/session-storage";
-import { executeBuiltinSlashCommand } from "@tau/tau-coding-agent/slash-commands/builtin-registry";
+import type { InteractiveModeContext } from "tau/modes/types";
+import { computeDefaultSessionDir } from "tau/session/session-paths";
+import { loadPinnedSessionIds } from "tau/session/session-pins";
+import { FileSessionStorage } from "tau/session/session-storage";
+import { executeBuiltinSlashCommand } from "tau/slash-commands/builtin-registry";
 import { getConfigRootDir, setAgentDir } from "@tau/tau-utils";
 
 let tempDir: string;

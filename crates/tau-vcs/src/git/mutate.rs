@@ -578,7 +578,7 @@ impl GitRepo {
 		};
 		let mut clone_error = None;
 		if let Some(preferred) = preferred {
-			for kind in pi_iso::clone_candidates(preferred) {
+			for kind in tau_iso::clone_candidates(preferred) {
 				match self.worktree_add_cloned(path, id, &head, kind, options.keep_changes) {
 					Ok(()) => {
 						return Ok(WorktreeAddResult { cloned_with: Some(kind), clone_error });
@@ -648,7 +648,7 @@ impl GitRepo {
 		path: &Path,
 		id: gix::hash::ObjectId,
 		head: &str,
-		kind: pi_iso::BackendKind,
+		kind: tau_iso::BackendKind,
 		keep_changes: bool,
 	) -> Result<()> {
 		let repo = self.gix()?;
@@ -664,7 +664,7 @@ impl GitRepo {
 			return Err(Error::backend("git worktree add", "source index is missing"));
 		}
 
-		pi_iso::backend(kind)
+		tau_iso::backend(kind)
 			.clone_tree(self.root(), path, &[OsStr::new(".git")])
 			.map_err(|err| Error::backend("git worktree add", err))?;
 		let admin = register_worktree(path, &self.info().common_dir, head)?;
@@ -2215,8 +2215,8 @@ mod tests {
 		fs::write(temp.path().join("parent-untracked.txt"), "delete\n").unwrap();
 
 		// 4. Global excludesfile (core.excludesFile), configured *after* `repo`'s
-		//    cached gix handle was opened by the staging calls above. The clean below
-		//    must observe it or `global.env` is deleted.
+		//    cached gix handle was opened by the staging calls above. The clean
+		//    below must observe it or `global.env` is deleted.
 		let global_exclude = outside.path().join("global-excludes");
 		fs::write(&global_exclude, "global.env\n").unwrap();
 		git(temp.path(), &["config", "core.excludesFile", global_exclude.to_str().unwrap()]);
@@ -2281,8 +2281,8 @@ mod tests {
 			initially_empty.exists(),
 			"pathspec-scoped clean leaves directories outside the pathspec"
 		);
-		// 10. Pathspec scoping: cleaning with a pathspec prunes empty dirs inside the
-		//     pathspec but preserves the parent
+		// 10. Pathspec scoping: cleaning with a pathspec prunes empty dirs inside
+		//     the pathspec but preserves the parent
 		let pathspec_dir = temp.path().join("pathspec-parent/child/grandchild");
 		fs::create_dir_all(&pathspec_dir).unwrap();
 		fs::write(pathspec_dir.join("leaf.txt"), "leaf\n").unwrap();
@@ -2458,7 +2458,7 @@ mod tests {
 		} else {
 			assert!(!linked.join("build/out.txt").exists());
 			assert!(
-				result.clone_error.is_some() || pi_iso::clone_candidates(None).is_empty(),
+				result.clone_error.is_some() || tau_iso::clone_candidates(None).is_empty(),
 				"a failed clone attempt must surface its reason"
 			);
 		}
@@ -2466,7 +2466,7 @@ mod tests {
 	}
 
 	/// Whether any host-available clone backend can actually clone a tree
-	/// on `dir`'s filesystem. `pi_iso::clone_candidates` is a host-level
+	/// on `dir`'s filesystem. `tau_iso::clone_candidates` is a host-level
 	/// probe only: Linux reports reflink support even when the temp dir
 	/// sits on ext4, where `FICLONE` fails with `EOPNOTSUPP`.
 	fn clone_works_on(dir: &Path) -> bool {
@@ -2474,9 +2474,9 @@ mod tests {
 		let target = dir.join("clone-probe-dst");
 		fs::create_dir_all(&source).unwrap();
 		fs::write(source.join("file"), b"probe\n").unwrap();
-		let works = pi_iso::clone_candidates(None).into_iter().any(|kind| {
+		let works = tau_iso::clone_candidates(None).into_iter().any(|kind| {
 			let _ = fs::remove_dir_all(&target);
-			pi_iso::backend(kind)
+			tau_iso::backend(kind)
 				.clone_tree(&source, &target, &[])
 				.is_ok()
 		});
@@ -2507,7 +2507,7 @@ mod tests {
 			);
 		} else {
 			assert!(
-				result.clone_error.is_some() || pi_iso::clone_candidates(None).is_empty(),
+				result.clone_error.is_some() || tau_iso::clone_candidates(None).is_empty(),
 				"a failed clone attempt must surface its reason"
 			);
 		}

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { __computeBundledSelfPackageRoot } from "@tau/tau-coding-agent/extensibility/plugins/legacy-tau-compat";
+import { __computeBundledSelfPackageRoot } from "tau/extensibility/plugins/legacy-tau-compat";
 
 // Issue #3423 removed the runtime bunfs-path computation (`__computeBunfsPackageRoot`,
 // `__joinBunfsPath`, `bunfsPath`): Bun 1.3.14 stopped exposing `--compile`
@@ -20,9 +20,9 @@ describe("legacy pi compat bundled-self package root computation", () => {
 			"C:\\Users\\me\\.bun\\install\\global\\node_modules\\@tau\\tau-coding-agent",
 		);
 
-		const posixMetaDir = "/home/me/.bun/install/global/node_modules/@tau/tau-coding-agent/dist";
+		const posixMetaDir = "/home/me/.bun/install/global/node_modules/tau/dist";
 		expect(__computeBundledSelfPackageRoot(posixMetaDir, path.posix)).toBe(
-			"/home/me/.bun/install/global/node_modules/@tau/tau-coding-agent",
+			"/home/me/.bun/install/global/node_modules/tau",
 		);
 	});
 

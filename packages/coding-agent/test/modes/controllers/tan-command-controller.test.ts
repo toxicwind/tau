@@ -2,17 +2,17 @@ import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
 import type { AgentMessage } from "@tau/tau-agent-core";
 import type { AssistantMessage, Model } from "@tau/tau-ai";
-import type { AsyncJobRegisterOptions } from "@tau/tau-coding-agent/async/job-manager";
-import type { EffectiveExtensionRoots } from "@tau/tau-coding-agent/capability/types";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import type { PreparedExtension } from "@tau/tau-coding-agent/extensibility/extensions";
-import { resolveLocalRoot } from "@tau/tau-coding-agent/internal-urls/local-protocol";
-import { TanCommandController } from "@tau/tau-coding-agent/modes/controllers/tan-command-controller";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
-import { AgentRegistry, MAIN_AGENT_ID } from "@tau/tau-coding-agent/registry/agent-registry";
-import type { CreateAgentSessionOptions, CreateAgentSessionResult } from "@tau/tau-coding-agent/sdk";
-import * as sdkModule from "@tau/tau-coding-agent/sdk";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import type { AsyncJobRegisterOptions } from "tau/async/job-manager";
+import type { EffectiveExtensionRoots } from "tau/capability/types";
+import { Settings } from "tau/config/settings";
+import type { PreparedExtension } from "tau/extensibility/extensions";
+import { resolveLocalRoot } from "tau/internal-urls/local-protocol";
+import { TanCommandController } from "tau/modes/controllers/tan-command-controller";
+import type { InteractiveModeContext } from "tau/modes/types";
+import { AgentRegistry, MAIN_AGENT_ID } from "tau/registry/agent-registry";
+import type { CreateAgentSessionOptions, CreateAgentSessionResult } from "tau/sdk";
+import * as sdkModule from "tau/sdk";
+import { SessionManager } from "tau/session/session-manager";
 import { TempDir } from "@tau/tau-utils";
 
 interface CapturedJobRunContext {

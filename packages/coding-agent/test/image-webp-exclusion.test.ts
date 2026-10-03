@@ -3,12 +3,12 @@ import type { Api, Message, Model } from "@tau/tau-ai";
 import { buildResponsesInput } from "@tau/tau-ai/providers/openai-shared";
 import { buildModel } from "@tau/tau-catalog/build";
 import { getBundledModels } from "@tau/tau-catalog/models";
-import type { CustomMessage } from "@tau/tau-coding-agent/session/messages";
-import { SessionProviderBoundary } from "@tau/tau-coding-agent/session/session-provider-boundary";
+import type { CustomMessage } from "tau/session/messages";
+import { SessionProviderBoundary } from "tau/session/session-provider-boundary";
 import {
 	normalizeModelContextImages,
 	normalizeModelContextMessages,
-} from "@tau/tau-coding-agent/utils/image-loading";
+} from "tau/utils/image-loading";
 import { modelLacksWebpSupport, webpExclusionForModel } from "@tau/tau-tui/chat/image-loading";
 
 // 1x1 red PNG seed, upscaled + re-encoded as WebP at test time so no binary

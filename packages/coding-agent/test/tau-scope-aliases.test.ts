@@ -9,7 +9,7 @@
  * Reported failures the test covers:
  *   - `@juicesharp/rpiv-ask-user-question` ⇒ `@earendil-works/tau-tui`
  *   - `@plannotator/tau-extension`         ⇒ `@tau/tau-agent-core`
- *   - `@runfusion/fusion`                 ⇒ `@tau/tau-coding-agent/...`
+ *   - `@runfusion/fusion`                 ⇒ `tau/...`
  *
  * Plus the two upstream-only surfaces that turned up via real-plugin E2E:
  *   - `Key` runtime helper from `tau-tui` (used by plannotator + rpiv-*).
@@ -18,12 +18,12 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { loadExtensions } from "@tau/tau-coding-agent/extensibility/extensions/loader";
+import { loadExtensions } from "tau/extensibility/extensions/loader";
 import { TempDir } from "@tau/tau-utils";
 
-const canonicalCodingAgent = Bun.resolveSync("@tau/tau-coding-agent", import.meta.dir);
+const canonicalCodingAgent = Bun.resolveSync("tau", import.meta.dir);
 const canonicalCodingAgentExtensions = Bun.resolveSync(
-	"@tau/tau-coding-agent/extensibility/extensions",
+	"tau/extensibility/extensions",
 	import.meta.dir,
 );
 const canonicalUtils = Bun.resolveSync("@tau/tau-utils", import.meta.dir);
@@ -53,7 +53,7 @@ const CASES: readonly AliasCase[] = [
 	{ id: "tau-utils", aliasSpecifier: "@tau/tau-utils", canonicalPath: canonicalUtils, symbol: "logger" },
 	{
 		id: "tau-coding-agent",
-		aliasSpecifier: "@tau/tau-coding-agent",
+		aliasSpecifier: "tau",
 		canonicalPath: canonicalCodingAgent,
 		symbol: "isToolCallEventType",
 	},

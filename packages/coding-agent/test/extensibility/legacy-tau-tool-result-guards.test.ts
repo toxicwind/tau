@@ -8,7 +8,7 @@ import {
 	isReadToolResult,
 	isWriteToolResult,
 	type ToolResultEvent,
-} from "@tau/tau-coding-agent/extensibility/legacy-tau-coding-agent-shim";
+} from "tau/extensibility/legacy-tau-coding-agent-shim";
 
 // Issue #8161: tau-lean-ctx@3.9.18 imports `isEditToolResult`/`isWriteToolResult`
 // from `@earendil-works/tau-coding-agent`, which aliases to this shim. The shim's

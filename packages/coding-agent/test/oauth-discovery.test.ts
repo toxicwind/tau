@@ -7,7 +7,7 @@ import {
 	extractOAuthChallengeScopes,
 	fetchResourceMetadataScopes,
 	rfc9728ProtectedResourceMetadataUrl,
-} from "@tau/tau-coding-agent/mcp/oauth-discovery";
+} from "tau/mcp/oauth-discovery";
 import { type FetchInput, mockFetch } from "./helpers/fetch-mock";
 
 describe("mcp oauth discovery", () => {

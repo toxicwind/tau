@@ -1,10 +1,10 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { STREAMING_REVEAL_FRAME_MS } from "@tau/tau-coding-agent/modes/controllers/streaming-reveal";
+import { STREAMING_REVEAL_FRAME_MS } from "tau/modes/controllers/streaming-reveal";
 import {
 	decodeStreamedToolArgs,
 	streamingStringKeysForTool,
 	ToolArgsRevealController,
-} from "@tau/tau-coding-agent/modes/controllers/tool-args-reveal";
+} from "tau/modes/controllers/tool-args-reveal";
 import { STREAMING_JSON_PARSE_MIN_GROWTH } from "@tau/tau-utils";
 
 class RecordingArgsComponent {

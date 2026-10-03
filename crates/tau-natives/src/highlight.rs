@@ -9,11 +9,11 @@ use std::{cell::RefCell, collections::HashMap, sync::OnceLock};
 
 use napi::{JsString, Result};
 use napi_derive::napi;
-use pi_shell::rayon_global_pool_available;
 use rayon::prelude::*;
 use syntect::parsing::{
 	ParseState, Scope, ScopeStack, ScopeStackOp, SyntaxDefinition, SyntaxReference, SyntaxSet,
 };
+use tau_shell::rayon_global_pool_available;
 
 use crate::{
 	js::{self, InlineStr},

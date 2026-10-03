@@ -2,17 +2,17 @@ import { afterEach, beforeEach, describe, expect, it, spyOn } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { Settings } from "tau/config/settings";
 import {
 	buildMemoryToolDeveloperInstructions,
 	getMemoryRoot,
 	refreshMemoryToolDeveloperInstructionsCacheAfterStartup,
 	saveLearnedLesson,
-} from "@tau/tau-coding-agent/memories";
-import { localBackend } from "@tau/tau-coding-agent/memory-backend/local-backend";
-import type { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
-import { LearnTool } from "@tau/tau-coding-agent/tools/learn";
+} from "tau/memories";
+import { localBackend } from "tau/memory-backend/local-backend";
+import type { AgentSession } from "tau/session/agent-session";
+import type { ToolSession } from "tau/tools";
+import { LearnTool } from "tau/tools/learn";
 import { removeWithRetries } from "@tau/tau-utils";
 
 Bun.env.PI_PYTHON_SKIP_CHECK = "1";

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { SessionManager } from "tau/session/session-manager";
 
 describe("SessionManager usage statistics", () => {
 	const modelUsage = {

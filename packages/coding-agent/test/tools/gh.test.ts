@@ -5,8 +5,8 @@ import * as path from "node:path";
 import type { ToolCall } from "@tau/tau-ai";
 import { toolWireSchema } from "@tau/tau-ai/utils/schema";
 import { validateToolArguments } from "@tau/tau-ai/utils/validation";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
+import { Settings } from "tau/config/settings";
+import type { ToolSession } from "tau/tools";
 import {
 	buildSearchDateQualifier,
 	GithubTool,
@@ -14,11 +14,11 @@ import {
 	parsePrUnifiedDiff,
 	parseSearchDateBound,
 	resolveDefaultRepoMemoized,
-} from "@tau/tau-coding-agent/tools/gh";
-import { parseIssueUrl, parsePullRequestUrl } from "@tau/tau-coding-agent/tools/gh-common";
-import { github } from "@tau/tau-coding-agent/utils/github";
+} from "tau/tools/gh";
+import { parseIssueUrl, parsePullRequestUrl } from "tau/tools/gh-common";
+import { github } from "tau/utils/github";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
-import { withRepoLock } from "@tau/tau-coding-agent/utils/repo-lock";
+import { withRepoLock } from "tau/utils/repo-lock";
 import type { VcsGitRepo } from "@tau/tau-natives";
 import * as vcs from "@tau/tau-natives/vcs";
 import { getAgentDir, hashPath, normalizePathForComparison, removeWithRetries, setAgentDir } from "@tau/tau-utils";

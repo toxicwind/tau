@@ -1,9 +1,9 @@
 import { afterAll, afterEach, describe, expect, it, vi } from "bun:test";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { disposeAllVmContexts } from "@tau/tau-coding-agent/eval/js/context-manager";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
-import { EvalTool } from "@tau/tau-coding-agent/tools/eval";
-import * as toolTimeouts from "@tau/tau-coding-agent/tools/tool-timeouts";
+import { Settings } from "tau/config/settings";
+import { disposeAllVmContexts } from "tau/eval/js/context-manager";
+import type { ToolSession } from "tau/tools";
+import { EvalTool } from "tau/tools/eval";
+import * as toolTimeouts from "tau/tools/tool-timeouts";
 
 function makeSession(): ToolSession {
 	return {

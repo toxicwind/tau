@@ -4,10 +4,10 @@ import {
 	PRINT_MODE_ADVISOR_DRAIN_TIMEOUT_MS,
 	PRINT_MODE_ERROR_ADVISOR_DRAIN_TIMEOUT_MS,
 	runPrintMode,
-} from "@tau/tau-coding-agent/modes/print-mode";
-import type { PlanModeState } from "@tau/tau-coding-agent/plan-mode/state";
-import type { AgentSession, AgentSessionEvent } from "@tau/tau-coding-agent/session/agent-session";
-import type { PlanProposalHandler } from "@tau/tau-coding-agent/tools/resolve";
+} from "tau/modes/print-mode";
+import type { PlanModeState } from "tau/plan-mode/state";
+import type { AgentSession, AgentSessionEvent } from "tau/session/agent-session";
+import type { PlanProposalHandler } from "tau/tools/resolve";
 
 function makeAssistantMessage(text: string): AssistantMessage {
 	const timestamp = Date.now();

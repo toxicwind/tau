@@ -2,17 +2,17 @@ import { beforeAll, describe, expect, it, spyOn } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { disableUserSource, enableUserSource } from "@tau/tau-coding-agent/capability";
-import { type Skill as CapabilitySkill, skillCapability } from "@tau/tau-coding-agent/capability/skill";
-import { getCapability } from "@tau/tau-coding-agent/discovery";
-import { getWslWindowsHomeCandidate, runHostProbe } from "@tau/tau-coding-agent/discovery/agents";
+import { disableUserSource, enableUserSource } from "tau/capability";
+import { type Skill as CapabilitySkill, skillCapability } from "tau/capability/skill";
+import { getCapability } from "tau/discovery";
+import { getWslWindowsHomeCandidate, runHostProbe } from "tau/discovery/agents";
 import {
 	type LoadSkillsResult,
 	loadSkills,
 	loadSkillsFromDir,
 	parseSkillInvocation,
 	type Skill,
-} from "@tau/tau-coding-agent/extensibility/skills";
+} from "tau/extensibility/skills";
 import { removeWithRetries } from "@tau/tau-utils";
 import { restoreEnvValue } from "./helpers/settings-test-state";
 const fixturesDir = path.resolve(import.meta.dirname, "fixtures/skills");

@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import type { Skill } from "@tau/tau-coding-agent/extensibility/skills";
-import { type ResolveContext, resolveLocalUrlToPath } from "@tau/tau-coding-agent/internal-urls";
-import { expandInternalUrls } from "@tau/tau-coding-agent/tools/bash-skill-urls";
+import type { Skill } from "tau/extensibility/skills";
+import { type ResolveContext, resolveLocalUrlToPath } from "tau/internal-urls";
+import { expandInternalUrls } from "tau/tools/bash-skill-urls";
 
 function shellEscape(p: string): string {
 	return `'${p.replace(/'/g, "'\\''")}'`;

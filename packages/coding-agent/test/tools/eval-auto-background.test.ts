@@ -1,11 +1,11 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import type { AgentToolContext } from "@tau/tau-agent-core";
-import { AsyncJobManager } from "@tau/tau-coding-agent/async";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import * as evalIndex from "@tau/tau-coding-agent/eval";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
-import { EvalTool } from "@tau/tau-coding-agent/tools/eval";
+import { AsyncJobManager } from "tau/async";
+import { Settings } from "tau/config/settings";
+import * as evalIndex from "tau/eval";
+import { SessionManager } from "tau/session/session-manager";
+import type { ToolSession } from "tau/tools";
+import { EvalTool } from "tau/tools/eval";
 
 function makeSession(settings: Settings, asyncJobManager: AsyncJobManager): ToolSession {
 	return {

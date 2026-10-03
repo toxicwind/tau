@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import { executePythonWithKernel, type PythonKernelExecutor } from "@tau/tau-coding-agent/eval/py/executor";
-import type { KernelExecuteOptions, KernelExecuteResult } from "@tau/tau-coding-agent/eval/py/kernel";
+import { executePythonWithKernel, type PythonKernelExecutor } from "tau/eval/py/executor";
+import type { KernelExecuteOptions, KernelExecuteResult } from "tau/eval/py/kernel";
 
 class FakeKernel implements PythonKernelExecutor {
 	constructor(

@@ -4,12 +4,12 @@ import { Agent, type AgentTool } from "@tau/tau-agent-core";
 import type { Message, Model } from "@tau/tau-ai";
 import { createMockModel } from "@tau/tau-ai/providers/mock";
 import { buildModel } from "@tau/tau-catalog/build";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import type { ExtensionRunner } from "@tau/tau-coding-agent/extensibility/extensions";
-import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
-import { convertToLlm } from "@tau/tau-coding-agent/session/messages";
-import { SessionMaintenance } from "@tau/tau-coding-agent/session/session-maintenance";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { Settings } from "tau/config/settings";
+import type { ExtensionRunner } from "tau/extensibility/extensions";
+import { AgentSession } from "tau/session/agent-session";
+import { convertToLlm } from "tau/session/messages";
+import { SessionMaintenance } from "tau/session/session-maintenance";
+import { SessionManager } from "tau/session/session-manager";
 
 function createPrefixBindingModel(): Model<"anthropic-messages"> {
 	return buildModel({

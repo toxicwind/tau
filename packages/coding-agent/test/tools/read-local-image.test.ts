@@ -13,10 +13,10 @@ import * as os from "node:os";
 import * as path from "node:path";
 import type { completeSimple } from "@tau/tau-ai";
 import { createMockModel } from "@tau/tau-ai/providers/mock";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { InternalUrlRouter, LocalProtocolHandler, parseInternalUrl } from "@tau/tau-coding-agent/internal-urls";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
-import { ReadTool } from "@tau/tau-coding-agent/tools/read";
+import { Settings } from "tau/config/settings";
+import { InternalUrlRouter, LocalProtocolHandler, parseInternalUrl } from "tau/internal-urls";
+import type { ToolSession } from "tau/tools";
+import { ReadTool } from "tau/tools/read";
 import { $which, removeWithRetries } from "@tau/tau-utils";
 
 const hasFfprobe = Boolean($which("ffprobe"));

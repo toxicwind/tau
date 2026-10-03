@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
 import * as path from "node:path";
-import { runCommitCommand } from "@tau/tau-coding-agent/commit";
+import { runCommitCommand } from "tau/commit";
 import { getProjectAgentDir, setAgentDir, setProjectDir, TempDir } from "@tau/tau-utils";
 import { $ } from "bun";
 import { beginSettingsTest, restoreSettingsTestState, type SettingsTestState } from "./helpers/settings-test-state";

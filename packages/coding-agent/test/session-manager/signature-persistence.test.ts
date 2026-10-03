@@ -2,8 +2,8 @@ import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import type { AssistantMessage, ImageContent } from "@tau/tau-ai";
-import type { SessionMessageEntry } from "@tau/tau-coding-agent/session/session-entries";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import type { SessionMessageEntry } from "tau/session/session-entries";
+import { SessionManager } from "tau/session/session-manager";
 import { getBlobsDir, TempDir } from "@tau/tau-utils";
 
 function isAssistantSessionEntry(entry: unknown): entry is SessionMessageEntry & { message: AssistantMessage } {

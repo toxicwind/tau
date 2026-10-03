@@ -1,7 +1,7 @@
 //! N-API bindings for microphone capture and speaker playback.
 //!
 //! The engine — device discovery, format conversion, mixing, drain semantics —
-//! lives in `pi_voice::audio`; these classes adapt its mono `f32` contract to
+//! lives in `tau_voice::audio`; these classes adapt its mono `f32` contract to
 //! TypeScript callbacks and `Float32Array` buffers.
 
 use std::sync::Arc;
@@ -12,7 +12,7 @@ use napi::{
 };
 use napi_derive::napi;
 use parking_lot::Mutex;
-use pi_voice::audio::{CaptureStream, PlaybackState, PlaybackStream};
+use tau_voice::audio::{CaptureStream, PlaybackState, PlaybackStream};
 
 type CaptureCallback = ThreadsafeFunction<Float32Array, UnknownReturnValue>;
 

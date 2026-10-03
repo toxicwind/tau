@@ -15,9 +15,9 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import { AuthStorage, SqliteAuthCredentialStore } from "@tau/tau-ai";
-import { MCPManager } from "@tau/tau-coding-agent/mcp/manager";
-import * as oauthFlow from "@tau/tau-coding-agent/mcp/oauth-flow";
-import type { MCPServerConfig } from "@tau/tau-coding-agent/mcp/types";
+import { MCPManager } from "tau/mcp/manager";
+import * as oauthFlow from "tau/mcp/oauth-flow";
+import type { MCPServerConfig } from "tau/mcp/types";
 import { removeWithRetries } from "@tau/tau-utils";
 
 const CREDENTIAL_ID = "mcp_oauth_test_1908";

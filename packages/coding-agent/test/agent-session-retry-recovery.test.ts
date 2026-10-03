@@ -5,14 +5,14 @@ import type { ApiKey, AssistantMessage, AssistantRetryRecovery, Usage } from "@t
 import { createMockModel } from "@tau/tau-ai/providers/mock";
 import * as aiStream from "@tau/tau-ai/stream";
 import { getBundledModel } from "@tau/tau-catalog/models";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
 import { resolveAssistantErrorPresentation } from "@tau/tau-tui/chat/transcript-render-helpers";
-import { AgentSession, type AgentSessionEvent } from "@tau/tau-coding-agent/session/agent-session";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
-import { SILENT_ABORT_MARKER } from "@tau/tau-coding-agent/session/messages";
-import type { SessionMessageEntry } from "@tau/tau-coding-agent/session/session-entries";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { AgentSession, type AgentSessionEvent } from "tau/session/agent-session";
+import { AuthStorage } from "tau/session/auth-storage";
+import { SILENT_ABORT_MARKER } from "tau/session/messages";
+import type { SessionMessageEntry } from "tau/session/session-entries";
+import { SessionManager } from "tau/session/session-manager";
 import { TempDir } from "@tau/tau-utils";
 import { mockSchedulerWaitWithClock } from "./helpers/mock-scheduler-clock";
 

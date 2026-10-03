@@ -13,8 +13,8 @@ import {
 } from "@tau/tau-ai";
 import { getOAuthProviders, unregisterOAuthProviders } from "@tau/tau-ai/oauth";
 import type { OAuthCredentials } from "@tau/tau-ai/oauth/types";
-import { ModelRegistry, type ProviderConfigInput } from "@tau/tau-coding-agent/config/model-registry";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { ModelRegistry, type ProviderConfigInput } from "tau/config/model-registry";
+import { AuthStorage } from "tau/session/auth-storage";
 import { logger, removeSyncWithRetries, Snowflake } from "@tau/tau-utils";
 
 describe("ModelRegistry runtime provider registration", () => {

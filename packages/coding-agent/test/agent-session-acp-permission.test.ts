@@ -11,20 +11,20 @@ import { Agent, type AgentTool } from "@tau/tau-agent-core";
 import { createMockModel, type MockModelOptions } from "@tau/tau-ai/providers/mock";
 import { AssistantMessageEventStream } from "@tau/tau-ai/utils/event-stream";
 import { getBundledModel } from "@tau/tau-catalog/models";
-import { type SettingPath, Settings } from "@tau/tau-coding-agent/config/settings";
-import { EditTool } from "@tau/tau-coding-agent/edit";
-import type { ExtensionRunner } from "@tau/tau-coding-agent/extensibility/extensions/runner";
-import { ExtensionToolWrapper } from "@tau/tau-coding-agent/extensibility/extensions/wrapper";
-import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import { type SettingPath, Settings } from "tau/config/settings";
+import { EditTool } from "tau/edit";
+import type { ExtensionRunner } from "tau/extensibility/extensions/runner";
+import { ExtensionToolWrapper } from "tau/extensibility/extensions/wrapper";
+import { AgentSession } from "tau/session/agent-session";
 import type {
 	ClientBridge,
 	ClientBridgePermissionOutcome,
 	ClientBridgePermissionToolCall,
-} from "@tau/tau-coding-agent/session/client-bridge";
-import { convertToLlm } from "@tau/tau-coding-agent/session/messages";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
-import { dispatchXdevTool, resolveMountedXdevExecutable, type XdevState } from "@tau/tau-coding-agent/tools/xdev";
+} from "tau/session/client-bridge";
+import { convertToLlm } from "tau/session/messages";
+import { SessionManager } from "tau/session/session-manager";
+import type { ToolSession } from "tau/tools";
+import { dispatchXdevTool, resolveMountedXdevExecutable, type XdevState } from "tau/tools/xdev";
 import { TempDir } from "@tau/tau-utils";
 
 // ---------------------------------------------------------------------------

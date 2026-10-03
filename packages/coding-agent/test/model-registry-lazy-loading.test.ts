@@ -5,8 +5,8 @@ import { buildModel } from "@tau/tau-catalog/build";
 import { writeModelCache } from "@tau/tau-catalog/model-cache";
 import { litellmModelManagerOptions } from "@tau/tau-catalog/provider-models";
 import { modelKind } from "@tau/tau-catalog/types";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { ModelRegistry } from "tau/config/model-registry";
+import { AuthStorage } from "tau/session/auth-storage";
 import { TempDir } from "@tau/tau-utils";
 
 const probePath = path.join(import.meta.dir, "fixtures", "model-registry-construction-build-probe.ts");

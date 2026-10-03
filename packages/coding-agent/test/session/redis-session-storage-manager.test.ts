@@ -13,9 +13,9 @@ import type { Usage } from "@tau/tau-ai";
 import {
 	RedisSessionStorage,
 	type RedisSessionStorageClient,
-} from "@tau/tau-coding-agent/session/redis-session-storage";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import { SessionWriteConflictError } from "@tau/tau-coding-agent/session/session-storage";
+} from "tau/session/redis-session-storage";
+import { SessionManager } from "tau/session/session-manager";
+import { SessionWriteConflictError } from "tau/session/session-storage";
 
 interface FakeRedis extends RedisSessionStorageClient {
 	strings: Map<string, string>;

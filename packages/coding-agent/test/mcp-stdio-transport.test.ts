@@ -2,8 +2,8 @@ import { afterEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { MCPTransportError } from "@tau/tau-coding-agent/mcp/errors";
-import { resolveStdioSpawnCommand, StdioTransport, writeFrame } from "@tau/tau-coding-agent/mcp/transports/stdio";
+import { MCPTransportError } from "tau/mcp/errors";
+import { resolveStdioSpawnCommand, StdioTransport, writeFrame } from "tau/mcp/transports/stdio";
 import { removeWithRetries } from "@tau/tau-utils";
 
 describe("resolveStdioSpawnCommand", () => {

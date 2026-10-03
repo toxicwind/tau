@@ -8,10 +8,10 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
 import type { AgentMessage } from "@tau/tau-agent-core";
 import { KeybindingsManager } from "@tau/tau-tui/app-keybindings";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
 import { type BranchVariantPath, RewindSelectorComponent } from "@tau/tau-tui/overlays/rewind-selector";
 import { initTheme } from "@tau/tau-tui/theme";
-import type { SessionMessageEntry } from "@tau/tau-coding-agent/session/session-entries";
+import type { SessionMessageEntry } from "tau/session/session-entries";
 import { setKeybindings, type TUI } from "@tau/tau-tui";
 
 const UP = "\x1b[A";

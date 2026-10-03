@@ -4,14 +4,14 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { type } from "@tau/tautype";
 import type { AgentTool } from "@tau/tau-agent-core";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { Settings } from "tau/config/settings";
 import * as themeModule from "@tau/tau-tui/theme";
-import { ToolChoiceQueue } from "@tau/tau-coding-agent/session/tool-choice-queue";
-import { createTools, type Tool, type ToolSession } from "@tau/tau-coding-agent/tools";
-import { requiresApproval, resolveApproval } from "@tau/tau-coding-agent/tools/approval";
+import { ToolChoiceQueue } from "tau/session/tool-choice-queue";
+import { createTools, type Tool, type ToolSession } from "tau/tools";
+import { requiresApproval, resolveApproval } from "tau/tools/approval";
 import { githubToolRenderer } from "@tau/tau-tui/tools/github";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
-import { WriteTool } from "@tau/tau-coding-agent/tools/write";
+import { WriteTool } from "tau/tools/write";
 import { type WriteRenderContext, writeToolRenderer } from "@tau/tau-tui/tools/write";
 import type { XdevMountedRenderer } from "@tau/tau-tui/tools/xdev";
 import {
@@ -24,7 +24,7 @@ import {
 	xdevDocs,
 	xdevDocsAll,
 	xdevEntries,
-} from "@tau/tau-coding-agent/tools/xdev";
+} from "tau/tools/xdev";
 import { removeWithRetries } from "@tau/tau-utils";
 
 /** Mirrors `ToolExecutionComponent#buildRenderContext`: mounted tools expose their render hooks to the write renderer. */

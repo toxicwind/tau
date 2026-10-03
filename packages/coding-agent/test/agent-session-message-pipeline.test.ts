@@ -24,26 +24,26 @@ import { AssistantMessageEventStream } from "@tau/tau-ai/utils/event-stream";
 import { getBundledModel } from "@tau/tau-catalog/models";
 import { buildModel } from "@tau/tau-catalog/build";
 import { Effort } from "@tau/tau-catalog/effort";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { ExtensionRuntime, loadExtensionFromFactory } from "@tau/tau-coding-agent/extensibility/extensions/loader";
+import { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
+import { ExtensionRuntime, loadExtensionFromFactory } from "tau/extensibility/extensions/loader";
 import {
 	ExtensionRunner,
 	EXTENSION_HANDLER_TIMEOUT_MS,
 	testSetExtensionHandlerTimeoutMs,
-} from "@tau/tau-coding-agent/extensibility/extensions/runner";
-import { RegisteredToolAdapter } from "@tau/tau-coding-agent/extensibility/extensions/wrapper";
-import { initializeExtensions } from "@tau/tau-coding-agent/modes/runtime-init";
-import * as memoryBackend from "@tau/tau-coding-agent/memory-backend";
-import type { MemoryBackend } from "@tau/tau-coding-agent/memory-backend/types";
-import { type MnemotauSessionState, setMnemotauSessionState } from "@tau/tau-coding-agent/mnemotau/state";
-import { createAgentSession, type ExtensionContext, type ExtensionFactory } from "@tau/tau-coding-agent/sdk";
-import { obfuscateProviderContext, SecretObfuscator } from "@tau/tau-coding-agent/secrets";
-import { AgentSession, type AgentSessionEvent } from "@tau/tau-coding-agent/session/agent-session";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
-import { convertToLlm, wrapSteeringForModel } from "@tau/tau-coding-agent/session/messages";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import { EventBus } from "@tau/tau-coding-agent/utils/event-bus";
+} from "tau/extensibility/extensions/runner";
+import { RegisteredToolAdapter } from "tau/extensibility/extensions/wrapper";
+import { initializeExtensions } from "tau/modes/runtime-init";
+import * as memoryBackend from "tau/memory-backend";
+import type { MemoryBackend } from "tau/memory-backend/types";
+import { type MnemotauSessionState, setMnemotauSessionState } from "tau/mnemotau/state";
+import { createAgentSession, type ExtensionContext, type ExtensionFactory } from "tau/sdk";
+import { obfuscateProviderContext, SecretObfuscator } from "tau/secrets";
+import { AgentSession, type AgentSessionEvent } from "tau/session/agent-session";
+import { AuthStorage } from "tau/session/auth-storage";
+import { convertToLlm, wrapSteeringForModel } from "tau/session/messages";
+import { SessionManager } from "tau/session/session-manager";
+import { EventBus } from "tau/utils/event-bus";
 import { TempDir } from "@tau/tau-utils";
 import { createAssistantMessage } from "./helpers/agent-session-setup";
 

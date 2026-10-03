@@ -1,11 +1,11 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import { type } from "@tau/tautype";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { TaskTool, taskSchema } from "@tau/tau-coding-agent/task";
-import * as discoveryModule from "@tau/tau-coding-agent/task/discovery";
-import { getTaskSchema } from "@tau/tau-coding-agent/task/types";
+import { Settings } from "tau/config/settings";
+import { TaskTool, taskSchema } from "tau/task";
+import * as discoveryModule from "tau/task/discovery";
+import { getTaskSchema } from "tau/task/types";
 import { oneLineLabel } from "@tau/tau-tui/tools/task";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
+import type { ToolSession } from "tau/tools";
 
 // Contract: the task tool's wire shape is flat `{ name?, agent?, task, isolated? }`
 // (batch: `{ context, tasks[] }` of the same items). `agent` defaults to the

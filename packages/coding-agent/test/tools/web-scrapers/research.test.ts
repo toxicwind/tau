@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
-import { handleBiorxiv } from "@tau/tau-coding-agent/web/scrapers/biorxiv";
-import { handleOpenLibrary } from "@tau/tau-coding-agent/web/scrapers/openlibrary";
-import { handleWikidata } from "@tau/tau-coding-agent/web/scrapers/wikidata";
+import { handleBiorxiv } from "tau/web/scrapers/biorxiv";
+import { handleOpenLibrary } from "tau/web/scrapers/openlibrary";
+import { handleWikidata } from "tau/web/scrapers/wikidata";
 
 const SKIP = !Bun.env.WEB_FETCH_INTEGRATION;
 

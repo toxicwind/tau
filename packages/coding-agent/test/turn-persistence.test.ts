@@ -16,7 +16,7 @@
  */
 import { describe, expect, test } from "bun:test";
 import type { AgentMessage } from "@tau/tau-agent-core";
-import { planTurnPersistence, sessionMessagePersistenceKey } from "@tau/tau-coding-agent/session/turn-persistence";
+import { planTurnPersistence, sessionMessagePersistenceKey } from "tau/session/turn-persistence";
 
 function assistant(overrides: Partial<Extract<AgentMessage, { role: "assistant" }>> = {}) {
 	return {

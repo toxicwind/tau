@@ -1,11 +1,11 @@
 import * as path from "node:path";
 import { afterEach, describe, expect, it, spyOn } from "bun:test";
-import { callTool } from "@tau/tau-coding-agent/mcp/client";
-import { MCPManager } from "@tau/tau-coding-agent/mcp/manager";
-import { resolveMCPStartupTimeoutMs } from "@tau/tau-coding-agent/mcp/timeout";
-import type { MCPStdioServerConfig } from "@tau/tau-coding-agent/mcp/types";
-import { runPrintMode } from "@tau/tau-coding-agent/modes/print-mode";
-import type { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import { callTool } from "tau/mcp/client";
+import { MCPManager } from "tau/mcp/manager";
+import { resolveMCPStartupTimeoutMs } from "tau/mcp/timeout";
+import type { MCPStdioServerConfig } from "tau/mcp/types";
+import { runPrintMode } from "tau/modes/print-mode";
+import type { AgentSession } from "tau/session/agent-session";
 import { TempDir } from "@tau/tau-utils";
 
 const FIXTURE = path.join(import.meta.dir, "fixtures", "readiness-mcp.ts");

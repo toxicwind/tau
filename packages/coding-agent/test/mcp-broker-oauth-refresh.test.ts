@@ -26,10 +26,10 @@ import {
 	RemoteAuthCredentialStore,
 	startAuthBroker,
 } from "@tau/tau-ai/auth-broker";
-import { refreshBrokerOAuthCredential } from "@tau/tau-coding-agent/cli/auth-broker-cli";
-import { MCPManager } from "@tau/tau-coding-agent/mcp/manager";
-import { mcpOAuthCredentialId } from "@tau/tau-coding-agent/mcp/oauth-flow";
-import type { MCPServerConfig } from "@tau/tau-coding-agent/mcp/types";
+import { refreshBrokerOAuthCredential } from "tau/cli/auth-broker-cli";
+import { MCPManager } from "tau/mcp/manager";
+import { mcpOAuthCredentialId } from "tau/mcp/oauth-flow";
+import type { MCPServerConfig } from "tau/mcp/types";
 import { removeWithRetries } from "@tau/tau-utils";
 import type { Server } from "bun";
 

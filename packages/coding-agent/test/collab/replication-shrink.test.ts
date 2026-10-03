@@ -29,16 +29,16 @@
  * `id`/`parentId` so the guest's branch chain stays connected.
  */
 import { afterEach, describe, expect, it } from "bun:test";
-import { importRoomKey } from "@tau/tau-coding-agent/collab/crypto";
-import { CollabHost } from "@tau/tau-coding-agent/collab/host";
+import { importRoomKey } from "tau/collab/crypto";
+import { CollabHost } from "tau/collab/host";
 import {
 	COLLAB_PROTO,
 	type CollabFrame,
 	parseCollabLink,
 	rewriteEnvelopePeer,
 	unpackEnvelope,
-} from "@tau/tau-coding-agent/collab/protocol";
-import { CollabSocket } from "@tau/tau-coding-agent/collab/relay-client";
+} from "tau/collab/protocol";
+import { CollabSocket } from "tau/collab/relay-client";
 import {
 	COLLAB_ENTRY_OMITTED_CUSTOM_TYPE,
 	copyForReplication,
@@ -48,11 +48,11 @@ import {
 	replicationByteLength,
 	shrinkReplicatedEntry,
 	shrinkReplicatedEvent,
-} from "@tau/tau-coding-agent/collab/replication-shrink";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
-import type { AgentSessionEvent } from "@tau/tau-coding-agent/session/agent-session";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import type { SessionEntry } from "@tau/tau-coding-agent/session/session-entries";
+} from "tau/collab/replication-shrink";
+import type { InteractiveModeContext } from "tau/modes/types";
+import type { AgentSessionEvent } from "tau/session/agent-session";
+import { SessionManager } from "tau/session/session-manager";
+import type { SessionEntry } from "tau/session/session-entries";
 
 interface RelayData {
 	role: "host" | "guest";

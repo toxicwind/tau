@@ -1,8 +1,8 @@
 import { Tokenizer } from "@tau/tau-agent-core";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { Settings } from "tau/config/settings";
 import { estimateToolSchemaTokens } from "@tau/tau-tui/status-line/context-usage";
-import { buildSystemPrompt } from "@tau/tau-coding-agent/system-prompt";
-import { createTools, type Tool, type ToolSession } from "@tau/tau-coding-agent/tools";
+import { buildSystemPrompt } from "tau/system-prompt";
+import { createTools, type Tool, type ToolSession } from "tau/tools";
 
 function bytes(s: string): number {
 	return Buffer.byteLength(s, "utf-8");

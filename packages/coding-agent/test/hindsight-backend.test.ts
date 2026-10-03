@@ -9,15 +9,15 @@
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import type { AgentMessage } from "@tau/tau-agent-core";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
 import {
 	hindsightBackend,
 	rebindMemoryBackendForCwd,
 	reloadMentalModelsForSession,
-} from "@tau/tau-coding-agent/hindsight/backend";
-import { HindsightApi } from "@tau/tau-coding-agent/hindsight/client";
-import { HindsightRetainQueue, type HindsightSessionState } from "@tau/tau-coding-agent/hindsight/state";
-import type { AgentSessionEventListener } from "@tau/tau-coding-agent/session/agent-session";
+} from "tau/hindsight/backend";
+import { HindsightApi } from "tau/hindsight/client";
+import { HindsightRetainQueue, type HindsightSessionState } from "tau/hindsight/state";
+import type { AgentSessionEventListener } from "tau/session/agent-session";
 
 interface FakeSessionDeps {
 	sessionId: string | null;

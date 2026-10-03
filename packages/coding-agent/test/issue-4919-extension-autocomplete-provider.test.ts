@@ -10,7 +10,7 @@
  * - interactive mode stacks each factory on top of the built-in editor provider.
  *
  * NOTE: imports are relative (`../src/...`) so the tests exercise this checkout
- * even when `node_modules/@tau/tau-coding-agent` resolves elsewhere.
+ * even when `node_modules/tau` resolves elsewhere.
  */
 
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";

@@ -1,7 +1,7 @@
 import * as path from "node:path";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { ModelsConfigFile } from "@tau/tau-coding-agent/config/models-config";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { ModelRegistry } from "tau/config/model-registry";
+import { ModelsConfigFile } from "tau/config/models-config";
+import { AuthStorage } from "tau/session/auth-storage";
 import { YAML } from "bun";
 
 interface HeapSnapshot {

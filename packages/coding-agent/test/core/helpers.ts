@@ -1,5 +1,5 @@
-import type { PythonKernelExecutor } from "@tau/tau-coding-agent/eval/py/executor";
-import type { KernelExecuteOptions, KernelExecuteResult } from "@tau/tau-coding-agent/eval/py/kernel";
+import type { PythonKernelExecutor } from "tau/eval/py/executor";
+import type { KernelExecuteOptions, KernelExecuteResult } from "tau/eval/py/kernel";
 
 export class FakeKernel implements PythonKernelExecutor {
 	private result: KernelExecuteResult;

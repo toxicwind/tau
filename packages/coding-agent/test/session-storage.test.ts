@@ -7,9 +7,9 @@ import {
 	IndexedSessionStorage,
 	type SessionStorageBackend,
 	type SessionStorageIndexEntry,
-} from "@tau/tau-coding-agent/session/indexed-session-storage";
-import { FileSessionStorage, SessionLockError } from "@tau/tau-coding-agent/session/session-storage";
-import { type SessionTitleUpdate, serializeTitleSlot } from "@tau/tau-coding-agent/session/session-title-slot";
+} from "tau/session/indexed-session-storage";
+import { FileSessionStorage, SessionLockError } from "tau/session/session-storage";
+import { type SessionTitleUpdate, serializeTitleSlot } from "tau/session/session-title-slot";
 
 class ControlledTitleUpdateBackend implements SessionStorageBackend {
 	readonly #sessionPath: string;

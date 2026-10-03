@@ -9,16 +9,16 @@ import {
 	type MockModel,
 	type MockResponseSource,
 } from "@tau/tau-ai/providers/mock";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { ExtensionRuntime, loadExtensionFromFactory } from "@tau/tau-coding-agent/extensibility/extensions/loader";
-import { ExtensionRunner } from "@tau/tau-coding-agent/extensibility/extensions/runner";
-import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
-import { convertToLlm } from "@tau/tau-coding-agent/session/messages";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import { CheckpointTool, RewindTool, type ToolSession } from "@tau/tau-coding-agent/tools";
-import { EventBus } from "@tau/tau-coding-agent/utils/event-bus";
+import { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
+import { ExtensionRuntime, loadExtensionFromFactory } from "tau/extensibility/extensions/loader";
+import { ExtensionRunner } from "tau/extensibility/extensions/runner";
+import { AgentSession } from "tau/session/agent-session";
+import { AuthStorage } from "tau/session/auth-storage";
+import { convertToLlm } from "tau/session/messages";
+import { SessionManager } from "tau/session/session-manager";
+import { CheckpointTool, RewindTool, type ToolSession } from "tau/tools";
+import { EventBus } from "tau/utils/event-bus";
 import { TempDir } from "@tau/tau-utils";
 
 const checkpointSchema = type({ goal: type("string") });

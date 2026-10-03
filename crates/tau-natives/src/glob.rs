@@ -2,9 +2,9 @@
 //! caching.
 //!
 //! # Overview
-//! Resolves a search root, scans entries via `tau-walker`, applies glob matching
-//! plus optional file-type filtering, and optionally streams each accepted
-//! match through a callback.
+//! Resolves a search root, scans entries via `tau-walker`, applies glob
+//! matching plus optional file-type filtering, and optionally streams each
+//! accepted match through a callback.
 //!
 //! The walker always skips `.git`, and skips `node_modules` unless explicitly
 //! requested.
@@ -126,13 +126,13 @@ fn apply_file_type_filter(entry: &GlobMatch, config: &GlobConfig) -> Option<File
 }
 
 fn collect_ranked_matches(
-	request: &pi_walker::WalkRequest,
+	request: &tau_walker::WalkRequest,
 	config: &GlobConfig,
 	ct: &task::CancelToken,
 ) -> Result<Vec<GlobMatch>> {
 	let outcome = request
 		.collect_ranked_with_heartbeat(
-			pi_walker::WalkRank::MtimeDescPathAsc,
+			tau_walker::WalkRank::MtimeDescPathAsc,
 			config.max_results,
 			|| ct.heartbeat(),
 		)
@@ -141,7 +141,7 @@ fn collect_ranked_matches(
 }
 
 fn collect_native_filtered_matches(
-	request: &pi_walker::WalkRequest,
+	request: &tau_walker::WalkRequest,
 	config: &GlobConfig,
 	ct: &task::CancelToken,
 ) -> Result<Vec<GlobMatch>> {
@@ -175,32 +175,32 @@ fn run_glob(
 	// Non-recursive patterns bound the walk: `dir/*` must not traverse the
 	// entire subtree under `dir` to match only direct children.
 	let walk_depth_limit = glob_util::walk_depth_bound(&walk_glob_pattern);
-	let walk_glob = pi_walker::CompiledWalkGlob::new([walk_glob_pattern])
+	let walk_glob = tau_walker::CompiledWalkGlob::new([walk_glob_pattern])
 		.map_err(|err| Error::from_reason(format!("Invalid glob pattern: {err}")))?;
 	if config.max_results == 0 {
 		return Ok(GlobResult { matches: Vec::new(), total_matches: 0 });
 	}
 
 	let scan_detail = if config.sort_by_mtime {
-		pi_walker::WalkDetail::Full
+		tau_walker::WalkDetail::Full
 	} else {
-		pi_walker::WalkDetail::Minimal
+		tau_walker::WalkDetail::Minimal
 	};
-	let base_request = pi_walker::WalkRequest::new(config.root.clone())
+	let base_request = tau_walker::WalkRequest::new(config.root.clone())
 		.hidden(config.include_hidden)
 		.gitignore(config.use_gitignore)
 		.skip_git(true)
 		.skip_node_modules(!config.mentions_node_modules)
-		.follow_links(pi_walker::FollowLinks::Never)
+		.follow_links(tau_walker::FollowLinks::Never)
 		.detail(scan_detail)
-		.order(pi_walker::WalkOrder::Path)
+		.order(tau_walker::WalkOrder::Path)
 		.emit_root(false)
 		.depth(1, walk_depth_limit)
-		.directory_errors(pi_walker::DirectoryErrorMode::SkipSkippable)
+		.directory_errors(tau_walker::DirectoryErrorMode::SkipSkippable)
 		.cache(config.cache)
-		.empty_recheck(pi_walker::EmptyRecheck::Configured)
+		.empty_recheck(tau_walker::EmptyRecheck::Configured)
 		.filter(
-			pi_walker::WalkFilter::all()
+			tau_walker::WalkFilter::all()
 				.glob(walk_glob)
 				.node_modules_unless_mentioned(config.mentions_node_modules),
 		);
@@ -281,7 +281,7 @@ pub fn glob(
 	task::blocking("glob", ct, move |ct| {
 		run_glob(
 			GlobConfig {
-				root: pi_walker::resolve_search_path(&path).map_err(iofs::map_walker_error)?,
+				root: tau_walker::resolve_search_path(&path).map_err(iofs::map_walker_error)?,
 				include_hidden: hidden.unwrap_or(false),
 				file_type_filter: file_type,
 				recursive: recursive.unwrap_or(true),

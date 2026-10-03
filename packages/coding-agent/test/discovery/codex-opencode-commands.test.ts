@@ -2,10 +2,10 @@ import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "bu
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { clearCache as clearFsCache } from "@tau/tau-coding-agent/capability/fs";
-import { type SlashCommand, slashCommandCapability } from "@tau/tau-coding-agent/capability/slash-command";
-import { resetSettingsForTest } from "@tau/tau-coding-agent/config/settings";
-import { loadCapability } from "@tau/tau-coding-agent/discovery";
+import { clearCache as clearFsCache } from "tau/capability/fs";
+import { type SlashCommand, slashCommandCapability } from "tau/capability/slash-command";
+import { resetSettingsForTest } from "tau/config/settings";
+import { loadCapability } from "tau/discovery";
 import { commandInspectorData, commandPreview } from "@tau/tau-tui/overlays/extensions/inspector-model";
 import { InspectorPanel } from "@tau/tau-tui/overlays/extensions/inspector-panel";
 import { applyFilter } from "@tau/tau-tui/overlays/extensions/state-manager";

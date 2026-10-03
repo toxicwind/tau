@@ -18,10 +18,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as os from "node:os";
 import * as path from "node:path";
 import type { ImageContent } from "@tau/tau-ai";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
-import { InputController } from "@tau/tau-coding-agent/modes/controllers/input-controller";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
+import { InputController } from "tau/modes/controllers/input-controller";
 import { chipLabel } from "@tau/tau-tui/prompt/composer-attachments";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
+import type { InteractiveModeContext } from "tau/modes/types";
 import { $which } from "@tau/tau-utils";
 
 // A clipboard with no image on it — the deterministic default for the

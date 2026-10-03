@@ -5,9 +5,9 @@ import {
 	goalTokenDelta,
 	renderGoalPrompt,
 	renderTrustedObjective,
-} from "@tau/tau-coding-agent/goals/runtime";
+} from "tau/goals/runtime";
 import type { Goal } from "@tau/tau-tui/tools/goal";
-import type { GoalModeState, GoalRuntimeEvent, GoalTokenUsage } from "@tau/tau-coding-agent/goals/state";
+import type { GoalModeState, GoalRuntimeEvent, GoalTokenUsage } from "tau/goals/state";
 import { escapeXmlText } from "@tau/tau-utils";
 
 function createUsage(overrides: Partial<GoalTokenUsage> = {}): GoalTokenUsage {

@@ -6,12 +6,12 @@ import { type } from "@tau/tautype";
 import { Agent, type AgentTool } from "@tau/tau-agent-core";
 import { Effort } from "@tau/tau-ai";
 import { getBundledModel } from "@tau/tau-catalog/models";
-import * as autoThinkingClassifier from "@tau/tau-coding-agent/auto-thinking/classifier";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import * as autoThinkingClassifier from "tau/auto-thinking/classifier";
+import { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
+import { AgentSession } from "tau/session/agent-session";
+import { AuthStorage } from "tau/session/auth-storage";
+import { SessionManager } from "tau/session/session-manager";
 import { AUTO_THINKING } from "@tau/tau-tui/thinking";
 import { removeWithRetries } from "@tau/tau-utils";
 

@@ -1,9 +1,9 @@
 import { afterAll, beforeAll, describe, expect, it, setDefaultTimeout } from "bun:test";
 import * as path from "node:path";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { disposeAllVmContexts } from "@tau/tau-coding-agent/eval/js/context-manager";
-import { executeJs, type JsResult } from "@tau/tau-coding-agent/eval/js/executor";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
+import { Settings } from "tau/config/settings";
+import { disposeAllVmContexts } from "tau/eval/js/context-manager";
+import { executeJs, type JsResult } from "tau/eval/js/executor";
+import type { ToolSession } from "tau/tools";
 import { TempDir } from "@tau/tau-utils";
 
 // JS eval cold-starts a Bun worker; under --isolate + high CI concurrency that startup

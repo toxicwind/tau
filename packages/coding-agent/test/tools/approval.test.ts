@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { customToolToDefinition } from "@tau/tau-coding-agent/sdk";
+import { customToolToDefinition } from "tau/sdk";
 import type { AgentTool, ToolApproval } from "@tau/tau-agent-core";
 import {
 	type ApprovalMode,
@@ -9,8 +9,8 @@ import {
 	resolveApproval,
 	resolveApprovalFromContext,
 	truncateForPrompt,
-} from "@tau/tau-coding-agent/tools/approval";
-import { BashTool } from "@tau/tau-coding-agent/tools/bash";
+} from "tau/tools/approval";
+import { BashTool } from "tau/tools/bash";
 import { Settings } from "../../src/config/settings";
 import { EditTool } from "../../src/edit";
 import type { ToolSession } from "../../src/tools";

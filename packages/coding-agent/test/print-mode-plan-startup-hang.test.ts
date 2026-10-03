@@ -5,13 +5,13 @@ import * as path from "node:path";
 import { Agent } from "@tau/tau-agent-core";
 import type { Context } from "@tau/tau-ai";
 import { createMockModel } from "@tau/tau-ai/providers/mock";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { runPrintMode } from "@tau/tau-coding-agent/modes/print-mode";
-import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import { createTools, type ToolSession } from "@tau/tau-coding-agent/tools";
+import { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
+import { runPrintMode } from "tau/modes/print-mode";
+import { AgentSession } from "tau/session/agent-session";
+import { AuthStorage } from "tau/session/auth-storage";
+import { SessionManager } from "tau/session/session-manager";
+import { createTools, type ToolSession } from "tau/tools";
 import { Snowflake } from "@tau/tau-utils";
 
 // Regression for #8272: with plan.defaultOnStartup:true, a headless `tau -p`

@@ -2,18 +2,18 @@ import { afterEach, beforeEach, describe, expect, it, spyOn } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
-import { EditTool } from "@tau/tau-coding-agent/edit";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
+import { EditTool } from "tau/edit";
+import type { ToolSession } from "tau/tools";
 import {
 	expandPath,
 	probeLiteralPathExists,
 	resolveToCwd,
 	splitPathAndSelPreferringLiteral,
 	splitPathAndSelPreferringLiteralSync,
-} from "@tau/tau-coding-agent/tools/path-utils";
+} from "tau/tools/path-utils";
 import { splitPathAndSel } from "@tau/tau-tui/tools/read";
-import { ReadTool } from "@tau/tau-coding-agent/tools/read";
+import { ReadTool } from "tau/tools/read";
 import { GrepOutputMode } from "@tau/tau-natives";
 import { removeWithRetries } from "@tau/tau-utils";
 import { runGrepCommand } from "../../src/cli/grep-cli";

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { pathTargetsSsh, peelWriteUrlSelector } from "@tau/tau-coding-agent/tools/path-utils";
+import { pathTargetsSsh, peelWriteUrlSelector } from "tau/tools/path-utils";
 import { splitInternalUrlSel } from "@tau/tau-tui/tools/read";
 
 describe("splitInternalUrlSel", () => {

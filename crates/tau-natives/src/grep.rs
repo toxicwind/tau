@@ -1119,28 +1119,28 @@ fn build_grep_walk_request(
 	include_hidden: bool,
 	use_gitignore: bool,
 	skip_node_modules: bool,
-	order: pi_walker::WalkOrder,
-) -> Result<pi_walker::WalkRequest> {
-	let mut filter = pi_walker::WalkFilter::files_only();
+	order: tau_walker::WalkOrder,
+) -> Result<tau_walker::WalkRequest> {
+	let mut filter = tau_walker::WalkFilter::files_only();
 	if let Some(glob) = glob.map(str::trim).filter(|value| !value.is_empty()) {
 		let pattern = glob_util::build_glob_pattern(glob, true);
-		let compiled = pi_walker::CompiledWalkGlob::new([pattern])
+		let compiled = tau_walker::CompiledWalkGlob::new([pattern])
 			.map_err(|err| Error::from_reason(format!("Invalid glob pattern: {err}")))?;
 		filter = filter.glob(compiled);
 	}
 
-	Ok(pi_walker::WalkRequest::new(search_path)
+	Ok(tau_walker::WalkRequest::new(search_path)
 		.hidden(include_hidden)
 		.gitignore(use_gitignore)
 		.skip_git(true)
 		.skip_node_modules(skip_node_modules)
-		.follow_links(pi_walker::FollowLinks::Never)
-		.detail(pi_walker::WalkDetail::Minimal)
-		.size_hints(pi_walker::SizeHintPolicy::WhenCheap)
+		.follow_links(tau_walker::FollowLinks::Never)
+		.detail(tau_walker::WalkDetail::Minimal)
+		.size_hints(tau_walker::SizeHintPolicy::WhenCheap)
 		.order(order)
 		.emit_root(false)
 		.depth(1, usize::MAX)
-		.directory_errors(pi_walker::DirectoryErrorMode::SkipSkippable)
+		.directory_errors(tau_walker::DirectoryErrorMode::SkipSkippable)
 		.cache(false)
 		.filter(filter))
 }
@@ -1152,9 +1152,9 @@ fn collect_grep_candidates(
 	include_hidden: bool,
 	use_gitignore: bool,
 	skip_node_modules: bool,
-	order: pi_walker::WalkOrder,
+	order: tau_walker::WalkOrder,
 	ct: &task::CancelToken,
-) -> Result<Option<Vec<pi_walker::FileCandidate>>> {
+) -> Result<Option<Vec<tau_walker::FileCandidate>>> {
 	let request = build_grep_walk_request(
 		search_path,
 		glob,
@@ -1208,7 +1208,7 @@ enum FileOutcome {
 #[derive(Default)]
 struct PassState {
 	results:           Mutex<Vec<FileSearchResult>>,
-	deferred:          Mutex<Vec<pi_walker::FileCandidate>>,
+	deferred:          Mutex<Vec<tau_walker::FileCandidate>>,
 	files_searched:    AtomicU64,
 	skipped_oversized: AtomicU64,
 	emitted:           AtomicU64,
@@ -1247,7 +1247,7 @@ fn read_file_prefix(path: &Path, buffer: &mut Vec<u8>) -> io::Result<ReadFile> {
 fn search_one_file<M: Matcher + Sync>(
 	worker: &mut SearchWorker,
 	matcher: &M,
-	file: &pi_walker::FileCandidate,
+	file: &tau_walker::FileCandidate,
 	file_params: SearchParams,
 	policy: ReadPolicy,
 ) -> FileOutcome {
@@ -1282,7 +1282,7 @@ fn search_one_file<M: Matcher + Sync>(
 
 /// Search one candidate and fold its outcome into the shared [`PassState`].
 fn handle_file<M: Matcher + Sync>(
-	file: &pi_walker::FileCandidate,
+	file: &tau_walker::FileCandidate,
 	worker: &mut SearchWorker,
 	matcher: &M,
 	file_params: SearchParams,
@@ -1329,7 +1329,7 @@ fn handle_file<M: Matcher + Sync>(
 /// Counters and the deferred list accumulate into `state`; `results` is drained
 /// here so the same state can drive a second pass.
 fn run_pass<M: Matcher + Sync>(
-	candidates: &[pi_walker::FileCandidate],
+	candidates: &[tau_walker::FileCandidate],
 	matcher: &M,
 	file_params: SearchParams,
 	policy: ReadPolicy,
@@ -1338,8 +1338,8 @@ fn run_pass<M: Matcher + Sync>(
 	state: &PassState,
 	ct: &task::CancelToken,
 ) -> Result<Vec<FileSearchResult>> {
-	if parallel_allowed && pi_walker::should_parallelize(candidates.len()) {
-		pi_walker::execute_candidates_init(
+	if parallel_allowed && tau_walker::should_parallelize(candidates.len()) {
+		tau_walker::execute_candidates_init(
 			candidates,
 			|| SearchWorker::new(file_params),
 			|worker, file| {
@@ -1379,7 +1379,7 @@ fn run_pass<M: Matcher + Sync>(
 /// satisfied match budget skip the oversized pass entirely. Normal results
 /// always precede oversized results; each group is path-sorted internally.
 fn process_candidates<M: Matcher + Sync>(
-	candidates: Vec<pi_walker::FileCandidate>,
+	candidates: Vec<tau_walker::FileCandidate>,
 	matcher: &M,
 	params: SearchParams,
 	parallel_allowed: bool,
@@ -1458,7 +1458,7 @@ fn run_sequential_grep<M: Matcher + Sync>(
 		include_hidden,
 		use_gitignore,
 		skip_node_modules,
-		pi_walker::WalkOrder::Path,
+		tau_walker::WalkOrder::Path,
 		ct,
 	)?
 	else {
@@ -1488,7 +1488,7 @@ fn run_parallel_streaming_grep<M: Matcher + Sync>(
 		include_hidden,
 		use_gitignore,
 		skip_node_modules,
-		pi_walker::WalkOrder::Unordered,
+		tau_walker::WalkOrder::Unordered,
 	)?;
 	let file_params = per_file_params(params);
 	let state = PassState::default();
@@ -1499,12 +1499,12 @@ fn run_parallel_streaming_grep<M: Matcher + Sync>(
 				if let Some(filter) = type_filter
 					&& !matches_type_filter_str(&file.relative, filter)
 				{
-					return Ok(pi_walker::ParallelWalkControl::Continue);
+					return Ok(tau_walker::ParallelWalkControl::Continue);
 				}
 				with_parallel_grep_searcher(file_params, |searcher| {
 					handle_file(file, searcher, matcher, file_params, ReadPolicy::Full, None, &state, ct)
 				})?;
-				Ok(pi_walker::ParallelWalkControl::Continue)
+				Ok(tau_walker::ParallelWalkControl::Continue)
 			},
 			|| ct.heartbeat(),
 		)
@@ -1534,7 +1534,7 @@ fn emitted_content_matches(results: &[FileSearchResult]) -> u64 {
 }
 
 fn flush_stream_window<M: Matcher + Sync>(
-	window: &mut Vec<pi_walker::FileCandidate>,
+	window: &mut Vec<tau_walker::FileCandidate>,
 	results: &mut Vec<FileSearchResult>,
 	matcher: &M,
 	file_params: SearchParams,
@@ -1579,7 +1579,7 @@ fn run_windowed_streaming_grep<M: Matcher + Sync>(
 		include_hidden,
 		use_gitignore,
 		skip_node_modules,
-		pi_walker::WalkOrder::Path,
+		tau_walker::WalkOrder::Path,
 	)?;
 	let file_params = per_file_params(params);
 	let state = PassState::default();
@@ -1593,10 +1593,10 @@ fn run_windowed_streaming_grep<M: Matcher + Sync>(
 				if let Some(filter) = type_filter
 					&& !matches_type_filter_str(entry.relative_path, filter)
 				{
-					return Ok(pi_walker::WalkDecision::Include);
+					return Ok(tau_walker::WalkDecision::Include);
 				}
 				let relative = entry.relative_path.to_owned();
-				window.push(pi_walker::FileCandidate {
+				window.push(tau_walker::FileCandidate {
 					path: entry.absolute_path.into_owned(),
 					relative,
 					mtime: entry.mtime,
@@ -1612,11 +1612,11 @@ fn run_windowed_streaming_grep<M: Matcher + Sync>(
 						ct,
 						stop_after_matches,
 					)? {
-					return Ok(pi_walker::WalkDecision::Stop);
+					return Ok(tau_walker::WalkDecision::Stop);
 				}
-				Ok(pi_walker::WalkDecision::Include)
+				Ok(tau_walker::WalkDecision::Include)
 			},
-			|_| Ok(pi_walker::WalkDecision::Include),
+			|_| Ok(tau_walker::WalkDecision::Include),
 		)
 		.map_err(iofs::map_walker_error)?;
 
@@ -1680,7 +1680,7 @@ fn run_streaming_grep<M: Matcher + Sync>(
 			skip_node_modules,
 			ct,
 		),
-		Some(stop) if stop <= ORDERED_STREAMING_STOP_MAX_COUNT || pi_walker::walk_workers() <= 1 => {
+		Some(stop) if stop <= ORDERED_STREAMING_STOP_MAX_COUNT || tau_walker::walk_workers() <= 1 => {
 			run_sequential_grep(
 				search_path,
 				matcher,

@@ -2,12 +2,12 @@ import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from "bun:t
 import { Agent, type AgentTool, type AsideMessage } from "@tau/tau-agent-core";
 import type { AssistantMessage, TextContent, ToolCall } from "@tau/tau-ai";
 import { getBundledModel } from "@tau/tau-catalog/models";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { AgentSession, type AgentSessionEvent } from "@tau/tau-coding-agent/session/agent-session";
-import type { CustomMessage } from "@tau/tau-coding-agent/session/messages";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import { TodoTool, type ToolSession } from "@tau/tau-coding-agent/tools";
+import { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
+import { AgentSession, type AgentSessionEvent } from "tau/session/agent-session";
+import type { CustomMessage } from "tau/session/messages";
+import { SessionManager } from "tau/session/session-manager";
+import { TodoTool, type ToolSession } from "tau/tools";
 import { TempDir } from "@tau/tau-utils";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 

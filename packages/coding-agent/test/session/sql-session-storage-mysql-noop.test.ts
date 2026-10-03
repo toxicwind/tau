@@ -21,8 +21,8 @@ import {
 	SqlSessionStorage,
 	type SqlSessionStorageClient,
 	type SqlSessionStorageResult,
-} from "@tau/tau-coding-agent/session/sql-session-storage";
-import { SessionWriteConflictError } from "@tau/tau-coding-agent/session/session-storage";
+} from "tau/session/sql-session-storage";
+import { SessionWriteConflictError } from "tau/session/session-storage";
 
 interface FakeRow {
 	content: string;

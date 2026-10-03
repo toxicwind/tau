@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import * as path from "node:path";
-import { RpcClient } from "@tau/tau-coding-agent/modes/rpc/rpc-client";
+import { RpcClient } from "tau/modes/rpc/rpc-client";
 import { TempDir } from "@tau/tau-utils";
 
 const MOCK_AGENT = path.join(import.meta.dir, "fixtures", "mock-rpc-agent.ts");

@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { connectToServer } from "@tau/tau-coding-agent/mcp/client";
-import { MCPTransportError } from "@tau/tau-coding-agent/mcp/errors";
-import { HttpTransport } from "@tau/tau-coding-agent/mcp/transports/http";
+import { connectToServer } from "tau/mcp/client";
+import { MCPTransportError } from "tau/mcp/errors";
+import { HttpTransport } from "tau/mcp/transports/http";
 import { postmortem } from "@tau/tau-utils";
 
 const encoder = new TextEncoder();

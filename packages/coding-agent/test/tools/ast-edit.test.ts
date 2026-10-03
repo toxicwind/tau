@@ -3,9 +3,9 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import { adaptSchemaForStrict, toolWireSchema } from "@tau/tau-ai/utils/schema";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { ToolChoiceQueue } from "@tau/tau-coding-agent/session/tool-choice-queue";
-import { createTools, type ToolSession } from "@tau/tau-coding-agent/tools";
+import { Settings } from "tau/config/settings";
+import { ToolChoiceQueue } from "tau/session/tool-choice-queue";
+import { createTools, type ToolSession } from "tau/tools";
 import { removeWithRetries } from "@tau/tau-utils";
 
 type InvokedToolResult = {

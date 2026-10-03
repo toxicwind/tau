@@ -2,9 +2,9 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, type 
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { computeBankScope, deriveBankId, ensureBankExists } from "@tau/tau-coding-agent/hindsight/bank";
-import { HindsightApi } from "@tau/tau-coding-agent/hindsight/client";
-import type { HindsightConfig } from "@tau/tau-coding-agent/hindsight/config";
+import { computeBankScope, deriveBankId, ensureBankExists } from "tau/hindsight/bank";
+import { HindsightApi } from "tau/hindsight/client";
+import type { HindsightConfig } from "tau/hindsight/config";
 import { removeWithRetries } from "@tau/tau-utils";
 
 // Isolate `git` invocations in this file from the host's global config —

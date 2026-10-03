@@ -2,22 +2,22 @@ import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { Skill } from "@tau/tau-coding-agent/extensibility/skills";
-import { parseArgs } from "@tau/tau-coding-agent/cli/args";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
+import type { Skill } from "tau/extensibility/skills";
+import { parseArgs } from "tau/cli/args";
+import { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
 import {
 	applyResolvedSystemPromptInputs,
 	buildSessionOptions,
 	readPipedInput,
 	submitInteractiveInput,
-} from "@tau/tau-coding-agent/main";
-import type { SubmittedUserInput } from "@tau/tau-coding-agent/modes/types";
-import { SKILL_PROMPT_MESSAGE_TYPE } from "@tau/tau-coding-agent/session/messages";
-import { discoverTitleSystemPromptFile } from "@tau/tau-coding-agent/system-prompt";
-import type { CreateAgentSessionOptions } from "@tau/tau-coding-agent/sdk";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+} from "tau/main";
+import type { SubmittedUserInput } from "tau/modes/types";
+import { SKILL_PROMPT_MESSAGE_TYPE } from "tau/session/messages";
+import { discoverTitleSystemPromptFile } from "tau/system-prompt";
+import type { CreateAgentSessionOptions } from "tau/sdk";
+import { AuthStorage } from "tau/session/auth-storage";
+import { SessionManager } from "tau/session/session-manager";
 import { removeWithRetries } from "@tau/tau-utils";
 
 const cleanupDirs: string[] = [];

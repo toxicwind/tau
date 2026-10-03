@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it } from "bun:test";
 import { SessionSelectorComponent } from "@tau/tau-tui/overlays/session-selector";
 import { initTheme } from "@tau/tau-tui/theme";
-import type { SessionInfo } from "@tau/tau-coding-agent/session/session-listing";
+import type { SessionInfo } from "tau/session/session-listing";
 
 beforeAll(async () => {
 	await initTheme();

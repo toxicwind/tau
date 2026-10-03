@@ -2,10 +2,10 @@ import { afterEach, beforeEach, describe, expect, mock, spyOn, test } from "bun:
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
-import { EditTool } from "@tau/tau-coding-agent/edit";
-import * as lsp from "@tau/tau-coding-agent/lsp";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
+import { EditTool } from "tau/edit";
+import * as lsp from "tau/lsp";
+import type { ToolSession } from "tau/tools";
 import { removeWithRetries } from "@tau/tau-utils";
 
 function makeSession(cwd: string): ToolSession {

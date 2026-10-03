@@ -2,8 +2,8 @@ import { afterEach, describe, expect, it, spyOn } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { getBundledModel } from "@tau/tau-catalog/models";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import { MemorySessionStorage, type WriteTextAtomicOptions } from "@tau/tau-coding-agent/session/session-storage";
+import { SessionManager } from "tau/session/session-manager";
+import { MemorySessionStorage, type WriteTextAtomicOptions } from "tau/session/session-storage";
 import { parseJsonlLenient, TempDir } from "@tau/tau-utils";
 
 const tempDirs: TempDir[] = [];

@@ -3,15 +3,15 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import type { AgentToolResult } from "@tau/tau-agent-core";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
+import { Settings } from "tau/config/settings";
+import type { ToolSession } from "tau/tools";
 import type { ReadToolDetails } from "@tau/tau-tui/tools/read";
-import { ReadTool } from "@tau/tau-coding-agent/tools/read";
+import { ReadTool } from "tau/tools/read";
 import {
 	demangleSymbol,
 	parseSampleProfile,
 	renderSampleProfile,
-} from "@tau/tau-coding-agent/utils/sample-profile";
+} from "tau/utils/sample-profile";
 import { removeWithRetries } from "@tau/tau-utils";
 
 const BOX_MEASURE = "_RNvNtCsfMEenOU8j5j_11slab_kernel6layout11box_measure";

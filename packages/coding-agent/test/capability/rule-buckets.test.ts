@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
-import { BUILTIN_DEFAULTS_PROVIDER_ID, type Rule } from "@tau/tau-coding-agent/capability/rule";
-import { bucketRules } from "@tau/tau-coding-agent/capability/rule-buckets";
-import { TtsrManager } from "@tau/tau-coding-agent/export/ttsr";
+import { BUILTIN_DEFAULTS_PROVIDER_ID, type Rule } from "tau/capability/rule";
+import { bucketRules } from "tau/capability/rule-buckets";
+import { TtsrManager } from "tau/export/ttsr";
 
 function source(provider: string): Rule["_source"] {
 	return { provider, providerName: provider, path: "/tmp/rule.md", level: "user" };

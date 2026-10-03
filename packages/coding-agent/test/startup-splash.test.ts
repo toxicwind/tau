@@ -1,8 +1,8 @@
 import { beforeAll, describe, expect, it } from "bun:test";
 import { runStartupSplash } from "@tau/tau-tui/setup/startup-splash";
 import { initTheme } from "@tau/tau-tui/theme";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
-import { shouldShowStartupSplash } from "@tau/tau-coding-agent/startup-splash";
+import type { InteractiveModeContext } from "tau/modes/types";
+import { shouldShowStartupSplash } from "tau/startup-splash";
 import type { Component } from "@tau/tau-tui";
 
 beforeAll(async () => {

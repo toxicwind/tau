@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import * as shim from "@tau/tau-coding-agent/extensibility/legacy-tau-coding-agent-shim";
+import * as shim from "tau/extensibility/legacy-tau-coding-agent-shim";
 
 // Issue #7094: pi extensions import the edit/write tool factories
 // (`createEditTool`, `createEditToolDefinition`, `createWriteTool`,

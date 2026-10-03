@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { refreshAgentDiscovery, TaskTool } from "@tau/tau-coding-agent/task";
-import * as discoveryModule from "@tau/tau-coding-agent/task/discovery";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
+import { Settings } from "tau/config/settings";
+import { refreshAgentDiscovery, TaskTool } from "tau/task";
+import * as discoveryModule from "tau/task/discovery";
+import type { ToolSession } from "tau/tools";
 
 const TEST_AGENTS = [
 	{

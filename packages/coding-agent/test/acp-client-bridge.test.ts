@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { createAcpClientBridge } from "@tau/tau-coding-agent/modes/acp/acp-client-bridge";
+import { createAcpClientBridge } from "tau/modes/acp/acp-client-bridge";
 import type { AgentSideConnection, RequestPermissionRequest } from "@tau/tau-utils/acp";
 
 describe("ACP client bridge permission requests", () => {

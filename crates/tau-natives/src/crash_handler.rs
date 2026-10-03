@@ -22,7 +22,7 @@
 //! - The crash log path mirrors the JS side (`packages/utils/src/dirs.ts`):
 //!   `$XDG_STATE_HOME/tau/logs/` on Linux / macOS when the user has migrated to
 //!   XDG (i.e. that directory already exists and `PI_CODING_AGENT_DIR` isn't
-//!   pointed somewhere custom), otherwise `<home>/<PI_CONFIG_DIR>/logs/`
+//!   pointed somewhere custom), otherwise `<home>/<TAU_CONFIG_DIR>/logs/`
 //!   (defaulting to `~/.tau/logs/`).
 //! - Hook installation is idempotent across repeated module loads.
 
@@ -45,7 +45,8 @@ use std::{
 };
 
 /// Default directory name for TAU's per-user state (overridable via
-/// `PI_CONFIG_DIR`, matching `packages/utils/src/dirs.ts`).
+/// `TAU_CONFIG_DIR` — legacy `PI_CONFIG_DIR` honored as a fallback —
+/// matching `packages/utils/src/dirs.ts`).
 const DEFAULT_CONFIG_DIR: &str = ".tau";
 
 /// App name used as the XDG-root subdirectory (`$XDG_STATE_HOME/tau/`),
@@ -136,7 +137,7 @@ fn blocking_task_panic_scope_active() -> bool {
 }
 
 fn panic_disposition() -> PanicDisposition {
-	if blocking_task_panic_scope_active() || pi_shell::panic_scope_active() {
+	if blocking_task_panic_scope_active() || tau_shell::panic_scope_active() {
 		PanicDisposition::LoggedRecoverable
 	} else {
 		PanicDisposition::Fatal
@@ -266,7 +267,8 @@ fn build_crash_log_path(dir: &Path, kind: CrashKind, pid: u32, now_ms: u128) -> 
 
 fn logs_dir() -> Option<PathBuf> {
 	let home = home_dir()?;
-	let config_override = std::env::var_os("PI_CONFIG_DIR");
+	let config_override =
+		std::env::var_os("TAU_CONFIG_DIR").or_else(|| std::env::var_os("PI_CONFIG_DIR"));
 	let xdg_logs = xdg_state_logs_from_env(&home, config_override.as_deref());
 	Some(resolve_logs_dir(&home, config_override.as_deref(), xdg_logs))
 }
@@ -463,11 +465,11 @@ mod tests {
 	}
 
 	#[test]
-	fn resolve_logs_dir_reroots_absolute_pi_config_dir_under_home() {
+	fn resolve_logs_dir_reroots_absolute_tau_config_dir_under_home() {
 		// JS resolves the config root via `path.join(os.homedir(),
-		// getConfigDirName())`, which never honors an absolute PI_CONFIG_DIR — it
-		// is always re-rooted under `$HOME` (and `..` components are normalized
-		// away).
+		// getConfigDirName())`, which never honors an absolute TAU_CONFIG_DIR —
+		// it is always re-rooted under `$HOME` (and `..` components are
+		// normalized away).
 		let dir = resolve_logs_dir(
 			Path::new("/tmp/tau-natives-test-home"),
 			Some(OsStr::new("/var/tmp/tau-natives-state")),

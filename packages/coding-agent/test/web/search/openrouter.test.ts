@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test";
 import type { FetchImpl } from "@tau/tau-ai/types";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { ModelRegistry } from "tau/config/model-registry";
 import { buildModel } from "@tau/tau-catalog/build";
-import { searchOpenRouterGrounded } from "@tau/tau-coding-agent/web/search/providers/openrouter";
+import { searchOpenRouterGrounded } from "tau/web/search/providers/openrouter";
 import { createInMemoryAuthStorage } from "../../helpers/agent-session-setup";
 
 function createFixture() {

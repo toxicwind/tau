@@ -5,8 +5,8 @@ import {
 	MAX_TINY_MESSAGE_CHARS,
 	preprocessTinyMessage,
 	stripCodeBlocks,
-} from "@tau/tau-coding-agent/tiny/message-preproc";
-import { isLowSignalTitleInput, NO_TITLE_SENTINEL, normalizeGeneratedTitle } from "@tau/tau-coding-agent/tiny/text";
+} from "tau/tiny/message-preproc";
+import { isLowSignalTitleInput, NO_TITLE_SENTINEL, normalizeGeneratedTitle } from "tau/tiny/text";
 
 describe("stripCodeBlocks", () => {
 	it("drops fenced code blocks but keeps the surrounding prose", () => {

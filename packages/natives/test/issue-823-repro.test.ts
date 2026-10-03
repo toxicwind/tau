@@ -3,7 +3,7 @@
  *
  * On WSL (and any host where the user moves the standalone binary away from the
  * build-time native artifacts), the compiled `tau` binary fails to load
- * `pi_natives.linux-x64-*.node`. Root cause: the old loader's
+ * `tau_natives.linux-x64-*.node`. Root cause: the old loader's
  * `isCompiledBinary` detection relied on signals that are unreliable in a Bun
  * standalone binary:
  *   - `process.env.PI_COMPILED` — never set, because `bun build --compile
@@ -54,8 +54,8 @@ describe("issue 823: standalone-binary native loader path resolution", () => {
 					files: [
 						{
 							variant: "modern",
-							filename: "pi_natives.linux-x64-modern.node",
-							filePath: "/$bunfs/root/packages/natives/native/pi_natives.linux-x64-modern.node",
+							filename: "tau_natives.linux-x64-modern.node",
+							filePath: "/$bunfs/root/packages/natives/native/tau_natives.linux-x64-modern.node",
 						},
 					],
 				},
@@ -106,10 +106,10 @@ describe("issue 823: standalone-binary native loader path resolution", () => {
 			userDataDir,
 		});
 
-		const versionedModern = path.join(versionedDir, "pi_natives.linux-x64-modern.node");
-		const versionedBaseline = path.join(versionedDir, "pi_natives.linux-x64-baseline.node");
-		const userDataModern = path.join(userDataDir, "pi_natives.linux-x64-modern.node");
-		const buildHostModern = path.join(nativeDir, "pi_natives.linux-x64-modern.node");
+		const versionedModern = path.join(versionedDir, "tau_natives.linux-x64-modern.node");
+		const versionedBaseline = path.join(versionedDir, "tau_natives.linux-x64-baseline.node");
+		const userDataModern = path.join(userDataDir, "tau_natives.linux-x64-modern.node");
+		const buildHostModern = path.join(nativeDir, "tau_natives.linux-x64-modern.node");
 
 		// Versioned cache and user-data dir candidates must exist for compiled binaries —
 		// these are where the embedded-addon extraction lands (~/.tau/natives/<v>) and where
@@ -134,8 +134,8 @@ describe("issue 823: standalone-binary native loader path resolution", () => {
 			versionedDir,
 			userDataDir,
 		});
-		expect(candidates).not.toContain(path.join(versionedDir, "pi_natives.linux-x64-baseline.node"));
-		expect(candidates).not.toContain(path.join(userDataDir, "pi_natives.linux-x64-baseline.node"));
+		expect(candidates).not.toContain(path.join(versionedDir, "tau_natives.linux-x64-baseline.node"));
+		expect(candidates).not.toContain(path.join(userDataDir, "tau_natives.linux-x64-baseline.node"));
 	});
 
 	it("prefers platform leaf package candidates ahead of core nativeDir candidates on npm installs", () => {
@@ -151,8 +151,8 @@ describe("issue 823: standalone-binary native loader path resolution", () => {
 			userDataDir: "/home/u/.local/bin",
 		});
 
-		const leafBaseline = path.join(leafPackageDir, "pi_natives.linux-x64-baseline.node");
-		const coreBaseline = path.join(nativeDir, "pi_natives.linux-x64-baseline.node");
+		const leafBaseline = path.join(leafPackageDir, "tau_natives.linux-x64-baseline.node");
+		const coreBaseline = path.join(nativeDir, "tau_natives.linux-x64-baseline.node");
 		expect(candidates).toContain(leafBaseline);
 		expect(candidates.indexOf(leafBaseline)).toBeLessThan(candidates.indexOf(coreBaseline));
 	});
@@ -172,9 +172,9 @@ describe("issue 823: standalone-binary native loader path resolution", () => {
 			userDataDir: "/home/u/AppData/Local/tau",
 		});
 
-		const stagedBaseline = path.join(versionedDir, "pi_natives.win32-x64-baseline.node");
-		const leafBaseline = path.join(leafPackageDir, "pi_natives.win32-x64-baseline.node");
-		const coreBaseline = path.join(nativeDir, "pi_natives.win32-x64-baseline.node");
+		const stagedBaseline = path.join(versionedDir, "tau_natives.win32-x64-baseline.node");
+		const leafBaseline = path.join(leafPackageDir, "tau_natives.win32-x64-baseline.node");
+		const coreBaseline = path.join(nativeDir, "tau_natives.win32-x64-baseline.node");
 		expect(candidates.indexOf(stagedBaseline)).toBeLessThan(candidates.indexOf(leafBaseline));
 		expect(candidates.indexOf(leafBaseline)).toBeLessThan(candidates.indexOf(coreBaseline));
 	});
@@ -206,8 +206,8 @@ describe("issue 823: standalone-binary native loader path resolution", () => {
 
 			const modern = Buffer.from("modern native addon");
 			const baseline = Buffer.from("baseline native addon");
-			const modernFilename = "pi_natives.linux-x64-modern.node";
-			const baselineFilename = "pi_natives.linux-x64-baseline.node";
+			const modernFilename = "tau_natives.linux-x64-modern.node";
+			const baselineFilename = "tau_natives.linux-x64-baseline.node";
 			await Bun.write(
 				archivePath,
 				await new Bun.Archive(

@@ -113,27 +113,27 @@ impl WorkspaceResults {
 	}
 }
 
-fn build_workspace_walk_request(config: &WorkspaceConfig) -> pi_walker::WalkRequest {
-	pi_walker::WalkRequest::new(config.root.clone())
+fn build_workspace_walk_request(config: &WorkspaceConfig) -> tau_walker::WalkRequest {
+	tau_walker::WalkRequest::new(config.root.clone())
 		.hidden(config.include_hidden)
 		.gitignore(config.use_gitignore)
 		.skip_git(true)
 		.skip_node_modules(true)
-		.follow_links(pi_walker::FollowLinks::Never)
-		.detail(pi_walker::WalkDetail::Full)
-		.order(pi_walker::WalkOrder::Path)
+		.follow_links(tau_walker::FollowLinks::Never)
+		.detail(tau_walker::WalkDetail::Full)
+		.order(tau_walker::WalkOrder::Path)
 		.emit_root(false)
 		.depth(1, config.walk_max_depth)
-		.directory_errors(pi_walker::DirectoryErrorMode::SkipSkippable)
+		.directory_errors(tau_walker::DirectoryErrorMode::SkipSkippable)
 		.cache(false)
 }
 
 fn glob_match_from_path(root: &Path, path: &Path) -> Option<GlobMatch> {
-	let relative = pi_walker::normalize_relative_path(root, path);
+	let relative = tau_walker::normalize_relative_path(root, path);
 	if relative.is_empty() {
 		return None;
 	}
-	let (file_type, mtime, size) = pi_walker::classify_file_type(path)?;
+	let (file_type, mtime, size) = tau_walker::classify_file_type(path)?;
 	Some(GlobMatch {
 		path: relative.into_owned(),
 		file_type: crate::iofs::from_walker_file_type(file_type),
@@ -207,7 +207,7 @@ fn run_list_workspace(
 			|entry| {
 				let file_type = iofs::from_walker_file_type(entry.file_type);
 				if is_excluded_workspace_entry(entry.relative_path, file_type) {
-					return Ok(pi_walker::WalkDecision::SkipDescend);
+					return Ok(tau_walker::WalkDecision::SkipDescend);
 				}
 				if file_type == FileType::Dir {
 					collect_agents_md_in_directory(
@@ -225,9 +225,9 @@ fn run_list_workspace(
 						size: entry.size,
 					});
 				}
-				Ok(pi_walker::WalkDecision::Include)
+				Ok(tau_walker::WalkDecision::Include)
 			},
-			|_| Ok(pi_walker::WalkDecision::Include),
+			|_| Ok(tau_walker::WalkDecision::Include),
 		)
 		.map_err(iofs::map_walker_error)?;
 
@@ -266,7 +266,7 @@ pub fn list_workspace(options: ListWorkspaceOptions<'_>) -> task::Promise<ListWo
 		};
 		run_list_workspace(
 			WorkspaceConfig {
-				root: pi_walker::resolve_search_path(&path).map_err(crate::iofs::map_walker_error)?,
+				root: tau_walker::resolve_search_path(&path).map_err(crate::iofs::map_walker_error)?,
 				max_depth,
 				walk_max_depth,
 				include_hidden: hidden.unwrap_or(false),

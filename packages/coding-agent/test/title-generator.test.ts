@@ -3,9 +3,9 @@ import type { Api, Model } from "@tau/tau-ai";
 import * as ai from "@tau/tau-ai";
 import { buildModel } from "@tau/tau-catalog/build";
 import { type GeneratedProvider, getBundledModel } from "@tau/tau-catalog/models";
-import { formatModelStringWithRouting, resolveModelOverride } from "@tau/tau-coding-agent/config/model-resolver";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { tinyTitleClient } from "@tau/tau-coding-agent/tiny/title-client";
+import { formatModelStringWithRouting, resolveModelOverride } from "tau/config/model-resolver";
+import { Settings } from "tau/config/settings";
+import { tinyTitleClient } from "tau/tiny/title-client";
 import {
 	disposeTerminalTitleState,
 	generateSessionTitle,
@@ -15,7 +15,7 @@ import {
 	setTerminalTitle,
 	setTerminalTitleSpinnerStyle,
 	setTerminalTitleState,
-} from "@tau/tau-coding-agent/utils/title-generator";
+} from "tau/utils/title-generator";
 import { isWsl, logger, setTerminalHeadless } from "@tau/tau-utils";
 import { mockWindowsConsoleTitle, type WindowsConsoleTitleMock } from "./terminal-title-test-utils";
 

@@ -10,7 +10,7 @@ rust_library(
     name = "tau-ast",
     srcs = glob(["src/**/*.rs"]),
     aliases = aliases(),
-    crate_name = "pi_ast",
+    crate_name = "tau_ast",
     edition = "2024",
     proc_macro_deps = all_crate_deps(proc_macro = True),
     version = "17.1.5",

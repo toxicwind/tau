@@ -1,4 +1,4 @@
-//! In-process `fd` builtin backed by `pi_walker`, `globset`, and `regex`.
+//! In-process `fd` builtin backed by `tau_walker`, `globset`, and `regex`.
 //!
 //! Relocated from tau-shell's native implementation.
 
@@ -18,7 +18,7 @@ use std::{
 use brush_core::{ShellExtensions, builtins::Registration};
 use clap::{ArgAction, Parser, ValueEnum};
 use globset::{GlobBuilder, GlobMatcher};
-use pi_walker::CollectedEntry;
+use tau_walker::CollectedEntry;
 use regex::{Regex, RegexBuilder};
 
 use crate::host::{Host, Utility, util};
@@ -689,7 +689,7 @@ fn search(
 			fd_walk_request(&search_path.resolved, &cli, use_gitignore, cli.one_file_system);
 		let outcome = match request.collect_with_heartbeat(cancel_heartbeat(cancelled)) {
 			Ok(outcome) => outcome,
-			Err(pi_walker::WalkError::Interrupted(_)) if cancelled.load(Ordering::Relaxed) => break,
+			Err(tau_walker::WalkError::Interrupted(_)) if cancelled.load(Ordering::Relaxed) => break,
 			Err(err) => return Err(walker_collect_error_to_io(err)),
 		};
 		let mut pruned_dirs = Vec::new();
@@ -719,23 +719,23 @@ fn fd_walk_request(
 	cli: &FdCli,
 	use_gitignore: bool,
 	same_file_system: bool,
-) -> pi_walker::WalkRequest {
+) -> tau_walker::WalkRequest {
 	let min_depth = cli.exact_depth.or(cli.min_depth).unwrap_or(0);
 	let max_depth = cli.exact_depth.or(cli.max_depth).unwrap_or(usize::MAX);
-	pi_walker::WalkRequest::new(root)
+	tau_walker::WalkRequest::new(root)
 		.hidden(include_hidden(cli))
 		.gitignore(use_gitignore)
 		.skip_git(false)
 		.skip_node_modules(false)
 		.follow_links(cli.follow.into())
-		.detail(pi_walker::WalkDetail::Minimal)
-		.order(pi_walker::WalkOrder::Path)
+		.detail(tau_walker::WalkDetail::Minimal)
+		.order(tau_walker::WalkOrder::Path)
 		.emit_root(true)
 		.depth(min_depth, max_depth)
-		.directory_errors(pi_walker::DirectoryErrorMode::Visit)
+		.directory_errors(tau_walker::DirectoryErrorMode::Visit)
 		.same_file_system(same_file_system)
 		.cache(false)
-		.visit_order(pi_walker::VisitOrder::PreOrder)
+		.visit_order(tau_walker::VisitOrder::PreOrder)
 }
 
 fn try_search_fast(
@@ -765,7 +765,7 @@ fn try_search_fast(
 			cancel_heartbeat(cancelled),
 			|entry| {
 				if cancelled.load(Ordering::Relaxed) || max_results.is_some_and(|max| matches >= max) {
-					return Ok(pi_walker::WalkDecision::Stop);
+					return Ok(tau_walker::WalkDecision::Stop);
 				}
 				let decision = process_walker_entry(
 					config,
@@ -777,7 +777,7 @@ fn try_search_fast(
 					&mut matches,
 				)?;
 				if cancelled.load(Ordering::Relaxed) || max_results.is_some_and(|max| matches >= max) {
-					Ok(pi_walker::WalkDecision::Stop)
+					Ok(tau_walker::WalkDecision::Stop)
 				} else {
 					Ok(decision)
 				}
@@ -787,14 +787,14 @@ fn try_search_fast(
 					had_error = true;
 					let _ = writeln!(err, "fd: {}", error.error);
 				}
-				Ok(pi_walker::WalkDecision::Include)
+				Ok(tau_walker::WalkDecision::Include)
 			},
 		);
 		state.matches = matches;
 		state.had_error = had_error;
 		match status {
-			Ok(pi_walker::WalkStatus::Complete | pi_walker::WalkStatus::Stopped) => {},
-			Err(pi_walker::WalkError::Interrupted(_)) if cancelled.load(Ordering::Relaxed) => break,
+			Ok(tau_walker::WalkStatus::Complete | tau_walker::WalkStatus::Stopped) => {},
+			Err(tau_walker::WalkError::Interrupted(_)) if cancelled.load(Ordering::Relaxed) => break,
 			Err(err) => return Err(walker_error_to_io(err)),
 		}
 	}
@@ -821,46 +821,46 @@ fn process_walker_entry<W: Write>(
 	ignore_contains: &[OsString],
 	path: &Path,
 	depth: usize,
-	file_type: pi_walker::FileType,
+	file_type: tau_walker::FileType,
 	out: &mut W,
 	matches: &mut usize,
-) -> io::Result<pi_walker::WalkDecision> {
-	let is_directory = file_type == pi_walker::FileType::Dir;
+) -> io::Result<tau_walker::WalkDecision> {
+	let is_directory = file_type == tau_walker::FileType::Dir;
 	if depth == 0 && is_directory {
-		return Ok(pi_walker::WalkDecision::Skip);
+		return Ok(tau_walker::WalkDecision::Skip);
 	}
 	if config.excludes.matches(path, &config.base_dir) {
 		return Ok(if is_directory {
-			pi_walker::WalkDecision::SkipDescend
+			tau_walker::WalkDecision::SkipDescend
 		} else {
-			pi_walker::WalkDecision::Skip
+			tau_walker::WalkDecision::Skip
 		});
 	}
 	if is_directory {
 		if ignore_contains.iter().any(|name| path.join(name).exists()) {
-			return Ok(pi_walker::WalkDecision::SkipDescend);
+			return Ok(tau_walker::WalkDecision::SkipDescend);
 		}
 		if config.prune
 			&& config
 				.matcher
 				.matches(&match_target(path, &config.base_dir, config.full_path))
 		{
-			return Ok(pi_walker::WalkDecision::SkipDescend);
+			return Ok(tau_walker::WalkDecision::SkipDescend);
 		}
 	}
 
 	let metadata = fs::symlink_metadata(path).ok();
 	if !matches_walker_filters(config, path, file_type, metadata.as_ref()) {
-		return Ok(pi_walker::WalkDecision::Skip);
+		return Ok(tau_walker::WalkDecision::Skip);
 	}
 	let target = match_target(path, &config.base_dir, config.full_path);
 	if !config.matcher.matches(&target) {
-		return Ok(pi_walker::WalkDecision::Skip);
+		return Ok(tau_walker::WalkDecision::Skip);
 	}
 
 	*matches = (*matches).saturating_add(1);
 	if config.quiet {
-		return Ok(pi_walker::WalkDecision::Include);
+		return Ok(tau_walker::WalkDecision::Include);
 	}
 	let display = display_path(config, path);
 	let text = if let Some(format) = config.format.as_deref() {
@@ -874,13 +874,13 @@ fn process_walker_entry<W: Write>(
 	} else {
 		out.write_all(b"\n")?;
 	}
-	Ok(pi_walker::WalkDecision::Include)
+	Ok(tau_walker::WalkDecision::Include)
 }
 
 fn matches_walker_filters(
 	config: &SearchConfig,
 	path: &Path,
-	file_type: pi_walker::FileType,
+	file_type: tau_walker::FileType,
 	metadata: Option<&Metadata>,
 ) -> bool {
 	if !matches_walker_type_filter(&config.types, path, file_type, metadata) {
@@ -906,16 +906,16 @@ fn matches_walker_filters(
 fn matches_walker_type_filter(
 	filter: &TypeFilter,
 	path: &Path,
-	file_type: pi_walker::FileType,
+	file_type: tau_walker::FileType,
 	metadata: Option<&Metadata>,
 ) -> bool {
 	if filter.is_empty() {
 		return true;
 	}
 	let kind_matches = if filter.has_kind() {
-		(filter.regular && file_type == pi_walker::FileType::File)
-			|| (filter.directory && file_type == pi_walker::FileType::Dir)
-			|| (filter.symlink && file_type == pi_walker::FileType::Symlink)
+		(filter.regular && file_type == tau_walker::FileType::File)
+			|| (filter.directory && file_type == tau_walker::FileType::Dir)
+			|| (filter.symlink && file_type == tau_walker::FileType::Symlink)
 	} else {
 		true
 	};
@@ -935,10 +935,10 @@ fn matches_walker_type_filter(
 ///
 /// The shared utility adapter flips `cancelled` when the shell cancellation
 /// token fires, then awaits the blocking task. Without this closure,
-/// `pi_walker`'s per-entry heartbeat never checks the flag and a cancelled walk
+/// `tau_walker`'s per-entry heartbeat never checks the flag and a cancelled walk
 /// keeps traversing until the whole tree is collected.
 /// Returning [`io::ErrorKind::Interrupted`] surfaces as
-/// [`pi_walker::WalkError::Interrupted`], which the callers translate to a
+/// [`tau_walker::WalkError::Interrupted`], which the callers translate to a
 /// silent break — the shared adapter owns the user-visible exit code (130), so
 /// no `fd:` diagnostic is emitted.
 ///
@@ -953,19 +953,19 @@ fn cancel_heartbeat(cancelled: &AtomicBool) -> impl Fn() -> io::Result<()> + Syn
 	}
 }
 
-fn walker_error_to_io(err: pi_walker::WalkError<io::Error>) -> io::Error {
+fn walker_error_to_io(err: tau_walker::WalkError<io::Error>) -> io::Error {
 	match err {
-		pi_walker::WalkError::Interrupted(err) => err,
-		pi_walker::WalkError::InvalidData { path, message } => {
+		tau_walker::WalkError::Interrupted(err) => err,
+		tau_walker::WalkError::InvalidData { path, message } => {
 			io::Error::other(format!("{}: {message}", path.display()))
 		},
 	}
 }
 
-fn walker_collect_error_to_io(err: pi_walker::WalkError<String>) -> io::Error {
+fn walker_collect_error_to_io(err: tau_walker::WalkError<String>) -> io::Error {
 	match err {
-		pi_walker::WalkError::Interrupted(err) => io::Error::other(err),
-		pi_walker::WalkError::InvalidData { path, message } => {
+		tau_walker::WalkError::Interrupted(err) => io::Error::other(err),
+		tau_walker::WalkError::InvalidData { path, message } => {
 			io::Error::other(format!("{}: {message}", path.display()))
 		},
 	}
@@ -986,7 +986,7 @@ fn process_collected_entry<W: Write>(
 		return Ok(());
 	}
 	let depth = entry.depth();
-	let is_directory = entry.file_type == pi_walker::FileType::Dir;
+	let is_directory = entry.file_type == tau_walker::FileType::Dir;
 	if depth == 0 && is_directory {
 		return Ok(());
 	}
@@ -1598,8 +1598,8 @@ mod tests {
 	/// seeded tree: hidden entries included, gitignore disabled, root emitted.
 	/// Keeping the shape in one place so both walker-level regressions exercise
 	/// what fd actually asks the walker to do.
-	fn walk_request(tree: &std::path::Path) -> pi_walker::WalkRequest {
-		pi_walker::WalkRequest::new(tree)
+	fn walk_request(tree: &std::path::Path) -> tau_walker::WalkRequest {
+		tau_walker::WalkRequest::new(tree)
 			.hidden(true)
 			.gitignore(false)
 			.emit_root(true)
@@ -1628,7 +1628,7 @@ mod tests {
 			.collect_with_heartbeat(cancel_heartbeat(&cancelled))
 			.expect_err("walker must surface the cancel flag as an error");
 		assert!(
-			matches!(err, pi_walker::WalkError::Interrupted(_)),
+			matches!(err, tau_walker::WalkError::Interrupted(_)),
 			"heartbeat interruption should surface as WalkError::Interrupted, got {err:?}"
 		);
 	}
@@ -1646,13 +1646,13 @@ mod tests {
 			cancel_heartbeat(&cancelled),
 			|_entry| {
 				visited.set(visited.get() + 1);
-				Ok::<_, std::io::Error>(pi_walker::WalkDecision::Include)
+				Ok::<_, std::io::Error>(tau_walker::WalkDecision::Include)
 			},
-			|_error| Ok::<_, std::io::Error>(pi_walker::WalkDecision::Include),
+			|_error| Ok::<_, std::io::Error>(tau_walker::WalkDecision::Include),
 		);
 		let err = result.expect_err("streaming walker must surface the cancel flag as an error");
 		assert!(
-			matches!(err, pi_walker::WalkError::Interrupted(_)),
+			matches!(err, tau_walker::WalkError::Interrupted(_)),
 			"heartbeat interruption should surface as WalkError::Interrupted, got {err:?}"
 		);
 		assert_eq!(

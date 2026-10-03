@@ -23,7 +23,7 @@ Webhook → durable queue → async dispatcher → per-issue git worktree → ta
 - `src/prompts/` — Mustache-style `{{var}}` templates loaded by `persona.py` via `@cache` and `importlib.resources`. Shipped as package data (`pyproject.toml` `package-data`).
 - `tests/` — pytest suite. `test_worker_smoke.py` is gated on `ROBTAU_INTEGRATION=1`.
 - `data/` — runtime state (sqlite + WAL, `workspaces/`, `logs/`). Never committed.
-- `/Dockerfile` (pi root) — produces `tau/pi:dev` (pi runtime image: python + bun + rustup + tau-natives + tau_rpc + `/usr/local/bin/tau` shim + the full pi source under `/pi`). Stages: `natives-builder` → `wheel-builder` → `tau-base` → `tau-runtime` (default). Built via `bun run pi:image`. Robtau's image extends `tau-base` via `FROM ${PI_BASE}` in `/Dockerfile.robtau`.
+- `/Dockerfile` (pi root) — produces `tau/tau:dev` (pi runtime image: python + bun + rustup + tau-natives + tau_rpc + `/usr/local/bin/tau` shim + the full pi source under `/pi`). Stages: `natives-builder` → `wheel-builder` → `tau-base` → `tau-runtime` (default). Built via `bun run tau:image`. Robtau's image extends `tau-base` via `FROM ${TAU_BASE}` in `/Dockerfile.robtau`.
 
 ## Development Commands
 
@@ -38,8 +38,8 @@ bun run robtau:serve              # python -m robtau serve on the host
 Docker inner loop:
 
 ```
-bun run pi:image                  # build tau/pi:dev (one-time / on pi change)
-bun run pi:run                    # docker run -it tau/pi:dev (smoke-test the shim)
+bun run tau:image                  # build tau/tau:dev (one-time / on pi change)
+bun run tau:run                    # docker run -it tau/tau:dev (smoke-test the shim)
 bun run robtau:build              # pi:image (if pi changed) + docker compose build
 bun run robtau:dev                # build + up -d + follow logs
 bun run robtau:up / robtau:down / robtau:restart / robtau:logs
@@ -97,8 +97,8 @@ Lint + format: TypeScript via Biome (config in `biome.json`), Python via Ruff (c
 - `src/cli.py` — Click CLI (`serve`, `triage`, `replay`, `status`, `cleanup`).
 - `src/dashboard.py` — single-page HTML dashboard served from `/`.
 - `pyproject.toml` — packaging + pytest config (`asyncio_mode = "auto"`, `testpaths = ["tests"]`).
-- `/Dockerfile.robtau` (pi root) — robtau's image. `FROM ${PI_BASE}` (default `tau/pi:dev`), adds the SolidJS dashboard bundle, the robtau Python package, and the `robtau-entrypoint` shim. Tini entrypoint, exposes `8080`, `VOLUME /data`. The toolchain (python + bun + rustup + tau-natives + tau_rpc + `tau` shim) comes from `tau-base` — no duplication in this file.
-- `docker-compose.yml` — `build.args.PI_BASE`, mounts `$PI_ROOT:/work/pi:ro`, `./data:/data`, `~/.tau/agent/models.container.yml:ro` (mapped to `models.yml` inside the container — kept separate from the host's `~/.tau/agent/models.yml` so the host tau doesn't pick up gateway routing intended only for the container), `extra_hosts: llm-gateway.internal:host-gateway`.
+- `/Dockerfile.robtau` (pi root) — robtau's image. `FROM ${TAU_BASE}` (default `tau/tau:dev`), adds the SolidJS dashboard bundle, the robtau Python package, and the `robtau-entrypoint` shim. Tini entrypoint, exposes `8080`, `VOLUME /data`. The toolchain (python + bun + rustup + tau-natives + tau_rpc + `tau` shim) comes from `tau-base` — no duplication in this file.
+- `docker-compose.yml` — `build.args.TAU_BASE`, mounts `$PI_ROOT:/work/pi:ro`, `./data:/data`, `~/.tau/agent/models.container.yml:ro` (mapped to `models.yml` inside the container — kept separate from the host's `~/.tau/agent/models.yml` so the host tau doesn't pick up gateway routing intended only for the container), `extra_hosts: llm-gateway.internal:host-gateway`.
 - `entrypoint.sh` — validates `PI_ROOT`, creates `/data/{workspaces,logs}` + build caches.
 - `.env.example` — authoritative list of required runtime env vars.
 - `README.md` — full architecture + operational reference. Authoritative for end-to-end flow, host-tool spec, security posture, and configuration reference.
@@ -110,7 +110,7 @@ Lint + format: TypeScript via Biome (config in `biome.json`), Python via Ruff (c
 - **Task runner**: `bun` (root `package.json` `scripts`). Always reach for an existing `bun run` recipe before invoking `docker compose` or `pytest` directly.
 - **Container runtime**: Docker Compose v2. The image embeds Bun 1.3.14 + a rustup launcher and exposes `tau` via a `/usr/local/bin/tau` shim; `ROBTAU_OMP_COMMAND=tau` should not need changing.
 - **Required env** (set in `.env`, see `.env.example`): `GITHUB_WEBHOOK_SECRET`, `ROBTAU_BOT_LOGIN`, `ROBTAU_GIT_AUTHOR_NAME`, `ROBTAU_GIT_AUTHOR_EMAIL`, `ROBTAU_REPO_ALLOWLIST`, plus model knobs (`ROBTAU_MODEL`, `ROBTAU_THINKING`, optional `ROBTAU_PROVIDER`) and rate-limit / concurrency / timeout overrides. Set `ROBTAU_BOT_LOGIN` to the lowercase mention handle (`roboomp` in production, no leading `@` or `[bot]`; config normalizes common variants). `ROBTAU_MAINTAINER_LOGINS` is optional comma-separated bare logins (`@`/`[bot]` optional, case-insensitive) for non-owner implementation authorizers. **GitHub auth is mode-exclusive**: either set `ROBTAU_GH_PROXY_URL` + `ROBTAU_GH_PROXY_HMAC_KEY` (gh-proxy mode; PAT lives only in the sidecar container — the bundled compose default), or set `GITHUB_TOKEN` directly (single-process PAT mode). `Settings._validate_proxy_or_pat` rejects a `.env` that sets both.
-- **PI_ROOT resolution**: roboomp lives inside the tau monorepo at `python/robtau/`. `bun run pi:image` builds the parent monorepo (`../..`) as its docker build context to produce `tau/pi:dev`; `docker-compose.yml` extends that image via `PI_BASE` and mounts the same parent path read-only at `/work/pi` for the orchestrator to see live source. Override `PI_ROOT` only when pointing the build/mount at a different tau checkout. Inside the container the path is always `/work/pi`. Build invalidation stays bounded: Python-only edits in roboomp never trigger a natives recompile.
+- **PI_ROOT resolution**: roboomp lives inside the tau monorepo at `python/robtau/`. `bun run tau:image` builds the parent monorepo (`../..`) as its docker build context to produce `tau/tau:dev`; `docker-compose.yml` extends that image via `TAU_BASE` and mounts the same parent path read-only at `/work/pi` for the orchestrator to see live source. Override `PI_ROOT` only when pointing the build/mount at a different tau checkout. Inside the container the path is always `/work/pi`. Build invalidation stays bounded: Python-only edits in roboomp never trigger a natives recompile.
 - **Forbidden**: no docker-in-docker, no extra service containers, no new background workers outside `WorkerPool`. The container itself is the isolation boundary; per-issue isolation is the git worktree.
 
 ## Testing & QA

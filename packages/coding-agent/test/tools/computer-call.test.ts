@@ -5,7 +5,7 @@ import {
 	isReadOnlyComputerCall,
 	renderComputerCall,
 	WINDOW_METHODS,
-} from "@tau/tau-coding-agent/tools/computer/call";
+} from "tau/tools/computer/call";
 
 function errorMessage(run: () => unknown): string {
 	try {

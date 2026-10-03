@@ -1,11 +1,11 @@
 import { describe, expect, test } from "bun:test";
 import * as path from "node:path";
 import { isRecord, readJsonl, TempDir } from "@tau/tau-utils";
-import { selectRpcEntries } from "@tau/tau-coding-agent/modes/rpc/rpc-compat";
-import { readRpcInputFrames } from "@tau/tau-coding-agent/modes/rpc/rpc-input";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import { FileSessionStorage } from "@tau/tau-coding-agent/session/session-storage";
-import type { SessionEntry, SessionTreeNode } from "@tau/tau-coding-agent/session/session-entries";
+import { selectRpcEntries } from "tau/modes/rpc/rpc-compat";
+import { readRpcInputFrames } from "tau/modes/rpc/rpc-input";
+import { SessionManager } from "tau/session/session-manager";
+import { FileSessionStorage } from "tau/session/session-storage";
+import type { SessionEntry, SessionTreeNode } from "tau/session/session-entries";
 
 function customEntry(id: string, parentId: string | null): SessionEntry {
 	return { type: "custom", id, parentId, timestamp: new Date().toISOString(), customType: "probe" };

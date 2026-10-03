@@ -2,14 +2,14 @@ import { afterEach, describe, expect, it } from "bun:test";
 import * as os from "node:os";
 import * as path from "node:path";
 import type { AgentEvent } from "@tau/tau-agent-core";
-import { defineRpcClientTool, RpcClient } from "@tau/tau-coding-agent/modes";
-import { RpcHostToolBridge } from "@tau/tau-coding-agent/modes/rpc/host-tools";
+import { defineRpcClientTool, RpcClient } from "tau/modes";
+import { RpcHostToolBridge } from "tau/modes/rpc/host-tools";
 import type {
 	RpcHostToolCallRequest,
 	RpcHostToolCancelRequest,
 	RpcHostToolUpdate,
-} from "@tau/tau-coding-agent/modes/rpc/rpc-types";
-import { toolReadsSkillUris } from "@tau/tau-coding-agent/system-prompt";
+} from "tau/modes/rpc/rpc-types";
+import { toolReadsSkillUris } from "tau/system-prompt";
 import { removeWithRetries } from "@tau/tau-utils";
 
 const tempPaths: string[] = [];

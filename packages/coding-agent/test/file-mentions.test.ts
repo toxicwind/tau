@@ -2,7 +2,7 @@ import { afterEach, describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { extractFileMentions, generateFileMentionMessages } from "@tau/tau-coding-agent/utils/file-mentions";
+import { extractFileMentions, generateFileMentionMessages } from "tau/utils/file-mentions";
 import { removeWithRetries } from "@tau/tau-utils";
 
 const tempDirs: string[] = [];

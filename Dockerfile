@@ -10,16 +10,16 @@
 #   tau-runtime      — tau-base + pi source + bun install      (DEFAULT, runnable)
 #
 # Build:
-#     docker build -t tau/pi:dev .                          # default = tau-runtime
+#     docker build -t tau/tau:dev .                          # default = tau-runtime
 #     docker build --target tau-base -t tau/tau-base:dev .    # base for derived images
 #
 # Run:
-#     docker run --rm tau/pi:dev --help
-#     docker run --rm -it -v "$PWD":/work tau/pi:dev cli    # interactive tau
+#     docker run --rm tau/tau:dev --help
+#     docker run --rm -it -v "$PWD":/work tau/tau:dev cli    # interactive tau
 #
 # Consume as a base in another Dockerfile (see Dockerfile.robtau):
-#     ARG PI_BASE=tau/pi:dev
-#     FROM ${PI_BASE} AS tau-base
+#     ARG TAU_BASE=tau/tau:dev
+#     FROM ${TAU_BASE} AS tau-base
 ###############################################################################
 
 ARG BUN_VERSION=1.4.2
@@ -175,7 +175,7 @@ RUN printf '%s\n' \
 ############################
 # 4) tau-runtime — tau-base + pi source + bun install (DEFAULT)
 #
-# A self-contained, runnable tau image. `docker run tau/pi:dev --help`
+# A self-contained, runnable tau image. `docker run tau/tau:dev --help`
 # Just Works without a host checkout.
 ############################
 FROM tau-base AS tau-runtime

@@ -3,8 +3,8 @@ import { afterEach, beforeAll, describe, expect, test } from "bun:test";
 import { stripVTControlCharacters } from "node:util";
 import type { Model } from "@tau/tau-ai";
 import { buildModel } from "@tau/tau-catalog/build";
-import type { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
+import type { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
 import {
 	type ModelHubCallbacks,
 	ModelHubComponent,

@@ -7,7 +7,7 @@ import {
 	parseConflictUri,
 	scanConflictLines,
 	spliceConflict,
-} from "@tau/tau-coding-agent/tools/conflict-detect";
+} from "tau/tools/conflict-detect";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 
 describe("scanConflictLines", () => {

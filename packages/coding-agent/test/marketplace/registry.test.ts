@@ -7,7 +7,7 @@ import type {
 	InstalledPluginsRegistry,
 	MarketplaceRegistryEntry,
 	MarketplacesRegistry,
-} from "@tau/tau-coding-agent/extensibility/plugins/marketplace";
+} from "tau/extensibility/plugins/marketplace";
 import {
 	addInstalledPlugin,
 	addMarketplaceEntry,
@@ -22,7 +22,7 @@ import {
 	removeMarketplaceEntry,
 	writeInstalledPluginsRegistry,
 	writeMarketplacesRegistry,
-} from "@tau/tau-coding-agent/extensibility/plugins/marketplace";
+} from "tau/extensibility/plugins/marketplace";
 import { removeSyncWithRetries } from "@tau/tau-utils";
 
 // Inline the parseClaudePluginsRegistry validation logic to avoid pulling

@@ -2,10 +2,10 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { ToolChoiceQueue } from "@tau/tau-coding-agent/session/tool-choice-queue";
-import { createTools, type ToolSession } from "@tau/tau-coding-agent/tools";
-import { resolveToCwd } from "@tau/tau-coding-agent/tools/path-utils";
+import { Settings } from "tau/config/settings";
+import { ToolChoiceQueue } from "tau/session/tool-choice-queue";
+import { createTools, type ToolSession } from "tau/tools";
+import { resolveToCwd } from "tau/tools/path-utils";
 import { removeWithRetries } from "@tau/tau-utils";
 
 function createTestSession(cwd: string, overrides: Partial<ToolSession> = {}): ToolSession {

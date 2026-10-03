@@ -1,8 +1,8 @@
 import { describe, expect, test } from "bun:test";
 import type { Model } from "@tau/tau-ai";
 import { buildModel } from "@tau/tau-catalog/build";
-import { getRoleInfo } from "@tau/tau-coding-agent/config/model-roles";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { getRoleInfo } from "tau/config/model-roles";
+import { Settings } from "tau/config/settings";
 
 function makeModel(id: string, metadata: Partial<Pick<Model, "api" | "kind" | "webSearch">> = {}): Model {
 	return buildModel({

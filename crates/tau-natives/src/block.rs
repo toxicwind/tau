@@ -23,8 +23,8 @@ pub struct BlockRange {
 	pub end_line:   u32,
 }
 
-impl From<pi_ast::block::BlockRange> for BlockRange {
-	fn from(value: pi_ast::block::BlockRange) -> Self {
+impl From<tau_ast::block::BlockRange> for BlockRange {
+	fn from(value: tau_ast::block::BlockRange) -> Self {
 		Self { start_line: value.start_line, end_line: value.end_line }
 	}
 }
@@ -36,7 +36,7 @@ impl From<pi_ast::block::BlockRange> for BlockRange {
 /// or the resolved subtree contains a syntax error.
 #[napi]
 pub fn block_range_at(options: BlockRangeOptions) -> Result<Option<BlockRange>> {
-	pi_ast::block::block_range_at(pi_ast::block::BlockRangeOptions {
+	tau_ast::block::block_range_at(tau_ast::block::BlockRangeOptions {
 		code: options.code,
 		lang: options.lang,
 		path: options.path,
@@ -56,8 +56,8 @@ pub struct NodeSpan {
 	pub kind:       String,
 }
 
-impl From<pi_ast::block::NodeSpan> for NodeSpan {
-	fn from(value: pi_ast::block::NodeSpan) -> Self {
+impl From<tau_ast::block::NodeSpan> for NodeSpan {
+	fn from(value: tau_ast::block::NodeSpan) -> Self {
 		Self { start_line: value.start_line, end_line: value.end_line, kind: value.kind }
 	}
 }
@@ -71,7 +71,7 @@ impl From<pi_ast::block::NodeSpan> for NodeSpan {
 /// out of range / blank, or the source fails to parse entirely.
 #[napi]
 pub fn node_chain_at(options: BlockRangeOptions) -> Result<Option<Vec<NodeSpan>>> {
-	pi_ast::block::node_chain_at(pi_ast::block::BlockRangeOptions {
+	tau_ast::block::node_chain_at(tau_ast::block::BlockRangeOptions {
 		code: options.code,
 		lang: options.lang,
 		path: options.path,
@@ -113,14 +113,14 @@ pub struct EnclosingBoundaryOptions {
 /// a sorted, unique list of 1-indexed boundary lines otherwise.
 #[napi]
 pub fn enclosing_block_boundaries(options: EnclosingBoundaryOptions) -> Result<Option<Vec<u32>>> {
-	pi_ast::block::enclosing_block_boundaries(pi_ast::block::EnclosingBoundaryOptions {
+	tau_ast::block::enclosing_block_boundaries(tau_ast::block::EnclosingBoundaryOptions {
 		code:   options.code,
 		lang:   options.lang,
 		path:   options.path,
 		ranges: options
 			.ranges
 			.into_iter()
-			.map(|range| pi_ast::block::LineRange {
+			.map(|range| tau_ast::block::LineRange {
 				start_line: range.start_line,
 				end_line:   range.end_line,
 			})

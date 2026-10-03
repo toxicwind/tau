@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { formatTaskResultSummary } from "@tau/tau-coding-agent/task/result-summary";
+import { formatTaskResultSummary } from "tau/task/result-summary";
 import type { SingleResult } from "@tau/tau-tui/tools/task";
 
 function settledResult(output: string): SingleResult {

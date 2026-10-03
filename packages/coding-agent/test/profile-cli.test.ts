@@ -52,9 +52,9 @@ describe("global --profile flag", () => {
 		originalAgentDirEnv = process.env.PI_CODING_AGENT_DIR;
 		originalOmpProfileEnv = process.env.TAU_PROFILE;
 		originalPiProfileEnv = process.env.PI_PROFILE;
-		originalConfigDir = process.env.PI_CONFIG_DIR;
+		originalConfigDir = process.env.TAU_CONFIG_DIR;
 		configDir = `.tau-profile-cli-test-${Snowflake.next()}`;
-		process.env.PI_CONFIG_DIR = configDir;
+		process.env.TAU_CONFIG_DIR = configDir;
 		process.exitCode = 0;
 	});
 
@@ -62,9 +62,9 @@ describe("global --profile flag", () => {
 		vi.restoreAllMocks();
 		setProfile(undefined);
 		if (originalConfigDir === undefined) {
-			delete process.env.PI_CONFIG_DIR;
+			delete process.env.TAU_CONFIG_DIR;
 		} else {
-			process.env.PI_CONFIG_DIR = originalConfigDir;
+			process.env.TAU_CONFIG_DIR = originalConfigDir;
 		}
 		if (originalProfile) {
 			setProfile(originalProfile);
@@ -243,7 +243,7 @@ describe("global --profile flag", () => {
 			const childEnv: Record<string, string | undefined> = {
 				...process.env,
 				HOME: home,
-				PI_CONFIG_DIR: configDir,
+				TAU_CONFIG_DIR: configDir,
 				PI_NO_TITLE: "1",
 				NO_COLOR: "1",
 			};
@@ -296,7 +296,7 @@ describe("global --profile flag", () => {
 			const childEnv: Record<string, string | undefined> = {
 				...process.env,
 				HOME: home,
-				PI_CONFIG_DIR: ".tau-profile-cli-env-bad",
+				TAU_CONFIG_DIR: ".tau-profile-cli-env-bad",
 				TAU_PROFILE: "..",
 				NO_COLOR: "1",
 			};

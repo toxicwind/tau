@@ -18,7 +18,7 @@ import {
 	flushTelemetryExport,
 	initTelemetryExport,
 	isTelemetryExportEnabled,
-} from "@tau/tau-coding-agent/telemetry-export";
+} from "tau/telemetry-export";
 import { logger } from "@tau/tau-utils";
 
 const seen = new Set<string>();

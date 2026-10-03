@@ -12,7 +12,7 @@
  * Usage: `installInMemoryRelay()` in `beforeAll`/`beforeEach`,
  * `uninstallInMemoryRelay()` in the matching `afterAll`/`afterEach`.
  */
-import { rewriteEnvelopePeer, unpackEnvelope } from "@tau/tau-coding-agent/collab/protocol";
+import { rewriteEnvelopePeer, unpackEnvelope } from "tau/collab/protocol";
 
 /** Active relay the fake transport routes through; set between install/uninstall. */
 let activeRelay: InMemoryRelay | null = null;

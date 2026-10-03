@@ -2,17 +2,17 @@ import { beforeAll, describe, expect, it, spyOn, vi } from "bun:test";
 import { stripVTControlCharacters } from "node:util";
 import { type } from "@tau/tautype";
 import type { AgentToolContext } from "@tau/tau-agent-core";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { Settings } from "tau/config/settings";
 import type {
 	ExtensionAskDialogQuestion,
 	ExtensionAskDialogResult,
 	ExtensionUISelectItem,
-} from "@tau/tau-coding-agent/extensibility/extensions";
+} from "tau/extensibility/extensions";
 import { getThemeByName, initTheme, theme, type Theme } from "@tau/tau-tui/theme";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
-import { AskTool } from "@tau/tau-coding-agent/tools/ask";
+import type { ToolSession } from "tau/tools";
+import { AskTool } from "tau/tools/ask";
 import { askToolRenderer } from "@tau/tau-tui/tools/ask";
-import { ToolAbortError } from "@tau/tau-coding-agent/tools/tool-errors";
+import { ToolAbortError } from "tau/tools/tool-errors";
 import { TERMINAL } from "@tau/tau-tui";
 
 function createSession(overrides: Partial<ToolSession> = {}): ToolSession {

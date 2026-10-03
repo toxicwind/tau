@@ -2,7 +2,7 @@ import { beforeAll, describe, expect, it } from "bun:test";
 import type { AgentMessage } from "@tau/tau-agent-core";
 import { TreeSelectorComponent } from "@tau/tau-tui/overlays/tree-selector";
 import * as themeModule from "@tau/tau-tui/theme";
-import type { SessionEntry, SessionTreeNode } from "@tau/tau-coding-agent/session/session-entries";
+import type { SessionEntry, SessionTreeNode } from "tau/session/session-entries";
 
 let counter = 0;
 function makeUserNode(text: string, parentId: string | null = null): SessionTreeNode {

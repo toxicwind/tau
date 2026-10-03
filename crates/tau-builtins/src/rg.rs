@@ -1106,7 +1106,7 @@ fn print_type_list<W: Write>(cli: &Rg, out: &mut W) -> Result<(), String> {
 }
 
 struct RgWalk {
-	request: pi_walker::WalkRequest,
+	request: tau_walker::WalkRequest,
 	filters: PathFilters,
 }
 
@@ -1118,8 +1118,8 @@ struct PathFilters {
 }
 
 impl PathFilters {
-	fn includes(&self, path: &Path, file_type: pi_walker::FileType, size: Option<f64>) -> bool {
-		let is_dir = file_type == pi_walker::FileType::Dir;
+	fn includes(&self, path: &Path, file_type: tau_walker::FileType, size: Option<f64>) -> bool {
+		let is_dir = file_type == tau_walker::FileType::Dir;
 		let override_match = self
 			.overrides
 			.as_ref()
@@ -1141,7 +1141,7 @@ impl PathFilters {
 		{
 			return false;
 		}
-		if file_type != pi_walker::FileType::File {
+		if file_type != tau_walker::FileType::File {
 			return true;
 		}
 		if !explicitly_included
@@ -1225,26 +1225,26 @@ fn build_walk(host: &mut Host, cli: &Rg, root: &Path) -> Result<RgWalk, String> 
 	let include_hidden = (cli.hidden || cli.unrestricted >= 2) && !cli.no_hidden;
 	let no_ignore = (cli.no_ignore || unrestricted_no_ignore) && !cli.ignore;
 	let order = if cli.sort_files || cli.sort.as_deref() == Some("path") {
-		pi_walker::WalkOrder::Path
+		tau_walker::WalkOrder::Path
 	} else {
-		pi_walker::WalkOrder::Unordered
+		tau_walker::WalkOrder::Unordered
 	};
-	let request = pi_walker::WalkRequest::new(root)
+	let request = tau_walker::WalkRequest::new(root)
 		.hidden(include_hidden)
 		.gitignore(!no_ignore)
 		.skip_git(!no_ignore)
 		.skip_node_modules(false)
-		.follow_links(pi_walker::FollowLinks::from(cli.follow && !cli.no_follow))
+		.follow_links(tau_walker::FollowLinks::from(cli.follow && !cli.no_follow))
 		.detail(if filters.max_filesize.is_some() {
-			pi_walker::WalkDetail::Full
+			tau_walker::WalkDetail::Full
 		} else {
-			pi_walker::WalkDetail::Minimal
+			tau_walker::WalkDetail::Minimal
 		})
 		.order(order)
 		.emit_root(false)
 		.depth(1, cli.max_depth.unwrap_or(usize::MAX))
-		.visit_order(pi_walker::VisitOrder::PreOrder)
-		.directory_errors(pi_walker::DirectoryErrorMode::Visit)
+		.visit_order(tau_walker::VisitOrder::PreOrder)
+		.directory_errors(tau_walker::DirectoryErrorMode::Visit)
 		.same_file_system(cli.one_file_system && !cli.no_one_file_system)
 		.cache(false);
 	Ok(RgWalk { request, filters })
@@ -1467,18 +1467,18 @@ fn search_dir<M: Matcher, W: Write>(
 		},
 		|entry| {
 			if opts.quiet && any_match.get() {
-				return Ok(pi_walker::WalkDecision::Stop);
+				return Ok(tau_walker::WalkDecision::Stop);
 			}
 			let path = entry.absolute_path.as_ref();
 			if !walk.filters.includes(path, entry.file_type, entry.size) {
-				return Ok(if entry.file_type == pi_walker::FileType::Dir {
-					pi_walker::WalkDecision::SkipDescend
+				return Ok(if entry.file_type == tau_walker::FileType::Dir {
+					tau_walker::WalkDecision::SkipDescend
 				} else {
-					pi_walker::WalkDecision::Skip
+					tau_walker::WalkDecision::Skip
 				});
 			}
-			if entry.file_type != pi_walker::FileType::File {
-				return Ok(pi_walker::WalkDecision::Skip);
+			if entry.file_type != tau_walker::FileType::File {
+				return Ok(tau_walker::WalkDecision::Skip);
 			}
 			let display_path = display_path(operand, root, path);
 			let display_bytes = display_path.as_os_str().as_encoded_bytes().to_vec();
@@ -1487,9 +1487,9 @@ fn search_dir<M: Matcher, W: Write>(
 			any_match.set(any_match.get() || outcome.any_match);
 			had_error.set(had_error.get() || outcome.had_error);
 			Ok(if opts.quiet && any_match.get() {
-				pi_walker::WalkDecision::Stop
+				tau_walker::WalkDecision::Stop
 			} else {
-				pi_walker::WalkDecision::Include
+				tau_walker::WalkDecision::Include
 			})
 		},
 		|error| {
@@ -1498,19 +1498,19 @@ fn search_dir<M: Matcher, W: Write>(
 				let _ =
 					writeln!(walk_err, "rg: {}: {}", error.path.display(), error.error);
 			}
-			Ok(pi_walker::WalkDecision::Include)
+			Ok(tau_walker::WalkDecision::Include)
 		},
 	) {
-		Ok(pi_walker::WalkStatus::Complete | pi_walker::WalkStatus::Stopped) => {
+		Ok(tau_walker::WalkStatus::Complete | tau_walker::WalkStatus::Stopped) => {
 			Some(Ok(SearchOutcome { any_match: any_match.get(), had_error: had_error.get() }))
 		},
-		Err(pi_walker::WalkError::Interrupted(_)) if host.is_cancelled() => {
+		Err(tau_walker::WalkError::Interrupted(_)) if host.is_cancelled() => {
 			// Harness cancellation; the shell wrapper overrides the exit code
 			// and stay-silent on stderr — no spurious "interrupted" diagnostic.
 			had_error.set(true);
 			Some(Ok(SearchOutcome { any_match: any_match.get(), had_error: true }))
 		},
-		Err(pi_walker::WalkError::Interrupted(error))
+		Err(tau_walker::WalkError::Interrupted(error))
 			if error.kind() == io::ErrorKind::BrokenPipe =>
 		{
 			Some(Err(error))
@@ -1544,22 +1544,22 @@ fn collect_filtered_files(host: &mut Host, cli: &Rg, root: &Path) -> io::Result<
 			}
 		},
 		|entry| {
-			if entry.file_type == pi_walker::FileType::File {
+			if entry.file_type == tau_walker::FileType::File {
 				let path = entry.absolute_path.as_ref();
 				if walk.filters.includes(path, entry.file_type, entry.size) {
 					files.push(path.to_path_buf());
 				}
 			}
-			Ok(pi_walker::WalkDecision::Include)
+			Ok(tau_walker::WalkDecision::Include)
 		},
-		|_| Ok(pi_walker::WalkDecision::Include),
+		|_| Ok(tau_walker::WalkDecision::Include),
 	);
 	match result {
-		Ok(pi_walker::WalkStatus::Complete | pi_walker::WalkStatus::Stopped) => Ok(files),
-		Err(pi_walker::WalkError::Interrupted(_)) if host.is_cancelled() => {
+		Ok(tau_walker::WalkStatus::Complete | tau_walker::WalkStatus::Stopped) => Ok(files),
+		Err(tau_walker::WalkError::Interrupted(_)) if host.is_cancelled() => {
 			Err(io::Error::other("rg: cancelled"))
 		},
-		Err(pi_walker::WalkError::Interrupted(error))
+		Err(tau_walker::WalkError::Interrupted(error))
 			if error.kind() == io::ErrorKind::BrokenPipe =>
 		{
 			Err(error)

@@ -1,12 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, spyOn } from "bun:test";
-import { generateRoomKey, importRoomKey } from "@tau/tau-coding-agent/collab/crypto";
-import { CollabGuestLink } from "@tau/tau-coding-agent/collab/guest";
-import { COLLAB_PROTO, type CollabFrame, formatCollabLink } from "@tau/tau-coding-agent/collab/protocol";
-import { CollabSocket } from "@tau/tau-coding-agent/collab/relay-client";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
-import { AgentRegistry } from "@tau/tau-coding-agent/registry/agent-registry";
-import { TASK_SUBAGENT_LIFECYCLE_CHANNEL } from "@tau/tau-coding-agent/task/types";
-import { EventBus } from "@tau/tau-coding-agent/utils/event-bus";
+import { generateRoomKey, importRoomKey } from "tau/collab/crypto";
+import { CollabGuestLink } from "tau/collab/guest";
+import { COLLAB_PROTO, type CollabFrame, formatCollabLink } from "tau/collab/protocol";
+import { CollabSocket } from "tau/collab/relay-client";
+import type { InteractiveModeContext } from "tau/modes/types";
+import { AgentRegistry } from "tau/registry/agent-registry";
+import { TASK_SUBAGENT_LIFECYCLE_CHANNEL } from "tau/task/types";
+import { EventBus } from "tau/utils/event-bus";
 import { installInMemoryRelay, uninstallInMemoryRelay } from "./helpers/in-memory-relay";
 
 // The guest mirrors host EventBus traffic onto the local session and

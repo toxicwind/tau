@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
 import * as natives from "@tau/tau-natives";
-import { needsNativeTeardown } from "@tau/tau-coding-agent/task/isolation-ownership";
+import { needsNativeTeardown } from "tau/task/isolation-ownership";
 
 const { IsoBackendKind } = natives;
 

@@ -17,11 +17,11 @@
  * exercised without fastembed/onnxruntime.
  */
 import { describe, expect, it, vi } from "bun:test";
-import { MnemotauEmbedClient, type MnemotauEmbedWorkerHandle } from "@tau/tau-coding-agent/mnemotau/embed-client";
+import { MnemotauEmbedClient, type MnemotauEmbedWorkerHandle } from "tau/mnemotau/embed-client";
 import type {
 	MnemotauEmbedWorkerInbound,
 	MnemotauEmbedWorkerOutbound,
-} from "@tau/tau-coding-agent/mnemotau/embed-protocol";
+} from "tau/mnemotau/embed-protocol";
 
 /** A fake worker that answers `init` but never answers `embed`. */
 function silentEmbedWorker(state: { spawns: number; terminated: number }): () => MnemotauEmbedWorkerHandle {

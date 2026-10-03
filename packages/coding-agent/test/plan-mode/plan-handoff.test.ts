@@ -2,8 +2,8 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { LocalProtocolOptions } from "@tau/tau-coding-agent/internal-urls";
-import { loadOverallPlanReference } from "@tau/tau-coding-agent/plan-mode/plan-handoff";
+import type { LocalProtocolOptions } from "tau/internal-urls";
+import { loadOverallPlanReference } from "tau/plan-mode/plan-handoff";
 import { removeWithRetries } from "@tau/tau-utils";
 
 describe("loadOverallPlanReference", () => {

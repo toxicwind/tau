@@ -8,7 +8,7 @@ use napi::{
 	threadsafe_function::{ThreadsafeFunction, UnknownReturnValue},
 };
 use napi_derive::napi;
-use pi_shell::{
+use tau_shell::{
 	MinimizerResult as CoreMinimizerResult, Shell as CoreShell,
 	ShellExecuteOptions as CoreShellExecuteOptions, ShellOptions as CoreShellOptions,
 	ShellRunOptions as CoreShellRunOptions, ShellRunResult as CoreShellRunResult,
@@ -420,7 +420,7 @@ mod tests {
 	};
 
 	use flume;
-	use pi_shell::{
+	use tau_shell::{
 		ShellRunOptions as CoreShellRunOptions,
 		cancel::{AbortReason, CancelToken},
 	};
@@ -619,7 +619,7 @@ mod tests {
 	}
 
 	mod child_session_action_tests {
-		use pi_shell::{ChildSessionAction, child_session_action};
+		use tau_shell::{ChildSessionAction, child_session_action};
 
 		#[test]
 		fn interactive_with_terminal_stdin_takes_foreground() {

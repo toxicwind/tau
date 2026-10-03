@@ -14,15 +14,15 @@
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import type { AgentMessage } from "@tau/tau-agent-core";
 import type { AssistantMessage, ToolResultMessage } from "@tau/tau-ai";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
-import { EventController } from "@tau/tau-coding-agent/modes/controllers/event-controller";
-import { SessionFocusController } from "@tau/tau-coding-agent/modes/controllers/session-focus-controller";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
+import { EventController } from "tau/modes/controllers/event-controller";
+import { SessionFocusController } from "tau/modes/controllers/session-focus-controller";
 import { initTheme } from "@tau/tau-tui/theme";
-import { UiHelpers } from "@tau/tau-coding-agent/modes/utils/ui-helpers";
-import { AgentLifecycleManager } from "@tau/tau-coding-agent/registry/agent-lifecycle";
-import { AgentRegistry, MAIN_AGENT_ID } from "@tau/tau-coding-agent/registry/agent-registry";
-import type { AgentSession, AgentSessionEvent } from "@tau/tau-coding-agent/session/agent-session";
-import type { SessionContext } from "@tau/tau-coding-agent/session/session-context";
+import { UiHelpers } from "tau/modes/utils/ui-helpers";
+import { AgentLifecycleManager } from "tau/registry/agent-lifecycle";
+import { AgentRegistry, MAIN_AGENT_ID } from "tau/registry/agent-registry";
+import type { AgentSession, AgentSessionEvent } from "tau/session/agent-session";
+import type { SessionContext } from "tau/session/session-context";
 import type { AgentProgress, TaskToolDetails } from "@tau/tau-tui/tools/task";
 import { createInteractiveModeContext } from "./helpers/interactive-mode-context";
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import { getPrompt, listPrompts, serverSupportsPrompts } from "@tau/tau-coding-agent/mcp/client";
-import type { MCPGetPromptResult, MCPPrompt, MCPPromptsListResult } from "@tau/tau-coding-agent/mcp/types";
+import { getPrompt, listPrompts, serverSupportsPrompts } from "tau/mcp/client";
+import type { MCPGetPromptResult, MCPPrompt, MCPPromptsListResult } from "tau/mcp/types";
 import { createMockConnection, createMockTransport } from "./mcp-test-utils";
 
 describe("listPrompts", () => {

@@ -1,6 +1,6 @@
 # Natives Addon Loader Runtime
 
-This page documents `packages/natives/native/loader-state.js`, the runtime between an ESM entrypoint and a validated `pi_natives.*.node` addon.
+This page documents `packages/natives/native/loader-state.js`, the runtime between an ESM entrypoint and a validated `tau_natives.*.node` addon.
 
 ## Entrypoints and eager/lazy loading
 
@@ -49,9 +49,9 @@ Detection uses `Bun.spawnSync` when available, then falls back to `node:child_pr
 
 | Runtime selection    | Ordered filenames                                                                         |
 | -------------------- | ----------------------------------------------------------------------------------------- |
-| modern x64           | `pi_natives.<tag>-modern.node`, `pi_natives.<tag>-baseline.node`, `pi_natives.<tag>.node` |
-| baseline x64         | `pi_natives.<tag>-baseline.node`, `pi_natives.<tag>.node`                                 |
-| non-x64 / no variant | `pi_natives.<tag>.node`                                                                   |
+| modern x64           | `tau_natives.<tag>-modern.node`, `tau_natives.<tag>-baseline.node`, `tau_natives.<tag>.node` |
+| baseline x64         | `tau_natives.<tag>-baseline.node`, `tau_natives.<tag>.node`                                 |
+| non-x64 / no variant | `tau_natives.<tag>.node`                                                                   |
 
 ## Candidate ordering
 
@@ -123,7 +123,7 @@ Cache cleanup ignores read/delete failures and removes only directories whose pa
 If no candidate succeeds:
 
 - an unsupported tag throws `Unsupported platform: <tag>`, the supported list, and issue guidance;
-- a supported tag throws `Failed to load pi_natives native addon for <tag>` (including the x64 variant), followed by every candidate/preparation error and mode-specific help.
+- a supported tag throws `Failed to load tau_natives native addon for <tag>` (including the x64 variant), followed by every candidate/preparation error and mode-specific help.
 
 Compiled help lists expected cache paths, suggests deleting the versioned directory, and prints release-download `curl` commands. Installed-package help suggests reinstalling, the local host build (`bun --cwd=packages/natives run build`), and explicit `scripts/bazel-natives.ts <target> --dest packages/natives/native` builds.
 

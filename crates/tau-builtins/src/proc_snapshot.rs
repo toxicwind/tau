@@ -4,7 +4,7 @@
 //! One `ProcInfo` per platform, each exposing the same accessors so the
 //! builtins above stay platform-agnostic. Lifted out of `tau-shell` when the
 //! process builtins moved into this crate; `tau-shell` keeps its own
-//! session/teardown process management (`pi_shell::process`), which is a
+//! session/teardown process management (`tau_shell::process`), which is a
 //! different concern and a different type.
 
 // Consumers (`ps`, `top`, `pgrep`, `pkill`, `pidwait`, `kill`) are each

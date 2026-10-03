@@ -11,7 +11,7 @@ describe("native addon embedding", () => {
 		const outputPath = path.join(nativeDir, "embedded-addon.js");
 		try {
 			await fs.mkdir(nativeDir);
-			await Bun.write(path.join(nativeDir, "pi_natives.win32-arm64.node"), "binary__piNativesV18_1_10");
+			await Bun.write(path.join(nativeDir, "tau_natives.win32-arm64.node"), "binary__piNativesV18_1_10");
 
 			await expect(
 				embedNativeAddon({

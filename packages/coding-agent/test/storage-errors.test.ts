@@ -3,8 +3,8 @@ import { expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import { SqliteAuthCredentialStore } from "@tau/tau-ai";
-import { AgentStorage } from "@tau/tau-coding-agent/session/agent-storage";
-import { HistoryStorage } from "@tau/tau-coding-agent/session/history-storage";
+import { AgentStorage } from "tau/session/agent-storage";
+import { HistoryStorage } from "tau/session/history-storage";
 import { TempDir } from "@tau/tau-utils";
 
 async function corruptDatabase(dbPath: string): Promise<Uint8Array<ArrayBuffer>> {

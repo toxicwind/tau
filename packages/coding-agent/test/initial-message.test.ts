@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import type { ImageContent } from "@tau/tau-ai";
-import type { Args } from "@tau/tau-coding-agent/cli/args";
-import { buildInitialMessage } from "@tau/tau-coding-agent/cli/initial-message";
+import type { Args } from "tau/cli/args";
+import { buildInitialMessage } from "tau/cli/initial-message";
 
 function createArgs(messages: string[]): Args {
 	return {

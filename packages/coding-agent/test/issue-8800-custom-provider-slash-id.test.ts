@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { Effort } from "@tau/tau-ai";
 import { buildModel } from "@tau/tau-catalog/build";
-import { parseModelPattern, resolveCliModel } from "@tau/tau-coding-agent/config/model-resolver";
+import { parseModelPattern, resolveCliModel } from "tau/config/model-resolver";
 
 // Issue #8800: a custom (models.yml) provider model whose literal id contains a
 // slash, e.g. "deepseek/deepseek-v4-flash", must resolve to the custom provider

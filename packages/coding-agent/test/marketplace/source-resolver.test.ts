@@ -2,8 +2,8 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { MarketplacePluginEntry } from "@tau/tau-coding-agent/extensibility/plugins/marketplace";
-import { resolvePluginSource, validatePluginSource } from "@tau/tau-coding-agent/extensibility/plugins/marketplace";
+import type { MarketplacePluginEntry } from "tau/extensibility/plugins/marketplace";
+import { resolvePluginSource, validatePluginSource } from "tau/extensibility/plugins/marketplace";
 import { removeSyncWithRetries } from "@tau/tau-utils";
 
 // Fixture: a cloned marketplace with a single plugin at ./plugins/hello-plugin

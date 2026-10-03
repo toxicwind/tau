@@ -7,7 +7,7 @@ import {
 	LocalProtocolHandler,
 	resolveLocalRoot,
 	resolveLocalUrlToPath,
-} from "@tau/tau-coding-agent/internal-urls";
+} from "tau/internal-urls";
 import { removeWithRetries } from "@tau/tau-utils";
 
 async function withTempDir<T>(fn: (dir: string) => Promise<T>): Promise<T> {

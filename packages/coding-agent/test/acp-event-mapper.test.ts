@@ -15,15 +15,15 @@ const arkSessionNotification = type({
 
 import type { Model } from "@tau/tau-ai";
 import { buildModel } from "@tau/tau-catalog/build";
-import { AcpAgent } from "@tau/tau-coding-agent/modes/acp/acp-agent";
+import { AcpAgent } from "tau/modes/acp/acp-agent";
 import {
 	buildToolCallStartUpdate,
 	mapAgentSessionEventToAcpSessionUpdates,
 	mapToolKind,
 	normalizeReplayToolArguments,
-} from "@tau/tau-coding-agent/modes/acp/acp-event-mapper";
-import type { AgentSession, AgentSessionEvent } from "@tau/tau-coding-agent/session/agent-session";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+} from "tau/modes/acp/acp-event-mapper";
+import type { AgentSession, AgentSessionEvent } from "tau/session/agent-session";
+import { SessionManager } from "tau/session/session-manager";
 import { expectAcpStructure, expectAcpStructureRejects } from "./helpers/acp-schema";
 
 function makeAssistantMessage(text: string) {

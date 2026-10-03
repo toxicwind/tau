@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import type { FileEntry } from "@tau/tau-coding-agent/session/session-entries";
-import { migrateSessionEntries } from "@tau/tau-coding-agent/session/session-migrations";
+import type { FileEntry } from "tau/session/session-entries";
+import { migrateSessionEntries } from "tau/session/session-migrations";
 
 describe("migrateSessionEntries", () => {
 	it("should add id/parentId to v1 entries", () => {

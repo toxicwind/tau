@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { executePythonWithKernel } from "@tau/tau-coding-agent/eval/py/executor";
+import { executePythonWithKernel } from "tau/eval/py/executor";
 import { DEFAULT_MAX_BYTES } from "@tau/tau-tui/tools/streaming-output";
 import { FakeKernel } from "./helpers";
 

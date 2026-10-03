@@ -2,8 +2,8 @@ import { afterEach, describe, expect, it, spyOn, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import * as collabCli from "@tau/tau-coding-agent/cli/collab-cli";
-import * as registry from "@tau/tau-coding-agent/collab/registry";
+import * as collabCli from "tau/cli/collab-cli";
+import * as registry from "tau/collab/registry";
 import {
 	COLLAB_REGISTRY_VERSION,
 	type CollabHostPublication,
@@ -11,8 +11,8 @@ import {
 	CollabLinkError,
 	publishCollabHost,
 	resolveCollabHostLink,
-} from "@tau/tau-coding-agent/collab/registry";
-import Collab from "@tau/tau-coding-agent/commands/collab";
+} from "tau/collab/registry";
+import Collab from "tau/commands/collab";
 import { type CliConfig, CliUsageError } from "@tau/tau-utils/cli";
 
 interface HostFixture {

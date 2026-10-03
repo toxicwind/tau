@@ -3,11 +3,11 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { disposeAllVmContexts } from "@tau/tau-coding-agent/eval/js/context-manager";
-import { createBrowserPrelude } from "@tau/tau-coding-agent/tools/browser";
-import { releaseAllTabs } from "@tau/tau-coding-agent/tools/browser/tab-supervisor";
-import type { ToolSession } from "@tau/tau-coding-agent/tools/index";
+import { Settings } from "tau/config/settings";
+import { disposeAllVmContexts } from "tau/eval/js/context-manager";
+import { createBrowserPrelude } from "tau/tools/browser";
+import { releaseAllTabs } from "tau/tools/browser/tab-supervisor";
+import type { ToolSession } from "tau/tools/index";
 import { chromiumAvailable } from "./chromium-probe";
 
 const CHROMIUM_AVAILABLE = await chromiumAvailable();

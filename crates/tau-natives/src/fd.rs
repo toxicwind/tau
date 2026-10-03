@@ -295,7 +295,7 @@ where
 }
 
 fn fuzzy_find_sync(config: FuzzyFindConfig, ct: task::CancelToken) -> Result<FuzzyFindResult> {
-	let root = pi_walker::resolve_search_path(&config.path).map_err(iofs::map_walker_error)?;
+	let root = tau_walker::resolve_search_path(&config.path).map_err(iofs::map_walker_error)?;
 	let include_hidden = config.hidden.unwrap_or(false);
 	let respect_gitignore = config.gitignore.unwrap_or(true);
 	let max_results = config.max_results.unwrap_or(100) as usize;
@@ -310,19 +310,19 @@ fn fuzzy_find_sync(config: FuzzyFindConfig, ct: task::CancelToken) -> Result<Fuz
 		return Ok(FuzzyFindResult { matches: Vec::new(), total_matches: 0 });
 	}
 
-	let outcome = pi_walker::WalkRequest::new(root)
+	let outcome = tau_walker::WalkRequest::new(root)
 		.hidden(include_hidden)
 		.gitignore(respect_gitignore)
 		.skip_git(true)
 		.skip_node_modules(true)
-		.follow_links(pi_walker::FollowLinks::Always)
-		.detail(pi_walker::WalkDetail::Minimal)
-		.order(pi_walker::WalkOrder::Path)
+		.follow_links(tau_walker::FollowLinks::Always)
+		.detail(tau_walker::WalkDetail::Minimal)
+		.order(tau_walker::WalkOrder::Path)
 		.emit_root(false)
 		.depth(1, usize::MAX)
-		.directory_errors(pi_walker::DirectoryErrorMode::SkipSkippable)
+		.directory_errors(tau_walker::DirectoryErrorMode::SkipSkippable)
 		.cache(config.cache.unwrap_or(false))
-		.empty_recheck(pi_walker::EmptyRecheck::Configured)
+		.empty_recheck(tau_walker::EmptyRecheck::Configured)
 		.collect_with_heartbeat(|| ct.heartbeat())
 		.map_err(iofs::map_walker_error)?;
 	let scored = score_entries(

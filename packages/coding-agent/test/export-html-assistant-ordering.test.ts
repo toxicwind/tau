@@ -161,7 +161,7 @@ function renderAssistant(
 function toolName(element: Element, context: vm.Context): string {
 	const key = element.getAttribute("data-key");
 	if (!key) throw new Error("Rendered tool call is missing its data key");
-	const payload = vm.runInContext(`globalThis.__OMP_TOOL_VIEW_DATA.get(${JSON.stringify(key)})`, context) as unknown;
+	const payload = vm.runInContext(`globalThis.__TAU_TOOL_VIEW_DATA.get(${JSON.stringify(key)})`, context) as unknown;
 	if (!payload || typeof payload !== "object" || !("name" in payload) || typeof payload.name !== "string") {
 		throw new Error(`Rendered tool call ${key} is missing its name`);
 	}

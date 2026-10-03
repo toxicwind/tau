@@ -1,7 +1,7 @@
 import { describe, expect, it, spyOn } from "bun:test";
 import { defaultConvertToLlm } from "@tau/tau-agent-core/compaction";
 import type { AssistantMessage } from "@tau/tau-ai";
-import { buildSessionContext } from "@tau/tau-coding-agent/session/session-context";
+import { buildSessionContext } from "tau/session/session-context";
 import type {
 	BranchSummaryEntry,
 	CompactionEntry,
@@ -9,7 +9,7 @@ import type {
 	SessionEntry,
 	SessionMessageEntry,
 	ThinkingLevelChangeEntry,
-} from "@tau/tau-coding-agent/session/session-entries";
+} from "tau/session/session-entries";
 import * as snapcompact from "@tau/snapcompact";
 
 function msg(id: string, parentId: string | null, role: "user" | "assistant", text: string): SessionMessageEntry {

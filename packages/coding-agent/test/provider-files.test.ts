@@ -6,15 +6,15 @@ import {
 	ProviderFileCache,
 	type ProviderFileClient,
 	type ProviderFileHandle,
-} from "@tau/tau-coding-agent/blob-broker/provider-file-types";
+} from "tau/blob-broker/provider-file-types";
 import {
 	type ProviderFileClientFactory,
 	ProviderFileManager,
-} from "@tau/tau-coding-agent/blob-broker/provider-files";
-import { createAnthropicFileClient } from "@tau/tau-coding-agent/blob-broker/provider-files-anthropic";
-import { createGeminiProviderFileClient } from "@tau/tau-coding-agent/blob-broker/provider-files-gemini";
-import { createOpenAIFileClient } from "@tau/tau-coding-agent/blob-broker/provider-files-openai";
-import type { FetchImpl } from "@tau/tau-coding-agent/blob-broker/uploader-runtime";
+} from "tau/blob-broker/provider-files";
+import { createAnthropicFileClient } from "tau/blob-broker/provider-files-anthropic";
+import { createGeminiProviderFileClient } from "tau/blob-broker/provider-files-gemini";
+import { createOpenAIFileClient } from "tau/blob-broker/provider-files-openai";
+import type { FetchImpl } from "tau/blob-broker/uploader-runtime";
 import { TempDir } from "@tau/tau-utils";
 
 interface RecordedRequest {

@@ -4,13 +4,13 @@ import * as os from "node:os";
 import * as path from "node:path";
 import type { AgentMessage } from "@tau/tau-agent-core";
 import type { AssistantMessage, Usage } from "@tau/tau-ai";
-import type { Rule } from "@tau/tau-coding-agent/capability/rule";
-import { OmfgController } from "@tau/tau-coding-agent/modes/controllers/omfg-controller";
+import type { Rule } from "tau/capability/rule";
+import { OmfgController } from "tau/modes/controllers/omfg-controller";
 import { initTheme } from "@tau/tau-tui/theme";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
+import type { InteractiveModeContext } from "tau/modes/types";
 import { Container, type TUI } from "@tau/tau-tui";
 import { removeWithRetries } from "@tau/tau-utils";
-import { clearCache, readDirEntries } from "@tau/tau-coding-agent/capability/fs";
+import { clearCache, readDirEntries } from "tau/capability/fs";
 
 const PROJECT_OPTION = "This project (.tau/rules)";
 

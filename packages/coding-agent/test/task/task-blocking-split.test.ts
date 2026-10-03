@@ -18,16 +18,16 @@
  *    and reports the failed spawn.
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import { AsyncJobManager } from "@tau/tau-coding-agent/async/job-manager";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { AgentLifecycleManager } from "@tau/tau-coding-agent/registry/agent-lifecycle";
-import { AgentRegistry } from "@tau/tau-coding-agent/registry/agent-registry";
-import { TaskTool } from "@tau/tau-coding-agent/task";
-import * as discoveryModule from "@tau/tau-coding-agent/task/discovery";
-import * as executorModule from "@tau/tau-coding-agent/task/executor";
-import type { AgentDefinition } from "@tau/tau-coding-agent/task/types";
+import { AsyncJobManager } from "tau/async/job-manager";
+import { Settings } from "tau/config/settings";
+import { AgentLifecycleManager } from "tau/registry/agent-lifecycle";
+import { AgentRegistry } from "tau/registry/agent-registry";
+import { TaskTool } from "tau/task";
+import * as discoveryModule from "tau/task/discovery";
+import * as executorModule from "tau/task/executor";
+import type { AgentDefinition } from "tau/task/types";
 import type { SingleResult, TaskParams, TaskToolDetails } from "@tau/tau-tui/tools/task";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
+import type { ToolSession } from "tau/tools";
 
 const taskAgent: AgentDefinition = {
 	name: "task",

@@ -2,10 +2,10 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
-import { EditTool, getEditStore, type PatchParams } from "@tau/tau-coding-agent/edit";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
+import { EditTool, getEditStore, type PatchParams } from "tau/edit";
 import { formatHashlineHeader } from "@tau/tau-tui/tools/hashline-format";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
+import type { ToolSession } from "tau/tools";
 import type { EditMode } from "@tau/tau-tui/tools/edit";
 import { removeWithRetries } from "@tau/tau-utils";
 

@@ -10,14 +10,14 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it, spyOn, vi } from "bun:test";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { createBrowserPrelude } from "@tau/tau-coding-agent/tools/browser";
-import * as attach from "@tau/tau-coding-agent/tools/browser/attach";
-import { CmuxSocketClient } from "@tau/tau-coding-agent/tools/browser/cmux/socket-client";
-import * as registry from "@tau/tau-coding-agent/tools/browser/registry";
-import { getTabsMapForTest, releaseTab } from "@tau/tau-coding-agent/tools/browser/tab-supervisor";
-import type { ToolSession } from "@tau/tau-coding-agent/tools/index";
-import { ToolAbortError } from "@tau/tau-coding-agent/tools/tool-errors";
+import { Settings } from "tau/config/settings";
+import { createBrowserPrelude } from "tau/tools/browser";
+import * as attach from "tau/tools/browser/attach";
+import { CmuxSocketClient } from "tau/tools/browser/cmux/socket-client";
+import * as registry from "tau/tools/browser/registry";
+import { getTabsMapForTest, releaseTab } from "tau/tools/browser/tab-supervisor";
+import type { ToolSession } from "tau/tools/index";
+import { ToolAbortError } from "tau/tools/tool-errors";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 
 function makeSession(): ToolSession {

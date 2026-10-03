@@ -1,7 +1,7 @@
 import { deflateSync } from "node:zlib";
 import { describe, expect, it } from "bun:test";
 import type { ImageContent } from "@tau/tau-ai";
-import { TerminalGraphicsDecoder, encodeTerminalImage } from "@tau/tau-coding-agent/utils/terminal-graphics";
+import { TerminalGraphicsDecoder, encodeTerminalImage } from "tau/utils/terminal-graphics";
 
 const RED_1X1_PNG_BASE64 =
 	"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGP4z8AAAAMBAQDJ/pLvAAAAAElFTkSuQmCC";

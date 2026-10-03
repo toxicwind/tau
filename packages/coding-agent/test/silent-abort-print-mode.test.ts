@@ -8,13 +8,13 @@
 import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from "bun:test";
 import type { AssistantMessage } from "@tau/tau-ai";
 import * as AIError from "@tau/tau-ai/error";
-import { runPrintMode } from "@tau/tau-coding-agent/modes/print-mode";
+import { runPrintMode } from "tau/modes/print-mode";
 import {
 	type AgentSession,
 	type AgentSessionDisposeOptions,
 	SHUTDOWN_CONSOLIDATE_BUDGET_MS,
-} from "@tau/tau-coding-agent/session/agent-session";
-import { SILENT_ABORT_MARKER } from "@tau/tau-coding-agent/session/messages";
+} from "tau/session/agent-session";
+import { SILENT_ABORT_MARKER } from "tau/session/messages";
 
 function makeAssistantMessage(overrides: Partial<AssistantMessage> = {}): AssistantMessage {
 	return {

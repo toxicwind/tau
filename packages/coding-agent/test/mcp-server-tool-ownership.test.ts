@@ -22,8 +22,8 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { MCPManager } from "@tau/tau-coding-agent/mcp/manager";
-import type { MCPStdioServerConfig } from "@tau/tau-coding-agent/mcp/types";
+import { MCPManager } from "tau/mcp/manager";
+import type { MCPStdioServerConfig } from "tau/mcp/types";
 import { removeSyncWithRetries } from "@tau/tau-utils";
 import { MANY_TOOL_COUNT, manyToolName } from "./fixtures/many-tools-mcp";
 

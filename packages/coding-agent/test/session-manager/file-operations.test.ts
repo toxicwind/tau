@@ -2,10 +2,10 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { FileEntry, SessionHeader } from "@tau/tau-coding-agent/session/session-entries";
-import { findMostRecentSession, resolveResumableSession } from "@tau/tau-coding-agent/session/session-listing";
-import { loadEntriesFromFile } from "@tau/tau-coding-agent/session/session-loader";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import type { FileEntry, SessionHeader } from "tau/session/session-entries";
+import { findMostRecentSession, resolveResumableSession } from "tau/session/session-listing";
+import { loadEntriesFromFile } from "tau/session/session-loader";
+import { SessionManager } from "tau/session/session-manager";
 import {
 	getConfigRootDir,
 	getSessionsDir,

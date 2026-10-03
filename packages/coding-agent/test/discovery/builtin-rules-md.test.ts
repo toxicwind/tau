@@ -9,12 +9,12 @@ import { afterEach, beforeEach, expect, test } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { getCapability } from "@tau/tau-coding-agent/capability";
-import { clearCache } from "@tau/tau-coding-agent/capability/fs";
-import { type Rule, ruleCapability } from "@tau/tau-coding-agent/capability/rule";
-import type { LoadContext } from "@tau/tau-coding-agent/capability/types";
+import { getCapability } from "tau/capability";
+import { clearCache } from "tau/capability/fs";
+import { type Rule, ruleCapability } from "tau/capability/rule";
+import type { LoadContext } from "tau/capability/types";
 // Importing discovery registers all providers as a side effect.
-import { loadCapability } from "@tau/tau-coding-agent/discovery";
+import { loadCapability } from "tau/discovery";
 import { getConfigRootDir, removeSyncWithRetries, setAgentDir } from "@tau/tau-utils";
 
 let tempDir: string;

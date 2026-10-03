@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it } from "bun:test";
 import { SessionAccountSelectorComponent } from "@tau/tau-tui/overlays/session-account-selector";
 import { initTheme } from "@tau/tau-tui/theme";
-import { toSessionPinAccounts } from "@tau/tau-coding-agent/slash-commands/helpers/session-pin";
+import { toSessionPinAccounts } from "tau/slash-commands/helpers/session-pin";
 
 beforeAll(async () => {
 	await initTheme();

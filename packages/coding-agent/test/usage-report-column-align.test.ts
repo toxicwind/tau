@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it } from "bun:test";
 import { stripVTControlCharacters } from "node:util";
 import type { UsageReport } from "@tau/tau-ai";
-import { renderUsageReports } from "@tau/tau-coding-agent/modes/controllers/command-controller";
+import { renderUsageReports } from "tau/modes/controllers/command-controller";
 import { initTheme, theme } from "@tau/tau-tui/theme";
 
 const HOUR = 3_600_000;

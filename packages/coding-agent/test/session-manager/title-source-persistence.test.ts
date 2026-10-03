@@ -7,11 +7,11 @@ import {
 	SESSION_TITLE_SLOT_BYTES,
 	type SessionHeader,
 	TITLE_CHANGE_ENTRY_TYPE,
-} from "@tau/tau-coding-agent/session/session-entries";
-import { loadEntriesFromFile } from "@tau/tau-coding-agent/session/session-loader";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import { FileSessionStorage, type WriteTextAtomicOptions } from "@tau/tau-coding-agent/session/session-storage";
-import type { SessionTitleUpdate } from "@tau/tau-coding-agent/session/session-title-slot";
+} from "tau/session/session-entries";
+import { loadEntriesFromFile } from "tau/session/session-loader";
+import { SessionManager } from "tau/session/session-manager";
+import { FileSessionStorage, type WriteTextAtomicOptions } from "tau/session/session-storage";
+import type { SessionTitleUpdate } from "tau/session/session-title-slot";
 import { getConfigRootDir, removeSyncWithRetries, setAgentDir } from "@tau/tau-utils";
 
 import { makeAssistantMessage } from "./helpers";

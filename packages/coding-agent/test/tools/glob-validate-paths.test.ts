@@ -2,14 +2,14 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { RenderResultOptions } from "@tau/tau-coding-agent/extensibility/custom-tools/types";
+import type { RenderResultOptions } from "tau/extensibility/custom-tools/types";
 import { getThemeByName, initTheme, type Theme } from "@tau/tau-tui/theme";
 import {
 	expandDelimitedPathEntries,
 	parseFindPattern,
 	resolveToolSearchScope,
 	splitDelimitedPathEntry,
-} from "@tau/tau-coding-agent/tools/path-utils";
+} from "tau/tools/path-utils";
 import type { Component } from "@tau/tau-tui";
 import { removeWithRetries } from "@tau/tau-utils";
 import { globToolRenderer } from "@tau/tau-tui/tools/glob";

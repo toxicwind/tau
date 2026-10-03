@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { startCpuProfile } from "@tau/tau-coding-agent/debug/profiler";
+import { startCpuProfile } from "tau/debug/profiler";
 
 describe("startCpuProfile", () => {
 	// Regression: `node:v8` `setFlagsFromString` throws on Bun

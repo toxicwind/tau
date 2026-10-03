@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { Settings } from "tau/config/settings";
 import { getThemeByName } from "@tau/tau-tui/theme";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
+import type { ToolSession } from "tau/tools";
 import {
 	dispatchResolutionDevice,
 	isPreviewResolutionToolCall,
@@ -11,7 +11,7 @@ import {
 	REJECT_DEVICE_PATH,
 	RESOLVE_DEVICE_PATH,
 	writeDeviceDispatch,
-} from "@tau/tau-coding-agent/tools/resolve";
+} from "tau/tools/resolve";
 import {
 	PROPOSE_DEVICE_NAME,
 	REJECT_DEVICE_NAME,

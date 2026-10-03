@@ -3,9 +3,9 @@ import { Agent } from "@tau/tau-agent-core";
 import { SUPERSEDED_NOTICE } from "@tau/tau-agent-core/compaction/pruning";
 import type { AssistantMessage, Model, ToolResultMessage } from "@tau/tau-ai";
 import { buildModel } from "@tau/tau-catalog/build";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { Settings } from "tau/config/settings";
+import { AgentSession } from "tau/session/agent-session";
+import { SessionManager } from "tau/session/session-manager";
 
 const OLD_RESULT = "old file contents\n".repeat(100);
 const NEW_RESULT = "new file contents\n".repeat(100);

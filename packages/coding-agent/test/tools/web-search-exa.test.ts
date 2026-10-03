@@ -1,9 +1,9 @@
 import type { BodyInit } from "bun";
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import type { FetchImpl } from "@tau/tau-ai/types";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { ModelRegistry } from "tau/config/model-registry";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
+import { AuthStorage } from "tau/session/auth-storage";
 import {
 	buildExaRequestBody,
 	ExaProvider,
@@ -11,7 +11,7 @@ import {
 	resetExaSearchThrottleForTest,
 	searchExa,
 	synthesizeAnswer,
-} from "@tau/tau-coding-agent/web/search/providers/exa";
+} from "tau/web/search/providers/exa";
 import { isRecord } from "@tau/tau-utils";
 import { createInMemoryAuthStorage } from "../helpers/agent-session-setup";
 

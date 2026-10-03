@@ -17,16 +17,16 @@
  */
 
 import { afterEach, describe, expect, it, spyOn, vi } from "bun:test";
-import type { CmuxKind } from "@tau/tau-coding-agent/tools/browser/cmux/rpc";
-import { CmuxSocketClient } from "@tau/tau-coding-agent/tools/browser/cmux/socket-client";
-import { acquireBrowser, getBrowsersMapForTest } from "@tau/tau-coding-agent/tools/browser/registry";
+import type { CmuxKind } from "tau/tools/browser/cmux/rpc";
+import { CmuxSocketClient } from "tau/tools/browser/cmux/socket-client";
+import { acquireBrowser, getBrowsersMapForTest } from "tau/tools/browser/registry";
 import {
 	acquireTab,
 	getTabsMapForTest,
 	releaseTab,
 	releaseTabsForOwner,
-} from "@tau/tau-coding-agent/tools/browser/tab-supervisor";
-import { ToolAbortError } from "@tau/tau-coding-agent/tools/tool-errors";
+} from "tau/tools/browser/tab-supervisor";
+import { ToolAbortError } from "tau/tools/tool-errors";
 
 function makeKind(socketSuffix: string): CmuxKind {
 	return { kind: "cmux", socketPath: `/tmp/tau-test-${socketSuffix}.sock`, surface: `surface-${socketSuffix}` };

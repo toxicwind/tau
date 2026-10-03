@@ -1,13 +1,13 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
-import { CollabController } from "@tau/tau-coding-agent/collab/controller";
-import { CollabHost } from "@tau/tau-coding-agent/collab/host";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import { CollabController } from "tau/collab/controller";
+import { CollabHost } from "tau/collab/host";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
 import { initTheme } from "@tau/tau-tui/theme";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
+import type { InteractiveModeContext } from "tau/modes/types";
 import {
 	type BuiltinSlashCommandRuntime,
 	executeBuiltinSlashCommand,
-} from "@tau/tau-coding-agent/slash-commands/builtin-registry";
+} from "tau/slash-commands/builtin-registry";
 import { CollabQrCodeComponent } from "@tau/tau-tui/chrome/collab-qrcode";
 import { Text, visibleWidth } from "@tau/tau-tui";
 

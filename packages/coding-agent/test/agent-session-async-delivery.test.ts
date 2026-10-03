@@ -11,27 +11,27 @@ import { Agent } from "@tau/tau-agent-core";
 import type { ImageContent } from "@tau/tau-ai";
 import { createMockModel } from "@tau/tau-ai/providers/mock";
 import { getBundledModel } from "@tau/tau-catalog/models";
-import { AsyncJobManager } from "@tau/tau-coding-agent/async";
-import type { AsyncJob } from "@tau/tau-coding-agent/async/job-manager";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import type { DaemonCompletionNotification } from "@tau/tau-coding-agent/launch/protocol";
+import { AsyncJobManager } from "tau/async";
+import type { AsyncJob } from "tau/async/job-manager";
+import { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
+import type { DaemonCompletionNotification } from "tau/launch/protocol";
 import { buildAsyncResultBlock } from "@tau/tau-tui/chat/transcript-render-helpers";
 import { initTheme } from "@tau/tau-tui/theme";
-import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
-import { ArtifactManager } from "@tau/tau-coding-agent/session/artifacts";
+import { AgentSession } from "tau/session/agent-session";
+import { ArtifactManager } from "tau/session/artifacts";
 import {
 	buildAsyncResultBatchMessage,
 	type AsyncResultEntry,
-} from "@tau/tau-coding-agent/session/async-job-delivery";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
-import { convertToLlm, type CustomMessage } from "@tau/tau-coding-agent/session/messages";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+} from "tau/session/async-job-delivery";
+import { AuthStorage } from "tau/session/auth-storage";
+import { convertToLlm, type CustomMessage } from "tau/session/messages";
+import { SessionManager } from "tau/session/session-manager";
 
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
+import type { ToolSession } from "tau/tools";
 import { type OutputMeta } from "@tau/tau-tui/tools/output-meta";
 import { formatOutputNotice } from "@tau/tau-tui/tools/output-meta";
-import { ReadTool } from "@tau/tau-coding-agent/tools/read";
+import { ReadTool } from "tau/tools/read";
 import { TempDir } from "@tau/tau-utils";
 function observeAsyncResultEnqueue(session: AgentSession): Promise<void> {
 	const queued = Promise.withResolvers<void>();

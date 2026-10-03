@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { openPath } from "@tau/tau-coding-agent/utils/open";
+import { openPath } from "tau/utils/open";
 import * as piUtils from "@tau/tau-utils";
 import type { Subprocess } from "bun";
 

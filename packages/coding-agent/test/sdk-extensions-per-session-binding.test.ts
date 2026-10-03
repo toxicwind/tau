@@ -15,8 +15,8 @@ import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { loadExtensions } from "@tau/tau-coding-agent/extensibility/extensions";
-import { EventBus } from "@tau/tau-coding-agent/utils/event-bus";
+import { loadExtensions } from "tau/extensibility/extensions";
+import { EventBus } from "tau/utils/event-bus";
 import { removeWithRetries } from "@tau/tau-utils";
 
 describe("loadExtensions per-session binding (#2190 review fix)", () => {

@@ -5,24 +5,24 @@ import * as path from "node:path";
 import { AgentBusyError } from "@tau/tau-agent-core";
 import type { Model } from "@tau/tau-ai";
 import { buildModel } from "@tau/tau-catalog/build";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
-import type { ExtensionUIContext } from "@tau/tau-coding-agent/extensibility/extensions";
-import { resolveLocalUrlToPath } from "@tau/tau-coding-agent/internal-urls";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
+import type { ExtensionUIContext } from "tau/extensibility/extensions";
+import { resolveLocalUrlToPath } from "tau/internal-urls";
 import {
 	ACP_BOOTSTRAP_RACE_GUARD_MS,
 	AcpAgent,
 	createAcpExtensionUiContext,
-} from "@tau/tau-coding-agent/modes/acp/acp-agent";
-import type { PlanModeState } from "@tau/tau-coding-agent/plan-mode/state";
+} from "tau/modes/acp/acp-agent";
+import type { PlanModeState } from "tau/plan-mode/state";
 import type {
 	AgentSession,
 	AgentSessionEvent,
 	UsageFallbackConfirmation,
-} from "@tau/tau-coding-agent/session/agent-session";
-import { SILENT_ABORT_MARKER } from "@tau/tau-coding-agent/session/messages";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import { TaskTool } from "@tau/tau-coding-agent/task";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
+} from "tau/session/agent-session";
+import { SILENT_ABORT_MARKER } from "tau/session/messages";
+import { SessionManager } from "tau/session/session-manager";
+import { TaskTool } from "tau/task";
+import type { ToolSession } from "tau/tools";
 import { getConfigRootDir, setAgentDir } from "@tau/tau-utils";
 import type {
 	AgentSideConnection,

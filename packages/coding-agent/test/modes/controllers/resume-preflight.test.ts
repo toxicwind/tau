@@ -3,11 +3,11 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import * as SessionSelector from "@tau/tau-tui/overlays/session-selector";
-import { SelectorController } from "@tau/tau-coding-agent/modes/controllers/selector-controller";
+import { SelectorController } from "tau/modes/controllers/selector-controller";
 import { initTheme } from "@tau/tau-tui/theme";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
-import type { SessionInfo } from "@tau/tau-coding-agent/session/session-listing";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import type { InteractiveModeContext } from "tau/modes/types";
+import type { SessionInfo } from "tau/session/session-listing";
+import { SessionManager } from "tau/session/session-manager";
 
 beforeAll(async () => {
 	await initTheme();

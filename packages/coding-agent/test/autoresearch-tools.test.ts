@@ -2,19 +2,19 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } 
 import * as fs from "node:fs";
 import * as path from "node:path";
 import type { ImageContent, TextContent } from "@tau/tau-ai";
-import { createSessionRuntime } from "@tau/tau-coding-agent/autoresearch/state";
+import { createSessionRuntime } from "tau/autoresearch/state";
 import {
 	type AutoresearchStorage,
 	closeAllAutoresearchStorages,
 	openAutoresearchStorage,
 	type SessionRow,
-} from "@tau/tau-coding-agent/autoresearch/storage";
-import { createInitExperimentTool } from "@tau/tau-coding-agent/autoresearch/tools/init-experiment";
-import { createLogExperimentTool } from "@tau/tau-coding-agent/autoresearch/tools/log-experiment";
-import { createRunExperimentTool } from "@tau/tau-coding-agent/autoresearch/tools/run-experiment";
-import { createUpdateNotesTool } from "@tau/tau-coding-agent/autoresearch/tools/update-notes";
+} from "tau/autoresearch/storage";
+import { createInitExperimentTool } from "tau/autoresearch/tools/init-experiment";
+import { createLogExperimentTool } from "tau/autoresearch/tools/log-experiment";
+import { createRunExperimentTool } from "tau/autoresearch/tools/run-experiment";
+import { createUpdateNotesTool } from "tau/autoresearch/tools/update-notes";
 import type { ASIData, LogDetails, NumericMetricMap, RunDetails } from "@tau/tau-tui/tools/autoresearch";
-import type { ExtensionAPI, ExtensionContext } from "@tau/tau-coding-agent/extensibility/extensions";
+import type { ExtensionAPI, ExtensionContext } from "tau/extensibility/extensions";
 import * as vcs from "@tau/tau-natives/vcs";
 import { TempDir } from "@tau/tau-utils";
 import { $ } from "bun";

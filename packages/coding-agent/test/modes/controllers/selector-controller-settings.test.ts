@@ -3,14 +3,14 @@ import * as path from "node:path";
 import { Agent } from "@tau/tau-agent-core";
 import type { Model } from "@tau/tau-ai";
 import { getBundledModel } from "@tau/tau-catalog/models";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { SelectorController } from "@tau/tau-coding-agent/modes/controllers/selector-controller";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
-import { SecretObfuscator } from "@tau/tau-coding-agent/secrets";
-import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
+import { SelectorController } from "tau/modes/controllers/selector-controller";
+import type { InteractiveModeContext } from "tau/modes/types";
+import { SecretObfuscator } from "tau/secrets";
+import { AgentSession } from "tau/session/agent-session";
+import { AuthStorage } from "tau/session/auth-storage";
+import { SessionManager } from "tau/session/session-manager";
 import { TempDir } from "@tau/tau-utils";
 
 describe("SelectorController prompt-affecting settings", () => {

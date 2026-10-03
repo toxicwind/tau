@@ -3,11 +3,11 @@ import * as fs from "node:fs";
 import * as fsp from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { SessionHeader } from "@tau/tau-coding-agent/session/session-entries";
-import { loadEntriesFromFile } from "@tau/tau-coding-agent/session/session-loader";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import { resolveResumableSession } from "@tau/tau-coding-agent/session/session-listing";
-import { stripOuterDoubleQuotes } from "@tau/tau-coding-agent/tools/path-utils";
+import type { SessionHeader } from "tau/session/session-entries";
+import { loadEntriesFromFile } from "tau/session/session-loader";
+import { SessionManager } from "tau/session/session-manager";
+import { resolveResumableSession } from "tau/session/session-listing";
+import { stripOuterDoubleQuotes } from "tau/tools/path-utils";
 import { getConfigRootDir, setAgentDir } from "@tau/tau-utils";
 
 // -- helpers ----------------------------------------------------------------

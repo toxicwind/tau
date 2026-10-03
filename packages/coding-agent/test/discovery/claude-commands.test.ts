@@ -2,10 +2,10 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { clearCache as clearFsCache } from "@tau/tau-coding-agent/capability/fs";
-import { type SlashCommand, slashCommandCapability } from "@tau/tau-coding-agent/capability/slash-command";
-import { resetSettingsForTest } from "@tau/tau-coding-agent/config/settings";
-import { loadCapability } from "@tau/tau-coding-agent/discovery";
+import { clearCache as clearFsCache } from "tau/capability/fs";
+import { type SlashCommand, slashCommandCapability } from "tau/capability/slash-command";
+import { resetSettingsForTest } from "tau/config/settings";
+import { loadCapability } from "tau/discovery";
 import { removeWithRetries } from "@tau/tau-utils";
 
 async function writeFile(filePath: string, content: string): Promise<void> {

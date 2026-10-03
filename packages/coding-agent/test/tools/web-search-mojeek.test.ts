@@ -1,9 +1,9 @@
 import { afterAll, describe, expect, it, vi } from "bun:test";
 import type { FetchImpl } from "@tau/tau-ai";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import type { SearchParams } from "@tau/tau-coding-agent/web/search/providers/base";
-import { searchMojeek } from "@tau/tau-coding-agent/web/search/providers/mojeek";
-import { SearchProviderError } from "@tau/tau-coding-agent/web/search/types";
+import { ModelRegistry } from "tau/config/model-registry";
+import type { SearchParams } from "tau/web/search/providers/base";
+import { searchMojeek } from "tau/web/search/providers/mojeek";
+import { SearchProviderError } from "tau/web/search/types";
 import { createInMemoryAuthStorage } from "../helpers/agent-session-setup";
 
 const authStorage = createInMemoryAuthStorage();

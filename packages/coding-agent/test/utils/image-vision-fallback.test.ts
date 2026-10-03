@@ -5,11 +5,11 @@ import * as path from "node:path";
 import type { Api, AssistantMessage, completeSimple, Model } from "@tau/tau-ai";
 import type { ModelSpec } from "@tau/tau-ai/types";
 import { buildModel } from "@tau/tau-catalog/build";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { Settings } from "tau/config/settings";
 import {
 	type DescribeAttachedImagesDeps,
 	describeAttachedImagesForTextModel,
-} from "@tau/tau-coding-agent/utils/image-vision-fallback";
+} from "tau/utils/image-vision-fallback";
 import { removeWithRetries } from "@tau/tau-utils";
 
 // 1x1 transparent PNG.

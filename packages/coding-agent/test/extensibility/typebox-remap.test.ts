@@ -3,11 +3,11 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import { toolWireSchema } from "@tau/tau-ai/utils/schema";
-import { Type as TypeBoxShimType } from "@tau/tau-coding-agent/extensibility/legacy-typebox";
+import { Type as TypeBoxShimType } from "tau/extensibility/legacy-typebox";
 import {
 	installLegacyPiSpecifierShim,
 	loadLegacyPiModule,
-} from "@tau/tau-coding-agent/extensibility/plugins/legacy-tau-compat";
+} from "tau/extensibility/plugins/legacy-tau-compat";
 import { removeWithRetries } from "@tau/tau-utils";
 
 // The remap installs a Bun.plugin onResolve hook plus an explicit

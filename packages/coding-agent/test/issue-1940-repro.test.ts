@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test";
-import { SttClient } from "@tau/tau-coding-agent/stt/asr-client";
-import type { SttWorkerInbound, SttWorkerOutbound } from "@tau/tau-coding-agent/stt/asr-protocol";
-import { TinyTitleClient } from "@tau/tau-coding-agent/tiny/title-client";
-import type { TinyWorkerRequest, TinyWorkerResponse } from "@tau/tau-coding-agent/tiny/title-protocol";
+import { SttClient } from "tau/stt/asr-client";
+import type { SttWorkerInbound, SttWorkerOutbound } from "tau/stt/asr-protocol";
+import { TinyTitleClient } from "tau/tiny/title-client";
+import type { TinyWorkerRequest, TinyWorkerResponse } from "tau/tiny/title-protocol";
 
 class FakeTinyWorker {
 	terminated = false;

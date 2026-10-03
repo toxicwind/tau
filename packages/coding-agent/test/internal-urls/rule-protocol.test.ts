@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it } from "bun:test";
-import type { Rule } from "@tau/tau-coding-agent/capability/rule";
-import { resetActiveRulesForTests, setActiveRules } from "@tau/tau-coding-agent/capability/rule";
-import type { InternalUrl } from "@tau/tau-coding-agent/internal-urls/types";
-import { RuleProtocolHandler } from "@tau/tau-coding-agent/internal-urls/rule-protocol";
+import type { Rule } from "tau/capability/rule";
+import { resetActiveRulesForTests, setActiveRules } from "tau/capability/rule";
+import type { InternalUrl } from "tau/internal-urls/types";
+import { RuleProtocolHandler } from "tau/internal-urls/rule-protocol";
 
 function makeRule(name: string, content: string): Rule {
 	return {

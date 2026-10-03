@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from "bun:test";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
-import { executeAcpBuiltinSlashCommand } from "@tau/tau-coding-agent/slash-commands/acp-builtins";
-import { executeBuiltinSlashCommand } from "@tau/tau-coding-agent/slash-commands/builtin-registry";
-import type { SlashCommandRuntime } from "@tau/tau-coding-agent/slash-commands/types";
+import type { InteractiveModeContext } from "tau/modes/types";
+import { executeAcpBuiltinSlashCommand } from "tau/slash-commands/acp-builtins";
+import { executeBuiltinSlashCommand } from "tau/slash-commands/builtin-registry";
+import type { SlashCommandRuntime } from "tau/slash-commands/types";
 
 function createRuntime(didRetry: boolean) {
 	const retry = vi.fn(async () => didRetry);

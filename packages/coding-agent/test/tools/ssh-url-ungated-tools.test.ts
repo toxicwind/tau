@@ -1,10 +1,10 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
 import * as os from "node:os";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { InternalUrlRouter } from "@tau/tau-coding-agent/internal-urls/router";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
-import { GlobTool } from "@tau/tau-coding-agent/tools/glob";
-import { resolveToolSearchScope } from "@tau/tau-coding-agent/tools/path-utils";
+import { Settings } from "tau/config/settings";
+import { InternalUrlRouter } from "tau/internal-urls/router";
+import type { ToolSession } from "tau/tools";
+import { GlobTool } from "tau/tools/glob";
+import { resolveToolSearchScope } from "tau/tools/path-utils";
 
 // Minimal ToolSession stub (ssh-url-approval.test.ts shape). The ssh:// guard
 // fires before any session/SSH access, so no real cwd/fs is needed.

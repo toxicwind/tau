@@ -2,12 +2,12 @@ import { afterEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { loadSkills, resetActiveSkillsForTests, setActiveSkills } from "@tau/tau-coding-agent/extensibility/skills";
-import { parseInternalUrl } from "@tau/tau-coding-agent/internal-urls/parse";
-import { SkillProtocolHandler } from "@tau/tau-coding-agent/internal-urls/skill-protocol";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
-import { ReadTool } from "@tau/tau-coding-agent/tools/read";
+import { Settings } from "tau/config/settings";
+import { loadSkills, resetActiveSkillsForTests, setActiveSkills } from "tau/extensibility/skills";
+import { parseInternalUrl } from "tau/internal-urls/parse";
+import { SkillProtocolHandler } from "tau/internal-urls/skill-protocol";
+import type { ToolSession } from "tau/tools";
+import { ReadTool } from "tau/tools/read";
 
 function makeSkillMd(name: string, dir: string) {
 	return `---\nname: ${name}\ndescription: ${name} skill.\n---\n\n# ${name} from ${dir}\n`;

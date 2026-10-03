@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { generateThemeVars } from "@tau/tau-coding-agent/export/html";
+import { generateThemeVars } from "tau/export/html";
 import { defaultThemes } from "@tau/tau-tui/theme/defaults";
 import { createTheme, getBuiltinThemes } from "@tau/tau-tui/theme/loader";
 import {

@@ -2,8 +2,8 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { clearCache as clearFsCache } from "@tau/tau-coding-agent/capability/fs";
-import { expandAtImports, MAX_AT_IMPORT_DEPTH } from "@tau/tau-coding-agent/discovery/at-imports";
+import { clearCache as clearFsCache } from "tau/capability/fs";
+import { expandAtImports, MAX_AT_IMPORT_DEPTH } from "tau/discovery/at-imports";
 import { removeWithRetries } from "@tau/tau-utils";
 
 /**

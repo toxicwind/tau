@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import { normalizeSchemaForGoogle } from "@tau/tau-ai";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { createTools, HIDDEN_TOOLS, type ToolSession } from "@tau/tau-coding-agent/tools";
+import { Settings } from "tau/config/settings";
+import { createTools, HIDDEN_TOOLS, type ToolSession } from "tau/tools";
 
 /**
  * Problematic JSON Schema features that cause issues with various providers.

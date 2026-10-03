@@ -3,12 +3,12 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import type { AgentToolResult } from "@tau/tau-agent-core";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
-import { ReadTool } from "@tau/tau-coding-agent/tools/read";
+import { Settings } from "tau/config/settings";
+import type { ToolSession } from "tau/tools";
+import { ReadTool } from "tau/tools/read";
 import { type ReadToolDetails } from "@tau/tau-tui/tools/read";
-import * as pdfRead from "@tau/tau-coding-agent/tools/read-pdf";
-import * as markit from "@tau/tau-coding-agent/utils/markit";
+import * as pdfRead from "tau/tools/read-pdf";
+import * as markit from "tau/utils/markit";
 import { removeWithRetries } from "@tau/tau-utils";
 
 const ONE_PX_PNG = Buffer.from(

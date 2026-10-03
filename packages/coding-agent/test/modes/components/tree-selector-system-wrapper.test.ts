@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it } from "bun:test";
 import { TreeSelectorComponent } from "@tau/tau-tui/overlays/tree-selector";
 import * as themeModule from "@tau/tau-tui/theme";
-import type { SessionTreeNode } from "@tau/tau-coding-agent/session/session-entries";
+import type { SessionTreeNode } from "tau/session/session-entries";
 
 function customMessageTree(customType: string, content: string): SessionTreeNode[] {
 	return [

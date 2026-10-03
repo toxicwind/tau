@@ -1,9 +1,9 @@
 import { afterAll, describe, expect, it } from "bun:test";
 import type { FetchImpl } from "@tau/tau-ai/types";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { ModelRegistry } from "tau/config/model-registry";
 import { buildModel } from "@tau/tau-catalog/build";
-import type { SearchParams } from "@tau/tau-coding-agent/web/search/providers/base";
-import { searchXAI } from "@tau/tau-coding-agent/web/search/providers/xai";
+import type { SearchParams } from "tau/web/search/providers/base";
+import { searchXAI } from "tau/web/search/providers/xai";
 import { createInMemoryAuthStorage } from "../../helpers/agent-session-setup";
 
 const SELECTED_MODEL_ID = "grok-selected-grounding";

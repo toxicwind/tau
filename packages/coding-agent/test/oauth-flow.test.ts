@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import type { FetchImpl } from "@tau/tau-ai/types";
-import { MCPOAuthFlow, refreshMCPOAuthToken } from "@tau/tau-coding-agent/mcp/oauth-flow";
+import { MCPOAuthFlow, refreshMCPOAuthToken } from "tau/mcp/oauth-flow";
 
 afterEach(() => {
 	vi.restoreAllMocks();

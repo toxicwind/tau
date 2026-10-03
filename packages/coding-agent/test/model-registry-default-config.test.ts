@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { ModelRegistry } from "tau/config/model-registry";
+import { AuthStorage } from "tau/session/auth-storage";
 import { getAgentDir, setAgentDir, TempDir } from "@tau/tau-utils";
 
 const originalAgentDir = getAgentDir();

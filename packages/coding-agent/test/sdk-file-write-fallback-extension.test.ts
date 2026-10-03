@@ -22,17 +22,17 @@ import * as os from "node:os";
 import * as path from "node:path";
 import type { AgentTool } from "@tau/tau-agent-core";
 import { getBundledModel } from "@tau/tau-catalog/models";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
 import type {
 	ExtensionActions,
 	ExtensionContextActions,
 	ExtensionFactory,
 	ExtensionRunner,
-} from "@tau/tau-coding-agent/extensibility/extensions";
-import { type CreateAgentSessionOptions, createAgentSession, discoverAuthStorage } from "@tau/tau-coding-agent/sdk";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import type { FileWriteFallbackRequest } from "@tau/tau-coding-agent/tools/file-write-fallback";
+} from "tau/extensibility/extensions";
+import { type CreateAgentSessionOptions, createAgentSession, discoverAuthStorage } from "tau/sdk";
+import { SessionManager } from "tau/session/session-manager";
+import type { FileWriteFallbackRequest } from "tau/tools/file-write-fallback";
 import { removeSyncWithRetries, Snowflake } from "@tau/tau-utils";
 
 /**

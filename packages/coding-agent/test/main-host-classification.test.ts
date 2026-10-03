@@ -1,8 +1,8 @@
 import { expect, it } from "bun:test";
-import { discoverAuthStorage } from "@tau/tau-coding-agent/sdk";
-import { parseArgs } from "@tau/tau-coding-agent/cli/args";
-import { resetSettingsForTest } from "@tau/tau-coding-agent/config/settings";
-import { runRootCommand } from "@tau/tau-coding-agent/main";
+import { discoverAuthStorage } from "tau/sdk";
+import { parseArgs } from "tau/cli/args";
+import { resetSettingsForTest } from "tau/config/settings";
+import { runRootCommand } from "tau/main";
 import { getDbBusyTimeoutMs, setInteractiveHost, TempDir } from "@tau/tau-utils";
 
 it("classifies an interactive host before opening auth storage", async () => {

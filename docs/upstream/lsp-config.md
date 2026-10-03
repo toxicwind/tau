@@ -33,7 +33,7 @@ Each location accepts `.json`, `.yaml`, and `.yml`, including hidden variants. W
 
 Merging is shallow per server: a higher-precedence server object overrides only its top-level fields, but object-valued fields such as `settings`, `initOptions`, `capabilities`, and `workspaceReadyTimings` replace the lower value as a whole rather than deep-merging it. Servers absent from override files remain at built-in defaults.
 
-The native user config directory follows `PI_CONFIG_DIR` and active profiles; `~/.tau/agent/lsp.json` is the default-profile spelling. This shared config lookup does not use `PI_CODING_AGENT_DIR` as an arbitrary replacement base. Project and cwd sources do not walk ancestors.
+The native user config directory follows `TAU_CONFIG_DIR` and active profiles; `~/.tau/agent/lsp.json` is the default-profile spelling. This shared config lookup does not use `PI_CODING_AGENT_DIR` as an arbitrary replacement base. Project and cwd sources do not walk ancestors.
 
 **Recommended locations:**
 

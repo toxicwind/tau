@@ -4,7 +4,7 @@ import {
 	formatMCPConnectingMessage,
 	formatMCPConnectionStatusMessage,
 	isMcpConnectionStatusEvent,
-} from "@tau/tau-coding-agent/mcp/startup-events";
+} from "tau/mcp/startup-events";
 
 // Cross-module contract guard.
 //

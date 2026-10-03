@@ -14,9 +14,9 @@ import { buildModel } from "@tau/tau-catalog/build";
 import type { ModelSpec } from "@tau/tau-catalog/types";
 import { writeModelCache } from "@tau/tau-catalog/model-cache";
 import { resolveModelCacheProviderId } from "@tau/tau-catalog/provider-models";
-import { type BenchSummary, runBenchCommand } from "@tau/tau-coding-agent/cli/bench-cli";
-import { type BenchModelRegistry, resolveBenchTargets } from "@tau/tau-coding-agent/cli/bench-runtime";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { type BenchSummary, runBenchCommand } from "tau/cli/bench-cli";
+import { type BenchModelRegistry, resolveBenchTargets } from "tau/cli/bench-runtime";
+import { Settings } from "tau/config/settings";
 import { getModelDbPath, TempDir } from "@tau/tau-utils";
 
 function fakeModel(provider: string, id: string): Model<Api> {

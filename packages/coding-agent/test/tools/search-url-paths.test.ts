@@ -2,9 +2,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { createTools, type ToolSession } from "@tau/tau-coding-agent/tools";
-import * as scrapers from "@tau/tau-coding-agent/web/scrapers/types";
+import { Settings } from "tau/config/settings";
+import { createTools, type ToolSession } from "tau/tools";
+import * as scrapers from "tau/web/scrapers/types";
 import { removeWithRetries } from "@tau/tau-utils";
 
 function createSession(testDir: string): ToolSession {

@@ -1,14 +1,14 @@
 import { describe, expect, it } from "bun:test";
 import type { AgentMessage } from "@tau/tau-agent-core";
 import type { ImageContent, TextContent } from "@tau/tau-ai";
-import { BlobStore, isBlobRef, lazyImageDataSync } from "@tau/tau-coding-agent/session/blob-store";
+import { BlobStore, isBlobRef, lazyImageDataSync } from "tau/session/blob-store";
 import type {
 	CompactionEntry,
 	FileEntry,
 	SessionMessageEntry,
-} from "@tau/tau-coding-agent/session/session-entries";
-import { resolveBlobRefsInEntries } from "@tau/tau-coding-agent/session/session-loader";
-import { prepareEntryForPersistence } from "@tau/tau-coding-agent/session/session-persistence";
+} from "tau/session/session-entries";
+import { resolveBlobRefsInEntries } from "tau/session/session-loader";
+import { prepareEntryForPersistence } from "tau/session/session-persistence";
 import { TempDir } from "@tau/tau-utils";
 import type { Archive } from "@tau/snapcompact";
 import * as snapcompact from "@tau/snapcompact";

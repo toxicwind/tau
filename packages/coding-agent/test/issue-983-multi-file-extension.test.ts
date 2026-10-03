@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { discoverAndLoadExtensions } from "@tau/tau-coding-agent/extensibility/extensions/loader";
+import { discoverAndLoadExtensions } from "tau/extensibility/extensions/loader";
 import { removeWithRetries } from "@tau/tau-utils";
 
 const TOOL_NAME = "legacy-multi-file-tool";

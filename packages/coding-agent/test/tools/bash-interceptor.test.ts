@@ -4,10 +4,10 @@ import { validateToolArguments } from "@tau/tau-ai/utils/validation";
 import {
 	type BashInterceptorRule,
 	DEFAULT_BASH_INTERCEPTOR_RULES,
-} from "@tau/tau-coding-agent/config/settings-schema";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
-import { BashTool, type BashToolInput } from "@tau/tau-coding-agent/tools/bash";
-import { checkBashInterception } from "@tau/tau-coding-agent/tools/bash-interceptor";
+} from "tau/config/settings-schema";
+import type { ToolSession } from "tau/tools";
+import { BashTool, type BashToolInput } from "tau/tools/bash";
+import { checkBashInterception } from "tau/tools/bash-interceptor";
 
 function createBashTool(rules: BashInterceptorRule[]): BashTool {
 	const session = {

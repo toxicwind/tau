@@ -3,7 +3,7 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import type { AgentTool } from "@tau/tau-agent-core";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
 import { ToolExecutionComponent } from "@tau/tau-tui/chat/tool-execution";
 import { theme as activeTheme, initTheme } from "@tau/tau-tui/theme";
 import { previewWindowRows } from "@tau/tau-tui/render/render-utils";

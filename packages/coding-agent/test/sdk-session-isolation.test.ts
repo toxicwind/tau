@@ -4,18 +4,18 @@ import * as os from "node:os";
 import * as path from "node:path";
 import type { AssistantMessage } from "@tau/tau-ai";
 import { getBundledModel } from "@tau/tau-catalog/models";
-import type { Rule } from "@tau/tau-coding-agent/capability/rule";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { LocalProtocolHandler } from "@tau/tau-coding-agent/internal-urls/local-protocol";
-import { AgentLifecycleManager } from "@tau/tau-coding-agent/registry/agent-lifecycle";
-import { AgentRegistry } from "@tau/tau-coding-agent/registry/agent-registry";
-import { createAgentSession } from "@tau/tau-coding-agent/sdk";
-import * as secrets from "@tau/tau-coding-agent/secrets";
-import type { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import { VibeSessionRegistry } from "@tau/tau-coding-agent/vibe/runtime";
+import type { Rule } from "tau/capability/rule";
+import { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
+import { LocalProtocolHandler } from "tau/internal-urls/local-protocol";
+import { AgentLifecycleManager } from "tau/registry/agent-lifecycle";
+import { AgentRegistry } from "tau/registry/agent-registry";
+import { createAgentSession } from "tau/sdk";
+import * as secrets from "tau/secrets";
+import type { AgentSession } from "tau/session/agent-session";
+import { AuthStorage } from "tau/session/auth-storage";
+import { SessionManager } from "tau/session/session-manager";
+import { VibeSessionRegistry } from "tau/vibe/runtime";
 import { getSessionsDir, removeSyncWithRetries, Snowflake } from "@tau/tau-utils";
 import { getActiveProfile, getConfigRootDir, setProfile } from "@tau/tau-utils/dirs";
 
@@ -56,20 +56,20 @@ async function withClearedSecretEnv<T>(run: () => Promise<T>): Promise<T> {
 
 async function withTempConfigRoot<T>(run: () => Promise<T>): Promise<T> {
 	const originalProfile = getActiveProfile();
-	const originalConfigDir = process.env.PI_CONFIG_DIR;
+	const originalConfigDir = process.env.TAU_CONFIG_DIR;
 	const originalAgentDir = process.env.PI_CODING_AGENT_DIR;
 	const configDirName = `.tau-sdk-session-${Snowflake.next()}`;
 	const configRoot = path.join(os.homedir(), configDirName);
 	try {
-		process.env.PI_CONFIG_DIR = configDirName;
+		process.env.TAU_CONFIG_DIR = configDirName;
 		setProfile(undefined);
 		return await run();
 	} finally {
 		setProfile(undefined);
 		if (originalConfigDir === undefined) {
-			delete process.env.PI_CONFIG_DIR;
+			delete process.env.TAU_CONFIG_DIR;
 		} else {
-			process.env.PI_CONFIG_DIR = originalConfigDir;
+			process.env.TAU_CONFIG_DIR = originalConfigDir;
 		}
 		if (originalAgentDir === undefined) {
 			delete process.env.PI_CODING_AGENT_DIR;

@@ -9,14 +9,14 @@
  */
 
 import { afterAll, afterEach, describe, expect, it, spyOn, vi } from "bun:test";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { disposeAllVmContexts } from "@tau/tau-coding-agent/eval/js/context-manager";
-import { createBrowserPrelude } from "@tau/tau-coding-agent/tools/browser";
-import { releaseAllTabs } from "@tau/tau-coding-agent/tools/browser/tab-supervisor";
-import { EvalTool } from "@tau/tau-coding-agent/tools/eval";
-import * as launch from "@tau/tau-coding-agent/tools/browser/launch";
-import type { ToolSession } from "@tau/tau-coding-agent/tools/index";
-import { ToolAbortError } from "@tau/tau-coding-agent/tools/tool-errors";
+import { Settings } from "tau/config/settings";
+import { disposeAllVmContexts } from "tau/eval/js/context-manager";
+import { createBrowserPrelude } from "tau/tools/browser";
+import { releaseAllTabs } from "tau/tools/browser/tab-supervisor";
+import { EvalTool } from "tau/tools/eval";
+import * as launch from "tau/tools/browser/launch";
+import type { ToolSession } from "tau/tools/index";
+import { ToolAbortError } from "tau/tools/tool-errors";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 import { chromiumAvailable } from "./chromium-probe";
 

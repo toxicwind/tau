@@ -4,12 +4,12 @@ import * as os from "node:os";
 import * as path from "node:path";
 import type { ImageContent } from "@tau/tau-ai";
 import type { SpeculativeOperationContext } from "@tau/tau-agent-core";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { getEditStore } from "@tau/tau-coding-agent/edit/store";
-import { CodingAgentSpeculativeExecutionHost } from "@tau/tau-coding-agent/speculation/host";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
-import { getConflictHistory } from "@tau/tau-coding-agent/tools/conflict-detect";
-import { ReadTool } from "@tau/tau-coding-agent/tools/read";
+import { Settings } from "tau/config/settings";
+import { getEditStore } from "tau/edit/store";
+import { CodingAgentSpeculativeExecutionHost } from "tau/speculation/host";
+import type { ToolSession } from "tau/tools";
+import { getConflictHistory } from "tau/tools/conflict-detect";
+import { ReadTool } from "tau/tools/read";
 import { removeSyncWithRetries } from "@tau/tau-utils";
 
 const TINY_PNG_BASE64 =

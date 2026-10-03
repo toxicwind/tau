@@ -5,29 +5,29 @@ import { Agent, type AgentMessage, type AgentTool } from "@tau/tau-agent-core";
 import type { Context, ImageContent } from "@tau/tau-ai";
 import { createMockModel, type MockResponseSource } from "@tau/tau-ai/providers/mock";
 import { buildModel } from "@tau/tau-catalog/build";
-import type { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { ExtensionRuntime } from "@tau/tau-coding-agent/extensibility/extensions/loader";
-import { ExtensionRunner } from "@tau/tau-coding-agent/extensibility/extensions/runner";
-import type { BeforeAgentStartEvent, Extension } from "@tau/tau-coding-agent/extensibility/extensions/types";
-import { HindsightApi } from "@tau/tau-coding-agent/hindsight/client";
-import { loadHindsightConfig } from "@tau/tau-coding-agent/hindsight/config";
-import { HindsightSessionState } from "@tau/tau-coding-agent/hindsight/state";
-import * as memoryBackend from "@tau/tau-coding-agent/memory-backend";
-import type { MemoryBackend } from "@tau/tau-coding-agent/memory-backend/types";
-import { loadMnemotauConfig } from "@tau/tau-coding-agent/mnemotau/config";
+import type { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
+import { ExtensionRuntime } from "tau/extensibility/extensions/loader";
+import { ExtensionRunner } from "tau/extensibility/extensions/runner";
+import type { BeforeAgentStartEvent, Extension } from "tau/extensibility/extensions/types";
+import { HindsightApi } from "tau/hindsight/client";
+import { loadHindsightConfig } from "tau/hindsight/config";
+import { HindsightSessionState } from "tau/hindsight/state";
+import * as memoryBackend from "tau/memory-backend";
+import type { MemoryBackend } from "tau/memory-backend/types";
+import { loadMnemotauConfig } from "tau/mnemotau/config";
 import {
 	getMnemotauSessionState,
 	loadMnemotau,
 	loadMnemotauCore,
 	MnemotauSessionState,
 	setMnemotauSessionState,
-} from "@tau/tau-coding-agent/mnemotau/state";
-import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
-import type { AgentSessionConfig } from "@tau/tau-coding-agent/session/agent-session-types";
-import { convertToLlm } from "@tau/tau-coding-agent/session/messages";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import { SessionProviderBoundary } from "@tau/tau-coding-agent/session/session-provider-boundary";
+} from "tau/mnemotau/state";
+import { AgentSession } from "tau/session/agent-session";
+import type { AgentSessionConfig } from "tau/session/agent-session-types";
+import { convertToLlm } from "tau/session/messages";
+import { SessionManager } from "tau/session/session-manager";
+import { SessionProviderBoundary } from "tau/session/session-provider-boundary";
 import { TempDir } from "@tau/tau-utils";
 import { createAssistantMessage } from "./helpers/agent-session-setup";
 

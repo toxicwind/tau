@@ -15,10 +15,10 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
-import { initializeWithSettings, reset as resetDiscoveryCache } from "@tau/tau-coding-agent/discovery";
-import { readMCPConfigFile, setMcpServerEnabled, setServerDisabled } from "@tau/tau-coding-agent/mcp/config-writer";
-import { loadAllExtensions } from "@tau/tau-coding-agent/modes/components/extensions/state-manager";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
+import { initializeWithSettings, reset as resetDiscoveryCache } from "tau/discovery";
+import { readMCPConfigFile, setMcpServerEnabled, setServerDisabled } from "tau/mcp/config-writer";
+import { loadAllExtensions } from "tau/modes/components/extensions/state-manager";
 import { __resetDirsFromEnvForTests, getMCPConfigPath, removeWithRetries, setAgentDir } from "@tau/tau-utils";
 
 describe("loadAllExtensions MCP parity with /mcp list (issue #3827)", () => {

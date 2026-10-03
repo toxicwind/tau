@@ -1,13 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { AgentLifecycleManager } from "@tau/tau-coding-agent/registry/agent-lifecycle";
-import { AgentRegistry } from "@tau/tau-coding-agent/registry/agent-registry";
-import { buildSpecializationAdvisory, TaskTool } from "@tau/tau-coding-agent/task";
-import * as discoveryModule from "@tau/tau-coding-agent/task/discovery";
-import * as executorModule from "@tau/tau-coding-agent/task/executor";
-import type { AgentDefinition } from "@tau/tau-coding-agent/task/types";
+import { Settings } from "tau/config/settings";
+import { AgentLifecycleManager } from "tau/registry/agent-lifecycle";
+import { AgentRegistry } from "tau/registry/agent-registry";
+import { buildSpecializationAdvisory, TaskTool } from "tau/task";
+import * as discoveryModule from "tau/task/discovery";
+import * as executorModule from "tau/task/executor";
+import type { AgentDefinition } from "tau/task/types";
 import type { SingleResult } from "@tau/tau-tui/tools/task";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
+import type { ToolSession } from "tau/tools";
 
 // Contract: the task tool appends an advisory (never a rejection) steering the
 // spawner toward more specific agent types when one call resolves ≥2 items to

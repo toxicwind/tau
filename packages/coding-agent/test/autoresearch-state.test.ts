@@ -1,19 +1,19 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import { createAutoresearchExtension } from "@tau/tau-coding-agent/autoresearch";
+import { createAutoresearchExtension } from "tau/autoresearch";
 import {
 	buildExperimentState,
 	computeConfidence,
 	findBestKeptMetric,
 	reconstructControlState,
-} from "@tau/tau-coding-agent/autoresearch/state";
-import { AutoresearchStorage, closeAllAutoresearchStorages } from "@tau/tau-coding-agent/autoresearch/storage";
+} from "tau/autoresearch/state";
+import { AutoresearchStorage, closeAllAutoresearchStorages } from "tau/autoresearch/storage";
 import type { ExperimentResult } from "@tau/tau-tui/tools/autoresearch";
 import { findBaselineMetric, findBaselineRunNumber } from "@tau/tau-tui/apps/autoresearch-data";
 import type {
 	ExtensionAPI,
 	ExtensionCommandContext,
 	RegisteredCommand,
-} from "@tau/tau-coding-agent/extensibility/extensions";
+} from "tau/extensibility/extensions";
 import type { VcsGitRepo, VcsGitRepoInfo } from "@tau/tau-natives";
 import * as vcs from "@tau/tau-natives/vcs";
 import { TempDir } from "@tau/tau-utils";

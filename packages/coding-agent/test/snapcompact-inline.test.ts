@@ -6,7 +6,7 @@ import {
 	planInlineSwaps,
 	type SnapcompactInlineOptions,
 	SnapcompactInlineTransformer,
-} from "@tau/tau-coding-agent/session/snapcompact-inline";
+} from "tau/session/snapcompact-inline";
 import * as snapcompact from "@tau/snapcompact";
 
 /**

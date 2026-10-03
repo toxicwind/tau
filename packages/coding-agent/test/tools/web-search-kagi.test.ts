@@ -1,9 +1,9 @@
 import { afterAll, afterEach, beforeEach, describe, expect, it, setSystemTime, vi } from "bun:test";
 import type { AuthStorage, FetchImpl } from "@tau/tau-ai";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { type KagiSearchRequest, searchWithKagi } from "@tau/tau-coding-agent/web/kagi";
-import { KagiProvider, searchKagi } from "@tau/tau-coding-agent/web/search/providers/kagi";
-import { SearchProviderError } from "@tau/tau-coding-agent/web/search/types";
+import { ModelRegistry } from "tau/config/model-registry";
+import { type KagiSearchRequest, searchWithKagi } from "tau/web/kagi";
+import { KagiProvider, searchKagi } from "tau/web/search/providers/kagi";
+import { SearchProviderError } from "tau/web/search/types";
 import { createInMemoryAuthStorage } from "../helpers/agent-session-setup";
 
 const providerAuthStorage = createInMemoryAuthStorage();

@@ -118,9 +118,9 @@ impl PathPolicy {
 			return None;
 		}
 		let escaped = escape_glob_metachars(normalized);
-		let glob = pi_walker::CompiledWalkGlob::new([format!("**/{escaped}")]).ok()?;
+		let glob = tau_walker::CompiledWalkGlob::new([format!("**/{escaped}")]).ok()?;
 		let started = Instant::now();
-		let request = pi_walker::WalkRequest::new(&self.cwd)
+		let request = tau_walker::WalkRequest::new(&self.cwd)
 			.hidden(true)
 			.gitignore(true)
 			.skip_git(true)
@@ -128,7 +128,7 @@ impl PathPolicy {
 			.emit_root(false)
 			.cache(false)
 			.limit(2)
-			.filter(pi_walker::WalkFilter::all().glob(glob));
+			.filter(tau_walker::WalkFilter::all().glob(glob));
 		let result = request
 			.collect_with_heartbeat(|| {
 				if started.elapsed() >= Duration::from_secs(5) {

@@ -115,7 +115,7 @@ pub enum WorktreeClone {
 	/// Try every available copy-on-write tree-cloning backend.
 	Auto,
 	/// Try this backend first, then other available cloning backends.
-	Prefer(pi_iso::BackendKind),
+	Prefer(tau_iso::BackendKind),
 }
 
 /// Options for linked-worktree creation.
@@ -132,7 +132,7 @@ pub struct WorktreeAddOptions {
 /// Outcome of linked-worktree creation.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct WorktreeAddResult {
-	pub cloned_with: Option<pi_iso::BackendKind>,
+	pub cloned_with: Option<tau_iso::BackendKind>,
 	pub clone_error: Option<String>,
 }
 

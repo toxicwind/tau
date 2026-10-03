@@ -24,8 +24,8 @@ use napi::{
 	bindgen_prelude::{Array, Either},
 };
 use napi_derive::napi;
-use pi_shell::rayon_global_pool_available;
 use rayon::prelude::*;
+use tau_shell::rayon_global_pool_available;
 
 use crate::{js, utok};
 

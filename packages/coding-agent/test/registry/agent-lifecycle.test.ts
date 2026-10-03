@@ -1,10 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fsp from "node:fs/promises";
 import * as path from "node:path";
-import { AgentLifecycleManager } from "@tau/tau-coding-agent/registry/agent-lifecycle";
-import { AgentRegistry, MAIN_AGENT_ID } from "@tau/tau-coding-agent/registry/agent-registry";
-import { registerPersistedSubagents } from "@tau/tau-coding-agent/registry/persisted-agents";
-import type { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import { AgentLifecycleManager } from "tau/registry/agent-lifecycle";
+import { AgentRegistry, MAIN_AGENT_ID } from "tau/registry/agent-registry";
+import { registerPersistedSubagents } from "tau/registry/persisted-agents";
+import type { AgentSession } from "tau/session/agent-session";
 import { TempDir } from "@tau/tau-utils";
 
 interface SessionStub {

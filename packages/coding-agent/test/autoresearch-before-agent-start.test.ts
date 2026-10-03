@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import { createAutoresearchExtension } from "@tau/tau-coding-agent/autoresearch";
-import { closeAllAutoresearchStorages } from "@tau/tau-coding-agent/autoresearch/storage";
+import { createAutoresearchExtension } from "tau/autoresearch";
+import { closeAllAutoresearchStorages } from "tau/autoresearch/storage";
 import type {
 	BeforeAgentStartEvent,
 	BeforeAgentStartEventResult,
@@ -8,7 +8,7 @@ import type {
 	ExtensionContext,
 	ExtensionHandler,
 	SessionStartEvent,
-} from "@tau/tau-coding-agent/extensibility/extensions";
+} from "tau/extensibility/extensions";
 import type { VcsGitRepo } from "@tau/tau-natives";
 import * as vcs from "@tau/tau-natives/vcs";
 import { TempDir } from "@tau/tau-utils";

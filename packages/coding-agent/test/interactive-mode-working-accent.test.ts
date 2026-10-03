@@ -1,11 +1,11 @@
 import { afterAll, afterEach, describe, expect, it, vi } from "bun:test";
 import { stripVTControlCharacters } from "node:util";
-import { resetSettingsForTest, Settings, settings } from "@tau/tau-coding-agent/config/settings";
-import { InteractiveMode } from "@tau/tau-coding-agent/modes/interactive-mode";
+import { resetSettingsForTest, Settings, settings } from "tau/config/settings";
+import { InteractiveMode } from "tau/modes/interactive-mode";
 import { initTheme, theme } from "@tau/tau-tui/theme";
-import type { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import { executeBuiltinSlashCommand } from "@tau/tau-coding-agent/slash-commands/builtin-registry";
+import type { AgentSession } from "tau/session/agent-session";
+import { SessionManager } from "tau/session/session-manager";
+import { executeBuiltinSlashCommand } from "tau/slash-commands/builtin-registry";
 import * as sessionColor from "@tau/tau-tui/theme/session-color";
 import { adjustHsv, TempDir } from "@tau/tau-utils";
 

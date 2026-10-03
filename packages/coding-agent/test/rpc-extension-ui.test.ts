@@ -5,7 +5,7 @@ import {
 	type PendingExtensionRequest,
 	requestRpcDialog,
 	requestRpcSelect,
-} from "@tau/tau-coding-agent/modes/rpc/rpc-mode";
+} from "tau/modes/rpc/rpc-mode";
 
 function requireRequest(frame: object | undefined): { id: string } {
 	if (!frame || !("id" in frame)) {

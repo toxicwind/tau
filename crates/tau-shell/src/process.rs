@@ -12,7 +12,7 @@ use parking_lot::Mutex;
 /// Defined in `tau-builtins` alongside the process-table snapshots its process
 /// builtins read, and re-exported here so this module — and `tau-natives`
 /// through it — keeps one status type for both concerns.
-pub use pi_builtins::ProcessStatus;
+pub use tau_builtins::ProcessStatus;
 
 use crate::cancel::CancelToken;
 

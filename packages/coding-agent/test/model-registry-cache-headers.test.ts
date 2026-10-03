@@ -6,8 +6,8 @@ import * as path from "node:path";
 import { writeModelCache } from "@tau/tau-catalog/model-cache";
 import { getBundledModels } from "@tau/tau-catalog/models";
 import { resolveModelCacheProviderId } from "@tau/tau-catalog/provider-models";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { ModelRegistry } from "tau/config/model-registry";
+import { AuthStorage } from "tau/session/auth-storage";
 import { removeSyncWithRetries } from "@tau/tau-utils";
 
 describe("startup model cache header restoration (#5780)", () => {

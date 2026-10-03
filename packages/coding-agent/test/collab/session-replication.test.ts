@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { isBlobRef } from "@tau/tau-coding-agent/session/blob-store";
-import type { SessionEntry } from "@tau/tau-coding-agent/session/session-entries";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { isBlobRef } from "tau/session/blob-store";
+import type { SessionEntry } from "tau/session/session-entries";
+import { SessionManager } from "tau/session/session-manager";
 import { TempDir } from "@tau/tau-utils";
 
 const tempDirs: TempDir[] = [];

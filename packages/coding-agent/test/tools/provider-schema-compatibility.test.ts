@@ -9,9 +9,9 @@ import {
 	validateSchemaCompatibility,
 	validateStrictSchemaEnforcement,
 } from "@tau/tau-ai/utils/schema";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { createTools, HIDDEN_TOOLS, type ToolSession } from "@tau/tau-coding-agent/tools";
-import { createVibeTools } from "@tau/tau-coding-agent/tools/vibe";
+import { Settings } from "tau/config/settings";
+import { createTools, HIDDEN_TOOLS, type ToolSession } from "tau/tools";
+import { createVibeTools } from "tau/tools/vibe";
 
 interface ToolSchemaEntry {
 	name: string;

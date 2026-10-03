@@ -18,16 +18,16 @@ import * as ai from "@tau/tau-ai";
 import { encodeTextSignatureV1 } from "@tau/tau-ai/providers/openai-shared";
 import type { AssistantMessage, Model, ProviderPayload, Usage } from "@tau/tau-ai/types";
 import { getBundledModel } from "@tau/tau-catalog/models";
-import { buildSessionContext } from "@tau/tau-coding-agent/session/session-context";
+import { buildSessionContext } from "tau/session/session-context";
 import type {
 	CompactionEntry,
 	ModelChangeEntry,
 	SessionEntry,
 	SessionMessageEntry,
 	ThinkingLevelChangeEntry,
-} from "@tau/tau-coding-agent/session/session-entries";
-import { parseSessionEntries } from "@tau/tau-coding-agent/session/session-loader";
-import { migrateSessionEntries } from "@tau/tau-coding-agent/session/session-migrations";
+} from "tau/session/session-entries";
+import { parseSessionEntries } from "tau/session/session-loader";
+import { migrateSessionEntries } from "tau/session/session-migrations";
 import { mockFetch } from "./helpers/fetch-mock";
 import { e2eApiKey } from "./utilities";
 

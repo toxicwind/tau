@@ -1,7 +1,7 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
 import * as os from "node:os";
 import * as path from "node:path";
-import { formatScreenshot, resizeImage } from "@tau/tau-coding-agent/utils/image-resize";
+import { formatScreenshot, resizeImage } from "tau/utils/image-resize";
 
 describe("formatScreenshot", () => {
 	function fakeResized(

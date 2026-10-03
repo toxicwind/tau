@@ -3,13 +3,13 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import * as natives from "@tau/tau-natives";
-import { clearWorktrees } from "@tau/tau-coding-agent/cli/worktree-cli";
+import { clearWorktrees } from "tau/cli/worktree-cli";
 import {
 	ISOLATION_OWNER_FILE,
 	RETAINED_BACKEND_FILE,
 	writeIsolationOwner,
 	writeRetainedBackend,
-} from "@tau/tau-coding-agent/task/isolation-ownership";
+} from "tau/task/isolation-ownership";
 import { setWorktreesDir } from "@tau/tau-utils";
 
 /**

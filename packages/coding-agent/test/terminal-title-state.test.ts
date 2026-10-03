@@ -7,7 +7,7 @@ import {
 	setSessionTerminalTitle,
 	setTerminalTitleSpinnerStyle,
 	setTerminalTitleState,
-} from "@tau/tau-coding-agent/utils/title-generator";
+} from "tau/utils/title-generator";
 import { setTerminalHeadless } from "@tau/tau-utils";
 import { mockWindowsConsoleTitle, type WindowsConsoleTitleMock } from "./terminal-title-test-utils";
 

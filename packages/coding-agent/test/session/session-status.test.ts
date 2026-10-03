@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test";
-import { isAssistantMessageLine } from "@tau/tau-coding-agent/session/session-entries";
-import type { SessionStatus } from "@tau/tau-coding-agent/session/session-listing";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import { MemorySessionStorage } from "@tau/tau-coding-agent/session/session-storage";
+import { isAssistantMessageLine } from "tau/session/session-entries";
+import type { SessionStatus } from "tau/session/session-listing";
+import { SessionManager } from "tau/session/session-manager";
+import { MemorySessionStorage } from "tau/session/session-storage";
 const SESSION_DIR = "/sessions/status-proj";
 
 function line(obj: unknown): string {

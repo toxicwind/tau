@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
 import type { FileDiagnosticsResult } from "@tau/tau-tui/tools/lsp";
-import { DiagnosticsLedger, diagnosticIdentity } from "@tau/tau-coding-agent/lsp/diagnostics-ledger";
+import { DiagnosticsLedger, diagnosticIdentity } from "tau/lsp/diagnostics-ledger";
 
 const FILE_A = "/repo/src/a.ts";
 const FILE_B = "/repo/src/b.ts";

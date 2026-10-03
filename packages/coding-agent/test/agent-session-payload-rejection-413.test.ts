@@ -7,12 +7,12 @@ import type { AssistantMessage } from "@tau/tau-ai";
 import * as AIError from "@tau/tau-ai/error";
 import { createMockModel } from "@tau/tau-ai/providers/mock";
 import { getBundledModel } from "@tau/tau-catalog/models";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { AgentSession, type AgentSessionEvent } from "@tau/tau-coding-agent/session/agent-session";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
-import { SessionMaintenance } from "@tau/tau-coding-agent/session/session-maintenance";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
+import { AgentSession, type AgentSessionEvent } from "tau/session/agent-session";
+import { AuthStorage } from "tau/session/auth-storage";
+import { SessionMaintenance } from "tau/session/session-maintenance";
+import { SessionManager } from "tau/session/session-manager";
 
 /** #9235: byte/media HTTP 413s must not route into token-context compaction. */
 

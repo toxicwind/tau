@@ -4,13 +4,13 @@ import * as os from "node:os";
 import * as path from "node:path";
 import type { AssistantMessage, Message, Usage } from "@tau/tau-ai";
 import { BtwHistoryPanel } from "@tau/tau-tui/overlays/btw-history-panel";
-import { BtwController } from "@tau/tau-coding-agent/modes/controllers/btw-controller";
+import { BtwController } from "tau/modes/controllers/btw-controller";
 import { initTheme } from "@tau/tau-tui/theme";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
-import { type BtwHistoryRecord, BtwHistoryStore, getBtwTurns } from "@tau/tau-coding-agent/session/btw-history";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import type { InteractiveModeContext } from "tau/modes/types";
+import { type BtwHistoryRecord, BtwHistoryStore, getBtwTurns } from "tau/session/btw-history";
+import { SessionManager } from "tau/session/session-manager";
 import { TRUNCATE_LENGTHS } from "@tau/tau-tui/render/render-utils";
-import * as clipboard from "@tau/tau-coding-agent/utils/clipboard";
+import * as clipboard from "tau/utils/clipboard";
 import { Container, type TUI } from "@tau/tau-tui";
 
 interface TurnArgs {

@@ -1,12 +1,12 @@
 import { afterEach, describe, expect, test } from "bun:test";
 import type { Api, Model } from "@tau/tau-ai";
 import { buildModel } from "@tau/tau-catalog/build";
-import { kNoAuth } from "@tau/tau-coding-agent/config/model-registry";
+import { kNoAuth } from "tau/config/model-registry";
 import {
 	type ModelLookupRegistry,
 	resolveModelOverrideWithAuthFallback,
-} from "@tau/tau-coding-agent/config/model-resolver";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+} from "tau/config/model-resolver";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
 
 /**
  * Regression test for #985.

@@ -8,7 +8,7 @@ import {
 	type SessionEntry,
 	sessionEntryToContextMessages,
 	serializeConversation,
-} from "@tau/tau-coding-agent/extensibility/legacy-tau-coding-agent-shim";
+} from "tau/extensibility/legacy-tau-coding-agent-shim";
 
 // Issue #6583: pi extensions import `estimateTokens` from
 // `@earendil-works/tau-coding-agent`, which aliases to this shim. Legacy pi

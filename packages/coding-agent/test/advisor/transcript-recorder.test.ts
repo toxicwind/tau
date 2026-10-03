@@ -21,7 +21,7 @@ import {
 	AdvisorTranscriptRecorder,
 	advisorTranscriptFilename,
 	loadAdvisorTranscriptCosts,
-} from "@tau/tau-coding-agent/advisor/transcript-recorder";
+} from "tau/advisor/transcript-recorder";
 import { removeWithRetries } from "@tau/tau-utils";
 
 interface AdvisorEntry {

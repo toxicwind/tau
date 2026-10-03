@@ -3,8 +3,8 @@ import * as fs from "node:fs";
 import * as fsp from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import { readTerminalBreadcrumbEntry } from "@tau/tau-coding-agent/session/session-paths";
+import { SessionManager } from "tau/session/session-manager";
+import { readTerminalBreadcrumbEntry } from "tau/session/session-paths";
 import { getTerminalId } from "@tau/tau-tui";
 import { getConfigRootDir, getTerminalSessionsDir, setAgentDir } from "@tau/tau-utils";
 

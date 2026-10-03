@@ -1,9 +1,9 @@
 import { Database } from "bun:sqlite";
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { AgentStorage } from "@tau/tau-coding-agent/session/agent-storage";
-import { createSubagentSettings } from "@tau/tau-coding-agent/task/executor";
+import { Settings } from "tau/config/settings";
+import { AgentStorage } from "tau/session/agent-storage";
+import { createSubagentSettings } from "tau/task/executor";
 import { TempDir } from "@tau/tau-utils";
 
 const MODEL_PERF_FLUSH_DELAY_MS = 100;

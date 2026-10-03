@@ -9,12 +9,12 @@ import type {
 	ResetCreditTarget,
 	UsageReport,
 } from "@tau/tau-ai";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { PluginManager } from "@tau/tau-coding-agent/extensibility/plugins";
-import { MarketplaceManager } from "@tau/tau-coding-agent/extensibility/plugins/marketplace";
-import type { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
-import type { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import { executeAcpBuiltinSlashCommand } from "@tau/tau-coding-agent/slash-commands/acp-builtins";
+import { Settings } from "tau/config/settings";
+import { PluginManager } from "tau/extensibility/plugins";
+import { MarketplaceManager } from "tau/extensibility/plugins/marketplace";
+import type { AgentSession } from "tau/session/agent-session";
+import type { SessionManager } from "tau/session/session-manager";
+import { executeAcpBuiltinSlashCommand } from "tau/slash-commands/acp-builtins";
 import { getProjectDir, removeWithRetries, setProjectDir } from "@tau/tau-utils";
 
 interface FakeAcpBuiltinSession {
@@ -1363,7 +1363,7 @@ describe("wave 5 — adapters and polish", () => {
 	it("/mcp add foo --url https://example.com --token X --scope project: outputs success or propagates write error", async () => {
 		// Uses project scope so it writes to /tmp/project/.tau/mcp.json which test infra controls.
 		// We verify the command either reports success or a meaningful error (not a parse error).
-		const mcpModule = await import("@tau/tau-coding-agent/mcp/config-writer");
+		const mcpModule = await import("tau/mcp/config-writer");
 		const spy = spyOn(mcpModule, "addMCPServer").mockResolvedValue(undefined);
 		try {
 			const { output, runtime } = createRuntime();
@@ -1401,7 +1401,7 @@ describe("wave 5 — adapters and polish", () => {
 
 	// /ssh add — spy on addSSHHost
 	it("/ssh add foo --host x --user y --scope user: calls addSSHHost", async () => {
-		const sshModule = await import("@tau/tau-coding-agent/ssh/config-writer");
+		const sshModule = await import("tau/ssh/config-writer");
 		const spy = spyOn(sshModule, "addSSHHost").mockResolvedValue(undefined);
 		try {
 			const { output, runtime } = createRuntime();
@@ -1505,7 +1505,7 @@ describe("wave 5 — adapters and polish", () => {
 
 	// /marketplace discover bulleted list
 	it("/marketplace discover: output is bulleted with '  - ' token", async () => {
-		const { MarketplaceManager } = await import("@tau/tau-coding-agent/extensibility/plugins/marketplace");
+		const { MarketplaceManager } = await import("tau/extensibility/plugins/marketplace");
 		const discoverSpy = spyOn(MarketplaceManager.prototype, "listAvailablePlugins").mockResolvedValue([
 			{ name: "hello", version: "1.0.0", description: "A greeting plugin" } as never,
 			{ name: "world", version: "2.0.0", description: undefined } as never,

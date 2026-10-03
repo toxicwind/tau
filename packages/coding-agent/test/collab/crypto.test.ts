@@ -5,7 +5,7 @@ import {
 	importRoomKey,
 	open,
 	seal,
-} from "@tau/tau-coding-agent/collab/crypto";
+} from "tau/collab/crypto";
 import {
 	type CollabFrame,
 	DEFAULT_RELAY_URL,
@@ -16,7 +16,7 @@ import {
 	parseCollabLink,
 	rewriteEnvelopePeer,
 	unpackEnvelope,
-} from "@tau/tau-coding-agent/collab/protocol";
+} from "tau/collab/protocol";
 
 describe("collab crypto", () => {
 	it("round-trips a frame through seal/open", async () => {

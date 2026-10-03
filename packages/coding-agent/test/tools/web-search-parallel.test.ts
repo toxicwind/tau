@@ -1,10 +1,10 @@
 import { afterAll, afterEach, beforeEach, describe, expect, it, setSystemTime, vi } from "bun:test";
 import { AuthStorage, type FetchImpl } from "@tau/tau-ai";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { resolveConfigValue } from "@tau/tau-coding-agent/config/resolve-config-value";
-import type { AgentStorage } from "@tau/tau-coding-agent/session/agent-storage";
-import { searchWithParallel } from "@tau/tau-coding-agent/web/parallel";
-import { ParallelProvider, searchParallel } from "@tau/tau-coding-agent/web/search/providers/parallel";
+import { ModelRegistry } from "tau/config/model-registry";
+import { resolveConfigValue } from "tau/config/resolve-config-value";
+import type { AgentStorage } from "tau/session/agent-storage";
+import { searchWithParallel } from "tau/web/parallel";
+import { ParallelProvider, searchParallel } from "tau/web/search/providers/parallel";
 import { USER_AGENT } from "@tau/tau-utils";
 import { createInMemoryAuthStorage } from "../helpers/agent-session-setup";
 

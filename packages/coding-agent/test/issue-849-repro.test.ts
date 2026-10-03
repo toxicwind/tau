@@ -1,11 +1,11 @@
 import { describe, expect, it } from "bun:test";
 import type { AssistantMessage } from "@tau/tau-ai";
-import { buildSessionContext } from "@tau/tau-coding-agent/session/session-context";
+import { buildSessionContext } from "tau/session/session-context";
 import type {
 	ModelChangeEntry,
 	SessionEntry,
 	SessionMessageEntry,
-} from "@tau/tau-coding-agent/session/session-entries";
+} from "tau/session/session-entries";
 
 /**
  * Issue #849: After a user explicitly switches to gpt-5.5, the session reverts

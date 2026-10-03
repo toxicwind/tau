@@ -8,7 +8,7 @@ import {
 	parseStreamingJson,
 	repairJson,
 	streamSimpleOpenAIResponses,
-} from "@tau/tau-coding-agent/extensibility/legacy-tau-ai-shim";
+} from "tau/extensibility/legacy-tau-ai-shim";
 
 // Issue #6859: pi extensions import runtime helpers from the `@earendil-works/tau-ai`
 // (aliased to `@tau/tau-ai`) package root that tau's barrel no longer forwards.

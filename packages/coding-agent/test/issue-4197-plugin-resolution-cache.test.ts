@@ -2,12 +2,12 @@ import { afterEach, expect, mock, spyOn, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { clearClaudePluginRootsCache } from "@tau/tau-coding-agent/discovery/helpers";
+import { clearClaudePluginRootsCache } from "tau/discovery/helpers";
 import {
 	__resetLegacyPiResolutionCache,
 	__rewriteLegacyExtensionSourceForTests,
-} from "@tau/tau-coding-agent/extensibility/plugins/legacy-tau-compat";
-import { getEnabledPlugins } from "@tau/tau-coding-agent/extensibility/plugins/loader";
+} from "tau/extensibility/plugins/legacy-tau-compat";
+import { getEnabledPlugins } from "tau/extensibility/plugins/loader";
 import { removeWithRetries } from "@tau/tau-utils";
 
 const tempRoots: string[] = [];

@@ -131,7 +131,7 @@ Three commands, then you're talking to the agent. Prefer the upstream binary unt
 
 ## Config & optional services
 
-Config lives in `~/.tau` (`PI_CONFIG_DIR=${HOME}/.tau`). The model catalog is compiled from `packages/catalog/src/compat/rules/**/*.kdl` → `rules.json`; regenerate it after any KDL edit.
+Config lives in `~/.tau` (`TAU_CONFIG_DIR=${HOME}/.tau`). The model catalog is compiled from `packages/catalog/src/compat/rules/**/*.kdl` → `rules.json`; regenerate it after any KDL edit.
 
 **Port SSOT** (`config/ports.env`) — the only place ports are defined:
 

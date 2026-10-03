@@ -9,15 +9,15 @@ import type {
 	BlobBrokerPurgeRequest,
 	BlobBrokerPurgeResponse,
 	BlobBrokerStatus,
-} from "@tau/tau-coding-agent/blob-broker/protocol";
-import { ProviderFileCache } from "@tau/tau-coding-agent/blob-broker/provider-file-types";
+} from "tau/blob-broker/protocol";
+import { ProviderFileCache } from "tau/blob-broker/provider-file-types";
 import {
 	type ImagesCliDependencies,
 	type ImagesCommandArgs,
 	type ImagesResolvedConfig,
 	runImagesCommand,
-} from "@tau/tau-coding-agent/cli/images-cli";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
+} from "tau/cli/images-cli";
+import { Settings } from "tau/config/settings";
 import type { FetchImpl } from "@tau/tau-utils";
 
 interface CapturedRequest {

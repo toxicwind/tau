@@ -5,17 +5,17 @@
  * rule of the same name overrides a bundled default (first-wins dedup).
  */
 import { describe, expect, it } from "bun:test";
-import { getCapability } from "@tau/tau-coding-agent/capability";
+import { getCapability } from "tau/capability";
 import {
 	BUILTIN_DEFAULTS_PROVIDER_ID,
 	compileRuleCondition,
 	type Rule,
 	ruleCapability,
-} from "@tau/tau-coding-agent/capability/rule";
-import type { LoadContext } from "@tau/tau-coding-agent/capability/types";
+} from "tau/capability/rule";
+import type { LoadContext } from "tau/capability/types";
 // Register all discovery providers as a side effect.
-import "@tau/tau-coding-agent/discovery";
-import { TtsrManager, type TtsrMatchContext } from "@tau/tau-coding-agent/export/ttsr";
+import "tau/discovery";
+import { TtsrManager, type TtsrMatchContext } from "tau/export/ttsr";
 
 function ruleProvider() {
 	const cap = getCapability(ruleCapability.id);

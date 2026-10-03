@@ -11,10 +11,10 @@ import type {
 import { SpeculativeOperationCoordinator } from "@tau/tau-agent-core";
 import type { Message } from "@tau/tau-ai";
 import { createMockModel } from "@tau/tau-ai/providers/mock";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { CodingAgentSpeculativeExecutionHost } from "@tau/tau-coding-agent/speculation/host";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
-import { ReadTool } from "@tau/tau-coding-agent/tools/read";
+import { Settings } from "tau/config/settings";
+import { CodingAgentSpeculativeExecutionHost } from "tau/speculation/host";
+import type { ToolSession } from "tau/tools";
+import { ReadTool } from "tau/tools/read";
 import { removeWithRetries } from "@tau/tau-utils";
 
 const temporaryDirectories: string[] = [];

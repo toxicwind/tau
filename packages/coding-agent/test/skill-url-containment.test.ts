@@ -2,10 +2,10 @@ import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { Skill } from "@tau/tau-coding-agent/extensibility/skills";
-import { parseInternalUrl } from "@tau/tau-coding-agent/internal-urls/parse";
-import { SkillProtocolHandler } from "@tau/tau-coding-agent/internal-urls/skill-protocol";
-import { expandInternalUrls, resolveSkillUrlToPathAsync } from "@tau/tau-coding-agent/tools/bash-skill-urls";
+import type { Skill } from "tau/extensibility/skills";
+import { parseInternalUrl } from "tau/internal-urls/parse";
+import { SkillProtocolHandler } from "tau/internal-urls/skill-protocol";
+import { expandInternalUrls, resolveSkillUrlToPathAsync } from "tau/tools/bash-skill-urls";
 
 let tempDir: string;
 let pluginRoot: string;

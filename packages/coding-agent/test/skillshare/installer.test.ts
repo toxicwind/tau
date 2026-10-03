@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { SkillshareClient } from "@tau/tau-coding-agent/skillshare/client";
+import { SkillshareClient } from "tau/skillshare/client";
 import {
 	computeIntegrity,
 	installSkillPackages,
@@ -10,7 +10,7 @@ import {
 	type SkillInstallHooks,
 	uninstallSkillPackages,
 	updateSkillPackages,
-} from "@tau/tau-coding-agent/skillshare/installer";
+} from "tau/skillshare/installer";
 import {
 	getSkillStorePath,
 	getSkillshareStoreDir,
@@ -19,8 +19,8 @@ import {
 	type SkillsLock,
 	writeSkillsLock,
 	writeSkillsManifest,
-} from "@tau/tau-coding-agent/skillshare/manifest";
-import { writeTar } from "@tau/tau-coding-agent/skillshare/tar";
+} from "tau/skillshare/manifest";
+import { writeTar } from "tau/skillshare/tar";
 import { removeWithRetries } from "@tau/tau-utils";
 import { getAgentDir, setAgentDir } from "@tau/tau-utils/dirs";
 import type { SkillPackument, SkillVersionManifest, SkillVersionSummary } from "@tau/tau-wire/skillshare";

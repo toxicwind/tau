@@ -3,7 +3,7 @@ import * as fs from "node:fs";
 import * as fsp from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { cleanupEmptyMoveSession, SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { cleanupEmptyMoveSession, SessionManager } from "tau/session/session-manager";
 import { getConfigRootDir, setAgentDir } from "@tau/tau-utils";
 
 import { makeAssistantMessage } from "./helpers";

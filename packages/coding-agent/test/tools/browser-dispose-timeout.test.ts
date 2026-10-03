@@ -12,8 +12,8 @@
  */
 
 import { describe, expect, it, spyOn, vi } from "bun:test";
-import * as attach from "@tau/tau-coding-agent/tools/browser/attach";
-import { type BrowserHandle, releaseBrowser } from "@tau/tau-coding-agent/tools/browser/registry";
+import * as attach from "tau/tools/browser/attach";
+import { type BrowserHandle, releaseBrowser } from "tau/tools/browser/registry";
 
 /** Build a headless handle whose `browser.close()` never resolves. */
 function makeHangingHeadlessHandle(pid: number | undefined): {

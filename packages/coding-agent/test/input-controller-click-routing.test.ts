@@ -1,11 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { KeybindingsManager } from "@tau/tau-tui/app-keybindings";
-import { resetSettingsForTest, Settings, settings } from "@tau/tau-coding-agent/config/settings";
+import { resetSettingsForTest, Settings, settings } from "tau/config/settings";
 import { PINNED_HUD_TOGGLE_ID } from "@tau/tau-tui/prompt/composer";
-import { InputController } from "@tau/tau-coding-agent/modes/controllers/input-controller";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
-import { AgentRegistry } from "@tau/tau-coding-agent/registry/agent-registry";
-import type { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import { InputController } from "tau/modes/controllers/input-controller";
+import type { InteractiveModeContext } from "tau/modes/types";
+import { AgentRegistry } from "tau/registry/agent-registry";
+import type { AgentSession } from "tau/session/agent-session";
 
 const ESC = String.fromCharCode(27);
 // SGR click on viewport row 2 (1-based y=3): the pinned expander row when the

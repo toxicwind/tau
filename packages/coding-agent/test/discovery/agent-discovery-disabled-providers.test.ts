@@ -13,11 +13,11 @@ import {
 	disableUserSource,
 	enableProvider,
 	enableUserSource,
-} from "@tau/tau-coding-agent/capability";
-import { clearCache as clearFsCache } from "@tau/tau-coding-agent/capability/fs";
-import { resolveAgentModelPatterns } from "@tau/tau-coding-agent/config/model-resolver";
-import { clearClaudePluginRootsCache } from "@tau/tau-coding-agent/discovery/helpers";
-import { discoverAgents } from "@tau/tau-coding-agent/task/discovery";
+} from "tau/capability";
+import { clearCache as clearFsCache } from "tau/capability/fs";
+import { resolveAgentModelPatterns } from "tau/config/model-resolver";
+import { clearClaudePluginRootsCache } from "tau/discovery/helpers";
+import { discoverAgents } from "tau/task/discovery";
 import { removeSyncWithRetries } from "@tau/tau-utils";
 import { restoreEnvValue } from "../helpers/settings-test-state";
 const PLUGIN_AGENT_MD = [

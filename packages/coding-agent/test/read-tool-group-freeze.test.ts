@@ -1,5 +1,5 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
-import { resetSettingsForTest, Settings, settings } from "@tau/tau-coding-agent/config/settings";
+import { resetSettingsForTest, Settings, settings } from "tau/config/settings";
 import { ReadToolGroupComponent } from "@tau/tau-tui/chat/read-tool-group";
 import { TranscriptContainer } from "@tau/tau-tui/chrome/transcript-container";
 import * as themeModule from "@tau/tau-tui/theme";

@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import { HistoryStorage } from "@tau/tau-coding-agent/session/history-storage";
+import { HistoryStorage } from "tau/session/history-storage";
 import { TempDir } from "@tau/tau-utils";
 
 let tempDir: TempDir | null = null;

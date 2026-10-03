@@ -8,7 +8,7 @@ import {
 	flushTelemetryExport,
 	initTelemetryExport,
 	isTelemetryExportEnabled,
-} from "@tau/tau-coding-agent/telemetry-export";
+} from "tau/telemetry-export";
 import { logger } from "@tau/tau-utils";
 import { metrics, trace } from "@opentelemetry/api";
 
@@ -43,7 +43,7 @@ const enabled = isTelemetryExportEnabled();
 const span = trace.getTracer("@tau/tau-agent-core").startSpan("non-otlp-probe");
 span.end();
 logger.error("non-OTLP probe");
-metrics.getMeter("@tau/tau-coding-agent").createCounter("non_otlp_probe").add(1);
+metrics.getMeter("tau").createCounter("non_otlp_probe").add(1);
 await flushTelemetryExport();
 await server.stop(true);
 

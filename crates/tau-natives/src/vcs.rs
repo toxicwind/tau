@@ -8,7 +8,7 @@ use std::{
 
 use napi::{Env, Result, bindgen_prelude::*};
 use napi_derive::napi;
-use pi_vcs::types as core;
+use tau_vcs::types as core;
 use tokio_util::sync::CancellationToken;
 
 use crate::{
@@ -19,14 +19,14 @@ use crate::{
 /// Build the JS `VcsError` on the JS thread and hand it to napi as the
 /// rejection/throw value. napi retains a reference to the constructed object,
 /// so JS receives exactly this error: a real `Error` with `name: "VcsError"`,
-/// a machine-readable `code` (the [`pi_vcs::Error::kind`] discriminant), and
+/// a machine-readable `code` (the [`tau_vcs::Error::kind`] discriminant), and
 /// the CLI result fields (`exitCode`/`stdout`/`stderr`; non-CLI failures
 /// mirror the message into `stderr` and synthesize `exitCode: 1`).
-fn rich_error(env: Env, err: pi_vcs::Error) -> napi::Error {
+fn rich_error(env: Env, err: tau_vcs::Error) -> napi::Error {
 	let message = err.to_string();
 	let kind = err.kind();
 	let (exit_code, stdout, stderr) = match err {
-		pi_vcs::Error::Cli { exit_code, stdout, stderr, .. } => (exit_code, stdout, stderr),
+		tau_vcs::Error::Cli { exit_code, stdout, stderr, .. } => (exit_code, stdout, stderr),
 		_ => (1, String::new(), message.clone()),
 	};
 	let built: Result<napi::Error> = (|| {
@@ -47,7 +47,7 @@ fn rich_error(env: Env, err: pi_vcs::Error) -> napi::Error {
 fn vcs_future<'env, T: ToNapiValue + Send + 'static>(
 	env: &'env Env,
 	tag: &'static str,
-	work: impl Future<Output = pi_vcs::Result<T>> + Send + 'static,
+	work: impl Future<Output = tau_vcs::Result<T>> + Send + 'static,
 ) -> Result<Object<'env>> {
 	let (deferred, promise) = env.create_deferred()?;
 	spawn(async move {
@@ -59,9 +59,9 @@ fn vcs_future<'env, T: ToNapiValue + Send + 'static>(
 }
 
 /// Promise produced by VCS blocking tasks: [`task::MappedPromise`] carrying
-/// [`pi_vcs::Error`] for the JS-thread rich-error conversion. Named
+/// [`tau_vcs::Error`] for the JS-thread rich-error conversion. Named
 /// `Promise` so the napi macro emits a plain `Promise<T>` TS return type.
-type Promise<T> = task::MappedPromise<T, pi_vcs::Error>;
+type Promise<T> = task::MappedPromise<T, tau_vcs::Error>;
 
 fn path_string(path: impl AsRef<Path>) -> String {
 	path.as_ref().to_string_lossy().into_owned()
@@ -434,7 +434,7 @@ impl TryFrom<VcsHunkSelection> for core::HunkSelection {
 	}
 }
 
-/// Convert a panic escaping a VCS operation into a typed [`pi_vcs::Error`].
+/// Convert a panic escaping a VCS operation into a typed [`tau_vcs::Error`].
 ///
 /// gitoxide `.expect(...)`s on fallible OS work in places — e.g. worker-thread
 /// spawn inside its parallel status walk fails under memory pressure (Windows
@@ -443,7 +443,7 @@ impl TryFrom<VcsHunkSelection> for core::HunkSelection {
 /// either way, but its rejection bypasses [`rich_error`]; catching here
 /// preserves the structured `VcsError` contract (name/code/stderr) for every
 /// failure mode.
-fn catch_panic<T>(tag: &'static str, f: impl FnOnce() -> pi_vcs::Result<T>) -> pi_vcs::Result<T> {
+fn catch_panic<T>(tag: &'static str, f: impl FnOnce() -> tau_vcs::Result<T>) -> tau_vcs::Result<T> {
 	// AssertUnwindSafe: the captured repo handles are read-mostly caches; an
 	// abandoned operation cannot leave them logically corrupt.
 	match std::panic::catch_unwind(std::panic::AssertUnwindSafe(f)) {
@@ -453,35 +453,35 @@ fn catch_panic<T>(tag: &'static str, f: impl FnOnce() -> pi_vcs::Result<T>) -> p
 			// remaining step that can panic again.
 			let message = crate::crash_handler::panic_payload(&*payload);
 			task::dispose_panic_payload(payload);
-			Err(pi_vcs::Error::backend(tag, format!("native panic: {message}")))
+			Err(tau_vcs::Error::backend(tag, format!("native panic: {message}")))
 		},
 	}
 }
 
 fn blocking<T: Send + 'static + ToNapiValue + TypeName>(
 	tag: &'static str,
-	repo: Arc<pi_vcs::git::GitRepo>,
+	repo: Arc<tau_vcs::git::GitRepo>,
 	signal: Option<Unknown>,
-	f: impl FnOnce(&pi_vcs::git::GitRepo) -> pi_vcs::Result<T> + Send + 'static,
+	f: impl FnOnce(&tau_vcs::git::GitRepo) -> tau_vcs::Result<T> + Send + 'static,
 ) -> Promise<T> {
 	let ct = task::CancelToken::new(None, signal);
 	task::blocking_mapped(tag, ct, rich_error, move |ct| {
 		if ct.heartbeat().is_err() {
-			return Err(pi_vcs::Error::Canceled);
+			return Err(tau_vcs::Error::Canceled);
 		}
 		catch_panic(tag, || f(&repo))
 	})
 }
 fn repo_blocking<T: Send + 'static + ToNapiValue + TypeName>(
 	tag: &'static str,
-	repo: pi_vcs::Repo,
+	repo: tau_vcs::Repo,
 	signal: Option<Unknown>,
-	f: impl FnOnce(&pi_vcs::Repo) -> pi_vcs::Result<T> + Send + 'static,
+	f: impl FnOnce(&tau_vcs::Repo) -> tau_vcs::Result<T> + Send + 'static,
 ) -> Promise<T> {
 	let ct = task::CancelToken::new(None, signal);
 	task::blocking_mapped(tag, ct, rich_error, move |ct| {
 		if ct.heartbeat().is_err() {
-			return Err(pi_vcs::Error::Canceled);
+			return Err(tau_vcs::Error::Canceled);
 		}
 		catch_panic(tag, || f(&repo))
 	})
@@ -490,13 +490,13 @@ fn repo_blocking<T: Send + 'static + ToNapiValue + TypeName>(
 /// Backend-agnostic repository handle for portable VCS reads.
 #[napi]
 pub struct VcsRepo {
-	inner: pi_vcs::Repo,
+	inner: tau_vcs::Repo,
 }
 
 /// Discover the repository owning a directory.
 #[napi]
 pub fn vcs_discover(env: Env, dir: String) -> Result<Option<VcsRepo>> {
-	pi_vcs::detect(Path::new(&dir))
+	tau_vcs::detect(Path::new(&dir))
 		.map(|repo| repo.map(|inner| VcsRepo { inner }))
 		.map_err(|err| rich_error(env, err))
 }
@@ -505,7 +505,7 @@ pub fn vcs_discover(env: Env, dir: String) -> Result<Option<VcsRepo>> {
 /// prefer Jujutsu. Git-safe automation must keep using [`vcs_discover`].
 #[napi]
 pub fn vcs_discover_for_display(env: Env, dir: String) -> Result<Option<VcsRepo>> {
-	pi_vcs::detect_for_display(Path::new(&dir))
+	tau_vcs::detect_for_display(Path::new(&dir))
 		.map(|repo| repo.map(|inner| VcsRepo { inner }))
 		.map_err(|err| rich_error(env, err))
 }
@@ -549,10 +549,10 @@ impl VcsRepo {
 	/// Whether this backend implements a portable feature.
 	#[napi]
 	pub fn supports(&self, env: Env, feature: String) -> Result<bool> {
-		let parsed = pi_vcs::Feature::parse(&feature).ok_or_else(|| {
+		let parsed = tau_vcs::Feature::parse(&feature).ok_or_else(|| {
 			rich_error(
 				env,
-				pi_vcs::Error::backend(
+				tau_vcs::Error::backend(
 					"vcs supports",
 					format!("unknown feature `{feature}`; valid: stagedDiff, revDiff"),
 				),
@@ -608,7 +608,7 @@ impl VcsRepo {
 	) -> Promise<String> {
 		let options = core::StatusOptions::try_from(options);
 		repo_blocking("vcs.statusPorcelain", self.inner.clone(), signal, move |repo| {
-			repo.status_porcelain(&options.map_err(|error| pi_vcs::Error::Backend {
+			repo.status_porcelain(&options.map_err(|error| tau_vcs::Error::Backend {
 				context: "vcs status options",
 				message: error.to_string(),
 			})?)
@@ -701,20 +701,20 @@ impl VcsRepo {
 /// In-process Git repository handle.
 #[napi]
 pub struct VcsGitRepo {
-	inner: Arc<pi_vcs::git::GitRepo>,
+	inner: Arc<tau_vcs::git::GitRepo>,
 }
 
 /// Discover the Git checkout containing a directory.
 #[napi]
 pub fn vcs_git_discover(env: Env, dir: String) -> Result<Option<VcsGitRepo>> {
-	pi_vcs::git::GitRepo::discover(Path::new(&dir))
+	tau_vcs::git::GitRepo::discover(Path::new(&dir))
 		.map(|v| v.map(|inner| VcsGitRepo { inner: Arc::new(inner) }))
 		.map_err(|err| rich_error(env, err))
 }
 /// Discover Git metadata without opening the repository.
 #[napi]
 pub fn vcs_git_repo_info(env: Env, dir: String) -> Result<Option<VcsGitRepoInfo>> {
-	pi_vcs::git::discover_info(Path::new(&dir))
+	tau_vcs::git::discover_info(Path::new(&dir))
 		.map(|v| v.map(Into::into))
 		.map_err(|err| rich_error(env, err))
 }
@@ -819,7 +819,7 @@ impl VcsGitRepo {
 	) -> Promise<String> {
 		let options = core::StatusOptions::try_from(options);
 		blocking("vcs.statusPorcelain", self.inner.clone(), signal, move |r| {
-			r.status_porcelain(&options.map_err(|error| pi_vcs::Error::Backend {
+			r.status_porcelain(&options.map_err(|error| tau_vcs::Error::Backend {
 				context: "git status options",
 				message: error.to_string(),
 			})?)
@@ -1139,7 +1139,7 @@ impl VcsGitRepo {
 		let selections: Result<Vec<_>> = selections.into_iter().map(TryInto::try_into).collect();
 		blocking("vcs.stageHunks", self.inner.clone(), signal, move |r| {
 			r.stage_hunks(
-				&selections.map_err(|error| pi_vcs::Error::Backend {
+				&selections.map_err(|error| tau_vcs::Error::Backend {
 					context: "git hunk selection",
 					message: error.to_string(),
 				})?,
@@ -1226,7 +1226,7 @@ impl VcsGitRepo {
 		};
 		blocking("vcs.reset", self.inner.clone(), signal, move |r| {
 			r.reset(
-				mode.map_err(|error| pi_vcs::Error::Backend {
+				mode.map_err(|error| tau_vcs::Error::Backend {
 					context: "git reset mode",
 					message: error.to_string(),
 				})?,
@@ -1382,7 +1382,7 @@ pub fn vcs_git_clone<'e>(
 	let options = options.into();
 	let cancel = cancellation_token(signal);
 	vcs_future(env, "vcs.clone", async move {
-		pi_vcs::git::clone(&url, Path::new(&target), &options, cancel).await
+		tau_vcs::git::clone(&url, Path::new(&target), &options, cancel).await
 	})
 }
 /// Detach copied Git metadata.
@@ -1395,9 +1395,9 @@ pub fn vcs_detach_git_dir(
 	let ct = task::CancelToken::new(None, signal);
 	task::blocking_mapped("vcs.detachGitDir", ct, rich_error, move |ct| {
 		if ct.heartbeat().is_err() {
-			return Err(pi_vcs::Error::Canceled);
+			return Err(tau_vcs::Error::Canceled);
 		}
-		pi_vcs::git::detach_git_dir(Path::new(&worktree_root), Path::new(&source_common_dir)).map(
+		tau_vcs::git::detach_git_dir(Path::new(&worktree_root), Path::new(&source_common_dir)).map(
 			|v| {
 				match v {
 					core::DetachGitDirResult::NoGit => "no-git",
@@ -1412,7 +1412,7 @@ pub fn vcs_detach_git_dir(
 /// Join patch fragments.
 #[napi]
 pub fn vcs_join_patches(parts: Vec<String>) -> String {
-	pi_vcs::git::join_patches(&parts)
+	tau_vcs::git::join_patches(&parts)
 }
 /// Validate hunk selections.
 #[napi]
@@ -1424,7 +1424,7 @@ pub fn vcs_validate_hunk_selections(
 		.into_iter()
 		.filter_map(|v| v.try_into().ok())
 		.collect();
-	pi_vcs::git::validate_hunk_selections(&raw_diff, &selections)
+	tau_vcs::git::validate_hunk_selections(&raw_diff, &selections)
 		.into_iter()
 		.map(|v| VcsHunkSelectionError { path: v.path, message: v.message })
 		.collect()
@@ -1432,31 +1432,31 @@ pub fn vcs_validate_hunk_selections(
 /// Test whether a directory is a pure jj workspace.
 #[napi]
 pub fn vcs_is_pure_jj(env: Env, dir: String) -> Result<bool> {
-	pi_vcs::is_pure_jj(Path::new(&dir)).map_err(|err| rich_error(env, err))
+	tau_vcs::is_pure_jj(Path::new(&dir)).map_err(|err| rich_error(env, err))
 }
 
 /// In-process Jujutsu workspace handle.
 #[napi]
 pub struct VcsJjWorkspace {
-	inner: Arc<pi_vcs::jj::JjWorkspace>,
+	inner: Arc<tau_vcs::jj::JjWorkspace>,
 }
 /// Discover a Jujutsu workspace.
 #[napi]
 pub fn vcs_jj_discover(env: Env, dir: String) -> Result<Option<VcsJjWorkspace>> {
-	pi_vcs::jj::JjWorkspace::discover(Path::new(&dir))
+	tau_vcs::jj::JjWorkspace::discover(Path::new(&dir))
 		.map(|v| v.map(|inner| VcsJjWorkspace { inner: Arc::new(inner) }))
 		.map_err(|err| rich_error(env, err))
 }
 fn jj_blocking<T: Send + 'static + ToNapiValue + TypeName>(
 	tag: &'static str,
-	ws: Arc<pi_vcs::jj::JjWorkspace>,
+	ws: Arc<tau_vcs::jj::JjWorkspace>,
 	signal: Option<Unknown>,
-	f: impl FnOnce(&pi_vcs::jj::JjWorkspace) -> pi_vcs::Result<T> + Send + 'static,
+	f: impl FnOnce(&tau_vcs::jj::JjWorkspace) -> tau_vcs::Result<T> + Send + 'static,
 ) -> Promise<T> {
 	let ct = task::CancelToken::new(None, signal);
 	task::blocking_mapped(tag, ct, rich_error, move |ct| {
 		if ct.heartbeat().is_err() {
-			return Err(pi_vcs::Error::Canceled);
+			return Err(tau_vcs::Error::Canceled);
 		}
 		catch_panic(tag, || f(&ws))
 	})
@@ -1524,12 +1524,12 @@ mod tests {
 	/// the operation tag and panic message — never as an unwind.
 	#[test]
 	fn catch_panic_converts_native_panics_into_backend_errors() {
-		let err = catch_panic("vcs.test", || -> pi_vcs::Result<()> {
+		let err = catch_panic("vcs.test", || -> tau_vcs::Result<()> {
 			panic!("valid name: Os {{ code: 1455 }}")
 		})
 		.unwrap_err();
 		match err {
-			pi_vcs::Error::Backend { context, message } => {
+			tau_vcs::Error::Backend { context, message } => {
 				assert_eq!(context, "vcs.test");
 				assert!(message.contains("1455"), "panic message lost: {message}");
 			},

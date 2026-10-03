@@ -1,10 +1,10 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, type Mock, vi } from "bun:test";
 import type { AgentMessage } from "@tau/tau-agent-core";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { SelectorController } from "@tau/tau-coding-agent/modes/controllers/selector-controller";
+import { Settings } from "tau/config/settings";
+import { SelectorController } from "tau/modes/controllers/selector-controller";
 import { initTheme } from "@tau/tau-tui/theme";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
-import type { SessionTreeNode } from "@tau/tau-coding-agent/session/session-entries";
+import type { InteractiveModeContext } from "tau/modes/types";
+import type { SessionTreeNode } from "tau/session/session-entries";
 import { setKittyProtocolActive } from "@tau/tau-tui/keys";
 import { beginSettingsTest, restoreSettingsTestState, type SettingsTestState } from "./helpers/settings-test-state";
 

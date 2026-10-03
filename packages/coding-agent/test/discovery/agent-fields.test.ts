@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { Effort } from "@tau/tau-ai";
-import { parseAgentFields } from "@tau/tau-coding-agent/discovery/helpers";
+import { parseAgentFields } from "tau/discovery/helpers";
 import { AUTO_THINKING } from "@tau/tau-tui/thinking";
 
 describe("parseAgentFields", () => {

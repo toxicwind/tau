@@ -57,7 +57,7 @@ describe("getLatestRelease rename pointers", () => {
 	it("follows tau.rename to the new package and resolves version, dist, and names from its manifest", async () => {
 		const urls = stubRegistry({
 			"@new/tau": { version: "999.1.0", tau: { dist: "npm" } },
-			"@tau/tau-coding-agent": {
+			"tau": {
 				version: "999.0.0",
 				tau: { dist: "binary", rename: { package: "@new/tau", natives: "@new/natives" } },
 			},
@@ -69,25 +69,25 @@ describe("getLatestRelease rename pointers", () => {
 		expect(release.dist).toBe("npm");
 		expect(release.packages).toEqual({ pkg: "@new/tau", natives: "@new/natives" });
 		expect(urls).toEqual([
-			"https://registry.npmjs.org/@tau/tau-coding-agent/latest",
+			"https://registry.npmjs.org/tau/latest",
 			"https://registry.npmjs.org/@new/tau/latest",
 		]);
 	});
 	it("fetches the canary dist-tag when checking the canary channel", async () => {
 		const urls = stubRegistry({
-			"@tau/tau-coding-agent": { version: "999.0.0-canary.1" },
+			"tau": { version: "999.0.0-canary.1" },
 		});
 
 		await getLatestRelease({ channel: "canary" });
 
-		expect(urls).toEqual(["https://registry.npmjs.org/@tau/tau-coding-agent/canary"]);
+		expect(urls).toEqual(["https://registry.npmjs.org/tau/canary"]);
 	});
 
 	it("ignores a rename pointer that cycles back to an already-visited package", async () => {
 		const urls = stubRegistry({
-			"@tau/tau-coding-agent": {
+			"tau": {
 				version: "999.0.0",
-				tau: { rename: { package: "@tau/tau-coding-agent" } },
+				tau: { rename: { package: "tau" } },
 			},
 		});
 
@@ -95,7 +95,7 @@ describe("getLatestRelease rename pointers", () => {
 
 		expect(urls).toHaveLength(1);
 		expect(release.version).toBe("999.0.0");
-		expect(release.packages).toEqual({ pkg: "@tau/tau-coding-agent", natives: "@tau/tau-natives" });
+		expect(release.packages).toEqual({ pkg: "tau", natives: "@tau/tau-natives" });
 	});
 });
 
@@ -108,7 +108,7 @@ describe("getLatestRelease proxy errors", () => {
 		const fetchStub = Object.assign(
 			async () => {
 				throw new Error(
-					'UnsupportedProxyProtocol fetching "https://registry.npmjs.org/@tau/tau-coding-agent/latest". ' +
+					'UnsupportedProxyProtocol fetching "https://registry.npmjs.org/tau/latest". ' +
 						"For more information, pass `verbose: true` in the second argument to fetch()",
 				);
 			},

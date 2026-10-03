@@ -11,12 +11,12 @@ import { Database } from "bun:sqlite";
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import { mkdirSync } from "node:fs";
 import path from "node:path";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
-import { HindsightApi } from "@tau/tau-coding-agent/hindsight/client";
-import type { HindsightConfig } from "@tau/tau-coding-agent/hindsight/config";
-import { HindsightSessionState } from "@tau/tau-coding-agent/hindsight/state";
-import { mnemotauBackend } from "@tau/tau-coding-agent/mnemotau/backend";
-import { loadMnemotauConfig, type MnemotauBackendConfig } from "@tau/tau-coding-agent/mnemotau/config";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
+import { HindsightApi } from "tau/hindsight/client";
+import type { HindsightConfig } from "tau/hindsight/config";
+import { HindsightSessionState } from "tau/hindsight/state";
+import { mnemotauBackend } from "tau/mnemotau/backend";
+import { loadMnemotauConfig, type MnemotauBackendConfig } from "tau/mnemotau/config";
 import {
 	getMnemotauScopedDbPaths,
 	getMnemotauSessionState,
@@ -24,13 +24,13 @@ import {
 	loadMnemotauCore,
 	MnemotauSessionState,
 	setMnemotauSessionState,
-} from "@tau/tau-coding-agent/mnemotau/state";
-import type { AgentSessionEventListener } from "@tau/tau-coding-agent/session/agent-session";
-import type { ToolSession } from "@tau/tau-coding-agent/tools/index";
-import { MemoryEditTool } from "@tau/tau-coding-agent/tools/memory-edit";
-import { MemoryRecallTool } from "@tau/tau-coding-agent/tools/memory-recall";
-import { MemoryReflectTool } from "@tau/tau-coding-agent/tools/memory-reflect";
-import { MemoryRetainTool } from "@tau/tau-coding-agent/tools/memory-retain";
+} from "tau/mnemotau/state";
+import type { AgentSessionEventListener } from "tau/session/agent-session";
+import type { ToolSession } from "tau/tools/index";
+import { MemoryEditTool } from "tau/tools/memory-edit";
+import { MemoryRecallTool } from "tau/tools/memory-recall";
+import { MemoryReflectTool } from "tau/tools/memory-reflect";
+import { MemoryRetainTool } from "tau/tools/memory-retain";
 import { resetMemoryForTests } from "@tau/tau-mnemotau";
 import { logger, TempDir } from "@tau/tau-utils";
 

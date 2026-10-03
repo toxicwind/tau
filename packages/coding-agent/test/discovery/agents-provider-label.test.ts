@@ -6,7 +6,7 @@
  * rules, prompts, commands, and context/system files (never agents).
  */
 import { describe, expect, test } from "bun:test";
-import { getAllProvidersInfo } from "@tau/tau-coding-agent/discovery";
+import { getAllProvidersInfo } from "tau/discovery";
 
 describe("agents (config-standard) provider label", () => {
 	test("display name disambiguates from the /agents subagents feature", () => {

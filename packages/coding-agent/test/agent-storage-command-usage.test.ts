@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { AgentStorage } from "@tau/tau-coding-agent/session/agent-storage";
+import { AgentStorage } from "tau/session/agent-storage";
 import { TempDir } from "@tau/tau-utils";
 
 describe("AgentStorage command usage", () => {

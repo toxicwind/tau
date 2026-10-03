@@ -9,8 +9,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { getOrFetchIssue, getOrFetchPr } from "@tau/tau-coding-agent/tools/gh";
+import { Settings } from "tau/config/settings";
+import { getOrFetchIssue, getOrFetchPr } from "tau/tools/gh";
 import {
 	clearAll,
 	getCached,
@@ -18,9 +18,9 @@ import {
 	openDb,
 	putCached,
 	resetForTests as resetCacheForTests,
-} from "@tau/tau-coding-agent/tools/github-cache";
-import { ToolAbortError, throwIfAborted } from "@tau/tau-coding-agent/tools/tool-errors";
-import { github } from "@tau/tau-coding-agent/utils/github";
+} from "tau/tools/github-cache";
+import { ToolAbortError, throwIfAborted } from "tau/tools/tool-errors";
+import { github } from "tau/utils/github";
 import { removeWithRetries } from "@tau/tau-utils";
 
 const TEST_REPO = "owner/example";

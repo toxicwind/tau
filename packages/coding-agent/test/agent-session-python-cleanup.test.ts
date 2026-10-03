@@ -1,14 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from "bun:test";
 import * as fs from "node:fs";
 import { getBundledModel } from "@tau/tau-catalog/models";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import * as pythonExecutor from "@tau/tau-coding-agent/eval/py/executor";
-import type { PythonKernel as PythonKernelInstance } from "@tau/tau-coding-agent/eval/py/kernel";
-import * as pythonKernel from "@tau/tau-coding-agent/eval/py/kernel";
-import { AgentRegistry } from "@tau/tau-coding-agent/registry/agent-registry";
-import { createAgentSession, type ExtensionFactory, type WorkspaceTree } from "@tau/tau-coding-agent/sdk";
-import { AgentStorage } from "@tau/tau-coding-agent/session/agent-storage";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { Settings } from "tau/config/settings";
+import * as pythonExecutor from "tau/eval/py/executor";
+import type { PythonKernel as PythonKernelInstance } from "tau/eval/py/kernel";
+import * as pythonKernel from "tau/eval/py/kernel";
+import { AgentRegistry } from "tau/registry/agent-registry";
+import { createAgentSession, type ExtensionFactory, type WorkspaceTree } from "tau/sdk";
+import { AgentStorage } from "tau/session/agent-storage";
+import { SessionManager } from "tau/session/session-manager";
 import { Snowflake, TempDir } from "@tau/tau-utils";
 
 const OK_EXECUTION = { status: "ok", cancelled: false, timedOut: false, stdinRequested: false } as const;

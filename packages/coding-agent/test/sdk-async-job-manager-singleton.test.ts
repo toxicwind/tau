@@ -3,12 +3,12 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import { type } from "@tau/tautype";
-import { AsyncJobManager } from "@tau/tau-coding-agent/async/job-manager";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { createAgentSession, type ExtensionFactory } from "@tau/tau-coding-agent/sdk";
-import type { AsyncJobSnapshot } from "@tau/tau-coding-agent/session/agent-session";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { AsyncJobManager } from "tau/async/job-manager";
+import { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
+import { createAgentSession, type ExtensionFactory } from "tau/sdk";
+import type { AsyncJobSnapshot } from "tau/session/agent-session";
+import { AuthStorage } from "tau/session/auth-storage";
 import { removeSyncWithRetries, Snowflake } from "@tau/tau-utils";
 
 describe("AsyncJobManager singleton across concurrent top-level sessions", () => {

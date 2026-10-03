@@ -3,7 +3,7 @@ import {
 	readImageFromClipboard,
 	readMacFileUrlsFromClipboard,
 	readTextFromClipboard,
-} from "@tau/tau-coding-agent/utils/clipboard";
+} from "tau/utils/clipboard";
 import * as native from "@tau/tau-natives/clipboard";
 import type { Subprocess } from "bun";
 

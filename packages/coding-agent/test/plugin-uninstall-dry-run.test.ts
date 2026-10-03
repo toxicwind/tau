@@ -11,10 +11,10 @@
  * rendered success or error output initialize it explicitly.
  */
 import { afterEach, beforeEach, describe, expect, mock, spyOn, test } from "bun:test";
-import { runPluginCommand } from "@tau/tau-coding-agent/cli/plugin-cli";
-import { PluginManager } from "@tau/tau-coding-agent/extensibility/plugins/manager";
-import type { InstalledPluginSummary } from "@tau/tau-coding-agent/extensibility/plugins/marketplace";
-import { MarketplaceManager } from "@tau/tau-coding-agent/extensibility/plugins/marketplace";
+import { runPluginCommand } from "tau/cli/plugin-cli";
+import { PluginManager } from "tau/extensibility/plugins/manager";
+import type { InstalledPluginSummary } from "tau/extensibility/plugins/marketplace";
+import { MarketplaceManager } from "tau/extensibility/plugins/marketplace";
 import { initTheme } from "@tau/tau-tui/theme";
 
 describe("runPluginCommand({ action: 'uninstall', flags: { dryRun } })", () => {

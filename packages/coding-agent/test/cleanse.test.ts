@@ -2,19 +2,19 @@ import { afterEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import * as cleanseAgent from "@tau/tau-coding-agent/cleanse/agent";
-import * as cleanseCheckers from "@tau/tau-coding-agent/cleanse/checkers";
-import { runCleanseCommand } from "@tau/tau-coding-agent/cleanse/index";
-import { runCleanseLoop } from "@tau/tau-coding-agent/cleanse/loop";
-import { type CleanseParserKind, parseCleanseDiagnostics } from "@tau/tau-coding-agent/cleanse/parsers";
+import * as cleanseAgent from "tau/cleanse/agent";
+import * as cleanseCheckers from "tau/cleanse/checkers";
+import { runCleanseCommand } from "tau/cleanse/index";
+import { runCleanseLoop } from "tau/cleanse/loop";
+import { type CleanseParserKind, parseCleanseDiagnostics } from "tau/cleanse/parsers";
 import type {
 	CleanseAgentOutcome,
 	CleanseAssignment,
 	CleanseDiagnostic,
 	CleanseDiagnosticReport,
-} from "@tau/tau-coding-agent/cleanse/types";
-import { createProgressReporter } from "@tau/tau-coding-agent/cli/progress-reporter";
-import { resolveCliArgv } from "@tau/tau-coding-agent/cli-commands";
+} from "tau/cleanse/types";
+import { createProgressReporter } from "tau/cli/progress-reporter";
+import { resolveCliArgv } from "tau/cli-commands";
 
 afterEach(() => {
 	vi.restoreAllMocks();

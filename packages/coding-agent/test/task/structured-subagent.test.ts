@@ -2,27 +2,27 @@ import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import path from "node:path";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import type { BeforeSubagentSpawnEvent } from "@tau/tau-coding-agent/extensibility/extensions/types";
+import { Settings } from "tau/config/settings";
+import type { BeforeSubagentSpawnEvent } from "tau/extensibility/extensions/types";
 import {
 	artifactsDirsFromRegistry,
 	resetRegisteredArtifactDirsForTests,
-} from "@tau/tau-coding-agent/internal-urls/registry-helpers";
-import * as planHandoff from "@tau/tau-coding-agent/plan-mode/plan-handoff";
-import * as discoveryModule from "@tau/tau-coding-agent/task/discovery";
-import { createEvalCustomTools } from "@tau/tau-coding-agent/task/eval-tools";
-import * as executorModule from "@tau/tau-coding-agent/task/executor";
-import * as isolationRunner from "@tau/tau-coding-agent/task/isolation-runner";
+} from "tau/internal-urls/registry-helpers";
+import * as planHandoff from "tau/plan-mode/plan-handoff";
+import * as discoveryModule from "tau/task/discovery";
+import { createEvalCustomTools } from "tau/task/eval-tools";
+import * as executorModule from "tau/task/executor";
+import * as isolationRunner from "tau/task/isolation-runner";
 import {
 	buildStructuredSubagentRecoveryHint,
 	resolveEffectiveSubagentPolicy,
 	runStructuredSubagent,
 	StructuredSubagentError,
 	type StructuredSubagentRequest,
-} from "@tau/tau-coding-agent/task/structured-subagent";
-import type { AgentDefinition } from "@tau/tau-coding-agent/task/types";
+} from "tau/task/structured-subagent";
+import type { AgentDefinition } from "tau/task/types";
 import type { SingleResult } from "@tau/tau-tui/tools/task";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
+import type { ToolSession } from "tau/tools";
 
 const AGENT: AgentDefinition = {
 	name: "worker",

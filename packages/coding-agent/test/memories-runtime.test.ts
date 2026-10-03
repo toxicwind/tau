@@ -4,13 +4,13 @@ import * as os from "node:os";
 import * as path from "node:path";
 import * as ai from "@tau/tau-ai";
 import { Effort, type Model } from "@tau/tau-ai";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { Settings } from "tau/config/settings";
 import {
 	buildMemoryToolDeveloperInstructions,
 	getMemoryRoot,
 	startMemoryStartupTask,
-} from "@tau/tau-coding-agent/memories";
-import * as memoryStorage from "@tau/tau-coding-agent/memories/storage";
+} from "tau/memories";
+import * as memoryStorage from "tau/memories/storage";
 import { getAgentDbPath, Snowflake, TempDir } from "@tau/tau-utils";
 import { restoreEnvValue } from "./helpers/settings-test-state";
 

@@ -2,11 +2,11 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { type ContextFile, contextFileCapability } from "@tau/tau-coding-agent/capability/context-file";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
-import { initializeWithSettings, loadCapability } from "@tau/tau-coding-agent/discovery";
+import { type ContextFile, contextFileCapability } from "tau/capability/context-file";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
+import { initializeWithSettings, loadCapability } from "tau/discovery";
 import { isShadowedExtension } from "@tau/tau-tui/overlays/extensions/types";
-import { loadAllExtensions } from "@tau/tau-coding-agent/modes/components/extensions/state-manager";
+import { loadAllExtensions } from "tau/modes/components/extensions/state-manager";
 import { __resetDirsFromEnvForTests, removeWithRetries, setAgentDir } from "@tau/tau-utils";
 
 function restoreEnvValue(key: string, value: string | undefined): void {

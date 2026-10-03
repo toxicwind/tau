@@ -5,7 +5,7 @@ import { DEFAULT_PRUNE_CONFIG, pruneToolOutputs } from "@tau/tau-agent-core/comp
 import { AGGRESSIVE_SHAKE_CONFIG, collectShakeRegions } from "@tau/tau-agent-core/compaction/shake";
 import type { ProtectedToolContext } from "@tau/tau-agent-core/compaction/tool-protection";
 import type { AssistantMessage, TextContent, ToolResultMessage, Usage } from "@tau/tau-ai";
-import { createPlanReadMatcher } from "@tau/tau-coding-agent/plan-mode/plan-protection";
+import { createPlanReadMatcher } from "tau/plan-mode/plan-protection";
 
 const tokenizer = new Tokenizer();
 

@@ -2,21 +2,21 @@
 ###############################################################################
 # robtau — GitHub triage+fix bot orchestrator.
 #
-# Extends `tau-base` (from /Dockerfile, default target tau/pi:dev) and adds
+# Extends `tau-base` (from /Dockerfile, default target tau/tau:dev) and adds
 # the robtau Python package + a Vite-built SolidJS dashboard bundle. The pi
 # toolchain (python + bun + rustup launcher + tau-natives + tau_rpc wheel +
-# /usr/local/bin/tau shim) all comes from PI_BASE; this file only layers what's
+# /usr/local/bin/tau shim) all comes from TAU_BASE; this file only layers what's
 # robtau-specific.
 #
 # Build (from pi root):
-#     bun run pi:image                              # build tau/pi:dev first
+#     bun run tau:image                              # build tau/tau:dev first
 #     docker build -f Dockerfile.robtau -t robtau:dev .
 #
 # Compose (recommended):
 #     docker compose --project-directory python/robtau build
 ###############################################################################
 
-ARG PI_BASE=tau/pi:dev
+ARG TAU_BASE=tau/tau:dev
 ARG BUN_VERSION=1.4.2
 
 ############################
@@ -38,7 +38,7 @@ RUN bun --cwd=python/robtau/web run build
 ############################
 # 2) runtime — tau-base + robtau src + web bundle + pip install
 ############################
-FROM ${PI_BASE} AS runtime
+FROM ${TAU_BASE} AS runtime
 
 # robtau runs against the host pi checkout mounted at /work/pi read-only.
 ENV PI_ROOT=/work/pi

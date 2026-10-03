@@ -5,9 +5,9 @@ import {
 	ASIDE_MESSAGE_DISCARD,
 	type CommittableAsideMessage,
 } from "@tau/tau-agent-core";
-import { type AsyncJob, AsyncJobManager, type AsyncJobType } from "@tau/tau-coding-agent/async";
-import type { CustomMessage } from "@tau/tau-coding-agent/session/messages";
-import { YieldQueue } from "@tau/tau-coding-agent/session/yield-queue";
+import { type AsyncJob, AsyncJobManager, type AsyncJobType } from "tau/async";
+import type { CustomMessage } from "tau/session/messages";
+import { YieldQueue } from "tau/session/yield-queue";
 
 type AsyncEntry = {
 	jobId: string;

@@ -11,10 +11,10 @@
  * Drives the production `CollabHost` over the in-memory relay.
  */
 import { afterEach, expect, it, spyOn } from "bun:test";
-import { importRoomKey } from "@tau/tau-coding-agent/collab/crypto";
-import { CollabHost } from "@tau/tau-coding-agent/collab/host";
-import { COLLAB_PROTO, type CollabFrame, parseCollabLink } from "@tau/tau-coding-agent/collab/protocol";
-import { CollabSocket } from "@tau/tau-coding-agent/collab/relay-client";
+import { importRoomKey } from "tau/collab/crypto";
+import { CollabHost } from "tau/collab/host";
+import { COLLAB_PROTO, type CollabFrame, parseCollabLink } from "tau/collab/protocol";
+import { CollabSocket } from "tau/collab/relay-client";
 import { FakeWebSocket, installInMemoryRelay, uninstallInMemoryRelay } from "./helpers/in-memory-relay";
 import {
 	HIGH_WATER_MARK,

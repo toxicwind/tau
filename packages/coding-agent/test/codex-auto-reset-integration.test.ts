@@ -29,15 +29,15 @@ import type { ResetCreditAccountStatus, ResetCreditTarget, UsageReport } from "@
 import { createMockModel } from "@tau/tau-ai/providers/mock";
 import * as aiStream from "@tau/tau-ai/stream";
 import { getBundledModel } from "@tau/tau-catalog/models";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
+import { AgentSession } from "tau/session/agent-session";
+import { AuthStorage } from "tau/session/auth-storage";
 import {
 	type CodexAutoRedeemCoordinator,
 	createCodexAutoRedeemCoordinator,
-} from "@tau/tau-coding-agent/session/codex-auto-reset";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+} from "tau/session/codex-auto-reset";
+import { SessionManager } from "tau/session/session-manager";
 import { mockSchedulerWaitWithClock } from "./helpers/mock-scheduler-clock";
 
 const ACCOUNT_ID = "acct-1";

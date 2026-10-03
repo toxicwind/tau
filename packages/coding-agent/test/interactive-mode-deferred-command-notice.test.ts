@@ -1,9 +1,9 @@
 import { afterAll, afterEach, describe, expect, it, vi } from "bun:test";
-import { resetSettingsForTest, Settings, settings } from "@tau/tau-coding-agent/config/settings";
-import { InteractiveMode } from "@tau/tau-coding-agent/modes/interactive-mode";
+import { resetSettingsForTest, Settings, settings } from "tau/config/settings";
+import { InteractiveMode } from "tau/modes/interactive-mode";
 import { initTheme } from "@tau/tau-tui/theme";
-import type { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import type { AgentSession } from "tau/session/agent-session";
+import { SessionManager } from "tau/session/session-manager";
 import { Text } from "@tau/tau-tui";
 import { TempDir } from "@tau/tau-utils";
 

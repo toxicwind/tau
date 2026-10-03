@@ -1,4 +1,4 @@
-import { agentTranscriptSource } from "@tau/tau-coding-agent/modes/agent-hub-runtime";
+import { agentTranscriptSource } from "tau/modes/agent-hub-runtime";
 /**
  * Regression: the fullscreen transcript viewer must align the header, body, and
  * footer on a single shared gutter. The transcript components carry their own
@@ -11,12 +11,12 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } 
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
 import type { AgentHubRemote } from "@tau/tau-tui/overlays/agent-hub";
 import { AgentTranscriptViewer } from "@tau/tau-tui/overlays/agent-transcript-viewer";
 import { initTheme } from "@tau/tau-tui/theme";
-import { AgentRegistry } from "@tau/tau-coding-agent/registry/agent-registry";
-import { CURRENT_SESSION_VERSION } from "@tau/tau-coding-agent/session/session-entries";
+import { AgentRegistry } from "tau/registry/agent-registry";
+import { CURRENT_SESSION_VERSION } from "tau/session/session-entries";
 import {
 	getKittyGraphics,
 	ImageBudget,

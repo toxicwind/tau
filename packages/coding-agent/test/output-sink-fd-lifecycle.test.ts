@@ -6,7 +6,7 @@ import { getThemeByName } from "@tau/tau-tui/theme";
 import { OutputSink } from "@tau/tau-tui/tools/streaming-output";
 import { bashToolRenderer } from "@tau/tau-tui/tools/bash";
 import { formatOutputNotice } from "@tau/tau-tui/tools/output-meta";
-import { outputMeta } from "@tau/tau-coding-agent/tools/output-meta";
+import { outputMeta } from "tau/tools/output-meta";
 import { removeWithRetries, sanitizeText } from "@tau/tau-utils";
 
 const createdTempDirs: string[] = [];

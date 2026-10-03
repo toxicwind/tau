@@ -9,9 +9,9 @@ import {
 	type FileEntry,
 	parseSessionEntries,
 	type SessionMessageEntry,
-} from "@tau/tau-coding-agent";
-import { RpcClient } from "@tau/tau-coding-agent/modes/rpc/rpc-client";
-import type { BashExecutionMessage } from "@tau/tau-coding-agent/session/messages";
+} from "tau";
+import { RpcClient } from "tau/modes/rpc/rpc-client";
+import type { BashExecutionMessage } from "tau/session/messages";
 import { removeSyncWithRetries, Snowflake } from "@tau/tau-utils";
 import { e2eApiKey } from "./utilities";
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import { parseArgs, reportUnrecognizedFlags } from "@tau/tau-coding-agent/cli/args";
-import { applyExtensionFlags } from "@tau/tau-coding-agent/cli/extension-flags";
+import { parseArgs, reportUnrecognizedFlags } from "tau/cli/args";
+import { applyExtensionFlags } from "tau/cli/extension-flags";
 
 // Regression coverage for issue #2459: `tau --list-models` (a stale flag) was
 // silently consumed as a prompt instead of failing fast — the agent started a

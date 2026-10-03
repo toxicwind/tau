@@ -65,8 +65,8 @@ set +u
 [ -f "$TAU_HOME/.config/claude/env" ] && { set -a; . "$TAU_HOME/.config/claude/env" >/dev/null 2>&1; set +a; }
 set -u
 
-# 18.2.6 engine joins PI_CONFIG_DIR onto homedir (dirs.ts); absolute path doubles to /home/toxic/home/toxic/.tau. Keep as bare name.
-export PI_CONFIG_DIR=".tau"
+# 18.2.6 engine joins TAU_CONFIG_DIR onto homedir (dirs.ts); absolute path doubles to /home/toxic/home/toxic/.tau. Keep as bare name.
+export TAU_CONFIG_DIR=".tau"
 
 # ── Profile loading + migration ───────────────────────────────────────
 TAU_PROFILE="${TAU_PROFILE:-default}"

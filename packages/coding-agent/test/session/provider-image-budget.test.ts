@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import type { Context, ImageContent, TextContent } from "@tau/tau-ai";
 import { buildModel } from "@tau/tau-catalog/build";
-import { clampProviderContextImages } from "@tau/tau-coding-agent/session/provider-image-budget";
+import { clampProviderContextImages } from "tau/session/provider-image-budget";
 
 const UMANS_MODEL = buildModel({
 	id: "umans-glm-5.2",

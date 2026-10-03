@@ -1,13 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
-import { importRoomKey } from "@tau/tau-coding-agent/collab/crypto";
-import { CollabHost } from "@tau/tau-coding-agent/collab/host";
-import { COLLAB_PROTO, parseCollabLink } from "@tau/tau-coding-agent/collab/protocol";
-import { CollabSocket } from "@tau/tau-coding-agent/collab/relay-client";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
-import { AgentRegistry } from "@tau/tau-coding-agent/registry/agent-registry";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import { TASK_SUBAGENT_LIFECYCLE_CHANNEL } from "@tau/tau-coding-agent/task/types";
-import { EventBus } from "@tau/tau-coding-agent/utils/event-bus";
+import { importRoomKey } from "tau/collab/crypto";
+import { CollabHost } from "tau/collab/host";
+import { COLLAB_PROTO, parseCollabLink } from "tau/collab/protocol";
+import { CollabSocket } from "tau/collab/relay-client";
+import type { InteractiveModeContext } from "tau/modes/types";
+import { AgentRegistry } from "tau/registry/agent-registry";
+import { SessionManager } from "tau/session/session-manager";
+import { TASK_SUBAGENT_LIFECYCLE_CHANNEL } from "tau/task/types";
+import { EventBus } from "tau/utils/event-bus";
 import { installInMemoryRelay, uninstallInMemoryRelay } from "./helpers/in-memory-relay";
 
 // Embedders on the previous InteractiveMode constructor signature wire only a

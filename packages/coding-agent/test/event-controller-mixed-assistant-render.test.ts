@@ -2,14 +2,14 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:
 import { type } from "@tau/tautype";
 import type { AgentTool } from "@tau/tau-agent-core";
 import type { AssistantMessage, ToolCall, ToolResultMessage, Usage } from "@tau/tau-ai";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
 import { AssistantMessageComponent } from "@tau/tau-tui/chat/assistant-message";
 import { ReadToolGroupComponent } from "@tau/tau-tui/chat/read-tool-group";
 import { ToolExecutionComponent } from "@tau/tau-tui/chat/tool-execution";
-import { EventController } from "@tau/tau-coding-agent/modes/controllers/event-controller";
+import { EventController } from "tau/modes/controllers/event-controller";
 import { initTheme } from "@tau/tau-tui/theme";
-import { UiHelpers } from "@tau/tau-coding-agent/modes/utils/ui-helpers";
-import type { AgentSessionEvent } from "@tau/tau-coding-agent/session/agent-session";
+import { UiHelpers } from "tau/modes/utils/ui-helpers";
+import type { AgentSessionEvent } from "tau/session/agent-session";
 import { type Component, TERMINAL } from "@tau/tau-tui";
 import { createInteractiveModeContext } from "./helpers/interactive-mode-context";
 

@@ -3,7 +3,7 @@ import type { ResetCreditAccountStatus, UsageReport, UsageResetCredit } from "@t
 import {
 	planClaudeResetRedemptions,
 	type ClaudeResetPlanInput,
-} from "@tau/tau-coding-agent/session/claude-auto-reset";
+} from "tau/session/claude-auto-reset";
 
 const NOW = 1_700_000_040_000;
 const HOUR = 3_600_000;

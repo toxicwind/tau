@@ -6,21 +6,21 @@
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import type { AssistantMessage } from "@tau/tau-ai";
-import { AsyncJobManager } from "@tau/tau-coding-agent/async/job-manager";
-import type { LoadExtensionsResult } from "@tau/tau-coding-agent/extensibility/extensions/types";
-import { AgentLifecycleManager } from "@tau/tau-coding-agent/registry/agent-lifecycle";
-import { AgentRegistry } from "@tau/tau-coding-agent/registry/agent-registry";
-import type { CreateAgentSessionResult } from "@tau/tau-coding-agent/sdk";
-import * as sdkModule from "@tau/tau-coding-agent/sdk";
+import { AsyncJobManager } from "tau/async/job-manager";
+import type { LoadExtensionsResult } from "tau/extensibility/extensions/types";
+import { AgentLifecycleManager } from "tau/registry/agent-lifecycle";
+import { AgentRegistry } from "tau/registry/agent-registry";
+import type { CreateAgentSessionResult } from "tau/sdk";
+import * as sdkModule from "tau/sdk";
 import type { AgentMessage } from "@tau/tau-agent-core";
-import type { AgentSession, AgentSessionEvent } from "@tau/tau-coding-agent/session/agent-session";
+import type { AgentSession, AgentSessionEvent } from "tau/session/agent-session";
 import {
 	attachIrcWakeTurnMonitor,
 	runSubagentFollowUpTurn,
 	runSubprocess,
-} from "@tau/tau-coding-agent/task/executor";
-import type { AgentDefinition } from "@tau/tau-coding-agent/task/types";
-import { EventBus } from "@tau/tau-coding-agent/utils/event-bus";
+} from "tau/task/executor";
+import type { AgentDefinition } from "tau/task/types";
+import { EventBus } from "tau/utils/event-bus";
 
 const AGENT_ID = "accepted-result";
 

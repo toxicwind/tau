@@ -3,13 +3,13 @@ import {
 	disposeAllKernelSessions,
 	disposeKernelSessionsByOwner,
 	executePython,
-} from "@tau/tau-coding-agent/eval/py/executor";
+} from "tau/eval/py/executor";
 import {
 	type KernelExecuteOptions,
 	type KernelExecuteResult,
 	type KernelShutdownResult,
 	PythonKernel,
-} from "@tau/tau-coding-agent/eval/py/kernel";
+} from "tau/eval/py/kernel";
 
 Bun.env.PI_PYTHON_SKIP_CHECK = "1";
 

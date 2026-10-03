@@ -5,10 +5,10 @@ import {
 	resolveAgentModelPatterns,
 	resolveAgentModelSelection,
 	resolveModelOverride,
-} from "@tau/tau-coding-agent/config/model-resolver";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { getBundledAgent } from "@tau/tau-coding-agent/task/agents";
-import { buildOutputValidator } from "@tau/tau-coding-agent/tools/output-schema-validator";
+} from "tau/config/model-resolver";
+import { Settings } from "tau/config/settings";
+import { getBundledAgent } from "tau/task/agents";
+import { buildOutputValidator } from "tau/tools/output-schema-validator";
 import { AUTO_THINKING } from "@tau/tau-tui/thinking";
 
 describe("bundled agent parsing", () => {

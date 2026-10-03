@@ -17,11 +17,11 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import type { AssistantMessage } from "@tau/tau-ai";
-import { resetSettingsForTest, Settings, settings } from "@tau/tau-coding-agent/config/settings";
-import { EventController } from "@tau/tau-coding-agent/modes/controllers/event-controller";
+import { resetSettingsForTest, Settings, settings } from "tau/config/settings";
+import { EventController } from "tau/modes/controllers/event-controller";
 import { initTheme } from "@tau/tau-tui/theme";
-import type { AgentSessionEvent } from "@tau/tau-coding-agent/session/agent-session";
-import * as titleGenerator from "@tau/tau-coding-agent/utils/title-generator";
+import type { AgentSessionEvent } from "tau/session/agent-session";
+import * as titleGenerator from "tau/utils/title-generator";
 import { TERMINAL } from "@tau/tau-tui";
 import { createInteractiveModeContext } from "../../helpers/interactive-mode-context";
 

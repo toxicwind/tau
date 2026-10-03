@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it } from "bun:test";
 import * as path from "node:path";
 import { getBundledModel } from "@tau/tau-catalog/models";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import { FileSessionStorage, MemorySessionStorage } from "@tau/tau-coding-agent/session/session-storage";
+import { SessionManager } from "tau/session/session-manager";
+import { FileSessionStorage, MemorySessionStorage } from "tau/session/session-storage";
 import { TempDir } from "@tau/tau-utils";
 
 const tempDirs: TempDir[] = [];

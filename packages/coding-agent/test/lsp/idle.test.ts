@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import { isIdleClient, sendRequest } from "@tau/tau-coding-agent/lsp/client";
-import type { LspClient } from "@tau/tau-coding-agent/lsp/types";
+import { isIdleClient, sendRequest } from "tau/lsp/client";
+import type { LspClient } from "tau/lsp/types";
 
 const IDLE_TIMEOUT_MS = 60_000;
 

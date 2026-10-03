@@ -3,10 +3,10 @@ import * as fsp from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import { getBundledModel } from "@tau/tau-catalog/models";
-import { listSessions } from "@tau/tau-coding-agent/session/session-listing";
-import { loadEntriesFromFile } from "@tau/tau-coding-agent/session/session-loader";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import { MemorySessionStorage } from "@tau/tau-coding-agent/session/session-storage";
+import { listSessions } from "tau/session/session-listing";
+import { loadEntriesFromFile } from "tau/session/session-loader";
+import { SessionManager } from "tau/session/session-manager";
+import { MemorySessionStorage } from "tau/session/session-storage";
 import * as snapcompact from "@tau/snapcompact";
 
 class CountingMemorySessionStorage extends MemorySessionStorage {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { parseReviewDiffSnapshot } from "@tau/tau-coding-agent/extensibility/custom-commands/bundled/review/diff";
+import { parseReviewDiffSnapshot } from "tau/extensibility/custom-commands/bundled/review/diff";
 import type { ReviewDiffRow, ReviewSourceRow } from "@tau/tau-tui/overlays/annotation-types";
 
 function rowOfKind(rows: readonly ReviewDiffRow[], kind: "context" | "added" | "removed"): ReviewSourceRow;

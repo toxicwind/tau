@@ -7,13 +7,13 @@ import {
 	renderGalleryState,
 	renderGallerySurfaceSections,
 	resolveFixture,
-} from "@tau/tau-coding-agent/cli/gallery-cli";
+} from "tau/cli/gallery-cli";
 import {
 	type GalleryFixture,
 	getComposerGalleryInventory,
 	getSegmentGalleryInventory,
-} from "@tau/tau-coding-agent/cli/gallery-fixtures";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+} from "tau/cli/gallery-fixtures";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
 import { initTheme, theme } from "@tau/tau-tui/theme";
 import { toolRenderers } from "@tau/tau-tui/tools";
 import { writeToolRenderer } from "@tau/tau-tui/tools/write";

@@ -9,13 +9,13 @@ import { describe, expect, it, vi } from "bun:test";
 import * as fsp from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { Args } from "@tau/tau-coding-agent/cli/args";
-import type { Settings } from "@tau/tau-coding-agent/config/settings";
-import { createSessionManager, SessionResolutionError, writeStartupNotice } from "@tau/tau-coding-agent/main";
-import * as sessionListingModule from "@tau/tau-coding-agent/session/session-listing";
-import { loadSessionFile } from "@tau/tau-coding-agent/session/session-loader";
-import { ForkSourceNotFoundError, SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import { FileSessionStorage } from "@tau/tau-coding-agent/session/session-storage";
+import type { Args } from "tau/cli/args";
+import type { Settings } from "tau/config/settings";
+import { createSessionManager, SessionResolutionError, writeStartupNotice } from "tau/main";
+import * as sessionListingModule from "tau/session/session-listing";
+import { loadSessionFile } from "tau/session/session-loader";
+import { ForkSourceNotFoundError, SessionManager } from "tau/session/session-manager";
+import { FileSessionStorage } from "tau/session/session-storage";
 
 function buildResumeArgs(resume: string, sessionDir?: string): Args {
 	return {

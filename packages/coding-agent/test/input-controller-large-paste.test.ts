@@ -11,9 +11,9 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import { CustomEditor } from "@tau/tau-tui/prompt/custom-editor";
-import { InputController } from "@tau/tau-coding-agent/modes/controllers/input-controller";
+import { InputController } from "tau/modes/controllers/input-controller";
 import { getEditorTheme } from "@tau/tau-tui/theme";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
+import type { InteractiveModeContext } from "tau/modes/types";
 
 function createContext(options?: {
 	threshold?: number;

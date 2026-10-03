@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, spyOn, vi } from "bun:test";
-import { resolveModels, runTinyModelsCommand } from "@tau/tau-coding-agent/cli/tiny-models-cli";
-import { TINY_LOCAL_MODELS } from "@tau/tau-coding-agent/tiny/models";
-import { tinyTitleClient } from "@tau/tau-coding-agent/tiny/title-client";
+import { resolveModels, runTinyModelsCommand } from "tau/cli/tiny-models-cli";
+import { TINY_LOCAL_MODELS } from "tau/tiny/models";
+import { tinyTitleClient } from "tau/tiny/title-client";
 
 afterEach(() => {
 	vi.restoreAllMocks();

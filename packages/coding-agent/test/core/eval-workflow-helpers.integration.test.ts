@@ -8,8 +8,8 @@
 
 import { afterEach, describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { disposeAllKernelSessions, executePythonWithKernel } from "@tau/tau-coding-agent/eval/py/executor";
-import { PythonKernel } from "@tau/tau-coding-agent/eval/py/kernel";
+import { disposeAllKernelSessions, executePythonWithKernel } from "tau/eval/py/executor";
+import { PythonKernel } from "tau/eval/py/kernel";
 import { TempDir } from "@tau/tau-utils";
 
 const SHOULD_RUN = Bun.env.PI_PYTHON_INTEGRATION === "1";

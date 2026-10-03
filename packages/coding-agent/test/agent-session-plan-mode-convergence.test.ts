@@ -22,15 +22,15 @@ import {
 } from "@tau/tau-agent-core";
 import { createMockModel, type MockModel, type MockResponse } from "@tau/tau-ai/providers/mock";
 import { getBundledModel } from "@tau/tau-catalog/models";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import type { CustomTool } from "@tau/tau-coding-agent/extensibility/custom-tools/types";
-import { resolveLocalUrlToPath } from "@tau/tau-coding-agent/internal-urls";
+import { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
+import type { CustomTool } from "tau/extensibility/custom-tools/types";
+import { resolveLocalUrlToPath } from "tau/internal-urls";
 import { type IrcMessage } from "@tau/tau-tui/tools/irc";
-import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import type { XdevState } from "@tau/tau-coding-agent/tools/xdev";
+import { AgentSession } from "tau/session/agent-session";
+import { AuthStorage } from "tau/session/auth-storage";
+import { SessionManager } from "tau/session/session-manager";
+import type { XdevState } from "tau/tools/xdev";
 import { TempDir } from "@tau/tau-utils";
 import planModeReminderPrompt from "../src/prompts/system/plan-mode-tool-decision-reminder.md" with { type: "text" };
 

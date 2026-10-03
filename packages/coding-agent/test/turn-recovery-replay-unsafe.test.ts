@@ -5,14 +5,14 @@ import * as AIError from "@tau/tau-ai/error";
 import { kCursorExecResolved } from "@tau/tau-ai/utils/block-symbols";
 import { getBundledModel } from "@tau/tau-catalog/models";
 import type { Model, Usage } from "@tau/tau-catalog/types";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
+import { AuthStorage } from "tau/session/auth-storage";
 import {
 	type RecoveryCompactionResult,
 	TurnRecovery,
 	type TurnRecoveryHost,
-} from "@tau/tau-coding-agent/session/turn-recovery";
+} from "tau/session/turn-recovery";
 import { TempDir } from "@tau/tau-utils";
 import { createProviderErrorMessage } from "../../ai/src/providers/error-message";
 

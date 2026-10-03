@@ -1,16 +1,16 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import { Agent } from "@tau/tau-agent-core";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import { ModelRegistry } from "tau/config/model-registry";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
 import { ReadToolGroupComponent } from "@tau/tau-tui/chat/read-tool-group";
 import { ToolExecutionComponent } from "@tau/tau-tui/chat/tool-execution";
-import { InteractiveMode } from "@tau/tau-coding-agent/modes/interactive-mode";
+import { InteractiveMode } from "tau/modes/interactive-mode";
 import { initTheme } from "@tau/tau-tui/theme";
-import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
-import { buildSessionContext } from "@tau/tau-coding-agent/session/session-context";
-import type { SessionEntry } from "@tau/tau-coding-agent/session/session-entries";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { AgentSession } from "tau/session/agent-session";
+import { AuthStorage } from "tau/session/auth-storage";
+import { buildSessionContext } from "tau/session/session-context";
+import type { SessionEntry } from "tau/session/session-entries";
+import { SessionManager } from "tau/session/session-manager";
 import { TempDir } from "@tau/tau-utils";
 
 /**

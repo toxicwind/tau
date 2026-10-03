@@ -264,7 +264,7 @@ The gateway has no dedicated env vars — it inherits `TAU_AUTH_BROKER_*` becaus
 | `<config-dir>/auth-broker.token`  | `tau auth-broker serve` (created at first start)     | `0600` in a `0700` parent dir |
 | `<config-dir>/auth-gateway.token` | `tau auth-gateway serve` (skipped under `--no-auth`) | `0600` in a `0700` parent dir |
 
-`<config-dir>` resolves to `~/.tau/` (respecting `PI_CONFIG_DIR`).
+`<config-dir>` resolves to `~/.tau/` (respecting `TAU_CONFIG_DIR`).
 
 ## Interaction with the local API-key resolution order
 

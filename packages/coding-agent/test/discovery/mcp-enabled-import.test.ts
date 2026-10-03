@@ -2,8 +2,8 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { type MCPServer, mcpCapability } from "@tau/tau-coding-agent/capability/mcp";
-import { loadCapability } from "@tau/tau-coding-agent/discovery";
+import { type MCPServer, mcpCapability } from "tau/capability/mcp";
+import { loadCapability } from "tau/discovery";
 import { removeWithRetries } from "@tau/tau-utils";
 
 async function loadMcp(cwd: string, provider: string): Promise<MCPServer[]> {

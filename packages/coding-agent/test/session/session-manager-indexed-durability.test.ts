@@ -15,9 +15,9 @@ import {
 	IndexedSessionStorage,
 	type SessionStorageBackend,
 	type SessionStorageIndexEntry,
-} from "@tau/tau-coding-agent/session/indexed-session-storage";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import { SessionWriteConflictError } from "@tau/tau-coding-agent/session/session-storage";
+} from "tau/session/indexed-session-storage";
+import { SessionManager } from "tau/session/session-manager";
+import { SessionWriteConflictError } from "tau/session/session-storage";
 
 class FakeBackend implements SessionStorageBackend {
 	readonly files = new Map<string, string>();

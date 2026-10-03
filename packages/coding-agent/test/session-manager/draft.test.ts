@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { SessionManager } from "tau/session/session-manager";
 import { isEnoent, TempDir } from "@tau/tau-utils";
 
 async function fileExists(p: string): Promise<boolean> {

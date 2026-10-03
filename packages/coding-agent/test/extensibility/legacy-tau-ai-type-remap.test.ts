@@ -14,12 +14,12 @@ import {
 	getBundledProviders,
 	modelsAreEqual,
 } from "@tau/tau-catalog/models";
-import { Type as TypeBoxShimType } from "@tau/tau-coding-agent/extensibility/legacy-typebox";
+import { Type as TypeBoxShimType } from "tau/extensibility/legacy-typebox";
 import {
 	__resetLegacyPiResolutionCache,
 	installLegacyPiSpecifierShim,
 	loadLegacyPiModule,
-} from "@tau/tau-coding-agent/extensibility/plugins/legacy-tau-compat";
+} from "tau/extensibility/plugins/legacy-tau-compat";
 import { removeWithRetries } from "@tau/tau-utils";
 
 // tau-ai 15.1.0 removed the runtime `Type` export from `@tau/tau-ai`'s
@@ -191,7 +191,7 @@ describe("legacy pi package root remaps (issue #1474)", () => {
 	it("loads @earendil-works/tau-coding-agent root imports when host package resolution is unavailable", async () => {
 		const realResolveSync = Bun.resolveSync.bind(Bun);
 		vi.spyOn(Bun, "resolveSync").mockImplementation((specifier: string, from: string) => {
-			if (specifier === "@tau/tau-coding-agent" && from.endsWith(path.join("src", "extensibility", "plugins"))) {
+			if (specifier === "tau" && from.endsWith(path.join("src", "extensibility", "plugins"))) {
 				throw new Error("compiled binary host package resolution unavailable");
 			}
 			return realResolveSync(specifier, from);

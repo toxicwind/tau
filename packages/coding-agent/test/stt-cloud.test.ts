@@ -3,10 +3,10 @@ import * as transcription from "@tau/tau-ai/transcription";
 import type { TranscriptionResult } from "@tau/tau-ai/transcription";
 import { getBundledModel } from "@tau/tau-catalog/models";
 import type { Model } from "@tau/tau-catalog/types";
-import { Settings, settings } from "@tau/tau-coding-agent/config/settings";
-import * as asrClient from "@tau/tau-coding-agent/stt/asr-client";
-import * as downloader from "@tau/tau-coding-agent/stt/downloader";
-import { STTController } from "@tau/tau-coding-agent/stt/stt-controller";
+import { Settings, settings } from "tau/config/settings";
+import * as asrClient from "tau/stt/asr-client";
+import * as downloader from "tau/stt/downloader";
+import { STTController } from "tau/stt/stt-controller";
 import { beginSettingsTest, restoreSettingsTestState, type SettingsTestState } from "./helpers/settings-test-state";
 
 const ZERO_USAGE = {

@@ -17,16 +17,16 @@ import { createMockModel, type MockResponse, registerMockApi } from "@tau/tau-ai
 import * as aiStream from "@tau/tau-ai/stream";
 import { kCursorExecResolved, kStreamingPartialJson } from "@tau/tau-ai/utils/block-symbols";
 import { AssistantMessageEventStream } from "@tau/tau-ai/utils/event-stream";
-import { SqliteAuthCredentialStore } from "@tau/tau-coding-agent/session/auth-storage";
+import { SqliteAuthCredentialStore } from "tau/session/auth-storage";
 import { opencodeGoUsageProvider } from "@tau/tau-ai/usage/opencode-go";
 import { getBundledModel } from "@tau/tau-catalog/models";
 import type { Model } from "@tau/tau-catalog/types";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import type { ExtensionRunner } from "@tau/tau-coding-agent/extensibility/extensions";
-import { AgentSession, type AgentSessionEvent } from "@tau/tau-coding-agent/session/agent-session";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
+import type { ExtensionRunner } from "tau/extensibility/extensions";
+import { AgentSession, type AgentSessionEvent } from "tau/session/agent-session";
+import { AuthStorage } from "tau/session/auth-storage";
+import { SessionManager } from "tau/session/session-manager";
 import { TempDir } from "@tau/tau-utils";
 import { mockSchedulerWaitWithClock } from "./helpers/mock-scheduler-clock";
 

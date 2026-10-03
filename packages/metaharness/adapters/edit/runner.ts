@@ -10,7 +10,8 @@ import * as path from "node:path";
 import { EditStore, hashlineCountOps, hashlineFormatHeader } from "@tau/tau-natives";
 import type { AgentMessage, ResolvedThinkingLevel, ThinkingLevel } from "@tau/tau-agent-core";
 import type { Model, ToolExample } from "@tau/tau-ai";
-import { formatSessionDumpText, RpcClient } from "@tau/tau-coding-agent";
+import { formatSessionDumpText } from "tau/session/session-dump-format";
+import { RpcClient } from "tau/modes/rpc/rpc-client";
 import { prompt } from "@tau/tau-utils";
 import { diffLines } from "diff";
 import { formatDirectory } from "@tau/typescript-edit-benchmark/formatter";
@@ -31,7 +32,7 @@ import {
 const REPO_ROOT = path.resolve(import.meta.dir, "..", "..", "..", "..");
 const RUNS_DIR = path.join(REPO_ROOT, "runs");
 const TMP = path.join(RUNS_DIR, `rb-${Math.random().toString(36).slice(2, 10)}`);
-const CLI_PATH = Bun.fileURLToPath(import.meta.resolve("@tau/tau-coding-agent/cli"));
+const CLI_PATH = Bun.fileURLToPath(import.meta.resolve("tau/cli"));
 
 function formatLogPath(logFile: string): string {
 	const relativePath = path.relative(REPO_ROOT, logFile);

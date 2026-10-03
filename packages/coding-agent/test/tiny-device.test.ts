@@ -7,7 +7,7 @@ import {
 	tinyMlxSupported,
 	tinyModelDeviceLoadOrder,
 	tinyModelDeviceSettingToEnv,
-} from "@tau/tau-coding-agent/tiny/device";
+} from "tau/tiny/device";
 
 describe("tiny model device selection", () => {
 	it("defaults to CPU-only inference on every platform", () => {

@@ -7,17 +7,17 @@
  */
 import { describe, expect, it } from "bun:test";
 import { type } from "@tau/tautype";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { CustomToolAdapter } from "@tau/tau-coding-agent/extensibility/custom-tools/wrapper";
-import type { ExtensionRunner } from "@tau/tau-coding-agent/extensibility/extensions/runner";
-import { RegisteredToolAdapter } from "@tau/tau-coding-agent/extensibility/extensions/wrapper";
-import { extensionToolSourceInfo } from "@tau/tau-coding-agent/extensibility/extensions/loader";
-import { BUILTIN_TOOLS, type ToolSession } from "@tau/tau-coding-agent/tools";
+import { Settings } from "tau/config/settings";
+import { CustomToolAdapter } from "tau/extensibility/custom-tools/wrapper";
+import type { ExtensionRunner } from "tau/extensibility/extensions/runner";
+import { RegisteredToolAdapter } from "tau/extensibility/extensions/wrapper";
+import { extensionToolSourceInfo } from "tau/extensibility/extensions/loader";
+import { BUILTIN_TOOLS, type ToolSession } from "tau/tools";
 import {
 	defaultLoadModeForToolName,
 	ESSENTIAL_BUILTIN_TOOL_NAMES,
-} from "@tau/tau-coding-agent/tools/essential-tools";
-import { isMountableUnderXdev } from "@tau/tau-coding-agent/tools/xdev";
+} from "tau/tools/essential-tools";
+import { isMountableUnderXdev } from "tau/tools/xdev";
 
 function makeSession(): ToolSession {
 	return {

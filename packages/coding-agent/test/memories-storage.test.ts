@@ -3,8 +3,8 @@ import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import type { AssistantMessage, Model } from "@tau/tau-ai";
 import * as ai from "@tau/tau-ai";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { startMemoryStartupTask } from "@tau/tau-coding-agent/memories";
+import { Settings } from "tau/config/settings";
+import { startMemoryStartupTask } from "tau/memories";
 import {
 	claimStage1Jobs,
 	clearMemoryData,
@@ -15,7 +15,7 @@ import {
 	openMemoryDb,
 	tryClaimGlobalPhase2Job,
 	upsertThreads,
-} from "@tau/tau-coding-agent/memories/storage";
+} from "tau/memories/storage";
 import { getAgentDbPath, TempDir } from "@tau/tau-utils";
 
 const GLOBAL_KIND = "memory_consolidate_global";

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import * as PiCodingAgent from "@tau/tau-coding-agent";
+import * as PiCodingAgent from "tau";
 import { askToolRenderer } from "@tau/tau-tui/tools/ask";
 
 /**

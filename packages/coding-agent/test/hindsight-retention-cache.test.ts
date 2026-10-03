@@ -4,12 +4,12 @@ import type {
 	CreateBankOptions,
 	RetainOptions,
 	RetainResponse,
-} from "@tau/tau-coding-agent/hindsight/client";
-import { HindsightApi } from "@tau/tau-coding-agent/hindsight/client";
-import type { HindsightConfig } from "@tau/tau-coding-agent/hindsight/config";
-import type { HindsightMessage } from "@tau/tau-coding-agent/hindsight/content";
-import { HindsightSessionState } from "@tau/tau-coding-agent/hindsight/state";
-import type { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+} from "tau/hindsight/client";
+import { HindsightApi } from "tau/hindsight/client";
+import type { HindsightConfig } from "tau/hindsight/config";
+import type { HindsightMessage } from "tau/hindsight/content";
+import { HindsightSessionState } from "tau/hindsight/state";
+import type { AgentSession } from "tau/session/agent-session";
 
 const makeConfig = (overrides: Partial<HindsightConfig> = {}): HindsightConfig => ({
 	hindsightApiUrl: "http://localhost:8888",

@@ -11,11 +11,11 @@
 import { describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { expandPromptTemplate, type PromptTemplate } from "@tau/tau-coding-agent/config/prompt-templates";
-import { expandSlashCommand, type FileSlashCommand } from "@tau/tau-coding-agent/extensibility/slash-commands";
-import { AgentRegistry, MAIN_AGENT_ID } from "@tau/tau-coding-agent/registry/agent-registry";
-import { collectIrcPeerRoster } from "@tau/tau-coding-agent/task/executor";
-import { parseCommandArgs, substituteArgs } from "@tau/tau-coding-agent/utils/command-args";
+import { expandPromptTemplate, type PromptTemplate } from "tau/config/prompt-templates";
+import { expandSlashCommand, type FileSlashCommand } from "tau/extensibility/slash-commands";
+import { AgentRegistry, MAIN_AGENT_ID } from "tau/registry/agent-registry";
+import { collectIrcPeerRoster } from "tau/task/executor";
+import { parseCommandArgs, substituteArgs } from "tau/utils/command-args";
 import { prompt } from "@tau/tau-utils";
 
 // ============================================================================

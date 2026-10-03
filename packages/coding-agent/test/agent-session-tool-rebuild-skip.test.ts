@@ -4,19 +4,19 @@ import { Agent, type AgentMessage, type AgentTool } from "@tau/tau-agent-core";
 import type { Message, Model } from "@tau/tau-ai";
 import { createMockModel, type MockResponseSource } from "@tau/tau-ai/providers/mock";
 import { buildModel } from "@tau/tau-catalog/build";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import type { CustomTool } from "@tau/tau-coding-agent/extensibility/custom-tools/types";
-import type { ExtensionRunner } from "@tau/tau-coding-agent/extensibility/extensions";
-import type { Skill } from "@tau/tau-coding-agent/extensibility/skills";
-import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
-import { type CustomMessage, convertToLlm } from "@tau/tau-coding-agent/session/messages";
-import { SessionMaintenance } from "@tau/tau-coding-agent/session/session-maintenance";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { Settings } from "tau/config/settings";
+import type { CustomTool } from "tau/extensibility/custom-tools/types";
+import type { ExtensionRunner } from "tau/extensibility/extensions";
+import type { Skill } from "tau/extensibility/skills";
+import { AgentSession } from "tau/session/agent-session";
+import { type CustomMessage, convertToLlm } from "tau/session/messages";
+import { SessionMaintenance } from "tau/session/session-maintenance";
+import { SessionManager } from "tau/session/session-manager";
 import {
 	collectMountedMCPToolRoutes,
 	projectMountedMCPXdevGuidance,
-} from "@tau/tau-coding-agent/session/session-tools";
-import { listXdevTools, XDEV_EXTERNAL_DESCRIPTION_CAP, type XdevState } from "@tau/tau-coding-agent/tools/xdev";
+} from "tau/session/session-tools";
+import { listXdevTools, XDEV_EXTERNAL_DESCRIPTION_CAP, type XdevState } from "tau/tools/xdev";
 import { logger } from "@tau/tau-utils";
 
 // Cache-stability invariant: when MCP servers reconnect with byte-identical tool

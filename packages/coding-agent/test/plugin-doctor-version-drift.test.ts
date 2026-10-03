@@ -2,8 +2,8 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { PluginManager } from "@tau/tau-coding-agent/extensibility/plugins/manager";
-import type { PluginRuntimeState } from "@tau/tau-coding-agent/extensibility/plugins/types";
+import { PluginManager } from "tau/extensibility/plugins/manager";
+import type { PluginRuntimeState } from "tau/extensibility/plugins/types";
 import * as piUtils from "@tau/tau-utils";
 import { removeWithRetries } from "@tau/tau-utils";
 

@@ -12,9 +12,9 @@
 import { describe, expect, it, vi } from "bun:test";
 import { AuthBrokerError } from "@tau/tau-ai/auth-broker";
 import { MissingApiKeyError } from "@tau/tau-ai/error";
-import { parseArgs } from "@tau/tau-coding-agent/cli/args";
-import { runRootCommand } from "@tau/tau-coding-agent/main";
-import { describeAuthBrokerStartupError } from "@tau/tau-coding-agent/session/auth-broker-config";
+import { parseArgs } from "tau/cli/args";
+import { runRootCommand } from "tau/main";
+import { describeAuthBrokerStartupError } from "tau/session/auth-broker-config";
 import { setInteractiveHost } from "@tau/tau-utils";
 
 class ProcessExitSignal extends Error {

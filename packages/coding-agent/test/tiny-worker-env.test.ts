@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { nativeLibraryPathOverlay, workerEnvFromParent } from "@tau/tau-coding-agent/subprocess/worker-client";
-import { tinyWorkerEnvOverlay } from "@tau/tau-coding-agent/tiny/title-client";
-import { tinyWorkerEndpoint, tinyWorkerLogPath } from "@tau/tau-coding-agent/tiny/title-protocol";
+import { nativeLibraryPathOverlay, workerEnvFromParent } from "tau/subprocess/worker-client";
+import { tinyWorkerEnvOverlay } from "tau/tiny/title-client";
+import { tinyWorkerEndpoint, tinyWorkerLogPath } from "tau/tiny/title-protocol";
 
 describe("workerEnvFromParent", () => {
 	it("drops inherited git repo-location overrides but keeps an explicit overlay", () => {

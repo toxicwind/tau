@@ -82,7 +82,7 @@ export async function bundleDist(outDir: string = defaultOutDir): Promise<void> 
 	await runCommand(["bun", "--cwd=../stats", "run", "gen:stats"]);
 	// One payload for both consumers: inlined into dist/cli.js via `--define` for
 	// the bundled CLI entrypoint, and written to dist/docs-index.generated.txt so
-	// SDK consumers importing `@tau/tau-coding-agent/*` (TypeScript source, no
+	// SDK consumers importing `tau/*` (TypeScript source, no
 	// build-time embed) can still resolve tau:// docs (see src/internal-urls/docs-index.ts).
 	try {
 		const docsPayload = await buildDocsIndexPayload();

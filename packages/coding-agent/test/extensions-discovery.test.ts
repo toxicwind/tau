@@ -2,15 +2,15 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as fsPromises from "node:fs/promises";
 import * as path from "node:path";
-import { type ExtensionModule, extensionModuleCapability } from "@tau/tau-coding-agent/capability/extension-module";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
-import { getCapability, initializeWithSettings } from "@tau/tau-coding-agent/discovery";
+import { type ExtensionModule, extensionModuleCapability } from "tau/capability/extension-module";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
+import { getCapability, initializeWithSettings } from "tau/discovery";
 import {
 	discoverAndLoadExtensions,
 	discoverExtensionPaths,
 	loadExtensions,
-} from "@tau/tau-coding-agent/extensibility/extensions/loader";
-import { discoverSessionExtensionPaths } from "@tau/tau-coding-agent/sdk";
+} from "tau/extensibility/extensions/loader";
+import { discoverSessionExtensionPaths } from "tau/sdk";
 import { getProjectAgentDir, TempDir } from "@tau/tau-utils";
 import { filterUserScoped } from "./utils/filter-user-extensions";
 

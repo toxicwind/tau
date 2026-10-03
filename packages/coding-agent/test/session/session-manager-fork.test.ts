@@ -2,15 +2,15 @@ import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import { isSyntheticToolResultMessage } from "@tau/tau-agent-core";
-import { collectPendingToolCalls } from "@tau/tau-coding-agent/session/exit-diagnostics";
+import { collectPendingToolCalls } from "tau/session/exit-diagnostics";
 import {
 	CURRENT_SESSION_VERSION,
 	type SessionEntry,
 	type SessionHeader,
 	type SessionMessageEntry,
-} from "@tau/tau-coding-agent/session/session-entries";
-import { loadEntriesFromFile } from "@tau/tau-coding-agent/session/session-loader";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+} from "tau/session/session-entries";
+import { loadEntriesFromFile } from "tau/session/session-loader";
+import { SessionManager } from "tau/session/session-manager";
 import { getTerminalId } from "@tau/tau-tui";
 import { getAgentDir, getTerminalSessionsDir, removeWithRetries, setAgentDir, TempDir } from "@tau/tau-utils";
 

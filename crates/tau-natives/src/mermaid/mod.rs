@@ -12,7 +12,7 @@
 //!
 //! # Example
 //! ```ignore
-//! let art = pi_natives::mermaid::render("graph LR\n  A --> B", &RenderOptions::default())?;
+//! let art = tau_natives::mermaid::render("graph LR\n  A --> B", &RenderOptions::default())?;
 //! ```
 
 use napi::bindgen_prelude::Error as NapiError;

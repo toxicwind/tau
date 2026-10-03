@@ -3,15 +3,15 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import type { ImageContent } from "@tau/tau-ai";
-import { RpcClient } from "@tau/tau-coding-agent/modes/rpc/rpc-client";
+import { RpcClient } from "tau/modes/rpc/rpc-client";
 import {
 	handleRpcSessionChange,
 	type RpcSessionChangeCommand,
 	type RpcSessionChangeResult,
 	type RpcSessionChangeSession,
-} from "@tau/tau-coding-agent/modes/rpc/rpc-mode";
-import { RpcSubagentRegistry, readRpcSubagentTranscript } from "@tau/tau-coding-agent/modes/rpc/rpc-subagents";
-import type { RpcSubagentFrame } from "@tau/tau-coding-agent/modes/rpc/rpc-types";
+} from "tau/modes/rpc/rpc-mode";
+import { RpcSubagentRegistry, readRpcSubagentTranscript } from "tau/modes/rpc/rpc-subagents";
+import type { RpcSubagentFrame } from "tau/modes/rpc/rpc-types";
 import { type AgentProgress } from "@tau/tau-tui/tools/task";
 import {
 	type SubagentEventPayload,
@@ -20,8 +20,8 @@ import {
 	TASK_SUBAGENT_EVENT_CHANNEL,
 	TASK_SUBAGENT_LIFECYCLE_CHANNEL,
 	TASK_SUBAGENT_PROGRESS_CHANNEL,
-} from "@tau/tau-coding-agent/task";
-import { EventBus } from "@tau/tau-coding-agent/utils/event-bus";
+} from "tau/task";
+import { EventBus } from "tau/utils/event-bus";
 import { removeSyncWithRetries } from "@tau/tau-utils";
 
 const tempPaths: string[] = [];

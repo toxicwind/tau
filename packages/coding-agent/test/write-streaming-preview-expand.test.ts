@@ -3,7 +3,7 @@ import { ToolExecutionComponent } from "@tau/tau-tui/chat/tool-execution";
 import {
 	decodeStreamedToolArgs,
 	streamingStringKeysForTool,
-} from "@tau/tau-coding-agent/modes/controllers/tool-args-reveal";
+} from "tau/modes/controllers/tool-args-reveal";
 import * as themeModule from "@tau/tau-tui/theme";
 import { writeToolRenderer } from "@tau/tau-tui/tools/write";
 import type { TUI } from "@tau/tau-tui";

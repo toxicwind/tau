@@ -7,8 +7,8 @@
  */
 
 import { describe, expect, it } from "bun:test";
-import { serializeTitleSlot } from "@tau/tau-coding-agent/session/session-title-slot";
-import { SqlSessionStorage, type SqlSessionStorageClient } from "@tau/tau-coding-agent/session/sql-session-storage";
+import { serializeTitleSlot } from "tau/session/session-title-slot";
+import { SqlSessionStorage, type SqlSessionStorageClient } from "tau/session/sql-session-storage";
 import { SQL } from "bun";
 
 async function createSqlite(): Promise<{ client: InstanceType<typeof SQL>; storage: SqlSessionStorage }> {

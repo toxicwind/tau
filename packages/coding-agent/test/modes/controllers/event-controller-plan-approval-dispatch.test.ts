@@ -1,7 +1,7 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
-import { EventController } from "@tau/tau-coding-agent/modes/controllers/event-controller";
+import { EventController } from "tau/modes/controllers/event-controller";
 import { initTheme } from "@tau/tau-tui/theme";
-import type { AgentSessionEvent } from "@tau/tau-coding-agent/session/agent-session";
+import type { AgentSessionEvent } from "tau/session/agent-session";
 import { PROPOSE_DEVICE_NAME } from "@tau/tau-tui/tools/resolve";
 import { createInteractiveModeContext } from "../../helpers/interactive-mode-context";
 

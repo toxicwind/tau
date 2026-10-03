@@ -13,11 +13,11 @@
  */
 
 import { afterAll, describe, expect, it } from "bun:test";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { createAcpSessionFactory } from "@tau/tau-coding-agent/main";
-import type { CreateAgentSessionOptions, CreateAgentSessionResult } from "@tau/tau-coding-agent/sdk";
-import type { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+import { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
+import { createAcpSessionFactory } from "tau/main";
+import type { CreateAgentSessionOptions, CreateAgentSessionResult } from "tau/sdk";
+import type { AgentSession } from "tau/session/agent-session";
 import { TempDir } from "@tau/tau-utils";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 

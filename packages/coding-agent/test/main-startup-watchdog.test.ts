@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { parseArgs } from "@tau/tau-coding-agent/cli/args";
-import { runRootCommand } from "@tau/tau-coding-agent/main";
+import { parseArgs } from "tau/cli/args";
+import { runRootCommand } from "tau/main";
 
 describe("startup watchdog under test runner", () => {
 	afterEach(() => {

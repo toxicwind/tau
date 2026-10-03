@@ -2,8 +2,8 @@ import { Database } from "bun:sqlite";
 import { expect, test } from "bun:test";
 import * as path from "node:path";
 import { AuthStorage, SqliteAuthCredentialStore } from "@tau/tau-ai";
-import { refreshStoredManagedMcpOAuthCredential } from "@tau/tau-coding-agent/mcp/oauth-credentials";
-import type { MCPStoredOAuthCredential } from "@tau/tau-coding-agent/mcp/oauth-flow";
+import { refreshStoredManagedMcpOAuthCredential } from "tau/mcp/oauth-credentials";
+import type { MCPStoredOAuthCredential } from "tau/mcp/oauth-flow";
 import { TempDir } from "@tau/tau-utils";
 
 /** Capture the `resource` form field of the single refresh_token grant a helper call makes. */

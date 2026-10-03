@@ -6,9 +6,9 @@ import { streamSimple } from "@tau/tau-ai";
 import { withAuth } from "@tau/tau-ai/auth-retry";
 import type { Api, Context, FetchImpl, Model } from "@tau/tau-ai/types";
 import { buildModel } from "@tau/tau-catalog/build";
-import { invalidateAllCommandConfigs, resolveConfigValue } from "@tau/tau-coding-agent/config/resolve-config-value";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { invalidateAllCommandConfigs, resolveConfigValue } from "tau/config/resolve-config-value";
+import { ModelRegistry } from "tau/config/model-registry";
+import { AuthStorage } from "tau/session/auth-storage";
 import * as piUtils from "@tau/tau-utils";
 import { removeSyncWithRetries, Snowflake } from "@tau/tau-utils";
 

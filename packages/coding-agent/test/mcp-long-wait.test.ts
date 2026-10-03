@@ -13,9 +13,9 @@
  */
 import { afterEach, describe, expect, it, spyOn, vi } from "bun:test";
 import * as path from "node:path";
-import * as mcpTimeout from "@tau/tau-coding-agent/mcp/timeout";
-import { HttpTransport } from "@tau/tau-coding-agent/mcp/transports/http";
-import { LegacySseTransport } from "@tau/tau-coding-agent/mcp/transports/sse";
+import * as mcpTimeout from "tau/mcp/timeout";
+import { HttpTransport } from "tau/mcp/transports/http";
+import { LegacySseTransport } from "tau/mcp/transports/sse";
 
 const PROBE_PATH = path.join(import.meta.dir, "fixtures", "mcp-idle-wait-probe.ts");
 const REPO_ROOT = path.resolve(import.meta.dir, "../../..");

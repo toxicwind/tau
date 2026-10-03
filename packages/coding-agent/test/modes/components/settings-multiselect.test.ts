@@ -1,8 +1,8 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
-import { resetSettingsForTest, Settings, settings } from "@tau/tau-coding-agent/config/settings";
+import { resetSettingsForTest, Settings, settings } from "tau/config/settings";
 import { SettingsSelectorComponent } from "@tau/tau-tui/overlays/settings-selector";
-import { createSettingsHost } from "@tau/tau-coding-agent/config/settings-ui";
-import { createPluginSettingsHost } from "@tau/tau-coding-agent/extensibility/plugins/settings-host";
+import { createSettingsHost } from "tau/config/settings-ui";
+import { createPluginSettingsHost } from "tau/extensibility/plugins/settings-host";
 import { initTheme } from "@tau/tau-tui/theme";
 
 beforeAll(async () => {

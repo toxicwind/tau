@@ -2,21 +2,21 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:
 import * as path from "node:path";
 import { Agent } from "@tau/tau-agent-core";
 import type { AssistantMessage } from "@tau/tau-ai";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
-import { ExtensionRuntime } from "@tau/tau-coding-agent/extensibility/extensions/loader";
-import { ExtensionRunner } from "@tau/tau-coding-agent/extensibility/extensions/runner";
+import { ModelRegistry } from "tau/config/model-registry";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
+import { ExtensionRuntime } from "tau/extensibility/extensions/loader";
+import { ExtensionRunner } from "tau/extensibility/extensions/runner";
 import { SessionSelectorComponent } from "@tau/tau-tui/overlays/session-selector";
-import { BtwController } from "@tau/tau-coding-agent/modes/controllers/btw-controller";
-import { ExtensionUiController } from "@tau/tau-coding-agent/modes/controllers/extension-ui-controller";
-import { SelectorController } from "@tau/tau-coding-agent/modes/controllers/selector-controller";
-import { InteractiveMode } from "@tau/tau-coding-agent/modes/interactive-mode";
+import { BtwController } from "tau/modes/controllers/btw-controller";
+import { ExtensionUiController } from "tau/modes/controllers/extension-ui-controller";
+import { SelectorController } from "tau/modes/controllers/selector-controller";
+import { InteractiveMode } from "tau/modes/interactive-mode";
 import { initTheme } from "@tau/tau-tui/theme";
-import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
-import { BtwHistoryStore } from "@tau/tau-coding-agent/session/btw-history";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import { FileSessionStorage } from "@tau/tau-coding-agent/session/session-storage";
+import { AgentSession } from "tau/session/agent-session";
+import { AuthStorage } from "tau/session/auth-storage";
+import { BtwHistoryStore } from "tau/session/btw-history";
+import { SessionManager } from "tau/session/session-manager";
+import { FileSessionStorage } from "tau/session/session-storage";
 import { TempDir } from "@tau/tau-utils";
 
 function answer(text: string) {

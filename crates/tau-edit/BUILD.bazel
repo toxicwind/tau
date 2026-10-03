@@ -13,7 +13,7 @@ rust_library(
         "prompts/*.md",
         "grammars/*.lark",
     ]),
-    crate_name = "pi_edit",
+    crate_name = "tau_edit",
     edition = "2024",
     proc_macro_deps = all_crate_deps(proc_macro = True),
     version = "18.1.5",

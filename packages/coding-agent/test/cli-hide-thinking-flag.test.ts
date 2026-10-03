@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import { ThinkingLevel } from "@tau/tau-agent-core";
 import { Effort } from "@tau/tau-ai";
-import { parseArgs } from "@tau/tau-coding-agent/cli/args";
+import { parseArgs } from "tau/cli/args";
 import { AUTO_THINKING } from "@tau/tau-tui/thinking";
 
 describe("parseArgs — --hide-thinking flag", () => {

@@ -6,7 +6,7 @@ import {
 	convertToLlm,
 	SKILL_PROMPT_MESSAGE_TYPE,
 	wrapSteeringForModel,
-} from "@tau/tau-coding-agent/session/messages";
+} from "tau/session/messages";
 import { COLLAB_PROMPT_MESSAGE_TYPE } from "@tau/tau-wire";
 
 function expectAttribution(message: Message | undefined, expected: "user" | "agent" | undefined): void {

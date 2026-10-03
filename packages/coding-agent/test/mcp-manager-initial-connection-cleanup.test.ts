@@ -2,9 +2,9 @@ import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import * as mcpClient from "@tau/tau-coding-agent/mcp/client";
-import { MCPManager } from "@tau/tau-coding-agent/mcp/manager";
-import type { MCPServerConnection, MCPStdioServerConfig, MCPTransport } from "@tau/tau-coding-agent/mcp/types";
+import * as mcpClient from "tau/mcp/client";
+import { MCPManager } from "tau/mcp/manager";
+import type { MCPServerConnection, MCPStdioServerConfig, MCPTransport } from "tau/mcp/types";
 import { removeWithRetries } from "@tau/tau-utils";
 import { TOOL_NAME as DELAYED_TOOL_NAME } from "./fixtures/delayed-tool-mcp";
 

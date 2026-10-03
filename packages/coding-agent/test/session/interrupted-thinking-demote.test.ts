@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
 import type { AssistantMessage } from "@tau/tau-ai";
-import { demoteInterruptedThinking } from "@tau/tau-coding-agent/session/messages";
+import { demoteInterruptedThinking } from "tau/session/messages";
 
 function demoteContent(content: AssistantMessage["content"]) {
 	return demoteInterruptedThinking({ content });

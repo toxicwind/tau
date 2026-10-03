@@ -1,10 +1,10 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { TOOL_INTERRUPT_ABORT_REASON } from "@tau/tau-agent-core";
-import { AsyncJobManager } from "@tau/tau-coding-agent/async/job-manager";
-import { IrcBus } from "@tau/tau-coding-agent/irc/bus";
-import { AgentRegistry } from "@tau/tau-coding-agent/registry/agent-registry";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
-import { WaitTool } from "@tau/tau-coding-agent/tools/wait";
+import { AsyncJobManager } from "tau/async/job-manager";
+import { IrcBus } from "tau/irc/bus";
+import { AgentRegistry } from "tau/registry/agent-registry";
+import type { ToolSession } from "tau/tools";
+import { WaitTool } from "tau/tools/wait";
 
 function session(manager?: AsyncJobManager): ToolSession {
 	return {

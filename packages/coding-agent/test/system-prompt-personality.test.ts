@@ -2,8 +2,8 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { Personality } from "@tau/tau-coding-agent/config/settings";
-import { buildSystemPrompt } from "@tau/tau-coding-agent/system-prompt";
+import type { Personality } from "tau/config/settings";
+import { buildSystemPrompt } from "tau/system-prompt";
 import { getAgentDir, removeSyncWithRetries, setAgentDir } from "@tau/tau-utils";
 
 const EMPTY_TREE = {

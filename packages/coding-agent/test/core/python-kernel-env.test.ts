@@ -7,7 +7,7 @@ import {
 	filterEnv,
 	resolveExplicitPythonRuntime,
 	resolvePythonRuntime,
-} from "@tau/tau-coding-agent/eval/py/runtime";
+} from "tau/eval/py/runtime";
 import * as piUtils from "@tau/tau-utils";
 
 describe("Python gateway environment filtering", () => {

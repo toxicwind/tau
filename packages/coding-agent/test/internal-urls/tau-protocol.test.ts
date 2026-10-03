@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { InternalUrlRouter } from "@tau/tau-coding-agent/internal-urls";
+import { InternalUrlRouter } from "tau/internal-urls";
 
 describe("TauProtocolHandler", () => {
 	it("treats tau://docs as the documentation root", async () => {

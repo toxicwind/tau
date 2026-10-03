@@ -1,17 +1,17 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
 import { Agent } from "@tau/tau-agent-core";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
-import type { Skill } from "@tau/tau-coding-agent/extensibility/skills";
-import { InteractiveMode } from "@tau/tau-coding-agent/modes/interactive-mode";
+import { ModelRegistry } from "tau/config/model-registry";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
+import type { Skill } from "tau/extensibility/skills";
+import { InteractiveMode } from "tau/modes/interactive-mode";
 import { initTheme } from "@tau/tau-tui/theme";
-import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
-import { HistoryStorage } from "@tau/tau-coding-agent/session/history-storage";
-import { SKILL_PROMPT_MESSAGE_TYPE } from "@tau/tau-coding-agent/session/messages";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import { BUILTIN_MODE_SLASH_COMMANDS } from "@tau/tau-coding-agent/slash-commands/builtin-modes";
+import { AgentSession } from "tau/session/agent-session";
+import { AuthStorage } from "tau/session/auth-storage";
+import { HistoryStorage } from "tau/session/history-storage";
+import { SKILL_PROMPT_MESSAGE_TYPE } from "tau/session/messages";
+import { SessionManager } from "tau/session/session-manager";
+import { BUILTIN_MODE_SLASH_COMMANDS } from "tau/slash-commands/builtin-modes";
 import { TempDir } from "@tau/tau-utils";
 
 /**

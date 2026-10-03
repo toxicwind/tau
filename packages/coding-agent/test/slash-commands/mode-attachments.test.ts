@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "bun:test";
 import type { ImageContent } from "@tau/tau-ai";
-import { InputController } from "@tau/tau-coding-agent/modes/controllers/input-controller";
-import type { InteractiveModeContext, SubmittedUserInput } from "@tau/tau-coding-agent/modes/types";
+import { InputController } from "tau/modes/controllers/input-controller";
+import type { InteractiveModeContext, SubmittedUserInput } from "tau/modes/types";
 
 type Attachments = Pick<SubmittedUserInput, "images" | "imageLinks">;
 

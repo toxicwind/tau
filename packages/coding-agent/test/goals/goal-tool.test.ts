@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from "bun:test";
-import { completionBudgetReport, GoalRuntime } from "@tau/tau-coding-agent/goals/runtime";
+import { completionBudgetReport, GoalRuntime } from "tau/goals/runtime";
 import type { Goal } from "@tau/tau-tui/tools/goal";
-import type { GoalModeState, GoalTokenUsage } from "@tau/tau-coding-agent/goals/state";
-import { GoalTool } from "@tau/tau-coding-agent/goals/tools/goal-tool";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
+import type { GoalModeState, GoalTokenUsage } from "tau/goals/state";
+import { GoalTool } from "tau/goals/tools/goal-tool";
+import type { ToolSession } from "tau/tools";
 
 function createUsage(overrides: Partial<GoalTokenUsage> = {}): GoalTokenUsage {
 	return {

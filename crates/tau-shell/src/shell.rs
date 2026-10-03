@@ -20,7 +20,7 @@ use brush_core::{
 };
 use bytes::Bytes;
 use flume::Sender;
-use pi_builtins::{BuiltinSet, default_builtins};
+use tau_builtins::{BuiltinSet, default_builtins};
 #[cfg(not(unix))]
 use tokio::io::AsyncReadExt as _;
 use tokio::{sync::Mutex as TokioMutex, time};
@@ -665,18 +665,18 @@ async fn create_session_for_run(
 	if let Some(suspend_builtin) = shell.builtin_mut("suspend") {
 		suspend_builtin.disabled = true;
 	}
-	// Process inspection and control (see `pi_builtins::process_builtins`).
+	// Process inspection and control (see `tau_builtins::process_builtins`).
 	// `nohup` is withheld when PI_DISABLE_NOHUP_BUILTIN asks for the system one;
 	// `kill` already comes from the default set, where our richer implementation
 	// replaced brush's.
-	for (name, registration) in pi_builtins::process_builtins() {
+	for (name, registration) in tau_builtins::process_builtins() {
 		if name == "nohup" && nohup_builtin_disabled(config) {
 			continue;
 		}
 		shell.register_builtin(name, registration);
 	}
 	// In-process command-line utility builtins (see
-	// `pi_builtins::utility_builtins`): consistent, cross-platform
+	// `tau_builtins::utility_builtins`): consistent, cross-platform
 	// implementations that run without spawning a process and resolve paths
 	// against the shell working directory. The whole set can be disabled
 	// (falling back to system binaries) via PI_DISABLE_UUTILS_BUILTINS; the
@@ -688,7 +688,7 @@ async fn create_session_for_run(
 			destructive_disabled || uutils_env_disabled(config, "PI_DISABLE_RM_BUILTIN");
 		let mv_disabled =
 			destructive_disabled || uutils_env_disabled(config, "PI_DISABLE_MV_BUILTIN");
-		for (name, registration) in pi_builtins::utility_builtins() {
+		for (name, registration) in tau_builtins::utility_builtins() {
 			let disabled = match name {
 				"rm" => rm_disabled,
 				"mv" => mv_disabled,
@@ -2101,10 +2101,10 @@ mod tests {
 	async fn wait_for_process_name(pid: i32, expected: &str) {
 		time::timeout(Duration::from_secs(2), async {
 			loop {
-				if pi_builtins::ProcInfo::all().into_iter().any(|process| {
+				if tau_builtins::ProcInfo::all().into_iter().any(|process| {
 					process.pid() == pid
 						&& process.match_name() == expected
-						&& process.status() == pi_builtins::ProcessStatus::Running
+						&& process.status() == tau_builtins::ProcessStatus::Running
 				}) {
 					return;
 				}
@@ -3384,7 +3384,7 @@ mod tests {
 	/// Every utility `tau-builtins` offers must actually be dispatchable in
 	/// process, under the name it is registered as.
 	///
-	/// The registry (`pi_builtins::utility_builtins`) maps a name to a
+	/// The registry (`tau_builtins::utility_builtins`) maps a name to a
 	/// `Registration`, and each registration renders its help from its own
 	/// `clap` command. Wiring a name to the wrong module — easy to do, since the
 	/// mapping is written by hand — still compiles and still runs; the only
@@ -3474,7 +3474,7 @@ mod tests {
 			"yes",
 		];
 		let mut names: Vec<&'static str> =
-			pi_builtins::utility_builtins::<brush_core::extensions::DefaultShellExtensions>()
+			tau_builtins::utility_builtins::<brush_core::extensions::DefaultShellExtensions>()
 				.into_iter()
 				.map(|(name, _)| name)
 				.collect();
@@ -3555,7 +3555,7 @@ mod tests {
 		// a test that skips whatever the registry omits cannot notice an
 		// omission.
 		let mut registered: Vec<&'static str> =
-			pi_builtins::process_builtins::<brush_core::extensions::DefaultShellExtensions>()
+			tau_builtins::process_builtins::<brush_core::extensions::DefaultShellExtensions>()
 				.into_iter()
 				.map(|(name, _)| name)
 				.collect();

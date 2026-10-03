@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "bun:test";
-import { createMCPJsonRpcError, MCPTransportError } from "@tau/tau-coding-agent/mcp/errors";
-import type { MCPReconnect } from "@tau/tau-coding-agent/mcp/tool-bridge";
+import { createMCPJsonRpcError, MCPTransportError } from "tau/mcp/errors";
+import type { MCPReconnect } from "tau/mcp/tool-bridge";
 import {
 	createLegacyMCPToolName,
 	createMCPToolName,
@@ -8,10 +8,10 @@ import {
 	deduplicateMCPToolsByName,
 	isRetriableConnectionError,
 	MCPTool,
-} from "@tau/tau-coding-agent/mcp/tool-bridge";
+} from "tau/mcp/tool-bridge";
 import type { MCPImageContent } from "@tau/tau-tui/tools/mcp";
-import type { MCPServerConnection, MCPToolCallResult, MCPTransport } from "@tau/tau-coding-agent/mcp/types";
-import { ToolAbortError } from "@tau/tau-coding-agent/tools/tool-errors";
+import type { MCPServerConnection, MCPToolCallResult, MCPTransport } from "tau/mcp/types";
+import { ToolAbortError } from "tau/tools/tool-errors";
 import { logger } from "@tau/tau-utils";
 
 // ---------------------------------------------------------------------------

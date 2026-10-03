@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { loadSlashCommands } from "@tau/tau-coding-agent/extensibility/slash-commands";
+import { loadSlashCommands } from "tau/extensibility/slash-commands";
 
 describe("loadSlashCommands argument-hint", () => {
 	test("parses argument-hint frontmatter into FileSlashCommand.argumentHint", async () => {

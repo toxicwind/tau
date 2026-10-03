@@ -4,9 +4,9 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { Effort } from "@tau/tau-catalog/effort";
 import { resolveWireModelId } from "@tau/tau-catalog/model-thinking";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { resetSettingsForTest } from "@tau/tau-coding-agent/config/settings";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { ModelRegistry } from "tau/config/model-registry";
+import { resetSettingsForTest } from "tau/config/settings";
+import { AuthStorage } from "tau/session/auth-storage";
 import { removeSyncWithRetries, Snowflake } from "@tau/tau-utils";
 
 describe("Portkey gateway custom models", () => {

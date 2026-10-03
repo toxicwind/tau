@@ -1,10 +1,10 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import { type } from "@tau/tautype";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { TaskTool, taskSchema } from "@tau/tau-coding-agent/task";
-import * as discoveryModule from "@tau/tau-coding-agent/task/discovery";
-import { getTaskSchema } from "@tau/tau-coding-agent/task/types";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
+import { Settings } from "tau/config/settings";
+import { TaskTool, taskSchema } from "tau/task";
+import * as discoveryModule from "tau/task/discovery";
+import { getTaskSchema } from "tau/task/types";
+import type { ToolSession } from "tau/tools";
 
 // Contract: the single-spawn schema (`task.batch: false`; the exported
 // `taskSchema` instance) carries no batch fields while accepting a caller

@@ -14,7 +14,7 @@
  * shows up in `~/.tau/logs/tau.log` without regressing idle-worker shutdown.
  */
 import { describe, expect, it } from "bun:test";
-import { createWorkerSubprocess, type SpawnedSubprocess } from "@tau/tau-coding-agent/subprocess/worker-client";
+import { createWorkerSubprocess, type SpawnedSubprocess } from "tau/subprocess/worker-client";
 
 interface FakeWorkerOutbound {
 	type: "pong";

@@ -11,17 +11,17 @@ import * as fs from "node:fs";
 import * as fsp from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { type Args, parseArgs } from "@tau/tau-coding-agent/cli/args";
-import * as modelResolverModule from "@tau/tau-coding-agent/config/model-resolver";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import * as pluginHelpers from "@tau/tau-coding-agent/discovery/helpers";
-import { createSessionManager, runRootCommand } from "@tau/tau-coding-agent/main";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
-import type { SessionHeader } from "@tau/tau-coding-agent/session/session-entries";
-import type { SessionInfo } from "@tau/tau-coding-agent/session/session-listing";
-import * as sessionListingModule from "@tau/tau-coding-agent/session/session-listing";
-import { loadEntriesFromFile } from "@tau/tau-coding-agent/session/session-loader";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { type Args, parseArgs } from "tau/cli/args";
+import * as modelResolverModule from "tau/config/model-resolver";
+import { Settings } from "tau/config/settings";
+import * as pluginHelpers from "tau/discovery/helpers";
+import { createSessionManager, runRootCommand } from "tau/main";
+import { AuthStorage } from "tau/session/auth-storage";
+import type { SessionHeader } from "tau/session/session-entries";
+import type { SessionInfo } from "tau/session/session-listing";
+import * as sessionListingModule from "tau/session/session-listing";
+import { loadEntriesFromFile } from "tau/session/session-loader";
+import { SessionManager } from "tau/session/session-manager";
 import {
 	__resetDirsFromEnvForTests,
 	getProjectDir,

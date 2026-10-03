@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { getDiagnosticsForFile } from "@tau/tau-coding-agent/lsp/diagnostics";
-import type { Diagnostic, LinterClient, ServerConfig } from "@tau/tau-coding-agent/lsp/types";
+import { getDiagnosticsForFile } from "tau/lsp/diagnostics";
+import type { Diagnostic, LinterClient, ServerConfig } from "tau/lsp/types";
 
 /**
  * Regression test for issue #4910: `edit` silently hangs forever on some

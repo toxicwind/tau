@@ -1,6 +1,6 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
 import type { AssistantMessage } from "@tau/tau-ai";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
 import { AssistantMessageComponent } from "@tau/tau-tui/chat/assistant-message";
 import { splitReaction } from "@tau/tau-tui/chat/reaction";
 import { UserMessageComponent } from "@tau/tau-tui/chat/user-message";

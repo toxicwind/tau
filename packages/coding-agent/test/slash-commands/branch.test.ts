@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
-import { executeBuiltinSlashCommand } from "@tau/tau-coding-agent/slash-commands/builtin-registry";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
+import type { InteractiveModeContext } from "tau/modes/types";
+import { executeBuiltinSlashCommand } from "tau/slash-commands/builtin-registry";
 
 beforeEach(async () => {
 	resetSettingsForTest();

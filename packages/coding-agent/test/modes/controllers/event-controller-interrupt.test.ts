@@ -1,9 +1,9 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
-import { EventController } from "@tau/tau-coding-agent/modes/controllers/event-controller";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
+import { EventController } from "tau/modes/controllers/event-controller";
 import { initTheme } from "@tau/tau-tui/theme";
-import type { AgentSessionEvent } from "@tau/tau-coding-agent/session/agent-session";
-import { vocalizer } from "@tau/tau-coding-agent/tts/vocalizer";
+import type { AgentSessionEvent } from "tau/session/agent-session";
+import { vocalizer } from "tau/tts/vocalizer";
 import { createInteractiveModeContext } from "../../helpers/interactive-mode-context";
 
 function createContext() {

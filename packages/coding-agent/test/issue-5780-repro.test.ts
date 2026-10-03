@@ -4,8 +4,8 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { clearCustomApis, type FetchImpl } from "@tau/tau-ai";
 import { unregisterOAuthProviders } from "@tau/tau-ai/oauth";
-import { ModelRegistry, type ProviderConfigInput } from "@tau/tau-coding-agent/config/model-registry";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { ModelRegistry, type ProviderConfigInput } from "tau/config/model-registry";
+import { AuthStorage } from "tau/session/auth-storage";
 import { removeSyncWithRetries, Snowflake } from "@tau/tau-utils";
 
 describe("issue #5780 post-auth runtime provider refresh", () => {

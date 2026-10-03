@@ -2,9 +2,9 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
-import { resolveExplicitSearchPaths } from "@tau/tau-coding-agent/tools/path-utils";
+import { Settings } from "tau/config/settings";
+import type { ToolSession } from "tau/tools";
+import { resolveExplicitSearchPaths } from "tau/tools/path-utils";
 import { removeWithRetries } from "@tau/tau-utils";
 import { GrepTool } from "../../src/tools/grep";
 

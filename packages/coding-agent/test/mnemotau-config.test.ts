@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { loadMnemotauConfig, type MnemotauBackendConfig } from "@tau/tau-coding-agent/mnemotau/config";
+import { Settings } from "tau/config/settings";
+import { loadMnemotauConfig, type MnemotauBackendConfig } from "tau/mnemotau/config";
 import { getMemoriesDir } from "@tau/tau-utils";
 
 // `mnemotau.embeddingVariant` selects the concrete local embedding model, while an

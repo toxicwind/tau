@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { PluginManager } from "@tau/tau-coding-agent/extensibility/plugins/manager";
+import { PluginManager } from "tau/extensibility/plugins/manager";
 import * as piUtils from "@tau/tau-utils";
 import { removeWithRetries } from "@tau/tau-utils";
 import type { Subprocess } from "bun";

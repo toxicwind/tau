@@ -2,9 +2,9 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { MCPManager } from "@tau/tau-coding-agent/mcp/manager";
-import type { McpConnectionStatusEvent } from "@tau/tau-coding-agent/mcp/startup-events";
-import type { MCPServerConfig } from "@tau/tau-coding-agent/mcp/types";
+import { MCPManager } from "tau/mcp/manager";
+import type { McpConnectionStatusEvent } from "tau/mcp/startup-events";
+import type { MCPServerConfig } from "tau/mcp/types";
 import { removeSyncWithRetries } from "@tau/tau-utils";
 
 const FIXTURE_PATH = path.join(import.meta.dir, "fixtures", "many-tools-mcp.ts");

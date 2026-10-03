@@ -1,7 +1,7 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
 import type { AgentMessage } from "@tau/tau-agent-core";
 import { KeybindingsManager } from "@tau/tau-tui/app-keybindings";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
 import { ExtensionList } from "@tau/tau-tui/overlays/extensions/extension-list";
 import type { Extension } from "@tau/tau-tui/overlays/extensions/types";
 import { HistorySearchComponent } from "@tau/tau-tui/overlays/history-search";
@@ -9,9 +9,9 @@ import { RewindSelectorComponent } from "@tau/tau-tui/overlays/rewind-selector";
 import { SessionSelectorComponent } from "@tau/tau-tui/overlays/session-selector";
 import { TreeSelectorComponent } from "@tau/tau-tui/overlays/tree-selector";
 import { initTheme } from "@tau/tau-tui/theme";
-import { HistoryStorage } from "@tau/tau-coding-agent/session/history-storage";
-import type { SessionMessageEntry, SessionTreeNode } from "@tau/tau-coding-agent/session/session-entries";
-import type { SessionInfo } from "@tau/tau-coding-agent/session/session-listing";
+import { HistoryStorage } from "tau/session/history-storage";
+import type { SessionMessageEntry, SessionTreeNode } from "tau/session/session-entries";
+import type { SessionInfo } from "tau/session/session-listing";
 import { setKeybindings, type TUI } from "@tau/tau-tui";
 import { TempDir } from "@tau/tau-utils";
 

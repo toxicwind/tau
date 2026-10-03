@@ -15,9 +15,9 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import { DEFAULT_MODEL_PER_PROVIDER } from "@tau/tau-catalog/provider-models";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { pickDefaultAvailableModel } from "@tau/tau-coding-agent/config/model-resolver";
-import type { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { ModelRegistry } from "tau/config/model-registry";
+import { pickDefaultAvailableModel } from "tau/config/model-resolver";
+import type { AuthStorage } from "tau/session/auth-storage";
 import { Snowflake } from "@tau/tau-utils";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 

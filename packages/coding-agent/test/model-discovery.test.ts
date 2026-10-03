@@ -11,12 +11,12 @@ import { writeModelCache } from "@tau/tau-catalog/model-cache";
 import { getBundledModel } from "@tau/tau-catalog/models";
 import { resolveModelCacheProviderId, resolveOllamaModelCacheProviderId } from "@tau/tau-catalog/provider-models";
 import type { ModelKind, ModelSpec, OpenAICompat } from "@tau/tau-catalog/types";
-import { discoverOllamaModels, discoveryProbeTimeoutMs } from "@tau/tau-coding-agent/config/model-discovery";
-import { RUNTIME_DYNAMIC_MODEL_FETCH_TIMEOUT_MS } from "@tau/tau-coding-agent/config/model-provider-discovery";
-import { kNoAuth, ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { ProviderDiscoverySchema } from "@tau/tau-coding-agent/config/models-config-schema";
-import { resetSettingsForTest } from "@tau/tau-coding-agent/config/settings";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { discoverOllamaModels, discoveryProbeTimeoutMs } from "tau/config/model-discovery";
+import { RUNTIME_DYNAMIC_MODEL_FETCH_TIMEOUT_MS } from "tau/config/model-provider-discovery";
+import { kNoAuth, ModelRegistry } from "tau/config/model-registry";
+import { ProviderDiscoverySchema } from "tau/config/models-config-schema";
+import { resetSettingsForTest } from "tau/config/settings";
+import { AuthStorage } from "tau/session/auth-storage";
 import { removeSyncWithRetries, Snowflake } from "@tau/tau-utils";
 
 describe("ModelRegistry runtime discovery", () => {

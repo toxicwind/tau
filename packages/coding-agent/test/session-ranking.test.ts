@@ -2,10 +2,10 @@ import { Database } from "bun:sqlite";
 import { describe, expect, it } from "bun:test";
 import * as path from "node:path";
 import { gzipSync } from "node:zlib";
-import { runGcCommand } from "@tau/tau-coding-agent/cli/gc-cli";
+import { runGcCommand } from "tau/cli/gc-cli";
 import { mergeSessionRanking, rankSessionSearchMatches } from "@tau/tau-tui/overlays/session-selector";
-import { listSessions, type SessionInfo } from "@tau/tau-coding-agent/session/session-listing";
-import { MemorySessionStorage } from "@tau/tau-coding-agent/session/session-storage";
+import { listSessions, type SessionInfo } from "tau/session/session-listing";
+import { MemorySessionStorage } from "tau/session/session-storage";
 import { getHistoryDbPath, getSessionsDir, TempDir } from "@tau/tau-utils";
 
 function makeSession(id: string, overrides: Partial<SessionInfo> = {}): SessionInfo {

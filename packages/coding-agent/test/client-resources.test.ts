@@ -7,7 +7,7 @@ import {
 	serverSupportsResources,
 	subscribeToResources,
 	unsubscribeFromResources,
-} from "@tau/tau-coding-agent/mcp/client";
+} from "tau/mcp/client";
 import type {
 	MCPResource,
 	MCPResourceReadResult,
@@ -15,7 +15,7 @@ import type {
 	MCPResourceTemplate,
 	MCPResourceTemplatesListResult,
 	MCPTransport,
-} from "@tau/tau-coding-agent/mcp/types";
+} from "tau/mcp/types";
 import { createMockConnection, createMockTransport } from "./mcp-test-utils";
 
 describe("listResources", () => {

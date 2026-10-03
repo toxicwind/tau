@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test";
-import { acquireBrowser, releaseBrowser } from "@tau/tau-coding-agent/tools/browser/registry";
-import { CmuxTab } from "@tau/tau-coding-agent/tools/browser/cmux/cmux-tab";
-import { acquireTab, releaseTab, runInTab } from "@tau/tau-coding-agent/tools/browser/tab-supervisor";
-import type { ToolSession } from "@tau/tau-coding-agent/tools/index";
+import { acquireBrowser, releaseBrowser } from "tau/tools/browser/registry";
+import { CmuxTab } from "tau/tools/browser/cmux/cmux-tab";
+import { acquireTab, releaseTab, runInTab } from "tau/tools/browser/tab-supervisor";
+import type { ToolSession } from "tau/tools/index";
 import { chromiumAvailable } from "./chromium-probe";
 
 const CHROMIUM_AVAILABLE = await chromiumAvailable();

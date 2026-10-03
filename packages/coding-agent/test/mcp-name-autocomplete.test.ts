@@ -2,12 +2,12 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { SourceMeta } from "@tau/tau-coding-agent/capability/types";
-import type { MCPServerConfig } from "@tau/tau-coding-agent/mcp/types";
-import { collectMcpServerNames } from "@tau/tau-coding-agent/modes/controllers/mcp-command-controller";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
-import { buildTuiBuiltinSlashCommands } from "@tau/tau-coding-agent/slash-commands/builtin-registry";
-import type { TuiSlashCommandRuntime } from "@tau/tau-coding-agent/slash-commands/types";
+import type { SourceMeta } from "tau/capability/types";
+import type { MCPServerConfig } from "tau/mcp/types";
+import { collectMcpServerNames } from "tau/modes/controllers/mcp-command-controller";
+import type { InteractiveModeContext } from "tau/modes/types";
+import { buildTuiBuiltinSlashCommands } from "tau/slash-commands/builtin-registry";
+import type { TuiSlashCommandRuntime } from "tau/slash-commands/types";
 import {
 	getConfigRootDir,
 	getMCPConfigPath,

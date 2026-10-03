@@ -23,7 +23,7 @@ rust_library(
     compile_data = glob([
         "src/minimizer/filters/fixtures/**",
     ]),
-    crate_name = "pi_shell",
+    crate_name = "tau_shell",
     edition = "2024",
     proc_macro_deps = all_crate_deps(proc_macro = True),
     version = "17.1.5",

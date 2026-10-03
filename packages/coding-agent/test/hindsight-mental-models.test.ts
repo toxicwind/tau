@@ -1,10 +1,10 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import type { BankScope } from "@tau/tau-coding-agent/hindsight/bank";
+import type { BankScope } from "tau/hindsight/bank";
 import {
 	type HindsightApi,
 	HindsightApi as HindsightApiCtor,
 	type MentalModelSummary,
-} from "@tau/tau-coding-agent/hindsight/client";
+} from "tau/hindsight/client";
 import {
 	diffMentalModelContent,
 	ensureMentalModels,
@@ -12,7 +12,7 @@ import {
 	MENTAL_MODEL_RENDER_BUDGET_CHARS_DEFAULT,
 	renderMentalModelsBlock,
 	resolveSeedsForScope,
-} from "@tau/tau-coding-agent/hindsight/mental-models";
+} from "tau/hindsight/mental-models";
 
 afterEach(() => {
 	vi.restoreAllMocks();

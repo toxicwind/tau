@@ -13,16 +13,16 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { Agent } from "@tau/tau-agent-core";
 import { getBundledModel } from "@tau/tau-catalog/models";
-import type { EffectiveExtensionRoots } from "@tau/tau-coding-agent/capability/types";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import "@tau/tau-coding-agent/discovery";
-import { setActiveSkills } from "@tau/tau-coding-agent/extensibility/skills";
-import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
-import { convertToLlm } from "@tau/tau-coding-agent/session/messages";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import { discoverAgents } from "@tau/tau-coding-agent/task/discovery";
+import type { EffectiveExtensionRoots } from "tau/capability/types";
+import { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
+import "tau/discovery";
+import { setActiveSkills } from "tau/extensibility/skills";
+import { AgentSession } from "tau/session/agent-session";
+import { AuthStorage } from "tau/session/auth-storage";
+import { convertToLlm } from "tau/session/messages";
+import { SessionManager } from "tau/session/session-manager";
+import { discoverAgents } from "tau/task/discovery";
 import { removeSyncWithRetries } from "@tau/tau-utils";
 
 interface SessionInputs {

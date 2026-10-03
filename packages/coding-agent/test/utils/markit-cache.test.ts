@@ -10,9 +10,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Markit } from "@tau/tau-coding-agent/markit";
-import { convertBufferWithMarkit, convertFileWithMarkit } from "@tau/tau-coding-agent/utils/markit";
-import { pruneMarkitConversionCache } from "@tau/tau-coding-agent/utils/markit-cache";
+import { Markit } from "tau/markit";
+import { convertBufferWithMarkit, convertFileWithMarkit } from "tau/utils/markit";
+import { pruneMarkitConversionCache } from "tau/utils/markit-cache";
 import { __resetDirsFromEnvForTests, getAgentDir, Snowflake, setAgentDir } from "@tau/tau-utils";
 
 function restoreEnv(key: string, value: string | undefined): void {

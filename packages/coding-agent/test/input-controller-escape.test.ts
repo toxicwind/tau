@@ -1,10 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from "bun:test";
 import type { ImageContent } from "@tau/tau-ai";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
-import { InputController } from "@tau/tau-coding-agent/modes/controllers/input-controller";
-import type { InteractiveModeContext, SubmittedUserInput } from "@tau/tau-coding-agent/modes/types";
-import { USER_INTERRUPT_LABEL } from "@tau/tau-coding-agent/session/messages";
-import { vocalizer } from "@tau/tau-coding-agent/tts/vocalizer";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
+import { InputController } from "tau/modes/controllers/input-controller";
+import type { InteractiveModeContext, SubmittedUserInput } from "tau/modes/types";
+import { USER_INTERRUPT_LABEL } from "tau/session/messages";
+import { vocalizer } from "tau/tts/vocalizer";
 import * as logger from "@tau/tau-utils/logger";
 
 type Spy = Mock<(...args: unknown[]) => unknown>;

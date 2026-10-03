@@ -4,22 +4,22 @@ import * as os from "node:os";
 import * as path from "node:path";
 import type { Judge, JudgmentRequest, JudgmentResult, NoulAnswer, Questions } from "@tau/tau-ai";
 import { tokenUsage } from "@tau/tau-ai";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { InternalUrlRouter } from "@tau/tau-coding-agent/internal-urls/router";
-import { isOmpDocsScope } from "@tau/tau-coding-agent/internal-urls/tau-scope";
-import { FindTool } from "@tau/tau-coding-agent/tools/jfind";
-import { runCascade } from "@tau/tau-coding-agent/tools/jfind/cascade";
-import { keywordsFromQuery } from "@tau/tau-coding-agent/tools/jfind/keywords";
-import { materializeOmpScope } from "@tau/tau-coding-agent/tools/jfind/tau-scope";
+import { Settings } from "tau/config/settings";
+import { InternalUrlRouter } from "tau/internal-urls/router";
+import { isOmpDocsScope } from "tau/internal-urls/tau-scope";
+import { FindTool } from "tau/tools/jfind";
+import { runCascade } from "tau/tools/jfind/cascade";
+import { keywordsFromQuery } from "tau/tools/jfind/keywords";
+import { materializeOmpScope } from "tau/tools/jfind/tau-scope";
 import {
 	mergeHeat,
 	type Passage,
 	selectWindows,
 	sketch,
 	windows,
-} from "@tau/tau-coding-agent/tools/jfind/passages";
-import { readText, ReadTextError } from "@tau/tau-coding-agent/tools/jfind/text";
-import { eligibleFile, renderTree } from "@tau/tau-coding-agent/tools/jfind/tree";
+} from "tau/tools/jfind/passages";
+import { readText, ReadTextError } from "tau/tools/jfind/text";
+import { eligibleFile, renderTree } from "tau/tools/jfind/tree";
 import { removeWithRetries } from "@tau/tau-utils";
 
 describe("jfind keywords", () => {

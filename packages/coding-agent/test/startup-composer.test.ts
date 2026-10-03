@@ -1,17 +1,17 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { parseArgs } from "@tau/tau-coding-agent/cli/args";
-import { importRoomKey } from "@tau/tau-coding-agent/collab/crypto";
-import { COLLAB_PROTO, type CollabFrame, parseCollabLink } from "@tau/tau-coding-agent/collab/protocol";
-import * as registry from "@tau/tau-coding-agent/collab/registry";
-import { CollabSocket } from "@tau/tau-coding-agent/collab/relay-client";
+import { parseArgs } from "tau/cli/args";
+import { importRoomKey } from "tau/collab/crypto";
+import { COLLAB_PROTO, type CollabFrame, parseCollabLink } from "tau/collab/protocol";
+import * as registry from "tau/collab/registry";
+import { CollabSocket } from "tau/collab/relay-client";
 import { KeybindingsManager } from "@tau/tau-tui/app-keybindings";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
-import * as pluginHelpers from "@tau/tau-coding-agent/discovery/helpers";
-import { runRootCommand } from "@tau/tau-coding-agent/main";
+import { ModelRegistry } from "tau/config/model-registry";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
+import * as pluginHelpers from "tau/discovery/helpers";
+import { runRootCommand } from "tau/main";
 import { Composer, type ComposerPreferences } from "@tau/tau-tui/prompt/composer";
-import { InteractiveMode } from "@tau/tau-coding-agent/modes/interactive-mode";
+import { InteractiveMode } from "tau/modes/interactive-mode";
 import {
 	applyStartupComposerPreferences,
 	beginStartupComposer,
@@ -19,10 +19,10 @@ import {
 	setStartupComposerLspServers,
 	stopPendingStartupComposer,
 	takeStartupComposerLease,
-} from "@tau/tau-coding-agent/modes/startup-composer";
+} from "tau/modes/startup-composer";
 import { initTheme } from "@tau/tau-tui/theme";
-import { AgentLifecycleManager } from "@tau/tau-coding-agent/registry/agent-lifecycle";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { AgentLifecycleManager } from "tau/registry/agent-lifecycle";
+import { AuthStorage } from "tau/session/auth-storage";
 import { getProjectDir, setProjectDir } from "@tau/tau-utils";
 import { VirtualTerminal } from "../../tui/test/virtual-terminal";
 import { installInMemoryRelay, uninstallInMemoryRelay } from "./collab/helpers/in-memory-relay";

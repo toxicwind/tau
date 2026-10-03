@@ -25,14 +25,14 @@
 
 import { describe, expect, it } from "bun:test";
 import { getBundledModel } from "@tau/tau-catalog/models";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { SessionManager } from "tau/session/session-manager";
 import {
 	MemorySessionStorage,
 	type SessionStorage,
 	type SessionStorageWriter,
 	type WriteTextAtomicOptions,
-} from "@tau/tau-coding-agent/session/session-storage";
-import type { SessionTitleUpdate } from "@tau/tau-coding-agent/session/session-title-slot";
+} from "tau/session/session-storage";
+import type { SessionTitleUpdate } from "tau/session/session-title-slot";
 
 class CloseHoldingStorage implements SessionStorage {
 	readonly #inner = new MemorySessionStorage();

@@ -144,7 +144,7 @@ async function resolveBuiltAddonPath(outputDir: string, canonicalFilename: strin
 	}
 
 	const generatedCandidates = entries.filter(
-		entry => entry.startsWith(`pi_natives.${process.platform}-${process.arch}`) && entry.endsWith(".node"),
+		entry => entry.startsWith(`tau_natives.${process.platform}-${process.arch}`) && entry.endsWith(".node"),
 	);
 
 	if (generatedCandidates.length === 1) {

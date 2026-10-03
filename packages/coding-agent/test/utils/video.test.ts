@@ -10,7 +10,7 @@ import {
 	parseVideoSelector,
 	parseVideoTimestamp,
 	splitVideoReadTarget,
-} from "@tau/tau-coding-agent/utils/video";
+} from "tau/utils/video";
 
 describe("parseVideoSelector", () => {
 	it("reads a bare integer as a frame index", () => {

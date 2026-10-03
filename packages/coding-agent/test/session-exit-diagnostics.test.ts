@@ -4,11 +4,11 @@ import * as path from "node:path";
 import { Agent } from "@tau/tau-agent-core";
 import type { AssistantMessage } from "@tau/tau-ai";
 import { getBundledModel } from "@tau/tau-catalog/models";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { createSessionTeardown } from "@tau/tau-coding-agent/modes/session-teardown";
-import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
+import { createSessionTeardown } from "tau/modes/session-teardown";
+import { AgentSession } from "tau/session/agent-session";
+import { AuthStorage } from "tau/session/auth-storage";
 import {
 	collectPendingToolCalls,
 	createInterruptedTurnAbortMessage,
@@ -16,9 +16,9 @@ import {
 	SESSION_EXIT_CUSTOM_TYPE,
 	TOOL_EXECUTION_START_CUSTOM_TYPE,
 	type ToolExecutionStartData,
-} from "@tau/tau-coding-agent/session/exit-diagnostics";
-import { convertToLlm } from "@tau/tau-coding-agent/session/messages";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+} from "tau/session/exit-diagnostics";
+import { convertToLlm } from "tau/session/messages";
+import { SessionManager } from "tau/session/session-manager";
 import { postmortem, TempDir } from "@tau/tau-utils";
 
 const pendingAssistant: AssistantMessage = {

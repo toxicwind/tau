@@ -12,24 +12,24 @@
  * frame is observable.
  */
 import { afterEach, beforeEach, describe, expect, it, spyOn } from "bun:test";
-import { generateRoomKey, importRoomKey } from "@tau/tau-coding-agent/collab/crypto";
-import { CollabGuestLink } from "@tau/tau-coding-agent/collab/guest";
-import { CollabHost } from "@tau/tau-coding-agent/collab/host";
+import { generateRoomKey, importRoomKey } from "tau/collab/crypto";
+import { CollabGuestLink } from "tau/collab/guest";
+import { CollabHost } from "tau/collab/host";
 import {
 	COLLAB_PROTO,
 	type CollabFrame,
 	type CollabSessionState,
 	formatCollabLink,
 	parseCollabLink,
-} from "@tau/tau-coding-agent/collab/protocol";
-import { CollabSocket } from "@tau/tau-coding-agent/collab/relay-client";
+} from "tau/collab/protocol";
+import { CollabSocket } from "tau/collab/relay-client";
 import type {
 	ExtensionAskDialogQuestion,
 	ExtensionUIDialogOptions,
 	ExtensionUISelectItem,
-} from "@tau/tau-coding-agent/extensibility/extensions/types";
-import { ExtensionUiController } from "@tau/tau-coding-agent/modes/controllers/extension-ui-controller";
-import type { InteractiveModeContext, InteractiveSelectorDialogOptions } from "@tau/tau-coding-agent/modes/types";
+} from "tau/extensibility/extensions/types";
+import { ExtensionUiController } from "tau/modes/controllers/extension-ui-controller";
+import type { InteractiveModeContext, InteractiveSelectorDialogOptions } from "tau/modes/types";
 import { installInMemoryRelay, uninstallInMemoryRelay } from "./helpers/in-memory-relay";
 
 // In-memory transport: shared FakeWebSocket + InMemoryRelay harness (see

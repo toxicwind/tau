@@ -11,13 +11,13 @@
  * are stubbed.
  */
 import { afterAll, afterEach, beforeAll, describe, expect, it, spyOn } from "bun:test";
-import { importRoomKey } from "@tau/tau-coding-agent/collab/crypto";
-import { CollabGuestLink } from "@tau/tau-coding-agent/collab/guest";
-import { CollabHost } from "@tau/tau-coding-agent/collab/host";
-import { COLLAB_PROTO, type CollabFrame, parseCollabLink } from "@tau/tau-coding-agent/collab/protocol";
-import { CollabSocket } from "@tau/tau-coding-agent/collab/relay-client";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
-import type { SessionEntry } from "@tau/tau-coding-agent/session/session-entries";
+import { importRoomKey } from "tau/collab/crypto";
+import { CollabGuestLink } from "tau/collab/guest";
+import { CollabHost } from "tau/collab/host";
+import { COLLAB_PROTO, type CollabFrame, parseCollabLink } from "tau/collab/protocol";
+import { CollabSocket } from "tau/collab/relay-client";
+import type { InteractiveModeContext } from "tau/modes/types";
+import type { SessionEntry } from "tau/session/session-entries";
 import { installInMemoryRelay, uninstallInMemoryRelay } from "./helpers/in-memory-relay";
 
 // In-memory transport: shared FakeWebSocket + InMemoryRelay harness (see

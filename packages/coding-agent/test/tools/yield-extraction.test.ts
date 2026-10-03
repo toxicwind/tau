@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import "@tau/tau-coding-agent/tools/yield";
-import { subprocessToolRegistry } from "@tau/tau-coding-agent/task/subprocess-tool-registry";
+import "tau/tools/yield";
+import { subprocessToolRegistry } from "tau/task/subprocess-tool-registry";
 
 describe("yield subprocess extraction", () => {
 	const handler = subprocessToolRegistry.getHandler("yield");

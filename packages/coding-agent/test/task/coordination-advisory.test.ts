@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { buildCoordinationAdvisory, composeSpawnAdvisory } from "@tau/tau-coding-agent/task";
+import { buildCoordinationAdvisory, composeSpawnAdvisory } from "tau/task";
 import type { TaskItem } from "@tau/tau-tui/tools/task";
 
 const item = (): TaskItem => ({ task: "do the thing" });

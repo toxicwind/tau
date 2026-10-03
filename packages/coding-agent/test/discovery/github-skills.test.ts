@@ -13,12 +13,12 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { loadCapability } from "@tau/tau-coding-agent/capability";
-import { clearCache } from "@tau/tau-coding-agent/capability/fs";
-import type { Skill } from "@tau/tau-coding-agent/capability/skill";
+import { loadCapability } from "tau/capability";
+import { clearCache } from "tau/capability/fs";
+import type { Skill } from "tau/capability/skill";
 import { removeSyncWithRetries } from "@tau/tau-utils";
-import "@tau/tau-coding-agent/capability/skill";
-import "@tau/tau-coding-agent/discovery/github";
+import "tau/capability/skill";
+import "tau/discovery/github";
 
 function writeSkill(root: string, name: string, description: string | null): void {
 	const skillDir = path.join(root, name);

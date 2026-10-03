@@ -2,11 +2,11 @@ import { afterEach, beforeEach, describe, expect, it, spyOn } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { discoverAndLoadExtensions } from "@tau/tau-coding-agent/extensibility/extensions/loader";
+import { discoverAndLoadExtensions } from "tau/extensibility/extensions/loader";
 import { getAgentDir, getPluginsDir, removeSyncWithRetries, setAgentDir, TempDir } from "@tau/tau-utils";
 
-const currentPiCodingAgentPath = Bun.resolveSync("@tau/tau-coding-agent", import.meta.dir);
-const currentPiExtensionsPath = Bun.resolveSync("@tau/tau-coding-agent/extensibility/extensions", import.meta.dir);
+const currentPiCodingAgentPath = Bun.resolveSync("tau", import.meta.dir);
+const currentPiExtensionsPath = Bun.resolveSync("tau/extensibility/extensions", import.meta.dir);
 
 describe("plugin extension discovery", () => {
 	let projectDir: TempDir;

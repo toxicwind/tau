@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { detectIndentFromContent, resolveFormatOptions } from "@tau/tau-coding-agent/lsp/format-options";
+import { detectIndentFromContent, resolveFormatOptions } from "tau/lsp/format-options";
 import { getProjectDir, removeWithRetries, Snowflake, setProjectDir } from "@tau/tau-utils";
 
 /**

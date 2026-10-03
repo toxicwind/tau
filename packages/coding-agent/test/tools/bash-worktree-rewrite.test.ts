@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { rewriteGitWorktreeAdd } from "@tau/tau-coding-agent/tools/bash-worktree-rewrite";
+import { rewriteGitWorktreeAdd } from "tau/tools/bash-worktree-rewrite";
 
 const TAU = ["bun", "/opt/tau cli.ts"] as const;
 

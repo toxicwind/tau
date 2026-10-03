@@ -2,11 +2,11 @@ import { beforeAll, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { BashResult } from "@tau/tau-coding-agent/exec/bash-executor";
+import type { BashResult } from "tau/exec/bash-executor";
 import { BashExecutionComponent } from "@tau/tau-tui/chat/bash-execution";
-import { CommandController } from "@tau/tau-coding-agent/modes/controllers/command-controller";
+import { CommandController } from "tau/modes/controllers/command-controller";
 import { getThemeByName, setThemeInstance } from "@tau/tau-tui/theme";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
+import type { InteractiveModeContext } from "tau/modes/types";
 
 function createContainer() {
 	return {

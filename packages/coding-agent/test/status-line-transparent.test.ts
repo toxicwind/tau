@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
 import { StatusLineComponent } from "@tau/tau-tui/status-line";
-import { statusLineHost } from "@tau/tau-coding-agent/modes/status-line-host";
+import { statusLineHost } from "tau/modes/status-line-host";
 import { initTheme, theme } from "@tau/tau-tui/theme";
 import { getProjectDir, setProjectDir } from "@tau/tau-utils";
 import { StatusLineTestComponents } from "./helpers/status-line";

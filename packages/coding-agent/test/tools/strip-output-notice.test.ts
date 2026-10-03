@@ -10,7 +10,7 @@
 import { describe, expect, it } from "bun:test";
 import { type OutputMeta, stripOutputNotice } from "@tau/tau-tui/tools/output-meta";
 import { formatOutputNotice } from "@tau/tau-tui/tools/output-meta";
-import { outputMeta } from "@tau/tau-coding-agent/tools/output-meta";
+import { outputMeta } from "tau/tools/output-meta";
 
 const truncation: OutputMeta = {
 	truncation: {

@@ -10,8 +10,8 @@ import { afterEach, describe, expect, it, spyOn } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { removeUserDataDir } from "@tau/tau-coding-agent/tools/browser/launch";
-import { type BrowserHandle, releaseBrowser } from "@tau/tau-coding-agent/tools/browser/registry";
+import { removeUserDataDir } from "tau/tools/browser/launch";
+import { type BrowserHandle, releaseBrowser } from "tau/tools/browser/registry";
 import * as piUtils from "@tau/tau-utils";
 
 async function makeProfileDir(): Promise<string> {

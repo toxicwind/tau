@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { stripVTControlCharacters } from "node:util";
-import { resetSettingsForTest, Settings, settings } from "@tau/tau-coding-agent/config/settings";
-import { MCPAuthorizationLinkPrompt } from "@tau/tau-coding-agent/modes/controllers/mcp-command-controller";
+import { resetSettingsForTest, Settings, settings } from "tau/config/settings";
+import { MCPAuthorizationLinkPrompt } from "tau/modes/controllers/mcp-command-controller";
 import { initTheme } from "@tau/tau-tui/theme";
 import { visibleWidth } from "@tau/tau-tui";
 

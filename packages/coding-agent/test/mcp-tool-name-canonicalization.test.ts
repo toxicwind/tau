@@ -3,9 +3,9 @@ import {
 	canonicalMCPToolNameCandidates,
 	createMCPToolName,
 	resolveMCPToolAlias,
-} from "@tau/tau-coding-agent/mcp/tool-bridge";
-import { resolveMountedXdevExecutable, type XdevState } from "@tau/tau-coding-agent/tools/xdev";
-import type { Tool } from "@tau/tau-coding-agent/tools/index";
+} from "tau/mcp/tool-bridge";
+import { resolveMountedXdevExecutable, type XdevState } from "tau/tools/xdev";
+import type { Tool } from "tau/tools/index";
 
 // `createMCPToolName` joins the sanitized server and tool with a SINGLE
 // underscore, but the harness identifies itself to the model as Claude Code,

@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it } from "bun:test";
-import { CommandController } from "@tau/tau-coding-agent/modes/controllers/command-controller";
+import { CommandController } from "tau/modes/controllers/command-controller";
 import { initTheme } from "@tau/tau-tui/theme";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
+import type { InteractiveModeContext } from "tau/modes/types";
 
 beforeAll(async () => {
 	await initTheme(false);

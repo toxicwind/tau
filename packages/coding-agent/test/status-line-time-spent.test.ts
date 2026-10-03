@@ -12,9 +12,9 @@
  *   window so `/clear` and fresh-session flows zero the meter.
  */
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
 import { StatusLineComponent } from "@tau/tau-tui/status-line";
-import { statusLineHost } from "@tau/tau-coding-agent/modes/status-line-host";
+import { statusLineHost } from "tau/modes/status-line-host";
 import type { SegmentContext } from "@tau/tau-tui/status-line/segments";
 import { renderSegment } from "@tau/tau-tui/status-line/segments";
 import { initTheme } from "@tau/tau-tui/theme";

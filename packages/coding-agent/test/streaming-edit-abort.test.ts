@@ -3,12 +3,12 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import type { Agent, AgentEvent } from "@tau/tau-agent-core";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { EditTool, getEditStore } from "@tau/tau-coding-agent/edit";
-import { StreamingEditGuard } from "@tau/tau-coding-agent/session/stream-guards";
+import { Settings } from "tau/config/settings";
+import { EditTool, getEditStore } from "tau/edit";
+import { StreamingEditGuard } from "tau/session/stream-guards";
 import { formatHashlineHeader } from "@tau/tau-tui/tools/hashline-format";
-import type { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
+import type { SessionManager } from "tau/session/session-manager";
+import type { ToolSession } from "tau/tools";
 import { removeWithRetries } from "@tau/tau-utils";
 
 function createGuard(

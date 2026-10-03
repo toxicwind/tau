@@ -14,9 +14,9 @@ import {
 	hasResolvableTranscript,
 	registerArtifactsDir,
 	resetRegisteredArtifactDirsForTests,
-} from "@tau/tau-coding-agent/internal-urls/registry-helpers";
-import { AgentRegistry } from "@tau/tau-coding-agent/registry/agent-registry";
-import type { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
+} from "tau/internal-urls/registry-helpers";
+import { AgentRegistry } from "tau/registry/agent-registry";
+import type { AgentSession } from "tau/session/agent-session";
 import { removeWithRetries } from "@tau/tau-utils";
 
 function fakeLiveSession(): AgentSession {

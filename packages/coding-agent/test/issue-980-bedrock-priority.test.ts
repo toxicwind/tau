@@ -5,8 +5,8 @@ import {
 	resolveCliModel,
 	resolveModelFromSettings,
 	resolveModelRoleValue,
-} from "@tau/tau-coding-agent/config/model-resolver";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
+} from "tau/config/model-resolver";
+import { Settings } from "tau/config/settings";
 
 function model(provider: string, id: string): Model<"anthropic-messages"> {
 	return buildModel({

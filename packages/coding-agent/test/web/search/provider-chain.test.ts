@@ -1,10 +1,10 @@
 import { afterEach, describe, expect, it } from "bun:test";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { resolveModelRoleValue, resolveRoleChain } from "@tau/tau-coding-agent/config/model-resolver";
-import { roleCandidatePool } from "@tau/tau-coding-agent/config/model-roles";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import type { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
-import { getSearchProvider } from "@tau/tau-coding-agent/web/search/provider";
+import { ModelRegistry } from "tau/config/model-registry";
+import { resolveModelRoleValue, resolveRoleChain } from "tau/config/model-resolver";
+import { roleCandidatePool } from "tau/config/model-roles";
+import { Settings } from "tau/config/settings";
+import type { AuthStorage } from "tau/session/auth-storage";
+import { getSearchProvider } from "tau/web/search/provider";
 import { createInMemoryAuthStorage } from "../../helpers/agent-session-setup";
 
 const originalPerplexityApiKey = process.env.PERPLEXITY_API_KEY;

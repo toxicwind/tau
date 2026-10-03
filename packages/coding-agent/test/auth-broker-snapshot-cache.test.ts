@@ -10,7 +10,7 @@ import {
 	startAuthBroker,
 	writeAuthBrokerSnapshotCache,
 } from "@tau/tau-ai/auth-broker";
-import { discoverAuthStorage } from "@tau/tau-coding-agent/sdk";
+import { discoverAuthStorage } from "tau/sdk";
 import { removeWithRetries } from "@tau/tau-utils";
 
 const ENV_KEYS = [

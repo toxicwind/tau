@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
 import type { AssistantMessage } from "@tau/tau-ai";
-import { isEmptyErrorTurn, sanitizeAssistantForReparentedHistory } from "@tau/tau-coding-agent/session/messages";
+import { isEmptyErrorTurn, sanitizeAssistantForReparentedHistory } from "tau/session/messages";
 
 type Turn = Pick<AssistantMessage, "stopReason" | "content">;
 

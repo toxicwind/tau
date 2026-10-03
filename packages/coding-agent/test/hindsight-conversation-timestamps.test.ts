@@ -1,10 +1,10 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { HindsightApi } from "@tau/tau-coding-agent/hindsight/client";
-import type { HindsightConfig } from "@tau/tau-coding-agent/hindsight/config";
-import { HindsightSessionState } from "@tau/tau-coding-agent/hindsight/state";
-import { extractMessages } from "@tau/tau-coding-agent/hindsight/transcript";
-import type { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
-import type { SessionEntry } from "@tau/tau-coding-agent/session/session-entries";
+import { HindsightApi } from "tau/hindsight/client";
+import type { HindsightConfig } from "tau/hindsight/config";
+import { HindsightSessionState } from "tau/hindsight/state";
+import { extractMessages } from "tau/hindsight/transcript";
+import type { AgentSession } from "tau/session/agent-session";
+import type { SessionEntry } from "tau/session/session-entries";
 
 function captureBodies(): unknown[] {
 	const bodies: unknown[] = [];

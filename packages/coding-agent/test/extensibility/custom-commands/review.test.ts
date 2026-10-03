@@ -2,12 +2,12 @@ import { afterAll, afterEach, beforeAll, describe, expect, it, spyOn, vi } from 
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { ReviewCommand } from "@tau/tau-coding-agent/extensibility/custom-commands/bundled/review";
-import type { CustomCommandAPI } from "@tau/tau-coding-agent/extensibility/custom-commands/types";
-import type { HookCommandContext } from "@tau/tau-coding-agent/extensibility/hooks/types";
-import type { SessionEntry } from "@tau/tau-coding-agent/session/session-entries";
-import type { PrDiffPayload, ViewLookupResult } from "@tau/tau-coding-agent/tools/gh";
-import * as gh from "@tau/tau-coding-agent/tools/gh";
+import { ReviewCommand } from "tau/extensibility/custom-commands/bundled/review";
+import type { CustomCommandAPI } from "tau/extensibility/custom-commands/types";
+import type { HookCommandContext } from "tau/extensibility/hooks/types";
+import type { SessionEntry } from "tau/session/session-entries";
+import type { PrDiffPayload, ViewLookupResult } from "tau/tools/gh";
+import * as gh from "tau/tools/gh";
 import type { VcsGitRepo, VcsRepo } from "@tau/tau-natives";
 import * as vcs from "@tau/tau-natives/vcs";
 import { removeWithRetries } from "@tau/tau-utils";

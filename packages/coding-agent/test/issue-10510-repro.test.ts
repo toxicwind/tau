@@ -5,12 +5,12 @@ import { Agent, type AgentMessage, type AgentTool } from "@tau/tau-agent-core";
 import { type Api, Effort, type Model } from "@tau/tau-ai";
 import { createMockModel, type MockResponse } from "@tau/tau-ai/providers/mock";
 import { getBundledModel } from "@tau/tau-catalog/models";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
-import type { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
-import { convertToLlm } from "@tau/tau-coding-agent/session/messages";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
+import { AgentSession } from "tau/session/agent-session";
+import type { AuthStorage } from "tau/session/auth-storage";
+import { convertToLlm } from "tau/session/messages";
+import { SessionManager } from "tau/session/session-manager";
 import { TempDir } from "@tau/tau-utils";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 

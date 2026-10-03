@@ -1,6 +1,6 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, spyOn } from "bun:test";
 import type { AssistantMessage } from "@tau/tau-ai";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
 import { AssistantMessageComponent, resetThinkingSpeedTracker } from "@tau/tau-tui/chat/assistant-message";
 import { initTheme } from "@tau/tau-tui/theme";
 import { setTerminalImageProtocol, TERMINAL } from "@tau/tau-tui";

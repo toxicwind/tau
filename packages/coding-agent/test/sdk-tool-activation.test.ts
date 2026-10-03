@@ -7,28 +7,28 @@ import type { AgentTool, StreamFn } from "@tau/tau-agent-core";
 import type { Model, ToolResultMessage } from "@tau/tau-ai";
 import { createMockModel } from "@tau/tau-ai/providers/mock";
 import { getBundledModel } from "@tau/tau-catalog/models";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import type { CursorExecHandlers } from "@tau/tau-coding-agent/cursor";
+import { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
+import type { CursorExecHandlers } from "tau/cursor";
 import {
 	EXTENSION_HANDLER_TIMEOUT_MS,
 	testSetExtensionHandlerTimeoutMs,
-} from "@tau/tau-coding-agent/extensibility/extensions/runner";
-import { ExtensionToolWrapper } from "@tau/tau-coding-agent/extensibility/extensions/wrapper";
-import type { MCPManager } from "@tau/tau-coding-agent/mcp/manager";
-import * as memoryBackendModule from "@tau/tau-coding-agent/memory-backend";
-import { initializeExtensions } from "@tau/tau-coding-agent/modes/runtime-init";
+} from "tau/extensibility/extensions/runner";
+import { ExtensionToolWrapper } from "tau/extensibility/extensions/wrapper";
+import type { MCPManager } from "tau/mcp/manager";
+import * as memoryBackendModule from "tau/memory-backend";
+import { initializeExtensions } from "tau/modes/runtime-init";
 import {
 	type CreateAgentSessionOptions,
 	type CustomTool,
 	createAgentSession,
 	discoverAuthStorage,
 	type ExtensionFactory,
-} from "@tau/tau-coding-agent/sdk";
-import type { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import { VIBE_TOOL_NAMES } from "@tau/tau-coding-agent/tools/vibe";
-import { resetYieldTurnState } from "@tau/tau-coding-agent/tools/yield";
+} from "tau/sdk";
+import type { AgentSession } from "tau/session/agent-session";
+import { SessionManager } from "tau/session/session-manager";
+import { VIBE_TOOL_NAMES } from "tau/tools/vibe";
+import { resetYieldTurnState } from "tau/tools/yield";
 import { logger, removeSyncWithRetries, Snowflake, untilAborted } from "@tau/tau-utils";
 
 const toolActivationExtension: ExtensionFactory = pi => {

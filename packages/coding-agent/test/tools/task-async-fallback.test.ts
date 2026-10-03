@@ -1,9 +1,9 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { TaskTool } from "@tau/tau-coding-agent/task";
-import * as discoveryModule from "@tau/tau-coding-agent/task/discovery";
+import { Settings } from "tau/config/settings";
+import { TaskTool } from "tau/task";
+import * as discoveryModule from "tau/task/discovery";
 import type { TaskParams } from "@tau/tau-tui/tools/task";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
+import type { ToolSession } from "tau/tools";
 
 function createSession(overrides: Partial<Record<string, unknown>> = {}): ToolSession {
 	return {

@@ -1,11 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { stripVTControlCharacters } from "node:util";
-import type { AsyncJobType } from "@tau/tau-coding-agent/async";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
+import type { AsyncJobType } from "tau/async";
+import { Settings } from "tau/config/settings";
 import { StatusLineComponent } from "@tau/tau-tui/status-line";
-import { statusLineHost } from "@tau/tau-coding-agent/modes/status-line-host";
+import { statusLineHost } from "tau/modes/status-line-host";
 import { initTheme, theme } from "@tau/tau-tui/theme";
-import type { AsyncJobSnapshotItem } from "@tau/tau-coding-agent/session/agent-session";
+import type { AsyncJobSnapshotItem } from "tau/session/agent-session";
 import { beginSettingsTest, restoreSettingsTestState, type SettingsTestState } from "./helpers/settings-test-state";
 import { StatusLineTestComponents } from "./helpers/status-line";
 

@@ -9,7 +9,7 @@ use std::{
 use ast_grep_core::{MatchStrictness, matcher::Pattern, source::Edit, tree_sitter::LanguageExt};
 use napi::bindgen_prelude::*;
 use napi_derive::napi;
-use pi_ast::{
+use tau_ast::{
 	SupportLang,
 	ops::{self as shared_ops},
 };
@@ -449,25 +449,25 @@ fn collect_candidates(
 
 	let mentions_node_modules = glob.is_some_and(|value| value.contains("node_modules"));
 	let mut filter =
-		pi_walker::WalkFilter::files_only().node_modules_unless_mentioned(mentions_node_modules);
+		tau_walker::WalkFilter::files_only().node_modules_unless_mentioned(mentions_node_modules);
 	if let Some(glob) = glob.map(str::trim).filter(|value| !value.is_empty()) {
 		let pattern = glob_util::build_glob_pattern(glob, false);
-		let compiled = pi_walker::CompiledWalkGlob::new([pattern])
+		let compiled = tau_walker::CompiledWalkGlob::new([pattern])
 			.map_err(|err| Error::from_reason(format!("Invalid glob pattern: {err}")))?;
 		filter = filter.glob(compiled);
 	}
-	let request = pi_walker::WalkRequest::new(&search_path)
+	let request = tau_walker::WalkRequest::new(&search_path)
 		.hidden(true)
 		.gitignore(true)
 		.skip_git(true)
-		.follow_links(pi_walker::FollowLinks::Never)
-		.detail(pi_walker::WalkDetail::Minimal)
-		.order(pi_walker::WalkOrder::Path)
+		.follow_links(tau_walker::FollowLinks::Never)
+		.detail(tau_walker::WalkDetail::Minimal)
+		.order(tau_walker::WalkOrder::Path)
 		.emit_root(false)
 		.depth(1, usize::MAX)
-		.directory_errors(pi_walker::DirectoryErrorMode::SkipSkippable)
+		.directory_errors(tau_walker::DirectoryErrorMode::SkipSkippable)
 		.cache(true)
-		.empty_recheck(pi_walker::EmptyRecheck::Configured)
+		.empty_recheck(tau_walker::EmptyRecheck::Configured)
 		.filter(filter);
 	let mut files: Vec<_> = request
 		.collect_files_with_heartbeat(|| ct.heartbeat())

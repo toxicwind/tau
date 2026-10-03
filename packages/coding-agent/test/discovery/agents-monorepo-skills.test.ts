@@ -10,16 +10,16 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { clearCache, readFile } from "@tau/tau-coding-agent/capability/fs";
-import type { Rule } from "@tau/tau-coding-agent/capability/rule";
-import type { LoadContext } from "@tau/tau-coding-agent/capability/types";
-import { getProjectPathCandidates } from "@tau/tau-coding-agent/discovery/agents";
+import { clearCache, readFile } from "tau/capability/fs";
+import type { Rule } from "tau/capability/rule";
+import type { LoadContext } from "tau/capability/types";
+import { getProjectPathCandidates } from "tau/discovery/agents";
 import {
 	buildRuleFromMarkdown,
 	calculateDepth,
 	loadFilesFromDir,
 	scanSkillsFromDir,
-} from "@tau/tau-coding-agent/discovery/helpers";
+} from "tau/discovery/helpers";
 import { removeSyncWithRetries } from "@tau/tau-utils";
 
 const PROVIDER_ID = "agents";

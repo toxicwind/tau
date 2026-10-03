@@ -8,11 +8,11 @@
  * ask toolResults).
  */
 import { afterEach, beforeAll, beforeEach, describe, expect, it, type Mock, vi } from "bun:test";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
-import { SelectorController } from "@tau/tau-coding-agent/modes/controllers/selector-controller";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
+import { SelectorController } from "tau/modes/controllers/selector-controller";
 import { initTheme } from "@tau/tau-tui/theme";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
-import type { SessionEntry, SessionTreeNode } from "@tau/tau-coding-agent/session/session-entries";
+import type { InteractiveModeContext } from "tau/modes/types";
+import type { SessionEntry, SessionTreeNode } from "tau/session/session-entries";
 
 beforeAll(async () => {
 	await initTheme();

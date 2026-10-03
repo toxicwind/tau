@@ -4,11 +4,11 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import { AuthStorage, SqliteAuthCredentialStore } from "@tau/tau-ai";
-import * as mcpClient from "@tau/tau-coding-agent/mcp/client";
-import * as oauthFlow from "@tau/tau-coding-agent/mcp/oauth-flow";
-import type { SourceMeta } from "@tau/tau-coding-agent/capability/types";
-import type { MCPServerConfig } from "@tau/tau-coding-agent/mcp/types";
-import { MCPCommandController } from "@tau/tau-coding-agent/modes/controllers/mcp-command-controller";
+import * as mcpClient from "tau/mcp/client";
+import * as oauthFlow from "tau/mcp/oauth-flow";
+import type { SourceMeta } from "tau/capability/types";
+import type { MCPServerConfig } from "tau/mcp/types";
+import { MCPCommandController } from "tau/modes/controllers/mcp-command-controller";
 import { initTheme } from "@tau/tau-tui/theme";
 import {
 	getConfigRootDir,

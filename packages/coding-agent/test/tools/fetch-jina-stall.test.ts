@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { AgentStorage } from "@tau/tau-coding-agent/session/agent-storage";
-import { renderHtmlToText } from "@tau/tau-coding-agent/tools/fetch";
+import { Settings } from "tau/config/settings";
+import { AgentStorage } from "tau/session/agent-storage";
+import { renderHtmlToText } from "tau/tools/fetch";
 import { TempDir } from "@tau/tau-utils";
 import { asGlobalFetch } from "../helpers/fetch-mock";
 

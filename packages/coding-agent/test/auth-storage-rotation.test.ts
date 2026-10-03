@@ -6,8 +6,8 @@ import { type OAuthCredential, type UsageProvider, resolvedApiKeyBearer, withAut
 import * as oauth from "@tau/tau-ai/oauth";
 import type { OAuthCredentials, OAuthProviderId } from "@tau/tau-ai/oauth/types";
 import { getBundledModel } from "@tau/tau-catalog/models";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { ModelRegistry } from "tau/config/model-registry";
+import { AuthStorage } from "tau/session/auth-storage";
 import { removeSyncWithRetries, Snowflake } from "@tau/tau-utils";
 import { createApiKeyResolver } from "../src/config/api-key-resolver";
 

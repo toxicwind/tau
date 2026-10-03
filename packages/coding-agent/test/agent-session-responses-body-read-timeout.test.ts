@@ -8,11 +8,11 @@ import { streamOpenAIResponses } from "@tau/tau-ai/providers/openai-responses";
 import { createOpenAIResponsesHistoryPayload } from "@tau/tau-ai/utils";
 import type { Context, Model, ModelSpec } from "@tau/tau-ai/types";
 import { buildModel } from "@tau/tau-catalog/build";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
+import { AgentSession } from "tau/session/agent-session";
+import { AuthStorage } from "tau/session/auth-storage";
+import { SessionManager } from "tau/session/session-manager";
 import { TempDir } from "@tau/tau-utils";
 
 const NATIVE_REPLAY_BULK = "NATIVE_REPLAY_BULK_SENTINEL ".repeat(1000);

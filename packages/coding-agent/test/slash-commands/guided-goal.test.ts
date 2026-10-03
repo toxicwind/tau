@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "bun:test";
 import type { ImageContent } from "@tau/tau-ai";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
-import { executeBuiltinSlashCommand } from "@tau/tau-coding-agent/slash-commands/builtin-registry";
+import type { InteractiveModeContext } from "tau/modes/types";
+import { executeBuiltinSlashCommand } from "tau/slash-commands/builtin-registry";
 
 function createRuntime(handler: () => Promise<boolean>) {
 	const handleGuidedGoalCommand = vi.fn(handler);

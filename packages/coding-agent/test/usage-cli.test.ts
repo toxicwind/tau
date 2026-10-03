@@ -11,7 +11,7 @@ import {
 	formatUsageHistory,
 	type UsageAccountIdentity,
 	type UsagePolicyDiagnosticsOptions,
-} from "@tau/tau-coding-agent/cli/usage-cli";
+} from "tau/cli/usage-cli";
 
 const HOUR = 3_600_000;
 const FIVE_HOURS = 5 * HOUR;

@@ -9,10 +9,10 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { clearCache } from "@tau/tau-coding-agent/capability/fs";
-import type { Skill } from "@tau/tau-coding-agent/capability/skill";
-import type { LoadContext, LoadResult } from "@tau/tau-coding-agent/capability/types";
-import { scanSkillsFromDir } from "@tau/tau-coding-agent/discovery/helpers";
+import { clearCache } from "tau/capability/fs";
+import type { Skill } from "tau/capability/skill";
+import type { LoadContext, LoadResult } from "tau/capability/types";
+import { scanSkillsFromDir } from "tau/discovery/helpers";
 import { removeSyncWithRetries } from "@tau/tau-utils";
 
 function writeSkill(dir: string, name: string, description: string): void {

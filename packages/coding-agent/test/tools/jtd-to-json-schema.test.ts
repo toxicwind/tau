@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { isJTDSchema, jtdToJsonSchema } from "@tau/tau-coding-agent/tools/jtd-to-json-schema";
+import { isJTDSchema, jtdToJsonSchema } from "tau/tools/jtd-to-json-schema";
 
 describe("jtdToJsonSchema", () => {
 	it("converts JTD elements and int32 primitives into JSON Schema", () => {

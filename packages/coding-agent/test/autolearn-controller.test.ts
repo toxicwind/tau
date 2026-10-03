@@ -5,11 +5,11 @@ import type { AssistantMessage, FetchImpl, Model, ProviderSessionState, Usage } 
 import { streamGoogle } from "@tau/tau-ai/providers/google";
 import { createMockModel } from "@tau/tau-ai/providers/mock";
 import { buildModel } from "@tau/tau-catalog/build";
-import { AutoLearnController, buildAutoLearnInstructions } from "@tau/tau-coding-agent/autolearn/controller";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { createAutoLearnCaptureRunner } from "@tau/tau-coding-agent/sdk";
-import type { AgentSession, AgentSessionEvent } from "@tau/tau-coding-agent/session/agent-session";
-import { convertToLlm } from "@tau/tau-coding-agent/session/messages";
+import { AutoLearnController, buildAutoLearnInstructions } from "tau/autolearn/controller";
+import { Settings } from "tau/config/settings";
+import { createAutoLearnCaptureRunner } from "tau/sdk";
+import type { AgentSession, AgentSessionEvent } from "tau/session/agent-session";
+import { convertToLlm } from "tau/session/messages";
 
 class FakeSession {
 	readonly listeners: Array<(event: AgentSessionEvent) => void> = [];

@@ -1,14 +1,14 @@
 import { beforeAll, describe, expect, it, spyOn } from "bun:test";
 import * as os from "node:os";
 import { stripVTControlCharacters } from "node:util";
-import { PluginManager } from "@tau/tau-coding-agent/extensibility/plugins";
+import { PluginManager } from "tau/extensibility/plugins";
 import {
 	type InstalledPluginSummary,
 	MarketplaceManager,
 	parsePluginId,
-} from "@tau/tau-coding-agent/extensibility/plugins/marketplace";
-import { createPluginSettingsHost } from "@tau/tau-coding-agent/extensibility/plugins/settings-host";
-import type { InstalledPlugin } from "@tau/tau-coding-agent/extensibility/plugins/types";
+} from "tau/extensibility/plugins/marketplace";
+import { createPluginSettingsHost } from "tau/extensibility/plugins/settings-host";
+import type { InstalledPlugin } from "tau/extensibility/plugins/types";
 import {
 	type InstalledPluginSummary as MarketplaceSettingsPlugin,
 	MarketplacePluginDetailComponent,

@@ -186,7 +186,7 @@ try {
 						...process.env,
 						HOME: home,
 						USERPROFILE: home,
-						PI_CONFIG_DIR: ".tau",
+						TAU_CONFIG_DIR: ".tau",
 						TAU_PROFILE: profile,
 						TAU_DAEMON_IDLE_GRACE_MS: "200",
 						TAU_TEST_RELAY_URL: cdpUrl,

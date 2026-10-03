@@ -1,8 +1,8 @@
 import { describe, expect, test } from "bun:test";
 import { TauErrors } from "@tau/tautype";
-import { getModelsConfigSchema } from "@tau/tau-coding-agent/config/models-config-schema-bundle";
-import { validateProviderConfiguration } from "@tau/tau-coding-agent/config/models-config";
-import { type ModelsConfig, ModelsConfigSchema } from "@tau/tau-coding-agent/config/models-config-schema";
+import { getModelsConfigSchema } from "tau/config/models-config-schema-bundle";
+import { validateProviderConfiguration } from "tau/config/models-config";
+import { type ModelsConfig, ModelsConfigSchema } from "tau/config/models-config-schema";
 
 const models = [{ id: "grok-4", api: "openai-completions" as const }];
 const baseUrl = "https://api.example.invalid/v1";

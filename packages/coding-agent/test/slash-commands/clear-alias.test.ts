@@ -2,7 +2,7 @@ import { describe, expect, it } from "bun:test";
 import {
 	BUILTIN_SLASH_COMMANDS,
 	lookupBuiltinSlashCommand,
-} from "@tau/tau-coding-agent/slash-commands/builtin-registry";
+} from "tau/slash-commands/builtin-registry";
 import { CombinedAutocompleteProvider } from "@tau/tau-tui/autocomplete";
 
 describe("/clear slash command", () => {

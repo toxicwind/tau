@@ -2,9 +2,9 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import * as mcpClient from "@tau/tau-coding-agent/mcp/client";
-import * as mcpConfigWriter from "@tau/tau-coding-agent/mcp/config-writer";
-import { MCPCommandController } from "@tau/tau-coding-agent/modes/controllers/mcp-command-controller";
+import * as mcpClient from "tau/mcp/client";
+import * as mcpConfigWriter from "tau/mcp/config-writer";
+import { MCPCommandController } from "tau/modes/controllers/mcp-command-controller";
 import { initTheme } from "@tau/tau-tui/theme";
 import type { Component } from "@tau/tau-tui";
 import { getConfigRootDir, getProjectDir, removeWithRetries, setAgentDir, setProjectDir } from "@tau/tau-utils";

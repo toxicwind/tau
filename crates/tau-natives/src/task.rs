@@ -33,7 +33,7 @@ use std::{
 };
 
 use napi::{Env, Error, Result, Status, Task, bindgen_prelude::*};
-use pi_shell::cancel as core_cancel;
+use tau_shell::cancel as core_cancel;
 
 use crate::prof::profile_region;
 

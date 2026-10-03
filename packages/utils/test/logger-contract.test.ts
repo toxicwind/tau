@@ -50,7 +50,7 @@ async function runScenario(scenario: string): Promise<ScenarioResult> {
 				// os.homedir() on Windows reads USERPROFILE, not HOME: without
 				// this the default-file scenario logs into the real profile.
 				USERPROFILE: primaryDir,
-				PI_CONFIG_DIR: ".tau",
+				TAU_CONFIG_DIR: ".tau",
 				TAU_PROFILE: "",
 				PI_PROFILE: "",
 				XDG_DATA_HOME: "",

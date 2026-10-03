@@ -18,21 +18,21 @@ import {
 	ShellArgsSchema,
 } from "@tau/tau-catalog/discovery/cursor-proto";
 import { create, fromBinary } from "@tau/tau-catalog/discovery/protobuf";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { CursorExecHandlers } from "@tau/tau-coding-agent/cursor";
+import { Settings } from "tau/config/settings";
+import { CursorExecHandlers } from "tau/cursor";
 import {
 	bridgeToolMap,
 	createBridgeEditTool,
 	createBridgeGrepFactory,
 	cursorMcpPrefersReplaceEdit,
 	normalizeCursorReplaceArgs,
-} from "@tau/tau-coding-agent/cursor-bridge-tools";
+} from "tau/cursor-bridge-tools";
 
-import { EditTool } from "@tau/tau-coding-agent/edit";
-import type { ExtensionRunner } from "@tau/tau-coding-agent/extensibility/extensions";
-import { ExtensionToolWrapper } from "@tau/tau-coding-agent/extensibility/extensions";
-import { BUILTIN_TOOLS, GrepTool, ReadTool, type Tool, type ToolSession } from "@tau/tau-coding-agent/tools";
-import { BashTool } from "@tau/tau-coding-agent/tools/bash";
+import { EditTool } from "tau/edit";
+import type { ExtensionRunner } from "tau/extensibility/extensions";
+import { ExtensionToolWrapper } from "tau/extensibility/extensions";
+import { BUILTIN_TOOLS, GrepTool, ReadTool, type Tool, type ToolSession } from "tau/tools";
+import { BashTool } from "tau/tools/bash";
 import type { TruncationMeta } from "@tau/tau-tui/tools/output-meta";
 import { removeWithRetries } from "@tau/tau-utils";
 import { AdviseTool } from "../src/advisor/advise-tool";

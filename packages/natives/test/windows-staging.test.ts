@@ -1,7 +1,7 @@
 /**
  * Regression for the Windows `bun install -g` update path: when an `tau`
  * process is running, bun cannot overwrite a locked
- * `node_modules/@tau/tau-natives/native/pi_natives.win32-x64.node` during
+ * `node_modules/@tau/tau-natives/native/tau_natives.win32-x64.node` during
  * package update and silently keeps the old binary next to the new ESM
  * wrapper. The next launch then throws `<sym> is not a function` deep inside
  * tool execution (see Discord report, 2026-05-14).
@@ -99,9 +99,9 @@ describe("windows native addon staging", () => {
 			userDataDir,
 		});
 
-		const versionedBaseline = path.join(versionedDir, "pi_natives.win32-x64-baseline.node");
-		const versionedDefault = path.join(versionedDir, "pi_natives.win32-x64.node");
-		const nodeModulesBaseline = path.join(winNodeModulesNativeDir, "pi_natives.win32-x64-baseline.node");
+		const versionedBaseline = path.join(versionedDir, "tau_natives.win32-x64-baseline.node");
+		const versionedDefault = path.join(versionedDir, "tau_natives.win32-x64.node");
+		const nodeModulesBaseline = path.join(winNodeModulesNativeDir, "tau_natives.win32-x64-baseline.node");
 
 		// Staged paths must be probed first so the running process locks the cache
 		// copy and bun is free to replace the node_modules copy on next update.
@@ -112,7 +112,7 @@ describe("windows native addon staging", () => {
 		// User-data dir is reserved for compiled-binary mode — staging must not
 		// quietly start probing it on npm installs (where it never contains the
 		// addon anyway).
-		const userDataBaseline = path.join(userDataDir, "pi_natives.win32-x64-baseline.node");
+		const userDataBaseline = path.join(userDataDir, "tau_natives.win32-x64-baseline.node");
 		expect(candidates).not.toContain(userDataBaseline);
 	});
 
@@ -186,8 +186,8 @@ describe("windows native addon staging", () => {
 			userDataDir: "/home/u/.local/bin",
 		});
 
-		const versionedBaseline = path.join(versionedDir, "pi_natives.linux-x64-baseline.node");
-		const nodeModulesBaseline = path.join(posixNodeModulesNativeDir, "pi_natives.linux-x64-baseline.node");
+		const versionedBaseline = path.join(versionedDir, "tau_natives.linux-x64-baseline.node");
+		const nodeModulesBaseline = path.join(posixNodeModulesNativeDir, "tau_natives.linux-x64-baseline.node");
 		expect(candidates).not.toContain(versionedBaseline);
 		expect(candidates).toContain(nodeModulesBaseline);
 	});

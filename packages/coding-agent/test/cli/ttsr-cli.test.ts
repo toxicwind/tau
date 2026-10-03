@@ -7,8 +7,8 @@ import {
 	type TtsrCommandArgs,
 	type TtsrScanArgs,
 	type TtsrTestArgs,
-} from "@tau/tau-coding-agent/cli/ttsr-cli";
-import { resetSettingsForTest } from "@tau/tau-coding-agent/config/settings";
+} from "tau/cli/ttsr-cli";
+import { resetSettingsForTest } from "tau/config/settings";
 import { getProjectAgentDir, getProjectDir, removeSyncWithRetries, setProjectDir } from "@tau/tau-utils";
 
 let testTmpDir: string;

@@ -7,14 +7,14 @@
 import { afterEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { Settings } from "tau/config/settings";
 import {
 	disposeAllKernelSessions,
 	executePython,
 	executePythonWithKernel,
-} from "@tau/tau-coding-agent/eval/py/executor";
-import { PythonKernel } from "@tau/tau-coding-agent/eval/py/kernel";
-import { filterEnv, resolvePythonRuntime } from "@tau/tau-coding-agent/eval/py/runtime";
+} from "tau/eval/py/executor";
+import { PythonKernel } from "tau/eval/py/kernel";
+import { filterEnv, resolvePythonRuntime } from "tau/eval/py/runtime";
 import { TempDir } from "@tau/tau-utils";
 
 const SHOULD_RUN = Bun.env.PI_PYTHON_INTEGRATION === "1";

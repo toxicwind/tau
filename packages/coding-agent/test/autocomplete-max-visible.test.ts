@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
-import { SelectorController } from "@tau/tau-coding-agent/modes/controllers/selector-controller";
-import { AgentStorage } from "@tau/tau-coding-agent/session/agent-storage";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
+import { SelectorController } from "tau/modes/controllers/selector-controller";
+import { AgentStorage } from "tau/session/agent-storage";
 import { getProjectAgentDir, TempDir } from "@tau/tau-utils";
 import { YAML } from "bun";
 import { beginSettingsTest, restoreSettingsTestState, type SettingsTestState } from "./helpers/settings-test-state";

@@ -21,8 +21,8 @@ use napi::{
 };
 use napi_derive::napi;
 use parking_lot::Mutex;
-use pi_shell::output_decode::OutputDecoder;
 use portable_pty::{Child, CommandBuilder, PtySize, native_pty_system};
+use tau_shell::output_decode::OutputDecoder;
 
 use crate::{js::into_string, ps, task};
 
@@ -361,7 +361,7 @@ fn run_pty_sync(
 	// repo-location overrides before the explicit env below is applied: the
 	// terminal's `git` rediscovers the repository from `cwd`, while a
 	// caller-supplied value still wins.
-	for name in pi_shell::shell::GIT_REPO_LOCATION_ENV_VARS {
+	for name in tau_shell::shell::GIT_REPO_LOCATION_ENV_VARS {
 		cmd.env_remove(name);
 	}
 	if let Some(env) = config.env.as_ref() {

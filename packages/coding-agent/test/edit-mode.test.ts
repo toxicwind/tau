@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { type EditMode } from "@tau/tau-tui/tools/edit";
-import { type EditModeSessionLike, resolveEditMode } from "@tau/tau-coding-agent/utils/edit-mode";
+import { type EditModeSessionLike, resolveEditMode } from "tau/utils/edit-mode";
 
 const originalEditVariant = Bun.env.PI_EDIT_VARIANT;
 const originalStrictEditMode = Bun.env.PI_STRICT_EDIT_MODE;

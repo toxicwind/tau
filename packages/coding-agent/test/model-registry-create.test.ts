@@ -1,10 +1,10 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { ConfigFile } from "@tau/tau-coding-agent/config/config-file";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { ModelsConfigSchema } from "@tau/tau-coding-agent/config/models-config-schema";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { ConfigFile } from "tau/config/config-file";
+import { ModelRegistry } from "tau/config/model-registry";
+import { ModelsConfigSchema } from "tau/config/models-config-schema";
+import { AuthStorage } from "tau/session/auth-storage";
 import { TempDir } from "@tau/tau-utils";
 
 describe("ModelRegistry.create() factory (F6)", () => {

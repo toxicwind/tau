@@ -86,10 +86,10 @@ export async function embedNativeAddon({
 	const candidates: CandidateAddon[] =
 		targetArch === "x64"
 			? [
-					{ variant: "modern", filename: `pi_natives.${platformTag}-modern.node` },
-					{ variant: "baseline", filename: `pi_natives.${platformTag}-baseline.node` },
+					{ variant: "modern", filename: `tau_natives.${platformTag}-modern.node` },
+					{ variant: "baseline", filename: `tau_natives.${platformTag}-baseline.node` },
 				]
-			: [{ variant: "default", filename: `pi_natives.${platformTag}.node` }];
+			: [{ variant: "default", filename: `tau_natives.${platformTag}.node` }];
 
 	const available: AvailableAddon[] = [];
 	for (const candidate of candidates) {

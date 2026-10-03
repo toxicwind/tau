@@ -4,12 +4,12 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { hashlineFileHash } from "@tau/tau-natives";
 import type { AgentToolResult } from "@tau/tau-agent-core";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { resolveLocalUrlToPath } from "@tau/tau-coding-agent/internal-urls";
-import type { PlanModeState } from "@tau/tau-coding-agent/plan-mode/state";
-import type { ClientBridge } from "@tau/tau-coding-agent/session/client-bridge";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
-import { WriteTool } from "@tau/tau-coding-agent/tools/write";
+import { Settings } from "tau/config/settings";
+import { resolveLocalUrlToPath } from "tau/internal-urls";
+import type { PlanModeState } from "tau/plan-mode/state";
+import type { ClientBridge } from "tau/session/client-bridge";
+import type { ToolSession } from "tau/tools";
+import { WriteTool } from "tau/tools/write";
 import { removeWithRetries } from "@tau/tau-utils";
 
 const FILE_CONTENT = "bridge write content\n";

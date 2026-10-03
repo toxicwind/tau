@@ -1,16 +1,16 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
 import { Agent } from "@tau/tau-agent-core";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
-import { InteractiveMode } from "@tau/tau-coding-agent/modes/interactive-mode";
-import * as loopCondition from "@tau/tau-coding-agent/modes/loop-condition";
-import type { LoopConditionVerdict } from "@tau/tau-coding-agent/modes/loop-condition";
+import { ModelRegistry } from "tau/config/model-registry";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
+import { InteractiveMode } from "tau/modes/interactive-mode";
+import * as loopCondition from "tau/modes/loop-condition";
+import type { LoopConditionVerdict } from "tau/modes/loop-condition";
 import { initTheme } from "@tau/tau-tui/theme";
-import type { SubmittedUserInput } from "@tau/tau-coding-agent/modes/types";
-import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import type { SubmittedUserInput } from "tau/modes/types";
+import { AgentSession } from "tau/session/agent-session";
+import { AuthStorage } from "tau/session/auth-storage";
+import { SessionManager } from "tau/session/session-manager";
 import { postmortem, TempDir } from "@tau/tau-utils";
 
 async function flushMicrotasks(): Promise<void> {

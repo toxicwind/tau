@@ -22,9 +22,9 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import type { ImageContent } from "@tau/tau-ai";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
-import { InputController } from "@tau/tau-coding-agent/modes/controllers/input-controller";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
+import { InputController } from "tau/modes/controllers/input-controller";
+import type { InteractiveModeContext } from "tau/modes/types";
 
 const ONE_PX_PNG = Buffer.from(
 	"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+M8AAAMBAQDJ/pLvAAAAAElFTkSuQmCC",

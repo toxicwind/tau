@@ -2,18 +2,18 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { clearCache as clearFsCache } from "@tau/tau-coding-agent/capability/fs";
-import { disableUserSource, enableProvider, loadCapability } from "@tau/tau-coding-agent/capability";
+import { clearCache as clearFsCache } from "tau/capability/fs";
+import { disableUserSource, enableProvider, loadCapability } from "tau/capability";
 import {
 	clearClaudePluginRootsCache,
 	listClaudePluginRoots,
 	parseClaudePluginsRegistry,
-} from "@tau/tau-coding-agent/discovery/helpers";
-import type { Skill } from "@tau/tau-coding-agent/capability/skill";
-import { loadSkills } from "@tau/tau-coding-agent/extensibility/skills";
-import { loadAllExtensions } from "@tau/tau-coding-agent/modes/components/extensions/state-manager";
+} from "tau/discovery/helpers";
+import type { Skill } from "tau/capability/skill";
+import { loadSkills } from "tau/extensibility/skills";
+import { loadAllExtensions } from "tau/modes/components/extensions/state-manager";
 import { __resetDirsFromEnvForTests, removeWithRetries, setAgentDir } from "@tau/tau-utils";
-import "@tau/tau-coding-agent/discovery/claude-plugins";
+import "tau/discovery/claude-plugins";
 
 describe("parseClaudePluginsRegistry", () => {
 	test("parses valid registry", () => {

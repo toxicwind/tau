@@ -19,16 +19,16 @@ import * as fs from "node:fs";
 import * as fsp from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { InternalUrlRouter } from "@tau/tau-coding-agent/internal-urls";
-import { resetRegisteredArtifactDirsForTests } from "@tau/tau-coding-agent/internal-urls/registry-helpers";
-import { AgentRegistry, MAIN_AGENT_ID } from "@tau/tau-coding-agent/registry/agent-registry";
-import { ensurePersistedRoster } from "@tau/tau-coding-agent/registry/persisted-agents";
-import { CURRENT_SESSION_VERSION } from "@tau/tau-coding-agent/session/session-entries";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
-import { expandInternalUrls } from "@tau/tau-coding-agent/tools/bash-skill-urls";
-import { GlobTool } from "@tau/tau-coding-agent/tools/glob";
-import { GrepTool } from "@tau/tau-coding-agent/tools/grep";
+import { Settings } from "tau/config/settings";
+import { InternalUrlRouter } from "tau/internal-urls";
+import { resetRegisteredArtifactDirsForTests } from "tau/internal-urls/registry-helpers";
+import { AgentRegistry, MAIN_AGENT_ID } from "tau/registry/agent-registry";
+import { ensurePersistedRoster } from "tau/registry/persisted-agents";
+import { CURRENT_SESSION_VERSION } from "tau/session/session-entries";
+import type { ToolSession } from "tau/tools";
+import { expandInternalUrls } from "tau/tools/bash-skill-urls";
+import { GlobTool } from "tau/tools/glob";
+import { GrepTool } from "tau/tools/grep";
 
 function sessionHeader(id: string): string {
 	return JSON.stringify({

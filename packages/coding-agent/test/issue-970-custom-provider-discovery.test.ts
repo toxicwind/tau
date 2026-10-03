@@ -6,12 +6,12 @@ import * as path from "node:path";
 import { stripVTControlCharacters } from "node:util";
 import { buildModel } from "@tau/tau-catalog/build";
 import { writeModelCache } from "@tau/tau-catalog/model-cache";
-import type { ModelRegistry, ProviderDiscoveryState } from "@tau/tau-coding-agent/config/model-registry";
-import { ModelRegistry as ModelRegistryImpl } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
+import type { ModelRegistry, ProviderDiscoveryState } from "tau/config/model-registry";
+import { ModelRegistry as ModelRegistryImpl } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
 import { ModelHubComponent } from "@tau/tau-tui/overlays/model-hub";
 import { getThemeByName, setThemeInstance } from "@tau/tau-tui/theme";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { AuthStorage } from "tau/session/auth-storage";
 import type { TUI } from "@tau/tau-tui";
 import { removeSyncWithRetries, Snowflake } from "@tau/tau-utils";
 

@@ -7,7 +7,7 @@ import {
 	loadProjectContextFiles,
 	loadSystemPromptFiles,
 	type SystemPromptToolMetadata,
-} from "@tau/tau-coding-agent/system-prompt";
+} from "tau/system-prompt";
 import { cleanupTempHome } from "./helpers/temp-home-cleanup";
 
 function escapeRegExp(text: string): string {

@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { disposeAllKernelSessions, executePython } from "@tau/tau-coding-agent/eval/py/executor";
-import type { KernelExecuteResult } from "@tau/tau-coding-agent/eval/py/kernel";
-import * as pythonKernel from "@tau/tau-coding-agent/eval/py/kernel";
+import { disposeAllKernelSessions, executePython } from "tau/eval/py/executor";
+import type { KernelExecuteResult } from "tau/eval/py/kernel";
+import * as pythonKernel from "tau/eval/py/kernel";
 import { getProjectDir } from "@tau/tau-utils";
 
 class FakeKernel {

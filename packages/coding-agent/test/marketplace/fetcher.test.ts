@@ -6,7 +6,7 @@ import {
 	classifySource,
 	fetchMarketplace,
 	parseMarketplaceCatalog,
-} from "@tau/tau-coding-agent/extensibility/plugins/marketplace";
+} from "tau/extensibility/plugins/marketplace";
 import * as vcs from "@tau/tau-natives/vcs";
 import { removeSyncWithRetries } from "@tau/tau-utils";
 

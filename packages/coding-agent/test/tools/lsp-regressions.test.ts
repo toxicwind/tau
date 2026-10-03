@@ -5,26 +5,26 @@ import * as os from "node:os";
 import * as path from "node:path";
 import type { AgentToolResult, RenderResultOptions } from "@tau/tau-agent-core";
 import { arkToWireSchema } from "@tau/tau-ai/utils/schema";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { preloadPluginRoots } from "@tau/tau-coding-agent/discovery/helpers";
+import { Settings } from "tau/config/settings";
+import { preloadPluginRoots } from "tau/discovery/helpers";
 import { restoreEnvValue } from "../helpers/settings-test-state";
-import { LspTool } from "@tau/tau-coding-agent/lsp";
-import * as lspClient from "@tau/tau-coding-agent/lsp/client";
-import * as lspConfig from "@tau/tau-coding-agent/lsp/config";
+import { LspTool } from "tau/lsp";
+import * as lspClient from "tau/lsp/client";
+import * as lspConfig from "tau/lsp/config";
 import {
 	configCache,
 	getConfig,
 	getServersForFile,
 	type LspConfig,
 	loadConfig,
-} from "@tau/tau-coding-agent/lsp/config";
-import { waitForDiagnostics } from "@tau/tau-coding-agent/lsp/diagnostics";
+} from "tau/lsp/config";
+import { waitForDiagnostics } from "tau/lsp/diagnostics";
 import {
 	applyTextEditsToString,
 	applyWorkspaceEdit,
 	type ExecutedWorkspaceChange,
 	sortAndValidateTextEdits,
-} from "@tau/tau-coding-agent/lsp/edits";
+} from "tau/lsp/edits";
 import { renderCall, renderResult } from "@tau/tau-tui/tools/lsp";
 import {
 	type CodeAction,
@@ -38,7 +38,7 @@ import {
 	type SymbolInformation,
 	type TextDocumentEdit,
 	type WorkspaceEdit,
-} from "@tau/tau-coding-agent/lsp/types";
+} from "tau/lsp/types";
 import { type LspToolDetails } from "@tau/tau-tui/tools/lsp";
 import {
 	applyCodeAction,
@@ -51,11 +51,11 @@ import {
 	resolveDiagnosticTargets,
 	resolveSymbolColumn,
 	uriToFile,
-} from "@tau/tau-coding-agent/lsp/utils";
+} from "tau/lsp/utils";
 import { getThemeByName, initTheme } from "@tau/tau-tui/theme";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
-import { ToolAbortError } from "@tau/tau-coding-agent/tools/tool-errors";
-import { clampTimeout } from "@tau/tau-coding-agent/tools/tool-timeouts";
+import type { ToolSession } from "tau/tools";
+import { ToolAbortError } from "tau/tools/tool-errors";
+import { clampTimeout } from "tau/tools/tool-timeouts";
 import * as piUtils from "@tau/tau-utils";
 import { sanitizeText, TempDir } from "@tau/tau-utils";
 import type { Subprocess } from "bun";

@@ -4,7 +4,7 @@ import type { AssistantMessage } from "@tau/tau-ai";
 import { renderSegment } from "@tau/tau-tui/status-line/segments";
 import type { SegmentContext } from "@tau/tau-tui/status-line/types";
 import { initTheme } from "@tau/tau-tui/theme";
-import { calculateTokensPerSecond } from "@tau/tau-coding-agent/utils/token-rate";
+import { calculateTokensPerSecond } from "tau/utils/token-rate";
 
 beforeAll(async () => {
 	await initTheme();

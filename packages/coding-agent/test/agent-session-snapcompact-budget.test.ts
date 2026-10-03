@@ -22,13 +22,13 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } 
 import { Agent } from "@tau/tau-agent-core";
 import { effectiveReserveTokens, prepareCompaction } from "@tau/tau-agent-core/compaction";
 import { getBundledModel } from "@tau/tau-catalog/models";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { encodeRpcFrame, MAX_RPC_FRAME_BYTES } from "@tau/tau-coding-agent/modes/rpc/rpc-frame";
+import { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
+import { encodeRpcFrame, MAX_RPC_FRAME_BYTES } from "tau/modes/rpc/rpc-frame";
 import { computeNonMessageTokens } from "@tau/tau-tui/status-line/context-usage";
-import { AgentSession, type AgentSessionEvent } from "@tau/tau-coding-agent/session/agent-session";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { AgentSession, type AgentSessionEvent } from "tau/session/agent-session";
+import { AuthStorage } from "tau/session/auth-storage";
+import { SessionManager } from "tau/session/session-manager";
 import * as snapcompact from "@tau/snapcompact";
 
 describe("AgentSession snapcompact frame-budget sizing", () => {

@@ -453,7 +453,8 @@ mod tests {
 			let mut buf = [0u8; 4096];
 			let mut total = 0usize;
 			while total < WRITES {
-				// SAFETY: buf is a valid out-buffer and read_fd stays open for this loop.
+				// SAFETY: buf is a valid out-buffer and read_fd stays open for this
+				// loop.
 				let n = unsafe { libc::read(read_fd, buf.as_mut_ptr().cast(), buf.len()) };
 				if n <= 0 {
 					break;
@@ -471,7 +472,8 @@ mod tests {
 		assert!(writer.flush_sync(5_000));
 		assert_eq!(writer.pending(), 0);
 		writer.stop(1_000);
-		// SAFETY: closing the test-owned original write fd lets the reader observe EOF.
+		// SAFETY: closing the test-owned original write fd lets the reader
+		// observe EOF.
 		unsafe { libc::close(write_fd) };
 		assert_eq!(reader.join().unwrap(), WRITES);
 	}

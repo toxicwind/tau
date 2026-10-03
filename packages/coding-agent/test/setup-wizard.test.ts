@@ -2,8 +2,8 @@ import { afterEach, describe, expect, it, mock, vi } from "bun:test";
 import type { Model } from "@tau/tau-ai";
 import { buildModel } from "@tau/tau-catalog/build";
 import { webModelManagerOptions } from "@tau/tau-catalog/provider-models/special";
-import { runOnboardingSetup } from "@tau/tau-coding-agent/commands/setup";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { runOnboardingSetup } from "tau/commands/setup";
+import { Settings } from "tau/config/settings";
 import {
 	ALL_SCENES,
 	createSetupHost,
@@ -13,14 +13,14 @@ import {
 	type SetupScene,
 	type SetupSceneHost,
 	selectSetupScenes,
-} from "@tau/tau-coding-agent/modes/setup";
+} from "tau/modes/setup";
 import { providersSetupScene } from "@tau/tau-tui/setup/scenes/providers";
 import { themeSetupScene } from "@tau/tau-tui/setup/scenes/theme";
 import { WebSearchTab } from "@tau/tau-tui/setup/scenes/web-search";
 import { SetupWizardComponent } from "@tau/tau-tui/setup/wizard-overlay";
 import { setTerminalGlyphProtocol } from "@tau/tau-tui/terminal-capabilities";
 import { initTheme, theme } from "@tau/tau-tui/theme";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
+import type { InteractiveModeContext } from "tau/modes/types";
 import { SEARCH_PROVIDER_OPTIONS } from "@tau/tau-tui/tools/web-search";
 
 type SetupApplicationSceneHost = Omit<SetupSceneHost, "ctx"> & { ctx: InteractiveModeContext };

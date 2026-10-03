@@ -7,11 +7,11 @@ import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import * as path from "node:path";
 import { Type } from "@tau/tautype/typebox";
 import type { AgentTool } from "@tau/tau-agent-core";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { HookRunner, type LoadedHook } from "@tau/tau-coding-agent/extensibility/hooks";
-import { HookToolWrapper } from "@tau/tau-coding-agent/extensibility/hooks/tool-wrapper";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { ModelRegistry } from "tau/config/model-registry";
+import { HookRunner, type LoadedHook } from "tau/extensibility/hooks";
+import { HookToolWrapper } from "tau/extensibility/hooks/tool-wrapper";
+import { AuthStorage } from "tau/session/auth-storage";
+import { SessionManager } from "tau/session/session-manager";
 import { TempDir } from "@tau/tau-utils";
 
 describe("HookToolWrapper tool_call input override", () => {

@@ -1,11 +1,11 @@
 import { describe, expect, it, vi } from "bun:test";
 import { type } from "@tau/tautype";
 import type { AgentTool, AgentToolContext, AgentToolResult } from "@tau/tau-agent-core";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { callSessionTool } from "@tau/tau-coding-agent/eval/js/tool-bridge";
-import type { EvalShadowCellSession } from "@tau/tau-coding-agent/eval/speculation/cell-session";
+import { Settings } from "tau/config/settings";
+import { callSessionTool } from "tau/eval/js/tool-bridge";
+import type { EvalShadowCellSession } from "tau/eval/speculation/cell-session";
 import { type TodoPhase } from "@tau/tau-tui/tools/todo";
-import { TodoTool, type ToolSession } from "@tau/tau-coding-agent/tools";
+import { TodoTool, type ToolSession } from "tau/tools";
 import { INTENT_FIELD } from "@tau/tau-wire";
 
 function createTool(name: string, execute: AgentTool["execute"]): AgentTool {

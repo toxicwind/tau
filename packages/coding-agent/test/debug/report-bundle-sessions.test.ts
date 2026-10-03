@@ -3,8 +3,8 @@ import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { collectMemoryStats } from "@tau/tau-coding-agent/debug/profiler";
-import { createReportBundle } from "@tau/tau-coding-agent/debug/report-bundle";
+import { collectMemoryStats } from "tau/debug/profiler";
+import { createReportBundle } from "tau/debug/report-bundle";
 import { getConfigRootDir, removeWithRetries, setAgentDir } from "@tau/tau-utils";
 
 const originalAgentDir = process.env.PI_CODING_AGENT_DIR;

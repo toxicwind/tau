@@ -6,11 +6,11 @@ import { afterEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { AgentRegistry, MAIN_AGENT_ID } from "@tau/tau-coding-agent/registry/agent-registry";
-import { registerPersistedSubagents } from "@tau/tau-coding-agent/registry/persisted-agents";
-import { CURRENT_SESSION_VERSION } from "@tau/tau-coding-agent/session/session-entries";
-import { createSubagentSettings } from "@tau/tau-coding-agent/task/executor";
+import { Settings } from "tau/config/settings";
+import { AgentRegistry, MAIN_AGENT_ID } from "tau/registry/agent-registry";
+import { registerPersistedSubagents } from "tau/registry/persisted-agents";
+import { CURRENT_SESSION_VERSION } from "tau/session/session-entries";
+import { createSubagentSettings } from "tau/task/executor";
 
 describe("per-agent settings migrations", () => {
 	let agentDir = "";

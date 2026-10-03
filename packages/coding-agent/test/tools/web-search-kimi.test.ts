@@ -3,8 +3,8 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import type { FetchImpl } from "@tau/tau-ai/types";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
-import { KimiProvider, searchKimi } from "@tau/tau-coding-agent/web/search/providers/kimi";
+import { AuthStorage } from "tau/session/auth-storage";
+import { KimiProvider, searchKimi } from "tau/web/search/providers/kimi";
 import { removeWithRetries } from "@tau/tau-utils";
 
 const originalMoonshotSearchApiKey = process.env.MOONSHOT_SEARCH_API_KEY;

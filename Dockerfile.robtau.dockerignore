@@ -20,7 +20,7 @@ packages/natives/npm/
 packages/natives/native/
 **/.cache/
 packages/snapcompact/research/results/
-# The addon comes from PI_BASE; nothing in this context needs one.
+# The addon comes from TAU_BASE; nothing in this context needs one.
 **/*.node
 
 # Per-host scratch the pi codebase uses for parallel agents / worktrees.
@@ -86,7 +86,7 @@ tau-*.html
 **/.env
 
 # Robtau-only excludes. Natives + wheel + python + bun + rustup all come
-# from PI_BASE; the web-builder stage only needs root manifests + the
+# from TAU_BASE; the web-builder stage only needs root manifests + the
 # python/robtau/web tree; the runtime stage only COPYs python/robtau/
 # pyproject + src + entrypoint. Everything below is dead weight in the
 # robtau build context.

@@ -2,9 +2,9 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { clearCache } from "@tau/tau-coding-agent/capability/fs";
-import type { LoadContext } from "@tau/tau-coding-agent/capability/types";
-import { loadFilesFromDir, scanSkillsFromDir } from "@tau/tau-coding-agent/discovery/helpers";
+import { clearCache } from "tau/capability/fs";
+import type { LoadContext } from "tau/capability/types";
+import { loadFilesFromDir, scanSkillsFromDir } from "tau/discovery/helpers";
 import { parseFrontmatter, removeSyncWithRetries } from "@tau/tau-utils";
 
 describe("parseFrontmatter", () => {

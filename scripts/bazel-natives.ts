@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 /**
- * Canonical Bazel driver for the shipping pi_natives addons.
+ * Canonical Bazel driver for the shipping tau_natives addons.
  *
  * Usage: bun scripts/bazel-natives.ts <target>... [--dest <dir>] [--source <dir>] [-- <extra bazel args>]
  *
@@ -44,14 +44,14 @@ const repoRoot = path.join(import.meta.dir, "..");
 
 /** //:natives-<name> → canonical addon filename (mirrors _ADDONS in BUILD.bazel). */
 export const ADDON_OUTPUTS: Record<string, string> = {
-	"linux-x64-baseline": "pi_natives.linux-x64-baseline.node",
-	"linux-x64-modern": "pi_natives.linux-x64-modern.node",
-	"linux-arm64": "pi_natives.linux-arm64.node",
-	"linux-musl-x64-baseline": "pi_natives.linux-x64-baseline.node",
-	"linux-musl-arm64": "pi_natives.linux-arm64.node",
-	"darwin-x64-baseline": "pi_natives.darwin-x64-baseline.node",
-	"darwin-arm64": "pi_natives.darwin-arm64.node",
-	"win32-x64-baseline": "pi_natives.win32-x64-baseline.node",
+	"linux-x64-baseline": "tau_natives.linux-x64-baseline.node",
+	"linux-x64-modern": "tau_natives.linux-x64-modern.node",
+	"linux-arm64": "tau_natives.linux-arm64.node",
+	"linux-musl-x64-baseline": "tau_natives.linux-x64-baseline.node",
+	"linux-musl-arm64": "tau_natives.linux-arm64.node",
+	"darwin-x64-baseline": "tau_natives.darwin-x64-baseline.node",
+	"darwin-arm64": "tau_natives.darwin-arm64.node",
+	"win32-x64-baseline": "tau_natives.win32-x64-baseline.node",
 };
 
 /** Aggregate filegroups → their member addon targets (mirrors BUILD.bazel). */

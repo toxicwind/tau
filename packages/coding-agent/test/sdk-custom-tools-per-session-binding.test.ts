@@ -16,7 +16,7 @@ import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { type CustomToolAPI, loadCustomTools } from "@tau/tau-coding-agent/extensibility/custom-tools";
+import { type CustomToolAPI, loadCustomTools } from "tau/extensibility/custom-tools";
 import { removeWithRetries } from "@tau/tau-utils";
 
 describe("loadCustomTools per-session binding (#2190 review fix)", () => {

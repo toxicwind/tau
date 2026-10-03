@@ -15,7 +15,7 @@ import {
 	IsolationBaselineTooLargeError,
 	mergeTaskBranches,
 	parseIsolationBackend,
-} from "@tau/tau-coding-agent/task/worktree";
+} from "tau/task/worktree";
 import * as natives from "@tau/tau-natives";
 import * as vcs from "@tau/tau-natives/vcs";
 import { removeWithRetries, setWorktreesDir } from "@tau/tau-utils";

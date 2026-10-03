@@ -2,16 +2,16 @@ import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import * as path from "node:path";
 import * as url from "node:url";
 import type { AgentMessage } from "@tau/tau-agent-core";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
-import { MAGIC_KEYWORDS } from "@tau/tau-coding-agent/modes/magic-keywords";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
+import { MAGIC_KEYWORDS } from "tau/modes/magic-keywords";
 import { CustomEditor } from "@tau/tau-tui/prompt/custom-editor";
 import { UserMessageComponent } from "@tau/tau-tui/chat/user-message";
 import { chipLabel, modelChipStyle, modelMentionChipLabel } from "@tau/tau-tui/prompt/composer-attachments";
 import { imageReferenceHyperlink } from "@tau/tau-tui/prompt/image-references";
 import { setMagicKeywords } from "@tau/tau-tui/prompt/magic-keywords";
 import { getEditorTheme, initTheme, theme } from "@tau/tau-tui/theme";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
-import { UiHelpers } from "@tau/tau-coding-agent/modes/utils/ui-helpers";
+import type { InteractiveModeContext } from "tau/modes/types";
+import { UiHelpers } from "tau/modes/utils/ui-helpers";
 import { Container } from "@tau/tau-tui";
 
 beforeAll(async () => {

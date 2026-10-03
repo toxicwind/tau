@@ -3,10 +3,10 @@ import type { ImageContent } from "@tau/tau-ai";
 import { AskDialogComponent } from "@tau/tau-tui/overlays/ask-dialog";
 import { HookEditorComponent } from "@tau/tau-tui/overlays/hook-editor";
 import { TreeSelectorComponent } from "@tau/tau-tui/overlays/tree-selector";
-import { InputController } from "@tau/tau-coding-agent/modes/controllers/input-controller";
+import { InputController } from "tau/modes/controllers/input-controller";
 import { initTheme } from "@tau/tau-tui/theme";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
-import type { SessionTreeNode } from "@tau/tau-coding-agent/session/session-entries";
+import type { InteractiveModeContext } from "tau/modes/types";
+import type { SessionTreeNode } from "tau/session/session-entries";
 import { type KeyId, matchesKey } from "@tau/tau-tui";
 import manualContinuePrompt from "../src/prompts/system/manual-continue.md" with { type: "text" };
 

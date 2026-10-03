@@ -9,13 +9,13 @@ import type {
 	HindsightApi,
 	MentalModelListResponse,
 	MentalModelSummary,
-} from "@tau/tau-coding-agent/hindsight/client";
-import type { HindsightConfig } from "@tau/tau-coding-agent/hindsight/config";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { renderMentalModelsBlock } from "@tau/tau-coding-agent/hindsight/mental-models";
-import type { AgentSessionEventListener } from "@tau/tau-coding-agent/session/agent-session";
-import { HindsightSessionState } from "@tau/tau-coding-agent/hindsight/state";
-import { SessionMemory, type SessionMemoryHost } from "@tau/tau-coding-agent/session/session-memory";
+} from "tau/hindsight/client";
+import type { HindsightConfig } from "tau/hindsight/config";
+import { Settings } from "tau/config/settings";
+import { renderMentalModelsBlock } from "tau/hindsight/mental-models";
+import type { AgentSessionEventListener } from "tau/session/agent-session";
+import { HindsightSessionState } from "tau/hindsight/state";
+import { SessionMemory, type SessionMemoryHost } from "tau/session/session-memory";
 
 function makeConfig(overrides: Partial<HindsightConfig> = {}): HindsightConfig {
 	return {

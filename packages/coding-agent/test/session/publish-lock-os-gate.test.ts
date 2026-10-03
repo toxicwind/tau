@@ -20,7 +20,7 @@ import * as fsp from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import { FileLock as NativeFileLock } from "@tau/tau-natives";
-import { FileSessionStorage, SessionLockError } from "@tau/tau-coding-agent/session/session-storage";
+import { FileSessionStorage, SessionLockError } from "tau/session/session-storage";
 
 /** Mirrors the OS-gate sidecar derived in `#withPublishLock`. */
 function osGatePath(lockPath: string): string {

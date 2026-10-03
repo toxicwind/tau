@@ -1,7 +1,7 @@
 import { expect, test } from "bun:test";
 import type { Api, Model, OAuthAccess } from "@tau/tau-ai";
-import { type DryBalanceModelRegistry, runDryBalanceCommand } from "@tau/tau-coding-agent/cli/dry-balance-cli";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { type DryBalanceModelRegistry, runDryBalanceCommand } from "tau/cli/dry-balance-cli";
+import { Settings } from "tau/config/settings";
 
 function fakeModel(provider: string, id: string): Model<Api> {
 	return {

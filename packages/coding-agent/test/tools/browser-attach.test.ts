@@ -2,9 +2,9 @@ import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import type { ToolSession } from "@tau/tau-coding-agent/sdk";
-import { createBrowserPrelude } from "@tau/tau-coding-agent/tools/browser";
+import { Settings } from "tau/config/settings";
+import type { ToolSession } from "tau/sdk";
+import { createBrowserPrelude } from "tau/tools/browser";
 import {
 	findFreeCdpPort,
 	findReusableCdp,
@@ -13,15 +13,15 @@ import {
 	resolveSpawnArgs,
 	shouldPreserveConnectedBrowserFocus,
 	waitForCdp,
-} from "@tau/tau-coding-agent/tools/browser/attach";
-import { ensureChromiumExecutable } from "@tau/tau-coding-agent/tools/browser/launch";
+} from "tau/tools/browser/attach";
+import { ensureChromiumExecutable } from "tau/tools/browser/launch";
 import {
 	acquireBrowser,
 	type BrowserHandle,
 	normalizeConnectedCdpUrl,
 	releaseBrowser,
-} from "@tau/tau-coding-agent/tools/browser/registry";
-import { acquireTab } from "@tau/tau-coding-agent/tools/browser/tab-supervisor";
+} from "tau/tools/browser/registry";
+import { acquireTab } from "tau/tools/browser/tab-supervisor";
 import { Process, ProcessStatus } from "@tau/tau-natives";
 import type { Browser, HTTPRequest, Page, Target } from "puppeteer-core";
 import { chromiumAvailable } from "./chromium-probe";

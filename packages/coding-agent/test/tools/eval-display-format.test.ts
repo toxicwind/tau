@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
 import type { EvalToolDetails } from "@tau/tau-tui/tools/eval";
 import { getThemeByName, setThemeInstance, type Theme } from "@tau/tau-tui/theme";
 import { evalToolRenderer } from "@tau/tau-tui/tools/eval";

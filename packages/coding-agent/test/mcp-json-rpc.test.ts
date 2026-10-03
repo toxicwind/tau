@@ -1,8 +1,8 @@
 import type { BodyInit } from "bun";
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import type { FetchImpl } from "@tau/tau-ai";
-import { fetchExaTools } from "@tau/tau-coding-agent/exa/mcp-client";
-import { callMCP, redactUrlForLog } from "@tau/tau-coding-agent/mcp/json-rpc";
+import { fetchExaTools } from "tau/exa/mcp-client";
+import { callMCP, redactUrlForLog } from "tau/mcp/json-rpc";
 import { isRecord } from "@tau/tau-utils";
 import { asGlobalFetch } from "./helpers/fetch-mock";
 

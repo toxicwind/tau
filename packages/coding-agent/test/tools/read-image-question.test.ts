@@ -4,9 +4,9 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { type completeSimple, Effort, type ImageContent, type Model } from "@tau/tau-ai";
 import { buildModel } from "@tau/tau-catalog/build";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import type { ImageAttachmentEntry, ToolSession } from "@tau/tau-coding-agent/tools";
-import { ReadTool } from "@tau/tau-coding-agent/tools/read";
+import { Settings } from "tau/config/settings";
+import type { ImageAttachmentEntry, ToolSession } from "tau/tools";
+import { ReadTool } from "tau/tools/read";
 import { removeSyncWithRetries } from "@tau/tau-utils";
 
 const TINY_PNG_BASE64 =

@@ -31,16 +31,16 @@
  * that also import the module-level `settings` need the global initialized.
  */
 import { vi } from "bun:test";
-import { isSettingsInitialized, Settings, settings } from "@tau/tau-coding-agent/config/settings";
-import type { MCPManager } from "@tau/tau-coding-agent/mcp/manager";
-import type { MCPServerConnection } from "@tau/tau-coding-agent/mcp/types";
+import { isSettingsInitialized, Settings, settings } from "tau/config/settings";
+import type { MCPManager } from "tau/mcp/manager";
+import type { MCPServerConnection } from "tau/mcp/types";
 import { ServedModelTracker } from "@tau/tau-tui/chat/served-model-marker";
 import { TranscriptContainer } from "@tau/tau-tui/chrome/transcript-container";
-import { OAuthManualInputManager } from "@tau/tau-coding-agent/modes/oauth-manual-input";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
-import type { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import { TokenRateMeter } from "@tau/tau-coding-agent/utils/token-rate";
+import { OAuthManualInputManager } from "tau/modes/oauth-manual-input";
+import type { InteractiveModeContext } from "tau/modes/types";
+import type { AgentSession } from "tau/session/agent-session";
+import { SessionManager } from "tau/session/session-manager";
+import { TokenRateMeter } from "tau/utils/token-rate";
 import { type Component, Container } from "@tau/tau-tui";
 
 type AnyFn = (...args: never[]) => unknown;

@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it } from "bun:test";
-import { executePython } from "@tau/tau-coding-agent/eval/py/executor";
-import type { KernelExecuteOptions, KernelExecuteResult } from "@tau/tau-coding-agent/eval/py/kernel";
-import { PythonKernel } from "@tau/tau-coding-agent/eval/py/kernel";
+import { executePython } from "tau/eval/py/executor";
+import type { KernelExecuteOptions, KernelExecuteResult } from "tau/eval/py/kernel";
+import { PythonKernel } from "tau/eval/py/kernel";
 import { TempDir } from "@tau/tau-utils";
 
 interface KernelStub {

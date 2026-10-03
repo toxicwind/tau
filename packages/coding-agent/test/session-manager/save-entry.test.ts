@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import type { CustomEntry } from "@tau/tau-coding-agent/session/session-entries";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import type { CustomEntry } from "tau/session/session-entries";
+import { SessionManager } from "tau/session/session-manager";
 
 describe("SessionManager.saveCustomEntry", () => {
 	it("saves custom entries and includes them in tree traversal", () => {

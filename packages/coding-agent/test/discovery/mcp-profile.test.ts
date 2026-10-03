@@ -16,9 +16,9 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { clearCache as clearFsCache } from "@tau/tau-coding-agent/capability/fs";
-import { type MCPServer, mcpCapability } from "@tau/tau-coding-agent/capability/mcp";
-import { loadCapability } from "@tau/tau-coding-agent/discovery";
+import { clearCache as clearFsCache } from "tau/capability/fs";
+import { type MCPServer, mcpCapability } from "tau/capability/mcp";
+import { loadCapability } from "tau/discovery";
 import { getConfigRootDir, removeWithRetries, setAgentDir } from "@tau/tau-utils";
 
 const originalAgentDirEnv = process.env.PI_CODING_AGENT_DIR;

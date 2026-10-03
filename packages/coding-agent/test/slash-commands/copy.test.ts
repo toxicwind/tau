@@ -1,9 +1,9 @@
 import { afterEach, describe, expect, it, spyOn, vi } from "bun:test";
 import type { AgentMessage } from "@tau/tau-agent-core";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
-import { executeBuiltinSlashCommand } from "@tau/tau-coding-agent/slash-commands/builtin-registry";
-import * as clipboard from "@tau/tau-coding-agent/utils/clipboard";
-import * as opener from "@tau/tau-coding-agent/utils/open";
+import type { InteractiveModeContext } from "tau/modes/types";
+import { executeBuiltinSlashCommand } from "tau/slash-commands/builtin-registry";
+import * as clipboard from "tau/utils/clipboard";
+import * as opener from "tau/utils/open";
 
 function assistantText(text: string): AgentMessage {
 	return { role: "assistant", content: [{ type: "text", text }] } as unknown as AgentMessage;

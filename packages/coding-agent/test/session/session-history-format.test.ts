@@ -9,7 +9,7 @@
  * - No system prompt / tool catalog sections.
  */
 import { describe, expect, it } from "bun:test";
-import { formatSessionHistoryMarkdown } from "@tau/tau-coding-agent/session/session-history-format";
+import { formatSessionHistoryMarkdown } from "tau/session/session-history-format";
 import { INTENT_FIELD } from "@tau/tau-wire";
 
 function buildMessages(): unknown[] {

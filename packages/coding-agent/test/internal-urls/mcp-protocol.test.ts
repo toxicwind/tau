@@ -1,11 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as os from "node:os";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { InternalUrlRouter } from "@tau/tau-coding-agent/internal-urls";
-import { MCPManager } from "@tau/tau-coding-agent/mcp/manager";
-import type { MCPResource, MCPResourceReadResult, MCPResourceTemplate } from "@tau/tau-coding-agent/mcp/types";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
-import { ReadTool } from "@tau/tau-coding-agent/tools/read";
+import { Settings } from "tau/config/settings";
+import { InternalUrlRouter } from "tau/internal-urls";
+import { MCPManager } from "tau/mcp/manager";
+import type { MCPResource, MCPResourceReadResult, MCPResourceTemplate } from "tau/mcp/types";
+import type { ToolSession } from "tau/tools";
+import { ReadTool } from "tau/tools/read";
 
 function createMockManager(opts: {
 	servers?: string[];

@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { buildSkillPromptMessage, type Skill } from "@tau/tau-coding-agent/extensibility/skills";
+import { buildSkillPromptMessage, type Skill } from "tau/extensibility/skills";
 import { removeWithRetries, Snowflake } from "@tau/tau-utils";
 
 async function createSkill(body: string): Promise<{ dir: string; skill: Skill }> {

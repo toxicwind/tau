@@ -2,9 +2,9 @@ import { Database } from "bun:sqlite";
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import { AuthStorage, type FetchImpl, type Model, SqliteAuthCredentialStore } from "@tau/tau-ai";
 import { buildModel } from "@tau/tau-catalog/build";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { searchXAI, XAIProvider } from "@tau/tau-coding-agent/web/search/providers/xai";
-import { SearchProviderError } from "@tau/tau-coding-agent/web/search/types";
+import { ModelRegistry } from "tau/config/model-registry";
+import { searchXAI, XAIProvider } from "tau/web/search/providers/xai";
+import { SearchProviderError } from "tau/web/search/types";
 
 type CapturedRequest = {
 	url: string;

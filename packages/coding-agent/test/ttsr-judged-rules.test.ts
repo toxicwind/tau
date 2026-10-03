@@ -1,11 +1,11 @@
 import { describe, expect, it, vi } from "bun:test";
 import type { Agent, AgentEvent } from "@tau/tau-agent-core";
 import type { AssistantMessage, Judge, JudgmentRequest, NoulAnswer } from "@tau/tau-ai";
-import type { Rule } from "@tau/tau-coding-agent/capability/rule";
-import type { Settings } from "@tau/tau-coding-agent/config/settings";
-import { JUDGED_CONTENT_MAX_TOKENS, TtsrManager } from "@tau/tau-coding-agent/export/ttsr";
-import type { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import { TtsrCoordinator, type TtsrCoordinatorHost } from "@tau/tau-coding-agent/session/ttsr-coordinator";
+import type { Rule } from "tau/capability/rule";
+import type { Settings } from "tau/config/settings";
+import { JUDGED_CONTENT_MAX_TOKENS, TtsrManager } from "tau/export/ttsr";
+import type { SessionManager } from "tau/session/session-manager";
+import { TtsrCoordinator, type TtsrCoordinatorHost } from "tau/session/ttsr-coordinator";
 import { countTokens, Encoding } from "@tau/tau-natives";
 
 function judgedRule(name: string, fields: Partial<Rule>): Rule {

@@ -18,7 +18,7 @@ import {
 } from "@tau/tau-tui/tools/streaming-output";
 import { stripOutputNotice } from "@tau/tau-tui/tools/output-meta";
 import { formatOutputNotice } from "@tau/tau-tui/tools/output-meta";
-import { outputMeta } from "@tau/tau-coding-agent/tools/output-meta";
+import { outputMeta } from "tau/tools/output-meta";
 import { removeWithRetries } from "@tau/tau-utils";
 
 const createdTempDirs: string[] = [];

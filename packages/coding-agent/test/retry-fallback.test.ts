@@ -8,8 +8,8 @@ import {
 	type RetryFallbackResolutionContext,
 	resolveRetryFallbackChainKey,
 	validateRetryFallbackChains,
-} from "@tau/tau-coding-agent/session/retry-fallback-chains";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
+} from "tau/session/retry-fallback-chains";
+import { Settings } from "tau/config/settings";
 
 function createContext(
 	chains: RetryFallbackResolutionContext["chains"],

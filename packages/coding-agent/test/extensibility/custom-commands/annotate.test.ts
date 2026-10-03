@@ -9,27 +9,27 @@ import type {
 	ExtensionCustomOptions,
 	ExtensionUIContext,
 	ExtensionUiComponent,
-} from "@tau/tau-coding-agent/extensibility/extensions/types";
+} from "tau/extensibility/extensions/types";
 import type { Theme } from "@tau/tau-tui/theme";
 import { initTheme, theme } from "@tau/tau-tui/theme";
 import { CopySelectorComponent } from "@tau/tau-tui/overlays/copy-selector";
-import type { SessionPick } from "@tau/tau-coding-agent/extensibility/custom-commands/bundled/annotate/text-source";
+import type { SessionPick } from "tau/extensibility/custom-commands/bundled/annotate/text-source";
 import {
 	AnnotateCommand,
 	runAnnotateCommand,
-} from "@tau/tau-coding-agent/extensibility/custom-commands/bundled/annotate";
+} from "tau/extensibility/custom-commands/bundled/annotate";
 import type {
 	CustomCommandAPI,
 	CustomCommandContext,
-} from "@tau/tau-coding-agent/extensibility/custom-commands/types";
-import type { ReviewPrRef } from "@tau/tau-coding-agent/extensibility/custom-commands/bundled/review";
+} from "tau/extensibility/custom-commands/types";
+import type { ReviewPrRef } from "tau/extensibility/custom-commands/bundled/review";
 import {
 	createResolvedReviewTarget,
 	type ResolvedReviewTarget,
 	type ReviewTargetUI,
-} from "@tau/tau-coding-agent/extensibility/custom-commands/bundled/review/target";
-import { buildTextReviewPrompt } from "@tau/tau-coding-agent/extensibility/custom-commands/bundled/annotate/text-review";
-import type { SessionMessageEntry } from "@tau/tau-coding-agent/session/session-entries";
+} from "tau/extensibility/custom-commands/bundled/review/target";
+import { buildTextReviewPrompt } from "tau/extensibility/custom-commands/bundled/annotate/text-review";
+import type { SessionMessageEntry } from "tau/session/session-entries";
 import type {
 	CodeReviewAnnotation,
 	TextReviewAnnotation,

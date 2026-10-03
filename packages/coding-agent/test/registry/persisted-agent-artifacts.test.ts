@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { AgentRegistry } from "@tau/tau-coding-agent/registry/agent-registry";
-import { registerPersistedSubagents } from "@tau/tau-coding-agent/registry/persisted-agents";
+import { AgentRegistry } from "tau/registry/agent-registry";
+import { registerPersistedSubagents } from "tau/registry/persisted-agents";
 import { TempDir } from "@tau/tau-utils";
 
 function transcript(): string {

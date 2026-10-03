@@ -2,9 +2,9 @@ import { describe, expect, it } from "bun:test";
 import type { Api, Model } from "@tau/tau-ai";
 import type { ModelSpec } from "@tau/tau-ai/types";
 import { buildModel } from "@tau/tau-catalog/build";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
-import { resolveImageQuestionModel } from "@tau/tau-coding-agent/utils/image-question";
+import { Settings } from "tau/config/settings";
+import type { ToolSession } from "tau/tools";
+import { resolveImageQuestionModel } from "tau/utils/image-question";
 
 function makeProxyModel(id: string, compat?: ModelSpec["compat"]): Model<Api> {
 	return buildModel({

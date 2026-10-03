@@ -28,7 +28,7 @@ import {
 	getSecretPlaceholderKey,
 	getSecretPlaceholderKeySync,
 	loadSecrets,
-} from "@tau/tau-coding-agent/secrets";
+} from "tau/secrets";
 import {
 	collectNativeReplayRegexSecretValues,
 	deobfuscateAgentMessages,
@@ -37,15 +37,15 @@ import {
 	obfuscateNativeReplay,
 	obfuscateProviderContext,
 	obfuscateToolArguments,
-} from "@tau/tau-coding-agent/secrets/message-transform";
-import { type SecretEntry, SecretObfuscator } from "@tau/tau-coding-agent/secrets/obfuscator";
+} from "tau/secrets/message-transform";
+import { type SecretEntry, SecretObfuscator } from "tau/secrets/obfuscator";
 import {
 	sanitizeSecretFriendlyName,
 	secretEntriesNeedPlaceholderKey,
 	secretEntryNeedsPlaceholderKey,
 	stripPendingSecretPlaceholderSuffix,
-} from "@tau/tau-coding-agent/secrets/placeholder";
-import { compileSecretRegex } from "@tau/tau-coding-agent/secrets/regex";
+} from "tau/secrets/placeholder";
+import { compileSecretRegex } from "tau/secrets/regex";
 import { getActiveProfile, getAgentDir, setProfile } from "@tau/tau-utils/dirs";
 
 describe("compileSecretRegex", () => {

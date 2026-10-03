@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from "bun:test";
-import { resumeCommand } from "@tau/tau-coding-agent/utils/resume-command";
+import { resumeCommand } from "tau/utils/resume-command";
 import { APP_NAME, getActiveProfile, setProfile } from "@tau/tau-utils/dirs";
 
 describe("resumeCommand", () => {

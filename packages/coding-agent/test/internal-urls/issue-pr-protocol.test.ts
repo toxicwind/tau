@@ -9,10 +9,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { InternalUrlRouter } from "@tau/tau-coding-agent/internal-urls";
-import { resetForTests as resetCacheForTests } from "@tau/tau-coding-agent/tools/github-cache";
-import { github } from "@tau/tau-coding-agent/utils/github";
+import { Settings } from "tau/config/settings";
+import { InternalUrlRouter } from "tau/internal-urls";
+import { resetForTests as resetCacheForTests } from "tau/tools/github-cache";
+import { github } from "tau/utils/github";
 import { removeWithRetries } from "@tau/tau-utils";
 
 let tempDir: string;

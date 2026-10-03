@@ -7,8 +7,8 @@ import {
 	hasPositiveMovedProjectEvidence,
 	readCwdIdentity,
 	writeTerminalBreadcrumb,
-} from "@tau/tau-coding-agent/session/session-paths";
-import { FileSessionStorage } from "@tau/tau-coding-agent/session/session-storage";
+} from "tau/session/session-paths";
+import { FileSessionStorage } from "tau/session/session-storage";
 import { getAgentDir, getCustomSessionFilesDir, getSessionsDir, hashPath, setAgentDir } from "@tau/tau-utils";
 
 const cleanup: string[] = [];

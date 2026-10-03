@@ -8,8 +8,8 @@ import {
 	parseVaultUrl,
 	resolveVaultUrlToPath,
 	VaultProtocolHandler,
-} from "@tau/tau-coding-agent/internal-urls";
-import * as vaultProtocol from "@tau/tau-coding-agent/internal-urls/vault-protocol";
+} from "tau/internal-urls";
+import * as vaultProtocol from "tau/internal-urls/vault-protocol";
 import { $which, removeWithRetries } from "@tau/tau-utils";
 
 async function withTempDir<T>(fn: (dir: string) => Promise<T>): Promise<T> {

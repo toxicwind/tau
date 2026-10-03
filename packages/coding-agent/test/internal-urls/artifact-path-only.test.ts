@@ -2,14 +2,14 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { ArtifactProtocolHandler } from "@tau/tau-coding-agent/internal-urls/artifact-protocol";
-import { parseInternalUrl } from "@tau/tau-coding-agent/internal-urls/parse";
+import { ArtifactProtocolHandler } from "tau/internal-urls/artifact-protocol";
+import { parseInternalUrl } from "tau/internal-urls/parse";
 import {
 	registerArtifactsDir,
 	resetRegisteredArtifactDirsForTests,
-} from "@tau/tau-coding-agent/internal-urls/registry-helpers";
-import { InternalUrlRouter } from "@tau/tau-coding-agent/internal-urls/router";
-import { resolveToolSearchScope } from "@tau/tau-coding-agent/tools/path-utils";
+} from "tau/internal-urls/registry-helpers";
+import { InternalUrlRouter } from "tau/internal-urls/router";
+import { resolveToolSearchScope } from "tau/tools/path-utils";
 
 /**
  * Path-only callers (search/grep, bash URL expansion) only need the artifact's

@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import * as settingsModule from "@tau/tau-coding-agent/config/settings";
+import * as settingsModule from "tau/config/settings";
 import type { Theme } from "@tau/tau-tui/theme";
 import { renderAsciiBar } from "@tau/tau-tui/chrome/format";
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { extractLeadingCdTarget, readShellWord } from "@tau/tau-coding-agent/tools/shell-tokenize";
+import { extractLeadingCdTarget, readShellWord } from "tau/tools/shell-tokenize";
 
 describe("extractLeadingCdTarget", () => {
 	it("extracts a bare cd target and returns the remainder", () => {

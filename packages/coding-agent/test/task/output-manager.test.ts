@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { AgentOutputManager } from "@tau/tau-coding-agent/task/output-manager";
+import { AgentOutputManager } from "tau/task/output-manager";
 import { PINNED_HUD_TOGGLE_ID } from "@tau/tau-tui/prompt/composer";
 import { TempDir } from "@tau/tau-utils";
 

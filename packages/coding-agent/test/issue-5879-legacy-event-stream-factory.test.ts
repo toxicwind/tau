@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { loadExtensions } from "@tau/tau-coding-agent/extensibility/extensions/loader";
+import { loadExtensions } from "tau/extensibility/extensions/loader";
 import { __resetDirsFromEnvForTests, setAgentDir, TempDir } from "@tau/tau-utils";
 
 describe("issue #5879: legacy provider compatibility", () => {

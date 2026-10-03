@@ -1,13 +1,13 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import { Agent } from "@tau/tau-agent-core";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
-import { InteractiveMode } from "@tau/tau-coding-agent/modes/interactive-mode";
+import { ModelRegistry } from "tau/config/model-registry";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
+import { InteractiveMode } from "tau/modes/interactive-mode";
 import { initTheme } from "@tau/tau-tui/theme";
-import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
-import type { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import { tinyTitleClient } from "@tau/tau-coding-agent/tiny/title-client";
+import { AgentSession } from "tau/session/agent-session";
+import type { AuthStorage } from "tau/session/auth-storage";
+import { SessionManager } from "tau/session/session-manager";
+import { tinyTitleClient } from "tau/tiny/title-client";
 import { TempDir } from "@tau/tau-utils";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 

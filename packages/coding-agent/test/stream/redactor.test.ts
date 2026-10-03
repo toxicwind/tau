@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { StreamRedactor } from "@tau/tau-coding-agent/stream/redactor";
+import { StreamRedactor } from "tau/stream/redactor";
 import { logger } from "@tau/tau-utils";
 
 let redactor: StreamRedactor;

@@ -1,12 +1,12 @@
 import { describe, expect, it, type Mock, vi } from "bun:test";
 import type { Agent, AgentEvent, AgentMessage } from "@tau/tau-agent-core";
 import type { AssistantMessage, AssistantMessageEvent } from "@tau/tau-ai";
-import type { Settings } from "@tau/tau-coding-agent/config/settings";
-import type { Rule } from "@tau/tau-coding-agent/capability/rule";
-import { TtsrManager } from "@tau/tau-coding-agent/export/ttsr";
-import type { AgentSessionEvent } from "@tau/tau-coding-agent/session/agent-session-events";
-import { TtsrCoordinator, type TtsrCoordinatorHost } from "@tau/tau-coding-agent/session/ttsr-coordinator";
-import type { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import type { Settings } from "tau/config/settings";
+import type { Rule } from "tau/capability/rule";
+import { TtsrManager } from "tau/export/ttsr";
+import type { AgentSessionEvent } from "tau/session/agent-session-events";
+import { TtsrCoordinator, type TtsrCoordinatorHost } from "tau/session/ttsr-coordinator";
+import type { SessionManager } from "tau/session/session-manager";
 
 const CONDITION = "FORBIDDEN";
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import { loadSessionFile } from "@tau/tau-coding-agent/session/session-loader";
-import { FileSessionStorage, MemorySessionStorage } from "@tau/tau-coding-agent/session/session-storage";
+import { loadSessionFile } from "tau/session/session-loader";
+import { FileSessionStorage, MemorySessionStorage } from "tau/session/session-storage";
 import { TempDir } from "@tau/tau-utils";
 
 /** Storage whose stat lags its content, simulating an interleaving appender. */

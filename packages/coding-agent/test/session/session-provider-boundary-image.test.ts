@@ -5,11 +5,11 @@ import * as path from "node:path";
 import type { Api, ImageContent, Model } from "@tau/tau-ai";
 import type { ModelSpec } from "@tau/tau-ai/types";
 import { buildModel } from "@tau/tau-catalog/build";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { Settings } from "tau/config/settings";
 import {
 	SessionProviderBoundary,
 	type SessionProviderBoundaryHost,
-} from "@tau/tau-coding-agent/session/session-provider-boundary";
+} from "tau/session/session-provider-boundary";
 import { removeWithRetries } from "@tau/tau-utils";
 
 const TINY_PNG_BASE64 =

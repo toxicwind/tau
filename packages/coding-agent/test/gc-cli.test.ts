@@ -5,8 +5,8 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { gunzipSync, gzipSync } from "node:zlib";
 import { withStatsSyncLock } from "@tau/tau-stats/aggregator";
-import { type GcResult, runGcCommand } from "@tau/tau-coding-agent/cli/gc-cli";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { type GcResult, runGcCommand } from "tau/cli/gc-cli";
+import { Settings } from "tau/config/settings";
 import {
 	getAgentDir,
 	getBlobsDir,

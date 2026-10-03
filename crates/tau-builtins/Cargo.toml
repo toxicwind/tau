@@ -28,7 +28,7 @@ autotests = false
 autobenches = false
 
 [lib]
-name = "pi_builtins"
+name = "tau_builtins"
 path = "src/lib.rs"
 bench = false
 

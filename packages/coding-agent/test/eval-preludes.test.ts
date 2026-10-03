@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from "bun:test";
 import type { AgentToolContext, AgentToolResult } from "@tau/tau-agent-core";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import type { EvalPreludeDefinition } from "@tau/tau-coding-agent/eval";
-import { getEnabledEvalPreludes, invokeEvalPrelude } from "@tau/tau-coding-agent/eval";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
+import { Settings } from "tau/config/settings";
+import type { EvalPreludeDefinition } from "tau/eval";
+import { getEnabledEvalPreludes, invokeEvalPrelude } from "tau/eval";
+import type { ToolSession } from "tau/tools";
 
 function makeSession(getEvalPreludes: () => EvalPreludeDefinition[]): ToolSession {
 	return {

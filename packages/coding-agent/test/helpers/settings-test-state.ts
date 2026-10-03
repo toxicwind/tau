@@ -1,5 +1,5 @@
 import { vi } from "bun:test";
-import { resetSettingsForTest } from "@tau/tau-coding-agent/config/settings";
+import { resetSettingsForTest } from "tau/config/settings";
 import { isTuiTight, setTuiTight } from "@tau/tau-tui";
 import { getAgentDir, getProjectDir, setAgentDir, setProjectDir } from "@tau/tau-utils";
 

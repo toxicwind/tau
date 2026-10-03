@@ -4,10 +4,10 @@ import type {
 	ExtensionCommandContextActions,
 	ExtensionContextActions,
 	ExtensionUIContext,
-} from "@tau/tau-coding-agent/extensibility/extensions";
-import { ExtensionUiController } from "@tau/tau-coding-agent/modes/controllers/extension-ui-controller";
-import { InteractiveMode } from "@tau/tau-coding-agent/modes/interactive-mode";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
+} from "tau/extensibility/extensions";
+import { ExtensionUiController } from "tau/modes/controllers/extension-ui-controller";
+import { InteractiveMode } from "tau/modes/interactive-mode";
+import type { InteractiveModeContext } from "tau/modes/types";
 
 async function createHost(initializeUi: boolean) {
 	let actions: ExtensionContextActions | undefined;

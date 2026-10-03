@@ -10,7 +10,7 @@ import {
 	STREAMING_REVEAL_FRAME_MS,
 	StreamingRevealController,
 	visibleUnits,
-} from "@tau/tau-coding-agent/modes/controllers/streaming-reveal";
+} from "tau/modes/controllers/streaming-reveal";
 import { initTheme } from "@tau/tau-tui/theme";
 import { getSegmenter } from "@tau/tau-tui";
 

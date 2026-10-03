@@ -1,10 +1,10 @@
 import { afterAll, afterEach, describe, expect, it, vi } from "bun:test";
 import type { AuthStorage } from "@tau/tau-ai";
 import type { FetchImpl } from "@tau/tau-ai/types";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import type { SearchParams } from "@tau/tau-coding-agent/web/search/providers/base";
-import { searchOllama } from "@tau/tau-coding-agent/web/search/providers/ollama";
-import { parseSearchQuery } from "@tau/tau-coding-agent/web/search/query";
+import { ModelRegistry } from "tau/config/model-registry";
+import type { SearchParams } from "tau/web/search/providers/base";
+import { searchOllama } from "tau/web/search/providers/ollama";
+import { parseSearchQuery } from "tau/web/search/query";
 import { createInMemoryAuthStorage } from "../../helpers/agent-session-setup";
 
 const OLLAMA_SEARCH_URL = "https://ollama.com/api/web_search";

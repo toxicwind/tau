@@ -2,7 +2,7 @@
  * Regression for https://github.com/toxicwind/tau/issues/3238.
  *
  * On macOS x64 (Intel), `tau stats` builds only the `modern`
- * (`pi_natives.darwin-x64-modern.node`) variant when the host has AVX2,
+ * (`tau_natives.darwin-x64-modern.node`) variant when the host has AVX2,
  * because `scripts/host-detect.ts` uses `Bun.spawnSync("sysctl", …)` from a
  * normal shell context and correctly resolves AVX2 → modern.
  *
@@ -15,7 +15,7 @@
  *
  * `detectAvx2Support` returned `false`, `resolveCpuVariant` selected
  * `baseline`, and `getAddonFilenames("baseline")` searched only
- * `pi_natives.darwin-x64-baseline.node` + `pi_natives.darwin-x64.node` —
+ * `tau_natives.darwin-x64-baseline.node` + `tau_natives.darwin-x64.node` —
  * neither of which exists on a modern-only on-disk build. The main thread,
  * which ran the same detector before spawning the worker, picked `modern`
  * fine; only the worker failed.
@@ -147,7 +147,7 @@ describe("issue 3238: variant resolution across worker contexts", () => {
 		}).variant;
 		expect(variant).toBe("modern");
 		const filenames = getAddonFilenames({ tag: "darwin-x64", arch: "x64", variant });
-		expect(filenames[0]).toBe("pi_natives.darwin-x64-modern.node");
-		expect(filenames).toContain("pi_natives.darwin-x64-baseline.node");
+		expect(filenames[0]).toBe("tau_natives.darwin-x64-modern.node");
+		expect(filenames).toContain("tau_natives.darwin-x64-baseline.node");
 	});
 });

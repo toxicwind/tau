@@ -2,19 +2,19 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as os from "node:os";
 import * as path from "node:path";
 import { buildModel } from "@tau/tau-catalog/build";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
-import { resolveLocalUrlToPath } from "@tau/tau-coding-agent/internal-urls";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
+import { resolveLocalUrlToPath } from "tau/internal-urls";
 import { getSettingsForTab } from "@tau/tau-tui/overlays/settings-defs";
-import { createSettingsHost } from "@tau/tau-coding-agent/config/settings-ui";
+import { createSettingsHost } from "tau/config/settings-ui";
 import {
 	autosaveApprovedPlan,
 	defaultPlanAutosaveDir,
 	resolvePlanAutosaveDir,
-} from "@tau/tau-coding-agent/plan-mode/plan-autosave";
-import type { PlanModeState } from "@tau/tau-coding-agent/plan-mode/state";
-import type { PlanYolo } from "@tau/tau-coding-agent/session/agent-session-types";
-import { PrewalkCoordinator, type PrewalkCoordinatorHost } from "@tau/tau-coding-agent/session/prewalk";
-import type { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+} from "tau/plan-mode/plan-autosave";
+import type { PlanModeState } from "tau/plan-mode/state";
+import type { PlanYolo } from "tau/session/agent-session-types";
+import { PrewalkCoordinator, type PrewalkCoordinatorHost } from "tau/session/prewalk";
+import type { SessionManager } from "tau/session/session-manager";
 import { TempDir } from "@tau/tau-utils";
 
 let tempDir: TempDir | undefined;

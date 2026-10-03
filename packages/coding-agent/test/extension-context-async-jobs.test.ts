@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
-import { ExtensionRunner } from "@tau/tau-coding-agent/extensibility/extensions/runner";
-import type { ExtensionRuntime } from "@tau/tau-coding-agent/extensibility/extensions/types";
-import type { AsyncJobSnapshot } from "@tau/tau-coding-agent/session/agent-session";
+import { ExtensionRunner } from "tau/extensibility/extensions/runner";
+import type { ExtensionRuntime } from "tau/extensibility/extensions/types";
+import type { AsyncJobSnapshot } from "tau/session/agent-session";
 
 function createRunner(getAsyncJobSnapshot?: () => AsyncJobSnapshot | null): ExtensionRunner {
 	const runtime = {

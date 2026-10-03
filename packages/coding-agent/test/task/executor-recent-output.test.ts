@@ -16,15 +16,15 @@
  */
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import type { AssistantMessage, TextContent } from "@tau/tau-ai";
-import type { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import type { CreateAgentSessionResult } from "@tau/tau-coding-agent/sdk";
-import * as sdkModule from "@tau/tau-coding-agent/sdk";
-import type { AgentSession, AgentSessionEvent } from "@tau/tau-coding-agent/session/agent-session";
-import { runSubprocess } from "@tau/tau-coding-agent/task/executor";
-import type { AgentDefinition } from "@tau/tau-coding-agent/task/types";
+import type { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
+import type { CreateAgentSessionResult } from "tau/sdk";
+import * as sdkModule from "tau/sdk";
+import type { AgentSession, AgentSessionEvent } from "tau/session/agent-session";
+import { runSubprocess } from "tau/task/executor";
+import type { AgentDefinition } from "tau/task/types";
 import type { AgentProgress } from "@tau/tau-tui/tools/task";
-import { EventBus } from "@tau/tau-coding-agent/utils/event-bus";
+import { EventBus } from "tau/utils/event-bus";
 import { createSessionDefaults } from "../helpers/session-defaults";
 
 const TAIL_BYTES = 8 * 1024;

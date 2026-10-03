@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from "bun:test";
 import { stripVTControlCharacters } from "node:util";
-import type { Rule } from "@tau/tau-coding-agent/capability/rule";
+import type { Rule } from "tau/capability/rule";
 import { TodoReminderComponent } from "@tau/tau-tui/chat/todo-reminder";
 import { ToolActivityContainer } from "@tau/tau-tui/chrome/tool-activity";
 import { TranscriptContainer } from "@tau/tau-tui/chrome/transcript-container";

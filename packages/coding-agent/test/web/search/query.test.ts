@@ -8,8 +8,8 @@ import {
 	matchesSite,
 	parseDateValue,
 	parseSearchQuery,
-} from "@tau/tau-coding-agent/web/search/query";
-import type { SearchSource } from "@tau/tau-coding-agent/web/search/types";
+} from "tau/web/search/query";
+import type { SearchSource } from "tau/web/search/types";
 
 describe("parseSearchQuery", () => {
 	it("leaves plain queries untouched", () => {

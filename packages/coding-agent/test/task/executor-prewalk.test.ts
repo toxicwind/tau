@@ -8,22 +8,22 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import type { Model } from "@tau/tau-ai";
 import { getBundledModel } from "@tau/tau-catalog/models";
-import type { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import type { LoadExtensionsResult } from "@tau/tau-coding-agent/extensibility/extensions/types";
-import { AgentLifecycleManager } from "@tau/tau-coding-agent/registry/agent-lifecycle";
-import { AgentRegistry } from "@tau/tau-coding-agent/registry/agent-registry";
-import type { CreateAgentSessionResult } from "@tau/tau-coding-agent/sdk";
-import * as sdkModule from "@tau/tau-coding-agent/sdk";
-import type { AgentSession, AgentSessionEvent, PromptOptions } from "@tau/tau-coding-agent/session/agent-session";
-import { TaskTool } from "@tau/tau-coding-agent/task";
-import * as discoveryModule from "@tau/tau-coding-agent/task/discovery";
-import * as executorModule from "@tau/tau-coding-agent/task/executor";
-import { runSubprocess } from "@tau/tau-coding-agent/task/executor";
-import type { AgentDefinition } from "@tau/tau-coding-agent/task/types";
+import type { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
+import type { LoadExtensionsResult } from "tau/extensibility/extensions/types";
+import { AgentLifecycleManager } from "tau/registry/agent-lifecycle";
+import { AgentRegistry } from "tau/registry/agent-registry";
+import type { CreateAgentSessionResult } from "tau/sdk";
+import * as sdkModule from "tau/sdk";
+import type { AgentSession, AgentSessionEvent, PromptOptions } from "tau/session/agent-session";
+import { TaskTool } from "tau/task";
+import * as discoveryModule from "tau/task/discovery";
+import * as executorModule from "tau/task/executor";
+import { runSubprocess } from "tau/task/executor";
+import type { AgentDefinition } from "tau/task/types";
 import type { SingleResult } from "@tau/tau-tui/tools/task";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
-import { EventBus } from "@tau/tau-coding-agent/utils/event-bus";
+import type { ToolSession } from "tau/tools";
+import { EventBus } from "tau/utils/event-bus";
 import { createSessionDefaults } from "../helpers/session-defaults";
 
 function yieldEmittingSession(

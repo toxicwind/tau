@@ -1,14 +1,14 @@
 import { afterEach, describe, expect, it, setDefaultTimeout } from "bun:test";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { Settings } from "tau/config/settings";
 import {
 	disposeAllVmContexts,
 	executeInVmContext,
 	type JsEvalWorkerFactories,
 	type JsEvalWorkerHandle,
 	setJsEvalWorkerFactoriesForTests,
-} from "@tau/tau-coding-agent/eval/js/context-manager";
-import type { WorkerInbound, WorkerOutbound } from "@tau/tau-coding-agent/eval/js/worker-protocol";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
+} from "tau/eval/js/context-manager";
+import type { WorkerInbound, WorkerOutbound } from "tau/eval/js/worker-protocol";
+import type { ToolSession } from "tau/tools";
 
 setDefaultTimeout(2_000);
 

@@ -10,7 +10,7 @@ import {
 	isCached,
 	isValidVersionForCache,
 	removeCachedPlugin,
-} from "@tau/tau-coding-agent/extensibility/plugins/marketplace";
+} from "tau/extensibility/plugins/marketplace";
 import { removeSyncWithRetries } from "@tau/tau-utils";
 
 // ── Helpers ─────────────────────────────────────────────────────────────────

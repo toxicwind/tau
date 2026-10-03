@@ -2,15 +2,15 @@ import { afterAll, describe, expect, it } from "bun:test";
 import { type Api, type FetchImpl, type Model } from "@tau/tau-ai";
 import { buildModel } from "@tau/tau-catalog/build";
 import { modelKind } from "@tau/tau-catalog/types";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import type { CustomToolContext, CustomToolResult } from "@tau/tau-coding-agent/extensibility/custom-tools";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
+import type { CustomToolContext, CustomToolResult } from "tau/extensibility/custom-tools";
+import { SessionManager } from "tau/session/session-manager";
 import {
 	getImageGenTools,
 	getImageGenToolsWithRegistry,
 	imageGenTool,
-} from "@tau/tau-coding-agent/tools/image-gen";
+} from "tau/tools/image-gen";
 import { removeWithRetries } from "@tau/tau-utils";
 import { createInMemoryAuthStorage } from "../helpers/agent-session-setup";
 

@@ -3,17 +3,17 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import type { ImageContent } from "@tau/tau-ai";
-import { resetSettingsForTest, Settings, type ShellMinimizerSettings } from "@tau/tau-coding-agent/config/settings";
+import { resetSettingsForTest, Settings, type ShellMinimizerSettings } from "tau/config/settings";
 import {
 	applyDirenvPreflight,
 	buildMinimizerOptions,
 	executeBash,
 	isPersistentShellCdCommand,
-} from "@tau/tau-coding-agent/exec/bash-executor";
-import * as direnvModule from "@tau/tau-coding-agent/exec/direnv";
+} from "tau/exec/bash-executor";
+import * as direnvModule from "tau/exec/direnv";
 import { DEFAULT_MAX_BYTES } from "@tau/tau-tui/tools/streaming-output";
-import * as shellSnapshot from "@tau/tau-coding-agent/utils/shell-snapshot";
-import { encodeTerminalImage } from "@tau/tau-coding-agent/utils/terminal-graphics";
+import * as shellSnapshot from "tau/utils/shell-snapshot";
+import { encodeTerminalImage } from "tau/utils/terminal-graphics";
 import type { Shell, ShellRunResult } from "@tau/tau-natives";
 import * as piNatives from "@tau/tau-natives";
 import { removeSyncWithRetries } from "@tau/tau-utils";

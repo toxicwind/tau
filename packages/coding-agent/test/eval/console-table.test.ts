@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
-import { JsRuntime, type RuntimeHooks } from "@tau/tau-coding-agent/eval/js/shared/runtime";
-import type { JsDisplayOutput } from "@tau/tau-coding-agent/eval/js/shared/types";
+import { JsRuntime, type RuntimeHooks } from "tau/eval/js/shared/runtime";
+import type { JsDisplayOutput } from "tau/eval/js/shared/types";
 
 let runtime: JsRuntime;
 

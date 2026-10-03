@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { normalizeModelContextImages } from "@tau/tau-coding-agent/utils/image-loading";
+import { normalizeModelContextImages } from "tau/utils/image-loading";
 import { ensureSupportedImageInput } from "@tau/tau-tui/chat/image-loading";
 
 // 1x1 red PNG (69 bytes). Bun.Image sniffs format from bytes, so we can pass

@@ -17,10 +17,10 @@
 import { afterAll, beforeAll, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import { AuthStorage } from "@tau/tau-ai";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { getModelMatchPreferences, resolveCliModel } from "@tau/tau-coding-agent/config/model-resolver";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
-import { loadCliExtensionProviders } from "@tau/tau-coding-agent/sdk";
+import { ModelRegistry } from "tau/config/model-registry";
+import { getModelMatchPreferences, resolveCliModel } from "tau/config/model-resolver";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
+import { loadCliExtensionProviders } from "tau/sdk";
 import { TempDir } from "@tau/tau-utils";
 
 let tmp: TempDir;

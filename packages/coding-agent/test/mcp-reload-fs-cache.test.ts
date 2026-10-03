@@ -2,9 +2,9 @@ import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "bu
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { clearCache, readFile } from "@tau/tau-coding-agent/capability/fs";
-import type { MCPServerConfig } from "@tau/tau-coding-agent/mcp/types";
-import { MCPCommandController } from "@tau/tau-coding-agent/modes/controllers/mcp-command-controller";
+import { clearCache, readFile } from "tau/capability/fs";
+import type { MCPServerConfig } from "tau/mcp/types";
+import { MCPCommandController } from "tau/modes/controllers/mcp-command-controller";
 import { initTheme } from "@tau/tau-tui/theme";
 import { getMCPConfigPath, getProjectDir, removeWithRetries, setProjectDir } from "@tau/tau-utils";
 import { createInteractiveModeContext, createMcpManagerStub } from "./helpers/interactive-mode-context";

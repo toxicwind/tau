@@ -2,7 +2,7 @@ import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import * as connectionManager from "@tau/tau-coding-agent/ssh/connection-manager";
+import * as connectionManager from "tau/ssh/connection-manager";
 import { removeWithRetries } from "@tau/tau-utils";
 
 async function withLooseKey<T>(run: (keyPath: string) => Promise<T>): Promise<T> {

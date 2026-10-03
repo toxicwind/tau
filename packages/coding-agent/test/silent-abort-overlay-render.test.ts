@@ -1,4 +1,4 @@
-import { agentTranscriptSource } from "@tau/tau-coding-agent/modes/agent-hub-runtime";
+import { agentTranscriptSource } from "tau/modes/agent-hub-runtime";
 /**
  * Regression: the agent-hub chat transcript must not render SILENT_ABORT_MARKER verbatim.
  *
@@ -13,12 +13,12 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import * as AIError from "@tau/tau-ai/error";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
 import { AgentTranscriptViewer } from "@tau/tau-tui/overlays/agent-transcript-viewer";
 import type { ObservableSession } from "@tau/tau-tui/overlays/session-observer-registry";
 import { initTheme } from "@tau/tau-tui/theme";
-import { AgentRegistry } from "@tau/tau-coding-agent/registry/agent-registry";
-import { SILENT_ABORT_MARKER } from "@tau/tau-coding-agent/session/messages";
+import { AgentRegistry } from "tau/registry/agent-registry";
+import { SILENT_ABORT_MARKER } from "tau/session/messages";
 import type { TUI } from "@tau/tau-tui";
 import { removeSyncWithRetries } from "@tau/tau-utils";
 

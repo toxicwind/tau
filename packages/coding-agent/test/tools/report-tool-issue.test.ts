@@ -1,8 +1,8 @@
 import { Database } from "bun:sqlite";
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
-import * as reportIssue from "@tau/tau-coding-agent/tools/report-tool-issue";
+import { Settings } from "tau/config/settings";
+import type { ToolSession } from "tau/tools";
+import * as reportIssue from "tau/tools/report-tool-issue";
 import {
 	__awaitAutoQaRecordPipelineForTests,
 	__resetAutoQaConsentForTests,
@@ -11,7 +11,7 @@ import {
 	flushGrievances,
 	isAutoQaEnabled,
 	reportIssueDeviceUsage,
-} from "@tau/tau-coding-agent/tools/report-tool-issue";
+} from "tau/tools/report-tool-issue";
 import * as piUtils from "@tau/tau-utils";
 import { mockFetch } from "../helpers/fetch-mock";
 

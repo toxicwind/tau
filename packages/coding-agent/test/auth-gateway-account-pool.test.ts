@@ -4,8 +4,8 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { AuthStorage, SqliteAuthCredentialStore } from "@tau/tau-ai";
 import { type AuthBrokerServerHandle, startAuthBroker } from "@tau/tau-ai/auth-broker";
-import { runAuthGatewayCommand } from "@tau/tau-coding-agent/cli/auth-gateway-cli";
-import { resetSettingsForTest } from "@tau/tau-coding-agent/config/settings";
+import { runAuthGatewayCommand } from "tau/cli/auth-gateway-cli";
+import { resetSettingsForTest } from "tau/config/settings";
 import { getAgentDir, removeWithRetries, setAgentDir } from "@tau/tau-utils";
 
 const BROKER_TOKEN = "gateway-account-pool-token";

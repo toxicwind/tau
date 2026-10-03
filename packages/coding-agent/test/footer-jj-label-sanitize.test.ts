@@ -4,9 +4,9 @@
  * at the cache boundary, mirroring the status-line jj label path.
  */
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
 import { FooterComponent } from "@tau/tau-tui/status-line/footer";
-import { statusLineHost } from "@tau/tau-coding-agent/modes/status-line-host";
+import { statusLineHost } from "tau/modes/status-line-host";
 import { initTheme } from "@tau/tau-tui/theme";
 import type { VcsRepo } from "@tau/tau-natives";
 import * as vcs from "@tau/tau-natives/vcs";

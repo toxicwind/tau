@@ -2,7 +2,7 @@ import { describe, expect, it } from "bun:test";
 import type { Tool } from "@tau/tau-ai/types";
 import { isValidJsonSchema, toolWireSchema } from "@tau/tau-ai/utils/schema";
 import { validateToolArguments } from "@tau/tau-ai/utils/validation";
-import { type TSchema, Type } from "@tau/tau-coding-agent/extensibility/legacy-typebox";
+import { type TSchema, Type } from "tau/extensibility/legacy-typebox";
 
 /**
  * Exercise the legacy `__validator` failure-marker contract independently of

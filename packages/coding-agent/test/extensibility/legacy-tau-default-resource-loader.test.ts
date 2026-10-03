@@ -2,15 +2,15 @@ import { afterAll, afterEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { Settings } from "tau/config/settings";
 import {
 	DefaultPackageManager,
 	DefaultResourceLoader,
 	createAgentSession as legacyCreateAgentSession,
-} from "@tau/tau-coding-agent/extensibility/legacy-tau-coding-agent-shim";
-import type { Skill } from "@tau/tau-coding-agent/extensibility/skills";
-import type { CreateAgentSessionOptions, CreateAgentSessionResult } from "@tau/tau-coding-agent/sdk";
-import * as sdkModule from "@tau/tau-coding-agent/sdk";
+} from "tau/extensibility/legacy-tau-coding-agent-shim";
+import type { Skill } from "tau/extensibility/skills";
+import type { CreateAgentSessionOptions, CreateAgentSessionResult } from "tau/sdk";
+import * as sdkModule from "tau/sdk";
 import { removeWithRetries } from "@tau/tau-utils";
 
 // Issue #4567: every published version of tau-schedule-prompt (and every pi

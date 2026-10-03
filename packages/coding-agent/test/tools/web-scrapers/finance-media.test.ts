@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
-import { handleArtifactHub } from "@tau/tau-coding-agent/web/scrapers/artifacthub";
-import { handleCoinGecko } from "@tau/tau-coding-agent/web/scrapers/coingecko";
-import { handleDiscogs } from "@tau/tau-coding-agent/web/scrapers/discogs";
+import { handleArtifactHub } from "tau/web/scrapers/artifacthub";
+import { handleCoinGecko } from "tau/web/scrapers/coingecko";
+import { handleDiscogs } from "tau/web/scrapers/discogs";
 
 const SKIP = !Bun.env.WEB_FETCH_INTEGRATION;
 

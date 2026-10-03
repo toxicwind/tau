@@ -2,11 +2,11 @@ import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import * as path from "node:path";
 import type { Model } from "@tau/tau-ai";
 import { buildModel } from "@tau/tau-catalog/build";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { createAcpConnection } from "@tau/tau-coding-agent/modes/acp/acp-mode";
-import type { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
-import type { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { Settings } from "tau/config/settings";
+import { createAcpConnection } from "tau/modes/acp/acp-mode";
+import type { AgentSession } from "tau/session/agent-session";
+import type { AuthStorage } from "tau/session/auth-storage";
+import { SessionManager } from "tau/session/session-manager";
 import { TempDir } from "@tau/tau-utils";
 import {
 	type Client,
@@ -170,7 +170,7 @@ async function closeTransport(writable: WritableStream<unknown>): Promise<void> 
 
 describe("ACP lazy startup", () => {
 	it("applies schema defaults for ACP background jobs", async () => {
-		const { runRootCommand } = await import("@tau/tau-coding-agent/main");
+		const { runRootCommand } = await import("tau/main");
 
 		type ObservedBackgroundSettings = {
 			asyncEnabled: boolean;
@@ -239,7 +239,7 @@ describe("ACP lazy startup", () => {
 		// configured value (caller, project, --config overlay, or global) with the
 		// schema default. The fix (re-)added an `isConfigured` guard so explicit
 		// configuration survives, and the schema default only fills holes.
-		const { runRootCommand } = await import("@tau/tau-coding-agent/main");
+		const { runRootCommand } = await import("tau/main");
 
 		const explicit = {
 			"task.isolation.enabled": true,
@@ -413,8 +413,8 @@ describe("ACP lazy startup", () => {
 		const authStorage = createInMemoryAuthStorage();
 		try {
 			const settings = Settings.isolated({ "marketplace.autoUpdate": "off" });
-			const { runRootCommand } = await import("@tau/tau-coding-agent/main");
-			const { createAgentSession } = await import("@tau/tau-coding-agent/sdk");
+			const { runRootCommand } = await import("tau/main");
+			const { createAgentSession } = await import("tau/sdk");
 			let session: AgentSession | undefined;
 			let sessionHasUI: boolean | undefined;
 			let deferredUsageReserveConfirmation: boolean | undefined;

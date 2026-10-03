@@ -6,18 +6,18 @@ import type { AssistantMessage, Model, ToolCall } from "@tau/tau-ai";
 import { createMockModel } from "@tau/tau-ai/providers/mock";
 import { AssistantMessageEventStream } from "@tau/tau-ai/utils/event-stream";
 import { getBundledModel } from "@tau/tau-catalog/models";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
+import { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
 import {
 	ExtensionRunner,
 	loadExtensionFromFactory,
 	loadExtensions,
-} from "@tau/tau-coding-agent/extensibility/extensions";
-import { SecretObfuscator } from "@tau/tau-coding-agent/secrets";
-import { AgentSession, type AgentSessionEvent } from "@tau/tau-coding-agent/session/agent-session";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import { EventBus } from "@tau/tau-coding-agent/utils/event-bus";
+} from "tau/extensibility/extensions";
+import { SecretObfuscator } from "tau/secrets";
+import { AgentSession, type AgentSessionEvent } from "tau/session/agent-session";
+import { AuthStorage } from "tau/session/auth-storage";
+import { SessionManager } from "tau/session/session-manager";
+import { EventBus } from "tau/utils/event-bus";
 import { TempDir } from "@tau/tau-utils";
 import * as snapcompact from "@tau/snapcompact";
 

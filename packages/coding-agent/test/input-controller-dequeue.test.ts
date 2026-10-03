@@ -17,10 +17,10 @@
  *     only its last entry is popped.
  */
 import { beforeAll, describe, expect, mock, test } from "bun:test";
-import { InputController } from "@tau/tau-coding-agent/modes/controllers/input-controller";
+import { InputController } from "tau/modes/controllers/input-controller";
 import { initTheme } from "@tau/tau-tui/theme";
-import type { CompactionQueuedMessage, InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
-import type { RestoredQueuedMessage } from "@tau/tau-coding-agent/session/agent-session";
+import type { CompactionQueuedMessage, InteractiveModeContext } from "tau/modes/types";
+import type { RestoredQueuedMessage } from "tau/session/agent-session";
 
 beforeAll(() => {
 	initTheme();

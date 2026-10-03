@@ -1,23 +1,23 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import { AgentBusyError, type AgentTelemetryConfig, type Tracer } from "@tau/tau-agent-core";
 import { type AssistantMessage, Effort } from "@tau/tau-ai";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import type { ExtensionActions, LoadExtensionsResult } from "@tau/tau-coding-agent/extensibility/extensions/types";
-import type { CreateAgentSessionResult } from "@tau/tau-coding-agent/sdk";
-import * as sdkModule from "@tau/tau-coding-agent/sdk";
-import { AgentRegistry } from "@tau/tau-coding-agent/registry/agent-registry";
-import { AgentLifecycleManager } from "@tau/tau-coding-agent/registry/agent-lifecycle";
-import type { AgentSession, AgentSessionEvent, PromptOptions } from "@tau/tau-coding-agent/session/agent-session";
-import type { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { Settings } from "tau/config/settings";
+import type { ExtensionActions, LoadExtensionsResult } from "tau/extensibility/extensions/types";
+import type { CreateAgentSessionResult } from "tau/sdk";
+import * as sdkModule from "tau/sdk";
+import { AgentRegistry } from "tau/registry/agent-registry";
+import { AgentLifecycleManager } from "tau/registry/agent-lifecycle";
+import type { AgentSession, AgentSessionEvent, PromptOptions } from "tau/session/agent-session";
+import type { AuthStorage } from "tau/session/auth-storage";
 import {
 	finalizeSubprocessOutput,
 	runSubagentFollowUpTurn,
 	runSubprocess,
 	SUBAGENT_WARNING_MISSING_YIELD,
-} from "@tau/tau-coding-agent/task/executor";
-import type { AgentDefinition } from "@tau/tau-coding-agent/task/types";
-import { YieldTool } from "@tau/tau-coding-agent/tools/yield";
-import { EventBus } from "@tau/tau-coding-agent/utils/event-bus";
+} from "tau/task/executor";
+import type { AgentDefinition } from "tau/task/types";
+import { YieldTool } from "tau/tools/yield";
+import { EventBus } from "tau/utils/event-bus";
 import { logger } from "@tau/tau-utils";
 import { createSessionDefaults } from "../helpers/session-defaults";
 
@@ -120,7 +120,7 @@ describe("runSubprocess yield reminders", () => {
 		settings: Settings.isolated(),
 		modelRegistry: {
 			refresh: async () => {},
-		} as unknown as import("@tau/tau-coding-agent/config/model-registry").ModelRegistry,
+		} as unknown as import("tau/config/model-registry").ModelRegistry,
 		enableLsp: false,
 	};
 
@@ -195,7 +195,7 @@ describe("runSubprocess yield reminders", () => {
 		const createAgentSessionSpy = mockCreateAgentSession(session);
 		const modelRegistry = {
 			refresh: async () => {},
-		} as unknown as import("@tau/tau-coding-agent/config/model-registry").ModelRegistry;
+		} as unknown as import("tau/config/model-registry").ModelRegistry;
 		const refreshSpy = vi.spyOn(modelRegistry, "refresh");
 
 		await runSubprocess({ ...baseOptions, id: "subagent-skip-refresh", modelRegistry });
@@ -1012,7 +1012,7 @@ describe("runSubprocess yield reminders", () => {
 		const modelRegistry = {
 			refresh: async () => {},
 			getAvailable: () => [{ provider: "openai", id: "gpt-4o", name: "GPT-4o" }],
-		} as unknown as import("@tau/tau-coding-agent/config/model-registry").ModelRegistry;
+		} as unknown as import("tau/config/model-registry").ModelRegistry;
 
 		await runSubprocess({
 			...baseOptions,
@@ -1155,7 +1155,7 @@ describe("runSubprocess yield reminders", () => {
 		const modelRegistry = {
 			authStorage: fakeAuthStorage,
 			refresh: async () => {},
-		} as unknown as import("@tau/tau-coding-agent/config/model-registry").ModelRegistry;
+		} as unknown as import("tau/config/model-registry").ModelRegistry;
 
 		await runSubprocess({ ...baseOptions, id: "subagent-registry-only", modelRegistry });
 
@@ -1171,7 +1171,7 @@ describe("runSubprocess yield reminders", () => {
 		const modelRegistry = {
 			authStorage: registryStorage,
 			refresh: async () => {},
-		} as unknown as import("@tau/tau-coding-agent/config/model-registry").ModelRegistry;
+		} as unknown as import("tau/config/model-registry").ModelRegistry;
 
 		const result = await runSubprocess({
 			...baseOptions,
@@ -1243,7 +1243,7 @@ describe("runSubprocess telemetry propagation", () => {
 		settings: Settings.isolated(),
 		modelRegistry: {
 			refresh: async () => {},
-		} as unknown as import("@tau/tau-coding-agent/config/model-registry").ModelRegistry,
+		} as unknown as import("tau/config/model-registry").ModelRegistry,
 		enableLsp: false,
 	};
 

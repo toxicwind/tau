@@ -11,7 +11,7 @@ import { resolveProviderModels } from "@tau/tau-catalog/model-manager";
 import { getSupportedEfforts } from "@tau/tau-catalog/model-thinking";
 import { openaiCodexModelManagerOptions } from "@tau/tau-catalog/provider-models/special";
 import { modelKind, type ModelSpec } from "@tau/tau-catalog/types";
-import { resolveProviderModelReference } from "@tau/tau-coding-agent/config/model-resolver";
+import { resolveProviderModelReference } from "tau/config/model-resolver";
 
 describe("Codex model discovery", () => {
 	it("normalizes optional maximum context windows separately from the default window", async () => {

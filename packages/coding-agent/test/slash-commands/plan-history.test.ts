@@ -1,6 +1,6 @@
 import { describe, expect, it, mock } from "bun:test";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
-import { executeBuiltinSlashCommand } from "@tau/tau-coding-agent/slash-commands/builtin-registry";
+import type { InteractiveModeContext } from "tau/modes/types";
+import { executeBuiltinSlashCommand } from "tau/slash-commands/builtin-registry";
 
 /**
  * Build a minimal ctx that simulates plan/goal-mode handlers.

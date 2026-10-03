@@ -415,7 +415,7 @@ function socketFallbackDir(dir: string, base: string): string {
 /**
  * Where this publication's Unix socket lives. The canonical location is next
  * to the metadata, but a deep config root (long home directory, nested
- * `PI_CONFIG_DIR`) can push that past `sun_path`, and a host that cannot bind
+ * `TAU_CONFIG_DIR`) can push that past `sun_path`, and a host that cannot bind
  * would silently stay absent from `tau collab list`. Listers never guess the
  * relocated path; the metadata records the endpoint.
  */

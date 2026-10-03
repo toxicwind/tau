@@ -11,11 +11,11 @@
  */
 import { afterEach, describe, expect, it, spyOn } from "bun:test";
 import * as fs from "node:fs";
-import { parseArgs, type Args } from "@tau/tau-coding-agent/cli/args";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { runRootCommand } from "@tau/tau-coding-agent/main";
-import type { CreateAgentSessionResult } from "@tau/tau-coding-agent/sdk";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { parseArgs, type Args } from "tau/cli/args";
+import { Settings } from "tau/config/settings";
+import { runRootCommand } from "tau/main";
+import type { CreateAgentSessionResult } from "tau/sdk";
+import { AuthStorage } from "tau/session/auth-storage";
 import { TempDir, postmortem } from "@tau/tau-utils";
 import type { AgentSession } from "../src/session/agent-session";
 import { SessionManager } from "../src/session/session-manager";

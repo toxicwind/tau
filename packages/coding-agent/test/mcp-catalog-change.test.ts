@@ -2,12 +2,12 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
-import { MCPManager } from "@tau/tau-coding-agent/mcp/manager";
-import type { MCPStdioServerConfig } from "@tau/tau-coding-agent/mcp/types";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
+import { MCPManager } from "tau/mcp/manager";
+import type { MCPStdioServerConfig } from "tau/mcp/types";
 import { ExtensionDashboard } from "@tau/tau-tui/overlays/extensions/extension-dashboard";
 import { snapshotMcpRuntime } from "@tau/tau-tui/overlays/extensions/mcp-runtime";
-import { createExtensionDashboardRuntime } from "@tau/tau-coding-agent/modes/components/extensions/dashboard-runtime";
+import { createExtensionDashboardRuntime } from "tau/modes/components/extensions/dashboard-runtime";
 import { initTheme } from "@tau/tau-tui/theme";
 import { removeSyncWithRetries } from "@tau/tau-utils";
 import { PROMPT_NAME, RESOURCE_NAME, RESOURCE_URI, TOOL_NAME } from "./fixtures/delayed-catalog-mcp";

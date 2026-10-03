@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import CommitCommand from "@tau/tau-coding-agent/commands/commit";
-import * as commitModule from "@tau/tau-coding-agent/commit";
+import CommitCommand from "tau/commands/commit";
+import * as commitModule from "tau/commit";
 import * as themeModule from "@tau/tau-tui/theme";
 import { postmortem } from "@tau/tau-utils";
 

@@ -7,12 +7,12 @@ import { Database } from "bun:sqlite";
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import { AuthStorage, SqliteAuthCredentialStore } from "@tau/tau-ai";
 import { getBundledModel } from "@tau/tau-catalog/models";
-import { runAgenticCommit } from "@tau/tau-coding-agent/commit/agentic";
-import * as agentModule from "@tau/tau-coding-agent/commit/agentic/agent";
-import * as modelSelection from "@tau/tau-coding-agent/commit/model-selection";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import * as sdkModule from "@tau/tau-coding-agent/sdk";
+import { runAgenticCommit } from "tau/commit/agentic";
+import * as agentModule from "tau/commit/agentic/agent";
+import * as modelSelection from "tau/commit/model-selection";
+import { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
+import * as sdkModule from "tau/sdk";
 import type { VcsGitRepo } from "@tau/tau-natives";
 import * as vcs from "@tau/tau-natives/vcs";
 

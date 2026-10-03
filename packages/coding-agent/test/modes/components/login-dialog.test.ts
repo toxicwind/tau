@@ -1,8 +1,8 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, spyOn } from "bun:test";
-import { resetSettingsForTest, Settings, settings } from "@tau/tau-coding-agent/config/settings";
+import { resetSettingsForTest, Settings, settings } from "tau/config/settings";
 import { LoginDialogComponent } from "@tau/tau-tui/overlays/login-dialog";
 import { initTheme } from "@tau/tau-tui/theme";
-import * as openModule from "@tau/tau-coding-agent/utils/open";
+import * as openModule from "tau/utils/open";
 import type { TUI } from "@tau/tau-tui";
 
 beforeAll(async () => {

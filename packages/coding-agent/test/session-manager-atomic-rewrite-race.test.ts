@@ -3,20 +3,20 @@ import { getBundledModel } from "@tau/tau-catalog/models";
 import {
 	IndexedSessionStorage,
 	type SessionStorageBackend,
-} from "@tau/tau-coding-agent/session/indexed-session-storage";
+} from "tau/session/indexed-session-storage";
 import {
 	SessionManager,
 	SessionPersistenceIndeterminateError,
-} from "@tau/tau-coding-agent/session/session-manager";
+} from "tau/session/session-manager";
 import {
 	FileSessionStorage,
 	MemorySessionStorage,
 	type SessionStorageWriter,
 	SessionWriteConflictError,
 	type WriteTextAtomicOptions,
-} from "@tau/tau-coding-agent/session/session-storage";
+} from "tau/session/session-storage";
 import { TempDir } from "@tau/tau-utils";
-import type { SessionTitleUpdate } from "@tau/tau-coding-agent/session/session-title-slot";
+import type { SessionTitleUpdate } from "tau/session/session-title-slot";
 
 interface DetachableWriter extends SessionStorageWriter {
 	detach(): void;

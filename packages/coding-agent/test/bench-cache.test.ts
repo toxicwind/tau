@@ -12,8 +12,8 @@ import type {
 	Model,
 	SimpleStreamOptions,
 } from "@tau/tau-ai";
-import { runBenchCommand } from "@tau/tau-coding-agent/cli/bench-cli";
-import type { BenchModelRegistry } from "@tau/tau-coding-agent/cli/bench-runtime";
+import { runBenchCommand } from "tau/cli/bench-cli";
+import type { BenchModelRegistry } from "tau/cli/bench-runtime";
 
 const model = {
 	provider: "openai",

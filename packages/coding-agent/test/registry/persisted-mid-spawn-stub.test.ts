@@ -1,9 +1,9 @@
 import { describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { AgentRegistry } from "@tau/tau-coding-agent/registry/agent-registry";
-import { registerPersistedSubagents } from "@tau/tau-coding-agent/registry/persisted-agents";
-import type { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
-import { CURRENT_SESSION_VERSION } from "@tau/tau-coding-agent/session/session-entries";
+import { AgentRegistry } from "tau/registry/agent-registry";
+import { registerPersistedSubagents } from "tau/registry/persisted-agents";
+import type { AgentSession } from "tau/session/agent-session";
+import { CURRENT_SESSION_VERSION } from "tau/session/session-entries";
 import { TempDir } from "@tau/tau-utils";
 
 function sessionHeader(id: string): string {

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
-import { OAuthManualInputManager } from "@tau/tau-coding-agent/modes/oauth-manual-input";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
-import { executeBuiltinSlashCommand } from "@tau/tau-coding-agent/slash-commands/builtin-registry";
+import { OAuthManualInputManager } from "tau/modes/oauth-manual-input";
+import type { InteractiveModeContext } from "tau/modes/types";
+import { executeBuiltinSlashCommand } from "tau/slash-commands/builtin-registry";
 
 type RuntimeHarness = {
 	runtime: { ctx: InteractiveModeContext };

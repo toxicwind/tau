@@ -2,8 +2,8 @@ import { spyOn } from "bun:test";
 import * as path from "node:path";
 import * as buildModule from "@tau/tau-catalog/build";
 import { writeModelCache } from "@tau/tau-catalog/model-cache";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { ModelRegistry } from "tau/config/model-registry";
+import { AuthStorage } from "tau/session/auth-storage";
 import { TempDir } from "@tau/tau-utils";
 
 const tempDir = TempDir.createSync("@model-registry-lazy-probe-");

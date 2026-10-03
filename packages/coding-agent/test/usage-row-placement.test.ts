@@ -6,13 +6,13 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import type { AgentMessage } from "@tau/tau-agent-core";
 import type { AssistantMessage } from "@tau/tau-ai";
-import { resetSettingsForTest, Settings, settings } from "@tau/tau-coding-agent/config/settings";
+import { resetSettingsForTest, Settings, settings } from "tau/config/settings";
 import { ChatTranscriptBuilder } from "@tau/tau-tui/chat/chat-transcript-builder";
 import { ReadToolGroupComponent } from "@tau/tau-tui/chat/read-tool-group";
 import { initTheme } from "@tau/tau-tui/theme";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
-import { UiHelpers } from "@tau/tau-coding-agent/modes/utils/ui-helpers";
-import type { SessionContext } from "@tau/tau-coding-agent/session/session-context";
+import type { InteractiveModeContext } from "tau/modes/types";
+import { UiHelpers } from "tau/modes/utils/ui-helpers";
+import type { SessionContext } from "tau/session/session-context";
 import { Container, TUI } from "@tau/tau-tui";
 import { formatNumber } from "@tau/tau-utils";
 import { VirtualTerminal } from "../../tui/test/virtual-terminal";

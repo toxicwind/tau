@@ -1,6 +1,6 @@
 import { describe, expect, it, spyOn } from "bun:test";
-import type { CustomEntry } from "@tau/tau-coding-agent/session/session-entries";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import type { CustomEntry } from "tau/session/session-entries";
+import { SessionManager } from "tau/session/session-manager";
 import { assistantMsg, userMsg } from "../utilities";
 
 describe("SessionManager append and tree traversal", () => {

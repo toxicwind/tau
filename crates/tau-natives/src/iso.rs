@@ -1,6 +1,6 @@
 //! napi shim for the `tau-iso` PAL.
 //!
-//! Mirrors [`pi_iso::IsolationBackend`] across the FFI boundary:
+//! Mirrors [`tau_iso::IsolationBackend`] across the FFI boundary:
 //!
 //! - `iso_backend()` — kind enum of the platform-native backend.
 //! - `iso_resolve(preferred?)` — let the PAL pick the best backend (or honour a
@@ -20,7 +20,7 @@
 
 use napi::bindgen_prelude::*;
 use napi_derive::napi;
-use pi_iso::{BackendKind, ChangeKind, Diff, FileChange, IsoError, IsolationBackend};
+use tau_iso::{BackendKind, ChangeKind, Diff, FileChange, IsoError, IsolationBackend};
 
 use crate::js;
 
@@ -103,7 +103,7 @@ pub const fn iso_backend() -> IsoBackendKind {
 #[napi]
 pub fn iso_probe(kind: Option<IsoBackendKind>) -> IsoProbeResult {
 	let resolved = kind.map_or_else(BackendKind::native, from_napi_kind);
-	let backend = pi_iso::backend(resolved);
+	let backend = tau_iso::backend(resolved);
 	let probe = backend.probe();
 	IsoProbeResult {
 		available: probe.available,
@@ -113,10 +113,10 @@ pub fn iso_probe(kind: Option<IsoBackendKind>) -> IsoProbeResult {
 }
 
 /// Pick the best backend available right now. `preferred` is treated as
-/// a hint — see [`pi_iso::resolve`] for the exact priority rules.
+/// a hint — see [`tau_iso::resolve`] for the exact priority rules.
 #[napi]
 pub fn iso_resolve(preferred: Option<IsoBackendKind>) -> IsoResolveResult {
-	let resolution = pi_iso::resolve(preferred.map(from_napi_kind));
+	let resolution = tau_iso::resolve(preferred.map(from_napi_kind));
 	IsoResolveResult {
 		kind:       to_napi_kind(resolution.kind),
 		candidates: resolution
@@ -136,7 +136,7 @@ pub async fn iso_start(kind: Option<IsoBackendKind>, lower: String, merged: Stri
 	let resolved = kind.map_or_else(BackendKind::native, from_napi_kind);
 	let lower_path = std::path::PathBuf::from(lower);
 	let merged_path = std::path::PathBuf::from(merged);
-	tokio::task::spawn_blocking(move || pi_iso::backend(resolved).start(&lower_path, &merged_path))
+	tokio::task::spawn_blocking(move || tau_iso::backend(resolved).start(&lower_path, &merged_path))
 		.await
 		.map_err(|err| Error::from_reason(format!("iso_start join: {err}")))?
 		.map_err(to_napi_error)
@@ -147,7 +147,7 @@ pub async fn iso_start(kind: Option<IsoBackendKind>, lower: String, merged: Stri
 pub async fn iso_stop(kind: Option<IsoBackendKind>, merged: String) -> Result<()> {
 	let resolved = kind.map_or_else(BackendKind::native, from_napi_kind);
 	let merged_path = std::path::PathBuf::from(merged);
-	tokio::task::spawn_blocking(move || pi_iso::backend(resolved).stop(&merged_path))
+	tokio::task::spawn_blocking(move || tau_iso::backend(resolved).stop(&merged_path))
 		.await
 		.map_err(|err| Error::from_reason(format!("iso_stop join: {err}")))?
 		.map_err(to_napi_error)
@@ -155,7 +155,7 @@ pub async fn iso_stop(kind: Option<IsoBackendKind>, merged: String) -> Result<()
 
 /// Capture the changes between `lower` and `merged`.
 ///
-/// Uses [`pi_iso::IsolationBackend::diff`]'s default implementation —
+/// Uses [`tau_iso::IsolationBackend::diff`]'s default implementation —
 /// `git diff` when `merged/.git` exists, otherwise a mtime-skipped tree
 /// walk. The backend selection only affects the lifecycle methods; diff
 /// behaviour is uniform.
@@ -165,7 +165,7 @@ pub async fn iso_diff(lower: String, merged: String) -> Result<IsoDiff> {
 	let merged_path = std::path::PathBuf::from(merged);
 	// Every backend inherits the same default `diff()` body, so we pick
 	// Rcopy as the always-available host.
-	let backend = pi_iso::backend(BackendKind::Rcopy);
+	let backend = tau_iso::backend(BackendKind::Rcopy);
 	let diff = backend
 		.diff(&lower_path, &merged_path)
 		.await
@@ -241,7 +241,7 @@ fn into_iso_diff(diff: Diff) -> IsoDiff {
 #[allow(dead_code, reason = "compile-time check that the trait stays dyn-compatible")]
 fn _assert_backend_object_safe() {
 	fn assert_object_safe(_: &dyn IsolationBackend) {}
-	let backend = pi_iso::default_backend();
+	let backend = tau_iso::default_backend();
 	assert_object_safe(backend);
 	let _: FileChange;
 }

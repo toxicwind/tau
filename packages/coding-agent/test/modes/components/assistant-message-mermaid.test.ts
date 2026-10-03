@@ -1,8 +1,8 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
 import * as path from "node:path";
 import type { AssistantMessage } from "@tau/tau-ai";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
-import type { AssistantThinkingRenderer } from "@tau/tau-coding-agent/extensibility/extensions";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
+import type { AssistantThinkingRenderer } from "tau/extensibility/extensions";
 import { AssistantMessageComponent } from "@tau/tau-tui/chat/assistant-message";
 import { TranscriptContainer } from "@tau/tau-tui/chrome/transcript-container";
 import { clearMermaidCache } from "@tau/tau-tui/theme/mermaid-cache";

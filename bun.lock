@@ -364,7 +364,6 @@
     "@tau/tau-agent-core": "workspace:*",
     "@tau/tau-ai": "workspace:*",
     "@tau/tau-catalog": "workspace:*",
-    "@tau/tau-coding-agent": "workspace:*",
     "@tau/tau-mnemotau": "workspace:*",
     "@tau/tau-natives": "workspace:*",
     "@tau/tau-stats": "workspace:*",

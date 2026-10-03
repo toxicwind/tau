@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
-import { isReadOnlyAgent } from "@tau/tau-coding-agent/task";
-import { loadBundledAgents } from "@tau/tau-coding-agent/task/agents";
-import type { AgentDefinition } from "@tau/tau-coding-agent/task/types";
+import { isReadOnlyAgent } from "tau/task";
+import { loadBundledAgents } from "tau/task/agents";
+import type { AgentDefinition } from "tau/task/types";
 
 function agentByName(agents: AgentDefinition[], name: string): AgentDefinition {
 	const agent = agents.find(candidate => candidate.name === name);

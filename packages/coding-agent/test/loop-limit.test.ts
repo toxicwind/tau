@@ -4,9 +4,9 @@ import {
 	createLoopLimitRuntime,
 	isLoopDurationExpired,
 	parseLoopArgs,
-} from "@tau/tau-coding-agent/modes/loop-limit";
-import type { BuiltinSlashCommandRuntime } from "@tau/tau-coding-agent/slash-commands/builtin-registry";
-import { executeBuiltinSlashCommand } from "@tau/tau-coding-agent/slash-commands/builtin-registry";
+} from "tau/modes/loop-limit";
+import type { BuiltinSlashCommandRuntime } from "tau/slash-commands/builtin-registry";
+import { executeBuiltinSlashCommand } from "tau/slash-commands/builtin-registry";
 
 describe("/loop slash command", () => {
 	test("forwards a bare limit argument verbatim", async () => {

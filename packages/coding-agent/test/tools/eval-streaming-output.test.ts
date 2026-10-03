@@ -3,17 +3,17 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import type { AgentToolContext } from "@tau/tau-agent-core";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import * as evalIndex from "@tau/tau-coding-agent/eval";
+import { Settings } from "tau/config/settings";
+import * as evalIndex from "tau/eval";
 import type { EvalToolDetails } from "@tau/tau-tui/tools/eval";
 import { getThemeByName } from "@tau/tau-tui/theme";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
-import { EvalTool } from "@tau/tau-coding-agent/tools/eval";
+import { SessionManager } from "tau/session/session-manager";
+import type { ToolSession } from "tau/tools";
+import { EvalTool } from "tau/tools/eval";
 import { evalToolRenderer } from "@tau/tau-tui/tools/eval";
 import { stripOutputNotice } from "@tau/tau-tui/tools/output-meta";
 import { formatOutputNotice } from "@tau/tau-tui/tools/output-meta";
-import { wrapToolWithMetaNotice } from "@tau/tau-coding-agent/tools/output-meta";
+import { wrapToolWithMetaNotice } from "tau/tools/output-meta";
 import { removeWithRetries, sanitizeText } from "@tau/tau-utils";
 
 function makeSession(settings = Settings.isolated()): ToolSession {

@@ -1,9 +1,9 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { LiveSessionController } from "@tau/tau-coding-agent/live/controller";
+import { Settings } from "tau/config/settings";
+import { LiveSessionController } from "tau/live/controller";
 import { LiveVisualizer } from "@tau/tau-tui/apps/live-visualizer";
-import { LiveCommandController } from "@tau/tau-coding-agent/modes/controllers/live-command-controller";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
+import { LiveCommandController } from "tau/modes/controllers/live-command-controller";
+import type { InteractiveModeContext } from "tau/modes/types";
 
 /** Fake InteractiveModeContext plus typed capture channels for focus/mount traffic. */
 interface ContextHarness {

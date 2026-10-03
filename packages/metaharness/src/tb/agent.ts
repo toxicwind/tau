@@ -17,7 +17,7 @@ async function run(command: string[], cwd?: string): Promise<void> {
 	if (exitCode !== 0) throw new Error(`${command.join(" ")} exited with code ${exitCode}`);
 }
 /**
- * Refresh cross-target `pi_natives.linux-<arch>*.node` files in
+ * Refresh cross-target `tau_natives.linux-<arch>*.node` files in
  * `packages/natives/native/` from the published npm leaf package.
  *
  * The binary build embeds whatever `.node` files sit in that directory; on a
@@ -37,7 +37,7 @@ async function refreshCrossNatives(arches: GuestArch[], version: string): Promis
 		let extracted = 0;
 		for (const [entry, file] of await archive.files()) {
 			const name = path.posix.basename(entry);
-			if (!name.startsWith(`pi_natives.linux-${arch}`) || !name.endsWith(".node")) continue;
+			if (!name.startsWith(`tau_natives.linux-${arch}`) || !name.endsWith(".node")) continue;
 			await Bun.write(path.join(NATIVES_DIR, name), file);
 			extracted++;
 		}

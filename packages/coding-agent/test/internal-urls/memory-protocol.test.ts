@@ -2,23 +2,23 @@ import { afterAll, afterEach, beforeEach, describe, expect, it } from "bun:test"
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { InternalUrlRouter } from "@tau/tau-coding-agent/internal-urls";
-import { splitMemoryGlobPattern } from "@tau/tau-coding-agent/internal-urls/memory-protocol";
-import { getMemoryRoot } from "@tau/tau-coding-agent/memories";
+import { Settings } from "tau/config/settings";
+import { InternalUrlRouter } from "tau/internal-urls";
+import { splitMemoryGlobPattern } from "tau/internal-urls/memory-protocol";
+import { getMemoryRoot } from "tau/memories";
 import {
 	loadMnemotau,
 	loadMnemotauCore,
 	MnemotauSessionState,
 	setMnemotauSessionState,
-} from "@tau/tau-coding-agent/mnemotau/state";
+} from "tau/mnemotau/state";
 import { getInternalUrlSuggestions } from "@tau/tau-tui/prompt/internal-url-autocomplete";
-import { AgentRegistry } from "@tau/tau-coding-agent/registry/agent-registry";
-import type { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
-import { GlobTool } from "@tau/tau-coding-agent/tools/glob";
-import { ReadTool } from "@tau/tau-coding-agent/tools/read";
+import { AgentRegistry } from "tau/registry/agent-registry";
+import type { AgentSession } from "tau/session/agent-session";
+import { SessionManager } from "tau/session/session-manager";
+import type { ToolSession } from "tau/tools";
+import { GlobTool } from "tau/tools/glob";
+import { ReadTool } from "tau/tools/read";
 import { getAgentDir, removeWithRetries, setAgentDir, TempDir } from "@tau/tau-utils";
 
 // Mnemotau state is loaded lazily; preload so `new MnemotauSessionState(...)` can

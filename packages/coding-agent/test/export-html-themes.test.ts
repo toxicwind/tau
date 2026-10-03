@@ -4,7 +4,7 @@ import {
 	generateThemeVars,
 	getTemplate,
 	parseExportArgs,
-} from "@tau/tau-coding-agent/export/html";
+} from "tau/export/html";
 
 describe("HTML export themes", () => {
 	it("bundles dark, light, and auto-following web themes", async () => {

@@ -4,8 +4,8 @@ import * as os from "node:os";
 import * as path from "node:path";
 import type { Model } from "@tau/tau-ai";
 import { buildModel } from "@tau/tau-catalog/build";
-import { invalidateCommandConfig } from "@tau/tau-coding-agent/config/resolve-config-value";
-import { mergeDiscoveredModel } from "@tau/tau-coding-agent/config/model-registry";
+import { invalidateCommandConfig } from "tau/config/resolve-config-value";
+import { mergeDiscoveredModel } from "tau/config/model-registry";
 
 /**
  * Regression for v15.2.4 tp- key bug: when Xiaomi `tp-` token-plan keys hit

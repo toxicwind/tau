@@ -8,8 +8,8 @@ import { ThinkingLevel } from "@tau/tau-agent-core";
 import type { Model } from "@tau/tau-ai";
 import { buildModel } from "@tau/tau-catalog/build";
 import { getBundledModel } from "@tau/tau-catalog/models";
-import type { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
+import type { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
 import {
 	type ModelHubCallbacks,
 	ModelHubComponent,

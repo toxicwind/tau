@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "bun:test";
-import { executeAcpBuiltinSlashCommand } from "@tau/tau-coding-agent/slash-commands/acp-builtins";
+import { executeAcpBuiltinSlashCommand } from "tau/slash-commands/acp-builtins";
 
 function acpRuntime(options?: { enabled?: boolean; available?: boolean }) {
 	const store = {

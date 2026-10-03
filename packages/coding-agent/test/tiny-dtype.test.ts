@@ -5,7 +5,7 @@ import {
 	TINY_MODEL_DTYPE_DEFAULT,
 	TINY_MODEL_DTYPE_SETTING_VALUES,
 	tinyModelDtypeSettingToEnv,
-} from "@tau/tau-coding-agent/tiny/dtype";
+} from "tau/tiny/dtype";
 
 describe("tiny model dtype selection", () => {
 	it("returns undefined when unset so callers keep the per-model spec dtype", () => {

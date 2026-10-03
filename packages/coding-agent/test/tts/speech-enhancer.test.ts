@@ -5,10 +5,10 @@ import { afterEach, describe, expect, it, vi } from "bun:test";
 import type { Model } from "@tau/tau-ai";
 import * as ai from "@tau/tau-ai";
 import { getBundledModel } from "@tau/tau-catalog/models";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
-import { BlockAccumulator, SpeechEnhancer } from "@tau/tau-coding-agent/tts/speech-enhancer";
+import { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
+import { AuthStorage } from "tau/session/auth-storage";
+import { BlockAccumulator, SpeechEnhancer } from "tau/tts/speech-enhancer";
 
 const authStorages: AuthStorage[] = [];
 const modelConfigDirs: string[] = [];

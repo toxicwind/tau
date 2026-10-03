@@ -49,8 +49,8 @@ pub struct SummaryResult {
 	pub segments:    Vec<SummarySegment>,
 }
 
-impl From<pi_ast::summary::SummarySegment> for SummarySegment {
-	fn from(value: pi_ast::summary::SummarySegment) -> Self {
+impl From<tau_ast::summary::SummarySegment> for SummarySegment {
+	fn from(value: tau_ast::summary::SummarySegment) -> Self {
 		Self {
 			kind:       value.kind,
 			start_line: value.start_line,
@@ -60,8 +60,8 @@ impl From<pi_ast::summary::SummarySegment> for SummarySegment {
 	}
 }
 
-impl From<pi_ast::summary::SummaryResult> for SummaryResult {
-	fn from(value: pi_ast::summary::SummaryResult) -> Self {
+impl From<tau_ast::summary::SummaryResult> for SummaryResult {
+	fn from(value: tau_ast::summary::SummaryResult) -> Self {
 		Self {
 			language:    value.language,
 			parsed:      value.parsed,
@@ -74,7 +74,7 @@ impl From<pi_ast::summary::SummaryResult> for SummaryResult {
 
 #[napi]
 pub fn summarize_code(options: SummaryOptions) -> Result<SummaryResult> {
-	pi_ast::summary::summarize_code(pi_ast::summary::SummaryOptions {
+	tau_ast::summary::summarize_code(tau_ast::summary::SummaryOptions {
 		code:               options.code,
 		lang:               options.lang,
 		path:               options.path,

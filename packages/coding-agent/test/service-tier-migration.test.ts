@@ -6,9 +6,9 @@ import { getBundledModel } from "@tau/tau-catalog/models";
 import {
 	resolveAgentServiceTierOverride,
 	validateAgentServiceTierOverrides,
-} from "@tau/tau-coding-agent/config/service-tier";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
-import { AgentStorage } from "@tau/tau-coding-agent/session/agent-storage";
+} from "tau/config/service-tier";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
+import { AgentStorage } from "tau/session/agent-storage";
 import { getProjectAgentDir, TempDir } from "@tau/tau-utils";
 import { YAML } from "bun";
 import { beginSettingsTest, restoreSettingsTestState, type SettingsTestState } from "./helpers/settings-test-state";

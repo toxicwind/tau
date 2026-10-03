@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it } from "bun:test";
 import * as os from "node:os";
 import * as path from "node:path";
-import { ArtifactManager } from "@tau/tau-coding-agent/session/artifacts";
+import { ArtifactManager } from "tau/session/artifacts";
 import { removeSyncWithRetries } from "@tau/tau-utils";
 
 describe("ArtifactManager tool-type sanitization", () => {

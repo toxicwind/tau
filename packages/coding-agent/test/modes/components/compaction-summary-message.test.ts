@@ -1,11 +1,11 @@
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
 import {
 	createHandoffSummaryMessageComponent,
 	HandoffSummaryMessageComponent,
 } from "@tau/tau-tui/chat/compaction-summary-message";
 import { initTheme } from "@tau/tau-tui/theme";
-import type { CustomMessage } from "@tau/tau-coding-agent/session/messages";
+import type { CustomMessage } from "tau/session/messages";
 
 beforeAll(async () => {
 	resetSettingsForTest();

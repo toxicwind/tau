@@ -6,9 +6,9 @@
  * server instead of being dropped.
  */
 import { describe, expect, test } from "bun:test";
-import type { SourceMeta } from "@tau/tau-coding-agent/capability/types";
-import { filterExaMCPServers, shouldFilterBrowserMCPForPrelude } from "@tau/tau-coding-agent/mcp/config";
-import type { MCPServerConfig } from "@tau/tau-coding-agent/mcp/types";
+import type { SourceMeta } from "tau/capability/types";
+import { filterExaMCPServers, shouldFilterBrowserMCPForPrelude } from "tau/mcp/config";
+import type { MCPServerConfig } from "tau/mcp/types";
 
 const SOURCE: SourceMeta = {
 	provider: "test",

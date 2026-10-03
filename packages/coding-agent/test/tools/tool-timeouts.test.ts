@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { clampTimeout, TOOL_TIMEOUTS } from "@tau/tau-coding-agent/tools/tool-timeouts";
+import { clampTimeout, TOOL_TIMEOUTS } from "tau/tools/tool-timeouts";
 
 describe("clampTimeout", () => {
 	it("returns the per-tool default when no raw timeout is given", () => {

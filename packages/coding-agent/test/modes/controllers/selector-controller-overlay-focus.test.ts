@@ -1,10 +1,10 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
 import type { SessionSelectorComponent } from "@tau/tau-tui/overlays/session-selector";
-import { SelectorController } from "@tau/tau-coding-agent/modes/controllers/selector-controller";
+import { SelectorController } from "tau/modes/controllers/selector-controller";
 import { initTheme } from "@tau/tau-tui/theme";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
-import type { SessionInfo } from "@tau/tau-coding-agent/session/session-listing";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import type { InteractiveModeContext } from "tau/modes/types";
+import type { SessionInfo } from "tau/session/session-listing";
+import { SessionManager } from "tau/session/session-manager";
 import { Text } from "@tau/tau-tui";
 
 beforeAll(async () => {

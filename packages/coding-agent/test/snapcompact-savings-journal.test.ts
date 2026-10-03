@@ -7,7 +7,7 @@ import { buildModel } from "@tau/tau-catalog/build";
 import {
 	createSnapcompactSavingsRecorder,
 	readSnapcompactSavingsJournal,
-} from "@tau/tau-coding-agent/session/snapcompact-savings-journal";
+} from "tau/session/snapcompact-savings-journal";
 
 function model(provider = "anthropic", id = "claude-test"): Model {
 	return buildModel({

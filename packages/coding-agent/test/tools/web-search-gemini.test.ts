@@ -3,8 +3,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import { AuthStorage, type FetchImpl, type Model, SqliteAuthCredentialStore } from "@tau/tau-ai";
 import { buildModel } from "@tau/tau-catalog/build";
 import { serializeCloudflareAiGatewayCredential } from "@tau/tau-catalog/wire/cloudflare-ai-gateway";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { GeminiProvider, searchGemini } from "@tau/tau-coding-agent/web/search/providers/gemini";
+import { ModelRegistry } from "tau/config/model-registry";
+import { GeminiProvider, searchGemini } from "tau/web/search/providers/gemini";
 
 const SSE_RESPONSE =
 	'data: {"response":{"candidates":[{"content":{"role":"model","parts":[{"text":"Gemini answer"}]}}],"modelVersion":"gemini-2.5-flash"}}\n\n';

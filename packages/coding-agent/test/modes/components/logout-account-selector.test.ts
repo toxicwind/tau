@@ -1,8 +1,8 @@
 import { beforeAll, describe, expect, it } from "bun:test";
 import { LogoutAccountSelectorComponent } from "@tau/tau-tui/overlays/logout-account-selector";
 import { initTheme } from "@tau/tau-tui/theme";
-import type { StoredAuthCredential } from "@tau/tau-coding-agent/session/auth-storage";
-import { toLogoutAccounts } from "@tau/tau-coding-agent/slash-commands/helpers/logout";
+import type { StoredAuthCredential } from "tau/session/auth-storage";
+import { toLogoutAccounts } from "tau/slash-commands/helpers/logout";
 
 beforeAll(async () => {
 	await initTheme();

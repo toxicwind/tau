@@ -1,10 +1,10 @@
 import { describe, expect, it } from "bun:test";
-import { RunOutput } from "@tau/tau-coding-agent/tools/browser/run-output";
+import { RunOutput } from "tau/tools/browser/run-output";
 import {
 	formatSelectorMatchHint,
 	type HandleOpGuard,
 	toActionableHandle,
-} from "@tau/tau-coding-agent/tools/browser/tab-worker";
+} from "tau/tools/browser/tab-worker";
 import type { ElementHandle } from "puppeteer-core";
 
 // Regression coverage for the invisible-output failure mode: `display("string")`,

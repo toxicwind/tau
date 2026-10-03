@@ -3,14 +3,14 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import type { AgentToolResult } from "@tau/tau-agent-core";
-import { InternalUrlRouter } from "@tau/tau-coding-agent/internal-urls/router";
-import type { ProtocolHandler } from "@tau/tau-coding-agent/internal-urls/types";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import type { ClientBridge } from "@tau/tau-coding-agent/session/client-bridge";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
-import { wrapToolWithMetaNotice } from "@tau/tau-coding-agent/tools/output-meta";
-import { ReadTool } from "@tau/tau-coding-agent/tools/read";
-import { WriteTool } from "@tau/tau-coding-agent/tools/write";
+import { InternalUrlRouter } from "tau/internal-urls/router";
+import type { ProtocolHandler } from "tau/internal-urls/types";
+import { Settings } from "tau/config/settings";
+import type { ClientBridge } from "tau/session/client-bridge";
+import type { ToolSession } from "tau/tools";
+import { wrapToolWithMetaNotice } from "tau/tools/output-meta";
+import { ReadTool } from "tau/tools/read";
+import { WriteTool } from "tau/tools/write";
 import { readArchiveEntries, writeArchive } from "@tau/tau-utils/ar";
 
 function createSession(cwd: string, bridge?: ClientBridge, editMode: "replace" | "hashline" = "replace"): ToolSession {

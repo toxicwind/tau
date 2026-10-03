@@ -8,11 +8,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { Markit } from "@tau/tau-coding-agent/markit";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
-import { ReadTool } from "@tau/tau-coding-agent/tools/read";
-import * as markit from "@tau/tau-coding-agent/utils/markit";
+import { Settings } from "tau/config/settings";
+import { Markit } from "tau/markit";
+import type { ToolSession } from "tau/tools";
+import { ReadTool } from "tau/tools/read";
+import * as markit from "tau/utils/markit";
 import { __resetDirsFromEnvForTests, removeSyncWithRetries, Snowflake, setAgentDir } from "@tau/tau-utils";
 
 function restoreEnv(key: string, value: string | undefined): void {

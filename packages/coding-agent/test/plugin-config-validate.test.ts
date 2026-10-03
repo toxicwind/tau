@@ -10,11 +10,11 @@
  * `flags.json` is set so the renderer takes the JSON branch and avoids the theme.
  */
 import { afterEach, beforeEach, describe, expect, mock, spyOn, test } from "bun:test";
-import { runPluginCommand } from "@tau/tau-coding-agent/cli/plugin-cli";
-import { PluginManager } from "@tau/tau-coding-agent/extensibility/plugins/manager";
-import type { InstalledPluginSummary } from "@tau/tau-coding-agent/extensibility/plugins/marketplace";
-import { MarketplaceManager } from "@tau/tau-coding-agent/extensibility/plugins/marketplace";
-import type { InstalledPlugin } from "@tau/tau-coding-agent/extensibility/plugins/types";
+import { runPluginCommand } from "tau/cli/plugin-cli";
+import { PluginManager } from "tau/extensibility/plugins/manager";
+import type { InstalledPluginSummary } from "tau/extensibility/plugins/marketplace";
+import { MarketplaceManager } from "tau/extensibility/plugins/marketplace";
+import type { InstalledPlugin } from "tau/extensibility/plugins/types";
 
 describe("runPluginCommand({ action: 'config', args: ['validate'] })", () => {
 	const output: string[] = [];

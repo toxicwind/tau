@@ -3,11 +3,11 @@ import { Agent } from "@tau/tau-agent-core";
 import type { Model } from "@tau/tau-ai";
 import { createMockModel, type MockResponseSource } from "@tau/tau-ai/providers/mock";
 import { buildModel } from "@tau/tau-catalog/build";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import type { ExtensionRunner } from "@tau/tau-coding-agent/extensibility/extensions";
-import { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
-import { convertToLlm } from "@tau/tau-coding-agent/session/messages";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import { Settings } from "tau/config/settings";
+import type { ExtensionRunner } from "tau/extensibility/extensions";
+import { AgentSession } from "tau/session/agent-session";
+import { convertToLlm } from "tau/session/messages";
+import { SessionManager } from "tau/session/session-manager";
 
 // Contract: a per-turn system prompt returned by `before_agent_start`
 // ("Replace the system prompt for this turn") must reach the provider for the

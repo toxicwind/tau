@@ -12,12 +12,12 @@
  */
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import type { AgentMessage } from "@tau/tau-agent-core";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
 import { ToolExecutionComponent, type ToolExecutionHandle } from "@tau/tau-tui/chat/tool-execution";
-import { EventController } from "@tau/tau-coding-agent/modes/controllers/event-controller";
+import { EventController } from "tau/modes/controllers/event-controller";
 import { initTheme } from "@tau/tau-tui/theme";
-import { UiHelpers } from "@tau/tau-coding-agent/modes/utils/ui-helpers";
-import type { SessionContext } from "@tau/tau-coding-agent/session/session-context";
+import { UiHelpers } from "tau/modes/utils/ui-helpers";
+import type { SessionContext } from "tau/session/session-context";
 import type { Component, TUI } from "@tau/tau-tui";
 import { createInteractiveModeContext } from "./helpers/interactive-mode-context";
 

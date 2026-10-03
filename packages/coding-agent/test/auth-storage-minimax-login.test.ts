@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import type { FetchImpl } from "@tau/tau-ai";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { AuthStorage } from "tau/session/auth-storage";
 
 describe("AuthStorage MiniMax login", () => {
 	let authStorage: AuthStorage;

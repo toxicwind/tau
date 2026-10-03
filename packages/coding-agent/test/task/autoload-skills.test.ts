@@ -1,14 +1,14 @@
 import { afterEach, describe, expect, it, type Mock, vi } from "bun:test";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import type { Skill } from "@tau/tau-coding-agent/extensibility/skills";
-import * as skillsModule from "@tau/tau-coding-agent/extensibility/skills";
-import type { CreateAgentSessionResult } from "@tau/tau-coding-agent/sdk";
-import * as sdkModule from "@tau/tau-coding-agent/sdk";
-import type { AgentSession, AgentSessionEvent, PromptOptions } from "@tau/tau-coding-agent/session/agent-session";
-import { SKILL_PROMPT_MESSAGE_TYPE } from "@tau/tau-coding-agent/session/messages";
-import { runSubprocess } from "@tau/tau-coding-agent/task/executor";
-import type { AgentDefinition } from "@tau/tau-coding-agent/task/types";
-import { EventBus } from "@tau/tau-coding-agent/utils/event-bus";
+import { Settings } from "tau/config/settings";
+import type { Skill } from "tau/extensibility/skills";
+import * as skillsModule from "tau/extensibility/skills";
+import type { CreateAgentSessionResult } from "tau/sdk";
+import * as sdkModule from "tau/sdk";
+import type { AgentSession, AgentSessionEvent, PromptOptions } from "tau/session/agent-session";
+import { SKILL_PROMPT_MESSAGE_TYPE } from "tau/session/messages";
+import { runSubprocess } from "tau/task/executor";
+import type { AgentDefinition } from "tau/task/types";
+import { EventBus } from "tau/utils/event-bus";
 import { createSessionDefaults } from "../helpers/session-defaults";
 
 // ── Helpers ────────────────────────────────────────────────────────────────
@@ -60,7 +60,7 @@ function createSessionResult(session: AgentSession): CreateAgentSessionResult {
 	return {
 		session,
 		extensionsResult:
-			{} as unknown as import("@tau/tau-coding-agent/extensibility/extensions/types").LoadExtensionsResult,
+			{} as unknown as import("tau/extensibility/extensions/types").LoadExtensionsResult,
 		setToolUIContext: () => {},
 		eventBus: new EventBus(),
 	};
@@ -89,7 +89,7 @@ describe("autoloadSkills in executor", () => {
 		settings: Settings.isolated(),
 		modelRegistry: {
 			refresh: async () => {},
-		} as unknown as import("@tau/tau-coding-agent/config/model-registry").ModelRegistry,
+		} as unknown as import("tau/config/model-registry").ModelRegistry,
 		enableLsp: false,
 	};
 

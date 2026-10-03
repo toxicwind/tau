@@ -1,7 +1,7 @@
 import { describe, expect, test, vi } from "bun:test";
 import { AuthStorage } from "@tau/tau-ai";
 import { getBundledModel } from "@tau/tau-catalog/models";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
+import { ModelRegistry } from "tau/config/model-registry";
 import { Settings } from "../../src/config/settings";
 import { createAgentSession } from "../../src/sdk";
 import { SessionManager } from "../../src/session/session-manager";

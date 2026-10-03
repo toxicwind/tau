@@ -4,7 +4,7 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { AuthStorage, SqliteAuthCredentialStore } from "@tau/tau-ai";
 import { type AuthBrokerServerHandle, startAuthBroker } from "@tau/tau-ai/auth-broker";
-import { runAuthBrokerCommand } from "@tau/tau-coding-agent/cli/auth-broker-cli";
+import { runAuthBrokerCommand } from "tau/cli/auth-broker-cli";
 import { getAgentDbPath, removeWithRetries, setAgentDir } from "@tau/tau-utils";
 
 const TEAM_ORG = "org-team-1111";

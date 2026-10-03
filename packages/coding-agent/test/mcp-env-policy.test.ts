@@ -2,8 +2,8 @@ import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { MCPManager } from "@tau/tau-coding-agent/mcp/manager";
-import type { MCPServerConfig, MCPStdioServerConfig } from "@tau/tau-coding-agent/mcp/types";
+import { MCPManager } from "tau/mcp/manager";
+import type { MCPServerConfig, MCPStdioServerConfig } from "tau/mcp/types";
 
 function expectStdio(config: MCPServerConfig): MCPStdioServerConfig {
 	if (config.type === "http" || config.type === "sse") throw new Error("expected a stdio config");

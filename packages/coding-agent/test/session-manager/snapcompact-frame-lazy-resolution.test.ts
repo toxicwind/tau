@@ -3,8 +3,8 @@ import * as fsp from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import { getBundledModel } from "@tau/tau-catalog/models";
-import * as blobStore from "@tau/tau-coding-agent/session/blob-store";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import * as blobStore from "tau/session/blob-store";
+import { SessionManager } from "tau/session/session-manager";
 import { getAgentDir, getBlobsDir, setAgentDir } from "@tau/tau-utils";
 import * as snapcompact from "@tau/snapcompact";
 

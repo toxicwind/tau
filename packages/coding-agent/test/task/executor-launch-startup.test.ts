@@ -1,13 +1,13 @@
 import { afterEach, expect, it, vi } from "bun:test";
 import { AuthStorage } from "@tau/tau-ai";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { ExtensionRuntime } from "@tau/tau-coding-agent/extensibility/extensions/loader";
-import type { CreateAgentSessionResult } from "@tau/tau-coding-agent/sdk";
-import * as sdkModule from "@tau/tau-coding-agent/sdk";
-import type { AgentSession, AgentSessionEvent } from "@tau/tau-coding-agent/session/agent-session";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import { runSubprocess } from "@tau/tau-coding-agent/task/executor";
-import { EventBus } from "@tau/tau-coding-agent/utils/event-bus";
+import { ModelRegistry } from "tau/config/model-registry";
+import { ExtensionRuntime } from "tau/extensibility/extensions/loader";
+import type { CreateAgentSessionResult } from "tau/sdk";
+import * as sdkModule from "tau/sdk";
+import type { AgentSession, AgentSessionEvent } from "tau/session/agent-session";
+import { SessionManager } from "tau/session/session-manager";
+import { runSubprocess } from "tau/task/executor";
+import { EventBus } from "tau/utils/event-bus";
 import { TempDir } from "@tau/tau-utils";
 import { createSessionDefaults } from "../helpers/session-defaults";
 

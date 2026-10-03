@@ -4,11 +4,11 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import type { ImageContent, TextContent } from "@tau/tau-ai";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
-import { ReadTool } from "@tau/tau-coding-agent/tools/read";
-import * as scrapers from "@tau/tau-coding-agent/web/scrapers/types";
-import * as scraperUtils from "@tau/tau-coding-agent/web/scrapers/utils";
+import { Settings } from "tau/config/settings";
+import type { ToolSession } from "tau/tools";
+import { ReadTool } from "tau/tools/read";
+import * as scrapers from "tau/web/scrapers/types";
+import * as scraperUtils from "tau/web/scrapers/utils";
 import { removeSyncWithRetries, Snowflake } from "@tau/tau-utils";
 import { encodeArchive } from "@tau/tau-utils/ar";
 

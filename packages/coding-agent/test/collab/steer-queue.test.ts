@@ -5,17 +5,17 @@
  * `queuedMessageCount` from the agent-core queue for host and guest UI state.
  */
 import { afterEach, describe, expect, it } from "bun:test";
-import { importRoomKey } from "@tau/tau-coding-agent/collab/crypto";
-import { CollabHost } from "@tau/tau-coding-agent/collab/host";
+import { importRoomKey } from "tau/collab/crypto";
+import { CollabHost } from "tau/collab/host";
 import {
 	COLLAB_PROTO,
 	type CollabFrame,
 	parseCollabLink,
 	rewriteEnvelopePeer,
 	unpackEnvelope,
-} from "@tau/tau-coding-agent/collab/protocol";
-import { CollabSocket } from "@tau/tau-coding-agent/collab/relay-client";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
+} from "tau/collab/protocol";
+import { CollabSocket } from "tau/collab/relay-client";
+import type { InteractiveModeContext } from "tau/modes/types";
 
 interface RelayData {
 	role: "host" | "guest";

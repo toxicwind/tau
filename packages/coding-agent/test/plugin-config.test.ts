@@ -2,8 +2,8 @@ import { afterEach, beforeAll, beforeEach, describe, expect, mock, spyOn, test }
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { runPluginCommand } from "@tau/tau-coding-agent/cli/plugin-cli";
-import { PluginManager } from "@tau/tau-coding-agent/extensibility/plugins/manager";
+import { runPluginCommand } from "tau/cli/plugin-cli";
+import { PluginManager } from "tau/extensibility/plugins/manager";
 import { initTheme } from "@tau/tau-tui/theme";
 import * as piUtils from "@tau/tau-utils";
 import { removeWithRetries } from "@tau/tau-utils";

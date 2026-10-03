@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, test, vi } from "bun:test";
 import { scheduler } from "node:timers/promises";
 import type { ImageContent } from "@tau/tau-ai";
-import { AsyncJobError, AsyncJobManager } from "@tau/tau-coding-agent/async/job-manager";
+import { AsyncJobError, AsyncJobManager } from "tau/async/job-manager";
 
 async function waitForJobEviction(manager: AsyncJobManager, jobId: string): Promise<void> {
 	const deadline = Date.now() + 2_000;

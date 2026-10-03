@@ -9,13 +9,13 @@ import { afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
 import type { AgentTool } from "@tau/tau-agent-core";
 import type { AssistantMessage } from "@tau/tau-ai";
 import { kStreamingPartialJson } from "@tau/tau-ai/utils/block-symbols";
-import { resetSettingsForTest, Settings, settings } from "@tau/tau-coding-agent/config/settings";
+import { resetSettingsForTest, Settings, settings } from "tau/config/settings";
 import { AssistantMessageComponent } from "@tau/tau-tui/chat/assistant-message";
 import { ToolExecutionComponent } from "@tau/tau-tui/chat/tool-execution";
-import { EventController } from "@tau/tau-coding-agent/modes/controllers/event-controller";
-import { STREAMING_REVEAL_FRAME_MS } from "@tau/tau-coding-agent/modes/controllers/streaming-reveal";
+import { EventController } from "tau/modes/controllers/event-controller";
+import { STREAMING_REVEAL_FRAME_MS } from "tau/modes/controllers/streaming-reveal";
 import { initTheme } from "@tau/tau-tui/theme";
-import type { AgentSessionEvent } from "@tau/tau-coding-agent/session/agent-session";
+import type { AgentSessionEvent } from "tau/session/agent-session";
 import { createInteractiveModeContext } from "../../helpers/interactive-mode-context";
 
 beforeAll(async () => {

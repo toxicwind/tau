@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, spyOn, test } from "bun:test";
-import { createMCPTimeout, isMCPTimeoutEnabled, resolveMCPTimeoutMs } from "@tau/tau-coding-agent/mcp/timeout";
+import { createMCPTimeout, isMCPTimeoutEnabled, resolveMCPTimeoutMs } from "tau/mcp/timeout";
 import { logger } from "@tau/tau-utils";
 
 const ORIGINAL_TIMEOUT = process.env.TAU_MCP_TIMEOUT_MS;

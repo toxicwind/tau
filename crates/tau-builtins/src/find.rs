@@ -4603,7 +4603,7 @@ impl Default for Config {
 			help_requested:    false,
 			version_requested: false,
 			today_start:       false,
-			// Directory information and traversal are handled by pi_walker,
+			// Directory information and traversal are handled by tau_walker,
 			// and this configuration field exists as a compatibility item for
 			// GNU findutils.
 			no_leaf_dirs:      false,
@@ -4768,35 +4768,35 @@ fn finish_find_walk(
 	}
 }
 
-fn walker_follow_links(follow: Follow) -> pi_walker::FollowLinks {
+fn walker_follow_links(follow: Follow) -> tau_walker::FollowLinks {
 	match follow {
-		Follow::Never => pi_walker::FollowLinks::Never,
-		Follow::Roots => pi_walker::FollowLinks::Roots,
-		Follow::Always => pi_walker::FollowLinks::Always,
+		Follow::Never => tau_walker::FollowLinks::Never,
+		Follow::Roots => tau_walker::FollowLinks::Roots,
+		Follow::Always => tau_walker::FollowLinks::Always,
 	}
 }
 
-fn build_find_walk_request(config: &Config, root: &Path) -> pi_walker::WalkRequest {
-	pi_walker::WalkRequest::new(root)
+fn build_find_walk_request(config: &Config, root: &Path) -> tau_walker::WalkRequest {
+	tau_walker::WalkRequest::new(root)
 		.hidden(true)
 		.gitignore(false)
 		.skip_git(false)
 		.skip_node_modules(false)
 		.follow_links(walker_follow_links(config.follow))
-		.detail(pi_walker::WalkDetail::Minimal)
+		.detail(tau_walker::WalkDetail::Minimal)
 		.order(if config.sorted_output {
-			pi_walker::WalkOrder::Path
+			tau_walker::WalkOrder::Path
 		} else {
-			pi_walker::WalkOrder::Unordered
+			tau_walker::WalkOrder::Unordered
 		})
 		.emit_root(true)
 		.depth(config.min_depth, config.max_depth)
 		.visit_order(if config.depth_first {
-			pi_walker::VisitOrder::ContentsFirst
+			tau_walker::VisitOrder::ContentsFirst
 		} else {
-			pi_walker::VisitOrder::PreOrder
+			tau_walker::VisitOrder::PreOrder
 		})
-		.directory_errors(pi_walker::DirectoryErrorMode::Visit)
+		.directory_errors(tau_walker::DirectoryErrorMode::Visit)
 		.same_file_system(config.same_file_system)
 		.cache(false)
 }
@@ -4823,7 +4823,7 @@ fn process_dir_walk_request(
 				Ok(())
 			}
 		},
-		|entry: pi_walker::EntryMeta<'_>| {
+		|entry: tau_walker::EntryMeta<'_>| {
 			let walk_entry =
 				WalkEntry::new(entry.absolute_path.as_ref().to_path_buf(), entry.depth, config.follow);
 			let mut current_dir = current_dir.borrow_mut();
@@ -4840,39 +4840,39 @@ fn process_dir_walk_request(
 			);
 			ret.set(ret_value);
 			if host.sigpipe_hit() {
-				Ok(pi_walker::WalkDecision::Stop)
+				Ok(tau_walker::WalkDecision::Stop)
 			} else if should_quit {
 				local_quit.set(true);
-				Ok(pi_walker::WalkDecision::Stop)
+				Ok(tau_walker::WalkDecision::Stop)
 			} else if should_skip_current_dir {
-				Ok(pi_walker::WalkDecision::SkipDescend)
+				Ok(tau_walker::WalkDecision::SkipDescend)
 			} else {
-				Ok(pi_walker::WalkDecision::Include)
+				Ok(tau_walker::WalkDecision::Include)
 			}
 		},
 		|error| {
 			ret.set(1);
 			let _ = writeln!(walk_stderr, "Error: {}: {}", error.path.display(), error.error);
-			Ok(pi_walker::WalkDecision::Include)
+			Ok(tau_walker::WalkDecision::Include)
 		},
 	);
 	let mut current_dir = current_dir.into_inner();
 	let mut ret_value = ret.get();
 	match status {
-		Ok(pi_walker::WalkStatus::Complete | pi_walker::WalkStatus::Stopped) => {
+		Ok(tau_walker::WalkStatus::Complete | tau_walker::WalkStatus::Stopped) => {
 			finish_find_walk(deps, host, matcher, &mut current_dir, &mut ret_value);
 			if local_quit.get() {
 				*quit = true;
 			}
 			ret_value
 		},
-		Err(pi_walker::WalkError::Interrupted(err)) => {
+		Err(tau_walker::WalkError::Interrupted(err)) => {
 			ret_value = 1;
 			let _ = writeln!(host.stderr, "Error: {err}");
 			finish_find_walk(deps, host, matcher, &mut current_dir, &mut ret_value);
 			ret_value
 		},
-		Err(pi_walker::WalkError::InvalidData { path, message }) => {
+		Err(tau_walker::WalkError::InvalidData { path, message }) => {
 			ret_value = 1;
 			let _ = writeln!(host.stderr, "Error: {}: {message}", path.display());
 			finish_find_walk(deps, host, matcher, &mut current_dir, &mut ret_value);

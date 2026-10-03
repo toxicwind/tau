@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import type { AgentMessage } from "@tau/tau-agent-core";
 import type { ImageContent, TextContent } from "@tau/tau-ai";
-import { convertToLlm, stripImagesFromMessage } from "@tau/tau-coding-agent/session/messages";
+import { convertToLlm, stripImagesFromMessage } from "tau/session/messages";
 
 const png = (data: string = "iVBORw0KGgo"): ImageContent => ({ type: "image", data, mimeType: "image/png" });
 const text = (value: string): TextContent => ({ type: "text", text: value });

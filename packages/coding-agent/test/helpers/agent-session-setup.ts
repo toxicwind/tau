@@ -1,6 +1,6 @@
 import { Database } from "bun:sqlite";
 import type { AssistantMessage } from "@tau/tau-ai";
-import { AuthStorage, SqliteAuthCredentialStore } from "@tau/tau-coding-agent/session/auth-storage";
+import { AuthStorage, SqliteAuthCredentialStore } from "tau/session/auth-storage";
 
 /**
  * Shared factory for building a minimal mock `AssistantMessage`

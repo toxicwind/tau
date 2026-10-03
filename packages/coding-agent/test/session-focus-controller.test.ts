@@ -3,12 +3,12 @@ import { Container } from "@tau/tau-tui";
 import {
 	pickRecentFocusableAgentId,
 	SessionFocusController,
-} from "@tau/tau-coding-agent/modes/controllers/session-focus-controller";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
-import { AgentLifecycleManager } from "@tau/tau-coding-agent/registry/agent-lifecycle";
-import { AgentRegistry, MAIN_AGENT_ID, type AgentRef } from "@tau/tau-coding-agent/registry/agent-registry";
-import type { AgentSession, AgentSessionEvent } from "@tau/tau-coding-agent/session/agent-session";
-import { UiHelpers } from "@tau/tau-coding-agent/modes/utils/ui-helpers";
+} from "tau/modes/controllers/session-focus-controller";
+import type { InteractiveModeContext } from "tau/modes/types";
+import { AgentLifecycleManager } from "tau/registry/agent-lifecycle";
+import { AgentRegistry, MAIN_AGENT_ID, type AgentRef } from "tau/registry/agent-registry";
+import type { AgentSession, AgentSessionEvent } from "tau/session/agent-session";
+import { UiHelpers } from "tau/modes/utils/ui-helpers";
 import { initTheme } from "@tau/tau-tui/theme";
 
 interface SessionStub {

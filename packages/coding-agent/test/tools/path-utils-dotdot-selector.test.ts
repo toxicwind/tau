@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { isFilesystemSourcePath } from "@tau/tau-coding-agent/tools/path-utils";
+import { isFilesystemSourcePath } from "tau/tools/path-utils";
 import { parseLineRangeChunk, parseLineRanges } from "@tau/tau-tui/tools/line-ranges";
 import { splitPathAndSel } from "@tau/tau-tui/tools/read";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";

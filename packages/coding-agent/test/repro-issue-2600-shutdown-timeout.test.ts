@@ -18,17 +18,17 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { discoverAndLoadExtensions } from "@tau/tau-coding-agent/extensibility/extensions/loader";
+import { ModelRegistry } from "tau/config/model-registry";
+import { discoverAndLoadExtensions } from "tau/extensibility/extensions/loader";
 import {
 	EXTENSION_HANDLER_TIMEOUT_MS,
 	ExtensionRunner,
 	SESSION_SHUTDOWN_HANDLER_TIMEOUT_MS,
 	testSetExtensionHandlerTimeoutMs,
 	testSetSessionShutdownHandlerTimeoutMs,
-} from "@tau/tau-coding-agent/extensibility/extensions/runner";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+} from "tau/extensibility/extensions/runner";
+import { AuthStorage } from "tau/session/auth-storage";
+import { SessionManager } from "tau/session/session-manager";
 import { getProjectAgentDir, logger, TempDir } from "@tau/tau-utils";
 
 const HANG_EXTENSION_SRC = `

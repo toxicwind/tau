@@ -2,8 +2,8 @@ import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { buildMemoryToolDeveloperInstructions, getMemoryRoot } from "@tau/tau-coding-agent/memories";
+import { Settings } from "tau/config/settings";
+import { buildMemoryToolDeveloperInstructions, getMemoryRoot } from "tau/memories";
 import { removeWithRetries } from "@tau/tau-utils";
 
 async function withTempDir<T>(fn: (dir: string) => Promise<T>): Promise<T> {

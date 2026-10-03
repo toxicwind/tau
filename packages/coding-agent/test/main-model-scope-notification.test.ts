@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test";
 import type { ThinkingLevel } from "@tau/tau-agent-core";
 import { buildModel } from "@tau/tau-catalog/build";
-import type { ScopedModel } from "@tau/tau-coding-agent/config/model-resolver";
-import { buildModelScopeNotification } from "@tau/tau-coding-agent/main";
+import type { ScopedModel } from "tau/config/model-resolver";
+import { buildModelScopeNotification } from "tau/main";
 
 function scopedModel(id: string): ScopedModel {
 	return {

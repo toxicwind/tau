@@ -1,4 +1,4 @@
-import type { MCPServerCapabilities, MCPServerConnection, MCPTransport } from "@tau/tau-coding-agent/mcp/types";
+import type { MCPServerCapabilities, MCPServerConnection, MCPTransport } from "tau/mcp/types";
 
 export function createMockTransport(
 	responses: Map<string, unknown[]>,

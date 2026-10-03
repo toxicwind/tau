@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
 import type { UsageReport } from "@tau/tau-ai";
-import { buildUsageReportText } from "@tau/tau-coding-agent/slash-commands/helpers/usage-report";
+import { buildUsageReportText } from "tau/slash-commands/helpers/usage-report";
 
 describe("PR 3318 repro", () => {
 	it("falls back to scoped account when metadata identities are empty strings", async () => {

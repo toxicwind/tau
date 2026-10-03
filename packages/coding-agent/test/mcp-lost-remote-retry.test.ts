@@ -21,10 +21,10 @@ import { afterEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { MCPManager, type MCPReconnectPolicy } from "@tau/tau-coding-agent/mcp/manager";
-import type { McpConnectionStatusEvent } from "@tau/tau-coding-agent/mcp/startup-events";
-import type { MCPTool } from "@tau/tau-coding-agent/mcp/tool-bridge";
-import type { MCPHttpServerConfig } from "@tau/tau-coding-agent/mcp/types";
+import { MCPManager, type MCPReconnectPolicy } from "tau/mcp/manager";
+import type { McpConnectionStatusEvent } from "tau/mcp/startup-events";
+import type { MCPTool } from "tau/mcp/tool-bridge";
+import type { MCPHttpServerConfig } from "tau/mcp/types";
 import { removeSyncWithRetries } from "@tau/tau-utils";
 import { type FlakyHttpMcpServer, startFlakyHttpMcpServer } from "./fixtures/flaky-http-mcp";
 

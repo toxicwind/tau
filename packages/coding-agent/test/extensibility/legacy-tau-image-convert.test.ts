@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { convertToPng } from "@tau/tau-coding-agent/extensibility/legacy-tau-coding-agent-shim";
+import { convertToPng } from "tau/extensibility/legacy-tau-coding-agent-shim";
 
 const RED_1X1_PNG_BASE64 =
 	"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGP4z8AAAAMBAQDJ/pLvAAAAAElFTkSuQmCC";

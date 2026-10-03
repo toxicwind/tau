@@ -2,18 +2,18 @@ import { afterEach, describe, expect, it, spyOn, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import * as dapModule from "@tau/tau-coding-agent/dap";
-import { connectSocket, DapClient, waitForTcpServerListening } from "@tau/tau-coding-agent/dap/client";
-import { DapSessionManager } from "@tau/tau-coding-agent/dap/session";
+import { Settings } from "tau/config/settings";
+import * as dapModule from "tau/dap";
+import { connectSocket, DapClient, waitForTcpServerListening } from "tau/dap/client";
+import { DapSessionManager } from "tau/dap/session";
 import type {
 	DapCapabilities,
 	DapClientState,
 	DapEventMessage,
 	DapResolvedAdapter,
-} from "@tau/tau-coding-agent/dap/types";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
-import { DebugTool } from "@tau/tau-coding-agent/tools/debug";
+} from "tau/dap/types";
+import type { ToolSession } from "tau/tools";
+import { DebugTool } from "tau/tools/debug";
 import { removeWithRetries, withTimeout } from "@tau/tau-utils";
 
 const TEST_ADAPTER: DapResolvedAdapter = {

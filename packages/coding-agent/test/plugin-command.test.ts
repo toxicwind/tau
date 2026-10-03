@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import Plugin from "@tau/tau-coding-agent/commands/plugin";
+import Plugin from "tau/commands/plugin";
 import type { CliConfig } from "@tau/tau-utils/cli";
 
 const TEST_CONFIG: CliConfig = {

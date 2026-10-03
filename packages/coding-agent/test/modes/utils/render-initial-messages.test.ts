@@ -15,14 +15,14 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, type Mock, vi }
 import type { AgentMessage } from "@tau/tau-agent-core";
 import type { AssistantMessage, ImageContent, Usage } from "@tau/tau-ai";
 import { kStreamingPartialJson } from "@tau/tau-ai/utils/block-symbols";
-import { resetSettingsForTest, Settings } from "@tau/tau-coding-agent/config/settings";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
 import { AssistantMessageComponent } from "@tau/tau-tui/chat/assistant-message";
 import { TranscriptContainer } from "@tau/tau-tui/chrome/transcript-container";
 import { initTheme } from "@tau/tau-tui/theme";
-import type { InteractiveModeContext, RenderSessionContextOptions } from "@tau/tau-coding-agent/modes/types";
-import { UiHelpers } from "@tau/tau-coding-agent/modes/utils/ui-helpers";
-import type { SessionContext, StrippedToolCallsMarker } from "@tau/tau-coding-agent/session/session-context";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import type { InteractiveModeContext, RenderSessionContextOptions } from "tau/modes/types";
+import { UiHelpers } from "tau/modes/utils/ui-helpers";
+import type { SessionContext, StrippedToolCallsMarker } from "tau/session/session-context";
+import { SessionManager } from "tau/session/session-manager";
 import { type Component, Container, Image, ImageProtocol, setTerminalImageProtocol, TERMINAL } from "@tau/tau-tui";
 import { TempDir } from "@tau/tau-utils";
 

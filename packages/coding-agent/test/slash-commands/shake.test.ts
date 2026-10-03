@@ -1,10 +1,10 @@
 import { describe, expect, it, vi } from "bun:test";
-import { CommandController } from "@tau/tau-coding-agent/modes/controllers/command-controller";
-import type { InteractiveModeContext } from "@tau/tau-coding-agent/modes/types";
-import type { ShakeMode } from "@tau/tau-coding-agent/session/shake-types";
-import { executeAcpBuiltinSlashCommand } from "@tau/tau-coding-agent/slash-commands/acp-builtins";
-import { executeBuiltinSlashCommand } from "@tau/tau-coding-agent/slash-commands/builtin-registry";
-import type { SlashCommandRuntime } from "@tau/tau-coding-agent/slash-commands/types";
+import { CommandController } from "tau/modes/controllers/command-controller";
+import type { InteractiveModeContext } from "tau/modes/types";
+import type { ShakeMode } from "tau/session/shake-types";
+import { executeAcpBuiltinSlashCommand } from "tau/slash-commands/acp-builtins";
+import { executeBuiltinSlashCommand } from "tau/slash-commands/builtin-registry";
+import type { SlashCommandRuntime } from "tau/slash-commands/types";
 
 function acpRuntime() {
 	const shake = vi.fn(async (mode: ShakeMode) => ({

@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it } from "bun:test";
-import { InternalUrlRouter } from "@tau/tau-coding-agent/internal-urls";
-import { parseInternalUrl } from "@tau/tau-coding-agent/internal-urls/parse";
-import { RpcHostUriBridge } from "@tau/tau-coding-agent/modes/rpc/host-uris";
-import type { RpcHostUriCancelRequest, RpcHostUriRequest } from "@tau/tau-coding-agent/modes/rpc/rpc-types";
+import { InternalUrlRouter } from "tau/internal-urls";
+import { parseInternalUrl } from "tau/internal-urls/parse";
+import { RpcHostUriBridge } from "tau/modes/rpc/host-uris";
+import type { RpcHostUriCancelRequest, RpcHostUriRequest } from "tau/modes/rpc/rpc-types";
 
 const router = InternalUrlRouter.instance();
 

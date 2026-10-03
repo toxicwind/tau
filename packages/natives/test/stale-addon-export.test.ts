@@ -18,7 +18,7 @@ import "../native";
 import type { NativeAddonStatus } from "../native/loader-state.js";
 import { missingNativeExport, missingNativeExportMessage, nativeAddonStatus } from "../native/loader-state.js";
 
-const addonPath = "/w/packages/natives/native/pi_natives.linux-x64-modern.node";
+const addonPath = "/w/packages/natives/native/tau_natives.linux-x64-modern.node";
 
 function status(overrides: Partial<NativeAddonStatus> = {}): NativeAddonStatus {
 	return {

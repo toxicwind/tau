@@ -5,8 +5,8 @@ import {
 	planFileUrlForSlug,
 	resolveApprovedPlan,
 	resolvePlanTitle,
-} from "@tau/tau-coding-agent/plan-mode/approved-plan";
-import { normalizeLocalScheme } from "@tau/tau-coding-agent/tools/path-utils";
+} from "tau/plan-mode/approved-plan";
+import { normalizeLocalScheme } from "tau/tools/path-utils";
 
 describe("planFileUrlForSlug", () => {
 	it("maps a slug to its local plan URL", () => {

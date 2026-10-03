@@ -12,7 +12,7 @@ import {
 	stripMemoryTags,
 	stripRetentionProtocolMarkers,
 	truncateRecallQuery,
-} from "@tau/tau-coding-agent/hindsight/content";
+} from "tau/hindsight/content";
 
 describe("stripMemoryTags", () => {
 	it("removes both <memories> and legacy memory blocks", () => {

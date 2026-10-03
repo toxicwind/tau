@@ -7,15 +7,15 @@
  * reads as something the human typed.
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import { AsyncJobManager } from "@tau/tau-coding-agent/async/job-manager";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { AgentRegistry } from "@tau/tau-coding-agent/registry/agent-registry";
-import type { AgentSession } from "@tau/tau-coding-agent/session/agent-session";
-import type { ExecutorOptions } from "@tau/tau-coding-agent/task/executor";
-import * as executorModule from "@tau/tau-coding-agent/task/executor";
+import { AsyncJobManager } from "tau/async/job-manager";
+import { Settings } from "tau/config/settings";
+import { AgentRegistry } from "tau/registry/agent-registry";
+import type { AgentSession } from "tau/session/agent-session";
+import type { ExecutorOptions } from "tau/task/executor";
+import * as executorModule from "tau/task/executor";
 import type { SingleResult } from "@tau/tau-tui/tools/task";
-import type { ToolSession } from "@tau/tau-coding-agent/tools";
-import { VibeSessionRegistry } from "@tau/tau-coding-agent/vibe/runtime";
+import type { ToolSession } from "tau/tools";
+import { VibeSessionRegistry } from "tau/vibe/runtime";
 
 const ATTRIBUTION_OWNER = "vibe-parent";
 

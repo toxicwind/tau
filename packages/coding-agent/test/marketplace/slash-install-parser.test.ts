@@ -2,7 +2,7 @@ import { describe, expect, it } from "bun:test";
 import {
 	parseMarketplaceInstallArgs,
 	parsePluginScopeArgs,
-} from "@tau/tau-coding-agent/slash-commands/marketplace-install-parser";
+} from "tau/slash-commands/marketplace-install-parser";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 

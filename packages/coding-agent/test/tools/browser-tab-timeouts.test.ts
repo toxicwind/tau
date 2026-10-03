@@ -4,8 +4,8 @@ import {
 	normalizeSelector,
 	resolveOpTimeouts,
 	resolveWaitTimeout,
-} from "@tau/tau-coding-agent/tools/browser/tab-worker";
-import { resolvePredicateTimeout } from "@tau/tau-coding-agent/tools/run-scope";
+} from "tau/tools/browser/tab-worker";
+import { resolvePredicateTimeout } from "tau/tools/run-scope";
 
 // Regression coverage for the "weird timeouts" failure mode: interactive `tab.*` helpers
 // used to run with the full cell budget as their internal puppeteer timeout, so a stalled

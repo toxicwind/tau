@@ -4,7 +4,7 @@ import {
 	externalizeImageData,
 	parseBlobRef,
 	resolveImageData,
-} from "@tau/tau-coding-agent/session/blob-store";
+} from "tau/session/blob-store";
 import { blobExtensionForImageMimeType } from "@tau/tau-tui/prompt/image-format";
 import { TempDir } from "@tau/tau-utils";
 

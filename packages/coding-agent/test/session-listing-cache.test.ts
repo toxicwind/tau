@@ -1,6 +1,6 @@
 import { describe, expect, it, spyOn } from "bun:test";
-import { listSessions } from "@tau/tau-coding-agent/session/session-listing";
-import { MemorySessionStorage } from "@tau/tau-coding-agent/session/session-storage";
+import { listSessions } from "tau/session/session-listing";
+import { MemorySessionStorage } from "tau/session/session-storage";
 
 const SESSION_DIR = "/sessions/project";
 

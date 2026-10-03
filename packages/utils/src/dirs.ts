@@ -1,7 +1,8 @@
 /**
  * Centralized path helpers for tau config directories.
  *
- * Uses PI_CONFIG_DIR (default ".tau") for the config root and
+ * Uses TAU_CONFIG_DIR (default ".tau"; legacy PI_CONFIG_DIR honored as fallback)
+ * for the config root and
  * PI_CODING_AGENT_DIR to override the agent directory.
  *
  * On Linux, if XDG_DATA_HOME / XDG_STATE_HOME / XDG_CACHE_HOME environment
@@ -87,6 +88,15 @@ export function normalizeProfileName(profile: string | undefined): string | unde
  */
 export function resolveProfileEnv(tau: string | undefined, pi: string | undefined): string | undefined {
 	return normalizeProfileName(tau !== undefined ? tau : pi);
+}
+
+/**
+ * Resolve the config-root override from the environment. `TAU_CONFIG_DIR` wins;
+ * legacy `PI_CONFIG_DIR` is honored only when `TAU_CONFIG_DIR` is unset, so
+ * existing user environments keep working after the rename.
+ */
+export function resolveConfigDirEnv(tau: string | undefined, pi: string | undefined): string | undefined {
+	return tau !== undefined ? tau : pi;
 }
 
 function getProfileFromEnv(): string | undefined {
@@ -296,9 +306,9 @@ export function getSafeProjectCwd(): string {
 }
 
 /**
- * Get the config directory name relative to home (e.g. ".tau" or PI_CONFIG_DIR override).
+ * Get the config directory name relative to home (e.g. ".tau" or TAU_CONFIG_DIR override).
  *
- * `PI_CONFIG_DIR` names a directory *relative to home* — callers join the result
+ * `TAU_CONFIG_DIR` (legacy fallback: `PI_CONFIG_DIR`) names a directory *relative to home* — callers join the result
  * onto `homedir()` (see `getPluginsDir`, `getConfigAgentDirName`). An absolute
  * value would therefore be joined onto home a second time and resolve to
  * `/home/u/home/u/...`, silently forking the whole config tree: plugins,
@@ -307,12 +317,12 @@ export function getSafeProjectCwd(): string {
  * holds no matter how the variable was set.
  */
 export function getConfigDirName(): string {
-	const configured = process.env.PI_CONFIG_DIR?.trim();
+	const configured = resolveConfigDirEnv(process.env.TAU_CONFIG_DIR, process.env.PI_CONFIG_DIR)?.trim();
 	if (!configured) return CONFIG_DIR_NAME;
 	return path.isAbsolute(configured) ? path.basename(configured) : configured;
 }
 
-/** Get the config agent directory name relative to home (e.g. ".tau/agent" or PI_CONFIG_DIR + "/agent"). */
+/** Get the config agent directory name relative to home (e.g. ".tau/agent" or TAU_CONFIG_DIR + "/agent"). */
 export function getConfigAgentDirName(): string {
 	const profile = getActiveProfile();
 	return profile ? path.join(getConfigDirName(), "profiles", profile, "agent") : `${getConfigDirName()}/agent`;

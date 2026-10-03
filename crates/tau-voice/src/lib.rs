@@ -9,8 +9,8 @@
 //! # Architecture
 //! ```text
 //! JS (packages/natives) -> #[napi] adapters (tau-natives audio.rs / live.rs)
-//!   -> pi_voice::audio  (capture/playback engine over in-house OS backends)
-//!   -> pi_voice::live   (WebRTC peer + Opus media, feeds audio playback)
+//!   -> tau_voice::audio  (capture/playback engine over in-house OS backends)
+//!   -> tau_voice::live   (WebRTC peer + Opus media, feeds audio playback)
 //! ```
 //!
 //! Async entry points ([`live::LivePeerCore::create_offer`] and friends) run

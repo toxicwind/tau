@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test";
 import type { AssistantMessage, ProviderPayload, Usage } from "@tau/tau-ai";
-import { BlobStore } from "@tau/tau-coding-agent/session/blob-store";
-import type { SessionMessageEntry } from "@tau/tau-coding-agent/session/session-entries";
-import { prepareEntryForPersistence } from "@tau/tau-coding-agent/session/session-persistence";
+import { BlobStore } from "tau/session/blob-store";
+import type { SessionMessageEntry } from "tau/session/session-entries";
+import { prepareEntryForPersistence } from "tau/session/session-persistence";
 import { TempDir } from "@tau/tau-utils";
 
 const usage = (): Usage => ({

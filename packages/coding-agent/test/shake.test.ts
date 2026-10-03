@@ -5,12 +5,12 @@ import { Agent, type AgentMessage, RESCUE_SHAKE_CONFIG, Tokenizer } from "@tau/t
 import * as compactionModule from "@tau/tau-agent-core/compaction";
 import type { AssistantMessage, ImageContent, ToolResultMessage } from "@tau/tau-ai";
 import { getBundledModel } from "@tau/tau-catalog/models";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { AgentSession, type AgentSessionEvent } from "@tau/tau-coding-agent/session/agent-session";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import { formatShakeSummary } from "@tau/tau-coding-agent/session/shake-types";
+import { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
+import { AgentSession, type AgentSessionEvent } from "tau/session/agent-session";
+import { AuthStorage } from "tau/session/auth-storage";
+import { SessionManager } from "tau/session/session-manager";
+import { formatShakeSummary } from "tau/session/shake-types";
 import { TempDir } from "@tau/tau-utils";
 
 const usage = {

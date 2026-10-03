@@ -3,9 +3,9 @@ import * as fs from "node:fs";
 import * as fsp from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { SessionHeader } from "@tau/tau-coding-agent/session/session-entries";
-import { loadEntriesFromFile } from "@tau/tau-coding-agent/session/session-loader";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
+import type { SessionHeader } from "tau/session/session-entries";
+import { loadEntriesFromFile } from "tau/session/session-loader";
+import { SessionManager } from "tau/session/session-manager";
 import { getConfigRootDir, setAgentDir } from "@tau/tau-utils";
 
 describe("SessionManager.createEmptySessionFile", () => {

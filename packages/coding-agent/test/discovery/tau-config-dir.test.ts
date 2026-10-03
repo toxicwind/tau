@@ -1,19 +1,25 @@
 import { afterEach, describe, expect, test } from "bun:test";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { LoadContext } from "@tau/tau-coding-agent/capability/types";
-import { getConfigDirs } from "@tau/tau-coding-agent/config";
-import { resolveClaudePaths } from "@tau/tau-coding-agent/config/claude-paths";
-import { getUserPath } from "@tau/tau-coding-agent/discovery/helpers";
+import type { LoadContext } from "tau/capability/types";
+import { getConfigDirs } from "tau/config";
+import { resolveClaudePaths } from "tau/config/claude-paths";
+import { getUserPath } from "tau/discovery/helpers";
 import { getAgentDir } from "@tau/tau-utils";
 
-describe("PI_CONFIG_DIR", () => {
-	const original = process.env.PI_CONFIG_DIR;
+describe("TAU_CONFIG_DIR", () => {
+	const originalTau = process.env.TAU_CONFIG_DIR;
+	const originalPi = process.env.PI_CONFIG_DIR;
 	afterEach(() => {
-		if (original === undefined) {
+		if (originalTau === undefined) {
+			delete process.env.TAU_CONFIG_DIR;
+		} else {
+			process.env.TAU_CONFIG_DIR = originalTau;
+		}
+		if (originalPi === undefined) {
 			delete process.env.PI_CONFIG_DIR;
 		} else {
-			process.env.PI_CONFIG_DIR = original;
+			process.env.PI_CONFIG_DIR = originalPi;
 		}
 	});
 
@@ -31,10 +37,27 @@ describe("PI_CONFIG_DIR", () => {
 		expect(getUserPath(ctx, "native", "commands")).not.toContain(ctx.home);
 	});
 
-	test("getConfigDirs respects PI_CONFIG_DIR for user base", () => {
-		process.env.PI_CONFIG_DIR = ".config/tau";
+	test("getConfigDirs respects TAU_CONFIG_DIR for user base", () => {
+		delete process.env.PI_CONFIG_DIR;
+		process.env.TAU_CONFIG_DIR = ".config/tau";
 		const result = getConfigDirs("commands", { project: false });
 		const expected = path.resolve(path.join(os.homedir(), ".config/tau", "agent", "commands"));
+		expect(result[0]).toEqual({ path: expected, source: ".tau", level: "user" });
+	});
+
+	test("honors legacy PI_CONFIG_DIR when TAU_CONFIG_DIR is unset", () => {
+		delete process.env.TAU_CONFIG_DIR;
+		process.env.PI_CONFIG_DIR = ".config/tau-legacy";
+		const result = getConfigDirs("commands", { project: false });
+		const expected = path.resolve(path.join(os.homedir(), ".config/tau-legacy", "agent", "commands"));
+		expect(result[0]).toEqual({ path: expected, source: ".tau", level: "user" });
+	});
+
+	test("TAU_CONFIG_DIR wins over legacy PI_CONFIG_DIR", () => {
+		process.env.TAU_CONFIG_DIR = ".config/tau-new";
+		process.env.PI_CONFIG_DIR = ".config/tau-legacy";
+		const result = getConfigDirs("commands", { project: false });
+		const expected = path.resolve(path.join(os.homedir(), ".config/tau-new", "agent", "commands"));
 		expect(result[0]).toEqual({ path: expected, source: ".tau", level: "user" });
 	});
 });

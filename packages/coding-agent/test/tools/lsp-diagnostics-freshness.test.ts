@@ -1,15 +1,15 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { createLspWritethrough } from "@tau/tau-coding-agent/lsp";
+import { Settings } from "tau/config/settings";
+import { createLspWritethrough } from "tau/lsp";
 import { type FileDiagnosticsResult, FileFormatResult } from "@tau/tau-tui/tools/lsp";
-import * as lspClient from "@tau/tau-coding-agent/lsp/client";
-import * as lspConfig from "@tau/tau-coding-agent/lsp/config";
-import { formatContent, INLINE_DIAGNOSTICS_WAIT_TIMEOUT_MS } from "@tau/tau-coding-agent/lsp/diagnostics";
-import type { Diagnostic, LinterClient, LspClient, ServerConfig } from "@tau/tau-coding-agent/lsp/types";
-import { EquivalentUriMap, fileToUri } from "@tau/tau-coding-agent/lsp/utils";
-import type { DeferredDiagnosticsEntry, ToolSession } from "@tau/tau-coding-agent/tools";
-import { WriteTool } from "@tau/tau-coding-agent/tools/write";
+import * as lspClient from "tau/lsp/client";
+import * as lspConfig from "tau/lsp/config";
+import { formatContent, INLINE_DIAGNOSTICS_WAIT_TIMEOUT_MS } from "tau/lsp/diagnostics";
+import type { Diagnostic, LinterClient, LspClient, ServerConfig } from "tau/lsp/types";
+import { EquivalentUriMap, fileToUri } from "tau/lsp/utils";
+import type { DeferredDiagnosticsEntry, ToolSession } from "tau/tools";
+import { WriteTool } from "tau/tools/write";
 import { type ptree, TempDir } from "@tau/tau-utils";
 
 const TEST_SERVER: ServerConfig = {

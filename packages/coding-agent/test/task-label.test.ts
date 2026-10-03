@@ -2,8 +2,8 @@ import { afterEach, describe, expect, it, vi } from "bun:test";
 import type { Api, Model } from "@tau/tau-ai";
 import * as ai from "@tau/tau-ai";
 import { getBundledModel } from "@tau/tau-catalog/models";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import { generateTaskLabel, labelEchoesHandle } from "@tau/tau-coding-agent/task/label";
+import { Settings } from "tau/config/settings";
+import { generateTaskLabel, labelEchoesHandle } from "tau/task/label";
 
 function getModelOrThrow(id: string): Model<Api> {
 	const model = getBundledModel("anthropic", id);

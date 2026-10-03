@@ -4,13 +4,13 @@ import * as path from "node:path";
 import { afterEach, beforeEach, describe, expect, spyOn, test, vi } from "bun:test";
 import type { FetchImpl, Model } from "@tau/tau-ai";
 import { type GeneratedProvider, getBundledModel } from "@tau/tau-catalog/models";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { Settings } from "@tau/tau-coding-agent/config/settings";
-import type { CustomToolContext } from "@tau/tau-coding-agent/extensibility/custom-tools/types";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
-import { SessionManager } from "@tau/tau-coding-agent/session/session-manager";
-import { resolveSpeechCandidates, ttsTool } from "@tau/tau-coding-agent/tools/tts";
-import { ttsClient } from "@tau/tau-coding-agent/tts/tts-client";
+import { ModelRegistry } from "tau/config/model-registry";
+import { Settings } from "tau/config/settings";
+import type { CustomToolContext } from "tau/extensibility/custom-tools/types";
+import { AuthStorage } from "tau/session/auth-storage";
+import { SessionManager } from "tau/session/session-manager";
+import { resolveSpeechCandidates, ttsTool } from "tau/tools/tts";
+import { ttsClient } from "tau/tts/tts-client";
 
 function requireModel(provider: GeneratedProvider, id: string): Model {
 	const model = getBundledModel(provider, id);

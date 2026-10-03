@@ -13,13 +13,13 @@ import { fingerprintStaticModels } from "@tau/tau-catalog/model-manager";
 import * as catalogModels from "@tau/tau-catalog/models";
 import { calculateUsageCost, getBundledModels } from "@tau/tau-catalog/models";
 import { modelKind } from "@tau/tau-catalog/types";
-import { finalizeCustomModel } from "@tau/tau-coding-agent/config/custom-models";
-import { applyModelPatch, mergeDiscoveredModel } from "@tau/tau-coding-agent/config/model-patch";
-import { ModelRegistry } from "@tau/tau-coding-agent/config/model-registry";
-import { resolveRoleChain } from "@tau/tau-coding-agent/config/model-resolver";
-import { roleCandidatePool } from "@tau/tau-coding-agent/config/model-roles";
-import { resetSettingsForTest, Settings, settings } from "@tau/tau-coding-agent/config/settings";
-import { AuthStorage } from "@tau/tau-coding-agent/session/auth-storage";
+import { finalizeCustomModel } from "tau/config/custom-models";
+import { applyModelPatch, mergeDiscoveredModel } from "tau/config/model-patch";
+import { ModelRegistry } from "tau/config/model-registry";
+import { resolveRoleChain } from "tau/config/model-resolver";
+import { roleCandidatePool } from "tau/config/model-roles";
+import { resetSettingsForTest, Settings, settings } from "tau/config/settings";
+import { AuthStorage } from "tau/session/auth-storage";
 import { removeSyncWithRetries, Snowflake } from "@tau/tau-utils";
 
 describe("ModelRegistry", () => {

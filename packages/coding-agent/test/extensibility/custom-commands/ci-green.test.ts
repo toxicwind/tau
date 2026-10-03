@@ -2,10 +2,10 @@ import { afterEach, describe, expect, it, vi } from "bun:test";
 import { type } from "@tau/tautype";
 import type * as TypeBox from "@tau/tautype/typebox";
 import * as zod from "@tau/tautype/zod";
-import * as piCodingAgent from "@tau/tau-coding-agent";
-import { GreenCommand } from "@tau/tau-coding-agent/extensibility/custom-commands/bundled/ci-green";
-import type { CustomCommandAPI } from "@tau/tau-coding-agent/extensibility/custom-commands/types";
-import type { HookCommandContext } from "@tau/tau-coding-agent/extensibility/hooks/types";
+import * as piCodingAgent from "tau";
+import { GreenCommand } from "tau/extensibility/custom-commands/bundled/ci-green";
+import type { CustomCommandAPI } from "tau/extensibility/custom-commands/types";
+import type { HookCommandContext } from "tau/extensibility/hooks/types";
 import type { VcsGitRepo } from "@tau/tau-natives";
 import * as vcs from "@tau/tau-natives/vcs";
 

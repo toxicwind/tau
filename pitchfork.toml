@@ -6,7 +6,7 @@ dir = "/home/toxic"
 mise = false
 retry = true
 --
-env = { PI_CONFIG_DIR = "/home/toxic/.tau", PI_AGENT_DIR = "/home/toxic/.tau/agent", PI_CODING_AGENT = "true", PI_REASONING_LEVEL = "high", PI_SUBAGENT_MODEL = "thinkingmachines/inkling", PI_OPENAI_STREAM_IDLE_TIMEOUT_MS = "120000", VANSROUTER_API_KEY = "local-sovereign" }
+env = { TAU_CONFIG_DIR = "/home/toxic/.tau", PI_AGENT_DIR = "/home/toxic/.tau/agent", PI_CODING_AGENT = "true", PI_REASONING_LEVEL = "high", PI_SUBAGENT_MODEL = "thinkingmachines/inkling", PI_OPENAI_STREAM_IDLE_TIMEOUT_MS = "120000", VANSROUTER_API_KEY = "local-sovereign" }
 auto = ["start"]
 [daemons.mesh-hub]
 port = 25115

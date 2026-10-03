@@ -13,7 +13,7 @@ import {
 	listCollabHosts,
 	publishCollabHost,
 	resolveCollabHostLink,
-} from "@tau/tau-coding-agent/collab/registry";
+} from "tau/collab/registry";
 
 const cleanupDirs: string[] = [];
 const openPublications: CollabHostPublication[] = [];
