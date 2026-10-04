@@ -47,7 +47,6 @@ import {
 	type Message,
 	type MessageAttribution,
 	type Model,
-	OPENAI_MAX_OUTPUT_TOKENS,
 	type ServiceTier,
 	type StopReason,
 	type StreamOptions,
@@ -607,7 +606,7 @@ export interface ResolveOpenAIOutputTokenInput {
 	isOpenRouterHost: boolean;
 	/** Endpoint always needs a cap (Kimi-family TPM math); supplies the model default when the caller did not. */
 	alwaysSendMaxTokens: boolean;
-	/** Hard provider clamp; defaults to {@link OPENAI_MAX_OUTPUT_TOKENS}. */
+	/** Hard provider clamp; defaults to the provider output clamp. */
 	providerOutputClamp?: number;
 }
 
@@ -618,13 +617,13 @@ export interface ResolveOpenAIOutputTokenInput {
  * lived inline in both `buildParams`:
  *  - `alwaysSendMaxTokens`: Kimi-family endpoints derive TPM limits from the
  *    cap and require one on every call, so default from the model cap (or
- *    {@link OPENAI_MAX_OUTPUT_TOKENS}) when the caller omitted it.
+ *    the provider output clamp) when the caller omitted it.
  *  - OpenRouter routing omission: OpenRouter fans out to upstreams whose output
  *    caps differ from the catalog value, so a catalog default above the routed
  *    upstream's cap makes OpenRouter skip that upstream. Omit catalog defaults
  *    (explicit caller caps still win) so `provider.order`/`only` is honored.
  *  - model/provider clamp: never exceed `model.maxTokens` or the provider clamp
- *    (`OPENAI_MAX_OUTPUT_TOKENS`, raised for GLM-5.2 reasoning by the caller).
+ *    (the provider output clamp, raised for GLM-5.2 reasoning by the caller).
  *  - `omitMaxOutputTokens`: proxies (Ollama) with unknown upstream caps drop it.
  */
 export function resolveOpenAIOutputTokenParam(
@@ -632,13 +631,13 @@ export function resolveOpenAIOutputTokenParam(
 ): OpenAIOutputTokenParam | undefined {
 	if (input.omitMaxOutputTokens) return undefined;
 	const requested =
-		input.maxTokens ?? (input.alwaysSendMaxTokens ? (input.modelMaxTokens ?? OPENAI_MAX_OUTPUT_TOKENS) : undefined);
+		input.maxTokens ?? (input.alwaysSendMaxTokens ? (input.modelMaxTokens ?? Number.POSITIVE_INFINITY) : undefined);
 	if (requested === undefined) return undefined;
 	if (input.isOpenRouterHost && !input.alwaysSendMaxTokens && !input.maxTokensExplicit) return undefined;
 	const value = Math.min(
 		requested,
 		input.modelMaxTokens ?? Number.POSITIVE_INFINITY,
-		input.providerOutputClamp ?? OPENAI_MAX_OUTPUT_TOKENS,
+		input.providerOutputClamp ?? Number.POSITIVE_INFINITY,
 	);
 	if (!(value > 0)) return undefined;
 	return { field: input.field, value };
@@ -1259,44 +1258,6 @@ function isZaiReasoningEffortDialect(_model: Model<"openai-completions">, compat
 	return compat.thinkingFormat === "zai" && compat.zaiReasoningEffortDialect;
 }
 
-/**
- * Provider-specific Chat Completions output clamp.
- *
- * Most OpenAI-compatible endpoints retain the conservative 64k ceiling from
- * {@link resolveOpenAIOutputTokenParam}. ClinePass, Z.AI/GLM-5.2 reasoning,
- * and native Moonshot K3 explicitly accept their full advertised model caps,
- * so those routes clamp to `model.maxTokens` instead.
- */
-export function resolveOpenAICompletionsOutputClamp(
-	model: Model<"openai-completions">,
-	compat: ResolvedOpenAICompat,
-): number | undefined {
-	if (model.provider === "cline-pass") {
-		return model.maxTokens ?? OPENAI_MAX_OUTPUT_TOKENS;
-	}
-	if (isZaiReasoningEffortDialect(model, compat)) {
-		return model.maxTokens ?? OPENAI_MAX_OUTPUT_TOKENS;
-	}
-	if (compat.clampOutputToModelMax) {
-		return model.maxTokens ?? OPENAI_MAX_OUTPUT_TOKENS;
-	}
-	return undefined;
-}
-
-/**
- * Provider-specific Responses API output clamp.
- *
- * Models whose compiled provider policy opts in may use their full advertised
- * output cap instead of the conservative 64k OpenAI-compatible default.
- */
-export function resolveOpenAIResponsesOutputClamp(
-	model: Pick<Model, "maxTokens"> & { compat: Pick<ResolvedOpenAISharedCompat, "clampOutputToModelMax"> },
-): number | undefined {
-	if (model.compat.clampOutputToModelMax) {
-		return model.maxTokens ?? OPENAI_MAX_OUTPUT_TOKENS;
-	}
-	return undefined;
-}
 
 /**
  * Enable `tool_stream` for Z.AI/GLM-5.2 reasoning models when tools are present
@@ -3738,7 +3699,7 @@ export function applyCommonResponsesSamplingParams<P extends CommonResponsesPara
 	model: Pick<Model, "provider" | "api" | "id" | "omitMaxOutputTokens" | "maxTokens" | "identity"> & {
 		compat: Pick<
 			ResolvedOpenAISharedCompat,
-			"supportsSamplingParams" | "supportsPenaltyAndStopParams" | "clampOutputToModelMax"
+			"supportsSamplingParams" | "supportsPenaltyAndStopParams"
 		>;
 	},
 ): void {
@@ -3746,7 +3707,6 @@ export function applyCommonResponsesSamplingParams<P extends CommonResponsesPara
 		params.max_output_tokens = Math.min(
 			options.maxTokens,
 			model.maxTokens ?? Number.POSITIVE_INFINITY,
-			resolveOpenAIResponsesOutputClamp(model) ?? OPENAI_MAX_OUTPUT_TOKENS,
 		);
 	}
 	// OpenAI proprietary reasoning models (o-series, gpt-5+) reject explicit

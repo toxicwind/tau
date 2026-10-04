@@ -64,7 +64,6 @@ const compat: ResolvedOpenAICompat = {
 	dropThinkingWhenReasoningEffort: false,
 	nativeKimiK3Reasoning: false,
 	zaiReasoningEffortDialect: false,
-	clampOutputToModelMax: false,
 	stripImageInput: false,
 	rejectRootObjectUnion: false,
 	retryWithoutStrictOnGrammarError: false,

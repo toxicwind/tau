@@ -101,7 +101,6 @@ import {
 	resolveOpenAICompatPolicy,
 	resolveOpenAIOutputTokenParam,
 	resolveOpenAIRequestSetup,
-	resolveOpenAIResponsesOutputClamp,
 	resolveReasoningSummaryOption,
 	shouldDropAutoToolChoiceForReasoning,
 	shouldRetryWithoutStrictTools,
@@ -1270,7 +1269,7 @@ export function buildParams(
 		omitMaxOutputTokens: model.omitMaxOutputTokens ?? false,
 		isOpenRouterHost: model.compat.isOpenRouterHost,
 		alwaysSendMaxTokens: model.compat.alwaysSendMaxTokens,
-		providerOutputClamp: resolveOpenAIResponsesOutputClamp(model),
+		providerOutputClamp: undefined,
 	});
 
 	applyCommonResponsesSamplingParams(params, { ...options, maxTokens: outputToken?.value }, model);

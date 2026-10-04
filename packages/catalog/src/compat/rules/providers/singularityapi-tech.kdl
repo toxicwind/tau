@@ -55,7 +55,6 @@ provider "singularityapi-tech" {
 		// Lane-scoped, not provider-wide: for a row whose ceiling discovery leaves
 		// unknown the clamp falls back to the OpenAI default ceiling, which is not
 		// something an unreviewed lane should inherit.
-		clamp-output-to-model-max #true
 		// Guide: up to 8 image_url parts per request (PNG/JPEG, data URL or
 		// public https). Declared here as well as clearing the class strip:
 		// live discovery seeds input ["text"], and the wire guard requires the

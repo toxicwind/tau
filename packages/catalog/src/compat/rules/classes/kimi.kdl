@@ -113,7 +113,6 @@ class "kimi" {
 	on "kimi-code" "moonshot" {
 		family "k3" {
 			native-kimi-k3-reasoning #true
-			clamp-output-to-model-max #true
 		}
 	}
 }

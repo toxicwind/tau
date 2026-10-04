@@ -90,7 +90,6 @@ export const AXES: Readonly<Record<string, AxisDef>> = {
 	"allows-synthetic-reasoning-content-for-tool-calls": wire("allowsSyntheticReasoningContentForToolCalls", OAI),
 	"always-send-max-tokens": wire("alwaysSendMaxTokens", OAI),
 	"cache-control-format": wire("cacheControlFormat", OAI, "scalar", ["anthropic"]),
-	"clamp-output-to-model-max": wire("clampOutputToModelMax", OAI),
 	"disable-reasoning-on-forced-tool-choice": wire("disableReasoningOnForcedToolChoice", OAI),
 	"disable-reasoning-on-tool-choice": wire("disableReasoningOnToolChoice", OAI),
 	"disable-reasoning-with-tools": wire("disableReasoningWithTools", ["openai"]),

@@ -85,7 +85,6 @@ describe("SingularityAPI reserved lanes support", () => {
 			expect(model.contextWindow).toBe(262144);
 			expect(model.input).toEqual(["text", "image"]);
 			expect(model.compat.maxTokensField).toBe("max_tokens");
-			expect(model.compat.clampOutputToModelMax).toBe(true);
 			// Live wire (2026-09-22): reasoning arrives as top-level
 			// `reasoning_content`, not the guide's `message.reasoning`.
 			expect(model.compat.reasoningContentField).toBe("reasoning_content");
@@ -102,7 +101,6 @@ describe("SingularityAPI reserved lanes support", () => {
 		const model = buildModel(laneSpec("deepseek-ai/DeepSeek-V3.2"));
 		expect(model.compat.maxTokensField).toBe("max_tokens");
 		expect(model.compat.reasoningContentField).toBe("reasoning_content");
-		expect(model.compat.clampOutputToModelMax).toBe(false);
 		expect(model.reasoning).toBe(false);
 		expect(model.thinking).toBeUndefined();
 	});

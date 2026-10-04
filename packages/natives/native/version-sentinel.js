@@ -15,7 +15,7 @@
  * @returns {string}
  */
 export function versionSentinelFor(packageVersion) {
-	return `__piNativesV${packageVersion.replace(/[^A-Za-z0-9]/g, "_")}`;
+	return `__tauNativesV${packageVersion.replace(/[^A-Za-z0-9]/g, "_")}`;
 }
 
 /**

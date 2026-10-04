@@ -19,7 +19,6 @@ class "glm" {
 	on "zai" "zhipu-coding-plan" {
 		revision ">=5.2 <5.3" {
 			zai-reasoning-effort-dialect #true
-			clamp-output-to-model-max #true
 		}
 	}
 	on "zai" "zhipu-coding-plan" "umans" "ollama-cloud" "baseten" {

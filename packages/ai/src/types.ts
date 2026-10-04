@@ -57,19 +57,6 @@ import type { AssistantMessageEventStream } from "./utils/event-stream";
 export type { StopDetails } from "./providers/anthropic-wire";
 export type { AssistantMessageEventStream } from "./utils/event-stream";
 
-/**
- * Ceiling on the output-token count tau requests from any OpenAI-family endpoint
- * (openai-responses, azure/xai responses, and openai-completions). Mirrors
- * Anthropic's {@link CLAUDE_CODE_MAX_OUTPUT_TOKENS}.
- *
- * Catalog `maxTokens` frequently reflects a model's context window rather than a
- * given upstream's real per-request output cap. OpenRouter, for instance,
- * advertises 131072 output tokens for `z-ai/glm-4.7`, but the Cerebras upstream
- * only allows ~131072 tokens total — so requesting the full ceiling overflows
- * with a 400. Requested output is clamped to this value (and to `model.maxTokens`).
- */
-export const OPENAI_MAX_OUTPUT_TOKENS = 64000;
-
 export interface ApiOptionsMap {
 	"anthropic-messages": AnthropicOptions;
 	"bedrock-converse-stream": BedrockOptions;

@@ -105,7 +105,6 @@ import {
 	type OpenAIStrictToolsState,
 	parseAzureDeploymentNameMap,
 	resolveOpenAICompatPolicy,
-	resolveOpenAICompletionsOutputClamp,
 	resolveOpenAIOutputTokenParam,
 	resolveOpenAIRequestSetup,
 	shouldDropAutoToolChoiceForReasoning,
@@ -1973,7 +1972,7 @@ function buildParams(
 		omitMaxOutputTokens: model.omitMaxOutputTokens ?? false,
 		isOpenRouterHost: compat.isOpenRouterHost,
 		alwaysSendMaxTokens: compat.alwaysSendMaxTokens,
-		providerOutputClamp: resolveOpenAICompletionsOutputClamp(model, compat),
+		providerOutputClamp: undefined,
 	});
 	if (outputToken) {
 		if (outputToken.field === "max_tokens") {

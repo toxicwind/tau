@@ -24,7 +24,6 @@ const NEW_COMPAT_FIELDS = new Set([
 	"thinkingLoopGuard",
 	"nativeKimiK3Reasoning",
 	"zaiReasoningEffortDialect",
-	"clampOutputToModelMax",
 	"supportsAllTurnsReasoningContext",
 	"supportsFunctionPartId",
 	"requiresSkipThoughtSignature",

@@ -41,6 +41,5 @@ provider "zai" {
 	// axis is a no-op on the Anthropic route).
 	models "glm-5.3-flash" {
 		thinking-mode "anthropic-budget-effort"
-		clamp-output-to-model-max #true
 	}
 }

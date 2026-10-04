@@ -84,8 +84,7 @@ describe("xai-oauth bundled catalog (regression)", () => {
 
 	// The OAuth surface's /v1/models reports no per-request output limit, so the
 	// curated catalog owns maxTokens — set to mirror each model's contextWindow
-	// (the openai-responses wire still clamps the actual request to
-	// OPENAI_MAX_OUTPUT_TOKENS). Pin maxTokens === contextWindow on both the
+	// (the openai-responses wire uses model.maxTokens). Pin maxTokens === contextWindow on both the
 	// static-seed and bundled paths so a null placeholder can
 	// never silently leak back into the bundle.
 	it("sets maxTokens equal to contextWindow for every xai-oauth Responses model", () => {

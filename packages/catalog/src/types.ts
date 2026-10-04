@@ -504,7 +504,6 @@ export interface OpenAICompat {
 	/** GLM-5.2 accepts Z.ai's `reasoning_effort` dialect alongside binary thinking. */
 	zaiReasoningEffortDialect?: boolean;
 	/** Clamp the requested max output tokens to the model's advertised ceiling. */
-	clampOutputToModelMax?: boolean;
 	/** Strip image inputs before encoding (text-only serving of a multimodal id). */
 	stripImageInput?: boolean;
 	/** Thinking-loop watchdog guard family applied to streamed reasoning. */
@@ -791,7 +790,6 @@ export interface ResolvedOpenAISharedCompat {
 	/** Whether this endpoint needs a max-token field even when caller did not set one. */
 	alwaysSendMaxTokens: boolean;
 	/** Clamp a requested output-token count to the model's advertised ceiling. */
-	clampOutputToModelMax: boolean;
 	openRouterRouting?: OpenAICompat["openRouterRouting"];
 	/** Provider-specific wire model-id transform applied to the base id. */
 	wireModelIdMode: "raw" | "cline-pass" | "firepass" | "fireworks" | "openrouter";
@@ -861,7 +859,6 @@ export type ResolvedOpenAICompat = ResolvedOpenAISharedCompat &
 			| "supportsStrictMode"
 			| "supportsLongPromptCacheRetention"
 			| "alwaysSendMaxTokens"
-			| "clampOutputToModelMax"
 			| "wireModelIdMode"
 			| "vercelGatewayRouting"
 			| "extraBody"

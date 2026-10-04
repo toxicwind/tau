@@ -1663,8 +1663,8 @@ export function applyXaiResponsesThinkingPolicy(model: ModelSpec<"openai-respons
 // (Grok Build / SuperGrok) surface, so the curated catalog owns `maxTokens`
 // like it owns `contextWindow`: each entry mirrors its context window. The
 // openai-responses wire clamps the actual request to
-// min(requested, model.maxTokens, OPENAI_MAX_OUTPUT_TOKENS=64000), so this is
-// just "no model-specific sub-cap below 64k", not an unbounded output budget.
+// min(requested, model.maxTokens), so this is
+// just "no model-specific sub-cap", not an unbounded output budget.
 
 // Single source of truth for curated → Model fan-in. Used by the static-seed
 // and the dynamic overlay/inject paths (applyXAIOAuthCuration) so curated

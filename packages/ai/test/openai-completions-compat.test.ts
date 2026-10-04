@@ -232,7 +232,6 @@ describe("openai-completions compatibility", () => {
 			dropThinkingWhenReasoningEffort: false,
 			nativeKimiK3Reasoning: false,
 			zaiReasoningEffortDialect: false,
-			clampOutputToModelMax: false,
 			stripImageInput: false,
 			rejectRootObjectUnion: false,
 			retryWithoutStrictOnGrammarError: false,
