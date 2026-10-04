@@ -33,9 +33,11 @@
 //! exists so that "in practice" failing produces one typed error instead of
 //! hundreds of identical backtraces.
 
-// `OnceFallible` and `RankTable` are reached by the load_tests module below.
-#[cfg(test)]
+// Re-exported so `mod.rs` and this module's tests can name the error without
+// reaching into the private `bpe` module.
 pub use crate::utok::bpe::BpeLoadError;
+// Only `load_tests` names `OnceFallible` directly; release builds reach it
+// through `bpe_table!`.
 #[cfg(test)]
 pub use crate::utok::bpe::OnceFallible;
 
@@ -91,7 +93,9 @@ macro_rules! bpe_table {
 					" (usually a truncated checkout or an interrupted write)",
 				));
 			}
-			if [bytes[0], bytes[1], bytes[2], bytes[3]] != [0x28u8, 0xB5, 0x2F, 0xFD] {
+			// Elementwise: `[u8; 4] != [u8; 4]` is not const-evaluable
+			// (PartialEq is not const-stable), but `u8` compares are.
+			if bytes[0] != 0x28 || bytes[1] != 0xB5 || bytes[2] != 0x2F || bytes[3] != 0xFD {
 				panic!(concat!(
 					"BPE blob is missing the zstd frame magic (expected 28 B5 2F FD): ",
 					$path,

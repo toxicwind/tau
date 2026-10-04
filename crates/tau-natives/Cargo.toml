@@ -8,7 +8,7 @@ homepage.workspace = true
 repository.workspace = true
 
 [lib]
-crate-type = ["cdylib"]
+crate-type = ["cdylib", "rlib"]
 
 [lints]
 workspace = true
@@ -19,7 +19,23 @@ workspace = true
 # pkg-config, which no CI/cross triple (musl, arm64) can satisfy, and the
 # Bazel-shipped addons build with crate_features = [] anyway. Linux devs who
 # want Wayland screencast opt in with `--features wayland-pipewire`.
-default = []
+# Every tokenizer family is linked in by default; the whole feature set is
+# ~5 MB of compressed vocabulary. Opt out per family to shrink a binary that
+# only serves one model, the same trade `rust-tiktoken` makes.
+default = [
+	"family-o200k",
+	"family-cl100k",
+	"family-qwen3",
+	"family-deepseek3",
+	"family-kimi",
+	"family-glm",
+]
+family-o200k = []
+family-cl100k = []
+family-qwen3 = []
+family-deepseek3 = []
+family-kimi = []
+family-glm = []
 wayland-pipewire = ["dep:pipewire"]
 
 [dependencies]

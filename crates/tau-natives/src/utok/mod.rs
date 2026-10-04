@@ -35,7 +35,7 @@ mod scan;
 mod tables;
 mod utf;
 pub use self::{
-	bpe::RankTable,
+	bpe::{BpeLoadError, RankTable},
 	utf::{Cursor, Unit, Utf},
 };
 
@@ -70,16 +70,31 @@ pub enum Encoding {
 impl Encoding {
 	/// Exact content token count of `text` (no specials, no message frame),
 	/// in any UTF flavor.
+	///
+	/// # Panics
+	///
+	/// If the family's embedded blob is corrupt. Layers 1, 2 and 4 of the
+	/// hardening in [`tables`] make that unreachable in a built binary: the
+	/// `const _` assertion fails the build and `build.rs` fails the build. Use
+	/// [`try_count`](Self::try_count) to handle it as a value instead.
 	pub fn count<T: Utf + ?Sized>(self, text: &T) -> u32 {
+		self.try_count(text).unwrap_or_else(|e| panic!("{e}"))
+	}
+
+	/// Fallible [`count`](Self::count): the same token count, with a missing
+	/// or corrupt vocabulary surfaced as a typed error.
+	pub fn try_count<T: Utf + ?Sized>(self, text: &T) -> Result<u32, BpeLoadError> {
 		match self {
-			Self::ClaudeV3 => claude::content_token_count(text.units(), claude::Family::V3),
-			Self::ClaudeV47 => claude::content_token_count(text.units(), claude::Family::V47),
-			Self::ClaudeV5 => claude::content_token_count(text.units(), claude::Family::V5),
+			Self::ClaudeV3 => Ok(claude::content_token_count(text.units(), claude::Family::V3)),
+			Self::ClaudeV47 => {
+				Ok(claude::content_token_count(text.units(), claude::Family::V47))
+			},
+			Self::ClaudeV5 => Ok(claude::content_token_count(text.units(), claude::Family::V5)),
 			Self::ClaudeV5Sonnet => {
-				claude::content_token_count(text.units(), claude::Family::V5Sonnet)
+				Ok(claude::content_token_count(text.units(), claude::Family::V5Sonnet))
 			},
 			Self::Jev => jev::content_token_count(text.units()),
-			_ => tables::bpe_for(self).count(text.units()),
+			_ => Ok(tables::bpe_for(self)?.count(text.units())),
 		}
 	}
 
@@ -87,12 +102,22 @@ impl Encoding {
 	///
 	/// `None` for the Claude families and Jev: both are reconstructed from
 	/// counts, not boundaries, so no id sequence exists.
+	///
+	/// # Panics
+	///
+	/// If the family's embedded blob is corrupt. Use
+	/// [`try_encode`](Self::try_encode) to handle that as a value.
 	pub fn encode<T: Utf + ?Sized>(self, text: &T) -> Option<Vec<u32>> {
+		self.try_encode(text).unwrap_or_else(|e| panic!("{e}"))
+	}
+
+	/// Fallible [`encode`](Self::encode).
+	pub fn try_encode<T: Utf + ?Sized>(self, text: &T) -> Result<Option<Vec<u32>>, BpeLoadError> {
 		match self {
 			Self::ClaudeV3 | Self::ClaudeV47 | Self::ClaudeV5 | Self::ClaudeV5Sonnet | Self::Jev => {
-				None
+				Ok(None)
 			},
-			_ => Some(tables::bpe_for(self).encode(text.units())),
+			_ => Ok(Some(tables::bpe_for(self)?.encode(text.units()))),
 		}
 	}
 }
