@@ -111,6 +111,7 @@ async function readMarketplaceRootManifest(root: ClaudePluginRoot): Promise<Clau
 			path.join(root.path, "marketplace.json"),
 			path.join(root.path, ".tau-plugin", "marketplace.json"),
 			path.join(root.path, ".claude-plugin", "marketplace.json"),
+			path.join(root.path, ".omp-plugin", "marketplace.json"),
 		].map(catalogPath => readFile(catalogPath)),
 	);
 
