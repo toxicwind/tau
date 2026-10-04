@@ -230,7 +230,7 @@ function exportTree(rev: string, dest: string): void {
 	if (r.status !== 0) throw new Error(`git archive ${rev} failed: ${r.stderr.trim()}`);
 }
 
-const at = (root: string, rel: string): string => join(root, rel);
+const at = (...segs: string[]): string => join(...segs);
 const has = (root: string, rel: string): boolean => existsSync(at(root, rel));
 
 function isBinary(root: string, rel: string): boolean {
@@ -288,7 +288,7 @@ function deriveRenames(baseRoot: string, oursRoot: string): Record<string, strin
 			if (!existsSync(p)) continue;
 			try {
 				const name = (JSON.parse(readFileSync(p, "utf8")) as { name?: string }).name;
-				if (name) out[name] = entry;
+				if (name) out[entry] = name;
 			} catch {
 				/* an unparseable manifest is reported by the coherence pass */
 			}
@@ -298,7 +298,7 @@ function deriveRenames(baseRoot: string, oursRoot: string): Record<string, strin
 	const theirs = names(baseRoot);
 	const ours = names(oursRoot);
 	const map: Record<string, string> = {};
-	for (const [oursName, dir] of Object.entries(ours)) {
+	for (const [dir, oursName] of Object.entries(ours)) {
 		const theirsName = theirs[dir];
 		if (theirsName && theirsName !== oursName) map[oursName] = theirsName;
 	}
