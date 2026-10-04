@@ -349,8 +349,19 @@ fn default_agent_dir(home: &Path, config_dir_override: Option<&OsStr>) -> PathBu
 }
 
 fn config_root_dir(home: &Path, config_dir: &OsStr) -> PathBuf {
+	let config_path = Path::new(config_dir);
+	// Match the TS getConfigDirName behavior: an absolute override is reduced
+	// to its final segment so it can never double the config root to
+	// $HOME/$HOME/.tau (observed live 2026-10-03).
+	if config_path.is_absolute() {
+		let mut base = PathBuf::from(home);
+		if let Some(final_seg) = config_path.file_name() {
+			base.push(final_seg);
+		}
+		return base;
+	}
 	let mut base = PathBuf::from(home);
-	for component in Path::new(config_dir).components() {
+	for component in config_path.components() {
 		match component {
 			std::path::Component::Prefix(_) | std::path::Component::RootDir => {},
 			std::path::Component::CurDir => {},
@@ -465,17 +476,16 @@ mod tests {
 	}
 
 	#[test]
-	fn resolve_logs_dir_reroots_absolute_tau_config_dir_under_home() {
-		// JS resolves the config root via `path.join(os.homedir(),
-		// getConfigDirName())`, which never honors an absolute TAU_CONFIG_DIR —
-		// it is always re-rooted under `$HOME` (and `..` components are
-		// normalized away).
+	fn resolve_logs_dir_trims_absolute_tau_config_dir_to_final_segment() {
+		// Matches getConfigDirName in packages/utils/src/dirs.ts: an absolute
+		// TAU_CONFIG_DIR is reduced to its final segment and joined onto
+		// $HOME, so it can never double the config root.
 		let dir = resolve_logs_dir(
 			Path::new("/tmp/tau-natives-test-home"),
 			Some(OsStr::new("/var/tmp/tau-natives-state")),
 			None,
 		);
-		assert_eq!(dir, PathBuf::from("/tmp/tau-natives-test-home/var/tmp/tau-natives-state/logs"));
+		assert_eq!(dir, PathBuf::from("/tmp/tau-natives-test-home/tau-natives-state/logs"));
 	}
 
 	#[test]

@@ -313,13 +313,17 @@ export function getSafeProjectCwd(): string {
  * value would therefore be joined onto home a second time and resolve to
  * `/home/u/home/u/...`, silently forking the whole config tree: plugins,
  * sessions, and the lockfile all land in a doubled path that nothing else reads.
- * Reduce an absolute override to its final segment so the documented contract
- * holds no matter how the variable was set.
+ * Reduce any separator-bearing override to its final segment so the documented
+ * contract holds no matter how the variable was set.
  */
 export function getConfigDirName(): string {
 	const configured = resolveConfigDirEnv(process.env.TAU_CONFIG_DIR, process.env.PI_CONFIG_DIR)?.trim();
 	if (!configured) return CONFIG_DIR_NAME;
-	return path.isAbsolute(configured) ? path.basename(configured) : configured;
+	// Never let a separator-bearing override escape $HOME: an absolute value or
+	// a nested relative path (e.g. "home/toxic/.tau") would otherwise double the
+	// config root to $HOME/$HOME/.tau. Reduce to the final segment so the
+	// documented contract (a bare name joined onto $HOME) always holds.
+	return path.basename(configured);
 }
 
 /** Get the config agent directory name relative to home (e.g. ".tau/agent" or TAU_CONFIG_DIR + "/agent"). */
