@@ -23,6 +23,7 @@ use std::{
 	borrow::Cow,
 	collections::HashMap,
 	hash::{BuildHasherDefault, Hasher},
+	sync::OnceLock,
 };
 
 use crate::utok::{
@@ -91,6 +92,74 @@ fn pack(key: &[u8]) -> Option<u128> {
 	Some(v | (n as u128) << 120)
 }
 
+/// Failure modes when decoding a compile-time-embedded BPE blob.
+///
+/// Every variant is a *build defect*, not a runtime condition: the blobs are
+/// `include_bytes!`'d, so an `Err` here means the repository shipped a
+/// corrupt artifact. Typed rather than a string so a caller can route it to
+/// observability without matching on message text.
+///
+/// Precedent for treating this as a real error type rather than a panic:
+/// `vllm-project/vllm#50954` documents a 14-byte malformed vocabulary file
+/// crashing production because the loader panicked instead of returning
+/// `Err`. Same bug class, same fix — validate, then return `Err`.
+#[derive(Debug, Clone, PartialEq, Eq)]
+#[non_exhaustive]
+pub enum BpeLoadError {
+	/// Outer zstd frame could not be decoded.
+	Zstd { family: &'static str, detail: String },
+	/// Decompressed blob is shorter than the six-byte `UTOK1\n` magic.
+	Truncated { family: &'static str, len: usize },
+	/// Decompressed blob did not start with `UTOK1\n`.
+	BadMagic { family: &'static str, got: [u8; 6] },
+	/// A varint length ran past the end of the buffer.
+	TruncatedVarint { family: &'static str, at: usize },
+	/// A piece slice ran past the end of the buffer.
+	TruncatedPiece { family: &'static str, need: usize, have: usize },
+	/// A length varint exceeded the 32-bit limit the packer writes.
+	VarintTooLong { family: &'static str, at: usize },
+	/// Decompressed buffer contained bytes after the last entry.
+	TrailingBytes { family: &'static str, count: usize },
+	/// A count-only family (Claude, Jev) was routed through `bpe_for`.
+	CountOnlyFamily { variant: crate::utok::Encoding },
+	/// The family's feature was disabled at compile time, so its blob was
+	/// never linked in.
+	FamilyDisabled { variant: crate::utok::Encoding, feature: &'static str },
+}
+
+impl std::fmt::Display for BpeLoadError {
+	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+		use BpeLoadError::*;
+		match self {
+			Zstd { family, detail } => write!(f, "utoken[{family}]: zstd decode failed: {detail}"),
+			Truncated { family, len } => {
+				write!(f, "utoken[{family}]: blob too short ({len} bytes, need 6 for magic)")
+			},
+			BadMagic { family, got } => write!(f, "utoken[{family}]: bad magic: got {got:?}"),
+			TruncatedVarint { family, at } => {
+				write!(f, "utoken[{family}]: truncated length varint at byte {at}")
+			},
+			TruncatedPiece { family, need, have } => {
+				write!(f, "utoken[{family}]: truncated piece (need {need} bytes, have {have})")
+			},
+			VarintTooLong { family, at } => {
+				write!(f, "utoken[{family}]: length varint exceeds 32 bits at byte {at}")
+			},
+			TrailingBytes { family, count } => {
+				write!(f, "utoken[{family}]: {count} trailing bytes after last entry")
+			},
+			CountOnlyFamily { variant } => {
+				write!(f, "utoken: count-only family {variant:?} never reaches bpe_for")
+			},
+			FamilyDisabled { variant, feature } => {
+				write!(f, "utoken: {variant:?} needs cargo feature {feature}, which is disabled")
+			},
+		}
+	}
+}
+
+impl std::error::Error for BpeLoadError {}
+
 /// Token bytes → rank map decoded from a UTOK1 blob.
 ///
 /// Split by key length into three stores, matching the merge loop's
@@ -115,39 +184,123 @@ pub struct RankTable {
 	pub max_token_len: usize,
 }
 
+/// Read one LEB128-style length varint from the front of `p`.
+///
+/// Returns the decoded length and the remainder, or a typed error: the
+/// varint ran off the end, or it exceeded the 32 bits the packer is
+/// specified to write. Splitting this out keeps the walk in
+/// [`RankTable::parse`] free of indexing panics — the whole point of the
+/// 2026-10-02 hardening.
+fn read_varint<'a>(
+	p: &'a [u8],
+	family: &'static str,
+	at: usize,
+) -> Result<(usize, &'a [u8]), BpeLoadError> {
+	let mut len = 0usize;
+	let mut shift = 0u32;
+	for (i, &b) in p.iter().enumerate() {
+		len |= usize::from(b & 0x7f) << shift;
+		if b < 0x80 {
+			return Ok((len, &p[i + 1..]));
+		}
+		shift += 7;
+		if shift >= 32 {
+			return Err(BpeLoadError::VarintTooLong { family, at: at + i });
+		}
+	}
+	Err(BpeLoadError::TruncatedVarint { family, at })
+}
+
+/// A `OnceLock<Result<T, E>>` with `get_or_try_init` semantics.
+///
+/// The stdlib has `OnceLock::get_or_try_init` only behind the unstable
+/// `once_cell_try` feature (rust-lang/rust#109737, open since 2023-04;
+/// gitoxide, mise, PyO3 and Wasmtime each hand-roll an equivalent). This
+/// closes that gap for this crate.
+///
+/// The semantic that matters: **failures are cached as values.** A second
+/// caller after a failed init pays one `Clone` on the error, not a re-parse
+/// of a corrupt blob. Contrast `LazyLock`, whose poison is unrecoverable by
+/// design: one panic inside the initializer makes every subsequent deref in
+/// the process panic with "LazyLock instance has previously been poisoned",
+/// which is exactly what turned the 2026-10-02 `deepseek3.bin.zst`
+/// corruption into hundreds of identical backtraces.
+pub struct OnceFallible<T, E> {
+	inner: OnceLock<Result<T, E>>,
+}
+
+impl<T, E: Clone> OnceFallible<T, E> {
+	#[must_use]
+	pub const fn new() -> Self {
+		Self { inner: OnceLock::new() }
+	}
+
+	/// Resolve `f` once, then hand every caller the same answer.
+	#[inline]
+	pub fn get_or_try_init<F>(&self, f: F) -> Result<&T, E>
+	where
+		F: FnOnce() -> Result<T, E>,
+	{
+		self.inner.get_or_init(f).as_ref().map_err(E::clone)
+	}
+}
+
+impl<T, E: std::fmt::Debug> std::fmt::Debug for OnceFallible<T, E> {
+	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+		match self.inner.get() {
+			None => f.write_str("OnceFallible(<unresolved>)"),
+			Some(Ok(_)) => f.write_str("OnceFallible(<ok>)"),
+			Some(Err(e)) => write!(f, "OnceFallible(<err: {e:?}>)"),
+		}
+	}
+}
+
 impl RankTable {
-	/// Parse a zstd-compressed UTOK1 blob. Panics on malformed data — the
-	/// blobs are compile-time embedded, so corruption is a build error.
+	/// Parse a zstd-compressed UTOK1 blob for `family`.
+	///
+	/// Fallible, not panicking. The blobs are compile-time embedded and
+	/// `build.rs` plus the `bpe_table!` const assertion prove them well-formed
+	/// before any code runs, so in practice `Ok` is the only outcome — but
+	/// "in practice" is what the 2026-10-02 `deepseek3.bin.zst` corruption
+	/// turned out to mean. When a blob *is* corrupt, this returns a typed
+	/// [`BpeLoadError`] the caller can surface, instead of a panic that
+	/// poisons a `LazyLock` and turns every later caller into the same
+	/// useless backtrace.
 	///
 	/// Zero-length entries are *skipped*: packers emit merge-unreachable
 	/// ("dead") vocab slots as empty strings to keep rank contiguity, and
 	/// those ranks must never be produced.
-	pub fn parse(zst: &[u8]) -> Self {
-		let raw = zstd::decode_all(zst).expect("utoken: zstd decode failed");
-		let mut p = &raw[..];
-		assert_eq!(&p[..6], b"UTOK1\n", "utoken: bad magic");
-		p = &p[6..];
-		let n = u32::from_le_bytes(p[..4].try_into().unwrap()) as usize;
+	pub fn parse(zst: &[u8], family: &'static str) -> Result<Self, BpeLoadError> {
+		let raw = zstd::decode_all(zst).map_err(|e| BpeLoadError::Zstd {
+			family,
+			detail: e.to_string(),
+		})?;
+		let Some(magic) = raw.get(..6) else {
+			return Err(BpeLoadError::Truncated { family, len: raw.len() });
+		};
+		if magic != b"UTOK1\n" {
+			return Err(BpeLoadError::BadMagic {
+				family,
+				got: [magic[0], magic[1], magic[2], magic[3], magic[4], magic[5]],
+			});
+		}
+		let mut p = &raw[10..];
+		let n = u32::from_le_bytes([p[0], p[1], p[2], p[3]]) as usize;
 		p = &p[4..];
 		let mut pairs: Box<[u32; 65536]> =
-			vec![u32::MAX; 65536].into_boxed_slice().try_into().unwrap();
+			vec![u32::MAX; 65536].into_boxed_slice().try_into().expect("64 KiB box fits");
 		let mut short = HashMap::with_capacity_and_hasher(n, Fx::default());
 		let mut long = FxMap::default();
 		let mut max_token_len = 0usize;
 		for rank in 0..n as u32 {
-			let mut len = 0usize;
-			let mut shift = 0;
-			loop {
-				let b = p[0];
-				p = &p[1..];
-				len |= ((b & 0x7f) as usize) << shift;
-				if b < 0x80 {
-					break;
-				}
-				shift += 7;
-			}
+			let (len, rest) = read_varint(p, family, &raw.len() - p.len())?;
+			p = rest;
 			if len > 0 {
-				let key = &p[..len];
+				if p.len() < len {
+					return Err(BpeLoadError::TruncatedPiece { family, need: len, have: p.len() });
+				}
+				let (key, rest) = p.split_at(len);
+				p = rest;
 				if let [a, b] = key {
 					pairs[usize::from(*a) << 8 | usize::from(*b)] = rank;
 				} else if let Some(k) = pack(key) {
@@ -156,11 +309,12 @@ impl RankTable {
 					long.insert(key.into(), rank);
 				}
 				max_token_len = max_token_len.max(len);
-				p = &p[len..];
 			}
 		}
-		assert!(p.is_empty(), "utoken: trailing bytes in UTOK1 blob");
-		Self { pairs, short, long, max_token_len }
+		if !p.is_empty() {
+			return Err(BpeLoadError::TrailingBytes { family, count: p.len() });
+		}
+		Ok(Self { pairs, short, long, max_token_len })
 	}
 
 	/// Rank of an exact token byte sequence, if present.

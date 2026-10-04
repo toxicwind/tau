@@ -1,4 +1,7 @@
 *.wasm filter=lfs diff=lfs merge=lfs -text linguist-vendored
+# zstd-compressed vocabulary blobs and generic binaries: NEVER normalize.
+*.zst  -text binary
+*.bin  -text binary
 
 # Default: normalize text files, but do not force binary files as text.
 * text=auto eol=lf

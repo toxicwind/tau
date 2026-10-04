@@ -604,26 +604,6 @@ export declare class VcsRepo {
 }
 
 /**
- * Version sentinel — exists solely so the JS loader can prove at load time
- * that the `.node` file on disk is from the same package release as the
- * `index.js` ESM wrapper invoking it.
- *
- * The `js_name` is bumped by `scripts/release.ts` to match the new
- * `Cargo.toml` / `package.json` version on every release. The JS loader
- * computes the expected name from `package.json#version` and refuses to use
- * a `.node` that doesn't expose it, turning the silent
- * `<sym> is not a function` crash from a locked-file update (the canonical
- * Windows `bun install -g` failure mode) into a clear load-time error.
- *
- * Bump policy: `__piNativesV{major}_{minor}_{patch}` — non-alphanumerics in
- * the version string are mapped to `_` to keep it a valid JS identifier.
- * MUST stay in sync with `VERSION_SENTINEL_EXPORT` in
- * `packages/natives/native/index.js` (which derives the name from
- * `package.json#version`).
- */
-export declare function __piNativesV18_3_0(): void
-
-/**
  * Install the bounded Tokio runtime napi-rs adopts for async exports and the
  * bounded Rayon global pool used by native parallel iterators.
  *
@@ -649,6 +629,26 @@ export declare function __piNativesV18_3_0(): void
  * calls. Idempotent.
  */
 export declare function __tauInstallTokioRuntime(): void
+
+/**
+ * Version sentinel — exists solely so the JS loader can prove at load time
+ * that the `.node` file on disk is from the same package release as the
+ * `index.js` ESM wrapper invoking it.
+ *
+ * The `js_name` is bumped by `scripts/release.ts` to match the new
+ * `Cargo.toml` / `package.json` version on every release. The JS loader
+ * computes the expected name from `package.json#version` and refuses to use
+ * a `.node` that doesn't expose it, turning the silent
+ * `<sym> is not a function` crash from a locked-file update (the canonical
+ * Windows `bun install -g` failure mode) into a clear load-time error.
+ *
+ * Bump policy: `__piNativesV{major}_{minor}_{patch}` — non-alphanumerics in
+ * the version string are mapped to `_` to keep it a valid JS identifier.
+ * MUST stay in sync with `VERSION_SENTINEL_EXPORT` in
+ * `packages/natives/native/index.js` (which derives the name from
+ * `package.json#version`).
+ */
+export declare function __tauNativesV18_3_0(): void
 
 /**
  * Reports whether the on-device model can generate, as an `availability`
