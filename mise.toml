@@ -8,7 +8,10 @@ pitchfork = "2.25.0"
 
 [env]
 RUSTUP_TOOLCHAIN = "nightly"
-TAU_CONFIG_DIR = "${HOME}/.tau"
+# Bare name only: the engine joins TAU_CONFIG_DIR onto $HOME (dirs.ts
+# getConfigDirName / crash_handler.rs config_root_dir). An absolute value
+# doubled the config root to $HOME/$HOME/.tau - observed live 2026-10-03.
+TAU_CONFIG_DIR = ".tau"
 PI_CODING_AGENT_DIR = "${HOME}/.tau"
 SCOUT_BASE_URL = "http://127.0.0.1:25100/v1"
 SCOUT_API_KEY = "llama-swap"
