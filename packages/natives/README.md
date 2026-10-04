@@ -69,9 +69,9 @@ native/                  # Core loader files and local/CI native build outputs
   index.js               # Public native export surface
   loader-state.js        # Platform, ISA variant, and addon resolution
   embedded-addon.js      # Standalone binary embed stub/generated metadata
-  pi_natives.<platform>-<arch>-modern.node   # x64 modern ISA (local/CI artifact)
-  pi_natives.<platform>-<arch>-baseline.node # x64 baseline ISA (local/CI artifact)
-  pi_natives.<platform>-<arch>.node          # non-x64 build artifact
+  tau_natives.<platform>-<arch>-modern.node   # x64 modern ISA (local/CI artifact)
+  tau_natives.<platform>-<arch>-baseline.node # x64 baseline ISA (local/CI artifact)
+  tau_natives.<platform>-<arch>.node          # non-x64 build artifact
 npm/<platform>-<arch>/   # Generated at publish time, not committed
   package.json           # @tau/tau-natives-<platform>-<arch>
   *.node                 # Only that platform's addon binary or x64 ISA variants

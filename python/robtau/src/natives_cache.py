@@ -1,6 +1,6 @@
 """Content-addressed cache of pre-built ``packages/natives/native/`` artifacts.
 
-The napi-rs build of ``pi_natives.<platform>-<arch>[-variant].node`` takes
+The napi-rs build of ``tau_natives.<platform>-<arch>[-variant].node`` takes
 minutes. Most issues never touch ``crates/``, so the same artifact is
 buildable in every workspace whose source state matches one we've already
 built. This module:
@@ -63,7 +63,7 @@ CACHE_KEY_PATHS: tuple[str, ...] = (
 # Files in ``packages/natives/native/`` that ARE pure functions of the
 # cache-key inputs and travel as a unit. ``.node`` is matched by glob since
 # the basename embeds the target triple + variant.
-_CACHED_NODE_GLOB = "pi_natives.*.node"
+_CACHED_NODE_GLOB = "tau_natives.*.node"
 _CACHED_COMPANION_FILES: tuple[str, ...] = (
     "index.d.ts",
     "index.js",

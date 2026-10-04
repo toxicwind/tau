@@ -3,7 +3,7 @@
 # tau — pi image
 #
 # Stages:
-#   natives-builder — Rust + Bun → pi_natives.linux-<arch>.node
+#   natives-builder — Rust + Bun → tau_natives.linux-<arch>.node
 #   wheel-builder   — tau_rpc Python wheel
 #   tau-base         — python + bun + rustup launcher + natives + tau_rpc
 #                     + /usr/local/bin/tau shim
@@ -25,7 +25,7 @@
 ARG BUN_VERSION=1.4.2
 
 ############################
-# 1) natives-builder — Rust + Bun → pi_natives.linux-<arch>.node (local cargo)
+# 1) natives-builder — Rust + Bun → tau_natives.linux-<arch>.node (local cargo)
 ############################
 FROM rust:1.86-slim-bookworm AS natives-builder
 
@@ -90,7 +90,7 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
     set -eux; \
     bun --cwd=packages/natives run build; \
     mkdir -p /out; \
-    cp packages/natives/native/pi_natives.linux-*.node /out/
+    cp packages/natives/native/tau_natives.linux-*.node /out/
 
 ############################
 # 2) wheel-builder — tau-rpc wheel
@@ -149,7 +149,7 @@ RUN curl -fsSL https://sh.rustup.rs -o /tmp/rustup-init.sh \
     && /usr/local/cargo/bin/rustup --version
 
 # tau-natives addon: pi's loader probes /opt/bun/bin as a fallback path.
-COPY --from=natives-builder /out/pi_natives.linux-*.node /opt/bun/bin/
+COPY --from=natives-builder /out/tau_natives.linux-*.node /opt/bun/bin/
 
 # tau-rpc Python wheel.
 COPY --from=wheel-builder /out/*.whl /tmp/wheels/

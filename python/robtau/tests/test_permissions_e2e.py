@@ -352,7 +352,7 @@ def _stage_built_natives(bindings: host_tools.ToolBindings, *, body: str = "ELFx
     Writes the four cached files AS THE SLOT so ownership matches a real
     post-build workspace; capture pulls these into the cache.
     """
-    _write_as_slot(bindings, "packages/natives/native/pi_natives.linux-arm64.node", body)
+    _write_as_slot(bindings, "packages/natives/native/tau_natives.linux-arm64.node", body)
     _write_as_slot(bindings, "packages/natives/native/index.d.ts", "export const X: number;\n")
     _write_as_slot(bindings, "packages/natives/native/index.js", "export const X = 1;\n")
     _write_as_slot(
@@ -407,7 +407,7 @@ def test_natives_cache_shares_artifacts_across_slot_workspaces(
     native_dir1 = ws1.repo_dir / "packages" / "natives" / "native"
     stored = natives_cache.capture(_REPO, key, native_dir1, source_workspace=ws1.workspace_key)
     assert stored is not None
-    cached_node = stored / "pi_natives.linux-arm64.node"
+    cached_node = stored / "tau_natives.linux-arm64.node"
     cached_companion = stored / "index.d.ts"
     # Cache root is setgid `tau`; new files inherit gid `tau` so any slot
     # with `extra_groups=[tau]` can read them.
@@ -427,7 +427,7 @@ def test_natives_cache_shares_artifacts_across_slot_workspaces(
     )
     bindings2 = _bindings(db=db, tool_loop=tool_loop, workspace=ws2, upstream=upstream_repo, slot_uid=_SLOT_TWO)
     native_dir2 = ws2.repo_dir / "packages" / "natives" / "native"
-    ws2_node = native_dir2 / "pi_natives.linux-arm64.node"
+    ws2_node = native_dir2 / "tau_natives.linux-arm64.node"
     ws2_companion = native_dir2 / "index.d.ts"
     assert ws2_node.exists(), "auto-populate must hardlink the .node into ws2"
     assert ws2_companion.exists(), "auto-populate must copy companions into ws2"
@@ -440,7 +440,7 @@ def test_natives_cache_shares_artifacts_across_slot_workspaces(
 
     # Slot 2 must be able to read the populated artifacts (group tau + 0660
     # via setgid inheritance from the cache root).
-    _run_ok(bindings2, ["test", "-r", "packages/natives/native/pi_natives.linux-arm64.node"])
+    _run_ok(bindings2, ["test", "-r", "packages/natives/native/tau_natives.linux-arm64.node"])
     _run_ok(bindings2, ["test", "-r", "packages/natives/native/index.d.ts"])
 
     # --- Rebuild simulation: napi's installBinary does temp + rename. ---
@@ -457,7 +457,7 @@ def test_natives_cache_shares_artifacts_across_slot_workspaces(
                 "open(tmp, 'wb').write(b'REBUILT'); "
                 "os.rename(tmp, dest)"
             ),
-            "packages/natives/native/pi_natives.linux-arm64.node",
+            "packages/natives/native/tau_natives.linux-arm64.node",
         ],
     )
     # Workspace sees the rebuilt bytes; cache is untouched (new inode in ws).

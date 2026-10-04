@@ -57,7 +57,7 @@ align_native_manifest() {
    local candidate_version
    local candidates=()
    shopt -s nullglob
-   candidates=("$ROOT_DIR"/packages/natives/native/pi_natives.*.node)
+   candidates=("$ROOT_DIR"/packages/natives/native/tau_natives.*.node)
    shopt -u nullglob
 
    if [ "${#candidates[@]}" -eq 0 ]; then

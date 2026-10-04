@@ -59,7 +59,7 @@ changes/
 packages/coding-agent/src/internal-urls/docs-index.generated.ts
 packages/natives/native/.build/
 # Every host-built addon: natives-builder compiles its own, and a stale host
-# `pi_natives.linux-*.node` riding in would be copied to /out alongside it.
+# `tau_natives.linux-*.node` riding in would be copied to /out alongside it.
 # (Also drops the ~760 MB of dev addons a working checkout accumulates.)
 **/*.node
 packages/ai/test/.temp-images/

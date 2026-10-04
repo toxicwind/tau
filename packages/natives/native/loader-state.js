@@ -12,7 +12,7 @@ import { containsVersionSentinel, versionSentinelFor } from "./version-sentinel.
  * Native addon loader for `@tau/tau-natives`.
  *
  * Owns every step between "Node imports `native/index.js`" and "the right
- * `pi_natives.<platform>-<arch>*.node` is required, validated, and returned":
+ * `tau_natives.<platform>-<arch>*.node` is required, validated, and returned":
  * platform/variant detection, candidate-path resolution, on-disk staging from
  * `node_modules` (Windows update safety), embedded-addon extraction (Bun
  * standalone binaries), version-sentinel validation, and the aggregated error
@@ -100,10 +100,10 @@ export function detectCompiledBinary({ embeddedAddon, env, importMetaUrl }) {
  * @returns {string[]}
  */
 export function getAddonFilenames({ tag, arch, variant }) {
-	const defaultFilename = `pi_natives.${tag}.node`;
+	const defaultFilename = `tau_natives.${tag}.node`;
 	if (arch !== "x64" || !variant) return [defaultFilename];
-	const baselineFilename = `pi_natives.${tag}-baseline.node`;
-	const modernFilename = `pi_natives.${tag}-modern.node`;
+	const baselineFilename = `tau_natives.${tag}-baseline.node`;
+	const modernFilename = `tau_natives.${tag}-modern.node`;
 	if (variant === "modern") {
 		return [modernFilename, baselineFilename, defaultFilename];
 	}
@@ -990,6 +990,6 @@ export function loadNative() {
 	}
 	const details = errors.map(error => `- ${error}`).join("\n");
 	throw new Error(
-		`Failed to load pi_natives native addon for ${ctx.addonLabel}.\n\nTried:\n${details}\n\n${buildHelpMessage(ctx)}`,
+		`Failed to load tau_natives native addon for ${ctx.addonLabel}.\n\nTried:\n${details}\n\n${buildHelpMessage(ctx)}`,
 	);
 }

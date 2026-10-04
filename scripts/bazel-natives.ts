@@ -84,7 +84,7 @@ export function hostTargetName(host: HostInfo): string {
 		if (host.arch === "x64") return host.avx2 ? "linux-x64-modern" : "linux-x64-baseline";
 	}
 	if (host.platform === "win32" && host.arch === "x64") return "win32-x64-baseline";
-	throw new Error(`No pi_natives addon target for host ${host.platform}-${host.arch}`);
+	throw new Error(`No tau_natives addon target for host ${host.platform}-${host.arch}`);
 }
 
 /** Expand pseudo-targets and map names to //:natives-* labels (deduplicated). */

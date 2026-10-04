@@ -965,7 +965,7 @@ def _make_capture_inputs(
     if with_native_artifacts:
         native_dir = ws.repo_dir / "packages" / "natives" / "native"
         native_dir.mkdir(parents=True)
-        (native_dir / "pi_natives.linux-arm64.node").write_bytes(b"ELFx")
+        (native_dir / "tau_natives.linux-arm64.node").write_bytes(b"ELFx")
         (native_dir / "index.d.ts").write_text("")
         (native_dir / "index.js").write_text("")
         (native_dir / "embedded-addon.js").write_text("")

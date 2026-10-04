@@ -1,4 +1,4 @@
-# One platform per shipped pi_natives addon. linux platforms inherit the zig
+# One platform per shipped tau_natives addon. linux platforms inherit the zig
 # libc-aware platforms so cc toolchain resolution pins glibc 2.17 (the shipped
 # portability floor) or musl; the cpu_variant constraint selects -Ctarget-cpu
 # in //crates/tau-natives. darwin/win32 resolve against the host Xcode toolchain

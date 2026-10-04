@@ -80,7 +80,7 @@ def _populate_built_artifacts(repo_dir: Path, *, body: bytes = b"\x7fELF...nativ
     """Fill `packages/natives/native/` with a complete built-artifact set."""
     native_dir = repo_dir / "packages" / "natives" / "native"
     native_dir.mkdir(parents=True, exist_ok=True)
-    (native_dir / "pi_natives.linux-arm64.node").write_bytes(body)
+    (native_dir / "tau_natives.linux-arm64.node").write_bytes(body)
     (native_dir / "index.d.ts").write_text("export const X: number;\n")
     (native_dir / "index.js").write_text("export const X = 1;\n")
     (native_dir / "embedded-addon.js").write_text("export const embeddedAddon = null;\n")
@@ -193,7 +193,7 @@ def test_capture_then_populate_shares_node_inode_but_copies_companions(tmp_path:
     assert stored is not None
     manifest = json.loads((stored / "manifest.json").read_text())
     assert manifest["key"] == key
-    assert "pi_natives.linux-arm64.node" in manifest["node_files"]
+    assert "tau_natives.linux-arm64.node" in manifest["node_files"]
 
     # Populate a fresh workspace from the same source state.
     dst_repo = src_repo.parent.parent / "dst" / "repo"
@@ -204,14 +204,14 @@ def test_capture_then_populate_shares_node_inode_but_copies_companions(tmp_path:
     hit = cache.populate_workspace(REPO, key, dst_native)
     assert hit is not None
     assert {p.name for p in hit.files} >= {
-        "pi_natives.linux-arm64.node",
+        "tau_natives.linux-arm64.node",
         "index.d.ts",
         "index.js",
         "embedded-addon.js",
     }
     # The `.node` is hardlinked: same inode, nlink ≥ 2.
-    cached_node = stored / "pi_natives.linux-arm64.node"
-    workspace_node = dst_native / "pi_natives.linux-arm64.node"
+    cached_node = stored / "tau_natives.linux-arm64.node"
+    workspace_node = dst_native / "tau_natives.linux-arm64.node"
     assert cached_node.stat().st_ino == workspace_node.stat().st_ino
     assert cached_node.stat().st_nlink >= 2
     # Companions are COPIED (independent inodes): in-place rewrite in the
@@ -231,7 +231,7 @@ def test_capture_skips_when_artifacts_incomplete(tmp_path: Path) -> None:
     repo = _seed_repo(tmp_path / "ws" / "repo")
     native_dir = repo / "packages" / "natives" / "native"
     # Only the .node — missing companions → capture refuses.
-    (native_dir / "pi_natives.linux-arm64.node").write_bytes(b"x")
+    (native_dir / "tau_natives.linux-arm64.node").write_bytes(b"x")
     assert cache.capture(REPO, "k", native_dir) is None
     # And no entry was created.
     assert not cache.entry_dir(REPO, "k").exists()
@@ -289,8 +289,8 @@ def test_populate_cross_device_falls_back_to_copy(tmp_path: Path, monkeypatch: p
         monkeypatch.setattr(os, "link", real_link)
     assert hit is not None
     # Files exist (via copy) but are distinct inodes from the cache.
-    cached_node = cache.entry_dir(REPO, key) / "pi_natives.linux-arm64.node"
-    copied_node = dst_native / "pi_natives.linux-arm64.node"
+    cached_node = cache.entry_dir(REPO, key) / "tau_natives.linux-arm64.node"
+    copied_node = dst_native / "tau_natives.linux-arm64.node"
     assert copied_node.exists()
     assert cached_node.stat().st_ino != copied_node.stat().st_ino
 
@@ -305,7 +305,7 @@ def test_populate_replaces_existing_file_atomically(tmp_path: Path) -> None:
     dst_native = tmp_path / "dst" / "packages" / "natives" / "native"
     dst_native.mkdir(parents=True)
     # Pre-existing stub bytes — populate must replace, not append/error.
-    target = dst_native / "pi_natives.linux-arm64.node"
+    target = dst_native / "tau_natives.linux-arm64.node"
     target.write_bytes(b"old-stub")
     hit = cache.populate_workspace(REPO, key, dst_native)
     assert hit is not None
@@ -318,12 +318,12 @@ def test_populate_replaces_existing_file_atomically(tmp_path: Path) -> None:
 def _stamp_entry(cache: NativesCache, repo: str, key: str, captured_at: float) -> Path:
     entry = cache.entry_dir(repo, key)
     entry.mkdir(parents=True, exist_ok=True)
-    (entry / "pi_natives.linux-arm64.node").write_bytes(b"x" * 1024)
+    (entry / "tau_natives.linux-arm64.node").write_bytes(b"x" * 1024)
     (entry / "index.d.ts").write_text("")
     (entry / "index.js").write_text("")
     (entry / "embedded-addon.js").write_text("")
     (entry / "manifest.json").write_text(
-        json.dumps({"key": key, "captured_at": captured_at, "node_files": ["pi_natives.linux-arm64.node"]})
+        json.dumps({"key": key, "captured_at": captured_at, "node_files": ["tau_natives.linux-arm64.node"]})
     )
     return entry
 
@@ -363,9 +363,9 @@ def test_gc_preserves_workspace_hardlinks(tmp_path: Path) -> None:
     entry = _stamp_entry(cache, REPO, "k1", now - 500)
     _stamp_entry(cache, REPO, "k2", now - 100)
     # Workspace hardlinks the older entry's .node before GC runs.
-    ws_node = tmp_path / "ws" / "pi_natives.linux-arm64.node"
+    ws_node = tmp_path / "ws" / "tau_natives.linux-arm64.node"
     ws_node.parent.mkdir(parents=True)
-    os.link(entry / "pi_natives.linux-arm64.node", ws_node)
+    os.link(entry / "tau_natives.linux-arm64.node", ws_node)
     cache.gc(REPO)
     assert not entry.exists()  # cache directory swept
     assert ws_node.exists()  # workspace file survives via inode refcount
@@ -387,7 +387,7 @@ def test_gc_drops_entry_with_missing_manifest(tmp_path: Path) -> None:
     cache = _cache(tmp_path)
     incomplete = cache.entry_dir(REPO, "bogus")
     incomplete.mkdir(parents=True)
-    (incomplete / "pi_natives.linux-arm64.node").write_bytes(b"x")
+    (incomplete / "tau_natives.linux-arm64.node").write_bytes(b"x")
     cache.gc(REPO)
     assert not incomplete.exists()
 

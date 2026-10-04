@@ -19,11 +19,11 @@ import * as path from "node:path";
 import { validateLoadedBindings } from "../native/loader-state.js";
 
 const unusedCandidate =
-	"/home/u/.bun/install/global/node_modules/@tau/tau-natives-linux-x64/pi_natives.linux-x64.node";
+	"/home/u/.bun/install/global/node_modules/@tau/tau-natives-linux-x64/tau_natives.linux-x64.node";
 
 async function withCandidate(contents: string, test: (candidate: string) => void) {
 	const dir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-natives-sentinel-"));
-	const candidate = path.join(dir, "pi_natives.node");
+	const candidate = path.join(dir, "tau_natives.node");
 	try {
 		await fs.writeFile(candidate, contents);
 		test(candidate);

@@ -1763,7 +1763,7 @@ def test_ensure_workspace_populates_from_natives_cache(tmp_path: Path, upstream_
     # Mirror the napi build output set. The filename must match the live
     # `target_triple()` value or the populate path won't recognize it.
     triple = target_triple()
-    (native_dir1 / f"pi_natives.{triple}.node").write_bytes(b"ELFx")
+    (native_dir1 / f"tau_natives.{triple}.node").write_bytes(b"ELFx")
     (native_dir1 / "index.d.ts").write_text("export const X: number;\n")
     (native_dir1 / "index.js").write_text("export const X = 1;\n")
     (native_dir1 / "embedded-addon.js").write_text("export const embeddedAddon = null;\n")
@@ -1788,7 +1788,7 @@ def test_ensure_workspace_populates_from_natives_cache(tmp_path: Path, upstream_
     # The auto-populate path used the real target_triple() — which matches
     # the host that just captured. So the same key applies and files appear.
     assert native_dir2.is_dir(), "populate should have created native/ on hit"
-    node_name = f"pi_natives.{triple}.node"
+    node_name = f"tau_natives.{triple}.node"
     assert (native_dir2 / node_name).read_bytes() == b"ELFx"
     # The .node is hardlinked, sharing the cache's inode.
     cached_node = cache.entry_dir("octo/widget", key) / node_name

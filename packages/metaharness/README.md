@@ -174,7 +174,7 @@ known-correct fix for a failed task), `--concurrency` (default 8).
 - **Network policy.** On Harbor's local Docker backend only **public**
   registries work; task containers reach models via the host gateway.
 - **`--install source` reflects local TS changes** with no rebuild, but Rust
-  natives load from the in-tree `packages/natives/native/pi_natives.linux-*.node`
+  natives load from the in-tree `packages/natives/native/tau_natives.linux-*.node`
   prebuilds — rebuild those when Rust changes (the loader skips the version
   sentinel for workspace loads, so a stale `.node` runs silently).
 - **Source mode is single-arch.** The deps tree matches the docker daemon's

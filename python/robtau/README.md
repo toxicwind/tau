@@ -229,7 +229,7 @@ The integration test spawns a real `tau --mode rpc` against an
 | `refusing to push: working tree is dirty` | Uncommitted agent edits. Or just call `gh_open_pr`, which auto-commits `bun run fix` output. |
 | `bun check failed before PR creation` | Fix the reported failure and retry `gh_open_pr`. |
 | `refusing to open PR: \`bun run test\` failed before open PR` | The repo suite is red at HEAD. Fix and commit, or `skip_checks=true` if the failure pre-exists on the default branch. |
-| `Failed to load pi_natives` | Wrong arch / missing native. `bun run tau:image` then `bun run robtau:build`. |
+| `Failed to load tau_natives` | Wrong arch / missing native. `bun run tau:image` then `bun run robtau:build`. |
 | `No API key found for <provider>` | `~/.tau/agent/models.container.yml` mount missing or provider id mismatch with `ROBTAU_MODEL`. |
 
 ## Layout

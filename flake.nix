@@ -179,6 +179,10 @@
             chmod -R u+w source
             cd source
             mv nix/bun.nix nix/bun.expected.nix
+            # bun2nix 2.1.2 rejects the lockfileVersion 2 stamp that Bun >=1.4
+            # writes; v1 and v2 share an identical content format per Bun's own
+            # writer, so restamp the working copy in place before generating.
+            sed -i -E 's/("lockfileVersion":) 2,/\1 1,/' bun.lock
             bun2nix -l bun.lock -c ../ -o nix/bun.nix
             sed -i -e '$a\' nix/bun.nix
             diff -u nix/bun.expected.nix nix/bun.nix

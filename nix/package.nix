@@ -29,21 +29,21 @@ let
   platform =
     {
       aarch64-darwin = {
-        addon = "pi_natives.darwin-arm64.node";
-        nativeLibrary = "libpi_natives.dylib";
+        addon = "tau_natives.darwin-arm64.node";
+        nativeLibrary = "libtau_natives.dylib";
       };
       aarch64-linux = {
-        addon = "pi_natives.linux-arm64.node";
-        nativeLibrary = "libpi_natives.so";
+        addon = "tau_natives.linux-arm64.node";
+        nativeLibrary = "libtau_natives.so";
       };
       x86_64-darwin = {
-        addon = "pi_natives.darwin-x64-baseline.node";
-        nativeLibrary = "libpi_natives.dylib";
+        addon = "tau_natives.darwin-x64-baseline.node";
+        nativeLibrary = "libtau_natives.dylib";
         rustFlags = "-C target-cpu=x86-64-v2";
       };
       x86_64-linux = {
-        addon = "pi_natives.linux-x64-baseline.node";
-        nativeLibrary = "libpi_natives.so";
+        addon = "tau_natives.linux-x64-baseline.node";
+        nativeLibrary = "libtau_natives.so";
         rustFlags = "-C target-cpu=x86-64-v2";
       };
     }

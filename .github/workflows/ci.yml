@@ -248,8 +248,8 @@ jobs:
               echo "Fetching $tarball"
               curl -fsSL --retry 3 "$tarball" | tar -xz -C "$RUNNER_TEMP"
               mkdir -p bazel-bin/natives-linux-x64-baseline bazel-bin/natives-linux-x64-modern
-              cp "$RUNNER_TEMP/package/pi_natives.linux-x64-baseline.node" bazel-bin/natives-linux-x64-baseline/
-              cp "$RUNNER_TEMP/package/pi_natives.linux-x64-modern.node" bazel-bin/natives-linux-x64-modern/
+              cp "$RUNNER_TEMP/package/tau_natives.linux-x64-baseline.node" bazel-bin/natives-linux-x64-baseline/
+              cp "$RUNNER_TEMP/package/tau_natives.linux-x64-modern.node" bazel-bin/natives-linux-x64-modern/
          # A corrupt download must fail here, not as a confusing dlopen error
          # in every downstream test shard.
          - name: Smoke release addons
@@ -272,8 +272,8 @@ jobs:
               loader=node
               if command -v bun >/dev/null 2>&1; then loader=bun; fi
               "$loader" "$RUNNER_TEMP/smoke-addons.js" \
-                "$PWD/bazel-bin/natives-linux-x64-baseline/pi_natives.linux-x64-baseline.node" \
-                "$PWD/bazel-bin/natives-linux-x64-modern/pi_natives.linux-x64-modern.node"
+                "$PWD/bazel-bin/natives-linux-x64-baseline/tau_natives.linux-x64-baseline.node" \
+                "$PWD/bazel-bin/natives-linux-x64-modern/tau_natives.linux-x64-modern.node"
          # Make the policy visible on the rare native-touching PR instead of
          # leaving a reviewer to wonder which addons the tests exercised.
          # Best-effort: a diff-API failure must not fail the job over a notice.
@@ -764,7 +764,7 @@ jobs:
            uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
            with:
               name: native-addons-${{ matrix.target_id }}
-              path: packages/natives/native/pi_natives.${{ matrix.target_id }}*.node
+              path: packages/natives/native/tau_natives.${{ matrix.target_id }}*.node
               if-no-files-found: error
               retention-days: 1
          - name: Upload release binary artifact

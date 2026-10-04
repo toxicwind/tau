@@ -6,7 +6,7 @@ import { validateLoadedBindings } from "../native/loader-state.js";
 
 async function withCandidate(contents: string, test: (candidate: string) => void) {
 	const dir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-natives-legacy-desktop-"));
-	const candidate = path.join(dir, "pi_natives.node");
+	const candidate = path.join(dir, "tau_natives.node");
 	try {
 		await fs.writeFile(candidate, contents);
 		test(candidate);
