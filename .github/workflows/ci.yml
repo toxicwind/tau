@@ -110,7 +110,7 @@ jobs:
          # tag straight from `github.ref_name`, and fetching `--tags` while
          # checkout uses an explicit tag refspec makes git refuse — so scope
          # fetch-tags to main refs.
-         - uses: actions/checkout@v4
+         - uses: actions/checkout@v5
            with:
               fetch-tags: ${{ github.ref == 'refs/heads/main' }}
          - name: Detect release tag at HEAD
@@ -147,7 +147,7 @@ jobs:
       name: Lint, type check & web build
       runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.04' || 'tau-kata' }}
       steps:
-         - uses: actions/checkout@v4
+         - uses: actions/checkout@v5
          - uses: ./.github/actions/bun-install
          - name: Verify Rust license compliance (cargo-deny 0.20.2)
            run: |
@@ -190,7 +190,7 @@ jobs:
       if: github.event_name != 'pull_request'
       runs-on: tau-kata
       steps:
-         - uses: actions/checkout@v4
+         - uses: actions/checkout@v5
          - uses: ./.github/actions/bun-install
          - id: cache
            uses: ./.github/actions/bazel-cache
@@ -236,7 +236,7 @@ jobs:
       name: Build native addons (bazel)
       runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.04' || 'tau-kata' }}
       steps:
-         - uses: actions/checkout@v4
+         - uses: actions/checkout@v5
 
          # ---- PR path: latest release addons from npm ----
          - name: Fetch release native addons (npm)
@@ -361,7 +361,7 @@ jobs:
       if: ${{ !cancelled() && needs.native_addons.result == 'success' }}
       timeout-minutes: 20
       steps:
-         - uses: actions/checkout@v4
+         - uses: actions/checkout@v5
          - uses: ./.github/actions/bun-install
          - uses: ./.github/actions/native-artifacts
            with:
@@ -383,7 +383,7 @@ jobs:
       if: ${{ !cancelled() && needs.native_addons.result == 'success' }}
       timeout-minutes: 20
       steps:
-         - uses: actions/checkout@v4
+         - uses: actions/checkout@v5
          - uses: ./.github/actions/bun-install
          - uses: ./.github/actions/native-artifacts
            with:
@@ -400,7 +400,7 @@ jobs:
       if: ${{ !cancelled() && needs.native_addons.result == 'success' }}
       timeout-minutes: 25
       steps:
-         - uses: actions/checkout@v4
+         - uses: actions/checkout@v5
          - uses: ./.github/actions/bun-install
          - uses: ./.github/actions/native-artifacts
            with:
@@ -417,7 +417,7 @@ jobs:
       if: ${{ !cancelled() && needs.native_addons.result == 'success' }}
       timeout-minutes: 25
       steps:
-         - uses: actions/checkout@v4
+         - uses: actions/checkout@v5
          - uses: ./.github/actions/bun-install
          - uses: ./.github/actions/native-artifacts
            with:
@@ -434,7 +434,7 @@ jobs:
       if: ${{ !cancelled() && needs.native_addons.result == 'success' }}
       timeout-minutes: 25
       steps:
-         - uses: actions/checkout@v4
+         - uses: actions/checkout@v5
          - uses: ./.github/actions/bun-install
          - uses: ./.github/actions/native-artifacts
            with:
@@ -461,7 +461,7 @@ jobs:
          matrix:
             shard: ${{ fromJSON(github.event_name == 'pull_request' && '["1/2","2/2"]' || '["1/1"]') }}
       steps:
-         - uses: actions/checkout@v4
+         - uses: actions/checkout@v5
          - uses: ./.github/actions/bun-install
          - uses: ./.github/actions/native-artifacts
            with:
@@ -479,7 +479,7 @@ jobs:
       if: ${{ !cancelled() && needs.native_addons.result == 'success' }}
       timeout-minutes: 15
       steps:
-         - uses: actions/checkout@v4
+         - uses: actions/checkout@v5
          - uses: ./.github/actions/bun-install
          - uses: ./.github/actions/native-artifacts
            with:
@@ -493,7 +493,7 @@ jobs:
       needs: [native_addons]
       if: ${{ !cancelled() && needs.native_addons.result == 'success' }}
       steps:
-         - uses: actions/checkout@v4
+         - uses: actions/checkout@v5
          - uses: ./.github/actions/bun-install
          - uses: ./.github/actions/native-artifacts
            with:
@@ -522,7 +522,7 @@ jobs:
       needs: [release_metadata, check, rust_validate, native_addons, test_workspace, test_coding_agent_singleton, test_ts_native, test_coding_agent_ui, test_coding_agent_runtime, test_coding_agent_native, test_smoke, install_methods]
       runs-on: ubuntu-22.04
       steps:
-         - uses: actions/checkout@v4
+         - uses: actions/checkout@v5
          - uses: ./.github/actions/bun-install
          # Generated-config drift gate: bazel/clippy.bazelrc is maintained by
          # scripts/release.ts (like the lockfiles); a stale file only blocks
