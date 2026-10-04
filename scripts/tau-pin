@@ -1,14 +1,30 @@
 #!/usr/bin/env bash
-# tau-pin: pinned launcher for the tau/tau/pi commands.
-# Resolves the estate tau repo root from THIS script's location (follows the
-# bin/tau-pin symlink), never from cwd, and never falls through to PATH —
-# so a stray or hostile tau on PATH can never shadow the estate install.
+# tau-pin: the single pinned launcher for the tau agent engine.
+#
+# Single canonical copy — /home/toxic/estate/scripts/tau-pin is a symlink to
+# this file, and ~/.local/bin/{tau,omp,pi} resolve through it.
+#
+# Resolves the tau repo root from THIS script's location (follows the whole
+# symlink chain, absolute or relative targets), never from cwd, and never
+# falls through to PATH — so a stray or hostile tau on PATH can never shadow
+# the pinned install. Also pins the launch directory to the folder tau-pin
+# was invoked from (via --cwd), so the engine never auto-switches away.
 set -euo pipefail
+
+# The uutils builtins shipped in-process (pi-uu-grep, pi-uu-find) are buggy and
+# shadow the host GNU binaries. Disabled unconditionally.
+export PI_DISABLE_UUTILS_BUILTINS=1
 
 _SRC="${BASH_SOURCE[0]}"
 while [ -L "$_SRC" ]; do
-  _DIR="$(cd -P -- "$(dirname -- "$_SRC")" >/dev/null 2>&1 && pwd)"
-  _SRC="$_DIR/$(readlink "$_SRC")"
+  _LINK="$(readlink "$_SRC")"
+  case "$_LINK" in
+    /*) _SRC="$_LINK" ;;
+    *)
+      _DIR="$(cd -P -- "$(dirname -- "$_SRC")" >/dev/null 2>&1 && pwd)"
+      _SRC="$_DIR/$_LINK"
+      ;;
+  esac
 done
 _SCRIPT_DIR="$(cd -P -- "$(dirname -- "$_SRC")" >/dev/null 2>&1 && pwd)"
 # scripts/ -> repo root
@@ -26,7 +42,7 @@ RESOLVED="$(realpath "$REAL")"
 case "$RESOLVED" in
   "$FORK_ROOT"/*) ;;
   *)
-    echo "tau-pin: resolved runner escapes the estate repo root: $RESOLVED" >&2
+    echo "tau-pin: resolved runner escapes the pinned repo root: $RESOLVED" >&2
     exit 127
     ;;
 esac
