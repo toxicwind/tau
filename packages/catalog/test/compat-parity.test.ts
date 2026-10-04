@@ -17,6 +17,11 @@ import { resolveModelPolicy } from "../src/compat/resolve";
 import models from "../src/models.json";
 import type { Api, Model, ModelSpec } from "../src/types";
 
+/** Fields retired from the engine — still present in pre-engine baked rows. */
+const RETIRED_COMPAT_FIELDS = new Set([
+	"clampOutputToModelMax",
+]);
+
 /** Fields introduced by the compat engine — absent from pre-engine baked rows. */
 const NEW_COMPAT_FIELDS = new Set([
 	"injectClaudeCodeInstruction",
@@ -56,6 +61,7 @@ function diffValues(prefix: string, baked: unknown, engine: unknown, out: string
 		const keys = new Set([...Object.keys(baked), ...Object.keys(engine)]);
 		for (const key of keys) {
 			if (NEW_COMPAT_FIELDS.has(key)) continue;
+		if (RETIRED_COMPAT_FIELDS.has(key)) continue;
 			diffValues(
 				`${prefix}.${key}`,
 				(baked as Record<string, unknown>)[key],

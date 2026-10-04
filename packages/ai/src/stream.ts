@@ -857,7 +857,9 @@ const serviceProviderMap: Record<string, KeyResolver> = {
 export function getEnvApiKey(provider: string): string | undefined {
 	const resolver = serviceProviderMap[provider];
 	if (typeof resolver === "string") {
-		return $env[resolver];
+		// $env coerces missing vars to ""; an empty key is not a key.
+		const value = $env[resolver];
+		return value === "" ? undefined : value;
 	}
 	return resolver?.();
 }

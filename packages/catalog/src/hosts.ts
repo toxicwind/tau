@@ -52,7 +52,7 @@ export const KNOWN_HOSTS = {
 	together: { providers: ["together"], urlMarkers: ["api.together.xyz", "together.ai"] },
 	baseten: { providers: ["baseten"], urlMarkers: ["baseten.co"] },
 	/** URL-only on purpose: the `fireworks`/`firepass` providers route per-model and not every model is Fireworks-shaped. */
-	fireworks: { providers: ["fireworks"], urlMarkers: ["api.fireworks.ai", "fireworks.ai"] },
+	fireworks: { urlMarkers: ["api.fireworks.ai", "fireworks.ai"] },
 	groq: { providers: ["groq"], urlMarkers: ["api.groq.com", "groq.com"] },
 	minimax: {
 		providers: ["minimax", "minimax-code", "minimax-code-cn"],
