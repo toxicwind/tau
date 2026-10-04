@@ -38,9 +38,10 @@ mod constants;
 mod engine;
 mod normalize;
 
-use std::sync::LazyLock;
 
-use engine::VocabCore;
+use crate::utok::bpe::OnceFallible;
+
+use engine::{VocabCore, VocabLoadError};
 use normalize::{FrameParams, nfc_units, raw_head_space_units, stream_norm, trim_end_ws};
 
 use crate::utok::utf::Unit;
@@ -72,24 +73,62 @@ pub enum Family {
 	V5Sonnet,
 }
 
-static CORE_V3: LazyLock<VocabCore> = LazyLock::new(|| {
-	let raw = zstd::decode_all(&include_bytes!("../../../data/ctok_v3.bin.zst")[..])
-		.expect("utoken: ctok v3 zstd decode failed");
-	VocabCore::parse(&raw)
-});
+// `OnceFallible` rather than `LazyLock`: `LazyLock` poisons itself on a
+// panicking initializer and the poison is unrecoverable, so one corrupt
+// ctok blob would cascade the same useless panic through every rayon
+// worker. Same doctrine as the BPE path; see `utok::bpe::OnceFallible`.
+static CORE_V3: OnceFallible<VocabCore, VocabLoadError> = OnceFallible::new();
+static CORE_V47: OnceFallible<VocabCore, VocabLoadError> = OnceFallible::new();
 
-static CORE_V47: LazyLock<VocabCore> = LazyLock::new(|| {
-	let raw = zstd::decode_all(&include_bytes!("../../../data/ctok_v4_7.bin.zst")[..])
-		.expect("utoken: ctok v4.7 zstd decode failed");
-	VocabCore::parse(&raw)
-});
+/// Const-assert a blob's zstd frame magic. Elementwise `u8` compares, since
+/// `[u8; 4] != [u8; 4]` is not const-evaluable (PartialEq is not const-stable).
+macro_rules! assert_zstd {
+	($which:literal, $path:literal) => {
+		const _: () = {
+			let bytes = include_bytes!($path);
+			if bytes.len() < 4
+				|| bytes[0] != 0x28
+				|| bytes[1] != 0xB5
+				|| bytes[2] != 0x2F
+				|| bytes[3] != 0xFD
+			{
+				panic!(concat!(
+					"utok[",
+					$which,
+					"]: blob is missing the zstd frame magic (expected 28 B5 2F FD); a leading \
+					 28 EF BF BD means the bytes were lossily re-encoded as UTF-8 (every byte \
+					 >= 0x80 replaced by U+FFFD), which is how data/deepseek3.bin.zst was \
+					 destroyed on 2026-10-02 by commit e0518234b5. Restore from a clean source.",
+				));
+			}
+		};
+	};
+}
+
+assert_zstd!("ctok_v3", "../../../data/ctok_v3.bin.zst");
+assert_zstd!("ctok_v4_7", "../../../data/ctok_v4_7.bin.zst");
+
+fn load(which: &'static str, bytes: &'static [u8]) -> Result<VocabCore, VocabLoadError> {
+	let raw = zstd::decode_all(bytes)
+		.map_err(|e| VocabLoadError::Zstd { which, detail: e.to_string() })?;
+	VocabCore::parse(&raw, which)
+}
 
 impl Family {
-	fn core(self) -> &'static VocabCore {
+	/// Fallible vocabulary resolution; every count path starts here.
+	pub fn try_core(self) -> Result<&'static VocabCore, VocabLoadError> {
 		match self {
-			Self::V3 => &CORE_V3,
-			Self::V47 | Self::V5 | Self::V5Sonnet => &CORE_V47,
+			Self::V3 => CORE_V3.get_or_try_init(|| {
+				load("ctok_v3", include_bytes!("../../../data/ctok_v3.bin.zst"))
+			}),
+			Self::V47 | Self::V5 | Self::V5Sonnet => CORE_V47.get_or_try_init(|| {
+				load("ctok_v4_7", include_bytes!("../../../data/ctok_v4_7.bin.zst"))
+			}),
 		}
+	}
+
+	fn core(self) -> &'static VocabCore {
+		self.try_core().unwrap_or_else(|e| panic!("{e}"))
 	}
 
 	fn params(self) -> FrameParams {
@@ -125,7 +164,17 @@ impl Family {
 /// fragments. Valid text counts flavor-invariantly; malformed units decode
 /// permissively as U+FFFD (utf.rs semantics).
 pub fn content_token_count<U: Unit>(units: &[U], family: Family) -> u32 {
-	let core = family.core();
+	try_content_token_count(units, family).unwrap_or_else(|e| panic!("{e}"))
+}
+
+/// Fallible [`content_token_count`]: the same count, with a missing or
+/// corrupt ctok vocabulary surfaced as a typed error rather than a panic
+/// that poisons the vocabulary cache.
+pub fn try_content_token_count<U: Unit>(
+	units: &[U],
+	family: Family,
+) -> Result<u32, VocabLoadError> {
+	let core = family.try_core()?;
 	let p = family.params();
 	let head_space = raw_head_space_units(units);
 	if p.ladder {
@@ -136,9 +185,9 @@ pub fn content_token_count<U: Unit>(units: &[U], family: Family) -> u32 {
 		let stream = stream_norm(&norm, &p, head_space);
 		let tail = core.ladder_tail_cost(n_tail, family.appended_newlines());
 		if stream.is_empty() {
-			return tail;
+			return Ok(tail);
 		}
-		core.tile_cost(&stream) + tail
+		Ok(core.tile_cost(&stream) + tail)
 	} else {
 		// The v5 frame absorbs raw ASCII whitespace, so strip before NFC:
 		// NFC folds NBSP etc. to U+0020, and those are not free at the end.
@@ -146,9 +195,9 @@ pub fn content_token_count<U: Unit>(units: &[U], family: Family) -> u32 {
 		let norm = nfc_units(stripped, p.fold_quotes);
 		let stream = stream_norm(&norm, &p, head_space);
 		if stream.is_empty() {
-			0
+			Ok(0)
 		} else {
-			core.tile_cost(&stream)
+			Ok(core.tile_cost(&stream))
 		}
 	}
 }

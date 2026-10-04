@@ -28,6 +28,74 @@ use std::collections::{HashSet, VecDeque};
 
 use super::{constants::is_marker_byte, normalize::FrameParams};
 
+/// Failure modes when decoding an embedded ctok vocabulary blob.
+///
+/// The Claude blobs (`data/ctok_v3.bin.zst`, `data/ctok_v4_7.bin.zst`) are
+/// exactly as exposed to corruption as the BPE blobs were on 2026-10-02, when
+/// commit `e0518234b5` re-encoded `deepseek3.bin.zst` through a lossy UTF-8
+/// transcoder and the failure cascaded through a poisoned `LazyLock`. Same
+/// failure class, same fix: a typed error instead of a panic.
+///
+/// Mirrors [`BpeLoadError`](crate::utok::bpe::BpeLoadError) so callers can
+/// handle both vocabulary formats uniformly.
+#[derive(Debug, Clone, PartialEq, Eq)]
+#[non_exhaustive]
+pub enum VocabLoadError {
+	/// Outer zstd frame could not be decoded.
+	Zstd { which: &'static str, detail: String },
+	/// Blob is shorter than the four-byte `CTOK` magic.
+	Truncated { which: &'static str, need: usize, have: usize },
+	/// Blob did not start with `CTOK`.
+	BadMagic { which: &'static str, got: [u8; 4] },
+	/// Container version this build cannot read.
+	BadVersion { which: &'static str, got: u8 },
+	/// A byte token declared a length outside `1..=4`.
+	ByteTokenOutOfRange { which: &'static str, len: u8 },
+	/// Front-coding referenced a prefix longer than the piece before it.
+	FrontCodingOutOfOrder { which: &'static str, shared: usize, have: usize },
+	/// A decoded piece was not valid UTF-8.
+	PieceNotUtf8 { which: &'static str },
+	/// A length varint exceeded 32 bits.
+	VarintTooLong { which: &'static str, at: usize },
+	/// Bytes remained after the final piece.
+	TrailingBytes { which: &'static str, count: usize },
+}
+
+impl std::fmt::Display for VocabLoadError {
+	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+		use VocabLoadError::*;
+		match self {
+			Zstd { which, detail } => {
+				write!(f, "utoken[{which}]: zstd decode failed: {detail}")
+			},
+			Truncated { which, need, have } => {
+				write!(f, "utoken[{which}]: truncated (need {need} bytes, have {have})")
+			},
+			BadMagic { which, got } => {
+				write!(f, "utoken[{which}]: bad magic: got {got:?}, expected CTOK")
+			},
+			BadVersion { which, got } => {
+				write!(f, "utoken[{which}]: unsupported container version {got}")
+			},
+			ByteTokenOutOfRange { which, len } => {
+				write!(f, "utoken[{which}]: byte token length {len} outside 1..=4")
+			},
+			FrontCodingOutOfOrder { which, shared, have } => {
+				write!(f, "utoken[{which}]: front-coded prefix {shared} exceeds previous piece {have}")
+			},
+			PieceNotUtf8 { which } => write!(f, "utoken[{which}]: decoded piece is not valid UTF-8"),
+			VarintTooLong { which, at } => {
+				write!(f, "utoken[{which}]: length varint exceeds 32 bits at {at}")
+			},
+			TrailingBytes { which, count } => {
+				write!(f, "utoken[{which}]: {count} trailing bytes after last piece")
+			},
+		}
+	}
+}
+
+impl std::error::Error for VocabLoadError {}
+
 /// Whether `b` continues a multi-byte UTF-8 sequence, so it is not the start of
 /// a character and no tile may begin or end there.
 #[inline]
@@ -357,44 +425,59 @@ fn decode_char(bytes: &[u8]) -> char {
 	char::from_u32(cp).expect("valid UTF-8")
 }
 
-/// Byte cursor over the embedded vocabulary blob. The data is generated and
-/// committed alongside the code, so malformed input is a build defect:
-/// readers panic with context rather than propagating errors.
+/// Byte cursor over the embedded vocabulary blob.
+///
+/// Fallible rather than panicking: a malformed blob is a build defect, and
+/// reporting it as a value is what lets the caller cache the failure instead
+/// of poisoning a `LazyLock` and cascading the same panic through every
+/// worker. Same doctrine as the BPE path (see `utok::bpe::BpeLoadError`).
 struct Cursor<'a> {
 	data: &'a [u8],
 	pos:  usize,
+	which: &'static str,
 }
 
 impl<'a> Cursor<'a> {
-	fn take(&mut self, n: usize) -> &'a [u8] {
-		let slice = &self.data[self.pos..self.pos + n];
-		self.pos += n;
-		slice
+	fn take(&mut self, n: usize) -> Result<&'a [u8], VocabLoadError> {
+		let end = self.pos.checked_add(n).filter(|e| *e <= self.data.len()).ok_or(
+			VocabLoadError::Truncated {
+				which: self.which,
+				need:  n,
+				have:  self.data.len().saturating_sub(self.pos),
+			},
+		)?;
+		let slice = &self.data[self.pos..end];
+		self.pos = end;
+		Ok(slice)
 	}
 
-	fn u8(&mut self) -> u8 {
-		self.take(1)[0]
+	fn u8(&mut self) -> Result<u8, VocabLoadError> {
+		Ok(self.take(1)?[0])
 	}
 
-	fn u16(&mut self) -> u16 {
-		u16::from_le_bytes(self.take(2).try_into().expect("two bytes"))
+	fn u16(&mut self) -> Result<u16, VocabLoadError> {
+		let bytes = self.take(2)?;
+		Ok(u16::from_le_bytes([bytes[0], bytes[1]]))
 	}
 
-	fn u32(&mut self) -> u32 {
-		u32::from_le_bytes(self.take(4).try_into().expect("four bytes"))
+	fn u32(&mut self) -> Result<u32, VocabLoadError> {
+		let b = self.take(4)?;
+		Ok(u32::from_le_bytes([b[0], b[1], b[2], b[3]]))
 	}
 
-	fn varint(&mut self) -> usize {
+	fn varint(&mut self) -> Result<usize, VocabLoadError> {
 		let mut value = 0usize;
 		let mut shift = 0u32;
 		loop {
-			let byte = self.u8();
+			let byte = self.u8()?;
 			value |= usize::from(byte & 0x7f) << shift;
 			if byte & 0x80 == 0 {
-				return value;
+				return Ok(value);
 			}
 			shift += 7;
-			assert!(shift < 32, "ctok varint overflow");
+			if shift >= 32 {
+				return Err(VocabLoadError::VarintTooLong { which: self.which, at: self.pos });
+			}
 		}
 	}
 }
@@ -424,26 +507,37 @@ impl VocabCore {
 	/// pieces arrive in the compact marker alphabet, sorted by those bytes).
 	/// Pieces stream straight into the automaton builder; nothing is buffered
 	/// beyond the front-coding scratch.
-	pub fn parse(blob: &[u8]) -> Self {
-		let mut cur = Cursor { data: blob, pos: 0 };
-		assert_eq!(cur.take(4), b"CTOK", "bad ctok vocabulary magic");
-		assert_eq!(cur.u8(), 2, "unsupported ctok vocabulary version");
-		let fold_quotes = cur.u8() & 1 != 0;
-		let message_overhead = u32::from(cur.u8());
-		let allcaps_min = match cur.u8() {
+	pub fn parse(blob: &[u8], which: &'static str) -> Result<Self, VocabLoadError> {
+		let mut cur = Cursor { data: blob, pos: 0, which };
+		let magic = cur.take(4)?;
+		if magic != b"CTOK" {
+			return Err(VocabLoadError::BadMagic { which, got: [magic[0], magic[1], magic[2], magic[3]] });
+		}
+		let version = cur.u8()?;
+		if version != 2 {
+			return Err(VocabLoadError::BadVersion { which, got: version });
+		}
+		let fold_quotes = cur.u8()? & 1 != 0;
+		let message_overhead = u32::from(cur.u8()?);
+		let allcaps_min = match cur.u8()? {
 			0 => None,
 			n => Some(usize::from(n)),
 		};
-		let byte_token_count = usize::from(cur.u16());
-		let piece_count = cur.u32();
+		let byte_token_count = usize::from(cur.u16()?);
+		let piece_count = cur.u32()?;
 
 		let mut tokens = HashSet::with_capacity(byte_token_count + 512);
 		let mut max_len = 1usize;
 		for _ in 0..byte_token_count {
-			let len = usize::from(cur.u8());
-			assert!((1..=4).contains(&len), "byte token out of range: {len}");
+			let len = usize::from(cur.u8()?);
+			if !(1..=4).contains(&len) {
+				return Err(VocabLoadError::ByteTokenOutOfRange {
+					which,
+					len: len as u8,
+				});
+			}
 			max_len = max_len.max(len);
-			tokens.insert(pack_bytes(cur.take(len)));
+			tokens.insert(pack_bytes(cur.take(len)?));
 		}
 
 		let mut builder = Builder::new(piece_count as usize);
@@ -451,14 +545,22 @@ impl VocabCore {
 		let mut newline_ladder = Vec::new();
 		let mut scratch: Vec<u8> = Vec::with_capacity(64);
 		for _ in 0..piece_count {
-			let shared = cur.varint();
-			let suffix_len = cur.varint();
-			assert!(shared <= scratch.len(), "ctok pieces should be front-coded in order");
+			let shared = cur.varint()?;
+			let suffix_len = cur.varint()?;
+			if shared > scratch.len() {
+				return Err(VocabLoadError::FrontCodingOutOfOrder {
+					which,
+					shared,
+					have: scratch.len(),
+				});
+			}
 			scratch.truncate(shared);
-			let suffix = cur.take(suffix_len);
+			let suffix = cur.take(suffix_len)?;
 			scratch.extend_from_slice(suffix);
 			builder.push_piece(shared, suffix);
-			assert!(std::str::from_utf8(&scratch).is_ok(), "ctok piece should be UTF-8");
+			if std::str::from_utf8(&scratch).is_err() {
+				return Err(VocabLoadError::PieceNotUtf8 { which });
+			}
 			if scratch.iter().all(|&b| b == b'\n') {
 				newline_ladder.push(scratch.len() as u32);
 			}
@@ -475,13 +577,15 @@ impl VocabCore {
 				tokens.insert(pack_bytes(&scratch));
 			}
 		}
-		assert_eq!(cur.pos, blob.len(), "trailing ctok vocabulary bytes");
+		if cur.pos != blob.len() {
+			return Err(VocabLoadError::TrailingBytes { which, count: blob.len() - cur.pos });
+		}
 		newline_ladder.sort_unstable();
 		unit_pieces.sort_unstable();
 		let mut tokens: Vec<u64> = tokens.into_iter().collect();
 		tokens.sort_unstable();
 
-		Self {
+		Ok(Self {
 			message_overhead,
 			fold_quotes,
 			allcaps_min,
@@ -489,7 +593,7 @@ impl VocabCore {
 			unit_pieces,
 			newline_ladder,
 			floor: ByteFloor { tokens, max_len },
-		}
+		})
 	}
 
 	/// One character standing where the vocabulary covers nothing: markers and
