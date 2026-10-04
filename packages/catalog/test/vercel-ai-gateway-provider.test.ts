@@ -49,4 +49,37 @@ describe("Vercel AI Gateway provider", () => {
 		expect(control?.contextWindow).toBe(200_000);
 		expect(control?.maxTokens).toBe(8192);
 	});
+
+	test("clamps poolside/laguna-s-2.1-free output allowance to 32768", async () => {
+		// The gateway reports max_tokens 65536 for laguna-s-2.1-free, but the
+		// real upstream caps output at 32768 — unclamped requests 400 with
+		// "max_tokens (65536): Input should be less than or equal to 32768".
+		const lagunaId = "poolside/laguna-s-2.1-free";
+		const fetchMock = (async () =>
+			Response.json({
+				object: "list",
+				data: [
+					{
+						id: lagunaId,
+						object: "model",
+						owned_by: "poolside",
+						tags: ["tool-use"],
+						context_window: 128_000,
+						max_tokens: 65_536,
+						pricing: { input: 0, output: 0 },
+					},
+				],
+			})) as unknown as typeof fetch;
+
+		const options = vercelAiGatewayModelManagerOptions({ fetch: fetchMock });
+		const models = await options.fetchDynamicModels?.();
+
+		expect(models).not.toBeNull();
+		const byId = new Map((models ?? []).map(model => [model.id, model]));
+
+		const laguna = byId.get(lagunaId);
+		expect(laguna).toBeDefined();
+		expect(laguna?.contextWindow).toBe(128_000);
+		expect(laguna?.maxTokens).toBe(32_768);
+	});
 });
