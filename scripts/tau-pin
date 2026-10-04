@@ -31,4 +31,25 @@ case "$RESOLVED" in
     ;;
 esac
 
+# Pin the launch directory to the folder tau-pin was invoked from.
+# Without an explicit --cwd the engine auto-switches a $HOME launch to ~/tmp
+# (maybeAutoChdir in src/cli/startup-cwd.ts); passing --cwd explicitly keeps
+# the session in the folder the user actually ran from. A user-supplied
+# --cwd (--cwd=DIR or --cwd DIR form) always wins.
+_LAUNCH_DIR="$PWD"
+_have_cwd=0
+_expect_cwd_value=0
+for _a in "$@"; do
+  if [ "$_expect_cwd_value" = 1 ]; then _have_cwd=1; break; fi
+  case "$_a" in
+    --) break ;;
+    --cwd=*) _have_cwd=1; break ;;
+    --cwd) _expect_cwd_value=1 ;;
+  esac
+done
+[ "$_expect_cwd_value" = 1 ] && _have_cwd=1
+if [ "$_have_cwd" = 0 ]; then
+  set -- "--cwd=$_LAUNCH_DIR" "$@"
+fi
+
 exec "$RESOLVED" "$@"
