@@ -1,6 +1,7 @@
 import { USER_AGENT, getInstallId } from "@tau/tau-utils";
 import * as logger from "@tau/tau-utils/logger";
 import { toClinePassPublicModelId } from "../cline-pass-model-id";
+import { getCuratedOutputCeiling } from "../output-ceilings";
 import {
 	apiRouteExactModelIds,
 	apiRouteFor,
@@ -3746,18 +3747,6 @@ function normalizeVercelAiGatewayBaseUrls(rawBaseUrl: string | undefined): { bas
 	};
 }
 
-/**
- * Per-model output caps for the Vercel AI Gateway where the gateway's
- * reported `max_tokens` exceeds the real upstream limit (stale gateway
- * metadata). Without the clamp the catalog stores the inflated ceiling and
- * requests 400 (e.g. poolside/laguna-s-2.1-free reported 65536, upstream
- * caps at 32768).
- */
-const VERCEL_GATEWAY_OUTPUT_CLAMPS: Record<string, number> = {
-	"meta/muse-spark-1.2-contributor": 131_072,
-	"poolside/laguna-s-2.1-free": 32_768,
-};
-
 export function vercelAiGatewayModelManagerOptions(
 	config?: VercelAiGatewayModelManagerConfig,
 ): ModelManagerOptions<"anthropic-messages"> {
@@ -3784,7 +3773,7 @@ export function vercelAiGatewayModelManagerOptions(
 					const tags = Array.isArray(entry.tags) ? (entry.tags as string[]) : [];
 					const reportedMaxTokens = typeof entry.max_tokens === "number" ? entry.max_tokens : defaults.maxTokens;
 					const modelId = typeof entry.id === "string" ? entry.id : defaults.id;
-					const outputClamp = VERCEL_GATEWAY_OUTPUT_CLAMPS[modelId];
+					const outputClamp = getCuratedOutputCeiling(modelId);
 					const maxTokens =
 						typeof reportedMaxTokens === "number" && outputClamp !== undefined
 							? Math.min(reportedMaxTokens, outputClamp)

@@ -1,6 +1,7 @@
 import { scheduler } from "node:timers/promises";
 import { $flag, logger, structuredCloneJSON } from "@tau/tau-utils";
 import * as AIError from "../error";
+import { getOutputCeiling } from "./output-ceilings";
 import { getEnvApiKey } from "../stream";
 import type {
 	AssistantMessage,
@@ -1269,7 +1270,7 @@ export function buildParams(
 		omitMaxOutputTokens: model.omitMaxOutputTokens ?? false,
 		isOpenRouterHost: model.compat.isOpenRouterHost,
 		alwaysSendMaxTokens: model.compat.alwaysSendMaxTokens,
-		providerOutputClamp: undefined,
+		providerOutputClamp: getOutputCeiling(model.id),
 	});
 
 	applyCommonResponsesSamplingParams(params, { ...options, maxTokens: outputToken?.value }, model);

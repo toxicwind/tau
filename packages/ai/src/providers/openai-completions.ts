@@ -6,6 +6,7 @@ import type { ResolvedOpenAICompat } from "@tau/tau-catalog/types";
 import { clinePassClientHeaders } from "@tau/tau-catalog/wire/cline-pass";
 import { $env, logger, parseStreamingJson, parseStreamingJsonThrottled } from "@tau/tau-utils";
 import { renderDemotedThinking } from "../dialect/demotion";
+import { getOutputCeiling } from "./output-ceilings";
 import * as AIError from "../error";
 import { getKimiCommonHeaders } from "../registry/oauth/kimi";
 import { getEnvApiKey } from "../stream";
@@ -1972,7 +1973,7 @@ function buildParams(
 		omitMaxOutputTokens: model.omitMaxOutputTokens ?? false,
 		isOpenRouterHost: compat.isOpenRouterHost,
 		alwaysSendMaxTokens: compat.alwaysSendMaxTokens,
-		providerOutputClamp: undefined,
+		providerOutputClamp: getOutputCeiling(model.id),
 	});
 	if (outputToken) {
 		if (outputToken.field === "max_tokens") {
