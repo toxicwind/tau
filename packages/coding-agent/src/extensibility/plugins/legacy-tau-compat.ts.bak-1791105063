@@ -2611,13 +2611,6 @@ async function ensureExtensionGraphHook(entryRealPath: string): Promise<{ clear(
  * rewrite ESM/TS sources and expose evaluated CommonJS namespaces directly.
  */
 export async function loadLegacyPiModule(resolvedPath: string): Promise<unknown> {
-	const __norm = (v: unknown) => {
-		if (v && typeof v === "object" && !("default" in (v as Record<string, unknown>))) {
-			return __norm({ ...(v as Record<string, unknown>), default: v } as typeof v);
-		}
-		return v;
-	};
-
 	// Bun reports the realpath of a loaded module to `onLoad` and exposes it as
 	// `import.meta.url`. Resolve symlinks here too (macOS `/var`→`/private/var`,
 	// `bun link`/pnpm installs) so the rewrite filter matches the path Bun
@@ -2634,7 +2627,7 @@ export async function loadLegacyPiModule(resolvedPath: string): Promise<unknown>
 			process.platform === "win32" || isBundledVirtualSpecifier(entryRealPath)
 				? toImportSpecifier(entryRealPath)
 				: entryRealPath;
-		return __norm(await import(`${entrySpecifier}?mtime=${nextLegacyPiLoadTag()}`));
+		return await import(`${entrySpecifier}?mtime=${nextLegacyPiLoadTag()}`);
 	} finally {
 		// Drop whatever the initial import didn't consume: graph modules only
 		// reached by lazy dynamic imports must be read from disk at their actual

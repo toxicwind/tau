@@ -224,6 +224,17 @@ async function installAddon(sourcePath: string, destPath: string): Promise<void>
 
 /** Build and install the host addon through the local Cargo/N-API path. */
 async function buildLocalHostAddon(host: HostInfo, destDir: string): Promise<void> {
+	const filename = resolveLocalHostAddon(host).filename;
+	const builtPath = path.join(repoRoot, "packages/natives/native", filename);
+	const forceBuild = Bun.env.TAU_FORCE_BUILD_NATIVES === "1" || Bun.env.TAU_FORCE_BUILD_NATIVES === "true";
+	if (!forceBuild && (await fs.stat(builtPath).then(() => true).catch(() => false))) {
+		console.log(`local host build: using existing native addon ${filename} (set TAU_FORCE_BUILD_NATIVES=1 to force rebuild)`);
+		if (path.dirname(builtPath) !== destDir) {
+			await fs.mkdir(destDir, { recursive: true });
+			await installAddon(builtPath, path.join(destDir, filename));
+		}
+		return;
+	}
 	const script = path.join(repoRoot, "packages/natives/scripts/build-bindings.ts");
 	console.log(`local host build: using ${path.relative(repoRoot, script)}`);
 	const proc = Bun.spawn([process.execPath, script], {
@@ -234,15 +245,12 @@ async function buildLocalHostAddon(host: HostInfo, destDir: string): Promise<voi
 	const exitCode = await proc.exited;
 	if (exitCode !== 0) process.exit(exitCode || 1);
 
-	const filename = resolveLocalHostAddon(host).filename;
-	const builtPath = path.join(repoRoot, "packages/natives/native", filename);
 	if (path.dirname(builtPath) !== destDir) {
 		await fs.mkdir(destDir, { recursive: true });
 		await installAddon(builtPath, path.join(destDir, filename));
 	}
 	console.log(`installed ${filename} → ${path.join(destDir, filename)}`);
 }
-
 async function main(): Promise<void> {
 	const options = parseCliArgs(process.argv.slice(2));
 	const host: HostInfo = { platform: process.platform, arch: process.arch, avx2: detectHostAvx2Support() };

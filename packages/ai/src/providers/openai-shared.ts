@@ -600,6 +600,8 @@ export interface ResolveOpenAIOutputTokenInput {
 	maxTokensExplicit: boolean;
 	/** Model output cap (`model.maxTokens`). */
 	modelMaxTokens: number | null | undefined;
+	/** Hard model/wire cap (`model.compat.maxTokensCap`). */
+	modelMaxTokensCap?: number | null | undefined;
 	/** Drop the field entirely — proxies with unknown upstream caps (Ollama via `model.omitMaxOutputTokens`). */
 	omitMaxOutputTokens: boolean;
 	/** The model sits behind OpenRouter (catalog default caps are omitted so each upstream self-caps). */
@@ -608,7 +610,6 @@ export interface ResolveOpenAIOutputTokenInput {
 	alwaysSendMaxTokens: boolean;
 	/** Hard provider clamp; defaults to the provider output clamp. */
 	providerOutputClamp?: number;
-}
 
 /**
  * Resolve the single output-token wire parameter shared by Chat Completions
@@ -637,6 +638,7 @@ export function resolveOpenAIOutputTokenParam(
 	const value = Math.min(
 		requested,
 		input.modelMaxTokens ?? Number.POSITIVE_INFINITY,
+		input.modelMaxTokensCap ?? Number.POSITIVE_INFINITY,
 		input.providerOutputClamp ?? Number.POSITIVE_INFINITY,
 	);
 	if (!(value > 0)) return undefined;
