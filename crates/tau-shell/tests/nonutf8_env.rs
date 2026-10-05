@@ -10,7 +10,7 @@
 
 use std::os::unix::ffi::OsStrExt;
 
-use pi_shell::{ShellExecuteOptions, cancel::CancelToken, execute_shell};
+use tau_shell::{ShellExecuteOptions, cancel::CancelToken, execute_shell};
 
 /// The corrupt bytes cmux/Ghostty staged as `GHOSTTY_BIN_DIR` on the
 /// reporter's host: `9d d9 50` has no valid UTF-8 encoding.

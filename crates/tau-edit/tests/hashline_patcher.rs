@@ -1,6 +1,6 @@
 mod common;
 
-use pi_edit::{
+use tau_edit::{
 	EditMode, ModeEngine,
 	modes::hashline::{
 		HashlineEngine,

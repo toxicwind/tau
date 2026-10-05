@@ -5,10 +5,28 @@
 
 use std::time::{Duration, Instant};
 
-use pi_shell::{
+use tau_shell::{
 	cancel::CancelToken,
 	shell::{ShellExecuteOptions, execute_shell},
 };
+
+/// Hermetic test environment: explicitly clears the PI_DISABLE_* builtin
+/// kill-switches so tests do not inherit them from the ambient developer
+/// environment (e.g. ~/.profile). Without this, the shell falls back to
+/// system binaries (e.g. /usr/bin/grep) instead of the in-process builtins,
+/// and the streaming contracts under test do not hold.
+fn hermetic_session_env() -> std::collections::HashMap<String, String> {
+	[
+		("PI_DISABLE_UUTILS_BUILTINS", "0"),
+		("PI_DISABLE_UUTILS_DESTRUCTIVE", "0"),
+		("PI_DISABLE_RM_BUILTIN", "0"),
+		("PI_DISABLE_MV_BUILTIN", "0"),
+		("PI_DISABLE_NOHUP_BUILTIN", "0"),
+	]
+	.into_iter()
+	.map(|(k, v)| (k.to_string(), v.to_string()))
+	.collect()
+}
 
 async fn run_collecting(command: &str) -> (Option<Duration>, Duration, String) {
 	let (tx, rx) = flume::unbounded::<String>();
@@ -30,6 +48,7 @@ async fn run_collecting(command: &str) -> (Option<Duration>, Duration, String) {
 		ShellExecuteOptions {
 			command: command.to_string(),
 			timeout_ms: Some(30_000),
+			session_env: Some(hermetic_session_env()),
 			..Default::default()
 		},
 		Some(tx),

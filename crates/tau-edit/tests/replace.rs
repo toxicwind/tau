@@ -1,7 +1,7 @@
 mod common;
 
 use common::{DiskWriter, Workspace, run_fixture};
-use pi_edit::{EditMode, ModeEngine, modes::replace::ReplaceEngine, stream_json::ArgSnapshot};
+use tau_edit::{EditMode, ModeEngine, modes::replace::ReplaceEngine, stream_json::ArgSnapshot};
 use serde_json::json;
 
 #[tokio::test]

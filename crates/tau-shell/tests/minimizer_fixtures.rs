@@ -24,7 +24,7 @@
 
 use std::{fmt::Write as _, fs, path::Path};
 
-use pi_shell::minimizer::{self, MinimizerConfig, engine::MIN_MINIMIZE_CHARS};
+use tau_shell::minimizer::{self, MinimizerConfig, engine::MIN_MINIMIZE_CHARS};
 
 /// Byte-savings gate: minimized output must be at most this fraction of the raw
 /// input for buffers large enough to be worth filtering.

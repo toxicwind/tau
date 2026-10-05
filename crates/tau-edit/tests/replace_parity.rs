@@ -1,7 +1,7 @@
 mod common;
 
 use common::run_fixture;
-use pi_edit::{
+use tau_edit::{
 	EditMode, EditStore, PathPolicy,
 	fuzzy::{FindMatchOptions, find_match},
 	path_policy::canonical_key,

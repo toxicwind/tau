@@ -4,7 +4,7 @@
 mod common;
 
 use common::{DiskWriter, Workspace};
-use pi_edit::{ApplyRequest, EditMode, FileOp, session::PreviewBatch};
+use tau_edit::{ApplyRequest, EditMode, FileOp, session::PreviewBatch};
 
 const SOURCE: &str = "fn main() {\n    let x = 1;\n    println!(\"{x}\");\n}\n";
 
@@ -406,7 +406,7 @@ async fn hashline_rem_removes_invalid_utf8_file() {
 
 #[tokio::test]
 async fn hashline_rem_streaming_preview_does_not_error_on_invalid_utf8() {
-	use pi_edit::{
+	use tau_edit::{
 		EditStore, PathPolicy,
 		session::{Session, SessionConfig},
 	};

@@ -1,7 +1,7 @@
 mod common;
 
 use common::{DiskWriter, Workspace, run_fixture};
-use pi_edit::{
+use tau_edit::{
 	EditError, EditMode, EditStore, ModeEngine,
 	files::FileCache,
 	modes::sloppy::{

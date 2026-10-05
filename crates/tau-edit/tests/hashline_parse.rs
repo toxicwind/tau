@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use pi_edit::modes::hashline::{
+use tau_edit::modes::hashline::{
 	format::{
 		format_cut_header, format_hashline_header, format_numbered_line, format_numbered_lines,
 		format_replace_header, split_addressable_file_lines,
