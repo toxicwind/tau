@@ -485,7 +485,13 @@ function normalizeSchemaObjectNode(value: JsonObject, options: NormalizeSchemaWa
 		if (types.includes("null") && !options.stripNullableKeyword) {
 			result.nullable = true;
 		}
-		result.type = nonNull[0] ?? types[0];
+		if (result.items !== undefined && nonNull.includes("array")) {
+			result.type = "array";
+		} else if (result.properties !== undefined && nonNull.includes("object")) {
+			result.type = "object";
+		} else {
+			result.type = nonNull[0] ?? types[0];
+		}
 	}
 	if (constValue !== undefined) {
 		const existingEnum = Array.isArray(result.enum) ? result.enum : [];
@@ -547,6 +553,24 @@ function applyNodePostProcessing(schema: JsonObject, options: NormalizeSchemaWal
 	if (options.foldOneOfIntoAnyOf) current = foldOneOfIntoAnyOf(current);
 	if (options.dropNonScalarEnum) current = dropNonScalarEnumForMfjs(current);
 	if (options.stringEnumsOnly && options.booleanIsSubschema) current = dropNonStringEnumForGoogle(current);
+	if (
+		typeof current.type === "string" &&
+		(options.collapseMixedTypeCombiners || options.normalizeTypeArrayToNullable)
+	) {
+		const allowedKeys = CLOUD_CODE_ASSIST_TYPE_SPECIFIC_KEYS[current.type];
+		if (allowedKeys) {
+			for (const key in current) {
+				if (key === "type") continue;
+				if (
+					Object.hasOwn(ALL_CCA_TYPE_SPECIFIC_KEYS, key) &&
+					!Object.hasOwn(allowedKeys, key) &&
+					!Object.hasOwn(CLOUD_CODE_ASSIST_SHARED_SCHEMA_KEYS, key)
+				) {
+					delete current[key];
+				}
+			}
+		}
+	}
 	return current;
 }
 
