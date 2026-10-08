@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Tau Launcher — modular, multi-user, multi-LLM
 #
-# Canonical engine: sovereign/projects/range/ranch/tau
+# Canonical engine: estate/ranch/tau (launcher parent). sovereign paths are fallbacks.
 # Collapse chain (first hit wins):
 #   1. $TAU_BIN (explicit override)
 #   2. Installed `tau` on PATH (not this script — avoids recursion)
@@ -66,7 +66,11 @@ export TAU_CONFIG_DIR=".tau"
 SOVEREIGN_DIR="$TAU_HOME/sovereign"
 
 resolve_engine() {
+    local here
+    here="$(cd "$SCRIPT_DIR/.." && pwd)"
     local candidates=(
+        "$here"
+        "$TAU_HOME/estate/ranch/tau"
         "$SOVEREIGN_DIR/projects/range/ranch/tau"
         "$SOVEREIGN_DIR/projects/range/ranch/stockyard/tau"
         "$SOVEREIGN_DIR/projects/tau/engine"
@@ -83,6 +87,8 @@ resolve_engine() {
 ENGINE_DIR="$(resolve_engine || true)"
 if [ -z "${ENGINE_DIR:-}" ]; then
     echo "tau: no engine found. Checked:" >&2
+    echo "  $SCRIPT_DIR/.." >&2
+    echo "  $TAU_HOME/estate/ranch/tau" >&2
     echo "  $SOVEREIGN_DIR/projects/range/ranch/tau" >&2
     echo "  $SOVEREIGN_DIR/projects/range/ranch/stockyard/tau" >&2
     echo "  $SOVEREIGN_DIR/projects/tau/engine" >&2

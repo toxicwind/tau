@@ -114,3 +114,6 @@ github_*_pat.json
 node_modules/
 .cache/
 .bun/
+
+# Per-run smithers traces. Not source.
+.smithers/executions/
