@@ -230,7 +230,6 @@ tau-builtins = { path = "crates/tau-builtins" }
 # ──────────────────────────────────────────────────────────────────────────────
 async-trait = "0.1"
 futures = "0.3"
-dashmap = "6.2"
 parking_lot = "0.12.5"
 rayon = "1.12"
 tokio = { version = "1", features = ["full"] }
@@ -313,7 +312,6 @@ windows-sys = { version = "0.61", features = [
 # find-msvc-tools 0.1.13 retyped that constant to i32, breaking every Windows
 # build. tree-sitter-sequel caps cc at ~1.2.1 so the fixed cc 1.4.x line is
 # out of reach; hold 0.1.12 until upstream ships a compatible release.
-find-msvc-tools = "=0.1.12"
 winreg = "0.56"
 
 # ──────────────────────────────────────────────────────────────────────────────

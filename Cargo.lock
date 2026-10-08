@@ -7739,7 +7739,6 @@ dependencies = [
  "core-graphics",
  "enigo",
  "fancy-regex 0.16.2",
- "find-msvc-tools",
  "flume",
  "fontdue",
  "foreign-types",

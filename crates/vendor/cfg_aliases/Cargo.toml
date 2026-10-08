@@ -8,6 +8,8 @@ description = "A tiny utility to help save you a lot of effort with long winded 
 keywords = ["cfg", "alias", "conditional", "compilation", "build"]
 categories = ["development-tools", "development-tools::build-utils"]
 documentation = "https://docs.rs/cfg_aliases"
-homepage = "https://github.com/katharostech/cfg_aliases"
 repository = "https://github.com/katharostech/cfg_aliases"
 publish = false
+
+[lints]
+workspace = true
