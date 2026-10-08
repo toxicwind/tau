@@ -2,15 +2,17 @@
 # tau tmux — manage tmux sessions for Tau experiments.
 # Sessions survive the launching shell (setsid when starting a fresh server).
 set -uo pipefail
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 SOCKETS=("" "-L tauhyperfix")   # default socket, then the hyperfix experiment socket
 
 usage() {
   cat <<'EOF'
 Usage: tau tmux <cmd> [args]
+  subagent ...          one session per tau agent (open/prompt/status/log/close)
   find [pattern]        list tmux sessions (and windows) matching pattern
   ls                    list all sessions on known sockets
-  new <name> -- <cmd>   create detached session running <cmd>
+  new <name> -- <cmd>   raw detached session. Prefer subagent for tau.
   run <session> <cmd>   send a command to a session's active pane
   capture <s>[:w]       dump a session/window pane
   kill <name>           kill a session
@@ -41,6 +43,9 @@ resolve() {
 
 cmd="${1:-}"; shift || true
 case "$cmd" in
+  subagent)
+    exec "$SCRIPT_DIR/tau-subagent.sh" "$@"
+    ;;
   find)
     pat="${1:-}"
     each_socket list-sessions -F '#S: #{session_windows} windows (created #{session_created_string})' 2>/dev/null | { grep -i "$pat" || true; }
