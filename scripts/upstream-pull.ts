@@ -343,8 +343,22 @@ function classify(stage: string, rel: string): PathKind {
 	return MANIFEST_RE.test(rel) ? "weave" : "suture";
 }
 
+/**
+ * The path kind actually taken on THIS host.
+ *
+ * `classify` picks the fast path from the tree's shape alone, but availability
+ * is a property of the host. Without suture every changed path falls back to
+ * the entity merge — slower, and correct. Both the merge and the idempotence
+ * gate resolve the kind through here, so they can never disagree about which
+ * engine produced a file.
+ */
+function effectiveKind(engines: Engines, stage: string, rel: string): PathKind {
+	const classified = classify(stage, rel);
+	return classified === "suture" && !engines.suture ? "weave" : classified;
+}
+
 function mergeOne(engines: Engines, stage: string, rel: string, outDir: string): Outcome {
-	const kind = classify(stage, rel);
+	const kind = effectiveKind(engines, stage, rel);
 	const ours = at(stage, "ours", rel);
 	const theirs = at(stage, "theirs", rel);
 	const out = at(outDir, rel);
@@ -671,7 +685,9 @@ function gateIdempotent(
 	mergedPath: string,
 	scratch: string,
 ): Finding | null {
-	if (classify(stage, rel) !== "weave") return null;
+	// Only the entity merge is re-runnable, and only when it is the engine that
+	// actually produced this file — see `effectiveKind`.
+	if (effectiveKind(engines, stage, rel) !== "weave") return null;
 	const again = join(scratch, rel);
 	mkdirSync(dirname(again), { recursive: true });
 	const r = run(engines.weave, [

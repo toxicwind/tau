@@ -116,6 +116,10 @@ import type { AgentHubRegistry } from "@tau/tau-tui/overlays/agent-hub-types";
 import { formatCost } from "@tau/tau-tui/overlays/agent-hub-renderer";
 import { AgentRegistry, MAIN_AGENT_ID } from "../registry/agent-registry";
 import {
+	startWorldRegistryBridge,
+	type WorldRegistryBridge,
+} from "../registry/world-registry-bridge";
+import {
 	type AgentSession,
 	type AgentSessionEvent,
 	type DroppedPrompt,
@@ -813,6 +817,8 @@ export class InteractiveMode implements InteractiveModeContext {
 	#ownsStartedUi: boolean;
 	session: AgentSession;
 	sessionManager: SessionManager;
+	/** Live cross-process agent-registry publication, withdrawn on shutdown. */
+	#worldRegistryBridge?: WorldRegistryBridge;
 	settings: Settings;
 	keybindings: KeybindingsManager;
 	agent: Agent;
@@ -1578,6 +1584,20 @@ export class InteractiveMode implements InteractiveModeContext {
 
 	async init(options: InteractiveModeInitOptions = {}): Promise<void> {
 		if (this.isInitialized) return;
+
+		// Publish this process's agent tree to the machine-wide registry so other
+		// tau processes can discover and read this session through the agent://
+		// and history:// transports. Fire-and-forget: publication failure must never
+		// delay or break startup, it only costs cross-process discovery. The peer
+		// registry computes its roster live on each request, so there is nothing to
+		// refresh when a subagent spawns, parks, or finishes.
+		startWorldRegistryBridge(AgentRegistry.global())
+			.then(bridge => {
+				this.#worldRegistryBridge = bridge;
+			})
+			.catch((error: unknown) => {
+				logger.warn("world agent registry publication failed", { error: String(error) });
+			});
 
 		this.keybindings = logger.time("InteractiveMode.init:keybindings", () => KeybindingsManager.create());
 
@@ -5899,7 +5919,12 @@ export class InteractiveMode implements InteractiveModeContext {
 			// Guests get goodbye and the registry entry disappears before the
 			// session is disposed, under the same still-closing progress notice.
 			await this.collabController.shutdown("host exited");
-			await this.#liveCommandController.stop();
+			// Withdraw the cross-process agent-registry entry BEFORE the session
+			// disposes, so a peer querying this tree sees a live process whose
+			// session is still attached rather than a half-torn-down one. A crash
+			// that skips this is covered by the lister's pid-liveness prune.
+			await this.#worldRegistryBridge?.close().catch(() => {});
+			this.#worldRegistryBridge = undefined;			await this.#liveCommandController.stop();
 			await this.#btwController.dispose();
 			this.#omfgController.dispose();
 			this.#cleanseController.dispose();

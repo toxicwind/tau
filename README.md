@@ -32,7 +32,9 @@
 - **82 providers, tack-sourced catalog** — `packages/catalog` holds the provider census (`models.json`); provider wire data (base URLs, key env vars, auth schemes, `/models` adapters) comes from `@ranch/tack` (`ranch/tack`, projected onto the catalog shape by `packages/catalog/src/compat/tack.ts`), while KDL compat/auth rules (`src/compat/rules/**/*.kdl`) compile to `rules.json`; the fork's sovereign delta flips the NVIDIA default model to `openai/gpt-oss-20b`.
 - **30+ documented tools** — one doc per tool under `docs/tools/`: `bash`, `read`, `write`, `edit`, `grep`, `glob`, `task`, `lsp`, `debug`, `browser`, `computer`, `web_search`, `github`, `tts`, `memory_edit`, `checkpoint`, `rewind`, `ask`, `learn`, `eval`, `ast-grep`, `ast-edit`, `security_scan`, `todo`, and more.
 - **First-class subagents** — `task` fans out into isolated worktrees with typed results back (`packages/agent`).
+- **Machine-wide agent registry** — `registry/world-registry-daemon.ts`: every interactive session publishes its agent tree to `~/.tau/run/world-agents` over a private Unix socket, so a second `tau` in another window can *discover* and *read* it through `agent://` and `history://`. Not a monkey patch and not a central broker — it is the same publication machinery as the collab host registry, pointed at the agent tree instead of a room URL. Local rosters keep priority; a cross-process miss names the peer (pid + cwd) instead of failing dead. See [Machine-wide agent registry](#machine-wide-agent-registry).
 - **Native hot path** — `crates/tau-natives` N-API bindings (prebuilt `tau_natives.linux-x64-{baseline,modern}.node` addons), `tau-shell` in-process shell runtime, `tau-builtins` (`grep`, `sed`, `cat`, `find`, `fd`, `rg`, `head`, `tail`, `tee`, `cut`, `date`, `ps`, `top`, `seq`, `yes`) — no fork/exec on the hot path.
+- **Verified local natives installer** — `scripts/install-natives-local.ts` rebuilds `tau_natives` with the features this host actually needs (notably `--features wayland-pipewire`, without which every Wayland capture call fails at runtime), verifies the resulting `.node`, and installs it into both the package tree and the per-version runtime cache. It refuses to swap a live `.node` under a running process. See [Native addon](#native-addon).
 - **AST-native editing** — `tau-ast` syntax layer with `tau-edit`/`tau-diff` surgical application; `ast-grep`/`ast-edit` tools.
 - **Git + jj, native** — `crates/tau-vcs` drives both `git` and `jj` (diff, mutate, patch, read ops).
 - **Copy-on-write file ops** — `crates/tau-iso` (`apfs.rs`, `linux_reflink.rs`, `windows_block_clone.rs`): reflinks where the filesystem allows.
@@ -79,6 +81,7 @@ flowchart TB
         PORTS["config/ports.env<br/>port SSOT"]
         PF["pitchfork.toml<br/>daemon supervision"]
         PIN["bin/tau-pin<br/>immutable launcher"]
+        WR["registry/world-registry-daemon<br/>cross-process agent tree"]
         PB["scripts/push-build.sh<br/>build queue · :25148"]
     end
     CLI --> AI
@@ -97,6 +100,8 @@ flowchart TB
     PORTS --> VRO
     PORTS --> PF
     PIN -.-> CLI
+    WR -->|publishes tree| WR
+    WR -.->|agent:// resolve| CLI
     PB -->|queues| SV
 ```
 
@@ -113,6 +118,7 @@ flowchart TB
 | Edit | `crates/tau-ast`, `crates/tau-edit`, `crates/tau-diff` | syntax layer, surgical patch application |
 | VCS | `crates/tau-vcs` | git + jj operations |
 | Platform | `crates/tau-iso`, `crates/tau-voice` | copy-on-write, speech I/O |
+| Registry | `packages/coding-agent/src/registry` | process-global agent tree, persisted roster, machine-wide cross-process registry |
 | Ranch | `config/`, `scripts/`, `pitchfork.toml`, `bin/` | router, ports, daemons, pinning, build queue |
 
 ---
@@ -126,6 +132,93 @@ bun dev               # runs the tau CLI from source
 ```
 
 Three commands, then you're talking to the agent. Prefer the upstream binary untouched? `bun install -g @tau/tau-coding-agent` — but you'll lose the ranch layer (pinned launcher, ports SSOT, VansRouter, supervised daemons).
+
+---
+
+## Machine-wide agent registry
+
+`AgentRegistry` is **process-global**: one `Map` inside one OS process. Two `tau` sessions
+in two terminal panes are two processes, so each knows only its own agent tree. `agent://`
+fails with "not found" for a peer that is demonstrably running a few feet away, and there is
+no first-class way to *discover* a sibling session at all.
+
+The world registry fixes that as a real subsystem, not a monkey patch:
+
+| Module | Role |
+| :--- | :--- |
+| `src/registry/world-registry-daemon.ts` | Publication + discovery transport (sockets, bearer auth, private dir) |
+| `src/registry/world-registry-bridge.ts` | Session-side glue: publish this tree, resolve foreign refs |
+| `src/registry/agent-registry.ts` | The existing process-global tree (unchanged) |
+
+**How it works.** Every interactive session publishes its tree on startup
+(`InteractiveMode.init`) and withdraws it on shutdown before the session disposes. Publication
+writes one owner-only JSON file plus a private Unix socket into `~/.tau/run/world-agents`.
+Listers read that directory, then query each socket.
+
+Four design decisions worth knowing:
+
+- **Discovery is a directory scan, not a subscription.** No central broker to lose, no
+  reconnect protocol, no ordering guarantee to get wrong. A crashed publisher leaves at
+  most a stale file, pruned by the next list via a pid-liveness probe.
+- **Roster state stays in the publisher.** A listing carries only non-capability metadata
+  (ids, statuses, cwd, model). Anything deeper is fetched by calling back over the socket,
+  so no session state is duplicated and no capability is written to disk.
+- **Local rosters keep priority.** A same-process ref always wins over a same-id peer
+  elsewhere, because the local one is what your session actually spawned.
+- **Reads cross processes; writes do not.** `agent://<id>` gains a foreign-process fallback
+  (a peer keeps its artifacts beside its own transcript, so its dir joins the scan). A
+  `write agent://<id>` deliberately stays local — cross-process delivery would need a
+  durable queue, ordering, and exactly-once semantics that IRC's fire-and-forget mailbox
+  does not provide. Guessing would be a worse failure than a clear error.
+
+`Main` is the default id for *every* top-level session, so resolution returns **all** matches
+rather than the first: silently picking a stranger's `Main` is exactly the confusion this
+subsystem exists to make visible.
+
+```sh
+# every published tree on this machine
+ls ~/.tau/run/world-agents/
+
+# from a tau session: read a peer in another window
+#   read agent://<id>
+# a local miss now reports the live peer instead of a bare "not found":
+#   Not found: <id>
+#   Available: …
+#   Running in another tau process: Main (pid 3346164, /home/toxic/tmp, running)
+```
+
+Publication failure (read-only fs, endpoint taken) is logged and degrades to in-process
+behaviour — it never blocks startup.
+
+---
+
+## Native addon
+
+`crates/tau-natives` ships prebuilt `.node` addons for `baseline` and `modern` targets. The
+shipped addon is **not** built with every feature this host needs, so a runtime call can fail
+long after a successful build:
+
+    Wayland capture requires the wayland-pipewire feature
+
+`scripts/install-natives-local.ts` rebuilds the addon with the features this machine needs,
+verifies the result, and installs it in **both** the package tree and the per-version runtime
+cache (`~/.tau/natives/<version>/`).
+
+```sh
+bun scripts/install-natives-local.ts            # build + verify + install
+bun scripts/install-natives-local.ts --check    # verify the installed addon only
+```
+
+Safety properties:
+
+- **Never swaps a live addon.** A `.node` still mapped into a running process cannot be
+  replaced safely, so the installer detects holders via `/proc/<pid>/maps` and refuses.
+- **Verify before install.** The rebuilt artifact is checked before it is published to either
+  location, so a failed build cannot leave a broken addon where a working one was.
+- **No hardcoded versions.** The runtime cache path is derived from the package version.
+
+Use this when a native feature fails at runtime despite a clean build; a plain
+`bun run build:natives` reproduces the shipped addon, not the host-corrected one.
 
 ---
 

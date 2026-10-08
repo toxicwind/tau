@@ -19,6 +19,7 @@ import { isEnoent } from "@tau/tau-utils";
 import { AgentRegistry } from "../registry/agent-registry";
 import { ensurePersistedRoster } from "../registry/persisted-agents";
 import { executeSend, isIrcEnabled } from "../irc/messaging";
+import { describeForeignAgents, findForeignAgents, foreignArtifactDirs } from "../registry/world-registry-bridge";
 import { artifactsDirsFromRegistry } from "./registry-helpers";
 import type {
 	InternalResource,
@@ -112,8 +113,24 @@ export class AgentProtocolHandler implements ProtocolHandler {
 		const dirs = artifactsDirsFromRegistry(
 			rootSessionFile ? { preferredDir: rootSessionFile.slice(0, -6) } : undefined,
 		);
+		// Cross-process fallback: an agent running in ANOTHER tau process (a
+		// second wezterm pane, a `tau` launched from a shell) is not in this
+		// process registry and owns none of its artifact dirs. The world registry
+		// publishes those peers transcript paths, and a peer keeps its artifacts
+		// beside its own transcript — so adding its dirs lets `agent://<id>` read a
+		// sibling session exactly like a local subagent. Local dirs keep priority:
+		// a same-process ref must win over a same-id peer elsewhere, because the
+		// local one is what this session actually spawned.
+		const foreign = await findForeignAgents(outputId);
+		for (const dir of foreignArtifactDirs(foreign)) {
+			if (!dirs.includes(dir)) dirs.push(dir);
+		}
 		if (dirs.length === 0) {
-			throw new Error("No session - agent outputs unavailable");
+			throw new Error(
+				foreign.length > 0
+					? `No artifacts directory found for ${outputId}; the peer ${describeForeignAgents(foreign)} has no readable transcript.`
+					: "No session - agent outputs unavailable",
+			);
 		}
 
 		const pathSegments = hasPathExtraction ? urlPath.split("/").filter(Boolean) : [];
@@ -131,7 +148,13 @@ export class AgentProtocolHandler implements ProtocolHandler {
 		}
 		if (!scan.foundPath) {
 			const availableStr = scan.availableIds.size > 0 ? [...scan.availableIds].join(", ") : "none";
-			throw new Error(`Not found: ${outputId}\nAvailable: ${availableStr}`);
+			// A local miss plus a live peer elsewhere is the confusing case this
+			// fallback exists to explain: the id IS addressable, just not from this
+			// process dirs. Naming the peer (pid + cwd) turns a dead end into a
+			// pointer.
+			const peerHint =
+				foreign.length > 0 ? `\nRunning in another tau process: ${describeForeignAgents(foreign)}` : "";
+			throw new Error(`Not found: ${outputId}\nAvailable: ${availableStr}${peerHint}`);
 		}
 
 		const rawContent = await Bun.file(scan.foundPath).text();
