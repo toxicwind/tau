@@ -1,9 +1,13 @@
 # Upstream Merge Workflow — tau ↔ tau
 
 **Upstream:** https://github.com/toxicwind/tau
-**Fork point:** upstream tag `v18.3.0` (`62bc57be1b03ef0802a33cf7f5f530e534527531`)
-**Our HEAD:** `f46cc8d` (2026-09-30)
-**Upstream HEAD:** `2b023d1b80` (upstream 18.4.4, as of 2026-09-30)
+**Fork point:** base `dacdef24a37f40b55601d2394372b6898c439e57` (upstream 18.3.0)
+**Our HEAD:** `9c7643f918` (2026-10-08)
+**Upstream HEAD:** `40e9368ef0` (upstream 18.8.4, as of 2026-10-08)
+
+> Live SHAs are pinned in `.upstream-sync.json`; the values above are the
+> snapshot that produced the current merge plan. Re-run `bun scripts/upstream-pull.ts`
+> to refresh them.
 
 > **Correction (2026-09-30):** `MIRROR-DIFF-vs-upstream.md` (2026-09-19) names
 > `v18.1.18` as the fork point. This is wrong. Our initial commit
@@ -91,8 +95,8 @@ below for merging without them.
 ```
 Upstream pull plan
   base    dacdef24a3 (upstream 18.3.0)
-  ours    f46cc8d
-  theirs  2b023d1b (upstream 18.4.4)
+  ours    9c7643f91
+  theirs  40e9368ef (upstream 18.8.4)
   ancestry UNRELATED — git merge impossible, entity merge in use
 
 Manifest coherence:

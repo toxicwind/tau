@@ -1,8 +1,8 @@
 # Sovereign Pre-Release Integration Engine
 
 > **Architectural Law**: *"Production logic is integrated DIRECTLY in code. Pre-release staging overrides resolve via clean indirection."*
-> **Engine**: `/home/toxic/sovereign/src/lib/pre_release_integration.ts`
-> **Integration Store**: `/home/toxic/sovereign/integrations/`
+> **Engine**: `/estate/src/lib/pre_release_integration.ts`
+> **Integration Store**: `/estate/integrations/`
 ---
 
 ## 1. The Anti-Pattern vs. The Pattern
@@ -19,12 +19,12 @@ The core codebase is designed to resolve its implementation from a persistent re
 ```text
 ┌────────────────────────────────────────────────────────┐
 │ Core Code (Unmodified by hotfixes)                     │
-│ Calls: hotfixRegistry.resolve(target, defaultImpl)     │
+│ Calls: preReleaseIntegration.resolve(target, defaultImpl)     │
 └───────────────────────────┬────────────────────────────┘
                             │ Queries
                             ▼
 ┌────────────────────────────────────────────────────────┐
-│ HotfixRegistry (src/lib/hotfix_registry.ts)            │
+│ PreReleaseIntegrationRegistry (estate/src/lib/pre_release_integration.ts)            │
 │ In-memory overrides map + live fs.watch file reloader  │
 └───────────────────────────┬────────────────────────────┘
                             │ Loads on boot & on-change
@@ -55,7 +55,7 @@ export const impl: ServiceDef = {
   id: "tau",
   name: "tau",
   portKey: "PI_AGENT_PORT",
-  run: "exec /home/toxic/sovereign/agent",
+  run: "exec /estate/agent",
   dir: "/home/toxic",
   readyCmd: "sleep 1 && echo ready",
   group: "agents",
@@ -78,18 +78,18 @@ export const impl: ServiceDef = {
 Core modules ask the registry rather than hardcoding mutable state:
 
 ```typescript
-// sovereign/src/services/registry.ts
-import { hotfixRegistry } from "../lib/hotfix_registry.ts";
+// estate/src/lib/pre_release_integration.ts
+import { preReleaseIntegration } from "../lib/pre_release_integration.ts";
 
 export const ALL_SERVICES: ServiceDef[] = [
   ...
   // Core never gets monkey patched; it resolves via the extension point:
-  hotfixRegistry.resolve<ServiceDef>("services.tau", defaultTauServiceDef),
+  preReleaseIntegration.resolve<ServiceDef>("services.tau", defaultTauServiceDef),
   ...
 ];
 ```
 
-If a patch exists in `patches/`, `hotfixRegistry.resolve()` returns the live patch. If the patch is disabled or absent, it falls back to `defaultTauServiceDef` with zero runtime overhead.
+If a patch exists in `patches/`, `preReleaseIntegration.resolve()` returns the live patch. If the patch is disabled or absent, it falls back to `defaultTauServiceDef` with zero runtime overhead.
 
 ---
 
@@ -120,7 +120,7 @@ $ hotfix status
 
 ## 5. New Deliverable Hotfix — `registry.emergent_sync`
 
-**File**: `/home/toxic/sovereign/patches/emergent_registry_sync.ts`
+**File**: `/estate/patches/emergent_registry_sync.ts`
 **Target**: `registry.emergent_sync`
 **Purpose**: Connects Hindsight health (`port 25117`) with Pitchfork daemon lifecycle (`herd`, `hindsight`) through the registry resolution mechanism, only activating when both services report healthy.
 
@@ -134,7 +134,7 @@ export const impl = {
   guardrails: [
     "health_check: hindsight_port_25117_responds",
     "health_check: pitchfork_herd_healthy",
-    "registry_resolution: uses_hotfixRegistry_resolve_not_monkey_patch",
+    "registry_resolution: uses_preReleaseIntegration_resolve_not_monkey_patch",
     "persistent_store: file_written_to_patches_directory_for_restart_survival",
     "live_reload: fs_watch_with_unref_on_patch_directory_for_dsu",
   ],
