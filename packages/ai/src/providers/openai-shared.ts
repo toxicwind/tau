@@ -610,6 +610,7 @@ export interface ResolveOpenAIOutputTokenInput {
 	alwaysSendMaxTokens: boolean;
 	/** Hard provider clamp; defaults to the provider output clamp. */
 	providerOutputClamp?: number;
+}
 
 /**
  * Resolve the single output-token wire parameter shared by Chat Completions

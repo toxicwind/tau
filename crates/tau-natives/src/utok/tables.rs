@@ -380,7 +380,8 @@ mod load_tests {
 		] {
 			match bpe_for(family) {
 				Err(BpeLoadError::CountOnlyFamily { variant }) => assert_eq!(variant, family),
-				other => panic!("expected CountOnlyFamily for {family:?}, got {other:?}"),
+				Ok(_) => panic!("expected CountOnlyFamily for {family:?}, got Ok"),
+				Err(e) => panic!("expected CountOnlyFamily for {family:?}, got Err: {e}"),
 			}
 		}
 	}
@@ -404,22 +405,23 @@ mod load_tests {
 	/// is a UTOK1 header with a truncated body.
 	#[test]
 	fn parse_rejects_bad_envelopes() {
-		let not_utok = zstd::encode_all(b"XXXXXXXXXX".as_slice()).unwrap();
+		let not_utok = zstd::encode_all(b"XXXXXXXXXX".as_slice(), 0).unwrap();
 		match RankTable::parse(&not_utok, "not-utok") {
 			Err(BpeLoadError::BadMagic { family, got }) => {
 				assert_eq!(family, "not-utok");
 				assert_eq!(&got, b"XXXXXX");
 			},
-			other => panic!("expected BadMagic, got {other:?}"),
+			Ok(_) => panic!("expected BadMagic, got Ok"),
+			Err(e) => panic!("expected BadMagic, got Err: {e}"),
 		}
 
-		let short = zstd::encode_all(b"UTOK".as_slice()).unwrap();
+		let short = zstd::encode_all(b"UTOK".as_slice(), 0).unwrap();
 		assert!(matches!(RankTable::parse(&short, "short"), Err(BpeLoadError::Truncated { .. })));
 
 		let mut body = b"UTOK1\n".to_vec();
 		body.extend_from_slice(&4u32.to_le_bytes());
 		body.extend_from_slice(&[0x08, 0x61, 0x62]); // len 8, then only 2 bytes
-		let truncated = zstd::encode_all(body.as_slice()).unwrap();
+		let truncated = zstd::encode_all(body.as_slice(), 0).unwrap();
 		assert!(matches!(
 			RankTable::parse(&truncated, "truncated"),
 			Err(BpeLoadError::TruncatedPiece { .. })
@@ -428,7 +430,7 @@ mod load_tests {
 		let mut trailing = b"UTOK1\n".to_vec();
 		trailing.extend_from_slice(&0u32.to_le_bytes());
 		trailing.extend_from_slice(b"junk");
-		let with_trailing = zstd::encode_all(trailing.as_slice()).unwrap();
+		let with_trailing = zstd::encode_all(trailing.as_slice(), 0).unwrap();
 		assert!(matches!(
 			RankTable::parse(&with_trailing, "trailing"),
 			Err(BpeLoadError::TrailingBytes { count: 4, .. })

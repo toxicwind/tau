@@ -284,9 +284,11 @@ impl RankTable {
 				got: [magic[0], magic[1], magic[2], magic[3], magic[4], magic[5]],
 			});
 		}
+		let Some(count_bytes) = raw.get(6..10) else {
+			return Err(BpeLoadError::Truncated { family, len: raw.len() });
+		};
+		let n = u32::from_le_bytes([count_bytes[0], count_bytes[1], count_bytes[2], count_bytes[3]]) as usize;
 		let mut p = &raw[10..];
-		let n = u32::from_le_bytes([p[0], p[1], p[2], p[3]]) as usize;
-		p = &p[4..];
 		let mut pairs: Box<[u32; 65536]> =
 			vec![u32::MAX; 65536].into_boxed_slice().try_into().expect("64 KiB box fits");
 		let mut short = HashMap::with_capacity_and_hasher(n, Fx::default());
