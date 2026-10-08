@@ -45,7 +45,8 @@
  * frame to LOCAL_TELEMETRY_SOCKET. A missing socket is normal and ignored.
  */
 
-import { existsSync, open, readFileSync, statSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import { open } from "node:fs/promises";
 
 /** Where the estate telemetry collector listens. */
 export const TELEMETRY_SOCKET = process.env.LOCAL_TELEMETRY_SOCKET ?? "/tmp/local_telemetry_ipc.sock";
@@ -377,14 +378,14 @@ export interface TelemetryEvent {
  * cases correct. Either way a stale or absent endpoint is normal and must
  * never fail a merge.
  */
-export function emitTelemetry(event: TelemetryEvent): void {
+export async function emitTelemetry(event: TelemetryEvent): Promise<void> {
 	try {
 		if (!existsSync(TELEMETRY_SOCKET)) return;
 		const payload = Buffer.from(JSON.stringify(event), "utf8");
 		const frame = Buffer.allocUnsafe(4 + payload.length);
 		frame.writeUInt32BE(payload.length, 0);
 		payload.copy(frame, 4);
-		appendSync(statSync(TELEMETRY_SOCKET).isSocket() ? 0 : 0, frame);
+		await deliver(frame);
 	} catch {
 		// Telemetry is best effort by definition.
 	}
@@ -412,11 +413,6 @@ async function deliver(frame: Buffer): Promise<void> {
 	} finally {
 		await fh.close();
 	}
-}
-
-/** Synchronous best-effort emit; `deliver` is the awaited variant. */
-async function appendSync(_unused: number, frame: Buffer): Promise<void> {
-	await deliver(frame);
 }
 
 // ------------------------------------------------------------- the resolver --

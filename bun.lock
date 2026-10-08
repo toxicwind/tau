@@ -78,6 +78,7 @@
     },
     "packages/coding-agent": {
       "name": "tau",
+      "version": "18.8.4+sovereign.tau.4132f2eb",
       "bin": {
         "tau": "src/cli.ts",
       },
