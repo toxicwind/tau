@@ -262,11 +262,17 @@ fn create_windows_napi_tokio_runtime() -> Option<tokio::runtime::Runtime> {
 /// `<sym> is not a function` crash from a locked-file update (the canonical
 /// Windows `bun install -g` failure mode) into a clear load-time error.
 ///
-/// Bump policy: `__piNativesV{major}_{minor}_{patch}` — non-alphanumerics in
+/// Bump policy: `__tauNativesV{major}_{minor}_{patch}` — non-alphanumerics in
 /// the version string are mapped to `_` to keep it a valid JS identifier.
 /// MUST stay in sync with `VERSION_SENTINEL_EXPORT` in
 /// `packages/natives/native/index.js` (which derives the name from
 /// `package.json#version`).
+///
+/// Addons built before the pi → tau rebrand export the same release as
+/// `__piNativesV{major}_{minor}_{patch}`. The rebrand renamed the symbol
+/// without bumping the version, so `VERSION_SENTINEL_PREFIXES` in
+/// `packages/natives/native/version-sentinel.js` still recognizes the legacy
+/// prefix and the loader accepts it at the same version.
 #[napi(js_name = "__tauNativesV18_3_0")]
 pub const fn tau_natives_version_sentinel() {}
 

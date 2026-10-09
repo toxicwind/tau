@@ -858,8 +858,8 @@ async function readExtensionModuleManifest(
 	const content = await readFile(packageJsonPath);
 	if (!content) return null;
 
-	const pkg = tryParseJson<{ tau?: ExtensionModuleManifest; pi?: ExtensionModuleManifest }>(content);
-	const manifest = pkg?.tau ?? pkg?.pi;
+	const pkg = tryParseJson<{ tau?: ExtensionModuleManifest; omp?: ExtensionModuleManifest; pi?: ExtensionModuleManifest }>(content);
+	const manifest = pkg?.tau ?? pkg?.omp ?? pkg?.pi;
 	if (manifest && typeof manifest === "object") {
 		return manifest;
 	}

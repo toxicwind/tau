@@ -15,6 +15,7 @@
  * Run after `napi build`: `bun packages/natives/scripts/gen-enums.ts`
  */
 import * as path from "node:path";
+import { VERSION_SENTINEL_PREFIXES } from "../native/version-sentinel.js";
 
 const nativeDir = path.resolve(import.meta.dir, "../native");
 const dtsPath = path.join(nativeDir, "index.d.ts");
@@ -39,7 +40,7 @@ const FUNCTION_RE = /^export declare function (\w+)/gm;
  * raw passthrough: a stub there would report presence for an addon that has it
  * not, defeating the loader's own staleness diagnosis.
  */
-const VERSION_SENTINEL_NAME_RE = /^__piNativesV/;
+const VERSION_SENTINEL_NAME_RE = new RegExp(`^(?:${VERSION_SENTINEL_PREFIXES.join("|")})`);
 
 interface EnumExport {
 	name: string;

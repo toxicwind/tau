@@ -6,7 +6,12 @@ import * as path from "node:path";
 import * as zlib from "node:zlib";
 import packageJson from "../package.json" with { type: "json" };
 import { embeddedAddon } from "./embedded-addon.js";
-import { containsVersionSentinel, versionSentinelFor } from "./version-sentinel.js";
+import {
+	containsVersionSentinel,
+	isVersionSentinelName,
+	versionSentinelFor,
+	versionSentinelVersion,
+} from "./version-sentinel.js";
 
 /**
  * Native addon loader for `@tau/tau-natives`.
@@ -657,16 +662,33 @@ function maybeStageNodeModulesAddon(ctx, errors) {
 }
 
 
-/** Any release sentinel a `.node` may carry (`__piNativesV{major}_{minor}_{patch}`). */
-const VERSION_SENTINEL_ANY_RE = /^__piNativesV[A-Za-z0-9_]+$/;
-
 /**
- * Release version encoded in a sentinel export name.
+ * Release version encoded in a sentinel export name, or `null` when the
+ * name is not a sentinel.
  * @param {string} sentinel
- * @returns {string}
+ * @returns {string | null}
  */
 function sentinelVersion(sentinel) {
-	return sentinel.slice("__piNativesV".length).replace(/_/g, ".");
+	return versionSentinelVersion(sentinel);
+}
+
+/**
+ * Whether `sentinel` satisfies `expected`: the exact expected name, or a
+ * recognized legacy prefix encoding the SAME version.
+ *
+ * The rebrand renamed the sentinel export without bumping the release, so
+ * every `.node` published before it carries `__piNativesV<version>` for the
+ * version this tree already expects. Treating that as a mismatch would fail
+ * every already-installed addon at load. A legacy prefix at a DIFFERENT
+ * version is a real drift and stays unmatched.
+ * @param {string} sentinel
+ * @param {string} expected
+ * @returns {boolean}
+ */
+export function sentinelMatchesExpected(sentinel, expected) {
+	if (sentinel === expected) return true;
+	const version = sentinelVersion(sentinel);
+	return version !== null && version === sentinelVersion(expected);
 }
 
 /**
@@ -677,7 +699,7 @@ function sentinelVersion(sentinel) {
  */
 function isCompatiblePreSentinelNativeAddon(bindings, diskHasExpectedSentinel) {
 	if (diskHasExpectedSentinel) return false;
-	if (Object.keys(bindings).some(key => /^__piNativesV[A-Za-z0-9_]+$/.test(key))) return false;
+	if (Object.keys(bindings).some(key => isVersionSentinelName(key))) return false;
 	return (
 		typeof bindings.countTokens === "function" &&
 		typeof bindings.executeShell === "function" &&
@@ -700,6 +722,9 @@ export function validateLoadedBindings(ctx, bindings, candidate) {
 	// reports the addon, both releases, and the rebuild command.
 	if (ctx.isWorkspaceLoad) return;
 	if (typeof bindings[ctx.versionSentinelExport] === "function") return;
+	// A pre-rebrand addon for this exact release exports the sentinel under the
+	// legacy prefix. That is the same release, not drift, so it validates.
+	if (Object.keys(bindings).some(key => sentinelMatchesExpected(key, ctx.versionSentinelExport))) return;
 
 	// The expected sentinel is missing. Distinguish two failure modes by the
 	// sentinel the bindings DO carry:
@@ -711,7 +736,7 @@ export function validateLoadedBindings(ctx, bindings, candidate) {
 	//     exports, which carry the PRIOR sentinel — disk is already consistent,
 	//     so reinstall is a no-op and only restarting the process re-syncs.
 	const residentSentinel = Object.keys(bindings).find(
-		key => key !== ctx.versionSentinelExport && VERSION_SENTINEL_ANY_RE.test(key),
+		key => key !== ctx.versionSentinelExport && isVersionSentinelName(key),
 	);
 	// A prior sentinel alone cannot distinguish a resident old module from an
 	// actually stale file: `require` returns the same exports in both cases.
@@ -757,14 +782,16 @@ let loadedAddon = null;
  * @param {string} candidate
  * @param {{ packageVersion: string; versionSentinelExport: string }} ctx
  */
-function describeLoadedAddon(bindings, candidate, ctx) {
-	const sentinel = Object.keys(bindings).find(key => VERSION_SENTINEL_ANY_RE.test(key)) ?? null;
+export function describeLoadedAddon(bindings, candidate, ctx) {
+	const sentinel = Object.keys(bindings).find(key => isVersionSentinelName(key)) ?? null;
 	return {
 		path: candidate,
 		sentinel,
 		expectedSentinel: ctx.versionSentinelExport,
 		packageVersion: ctx.packageVersion,
-		stale: sentinel !== ctx.versionSentinelExport,
+		// A null sentinel means a pre-sentinel addon: it predates version
+		// sentinels entirely, so it cannot be shown to be this release.
+		stale: sentinel === null || !sentinelMatchesExpected(sentinel, ctx.versionSentinelExport),
 	};
 }
 
@@ -928,12 +955,15 @@ export function initLoaderContext(overrides = {}) {
 	});
 
 	// Version sentinel emitted by the Rust addon under a `js_name` that encodes
-	// the package version (`__piNativesV{major}_{minor}_{patch}`).
+	// the package version (`__tauNativesV{major}_{minor}_{patch}`).
 	// `scripts/release.ts` bumps the name in `crates/tau-natives/src/lib.rs` in
 	// lock-step with the version, so a `.node` from a different release
 	// physically cannot expose the symbol this loader is looking for. That
 	// turns the silent `<sym> is not a function` crash from a Windows
-	// locked-file update into an actionable load-time error.
+	// locked-file update into an actionable load-time error. Addons built
+	// before the rebrand still export `__piNativesV{major}_{minor}_{patch}`;
+	// `version-sentinel.js` owns both prefixes and `sentinelMatchesExpected`
+	// treats a legacy-prefix sentinel at the same version as current.
 	const versionSentinelExport = versionSentinelFor(packageVersion);
 
 	return {

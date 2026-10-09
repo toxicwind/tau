@@ -799,10 +799,13 @@ const CANONICAL_PI_SCOPE = "@tau";
 // of internal tau-* packages. `@tau` is intentionally included so direct
 // canonical imports still pass through the same host-bundled package resolution
 // path instead of pulling a duplicate copy from plugin node_modules.
-const PI_SCOPE_ALIASES = ["tau", "mariozechner", "earendil-works"] as const;
+const PI_SCOPE_ALIASES = ["tau", "oh-my-pi", "mariozechner", "earendil-works"] as const;
 
-// Internal tau-* package basenames bundled inside the tau binary.
-const PI_PACKAGE_NAMES = ["tau-agent-core", "tau-ai", "tau-coding-agent", "tau-natives", "tau-tui", "tau-utils"] as const;
+// Internal tau-* package basenames bundled inside the tau binary, plus legacy pi-* aliases.
+const PI_PACKAGE_NAMES = [
+	"tau-agent-core", "tau-ai", "tau-coding-agent", "tau-natives", "tau-tui", "tau-utils",
+	"pi-agent-core", "pi-ai", "pi-coding-agent", "pi-natives", "pi-tui", "pi-utils",
+] as const;
 
 const PI_SCOPE_ALTERNATION = PI_SCOPE_ALIASES.join("|");
 const PI_PACKAGE_ALTERNATION = PI_PACKAGE_NAMES.join("|");
@@ -814,6 +817,18 @@ const PI_PACKAGE_ALTERNATION = PI_PACKAGE_NAMES.join("|");
 // bundled copy. Entries ending in `/` rewrite the whole subtree; add new
 // `pkg/from -> pkg/to` pairs whenever an upstream-only subpath breaks resolution.
 const PI_SUBPATH_REMAPS: ReadonlyMap<string, string> = new Map<string, string>([
+	["pi-coding-agent", "tau-coding-agent"],
+	["pi-coding-agent/", "tau-coding-agent/"],
+	["pi-tui", "tau-tui"],
+	["pi-tui/", "tau-tui/"],
+	["pi-ai", "tau-ai"],
+	["pi-ai/", "tau-ai/"],
+	["pi-agent-core", "tau-agent-core"],
+	["pi-agent-core/", "tau-agent-core/"],
+	["pi-natives", "tau-natives"],
+	["pi-natives/", "tau-natives/"],
+	["pi-utils", "tau-utils"],
+	["pi-utils/", "tau-utils/"],
 	["tau-ai/utils/oauth", "tau-ai/oauth"],
 	["tau-ai/utils/oauth/", "tau-ai/oauth/"],
 	["tau-ai/compat", "tau-ai"],

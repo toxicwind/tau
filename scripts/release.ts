@@ -9,6 +9,7 @@
  * Example: bun scripts/release.ts minor
  */
 import { $, Glob } from "bun";
+import { VERSION_SENTINEL_PREFIX } from "../packages/natives/native/version-sentinel.js";
 import { compareVersions } from "../packages/utils/src/version.ts";
 import { runChangelogFixer } from "./fix-changelogs";
 import { generateNixBunDeps, resolveNixBunDepsGenerator } from "./gen-nix-bun";
@@ -337,24 +338,26 @@ async function cmdRelease(versionOrBump: string): Promise<void> {
 	// a previous release physically cannot expose the symbol the new `index.js`
 	// expects. The JS loader derives `VERSION_SENTINEL_EXPORT` from `package.json`
 	// at runtime, so the only thing that has to move on the Rust side is the
-	// `js_name = "__piNativesV…"` literal. `gen-enums.ts` regenerates the matching
+	// `js_name = "__tauNativesV…"` literal. `gen-enums.ts` regenerates the matching
 	// entries in `packages/natives/native/{index.d.ts,index.js}` on the next napi
 	// build, but bump them here too so the committed surface tracks the version
 	// without waiting for a local rebuild on the release host.
 	console.log(`Bumping tau-natives version sentinel to v${version}…`);
 	const sentinelJsId = version.replace(/[^A-Za-z0-9]/g, "_");
-	const sentinelName = `__piNativesV${sentinelJsId}`;
+	const sentinelName = `${VERSION_SENTINEL_PREFIX}${sentinelJsId}`;
 	const sentinelFiles = [
 		"crates/tau-natives/src/lib.rs",
 		"packages/natives/native/index.d.ts",
 		"packages/natives/native/index.js",
 	];
-	await $`sd '__piNativesV[A-Za-z0-9_]+' ${sentinelName} ${sentinelFiles}`;
+	// Only the current prefix is rewritten: the legacy one names already-published
+	// releases and appears in prose that must keep describing them.
+	await $`sd '${VERSION_SENTINEL_PREFIX}[A-Za-z0-9_]+' ${sentinelName} ${sentinelFiles}`;
 	const libRs = await Bun.file("crates/tau-natives/src/lib.rs").text();
 	if (!libRs.includes(`js_name = "${sentinelName}"`)) {
 		console.error(
 			`Error: tau-natives version sentinel did not move to ${sentinelName} in crates/tau-natives/src/lib.rs. ` +
-				"The `__piNativesV…` literal may have been removed or renamed; restore it before releasing.",
+				`The \`${VERSION_SENTINEL_PREFIX}…\` literal may have been removed or renamed; restore it before releasing.`,
 		);
 		process.exit(1);
 	}

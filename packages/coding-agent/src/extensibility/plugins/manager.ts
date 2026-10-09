@@ -610,7 +610,7 @@ export class PluginManager {
 			}
 
 			const pkgPath = path.join(getPluginsNodeModules(), actualName, "package.json");
-			let pkg: { name: string; version: string; tau?: PluginManifest; pi?: PluginManifest };
+			let pkg: { name: string; version: string; tau?: PluginManifest; omp?: PluginManifest; pi?: PluginManifest };
 			try {
 				pkg = await Bun.file(pkgPath).json();
 			} catch (err) {
@@ -619,7 +619,7 @@ export class PluginManager {
 				}
 				throw err;
 			}
-			const manifest: PluginManifest = pkg.tau || pkg.pi || { version: pkg.version };
+			const manifest: PluginManifest = pkg.tau || pkg.omp || pkg.pi || { version: pkg.version };
 			manifest.version = pkg.version;
 
 			// Resolve enabled features
@@ -815,7 +815,7 @@ export class PluginManager {
 		const absolutePath = path.resolve(this.#cwd, localPath);
 
 		const pkgFilePath = path.join(absolutePath, "package.json");
-		let pkg: { name?: string; version: string; tau?: PluginManifest; pi?: PluginManifest };
+		let pkg: { name?: string; version: string; tau?: PluginManifest; omp?: PluginManifest; pi?: PluginManifest };
 		try {
 			pkg = await Bun.file(pkgFilePath).json();
 		} catch (err) {
@@ -842,7 +842,7 @@ export class PluginManager {
 
 		await fs.promises.symlink(absolutePath, linkPath);
 
-		const manifest: PluginManifest = pkg.tau || pkg.pi || { version: pkg.version };
+		const manifest: PluginManifest = pkg.tau || pkg.omp || pkg.pi || { version: pkg.version };
 		manifest.version = pkg.version;
 
 		// Add to runtime config

@@ -88,11 +88,14 @@ import {
 	mkdtempSync,
 	readFileSync,
 	readdirSync,
+	renameSync,
 	rmSync,
 	writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, relative } from "node:path";
+import { hasMarkers, resolveFile, type Strategy } from "./ai-conflict-resolver.ts";
+import { derivePathMap, parseRenameRecords, realignPath } from "./upstream-pull-paths.ts";
 
 const REPO_ROOT = join(import.meta.dir, "..");
 const SYNC_RECORD = join(REPO_ROOT, ".upstream-sync.json");
@@ -160,6 +163,13 @@ interface SyncRecord {
 	recordedAt: string;
 	/** Extra renames to realign, ours -> upstream, beyond the derived ones. */
 	renames?: Record<string, string>;
+	/**
+	 * Directory renames to realign, upstream -> ours, derived from the fork
+	 * commit's own rename records. Persisted because the derivation depends on
+	 * `base`, and re-deriving it on a later run would silently pick up renames
+	 * the fork has since reworked.
+	 */
+	pathMap?: Record<string, string>;
 }
 
 /**
@@ -310,6 +320,62 @@ const invert = (m: Record<string, string>): Record<string, string> => {
 	for (const [from, to] of Object.entries(m)) out[to] = from;
 	return out;
 };
+
+/**
+ * Rename whole directories from one vocabulary to the other.
+ *
+ * This has to be directory-level, not file-level. The changed-path list holds
+ * BOTH spellings — ours contributes `crates/tau-natives/...` from the
+ * base->ours diff and theirs contributes `crates/pi-natives/...` from
+ * base->theirs — so moving file by file interleaves the two and lands the
+ * merge with every renamed crate present twice, half-populated in each
+ * spelling. One `rename` per directory has no interleaving to get wrong.
+ *
+ * Content rewriting (`rewriteTree`) is not a substitute: `classify()` looks
+ * each path up on disk in all three trees, and an upstream path with no file
+ * behind it reads as "deleted upstream" rather than "renamed on our side" —
+ * the exact failure this layer exists to prevent.
+ */
+function moveTree(root: string, map: Record<string, string>): number {
+	// Shallowest first: renaming a parent makes its children redundant, and
+	// renaming a child afterwards would look for a path that no longer exists.
+	let moved = 0;
+	for (const [from, to] of Object.entries(map).sort((a, b) => a[0].length - b[0].length)) {
+		const src = at(root, from);
+		const dest = at(root, to);
+		if (!existsSync(src) || existsSync(dest)) continue;
+		mkdirSync(dirname(dest), { recursive: true });
+		renameSync(src, dest);
+		moved++;
+	}
+	// Prune both directions: the destinations of this map, and the sources of
+	// its inverse. The merged tree is written at upstream paths and then moved
+	// to ours, so a shell is left under whichever spelling the map does not
+	// name directly — `crates/pi-edit` when the entry is `crates/pi-edit/src`.
+	pruneEmptyDirs(root, [...Object.keys(map), ...Object.values(map)]);
+	return moved;
+}
+
+/**
+ * Drop directories left empty by a rename, deepest first and never above
+ * `root`.
+ *
+ * `mergeOne` calls `mkdirSync(dirname(out))` for the file it is about to
+ * write, so a target that replay later moves elsewhere leaves its original
+ * directory behind as an empty shell. `crates/pi-edit` and `crates/pi-vcs`
+ * then sit beside their `crates/tau-*` counterparts in the merged tree, where
+ * they read as duplicate crates that the rebrand only half applied.
+ */
+function pruneEmptyDirs(root: string, dirs: string[]): void {
+	for (const dir of [...new Set(dirs)].sort((a, b) => b.length - a.length)) {
+		const stop = root.length + 1; // never walk above the staging root
+		let cursor = at(root, dir);
+		while (cursor.length > stop && existsSync(cursor) && readdirSync(cursor).length === 0) {
+			rmSync(cursor, { recursive: true, force: true });
+			cursor = dirname(cursor);
+		}
+	}
+}
 
 // ----------------------------------------------------------------- the merge --
 
@@ -735,10 +801,15 @@ interface Options {
 	manifestsOnly: boolean;
 	recordBase: boolean;
 	gates: boolean;
+	/**
+	 * `on` runs the whole rule chain including model inference, `policy-only`
+	 * runs just the deterministic gates, `off` leaves markers for a human.
+	 */
+	resolve: "on" | "policy-only" | "off";
 }
 
 function parseArgs(argv: string[]): Options {
-	const o: Options = { apply: false, manifestsOnly: false, recordBase: false, gates: true };
+	const o: Options = { apply: false, manifestsOnly: false, recordBase: false, gates: true, resolve: "on" };
 	for (let i = 0; i < argv.length; i++) {
 		switch (argv[i]) {
 			case "--base": {
@@ -759,6 +830,15 @@ function parseArgs(argv: string[]): Options {
 			case "--no-gates":
 				o.gates = false;
 				break;
+			case "--resolve":
+				o.resolve = "on";
+				break;
+			case "--resolve-policy-only":
+				o.resolve = "policy-only";
+				break;
+			case "--no-resolve":
+				o.resolve = "off";
+				break;
 			case "--quiet":
 				quiet = true;
 				break;
@@ -769,7 +849,7 @@ function parseArgs(argv: string[]): Options {
 	return o;
 }
 
-function main(): number {
+async function main(): Promise<number> {
 	const opts = parseArgs(process.argv.slice(2));
 
 	run("git", ["fetch", UPSTREAM_REMOTE, "--quiet"]);
@@ -795,9 +875,11 @@ function main(): number {
 			baseVersion: upstreamVersionAt(base),
 			theirs,
 			recordedAt: new Date().toISOString(),
+			pathMap: derivePathMap(parseRenameRecords(git(["diff", "--name-status", "-M", base, ours]))),
 		};
 		writeFileSync(SYNC_RECORD, `${JSON.stringify(rec, null, "\t")}\n`);
 		log(`\nrecorded fork point -> ${relative(REPO_ROOT, SYNC_RECORD)}`);
+		log(`  ${Object.keys(rec.pathMap!).length} directory rename(s) pinned alongside it`);
 		return 0;
 	}
 
@@ -841,7 +923,55 @@ function main(): number {
 		] as const) {
 			for (const line of git(["diff", "--name-only", a, b]).split("\n")) if (line) changed.add(line);
 		}
-		const targets = [...changed].filter(p => !p.startsWith("node_modules/")).sort();
+		// ---- layer 0: realign PATHS so the merge can see both sides at all ----
+		//
+		// The fork moved directories (`crates/pi-natives` -> `crates/tau-*`).
+		// Upstream never did, so an upstream target path has no counterpart in
+		// our staging tree and `classify()` scores every one of them
+		// "deleted-upstream" — which drops them. Moving our side back into
+		// upstream's spelling is what makes those files comparable at all.
+		//
+		// Derived from git's own rename records in the fork commit rather than
+		// string substitution: the renames are not a prefix rule (`mnemopi` ->
+		// `mnemotau`, `omptype` -> `tautype`, `pi-vcs` -> `tau-vcs`), and a
+		// wrong prefix rule would silently swallow a whole subtree.
+		// The base->ours diff reads (upstream path, our path), so the derived
+		// map is keyed upstream -> ours. Realign needs the opposite direction —
+		// it moves OUR files onto upstream's spelling so `classify()` can find
+		// them next to `theirs`. Keeping one variable per direction stops the
+		// two call sites from silently trading places.
+		// A recorded map wins over a fresh derivation. Re-deriving from the
+		// base->ours diff each run would silently pick up directories this fork
+		// has since reworked, quietly changing which paths a merge compares.
+		const derived = derivePathMap(parseRenameRecords(git(["diff", "--name-status", "-M", base, ours])));
+		const upstreamToOurs = recorded?.pathMap ?? derived;
+		if (recorded?.pathMap) {
+			const drift = Object.keys(derived).filter(k => derived[k] !== recorded.pathMap![k]).length;
+			log(
+				`  ${Object.keys(upstreamToOurs).length} directory rename(s) from ${relative(REPO_ROOT, SYNC_RECORD)}` +
+					(drift ? ` (${drift} differ from a fresh derivation)` : ""),
+			);
+		}
+		const oursToUpstream = invert(upstreamToOurs);
+		heading("Path realign (ours -> upstream vocabulary)");
+		if (Object.keys(oursToUpstream).length === 0) {
+			log("  no directory renames detected — merging as-is");
+		} else {
+			for (const [oursDir, theirsDir] of Object.entries(oursToUpstream)) log(`  ${oursDir}  ->  ${theirsDir}`);
+			const moved = moveTree(at(stage, "ours"), oursToUpstream);
+			log(`  renamed ${moved} of our director(ies) into upstream vocabulary`);
+		}
+
+		// `changed` mixes two vocabularies: the base->ours diff speaks ours,
+		// the base->theirs diff speaks upstream's. Once our staging tree is in
+		// upstream's spelling, ours-spelled entries would name files that no
+		// longer exist there, so both sides are folded onto one vocabulary here.
+		// Merging them separately is what left `crates/tau-edit` and a stray
+		// `crates/pi-edit` in the merged tree — the same file, two homes.
+		const targets = [...changed]
+			.filter(p => !p.startsWith("node_modules/"))
+			.map(p => realignPath(p, oursToUpstream))
+			.sort();
 		log(`\n  ${targets.length} path(s) differ from the fork point`);
 
 		// ---- layer 1: realign our renames so the merge sees one vocabulary ----
@@ -911,7 +1041,19 @@ function main(): number {
 		}
 
 		// ---- replay: put our vocabulary back before anything is written ----
+		//
+		// Paths first, then contents: the resolver and the tau-natives gate both
+		// key off `crates/tau-natives/`, so content replay only makes sense once
+		// the paths are back in our vocabulary.
 		heading("Replay (restore our names)");
+		const replayedPaths = moveTree(outDir, upstreamToOurs);
+		log(replayedPaths ? `  renamed ${replayedPaths} director(ies) back into our vocabulary` : "  no path replay");
+
+		// Everything downstream of replay addresses the merged tree, which now
+		// lives in OUR spelling. Outcome paths are still upstream-spelled, so
+		// translate once here rather than at each of the six call sites below.
+		for (const o of outcomes) o.rel = realignPath(o.rel, upstreamToOurs);
+
 		const replayed = Object.keys(renames).length
 			? rewriteTree(
 					outDir,
@@ -926,7 +1068,35 @@ function main(): number {
 		heading("Manifest coherence after merge");
 		reportManifests(checkManifestCoherence(outDir));
 
-		const conflicts = outcomes.filter(o => o.kind === "conflict");
+		// weave-driver's markers are raw at this point. Run the resolver over the
+		// REPLAYED tree — our vocabulary is back by now, which is what the
+		// tau-natives gate and the package-vocabulary rule key off.
+		let conflicts = outcomes.filter(o => o.kind === "conflict");
+		if (opts.resolve !== "off" && conflicts.length) {
+			heading("AI conflict resolution");
+			let cleared = 0;
+			for (const c of conflicts) {
+				const abs = at(outDir, c.rel);
+				if (!existsSync(abs)) continue;
+				const r = await resolveFile(c.rel, abs, { model: opts.resolve === "on" });
+				const breakdown = (Object.keys(r.byStrategy) as Strategy[])
+					.filter(k => r.byStrategy[k] > 0)
+					.map(k => `${r.byStrategy[k]} ${k}`)
+					.join(", ");
+				if (r.remaining > 0) {
+					log(`  \x1b[31mUNRESOLVED\x1b[0m ${c.rel}\n      ${r.remaining} marker(s) left — needs a human`);
+					continue;
+				}
+				cleared++;
+				log(`  \x1b[32mresolved\x1b[0m ${c.rel}\n      ${r.resolved} hunk(s): ${breakdown}`);
+			}
+			conflicts = conflicts.filter(c => {
+				const abs = at(outDir, c.rel);
+				return !existsSync(abs) || hasMarkers(readFileSync(abs, "utf8"));
+			});
+			log(`  cleared ${cleared} of ${cleared + conflicts.length}`);
+		}
+
 		if (conflicts.length) {
 			code = 1;
 			heading(`Conflicts needing a human (${conflicts.length})`);
@@ -966,4 +1136,4 @@ function main(): number {
 	return code;
 }
 
-process.exit(main());
+process.exit(await main());

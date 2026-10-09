@@ -188,6 +188,7 @@ class ConcreteExtensionAPI implements ExtensionAPI, IExtensionRuntime {
 		sourceId: string;
 	}> = [];
 
+	public readonly tau: typeof PiCodingAgent;
 	constructor(
 		public readonly pi: typeof PiCodingAgent,
 		private readonly extension: Extension,
@@ -205,6 +206,7 @@ class ConcreteExtensionAPI implements ExtensionAPI, IExtensionRuntime {
 			if (typeof descriptor?.value !== "function") continue;
 			Object.defineProperty(this, name, { value: descriptor.value.bind(this), writable: true, configurable: true });
 		}
+		this.tau = this.pi;
 	}
 
 	on<F extends HandlerFn>(event: string, handler: F): void {

@@ -159,7 +159,7 @@ async function collectPluginsAtRoot(
 			continue;
 		}
 		const pluginPkgPath = path.join(nodeModulesPath, name, "package.json");
-		let pluginPkg: { version: string; tau?: PluginManifest; pi?: PluginManifest };
+		let pluginPkg: { version: string; tau?: PluginManifest; omp?: PluginManifest; pi?: PluginManifest };
 		try {
 			pluginPkg = await Bun.file(pluginPkgPath).json();
 		} catch (err) {
@@ -176,7 +176,7 @@ async function collectPluginsAtRoot(
 			throw err;
 		}
 
-		const manifest: PluginManifest | undefined = pluginPkg.tau || pluginPkg.pi;
+		const manifest: PluginManifest | undefined = pluginPkg.tau || pluginPkg.omp || pluginPkg.pi;
 		if (!manifest) {
 			// Not an tau plugin, skip
 			continue;

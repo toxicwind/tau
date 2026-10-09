@@ -4,8 +4,8 @@
  * A long-lived tau session that survives an in-place `bun install -g` upgrade
  * keeps the previous tau-natives NAPI addon resident in the process. A tab
  * worker spawned afterwards runs the freshly-installed JS loader, which expects
- * the new sentinel (e.g. `__piNativesV16_3_11`), but `require` returns the
- * resident old exports carrying the PRIOR sentinel (`__piNativesV16_3_10`).
+ * the new sentinel (e.g. `__tauNativesV16_3_11`), but `require` returns the
+ * resident old exports carrying the PRIOR sentinel (`__tauNativesV16_3_10`).
  *
  * The contract this test pins down: `validateLoadedBindings` distinguishes a
  * process-stale mix (disk consistent — restart to re-sync) from a genuinely
@@ -36,7 +36,7 @@ function ctxFor(version: string) {
 	return {
 		isWorkspaceLoad: false,
 		packageVersion: version,
-		versionSentinelExport: `__piNativesV${version.replace(/[^A-Za-z0-9]/g, "_")}`,
+		versionSentinelExport: `__tauNativesV${version.replace(/[^A-Za-z0-9]/g, "_")}`,
 	};
 }
 
@@ -44,14 +44,14 @@ describe("issue 4812: tau-natives sentinel process-stale diagnosis", () => {
 	it("accepts bindings that expose the expected sentinel", () => {
 		const ctx = ctxFor("16.3.11");
 		expect(() =>
-			validateLoadedBindings(ctx, { __piNativesV16_3_11: () => {}, grep: () => {} }, unusedCandidate),
+			validateLoadedBindings(ctx, { __tauNativesV16_3_11: () => {}, grep: () => {} }, unusedCandidate),
 		).not.toThrow();
 	});
 
 	it("reports a mid-session upgrade (restart) only when disk has the expected sentinel", async () => {
 		const ctx = ctxFor("16.3.11");
-		const resident = { __piNativesV16_3_10: () => {}, grep: () => {} };
-		await withCandidate("__piNativesV16_3_11", candidate => {
+		const resident = { __tauNativesV16_3_10: () => {}, grep: () => {} };
+		await withCandidate("__tauNativesV16_3_11", candidate => {
 			expect(() => validateLoadedBindings(ctx, resident, candidate)).toThrow("16.3.10");
 			expect(() => validateLoadedBindings(ctx, resident, candidate)).toThrow("restart tau");
 			expect(() => validateLoadedBindings(ctx, resident, candidate)).toThrow("Disk is already consistent");
@@ -61,8 +61,8 @@ describe("issue 4812: tau-natives sentinel process-stale diagnosis", () => {
 
 	it("reports disk-stale (reinstall) when an old addon exposes a prior sentinel", async () => {
 		const ctx = ctxFor("16.3.11");
-		const stale = { __piNativesV16_3_10: () => {}, grep: () => {} };
-		await withCandidate("__piNativesV16_3_10", candidate => {
+		const stale = { __tauNativesV16_3_10: () => {}, grep: () => {} };
+		await withCandidate("__tauNativesV16_3_10", candidate => {
 			expect(() => validateLoadedBindings(ctx, stale, candidate)).toThrow(
 				"from a different release than this loader",
 			);

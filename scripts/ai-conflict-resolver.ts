@@ -226,7 +226,14 @@ export function renderScopePrompt(rel: string, hunk: Hunk, scope: AstScope): str
  */
 const PROTECTED_TOKENS = ["header_offset", "deepseek", "openai-shared", "openai_shared"] as const;
 
-const NATIVE_DIR = /^crates\/tau-natives\//;
+// The native crate carries two legal spellings: `crates/tau-natives/` in the
+// working tree, and `crates/pi-natives/` inside the upstream-pull staging
+// tree (upstream has not renamed; see scripts/upstream-pull.ts pathRealign).
+// Once path realignment lands, a conflict resolved against a staged
+// `crates/pi-natives/...` path must still be forced to ours — otherwise the
+// tokenizer gate is silently skipped for exactly the files it exists to
+// protect. Match both.
+const NATIVE_DIR = /^crates\/(?:tau|pi)-natives\//;
 
 export function nativePolicy(rel: string, hunk: Hunk): { protected: true; reason: string } | { protected: false } {
 	const hay = [...hunk.ours, ...hunk.theirs].join("\n").toLowerCase();

@@ -1,6 +1,32 @@
 {
 	"base": "dacdef24a37f40b55601d2394372b6898c439e57",
 	"baseVersion": "18.3.0",
-	"theirs": "40e9368ef0458fd9073329cdff4174895f91bc6b",
-	"recordedAt": "2026-10-08T08:12:18.640Z"
+	"theirs": "6c99a355d64fe43e027b047ce97859a566afd760",
+	"recordedAt": "2026-10-09T09:33:00.833Z",
+	"pathMap": {
+		"python/omp-rpc/src": "python/tau-rpc/src",
+		"crates/pi-edit": "crates/tau-edit",
+		"python/omp-rpc": "python/tau-rpc",
+		"crates/pi-vcs": "crates/tau-vcs",
+		".omp": ".tau",
+		"packages/coding-agent/src/mnemopi": "packages/coding-agent/src/mnemotau",
+		"python/omp-rpc/src/omp_rpc": "python/tau-rpc/src/tau_rpc",
+		"crates/pi-edit/grammars": "crates/tau-edit/grammars",
+		"crates/pi-edit/prompts": "crates/tau-edit/prompts",
+		"crates/pi-edit/tests": "crates/tau-edit/tests",
+		"python/omp-rpc/tests": "python/tau-rpc/tests",
+		"crates/pi-builtins": "crates/tau-builtins",
+		"crates/pi-edit/src": "crates/tau-edit/src",
+		"crates/pi-natives": "crates/tau-natives",
+		"crates/pi-vcs/src": "crates/tau-vcs/src",
+		"crates/pi-walker": "crates/tau-walker",
+		"packages/mnemopi": "packages/mnemotau",
+		"packages/omptype": "packages/tautype",
+		"crates/pi-shell": "crates/tau-shell",
+		"crates/pi-voice": "crates/tau-voice",
+		".omp/commands": ".tau/commands",
+		"crates/pi-ast": "crates/tau-ast",
+		"crates/pi-iso": "crates/tau-iso",
+		"python/robomp": "python/robtau"
+	}
 }

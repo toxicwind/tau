@@ -1970,7 +1970,7 @@ function buildParams(
 		maxTokens: options?.maxTokens,
 		maxTokensExplicit: options?.maxTokensExplicit ?? options?.maxTokens !== undefined,
 		modelMaxTokens: model.maxTokens,
-		modelMaxTokensCap: model.compat.maxTokensCap,
+		modelMaxTokensCap: (model.compat as { maxTokensCap?: number })?.maxTokensCap,
 		omitMaxOutputTokens: model.omitMaxOutputTokens ?? false,
 		isOpenRouterHost: compat.isOpenRouterHost,
 		alwaysSendMaxTokens: compat.alwaysSendMaxTokens,

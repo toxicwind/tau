@@ -127,6 +127,19 @@ export function validateLoadedBindings(
 	candidate: string,
 ): void;
 
+/**
+ * Whether `sentinel` satisfies `expected`: the exact expected name, or a
+ * recognized legacy prefix encoding the same version.
+ */
+export function sentinelMatchesExpected(sentinel: string, expected: string): boolean;
+
+/** Describe a loaded addon for the missing-export diagnostic. */
+export function describeLoadedAddon(
+	bindings: Record<string, unknown>,
+	candidate: string,
+	ctx: { packageVersion: string; versionSentinelExport: string },
+): NativeAddonStatus;
+
 /** Identity of the addon `loadNative()` returned, for missing-export diagnostics. */
 export interface NativeAddonStatus {
 	/** Absolute path of the loaded `.node`. */
@@ -157,3 +170,4 @@ export function missingNativeExport(
 export function missingNativeExportMessage(symbolName: string, addon?: NativeAddonStatus | null): string;
 
 export function loadNative(): Record<string, unknown>;
+

@@ -228,9 +228,9 @@ describe("tau-natives version sentinel", () => {
 		// sync we ship a `.node` that the loader will refuse to use. Pinning the
 		// pairing here catches release-script regressions before they reach CI.
 		const libRs = await Bun.file(path.join(import.meta.dir, "../../../crates/tau-natives/src/lib.rs")).text();
-		const sentinelMatch = libRs.match(/js_name = "(__piNativesV[A-Za-z0-9_]+)"/);
-		expect(sentinelMatch, 'Rust sentinel `js_name = "__piNativesV…"` not found in lib.rs').not.toBeNull();
-		const expected = `__piNativesV${packageJson.version.replace(/[^A-Za-z0-9]/g, "_")}`;
+		const sentinelMatch = libRs.match(/js_name = "(__tauNativesV[A-Za-z0-9_]+)"/);
+		expect(sentinelMatch, 'Rust sentinel `js_name = "__tauNativesV…"` not found in lib.rs').not.toBeNull();
+		const expected = `__tauNativesV${packageJson.version.replace(/[^A-Za-z0-9]/g, "_")}`;
 		expect(sentinelMatch?.[1]).toBe(expected);
 	});
 });

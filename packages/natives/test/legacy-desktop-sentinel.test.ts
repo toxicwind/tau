@@ -19,7 +19,7 @@ function ctxFor(version: string) {
 	return {
 		isWorkspaceLoad: false,
 		packageVersion: version,
-		versionSentinelExport: `__piNativesV${version.replace(/[^A-Za-z0-9]/g, "_")}`,
+		versionSentinelExport: `__tauNativesV${version.replace(/[^A-Za-z0-9]/g, "_")}`,
 	};
 }
 
@@ -61,8 +61,8 @@ describe("legacy native addon loading", () => {
 
 	it("keeps resident old addons restart-only", async () => {
 		const ctx = ctxFor("17.2.8");
-		const bindings = { __piNativesV17_2_7: () => {}, ...legacyCoreBindings, DesktopSession: LegacyDesktopSession };
-		await withCandidate("__piNativesV17_2_8", candidate => {
+		const bindings = { __tauNativesV17_2_7: () => {}, ...legacyCoreBindings, DesktopSession: LegacyDesktopSession };
+		await withCandidate("__tauNativesV17_2_8", candidate => {
 			expect(() => validateLoadedBindings(ctx, bindings, candidate)).toThrow("restart tau");
 		});
 	});

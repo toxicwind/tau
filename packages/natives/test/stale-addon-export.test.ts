@@ -16,15 +16,20 @@ import { describe, expect, it } from "bun:test";
 // reflects this tree's build rather than an injected fixture.
 import "../native";
 import type { NativeAddonStatus } from "../native/loader-state.js";
-import { missingNativeExport, missingNativeExportMessage, nativeAddonStatus } from "../native/loader-state.js";
+import {
+	missingNativeExport,
+	missingNativeExportMessage,
+	nativeAddonStatus,
+	sentinelMatchesExpected,
+} from "../native/loader-state.js";
 
 const addonPath = "/w/packages/natives/native/tau_natives.linux-x64-modern.node";
 
 function status(overrides: Partial<NativeAddonStatus> = {}): NativeAddonStatus {
 	return {
 		path: addonPath,
-		sentinel: "__piNativesV18_1_18",
-		expectedSentinel: "__piNativesV18_2_6",
+		sentinel: "__tauNativesV18_1_18",
+		expectedSentinel: "__tauNativesV18_2_6",
 		packageVersion: "18.2.6",
 		stale: true,
 		...overrides,
@@ -40,7 +45,7 @@ describe("native exports missing from a stale addon", () => {
 			addonPath,
 			"18.1.18",
 			"18.2.6",
-			"__piNativesV18_2_6",
+			"__tauNativesV18_2_6",
 			"bun run build:native",
 		]) {
 			expect(() => stub?.()).toThrow(expected);
@@ -54,7 +59,7 @@ describe("native exports missing from a stale addon", () => {
 	});
 
 	it("keeps the absence a plain undefined on a current addon", () => {
-		const current = status({ sentinel: "__piNativesV18_2_6", stale: false });
+		const current = status({ sentinel: "__tauNativesV18_2_6", stale: false });
 		expect(missingNativeExport("macOSSpellCheckerAvailable", current)).toBeUndefined();
 		expect(missingNativeExportMessage("macOSSpellCheckerAvailable", current)).toContain(addonPath);
 	});
@@ -63,9 +68,11 @@ describe("native exports missing from a stale addon", () => {
 		const loaded = nativeAddonStatus();
 		expect(loaded).not.toBeNull();
 		expect(loaded?.path.endsWith(".node")).toBe(true);
-		expect(loaded?.expectedSentinel).toBe(`__piNativesV${loaded?.packageVersion.replace(/[^A-Za-z0-9]/g, "_")}`);
+		expect(loaded?.expectedSentinel).toBe(`__tauNativesV${loaded?.packageVersion.replace(/[^A-Za-z0-9]/g, "_")}`);
 		// Whatever the tree's build state, the flag the stubs branch on must be
-		// the one the sentinels imply.
-		expect(loaded?.stale).toBe(loaded?.sentinel !== loaded?.expectedSentinel);
+		// the one the sentinels imply, legacy prefix at the same release included.
+		expect(loaded?.stale).toBe(
+			loaded?.sentinel === null || !sentinelMatchesExpected(loaded.sentinel, loaded.expectedSentinel),
+		);
 	});
 });
