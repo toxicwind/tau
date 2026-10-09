@@ -30,8 +30,8 @@ const BUNDLED_PACKAGES: readonly BundledPackage[] = [
 		dir: "coding-agent",
 		identifier: "PiCodingAgent",
 		rootShim: "legacy-tau-coding-agent-shim.ts",
-		// Renamed to `tau` in the tau->tau rebrand; the published scope did not move with it.
-		legacyName: "tau",
+		// Renamed from `@tau/tau-coding-agent` to `tau` in package.json; runtime shim looks up `@tau/tau-coding-agent`.
+		legacyName: "@tau/tau-coding-agent",
 	},
 	{ dir: "natives", identifier: "PiNatives", rootShim: null },
 	{ dir: "tui", identifier: "PiTui", rootShim: "legacy-tau-tui-shim.ts" },
