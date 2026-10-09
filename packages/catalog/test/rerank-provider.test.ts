@@ -11,7 +11,7 @@ describe("rerank catalog policy", () => {
 	test("OpenRouter's documented rerank seed resolves onto the rerank runner", async () => {
 		const rules = await compileCompatRules(RULES_DIR);
 		// openrouter's entry (kindApis + seed rows) now comes from
-		// `@ranch/tack` via `src/compat/roost.ts`; tack wins on conflict.
+		// `@ranch/roost` via `src/compat/roost.ts`; roost wins on conflict.
 		const provider = roostProviderEntries()["openrouter"] ?? rules.providers.openrouter;
 		if (!provider?.seed) throw new Error("openrouter has no catalog seed");
 		expect(provider.kindApis?.rerank).toBe("openrouter-rerank");

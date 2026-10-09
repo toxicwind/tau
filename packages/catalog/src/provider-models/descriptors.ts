@@ -1,7 +1,7 @@
 /**
  * Runtime model-manager factories for catalog providers. Everything else a
  * provider entry carries — default model, env keys, discovery wiring, seed
- * rows — comes from `@ranch/tack` for tack-sourced providers
+ * rows — comes from `@ranch/roost` for roost-sourced providers
  * (`src/compat/roost.ts`), from `src/compat/rules/providers/<id>.kdl` for the
  * remaining KDL-catalog providers, and is read from the merged entry
  * (`src/compat/providers.ts`); this table holds only the code half.

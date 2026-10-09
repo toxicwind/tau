@@ -9,9 +9,9 @@ const RULES_DIR = path.join(import.meta.dir, "../src/compat/rules");
 
 async function resolvedSeedModels(providerId: "openai" | "openrouter") {
 	const rules = await compileCompatRules(RULES_DIR);
-	// Catalog entries are KDL-compiled plus tack-sourced: openrouter's entry
-	// (including these seed rows) now comes from `@ranch/tack` via
-	// `src/compat/roost.ts`. Tack wins on id conflict, mirroring
+	// Catalog entries are KDL-compiled plus roost-sourced: openrouter's entry
+	// (including these seed rows) now comes from `@ranch/roost` via
+	// `src/compat/roost.ts`. Roost wins on id conflict, mirroring
 	// `src/compat/providers.ts`.
 	const providers = { ...rules.providers, ...roostProviderEntries() };
 	const seed = providers[providerId]?.seed;

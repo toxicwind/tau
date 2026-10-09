@@ -1,7 +1,7 @@
 {
 	"extends": "../tsconfig.workspace.json",
 	"compilerOptions": {
-		// `@ranch/tack` (and the bridge in src/compat/tack.ts) uses
+		// `@ranch/roost` (and the bridge in src/compat/roost.ts) uses
 		// explicit `.ts` import extensions, the Bun-era convention.
 		"allowImportingTsExtensions": true
 	},
