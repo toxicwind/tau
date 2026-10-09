@@ -28,8 +28,10 @@ to a **machine-wide registry**, so a second `tau` in another window can discover
 this one and read its output through `agent://`.
 
 ```sh
-bun setup      # install workspaces + build the native addon
-bun dev        # run tau from source
+cargo build -p tau-natives --release --features wayland-pipewire
+bun --cwd=packages/natives run gen:native
+bun --cwd=packages/coding-agent run build
+./scripts/tau-pin --version   # verify pinned build
 ```
 
 Full install, config, and architecture: [below](#table-of-contents).
@@ -96,13 +98,13 @@ Full install, config, and architecture: [below](#table-of-contents).
 - **Snapcompact** — bitmap-frame context compression for vision-capable LLMs.
 - **Observability & benchmarks** — `packages/stats` (local usage dashboard),
   `packages/metaharness` (benchmark runners, REST/SSE APIs, live dashboard).
-- **Immutable binary pinning** — `bin/tau-pin` resolves the fork root via
+- **Immutable binary pinning** — `scripts/tau-pin` resolves the fork root via
   `git rev-parse --show-toplevel`, `realpath`-checks containment, and refuses to
   fall through to PATH. Auto-update cannot clobber it.
 - **Port SSOT** — `config/ports.env` is the single source of truth for every
   service port. Zero hardcoded ports in code.
-- **Daemon supervision** — `pitchfork.toml` tracks `tau`, `mesh-hub`,
-  `kimi-code`, `vansrouter`, `kimi-auto-shim`, and `buildsrv`.
+- **Daemon supervision** — `pitchfork.toml` tracks `tau`, `herd`,
+  `kimi-code`, `vansrouter`, `flock`, `nativelink`, and `mbx-cache`.
 - **Upstream sync without merge anxiety** — `scripts/upstream-pull.ts` performs an
   ancestry-free entity merge across unrelated git histories (see
   [UPSTREAM-MERGE.md](docs/UPSTREAM-MERGE.md)).
@@ -140,9 +142,10 @@ graph TD
 ## Quick start
 
 ```sh
-bun setup                 # install workspaces + build @tau/tau-natives
-bun dev                   # run the tau CLI from source
-./bin/tau-pin --version   # pinned launcher — never clobbered by auto-update
+cargo build -p tau-natives --release --features wayland-pipewire
+bun --cwd=packages/natives run gen:native
+bun --cwd=packages/coding-agent run build
+./scripts/tau-pin --version   # pinned launcher — never clobbered by auto-update
 ```
 
 Prefer the upstream binary untouched? `bun install -g @tau/tau-coding-agent` — but
@@ -213,13 +216,13 @@ sticks. The supported path is a cargo build → `gen:native` → rebuild above.
 
 | Service | Port | What it does |
 |---|---|---|
-| `LLAMA_SWAP` | 25100 | local model server |
+| `HERD` | 25100 | local model server (formerly llama-swap) |
 | `KIMI_CODE` | 25126 | Kimi code backend |
 | `VANSROUTER` | 20128 | source-owned OpenAI-compatible router |
-| `FLOCK` | 25193 | Flock gateway |
-| `BUILDSRV` | 25148 | build server / remote task cache |
+| `FLOCK` | 25193 | Flock cloud model gateway |
+| `NATIVELINK` | 25155 / 25157 | high-performance Bazel REAPI build server & remote cache |
+| `MBX_CACHE` | 25148 | mise remote task cache |
 | `QDRANT` | 25133 | vector store (gRPC 25134) |
-
 Every port is defined once in `config/ports.env` and consumed from there —
 nothing hardcodes a port in code. Ports are pulled by services via
 `stack/lib-ports.sh` / `require_port`, and pitchfork daemons carry their port in

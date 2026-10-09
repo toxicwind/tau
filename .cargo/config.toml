@@ -4,3 +4,4 @@ rustflags = ["-C", "link-arg=-fuse-ld=mold", "-C", "target-cpu=native"]
 
 [build]
 jobs = 32
+rustc-wrapper = "sccache"
