@@ -132,7 +132,20 @@ function resolveRoostModule(): { PROVIDER_DEFS: RoostProviderDef[] } {
 	};
 }
 
-const { PROVIDER_DEFS } = resolveRoostModule();
+const roostModule = resolveRoostModule();
+const { PROVIDER_DEFS } = roostModule;
+/**
+ * Auto provider-defs loader, when the resolved roost module provides it.
+ * Absent on the embedded fallback snapshot path (which predates the loader).
+ */
+const loadProviderDefs = (
+  roostModule as {
+    loadProviderDefs?: (
+      staticDefs: readonly RoostProviderDef[],
+      opts?: { requiredIds?: readonly string[] },
+    ) => { defs: RoostProviderDef[]; synthesized: string[] };
+  }
+).loadProviderDefs;
 
 /** Tau-side catalog policy for one roost-sourced provider. */
 interface TauProviderPolicy {
@@ -1897,16 +1910,24 @@ export const ROOST_PROVIDER_IDS: readonly string[] = Object.keys(TAU_PROVIDER_PO
  * comes from `TAU_PROVIDER_POLICY`.
  */
 export function roostProviderEntries(): Record<string, CompiledProvider> {
-	const defs = new Map(PROVIDER_DEFS.map(def => [def.name, def]));
+	// First-class drift killer: the catalog auto-loader synthesizes a
+	// best-effort def for any policy id missing from PROVIDER_DEFS, so a
+	// new provider never silently drops out of the compiled catalog again.
+	// (Workaround, not fail — the loud skip below only survives on the
+	// embedded-snapshot path, which predates the loader.)
+	const defs = new Map<string, RoostProviderDef>();
+	if (loadProviderDefs) {
+		const { defs: resolved } = loadProviderDefs(PROVIDER_DEFS, {
+			requiredIds: ROOST_PROVIDER_IDS,
+		});
+		for (const d of resolved) defs.set(d.name, d);
+	} else {
+		for (const d of PROVIDER_DEFS) defs.set(d.name, d);
+	}
 	const entries: Record<string, CompiledProvider> = {};
 	for (const id of ROOST_PROVIDER_IDS) {
 		const def = defs.get(id);
 		if (!def) {
-			// Fallback, not rollback: skip the drifted provider with a loud
-			// warning instead of killing the entire catalog (or restoring
-			// duplicated KDL authority). Tack is the source of truth — the
-			// provider stays absent until roost defines it or the policy entry
-			// is removed.
 			console.error(
 				`[roost] DRIFT: provider policy for "${id}" has no PROVIDER_DEFS definition — skipping. ` +
 					`Add the definition to ranch/mesh/catalog or remove the entry from TAU_PROVIDER_POLICY.`,
