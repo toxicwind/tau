@@ -77,6 +77,7 @@ providers:
           supportsDeveloperRole: true
           supportsReasoningEffort: true
           maxTokensField: max_completion_tokens
+          allowEmptySignature: true # Anthropic-messages: preserve thinking blocks with signature: "" (e.g. Vercel AI Gateway Seed reasoning)
           openRouterRouting:
             only: [anthropic]
           vercelGatewayRouting:

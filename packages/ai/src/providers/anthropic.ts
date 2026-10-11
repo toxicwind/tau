@@ -4837,6 +4837,14 @@ export function convertAnthropicMessages(
 					if (hasSignedThinking) {
 						if (!block.thinkingSignature || block.thinkingSignature.trim().length === 0) {
 							if (block.thinking.trim().length === 0) continue;
+							if (model.compat.allowEmptySignature) {
+								blocks.push({
+									type: "thinking",
+									thinking: block.thinking.toWellFormed(),
+									signature: "",
+								});
+								continue;
+							}
 							blocks.push({
 								type: "text",
 								text: renderDemotedThinking(model.id, block.thinking),
@@ -4852,7 +4860,7 @@ export function convertAnthropicMessages(
 					}
 					if (block.thinking.trim().length === 0) continue;
 					if (!block.thinkingSignature || block.thinkingSignature.trim().length === 0) {
-						if (model.compat.replayUnsignedThinking) {
+						if (model.compat.replayUnsignedThinking || model.compat.allowEmptySignature) {
 							blocks.push({
 								type: "thinking",
 								thinking: block.thinking.toWellFormed(),

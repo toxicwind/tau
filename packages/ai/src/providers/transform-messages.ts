@@ -831,6 +831,7 @@ export function transformMessages<TApi extends Api>(
 						if (
 							isSameModel &&
 							isSigningAnthropicTarget &&
+							!model.compat.allowEmptySignature &&
 							(!sanitized.thinkingSignature || sanitized.thinkingSignature.trim() === "")
 						) {
 							return [];

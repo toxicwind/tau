@@ -877,6 +877,7 @@ function resolveAnthropicPolicy(
 		requiresThinkingEnabled,
 		replayUnsignedThinking:
 			!signingEndpoint && (compatReasoning(spec, axes) || modelMatchesHost(spec, "deepseekFamily")),
+		allowEmptySignature: false,
 		escapeBuiltinToolNames: false,
 		injectClaudeCodeInstruction: true,
 		stripImageInput: false,

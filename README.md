@@ -62,7 +62,8 @@ Full install, config, and architecture: [below](#table-of-contents).
 - **73 models across 73 providers** — `packages/catalog` is the provider census;
   `packages/ai` carries **69 provider wire implementations**. Role-based routing:
   `smol`, `slow`, `plan`, `vision`, `task`, `advisor`, `tiny`. CLI flags `--smol`,
-  `--slow`, `--plan`.
+  `--slow`, `--plan`. Granular wire compat policies (`compat.allowEmptySignature`,
+  `compat.replayUnsignedThinking`, etc.) ensure seamless replay across multi-provider gateways.
 - **In-process shell, no fork/exec** — `crates/tau-builtins` provides 59 shell
   builtins (`grep`, `sed`, `cat`, `find`, `fd`, `rg`, `head`, `tail`, `tee`, `cut`,
   `wc`, `xargs`, `date`, `sort`, `uniq`, …) plus 8 process-control builtins
@@ -89,6 +90,7 @@ Full install, config, and architecture: [below](#table-of-contents).
   `computer`, `web_search`, `github`, `tts`, `memory_edit`, `checkpoint`, `rewind`,
   `ask`, `learn`, `eval`, `ast-grep`, `ast-edit`, `security_scan`, `todo`, and
   more.
+- **First-class Wayland / Hyprland desktop automation** — native IPC socket integration (`.socket.sock`), multi-monitor client resolution, window activation via `hl.dsp.window.focusaddr`, and high-resolution `grim` region capture for CachyOS and Linux.
 - **Live session collaboration** — `packages/collab-web` exposes `/collab` with a
   link and QR code; join via `tau join` or a browser, read-write or view-only.
 - **Browser relay** — `packages/browser-relay` lets the browser tool drive your
@@ -223,6 +225,8 @@ sticks. The supported path is a cargo build → `gen:native` → rebuild above.
 | `NATIVELINK` | 25155 / 25157 | high-performance Bazel REAPI build server & remote cache |
 | `MBX_CACHE` | 25148 | mise remote task cache |
 | `QDRANT` | 25133 | vector store (gRPC 25134) |
+| `CUTTINGGATE` | 25200 | guard plane for herd (:25100) & flock (:25193); circuit breaker & quarantine |
+| `GATEHOUSE` | 25127 | MCP federation proxy & gateway |
 Every port is defined once in `config/ports.env` and consumed from there —
 nothing hardcodes a port in code. Ports are pulled by services via
 `stack/lib-ports.sh` / `require_port`, and pitchfork daemons carry their port in

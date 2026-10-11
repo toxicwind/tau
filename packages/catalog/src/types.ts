@@ -615,6 +615,11 @@ export interface AnthropicCompat {
 	 */
 	replayUnsignedThinking?: boolean;
 	/**
+	 * Preserve thinking blocks with empty signatures (`signature: ""`) across replay
+	 * cycles instead of dropping them or demoting them to plain text.
+	 */
+	allowEmptySignature?: boolean;
+	/**
 	 * Whether the endpoint requires `thinking.type: "enabled"` whenever the
 	 * model reasons. Use for models that reject omitted or disabled thinking.
 	 */
