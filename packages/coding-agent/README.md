@@ -33,3 +33,11 @@ The agent supports three mutually-exclusive memory backends, selected via the `m
    - `HINDSIGHT_BANK_MISSION`, `HINDSIGHT_DEBUG`
 
 Switching backends mid-session immediately replaces the live backend, memory tools, listeners, and system-prompt context. Existing users with `memories.enabled = true|false` are migrated to `memory.backend = "local"|"off"` exactly once on first launch; afterward, `memory.backend` is the sole runtime selector.
+
+## Symlink-Aware Context Consolidation & Deduplication
+
+Tau natively consolidates standalone context files (`AGENTS.md`, `CLAUDE.md`, `SYSTEM.md`) across symlink hierarchies before injecting them into the system prompt:
+
+1. **Canonical Path Deduplication**: If multiple entries resolve to the same physical file on disk (via direct, relative, or transitive symlinks), only the single most authoritative file (closest to cwd, lower depth) is retained.
+2. **Fast-Path Content Identity Consolidation**: Files with byte-identical or trimmed-identical content are consolidated prior to paragraph subsequence checks or similarity indexing, preventing redundant token consumption and CPU overhead.
+3. **Symlink-Aware Upward Traversal**: Core discovery helpers (`walkUp`, `loadStandaloneContextFiles`) detect and dereference symlinked files and directory pointers (e.g. symlinked `.git` or workspace roots) seamlessly.

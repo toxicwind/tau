@@ -2,6 +2,7 @@
  * System prompt construction and project context loading
  */
 
+import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import type { AgentTool } from "@tau/tau-agent-core";
@@ -247,17 +248,26 @@ export interface LoadContextFilesOptions {
 	disabledExtensions?: string[];
 }
 
+function safeCanonicalPath(filePath: string): string {
+	try {
+		return fs.realpathSync.native(filePath);
+	} catch {
+		return path.resolve(filePath);
+	}
+}
+
 /**
- * Deduplicate context files by paragraph containment.
+ * Deduplicate context files by paragraph containment and canonical symlink consolidation.
  *
  * Files are sorted by depth descending (farther from cwd first) so that a
  * file is omitted only when a more-authoritative (closer-to-cwd) file
- * contains its entire normalized paragraph sequence as a contiguous run.
- * This makes the function self-contained — it does not rely on callers
- * pre-sorting the array, which matters because some callers concatenate
- * independently sorted workspace roots where array position does not reflect
- * authority. Files whose paragraphs are merely paraphrased or interleaved are
- * kept — containment is exact after normalization, not fuzzy.
+ * contains its entire normalized paragraph sequence as a contiguous run,
+ * or resolves to the exact same canonical path on disk (symlinks), or has
+ * identical content.
+ *
+ * Canonical realpath and byte/trimmed content deduplication run first as a fast
+ * consolidation pass, avoiding expensive block splitting and similarity indexing
+ * for redundant or symlinked files.
  *
  * @internal Exported for testing.
  */
@@ -272,8 +282,39 @@ export function dedupeContainedContextFiles(
 		const depthB = b.depth ?? Number.POSITIVE_INFINITY;
 		return depthB - depthA;
 	});
-	const blocks = sorted.map(file => splitComparablePromptBlocks(file.content));
-	return sorted.filter(
+
+	// Fast consolidation pass 1: Symlink / Canonical path deduplication.
+	// If two entries resolve to the exact same canonical realpath on disk,
+	// keep only the more authoritative one (higher index in depth-descending array).
+	const canonicalPaths = sorted.map(file => safeCanonicalPath(file.path));
+	const afterCanonicalDedup: Array<{ path: string; content: string; depth?: number }> = [];
+
+	for (let i = 0; i < sorted.length; i++) {
+		const isShadowedByMoreAuthoritative = canonicalPaths.some(
+			(otherCanonical, otherIndex) => otherIndex > i && otherCanonical === canonicalPaths[i],
+		);
+		if (!isShadowedByMoreAuthoritative) {
+			afterCanonicalDedup.push(sorted[i]);
+		}
+	}
+
+	// Fast consolidation pass 2: Content identity deduplication.
+	// If two entries have identical non-empty trimmed content, keep only the more authoritative one.
+	const trimmedContents = afterCanonicalDedup.map(file => file.content.trim());
+	const afterContentDedup: Array<{ path: string; content: string; depth?: number }> = [];
+
+	for (let i = 0; i < afterCanonicalDedup.length; i++) {
+		const isContentShadowed =
+			trimmedContents[i] !== "" &&
+			trimmedContents.some((otherTrimmed, otherIndex) => otherIndex > i && otherTrimmed === trimmedContents[i]);
+		if (!isContentShadowed) {
+			afterContentDedup.push(afterCanonicalDedup[i]);
+		}
+	}
+
+	// Pass 3: Paragraph block containment index.
+	const blocks = afterContentDedup.map(file => splitComparablePromptBlocks(file.content));
+	return afterContentDedup.filter(
 		(_file, index) =>
 			!blocks.some(
 				(candidateBlocks, candidateIndex) =>

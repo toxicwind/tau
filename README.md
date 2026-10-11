@@ -91,6 +91,7 @@ Full install, config, and architecture: [below](#table-of-contents).
   `ask`, `learn`, `eval`, `ast-grep`, `ast-edit`, `security_scan`, `todo`, and
   more.
 - **First-class Wayland / Hyprland desktop automation** — native IPC socket integration (`.socket.sock`), multi-monitor client resolution, window activation via `hl.dsp.window.focusaddr`, and high-resolution `grim` region capture for CachyOS and Linux.
+- **Symlink-aware context consolidation** — automatic canonical realpath deduplication and content identity consolidation for `AGENTS.md`, `CLAUDE.md`, and system prompt files across workspace and ancestor symlinks, pruning redundant tokens before paragraph indexing.
 - **Live session collaboration** — `packages/collab-web` exposes `/collab` with a
   link and QR code; join via `tau join` or a browser, read-write or view-only.
 - **Browser relay** — `packages/browser-relay` lets the browser tool drive your

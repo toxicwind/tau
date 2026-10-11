@@ -1,5 +1,8 @@
-import { describe, expect, it } from "bun:test";
-import { dedupeContainedContextFiles } from "tau/system-prompt";
+import * as fs from "node:fs";
+import * as os from "node:os";
+import * as path from "node:path";
+import { afterEach, beforeEach, describe, expect, it } from "bun:test";
+import { dedupeContainedContextFiles } from "../src/system-prompt";
 
 interface ContextFile {
 	path: string;
@@ -133,5 +136,100 @@ describe("dedupeContainedContextFiles", () => {
 		const files = [file("/home/user/.config/AGENTS.md", lower, 5), file("/project/AGENTS.md", higher, 0)];
 
 		expect(paths(dedupeContainedContextFiles(files))).toEqual(["/home/user/.config/AGENTS.md", "/project/AGENTS.md"]);
+	});
+
+	describe("symlink and canonical path consolidation", () => {
+		let tmpDir: string;
+
+		beforeEach(() => {
+			tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "tau-symlink-dedup-"));
+		});
+
+		afterEach(() => {
+			try {
+				fs.rmSync(tmpDir, { recursive: true, force: true });
+			} catch {}
+		});
+
+		it("consolidates two paths pointing to the same physical file via symlink", () => {
+			const realFile = path.join(tmpDir, "real-AGENTS.md");
+			fs.writeFileSync(realFile, "Core rule 1.\n\nCore rule 2.");
+			const symlinkFile = path.join(tmpDir, "symlink-AGENTS.md");
+			fs.symlinkSync(realFile, symlinkFile);
+
+			const files = [
+				file(symlinkFile, "Core rule 1.\n\nCore rule 2.", 3),
+				file(realFile, "Core rule 1.\n\nCore rule 2.", 0),
+			];
+
+			const result = dedupeContainedContextFiles(files);
+			expect(paths(result)).toEqual([realFile]);
+		});
+
+		it("prefers closer-to-cwd file when symlink is closer to cwd than real file", () => {
+			const projectDir = path.join(tmpDir, "project");
+			const configDir = path.join(tmpDir, "config");
+			fs.mkdirSync(projectDir);
+			fs.mkdirSync(configDir);
+
+			const realConfig = path.join(configDir, "AGENTS.md");
+			fs.writeFileSync(realConfig, "Shared rule.");
+			const projectLink = path.join(projectDir, "AGENTS.md");
+			fs.symlinkSync(realConfig, projectLink);
+
+			const files = [
+				file(realConfig, "Shared rule.", 5),
+				file(projectLink, "Shared rule.", 0),
+			];
+
+			const result = dedupeContainedContextFiles(files);
+			expect(paths(result)).toEqual([projectLink]);
+		});
+
+		it("consolidates multiple symlinks pointing to the same target", () => {
+			const realFile = path.join(tmpDir, "authoritative.md");
+			fs.writeFileSync(realFile, "System instructions.");
+			const link1 = path.join(tmpDir, "link1.md");
+			const link2 = path.join(tmpDir, "link2.md");
+			const link3 = path.join(tmpDir, "link3.md");
+			fs.symlinkSync(realFile, link1);
+			fs.symlinkSync(realFile, link2);
+			fs.symlinkSync(link1, link3); // transitive symlink
+
+			const files = [
+				file(link1, "System instructions.", 4),
+				file(link2, "System instructions.", 2),
+				file(link3, "System instructions.", 1),
+			];
+
+			const result = dedupeContainedContextFiles(files);
+			// link3 has lowest depth (1, most authoritative)
+			expect(paths(result)).toEqual([link3]);
+		});
+
+		it("handles non-existent paths gracefully without throwing", () => {
+			const nonExistent1 = "/non/existent/path/AGENTS.md";
+			const nonExistent2 = "/another/missing/file.md";
+
+			const files = [
+				file(nonExistent1, "Rule A.", 2),
+				file(nonExistent2, "Rule B.", 0),
+			];
+
+			expect(() => dedupeContainedContextFiles(files)).not.toThrow();
+			expect(paths(dedupeContainedContextFiles(files))).toEqual([nonExistent1, nonExistent2]);
+		});
+
+		it("fast-path content consolidation drops duplicates before block indexing", () => {
+			const duplicateContent = "A large prompt block that repeats across many entries.";
+			const files = [
+				file("/path/1.md", duplicateContent, 5),
+				file("/path/2.md", duplicateContent, 3),
+				file("/path/3.md", duplicateContent, 0),
+			];
+
+			const result = dedupeContainedContextFiles(files);
+			expect(paths(result)).toEqual(["/path/3.md"]);
+		});
 	});
 });

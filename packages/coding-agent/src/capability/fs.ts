@@ -69,6 +69,15 @@ export async function walkUp(
 		if (entry) {
 			if (file && entry.isFile()) return path.join(current, name);
 			if (dir && entry.isDirectory()) return path.join(current, name);
+			if (entry.isSymbolicLink()) {
+				try {
+					const targetStat = await fs.promises.stat(path.join(current, name));
+					if (file && targetStat.isFile()) return path.join(current, name);
+					if (dir && targetStat.isDirectory()) return path.join(current, name);
+				} catch {
+					// Broken symlink; fall through
+				}
+			}
 		}
 		const parent = path.dirname(current);
 		if (parent === current) return null;

@@ -772,13 +772,23 @@ export async function loadStandaloneContextFiles(
 	const includeBoundary = repoRoot === null ? cwdIsUnderHome : !samePath(boundary, home) || repoIsHome;
 	const excludeHome = scanToHome;
 
+	const seenCanonicalPaths = new Set<string>();
 	let current = cwd;
 	while (true) {
 		const atBoundary = samePath(current, boundary);
 		const atHome = excludeHome && samePath(current, home);
 		if (!(atHome || (atBoundary && !includeBoundary))) {
 			const candidate = path.join(current, fileName);
-			const content = await readFile(candidate);
+			let canonical = candidate;
+			try {
+				canonical = fs.realpathSync.native(candidate);
+			} catch {
+				canonical = path.resolve(candidate);
+			}
+
+			if (!seenCanonicalPaths.has(canonical)) {
+				seenCanonicalPaths.add(canonical);
+				const content = await readFile(candidate);
 
 			// Empty files contribute nothing and must not claim the depth scope:
 			// at a priority tie, an empty first-registered file would shadow a
@@ -799,6 +809,7 @@ export async function loadStandaloneContextFiles(
 						_source: createSourceMeta(providerId, candidate, "project"),
 					});
 				}
+			}
 			}
 		}
 		if (atBoundary) break;
