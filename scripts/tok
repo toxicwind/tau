@@ -1,111 +1,83 @@
-#!/usr/bin/env python3
-"""
-yolo_tiktoken.py — Emergent, Crash-Proof Token Counting & Encoding
+#!/usr/bin/env bun
+/**
+ * tok — Sovereign Native Fast Token Counter CLI
+ *
+ * Uses @tau/tau-natives (Rust utok) compiled in-binary tokenizer.
+ * Zero network, zero Python runtime, zero CPython symbol errors.
+ *
+ * Supports:
+ *   tok <file>
+ *   tok "some string"
+ *   echo "hello" | tok
+ *   tok -v <file>  (verbose breakdown across model families)
+ */
+import { countTokens, Encoding } from "/home/toxic/estate/ranch/tau/packages/natives/native/index.js";
+import { readFileSync, existsSync } from "node:fs";
 
-Defaults to `o200k_harmony` (OpenAI bleeding-edge agent encoding with native
-channel/call/constrain tokens).
-Optimized for yolo/untrusted agent inputs (never throws on special tokens).
-Uses persistent cache in `~/.cache/tiktoken` for instant offline loading.
-"""
-from __future__ import annotations
+async function main() {
+  const args = process.argv.slice(2);
+  let verbose = false;
+  let selectedEncoding: Encoding = Encoding.O200kBase;
+  const targets: string[] = [];
 
-import os
-import sys
+  for (let i = 0; i < args.length; i++) {
+    const a = args[i];
+    if (a === "-v" || a === "--verbose") {
+      verbose = true;
+    } else if (a === "-e" || a === "--encoding") {
+      const name = args[++i];
+      if (name && name in Encoding) {
+        selectedEncoding = (Encoding as any)[name];
+      }
+    } else if (a === "-h" || a === "--help") {
+      console.log(`tok — Sovereign Native Token Counter (utok / Rust)
 
-# Ensure persistent local cache
-CACHE_DIR = os.path.expanduser("~/.cache/tiktoken")
-os.makedirs(CACHE_DIR, exist_ok=True)
-os.environ.setdefault("TIKTOKEN_CACHE_DIR", CACHE_DIR)
+Usage:
+  tok [options] [file | "text string"]
+  cat file | tok [options]
 
-# Ensure user site-packages are accessible
-user_site = os.path.expanduser("~/.local/lib/python3.14/site-packages")
-if user_site not in sys.path:
-    sys.path.append(user_site)
+Options:
+  -v, --verbose        Show multi-model comparison (o200k, cl100k, qwen3, deepseek)
+  -e, --encoding <enc> Select encoding (O200kBase, Cl100kBase, Qwen3, DeepSeekV3, ClaudeV5)
+  -h, --help           Show this help message`);
+      process.exit(0);
+    } else {
+      targets.push(a);
+    }
+  }
 
-import tiktoken
+  let text = "";
+  if (targets.length === 0) {
+    // Read from stdin
+    text = await Bun.stdin.text();
+  } else {
+    const target = targets.join(" ");
+    if (existsSync(target)) {
+      try {
+        text = readFileSync(target, "utf8");
+      } catch {
+        text = target;
+      }
+    } else {
+      text = target;
+    }
+  }
 
-_HARMONY_ENC = None
-_O200K_ENC = None
-_CL100K_ENC = None
+  const byteLen = Buffer.byteLength(text, "utf8");
+  const charLen = text.length;
+  const o200k = countTokens(text, Encoding.O200kBase);
 
-def get_harmony_encoding() -> tiktoken.Encoding:
-    global _HARMONY_ENC
-    if _HARMONY_ENC is None:
-        _HARMONY_ENC = tiktoken.get_encoding("o200k_harmony")
-    return _HARMONY_ENC
+  if (verbose) {
+    const cl100k = countTokens(text, Encoding.Cl100kBase);
+    const qwen = countTokens(text, Encoding.Qwen3);
+    const deepseek = countTokens(text, Encoding.DeepSeekV3);
+    console.log(`o200k_base: ${o200k.toLocaleString()} tokens | cl100k: ${cl100k.toLocaleString()} | qwen3: ${qwen.toLocaleString()} | deepseek: ${deepseek.toLocaleString()} | bytes: ${byteLen.toLocaleString()} | chars: ${charLen.toLocaleString()}`);
+  } else {
+    console.log(o200k);
+  }
+}
 
-def get_o200k_encoding() -> tiktoken.Encoding:
-    global _O200K_ENC
-    if _O200K_ENC is None:
-        _O200K_ENC = tiktoken.get_encoding("o200k_base")
-    return _O200K_ENC
-
-def get_cl100k_encoding() -> tiktoken.Encoding:
-    global _CL100K_ENC
-    if _CL100K_ENC is None:
-        _CL100K_ENC = tiktoken.get_encoding("cl100k_base")
-    return _CL100K_ENC
-
-def count(text: str | bytes, encoding: str = "o200k_harmony") -> int:
-    """Crash-proof token counter for any text or raw payload."""
-    if isinstance(text, bytes):
-        text = text.decode("utf-8", errors="replace")
-    if not text:
-        return 0
-    if encoding == "o200k_harmony":
-        enc = get_harmony_encoding()
-    elif encoding in ("o200k_base", "o200k", "gpt-4o", "gpt-5"):
-        enc = get_o200k_encoding()
-    elif encoding in ("cl100k_base", "cl100k", "gpt-4"):
-        enc = get_cl100k_encoding()
-    else:
-        try:
-            enc = tiktoken.encoding_for_model(encoding)
-        except KeyError:
-            enc = get_harmony_encoding()
-    return len(enc.encode(text, disallowed_special=()))
-
-def encode_safe(text: str | bytes, encoding: str = "o200k_harmony") -> list[int]:
-    """Encodes text without throwing ValueError on special tokens."""
-    if isinstance(text, bytes):
-        text = text.decode("utf-8", errors="replace")
-    if encoding == "o200k_harmony":
-        enc = get_harmony_encoding()
-    else:
-        enc = get_o200k_encoding()
-    return enc.encode(text, disallowed_special=())
-
-def decode_safe(tokens: list[int], encoding: str = "o200k_harmony") -> str:
-    """Decodes tokens back to text."""
-    if encoding == "o200k_harmony":
-        enc = get_harmony_encoding()
-    else:
-        enc = get_o200k_encoding()
-    return enc.decode(tokens)
-
-def main():
-    import argparse
-    parser = argparse.ArgumentParser(description="Emergent token counter CLI")
-    parser.add_argument("file_or_text", nargs="?", default="-", help="Path to file, string, or - for stdin")
-    parser.add_argument("-e", "--encoding", default="o200k_harmony", help="Encoding name (default: o200k_harmony)")
-    parser.add_argument("-v", "--verbose", action="store_true", help="Print both o200k and cl100k comparison")
-    args = parser.parse_args()
-
-    if args.file_or_text == "-" or (os.path.exists(args.file_or_text) is False and not sys.stdin.isatty()):
-        raw = sys.stdin.read()
-    elif os.path.exists(args.file_or_text):
-        with open(args.file_or_text, "r", errors="replace") as f:
-            raw = f.read()
-    else:
-        raw = args.file_or_text
-
-    c_harmony = count(raw, "o200k_harmony")
-    if args.verbose:
-        c_cl100k = count(raw, "cl100k_base")
-        c_bytes = len(raw.encode("utf-8"))
-        print(f"o200k_harmony: {c_harmony} tokens | cl100k: {c_cl100k} tokens | bytes: {c_bytes}")
-    else:
-        print(c_harmony)
-
-if __name__ == "__main__":
-    main()
+main().catch((err) => {
+  console.error("tok error:", err);
+  process.exit(1);
+});

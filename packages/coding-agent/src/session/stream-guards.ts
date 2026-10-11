@@ -95,7 +95,9 @@ export class StreamingEditGuard {
 				file.error.length > 0 &&
 				!file.error.startsWith(NO_CHANGES_PREVIEW_PREFIX),
 		);
-		if (failed) this.#abortPatch(event.toolCallId, failed.path, failed.error);
+		if (failed && this.#host.settings.get("edit.streamingAbort") === true) {
+			this.#abortPatch(event.toolCallId, failed.path, failed.error);
+		}
 	}
 
 	#abortPatch(toolCallId: string, filePath: string, error: string): void {

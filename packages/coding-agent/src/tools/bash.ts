@@ -715,14 +715,17 @@ export class BashTool implements AgentTool<BashToolSchema, BashToolDetails> {
 				outputLines.push("", `[${message}]`);
 			}
 			const timeoutOutputText = await enforceInlineByteCap(outputLines.join("\n"), inlineCap);
+			let finalTimeoutText = timeoutOutputText;
 			const tiktokenEnabled = this.session.settings.get("bash.tiktokenShim.enabled") !== false;
 			if (tiktokenEnabled && timeoutOutputText) {
 				try {
-					details.tokens = countTokens(timeoutOutputText, Encoding.O200kBase);
+					const tokens = countTokens(timeoutOutputText, Encoding.O200kBase);
+					details.tokens = tokens;
+					finalTimeoutText = `[Tokens: ${tokens.toLocaleString()} | o200k_base | Time: ${details.wallTimeMs ?? 0}ms]\n${timeoutOutputText}`;
 				} catch {}
 			}
 			return toolResult(details)
-				.content([{ type: "text", text: timeoutOutputText }, ...(result.images ?? [])])
+				.content([{ type: "text", text: finalTimeoutText }, ...(result.images ?? [])])
 				.truncationFromSummary(result, { direction: "tail" })
 				.error()
 				.done();
@@ -734,15 +737,18 @@ export class BashTool implements AgentTool<BashToolSchema, BashToolDetails> {
 		// No-op for already-bounded output; see `inlineCap` above.
 		const cappedOutputText = await enforceInlineByteCap(outputText, inlineCap);
 
+		let finalOutputText = cappedOutputText;
 		const tiktokenEnabled = this.session.settings.get("bash.tiktokenShim.enabled") !== false;
 		if (tiktokenEnabled && cappedOutputText) {
 			try {
-				details.tokens = countTokens(cappedOutputText, Encoding.O200kBase);
+				const tokens = countTokens(cappedOutputText, Encoding.O200kBase);
+				details.tokens = tokens;
+				finalOutputText = `[Tokens: ${tokens.toLocaleString()} | o200k_base | Time: ${details.wallTimeMs ?? 0}ms]\n${cappedOutputText}`;
 			} catch {}
 		}
 
 		const resultBuilder = toolResult(details)
-			.content([{ type: "text", text: cappedOutputText }, ...(result.images ?? [])])
+			.content([{ type: "text", text: finalOutputText }, ...(result.images ?? [])])
 			.truncationFromSummary(result, { direction: "tail" });
 		if (failedExit) resultBuilder.error();
 		return resultBuilder.done();
