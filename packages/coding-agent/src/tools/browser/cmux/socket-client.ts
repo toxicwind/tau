@@ -1,3 +1,5 @@
+import { resolve } from "node:path";
+import { join } from "node:path";
 import { randomUUID } from "node:crypto";
 import * as net from "node:net";
 import * as os from "node:os";

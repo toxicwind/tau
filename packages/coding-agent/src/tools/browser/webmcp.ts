@@ -1,3 +1,4 @@
+import { join } from "node:path";
 import { truncateHeadBytes } from "@tau/tau-tui/tools/streaming-output";
 import type { CDPSession, Frame, NewDocumentScriptEvaluation, Page, Realm, WebMCPTool } from "puppeteer-core";
 

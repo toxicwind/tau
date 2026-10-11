@@ -1,3 +1,4 @@
+import { join } from "node:path";
 import type { default as PuppeteerInstance, Puppeteer as PuppeteerClass } from "puppeteer-core";
 
 interface QueryRoot {

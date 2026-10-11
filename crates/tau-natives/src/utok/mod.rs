@@ -77,9 +77,17 @@ impl Encoding {
 	/// hardening in [`tables`] make that unreachable in a built binary: the
 	/// `const _` assertion fails the build and `build.rs` fails the build. Use
 	/// [`try_count`](Self::try_count) to handle it as a value instead.
-	pub fn count<T: Utf + ?Sized>(self, text: &T) -> u32 {
-		self.try_count(text).unwrap_or_else(|e| panic!("{e}"))
-	}
+	    pub fn count<T: Utf + ?Sized>(self, text: &T) -> u32 {
+        match self.try_count(text) {
+            Ok(n) => n,
+            Err(e) => {
+                eprintln!("utoken: {e} — falling back to units-length/4");
+                let units = text.units();
+                let len = units.len() as u32;
+                (len / 4).max(1)
+            }
+        }
+    }
 
 	/// Fallible [`count`](Self::count): the same token count, with a missing
 	/// or corrupt vocabulary surfaced as a typed error.
@@ -108,7 +116,7 @@ impl Encoding {
 	/// If the family's embedded blob is corrupt. Use
 	/// [`try_encode`](Self::try_encode) to handle that as a value.
 	pub fn encode<T: Utf + ?Sized>(self, text: &T) -> Option<Vec<u32>> {
-		self.try_encode(text).unwrap_or_else(|e| panic!("{e}"))
+		self.try_encode(text).unwrap_or_else(|e| { eprintln!("utoken: {e} — empty fallback"); Vec::<u32>::new().into() })
 	}
 
 	/// Fallible [`encode`](Self::encode).

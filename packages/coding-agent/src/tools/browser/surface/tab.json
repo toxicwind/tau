@@ -1,0 +1,1295 @@
+{
+  "namespace": "tab",
+  "receiver": "BrowserTabHelpers",
+  "doc": "Browser-tab helpers whose behavior is shared by direct and run-realm handles.",
+  "methods": [
+    {
+      "name": "url",
+      "args": [],
+      "returns": "string",
+      "async": true,
+      "doc": "Return the current page URL."
+    },
+    {
+      "name": "title",
+      "args": [],
+      "returns": "string",
+      "async": true,
+      "doc": "Return the current page title."
+    },
+    {
+      "name": "goto",
+      "args": [
+        {
+          "name": "url",
+          "type": "string"
+        },
+        {
+          "name": "options",
+          "type": "BrowserGotoOptions",
+          "optional": true
+        }
+      ],
+      "returns": "void",
+      "async": true,
+      "doc": "Navigate the page."
+    },
+    {
+      "name": "back",
+      "args": [
+        {
+          "name": "options",
+          "type": "BrowserGotoOptions",
+          "optional": true
+        }
+      ],
+      "returns": "string",
+      "async": true,
+      "doc": "Navigate to the previous session-history entry."
+    },
+    {
+      "name": "forward",
+      "args": [
+        {
+          "name": "options",
+          "type": "BrowserGotoOptions",
+          "optional": true
+        }
+      ],
+      "returns": "string",
+      "async": true,
+      "doc": "Navigate to the next session-history entry."
+    },
+    {
+      "name": "reload",
+      "args": [
+        {
+          "name": "options",
+          "type": "BrowserGotoOptions",
+          "optional": true
+        }
+      ],
+      "returns": "string",
+      "async": true,
+      "doc": "Reload the current document."
+    },
+    {
+      "name": "pushState",
+      "args": [
+        {
+          "name": "url",
+          "type": "string"
+        }
+      ],
+      "returns": "string",
+      "async": true,
+      "doc": "Perform client-side navigation without loading a new document."
+    },
+    {
+      "name": "frames",
+      "args": [],
+      "returns": "BrowserFrameInfo[]",
+      "async": true,
+      "doc": "List the current main and child frames."
+    },
+    {
+      "name": "dialog",
+      "args": [],
+      "returns": "BrowserDialogState",
+      "async": true,
+      "doc": "Return the current pending JavaScript-dialog state."
+    },
+    {
+      "name": "handleDialog",
+      "args": [
+        {
+          "name": "options",
+          "type": "BrowserHandleDialogOptions"
+        }
+      ],
+      "returns": "void",
+      "async": true,
+      "doc": "Explicitly settle the pending confirm or prompt."
+    },
+    {
+      "name": "setDialogs",
+      "args": [
+        {
+          "name": "policy",
+          "type": "\"accept\" | \"dismiss\" | null"
+        }
+      ],
+      "returns": "void",
+      "async": true,
+      "doc": "Change the automatic JavaScript-dialog policy at runtime."
+    },
+    {
+      "name": "observe",
+      "args": [
+        {
+          "name": "options",
+          "type": "BrowserObserveOptions",
+          "optional": true
+        }
+      ],
+      "returns": "BrowserObservation",
+      "async": true,
+      "doc": "Capture a structured accessibility observation."
+    },
+    {
+      "name": "ariaSnapshot",
+      "args": [
+        {
+          "name": "selector",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "options",
+          "type": "BrowserAriaSnapshotOptions",
+          "optional": true
+        }
+      ],
+      "returns": "string | BrowserAriaSnapshotDiffResult",
+      "async": true,
+      "doc": "Capture a Playwright-format ARIA snapshot."
+    },
+    {
+      "name": "a11y",
+      "args": [
+        {
+          "name": "options",
+          "type": "BrowserA11yOptions",
+          "optional": true
+        }
+      ],
+      "returns": "BrowserA11yResult",
+      "async": true,
+      "doc": "Run an axe-core accessibility audit across the page frame tree."
+    },
+    {
+      "name": "webmcpList",
+      "args": [
+        {
+          "name": "options",
+          "type": "BrowserWebMcpListOptions",
+          "optional": true
+        }
+      ],
+      "returns": "BrowserWebMcpListResult",
+      "async": true,
+      "doc": "Discover experimental page-provided WebMCP tools."
+    },
+    {
+      "name": "webmcpInvoke",
+      "args": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "params",
+          "type": "Record<string, unknown>"
+        },
+        {
+          "name": "options",
+          "type": "BrowserWebMcpInvokeOptions",
+          "optional": true
+        }
+      ],
+      "returns": "BrowserWebMcpInvokeResult",
+      "async": true,
+      "doc": "Invoke one experimental page-provided WebMCP tool."
+    },
+    {
+      "name": "webmcpEvents",
+      "args": [
+        {
+          "name": "options",
+          "type": "BrowserWebMcpEventsOptions",
+          "optional": true
+        }
+      ],
+      "returns": "BrowserWebMcpEventsResult",
+      "async": true,
+      "doc": "Poll the experimental WebMCP catalog change log."
+    },
+    {
+      "name": "screenshot",
+      "args": [
+        {
+          "name": "options",
+          "type": "BrowserScreenshotOptions",
+          "optional": true
+        }
+      ],
+      "returns": "string | BrowserScreenshotChangeResult",
+      "async": true,
+      "doc": "Capture the page or one matching element; tracked captures return change metadata."
+    },
+    {
+      "name": "diffScreenshot",
+      "args": [
+        {
+          "name": "baselinePath",
+          "type": "string"
+        },
+        {
+          "name": "options",
+          "type": "BrowserDiffScreenshotOptions",
+          "optional": true
+        }
+      ],
+      "returns": "BrowserDiffScreenshotResult",
+      "async": true,
+      "doc": "Compare the current viewport against a saved PNG and display a highlighted diff."
+    },
+    {
+      "name": "pdf",
+      "args": [
+        {
+          "name": "options",
+          "type": "BrowserPdfOptions",
+          "optional": true
+        }
+      ],
+      "returns": "string",
+      "async": true,
+      "doc": "Print the page to PDF and return its absolute path."
+    },
+    {
+      "name": "extract",
+      "args": [
+        {
+          "name": "format",
+          "type": "\"text\" | \"markdown\"",
+          "optional": true
+        },
+        {
+          "name": "options",
+          "type": "BrowserExtractOptions",
+          "optional": true
+        }
+      ],
+      "returns": "string",
+      "async": true,
+      "doc": "Extract readable page content."
+    },
+    {
+      "name": "click",
+      "args": [
+        {
+          "name": "selector",
+          "type": "string"
+        }
+      ],
+      "returns": "void",
+      "async": true,
+      "doc": "Click the element matching selector."
+    },
+    {
+      "name": "dblclick",
+      "args": [
+        {
+          "name": "selector",
+          "type": "string"
+        }
+      ],
+      "returns": "void",
+      "async": true,
+      "doc": "Double-click the element matching selector."
+    },
+    {
+      "name": "hover",
+      "args": [
+        {
+          "name": "selector",
+          "type": "string"
+        }
+      ],
+      "returns": "void",
+      "async": true,
+      "doc": "Hover the element matching selector."
+    },
+    {
+      "name": "focus",
+      "args": [
+        {
+          "name": "selector",
+          "type": "string"
+        }
+      ],
+      "returns": "void",
+      "async": true,
+      "doc": "Focus the element matching selector."
+    },
+    {
+      "name": "check",
+      "args": [
+        {
+          "name": "selector",
+          "type": "string"
+        }
+      ],
+      "returns": "void",
+      "async": true,
+      "doc": "Set a checkbox, radio, or ARIA switch."
+    },
+    {
+      "name": "uncheck",
+      "args": [
+        {
+          "name": "selector",
+          "type": "string"
+        }
+      ],
+      "returns": "void",
+      "async": true,
+      "doc": "Clear a checkbox, radio, or ARIA switch."
+    },
+    {
+      "name": "keyDown",
+      "args": [
+        {
+          "name": "key",
+          "type": "string"
+        }
+      ],
+      "returns": "void",
+      "async": true,
+      "doc": "Press a keyboard key without releasing it."
+    },
+    {
+      "name": "keyUp",
+      "args": [
+        {
+          "name": "key",
+          "type": "string"
+        }
+      ],
+      "returns": "void",
+      "async": true,
+      "doc": "Release a keyboard key."
+    },
+    {
+      "name": "mouseMove",
+      "args": [
+        {
+          "name": "x",
+          "type": "number"
+        },
+        {
+          "name": "y",
+          "type": "number"
+        },
+        {
+          "name": "options",
+          "type": "BrowserMouseMoveOptions",
+          "optional": true
+        }
+      ],
+      "returns": "void",
+      "async": true,
+      "doc": "Move the pointer to viewport coordinates."
+    },
+    {
+      "name": "mouseDown",
+      "args": [
+        {
+          "name": "options",
+          "type": "BrowserMouseButtonOptions",
+          "optional": true
+        }
+      ],
+      "returns": "void",
+      "async": true,
+      "doc": "Press a mouse button at the current pointer position."
+    },
+    {
+      "name": "mouseUp",
+      "args": [
+        {
+          "name": "options",
+          "type": "BrowserMouseButtonOptions",
+          "optional": true
+        }
+      ],
+      "returns": "void",
+      "async": true,
+      "doc": "Release a mouse button at the current pointer position."
+    },
+    {
+      "name": "clickAt",
+      "args": [
+        {
+          "name": "x",
+          "type": "number"
+        },
+        {
+          "name": "y",
+          "type": "number"
+        },
+        {
+          "name": "options",
+          "type": "BrowserClickAtOptions",
+          "optional": true
+        }
+      ],
+      "returns": "void",
+      "async": true,
+      "doc": "Click the element under viewport coordinates."
+    },
+    {
+      "name": "wheel",
+      "args": [
+        {
+          "name": "deltaX",
+          "type": "number"
+        },
+        {
+          "name": "deltaY",
+          "type": "number"
+        }
+      ],
+      "returns": "void",
+      "async": true,
+      "doc": "Dispatch a raw wheel event."
+    },
+    {
+      "name": "highlight",
+      "args": [
+        {
+          "name": "selector",
+          "type": "string"
+        },
+        {
+          "name": "options",
+          "type": "BrowserHighlightOptions",
+          "optional": true
+        }
+      ],
+      "returns": "void",
+      "async": true,
+      "doc": "Draw a temporary inert outline around a matching element."
+    },
+    {
+      "name": "type",
+      "args": [
+        {
+          "name": "selector",
+          "type": "string"
+        },
+        {
+          "name": "text",
+          "type": "string"
+        }
+      ],
+      "returns": "void",
+      "async": true,
+      "doc": "Type text into the element matching selector."
+    },
+    {
+      "name": "fill",
+      "args": [
+        {
+          "name": "selector",
+          "type": "string"
+        },
+        {
+          "name": "value",
+          "type": "string"
+        }
+      ],
+      "returns": "void",
+      "async": true,
+      "doc": "Replace the value of the element matching selector."
+    },
+    {
+      "name": "press",
+      "args": [
+        {
+          "name": "key",
+          "type": "string"
+        },
+        {
+          "name": "options",
+          "type": "BrowserPressOptions",
+          "optional": true
+        }
+      ],
+      "returns": "void",
+      "async": true,
+      "doc": "Press a keyboard key, optionally on a matching element."
+    },
+    {
+      "name": "scroll",
+      "args": [
+        {
+          "name": "deltaX",
+          "type": "number"
+        },
+        {
+          "name": "deltaY",
+          "type": "number"
+        },
+        {
+          "name": "options",
+          "type": "BrowserScrollOptions",
+          "optional": true
+        }
+      ],
+      "returns": "void",
+      "async": true,
+      "doc": "Scroll by page-relative or matching-element deltas."
+    },
+    {
+      "name": "drag",
+      "args": [
+        {
+          "name": "from",
+          "type": "BrowserDragTarget"
+        },
+        {
+          "name": "to",
+          "type": "BrowserDragTarget"
+        }
+      ],
+      "returns": "void",
+      "async": true,
+      "doc": "Drag from one selector or point to another."
+    },
+    {
+      "name": "select",
+      "args": [
+        {
+          "name": "selector",
+          "type": "string"
+        },
+        {
+          "name": "values",
+          "type": "string",
+          "rest": true
+        }
+      ],
+      "returns": "string[]",
+      "async": true,
+      "doc": "Select values in the matching select element."
+    },
+    {
+      "name": "uploadFile",
+      "args": [
+        {
+          "name": "selector",
+          "type": "string"
+        },
+        {
+          "name": "filePaths",
+          "type": "string",
+          "rest": true
+        }
+      ],
+      "returns": "void",
+      "async": true,
+      "doc": "Upload files through a matching file input, chooser trigger, or drop zone."
+    },
+    {
+      "name": "waitForUrl",
+      "args": [
+        {
+          "name": "pattern",
+          "type": "string | RegExp"
+        },
+        {
+          "name": "options",
+          "type": "BrowserWaitOptions",
+          "optional": true
+        }
+      ],
+      "returns": "string",
+      "async": true,
+      "doc": "Wait for the current URL to match a string or regular expression."
+    },
+    {
+      "name": "text",
+      "args": [
+        {
+          "name": "selector",
+          "type": "string"
+        }
+      ],
+      "returns": "string | null",
+      "async": true,
+      "doc": "Return the first matching element's rendered text, or null."
+    },
+    {
+      "name": "html",
+      "args": [
+        {
+          "name": "selector",
+          "type": "string"
+        }
+      ],
+      "returns": "string | null",
+      "async": true,
+      "doc": "Return the first matching element's inner HTML, or null."
+    },
+    {
+      "name": "value",
+      "args": [
+        {
+          "name": "selector",
+          "type": "string"
+        }
+      ],
+      "returns": "string | null",
+      "async": true,
+      "doc": "Return the first matching form element's current value, or null."
+    },
+    {
+      "name": "attr",
+      "args": [
+        {
+          "name": "selector",
+          "type": "string"
+        },
+        {
+          "name": "name",
+          "type": "string"
+        }
+      ],
+      "returns": "string | null",
+      "async": true,
+      "doc": "Return one attribute from the first matching element, or null."
+    },
+    {
+      "name": "count",
+      "args": [
+        {
+          "name": "selector",
+          "type": "string"
+        }
+      ],
+      "returns": "number",
+      "async": true,
+      "doc": "Count elements matching a selector."
+    },
+    {
+      "name": "box",
+      "args": [
+        {
+          "name": "selector",
+          "type": "string"
+        }
+      ],
+      "returns": "BrowserBoundingBox | null",
+      "async": true,
+      "doc": "Return the first matching element's page-coordinate bounds, or null."
+    },
+    {
+      "name": "styles",
+      "args": [
+        {
+          "name": "selector",
+          "type": "string"
+        },
+        {
+          "name": "props",
+          "type": "string[]",
+          "optional": true
+        }
+      ],
+      "returns": "Record<string, string> | null",
+      "async": true,
+      "doc": "Return selected computed styles for the first matching element, or null."
+    },
+    {
+      "name": "isVisible",
+      "args": [
+        {
+          "name": "selector",
+          "type": "string"
+        }
+      ],
+      "returns": "boolean",
+      "async": true,
+      "doc": "Report whether the first matching element is visible."
+    },
+    {
+      "name": "isEnabled",
+      "args": [
+        {
+          "name": "selector",
+          "type": "string"
+        }
+      ],
+      "returns": "boolean",
+      "async": true,
+      "doc": "Report whether the first matching element is enabled."
+    },
+    {
+      "name": "isChecked",
+      "args": [
+        {
+          "name": "selector",
+          "type": "string"
+        }
+      ],
+      "returns": "boolean",
+      "async": true,
+      "doc": "Report whether the first matching element is checked."
+    },
+    {
+      "name": "waitForText",
+      "args": [
+        {
+          "name": "text",
+          "type": "string"
+        },
+        {
+          "name": "options",
+          "type": "BrowserWaitForTextOptions",
+          "optional": true
+        }
+      ],
+      "returns": "void",
+      "async": true,
+      "doc": "Wait until text appears in the document body or one matching element."
+    },
+    {
+      "name": "evaluate",
+      "args": [
+        {
+          "name": "fn",
+          "type": "string | ((...args: TArgs) => R | Promise<R>)"
+        },
+        {
+          "name": "args",
+          "type": "TArgs",
+          "rest": true
+        }
+      ],
+      "returns": "R",
+      "async": true,
+      "doc": "Evaluate a function or source string in the page.",
+      "generic": [
+        "R",
+        "TArgs"
+      ]
+    },
+    {
+      "name": "waitFor",
+      "args": [
+        {
+          "name": "selector",
+          "type": "string"
+        },
+        {
+          "name": "options",
+          "type": "BrowserWaitForSelectorOptions",
+          "optional": true
+        }
+      ],
+      "returns": "boolean",
+      "async": true,
+      "doc": "Wait for an actionable selector and report whether it appeared."
+    },
+    {
+      "name": "emulate",
+      "args": [
+        {
+          "name": "options",
+          "type": "BrowserEmulateOptions",
+          "optional": true
+        }
+      ],
+      "returns": "BrowserEmulateOptions",
+      "async": true,
+      "doc": "Merge runtime emulation overrides, or return the current state when omitted."
+    },
+    {
+      "name": "devices",
+      "args": [],
+      "returns": "string[]",
+      "async": true,
+      "doc": "List Puppeteer known-device names."
+    },
+    {
+      "name": "clipboardRead",
+      "args": [],
+      "returns": "BrowserClipboardReadResult",
+      "async": true,
+      "doc": "Read plain text from the page clipboard."
+    },
+    {
+      "name": "clipboardWrite",
+      "args": [
+        {
+          "name": "text",
+          "type": "string"
+        }
+      ],
+      "returns": "BrowserClipboardActionResult",
+      "async": true,
+      "doc": "Write plain text to the page clipboard."
+    },
+    {
+      "name": "clipboardCopy",
+      "args": [],
+      "returns": "BrowserClipboardActionResult",
+      "async": true,
+      "doc": "Copy the page's current selection."
+    },
+    {
+      "name": "clipboardPaste",
+      "args": [],
+      "returns": "BrowserClipboardActionResult",
+      "async": true,
+      "doc": "Paste the page clipboard into the focused control."
+    },
+    {
+      "name": "cookies",
+      "args": [
+        {
+          "name": "options",
+          "type": "BrowserCookieQueryOptions",
+          "optional": true
+        }
+      ],
+      "returns": "BrowserCookie[]",
+      "async": true,
+      "doc": "Return cookies visible to the current page or supplied URLs."
+    },
+    {
+      "name": "setCookies",
+      "args": [
+        {
+          "name": "cookies",
+          "type": "BrowserCookieInput | string | BrowserCookieScope",
+          "rest": true
+        }
+      ],
+      "returns": "void",
+      "async": true,
+      "doc": "Install cookie objects, a raw Cookie header, a cURL dump, or a JSON cookie array."
+    },
+    {
+      "name": "clearCookies",
+      "args": [
+        {
+          "name": "options",
+          "type": "BrowserClearCookiesOptions",
+          "optional": true
+        }
+      ],
+      "returns": "void",
+      "async": true,
+      "doc": "Delete all current-page cookies or selected cookie names."
+    },
+    {
+      "name": "storage",
+      "args": [
+        {
+          "name": "kind",
+          "type": "BrowserStorageKind"
+        },
+        {
+          "name": "options",
+          "type": "BrowserStorageKeyOptions",
+          "optional": true
+        }
+      ],
+      "returns": "Record<string, string> | string | null",
+      "async": true,
+      "doc": "Return all pairs from a Web Storage area, or one selected value."
+    },
+    {
+      "name": "setStorage",
+      "args": [
+        {
+          "name": "kind",
+          "type": "BrowserStorageKind"
+        },
+        {
+          "name": "keyOrEntries",
+          "type": "string | Record<string, unknown>"
+        },
+        {
+          "name": "value",
+          "type": "unknown",
+          "optional": true
+        }
+      ],
+      "returns": "void",
+      "async": true,
+      "doc": "Set one or several Web Storage values."
+    },
+    {
+      "name": "clearStorage",
+      "args": [
+        {
+          "name": "kind",
+          "type": "BrowserStorageKind"
+        }
+      ],
+      "returns": "void",
+      "async": true,
+      "doc": "Clear one Web Storage area."
+    },
+    {
+      "name": "saveState",
+      "args": [
+        {
+          "name": "path",
+          "type": "string",
+          "optional": true
+        }
+      ],
+      "returns": "string",
+      "async": true,
+      "doc": "Save Playwright-compatible cookies and current-origin storage, returning the absolute file path."
+    },
+    {
+      "name": "loadState",
+      "args": [
+        {
+          "name": "path",
+          "type": "string"
+        }
+      ],
+      "returns": "BrowserLoadStateResult",
+      "async": true,
+      "doc": "Restore cookies and per-origin storage from a saved state file."
+    },
+    {
+      "name": "addInitScript",
+      "args": [
+        {
+          "name": "source",
+          "type": "string"
+        }
+      ],
+      "returns": "{ id: string }",
+      "async": true,
+      "doc": "Register JavaScript for every future document and return its identifier."
+    },
+    {
+      "name": "removeInitScript",
+      "args": [
+        {
+          "name": "id",
+          "type": "string"
+        }
+      ],
+      "returns": "void",
+      "async": true,
+      "doc": "Remove a previously registered document-start script."
+    },
+    {
+      "name": "initScripts",
+      "args": [],
+      "returns": "BrowserInitScript[]",
+      "async": true,
+      "doc": "List document-start scripts registered through this tab helper."
+    },
+    {
+      "name": "waitForDownload",
+      "args": [
+        {
+          "name": "options",
+          "type": "BrowserWaitOptions",
+          "optional": true
+        }
+      ],
+      "returns": "BrowserDownload",
+      "async": true,
+      "doc": "Wait for the next completed download."
+    },
+    {
+      "name": "downloads",
+      "args": [],
+      "returns": "BrowserDownload[]",
+      "async": true,
+      "doc": "List completed downloads for this tab."
+    },
+    {
+      "name": "console",
+      "args": [
+        {
+          "name": "options",
+          "type": "BrowserConsoleOptions",
+          "optional": true
+        }
+      ],
+      "returns": "BrowserCaptureResult<BrowserConsoleEntry>",
+      "async": true,
+      "doc": "Read captured page console messages."
+    },
+    {
+      "name": "errors",
+      "args": [
+        {
+          "name": "options",
+          "type": "BrowserErrorOptions",
+          "optional": true
+        }
+      ],
+      "returns": "BrowserCaptureResult<BrowserErrorEntry>",
+      "async": true,
+      "doc": "Read captured uncaught exceptions and failed requests."
+    },
+    {
+      "name": "clearConsole",
+      "args": [],
+      "returns": "void",
+      "async": true,
+      "doc": "Clear captured page console messages, errors, and overflow state."
+    },
+    {
+      "name": "traceStart",
+      "args": [
+        {
+          "name": "options",
+          "type": "BrowserTraceStartOptions",
+          "optional": true
+        }
+      ],
+      "returns": "void",
+      "async": true,
+      "doc": "Start recording a Chrome DevTools Protocol trace."
+    },
+    {
+      "name": "traceStop",
+      "args": [
+        {
+          "name": "options",
+          "type": "BrowserTraceStopOptions",
+          "optional": true
+        }
+      ],
+      "returns": "string",
+      "async": true,
+      "doc": "Stop recording and save the trace to disk, returning the absolute file path."
+    },
+    {
+      "name": "profileStart",
+      "args": [
+        {
+          "name": "options",
+          "type": "BrowserProfileStartOptions",
+          "optional": true
+        }
+      ],
+      "returns": "void",
+      "async": true,
+      "doc": "Start capturing a V8 CPU profile."
+    },
+    {
+      "name": "profileStop",
+      "args": [
+        {
+          "name": "options",
+          "type": "BrowserProfileStopOptions",
+          "optional": true
+        }
+      ],
+      "returns": "string",
+      "async": true,
+      "doc": "Stop CPU profiling and save the profile to disk, returning the absolute file path."
+    },
+    {
+      "name": "metrics",
+      "args": [],
+      "returns": "BrowserMetricsResult",
+      "async": true,
+      "doc": "Sample layout, DOM node, listener count, and heap metrics."
+    },
+    {
+      "name": "route",
+      "args": [
+        {
+          "name": "pattern",
+          "type": "string"
+        },
+        {
+          "name": "handler",
+          "type": "(route: unknown) => void | Promise<void>"
+        }
+      ],
+      "returns": "void",
+      "async": true,
+      "doc": "Intercept network requests matching a glob pattern."
+    },
+    {
+      "name": "unroute",
+      "args": [
+        {
+          "name": "pattern",
+          "type": "string",
+          "optional": true
+        }
+      ],
+      "returns": "void",
+      "async": true,
+      "doc": "Remove request interception routes matching pattern, or all when omitted."
+    },
+    {
+      "name": "routes",
+      "args": [],
+      "returns": "string[]",
+      "async": true,
+      "doc": "List currently active route patterns."
+    },
+    {
+      "name": "requests",
+      "args": [
+        {
+          "name": "options",
+          "type": "BrowserRequestFilterOptions",
+          "optional": true
+        }
+      ],
+      "returns": "BrowserRequestEntry[]",
+      "async": true,
+      "doc": "List captured HTTP network requests."
+    },
+    {
+      "name": "request",
+      "args": [
+        {
+          "name": "requestId",
+          "type": "string"
+        }
+      ],
+      "returns": "BrowserRequestDetail | null",
+      "async": true,
+      "doc": "Fetch full detail for a captured request, including response body when available."
+    },
+    {
+      "name": "clearRequests",
+      "args": [],
+      "returns": "void",
+      "async": true,
+      "doc": "Clear recorded network requests."
+    },
+    {
+      "name": "harStart",
+      "args": [
+        {
+          "name": "options",
+          "type": "BrowserHarStartOptions",
+          "optional": true
+        }
+      ],
+      "returns": "void",
+      "async": true,
+      "doc": "Start recording HTTP traffic to a HAR file."
+    },
+    {
+      "name": "harStop",
+      "args": [],
+      "returns": "string",
+      "async": true,
+      "doc": "Stop HAR recording and save to disk, returning the absolute file path."
+    },
+    {
+      "name": "allowedDomains",
+      "args": [],
+      "returns": "string[]",
+      "async": true,
+      "doc": "List domains currently permitted for page navigation and subresources."
+    },
+    {
+      "name": "vitals",
+      "args": [],
+      "returns": "BrowserVitalsResult",
+      "async": true,
+      "doc": "Sample Web Vitals metrics (LCP, FID, CLS, TTFB, FCP)."
+    },
+    {
+      "name": "reactEnable",
+      "args": [],
+      "returns": "boolean",
+      "async": true,
+      "doc": "Enable the React DevTools hook on this tab."
+    },
+    {
+      "name": "reactTree",
+      "args": [
+        {
+          "name": "options",
+          "type": "BrowserReactTreeOptions",
+          "optional": true
+        }
+      ],
+      "returns": "BrowserReactComponentTree | null",
+      "async": true,
+      "doc": "Capture the mounted React component tree."
+    },
+    {
+      "name": "reactInspect",
+      "args": [
+        {
+          "name": "componentId",
+          "type": "string"
+        }
+      ],
+      "returns": "BrowserReactComponentDetail | null",
+      "async": true,
+      "doc": "Inspect props, state, and hooks for a React component."
+    },
+    {
+      "name": "reactRenders",
+      "args": [
+        {
+          "name": "options",
+          "type": "BrowserReactRenderOptions",
+          "optional": true
+        }
+      ],
+      "returns": "BrowserReactRenderSummary | null",
+      "async": true,
+      "doc": "Read recent React render timeline entries."
+    },
+    {
+      "name": "reactSuspense",
+      "args": [],
+      "returns": "BrowserReactSuspenseSummary | null",
+      "async": true,
+      "doc": "List pending and resolved React Suspense boundaries."
+    },
+    {
+      "name": "recordStart",
+      "args": [
+        {
+          "name": "options",
+          "type": "BrowserRecordStartOptions",
+          "optional": true
+        }
+      ],
+      "returns": "void",
+      "async": true,
+      "doc": "Start recording user interactions on this tab."
+    },
+    {
+      "name": "recordStop",
+      "args": [],
+      "returns": "string",
+      "async": true,
+      "doc": "Stop interaction recording and return recorded actions as a script string."
+    },
+    {
+      "name": "recordRestart",
+      "args": [],
+      "returns": "void",
+      "async": true,
+      "doc": "Clear recorded actions and restart interaction recording."
+    },
+    {
+      "name": "recording",
+      "args": [],
+      "returns": "boolean",
+      "async": true,
+      "doc": "Report whether interaction recording is active."
+    }
+  ]
+}

@@ -94,7 +94,7 @@ rust_shared_library(
         "@platforms//os:macos": [":oauth_callback_darwin_helper"],
         "//conditions:default": [":oauth_callback_relay"],
     }),
-    crate_features = [],
+    crate_features = ["family-o200k", "family-cl100k", "family-qwen3", "family-deepseek3", "family-kimi", "family-glm"],
     edition = "2024",
     proc_macro_deps = all_crate_deps(proc_macro = True),
     rustc_env = select({
@@ -170,3 +170,4 @@ rust_test(
         "@crates//:xkeysym",
     ],
 )
+# rebuild trigger 20261011_052705

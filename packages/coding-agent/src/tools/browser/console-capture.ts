@@ -1,3 +1,4 @@
+import { join } from "node:path";
 import type { Protocol } from "devtools-protocol";
 import type { CDPSession, ConsoleMessage, HTTPRequest, Page } from "puppeteer-core";
 

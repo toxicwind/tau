@@ -1,3 +1,5 @@
+(__GENERATED_PY__)
+
 def _make_browser():
     import re
 

@@ -1,0 +1,31 @@
+{
+  "namespace": "element",
+  "receiver": "BrowserElement",
+  "doc": "An element handle returned by BrowserTab.id or BrowserTab.ref.",
+  "methods": [
+    { "name": "click",          "args": [],                                                                       "returns": "void",                      "async": true, "doc": "Click this element." },
+    { "name": "dblclick",       "args": [],                                                                       "returns": "void",                      "async": true, "doc": "Double-click this element." },
+    { "name": "check",          "args": [],                                                                       "returns": "void",                      "async": true, "doc": "Set this checkbox, radio, or ARIA switch." },
+    { "name": "uncheck",        "args": [],                                                                       "returns": "void",                      "async": true, "doc": "Clear this checkbox, radio, or ARIA switch." },
+    { "name": "highlight",      "args": [{"name":"options","type":"BrowserHighlightOptions","optional":true}],    "returns": "void",                      "async": true, "doc": "Draw a temporary inert outline around this element." },
+    { "name": "type",           "args": [{"name":"text","type":"string"}],                                        "returns": "void",                      "async": true, "doc": "Type text into this element." },
+    { "name": "fill",           "args": [{"name":"value","type":"string"}],                                       "returns": "void",                      "async": true, "doc": "Replace this element's value." },
+    { "name": "press",          "args": [{"name":"key","type":"string"}],                                         "returns": "void",                      "async": true, "doc": "Press a keyboard key on this element." },
+    { "name": "hover",          "args": [],                                                                       "returns": "void",                      "async": true, "doc": "Hover this element." },
+    { "name": "focus",          "args": [],                                                                       "returns": "void",                      "async": true, "doc": "Focus this element." },
+    { "name": "select",         "args": [{"name":"values","type":"string","rest":true}],                          "returns": "string[]",                  "async": true, "doc": "Select values when this element is a select." },
+    { "name": "uploadFile",     "args": [{"name":"filePaths","type":"string","rest":true}],                       "returns": "void",                      "async": true, "doc": "Upload files when this element is a file input." },
+    { "name": "scrollIntoView", "args": [],                                                                       "returns": "void",                      "async": true, "doc": "Scroll this element into view." },
+    { "name": "boundingBox",    "args": [],                                                                       "returns": "BrowserBoundingBox | null", "async": true, "doc": "Return this element's page-coordinate bounds." },
+    { "name": "isVisible",      "args": [],                                                                       "returns": "boolean",                   "async": true, "doc": "Report whether this element is visible." },
+    { "name": "isHidden",       "args": [],                                                                       "returns": "boolean",                   "async": true, "doc": "Report whether this element is hidden." },
+    { "name": "text",           "args": [],                                                                       "returns": "string",                    "async": true, "doc": "Return this element's rendered text." },
+    { "name": "html",           "args": [],                                                                       "returns": "string",                    "async": true, "doc": "Return this element's inner HTML." },
+    { "name": "value",          "args": [],                                                                       "returns": "string | null",             "async": true, "doc": "Return this form element's current value, or null when unsupported." },
+    { "name": "attr",           "args": [{"name":"name","type":"string"}],                                        "returns": "string | null",             "async": true, "doc": "Return one attribute, or null when absent." },
+    { "name": "styles",         "args": [{"name":"props","type":"string[]","optional":true}],                     "returns": "Record<string, string>",    "async": true, "doc": "Return selected computed styles." },
+    { "name": "isEnabled",      "args": [],                                                                       "returns": "boolean",                   "async": true, "doc": "Report whether this element is enabled." },
+    { "name": "isChecked",      "args": [],                                                                       "returns": "boolean",                   "async": true, "doc": "Report whether this element is checked." },
+    { "name": "evaluate",       "args": [{"name":"fn","type":"string | ((element: unknown, ...args: TArgs) => R | Promise<R>)"},{"name":"args","type":"TArgs","rest":true}], "returns": "R", "async": true, "generic": ["R","TArgs"], "doc": "Evaluate a function or source string with this element as the first argument." }
+  ]
+}

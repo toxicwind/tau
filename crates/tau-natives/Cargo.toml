@@ -30,6 +30,7 @@ default = [
 	"family-kimi",
 	"family-glm",
 ]
+allow-no-tokenizer = []
 family-o200k = []
 family-cl100k = []
 family-qwen3 = []

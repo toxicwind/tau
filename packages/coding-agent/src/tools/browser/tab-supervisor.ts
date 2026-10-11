@@ -1,3 +1,5 @@
+import { resolve } from "node:path";
+import { join } from "node:path";
 import {
 	getProjectDir,
 	getPuppeteerDir,
