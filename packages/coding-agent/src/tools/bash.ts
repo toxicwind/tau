@@ -1,3 +1,4 @@
+import { join } from "node:path";
 import {
 	type BashToolDetails,
 	formatBackgroundNotice,
@@ -5,6 +6,7 @@ import {
 	formatExitCodeNotice,
 } from "@tau/tau-tui/tools/bash";
 import * as fs from "node:fs";
+import { countTokens, Encoding } from "@tau/tau-natives";
 import { type } from "@tau/tautype";
 import type {
 	AgentTool,
@@ -713,6 +715,12 @@ export class BashTool implements AgentTool<BashToolSchema, BashToolDetails> {
 				outputLines.push("", `[${message}]`);
 			}
 			const timeoutOutputText = await enforceInlineByteCap(outputLines.join("\n"), inlineCap);
+			const tiktokenEnabled = this.session.settings.get("bash.tiktokenShim.enabled") !== false;
+			if (tiktokenEnabled && timeoutOutputText) {
+				try {
+					details.tokens = countTokens(timeoutOutputText, Encoding.O200kBase);
+				} catch {}
+			}
 			return toolResult(details)
 				.content([{ type: "text", text: timeoutOutputText }, ...(result.images ?? [])])
 				.truncationFromSummary(result, { direction: "tail" })
@@ -725,6 +733,13 @@ export class BashTool implements AgentTool<BashToolSchema, BashToolDetails> {
 
 		// No-op for already-bounded output; see `inlineCap` above.
 		const cappedOutputText = await enforceInlineByteCap(outputText, inlineCap);
+
+		const tiktokenEnabled = this.session.settings.get("bash.tiktokenShim.enabled") !== false;
+		if (tiktokenEnabled && cappedOutputText) {
+			try {
+				details.tokens = countTokens(cappedOutputText, Encoding.O200kBase);
+			} catch {}
+		}
 
 		const resultBuilder = toolResult(details)
 			.content([{ type: "text", text: cappedOutputText }, ...(result.images ?? [])])

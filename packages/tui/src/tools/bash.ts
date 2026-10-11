@@ -31,6 +31,7 @@ export function formatBackgroundNotice(jobId: string): string {
 /** Shell execution metadata used by transcript rendering. */
 export interface BashToolDetails {
 	meta?: OutputMeta;
+	tokens?: number;
 	timeoutSeconds?: number;
 	requestedTimeoutSeconds?: number;
 	timeoutDisabled?: boolean;
@@ -377,6 +378,9 @@ export function createShellRenderer<TArgs>(config: ShellRendererConfig<TArgs>) {
 					}
 					if (wallTimeMs !== undefined) {
 						statsParts.push(`Wall: ${formatWallTimeSeconds(wallTimeMs)}s`);
+					}
+					if (details?.tokens !== undefined) {
+						statsParts.push(`Tokens: ${details.tokens.toLocaleString()}`);
 					}
 					if (timeoutDisabled) {
 						statsParts.push("Timeout: disabled");

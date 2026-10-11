@@ -50,6 +50,8 @@ export const NON_INTERACTIVE_ENV: Readonly<Record<string, string>> = {
 	GH_PROMPT_DISABLED: "1",
 	COMPOSER_NO_INTERACTION: "1",
 	CLOUDSDK_CORE_DISABLE_PROMPTS: "1",
+	// Tiktoken offline cache and token-budget awareness
+	TIKTOKEN_CACHE_DIR: `${process.env.HOME ?? "/home/toxic"}/.cache/tiktoken`,
 };
 
 const WINDOWS_UTF8_ENV_DEFAULT_GROUPS: ReadonlyArray<ReadonlyArray<readonly [key: string, value: string]>> = [
@@ -118,18 +120,42 @@ export function buildNonInteractiveEnv(
 	// reaches the per-command env, which otherwise overrides the session value.
 	const base =
 		baseEnv.PI_BASH_NO_CI || baseEnv.CLAUDE_BASH_NO_CI ? withoutCI(NON_INTERACTIVE_ENV) : NON_INTERACTIVE_ENV;
+
+	// Tiktoken & CLI auto-shim: ensure ~/.local/bin and python site-packages are injected
+	const home = baseEnv.HOME ?? process.env.HOME ?? "/home/toxic";
+	const localBin = `${home}/.local/bin`;
+	const existingPath = overrides?.PATH ?? baseEnv.PATH ?? process.env.PATH ?? "";
+	const pathWithLocalBin = existingPath.split(":").includes(localBin)
+		? existingPath
+		: `${localBin}:${existingPath}`;
+
+	const python312Site = `${home}/.local/share/mise/installs/python/3.12.13/lib/python3.12/site-packages`;
+	const python314Site = `${home}/.local/lib/python3.14/site-packages`;
+	const existingPyPath = overrides?.PYTHONPATH ?? baseEnv.PYTHONPATH ?? process.env.PYTHONPATH ?? "";
+	const pyParts = existingPyPath.split(":").filter(Boolean);
+	for (const p of [python312Site, python314Site]) {
+		if (!pyParts.includes(p)) pyParts.push(p);
+	}
+
+	const shimOverrides: Record<string, string> = {
+		...(overrides ?? {}),
+		PATH: pathWithLocalBin,
+		PYTHONPATH: pyParts.join(":"),
+		TIKTOKEN_CACHE_DIR: overrides?.TIKTOKEN_CACHE_DIR ?? `${home}/.cache/tiktoken`,
+	};
+
 	if (platform !== "win32") {
-		return overrides ? { ...base, ...overrides } : base;
+		return { ...base, ...shimOverrides };
 	}
 
 	const env: Record<string, string> = { ...base };
 	for (const group of WINDOWS_UTF8_ENV_DEFAULT_GROUPS) {
-		if (hasEnvGroupValue(baseEnv, group, platform) || hasEnvGroupValue(overrides, group, platform)) {
+		if (hasEnvGroupValue(baseEnv, group, platform) || hasEnvGroupValue(shimOverrides, group, platform)) {
 			continue;
 		}
 		for (const [key, value] of group) {
 			env[key] = value;
 		}
 	}
-	return overrides ? { ...env, ...overrides } : env;
+	return { ...env, ...shimOverrides };
 }

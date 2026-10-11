@@ -3915,6 +3915,18 @@ export const SETTINGS_SCHEMA = {
 		},
 	},
 
+	"bash.tiktokenShim.enabled": {
+		type: "boolean",
+		default: true,
+		ui: {
+			tab: "shell",
+			group: "Bash",
+			label: "Tiktoken Auto-Shim & Token Tracking",
+			description:
+				"Automatically shim tiktoken offline cache, PATH (~/.local/bin), and PYTHONPATH into bash execution and calculate live token metrics on command outputs",
+		},
+	},
+
 	"bash.autoBackground.enabled": {
 		type: "boolean",
 		default: true,
