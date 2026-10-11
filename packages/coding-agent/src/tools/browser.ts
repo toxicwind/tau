@@ -1,3 +1,4 @@
+import { join } from "node:path";
 import { type } from "@tau/tautype";
 import type { AgentToolResult } from "@tau/tau-agent-core";
 import { isRecord, logger, untilAborted } from "@tau/tau-utils";

@@ -535,7 +535,7 @@ function collectExtensionSpecifierReferences(
 	return references;
 }
 
-const EXTENSION_PARSE_CACHE_SCHEMA_VERSION = 3;
+const EXTENSION_PARSE_CACHE_SCHEMA_VERSION = 5;
 const CREATE_EXTENSION_PARSE_CACHE_TABLE =
 	"CREATE TABLE IF NOT EXISTS extension_parse_cache (cache_key TEXT PRIMARY KEY, source_type TEXT NOT NULL, [references] TEXT NOT NULL, commonjs_syntax INTEGER NOT NULL)";
 const EXTENSION_PARSE_CACHE_MAX_BYTES = 8 * 1024 * 1024;
@@ -803,7 +803,7 @@ const PI_SCOPE_ALIASES = ["tau", "oh-my-pi", "mariozechner", "earendil-works"] a
 
 // Internal tau-* package basenames bundled inside the tau binary, plus legacy pi-* aliases.
 const PI_PACKAGE_NAMES = [
-	"tau-agent-core", "tau-ai", "tau-coding-agent", "tau-natives", "tau-tui", "tau-utils",
+	"tau-agent-core", "tau-ai", "tau-coding-agent", "tau-agent", "coding-agent", "tau-natives", "tau-tui", "tau-utils",
 	"pi-agent-core", "pi-ai", "pi-coding-agent", "pi-natives", "pi-tui", "pi-utils",
 ] as const;
 
@@ -817,6 +817,10 @@ const PI_PACKAGE_ALTERNATION = PI_PACKAGE_NAMES.join("|");
 // bundled copy. Entries ending in `/` rewrite the whole subtree; add new
 // `pkg/from -> pkg/to` pairs whenever an upstream-only subpath breaks resolution.
 const PI_SUBPATH_REMAPS: ReadonlyMap<string, string> = new Map<string, string>([
+	["tau-agent", "tau-coding-agent"],
+	["tau-agent/", "tau-coding-agent/"],
+	["coding-agent", "tau-coding-agent"],
+	["coding-agent/", "tau-coding-agent/"],
 	["pi-coding-agent", "tau-coding-agent"],
 	["pi-coding-agent/", "tau-coding-agent/"],
 	["pi-tui", "tau-tui"],
@@ -849,7 +853,7 @@ function remapLegacyPiSubpath(rest: string): string {
 	return rest;
 }
 
-const LEGACY_PI_SPECIFIER_FILTER = new RegExp(`^@(?:${PI_SCOPE_ALTERNATION})/(?:${PI_PACKAGE_ALTERNATION})(?:/.*)?$`);
+const LEGACY_PI_SPECIFIER_FILTER = new RegExp(`^(?:@(?:${PI_SCOPE_ALTERNATION})/(?:${PI_PACKAGE_ALTERNATION})|tau|oh-my-pi|pi)(?:/.*)?$`);
 const resolvedSpecifierFallbacks = new Map<string, string>();
 const SOURCE_MODULE_EXTENSIONS = [".ts", ".tsx", ".mts", ".cts", ".js", ".jsx", ".mjs", ".cjs"] as const;
 const SUPPORTED_PACKAGE_IMPORT_CONDITIONS = new Set(["bun", "node", "import", "default"]);
@@ -1036,6 +1040,7 @@ export function __buildLegacyPiPackageRootOverrides(
 	const candidates: Record<string, string> = {
 		[`${CANONICAL_PI_SCOPE}/tau-ai`]: LEGACY_PI_AI_SHIM_PATH,
 		[`${CANONICAL_PI_SCOPE}/tau-coding-agent`]: LEGACY_PI_CODING_AGENT_SHIM_PATH,
+		tau: LEGACY_PI_CODING_AGENT_SHIM_PATH,
 		[`${CANONICAL_PI_SCOPE}/tau-tui`]: LEGACY_PI_TUI_SHIM_PATH,
 	};
 	if (useBundledModules) {
@@ -1070,11 +1075,17 @@ function ensureLegacyPiOverridesReady(): Promise<void> {
 let isLegacyPiSpecifierShimInstalled = false;
 
 function remapLegacyPiSpecifier(specifier: string): string | null {
+	if (specifier === "tau" || specifier === "oh-my-pi" || specifier === "pi") {
+		return `${CANONICAL_PI_SCOPE}/tau-coding-agent`;
+	}
+	if (specifier.startsWith("tau/") || specifier.startsWith("oh-my-pi/") || specifier.startsWith("pi/")) {
+		const subpath = specifier.slice(specifier.indexOf("/") + 1);
+		return `${CANONICAL_PI_SCOPE}/${remapLegacyPiSubpath(`tau-coding-agent/${subpath}`)}`;
+	}
 	if (!LEGACY_PI_SPECIFIER_FILTER.test(specifier)) {
 		return null;
 	}
 	const slashIdx = specifier.indexOf("/", 1);
-	// Filter guarantees a slash exists, but guard anyway to keep the type narrow.
 	if (slashIdx === -1) {
 		return null;
 	}
@@ -1148,6 +1159,10 @@ async function rewriteLegacyExtensionSource(
 	// keys on first use; every rewrite path must see the full map.
 	await ensureLegacyPiOverridesReady();
 	const references = getExtensionSourceAnalysis(source, importerPath).references;
+	if (process.env.TAU_LEGACY_PI_DEBUG === "1") {
+		console.error(`[legacy-pi] rewrite ${importerPath} refs=${references.length}`);
+		for (const r of references) console.error(`[legacy-pi]   ref ${r.kind} ${r.specifier}`);
+	}
 	const replacements: Array<ExtensionSpecifierReference & { replacement: string }> = [];
 	for (const reference of references) {
 		if (reference.kind !== "import") continue;
@@ -2546,6 +2561,10 @@ async function ensureExtensionGraphHook(entryRealPath: string): Promise<{ clear(
 		cacheBustResolvedImportModules: discoveredCacheBustModules,
 		synchronousSourcePaths,
 	} = await collectExtensionModules(entryRealPath);
+	if (process.env.TAU_LEGACY_PI_DEBUG === "1") {
+		console.error(`[legacy-pi] hook entry=${entryRealPath} modules=${currentModules.size} cjs=${commonJsPaths.size} sync=${synchronousSourcePaths.size}`);
+		for (const m of currentModules.keys()) console.error(`[legacy-pi]   graph ${m}`);
+	}
 	let cacheBustResolvedImportModules = extensionGraphCacheBustResolvedImportModules.get(entryRealPath);
 	if (!cacheBustResolvedImportModules) {
 		cacheBustResolvedImportModules = new Set<string>();
@@ -2638,6 +2657,9 @@ export async function loadLegacyPiModule(resolvedPath: string): Promise<unknown>
 	// `bun link`/pnpm installs) so the rewrite filter matches the path Bun
 	// actually hands the hook.
 	const entryRealPath = await realpathOrSelf(path.resolve(resolvedPath));
+	if (process.env.TAU_LEGACY_PI_DEBUG === "1") {
+		console.error(`[legacy-pi] loadLegacyPiModule ${resolvedPath} -> ${entryRealPath}`);
+	}
 	await ensureLegacyPiOverridesReady();
 	const pendingSources = await ensureExtensionGraphHook(entryRealPath);
 	try {

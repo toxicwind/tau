@@ -85,7 +85,7 @@ const CONDITIONS: Record<string, () => boolean> = {
 };
 
 /** Adapt the application schema and settings store to the terminal overlay. */
-export function createSettingsHost(): SettingsHost {
+export function createSettingsHost(settingsInstance?: Settings): SettingsHost {
 	const entries: SettingsDisplayEntry[] = [];
 	for (const tab of SETTING_TABS) {
 		for (const path of getPathsForTab(tab)) {
@@ -103,8 +103,14 @@ export function createSettingsHost(): SettingsHost {
 	}
 	return {
 		entries,
-		get: path => settings.get(path as SettingPath),
-		set: (path, value) => settings.set(path as SettingPath, value as never),
+		get: path => {
+			try {
+				return (settingsInstance ?? Settings.instance ?? settings).get(path as SettingPath);
+			} catch {
+				return getDefault(path as SettingPath);
+			}
+		},
+		set: (path, value) => (settingsInstance ?? Settings.instance ?? settings).set(path as SettingPath, value as never),
 		normalizeProviderLimits: normalizeProviderMaxInFlightRequests,
 		validateProviderLimits: validateProviderMaxInFlightRequests,
 	};

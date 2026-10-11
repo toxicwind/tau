@@ -1,3 +1,4 @@
+import { join } from "node:path";
 /**
  * Tool approval resolution.
  *

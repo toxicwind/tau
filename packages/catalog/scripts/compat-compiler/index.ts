@@ -48,12 +48,13 @@ export async function compileCompatRules(rulesDir: string): Promise<CompiledComp
 		readGroup(rulesDir, "auth"),
 	]);
 	const behaviorSource = runtime.find(source => source.file === "runtime/behavior.kdl");
+	const runtimeCascade = runtime.filter(source => source.file !== "runtime/behavior.kdl");
 	const files = [...taxonomy, ...classes, ...providers, ...runtime, ...auth].map(source => source.file).sort();
 	return {
 		version: 1,
 		files,
 		taxonomy: compileTaxonomy(taxonomy),
-		cascade: compileCascade([...classes, ...providers]),
+		cascade: compileCascade([...classes, ...providers, ...runtimeCascade]),
 		behavior: compileBehavior(behaviorSource),
 		auth: compileAuth(auth),
 		providers: compileProviders(providers),

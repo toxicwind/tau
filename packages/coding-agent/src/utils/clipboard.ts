@@ -186,6 +186,14 @@ export async function copyToClipboard(text: string): Promise<void> {
 				// Fall through to native.
 			}
 		}
+		if (process.platform === "linux" && process.env.WAYLAND_DISPLAY) {
+			try {
+				await spawnCapture(["wl-copy"], { input: text, timeoutMs: 3000 });
+				return;
+			} catch {
+				// Fall through to native
+			}
+		}
 
 		await nativeCopyToClipboard(text);
 	} catch {

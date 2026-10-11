@@ -338,7 +338,9 @@ async function generateTitleOnlineWithModels(
 			const messages: Message[] = [{ role: "user", content: userMessage, timestamp: Date.now() }];
 			if (model.supportsAssistantPrefill) messages.push(titlePrefill(model));
 
-			const response = await retryTransientCompletion(
+					let response;
+		try {
+			response = await retryTransientCompletion(
 				() =>
 					completeSimple(
 						model,
@@ -362,6 +364,32 @@ async function generateTitleOnlineWithModels(
 					),
 				{ signal, provider: model.provider },
 			);
+		} catch (err) {
+			// Some providers/models reject disableReasoning with "Reasoning is mandatory"
+			// (e.g. openrouter free models). Retry once without the flag before giving up.
+			const msg = err instanceof Error ? err.message : String(err);
+			if (/reasoning.*mandatory|reasoning.*required|cannot.*disable.*reasoning/i.test(msg)) {
+				logger.debug("title-generator: model requires reasoning, retrying without disableReasoning", modelContext);
+				response = await retryTransientCompletion(
+					() =>
+						completeSimple(
+							model,
+							{ systemPrompt, messages },
+							{
+								apiKey: registry.resolver(model, sessionId),
+								sessionId,
+								maxTokens,
+								temperature: 0,
+								metadata,
+								signal,
+							},
+						),
+					{ signal, provider: model.provider },
+				);
+			} else {
+				throw err;
+			}
+		}
 
 			if (response.stopReason === "aborted" || signal?.aborted) {
 				logger.debug("title-generator: aborted", {

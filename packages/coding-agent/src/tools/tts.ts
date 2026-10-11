@@ -1,3 +1,4 @@
+import { join } from "node:path";
 // Ported from NousResearch/hermes-agent (MIT) — tools/tts_tool.py L167-171, L896-959.
 // Speech backends are catalog models selected through the speech role chain.
 

@@ -1,0 +1,13 @@
+modelRoles:
+  default: omni/auto
+task:
+  maxConcurrency: 32
+lsp:
+  diagnosticsOnEdit: false
+read:
+  defaultLimit: 1000
+hindsight:
+  autoRecall: false
+  scoping: per-project
+images:
+  describeForTextModels: false

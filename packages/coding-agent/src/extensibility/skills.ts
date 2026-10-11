@@ -18,6 +18,7 @@ import type { SkillPromptDetails } from "../session/messages";
 import { expandTilde } from "../tools/path-utils";
 
 export { allowsSkillTokens, SKILL_TOKEN_RE };
+export { getAgentDir } from "@tau/tau-utils";
 
 export interface Skill {
 	name: string;
@@ -88,12 +89,13 @@ export function isNameClaimedByAuthoredSkill(name: string): boolean {
 export interface LoadSkillsFromDirOptions {
 	/** Directory to scan for skills */
 	dir: string;
-	/** Source identifier for these skills */
-	source: string;
+	/** Source identifier for these skills; defaults to "custom:user" when omitted (e.g. legacy callers). */
+	source?: string;
 }
 
 export async function loadSkillsFromDir(options: LoadSkillsFromDirOptions): Promise<LoadSkillsResult> {
-	const [rawProviderId, rawLevel] = options.source.split(":", 2);
+	const source = options.source ?? "custom:user";
+	const [rawProviderId, rawLevel] = source.split(":", 2);
 	const providerId = rawProviderId || "custom";
 	const level: "user" | "project" = rawLevel === "project" ? "project" : "user";
 	const result = await scanSkillsFromDir(
@@ -112,7 +114,7 @@ export async function loadSkillsFromDir(options: LoadSkillsFromDirOptions): Prom
 			description: typeof capSkill.frontmatter?.description === "string" ? capSkill.frontmatter.description : "",
 			filePath: capSkill.path,
 			baseDir: capSkill.path.replace(/[\\/]SKILL\.md$/, ""),
-			source: options.source,
+			source,
 			...(capSkill.containRoot !== undefined && { containRoot: capSkill.containRoot }),
 			hide: capSkill.frontmatter?.hide === true || capSkill.frontmatter?.disableModelInvocation === true,
 			_source: capSkill._source,

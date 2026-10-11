@@ -1,3 +1,4 @@
+import { join } from "node:path";
 import type { GrepToolDetails } from "@tau/tau-tui/tools/grep";
 import { mkdtemp, rm, stat, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";

@@ -1,3 +1,4 @@
+import { join } from "node:path";
 /**
  * Structured metadata for tool outputs.
  *

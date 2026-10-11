@@ -14,14 +14,19 @@ fi
 PKG_DIR="$FORK_ROOT/packages/coding-agent"
 COMPILED="$PKG_DIR/dist/tau"
 
-if [ -x "$COMPILED" ] && [ -z "${TAU_DEV_MODE:-}" ]; then
+# In the sovereign development fork, default to running the TypeScript CLI
+# directly through bun so live changes are immediately active without forcing
+# TAU_DEV_MODE=1. Compiled binary execution is opt-in via TAU_USE_COMPILED=1.
+if [ -n "${TAU_USE_COMPILED:-}" ] && [ -x "$COMPILED" ]; then
   exec "$COMPILED" "$@"
 fi
 
-# Dev fallback: run the TypeScript CLI straight through bun.
 if command -v bun >/dev/null 2>&1 && [ -f "$PKG_DIR/src/cli.ts" ]; then
   exec bun "$PKG_DIR/src/cli.ts" "$@"
 fi
 
+if [ -x "$COMPILED" ]; then
+  exec "$COMPILED" "$@"
+fi
 echo "tau: no compiled dist/tau and no bun + src/cli.ts fallback under $PKG_DIR" >&2
 exit 127

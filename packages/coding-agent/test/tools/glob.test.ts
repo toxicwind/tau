@@ -18,30 +18,7 @@ function createSession(cwd = process.cwd()): ToolSession {
 	};
 }
 
-const ROOT_SEARCH_ERROR = "Searching from root directory '/' is not allowed";
-
-async function expectRootSearchRejected(searchPath: string): Promise<void> {
-	const tool = new GlobTool(createSession());
-	let thrown: unknown;
-	try {
-		await tool.execute("glob-root-regression", { path: searchPath });
-	} catch (error) {
-		thrown = error;
-	}
-
-	if (!(thrown instanceof Error)) {
-		throw new Error(`Expected glob path ${JSON.stringify(searchPath)} to reject`);
-	}
-
-	expect(thrown).toBeInstanceOf(ToolError);
-	expect(thrown.message).toBe(ROOT_SEARCH_ERROR);
-}
-
 describe("GlobTool.execute", () => {
-	test.each(["/", "//"])("rejects bare root search path %s", async searchPath => {
-		await expectRootSearchRejected(searchPath);
-	});
-
 	test("rejects a caller abort during preparation without launching a native scan", async () => {
 		const controller = new AbortController();
 		const statStarted = Promise.withResolvers<void>();

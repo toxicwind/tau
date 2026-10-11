@@ -1,3 +1,4 @@
+import { join } from "node:path";
 import { type ElidedRange, formatSingleLine } from "@tau/tau-tui/tools/read";
 import * as path from "node:path";
 import type { AgentToolResult } from "@tau/tau-agent-core";

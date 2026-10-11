@@ -6,7 +6,6 @@
  * The coding-agent package's own barrel (`./src/index.ts`) cannot be listed
  * as a `bun --compile` extra entrypoint alongside the CLI entry without
  * silently breaking the main binary's startup (see issue #1474 follow-up).
- * Routing legacy plugin imports through this sibling shim sidesteps that
  * conflict: bun bundles a distinct entry whose path differs from the CLI
  * entry, while still re-exporting the canonical surface so plugins observe
  * the same module identity as a direct `@tau/tau-coding-agent` import.
@@ -35,10 +34,10 @@ import { getKeybindings, type Keybinding, Text } from "@tau/tau-tui";
 import {
 	getAgentDbPath,
 	getAgentDir,
-	getProjectDir,
 	isCompiledBinary,
 	parseFrontmatter as parseOmpFrontmatter,
 } from "@tau/tau-utils";
+import { AgentSession } from "../session/agent-session";
 import { getPackageDir as getOmpPackageDir } from "../config";
 import { formatKeyHints } from "@tau/tau-tui/app-keybindings";
 import type { PromptTemplate } from "../config/prompt-templates";
@@ -59,7 +58,6 @@ import {
 	truncateHead,
 	truncateTail,
 } from "@tau/tau-tui/tools/streaming-output";
-import type { SessionEntry } from "../session/session-entries";
 import type { Tool, ToolSession } from "../tools";
 import { BashTool } from "../tools/bash";
 import { GlobTool } from "../tools/glob";
@@ -1645,3 +1643,10 @@ export type LsToolResultEvent = ToolResultEvent & { toolName: "ls" };
 export function isLsToolResult(e: ToolResultEvent): e is LsToolResultEvent {
 	return e.toolName === "ls";
 }
+
+// ─── Legacy pi contract re-exports ────────────────────────────────────────
+// Every runtime symbol in LEGACY_PI_ROOT_EXPORTS must appear here.
+// The conformance test enforces it.
+export { parseSkillBlock, type ParsedSkillBlock } from "./skills/parse-skill-block";
+export { loadSkills, getAgentDir } from "./skills";
+export { AgentSession } from "../session/agent-session";

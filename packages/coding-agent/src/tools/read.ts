@@ -1,3 +1,4 @@
+import { join } from "node:path";
 import type { ReadToolDetails } from "@tau/tau-tui/tools/read";
 import { tryResolveInternalUrlSync } from "../internal-urls/hyperlink-targets";
 import * as fs from "node:fs/promises";

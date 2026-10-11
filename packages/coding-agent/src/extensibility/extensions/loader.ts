@@ -582,22 +582,33 @@ export async function discoverExtensionPaths(
 	const disabled = new Set(disabledExtensionIds ?? []);
 	const loadOptions = disabledExtensionIds ? { cwd, disabledExtensions: disabledExtensionIds } : { cwd };
 
-	const isDisabledName = (name: string): boolean => disabled.has(`extension-module:${name}`);
+	const isDisabled = (extPath: string): boolean => {
+		const name = getExtensionNameFromPath(extPath);
+		const base = path.basename(extPath);
+		const ext = path.extname(extPath);
+		const baseNoExt = ext ? path.basename(extPath, ext) : base;
+		return (
+			disabled.has(name) ||
+			disabled.has(`extension-module:${name}`) ||
+			disabled.has(`extension:${name}`) ||
+			disabled.has(`plugin:${name}`) ||
+			disabled.has(base) ||
+			disabled.has(baseNoExt) ||
+			disabled.has(extPath) ||
+			disabled.has(path.resolve(extPath))
+		);
+	};
 
 	const addPath = async (extPath: string): Promise<void> => {
+		if (isDisabled(extPath)) {
+			return;
+		}
 		const resolved = path.resolve(extPath);
-		// Dedup on the real path, not the literal string. `~/.tau` and `~/.tau`
-		// are symlinks to the same directory, so the same file reached through
-		// both roots produced two distinct resolved strings, both survived
-		// dedup, and the module body ran twice per session — every hook fired
-		// twice. The original path string is still what we hand downstream, so
-		// labels and error messages keep naming the path the user configured.
 		let key = resolved;
 		try {
 			key = await fs.realpath(resolved);
 		} catch {
-			// A path that does not exist has no real path to compare, so fall
-			// back to the resolved string and let the later load report why.
+			// Fall back to resolved string
 		}
 		if (!seen.has(key)) {
 			seen.add(key);
@@ -607,7 +618,7 @@ export async function discoverExtensionPaths(
 
 	const addPaths = async (paths: string[]): Promise<void> => {
 		for (const extPath of paths) {
-			if (isDisabledName(getExtensionNameFromPath(extPath))) continue;
+			if (isDisabled(extPath)) continue;
 			await addPath(extPath);
 		}
 	};

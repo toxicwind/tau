@@ -1,3 +1,4 @@
+import { join } from "node:path";
 import { renderJobsSection, renderFailedJobLogs, renderRunSection } from "@tau/tau-tui/tools/github";
 import { scheduler } from "node:timers/promises";
 import type { AgentToolResult, AgentToolUpdateCallback } from "@tau/tau-agent-core";

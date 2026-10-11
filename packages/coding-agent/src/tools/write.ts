@@ -1,3 +1,4 @@
+import { join } from "node:path";
 import type { WriteToolDetails } from "@tau/tau-tui/tools/write";
 import { Database } from "bun:sqlite";
 import * as fs from "node:fs/promises";

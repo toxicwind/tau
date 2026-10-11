@@ -40,10 +40,16 @@ export function createSkillDescriptionCompressor(
 			configured ??
 			(preferred ? { model: preferred, thinkingLevel: undefined } : undefined) ??
 			resolveRoleSelection(["tiny"], settings, available);
-		if (!selected) throw new Error("No smol or tiny model available");
+		if (!selected) {
+			logger.debug("Skill description compression skipped: no smol or tiny model available");
+			throw new Error("No smol or tiny model available");
+		}
 		const { model } = selected;
 		const apiKey = await registry.getApiKey(model, sessionId);
-		if (!apiKey) throw new Error(`No credential for ${model.provider}/${model.id}`);
+		if (!apiKey) {
+			logger.debug("Skill description compression skipped: no credential", { model: model.id, provider: model.provider });
+			throw new Error(`No credential for ${model.provider}/${model.id}`);
+		}
 		const response = await completeSimple(
 			model,
 			{
@@ -198,9 +204,9 @@ export class SkillDescriptionCatalog {
 				} finally {
 					compressionSlots.release();
 				}
-			} catch (error) {
-				logger.warn("Skill description compression failed", { skill: skill.name, error: String(error) });
-			} finally {
+					} catch (error) {
+			logger.debug("Skill description compression failed", { skill: skill.name, error: String(error) });
+		} finally {
 				inFlight.delete(job);
 			}
 		});

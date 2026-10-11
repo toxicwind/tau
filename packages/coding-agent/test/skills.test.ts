@@ -161,6 +161,18 @@ describe("skills", () => {
 
 			expect(skills).toHaveLength(0);
 		});
+
+		it("should default source to custom:user when omitted (legacy callers)", async () => {
+			// Legacy extensions call loadSkills without a source identifier;
+			// this must degrade to a custom scan, never throw (dev-mode crash).
+			const { skills } = await loadSkillsFromDir({
+				dir: fixturesDir,
+			} as Parameters<typeof loadSkillsFromDir>[0]);
+
+			expect(skills.length).toBeGreaterThan(0);
+			expect(skills.every(s => s.source === "custom:user")).toBe(true);
+			expect(skills.find(skill => skill.name === "valid-skill")).toBeDefined();
+		});
 	});
 
 	describe("loadSkills with options", () => {
@@ -175,14 +187,18 @@ describe("skills", () => {
 		it("should load from customDirectories only when built-ins disabled", async () => {
 			const { skills } = customDirectorySkills;
 			expect(skills.length).toBeGreaterThan(0);
-			// Custom directory skills have source "custom:user"
-			expect(skills.every(s => s.source.startsWith("custom"))).toBe(true);
+			// Managed (auto-learn) skills are unconditional by design, so scope
+			// custom-directory assertions to custom-source skills.
+			const customSkills = skills.filter(s => s.source.startsWith("custom"));
+			expect(customSkills.length).toBeGreaterThan(0);
+			expect(customSkills.every(s => s.source === "custom:user")).toBe(true);
 		});
 
 		it("should return customDirectory skills sorted by name (case-insensitive)", async () => {
 			const { skills } = customDirectorySkills;
+			const customSkills = skills.filter(s => s.source.startsWith("custom"));
 
-			expect(skills.map(s => s.name)).toEqual(expectedFixtureSkillOrder);
+			expect(customSkills.map(s => s.name)).toEqual(expectedFixtureSkillOrder);
 		});
 
 		it("should keep user Claude skills when project .claude/skills is missing", async () => {
@@ -504,9 +520,12 @@ description: Skill loaded from a tilde-expanded custom directory.
 		}
 	});
 
-	it("should return empty when all sources disabled and no custom dirs", async () => {
+	it("should return only managed skills when all sources disabled and no custom dirs", async () => {
+		// Managed (auto-learn) skills are discovered unconditionally by design;
+		// disabling every built-in source leaves exactly those.
 		const { skills } = await loadSkills({ ...DISABLE_ALL_BUILTIN_SKILLS });
-		expect(skills).toHaveLength(0);
+		expect(skills.every(s => !s.source.startsWith("custom"))).toBe(true);
+		expect(skills.filter(s => s.source.startsWith("custom")).length).toBe(0);
 	});
 
 	it("should filter skills with includeSkills glob patterns", async () => {
@@ -535,6 +554,39 @@ description: Skill loaded from a tilde-expanded custom directory.
 		});
 		expect(skills.length).toBeGreaterThan(0);
 		expect(skills.every(s => s.name.startsWith("valid-"))).toBe(true);
+	});
+
+	it("should discover an isolated skill repo end to end (hub wiring path)", async () => {
+		// Hermetic: temp dir only, includeSkills-pinned, so stray $HOME skills
+		// can never leak into the assertion. Mirrors the skills-hub flat/
+		// registration (skills.customDirectories + requireDescription).
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-hub-wiring-"));
+		const skillDir = path.join(tempDir, "probe-skill");
+		await fs.mkdir(skillDir, { recursive: true });
+		await fs.writeFile(
+			path.join(skillDir, "SKILL.md"),
+			`---
+name: probe-skill
+description: Wiring probe skill.
+---
+
+# Probe Skill
+`,
+		);
+
+		try {
+			const { skills } = await loadSkills({
+				...DISABLE_ALL_BUILTIN_SKILLS,
+				customDirectories: [tempDir],
+				includeSkills: ["probe-skill"],
+			});
+			expect(skills).toHaveLength(1);
+			expect(skills[0].name).toBe("probe-skill");
+			expect(skills[0].source).toBe("custom:user");
+			expect(skills[0].filePath).toBe(path.join(skillDir, "SKILL.md"));
+		} finally {
+			await removeWithRetries(tempDir);
+		}
 	});
 
 	it("should return all skills when includeSkills is empty", async () => {

@@ -1,3 +1,4 @@
+import { resolve } from "node:path";
 import { AsyncLocalStorage } from "node:async_hooks";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -26,6 +27,13 @@ import {
 } from "../run-scope";
 import { ToolAbortError, throwIfAborted } from "../tool-errors";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
+import {
+	isHyprlandActive,
+	hyprListWindows,
+	hyprListDisplays,
+	hyprFocusWindow,
+	hyprCaptureRegion,
+} from "./hyprland";
 import type {
 	ComputerScreenshot,
 	ComputerSessionSnapshot,
@@ -187,13 +195,44 @@ async function captureScreenshot(
 	options?: ScreenshotOptions,
 ): Promise<{ path: string; width: number; height: number }> {
 	const context = getContext();
+	const destination = path.join(os.tmpdir(), `tau-computer-${Snowflake.next()}.png`);
+	if (target !== "desktop" && target.startsWith("0x") && isHyprlandActive()) {
+		const windows = await hyprListWindows();
+		const win = windows.find(w => w.id === target);
+		if (win) {
+			await hyprCaptureRegion(win, destination);
+			const width = win.width;
+			const height = win.height;
+			context.screenshots.push({
+				path: destination,
+				width,
+				height,
+				sourceWidth: width,
+				sourceHeight: height,
+				target,
+			});
+			if (!options?.silent) {
+				const buf = await Bun.file(destination).arrayBuffer();
+				context.output.push({
+					type: "text",
+					text: `screenshot ${target} ${width}×${height} → ${destination}`,
+				});
+				context.output.push({
+					type: "image",
+					data: Buffer.from(buf).toString("base64"),
+					mimeType: "image/png",
+				});
+			}
+			return { path: destination, width, height };
+		}
+	}
+
 	const frame = await nativeCall(context.signal, () =>
 		session.capture(target, {
 			maxWidth: context.snapshot.captureMaxWidth,
 			maxHeight: context.snapshot.captureMaxHeight,
 		}),
 	);
-	const destination = path.join(os.tmpdir(), `tau-computer-${Snowflake.next()}.png`);
 	await Bun.write(destination, frame.data);
 	const scaled = frame.width !== frame.sourceWidth || frame.height !== frame.sourceHeight;
 	context.screenshots.push({
@@ -394,6 +433,10 @@ class Win {
 	async raise(): Promise<void> {
 		const context = this.#getContext();
 		guardRun(context, "raise");
+		if (isHyprlandActive() && this.id.startsWith("0x")) {
+			await hyprFocusWindow(this.id);
+			return;
+		}
 		await nativeCall(context.signal, () => this.#session.raiseWindow(this.id));
 	}
 
@@ -712,20 +755,36 @@ export class ComputerWorkerCore {
 			},
 			displays: async (): Promise<DesktopDisplay[]> => {
 				const { signal } = getContext();
-				return await nativeCall(signal, () => session.listDisplays());
+				const nativeDisplays = await nativeCall(signal, () => session.listDisplays());
+				if (nativeDisplays.length > 0) return nativeDisplays;
+				if (isHyprlandActive()) {
+					const hyprMonitors = await hyprListDisplays();
+					if (hyprMonitors.length > 0) return hyprMonitors;
+				}
+				return nativeDisplays;
 			},
 			windows: async (filter?: WindowFilter): Promise<DesktopWindow[]> => {
 				const { signal } = getContext();
-				return (await nativeCall(signal, () => session.listWindows())).filter(window =>
-					matchesFilter(window, filter),
-				);
+				let list = await nativeCall(signal, () => session.listWindows());
+				if (list.length === 0 && isHyprlandActive()) {
+					list = await hyprListWindows();
+				}
+				return list.filter(window => matchesFilter(window, filter));
 			},
 			window: async (selector: string | WindowFilter): Promise<Win> => {
 				const { signal } = getContext();
-				const windows = await nativeCall(signal, () => session.listWindows());
+				let windows = await nativeCall(signal, () => session.listWindows());
+				if (windows.length === 0 && isHyprlandActive()) {
+					windows = await hyprListWindows();
+				}
 				const matches =
 					typeof selector === "string"
-						? windows.filter(window => window.id === selector)
+						? windows.filter(
+								window =>
+									window.id === selector ||
+									window.app.toLowerCase().includes(selector.toLowerCase()) ||
+									window.title.toLowerCase().includes(selector.toLowerCase()),
+							)
 						: windows.filter(window => matchesFilter(window, selector));
 				if (matches.length === 0) throw new ToolError(`no window matches ${JSON.stringify(selector)}`);
 				if (matches.length > 1) {
@@ -738,7 +797,11 @@ export class ComputerWorkerCore {
 			},
 			focusedWindow: async (): Promise<Win | null> => {
 				const { signal } = getContext();
-				const window = (await nativeCall(signal, () => session.listWindows())).find(candidate => candidate.focused);
+				let windows = await nativeCall(signal, () => session.listWindows());
+				if (windows.length === 0 && isHyprlandActive()) {
+					windows = await hyprListWindows();
+				}
+				const window = windows.find(candidate => candidate.focused);
 				return window ? makeWin(window) : null;
 			},
 			screenshot: (options?: ScreenshotOptions) => captureScreenshot(session, getContext, "desktop", options),

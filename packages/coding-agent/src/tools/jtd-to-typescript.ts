@@ -1,3 +1,4 @@
+import { join } from "node:path";
 /**
  * Convert JSON Type Definition (JTD) to TypeScript interface notation.
  *

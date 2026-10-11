@@ -1,3 +1,4 @@
+import * as path from "node:path";
 import { logger } from "@tau/tau-utils";
 import { throwIfAborted } from "../tools/tool-errors";
 import {
@@ -14,7 +15,8 @@ import {
 	syncContent,
 	WARMUP_TIMEOUT_MS,
 } from "./client";
-import { getServersForFile, type LspConfig, loadConfig } from "./config";
+import { getServersForFile, hasRootMarkers, type LspConfig, loadConfig, resolveCommand } from "./config";
+import DEFAULTS from "./defaults.json" with { type: "json" };
 import { MUX_RESTART_METHOD } from "./mux/protocol";
 import type { LspClient, ServerConfig } from "./types";
 import { uriToFile } from "./utils";
@@ -54,16 +56,88 @@ export interface LspWarmupOptions {
 	onConnecting?: (serverNames: string[]) => void;
 }
 
+/**
+ * Find the nearest project root by walking up from cwd and checking for LSP root markers.
+ * Returns the nearest directory with any recognized LSP root marker, or null if none found.
+ */
+function findNearestProjectRoot(cwd: string): string | null {
+	const allMarkers: string[] = [];
+	for (const serverConfig of Object.values(DEFAULTS) as Array<Partial<ServerConfig>>) {
+		if (Array.isArray(serverConfig.rootMarkers)) {
+			for (const marker of serverConfig.rootMarkers) {
+				if (!allMarkers.includes(marker)) allMarkers.push(marker);
+			}
+		}
+	}
+	let dir = path.resolve(cwd);
+	const root = path.parse(dir).root;
+	while (dir !== root) {
+		if (hasRootMarkers(dir, allMarkers)) return dir;
+		const parent = path.dirname(dir);
+		if (parent === dir) break;
+		dir = parent;
+	}
+	return null;
+}
+
+/**
+ * Discover LSP servers available on the system (binary resolves on PATH),
+ * regardless of whether the current directory is a project root.
+ * Used as a fallback when no project root is found, so the welcome screen
+ * always shows something useful instead of "No LSP servers".
+ */
+function discoverAvailableLspServers(cwd: string): LspStartupServerInfo[] {
+	const servers: LspStartupServerInfo[] = [];
+	for (const [name, rawConfig] of Object.entries(DEFAULTS) as Array<[string, Partial<ServerConfig>]>) {
+		if (!rawConfig.command || !rawConfig.fileTypes) continue;
+		if (rawConfig.isLinter) continue; // skip linters in the available list
+		const resolved = resolveCommand(rawConfig.command, cwd);
+		if (!resolved) continue;
+		servers.push({
+			name,
+			status: "available",
+			fileTypes: rawConfig.fileTypes,
+		});
+	}
+	return servers;
+}
+
 export function discoverStartupLspServers(
 	cwd: string,
 	status: LspStartupServerInfo["status"] = "connecting",
 ): LspStartupServerInfo[] {
+	// First try: load servers for the current directory
 	const config = loadConfig(cwd);
-	return getLspServers(config).map(([name, serverConfig]) => ({
-		name,
-		status,
-		fileTypes: serverConfig.fileTypes,
-	}));
+	const directServers = getLspServers(config);
+	if (directServers.length > 0) {
+		return directServers.map(([name, serverConfig]) => ({
+			name,
+			status,
+			fileTypes: serverConfig.fileTypes,
+		}));
+	}
+
+	// Second try: walk up to find a project root and load servers from there
+	const rootDir = findNearestProjectRoot(cwd);
+	if (rootDir && rootDir !== path.resolve(cwd)) {
+		const rootConfig = loadConfig(rootDir);
+		const rootServers = getLspServers(rootConfig);
+		if (rootServers.length > 0) {
+			return rootServers.map(([name, serverConfig]) => ({
+				name,
+				status: "available",
+				fileTypes: serverConfig.fileTypes,
+			}));
+		}
+	}
+
+	// Third try: fall back to all servers whose binaries are available on PATH
+	const available = discoverAvailableLspServers(cwd);
+	if (available.length > 0) {
+		return available;
+	}
+
+	return [];
 }
 
 /**

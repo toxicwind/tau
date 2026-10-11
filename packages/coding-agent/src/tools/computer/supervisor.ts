@@ -1,3 +1,4 @@
+import { resolve } from "node:path";
 import type { DesktopCapabilities } from "@tau/tau-natives";
 import { withTimeout } from "@tau/tau-utils/async";
 import * as logger from "@tau/tau-utils/logger";

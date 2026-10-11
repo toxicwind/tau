@@ -1,3 +1,4 @@
+import { join } from "node:path";
 import type { AskToolDetails, QuestionResult } from "@tau/tau-tui/tools/ask";
 /**
  * Ask Tool - Interactive user prompting during execution

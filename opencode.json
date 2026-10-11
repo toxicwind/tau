@@ -1,0 +1,15 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "ash": {
+      "command": [
+        "/home/toxic/.local/bin/ash",
+        "--config",
+        "/home/toxic/.config/ash/config.toml",
+        "mcp"
+      ],
+      "enabled": true,
+      "type": "local"
+    }
+  }
+}

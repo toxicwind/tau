@@ -1,3 +1,4 @@
+import { join } from "node:path";
 import type { AgentToolResult } from "@tau/tau-agent-core";
 import { github } from "../utils/github";
 import type { ToolSession } from ".";

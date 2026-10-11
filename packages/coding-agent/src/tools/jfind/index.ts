@@ -1,3 +1,4 @@
+import { join } from "node:path";
 /**
  * `find`: semantic grep over the workspace, driven by the session's judge
  * role. The exploration (lexical prior, filename ranking, sketch routing,
@@ -40,8 +41,8 @@ const RANGES_SHOWN = 3;
  */
 export function isFindEnabled(session: ToolSession): boolean {
 	const mode = session.settings.get("find.enabled");
-	if (mode !== "auto") return mode === "on";
-	return session.modelRegistry !== undefined && hasNativeJudge(session.settings, session.modelRegistry);
+	if (mode === "off") return false;
+	return true;
 }
 
 /** Semantic search tool: describe a behavior, get files and line ranges that implement it. */
@@ -81,6 +82,57 @@ export class FindTool implements AgentTool<typeof findSchema, FindToolDetails> {
 				tauScope?.scopePath ??
 				(root === path.resolve(cwd) ? undefined : formatPathRelativeToCwd(root, cwd, { trailingSlash: true }));
 			const registry = this.session.modelRegistry;
+			const canJudge = registry !== undefined && hasNativeJudge(this.session.settings, registry) && (params.grep_keywords?.length ?? 0) > 0;
+			if (!canJudge) {
+				const started = performance.now();
+				try {
+					const proc = Bun.spawn(["ffs", "find", query, "--root", root, "--format", "json", "--limit", "50"], { signal });
+					const raw = await new Response(proc.stdout).text();
+					const data = JSON.parse(raw);
+					const matches: string[] = data.matches || [];
+					const elapsedMs = performance.now() - started;
+					const toRel = (p: string) => formatPathRelativeToCwd(p, cwd);
+					const hits: FindHit[] = matches.map(m => ({
+						rel: toRel(m),
+						contentScore: 1.0,
+						ranges: [],
+						linesSeen: 0,
+						truncated: false,
+					}));
+					const stats: FindStats = {
+						listed: matches.length,
+						requests: 0,
+						errors: 0,
+						judged: 0,
+						filesRead: 0,
+						fileBytes: 0,
+						inputTokens: 0,
+						outputTokens: 0,
+						cost: 0,
+						apiMs: 0,
+						windowsJudged: 0,
+						windowsPruned: 0,
+						mapCards: 0,
+						failures: [],
+					};
+					const details: FindToolDetails = { query, keywords: [query], threshold: 1.0, hits, stats, elapsedMs, cwd, scopePath };
+					const where = scopePath === undefined ? "" : ` in ${scopePath}`;
+					const out: string[] = [];
+					if (hits.length === 0) {
+						out.push(`no files found matching "${query}"${where}`);
+					} else {
+						out.push(`${hits.length} file(s) found for "${query}"${where}, strongest first:`);
+						for (const hit of hits) {
+							out.push(hit.rel);
+						}
+					}
+					const builder = toolResult(details).text(out.join("\n"));
+					if (hits.length === 0) builder.useless();
+					return builder.done();
+				} catch {
+					// Fall back to cascade if ffs is unavailable
+				}
+			}
 			if (!registry) throw new ToolError("find has no model registry to resolve a judge from");
 			const judge = resolveJudge({
 				settings: this.session.settings,

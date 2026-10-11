@@ -175,6 +175,7 @@ export const observed = [
 			if (
 				key === "@tau/tau-ai" ||
 				key === "tau" ||
+				key === "@tau/tau-coding-agent" ||
 				key === "@tau/tau-tui" ||
 				key === "typebox"
 			)

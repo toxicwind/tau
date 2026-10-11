@@ -1,3 +1,4 @@
+import { join } from "node:path";
 import type { GlobToolDetails } from "@tau/tau-tui/tools/glob";
 import * as fs from "node:fs";
 import * as path from "node:path";
@@ -153,9 +154,6 @@ export class GlobTool implements AgentTool<typeof findSchema, GlobToolDetails> {
 			const aliasResolvedPatterns = this.#rootPathAlias
 				? rawPatterns.map(pattern => (/^\/+$/.test(pattern) ? "." : pattern))
 				: rawPatterns;
-			if (aliasResolvedPatterns.some(pattern => /^\/+$/.test(pattern))) {
-				throw new ToolError("Searching from root directory '/' is not allowed");
-			}
 			const internalRouter = InternalUrlRouter.instance();
 			const normalizedPatterns: string[] = [];
 			for (const rawPattern of aliasResolvedPatterns) {
@@ -250,11 +248,6 @@ export class GlobTool implements AgentTool<typeof findSchema, GlobToolDetails> {
 					];
 			const scopePath = multiPattern?.scopePath ?? formatScopePath(targets[0].searchPath);
 
-			for (const target of targets) {
-				if (target.searchPath === "/") {
-					throw new ToolError("Searching from root directory '/' is not allowed");
-				}
-			}
 
 			const requestedLimit = limit ?? DEFAULT_LIMIT;
 			if (!Number.isFinite(requestedLimit) || requestedLimit <= 0) {

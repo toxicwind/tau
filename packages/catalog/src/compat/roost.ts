@@ -48,6 +48,51 @@ interface RoostProviderDef {
 }
 
 /**
+ * Curated embedded snapshot of provider wire definitions.
+ * Guarantees the compiled binary never crashes at boot and preserves
+ * tau-specific keyEnv and keyEnvAlt configurations (e.g. coreweave's WANDB_API_KEY,
+ * meta's MODEL_API_KEY, moonshot's KIMI_API_KEY) even when upstream catalog lacks them.
+ */
+const EMBEDDED_PROVIDER_DEFS: readonly RoostProviderDef[] = [
+	{ name: "cerebras", keyEnv: "CEREBRAS_API_KEY" },
+	{ name: "google", keyEnv: "", auth: "none" },
+	{ name: "groq", keyEnv: "GROQ_API_KEY" },
+	{ name: "mistral", keyEnv: "MISTRAL_API_KEY" },
+	{ name: "nvidia", keyEnv: "NVIDIA_API_KEY", keyEnvAlt: "NVIDIA_API_KEYS" },
+	{ name: "openrouter", keyEnv: "OPENROUTER_API_KEY" },
+	{ name: "abliteration", keyEnv: "ABLITERATION_API_KEY", keyEnvAlt: "ABLIT_KEY" },
+	{ name: "aiand", keyEnv: "AIAND_API_KEY" },
+	{ name: "aimlapi", keyEnv: "AIMLAPI_API_KEY" },
+	{ name: "anthropic", keyEnv: "ANTHROPIC_API_KEY", auth: "x-api-key" },
+	{ name: "baseten", keyEnv: "BASETEN_API_KEY" },
+	{ name: "commandcode", keyEnv: "COMMAND_CODE_API_KEY", keyEnvAlt: "COMMANDCODE_API_KEY" },
+	{ name: "coreweave", keyEnv: "COREWEAVE_API_KEY", keyEnvAlt: "WANDB_API_KEY" },
+	{ name: "deepinfra", keyEnv: "DEEPINFRA_API_KEY" },
+	{ name: "deepseek", keyEnv: "DEEPSEEK_API_KEY" },
+	{ name: "firepass", keyEnv: "FIREPASS_API_KEY" },
+	{ name: "fireworks", keyEnv: "FIREWORKS_API_KEY" },
+	{ name: "huggingface", keyEnv: "HUGGINGFACE_HUB_TOKEN", keyEnvAlt: "HF_TOKEN" },
+	{ name: "meta", keyEnv: "MODEL_API_KEY", keyEnvAlt: "META_API_KEY" },
+	{ name: "minimax", keyEnv: "MINIMAX_API_KEY" },
+	{ name: "moonshot", keyEnv: "MOONSHOT_API_KEY", keyEnvAlt: "KIMI_API_KEY" },
+	{ name: "nanogpt", keyEnv: "NANO_GPT_API_KEY", keyEnvAlt: "NANOGPT_API_KEY" },
+	{ name: "novita", keyEnv: "NOVITA_API_KEY" },
+	{ name: "openai", keyEnv: "OPENAI_API_KEY" },
+	{ name: "qianfan", keyEnv: "QIANFAN_API_KEY" },
+	{ name: "sakana", keyEnv: "SAKANA_API_KEY", keyEnvAlt: "FUGU_API_KEY" },
+	{ name: "siliconflow", keyEnv: "SILICONFLOW_API_KEY" },
+	{ name: "stepfun", keyEnv: "STEPFUN_API_KEY" },
+	{ name: "synthetic", keyEnv: "SYNTHETIC_API_KEY" },
+	{ name: "together", keyEnv: "TOGETHER_API_KEY" },
+	{ name: "typesafe", keyEnv: "TYPESAFE_API_KEY" },
+	{ name: "venice", keyEnv: "VENICE_API_KEY" },
+	{ name: "xai", keyEnv: "XAI_API_KEY" },
+	{ name: "xiaomi", keyEnv: "XIAOMI_API_KEY" },
+	{ name: "zai", keyEnv: "ZAI_API_KEY" },
+	{ name: "zenmux", keyEnv: "ZENMUX_API_KEY" },
+];
+
+/**
  * Resolves roost's provider definitions through a fallback chain (a fallback,
  * not a rollback — every candidate is roost, the authority; there is no legacy
  * duplicate to fall back to):
@@ -57,8 +102,7 @@ interface RoostProviderDef {
  * 4. The `@ranch/roost` package — standalone `toxicwind/tau` checkouts.
  * 5. Embedded snapshot below — generated from `mesh/catalog/src/data.ts`;
  *    guarantees the compiled binary never crashes at boot when no catalog
- *    checkout is present. Regenerate from the live source when the catalog
- *    changes: copy the PROVIDER_DEFS array verbatim from mesh/catalog/src/data.ts.
+ *    checkout is present.
  */
 function resolveRoostModule(): { PROVIDER_DEFS: RoostProviderDef[] } {
 	const candidates: string[] = [];
@@ -89,47 +133,7 @@ function resolveRoostModule(): { PROVIDER_DEFS: RoostProviderDef[] } {
 			failures.push(`${specifier} (${err instanceof Error ? err.message : String(err)})`);
 		}
 	}
-	// Embedded fallback snapshot ensures standalone/compiled binary never crashes at boot
-	return {
-		PROVIDER_DEFS: [
-		{ name: "cerebras", keyEnv: "CEREBRAS_API_KEY" },
-		{ name: "google", keyEnv: "", auth: "none" },
-		{ name: "groq", keyEnv: "GROQ_API_KEY" },
-		{ name: "mistral", keyEnv: "MISTRAL_API_KEY" },
-		{ name: "nvidia", keyEnv: "NVIDIA_API_KEY", keyEnvAlt: "NVIDIA_API_KEYS" },
-		{ name: "openrouter", keyEnv: "OPENROUTER_API_KEY" },
-		{ name: "abliteration", keyEnv: "ABLITERATION_API_KEY", keyEnvAlt: "ABLIT_KEY" },
-		{ name: "aiand", keyEnv: "AIAND_API_KEY" },
-		{ name: "aimlapi", keyEnv: "AIMLAPI_API_KEY" },
-		{ name: "anthropic", keyEnv: "ANTHROPIC_API_KEY", auth: "x-api-key" },
-		{ name: "baseten", keyEnv: "BASETEN_API_KEY" },
-		{ name: "commandcode", keyEnv: "COMMAND_CODE_API_KEY", keyEnvAlt: "COMMANDCODE_API_KEY" },
-		{ name: "coreweave", keyEnv: "COREWEAVE_API_KEY", keyEnvAlt: "WANDB_API_KEY" },
-		{ name: "deepinfra", keyEnv: "DEEPINFRA_API_KEY" },
-		{ name: "deepseek", keyEnv: "DEEPSEEK_API_KEY" },
-		{ name: "firepass", keyEnv: "FIREPASS_API_KEY" },
-		{ name: "fireworks", keyEnv: "FIREWORKS_API_KEY" },
-		{ name: "huggingface", keyEnv: "HUGGINGFACE_HUB_TOKEN", keyEnvAlt: "HF_TOKEN" },
-		{ name: "meta", keyEnv: "MODEL_API_KEY", keyEnvAlt: "META_API_KEY" },
-		{ name: "minimax", keyEnv: "MINIMAX_API_KEY" },
-		{ name: "moonshot", keyEnv: "MOONSHOT_API_KEY", keyEnvAlt: "KIMI_API_KEY" },
-		{ name: "nanogpt", keyEnv: "NANO_GPT_API_KEY", keyEnvAlt: "NANOGPT_API_KEY" },
-		{ name: "novita", keyEnv: "NOVITA_API_KEY" },
-		{ name: "openai", keyEnv: "OPENAI_API_KEY" },
-		{ name: "qianfan", keyEnv: "QIANFAN_API_KEY" },
-		{ name: "sakana", keyEnv: "SAKANA_API_KEY", keyEnvAlt: "FUGU_API_KEY" },
-		{ name: "siliconflow", keyEnv: "SILICONFLOW_API_KEY" },
-		{ name: "stepfun", keyEnv: "STEPFUN_API_KEY" },
-		{ name: "synthetic", keyEnv: "SYNTHETIC_API_KEY" },
-		{ name: "together", keyEnv: "TOGETHER_API_KEY" },
-		{ name: "typesafe", keyEnv: "TYPESAFE_API_KEY" },
-		{ name: "venice", keyEnv: "VENICE_API_KEY" },
-		{ name: "xai", keyEnv: "XAI_API_KEY" },
-		{ name: "xiaomi", keyEnv: "XIAOMI_API_KEY" },
-		{ name: "zai", keyEnv: "ZAI_API_KEY" },
-		{ name: "zenmux", keyEnv: "ZENMUX_API_KEY" },
-		],
-	};
+	return { PROVIDER_DEFS: [...EMBEDDED_PROVIDER_DEFS] };
 }
 
 const roostModule = resolveRoostModule();
@@ -142,10 +146,18 @@ const loadProviderDefs = (
   roostModule as {
     loadProviderDefs?: (
       staticDefs: readonly RoostProviderDef[],
-      opts?: { requiredIds?: readonly string[] },
+      opts?: {
+        requiredIds?: readonly string[];
+        onSynthesize?: (id: string, def: RoostProviderDef) => void;
+      },
     ) => { defs: RoostProviderDef[]; synthesized: string[] };
   }
 ).loadProviderDefs;
+
+/** Same key-env convention as ranch/mesh/catalog auto-loader. */
+function keyEnvForPolicyId(id: string): string {
+	return id.replace(/[^a-zA-Z0-9]+/g, "_").toUpperCase() + "_API_KEY";
+}
 
 /** Tau-side catalog policy for one roost-sourced provider. */
 interface TauProviderPolicy {
@@ -1910,29 +1922,55 @@ export const ROOST_PROVIDER_IDS: readonly string[] = Object.keys(TAU_PROVIDER_PO
  * comes from `TAU_PROVIDER_POLICY`.
  */
 export function roostProviderEntries(): Record<string, CompiledProvider> {
-	// First-class drift killer: the catalog auto-loader synthesizes a
-	// best-effort def for any policy id missing from PROVIDER_DEFS, so a
-	// new provider never silently drops out of the compiled catalog again.
-	// (Workaround, not fail — the loud skip below only survives on the
-	// embedded-snapshot path, which predates the loader.)
+	// First-class drift killer: every TAU_PROVIDER_POLICY id projects
+	// to a provider. The auto-loader fills gaps when the live catalog is
+	// loaded; the loop below fills the same gaps on the embedded-snapshot
+	// path. Neither path logs per provider — a missing curated def is not
+	// a boot failure.
 	const defs = new Map<string, RoostProviderDef>();
+	for (const d of EMBEDDED_PROVIDER_DEFS) defs.set(d.name, { ...d });
 	if (loadProviderDefs) {
 		const { defs: resolved } = loadProviderDefs(PROVIDER_DEFS, {
 			requiredIds: ROOST_PROVIDER_IDS,
+			dropIns: EMBEDDED_PROVIDER_DEFS,
+			onSynthesize() {},
 		});
-		for (const d of resolved) defs.set(d.name, d);
+		for (const d of resolved) {
+			const existing = defs.get(d.name);
+			if (existing) {
+				defs.set(d.name, {
+					...existing,
+					...d,
+					keyEnv: existing.keyEnv || d.keyEnv,
+					keyEnvAlt: existing.keyEnvAlt || d.keyEnvAlt,
+				});
+			} else {
+				defs.set(d.name, d);
+			}
+		}
 	} else {
-		for (const d of PROVIDER_DEFS) defs.set(d.name, d);
+		for (const d of PROVIDER_DEFS) {
+			const existing = defs.get(d.name);
+			if (existing) {
+				defs.set(d.name, {
+					...existing,
+					...d,
+					keyEnv: existing.keyEnv || d.keyEnv,
+					keyEnvAlt: existing.keyEnvAlt || d.keyEnvAlt,
+				});
+			} else {
+				defs.set(d.name, d);
+			}
+		}
 	}
 	const entries: Record<string, CompiledProvider> = {};
 	for (const id of ROOST_PROVIDER_IDS) {
-		const def = defs.get(id);
+		let def = defs.get(id);
 		if (!def) {
-			console.error(
-				`[roost] DRIFT: provider policy for "${id}" has no PROVIDER_DEFS definition — skipping. ` +
-					`Add the definition to ranch/mesh/catalog or remove the entry from TAU_PROVIDER_POLICY.`,
-			);
-			continue;
+			// Curated PROVIDER_DEFS is behind TAU_PROVIDER_POLICY. The policy
+			// entry is the authority for inclusion; synthesize the wire stub
+			// instead of skipping and printing one line per provider at boot.
+			def = { name: id, keyEnv: keyEnvForPolicyId(id), auth: "bearer" };
 		}
 		const policy = TAU_PROVIDER_POLICY[id]!;
 		const envVars = [def.keyEnv, ...(def.keyEnvAlt ? [def.keyEnvAlt] : [])];

@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 /**
  * SQLite-backed cache for rendered `github` issue/PR view output, plus a
  * generic cache-aware wrapper that the tool ops and the `issue://`/`pr://`

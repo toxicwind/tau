@@ -1,3 +1,4 @@
+import { join } from "node:path";
 import type { AstEditToolDetails } from "@tau/tau-tui/tools/ast-edit";
 import * as path from "node:path";
 import { type } from "@tau/tautype";

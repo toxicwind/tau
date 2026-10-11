@@ -1,3 +1,4 @@
+import { join } from "node:path";
 import { extractUriScheme } from "../internal-urls/parse";
 import { type LineRange } from "@tau/tau-tui/tools/line-ranges";
 import { splitPathAndSel, splitInternalUrlSel, isReadableUrlPath } from "@tau/tau-tui/tools/read";

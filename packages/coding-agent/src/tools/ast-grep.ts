@@ -1,3 +1,4 @@
+import { join } from "node:path";
 import type { AstGrepToolDetails } from "@tau/tau-tui/tools/ast-grep";
 import * as path from "node:path";
 import { type } from "@tau/tautype";

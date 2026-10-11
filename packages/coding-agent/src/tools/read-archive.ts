@@ -1,3 +1,4 @@
+import { join } from "node:path";
 import type { AgentToolResult } from "@tau/tau-agent-core";
 import type { TextContent } from "@tau/tau-ai";
 import {

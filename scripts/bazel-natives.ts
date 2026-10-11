@@ -261,15 +261,11 @@ async function main(): Promise<void> {
 		throw new Error(`Unknown TAU_NATIVE_BUILD_BACKEND "${backend}" (expected "cargo" or "bazel")`);
 	}
 	const hostOnly = options.targets.length === 1 && options.targets[0] === "host";
-	// Backend selection: the host build defaults to the local Cargo/N-API
-	// path; bazel is opt-in for host via TAU_NATIVE_BUILD_BACKEND=bazel or
-	// extra bazel args after `--`. Explicit //:natives-* targets always go
-	// through bazel. win32 hosts can only build `host`, locally (see the msvc
-	// toolchain note in the header).
+	// Backend selection: Bazel (backed by NativeLink :25155) is the default backend.
+	// Cargo is opt-in via TAU_NATIVE_BUILD_BACKEND=cargo or on Windows hosts.
 	const cargoBackend =
 		backend === "cargo" ||
-		host.platform === "win32" ||
-		(backend !== "bazel" && hostOnly && options.bazelArgs.length === 0);
+		(backend !== "bazel" && host.platform === "win32");
 	if (cargoBackend && !options.source) {
 		if (!hostOnly) {
 			if (host.platform === "win32") {

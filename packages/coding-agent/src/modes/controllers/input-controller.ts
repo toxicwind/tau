@@ -2146,6 +2146,25 @@ export class InputController {
 				() => {},
 				() => {},
 			);
+			const text = await textPromise;
+			if (text) {
+				const imagePath = promptTarget ? null : extractImagePathFromText(text);
+				if (imagePath) {
+					await this.handleImagePathPaste(imagePath);
+					return true;
+				}
+				if (promptTarget && this.ctx.ui.getFocused() !== promptTarget) return false;
+				if (finishPaste) {
+					const accepted = finishPaste(text);
+					finishPaste = undefined;
+					if (!accepted) return false;
+				} else {
+					const target = promptTarget ?? this.ctx.editor;
+					target.pasteText(text);
+				}
+				this.ctx.ui.requestRender();
+				return true;
+			}
 			const image = await this.clipboard.readImage();
 			if (image) {
 				if (promptTarget) {
@@ -2161,16 +2180,8 @@ export class InputController {
 					`Unsupported clipboard image format: ${image.mimeType}`,
 				);
 			}
-			// Smart paste (#1628): no image on the clipboard — fall back to
-			// pasting its text so the same chord covers both payload kinds.
-			// Hosts that pre-empt the terminal's own paste (VS Code's
-			// integrated terminal, Win+V clipboard history) deliver only
-			// this keypress, so a miss here must not dead-end.
-			const text = await textPromise;
-			if (!text) {
-				this.ctx.showStatus("Clipboard is empty");
-				return false;
-			}
+			this.ctx.showStatus("Clipboard is empty");
+			return false;
 			// #3506: when the clipboard text is an explicit image file path,
 			// route through {@link handleImagePathPaste} so the image is
 			// loaded and attached instead of pasting the path as literal

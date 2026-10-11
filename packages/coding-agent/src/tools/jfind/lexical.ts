@@ -1,3 +1,4 @@
+import { join } from "node:path";
 /**
  * Lexical prior: per-file keyword occurrence counts from one native grep pass,
  * turned into IDF weights and a file score that ranks candidates before any

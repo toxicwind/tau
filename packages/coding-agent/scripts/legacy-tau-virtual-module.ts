@@ -1,47 +1,28 @@
 import * as path from "node:path";
 import { isEnoent } from "@tau/tau-utils/fs-error";
+import {
+	LEGACY_PI_BUNDLED_PACKAGES,
+	LEGACY_PI_CONFIG,
+	type LegacyPiBundledPackage,
+} from "../src/extensibility/legacy-pi-config";
 
 /** Build-time specifier resolved to bundled legacy Pi module namespaces. */
-export const LEGACY_PI_MODULES_SPECIFIER = "tau-legacy-tau-modules";
+export const LEGACY_PI_MODULES_SPECIFIER = LEGACY_PI_CONFIG.virtualModuleSpecifier;
 
-const VIRTUAL_NAMESPACE = "tau-legacy-tau-modules-build";
-const packageDir = path.resolve(import.meta.dir, "..");
-const repoRoot = path.resolve(packageDir, "..", "..");
+/** Bun plugin namespace carrying the generated loader registry. */
+const VIRTUAL_NAMESPACE = LEGACY_PI_CONFIG.virtualModuleBuildNamespace;
 
-interface BundledPackage {
-	readonly dir: string;
-	readonly identifier: string;
-	readonly rootShim: string | null;
-	/**
-	 * Previously published package name, registered alongside `manifest.name`.
-	 * A rebrand changes what the manifest is called, not what the extension
-	 * ecosystem imports: the runtime shim only ever looks up `@tau/*`
-	 * keys (see `PI_PACKAGE_NAMES` in legacy-tau-compat.ts), so dropping the
-	 * old name from this registry makes every legacy extension importing it
-	 * fail with "no bundled module registered".
-	 */
-	readonly legacyName?: string;
-}
+const packageDir = path.resolve(import.meta.dir, ...LEGACY_PI_CONFIG.packageRootFromScriptDir);
+const repoRoot = path.resolve(packageDir, ...LEGACY_PI_CONFIG.repoRootFromPackageRoot);
 
-const BUNDLED_PACKAGES: readonly BundledPackage[] = [
-	{ dir: "agent", identifier: "PiAgentCore", rootShim: null },
-	{ dir: "ai", identifier: "PiAi", rootShim: "legacy-tau-ai-shim.ts" },
-	{
-		dir: "coding-agent",
-		identifier: "PiCodingAgent",
-		rootShim: "legacy-tau-coding-agent-shim.ts",
-		// Renamed from `@tau/tau-coding-agent` to `tau` in package.json; runtime shim looks up `@tau/tau-coding-agent`.
-		legacyName: "@tau/tau-coding-agent",
-	},
-	{ dir: "natives", identifier: "PiNatives", rootShim: null },
-	{ dir: "tui", identifier: "PiTui", rootShim: "legacy-tau-tui-shim.ts" },
-	{ dir: "utils", identifier: "PiUtils", rootShim: null },
-];
+const BUNDLED_PACKAGES: readonly LegacyPiBundledPackage[] = LEGACY_PI_BUNDLED_PACKAGES;
 
-const TYPEBOX_MODULE_KEY = "typebox";
-const TYPEBOX_COMPAT_MODULE = "legacy-typebox.ts";
-const SKIPPED_WILDCARD_BASENAMES = new Set(["index"]);
-const MAIN_THREAD_UNSAFE_WILDCARD_BASENAMES = new Set(["worker-entry"]);
+const TYPEBOX_MODULE_KEY = LEGACY_PI_CONFIG.typeboxModuleKey;
+const TYPEBOX_COMPAT_MODULE = LEGACY_PI_CONFIG.shims.typebox;
+const SKIPPED_WILDCARD_BASENAMES = new Set<string>(LEGACY_PI_CONFIG.skippedWildcardBasenames);
+const MAIN_THREAD_UNSAFE_WILDCARD_BASENAMES = new Set<string>(
+	LEGACY_PI_CONFIG.mainThreadUnsafeWildcardBasenames,
+);
 
 /** One namespace module the binary must retain for legacy extension imports. */
 export interface BundledPiEntry {
@@ -62,6 +43,10 @@ interface WildcardPattern {
 
 function isRecord(value: unknown): value is Record<string, unknown> {
 	return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function escapeRegExp(value: string): string {
+	return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 function bindingForSubpath(identifier: string, subpath: string): string {
@@ -107,7 +92,7 @@ function exportImportTarget(value: unknown): string | null {
 }
 
 function shimSpecifier(file: string): string {
-	return path.join(packageDir, "src", "extensibility", file);
+	return path.join(packageDir, ...LEGACY_PI_CONFIG.extensibilityDir, file);
 }
 
 /**
@@ -137,7 +122,7 @@ export async function collectBundledPiEntries(): Promise<BundledPiEntry[]> {
 	}
 
 	for (const pkg of BUNDLED_PACKAGES) {
-		const packageRoot = path.join(repoRoot, "packages", pkg.dir);
+		const packageRoot = path.join(repoRoot, LEGACY_PI_CONFIG.packagesDirname, pkg.dir);
 		const manifestPath = path.join(packageRoot, "package.json");
 		const manifest: unknown = await Bun.file(manifestPath).json();
 		if (!isRecord(manifest) || typeof manifest.name !== "string") {
@@ -161,7 +146,7 @@ export async function collectBundledPiEntries(): Promise<BundledPiEntry[]> {
 			const sourcePattern = exportImportTarget(exportsField[exportKey]);
 			if (!sourcePattern) continue;
 			const pattern = parseWildcardPattern(exportKey, sourcePattern);
-			if (!pattern || !/\.(ts|tsx|mts|cts|js|mjs|cjs|jsx)$/.test(pattern.sourceSuffix)) continue;
+			if (!pattern || !LEGACY_PI_CONFIG.sourceExtensionsRegex.test(pattern.sourceSuffix)) continue;
 			if (pattern.exportPrefix === "" || pattern.exportPrefix === "/") continue;
 
 			const sourceDir = path.join(packageRoot, pattern.sourcePrefix);
@@ -235,10 +220,11 @@ export function __renderLegacyPiVirtualModule(entries: readonly BundledPiEntry[]
  */
 export async function createLegacyPiVirtualModulePlugin(): Promise<Bun.BunPlugin> {
 	const source = __renderLegacyPiVirtualModule(await collectBundledPiEntries());
+	const specifierFilter = new RegExp(`^${escapeRegExp(LEGACY_PI_CONFIG.virtualModuleSpecifier)}$`);
 	return {
 		name: "tau:legacy-tau-modules",
 		setup(build) {
-			build.onResolve({ filter: /^tau-legacy-tau-modules$/ }, () => ({
+			build.onResolve({ filter: specifierFilter }, () => ({
 				path: LEGACY_PI_MODULES_SPECIFIER,
 				namespace: VIRTUAL_NAMESPACE,
 			}));
