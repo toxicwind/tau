@@ -5154,6 +5154,31 @@ mod tests {
 	}
 
 	#[test]
+	fn operand_with_spaces_is_walked() {
+		let (_dir, root) = fixture();
+		let spaced = root.join("my dir");
+		fs::create_dir(&spaced).unwrap();
+		fs::write(spaced.join("a b.txt"), b"x").unwrap();
+		let (code, capture) = run(&root, &[spaced.display().to_string(), "-name".into(), "*.txt".into()]);
+		assert_eq!(code, 0, "stderr: {}", capture.err());
+		assert_eq!(capture.out(), format!("{}\n", spaced.join("a b.txt").display()));
+	}
+
+	#[test]
+	fn file_url_and_missing_operands_fail_without_panicking() {
+		let (_dir, root) = fixture();
+		for operand in [
+			format!("file://{}/a.txt", root.display()),
+			format!("file://{}/my%20dir", root.display()),
+			"/nonexistent path/with spaces".to_string(),
+		] {
+			let (code, capture) = run(&root, &[operand.clone()]);
+			assert_ne!(code, 0, "operand {operand:?} should fail, stdout: {}", capture.out());
+			assert!(!capture.err().contains("panicked"), "operand {operand:?}: {}", capture.err());
+		}
+	}
+
+	#[test]
 	fn resolves_relative_walk_roots_against_shell_cwd() {
 		let (_dir, root) = fixture();
 		let (code, capture) = run(&root, &[".".into(), "-name".into(), "a.txt".into()]);
