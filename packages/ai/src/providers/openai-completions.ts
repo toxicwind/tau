@@ -85,6 +85,8 @@ import { servedModelFromOpenRouterReasoning } from "./anthropic-signature";
 import { resolveCopilotRequestIdentity, wrapFetchForCopilotFallback } from "./github-copilot-headers";
 import {
 	applyChatCompletionsReasoningParams,
+	applyDotsRequestShaping,
+	isDotsModel,
 	applyChatCompletionsToolStream,
 	applyOpenAIExtraBody,
 	applyOpenAIGatewayRouting,
@@ -832,7 +834,9 @@ const streamOpenAICompletionsOnce = (
 				? `${trimmedBaseUrl}/chat/completions?${new URLSearchParams(query)}`
 				: `${trimmedBaseUrl}/chat/completions`;
 			const createCompletionsStream = async (toolStrictModeOverride?: ToolStrictModeOverride) => {
-				const effectiveToolStrictModeOverride = disableStrictTools ? "none" : toolStrictModeOverride;
+				const effectiveToolStrictModeOverride = disableStrictTools
+					? "none"
+					: (toolStrictModeOverride ?? (isDotsModel(model.id) ? "all_strict" : undefined));
 				const builtParams = buildParams(model, context, options, effectiveToolStrictModeOverride);
 				appliedStrictTools = builtParams.strictToolsApplied;
 				let params = builtParams.params;
@@ -2029,6 +2033,7 @@ function buildParams(
 		toolChoice: params.tool_choice,
 		hasTools: Array.isArray(params.tools) && params.tools.length > 0,
 	});
+	applyDotsRequestShaping(params as unknown as Record<string, unknown>, model.id);
 	dropOpenRouterKimiForcedToolReasoning(params, model, finalPolicy);
 
 	applyOpenAIGatewayRouting(params, compat, cacheRetention !== "none");

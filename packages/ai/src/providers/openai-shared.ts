@@ -651,6 +651,36 @@ export function dotsMaxTokensFloor(
 }
 
 /**
+ * Dots-3-Note production coercions, ported from SovereignDotsClient
+ * (Chris 2026-10-13 — Dots is the main model for tau).
+ *
+ * Dots degrades without strict tool schemas, burns its completion budget on
+ * reasoning, and emits ghost-output tails — so every Dots-family request on
+ * the OpenAI-compatible path gets:
+ *  - temperature 0.1 when the caller didn't specify one (deterministic tool use)
+ *  - stop sequences that cut the ghost tails
+ *  - reasoning capped at 128 tokens and excluded from the response
+ * (Strict tool schemas are forced via the toolStrictModeOverride in
+ * openai-completions.ts so schema adaptation runs through the normal path.)
+ */
+export const DOTS_REASONING_MAX_TOKENS = 128;
+export const DOTS_TEMPERATURE = 0.1;
+export const DOTS_STOP_SEQUENCES = ["</tool_call>", "</dots_function_call>", "<|endoftext|>", "```"];
+
+export function applyDotsRequestShaping(
+	params: Record<string, unknown>,
+	modelId: string | undefined,
+): void {
+	if (!isDotsModel(modelId)) return;
+	if (params.temperature === undefined) params.temperature = DOTS_TEMPERATURE;
+	if (params.stop === undefined) params.stop = [...DOTS_STOP_SEQUENCES];
+	(params as { reasoning?: unknown }).reasoning = {
+		max_tokens: DOTS_REASONING_MAX_TOKENS,
+		exclude: true,
+	};
+}
+
+/**
  * Resolve the single output-token wire parameter shared by Chat Completions
  * (`max_tokens`/`max_completion_tokens`) and the Responses family
  * (`max_output_tokens`). Centralizes the provider exceptions that previously
@@ -851,7 +881,7 @@ export type OpenAICompletionsParams = Omit<ChatCompletionCreateParamsStreaming, 
 		preserve_thinking?: boolean;
 		reasoning_effort?: string;
 	};
-	reasoning?: { effort?: string; enabled?: boolean; max_tokens?: number };
+	reasoning?: { effort?: string; enabled?: boolean; max_tokens?: number; exclude?: boolean };
 	venice_parameters?: { disable_thinking?: boolean; [key: string]: unknown };
 	reasoning_effort?: string | null;
 	service_tier?: ServiceTier;
