@@ -236,6 +236,7 @@ describe("OpenRouter pseudo API dual-surface request parity", () => {
 
 		expect(chatBody).toEqual({
 			model: "anthropic/claude-fable-5:nitro",
+			temperature: 0.1,
 			messages: [
 				{ role: "system", content: "Stay concise." },
 				{
@@ -247,7 +248,7 @@ describe("OpenRouter pseudo API dual-surface request parity", () => {
 			stream_options: { include_usage: true },
 			store: false,
 			reasoning: { effort: "high" },
-			provider: routing,
+			provider: { ...routing, require_parameters: true, allow_fallbacks: false },
 		});
 		expect(responsesBody).toEqual({
 			model: "anthropic/claude-fable-5:nitro",
@@ -258,7 +259,7 @@ describe("OpenRouter pseudo API dual-surface request parity", () => {
 			reasoning: { effort: "high", summary: "auto" },
 			prompt_cache_key: "workflow-123",
 			session_id: "workflow-123",
-			provider: routing,
+			provider: { ...routing, require_parameters: true, allow_fallbacks: false },
 			include: ["reasoning.encrypted_content"],
 			cache_control: { type: "ephemeral" },
 		});
@@ -287,6 +288,7 @@ describe("OpenRouter pseudo API dual-surface request parity", () => {
 
 		expect(chatBody).toEqual({
 			model: "deepseek/deepseek-r1:nitro",
+			temperature: 0.1,
 			messages: [
 				{ role: "system", content: "Stay concise." },
 				{ role: "user", content: "ping" },
@@ -295,7 +297,7 @@ describe("OpenRouter pseudo API dual-surface request parity", () => {
 			stream_options: { include_usage: true },
 			store: false,
 			reasoning: { effort: "high" },
-			provider: routing,
+			provider: { ...routing, require_parameters: true, allow_fallbacks: false },
 		});
 		expect(responsesBody).toEqual({
 			model: "deepseek/deepseek-r1:nitro",
@@ -306,7 +308,7 @@ describe("OpenRouter pseudo API dual-surface request parity", () => {
 			reasoning: { effort: "high", summary: "auto" },
 			prompt_cache_key: "workflow-456",
 			session_id: "workflow-456",
-			provider: routing,
+			provider: { ...routing, require_parameters: true, allow_fallbacks: false },
 			include: ["reasoning.encrypted_content"],
 		});
 		expect(chatBody).not.toHaveProperty("max_tokens");
@@ -386,7 +388,7 @@ describe("OpenRouter Responses request shape", () => {
 		expect(pseudoModel.compat.openRouterRouting).toEqual(routing);
 
 		const { body } = await captureRequest(buildOpenRouterResponsesModel({ compat: { openRouterRouting: routing } }));
-		expect(body.provider).toEqual(routing);
+		expect(body.provider).toEqual({ ...routing, require_parameters: true, allow_fallbacks: false });
 	});
 
 	it("explicitly disables OpenRouter Responses reasoning with enabled=false", async () => {

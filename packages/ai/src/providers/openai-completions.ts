@@ -85,7 +85,6 @@ import { servedModelFromOpenRouterReasoning } from "./anthropic-signature";
 import { resolveCopilotRequestIdentity, wrapFetchForCopilotFallback } from "./github-copilot-headers";
 import {
 	applyChatCompletionsReasoningParams,
-	applyDotsRequestShaping,
 	isDotsModel,
 	applyChatCompletionsToolStream,
 	applyOpenAIExtraBody,
@@ -122,6 +121,10 @@ import {
 } from "./vision-guard";
 
 export { applyOpenRouterRoutingVariant } from "./openai-shared";
+import {
+	applyOpenRouterRequestShaping,
+	normalizeOpenRouterMessages,
+} from "./openrouter-coercion";
 
 type OpenAICompletionsReasoningField = NonNullable<ResolvedOpenAICompat["reasoningContentField"]>;
 
@@ -836,7 +839,7 @@ const streamOpenAICompletionsOnce = (
 			const createCompletionsStream = async (toolStrictModeOverride?: ToolStrictModeOverride) => {
 				const effectiveToolStrictModeOverride = disableStrictTools
 					? "none"
-					: (toolStrictModeOverride ?? (isDotsModel(model.id) ? "all_strict" : undefined));
+					: (toolStrictModeOverride ?? (model.compat.isOpenRouterHost || isDotsModel(model.id) ? "all_strict" : undefined));
 				const builtParams = buildParams(model, context, options, effectiveToolStrictModeOverride);
 				appliedStrictTools = builtParams.strictToolsApplied;
 				let params = builtParams.params;
@@ -2005,6 +2008,7 @@ function buildParams(
 	const messages = convertMessages(model, context, compat);
 	maybeAddAnthropicCacheControl(compat, messages);
 	params.messages = messages;
+	if (compat.isOpenRouterHost) params.messages = normalizeOpenRouterMessages(messages);
 	const outputToken = resolveOpenAIOutputTokenParam({
 		field: compat.maxTokensField,
 		maxTokens: options?.maxTokens,
@@ -2033,10 +2037,18 @@ function buildParams(
 		toolChoice: params.tool_choice,
 		hasTools: Array.isArray(params.tools) && params.tools.length > 0,
 	});
-	applyDotsRequestShaping(params as unknown as Record<string, unknown>, model.id);
 	dropOpenRouterKimiForcedToolReasoning(params, model, finalPolicy);
 
 	applyOpenAIGatewayRouting(params, compat, cacheRetention !== "none");
+	// Generalized OpenRouter coercions (SovereignDotsClient port): any
+	// OpenRouter-routed model gets temperature/stop/reasoning/provider
+	// shaping, gated on the route rather than the model ID.
+	// reasoning cap is Dots-scoped: the recon proved the ghost-output
+	// disease there; other models defer to the pipeline's deliberate
+	// reasoning management (adaptive efforts, forced-toolChoice stripping).
+	applyOpenRouterRequestShaping(params as unknown as Record<string, unknown>, compat, {
+		reasoning: isDotsModel(model.id),
+	});
 
 	applyOpenAIExtraBody(params, compat.extraBody, {
 		dropThinkingWhenReasoningEffort: compat.dropThinkingWhenReasoningEffort,

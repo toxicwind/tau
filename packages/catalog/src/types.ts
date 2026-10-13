@@ -713,6 +713,10 @@ export interface OpenRouterRouting {
 	only?: string[];
 	/** List of provider slugs to try in order (e.g., ["anthropic", "openai"]). */
 	order?: string[];
+	/** Require structured parameters from the upstream (fail closed on non-structured output). */
+	require_parameters?: boolean;
+	/** Disable OpenRouter fallback chains; fail fast instead of hanging through slow fallbacks. */
+	allow_fallbacks?: boolean;
 }
 
 /**

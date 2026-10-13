@@ -106,6 +106,7 @@ import {
 	shouldDropAutoToolChoiceForReasoning,
 	shouldRetryWithoutStrictTools,
 } from "./openai-shared";
+import { applyOpenRouterRequestShaping } from "./openrouter-coercion";
 
 // OpenAI Responses-specific options
 export interface OpenAIResponsesOptions extends StreamOptions {
@@ -1368,6 +1369,14 @@ export function buildParams(
 	} else {
 		applyOpenAIGatewayRouting(params, model.compat);
 	}
+	// Generalized OpenRouter coercions (SovereignDotsClient port): provider-only
+	// on the Responses API — no top-level temperature/stop fields there, and
+	// the reasoning schema differs from Chat Completions.
+	applyOpenRouterRequestShaping(params as unknown as Record<string, unknown>, model.compat, {
+		temperature: false,
+		stopSequences: false,
+		reasoning: false,
+	});
 
 	applyOpenAIExtraBody(params, options?.extraBody);
 	applyOpenAIResponsesPromptCachePolicy(params, model, options, statefulCacheBaseline);
