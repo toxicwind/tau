@@ -17,6 +17,7 @@ import type { ToolSession } from "../sdk";
 import type { SessionEntry } from "../session/session-entries";
 
 import { normalizePathLikeInput, resolveToCwd } from "./path-utils";
+import { parseMarkdownList } from "@tau/tau-ai/dialect/coercion.js";
 
 /** Whether an unknown value is a persisted todo phase. */
 export function isTodoPhase(value: unknown): value is TodoPhase {
@@ -60,7 +61,9 @@ const InitListEntry = type({
 
 const todoSchema = type({
 	op: TodoOp,
-	"list?": InitListEntry.array().describe("phases for init"),
+	"list?": InitListEntry.array().or(type("string")).describe(
+		"phases for init: [{phase, items}] or a markdown checklist string (Dots shape)"
+	),
 	"task?": type("string").describe("verbatim task content"),
 	"phase?": type("string"),
 	// No `atLeastLength(1)` here: `items` is only meaningful for `init`/`append`,
@@ -312,8 +315,16 @@ function initPhases(entry: TodoOpEntryValue, errors: string[]): TodoPhase[] {
 	// (optionally with a bare `phase`) instead of the canonical
 	// `list: [{phase, items}]`. Accept that shape by synthesizing a one-phase list
 	// so a common, recoverable mistake isn't a hard error.
+	//
+	// Dots (and several GLM/Qwen checkpoints) go one step further and render
+	// `list` itself as a markdown checklist string instead of JSON. Normalize
+	// that here before the flat-items recovery below.
+	let rawList: typeof entry.list = entry.list;
+	if (typeof rawList === "string") {
+		rawList = [{ phase: entry.phase ?? DEFAULT_INIT_PHASE, items: parseMarkdownList(rawList) }];
+	}
 	const list =
-		entry.list ??
+		rawList ??
 		(entry.items && entry.items.length > 0
 			? [{ phase: entry.phase ?? DEFAULT_INIT_PHASE, items: entry.items }]
 			: undefined);

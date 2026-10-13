@@ -564,13 +564,12 @@ export function extractEmbeddedAddonArchive({ archivePath, files, targetDir }) {
 	return writtenPaths;
 }
 
-function maybeExtractEmbeddedAddon(ctx, errors) {
+function maybeExtractEmbeddedAddon(ctx, errors, file = selectEmbeddedAddonFile(ctx.selectedVariant)) {
 	if (!ctx.isCompiledBinary || !embeddedAddon) return null;
 	if (embeddedAddon.platformTag !== ctx.platformTag || embeddedAddon.version !== ctx.packageVersion) return null;
 
-	const selectedEmbeddedFile = selectEmbeddedAddonFile(ctx.selectedVariant);
-	if (!selectedEmbeddedFile) return null;
-	const targetPath = path.join(ctx.versionedDir, selectedEmbeddedFile.filename);
+	if (!file) return null;
+	const targetPath = path.join(ctx.versionedDir, file.filename);
 
 	startupMarker("native:extractEmbeddedAddon:start");
 	try {
@@ -585,13 +584,13 @@ function maybeExtractEmbeddedAddon(ctx, errors) {
 		try {
 			extractEmbeddedAddonArchive({
 				archivePath: embeddedAddon.archive.filePath,
-				files: embeddedAddon.files,
+				files: [file],
 				targetDir: ctx.versionedDir,
 			});
-			if (isEmbeddedAddonFileCurrent(targetPath, selectedEmbeddedFile)) {
+			if (isEmbeddedAddonFileCurrent(targetPath, file)) {
 				return targetPath;
 			}
-			errors.push(`embedded addon archive (${embeddedAddon.archive.filename}): missing ${selectedEmbeddedFile.filename}`);
+			errors.push(`embedded addon archive (${embeddedAddon.archive.filename}): missing ${file.filename}`);
 			return null;
 		} catch (err) {
 			const message = err instanceof Error ? err.message : String(err);
@@ -600,21 +599,21 @@ function maybeExtractEmbeddedAddon(ctx, errors) {
 		}
 	}
 
-	if (isEmbeddedAddonFileCurrent(targetPath, selectedEmbeddedFile)) {
+	if (isEmbeddedAddonFileCurrent(targetPath, file)) {
 		return targetPath;
 	}
-	if (!selectedEmbeddedFile.filePath) {
-		errors.push(`embedded addon metadata missing file path for ${selectedEmbeddedFile.filename}`);
+	if (!file.filePath) {
+		errors.push(`embedded addon metadata missing file path for ${file.filename}`);
 		return null;
 	}
 
 	try {
-		const buffer = fs.readFileSync(selectedEmbeddedFile.filePath);
+		const buffer = fs.readFileSync(file.filePath);
 		fs.writeFileSync(targetPath, buffer);
 		return targetPath;
 	} catch (err) {
 		const message = err instanceof Error ? err.message : String(err);
-		errors.push(`embedded addon write (${selectedEmbeddedFile.filename}): ${message}`);
+		errors.push(`embedded addon write (${file.filename}): ${message}`);
 		return null;
 	}
 }
@@ -994,8 +993,16 @@ export function loadNative() {
 	const stagedCandidate = embeddedCandidate ? null : maybeStageNodeModulesAddon(ctx, errors);
 	const prepended = [embeddedCandidate, stagedCandidate].filter(c => typeof c === "string");
 	const runtimeCandidates = prepended.length > 0 ? [...prepended, ...ctx.candidates] : ctx.candidates;
+	const fallbackEmbeddedFile =
+		ctx.selectedVariant === "modern" && embeddedAddon
+			? embeddedAddon.files.find(file => file.variant === "baseline")
+			: null;
+	const fallbackEmbeddedPath = fallbackEmbeddedFile && path.join(ctx.versionedDir, fallbackEmbeddedFile.filename);
 
 	for (const candidate of runtimeCandidates) {
+		if (fallbackEmbeddedFile && candidate === fallbackEmbeddedPath) {
+			maybeExtractEmbeddedAddon(ctx, errors, fallbackEmbeddedFile);
+		}
 		try {
 			startupMarker(`native:require:${path.basename(candidate)}`);
 			const bindings = require_(candidate);

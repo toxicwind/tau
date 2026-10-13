@@ -5019,7 +5019,7 @@ export const SETTINGS_SCHEMA = {
 			group: "Isolation",
 			label: "Clone Checkout into Worktrees",
 			description:
-				"New worktrees from `github pr_checkout` and `git worktree add` in bash start as a copy-on-write clone of the current checkout so ignored build artifacts (node_modules, target) carry over; falls back to a plain checkout when the filesystem cannot clone",
+				"New worktrees from `github pr_checkout` and `git worktree add` in bash start as a copy-on-write clone of the current checkout so ignored build artifacts (node_modules, target) carry over. Secret-shaped files (.env*, *.key, *.pem, key.properties, credentials*, secrets*) are NEVER cloned (issue #15476); falls back to a plain checkout when the filesystem cannot clone",
 		},
 	},
 

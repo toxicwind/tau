@@ -67,6 +67,8 @@ interface TranscriptEntry {
 	component: Component;
 	state: BlockState;
 	mode: TranscriptBlockMode;
+	/** Wall-clock ms when the block transitioned to "settled"; undefined while active. */
+	settledAt?: number;
 	stableRows: readonly TranscriptStableRow[];
 	renderedStableByWidth: Map<number, readonly string[]>;
 	/**
@@ -93,6 +95,14 @@ type Offered =
 	| { batch: HistoryBatch; kind: "replay" };
 
 const MAX_LIVE_BLOCKS = 256;
+/**
+ * Render-cache release backstops (issue #15544): a pinned frontier must not pin
+ * gigabytes of rendered bitmaps. Settled blocks more than this many blocks
+ * behind the live head, or settled longer than the age below, have their
+ * per-width render caches dropped and re-render on demand.
+ */
+const CACHE_RELEASE_BEHIND_BLOCKS = 512;
+const CACHE_RELEASE_SETTLED_MS = 10 * 60 * 1000;
 /** Grace before a pressure-blocked frontier is reported; a streaming block may legitimately hold it briefly. */
 const PINNED_FRONTIER_WARN_MS = 30_000;
 const EMPTY_ROWS: readonly string[] = [];
@@ -552,10 +562,17 @@ export class TranscriptContainer extends Container {
 			index++;
 		}
 		if (end === this.#frontier) {
-			if (policy === "pressure") this.#notePinnedFrontier();
+			if (policy === "pressure") {
+				this.#notePinnedFrontier();
+				// The walk is pinned: still release caches behind it so a stuck
+				// frontier block cannot pin gigabytes of rendered bitmaps (#15544).
+				this.#releaseRenderCaches();
+			}
 			return undefined;
 		}
 		this.#pinnedFrontier = undefined;
+		// Opportunistic cache release on every successful retirement offer.
+		this.#releaseRenderCaches();
 		const batch: HistoryBatch = {
 			id: this.#nextBatchId++,
 			rows: this.#renderRange(this.#frontier, end, width, true),
@@ -709,6 +726,37 @@ export class TranscriptContainer extends Container {
 		return this.#renderStablePrefix(entry, count, width).length;
 	}
 	/**
+	 * Release render caches decoupled from frontier retirement (issue #15544).
+	 *
+	 * A pinned frontier (an unfinalized tool card) blocks the retirement walk
+	 * in #peekBatch, but it must not block cache release: settled blocks far
+	 * behind the live head, or settled long ago, have their per-width rendered
+	 * bitmaps and memoized counts dropped. They re-render on demand from the
+	 * component — slower on the rare replay path, but bounded in memory.
+	 *
+	 * The frontier entry itself is kept (needed for resume) but its rendered
+	 * cache is equally releasable; only entry identity is retained. Committed
+	 * entries always have caches released: they sit behind the frontier and
+	 * are only re-rendered on explicit replay.
+	 */
+	#releaseRenderCaches(): void {
+		const now = Date.now();
+		const liveHead = this.#entries.length;
+		for (let index = 0; index < this.#entries.length; index++) {
+			const entry = this.#entries[index]!;
+			const behindLiveHead = liveHead - index;
+			const settledLongAgo = entry.settledAt !== undefined && now - entry.settledAt > CACHE_RELEASE_SETTLED_MS;
+			const farBehind = behindLiveHead > CACHE_RELEASE_BEHIND_BLOCKS;
+			if (entry.state === "committed" || (entry.state === "settled" && (farBehind || settledLongAgo))) {
+				if (entry.renderedStableByWidth.size > 0 || entry.stableRowCountByWidth.size > 0) {
+					entry.renderedStableByWidth = new Map();
+					entry.stableRowCountByWidth = new Map();
+				}
+			}
+		}
+	}
+
+	/**
 	 * Record that pressure retirement is blocked behind a not-yet-settled
 	 * frontier block, and log its identity once the episode outlives the grace
 	 * period. A block that never finalizes (a dropped terminal event) pins the
@@ -858,7 +906,10 @@ export class TranscriptContainer extends Container {
 	#settleFinalized(): void {
 		for (let index = this.#frontier; index < this.#entries.length; index++) {
 			const entry = this.#entries[index]!;
-			if (entry.state === "active" && isFinalized(entry.component)) entry.state = "settled";
+			if (entry.state === "active" && isFinalized(entry.component)) {
+				entry.state = "settled";
+				entry.settledAt ??= Date.now();
+			}
 		}
 	}
 

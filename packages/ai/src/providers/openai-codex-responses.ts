@@ -2846,6 +2846,8 @@ class CodexStreamProcessor {
 			// web_search_call) may already have accumulated.
 			this.runtime.resetAccumulators();
 			this.firstTokenTime = undefined;
+			// Mint a fresh controller so the retry doesn't inherit an aborted signal.
+			this.#refreshRequestSetup();
 			await scheduler.wait(CODEX_WEBSOCKET_RETRY_DELAY_MS * Math.max(1, this.runtime.websocketStreamRetries), {
 				signal: this.requestSetup.requestSignal,
 			});
@@ -2887,6 +2889,20 @@ class CodexStreamProcessor {
 				stream.push({ type: "text_end", contentIndex: entry.contentIndex, content: block.text, partial: output });
 			}
 		}
+	}
+
+	/**
+	 * Mint a fresh AbortController + combined signal for a retry attempt.
+	 *
+	 * The SSE/websocket idle watchdog aborts the previous attempt's
+	 * requestAbortController when a stream stalls. Reusing that already-aborted
+	 * signal for the retry makes scheduler.wait and the next transport setup
+	 * die immediately with "The operation was aborted". A fresh controller
+	 * stays linked to external cancellation (user Ctrl+C / session teardown)
+	 * via AbortSignal.any so cancellation still propagates.
+	 */
+	#refreshRequestSetup(): void {
+		this.requestSetup = createRequestSetup(this.options);
 	}
 
 	async #tryRetryProviderError(error: unknown): Promise<boolean> {
@@ -2939,6 +2955,9 @@ class CodexStreamProcessor {
 		this.runtime.sawTerminalEvent = false;
 		resetOutputState(this.output);
 		this.firstTokenTime = undefined;
+		// The watchdog aborted the previous attempt's controller; mint a fresh
+		// one so the retry doesn't inherit the aborted signal.
+		this.#refreshRequestSetup();
 		await scheduler.wait(CODEX_RETRY_DELAY_MS * this.runtime.providerRetryAttempt, {
 			signal: this.requestSetup.requestSignal,
 		});

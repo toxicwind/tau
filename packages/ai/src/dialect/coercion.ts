@@ -72,18 +72,50 @@ export function jsonTypeOf(value: unknown): string {
 	return "object";
 }
 
-export function decodeValue(raw: string): unknown {
+export function decodeValue(raw: string, schema?: unknown): unknown {
 	const trimmed = raw.trim();
 	if (trimmed.length === 0) return trimmed;
 	try {
 		return JSON.parse(trimmed) as unknown;
 	} catch {
-		return raw;
+		// Fall through to markdown-list recovery below.
 	}
+
+	// The schema wants an array and the value is a markdown list.
+	// Dots (and several GLM/Qwen checkpoints) render a flat array as a
+	// checklist rather than as JSON. Recover the items instead of failing
+	// the whole tool call.
+	if (schema && isArraySchema(schema) && isMarkdownList(trimmed)) {
+		return parseMarkdownList(trimmed);
+	}
+
+	return raw;
 }
 
 export function coerceValue(raw: string, schema: unknown): unknown {
-	return isStringOnlySchema(schema) ? raw : decodeValue(raw);
+	return isStringOnlySchema(schema) ? raw : decodeValue(raw, schema);
+}
+
+/**
+ * Detect a markdown list: any line that is "- item", "* item", "- [ ] item",
+ * or "1. item". Used to recover array-typed tool args the model rendered
+ * as a checklist instead of JSON (Dots shape).
+ */
+export function isMarkdownList(text: string): boolean {
+	return /^\s*(?:[-*+](?:\s+\[[ x]\])?\s+|\d+\.\s+)\S/m.test(text);
+}
+
+/**
+ * Parse a markdown checklist into a string array, stripping bullets,
+ * checkboxes, and ordered-list prefixes.
+ */
+export function parseMarkdownList(text: string): string[] {
+	const out: string[] = [];
+	for (const line of text.split("\n")) {
+		const m = line.match(/^\s*(?:[-*+](?:\s+\[[ x]\])?\s+|\d+\.\s+)(.+?)\s*$/);
+		if (m) out.push(m[1]);
+	}
+	return out;
 }
 
 export function isArraySchema(schema: unknown): boolean {

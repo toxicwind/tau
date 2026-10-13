@@ -914,6 +914,18 @@ export interface KeysApi {
 	 */
 	setResolver(resolver: (config: string) => Promise<string | undefined>): void;
 	/**
+	 * Invalidate in-memory auth state for a provider.
+	 *
+	 * Called after an interactive model switch so the next resolution re-runs
+	 * credential selection instead of trusting state cached before the switch
+	 * (session affinity pins can reference a pre-switch selection, and the
+	 * pool generation bump forces selectors to re-rank). Does NOT touch
+	 * runtime/config overrides -- those are deliberate user configuration.
+	 *
+	 * See issue #15557 (xiaomi 401s process-wide after model switch).
+	 */
+	invalidateProviderAuth(provider: string): void;
+	/**
 	 * Build an {@link ApiKeyResolver} backed by this storage, implementing the
 	 * central a/b/c auth-retry policy:
 	 *

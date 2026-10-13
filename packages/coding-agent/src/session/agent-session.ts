@@ -9113,6 +9113,11 @@ export class AgentSession {
 			this.#closeProviderSessionsForModelSwitch(currentModel, model);
 			if (isChanging) {
 				this.#clearInheritedProviderPromptCacheKey();
+				// Invalidate in-memory auth state for the target provider so the
+				// next credential resolution re-runs selection instead of trusting
+				// state cached before the switch. See issue #15557 (xiaomi 401s
+				// process-wide after model switch).
+				this.#modelRegistry.authStorage.keys.invalidateProviderAuth(model.provider);
 			}
 		}
 		this.agent.setModel(model);

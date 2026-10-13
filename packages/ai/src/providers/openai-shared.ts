@@ -1516,6 +1516,15 @@ export function repairOrphanResponsesToolOutputs(input: ResponseInput): Response
 		}
 
 		if (!repaired) repaired = input.slice(0, index);
+		// Drop a trailing orphan output instead of synthesizing an assistant note.
+		// DeepSeek-family thinking-mode targets require `reasoning_text` on every
+		// assistant turn when tools are present; a synthesized `[Orphan ...]`
+		// note is an assistant message with no reasoning item, so when it lands
+		// as the trailing input item the request 400s deterministically
+		// ("The reasoning_text in the thinking mode must be passed back").
+		// A dropped tool result is recoverable (the model can re-issue the
+		// call); a 400 is not. See issue #15568.
+		if (index === input.length - 1) continue;
 		const toolName = outputKind === "computer" ? "computer" : "tool";
 		const rawOutput = "output" in item ? item.output : undefined;
 		let text: string;

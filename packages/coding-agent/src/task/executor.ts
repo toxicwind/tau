@@ -57,7 +57,7 @@ import { type ArtifactManager, writeArtifact } from "../session/artifacts";
 import { ASYNC_RESULT_MESSAGE_TYPE } from "../session/async-job-delivery";
 import type { AuthStorage } from "../session/auth-storage";
 import { SKILL_PROMPT_MESSAGE_TYPE, USER_INTERRUPT_LABEL } from "../session/messages";
-import { hasConversationalHistory, SessionManager } from "../session/session-manager";
+import { extractSessionInit, hasConversationalHistory, SessionManager } from "../session/session-manager";
 import { truncateTail } from "@tau/tau-tui/tools/streaming-output";
 import {
 	type ConfiguredThinkingLevel,
@@ -3759,6 +3759,15 @@ export async function runSubprocess(options: ExecutorOptions): Promise<SingleRes
 				// while the replacement builds) and the revived prompt resurrects
 				// the launch-time pooled instructions against an ordinary runtime.
 				forRevive = false,
+				// Cache economics (issue #15523): a revived subagent re-rendered
+				// its system prompt at build time, including the volatile IRC
+				// peer roster (collectIrcPeerRoster), so the prompt the provider
+				// cached the conversation under never matched and every revived
+				// request missed cache. When set, the persisted park-time prompt
+				// is used verbatim instead of re-rendering; roster staleness is
+				// harmless for a revived worker (it regains live context from
+				// its task).
+				persistedSystemPrompt?: string,
 			): CreateAgentSessionOptions => ({
 				cwd: worktree ?? cwd,
 				additionalDirectories: worktree !== undefined ? undefined : options.additionalDirectories,
@@ -3795,7 +3804,10 @@ export async function runSubprocess(options: ExecutorOptions): Promise<SingleRes
 				preloadedExtensionPaths: restrictToolNames ? [] : options.preloadedExtensionPaths,
 				preloadedPreparedExtensions: options.preloadedPreparedExtensions,
 				preloadedCustomToolPaths: restrictToolNames ? [] : options.preloadedCustomToolPaths,
-				systemPrompt: defaultPrompt => {
+				systemPrompt:
+					persistedSystemPrompt !== undefined
+						? [persistedSystemPrompt]
+						: defaultPrompt => {
 					const ircRoster = ircEnabled
 						? collectIrcPeerRoster(AgentRegistry.global(), id, ircRootSessionFile)
 						: undefined;
@@ -3946,8 +3958,18 @@ export async function runSubprocess(options: ExecutorOptions): Promise<SingleRes
 								AgentRegistry.global().get(MAIN_AGENT_ID)?.sessionFile,
 						);
 					}
+					// Cache economics (issue #15523): reuse the persisted park-time
+					// system prompt verbatim so revived requests hit the provider's
+					// prompt cache instead of re-rendering (and invalidating it via
+					// the volatile IRC peer roster).
+					const persistedInit = extractSessionInit(reopened.getEntries());
 					const { session: revived } = await createAgentSession(
-						buildSubagentSessionOptions(reopened, expectedAgentRef, true),
+						buildSubagentSessionOptions(
+							reopened,
+							expectedAgentRef,
+							true,
+							persistedInit?.systemPrompt,
+						),
 					);
 					// Re-run the executor's extension wiring on the rebuilt session.
 					// Skipping it leaves the runner pre-init, so a `tool_call` handler

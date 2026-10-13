@@ -1,4 +1,4 @@
-import { CString, dlopen, FFIType } from "bun:ffi";
+import { dlopen, FFIType } from "bun:ffi";
 import * as fs from "node:fs";
 import * as os from "node:os";
 
@@ -18,11 +18,14 @@ export function getTtyPath(): string | null {
 		try {
 			const libName = os.platform() === "darwin" ? "libSystem.B.dylib" : "libc.so.6";
 			const lib = dlopen(libName, {
-				ttyname: { args: [FFIType.i32], returns: FFIType.ptr },
+				ttyname: { args: [FFIType.i32], returns: "cstring" },
 			});
 			try {
-				const result = lib.symbols.ttyname(0);
-				return result ? new CString(result).toString() : null;
+				// Bun >=1.4: "cstring" returns a plain string. Older Bun returns a
+				// CString object. Handle both so this works across versions.
+				const raw: unknown = lib.symbols.ttyname(0);
+				if (raw == null) return null;
+				return typeof raw === "string" ? raw : (raw as { toString(): string }).toString();
 			} finally {
 				lib.close();
 			}

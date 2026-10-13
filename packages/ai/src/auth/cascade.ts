@@ -266,6 +266,20 @@ export class KeyCascade implements KeysApi {
 		return undefined;
 	}
 
+	/**
+	 * Invalidate in-memory auth state for a provider after an interactive
+	 * model switch.
+	 *
+	 * Drops session affinity pins (in-memory and persisted) so the next
+	 * `get()` re-runs credential selection, and bumps the credential pool
+	 * generation so selectors and usage-ranking discard any pre-switch
+	 * ordering. Runtime/config overrides are left intact.
+	 */
+	invalidateProviderAuth(provider: string): void {
+		this.#deps.affinity.clearProvider(provider);
+		this.#deps.pool.bump(`model-switch:${provider}`);
+	}
+
 	/** Resolve a bearer together with the stored row that supplied it. */
 	async getWithCredential(
 		provider: string,
