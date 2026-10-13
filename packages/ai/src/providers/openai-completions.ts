@@ -120,6 +120,8 @@ import {
 	NON_VISION_IMAGE_PLACEHOLDER,
 } from "./vision-guard";
 
+import { withReasoningOnlyEmptyRetry } from "../utils/reasoning-only-retry";
+
 export { applyOpenRouterRoutingVariant } from "./openai-shared";
 import {
 	applyOpenRouterRequestShaping,
@@ -1672,26 +1674,34 @@ function resolveOpenAICompletionsCompat(model: Model<"openai-completions">): Mod
 export const streamOpenAICompletions: StreamFunction<"openai-completions"> = (model, context, options) => {
 	const resolvedModel = resolveOpenAICompletionsCompat(model);
 	const originalToolChoice = (options as OpenAICompletionsOptions | undefined)?.toolChoice;
+	const log = (msg: string) => console.debug(msg);
 	const attempt = (
 		m: typeof resolvedModel,
 		ctx: typeof context,
 		opts?: typeof options,
 	) =>
-		withReplaySafeStreamRetry(m, ctx, opts, streamOpenAICompletionsOnce, {
-			retryEmptyCompletion: true,
-			retryProviderErrors: true,
-			maxProviderErrorRetries: 1,
-		});
+		withReasoningOnlyEmptyRetry(m, ctx, opts, (m2, ctx2, opts2) =>
+			withReplaySafeStreamRetry(m2, ctx2, opts2, streamOpenAICompletionsOnce, {
+				retryEmptyCompletion: true,
+				retryProviderErrors: true,
+				maxProviderErrorRetries: 1,
+			}),
+			log,
+		);
 	// Dots 3 Note (and related) models return empty array args under forced
 	// tool_choice (e.g. {"list":[]}) but correct data under auto. Detect the
 	// degradation and retry with auto. See Dots 3 recon 2026-10-13.
+	// Reasoning models can also die at the reasoning->content boundary:
+	// finish=stop with non-empty thinking but zero content chunks. The attempt
+	// layer above detects that shape and retries once with reasoning disabled.
+	// See tau-models-diagnosis 2026-10-13.
 	return withForcedToolDegradationRetry(
 		resolvedModel,
 		context,
 		options,
 		originalToolChoice,
 		attempt,
-		(msg: string) => console.debug(msg),
+		log,
 	);
 };
 
