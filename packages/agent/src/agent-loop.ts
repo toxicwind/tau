@@ -39,6 +39,7 @@ import {
 	kCursorExecResolved,
 } from "@tau/tau-ai/utils/block-symbols";
 import { stamp } from "@tau/tau-ai/utils/schema/stamps";
+import { type ArgumentChunkPlan, planArgumentChunks } from "@tau/tau-ai/utils/chunk-tool-args";
 import {
 	createHarmonyAuditEvent,
 	detectHarmonyLeakInAssistantMessage,
@@ -2850,6 +2851,31 @@ async function speculativeFinalCalls(
 }
 
 /**
+ * Execute a chunked tool call plan: run the tool once per chunk,
+ * sequentially and in order, merging the per-chunk results into one.
+ * Content blocks concatenate in order; `details` concatenate when every
+ * chunk produced an array, otherwise the final chunk's `details` win.
+ * Stops at the first chunk that returns an error result; a thrown error
+ * propagates to the caller's error path. See {@link AgentTool.chunking}.
+ */
+async function executeChunkedToolCall(
+	plan: ArgumentChunkPlan,
+	execute: (args: Record<string, unknown>) => Promise<unknown>,
+): Promise<AgentToolResult<unknown>> {
+	const chunkResults: AgentToolResult<unknown>[] = [];
+	for (const callArgs of plan.calls) {
+		const coerced = coerceToolResult(await execute(callArgs)).result;
+		chunkResults.push(coerced);
+		if (coerced.isError) break;
+	}
+	const content = chunkResults.flatMap(r => r.content);
+	const details = chunkResults.every(r => Array.isArray(r.details))
+		? chunkResults.flatMap(r => r.details as unknown[])
+		: chunkResults[chunkResults.length - 1]?.details;
+	return { content, details, isError: chunkResults.some(r => r.isError) };
+}
+
+/**
  * Execute tool calls from an assistant message.
  */
 async function executeToolCalls(
@@ -3205,21 +3231,36 @@ async function executeToolCalls(
 					executionStarted = true;
 					let rawResult: unknown;
 					try {
-						rawResult = await tool.execute(
-							toolCall.id,
-							executionArgs,
-							record.signal,
-							partialResult => {
-								stream.push({
-									type: "tool_execution_update",
-									toolCallId: toolCall.id,
-									toolName: toolCall.name,
-									args: executionArgs,
-									partialResult: coerceToolResult(partialResult).result,
-								});
-							},
-							toolContext,
-						);
+						const emitPartial = (args: Record<string, unknown>) => (partialResult: unknown) => {
+							stream.push({
+								type: "tool_execution_update",
+								toolCallId: toolCall.id,
+								toolName: toolCall.name,
+								args,
+								partialResult: coerceToolResult(partialResult).result,
+							});
+						};
+						// Tools that declare `chunking` get oversized array arguments
+						// split into sequential calls under the item ceiling instead of
+						// one giant call (Dots 3 recon: models collapse those to `{}`).
+						const chunkPlan = tool.chunking
+							? planArgumentChunks(
+									executionArgs as Record<string, unknown>,
+									tool.chunking.field,
+									tool.chunking.maxItems,
+								)
+							: null;
+						rawResult = chunkPlan
+							? await executeChunkedToolCall(chunkPlan, args =>
+									tool.execute(toolCall.id, args, record.signal, emitPartial(args), toolContext),
+								)
+							: await tool.execute(
+									toolCall.id,
+									executionArgs,
+									record.signal,
+									emitPartial(executionArgs as Record<string, unknown>),
+									toolContext,
+								);
 					} finally {
 						await streamSession?.discard("outer tool completed without committing stream speculation");
 					}

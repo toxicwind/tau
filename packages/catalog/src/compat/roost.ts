@@ -148,6 +148,7 @@ const loadProviderDefs = (
       staticDefs: readonly RoostProviderDef[],
       opts?: {
         requiredIds?: readonly string[];
+        dropIns?: readonly RoostProviderDef[];
         onSynthesize?: (id: string, def: RoostProviderDef) => void;
       },
     ) => { defs: RoostProviderDef[]; synthesized: string[] };

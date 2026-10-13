@@ -1075,6 +1075,14 @@ export interface AssistantMessage {
 	 * other than what was requested.
 	 */
 	upstreamModel?: string;
+	/**
+	 * Message-level `reasoning_details` entries captured from the provider
+	 * stream that no tool call owned (e.g. a reasoning-only turn). Preserved
+	 * so replay can return them verbatim: providers that validate reasoning
+	 * history (OpenRouter/Dots) kill the continuation when they are dropped
+	 * (Dots 3 recon: replay probes died with finish=length, zero content).
+	 */
+	messageReasoningDetails?: unknown[];
 	usage: Usage;
 	stopReason: StopReason;
 	stopDetails?: StopDetails | null;

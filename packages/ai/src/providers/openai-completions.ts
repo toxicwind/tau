@@ -191,6 +191,17 @@ function parseStoredThoughtSignature(thoughtSignature: string | undefined): unkn
 	}
 }
 
+// Dedup key for a `reasoning_details` entry: encrypted entries are identified
+// by their (id, data) pair; anything else falls back to its JSON shape.
+function reasoningDetailKey(detail: unknown): string {
+	if (typeof detail === "object" && detail !== null) {
+		const id = Reflect.get(detail, "id");
+		const data = Reflect.get(detail, "data");
+		if (typeof id === "string" && typeof data === "string") return `enc:${id}:${data}`;
+	}
+	return `json:${JSON.stringify(detail) ?? "null"}`;
+}
+
 // A single tool-call turn on an OpenAI-compatible Gemini wire can carry two
 // independent signatures: a per-call one (`extra_content.google|vertex` or an
 // encrypted `reasoning_details` entry) and a message-level `thinking_signature`
@@ -1480,6 +1491,13 @@ const streamOpenAICompletionsOnce = (
 										matchingToolCall.thoughtSignature,
 										{ perCall: detailObject },
 									);
+								} else {
+									// No tool call owns this detail (reasoning-only turn, or the
+									// detail raced ahead of its tool call). Preserve it at message
+									// level so replay returns it verbatim instead of dropping it —
+									// providers that validate reasoning history kill the
+									// continuation otherwise (Dots 3 recon: finish=length, 0 content).
+									(output.messageReasoningDetails ??= []).push(detailObject);
 								}
 							}
 						}
@@ -2493,10 +2511,28 @@ export function convertMessages(
 					assistantMsg.reasoning_details = reasoningDetails;
 				}
 			}
+			// Preserve message-level reasoning details captured when no tool call
+			// owned them (reasoning-only turns). Providers that validate reasoning
+			// history (OpenRouter/Dots) kill the continuation when these are
+			// dropped: finish=length with zero content (Dots 3 recon).
+			const messageReasoningDetails = msg.messageReasoningDetails;
+			if (messageReasoningDetails && messageReasoningDetails.length > 0) {
+				const mergedDetails = [...(assistantMsg.reasoning_details ?? [])];
+				const seenDetailKeys = new Set(mergedDetails.map(d => reasoningDetailKey(d)));
+				for (const detail of messageReasoningDetails) {
+					const key = reasoningDetailKey(detail);
+					if (seenDetailKeys.has(key)) continue;
+					seenDetailKeys.add(key);
+					mergedDetails.push(detail);
+				}
+				assistantMsg.reasoning_details = mergedDetails;
+			}
 			// Some OpenAI-compatible backends concatenate assistant content as a
 			// string even for tool-call replay. OpenAI accepts an empty string here;
 			// null trips strict/proxy implementations before the tool result is read.
-			if (assistantMsg.content === null && (hasReasoningField || assistantMsg.tool_calls)) {
+			const hasReasoningDetails =
+				assistantMsg.reasoning_details !== undefined && assistantMsg.reasoning_details.length > 0;
+			if (assistantMsg.content === null && (hasReasoningField || hasReasoningDetails || assistantMsg.tool_calls)) {
 				assistantMsg.content = "";
 			}
 			// Skip assistant messages that have no content, no tool calls, and no reasoning payload.
@@ -2510,7 +2546,7 @@ export function convertMessages(
 			if (!hasContent && assistantMsg.tool_calls && compat.requiresAssistantContentForToolCalls) {
 				assistantMsg.content = ".";
 			}
-			if (!hasContent && !assistantMsg.tool_calls && !hasReasoningField) {
+			if (!hasContent && !assistantMsg.tool_calls && !hasReasoningField && !hasReasoningDetails) {
 				continue;
 			}
 			params.push(assistantMsg);

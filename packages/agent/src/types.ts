@@ -1064,6 +1064,24 @@ export interface AgentTool<
 	/** If true, argument validation errors are non-fatal: raw args are passed to execute() instead of returning an error to the LLM. */
 	lenientArgValidation?: boolean;
 	/**
+	 * Declares that one top-level array argument may be split into sequential
+	 * chunked calls when it exceeds the item ceiling, instead of a single
+	 * giant call. Reasoning models collapse oversized argument payloads to
+	 * `{}` (Dots 3 recon, 2026-10-13: ~200 items / ~2.9k tokens -> finish=error),
+	 * so tools whose calls legitimately carry large arrays opt in here and the
+	 * agent loop chunks uniformly for any tool that declares it: one
+	 * `execute()` per chunk, in order, results merged by concatenating content
+	 * (array `details` concatenate too; otherwise the final chunk's `details`
+	 * win). A chunk error stops the sequence and surfaces as the call's error.
+	 * Tools that do not declare this are never chunked.
+	 */
+	chunking?: {
+		/** Top-level argument field holding the array to chunk. */
+		field: string;
+		/** Max items per chunked call. Defaults to 80. */
+		maxItems?: number;
+	};
+	/**
 	 * Whether the agent loop may abort this tool mid-execution — or skip it
 	 * before it starts — to deliver a queued steering message. A function
 	 * resolves this per call from the raw, pre-validation arguments.
