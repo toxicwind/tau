@@ -5,5 +5,15 @@
   "exports": {
     ".": "./index.js",
     "./*": "./index.js"
+  },
+  "dependencies": {
+    "@opentelemetry/api-logs": "catalog:",
+    "@opentelemetry/exporter-logs-otlp-proto": "catalog:",
+    "@opentelemetry/exporter-metrics-otlp-proto": "catalog:",
+    "@opentelemetry/exporter-trace-otlp-proto": "catalog:",
+    "@opentelemetry/sdk-logs": "catalog:",
+    "@opentelemetry/sdk-metrics": "2.10.0",
+    "@opentelemetry/sdk-trace-node": "2.10.0",
+    "axe-core": "^4.14.0"
   }
 }
