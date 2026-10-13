@@ -156,3 +156,7 @@ packages/catalog/src/compat/rules.json binary
 *.yaml merge=weave
 *.yml merge=weave
 *.zig merge=weave
+*.bsl merge=weave
+*.cfg merge=weave
+*.ini merge=weave
+*.osl merge=weave
