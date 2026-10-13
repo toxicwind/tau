@@ -33,6 +33,7 @@ import { normalizeSystemPrompts, resolveCacheRetention } from "../utils";
 import { createAbortSourceTracker } from "../utils/abort";
 import { isDemotedThinking, kStreamingLastParseLen } from "../utils/block-symbols";
 import { hasVisibleAssistantContent, withReplaySafeStreamRetry } from "../utils/empty-completion-retry";
+import { withForcedToolDegradationRetry } from "../utils/forced-tool-retry";
 import { AssistantMessageEventStream } from "../utils/event-stream";
 import type { RawHttpRequestDump } from "../utils/http-inspector";
 import {
@@ -1645,11 +1646,28 @@ function resolveOpenAICompletionsCompat(model: Model<"openai-completions">): Mod
  */
 export const streamOpenAICompletions: StreamFunction<"openai-completions"> = (model, context, options) => {
 	const resolvedModel = resolveOpenAICompletionsCompat(model);
-	return withReplaySafeStreamRetry(resolvedModel, context, options, streamOpenAICompletionsOnce, {
-		retryEmptyCompletion: true,
-		retryProviderErrors: true,
-		maxProviderErrorRetries: 1,
-	});
+	const originalToolChoice = (options as OpenAICompletionsOptions | undefined)?.toolChoice;
+	const attempt = (
+		m: typeof resolvedModel,
+		ctx: typeof context,
+		opts?: typeof options,
+	) =>
+		withReplaySafeStreamRetry(m, ctx, opts, streamOpenAICompletionsOnce, {
+			retryEmptyCompletion: true,
+			retryProviderErrors: true,
+			maxProviderErrorRetries: 1,
+		});
+	// Dots 3 Note (and related) models return empty array args under forced
+	// tool_choice (e.g. {"list":[]}) but correct data under auto. Detect the
+	// degradation and retry with auto. See Dots 3 recon 2026-10-13.
+	return withForcedToolDegradationRetry(
+		resolvedModel,
+		context,
+		options,
+		originalToolChoice,
+		attempt,
+		(msg: string) => console.debug(msg),
+	);
 };
 
 function createRequestSetup(
@@ -1975,6 +1993,9 @@ function buildParams(
 		isOpenRouterHost: compat.isOpenRouterHost,
 		alwaysSendMaxTokens: compat.alwaysSendMaxTokens,
 		providerOutputClamp: getOutputCeiling(model.id),
+		modelId: model.id,
+		hasTools: Array.isArray(params.tools) && params.tools.length > 0,
+		isContinuation: messages.some(m => m.role === "assistant" || m.role === "tool"),
 	});
 	if (outputToken) {
 		if (outputToken.field === "max_tokens") {

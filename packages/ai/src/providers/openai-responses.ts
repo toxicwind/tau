@@ -1272,6 +1272,13 @@ export function buildParams(
 		isOpenRouterHost: model.compat.isOpenRouterHost,
 		alwaysSendMaxTokens: model.compat.alwaysSendMaxTokens,
 		providerOutputClamp: getOutputCeiling(model.id),
+		modelId: model.id,
+		hasTools: Array.isArray(params.tools) && params.tools.length > 0,
+		isContinuation: Array.isArray(params.input) && params.input.some(
+			(item: unknown) => typeof item === "object" && item !== null &&
+				((item as { type?: string }).type === "function_call_output" ||
+					((item as { role?: string }).role === "assistant")),
+		),
 	});
 
 	applyCommonResponsesSamplingParams(params, { ...options, maxTokens: outputToken?.value }, model);

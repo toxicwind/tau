@@ -610,6 +610,44 @@ export interface ResolveOpenAIOutputTokenInput {
 	alwaysSendMaxTokens: boolean;
 	/** Hard provider clamp; defaults to the provider output clamp. */
 	providerOutputClamp?: number;
+	/** Model ID for provider-specific floors (e.g. Dots reasoning models). */
+	modelId?: string;
+	/** Whether the request includes tools (affects Dots floor tier). */
+	hasTools?: boolean;
+	/** Whether this is a replay/continuation (second turn+, affects Dots floor tier). */
+	isContinuation?: boolean;
+}
+
+/**
+ * Dots 3 (and similar MoE reasoning models) need headroom for thinking tokens.
+ * Recon (2026-10-13) confirmed: max_tokens=64 on text-only -> reasoning 70 tokens
+ * exceeds limit -> finish=length with 0 content. Floors (raise-only, never lower
+ * an explicit value):
+ *  - text-only (no tools): 256
+ *  - tool calls: 512
+ *  - replay/continuation (second turn+): 1024
+ */
+export const DOTS_TEXT_FLOOR = 256;
+export const DOTS_TOOLS_FLOOR = 512;
+export const DOTS_CONTINUATION_FLOOR = 1024;
+
+/** Detect Dots-family reasoning models by ID (case-insensitive). */
+export function isDotsModel(modelId: string | undefined): boolean {
+	return modelId !== undefined && modelId.toLowerCase().includes("dots");
+}
+
+/**
+ * Compute the Dots-specific max_tokens floor for this request shape.
+ * Returns 0 when the model is not Dots (no floor applies).
+ */
+export function dotsMaxTokensFloor(
+	modelId: string | undefined,
+	hasTools: boolean,
+	isContinuation: boolean,
+): number {
+	if (!isDotsModel(modelId)) return 0;
+	if (isContinuation) return DOTS_CONTINUATION_FLOOR;
+	return hasTools ? DOTS_TOOLS_FLOOR : DOTS_TEXT_FLOOR;
 }
 
 /**
@@ -636,8 +674,12 @@ export function resolveOpenAIOutputTokenParam(
 		input.maxTokens ?? (input.alwaysSendMaxTokens ? (input.modelMaxTokens ?? Number.POSITIVE_INFINITY) : undefined);
 	if (requested === undefined) return undefined;
 	if (input.isOpenRouterHost && !input.alwaysSendMaxTokens && !input.maxTokensExplicit) return undefined;
+	// Dots reasoning-model floor: raise-only, never lowers an explicit value.
+	// The floor is applied before the min() clamp so model/provider caps still win.
+	const dotsFloor = dotsMaxTokensFloor(input.modelId, input.hasTools ?? false, input.isContinuation ?? false);
+	const floored = dotsFloor > 0 ? Math.max(requested, dotsFloor) : requested;
 	const value = Math.min(
-		requested,
+		floored,
 		input.modelMaxTokens ?? Number.POSITIVE_INFINITY,
 		input.modelMaxTokensCap ?? Number.POSITIVE_INFINITY,
 		input.providerOutputClamp ?? Number.POSITIVE_INFINITY,
