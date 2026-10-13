@@ -1,10 +1,10 @@
 {
   "base": "18.8.4",
-  "sovereignMainShort": "4132f2eb",
-  "sovereignMainFull": "4132f2ebcaabff2a4fbce9d3d00c3f9acca37f92",
-  "tauShort": "4132f2eb",
-  "canonical": "18.8.4+sovereign.tau.4132f2eb",
-  "canonicalFull": "18.8.4+sovereign.tau.4132f2ebcaabff2a4fbce9d3d00c3f9acca37f92",
-  "npm": "18.8.4+sovereign.tau.4132f2eb",
-  "generatedAt": "2026-10-08T08:12:18.640Z"
+  "sovereignMainShort": "f946a2cc",
+  "sovereignMainFull": "f946a2cc2a5b73b19ba4169e31f30db539e3f685",
+  "tauShort": "f946a2cc",
+  "canonical": "18.8.4+sovereign.tau.f946a2cc",
+  "canonicalFull": "18.8.4+sovereign.tau.f946a2cc2a5b73b19ba4169e31f30db539e3f685",
+  "npm": "18.8.4+sovereign.tau.f946a2cc",
+  "generatedAt": "2026-10-13T06:40:31Z"
 }
