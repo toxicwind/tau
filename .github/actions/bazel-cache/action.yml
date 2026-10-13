@@ -134,7 +134,7 @@ runs:
                echo "common --repository_cache=/opt/bazel-repo-cache"
                echo "common --repo_env=TAU_XWIN_CACHE_DIR=/opt/bazel-repo-cache/xwin"
                echo "common --config=cache-rw"
-               echo "common --remote_cache=grpcs://bazel-remote.bazel-cache.svc.cluster.local:9092"
+               echo "build --remote_cache=grpcs://bazel-remote.bazel-cache.svc.cluster.local:9092"
                echo "common --tls_certificate=infra/bazel-remote/ca.crt"
                echo "common --remote_header='authorization=Basic ${auth}'"
                echo "common --remote_download_toplevel"
@@ -155,13 +155,13 @@ runs:
              find "$HOME/.cache/tau-bazel-disk" -type f -mtime +14 -delete 2>/dev/null || true
              {
                echo "common --config=ci"
-               # GitHub-hosted runners never use a remote cache: the base
-               # .bazelrc may carry an estate-local default (e.g. NativeLink
-               # grpc://127.0.0.1:25155), which is unreachable here and fails
-               # the build with "Failed to query remote execution
-               # capabilities: Connection refused". Empty it explicitly —
-               # later rc options win, and empty disables the remote cache.
-               echo "common --remote_cache="
+               # Scope is `build`, not `common`: the base .bazelrc may set a
+               # build-scoped estate-local endpoint, and build-scoped options
+               # beat common-scoped ones regardless of file order — a common-
+               # scoped empty value does NOT neutralize it (verified live:
+               # run 38349739150 still hit 127.0.0.1:25155). Same-scope +
+               # later file (--bazelrc from the CLI) wins. Empty disables.
+               echo "build --remote_cache="
                echo "common --disk_cache=$HOME/.cache/tau-bazel-disk"
                echo "common --repository_cache=$HOME/.cache/tau-bazel-repo"
              } > "$rc"
