@@ -155,6 +155,13 @@ runs:
              find "$HOME/.cache/tau-bazel-disk" -type f -mtime +14 -delete 2>/dev/null || true
              {
                echo "common --config=ci"
+               # GitHub-hosted runners never use a remote cache: the base
+               # .bazelrc may carry an estate-local default (e.g. NativeLink
+               # grpc://127.0.0.1:25155), which is unreachable here and fails
+               # the build with "Failed to query remote execution
+               # capabilities: Connection refused". Empty it explicitly —
+               # later rc options win, and empty disables the remote cache.
+               echo "common --remote_cache="
                echo "common --disk_cache=$HOME/.cache/tau-bazel-disk"
                echo "common --repository_cache=$HOME/.cache/tau-bazel-repo"
              } > "$rc"

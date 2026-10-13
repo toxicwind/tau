@@ -38,7 +38,6 @@
     "@babel/traverse": "catalog:",
     "@babel/types": "catalog:",
     "@tau/tau-agent-core": "catalog:",
-    "@tau/tau-agent": "workspace:*",
     "@tau/tau-utils": "catalog:",
     "diff": "catalog:",
     "@tau/tau-natives": "catalog:",
