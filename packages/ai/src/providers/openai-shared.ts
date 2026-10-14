@@ -675,11 +675,16 @@ export function applyDotsRequestShaping(
 ): void {
 	if (!isDotsModel(modelId)) return;
 	if (params.temperature === undefined) params.temperature = DOTS_TEMPERATURE;
-	if (params.stop === undefined) params.stop = [...DOTS_STOP_SEQUENCES];
-	(params as { reasoning?: unknown }).reasoning = {
-		max_tokens: DOTS_REASONING_MAX_TOKENS,
-		exclude: true,
-	};
+	const provider = (params as { provider?: { require_parameters?: boolean } }).provider;
+	if (params.stop === undefined && provider?.require_parameters !== true) {
+		params.stop = [...DOTS_STOP_SEQUENCES];
+	}
+	if ((params as { reasoning?: unknown }).reasoning === undefined) {
+		(params as { reasoning?: unknown }).reasoning = {
+			max_tokens: DOTS_REASONING_MAX_TOKENS,
+			exclude: true,
+		};
+	}
 }
 
 /**

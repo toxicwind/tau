@@ -117,3 +117,10 @@ node_modules/
 
 # Per-run smithers traces. Not source.
 .smithers/executions/
+
+# Security boundaries (git-mutator)
+*.env
+.env.*
+credentials.json
+*.pem
+.bak.

@@ -1086,6 +1086,10 @@ function impliesMandatoryReasoning(facts: IdentityFacts, modelId: string): boole
 	// (`runtime-thinking-model`, `qwen3-…-thinking-2507`) names the
 	// reasoning-locked sibling even when it is not a collapse suffix.
 	if (stripThinkingVariantSuffix(modelId) !== undefined) return true;
+	// Liquid LFM-2.5 endpoints on OpenRouter (e.g. liquid/lfm-2.5-2.6b:free)
+	// reject reasoning:{enabled:false} with HTTP 400 "Reasoning is mandatory
+	// for this endpoint and cannot be disabled" (4,955x in http-400-requests).
+	if (/(?:^|\/)lfm-2\.5-/i.test(modelId)) return true;
 	return false;
 }
 

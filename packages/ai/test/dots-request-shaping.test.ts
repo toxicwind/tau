@@ -47,11 +47,21 @@ describe("applyDotsRequestShaping (SovereignDotsClient coercions)", () => {
     expect(params.stop).toEqual(["custom"]);
   });
 
-  test("caps reasoning at 128 tokens and excludes it", () => {
+  test("skips stop sequences when provider.require_parameters is true (avoids OpenRouter 404)", () => {
+    const params: Record<string, unknown> = { provider: { require_parameters: true } };
+    applyDotsRequestShaping(params, "openrouter/dots-studio/dots-3-note-preview:free");
+    expect(params.stop).toBeUndefined();
+  });
+
+  test("caps reasoning at 128 tokens and excludes it (fill-in only)", () => {
     const params: Record<string, unknown> = {};
     applyDotsRequestShaping(params, "openrouter/dots-studio/dots-3-note-preview:free");
     expect(params.reasoning).toEqual({ max_tokens: DOTS_REASONING_MAX_TOKENS, exclude: true });
     expect(DOTS_REASONING_MAX_TOKENS).toBe(128);
+
+    const explicit: Record<string, unknown> = { reasoning: { effort: "low" } };
+    applyDotsRequestShaping(explicit, "openrouter/dots-studio/dots-3-note-preview:free");
+    expect(explicit.reasoning).toEqual({ effort: "low" });
   });
 
   test("matches Dots family by id substring (case-insensitive)", () => {

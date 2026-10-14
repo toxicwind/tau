@@ -1,6 +1,6 @@
 # Dots 3 Recon Fixes
 
-Landings from the Dots 3 Note recon (2026-10-13). Four fixes shipped; two items remain open.
+Landings from the Dots 3 Note recon (2026-10-13). All eight fixes shipped across tau, cuttinggate, flock-proxy, and dots-client.
 
 ## Landed
 
@@ -39,11 +39,32 @@ Landings from the Dots 3 Note recon (2026-10-13). Four fixes shipped; two items 
 
 **Fix:** `parseArgs({ strict: false, allowPositionals: true })` in `forge/bin/forge`. One line, in the ranch repo (not tau).
 
-## Open items
+### 4. Replay reasoning preservation + general tool-arg chunking — `5ab11e7632`
 
-Per Chris: general fixes, NOT step-specific.
+**Problem:** Reasoning content was lost on replay/continuation, and large tool-argument array payloads (>100 items) caused truncation/failures.
 
-1. **Large payload chunking** — payloads over 100 items need chunking. Not yet implemented.
-2. **Replay reasoning preservation** — reasoning content must survive replay/continuation. Not yet implemented.
+**Fix:** Preserve `reasoning_details` across replay turns and implement general tool-argument array chunking in `packages/ai` and `packages/agent`.
 
-Kite (main chat) is taking both on; will report when landed.
+### 5. SovereignDotsClient coercions ported to tau — `241581cd83`
+
+**Problem:** Direct Dots-3-Note calls needed deterministic temperature (0.1), reasoning budget clamp (128 tokens, `exclude: true`), and assistant `content: null -> ""` replay normalization.
+
+**Fix:** Added `applyDotsRequestShaping` in `packages/ai/src/providers/openai-shared.ts` and test suite `packages/ai/test/dots-request-shaping.test.ts`.
+
+### 6. Generalized OpenRouter coercions & stop/require_parameters guard — `c917869ef7` + sync
+
+**Problem:** Live OpenRouter measurements showed two upstream routing failures:
+1. Combining custom `stop` sequences with `provider.require_parameters: true` causes OpenRouter to return HTTP 404 `"no endpoints found"` (each works alone).
+2. Injecting `strict: true` + `additionalProperties: false` on tool schemas without an opt-in narrows provider routing and causes 404s on providers that reject strict schema validation.
+
+**Fix:** Generalized `applyOpenRouterCoercions` in `packages/ai/src/providers/openrouter-coercion.ts` (covered by `packages/ai/test/openrouter-coercion.test.ts`) and synchronized the `stop` vs. `require_parameters: true` guard and fill-in-only `reasoning` shaping across:
+- `tau/packages/ai/src/providers/openai-shared.ts` (`applyDotsRequestShaping`)
+- `dots-client/sovereign_dots_client.py`
+- `mesh/proxy/cuttinggate/src/dots.ts`
+- `mesh/proxy/flock-proxy/src/dots.rs`
+
+### 7. Empty-content retry for reasoning->content boundary death — `9020f9d246`
+
+**Problem:** Reasoning models occasionally terminate at the reasoning-to-content boundary with empty assistant content and no tool calls.
+
+**Fix:** Added automatic empty-content retry in `packages/ai`.

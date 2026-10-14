@@ -172,4 +172,22 @@ describe("thinking.requiresEffort clamping", () => {
 		expect(off.model).toBe("test/router-model-thinking");
 		expect(off.reasoning).toEqual({ effort: "minimal" });
 	});
+
+	it("auto-derives requiresEffort for liquid/lfm-2.5-* so disableReasoning never sends enabled:false", async () => {
+		const lfm = buildModel({
+			id: "liquid/lfm-2.5-2.6b:free",
+			name: "Liquid LFM 2.5 2.6B",
+			api: "openai-completions",
+			provider: "openrouter",
+			baseUrl: "https://openrouter.ai/api/v1",
+			reasoning: true,
+			input: ["text"],
+			cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
+			contextWindow: 32_768,
+			maxTokens: 4_096,
+		} satisfies ModelSpec<"openai-completions">);
+		expect(lfm.thinking?.requiresEffort).toBe(true);
+		const disabled = await captureBody(lfm, { disableReasoning: true });
+		expect(disabled.reasoning).toEqual({ effort: "minimal" });
+	});
 });
