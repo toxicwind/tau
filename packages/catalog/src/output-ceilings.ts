@@ -21,6 +21,8 @@
 export const CURATED_OUTPUT_CEILINGS: Record<string, number> = {
 	"meta/muse-spark-1.2-contributor": 131_072,
 	"poolside/laguna-s-2.1-free": 32_768,
+	"z-ai/glm-4.6v-flash-free": 32_768,
+	"z-ai/glm-4.6v-flash": 32_768,
 };
 
 /** Curated true ceiling for a model id, if we have one. */
@@ -38,6 +40,8 @@ export interface ParsedOutputCeiling {
 
 // Matches "max_tokens (65536): Input should be less than or equal to 32768"
 // and common variants ("must be less than or equal to", "expected <= N").
+const CEILING_400_RE_ZH = /\[\d+\s*,\s*(\d+)\]/;
+
 const CEILING_400_RE =
 	/max_tokens\s*\((\d+)\)[^.]*?(?:less than or equal to|must be (?:less than or )?equal to|expected\s*<=?)\s+(\d+)/i;
 
@@ -49,7 +53,14 @@ const CEILING_400_RE =
 export function parseOutputCeilingFromErrorText(text: string): ParsedOutputCeiling | undefined {
 	if (!text) return undefined;
 	const m = CEILING_400_RE.exec(text);
-	if (!m) return undefined;
+	if (!m) {
+		const zhm = CEILING_400_RE_ZH.exec(text);
+		if (zhm) {
+			const zc = Number(zhm[1]);
+			if (Number.isSafeInteger(zc) && zc > 0) return { requested: zc + 1, ceiling: zc };
+		}
+		return undefined;
+	}
 	const requested = Number(m[1]);
 	const ceiling = Number(m[2]);
 	if (!Number.isSafeInteger(requested) || !Number.isSafeInteger(ceiling)) return undefined;

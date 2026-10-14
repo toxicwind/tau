@@ -32,6 +32,13 @@ describe("output-ceilings (catalog)", () => {
 		});
 	});
 
+	test("parses Chinese provider range errors", () => {
+		expect(parseOutputCeilingFromErrorText("max_tokens\u53c2\u6570\u975e\u6cd5\uff1a\u9650\u5236\u6570\u503c\u8303\u56f4[1,32768]")).toEqual({
+			requested: 32769,
+			ceiling: 32768,
+		});
+	});
+
 	test("rejects non-corrections and non-matching text", () => {
 		// ceiling not below requested -> not a correction
 		expect(parseOutputCeilingFromErrorText("max_tokens (100): Input should be less than or equal to 100")).toBeUndefined();
