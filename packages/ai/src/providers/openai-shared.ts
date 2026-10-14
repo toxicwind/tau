@@ -606,6 +606,8 @@ export interface ResolveOpenAIOutputTokenInput {
 	omitMaxOutputTokens: boolean;
 	/** The model sits behind OpenRouter (catalog default caps are omitted so each upstream self-caps). */
 	isOpenRouterHost: boolean;
+	/** The model sits behind Groq (Groq-specific wire coercions apply). */
+	isGroqHost?: boolean;
 	/** Endpoint always needs a cap (Kimi-family TPM math); supplies the model default when the caller did not. */
 	alwaysSendMaxTokens: boolean;
 	/** Hard provider clamp; defaults to the provider output clamp. */
@@ -725,6 +727,7 @@ export interface OpenAIGatewayRoutingParams {
 
 export interface OpenAIGatewayRoutingCompat {
 	isOpenRouterHost: boolean;
+	isGroqHost?: boolean;
 	openRouterRouting?: OpenRouterRouting;
 	isVercelGatewayHost?: boolean;
 	vercelGatewayRouting?: VercelGatewayRouting;

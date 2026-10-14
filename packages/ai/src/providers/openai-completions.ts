@@ -127,6 +127,10 @@ import {
 	applyOpenRouterRequestShaping,
 	normalizeOpenRouterMessages,
 } from "./openrouter-coercion";
+import {
+	applyGroqRequestShaping,
+	stripGroqReasoningContent,
+} from "./groq-coercion";
 
 type OpenAICompletionsReasoningField = NonNullable<ResolvedOpenAICompat["reasoningContentField"]>;
 
@@ -2019,6 +2023,10 @@ function buildParams(
 	maybeAddAnthropicCacheControl(compat, messages);
 	params.messages = messages;
 	if (compat.isOpenRouterHost) params.messages = normalizeOpenRouterMessages(messages);
+	if (compat.isGroqHost) {
+		params.messages = stripGroqReasoningContent(messages);
+		applyGroqRequestShaping(params, compat);
+	}
 	const outputToken = resolveOpenAIOutputTokenParam({
 		field: compat.maxTokensField,
 		maxTokens: options?.maxTokens,
@@ -2027,6 +2035,7 @@ function buildParams(
 		modelMaxTokensCap: (model.compat as { maxTokensCap?: number })?.maxTokensCap,
 		omitMaxOutputTokens: model.omitMaxOutputTokens ?? false,
 		isOpenRouterHost: compat.isOpenRouterHost,
+		isGroqHost: compat.isGroqHost,
 		alwaysSendMaxTokens: compat.alwaysSendMaxTokens,
 		providerOutputClamp: getOutputCeiling(model.id),
 		modelId: model.id,

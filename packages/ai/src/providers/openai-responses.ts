@@ -1271,6 +1271,7 @@ export function buildParams(
 		modelMaxTokensCap: (model.compat as { maxTokensCap?: number })?.maxTokensCap,
 		omitMaxOutputTokens: model.omitMaxOutputTokens ?? false,
 		isOpenRouterHost: model.compat.isOpenRouterHost,
+		isGroqHost: model.compat.isGroqHost,
 		alwaysSendMaxTokens: model.compat.alwaysSendMaxTokens,
 		providerOutputClamp: getOutputCeiling(model.id),
 		modelId: model.id,

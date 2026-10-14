@@ -796,6 +796,12 @@ export interface ResolvedOpenAISharedCompat {
 	promptCacheBreakpointTtl?: "30m";
 	/** The model sits behind OpenRouter (routing prefs and max-token omission apply). */
 	isOpenRouterHost: boolean;
+	/**
+	 * The model sits behind Groq (reasoning_content and repetition_penalty are stripped).
+	 * Built catalog models always materialize this false-by-default value;
+	 * optionality preserves hand-authored resolved compat fixtures.
+	 */
+	isGroqHost?: boolean;
 	/** Whether this endpoint needs a max-token field even when caller did not set one. */
 	alwaysSendMaxTokens: boolean;
 	/** Clamp a requested output-token count to the model's advertised ceiling. */

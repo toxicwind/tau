@@ -539,6 +539,7 @@ function detectOpenAICompat(
 		openRouterRouting: undefined,
 		vercelGatewayRouting: undefined,
 		isOpenRouterHost: d.isOpenRouter,
+		isGroqHost,
 		wireModelIdMode,
 		isVercelGatewayHost: isVercelGateway,
 		supportsStrictMode:
@@ -697,6 +698,7 @@ function resolveOpenAIResponsesPolicy(
 	const hostModel = { provider, baseUrl };
 	const isAzure = modelMatchesHost(hostModel, "azureOpenAI");
 	const isOpenRouter = modelMatchesHost(hostModel, "openrouter");
+	const isGroqHost = modelMatchesHost(hostModel, "groq");
 	const isOpenAIUrl = hostMatchesUrl(baseUrl, "openai");
 	const isVercelGateway = modelMatchesHost(hostModel, "vercelAIGateway");
 	const isXaiHost = modelMatchesHost(hostModel, "xai");
@@ -765,6 +767,7 @@ function resolveOpenAIResponsesPolicy(
 		openRouterRouting: undefined,
 		vercelGatewayRouting: undefined,
 		isOpenRouterHost: isOpenRouter,
+		isGroqHost,
 		isVercelGatewayHost: isVercelGateway,
 		wireModelIdMode: isOpenRouter ? "openrouter" : "raw",
 		toolSchemaFlavor: facts.is("kimi") ? "moonshot-mfjs" : undefined,
