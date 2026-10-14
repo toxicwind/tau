@@ -1,9 +1,9 @@
 # Upstream Merge Workflow — tau ↔ tau
 
-**Upstream:** https://github.com/toxicwind/tau
-**Fork point:** base `dacdef24a37f40b55601d2394372b6898c439e57` (upstream 18.3.0)
-**Our HEAD:** `9c7643f918` (2026-10-08)
-**Upstream HEAD:** `40e9368ef0` (upstream 18.8.4, as of 2026-10-08)
+**Upstream:** https://github.com/can1357/oh-my-pi (`upstream` remote)
+**Fork point:** base `e16ba790b90fbdaf286da0a46b78291cc7088d92` (upstream 18.3.0-era, 2026-09-24)
+**Our HEAD:** see `.upstream-sync.json` + `packages/coding-agent/src/generated/version.json`
+**Upstream HEAD:** `b91db66e9b0` (upstream 18.10.4, as of 2026-10-14)
 
 > Live SHAs are pinned in `.upstream-sync.json`; the values above are the
 > snapshot that produced the current merge plan. Re-run `bun scripts/upstream-pull.ts`
@@ -14,11 +14,24 @@
 > (`141e270e2c`, "Initial commit: Tau 18.3.0 monorepo") is a squash-import of
 > upstream `v18.3.0`. The true sovereign delta is **234 paths** (+2,111/−2,197
 > lines, excluding docs), not 398.
+>
+> **Refinement (2026-10-14):** the exact seed commit is `e16ba790b9`
+> (2026-09-24), proven by lockfile-blob intersection (`Cargo.lock`,
+> `MODULE.bazel.lock`, `flake.lock`, `.bazelversion`, `rust-toolchain.toml`
+> all byte-identical, minimum tree distance 109 files vs 900–1,500 for
+> rivals). The lineage is welded with
+> `git replace --graft 141e270e2c e16ba790b9` — merge-base exists again, so
+> tooling that assumes ancestry (including this script's plan phase) works.
+> The replace ref is local; push it to origin if you ever rebuild the clone.
 
 ## Why `git merge` doesn't work
 
 This fork was created by **squashing upstream into a single commit** — there is
 no shared git history. `git merge-base origin/main upstream/main` returns empty.
+
+**(2026-10-14):** with the graft above, `git merge-base` returns `e16ba790b9`.
+Naked `git merge upstream/main` is still forbidden — the fork slimmed ~730k
+lines the seed carried; only `scripts/upstream-pull.ts` knows the path map.
 
 ```
 $ git merge-base origin/main upstream/main
@@ -161,6 +174,24 @@ diff -r -q . /tmp/upstream-base --exclude=.git --exclude=node_modules \
 - **Don't chase every patch release** — our delta is small and stable
 - **Always dry-run first**, review the plan, then `--apply` on a feature branch
 - **Never merge directly to main** — use a `upstream-merge-YYYYMMDD` branch, test, then merge
+
+## Session log (2026-10-14): engines restored, base truthed
+
+- **Botched weave incident:** an undocumented naked merge staged 4,795 files of
+  line-soup; archived at `refs/archive/weave-botched-20261014`, tree reset.
+  Root causes: `.upstream-sync.json` recorded base `dacdef24` while our bytes
+  descend from `e16ba790b9` → every suture patch digest-mismatched (5,198
+  refusals). Lesson: **the recorded base must be the true content ancestor,
+  not the aspirational version tag.** Re-record with
+  `bun scripts/upstream-pull.ts --base <sha> --record-base`.
+- **Engines:** `weave-driver` (PATH) + `suture` v0.3.0 (`cargo install suture
+  --features cli` — the CLI hides behind the feature flag) both verified.
+- **fuse** (provasign, v0.13.3) evaluated as complementary entity merger;
+  config in `fuse.yaml`, agent bridge `scripts/fuse-agent.sh` → local
+  beellama endpoint (port SSOT). Synthetic TS conflict auto-merged at 0.95
+  confidence.
+- **git-mutator** gained scoped `commit "<msg>" [paths...]` (audit → stage
+  paths → commit, no push) after a commit-push swept 9 unrelated staged files.
 
 ## Files
 
