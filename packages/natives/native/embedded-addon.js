@@ -27,17 +27,5 @@
  * @property {EmbeddedAddonArchive=} archive
  */
 
-import archivePath from "../native/embedded-addons.linux-x64.tar.gz" with { type: "file" };
-
-export const embeddedAddon = {
-	platformTag: "linux-x64",
-	version: "18.3.0",
-	archive: {
-		format: "tar.gz",
-		filename: "embedded-addons.linux-x64.tar.gz",
-		filePath: archivePath,
-	},
-	files: [
-		{ variant: "modern", filename: "tau_natives.linux-x64-modern.node", size: 184188176 },
-	],
-};
+/** @type {EmbeddedAddon|null} */
+export const embeddedAddon = null;
