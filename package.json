@@ -86,6 +86,8 @@
     "meta": "bun --cwd=packages/metaharness run dev",
     "claude:trace": "bun scripts/claude-trace.ts",
     "build": "bun run --workspaces --if-present build",
+    "make:nativelink": "MISE_CACHE_REMOTE_URL=http://127.0.0.1:25148 mise run build && du -h packages/coding-agent/dist/tau",
+    "make": "bun run make:nativelink",
     "build:native": "bun --cwd=packages/natives run build",
     "test": "bun run test:ts && bun run test:rs && bun run test:py",
     "test:ts": "bun scripts/ci-test-ts.ts local-ts",
