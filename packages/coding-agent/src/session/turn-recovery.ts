@@ -2222,8 +2222,6 @@ export class TurnRecovery {
 		const maxRetries = this.#isBoundedThinkingStreamClose(message)
 			? Math.min(retrySettings.maxRetries, 1)
 			: retrySettings.maxRetries;
-		const retryBudgetExhausted = this.#retryAttempt > maxRetries;
-
 		const errorMessage = message.errorMessage || "Unknown error";
 		const id = this.#classifyRetryMessage(message);
 		const preserveFailedTurn =
@@ -2231,6 +2229,17 @@ export class TurnRecovery {
 			((classifierRefusal || AIError.is(id, AIError.Flag.MalformedFunctionCall) || AIError.retriable(id)) &&
 				this.#unexecutedToolCallsReplaySafe(message));
 		const rateLimitReason = parseRateLimitReason(errorMessage);
+		// A client-side/proxy concurrency-shed 429 (not a genuine provider
+		// quota/rate limit) is a dev-env admission cap — retry-after tells us the
+		// route is just momentarily over capacity, so when the operator opts into
+		// unlimited retry we bypass the finite ceiling and let the existing
+		// backoff/retry-after window clear before re-issuing. Genuine quota /
+		// usage / capacity reasons still honor retry.maxRetries.
+		const concurrencyShed =
+			rateLimitReason === "CONCURRENT_LIMIT" || rateLimitReason === "RATE_LIMIT_EXCEEDED";
+		const unlimitedConcurrencyRetry =
+			retrySettings.enabled && retrySettings.unlimitedRetryOnConcurrency429 && concurrencyShed;
+		const retryBudgetExhausted = !unlimitedConcurrencyRetry && this.#retryAttempt > maxRetries;
 		const staleOpenAIResponsesReplayError = AIError.is(id, AIError.Flag.StaleResponsesItem);
 		const accountPolicyDenial = AIError.is(id, AIError.Flag.AccountPolicy);
 		const recordedUsageLimitOutcome = await this.#usageLimitOutcomes.get(message);
