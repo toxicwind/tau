@@ -54,8 +54,8 @@ describe("collab peer isolation", () => {
 				corruption === "truncated"
 					? new Uint8Array(1)
 					: await seal(await importRoomKey(generateRoomKey()), { t: "abort" });
-			sender.send(packEnvelope(0, payload));
-			sender.send(packEnvelope(0, await seal(key, { t: "prompt", text: "after corruption" })));
+			sender.send(toFetchBody(packEnvelope(0, payload)));
+			sender.send(toFetchBody(packEnvelope(0, await seal(key, { t: "prompt", text: "after corruption" }))));
 			expect(await afterCorruption.promise).toBe("delivered");
 			guest.send({ t: "prompt", text: "healthy guest" });
 			expect(await received.promise).toEqual({ t: "error", message: "healthy reply" });

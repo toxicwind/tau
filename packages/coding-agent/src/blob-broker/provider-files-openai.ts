@@ -82,7 +82,7 @@ export function createOpenAIFileClient(
 			form.append("purpose", "vision");
 			form.append(
 				"file",
-				new Blob([uploadRequest.bytes], { type: uploadRequest.mimeType }),
+				new Blob([toFetchBody(uploadRequest.bytes)], { type: uploadRequest.mimeType }),
 				fileName(uploadRequest),
 			);
 

@@ -22,6 +22,7 @@
  */
 import { realpathSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
+import { fileURLToPath } from "node:url";
 
 const [target = "."] = process.argv.slice(2);
 // `PWD` is the logical path the shell cd'd through; `process.cwd()` is already
@@ -35,15 +36,27 @@ const projectDir = isTsconfig ? dirname(requested) : requested;
 const logical = isTsconfig ? requested : join(projectDir, "tsconfig.json");
 const resolved = realpathSync(logical);
 if (resolved !== logical) {
-	// Say so once: every path in the output below will be the physical one.
-	console.log(`typecheck: ${relative(base, logical)} → ${relative(base, resolved)} (symlink resolved)`);
+  // Say so once: every path in the output below will be the physical one.
+  console.log(
+    `typecheck: ${relative(base, logical)} → ${relative(base, resolved)} (symlink resolved)`,
+  );
 }
 
 // Inherit stdio so diagnostics stream unchanged, and take the child's exit code
 // as our own so `check:ts` still fails the build.
-const child = Bun.spawn(["bunx", "tsgo", "-p", resolved, "--noEmit"], {
-	cwd: realpathSync(projectDir),
-	stdout: "inherit",
-	stderr: "inherit",
+// Run the native-preview compiler under bun rather than via its `bin/tsgo`
+// shim. The shim's `#!/usr/bin/env node` shebang spawns Node, and Node's ESM
+// resolver cannot walk this checkout's flat symlinked node_modules to the
+// scoped `@typescript/native-preview-linux-x64` package ("Cannot find package");
+// bun's resolver follows it (bun canary). Spawning the compiler's JS entry
+// through `bun` keeps typecheck portable to both symlinked local checkouts and CI.
+const tsgoEntry = fileURLToPath(
+  import.meta.resolve("@typescript/native-preview/package.json"),
+);
+const tsgo = join(dirname(tsgoEntry), "lib", "tsgo.js");
+const child = Bun.spawn(["bun", tsgo, "-p", resolved, "--noEmit"], {
+  cwd: realpathSync(projectDir),
+  stdout: "inherit",
+  stderr: "inherit",
 });
 process.exit(await child.exited);

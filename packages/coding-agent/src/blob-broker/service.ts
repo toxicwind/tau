@@ -10,7 +10,7 @@
 
 import * as path from "node:path";
 import type { Context, ImageContent, Model } from "@tau/tau-ai";
-import { getBlobsDir, logger } from "@tau/tau-utils";
+import { getBlobsDir, logger, toFetchBody } from "@tau/tau-utils";
 import * as snapcompact from "@tau/snapcompact";
 import type { Settings } from "../config/settings";
 import { type BlobBackend, LocalBlobBackend } from "./broker";
@@ -206,7 +206,7 @@ export class ImageUrlService {
 					const fetcher = this.#producers.get(key);
 					const bytes = fetcher ? await fetcher() : null;
 					if (!bytes) return new Response(null, { status: 404 });
-					return new Response(bytes, { status: 200, headers: { "content-type": "application/octet-stream" } });
+					return new Response(toFetchBody(bytes), { status: 200, headers: { "content-type": "application/octet-stream" } });
 				},
 			});
 			server.unref();

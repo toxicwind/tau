@@ -537,3 +537,14 @@ export function isRetryableError(error: unknown): boolean {
 	if (VALIDATION_MESSAGE_PATTERN.test(message)) return false;
 	return isUnexpectedSocketCloseMessage(message) || TRANSIENT_MESSAGE_PATTERN.test(message);
 }
+
+/** Narrow any Uint8Array to an ArrayBuffer-backed view for DOM `BodyInit`/`BlobPart`.
+ * tsgo/TS7 requires `Uint8Array<ArrayBuffer>` (concrete buffer), not the loose
+ * `Uint8Array<ArrayBufferLike>`; the backing store is checked at runtime so the
+ * narrowing is truthful (a copy is made only when the buffer is not an ArrayBuffer).
+ */
+export function toFetchBody(bytes: Uint8Array): Uint8Array<ArrayBuffer> {
+	return bytes.buffer instanceof ArrayBuffer
+		? (bytes as Uint8Array<ArrayBuffer>)
+		: new Uint8Array(bytes);
+}

@@ -22,7 +22,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { identifyImageFetcher } from "@tau/tau-catalog/wire/image-fetchers";
-import { isEnoent, logger } from "@tau/tau-utils";
+import { isEnoent, logger, toFetchBody } from "@tau/tau-utils";
 import { BlobStore as SessionBlobStore } from "../session/blob-store";
 import {
 	BLOB_FETCH_EVENT_LIMIT,
@@ -613,7 +613,7 @@ export class BlobRegistry {
 		}
 		headers["content-length"] = String(bytes.byteLength);
 		this.#recordHit(entry, method, bytes.byteLength);
-		return new Response(method === "HEAD" ? null : bytes, { status: 200, headers });
+		return new Response(method === "HEAD" ? null : toFetchBody(bytes), { status: 200, headers });
 	}
 
 	#servableSeconds(entry: StoredBlob): number {

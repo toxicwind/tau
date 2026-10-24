@@ -125,7 +125,7 @@ export function createGeminiProviderFileClient(
 						"X-Goog-Upload-Command": "upload, finalize",
 						"X-Goog-Upload-Offset": "0",
 					},
-					body: request.bytes,
+					body: toFetchBody(request.bytes),
 					signal: request.signal,
 				});
 			} catch {

@@ -218,7 +218,7 @@ function createS3Uploader(destination: BlobDestinationId, config: DestinationRun
 				host: target.url.host,
 				path: target.signingPath,
 				headers: requestHeaders,
-				body: uploadRequest.bytes,
+				body: toFetchBody(uploadRequest.bytes),
 				region: settings.region,
 				service: "s3",
 				credentials,
@@ -227,7 +227,7 @@ function createS3Uploader(destination: BlobDestinationId, config: DestinationRun
 				await request(target.url, {
 					method: "PUT",
 					headers: { ...requestHeaders, ...toSignedHeaderRecord(signed) },
-					body: uploadRequest.bytes,
+					body: toFetchBody(uploadRequest.bytes),
 				}),
 				destination,
 			);
@@ -415,7 +415,7 @@ function createAzureUploader(config: DestinationRuntimeConfig): BlobUploader {
 				uploadRequest.mimeType,
 				cacheControl,
 			);
-			await expectOk(await request(url, { method: "PUT", headers, body: uploadRequest.bytes }), destination);
+			await expectOk(await request(url, { method: "PUT", headers, body: toFetchBody(uploadRequest.bytes) }), destination);
 			const deleteHeaders = await azureHeaders("DELETE", accountName, accountKey, resourcePath, 0);
 			const publicUrl = publicBaseUrl ? publicObjectUrl(publicBaseUrl, key) : url.toString();
 			return publication(destination, uploadRequest, publicUrl, {
@@ -579,7 +579,7 @@ function createNativeB2Uploader(config: DestinationRuntimeConfig): BlobUploader 
 						"x-bz-file-name": encodePath(key),
 						...(cacheControl ? { "x-bz-info-b2-cache-control": encodeURIComponent(cacheControl) } : {}),
 					},
-					body: uploadRequest.bytes,
+					body: toFetchBody(uploadRequest.bytes),
 				}),
 				destination,
 			);

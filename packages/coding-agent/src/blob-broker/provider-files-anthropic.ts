@@ -83,7 +83,7 @@ function parseExpiresAt(value: string | null | undefined): number | undefined {
 function uploadedFile(request: ProviderFileUploadRequest): File {
 	const preferred = request.filename?.trim().replaceAll("\\", "/").split("/").pop();
 	const filename = preferred && preferred !== "." && preferred !== ".." ? preferred : "upload";
-	return new File([request.bytes], filename, { type: request.mimeType });
+	return new File([toFetchBody(request.bytes)], filename, { type: request.mimeType });
 }
 
 /**

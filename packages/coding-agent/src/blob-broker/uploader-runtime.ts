@@ -109,7 +109,7 @@ export function multipartFile(
 ): FormData {
 	const form = new FormData();
 	for (const key in fields) form.append(key, fields[key]);
-	const file = new File([request.bytes], fileNameFor(request), { type: request.mimeType });
+	const file = new File([toFetchBody(request.bytes)], fileNameFor(request), { type: request.mimeType });
 	form.append(fieldName, file);
 	return form;
 }

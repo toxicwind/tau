@@ -177,7 +177,7 @@ function createDropboxUploader(config: DestinationRuntimeConfig): BlobUploader {
 						"Content-Type": "application/octet-stream",
 						"Dropbox-API-Arg": JSON.stringify({ path, mode: "overwrite", autorename: false, mute: true }),
 					},
-					body: request.bytes,
+					body: toFetchBody(request.bytes),
 				}),
 				"dropbox",
 			);
@@ -254,7 +254,7 @@ function createOneDriveUploader(config: DestinationRuntimeConfig): BlobUploader 
 						"Content-Length": (endExclusive - start).toString(),
 						"Content-Range": `bytes ${start}-${endExclusive - 1}/${request.bytes.byteLength}`,
 					},
-					body: request.bytes.subarray(start, endExclusive),
+					body: toFetchBody(request.bytes.subarray(start, endExclusive)),
 				});
 				if (!chunkResponse.ok) {
 					await fetchImpl(uploadUrl, { method: "DELETE" });
@@ -301,7 +301,7 @@ function createGoogleDriveUploader(config: DestinationRuntimeConfig): BlobUpload
 			const body = new Blob([
 				`--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(metadata)}\r\n`,
 				`--${boundary}\r\nContent-Type: ${request.mimeType}\r\n\r\n`,
-				request.bytes,
+				toFetchBody(request.bytes),
 				`\r\n--${boundary}--\r\n`,
 			]);
 			const uploadResponse = await expectOk(

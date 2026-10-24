@@ -309,7 +309,7 @@ function createOwnCloudUploader(config: DestinationRuntimeConfig): BlobUploader 
 				await requestFetch(davUrl, {
 					method: "PUT",
 					headers: { ...requestHeaders, "Content-Type": request.mimeType },
-					body: request.bytes,
+					body: toFetchBody(request.bytes),
 				}),
 				"owncloud",
 			);

@@ -344,7 +344,7 @@ export class CollabSocket {
 			if (pending.cancelled) return "cancelled";
 			if (ws !== this.#ws || ws.readyState !== WebSocket.OPEN || ws.bufferedAmount >= WS_BACKPRESSURE_THRESHOLD)
 				continue;
-			ws.send(envelope);
+			ws.send(toFetchBody(envelope));
 			return "sent";
 		}
 		return "stop";
@@ -432,7 +432,7 @@ export class CollabSocket {
 				// prepared envelope (typically a final `bye`) enters the socket buffer
 				// ahead of the close frame.
 				if (ws.readyState === WebSocket.OPEN) {
-					for (const envelope of prepared) ws.send(envelope);
+					for (const envelope of prepared) ws.send(toFetchBody(envelope));
 				}
 				ws.close(1000);
 			} catch {
