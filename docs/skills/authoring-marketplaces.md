@@ -230,10 +230,10 @@ tau plugin install name@marketplace-name
 
 Scope behavior:
 
-- **user** (default) — installed in the user plugins data root's `installed_plugins.json` (`~/.tau/plugins/installed_plugins.json` by default), available in all projects. On Linux and macOS, `tau config init-xdg` initializes (but does not migrate data into) the XDG roots; with the XDG variables set, initialized roots store new user state in `$XDG_DATA_HOME/tau/plugins/installed_plugins.json`.
+- **user** (default) — installed in the architect plugins data root's `installed_plugins.json` (`~/.tau/plugins/installed_plugins.json` by default), available in all projects. On Linux and macOS, `tau config init-xdg` initializes (but does not migrate data into) the XDG roots; with the XDG variables set, initialized roots store new user state in `$XDG_DATA_HOME/tau/plugins/installed_plugins.json`.
 - **project** — installed in `<project>/.tau/plugins/installed_plugins.json`, available only in that project
 
-An enabled project-scoped install shadows an enabled user-scoped install of the same `name@marketplace` ID. A disabled project copy leaves the user copy active.
+An enabled project-scoped install shadows an enabled user-scoped install of the same `name@marketplace` ID. A disabled project copy leaves the architect copy active.
 
 Install and discovery details:
 

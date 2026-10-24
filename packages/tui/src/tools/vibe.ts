@@ -98,8 +98,13 @@ export interface VibeWaitOutcome {
 	stillRunning: string[];
 	timedOut: boolean;
 }
-/** The two worker CLI flavors the director drives. */
-export type VibeCli = "fast" | "good";
+/** Worker CLI flavors: the two base tiers plus 10 swarm slots pinned per-model. */
+export type VibeCli = "fast" | "good" | "swarm1" | "swarm2" | "swarm3" | "swarm4" | "swarm5" | "swarm6" | "swarm7" | "swarm8" | "swarm9" | "swarm10";
+/** The swarm slot flavors, in spawn order. */
+export const SWARM_CLI_SLOTS: readonly Exclude<VibeCli, "fast" | "good">[] = [
+	"swarm1", "swarm2", "swarm3", "swarm4", "swarm5",
+	"swarm6", "swarm7", "swarm8", "swarm9", "swarm10",
+];
 // =============================================================================
 // TUI Renderer — mini composer (spawn/send) + TV wall (wait/list)
 // =============================================================================

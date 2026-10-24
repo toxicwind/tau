@@ -1,4 +1,4 @@
-# fuse configuration — Sovereign tau fork (2026-10-14)
+# fuse configuration — estate-scripts tau fork (2026-10-14)
 # Driver: fuse v0.13.3 (entity-level merge, validation-gated).
 # Residual conflicts after symbol merge are handed to the local
 # beellama endpoint via scripts/fuse-agent.sh (see docs/UPSTREAM-MERGE.md

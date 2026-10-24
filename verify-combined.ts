@@ -4,7 +4,7 @@ import { existsSync } from "node:fs";
 import { resolve, join } from "node:path";
 
 const TAU = process.env.TAU
-  || resolve(process.env.HOME!, "sovereign/projects/range/ranch/stockyard/tau");
+  || resolve(process.env.HOME!, "estate-scripts/projects/range/ranch/stockyard/tau");
 
 const tests = [
   "packages/catalog/test/issue-9345-repro.test.ts",

@@ -45,7 +45,7 @@ Landings from the Dots 3 Note recon (2026-10-13). All eight fixes shipped across
 
 **Fix:** Preserve `reasoning_details` across replay turns and implement general tool-argument array chunking in `packages/ai` and `packages/agent`.
 
-### 5. SovereignDotsClient coercions ported to tau — `241581cd83`
+### 5. estate-scriptsDotsClient coercions ported to tau — `241581cd83`
 
 **Problem:** Direct Dots-3-Note calls needed deterministic temperature (0.1), reasoning budget clamp (128 tokens, `exclude: true`), and assistant `content: null -> ""` replay normalization.
 
@@ -59,7 +59,7 @@ Landings from the Dots 3 Note recon (2026-10-13). All eight fixes shipped across
 
 **Fix:** Generalized `applyOpenRouterCoercions` in `packages/ai/src/providers/openrouter-coercion.ts` (covered by `packages/ai/test/openrouter-coercion.test.ts`) and synchronized the `stop` vs. `require_parameters: true` guard and fill-in-only `reasoning` shaping across:
 - `tau/packages/ai/src/providers/openai-shared.ts` (`applyDotsRequestShaping`)
-- `dots-client/sovereign_dots_client.py`
+- `dots-client/estate-scripts_dots_client.py`
 - `mesh/proxy/cuttinggate/src/dots.ts`
 - `mesh/proxy/flock-proxy/src/dots.rs`
 

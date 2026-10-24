@@ -1310,6 +1310,17 @@ export interface Model<TApi extends Api = Api> {
 	omitMaxOutputTokens?: boolean;
 	headers?: Record<string, string>;
 	/**
+	 * Browser TLS/HTTP fingerprint persona for the request transport (ported
+	 * from kappa's browser-fingerprint HTTP transport). When `"chrome"`,
+	 * OpenAI-compatible requests merge Chrome-aligned client headers
+	 * (`sec-ch-ua`, `accept-language`, `sec-ch-ua-platform`, …) so
+	 * Cloudflare-guarded providers that reject non-browser signatures
+	 * (e.g. freeinference.org, error 1010) accept the call. The marker is
+	 * advisory metadata on the model; header injection lives in
+	 * `createRequestSetup`.
+	 */
+	fingerprint?: "chrome";
+	/**
 	 * Materialize config-backed headers immediately before a request. Catalog
 	 * inspection never invokes this hook; transports receive a cloned model
 	 * whose `headers` is a plain resolved record and whose hook is removed.

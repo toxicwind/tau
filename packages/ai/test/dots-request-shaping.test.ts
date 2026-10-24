@@ -7,7 +7,7 @@ import {
   isDotsModel,
 } from "../src/providers/openai-shared";
 
-describe("applyDotsRequestShaping (SovereignDotsClient coercions)", () => {
+describe("applyDotsRequestShaping (estate-scriptsDotsClient coercions)", () => {
   test("no-op for non-Dots models", () => {
     const params: Record<string, unknown> = { temperature: 0.7 };
     applyDotsRequestShaping(params, "openai/gpt-4o");

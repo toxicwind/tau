@@ -1,5 +1,5 @@
 === TAU ===
-/home/toxic/sovereign/projects/range/ranch/stockyard/tau
+/home/toxic/estate-scripts/projects/range/ranch/stockyard/tau
 Sat Sep 26 06:58:54 AM UTC 2026
 === JUNIT ===
 === FAILS FROM XML ===
@@ -80,7 +80,7 @@ packages/coding-agent/test/mcp-http-transport.test.ts:
 [32m- Expected  - 7[0m
 [31m+ Received  + 1[0m
 [0m
-[0m      [2mat [0m[0m[2m<anonymous>[0m[2m ([0m[0m[36m[2m/home/toxic/sovereign/projects/range/ranch/stockyard/tau/[0m[36mpackages/coding-agent/test/mcp-http-transport.test.ts[0m[2m:[0m[33m238[0m[2m:[33m86[0m[2m)[0m
+[0m      [2mat [0m[0m[2m<anonymous>[0m[2m ([0m[0m[36m[2m/home/toxic/estate-scripts/projects/range/ranch/stockyard/tau/[0m[36mpackages/coding-agent/test/mcp-http-transport.test.ts[0m[2m:[0m[33m238[0m[2m:[33m86[0m[2m)[0m
 [0m[31m✗[0m [0mMCP Streamable HTTP transport timeouts[2m >[0m[1m keeps the request timeout active until a JSON response body is fully read[0m [0m[2m[[1m505.38ms[0m[2m][0m
 [0m[1m260 |[0m 		})[0m[2m;[0m
 [0m[1m261 |[0m 		[0m[35mconst[0m transport = [0m[35mawait[0m connectedTransport(timeoutMs)[0m[2m;[0m
@@ -102,7 +102,7 @@ packages/coding-agent/test/mcp-http-transport.test.ts:
 [32m- Expected  - 6[0m
 [31m+ Received  + 1[0m
 [0m
-[0m      [2mat [0m[0m[2m<anonymous>[0m[2m ([0m[0m[36m[2m/home/toxic/sovereign/projects/range/ranch/stockyard/tau/[0m[36mpackages/coding-agent/test/mcp-http-transport.test.ts[0m[2m:[0m[33m265[0m[2m:[33m91[0m[2m)[0m
+[0m      [2mat [0m[0m[2m<anonymous>[0m[2m ([0m[0m[36m[2m/home/toxic/estate-scripts/projects/range/ranch/stockyard/tau/[0m[36mpackages/coding-agent/test/mcp-http-transport.test.ts[0m[2m:[0m[33m265[0m[2m:[33m91[0m[2m)[0m
 [0m[31m✗[0m [0mMCP Streamable HTTP transport timeouts[2m >[0m[1m uses one deadline across delayed SSE headers and a stalled response body[0m [0m[2m[[1m501.44ms[0m[2m][0m
 === FILES ===
 -rw-r--r-- 1 toxic toxic 2.0M Sep 26 00:54 .patch-backups/tests-ALL-20260926-004633.log

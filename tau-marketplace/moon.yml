@@ -1,0 +1,9 @@
+$schema: 'https://moonrepo.dev/schemas/project.json'
+language: 'typescript'
+layer: 'application'
+tasks:
+  validate:
+    command: 'bun run bin/validate.ts'
+    inputs: ['marketplace.json', 'plugins/**/*', 'bin/**/*']
+  test:
+    command: 'bun test'

@@ -48,7 +48,7 @@ Rust creates `brush_core::Shell` with:
 - process builtins registered unconditionally from `pi_builtins::process_builtins()` — `nohup`, `pgrep`, `pkill`, `pidwait`, `ps`, `sleep`, `timeout`, and `top` (`nohup` is withheld when `PI_DISABLE_NOHUP_BUILTIN` is set; `kill` comes from the default bash-mode set, where `tau-builtins`' richer implementation replaces brush's original),
 - in-process utility builtins registered from `pi_builtins::utility_builtins()` (see the next section),
 - skip-list for shell-sensitive vars (`PS1`, `PWD`, `SHLVL`, bash function exports, etc.),
-- a non-exported `env="$env"` fallback so PowerShell-style `$env:NAME` survives brush parameter expansion unless the user shadows `env`.
+- a non-exported `env="$env"` fallback so PowerShell-style `$env:NAME` survives brush parameter expansion unless the architect shadows `env`.
 
 Session env behavior:
 

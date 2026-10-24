@@ -123,9 +123,11 @@ done`
 		: `# Force autoload all functions first
 declare -f > /dev/null 2>&1
 # Get user function names - filter system/private ones
-declare -F 2>/dev/null | cut -d' ' -f3 | grep -vE '^(_|__)' | grep -vE '${commonToolsRegex}' | while read func; do
+declare -F 2>/dev/null | cut -d' ' -f3 | grep -vE '^(__)' | grep -vE '^_(2s_)?' | grep -vE '${commonToolsRegex}' | while read func; do
    declare -f "$func" 2>/dev/null
-done`;
+done
+# Ensure _2s_slow is always preserved in snapshot if defined
+declare -f _2s_slow 2>/dev/null || true`;
 
 	// Shell options extraction
 	const optionsScript = isZsh

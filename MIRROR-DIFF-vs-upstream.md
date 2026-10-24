@@ -2,7 +2,7 @@
 > the fork point. This is **wrong**. Our initial commit (`141e270e2c`,
 > "Initial commit: Tau 18.3.0 monorepo (fork of can1357/tau)", 2026-09-24)
 > is a squash-import of upstream **`v18.3.0`**
-> (`62bc57be1b03ef0802a33cf7f5f530e534527531`). The true sovereign delta is
+> (`62bc57be1b03ef0802a33cf7f5f530e534527531`). The true estate-scripts delta is
 > **234 paths** (+2,111/-2,197 lines, excluding docs): 23 new files, 128
 > modified files, ~1 dropped build artifact. See `docs/UPSTREAM-MERGE.md` for
 > the current workflow. The section 3a numbers below (398 paths vs v18.1.18)
@@ -17,7 +17,7 @@ Date: 2026-09-19 (MDT). Author: Hatch (subagent task 2/3).
 - Upstream: https://github.com/toxicwind/tau
 - Upstream main HEAD diffed: `78b753124d11f8dd3ae73e2524125890ff7c977e` — 2026-09-18 19:27:51 +0200, `chore: bump version to 18.2.6`
 - **Fork point (verified, see §2): upstream tag `v18.1.18`** — `00085d4e7dfdcfbf302c122fa2682b410a0f43d1`, released 2026-09-11
-- Our tree: `/home/toxic/sovereign/projects/tau/engine` (inside the sovereign monorepo; remote `origin` = `github.com/toxicwind/sovereign-projects`)
+- Our tree: `/home/toxic/estate-scripts/projects/tau/engine` (inside the estate-scripts monorepo; remote `origin` = `github.com/toxicwind/estate-scripts-projects`)
 - Scratch: `/home/toxic/scratch/tau-upstream-20260919` (clone of upstream main), `/home/toxic/scratch/tau-v18.1.18` (`git archive v18.1.18`), raw diffs in `/home/toxic/scratch/mirrordiff/`
 
 ## 2. Fork-point evidence
@@ -27,22 +27,22 @@ Date: 2026-09-19 (MDT). Author: Hatch (subagent task 2/3).
 - Our `engine/packages/coding-agent/CHANGELOG.md` head is `## [18.1.18] - 2026-09-11`, byte-identical to the head of upstream `v18.1.18`'s changelog. Upstream main HEAD is at `## [18.2.6] - 2026-09-18`.
 - `engine/packages/catalog/src/compat/rules/providers/anthropic.kdl` is byte-identical to upstream `v18.1.18`'s copy (upstream main HEAD's copy has since gained a `seed` block with `claude-sonnet-5`/`claude-fable-5`/`claude-mythos-5`).
 - `engine/packages/catalog/src/models.json` has the identical 69-provider key set as upstream main HEAD (verified with `python3 -c json.load` on both; `set(engine) == set(upstream)`, no keys only on either side). Catalog content parity is intact at the fork.
-- `engine/packages/ai/src/auth/oauth-refresh-support.ts` (sovereign, see §4.1) does **not** exist anywhere in upstream history at or before `v18.1.18`.
-- `engine/packages/coding-agent/src/cli/git-tui/index.ts` **does** exist at upstream `v18.1.18` (blob `4ebbf6b1583ba1b1e9863e5d1addaaf1417a7f9b`) — it is upstream code, not a sovereign addition (earlier audits mis-attributed it).
+- `engine/packages/ai/src/auth/oauth-refresh-support.ts` (estate-scripts, see §4.1) does **not** exist anywhere in upstream history at or before `v18.1.18`.
+- `engine/packages/coding-agent/src/cli/git-tui/index.ts` **does** exist at upstream `v18.1.18` (blob `4ebbf6b1583ba1b1e9863e5d1addaaf1417a7f9b`) — it is upstream code, not a estate-scripts addition (earlier audits mis-attributed it).
 
-**Conclusion: `engine/` = upstream `v18.1.18` (2026-09-11) + sovereign delta. The record diff below is computed against `v18.1.18` (the true sovereign delta). §5 additionally snapshots drift against upstream main HEAD (`78b7531…`, 7 days of upstream evolution).**
+**Conclusion: `engine/` = upstream `v18.1.18` (2026-09-11) + estate-scripts delta. The record diff below is computed against `v18.1.18` (the true estate-scripts delta). §5 additionally snapshots drift against upstream main HEAD (`78b7531…`, 7 days of upstream evolution).**
 
-Method: `diff -r -q` of `engine/` vs the `git archive v18.1.18` tree, excluding `.git`, `node_modules`, `dist`, `build`, generated lockfiles (`bun.lock*`, `package-lock.json`, `Cargo.lock`, …), and `vendor/` (`engine/vendor/tau` is a full `sovereign-projects` checkout, not an upstream mirror — confirmed: its HEAD is `de173502b4b0d2f8c9656b13b0d17b3129862af3` on `origin = github.com/toxicwind/sovereign-projects`).
+Method: `diff -r -q` of `engine/` vs the `git archive v18.1.18` tree, excluding `.git`, `node_modules`, `dist`, `build`, generated lockfiles (`bun.lock*`, `package-lock.json`, `Cargo.lock`, …), and `vendor/` (`engine/vendor/tau` is a full `estate-scripts-projects` checkout, not an upstream mirror — confirmed: its HEAD is `de173502b4b0d2f8c9656b13b0d17b3129862af3` on `origin = github.com/toxicwind/estate-scripts-projects`).
 
 ## 3. Summary numbers
 
-### 3a. Sovereign delta (engine/ vs upstream v18.1.18) — the fork diff
+### 3a. estate-scripts delta (engine/ vs upstream v18.1.18) — the fork diff
 
 | Direction | Count | Meaning |
 |---|---|---|
-| Only in engine/ (sovereign additions) | **117 files** | new sovereign files/modules |
+| Only in engine/ (estate-scripts additions) | **117 files** | new estate-scripts files/modules |
 | Only in upstream v18.1.18 (dropped in fork) | **19 files** | upstream files we removed |
-| Modified (differ) | **262 files** | sovereign edits |
+| Modified (differ) | **262 files** | estate-scripts edits |
 | **Total changed paths** | **398** | |
 | Diffstat | **+8,878 / −4,669 lines** | |
 
@@ -55,11 +55,11 @@ Method: `diff -r -q` of `engine/` vs the `git archive v18.1.18` tree, excluding 
 | Modified | 1,913 files |
 | **Total changed paths** | **2,771** |
 
-§3b mixes the sovereign delta with ~7 days of upstream evolution (18.1.18 → 18.2.6). Key upstream-side moves are listed in §5 so they are not mistaken for sovereign work.
+§3b mixes the estate-scripts delta with ~7 days of upstream evolution (18.1.18 → 18.2.6). Key upstream-side moves are listed in §5 so they are not mistaken for estate-scripts work.
 
-## 4. Top-10 functional sovereign diffs (vs fork point v18.1.18, all grounded in actual diffs)
+## 4. Top-10 functional estate-scripts diffs (vs fork point v18.1.18, all grounded in actual diffs)
 
-### 4.1 Auth-storage refactor — 4 new sovereign modules
+### 4.1 Auth-storage refactor — 4 new estate-scripts modules
 New: `packages/ai/src/auth/oauth-refresh-support.ts`, `storage-contract.ts`, `usage-cache-impl.ts`, `usage-metrics.ts` (plus two `.bak-20260915` copies of the cache/metrics files).
 `packages/ai/src/auth-storage.ts` imports all four and re-exports their public surface (`AuthCredential`, `OAuthAccess`, `UsageCache`, …) unchanged; diffstat **+1,163/−57**. Effect: the monolithic auth-storage file is split into OAuth refresh leases (`OAUTH_REFRESH_LEASE_TTL_MS`, …), the credential storage contract, a usage-metering cache, and usage metrics/ranking. None of these four modules exists anywhere in upstream history at or before v18.1.18.
 
@@ -82,12 +82,12 @@ Lets Tau's existing collab-web UI drive Moonshot's kimi-code backend (`kap-serve
 
 ### 4.6 RoboMP web frontend
 New: `python/robtau/web/` — a Vite SPA (~30 files: `App.js`, `api.js`, `state.js`, views `Pipeline`/`Releases`/`Operations`/`Triage`/`Activity`, components `IssueCard`/`LifecycleStepper`/`Vitals`/`TopBar`/…, `work-items.js` + contract tests, `web/scripts/verify-{cards,live}.js`) plus `python/robtau/src/static`.
-Note: upstream already had a `python/robtau` server at the fork point (`src/server.py`, `AGENTS.md`, `docker-compose.yml`, `Dockerfile.robtau` — all in the *modified* list, e.g. `server.py` +107/−48), so the sovereign addition is the **web UI layer**, not robtau itself.
+Note: upstream already had a `python/robtau` server at the fork point (`src/server.py`, `AGENTS.md`, `docker-compose.yml`, `Dockerfile.robtau` — all in the *modified* list, e.g. `server.py` +107/−48), so the estate-scripts addition is the **web UI layer**, not robtau itself.
 
 ### 4.7 Repo-identity rewrite: README, AGENTS.md, harness dirs
-- `README.md` rewritten as "Tau: The Sovereign AI Agent Engine" (**+695/−41** vs upstream README; drops the upstream hero/badge marketing block).
-- `AGENTS.md` **+340/−18** sovereign operator rules.
-- New: `CLAUDE.md`, `AUDIT.md`, `.gitmodules` (6 sovereign submodule mirrors: `kimi-code-sovereign`, `modelbeats`, `tau`, `tau-subagents`, `tau-upstream` → earendil-works/pi, `tinker-cookbook` — all under `github.com/toxicwind/*` except tau-upstream), `.agent/`, `.agents/`, `.claude/`, `.codex/`, `.gemini/`, `.nanocoder/`, `.env.ai`, `docs/ralph-workflow-policy`, `docs/skills/examples/{hello-extension,mini-marketplace/my-plugin,safety-hook}/index.js`, `docs/tools/inspect_image.md`.
+- `README.md` rewritten as "Tau: The estate-scripts AI Agent Engine" (**+695/−41** vs upstream README; drops the upstream hero/badge marketing block).
+- `AGENTS.md` **+340/−18** estate-scripts operator rules.
+- New: `CLAUDE.md`, `AUDIT.md`, `.gitmodules` (6 estate-scripts submodule mirrors: `kimi-code-estate-scripts`, `modelbeats`, `tau`, `tau-subagents`, `tau-upstream` → earendil-works/pi, `tinker-cookbook` — all under `github.com/toxicwind/*` except tau-upstream), `.agent/`, `.agents/`, `.claude/`, `.codex/`, `.gemini/`, `.nanocoder/`, `.env.ai`, `docs/ralph-workflow-policy`, `docs/skills/examples/{hello-extension,mini-marketplace/my-plugin,safety-hook}/index.js`, `docs/tools/inspect_image.md`.
 
 ### 4.8 `.tau` → `.tau`/`.pi` migration + file drops
 - Deleted: `.tau/tools` (upstream's bundled tools dir); added `.pi/sessions`.
@@ -103,11 +103,11 @@ Note: upstream already had a `python/robtau` server at the fork point (`src/serv
 - New: `packages/natives/native/pi_natives.linux-x64-{baseline,modern}.node` (prebuilt native addons), `packages/coding-agent/scripts/bench-router-models.ts`, `packages/catalog/test/nvidia-wire-compat.test.ts`, `packages/tui/test/double-slash.test.ts`, `packages/ai/src/registry/api-key-login.ts`.
 - Modified build plumbing: `MODULE.bazel`/`MODULE.bazel.lock` (+1,194/−145 — regenerated), `nix/bun.nix` (+454/−323), `.cargo/config.toml` (Ryzen 7 8700F build-throttle note), `bazel/toolchains/sha2-asm-cc.sh`, `Cargo.toml`, `flake.nix`, `rust-toolchain.toml`.
 
-## 5. Upstream drift since the fork (18.1.18 → 18.2.6, 2026-09-11 → 2026-09-18) — NOT sovereign work
+## 5. Upstream drift since the fork (18.1.18 → 18.2.6, 2026-09-11 → 2026-09-18) — NOT estate-scripts work
 
 From the §3b drift snapshot (engine/ vs upstream main HEAD `78b7531…`):
 
-- **Terminal UI moved to `@tau/tau-tui`** (upstream 18.2.5 breaking change): themes, tool renderers, chat, overlay, status-line, composer, setup wizard, Git/PS/debug apps. Our `agent-session.ts` still imports `../modes/*`, `../debug/raw-sse-buffer`, `../tools/*` — the old paths. (Note: our own sovereign debug dir `packages/coding-agent/src/debug/` — `raw-sse.ts`, `raw-sse-buffer.ts`, `log-viewer.ts`, `protocol-probe.ts`, `log-formatting.ts`, `terminal-info.ts` — exists upstream only as `@tau/tau-tui/apps/debug/*`; ours is a pre-split fork of that work.)
+- **Terminal UI moved to `@tau/tau-tui`** (upstream 18.2.5 breaking change): themes, tool renderers, chat, overlay, status-line, composer, setup wizard, Git/PS/debug apps. Our `agent-session.ts` still imports `../modes/*`, `../debug/raw-sse-buffer`, `../tools/*` — the old paths. (Note: our own estate-scripts debug dir `packages/coding-agent/src/debug/` — `raw-sse.ts`, `raw-sse-buffer.ts`, `log-viewer.ts`, `protocol-probe.ts`, `log-formatting.ts`, `terminal-info.ts` — exists upstream only as `@tau/tau-tui/apps/debug/*`; ours is a pre-split fork of that work.)
 - New `packages/ai/src/judgment/` (chat.ts, text.ts, types.ts, typesafe.ts, text-judge*.md) — upstream text-judge tooling we don't have.
 - Provider catalog: upstream `anthropic.kdl` gained a `seed` block (curated `claude-sonnet-5`/`claude-fable-5`/`claude-mythos-5` models, `default-model "claude-opus-4-8"`); new KDL providers `deepinfra`, `devin`, `gitlab-duo-agent`, `charm-hyper` (providers+auth), `stencil`, `typesafe` (auth); `anthropic-signature.ts` and `usage/charm-hyper.ts` wire additions in `packages/ai`.
 - New `packages/agent/src/speculative-execution.ts` (+ compaction/speculative-commit tests).
@@ -575,19 +575,19 @@ crates/tau-builtins/src/grep.rs|254|93
 
 ## 8. How to re-sync (manual procedure)
 
-No mechanical merge is possible: `engine/` was committed as a plain tree (no tau git history in the sovereign monorepo). Re-sync is diff-and-apply by hand:
+No mechanical merge is possible: `engine/` was committed as a plain tree (no tau git history in the estate-scripts monorepo). Re-sync is diff-and-apply by hand:
 
 1. **Refresh the upstream mirror.** Keep a dated clone, e.g. `/home/toxic/scratch/tau-upstream-<YYYYMMDD>`; `git pull origin main` inside it, or clone fresh. Record the exact SHA and date (`git rev-parse HEAD`).
 2. **Extract the baseline.** If re-syncing from a tag: `git archive <tag> | tar -x -C /home/toxic/scratch/tau-<tag>`. Keep a `SYNC-BASELINE.txt` (tag + SHA + date) next to the report so the next diff starts from the right point. Current baseline: `v18.1.18` = `00085d4e7dfdcfbf302c122fa2682b410a0f43d1` (2026-09-11).
 3. **Diff three ways.**
-   - `diff -r -q --exclude=.git --exclude=node_modules --exclude=dist --exclude=build --exclude=bun.lock* --exclude=Cargo.lock --exclude=vendor engine/ <baseline-tree>` → **sovereign delta** (ours).
+   - `diff -r -q --exclude=.git --exclude=node_modules --exclude=dist --exclude=build --exclude=bun.lock* --exclude=Cargo.lock --exclude=vendor engine/ <baseline-tree>` → **estate-scripts delta** (ours).
    - `diff -r -q <same excludes> <baseline-tree> <upstream-head-tree>` → **upstream evolution** (theirs).
-   - Apply upstream-evolution hunks onto engine/, skipping any that collide with the sovereign delta list in §6 (sovereign-owned files win; merge conflicts by hand).
+   - Apply upstream-evolution hunks onto engine/, skipping any that collide with the estate-scripts delta list in §6 (estate-scripts-owned files win; merge conflicts by hand).
 4. **Permanent divergences to merge by hand, never copy blindly:**
    - `crates/tau-builtins/src/{bre.rs,grep.rs,sed.rs}` — we deleted `bre.rs` and inlined BRE handling; upstream still ships `bre.rs`. Copying upstream `grep.rs`/`sed.rs` verbatim resurrects a `crate::bre` import against a deleted module.
    - `packages/ai/src/auth-storage.ts` + `packages/ai/src/auth/*` — upstream is evolving its own auth layout (`utils/retry-after`, `usage/charm-hyper`); our four-module split must be preserved and upstream hunks rebased onto it.
    - `packages/coding-agent/src/debug/*` vs upstream `@tau/tau-tui` — upstream moved TUI modules to a new package in 18.2.5; our pre-split copies need a deliberate port, not a copy.
 5. **Regenerate compiled artifacts** after any KDL edit: `packages/catalog/src/compat/rules.json` (compiled from `src/compat/rules/**/*.kdl`); `src/models.json` only if the model census changes. Note the formatting trap: upstream now minifies these (single-line); ours are pretty-printed — keep one convention and note it in the commit.
-6. **Commit additively** in the sovereign monorepo (`projects/tau/MIRROR-DIFF-vs-upstream.md` updated each sync), push, and verify remote HEAD == local HEAD via `git ls-remote`.
+6. **Commit additively** in the estate-scripts monorepo (`projects/tau/MIRROR-DIFF-vs-upstream.md` updated each sync), push, and verify remote HEAD == local HEAD via `git ls-remote`.
 
-Supersedes: the 2026-09-08 `engine-vendor-diff.csv` (414 differences vs `engine/vendor/tau`) is obsolete as an upstream record — `engine/vendor/tau` is a `sovereign-projects` checkout (origin `github.com/toxicwind/sovereign-projects`), not an upstream mirror. This report is the first direct diff against `github.com/toxicwind/tau`.
+Supersedes: the 2026-09-08 `engine-vendor-diff.csv` (414 differences vs `engine/vendor/tau`) is obsolete as an upstream record — `engine/vendor/tau` is a `estate-scripts-projects` checkout (origin `github.com/toxicwind/estate-scripts-projects`), not an upstream mirror. This report is the first direct diff against `github.com/toxicwind/tau`.

@@ -1370,7 +1370,7 @@ export function buildParams(
 	} else {
 		applyOpenAIGatewayRouting(params, model.compat);
 	}
-	// Generalized OpenRouter coercions (SovereignDotsClient port): provider-only
+	// Generalized OpenRouter coercions (estate-scriptsDotsClient port): provider-only
 	// on the Responses API — no top-level temperature/stop fields there, and
 	// the reasoning schema differs from Chat Completions.
 	applyOpenRouterRequestShaping(params as unknown as Record<string, unknown>, model.compat, {

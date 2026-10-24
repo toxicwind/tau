@@ -113,7 +113,7 @@ Do not add new runtime asset copy steps. Keep assets in repo and prefer Bun embe
 - Prompts are static `.md` files; use Bun text imports (`with { type: "text" }`) and Handlebars instead of inline prompt strings.
 - Use `import.meta.dir` + `Bun.file` to load adjacent non-text resources.
 - Keep assets in-repo and let the bundler include them.
-- Eliminate copy scripts unless the user explicitly requests them or the package already has an intentional generation step.
+- Eliminate copy scripts unless the architect explicitly requests them or the package already has an intentional generation step.
 - If upstream reads a bundled fallback file at runtime, replace filesystem reads with a Bun text embed import unless the current package already uses a generated asset pipeline.
   - Example (Codex instructions fallback):
     - `const FALLBACK_PROMPT_PATH = join(import.meta.dir, "codex-instructions.md");` -> removed

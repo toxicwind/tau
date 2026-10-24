@@ -12,7 +12,7 @@
 > **Correction (2026-09-30):** `MIRROR-DIFF-vs-upstream.md` (2026-09-19) names
 > `v18.1.18` as the fork point. This is wrong. Our initial commit
 > (`141e270e2c`, "Initial commit: Tau 18.3.0 monorepo") is a squash-import of
-> upstream `v18.3.0`. The true sovereign delta is **234 paths** (+2,111/−2,197
+> upstream `v18.3.0`. The true estate-scripts delta is **234 paths** (+2,111/−2,197
 > lines, excluding docs), not 398.
 >
 > **Refinement (2026-10-14):** the exact seed commit is `e16ba790b9`
@@ -114,7 +114,7 @@ Upstream pull plan
 
 Manifest coherence:
   - packages/coding-agent/package.json: non-semver version
-    "tau/main-18.3.0-sovereign-tau-d83c686" breaks catalog: ranges
+    "tau/main-18.3.0-estate-scripts-tau-d83c686" breaks catalog: ranges
   - packages/metaharness/package.json: link: spec bypasses workspace
   - packages/typescript-edit-benchmark/package.json: link: spec bypasses workspace
 ```

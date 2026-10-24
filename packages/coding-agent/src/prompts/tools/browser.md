@@ -43,8 +43,8 @@ Application modes:
 - `headed` picks a visible or hidden managed browser per open. `allow_file_access` is a launch flag and cannot change an already-running shared Chromium; use a dedicated `app.path` with `app.args`. `ignore_https_errors` applies per tab through CDP.
 - `app.path`: launch the specified browser or Electron executable. Chromium-family browsers use an tau-owned profile unless `args` supplies `--user-data-dir`.
 - `app.cdp_url`: attach to an existing CDP endpoint.
-- `app.relay: true`: drive the user's Chrome through the tau relay. `app.target` selects a tab by URL/title substring; without it, the visible tab is adopted. Opening with `url` navigates that adopted tab.
-- Relay sessions are the user's real logged-in browser. Sites attribute actions to the user. Name a target or create a dedicated tab; NEVER navigate the visible tab without authorization.
+- `app.relay: true`: drive the architect's Chrome through the tau relay. `app.target` selects a tab by URL/title substring; without it, the visible tab is adopted. Opening with `url` navigates that adopted tab.
+- Relay sessions are the architect's real logged-in browser. Sites attribute actions to the architect. Name a target or create a dedicated tab; NEVER navigate the visible tab without authorization.
 - Closing releases the managed tab. It never closes relay/CDP-attached pages. `kill: true` terminates only applications spawned by this process, never reused browser processes.
 - Idle tabs auto-freeze at turn settle (animated pages stop burning CPU/GPU) and unfreeze on next use; tabs idle past the idle-close timeout are closed. Pass `persist: true` on `open` to keep a tab live across turns (e.g. multi-step login); `browser.close` still releases explicitly.
  </instruction>

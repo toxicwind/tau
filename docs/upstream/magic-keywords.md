@@ -1,6 +1,6 @@
 # Magic keywords
 
-Magic keywords are standalone prose words in a user prompt that can add hidden, user-attributed instructions for that turn. Notice injection is enabled by default. The TUI highlights recognized words with animated gradients while editing and static gradients in sent messages; highlighting is a visual affordance and currently remains even when notice injection is disabled in settings. Recognized words are also exempt from macOS spelling autocorrect and typo underlines, so `workflowz` and `jevify` are never rewritten into dictionary words.
+Magic keywords are standalone prose words in an architect prompt that can add hidden, user-attributed instructions for that turn. Notice injection is enabled by default. The TUI highlights recognized words with animated gradients while editing and static gradients in sent messages; highlighting is a visual affordance and currently remains even when notice injection is disabled in settings. Recognized words are also exempt from macOS spelling autocorrect and typo underlines, so `workflowz` and `jevify` are never rewritten into dictionary words.
 
 The full list — trigger word, gradient, settings copy, required tools, and notice — lives in one table, `packages/coding-agent/src/modes/magic-keywords.ts`; every other surface (settings, notice injection, editor highlighting) derives from it.
 
@@ -32,7 +32,7 @@ Matching is deliberate so source code and paths do not accidentally change agent
 - Use the exact lowercase spelling. `Ultrathink`, `Orchestrate`, `Workflowz`, and `Jevify` do not trigger.
 - The keyword must be standalone prose. Sentence punctuation and quotes may touch it, but letters, digits, underscores, slashes, backslashes, hyphens, file extensions, symbol references, and call syntax do not match. For example, `orchestrate,` matches; `orchestrated`, `orchestrate.ts`, `foo::orchestrate`, and `orchestrate()` do not.
 - Fenced code blocks (backticks or tildes), inline code spans, HTML/XML comments/tags/elements, and their contents are ignored.
-- All enabled keywords in one prompt may add their own notice. The visible word remains in the user message; hidden notices are non-displayed custom messages attributed to the user.
+- All enabled keywords in one prompt may add their own notice. The visible word remains in the architect message; hidden notices are non-displayed custom messages attributed to the architect.
 - The instruction applies only to the turn containing the keyword.
 
 ## Configuration

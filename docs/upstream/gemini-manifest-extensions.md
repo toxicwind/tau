@@ -153,7 +153,7 @@ Higher-priority provider wins on duplicate extension names.
 Because dedup is “first seen wins”, provider-local item order matters.
 
 - Gemini loader appends **user first**, then **project**.
-- Therefore, duplicate names between `~/.gemini/extensions` and `<cwd>/.gemini/extensions` keep the user entry and shadow the project entry.
+- Therefore, duplicate names between `~/.gemini/extensions` and `<cwd>/.gemini/extensions` keep the architect entry and shadow the project entry.
 
 By contrast, native provider builds config dir order differently (`project` then `user` in `getConfigDirs()`), so native intra-provider shadowing is the opposite direction.
 

@@ -18,7 +18,7 @@ echo "== tau audit :: $(date -u +%FT%TZ) host=$(hostname) =="
 # 1. engine resolution -------------------------------------------------------
 BIN=""
 if [ -n "${TAU_BIN:-}" ] && [ -x "$TAU_BIN" ]; then BIN="$TAU_BIN (TAU_BIN)"; fi
-SOV="$TAU_HOME/sovereign"
+SOV="$TAU_HOME/estate-scripts"
 if [ -z "$BIN" ]; then
   # Candidate order mirrors the launcher's resolve_engine (ranch/tau is canonical).
   for d in "$SOV/projects/range/ranch/tau" "$SOV/projects/range/ranch/stockyard/tau" "$SOV/projects/tau/engine" "$SOV/tau/engine"; do
@@ -93,7 +93,7 @@ fi
 if [ -f "$TAU_HOME/.tau/profiles/default.yml" ]; then ok "default profile present"; else warn "no default profile"; fi
 
 # 5. engine git hookup (warn-only; shared tree, never touch) --------------------
-if [ -n "$BIN" ] && [[ "$BIN" == *sovereign* ]]; then
+if [ -n "$BIN" ] && [[ "$BIN" == *estate-scripts* ]]; then
   engdir="$(echo "$BIN" | sed 's|/packages/coding-agent/dist/tau||')"
   if git -C "$engdir" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
     br="$(git -C "$engdir" rev-parse --abbrev-ref HEAD 2>/dev/null)"
@@ -105,7 +105,7 @@ if [ -n "$BIN" ] && [[ "$BIN" == *sovereign* ]]; then
 fi
 
 # 6. launcher drift: live vs repo canonical ------------------------------------
-# Live launcher = sovereign/bin/tau (resolves to ranch/tau/launcher/tau).
+# Live launcher = estate-scripts/bin/tau (resolves to ranch/tau/launcher/tau).
 LIVE="$(readlink -f "$SOV/bin/tau" 2>/dev/null || echo "$HOME/.local/bin/tau")"
 REPO_LAUNCHER="$SOV/projects/range/ranch/tau/launcher/tau"
 if [ -f "$REPO_LAUNCHER" ]; then

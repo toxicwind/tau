@@ -120,7 +120,7 @@ If auto generation returns no document, maintenance advances to the next configu
 
 `CommandController.handleHandoffCommand` behavior:
 
-- Refuses with a warning when `session.isStreaming` (matches `/fork` and `/move`) — the user must finish or abort the response before handing off.
+- Refuses with a warning when `session.isStreaming` (matches `/fork` and `/move`) — the architect must finish or abort the response before handing off.
 - Shows a status loader: `Generating handoff… (esc to cancel)`.
 - Calls `await session.handoff(customInstructions)`.
 - If result is `undefined`: `showError("Handoff cancelled")`.
@@ -146,7 +146,7 @@ Manual `/handoff` does not stream the generated document into chat. A cancellabl
 - `abortHandoff()` → aborts the generation controller
 - `isGeneratingHandoff` → true while generation is in flight
 
-Direct `abortHandoff()` passes an unreasoned abort signal to `completeSimple(...)`; generation normalizes it to `Error("Handoff cancelled")`, and command controller maps it to cancellation UI. `AgentSession.abort(...)` instead aborts the handoff first with its harness reason (or `Handoff aborted by session`), so subsequent compaction cancellation cannot mask that failure as a user cancellation.
+Direct `abortHandoff()` passes an unreasoned abort signal to `completeSimple(...)`; generation normalizes it to `Error("Handoff cancelled")`, and command controller maps it to cancellation UI. `AgentSession.abort(...)` instead aborts the handoff first with its harness reason (or `Handoff aborted by session`), so subsequent compaction cancellation cannot mask that failure as an architect cancellation.
 
 ### Interactive `/handoff` path
 

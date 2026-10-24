@@ -91,7 +91,7 @@ Notes:
 - `providerPromptCacheKey` carries an inherited provider prompt-cache identity for eligible full forks.
 - `parentSession` is an opaque lineage string. Current code writes either a session id or a session path depending on flow (`fork`, `forkFrom`, `createBranchedSession`, or explicit `newSession({ parentSession })`). Treat it as metadata, not a typed foreign key.
 
-- `titleSource` is `auto` or `user`; automatic renames cannot overwrite a user title.
+- `titleSource` is `auto` or `user`; automatic renames cannot overwrite an architect title.
 
 ### Entry Base (`SessionEntryBase`)
 
@@ -238,7 +238,7 @@ are merged into `CustomAgentMessages` (`packages/agent/src/compaction/messages.t
 }
 ```
 
-`configured` may additionally preserve the selector the user chose (`"auto"` or a concrete level). Readers of older entries fall back to `thinkingLevel`.
+`configured` may additionally preserve the selector the architect chose (`"auto"` or a concrete level). Readers of older entries fall back to `thinkingLevel`.
 
 ### `compaction`
 
@@ -310,7 +310,7 @@ The strings in the table are reserved for their core consumers. Extensions MUST 
 
 ### `custom_message`
 
-Extension-provided message that does participate in LLM context. `content` can be a string or text/image content blocks, and `attribution` records whether the user or agent initiated it.
+Extension-provided message that does participate in LLM context. `content` can be a string or text/image content blocks, and `attribution` records whether the architect or agent initiated it.
 
 ```json
 {

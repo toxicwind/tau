@@ -1,0 +1,38 @@
+{
+  "bugs": {
+    "url": "https://github.com/toxicwind/tau-extensions/issues"
+  },
+  "description": "Tau extension: kimi-auto virtual model \u2014 dynamically resolves to the best available Kimi model via the kimi-auto resolver. Kimi-only: never falls back to non-Kimi models.",
+  "devDependencies": {
+    "@tau/tau-agent": "npm:@oh-my-pi/pi-coding-agent@^18.0.11",
+    "@types/bun": "latest",
+    "typescript": "^5.6.0"
+  },
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "homepage": "https://github.com/toxicwind/tau-extensions/tree/main/packages/tau-kimi-auto#readme",
+  "license": "MIT",
+  "name": "@toxicwind/tau-kimi-auto",
+  "peerDependencies": {
+    "@tau/tau-agent": "^18.0.11"
+  },
+  "repository": {
+    "directory": "packages/tau-kimi-auto",
+    "type": "git",
+    "url": "git+https://github.com/toxicwind/tau-extensions.git"
+  },
+  "scripts": {
+    "test": "bun test",
+    "typecheck": "tsc --noEmit"
+  },
+  "@tau/tau-agent": {
+    "extensions": [
+      "./src/extension.ts"
+    ]
+  },
+  "type": "module",
+  "version": "1.0.0"
+}

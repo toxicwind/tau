@@ -163,7 +163,7 @@ The pause/resume events are the sole mechanism that suspends the budget. Compute
 On abort/timeout:
 
 - The host sends `kill("SIGINT")` to the runner subprocess.
-- The runner's exec-time signal handler raises `KeyboardInterrupt` inside the user code.
+- The runner's exec-time signal handler raises `KeyboardInterrupt` inside the architect code.
 - Result includes `cancelled=true`; a kernel timeout is annotated as `eval cell timed out after <n>s; kernel interrupted but remains running. Reset the kernel via { reset: true } if state appears corrupted.`
 - Between requests the runner installs `SIG_IGN` for SIGINT so a stray cancel does not tear down the kernel.
 

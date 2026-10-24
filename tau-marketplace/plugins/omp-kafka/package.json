@@ -1,0 +1,43 @@
+{
+  "name": "@toxicwind/omp-kafka",
+  "version": "0.2.0",
+  "description": "oh-my-pi (omp) extension: consume Kafka topics into an omp session in auto (push) or pull mode.",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/toxicwind/omp-extensions.git",
+    "directory": "packages/omp-kafka"
+  },
+  "homepage": "https://github.com/toxicwind/omp-extensions/tree/main/packages/omp-kafka#readme",
+  "bugs": {
+    "url": "https://github.com/toxicwind/omp-extensions/issues"
+  },
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "omp": {
+    "extensions": [
+      "./src/extension.ts"
+    ]
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "kafkajs": "^2.2.4",
+    "yaml": "^2.9.0",
+    "zod": "^3.23.0"
+  },
+  "peerDependencies": {
+    "@tau/tau-agent": "^18.0.11"
+  },
+  "devDependencies": {
+    "@tau/tau-agent": "npm:@oh-my-pi/pi-coding-agent@^18.0.11",
+    "@types/bun": "latest",
+    "typescript": "^5.6.0"
+  }
+}

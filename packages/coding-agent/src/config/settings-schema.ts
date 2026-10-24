@@ -1732,6 +1732,18 @@ export const SETTINGS_SCHEMA = {
 		},
 	},
 
+	"retry.unlimitedRetryOnConcurrency429": {
+		type: "boolean",
+		default: false,
+		ui: {
+			tab: "model",
+			group: "Retry & Fallback",
+			label: "Unlimited Retry On Concurrency 429",
+			description:
+				"When a provider sheds an over-concurrency request with HTTP 429 / 'too many requests' / rate-limit wording that indicates a client-side or proxy admission cap (not a real account quota), retry indefinitely past retry.maxRetries. Honors retry-after/backoff between attempts. Default off — genuine provider rate/quota limits still bounded by retry.maxRetries.",
+		},
+	},
+
 	"retry.baseDelayMs": { type: "number", default: 500 },
 	"retry.maxDelayMs": {
 		type: "number",
@@ -6223,6 +6235,7 @@ export interface ContextPromotionSettings {
 export interface RetrySettings {
 	enabled: boolean;
 	maxRetries: number;
+	unlimitedRetryOnConcurrency429: boolean;
 	baseDelayMs: number;
 	maxDelayMs: number;
 	waitForUsageReset: boolean;

@@ -65,8 +65,8 @@ export default function myExtension(pi: ExtensionAPI): void {
 | `before_agent_start` | Before agent starts a turn | `{ message?: { customType; content; display; details; attribution? } }` |
 | `agent_start` | Agent streaming starts | — |
 | `agent_end` | Agent streaming ends | — |
-| `turn_start` | Start of a user→agent turn | — |
-| `turn_end` | End of a user→agent turn | — |
+| `turn_start` | Start of an architect→agent turn | — |
+| `turn_end` | End of an architect→agent turn | — |
 | `context` | Before each LLM API call | `{ messages?: Message[] }` |
 | `auto_compaction_start` | Auto-compaction begins | — |
 | `auto_compaction_end` | Auto-compaction ends | — |

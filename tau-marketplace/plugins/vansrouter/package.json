@@ -1,0 +1,11 @@
+{
+  "name": "vansrouter",
+  "version": "1.0.0",
+  "description": "Dynamic OpenAI-compatible local model provider with live catalog sync from VansRouter (:20128)",
+  "main": "index.ts",
+  "module": "index.ts",
+  "types": "index.ts",
+  "type": "module",
+  "keywords": ["vansrouter", "provider", "openai-compatible", "local-models", "tau", "omp"],
+  "license": "MIT"
+}

@@ -149,7 +149,7 @@ The same file also exposes non-tool helpers used by `/todo`:
   - `Missing items for append operation`
   - `Task "..." already exists`
 - A `todo` call carries a single op; any error in it discards every mutation the op made.
-- Runtime-level tool failure is handled outside the tool body: `agent-session` injects a hidden reminder and the event controller warns the user that visible progress may be stale.
+- Runtime-level tool failure is handled outside the tool body: `agent-session` injects a hidden reminder and the event controller warns the architect that visible progress may be stale.
 - Idempotency is op-specific:
   - `init` is a full replacement; replaying the same payload yields the same state.
   - `start`, `done`, `drop`, `block`, and `unblock` are effectively idempotent on an existing target state, though `start` also demotes another active task and a repeated `block` can update its reason.
@@ -164,6 +164,6 @@ The same file also exposes non-tool helpers used by `/todo`:
 - Reload persistence differs by path:
   - plain `todo` calls survive in transcript tool-result details;
   - `/todo` command edits additionally append `customType: "user_todo_edit"` entries and inject a visible-to-model `<system-reminder>` developer message describing the manual edit.
-- On session resume, `AgentSession.#syncTodoPhasesFromBranch()` strips `completed` and `abandoned` tasks before restoring the cached list. The `/todo` command works around that by reading the latest transcript/custom-entry state so historical done/dropped tasks still appear to the user.
+- On session resume, `AgentSession.#syncTodoPhasesFromBranch()` strips `completed` and `abandoned` tasks before restoring the cached list. The `/todo` command works around that by reading the latest transcript/custom-entry state so historical done/dropped tasks still appear to the architect.
 - Tool availability is gated by `todo.enabled`, and the registry excludes it when `includeYield` is enabled unless the session is prewalk-armed (`packages/coding-agent/src/tools/index.ts`).
 - Subagents do not inherit `todo`; `packages/coding-agent/src/task/executor.ts` also filters it from the active set as a parent-owned tool. Exception (both layers): prewalk-armed subagents keep it — the prewalk plan nudge and todo gate require the child to commit its own todo list before the hand-off.

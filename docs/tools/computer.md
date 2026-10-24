@@ -167,4 +167,4 @@ Current native backends support macOS, Linux X11, Linux Wayland portal capture/i
 - Prefer AX actions to pixels when a semantic control exists.
 - Prefer direct inspection helpers; use `read_only: true` for inspection-only `computer.run` calls.
 - Never mix screenshot-pixel coordinates with global AX coordinates.
-- Confirm consequential or irreversible actions unless the user's direct request already authorized that exact action.
+- Confirm consequential or irreversible actions unless the architect's direct request already authorized that exact action.

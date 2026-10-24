@@ -2,7 +2,7 @@
  * roost — tau's provider-data authority.
  *
  * `@ranch/roost` (`flock/roost`, contract `ranch-roost/live-catalog/v1`) is the
- * single source of truth for provider wire data across the sovereign estate:
+ * single source of truth for provider wire data across the estate-scripts estate:
  * base URLs, key env vars, auth schemes, `/models` endpoint adapters,
  * aliases, and cold-start seeds. Tau consumes it here and projects each
  * definition onto the `CompiledProvider` shape the catalog engine
@@ -30,8 +30,8 @@
  *
  * Import path note: tau is its own repo (`toxicwind/tau`) nested inside the
  * ranch monorepo, so this reaches roost via a relative import — the same
- * pattern the sovereign router uses (`tools/sovereign-router/
- * sovereign-router-ts/router_live_models.ts`). A standalone `toxicwind/tau`
+ * pattern the estate-scripts router uses (`tools/estate-scripts-router/
+ * estate-scripts-router-ts/router_live_models.ts`). A standalone `toxicwind/tau`
  * checkout cannot resolve that path, so `resolveRoostModule()` below falls
  * back to the `@ranch/roost` package and finally to an actionable error
  * naming both candidates (instead of a bare "Cannot find module").
@@ -364,7 +364,7 @@ const OPENROUTER_SEED: CompiledSeed = {
  * Tau catalog policy for roost-sourced providers, keyed by provider id.
  * Every key MUST name a definition in roost's `PROVIDER_DEFS` (checked at
  * build time below); every other roost definition (llama-swap, nim-local,
- * kimi-auto — sovereign-router-local concepts roost itself flags
+ * kimi-auto — estate-scripts-router-local concepts roost itself flags
  * `routerLocal`) stays out of tau's catalog by design.
  *
  * Values transcribed verbatim from the retired KDL catalog nodes

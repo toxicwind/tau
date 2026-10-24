@@ -1,0 +1,551 @@
+/**
+ * Tier resolution and routing composition logic.
+ * Orchestrates heuristic + context capacity + classifier + image upgrade.
+ */
+
+import type { Context } from "@oh-my-pi/pi-ai";
+import type { ExtensionContext } from "tau";
+import { parseCanonicalModelRef } from "../config";
+import type {
+	RouterTier,
+	RouterProfile,
+	RoutingDecision,
+	RoutingRule,
+	RouterThinkingByTier,
+} from "../types";
+import type { SessionCalibration, CalibrationConfig } from "../calibration/types";
+import type { SessionScope } from "../state";
+import type { RouterState } from "../state";
+import { getLastUserText, extractRecentToolCalls, getBucket } from "../utils/messages.js";
+import { updateCalibrationMatrix } from "../calibration/session";
+import { setScopedPin, incrementPinPressure, DEFAULT_PIN_PRESSURE_THRESHOLD, clearScopedPin } from "./pin";
+import { hasImageAttachment } from "./text";
+import { decideRouting, buildRoutingDecision, phaseForTier } from "./heuristic";
+import { appendPromptRecord } from "../calibration/trace.js";
+import { buildClassifierPrompt, detectSignals } from "../calibration/classifier-utils.js";
+
+// ─── Model-capacity-aware tier promotion ─────────────────────────────────────
+
+const TIER_ORDER: readonly RouterTier[] = ["low", "medium", "high"];
+const RESPONSE_HEADROOM_TOKENS = 8192;
+
+interface PromotedTier {
+	tier: RouterTier;
+	fromCapacity: number;
+	toCapacity: number;
+	fits: boolean;
+}
+
+/**
+ * Resolve a tier's model and return its usable input capacity (contextWindow
+ * minus response headroom). Returns undefined if the model can't be resolved.
+ */
+const tierUsableCapacity = (
+	tier: RouterTier,
+	profile: RouterProfile,
+	registry: ExtensionContext["modelRegistry"],
+): number | undefined => {
+	const ref = profile[tier]?.model;
+	if (!ref) return undefined;
+	const slash = ref.indexOf("/");
+	if (slash === -1) return undefined;
+	const provider = ref.slice(0, slash);
+	const modelId = ref.slice(slash + 1);
+	const model = registry.find(provider, modelId);
+	if (!model || !model.contextWindow) return undefined;
+	const headroom = Math.max(model.maxTokens ?? 0, RESPONSE_HEADROOM_TOKENS);
+	return Math.max(0, model.contextWindow - headroom);
+};
+
+/**
+ * Find the cheapest tier (low → medium → high) whose model can fit `tokens`
+ * with response headroom. Returns the promoted tier or undefined if the
+ * current tier already fits or no tier fits.
+ */
+const promoteForContextCapacity = (
+	currentTier: RouterTier,
+	tokens: number,
+	profile: RouterProfile,
+	registry: ExtensionContext["modelRegistry"],
+): PromotedTier | undefined => {
+	const currentCapacity = tierUsableCapacity(currentTier, profile, registry);
+	if (currentCapacity === undefined) return undefined; // unresolvable; leave alone
+	if (tokens <= currentCapacity) return undefined; // current tier fits
+
+	const startIdx = TIER_ORDER.indexOf(currentTier) + 1;
+	for (let i = startIdx; i < TIER_ORDER.length; i++) {
+		const candidate = TIER_ORDER[i];
+		const cap = tierUsableCapacity(candidate, profile, registry);
+		if (cap !== undefined && tokens <= cap) {
+			return { tier: candidate, fromCapacity: currentCapacity, toCapacity: cap, fits: true };
+		}
+	}
+	// No tier fits; promote to highest tier with biggest capacity (best-effort).
+	let best: PromotedTier | undefined;
+	for (let i = startIdx; i < TIER_ORDER.length; i++) {
+		const cap = tierUsableCapacity(TIER_ORDER[i], profile, registry);
+		if (cap === undefined) continue;
+		if (!best || cap > best.toCapacity) {
+			best = { tier: TIER_ORDER[i], fromCapacity: currentCapacity, toCapacity: cap, fits: false };
+		}
+	}
+	return best;
+};
+
+// ─── resolveRouting — composites heuristic + all overrides ───────────────────
+
+export interface RoutingInput {
+	context: Context;
+	previousDecision: RoutingDecision | undefined;
+	/** Active scoped pin (from user /router pin or system). Skips heuristic+classifier entirely. */
+	pinnedTier?: RouterTier;
+	/** Config floor (from defaultPin). Applied as a minimum clamp AFTER all routing decisions. */
+	floor?: RouterTier;
+	isBudgetExceeded: boolean;
+	modelRegistry: ExtensionContext["modelRegistry"];
+	lastExtensionContext?: ExtensionContext;
+	calibration?: SessionCalibration;
+	/**
+	 * Active session scope — mutated by setScopedPin when a pin-creating event fires.
+	 * Optional for backward compat; when absent, scoped pin creation is skipped.
+	 */
+	scope?: SessionScope;
+	/**
+	 * Router state — used for the classifier prompt cache (Phase 1).
+	 * Optional for backward compat; when absent, cache is bypassed.
+	 */
+	state?: RouterState;
+}
+
+export interface RoutingConfig {
+	profileName: string;
+	profile: RouterProfile;
+	thinkingOverrides?: RouterThinkingByTier;
+	phaseBias: number;
+	rules?: RoutingRule[];
+	classifierModel?: string | string[];
+	debug?: boolean;
+	calibrationConfig?: CalibrationConfig;
+	/** Subset of RouterConfig needed for scoped-pin operations (timeout, floor, pressure threshold). */
+	pinConfig?: { pinTimeout?: number; defaultPin?: RouterTier | "auto"; pinPressureThreshold?: number };
+	/**
+	 * Pre-loaded pitfalls markdown content (injected into classifier prompt).
+	 * Loaded by the caller (provider.ts) via loadPitfalls() so FS concerns stay out of compose.
+	 */
+	pitfalls?: string;
+	/** Path to classifierPrompt.jsonl for logging full prompts+verdicts. Only written on fresh sync calls. */
+	promptLogPath?: string;
+	/**
+	 * Called after a fresh (non-cached) classifier run to record the classifier model's
+	 * actual token usage and cost into the session's modelCosts map.
+	 * Receives the canonical model ref (e.g. "anthropic/claude-3-haiku-20240307") and usage.
+	 */
+	recordClassifierCost?: (modelRef: string, usage: { inputTokens: number; outputTokens: number; cacheReadTokens: number; cacheWriteTokens: number; cost: number }) => void;
+	/**
+	 * TEST-ONLY: inject a fake runClassifier to avoid mock.module() leaking across files.
+	 * When set, bypasses the dynamic import and uses this function directly.
+	 */
+	_classifierOverride?: (...args: Parameters<Awaited<typeof import("./index.js")>["runClassifier"]>) => ReturnType<Awaited<typeof import("./index.js")>["runClassifier"]>;
+}
+
+/**
+ * Resolve the full routing decision for a request, composing:
+ *   1. Heuristic decision (decideRouting)
+ *   2. Context trigger upgrade (large context window forces high tier)
+ *   3. Classifier override (LLM classifier overrides heuristic)
+ *   4. Image attachment upgrade (forces tier that supports images)
+ */
+export const resolveRouting = async (
+	input: RoutingInput,
+	config: RoutingConfig,
+): Promise<RoutingDecision> => {
+	// 1. Heuristic decision
+	let decision = decideRouting(
+		input.context,
+		config.profileName,
+		config.profile,
+		input.previousDecision,
+		input.pinnedTier,
+		config.thinkingOverrides,
+		config.phaseBias,
+		config.rules,
+		input.isBudgetExceeded,
+		input.floor,
+	);
+
+	// ── Pressure lapse: one pressure increment per turn, best available signal.
+	//    When classifier is configured, the classifier block below owns this (using
+	//    verdict.tier as the shadow). Only run the heuristic shadow here when no
+	//    classifier is configured so the pin is never left untested on heuristic-only sessions.
+	if (input.pinnedTier && input.scope && config.pinConfig && !config.classifierModel) {
+		const pin = input.scope.scopedPin;
+		if (pin && pin.source !== "user") {
+			// Compute shadow tier: what the heuristic would say with no pin.
+			const shadowDecision = decideRouting(
+				input.context,
+				config.profileName,
+				config.profile,
+				input.previousDecision,
+				undefined, // no pin
+				config.thinkingOverrides,
+				config.phaseBias,
+				config.rules,
+				input.isBudgetExceeded,
+				input.floor,
+			);
+			const threshold =
+				config.pinConfig.pinPressureThreshold ??
+				DEFAULT_PIN_PRESSURE_THRESHOLD;
+			const lapsed = incrementPinPressure(
+				input.scope,
+				shadowDecision.tier,
+				threshold,
+				config.debug,
+			);
+			if (lapsed) {
+				// Bust classifier cache — routing context has changed.
+				// Prefer input.scope (session-local snapshot); fall back to state.scope for
+				// backward compat with tests that pass state but not scope.
+				const bustScope = input.scope ?? input.state?.scope;
+				if (bustScope) {
+					bustScope.lastClassifierKey = undefined;
+					bustScope.lastClassifierVerdict = undefined;
+					bustScope.classifierTurnsSinceRun = 0;
+				}
+				// Re-route freely (no pin) using the shadow decision already computed.
+				decision = shadowDecision;
+				// Clear pinnedTier for all downstream steps (context trigger, classifier, image).
+				input = { ...input, pinnedTier: undefined };
+			}
+		}
+	}
+
+	// ── P2 pin for Rule J and rule-match (heuristic-created sticky decisions) ───────
+	if (input.scope && !input.pinnedTier && config.pinConfig) {
+		const isRuleJ = decision.reasoning.includes("planning-phase bias");
+		const isRuleMatch = decision.isRuleMatched === true;
+		if (isRuleJ) {
+			setScopedPin(input.scope, decision.tier, "heuristic", config.pinConfig);
+		} else if (isRuleMatch) {
+			setScopedPin(input.scope, decision.tier, "rule", config.pinConfig);
+		}
+	}
+
+	// 2. Context trigger — promote tier to the cheapest one whose model can
+	//    actually fit the current context. Static thresholds are wrong because
+	//    each tier's model has its own contextWindow (e.g. Haiku 200k vs
+	//    Sonnet 200k vs Nova Micro 128k). We require headroom = max(maxTokens, 8k)
+	//    so the response has room to generate.
+	if (decision.tier !== "high" && input.lastExtensionContext) {
+		try {
+			const usage = await input.lastExtensionContext.getContextUsage();
+			const tokens = usage?.tokens ?? 0;
+			if (tokens > 0) {
+				const promoted = promoteForContextCapacity(
+					decision.tier,
+					tokens,
+					config.profile,
+					input.modelRegistry,
+				);
+				if (promoted && promoted.tier !== decision.tier) {
+					decision = buildRoutingDecision(
+						config.profileName,
+						config.profile,
+						promoted.tier,
+						decision.phase,
+						promoted.fits
+							? `Context (${tokens} tok) exceeds ${decision.tier} capacity (${promoted.fromCapacity} tok). Promoted ${decision.tier}→${promoted.tier} (cap ${promoted.toCapacity}).`
+							: `Context (${tokens} tok) overflows every tier; ${promoted.tier} has biggest capacity (${promoted.toCapacity} tok).`,
+						config.thinkingOverrides,
+						false,
+					);
+					decision.isContextTriggered = true;
+					// Cache bust: routing context changed, force classifier re-eval on next eligible turn.
+					// Prefer input.scope (session-local snapshot); fall back to state.scope for
+					// backward compat with tests that pass state but not scope.
+					const bustScope2 = input.scope ?? input.state?.scope;
+					if (bustScope2) {
+						bustScope2.lastClassifierKey = undefined;
+						bustScope2.lastClassifierVerdict = undefined;
+						bustScope2.classifierTurnsSinceRun = 0;
+					}
+				}
+			}
+		} catch {
+			// ignore — fall through with existing decision
+		}
+	}
+	// 3. Classifier override — gated by prompt-equality cache (Phase 1)
+	//    Skip entirely in sub-agent sessions: the parent already classified the
+	//    user request, and running a blocking LLM call before every tool-loop
+	//    turn inside a parallel task wastes 10-20s and can freeze sub-agents.
+	//    Use input.scope (session-local snapshot) so parallel sub-agents each
+	//    check their own parentSessionId, not the shared active scope.
+	//    Fall back to input.state?.scope for backward compatibility with tests
+	//    that pass state but not scope.
+	const resolvedScope = input.scope ?? input.state?.scope;
+	const isSubAgent = (resolvedScope?.parentSessionId) !== undefined;
+	let bucket: string | undefined;
+	let verdict: { tier: RouterTier; reasoning: string; classifierModelRef?: string; classifierUsage?: { inputTokens: number; outputTokens: number; cacheReadTokens: number; cacheWriteTokens: number; cost: number } } | undefined;
+	if (
+		config.classifierModel &&
+		!isSubAgent &&
+		!decision.isContextTriggered &&
+		!decision.isRuleMatched
+	) {
+		// ── Compute classifier signature (Phase 1 cache key) ──────────────
+		const lastUserText = getLastUserText(input.context) ?? "";
+		// Monotonic user-message counter on scope — incremented by turn_start.
+		// Always use input.scope (session-local snapshot) — never input.state.scope
+		// which reflects whichever sub-agent last ran turn_start.
+		const scope = resolvedScope;
+		const userMsgIndex = scope?.userMessagesSeen ?? 0;
+		// Phase 2: tool-mix bucket extends the cache key
+		const { counts: toolCounts } = extractRecentToolCalls(input.context);
+		bucket = getBucket(toolCounts);
+		const sig = `${lastUserText}|${userMsgIndex}|${bucket}`;
+
+		// ── Cache gate ──────────────────────────────────────────────────────
+		const ttlTurns = input.state?.currentConfig.classifierCache?.ttlTurns ?? 20;
+		const cacheHit =
+			scope !== undefined &&
+			scope.lastClassifierKey === sig &&
+			scope.lastClassifierVerdict !== undefined &&
+			scope.classifierTurnsSinceRun < ttlTurns;
+
+		if (cacheHit && scope) {
+			verdict = scope.lastClassifierVerdict;
+			scope.classifierTurnsSinceRun += 1;
+			scope.classifierCacheHits += 1;
+		} else {
+			const classifierSpawnTime = Date.now();
+			const { resolveClassifierContextWindow, runClassifier: importedRunClassifier } = await import("./index.js");
+			const runClassifier = config._classifierOverride ?? importedRunClassifier;
+			const classifierContextWindow = resolveClassifierContextWindow(
+				config.classifierModel,
+				input.modelRegistry,
+			);
+			const builtPrompt = buildClassifierPrompt(
+				input.context,
+				decision.phase,
+				toolCounts,
+				config.pitfalls,
+				classifierContextWindow,
+			);
+			verdict = await runClassifier(
+				config.classifierModel,
+				input.modelRegistry,
+				input.context,
+				decision.phase,
+				config.debug,
+				toolCounts,
+				config.pitfalls,
+				classifierContextWindow,
+			);
+			if (verdict && scope) {
+				scope.lastClassifierKey = sig;
+				scope.lastClassifierVerdict = verdict;
+				scope.classifierTurnsSinceRun = 0;
+				scope.classifierInvocations += 1;
+				// Record classifier model cost on fresh run
+				if (verdict.classifierUsage && verdict.classifierModelRef && config.recordClassifierCost) {
+					config.recordClassifierCost(verdict.classifierModelRef, verdict.classifierUsage);
+				}
+			}
+			// Write prompt log on fresh call (not cache hit)
+			if (config.promptLogPath) {
+				const refForModel = Array.isArray(config.classifierModel)
+					? config.classifierModel[0]
+					: config.classifierModel;
+				const detectedSignals = detectSignals(input.context);
+			await appendPromptRecord(config.promptLogPath, {
+					timestamp:    new Date().toISOString(),
+					turnIndex:    input.calibration?.turnsProcessed ?? 0,
+					userMsgIndex: resolvedScope?.userMessagesSeen ?? 0,
+					bucket,
+					model:        refForModel ?? "unknown",
+					heuristicTier: decision.tier,
+					verdict:      verdict ?? null,
+					error:        verdict ? undefined : "no-verdict",
+					latencyMs:    Date.now() - classifierSpawnTime,
+					prompt:       builtPrompt,
+					signals:      detectedSignals.length > 0 ? detectedSignals : undefined,
+				});
+			}
+		}
+
+		if (verdict) {
+			// Record verdict into calibration matrix — always, regardless of mode
+			if (input.calibration && config.calibrationConfig?.enabled) {
+				updateCalibrationMatrix(input.calibration, decision.tier, verdict.tier);
+			}
+
+			const isAdaptive = config.calibrationConfig?.mode === "adaptive";
+
+			if (!isAdaptive) {
+				// Telemetry mode: classifier ran for data collection only; heuristic decision stands
+				decision.isTelemetry = true;
+				decision.classifierModelRef = verdict.classifierModelRef;
+			} else if (input.pinnedTier) {
+				// Adaptive + pinned: use verdict for pin-pressure comparison, but don't override routing decision
+				if (input.scope && config.pinConfig) {
+					const threshold =
+						config.pinConfig.pinPressureThreshold ??
+						DEFAULT_PIN_PRESSURE_THRESHOLD;
+					const lapsed = incrementPinPressure(
+						input.scope,
+						verdict.tier, // classifier verdict is stronger signal than heuristic
+						threshold,
+						config.debug,
+					);
+					if (lapsed) {
+						// Pin lapsed — apply classifier verdict
+						decision = buildRoutingDecision(
+							config.profileName,
+							config.profile,
+							verdict.tier,
+							phaseForTier(verdict.tier),
+							cacheHit
+								? `Pin lapsed. Classifier (cached): ${verdict.reasoning}`
+								: `Pin lapsed. Classifier: ${verdict.reasoning}`,
+							config.thinkingOverrides,
+							true,
+						);
+						decision.classifierModelRef = verdict.classifierModelRef;
+						if (input.isBudgetExceeded && decision.tier === "high") {
+							decision.tier = "medium";
+							decision.phase = "implementation";
+							decision.reasoning = `Budget exceeded. Downgraded to medium. (Original: ${decision.reasoning})`;
+							decision.isBudgetForced = true;
+						}
+						clearScopedPin(input.scope);
+					} else {
+						// Pin holds — classifier ran but didn't override; record it ran so widget can show it
+						decision.classifierModelRef = verdict.classifierModelRef;
+					}
+				}
+			} else {
+				// Adaptive + not pinned: apply classifier verdict to override routing decision
+				decision = buildRoutingDecision(
+					config.profileName,
+					config.profile,
+					verdict.tier,
+					phaseForTier(verdict.tier),
+					cacheHit
+						? `Classifier (cached): ${verdict.reasoning}`
+						: `Classifier: ${verdict.reasoning}`,
+					config.thinkingOverrides,
+					true,
+				);
+				decision.classifierModelRef = verdict.classifierModelRef;
+				if (input.isBudgetExceeded && decision.tier === "high") {
+					decision.tier = "medium";
+					decision.phase = "implementation";
+					decision.reasoning = `Budget exceeded. Downgraded classifier decision to medium. (Original: ${decision.reasoning})`;
+					decision.isBudgetForced = true;
+				}
+				// P2 pin for classifier override (only on fresh run, not cache hit)
+				if (!cacheHit && input.scope && config.pinConfig) {
+					setScopedPin(input.scope, decision.tier, "classifier", config.pinConfig);
+				}
+			}
+		} else {
+			// Classifier configured but failed — fall back to heuristic.
+			decision.reasoning = `Classifier unavailable, using heuristic: ${decision.reasoning}`;
+			decision.isHeuristic = true;
+			// Still apply heuristic pressure so a pinned session isn't frozen by classifier failure.
+			if (input.pinnedTier && input.scope && config.pinConfig) {
+				const pin = input.scope.scopedPin;
+				if (pin && pin.source !== "user") {
+					const shadowDecision = decideRouting(
+						input.context,
+						config.profileName,
+						config.profile,
+						input.previousDecision,
+						undefined,
+						config.thinkingOverrides,
+						config.phaseBias,
+						config.rules,
+						input.isBudgetExceeded,
+						input.floor,
+					);
+					const threshold = config.pinConfig.pinPressureThreshold ?? DEFAULT_PIN_PRESSURE_THRESHOLD;
+					const lapsed = incrementPinPressure(input.scope, shadowDecision.tier, threshold, config.debug);
+					if (lapsed) {
+						const bustScope = input.scope ?? input.state?.scope;
+						if (bustScope) {
+							bustScope.lastClassifierKey = undefined;
+							bustScope.lastClassifierVerdict = undefined;
+							bustScope.classifierTurnsSinceRun = 0;
+						}
+						decision = shadowDecision;
+						input = { ...input, pinnedTier: undefined };
+					}
+				}
+			}
+		}
+	}
+	
+
+	// 4. Image attachment upgrade — find lowest tier that supports images
+	if (hasImageAttachment(input.context)) {
+		const checkTierSupportsImage = (tier: RouterTier): boolean => {
+			const models = [
+				config.profile[tier].model,
+				...(config.profile[tier].fallbacks ?? []),
+			];
+			return models.some((ref) => {
+				try {
+					const { provider, modelId } = parseCanonicalModelRef(ref);
+					return (
+						input.modelRegistry.find(provider, modelId)?.input?.includes(
+							"image",
+						) ?? false
+					);
+				} catch {
+					return false;
+				}
+			});
+		};
+
+		if (!checkTierSupportsImage(decision.tier)) {
+			// Determine tiers to try; skip high if budget is exceeded
+			const tiersToTry: RouterTier[] =
+				decision.tier === "low"
+					? (input.isBudgetExceeded ? ["medium"] : ["medium", "high"])
+					: decision.tier === "medium"
+						? (input.isBudgetExceeded ? [] : ["high"])
+						: [];
+
+			for (const t of tiersToTry) {
+				if (checkTierSupportsImage(t)) {
+					const prevBudgetForced = decision.isBudgetForced;
+					decision = buildRoutingDecision(
+						config.profileName,
+						config.profile,
+						t,
+						phaseForTier(t),
+						`Forced ${t} tier because the originally routed ${decision.tier} tier does not support image attachments.`,
+						config.thinkingOverrides,
+						false,
+					);
+					// Preserve budget enforcement flag from prior decision
+					if (prevBudgetForced) decision.isBudgetForced = true;
+					break;
+				}
+			}
+
+			// If no tier with image support found and budget exceeded, stay at current tier
+			// (routing proceeds without image capability rather than exceeding budget)
+		}
+	}
+
+	// 5. Floor: defaultPin is the starting default tier when no scoped pin is active.
+	//    It is NOT a minimum clamp — heuristic and classifier can freely route
+	//    to any tier including below the floor. The floor only provides the
+	//    baseline default (replacing the hardcoded 'medium') when routing starts.
+	//    Nothing to do here — floor was already passed as the heuristic default tier.
+
+	decision.toolBucket = bucket;
+	return decision;
+};

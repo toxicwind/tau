@@ -13,8 +13,8 @@
  * `compat.isOpenRouterHost` (resolved by the catalog from the provider
  * config), never on the model ID.
  *
- * Ported from ranch/dots-client/sovereign_dots_client.py
- * (SovereignDotsClient.execute_structured_step), with two corrections proven
+ * Ported from ranch/dots-client/estate-scripts_dots_client.py
+ * (estate-scriptsDotsClient.execute_structured_step), with two corrections proven
  * by live measurement (2026-10-13, dots-3-note-preview:free):
  *  1. Custom `stop` sequences + `provider.require_parameters:true` is
  *     unroutable — OpenRouter returns 404 "no endpoints found" for the
@@ -99,7 +99,7 @@ export interface OpenRouterRequestShapingOptions {
 }
 
 /**
- * Apply the SovereignDotsClient payload coercions to a request body.
+ * Apply the estate-scriptsDotsClient payload coercions to a request body.
  * Raise-only / fill-in-only: explicit caller values always win.
  *  - temperature 0.1 when unspecified (deterministic tool use)
  *  - provider.require_parameters=true + provider.allow_fallbacks=false when

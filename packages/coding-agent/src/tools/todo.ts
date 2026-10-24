@@ -61,9 +61,9 @@ const InitListEntry = type({
 
 const todoSchema = type({
 	op: TodoOp,
-	"list?": InitListEntry.array().or(type("string")).describe(
-		"phases for init: [{phase, items}] or a markdown checklist string (Dots shape)"
-	),
+	"list?": InitListEntry.array()
+		.or(type("string"))
+		.describe("phases for init: [{phase, items}] or a markdown checklist string (Dots shape)"),
 	"task?": type("string").describe("verbatim task content"),
 	"phase?": type("string"),
 	// No `atLeastLength(1)` here: `items` is only meaningful for `init`/`append`,
@@ -71,6 +71,9 @@ const todoSchema = type({
 	// an op that ignores it (e.g. `view`) must not be a hard schema rejection.
 	"items?": type("string").array().describe("tasks for flat init or append"),
 	"reason?": type("string").describe("blocker note for block"),
+	"maxParallel?": type("number").describe(
+		"concurrency ceiling: how many tasks may stay in_progress at once (default 1 = the existing single in-progress pointer). Use to track a batch being worked in parallel; excess in_progress tasks demote to pending.",
+	),
 });
 
 type TodoParams = TodoSchema;
@@ -101,7 +104,10 @@ function cloneTask(task: TodoItem): TodoItem {
 }
 
 function clonePhases(phases: TodoPhase[]): TodoPhase[] {
-	return phases.map(phase => ({ name: phase.name, tasks: phase.tasks.map(cloneTask) }));
+	return phases.map(phase => ({
+		name: phase.name,
+		tasks: phase.tasks.map(cloneTask),
+	}));
 }
 
 function todoTransitionKey(phase: string, content: string): string {
@@ -129,21 +135,23 @@ function getCompletionTransitions(previous: TodoPhase[], updated: TodoPhase[]): 
 	return transitions;
 }
 
-function normalizeInProgressTask(phases: TodoPhase[]): void {
+function normalizeInProgressTask(phases: TodoPhase[], maxParallel: number = 1): void {
 	const orderedTasks = phases.flatMap(phase => phase.tasks);
 	if (orderedTasks.length === 0) return;
 
 	const inProgressTasks = orderedTasks.filter(task => task.status === "in_progress");
-	if (inProgressTasks.length > 1) {
-		for (const task of inProgressTasks.slice(1)) {
+	if (inProgressTasks.length > maxParallel) {
+		for (const task of inProgressTasks.slice(maxParallel)) {
 			task.status = "pending";
 		}
 	}
 
 	if (inProgressTasks.length > 0) return;
 
-	const firstPendingTask = orderedTasks.find(task => task.status === "pending");
-	if (firstPendingTask) firstPendingTask.status = "in_progress";
+	const firstPendingTasks = orderedTasks.filter(task => task.status === "pending").slice(0, maxParallel);
+	for (const task of firstPendingTasks) {
+		task.status = "in_progress";
+	}
 }
 
 /** Return the active todo task, preferring an in-progress item over the first pending item. */
@@ -180,7 +188,11 @@ function todoPhasesFingerprint(phases: readonly TodoPhase[]): string {
 			tasks: phase.tasks.map(task =>
 				task.blocker === undefined
 					? { content: task.content, status: task.status }
-					: { content: task.content, status: task.status, blocker: task.blocker },
+					: {
+							content: task.content,
+							status: task.status,
+							blocker: task.blocker,
+						},
 			),
 		})),
 	);
@@ -321,7 +333,12 @@ function initPhases(entry: TodoOpEntryValue, errors: string[]): TodoPhase[] {
 	// that here before the flat-items recovery below.
 	let rawList: typeof entry.list = entry.list;
 	if (typeof rawList === "string") {
-		rawList = [{ phase: entry.phase ?? DEFAULT_INIT_PHASE, items: parseMarkdownList(rawList) }];
+		rawList = [
+			{
+				phase: entry.phase ?? DEFAULT_INIT_PHASE,
+				items: parseMarkdownList(rawList),
+			},
+		];
 	}
 	const list =
 		rawList ??
@@ -350,7 +367,10 @@ function initPhases(entry: TodoOpEntryValue, errors: string[]): TodoPhase[] {
 	}
 	return list.map(listEntry => ({
 		name: listEntry.phase,
-		tasks: listEntry.items.map<TodoItem>(content => ({ content, status: "pending" })),
+		tasks: listEntry.items.map<TodoItem>(content => ({
+			content,
+			status: "pending",
+		})),
 	}));
 }
 
@@ -523,7 +543,7 @@ function resolveTodoParams(raw: unknown, hasExistingPhases: boolean): TodoOpEntr
 function applyParams(phases: TodoPhase[], params: TodoOpEntryValue): { phases: TodoPhase[]; errors: string[] } {
 	const errors: string[] = [];
 	const next = applyEntry(phases, params, errors);
-	normalizeInProgressTask(next);
+	normalizeInProgressTask(next, params.maxParallel ?? 1);
 	return { phases: next, errors };
 }
 
@@ -534,10 +554,12 @@ export function applyOpsToPhases(
 ): { phases: TodoPhase[]; errors: string[] } {
 	const errors: string[] = [];
 	let next = clonePhases(currentPhases);
+	let maxParallel = 1;
 	for (const op of ops) {
+		if (op.maxParallel !== undefined) maxParallel = op.maxParallel;
 		next = applyEntry(next, op, errors);
 	}
-	normalizeInProgressTask(next);
+	normalizeInProgressTask(next, maxParallel);
 	return { phases: next, errors };
 }
 
@@ -590,7 +612,10 @@ const MARKER_TO_STATUS: Record<string, TodoStatus> = {
 };
 
 /** Parse a Markdown checklist back into todo phases. */
-export function markdownToPhases(md: string): { phases: TodoPhase[]; errors: string[] } {
+export function markdownToPhases(md: string): {
+	phases: TodoPhase[];
+	errors: string[];
+} {
 	const errors: string[] = [];
 	const phases: TodoPhase[] = [];
 	let currentPhase: TodoPhase | undefined;
@@ -629,7 +654,11 @@ export function markdownToPhases(md: string): { phases: TodoPhase[]; errors: str
 			const rawContent = taskMatch[2].trim();
 			const blockerMatch = /^(.*?)\s*<!--\s*blocker:\s*(.*?)\s*-->$/.exec(rawContent);
 			if (status === "blocked" && blockerMatch) {
-				currentPhase.tasks.push({ content: blockerMatch[1].trim(), status, blocker: blockerMatch[2].trim() });
+				currentPhase.tasks.push({
+					content: blockerMatch[1].trim(),
+					status,
+					blocker: blockerMatch[2].trim(),
+				});
 			} else {
 				currentPhase.tasks.push({ content: rawContent, status });
 			}

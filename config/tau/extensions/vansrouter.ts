@@ -19,7 +19,7 @@ function resolveApiKey(): string {
       }
     } catch {}
   }
-  return "local-sovereign";
+  return "local-estate-scripts";
 }
 
 // Collapse accidental double prefixes like nvidia/nvidia/foo -> nvidia/foo

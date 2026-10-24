@@ -1,4 +1,4 @@
-# Sovereign Pre-Release Integration Engine
+# estate-scripts Pre-Release Integration Engine
 
 > **Architectural Law**: *"Production logic is integrated DIRECTLY in code. Pre-release staging overrides resolve via clean indirection."*
 > **Engine**: `/estate/src/lib/pre_release_integration.ts`
@@ -13,7 +13,7 @@
 module.someService = myCustomService; // Untracked, unversioned, lost on restart
 ```
 
-### The Sovereign Pattern (Resolution Indirection)
+### The estate-scripts Pattern (Resolution Indirection)
 The core codebase is designed to resolve its implementation from a persistent registry:
 
 ```text
@@ -39,15 +39,15 @@ The core codebase is designed to resolve its implementation from a persistent re
 
 ## 2. Anatomy of a Deliverable Hotfix Patch
 
-Every patch in `sovereign/patches/` is a real, committed TypeScript module:
+Every patch in `estate-scripts/patches/` is a real, committed TypeScript module:
 
 ```typescript
-// sovereign/patches/services_tau.ts
+// estate-scripts/patches/services_tau.ts
 import type { ServiceDef } from "../src/types/index.ts";
 
 export const TARGET = "services.tau";
 export const VERSION = "1.1.0";
-export const AUTHOR = "sovereign";
+export const AUTHOR = "estate-scripts";
 export const REASON = "Permanent .tau path resolution without monkey patching";
 export const ENABLED = true;
 
@@ -112,9 +112,9 @@ $ hotfix status
 ```
 
 ### Why This Is Permanent & Live:
-1. **Permanent**: Patches are written to disk in `sovereign/patches/*.ts` and survive all daemon/process restarts.
+1. **Permanent**: Patches are written to disk in `estate-scripts/patches/*.ts` and survive all daemon/process restarts.
 2. **Non-Monkey-Patch**: The core codebase intentionally consumes the registry as an extension point.
-3. **Zero-Downtime Live Reload**: The engine runs `fs.watch` on `sovereign/patches/`, dynamically importing updated code into memory without restarting Pitchfork or background daemons.
+3. **Zero-Downtime Live Reload**: The engine runs `fs.watch` on `estate-scripts/patches/`, dynamically importing updated code into memory without restarting Pitchfork or background daemons.
 
 ---
 

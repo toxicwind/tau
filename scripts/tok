@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 /**
- * tok — Sovereign Native Fast Token Counter CLI
+ * tok — estate-scripts Native Fast Token Counter CLI
  *
  * Uses @tau/tau-natives (Rust utok) compiled in-binary tokenizer.
  * Zero network, zero Python runtime, zero CPython symbol errors.
@@ -119,7 +119,7 @@ async function readText(p: string): Promise<{ text: string; bytes: number } | { 
 }
 
 function usage(): string {
-	return `tok — Sovereign Native Token Counter (utok / Rust, via @tau/tau-natives)
+	return `tok — estate-scripts Native Token Counter (utok / Rust, via @tau/tau-natives)
 
 Usage:
   tok [options] [file | dir | "text string"] ...

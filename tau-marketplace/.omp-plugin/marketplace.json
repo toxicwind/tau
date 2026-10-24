@@ -1,0 +1,145 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "tau-marketplace",
+  "owner": {
+    "name": "toxicwind",
+    "email": "toxicwind@users.noreply.github.com"
+  },
+  "metadata": {
+    "description": "Official estate-scripts Estate Marketplace for Tau & Oh-My-Pi extensions, plugins, and ambient tools",
+    "version": "1.0.0",
+    "homepage": "https://github.com/toxicwind/estate-scripts-projects/tree/main/ranch/tau-marketplace",
+    "pluginRoot": "plugins"
+  },
+  "plugins": [
+    {
+      "name": "omp-mobile-autocorrect",
+      "version": "1.0.0",
+      "description": "In-process MITM spatial QWERTY autocorrect middleware for Termux, Android keyboard slips, and touchscreens",
+      "category": "mobile",
+      "tags": [
+        "autocorrect",
+        "termux",
+        "qwerty",
+        "touchscreen",
+        "mitm",
+        "ergonomics"
+      ],
+      "source": "./plugins/omp-mobile-autocorrect",
+      "homepage": "https://github.com/toxicwind/estate-scripts-projects/tree/main/ranch/tau-marketplace/plugins/omp-mobile-autocorrect",
+      "license": "MIT"
+    },
+    {
+      "name": "vansrouter",
+      "version": "1.0.0",
+      "description": "OpenAI-compatible local model provider with live catalog sync from VansRouter (:20128)",
+      "category": "model-provider",
+      "tags": [
+        "vansrouter",
+        "provider",
+        "local-models",
+        "catalog",
+        "routing"
+      ],
+      "source": "./plugins/vansrouter",
+      "homepage": "https://github.com/toxicwind/estate-scripts-projects/tree/main/ranch/tau-marketplace/plugins/vansrouter",
+      "license": "MIT"
+    },
+    {
+      "name": "strict-bash-guard",
+      "version": "1.0.0",
+      "description": "Tool guard that intercepts bash tool calls and blocks redundant shell commands duplicating built-in tools",
+      "category": "safety",
+      "tags": [
+        "guard",
+        "bash",
+        "safety",
+        "tool-call",
+        "enforcement"
+      ],
+      "source": "./plugins/strict-bash-guard",
+      "homepage": "https://github.com/toxicwind/estate-scripts-projects/tree/main/ranch/tau-marketplace/plugins/strict-bash-guard",
+      "license": "MIT"
+    },
+    {
+      "name": "omp-model-router",
+      "version": "1.0.0",
+      "description": "Dynamic multi-model router, prompt classifier, token estimator, fallback picker, and cost governor",
+      "category": "routing",
+      "tags": [
+        "model-router",
+        "routing",
+        "classifier",
+        "fallback",
+        "tokens"
+      ],
+      "source": "./plugins/omp-model-router",
+      "homepage": "https://github.com/toxicwind/estate-scripts-projects/tree/main/ranch/tau-marketplace/plugins/omp-model-router",
+      "license": "MIT"
+    },
+    {
+      "name": "tau-kimi-auto",
+      "version": "1.0.0",
+      "description": "Dynamic virtual model provider resolving to the best healthy Kimi model via herd (:25100/:25153)",
+      "category": "model-provider",
+      "tags": [
+        "kimi",
+        "kimi-auto",
+        "provider",
+        "herd",
+        "resilience"
+      ],
+      "source": "./plugins/tau-kimi-auto",
+      "homepage": "https://github.com/toxicwind/estate-scripts-projects/tree/main/ranch/tau-marketplace/plugins/tau-kimi-auto",
+      "license": "MIT"
+    },
+    {
+      "name": "omp-edit-committer",
+      "version": "0.1.0",
+      "description": "Conventional-commit generator that auto-commits file mutations with intent, trade-offs, and visual hunk badges",
+      "category": "workflow",
+      "tags": [
+        "git",
+        "commits",
+        "workflow",
+        "hunk",
+        "review"
+      ],
+      "source": "./plugins/omp-edit-committer",
+      "homepage": "https://github.com/toxicwind/estate-scripts-projects/tree/main/ranch/tau-marketplace/plugins/omp-edit-committer",
+      "license": "MIT"
+    },
+    {
+      "name": "omp-kafka",
+      "version": "0.1.0",
+      "description": "Consume Kafka topics into an omp session in auto (push) or pull mode with /kafka-* slash commands",
+      "category": "integration",
+      "tags": [
+        "kafka",
+        "streaming",
+        "events",
+        "topics",
+        "extension"
+      ],
+      "source": "./plugins/omp-kafka",
+      "homepage": "https://github.com/toxicwind/estate-scripts-projects/tree/main/ranch/tau-marketplace/plugins/omp-kafka",
+      "license": "MIT"
+    },
+    {
+      "name": "tau-loops",
+      "version": "1.0.0",
+      "description": "Bounded diagnostic and audit loops (/loop-model-audit, /loop-dir-diff, /loop-probe) for fleet verification",
+      "category": "diagnostics",
+      "tags": [
+        "loops",
+        "audit",
+        "diagnostics",
+        "model-audit",
+        "diff"
+      ],
+      "source": "./plugins/tau-loops",
+      "homepage": "https://github.com/toxicwind/estate-scripts-projects/tree/main/ranch/tau-marketplace/plugins/tau-loops",
+      "license": "MIT"
+    }
+  ]
+}

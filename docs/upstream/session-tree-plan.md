@@ -92,7 +92,7 @@ Important: summary entries are attached at the **new navigation position**, not 
 `/branch` and `/tree` normally differ:
 
 - `/tree` navigates within the current session file.
-- `/branch` opens the user-message selector and creates a new session branch file (or an in-memory replacement for non-persistent mode).
+- `/branch` opens the architect-message selector and creates a new session branch file (or an in-memory replacement for non-persistent mode).
 
 Default user-facing `/branch` flow (`SelectorController.showUserMessageSelector` → `AgentSession.branch`):
 
@@ -148,7 +148,7 @@ Tree selector behavior (`tree-selector.ts`):
 Command routing:
 
 - `/tree` always opens the tree selector.
-- `/branch` normally opens the user-message/file-branch selector. With `doubleEscapeAction=tree`, it opens the tree selector and performs same-file navigation instead.
+- `/branch` normally opens the architect-message/file-branch selector. With `doubleEscapeAction=tree`, it opens the tree selector and performs same-file navigation instead.
 
 ## Extension and hook touchpoints for tree operations
 
@@ -192,7 +192,7 @@ Adjacent but related lifecycle hooks:
 
 ## Plan approval session naming
 
-When a user approves a plan from plan mode (`InteractiveMode.#approvePlan`), the dispatch path seeds the session name from the plan's title so the resulting fresh, preserved, or compacted session does not stay unnamed.
+When an architect approves a plan from plan mode (`InteractiveMode.#approvePlan`), the dispatch path seeds the session name from the plan's title so the resulting fresh, preserved, or compacted session does not stay unnamed.
 
 Trigger:
 

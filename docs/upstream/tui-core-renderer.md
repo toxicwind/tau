@@ -85,7 +85,7 @@ only repaints the viewport.
 
 Destructive display resets are gesture-driven. `resetDisplay()` and explicit
 session replacement may clear terminal history and repaint the current product
-state because the user action establishes a new display boundary. Ordinary
+state because the architect action establishes a new display boundary. Ordinary
 renders never clear history.
 
 A resize invalidates viewport geometry and repaints the viewport at the new
@@ -104,8 +104,8 @@ transaction; preserve prepares none. Replay consumes one fresh monotonic history
 id without rewinding logical retirement state, and acknowledgement happens only
 after the synchronous write returns.
 
-The renderer never probes the user's scroll position. This keeps updates safe
-while the user is reading older terminal history and avoids terminal- or
+The renderer never probes the architect's scroll position. This keeps updates safe
+while the architect is reading older terminal history and avoids terminal- or
 platform-specific finality policy.
 
 ## 4. ANSI and width invariants

@@ -1,0 +1,11 @@
+{
+  "name": "strict-bash-guard",
+  "version": "1.0.0",
+  "description": "Tool guard blocking redundant shell execution and enforcing native glob, grep, read tools",
+  "main": "index.ts",
+  "module": "index.ts",
+  "types": "index.ts",
+  "type": "module",
+  "keywords": ["guard", "bash", "safety", "tool-call", "tau", "omp"],
+  "license": "MIT"
+}

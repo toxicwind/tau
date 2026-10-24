@@ -1,0 +1,41 @@
+{
+  "name": "@toxicwind/tau-loops",
+  "version": "0.1.0",
+  "description": "Tau extension: reusable audit loops for the estate-scripts stack. Model/config liveness, undefined-role detection, two-tree diff with a consumer census, and a throwaway-extension probe runner.",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/toxicwind/omp-extensions.git",
+    "directory": "packages/tau-loops"
+  },
+  "homepage": "https://github.com/toxicwind/omp-extensions/tree/main/packages/tau-loops#readme",
+  "bugs": {
+    "url": "https://github.com/toxicwind/omp-extensions/issues"
+  },
+	"files": [
+		"src",
+		"scripts",
+		"README.md",
+		"LICENSE"
+	],
+  "@tau/tau-agent": {
+    "extensions": [
+      "./src/extension.ts"
+    ]
+  },
+	"scripts": {
+		"typecheck": "tsc --noEmit",
+		"test": "bun test",
+		"loop:model-audit": "bun scripts/run-model-audit.ts",
+		"loop:dir-diff": "bun scripts/run-dir-diff.ts"
+	},
+  "peerDependencies": {
+    "@tau/tau-agent": "^18.0.11"
+  },
+  "devDependencies": {
+      "@tau/tau-agent": "npm:@oh-my-pi/pi-coding-agent@^18.0.11",
+    "@types/bun": "latest",
+    "typescript": "^5.6.0"
+  }
+}

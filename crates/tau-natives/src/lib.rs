@@ -73,6 +73,7 @@ pub mod tty_writer;
 pub(crate) mod utils;
 pub mod vectors;
 pub mod workspace;
+// Removed Zero-Transport link statement - added inline FFI in zero_transport.rs
 
 #[cfg(target_os = "windows")]
 use std::sync::{

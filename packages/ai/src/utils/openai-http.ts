@@ -53,12 +53,27 @@ const CONCURRENCY_ADMISSION_LIMITER = "max_parallel_requests";
 /** Body form of the marker: `"rate_limit_type": "max_parallel_requests"` (top level or under `error`). */
 const CONCURRENCY_ADMISSION_BODY_PATTERN = /"rate_limit_type"\s*:\s*"max_parallel_requests"/;
 
+/** Body form of an OpenAI-compatible concurrency-limit 429: `error: { type: "concurrency_limit_exceeded" }`. */
+const CONCURRENCY_LIMIT_EXCEEDED_BODY_PATTERN = /"type"\s*:\s*"concurrency_limit_exceeded"/;
+
 /** `true` for a proxy concurrency-admission 429 that must bypass transport-level retry. */
 function isConcurrencyAdmissionRejection(response: Response, bodyText: string): boolean {
-	return (
+	// Standard LiteLLM / aggregator marker: `rate_limit_type: max_parallel_requests`
+	if (
 		response.headers.get("rate_limit_type")?.trim() === CONCURRENCY_ADMISSION_LIMITER ||
 		CONCURRENCY_ADMISSION_BODY_PATTERN.test(bodyText)
-	);
+	) return true;
+
+	// OpenAI-compatible provider envelope (e.g. freeinference): `"type":"concurrency_limit_exceeded"`.
+	// A concurrency-admission 429 means the request never reached the model — the server is
+	// enforcing a parallel-request cap. Retrying it in-transport (honouring `Retry-After`,
+	// up to {@link DEFAULT_MAX_ATTEMPTS} times) duplicates — worse, at the provider's wait
+	// multiplied by N retries — the concurrency backoff that `TurnRecovery` owns, burning
+	// retry budget on every slot. Surface it immediately so session recovery can queue
+	// instead of sleep. (Follows the same rationale as issue #8854.)
+	if (CONCURRENCY_LIMIT_EXCEEDED_BODY_PATTERN.test(bodyText)) return true;
+
+	return false;
 }
 
 export interface OpenAIStreamRequestInit {

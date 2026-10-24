@@ -206,7 +206,7 @@ The bundled TypeScript `RpcClient.getMessages()` and Python `RpcClient.get_messa
 
 Login forwards ordinary OAuth input prompts only after the provider emits an
 authorization URL. Prompts marked `secret: true` are always rejected with a
-failed `login` response directing the user to the terminal UI; no ordinary
+failed `login` response directing the architect to the terminal UI; no ordinary
 `input` request is emitted. RPC does not negotiate secret-input support.
 
 ## Response Schema

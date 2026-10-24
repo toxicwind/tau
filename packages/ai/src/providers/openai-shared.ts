@@ -329,6 +329,11 @@ export function resolveOpenAIRequestSetup(
 	if (model.provider === "xai" || model.provider === "xai-oauth") {
 		setHeaderIfAbsent(headers, "User-Agent", USER_AGENT);
 	}
+	// Default every provider to honest client identification unless the model
+	// or provider config already carries a User-Agent (models.yml `headers`).
+	// Providers banning fake user agents (freeinference ToS) get truthful
+	// identification; a config-provided UA always wins over this default.
+	setHeaderIfAbsent(headers, "User-Agent", USER_AGENT);
 	const requestHeaders = { ...headers };
 	// A keyless provider (`auth: none` in models.yml) resolves to the `N/A`
 	// sentinel rather than a real key. Injecting `Authorization: Bearer N/A`
@@ -653,7 +658,7 @@ export function dotsMaxTokensFloor(
 }
 
 /**
- * Dots-3-Note production coercions, ported from SovereignDotsClient
+ * Dots-3-Note production coercions, ported from estate-scriptsDotsClient
  * (Chris 2026-10-13 — Dots is the main model for tau).
  *
  * Dots degrades without strict tool schemas, burns its completion budget on

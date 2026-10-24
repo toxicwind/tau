@@ -65,6 +65,16 @@ import { type VibeCli } from "@tau/tau-tui/tools/vibe";
 export const VIBE_CLI_AGENT: Record<VibeCli, string> = {
 	fast: "sonic",
 	good: "task",
+	swarm1: "swarm1",
+	swarm2: "swarm2",
+	swarm3: "swarm3",
+	swarm4: "swarm4",
+	swarm5: "swarm5",
+	swarm6: "swarm6",
+	swarm7: "swarm7",
+	swarm8: "swarm8",
+	swarm9: "swarm9",
+	swarm10: "swarm10",
 };
 
 /** One completed tool call in the per-turn activity trace. */

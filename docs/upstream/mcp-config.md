@@ -39,7 +39,7 @@ TAU also translates these current tool-native sources:
 - VS Code: project-only `.vscode/mcp.json` using `mcp.servers`
 - installed Claude marketplace plugins and TAU extension packages that declare MCP servers
 
-For Claude Code, Codex, Gemini CLI, Cursor, and Windsurf, the project entry is encountered before its same-named user entry — matching TAU-native config, whose project entry precedes its active-profile user entry — so a project `enabled: false` suppresses a same-named user server. OpenCode currently encounters the user entry first. Cross-provider priority is listed in [Discovery and precedence](#discovery-and-precedence).
+For Claude Code, Codex, Gemini CLI, Cursor, and Windsurf, the project entry is encountered before its same-named user entry — matching TAU-native config, whose project entry precedes its active-profile user entry — so a project `enabled: false` suppresses a same-named user server. OpenCode currently encounters the architect entry first. Cross-provider priority is listed in [Discovery and precedence](#discovery-and-precedence).
 
 ### Profiles
 
@@ -442,7 +442,7 @@ The active profile's user file supplies two cross-source overrides:
 }
 ```
 
-`/mcp enable` and `/mcp disable` update `enabled` directly when the definition is in an TAU-owned writable file. TAU does not mutate another tool's config: for such sources, those commands maintain the user-level allowlist or denylist instead and remove a conflicting stale override.
+`/mcp enable` and `/mcp disable` update `enabled` directly when the definition is in an TAU-owned writable file. TAU does not mutate another tool's config: for such sources, those commands maintain the architect-level allowlist or denylist instead and remove a conflicting stale override.
 
 ## `/mcp add` vs editing JSON directly
 
@@ -498,7 +498,7 @@ Within TAU native config, project `.tau/mcp.json` precedes `.tau/.mcp.json`, the
 
 - prefer `.tau/mcp.json` or the active profile's user `mcp.json` for an TAU-specific override
 - keep names and endpoint definitions unique across tools when possible
-- use the user `disabledServers` list when a third-party config keeps reintroducing an unwanted server
+- use the architect `disabledServers` list when a third-party config keeps reintroducing an unwanted server
 - set `mcp.enableProjectConfig: false` to exclude every project-level source before deduplication, allowing a same-named user entry to survive
 
 ## Troubleshooting
@@ -522,7 +522,7 @@ The JSON is valid, but the server may still be unreachable. Use `/mcp test <name
 
 ### The server exists in another tool's config but not in TAU
 
-Run `/mcp list`. TAU discovers many third-party MCP files, but project-level loading can also be disabled via the `mcp.enableProjectConfig` setting, and a user-level `disabledServers` entry can suppress a server by name.
+Run `/mcp list`. TAU discovers many third-party MCP files, but project-level loading can also be disabled via the `mcp.enableProjectConfig` setting, and an architect-level `disabledServers` entry can suppress a server by name.
 
 ### A browser MCP server is configured but never loads
 

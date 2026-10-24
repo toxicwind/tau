@@ -13,13 +13,13 @@ mkdir -p "$OUT_DIR"
 cat > "$OUT_DIR/version.json" <<JSON
 {
   "base": "${BASE}",
-  "sovereignMainShort": "${SHORT}",
-  "sovereignMainFull": "${FULL}",
+  "estate-scriptsMainShort": "${SHORT}",
+  "estate-scriptsMainFull": "${FULL}",
   "tauShort": "${SHORT}",
-  "canonical": "${BASE}+sovereign.tau.${SHORT}",
-  "canonicalFull": "${BASE}+sovereign.tau.${FULL}",
-  "npm": "${BASE}+sovereign.tau.${SHORT}",
+  "canonical": "${BASE}+estate-scripts.tau.${SHORT}",
+  "canonicalFull": "${BASE}+estate-scripts.tau.${FULL}",
+  "npm": "${BASE}+estate-scripts.tau.${SHORT}",
   "generatedAt": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 }
 JSON
-echo "[gen-version] ${BASE}+sovereign.tau.${SHORT}"
+echo "[gen-version] ${BASE}+estate-scripts.tau.${SHORT}"

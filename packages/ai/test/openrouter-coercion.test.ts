@@ -77,7 +77,7 @@ describe("applyOpenRouterStrictToolSchemas", () => {
 	});
 });
 
-describe("applyOpenRouterRequestShaping (generalized SovereignDotsClient coercions)", () => {
+describe("applyOpenRouterRequestShaping (generalized estate-scriptsDotsClient coercions)", () => {
 	test("no-op when not OpenRouter-routed", () => {
 		const params: Record<string, unknown> = {};
 		applyOpenRouterRequestShaping(params, { isOpenRouterHost: false });

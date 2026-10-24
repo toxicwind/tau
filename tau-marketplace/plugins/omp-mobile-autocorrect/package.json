@@ -1,0 +1,34 @@
+{
+  "name": "omp-mobile-autocorrect",
+  "version": "1.0.0",
+  "description": "In-process spatial QWERTY touchscreen autocorrect middleware for Oh-My-Pi, Tau, and Termux",
+  "main": "index.ts",
+  "module": "index.ts",
+  "types": "index.ts",
+  "type": "module",
+  "scripts": {
+    "test": "bun test",
+    "lint": "oxlint index.ts test/*.ts",
+    "bench": "bun run test/autocorrect.test.ts"
+  },
+  "keywords": [
+    "autocorrect",
+    "termux",
+    "qwerty",
+    "spellchecker",
+    "spatial-distance",
+    "touchscreen",
+    "oh-my-pi",
+    "tau",
+    "coding-agent",
+    "damerau-levenshtein"
+  ],
+  "author": "toxicwind",
+  "license": "MIT",
+  "peerDependencies": {
+    "@tau/tau-agent": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@tau/tau-agent": "npm:@oh-my-pi/pi-coding-agent@18.3.0"
+  }
+}

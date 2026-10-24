@@ -6,7 +6,7 @@ import { execSync } from "node:child_process";
 import { resolve, join } from "node:path";
 
 const HOME = process.env.HOME || "/home/toxic";
-const TAU  = resolve(HOME, "sovereign/projects/range/ranch/stockyard/tau");
+const TAU  = resolve(HOME, "estate-scripts/projects/range/ranch/stockyard/tau");
 const BAK  = join(TAU, ".patch-backups");
 mkdirSync(BAK, { recursive: true });
 const STAMP = new Date().toISOString().replace(/[:.]/g, "-");

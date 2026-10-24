@@ -29,7 +29,7 @@ never landed — **not** doc drift.
 
 - README claimed **82 providers** → actual **73** (`getBundledProviders()`).
 - README claimed `packages/ai/src/utils/hedged-stream.ts` → **file absent** (B1).
-- README claimed hotfix engine paths under `/home/toxic/sovereign/...` → actual `estate/src/lib/pre_release_integration.ts`, registry absent (B2, B3).
+- README claimed hotfix engine paths under `/home/toxic/estate-scripts/...` → actual `estate/src/lib/pre_release_integration.ts`, registry absent (B2, B3).
 - README documented `scripts/install-natives-local.ts` → **reverted in `4132f2ebca`**; supported path is cargo → `gen:native` → build.
 - README claimed license **BSL-1.1** → actual **MIT** (`LICENSE`, 23 lines, "Copyright (c) 2025 Mario Zechner").
 - README claimed `tack` live → absent (B4).

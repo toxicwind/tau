@@ -81,8 +81,8 @@ const VOCABULARY = [
   "only", "other", "please", "read", "same", "some", "that", "then", "there",
   "these", "they", "this", "time", "under", "used", "want", "well", "were",
   "will", "with", "would", "write",
-  // Sovereign estate, agents & infrastructure
-  "sovereign", "estate", "ranch", "stockyard", "barn", "flock", "herd",
+  // estate-scripts estate, agents & infrastructure
+  "estate-scripts", "estate", "ranch", "stockyard", "barn", "flock", "herd",
   "yote", "openfang", "tau", "tau", "kimi", "pitchfork", "mise", "cell",
   "bridge", "hatch", "quill", "shrew", "trailboss", "effusion", "oracle",
   "market", "btrfs", "fclones", "flicker", "telemetry", "runtime", "harness",

@@ -4,7 +4,7 @@
 
 This repo contains multiple packages, but **`packages/coding-agent/`** is the primary focus. Unless otherwise specified, assume work refers to this package.
 
-**Terminology**: When the user says "agent" or asks "why is agent doing X", they mean the **coding-agent package implementation**, not you (the assistant). The coding-agent is a CLI tool — questions about its behavior refer to code in `packages/coding-agent/`, not your current session.
+**Terminology**: When the architect says "agent" or asks "why is agent doing X", they mean the **coding-agent package implementation**, not you (the assistant). The coding-agent is a CLI tool — questions about its behavior refer to code in `packages/coding-agent/`, not your current session.
 
 ### Package Structure
 
@@ -317,7 +317,7 @@ Test the contract the system exposes — not the easiest internal detail to asse
 
 Location: `packages/*/CHANGELOG.md` (per package).
 
-**NEVER update changelogs unless explicitly asked.** Do not add, edit, or reorder entries as part of a feature, fix, or PR unless the user requests it.
+**NEVER update changelogs unless explicitly asked.** Do not add, edit, or reorder entries as part of a feature, fix, or PR unless the architect requests it.
 
 **Format** — sections under `## [Unreleased]`:
 
@@ -330,7 +330,7 @@ Location: `packages/*/CHANGELOG.md` (per package).
 **Rules:**
 
 - New entries always go under `## [Unreleased]`.
-- Entries are one line, brief, and user-facing: lead with what the user will see or can now do. Root-cause narration and implementation detail belong in the commit/PR, not the changelog.
+- Entries are one line, brief, and user-facing: lead with what the architect will see or can now do. Root-cause narration and implementation detail belong in the commit/PR, not the changelog.
 - Never modify already-released sections (e.g., `## [0.12.2]`) — they are immutable.
 - Don't flag changelog section order or formatting in reviews or PRs — `bun run release` runs `fix-changelogs` which normalizes everything automatically.
 
@@ -345,3 +345,13 @@ Location: `packages/*/CHANGELOG.md` (per package).
 2. Run `bun run release`.
 
 The script handles version bump, CHANGELOG finalization, commit, tag, publish, and adding new `[Unreleased]` sections.
+
+<!-- delendai:begin -->
+
+# delendai host hints (auto-generated)
+
+See `docs/delendai/host-hints/agent-instructions.generated.md` for the live agent catalog.
+
+- Bootstrap §7 (repo-level rules) is in effect.
+
+<!-- delendai:end -->

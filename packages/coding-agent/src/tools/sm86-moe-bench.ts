@@ -1,6 +1,6 @@
 import { join } from "node:path";
 /**
- * Run Sovereign MoE PCIe experiments (1-8) via the unified CLI.
+ * Run estate-scripts MoE PCIe experiments (1-8) via the unified CLI.
  */
 export class Sm86MoeBenchTool {
 	static readonly loadMode = "essential" as const;
@@ -12,7 +12,7 @@ export class Sm86MoeBenchTool {
 			throw new Error(`Invalid experiment ID: ${experiment}. Must be one of ${valid.join(", ")}`);
 		}
 
-		const args = ["python3", "/home/toxic/sovereign/tools/pcie-moe/cli.py", experiment];
+		const args = ["python3", "/home/toxic/estate-scripts/tools/pcie-moe/cli.py", experiment];
 		if (json) args.push("--json");
 
 		const proc = Bun.spawnSync(args, { stdout: "pipe", stderr: "pipe" });

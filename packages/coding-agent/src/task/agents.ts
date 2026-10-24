@@ -70,6 +70,17 @@ const EMBEDDED_AGENT_DEFS: EmbeddedAgentDef[] = [
 		},
 		template: taskMd,
 	},
+	...SWARM_SLOTS.map(slot => ({
+		fileName: `${slot}.md`,
+		frontmatter: {
+			name: slot,
+			description: `Swarm worker slot ${slot.slice(5)} — pin its model via task.agentModelOverrides.${slot}`,
+			spawns: "*" as const,
+			model: "@smol",
+			thinkingLevel: Effort.Medium,
+		},
+		template: taskMd,
+	})),
 ];
 
 // Computed lazily on first loadBundledAgents() call to avoid eager prompt.render at module load.

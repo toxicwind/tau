@@ -2059,7 +2059,7 @@ function buildParams(
 	dropOpenRouterKimiForcedToolReasoning(params, model, finalPolicy);
 
 	applyOpenAIGatewayRouting(params, compat, cacheRetention !== "none");
-	// Generalized OpenRouter coercions (SovereignDotsClient port): any
+	// Generalized OpenRouter coercions (estate-scriptsDotsClient port): any
 	// OpenRouter-routed model gets temperature/stop/reasoning/provider
 	// shaping, gated on the route rather than the model ID.
 	// reasoning cap is Dots-scoped: the recon proved the ghost-output

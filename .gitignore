@@ -97,7 +97,7 @@ packages/coding-agent/bench/boot-baseline.json
 
 .parity/
 
-# Sovereign standard sensitive & ephemeral patterns added by auditor
+# estate-scripts standard sensitive & ephemeral patterns added by auditor
 .secrets
 *.key
 *.pat

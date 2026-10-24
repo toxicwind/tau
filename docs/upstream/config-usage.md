@@ -79,7 +79,7 @@ A named profile (`tau --profile <name>`, `TAU_PROFILE`, or the legacy fallback `
 
 The relocation is uniform across the native provider (`builtin.ts`) and the generic `config.ts` helpers, so it covers slash commands, rules, prompts, instructions, hooks, tools, extensions, settings, skills, and MCP, plus the top-level `SYSTEM.md` / `RULES.md` / `AGENTS.md` files and runtime state (sessions, blobs, `agent.db`). A profile sees only its own TAU config, never the default profile's agent config.
 
-Keybindings are the one exception: a named profile merges the default profile's `~/.tau/agent/keybindings.*` under its own `~/.tau/profiles/<name>/agent/keybindings.*`, with the profile file overriding per binding ([#4867](https://github.com/toxicwind/tau/issues/4867)). Keybindings describe the terminal/keyboard in front of the user, which doesn't change with the active profile, so user-level remaps keep working in every profile unless the profile explicitly overrides them. The inherited file is read-only for the profile process — legacy-format migration of the default profile's file only happens when the default profile itself runs.
+Keybindings are the one exception: a named profile merges the default profile's `~/.tau/agent/keybindings.*` under its own `~/.tau/profiles/<name>/agent/keybindings.*`, with the profile file overriding per binding ([#4867](https://github.com/toxicwind/tau/issues/4867)). Keybindings describe the terminal/keyboard in front of the architect, which doesn't change with the active profile, so user-level remaps keep working in every profile unless the profile explicitly overrides them. The inherited file is read-only for the profile process — legacy-format migration of the default profile's file only happens when the default profile itself runs.
 
 On macOS and Linux, an existing `$XDG_DATA_HOME/tau`, `$XDG_STATE_HOME/tau`, or `$XDG_CACHE_HOME/tau` can relocate the corresponding data, state, or cache paths. For a named profile, TAU uses an XDG category only when that category already contains `tau/profiles/<name>`; otherwise that category remains under `~/.tau/profiles/<name>`. Run `tau config init-xdg` before relying on XDG paths.
 
@@ -297,7 +297,7 @@ Generate a session name using lowercase `<type>:<primary-objective>`.
 ```
 
 - Missing `TITLE_SYSTEM.md` keeps the bundled title prompts.
-- Discovery checks the current project directory bases first (`<cwd>/.tau`, `.claude`, `.codex`, `.gemini`), then the user bases in the generic helper order. Unlike native `SYSTEM.md`, project title discovery does **not** walk ancestor directories.
+- Discovery checks the current project directory bases first (`<cwd>/.tau`, `.claude`, `.codex`, `.gemini`), then the architect bases in the generic helper order. Unlike native `SYSTEM.md`, project title discovery does **not** walk ancestor directories.
 - The override replaces only the automatic session-title generation system prompt; normal `SYSTEM.md` / `APPEND_SYSTEM.md` prompt customization is unaffected.
 - The online path asks the title model to wrap the title in `<title>...</title>` and parses it leniently from text (a plain sentence, a truncated/unclosed tag, or a stray `{"title": "..."}` JSON echo all still work). A `TITLE_SYSTEM.md` override gets the wrap-in-`<title>` instruction appended after it. The local tiny-title path keeps the `<title>...</title>` prefill/stop wrapper and uses this file as its system turn.
 

@@ -22,11 +22,35 @@ FLOCK_PORT = "25193"
 [env._]
 file = "../../config/ports.env"
 
+# Per-project opt-in for the estate remote task cache (mbx-cache / mise at
+# :25148). The global mise config does NOT cascade here; each project must set
+# this itself for declared sources/outputs tasks to restore from the cache.
+[task_config.cache]
+enabled = true
+
 [tasks]
-build = "bun --cwd packages/coding-agent run build"
 "build:natives" = "cargo build -p tau-natives"
 dev = "bun packages/coding-agent/scripts/tau"
 test = "bun test"
 typecheck = "bun x tsc --noEmit"
 install = "bun install"
 clean = "cargo clean && rm -rf packages/*/dist"
+
+# Default fast build: compile the tau binary (cached via tau-build).
+[tasks.build]
+description = "Default fast build: compile the tau binary (cached via tau-build)"
+depends = ["tau-build"]
+
+# Canonical fast single-target binary build with declared inputs/outputs so
+# mbx-cache restores `packages/coding-agent/dist/tau` when nothing changed.
+[tasks.tau-build]
+description = "Compile the tau coding-agent binary to dist/tau (remote-cache restored)"
+run = "bun --cwd packages/coding-agent scripts/build-binary.ts"
+sources = [
+	"package.json",
+	"bun.lock",
+	"packages/coding-agent/package.json",
+	"packages/coding-agent/scripts/**/*.ts",
+	"packages/coding-agent/src/**/*.ts",
+]
+outputs = ["packages/coding-agent/dist/tau"]

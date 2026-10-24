@@ -290,7 +290,7 @@ With an argument:
 
 ### `--resume` (no value)
 
-- `main.ts` lists sessions for the current cwd/sessionDir and opens the picker in current-folder scope. When that list is empty it preloads `SessionManager.listAll()` so a user-initiated Tab switch to all-projects scope is immediate; it does not auto-switch scopes (issue #3099). `No sessions found` is printed only when the global list is also empty.
+- `main.ts` lists sessions for the current cwd/sessionDir and opens the picker in current-folder scope. When that list is empty it preloads `SessionManager.listAll()` so an architect-initiated Tab switch to all-projects scope is immediate; it does not auto-switch scopes (issue #3099). `No sessions found` is printed only when the global list is also empty.
 - Selected path is opened with `SessionManager.open(selectedPath)` before session creation; the process/project scope then switches to the resumed session's cwd (`switchToResumedProject`), reloading cwd-scoped settings and plugin caches and re-resolving scoped models.
 
 ### `--resume <value>`
@@ -307,7 +307,7 @@ Cross-project id match behavior:
 
 - If the matched session's recorded directory no longer exists, CLI asks `Session's directory no longer exists (...). Move (re-root) it into the current directory? [Y/n]`.
   - On yes (default), `SessionManager.open(match.path)` followed by `manager.moveTo(cwd)` re-roots the existing session into the current directory without duplicating it.
-  - On no, startup is cancelled. In non-TTY mode, startup fails with an error directing the user to run interactively.
+  - On no, startup is cancelled. In non-TTY mode, startup fails with an error directing the architect to run interactively.
 - If the recorded directory still exists, the matched session is opened directly. Startup later changes the process/project scope to the resumed session's cwd and reloads cwd-scoped settings and plugin caches. It is not implicitly forked.
 
 ## CLI `--continue`
