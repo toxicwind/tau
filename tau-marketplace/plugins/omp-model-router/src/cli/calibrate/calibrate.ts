@@ -55,17 +55,12 @@ function doAnalyze(path: string | undefined): number {
 	return 0;
 }
 
-function doSimulate(
-	path: string | undefined,
-	opts: { warmup: number },
-): number {
+function doSimulate(path: string | undefined, opts: { warmup: number }): number {
 	const files = resolveTraceFiles(path);
 	const trace = parseTraceFiles(files);
-	const completed = trace.records.filter((r) => r.llmDecision).length;
+	const completed = trace.records.filter(r => r.llmDecision).length;
 	if (completed < 5) {
-		console.error(
-			`Need at least 5 completed comparisons; found ${completed}. Collect more telemetry first.`,
-		);
+		console.error(`Need at least 5 completed comparisons; found ${completed}. Collect more telemetry first.`);
 		return 1;
 	}
 	console.log(`# ${files.length} file(s), ${completed} scoreable record(s), warmup=${opts.warmup}`);
@@ -90,9 +85,7 @@ function doImport(fromPath: string | undefined): number {
 		return 1;
 	}
 	const r = importGlobal(fromPath);
-	console.log(
-		`Imported snapshot: ${r.totalSessions} sessions, ${r.totalComparisons} comparisons`,
-	);
+	console.log(`Imported snapshot: ${r.totalSessions} sessions, ${r.totalComparisons} comparisons`);
 	return 0;
 }
 

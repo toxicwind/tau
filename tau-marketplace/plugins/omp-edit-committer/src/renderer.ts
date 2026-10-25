@@ -56,9 +56,7 @@ export function renderCommitMessage(
 		// Defensive: an entry without details (e.g. older session log) gets a
 		// single neutral line so the user isn't surprised by a blank block.
 		const fallback = new Container();
-		fallback.addChild(
-			new Text(theme.fg("muted", "edit-committer: (missing record)"), 0, 0),
-		);
+		fallback.addChild(new Text(theme.fg("muted", "edit-committer: (missing record)"), 0, 0));
 		return fallback;
 	}
 	const container = new Container();

@@ -31,10 +31,7 @@
  * returns a string and a `MessageMeta` blob the extension uses to render
  * the in-TUI commit badge.
  */
-import type {
-	EditToolDetails,
-	EditToolPerFileResult,
-} from "tau";
+import type { EditToolDetails, EditToolPerFileResult } from "tau";
 
 /** Lightweight handle to the parts of a diff we care about. */
 export interface DiffSummary {
@@ -170,7 +167,7 @@ function collectDiffs(
 	perFile: EditToolPerFileResult[] | undefined,
 ): FlatFileDiff[] {
 	if (perFile && perFile.length > 0) {
-		return perFile.map((entry) => ({
+		return perFile.map(entry => ({
 			path: entry.path,
 			diff: entry.diff,
 			op: entry.op,
@@ -187,7 +184,7 @@ function collectDiffs(
 	}
 	// `write` tool details is `undefined`; fall back to one entry per path
 	// with an empty diff. We still know *which* files were touched.
-	return paths.map((p) => ({ path: p, diff: "" }));
+	return paths.map(p => ({ path: p, diff: "" }));
 }
 
 /** Pick the verb that best matches the first added line, if any. */
@@ -195,8 +192,7 @@ function detectVerb(added: string | null, kind: EditKind): string {
 	if (kind === "create") return "add";
 	if (kind === "delete") return "drop";
 	if (kind === "rename") return "rename";
-	if (kind === "write")
-		return added ? (firstVerbMatch(added) ?? "update") : "update";
+	if (kind === "write") return added ? (firstVerbMatch(added) ?? "update") : "update";
 	return added ? (firstVerbMatch(added) ?? "edit") : "edit";
 }
 
@@ -214,7 +210,7 @@ function detectScope(paths: string[]): string {
 	const lastSlash = first.lastIndexOf("/");
 	if (paths.length > 1) {
 		// Multi-file: prefer the shared directory.
-		const dirs = new Set(paths.map((p) => p.slice(0, p.lastIndexOf("/"))));
+		const dirs = new Set(paths.map(p => p.slice(0, p.lastIndexOf("/"))));
 		if (dirs.size === 1) {
 			const d = [...dirs][0] ?? "";
 			return shortenScope(d) || "config";
@@ -223,9 +219,7 @@ function detectScope(paths: string[]): string {
 	}
 	const stem = first.slice(lastSlash + 1).replace(/\.[^.]+$/, "");
 	if (stem) return stem;
-	return (
-		shortenScope(lastSlash > 0 ? first.slice(0, lastSlash) : "") || "config"
-	);
+	return shortenScope(lastSlash > 0 ? first.slice(0, lastSlash) : "") || "config";
 }
 
 function shortenScope(scope: string): string {
@@ -235,16 +229,10 @@ function shortenScope(scope: string): string {
 }
 
 /** Build a 72-char-or-fewer subject line. */
-export function buildSubject(
-	summary: DiffSummary,
-	kind: EditKind,
-	intentHint?: string,
-): string {
+export function buildSubject(summary: DiffSummary, kind: EditKind, intentHint?: string): string {
 	const verb = detectVerb(summary.firstAddedLine ?? intentHint ?? null, kind);
 	const scope = detectScope(summary.paths);
-	const subject = intentHint
-		? sanitizeSubject(intentHint)
-		: summarizeFromDiff(summary, verb);
+	const subject = intentHint ? sanitizeSubject(intentHint) : summarizeFromDiff(summary, verb);
 	return trimSubject(`${verb}(${scope}): ${subject}`);
 }
 
@@ -270,17 +258,11 @@ function trimSubject(s: string): string {
 }
 
 /** Build the "Intent" block. Pulls the user's hint when present. */
-function buildIntent(
-	intentHint: string | undefined,
-	summary: DiffSummary,
-): string[] {
+function buildIntent(intentHint: string | undefined, summary: DiffSummary): string[] {
 	if (intentHint) return [`- ${sanitizeSubject(intentHint)}`];
-	if (summary.firstAddedLine)
-		return [`- ${sanitizeSubject(summary.firstAddedLine)}`];
+	if (summary.firstAddedLine) return [`- ${sanitizeSubject(summary.firstAddedLine)}`];
 	if (summary.hasStructuralChange) {
-		return [
-			`- ${summary.paths[0] ?? "file"} ${summary.hunks === 0 ? "structure" : "touched"}`,
-		];
+		return [`- ${summary.paths[0] ?? "file"} ${summary.hunks === 0 ? "structure" : "touched"}`];
 	}
 	return ["- no semantic change; pure formatting or whitespace"];
 }
@@ -293,32 +275,22 @@ function buildIntent(
 function buildTradeoffs(summary: DiffSummary, kind: EditKind): string[] {
 	const out: string[] = [];
 	if (summary.added === 0 && summary.removed > 0) {
-		out.push(
-			"- net removal; callers depending on the removed API/symbol will break",
-		);
+		out.push("- net removal; callers depending on the removed API/symbol will break");
 	}
 	if (summary.hasMultiFile && !summary.hasStructuralChange) {
-		out.push(
-			"- spans multiple files; reviewer should confirm coupling between sites",
-		);
+		out.push("- spans multiple files; reviewer should confirm coupling between sites");
 	}
 	if (summary.hasManyHunks) {
 		out.push("- many hunks; consider splitting the commit before review");
 	}
 	if (kind === "create") {
-		out.push(
-			"- new file; not yet exercised by any caller, so hidden coupling is possible",
-		);
+		out.push("- new file; not yet exercised by any caller, so hidden coupling is possible");
 	}
 	if (kind === "delete") {
-		out.push(
-			"- the file is gone; no greppable tombstones, search the old name manually",
-		);
+		out.push("- the file is gone; no greppable tombstones, search the old name manually");
 	}
 	if (out.length === 0) {
-		out.push(
-			"- kept the diff shape minimal; no refactor / no rename / no formatting churn",
-		);
+		out.push("- kept the diff shape minimal; no refactor / no rename / no formatting churn");
 	}
 	return out;
 }
@@ -330,11 +302,7 @@ function buildTradeoffs(summary: DiffSummary, kind: EditKind): string[] {
  * We emit a small, well-defined scaffold the LLM can replace with prose.
  */
 function buildDiagram(summary: DiffSummary, kind: EditKind): string[] {
-	if (
-		!summary.hasMultiFile &&
-		!summary.hasManyHunks &&
-		!summary.hasStructuralChange
-	) {
+	if (!summary.hasMultiFile && !summary.hasManyHunks && !summary.hasStructuralChange) {
 		return [];
 	}
 	const op =
@@ -347,12 +315,7 @@ function buildDiagram(summary: DiffSummary, kind: EditKind): string[] {
 					: kind === "write"
 						? "overwrite"
 						: `edit (+${summary.added}/-${summary.removed})`;
-	const lines: string[] = [
-		"```",
-		"Edit shape:",
-		"  before           after",
-		"  ───────          ─────",
-	];
+	const lines: string[] = ["```", "Edit shape:", "  before           after", "  ───────          ─────"];
 	for (const p of summary.paths.slice(0, 4)) {
 		lines.push(`  ${p}  ──►  ${op}`);
 	}

@@ -42,9 +42,7 @@ export const DEFAULT_OMP = join(
 export function resolveOmpPath(explicit?: string): string {
 	const candidate = explicit ?? process.env.OMP_BIN ?? DEFAULT_OMP;
 	if (!existsSync(candidate)) {
-		throw new Error(
-			`probe-runner: omp binary not found at ${candidate}; set OMP_BIN or pass an explicit path`,
-		);
+		throw new Error(`probe-runner: omp binary not found at ${candidate}; set OMP_BIN or pass an explicit path`);
 	}
 	return candidate;
 }
@@ -94,7 +92,7 @@ export function runProbe(options: RunProbeOptions): Promise<ProbeRun> {
 	if (options.model !== undefined) argv.push("--model", options.model);
 	argv.push(prompt);
 
-	return new Promise((resolvePromise) => {
+	return new Promise(resolvePromise => {
 		const started = Date.now();
 		const child = spawn(ompPath, argv, {
 			cwd: options.cwd ?? process.cwd(),
@@ -113,7 +111,7 @@ export function runProbe(options: RunProbeOptions): Promise<ProbeRun> {
 		child.stderr.on("data", (chunk: Buffer) => {
 			stderr += chunk.toString();
 		});
-		child.on("close", (code) => {
+		child.on("close", code => {
 			clearTimeout(timer);
 			let json: unknown = null;
 			if (existsSync(outputPath)) {

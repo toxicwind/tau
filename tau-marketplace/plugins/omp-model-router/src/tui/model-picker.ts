@@ -46,7 +46,7 @@ export interface ModelPickerOptions {
 
 /** Tabs by id; ALL is the unfiltered scope. Rest derived from models. */
 function buildTabs(models: readonly ModelItem[]): Tab[] {
-	const providers = [...new Set(models.map((m) => m.provider))].sort();
+	const providers = [...new Set(models.map(m => m.provider))].sort();
 	const tabs: Tab[] = [{ id: "all", label: "ALL" }];
 	for (const p of providers) {
 		tabs.push({ id: p, label: p.toUpperCase() });
@@ -136,12 +136,17 @@ export class ModelPickerComponent implements Component {
 		this.#currentFallbacks = options.currentFallbacks ?? [];
 		this.#models = options.models ?? collectModels(options.modelRegistry);
 
-		this.#tabBar = new TabBar("Provider", buildTabs(this.#models), {
-			label: (text) => theme.fg("muted", text),
-			activeTab: (text) => theme.fg("accent", text),
-			inactiveTab: (text) => theme.fg("muted", text),
-			hint: (text) => theme.fg("muted", text),
-		}, 0);
+		this.#tabBar = new TabBar(
+			"Provider",
+			buildTabs(this.#models),
+			{
+				label: text => theme.fg("muted", text),
+				activeTab: text => theme.fg("accent", text),
+				inactiveTab: text => theme.fg("muted", text),
+				hint: text => theme.fg("muted", text),
+			},
+			0,
+		);
 		this.#tabBar.onTabChange = (tab): void => {
 			this.#scope = tab.id;
 			this.#applyFilter();
@@ -194,7 +199,7 @@ export class ModelPickerComponent implements Component {
 		// Hint line
 		lines.push(t.fg("muted", "type filter · TAB scope · ↑↓ navigate · ENTER pick · ESC cancel"));
 
-		return lines.map((line) => truncateToWidth(replaceTabs(line), width));
+		return lines.map(line => truncateToWidth(replaceTabs(line), width));
 	}
 
 	handleInput(data: string): void {
@@ -244,8 +249,7 @@ export class ModelPickerComponent implements Component {
 
 	#moveUp(): void {
 		if (this.#filtered.length === 0) return;
-		this.#selectedIndex =
-			(this.#selectedIndex - 1 + this.#filtered.length) % this.#filtered.length;
+		this.#selectedIndex = (this.#selectedIndex - 1 + this.#filtered.length) % this.#filtered.length;
 	}
 
 	#moveDown(): void {
@@ -255,12 +259,8 @@ export class ModelPickerComponent implements Component {
 
 	#applyFilter(): void {
 		const query = this.#searchInput.getValue();
-		const scoped = this.#scope === "all"
-			? this.#models
-			: this.#models.filter((m) => m.provider === this.#scope);
-		const next = query
-			? fuzzyFilter([...scoped], query, (m) => `${m.provider}/${m.id} ${m.name}`)
-			: [...scoped];
+		const scoped = this.#scope === "all" ? this.#models : this.#models.filter(m => m.provider === this.#scope);
+		const next = query ? fuzzyFilter([...scoped], query, m => `${m.provider}/${m.id} ${m.name}`) : [...scoped];
 		this.#filtered = next;
 		this.#selectedIndex = Math.min(this.#selectedIndex, Math.max(0, next.length - 1));
 	}
@@ -279,7 +279,7 @@ export class ModelPickerComponent implements Component {
 		if (slash < 0) return undefined;
 		const provider = ref.slice(0, slash);
 		const id = ref.slice(slash + 1);
-		return this.#models.find((m) => m.provider === provider && m.id === id);
+		return this.#models.find(m => m.provider === provider && m.id === id);
 	}
 
 	#badgeFor(item: ModelItem): { text: string; styled: string } {
@@ -346,7 +346,7 @@ export class ModelPickerComponent implements Component {
 		// the badge column lines up exactly. The instance is kept around so
 		// future refactors can delegate viewport/scroll logic to it without
 		// changing the public surface.
-		const items: SelectItem[] = this.#models.map((m) => ({
+		const items: SelectItem[] = this.#models.map(m => ({
 			value: `${m.provider}/${m.id}`,
 			label: `${m.provider}/${m.id}`,
 			description: modelMeta(m.contextWindow, m.costInput, m.costOutput),

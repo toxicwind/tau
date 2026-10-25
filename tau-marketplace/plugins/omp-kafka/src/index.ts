@@ -5,9 +5,4 @@
  */
 
 export { default } from "./extension.ts";
-export type {
-	ConsumerMode,
-	DeliverAs,
-	KafkaMessageRecord,
-	ResolvedConsumer,
-} from "./types.ts";
+export type { ConsumerMode, DeliverAs, KafkaMessageRecord, ResolvedConsumer } from "./types.ts";

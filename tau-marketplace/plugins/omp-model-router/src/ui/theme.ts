@@ -50,9 +50,7 @@ export const shortenModelId = (provider: string, modelId: string): string => {
 	result = result.replace(/\./g, "-");
 
 	// Strip known boilerplate prefixes
-	const stripped = result
-		.replace(/^claude-/, "")
-		.replace(/^anthropic-/, "");
+	const stripped = result.replace(/^claude-/, "").replace(/^anthropic-/, "");
 
 	return stripped || result || modelId;
 };

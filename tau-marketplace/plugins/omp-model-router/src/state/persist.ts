@@ -2,28 +2,18 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync, appendFileSync } fr
 import { join, dirname } from "node:path";
 import { getAgentDir } from "tau";
 import type { ExtensionContext } from "tau";
-import type {
-	RouterPersistedState,
-	CustomSessionEntry,
-	RoutingDecision,
-} from "../types";
+import type { RouterPersistedState, CustomSessionEntry, RoutingDecision } from "../types";
 import { resolveProfileName } from "../config";
 import type { RouterState } from "./index";
 
 // ─── Type guard for deserialization ──────────────────────────────────────────
 
-export const isRouterPersistedState = (
-	value: unknown,
-): value is RouterPersistedState => {
+export const isRouterPersistedState = (value: unknown): value is RouterPersistedState => {
 	if (typeof value !== "object" || value === null) {
 		return false;
 	}
 	const v = value as Record<string, unknown>;
-	return (
-		typeof v.enabled === "boolean" &&
-		typeof v.selectedProfile === "string" &&
-		typeof v.timestamp === "number"
-	);
+	return typeof v.enabled === "boolean" && typeof v.selectedProfile === "string" && typeof v.timestamp === "number";
 };
 
 // ─── Persistent state file helpers ─────────────────────────────────────────
@@ -76,19 +66,13 @@ const debugFilePath = (state: RouterState): string | undefined => {
  * regardless of whether `debugVerbose` is set. The main session JSONL never
  * carries `debugHistory` data — only a count reference.
  */
-export const appendDebugEntry = (
-	state: RouterState,
-	decision: RoutingDecision,
-): void => {
+export const appendDebugEntry = (state: RouterState, decision: RoutingDecision): void => {
 	const file = debugFilePath(state);
 	if (!file) return;
 	try {
 		const dir = dirname(file);
 		if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
-		appendFileSync(
-			file,
-			JSON.stringify({ turn: state.userMessagesSeen, ...decision }) + "\n",
-		);
+		appendFileSync(file, JSON.stringify({ turn: state.userMessagesSeen, ...decision }) + "\n");
 	} catch {
 		// Never surface debug write errors to the user.
 	}
@@ -99,9 +83,7 @@ export const appendDebugEntry = (
 /** Minimum interval between session entry writes (ms) */
 export const PERSIST_DEBOUNCE_MS = 1000;
 
-export const buildPersistedState = (
-	state: RouterState,
-): RouterPersistedState => ({
+export const buildPersistedState = (state: RouterState): RouterPersistedState => ({
 	enabled: state.routerEnabled,
 	selectedProfile: state.selectedProfile,
 	thinkingByProfile: { ...state.thinkingByProfile },
@@ -120,10 +102,8 @@ const persistNow = (state: RouterState): void => {
 	const snapshot = JSON.stringify({
 		...persisted,
 		timestamp: 0,
-		lastDecision: persisted.lastDecision
-			? { ...persisted.lastDecision, timestamp: 0 }
-			: undefined,
-		debugHistory: persisted.debugHistory?.map((d) => ({
+		lastDecision: persisted.lastDecision ? { ...persisted.lastDecision, timestamp: 0 } : undefined,
+		debugHistory: persisted.debugHistory?.map(d => ({
 			...d,
 			timestamp: 0,
 		})),
@@ -172,10 +152,7 @@ export const persist = (state: RouterState): void => {
 	persistNow(state);
 };
 
-export const restoreFromSession = (
-	state: RouterState,
-	ctx: ExtensionContext,
-): void => {
+export const restoreFromSession = (state: RouterState, ctx: ExtensionContext): void => {
 	// NOTE: lastExtensionContext is intentionally NOT assigned here.
 	// Storing ctx during session_start/branch pins the full ExtensionContext
 	// (including sessionManager with the entire JSONL branch tree) in heap for
@@ -188,10 +165,7 @@ export const restoreFromSession = (
 
 	// ─── Source of truth for enabled/profile is the config file ─────
 	state.routerEnabled = state.currentConfig.routerEnabled ?? false;
-	state.selectedProfile = resolveProfileName(
-		state.currentConfig,
-		state.currentConfig.defaultProfile,
-	);
+	state.selectedProfile = resolveProfileName(state.currentConfig, state.currentConfig.defaultProfile);
 
 	// ─── Reset session-scoped state ─────────────────────────────────
 	state.thinkingByProfile = {};
@@ -201,9 +175,7 @@ export const restoreFromSession = (
 	// These are session-scoped metrics that persist across /reload.
 	// They are only zero-initialized when activateSession() creates a NEW scope.
 	state.lastNonRouterModel =
-		ctx.model && ctx.model.provider !== "router"
-			? `${ctx.model.provider}/${ctx.model.id}`
-			: state.lastNonRouterModel;
+		ctx.model && ctx.model.provider !== "router" ? `${ctx.model.provider}/${ctx.model.id}` : state.lastNonRouterModel;
 	state.lastDecision = undefined;
 
 	// ─── Restore session-level preferences from saved state ─────────
@@ -217,31 +189,22 @@ export const restoreFromSession = (
 	const branch = ctx.sessionManager.getBranch() as CustomSessionEntry[];
 	const tail = branch.length > 20 ? branch.slice(-20) : branch;
 	const sessionState = tail
-		.filter(
-			(entry) =>
-				entry.type === "custom" && entry.customType === "router-state",
-		)
-		.map((entry) => entry.data)
-		.reduce<RouterPersistedState | null>(
-			(acc, data) => (isRouterPersistedState(data) ? data : acc),
-			null,
-		);
+		.filter(entry => entry.type === "custom" && entry.customType === "router-state")
+		.map(entry => entry.data)
+		.reduce<RouterPersistedState | null>((acc, data) => (isRouterPersistedState(data) ? data : acc), null);
 
 	const savedState = sessionState ?? persistedState;
 
 	if (isRouterPersistedState(savedState)) {
 		// Do NOT restore enabled/selectedProfile from state — config is authoritative
 		// Pins are NO LONGER persisted — scoped pins are memory-only and session-scoped.
-		state.thinkingByProfile = savedState.thinkingByProfile
-			? { ...savedState.thinkingByProfile }
-			: {};
+		state.thinkingByProfile = savedState.thinkingByProfile ? { ...savedState.thinkingByProfile } : {};
 		state.debugEnabled = savedState.debugEnabled ?? state.debugEnabled;
 		state.widgetEnabled = savedState.widgetEnabled ?? state.widgetEnabled;
 		// debugHistory is session-scoped and NOT restored — usage ledger is
 		// the authoritative source for /router usage. debugHistory only shows
 		// the last N routing decisions for debugging purposes.
-		state.lastNonRouterModel =
-			savedState.lastNonRouterModel ?? state.lastNonRouterModel;
+		state.lastNonRouterModel = savedState.lastNonRouterModel ?? state.lastNonRouterModel;
 		// Accumulated metrics (cost, tokens, cache) are session-scoped and
 		// intentionally NOT restored from persisted state. They always start at 0
 		// for each new session to accurately reflect the current session's usage.

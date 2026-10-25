@@ -172,8 +172,6 @@ export class RouterState {
 	rtkRewriteCount = 0;
 	/** Whether RTK integration is active (config enabled + binary available). */
 	rtkActive = false;
-	
-
 
 	// ─── Calibration (session-level, ephemeral) ─────────────────────────
 	calibration: SessionCalibration | undefined;
@@ -211,10 +209,7 @@ export class RouterState {
 
 	constructor(pi: ExtensionAPI) {
 		this.pi = pi;
-		this.selectedProfile = resolveProfileName(
-			FALLBACK_CONFIG,
-			FALLBACK_CONFIG.defaultProfile,
-		);
+		this.selectedProfile = resolveProfileName(FALLBACK_CONFIG, FALLBACK_CONFIG.defaultProfile);
 	}
 
 	// ─── Session scope management ───────────────────────────────────────
@@ -240,11 +235,7 @@ export class RouterState {
 	 * @param source          Provenance of `parentSessionId` for diagnostics: "header" |
 	 *                        "fallback" | "none". Defaults to "none".
 	 */
-	activateSession(
-		sessionId: string,
-		parentSessionId?: string,
-		source: "header" | "fallback" | "none" = "none",
-	): void {
+	activateSession(sessionId: string, parentSessionId?: string, source: "header" | "fallback" | "none" = "none"): void {
 		const previousSessionId = this.activeSessionId;
 		this.activeSessionId = sessionId;
 		const existing = this.sessionScopes.get(sessionId);
@@ -254,13 +245,9 @@ export class RouterState {
 			// new session ID for a system-reminder retry within the same sub-agent),
 			// carry forward accumulated cost/counters so budget enforcement isn't
 			// inadvertently bypassed by the ID rotation.
-			const previousScope = previousSessionId
-				? this.sessionScopes.get(previousSessionId)
-				: undefined;
+			const previousScope = previousSessionId ? this.sessionScopes.get(previousSessionId) : undefined;
 			const isSibling =
-				previousScope &&
-				parentSessionId !== undefined &&
-				previousScope.parentSessionId === parentSessionId;
+				previousScope && parentSessionId !== undefined && previousScope.parentSessionId === parentSessionId;
 
 			this.sessionScopes.set(sessionId, {
 				sessionId,
@@ -269,22 +256,18 @@ export class RouterState {
 				debugHistory: isSibling ? previousScope.debugHistory : [],
 				lastDecision: isSibling ? previousScope.lastDecision : undefined,
 				isStreaming: false,
-				tierCounter: isSibling
-					? { ...previousScope.tierCounter }
-					: { high: 0, medium: 0, low: 0 },
-				modelCosts: isSibling
-					? new Map(previousScope.modelCosts)
-					: new Map(),
-			// Classifier cache — never carry forward (each session gets a fresh cache)
-			lastClassifierKey: undefined,
-			lastClassifierVerdict: undefined,
-			classifierTurnsSinceRun: 0,
-			classifierInvocations: isSibling ? previousScope.classifierInvocations : 0,
-			classifierCacheHits: isSibling ? previousScope.classifierCacheHits : 0,
-			// Monotonic user-message counter — carry forward for siblings
-			// (sibling sessions share the same user message stream)
-			userMessagesSeen: isSibling ? previousScope.userMessagesSeen : 0,
-			lastUserEntryId: isSibling ? previousScope.lastUserEntryId : undefined,
+				tierCounter: isSibling ? { ...previousScope.tierCounter } : { high: 0, medium: 0, low: 0 },
+				modelCosts: isSibling ? new Map(previousScope.modelCosts) : new Map(),
+				// Classifier cache — never carry forward (each session gets a fresh cache)
+				lastClassifierKey: undefined,
+				lastClassifierVerdict: undefined,
+				classifierTurnsSinceRun: 0,
+				classifierInvocations: isSibling ? previousScope.classifierInvocations : 0,
+				classifierCacheHits: isSibling ? previousScope.classifierCacheHits : 0,
+				// Monotonic user-message counter — carry forward for siblings
+				// (sibling sessions share the same user message stream)
+				userMessagesSeen: isSibling ? previousScope.userMessagesSeen : 0,
+				lastUserEntryId: isSibling ? previousScope.lastUserEntryId : undefined,
 			});
 			if (this.currentConfig.debug && !this.parentAttributionLogged.has(sessionId)) {
 				this.parentAttributionLogged.add(sessionId);
@@ -303,9 +286,7 @@ export class RouterState {
 						`[model-router] parent attribution: child=${sessionId} source=fallback parent=${parentSessionId}`,
 					);
 				} else {
-					console.log(
-						`[model-router] parent attribution: child=${sessionId} source=none (root or orphan)`,
-					);
+					console.log(`[model-router] parent attribution: child=${sessionId} source=none (root or orphan)`);
 				}
 			}
 		} else {
@@ -326,17 +307,11 @@ export class RouterState {
 	 * scope's current `parentSessionId` is `undefined` and the incoming value
 	 * is defined — first non-undefined parent wins.
 	 */
-	private setParentIfAbsent(
-		scope: SessionScope,
-		parentSessionId: string | undefined,
-		sessionId: string,
-	): void {
+	private setParentIfAbsent(scope: SessionScope, parentSessionId: string | undefined, sessionId: string): void {
 		if (scope.parentSessionId === undefined && parentSessionId !== undefined) {
 			scope.parentSessionId = parentSessionId;
 			if (this.currentConfig.debug) {
-				console.log(
-					`[model-router] late-bound parent for ${sessionId}: ${parentSessionId}`,
-				);
+				console.log(`[model-router] late-bound parent for ${sessionId}: ${parentSessionId}`);
 			}
 		}
 	}
@@ -414,13 +389,13 @@ export class RouterState {
 			const parent = this.sessionScopes.get(parentId);
 			if (parent) {
 				// ── numeric sums ─────────────────────────────────────────────
-				parent.accumulatedCost               += child.accumulatedCost;
+				parent.accumulatedCost += child.accumulatedCost;
 				// ── struct sum ───────────────────────────────────────────────
-				parent.tierCounter.high   += child.tierCounter.high;
+				parent.tierCounter.high += child.tierCounter.high;
 				parent.tierCounter.medium += child.tierCounter.medium;
-				parent.tierCounter.low    += child.tierCounter.low;
+				parent.tierCounter.low += child.tierCounter.low;
 				parent.classifierInvocations += child.classifierInvocations;
-				parent.classifierCacheHits   += child.classifierCacheHits;
+				parent.classifierCacheHits += child.classifierCacheHits;
 				// ── map merge ────────────────────────────────────────────────
 				this.mergeModelCosts(parent.modelCosts, child.modelCosts);
 				// SKIP: debugHistory, lastDecision — parent retains its own routing trace.
@@ -438,19 +413,16 @@ export class RouterState {
 	 * - If absent from target: copy as a new entry (value copy, not reference).
 	 * - If present: sum all numeric fields in-place; keep target's `tier` label.
 	 */
-	private mergeModelCosts(
-		target: Map<string, ModelCostEntry>,
-		source: Map<string, ModelCostEntry>,
-	): void {
+	private mergeModelCosts(target: Map<string, ModelCostEntry>, source: Map<string, ModelCostEntry>): void {
 		for (const [key, src] of source) {
 			const existing = target.get(key);
 			if (existing) {
-				existing.invocations      += src.invocations;
-				existing.inputTokens      += src.inputTokens;
-				existing.outputTokens     += src.outputTokens;
-				existing.cacheReadTokens  += src.cacheReadTokens;
+				existing.invocations += src.invocations;
+				existing.inputTokens += src.inputTokens;
+				existing.outputTokens += src.outputTokens;
+				existing.cacheReadTokens += src.cacheReadTokens;
 				existing.cacheWriteTokens += src.cacheWriteTokens;
-				existing.cost             += src.cost;
+				existing.cost += src.cost;
 				// keep existing.tier — parent's label wins
 			} else {
 				target.set(key, { ...src });
@@ -486,10 +458,10 @@ export class RouterState {
 
 		for (const scope of this.sessionScopes.values()) {
 			for (const entry of scope.modelCosts.values()) {
-				inputTokens          += entry.inputTokens;
-				outputTokens         += entry.outputTokens;
+				inputTokens += entry.inputTokens;
+				outputTokens += entry.outputTokens;
 				modelCacheReadTokens += entry.cacheReadTokens;
-				cacheWriteTokens     += entry.cacheWriteTokens;
+				cacheWriteTokens += entry.cacheWriteTokens;
 			}
 		}
 
@@ -504,35 +476,78 @@ export class RouterState {
 
 	// ─── Backward-compatible accessors (delegate to active scope) ────────
 
-	get accumulatedCost(): number { return this.scope.accumulatedCost; }
-	set accumulatedCost(v: number) { this.scope.accumulatedCost = v; }
+	get accumulatedCost(): number {
+		return this.scope.accumulatedCost;
+	}
+	set accumulatedCost(v: number) {
+		this.scope.accumulatedCost = v;
+	}
 
-	get debugHistory(): RoutingDecision[] { return this.scope.debugHistory; }
-	set debugHistory(v: RoutingDecision[]) { this.scope.debugHistory = v; }
+	get debugHistory(): RoutingDecision[] {
+		return this.scope.debugHistory;
+	}
+	set debugHistory(v: RoutingDecision[]) {
+		this.scope.debugHistory = v;
+	}
 
-	get lastDecision(): RoutingDecision | undefined { return this.scope.lastDecision; }
-	set lastDecision(v: RoutingDecision | undefined) { this.scope.lastDecision = v; }
+	get lastDecision(): RoutingDecision | undefined {
+		return this.scope.lastDecision;
+	}
+	set lastDecision(v: RoutingDecision | undefined) {
+		this.scope.lastDecision = v;
+	}
 
-	get isStreaming(): boolean { return this.scope.isStreaming; }
-	set isStreaming(v: boolean) { this.scope.isStreaming = v; }
+	get isStreaming(): boolean {
+		return this.scope.isStreaming;
+	}
+	set isStreaming(v: boolean) {
+		this.scope.isStreaming = v;
+	}
 
-	get tierCounter(): TierCounter { return this.scope.tierCounter; }
-	get modelCosts(): Map<string, ModelCostEntry> { return this.scope.modelCosts; }
-
+	get tierCounter(): TierCounter {
+		return this.scope.tierCounter;
+	}
+	get modelCosts(): Map<string, ModelCostEntry> {
+		return this.scope.modelCosts;
+	}
 
 	// ─── Classifier cache accessors (scope-delegating) ───────────────────
-	get lastClassifierKey(): string | undefined { return this.scope.lastClassifierKey; }
-	set lastClassifierKey(v: string | undefined) { this.scope.lastClassifierKey = v; }
-	get lastClassifierVerdict(): { tier: RouterTier; reasoning: string } | undefined { return this.scope.lastClassifierVerdict; }
-	set lastClassifierVerdict(v: { tier: RouterTier; reasoning: string } | undefined) { this.scope.lastClassifierVerdict = v; }
-	get classifierTurnsSinceRun(): number { return this.scope.classifierTurnsSinceRun; }
-	set classifierTurnsSinceRun(v: number) { this.scope.classifierTurnsSinceRun = v; }
-	get classifierInvocations(): number { return this.scope.classifierInvocations; }
-	get classifierCacheHits(): number { return this.scope.classifierCacheHits; }
-	get userMessagesSeen(): number { return this.scope.userMessagesSeen; }
-	set userMessagesSeen(v: number) { this.scope.userMessagesSeen = v; }
-	get lastUserEntryId(): string | undefined { return this.scope.lastUserEntryId; }
-	set lastUserEntryId(v: string | undefined) { this.scope.lastUserEntryId = v; }
+	get lastClassifierKey(): string | undefined {
+		return this.scope.lastClassifierKey;
+	}
+	set lastClassifierKey(v: string | undefined) {
+		this.scope.lastClassifierKey = v;
+	}
+	get lastClassifierVerdict(): { tier: RouterTier; reasoning: string } | undefined {
+		return this.scope.lastClassifierVerdict;
+	}
+	set lastClassifierVerdict(v: { tier: RouterTier; reasoning: string } | undefined) {
+		this.scope.lastClassifierVerdict = v;
+	}
+	get classifierTurnsSinceRun(): number {
+		return this.scope.classifierTurnsSinceRun;
+	}
+	set classifierTurnsSinceRun(v: number) {
+		this.scope.classifierTurnsSinceRun = v;
+	}
+	get classifierInvocations(): number {
+		return this.scope.classifierInvocations;
+	}
+	get classifierCacheHits(): number {
+		return this.scope.classifierCacheHits;
+	}
+	get userMessagesSeen(): number {
+		return this.scope.userMessagesSeen;
+	}
+	set userMessagesSeen(v: number) {
+		this.scope.userMessagesSeen = v;
+	}
+	get lastUserEntryId(): string | undefined {
+		return this.scope.lastUserEntryId;
+	}
+	set lastUserEntryId(v: string | undefined) {
+		this.scope.lastUserEntryId = v;
+	}
 
 	/** Record a routing decision (tier counter). Called at decision time. */
 	recordRoutingDecision(tier: RouterTier): void {
@@ -540,7 +555,17 @@ export class RouterState {
 	}
 
 	/** Record model cost on stream completion. Called when usage data arrives. */
-	recordModelCost(model: string, tier: string, usage: { inputTokens: number; outputTokens: number; cacheReadTokens: number; cacheWriteTokens: number; cost: number }): void {
+	recordModelCost(
+		model: string,
+		tier: string,
+		usage: {
+			inputTokens: number;
+			outputTokens: number;
+			cacheReadTokens: number;
+			cacheWriteTokens: number;
+			cost: number;
+		},
+	): void {
 		const existing = this.scope.modelCosts.get(model);
 		if (existing) {
 			existing.invocations++;
@@ -570,10 +595,7 @@ export class RouterState {
 		appendDebugEntry(this, decision);
 	}
 
-	getThinkingOverride(
-		profileName: string,
-		tier: RouterTier,
-	): RoutingDecision["thinking"] | undefined {
+	getThinkingOverride(profileName: string, tier: RouterTier): RoutingDecision["thinking"] | undefined {
 		return this.thinkingByProfile[profileName]?.[tier];
 	}
 

@@ -45,11 +45,7 @@ function sha256(contents: string): string {
 	return createHash("sha256").update(contents).digest("hex");
 }
 
-function listTree(
-	root: string,
-	ignoreDirs: ReadonlySet<string>,
-	ignoreFiles: ReadonlySet<string>,
-): FileEntry[] {
+function listTree(root: string, ignoreDirs: ReadonlySet<string>, ignoreFiles: ReadonlySet<string>): FileEntry[] {
 	const entries: FileEntry[] = [];
 	const walk = (dir: string): void => {
 		for (const dirent of readdirSync(dir, { withFileTypes: true })) {
@@ -83,8 +79,8 @@ export function diffTrees(
 	}
 	const ignoreDirs = options.ignoreDirs ?? DEFAULT_IGNORED_DIRS;
 	const ignoreFiles = options.ignoreFiles ?? DEFAULT_IGNORED_FILES;
-	const left = new Map(listTree(leftRoot, ignoreDirs, ignoreFiles).map((e) => [e.relPath, e]));
-	const right = new Map(listTree(rightRoot, ignoreDirs, ignoreFiles).map((e) => [e.relPath, e]));
+	const left = new Map(listTree(leftRoot, ignoreDirs, ignoreFiles).map(e => [e.relPath, e]));
+	const right = new Map(listTree(rightRoot, ignoreDirs, ignoreFiles).map(e => [e.relPath, e]));
 
 	const onlyInLeft: string[] = [];
 	const onlyInRight: string[] = [];
@@ -119,7 +115,7 @@ export type CensusOptions = {
  * A directory with no hits outside itself has no consumers and is dead.
  */
 export function censusConsumers(options: CensusOptions): Map<string, ConsumerHit[]> {
-	const hits = new Map<string, ConsumerHit[]>(options.needles.map((n) => [n, []]));
+	const hits = new Map<string, ConsumerHit[]>(options.needles.map(n => [n, []]));
 	const ignoreDirs = options.ignoreDirs ?? DEFAULT_IGNORED_DIRS;
 	const perNeedle = options.maxHitsPerNeedle ?? 40;
 

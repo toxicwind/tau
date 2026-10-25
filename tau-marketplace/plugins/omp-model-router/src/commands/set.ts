@@ -5,10 +5,7 @@ import { join } from "node:path";
 import type { RouterState } from "../state";
 import { applyConfigUpdate, resolveConfigValue, type Actions } from "./shared";
 
-export const handleSet = (
-	_state: RouterState,
-	actions: Actions,
-) => async (args: string[], ctx: ExtensionContext) => {
+export const handleSet = (_state: RouterState, actions: Actions) => async (args: string[], ctx: ExtensionContext) => {
 	if (args.length === 0) {
 		const lines = [
 			"Usage: /router set <key> [value]",
@@ -49,10 +46,7 @@ export const handleSet = (
 	// Show current value when no value provided
 	if (!value) {
 		const current = resolveConfigValue(raw, key);
-		ctx.ui.notify(
-			`${key} = ${current === undefined ? "(unset)" : JSON.stringify(current)}`,
-			"info",
-		);
+		ctx.ui.notify(`${key} = ${current === undefined ? "(unset)" : JSON.stringify(current)}`, "info");
 		return;
 	}
 
@@ -76,8 +70,5 @@ export const handleSet = (
 	await actions.ensureValidActiveRouterProfile(ctx);
 
 	const newValue = resolveConfigValue(raw, key);
-	ctx.ui.notify(
-		`Set ${key} = ${JSON.stringify(newValue)}  (config reloaded)`,
-		"info",
-	);
+	ctx.ui.notify(`Set ${key} = ${JSON.stringify(newValue)}  (config reloaded)`, "info");
 };

@@ -89,7 +89,7 @@ describe("censusConsumers", () => {
 		const hits = censusConsumers({ searchRoot: root, needles: ["ui-svelte"] });
 		const found = hits.get("ui-svelte") ?? [];
 		expect(found.length).toBe(2);
-		expect(found.map((hit) => hit.file).sort()).toEqual(["README.md", "bin/run.sh"]);
+		expect(found.map(hit => hit.file).sort()).toEqual(["README.md", "bin/run.sh"]);
 		expect(found[0]?.line).toBeGreaterThan(0);
 	});
 
@@ -110,7 +110,7 @@ describe("censusConsumers", () => {
 	test("does not descend into ignored directories", () => {
 		const root = makeTree({ "node_modules/dep/index.js": "needle\n", "app.ts": "needle\n" });
 		const hits = censusConsumers({ searchRoot: root, needles: ["needle"] });
-		expect(hits.get("needle")?.map((hit) => hit.file)).toEqual(["app.ts"]);
+		expect(hits.get("needle")?.map(hit => hit.file)).toEqual(["app.ts"]);
 	});
 });
 

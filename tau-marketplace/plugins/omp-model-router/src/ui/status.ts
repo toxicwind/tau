@@ -3,12 +3,7 @@ import type { TUI } from "@oh-my-pi/pi-tui";
 import type { ShimmerPalette } from "tau/modes/theme/shimmer";
 import { shimmerSegments } from "tau/modes/theme/shimmer";
 import type { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type {
-	RoutingDecision,
-	RouterConfig,
-	RouterThinkingByProfile,
-	ScopedPin,
-} from "../types";
+import type { RoutingDecision, RouterConfig, RouterThinkingByProfile, ScopedPin } from "../types";
 import { resolveEffectivePin, DEFAULT_PIN_TIMEOUT_MS } from "../routing/pin";
 import type { SessionScope } from "../state";
 import {
@@ -77,9 +72,7 @@ const getEffectiveThinking = (
 	thinkingByProfile: RouterThinkingByProfile,
 	profileName: string,
 	decision: RoutingDecision,
-): ThinkingLevel =>
-	(thinkingByProfile[profileName]?.[decision.tier] ??
-		decision.thinking) as ThinkingLevel;
+): ThinkingLevel => (thinkingByProfile[profileName]?.[decision.tier] ?? decision.thinking) as ThinkingLevel;
 
 const getDecisionFlags = (decision: RoutingDecision): string[] => {
 	const flags: string[] = [];
@@ -138,46 +131,37 @@ export const buildStatusText = (
 		let model = "";
 		if (lastNonRouterModel) {
 			const slashIdx = lastNonRouterModel.indexOf("/");
-			const shortModel = slashIdx >= 0
-				? shortenModelId(lastNonRouterModel.slice(0, slashIdx), lastNonRouterModel.slice(slashIdx + 1))
-				: lastNonRouterModel;
+			const shortModel =
+				slashIdx >= 0
+					? shortenModelId(lastNonRouterModel.slice(0, slashIdx), lastNonRouterModel.slice(slashIdx + 1))
+					: lastNonRouterModel;
 			model = theme.fg("dim", `  ${shortModel}`);
 		}
 		return offProfile + model;
 	}
 
-	const matchesProfile =
-		lastDecision && lastDecision.profile === selectedProfile;
+	const matchesProfile = lastDecision && lastDecision.profile === selectedProfile;
 	const matchesPin = activePin ? lastDecision?.tier === activePin : true;
 
 	if (!lastDecision || !matchesProfile || !matchesPin) {
 		// No decision yet — profile label only
 		const profileText = ` ⬡ ${selectedProfile}`;
 		if (isStreaming) {
-			return shimmerSegments(
-				[{ text: profileText, palette: PROFILE_PALETTE }],
-				theme,
-			) + pinSuffix + theme.fg("dim", "  routing…");
+			return (
+				shimmerSegments([{ text: profileText, palette: PROFILE_PALETTE }], theme) +
+				pinSuffix +
+				theme.fg("dim", "  routing…")
+			);
 		}
-	return theme.fg("accent", profileText) + pinSuffix + theme.fg("dim", "  waiting…");
+		return theme.fg("accent", profileText) + pinSuffix + theme.fg("dim", "  waiting…");
 	}
 
-	const thinking = getEffectiveThinking(
-		thinkingByProfile,
-		selectedProfile,
-		lastDecision,
-	);
+	const thinking = getEffectiveThinking(thinkingByProfile, selectedProfile, lastDecision);
 	const thinkingColor = THINKING_COLOR[thinking] ?? "muted";
 	const thinkingIcon = THINKING_ICON[thinking] ?? "○";
-	const shortModel = shortenModelId(
-		lastDecision.targetProvider,
-		lastDecision.targetModelId,
-	);
+	const shortModel = shortenModelId(lastDecision.targetProvider, lastDecision.targetModelId);
 	const flags = getDecisionFlags(lastDecision);
-	const flagText =
-		flags.length > 0
-			? " " + flags.map((f) => theme.fg("warning", `[${f}]`)).join(" ")
-			: "";
+	const flagText = flags.length > 0 ? " " + flags.map(f => theme.fg("warning", `[${f}]`)).join(" ") : "";
 
 	const profileText = ` ⬡ ${selectedProfile}`;
 	const modelText = `${thinkingIcon} ${shortModel}`;
@@ -256,9 +240,7 @@ export const updateStatus = (
 			const tierPalette = makeTierPalette(thinkingColor);
 			const costText = formatCost(theme, lastDecision);
 			const flags = getDecisionFlags(lastDecision);
-			const flagText = flags.length > 0
-				? " " + flags.map((f) => theme.fg("warning", `[${f}]`)).join(" ")
-				: "";
+			const flagText = flags.length > 0 ? " " + flags.map(f => theme.fg("warning", `[${f}]`)).join(" ") : "";
 			const classifierSuffix = lastDecision.classifierModelRef
 				? theme.fg("dim", ` ⚡${shortenModelRef(lastDecision.classifierModelRef)}`)
 				: "";
@@ -314,9 +296,7 @@ export const updateStatus = (
 		`Profile: ${statusProfile}${routerEnabled ? " (active)" : ""}`,
 		`Pin: ${formatScopedPin(scope, currentConfig)}`,
 		`Session cost: $${accumulatedCost.toFixed(4)}` +
-			(currentConfig.maxSessionBudget
-				? ` / $${currentConfig.maxSessionBudget.toFixed(2)}`
-				: ""),
+			(currentConfig.maxSessionBudget ? ` / $${currentConfig.maxSessionBudget.toFixed(2)}` : ""),
 	];
 
 	if (lastDecision && lastDecision.profile === statusProfile) {
@@ -326,8 +306,8 @@ export const updateStatus = (
 		const u = lastDecision.usage;
 		const usageStr = u
 			? ` ↑${u.inputTokens.toLocaleString()} ↓${u.outputTokens.toLocaleString()}` +
-			  (u.cacheReadTokens > 0 ? ` 📦${u.cacheReadTokens.toLocaleString()}` : "") +
-			  ` $${(u.cost ?? 0).toFixed(4)}`
+				(u.cacheReadTokens > 0 ? ` 📦${u.cacheReadTokens.toLocaleString()}` : "") +
+				` $${(u.cost ?? 0).toFixed(4)}`
 			: "";
 
 		widgetLines.push(
@@ -336,16 +316,13 @@ export const updateStatus = (
 		if (lastDecision.classifierModelRef) {
 			widgetLines.push(`Classifier: ${shortenModelRef(lastDecision.classifierModelRef)}`);
 		}
-		widgetLines.push(
-			`Phase: ${lastDecision.phase}`,
-			`Usage:${usageStr || " —"}`,
-		);
+		widgetLines.push(`Phase: ${lastDecision.phase}`, `Usage:${usageStr || " —"}`);
 	} else if (!routerEnabled && lastNonRouterModel) {
 		widgetLines.push(`Fallback: ${lastNonRouterModel}`);
 	}
 
 	ctx.ui.setWidget(
 		"router",
-		widgetLines.map((line) => theme.fg("dim", line)),
+		widgetLines.map(line => theme.fg("dim", line)),
 	);
 };

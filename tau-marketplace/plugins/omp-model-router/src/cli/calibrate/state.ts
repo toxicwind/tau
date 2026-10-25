@@ -1,15 +1,10 @@
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { homedir } from "node:os";
-import {
-	loadGlobalCalibration,
-	resetGlobalCalibration,
-	saveGlobalSnapshot,
-} from "../../calibration/global";
+import { loadGlobalCalibration, resetGlobalCalibration, saveGlobalSnapshot } from "../../calibration/global";
 import type { GlobalCalibrationSnapshot } from "../../calibration/types";
 
-const GLOBAL_FILE = () =>
-	join(homedir(), ".omp", "agent", "model-router", "calibration-global.json");
+const GLOBAL_FILE = () => join(homedir(), ".omp", "agent", "model-router", "calibration-global.json");
 
 export function exportGlobal(toPath: string): { path: string; bytes: number } {
 	const global = loadGlobalCalibration();
@@ -28,9 +23,7 @@ export function importGlobal(fromPath: string): {
 	if (!existsSync(fromPath)) {
 		throw new Error(`Import file not found: ${fromPath}`);
 	}
-	const data = JSON.parse(readFileSync(fromPath, "utf-8")) as
-		| GlobalCalibrationSnapshot
-		| undefined;
+	const data = JSON.parse(readFileSync(fromPath, "utf-8")) as GlobalCalibrationSnapshot | undefined;
 	if (
 		!data ||
 		typeof data !== "object" ||

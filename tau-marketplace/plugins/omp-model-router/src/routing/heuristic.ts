@@ -15,13 +15,7 @@ import type {
 	RouterThinkingByTier,
 	TaskType,
 } from "../types";
-import {
-	hasImageAttachment,
-	getLastUserText,
-	countToolResults,
-	countWords,
-	getRecentConversationText,
-} from "./text";
+import { hasImageAttachment, getLastUserText, countToolResults, countWords, getRecentConversationText } from "./text";
 
 // ─── Keyword matching ─────────────────────────────────────────────────────────
 
@@ -128,14 +122,7 @@ const IMPLEMENTATION_KEYWORDS: readonly string[] = [
 	"go ahead",
 ];
 
-const LOOKUP_KEYWORDS: readonly string[] = [
-	"where is",
-	"which file",
-	"show me",
-	"list",
-	"find",
-	"grep",
-];
+const LOOKUP_KEYWORDS: readonly string[] = ["where is", "which file", "show me", "list", "find", "grep"];
 
 const GIT_KEYWORDS: readonly string[] = [
 	"commit",
@@ -305,10 +292,7 @@ const SUMMARIZATION_TASK_MATCHER = buildKeywordMatcher(SUMMARIZATION_KEYWORDS);
  * word-boundary matching for single-word keywords and substring matching
  * for multi-word phrases.
  */
-export const matchesKeywords = (
-	text: string,
-	matcher: KeywordMatcher,
-): boolean => {
+export const matchesKeywords = (text: string, matcher: KeywordMatcher): boolean => {
 	for (const re of matcher.singleWord) {
 		if (re.test(text)) return true;
 	}
@@ -335,7 +319,7 @@ const countKeywordMatches = (text: string, matcher: KeywordMatcher): number => {
  * Kept for external callers that may depend on it.
  */
 export const containsAny = (text: string, keywords: string[]): boolean => {
-	return keywords.some((keyword) => {
+	return keywords.some(keyword => {
 		if (keyword.includes(" ")) return text.includes(keyword);
 		return new RegExp(`\\b${keyword}\\b`, "i").test(text);
 	});
@@ -392,13 +376,8 @@ export const buildRoutingDecision = (
 	const { provider, modelId } = parseCanonicalModelRef(routed.model);
 	const baseThinking: ThinkingLevel =
 		routed.thinking ??
-		(tier === "high"
-			? ThinkingLevel.High
-			: tier === "low"
-				? ThinkingLevel.Low
-				: ThinkingLevel.Medium);
-	const effectiveThinking: ThinkingLevel =
-		thinkingOverrides?.[tier] ?? baseThinking;
+		(tier === "high" ? ThinkingLevel.High : tier === "low" ? ThinkingLevel.Low : ThinkingLevel.Medium);
+	const effectiveThinking: ThinkingLevel = thinkingOverrides?.[tier] ?? baseThinking;
 
 	return {
 		profile: profileName,
@@ -448,16 +427,12 @@ export const decideRouting = (
 		// Check custom rules first (use matchesKeywords for word-boundary accuracy)
 		if (rules) {
 			for (const rule of rules) {
-				const matches = Array.isArray(rule.matches)
-					? rule.matches
-					: [rule.matches];
+				const matches = Array.isArray(rule.matches) ? rule.matches : [rule.matches];
 				const ruleMatcher = buildKeywordMatcher(matches);
 				if (matchesKeywords(prompt, ruleMatcher)) {
 					tier = rule.tier;
 					phase = phaseForTier(tier);
-					reasoning =
-						rule.reason ??
-						`Matched custom routing rule for: ${matches.join(", ")}`;
+					reasoning = rule.reason ?? `Matched custom routing rule for: ${matches.join(", ")}`;
 					isRuleMatched = true;
 					break;
 				}
@@ -466,15 +441,11 @@ export const decideRouting = (
 
 		if (!isRuleMatched) {
 			// Sticky phase adjustments
-			const highThreshold = Math.max(
-				40,
-				120 - (previousDecision?.phase === "planning" ? phaseBias * 80 : 0),
-			);
+			const highThreshold = Math.max(40, 120 - (previousDecision?.phase === "planning" ? phaseBias * 80 : 0));
 			const lowThreshold = Math.max(
 				4,
 				12 -
-					(previousDecision?.phase === "implementation" ||
-					previousDecision?.phase === "planning"
+					(previousDecision?.phase === "implementation" || previousDecision?.phase === "planning"
 						? phaseBias * 8
 						: 0),
 			);
@@ -482,13 +453,11 @@ export const decideRouting = (
 			if (matchesKeywords(prompt, HIGH_HINT_MATCHER)) {
 				phase = "planning";
 				tier = "high";
-				reasoning =
-					"Detected an explicit request for deeper or higher-quality reasoning.";
+				reasoning = "Detected an explicit request for deeper or higher-quality reasoning.";
 			} else if (matchesKeywords(prompt, LOW_HINT_MATCHER)) {
 				phase = "lightweight";
 				tier = "low";
-				reasoning =
-					"Detected an explicit request for a faster or lighter response.";
+				reasoning = "Detected an explicit request for a faster or lighter response.";
 			} else if (matchesKeywords(prompt, SUMMARY_MATCHER)) {
 				phase = "lightweight";
 				tier = "low";
@@ -521,13 +490,8 @@ export const decideRouting = (
 			} else if (matchesKeywords(prompt, IMPLEMENTATION_MATCHER)) {
 				phase = "implementation";
 				tier = "medium";
-				reasoning =
-					"Detected implementation-oriented work with bounded execution scope.";
-			} else if (
-				matchesKeywords(prompt, LOOKUP_MATCHER) &&
-				wordCount <= 24 &&
-				toolResultCount === 0
-			) {
+				reasoning = "Detected implementation-oriented work with bounded execution scope.";
+			} else if (matchesKeywords(prompt, LOOKUP_MATCHER) && wordCount <= 24 && toolResultCount === 0) {
 				phase = "lightweight";
 				tier = "low";
 				reasoning = "Detected a short read-only lookup request.";
@@ -538,8 +502,7 @@ export const decideRouting = (
 			) {
 				phase = "planning";
 				tier = "high";
-				reasoning =
-					"Kept the planning-phase bias because the conversation still looks exploratory.";
+				reasoning = "Kept the planning-phase bias because the conversation still looks exploratory.";
 			} else if (
 				toolResultCount > 0 ||
 				previousDecision?.phase === "implementation" ||
@@ -547,8 +510,7 @@ export const decideRouting = (
 			) {
 				phase = "implementation";
 				tier = "medium";
-				reasoning =
-					"Detected active implementation work from prior tools or recent plan execution context.";
+				reasoning = "Detected active implementation work from prior tools or recent plan execution context.";
 			} else if (wordCount <= lowThreshold) {
 				phase = "lightweight";
 				tier = "low";
@@ -565,15 +527,7 @@ export const decideRouting = (
 		isBudgetForced = true;
 	}
 
-	const decision = buildRoutingDecision(
-		profileName,
-		profile,
-		tier,
-		phase,
-		reasoning,
-		thinkingOverrides,
-		false,
-	);
+	const decision = buildRoutingDecision(profileName, profile, tier, phase, reasoning, thinkingOverrides, false);
 	decision.isRuleMatched = isRuleMatched;
 	decision.isBudgetForced = isBudgetForced;
 	return decision;

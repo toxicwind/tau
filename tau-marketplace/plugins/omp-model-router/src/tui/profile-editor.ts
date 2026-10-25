@@ -6,11 +6,7 @@ import type { RouterProfile, RouterTier } from "../types";
 import { ModelPickerComponent } from "./model-picker";
 
 const TIERS: readonly RouterTier[] = ["high", "medium", "low"] as const;
-const THINKING_CYCLE: readonly ThinkingLevel[] = [
-	ThinkingLevel.Low,
-	ThinkingLevel.Medium,
-	ThinkingLevel.High,
-] as const;
+const THINKING_CYCLE: readonly ThinkingLevel[] = [ThinkingLevel.Low, ThinkingLevel.Medium, ThinkingLevel.High] as const;
 
 // Dynamic rows: 'thinking' and model/fallback chain entries
 export type RowKind = "thinking" | "chain";
@@ -29,7 +25,7 @@ type EditorState = "editing" | "dirty_confirm";
  *
  * Each tier shows:
  * - thinking row → cycles through `low → medium → high → low` via SPACE
- * - chain rows (model + fallbacks) → numbered rows with CTRL+U/K (move), 
+ * - chain rows (model + fallbacks) → numbered rows with CTRL+U/K (move),
  *   CTRL+A (add), CTRL+D (delete), Enter/Space to replace
  *
  * Exit paths:
@@ -87,7 +83,7 @@ export class ProfileEditorComponent implements Component {
 		for (const tier of TIERS) {
 			// Add thinking row for this tier
 			rows.push({ tier, kind: "thinking" });
-			
+
 			// Add chain rows for [model, ...fallbacks]
 			const cfg = this.#draft[tier];
 			const fallbacks = cfg.fallbacks ?? [];
@@ -160,12 +156,7 @@ export class ProfileEditorComponent implements Component {
 			const chain = this.#getChainForTier(tier);
 			const primaryModel = chain[0];
 			if (!primaryModel || primaryModel.trim().length === 0) {
-				lines.push(
-					t.fg(
-						"warning",
-						`  ⚠ ${tier.toUpperCase()} has no model configured`,
-					),
-				);
+				lines.push(t.fg("warning", `  ⚠ ${tier.toUpperCase()} has no model configured`));
 			}
 		}
 
@@ -173,7 +164,7 @@ export class ProfileEditorComponent implements Component {
 		lines.push("");
 		lines.push(t.fg("muted", `  ${this.#hintLine(rows)}`));
 
-		return lines.map((line) => truncateToWidth(replaceTabs(line), width));
+		return lines.map(line => truncateToWidth(replaceTabs(line), width));
 	}
 
 	#renderTierHeader(tier: RouterTier): string {
@@ -215,9 +206,7 @@ export class ProfileEditorComponent implements Component {
 
 		const prefix = changed ? "* " : cursor;
 		const number = `${chainIndex + 1}. `;
-		const role = chainIndex === 0
-			? t.fg("accent", "[primary]")
-			: t.fg("muted", `[fallback ${chainIndex}]`);
+		const role = chainIndex === 0 ? t.fg("accent", "[primary]") : t.fg("muted", `[fallback ${chainIndex}]`);
 
 		const modelText = isSelected ? t.fg("accent", modelRef) : modelRef;
 		return `${prefix}${number}${modelText} ${role}`;
@@ -242,10 +231,7 @@ export class ProfileEditorComponent implements Component {
 			const i = row.chainIndex!;
 			const canUp = i > 0;
 			const canDown = i < chain.length - 1;
-			const moveHints = [
-				canUp ? "ctrl+u ▲" : "",
-				canDown ? "ctrl+k ▼" : "",
-			].filter(Boolean).join(" · ");
+			const moveHints = [canUp ? "ctrl+u ▲" : "", canDown ? "ctrl+k ▼" : ""].filter(Boolean).join(" · ");
 			const base = "ENTER replace · ctrl+a add · ctrl+d remove";
 			return moveHints ? `${base} · ${moveHints} · ctrl+s save · ESC cancel` : `${base} · ctrl+s save · ESC cancel`;
 		}
@@ -390,7 +376,7 @@ export class ProfileEditorComponent implements Component {
 
 	#cycleThinking(tier: RouterTier): void {
 		const current = this.#draft[tier].thinking;
-		const idx = THINKING_CYCLE.findIndex((v) => v === current);
+		const idx = THINKING_CYCLE.findIndex(v => v === current);
 		const next = THINKING_CYCLE[(idx + 1 + THINKING_CYCLE.length) % THINKING_CYCLE.length];
 		this.#draft[tier] = { ...this.#draft[tier], thinking: next };
 	}
@@ -410,18 +396,12 @@ export class ProfileEditorComponent implements Component {
 			}
 		};
 
-		this.#subView = new ModelPickerComponent(
-			this.#tui,
-			this.#theme,
-			this.#keybindings,
-			done,
-			{
-				tier,
-				modelRegistry: this.#modelRegistry,
-				currentPrimary: current,
-				currentFallbacks: chain.filter((_, i) => i !== chainIndex),
-			},
-		);
+		this.#subView = new ModelPickerComponent(this.#tui, this.#theme, this.#keybindings, done, {
+			tier,
+			modelRegistry: this.#modelRegistry,
+			currentPrimary: current,
+			currentFallbacks: chain.filter((_, i) => i !== chainIndex),
+		});
 	}
 
 	#openModelPickerAdd(tier: RouterTier): void {
@@ -438,25 +418,17 @@ export class ProfileEditorComponent implements Component {
 				}
 				// Move cursor to the new chain row
 				const rows = this.#buildRows();
-				const newIdx = rows.findIndex(
-					(r) => r.tier === tier && r.kind === "chain" && r.chainIndex === c.length - 1
-				);
+				const newIdx = rows.findIndex(r => r.tier === tier && r.kind === "chain" && r.chainIndex === c.length - 1);
 				if (newIdx >= 0) this.#cursor = newIdx;
 			}
 		};
 
-		this.#subView = new ModelPickerComponent(
-			this.#tui,
-			this.#theme,
-			this.#keybindings,
-			done,
-			{
-				tier,
-				modelRegistry: this.#modelRegistry,
-				currentPrimary: chain[0],
-				currentFallbacks: chain.slice(1),
-			},
-		);
+		this.#subView = new ModelPickerComponent(this.#tui, this.#theme, this.#keybindings, done, {
+			tier,
+			modelRegistry: this.#modelRegistry,
+			currentPrimary: chain[0],
+			currentFallbacks: chain.slice(1),
+		});
 	}
 
 	// ─── Helpers ───────────────────────────────────────────────────────────
@@ -465,7 +437,6 @@ export class ProfileEditorComponent implements Component {
 		return JSON.stringify(this.#draft) !== this.#originalJson;
 	}
 }
-
 
 /**
  * Factory matching the `ctx.ui.custom` signature. Builds a component bound to
@@ -483,15 +454,7 @@ export function createProfileEditorFactory(
 	done: (result: RouterProfile | undefined) => void,
 ) => ProfileEditorComponent {
 	return (tui, theme, keybindings, done) =>
-		new ProfileEditorComponent(
-			tui,
-			theme,
-			keybindings,
-			done,
-			profileName,
-			profile,
-			modelRegistry,
-		);
+		new ProfileEditorComponent(tui, theme, keybindings, done, profileName, profile, modelRegistry);
 }
 
 // ─── CRUD Helper Functions ────────────────────────────────────────────────────

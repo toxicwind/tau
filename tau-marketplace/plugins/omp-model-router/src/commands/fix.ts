@@ -7,10 +7,7 @@ import { setScopedPin, DEFAULT_PIN_TIMEOUT_MS } from "../routing/pin";
 
 const TIER_SET: readonly string[] = ROUTER_TIERS;
 
-export const handleFix = (
-	state: RouterState,
-	actions: Actions,
-) => async (args: string[], ctx: ExtensionContext) => {
+export const handleFix = (state: RouterState, actions: Actions) => async (args: string[], ctx: ExtensionContext) => {
 	if (args.length !== 1) {
 		ctx.ui.notify("Usage: /router fix <high|medium|low>", "error");
 		return;
@@ -29,8 +26,5 @@ export const handleFix = (
 	actions.updateStatus(ctx);
 	const ttl = state.currentConfig.pinTimeout ?? DEFAULT_PIN_TIMEOUT_MS;
 	const mins = Math.round(ttl / 60_000);
-	ctx.ui.notify(
-		`Router decision corrected. Pinned to ${tier} for this session (decays in ~${mins} min).`,
-		"info",
-	);
+	ctx.ui.notify(`Router decision corrected. Pinned to ${tier} for this session (decays in ~${mins} min).`, "info");
 };

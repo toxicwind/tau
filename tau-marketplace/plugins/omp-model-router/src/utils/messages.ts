@@ -24,17 +24,8 @@ export interface ExtractOptions {
  * Extract plain text from message content. Handles both the string and
  * structured-array shapes that `Message["content"]` can take.
  */
-export function extractMessageText(
-	content: string | Message["content"],
-	opts: ExtractOptions = {},
-): string {
-	const {
-		includeThinking = true,
-		includeToolCalls = true,
-		toolCallFormat = "args",
-		maxLength,
-		joiner = "\n",
-	} = opts;
+export function extractMessageText(content: string | Message["content"], opts: ExtractOptions = {}): string {
+	const { includeThinking = true, includeToolCalls = true, toolCallFormat = "args", maxLength, joiner = "\n" } = opts;
 
 	if (typeof content === "string") {
 		return maxLength !== undefined ? content.slice(0, maxLength) : content;
@@ -49,9 +40,7 @@ export function extractMessageText(
 			if (part.thinking) parts.push(part.thinking);
 		} else if (part.type === "toolCall" && includeToolCalls) {
 			parts.push(
-				toolCallFormat === "name-only"
-					? `[tool:${part.name}]`
-					: `${part.name} ${JSON.stringify(part.arguments)}`,
+				toolCallFormat === "name-only" ? `[tool:${part.name}]` : `${part.name} ${JSON.stringify(part.arguments)}`,
 			);
 		}
 	}
@@ -80,7 +69,6 @@ export function getLastUserText(context: Context, opts?: ExtractOptions): string
 	return "";
 }
 
-
 // ─── Tool-mix extraction (Phase 2: classifier-tool-mix-signal) ───────────────
 
 /**
@@ -89,13 +77,7 @@ export function getLastUserText(context: Context, opts?: ExtractOptions): string
  * "mixed"  — no single category exceeds the 60% dominance threshold.
  * "other"  — internal use; unmapped tool names fold here but never win.
  */
-export type Bucket =
-	| "exploration"
-	| "implementation"
-	| "verification"
-	| "delegation"
-	| "mixed"
-	| "fresh";
+export type Bucket = "exploration" | "implementation" | "verification" | "delegation" | "mixed" | "fresh";
 
 /** Category map: tool name → primary bucket. Unlisted names fold into "other". */
 const TOOL_CATEGORIES: Record<string, Exclude<Bucket, "mixed" | "fresh">> = {
@@ -125,7 +107,7 @@ const TOOL_CATEGORIES: Record<string, Exclude<Bucket, "mixed" | "fresh">> = {
 	eval: "delegation",
 } as const;
 
-const DOMINANCE_THRESHOLD = 0.60;
+const DOMINANCE_THRESHOLD = 0.6;
 const TOOL_WINDOW_CAP = 12;
 
 /**
@@ -140,9 +122,7 @@ const TOOL_WINDOW_CAP = 12;
  *
  * Single-pass: no intermediate arrays, no flat(), early exit when window is full.
  */
-export function extractRecentToolCalls(
-	context: Context,
-): { counts: Record<string, number>; names: string[] } {
+export function extractRecentToolCalls(context: Context): { counts: Record<string, number>; names: string[] } {
 	// Collect at most TOOL_WINDOW_CAP names in reverse (most-recent first),
 	// then reverse once at the end. No intermediate groups array or .flat().
 	const reversed: string[] = [];

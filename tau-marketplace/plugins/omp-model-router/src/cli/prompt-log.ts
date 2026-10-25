@@ -95,9 +95,9 @@ function parseJsonlFile(path: string): PromptLogRecord[] {
 }
 
 const TIER_COLORS: Record<string, string> = {
-	high: "\x1b[31m",    // red
-	medium: "\x1b[33m",  // yellow
-	low: "\x1b[32m",     // green
+	high: "\x1b[31m", // red
+	medium: "\x1b[33m", // yellow
+	low: "\x1b[32m", // green
 };
 const RESET = "\x1b[0m";
 const DIM = "\x1b[2m";
@@ -110,8 +110,8 @@ function formatRecord(rec: PromptLogRecord, showPrompts: boolean): string {
 
 	lines.push(
 		`${DIM}${ts}${RESET}  turn:${rec.turnIndex}  msg:${rec.userMsgIndex}  ` +
-		`bucket:${BOLD}${rec.bucket ?? "—"}${RESET}  ` +
-		`model:${rec.model}  ${rec.latencyMs}ms`
+			`bucket:${BOLD}${rec.bucket ?? "—"}${RESET}  ` +
+			`model:${rec.model}  ${rec.latencyMs}ms`,
 	);
 
 	const hColor = TIER_COLORS[rec.heuristicTier] ?? "";
@@ -120,8 +120,8 @@ function formatRecord(rec: PromptLogRecord, showPrompts: boolean): string {
 		const marker = agree ? "✓" : "✗";
 		lines.push(
 			`  heuristic: ${hColor}${rec.heuristicTier}${RESET}  →  ` +
-			`classifier: ${tierColor}${rec.verdict.tier}${RESET}  ${marker}` +
-			(rec.verdict.reasoning ? `  "${rec.verdict.reasoning}"` : "")
+				`classifier: ${tierColor}${rec.verdict.tier}${RESET}  ${marker}` +
+				(rec.verdict.reasoning ? `  "${rec.verdict.reasoning}"` : ""),
 		);
 	} else if (rec.error) {
 		lines.push(`  heuristic: ${hColor}${rec.heuristicTier}${RESET}  →  ⚠ error: ${rec.error}`);
@@ -186,7 +186,9 @@ export async function runPromptLog(args: string[]): Promise<number> {
 			console.log(JSON.stringify(clean));
 		}
 	} else {
-		console.log(`${BOLD}Classifier Prompt Log${RESET}  (${allRecords.length} records from ${files.length} file(s))\n`);
+		console.log(
+			`${BOLD}Classifier Prompt Log${RESET}  (${allRecords.length} records from ${files.length} file(s))\n`,
+		);
 
 		let lastFile = "";
 		for (const rec of allRecords) {
@@ -202,16 +204,15 @@ export async function runPromptLog(args: string[]): Promise<number> {
 		const verdicts = allRecords.filter(r => r.verdict);
 		const errors = allRecords.filter(r => r.error);
 		const agreements = verdicts.filter(r => r.heuristicTier === r.verdict!.tier).length;
-		const avgLatency = verdicts.length > 0
-			? Math.round(verdicts.reduce((sum, r) => sum + r.latencyMs, 0) / verdicts.length)
-			: 0;
+		const avgLatency =
+			verdicts.length > 0 ? Math.round(verdicts.reduce((sum, r) => sum + r.latencyMs, 0) / verdicts.length) : 0;
 
 		console.log(`${DIM}───────────────────${RESET}`);
 		console.log(
 			`Total: ${allRecords.length}  Verdicts: ${verdicts.length}  ` +
-			`Errors: ${errors.length}  Agreement: ${agreements}/${verdicts.length} ` +
-			`(${verdicts.length > 0 ? Math.round(agreements / verdicts.length * 100) : 0}%)  ` +
-			`Avg latency: ${avgLatency}ms`
+				`Errors: ${errors.length}  Agreement: ${agreements}/${verdicts.length} ` +
+				`(${verdicts.length > 0 ? Math.round((agreements / verdicts.length) * 100) : 0}%)  ` +
+				`Avg latency: ${avgLatency}ms`,
 		);
 	}
 

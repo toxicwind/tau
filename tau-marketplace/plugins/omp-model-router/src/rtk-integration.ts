@@ -15,12 +15,10 @@ import type { RouterState } from "./state";
 
 type ToolCallEvent = {
 	toolName: string;
-	input: { command: string;[key: string]: any };
+	input: { command: string; [key: string]: any };
 };
 
-type RewriteDecision =
-	| { kind: "rewrite"; rewritten: string }
-	| { kind: "skip" };
+type RewriteDecision = { kind: "rewrite"; rewritten: string } | { kind: "skip" };
 
 /**
  * Read text from a stream (Bun runtime)
@@ -29,7 +27,7 @@ function readText(stream: ReadableStream<Uint8Array> | null | undefined, name: s
 	if (!stream) {
 		throw new Error(`rtk rewrite ${name} stream was unavailable`);
 	}
-	return new Response(stream).text().then((text) => text.trim());
+	return new Response(stream).text().then(text => text.trim());
 }
 
 /**
@@ -46,11 +44,7 @@ async function rewriteWithRtk(command: string): Promise<RewriteDecision> {
 		stderr: "pipe",
 	});
 
-	const [exitCode, stdout] = await Promise.all([
-		proc.exited,
-		readText(proc.stdout, "stdout"),
-		proc.stderr?.cancel(),
-	]);
+	const [exitCode, stdout] = await Promise.all([proc.exited, readText(proc.stdout, "stdout"), proc.stderr?.cancel()]);
 
 	switch (exitCode) {
 		case 0: // Rewritten
@@ -77,10 +71,7 @@ function hasRtkBinary(): boolean {
  * Intercepts bash tool calls and rewrites them via `rtk rewrite`.
  * Updates `state.rtkActive` and `state.rtkRewriteCount` for observability.
  */
-export function registerRtkIntegration(
-	pi: ExtensionAPI,
-	state: RouterState,
-): void {
+export function registerRtkIntegration(pi: ExtensionAPI, state: RouterState): void {
 	const enabled = state.currentConfig.enableRtk ?? false;
 	if (!enabled) {
 		state.rtkActive = false;
@@ -92,17 +83,14 @@ export function registerRtkIntegration(
 		state.rtkActive = false;
 		// Notify on session start that RTK is configured but not installed.
 		pi.on("session_start", (_event, ctx: ExtensionContext) => {
-			ctx.ui.notify(
-				"RTK enabled but binary not found in PATH. Install: brew install rtk",
-				"warning",
-			);
+			ctx.ui.notify("RTK enabled but binary not found in PATH. Install: brew install rtk", "warning");
 		});
 		return;
 	}
 
 	state.rtkActive = true;
 
-	pi.on("tool_execution_start", async (event) => {
+	pi.on("tool_execution_start", async event => {
 		// RTK currently only supports bash tool rewrites.
 		if (event.toolName !== "bash") return;
 

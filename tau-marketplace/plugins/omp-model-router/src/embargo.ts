@@ -30,17 +30,14 @@ const RETRYABLE_TEXT_PATTERNS = [
  * @param message Error message text from `AssistantMessage.errorMessage`
  * @returns true if the error is retryable and should trigger embargo
  */
-export function isRetryableStatus(
-	status: number | undefined,
-	message: string,
-): boolean {
+export function isRetryableStatus(status: number | undefined, message: string): boolean {
 	if (status !== undefined) {
 		if (NON_RETRYABLE_STATUSES.has(status)) return false;
 		if (RETRYABLE_STATUSES.has(status)) return true;
 		// Unknown status — fall through to text heuristic
 	}
 	// No status or unrecognized status — use text heuristic
-	return RETRYABLE_TEXT_PATTERNS.some((pattern) => pattern.test(message));
+	return RETRYABLE_TEXT_PATTERNS.some(pattern => pattern.test(message));
 }
 
 // ─── Retry-After parsing ─────────────────────────────────────────────────────
@@ -91,10 +88,7 @@ const MAX_COOLDOWN_MS = 3_600_000;
  * @param config        EmbargoConfig from router config
  * @returns Duration in milliseconds to embargo the model
  */
-export function computeEmbargoDuration(
-	retryAfterMs: number | undefined,
-	config: EmbargoConfig,
-): number {
+export function computeEmbargoDuration(retryAfterMs: number | undefined, config: EmbargoConfig): number {
 	const defaultMs = config.defaultCooldownMs ?? DEFAULT_COOLDOWN_MS;
 	const minMs = config.minCooldownMs ?? MIN_COOLDOWN_MS;
 	const maxMs = config.maxCooldownMs ?? MAX_COOLDOWN_MS;

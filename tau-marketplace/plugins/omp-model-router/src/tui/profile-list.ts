@@ -1,12 +1,4 @@
-import {
-	type Component,
-	Input,
-	type TUI,
-	matchesKey,
-	padding,
-	replaceTabs,
-	truncateToWidth,
-} from "@oh-my-pi/pi-tui";
+import { type Component, Input, type TUI, matchesKey, padding, replaceTabs, truncateToWidth } from "@oh-my-pi/pi-tui";
 import type { ModelRegistry, Theme, KeybindingsManager } from "tau";
 import type { RouterConfig, RouterProfile, RouterTier } from "../types";
 import type { CalibrationConfig } from "../calibration/types";
@@ -229,22 +221,37 @@ export class ProfileListComponent implements Component {
 			const nameWidth = this.#filtered.reduce((w, e) => Math.max(w, e.name.length), 0);
 			const modelBudget = narrow ? 8 : 14;
 			const hWidth = this.#filtered.reduce(
-				(w, e) => Math.max(w, ellipsize(e.profile.high?.model ? shortenModelRef(e.profile.high.model) : "—", modelBudget).length),
+				(w, e) =>
+					Math.max(
+						w,
+						ellipsize(e.profile.high?.model ? shortenModelRef(e.profile.high.model) : "—", modelBudget).length,
+					),
 				0,
 			);
 			const mWidth = this.#filtered.reduce(
-				(w, e) => Math.max(w, ellipsize(e.profile.medium?.model ? shortenModelRef(e.profile.medium.model) : "—", modelBudget).length),
+				(w, e) =>
+					Math.max(
+						w,
+						ellipsize(e.profile.medium?.model ? shortenModelRef(e.profile.medium.model) : "—", modelBudget)
+							.length,
+					),
 				0,
 			);
 			const lWidth = this.#filtered.reduce(
-				(w, e) => Math.max(w, ellipsize(e.profile.low?.model ? shortenModelRef(e.profile.low.model) : "—", modelBudget).length),
+				(w, e) =>
+					Math.max(
+						w,
+						ellipsize(e.profile.low?.model ? shortenModelRef(e.profile.low.model) : "—", modelBudget).length,
+					),
 				0,
 			);
 
 			for (let i = 0; i < this.#filtered.length; i++) {
 				const entry = this.#filtered[i];
 				if (!entry) continue;
-				lines.push(this.#renderRow(entry, i === this.#cursor, narrow, nameWidth, hWidth, mWidth, lWidth, modelBudget));
+				lines.push(
+					this.#renderRow(entry, i === this.#cursor, narrow, nameWidth, hWidth, mWidth, lWidth, modelBudget),
+				);
 			}
 
 			// Page counter
@@ -368,15 +375,7 @@ export class ProfileListComponent implements Component {
 
 		const sep = narrow ? " " : "   ";
 		return (
-			cursorMark +
-			star +
-			name +
-			sep +
-			badge("H", h, hPad) +
-			sep +
-			badge("M", m, mPad) +
-			sep +
-			badge("L", l, lPad)
+			cursorMark + star + name + sep + badge("H", h, hPad) + sep + badge("M", m, mPad) + sep + badge("L", l, lPad)
 		);
 	}
 

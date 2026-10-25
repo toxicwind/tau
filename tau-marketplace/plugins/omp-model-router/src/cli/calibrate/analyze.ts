@@ -21,10 +21,7 @@ export function analyzeTrace(trace: ParsedTrace): AnalyzeStats {
 	const bySource = new Map<string, number>();
 
 	for (const rec of trace.records) {
-		bySource.set(
-			rec.finalDecision.source,
-			(bySource.get(rec.finalDecision.source) ?? 0) + 1,
-		);
+		bySource.set(rec.finalDecision.source, (bySource.get(rec.finalDecision.source) ?? 0) + 1);
 		if (rec.heuristicDecision.ruleName) rulePresent++;
 		if (rec.finalDecision.source === "pinned") pinned++;
 
@@ -43,13 +40,9 @@ export function analyzeTrace(trace: ParsedTrace): AnalyzeStats {
 			if (lat > maxLatency) maxLatency = lat;
 		} else {
 			failed++;
-			const reason =
-				(rec as { failureReason?: string }).failureReason ?? "unknown";
+			const reason = (rec as { failureReason?: string }).failureReason ?? "unknown";
 			const normalized = reason.replace(/\s*\(\d+ms\)\s*$/, "").trim();
-			failureReasons.set(
-				normalized,
-				(failureReasons.get(normalized) ?? 0) + 1,
-			);
+			failureReasons.set(normalized, (failureReasons.get(normalized) ?? 0) + 1);
 		}
 	}
 
@@ -74,20 +67,12 @@ export function formatAnalysisTable(stats: AnalyzeStats): string {
 	lines.push("Calibration Trace Analysis");
 	lines.push("==========================");
 	lines.push("");
-	lines.push(
-		`Records: ${stats.totalRecords} (${stats.completed} completed, ${stats.failed} failed/abandoned)`,
-	);
+	lines.push(`Records: ${stats.totalRecords} (${stats.completed} completed, ${stats.failed} failed/abandoned)`);
 	if (stats.completed > 0) {
 		const agreementRate = (stats.agreements / stats.completed) * 100;
-		lines.push(
-			`Agreement: ${agreementRate.toFixed(1)}% (${stats.agreements}/${stats.completed})`,
-		);
-		lines.push(
-			`Disagreement: ${(100 - agreementRate).toFixed(1)}% (${stats.disagreements}/${stats.completed})`,
-		);
-		lines.push(
-			`LLM latency: avg ${stats.avgLatencyMs}ms, max ${stats.maxLatencyMs}ms`,
-		);
+		lines.push(`Agreement: ${agreementRate.toFixed(1)}% (${stats.agreements}/${stats.completed})`);
+		lines.push(`Disagreement: ${(100 - agreementRate).toFixed(1)}% (${stats.disagreements}/${stats.completed})`);
+		lines.push(`LLM latency: avg ${stats.avgLatencyMs}ms, max ${stats.maxLatencyMs}ms`);
 	}
 	lines.push("");
 
@@ -96,18 +81,14 @@ export function formatAnalysisTable(stats: AnalyzeStats): string {
 		lines.push("           low    medium  high");
 		for (let h = 0; h < 3; h++) {
 			const row = stats.matrix[h];
-			lines.push(
-				`  ${TIER_LABELS[h].padEnd(8)} ${pad(row[0])}  ${pad(row[1])}  ${pad(row[2])}`,
-			);
+			lines.push(`  ${TIER_LABELS[h].padEnd(8)} ${pad(row[0])}  ${pad(row[1])}  ${pad(row[2])}`);
 		}
 		lines.push("");
 	}
 
 	if (stats.bySource.size > 0) {
 		lines.push("Decision source:");
-		for (const [src, count] of [...stats.bySource.entries()].sort(
-			(a, b) => b[1] - a[1],
-		)) {
+		for (const [src, count] of [...stats.bySource.entries()].sort((a, b) => b[1] - a[1])) {
 			lines.push(`  ${src.padEnd(12)} ${count}`);
 		}
 		lines.push("");
@@ -115,9 +96,7 @@ export function formatAnalysisTable(stats: AnalyzeStats): string {
 
 	if (stats.failureReasons.size > 0) {
 		lines.push("Failure reasons:");
-		for (const [reason, count] of [...stats.failureReasons.entries()].sort(
-			(a, b) => b[1] - a[1],
-		)) {
+		for (const [reason, count] of [...stats.failureReasons.entries()].sort((a, b) => b[1] - a[1])) {
 			lines.push(`  ${count.toString().padStart(4)}× ${reason}`);
 		}
 		lines.push("");

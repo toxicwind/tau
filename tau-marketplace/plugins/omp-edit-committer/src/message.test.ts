@@ -7,16 +7,8 @@
  * implicitly by the extension smoke test.
  */
 import { describe, expect, test } from "bun:test";
-import type {
-	EditToolDetails,
-	EditToolPerFileResult,
-} from "tau";
-import {
-	type DiffSummary,
-	buildMessage,
-	buildSubject,
-	summarize,
-} from "./message.ts";
+import type { EditToolDetails, EditToolPerFileResult } from "tau";
+import { type DiffSummary, buildMessage, buildSubject, summarize } from "./message.ts";
 
 const SINGLE_EDIT_DIFF = [
 	"@@ -12,7 +12,9 @@",
@@ -29,10 +21,7 @@ const SINGLE_EDIT_DIFF = [
 	"",
 ].join("\n");
 
-function singleFileDetails(
-	diff = SINGLE_EDIT_DIFF,
-	path = "src/lib/foo.ts",
-): EditToolDetails {
+function singleFileDetails(diff = SINGLE_EDIT_DIFF, path = "src/lib/foo.ts"): EditToolDetails {
 	return {
 		diff,
 		path,
@@ -40,9 +29,7 @@ function singleFileDetails(
 	};
 }
 
-function perFile(
-	overrides: Partial<EditToolPerFileResult> = {},
-): EditToolPerFileResult[] {
+function perFile(overrides: Partial<EditToolPerFileResult> = {}): EditToolPerFileResult[] {
 	return [
 		{
 			path: "src/lib/foo.ts",
@@ -55,11 +42,7 @@ function perFile(
 
 describe("summarize", () => {
 	test("counts added / removed / hunks from a unified diff", () => {
-		const summary = summarize(
-			["src/lib/foo.ts"],
-			singleFileDetails(),
-			undefined,
-		);
+		const summary = summarize(["src/lib/foo.ts"], singleFileDetails(), undefined);
 		expect(summary.added).toBe(3);
 		expect(summary.removed).toBe(1);
 		expect(summary.hunks).toBe(1);
@@ -71,11 +54,7 @@ describe("summarize", () => {
 	});
 
 	test("de-duplicates repeated paths", () => {
-		const summary = summarize(
-			["src/lib/foo.ts", "src/lib/foo.ts", "src/lib/bar.ts"],
-			undefined,
-			perFile(),
-		);
+		const summary = summarize(["src/lib/foo.ts", "src/lib/foo.ts", "src/lib/bar.ts"], undefined, perFile());
 		expect(summary.paths).toEqual(["src/lib/foo.ts", "src/lib/bar.ts"]);
 		expect(summary.hasMultiFile).toBe(true);
 	});
@@ -88,10 +67,7 @@ describe("summarize", () => {
 	});
 
 	test("counts many hunks", () => {
-		const diff = Array.from(
-			{ length: 5 },
-			(_, i) => `@@ -${i + 1} +${i + 1} @@`,
-		).join("\n");
+		const diff = Array.from({ length: 5 }, (_, i) => `@@ -${i + 1} +${i + 1} @@`).join("\n");
 		const summary = summarize(["x.ts"], { diff, path: "x.ts" }, undefined);
 		expect(summary.hunks).toBe(5);
 		expect(summary.hasManyHunks).toBe(true);
@@ -100,11 +76,7 @@ describe("summarize", () => {
 
 describe("buildSubject", () => {
 	test("uses file stem as scope and verb from the first added line", () => {
-		const summary = summarize(
-			["src/lib/foo.ts"],
-			singleFileDetails(),
-			undefined,
-		);
+		const summary = summarize(["src/lib/foo.ts"], singleFileDetails(), undefined);
 		const subject = buildSubject(summary, "edit");
 		expect(subject).toMatch(/^edit\(foo\):/);
 	});
@@ -145,9 +117,7 @@ describe("buildMessage", () => {
 			intentHint: "swap helper to the new failure-aware variant",
 		});
 		expect(out.body).toContain("Intent");
-		expect(out.body).toContain(
-			"- swap helper to the new failure-aware variant",
-		);
+		expect(out.body).toContain("- swap helper to the new failure-aware variant");
 		expect(out.body).toContain("Trade-offs");
 		expect(out.body).toContain("spans multiple files");
 		expect(out.body).toContain("Diagram");
@@ -166,11 +136,7 @@ describe("buildMessage", () => {
 
 	test("emits a 'net removal' tradeoff when only removals exist", () => {
 		const diff = "@@ -1,2 +0,0 @@\n-bye\n-bye2\n";
-		const summary = summarize(
-			["src/gone.ts"],
-			{ diff, path: "src/gone.ts" },
-			undefined,
-		);
+		const summary = summarize(["src/gone.ts"], { diff, path: "src/gone.ts" }, undefined);
 		const out = buildMessage(summary, { kind: "delete" });
 		expect(out.body).toContain("the file is gone");
 	});

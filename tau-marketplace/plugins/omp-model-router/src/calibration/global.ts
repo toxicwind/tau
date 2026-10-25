@@ -1,10 +1,7 @@
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { getAgentDir } from "tau";
-import type {
-	GlobalCalibrationSnapshot,
-	SessionCalibration,
-} from "./types";
+import type { GlobalCalibrationSnapshot, SessionCalibration } from "./types";
 
 const CALIBRATION_DIR = () => join(getAgentDir(), "model-router");
 const GLOBAL_FILE = () => join(CALIBRATION_DIR(), "calibration-global.json");
@@ -19,9 +16,7 @@ const COMPARISON_THRESHOLD = 50; // Save every 50 new comparisons
  * Load global calibration snapshot from disk
  * Returns undefined if file doesn't exist or is invalid
  */
-export function loadGlobalCalibration():
-	| GlobalCalibrationSnapshot
-	| undefined {
+export function loadGlobalCalibration(): GlobalCalibrationSnapshot | undefined {
 	const path = GLOBAL_FILE();
 	if (!existsSync(path)) return undefined;
 
@@ -30,17 +25,13 @@ export function loadGlobalCalibration():
 		const data = JSON.parse(content);
 
 		if (!isValidGlobalSnapshot(data)) {
-			console.warn(
-				"[model-router] Global calibration file corrupt; ignoring",
-			);
+			console.warn("[model-router] Global calibration file corrupt; ignoring");
 			return undefined;
 		}
 
 		return data;
 	} catch (error) {
-		console.warn(
-			`[model-router] Failed to load global calibration: ${error}`,
-		);
+		console.warn(`[model-router] Failed to load global calibration: ${error}`);
 		return undefined;
 	}
 }
@@ -51,11 +42,7 @@ export function loadGlobalCalibration():
  *
  * @param immediate - Skip debouncing and save immediately
  */
-export function mergeSessionIntoGlobal(
-	session: SessionCalibration,
-	routerVersion: string,
-	immediate = false,
-): void {
+export function mergeSessionIntoGlobal(session: SessionCalibration, routerVersion: string, immediate = false): void {
 	const global = loadGlobalCalibration() ?? createEmptySnapshot(routerVersion);
 
 	// Merge matrix counts
@@ -92,9 +79,7 @@ export function saveGlobalSnapshot(snapshot: GlobalCalibrationSnapshot): void {
 		writeFileSync(path, content, "utf-8");
 		lastSaveTime = Date.now();
 	} catch (error) {
-		console.error(
-			`[model-router] Failed to save global calibration: ${error}`,
-		);
+		console.error(`[model-router] Failed to save global calibration: ${error}`);
 	}
 }
 
@@ -108,9 +93,7 @@ export function resetGlobalCalibration(): void {
 			const fs = require("node:fs");
 			fs.unlinkSync(path);
 		} catch (error) {
-			console.error(
-				`[model-router] Failed to delete global calibration: ${error}`,
-			);
+			console.error(`[model-router] Failed to delete global calibration: ${error}`);
 		}
 	}
 }
@@ -153,9 +136,7 @@ function isValidGlobalSnapshot(data: unknown): data is GlobalCalibrationSnapshot
 		obj.version === 1 &&
 		Array.isArray(obj.matrix) &&
 		obj.matrix.length === 3 &&
-		obj.matrix.every(
-			(row) => Array.isArray(row) && row.length === 3 && row.every((n) => typeof n === "number"),
-		) &&
+		obj.matrix.every(row => Array.isArray(row) && row.length === 3 && row.every(n => typeof n === "number")) &&
 		typeof obj.metadata === "object" &&
 		obj.metadata !== null
 	);
@@ -164,10 +145,7 @@ function isValidGlobalSnapshot(data: unknown): data is GlobalCalibrationSnapshot
 /**
  * Debounced save: only persist if enough time has passed or enough comparisons accumulated
  */
-function debouncedSave(
-	snapshot: GlobalCalibrationSnapshot,
-	newComparisons: number,
-): void {
+function debouncedSave(snapshot: GlobalCalibrationSnapshot, newComparisons: number): void {
 	const now = Date.now();
 	const timeSinceLastSave = now - lastSaveTime;
 	const shouldSaveByTime = timeSinceLastSave >= MIN_SAVE_INTERVAL_MS;
@@ -184,9 +162,12 @@ function debouncedSave(
 	// Queue a deferred save
 	if (!pendingSave) {
 		const delay = MIN_SAVE_INTERVAL_MS - timeSinceLastSave;
-		pendingSave = setTimeout(() => {
-			saveGlobalSnapshot(snapshot);
-			pendingSave = undefined;
-		}, Math.max(0, delay));
+		pendingSave = setTimeout(
+			() => {
+				saveGlobalSnapshot(snapshot);
+				pendingSave = undefined;
+			},
+			Math.max(0, delay),
+		);
 	}
 }

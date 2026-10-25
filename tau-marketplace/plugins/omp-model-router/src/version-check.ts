@@ -27,15 +27,9 @@ interface CacheEntry {
 // ─── Version comparison ───────────────────────────────────────────────────────
 
 function parseVersion(version: string): [number, number, number] | undefined {
-	const match = version
-		.trim()
-		.match(/^v?(\d+)\.(\d+)\.(\d+)(?:-[0-9A-Za-z.-]+)?(?:\+.*)?$/);
+	const match = version.trim().match(/^v?(\d+)\.(\d+)\.(\d+)(?:-[0-9A-Za-z.-]+)?(?:\+.*)?$/);
 	if (!match) return undefined;
-	return [
-		Number.parseInt(match[1], 10),
-		Number.parseInt(match[2], 10),
-		Number.parseInt(match[3], 10),
-	];
+	return [Number.parseInt(match[1], 10), Number.parseInt(match[2], 10), Number.parseInt(match[3], 10)];
 }
 
 /** Returns true if `candidate` is strictly newer than `current`. */
@@ -50,7 +44,7 @@ export function isNewer(candidate: string, current: string): boolean {
 
 // ─── Dev install detection ────────────────────────────────────────────────────
 
-/** 
+/**
  * Returns true when running from a dev install (skip update check).
  * Detects:
  * - Symlinked extension directories
@@ -59,7 +53,7 @@ export function isNewer(candidate: string, current: string): boolean {
  */
 export function isDevInstall(): boolean {
 	const moduleDir = import.meta.dir;
-	
+
 	// Check for symlinks
 	try {
 		const stat = lstatSync(moduleDir);
@@ -67,16 +61,13 @@ export function isDevInstall(): boolean {
 	} catch {
 		// lstat can fail if path is unusual; fall through
 	}
-	
+
 	// Heuristic: development installs typically live under ~/workspace/
 	// while npm-installed packages live under node_modules/
-	if (
-		moduleDir.includes("/workspace/") &&
-		!moduleDir.includes("node_modules")
-	) {
+	if (moduleDir.includes("/workspace/") && !moduleDir.includes("node_modules")) {
 		return true;
 	}
-	
+
 	// Check if installed via file: dependency in parent package.json
 	// This happens when users do: bun add file:../../../../workspace/omp-model-router
 	// or when deploy:dev script creates a local link
@@ -100,7 +91,7 @@ export function isDevInstall(): boolean {
 	} catch {
 		// Ignore errors during file: dependency detection
 	}
-	
+
 	return false;
 }
 
@@ -110,10 +101,7 @@ function readCache(): CacheEntry | undefined {
 	try {
 		const raw = readFileSync(CACHE_FILE, "utf-8");
 		const data = JSON.parse(raw) as CacheEntry;
-		if (
-			typeof data.latestVersion === "string" &&
-			typeof data.checkedAt === "number"
-		) {
+		if (typeof data.latestVersion === "string" && typeof data.checkedAt === "number") {
 			return data;
 		}
 	} catch {
@@ -200,9 +188,7 @@ export async function checkForUpdate(): Promise<UpdateInfo | undefined> {
 	// treat cache as stale so we re-fetch and get the real latest.
 	const cached = readCache();
 	const cacheIsFresh =
-		cached !== undefined &&
-		Date.now() - cached.checkedAt < CACHE_TTL_MS &&
-		!isNewer(current, cached.latestVersion); // current hasn't surpassed cache
+		cached !== undefined && Date.now() - cached.checkedAt < CACHE_TTL_MS && !isNewer(current, cached.latestVersion); // current hasn't surpassed cache
 
 	if (cacheIsFresh && cached) {
 		if (isNewer(cached.latestVersion, current)) {

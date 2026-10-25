@@ -1,11 +1,7 @@
 import type { TraceRecord } from "../../calibration/types";
 import type { ParsedTrace, SimulateStats } from "./types";
 import type { RouterTier } from "../../types";
-import {
-	applyCalibratedTier,
-	initSessionCalibration,
-	updateCalibrationMatrix,
-} from "../../calibration/session";
+import { applyCalibratedTier, initSessionCalibration, updateCalibrationMatrix } from "../../calibration/session";
 
 // Per-call cost approximations ($) — used for relative comparison only.
 // Heuristic = free (in-process keyword match).
@@ -31,11 +27,8 @@ function avgLatencyFor(records: TraceRecord[], strategy: string): number {
  * Run strategy comparison. Uses LLM verdict as the proxy ground truth.
  * If a record has no LLM verdict it's skipped (no signal to score against).
  */
-export function simulateStrategies(
-	trace: ParsedTrace,
-	opts: { warmup: number },
-): SimulateStats[] {
-	const scored = trace.records.filter((r) => r.llmDecision);
+export function simulateStrategies(trace: ParsedTrace, opts: { warmup: number }): SimulateStats[] {
+	const scored = trace.records.filter(r => r.llmDecision);
 
 	const heuristic: SimulateStats = {
 		strategy: "heuristic",
@@ -124,7 +117,7 @@ function similar(a: string, b: string): boolean {
 	const wa = a.split(/\s+/);
 	const wb = b.split(/\s+/);
 	if (Math.abs(wa.length - wb.length) > 2) return false;
-	const sa = new Set(wa.map((w) => w.toLowerCase()));
+	const sa = new Set(wa.map(w => w.toLowerCase()));
 	let overlap = 0;
 	for (const w of wb) if (sa.has(w.toLowerCase())) overlap++;
 	return overlap / Math.max(wa.length, wb.length) >= 0.7;
@@ -135,22 +128,17 @@ export function formatSimulationTable(rows: SimulateStats[]): string {
 	lines.push("Strategy Simulation");
 	lines.push("===================");
 	lines.push("");
-	lines.push(
-		"Strategy   | Decisions | Accuracy | Cost     | Latency  | Flapping",
-	);
-	lines.push(
-		"-----------|-----------|----------|----------|----------|---------",
-	);
+	lines.push("Strategy   | Decisions | Accuracy | Cost     | Latency  | Flapping");
+	lines.push("-----------|-----------|----------|----------|----------|---------");
 	for (const r of rows) {
-		const acc =
-			r.totalDecisions > 0 ? ((r.correct / r.totalDecisions) * 100).toFixed(1) : "0.0";
+		const acc = r.totalDecisions > 0 ? ((r.correct / r.totalDecisions) * 100).toFixed(1) : "0.0";
 		lines.push(
 			`${r.strategy.padEnd(10)} | ${String(r.totalDecisions).padStart(9)} | ${(acc + "%").padStart(8)} | $${r.cost.toFixed(4).padStart(7)} | ${(r.avgLatencyMs + "ms").padStart(8)} | ${String(r.flapping).padStart(8)}`,
 		);
 	}
 	lines.push("");
 	lines.push(
-		"Note: \"Accuracy\" treats LLM verdict as ground truth (proxy). Pass criteria require external judge for real validation.",
+		'Note: "Accuracy" treats LLM verdict as ground truth (proxy). Pass criteria require external judge for real validation.',
 	);
 	return lines.join("\n");
 }

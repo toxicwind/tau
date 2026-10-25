@@ -30,7 +30,7 @@ export function measure<T>(name: string, fn: () => T | Promise<T>, detail?: stri
 	};
 	if (fn instanceof Promise) {
 		return fn.then(
-			(value) => {
+			value => {
 				settle(true);
 				return value;
 			},
@@ -60,8 +60,8 @@ export function takeTimings(): Timing[] {
 
 export function formatTimings(): string {
 	if (TIMINGS.length === 0) return "timings: (none)";
-	const width = Math.max(...TIMINGS.map((t) => t.name.length));
-	const lines = TIMINGS.map((t) => {
+	const width = Math.max(...TIMINGS.map(t => t.name.length));
+	const lines = TIMINGS.map(t => {
 		const ms = (t.durationUs / 1000).toFixed(1).padStart(9);
 		const flag = t.ok ? "ok  " : "FAIL";
 		const note = t.detail ? `  ${t.detail}` : "";
@@ -87,12 +87,7 @@ export function trace(loop: string, event: string, fields: Record<string, unknow
 	process.stderr.write(`${line}\n`);
 }
 
-export function traceError(
-	loop: string,
-	event: string,
-	error: unknown,
-	fields: Record<string, unknown> = {},
-): void {
+export function traceError(loop: string, event: string, error: unknown, fields: Record<string, unknown> = {}): void {
 	const line = JSON.stringify({
 		ts: new Date().toISOString(),
 		level: "error",
@@ -135,8 +130,8 @@ export function readWinners(tag: string, limit = 50): WinnerRecord[] {
 	try {
 		return readFileLines(WINNERS_LOG)
 			.filter((line): line is string => typeof line === "string")
-			.map((line) => JSON.parse(line) as WinnerRecord)
-			.filter((record) => record.tag === tag)
+			.map(line => JSON.parse(line) as WinnerRecord)
+			.filter(record => record.tag === tag)
 			.slice(-limit);
 	} catch {
 		return [];
@@ -168,7 +163,7 @@ export async function race<T>(
 	strategies: Array<{ name: string; run: () => Promise<T>; valid?: (value: T) => boolean }>,
 	options: { timeoutUs: number },
 ): Promise<{ winner: string; value: T; latencyMs: number; attempts: number }> {
-	trace("race", "start", { tag, strategies: strategies.map((s) => s.name), timeoutUs: options.timeoutUs });
+	trace("race", "start", { tag, strategies: strategies.map(s => s.name), timeoutUs: options.timeoutUs });
 	const settled = new Map<string, { ok: boolean; value?: T; latencyUs: number; reason?: string }>();
 
 	for (const strategy of strategies) {
@@ -178,7 +173,7 @@ export async function race<T>(
 		// of being recorded as a loser.
 		void Promise.resolve()
 			.then(() => strategy.run())
-			.then((value) => {
+			.then(value => {
 				const valid = strategy.valid ? strategy.valid(value) : true;
 				settled.set(strategy.name, {
 					ok: valid,
@@ -235,13 +230,13 @@ export async function race<T>(
 			};
 		}
 		if (nowUs() - startedUs >= deadlineUs) {
-			const reasons = strategies.map((s) => `${s.name}=${settled.get(s.name)?.reason ?? "timeout"}`);
+			const reasons = strategies.map(s => `${s.name}=${settled.get(s.name)?.reason ?? "timeout"}`);
 			recordWinner({
 				ts: new Date().toISOString(),
 				tag,
 				winner: "none",
 				latencyMs: (nowUs() - startedUs) / 1000,
-				losers: reasons.map((reason) => ({ strategy: reason.split("=")[0] ?? "?", latencyMs: 0, reason })),
+				losers: reasons.map(reason => ({ strategy: reason.split("=")[0] ?? "?", latencyMs: 0, reason })),
 			});
 			throw new Error(`race "${tag}" timed out after ${deadlineUs}us: ${reasons.join(", ")}`);
 		}

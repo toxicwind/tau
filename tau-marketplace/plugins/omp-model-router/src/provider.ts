@@ -11,20 +11,11 @@ import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream"
 import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
 import { clampThinkingLevelForModel } from "@oh-my-pi/pi-catalog/model-thinking";
 import type { Effort } from "@oh-my-pi/pi-catalog/effort";
-import type {
-	ExtensionAPI,
-	ExtensionContext,
-} from "tau";
+import type { ExtensionAPI, ExtensionContext } from "tau";
 import type { RoutingDecision } from "./types";
 import { profileNames, parseCanonicalModelRef, ROUTER_TIERS, resolveProfileForTaskType } from "./config";
 import { resolveEffectivePin, setScopedPin } from "./routing/pin";
-import {
-	resolveRouting,
-	extractTextFromContent,
-	hasImageAttachment,
-	getLastUserText,
-	detectTaskType,
-} from "./routing";
+import { resolveRouting, extractTextFromContent, hasImageAttachment, getLastUserText, detectTaskType } from "./routing";
 import { sanitizeToolSchemas } from "./utils/schema-compat";
 import type { RouterState } from "./state";
 import { loadPitfalls } from "./calibration/pitfalls";
@@ -44,10 +35,10 @@ import {
  * All others default to 45s (the pi-ai standard for healthy streaming).
  */
 const STREAM_IDLE_TIMEOUT_BY_PROVIDER: Record<string, number> = {
-	"openai": 45_000,
-	"anthropic": 45_000,
+	openai: 45_000,
+	anthropic: 45_000,
 	"amazon-bedrock": 45_000,
-	"google": 45_000,
+	google: 45_000,
 	"github-copilot": 45_000,
 };
 const DEFAULT_STREAM_IDLE_TIMEOUT_MS = 45_000;
@@ -79,20 +70,16 @@ export class StreamIdleTimeoutError extends Error {
 	}
 }
 
-export async function* withIdleTimeout<T>(
-	iterable: AsyncIterable<T>,
-	timeoutMs: number,
-): AsyncGenerator<T> {
+export async function* withIdleTimeout<T>(iterable: AsyncIterable<T>, timeoutMs: number): AsyncGenerator<T> {
 	const iterator = iterable[Symbol.asyncIterator]();
 	try {
 		while (true) {
-			const { promise: timeoutPromise, resolve: resolveTimeout } =
-				Promise.withResolvers<{ kind: "timeout" }>();
+			const { promise: timeoutPromise, resolve: resolveTimeout } = Promise.withResolvers<{ kind: "timeout" }>();
 			const timer = setTimeout(() => resolveTimeout({ kind: "timeout" }), timeoutMs);
 
 			const nextPromise = iterator.next().then(
-				(result) => ({ kind: "next" as const, result }),
-				(error) => ({ kind: "error" as const, error }),
+				result => ({ kind: "next" as const, result }),
+				error => ({ kind: "error" as const, error }),
 			);
 
 			try {
@@ -136,14 +123,10 @@ export class StreamMaxDurationError extends Error {
  * have arrived. Protects against models that drip-feed tokens indefinitely
  * (e.g. Opus extended thinking resetting the idle timer every few seconds).
  */
-export async function* withMaxDuration<T>(
-	iterable: AsyncIterable<T>,
-	durationMs: number,
-): AsyncGenerator<T> {
+export async function* withMaxDuration<T>(iterable: AsyncIterable<T>, durationMs: number): AsyncGenerator<T> {
 	const iterator = iterable[Symbol.asyncIterator]();
 	let timedOut = false;
-	const { promise: deadlinePromise, resolve: resolveDeadline } =
-		Promise.withResolvers<{ kind: "deadline" }>();
+	const { promise: deadlinePromise, resolve: resolveDeadline } = Promise.withResolvers<{ kind: "deadline" }>();
 	const timer = setTimeout(() => {
 		timedOut = true;
 		resolveDeadline({ kind: "deadline" });
@@ -151,8 +134,8 @@ export async function* withMaxDuration<T>(
 	try {
 		while (true) {
 			const nextPromise = iterator.next().then(
-				(result) => ({ kind: "next" as const, result }),
-				(error) => ({ kind: "error" as const, error }),
+				result => ({ kind: "next" as const, result }),
+				error => ({ kind: "error" as const, error }),
 			);
 			const outcome = await Promise.race([nextPromise, deadlinePromise]);
 			if (outcome.kind === "deadline") {
@@ -191,11 +174,7 @@ export async function* withMaxDuration<T>(
  *
  * @returns true if provider responded (alive), false if probe failed
  */
-async function probeProvider(
-	targetModel: Model<Api>,
-	apiKey: string,
-	debug: boolean,
-): Promise<boolean> {
+async function probeProvider(targetModel: Model<Api>, apiKey: string, debug: boolean): Promise<boolean> {
 	const probeContext = {
 		messages: [{ role: "user" as const, content: "hi" }],
 	} as Context;
@@ -212,7 +191,8 @@ async function probeProvider(
 		for await (const event of probeStream) {
 			clearTimeout(timeout);
 			if (event.type === "error") {
-				if (debug) console.log(`[model-router] probe failed: ${(event as any).error?.errorMessage || "error event"}`);
+				if (debug)
+					console.log(`[model-router] probe failed: ${(event as any).error?.errorMessage || "error event"}`);
 				return false;
 			}
 			// Any non-error event means the provider is alive
@@ -230,10 +210,7 @@ async function probeProvider(
 	}
 }
 
-export const createErrorMessage = (
-	model: Model<Api>,
-	message: string,
-): AssistantMessage => {
+export const createErrorMessage = (model: Model<Api>, message: string): AssistantMessage => {
 	return {
 		role: "assistant",
 		content: [],
@@ -289,31 +266,31 @@ export const sanitizeContext = (context: Context): Context => {
 		}
 	}
 
-	const hasEmptyDescriptions = context.tools?.some((t) => !t.description) ?? false;
+	const hasEmptyDescriptions = context.tools?.some(t => !t.description) ?? false;
 
 	if (!needsMsgSanitize && !hasEmptyDescriptions) return context;
 
 	// Fix messages: rebuild only those with invalid tool call names.
 	const messages = needsMsgSanitize
-		? context.messages.map((msg) => {
-			if (!Array.isArray(msg.content)) return msg;
-			let contentModified = false;
-			const content = (msg.content as any[]).map((block: any) => {
-				if (block.type === "toolCall" && block.name && !VALID_TOOL_NAME_RE.test(block.name)) {
-					contentModified = true;
-					return { ...block, name: sanitizeToolName(block.name) };
-				}
-				return block;
-			});
-			if (contentModified) return { ...msg, content };
-			return msg;
-		})
+		? context.messages.map(msg => {
+				if (!Array.isArray(msg.content)) return msg;
+				let contentModified = false;
+				const content = (msg.content as any[]).map((block: any) => {
+					if (block.type === "toolCall" && block.name && !VALID_TOOL_NAME_RE.test(block.name)) {
+						contentModified = true;
+						return { ...block, name: sanitizeToolName(block.name) };
+					}
+					return block;
+				});
+				if (contentModified) return { ...msg, content };
+				return msg;
+			})
 		: context.messages;
 
 	// Fix tools: replace empty descriptions with the tool name so Bedrock
 	// (and other providers that require non-empty description) don't reject the request.
 	const tools = hasEmptyDescriptions
-		? context.tools!.map((t) => (t.description ? t : { ...t, description: t.name }))
+		? context.tools!.map(t => (t.description ? t : { ...t, description: t.name }))
 		: context.tools;
 
 	return { ...context, messages, tools };
@@ -322,10 +299,7 @@ export const sanitizeContext = (context: Context): Context => {
 /**
  * Returns true if the given model ref supports image input.
  */
-const modelSupportsImage = (
-	modelRef: string,
-	registry: ExtensionContext["modelRegistry"],
-): boolean => {
+const modelSupportsImage = (modelRef: string, registry: ExtensionContext["modelRegistry"]): boolean => {
 	try {
 		const { provider, modelId } = parseCanonicalModelRef(modelRef);
 		return registry.find(provider, modelId)?.input?.includes("image") ?? false;
@@ -343,9 +317,7 @@ const truncateContext = (context: Context, limit: number): Context => {
 	const messages = context.messages;
 	if (messages.length <= 1) return context;
 
-	const systemTokens = context.systemPrompt
-		? estimateTokens(context.systemPrompt.join("\n"))
-		: 0;
+	const systemTokens = context.systemPrompt ? estimateTokens(context.systemPrompt.join("\n")) : 0;
 
 	let totalTokens = systemTokens;
 	const msgCosts = new Array<number>(messages.length);
@@ -388,7 +360,6 @@ const supportsReasoning = (
 	return false;
 };
 
-
 export const registerRouterProvider = (
 	pi: ExtensionAPI,
 	state: RouterState,
@@ -404,7 +375,7 @@ export const registerRouterProvider = (
 ) => {
 	const profileList = profileNames(state.currentConfig);
 
-	const modelDefinitions = profileList.map((name) => {
+	const modelDefinitions = profileList.map(name => {
 		const profile = state.currentConfig.profiles[name];
 		let contextWindow = 1_000_000;
 		let maxTokens = 64_000;
@@ -412,9 +383,7 @@ export const registerRouterProvider = (
 		if (state.currentModelRegistry) {
 			for (const tier of ROUTER_TIERS) {
 				try {
-					const { provider, modelId } = parseCanonicalModelRef(
-						profile[tier].model,
-					);
+					const { provider, modelId } = parseCanonicalModelRef(profile[tier].model);
 					const tierModel = state.currentModelRegistry.find(provider, modelId);
 					if (tierModel && tier === "high") {
 						contextWindow = tierModel.contextWindow ?? contextWindow;
@@ -437,9 +406,7 @@ export const registerRouterProvider = (
 		};
 	});
 
-	const modelsKey = modelDefinitions
-		.map((m) => `${m.id}:${m.contextWindow}:${m.maxTokens}:${m.reasoning}`)
-		.join(",");
+	const modelsKey = modelDefinitions.map(m => `${m.id}:${m.contextWindow}:${m.maxTokens}:${m.reasoning}`).join(",");
 	if (state.lastRegisteredModels === modelsKey) return;
 
 	pi.registerProvider("router", {
@@ -447,11 +414,7 @@ export const registerRouterProvider = (
 		apiKey: "omp-model-router",
 		api: "router-local-api" as Api,
 		models: modelDefinitions,
-		streamSimple(
-			model: Model<Api>,
-			context: Context,
-			options?: SimpleStreamOptions,
-		): AssistantMessageEventStream {
+		streamSimple(model: Model<Api>, context: Context, options?: SimpleStreamOptions): AssistantMessageEventStream {
 			const stream = new AssistantMessageEventStream();
 
 			(async () => {
@@ -476,9 +439,7 @@ export const registerRouterProvider = (
 							}
 						} else {
 							state.lastStreamWasInternalError = true;
-							throw new Error(
-								"Router provider not initialized yet. Wait for session_start and retry.",
-							);
+							throw new Error("Router provider not initialized yet. Wait for session_start and retry.");
 						}
 					}
 					const profile = state.currentConfig.profiles[model.id];
@@ -489,35 +450,33 @@ export const registerRouterProvider = (
 					// Clear internal error flag — we successfully initialized.
 					state.lastStreamWasInternalError = false;
 
-				// ── Task-type profile selection ───────────────────────────────────────
-				// If the active profile is generic (no taskType declared), detect the
-				// task type from the prompt and redirect to a task-type profile if one
-				// exists. When the user is already on a task-specific profile, skip.
-				let effectiveProfileName = model.id;
-				let effectiveProfile = profile;
-				if (!profile.taskType) {
-					const lastText = getLastUserText(context);
-					if (lastText) {
-						const detectedType = detectTaskType(lastText);
-						if (detectedType) {
-							const taskProfileName = resolveProfileForTaskType(state.currentConfig, detectedType);
-							const taskProfile = taskProfileName
-								? state.currentConfig.profiles[taskProfileName]
-								: undefined;
-							if (taskProfileName && taskProfile) {
-								effectiveProfileName = taskProfileName;
-								effectiveProfile = taskProfile;
-								if (state.currentConfig.debug) {
-									console.log(
-										`[model-router] task-type: detected="${detectedType}" profile="${model.id}"→"${taskProfileName}"`,
-									);
+					// ── Task-type profile selection ───────────────────────────────────────
+					// If the active profile is generic (no taskType declared), detect the
+					// task type from the prompt and redirect to a task-type profile if one
+					// exists. When the user is already on a task-specific profile, skip.
+					let effectiveProfileName = model.id;
+					let effectiveProfile = profile;
+					if (!profile.taskType) {
+						const lastText = getLastUserText(context);
+						if (lastText) {
+							const detectedType = detectTaskType(lastText);
+							if (detectedType) {
+								const taskProfileName = resolveProfileForTaskType(state.currentConfig, detectedType);
+								const taskProfile = taskProfileName ? state.currentConfig.profiles[taskProfileName] : undefined;
+								if (taskProfileName && taskProfile) {
+									effectiveProfileName = taskProfileName;
+									effectiveProfile = taskProfile;
+									if (state.currentConfig.debug) {
+										console.log(
+											`[model-router] task-type: detected="${detectedType}" profile="${model.id}"→"${taskProfileName}"`,
+										);
+									}
 								}
 							}
 						}
 					}
-				}
-				state.selectedProfile = effectiveProfileName;
-				state.routerEnabled = true;
+					state.selectedProfile = effectiveProfileName;
+					state.routerEnabled = true;
 
 					const isBudgetExceeded =
 						state.currentConfig.maxSessionBudget !== undefined &&
@@ -539,47 +498,52 @@ export const registerRouterProvider = (
 						? loadPitfalls(state.currentCwd, state.currentConfig.pitfallsPath)
 						: undefined;
 
-				const { scopedPin, floor } = resolveEffectivePin(sessionScope, state.currentConfig);
-				const traceEnabled = !!state.currentConfig.calibration?.traceEnabled;
-				// Derive path from session file directly — getArtifactsDir() returns null
-				// before the harness creates the directory (i.e. before first tool call).
-				// sessionFile.slice(0, -6) is the same formula the harness uses internally.
-				const sessionFile = traceEnabled && sessionCtx
-					? (sessionCtx.sessionManager as any).getSessionFile?.() as string | undefined
-					: undefined;
-				const artifactsDir = sessionFile ? sessionFile.slice(0, -6) : null;
-				const promptLogPath: string | undefined = typeof artifactsDir === "string" && artifactsDir
-					? join(artifactsDir, "classifierPrompt.jsonl")
-					: undefined;
-				const decision = await resolveRouting(
-					{
-						context,
-						previousDecision: sessionScope.lastDecision,
-						pinnedTier: scopedPin,
-						floor,
-						isBudgetExceeded,
-						modelRegistry: state.currentModelRegistry,
-						lastExtensionContext: sessionCtx,
-						calibration: state.calibration,
-						scope: sessionScope,
-						state: state,
-					},
-					{
-					profileName: effectiveProfileName,
-					profile: effectiveProfile,
-					thinkingOverrides: state.thinkingByProfile[effectiveProfileName],
-						phaseBias: state.currentConfig.phaseBias ?? 0.5,
-						rules: state.currentConfig.rules,
-						classifierModel: effectiveClassifierModel,
-						debug: state.currentConfig.debug,
-						calibrationConfig: state.currentConfig.calibration,
-						pinConfig: { pinTimeout: state.currentConfig.pinTimeout, defaultPin: state.currentConfig.defaultPin, pinPressureThreshold: state.currentConfig.pinPressureThreshold },
-						pitfalls: pitfalls || undefined,
-						promptLogPath,
-						recordClassifierCost: (modelRef, usage) =>
-							state.recordModelCost(modelRef, "classifier", usage),
-					},
-				);
+					const { scopedPin, floor } = resolveEffectivePin(sessionScope, state.currentConfig);
+					const traceEnabled = !!state.currentConfig.calibration?.traceEnabled;
+					// Derive path from session file directly — getArtifactsDir() returns null
+					// before the harness creates the directory (i.e. before first tool call).
+					// sessionFile.slice(0, -6) is the same formula the harness uses internally.
+					const sessionFile =
+						traceEnabled && sessionCtx
+							? ((sessionCtx.sessionManager as any).getSessionFile?.() as string | undefined)
+							: undefined;
+					const artifactsDir = sessionFile ? sessionFile.slice(0, -6) : null;
+					const promptLogPath: string | undefined =
+						typeof artifactsDir === "string" && artifactsDir
+							? join(artifactsDir, "classifierPrompt.jsonl")
+							: undefined;
+					const decision = await resolveRouting(
+						{
+							context,
+							previousDecision: sessionScope.lastDecision,
+							pinnedTier: scopedPin,
+							floor,
+							isBudgetExceeded,
+							modelRegistry: state.currentModelRegistry,
+							lastExtensionContext: sessionCtx,
+							calibration: state.calibration,
+							scope: sessionScope,
+							state: state,
+						},
+						{
+							profileName: effectiveProfileName,
+							profile: effectiveProfile,
+							thinkingOverrides: state.thinkingByProfile[effectiveProfileName],
+							phaseBias: state.currentConfig.phaseBias ?? 0.5,
+							rules: state.currentConfig.rules,
+							classifierModel: effectiveClassifierModel,
+							debug: state.currentConfig.debug,
+							calibrationConfig: state.currentConfig.calibration,
+							pinConfig: {
+								pinTimeout: state.currentConfig.pinTimeout,
+								defaultPin: state.currentConfig.defaultPin,
+								pinPressureThreshold: state.currentConfig.pinPressureThreshold,
+							},
+							pitfalls: pitfalls || undefined,
+							promptLogPath,
+							recordClassifierCost: (modelRef, usage) => state.recordModelCost(modelRef, "classifier", usage),
+						},
+					);
 
 					// (auto-upgrade is now handled via setScopedPin in index.ts tool_execution_end)
 
@@ -597,23 +561,18 @@ export const registerRouterProvider = (
 
 					// ── Build fallback model chain ────────────────────────────────────
 					const imageAttached = hasImageAttachment(context);
-					let modelsToTry = [
-						decision.targetLabel,
-						...(effectiveProfile[decision.tier].fallbacks ?? []),
-					];
+					let modelsToTry = [decision.targetLabel, ...(effectiveProfile[decision.tier].fallbacks ?? [])];
 					if (imageAttached) {
-						const filtered = modelsToTry.filter((ref) =>
-							modelSupportsImage(ref, state.currentModelRegistry!),
-						);
+						const filtered = modelsToTry.filter(ref => modelSupportsImage(ref, state.currentModelRegistry!));
 						modelsToTry = filtered.length > 0 ? filtered : [decision.targetLabel];
 					}
 
 					// ── Embargo-aware filtering ────────────────────────────────────────
 					const embargoEnabled = state.currentConfig.embargo?.enabled !== false;
 					if (embargoEnabled) {
-						const nonEmbargoed = modelsToTry.filter((ref) => !state.isEmbargoed(ref));
+						const nonEmbargoed = modelsToTry.filter(ref => !state.isEmbargoed(ref));
 						if (nonEmbargoed.length > 0) {
-							const skipped = modelsToTry.filter((ref) => state.isEmbargoed(ref));
+							const skipped = modelsToTry.filter(ref => state.isEmbargoed(ref));
 							if (state.currentConfig.debug && skipped.length > 0) {
 								for (const ref of skipped) {
 									const remaining = Math.ceil(state.getEmbargoTimeRemaining(ref) / 1000);
@@ -641,50 +600,38 @@ export const registerRouterProvider = (
 					let lastError: unknown;
 					let success = false;
 
-				for (let i = 0; i < modelsToTry.length; i++) {
-					const modelRef = modelsToTry[i];
-					const { provider: targetProvider, modelId: targetModelId } =
-						parseCanonicalModelRef(modelRef);
+					for (let i = 0; i < modelsToTry.length; i++) {
+						const modelRef = modelsToTry[i];
+						const { provider: targetProvider, modelId: targetModelId } = parseCanonicalModelRef(modelRef);
 
-					if (state.currentConfig.debug) {
-						console.log(
-							`[model-router] Attempt ${i + 1}/${modelsToTry.length}: ${modelRef}`,
-						);
-					}
-
-					if (targetProvider === "router") {
 						if (state.currentConfig.debug) {
-							console.log(`  ✗ Skipped: router provider`);
+							console.log(`[model-router] Attempt ${i + 1}/${modelsToTry.length}: ${modelRef}`);
 						}
-						continue;
-					}
 
-					const targetModel = state.currentModelRegistry.find(
-						targetProvider,
-						targetModelId,
-					);
-					if (!targetModel) {
-						if (state.currentConfig.debug) {
-							console.log(`  ✗ Skipped: model not in registry`);
+						if (targetProvider === "router") {
+							if (state.currentConfig.debug) {
+								console.log(`  ✗ Skipped: router provider`);
+							}
+							continue;
 						}
-						lastError = new Error(
-							`Routed model not found: ${targetProvider}/${targetModelId}`,
-						);
-						continue;
-					}
 
-					const apiKey = await state.currentModelRegistry.getApiKey(
-						targetModel,
-					);
-					if (!apiKey) {
-						if (state.currentConfig.debug) {
-							console.log(`  ✗ Skipped: no API key`);
+						const targetModel = state.currentModelRegistry.find(targetProvider, targetModelId);
+						if (!targetModel) {
+							if (state.currentConfig.debug) {
+								console.log(`  ✗ Skipped: model not in registry`);
+							}
+							lastError = new Error(`Routed model not found: ${targetProvider}/${targetModelId}`);
+							continue;
 						}
-						lastError = new Error(
-							`No API key for routed model: ${targetProvider}/${targetModelId}`,
-						);
-						continue;
-					}
+
+						const apiKey = await state.currentModelRegistry.getApiKey(targetModel);
+						if (!apiKey) {
+							if (state.currentConfig.debug) {
+								console.log(`  ✗ Skipped: no API key`);
+							}
+							lastError = new Error(`No API key for routed model: ${targetProvider}/${targetModelId}`);
+							continue;
+						}
 						// Hoisted so the catch block (probe-retry path) can access it
 						let effectiveContext: typeof context = context;
 						try {
@@ -695,429 +642,430 @@ export const registerRouterProvider = (
 									? truncateContext(context, targetLimit)
 									: context;
 
+							const thinkingOverride = actions.getThinkingOverride(effectiveProfileName, decision.tier);
+							const effectiveThinking = thinkingOverride ?? decision.thinking;
+							const delegatedReasoning: Effort | undefined =
+								targetModel.reasoning &&
+								effectiveThinking !== ThinkingLevel.Off &&
+								effectiveThinking !== ThinkingLevel.Inherit
+									? clampThinkingLevelForModel(targetModel, effectiveThinking as Effort)
+									: undefined;
 
-						const thinkingOverride = actions.getThinkingOverride(
-							effectiveProfileName,
-							decision.tier,
-						);
-						const effectiveThinking = thinkingOverride ?? decision.thinking;
-						const delegatedReasoning: Effort | undefined =
-							targetModel.reasoning &&
-							effectiveThinking !== ThinkingLevel.Off &&
-							effectiveThinking !== ThinkingLevel.Inherit
-								? clampThinkingLevelForModel(
-										targetModel,
-										effectiveThinking as Effort,
-								  )
-								: undefined;
+							// TODO: Hidden thinking label - API not available yet
+							// if (state.lastExtensionContext) {
+							// 	if (delegatedReasoning) {
+							// 		state.lastExtensionContext.ui.setHiddenThinkingLabel?.(
+							// 			`Thinking (${targetProvider}/${targetModelId})...`,
+							// 		);
+							// 	} else {
+							// 		state.lastExtensionContext.ui.setHiddenThinkingLabel?.();
+							// 	}
+							// }
 
-						// TODO: Hidden thinking label - API not available yet
-						// if (state.lastExtensionContext) {
-						// 	if (delegatedReasoning) {
-						// 		state.lastExtensionContext.ui.setHiddenThinkingLabel?.(
-						// 			`Thinking (${targetProvider}/${targetModelId})...`,
-						// 		);
-						// 	} else {
-						// 		state.lastExtensionContext.ui.setHiddenThinkingLabel?.();
-						// 	}
-						// }
+							const delegatedStream = streamSimple(
+								targetModel,
+								sanitizeToolSchemas(sanitizeContext(effectiveContext)),
+								{
+									...options,
+									apiKey,
+									headers: targetModel.headers,
+									...(delegatedReasoning ? { reasoning: delegatedReasoning } : {}),
+								},
+							);
 
-						const delegatedStream = streamSimple(targetModel, sanitizeToolSchemas(sanitizeContext(effectiveContext)), {
-							...options,
-							apiKey,
-							headers: targetModel.headers,
-							...(delegatedReasoning ? { reasoning: delegatedReasoning } : {}),
-						});
-
-						// Wrap stream with idle timeout to detect stalled providers,
-						// then wrap with absolute wall-clock duration limit to catch
-						// models that drip-feed tokens indefinitely (e.g. extended thinking).
-						const idleTimeoutMs = resolveStreamIdleTimeout(
-							state.currentConfig.streamIdleTimeoutMs,
-							targetProvider,
-						);
-						const maxDurationMs = state.currentConfig.maxStreamDurationMs !== undefined
-							? state.currentConfig.maxStreamDurationMs
-							: DEFAULT_MAX_STREAM_DURATION_MS;
-						let eventSource: AsyncIterable<import("@oh-my-pi/pi-ai").AssistantMessageEvent> = idleTimeoutMs > 0
-							? withIdleTimeout(delegatedStream, idleTimeoutMs)
-							: delegatedStream;
-						if (maxDurationMs > 0) {
-							eventSource = withMaxDuration(eventSource, maxDurationMs);
-						}
-
-						for await (const event of eventSource) {
-							if (event.type === "done") {
-								const u = event.message.usage;
-								const cost = u?.cost?.total ?? 0;
-								state.accumulatedCost += cost;
-								decision.usage = {
-									inputTokens:
-										(decision.usage?.inputTokens ?? 0) + (u?.input ?? 0),
-									outputTokens:
-										(decision.usage?.outputTokens ?? 0) + (u?.output ?? 0),
-									cacheReadTokens:
-										(decision.usage?.cacheReadTokens ?? 0) +
-										(u?.cacheRead ?? 0),
-									cacheWriteTokens:
-										(decision.usage?.cacheWriteTokens ?? 0) +
-										(u?.cacheWrite ?? 0),
-									cost: (decision.usage?.cost ?? 0) + cost,
-								};
-								// Track model cost
-								state.recordModelCost(decision.targetLabel, decision.tier, {
-									inputTokens: u?.input ?? 0,
-									outputTokens: u?.output ?? 0,
-									cacheReadTokens: u?.cacheRead ?? 0,
-									cacheWriteTokens: u?.cacheWrite ?? 0,
-									cost,
-								});
+							// Wrap stream with idle timeout to detect stalled providers,
+							// then wrap with absolute wall-clock duration limit to catch
+							// models that drip-feed tokens indefinitely (e.g. extended thinking).
+							const idleTimeoutMs = resolveStreamIdleTimeout(
+								state.currentConfig.streamIdleTimeoutMs,
+								targetProvider,
+							);
+							const maxDurationMs =
+								state.currentConfig.maxStreamDurationMs !== undefined
+									? state.currentConfig.maxStreamDurationMs
+									: DEFAULT_MAX_STREAM_DURATION_MS;
+							let eventSource: AsyncIterable<import("@oh-my-pi/pi-ai").AssistantMessageEvent> =
+								idleTimeoutMs > 0 ? withIdleTimeout(delegatedStream, idleTimeoutMs) : delegatedStream;
+							if (maxDurationMs > 0) {
+								eventSource = withMaxDuration(eventSource, maxDurationMs);
 							}
-							if (event.type === "error") {
-								const errEvent = event as { error?: { errorMessage?: string; errorStatus?: number } };
-								const errMsg = errEvent.error?.errorMessage || "Model failed.";
-								const errStatus = errEvent.error?.errorStatus;
-								const retryAfter = parseRetryAfterMs(errMsg);
-								throw new StatusAwareError(errMsg, errStatus, retryAfter);
-							}
-							stream.push(event);
-						}
-						if (state.currentConfig.debug) {
-							console.log(`  ✓ Success with ${modelRef}`);
-						}
-						// Lift embargo on success (model recovered)
-						if (embargoEnabled && state.isEmbargoed(modelRef)) {
-							state.liftEmbargo(modelRef);
-							if (state.currentConfig.debug) {
-								console.log(`[model-router] ✓ Embargo lifted: ${modelRef}`);
-							}
-						}
-						success = true;
-						if (i > 0) decision.isFallback = true;
-						break;
-					} catch (err) {
-						const errMsg = err instanceof Error ? err.message : String(err);
-						if (state.currentConfig.debug) {
-							console.log(`  ✗ Failed: ${errMsg}`);
-						}
 
-						// ── Stream idle timeout: probe provider before giving up ──────
-						if ((err instanceof StreamIdleTimeoutError || err instanceof StreamMaxDurationError) && apiKey) {
-							let probeRetry = 0;
-							while (probeRetry < PROBE_MAX_RETRIES) {
-								probeRetry++;
-								const backoffMs = 5_000 * 2 ** (probeRetry - 1); // 5s, 10s
-								if (state.currentConfig.debug) {
-									console.log(
-										`[model-router] stream stalled on ${modelRef} — probing provider (attempt ${probeRetry}/${PROBE_MAX_RETRIES}, backoff ${backoffMs / 1000}s)`,
-									);
-								}
-								await new Promise((r) => setTimeout(r, backoffMs));
-								const alive = await probeProvider(targetModel, apiKey, state.currentConfig.debug ?? false);
-								if (!alive) {
-									if (state.currentConfig.debug) {
-										console.log(`[model-router] probe failed — provider ${modelRef} is down, triggering fallback`);
-									}
-									break; // Provider is dead → fall through to embargo + next model
-								}
-								// Provider alive — retry the original stream
-								if (state.currentConfig.debug) {
-									console.log(`[model-router] probe succeeded — retrying ${modelRef}`);
-								}
-								// Retry using hoisted effectiveContext (set before the try block)
-								const retryIdleMs = resolveStreamIdleTimeout(
-									state.currentConfig.streamIdleTimeoutMs,
-									targetProvider,
-								);
-								const retryContext = sanitizeToolSchemas(sanitizeContext(effectiveContext));
-								try {
-									const retryStream = streamSimple(targetModel, retryContext, {
-										...options,
-										apiKey,
-										headers: targetModel.headers,
+							for await (const event of eventSource) {
+								if (event.type === "done") {
+									const u = event.message.usage;
+									const cost = u?.cost?.total ?? 0;
+									state.accumulatedCost += cost;
+									decision.usage = {
+										inputTokens: (decision.usage?.inputTokens ?? 0) + (u?.input ?? 0),
+										outputTokens: (decision.usage?.outputTokens ?? 0) + (u?.output ?? 0),
+										cacheReadTokens: (decision.usage?.cacheReadTokens ?? 0) + (u?.cacheRead ?? 0),
+										cacheWriteTokens: (decision.usage?.cacheWriteTokens ?? 0) + (u?.cacheWrite ?? 0),
+										cost: (decision.usage?.cost ?? 0) + cost,
+									};
+									// Track model cost
+									state.recordModelCost(decision.targetLabel, decision.tier, {
+										inputTokens: u?.input ?? 0,
+										outputTokens: u?.output ?? 0,
+										cacheReadTokens: u?.cacheRead ?? 0,
+										cacheWriteTokens: u?.cacheWrite ?? 0,
+										cost,
 									});
-									const retryMaxDurationMs = state.currentConfig.maxStreamDurationMs !== undefined
-										? state.currentConfig.maxStreamDurationMs
-										: DEFAULT_MAX_STREAM_DURATION_MS;
-									let retrySource: AsyncIterable<import("@oh-my-pi/pi-ai").AssistantMessageEvent> = retryIdleMs > 0
-										? withIdleTimeout(retryStream, retryIdleMs)
-										: retryStream;
-									if (retryMaxDurationMs > 0) {
-										retrySource = withMaxDuration(retrySource, retryMaxDurationMs);
+								}
+								if (event.type === "error") {
+									const errEvent = event as { error?: { errorMessage?: string; errorStatus?: number } };
+									const errMsg = errEvent.error?.errorMessage || "Model failed.";
+									const errStatus = errEvent.error?.errorStatus;
+									const retryAfter = parseRetryAfterMs(errMsg);
+									throw new StatusAwareError(errMsg, errStatus, retryAfter);
+								}
+								stream.push(event);
+							}
+							if (state.currentConfig.debug) {
+								console.log(`  ✓ Success with ${modelRef}`);
+							}
+							// Lift embargo on success (model recovered)
+							if (embargoEnabled && state.isEmbargoed(modelRef)) {
+								state.liftEmbargo(modelRef);
+								if (state.currentConfig.debug) {
+									console.log(`[model-router] ✓ Embargo lifted: ${modelRef}`);
+								}
+							}
+							success = true;
+							if (i > 0) decision.isFallback = true;
+							break;
+						} catch (err) {
+							const errMsg = err instanceof Error ? err.message : String(err);
+							if (state.currentConfig.debug) {
+								console.log(`  ✗ Failed: ${errMsg}`);
+							}
+
+							// ── Stream idle timeout: probe provider before giving up ──────
+							if ((err instanceof StreamIdleTimeoutError || err instanceof StreamMaxDurationError) && apiKey) {
+								let probeRetry = 0;
+								while (probeRetry < PROBE_MAX_RETRIES) {
+									probeRetry++;
+									const backoffMs = 5_000 * 2 ** (probeRetry - 1); // 5s, 10s
+									if (state.currentConfig.debug) {
+										console.log(
+											`[model-router] stream stalled on ${modelRef} — probing provider (attempt ${probeRetry}/${PROBE_MAX_RETRIES}, backoff ${backoffMs / 1000}s)`,
+										);
 									}
-									for await (const event of retrySource) {
-										if (event.type === "done") {
-											const u = event.message.usage;
-											const cost = u?.cost?.total ?? 0;
-											state.accumulatedCost += cost;
-											decision.usage = {
-												inputTokens: (decision.usage?.inputTokens ?? 0) + (u?.input ?? 0),
-												outputTokens: (decision.usage?.outputTokens ?? 0) + (u?.output ?? 0),
-												cacheReadTokens: (decision.usage?.cacheReadTokens ?? 0) + (u?.cacheRead ?? 0),
-												cacheWriteTokens: (decision.usage?.cacheWriteTokens ?? 0) + (u?.cacheWrite ?? 0),
-												cost: (decision.usage?.cost ?? 0) + cost,
-											};
-											state.recordModelCost(decision.targetLabel, decision.tier, {
-												inputTokens: u?.input ?? 0,
-												outputTokens: u?.output ?? 0,
-												cacheReadTokens: u?.cacheRead ?? 0,
-												cacheWriteTokens: u?.cacheWrite ?? 0,
-												cost,
-											});
-										}
-										if (event.type === "error") {
-											const errEvent = event as { error?: { errorMessage?: string; errorStatus?: number } };
-											const retryErrMsg = errEvent.error?.errorMessage || "Model failed.";
-											throw new StatusAwareError(
-												retryErrMsg,
-												errEvent.error?.errorStatus,
-												parseRetryAfterMs(retryErrMsg),
+									await new Promise(r => setTimeout(r, backoffMs));
+									const alive = await probeProvider(targetModel, apiKey, state.currentConfig.debug ?? false);
+									if (!alive) {
+										if (state.currentConfig.debug) {
+											console.log(
+												`[model-router] probe failed — provider ${modelRef} is down, triggering fallback`,
 											);
 										}
-										stream.push(event);
+										break; // Provider is dead → fall through to embargo + next model
 									}
+									// Provider alive — retry the original stream
 									if (state.currentConfig.debug) {
-										console.log(`  ✓ Success with ${modelRef} (after probe-retry)`);
+										console.log(`[model-router] probe succeeded — retrying ${modelRef}`);
 									}
-									success = true;
-									break;
-								} catch (retryErr) {
-									if (retryErr instanceof StreamIdleTimeoutError || retryErr instanceof StreamMaxDurationError) {
-										// Same stall on retry — continue probing
-										if (state.currentConfig.debug) {
-											console.log(`[model-router] retry also stalled — will probe again`);
-										}
-										continue;
-									}
-									// Different error — treat as model failure, fall through
-									if (state.currentConfig.debug) {
-										console.log(`[model-router] retry failed: ${retryErr instanceof Error ? retryErr.message : String(retryErr)}`);
-									}
-									break;
-								}
-							}
-							if (success) break; // Exit the model loop entirely
-						}
-
-						// Embargo model on retryable errors
-						if (embargoEnabled) {
-							// pi-ai wraps retry-exhausted errors as plain Error — recover original status/retryAfter
-							const wrappedStatus = parseOriginalStatus(errMsg);
-							const wrappedRetryAfter = parseRetryAfterMs(errMsg);
-							const errStatus = err instanceof StatusAwareError ? err.status : wrappedStatus;
-							const errRetryAfter = err instanceof StatusAwareError ? err.retryAfterMs : wrappedRetryAfter;
-							if (isRetryableStatus(errStatus, errMsg)) {
-								const embargoCfg = state.currentConfig.embargo ?? { enabled: true };
-								const duration = computeEmbargoDuration(errRetryAfter, embargoCfg);
-								const reason = errStatus ? `HTTP ${errStatus}: ${errMsg.slice(0, 100)}` : errMsg.slice(0, 100);
-								state.embargoModel(modelRef, errStatus, reason, duration, errRetryAfter);
-								if (state.currentConfig.debug) {
-									console.log(`[model-router] ⏸ Embargoed: ${modelRef} for ${Math.ceil(duration / 1000)}s (HTTP ${errStatus ?? 'unknown'})`);
-								}
-							}
-						}
-						lastError = err;
-					}
-				}
-
-				// ── Cross-tier fallback on retryable errors ────────────────────────
-				// When the entire primary chain (tier + explicit fallbacks) fails with
-				// retryable errors (429 account rate limit, 503, etc.), try models from
-				// other tiers in the same profile before giving up. This handles the
-				// common case of account-level rate limits exhausting all same-provider
-				// models in one tier.
-				if (!success && lastError) {
-					const lastErrMsg = lastError instanceof Error ? lastError.message : String(lastError);
-					const lastErrStatus = lastError instanceof StatusAwareError
-						? lastError.status
-						: parseOriginalStatus(lastErrMsg);
-					const isLastRetryable = isRetryableStatus(lastErrStatus, lastErrMsg);
-
-					if (isLastRetryable) {
-						const triedModels = new Set(modelsToTry);
-						// Collect models from other tiers: lower first (cheaper), then higher
-						const tierOrder: Array<"high" | "medium" | "low"> = [];
-						const currentTierIdx = ROUTER_TIERS.indexOf(decision.tier);
-						// Lower tiers first (medium → low after high; low after medium)
-						for (let t = currentTierIdx + 1; t < ROUTER_TIERS.length; t++) {
-							tierOrder.push(ROUTER_TIERS[t]);
-						}
-						// Then higher tiers
-						for (let t = currentTierIdx - 1; t >= 0; t--) {
-							tierOrder.push(ROUTER_TIERS[t]);
-						}
-
-						const crossTierModels: string[] = [];
-						for (const tier of tierOrder) {
-							const tierConfig = effectiveProfile[tier];
-							if (tierConfig.model && !triedModels.has(tierConfig.model)) {
-								crossTierModels.push(tierConfig.model);
-								triedModels.add(tierConfig.model);
-							}
-							for (const fb of tierConfig.fallbacks ?? []) {
-								if (!triedModels.has(fb)) {
-									crossTierModels.push(fb);
-									triedModels.add(fb);
-								}
-							}
-						}
-
-						// Filter embargoed models
-						const viableCrossTier = embargoEnabled
-							? crossTierModels.filter((ref) => !state.isEmbargoed(ref))
-							: crossTierModels;
-
-						if (viableCrossTier.length > 0) {
-							if (state.currentConfig.debug) {
-								console.log(
-									`[model-router] ⚡ Cross-tier fallback: trying ${viableCrossTier.length} models from other tiers`,
-								);
-							}
-
-							for (let i = 0; i < viableCrossTier.length; i++) {
-								const modelRef = viableCrossTier[i];
-								const { provider: targetProvider, modelId: targetModelId } =
-									parseCanonicalModelRef(modelRef);
-
-								if (state.currentConfig.debug) {
-									console.log(
-										`[model-router] Cross-tier attempt ${i + 1}/${viableCrossTier.length}: ${modelRef}`,
-									);
-								}
-
-								if (targetProvider === "router") continue;
-
-								const targetModel = state.currentModelRegistry!.find(
-									targetProvider,
-									targetModelId,
-								);
-								if (!targetModel) {
-									if (state.currentConfig.debug) {
-										console.log(`  ✗ Skipped: model not in registry`);
-									}
-									continue;
-								}
-
-								const apiKey = await state.currentModelRegistry!.getApiKey(targetModel);
-								if (!apiKey) {
-									if (state.currentConfig.debug) {
-										console.log(`  ✗ Skipped: no API key`);
-									}
-									continue;
-								}
-
-								try {
-									const targetLimit = targetModel.contextWindow || 128_000;
-									const crossTierContext =
-										targetLimit < (model.contextWindow ?? Infinity)
-											? truncateContext(context, targetLimit)
-											: context;
-
-									const thinkingOverride = actions.getThinkingOverride(
-										effectiveProfileName,
-										decision.tier,
-									);
-									const effectiveThinking = thinkingOverride ?? decision.thinking;
-									const delegatedReasoning: Effort | undefined =
-										targetModel.reasoning &&
-										effectiveThinking !== ThinkingLevel.Off &&
-										effectiveThinking !== ThinkingLevel.Inherit
-											? clampThinkingLevelForModel(
-													targetModel,
-													effectiveThinking as Effort,
-											  )
-											: undefined;
-
-									const delegatedStream = streamSimple(targetModel, sanitizeToolSchemas(sanitizeContext(crossTierContext)), {
-										...options,
-										apiKey,
-										headers: targetModel.headers,
-										...(delegatedReasoning ? { reasoning: delegatedReasoning } : {}),
-									});
-
-									const idleTimeoutMs = resolveStreamIdleTimeout(
+									// Retry using hoisted effectiveContext (set before the try block)
+									const retryIdleMs = resolveStreamIdleTimeout(
 										state.currentConfig.streamIdleTimeoutMs,
 										targetProvider,
 									);
-									const maxDurationMs = state.currentConfig.maxStreamDurationMs !== undefined
-										? state.currentConfig.maxStreamDurationMs
-										: DEFAULT_MAX_STREAM_DURATION_MS;
-									let eventSource: AsyncIterable<import("@oh-my-pi/pi-ai").AssistantMessageEvent> = idleTimeoutMs > 0
-										? withIdleTimeout(delegatedStream, idleTimeoutMs)
-										: delegatedStream;
-									if (maxDurationMs > 0) {
-										eventSource = withMaxDuration(eventSource, maxDurationMs);
+									const retryContext = sanitizeToolSchemas(sanitizeContext(effectiveContext));
+									try {
+										const retryStream = streamSimple(targetModel, retryContext, {
+											...options,
+											apiKey,
+											headers: targetModel.headers,
+										});
+										const retryMaxDurationMs =
+											state.currentConfig.maxStreamDurationMs !== undefined
+												? state.currentConfig.maxStreamDurationMs
+												: DEFAULT_MAX_STREAM_DURATION_MS;
+										let retrySource: AsyncIterable<import("@oh-my-pi/pi-ai").AssistantMessageEvent> =
+											retryIdleMs > 0 ? withIdleTimeout(retryStream, retryIdleMs) : retryStream;
+										if (retryMaxDurationMs > 0) {
+											retrySource = withMaxDuration(retrySource, retryMaxDurationMs);
+										}
+										for await (const event of retrySource) {
+											if (event.type === "done") {
+												const u = event.message.usage;
+												const cost = u?.cost?.total ?? 0;
+												state.accumulatedCost += cost;
+												decision.usage = {
+													inputTokens: (decision.usage?.inputTokens ?? 0) + (u?.input ?? 0),
+													outputTokens: (decision.usage?.outputTokens ?? 0) + (u?.output ?? 0),
+													cacheReadTokens: (decision.usage?.cacheReadTokens ?? 0) + (u?.cacheRead ?? 0),
+													cacheWriteTokens: (decision.usage?.cacheWriteTokens ?? 0) + (u?.cacheWrite ?? 0),
+													cost: (decision.usage?.cost ?? 0) + cost,
+												};
+												state.recordModelCost(decision.targetLabel, decision.tier, {
+													inputTokens: u?.input ?? 0,
+													outputTokens: u?.output ?? 0,
+													cacheReadTokens: u?.cacheRead ?? 0,
+													cacheWriteTokens: u?.cacheWrite ?? 0,
+													cost,
+												});
+											}
+											if (event.type === "error") {
+												const errEvent = event as {
+													error?: { errorMessage?: string; errorStatus?: number };
+												};
+												const retryErrMsg = errEvent.error?.errorMessage || "Model failed.";
+												throw new StatusAwareError(
+													retryErrMsg,
+													errEvent.error?.errorStatus,
+													parseRetryAfterMs(retryErrMsg),
+												);
+											}
+											stream.push(event);
+										}
+										if (state.currentConfig.debug) {
+											console.log(`  ✓ Success with ${modelRef} (after probe-retry)`);
+										}
+										success = true;
+										break;
+									} catch (retryErr) {
+										if (
+											retryErr instanceof StreamIdleTimeoutError ||
+											retryErr instanceof StreamMaxDurationError
+										) {
+											// Same stall on retry — continue probing
+											if (state.currentConfig.debug) {
+												console.log(`[model-router] retry also stalled — will probe again`);
+											}
+											continue;
+										}
+										// Different error — treat as model failure, fall through
+										if (state.currentConfig.debug) {
+											console.log(
+												`[model-router] retry failed: ${retryErr instanceof Error ? retryErr.message : String(retryErr)}`,
+											);
+										}
+										break;
+									}
+								}
+								if (success) break; // Exit the model loop entirely
+							}
+
+							// Embargo model on retryable errors
+							if (embargoEnabled) {
+								// pi-ai wraps retry-exhausted errors as plain Error — recover original status/retryAfter
+								const wrappedStatus = parseOriginalStatus(errMsg);
+								const wrappedRetryAfter = parseRetryAfterMs(errMsg);
+								const errStatus = err instanceof StatusAwareError ? err.status : wrappedStatus;
+								const errRetryAfter = err instanceof StatusAwareError ? err.retryAfterMs : wrappedRetryAfter;
+								if (isRetryableStatus(errStatus, errMsg)) {
+									const embargoCfg = state.currentConfig.embargo ?? { enabled: true };
+									const duration = computeEmbargoDuration(errRetryAfter, embargoCfg);
+									const reason = errStatus
+										? `HTTP ${errStatus}: ${errMsg.slice(0, 100)}`
+										: errMsg.slice(0, 100);
+									state.embargoModel(modelRef, errStatus, reason, duration, errRetryAfter);
+									if (state.currentConfig.debug) {
+										console.log(
+											`[model-router] ⏸ Embargoed: ${modelRef} for ${Math.ceil(duration / 1000)}s (HTTP ${errStatus ?? "unknown"})`,
+										);
+									}
+								}
+							}
+							lastError = err;
+						}
+					}
+
+					// ── Cross-tier fallback on retryable errors ────────────────────────
+					// When the entire primary chain (tier + explicit fallbacks) fails with
+					// retryable errors (429 account rate limit, 503, etc.), try models from
+					// other tiers in the same profile before giving up. This handles the
+					// common case of account-level rate limits exhausting all same-provider
+					// models in one tier.
+					if (!success && lastError) {
+						const lastErrMsg = lastError instanceof Error ? lastError.message : String(lastError);
+						const lastErrStatus =
+							lastError instanceof StatusAwareError ? lastError.status : parseOriginalStatus(lastErrMsg);
+						const isLastRetryable = isRetryableStatus(lastErrStatus, lastErrMsg);
+
+						if (isLastRetryable) {
+							const triedModels = new Set(modelsToTry);
+							// Collect models from other tiers: lower first (cheaper), then higher
+							const tierOrder: Array<"high" | "medium" | "low"> = [];
+							const currentTierIdx = ROUTER_TIERS.indexOf(decision.tier);
+							// Lower tiers first (medium → low after high; low after medium)
+							for (let t = currentTierIdx + 1; t < ROUTER_TIERS.length; t++) {
+								tierOrder.push(ROUTER_TIERS[t]);
+							}
+							// Then higher tiers
+							for (let t = currentTierIdx - 1; t >= 0; t--) {
+								tierOrder.push(ROUTER_TIERS[t]);
+							}
+
+							const crossTierModels: string[] = [];
+							for (const tier of tierOrder) {
+								const tierConfig = effectiveProfile[tier];
+								if (tierConfig.model && !triedModels.has(tierConfig.model)) {
+									crossTierModels.push(tierConfig.model);
+									triedModels.add(tierConfig.model);
+								}
+								for (const fb of tierConfig.fallbacks ?? []) {
+									if (!triedModels.has(fb)) {
+										crossTierModels.push(fb);
+										triedModels.add(fb);
+									}
+								}
+							}
+
+							// Filter embargoed models
+							const viableCrossTier = embargoEnabled
+								? crossTierModels.filter(ref => !state.isEmbargoed(ref))
+								: crossTierModels;
+
+							if (viableCrossTier.length > 0) {
+								if (state.currentConfig.debug) {
+									console.log(
+										`[model-router] ⚡ Cross-tier fallback: trying ${viableCrossTier.length} models from other tiers`,
+									);
+								}
+
+								for (let i = 0; i < viableCrossTier.length; i++) {
+									const modelRef = viableCrossTier[i];
+									const { provider: targetProvider, modelId: targetModelId } =
+										parseCanonicalModelRef(modelRef);
+
+									if (state.currentConfig.debug) {
+										console.log(
+											`[model-router] Cross-tier attempt ${i + 1}/${viableCrossTier.length}: ${modelRef}`,
+										);
 									}
 
-									for await (const event of eventSource) {
-										if (event.type === "done") {
-											const u = event.message.usage;
-											const cost = u?.cost?.total ?? 0;
-											state.accumulatedCost += cost;
-											decision.usage = {
-												inputTokens: (decision.usage?.inputTokens ?? 0) + (u?.input ?? 0),
-												outputTokens: (decision.usage?.outputTokens ?? 0) + (u?.output ?? 0),
-												cacheReadTokens: (decision.usage?.cacheReadTokens ?? 0) + (u?.cacheRead ?? 0),
-												cacheWriteTokens: (decision.usage?.cacheWriteTokens ?? 0) + (u?.cacheWrite ?? 0),
-												cost: (decision.usage?.cost ?? 0) + cost,
-											};
-											state.recordModelCost(modelRef, decision.tier, {
-												inputTokens: u?.input ?? 0,
-												outputTokens: u?.output ?? 0,
-												cacheReadTokens: u?.cacheRead ?? 0,
-												cacheWriteTokens: u?.cacheWrite ?? 0,
-												cost,
-											});
+									if (targetProvider === "router") continue;
+
+									const targetModel = state.currentModelRegistry!.find(targetProvider, targetModelId);
+									if (!targetModel) {
+										if (state.currentConfig.debug) {
+											console.log(`  ✗ Skipped: model not in registry`);
 										}
-										if (event.type === "error") {
-											const errEvent = event as { error?: { errorMessage?: string; errorStatus?: number } };
-											const errMsg = errEvent.error?.errorMessage || "Model failed.";
-											const errStatus = errEvent.error?.errorStatus;
-											throw new StatusAwareError(errMsg, errStatus, parseRetryAfterMs(errMsg));
+										continue;
+									}
+
+									const apiKey = await state.currentModelRegistry!.getApiKey(targetModel);
+									if (!apiKey) {
+										if (state.currentConfig.debug) {
+											console.log(`  ✗ Skipped: no API key`);
 										}
-										stream.push(event);
+										continue;
 									}
-									if (state.currentConfig.debug) {
-										console.log(`  ✓ Success with ${modelRef} (cross-tier fallback)`);
-									}
-									if (embargoEnabled && state.isEmbargoed(modelRef)) {
-										state.liftEmbargo(modelRef);
-									}
-									decision.isFallback = true;
-									decision.targetLabel = modelRef;
-									success = true;
-									break;
-								} catch (err) {
-									const errMsg = err instanceof Error ? err.message : String(err);
-									if (state.currentConfig.debug) {
-										console.log(`  ✗ Cross-tier failed: ${errMsg}`);
-									}
-									if (embargoEnabled) {
-										const errStatus = err instanceof StatusAwareError ? err.status : undefined;
-										const errRetryAfter = err instanceof StatusAwareError ? err.retryAfterMs : undefined;
-										if (isRetryableStatus(errStatus, errMsg)) {
-											const embargoCfg = state.currentConfig.embargo ?? { enabled: true };
-											const duration = computeEmbargoDuration(errRetryAfter, embargoCfg);
-											const reason = errStatus ? `HTTP ${errStatus}: ${errMsg.slice(0, 100)}` : errMsg.slice(0, 100);
-											state.embargoModel(modelRef, errStatus, reason, duration, errRetryAfter);
+
+									try {
+										const targetLimit = targetModel.contextWindow || 128_000;
+										const crossTierContext =
+											targetLimit < (model.contextWindow ?? Infinity)
+												? truncateContext(context, targetLimit)
+												: context;
+
+										const thinkingOverride = actions.getThinkingOverride(effectiveProfileName, decision.tier);
+										const effectiveThinking = thinkingOverride ?? decision.thinking;
+										const delegatedReasoning: Effort | undefined =
+											targetModel.reasoning &&
+											effectiveThinking !== ThinkingLevel.Off &&
+											effectiveThinking !== ThinkingLevel.Inherit
+												? clampThinkingLevelForModel(targetModel, effectiveThinking as Effort)
+												: undefined;
+
+										const delegatedStream = streamSimple(
+											targetModel,
+											sanitizeToolSchemas(sanitizeContext(crossTierContext)),
+											{
+												...options,
+												apiKey,
+												headers: targetModel.headers,
+												...(delegatedReasoning ? { reasoning: delegatedReasoning } : {}),
+											},
+										);
+
+										const idleTimeoutMs = resolveStreamIdleTimeout(
+											state.currentConfig.streamIdleTimeoutMs,
+											targetProvider,
+										);
+										const maxDurationMs =
+											state.currentConfig.maxStreamDurationMs !== undefined
+												? state.currentConfig.maxStreamDurationMs
+												: DEFAULT_MAX_STREAM_DURATION_MS;
+										let eventSource: AsyncIterable<import("@oh-my-pi/pi-ai").AssistantMessageEvent> =
+											idleTimeoutMs > 0 ? withIdleTimeout(delegatedStream, idleTimeoutMs) : delegatedStream;
+										if (maxDurationMs > 0) {
+											eventSource = withMaxDuration(eventSource, maxDurationMs);
 										}
+
+										for await (const event of eventSource) {
+											if (event.type === "done") {
+												const u = event.message.usage;
+												const cost = u?.cost?.total ?? 0;
+												state.accumulatedCost += cost;
+												decision.usage = {
+													inputTokens: (decision.usage?.inputTokens ?? 0) + (u?.input ?? 0),
+													outputTokens: (decision.usage?.outputTokens ?? 0) + (u?.output ?? 0),
+													cacheReadTokens: (decision.usage?.cacheReadTokens ?? 0) + (u?.cacheRead ?? 0),
+													cacheWriteTokens: (decision.usage?.cacheWriteTokens ?? 0) + (u?.cacheWrite ?? 0),
+													cost: (decision.usage?.cost ?? 0) + cost,
+												};
+												state.recordModelCost(modelRef, decision.tier, {
+													inputTokens: u?.input ?? 0,
+													outputTokens: u?.output ?? 0,
+													cacheReadTokens: u?.cacheRead ?? 0,
+													cacheWriteTokens: u?.cacheWrite ?? 0,
+													cost,
+												});
+											}
+											if (event.type === "error") {
+												const errEvent = event as {
+													error?: { errorMessage?: string; errorStatus?: number };
+												};
+												const errMsg = errEvent.error?.errorMessage || "Model failed.";
+												const errStatus = errEvent.error?.errorStatus;
+												throw new StatusAwareError(errMsg, errStatus, parseRetryAfterMs(errMsg));
+											}
+											stream.push(event);
+										}
+										if (state.currentConfig.debug) {
+											console.log(`  ✓ Success with ${modelRef} (cross-tier fallback)`);
+										}
+										if (embargoEnabled && state.isEmbargoed(modelRef)) {
+											state.liftEmbargo(modelRef);
+										}
+										decision.isFallback = true;
+										decision.targetLabel = modelRef;
+										success = true;
+										break;
+									} catch (err) {
+										const errMsg = err instanceof Error ? err.message : String(err);
+										if (state.currentConfig.debug) {
+											console.log(`  ✗ Cross-tier failed: ${errMsg}`);
+										}
+										if (embargoEnabled) {
+											const errStatus = err instanceof StatusAwareError ? err.status : undefined;
+											const errRetryAfter = err instanceof StatusAwareError ? err.retryAfterMs : undefined;
+											if (isRetryableStatus(errStatus, errMsg)) {
+												const embargoCfg = state.currentConfig.embargo ?? { enabled: true };
+												const duration = computeEmbargoDuration(errRetryAfter, embargoCfg);
+												const reason = errStatus
+													? `HTTP ${errStatus}: ${errMsg.slice(0, 100)}`
+													: errMsg.slice(0, 100);
+												state.embargoModel(modelRef, errStatus, reason, duration, errRetryAfter);
+											}
+										}
+										lastError = err;
 									}
-									lastError = err;
 								}
 							}
 						}
 					}
-				}
 
-				if (!success) {
-					if (state.currentConfig.debug) {
-						console.log(
-							`[model-router] ❌ All models failed (${modelsToTry.length} primary + cross-tier). Last error: ${lastError instanceof Error ? lastError.message : String(lastError)}`,
-						);
+					if (!success) {
+						if (state.currentConfig.debug) {
+							console.log(
+								`[model-router] ❌ All models failed (${modelsToTry.length} primary + cross-tier). Last error: ${lastError instanceof Error ? lastError.message : String(lastError)}`,
+							);
+						}
+						throw lastError || new Error("Failed to delegate to any model in the chain.");
 					}
-					throw lastError || new Error("Failed to delegate to any model in the chain.");
-				}
-
 
 					stream.end();
 				} catch (error) {
@@ -1125,10 +1073,7 @@ export const registerRouterProvider = (
 					stream.push({
 						type: "error",
 						reason: "error",
-						error: createErrorMessage(
-							model,
-							error instanceof Error ? error.message : String(error),
-						),
+						error: createErrorMessage(model, error instanceof Error ? error.message : String(error)),
 					});
 					stream.end();
 				} finally {

@@ -95,10 +95,7 @@ async function run(cwd: string, args: string[]): Promise<RunResult> {
 	return { stdout, stderr, code: typeof code === "number" ? code : 1 };
 }
 
-async function readText(
-	stream: ReadableStream<Uint8Array> | undefined,
-	cap: number,
-): Promise<string> {
+async function readText(stream: ReadableStream<Uint8Array> | undefined, cap: number): Promise<string> {
 	if (!stream) return "";
 	const reader = stream.getReader();
 	let total = 0;
@@ -109,17 +106,13 @@ async function readText(
 		if (!value) continue;
 		total += value.byteLength;
 		if (total > cap) {
-			chunks.push(
-				value.subarray(0, Math.max(0, cap - (total - value.byteLength))),
-			);
+			chunks.push(value.subarray(0, Math.max(0, cap - (total - value.byteLength))));
 			break;
 		}
 		chunks.push(value);
 	}
 	reader.releaseLock();
-	const merged = new Uint8Array(
-		chunks.reduce((sum, c) => sum + c.byteLength, 0),
-	);
+	const merged = new Uint8Array(chunks.reduce((sum, c) => sum + c.byteLength, 0));
 	let offset = 0;
 	for (const c of chunks) {
 		merged.set(c, offset);
@@ -139,11 +132,7 @@ export async function probeRepo(cwd: string): Promise<RepoProbe> {
 	}
 	const user = await run(cwd, ["config", "user.name"]);
 	const email = await run(cwd, ["config", "user.email"]);
-	const identity =
-		user.code === 0 &&
-		user.stdout.trim() !== "" &&
-		email.code === 0 &&
-		email.stdout.trim() !== "";
+	const identity = user.code === 0 && user.stdout.trim() !== "" && email.code === 0 && email.stdout.trim() !== "";
 	return {
 		insideRepo: true,
 		toplevel: top.stdout.trim(),
@@ -159,10 +148,7 @@ export async function probeRepo(cwd: string): Promise<RepoProbe> {
  * the `write` tool, which never carries an edit-style diff in its
  * `tool_result` event.
  */
-export async function statStagedPaths(
-	cwd: string,
-	paths: string[],
-): Promise<PathStat> {
+export async function statStagedPaths(cwd: string, paths: string[]): Promise<PathStat> {
 	if (paths.length === 0) {
 		return { added: 0, removed: 0, hunks: 0, diff: "", hasRename: false };
 	}
@@ -174,13 +160,7 @@ export async function statStagedPaths(
 	// (now-gone) file; a blanket `git add -A` (no pathspec) would
 	// sweep the whole worktree and break the per-edit scoping.
 	await stageEach(cwd, paths);
-	const numstat = await run(cwd, [
-		"diff",
-		"--cached",
-		"--numstat",
-		"--",
-		...paths,
-	]);
+	const numstat = await run(cwd, ["diff", "--cached", "--numstat", "--", ...paths]);
 	const diff = await run(cwd, ["diff", "--cached", "--", ...paths]);
 	let added = 0;
 	let removed = 0;
@@ -219,25 +199,15 @@ export async function commitPaths(
 	// Stage each path with the right verb (add vs rm). See
 	// `stageEach` for why a single `git add -A` doesn't work here.
 	const staged = await stageEach(cwd, paths);
-	if (
-		staged.failed.length > 0 &&
-		staged.added.length === 0 &&
-		staged.removed.length === 0
-	) {
+	if (staged.failed.length > 0 && staged.added.length === 0 && staged.removed.length === 0) {
 		return {
 			sha: null,
 			skipped: true,
 			reason: "git stage failed",
-			stderr: staged.failed.map((f) => f.stderr).join("\n"),
+			stderr: staged.failed.map(f => f.stderr).join("\n"),
 		};
 	}
-	const status = await run(cwd, [
-		"diff",
-		"--cached",
-		"--name-only",
-		"--",
-		...paths,
-	]);
+	const status = await run(cwd, ["diff", "--cached", "--name-only", "--", ...paths]);
 	if (status.code !== 0) {
 		return {
 			sha: null,
@@ -253,16 +223,7 @@ export async function commitPaths(
 	// paths outside the pathspec, so the commit can never sweep up the
 	// user's unrelated work. The trailing `--` plus pathspec is the
 	// belt-and-braces form of the same guarantee.
-	const commit = await run(cwd, [
-		"commit",
-		"--only",
-		"--no-verify",
-		"--no-gpg-sign",
-		"-m",
-		message,
-		"--",
-		...paths,
-	]);
+	const commit = await run(cwd, ["commit", "--only", "--no-verify", "--no-gpg-sign", "-m", message, "--", ...paths]);
 	if (commit.code !== 0) {
 		return {
 			sha: null,
@@ -331,13 +292,7 @@ async function pathExists(cwd: string, path: string): Promise<boolean> {
 	// For an untracked file that's been created, we also want to
 	// treat it as "exists" so we use `git add` rather than `git rm`.
 	if (r.code === 0) return true;
-	const stat = await run(cwd, [
-		"ls-files",
-		"--others",
-		"--exclude-standard",
-		"--",
-		path,
-	]);
+	const stat = await run(cwd, ["ls-files", "--others", "--exclude-standard", "--", path]);
 	if (r.code !== 0 && stat.code === 0 && stat.stdout.trim() !== "") return true;
 	// Fall back to the on-disk stat: the path may not be tracked yet
 	// (e.g. an Edit that created a brand-new file), or git might not

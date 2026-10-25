@@ -29,9 +29,7 @@ export async function onSessionStart(
 		return;
 	}
 
-	const global = config.calibration.useGlobalPrior
-		? loadGlobalCalibration()
-		: undefined;
+	const global = config.calibration.useGlobalPrior ? loadGlobalCalibration() : undefined;
 
 	state.calibration = initSessionCalibration(global, config.calibration);
 

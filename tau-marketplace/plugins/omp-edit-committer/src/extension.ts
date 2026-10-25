@@ -32,24 +32,9 @@ import type {
 	WriteToolCallEvent,
 	WriteToolResultEvent,
 } from "tau";
-import {
-	type RepoProbe,
-	commitPaths,
-	probeRepo,
-	statStagedPaths,
-} from "./git.ts";
-import {
-	type DiffSummary,
-	type EditKind,
-	buildMessage,
-	summarize,
-} from "./message.ts";
-import {
-	COMMIT_MESSAGE_TYPE,
-	type CommitRecord,
-	makeCommitRecord,
-	renderCommitMessage,
-} from "./renderer.ts";
+import { type RepoProbe, commitPaths, probeRepo, statStagedPaths } from "./git.ts";
+import { type DiffSummary, type EditKind, buildMessage, summarize } from "./message.ts";
+import { COMMIT_MESSAGE_TYPE, type CommitRecord, makeCommitRecord, renderCommitMessage } from "./renderer.ts";
 
 /** Tool names we auto-commit. */
 type CommitTool = "edit" | "write";
@@ -79,7 +64,7 @@ const repoCache = new Map<string, Promise<RepoProbe>>();
 function probeFor(cwd: string): Promise<RepoProbe> {
 	const cached = repoCache.get(cwd);
 	if (cached) return cached;
-	const p = probeRepo(cwd).catch((err) => {
+	const p = probeRepo(cwd).catch(err => {
 		// Drop the failed promise so the next call retries; git might be
 		// installed later in the session, or the user might `git init`.
 		repoCache.delete(cwd);
@@ -94,10 +79,7 @@ function probeFor(cwd: string): Promise<RepoProbe> {
 	return p;
 }
 
-function pickKind(
-	toolName: CommitTool,
-	details: EditToolDetails | undefined,
-): EditKind {
+function pickKind(toolName: CommitTool, details: EditToolDetails | undefined): EditKind {
 	if (toolName === "write") return "write";
 	// `EditToolDetails["op"]` is "create" | "delete" | "update"; rename
 	// is signalled by `sourcePath` (the pre-move path), not by `op`.
@@ -136,27 +118,18 @@ function extractIntentHint(input: Record<string, unknown>): string | undefined {
 	// the tool call. We don't require it; without one, the message builder
 	// falls back to diff-derived text.
 	const hint = input.intent ?? input.commit_message ?? input.commitMessage;
-	return typeof hint === "string" && hint.trim() !== ""
-		? hint.trim()
-		: undefined;
+	return typeof hint === "string" && hint.trim() !== "" ? hint.trim() : undefined;
 }
 
-function collectPathsFromDetails(
-	details: EditToolDetails | undefined,
-): string[] {
+function collectPathsFromDetails(details: EditToolDetails | undefined): string[] {
 	if (!details) return [];
-	if (
-		Array.isArray(details.perFileResults) &&
-		details.perFileResults.length > 0
-	) {
+	if (Array.isArray(details.perFileResults) && details.perFileResults.length > 0) {
 		// For multi-file edits each per-file entry can carry its own
 		// `sourcePath` (rename). We must include both the destination
 		// and the source so a `git commit --only -- <paths>` of just
 		// the destinations doesn't drop the deletion half of the rename.
-		return details.perFileResults.flatMap((p) =>
-			p.sourcePath && p.sourcePath !== p.path
-				? [p.sourcePath, p.path]
-				: [p.path],
+		return details.perFileResults.flatMap(p =>
+			p.sourcePath && p.sourcePath !== p.path ? [p.sourcePath, p.path] : [p.path],
 		);
 	}
 	const out: string[] = [];
@@ -189,15 +162,12 @@ export default function editCommitterExtension(pi: ExtensionAPI): void {
 
 	// ---- tool_call ---------------------------------------------------------
 
-	pi.on("tool_call", async (event) => {
+	pi.on("tool_call", async event => {
 		if (event.type !== "tool_call") return;
 		const ev = event as EditToolCallEvent | WriteToolCallEvent;
 		if (ev.toolName !== "edit" && ev.toolName !== "write") return;
 		const input = ev.input as Record<string, unknown>;
-		const paths =
-			ev.toolName === "edit"
-				? extractEditPaths(input)
-				: extractWritePaths(input);
+		const paths = ev.toolName === "edit" ? extractEditPaths(input) : extractWritePaths(input);
 		if (paths.length === 0) return;
 		pending.set(ev.toolCallId, {
 			paths,
@@ -222,8 +192,7 @@ export default function editCommitterExtension(pi: ExtensionAPI): void {
 		const details = ev.toolName === "edit" ? ev.details : undefined;
 		// Edit may surface paths inside `details` that weren't in the call
 		// (apply-patch / multi-file). Prefer those when present.
-		const detailsPaths =
-			ev.toolName === "edit" ? collectPathsFromDetails(details) : [];
+		const detailsPaths = ev.toolName === "edit" ? collectPathsFromDetails(details) : [];
 		const paths = detailsPaths.length > 0 ? detailsPaths : initial.paths;
 		if (paths.length === 0) return;
 
@@ -285,29 +254,20 @@ function buildSummary(
 		removed: gitStat.removed,
 		hunks: gitStat.hunks,
 		firstAddedLine: firstLine(gitStat.diff, "+") ?? fromEvent.firstAddedLine,
-		firstRemovedLine:
-			firstLine(gitStat.diff, "-") ?? fromEvent.firstRemovedLine,
+		firstRemovedLine: firstLine(gitStat.diff, "-") ?? fromEvent.firstRemovedLine,
 	};
 }
 
 function firstLine(diff: string, prefix: "+" | "-"): string | null {
 	for (const raw of diff.split("\n")) {
-		if (
-			raw.startsWith(prefix) &&
-			!raw.startsWith(`${prefix}++`) &&
-			!raw.startsWith(`${prefix}--`)
-		) {
+		if (raw.startsWith(prefix) && !raw.startsWith(`${prefix}++`) && !raw.startsWith(`${prefix}--`)) {
 			return raw.slice(1).trim();
 		}
 	}
 	return null;
 }
 
-async function runCommit(
-	pi: ExtensionAPI,
-	ctx: ExtensionContext,
-	args: RunCommitArgs,
-): Promise<void> {
+async function runCommit(pi: ExtensionAPI, ctx: ExtensionContext, args: RunCommitArgs): Promise<void> {
 	const cwd = ctx.cwd;
 	const probe = await probeFor(cwd);
 	if (!probe.insideRepo) {

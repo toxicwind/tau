@@ -1,9 +1,7 @@
 import type { ExtensionContext } from "tau";
 import type { RouterState } from "../state";
 
-export const handleEmbargo = (
-	state: RouterState,
-) => {
+export const handleEmbargo = (state: RouterState) => {
 	return async (subArgs: string[], ctx: ExtensionContext) => {
 		const action = subArgs[0]?.toLowerCase();
 
@@ -30,7 +28,9 @@ export const handleEmbargo = (
 			lines.push(`  Status: HTTP ${entry.status ?? "unknown"} | Remaining: ${timeStr}`);
 			lines.push(`  Reason: ${entry.reason}`);
 			if (entry.requestedDurationMs && entry.requestedDurationMs !== entry.effectiveDurationMs) {
-				lines.push(`  Provider requested: ${Math.ceil(entry.requestedDurationMs / 1000)}s (capped to ${Math.ceil(entry.effectiveDurationMs / 1000)}s)`);
+				lines.push(
+					`  Provider requested: ${Math.ceil(entry.requestedDurationMs / 1000)}s (capped to ${Math.ceil(entry.effectiveDurationMs / 1000)}s)`,
+				);
 			}
 			lines.push("");
 		}

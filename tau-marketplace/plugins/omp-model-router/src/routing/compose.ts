@@ -6,13 +6,7 @@
 import type { Context } from "@oh-my-pi/pi-ai";
 import type { ExtensionContext } from "tau";
 import { parseCanonicalModelRef } from "../config";
-import type {
-	RouterTier,
-	RouterProfile,
-	RoutingDecision,
-	RoutingRule,
-	RouterThinkingByTier,
-} from "../types";
+import type { RouterTier, RouterProfile, RoutingDecision, RoutingRule, RouterThinkingByTier } from "../types";
 import type { SessionCalibration, CalibrationConfig } from "../calibration/types";
 import type { SessionScope } from "../state";
 import type { RouterState } from "../state";
@@ -140,12 +134,23 @@ export interface RoutingConfig {
 	 * actual token usage and cost into the session's modelCosts map.
 	 * Receives the canonical model ref (e.g. "anthropic/claude-3-haiku-20240307") and usage.
 	 */
-	recordClassifierCost?: (modelRef: string, usage: { inputTokens: number; outputTokens: number; cacheReadTokens: number; cacheWriteTokens: number; cost: number }) => void;
+	recordClassifierCost?: (
+		modelRef: string,
+		usage: {
+			inputTokens: number;
+			outputTokens: number;
+			cacheReadTokens: number;
+			cacheWriteTokens: number;
+			cost: number;
+		},
+	) => void;
 	/**
 	 * TEST-ONLY: inject a fake runClassifier to avoid mock.module() leaking across files.
 	 * When set, bypasses the dynamic import and uses this function directly.
 	 */
-	_classifierOverride?: (...args: Parameters<Awaited<typeof import("./index.js")>["runClassifier"]>) => ReturnType<Awaited<typeof import("./index.js")>["runClassifier"]>;
+	_classifierOverride?: (
+		...args: Parameters<Awaited<typeof import("./index.js")>["runClassifier"]>
+	) => ReturnType<Awaited<typeof import("./index.js")>["runClassifier"]>;
 }
 
 /**
@@ -155,10 +160,7 @@ export interface RoutingConfig {
  *   3. Classifier override (LLM classifier overrides heuristic)
  *   4. Image attachment upgrade (forces tier that supports images)
  */
-export const resolveRouting = async (
-	input: RoutingInput,
-	config: RoutingConfig,
-): Promise<RoutingDecision> => {
+export const resolveRouting = async (input: RoutingInput, config: RoutingConfig): Promise<RoutingDecision> => {
 	// 1. Heuristic decision
 	let decision = decideRouting(
 		input.context,
@@ -193,15 +195,8 @@ export const resolveRouting = async (
 				input.isBudgetExceeded,
 				input.floor,
 			);
-			const threshold =
-				config.pinConfig.pinPressureThreshold ??
-				DEFAULT_PIN_PRESSURE_THRESHOLD;
-			const lapsed = incrementPinPressure(
-				input.scope,
-				shadowDecision.tier,
-				threshold,
-				config.debug,
-			);
+			const threshold = config.pinConfig.pinPressureThreshold ?? DEFAULT_PIN_PRESSURE_THRESHOLD;
+			const lapsed = incrementPinPressure(input.scope, shadowDecision.tier, threshold, config.debug);
 			if (lapsed) {
 				// Bust classifier cache — routing context has changed.
 				// Prefer input.scope (session-local snapshot); fall back to state.scope for
@@ -241,12 +236,7 @@ export const resolveRouting = async (
 			const usage = await input.lastExtensionContext.getContextUsage();
 			const tokens = usage?.tokens ?? 0;
 			if (tokens > 0) {
-				const promoted = promoteForContextCapacity(
-					decision.tier,
-					tokens,
-					config.profile,
-					input.modelRegistry,
-				);
+				const promoted = promoteForContextCapacity(decision.tier, tokens, config.profile, input.modelRegistry);
 				if (promoted && promoted.tier !== decision.tier) {
 					decision = buildRoutingDecision(
 						config.profileName,
@@ -284,15 +274,23 @@ export const resolveRouting = async (
 	//    Fall back to input.state?.scope for backward compatibility with tests
 	//    that pass state but not scope.
 	const resolvedScope = input.scope ?? input.state?.scope;
-	const isSubAgent = (resolvedScope?.parentSessionId) !== undefined;
+	const isSubAgent = resolvedScope?.parentSessionId !== undefined;
 	let bucket: string | undefined;
-	let verdict: { tier: RouterTier; reasoning: string; classifierModelRef?: string; classifierUsage?: { inputTokens: number; outputTokens: number; cacheReadTokens: number; cacheWriteTokens: number; cost: number } } | undefined;
-	if (
-		config.classifierModel &&
-		!isSubAgent &&
-		!decision.isContextTriggered &&
-		!decision.isRuleMatched
-	) {
+	let verdict:
+		| {
+				tier: RouterTier;
+				reasoning: string;
+				classifierModelRef?: string;
+				classifierUsage?: {
+					inputTokens: number;
+					outputTokens: number;
+					cacheReadTokens: number;
+					cacheWriteTokens: number;
+					cost: number;
+				};
+		  }
+		| undefined;
+	if (config.classifierModel && !isSubAgent && !decision.isContextTriggered && !decision.isRuleMatched) {
 		// ── Compute classifier signature (Phase 1 cache key) ──────────────
 		const lastUserText = getLastUserText(input.context) ?? "";
 		// Monotonic user-message counter on scope — incremented by turn_start.
@@ -321,10 +319,7 @@ export const resolveRouting = async (
 			const classifierSpawnTime = Date.now();
 			const { resolveClassifierContextWindow, runClassifier: importedRunClassifier } = await import("./index.js");
 			const runClassifier = config._classifierOverride ?? importedRunClassifier;
-			const classifierContextWindow = resolveClassifierContextWindow(
-				config.classifierModel,
-				input.modelRegistry,
-			);
+			const classifierContextWindow = resolveClassifierContextWindow(config.classifierModel, input.modelRegistry);
 			const builtPrompt = buildClassifierPrompt(
 				input.context,
 				decision.phase,
@@ -358,18 +353,18 @@ export const resolveRouting = async (
 					? config.classifierModel[0]
 					: config.classifierModel;
 				const detectedSignals = detectSignals(input.context);
-			await appendPromptRecord(config.promptLogPath, {
-					timestamp:    new Date().toISOString(),
-					turnIndex:    input.calibration?.turnsProcessed ?? 0,
+				await appendPromptRecord(config.promptLogPath, {
+					timestamp: new Date().toISOString(),
+					turnIndex: input.calibration?.turnsProcessed ?? 0,
 					userMsgIndex: resolvedScope?.userMessagesSeen ?? 0,
 					bucket,
-					model:        refForModel ?? "unknown",
+					model: refForModel ?? "unknown",
 					heuristicTier: decision.tier,
-					verdict:      verdict ?? null,
-					error:        verdict ? undefined : "no-verdict",
-					latencyMs:    Date.now() - classifierSpawnTime,
-					prompt:       builtPrompt,
-					signals:      detectedSignals.length > 0 ? detectedSignals : undefined,
+					verdict: verdict ?? null,
+					error: verdict ? undefined : "no-verdict",
+					latencyMs: Date.now() - classifierSpawnTime,
+					prompt: builtPrompt,
+					signals: detectedSignals.length > 0 ? detectedSignals : undefined,
 				});
 			}
 		}
@@ -389,9 +384,7 @@ export const resolveRouting = async (
 			} else if (input.pinnedTier) {
 				// Adaptive + pinned: use verdict for pin-pressure comparison, but don't override routing decision
 				if (input.scope && config.pinConfig) {
-					const threshold =
-						config.pinConfig.pinPressureThreshold ??
-						DEFAULT_PIN_PRESSURE_THRESHOLD;
+					const threshold = config.pinConfig.pinPressureThreshold ?? DEFAULT_PIN_PRESSURE_THRESHOLD;
 					const lapsed = incrementPinPressure(
 						input.scope,
 						verdict.tier, // classifier verdict is stronger signal than heuristic
@@ -431,9 +424,7 @@ export const resolveRouting = async (
 					config.profile,
 					verdict.tier,
 					phaseForTier(verdict.tier),
-					cacheHit
-						? `Classifier (cached): ${verdict.reasoning}`
-						: `Classifier: ${verdict.reasoning}`,
+					cacheHit ? `Classifier (cached): ${verdict.reasoning}` : `Classifier: ${verdict.reasoning}`,
 					config.thinkingOverrides,
 					true,
 				);
@@ -485,23 +476,15 @@ export const resolveRouting = async (
 			}
 		}
 	}
-	
 
 	// 4. Image attachment upgrade — find lowest tier that supports images
 	if (hasImageAttachment(input.context)) {
 		const checkTierSupportsImage = (tier: RouterTier): boolean => {
-			const models = [
-				config.profile[tier].model,
-				...(config.profile[tier].fallbacks ?? []),
-			];
-			return models.some((ref) => {
+			const models = [config.profile[tier].model, ...(config.profile[tier].fallbacks ?? [])];
+			return models.some(ref => {
 				try {
 					const { provider, modelId } = parseCanonicalModelRef(ref);
-					return (
-						input.modelRegistry.find(provider, modelId)?.input?.includes(
-							"image",
-						) ?? false
-					);
+					return input.modelRegistry.find(provider, modelId)?.input?.includes("image") ?? false;
 				} catch {
 					return false;
 				}
@@ -512,9 +495,13 @@ export const resolveRouting = async (
 			// Determine tiers to try; skip high if budget is exceeded
 			const tiersToTry: RouterTier[] =
 				decision.tier === "low"
-					? (input.isBudgetExceeded ? ["medium"] : ["medium", "high"])
+					? input.isBudgetExceeded
+						? ["medium"]
+						: ["medium", "high"]
 					: decision.tier === "medium"
-						? (input.isBudgetExceeded ? [] : ["high"])
+						? input.isBudgetExceeded
+							? []
+							: ["high"]
 						: [];
 
 			for (const t of tiersToTry) {

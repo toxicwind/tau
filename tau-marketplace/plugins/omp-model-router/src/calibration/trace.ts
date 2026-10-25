@@ -25,9 +25,7 @@ export function openTraceFile(sessionId: string): string {
 		try {
 			writeFileSync(path, "", "utf-8");
 		} catch (error) {
-			console.error(
-				`[model-router] Failed to create trace file: ${error}`,
-			);
+			console.error(`[model-router] Failed to create trace file: ${error}`);
 		}
 	}
 
@@ -37,17 +35,12 @@ export function openTraceFile(sessionId: string): string {
 /**
  * Append a trace record to the file
  */
-export function appendTraceRecord(
-	traceFilePath: string,
-	record: TraceRecord,
-): void {
+export function appendTraceRecord(traceFilePath: string, record: TraceRecord): void {
 	try {
 		const line = JSON.stringify(record) + "\n";
 		appendFileSync(traceFilePath, line, "utf-8");
 	} catch (error) {
-		console.error(
-			`[model-router] Failed to append trace record: ${error}`,
-		);
+		console.error(`[model-router] Failed to append trace record: ${error}`);
 	}
 }
 

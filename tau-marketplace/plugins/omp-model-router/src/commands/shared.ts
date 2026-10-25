@@ -3,16 +3,9 @@ import type { ExtensionContext } from "tau";
 export type Actions = {
 	persistState: () => void;
 	updateStatus: (ctx: ExtensionContext) => void;
-	reloadConfig: (
-		ctx?: ExtensionContext,
-		options?: { preserveDebug?: boolean },
-	) => void;
+	reloadConfig: (ctx?: ExtensionContext, options?: { preserveDebug?: boolean }) => void;
 	ensureValidActiveRouterProfile: (ctx: ExtensionContext) => Promise<void>;
-	switchToRouterProfile: (
-		profileName: string,
-		ctx: ExtensionContext,
-		strict?: boolean,
-	) => Promise<boolean>;
+	switchToRouterProfile: (profileName: string, ctx: ExtensionContext, strict?: boolean) => Promise<boolean>;
 };
 
 export const SET_KEYS = [
@@ -24,10 +17,7 @@ export const SET_KEYS = [
 	"defaultProfile",
 ] as const;
 
-export const resolveConfigValue = (
-	raw: Record<string, unknown>,
-	key: string,
-): unknown => {
+export const resolveConfigValue = (raw: Record<string, unknown>, key: string): unknown => {
 	// Profile dot-path: <profile>.<tier>.model|thinking|fallbacks
 	const profileMatch = key.match(/^([^.]+)\.(high|medium|low)\.(model|thinking|fallbacks)$/);
 	if (profileMatch) {
@@ -36,21 +26,24 @@ export const resolveConfigValue = (
 		return profiles?.[profile]?.[tier]?.[field];
 	}
 	switch (key) {
-		case "routerEnabled":       return raw.routerEnabled;
-		case "phaseBias":           return raw.phaseBias;
-		case "budget":              return raw.maxSessionBudget;
-		case "contextThreshold":    return raw.largeContextThreshold;
-		case "debug":               return raw.debug;
-		case "defaultProfile":      return raw.defaultProfile;
-		default:                    return undefined;
+		case "routerEnabled":
+			return raw.routerEnabled;
+		case "phaseBias":
+			return raw.phaseBias;
+		case "budget":
+			return raw.maxSessionBudget;
+		case "contextThreshold":
+			return raw.largeContextThreshold;
+		case "debug":
+			return raw.debug;
+		case "defaultProfile":
+			return raw.defaultProfile;
+		default:
+			return undefined;
 	}
 };
 
-export const applyConfigUpdate = (
-	raw: Record<string, unknown>,
-	key: string,
-	value: string,
-): string | null => {
+export const applyConfigUpdate = (raw: Record<string, unknown>, key: string, value: string): string | null => {
 	// Profile dot-path: <profile>.<tier>.model|thinking|fallbacks
 	const profileMatch = key.match(/^([^.]+)\.(high|medium|low)\.(model|thinking|fallbacks)$/);
 	if (profileMatch) {
@@ -59,7 +52,10 @@ export const applyConfigUpdate = (
 		if (!profiles?.[profile]) return `Unknown profile: "${profile}"`;
 		if (!profiles[profile][tier]) return `Unknown tier: "${tier}"`;
 		if (field === "fallbacks") {
-			profiles[profile][tier].fallbacks = value.split(",").map((s) => s.trim()).filter(Boolean);
+			profiles[profile][tier].fallbacks = value
+				.split(",")
+				.map(s => s.trim())
+				.filter(Boolean);
 		} else {
 			profiles[profile][tier][field] = value;
 		}

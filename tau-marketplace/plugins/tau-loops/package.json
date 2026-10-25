@@ -13,29 +13,29 @@
   "bugs": {
     "url": "https://github.com/toxicwind/omp-extensions/issues"
   },
-	"files": [
-		"src",
-		"scripts",
-		"README.md",
-		"LICENSE"
-	],
+  "files": [
+    "src",
+    "scripts",
+    "README.md",
+    "LICENSE"
+  ],
   "@tau/tau-agent": {
     "extensions": [
       "./src/extension.ts"
     ]
   },
-	"scripts": {
-		"typecheck": "tsc --noEmit",
-		"test": "bun test",
-		"loop:model-audit": "bun scripts/run-model-audit.ts",
-		"loop:dir-diff": "bun scripts/run-dir-diff.ts"
-	},
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "bun test",
+    "loop:model-audit": "bun scripts/run-model-audit.ts",
+    "loop:dir-diff": "bun scripts/run-dir-diff.ts"
+  },
   "peerDependencies": {
-    "@tau/tau-agent": "^18.0.11"
+    "@tau/tau-agent-core": "^18.3.0"
   },
   "devDependencies": {
-      "@tau/tau-agent": "npm:@oh-my-pi/pi-coding-agent@^18.0.11",
     "@types/bun": "latest",
-    "typescript": "^5.6.0"
+    "typescript": "^5.6.0",
+    "@tau/tau-agent-core": "npm:@oh-my-pi/pi-coding-agent@^18.0.11"
   }
 }

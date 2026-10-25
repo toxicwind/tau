@@ -61,13 +61,13 @@ describe("collectReferences", () => {
 			retry: { fallbackChains: { "openrouter/*": ["openrouter/qwen/qwen3.8-27b:free"] } },
 		};
 		const refs = collectReferences(config);
-		const found = refs.map((r) => `${r.origin}=${r.ref}`);
+		const found = refs.map(r => `${r.origin}=${r.ref}`);
 		expect(found).toEqual([
 			"modelRoles.default=openrouter/nvidia/nemotron-3.5-lightning:free",
 			"subagents.defaultModel=openrouter/liquid/lfm-2.5-2.6b:free",
 			"fallbackChains.openrouter/*[0]=openrouter/qwen/qwen3.8-27b:free",
 		]);
-		expect(refs.every((r) => r.provider === "openrouter")).toBe(true);
+		expect(refs.every(r => r.provider === "openrouter")).toBe(true);
 	});
 
 	test("keeps non-openrouter providers addressable", () => {
@@ -89,7 +89,7 @@ describe("findUndefinedRoles", () => {
 		const modelRoles = { default: "openrouter/nvidia/nemotron-3.5-lightning:free" };
 		const roles = parseModelRoleIds(ROLE_SOURCE);
 		const undefinedRoles = findUndefinedRoles(roles, modelRoles, PRIORITY);
-		const byRole = new Map(undefinedRoles.map((u) => [u.role, u.fallsThroughTo]));
+		const byRole = new Map(undefinedRoles.map(u => [u.role, u.fallsThroughTo]));
 
 		expect(byRole.get("smol")).toBe("google-antigravity/gemini-3.8-flash");
 		expect(byRole.get("slow")).toBe("anthropic/claude-opus-5-5");

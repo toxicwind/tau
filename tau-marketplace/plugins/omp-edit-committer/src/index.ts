@@ -6,9 +6,5 @@
 export { default } from "./extension.ts";
 export { buildMessage, summarize } from "./message.ts";
 export type { CommitMessage, DiffSummary, EditKind } from "./message.ts";
-export {
-	COMMIT_MESSAGE_TYPE,
-	makeCommitRecord,
-	renderCommitMessage,
-} from "./renderer.ts";
+export { COMMIT_MESSAGE_TYPE, makeCommitRecord, renderCommitMessage } from "./renderer.ts";
 export type { CommitRecord } from "./renderer.ts";

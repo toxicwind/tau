@@ -13,10 +13,7 @@
 import type { Context, Message } from "@oh-my-pi/pi-ai";
 import type { RouterTier, RouterPhase } from "../types";
 import { isRouterTier } from "../config";
-import {
-	extractText,
-	getLastUserText,
-} from "../utils/messages.js";
+import { extractText, getLastUserText } from "../utils/messages.js";
 
 export { getLastUserText };
 
@@ -49,7 +46,7 @@ function extractTextOnly(msg: Message): string {
  */
 const DEFAULT_CONTEXT_WINDOW = 128_000;
 const CHARS_PER_TOKEN = 4;
-const CONTEXT_BUDGET_RATIO = 0.10;
+const CONTEXT_BUDGET_RATIO = 0.1;
 /** Hard cap regardless of context window — protects small classifier models */
 const MAX_CLASSIFIER_CHARS = 8_000;
 
@@ -62,13 +59,13 @@ function computeBudgets(contextWindow: number): {
 	maxMsgChars: number;
 	maxPitfallsChars: number;
 } {
-	const raw   = Math.floor(contextWindow * CONTEXT_BUDGET_RATIO * CHARS_PER_TOKEN);
+	const raw = Math.floor(contextWindow * CONTEXT_BUDGET_RATIO * CHARS_PER_TOKEN);
 	const total = Math.min(raw, MAX_CLASSIFIER_CHARS);
 	return {
-		maxPitfallsChars: Math.floor(total * 0.40),
-		maxHistoryChars:  Math.floor(total * 0.30),
-		maxPromptChars:   Math.floor(total * 0.20),
-		maxMsgChars:      Math.floor(total * 0.05),
+		maxPitfallsChars: Math.floor(total * 0.4),
+		maxHistoryChars: Math.floor(total * 0.3),
+		maxPromptChars: Math.floor(total * 0.2),
+		maxMsgChars: Math.floor(total * 0.05),
 	};
 }
 
@@ -90,20 +87,16 @@ export function stripForUserMessage(text: string, budget: number): string {
 	let out = text;
 
 	// Elide fenced code blocks — paste payload, not intent
-	out = out.replace(
-		/^(`{3,}|~{3,})[^\n]*\n([\s\S]*?)\n\1[ \t]*$/gm,
-		(match) => {
-			if (match.length < SHAKE_MIN_SAVINGS) return match;
-			return `[code ~${Math.round(match.length / 4)}t]`;
-		},
-	);
+	out = out.replace(/^(`{3,}|~{3,})[^\n]*\n([\s\S]*?)\n\1[ \t]*$/gm, match => {
+		if (match.length < SHAKE_MIN_SAVINGS) return match;
+		return `[code ~${Math.round(match.length / 4)}t]`;
+	});
 
 	// Strip XML wrapper tags but KEEP their inner content.
 	// Handles harness-injected blocks like <system-directive>...</system-directive>,
 	// <context>...</context>, <file path="...">...</file>, etc.
-	out = out.replace(
-		/<([A-Za-z][A-Za-z0-9_-]*)(?:\s[^>]*)?>(([\s\S]*?))<\/\1>/g,
-		(_match, _tag, inner: string) => inner.trim(),
+	out = out.replace(/<([A-Za-z][A-Za-z0-9_-]*)(?:\s[^>]*)?>(([\s\S]*?))<\/\1>/g, (_match, _tag, inner: string) =>
+		inner.trim(),
 	);
 
 	return truncateAtWord(out, budget);
@@ -120,14 +113,10 @@ export function stripForUserMessage(text: string, budget: number): string {
  */
 export function extractUserBareText(text: string, budget: number): string {
 	// Remove XML blocks entirely — drop wrapper AND inner content
-	let out = text.replace(
-		/<([A-Za-z][A-Za-z0-9_-]*)(?:\s[^>]*)?>[\s\S]*?<\/\1>/g,
-		"",
-	);
+	let out = text.replace(/<([A-Za-z][A-Za-z0-9_-]*)(?:\s[^>]*)?>[\s\S]*?<\/\1>/g, "");
 	// Also elide code fences (pasted code is not user intent)
-	out = out.replace(
-		/^(`{3,}|~{3,})[^\n]*\n([\s\S]*?)\n\1[ \t]*$/gm,
-		(match) => match.length < SHAKE_MIN_SAVINGS ? match : "",
+	out = out.replace(/^(`{3,}|~{3,})[^\n]*\n([\s\S]*?)\n\1[ \t]*$/gm, match =>
+		match.length < SHAKE_MIN_SAVINGS ? match : "",
 	);
 	out = out.trim();
 	return truncateAtWord(out, budget);
@@ -145,24 +134,18 @@ export function shakeForClassifier(text: string, budget: number): string {
 	let out = text;
 
 	// 1. Fenced code blocks: ``` ... ``` and ~~~ ... ~~~
-	out = out.replace(
-		/^(`{3,}|~{3,})[^\n]*\n([\s\S]*?)\n\1[ \t]*$/gm,
-		(match) => {
-			if (match.length < SHAKE_MIN_SAVINGS) return match;
-			const approxTokens = Math.round(match.length / 4);
-			return `[code block ~${approxTokens} tokens elided]`;
-		},
-	);
+	out = out.replace(/^(`{3,}|~{3,})[^\n]*\n([\s\S]*?)\n\1[ \t]*$/gm, match => {
+		if (match.length < SHAKE_MIN_SAVINGS) return match;
+		const approxTokens = Math.round(match.length / 4);
+		return `[code block ~${approxTokens} tokens elided]`;
+	});
 
 	// 2. Top-level XML-ish blocks: <tag ...>...</tag>
-	out = out.replace(
-		/<([A-Za-z][A-Za-z0-9_-]*)(?:\s[^>]*)?>[\s\S]*?<\/\1>/g,
-		(match) => {
-			if (match.length < SHAKE_MIN_SAVINGS) return match;
-			const approxTokens = Math.round(match.length / 4);
-			return `[xml block ~${approxTokens} tokens elided]`;
-		},
-	);
+	out = out.replace(/<([A-Za-z][A-Za-z0-9_-]*)(?:\s[^>]*)?>[\s\S]*?<\/\1>/g, match => {
+		if (match.length < SHAKE_MIN_SAVINGS) return match;
+		const approxTokens = Math.round(match.length / 4);
+		return `[xml block ~${approxTokens} tokens elided]`;
+	});
 
 	return truncateAtWord(out, budget);
 }
@@ -184,16 +167,18 @@ export function shakeForClassifier(text: string, budget: number): string {
  * form when the attacker omits the brackets).
  */
 export function sanitizeRoleMarkers(text: string): string {
-	return text
-		// Neutralize any line-start "A:" or "B:" injection that could fake a
-		// history turn (defense-in-depth for the <request> block).
-		// Also covers legacy [user]/[assistant] forms in case they appear in the
-		// live prompt — they are semantically inert against A:/B: delimiters but
-		// best stripped anyway to avoid confusing the model.
-		.replace(/\[(?:user|assistant)\]/gi, (m) => `(${m.slice(1, -1).toLowerCase()})`)
-		.replace(/^(user|assistant)\s*:/gim, (_, role) => `(${role.toLowerCase()}):`)
-		.replace(/^A\s*:/gm, "(A):")
-		.replace(/^B\s*:/gm, "(B):");
+	return (
+		text
+			// Neutralize any line-start "A:" or "B:" injection that could fake a
+			// history turn (defense-in-depth for the <request> block).
+			// Also covers legacy [user]/[assistant] forms in case they appear in the
+			// live prompt — they are semantically inert against A:/B: delimiters but
+			// best stripped anyway to avoid confusing the model.
+			.replace(/\[(?:user|assistant)\]/gi, m => `(${m.slice(1, -1).toLowerCase()})`)
+			.replace(/^(user|assistant)\s*:/gim, (_, role) => `(${role.toLowerCase()}):`)
+			.replace(/^A\s*:/gm, "(A):")
+			.replace(/^B\s*:/gm, "(B):")
+	);
 }
 
 /**
@@ -221,7 +206,6 @@ export function sanitizeAngleBrackets(text: string): string {
 	return text.replace(/<([^>]{0,120})>/g, (_match, inner: string) => `[${inner}]`);
 }
 
-
 /**
  * Truncate `text` to at most `budget` chars, breaking at the last word
  * boundary (space or newline) within the budget. Appends "…" when cut.
@@ -235,7 +219,6 @@ function truncateAtWord(text: string, budget: number): string {
 	if (cut === 0) cut = budget;
 	return text.slice(0, cut).trimEnd() + "…";
 }
-
 
 /**
  * Build an interleaved conversation summary for the classifier.
@@ -262,7 +245,7 @@ export function getConversationSummary(
 			// Skip mid-loop messages that issued tool calls — they are execution narration,
 			// not conversation turns. Only include pure-text replies (no toolCall parts).
 			const content = msg.content;
-			if (Array.isArray(content) && content.some((p) => (p as { type: string }).type === "toolCall")) {
+			if (Array.isArray(content) && content.some(p => (p as { type: string }).type === "toolCall")) {
 				continue;
 			}
 			const text = extractTextOnly(msg).trim();
@@ -271,7 +254,8 @@ export function getConversationSummary(
 			// Skip clarification/meta replies — short and/or contain request-for-input phrases
 			if (plain.length < 20) continue;
 			const firstLine = plain.split("\n")[0].toLowerCase();
-			if (/^(please |proceed |let me know|could you |can you provide|i need more|alternatively)/.test(firstLine)) continue;
+			if (/^(please |proceed |let me know|could you |can you provide|i need more|alternatively)/.test(firstLine))
+				continue;
 			const truncated = shakeForClassifier(sanitizeAngleBrackets(sanitizeRoleMarkers(plain)), maxMsgChars);
 			if (!truncated) continue;
 			if (totalChars + truncated.length > maxHistoryChars) break;
@@ -298,32 +282,33 @@ export function getConversationSummary(
 	return entries.join("\n");
 }
 
-
 /** Strip markdown formatting to plain text for classifier history entries */
 function stripMarkdown(text: string): string {
-	return text
-		// Headers: ## Foo → Foo
-		.replace(/^#{1,6}\s+/gm, "")
-		// Bold/italic: **foo**, *foo*, __foo__, _foo_
-		.replace(/(\*{1,3}|_{1,3})(.*?)\1/g, "$2")
-		// Inline code: `foo`
-		.replace(/`([^`]+)`/g, "$1")
-		// Links: [text](url) → text
-		.replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
-		// Horizontal rules
-		.replace(/^[-*_]{3,}\s*$/gm, "")
-		// Bullet/numbered list markers
-		.replace(/^[\s]*[-*+]\s+/gm, "")
-		.replace(/^[\s]*\d+\.\s+/gm, "")
-		// Collapse multiple blank lines to one
-		.replace(/\n{3,}/g, "\n\n")
-		// Remove entire lines that start with prompt delimiter keywords — these appear
-		// in assistant reply prose and would confuse the classifier output parser
-		.replace(/^(User|Tier|Reasoning|History|Pitfalls|A|B)\s*:.*$/gim, "")
-		// Remove XML-like placeholder tokens e.g. <current message>, <file>, etc.
-		.replace(/<[^>]{1,40}>/g, "")
-		.replace(/\n{3,}/g, "\n\n")
-		.trim();
+	return (
+		text
+			// Headers: ## Foo → Foo
+			.replace(/^#{1,6}\s+/gm, "")
+			// Bold/italic: **foo**, *foo*, __foo__, _foo_
+			.replace(/(\*{1,3}|_{1,3})(.*?)\1/g, "$2")
+			// Inline code: `foo`
+			.replace(/`([^`]+)`/g, "$1")
+			// Links: [text](url) → text
+			.replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
+			// Horizontal rules
+			.replace(/^[-*_]{3,}\s*$/gm, "")
+			// Bullet/numbered list markers
+			.replace(/^[\s]*[-*+]\s+/gm, "")
+			.replace(/^[\s]*\d+\.\s+/gm, "")
+			// Collapse multiple blank lines to one
+			.replace(/\n{3,}/g, "\n\n")
+			// Remove entire lines that start with prompt delimiter keywords — these appear
+			// in assistant reply prose and would confuse the classifier output parser
+			.replace(/^(User|Tier|Reasoning|History|Pitfalls|A|B)\s*:.*$/gim, "")
+			// Remove XML-like placeholder tokens e.g. <current message>, <file>, etc.
+			.replace(/<[^>]{1,40}>/g, "")
+			.replace(/\n{3,}/g, "\n\n")
+			.trim()
+	);
 }
 // ─── Signal detection ─────────────────────────────────────────────────────────
 
@@ -346,7 +331,9 @@ export function detectSignals(context: Context): string[] {
 		if (msg.role === "user") {
 			const text = extractTextOnly(msg).trim().toLowerCase();
 			// Strip XML blocks for comparison
-			const bare = text.replace(/<[A-Za-z][A-Za-z0-9_-]*(?:\s[^>]*)?>[\s\S]*?<\/[A-Za-z][A-Za-z0-9_-]*>/g, "").trim();
+			const bare = text
+				.replace(/<[A-Za-z][A-Za-z0-9_-]*(?:\s[^>]*)?>[\s\S]*?<\/[A-Za-z][A-Za-z0-9_-]*>/g, "")
+				.trim();
 			if (bare) userMessages.push(bare);
 		}
 	}
@@ -373,13 +360,15 @@ export function detectSignals(context: Context): string[] {
 	}
 
 	// Escalation request patterns
-	const escalationPatterns = /\b(try again|do it (properly|correctly|right)|that('s| is) (not right|wrong|broken)|not what i (asked|wanted)|fix (this|that|it)|still (broken|wrong|not working))\b/i;
+	const escalationPatterns =
+		/\b(try again|do it (properly|correctly|right)|that('s| is) (not right|wrong|broken)|not what i (asked|wanted)|fix (this|that|it)|still (broken|wrong|not working))\b/i;
 	if (escalationPatterns.test(current)) {
 		signals.push("escalation_request");
 	}
 
 	// Refine previous output
-	const refinePatterns = /\b(improve|enhance|update|refine|make it better|redo|revise|not good enough|can you do better)\b/i;
+	const refinePatterns =
+		/\b(improve|enhance|update|refine|make it better|redo|revise|not good enough|can you do better)\b/i;
 	if (refinePatterns.test(current)) {
 		signals.push("refine_previous");
 	}
@@ -397,10 +386,12 @@ export function buildClassifierPrompt(
 ): string {
 	const b = computeBudgets(contextWindow);
 
-	const promptText     = sanitizeAngleBrackets(sanitizeRoleMarkers(stripForUserMessage(getLastUserText(context), b.maxPromptChars)));
-	const historyText    = getConversationSummary(context, 12, b.maxMsgChars, b.maxHistoryChars);
+	const promptText = sanitizeAngleBrackets(
+		sanitizeRoleMarkers(stripForUserMessage(getLastUserText(context), b.maxPromptChars)),
+	);
+	const historyText = getConversationSummary(context, 12, b.maxMsgChars, b.maxHistoryChars);
 	const pitfallsSection = pitfalls ? truncateAtWord(pitfalls, b.maxPitfallsChars) : undefined;
-	const signals        = detectSignals(context);
+	const signals = detectSignals(context);
 
 	// Activity line
 	let activityText = "";
@@ -422,10 +413,10 @@ export function buildClassifierPrompt(
 	}
 
 	// XML section blocks — only included when non-empty
-	const pitfallsBlock  = pitfallsSection ? `\n<pitfalls>\n${pitfallsSection}\n</pitfalls>\n` : "";
-	const historyBlock   = historyText     ? `\n<history>\n${historyText}\n</history>\n`        : "";
-	const activityBlock  = activityText    ? `\n<activity>${activityText}</activity>\n`          : "";
-	const signalsBlock   = hints.length    ? `\n<signals>${hints.join(" ")}</signals>\n`         : "";
+	const pitfallsBlock = pitfallsSection ? `\n<pitfalls>\n${pitfallsSection}\n</pitfalls>\n` : "";
+	const historyBlock = historyText ? `\n<history>\n${historyText}\n</history>\n` : "";
+	const activityBlock = activityText ? `\n<activity>${activityText}</activity>\n` : "";
+	const signalsBlock = hints.length ? `\n<signals>${hints.join(" ")}</signals>\n` : "";
 
 	return `You are a routing classifier. Classify the user request below as "high", "medium", or "low" effort. Reply ONLY with the two lines shown in the format — no preamble, no explanation, no other text.
 
@@ -445,24 +436,23 @@ Reasoning: one sentence`;
 }
 
 /** Parse classifier output (shared between sync and async paths) */
-export function parseClassifierOutput(
-	text: string,
-): { tier: RouterTier; reasoning: string } | undefined {
+export function parseClassifierOutput(text: string): { tier: RouterTier; reasoning: string } | undefined {
 	const lines = text.trim().split("\n");
 
 	// Primary: strict line-prefix match (expected format)
-	const tierLine = lines.find((l) => l.toLowerCase().startsWith("tier:"));
-	const reasoningLine = lines.find((l) => l.toLowerCase().startsWith("reasoning:"));
+	const tierLine = lines.find(l => l.toLowerCase().startsWith("tier:"));
+	const reasoningLine = lines.find(l => l.toLowerCase().startsWith("reasoning:"));
 
 	if (tierLine) {
 		const tierValue = tierLine.split(":")[1].trim().toLowerCase();
 		if (isRouterTier(tierValue)) {
 			const rawReasoning = reasoningLine ? reasoningLine.split(":")[1].trim() : "";
 			// Reject template placeholders: "[one sentence]", "[high|medium|low]", "one sentence"
-			const isPlaceholder = !rawReasoning
-				|| rawReasoning.includes("|")
-				|| rawReasoning.startsWith("[")
-				|| rawReasoning.toLowerCase() === "one sentence";
+			const isPlaceholder =
+				!rawReasoning ||
+				rawReasoning.includes("|") ||
+				rawReasoning.startsWith("[") ||
+				rawReasoning.toLowerCase() === "one sentence";
 			const reasoning = isPlaceholder ? "Classifier decision." : rawReasoning;
 			return { tier: tierValue, reasoning };
 		}
@@ -478,7 +468,10 @@ export function parseClassifierOutput(
 		// Tier word must appear at the very start (optionally preceded by quotes/dashes)
 		const m = lower.match(/^["'\-*]*\s*(high|medium|low)\b/);
 		if (m && isRouterTier(m[1])) {
-			const afterTier = trimmed.slice(lower.indexOf(m[1]) + m[1].length).replace(/^[^a-z]*/i, "").trim();
+			const afterTier = trimmed
+				.slice(lower.indexOf(m[1]) + m[1].length)
+				.replace(/^[^a-z]*/i, "")
+				.trim();
 			const reasoning = afterTier || (reasoningLine ? reasoningLine.split(":")[1].trim() : "Classifier decision.");
 			return { tier: m[1], reasoning };
 		}

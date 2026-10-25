@@ -19,11 +19,7 @@ import type { ExtensionAPI, ExtensionContext } from "tau";
 import { z } from "zod/v4";
 import { type LoadResult, loadConfig } from "./config.ts";
 import { type ConsumerStatus, ManagedConsumer } from "./consumer.ts";
-import type {
-	DeliverAs,
-	KafkaMessageRecord,
-	ResolvedConsumer,
-} from "./types.ts";
+import type { DeliverAs, KafkaMessageRecord, ResolvedConsumer } from "./types.ts";
 
 const STATUS_KEY = "kafka";
 const DEBUG = process.env.KAFKA_DEBUG === "1";
@@ -41,11 +37,7 @@ function formatRecord(r: KafkaMessageRecord): string {
 	return `[${r.timestamp}] ${r.topic}@${r.partition}/${r.offset}${head}\n${r.value}`;
 }
 
-function statusLabel(
-	status: ConsumerStatus,
-	depth: number,
-	dropped: number,
-): string {
+function statusLabel(status: ConsumerStatus, depth: number, dropped: number): string {
 	const droppedSuffix = dropped > 0 ? ` +${dropped} dropped` : "";
 	switch (status.state) {
 		case "idle":
@@ -97,13 +89,10 @@ export default function kafkaExtension(pi: ExtensionAPI): void {
 	const disconnectAll = async (): Promise<void> => {
 		const list = [...consumers.values()];
 		consumers.clear();
-		await Promise.allSettled(list.map((c) => c.disconnect()));
+		await Promise.allSettled(list.map(c => c.disconnect()));
 	};
 
-	const onAutoMessage = (
-		record: KafkaMessageRecord,
-		cfg: ResolvedConsumer,
-	): void => {
+	const onAutoMessage = (record: KafkaMessageRecord, cfg: ResolvedConsumer): void => {
 		const deliverAs: DeliverAs = cfg.auto.deliverAs;
 		const body = `${cfg.auto.prefix}${formatRecord(record)}`;
 		try {
@@ -113,15 +102,10 @@ export default function kafkaExtension(pi: ExtensionAPI): void {
 		}
 	};
 
-	const buildConsumers = async (
-		ctx: ExtensionContext,
-		result: LoadResult,
-	): Promise<void> => {
+	const buildConsumers = async (ctx: ExtensionContext, result: LoadResult): Promise<void> => {
 		if (result.config.length === 0) {
 			ctx.ui.notify(
-				result.errors.length > 0
-					? `kafka: ${result.errors[0]}`
-					: "kafka: no consumers configured",
+				result.errors.length > 0 ? `kafka: ${result.errors[0]}` : "kafka: no consumers configured",
 				"warning",
 			);
 			return;
@@ -132,31 +116,22 @@ export default function kafkaExtension(pi: ExtensionAPI): void {
 			consumers.set(cfg.name, managed);
 
 			if (cfg.mode === "auto") {
-				managed.onMessage((record) => onAutoMessage(record, cfg));
+				managed.onMessage(record => onAutoMessage(record, cfg));
 			}
 
 			if (cfg.notify) {
-				managed.onMessage((record) => {
-					const summary =
-						record.value.length > 80
-							? `${record.value.slice(0, 77)}…`
-							: record.value;
-					ctx.ui.notify(
-						`kafka[${cfg.name}] ${record.topic}: ${summary.replace(/\n/g, " ")}`,
-						"info",
-					);
+				managed.onMessage(record => {
+					const summary = record.value.length > 80 ? `${record.value.slice(0, 77)}…` : record.value;
+					ctx.ui.notify(`kafka[${cfg.name}] ${record.topic}: ${summary.replace(/\n/g, " ")}`, "info");
 				});
 			}
 		}
 
 		await Promise.allSettled(
-			[...consumers.values()].map((c) =>
-				c.connect().catch((err) => {
+			[...consumers.values()].map(c =>
+				c.connect().catch(err => {
 					debug(`connect failed for ${c.name}:`, err);
-					ctx.ui.notify(
-						`kafka[${c.name}] connect failed: ${(err as Error).message}`,
-						"error",
-					);
+					ctx.ui.notify(`kafka[${c.name}] connect failed: ${(err as Error).message}`, "error");
 				}),
 			),
 		);
@@ -177,8 +152,7 @@ export default function kafkaExtension(pi: ExtensionAPI): void {
 			debug("no kafka config found");
 		}
 		if (activeLoad.errors.length > 0) {
-			for (const err of activeLoad.errors)
-				ctx.ui.notify(`kafka: ${err}`, "error");
+			for (const err of activeLoad.errors) ctx.ui.notify(`kafka: ${err}`, "error");
 		}
 		await buildConsumers(ctx, activeLoad);
 	});
@@ -221,7 +195,7 @@ export default function kafkaExtension(pi: ExtensionAPI): void {
 		description: "Print the last N records from a Kafka consumer.",
 		getArgumentCompletions: () => {
 			const names = [...consumers.keys()];
-			return names.map((n) => ({
+			return names.map(n => ({
 				value: n,
 				label: n,
 				description: "consumer name",
@@ -350,9 +324,7 @@ export default function kafkaExtension(pi: ExtensionAPI): void {
 			const limit = params.limit ?? 20;
 			const lines: string[] = [];
 			const targets = params.consumer
-				? [consumers.get(params.consumer)].filter((c): c is ManagedConsumer =>
-						Boolean(c),
-					)
+				? [consumers.get(params.consumer)].filter((c): c is ManagedConsumer => Boolean(c))
 				: [...consumers.values()];
 
 			if (targets.length === 0) {
@@ -360,9 +332,7 @@ export default function kafkaExtension(pi: ExtensionAPI): void {
 					content: [
 						{
 							type: "text" as const,
-							text: params.consumer
-								? `unknown consumer: ${params.consumer}`
-								: "no consumers configured",
+							text: params.consumer ? `unknown consumer: ${params.consumer}` : "no consumers configured",
 						},
 					],
 					details: { count: 0 },

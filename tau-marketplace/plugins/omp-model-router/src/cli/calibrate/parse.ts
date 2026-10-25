@@ -4,8 +4,7 @@ import { homedir } from "node:os";
 import type { TraceRecord } from "../../calibration/types";
 import type { ParsedTrace } from "./types";
 
-const DEFAULT_TRACE_DIR = () =>
-	join(homedir(), ".omp", "agent", "model-router", "traces");
+const DEFAULT_TRACE_DIR = () => join(homedir(), ".omp", "agent", "model-router", "traces");
 
 export function resolveTraceFiles(pathArg?: string): string[] {
 	const target = pathArg ?? DEFAULT_TRACE_DIR();
@@ -16,8 +15,8 @@ export function resolveTraceFiles(pathArg?: string): string[] {
 	if (stat.isFile()) return [target];
 	if (stat.isDirectory()) {
 		return readdirSync(target)
-			.filter((f) => f.endsWith(".jsonl"))
-			.map((f) => join(target, f))
+			.filter(f => f.endsWith(".jsonl"))
+			.map(f => join(target, f))
 			.sort();
 	}
 	throw new Error(`Trace path is neither file nor directory: ${target}`);

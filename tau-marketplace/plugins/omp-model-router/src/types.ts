@@ -9,19 +9,9 @@ export type RouterPin = RouterTier | "auto";
  * for matching task types instead of always using defaultProfile.
  * Profiles without taskType are never auto-selected — they act as manual presets.
  */
-export type TaskType =
-	| "coding"
-	| "research"
-	| "math"
-	| "writing"
-	| "summarization";
+export type TaskType = "coding" | "research" | "math" | "writing" | "summarization";
 
-export type ScopedPinSource =
-	| "user"
-	| "heuristic"
-	| "classifier"
-	| "rule"
-	| "auto-upgrade";
+export type ScopedPinSource = "user" | "heuristic" | "classifier" | "rule" | "auto-upgrade";
 
 export interface ScopedPin {
 	/** The pinned tier. */
@@ -97,7 +87,6 @@ export interface AutoUpgradeConfig {
 	 */
 	tools?: string[];
 }
-
 
 export interface RouterProfile {
 	/**

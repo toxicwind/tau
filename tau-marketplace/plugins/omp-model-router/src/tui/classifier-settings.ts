@@ -85,10 +85,7 @@ export class ClassifierSettingsComponent implements Component {
 	// ─── Rows ──────────────────────────────────────────────────────────────
 
 	#buildRows(): FieldRow[] {
-		const rows: FieldRow[] = [
-			{ kind: "enabled" },
-			{ kind: "mode" },
-		];
+		const rows: FieldRow[] = [{ kind: "enabled" }, { kind: "mode" }];
 		// Model chain rows
 		const models = this.#getModels();
 		for (let i = 0; i < models.length; i++) {
@@ -169,12 +166,12 @@ export class ClassifierSettingsComponent implements Component {
 		// Hint line
 		lines.push(t.fg("muted", `  ${this.#hintLine(rows)}`));
 
-		return lines.map((line) => truncateToWidth(replaceTabs(line), width));
+		return lines.map(line => truncateToWidth(replaceTabs(line), width));
 	}
 
 	#renderField(rows: FieldRow[], kind: FieldKind): string {
 		const t = this.#theme;
-		const rowIdx = rows.findIndex((r) => r.kind === kind && r.modelIndex === undefined);
+		const rowIdx = rows.findIndex(r => r.kind === kind && r.modelIndex === undefined);
 		const isSelected = rowIdx === this.#cursor;
 		const cursor = isSelected ? "❯ " : "  ";
 		const label = this.#labelFor(kind).padEnd(20);
@@ -197,7 +194,7 @@ export class ClassifierSettingsComponent implements Component {
 
 	#renderModelRow(rows: FieldRow[], index: number, modelRef: string): string {
 		const t = this.#theme;
-		const rowIdx = rows.findIndex((r) => r.kind === "model" && r.modelIndex === index);
+		const rowIdx = rows.findIndex(r => r.kind === "model" && r.modelIndex === index);
 		const isSelected = rowIdx === this.#cursor;
 		const cursor = isSelected ? "❯ " : "  ";
 
@@ -206,9 +203,7 @@ export class ClassifierSettingsComponent implements Component {
 
 		const prefix = changed ? "* " : cursor;
 		const number = `${index + 1}. `;
-		const role = index === 0
-			? t.fg("accent", "[primary]")
-			: t.fg("muted", `[fallback ${index}]`);
+		const role = index === 0 ? t.fg("accent", "[primary]") : t.fg("muted", `[fallback ${index}]`);
 
 		const modelText = isSelected ? t.fg("accent", modelRef) : modelRef;
 		return `${prefix}${number}${modelText} ${role}`;
@@ -216,37 +211,58 @@ export class ClassifierSettingsComponent implements Component {
 
 	#labelFor(kind: FieldKind): string {
 		switch (kind) {
-			case "enabled": return "enabled";
-			case "mode": return "mode";
-			case "warmupTurns": return "warmupTurns";
-			case "overrideThreshold": return "overrideThreshold";
-			case "globalPriorWeight": return "globalPriorWeight";
-			case "traceEnabled": return "traceEnabled";
-			default: return kind;
+			case "enabled":
+				return "enabled";
+			case "mode":
+				return "mode";
+			case "warmupTurns":
+				return "warmupTurns";
+			case "overrideThreshold":
+				return "overrideThreshold";
+			case "globalPriorWeight":
+				return "globalPriorWeight";
+			case "traceEnabled":
+				return "traceEnabled";
+			default:
+				return kind;
 		}
 	}
 
 	#valueFor(kind: FieldKind): string {
 		switch (kind) {
-			case "enabled": return String(this.#draft.enabled);
-			case "mode": return this.#draft.mode;
-			case "warmupTurns": return String(this.#draft.warmupTurns);
-			case "overrideThreshold": return String(this.#draft.overrideThreshold);
-			case "globalPriorWeight": return String(this.#draft.globalPriorWeight);
-			case "traceEnabled": return String(this.#draft.traceEnabled);
-			default: return "";
+			case "enabled":
+				return String(this.#draft.enabled);
+			case "mode":
+				return this.#draft.mode;
+			case "warmupTurns":
+				return String(this.#draft.warmupTurns);
+			case "overrideThreshold":
+				return String(this.#draft.overrideThreshold);
+			case "globalPriorWeight":
+				return String(this.#draft.globalPriorWeight);
+			case "traceEnabled":
+				return String(this.#draft.traceEnabled);
+			default:
+				return "";
 		}
 	}
 
 	#fieldChanged(kind: FieldKind): boolean {
 		switch (kind) {
-			case "enabled": return this.#draft.enabled !== this.#original.enabled;
-			case "mode": return this.#draft.mode !== this.#original.mode;
-			case "warmupTurns": return this.#draft.warmupTurns !== this.#original.warmupTurns;
-			case "overrideThreshold": return this.#draft.overrideThreshold !== this.#original.overrideThreshold;
-			case "globalPriorWeight": return this.#draft.globalPriorWeight !== this.#original.globalPriorWeight;
-			case "traceEnabled": return this.#draft.traceEnabled !== this.#original.traceEnabled;
-			default: return false;
+			case "enabled":
+				return this.#draft.enabled !== this.#original.enabled;
+			case "mode":
+				return this.#draft.mode !== this.#original.mode;
+			case "warmupTurns":
+				return this.#draft.warmupTurns !== this.#original.warmupTurns;
+			case "overrideThreshold":
+				return this.#draft.overrideThreshold !== this.#original.overrideThreshold;
+			case "globalPriorWeight":
+				return this.#draft.globalPriorWeight !== this.#original.globalPriorWeight;
+			case "traceEnabled":
+				return this.#draft.traceEnabled !== this.#original.traceEnabled;
+			default:
+				return false;
 		}
 	}
 
@@ -270,10 +286,7 @@ export class ClassifierSettingsComponent implements Component {
 			const i = row.modelIndex!;
 			const canUp = i > 0;
 			const canDown = i < models.length - 1;
-			const moveHints = [
-				canUp ? "ctrl+u ▲" : "",
-				canDown ? "ctrl+k ▼" : "",
-			].filter(Boolean).join(" · ");
+			const moveHints = [canUp ? "ctrl+u ▲" : "", canDown ? "ctrl+k ▼" : ""].filter(Boolean).join(" · ");
 			const base = "ENTER replace · ctrl+a add · ctrl+d remove";
 			return moveHints ? `${base} · ${moveHints} · ctrl+s save · ESC back` : `${base} · ctrl+s save · ESC back`;
 		}
@@ -397,7 +410,6 @@ export class ClassifierSettingsComponent implements Component {
 			return;
 		}
 
-
 		// Save
 		if (matchesKey(data, "ctrl+s")) {
 			this.#done(this.#draft);
@@ -494,18 +506,12 @@ export class ClassifierSettingsComponent implements Component {
 			}
 		};
 
-		this.#subView = new ModelPickerComponent(
-			this.#tui,
-			this.#theme,
-			this.#keybindings,
-			done,
-			{
-				tier: "low", // Classifier models are typically cheap/fast
-				modelRegistry: this.#modelRegistry,
-				currentPrimary: current,
-				currentFallbacks: models.filter((_, i) => i !== replaceIndex),
-			},
-		);
+		this.#subView = new ModelPickerComponent(this.#tui, this.#theme, this.#keybindings, done, {
+			tier: "low", // Classifier models are typically cheap/fast
+			modelRegistry: this.#modelRegistry,
+			currentPrimary: current,
+			currentFallbacks: models.filter((_, i) => i !== replaceIndex),
+		});
 	}
 
 	#openModelPickerAdd(): void {
@@ -522,23 +528,17 @@ export class ClassifierSettingsComponent implements Component {
 				}
 				// Move cursor to the new model row
 				const rows = this.#buildRows();
-				const newIdx = rows.findIndex((r) => r.kind === "model" && r.modelIndex === m.length - 1);
+				const newIdx = rows.findIndex(r => r.kind === "model" && r.modelIndex === m.length - 1);
 				if (newIdx >= 0) this.#cursor = newIdx;
 			}
 		};
 
-		this.#subView = new ModelPickerComponent(
-			this.#tui,
-			this.#theme,
-			this.#keybindings,
-			done,
-			{
-				tier: "low",
-				modelRegistry: this.#modelRegistry,
-				currentPrimary: models[0],
-				currentFallbacks: models.slice(1),
-			},
-		);
+		this.#subView = new ModelPickerComponent(this.#tui, this.#theme, this.#keybindings, done, {
+			tier: "low",
+			modelRegistry: this.#modelRegistry,
+			currentPrimary: models[0],
+			currentFallbacks: models.slice(1),
+		});
 	}
 
 	// ─── Helpers ───────────────────────────────────────────────────────────

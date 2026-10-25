@@ -1,11 +1,4 @@
-import {
-	type Component,
-	type TUI,
-	matchesKey,
-	padding,
-	replaceTabs,
-	truncateToWidth,
-} from "@oh-my-pi/pi-tui";
+import { type Component, type TUI, matchesKey, padding, replaceTabs, truncateToWidth } from "@oh-my-pi/pi-tui";
 import type { Theme, KeybindingsManager } from "tau";
 import type { PromptLogRecord } from "../calibration/trace";
 
@@ -67,8 +60,7 @@ export class SessionPickerComponent implements Component {
 			return;
 		}
 		if (kb.matches(data, "tui.select.down")) {
-			if (this.#sessions.length > 0)
-				this.#cursor = (this.#cursor + 1) % this.#sessions.length;
+			if (this.#sessions.length > 0) this.#cursor = (this.#cursor + 1) % this.#sessions.length;
 			return;
 		}
 		if (kb.matches(data, "tui.select.confirm")) {
@@ -195,7 +187,7 @@ export class LogViewerComponent implements Component {
 				stubTui,
 				this.#theme,
 				this.#keybindings,
-				(selected) => {
+				selected => {
 					this.#subView = undefined;
 					if (selected) this.#loadSession(selected);
 				},
@@ -354,9 +346,7 @@ export class LogViewerComponent implements Component {
 			: rec.error
 				? `${rec.heuristicTier[0]}→✗`
 				: `${rec.heuristicTier[0]}→?`;
-		const marker = rec.verdict
-			? (rec.heuristicTier === rec.verdict.tier ? "✓" : "✗")
-			: "⚠";
+		const marker = rec.verdict ? (rec.heuristicTier === rec.verdict.tier ? "✓" : "✗") : "⚠";
 		const label = `${ts} ${tierArrow} ${marker}`;
 		const line = cursor + label;
 		const truncated = ellipsize(line, maxWidth);
@@ -420,15 +410,15 @@ export class LogViewerComponent implements Component {
 		const verdicts = this.#records.filter(r => r.verdict);
 		const errors = this.#records.filter(r => r.error);
 		const agreements = verdicts.filter(r => r.heuristicTier === r.verdict!.tier).length;
-		const avgLatency = verdicts.length > 0
-			? Math.round(verdicts.reduce((sum, r) => sum + r.latencyMs, 0) / verdicts.length)
-			: 0;
-		const pct = verdicts.length > 0 ? Math.round(agreements / verdicts.length * 100) : 0;
+		const avgLatency =
+			verdicts.length > 0 ? Math.round(verdicts.reduce((sum, r) => sum + r.latencyMs, 0) / verdicts.length) : 0;
+		const pct = verdicts.length > 0 ? Math.round((agreements / verdicts.length) * 100) : 0;
 
-		return t.fg("muted",
+		return t.fg(
+			"muted",
 			`  Total:${this.#records.length}  Verdicts:${verdicts.length}  ` +
-			`Errors:${errors.length}  Agree:${agreements}/${verdicts.length} (${pct}%)  ` +
-			`Avg:${avgLatency}ms`,
+				`Errors:${errors.length}  Agree:${agreements}/${verdicts.length} (${pct}%)  ` +
+				`Avg:${avgLatency}ms`,
 		);
 	}
 }
@@ -502,12 +492,7 @@ export function createLogViewerFactory(
 	records: PromptLogRecord[],
 	source: string | undefined,
 	sessions: SessionLogEntry[] = [],
-): (
-	tui: TUI,
-	theme: Theme,
-	keybindings: KeybindingsManager,
-	done: (result: undefined) => void,
-) => LogViewerComponent {
+): (tui: TUI, theme: Theme, keybindings: KeybindingsManager, done: (result: undefined) => void) => LogViewerComponent {
 	return (tui, theme, keybindings, done) =>
 		new LogViewerComponent(tui, theme, keybindings, done, records.slice().reverse(), source, sessions);
 }

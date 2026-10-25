@@ -74,9 +74,9 @@ function scanClassifierLog(path: string, totals: Map<string, ModelCostEntry>): v
 			const existing = totals.get(model);
 			if (existing) {
 				existing.invocations++;
-				existing.inputTokens  += u.inputTokens ?? 0;
+				existing.inputTokens += u.inputTokens ?? 0;
 				existing.outputTokens += u.outputTokens ?? 0;
-				existing.cacheReadTokens  += u.cacheReadTokens ?? 0;
+				existing.cacheReadTokens += u.cacheReadTokens ?? 0;
 				existing.cacheWriteTokens += u.cacheWriteTokens ?? 0;
 				existing.cost += cost;
 			} else {
@@ -100,9 +100,7 @@ function scanClassifierLog(path: string, totals: Map<string, ModelCostEntry>): v
 export function scanSessionTree(sessionFile: string): Map<string, ModelCostEntry> {
 	const totals = new Map<string, ModelCostEntry>();
 	scanFile(sessionFile, totals);
-	const childDir = sessionFile.endsWith(".jsonl")
-		? sessionFile.slice(0, -".jsonl".length)
-		: sessionFile;
+	const childDir = sessionFile.endsWith(".jsonl") ? sessionFile.slice(0, -".jsonl".length) : sessionFile;
 	if (existsSync(childDir)) {
 		for (const f of readdirSync(childDir)) {
 			if (!f.endsWith(".jsonl")) continue;
@@ -117,10 +115,7 @@ export function scanSessionTree(sessionFile: string): Map<string, ModelCostEntry
 	return totals;
 }
 
-function resolveModelTier(
-	modelKey: string,
-	profile: RouterConfig["profiles"][string],
-): string {
+function resolveModelTier(modelKey: string, profile: RouterConfig["profiles"][string]): string {
 	for (const tier of ROUTER_TIERS) {
 		const tc = profile[tier];
 		if (tc.model === modelKey || tc.fallbacks?.includes(modelKey)) return tier;
@@ -128,9 +123,7 @@ function resolveModelTier(
 	return "";
 }
 
-export const handleUsage = (
-	state: RouterState,
-) => async (_args: string[], ctx: ExtensionContext) => {
+export const handleUsage = (state: RouterState) => async (_args: string[], ctx: ExtensionContext) => {
 	const profile = state.currentConfig.profiles[state.selectedProfile];
 	if (!profile) {
 		ctx.ui.notify("No active router profile.", "error");
@@ -153,9 +146,7 @@ export const handleUsage = (
 		// Build a set of classifier model refs from config for O(1) lookup
 		const rawClassifierModel = state.currentConfig.calibration?.classifierModel;
 		const classifierRefs = new Set<string>(
-			rawClassifierModel
-				? (Array.isArray(rawClassifierModel) ? rawClassifierModel : [rawClassifierModel])
-				: [],
+			rawClassifierModel ? (Array.isArray(rawClassifierModel) ? rawClassifierModel : [rawClassifierModel]) : [],
 		);
 		for (const entry of reportModelCosts.values()) {
 			if (classifierRefs.has(entry.model)) {

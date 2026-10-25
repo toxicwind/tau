@@ -74,10 +74,8 @@ export type AuditReport = {
 const OPENROUTER_BASE = "https://openrouter.ai/api/v1";
 
 /** The engine's authoritative role list, read from source rather than hardcoded. */
-export const MODEL_BROWSER_SRC =
-	"/home/toxic/estate/ranch/stockyard/tau/packages/tui/src/overlays/model-browser.ts";
-export const PRIORITY_JSON =
-	"/home/toxic/estate/ranch/stockyard/tau/packages/coding-agent/src/priority.json";
+export const MODEL_BROWSER_SRC = "/home/toxic/estate/ranch/stockyard/tau/packages/tui/src/overlays/model-browser.ts";
+export const PRIORITY_JSON = "/home/toxic/estate/ranch/stockyard/tau/packages/coding-agent/src/priority.json";
 
 function fail(message: string): never {
 	throw new Error(`model-audit: ${message}`);
@@ -99,8 +97,8 @@ export function parseModelRoleIds(source: string): string[] {
 	if (body === undefined) fail("MODEL_ROLE_IDS not found in engine source");
 	const ids = body
 		.split(",")
-		.map((raw) => raw.trim().replace(/^["']|["']$/g, ""))
-		.filter((id) => id.length > 0);
+		.map(raw => raw.trim().replace(/^["']|["']$/g, ""))
+		.filter(id => id.length > 0);
 	if (ids.length === 0) fail("MODEL_ROLE_IDS parsed to an empty list");
 	return ids;
 }
@@ -158,8 +156,8 @@ export function findUndefinedRoles(
 	priority: PriorityIndex,
 ): UndefinedRole[] {
 	return roleIds
-		.filter((role) => modelRoles[role] === undefined)
-		.map((role) => ({ role, fallsThroughTo: priority[role]?.[0] ?? null }));
+		.filter(role => modelRoles[role] === undefined)
+		.map(role => ({ role, fallsThroughTo: priority[role]?.[0] ?? null }));
 }
 
 function classify(status: number, body: string): { verdict: ProbeVerdict; detail: string } {
@@ -277,16 +275,14 @@ export async function runAudit(options: RunAuditOptions): Promise<AuditReport> {
 	const modelRoles = (config.modelRoles ?? {}) as Record<string, unknown>;
 	const undefinedRoles = findUndefinedRoles(roleIds, modelRoles, priority);
 
-	const distinct = [...new Map(references.map((r) => [r.ref, r])).values()];
+	const distinct = [...new Map(references.map(r => [r.ref, r])).values()];
 	const concurrency = options.concurrency ?? PROBE_CONCURRENCY;
 	const timeoutMs = options.timeoutMs ?? DEFAULT_PROBE_TIMEOUT_MS;
 	const probes: ProbeResult[] = [];
 	for (let index = 0; index < distinct.length; index += concurrency) {
 		const batch = distinct.slice(index, index + concurrency);
 		probes.push(
-			...(await Promise.all(
-				batch.map((ref) => probeModel(ref, { apiKey, timeoutMs, baseUrl: options.baseUrl })),
-			)),
+			...(await Promise.all(batch.map(ref => probeModel(ref, { apiKey, timeoutMs, baseUrl: options.baseUrl })))),
 		);
 	}
 
@@ -295,7 +291,7 @@ export async function runAudit(options: RunAuditOptions): Promise<AuditReport> {
 		references,
 		probes,
 		undefinedRoles,
-		byRef: new Map(probes.map((p) => [p.ref, p])),
+		byRef: new Map(probes.map(p => [p.ref, p])),
 	};
 }
 
@@ -320,7 +316,7 @@ export function formatReport(report: AuditReport): string {
 	// Counted apart from the dead: a `web/*` entry failing a chat probe is a
 	// category error in this audit, not a broken config line, and lumping the
 	// two together buries the real failures under noise.
-	const dead = report.probes.filter((p) => p.verdict !== "ok" && p.verdict !== "not-chat");
+	const dead = report.probes.filter(p => p.verdict !== "ok" && p.verdict !== "not-chat");
 	lines.push("");
 	lines.push(dead.length === 0 ? "ALL REFERENCES LIVE" : `DEAD OR DEGRADED: ${dead.length}`);
 	for (const probe of [...dead].sort((a, b) => a.ref.localeCompare(b.ref))) {
@@ -328,7 +324,7 @@ export function formatReport(report: AuditReport): string {
 		lines.push(`                ${probe.detail}`);
 	}
 
-	const skipped = report.probes.filter((p) => p.verdict === "not-chat");
+	const skipped = report.probes.filter(p => p.verdict === "not-chat");
 	if (skipped.length > 0) {
 		lines.push("");
 		lines.push(`NOT PROBED (not chat endpoints): ${skipped.length}`);
@@ -339,7 +335,7 @@ export function formatReport(report: AuditReport): string {
 	lines.push("per-reference:");
 	for (const ref of report.references) {
 		const probe = report.byRef.get(ref.ref);
-		const origins = report.references.filter((r) => r.ref === ref.ref).map((r) => r.origin);
+		const origins = report.references.filter(r => r.ref === ref.ref).map(r => r.origin);
 		const verdict = probe ? probe.verdict : "unprobed";
 		const ms = probe ? `${probe.latencyMs}ms` : "";
 		lines.push(`  ${verdict.padEnd(13)} ${ref.ref.padEnd(58)} ${ms.padStart(7)}  ${origins.join(", ")}`);
@@ -377,7 +373,7 @@ export function resolveApiKey(env: NodeJS.ProcessEnv = process.env): string {
 }
 
 export function describeRun(report: AuditReport): string {
-	const ok = report.probes.filter((p) => p.verdict === "ok").length;
+	const ok = report.probes.filter(p => p.verdict === "ok").length;
 	return `audited ${report.references.length} refs: ${ok} live, ${report.probes.length - ok} dead, ${report.undefinedRoles.length} undefined roles`;
 }
 

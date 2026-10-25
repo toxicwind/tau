@@ -20,7 +20,7 @@ export const ROUTER_TIERS = ["high", "medium", "low"] as const;
 export const FALLBACK_CONFIG: RouterConfig = {
 	defaultProfile: "auto",
 	debug: false,
-	enableRtk: false,  // RTK integration disabled by default (opt-in)
+	enableRtk: false, // RTK integration disabled by default (opt-in)
 	defaultPin: "auto" as const,
 	pinTimeout: 300_000,
 	pinPressureThreshold: 3,
@@ -49,19 +49,10 @@ export const FALLBACK_CONFIG: RouterConfig = {
 	classifierCache: { ttlTurns: 20 },
 };
 
-export const THINKING_LEVELS = [
-	"off",
-	"minimal",
-	"low",
-	"medium",
-	"high",
-	"xhigh",
-] as readonly ThinkingLevel[];
+export const THINKING_LEVELS = ["off", "minimal", "low", "medium", "high", "xhigh"] as readonly ThinkingLevel[];
 export const ROUTER_PIN_VALUES = ["auto", "high", "medium", "low"] as const;
 
-export const isObjectRecord = (
-	value: unknown,
-): value is Record<string, unknown> =>
+export const isObjectRecord = (value: unknown): value is Record<string, unknown> =>
 	typeof value === "object" && value !== null;
 
 export const isThinkingLevel = (value: unknown): value is ThinkingLevel =>
@@ -94,10 +85,7 @@ export const parseConfigFile = (path: string): ParsedConfigFile => {
 	}
 };
 
-export const mergeConfig = (
-	base: RouterConfig,
-	override: Partial<RouterConfig>,
-): RouterConfig => {
+export const mergeConfig = (base: RouterConfig, override: Partial<RouterConfig>): RouterConfig => {
 	const mergedProfiles: Record<string, RouterProfile> = { ...base.profiles };
 	for (const [name, profile] of Object.entries(override.profiles ?? {})) {
 		const existing = mergedProfiles[name];
@@ -128,21 +116,15 @@ export const mergeConfig = (
 	};
 };
 
-export const parseCanonicalModelRef = (
-	value: string,
-): { provider: string; modelId: string } => {
+export const parseCanonicalModelRef = (value: string): { provider: string; modelId: string } => {
 	const slashIndex = value.indexOf("/");
 	if (slashIndex === -1) {
-		throw new Error(
-			`Invalid model reference "${value}". Expected "provider/model".`,
-		);
+		throw new Error(`Invalid model reference "${value}". Expected "provider/model".`);
 	}
 	const provider = value.slice(0, slashIndex).trim();
 	const modelId = value.slice(slashIndex + 1).trim();
 	if (!provider || !modelId) {
-		throw new Error(
-			`Invalid model reference "${value}". Expected "provider/model".`,
-		);
+		throw new Error(`Invalid model reference "${value}". Expected "provider/model".`);
 	}
 	return { provider, modelId };
 };
@@ -159,11 +141,7 @@ export const parseCanonicalModelRef = (
  * when used as classifiers. The classifier output is always < 100 chars —
  * there is no reason to use a 671B model for it.
  */
-const UNSAFE_CLASSIFIER_PATTERNS = [
-	/671b/i,
-	/405b/i,
-	/70b(?!.*micro)/i,
-];
+const UNSAFE_CLASSIFIER_PATTERNS = [/671b/i, /405b/i, /70b(?!.*micro)/i];
 
 const isUnsafeClassifier = (ref: string): string | undefined => {
 	for (const pattern of UNSAFE_CLASSIFIER_PATTERNS) {
@@ -174,10 +152,7 @@ const isUnsafeClassifier = (ref: string): string | undefined => {
 	return undefined;
 };
 
-const validateClassifierModel = (
-	value: unknown,
-	warnings: string[],
-): string | string[] | undefined => {
+const validateClassifierModel = (value: unknown, warnings: string[]): string | string[] | undefined => {
 	if (typeof value === "string") {
 		const trimmed = value.trim();
 		const unsafeReason = isUnsafeClassifier(trimmed);
@@ -189,9 +164,7 @@ const validateClassifierModel = (
 			parseCanonicalModelRef(trimmed);
 			return trimmed;
 		} catch (error) {
-			warnings.push(
-				`Invalid classifierModel: ${error instanceof Error ? error.message : String(error)}`,
-			);
+			warnings.push(`Invalid classifierModel: ${error instanceof Error ? error.message : String(error)}`);
 			return undefined;
 		}
 	}
@@ -227,18 +200,14 @@ export const normalizeTierConfig = (
 	warnings: string[],
 ): RoutedTierConfig => {
 	if (!isObjectRecord(value)) {
-		warnings.push(
-			`Profile "${profileName}" has invalid ${tier} tier config. Falling back to ${fallback.model}.`,
-		);
+		warnings.push(`Profile "${profileName}" has invalid ${tier} tier config. Falling back to ${fallback.model}.`);
 		return { ...fallback };
 	}
 
 	const model = typeof value.model === "string" ? value.model.trim() : "";
 	let parsedModel = fallback.model;
 	if (!model) {
-		warnings.push(
-			`Profile "${profileName}" ${tier} tier is missing a model. Falling back to ${fallback.model}.`,
-		);
+		warnings.push(`Profile "${profileName}" ${tier} tier is missing a model. Falling back to ${fallback.model}.`);
 	} else {
 		try {
 			parseCanonicalModelRef(model);
@@ -248,9 +217,7 @@ export const normalizeTierConfig = (
 		}
 	}
 
-	const thinking = isThinkingLevel(value.thinking)
-		? value.thinking
-		: fallback.thinking;
+	const thinking = isThinkingLevel(value.thinking) ? value.thinking : fallback.thinking;
 	if (value.thinking !== undefined && !isThinkingLevel(value.thinking)) {
 		warnings.push(
 			`Profile "${profileName}" ${tier} tier has invalid thinking level. Falling back to ${fallback.thinking ?? "medium"}.`,
@@ -289,45 +256,21 @@ export const normalizeConfig = (raw: RouterConfig): ConfigLoadResult => {
 			rawTaskType && validTaskTypes.includes(rawTaskType) ? rawTaskType : undefined;
 		normalizedProfiles[name] = {
 			...(taskType !== undefined ? { taskType } : {}),
-			high: normalizeTierConfig(
-				profile?.high,
-				fallbackAuto.high,
-				name,
-				"high",
-				warnings,
-			),
-			medium: normalizeTierConfig(
-				profile?.medium,
-				fallbackAuto.medium,
-				name,
-				"medium",
-				warnings,
-			),
-			low: normalizeTierConfig(
-				profile?.low,
-				fallbackAuto.low,
-				name,
-				"low",
-				warnings,
-			),
+			high: normalizeTierConfig(profile?.high, fallbackAuto.high, name, "high", warnings),
+			medium: normalizeTierConfig(profile?.medium, fallbackAuto.medium, name, "medium", warnings),
+			low: normalizeTierConfig(profile?.low, fallbackAuto.low, name, "low", warnings),
 		};
 	}
 
 	if (Object.keys(normalizedProfiles).length === 0) {
 		normalizedProfiles.auto = fallbackAuto;
-		warnings.push(
-			"No valid router profiles found. Falling back to the built-in auto profile.",
-		);
+		warnings.push("No valid router profiles found. Falling back to the built-in auto profile.");
 	}
 
 	let defaultProfile =
-		typeof raw.defaultProfile === "string" && raw.defaultProfile.trim()
-			? raw.defaultProfile.trim()
-			: undefined;
+		typeof raw.defaultProfile === "string" && raw.defaultProfile.trim() ? raw.defaultProfile.trim() : undefined;
 	if (!defaultProfile || !normalizedProfiles[defaultProfile]) {
-		const fallbackProfile = normalizedProfiles[
-			FALLBACK_CONFIG.defaultProfile ?? "auto"
-		]
+		const fallbackProfile = normalizedProfiles[FALLBACK_CONFIG.defaultProfile ?? "auto"]
 			? (FALLBACK_CONFIG.defaultProfile ?? "auto")
 			: Object.keys(normalizedProfiles).sort()[0];
 		if (defaultProfile && !normalizedProfiles[defaultProfile]) {
@@ -338,21 +281,15 @@ export const normalizeConfig = (raw: RouterConfig): ConfigLoadResult => {
 		defaultProfile = fallbackProfile;
 	}
 
-	const phaseBias =
-		typeof raw.phaseBias === "number"
-			? Math.max(0, Math.min(1, raw.phaseBias))
-			: 0.5;
+	const phaseBias = typeof raw.phaseBias === "number" ? Math.max(0, Math.min(1, raw.phaseBias)) : 0.5;
 
 	const largeContextThreshold =
-		typeof raw.largeContextThreshold === "number" &&
-		raw.largeContextThreshold > 0
+		typeof raw.largeContextThreshold === "number" && raw.largeContextThreshold > 0
 			? raw.largeContextThreshold
 			: undefined;
 
 	const maxSessionBudget =
-		typeof raw.maxSessionBudget === "number" && raw.maxSessionBudget > 0
-			? raw.maxSessionBudget
-			: undefined;
+		typeof raw.maxSessionBudget === "number" && raw.maxSessionBudget > 0 ? raw.maxSessionBudget : undefined;
 
 	const rules: RoutingRule[] = [];
 	if (Array.isArray(raw.rules)) {
@@ -360,19 +297,14 @@ export const normalizeConfig = (raw: RouterConfig): ConfigLoadResult => {
 			if (isObjectRecord(rule)) {
 				const matches = rule.matches;
 				const tier = rule.tier;
-				if (
-					(typeof matches === "string" || Array.isArray(matches)) &&
-					isRouterTier(tier)
-				) {
+				if ((typeof matches === "string" || Array.isArray(matches)) && isRouterTier(tier)) {
 					rules.push({
 						matches,
 						tier,
 						reason: typeof rule.reason === "string" ? rule.reason : undefined,
 					});
 				} else {
-					warnings.push(
-						`Ignored invalid routing rule: ${JSON.stringify(rule)}`,
-					);
+					warnings.push(`Ignored invalid routing rule: ${JSON.stringify(rule)}`);
 				}
 			}
 		}
@@ -409,7 +341,6 @@ export const normalizeConfig = (raw: RouterConfig): ConfigLoadResult => {
 		};
 	}
 
-
 	// Start with all fields from raw (preserves new optional fields automatically)
 	// Then override with normalized/validated values.
 	// This is the SINGLE SOURCE OF TRUTH for field preservation —
@@ -443,18 +374,11 @@ export const loadRouterConfig = (cwd: string): ConfigLoadResult => {
 	const projectPath = join(cwd, ".omp", "model-router.json");
 	const globalResult = parseConfigFile(globalPath);
 	const projectResult = parseConfigFile(projectPath);
-	const merged = mergeConfig(
-		mergeConfig(FALLBACK_CONFIG, globalResult.config),
-		projectResult.config,
-	);
+	const merged = mergeConfig(mergeConfig(FALLBACK_CONFIG, globalResult.config), projectResult.config);
 	const normalized = normalizeConfig(merged);
 	return {
 		config: normalized.config,
-		warnings: [
-			...globalResult.warnings,
-			...projectResult.warnings,
-			...normalized.warnings,
-		],
+		warnings: [...globalResult.warnings, ...projectResult.warnings, ...normalized.warnings],
 	};
 };
 
@@ -462,10 +386,7 @@ export const profileNames = (config: RouterConfig): string[] => {
 	return Object.keys(config.profiles).sort();
 };
 
-export const resolveProfileName = (
-	config: RouterConfig,
-	requested?: string,
-): string => {
+export const resolveProfileName = (config: RouterConfig, requested?: string): string => {
 	if (requested && config.profiles[requested]) {
 		return requested;
 	}
@@ -480,9 +401,7 @@ export const resolveProfileName = (
  * Merges `updates` into the existing JSON object and writes back.
  * Returns true on success; logs nothing on failure (caller decides).
  */
-export const patchConfigFile = (
-	updates: Record<string, unknown>,
-): boolean => {
+export const patchConfigFile = (updates: Record<string, unknown>): boolean => {
 	const globalPath = join(getAgentDir(), "model-router.json");
 	let raw: Record<string, unknown>;
 	try {
@@ -507,10 +426,7 @@ export const patchConfigFile = (
  * Returns the profile name or undefined if none matches.
  * Profiles are checked in sorted order for determinism.
  */
-export const resolveProfileForTaskType = (
-	config: RouterConfig,
-	taskType: TaskType,
-): string | undefined => {
+export const resolveProfileForTaskType = (config: RouterConfig, taskType: TaskType): string | undefined => {
 	for (const name of profileNames(config)) {
 		if (config.profiles[name]?.taskType === taskType) {
 			return name;

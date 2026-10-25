@@ -18,10 +18,7 @@ const formatTTL = (remainingMs: number): string => {
 	return `${secs}s`;
 };
 
-export const handlePin = (
-	state: RouterState,
-	actions: Actions,
-) => async (args: string[], ctx: ExtensionContext) => {
+export const handlePin = (state: RouterState, actions: Actions) => async (args: string[], ctx: ExtensionContext) => {
 	const currentProfile = state.selectedProfile;
 	if (args.length === 0) {
 		const pin = state.scope.scopedPin;
@@ -33,20 +30,14 @@ export const handlePin = (
 			const pressureThreshold = state.currentConfig.pinPressureThreshold ?? 3;
 			const pressureCount = pin.overridePressureCount ?? 0;
 			const pressureSuffix =
-				pin.source !== "user" && pressureCount > 0
-					? ` [pressure: ${pressureCount}/${pressureThreshold}]`
-					: "";
+				pin.source !== "user" && pressureCount > 0 ? ` [pressure: ${pressureCount}/${pressureThreshold}]` : "";
 			pinLine = `Scoped pin: ${pin.tier} [source: ${pin.source}]${pressureSuffix}${ttl}`;
 		} else {
 			const floor = state.currentConfig.defaultPin ?? "auto";
 			pinLine = `Scoped pin: none (floor: ${floor})`;
 		}
 		ctx.ui.notify(
-			[
-				`Profile: ${currentProfile}`,
-				pinLine,
-				`Usage: /router pin <high|medium|low|auto>`,
-			].join("\n"),
+			[`Profile: ${currentProfile}`, pinLine, `Usage: /router pin <high|medium|low|auto>`].join("\n"),
 			"info",
 		);
 		actions.updateStatus(ctx);
@@ -73,19 +64,13 @@ export const handlePin = (
 		} else if (PIN_SET.includes(maybeProfile)) {
 			pinValue = maybeProfile;
 		} else {
-			ctx.ui.notify(
-				`Invalid arguments. Usage: /router pin <high|medium|low|auto>`,
-				"error",
-			);
+			ctx.ui.notify(`Invalid arguments. Usage: /router pin <high|medium|low|auto>`, "error");
 			return;
 		}
 	}
 
 	if (!PIN_SET.includes(pinValue)) {
-		ctx.ui.notify(
-			`Invalid router pin: ${pinValue}. Use one of: ${ROUTER_PIN_VALUES.join(", ")}`,
-			"error",
-		);
+		ctx.ui.notify(`Invalid router pin: ${pinValue}. Use one of: ${ROUTER_PIN_VALUES.join(", ")}`, "error");
 		return;
 	}
 
@@ -94,10 +79,7 @@ export const handlePin = (
 		clearScopedPin(state.scope);
 		actions.persistState();
 		actions.updateStatus(ctx);
-		ctx.ui.notify(
-			`Pin cleared; heuristic routing restored (lastDecision reset).`,
-			"info",
-		);
+		ctx.ui.notify(`Pin cleared; heuristic routing restored (lastDecision reset).`, "info");
 		return;
 	}
 

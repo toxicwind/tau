@@ -1,9 +1,6 @@
 import type { ExtensionContext } from "tau";
 
-export const handleHelp = async (
-	_args: string[],
-	ctx: ExtensionContext,
-) => {
+export const handleHelp = async (_args: string[], ctx: ExtensionContext) => {
 	ctx.ui.notify(
 		[
 			"Router Subcommands:",

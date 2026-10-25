@@ -4,7 +4,12 @@ import { homedir } from "node:os";
 import type { ExtensionContext } from "tau";
 import type { RouterState } from "../state";
 import type { PromptLogRecord } from "../calibration/trace";
-import { createLogViewerFactory, createSessionPickerFactory, parseJsonlFile, type SessionLogEntry } from "../tui/log-viewer";
+import {
+	createLogViewerFactory,
+	createSessionPickerFactory,
+	parseJsonlFile,
+	type SessionLogEntry,
+} from "../tui/log-viewer";
 
 /**
  * /router log [--last N] [--prompts] [--text]
@@ -12,9 +17,7 @@ import { createLogViewerFactory, createSessionPickerFactory, parseJsonlFile, typ
  * Opens an interactive split-panel TUI showing classifier prompt log entries.
  * Falls back to plain text when TUI is unavailable or --text is passed.
  */
-export const handleLog = (
-	state: RouterState,
-) => async (args: string[], ctx: ExtensionContext) => {
+export const handleLog = (state: RouterState) => async (args: string[], ctx: ExtensionContext) => {
 	const last = parseLastArg(args);
 	const showPrompts = args.includes("--prompts") || args.includes("-p");
 	const forceText = args.includes("--text") || args.includes("-t");
@@ -65,8 +68,7 @@ export const handleLog = (
 
 			if (sessions.length === 0) {
 				ctx.ui.notify(
-					"No classifier log sessions found.\n" +
-					"Ensure calibration.traceEnabled is true in your config.",
+					"No classifier log sessions found.\n" + "Ensure calibration.traceEnabled is true in your config.",
 					"warning",
 				);
 				return;
@@ -102,20 +104,15 @@ export const handleLog = (
 
 	for (const rec of display) {
 		const ts = rec.timestamp.replace("T", " ").replace(/\.\d+Z$/, "");
-		const tierMarker = rec.verdict
-			? (rec.heuristicTier === rec.verdict.tier ? "✓" : "✗")
-			: "⚠";
+		const tierMarker = rec.verdict ? (rec.heuristicTier === rec.verdict.tier ? "✓" : "✗") : "⚠";
 
-		lines.push(
-			`${ts}  turn:${rec.turnIndex}  bucket:${rec.bucket ?? "—"}  ` +
-			`${rec.latencyMs}ms  ${tierMarker}`
-		);
+		lines.push(`${ts}  turn:${rec.turnIndex}  bucket:${rec.bucket ?? "—"}  ` + `${rec.latencyMs}ms  ${tierMarker}`);
 
 		if (rec.verdict) {
 			lines.push(
 				`  ${rec.heuristicTier} → ${rec.verdict.tier}  ` +
-				`(${rec.model})` +
-				(rec.verdict.reasoning ? `  "${rec.verdict.reasoning}"` : "")
+					`(${rec.model})` +
+					(rec.verdict.reasoning ? `  "${rec.verdict.reasoning}"` : ""),
 			);
 		} else if (rec.error) {
 			lines.push(`  ${rec.heuristicTier} → error: ${rec.error}`);
@@ -139,15 +136,14 @@ export const handleLog = (
 	const verdicts = records.filter(r => r.verdict);
 	const errors = records.filter(r => r.error);
 	const agreements = verdicts.filter(r => r.heuristicTier === r.verdict!.tier).length;
-	const avgLatency = verdicts.length > 0
-		? Math.round(verdicts.reduce((sum, r) => sum + r.latencyMs, 0) / verdicts.length)
-		: 0;
+	const avgLatency =
+		verdicts.length > 0 ? Math.round(verdicts.reduce((sum, r) => sum + r.latencyMs, 0) / verdicts.length) : 0;
 
 	lines.push(
 		`Total: ${records.length}  Verdicts: ${verdicts.length}  ` +
-		`Errors: ${errors.length}  Agreement: ${agreements}/${verdicts.length} ` +
-		`(${verdicts.length > 0 ? Math.round(agreements / verdicts.length * 100) : 0}%)  ` +
-		`Avg: ${avgLatency}ms`
+			`Errors: ${errors.length}  Agreement: ${agreements}/${verdicts.length} ` +
+			`(${verdicts.length > 0 ? Math.round((agreements / verdicts.length) * 100) : 0}%)  ` +
+			`Avg: ${avgLatency}ms`,
 	);
 
 	if (logPath) {
@@ -197,10 +193,7 @@ function findPromptLogFiles(dir: string): string[] {
  * Sorted newest-last-timestamp first. Current session (matching `currentPath`)
  * is pinned to top.
  */
-function discoverSessions(
-	scanDir: string,
-	currentPath: string | undefined,
-): SessionLogEntry[] {
+function discoverSessions(scanDir: string, currentPath: string | undefined): SessionLogEntry[] {
 	const paths = findPromptLogFiles(scanDir);
 	const entries: SessionLogEntry[] = [];
 
@@ -270,4 +263,3 @@ function discoverSessions(
 
 	return entries;
 }
-

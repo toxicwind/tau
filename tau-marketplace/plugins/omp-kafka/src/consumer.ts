@@ -155,14 +155,14 @@ export class ManagedConsumer {
 
 	async pause(): Promise<void> {
 		if (!this.consumer || this.status.state !== "running") return;
-		const topics = this.cfg.topics.map((t) => ({ topic: t }));
+		const topics = this.cfg.topics.map(t => ({ topic: t }));
 		this.consumer.pause(topics);
 		this.status = { state: "paused", since: Date.now() };
 	}
 
 	async resume(): Promise<void> {
 		if (!this.consumer || this.status.state !== "paused") return;
-		const topics = this.cfg.topics.map((t) => ({ topic: t }));
+		const topics = this.cfg.topics.map(t => ({ topic: t }));
 		this.consumer.resume(topics);
 		this.status = { state: "running", since: Date.now() };
 	}
@@ -194,11 +194,7 @@ export class ManagedConsumer {
 		}
 	}
 
-	private toRecord(
-		topic: string,
-		partition: number,
-		message: KafkaMessage,
-	): KafkaMessageRecord {
+	private toRecord(topic: string, partition: number, message: KafkaMessage): KafkaMessageRecord {
 		const headers: Record<string, string> = {};
 		for (const [k, v] of Object.entries(message.headers ?? {})) {
 			if (v === undefined) continue;

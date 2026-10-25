@@ -20,11 +20,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { isAbsolute, resolve as resolvePath } from "node:path";
 import { parse as parseYaml } from "yaml";
-import type {
-	ConsumerConfig,
-	KafkaYamlConfig,
-	ResolvedConsumer,
-} from "./types.ts";
+import type { ConsumerConfig, KafkaYamlConfig, ResolvedConsumer } from "./types.ts";
 
 /// Ambient Bun global for typecheck (no @types/bun dependency at runtime).
 declare const Bun: { file(path: string): { text(): Promise<string> } };
@@ -45,10 +41,7 @@ export interface LoadResult {
 }
 
 /** Public entry point. Returns an empty `config` on any error. */
-export async function loadConfig(
-	cwd: string,
-	env: NodeJS.ProcessEnv = process.env,
-): Promise<LoadResult> {
+export async function loadConfig(cwd: string, env: NodeJS.ProcessEnv = process.env): Promise<LoadResult> {
 	const errors: string[] = [];
 	const source = resolveConfigPath(cwd, env);
 	if (!source) {
@@ -94,16 +87,12 @@ export async function loadConfig(
 function resolveConfigPath(cwd: string, env: NodeJS.ProcessEnv): string | null {
 	const candidates: string[] = [];
 	if (env.KAFKA_CONFIG) {
-		candidates.push(
-			isAbsolute(env.KAFKA_CONFIG)
-				? env.KAFKA_CONFIG
-				: resolvePath(cwd, env.KAFKA_CONFIG),
-		);
+		candidates.push(isAbsolute(env.KAFKA_CONFIG) ? env.KAFKA_CONFIG : resolvePath(cwd, env.KAFKA_CONFIG));
 	}
 	candidates.push(resolvePath(cwd, "kafka.yml"));
 	candidates.push(resolvePath(cwd, ".omp", "kafka.yml"));
 	candidates.push(resolvePath(homedir(), ".omp", "agent", "kafka.yml"));
-	return candidates.find((c) => existsSync(c)) ?? null;
+	return candidates.find(c => existsSync(c)) ?? null;
 }
 
 async function readText(path: string): Promise<string> {
@@ -143,7 +132,7 @@ function validate(raw: unknown, errors: string[]): KafkaYamlConfig {
 		if (
 			!Array.isArray(e.brokers) ||
 			e.brokers.length === 0 ||
-			!e.brokers.every((b) => typeof b === "string" && b.length > 0)
+			!e.brokers.every(b => typeof b === "string" && b.length > 0)
 		) {
 			errors.push(`${path}.brokers: required non-empty array of strings`);
 			return;
@@ -151,7 +140,7 @@ function validate(raw: unknown, errors: string[]): KafkaYamlConfig {
 		if (
 			!Array.isArray(e.topics) ||
 			e.topics.length === 0 ||
-			!e.topics.every((t) => typeof t === "string" && t.length > 0)
+			!e.topics.every(t => typeof t === "string" && t.length > 0)
 		) {
 			errors.push(`${path}.topics: required non-empty array of strings`);
 			return;

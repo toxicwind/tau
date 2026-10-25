@@ -75,9 +75,7 @@ export function resolveEffectivePin(
 
 	// Config floor — applied as a post-routing minimum clamp, NOT as an override.
 	const defaultPin = config.defaultPin;
-	const floor = (defaultPin !== undefined && defaultPin !== "auto")
-		? defaultPin
-		: undefined;
+	const floor = defaultPin !== undefined && defaultPin !== "auto" ? defaultPin : undefined;
 
 	return { scopedPin, floor };
 }
@@ -208,7 +206,7 @@ export function incrementPinPressure(
 		if (debug) {
 			console.log(
 				`[model-router] pin pressure lapse: tier=${pin.tier} source=${pin.source} ` +
-				`pressure=${pin.overridePressureCount}/${threshold} shadow=${shadowTier} → routing freely`,
+					`pressure=${pin.overridePressureCount}/${threshold} shadow=${shadowTier} → routing freely`,
 			);
 		}
 		scope.scopedPin = undefined;

@@ -26,9 +26,9 @@
   "author": "toxicwind",
   "license": "MIT",
   "peerDependencies": {
-    "@tau/tau-agent": ">=18.0.0"
+    "@tau/tau-agent-core": "^18.3.0"
   },
   "devDependencies": {
-    "@tau/tau-agent": "npm:@oh-my-pi/pi-coding-agent@18.3.0"
+    "@tau/tau-agent-core": "npm:@oh-my-pi/pi-coding-agent@18.3.0"
   }
 }

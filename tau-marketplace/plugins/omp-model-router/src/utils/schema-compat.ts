@@ -51,7 +51,9 @@
  * ArkType schemas are callable functions with a `toJsonSchema` method.
  * This is distinct from Zod (plain object with `_zod`) and TypeBox (plain object).
  */
-export function isArkTypeInstance(schema: unknown): schema is { toJsonSchema(opts?: unknown): Record<string, unknown> } {
+export function isArkTypeInstance(
+	schema: unknown,
+): schema is { toJsonSchema(opts?: unknown): Record<string, unknown> } {
 	return (
 		typeof schema === "function" &&
 		typeof (schema as Record<string, unknown>)["toJsonSchema"] === "function" &&
@@ -90,9 +92,7 @@ type JsonSchema = Record<string, unknown>;
 function arkJsonAstToWire(node: unknown): JsonSchema {
 	// Bare array → enum of units
 	if (Array.isArray(node)) {
-		const units = (node as Array<{ unit?: unknown; meta?: string }>)
-			.map((b) => b.unit)
-			.filter((u) => u !== undefined);
+		const units = (node as Array<{ unit?: unknown; meta?: string }>).map(b => b.unit).filter(u => u !== undefined);
 		if (units.length > 0) return { enum: units };
 		return {};
 	}
@@ -120,7 +120,7 @@ function arkJsonAstToWire(node: unknown): JsonSchema {
 	// ── Enum node ─────────────────────────────────────────────────────────────
 	if ("branches" in n && Array.isArray(n["branches"])) {
 		const branches = n["branches"] as Array<{ unit?: unknown; meta?: string }>;
-		const units = branches.map((b) => b.unit).filter((u) => u !== undefined);
+		const units = branches.map(b => b.unit).filter(u => u !== undefined);
 		const result: JsonSchema = { enum: units };
 		if (meta) result["description"] = meta;
 		return result;
@@ -143,12 +143,8 @@ function arkJsonAstToWire(node: unknown): JsonSchema {
 		const properties: Record<string, JsonSchema> = {};
 		const requiredKeys: string[] = [];
 
-		const reqEntries = Array.isArray(n["required"])
-			? (n["required"] as Array<{ key: string; value: unknown }>)
-			: [];
-		const optEntries = Array.isArray(n["optional"])
-			? (n["optional"] as Array<{ key: string; value: unknown }>)
-			: [];
+		const reqEntries = Array.isArray(n["required"]) ? (n["required"] as Array<{ key: string; value: unknown }>) : [];
+		const optEntries = Array.isArray(n["optional"]) ? (n["optional"] as Array<{ key: string; value: unknown }>) : [];
 
 		for (const entry of reqEntries) {
 			if (!entry.key) continue;
@@ -201,7 +197,10 @@ export function convertToJsonSchema(schema: unknown): unknown {
 	// Case 1: live ArkType instance — convert via native toJsonSchema()
 	if (isArkTypeInstance(schema)) {
 		try {
-			const raw = schema.toJsonSchema({ target: "draft-2020-12", fallback: (ctx: { base: unknown }) => ctx.base }) as Record<string, unknown>;
+			const raw = schema.toJsonSchema({
+				target: "draft-2020-12",
+				fallback: (ctx: { base: unknown }) => ctx.base,
+			}) as Record<string, unknown>;
 			delete raw.$schema;
 			postProcessSchema(raw);
 			return raw;
@@ -233,7 +232,7 @@ function postProcessSchema(node: unknown): void {
 
 	// Infer type for bare enum (no type field)
 	if (!("type" in obj) && Array.isArray(obj.enum)) {
-		const types = new Set((obj.enum as unknown[]).map((v) => typeof v));
+		const types = new Set((obj.enum as unknown[]).map(v => typeof v));
 		if (types.size === 1) {
 			const t = [...types][0];
 			if (t === "string" || t === "number" || t === "boolean") obj.type = t;
@@ -261,9 +260,9 @@ function postProcessSchema(node: unknown): void {
  * Sanitize a context's tool list so all tool parameters are valid JSON Schema.
  * Returns the context unchanged if no tools need conversion (zero-alloc fast path).
  */
-export function sanitizeToolSchemas<T extends { tools?: Array<{ name: string; description: string; parameters: unknown }> }>(
-	context: T,
-): T {
+export function sanitizeToolSchemas<
+	T extends { tools?: Array<{ name: string; description: string; parameters: unknown }> },
+>(context: T): T {
 	const tools = context.tools;
 	if (!tools || tools.length === 0) return context;
 
@@ -276,7 +275,7 @@ export function sanitizeToolSchemas<T extends { tools?: Array<{ name: string; de
 	}
 	if (!needsConversion) return context;
 
-	const convertedTools = tools.map((tool) => {
+	const convertedTools = tools.map(tool => {
 		if (!isArkTypeInstance(tool.parameters) && !isInternalSchema(tool.parameters)) return tool;
 		return { ...tool, parameters: convertToJsonSchema(tool.parameters) };
 	});

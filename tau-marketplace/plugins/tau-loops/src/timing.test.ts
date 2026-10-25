@@ -23,7 +23,7 @@ describe("race", () => {
 		const result = await race<string>(
 			"test/invalid",
 			[
-				{ name: "fast-but-empty", run: () => afterTicks(1, ""), valid: (v) => v.length > 0 },
+				{ name: "fast-but-empty", run: () => afterTicks(1, ""), valid: v => v.length > 0 },
 				{ name: "slow-but-real", run: () => afterTicks(50, "real") },
 			],
 			{ timeoutUs: 2_000_000 },

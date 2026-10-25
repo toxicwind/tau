@@ -1,9 +1,4 @@
-import type {
-	RoutingDecision,
-	RouterConfig,
-	RouterThinkingByProfile,
-	ScopedPin,
-} from "../types";
+import type { RoutingDecision, RouterConfig, RouterThinkingByProfile, ScopedPin } from "../types";
 import type { SessionScope } from "../state";
 import { DEFAULT_PIN_TIMEOUT_MS } from "../routing/pin";
 
@@ -29,9 +24,7 @@ export const formatScopedPin = (
 	return `${pin.tier} [${pin.source}] (${ttl})`;
 };
 
-export const formatThinkingSummary = (
-	thinkingByProfile: RouterThinkingByProfile,
-): string => {
+export const formatThinkingSummary = (thinkingByProfile: RouterThinkingByProfile): string => {
 	const entries = Object.entries(thinkingByProfile)
 		.sort(([a], [b]) => a.localeCompare(b))
 		.map(([profile, tierMap]) => {
