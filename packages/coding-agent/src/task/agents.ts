@@ -17,6 +17,17 @@ import { AUTO_THINKING } from "@tau/tau-tui/thinking";
 import type { AgentSource } from "@tau/tau-tui/tools/task";
 import type { AgentDefinition } from "./types";
 
+/**
+ * Swarm worker slot ids. Referenced by the embedded agent catalog below
+ * (`...SWARM_SLOTS.map(...)`); `slot.slice(5)` yields the numeric suffix
+ * (`swarm-01` -> `01`), which appears in `task.agentModelOverrides.swarm-01`.
+ * A bare `SWARM_SLOTS` reference outside scope (invoked at agent-catalog
+ * evaluation, i.e. any `tau acp`/serve startup) threw `ReferenceError:
+ * SWARM_SLOTS is not defined` and crashed the compiled binary. Defined here so
+ * the ACP/agent catalog path builds cleanly.
+ */
+const SWARM_SLOTS: string[] = Array.from({ length: 8 }, (_, i) => `swarm-${String(i + 1).padStart(2, "0")}`);
+
 interface AgentFrontmatter {
 	name: string;
 	description: string;
