@@ -887,7 +887,8 @@ mod tests {
 				fs::metadata(staging_executable)
 					.unwrap()
 					.permissions()
-					.mode() & 0o777,
+					.mode()
+					& 0o777,
 				0o700
 			);
 		}

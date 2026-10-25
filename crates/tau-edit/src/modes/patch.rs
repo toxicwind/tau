@@ -486,11 +486,12 @@ fn fallback_variants(hunk: &DiffHunk, aggressive: bool) -> Vec<HunkVariant> {
 			|| !matches!(
 				variant.kind,
 				HunkVariantKind::CollapseRepeated | HunkVariantKind::SingleLine
-			)) && seen.insert(format!(
-			"{}||{}",
-			variant.old_lines.join("\n"),
-			variant.new_lines.join("\n")
-		))
+			))
+			&& seen.insert(format!(
+				"{}||{}",
+				variant.old_lines.join("\n"),
+				variant.new_lines.join("\n")
+			))
 	});
 	variants
 }

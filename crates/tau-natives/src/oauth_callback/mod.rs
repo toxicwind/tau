@@ -689,7 +689,8 @@ fn validate_scheme(scheme: &str) -> AnyResult<()> {
 			character.is_ascii_lowercase()
 				|| character.is_ascii_digit()
 				|| matches!(character, '+' | '-' | '.')
-		}) || scheme.len() > 128
+		})
+		|| scheme.len() > 128
 	{
 		bail!("invalid native OAuth URL scheme");
 	}

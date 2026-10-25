@@ -3141,7 +3141,11 @@ mod tests {
 		std::fs::write(root.join("b"), b"same").expect("write b");
 		std::fs::write(root.join("c"), b"different").expect("write c");
 
-		let config = ShellConfig { session_env: Some(hermetic_test_env()), snapshot_path: None, minimizer: None };
+		let config = ShellConfig {
+			session_env:   Some(hermetic_test_env()),
+			snapshot_path: None,
+			minimizer:     None,
+		};
 		let mut session = create_session(&config).await.expect("create_session");
 		session
 			.shell
@@ -3177,7 +3181,11 @@ mod tests {
 		let dir = tempfile::tempdir().expect("temp dir");
 		let root = std::fs::canonicalize(dir.path()).expect("canonical temp dir");
 
-		let config = ShellConfig { session_env: Some(hermetic_test_env()), snapshot_path: None, minimizer: None };
+		let config = ShellConfig {
+			session_env:   Some(hermetic_test_env()),
+			snapshot_path: None,
+			minimizer:     None,
+		};
 		let mut session = create_session(&config).await.expect("create_session");
 		session
 			.shell
@@ -3253,7 +3261,11 @@ mod tests {
 		}
 		std::fs::write(tmp.join("in.txt"), &input).expect("write input");
 
-		let config = ShellConfig { session_env: Some(hermetic_test_env()), snapshot_path: None, minimizer: None };
+		let config = ShellConfig {
+			session_env:   Some(hermetic_test_env()),
+			snapshot_path: None,
+			minimizer:     None,
+		};
 		let mut session = create_session(&config).await.expect("create_session");
 		session
 			.shell
@@ -3414,7 +3426,11 @@ mod tests {
 		let _ = std::fs::remove_dir_all(&tmp);
 		std::fs::create_dir_all(&tmp).expect("temp dir");
 
-		let config = ShellConfig { session_env: Some(hermetic_test_env()), snapshot_path: None, minimizer: None };
+		let config = ShellConfig {
+			session_env:   Some(hermetic_test_env()),
+			snapshot_path: None,
+			minimizer:     None,
+		};
 		let mut session = create_session(&config).await.expect("create_session");
 		session
 			.shell
@@ -3891,7 +3907,11 @@ mod tests {
 		std::fs::write(tmp.join("binary.bin"), b"needle\0hidden\n").expect("binary");
 		let tmp_str = tmp.to_str().expect("utf8");
 
-		let config = ShellConfig { session_env: Some(hermetic_test_env()), snapshot_path: None, minimizer: None };
+		let config = ShellConfig {
+			session_env:   Some(hermetic_test_env()),
+			snapshot_path: None,
+			minimizer:     None,
+		};
 		let mut session = create_session(&config).await.expect("create_session");
 		session.shell.set_working_dir(tmp_str).expect("cwd");
 		let mut params = session.shell.default_exec_params();
@@ -4554,9 +4574,12 @@ mod tests {
 		assert!(all_off.shell.builtin_mut("rg").is_none(), "kill-switch drops rg");
 		assert!(all_off.shell.builtin_mut("rm").is_none(), "kill-switch drops rm");
 
-		let mut rm_off = create_session(&session_with(&[("PI_DISABLE_RM_BUILTIN", "1"), ("PI_DISABLE_UUTILS_BUILTINS", "0")]))
-			.await
-			.expect("create_session");
+		let mut rm_off = create_session(&session_with(&[
+			("PI_DISABLE_RM_BUILTIN", "1"),
+			("PI_DISABLE_UUTILS_BUILTINS", "0"),
+		]))
+		.await
+		.expect("create_session");
 		assert!(rm_off.shell.builtin_mut("rm").is_none(), "rm disabled individually");
 		assert!(rm_off.shell.builtin_mut("mv").is_some(), "mv stays enabled");
 		assert!(rm_off.shell.builtin_mut("head").is_some(), "head stays enabled");

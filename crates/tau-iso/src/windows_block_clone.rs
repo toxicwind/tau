@@ -221,7 +221,9 @@ mod imp {
 		for entry in entries {
 			let entry = entry
 				.map_err(|err| IsoError::other(format!("dir entry in {}: {err}", src.display())))?;
-			if skip.is_some_and(|names| names.contains(&entry.file_name().as_os_str())) || crate::is_secret_filename(&entry.file_name()) {
+			if skip.is_some_and(|names| names.contains(&entry.file_name().as_os_str()))
+				|| crate::is_secret_filename(&entry.file_name())
+			{
 				continue;
 			}
 			let file_type = entry.file_type().map_err(|err| {

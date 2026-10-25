@@ -1,5 +1,6 @@
 mod common;
 
+use serde_json::json;
 use tau_edit::{
 	EditMode, ModeEngine,
 	modes::hashline::{
@@ -8,7 +9,6 @@ use tau_edit::{
 	},
 	stream_json::ArgSnapshot,
 };
-use serde_json::json;
 
 #[tokio::test]
 async fn patcher_apply_cases() {

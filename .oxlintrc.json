@@ -40,6 +40,7 @@
 		".worktrees/**",
 		".wt/**",
 		".tau/**",
+		".super-ralph/**",
 		"crates/**",
 		"docs/**",
 		"python/**",

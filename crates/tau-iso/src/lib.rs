@@ -155,28 +155,28 @@ impl fmt::Display for BackendKind {
 /// Returns true if a top-level filename looks like a secret that must never
 /// be cloned into a worktree (issue #15476).
 ///
-/// Matches: `.env*`, `*.key`, `key.properties`, `credentials*`, `secrets*`, `*.pem`
-/// This is a security boundary: secrets duplicated across worktrees go stale
-/// after rotation and leak via the worktree directory.
+/// Matches: `.env*`, `*.key`, `key.properties`, `credentials*`, `secrets*`,
+/// `*.pem` This is a security boundary: secrets duplicated across worktrees go
+/// stale after rotation and leak via the worktree directory.
 pub fn is_secret_filename(name: &std::ffi::OsStr) -> bool {
-    let Some(s) = name.to_str() else { return false };
-    let lower = s.to_lowercase();
-    if lower == ".env" || lower.starts_with(".env.") {
-        return true;
-    }
-    if lower.ends_with(".key") || lower.ends_with(".pem") {
-        return true;
-    }
-    if lower == "key.properties" {
-        return true;
-    }
-    if lower.starts_with("credentials") || lower.starts_with("secrets") {
-        return true;
-    }
-    if lower == ".secrets" || lower.starts_with(".secrets.") {
-        return true;
-    }
-    false
+	let Some(s) = name.to_str() else { return false };
+	let lower = s.to_lowercase();
+	if lower == ".env" || lower.starts_with(".env.") {
+		return true;
+	}
+	if lower.ends_with(".key") || lower.ends_with(".pem") {
+		return true;
+	}
+	if lower == "key.properties" {
+		return true;
+	}
+	if lower.starts_with("credentials") || lower.starts_with("secrets") {
+		return true;
+	}
+	if lower == ".secrets" || lower.starts_with(".secrets.") {
+		return true;
+	}
+	false
 }
 
 /// Result of a backend probe.

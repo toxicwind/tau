@@ -157,7 +157,9 @@ mod imp {
 				let entry = entry.map_err(|err| {
 					IsoError::other(format!("dir entry in {}: {err}", lower.display()))
 				})?;
-				if skip.contains(&entry.file_name().as_os_str()) || crate::is_secret_filename(&entry.file_name()) {
+				if skip.contains(&entry.file_name().as_os_str())
+					|| crate::is_secret_filename(&entry.file_name())
+				{
 					continue;
 				}
 				// `clonefile` only accepts regular files, directories, and

@@ -6,6 +6,7 @@ use std::{
 };
 
 use common::Workspace;
+use serde_json::{Value, json};
 use tau_edit::{
 	EditMode,
 	diff_string::{CompactDiffOptions, build_compact_diff_preview},
@@ -24,7 +25,6 @@ use tau_edit::{
 	stream_json::snapshot_from_text,
 	text::{LineEnding, detect_line_ending},
 };
-use serde_json::{Value, json};
 
 const FIXTURES: &[&str] = &[
 	"parity_boundary_repair.json",

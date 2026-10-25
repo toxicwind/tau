@@ -38,13 +38,10 @@ mod constants;
 mod engine;
 mod normalize;
 
-
-use crate::utok::bpe::OnceFallible;
-
 use engine::{VocabCore, VocabLoadError};
 use normalize::{FrameParams, nfc_units, raw_head_space_units, stream_norm, trim_end_ws};
 
-use crate::utok::utf::Unit;
+use crate::utok::{bpe::OnceFallible, utf::Unit};
 
 /// One reconstructed tokenizer generation.
 ///
@@ -88,17 +85,17 @@ macro_rules! assert_zstd {
 			let bytes = include_bytes!($path);
 			if bytes.len() < 4
 				|| bytes[0] != 0x28
-				|| bytes[1] != 0xB5
-				|| bytes[2] != 0x2F
-				|| bytes[3] != 0xFD
+				|| bytes[1] != 0xb5
+				|| bytes[2] != 0x2f
+				|| bytes[3] != 0xfd
 			{
 				panic!(concat!(
 					"utok[",
 					$which,
-					"]: blob is missing the zstd frame magic (expected 28 B5 2F FD); a leading \
-					 28 EF BF BD means the bytes were lossily re-encoded as UTF-8 (every byte \
-					 >= 0x80 replaced by U+FFFD), which is how data/deepseek3.bin.zst was \
-					 destroyed on 2026-10-02 by commit e0518234b5. Restore from a clean source.",
+					"]: blob is missing the zstd frame magic (expected 28 B5 2F FD); a leading 28 EF \
+					 BF BD means the bytes were lossily re-encoded as UTF-8 (every byte >= 0x80 \
+					 replaced by U+FFFD), which is how data/deepseek3.bin.zst was destroyed on \
+					 2026-10-02 by commit e0518234b5. Restore from a clean source.",
 				));
 			}
 		};
@@ -109,8 +106,8 @@ assert_zstd!("ctok_v3", "../../../data/ctok_v3.bin.zst");
 assert_zstd!("ctok_v4_7", "../../../data/ctok_v4_7.bin.zst");
 
 fn load(which: &'static str, bytes: &'static [u8]) -> Result<VocabCore, VocabLoadError> {
-	let raw = zstd::decode_all(bytes)
-		.map_err(|e| VocabLoadError::Zstd { which, detail: e.to_string() })?;
+	let raw =
+		zstd::decode_all(bytes).map_err(|e| VocabLoadError::Zstd { which, detail: e.to_string() })?;
 	VocabCore::parse(&raw, which)
 }
 
@@ -118,9 +115,8 @@ impl Family {
 	/// Fallible vocabulary resolution; every count path starts here.
 	pub fn try_core(self) -> Result<&'static VocabCore, VocabLoadError> {
 		match self {
-			Self::V3 => CORE_V3.get_or_try_init(|| {
-				load("ctok_v3", include_bytes!("../../../data/ctok_v3.bin.zst"))
-			}),
+			Self::V3 => CORE_V3
+				.get_or_try_init(|| load("ctok_v3", include_bytes!("../../../data/ctok_v3.bin.zst"))),
 			Self::V47 | Self::V5 | Self::V5Sonnet => CORE_V47.get_or_try_init(|| {
 				load("ctok_v4_7", include_bytes!("../../../data/ctok_v4_7.bin.zst"))
 			}),

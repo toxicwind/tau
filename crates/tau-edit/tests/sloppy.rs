@@ -1,6 +1,7 @@
 mod common;
 
 use common::{DiskWriter, Workspace, run_fixture};
+use serde_json::json;
 use tau_edit::{
 	EditError, EditMode, EditStore, ModeEngine,
 	files::FileCache,
@@ -12,7 +13,6 @@ use tau_edit::{
 	path_policy::canonical_key,
 	stream_json::ArgSnapshot,
 };
-use serde_json::json;
 
 #[tokio::test]
 async fn apply_fixtures() {

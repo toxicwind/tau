@@ -1,8 +1,8 @@
 mod common;
 
 use common::{DiskWriter, Workspace, run_fixture};
-use tau_edit::{EditMode, ModeEngine, modes::replace::ReplaceEngine, stream_json::ArgSnapshot};
 use serde_json::json;
+use tau_edit::{EditMode, ModeEngine, modes::replace::ReplaceEngine, stream_json::ArgSnapshot};
 
 #[tokio::test]
 async fn replace_core_fixtures() {

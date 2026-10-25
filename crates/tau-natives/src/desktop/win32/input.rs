@@ -422,11 +422,13 @@ mod background {
 			VK_INSERT
 				| VK_DELETE
 				| VK_HOME
-				| VK_END | VK_PRIOR
+				| VK_END
+				| VK_PRIOR
 				| VK_NEXT
 				| VK_LEFT
 				| VK_RIGHT
-				| VK_UP | VK_DOWN
+				| VK_UP
+				| VK_DOWN
 		)
 	}
 

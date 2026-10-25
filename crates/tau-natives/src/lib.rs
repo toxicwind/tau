@@ -382,16 +382,15 @@ mod tests {
 }
 
 #[cfg(not(any(
-    feature = "family-o200k",
-    feature = "family-cl100k",
-    feature = "family-qwen3",
-    feature = "family-deepseek3",
-    feature = "family-kimi",
-    feature = "family-glm",
-    feature = "allow-no-tokenizer",
+	feature = "family-o200k",
+	feature = "family-cl100k",
+	feature = "family-qwen3",
+	feature = "family-deepseek3",
+	feature = "family-kimi",
+	feature = "family-glm",
+	feature = "allow-no-tokenizer",
 )))]
 compile_error!(
-    "tau-natives: no tokenizer family enabled. Cargo.toml [features].default \
-     must contain at least one family-* entry, or this target must pass the \
-     allow-no-tokenizer feature explicitly."
+	"tau-natives: no tokenizer family enabled. Cargo.toml [features].default must contain at least \
+	 one family-* entry, or this target must pass the allow-no-tokenizer feature explicitly."
 );

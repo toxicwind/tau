@@ -432,20 +432,22 @@ fn decode_char(bytes: &[u8]) -> char {
 /// of poisoning a `LazyLock` and cascading the same panic through every
 /// worker. Same doctrine as the BPE path (see `utok::bpe::BpeLoadError`).
 struct Cursor<'a> {
-	data: &'a [u8],
-	pos:  usize,
+	data:  &'a [u8],
+	pos:   usize,
 	which: &'static str,
 }
 
 impl<'a> Cursor<'a> {
 	fn take(&mut self, n: usize) -> Result<&'a [u8], VocabLoadError> {
-		let end = self.pos.checked_add(n).filter(|e| *e <= self.data.len()).ok_or(
-			VocabLoadError::Truncated {
+		let end = self
+			.pos
+			.checked_add(n)
+			.filter(|e| *e <= self.data.len())
+			.ok_or(VocabLoadError::Truncated {
 				which: self.which,
 				need:  n,
 				have:  self.data.len().saturating_sub(self.pos),
-			},
-		)?;
+			})?;
 		let slice = &self.data[self.pos..end];
 		self.pos = end;
 		Ok(slice)
@@ -511,7 +513,10 @@ impl VocabCore {
 		let mut cur = Cursor { data: blob, pos: 0, which };
 		let magic = cur.take(4)?;
 		if magic != b"CTOK" {
-			return Err(VocabLoadError::BadMagic { which, got: [magic[0], magic[1], magic[2], magic[3]] });
+			return Err(VocabLoadError::BadMagic {
+				which,
+				got: [magic[0], magic[1], magic[2], magic[3]],
+			});
 		}
 		let version = cur.u8()?;
 		if version != 2 {
@@ -531,10 +536,7 @@ impl VocabCore {
 		for _ in 0..byte_token_count {
 			let len = usize::from(cur.u8()?);
 			if !(1..=4).contains(&len) {
-				return Err(VocabLoadError::ByteTokenOutOfRange {
-					which,
-					len: len as u8,
-				});
+				return Err(VocabLoadError::ByteTokenOutOfRange { which, len: len as u8 });
 			}
 			max_len = max_len.max(len);
 			tokens.insert(pack_bytes(cur.take(len)?));

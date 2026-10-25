@@ -17,17 +17,17 @@
 //! panicked with the same useless "previously been poisoned" message):
 //!
 //! 1. **A module-scope `const _` assertion** in [`bpe_table!`] checks the
-//!    blob's zstd magic while rustc is still building the crate. Module
-//!    scope specifically, because a const assertion inside a generic
-//!    function is not evaluated under `cargo check` (trybuild#225).
+//!    blob's zstd magic while rustc is still building the crate. Module scope
+//!    specifically, because a const assertion inside a generic function is not
+//!    evaluated under `cargo check` (trybuild#225).
 //! 2. **`build.rs`** walks the decompressed piece table of every blob before
 //!    the crate compiles, catching truncation the magic check cannot see.
 //! 3. **[`OnceFallible`]** caches a failed load as a value. `LazyLock`
-//!    poisoning is unrecoverable by design, which is what turned one bad
-//!    blob into a process-wide cascade.
+//!    poisoning is unrecoverable by design, which is what turned one bad blob
+//!    into a process-wide cascade.
 //! 4. **`tests/compile_fail.rs`** ships a blob with the exact corruption
-//!    signature and asserts the build rejects it. A safety mechanism nobody
-//!    has watched fire is a hypothesis, not a check.
+//!    signature and asserts the build rejects it. A safety mechanism nobody has
+//!    watched fire is a hypothesis, not a check.
 //!
 //! Layers 1, 2 and 4 are what make layer 3 unreachable in practice; layer 3
 //! exists so that "in practice" failing produces one typed error instead of
@@ -40,23 +40,18 @@ pub use crate::utok::bpe::BpeLoadError;
 // through `bpe_table!`.
 #[cfg(test)]
 pub use crate::utok::bpe::OnceFallible;
-
-use crate::utok::{
-	Encoding,
-	bpe::BpeEncoding,
-	pretoken::Splitter,
-};
 #[cfg(test)]
 use crate::utok::bpe::RankTable;
+use crate::utok::{Encoding, bpe::BpeEncoding, pretoken::Splitter};
 
 /// Declare a lazily-loaded BPE table backed by a zstd-compressed
 /// `include_bytes!`'d blob.
 ///
 /// Emits, in order:
 ///
-/// 1. A module-scope `const _` block asserting the blob begins with the
-///    zstd frame magic. Evaluated by rustc, so a corrupt blob fails the
-///    build before a single line of runtime code exists.
+/// 1. A module-scope `const _` block asserting the blob begins with the zstd
+///    frame magic. Evaluated by rustc, so a corrupt blob fails the build before
+///    a single line of runtime code exists.
 /// 2. A `static` [`OnceFallible`] slot.
 /// 3. An `#[inline]` accessor returning `Result<&'static BpeEncoding,
 ///    BpeLoadError>`, resolving and caching the decode on first call.
@@ -309,10 +304,7 @@ pub(crate) fn bpe_for(enc: Encoding) -> Result<&'static BpeEncoding, BpeLoadErro
 		// the match stays exhaustive and the caller gets a typed reason
 		// instead of an `unreachable!` panic.
 		#[allow(unreachable_patterns)]
-		disabled => Err(BpeLoadError::FamilyDisabled {
-			variant: disabled,
-			feature: "family-*",
-		}),
+		disabled => Err(BpeLoadError::FamilyDisabled { variant: disabled, feature: "family-*" }),
 	}
 }
 
@@ -391,10 +383,7 @@ mod load_tests {
 	/// outer frame survived while the payload did not.
 	#[test]
 	fn parse_rejects_malformed_blobs_without_panicking() {
-		assert!(matches!(
-			RankTable::parse(&[], "empty"),
-			Err(BpeLoadError::Zstd { .. })
-		));
+		assert!(matches!(RankTable::parse(&[], "empty"), Err(BpeLoadError::Zstd { .. })));
 		assert!(matches!(
 			RankTable::parse(b"not a zstd frame at all", "garbage"),
 			Err(BpeLoadError::Zstd { .. })

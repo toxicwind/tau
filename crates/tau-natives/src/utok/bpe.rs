@@ -271,10 +271,8 @@ impl RankTable {
 	/// ("dead") vocab slots as empty strings to keep rank contiguity, and
 	/// those ranks must never be produced.
 	pub fn parse(zst: &[u8], family: &'static str) -> Result<Self, BpeLoadError> {
-		let raw = zstd::decode_all(zst).map_err(|e| BpeLoadError::Zstd {
-			family,
-			detail: e.to_string(),
-		})?;
+		let raw =
+			zstd::decode_all(zst).map_err(|e| BpeLoadError::Zstd { family, detail: e.to_string() })?;
 		let Some(magic) = raw.get(..6) else {
 			return Err(BpeLoadError::Truncated { family, len: raw.len() });
 		};
@@ -287,10 +285,13 @@ impl RankTable {
 		let Some(count_bytes) = raw.get(6..10) else {
 			return Err(BpeLoadError::Truncated { family, len: raw.len() });
 		};
-		let n = u32::from_le_bytes([count_bytes[0], count_bytes[1], count_bytes[2], count_bytes[3]]) as usize;
+		let n = u32::from_le_bytes([count_bytes[0], count_bytes[1], count_bytes[2], count_bytes[3]])
+			as usize;
 		let mut p = &raw[10..];
-		let mut pairs: Box<[u32; 65536]> =
-			vec![u32::MAX; 65536].into_boxed_slice().try_into().expect("64 KiB box fits");
+		let mut pairs: Box<[u32; 65536]> = vec![u32::MAX; 65536]
+			.into_boxed_slice()
+			.try_into()
+			.expect("64 KiB box fits");
 		let mut short = HashMap::with_capacity_and_hasher(n, Fx::default());
 		let mut long = FxMap::default();
 		let mut max_token_len = 0usize;

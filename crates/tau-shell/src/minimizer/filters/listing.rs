@@ -31,10 +31,12 @@ fn find_outputs_paths_only(command: &str) -> bool {
 			"-print0"
 				| "-printf"
 				| "-fprintf"
-				| "-ls" | "-fls"
+				| "-ls"
+				| "-fls"
 				| "-exec"
 				| "-execdir"
-				| "-ok" | "-okdir"
+				| "-ok"
+				| "-okdir"
 		)
 	})
 }
@@ -787,15 +789,21 @@ fn is_source_path(path: &str) -> bool {
 	matches!(
 		ext,
 		"rs"
-			| "ts" | "tsx"
-			| "js" | "jsx"
-			| "py" | "go"
+			| "ts"
+			| "tsx"
+			| "js"
+			| "jsx"
+			| "py"
+			| "go"
 			| "java"
-			| "c" | "cc"
+			| "c"
+			| "cc"
 			| "cpp"
-			| "h" | "hpp"
+			| "h"
+			| "hpp"
 			| "swift"
-			| "kt" | "rb"
+			| "kt"
+			| "rb"
 	)
 }
 

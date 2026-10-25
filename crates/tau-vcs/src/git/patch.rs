@@ -1560,7 +1560,8 @@ fn validate_repo_path(path: &str) -> std::result::Result<(), ApplyFailure> {
 	if candidate.is_absolute()
 		|| candidate.components().any(|component| {
 			matches!(component, Component::ParentDir | Component::RootDir | Component::Prefix(_))
-		}) || path.is_empty()
+		})
+		|| path.is_empty()
 	{
 		return Err(ApplyFailure::Invalid(format!("unsafe patch path: {path}")));
 	}

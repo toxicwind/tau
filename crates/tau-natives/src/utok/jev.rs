@@ -63,16 +63,16 @@ fn load() -> Result<&'static Jev, BpeLoadError> {
 				// (PartialEq is not const-stable), hence elementwise.
 				if bytes.len() < 4
 					|| bytes[0] != 0x28
-					|| bytes[1] != 0xB5
-					|| bytes[2] != 0x2F
-					|| bytes[3] != 0xFD
+					|| bytes[1] != 0xb5
+					|| bytes[2] != 0x2f
+					|| bytes[3] != 0xfd
 				{
 					panic!(concat!(
 						"utok[",
 						$name,
-						"]: blob is missing the zstd frame magic (expected 28 B5 2F FD); a \
-						 leading 28 EF BF BD means the bytes were lossily re-encoded as UTF-8 \
-						 (every byte >= 0x80 replaced by U+FFFD). Restore from a clean source.",
+						"]: blob is missing the zstd frame magic (expected 28 B5 2F FD); a leading 28 \
+						 EF BF BD means the bytes were lossily re-encoded as UTF-8 (every byte >= 0x80 \
+						 replaced by U+FFFD). Restore from a clean source.",
 					));
 				}
 			};
@@ -85,7 +85,12 @@ fn load() -> Result<&'static Jev, BpeLoadError> {
 	let whole = RankTable::parse(include_bytes!("../../data/jev_whole.bin.zst"), "jev_whole")?;
 	JEV.get_or_try_init(|| {
 		Ok(Jev {
-			bpe:   BpeEncoding { table: base, splitter: Splitter::Qwen, nfc: true, ignore_merges: false },
+			bpe: BpeEncoding {
+				table:         base,
+				splitter:      Splitter::Qwen,
+				nfc:           true,
+				ignore_merges: false,
+			},
 			whole,
 		})
 	})
