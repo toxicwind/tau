@@ -9,7 +9,8 @@
   },
   "workspaces": {
     "packages": [
-      "packages/*"
+      "packages/*",
+      "tau-extensions/packages/*"
     ],
     "catalog": {
       "@babel/generator": "^7.29.8",
@@ -169,6 +170,7 @@
     "postinstall": "node scripts/fix-effect-bytesize.js || true"
   },
   "dependencies": {
+    "@huggingface/transformers": "catalog:",
     "sherpa-onnx": "1.13.2",
     "sherpa-onnx-darwin-arm64": "1.13.3",
     "sherpa-onnx-node": "1.13.2"
