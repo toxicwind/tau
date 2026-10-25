@@ -803,8 +803,20 @@ const PI_SCOPE_ALIASES = ["tau", "oh-my-pi", "mariozechner", "earendil-works"] a
 
 // Internal tau-* package basenames bundled inside the tau binary, plus legacy pi-* aliases.
 const PI_PACKAGE_NAMES = [
-	"tau-agent-core", "tau-ai", "tau-coding-agent", "tau-agent", "coding-agent", "tau-natives", "tau-tui", "tau-utils",
-	"pi-agent-core", "pi-ai", "pi-coding-agent", "pi-natives", "pi-tui", "pi-utils",
+	"tau-agent-core",
+	"tau-ai",
+	"tau-coding-agent",
+	"tau-agent",
+	"coding-agent",
+	"tau-natives",
+	"tau-tui",
+	"tau-utils",
+	"pi-agent-core",
+	"pi-ai",
+	"pi-coding-agent",
+	"pi-natives",
+	"pi-tui",
+	"pi-utils",
 ] as const;
 
 const PI_SCOPE_ALTERNATION = PI_SCOPE_ALIASES.join("|");
@@ -853,7 +865,9 @@ function remapLegacyPiSubpath(rest: string): string {
 	return rest;
 }
 
-const LEGACY_PI_SPECIFIER_FILTER = new RegExp(`^(?:@(?:${PI_SCOPE_ALTERNATION})/(?:${PI_PACKAGE_ALTERNATION})|tau|oh-my-pi|pi)(?:/.*)?$`);
+const LEGACY_PI_SPECIFIER_FILTER = new RegExp(
+	`^(?:@(?:${PI_SCOPE_ALTERNATION})/(?:${PI_PACKAGE_ALTERNATION})|tau|oh-my-pi|pi)(?:/.*)?$`,
+);
 const resolvedSpecifierFallbacks = new Map<string, string>();
 const SOURCE_MODULE_EXTENSIONS = [".ts", ".tsx", ".mts", ".cts", ".js", ".jsx", ".mjs", ".cjs"] as const;
 const SUPPORTED_PACKAGE_IMPORT_CONDITIONS = new Set(["bun", "node", "import", "default"]);
@@ -2562,7 +2576,9 @@ async function ensureExtensionGraphHook(entryRealPath: string): Promise<{ clear(
 		synchronousSourcePaths,
 	} = await collectExtensionModules(entryRealPath);
 	if (process.env.TAU_LEGACY_PI_DEBUG === "1") {
-		console.error(`[legacy-pi] hook entry=${entryRealPath} modules=${currentModules.size} cjs=${commonJsPaths.size} sync=${synchronousSourcePaths.size}`);
+		console.error(
+			`[legacy-pi] hook entry=${entryRealPath} modules=${currentModules.size} cjs=${commonJsPaths.size} sync=${synchronousSourcePaths.size}`,
+		);
 		for (const m of currentModules.keys()) console.error(`[legacy-pi]   graph ${m}`);
 	}
 	let cacheBustResolvedImportModules = extensionGraphCacheBustResolvedImportModules.get(entryRealPath);

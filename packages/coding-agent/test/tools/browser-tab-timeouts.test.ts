@@ -1,10 +1,5 @@
 import { describe, expect, it, vi } from "bun:test";
-import {
-	dispatchScroll,
-	normalizeSelector,
-	resolveOpTimeouts,
-	resolveWaitTimeout,
-} from "tau/tools/browser/tab-worker";
+import { dispatchScroll, normalizeSelector, resolveOpTimeouts, resolveWaitTimeout } from "tau/tools/browser/tab-worker";
 import { resolvePredicateTimeout } from "tau/tools/run-scope";
 
 // Regression coverage for the "weird timeouts" failure mode: interactive `tab.*` helpers

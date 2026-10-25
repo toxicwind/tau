@@ -45,10 +45,7 @@ export {
 	isUserInvokedSkillPrompt,
 	isUserTurnInitiator,
 } from "@tau/tau-tui/chat/messages";
-import {
-	invalidateMessageCache,
-	registerMessageCacheInvalidator,
-} from "@tau/tau-agent-core/compaction/message-cache";
+import { invalidateMessageCache, registerMessageCacheInvalidator } from "@tau/tau-agent-core/compaction/message-cache";
 import { convertMessageToLlm } from "@tau/tau-agent-core/compaction/messages";
 import type { AssistantMessage, ImageContent, Message, TextContent, UserMessage } from "@tau/tau-ai";
 import { copyPerCallContextMessage } from "@tau/tau-ai/utils/block-symbols";

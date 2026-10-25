@@ -5,12 +5,7 @@ import * as path from "node:path";
 import { pathToFileURL } from "node:url";
 import { shadowSnapshotDigest } from "tau/eval/js/shared/runtime";
 import { WorkerCore } from "tau/eval/js/worker-core";
-import type {
-	SessionSnapshot,
-	Transport,
-	WorkerInbound,
-	WorkerOutbound,
-} from "tau/eval/js/worker-protocol";
+import type { SessionSnapshot, Transport, WorkerInbound, WorkerOutbound } from "tau/eval/js/worker-protocol";
 import { postmortem } from "@tau/tau-utils";
 
 interface WorkerHarness {

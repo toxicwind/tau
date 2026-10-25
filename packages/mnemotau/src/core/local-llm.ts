@@ -365,7 +365,9 @@ export async function callRemoteLlm(
 				fetch: fetchImpl,
 			});
 			if (res.status === 401) {
-				throw new ProviderHttpError("mnemotau remote LLM request unauthorized (401)", 401, { headers: res.headers });
+				throw new ProviderHttpError("mnemotau remote LLM request unauthorized (401)", 401, {
+					headers: res.headers,
+				});
 			}
 			return res;
 		});

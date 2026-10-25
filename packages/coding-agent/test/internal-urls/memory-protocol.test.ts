@@ -6,12 +6,7 @@ import { Settings } from "tau/config/settings";
 import { InternalUrlRouter } from "tau/internal-urls";
 import { splitMemoryGlobPattern } from "tau/internal-urls/memory-protocol";
 import { getMemoryRoot } from "tau/memories";
-import {
-	loadMnemotau,
-	loadMnemotauCore,
-	MnemotauSessionState,
-	setMnemotauSessionState,
-} from "tau/mnemotau/state";
+import { loadMnemotau, loadMnemotauCore, MnemotauSessionState, setMnemotauSessionState } from "tau/mnemotau/state";
 import { getInternalUrlSuggestions } from "@tau/tau-tui/prompt/internal-url-autocomplete";
 import { AgentRegistry } from "tau/registry/agent-registry";
 import type { AgentSession } from "tau/session/agent-session";

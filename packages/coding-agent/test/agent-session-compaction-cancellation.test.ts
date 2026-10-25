@@ -9,14 +9,7 @@ import { AgentSession } from "tau/session/agent-session";
 import { AuthStorage } from "tau/session/auth-storage";
 import { USER_INTERRUPT_LABEL } from "tau/session/messages";
 import { SessionManager } from "tau/session/session-manager";
-import {
-	ContextNotesTool,
-	GrepTool,
-	NewContextTool,
-	ReadTool,
-	type Tool,
-	type ToolSession,
-} from "tau/tools";
+import { ContextNotesTool, GrepTool, NewContextTool, ReadTool, type Tool, type ToolSession } from "tau/tools";
 import { EventBus } from "tau/utils/event-bus";
 import { TempDir } from "@tau/tau-utils";
 

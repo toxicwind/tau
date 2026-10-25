@@ -33,11 +33,7 @@ export function hasReasoningOnlyEmptyContent(message: AssistantMessage): boolean
 		}
 	}
 
-	if (
-		!hasReasoning &&
-		message.messageReasoningDetails !== undefined &&
-		message.messageReasoningDetails.length > 0
-	) {
+	if (!hasReasoning && message.messageReasoningDetails !== undefined && message.messageReasoningDetails.length > 0) {
 		hasReasoning = true;
 	}
 
@@ -54,10 +50,7 @@ export function hasReasoningOnlyEmptyContent(message: AssistantMessage): boolean
  * Mirrors the forced-tool-degradation retry pattern
  * (utils/forced-tool-retry.ts). Logs the retry so it's visible in debugging.
  */
-export function withReasoningOnlyEmptyRetry<
-	M,
-	O extends { disableReasoning?: boolean; signal?: AbortSignal },
->(
+export function withReasoningOnlyEmptyRetry<M, O extends { disableReasoning?: boolean; signal?: AbortSignal }>(
 	model: M,
 	context: { tools?: unknown[] },
 	options: O | undefined,
@@ -81,12 +74,7 @@ export function withReasoningOnlyEmptyRetry<
 
 		// Check for reasoning-only empty content death.
 		const message = terminal?.type === "done" ? terminal.message : undefined;
-		if (
-			message &&
-			hasReasoningOnlyEmptyContent(message) &&
-			!options?.signal?.aborted &&
-			!options?.disableReasoning
-		) {
+		if (message && hasReasoningOnlyEmptyContent(message) && !options?.signal?.aborted && !options?.disableReasoning) {
 			log(
 				"[reasoning-only-empty] Detected finish=stop with empty content but non-empty reasoning; retrying once with reasoning disabled",
 			);

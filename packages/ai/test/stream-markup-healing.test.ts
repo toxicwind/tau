@@ -1,10 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import {
-	type Dialect,
-	getDialectDefinition,
-	type InbandScanEvent,
-	ThinkingInbandScanner,
-} from "@tau/tau-ai/dialect";
+import { type Dialect, getDialectDefinition, type InbandScanEvent, ThinkingInbandScanner } from "@tau/tau-ai/dialect";
 import { streamGoogleGeminiCli } from "@tau/tau-ai/providers/google-gemini-cli";
 import { streamOpenAICompletions } from "@tau/tau-ai/providers/openai-completions";
 import { stream } from "@tau/tau-ai/stream";

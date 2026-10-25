@@ -13,10 +13,7 @@ import type { ExtensionRunner } from "tau/extensibility/extensions/runner";
 import { RegisteredToolAdapter } from "tau/extensibility/extensions/wrapper";
 import { extensionToolSourceInfo } from "tau/extensibility/extensions/loader";
 import { BUILTIN_TOOLS, type ToolSession } from "tau/tools";
-import {
-	defaultLoadModeForToolName,
-	ESSENTIAL_BUILTIN_TOOL_NAMES,
-} from "tau/tools/essential-tools";
+import { defaultLoadModeForToolName, ESSENTIAL_BUILTIN_TOOL_NAMES } from "tau/tools/essential-tools";
 import { isMountableUnderXdev } from "tau/tools/xdev";
 
 function makeSession(): ToolSession {

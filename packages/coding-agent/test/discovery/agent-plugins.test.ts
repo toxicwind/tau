@@ -11,11 +11,7 @@ import {
 	parseAgentPluginManifest,
 	parseAgentPluginMcp,
 } from "tau/discovery/agent-plugin-format";
-import {
-	clearClaudePluginRootsCache,
-	injectPluginDirRoots,
-	listClaudePluginRoots,
-} from "tau/discovery/helpers";
+import { clearClaudePluginRootsCache, injectPluginDirRoots, listClaudePluginRoots } from "tau/discovery/helpers";
 import { getPluginsDir, removeWithRetries } from "@tau/tau-utils";
 import { restoreEnvValue } from "../helpers/settings-test-state";
 import "tau/discovery/agent-plugins";

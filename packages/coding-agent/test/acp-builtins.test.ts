@@ -3,12 +3,7 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import { Tokenizer } from "@tau/tau-agent-core";
-import type {
-	ResetCreditAccountStatus,
-	ResetCreditRedeemOutcome,
-	ResetCreditTarget,
-	UsageReport,
-} from "@tau/tau-ai";
+import type { ResetCreditAccountStatus, ResetCreditRedeemOutcome, ResetCreditTarget, UsageReport } from "@tau/tau-ai";
 import { Settings } from "tau/config/settings";
 import { PluginManager } from "tau/extensibility/plugins";
 import { MarketplaceManager } from "tau/extensibility/plugins/marketplace";

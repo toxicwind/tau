@@ -2,11 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, spyOn } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import {
-	classifySource,
-	fetchMarketplace,
-	parseMarketplaceCatalog,
-} from "tau/extensibility/plugins/marketplace";
+import { classifySource, fetchMarketplace, parseMarketplaceCatalog } from "tau/extensibility/plugins/marketplace";
 import * as vcs from "@tau/tau-natives/vcs";
 import { removeSyncWithRetries } from "@tau/tau-utils";
 

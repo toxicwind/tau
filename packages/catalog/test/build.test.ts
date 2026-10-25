@@ -896,7 +896,6 @@ describe("openai-completions wire-quirk compat detection", () => {
 	});
 });
 
-
 describe("OpenAI explicit prompt-cache breakpoint compat", () => {
 	it("enables the 30-minute breakpoint contract for GPT-5.6+ on the official API", () => {
 		const completions = resolveModelPolicy(

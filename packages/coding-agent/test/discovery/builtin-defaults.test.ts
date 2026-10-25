@@ -6,12 +6,7 @@
  */
 import { describe, expect, it } from "bun:test";
 import { getCapability } from "tau/capability";
-import {
-	BUILTIN_DEFAULTS_PROVIDER_ID,
-	compileRuleCondition,
-	type Rule,
-	ruleCapability,
-} from "tau/capability/rule";
+import { BUILTIN_DEFAULTS_PROVIDER_ID, compileRuleCondition, type Rule, ruleCapability } from "tau/capability/rule";
 import type { LoadContext } from "tau/capability/types";
 // Register all discovery providers as a side effect.
 import "tau/discovery";

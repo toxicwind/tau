@@ -4,10 +4,7 @@ import { buildModel } from "@tau/tau-catalog/build";
 import { getBundledModel } from "@tau/tau-catalog/models";
 import { seedModels } from "@tau/tau-catalog/compat/providers";
 import { providerEntry } from "@tau/tau-catalog/compat/providers";
-import {
-	metaModelManagerOptions,
-	museCodeModelManagerOptions,
-} from "@tau/tau-catalog/provider-models/openai-compat";
+import { metaModelManagerOptions, museCodeModelManagerOptions } from "@tau/tau-catalog/provider-models/openai-compat";
 import type { FetchImpl, ThinkingConfig } from "@tau/tau-catalog/types";
 
 const MUSE_SPARK_THINKING: ThinkingConfig = {

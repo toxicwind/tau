@@ -8,15 +8,7 @@
  * broken turn is the score, because state is carried in the model's own last
  * reply and cannot be recovered once it drifts.
  */
-import type {
-	Api,
-	ApiKeyResolver,
-	AssistantMessage,
-	Context,
-	Message,
-	Model,
-	ProviderSessionState,
-} from "@tau/tau-ai";
+import type { Api, ApiKeyResolver, AssistantMessage, Context, Message, Model, ProviderSessionState } from "@tau/tau-ai";
 import { logger } from "@tau/tau-utils";
 import type { BenchRuntime, BenchTarget, StreamSimpleFn } from "../cli/bench-runtime";
 import { formatModelSelectorValue } from "@tau/tau-tui/overlays/model-selector";

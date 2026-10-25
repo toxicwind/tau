@@ -1,14 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import { streamSimple } from "@tau/tau-ai";
 import type { CacheControlEphemeral, MessageCreateParams } from "@tau/tau-ai/providers/anthropic-wire";
-import type {
-	CacheRetention,
-	Context,
-	FetchImpl,
-	Model,
-	ProviderSessionState,
-	ToolChoice,
-} from "@tau/tau-ai/types";
+import type { CacheRetention, Context, FetchImpl, Model, ProviderSessionState, ToolChoice } from "@tau/tau-ai/types";
 import { buildModel } from "@tau/tau-catalog/build";
 import { withOfficialAnthropicEndpoint } from "./helpers";
 

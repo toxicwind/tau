@@ -4,14 +4,7 @@ import * as nodePath from "node:path";
 import { type ApiKey, getOpenRouterHeaders, withAuth } from "@tau/tau-ai";
 import { ProviderHttpError } from "@tau/tau-ai/error";
 import { hostMatchesUrl } from "@tau/tau-catalog/hosts";
-import {
-	$env,
-	$flag,
-	extractHttpStatusFromError,
-	fetchWithRetry,
-	getFastembedCacheDir,
-	logger,
-} from "@tau/tau-utils";
+import { $env, $flag, extractHttpStatusFromError, fetchWithRetry, getFastembedCacheDir, logger } from "@tau/tau-utils";
 import { LRUCache } from "@tau/tau-utils/lru";
 import type { EmbeddingModel } from "fastembed";
 import { ensureFastembedModelSidecars } from "./fastembed-model-cache";

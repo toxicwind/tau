@@ -2,11 +2,7 @@ import { afterAll, afterEach, describe, expect, it, vi } from "bun:test";
 import type { AuthStorage } from "@tau/tau-ai";
 import type { FetchImpl } from "@tau/tau-ai/types";
 import { ModelRegistry } from "tau/config/model-registry";
-import {
-	buildRequestBody,
-	searchTavily,
-	type TavilySearchParams,
-} from "tau/web/search/providers/tavily";
+import { buildRequestBody, searchTavily, type TavilySearchParams } from "tau/web/search/providers/tavily";
 import { createInMemoryAuthStorage } from "../../helpers/agent-session-setup";
 
 const catalogAuthStorage = createInMemoryAuthStorage();

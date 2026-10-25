@@ -1,9 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { getEnvApiKey } from "@tau/tau-ai/stream";
-import {
-	aimlApiModelManagerOptions,
-	isLikelyAimlApiChatModelId,
-} from "@tau/tau-catalog/provider-models/openai-compat";
+import { aimlApiModelManagerOptions, isLikelyAimlApiChatModelId } from "@tau/tau-catalog/provider-models/openai-compat";
 
 describe("AIML API built-in provider (issue #2105)", () => {
 	test("uses the OpenAI-compatible completions transport and AIML API base URL", async () => {

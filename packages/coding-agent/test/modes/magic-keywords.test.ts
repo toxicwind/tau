@@ -1,9 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import {
-	MAGIC_KEYWORDS,
-	renderOrchestrateNotice,
-	renderWorkflowNotice,
-} from "tau/modes/magic-keywords";
+import { MAGIC_KEYWORDS, renderOrchestrateNotice, renderWorkflowNotice } from "tau/modes/magic-keywords";
 import { clearBundledCommandsCache, loadBundledCommands } from "tau/task/commands";
 
 describe("magic keyword registry", () => {

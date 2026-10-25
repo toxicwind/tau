@@ -2,12 +2,7 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import {
-	runTtsrCommand,
-	type TtsrCommandArgs,
-	type TtsrScanArgs,
-	type TtsrTestArgs,
-} from "tau/cli/ttsr-cli";
+import { runTtsrCommand, type TtsrCommandArgs, type TtsrScanArgs, type TtsrTestArgs } from "tau/cli/ttsr-cli";
 import { resetSettingsForTest } from "tau/config/settings";
 import { getProjectAgentDir, getProjectDir, removeSyncWithRetries, setProjectDir } from "@tau/tau-utils";
 

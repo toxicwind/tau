@@ -1,11 +1,6 @@
 import { type AuthStorage, isAuthRetryableError, type OAuthAccess, withOAuthAccess } from "@tau/tau-ai";
 import { getProxyForUrl, wrapFetchForProxy } from "@tau/tau-ai/utils/proxy";
-import {
-	CODEX_BASE_URL,
-	CODEX_CLIENT_VERSION,
-	getCodexAccountId,
-	OPENAI_HEADERS,
-} from "@tau/tau-catalog/wire/codex";
+import { CODEX_BASE_URL, CODEX_CLIENT_VERSION, getCodexAccountId, OPENAI_HEADERS } from "@tau/tau-catalog/wire/codex";
 import { LiveWebRtcPeer } from "@tau/tau-natives";
 import { generateCodexAttestation } from "./attestation";
 import {

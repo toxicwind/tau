@@ -4,11 +4,7 @@ import * as path from "node:path";
 import type { AgentEvent } from "@tau/tau-agent-core";
 import { defineRpcClientTool, RpcClient } from "tau/modes";
 import { RpcHostToolBridge } from "tau/modes/rpc/host-tools";
-import type {
-	RpcHostToolCallRequest,
-	RpcHostToolCancelRequest,
-	RpcHostToolUpdate,
-} from "tau/modes/rpc/rpc-types";
+import type { RpcHostToolCallRequest, RpcHostToolCancelRequest, RpcHostToolUpdate } from "tau/modes/rpc/rpc-types";
 import { toolReadsSkillUris } from "tau/system-prompt";
 import { removeWithRetries } from "@tau/tau-utils";
 

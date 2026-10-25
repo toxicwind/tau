@@ -14,14 +14,8 @@ import type { Theme } from "@tau/tau-tui/theme";
 import { initTheme, theme } from "@tau/tau-tui/theme";
 import { CopySelectorComponent } from "@tau/tau-tui/overlays/copy-selector";
 import type { SessionPick } from "tau/extensibility/custom-commands/bundled/annotate/text-source";
-import {
-	AnnotateCommand,
-	runAnnotateCommand,
-} from "tau/extensibility/custom-commands/bundled/annotate";
-import type {
-	CustomCommandAPI,
-	CustomCommandContext,
-} from "tau/extensibility/custom-commands/types";
+import { AnnotateCommand, runAnnotateCommand } from "tau/extensibility/custom-commands/bundled/annotate";
+import type { CustomCommandAPI, CustomCommandContext } from "tau/extensibility/custom-commands/types";
 import type { ReviewPrRef } from "tau/extensibility/custom-commands/bundled/review";
 import {
 	createResolvedReviewTarget,

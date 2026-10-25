@@ -7,10 +7,7 @@ import {
 	type ProviderFileClient,
 	type ProviderFileHandle,
 } from "tau/blob-broker/provider-file-types";
-import {
-	type ProviderFileClientFactory,
-	ProviderFileManager,
-} from "tau/blob-broker/provider-files";
+import { type ProviderFileClientFactory, ProviderFileManager } from "tau/blob-broker/provider-files";
 import { createAnthropicFileClient } from "tau/blob-broker/provider-files-anthropic";
 import { createGeminiProviderFileClient } from "tau/blob-broker/provider-files-gemini";
 import { createOpenAIFileClient } from "tau/blob-broker/provider-files-openai";

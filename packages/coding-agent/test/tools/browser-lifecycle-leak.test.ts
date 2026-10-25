@@ -20,12 +20,7 @@ import { afterEach, describe, expect, it, spyOn, vi } from "bun:test";
 import type { CmuxKind } from "tau/tools/browser/cmux/rpc";
 import { CmuxSocketClient } from "tau/tools/browser/cmux/socket-client";
 import { acquireBrowser, getBrowsersMapForTest } from "tau/tools/browser/registry";
-import {
-	acquireTab,
-	getTabsMapForTest,
-	releaseTab,
-	releaseTabsForOwner,
-} from "tau/tools/browser/tab-supervisor";
+import { acquireTab, getTabsMapForTest, releaseTab, releaseTabsForOwner } from "tau/tools/browser/tab-supervisor";
 import { ToolAbortError } from "tau/tools/tool-errors";
 
 function makeKind(socketSuffix: string): CmuxKind {

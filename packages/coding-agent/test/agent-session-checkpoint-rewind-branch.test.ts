@@ -3,12 +3,7 @@ import * as path from "node:path";
 import { type } from "@tau/tautype";
 import { Agent, type AgentMessage, type AgentTool } from "@tau/tau-agent-core";
 import type { AssistantMessage, Message, ThinkingContent } from "@tau/tau-ai";
-import {
-	createMockModel,
-	type MockContent,
-	type MockModel,
-	type MockResponseSource,
-} from "@tau/tau-ai/providers/mock";
+import { createMockModel, type MockContent, type MockModel, type MockResponseSource } from "@tau/tau-ai/providers/mock";
 import { ModelRegistry } from "tau/config/model-registry";
 import { Settings } from "tau/config/settings";
 import { ExtensionRuntime, loadExtensionFromFactory } from "tau/extensibility/extensions/loader";

@@ -415,7 +415,10 @@ function createAzureUploader(config: DestinationRuntimeConfig): BlobUploader {
 				uploadRequest.mimeType,
 				cacheControl,
 			);
-			await expectOk(await request(url, { method: "PUT", headers, body: toFetchBody(uploadRequest.bytes) }), destination);
+			await expectOk(
+				await request(url, { method: "PUT", headers, body: toFetchBody(uploadRequest.bytes) }),
+				destination,
+			);
 			const deleteHeaders = await azureHeaders("DELETE", accountName, accountKey, resourcePath, 0);
 			const publicUrl = publicBaseUrl ? publicObjectUrl(publicBaseUrl, key) : url.toString();
 			return publication(destination, uploadRequest, publicUrl, {

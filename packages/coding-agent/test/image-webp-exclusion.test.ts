@@ -5,10 +5,7 @@ import { buildModel } from "@tau/tau-catalog/build";
 import { getBundledModels } from "@tau/tau-catalog/models";
 import type { CustomMessage } from "tau/session/messages";
 import { SessionProviderBoundary } from "tau/session/session-provider-boundary";
-import {
-	normalizeModelContextImages,
-	normalizeModelContextMessages,
-} from "tau/utils/image-loading";
+import { normalizeModelContextImages, normalizeModelContextMessages } from "tau/utils/image-loading";
 import { modelLacksWebpSupport, webpExclusionForModel } from "@tau/tau-tui/chat/image-loading";
 
 // 1x1 red PNG seed, upscaled + re-encoded as WebP at test time so no binary

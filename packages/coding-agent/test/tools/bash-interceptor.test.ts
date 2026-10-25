@@ -1,10 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import type { AgentToolContext } from "@tau/tau-agent-core";
 import { validateToolArguments } from "@tau/tau-ai/utils/validation";
-import {
-	type BashInterceptorRule,
-	DEFAULT_BASH_INTERCEPTOR_RULES,
-} from "tau/config/settings-schema";
+import { type BashInterceptorRule, DEFAULT_BASH_INTERCEPTOR_RULES } from "tau/config/settings-schema";
 import type { ToolSession } from "tau/tools";
 import { BashTool, type BashToolInput } from "tau/tools/bash";
 import { checkBashInterception } from "tau/tools/bash-interceptor";

@@ -4,13 +4,7 @@ import { type } from "@tau/tautype";
 import { Settings } from "tau/config/settings";
 import { initTheme, theme } from "@tau/tau-tui/theme";
 import type { ToolSession } from "tau/tools";
-import {
-	markdownToPhases,
-	nextActionableTask,
-	phasesToMarkdown,
-	resolveTodoMarkdownPath,
-	TodoTool,
-} from "tau/tools";
+import { markdownToPhases, nextActionableTask, phasesToMarkdown, resolveTodoMarkdownPath, TodoTool } from "tau/tools";
 import {
 	selectCollapsedTodos,
 	TODO_STRIKE_HOLD_FRAMES,

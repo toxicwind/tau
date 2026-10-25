@@ -1,11 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import type { Model } from "@tau/tau-ai";
 import { buildModel } from "@tau/tau-catalog/build";
-import {
-	resolveCliModel,
-	resolveModelFromSettings,
-	resolveModelRoleValue,
-} from "tau/config/model-resolver";
+import { resolveCliModel, resolveModelFromSettings, resolveModelRoleValue } from "tau/config/model-resolver";
 import { Settings } from "tau/config/settings";
 
 function model(provider: string, id: string): Model<"anthropic-messages"> {

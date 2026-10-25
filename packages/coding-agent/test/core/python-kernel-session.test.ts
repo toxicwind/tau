@@ -1,10 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { disposeAllKernelSessions, executePython } from "tau/eval/py/executor";
-import type {
-	KernelExecuteOptions,
-	KernelExecuteResult,
-	KernelShutdownResult,
-} from "tau/eval/py/kernel";
+import type { KernelExecuteOptions, KernelExecuteResult, KernelShutdownResult } from "tau/eval/py/kernel";
 import { PythonKernel } from "tau/eval/py/kernel";
 import { TempDir } from "@tau/tau-utils";
 

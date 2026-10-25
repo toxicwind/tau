@@ -1,10 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import { resetSettingsForTest, Settings } from "tau/config/settings";
-import {
-	describeLoopCondition,
-	evaluateLoopCondition,
-	type LoopConditionVerdict,
-} from "tau/modes/loop-condition";
+import { describeLoopCondition, evaluateLoopCondition, type LoopConditionVerdict } from "tau/modes/loop-condition";
 import { TempDir } from "@tau/tau-utils";
 
 describe("evaluateLoopCondition", () => {

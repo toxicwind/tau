@@ -3,10 +3,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import type { ServiceTierByFamily } from "@tau/tau-ai";
 import { getBundledModel } from "@tau/tau-catalog/models";
-import {
-	resolveAgentServiceTierOverride,
-	validateAgentServiceTierOverrides,
-} from "tau/config/service-tier";
+import { resolveAgentServiceTierOverride, validateAgentServiceTierOverrides } from "tau/config/service-tier";
 import { resetSettingsForTest, Settings } from "tau/config/settings";
 import { AgentStorage } from "tau/session/agent-storage";
 import { getProjectAgentDir, TempDir } from "@tau/tau-utils";

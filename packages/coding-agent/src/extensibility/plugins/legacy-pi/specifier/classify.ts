@@ -22,9 +22,7 @@ export function isBareExtensionDependencySpecifier(specifier: string): boolean {
 	) {
 		return false;
 	}
-	const packageName = specifier.startsWith("@")
-		? specifier.split("/").slice(0, 2).join("/")
-		: specifier.split("/")[0];
+	const packageName = specifier.startsWith("@") ? specifier.split("/").slice(0, 2).join("/") : specifier.split("/")[0];
 	return Boolean(packageName && !isBuiltin(specifier));
 }
 

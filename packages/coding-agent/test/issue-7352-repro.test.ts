@@ -18,10 +18,7 @@
  */
 import { describe, expect, it, vi } from "bun:test";
 import { MnemotauEmbedClient, type MnemotauEmbedWorkerHandle } from "tau/mnemotau/embed-client";
-import type {
-	MnemotauEmbedWorkerInbound,
-	MnemotauEmbedWorkerOutbound,
-} from "tau/mnemotau/embed-protocol";
+import type { MnemotauEmbedWorkerInbound, MnemotauEmbedWorkerOutbound } from "tau/mnemotau/embed-protocol";
 
 /** A fake worker that answers `init` but never answers `embed`. */
 function silentEmbedWorker(state: { spawns: number; terminated: number }): () => MnemotauEmbedWorkerHandle {

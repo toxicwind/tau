@@ -678,10 +678,7 @@ describe("update-cli npm rename contract", () => {
 			"@tau/tau-natives",
 			"@tau/tau-natives-darwin-arm64",
 		]);
-		expect(buildRenameCleanupPackages(packages, "linux-arm")).toEqual([
-			"tau",
-			"@tau/tau-natives",
-		]);
+		expect(buildRenameCleanupPackages(packages, "linux-arm")).toEqual(["tau", "@tau/tau-natives"]);
 	});
 
 	it("keeps the natives packages on an agent-only rename so cleanup cannot strip the addon the new install pinned", () => {

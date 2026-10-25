@@ -3,10 +3,7 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 
-import {
-	resolveActiveRepoContext,
-	resolveActiveRepoContextSync,
-} from "tau/utils/active-repo-context";
+import { resolveActiveRepoContext, resolveActiveRepoContextSync } from "tau/utils/active-repo-context";
 import type { ActiveRepoContext } from "@tau/tau-tui/status-line/host";
 
 const itWithSymlinkPrivilege = process.platform === "win32" ? it.skip : it;

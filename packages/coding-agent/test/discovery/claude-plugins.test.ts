@@ -4,11 +4,7 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { clearCache as clearFsCache } from "tau/capability/fs";
 import { disableUserSource, enableProvider, loadCapability } from "tau/capability";
-import {
-	clearClaudePluginRootsCache,
-	listClaudePluginRoots,
-	parseClaudePluginsRegistry,
-} from "tau/discovery/helpers";
+import { clearClaudePluginRootsCache, listClaudePluginRoots, parseClaudePluginsRegistry } from "tau/discovery/helpers";
 import type { Skill } from "tau/capability/skill";
 import { loadSkills } from "tau/extensibility/skills";
 import { loadAllExtensions } from "tau/modes/components/extensions/state-manager";

@@ -3,11 +3,7 @@ import * as os from "node:os";
 import * as path from "node:path";
 import type { AgentEvent, AgentMessage } from "@tau/tau-agent-core";
 import { RpcClient } from "tau/modes/rpc/rpc-client";
-import type {
-	BranchSummaryEntry,
-	CustomMessageEntry,
-	SessionMessageEntry,
-} from "tau/session/session-entries";
+import type { BranchSummaryEntry, CustomMessageEntry, SessionMessageEntry } from "tau/session/session-entries";
 import { parseSessionEntries } from "tau/session/session-loader";
 
 function extractText(message: AgentMessage): string {

@@ -7,11 +7,7 @@ import { Settings } from "tau/config/settings";
 import type { ToolSession } from "tau/tools";
 import type { ReadToolDetails } from "@tau/tau-tui/tools/read";
 import { ReadTool } from "tau/tools/read";
-import {
-	demangleSymbol,
-	parseSampleProfile,
-	renderSampleProfile,
-} from "tau/utils/sample-profile";
+import { demangleSymbol, parseSampleProfile, renderSampleProfile } from "tau/utils/sample-profile";
 import { removeWithRetries } from "@tau/tau-utils";
 
 const BOX_MEASURE = "_RNvNtCsfMEenOU8j5j_11slab_kernel6layout11box_measure";

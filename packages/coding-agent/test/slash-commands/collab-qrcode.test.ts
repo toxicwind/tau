@@ -4,10 +4,7 @@ import { CollabHost } from "tau/collab/host";
 import { resetSettingsForTest, Settings } from "tau/config/settings";
 import { initTheme } from "@tau/tau-tui/theme";
 import type { InteractiveModeContext } from "tau/modes/types";
-import {
-	type BuiltinSlashCommandRuntime,
-	executeBuiltinSlashCommand,
-} from "tau/slash-commands/builtin-registry";
+import { type BuiltinSlashCommandRuntime, executeBuiltinSlashCommand } from "tau/slash-commands/builtin-registry";
 import { CollabQrCodeComponent } from "@tau/tau-tui/chrome/collab-qrcode";
 import { Text, visibleWidth } from "@tau/tau-tui";
 

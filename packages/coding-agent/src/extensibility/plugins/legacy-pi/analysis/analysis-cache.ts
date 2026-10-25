@@ -131,7 +131,7 @@ export class ExtensionParseCache {
 
 	#open(cachePath: string): Database | null {
 		try {
-				try {
+			try {
 				if (fs.statSync(cachePath).size > EXTENSION_PARSE_CACHE_MAX_BYTES) {
 					// Remove the full WAL set, not just the main db. A leftover
 					// `-wal`/`-shm` pair still owned by a concurrent tau process is
@@ -157,8 +157,7 @@ export class ExtensionParseCache {
 			db.run(`PRAGMA busy_timeout = ${getDbBusyTimeoutMs()}`);
 			db.run("PRAGMA journal_mode=WAL");
 			db.run("PRAGMA synchronous=NORMAL");
-			const schemaVersion =
-				db.query<{ user_version: number }, []>("PRAGMA user_version").get()?.user_version ?? 0;
+			const schemaVersion = db.query<{ user_version: number }, []>("PRAGMA user_version").get()?.user_version ?? 0;
 			if (schemaVersion === EXTENSION_PARSE_CACHE_SCHEMA_VERSION) {
 				db.run(CREATE_EXTENSION_PARSE_CACHE_TABLE);
 			} else {

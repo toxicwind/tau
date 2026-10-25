@@ -22,10 +22,7 @@ import { loadExtensions } from "tau/extensibility/extensions/loader";
 import { TempDir } from "@tau/tau-utils";
 
 const canonicalCodingAgent = Bun.resolveSync("tau", import.meta.dir);
-const canonicalCodingAgentExtensions = Bun.resolveSync(
-	"tau/extensibility/extensions",
-	import.meta.dir,
-);
+const canonicalCodingAgentExtensions = Bun.resolveSync("tau/extensibility/extensions", import.meta.dir);
 const canonicalUtils = Bun.resolveSync("@tau/tau-utils", import.meta.dir);
 const canonicalTui = Bun.resolveSync("@tau/tau-tui", import.meta.dir);
 // Subpath: upstream `tau-ai/oauth` re-exported `utils/oauth/index`; our tau-ai now

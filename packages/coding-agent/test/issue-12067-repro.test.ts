@@ -10,10 +10,7 @@
  */
 import { describe, expect, it } from "bun:test";
 import { MnemotauEmbedClient, type MnemotauEmbedWorkerHandle } from "tau/mnemotau/embed-client";
-import type {
-	MnemotauEmbedWorkerInbound,
-	MnemotauEmbedWorkerOutbound,
-} from "tau/mnemotau/embed-protocol";
+import type { MnemotauEmbedWorkerInbound, MnemotauEmbedWorkerOutbound } from "tau/mnemotau/embed-protocol";
 
 class DelayedEmbedWorker implements MnemotauEmbedWorkerHandle {
 	readonly firstRequest = Promise.withResolvers<MnemotauEmbedWorkerInbound>();

@@ -42,10 +42,7 @@
 import { describe, expect, it } from "bun:test";
 import { renderDemotedThinking } from "@tau/tau-ai/dialect";
 import { convertMessages } from "@tau/tau-ai/providers/openai-completions";
-import {
-	applyChatCompletionsReasoningParams,
-	type OpenAICompletionsParams,
-} from "@tau/tau-ai/providers/openai-shared";
+import { applyChatCompletionsReasoningParams, type OpenAICompletionsParams } from "@tau/tau-ai/providers/openai-shared";
 import type { AssistantMessage, Message, Model, ModelSpec, ThinkingContent, UserMessage } from "@tau/tau-ai/types";
 import { buildModel } from "@tau/tau-catalog/build";
 

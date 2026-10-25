@@ -8,12 +8,7 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import {
-	disableProvider,
-	disableUserSource,
-	enableProvider,
-	enableUserSource,
-} from "tau/capability";
+import { disableProvider, disableUserSource, enableProvider, enableUserSource } from "tau/capability";
 import { clearCache as clearFsCache } from "tau/capability/fs";
 import { resolveAgentModelPatterns } from "tau/config/model-resolver";
 import { clearClaudePluginRootsCache } from "tau/discovery/helpers";

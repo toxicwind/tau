@@ -23,9 +23,7 @@ describe("bash tiktoken auto-shim & token tracking", () => {
 	});
 
 	it("has bash.tiktokenShim.enabled registered in SETTINGS_SCHEMA defaulting to true", () => {
-		const setting = (SETTINGS_SCHEMA as Record<string, { default?: unknown }>)[
-			"bash.tiktokenShim.enabled"
-		];
+		const setting = (SETTINGS_SCHEMA as Record<string, { default?: unknown }>)["bash.tiktokenShim.enabled"];
 		expect(setting).toBeDefined();
 		expect(setting?.default).toBe(true);
 	});

@@ -26,7 +26,17 @@ const REPO_ROOT = join(import.meta.dir, "..");
 
 /** Directories that never contain mergeable source. */
 const SKIP_DIRS = new Set([
-	".git", "node_modules", "dist", "build", "target", ".jj", ".next", "coverage", "vendor", ".turbo", ".cache",
+	".git",
+	"node_modules",
+	"dist",
+	"build",
+	"target",
+	".jj",
+	".next",
+	"coverage",
+	"vendor",
+	".turbo",
+	".cache",
 ]);
 
 /** Only these can carry weave markers worth resolving. */
@@ -102,7 +112,9 @@ async function main(): Promise<number> {
 
 		if (r.remaining > 0) {
 			unresolved.push(rel);
-			console.log(`\n  \x1b[31mUNRESOLVED\x1b[0m ${rel}\n      ${r.resolved} hunk(s) attempted, ${r.remaining} still carry markers — left byte-identical`);
+			console.log(
+				`\n  \x1b[31mUNRESOLVED\x1b[0m ${rel}\n      ${r.resolved} hunk(s) attempted, ${r.remaining} still carry markers — left byte-identical`,
+			);
 		} else if (r.changed) {
 			cleaned++;
 			const breakdown = (Object.keys(r.byStrategy) as Strategy[])
@@ -111,7 +123,9 @@ async function main(): Promise<number> {
 				.join(", ");
 			console.log(`\n  \x1b[32mresolved\x1b[0m ${rel}\n      ${r.resolved} hunk(s): ${breakdown}`);
 		} else {
-			console.log(`\n  \x1b[33munchanged\x1b[0m ${rel}\n      ${r.resolved} hunk(s) resolved to exactly the current content`);
+			console.log(
+				`\n  \x1b[33munchanged\x1b[0m ${rel}\n      ${r.resolved} hunk(s) resolved to exactly the current content`,
+			);
 		}
 	}
 

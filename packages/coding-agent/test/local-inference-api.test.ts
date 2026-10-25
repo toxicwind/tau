@@ -10,21 +10,10 @@ import {
 } from "@tau/tau-ai";
 import { unregisterCustomApis } from "@tau/tau-ai/api-registry";
 import { getBundledModel } from "@tau/tau-catalog/models";
-import {
-	buildLocalInferenceMessages,
-	registerLocalInferenceApi,
-} from "tau/tiny/local-inference-api";
+import { buildLocalInferenceMessages, registerLocalInferenceApi } from "tau/tiny/local-inference-api";
 import { TINY_LOCAL_MODELS } from "tau/tiny/models";
-import {
-	type TinyModelChatOptions,
-	TinyTitleClient,
-	tinyModelClient,
-} from "tau/tiny/title-client";
-import type {
-	TinyChatMessage,
-	TinyWorkerRequest,
-	TinyWorkerResponse,
-} from "tau/tiny/title-protocol";
+import { type TinyModelChatOptions, TinyTitleClient, tinyModelClient } from "tau/tiny/title-client";
+import type { TinyChatMessage, TinyWorkerRequest, TinyWorkerResponse } from "tau/tiny/title-protocol";
 
 const SOURCE_ID = "tau/local-inference";
 const model = getBundledModel("local", "lfm2.5-230m")!;

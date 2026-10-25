@@ -1,11 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import {
-	encodeTextSized,
-	extractSegments,
-	sliceWithWidth,
-	truncateToWidth,
-	visibleWidth,
-} from "@tau/tau-tui/utils";
+import { encodeTextSized, extractSegments, sliceWithWidth, truncateToWidth, visibleWidth } from "@tau/tau-tui/utils";
 
 describe("text utils", () => {
 	it("computes visible width for ANSI and tabs", () => {

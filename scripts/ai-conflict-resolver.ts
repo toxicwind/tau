@@ -274,7 +274,12 @@ export interface ModelSpec {
 /** Candidate lanes in preference order; the first that answers wins. */
 export const MODEL_LANES: ModelSpec[] = [
 	{ baseUrl: "https://api.groq.com/openai/v1", apiKeyEnv: "GROQ_API_KEY", model: "qwen/qwen3.8-27b", maxTokens: 4096 },
-	{ baseUrl: "https://api.openrouter.ai/api/v1", apiKeyEnv: "OPENROUTER_API_KEY", model: "deepseek/deepseek-chat", maxTokens: 4096 },
+	{
+		baseUrl: "https://api.openrouter.ai/api/v1",
+		apiKeyEnv: "OPENROUTER_API_KEY",
+		model: "deepseek/deepseek-chat",
+		maxTokens: 4096,
+	},
 ];
 
 export interface ModelAnswer {
@@ -455,7 +460,13 @@ export async function decideHunk(
 	// RULE 1 — native crate policy gate.
 	const native = nativePolicy(rel, hunk);
 	if (native.protected) {
-		await emitTelemetry({ event: "conflict.resolved", rel, line: hunk.line, strategy: "ours-policy", reason: native.reason });
+		await emitTelemetry({
+			event: "conflict.resolved",
+			rel,
+			line: hunk.line,
+			strategy: "ours-policy",
+			reason: native.reason,
+		});
 		return { choice: "ours", text: hunk.ours.join("\n"), strategy: "ours-policy" };
 	}
 
@@ -471,7 +482,13 @@ export async function decideHunk(
 	}
 	try {
 		const answer = await askModel(renderScopePrompt(rel, hunk, harvestScope(sourceText, hunk.line)), opts.timeoutMs);
-		await emitTelemetry({ event: "conflict.resolved", rel, line: hunk.line, strategy: "model", lane: answer.lane.model });
+		await emitTelemetry({
+			event: "conflict.resolved",
+			rel,
+			line: hunk.line,
+			strategy: "model",
+			lane: answer.lane.model,
+		});
 
 		// A model that merely ECHOES one side has added nothing, and its echo
 		// loses the original's leading indentation. Comparing normalized text

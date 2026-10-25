@@ -10,11 +10,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import type { AgentMessage } from "@tau/tau-agent-core";
 import { resetSettingsForTest, Settings } from "tau/config/settings";
-import {
-	hindsightBackend,
-	rebindMemoryBackendForCwd,
-	reloadMentalModelsForSession,
-} from "tau/hindsight/backend";
+import { hindsightBackend, rebindMemoryBackendForCwd, reloadMentalModelsForSession } from "tau/hindsight/backend";
 import { HindsightApi } from "tau/hindsight/client";
 import { HindsightRetainQueue, type HindsightSessionState } from "tau/hindsight/state";
 import type { AgentSessionEventListener } from "tau/session/agent-session";

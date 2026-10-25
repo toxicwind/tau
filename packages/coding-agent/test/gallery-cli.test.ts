@@ -8,11 +8,7 @@ import {
 	renderGallerySurfaceSections,
 	resolveFixture,
 } from "tau/cli/gallery-cli";
-import {
-	type GalleryFixture,
-	getComposerGalleryInventory,
-	getSegmentGalleryInventory,
-} from "tau/cli/gallery-fixtures";
+import { type GalleryFixture, getComposerGalleryInventory, getSegmentGalleryInventory } from "tau/cli/gallery-fixtures";
 import { resetSettingsForTest, Settings } from "tau/config/settings";
 import { initTheme, theme } from "@tau/tau-tui/theme";
 import { toolRenderers } from "@tau/tau-tui/tools";

@@ -1,15 +1,7 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
 import { Agent } from "@tau/tau-agent-core";
-import type {
-	Api,
-	AssistantMessage,
-	Context,
-	Message,
-	Model,
-	SimpleStreamOptions,
-	ThinkingContent,
-} from "@tau/tau-ai";
+import type { Api, AssistantMessage, Context, Message, Model, SimpleStreamOptions, ThinkingContent } from "@tau/tau-ai";
 import { createMockModel } from "@tau/tau-ai/providers/mock";
 import { AssistantMessageEventStream } from "@tau/tau-ai/utils/event-stream";
 import { GEMINI_HEADER_RUNAWAY_THRESHOLD } from "@tau/tau-ai/utils/thinking-loop";

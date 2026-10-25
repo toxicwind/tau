@@ -2,12 +2,7 @@ import { afterEach, beforeAll, describe, expect, it } from "bun:test";
 import { Markdown } from "@tau/tau-tui";
 import { Settings } from "../../../src/config/settings";
 import { createTheme, getBuiltinThemes } from "@tau/tau-tui/theme/loader";
-import {
-	getMarkdownTheme,
-	getThemeByName,
-	setMarkdownMermaidRendering,
-	setThemeInstance,
-} from "@tau/tau-tui/theme";
+import { getMarkdownTheme, getThemeByName, setMarkdownMermaidRendering, setThemeInstance } from "@tau/tau-tui/theme";
 import { buildSystemPrompt } from "../../../src/system-prompt";
 
 const workspaceTree = {

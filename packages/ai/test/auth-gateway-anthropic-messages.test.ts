@@ -7,13 +7,7 @@ import type {
 	WebSearchServerToolUseBlockParam,
 	WebSearchToolResultBlockParam,
 } from "@tau/tau-ai/providers/anthropic-wire";
-import type {
-	AssistantMessage,
-	AssistantMessageEvent,
-	Model,
-	ToolCall,
-	ToolResultMessage,
-} from "@tau/tau-ai/types";
+import type { AssistantMessage, AssistantMessageEvent, Model, ToolCall, ToolResultMessage } from "@tau/tau-ai/types";
 import { type CursorExecResolvedCarrier, kCursorExecResolved } from "@tau/tau-ai/utils/block-symbols";
 import { AssistantMessageEventStream } from "@tau/tau-ai/utils/event-stream";
 import { buildModel } from "@tau/tau-catalog/build";

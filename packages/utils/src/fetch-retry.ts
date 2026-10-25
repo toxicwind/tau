@@ -544,7 +544,5 @@ export function isRetryableError(error: unknown): boolean {
  * narrowing is truthful (a copy is made only when the buffer is not an ArrayBuffer).
  */
 export function toFetchBody(bytes: Uint8Array): Uint8Array<ArrayBuffer> {
-	return bytes.buffer instanceof ArrayBuffer
-		? (bytes as Uint8Array<ArrayBuffer>)
-		: new Uint8Array(bytes);
+	return bytes.buffer instanceof ArrayBuffer ? (bytes as Uint8Array<ArrayBuffer>) : new Uint8Array(bytes);
 }

@@ -3,10 +3,7 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import { SessionManager } from "tau/session/session-manager";
-import {
-	additionalWorkspaceDirectories,
-	normalizeSessionWorkspace,
-} from "tau/session/session-workspace";
+import { additionalWorkspaceDirectories, normalizeSessionWorkspace } from "tau/session/session-workspace";
 import { TempDir } from "@tau/tau-utils";
 import { makeAssistantMessage } from "./helpers";
 

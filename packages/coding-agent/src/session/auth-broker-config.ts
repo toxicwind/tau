@@ -20,11 +20,7 @@
  */
 
 import * as path from "node:path";
-import {
-	type AuthAccountPolicyConfig,
-	AuthBrokerError,
-	loadAuthAccountPolicyConfig,
-} from "@tau/tau-ai/auth-broker";
+import { type AuthAccountPolicyConfig, AuthBrokerError, loadAuthAccountPolicyConfig } from "@tau/tau-ai/auth-broker";
 import {
 	type AuthBrokerClientConfig,
 	type DiscoverAuthStorageOptions,

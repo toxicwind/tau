@@ -1,13 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import { getBundledModel } from "@tau/tau-catalog/models";
-import {
-	IndexedSessionStorage,
-	type SessionStorageBackend,
-} from "tau/session/indexed-session-storage";
-import {
-	SessionManager,
-	SessionPersistenceIndeterminateError,
-} from "tau/session/session-manager";
+import { IndexedSessionStorage, type SessionStorageBackend } from "tau/session/indexed-session-storage";
+import { SessionManager, SessionPersistenceIndeterminateError } from "tau/session/session-manager";
 import {
 	FileSessionStorage,
 	MemorySessionStorage,

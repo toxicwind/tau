@@ -6,10 +6,7 @@ import type { Api, ImageContent, Model } from "@tau/tau-ai";
 import type { ModelSpec } from "@tau/tau-ai/types";
 import { buildModel } from "@tau/tau-catalog/build";
 import { Settings } from "tau/config/settings";
-import {
-	SessionProviderBoundary,
-	type SessionProviderBoundaryHost,
-} from "tau/session/session-provider-boundary";
+import { SessionProviderBoundary, type SessionProviderBoundaryHost } from "tau/session/session-provider-boundary";
 import { removeWithRetries } from "@tau/tau-utils";
 
 const TINY_PNG_BASE64 =

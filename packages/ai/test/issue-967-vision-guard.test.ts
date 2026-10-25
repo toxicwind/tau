@@ -3,10 +3,7 @@ import { convertAnthropicMessages } from "@tau/tau-ai/providers/anthropic";
 import { convertMessages as convertGoogleMessages } from "@tau/tau-ai/providers/google-shared";
 import { convertCodexResponsesMessages } from "@tau/tau-ai/providers/openai-codex-responses";
 import { convertMessages as convertOpenAICompletionsMessages } from "@tau/tau-ai/providers/openai-completions";
-import {
-	appendResponsesToolResultMessages,
-	convertResponsesInputContent,
-} from "@tau/tau-ai/providers/openai-shared";
+import { appendResponsesToolResultMessages, convertResponsesInputContent } from "@tau/tau-ai/providers/openai-shared";
 import { NON_VISION_IMAGE_PLACEHOLDER } from "@tau/tau-ai/providers/vision-guard";
 import type { Api, AssistantMessage, Context, Model, ModelSpec, ToolResultMessage, Usage } from "@tau/tau-ai/types";
 import { buildModel } from "@tau/tau-catalog/build";

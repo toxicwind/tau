@@ -2,12 +2,7 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import {
-	InternalUrlRouter,
-	LocalProtocolHandler,
-	resolveLocalRoot,
-	resolveLocalUrlToPath,
-} from "tau/internal-urls";
+import { InternalUrlRouter, LocalProtocolHandler, resolveLocalRoot, resolveLocalUrlToPath } from "tau/internal-urls";
 import { removeWithRetries } from "@tau/tau-utils";
 
 async function withTempDir<T>(fn: (dir: string) => Promise<T>): Promise<T> {

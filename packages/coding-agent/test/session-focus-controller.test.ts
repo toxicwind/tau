@@ -1,9 +1,6 @@
 import { beforeAll, describe, expect, it } from "bun:test";
 import { Container } from "@tau/tau-tui";
-import {
-	pickRecentFocusableAgentId,
-	SessionFocusController,
-} from "tau/modes/controllers/session-focus-controller";
+import { pickRecentFocusableAgentId, SessionFocusController } from "tau/modes/controllers/session-focus-controller";
 import type { InteractiveModeContext } from "tau/modes/types";
 import { AgentLifecycleManager } from "tau/registry/agent-lifecycle";
 import { AgentRegistry, MAIN_AGENT_ID, type AgentRef } from "tau/registry/agent-registry";

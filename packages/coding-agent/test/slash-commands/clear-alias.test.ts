@@ -1,8 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import {
-	BUILTIN_SLASH_COMMANDS,
-	lookupBuiltinSlashCommand,
-} from "tau/slash-commands/builtin-registry";
+import { BUILTIN_SLASH_COMMANDS, lookupBuiltinSlashCommand } from "tau/slash-commands/builtin-registry";
 import { CombinedAutocompleteProvider } from "@tau/tau-tui/autocomplete";
 
 describe("/clear slash command", () => {

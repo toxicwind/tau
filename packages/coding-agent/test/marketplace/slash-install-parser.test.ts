@@ -1,8 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import {
-	parseMarketplaceInstallArgs,
-	parsePluginScopeArgs,
-} from "tau/slash-commands/marketplace-install-parser";
+import { parseMarketplaceInstallArgs, parsePluginScopeArgs } from "tau/slash-commands/marketplace-install-parser";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 

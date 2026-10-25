@@ -21,12 +21,7 @@ import { createFileRecorder, formatResultPath } from "./file-recorder";
 import { formatGroupedFiles } from "@tau/tau-tui/tools/grouped-file-output";
 
 import { isInternalUrlPath, resolveToolSearchScope } from "./path-utils";
-import {
-	capParseErrors,
-	formatCodeFrameLine,
-	formatCount,
-	formatParseErrors,
-} from "@tau/tau-tui/render/render-utils";
+import { capParseErrors, formatCodeFrameLine, formatCount, formatParseErrors } from "@tau/tau-tui/render/render-utils";
 import { PREVIEW_PENDING_NOTICE, queueResolveHandler } from "./resolve";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 import { toolResult } from "./tool-result";

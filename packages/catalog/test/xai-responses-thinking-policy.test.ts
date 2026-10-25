@@ -1,10 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import { Effort } from "@tau/tau-catalog/effort";
 import MODELS_JSON from "@tau/tau-catalog/models.json" with { type: "json" };
-import {
-	MODELS_DEV_PROVIDER_DESCRIPTORS,
-	mapModelsDevToModels,
-} from "@tau/tau-catalog/provider-models/openai-compat";
+import { MODELS_DEV_PROVIDER_DESCRIPTORS, mapModelsDevToModels } from "@tau/tau-catalog/provider-models/openai-compat";
 import type { ModelSpec } from "@tau/tau-catalog/types";
 import { applyGeneratedModelPolicies } from "../scripts/generated-policies";
 

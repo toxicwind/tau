@@ -22,10 +22,7 @@ import {
 	MnemotauEmbedClient,
 	type MnemotauEmbedWorkerHandle,
 } from "tau/mnemotau/embed-client";
-import type {
-	MnemotauEmbedWorkerInbound,
-	MnemotauEmbedWorkerOutbound,
-} from "tau/mnemotau/embed-protocol";
+import type { MnemotauEmbedWorkerInbound, MnemotauEmbedWorkerOutbound } from "tau/mnemotau/embed-protocol";
 
 describe("issue #3031 — mnemotau embeddings live in an isolated subprocess", () => {
 	it("ping/pongs through the spawned worker subprocess and tears it down cleanly", async () => {

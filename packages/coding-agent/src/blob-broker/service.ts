@@ -206,7 +206,10 @@ export class ImageUrlService {
 					const fetcher = this.#producers.get(key);
 					const bytes = fetcher ? await fetcher() : null;
 					if (!bytes) return new Response(null, { status: 404 });
-					return new Response(toFetchBody(bytes), { status: 200, headers: { "content-type": "application/octet-stream" } });
+					return new Response(toFetchBody(bytes), {
+						status: 200,
+						headers: { "content-type": "application/octet-stream" },
+					});
 				},
 			});
 			server.unref();

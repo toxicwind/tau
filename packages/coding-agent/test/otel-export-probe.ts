@@ -11,11 +11,7 @@
  * OTEL_EXPORTER_OTLP[_TRACES]_HEADERS.
  */
 
-import {
-	flushTelemetryExport,
-	initTelemetryExport,
-	isTelemetryExportEnabled,
-} from "tau/telemetry-export";
+import { flushTelemetryExport, initTelemetryExport, isTelemetryExportEnabled } from "tau/telemetry-export";
 import { trace } from "@opentelemetry/api";
 
 let received = false;

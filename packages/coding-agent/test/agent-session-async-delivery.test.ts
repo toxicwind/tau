@@ -20,10 +20,7 @@ import { buildAsyncResultBlock } from "@tau/tau-tui/chat/transcript-render-helpe
 import { initTheme } from "@tau/tau-tui/theme";
 import { AgentSession } from "tau/session/agent-session";
 import { ArtifactManager } from "tau/session/artifacts";
-import {
-	buildAsyncResultBatchMessage,
-	type AsyncResultEntry,
-} from "tau/session/async-job-delivery";
+import { buildAsyncResultBatchMessage, type AsyncResultEntry } from "tau/session/async-job-delivery";
 import { AuthStorage } from "tau/session/auth-storage";
 import { convertToLlm, type CustomMessage } from "tau/session/messages";
 import { SessionManager } from "tau/session/session-manager";

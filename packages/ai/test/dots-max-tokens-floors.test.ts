@@ -48,10 +48,22 @@ test("resolveOpenAIOutputTokenParam applies Dots floor (raise-only)", () => {
 	expect(cont?.value).toBe(1024);
 
 	// Explicit higher value is NOT lowered
-	const explicit = resolveOpenAIOutputTokenParam({ ...base, maxTokens: 2048, maxTokensExplicit: true, hasTools: false, isContinuation: false });
+	const explicit = resolveOpenAIOutputTokenParam({
+		...base,
+		maxTokens: 2048,
+		maxTokensExplicit: true,
+		hasTools: false,
+		isContinuation: false,
+	});
 	expect(explicit?.value).toBe(2048);
 
 	// Non-Dots model: no floor
-	const nonDots = resolveOpenAIOutputTokenParam({ ...base, modelId: "openai/gpt-4", maxTokens: 64, hasTools: false, isContinuation: false });
+	const nonDots = resolveOpenAIOutputTokenParam({
+		...base,
+		modelId: "openai/gpt-4",
+		maxTokens: 64,
+		hasTools: false,
+		isContinuation: false,
+	});
 	expect(nonDots?.value).toBe(64);
 });

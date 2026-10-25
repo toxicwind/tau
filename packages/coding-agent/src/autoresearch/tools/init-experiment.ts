@@ -1,8 +1,4 @@
-import {
-	HARNESS_FILENAME,
-	DEFAULT_HARNESS_COMMAND,
-	type InitExperimentDetails,
-} from "@tau/tau-tui/tools/autoresearch";
+import { HARNESS_FILENAME, DEFAULT_HARNESS_COMMAND, type InitExperimentDetails } from "@tau/tau-tui/tools/autoresearch";
 import { initExperimentToolRenderer } from "@tau/tau-tui/tools/autoresearch";
 import * as path from "node:path";
 import { type } from "@tau/tautype";

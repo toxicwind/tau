@@ -1,10 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import {
-	generateThemeStyles,
-	generateThemeVars,
-	getTemplate,
-	parseExportArgs,
-} from "tau/export/html";
+import { generateThemeStyles, generateThemeVars, getTemplate, parseExportArgs } from "tau/export/html";
 
 describe("HTML export themes", () => {
 	it("bundles dark, light, and auto-following web themes", async () => {

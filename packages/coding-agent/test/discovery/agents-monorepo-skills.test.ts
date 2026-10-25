@@ -14,12 +14,7 @@ import { clearCache, readFile } from "tau/capability/fs";
 import type { Rule } from "tau/capability/rule";
 import type { LoadContext } from "tau/capability/types";
 import { getProjectPathCandidates } from "tau/discovery/agents";
-import {
-	buildRuleFromMarkdown,
-	calculateDepth,
-	loadFilesFromDir,
-	scanSkillsFromDir,
-} from "tau/discovery/helpers";
+import { buildRuleFromMarkdown, calculateDepth, loadFilesFromDir, scanSkillsFromDir } from "tau/discovery/helpers";
 import { removeSyncWithRetries } from "@tau/tau-utils";
 
 const PROVIDER_ID = "agents";

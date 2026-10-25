@@ -32,7 +32,7 @@ describe("legacy pi compat package-root override validation (issue #2168)", () =
 	it("drops overrides whose filesystem targets are missing on disk", () => {
 		const candidates = {
 			"@tau/tau-ai": "/tmp/exists-ai.js",
-			"tau": "/tmp/exists-shim.js",
+			tau: "/tmp/exists-shim.js",
 			"@tau/tau-utils": "/$bunfs/root/packages/utils/src/index.js",
 			"@tau/tau-tui": "/$bunfs/root/packages/tui/src/index.js",
 		};
@@ -40,7 +40,7 @@ describe("legacy pi compat package-root override validation (issue #2168)", () =
 		const result = __validateLegacyPiPackageRootOverrides(candidates, p => !missing.has(p));
 		expect(result).toEqual({
 			"@tau/tau-ai": "/tmp/exists-ai.js",
-			"tau": "/tmp/exists-shim.js",
+			tau: "/tmp/exists-shim.js",
 		});
 		// `tau-utils` and `tau-tui` are absent so the resolver falls through to
 		// `getResolvedSpecifier` (which throws under bunfs), which triggers
@@ -67,7 +67,7 @@ describe("legacy pi compat package-root override validation (issue #2168)", () =
 		let probed = false;
 		const candidates = {
 			"@tau/tau-ai": "tau-legacy-tau-bundled:@tau/tau-ai",
-			"tau": "tau-legacy-tau-bundled:tau",
+			tau: "tau-legacy-tau-bundled:tau",
 			"@tau/tau-agent-core": "tau-legacy-tau-bundled:@tau/tau-agent-core",
 			"@tau/tau-natives": "tau-legacy-tau-bundled:@tau/tau-natives",
 			"@tau/tau-tui": "tau-legacy-tau-bundled:@tau/tau-tui",
@@ -84,14 +84,14 @@ describe("legacy pi compat package-root override validation (issue #2168)", () =
 	it("mixes virtual and filesystem entries: virtuals always pass, filesystems gated", () => {
 		const candidates = {
 			"@tau/tau-ai": "tau-legacy-tau-bundled:@tau/tau-ai",
-			"tau": "/dev/source/legacy-tau-coding-agent-shim.ts",
+			tau: "/dev/source/legacy-tau-coding-agent-shim.ts",
 			"@tau/tau-tui": "/missing/path.ts",
 		};
 		const missing = new Set(["/missing/path.ts"]);
 		const result = __validateLegacyPiPackageRootOverrides(candidates, p => !missing.has(p));
 		expect(result).toEqual({
 			"@tau/tau-ai": "tau-legacy-tau-bundled:@tau/tau-ai",
-			"tau": "/dev/source/legacy-tau-coding-agent-shim.ts",
+			tau: "/dev/source/legacy-tau-coding-agent-shim.ts",
 		});
 	});
 });

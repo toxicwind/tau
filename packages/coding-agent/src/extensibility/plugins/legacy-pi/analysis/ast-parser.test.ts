@@ -32,7 +32,9 @@ describe("AstParser.parse", () => {
 describe("AstParser.collectSpecifierReferences", () => {
 	test("finds static import declarations", () => {
 		const refs = parser.collectSpecifierReferences('import x from "lodash";', "test.ts");
-		expect(refs).toEqual([{ kind: "import", specifier: "lodash", start: expect.any(Number), end: expect.any(Number) }]);
+		expect(refs).toEqual([
+			{ kind: "import", specifier: "lodash", start: expect.any(Number), end: expect.any(Number) },
+		]);
 	});
 
 	test("finds named and namespace imports", () => {
@@ -77,7 +79,7 @@ describe("AstParser.collectSpecifierReferences", () => {
 	test("finds createRequire(...)(...) call targets", () => {
 		const src = [
 			'import { createRequire } from "node:module";',
-			'const require = createRequire(import.meta.url);',
+			"const require = createRequire(import.meta.url);",
 			'const dep = require("ffi-napi");',
 		].join("\n");
 		const refs = parser.collectSpecifierReferences(src, "test.ts");
@@ -109,11 +111,9 @@ describe("AstParser.collectSpecifierReferences", () => {
 	});
 
 	test("preserves source order across mixed import forms", () => {
-		const src = [
-			'import a from "first";',
-			'const b = require("second");',
-			'const c = await import("third");',
-		].join("\n");
+		const src = ['import a from "first";', 'const b = require("second");', 'const c = await import("third");'].join(
+			"\n",
+		);
 		const refs = parser.collectSpecifierReferences(src, "test.ts");
 		expect(refs.map(r => r.specifier)).toEqual(["first", "second", "third"]);
 	});

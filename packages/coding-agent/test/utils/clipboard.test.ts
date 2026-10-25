@@ -1,9 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import {
-	readImageFromClipboard,
-	readMacFileUrlsFromClipboard,
-	readTextFromClipboard,
-} from "tau/utils/clipboard";
+import { readImageFromClipboard, readMacFileUrlsFromClipboard, readTextFromClipboard } from "tau/utils/clipboard";
 import * as native from "@tau/tau-natives/clipboard";
 import type { Subprocess } from "bun";
 

@@ -12,11 +12,7 @@ import type {
 	ComputerWorkerOutbound,
 	ComputerWorkerTransport,
 } from "tau/tools/computer/protocol";
-import {
-	type ComputerController,
-	ComputerSupervisor,
-	type ComputerWorkerHandle,
-} from "tau/tools/computer/supervisor";
+import { type ComputerController, ComputerSupervisor, type ComputerWorkerHandle } from "tau/tools/computer/supervisor";
 import { ComputerWorkerCore, type NativeDesktopSession } from "tau/tools/computer/worker";
 import type {
 	AxNode,

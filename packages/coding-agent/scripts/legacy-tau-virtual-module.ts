@@ -20,9 +20,7 @@ const BUNDLED_PACKAGES: readonly LegacyPiBundledPackage[] = LEGACY_PI_BUNDLED_PA
 const TYPEBOX_MODULE_KEY = LEGACY_PI_CONFIG.typeboxModuleKey;
 const TYPEBOX_COMPAT_MODULE = LEGACY_PI_CONFIG.shims.typebox;
 const SKIPPED_WILDCARD_BASENAMES = new Set<string>(LEGACY_PI_CONFIG.skippedWildcardBasenames);
-const MAIN_THREAD_UNSAFE_WILDCARD_BASENAMES = new Set<string>(
-	LEGACY_PI_CONFIG.mainThreadUnsafeWildcardBasenames,
-);
+const MAIN_THREAD_UNSAFE_WILDCARD_BASENAMES = new Set<string>(LEGACY_PI_CONFIG.mainThreadUnsafeWildcardBasenames);
 
 /** One namespace module the binary must retain for legacy extension imports. */
 export interface BundledPiEntry {

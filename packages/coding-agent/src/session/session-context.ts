@@ -1,11 +1,7 @@
 import type { AgentMessage } from "@tau/tau-agent-core";
 import { customMessageEntryMessage, isUserRequestEntry } from "@tau/tau-tui/chat/transcript-entry";
 import { getAnthropicCompactionPayload, isTurnStartEntry } from "@tau/tau-agent-core/compaction";
-import {
-	coerceServiceTierByFamily,
-	type OpenAIResponsesHistoryPayload,
-	type ServiceTierByFamily,
-} from "@tau/tau-ai";
+import { coerceServiceTierByFamily, type OpenAIResponsesHistoryPayload, type ServiceTierByFamily } from "@tau/tau-ai";
 import * as snapcompact from "@tau/snapcompact";
 import { isRecord } from "@tau/tau-utils";
 import {

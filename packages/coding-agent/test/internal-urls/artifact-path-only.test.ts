@@ -4,10 +4,7 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { ArtifactProtocolHandler } from "tau/internal-urls/artifact-protocol";
 import { parseInternalUrl } from "tau/internal-urls/parse";
-import {
-	registerArtifactsDir,
-	resetRegisteredArtifactDirsForTests,
-} from "tau/internal-urls/registry-helpers";
+import { registerArtifactsDir, resetRegisteredArtifactDirsForTests } from "tau/internal-urls/registry-helpers";
 import { InternalUrlRouter } from "tau/internal-urls/router";
 import { resolveToolSearchScope } from "tau/tools/path-utils";
 

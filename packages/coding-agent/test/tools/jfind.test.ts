@@ -11,13 +11,7 @@ import { FindTool } from "tau/tools/jfind";
 import { runCascade } from "tau/tools/jfind/cascade";
 import { keywordsFromQuery } from "tau/tools/jfind/keywords";
 import { materializeOmpScope } from "tau/tools/jfind/tau-scope";
-import {
-	mergeHeat,
-	type Passage,
-	selectWindows,
-	sketch,
-	windows,
-} from "tau/tools/jfind/passages";
+import { mergeHeat, type Passage, selectWindows, sketch, windows } from "tau/tools/jfind/passages";
 import { readText, ReadTextError } from "tau/tools/jfind/text";
 import { eligibleFile, renderTree } from "tau/tools/jfind/tree";
 import { removeWithRetries } from "@tau/tau-utils";

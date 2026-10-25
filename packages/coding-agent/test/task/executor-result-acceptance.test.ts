@@ -14,11 +14,7 @@ import type { CreateAgentSessionResult } from "tau/sdk";
 import * as sdkModule from "tau/sdk";
 import type { AgentMessage } from "@tau/tau-agent-core";
 import type { AgentSession, AgentSessionEvent } from "tau/session/agent-session";
-import {
-	attachIrcWakeTurnMonitor,
-	runSubagentFollowUpTurn,
-	runSubprocess,
-} from "tau/task/executor";
+import { attachIrcWakeTurnMonitor, runSubagentFollowUpTurn, runSubprocess } from "tau/task/executor";
 import type { AgentDefinition } from "tau/task/types";
 import { EventBus } from "tau/utils/event-bus";
 

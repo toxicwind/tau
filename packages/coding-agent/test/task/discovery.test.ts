@@ -5,10 +5,7 @@ import * as path from "node:path";
 import { disableProvider, enableProvider } from "tau/capability";
 import { clearCache as clearFsCache } from "tau/capability/fs";
 import { clearAgentPluginRootCache } from "tau/discovery/agent-plugin-format";
-import {
-	clearOmpExtensionCliRoots,
-	injectOmpExtensionCliRoots,
-} from "tau/discovery/tau-extension-roots";
+import { clearOmpExtensionCliRoots, injectOmpExtensionCliRoots } from "tau/discovery/tau-extension-roots";
 import { clearClaudePluginRootsCache, injectPluginDirRoots } from "tau/discovery/helpers";
 import { discoverAgents } from "tau/task/discovery";
 import { removeWithRetries } from "@tau/tau-utils";

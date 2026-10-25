@@ -1,11 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import { AsyncJobManager } from "tau/async";
 import { Settings } from "tau/config/settings";
-import {
-	runEvalAgent,
-	type EvalAgentBridgeOptions,
-	type EvalAgentResult,
-} from "tau/eval/agent-bridge";
+import { runEvalAgent, type EvalAgentBridgeOptions, type EvalAgentResult } from "tau/eval/agent-bridge";
 import { runEvalWait } from "tau/eval/handle-bridge";
 import type { LocalProtocolOptions } from "tau/internal-urls";
 import type { MCPManager } from "tau/mcp";

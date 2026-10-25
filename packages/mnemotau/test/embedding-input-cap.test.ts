@@ -1,10 +1,6 @@
 import { afterEach, describe, expect, it } from "bun:test";
 
-import {
-	embed,
-	resetEmbeddingProviderForTests,
-	setEmbeddingProviderForTests,
-} from "@tau/tau-mnemotau/core/embeddings";
+import { embed, resetEmbeddingProviderForTests, setEmbeddingProviderForTests } from "@tau/tau-mnemotau/core/embeddings";
 import { withMnemotauRuntimeOptions } from "@tau/tau-mnemotau/core/runtime-options";
 
 /**

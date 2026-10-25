@@ -1,9 +1,5 @@
 import { getProjectDir } from "@tau/tau-utils";
-import {
-	type CleanseTargetChoice,
-	pickCleanseTarget,
-	promptCleanseRequest,
-} from "@tau/tau-tui/apps/cleanse-picker";
+import { type CleanseTargetChoice, pickCleanseTarget, promptCleanseRequest } from "@tau/tau-tui/apps/cleanse-picker";
 import { shortenPath } from "@tau/tau-tui/render/render-utils";
 import { type CleanseAgentHooks, type CleanseAgentRuntime, createCleanseAgentRuntime } from "./agent";
 import { groupDiagnosticsByFile } from "./balance";

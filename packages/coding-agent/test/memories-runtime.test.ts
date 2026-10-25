@@ -5,11 +5,7 @@ import * as path from "node:path";
 import * as ai from "@tau/tau-ai";
 import { Effort, type Model } from "@tau/tau-ai";
 import { Settings } from "tau/config/settings";
-import {
-	buildMemoryToolDeveloperInstructions,
-	getMemoryRoot,
-	startMemoryStartupTask,
-} from "tau/memories";
+import { buildMemoryToolDeveloperInstructions, getMemoryRoot, startMemoryStartupTask } from "tau/memories";
 import * as memoryStorage from "tau/memories/storage";
 import { getAgentDbPath, Snowflake, TempDir } from "@tau/tau-utils";
 import { restoreEnvValue } from "./helpers/settings-test-state";

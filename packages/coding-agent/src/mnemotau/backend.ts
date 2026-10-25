@@ -85,7 +85,10 @@ export function resolveMemoryCompletionInput(
 	return { prompt };
 }
 
-async function installMnemotauState(session: AgentSession, config: MnemotauBackendConfig): Promise<MnemotauSessionState> {
+async function installMnemotauState(
+	session: AgentSession,
+	config: MnemotauBackendConfig,
+): Promise<MnemotauSessionState> {
 	const state = new MnemotauSessionState({ sessionId: session.sessionId, config, session });
 	const previous = setMnemotauSessionState(session, state);
 	await previous?.dispose();

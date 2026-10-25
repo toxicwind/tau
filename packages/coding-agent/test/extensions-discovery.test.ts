@@ -5,11 +5,7 @@ import * as path from "node:path";
 import { type ExtensionModule, extensionModuleCapability } from "tau/capability/extension-module";
 import { resetSettingsForTest, Settings } from "tau/config/settings";
 import { getCapability, initializeWithSettings } from "tau/discovery";
-import {
-	discoverAndLoadExtensions,
-	discoverExtensionPaths,
-	loadExtensions,
-} from "tau/extensibility/extensions/loader";
+import { discoverAndLoadExtensions, discoverExtensionPaths, loadExtensions } from "tau/extensibility/extensions/loader";
 import { discoverSessionExtensionPaths } from "tau/sdk";
 import { getProjectAgentDir, TempDir } from "@tau/tau-utils";
 import { filterUserScoped } from "./utils/filter-user-extensions";

@@ -2,11 +2,7 @@ import { describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import {
-	dispatchRpcSkillPrompt,
-	RpcExtensionUserMessageTracker,
-	tryRunRpcSkillCommand,
-} from "tau/modes/rpc/rpc-mode";
+import { dispatchRpcSkillPrompt, RpcExtensionUserMessageTracker, tryRunRpcSkillCommand } from "tau/modes/rpc/rpc-mode";
 import { type CustomMessage, SKILL_PROMPT_MESSAGE_TYPE } from "tau/session/messages";
 import { removeWithRetries, Snowflake } from "@tau/tau-utils";
 

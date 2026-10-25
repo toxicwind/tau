@@ -214,10 +214,7 @@ describe("world agent registry", () => {
 });
 
 /** Minimal newline-delimited client, matching the server's one-request-per-connection shape. */
-function fetchSocket(
-	endpoint: string,
-	payload: Record<string, unknown>,
-): Promise<Record<string, unknown>> {
+function fetchSocket(endpoint: string, payload: Record<string, unknown>): Promise<Record<string, unknown>> {
 	const { promise, resolve, reject } = Promise.withResolvers<Record<string, unknown>>();
 	const socket = net.createConnection({ path: endpoint });
 	let buffer = "";

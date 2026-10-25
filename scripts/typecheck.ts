@@ -36,10 +36,8 @@ const projectDir = isTsconfig ? dirname(requested) : requested;
 const logical = isTsconfig ? requested : join(projectDir, "tsconfig.json");
 const resolved = realpathSync(logical);
 if (resolved !== logical) {
-  // Say so once: every path in the output below will be the physical one.
-  console.log(
-    `typecheck: ${relative(base, logical)} → ${relative(base, resolved)} (symlink resolved)`,
-  );
+	// Say so once: every path in the output below will be the physical one.
+	console.log(`typecheck: ${relative(base, logical)} → ${relative(base, resolved)} (symlink resolved)`);
 }
 
 // Inherit stdio so diagnostics stream unchanged, and take the child's exit code
@@ -50,13 +48,11 @@ if (resolved !== logical) {
 // scoped `@typescript/native-preview-linux-x64` package ("Cannot find package");
 // bun's resolver follows it (bun canary). Spawning the compiler's JS entry
 // through `bun` keeps typecheck portable to both symlinked local checkouts and CI.
-const tsgoEntry = fileURLToPath(
-  import.meta.resolve("@typescript/native-preview/package.json"),
-);
+const tsgoEntry = fileURLToPath(import.meta.resolve("@typescript/native-preview/package.json"));
 const tsgo = join(dirname(tsgoEntry), "lib", "tsgo.js");
 const child = Bun.spawn(["bun", tsgo, "-p", resolved, "--noEmit"], {
-  cwd: realpathSync(projectDir),
-  stdout: "inherit",
-  stderr: "inherit",
+	cwd: realpathSync(projectDir),
+	stdout: "inherit",
+	stderr: "inherit",
 });
 process.exit(await child.exited);

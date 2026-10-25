@@ -5,11 +5,7 @@
  */
 
 import { describe, expect, it, vi } from "bun:test";
-import type {
-	HindsightApi,
-	MentalModelListResponse,
-	MentalModelSummary,
-} from "tau/hindsight/client";
+import type { HindsightApi, MentalModelListResponse, MentalModelSummary } from "tau/hindsight/client";
 import type { HindsightConfig } from "tau/hindsight/config";
 import { Settings } from "tau/config/settings";
 import { renderMentalModelsBlock } from "tau/hindsight/mental-models";

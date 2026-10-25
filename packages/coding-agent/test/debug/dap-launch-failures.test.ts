@@ -6,12 +6,7 @@ import { Settings } from "tau/config/settings";
 import * as dapModule from "tau/dap";
 import { connectSocket, DapClient, waitForTcpServerListening } from "tau/dap/client";
 import { DapSessionManager } from "tau/dap/session";
-import type {
-	DapCapabilities,
-	DapClientState,
-	DapEventMessage,
-	DapResolvedAdapter,
-} from "tau/dap/types";
+import type { DapCapabilities, DapClientState, DapEventMessage, DapResolvedAdapter } from "tau/dap/types";
 import type { ToolSession } from "tau/tools";
 import { DebugTool } from "tau/tools/debug";
 import { removeWithRetries, withTimeout } from "@tau/tau-utils";

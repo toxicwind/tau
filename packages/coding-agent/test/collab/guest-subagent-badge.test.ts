@@ -1,12 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, spyOn } from "bun:test";
 import { generateRoomKey, importRoomKey } from "tau/collab/crypto";
 import { CollabGuestLink } from "tau/collab/guest";
-import {
-	type AgentSnapshot,
-	COLLAB_PROTO,
-	type CollabFrame,
-	formatCollabLink,
-} from "tau/collab/protocol";
+import { type AgentSnapshot, COLLAB_PROTO, type CollabFrame, formatCollabLink } from "tau/collab/protocol";
 import { CollabSocket } from "tau/collab/relay-client";
 import {
 	getRunningSubagentBadgeAgentIds,

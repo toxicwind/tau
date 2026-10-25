@@ -1,10 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import {
-	CompressionStats,
-	DetectedPattern,
-	MemoryCompressor,
-	PatternDetector,
-} from "@tau/tau-mnemotau/core/patterns";
+import { CompressionStats, DetectedPattern, MemoryCompressor, PatternDetector } from "@tau/tau-mnemotau/core/patterns";
 
 describe("memory compression", () => {
 	it("reports savings and zero-size stats", () => {

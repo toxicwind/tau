@@ -7,14 +7,8 @@ import { buildModel } from "@tau/tau-catalog/build";
 import { writeModelCache } from "@tau/tau-catalog/model-cache";
 import { resolveProviderModels } from "@tau/tau-catalog/model-manager";
 import { getBundledModels } from "@tau/tau-catalog/models";
-import {
-	googleModelManagerOptions,
-	googleVertexModelManagerOptions,
-} from "@tau/tau-catalog/provider-models/google";
-import {
-	MODELS_DEV_PROVIDER_DESCRIPTORS,
-	mapModelsDevToModels,
-} from "@tau/tau-catalog/provider-models/openai-compat";
+import { googleModelManagerOptions, googleVertexModelManagerOptions } from "@tau/tau-catalog/provider-models/google";
+import { MODELS_DEV_PROVIDER_DESCRIPTORS, mapModelsDevToModels } from "@tau/tau-catalog/provider-models/openai-compat";
 import type { Api, ModelSpec } from "@tau/tau-catalog/types";
 
 const googleVertexModelsDevPayload = {

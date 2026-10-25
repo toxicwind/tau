@@ -15,10 +15,7 @@ import {
 	type VariantCollapseTable,
 } from "@tau/tau-catalog/compat/collapse";
 import { stripThinkingVariantSuffix } from "@tau/tau-catalog/compat/taxonomy";
-import {
-	ANTIGRAVITY_PRIMARY_ENDPOINT,
-	fetchAntigravityDiscoveryModels,
-} from "@tau/tau-catalog/discovery/antigravity";
+import { ANTIGRAVITY_PRIMARY_ENDPOINT, fetchAntigravityDiscoveryModels } from "@tau/tau-catalog/discovery/antigravity";
 import { Effort } from "@tau/tau-catalog/effort";
 import { resolveProviderModels } from "@tau/tau-catalog/model-manager";
 import {

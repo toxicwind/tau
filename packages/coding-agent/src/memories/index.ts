@@ -5,15 +5,7 @@ import * as path from "node:path";
 import type { AgentMessage } from "@tau/tau-agent-core";
 import { type ApiKey, completeSimple, Effort, type Model, retryTransientCompletion } from "@tau/tau-ai";
 import { clampThinkingLevelForModel } from "@tau/tau-catalog/model-thinking";
-import {
-	getAgentDbPath,
-	getMemoriesDir,
-	isEnoent,
-	logger,
-	parseJsonlLenient,
-	peekFile,
-	prompt,
-} from "@tau/tau-utils";
+import { getAgentDbPath, getMemoriesDir, isEnoent, logger, parseJsonlLenient, peekFile, prompt } from "@tau/tau-utils";
 
 import type { ModelRegistry } from "../config/model-registry";
 import { getModelMatchPreferences, resolveModelRoleValue } from "../config/model-resolver";

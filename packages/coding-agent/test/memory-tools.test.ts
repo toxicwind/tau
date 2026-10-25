@@ -435,9 +435,12 @@ describe("retain.execute (Mnemotau backend)", () => {
 		expect(betaRecall.content[0]).toEqual({ type: "text", text: "No relevant memories found." });
 		await registeredMnemotauState?.dispose();
 		registerMnemotauState(alphaConfig, { cwd: "/work/project-alpha" });
-		const alphaRecall = await MemoryRecallTool.createIf(makeSession(settings))!.execute("call-mnemotau-alpha-recall", {
-			query: "tabs",
-		});
+		const alphaRecall = await MemoryRecallTool.createIf(makeSession(settings))!.execute(
+			"call-mnemotau-alpha-recall",
+			{
+				query: "tabs",
+			},
+		);
 		expect((alphaRecall.content[0] as { text: string }).text).toContain("alpha uses tabs");
 	});
 	it("throws when no per-session Mnemotau state is registered", async () => {

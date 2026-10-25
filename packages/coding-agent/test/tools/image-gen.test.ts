@@ -6,11 +6,7 @@ import { ModelRegistry } from "tau/config/model-registry";
 import { Settings } from "tau/config/settings";
 import type { CustomToolContext, CustomToolResult } from "tau/extensibility/custom-tools";
 import { SessionManager } from "tau/session/session-manager";
-import {
-	getImageGenTools,
-	getImageGenToolsWithRegistry,
-	imageGenTool,
-} from "tau/tools/image-gen";
+import { getImageGenTools, getImageGenToolsWithRegistry, imageGenTool } from "tau/tools/image-gen";
 import { removeWithRetries } from "@tau/tau-utils";
 import { createInMemoryAuthStorage } from "../helpers/agent-session-setup";
 

@@ -3,10 +3,7 @@ import * as path from "node:path";
 import * as ai from "@tau/tau-ai";
 import { ModelRegistry } from "tau/config/model-registry";
 import { Settings } from "tau/config/settings";
-import {
-	renderSharpshooterSessions,
-	runSharpshooterConsolidation,
-} from "tau/sharpshooter/consolidate";
+import { renderSharpshooterSessions, runSharpshooterConsolidation } from "tau/sharpshooter/consolidate";
 import {
 	readSharpshooterState,
 	sharpshooterBankDir,

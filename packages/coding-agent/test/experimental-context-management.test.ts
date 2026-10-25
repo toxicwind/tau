@@ -8,11 +8,7 @@ import { ModelRegistry } from "tau/config/model-registry";
 import { Settings } from "tau/config/settings";
 import { AgentSession, type AgentSessionEvent } from "tau/session/agent-session";
 import { CONTEXT_NOTES_ENTRY_TYPE, getContextNotes } from "tau/session/context-notes";
-import {
-	createCustomMessage,
-	convertToLlm,
-	SKILL_PROMPT_MESSAGE_TYPE,
-} from "tau/session/messages";
+import { createCustomMessage, convertToLlm, SKILL_PROMPT_MESSAGE_TYPE } from "tau/session/messages";
 import type { CompactionEntry } from "tau/session/session-entries";
 import { ExtensionRuntime, loadExtensionFromFactory } from "tau/extensibility/extensions/loader";
 import { ExtensionRunner } from "tau/extensibility/extensions/runner";

@@ -1,10 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import type {
-	BankProfileResponse,
-	CreateBankOptions,
-	RetainOptions,
-	RetainResponse,
-} from "tau/hindsight/client";
+import type { BankProfileResponse, CreateBankOptions, RetainOptions, RetainResponse } from "tau/hindsight/client";
 import { HindsightApi } from "tau/hindsight/client";
 import type { HindsightConfig } from "tau/hindsight/config";
 import type { HindsightMessage } from "tau/hindsight/content";

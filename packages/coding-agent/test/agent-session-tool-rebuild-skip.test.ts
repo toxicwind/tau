@@ -12,10 +12,7 @@ import { AgentSession } from "tau/session/agent-session";
 import { type CustomMessage, convertToLlm } from "tau/session/messages";
 import { SessionMaintenance } from "tau/session/session-maintenance";
 import { SessionManager } from "tau/session/session-manager";
-import {
-	collectMountedMCPToolRoutes,
-	projectMountedMCPXdevGuidance,
-} from "tau/session/session-tools";
+import { collectMountedMCPToolRoutes, projectMountedMCPXdevGuidance } from "tau/session/session-tools";
 import { listXdevTools, XDEV_EXTERNAL_DESCRIPTION_CAP, type XdevState } from "tau/tools/xdev";
 import { logger } from "@tau/tau-utils";
 

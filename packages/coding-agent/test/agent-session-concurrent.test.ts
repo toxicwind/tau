@@ -10,10 +10,7 @@ import { scheduler } from "node:timers/promises";
 import { type } from "@tau/tautype";
 import { Agent, type AgentMessage, type AgentTool } from "@tau/tau-agent-core";
 import type { AssistantMessage, AssistantMessageEvent, ToolCall } from "@tau/tau-ai";
-import {
-	accumulateToolCallArgumentsDelta,
-	finalizeToolCallArgumentsDone,
-} from "@tau/tau-ai/providers/openai-shared";
+import { accumulateToolCallArgumentsDelta, finalizeToolCallArgumentsDone } from "@tau/tau-ai/providers/openai-shared";
 import { createMockModel } from "@tau/tau-ai/providers/mock";
 import { kStreamingPartialJson } from "@tau/tau-ai/utils/block-symbols";
 import { AssistantMessageEventStream } from "@tau/tau-ai/utils/event-stream";

@@ -85,12 +85,7 @@ export * from "./ask";
 export * from "./ast-edit";
 export * from "./ast-grep";
 export * from "./bash";
-export type {
-	BashToolDetails,
-	BashRenderArgs,
-	BashRenderContext,
-	ShellRendererConfig,
-} from "@tau/tau-tui/tools/bash";
+export type { BashToolDetails, BashRenderArgs, BashRenderContext, ShellRendererConfig } from "@tau/tau-tui/tools/bash";
 export * from "./browser";
 export * from "./checkpoint";
 export * from "./computer";

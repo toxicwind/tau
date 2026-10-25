@@ -10,10 +10,7 @@
 
 import { describe, expect, it } from "bun:test";
 import type { Usage } from "@tau/tau-ai";
-import {
-	RedisSessionStorage,
-	type RedisSessionStorageClient,
-} from "tau/session/redis-session-storage";
+import { RedisSessionStorage, type RedisSessionStorageClient } from "tau/session/redis-session-storage";
 import { SessionManager } from "tau/session/session-manager";
 import { SessionWriteConflictError } from "tau/session/session-storage";
 

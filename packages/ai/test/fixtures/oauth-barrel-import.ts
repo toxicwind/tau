@@ -1,7 +1,4 @@
-import {
-	getOAuthProviders as rootGetOAuthProviders,
-	refreshOAuthToken as rootRefreshOAuthToken,
-} from "@tau/tau-ai";
+import { getOAuthProviders as rootGetOAuthProviders, refreshOAuthToken as rootRefreshOAuthToken } from "@tau/tau-ai";
 import {
 	getOAuthProviders as oauthGetOAuthProviders,
 	refreshOAuthToken as oauthRefreshOAuthToken,

@@ -9,13 +9,13 @@
  * Regenerate with: bun run scripts/sync-legacy-pi-contract.ts
  */
 export const LEGACY_PI_ROOT_EXPORTS = {
-  // core/session
-  AgentSession: "class",
-  parseSkillBlock: "function",
-  // ParsedSkillBlock is a type — no runtime presence required
-  ParsedSkillBlock: "type",
+	// core/session
+	AgentSession: "class",
+	parseSkillBlock: "function",
+	// ParsedSkillBlock is a type — no runtime presence required
+	ParsedSkillBlock: "type",
 
-  // skills / extensibility
-  loadSkills: "function",
-  getAgentDir: "function",
+	// skills / extensibility
+	loadSkills: "function",
+	getAgentDir: "function",
 } as const satisfies Record<string, "function" | "class" | "type">;

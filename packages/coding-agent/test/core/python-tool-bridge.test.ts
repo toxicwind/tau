@@ -1,11 +1,7 @@
 import { afterAll, describe, expect, it } from "bun:test";
 import type { AgentTool, AgentToolResult } from "@tau/tau-agent-core";
 import { PYTHON_PRELUDE } from "tau/eval/py/prelude";
-import {
-	disposePyToolBridge,
-	ensurePyToolBridge,
-	registerPyToolBridge,
-} from "tau/eval/py/tool-bridge";
+import { disposePyToolBridge, ensurePyToolBridge, registerPyToolBridge } from "tau/eval/py/tool-bridge";
 import type { EvalShadowCellSession } from "tau/eval/speculation/cell-session";
 import type { ToolSession } from "tau/tools";
 import { $which, isRecord } from "@tau/tau-utils";

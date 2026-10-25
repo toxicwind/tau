@@ -88,7 +88,11 @@ export function embeddingApiKey(env: Env = process.env): string {
 }
 
 export function embeddingApiUrl(env: Env = process.env): string {
-	return envString("MNEMOTAU_EMBEDDING_API_URL", envString("OPENROUTER_BASE_URL", DEFAULT_EMBEDDING_API_URL, env), env);
+	return envString(
+		"MNEMOTAU_EMBEDDING_API_URL",
+		envString("OPENROUTER_BASE_URL", DEFAULT_EMBEDDING_API_URL, env),
+		env,
+	);
 }
 
 export function embeddingsViaApi(env: Env = process.env): boolean {

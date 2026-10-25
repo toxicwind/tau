@@ -6,12 +6,7 @@ import type { Skill } from "tau/extensibility/skills";
 import { parseArgs } from "tau/cli/args";
 import { ModelRegistry } from "tau/config/model-registry";
 import { Settings } from "tau/config/settings";
-import {
-	applyResolvedSystemPromptInputs,
-	buildSessionOptions,
-	readPipedInput,
-	submitInteractiveInput,
-} from "tau/main";
+import { applyResolvedSystemPromptInputs, buildSessionOptions, readPipedInput, submitInteractiveInput } from "tau/main";
 import type { SubmittedUserInput } from "tau/modes/types";
 import { SKILL_PROMPT_MESSAGE_TYPE } from "tau/session/messages";
 import { discoverTitleSystemPromptFile } from "tau/system-prompt";

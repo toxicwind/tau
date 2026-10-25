@@ -4,11 +4,7 @@
  * attempt real exports without contaminating the test runner.
  */
 
-import {
-	flushTelemetryExport,
-	initTelemetryExport,
-	isTelemetryExportEnabled,
-} from "tau/telemetry-export";
+import { flushTelemetryExport, initTelemetryExport, isTelemetryExportEnabled } from "tau/telemetry-export";
 import { logger } from "@tau/tau-utils";
 import { metrics, trace } from "@opentelemetry/api";
 

@@ -4,13 +4,7 @@
  */
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import {
-	type Agent,
-	AgentBusyError,
-	type AgentMessage,
-	EventLoopKeepalive,
-	ThinkingLevel,
-} from "@tau/tau-agent-core";
+import { type Agent, AgentBusyError, type AgentMessage, EventLoopKeepalive, ThinkingLevel } from "@tau/tau-agent-core";
 import type { CompactionOutcome } from "@tau/tau-agent-core/compaction";
 import type { AssistantMessage, ImageContent, Model, Usage, UsageReport } from "@tau/tau-ai";
 import { modelsAreEqual } from "@tau/tau-catalog/models";
@@ -115,10 +109,7 @@ import planModeCompactInstructionsPrompt from "../prompts/system/plan-mode-compa
 import type { AgentHubRegistry } from "@tau/tau-tui/overlays/agent-hub-types";
 import { formatCost } from "@tau/tau-tui/overlays/agent-hub-renderer";
 import { AgentRegistry, MAIN_AGENT_ID } from "../registry/agent-registry";
-import {
-	startWorldRegistryBridge,
-	type WorldRegistryBridge,
-} from "../registry/world-registry-bridge";
+import { startWorldRegistryBridge, type WorldRegistryBridge } from "../registry/world-registry-bridge";
 import {
 	type AgentSession,
 	type AgentSessionEvent,
@@ -5924,7 +5915,8 @@ export class InteractiveMode implements InteractiveModeContext {
 			// session is still attached rather than a half-torn-down one. A crash
 			// that skips this is covered by the lister's pid-liveness prune.
 			await this.#worldRegistryBridge?.close().catch(() => {});
-			this.#worldRegistryBridge = undefined;			await this.#liveCommandController.stop();
+			this.#worldRegistryBridge = undefined;
+			await this.#liveCommandController.stop();
 			await this.#btwController.dispose();
 			this.#omfgController.dispose();
 			this.#cleanseController.dispose();

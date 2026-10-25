@@ -1,9 +1,6 @@
 import { beforeAll, describe, expect, it } from "bun:test";
 import type { Usage } from "@tau/tau-ai/types";
-import {
-	CacheInvalidationMarkerComponent,
-	detectCacheInvalidation,
-} from "@tau/tau-tui/chat/cache-invalidation-marker";
+import { CacheInvalidationMarkerComponent, detectCacheInvalidation } from "@tau/tau-tui/chat/cache-invalidation-marker";
 import { initTheme } from "@tau/tau-tui/theme";
 
 function usage(parts: { input?: number; cacheRead?: number; cacheWrite?: number; output?: number }): Usage {

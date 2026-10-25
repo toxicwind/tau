@@ -6,13 +6,7 @@ import type { OAuthProvider } from "@tau/tau-ai/oauth/types";
 import * as vcs from "@tau/tau-natives/vcs";
 import type { Component, OverlayHandle, ResizeScrollbackMode } from "@tau/tau-tui";
 import { Loader, Spacer, setTuiTight, Text } from "@tau/tau-tui";
-import {
-	getAgentDbPath,
-	getAgentDir,
-	getProjectDir,
-	normalizePathForComparison,
-	sanitizeText,
-} from "@tau/tau-utils";
+import { getAgentDbPath, getAgentDir, getProjectDir, normalizePathForComparison, sanitizeText } from "@tau/tau-utils";
 import {
 	ADVISOR_DEFAULT_TOOL_NAMES,
 	discoverAdvisorConfigs,

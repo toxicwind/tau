@@ -8,11 +8,7 @@ import { Settings } from "tau/config/settings";
 import { AgentSession } from "tau/session/agent-session";
 import { AuthStorage } from "tau/session/auth-storage";
 import { expandModelMentionTags } from "@tau/tau-tui/prompt/model-mention-syntax";
-import {
-	MODEL_MENTION_ENTRY_TYPE,
-	ModelMentionRegistry,
-	readModelMentions,
-} from "tau/session/model-mentions";
+import { MODEL_MENTION_ENTRY_TYPE, ModelMentionRegistry, readModelMentions } from "tau/session/model-mentions";
 import { SessionManager } from "tau/session/session-manager";
 import { getBundledAgent } from "tau/task/agents";
 

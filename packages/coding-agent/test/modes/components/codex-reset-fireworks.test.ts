@@ -2,10 +2,7 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } 
 import { stripVTControlCharacters } from "node:util";
 import type { Component, OverlayHandle, OverlayOptions } from "@tau/tau-tui";
 import { Settings } from "../../../src/config/settings";
-import {
-	CodexResetFireworksController,
-	detectCodexResetFireworks,
-} from "@tau/tau-tui/overlays/codex-reset-fireworks";
+import { CodexResetFireworksController, detectCodexResetFireworks } from "@tau/tau-tui/overlays/codex-reset-fireworks";
 import { getThemeByName, setThemeInstance, type Theme, theme } from "@tau/tau-tui/theme";
 
 type CodexResetFireworksHost = ConstructorParameters<typeof CodexResetFireworksController>[0];

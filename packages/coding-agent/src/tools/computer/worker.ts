@@ -27,13 +27,7 @@ import {
 } from "../run-scope";
 import { ToolAbortError, throwIfAborted } from "../tool-errors";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
-import {
-	isHyprlandActive,
-	hyprListWindows,
-	hyprListDisplays,
-	hyprFocusWindow,
-	hyprCaptureRegion,
-} from "./hyprland";
+import { isHyprlandActive, hyprListWindows, hyprListDisplays, hyprFocusWindow, hyprCaptureRegion } from "./hyprland";
 import type {
 	ComputerScreenshot,
 	ComputerSessionSnapshot,

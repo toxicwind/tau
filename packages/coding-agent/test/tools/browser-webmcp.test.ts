@@ -3,11 +3,7 @@ import { Settings } from "tau/config/settings";
 import { disposeAllVmContexts } from "tau/eval/js/context-manager";
 import { createBrowserPrelude } from "tau/tools/browser";
 import { releaseAllTabs } from "tau/tools/browser/tab-supervisor";
-import type {
-	WebMcpEventsResult,
-	WebMcpInvokeResult,
-	WebMcpListResult,
-} from "tau/tools/browser/webmcp";
+import type { WebMcpEventsResult, WebMcpInvokeResult, WebMcpListResult } from "tau/tools/browser/webmcp";
 import type { ToolSession } from "tau/tools/index";
 import { chromiumAvailable } from "./chromium-probe";
 

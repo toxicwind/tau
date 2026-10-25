@@ -1,11 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import type { Model } from "@tau/tau-ai";
 import { buildModel } from "@tau/tau-catalog/build";
-import {
-	RawSseDebugBuffer,
-	rawSseRecordLines,
-	resolveRawSseDebugBuffer,
-} from "@tau/tau-tui/apps/debug/raw-sse-buffer";
+import { RawSseDebugBuffer, rawSseRecordLines, resolveRawSseDebugBuffer } from "@tau/tau-tui/apps/debug/raw-sse-buffer";
 
 const model: Model<"anthropic-messages"> = buildModel({
 	id: "claude-test",

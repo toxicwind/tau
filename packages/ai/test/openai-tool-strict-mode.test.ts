@@ -2,15 +2,7 @@ import { describe, expect, it } from "bun:test";
 import { type } from "@tau/tautype";
 import { streamOpenAICompletions } from "@tau/tau-ai/providers/openai-completions";
 import { streamOpenAIResponses } from "@tau/tau-ai/providers/openai-responses";
-import type {
-	Context,
-	FetchImpl,
-	Model,
-	ModelSpec,
-	OpenAICompat,
-	ProviderSessionState,
-	Tool,
-} from "@tau/tau-ai/types";
+import type { Context, FetchImpl, Model, ModelSpec, OpenAICompat, ProviderSessionState, Tool } from "@tau/tau-ai/types";
 import { buildModel } from "@tau/tau-catalog/build";
 import { getBundledModel } from "@tau/tau-catalog/models";
 

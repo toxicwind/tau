@@ -3,10 +3,7 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import { Settings } from "tau/config/settings";
-import {
-	registerArtifactsDir,
-	resetRegisteredArtifactDirsForTests,
-} from "tau/internal-urls/registry-helpers";
+import { registerArtifactsDir, resetRegisteredArtifactDirsForTests } from "tau/internal-urls/registry-helpers";
 import type { ToolSession } from "tau/tools";
 import { formatTruncationMetaNotice } from "@tau/tau-tui/tools/output-meta";
 import { ReadTool } from "tau/tools/read";

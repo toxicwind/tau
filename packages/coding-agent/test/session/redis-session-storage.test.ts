@@ -15,10 +15,7 @@
  */
 
 import { beforeEach, describe, expect, it } from "bun:test";
-import {
-	RedisSessionStorage,
-	type RedisSessionStorageClient,
-} from "tau/session/redis-session-storage";
+import { RedisSessionStorage, type RedisSessionStorageClient } from "tau/session/redis-session-storage";
 import { serializeTitleSlot } from "tau/session/session-title-slot";
 
 interface FakeRedisCall {

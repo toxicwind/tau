@@ -3808,35 +3808,35 @@ export async function runSubprocess(options: ExecutorOptions): Promise<SingleRes
 					persistedSystemPrompt !== undefined
 						? [persistedSystemPrompt]
 						: defaultPrompt => {
-					const ircRoster = ircEnabled
-						? collectIrcPeerRoster(AgentRegistry.global(), id, ircRootSessionFile)
-						: undefined;
-					const subagentPrompt = prompt.render(subagentSystemPromptTemplate, {
-						agent: agent.systemPrompt,
-						context: options.context?.trim() ?? "",
-						planReference: options.planReference?.content ?? "",
-						planReferencePath: options.planReference?.path ?? "",
-						worktree: worktree ?? "",
-						outputSchema: normalizedOutputSchema,
-						outputSchemaOverridesAgent: options.outputSchemaOverridesAgent === true,
-						// Read the live item set through the registry instead of capturing
-						// the session: this callback outlives the turn via the lifecycle
-						// reviver, and a captured session would pin its whole graph past
-						// TTL park disposal. Parked revivals build while the registry
-						// session is null, so render the cleared set rather than
-						// resurrecting the launch-time pooled instructions.
-						workPoolYieldItems:
-							AgentRegistry.global().get(id)?.session?.getWorkPoolYieldItems?.() ??
-							(forRevive ? [] : (options.workPoolYieldItems ?? [])),
-						ircPeers: ircRoster?.peers ?? [],
-						ircParkedCount: ircRoster?.parkedCount ?? 0,
-						ircOmittedCount: ircRoster?.omittedCount ?? 0,
-						ircSelfId: ircEnabled ? id : "",
-					});
-					return defaultPrompt.length === 0
-						? [subagentPrompt]
-						: [...defaultPrompt.slice(0, -1), subagentPrompt, defaultPrompt[defaultPrompt.length - 1]];
-				},
+								const ircRoster = ircEnabled
+									? collectIrcPeerRoster(AgentRegistry.global(), id, ircRootSessionFile)
+									: undefined;
+								const subagentPrompt = prompt.render(subagentSystemPromptTemplate, {
+									agent: agent.systemPrompt,
+									context: options.context?.trim() ?? "",
+									planReference: options.planReference?.content ?? "",
+									planReferencePath: options.planReference?.path ?? "",
+									worktree: worktree ?? "",
+									outputSchema: normalizedOutputSchema,
+									outputSchemaOverridesAgent: options.outputSchemaOverridesAgent === true,
+									// Read the live item set through the registry instead of capturing
+									// the session: this callback outlives the turn via the lifecycle
+									// reviver, and a captured session would pin its whole graph past
+									// TTL park disposal. Parked revivals build while the registry
+									// session is null, so render the cleared set rather than
+									// resurrecting the launch-time pooled instructions.
+									workPoolYieldItems:
+										AgentRegistry.global().get(id)?.session?.getWorkPoolYieldItems?.() ??
+										(forRevive ? [] : (options.workPoolYieldItems ?? [])),
+									ircPeers: ircRoster?.peers ?? [],
+									ircParkedCount: ircRoster?.parkedCount ?? 0,
+									ircOmittedCount: ircRoster?.omittedCount ?? 0,
+									ircSelfId: ircEnabled ? id : "",
+								});
+								return defaultPrompt.length === 0
+									? [subagentPrompt]
+									: [...defaultPrompt.slice(0, -1), subagentPrompt, defaultPrompt[defaultPrompt.length - 1]];
+							},
 				sessionManager: sessionManagerForRun,
 				hasUI: false,
 				prewalk,
@@ -3964,12 +3964,7 @@ export async function runSubprocess(options: ExecutorOptions): Promise<SingleRes
 					// the volatile IRC peer roster).
 					const persistedInit = extractSessionInit(reopened.getEntries());
 					const { session: revived } = await createAgentSession(
-						buildSubagentSessionOptions(
-							reopened,
-							expectedAgentRef,
-							true,
-							persistedInit?.systemPrompt,
-						),
+						buildSubagentSessionOptions(reopened, expectedAgentRef, true, persistedInit?.systemPrompt),
 					);
 					// Re-run the executor's extension wiring on the rebuilt session.
 					// Skipping it leaves the runner pre-init, so a `tool_call` handler

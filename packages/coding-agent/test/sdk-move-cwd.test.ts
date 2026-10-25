@@ -193,80 +193,83 @@ describe("createAgentSession cwd after /move", () => {
 			}
 		}
 	});
-	it.each(["hindsight", "mnemotau"] as const)("keeps %s disabled in restricted sessions after /move", async backend => {
-		const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "tau-sdk-restricted-memory-move-"));
-		tempDirs.push(tempDir);
-		const cwdA = path.join(tempDir, "cwd-a");
-		const cwdB = path.join(tempDir, "cwd-b");
-		const agentDir = path.join(tempDir, "agent");
-		await Promise.all(
-			[cwdA, cwdB].map(cwd =>
-				Bun.write(
-					path.join(getProjectAgentDir(cwd), "config.yml"),
-					Bun.YAML.stringify({
-						memory: { backend },
-						hindsight: { apiUrl: "http://127.0.0.1:1", mentalModelsEnabled: false },
-						mnemotau: { noEmbeddings: true, llmMode: "none" },
-					}),
+	it.each(["hindsight", "mnemotau"] as const)(
+		"keeps %s disabled in restricted sessions after /move",
+		async backend => {
+			const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "tau-sdk-restricted-memory-move-"));
+			tempDirs.push(tempDir);
+			const cwdA = path.join(tempDir, "cwd-a");
+			const cwdB = path.join(tempDir, "cwd-b");
+			const agentDir = path.join(tempDir, "agent");
+			await Promise.all(
+				[cwdA, cwdB].map(cwd =>
+					Bun.write(
+						path.join(getProjectAgentDir(cwd), "config.yml"),
+						Bun.YAML.stringify({
+							memory: { backend },
+							hindsight: { apiUrl: "http://127.0.0.1:1", mentalModelsEnabled: false },
+							mnemotau: { noEmbeddings: true, llmMode: "none" },
+						}),
+					),
 				),
-			),
-		);
-		const settings = await Settings.loadIsolated({ cwd: cwdA, agentDir });
-		const sessionManager = SessionManager.create(cwdA, path.join(tempDir, "sessions"));
-		const authStorage = createInMemoryAuthStorage();
-		const { session } = await createAgentSession({
-			cwd: cwdA,
-			agentDir,
-			sessionManager,
-			authStorage,
-			modelRegistry: new ModelRegistry(authStorage, path.join(tempDir, "models.yml")),
-			settings,
-			model: getBundledModel("openai", "gpt-4o-mini"),
-			restrictToolNames: true,
-			toolNames: ["read"],
-			disableExtensionDiscovery: true,
-			skills: [],
-			contextFiles: [],
-			promptTemplates: [],
-			slashCommands: [],
-			enableMCP: false,
-			enableLsp: false,
-			skipPythonPreflight: true,
-			rules: [],
-			preloadedCustomToolPaths: [],
-		});
-		const originalProjectDir = getProjectDir();
-		try {
-			expect(session.getHindsightSessionState()).toBeUndefined();
-			expect(session.getMnemotauSessionState()).toBeUndefined();
-			const output: string[] = [];
-			await executeAcpBuiltinSlashCommand("/move " + cwdB, {
-				session,
-				sessionManager,
-				settings,
+			);
+			const settings = await Settings.loadIsolated({ cwd: cwdA, agentDir });
+			const sessionManager = SessionManager.create(cwdA, path.join(tempDir, "sessions"));
+			const authStorage = createInMemoryAuthStorage();
+			const { session } = await createAgentSession({
 				cwd: cwdA,
-				output: text => {
-					output.push(text);
-				},
-				refreshCommands: () => {},
-				reloadPlugins: async () => {},
+				agentDir,
+				sessionManager,
+				authStorage,
+				modelRegistry: new ModelRegistry(authStorage, path.join(tempDir, "models.yml")),
+				settings,
+				model: getBundledModel("openai", "gpt-4o-mini"),
+				restrictToolNames: true,
+				toolNames: ["read"],
+				disableExtensionDiscovery: true,
+				skills: [],
+				contextFiles: [],
+				promptTemplates: [],
+				slashCommands: [],
+				enableMCP: false,
+				enableLsp: false,
+				skipPythonPreflight: true,
+				rules: [],
+				preloadedCustomToolPaths: [],
 			});
-			expect(output.join("\n")).toContain("Moved to ");
-			expect(sessionManager.getCwd()).toBe(cwdB);
-			expect(session.getHindsightSessionState()).toBeUndefined();
-			expect(session.getMnemotauSessionState()).toBeUndefined();
-			// Explicit backend reapplication must preserve the same startup policy.
-			await session.applyMemoryBackend();
-			expect(session.getHindsightSessionState()).toBeUndefined();
-			expect(session.getMnemotauSessionState()).toBeUndefined();
-			expect(session.getActiveToolNames()).toEqual(["read"]);
-		} finally {
-			setProjectDir(originalProjectDir);
+			const originalProjectDir = getProjectDir();
 			try {
-				await session.dispose();
+				expect(session.getHindsightSessionState()).toBeUndefined();
+				expect(session.getMnemotauSessionState()).toBeUndefined();
+				const output: string[] = [];
+				await executeAcpBuiltinSlashCommand("/move " + cwdB, {
+					session,
+					sessionManager,
+					settings,
+					cwd: cwdA,
+					output: text => {
+						output.push(text);
+					},
+					refreshCommands: () => {},
+					reloadPlugins: async () => {},
+				});
+				expect(output.join("\n")).toContain("Moved to ");
+				expect(sessionManager.getCwd()).toBe(cwdB);
+				expect(session.getHindsightSessionState()).toBeUndefined();
+				expect(session.getMnemotauSessionState()).toBeUndefined();
+				// Explicit backend reapplication must preserve the same startup policy.
+				await session.applyMemoryBackend();
+				expect(session.getHindsightSessionState()).toBeUndefined();
+				expect(session.getMnemotauSessionState()).toBeUndefined();
+				expect(session.getActiveToolNames()).toEqual(["read"]);
 			} finally {
-				authStorage.close();
+				setProjectDir(originalProjectDir);
+				try {
+					await session.dispose();
+				} finally {
+					authStorage.close();
+				}
 			}
-		}
-	});
+		},
+	);
 });

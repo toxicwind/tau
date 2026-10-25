@@ -7,10 +7,7 @@ import { isCatalogDescriptor, resolveModelCacheProviderId } from "@tau/tau-catal
 import { DEFAULT_MODEL_PER_PROVIDER, PROVIDER_DESCRIPTORS } from "@tau/tau-catalog/provider-models/descriptors";
 import { singularityApiDevModelManagerOptions } from "@tau/tau-catalog/provider-models/openai-compat";
 import type { FetchImpl, ModelSpec } from "@tau/tau-catalog/types";
-import {
-	SINGULARITYAPI_DEV_API_BASE_URL,
-	normalizeSingularityApiBaseUrl,
-} from "@tau/tau-catalog/wire/singularityapi";
+import { SINGULARITYAPI_DEV_API_BASE_URL, normalizeSingularityApiBaseUrl } from "@tau/tau-catalog/wire/singularityapi";
 
 const originalKey = Bun.env.SINGULARITYAPI_DEV_API_KEY;
 

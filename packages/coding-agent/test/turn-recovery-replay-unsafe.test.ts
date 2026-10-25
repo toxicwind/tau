@@ -8,11 +8,7 @@ import type { Model, Usage } from "@tau/tau-catalog/types";
 import { ModelRegistry } from "tau/config/model-registry";
 import { Settings } from "tau/config/settings";
 import { AuthStorage } from "tau/session/auth-storage";
-import {
-	type RecoveryCompactionResult,
-	TurnRecovery,
-	type TurnRecoveryHost,
-} from "tau/session/turn-recovery";
+import { type RecoveryCompactionResult, TurnRecovery, type TurnRecoveryHost } from "tau/session/turn-recovery";
 import { TempDir } from "@tau/tau-utils";
 import { createProviderErrorMessage } from "../../ai/src/providers/error-message";
 

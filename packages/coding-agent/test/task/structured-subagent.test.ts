@@ -4,10 +4,7 @@ import * as os from "node:os";
 import path from "node:path";
 import { Settings } from "tau/config/settings";
 import type { BeforeSubagentSpawnEvent } from "tau/extensibility/extensions/types";
-import {
-	artifactsDirsFromRegistry,
-	resetRegisteredArtifactDirsForTests,
-} from "tau/internal-urls/registry-helpers";
+import { artifactsDirsFromRegistry, resetRegisteredArtifactDirsForTests } from "tau/internal-urls/registry-helpers";
 import * as planHandoff from "tau/plan-mode/plan-handoff";
 import * as discoveryModule from "tau/task/discovery";
 import { createEvalCustomTools } from "tau/task/eval-tools";

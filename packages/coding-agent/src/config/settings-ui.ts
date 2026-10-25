@@ -110,7 +110,8 @@ export function createSettingsHost(settingsInstance?: Settings): SettingsHost {
 				return getDefault(path as SettingPath);
 			}
 		},
-		set: (path, value) => (settingsInstance ?? Settings.instance ?? settings).set(path as SettingPath, value as never),
+		set: (path, value) =>
+			(settingsInstance ?? Settings.instance ?? settings).set(path as SettingPath, value as never),
 		normalizeProviderLimits: normalizeProviderMaxInFlightRequests,
 		validateProviderLimits: validateProviderMaxInFlightRequests,
 	};

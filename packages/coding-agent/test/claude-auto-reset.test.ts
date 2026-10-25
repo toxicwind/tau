@@ -1,9 +1,6 @@
 import { describe, expect, it } from "bun:test";
 import type { ResetCreditAccountStatus, UsageReport, UsageResetCredit } from "@tau/tau-ai";
-import {
-	planClaudeResetRedemptions,
-	type ClaudeResetPlanInput,
-} from "tau/session/claude-auto-reset";
+import { planClaudeResetRedemptions, type ClaudeResetPlanInput } from "tau/session/claude-auto-reset";
 
 const NOW = 1_700_000_040_000;
 const HOUR = 3_600_000;

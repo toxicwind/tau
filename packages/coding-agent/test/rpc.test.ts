@@ -4,12 +4,7 @@ import * as os from "node:os";
 import * as path from "node:path";
 import type { AgentEvent, AgentMessage } from "@tau/tau-agent-core";
 import { type AssistantMessage, Effort, type TextContent } from "@tau/tau-ai";
-import {
-	type CompactionEntry,
-	type FileEntry,
-	parseSessionEntries,
-	type SessionMessageEntry,
-} from "tau";
+import { type CompactionEntry, type FileEntry, parseSessionEntries, type SessionMessageEntry } from "tau";
 import { RpcClient } from "tau/modes/rpc/rpc-client";
 import type { BashExecutionMessage } from "tau/session/messages";
 import { removeSyncWithRetries, Snowflake } from "@tau/tau-utils";

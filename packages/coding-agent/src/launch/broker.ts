@@ -6,12 +6,7 @@ import { FileLock, Process, type PtyRunResult, PtySession } from "@tau/tau-nativ
 import { isEnoent, logger, postmortem, procmgr, sanitizeText, setProcessName } from "@tau/tau-utils";
 import { TerminalQueryResponder } from "@tau/tau-utils/vterm";
 import { hostHasInheritableConsole } from "../eval/py/spawn-options";
-import {
-	truncateHead,
-	truncateHeadBytes,
-	truncateTail,
-	truncateTailBytes,
-} from "@tau/tau-tui/tools/streaming-output";
+import { truncateHead, truncateHeadBytes, truncateTail, truncateTailBytes } from "@tau/tau-tui/tools/streaming-output";
 import { workerEnvFromParent } from "../subprocess/worker-client";
 import { daemonBrokerEndpoint, writeDaemonScopeMeta } from "./paths";
 import type { DaemonReadySpec, DaemonSnapshot, DaemonSpec } from "@tau/tau-tui/tools/daemon";

@@ -177,10 +177,7 @@ describe("dedupeContainedContextFiles", () => {
 			const projectLink = path.join(projectDir, "AGENTS.md");
 			fs.symlinkSync(realConfig, projectLink);
 
-			const files = [
-				file(realConfig, "Shared rule.", 5),
-				file(projectLink, "Shared rule.", 0),
-			];
+			const files = [file(realConfig, "Shared rule.", 5), file(projectLink, "Shared rule.", 0)];
 
 			const result = dedupeContainedContextFiles(files);
 			expect(paths(result)).toEqual([projectLink]);
@@ -211,10 +208,7 @@ describe("dedupeContainedContextFiles", () => {
 			const nonExistent1 = "/non/existent/path/AGENTS.md";
 			const nonExistent2 = "/another/missing/file.md";
 
-			const files = [
-				file(nonExistent1, "Rule A.", 2),
-				file(nonExistent2, "Rule B.", 0),
-			];
+			const files = [file(nonExistent1, "Rule A.", 2), file(nonExistent2, "Rule B.", 0)];
 
 			expect(() => dedupeContainedContextFiles(files)).not.toThrow();
 			expect(paths(dedupeContainedContextFiles(files))).toEqual([nonExistent1, nonExistent2]);

@@ -8,11 +8,7 @@ import { AssistantMessageEventStream } from "@tau/tau-ai/utils/event-stream";
 import { getBundledModel } from "@tau/tau-catalog/models";
 import { ModelRegistry } from "tau/config/model-registry";
 import { Settings } from "tau/config/settings";
-import {
-	ExtensionRunner,
-	loadExtensionFromFactory,
-	loadExtensions,
-} from "tau/extensibility/extensions";
+import { ExtensionRunner, loadExtensionFromFactory, loadExtensions } from "tau/extensibility/extensions";
 import { SecretObfuscator } from "tau/secrets";
 import { AgentSession, type AgentSessionEvent } from "tau/session/agent-session";
 import { AuthStorage } from "tau/session/auth-storage";

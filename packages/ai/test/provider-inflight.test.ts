@@ -4,11 +4,7 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { clearCustomApis } from "@tau/tau-ai/api-registry";
 import { createMockModel, registerMockApi } from "@tau/tau-ai/providers/mock";
-import {
-	__providerInFlightForTesting,
-	configureProviderMaxInFlightRequests,
-	streamSimple,
-} from "@tau/tau-ai/stream";
+import { __providerInFlightForTesting, configureProviderMaxInFlightRequests, streamSimple } from "@tau/tau-ai/stream";
 import type { Context } from "@tau/tau-ai/types";
 
 function context(): Context {

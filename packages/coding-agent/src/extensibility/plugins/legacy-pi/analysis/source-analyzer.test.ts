@@ -3,8 +3,7 @@ import { AstParser } from "./ast-parser";
 import { ExtensionParseCache } from "./analysis-cache";
 import { extensionParseCacheKey, SourceAnalyzer } from "./source-analyzer";
 
-const makeAnalyzer = () =>
-	new SourceAnalyzer(new AstParser(), new ExtensionParseCache(":memory:"));
+const makeAnalyzer = () => new SourceAnalyzer(new AstParser(), new ExtensionParseCache(":memory:"));
 
 describe("extensionParseCacheKey", () => {
 	test("is deterministic for the same source and extension", () => {

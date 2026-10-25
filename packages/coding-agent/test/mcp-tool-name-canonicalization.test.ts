@@ -1,9 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import {
-	canonicalMCPToolNameCandidates,
-	createMCPToolName,
-	resolveMCPToolAlias,
-} from "tau/mcp/tool-bridge";
+import { canonicalMCPToolNameCandidates, createMCPToolName, resolveMCPToolAlias } from "tau/mcp/tool-bridge";
 import { resolveMountedXdevExecutable, type XdevState } from "tau/tools/xdev";
 import type { Tool } from "tau/tools/index";
 

@@ -1,9 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import { ToolExecutionComponent } from "@tau/tau-tui/chat/tool-execution";
-import {
-	decodeStreamedToolArgs,
-	streamingStringKeysForTool,
-} from "tau/modes/controllers/tool-args-reveal";
+import { decodeStreamedToolArgs, streamingStringKeysForTool } from "tau/modes/controllers/tool-args-reveal";
 import * as themeModule from "@tau/tau-tui/theme";
 import { writeToolRenderer } from "@tau/tau-tui/tools/write";
 import type { TUI } from "@tau/tau-tui";

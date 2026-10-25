@@ -82,11 +82,16 @@ export class FindTool implements AgentTool<typeof findSchema, FindToolDetails> {
 				tauScope?.scopePath ??
 				(root === path.resolve(cwd) ? undefined : formatPathRelativeToCwd(root, cwd, { trailingSlash: true }));
 			const registry = this.session.modelRegistry;
-			const canJudge = registry !== undefined && hasNativeJudge(this.session.settings, registry) && (params.grep_keywords?.length ?? 0) > 0;
+			const canJudge =
+				registry !== undefined &&
+				hasNativeJudge(this.session.settings, registry) &&
+				(params.grep_keywords?.length ?? 0) > 0;
 			if (!canJudge) {
 				const started = performance.now();
 				try {
-					const proc = Bun.spawn(["ffs", "find", query, "--root", root, "--format", "json", "--limit", "50"], { signal });
+					const proc = Bun.spawn(["ffs", "find", query, "--root", root, "--format", "json", "--limit", "50"], {
+						signal,
+					});
 					const raw = await new Response(proc.stdout).text();
 					const data = JSON.parse(raw);
 					const matches: string[] = data.matches || [];
@@ -115,7 +120,16 @@ export class FindTool implements AgentTool<typeof findSchema, FindToolDetails> {
 						mapCards: 0,
 						failures: [],
 					};
-					const details: FindToolDetails = { query, keywords: [query], threshold: 1.0, hits, stats, elapsedMs, cwd, scopePath };
+					const details: FindToolDetails = {
+						query,
+						keywords: [query],
+						threshold: 1.0,
+						hits,
+						stats,
+						elapsedMs,
+						cwd,
+						scopePath,
+					};
 					const where = scopePath === undefined ? "" : ` in ${scopePath}`;
 					const out: string[] = [];
 					if (hits.length === 0) {

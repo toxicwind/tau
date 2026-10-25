@@ -6,12 +6,7 @@ import "tau/discovery";
 import { clearCache as clearFsCache } from "tau/capability/fs";
 import { loadSkillshareSkills } from "tau/discovery/skillshare";
 import { loadSkills } from "tau/extensibility/skills";
-import {
-	getSkillStorePath,
-	STORE_INTEGRITY_FILE,
-	type SkillsLock,
-	writeSkillsLock,
-} from "tau/skillshare/manifest";
+import { getSkillStorePath, STORE_INTEGRITY_FILE, type SkillsLock, writeSkillsLock } from "tau/skillshare/manifest";
 import { removeWithRetries } from "@tau/tau-utils";
 import { getAgentDir, setAgentDir } from "@tau/tau-utils/dirs";
 

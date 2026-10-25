@@ -14,14 +14,8 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { Settings } from "tau/config/settings";
 import { InternalUrlRouter } from "tau/internal-urls";
-import {
-	formatCurrentBranchFullHistory,
-	HistoryProtocolHandler,
-} from "tau/internal-urls/history-protocol";
-import {
-	registerArtifactsDir,
-	resetRegisteredArtifactDirsForTests,
-} from "tau/internal-urls/registry-helpers";
+import { formatCurrentBranchFullHistory, HistoryProtocolHandler } from "tau/internal-urls/history-protocol";
+import { registerArtifactsDir, resetRegisteredArtifactDirsForTests } from "tau/internal-urls/registry-helpers";
 import { AgentRegistry } from "tau/registry/agent-registry";
 import type { AgentSession } from "tau/session/agent-session";
 import { CURRENT_SESSION_VERSION, type SessionEntry } from "tau/session/session-entries";

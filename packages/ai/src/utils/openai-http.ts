@@ -62,7 +62,8 @@ function isConcurrencyAdmissionRejection(response: Response, bodyText: string): 
 	if (
 		response.headers.get("rate_limit_type")?.trim() === CONCURRENCY_ADMISSION_LIMITER ||
 		CONCURRENCY_ADMISSION_BODY_PATTERN.test(bodyText)
-	) return true;
+	)
+		return true;
 
 	// OpenAI-compatible provider envelope (e.g. freeinference): `"type":"concurrency_limit_exceeded"`.
 	// A concurrency-admission 429 means the request never reached the model — the server is

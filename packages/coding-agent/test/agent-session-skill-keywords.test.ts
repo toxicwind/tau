@@ -9,11 +9,7 @@ import { Settings } from "tau/config/settings";
 import { renderWorkflowNotice } from "tau/modes/magic-keywords";
 import { AgentSession } from "tau/session/agent-session";
 import { AuthStorage } from "tau/session/auth-storage";
-import {
-	convertToLlm,
-	SKILL_PROMPT_MESSAGE_TYPE,
-	type SkillPromptDetails,
-} from "tau/session/messages";
+import { convertToLlm, SKILL_PROMPT_MESSAGE_TYPE, type SkillPromptDetails } from "tau/session/messages";
 import { SessionManager } from "tau/session/session-manager";
 import { TempDir } from "@tau/tau-utils";
 import { createAssistantMessage } from "./helpers/agent-session-setup";

@@ -1,10 +1,7 @@
 import { describe, expect, mock, test } from "bun:test";
 import type { FetchImpl } from "@tau/tau-ai/types";
 import type { UsageFetchParams } from "@tau/tau-ai/usage";
-import {
-	alibabaTokenPlanRankingStrategy,
-	alibabaTokenPlanUsageProvider,
-} from "@tau/tau-ai/usage/alibaba-token-plan";
+import { alibabaTokenPlanRankingStrategy, alibabaTokenPlanUsageProvider } from "@tau/tau-ai/usage/alibaba-token-plan";
 import {
 	ALIBABA_TOKEN_PLAN_CN_BASE_URL,
 	serializeAlibabaTokenPlanCredential,

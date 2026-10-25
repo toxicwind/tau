@@ -11,10 +11,7 @@
 import { expect, test } from "bun:test";
 import { hasModelScopedEffortLadder, resolveModelPolicy } from "@tau/tau-catalog/compat/resolve";
 import { Effort } from "@tau/tau-catalog/effort";
-import {
-	moonshotModelManagerOptions,
-	novitaModelManagerOptions,
-} from "@tau/tau-catalog/provider-models/openai-compat";
+import { moonshotModelManagerOptions, novitaModelManagerOptions } from "@tau/tau-catalog/provider-models/openai-compat";
 import type { FetchImpl, ModelSpec } from "@tau/tau-catalog/types";
 
 const SHARED_CATALOG_URL = "https://catalog.stencil.so/models.json.zstd";

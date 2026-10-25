@@ -1,16 +1,9 @@
 import { describe, expect, it, spyOn } from "bun:test";
 import * as path from "node:path";
 import { BlobStore } from "tau/session/blob-store";
-import type {
-	CompactionEntry,
-	FileEntry,
-	SessionMessageEntry,
-} from "tau/session/session-entries";
+import type { CompactionEntry, FileEntry, SessionMessageEntry } from "tau/session/session-entries";
 import { formatSessionHistoryMarkdown } from "tau/session/session-history-format";
-import {
-	loadSessionMessagesReadOnly,
-	resolveBlobRefsInEntries,
-} from "tau/session/session-loader";
+import { loadSessionMessagesReadOnly, resolveBlobRefsInEntries } from "tau/session/session-loader";
 import { TempDir } from "@tau/tau-utils";
 import * as snapcompact from "@tau/snapcompact";
 

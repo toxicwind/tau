@@ -1,11 +1,7 @@
 import { describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
 import { isRecord, readJsonl, TempDir } from "@tau/tau-utils";
-import {
-	type PendingExtensionRequest,
-	requestRpcDialog,
-	requestRpcSelect,
-} from "tau/modes/rpc/rpc-mode";
+import { type PendingExtensionRequest, requestRpcDialog, requestRpcSelect } from "tau/modes/rpc/rpc-mode";
 
 function requireRequest(frame: object | undefined): { id: string } {
 	if (!frame || !("id" in frame)) {

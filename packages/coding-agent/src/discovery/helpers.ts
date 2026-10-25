@@ -790,26 +790,26 @@ export async function loadStandaloneContextFiles(
 				seenCanonicalPaths.add(canonical);
 				const content = await readFile(candidate);
 
-			// Empty files contribute nothing and must not claim the depth scope:
-			// at a priority tie, an empty first-registered file would shadow a
-			// non-empty sibling (e.g. an empty AGENTS.md shadowing CLAUDE.md).
-			if (content !== null && content !== "") {
-				const parent = path.dirname(candidate);
-				const baseName = parent.split(path.sep).pop() ?? "";
+				// Empty files contribute nothing and must not claim the depth scope:
+				// at a priority tie, an empty first-registered file would shadow a
+				// non-empty sibling (e.g. an empty AGENTS.md shadowing CLAUDE.md).
+				if (content !== null && content !== "") {
+					const parent = path.dirname(candidate);
+					const baseName = parent.split(path.sep).pop() ?? "";
 
-				if (!baseName.startsWith(".")) {
-					const fileDir = path.dirname(candidate);
-					const calculatedDepth = calculateDepth(cwd, fileDir, path.sep);
+					if (!baseName.startsWith(".")) {
+						const fileDir = path.dirname(candidate);
+						const calculatedDepth = calculateDepth(cwd, fileDir, path.sep);
 
-					items.push({
-						path: candidate,
-						content,
-						level: "project",
-						depth: calculatedDepth,
-						_source: createSourceMeta(providerId, candidate, "project"),
-					});
+						items.push({
+							path: candidate,
+							content,
+							level: "project",
+							depth: calculatedDepth,
+							_source: createSourceMeta(providerId, candidate, "project"),
+						});
+					}
 				}
-			}
 			}
 		}
 		if (atBoundary) break;
@@ -869,7 +869,11 @@ async function readExtensionModuleManifest(
 	const content = await readFile(packageJsonPath);
 	if (!content) return null;
 
-	const pkg = tryParseJson<{ tau?: ExtensionModuleManifest; omp?: ExtensionModuleManifest; pi?: ExtensionModuleManifest }>(content);
+	const pkg = tryParseJson<{
+		tau?: ExtensionModuleManifest;
+		omp?: ExtensionModuleManifest;
+		pi?: ExtensionModuleManifest;
+	}>(content);
 	const manifest = pkg?.tau ?? pkg?.omp ?? pkg?.pi;
 	if (manifest && typeof manifest === "object") {
 		return manifest;

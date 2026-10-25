@@ -2,11 +2,7 @@ import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import {
-	CONFIG_DIR_NAME,
-	createReadToolDefinition,
-	parseArgs,
-} from "tau/extensibility/legacy-tau-coding-agent-shim";
+import { CONFIG_DIR_NAME, createReadToolDefinition, parseArgs } from "tau/extensibility/legacy-tau-coding-agent-shim";
 import { toolReadsSkillUris } from "tau/system-prompt";
 
 describe("legacy shim CLI exports", () => {

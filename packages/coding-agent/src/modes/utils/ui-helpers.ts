@@ -21,10 +21,7 @@ import {
 import { CustomMessageComponent } from "@tau/tau-tui/chat/custom-message";
 import { DynamicBorder } from "@tau/tau-tui/chrome/dynamic-border";
 import { EvalExecutionComponent } from "@tau/tau-tui/chat/eval-execution";
-import {
-	type LateDiagnosticsFile,
-	LateDiagnosticsMessageComponent,
-} from "@tau/tau-tui/chat/late-diagnostics-message";
+import { type LateDiagnosticsFile, LateDiagnosticsMessageComponent } from "@tau/tau-tui/chat/late-diagnostics-message";
 import {
 	groupedReadUsageCallIds,
 	ReadToolGroupComponent,

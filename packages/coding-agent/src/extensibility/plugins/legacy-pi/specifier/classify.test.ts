@@ -1,9 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import {
-	escapeRegExp,
-	isBareExtensionDependencySpecifier,
-	splitBarePackageSpecifier,
-} from "./classify";
+import { escapeRegExp, isBareExtensionDependencySpecifier, splitBarePackageSpecifier } from "./classify";
 
 describe("isBareExtensionDependencySpecifier", () => {
 	test("accepts unscoped bare packages", () => {

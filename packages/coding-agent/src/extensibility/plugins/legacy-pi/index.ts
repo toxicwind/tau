@@ -46,8 +46,5 @@ export {
 
 // Analysis
 export { AstParser } from "./analysis/ast-parser";
-export {
-	EXTENSION_PARSE_CACHE_SCHEMA_VERSION,
-	ExtensionParseCache,
-} from "./analysis/analysis-cache";
+export { EXTENSION_PARSE_CACHE_SCHEMA_VERSION, ExtensionParseCache } from "./analysis/analysis-cache";
 export { extensionParseCacheKey, SourceAnalyzer } from "./analysis/source-analyzer";

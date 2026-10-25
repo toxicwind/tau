@@ -1,9 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import {
-	applyGroqRequestShaping,
-	isGroqRouted,
-	stripGroqReasoningContent,
-} from "../src/providers/groq-coercion";
+import { applyGroqRequestShaping, isGroqRouted, stripGroqReasoningContent } from "../src/providers/groq-coercion";
 
 describe("isGroqRouted", () => {
 	test("true only when compat says Groq host", () => {

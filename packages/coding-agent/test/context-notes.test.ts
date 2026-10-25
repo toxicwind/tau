@@ -1,11 +1,7 @@
 import { describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
 import { Settings } from "tau/config/settings";
-import {
-	CONTEXT_NOTES_ENTRY_TYPE,
-	getContextNotes,
-	MAX_CONTEXT_NOTES_BYTES,
-} from "tau/session/context-notes";
+import { CONTEXT_NOTES_ENTRY_TYPE, getContextNotes, MAX_CONTEXT_NOTES_BYTES } from "tau/session/context-notes";
 import type { ContextNotesEntry } from "tau/session/context-notes";
 import type { CustomEntry, ResetBoundaryEntry, SessionEntry } from "tau/session/session-entries";
 import { SessionManager } from "tau/session/session-manager";

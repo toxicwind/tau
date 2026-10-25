@@ -114,11 +114,7 @@ function resolveRoostModule(): { PROVIDER_DEFS: RoostProviderDef[] } {
 		const path = require("node:path");
 		candidates.push(path.join(os.homedir(), "estate/ranch/mesh/catalog/src/index.ts"));
 	} catch {}
-	candidates.push(
-		"../../../../../mesh/catalog/src/index.ts",
-		"../../../../mesh/catalog/src/index.ts",
-		"@ranch/roost",
-	);
+	candidates.push("../../../../../mesh/catalog/src/index.ts", "../../../../mesh/catalog/src/index.ts", "@ranch/roost");
 	const failures: string[] = [];
 	for (const specifier of candidates) {
 		try {
@@ -143,16 +139,16 @@ const { PROVIDER_DEFS } = roostModule;
  * Absent on the embedded fallback snapshot path (which predates the loader).
  */
 const loadProviderDefs = (
-  roostModule as {
-    loadProviderDefs?: (
-      staticDefs: readonly RoostProviderDef[],
-      opts?: {
-        requiredIds?: readonly string[];
-        dropIns?: readonly RoostProviderDef[];
-        onSynthesize?: (id: string, def: RoostProviderDef) => void;
-      },
-    ) => { defs: RoostProviderDef[]; synthesized: string[] };
-  }
+	roostModule as {
+		loadProviderDefs?: (
+			staticDefs: readonly RoostProviderDef[],
+			opts?: {
+				requiredIds?: readonly string[];
+				dropIns?: readonly RoostProviderDef[];
+				onSynthesize?: (id: string, def: RoostProviderDef) => void;
+			},
+		) => { defs: RoostProviderDef[]; synthesized: string[] };
+	}
 ).loadProviderDefs;
 
 /** Same key-env convention as ranch/mesh/catalog auto-loader. */
@@ -933,7 +929,6 @@ const DEEPINFRA_SEED: CompiledSeed = {
 		},
 	],
 };
-
 
 /**
  * firepass: authored seed rows, transcribed from compiled rules.json

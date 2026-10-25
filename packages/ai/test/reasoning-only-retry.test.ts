@@ -1,11 +1,7 @@
 import { expect, test } from "bun:test";
 import { hasReasoningOnlyEmptyContent } from "../src/utils/reasoning-only-retry";
 
-function makeMessage(opts: {
-	stopReason?: string;
-	content?: any[];
-	reasoningDetails?: unknown[];
-}): any {
+function makeMessage(opts: { stopReason?: string; content?: any[]; reasoningDetails?: unknown[] }): any {
 	return {
 		stopReason: opts.stopReason ?? "stop",
 		content: opts.content ?? [],

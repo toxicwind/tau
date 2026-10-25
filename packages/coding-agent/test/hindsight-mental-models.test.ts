@@ -1,10 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import type { BankScope } from "tau/hindsight/bank";
-import {
-	type HindsightApi,
-	HindsightApi as HindsightApiCtor,
-	type MentalModelSummary,
-} from "tau/hindsight/client";
+import { type HindsightApi, HindsightApi as HindsightApiCtor, type MentalModelSummary } from "tau/hindsight/client";
 import {
 	diffMentalModelContent,
 	ensureMentalModels,

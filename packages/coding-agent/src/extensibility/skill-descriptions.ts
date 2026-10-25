@@ -47,7 +47,10 @@ export function createSkillDescriptionCompressor(
 		const { model } = selected;
 		const apiKey = await registry.getApiKey(model, sessionId);
 		if (!apiKey) {
-			logger.debug("Skill description compression skipped: no credential", { model: model.id, provider: model.provider });
+			logger.debug("Skill description compression skipped: no credential", {
+				model: model.id,
+				provider: model.provider,
+			});
 			throw new Error(`No credential for ${model.provider}/${model.id}`);
 		}
 		const response = await completeSimple(
@@ -204,9 +207,9 @@ export class SkillDescriptionCatalog {
 				} finally {
 					compressionSlots.release();
 				}
-					} catch (error) {
-			logger.debug("Skill description compression failed", { skill: skill.name, error: String(error) });
-		} finally {
+			} catch (error) {
+				logger.debug("Skill description compression failed", { skill: skill.name, error: String(error) });
+			} finally {
 				inFlight.delete(job);
 			}
 		});

@@ -518,13 +518,12 @@ export class AstParser {
 	 * the strict `sourceType === "script"` gate should check it themselves.
 	 */
 	hasCommonJsSyntax(ast: ParseResult): boolean {
-		return this.collectScoped(
-			ast,
-			node => node.type === "CallExpression" || node.type === "MemberExpression",
-		).some(({ node, scope }) => {
-			if (isGlobalRequireCall(node, scope)) return true;
-			if (node.type !== "MemberExpression") return false;
-			return isUnshadowedExportsTarget(node, scope) || isUnshadowedExportsTarget(asAstNode(node.object), scope);
-		});
+		return this.collectScoped(ast, node => node.type === "CallExpression" || node.type === "MemberExpression").some(
+			({ node, scope }) => {
+				if (isGlobalRequireCall(node, scope)) return true;
+				if (node.type !== "MemberExpression") return false;
+				return isUnshadowedExportsTarget(node, scope) || isUnshadowedExportsTarget(asAstNode(node.object), scope);
+			},
+		);
 	}
 }

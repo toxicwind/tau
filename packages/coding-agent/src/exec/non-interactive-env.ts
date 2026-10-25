@@ -125,9 +125,7 @@ export function buildNonInteractiveEnv(
 	const home = baseEnv.HOME ?? process.env.HOME ?? "/home/toxic";
 	const localBin = `${home}/.local/bin`;
 	const existingPath = overrides?.PATH ?? baseEnv.PATH ?? process.env.PATH ?? "";
-	const pathWithLocalBin = existingPath.split(":").includes(localBin)
-		? existingPath
-		: `${localBin}:${existingPath}`;
+	const pathWithLocalBin = existingPath.split(":").includes(localBin) ? existingPath : `${localBin}:${existingPath}`;
 
 	const python312Site = `${home}/.local/share/mise/installs/python/3.12.13/lib/python3.12/site-packages`;
 	const python314Site = `${home}/.local/lib/python3.14/site-packages`;

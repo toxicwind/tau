@@ -8,17 +8,9 @@ import { buildModel } from "@tau/tau-catalog/build";
 import { resetSettingsForTest, Settings } from "tau/config/settings";
 import type { ExtensionUIContext } from "tau/extensibility/extensions";
 import { resolveLocalUrlToPath } from "tau/internal-urls";
-import {
-	ACP_BOOTSTRAP_RACE_GUARD_MS,
-	AcpAgent,
-	createAcpExtensionUiContext,
-} from "tau/modes/acp/acp-agent";
+import { ACP_BOOTSTRAP_RACE_GUARD_MS, AcpAgent, createAcpExtensionUiContext } from "tau/modes/acp/acp-agent";
 import type { PlanModeState } from "tau/plan-mode/state";
-import type {
-	AgentSession,
-	AgentSessionEvent,
-	UsageFallbackConfirmation,
-} from "tau/session/agent-session";
+import type { AgentSession, AgentSessionEvent, UsageFallbackConfirmation } from "tau/session/agent-session";
 import { SILENT_ABORT_MARKER } from "tau/session/messages";
 import { SessionManager } from "tau/session/session-manager";
 import { TaskTool } from "tau/task";

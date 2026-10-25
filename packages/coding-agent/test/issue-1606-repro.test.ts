@@ -18,12 +18,7 @@ import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import {
-	connectTinyWorker,
-	onnxLaunch,
-	smokeTestTinyTitleWorker,
-	TINY_WORKER_CLOSED,
-} from "tau/tiny/title-client";
+import { connectTinyWorker, onnxLaunch, smokeTestTinyTitleWorker, TINY_WORKER_CLOSED } from "tau/tiny/title-client";
 
 describe("issue #1606 — tiny model lives in an isolated process", () => {
 	it("ping/pongs through the spawned worker process and tears it down cleanly", async () => {

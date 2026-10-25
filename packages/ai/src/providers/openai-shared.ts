@@ -647,11 +647,7 @@ export function isDotsModel(modelId: string | undefined): boolean {
  * Compute the Dots-specific max_tokens floor for this request shape.
  * Returns 0 when the model is not Dots (no floor applies).
  */
-export function dotsMaxTokensFloor(
-	modelId: string | undefined,
-	hasTools: boolean,
-	isContinuation: boolean,
-): number {
+export function dotsMaxTokensFloor(modelId: string | undefined, hasTools: boolean, isContinuation: boolean): number {
 	if (!isDotsModel(modelId)) return 0;
 	if (isContinuation) return DOTS_CONTINUATION_FLOOR;
 	return hasTools ? DOTS_TOOLS_FLOOR : DOTS_TEXT_FLOOR;
@@ -674,10 +670,7 @@ export const DOTS_REASONING_MAX_TOKENS = 128;
 export const DOTS_TEMPERATURE = 0.1;
 export const DOTS_STOP_SEQUENCES = ["</tool_call>", "</dots_function_call>", "<|endoftext|>", "```"];
 
-export function applyDotsRequestShaping(
-	params: Record<string, unknown>,
-	modelId: string | undefined,
-): void {
+export function applyDotsRequestShaping(params: Record<string, unknown>, modelId: string | undefined): void {
 	if (!isDotsModel(modelId)) return;
 	if (params.temperature === undefined) params.temperature = DOTS_TEMPERATURE;
 	const provider = (params as { provider?: { require_parameters?: boolean } }).provider;
@@ -1345,7 +1338,6 @@ export function disableChatCompletionsReasoningForDialect(
 function isZaiReasoningEffortDialect(_model: Model<"openai-completions">, compat: ResolvedOpenAICompat): boolean {
 	return compat.thinkingFormat === "zai" && compat.zaiReasoningEffortDialect;
 }
-
 
 /**
  * Enable `tool_stream` for Z.AI/GLM-5.2 reasoning models when tools are present
@@ -3794,17 +3786,11 @@ export function applyCommonResponsesSamplingParams<P extends CommonResponsesPara
 	params: P,
 	options: CommonSamplingOptions | undefined,
 	model: Pick<Model, "provider" | "api" | "id" | "omitMaxOutputTokens" | "maxTokens" | "identity"> & {
-		compat: Pick<
-			ResolvedOpenAISharedCompat,
-			"supportsSamplingParams" | "supportsPenaltyAndStopParams"
-		>;
+		compat: Pick<ResolvedOpenAISharedCompat, "supportsSamplingParams" | "supportsPenaltyAndStopParams">;
 	},
 ): void {
 	if (options?.maxTokens && !model.omitMaxOutputTokens) {
-		params.max_output_tokens = Math.min(
-			options.maxTokens,
-			model.maxTokens ?? Number.POSITIVE_INFINITY,
-		);
+		params.max_output_tokens = Math.min(options.maxTokens, model.maxTokens ?? Number.POSITIVE_INFINITY);
 	}
 	// OpenAI proprietary reasoning models (o-series, gpt-5+) reject explicit
 	// sampling params with a 400 on every serving host (#5606).

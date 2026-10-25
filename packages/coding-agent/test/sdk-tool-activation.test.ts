@@ -10,10 +10,7 @@ import { getBundledModel } from "@tau/tau-catalog/models";
 import { ModelRegistry } from "tau/config/model-registry";
 import { Settings } from "tau/config/settings";
 import type { CursorExecHandlers } from "tau/cursor";
-import {
-	EXTENSION_HANDLER_TIMEOUT_MS,
-	testSetExtensionHandlerTimeoutMs,
-} from "tau/extensibility/extensions/runner";
+import { EXTENSION_HANDLER_TIMEOUT_MS, testSetExtensionHandlerTimeoutMs } from "tau/extensibility/extensions/runner";
 import { ExtensionToolWrapper } from "tau/extensibility/extensions/wrapper";
 import type { MCPManager } from "tau/mcp/manager";
 import * as memoryBackendModule from "tau/memory-backend";

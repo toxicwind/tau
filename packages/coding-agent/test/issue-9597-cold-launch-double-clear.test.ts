@@ -2,11 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import { resetSettingsForTest, Settings } from "tau/config/settings";
 import type { ComposerPreferences } from "@tau/tau-tui/prompt/composer";
 import { InteractiveMode } from "tau/modes/interactive-mode";
-import {
-	beginStartupComposer,
-	stopPendingStartupComposer,
-	takeStartupComposerLease,
-} from "tau/modes/startup-composer";
+import { beginStartupComposer, stopPendingStartupComposer, takeStartupComposerLease } from "tau/modes/startup-composer";
 import { initTheme } from "@tau/tau-tui/theme";
 import { VirtualTerminal } from "../../tui/test/virtual-terminal";
 import { assistantMsg, createTestSession, userMsg } from "./utilities";

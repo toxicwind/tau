@@ -75,9 +75,7 @@ export const finalBeta = Reflect.get(globalThis, "__betaLoads") ?? 0;
 		// fall-through. The generator now globs each wildcard's source pattern
 		// and registers every concrete `.ts` match against the virtual namespace.
 		const overrides = __buildLegacyPiPackageRootOverrides(true, bundledModuleKeys);
-		expect(overrides["@tau/tau-ai/oauth/anthropic"]).toBe(
-			"tau-legacy-tau-bundled:@tau/tau-ai/oauth/anthropic",
-		);
+		expect(overrides["@tau/tau-ai/oauth/anthropic"]).toBe("tau-legacy-tau-bundled:@tau/tau-ai/oauth/anthropic");
 		// Sanity: the wildcard expansion also reaches deeper subroots so plugins
 		// pinned to e.g. `@tau/tau-ai/providers/openai` keep resolving.
 		expect(bundledModuleKeys.has("@tau/tau-ai/oauth/anthropic")).toBe(true);

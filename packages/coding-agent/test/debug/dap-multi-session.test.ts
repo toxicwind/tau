@@ -1,13 +1,7 @@
 import { afterEach, describe, expect, it, spyOn, vi } from "bun:test";
 import { DapClient } from "tau/dap/client";
 import { DapSessionManager } from "tau/dap/session";
-import type {
-	DapCapabilities,
-	DapClientState,
-	DapEventMessage,
-	DapResolvedAdapter,
-	DapThread,
-} from "tau/dap/types";
+import type { DapCapabilities, DapClientState, DapEventMessage, DapResolvedAdapter, DapThread } from "tau/dap/types";
 import { type ChildProcess, ptree } from "@tau/tau-utils";
 
 const TEST_ADAPTER: DapResolvedAdapter = {

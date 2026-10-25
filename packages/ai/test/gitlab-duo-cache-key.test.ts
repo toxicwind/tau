@@ -1,10 +1,6 @@
 import { afterEach, describe, expect, it, mock, spyOn } from "bun:test";
 import { Effort, type Context } from "@tau/tau-ai";
-import {
-	clearGitLabDuoDirectAccessCache,
-	getGitLabDuoModels,
-	streamGitLabDuo,
-} from "@tau/tau-ai/providers/gitlab-duo";
+import { clearGitLabDuoDirectAccessCache, getGitLabDuoModels, streamGitLabDuo } from "@tau/tau-ai/providers/gitlab-duo";
 import * as registerBuiltins from "@tau/tau-ai/providers/register-builtins";
 import { apiRouteFor } from "@tau/tau-catalog/compat/behavior";
 import { getBundledModel } from "@tau/tau-catalog/models";

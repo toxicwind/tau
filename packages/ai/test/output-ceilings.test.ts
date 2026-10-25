@@ -8,8 +8,7 @@ import {
 	learnOutputCeilingFromError,
 } from "../src/providers/output-ceilings";
 
-const CEILING_400 =
-	"400 max_tokens (65536): Input should be less than or equal to 32768 (type=AI_APICallError)";
+const CEILING_400 = "400 max_tokens (65536): Input should be less than or equal to 32768 (type=AI_APICallError)";
 
 const cacheFile = () => path.join(getAgentDir(), "cache", "output-ceilings.json");
 let backup: string | null = null;

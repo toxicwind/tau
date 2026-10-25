@@ -1,4 +1,9 @@
-export type { MnemotauBackendConfig, MnemotauLlmMode, MnemotauProviderOptions, MnemotauScoping } from "../mnemotau/config";
+export type {
+	MnemotauBackendConfig,
+	MnemotauLlmMode,
+	MnemotauProviderOptions,
+	MnemotauScoping,
+} from "../mnemotau/config";
 export type {
 	MnemotauMemoryEditOperation,
 	MnemotauMemoryEditOptions,

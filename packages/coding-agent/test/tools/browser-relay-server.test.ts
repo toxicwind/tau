@@ -1,10 +1,6 @@
 import { afterEach, describe, expect, it } from "bun:test";
 import { findFreeCdpPort } from "tau/tools/browser/attach";
-import {
-	type RelayServer,
-	type RelayUnavailableInfo,
-	startRelayServer,
-} from "tau/tools/browser/relay/server";
+import { type RelayServer, type RelayUnavailableInfo, startRelayServer } from "tau/tools/browser/relay/server";
 
 const EXTENSION_HELLO = {
 	t: "hello",

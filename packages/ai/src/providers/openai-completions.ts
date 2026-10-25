@@ -123,14 +123,8 @@ import {
 import { withReasoningOnlyEmptyRetry } from "../utils/reasoning-only-retry";
 
 export { applyOpenRouterRoutingVariant } from "./openai-shared";
-import {
-	applyOpenRouterRequestShaping,
-	normalizeOpenRouterMessages,
-} from "./openrouter-coercion";
-import {
-	applyGroqRequestShaping,
-	stripGroqReasoningContent,
-} from "./groq-coercion";
+import { applyOpenRouterRequestShaping, normalizeOpenRouterMessages } from "./openrouter-coercion";
+import { applyGroqRequestShaping, stripGroqReasoningContent } from "./groq-coercion";
 
 type OpenAICompletionsReasoningField = NonNullable<ResolvedOpenAICompat["reasoningContentField"]>;
 
@@ -845,7 +839,8 @@ const streamOpenAICompletionsOnce = (
 			const createCompletionsStream = async (toolStrictModeOverride?: ToolStrictModeOverride) => {
 				const effectiveToolStrictModeOverride = disableStrictTools
 					? "none"
-					: (toolStrictModeOverride ?? (model.compat.isOpenRouterHost || isDotsModel(model.id) ? "all_strict" : undefined));
+					: (toolStrictModeOverride ??
+						(model.compat.isOpenRouterHost || isDotsModel(model.id) ? "all_strict" : undefined));
 				const builtParams = buildParams(model, context, options, effectiveToolStrictModeOverride);
 				appliedStrictTools = builtParams.strictToolsApplied;
 				let params = builtParams.params;
@@ -1679,17 +1674,17 @@ export const streamOpenAICompletions: StreamFunction<"openai-completions"> = (mo
 	const resolvedModel = resolveOpenAICompletionsCompat(model);
 	const originalToolChoice = (options as OpenAICompletionsOptions | undefined)?.toolChoice;
 	const log = (msg: string) => console.debug(msg);
-	const attempt = (
-		m: typeof resolvedModel,
-		ctx: typeof context,
-		opts?: typeof options,
-	) =>
-		withReasoningOnlyEmptyRetry(m, ctx, opts, (m2, ctx2, opts2) =>
-			withReplaySafeStreamRetry(m2, ctx2, opts2, streamOpenAICompletionsOnce, {
-				retryEmptyCompletion: true,
-				retryProviderErrors: true,
-				maxProviderErrorRetries: 1,
-			}),
+	const attempt = (m: typeof resolvedModel, ctx: typeof context, opts?: typeof options) =>
+		withReasoningOnlyEmptyRetry(
+			m,
+			ctx,
+			opts,
+			(m2, ctx2, opts2) =>
+				withReplaySafeStreamRetry(m2, ctx2, opts2, streamOpenAICompletionsOnce, {
+					retryEmptyCompletion: true,
+					retryProviderErrors: true,
+					maxProviderErrorRetries: 1,
+				}),
 			log,
 		);
 	// Dots 3 Note (and related) models return empty array args under forced
@@ -1699,14 +1694,7 @@ export const streamOpenAICompletions: StreamFunction<"openai-completions"> = (mo
 	// finish=stop with non-empty thinking but zero content chunks. The attempt
 	// layer above detects that shape and retries once with reasoning disabled.
 	// See tau-models-diagnosis 2026-10-13.
-	return withForcedToolDegradationRetry(
-		resolvedModel,
-		context,
-		options,
-		originalToolChoice,
-		attempt,
-		log,
-	);
+	return withForcedToolDegradationRetry(resolvedModel, context, options, originalToolChoice, attempt, log);
 };
 
 function createRequestSetup(

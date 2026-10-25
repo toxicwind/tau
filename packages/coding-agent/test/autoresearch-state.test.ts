@@ -9,11 +9,7 @@ import {
 import { AutoresearchStorage, closeAllAutoresearchStorages } from "tau/autoresearch/storage";
 import type { ExperimentResult } from "@tau/tau-tui/tools/autoresearch";
 import { findBaselineMetric, findBaselineRunNumber } from "@tau/tau-tui/apps/autoresearch-data";
-import type {
-	ExtensionAPI,
-	ExtensionCommandContext,
-	RegisteredCommand,
-} from "tau/extensibility/extensions";
+import type { ExtensionAPI, ExtensionCommandContext, RegisteredCommand } from "tau/extensibility/extensions";
 import type { VcsGitRepo, VcsGitRepoInfo } from "@tau/tau-natives";
 import * as vcs from "@tau/tau-natives/vcs";
 import { TempDir } from "@tau/tau-utils";

@@ -33,10 +33,7 @@ import { ModelRegistry } from "tau/config/model-registry";
 import { Settings } from "tau/config/settings";
 import { AgentSession } from "tau/session/agent-session";
 import { AuthStorage } from "tau/session/auth-storage";
-import {
-	type CodexAutoRedeemCoordinator,
-	createCodexAutoRedeemCoordinator,
-} from "tau/session/codex-auto-reset";
+import { type CodexAutoRedeemCoordinator, createCodexAutoRedeemCoordinator } from "tau/session/codex-auto-reset";
 import { SessionManager } from "tau/session/session-manager";
 import { mockSchedulerWaitWithClock } from "./helpers/mock-scheduler-clock";
 

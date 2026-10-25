@@ -3,14 +3,7 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } 
 import * as path from "node:path";
 import { type } from "@tau/tautype";
 import { Agent, type AgentTool } from "@tau/tau-agent-core";
-import type {
-	ApiKey,
-	AssistantMessage,
-	TextContent,
-	ThinkingContent,
-	ToolCall,
-	ToolResultMessage,
-} from "@tau/tau-ai";
+import type { ApiKey, AssistantMessage, TextContent, ThinkingContent, ToolCall, ToolResultMessage } from "@tau/tau-ai";
 import { unregisterCustomApis } from "@tau/tau-ai/api-registry";
 import * as AIError from "@tau/tau-ai/error";
 import { createMockModel, type MockResponse, registerMockApi } from "@tau/tau-ai/providers/mock";

@@ -8,11 +8,7 @@ import { afterEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import { Settings } from "tau/config/settings";
-import {
-	disposeAllKernelSessions,
-	executePython,
-	executePythonWithKernel,
-} from "tau/eval/py/executor";
+import { disposeAllKernelSessions, executePython, executePythonWithKernel } from "tau/eval/py/executor";
 import { PythonKernel } from "tau/eval/py/kernel";
 import { filterEnv, resolvePythonRuntime } from "tau/eval/py/runtime";
 import { TempDir } from "@tau/tau-utils";

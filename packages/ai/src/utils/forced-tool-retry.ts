@@ -12,10 +12,7 @@ import { AssistantMessageEventStream } from "../utils/event-stream";
  *
  * See Dots 3 recon 2026-10-13: forced -> {"list":[]}, auto -> correct data.
  */
-export function hasForcedToolDegradation(
-	message: AssistantMessage,
-	wasForced: boolean,
-): boolean {
+export function hasForcedToolDegradation(message: AssistantMessage, wasForced: boolean): boolean {
 	if (!wasForced) return false;
 	for (const block of message.content) {
 		if (block.type !== "toolCall") continue;
@@ -66,10 +63,13 @@ export function withForcedToolDegradationRetry<M, O extends { toolChoice?: unkno
 		// Check for forced-tool degradation.
 		const message = terminal?.type === "done" ? terminal.message : undefined;
 		if (message && hasForcedToolDegradation(message, wasForced) && !options?.signal?.aborted) {
-			const toolName = typeof originalToolChoice === "object" && originalToolChoice !== null
-				? JSON.stringify(originalToolChoice)
-				: String(originalToolChoice);
-			log(`[forced-tool-degradation] Detected empty-args tool call under forced tool_choice=${toolName}; retrying with tool_choice="auto"`);
+			const toolName =
+				typeof originalToolChoice === "object" && originalToolChoice !== null
+					? JSON.stringify(originalToolChoice)
+					: String(originalToolChoice);
+			log(
+				`[forced-tool-degradation] Detected empty-args tool call under forced tool_choice=${toolName}; retrying with tool_choice="auto"`,
+			);
 			// Retry with auto.
 			const retryOptions = { ...options, toolChoice: "auto" } as O;
 			const second = attempt(model, context, retryOptions);

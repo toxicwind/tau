@@ -29,11 +29,7 @@ import askDescription from "../prompts/tools/ask.md" with { type: "text" };
 import { vocalizer } from "../tts/vocalizer";
 
 import type { ToolSession } from ".";
-import {
-	disambiguateDisplayLabels,
-	sanitizeCarriageReturns,
-	TRUNCATE_LENGTHS,
-} from "@tau/tau-tui/render/render-utils";
+import { disambiguateDisplayLabels, sanitizeCarriageReturns, TRUNCATE_LENGTHS } from "@tau/tau-tui/render/render-utils";
 import { ToolAbortError } from "./tool-errors";
 
 // =============================================================================

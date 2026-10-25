@@ -1,10 +1,7 @@
 import * as path from "node:path";
 import type { AgentMessage } from "@tau/tau-agent-core";
 import type { AssistantMessage, UsageLimit, UsageReport } from "@tau/tau-ai";
-import {
-	getAntigravityCounterKeyForModel,
-	scopeAntigravityLimitsForModel,
-} from "@tau/tau-ai/usage/google-antigravity";
+import { getAntigravityCounterKeyForModel, scopeAntigravityLimitsForModel } from "@tau/tau-ai/usage/google-antigravity";
 import { getNextTimeBasedPricingTransition } from "@tau/tau-catalog/models";
 import type { Model, ModelCost } from "@tau/tau-catalog/types";
 import type { VcsRepo } from "@tau/tau-natives";

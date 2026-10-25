@@ -6,10 +6,7 @@ import * as url from "node:url";
 import { stripVTControlCharacters } from "node:util";
 import { resetSettingsForTest, Settings, settings } from "tau/config/settings";
 import { LocalProtocolHandler } from "tau/internal-urls/local-protocol";
-import {
-	resolveMarkdownLinkTargets,
-	tryResolveInternalUrlSync,
-} from "tau/internal-urls/hyperlink-targets";
+import { resolveMarkdownLinkTargets, tryResolveInternalUrlSync } from "tau/internal-urls/hyperlink-targets";
 import { AgentRegistry } from "tau/registry/agent-registry";
 import { getMarkdownTheme, initTheme } from "@tau/tau-tui/theme";
 import * as terminalCaps from "@tau/tau-tui";

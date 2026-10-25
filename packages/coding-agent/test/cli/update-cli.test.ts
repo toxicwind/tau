@@ -57,7 +57,7 @@ describe("getLatestRelease rename pointers", () => {
 	it("follows tau.rename to the new package and resolves version, dist, and names from its manifest", async () => {
 		const urls = stubRegistry({
 			"@new/tau": { version: "999.1.0", tau: { dist: "npm" } },
-			"tau": {
+			tau: {
 				version: "999.0.0",
 				tau: { dist: "binary", rename: { package: "@new/tau", natives: "@new/natives" } },
 			},
@@ -68,14 +68,11 @@ describe("getLatestRelease rename pointers", () => {
 		expect(release.version).toBe("999.1.0");
 		expect(release.dist).toBe("npm");
 		expect(release.packages).toEqual({ pkg: "@new/tau", natives: "@new/natives" });
-		expect(urls).toEqual([
-			"https://registry.npmjs.org/tau/latest",
-			"https://registry.npmjs.org/@new/tau/latest",
-		]);
+		expect(urls).toEqual(["https://registry.npmjs.org/tau/latest", "https://registry.npmjs.org/@new/tau/latest"]);
 	});
 	it("fetches the canary dist-tag when checking the canary channel", async () => {
 		const urls = stubRegistry({
-			"tau": { version: "999.0.0-canary.1" },
+			tau: { version: "999.0.0-canary.1" },
 		});
 
 		await getLatestRelease({ channel: "canary" });
@@ -85,7 +82,7 @@ describe("getLatestRelease rename pointers", () => {
 
 	it("ignores a rename pointer that cycles back to an already-visited package", async () => {
 		const urls = stubRegistry({
-			"tau": {
+			tau: {
 				version: "999.0.0",
 				tau: { rename: { package: "tau" } },
 			},

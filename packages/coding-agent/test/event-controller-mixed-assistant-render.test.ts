@@ -267,9 +267,7 @@ describe("EventController mixed assistant text/tool rendering", () => {
 			toolName: toolCall.name,
 			args: toolCall.arguments,
 		} as Extract<AgentSessionEvent, { type: "tool_execution_start" }>);
-		expect(Bun.stripANSI(executionOnly.chatContainer.render(120).join("\n"))).toContain(
-			"GitHub Repo can1357/tau",
-		);
+		expect(Bun.stripANSI(executionOnly.chatContainer.render(120).join("\n"))).toContain("GitHub Repo can1357/tau");
 
 		const rebuilt = createFixture(false, toolByName);
 		const rebuiltHelpers = new UiHelpers(rebuilt.ctx);

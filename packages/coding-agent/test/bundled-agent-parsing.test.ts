@@ -1,11 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import { Effort } from "@tau/tau-ai";
 import { buildModel } from "@tau/tau-catalog/build";
-import {
-	resolveAgentModelPatterns,
-	resolveAgentModelSelection,
-	resolveModelOverride,
-} from "tau/config/model-resolver";
+import { resolveAgentModelPatterns, resolveAgentModelSelection, resolveModelOverride } from "tau/config/model-resolver";
 import { Settings } from "tau/config/settings";
 import { getBundledAgent } from "tau/task/agents";
 import { buildOutputValidator } from "tau/tools/output-schema-validator";

@@ -15,10 +15,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { getAgentDir } from "@tau/tau-utils";
-import {
-	getCuratedOutputCeiling,
-	parseOutputCeilingFromErrorText,
-} from "@tau/tau-catalog/output-ceilings";
+import { getCuratedOutputCeiling, parseOutputCeilingFromErrorText } from "@tau/tau-catalog/output-ceilings";
 
 interface LearnedCeiling {
 	ceiling: number;
@@ -69,8 +66,7 @@ function errorText(error: unknown): string {
 	if (typeof error === "string") return error;
 	if (error instanceof Error) {
 		const cause = (error as { cause?: unknown }).cause;
-		const causeText =
-			cause instanceof Error ? cause.message : cause !== undefined ? String(cause) : "";
+		const causeText = cause instanceof Error ? cause.message : cause !== undefined ? String(cause) : "";
 		return `${error.message}\n${causeText}`;
 	}
 	return "";
@@ -81,10 +77,7 @@ function errorText(error: unknown): string {
  * undefined when the error carries no usable correction. Safe to call on any
  * error — non-matching errors are ignored.
  */
-export function learnOutputCeilingFromError(
-	modelId: string,
-	error: unknown,
-): number | undefined {
+export function learnOutputCeilingFromError(modelId: string, error: unknown): number | undefined {
 	const parsed = parseOutputCeilingFromErrorText(errorText(error));
 	if (!parsed) return undefined;
 	const map = loadLearned();

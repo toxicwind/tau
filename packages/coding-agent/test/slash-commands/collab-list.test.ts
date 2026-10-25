@@ -5,10 +5,7 @@ import * as registry from "tau/collab/registry";
 import { resetSettingsForTest, Settings } from "tau/config/settings";
 import { initTheme } from "@tau/tau-tui/theme";
 import type { InteractiveModeContext } from "tau/modes/types";
-import {
-	type BuiltinSlashCommandRuntime,
-	executeBuiltinSlashCommand,
-} from "tau/slash-commands/builtin-registry";
+import { type BuiltinSlashCommandRuntime, executeBuiltinSlashCommand } from "tau/slash-commands/builtin-registry";
 
 beforeAll(async () => {
 	resetSettingsForTest();

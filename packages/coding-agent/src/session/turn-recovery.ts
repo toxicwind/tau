@@ -2235,8 +2235,7 @@ export class TurnRecovery {
 		// unlimited retry we bypass the finite ceiling and let the existing
 		// backoff/retry-after window clear before re-issuing. Genuine quota /
 		// usage / capacity reasons still honor retry.maxRetries.
-		const concurrencyShed =
-			rateLimitReason === "CONCURRENT_LIMIT" || rateLimitReason === "RATE_LIMIT_EXCEEDED";
+		const concurrencyShed = rateLimitReason === "CONCURRENT_LIMIT" || rateLimitReason === "RATE_LIMIT_EXCEEDED";
 		const unlimitedConcurrencyRetry =
 			retrySettings.enabled && retrySettings.unlimitedRetryOnConcurrency429 && concurrencyShed;
 		const retryBudgetExhausted = !unlimitedConcurrencyRetry && this.#retryAttempt > maxRetries;

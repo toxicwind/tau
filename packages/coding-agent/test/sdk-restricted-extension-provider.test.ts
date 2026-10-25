@@ -10,11 +10,7 @@ import * as commitTools from "tau/commit/agentic/tools";
 import { ModelRegistry } from "tau/config/model-registry";
 import { Settings } from "tau/config/settings";
 import { initializeExtensions } from "tau/modes/runtime-init";
-import {
-	type CreateAgentSessionOptions,
-	createAgentSession,
-	type ExtensionFactory,
-} from "tau/sdk";
+import { type CreateAgentSessionOptions, createAgentSession, type ExtensionFactory } from "tau/sdk";
 import type { AuthStorage } from "tau/session/auth-storage";
 import type { AgentSession } from "tau/session/agent-session";
 import { SessionManager } from "tau/session/session-manager";

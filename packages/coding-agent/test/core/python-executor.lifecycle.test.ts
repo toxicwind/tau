@@ -1,9 +1,5 @@
 import { afterEach, describe, expect, it } from "bun:test";
-import {
-	disposeAllKernelSessions,
-	disposeKernelSessionsByOwner,
-	executePython,
-} from "tau/eval/py/executor";
+import { disposeAllKernelSessions, disposeKernelSessionsByOwner, executePython } from "tau/eval/py/executor";
 import {
 	type KernelExecuteOptions,
 	type KernelExecuteResult,

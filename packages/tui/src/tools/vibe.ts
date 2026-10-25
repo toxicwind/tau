@@ -99,11 +99,31 @@ export interface VibeWaitOutcome {
 	timedOut: boolean;
 }
 /** Worker CLI flavors: the two base tiers plus 10 swarm slots pinned per-model. */
-export type VibeCli = "fast" | "good" | "swarm1" | "swarm2" | "swarm3" | "swarm4" | "swarm5" | "swarm6" | "swarm7" | "swarm8" | "swarm9" | "swarm10";
+export type VibeCli =
+	| "fast"
+	| "good"
+	| "swarm1"
+	| "swarm2"
+	| "swarm3"
+	| "swarm4"
+	| "swarm5"
+	| "swarm6"
+	| "swarm7"
+	| "swarm8"
+	| "swarm9"
+	| "swarm10";
 /** The swarm slot flavors, in spawn order. */
 export const SWARM_CLI_SLOTS: readonly Exclude<VibeCli, "fast" | "good">[] = [
-	"swarm1", "swarm2", "swarm3", "swarm4", "swarm5",
-	"swarm6", "swarm7", "swarm8", "swarm9", "swarm10",
+	"swarm1",
+	"swarm2",
+	"swarm3",
+	"swarm4",
+	"swarm5",
+	"swarm6",
+	"swarm7",
+	"swarm8",
+	"swarm9",
+	"swarm10",
 ];
 // =============================================================================
 // TUI Renderer — mini composer (spawn/send) + TV wall (wait/list)

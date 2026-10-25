@@ -4,10 +4,7 @@ import * as ai from "@tau/tau-ai";
 import { getBundledModel } from "@tau/tau-catalog/models";
 import { ModelRegistry } from "tau/config/model-registry";
 import { Settings } from "tau/config/settings";
-import {
-	classifyUnexpectedStop,
-	isUnexpectedStopCandidate,
-} from "tau/session/unexpected-stop-classifier";
+import { classifyUnexpectedStop, isUnexpectedStopCandidate } from "tau/session/unexpected-stop-classifier";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 import { asGlobalFetch } from "./helpers/fetch-mock";
 

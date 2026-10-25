@@ -35,12 +35,7 @@ import * as path from "node:path";
 import type { CmuxKind } from "tau/tools/browser/cmux/rpc";
 import { CmuxSocketClient } from "tau/tools/browser/cmux/socket-client";
 import { acquireBrowser } from "tau/tools/browser/registry";
-import {
-	acquireTab,
-	getTabsMapForTest,
-	releaseTab,
-	runInTab,
-} from "tau/tools/browser/tab-supervisor";
+import { acquireTab, getTabsMapForTest, releaseTab, runInTab } from "tau/tools/browser/tab-supervisor";
 import type { ToolSession } from "tau/tools/index";
 import * as logger from "@tau/tau-utils/logger";
 

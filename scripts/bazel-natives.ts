@@ -227,8 +227,16 @@ async function buildLocalHostAddon(host: HostInfo, destDir: string): Promise<voi
 	const filename = resolveLocalHostAddon(host).filename;
 	const builtPath = path.join(repoRoot, "packages/natives/native", filename);
 	const forceBuild = Bun.env.TAU_FORCE_BUILD_NATIVES === "1" || Bun.env.TAU_FORCE_BUILD_NATIVES === "true";
-	if (!forceBuild && (await fs.stat(builtPath).then(() => true).catch(() => false))) {
-		console.log(`local host build: using existing native addon ${filename} (set TAU_FORCE_BUILD_NATIVES=1 to force rebuild)`);
+	if (
+		!forceBuild &&
+		(await fs
+			.stat(builtPath)
+			.then(() => true)
+			.catch(() => false))
+	) {
+		console.log(
+			`local host build: using existing native addon ${filename} (set TAU_FORCE_BUILD_NATIVES=1 to force rebuild)`,
+		);
 		if (path.dirname(builtPath) !== destDir) {
 			await fs.mkdir(destDir, { recursive: true });
 			await installAddon(builtPath, path.join(destDir, filename));
@@ -263,9 +271,7 @@ async function main(): Promise<void> {
 	const hostOnly = options.targets.length === 1 && options.targets[0] === "host";
 	// Backend selection: Bazel (backed by NativeLink :25155) is the default backend.
 	// Cargo is opt-in via TAU_NATIVE_BUILD_BACKEND=cargo or on Windows hosts.
-	const cargoBackend =
-		backend === "cargo" ||
-		(backend !== "bazel" && host.platform === "win32");
+	const cargoBackend = backend === "cargo" || (backend !== "bazel" && host.platform === "win32");
 	if (cargoBackend && !options.source) {
 		if (!hostOnly) {
 			if (host.platform === "win32") {

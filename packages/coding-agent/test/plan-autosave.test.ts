@@ -6,11 +6,7 @@ import { resetSettingsForTest, Settings } from "tau/config/settings";
 import { resolveLocalUrlToPath } from "tau/internal-urls";
 import { getSettingsForTab } from "@tau/tau-tui/overlays/settings-defs";
 import { createSettingsHost } from "tau/config/settings-ui";
-import {
-	autosaveApprovedPlan,
-	defaultPlanAutosaveDir,
-	resolvePlanAutosaveDir,
-} from "tau/plan-mode/plan-autosave";
+import { autosaveApprovedPlan, defaultPlanAutosaveDir, resolvePlanAutosaveDir } from "tau/plan-mode/plan-autosave";
 import type { PlanModeState } from "tau/plan-mode/state";
 import type { PlanYolo } from "tau/session/agent-session-types";
 import { PrewalkCoordinator, type PrewalkCoordinatorHost } from "tau/session/prewalk";

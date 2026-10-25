@@ -5,12 +5,7 @@
  * never silently become 90 seconds.
  */
 import { describe, expect, it } from "bun:test";
-import {
-	formatVideoTimestamp,
-	parseVideoSelector,
-	parseVideoTimestamp,
-	splitVideoReadTarget,
-} from "tau/utils/video";
+import { formatVideoTimestamp, parseVideoSelector, parseVideoTimestamp, splitVideoReadTarget } from "tau/utils/video";
 
 describe("parseVideoSelector", () => {
 	it("reads a bare integer as a frame index", () => {

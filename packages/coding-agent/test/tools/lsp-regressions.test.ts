@@ -11,13 +11,7 @@ import { restoreEnvValue } from "../helpers/settings-test-state";
 import { LspTool } from "tau/lsp";
 import * as lspClient from "tau/lsp/client";
 import * as lspConfig from "tau/lsp/config";
-import {
-	configCache,
-	getConfig,
-	getServersForFile,
-	type LspConfig,
-	loadConfig,
-} from "tau/lsp/config";
+import { configCache, getConfig, getServersForFile, type LspConfig, loadConfig } from "tau/lsp/config";
 import { waitForDiagnostics } from "tau/lsp/diagnostics";
 import {
 	applyTextEditsToString,

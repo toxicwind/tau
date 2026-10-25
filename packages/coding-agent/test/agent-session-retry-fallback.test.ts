@@ -30,10 +30,7 @@ import { ExtensionRunner } from "tau/extensibility/extensions/runner";
 import { initTheme } from "@tau/tau-tui/theme";
 import { AgentSession, type AgentSessionEvent } from "tau/session/agent-session";
 import { AuthStorage } from "tau/session/auth-storage";
-import {
-	type ServingModel,
-	validateRetryFallbackChains,
-} from "tau/session/retry-fallback-chains";
+import { type ServingModel, validateRetryFallbackChains } from "tau/session/retry-fallback-chains";
 import { SessionManager } from "tau/session/session-manager";
 import { convertToLlm } from "tau/session/messages";
 import { EventBus } from "tau/utils/event-bus";

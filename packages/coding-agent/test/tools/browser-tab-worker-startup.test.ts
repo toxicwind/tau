@@ -3,19 +3,9 @@ import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 // Browser global read inside page.evaluate callbacks; absent from bun-types.
 declare const devicePixelRatio: number;
 
-import {
-	acquireBrowser,
-	type BrowserHandle,
-	holdBrowser,
-	releaseBrowser,
-} from "tau/tools/browser/registry";
+import { acquireBrowser, type BrowserHandle, holdBrowser, releaseBrowser } from "tau/tools/browser/registry";
 import type { ReadyInfo, WorkerInbound, WorkerOutbound } from "tau/tools/browser/tab-protocol";
-import {
-	acquireTab,
-	initializeTabWorkerForTest,
-	releaseTab,
-	runInTab,
-} from "tau/tools/browser/tab-supervisor";
+import { acquireTab, initializeTabWorkerForTest, releaseTab, runInTab } from "tau/tools/browser/tab-supervisor";
 import type { ToolSession } from "tau/tools/index";
 import { chromiumAvailable, visibleBrowserAvailable } from "./chromium-probe";
 

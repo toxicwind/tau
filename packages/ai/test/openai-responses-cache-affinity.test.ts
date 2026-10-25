@@ -775,7 +775,12 @@ describe("openai-responses cache affinity", () => {
 		const captured = await captureOpenAIResponseHeaders({ openrouterVariant: "nitro" }, routedModel);
 
 		expect(captured.body?.model).toBe("openai/gpt-5.5:nitro");
-		expect(captured.body?.provider).toEqual({ only: ["anthropic"], order: ["anthropic"], require_parameters: true, allow_fallbacks: false });
+		expect(captured.body?.provider).toEqual({
+			only: ["anthropic"],
+			order: ["anthropic"],
+			require_parameters: true,
+			allow_fallbacks: false,
+		});
 	});
 
 	it("keeps OpenRouter session_id on values longer than OpenAI prompt cache keys", async () => {
