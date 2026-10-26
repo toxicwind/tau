@@ -22,6 +22,9 @@ const RETIRED_COMPAT_FIELDS = new Set(["clampOutputToModelMax"]);
 
 /** Fields introduced by the compat engine — absent from pre-engine baked rows. */
 const NEW_COMPAT_FIELDS = new Set([
+	"requiresEffort",
+	"allowEmptySignature",
+	"isGroqHost",
 	"injectClaudeCodeInstruction",
 	"stripImageInput",
 	"thinkingLoopGuard",
