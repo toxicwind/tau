@@ -86,7 +86,7 @@ const VOCABULARY = [
   "yote", "openfang", "tau", "tau", "kimi", "pitchfork", "mise", "cell",
   "bridge", "hatch", "quill", "shrew", "trailboss", "effusion", "oracle",
   "market", "btrfs", "fclones", "flicker", "telemetry", "runtime", "harness",
-  "gatehouse", "sentinel", "smithers", "somasays", "corral", "router",
+  "thresher", "sentinel", "smithers", "somasays", "corral", "router",
   "keypool", "keypools", "secret", "secrets", "vault", "model", "models",
   "provider", "providers", "subagent", "subagents", "agent", "agents",
   "turn", "session", "sessions", "prompt", "prompts", "context", "stream",

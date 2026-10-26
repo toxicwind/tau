@@ -126,8 +126,15 @@ declare -f > /dev/null 2>&1
 declare -F 2>/dev/null | cut -d' ' -f3 | grep -vE '^(__)' | grep -vE '^_(2s_)?' | grep -vE '${commonToolsRegex}' | while read func; do
    declare -f "$func" 2>/dev/null
 done
-# Ensure _2s_slow is always preserved in snapshot if defined
-declare -f _2s_slow 2>/dev/null || true`;
+# Preserve the kairos/two-sec guard family + doctrine wrappers even though the
+# filters above strip them (estate: the shim is the enforcement surface).
+# _2s_wrap/_2s_guard/_2s_urgent/_2s_slow are called by the bun()/git()/head()/
+# tail() wrappers; dropping them orphans those wrappers (command-not-found at
+# call time) and silently disables head/tail-to-ffs enforcement in agent shells.
+for _f in _2s_slow _2s_wrap _2s_guard _2s_urgent two_sec_slow four_sec_run head tail timeout print_doctrine_hint; do
+  declare -f "$_f" 2>/dev/null
+done
+unset _f 2>/dev/null || true`;
 
 	// Shell options extraction
 	const optionsScript = isZsh

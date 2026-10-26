@@ -227,7 +227,7 @@ sticks. The supported path is a cargo build → `gen:native` → rebuild above.
 | `MBX_CACHE` | 25148 | mise remote task cache |
 | `QDRANT` | 25133 | vector store (gRPC 25134) |
 | `CUTTINGGATE` | 25200 | guard plane for herd (:25100) & flock (:25193); circuit breaker & quarantine |
-| `GATEHOUSE` | 25127 | MCP federation proxy & gateway |
+| `THRESHER` | 25127 | MCP federation proxy & gateway |
 Every port is defined once in `config/ports.env` and consumed from there —
 nothing hardcodes a port in code. Ports are pulled by services via
 `stack/lib-ports.sh` / `require_port`, and pitchfork daemons carry their port in
