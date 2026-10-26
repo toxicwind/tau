@@ -48,6 +48,7 @@ import {
 	projectOpenAIProReasoningAliases,
 	stripFireworksDeepSeekThinkingToggle,
 } from "../src/provider-models/openai-compat";
+import { resolveContext } from "@toxicwind/mimetite";
 import { type OpenAICodexAccount, openaiCodexModelManagerOptions } from "../src/provider-models/special";
 import type { Api, Model, ModelSpec } from "../src/types";
 import { cleanModelName } from "../src/utils";
@@ -730,6 +731,16 @@ async function generateModels() {
 	};
 
 	const modelSpecs: Record<string, Record<string, ModelSpec>> = sortObj(providers);
+	// Apply mimetite contextLengths as authoritative context source for all models.
+	// mimetite is the geode catalog SSOT; its contextLengths override stale bundled values.
+	for (const models of Object.values(modelSpecs)) {
+		for (const model of Object.values(models)) {
+			const resolved = resolveContext(model.id);
+			if (resolved && (!model.contextWindow || resolved.contextLength !== model.contextWindow)) {
+				model.contextWindow = resolved.contextLength;
+			}
+		}
+	}
 	const MODELS: Record<string, Record<string, Model<Api>>> = {};
 	for (const [provider, models] of Object.entries(modelSpecs)) {
 		MODELS[provider] = Object.fromEntries(

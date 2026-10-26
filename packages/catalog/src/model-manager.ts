@@ -1,3 +1,4 @@
+import { resolveContext } from "@toxicwind/mimetite";
 import { VERSION } from "@tau/tau-utils";
 import { buildModel } from "./build";
 import { collapseBuiltVariants } from "./compat/collapse";
@@ -652,7 +653,10 @@ function mergeDynamicModel<TApi extends Api>(existingModel: Model<TApi>, dynamic
 			...(longContextCost ? { longContext: longContextCost } : {}),
 			...(timeBasedCost ? { timeBased: timeBasedCost } : {}),
 		},
-		contextWindow: preferDiscoveryLimit(dynamicModel.contextWindow, existingModel.contextWindow),
+		contextWindow: preferDiscoveryLimit(
+			dynamicModel.contextWindow,
+			resolveContext(dynamicModel.id) ?? existingModel.contextWindow,
+		),
 		maxTokens: preferDiscoveryLimit(dynamicModel.maxTokens, existingModel.maxTokens),
 		headers: resolveHeaders
 			? undefined
