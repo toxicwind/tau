@@ -1,0 +1,211 @@
+{
+  "timestamp": "2026-10-04T16:21:21-06:00",
+  "host": "awrawr-pc",
+  "user": "toxic",
+  "rsync": {
+    "canonical_exists": true,
+    "estate_config_exists": true,
+    "omp_symlink": {
+      "exists": true,
+      "target": "/home/toxic/estate/config/tau/models.yml"
+    },
+    "git": {
+      "head": "eeac2e842a2e0d2ff8b1d8f2e55a1ebc66aa31e2",
+      "branch": "HEAD",
+      "dirty_count": 26
+    },
+    "config_drift_files": [],
+    "in_sync": true
+  },
+  "dropbox": {
+    "daemon_running": true,
+    "local_dir_exists": false,
+    "info_json": false,
+    "env_tokens": {
+      "DROPBOX_TOKEN": false,
+      "DROPBOX_ACCESS_TOKEN": false,
+      "DROPBOX_REFRESH_TOKEN": false,
+      "DROPBOX_APP_KEY": false
+    }
+  },
+  "google_drive": {
+    "rclone_installed": true,
+    "rclone_conf_exists": true,
+    "rclone_remotes": [
+      "gdrive-sa"
+    ],
+    "active_mounts": []
+  },
+  "google_sdk": {
+    "installed": true,
+    "version": "Google Cloud SDK 586.0.0\nalpha 2026.09.20",
+    "active_account": "toxicwind@gmail.com",
+    "project": "gen-lang-client-0111199472",
+    "adc_exists": false
+  },
+  "eap_tokens": {
+    "credentials": {
+      "GEMINI_EAP_KEY_1": {
+        "source": "/home/toxic/.env",
+        "len": 53,
+        "preview": "AQ.A...AQXQ"
+      },
+      "GEMINI_EAP_KEY_2": {
+        "source": "/home/toxic/.env",
+        "len": 53,
+        "preview": "AQ.A...6f9w"
+      },
+      "GEMINI_EAP_KEY_3": {
+        "source": "/home/toxic/.env",
+        "len": 53,
+        "preview": "AQ.A...oL-A"
+      },
+      "GEMINI_EAP_KEY_4": {
+        "source": "/home/toxic/.env",
+        "len": 53,
+        "preview": "AQ.A...hPYw"
+      },
+      "GEMINI_EAP_KEY_5": {
+        "source": "/home/toxic/.env",
+        "len": 53,
+        "preview": "AQ.A...3UQA"
+      },
+      "GEMINI_EAP_KEY_6": {
+        "source": "/home/toxic/.env",
+        "len": 39,
+        "preview": "AIza...0bUQ"
+      },
+      "MOONBOX_GOOGLE_API_KEY": {
+        "source": "/home/toxic/.secrets",
+        "len": 39,
+        "preview": "AIza...d44k"
+      },
+      "MOONBOX_GOOGLE_CLIENT_SECRET": {
+        "source": "/home/toxic/.secrets",
+        "len": 24,
+        "preview": "kdlo...jAQh"
+      },
+      "GEMINI_API_KEY_1": {
+        "source": "/home/toxic/.env",
+        "len": 53,
+        "preview": "AQ.A...1uzA"
+      },
+      "GEMINI_API_KEY_1_EAP": {
+        "source": "/home/toxic/.env",
+        "len": 1,
+        "preview": "***"
+      },
+      "GEMINI_API_KEY_1_NAME": {
+        "source": "/home/toxic/.env",
+        "len": 16,
+        "preview": "Gemi...ey 2"
+      },
+      "GEMINI_API_KEY_1_PROJECT": {
+        "source": "/home/toxic/.env",
+        "len": 21,
+        "preview": "proj...2746"
+      },
+      "GEMINI_API_KEY_2": {
+        "source": "/home/toxic/.env",
+        "len": 53,
+        "preview": "AQ.A...3ntQ"
+      },
+      "GEMINI_API_KEY_2_EAP": {
+        "source": "/home/toxic/.env",
+        "len": 1,
+        "preview": "***"
+      },
+      "GEMINI_API_KEY_2_NAME": {
+        "source": "/home/toxic/.env",
+        "len": 16,
+        "preview": "Gemi...ey 5"
+      },
+      "GEMINI_API_KEY_2_PROJECT": {
+        "source": "/home/toxic/.env",
+        "len": 21,
+        "preview": "proj...8272"
+      },
+      "GEMINI_API_KEY_3": {
+        "source": "/home/toxic/.env",
+        "len": 53,
+        "preview": "AQ.A...IJkw"
+      },
+      "GEMINI_API_KEY_3_EAP": {
+        "source": "/home/toxic/.env",
+        "len": 1,
+        "preview": "***"
+      },
+      "GEMINI_API_KEY_3_NAME": {
+        "source": "/home/toxic/.env",
+        "len": 14,
+        "preview": "Gemi... Key"
+      },
+      "GEMINI_API_KEY_3_PROJECT": {
+        "source": "/home/toxic/.env",
+        "len": 21,
+        "preview": "proj...4265"
+      },
+      "GEMINI_API_KEY_4": {
+        "source": "/home/toxic/.env",
+        "len": 53,
+        "preview": "AQ.A...YVMw"
+      },
+      "GEMINI_API_KEY_4_EAP": {
+        "source": "/home/toxic/.env",
+        "len": 1,
+        "preview": "***"
+      },
+      "GEMINI_API_KEY_4_NAME": {
+        "source": "/home/toxic/.env",
+        "len": 14,
+        "preview": "Gemi... Key"
+      },
+      "GEMINI_API_KEY_4_PROJECT": {
+        "source": "/home/toxic/.env",
+        "len": 20,
+        "preview": "proj...2275"
+      },
+      "GEMINI_API_KEY_5": {
+        "source": "/home/toxic/.env",
+        "len": 53,
+        "preview": "AQ.A...IMfw"
+      },
+      "GEMINI_API_KEY_5_EAP": {
+        "source": "/home/toxic/.env",
+        "len": 1,
+        "preview": "***"
+      },
+      "GEMINI_API_KEY_5_NAME": {
+        "source": "/home/toxic/.env",
+        "len": 14,
+        "preview": "Gemi... Key"
+      },
+      "GEMINI_API_KEY_5_PROJECT": {
+        "source": "/home/toxic/.env",
+        "len": 21,
+        "preview": "proj...2366"
+      },
+      "GEMINI_API_KEY": {
+        "source": "ENV",
+        "len": 53,
+        "preview": "AQ.A...1uzA"
+      },
+      "GEMINI_EAP_KEY_0": {
+        "source": "/home/toxic/.env",
+        "len": 53,
+        "preview": "AQ.A...3ntQ"
+      },
+      "GOOGLE_API_KEY": {
+        "source": "ENV",
+        "len": 53,
+        "preview": "AQ.A...YVMw"
+      }
+    },
+    "probe": {
+      "status": "ERROR",
+      "code": 401,
+      "message": "Request had invalid authentication credentials. Expected OAuth 2 access token, login cookie or other valid authentication credential. See https://developers.google.com/identity/sign-in/web/devconsole-project."
+    }
+  },
+  "keypools_and_ports": {}
+}

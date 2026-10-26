@@ -1,7 +1,7 @@
 {
   "mcpServers": {
     "thresher": {
-      "type": "remote",
+      "type": "http",
       "url": "http://127.0.0.1:25127/mcp",
       "enabled": true,
       "timeout": 120000

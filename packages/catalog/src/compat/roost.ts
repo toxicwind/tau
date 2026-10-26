@@ -112,9 +112,14 @@ function resolveRoostModule(): { PROVIDER_DEFS: RoostProviderDef[] } {
 		const os = require("node:os");
 		// eslint-disable-next-line @typescript-eslint/no-require-imports
 		const path = require("node:path");
-		candidates.push(path.join(os.homedir(), "estate/ranch/mesh/catalog/src/index.ts"));
+		// geode pen (2026-10-26): provider catalog consolidated to
+		// pens/geode/products/mimetite (ex-ranch/mesh/catalog). Prefer the live
+		// source so contexts/models stay current; fall back to the bundled
+		// package, then the embedded snapshot.
+		candidates.push(path.join(os.homedir(), "pens/geode/products/mimetite/src/index.ts"));
+		candidates.push(path.join(os.homedir(), "pens/geode/products/mimetite/dist/index.js"));
 	} catch {}
-	candidates.push("../../../../../mesh/catalog/src/index.ts", "../../../../mesh/catalog/src/index.ts", "@ranch/roost");
+	candidates.push("@toxicwind/mimetite", "mimetite", "@ranch/roost", "../../../../../mesh/catalog/src/index.ts");
 	const failures: string[] = [];
 	for (const specifier of candidates) {
 		try {
