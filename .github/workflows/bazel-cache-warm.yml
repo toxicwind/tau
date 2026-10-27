@@ -91,5 +91,12 @@ jobs:
       name: Seed bun store cache
       runs-on: ubuntu-22.04
       steps:
+         # tau-extensions/packages/* are bun workspace members; without the
+         # submodule they are missing and bun reports 7 skipped workspaces.
          - uses: actions/checkout@v5
+           with:
+             submodules: recursive
+         # packages/catalog depends on @toxicwind/mimetite, now an in-tree
+         # submodule at geode/products/mimetite (the recursive checkout
+         # above provides it); the old $HOME/geode path is no longer used.
          - uses: ./.github/actions/bun-install
