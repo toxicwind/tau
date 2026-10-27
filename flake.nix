@@ -9,6 +9,13 @@
   };
 
   inputs = {
+    # tau-extensions is a git submodule whose packages/ tree is a bun
+    # workspace member (see .gitmodules). Nix >= 2.27 only copies submodule
+    # contents into self.outPath when the flake declares this; without it,
+    # nix/bun.nix's copyPathToStore ../tau-extensions/... fails with
+    # "path does not exist" on a plain checkout (CI runs 40408281140 etc.).
+    self.submodules = true;
+
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
     # nixpkgs unstable dropped Intel macOS in 26.11; keep that supported

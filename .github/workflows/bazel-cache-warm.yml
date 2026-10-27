@@ -91,5 +91,20 @@ jobs:
       name: Seed bun store cache
       runs-on: ubuntu-22.04
       steps:
+         # tau-extensions/packages/* are bun workspace members; without the
+         # submodule they are missing and bun reports 7 skipped workspaces.
          - uses: actions/checkout@v5
+           with:
+             submodules: recursive
+         # packages/catalog depends on @toxicwind/mimetite via a file: path
+         # that resolves to $HOME/geode/products/mimetite (the yote layout;
+         # toxicwind/geode does not exist — the package lives in the
+         # standalone toxicwind/mimetite repo, whose committed dist/ is the
+         # file: target). Clone it to exactly that path before bun install.
+         - name: Check out mimetite to $HOME/geode/products/mimetite
+           run: |
+             if [ ! -f "$HOME/geode/products/mimetite/package.json" ]; then
+               git clone --depth 1 https://github.com/toxicwind/mimetite "$HOME/geode/products/mimetite"
+             fi
+             test -f "$HOME/geode/products/mimetite/dist/index.js"
          - uses: ./.github/actions/bun-install
