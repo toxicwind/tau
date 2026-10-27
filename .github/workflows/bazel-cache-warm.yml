@@ -96,15 +96,7 @@ jobs:
          - uses: actions/checkout@v5
            with:
              submodules: recursive
-         # packages/catalog depends on @toxicwind/mimetite via a file: path
-         # that resolves to $HOME/geode/products/mimetite (the yote layout;
-         # toxicwind/geode does not exist — the package lives in the
-         # standalone toxicwind/mimetite repo, whose committed dist/ is the
-         # file: target). Clone it to exactly that path before bun install.
-         - name: Check out mimetite to $HOME/geode/products/mimetite
-           run: |
-             if [ ! -f "$HOME/geode/products/mimetite/package.json" ]; then
-               git clone --depth 1 https://github.com/toxicwind/mimetite "$HOME/geode/products/mimetite"
-             fi
-             test -f "$HOME/geode/products/mimetite/dist/index.js"
+         # packages/catalog depends on @toxicwind/mimetite, now an in-tree
+         # submodule at geode/products/mimetite (the recursive checkout
+         # above provides it); the old $HOME/geode path is no longer used.
          - uses: ./.github/actions/bun-install

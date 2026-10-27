@@ -1,3 +1,6 @@
 [submodule "tau-extensions"]
 	path = tau-extensions
 	url = https://github.com/toxicwind/tau-extensions
+[submodule "geode/products/mimetite"]
+	path = geode/products/mimetite
+	url = https://github.com/toxicwind/mimetite

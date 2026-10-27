@@ -112,6 +112,7 @@ jobs:
          # fetch-tags to main refs.
          - uses: actions/checkout@v5
            with:
+              submodules: recursive
               fetch-tags: ${{ github.ref == 'refs/heads/main' }}
          - name: Detect release tag at HEAD
            id: detect
@@ -148,6 +149,8 @@ jobs:
       runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.04' || 'tau-kata' }}
       steps:
          - uses: actions/checkout@v5
+           with:
+             submodules: recursive
          - uses: ./.github/actions/bun-install
          - name: Verify Rust license compliance (cargo-deny 0.20.2)
            run: |
@@ -191,6 +194,8 @@ jobs:
       runs-on: tau-kata
       steps:
          - uses: actions/checkout@v5
+           with:
+             submodules: recursive
          - uses: ./.github/actions/bun-install
          - id: cache
            uses: ./.github/actions/bazel-cache
@@ -237,6 +242,8 @@ jobs:
       runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.04' || 'tau-kata' }}
       steps:
          - uses: actions/checkout@v5
+           with:
+             submodules: recursive
 
          # ---- PR path: latest release addons from npm ----
          - name: Fetch release native addons (npm)
@@ -362,6 +369,8 @@ jobs:
       timeout-minutes: 20
       steps:
          - uses: actions/checkout@v5
+           with:
+             submodules: recursive
          - uses: ./.github/actions/bun-install
          - uses: ./.github/actions/native-artifacts
            with:
@@ -384,6 +393,8 @@ jobs:
       timeout-minutes: 20
       steps:
          - uses: actions/checkout@v5
+           with:
+             submodules: recursive
          - uses: ./.github/actions/bun-install
          - uses: ./.github/actions/native-artifacts
            with:
@@ -401,6 +412,8 @@ jobs:
       timeout-minutes: 25
       steps:
          - uses: actions/checkout@v5
+           with:
+             submodules: recursive
          - uses: ./.github/actions/bun-install
          - uses: ./.github/actions/native-artifacts
            with:
@@ -418,6 +431,8 @@ jobs:
       timeout-minutes: 25
       steps:
          - uses: actions/checkout@v5
+           with:
+             submodules: recursive
          - uses: ./.github/actions/bun-install
          - uses: ./.github/actions/native-artifacts
            with:
@@ -435,6 +450,8 @@ jobs:
       timeout-minutes: 25
       steps:
          - uses: actions/checkout@v5
+           with:
+             submodules: recursive
          - uses: ./.github/actions/bun-install
          - uses: ./.github/actions/native-artifacts
            with:
@@ -462,6 +479,8 @@ jobs:
             shard: ${{ fromJSON(github.event_name == 'pull_request' && '["1/2","2/2"]' || '["1/1"]') }}
       steps:
          - uses: actions/checkout@v5
+           with:
+             submodules: recursive
          - uses: ./.github/actions/bun-install
          - uses: ./.github/actions/native-artifacts
            with:
@@ -480,6 +499,8 @@ jobs:
       timeout-minutes: 15
       steps:
          - uses: actions/checkout@v5
+           with:
+             submodules: recursive
          - uses: ./.github/actions/bun-install
          - uses: ./.github/actions/native-artifacts
            with:
@@ -494,6 +515,8 @@ jobs:
       if: ${{ !cancelled() && needs.native_addons.result == 'success' }}
       steps:
          - uses: actions/checkout@v5
+           with:
+             submodules: recursive
          - uses: ./.github/actions/bun-install
          - uses: ./.github/actions/native-artifacts
            with:
@@ -523,6 +546,8 @@ jobs:
       runs-on: ubuntu-22.04
       steps:
          - uses: actions/checkout@v5
+           with:
+             submodules: recursive
          - uses: ./.github/actions/bun-install
          # Generated-config drift gate: bazel/clippy.bazelrc is maintained by
          # scripts/release.ts (like the lockfiles); a stale file only blocks
