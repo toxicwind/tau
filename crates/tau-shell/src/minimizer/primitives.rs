@@ -336,6 +336,64 @@ pub fn max_lines(input: &str, max: usize) -> String {
 	out
 }
 
+/// Character-budget truncation with a reserved error pool.
+///
+/// Line-count caps (`max_lines`) lose the tail of a long log; a character
+/// budget keeps the SHAPE of the output. This implements the same policy a
+/// "budget printer" uses for command logs:
+///
+/// - `budget` total characters of output.
+/// - `error_reserve` (as a fraction of the budget) is set aside for lines
+///   that match `error_pattern` — errors always survive, however much of
+///   the general pool is spent.
+/// - Lines are kept in order; a line that does not fit the remaining
+///   general pool is dropped, and the count of dropped lines is reported
+///   in a trailing marker so nothing looks silently complete.
+///
+/// `error_pattern` is a regex; when it is None every line is general.
+#[must_use]
+pub fn budget_chars(
+	input: &str,
+	budget: usize,
+	error_reserve_pct: u8,
+	error_pattern: Option<&regex::Regex>,
+) -> String {
+	if budget == 0 {
+		return String::new();
+	}
+	let reserve = (budget * error_reserve_pct.min(100) as usize) / 100;
+	let general = budget.saturating_sub(reserve);
+
+	let mut out = String::new();
+	let mut general_used = 0usize;
+	let mut reserve_used = 0usize;
+	let mut dropped = 0usize;
+
+	for line in input.lines() {
+		let is_error = error_pattern.map(|re| re.is_match(line)).unwrap_or(false);
+		let cost = line.len() + 1;
+		if is_error {
+			if reserve_used + cost > reserve {
+				dropped += 1;
+				continue;
+			}
+			reserve_used += cost;
+		} else {
+			if general_used + cost > general {
+				dropped += 1;
+				continue;
+			}
+			general_used += cost;
+		}
+		out.push_str(line);
+		out.push('\n');
+	}
+	if dropped > 0 {
+		out.push_str(&format!("[{dropped} lines dropped by char budget]\n"));
+	}
+	out
+}
+
 /// Line filter combining an optional keep set and an optional strip set.
 ///
 /// A line survives iff it matches the keep set (when present) AND does not
@@ -502,4 +560,56 @@ mod tests {
 		assert!(!is_horizontal_rule("   "), "whitespace-only must not be a rule");
 		assert!(!is_horizontal_rule("  "), "short whitespace must not be a rule");
 	}
+
+	#[test]
+	fn budget_keeps_everything_when_it_fits() {
+		let input = "alpha\nbeta\ngamma\n";
+		let out = super::budget_chars(input, 8000, 30, Some(&regex::Regex::new(r"(?i)\b(error|failed)\b").unwrap()));
+		assert_eq!(out, input);
+	}
+
+	#[test]
+	fn budget_preserves_errors_when_the_general_pool_is_spent() {
+		let mut input = String::new();
+		for i in 0..500 {
+			input.push_str(&format!("filler line {i} padding padding padding\n"));
+		}
+		input.push_str("ERROR: the thing broke\n");
+		let out = super::budget_chars(&input, 1000, 30, Some(&regex::Regex::new(r"(?i)\b(errors?|errored|failed|fatal|panic)\b").unwrap()));
+		assert!(
+			out.contains("ERROR: the thing broke"),
+			"the error line must survive the budget"
+		);
+	}
+
+	#[test]
+	fn budget_reports_dropped_lines() {
+		let mut input = String::new();
+		for i in 0..500 {
+			input.push_str(&format!("filler {i} padding padding padding padding\n"));
+		}
+		let out = super::budget_chars(&input, 500, 30, Some(&regex::Regex::new(r"(?i)\b(error|failed)\b").unwrap()));
+		assert!(
+			out.contains("lines dropped by char budget"),
+			"dropped lines must be counted, not silently vanished"
+		);
+	}
+
+	#[test]
+	fn budget_reserve_is_respected() {
+		let mut input = String::new();
+		for _ in 0..100 {
+			input.push_str("x\n");
+		}
+		let out = super::budget_chars(&input, 100, 50, Some(&regex::Regex::new(r"(?i)\b(error|failed)\b").unwrap()));
+		let kept = out.lines().filter(|l| *l == "x").count();
+		assert!(kept <= 25, "general pool must not exceed its share: kept {kept}");
+	}
+
+	#[test]
+	fn budget_zero_yields_empty() {
+		let out = super::budget_chars("alpha\nbeta\n", 0, 30, None);
+		assert_eq!(out, "");
+	}
+
 }

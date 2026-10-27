@@ -1258,6 +1258,25 @@ mod pipeline_integration_tests {
 	use crate::minimizer::MinimizerOptions;
 
 	#[test]
+	/// LIVE-WORLD check: a real long log through the budget def must keep the
+	/// error line and report the dropped count, and must not exceed the
+	/// character budget.
+	#[test]
+	fn budget_def_applies_to_a_real_long_log() {
+		let pipe = builtin_pipelines()
+			.find("journalctl", None)
+			.expect("budget def registered for journalctl");
+		let mut input = String::new();
+		for i in 0..4000 {
+			input.push_str(&format!("2026-10-27T05:00:00Z INFO routine event {i} padding padding\n"));
+		}
+		input.push_str("2026-10-27T05:00:00Z ERROR fatal: the thing broke\n");
+		let out = pipe.apply(&input);
+		assert!(out.contains("ERROR fatal: the thing broke"), "error line must survive");
+		assert!(out.contains("lines dropped by char budget"), "dropped lines must be counted");
+		assert!(out.len() <= 8000 + 200, "output must respect the budget: {}", out.len());
+	}
+
 	fn builtin_filters_parse_and_pass_inline_tests() {
 		let outcomes = verify_builtin_filters();
 		let failures: Vec<_> = outcomes.iter().filter(|o| !o.passed).collect();

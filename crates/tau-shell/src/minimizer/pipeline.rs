@@ -67,6 +67,17 @@ pub struct PipelineDef {
 	pub head_lines:           Option<usize>,
 	pub tail_lines:           Option<usize>,
 	pub max_lines:            Option<usize>,
+	/// Character budget for the whole output. Unlike `max_lines` this keeps
+	/// the SHAPE of a long log instead of its tail: a reserved slice of the
+	/// budget is held back for error lines so diagnostics always survive.
+	#[serde(default)]
+	pub budget_chars:         Option<usize>,
+	/// Percentage of `budget_chars` reserved for error lines (0-100).
+	#[serde(default)]
+	pub budget_error_pct:     Option<u8>,
+	/// Regex selecting the error lines that draw on the reserve.
+	#[serde(default)]
+	pub budget_error_pattern: Option<String>,
 	pub on_empty:             Option<String>,
 	/// Return the original input unchanged when all filtering stages remove it.
 	/// Useful for diagnostic filters that must not discard an unrecognized
@@ -152,6 +163,9 @@ pub struct CompiledPipeline {
 	pub head_lines:        Option<usize>,
 	pub tail_lines:        Option<usize>,
 	pub max_lines:         Option<usize>,
+	pub budget_chars:      Option<usize>,
+	pub budget_error_pct:  u8,
+	pub budget_error:      Option<Regex>,
 	pub on_empty:          Option<String>,
 	pub preserve_if_empty: bool,
 	pub only_on_exit:      Vec<i32>,
@@ -217,6 +231,13 @@ pub fn compile(name: String, def: PipelineDef) -> Result<CompiledPipeline, Strin
 		)
 	};
 
+	let budget_error = match def.budget_error_pattern.as_deref() {
+		Some(pat) => Some(
+			Regex::new(pat).map_err(|e| format!("invalid budget_error_pattern: {e}"))?,
+		),
+		None => None,
+	};
+
 	Ok(CompiledPipeline {
 		name,
 		description: def.description,
@@ -232,6 +253,9 @@ pub fn compile(name: String, def: PipelineDef) -> Result<CompiledPipeline, Strin
 		head_lines: def.head_lines,
 		tail_lines: def.tail_lines,
 		max_lines: def.max_lines,
+		budget_chars: def.budget_chars,
+		budget_error_pct: def.budget_error_pct.unwrap_or(30),
+		budget_error,
 		on_empty: def.on_empty,
 		preserve_if_empty: def.preserve_if_empty,
 		only_on_exit: def.only_on_exit,
@@ -339,22 +363,36 @@ impl CompiledPipeline {
 			stage7
 		};
 
-		// Stage 9: preserve the source when a keep-only filter removed every
+		// Stage 9: character budget with a reserved error pool. Runs LAST so
+		// the budget sees the final line shapes; error lines draw on their
+		// own reserve so they survive even when the general pool is spent.
+		let stage9: Cow<'_, str> = if let Some(b) = self.budget_chars {
+			Cow::Owned(primitives::budget_chars(
+				&stage8,
+				b,
+				self.budget_error_pct,
+				self.budget_error.as_ref(),
+			))
+		} else {
+			stage8
+		};
+
+		// Stage 10: preserve the source when a keep-only filter removed every
 		// line. This prevents a successful query/diagnostic command's
 		// meaningful output from being replaced by the engine's generic "OK"
 		// sentinel.
-		if self.preserve_if_empty && stage8.trim().is_empty() {
+		if self.preserve_if_empty && stage9.trim().is_empty() {
 			return Cow::Borrowed(input);
 		}
 
-		// Stage 10: on_empty
+		// Stage 11: on_empty
 		if let Some(msg) = self.on_empty.as_deref()
-			&& stage8.trim().is_empty()
+			&& stage9.trim().is_empty()
 		{
 			return Cow::Owned(msg.to_string());
 		}
 
-		stage8
+		stage9
 	}
 }
 
