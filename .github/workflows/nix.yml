@@ -50,7 +50,11 @@ jobs:
     name: Evaluate flake
     runs-on: ubuntu-22.04
     steps:
+      # tau-extensions is a git submodule (see .gitmodules); the default
+      # checkout leaves it empty, which breaks nix/bun.nix copyPathToStore.
       - uses: actions/checkout@v5
+        with:
+          submodules: recursive
       - uses: cachix/install-nix-action@v31
         with:
           extra_nix_config: |
