@@ -90,6 +90,7 @@ const EMBEDDED_PROVIDER_DEFS: readonly RoostProviderDef[] = [
 	{ name: "xiaomi", keyEnv: "XIAOMI_API_KEY" },
 	{ name: "zai", keyEnv: "ZAI_API_KEY" },
 	{ name: "zenmux", keyEnv: "ZENMUX_API_KEY" },
+	{ name: "freeinference", keyEnv: "FREEINFERENCE_API_KEY", auth: "bearer" },
 ];
 
 /**
@@ -1910,6 +1911,20 @@ const TAU_PROVIDER_POLICY: Readonly<Record<string, TauProviderPolicy>> = {
 			allowUnauthenticated: true,
 		},
 		allowUnauthenticated: true,
+	},
+	freeinference: {
+		defaultModel: "qwen3.6-35b",
+		discovery: {
+			label: "FreeInference",
+			allowUnauthenticated: true,
+		},
+		dynamicModelsAuthoritative: true,
+		kindApis: {
+			embedding: "openai-embeddings",
+			image: "openai-images",
+			stt: "openai-transcriptions",
+			tts: "openai-speech",
+		},
 	},
 };
 

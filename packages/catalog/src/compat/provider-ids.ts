@@ -25,6 +25,7 @@ export type KnownProvider =
 	| "devin"
 	| "firepass"
 	| "fireworks"
+	| "freeinference"
 	| "github-copilot"
 	| "gitlab-duo"
 	| "gitlab-duo-agent"
