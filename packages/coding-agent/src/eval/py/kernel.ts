@@ -144,6 +144,9 @@ async function probePythonKernelAvailability(
 		const settings = await Settings.init();
 		const { env } = settings.getShellConfig();
 		const baseEnv = filterEnv(env);
+		if (!interpreter) {
+			await ensureManagedPythonEnv();
+		}
 		const runtimes = interpreter
 			? [resolveExplicitPythonRuntime(interpreter, cwd, baseEnv)]
 			: enumeratePythonRuntimes(cwd, baseEnv);

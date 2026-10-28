@@ -647,6 +647,10 @@ async function runInteractiveMode(
 			}),
 		);
 		void startBackgroundModelDiscovery?.();
+		// Broker & Squawk Fleet Auto-Join (Phase 3)
+		void import("./launch/auto-join")
+			.then(m => m.registerInteractiveTauSession({ species: "tau" }))
+			.catch(() => {});
 
 		if (setupWizard && playStartupSplash) {
 			await setupWizard.runStartupSplash(mode);

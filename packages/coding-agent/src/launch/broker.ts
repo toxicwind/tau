@@ -1,3 +1,4 @@
+import { existsSync } from "node:fs";
 import * as fs from "node:fs/promises";
 import * as net from "node:net";
 import * as os from "node:os";
@@ -1245,6 +1246,19 @@ class DaemonBroker {
 		const record = this.#record(name);
 		await this.#stopRecord(record, 2_000);
 		await record.log?.close();
+
+		// Hot-Reload: check if updated binary (.next) exists at process boundary
+		try {
+			const appDir = path.dirname(record.spec.application);
+			const base = path.basename(record.spec.application);
+			const nextApp = path.join(appDir, `${base}.next`);
+			if (existsSync(nextApp)) {
+				await fs.rename(nextApp, record.spec.application);
+			}
+		} catch {
+			// Continue with current binary if swap fails
+		}
+
 		record.log = await DaemonLog.open(record.dir);
 		record.stopRequested = false;
 		await this.#launch(record);
