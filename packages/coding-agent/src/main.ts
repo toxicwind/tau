@@ -680,7 +680,7 @@ async function runInteractiveMode(
 		if (advisorConfigWarnings.length > 0) {
 			// Pulled here, not pushed from SessionAdvisors: the constructor-time
 			// `emitNotice` fired before the UI subscribed and was silently lost.
-			mode.showWarning(`WATCHDOG.yml: ${sanitizeDisplayWarnings(advisorConfigWarnings).join("; ")}`);
+			mode.showWarning(`TAUVISOR.yml: ${sanitizeDisplayWarnings(advisorConfigWarnings).join("; ")}`);
 		}
 
 		for (const notify of notifs) {

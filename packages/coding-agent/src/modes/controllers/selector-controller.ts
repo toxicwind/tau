@@ -375,7 +375,7 @@ export class SelectorController {
 		const agentDir = getAgentDir() ?? getProjectDir();
 		const initialScope: AdvisorConfigScope = "project";
 		void (async () => {
-			// "Project" scope edits the repo-root WATCHDOG.yml (the project-level file
+			// "Project" scope edits the repo-root TAUVISOR.yml (the project-level file
 			// discovery walks), not the launch subdir — `getProjectDir()` is only cwd.
 			let projectDir = cwd;
 			try {
@@ -430,12 +430,12 @@ export class SelectorController {
 					);
 					this.ctx.statusLine.invalidate();
 					if (discovered.warnings.length > 0) {
-						this.ctx.showWarning(`WATCHDOG.yml: ${sanitizeDisplayWarnings(discovered.warnings).join("; ")}`);
+						this.ctx.showWarning(`TAUVISOR.yml: ${sanitizeDisplayWarnings(discovered.warnings).join("; ")}`);
 					}
 					this.ctx.showStatus(
 						count > 0
-							? `Saved ${scope} WATCHDOG.yml — ${count} advisor${count === 1 ? "" : "s"} active.`
-							: `Saved ${scope} WATCHDOG.yml. Run /advisor on to activate the configured advisors.`,
+							? `Saved ${scope} TAUVISOR.yml — ${count} advisor${count === 1 ? "" : "s"} active.`
+							: `Saved ${scope} TAUVISOR.yml. Run /advisor on to activate the configured advisors.`,
 					);
 					this.ctx.ui.requestRender();
 				},

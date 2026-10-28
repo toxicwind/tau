@@ -5,7 +5,7 @@ import { isEnoent, logger } from "@tau/tau-utils";
 import { YAML } from "bun";
 import { expandAtImports } from "../discovery/at-imports";
 import { BUILTIN_TOOL_NAMES, normalizeToolNames } from "../tools/builtin-names";
-import { collectConfigCandidates } from "./watchdog";
+import { applyTauvisorPrecedence, collectConfigCandidates } from "./watchdog";
 
 import type { AdvisorConfig, AdvisorConfigScope, WatchdogConfigDoc } from "@tau/tau-tui/overlays/advisor-config";
 
@@ -166,7 +166,16 @@ function filterAdvisorTools(tools: string[] | undefined, sourcePath: string): st
  * thrown — so a bad project config can't kill the session.
  */
 export async function discoverAdvisorConfigs(cwd: string, agentDir?: string): Promise<DiscoveredAdvisors> {
-	const items = await collectConfigCandidates(cwd, agentDir, ["WATCHDOG.yml", "WATCHDOG.yaml"]);
+	// TAUVISOR.yml is the tau-specific canonical name; WATCHDOG.{yml,yaml} is
+	// the read-only legacy fallback. Project scope replaces user scope +
+	// defaults (applyTauvisorPrecedence) — see advisor/watchdog.ts.
+	const raw = await collectConfigCandidates(cwd, agentDir, [
+		"TAUVISOR.yml",
+		"TAUVISOR.yaml",
+		"WATCHDOG.yml",
+		"WATCHDOG.yaml",
+	]);
+	const items = applyTauvisorPrecedence(raw, ["TAUVISOR.md", "TAUVISOR.yaml", "TAUVISOR.yml"]);
 	const advisors = new Map<string, AdvisorConfig>();
 	const sharedParts: string[] = [];
 	let sharedMaxNotesPerUpdate: number | undefined;
@@ -233,32 +242,40 @@ export async function discoverAdvisorConfigs(cwd: string, agentDir?: string): Pr
 }
 
 /**
- * Resolve the `WATCHDOG.yml` path for a scope: `project` → `<projectDir>/WATCHDOG.yml`
- * (discovered by the project-level walk), `user` → `<agentDir>/WATCHDOG.yml` (the
- * user-level candidate).
+ * Resolve the `TAUVISOR.yml` path for a scope (tau-specific canonical):
+ * `project` → `<projectDir>/TAUVISOR.yml`, `user` → `<agentDir>/TAUVISOR.yml`.
  */
 export function advisorConfigFilePath(
 	scope: AdvisorConfigScope,
 	dirs: { projectDir: string; agentDir: string },
 ): string {
-	return path.join(scope === "user" ? dirs.agentDir : dirs.projectDir, "WATCHDOG.yml");
+	return path.join(scope === "user" ? dirs.agentDir : dirs.projectDir, "TAUVISOR.yml");
 }
 
 /**
- * Resolve which `WATCHDOG.{yml,yaml}` to edit for a scope: prefer the canonical
- * `.yml`, but when only a `.yaml` exists for that scope, edit it in place so an
- * existing `.yaml` user isn't shown a blank editor and left with two files at the
- * same precedence. Falls back to `.yml` when neither exists.
+ * Resolve which advisor config to edit for a scope: prefer the tau-specific
+ * canonical `TAUVISOR.yml`, then `TAUVISOR.yaml`, then edit a legacy
+ * `WATCHDOG.{yml,yaml}` in place when it is the only file (so an existing
+ * legacy user isn't shown a blank editor). Falls back to `TAUVISOR.yml` when
+ * none exists. Saving always writes `TAUVISOR.yml` and removes the legacy
+ * sibling (cutover — never two names of one setting).
  */
 export async function resolveAdvisorConfigEditPath(
 	scope: AdvisorConfigScope,
 	dirs: { projectDir: string; agentDir: string },
 ): Promise<string> {
 	const dir = scope === "user" ? dirs.agentDir : dirs.projectDir;
-	const yml = path.join(dir, "WATCHDOG.yml");
-	const yaml = path.join(dir, "WATCHDOG.yaml");
-	if (!(await Bun.file(yml).exists()) && (await Bun.file(yaml).exists())) return yaml;
-	return yml;
+	const tauYml = path.join(dir, "TAUVISOR.yml");
+	const tauYaml = path.join(dir, "TAUVISOR.yaml");
+	if (await Bun.file(tauYml).exists()) return tauYml;
+	if (!(await Bun.file(tauYaml).exists())) {
+		const legacyYml = path.join(dir, "WATCHDOG.yml");
+		const legacyYaml = path.join(dir, "WATCHDOG.yaml");
+		if (!(await Bun.file(legacyYml).exists()) && (await Bun.file(legacyYaml).exists())) return legacyYaml;
+		if (await Bun.file(legacyYml).exists()) return legacyYml;
+		return tauYml;
+	}
+	return tauYaml;
 }
 
 /**
@@ -384,19 +401,41 @@ export function serializeWatchdogConfig(doc: WatchdogConfigDoc): string {
 }
 
 /**
- * Write an editable doc to `WATCHDOG.yml`. An empty doc removes the file so
+ * Write an editable doc to the advisor config. Saving cutover: the canonical
+ * target is always `TAUVISOR.yml` (tau-specific); when the caller handed a
+ * legacy `WATCHDOG.{yml,yaml}` path (the only-file edit fallback), the write
+ * goes to `TAUVISOR.yml` and the legacy file is REMOVED so discovery never
+ * sees two names of one setting. An empty doc removes the target file so
  * discovery falls back to the legacy single-advisor path rather than leaving an
  * empty config behind.
  */
 export async function saveWatchdogConfigFile(filePath: string, doc: WatchdogConfigDoc): Promise<void> {
+	const base = path.basename(filePath);
+	const legacy = base === "WATCHDOG.yml" || base === "WATCHDOG.yaml";
+	const dir = path.dirname(filePath);
+	const target = legacy ? path.join(dir, "TAUVISOR.yml") : filePath;
 	const content = serializeWatchdogConfig(doc);
 	if (!content.trim()) {
 		try {
-			await fs.rm(filePath, { force: true });
+			await fs.rm(target, { force: true });
+			if (legacy) {
+				try {
+					await fs.rm(filePath, { force: true });
+				} catch (err) {
+					if (!isEnoent(err)) throw err;
+				}
+			}
 		} catch (err) {
 			if (!isEnoent(err)) throw err;
 		}
 		return;
 	}
-	await Bun.write(filePath, content);
+	await Bun.write(target, content);
+	if (legacy) {
+		try {
+			await fs.rm(filePath, { force: true });
+		} catch (err) {
+			if (!isEnoent(err)) throw err;
+		}
+	}
 }

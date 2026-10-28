@@ -45,7 +45,10 @@ type RequestBody = string | Uint8Array;
 const directAgent = new https.Agent({ keepAlive: true });
 
 /** Resolved at call time, so a proxy wrapper installed after this module loads is honored. */
-const fallbackFetch: FetchImpl = (input, init) => globalThis.fetch(input, init as RequestInit);
+const fallbackFetch: FetchImpl = (input, init) => {
+	const verbose = process.env.TAU_FETCH_VERBOSE === "1";
+	return globalThis.fetch(input, { ...(init as RequestInit), ...(verbose ? { verbose: true } : {}) });
+};
 
 function isHeaderRecord(headers: RequestInit["headers"]): headers is Record<string, string> {
 	return headers !== undefined && !(headers instanceof Headers) && !Array.isArray(headers);

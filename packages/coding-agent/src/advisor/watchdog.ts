@@ -134,11 +134,49 @@ export async function collectConfigCandidates(
 }
 
 /**
- * Discover and load WATCHDOG.md files walking up from cwd, project .tau folder, and user agent dir.
+ * Tauvisor precedence (2026-10-27 architect directive: "project scope tauvisor
+ * replacing user scope and default ... this is tau specific"):
+ *
+ * 1. Tau-specific filenames outrank the legacy upstream names: when ANY
+ *    TAUVISOR.* candidate exists, every WATCHDOG.* candidate drops — tau does
+ *    not layer two names of one setting (two truths are a bug).
+ * 2. Project replaces user: when ANY project-level candidate exists for a
+ *    basename, the user-level candidate of that basename drops. The user file
+ *    is a fallback record, never an override.
+ * 3. Within a level, the existing ancestor→leaf order holds (leaf most
+ *    specific last, so slug replacement gives the leaf the final word).
+ */
+export function applyTauvisorPrecedence(
+	items: ConfigCandidate[],
+	tauvivorBasenames: readonly string[],
+): ConfigCandidate[] {
+	const hasTauvisor = items.some(
+		(i) => tauvivorBasenames.some((b) => i.path.endsWith(b)),
+	);
+	let out = items;
+	if (hasTauvisor) {
+		out = out.filter((i) => !/WATCHDOG\./i.test(i.path));
+}
+	const basenames = new Set(out.map((i) => path.basename(i.path)));
+	for (const basename of basenames) {
+		const pool = out.filter((i) => path.basename(i.path) === basename);
+		if (pool.some((i) => i.level === "project")) {
+			out = out.filter((i) => !(path.basename(i.path) === basename && i.level === "user"));
+}
+}
+	return out;
+}
+
+/**
+ * Discover and load TAUVISOR.md (tau-specific; WATCHDOG.md is the read-only
+ * legacy fallback) files walking up from cwd, project .tau folder, and user
+ * agent dir. Project scope replaces user scope + defaults; TAUVISOR replaces
+ * WATCHDOG outright when present.
  * Returns formatted watchdog file blocks ready to be appended to the advisor system prompt.
  */
 export async function discoverWatchdogFiles(cwd: string, agentDir?: string): Promise<string[]> {
-	const items = await collectConfigCandidates(cwd, agentDir, ["WATCHDOG.md"]);
+	const raw = await collectConfigCandidates(cwd, agentDir, ["TAUVISOR.md", "WATCHDOG.md"]);
+	const items = applyTauvisorPrecedence(raw, ["TAUVISOR.md", "TAUVISOR.yaml", "TAUVISOR.yml"]);
 	const blocks: string[] = [];
 	for (const item of items) {
 		const expanded = await expandAtImports(item.content, item.path);

@@ -1000,22 +1000,33 @@ export class SessionAdvisors {
 				emissionGuard,
 			);
 
-			// `#advisorWatchdogPrompt` already carries WATCHDOG.md + YAML shared
+			// `#advisorWatchdogPrompt` already carries TAUVISOR.md + shared YAML
 			// instructions; `config.instructions` adds this advisor's specialization.
-			const systemPrompt = [prompt.render(advisorSystemPrompt, { max_notes_per_update: budgetPerUpdate })];
+			// Tool-awareness: the prompt names the advisor's ACTUAL granted tools
+			// (post session-availability filter) so the advisor never assumes a
+			// tool beyond its list.
+			// The default roster additionally gets `recall` when the active memory
+			// backend built it (MemoryRecallTool.createIf — hindsight/mnemotau only;
+			// sharpshooter/local expose no recall tool, so the extra name filters
+			// nothing there). Explicit `tools` lists stay user-owned and are not widened.
+			const names =
+				config.tools === undefined ? new Set([...ADVISOR_DEFAULT_TOOL_NAMES, "recall"]) : new Set(config.tools);
+			const grantedToolNames = (this.#advisorTools ?? [])
+				.map(t => t.name)
+				.filter(n => names.has(n))
+				.sort();
+			const systemPrompt = [
+				prompt.render(advisorSystemPrompt, {
+					max_notes_per_update: budgetPerUpdate,
+					granted_tools: grantedToolNames.join("`, `"),
+				}),
+			];
 			if (this.#advisorContextPrompt) systemPrompt.push(this.#advisorContextPrompt);
 			if (this.#advisorMemoryPrompt) systemPrompt.push(this.#advisorMemoryPrompt);
 			if (this.#advisorWatchdogPrompt) systemPrompt.push(this.#advisorWatchdogPrompt);
 			if (this.#advisorSharedInstructions) systemPrompt.push(this.#advisorSharedInstructions);
 			if (config.instructions?.trim()) systemPrompt.push(config.instructions.trim());
 
-			// The default roster additionally gets `recall` when the active memory
-			// backend built it (MemoryRecallTool.createIf — hindsight/mnemotau only;
-			// sharpshooter/local expose no recall tool, so the extra name filters
-			// nothing there). The advisor's instance reads the same bank as the
-			// primary. Explicit `tools` lists stay user-owned and are not widened.
-			const names =
-				config.tools === undefined ? new Set([...ADVISOR_DEFAULT_TOOL_NAMES, "recall"]) : new Set(config.tools);
 			const tools = (this.#advisorTools ?? []).filter(t => names.has(t.name));
 			const advisorLoopTools: AgentTool<any>[] = [adviseTool, ...tools];
 			const advisorToolMap = new Map<string, AgentTool<any>>();

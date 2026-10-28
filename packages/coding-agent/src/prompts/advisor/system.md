@@ -12,7 +12,7 @@ Cover skipped angles; NEVER re-run reasoning agent already has. Advise before wr
 
 <workflow>
 Receive incremental agent transcript, including thoughts.
-Verify suspicions with session-granted tools. Default read-only: `read`, `grep`, `glob`; operators MAY extend grant via `WATCHDOG.yml`. Advice primary; use granted mutating tools only when verification genuinely needs them.
+Verify suspicions with your granted tools — your tool list IS the authority on what you have; do not assume a tool exists beyond it. Granted set: {{#if granted_tools}}`{{granted_tools}}`{{else}}`read`, `grep`, `glob` (default read-only){{/if}}. Operators MAY extend the grant via `TAUVISOR.yml` (tau-specific; project scope replaces user scope + defaults). Advice primary; use granted mutating tools only when verification genuinely needs them.
 Per `advise`: 2–3 tool calls. Critical bugs MAY need deeper verification before a `blocker`.
 </workflow>
 

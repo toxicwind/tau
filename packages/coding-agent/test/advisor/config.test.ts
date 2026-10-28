@@ -248,7 +248,7 @@ describe("getOrCreateAdvisorProviderSessionId", () => {
 	});
 });
 
-describe("WATCHDOG.yml file round-trip", () => {
+describe("advisor config file round-trip (TAUVISOR.yml canonical)", () => {
 	let tmp: string;
 	beforeEach(async () => {
 		tmp = await fsp.mkdtemp(path.join(os.tmpdir(), "tau-advisor-file-"));
@@ -271,14 +271,14 @@ describe("WATCHDOG.yml file round-trip", () => {
 	};
 
 	it("saves and reloads a doc byte-equivalently (incl. multiline and special chars)", async () => {
-		const file = path.join(tmp, "WATCHDOG.yml");
+		const file = path.join(tmp, "TAUVISOR.yml");
 		await saveWatchdogConfigFile(file, doc);
 		const loaded = await loadWatchdogConfigFile(file);
 		expect(loaded).toEqual(doc);
 	});
 
 	it("serializes block-style YAML that the discovery path also parses", async () => {
-		const file = path.join(tmp, "WATCHDOG.yml");
+		const file = path.join(tmp, "TAUVISOR.yml");
 		await saveWatchdogConfigFile(file, doc);
 		const text = await Bun.file(file).text();
 		// Block style (not the flow `{...}` form), so it stays hand-editable.
@@ -293,7 +293,7 @@ describe("WATCHDOG.yml file round-trip", () => {
 	});
 
 	it("preserves significant leading whitespace and trailing newlines in block scalars", async () => {
-		const file = path.join(tmp, "WATCHDOG.yml");
+		const file = path.join(tmp, "TAUVISOR.yml");
 		const whitespaceDoc: WatchdogConfigDoc = {
 			instructions: "  indented first line\nplain second line\n\n",
 			advisors: [{ name: "Whitespace", instructions: "\n  indented after blank\nplain" }],
@@ -304,7 +304,7 @@ describe("WATCHDOG.yml file round-trip", () => {
 	});
 
 	it("round-trips an explicit empty tools list without collapsing it into the default", async () => {
-		const file = path.join(tmp, "WATCHDOG.yml");
+		const file = path.join(tmp, "TAUVISOR.yml");
 		const explicitNoToolsDoc: WatchdogConfigDoc = {
 			advisors: [{ name: "No Tools", tools: [] }, { name: "Default Tools" }],
 		};
@@ -320,11 +320,16 @@ describe("WATCHDOG.yml file round-trip", () => {
 
 	it("removes the file when the doc is empty so legacy discovery resumes", async () => {
 		const file = path.join(tmp, "WATCHDOG.yml");
+		// Save cutover: writing through a legacy path lands in TAUVISOR.yml and
+		// removes the legacy sibling; an empty doc then removes the tauvisor file.
 		await saveWatchdogConfigFile(file, doc);
+		expect(await Bun.file(path.join(tmp, "TAUVISOR.yml")).exists()).toBe(true);
+		expect(await Bun.file(file).exists()).toBe(false);
 		await saveWatchdogConfigFile(file, { advisors: [] });
+		expect(await Bun.file(path.join(tmp, "TAUVISOR.yml")).exists()).toBe(false);
 		expect(await Bun.file(file).exists()).toBe(false);
 		// Loading a missing file yields an empty doc, never throws.
-		expect(await loadWatchdogConfigFile(file)).toEqual({ advisors: [] });
+		expect(await loadWatchdogConfigFile(path.join(tmp, "TAUVISOR.yml"))).toEqual({ advisors: [] });
 	});
 
 	it("returns an empty serialization for an empty doc", () => {
@@ -333,15 +338,15 @@ describe("WATCHDOG.yml file round-trip", () => {
 
 	it("resolves project and user scope paths", () => {
 		expect(advisorConfigFilePath("project", { projectDir: "/repo", agentDir: "/home/.tau" })).toBe(
-			path.join("/repo", "WATCHDOG.yml"),
+			path.join("/repo", "TAUVISOR.yml"),
 		);
 		expect(advisorConfigFilePath("user", { projectDir: "/repo", agentDir: "/home/.tau" })).toBe(
-			path.join("/home/.tau", "WATCHDOG.yml"),
+			path.join("/home/.tau", "TAUVISOR.yml"),
 		);
 	});
 });
 
-describe("resolveAdvisorConfigEditPath", () => {
+describe("resolveAdvisorConfigEditPath (TAUVISOR canonical, legacy in-place)", () => {
 	let tmp: string;
 	beforeEach(async () => {
 		tmp = await fsp.mkdtemp(path.join(os.tmpdir(), "tau-advisor-resolve-"));
@@ -353,7 +358,7 @@ describe("resolveAdvisorConfigEditPath", () => {
 	const dirs = (d: string) => ({ projectDir: d, agentDir: d });
 
 	it("defaults to .yml when neither file exists", async () => {
-		expect(await resolveAdvisorConfigEditPath("project", dirs(tmp))).toBe(path.join(tmp, "WATCHDOG.yml"));
+		expect(await resolveAdvisorConfigEditPath("project", dirs(tmp))).toBe(path.join(tmp, "TAUVISOR.yml"));
 	});
 
 	it("edits an existing .yaml in place when only it exists", async () => {
@@ -361,9 +366,15 @@ describe("resolveAdvisorConfigEditPath", () => {
 		expect(await resolveAdvisorConfigEditPath("project", dirs(tmp))).toBe(path.join(tmp, "WATCHDOG.yaml"));
 	});
 
-	it("prefers the canonical .yml when both exist", async () => {
+	it("prefers TAUVISOR.yml when tauvisor and legacy both exist", async () => {
+		await Bun.write(path.join(tmp, "TAUVISOR.yml"), "advisors: []\n");
 		await Bun.write(path.join(tmp, "WATCHDOG.yml"), "advisors: []\n");
 		await Bun.write(path.join(tmp, "WATCHDOG.yaml"), "advisors: []\n");
+		expect(await resolveAdvisorConfigEditPath("project", dirs(tmp))).toBe(path.join(tmp, "TAUVISOR.yml"));
+	});
+
+	it("edits legacy WATCHDOG.yml in place when it is the only file", async () => {
+		await Bun.write(path.join(tmp, "WATCHDOG.yml"), "advisors: []\n");
 		expect(await resolveAdvisorConfigEditPath("project", dirs(tmp))).toBe(path.join(tmp, "WATCHDOG.yml"));
 	});
 });
@@ -383,7 +394,8 @@ describe("per-advisor enabled field", () => {
 			const file = path.join(tmp, "WATCHDOG.yml");
 			await saveWatchdogConfigFile(file, doc);
 
-			const loaded = await loadWatchdogConfigFile(file);
+			// Save cutover: the doc lands in TAUVISOR.yml; discovery reads it there.
+			const loaded = await loadWatchdogConfigFile(path.join(tmp, "TAUVISOR.yml"));
 			expect(loaded.advisors.map(advisor => advisor.enabled)).toEqual([true, false, undefined]);
 
 			const { advisors } = await discoverAdvisorConfigs(tmp, tmp);
@@ -441,7 +453,7 @@ describe("maxNotesPerUpdate configuration", () => {
 			const file = path.join(tmp, "WATCHDOG.yml");
 			await saveWatchdogConfigFile(file, doc);
 
-			const loaded = await loadWatchdogConfigFile(file);
+			const loaded = await loadWatchdogConfigFile(path.join(tmp, "TAUVISOR.yml"));
 			expect(loaded.maxNotesPerUpdate).toBe(3);
 			expect(loaded.advisors[0]?.maxNotesPerUpdate).toBe(5);
 			expect(loaded.advisors[1]?.maxNotesPerUpdate).toBeUndefined();
