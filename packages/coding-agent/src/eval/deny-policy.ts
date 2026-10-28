@@ -1,7 +1,7 @@
 /**
  * deny-policy.ts — carry `tools.approval.<tool>: deny` INTO eval kernels.
  *
- * CVE-2026-1037 (estate anomaly #37, verified 2026-10-28)
+ * ESTATE-ANOMALY-37 (estate anomaly #37, verified 2026-10-28)
  * ========================================================
  * The approval gate (`tools.approval`) is enforced per tool NAME in the host
  * (`approval.ts` → `resolveApproval` throws on deny). Eval kernels are spawned

@@ -23,6 +23,7 @@ import type { ShadowPlan } from "../speculation/types";
 import { PYTHON_PRELUDE } from "./prelude";
 import RUNNER_SCRIPT from "./runner.py" with { type: "text" };
 import {
+	ensureManagedPythonEnv,
 	enumeratePythonRuntimes,
 	filterEnv,
 	type PythonRuntime,
@@ -147,7 +148,16 @@ async function probePythonKernelAvailability(
 			? [resolveExplicitPythonRuntime(interpreter, cwd, baseEnv)]
 			: enumeratePythonRuntimes(cwd, baseEnv);
 		if (runtimes.length === 0) {
-			return { ok: false, reason: "Python executable not found on PATH" };
+			// No venv, no managed env, no system python on PATH? Bootstrap the
+			// managed env so eval has an isolated interpreter instead of dying.
+			await ensureManagedPythonEnv();
+			const bootstrapped = interpreter
+				? [resolveExplicitPythonRuntime(interpreter, cwd, baseEnv)]
+				: enumeratePythonRuntimes(cwd, baseEnv);
+			runtimes.push(...bootstrapped);
+			if (runtimes.length === 0) {
+				return { ok: false, reason: "Python executable not found on PATH" };
+			}
 		}
 		const result = await probeCandidates(
 			runtimes.map(runtime => ({

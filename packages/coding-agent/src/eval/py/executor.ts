@@ -233,7 +233,7 @@ function createCancelledPythonResult(timedOut: boolean, timeoutMs?: number): Pyt
 
 async function startKernel(cwd: string, options: PythonExecutorOptions): Promise<PythonKernel> {
 	requireRemainingTimeoutMs(options.deadlineMs);
-	// CVE-2026-1037 (anomaly #37): read `tools.approval` deny entries and carry
+	// ESTATE-ANOMALY-37 (anomaly #37): read `tools.approval` deny entries and carry
 	// the resolved exe families to the kernel so prelude.py can gate spawns.
 	const settings = await Settings.init();
 	const deniedTools = buildDeniedToolsEnv(settings.get("tools.approval"));

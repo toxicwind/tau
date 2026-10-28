@@ -311,7 +311,7 @@ export const MANAGED_KERNEL_ENV_KEYS = [
 	"PI_TOOL_BRIDGE_TOKEN",
 	"PI_TOOL_BRIDGE_SESSION",
 	"PI_EVAL_LOCAL_ROOTS",
-	// CVE-2026-1037 (anomaly #37): deny list for the kernel's spawn surface.
+	// ESTATE-ANOMALY-37 (anomaly #37): deny list for the kernel's spawn surface.
 	// Carried as env so the py/js preludes can enforce `tools.approval.*: deny`
 	// on subprocess/Popen/Bun.$ without any host-side name-filtering gap.
 	"TAU_DENIED_TOOLS",

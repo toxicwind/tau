@@ -153,7 +153,7 @@ export async function executeJs(code: string, options: JsExecutorOptions): Promi
 				: (options.signal ?? timeoutSignal);
 		signal?.throwIfAborted();
 		runtimeEntered = true;
-		// CVE-2026-1037 (anomaly #37): carry `tools.approval.*: deny` into the JS
+		// ESTATE-ANOMALY-37 (anomaly #37): carry `tools.approval.*: deny` into the JS
 		// worker env (both the subprocess spawn and `new Worker` inherit this).
 		// The worker-core boot gate wraps Bun.spawn/Bun.$ with the deny list.
 		if (process.env.TAU_DENIED_TOOLS === undefined) {

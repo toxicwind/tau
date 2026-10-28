@@ -4,6 +4,7 @@
  * Centralizes environment filtering, venv detection, and Python executable resolution
  * for both the shared gateway and local kernel spawning.
  */
+import { $ } from "bun";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -273,4 +274,45 @@ export function resolvePythonRuntime(cwd: string, baseEnv: Record<string, string
 		throw new Error("Python executable not found on PATH");
 	}
 	return runtime;
+}
+
+/**
+ * Ensure the managed `~/.tau/python-env` virtualenv exists, creating it with
+ * `uv venv` (or `python -m venv` fallback) when missing.
+ *
+ * This is the Python bootstrap: `%pip` and the eval kernel need an isolated
+ * install target. Without it, `%pip install` would silently write into the
+ * system interpreter. Project-local venvs still take priority at runtime —
+ * this only guarantees the managed fallback exists.
+ *
+ * Returns `true` when the env is ready (created or pre-existing), `false` when
+ * creation failed and callers should fall back to the system interpreter.
+ */
+let _bootstrapPromise: Promise<boolean> | null = null;
+
+export async function ensureManagedPythonEnv(): Promise<boolean> {
+	const { venvPath, pythonPath } = resolveManagedPythonCandidate();
+	if (fs.existsSync(pythonPath)) return true;
+	if (_bootstrapPromise) return _bootstrapPromise;
+
+	_bootstrapPromise = (async () => {
+		if (fs.existsSync(pythonPath)) return true;
+		const uvPath = $which("uv");
+		try {
+			if (uvPath) {
+				await $`${uvPath} venv ${venvPath}`.quiet();
+			} else {
+				const sysPython = $which("python3") ?? $which("python");
+				if (!sysPython) return false;
+				await $`${sysPython} -m venv ${venvPath}`.quiet();
+			}
+			return fs.existsSync(pythonPath);
+		} catch {
+			return false;
+		} finally {
+			_bootstrapPromise = null;
+		}
+	})();
+
+	return _bootstrapPromise;
 }

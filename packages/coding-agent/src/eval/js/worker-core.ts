@@ -10,7 +10,7 @@ import type {
 } from "./worker-protocol";
 
 // ---------------------------------------------------------------------------
-// CVE-2026-1037 (anomaly #37) — enforce `tools.approval.*: deny` inside the JS
+// ESTATE-ANOMALY-37 (anomaly #37) — enforce `tools.approval.*: deny` inside the JS
 // kernel too. The worker hands user code the raw `Bun` global (`Bun.spawn` /
 // `Bun.$`), so the deny list carried as `TAU_DENIED_TOOLS` env must gate the
 // spawn surface at the global level, not by tool name.
@@ -65,7 +65,7 @@ function assertNotDenied(cmd: unknown, surface: string): void {
 	if (name && DENIED.has(name)) {
 		throw new Error(
 			`TAU_DENIED_TOOLS: '${name}' is denied by tools.approval via ${surface} ` +
-				`(CVE-2026-1037). Remove the deny from config to run it.`,
+				`(ESTATE-ANOMALY-37). Remove the deny from config to run it.`,
 		);
 	}
 }

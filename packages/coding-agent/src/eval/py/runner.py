@@ -1521,7 +1521,7 @@ class _ShellResult(list):
 
 
 def __tau_shell(cmd: str) -> _ShellResult:
-    # CVE-2026-1037: gate the shell helper first (shell=True string form).
+    # ESTATE-ANOMALY-37: gate the shell helper first (shell=True string form).
     _tau_denied_check(cmd)
     # stdin=DEVNULL: see _run_shell_body.
     proc = subprocess.Popen(
@@ -2417,7 +2417,7 @@ def main() -> None:
 
 
 # ---------------------------------------------------------------------------
-# CVE-2026-1037 (anomaly #37) — enforce `tools.approval.*: deny` inside the
+# ESTATE-ANOMALY-37 (anomaly #37) — enforce `tools.approval.*: deny` inside the
 # kernel. The host gates the literal `bash`/`grep`/`find` TOOLS by name; eval
 # kernels hand user code raw subprocess, so the deny list is carried here as
 # `TAU_DENIED_TOOLS` env (tool:exe,exe;tool:exe…) and enforced on every
@@ -2450,7 +2450,7 @@ class _DeniedTools:
         if base in self._exes:
             raise PermissionError(
                 f"TAU_DENIED_TOOLS: '{base}' is denied by tools.approval "
-                f"(CVE-2026-1037). Remove the deny from config to run it."
+                f"(ESTATE-ANOMALY-37). Remove the deny from config to run it."
             )
 
     def check_cmd(self, cmd: object) -> None:
@@ -2462,7 +2462,7 @@ class _DeniedTools:
             if first in self._exes:
                 raise PermissionError(
                     f"TAU_DENIED_TOOLS: '{first}' is denied by tools.approval "
-                    f"(CVE-2026-1037). Remove the deny from config to run it."
+                    f"(ESTATE-ANOMALY-37). Remove the deny from config to run it."
                 )
             return
         if isinstance(cmd, (list, tuple)) and len(cmd) > 0:
