@@ -311,6 +311,10 @@ export const MANAGED_KERNEL_ENV_KEYS = [
 	"PI_TOOL_BRIDGE_TOKEN",
 	"PI_TOOL_BRIDGE_SESSION",
 	"PI_EVAL_LOCAL_ROOTS",
+	// CVE-2026-1037 (anomaly #37): deny list for the kernel's spawn surface.
+	// Carried as env so the py/js preludes can enforce `tools.approval.*: deny`
+	// on subprocess/Popen/Bun.$ without any host-side name-filtering gap.
+	"TAU_DENIED_TOOLS",
 ] as const;
 
 interface ManagedKernelEnvOptions {
@@ -319,6 +323,7 @@ interface ManagedKernelEnvOptions {
 	bridgeSessionId?: string;
 	bridge?: { url: string; token: string };
 	localRoots?: Record<string, string>;
+	deniedTools?: string;
 }
 interface ManagedKernelEnvPolicy {
 	sparse?: boolean;
@@ -344,6 +349,7 @@ export function buildManagedKernelEnvPatch(
 			patch.PI_TOOL_BRIDGE_SESSION = options.bridgeSessionId ?? "";
 		}
 		if (localRoots) patch.PI_EVAL_LOCAL_ROOTS = JSON.stringify(localRoots);
+		if (options.deniedTools) patch.TAU_DENIED_TOOLS = options.deniedTools;
 		return patch;
 	}
 	return {
@@ -353,6 +359,7 @@ export function buildManagedKernelEnvPatch(
 		PI_TOOL_BRIDGE_TOKEN: options.bridge?.token ?? null,
 		PI_TOOL_BRIDGE_SESSION: options.bridge && options.bridgeSessionId ? options.bridgeSessionId : null,
 		PI_EVAL_LOCAL_ROOTS: localRoots && Object.keys(localRoots).length > 0 ? JSON.stringify(localRoots) : null,
+		TAU_DENIED_TOOLS: options.deniedTools ?? null,
 	};
 }
 

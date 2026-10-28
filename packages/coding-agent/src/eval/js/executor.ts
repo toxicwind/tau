@@ -3,6 +3,8 @@ import type { ToolSession } from "../../tools";
 import { resolveOutputMaxColumns, resolveOutputSinkHeadBytes } from "../../tools/output-meta";
 import { isEvalTimeoutControlEvent, withBridgeTimeoutPause } from "../bridge-timeout";
 import { DisplayOutputCollector } from "../executor-base";
+import { buildDeniedToolsEnv } from "../deny-policy";
+import { Settings } from "../../config/settings";
 import { executeInVmContext, type JsDisplayOutput } from "./context-manager";
 import { installJsPackages } from "./package-installer";
 import type { JsPackageEnvironmentMode } from "./package-installer";
@@ -151,6 +153,16 @@ export async function executeJs(code: string, options: JsExecutorOptions): Promi
 				: (options.signal ?? timeoutSignal);
 		signal?.throwIfAborted();
 		runtimeEntered = true;
+		// CVE-2026-1037 (anomaly #37): carry `tools.approval.*: deny` into the JS
+		// worker env (both the subprocess spawn and `new Worker` inherit this).
+		// The worker-core boot gate wraps Bun.spawn/Bun.$ with the deny list.
+		if (process.env.TAU_DENIED_TOOLS === undefined) {
+			const s = await Settings.init();
+			const deniedToolsEnv = buildDeniedToolsEnv(s.get("tools.approval"));
+			if (deniedToolsEnv !== undefined) {
+				process.env.TAU_DENIED_TOOLS = deniedToolsEnv;
+			}
+		}
 		await executeInVmContext({
 			sessionKey: options.sessionId,
 			sessionId: options.sessionId,

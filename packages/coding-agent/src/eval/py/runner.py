@@ -1521,6 +1521,8 @@ class _ShellResult(list):
 
 
 def __tau_shell(cmd: str) -> _ShellResult:
+    # CVE-2026-1037: gate the shell helper first (shell=True string form).
+    _tau_denied_check(cmd)
     # stdin=DEVNULL: see _run_shell_body.
     proc = subprocess.Popen(
         cmd,
@@ -2412,6 +2414,108 @@ async def _main_async() -> None:
 
 def main() -> None:
     asyncio.run(_main_async())
+
+
+# ---------------------------------------------------------------------------
+# CVE-2026-1037 (anomaly #37) — enforce `tools.approval.*: deny` inside the
+# kernel. The host gates the literal `bash`/`grep`/`find` TOOLS by name; eval
+# kernels hand user code raw subprocess, so the deny list is carried here as
+# `TAU_DENIED_TOOLS` env (tool:exe,exe;tool:exe…) and enforced on every
+# spawn-ish entry the kernel exposes. Parse once at boot; inert when unset.
+# ---------------------------------------------------------------------------
+
+class _DeniedTools:
+    def __init__(self) -> None:
+        raw = os.environ.get("TAU_DENIED_TOOLS", "")
+        self._exes: set[str] = set()
+        self._by_tool: dict[str, list[str]] = {}
+        for part in raw.split(";") if raw else []:
+            if ":" not in part:
+                continue
+            tool, exes = part.split(":", 1)
+            lst = [e for e in exes.split(",") if e]
+            if lst:
+                self._by_tool[tool] = lst
+                self._exes.update(lst)
+
+    @property
+    def active(self) -> bool:
+        return bool(self._exes)
+
+    def check_argv0(self, argv0: str | None) -> None:
+        """Raise PermissionError if `argv0` resolves into a denied family."""
+        if not self.active or not argv0:
+            return
+        base = os.path.basename(argv0)
+        if base in self._exes:
+            raise PermissionError(
+                f"TAU_DENIED_TOOLS: '{base}' is denied by tools.approval "
+                f"(CVE-2026-1037). Remove the deny from config to run it."
+            )
+
+    def check_cmd(self, cmd: object) -> None:
+        """Inspect a subprocess argv — list[0] or Popen args shape."""
+        if isinstance(cmd, str):
+            # shell=True string: only the first token is visible without a
+            # real shell parse; a leading `bash -lc '…'` is the common evasion.
+            first = cmd.strip().split(None, 1)[0] if cmd.strip() else ""
+            if first in self._exes:
+                raise PermissionError(
+                    f"TAU_DENIED_TOOLS: '{first}' is denied by tools.approval "
+                    f"(CVE-2026-1037). Remove the deny from config to run it."
+                )
+            return
+        if isinstance(cmd, (list, tuple)) and len(cmd) > 0:
+            self.check_argv0(str(cmd[0]))
+            # exec-form: [exe, name, …] keeps the path at 0; [exe, …] too.
+            return
+        if cmd is not None and isinstance(getattr(cmd, "args", None), (list, tuple)):
+            args = cmd.args
+            if len(args) > 0:
+                self.check_argv0(str(args[0]))
+
+
+_DENIED = _DeniedTools()
+
+
+def _tau_denied_check(args) -> None:
+    if not _DENIED.active:
+        return
+    if args is None:
+        return
+    _DENIED.check_cmd(args)
+
+
+def _install_subprocess_gate() -> None:
+    """Thin wrapper over subprocess.Popen that gates the executable.
+
+    Replacing `Popen` covers run/call/check_*/getoutput (they all construct a
+    Popen). Shell-string form (`shell=True`) is checked via the string head;
+    exec-vector form via argv[0]. The module is replaced in sys.modules so
+    both runner-owned and user `import subprocess` see the gate.
+    """
+    if not _DENIED.active:
+        return
+    try:
+        import subprocess as _sp
+
+        _real_popen = _sp.Popen
+
+        class _GatedPopen(_real_popen):
+            def __init__(self, args, *a, **kw):
+                _tau_denied_check(args)
+                super().__init__(args, *a, **kw)
+
+        _GatedPopen.__name__ = "Popen"
+        _GatedPopen.__qualname__ = "Popen"
+        _sp.Popen = _GatedPopen
+    except Exception:
+        # Gate is best-effort inside the sandbox; never break kernel boot on
+        # a patch failure (the host name-gate still protects direct tool calls).
+        pass
+
+
+_install_subprocess_gate()
 
 
 if __name__ == "__main__":

@@ -738,8 +738,12 @@ function ensureBundledModuleLoadersLoaded(): Promise<BundledModuleLoaders> {
 		return Promise.reject(new Error("tau:legacy-tau-shim: bundled modules are only available in bundled mode"));
 	}
 	if (!bundledModuleLoadersPromise) {
-		// This virtual module exists only in compiled/npm builds; source mode cannot import it statically.
-		bundledModuleLoadersPromise = import("tau-legacy-tau-modules").then(module => module.BUNDLED_PI_MODULE_LOADERS);
+		// This virtual module exists only in compiled/npm builds; source mode
+		// cannot import it statically. A non-literal specifier keeps bundlers
+		// (bun build in source mode, vite) from statically resolving it, while
+		// `--compile` builds still replace it via the virtual-module plugin.
+		const virtualModule = "tau-legacy-tau-modules" as string;
+		bundledModuleLoadersPromise = import(/* @vite-ignore */ virtualModule).then(module => module.BUNDLED_PI_MODULE_LOADERS);
 	}
 	return bundledModuleLoadersPromise;
 }

@@ -9,6 +9,107 @@ import type {
 	WorkerOutbound,
 } from "./worker-protocol";
 
+// ---------------------------------------------------------------------------
+// CVE-2026-1037 (anomaly #37) — enforce `tools.approval.*: deny` inside the JS
+// kernel too. The worker hands user code the raw `Bun` global (`Bun.spawn` /
+// `Bun.$`), so the deny list carried as `TAU_DENIED_TOOLS` env must gate the
+// spawn surface at the global level, not by tool name.
+// ---------------------------------------------------------------------------
+
+interface DeniedSpec {
+	tool: string;
+	executables: string[];
+}
+
+function deniedSpecs(): DeniedSpec[] {
+	const raw = process.env.TAU_DENIED_TOOLS;
+	if (!raw) return [];
+	const out: DeniedSpec[] = [];
+	for (const part of raw.split(";")) {
+		const idx = part.indexOf(":");
+		if (idx < 0) continue;
+		const tool = part.slice(0, idx);
+		const executables = part.slice(idx + 1).split(",").filter(Boolean);
+		if (executables.length > 0) out.push({ tool, executables });
+	}
+	return out;
+}
+
+const DENIED = new Set<string>();
+for (const spec of deniedSpecs()) {
+	for (const exe of spec.executables) DENIED.add(exe);
+}
+
+function deniedExecutableName(cmd: unknown): string | null {
+	if (typeof cmd === "string") {
+		return cmd.trim().split(/\s+/)[0] ?? null;
+	}
+	if (Array.isArray(cmd)) {
+		const first = cmd[0];
+		if (typeof first === "string") return first;
+		if (first && typeof first === "object") {
+			const cmd2 = Reflect.get(first, "cmd");
+			if (typeof cmd2 === "string") return cmd2.trim().split(/\s+/)[0] ?? null;
+		}
+		if (first && typeof first === "object") {
+			const path = Reflect.get(first, "path");
+			if (typeof path === "string") return path;
+		}
+	}
+	return null;
+}
+
+function assertNotDenied(cmd: unknown, surface: string): void {
+	if (DENIED.size === 0) return;
+	const name = deniedExecutableName(cmd);
+	if (name && DENIED.has(name)) {
+		throw new Error(
+			`TAU_DENIED_TOOLS: '${name}' is denied by tools.approval via ${surface} ` +
+				`(CVE-2026-1037). Remove the deny from config to run it.`,
+		);
+	}
+}
+
+function installJsDenyGate(): void {
+	if (DENIED.size === 0) return;
+	const bun = (globalThis as Record<string, unknown>).Bun as
+		| (Record<string, unknown> & { spawn: unknown; $: unknown })
+		| undefined;
+	if (!bun) return;
+	// Bun.spawn — exec-vector + subprocess options.
+	const realSpawn = bun.spawn;
+	const gatedSpawn = new Proxy(typeof realSpawn === "function" ? realSpawn : function () {}, {
+		apply(target, thisArg, args: unknown[]) {
+			assertNotDenied(args[0], "Bun.spawn");
+			return Reflect.apply(target as () => unknown, thisArg, args);
+		},
+	});
+	bun.spawn = gatedSpawn;
+	// Bun.$ — template-tag shell form; the tagged fn exposes .cwd/.env/_ and is
+	// itself callable with strings. Wrap the callable via Proxy.
+	if (typeof bun.$ === "function") {
+		const realShell = bun.$;
+		const gatedShell = new Proxy(realShell, {
+			apply(target, thisArg, args: unknown[]) {
+				// Strings/template output arrive as arguments when invoked plain.
+				for (const arg of args) {
+					if (typeof arg === "string") {
+						assertNotDenied(arg, "Bun.$");
+						break;
+					}
+				}
+				return Reflect.apply(target as () => unknown, thisArg, args);
+			},
+			get(target, prop, receiver) {
+				return Reflect.get(target, prop, receiver);
+			},
+		});
+		bun.$ = gatedShell;
+	}
+}
+
+installJsDenyGate();
+
 interface PendingTool {
 	runId: string;
 	resolve(value: unknown): void;

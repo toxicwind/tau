@@ -15,6 +15,8 @@ import {
 	isTimedOutCancellation,
 	waitForPromiseWithCancellation,
 } from "../executor-base";
+import { buildDeniedToolsEnv } from "../deny-policy";
+import { Settings } from "../../config/settings";
 import type { JsStatusEvent } from "../js/shared/types";
 import { getEnabledEvalPreludes } from "../preludes";
 import type { EvalToolDescriptor, EvalToolInvokeResult } from "../types";
@@ -231,9 +233,13 @@ function createCancelledPythonResult(timedOut: boolean, timeoutMs?: number): Pyt
 
 async function startKernel(cwd: string, options: PythonExecutorOptions): Promise<PythonKernel> {
 	requireRemainingTimeoutMs(options.deadlineMs);
+	// CVE-2026-1037 (anomaly #37): read `tools.approval` deny entries and carry
+	// the resolved exe families to the kernel so prelude.py can gate spawns.
+	const settings = await Settings.init();
+	const deniedTools = buildDeniedToolsEnv(settings.get("tools.approval"));
 	return await PythonKernel.start({
 		cwd,
-		env: buildManagedKernelEnv(options),
+		env: buildManagedKernelEnv({ ...options, deniedTools }),
 		signal: options.signal,
 		deadlineMs: options.deadlineMs,
 		interpreter: options.interpreter,
