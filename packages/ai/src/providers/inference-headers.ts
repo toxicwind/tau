@@ -43,6 +43,13 @@ export function applyInferenceHeaders(headers: Record<string, string>, options: 
 		setHeader(headers, "session_id", sessionId);
 		setHeader(headers, "x-client-request-id", sessionId);
 	}
+	// freeinference.org gateway (verified 2026-10-28): X-Session-ID is the
+	// sticky-routing hint that keeps our KV-cache prefix on the same SGLang
+	// worker across a multi-turn loop. Send it for both protocols — the
+	// gateway accepts it on /v1/chat/completions AND /v1|/anthropic/v1/messages.
+	if (options.provider === "freeinference" && sessionId) {
+		setHeaderIfAbsent(headers, "X-Session-ID", sessionId);
+	}
 
 	if (isOpenCode) {
 		setHeaderIfAbsent(headers, "User-Agent", USER_AGENT);
