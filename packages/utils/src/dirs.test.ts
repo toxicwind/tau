@@ -7,15 +7,20 @@ import {
 	normalizeProfileName,
 	resolveConfigDirEnv,
 	resolveProfileEnv,
+	refreshDirsFromEnv,
 	setAgentDir,
 	setProfile,
 	__resetDirsFromEnvForTests,
 	__resetInstallIdCacheForTests,
+	__resetProjectDirCacheForTests,
+	setProjectDir,
+	getProjectDir,
 	getConfigDirName,
 	getConfigAgentDirName,
 	getConfigRootDir,
 	getAgentDir,
 	getProfileRootDir,
+	getActiveProfile,
 	getReportsDir,
 	getLogsDir,
 	getLogPath,
@@ -39,28 +44,36 @@ import {
 	getAgentDbPath,
 	getMCPConfigPath,
 	getSSHConfigPath,
-	getActiveProfile,
 } from "./dirs";
 
 const HOME = os.homedir();
 
 describe("normalizeProfileName", () => {
-	// REAL contract, three distinct behaviors — sentinels return undefined
-	// WITHOUT throwing; valid names pass through verbatim (no lowercasing);
-	// invalid names THROW. A blanket "undefined expected ⇒ throw" rule fails
-	// the sentinel cases ("", "   ", "default") which legitimately do not throw.
-	test.each([[undefined], [""], ["   "], ["default"]])("sentinel %j → undefined, no throw", input => {
-		expect(normalizeProfileName(input)).toBeUndefined();
-	});
-	test.each([["tau"], ["my.profile_1-2"], ["a".repeat(64)]])("valid %j passes through verbatim", input => {
-		expect(normalizeProfileName(input)).toBe(input);
-	});
-	test.each([[" Tau "], ["UPPER"], ["."], [".."], ["ends."], ["CON"], ["con.txt"], ["LPT9.foo"], ["a".repeat(65)]])(
-		"invalid %j throws",
+	test.each([[undefined], [""], ["   "], ["default"]])(
+		"sentinel %j → undefined, no throw",
 		input => {
-			expect(() => normalizeProfileName(input)).toThrow("Invalid TAU profile");
+			expect(normalizeProfileName(input)).toBeUndefined();
 		},
 	);
+	test.each([["tau"], ["my.profile_1-2"], ["a".repeat(64)]])(
+		"valid %j passes through verbatim",
+		input => {
+			expect(normalizeProfileName(input)).toBe(input);
+		},
+	);
+	test.each([
+		[" Tau "],
+		["UPPER"],
+		["."],
+		[".."],
+		["ends."],
+		["CON"],
+		["con.txt"],
+		["LPT9.foo"],
+		["a".repeat(65)],
+	])("invalid %j throws", input => {
+		expect(() => normalizeProfileName(input)).toThrow("Invalid TAU profile");
+	});
 });
 
 describe("resolveProfileEnv / resolveConfigDirEnv", () => {
@@ -127,14 +140,15 @@ describe("profile nesting", () => {
 		__resetDirsFromEnvForTests();
 	});
 
-	test("no profile appends agent to the config dir", () => {
-		expect(getConfigAgentDirName()).toEqual(`${CONFIG_DIR_NAME}/agent`);
+	test("no profile agent dir", () => {
+		expect(getAgentDir()).toMatch(/\/agent$/);
+		expect(getConfigRootDir()).toEqual(path.join(HOME, CONFIG_DIR_NAME));
 	});
 
 	test("profile nests under profiles/<name>/agent", () => {
 		setProfile("olympus");
-		expect(getConfigAgentDirName()).toEqual(
-			path.join(CONFIG_DIR_NAME, "profiles", "olympus", "agent"),
+		expect(getAgentDir()).toEqual(
+			path.join(HOME, CONFIG_DIR_NAME, "profiles", "olympus", "agent"),
 		);
 		expect(getActiveProfile()).toEqual("olympus");
 	});
@@ -146,8 +160,8 @@ describe("profile nesting", () => {
 	test("setProfile(undefined) restores default", () => {
 		setProfile("olympus");
 		setProfile(undefined);
-		expect(getConfigAgentDirName()).toEqual(`${CONFIG_DIR_NAME}/agent`);
 		expect(getActiveProfile()).toBeUndefined();
+		expect(getAgentDir()).toMatch(/\/agent$/);
 	});
 });
 
@@ -348,6 +362,36 @@ describe("worktree dir weirdness", () => {
 
 	test("hashPath uses 7-hex encoding", () => {
 		expect(hashPath("/a/b")).toHaveLength(7);
+	});
+});
+
+describe("plugins dir with overridden home", () => {
+	test("getPluginsDir(home) short-circuits deterministically", () => {
+		const fakeHome = path.join(os.tmpdir(), "tau-fake-home-" + process.pid);
+		fs.mkdirSync(fakeHome, { recursive: true });
+		try {
+			expect(getPluginsDir(fakeHome)).toEqual(
+				path.join(fakeHome, CONFIG_DIR_NAME, "plugins"),
+			);
+		} finally {
+			fs.rmSync(fakeHome, { recursive: true, force: true });
+		}
+	});
+});
+
+describe("project dir resolution", () => {
+	const originalEnv = { ...process.env };
+	afterEach(() => {
+		process.env = { ...originalEnv };
+		__resetProjectDirCacheForTests();
+		delete process.env.PWD;
+	});
+
+	test("setProjectDir wins over cwd", () => {
+		const fake = path.join(os.tmpdir(), "tau-proj-" + process.pid);
+		fs.mkdirSync(fake, { recursive: true });
+		setProjectDir(fake);
+		expect(getProjectDir()).toEqual(fake);
 	});
 });
 
