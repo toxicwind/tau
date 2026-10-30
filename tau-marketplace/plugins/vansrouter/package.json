@@ -1,4 +1,8 @@
 {
+  "devDependencies": {
+    "@types/bun": "^1.4.4",
+    "bun-types": "^1.4.4"
+  },
   "name": "vansrouter",
   "version": "1.0.0",
   "description": "Dynamic OpenAI-compatible local model provider with live catalog sync from VansRouter (:20128)",

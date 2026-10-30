@@ -92,6 +92,8 @@
 		"@toxicwind/mimetite": "file:../../geode/products/mimetite",
 	},
 	"devDependencies": {
+    "@types/bun": "^1.4.4",
+    "bun-types": "^1.4.4",
 		"@bgotink/kdl": "0.4.0",
 		"@tau/tau-ai": "catalog:",
 		"@types/bun": "catalog:"

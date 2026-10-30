@@ -59,8 +59,17 @@ const PROTECTED_DEV_TERMS: Record<string, true> = {
   url: true, uri: true, jwt: true, env: true, json: true, yaml: true, yml: true,
   toml: true, diff: true, npm: true, pnpm: true, bun: true, bunx: true, tsc: true,
   pip: true, cargo: true, docker: true, sudo: true, curl: true, ssh: true,
-  tau: true, tau: true, vim: true, sed: true, awk: true, zsh: true, bash: true,
+  tau: true, kappa: true, vim: true, sed: true, awk: true, zsh: true, bash: true,
   tar: true, zip: true, gzip: true, grep: true, glob: true, ast: true, nix: true, bazel: true,
+  // Estate lexicon (2026-10-28 audit fix: these are LIVE identifiers — never correct them)
+  pens: true, geode: true, yote: true, kairos: true, thresher: true, mimetite: true,
+  rhodochrosite: true, chalcopyrite: true, bornite: true, azurite: true, galena: true,
+  danburite: true, pseudobrookite: true, olympus: true, barn: true, ranch: true,
+  estate: true, pitchfork: true, mise: true, secretsmith: true, corral: true,
+  squawk: true, flotilla: true, openfang: true, sigma: true, keryx: true, muse: true,
+  hodos: true, pinax: true, forge: true, nativelink: true, weave: true, stoat: true,
+  ffs: true, bin: true, tailrec: true, remy: true, blackbird: true, tiktoken: true,
+  termux: true, nftables: true, tailscale: true, keygate: true, klbs: true,
 };
 
 // ============================================================================

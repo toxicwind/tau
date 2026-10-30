@@ -184,6 +184,9 @@ describe("OpenAI completions disableReasoning and thinking dialects", () => {
 			cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
 			contextWindow: 128_000,
 			maxTokens: 16_384,
+			// Disable-able OpenRouter reasoning model (`enabled:false` accepted).
+			// Mandatory-reasoning endpoints (LFM-2.5 etc) are covered separately.
+			thinking: { mode: "effort", efforts: ["minimal", "low", "medium", "high"], requiresEffort: false },
 		});
 
 		const payload = await captureDisableReasoningPayload(model);

@@ -62,8 +62,108 @@ if (!globalThis.__tau_js_prelude_loaded__) {
 		}
 		return callHelper("read", path, options);
 	};
-	const write = async (path, data) => callHelper("writeFile", path, data);
+	const writeToolText = async (path, content) => {
+		const res = await globalThis.__tau_call_tool__("write", {
+			path,
+			content: typeof content === "string" ? content : JSON.stringify(content ?? {}),
+		});
+		return res && typeof res === "object" && "text" in res ? res.text : res;
+	};
+	const write = async (path, data) => {
+		if (shouldDelegateRead(path)) {
+			return writeToolText(path, data);
+		}
+		return callHelper("writeFile", path, data);
+	};
 	const env = (key, value) => callHelper("env", key, value);
+
+	const xd = new Proxy(
+		async (device, payload) => {
+			if (!device) return readToolText("xd://");
+			const url = device.startsWith("xd://") ? device : `xd://${device}`;
+			if (payload === undefined) return readToolText(url);
+			return writeToolText(url, payload);
+		},
+		{
+			get(_target, prop) {
+				if (prop === "list") return () => readToolText("xd://");
+				if (prop === "docs") return name => readToolText(`xd://${name}`);
+				if (typeof prop !== "string") return undefined;
+				return async payload =>
+					payload === undefined ? readToolText(`xd://${prop}`) : writeToolText(`xd://${prop}`, payload);
+			},
+		},
+	);
+
+	const mcp = new Proxy(
+		async (target, payload) => {
+			if (!target) return readToolText("mcp://");
+			const url = target.startsWith("mcp://") ? target : `mcp://${target}`;
+			if (payload === undefined) return readToolText(url);
+			return writeToolText(url, payload);
+		},
+		{
+			get(_target, prop) {
+				if (prop === "list") return () => readToolText("mcp://");
+				if (typeof prop !== "string") return undefined;
+				return async payload =>
+					payload === undefined ? readToolText(`mcp://${prop}`) : writeToolText(`mcp://${prop}`, payload);
+			},
+		},
+	);
+
+	const runFfs = (subcmd, args = [], opts = {}) => {
+		const cmdArgs = [subcmd];
+		if (opts.noIgnore !== false && (subcmd === "grep" || subcmd === "multi-grep")) {
+			cmdArgs.push("--no-ignore");
+		}
+		if (opts.root) cmdArgs.push("--root", String(opts.root));
+		if (opts.limit) cmdArgs.push("--limit", String(opts.limit));
+		if (opts.format) cmdArgs.push("--format", String(opts.format));
+		for (const a of Array.isArray(args) ? args : [args]) {
+			if (a !== undefined && a !== null) cmdArgs.push(String(a));
+		}
+		const proc = Bun.spawnSync(["/home/toxic/.local/bin/ffs", ...cmdArgs], {
+			cwd: opts.cwd || process.cwd(),
+			stdout: "pipe",
+			stderr: "pipe",
+		});
+		const out = new TextDecoder().decode(proc.stdout);
+		const err = new TextDecoder().decode(proc.stderr);
+		if (proc.exitCode !== 0 && !out) throw new Error(`ffs ${subcmd} failed (${proc.exitCode}): ${err}`);
+		return out;
+	};
+
+	const ffs = Object.assign(
+		(subcmd, ...rest) => runFfs(subcmd, rest),
+		{
+			grep: (needle, opts = {}) => runFfs("grep", [needle], typeof opts === "string" ? { root: opts } : opts),
+			find: (pattern, opts = {}) => runFfs("find", [pattern], typeof opts === "string" ? { root: opts } : opts),
+			glob: (pattern, opts = {}) => runFfs("glob", [pattern], typeof opts === "string" ? { root: opts } : opts),
+			read: (filePath, opts = {}) => runFfs("read", [filePath], opts),
+			outline: (filePath, opts = {}) => runFfs("outline", [filePath], opts),
+			symbol: (sym, opts = {}) => runFfs("symbol", [sym], typeof opts === "string" ? { root: opts } : opts),
+			refs: (sym, opts = {}) => runFfs("refs", [sym], typeof opts === "string" ? { root: opts } : opts),
+			callers: (sym, opts = {}) => runFfs("callers", [sym], typeof opts === "string" ? { root: opts } : opts),
+			callees: (sym, opts = {}) => runFfs("callees", [sym], typeof opts === "string" ? { root: opts } : opts),
+			flow: (sym, opts = {}) => runFfs("flow", [sym], typeof opts === "string" ? { root: opts } : opts),
+		},
+	);
+
+	const evalShim = (cmd, args = [], opts = {}) => {
+		const argv = Array.isArray(cmd) ? cmd : [cmd, ...(Array.isArray(args) ? args : [args])];
+		const proc = Bun.spawnSync(["/home/toxic/.bun/bin/bun", "/home/toxic/pens/estate/products/estate-ops/bin/eval-shim.ts", ...argv.map(String)], {
+			cwd: opts.cwd || process.cwd(),
+			env: { ...process.env, BASH_ENV: "", ...(opts.env || {}) },
+			stdout: "pipe",
+			stderr: "pipe",
+		});
+		return {
+			exitCode: proc.exitCode,
+			stdout: new TextDecoder().decode(proc.stdout),
+			stderr: new TextDecoder().decode(proc.stderr),
+		};
+	};
 
 	const __tools = new Map();
 	globalThis.__tau_tools__ = __tools;
@@ -629,4 +729,8 @@ if (!globalThis.__tau_js_prelude_loaded__) {
 	globalThis.read = read;
 	globalThis.write = write;
 	globalThis.env = env;
+	globalThis.xd = xd;
+	globalThis.mcp = mcp;
+	globalThis.ffs = ffs;
+	globalThis.evalShim = evalShim;
 }

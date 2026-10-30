@@ -25,6 +25,10 @@ function chatModel(compat: OpenAICompat): Model<"openai-completions"> {
 		contextWindow: 128_000,
 		maxTokens: 4096,
 		compat,
+		// A disable-able OpenRouter reasoning model (permissive: `enabled:false`
+		// is accepted). Mandatory-reasoning endpoints (LFM-2.5 etc) are covered
+		// by the dedicated regression test below.
+		thinking: { mode: "effort", efforts: ["minimal", "low", "medium", "high"], requiresEffort: false },
 	} satisfies ModelSpec<"openai-completions">);
 }
 
@@ -41,6 +45,7 @@ function responsesModel(compat: OpenAICompat): Model<"openai-responses"> {
 		contextWindow: 128_000,
 		maxTokens: 4096,
 		compat,
+		thinking: { mode: "effort", efforts: ["minimal", "low", "medium", "high"], requiresEffort: false },
 	} satisfies ModelSpec<"openai-responses">);
 }
 
@@ -100,6 +105,46 @@ describe("OpenAI compat policy", () => {
 
 		expect(chatBody.reasoning).toEqual({ enabled: false });
 		expect(responseBody.reasoning as unknown).toEqual({ enabled: false });
+	});
+
+	it("clamps mandatory-reasoning OpenRouter models to floor effort instead of enabled:false", () => {
+		// Regression for the 8,682x http-400-requests on openrouter
+		// liquid/lfm-2.5-2.6b:free: "Reasoning is mandatory for this endpoint and
+		// cannot be disabled". A model with `thinking.requiresEffort` must never
+		// emit `reasoning:{enabled:false}` even when reasoning is caller-disabled
+		// — it stays on at the lowest supported effort.
+		const compat: OpenAICompat = {
+			thinkingFormat: "openrouter",
+			reasoningDisableMode: "openrouter-enabled-false",
+		};
+		const thinking = { mode: "effort" as const, efforts: ["low", "high", "max"] as const, requiresEffort: true };
+		const chatModelWithThinking = buildModel({
+			id: "lfm-mandatory",
+			name: "Mandatory Reasoner",
+			api: "openai-completions",
+			provider: "test-provider",
+			baseUrl: "https://example.com/v1",
+			reasoning: true,
+			input: ["text"],
+			cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
+			contextWindow: 128_000,
+			maxTokens: 4096,
+			compat,
+			thinking,
+		} satisfies ModelSpec<"openai-completions">);
+
+		const chatBody = chatParams();
+		const policy = resolveOpenAICompatPolicy(chatModelWithThinking, {
+			endpoint: "chat-completions",
+			disableReasoning: true,
+		});
+		applyChatCompletionsCompatPolicy(chatBody, policy);
+
+		// The request stays on at the floor effort — never a provider-400 off switch.
+		expect(policy.reasoning.requiresEffort).toBe(true);
+		expect(policy.reasoning.enabled).toBe(true);
+		expect(policy.reasoning.disabled).toBe(false);
+		expect(chatBody.reasoning).toEqual({ effort: "low" });
 	});
 
 	it("omits effort for both wire adapters from one catalog flag", () => {

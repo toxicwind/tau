@@ -193,7 +193,7 @@ async function loadMCPServers(ctx: LoadContext): Promise<LoadResult<MCPServer>> 
 							prompt?: string;
 					  }
 					| undefined,
-				transport: serverConfig.type as "stdio" | "sse" | "http" | undefined,
+				transport: (serverConfig.type ?? serverConfig.transport) as "stdio" | "sse" | "http" | undefined,
 				_source: createSourceMeta(PROVIDER_ID, path, level),
 			});
 		}
@@ -201,13 +201,21 @@ async function loadMCPServers(ctx: LoadContext): Promise<LoadResult<MCPServer>> 
 	};
 
 	// User scope tracks the active profile via getAgentDir() (not ctx.home), so it
-	// stays in sync with getMCPConfigPath("user") and the /mcp config writer.
+	// stays in sync with getMCPConfigPath("user") and the /mcp config writer. Also
+	// include ~/.tau/mcp.json so root-level user MCP configs are never ignored.
 	const userAgentDir = getAgentDir();
+	const userRootDir = path.dirname(userAgentDir);
 	const paths = [
 		{ path: path.join(ctx.cwd, PATHS.projectDir, "mcp.json"), level: "project" as const },
 		{ path: path.join(ctx.cwd, PATHS.projectDir, ".mcp.json"), level: "project" as const },
 		{ path: path.join(userAgentDir, "mcp.json"), level: "user" as const },
 		{ path: path.join(userAgentDir, ".mcp.json"), level: "user" as const },
+		...(userRootDir !== userAgentDir
+			? [
+					{ path: path.join(userRootDir, "mcp.json"), level: "user" as const },
+					{ path: path.join(userRootDir, ".mcp.json"), level: "user" as const },
+				]
+			: []),
 	];
 
 	const contents = await Promise.allSettled(

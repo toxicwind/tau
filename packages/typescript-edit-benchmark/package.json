@@ -47,6 +47,8 @@
     "@tau/tau-tui": "catalog:"
   },
   "devDependencies": {
+    "@types/bun": "^1.4.4",
+    "bun-types": "^1.4.4",
     "@types/babel__generator": "catalog:",
     "@types/babel__traverse": "catalog:",
     "@types/bun": "catalog:"

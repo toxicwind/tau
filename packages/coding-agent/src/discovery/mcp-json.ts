@@ -41,6 +41,7 @@ interface MCPConfigFile {
 				clientSecret?: string;
 			};
 			type?: "stdio" | "sse" | "http";
+			transport?: "stdio" | "sse" | "http";
 			oauth?: {
 				clientId?: string;
 				clientSecret?: string;
@@ -105,7 +106,7 @@ function transformMCPConfig(config: MCPConfigFile, source: SourceMeta): MCPServe
 				headers: serverConfig.headers,
 				auth: serverConfig.auth,
 				oauth: serverConfig.oauth,
-				transport: serverConfig.type,
+				transport: serverConfig.type ?? serverConfig.transport,
 				_source: source,
 			};
 

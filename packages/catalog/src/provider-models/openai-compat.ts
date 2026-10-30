@@ -3869,7 +3869,21 @@ export function vercelAiGatewayModelManagerOptions(
 				apiKey,
 				filterModel: (entry: OpenAICompatibleModelRecord) => {
 					const tags = entry.tags;
-					return Array.isArray(tags) && tags.includes("tool-use");
+					if (!Array.isArray(tags)) return false;
+					if (!tags.includes("tool-use")) return false;
+					const hasNonLanguageTag =
+						tags.includes("video") ||
+						tags.includes("audio") ||
+						tags.includes("embedding") ||
+						tags.includes("embed") ||
+						tags.includes("decision") ||
+						tags.includes("tts") ||
+						tags.includes("speech") ||
+						tags.includes("image-gen") ||
+						tags.includes("stt") ||
+						tags.includes("text-to-image") ||
+						tags.includes("image-embedding");
+					return !hasNonLanguageTag;
 				},
 				mapModel: (
 					entry: OpenAICompatibleModelRecord,

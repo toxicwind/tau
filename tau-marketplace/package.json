@@ -24,6 +24,8 @@
     "@tau/tau-agent": ">=18.0.0"
   },
   "devDependencies": {
+    "@types/bun": "^1.4.4",
+    "bun-types": "^1.4.4",
     "@tau/tau-agent": "npm:@oh-my-pi/pi-coding-agent@18.3.0"
   }
 }

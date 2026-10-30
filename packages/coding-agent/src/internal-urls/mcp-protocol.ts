@@ -1,6 +1,6 @@
 import { MCPManager } from "../mcp/manager";
 import type { MCPResourceReadResult } from "../mcp/types";
-import type { InternalResource, InternalUrl, ProtocolHandler } from "./types";
+import type { InternalResource, InternalUrl, InternalWriteResult, ProtocolHandler, WriteContext } from "./types";
 
 function escapeRegex(text: string): string {
 	return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -34,9 +34,6 @@ function extractResourceUri(url: InternalUrl): string {
 	const rawPathname = url.rawPathname ?? url.pathname;
 	const hasPath = rawPathname && rawPathname !== "/";
 	const uri = `${host}${hasPath ? rawPathname : ""}${url.search}${url.hash}`.trim();
-	if (!uri) {
-		throw new Error("mcp:// URL requires a resource URI: mcp://<resource-uri>");
-	}
 	return uri;
 }
 
@@ -103,7 +100,29 @@ function formatAvailableResources(mcpManager: MCPManager): string {
 			return [...concrete, ...templates];
 		})
 		.join("\n");
-	return available || "  (none)";
+	const tools = mcpManager
+		.getTools()
+		.map(t => `  mcp://${t.mcpServerName}/${t.mcpToolName} (or xd://${t.name}) — ${t.description.split("\n")[0]?.slice(0, 120) ?? ""}`)
+		.join("\n");
+	const parts: string[] = [];
+	if (available) parts.push(`Resources:\n${available}`);
+	if (tools) parts.push(`Tools (read mcp://<tool> for schema, write JSON args to mcp://<tool> or xd://<tool> to execute):\n${tools}`);
+	return parts.join("\n\n") || "  (none)";
+}
+
+function findMatchingMcpTool(mcpManager: MCPManager, uri: string) {
+	const cleaned = uri.replace(/^\/+|\/+$/g, "");
+	for (const tool of mcpManager.getTools()) {
+		if (
+			tool.name === cleaned ||
+			tool.mcpToolName === cleaned ||
+			`${tool.mcpServerName}/${tool.mcpToolName}` === cleaned ||
+			`${tool.mcpServerName}__${tool.mcpToolName}` === cleaned
+		) {
+			return tool;
+		}
+	}
+	return undefined;
 }
 
 /**
@@ -124,6 +143,21 @@ export class McpProtocolHandler implements ProtocolHandler {
 		}
 
 		const uri = extractResourceUri(url);
+		if (!uri) {
+			await mcpManager.waitForPendingConnections();
+			const servers = mcpManager.getConnectedServers();
+			const content = [
+				`mcp:// ${servers.length} connected server(s): ${servers.join(", ") || "none"}`,
+				"",
+				formatAvailableResources(mcpManager),
+			].join("\n");
+			return {
+				url: url.href,
+				content,
+				contentType: "text/plain",
+				size: Buffer.byteLength(content, "utf-8"),
+			};
+		}
 		let targetServer = resolveTargetServer(mcpManager, uri);
 		if (!targetServer) {
 			// A configured server may still be handshaking when discovery returned
@@ -136,8 +170,29 @@ export class McpProtocolHandler implements ProtocolHandler {
 			targetServer = resolveTargetServer(mcpManager, uri);
 		}
 		if (!targetServer) {
+			const matchedTool = findMatchingMcpTool(mcpManager, uri);
+			if (matchedTool) {
+				const doc = [
+					`# ${matchedTool.mcpServerName}/${matchedTool.mcpToolName} (xd://${matchedTool.name})`,
+					"",
+					matchedTool.description,
+					"",
+					"## Input Schema",
+					"```json",
+					JSON.stringify(matchedTool.parameters, null, 2),
+					"```",
+					`Execute by writing JSON args to \`mcp://${matchedTool.mcpServerName}/${matchedTool.mcpToolName}\` or \`xd://${matchedTool.name}\`.`,
+				].join("\n");
+				return {
+					url: url.href,
+					content: doc,
+					contentType: "text/markdown",
+					size: Buffer.byteLength(doc, "utf-8"),
+					notes: [`MCP server: ${matchedTool.mcpServerName}`],
+				};
+			}
 			throw new Error(
-				`No MCP server has resource "${uri}".\n\nAvailable resources:\n${formatAvailableResources(mcpManager)}`,
+				`No MCP server has resource or tool "${uri}".\n\nAvailable:\n${formatAvailableResources(mcpManager)}`,
 			);
 		}
 
@@ -170,5 +225,31 @@ export class McpProtocolHandler implements ProtocolHandler {
 			size: Buffer.byteLength(content, "utf-8"),
 			notes: [`MCP server: ${targetServer}`],
 		};
+	}
+
+	async write(url: InternalUrl, content: string, context?: WriteContext): Promise<InternalWriteResult | void> {
+		const mcpManager = MCPManager.instance();
+		if (!mcpManager) {
+			throw new Error("No MCP manager available. MCP servers may not be configured.");
+		}
+		await mcpManager.waitForPendingConnections();
+		const uri = extractResourceUri(url);
+		const matchedTool = findMatchingMcpTool(mcpManager, uri);
+		if (!matchedTool) {
+			throw new Error(
+				`No MCP tool matches "${uri}".\n\nAvailable:\n${formatAvailableResources(mcpManager)}`,
+			);
+		}
+		if (context?.xd) {
+			await context.xd.write(matchedTool.name, content);
+			return;
+		}
+		const args = content.trim() ? (JSON.parse(content) as Record<string, unknown>) : {};
+		const res = await matchedTool.execute("mcp-url-write", args, undefined, {} as never, context?.signal);
+		const text = res.content
+			.filter((c): c is { type: "text"; text: string } => c.type === "text")
+			.map(c => c.text)
+			.join("\n");
+		return { text: text || "(ok)", isError: res.isError };
 	}
 }

@@ -937,6 +937,14 @@ export interface OpenAICompatPolicy {
 		disableReason?: OpenAIReasoningDisableReason;
 		dialect: ResolvedOpenAISharedCompat["thinkingFormat"];
 		disableMode: OpenAIReasoningDisableMode;
+		/**
+		 * True when the endpoint mandates reasoning and rejects a hard-disable
+		 * (`reasoning.enabled:false`, `reasoning_effort` removed, thinking off).
+		 * Mirrors `thinking.requiresEffort` from the catalog. When set, disable
+		 * requests clamp to the lowest supported effort instead of emitting a
+		 * provider-400 shape — "Reasoning is mandatory ... cannot be disabled".
+		 */
+		requiresEffort: boolean;
 		omitReasoningEffort: boolean;
 		includeEncryptedReasoning: boolean;
 		filterReasoningHistory: boolean;
@@ -1038,7 +1046,7 @@ export function resolveOpenAICompatPolicy<TApi extends Api>(
 			: toolsSuppressReasoning
 				? "tools"
 				: undefined;
-	const disableReason: OpenAIReasoningDisableReason | undefined = options.disableReasoning
+	let disableReason: OpenAIReasoningDisableReason | undefined = options.disableReasoning
 		? "caller"
 		: conflictDisableReason;
 	const enabledBeforeThinkingVariant = requestedAndAllowed && disableReason === undefined;
@@ -1050,7 +1058,7 @@ export function resolveOpenAICompatPolicy<TApi extends Api>(
 		enabledBeforeThinkingVariant &&
 		baseCompat.reasoningDisableMode === "zai-thinking-disabled" &&
 		baseWireEffort === "none";
-	const enabled = enabledBeforeThinkingVariant && !disabledByNoneEffort;
+	let enabled = enabledBeforeThinkingVariant && !disabledByNoneEffort;
 	const compat =
 		enabled && baseCompat.whenThinking ? (baseCompat.whenThinking as OpenAICompatPolicyCompat) : baseCompat;
 	const omitReasoningEffort =
@@ -1063,11 +1071,20 @@ export function resolveOpenAICompatPolicy<TApi extends Api>(
 		requestedEffort === undefined &&
 		!options.disableReasoning &&
 		isImplicitDisableWhenNotRequested(disableMode);
-	const disabled =
+	let disabled =
 		(modelSupported && disableReason === "caller") ||
 		conflictDisableReason !== undefined ||
 		(modelSupported && disabledWithoutRequest) ||
 		disabledByNoneEffort;
+	// Mandatory-reasoning endpoints (catalog `thinking.requiresEffort`)
+	// reject any hard-disable wire shape ("Reasoning is mandatory for this
+	// endpoint and cannot be disabled" — measured 8,682x on openrouter
+	// liquid/lfm-2.5-2.6b:free writing `reasoning:{enabled:false}`). When
+	// the model mandates reasoning, force the request to stay enabled at the
+	// lowest supported effort rather than emit a provider-400 off switch.
+	// This central clamp repairs both the chat-completions and Responses
+	// encoders, mirroring `normalizeMandatoryReasoningOptions` in stream.ts.
+	const mandatoryReasoning = modelSupported && model.thinking?.requiresEffort === true;
 	if (disabled && compat.supportsReasoningEffort && !omitReasoningEffort) {
 		if (disableMode === "none-effort") {
 			wireEffort = "none";
@@ -1079,6 +1096,23 @@ export function resolveOpenAICompatPolicy<TApi extends Api>(
 				);
 			}
 			wireEffort = mapOpenAIReasoningEffort(model, compat, minEffort);
+		} else if (mandatoryReasoning && disableMode === "openrouter-enabled-false") {
+			// Mandatory-reasoning endpoints reject a hard-disable wire
+			// shape ("Reasoning is mandatory for this endpoint and cannot
+			// be disabled" — measured 8,682x on openrouter
+			// liquid/lfm-2.5-2.6b:free writing `reasoning:{enabled:false}`).
+			// Force the request to stay enabled at the lowest supported
+			// effort so the encoder emits `reasoning:{effort:floor}` (which
+			// OpenRouter accepts) instead of a provider-400 off switch.
+			const floorEffort = getSupportedEfforts(model)[0];
+			if (floorEffort !== undefined) {
+				wireEffort = mapOpenAIReasoningEffort(model, compat, floorEffort);
+				// A mandatory model can never be truly disabled via the
+				// openrouter off switch — keep reasoning on at the floor.
+				enabled = true;
+				disabled = false;
+				disableReason = undefined;
+			}
 		}
 	}
 
@@ -1100,6 +1134,7 @@ export function resolveOpenAICompatPolicy<TApi extends Api>(
 			reasoningContentField: compat.reasoningContentField,
 			requiresThinkingAsText: compat.requiresThinkingAsText,
 			disableMode,
+			requiresEffort: Boolean(mandatoryReasoning),
 			omitReasoningEffort,
 			includeEncryptedReasoning: options.includeEncryptedReasoning ?? compat.includeEncryptedReasoning,
 			filterReasoningHistory: options.filterReasoningHistory ?? compat.filterReasoningHistory,
@@ -1129,8 +1164,26 @@ export function resolveOpenAICompatPolicy<TApi extends Api>(
 function encodeChatCompletionsDisabledReasoning(
 	params: OpenAICompletionsParams,
 	disableMode: OpenAIReasoningDisableMode,
+	opts?: { requiresEffort?: boolean; floorEffort?: string },
 ): void {
 	delete params.reasoning_effort;
+	// Mandatory-reasoning endpoints reject a hard-disable ("Reasoning is
+	// mandatory for this endpoint and cannot be disabled" — measured
+	// 8,682x on openrouter liquid/lfm-2.5-2.6b:free writing
+	// `reasoning:{enabled:false}`). Clamp to the lowest supported effort so
+	// reasoning stays on instead of emitting the provider-400 shape. Only
+	// the modes that write an explicit off switch are clamped; modes that
+	// merely omit the field ("lowest-effort"/"none-effort" via the existing
+	// wire-effort branch) keep their existing semantics.
+	if (
+		opts?.requiresEffort === true &&
+		disableMode === "openrouter-enabled-false"
+	) {
+		if (opts.floorEffort !== undefined) {
+			params.reasoning = { effort: opts.floorEffort };
+		}
+		return;
+	}
 	switch (disableMode) {
 		case "none-effort":
 			params.reasoning_effort = "none";
@@ -3910,7 +3963,7 @@ export function applyResponsesReasoningParams<P extends ResponseCreateParamsStre
 	includeEncryptedReasoning?: boolean,
 	omitReasoningEffort?: boolean,
 ): void {
-	return applyResponsesCompatPolicy(
+	applyResponsesCompatPolicy(
 		params,
 		resolveOpenAICompatPolicy(model, {
 			endpoint: "responses",
