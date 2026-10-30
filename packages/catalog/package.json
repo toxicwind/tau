@@ -89,7 +89,7 @@
 	"dependencies": {
 		"@tau/tautype": "catalog:",
 		"@tau/tau-utils": "catalog:",
-		"@toxicwind/mimetite": "file:../../geode/products/mimetite",
+		"@toxicwind/mimetite": "file:../../geode/products/mimetite"
 	},
 	"devDependencies": {
     "@types/bun": "^1.4.4",
