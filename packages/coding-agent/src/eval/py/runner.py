@@ -2429,6 +2429,7 @@ class _DeniedTools:
         raw = os.environ.get("TAU_DENIED_TOOLS", "")
         self._exes: set[str] = set()
         self._by_tool: dict[str, list[str]] = {}
+        self._identity_cache: dict[str, str | None] = {}
         for part in raw.split(";") if raw else []:
             if ":" not in part:
                 continue
@@ -2442,16 +2443,62 @@ class _DeniedTools:
     def active(self) -> bool:
         return bool(self._exes)
 
+    def _identity(self, name: str) -> str | None:
+        """Resolve a name/path through PATH to its realpath (memoized)."""
+        cached = self._identity_cache.get(name, "__unset__")
+        if cached != "__unset__":
+            return cached  # type: ignore[return-value]
+        if "/" in name:
+            resolved = os.path.realpath(name)
+        else:
+            resolved = None
+            for directory in os.environ.get("PATH", "").split(":"):
+                if not directory:
+                    continue
+                candidate = os.path.join(directory, name)
+                if os.access(candidate, os.X_OK):
+                    resolved = os.path.realpath(candidate)
+                    break
+        self._identity_cache[name] = resolved
+        return resolved
+
+    def _denied_by_identity(self, name: str) -> bool:
+        """True when `name` — bare or full-path — resolves onto a denied exe.
+
+        Name-only matching let `/usr/bin/bash` bypass a `bash` deny (live
+        escape used 2026-10-30); identity resolution closes it.
+        """
+        if name in self._exes:
+            return True
+        identity = self._identity(name)
+        if identity:
+            for exe in self._exes:
+                exe_identity = self._identity(exe)
+                if exe_identity and exe_identity == identity:
+                    return True
+        return False
+
+    def _deny_error(self, name: str, surface: str) -> PermissionError:
+        # Message contract: NEVER advise the agent to strip the guard
+        # ("remove the deny from config" was read as an instruction and
+        # poisoned agent context). A denial is a ROUTE: sanctioned equivalent
+        # or escalate to the architect. Full-path spellings no longer bypass —
+        # the gate is identity-resolved.
+        return PermissionError(
+            f"TAU_DENIED_TOOLS: '{name}' is denied by tools.approval policy "
+            f"via {surface} (ESTATE-ANOMALY-37, identity-resolved gate — "
+            f"full-path spelling does not bypass). Do NOT edit config to "
+            f"bypass. Route instead: use a sanctioned equivalent, or ask the "
+            f"architect for the capability."
+        )
+
     def check_argv0(self, argv0: str | None) -> None:
         """Raise PermissionError if `argv0` resolves into a denied family."""
         if not self.active or not argv0:
             return
         base = os.path.basename(argv0)
-        if base in self._exes:
-            raise PermissionError(
-                f"TAU_DENIED_TOOLS: '{base}' is denied by tools.approval "
-                f"(ESTATE-ANOMALY-37). Remove the deny from config to run it."
-            )
+        if self._denied_by_identity(base) or self._denied_by_identity(argv0):
+            raise self._deny_error(base, "argv0")
 
     def check_cmd(self, cmd: object) -> None:
         """Inspect a subprocess argv — list[0] or Popen args shape."""
@@ -2459,11 +2506,8 @@ class _DeniedTools:
             # shell=True string: only the first token is visible without a
             # real shell parse; a leading `bash -lc '…'` is the common evasion.
             first = cmd.strip().split(None, 1)[0] if cmd.strip() else ""
-            if first in self._exes:
-                raise PermissionError(
-                    f"TAU_DENIED_TOOLS: '{first}' is denied by tools.approval "
-                    f"(ESTATE-ANOMALY-37). Remove the deny from config to run it."
-                )
+            if self._denied_by_identity(first):
+                raise self._deny_error(first, "cmd-string")
             return
         if isinstance(cmd, (list, tuple)) and len(cmd) > 0:
             self.check_argv0(str(cmd[0]))

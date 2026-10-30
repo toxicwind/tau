@@ -1,3 +1,4 @@
+import * as fs from "node:fs";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 import { JsRuntime, type RuntimeCallIdentity, type RuntimeHooks, shadowSnapshotDigest } from "./shared/runtime";
 import type {
@@ -40,6 +41,64 @@ for (const spec of deniedSpecs()) {
 	for (const exe of spec.executables) DENIED.add(exe);
 }
 
+/**
+ * Resolve a bare command name through PATH to its absolute identity so a
+ * full-path invocation (e.g. /usr/bin/bash) is RECOGNIZED as the denied
+ * executable instead of bypassing the gate. Name-only matching made the deny
+ * list both over-blocking (nagging errors) and under-protecting (path escape).
+ */
+function resolveExecutableIdentity(name: string): string | null {
+	if (name.includes("/")) {
+		try {
+			return fs.realpathSync(name);
+		} catch {
+			return name;
+		}
+	}
+	for (const dir of (process.env.PATH ?? "").split(":")) {
+		if (!dir) continue;
+		const candidate = `${dir}/${name}`;
+		try {
+			fs.accessSync(candidate, fs.constants.X_OK);
+			try {
+				return fs.realpathSync(candidate);
+			} catch {
+				return candidate;
+			}
+		} catch {
+			// not here — keep scanning
+		}
+	}
+	return null;
+}
+
+// Populated lazily: name -> resolved identity (memoized; PATH rarely changes
+// inside a kernel's lifetime).
+const IDENTITY_CACHE = new Map<string, string | null>();
+function identityOf(name: string): string | null {
+	if (!IDENTITY_CACHE.has(name)) {
+		IDENTITY_CACHE.set(name, resolveExecutableIdentity(name));
+	}
+	return IDENTITY_CACHE.get(name) ?? null;
+}
+
+/** True when the DENIED set covers this command under ANY spelling. */
+function isDenied(cmd: unknown): boolean {
+	const name = deniedExecutableName(cmd);
+	if (!name) return false;
+	if (DENIED.has(name)) return true;
+	// Identity match: the bare name resolves onto a denied executable, OR the
+	// given path resolves onto a denied name's identity.
+	const identity = identityOf(name);
+	if (identity) {
+		for (const denied of DENIED) {
+			const deniedIdentity = identityOf(denied);
+			if (deniedIdentity && deniedIdentity === identity) return true;
+		}
+	}
+	return false;
+}
+
 function deniedExecutableName(cmd: unknown): string | null {
 	if (typeof cmd === "string") {
 		return cmd.trim().split(/\s+/)[0] ?? null;
@@ -62,10 +121,18 @@ function deniedExecutableName(cmd: unknown): string | null {
 function assertNotDenied(cmd: unknown, surface: string): void {
 	if (DENIED.size === 0) return;
 	const name = deniedExecutableName(cmd);
-	if (name && DENIED.has(name)) {
+	if (name && isDenied(cmd)) {
+		// Deliberate message contract: NEVER tell the agent to nag the architect
+		// or strip the guard ("remove the deny from config" was poisoning agent
+		// context — agents read their own errors as instructions). The denial
+		// is a ROUTE, not a dead end: use a sanctioned equivalent (full-path
+		// escapes no longer exist — identity-resolved), or surface the block to
+		// the architect as a question, not as self-edit advice.
 		throw new Error(
-			`TAU_DENIED_TOOLS: '${name}' is denied by tools.approval via ${surface} ` +
-				`(ESTATE-ANOMALY-37). Remove the deny from config to run it.`,
+			`TAU_DENIED_TOOLS: '${name}' is denied by tools.approval policy via ${surface} ` +
+				`(ESTATE-ANOMALY-37, identity-resolved gate — full-path spelling does not bypass). ` +
+				`Do NOT edit config to bypass. Route instead: use a sanctioned equivalent, ` +
+				`or ask the architect for the capability.`,
 		);
 	}
 }
