@@ -6,6 +6,7 @@ import { YAML } from "bun";
 import { expandAtImports } from "../discovery/at-imports";
 import { BUILTIN_TOOL_NAMES, normalizeToolNames } from "../tools/builtin-names";
 import { applyTauvisorPrecedence, collectConfigCandidates } from "./watchdog";
+import { applySandboxToToolGrant, classifyAdvisorSandbox, type AdvisorSandbox } from "./sandbox";
 
 import type { AdvisorConfig, AdvisorConfigScope, WatchdogConfigDoc } from "@tau/tau-tui/overlays/advisor-config";
 
@@ -44,6 +45,7 @@ const advisorEntrySchema = type({
 	"instructions?": "string",
 	"enabled?": "boolean",
 	"maxNotesPerUpdate?": "number",
+	"sandbox?": "string",
 });
 
 type AdvisorYamlEntry = typeof advisorEntrySchema.infer;
@@ -217,10 +219,29 @@ export async function discoverAdvisorConfigs(cwd: string, agentDir?: string): Pr
 			const entryInstructions = entry.instructions?.trim()
 				? (await expandAtImports(entry.instructions, item.path)).trim() || undefined
 				: undefined;
+			// Sandbox contract: a malformed `sandbox:` value is a config error
+			// (surfaced as a warning, never a crash) that falls back to the safe
+			// read-only default — a sensor advisor must never hold write grants
+			// because a typo'd directory name would silently grant full-tree
+			// write access.
+			let sandbox: AdvisorSandbox = { mode: "read-only" };
+			if (entry.sandbox !== undefined) {
+				try {
+					sandbox = classifyAdvisorSandbox(entry.sandbox);
+				} catch (err) {
+					warn(`"${entry.name}": ${String(err instanceof Error ? err.message : err)} — defaulting to sandbox: read-only`, {
+						path: item.path,
+					});
+				}
+			}
+			const toolGrant = applySandboxToToolGrant(entry.tools, sandbox);
 			advisors.set(slug, {
 				name: entry.name,
 				model: entry.model?.trim() || undefined,
-				tools: filterAdvisorTools(entry.tools, item.path),
+				tools:
+					toolGrant === undefined
+						? undefined
+						: filterAdvisorTools(toolGrant.length > 0 ? toolGrant : ([] as string[]), item.path),
 				maxNotesPerUpdate:
 					typeof entry.maxNotesPerUpdate === "number" &&
 					Number.isFinite(entry.maxNotesPerUpdate) &&
@@ -229,6 +250,7 @@ export async function discoverAdvisorConfigs(cwd: string, agentDir?: string): Pr
 						: undefined,
 				enabled: entry.enabled,
 				instructions: entryInstructions,
+				sandbox: entry.sandbox,
 			});
 		}
 	}
@@ -318,6 +340,7 @@ export async function loadWatchdogConfigFile(filePath: string): Promise<Watchdog
 		if (a.tools !== undefined) advisor.tools = [...a.tools];
 		if (a.instructions?.trim()) advisor.instructions = a.instructions;
 		if (a.enabled !== undefined) advisor.enabled = a.enabled;
+		if (a.sandbox !== undefined) advisor.sandbox = a.sandbox;
 		if (typeof a.maxNotesPerUpdate === "number" && Number.isFinite(a.maxNotesPerUpdate) && a.maxNotesPerUpdate >= 1) {
 			advisor.maxNotesPerUpdate = Math.trunc(a.maxNotesPerUpdate);
 		}
@@ -388,6 +411,7 @@ export function serializeWatchdogConfig(doc: WatchdogConfigDoc): string {
 				appendYamlString(lines, "    ", "instructions", advisor.instructions);
 			}
 			if (advisor.enabled !== undefined) lines.push(`    enabled: ${advisor.enabled}`);
+			if (advisor.sandbox !== undefined) lines.push(`    sandbox: ${YAML.stringify(advisor.sandbox)}`);
 			if (
 				typeof advisor.maxNotesPerUpdate === "number" &&
 				Number.isFinite(advisor.maxNotesPerUpdate) &&

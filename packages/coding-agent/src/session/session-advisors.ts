@@ -91,6 +91,12 @@ import {
 } from "@tau/tau-tui/thinking";
 import type { AgentSessionEvent } from "./agent-session-events";
 import type { ClientBridge } from "./client-bridge";
+import {
+	applySandboxToToolGrant,
+	classifyAdvisorSandbox,
+	wrapAdvisorToolForSandbox,
+} from "../advisor/sandbox";
+import { formatAdvisorGitState } from "../advisor/git-state";
 import { resolveCompactionMethodOrder, resolveMethodSettings } from "./compaction-methods";
 import type { CustomMessage, CustomMessagePayload } from "./messages";
 import { isAdvisorCard, isTerminalTextAssistantAnswer } from "./queued-messages";
@@ -1011,6 +1017,17 @@ export class SessionAdvisors {
 			// nothing there). Explicit `tools` lists stay user-owned and are not widened.
 			const names =
 				config.tools === undefined ? new Set([...ADVISOR_DEFAULT_TOOL_NAMES, "recall"]) : new Set(config.tools);
+			// Sandbox contract (2026-10-30): the YAML `sandbox:` field re-filters
+			// the grant at runtime — read-only (default) strips every mutating
+			// tool; an absolute dir confines the path-scoped ones and wraps
+			// their execute so every write target is checked against the dir.
+			// config.ts applied the same filter at discovery; this second pass
+			// guards project-scoped TUI edits and keeps `granted_tools` true to
+			// what the advisor actually holds.
+			const advisorSandbox = classifyAdvisorSandbox(config.sandbox);
+			const sandboxedToolNames = new Set(
+				applySandboxToToolGrant([...names], advisorSandbox) ?? [...names],
+			);
 			const grantedToolNames = (this.#advisorTools ?? [])
 				.map(t => t.name)
 				.filter(n => names.has(n))
@@ -1018,16 +1035,25 @@ export class SessionAdvisors {
 			const systemPrompt = [
 				prompt.render(advisorSystemPrompt, {
 					max_notes_per_update: budgetPerUpdate,
-					granted_tools: grantedToolNames.join("`, `"),
+					granted_tools: grantedToolNames.filter(n => sandboxedToolNames.has(n)).join("`, `"),
 				}),
 			];
+			// Git-state awareness: the advisor sees HEAD/branch/dirty for the
+			// active repo so it never claims "pushed to main" for uncommitted
+			// work and can hold the executor to a clean-tree standard.
+			const gitState = await formatAdvisorGitState(process.cwd()).catch(() => "(git state unavailable)");
+			systemPrompt.push(
+				`<repo-state>\n${gitState}\n</repo-state>\nReview the executor's commit/push claims against this state — "pushed to main" requires HEAD present here, branch=main, dirty=0.\n`,
+			);
 			if (this.#advisorContextPrompt) systemPrompt.push(this.#advisorContextPrompt);
 			if (this.#advisorMemoryPrompt) systemPrompt.push(this.#advisorMemoryPrompt);
 			if (this.#advisorWatchdogPrompt) systemPrompt.push(this.#advisorWatchdogPrompt);
 			if (this.#advisorSharedInstructions) systemPrompt.push(this.#advisorSharedInstructions);
 			if (config.instructions?.trim()) systemPrompt.push(config.instructions.trim());
 
-			const tools = (this.#advisorTools ?? []).filter(t => names.has(t.name));
+			const tools = (this.#advisorTools ?? [])
+				.filter(t => names.has(t.name) && sandboxedToolNames.has(t.name))
+				.map(t => wrapAdvisorToolForSandbox(t, advisorSandbox));
 			const advisorLoopTools: AgentTool<any>[] = [adviseTool, ...tools];
 			const advisorToolMap = new Map<string, AgentTool<any>>();
 			for (const tool of advisorLoopTools) {
