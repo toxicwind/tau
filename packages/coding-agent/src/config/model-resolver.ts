@@ -32,6 +32,7 @@ import { modelMatchesHost } from "@tau/tau-catalog/hosts";
 import { buildModelProviderPriorityRank } from "@tau/tau-catalog/identity";
 import { clampThinkingLevelForModel } from "@tau/tau-catalog/model-thinking";
 import { type GeneratedProvider, getBundledModels, modelsAreEqual } from "@tau/tau-catalog/models";
+import { providerEntry } from "@tau/tau-catalog/compat/providers";
 import { DEFAULT_MODEL_PER_PROVIDER } from "@tau/tau-catalog/provider-models";
 import { fuzzyMatch } from "@tau/tau-tui";
 import { logger } from "@tau/tau-utils";
@@ -79,19 +80,22 @@ export function pickDefaultAvailableModel(
 	availableModels: Model<Api>[],
 	hasConcreteCredential?: (provider: string) => boolean,
 ): Model<Api> | undefined {
+	// Providers with automatic-default #false remain available to explicit model
+	// selectors but cannot become the startup fallback.
+	const autoSelectable = availableModels.filter(model => providerEntry(model.provider)?.automaticDefault !== false);
 	const models =
 		hasConcreteCredential === undefined
-			? availableModels
+			? autoSelectable
 			: (() => {
 					const concreteAuthByProvider = new Map<string, boolean>();
-					const concrete = availableModels.filter(model => {
+					const concrete = autoSelectable.filter(model => {
 						const cached = concreteAuthByProvider.get(model.provider);
 						if (cached !== undefined) return cached;
 						const hasConcreteAuth = hasConcreteCredential(model.provider);
 						concreteAuthByProvider.set(model.provider, hasConcreteAuth);
 						return hasConcreteAuth;
 					});
-					return concrete.length > 0 ? concrete : availableModels;
+					return concrete.length > 0 ? concrete : autoSelectable;
 				})();
 	const firstDefault = models.find(
 		model => isKnownProvider(model.provider) && DEFAULT_MODEL_PER_PROVIDER[model.provider] === model.id,
