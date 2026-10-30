@@ -1,4 +1,6 @@
 import { describe, expect, test } from "bun:test";
+import * as fs from "node:fs";
+import * as os from "node:os";
 import * as path from "node:path";
 import { FileType } from "@tau/tau-natives";
 import { Settings } from "../../src/config/settings";
@@ -18,7 +20,56 @@ function createSession(cwd = process.cwd()): ToolSession {
 	};
 }
 
+function textOf(result: Awaited<ReturnType<GlobTool["execute"]>>): string {
+	return result.content
+		.filter((block): block is { type: "text"; text: string } => block.type === "text")
+		.map(block => block.text)
+		.join("\n");
+}
+
 describe("GlobTool.execute", () => {
+	test("** patterns match under an allowlist pointer-repo .gitignore at the walk root", async () => {
+		// Pointer superprojects (pensctl-style) keep `.gitignore` as a git-tracking
+		// guard: `*` ignores everything so pen dirs never become a monorepo. That
+		// manifest is not a search filter — globbing `**/target.ts` under it must
+		// still find files, or every `glob` on the estate's pens tree lies "No files".
+		const fixture = fs.mkdtempSync(path.join(os.tmpdir(), "tau-glob-allowlist-"));
+		try {
+			fs.writeFileSync(path.join(fixture, ".gitignore"), "*\n!.gitignore\n!pensctl\n");
+			fs.mkdirSync(path.join(fixture, "nested", "deep"), { recursive: true });
+			fs.writeFileSync(path.join(fixture, "nested", "deep", "target.ts"), "export const x = 1;\n");
+
+			const tool = new GlobTool(createSession(fixture), { timeoutMs: 5000 });
+			const result = await tool.execute("glob-allowlist-pens", { path: "**/target.ts" });
+			// formatGroupedPaths renders the hit as a `# nested/deep/` group header + basename.
+			expect(textOf(result)).toContain("nested/deep/");
+			expect(textOf(result)).toContain("target.ts");
+			expect(textOf(result)).not.toContain("No files found");
+		} finally {
+			fs.rmSync(fixture, { recursive: true, force: true });
+		}
+	});
+
+	test("ordinary .gitignore filtering still applies", async () => {
+		const fixture = fs.mkdtempSync(path.join(os.tmpdir(), "tau-glob-gitignore-"));
+		try {
+			fs.writeFileSync(path.join(fixture, ".gitignore"), "node_modules/\ndist/\n");
+			fs.mkdirSync(path.join(fixture, "src"), { recursive: true });
+			fs.mkdirSync(path.join(fixture, "node_modules", "pkg"), { recursive: true });
+			fs.writeFileSync(path.join(fixture, "src", "index.ts"), "export const y = 2;\n");
+			fs.writeFileSync(path.join(fixture, "node_modules", "pkg", "index.ts"), "export const z = 3;\n");
+
+			const tool = new GlobTool(createSession(fixture), { timeoutMs: 5000 });
+			const result = await tool.execute("glob-gitignore", { path: "**/*.ts" });
+			// formatGroupedPaths renders the hit as a `# src/` group header + basename.
+			expect(textOf(result)).toContain("src/");
+			expect(textOf(result)).toContain("index.ts");
+			expect(textOf(result)).not.toContain("node_modules");
+		} finally {
+			fs.rmSync(fixture, { recursive: true, force: true });
+		}
+	});
+
 	test("rejects a caller abort during preparation without launching a native scan", async () => {
 		const controller = new AbortController();
 		const statStarted = Promise.withResolvers<void>();

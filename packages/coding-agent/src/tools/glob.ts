@@ -45,6 +45,36 @@ const MAX_LIMIT = 200;
 const DEFAULT_GLOB_TIMEOUT_MS = 5000;
 
 /**
+ * Rules that make a `.gitignore` an allowlist manifest: the repo tracks almost
+ * nothing by default and re-includes specific paths (`*` first, `!` negations
+ * after). This is the signature of pointer superprojects (pensctl-style) —
+ * the file exists to keep git from absorbing a whole tree, not to express
+ * "search should skip this". Honoring it as a search filter turns every glob
+ * under the root into a lie ("No files found") even though the tree is full.
+ */
+const ALLOWLIST_GITIGNORE_RULES: ReadonlyArray<RegExp> = [/^\*+$/, /^\*+\/$/, /^\*\*\/\*+$/];
+
+/**
+ * True when the `.gitignore` at `searchPath` is an ignore-all allowlist (a
+ * non-negated, non-comment rule matching everything). Missing/unreadable files
+ * are NOT allowlists — the native walker resolves those itself.
+ */
+async function isAllowlistGitignore(searchPath: string): Promise<boolean> {
+	let content: string;
+	try {
+		content = await fs.promises.readFile(path.join(searchPath, ".gitignore"), "utf8");
+	} catch {
+		return false;
+	}
+	for (const rawLine of content.split(/\r?\n/)) {
+		const line = rawLine.trim();
+		if (line.length === 0 || line.startsWith("#") || line.startsWith("!")) continue;
+		if (ALLOWLIST_GITIGNORE_RULES.some(rule => rule.test(line))) return true;
+	}
+	return false;
+}
+
+/**
  * Pluggable operations for the find tool.
  * Override these to delegate file search to remote systems (e.g., SSH).
  */
@@ -81,6 +111,8 @@ interface GlobTarget {
 interface NativePreparedTarget {
 	target: GlobTarget;
 	result?: Array<{ path: string; mtime: number }>;
+	/** Effective gitignore flag for this target's native scan. */
+	gitignore: boolean;
 }
 
 export class GlobTool implements AgentTool<typeof findSchema, GlobToolDetails> {
@@ -361,6 +393,9 @@ export class GlobTool implements AgentTool<typeof findSchema, GlobToolDetails> {
 				return buildResult(merged);
 			}
 
+			// An ignore-all allowlist at the walk root is a git-tracking guard, not a
+			// search filter (estate pens/olympus pointer superprojects returned
+			// "No files found" for every pattern): scan the real tree there.
 			const preparedTargets: NativePreparedTarget[] = await Promise.all(
 				targets.map(async target => {
 					throwIfAborted(signal);
@@ -372,7 +407,7 @@ export class GlobTool implements AgentTool<typeof findSchema, GlobToolDetails> {
 						// "Path not found" instead of leaking the raw errno (issue #7597).
 						if (isEnoent(err) || hasFsCode(err, "ENAMETOOLONG")) {
 							if (isSingle) throw new ToolError(`Path not found: ${scopePath}`);
-							return { target, result: [] };
+							return { target, result: [], gitignore: useGitignore };
 						}
 						throw err;
 					}
@@ -380,15 +415,24 @@ export class GlobTool implements AgentTool<typeof findSchema, GlobToolDetails> {
 						return {
 							target,
 							result: [{ path: formatScopePath(target.searchPath), mtime: stat.mtimeMs }],
+							gitignore: useGitignore,
 						};
 					}
 					if (!stat.isDirectory()) {
 						if (isSingle) throw new ToolError(`Path is not a directory: ${target.searchPath}`);
-						return { target, result: [] };
+						return { target, result: [], gitignore: useGitignore };
 					}
-					return { target };
+					const gitignore = useGitignore && !(await isAllowlistGitignore(target.searchPath));
+					return { target, gitignore };
 				}),
 			);
+			const skippedAllowlistRoots = preparedTargets
+				.filter(prepared => prepared.result === undefined && useGitignore && !prepared.gitignore)
+				.map(prepared => formatScopePath(prepared.target.searchPath));
+			const allowlistNote =
+				skippedAllowlistRoots.length > 0
+					? `Skipped gitignore at ${skippedAllowlistRoots.join(", ")}: its .gitignore is an ignore-all allowlist (pointer superproject), so the real tree was searched`
+					: undefined;
 			const nativeScanPending = preparedTargets.some(prepared => prepared.result === undefined);
 			if (nativeScanPending && preparationController && signal) {
 				signal.removeEventListener("abort", abortPreparation);
@@ -440,7 +484,7 @@ export class GlobTool implements AgentTool<typeof findSchema, GlobToolDetails> {
 							hidden: includeHidden,
 							maxResults: effectiveLimit,
 							sortByMtime: true,
-							gitignore: useGitignore,
+							gitignore: prepared.gitignore,
 							// parseFindPattern explicitly prepends "**/" when the user's
 							// pattern begins with a glob (so `*.ts` becomes `**/*.ts`).
 							// Anything that arrives here without "**/" was scoped to a
@@ -499,10 +543,14 @@ export class GlobTool implements AgentTool<typeof findSchema, GlobToolDetails> {
 				// mtime-ranked scan cannot early-exit, so a "narrow" pattern over a
 				// huge tree still times out. Say so instead of implying the pattern
 				// was too broad.
-				const notice =
+				const notice = [
+					allowlistNote,
 					sortedPaths.length > 0
 						? `glob timed out after ${seconds}s; returning ${sortedPaths.length} partial matches — results are incomplete, scope to a deeper directory instead of retrying blindly`
-						: `Glob timed out after ${seconds}s before finding any matches — the scan is incomplete, NOT proof of absence. The walk is bounded by directory size, not pattern width; scope the search to a deeper directory (e.g. \`sub/dir/*.ext\` instead of \`*.ext\` at a huge root).`;
+						: `Glob timed out after ${seconds}s before finding any matches — the scan is incomplete, NOT proof of absence. The walk is bounded by directory size, not pattern width; scope the search to a deeper directory (e.g. \`sub/dir/*.ext\` instead of \`*.ext\` at a huge root).`,
+				]
+					.filter((part): part is string => part !== undefined)
+					.join("\n");
 				return buildResult(sortedPaths, { notice, forceTruncated: true, timedOut: true });
 			}
 
@@ -519,7 +567,7 @@ export class GlobTool implements AgentTool<typeof findSchema, GlobToolDetails> {
 				}
 			}
 			merged.sort((a, b) => b.mtime - a.mtime);
-			return buildResult(merged.map(entry => entry.path));
+			return buildResult(merged.map(entry => entry.path), { notice: allowlistNote });
 		});
 		return execution.finally(() => {
 			signal?.removeEventListener("abort", abortPreparation);

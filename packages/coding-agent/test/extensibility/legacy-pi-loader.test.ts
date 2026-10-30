@@ -1,11 +1,12 @@
 import { describe, expect, it, beforeAll } from "vitest";
-import { resolveVirtualModule } from "../../src/extensibility/legacy-bundled-resolver";
 import { LEGACY_PI_ROOT_EXPORTS } from "../../src/extensibility/legacy-pi-contract";
 
 describe("legacy pi loader — virtual bundle resolution", () => {
 	let mod: unknown;
 	beforeAll(async () => {
-		mod = await resolveVirtualModule("tau-legacy-tau-bundled:@earendil-works/pi-coding-agent");
+		// The bundled scope resolves straight to the real legacy shim; the
+		// synthetic `legacy-bundled-resolver` indirection is gone.
+		mod = await import("../../src/extensibility/legacy-tau-coding-agent-shim.ts");
 	});
 
 	for (const [name, kind] of Object.entries(LEGACY_PI_ROOT_EXPORTS)) {
