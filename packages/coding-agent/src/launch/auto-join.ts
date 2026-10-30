@@ -20,6 +20,12 @@ export interface RegisteredSession {
 }
 
 export async function registerInteractiveTauSession(options: AutoJoinOptions = {}): Promise<RegisteredSession | null> {
+	// A broker-spawned copy of this process is itself an interactive session;
+	// re-registering under `tau-${pid}` gives every generation a fresh name, so
+	// the broker's duplicate check never trips and each child spawns another
+	// child (restart: "always") — an unbounded tau fork storm. The env marker
+	// set on the spec below breaks the recursion after one hop.
+	if (process.env.TAU_DAEMON_CHILD) return null;
 	const name = options.name ?? `tau-${process.pid}`;
 	const species = options.species ?? "tau";
 	const task = options.task ?? "interactive-coding";
@@ -30,7 +36,7 @@ export async function registerInteractiveTauSession(options: AutoJoinOptions = {
 		name,
 		application: process.execPath,
 		args: process.argv.slice(1),
-		env: { ...process.env } as Record<string, string>,
+		env: { ...process.env, TAU_DAEMON_CHILD: "1" } as Record<string, string>,
 		cwd,
 		pty: true,
 		restart: "always",

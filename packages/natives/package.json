@@ -47,7 +47,6 @@
     "@types/bun": "^1.4.4",
     "bun-types": "^1.4.4",
     "@napi-rs/cli": "catalog:",
-    "@types/bun": "catalog:",
     "cli-truncate": "6.1.1",
     "diff": "9.0.0",
     "gpt-tokenizer": "4.0.0",

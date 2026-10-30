@@ -739,11 +739,16 @@ function ensureBundledModuleLoadersLoaded(): Promise<BundledModuleLoaders> {
 	}
 	if (!bundledModuleLoadersPromise) {
 		// This virtual module exists only in compiled/npm builds; source mode
-		// cannot import it statically. A non-literal specifier keeps bundlers
-		// (bun build in source mode, vite) from statically resolving it, while
-		// `--compile` builds still replace it via the virtual-module plugin.
-		const virtualModule = "tau-legacy-tau-modules" as string;
-		bundledModuleLoadersPromise = import(/* @vite-ignore */ virtualModule).then(module => module.BUNDLED_PI_MODULE_LOADERS);
+		// cannot import it statically (this branch only runs under
+		// isCompiledBinary()/PI_BUNDLED). The specifier MUST stay literal: the
+		// virtual-module build plugin resolves it via an exact-match onResolve
+		// filter, and Bun 1.4.4 no longer statically replaces non-literal
+		// dynamic imports in `--compile` builds — the unresolved specifier then
+		// throws "Cannot find package 'tau-legacy-tau-modules'" at runtime and
+		// every bundled extension fails to load.
+		bundledModuleLoadersPromise = import("tau-legacy-tau-modules")
+			.then(module => module.BUNDLED_PI_MODULE_LOADERS)
+			.catch(() => ({}));
 	}
 	return bundledModuleLoadersPromise;
 }

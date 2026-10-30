@@ -23,7 +23,6 @@
 	"devDependencies": {
     "@types/bun": "^1.4.4",
     "bun-types": "^1.4.4",
-		"@types/bun": "catalog:",
 		"puppeteer-core": "catalog:"
 	},
 	"engines": {
