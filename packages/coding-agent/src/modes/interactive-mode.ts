@@ -259,7 +259,7 @@ import {
 	type SessionObserverChangeKind,
 	SessionObserverRegistry,
 } from "@tau/tau-tui/overlays/session-observer-registry";
-import { createSessionTeardown, type SessionTeardown } from "./session-teardown";
+import { createSessionTeardown, resolveFatalSignalAction, type SessionTeardown } from "./session-teardown";
 import { sanitizeStatusText } from "@tau/tau-tui/chrome/shared";
 import { invokeSkillCommandFromText, isKnownSkillCommand } from "./skill-command";
 import { clearMermaidCache } from "@tau/tau-tui/theme/mermaid-cache";
@@ -1033,6 +1033,8 @@ export class InteractiveMode implements InteractiveModeContext {
 	#autocompleteProviderFactories: AutocompleteProviderFactory[] = [];
 	#cleanupUnsubscribe?: () => void;
 	#signalTeardown?: SessionTeardown;
+	/** True once a SIGTERM/SIGHUP detached this TUI from its still-running session (see `#detachAndKeep`). */
+	#detachedKeeper = false;
 	readonly #version: string;
 	readonly #startupChangelog: StartupChangelogSelection | undefined;
 	/** Header components below the config warnings + welcome, retained so a live config-warning change can rebuild the header (#10048). */
@@ -1620,6 +1622,12 @@ export class InteractiveMode implements InteractiveModeContext {
 		// after the AgentSession constructor's `agent-session:<id>` recorder) runs
 		// FIRST and its dispose() would otherwise persist the generic "dispose".
 		this.#cleanupUnsubscribe = postmortem.register("session-teardown", reason => this.#signalTeardown!(reason));
+		// The TUI is disposable; the session is not. Take over SIGTERM/SIGHUP so a
+		// killed TUI (kill(1), terminal/tmux death → SIGHUP) detaches instead of
+		// aborting in-flight work; the process keeps running headless until the
+		// session drains, then exits cleanly. SIGINT stays with postmortem: Ctrl+C
+		// remains the user's abort path.
+		this.#installHangupSignalPolicy();
 
 		// Wire the report_tool_issue consent gate to the Yes/No dialog popup.
 		// The handler is process-global — subagent tools (which can't reach
@@ -5768,6 +5776,192 @@ export class InteractiveMode implements InteractiveModeContext {
 		}
 		// Clear the process-global consent handler so it doesn't outlive this
 		// InteractiveMode instance (e.g. test harnesses, headless re-init).
+		setAutoQaConsentHandler(null, null);
+		this.#hideSessionInfo();
+		if (this.#ownsStartedUi) {
+			this.ui.stop();
+			this.#ownsStartedUi = false;
+		}
+		this.isInitialized = false;
+	}
+
+	/**
+	 * Own SIGTERM/SIGHUP for this interactive TUI (POSIX only). The postmortem
+	 * default handlers run a cleanup pass and exit unconditionally, which aborts
+	 * in-flight turns — the exact "killed the TUI, session aborted" failure. The
+	 * taken-over policy instead routes through {@link resolveFatalSignalAction}:
+	 * in-flight work detaches (process survives headless), everything else keeps
+	 * the original contract (full cleanup pass, exit 128+n).
+	 */
+	#installHangupSignalPolicy(): void {
+		if (process.platform === "win32") return;
+		for (const signal of ["SIGTERM", "SIGHUP"] as const) {
+			if (!postmortem.takeoverSignalHandler(signal)) continue;
+			process.on(signal, () => {
+				void this.#onHangupSignal(signal);
+			});
+		}
+	}
+
+	#onHangupSignal = async (signal: "SIGTERM" | "SIGHUP"): Promise<void> => {
+		const reason = signal === "SIGTERM" ? postmortem.Reason.SIGTERM : postmortem.Reason.SIGHUP;
+		const exitCode = signal === "SIGTERM" ? 143 : 129;
+		const action = resolveFatalSignalAction(reason, this.#hasDetachableWork(), this.#detachedKeeper);
+		if (action === "detach") {
+			// Exits the process itself: 0 after the session drains cleanly, 1 if
+			// the keeper fails to settle.
+			await this.#detachAndKeep(signal);
+			return;
+		}
+		try {
+			if (this.#detachedKeeper && this.#signalTeardown) {
+				// Escape hatch for a headless stall (e.g. an approval prompt that can
+				// no longer be answered): stop() unregistered the postmortem teardown,
+				// so dispose explicitly and exit with the signal's code.
+				await this.#signalTeardown(reason);
+				// Quick-exit (never wait on anything else): the escape hatch exists
+				// to release a headless keeper stuck on a gate nothing can answer.
+				postmortem.exitProcess(exitCode);
+				return;
+			}
+			// Original postmortem contract: full cleanup pass (this disposes the
+			// session with the real signal reason), then exit 128+n.
+			await postmortem.runTakenOverSignalCleanup(reason);
+		} finally {
+			postmortem.exitProcess(exitCode);
+		}
+	};
+
+	/** True while anything the session owns is still running (turn, compaction, queued/follow-up work, async jobs). */
+	#hasDetachableWork(): boolean {
+		return (
+			this.session.isStreaming ||
+			this.session.isCompacting ||
+			this.session.hasPostPromptWork ||
+			this.session.hasPendingAsyncWork() ||
+			this.session.queuedMessageCount > 0 ||
+			this.session.hasAdmittedSubmission ||
+			this.hasPendingSubmission()
+		);
+	}
+
+	/**
+	 * Detach-and-keep: uninstall only the UI layer and keep the process alive
+	 * until every session-owned work item drains, then dispose the session with
+	 * a clean exit record so `tau --resume` sees completed work instead of an
+	 * aborted mid-turn tail. Session-coupled infrastructure (eval kernels,
+	 * browser tabs, MCP, collab, the world-registry publication) stays alive.
+	 */
+	async #detachAndKeep(signal: "SIGTERM" | "SIGHUP"): Promise<void> {
+		this.#detachedKeeper = true;
+		// Block shutdown()/checkShutdownRequested()/restart() from racing the
+		// keeper loop; the keeper performs the real dispose itself.
+		this.#isShuttingDown = true;
+		logger.warn("TUI detached from live session; continuing headless", {
+			signal,
+			pid: process.pid,
+			sessionId: this.sessionManager.getSessionId(),
+		});
+		// Announce while the terminal may still be attached (the kill(1) case). A
+		// closed terminal delivers SIGHUP with the TTY already gone and this write
+		// is lost — the log line above is the durable record.
+		try {
+			process.stderr.write(
+				`\nτ ${signal}: TUI detached — session continues headless (pid ${process.pid}); ` +
+					`in-flight work will finish and the session will exit cleanly.\n`,
+			);
+		} catch {}
+		try {
+			await this.sessionManager.saveDraft(this.#inputController.getDraftText());
+		} catch (error) {
+			logger.warn("Failed to save session draft during detach", { error: String(error) });
+		}
+		// UI-owned continuation loops do not survive the detach: loop mode's
+		// auto-submit and its loop condition drive fresh prompts through the
+		// (now stopped) TUI input path. The current turn, queued messages, and
+		// async jobs are session-owned and continue.
+		this.#abortLoopCondition();
+		this.#cancelLoopAutoSubmit();
+		this.#stopUiForDetach();
+		try {
+			for (;;) {
+				await this.session.waitForIdle();
+				if (
+					!this.session.hasAdmittedSubmission &&
+					!this.session.hasPendingAsyncWork() &&
+					this.session.queuedMessageCount === 0 &&
+					!this.hasPendingSubmission()
+				) {
+					break;
+				}
+				if (this.session.hasAdmittedSubmission) {
+					await this.session.waitForAdmittedSubmissions();
+				} else {
+					await Bun.sleep(200);
+				}
+			}
+			// Clean exit: `session_exit` kind=normal, so forensics and `--resume`
+			// see completed work instead of an abort marker.
+			if (this.#signalTeardown) {
+				await this.#signalTeardown();
+			} else {
+				await this.session.dispose({ mnemotauConsolidateTimeoutMs: SHUTDOWN_CONSOLIDATE_BUDGET_MS });
+			}
+			await postmortem.quit(0, { drainStdout: false });
+		} catch (error) {
+			logger.error("Detached keeper failed to settle session", { error: String(error) });
+			postmortem.exitProcess(1);
+		}
+	}
+
+	/**
+	 * UI-only subset of {@link stop} for the detached keeper. Deliberately skips
+	 * everything stop() does that the still-running session needs: the
+	 * postmortem session-teardown registration (kept armed so any later fatal
+	 * path still disposes the session properly), the goal/todo/observer
+	 * continuation timers, and the agent-registry publication. Also skips
+	 * `this.unsubscribe` — the session event subscription is torn down with the
+	 * session itself.
+	 */
+	#stopUiForDetach(): void {
+		this.#appearanceRefreshRequest = undefined;
+		// Share/recording surface the UI; they end with it.
+		this.#streamPublisher?.dispose();
+		this.#streamPublisher = undefined;
+		void this.#recorder?.stop();
+		this.#recorder = undefined;
+		this.#persistComposerStatus();
+		if (this.loadingAnimation) {
+			this.#stopLoadingAnimation(false);
+		}
+		this.#cleanupMicAnimation();
+		stopSharedSpinnerTicker();
+		this.#liveCommandController.dispose();
+		this.#clearJudgmentBatchProgress();
+		if (this.#sttController) {
+			this.#sttController.dispose();
+			this.#sttController = undefined;
+		}
+		this.#extensionUiController.clearExtensionTerminalInputListeners();
+		this.#extensionUiController.clearHookWidgets();
+		this.#extensionUiController.disposeComposerShapes();
+		// All event-bus subscriptions registered in init() are render-only
+		// (banners, status chips, theme/appearance); none carry session logic.
+		for (const unsubscribe of this.#eventBusUnsubscribers) {
+			unsubscribe();
+		}
+		this.#eventBusUnsubscribers = [];
+		this.#observerRegistry.dispose();
+		this.#agentRegistryUnsubscribe?.();
+		this.#agentRegistryUnsubscribe = undefined;
+		this.#agentRegistrySubscriptionTarget = undefined;
+		this.#eventController.dispose();
+		this.#codexResetFireworksController.dispose();
+		this.statusLine.dispose();
+		if (this.#resizeHandler) {
+			process.stdout.removeListener("resize", this.#resizeHandler);
+			this.#resizeHandler = undefined;
+		}
 		setAutoQaConsentHandler(null, null);
 		this.#hideSessionInfo();
 		if (this.#ownsStartedUi) {

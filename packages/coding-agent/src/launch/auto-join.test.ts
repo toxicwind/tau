@@ -3,67 +3,49 @@ import { afterEach, describe, expect, mock, test } from "bun:test";
 const brokerRequests: Array<Record<string, unknown>> = [];
 const squawkCalls: Array<Record<string, unknown>> = [];
 
-mock.module("./client", () => {
-	return {
-		daemonClientForProject: () => ({
-			request: (req: Record<string, unknown>) => {
-				brokerRequests.push(req);
-				return Promise.resolve({});
-			},
-		}),
-	};
-});
-mock.module("./fleet-card", () => {
-	return {
-		buildAgentCard: (card: Record<string, unknown>) => card,
-		joinSquawkFleet: async (card: Record<string, unknown>) => {
-			squawkCalls.push(card);
+// The broker client module must never be reached by an interactive session:
+// auto-join registers PRESENCE only. The mock records any attempt so the test
+// can assert the fork-storm machine stays dead.
+mock.module("./client", () => ({
+	daemonClientForProject: () => ({
+		request: (req: Record<string, unknown>) => {
+			brokerRequests.push(req);
+			return Promise.resolve({});
 		},
-		startPresenceHeartbeat: () => () => {},
-	};
-});
+	}),
+}));
+mock.module("./fleet-card", () => ({
+	buildAgentCard: (card: Record<string, unknown>) => card,
+	joinSquawkFleet: async (card: Record<string, unknown>) => {
+		squawkCalls.push(card);
+	},
+	startPresenceHeartbeat: () => () => {},
+}));
 
 const { registerInteractiveTauSession } = await import("./auto-join");
 
-const CHILD_ENV = "TAU_DAEMON_CHILD";
-
-describe("registerInteractiveTauSession fork-storm guard", () => {
+/**
+ * The interactive TUI is a UI, not a daemon (2026-10-31 incident): it joins
+ * the squawk fleet for presence and NEVER mints a broker daemon spec — the
+ * old `restart: "always"` PTY spec respawned full TUI copies whose leaked
+ * bunfs self-path became a user prompt (ghost agentic turns, fork storm).
+ */
+describe("registerInteractiveTauSession", () => {
 	afterEach(() => {
-		delete process.env[CHILD_ENV];
 		brokerRequests.length = 0;
 		squawkCalls.length = 0;
 	});
 
-	test("broker-spawned child (TAU_DAEMON_CHILD set) registers nothing", async () => {
-		process.env[CHILD_ENV] = "1";
-		const result = await registerInteractiveTauSession();
-		// The guard MUST run before any side effect: no broker op, no squawk join.
-		expect(result).toBeNull();
-		expect(brokerRequests).toHaveLength(0);
-		expect(squawkCalls).toHaveLength(0);
-	});
-
-	test("interactive parent still registers exactly one daemon spec", async () => {
+	test("joins the squawk fleet exactly once with a presence card", async () => {
 		const result = await registerInteractiveTauSession();
 		expect(result).not.toBeNull();
-		expect(brokerRequests).toHaveLength(1);
-		// The spec must carry the guard marker so the spawned child cannot
-		// re-register: without it each generation picks a fresh tau-${pid}
-		// name and the broker duplicate check never trips (unbounded
-		// tau-spawns-tau recursion, ~90 procs/min on 2026-10-30).
-		const start = brokerRequests[0] as { op?: string; spec?: { env?: Record<string, string> } };
-		expect(start.op).toBe("start");
-		expect(start.spec?.env?.[CHILD_ENV]).toBe("1");
+		expect(squawkCalls).toHaveLength(1);
+		expect(squawkCalls[0]?.name).toBe(`tau-${process.pid}`);
+		expect(squawkCalls[0]?.species).toBe("tau");
 	});
 
-	test("registration spec uses restart-capable managed daemon shape", async () => {
+	test("never registers a broker daemon — no start/adopt ops, no child env marker", async () => {
 		await registerInteractiveTauSession();
-		const start = brokerRequests[0] as {
-			spec?: { application?: string; args?: unknown[]; pty?: boolean; restart?: string };
-		};
-		expect(typeof start.spec?.application).toBe("string");
-		expect(Array.isArray(start.spec?.args)).toBe(true);
-		expect(start.spec?.pty).toBe(true);
-		expect(start.spec?.restart).toBe("always");
+		expect(brokerRequests).toHaveLength(0);
 	});
 });

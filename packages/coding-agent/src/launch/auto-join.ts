@@ -1,9 +1,22 @@
 /**
- * auto-join.ts — Automatic interactive session registration into Daemon Broker and Squawk Fleet.
+ * auto-join.ts — Automatic interactive session registration into the Squawk Fleet.
+ *
+ * The interactive TUI is a UI, not a daemon: it registers PRESENCE (squawk
+ * fleet card + heartbeat) and nothing more. It must never register itself as
+ * a broker-supervised daemon — the 2026-10-31 incident: every interactive
+ * session minted a `restart: "always"` PTY daemon spec whose
+ * `application: process.execPath` is the compiled binary's in-memory bunfs
+ * path (`/$bunfs/root/tau`), so the broker kept respawning full TUI copies
+ * whose mangled argv turned the leaked self-path into a user prompt — ghost
+ * sessions running unintended agentic turns (~90 procs/min fork storm on
+ * 2026-10-30, ghost build turns on 2026-10-31).
+ *
+ * A session that must outlive its TUI is served by the detached keeper
+ * (`modes/interactive-mode.ts` `#detachAndKeep`): the same process continues
+ * headless until the session drains. Daemonization belongs to session hosts
+ * (`tau acp`), not to UI copies.
  */
 
-import type { DaemonSpec } from "@tau/tau-tui/tools/daemon";
-import { daemonClientForProject } from "./client";
 import { buildAgentCard, joinSquawkFleet, startPresenceHeartbeat } from "./fleet-card";
 
 export interface AutoJoinOptions {
@@ -20,46 +33,11 @@ export interface RegisteredSession {
 }
 
 export async function registerInteractiveTauSession(options: AutoJoinOptions = {}): Promise<RegisteredSession | null> {
-	// A broker-spawned copy of this process is itself an interactive session;
-	// re-registering under `tau-${pid}` gives every generation a fresh name, so
-	// the broker's duplicate check never trips and each child spawns another
-	// child (restart: "always") — an unbounded tau fork storm. The env marker
-	// set on the spec below breaks the recursion after one hop.
-	if (process.env.TAU_DAEMON_CHILD) return null;
 	const name = options.name ?? `tau-${process.pid}`;
 	const species = options.species ?? "tau";
 	const task = options.task ?? "interactive-coding";
-	const cwd = process.cwd();
 
-	// 1. Construct DaemonSpec per Phase 3.0.1 specification
-	const spec: DaemonSpec = {
-		name,
-		application: process.execPath,
-		args: process.argv.slice(1),
-		env: { ...process.env, TAU_DAEMON_CHILD: "1" } as Record<string, string>,
-		cwd,
-		pty: true,
-		restart: "always",
-		persist: true,
-		detached: false,
-	};
-
-	// 2. Connect to daemon broker socket and emit start/adopt operation
-	try {
-		const client = await daemonClientForProject(cwd);
-		await client.request({
-			op: "start",
-			spec,
-			owner: name,
-			replace: true,
-		}).catch(() => {
-			// Broker rejected or already registered; non-fatal
-		});
-	} catch {
-		// Broker daemon socket offline; continue gracefully
-	}
-
-	// 3. Emit POST /v1/join with LDP Agent Card to Squawk Fleet
+	// Emit POST /v1/join with LDP Agent Card to Squawk Fleet
 	const card = buildAgentCard({
 		name,
 		species,
@@ -70,7 +48,7 @@ export async function registerInteractiveTauSession(options: AutoJoinOptions = {
 
 	await joinSquawkFleet(card).catch(() => {});
 
-	// 4. Start continuous presence heartbeat to squawk daemon (:25120)
+	// Continuous presence heartbeat to squawk daemon (:25120)
 	const stopHeartbeat = startPresenceHeartbeat(name, 30_000);
 
 	return {

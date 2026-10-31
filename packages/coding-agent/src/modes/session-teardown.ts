@@ -9,7 +9,7 @@
  * Extracted (rather than inlined into `InteractiveMode`) so the callback body
  * is directly unit-testable without instantiating the full TUI stack.
  */
-import { logger, type postmortem } from "@tau/tau-utils";
+import { logger, postmortem } from "@tau/tau-utils";
 
 /** Dependencies the teardown captures at construction time. */
 export interface SessionTeardownDeps {
@@ -79,4 +79,30 @@ export function createSessionTeardown(deps: SessionTeardownDeps): SessionTeardow
 		if (!pending) pending = run(reason);
 		return pending;
 	};
+}
+
+/** What a caught fatal signal should do to a TUI-owned live session. */
+export type FatalSignalAction = "detach" | "teardown";
+
+/**
+ * Route a fatal signal to an action:
+ *
+ * - `detach` — SIGTERM/SIGHUP landing on in-flight session work: the TUI is
+ *   disposable, the session is not. The process keeps running headless until
+ *   the work drains, then exits cleanly (`kill(1)`, terminal/tmux death).
+ * - `teardown` — everything else: Ctrl+C (`SIGINT`) stays the user's abort
+ *   path; a signal with no work in flight exits immediately; a second signal
+ *   while already detached is the escape hatch for a headless stall (e.g. an
+ *   approval prompt that can no longer be answered).
+ */
+export function resolveFatalSignalAction(
+	reason: postmortem.Reason,
+	workInFlight: boolean,
+	alreadyDetached: boolean,
+): FatalSignalAction {
+	if (alreadyDetached) return "teardown";
+	if ((reason === postmortem.Reason.SIGTERM || reason === postmortem.Reason.SIGHUP) && workInFlight) {
+		return "detach";
+	}
+	return "teardown";
 }

@@ -647,7 +647,9 @@ async function runInteractiveMode(
 			}),
 		);
 		void startBackgroundModelDiscovery?.();
-		// Broker & Squawk Fleet Auto-Join (Phase 3)
+		// Squawk Fleet presence join — PRESENCE ONLY: the interactive TUI must
+		// never register itself as a broker daemon (fork-storm/ghost incident
+		// 2026-10-31; see launch/auto-join.ts header).
 		void import("./launch/auto-join")
 			.then(m => m.registerInteractiveTauSession({ species: "tau" }))
 			.catch(() => {});

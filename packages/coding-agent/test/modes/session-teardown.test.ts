@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
 import { postmortem } from "@tau/tau-utils";
-import { createSessionTeardown } from "../../src/modes/session-teardown";
+import { createSessionTeardown, resolveFatalSignalAction } from "../../src/modes/session-teardown";
 
 /**
  * Signal-safe session teardown contract (issue #4080). The callback body
@@ -215,5 +215,36 @@ describe("createSessionTeardown", () => {
 		await Promise.all([first, second]);
 
 		expect(received).toEqual([postmortem.Reason.SIGTERM]);
+	});
+});
+
+/**
+ * Fatal-signal routing for the detached keeper. The TUI is disposable; the
+ * session is not: SIGTERM/SIGHUP landing on in-flight work must detach (the
+ * process keeps running headless until the work drains) while Ctrl+C, idle
+ * signals, and a second signal while already detached keep the original
+ * teardown contract.
+ */
+describe("resolveFatalSignalAction", () => {
+	it("detaches SIGTERM landing on in-flight work", () => {
+		expect(resolveFatalSignalAction(postmortem.Reason.SIGTERM, true, false)).toBe("detach");
+	});
+
+	it("detaches SIGHUP landing on in-flight work", () => {
+		expect(resolveFatalSignalAction(postmortem.Reason.SIGHUP, true, false)).toBe("detach");
+	});
+
+	it("keeps Ctrl+C as the abort path even mid-turn", () => {
+		expect(resolveFatalSignalAction(postmortem.Reason.SIGINT, true, false)).toBe("teardown");
+	});
+
+	it("tears down a signal with nothing in flight", () => {
+		expect(resolveFatalSignalAction(postmortem.Reason.SIGTERM, false, false)).toBe("teardown");
+		expect(resolveFatalSignalAction(postmortem.Reason.SIGHUP, false, false)).toBe("teardown");
+	});
+
+	it("second signal while detached is the escape hatch, never a re-detach", () => {
+		expect(resolveFatalSignalAction(postmortem.Reason.SIGTERM, true, true)).toBe("teardown");
+		expect(resolveFatalSignalAction(postmortem.Reason.SIGHUP, true, true)).toBe("teardown");
 	});
 });

@@ -498,12 +498,22 @@ export async function fatal(error: unknown): Promise<never> {
 	return exitAfterFatal(output, "Fatal error", err, Reason.UNHANDLED_REJECTION);
 }
 
+const sigintHandler = async (): Promise<void> => {
+	await runCleanup(Reason.SIGINT);
+	exitProcess(130); // 128 + SIGINT (2)
+};
+const sigtermHandler = async (): Promise<void> => {
+	await runCleanup(Reason.SIGTERM);
+	exitProcess(143); // 128 + SIGTERM (15)
+};
+const sighupHandler = async (): Promise<void> => {
+	await runCleanup(Reason.SIGHUP);
+	exitProcess(129); // 128 + SIGHUP (1)
+};
+
 if (Bun.isMainThread) {
 	process
-		.on("SIGINT", async () => {
-			await runCleanup(Reason.SIGINT);
-			exitProcess(130); // 128 + SIGINT (2)
-		})
+		.on("SIGINT", sigintHandler)
 		.on("SIGUSR1", async () => {
 			if (inspectorOpened) return;
 			inspectorOpened = true;
@@ -577,14 +587,8 @@ if (Bun.isMainThread) {
 		.on("exit", async () => {
 			void runCleanup(Reason.EXIT); // fire and forget (exit imminent)
 		})
-		.on("SIGTERM", async () => {
-			await runCleanup(Reason.SIGTERM);
-			exitProcess(143); // 128 + SIGTERM (15)
-		})
-		.on("SIGHUP", async () => {
-			await runCleanup(Reason.SIGHUP);
-			exitProcess(129); // 128 + SIGHUP (1)
-		});
+		.on("SIGTERM", sigtermHandler)
+		.on("SIGHUP", sighupHandler);
 } else {
 	// Worker thread: only register exit handler for cleanup.
 	// DO NOT register uncaughtException/unhandledRejection handlers here -
@@ -681,6 +685,39 @@ export function register(
  */
 export function cleanup(): Promise<void> {
 	return runCleanup(Reason.MANUAL, true);
+}
+
+/** Signals whose default postmortem handler can be taken over by an owner. */
+export type TakeoverSignal = "SIGTERM" | "SIGHUP";
+
+const defaultSignalHandlers: Record<TakeoverSignal, () => Promise<void>> = {
+	SIGTERM: sigtermHandler,
+	SIGHUP: sighupHandler,
+};
+const takenOverSignals = new Set<TakeoverSignal>();
+
+/**
+ * Remove the module's default handler for `signal` so the caller owns that
+ * signal's policy — e.g. the interactive TUI detaching a live session across
+ * terminal death instead of tearing the session down. Every other postmortem
+ * contract (cleanup registrations, fatal handlers, `quit`) stays armed.
+ * Idempotent: returns false when off the main thread or the signal is already
+ * taken over.
+ */
+export function takeoverSignalHandler(signal: TakeoverSignal): boolean {
+	if (!Bun.isMainThread || takenOverSignals.has(signal)) return false;
+	process.removeListener(signal, defaultSignalHandlers[signal]);
+	takenOverSignals.add(signal);
+	return true;
+}
+
+/**
+ * Run a real (exit-settling) cleanup pass for a taken-over signal. The caller
+ * owns the process lifetime and MUST exit afterwards — the removed default
+ * handler did exactly this before exiting with 128+n.
+ */
+export function runTakenOverSignalCleanup(reason: Reason): Promise<void> {
+	return runCleanup(reason);
 }
 
 /** Controls how manual process shutdown handles terminal output. */

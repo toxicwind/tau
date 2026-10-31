@@ -1038,13 +1038,6 @@ export class SessionAdvisors {
 					granted_tools: grantedToolNames.filter(n => sandboxedToolNames.has(n)).join("`, `"),
 				}),
 			];
-			// Git-state awareness: the advisor sees HEAD/branch/dirty for the
-			// active repo so it never claims "pushed to main" for uncommitted
-			// work and can hold the executor to a clean-tree standard.
-			const gitState = await formatAdvisorGitState(process.cwd()).catch(() => "(git state unavailable)");
-			systemPrompt.push(
-				`<repo-state>\n${gitState}\n</repo-state>\nReview the executor's commit/push claims against this state — "pushed to main" requires HEAD present here, branch=main, dirty=0.\n`,
-			);
 			if (this.#advisorContextPrompt) systemPrompt.push(this.#advisorContextPrompt);
 			if (this.#advisorMemoryPrompt) systemPrompt.push(this.#advisorMemoryPrompt);
 			if (this.#advisorWatchdogPrompt) systemPrompt.push(this.#advisorWatchdogPrompt);
@@ -1134,6 +1127,32 @@ export class SessionAdvisors {
 				mcpResources: this.#advisorMcpResources,
 			});
 			const baseAdvisorStreamFn = this.#advisorStreamFn ?? streamSimple;
+			// Git-state awareness is injected PER REQUEST (the async
+			// transformProviderContext hook), never stamped at advisor build: the
+			// advisor must see HEAD/branch/dirty as of the request it reviews, so
+			// it never claims "pushed to main" for uncommitted work. The block is
+			// appended at the END of the system prompt (replacing any previous
+			// element) so the stable prefix keeps provider prompt caching intact.
+			const baseAdvisorTransform = this.#transformProviderContext;
+			const advisorTransformProviderContext = async (
+				context: Context,
+				transformModel: Model,
+			): Promise<Context> => {
+				let transformed = baseAdvisorTransform ? await baseAdvisorTransform(context, transformModel) : context;
+				if (transformed.systemPrompt !== undefined) {
+					const gitState = await formatAdvisorGitState(this.#host.sessionManager.getCwd()).catch(
+						() => "(git state unavailable)",
+					);
+					const repoState =
+						`<repo-state>\n${gitState}\n</repo-state>\n` +
+						`Review the executor's commit/push claims against this state — "pushed to main" requires HEAD present here, branch=main, dirty=0.`;
+					transformed = {
+						...transformed,
+						systemPrompt: [...transformed.systemPrompt.filter(block => !block.startsWith("<repo-state>")), repoState],
+					};
+				}
+				return transformed;
+			};
 			const advisorStreamFn: StreamFn = (requestModel, context, options) => {
 				if (requestModel.api === "openai-codex-responses") {
 					return baseAdvisorStreamFn(requestModel, context, {
@@ -1172,7 +1191,7 @@ export class SessionAdvisors {
 				onPayload: this.#host.onPayload,
 				onResponse: this.#host.onResponse,
 				onSseEvent: this.#host.onSseEvent,
-				transformProviderContext: this.#transformProviderContext,
+				transformProviderContext: advisorTransformProviderContext,
 				intentTracing: false,
 				transformAssistantMessage: message => {
 					quarantinedAdvisorOutput = quarantineAdvisorUnsafeOutput(
