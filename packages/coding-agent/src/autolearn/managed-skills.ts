@@ -109,19 +109,24 @@ function serializeSkillMutation<T>(name: string, op: () => Promise<T>): Promise<
 }
 
 /**
- * Reject when the managed-skills root itself is a symlink. lstat on a child
- * follows intermediate components, so a symlinked root would let an otherwise
- * valid name write/delete outside the isolated directory (e.g. onto authored
- * skills). Checked before composing any child path.
+ * Resolve the managed-skills root for child-path composition.
+ *
+ * The root MAY be a symlink — on this estate it is by design
+ * (`~/.tau/agent/managed-skills` -> the azurite pen's managed-skills dir, the
+ * pen-SSOT skills layout). What must never happen is a child path following an
+ * intermediate symlink AFTER the root is checked: a swap of the root symlink
+ * between lstat and write would redirect a valid-name write onto authored
+ * skills. So we resolve the root ONCE via realpath and compose every child
+ * path from the resolved directory. Child-level lstat/O_NOFOLLOW checks below
+ * still reject symlinked skill dirs/files. If the root is a dangling symlink,
+ * realpath fails and the op fails closed.
  */
-async function assertManagedRootSafe(): Promise<void> {
-	const rootStat = await fs.lstat(getManagedSkillsDir()).catch(err => {
-		if (isEnoent(err)) return null;
+async function resolveManagedRoot(): Promise<string> {
+	const root = getManagedSkillsDir();
+	return fs.realpath(root).catch(err => {
+		if (isEnoent(err)) return root; // absent root is safe; mkdir creates it below
 		throw err;
 	});
-	if (rootStat?.isSymbolicLink()) {
-		throw new Error("The managed-skills root is a symlink; refusing to operate outside the managed directory.");
-	}
 }
 
 const UPDATE_FILE_OPEN_FLAGS = fsConstants.O_WRONLY | fsConstants.O_NOFOLLOW;
@@ -172,8 +177,8 @@ export async function writeManagedSkill(input: WriteManagedSkillInput): Promise<
 		);
 	}
 	return serializeSkillMutation(name, async () => {
-		await assertManagedRootSafe();
-		const dir = path.join(getManagedSkillsDir(), name);
+		const root = await resolveManagedRoot();
+		const dir = path.join(root, name);
 		const file = path.join(dir, "SKILL.md");
 		// Reject a symlinked skill directory: an intermediate symlink would let the
 		// write escape the isolated managed root. lstat does not follow the final
@@ -233,8 +238,8 @@ export async function writeManagedSkill(input: WriteManagedSkillInput): Promise<
 export async function deleteManagedSkill(name: string): Promise<void> {
 	const safe = sanitizeSkillName(name);
 	await serializeSkillMutation(safe, async () => {
-		await assertManagedRootSafe();
-		const dir = path.join(getManagedSkillsDir(), safe);
+		const root = await resolveManagedRoot();
+		const dir = path.join(root, safe);
 		// Refuse to follow a symlinked skill directory (rm would delete the target).
 		const dirStat = await fs.lstat(dir).catch(err => {
 			if (isEnoent(err)) return null;

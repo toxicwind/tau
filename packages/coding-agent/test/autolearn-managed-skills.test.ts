@@ -160,15 +160,17 @@ describe("managed-skills primitives", () => {
 			).rejects.toThrow(/non-empty body/);
 		});
 
-		it("refuses to write when the managed-skills root itself is a symlink", async () => {
+		it("writes through a symlinked root into the resolved target (pen-SSOT layout)", async () => {
 			const realRoot = await fs.mkdtemp(path.join(os.tmpdir(), "tau-realroot-"));
 			try {
 				await fs.mkdir(path.dirname(getManagedSkillsDir()), { recursive: true });
 				await fs.symlink(realRoot, getManagedSkillsDir());
-				await expect(
-					writeManagedSkill({ action: "create", name: "demo", description: "d", body: "b" }),
-				).rejects.toThrow(/managed-skills root is a symlink/);
-				expect(await Bun.file(path.join(realRoot, "demo", "SKILL.md")).exists()).toBe(false);
+				// The root symlink is the estate's pen-SSOT design (azurite). The old
+				// blanket refusal broke every managed-skill op; instead children are
+				// composed from the RESOLVED root, so a mid-write symlink swap cannot
+				// redirect writes — this pins the resolved-target contract.
+				await writeManagedSkill({ action: "create", name: "demo", description: "d", body: "b" });
+				expect(await Bun.file(path.join(realRoot, "demo", "SKILL.md")).exists()).toBe(true);
 			} finally {
 				await removeWithRetries(realRoot);
 			}
