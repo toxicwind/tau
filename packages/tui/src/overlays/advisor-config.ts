@@ -50,6 +50,14 @@ export interface AdvisorConfig {
 	enabled?: boolean;
 	/** Maximum non-blocker notes per advisor prompt update (default 4); blockers are exempt. */
 	maxNotesPerUpdate?: number;
+	/**
+	 * Write-sandbox for the advisor (2026-10-30): `read-only` (default) strips
+	 * every mutating tool from the grant so the "run no tools" sensor contract
+	 * is structural, not negotiated; an absolute directory confines the
+	 * mutating tools' write targets to that dir. Anything else is a config
+	 * error (warned, defaults to read-only).
+	 */
+	sandbox?: string;
 }
 
 /** Which level a `WATCHDOG.yml` lives at: the project root or the user agent dir. */

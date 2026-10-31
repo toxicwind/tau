@@ -51,7 +51,7 @@ async function readLock(): Promise<Lock> {
 // We fallback to the local estate copy if the remote fetch fails.
 async function fetchUpstreamDTS(lock: Lock): Promise<string> {
 	// First, try to read from the local estate pi-coding-agent
-	const localPath = `/home/toxic/estate/config/tau/plugins/node_modules/@${lock.repo}/dist/index.d.ts`;
+	const localPath = `/home/toxic/pens/estate/config/tau/plugins/node_modules/@${lock.repo}/dist/index.d.ts`;
 	try {
 		return await readFile(localPath, "utf-8");
 	} catch (localErr) {

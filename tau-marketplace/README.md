@@ -61,7 +61,7 @@ flowchart TD
 ### 1. Register the Marketplace in Tau / OMP
 ```bash
 # Add this repository to your configured marketplaces
-omp plugin marketplace add /home/toxic/estate/ranch/tau-marketplace
+omp plugin marketplace add /home/toxic/pens/estate/ranch/tau-marketplace
 ```
 
 ### 2. Discover Available Plugins
@@ -155,8 +155,8 @@ bun test
 Expected output:
 ```
 === TAU MARKETPLACE VALIDATOR ===
-Root: /home/toxic/estate/ranch/tau-marketplace
-Catalog: /home/toxic/estate/ranch/tau-marketplace/marketplace.json
+Root: /home/toxic/pens/estate/ranch/tau-marketplace
+Catalog: /home/toxic/pens/estate/ranch/tau-marketplace/marketplace.json
 
 Marketplace: "tau-marketplace" (version 1.0.0)
 Owner: toxicwind

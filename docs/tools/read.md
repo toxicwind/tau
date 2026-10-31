@@ -296,7 +296,11 @@ Notes: ...
 
 ## Limits & Caps
 
-- Shared text truncation defaults from `packages/coding-agent/src/session/streaming-output.ts`:
+- Shared text truncation defaults re-exported through
+  `packages/coding-agent/src/tools/read.ts` from the canonical module
+  `packages/tui/src/tools/streaming-output.ts` (published as
+  `@tau/tau-tui/tools/streaming-output`; also used by
+  `packages/coding-agent/src/security/resource-output.ts`):
    - `DEFAULT_MAX_LINES = 3000`
    - `DEFAULT_MAX_BYTES = 50 * 1024`
 - Local text open-ended default line limit: `read.defaultLimit` (default `300`), clamped to `[1, DEFAULT_MAX_LINES]`.

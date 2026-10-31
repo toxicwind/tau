@@ -74,8 +74,8 @@ export type AuditReport = {
 const OPENROUTER_BASE = "https://openrouter.ai/api/v1";
 
 /** The engine's authoritative role list, read from source rather than hardcoded. */
-export const MODEL_BROWSER_SRC = "/home/toxic/estate/ranch/stockyard/tau/packages/tui/src/overlays/model-browser.ts";
-export const PRIORITY_JSON = "/home/toxic/estate/ranch/stockyard/tau/packages/coding-agent/src/priority.json";
+export const MODEL_BROWSER_SRC = "/home/toxic/pens/estate/ranch/stockyard/tau/packages/tui/src/overlays/model-browser.ts";
+export const PRIORITY_JSON = "/home/toxic/pens/estate/ranch/stockyard/tau/packages/coding-agent/src/priority.json";
 
 function fail(message: string): never {
 	throw new Error(`model-audit: ${message}`);

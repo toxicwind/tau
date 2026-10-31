@@ -72,7 +72,7 @@ zt_pop(handle, buffer, sizeof(buffer), NULL, NULL);
 ## Building
 
 ```bash
-cd /home/toxic/estate/ranch/tau
+cd /home/toxic/pens/estate/ranch/tau
 cargo build -p tau-natives
 ```
 

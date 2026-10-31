@@ -150,7 +150,7 @@ figure iut what the diff between each keys are and make a md wfter you uodste al
 ### Option 1: Via Tau Marketplace (Recommended)
 ```bash
 # Register the estate-scripts marketplace
-omp plugin marketplace add /home/toxic/estate/ranch/tau-marketplace
+omp plugin marketplace add /home/toxic/pens/estate/ranch/tau-marketplace
 
 # Install the mobile autocorrect plugin
 omp plugin install omp-mobile-autocorrect@tau-marketplace
@@ -159,12 +159,12 @@ omp plugin install omp-mobile-autocorrect@tau-marketplace
 ### Option 2: Ambient Extension
 Copy or symlink directly into your active extensions directory:
 ```bash
-ln -s /home/toxic/estate/packages/omp-mobile-autocorrect/index.ts ~/.tau/extensions/mobile-autocorrect.ts
+ln -s /home/toxic/pens/estate/packages/omp-mobile-autocorrect/index.ts ~/.tau/extensions/mobile-autocorrect.ts
 ```
 
 ### Option 3: Single-Session Invocation
 ```bash
-omp --extension /home/toxic/estate/packages/omp-mobile-autocorrect/index.ts
+omp --extension /home/toxic/pens/estate/packages/omp-mobile-autocorrect/index.ts
 ```
 
 ---
@@ -186,7 +186,7 @@ Measured on Bun 1.4.3 (Linux x86_64 / Android Termux ARM64):
 ## 🧪 Running Tests
 
 ```bash
-cd /home/toxic/estate/packages/omp-mobile-autocorrect
+cd /home/toxic/pens/estate/packages/omp-mobile-autocorrect
 bun test
 ```
 

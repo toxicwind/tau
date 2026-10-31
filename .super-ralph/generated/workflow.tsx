@@ -1,8 +1,8 @@
 import React from "react";
 import { createSmithers, ClaudeCodeAgent, CodexAgent, Sequence, Ralph } from "smthrs";
-import { SuperRalph } from "/home/toxic/estate/ranch/corral/src";
-import { InterpretConfig, FinalReport, CompletionValidator } from "/home/toxic/estate/ranch/corral/src/components";
-import { ralphOutputSchemas } from "/home/toxic/estate/ranch/corral/src";
+import { SuperRalph } from "/home/toxic/pens/estate/ranch/corral/src";
+import { InterpretConfig, FinalReport, CompletionValidator } from "/home/toxic/pens/estate/ranch/corral/src/components";
+import { ralphOutputSchemas } from "/home/toxic/pens/estate/ranch/corral/src";
 
 const REPO_ROOT = "/home/toxic/tau";
 const DB_PATH = "/home/toxic/tau/.smithers/workflow.db";

@@ -4,7 +4,7 @@
 # ==============================================================================
 set -uo pipefail
 
-TAU_ROOT="${TAU_ROOT:-/home/toxic/estate/ranch/tau}"
+TAU_ROOT="${TAU_ROOT:-/home/toxic/pens/estate/ranch/tau}"
 GATEWAY_URL="${VERCEL_GATEWAY_URL:-https://ai-gateway.vercel.sh/v1}"
 
 RED='\033[0;31m'

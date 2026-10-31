@@ -1,7 +1,7 @@
 [daemons.tau]
 # tau acp exposed as TCP daemon via chute (stdio→TCP + mcpServers normalization)
 port = 25111
-run = "exec /home/toxic/estate/projects/range/ranch/barn/chute/chute.mjs --port 25111 -- /home/toxic/estate/projects/range/ranch/stockyard/tau/packages/coding-agent/dist/tau acp -e /home/toxic/.tau/extensions/vansrouter.ts"
+run = "exec /home/toxic/pens/estate/projects/range/ranch/barn/chute/chute.mjs --port 25111 -- /home/toxic/pens/estate/projects/range/ranch/stockyard/tau/packages/coding-agent/dist/tau acp -e /home/toxic/.tau/extensions/vansrouter.ts"
 dir = "/home/toxic"
 mise = false
 retry = true
@@ -13,7 +13,7 @@ port = 25115
 --
 [daemons.kimi-code]
 port = 25126
-run = "exec /home/toxic/estate/bin/claim-port 25126 /home/toxic/kimi-code-npm/node_modules/@moonshot-ai/kimi-code/dist/main.mjs web --no-open --port 25126" # 25126 == $KIMI_CODE_PORT (SSOT); literal: ${} not expanded in run lines
+run = "exec /home/toxic/pens/estate/bin/claim-port 25126 /home/toxic/kimi-code-npm/node_modules/@moonshot-ai/kimi-code/dist/main.mjs web --no-open --port 25126" # 25126 == $KIMI_CODE_PORT (SSOT); literal: ${} not expanded in run lines
 dir = "/home/toxic/kimi-code-npm"
 mise = true
 retry = true
@@ -21,7 +21,7 @@ ready_http = "http://127.0.0.1:25126/health"
 --
 [daemons.vansrouter]
 port = 20128
-run = "exec /home/toxic/estate/stack/services/vansrouter.sh"
+run = "exec /home/toxic/pens/estate/stack/services/vansrouter.sh"
 dir = "."
 mise = false
 retry = true
@@ -42,8 +42,8 @@ daemons = ["shep", "mesh-hub", "herd", "vansrouter", "coyote", "yote", "search-a
 # NOTE: pitchfork.toml is hand-edited (generator retired 2026-09-14, never run it).
 [daemons.buildsrv]
 port = 25148
-run = "exec /usr/bin/python3 /home/toxic/estate/tools/buildsrv/buildsrvd.py"
-dir = "/home/toxic/estate/tools/buildsrv"
+run = "exec /usr/bin/python3 /home/toxic/pens/estate/tools/buildsrv/buildsrvd.py"
+dir = "/home/toxic/pens/estate/tools/buildsrv"
 mise = false
 retry = true
 boot_start = true

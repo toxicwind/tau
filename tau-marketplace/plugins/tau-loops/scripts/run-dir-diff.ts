@@ -12,7 +12,7 @@ process.stdout.write(`dir-diff ${left} <-> ${right}\n${formatDiff(diff)}\n`);
 
 if (needles.length > 0) {
 	const hits = censusConsumers({
-		searchRoot: resolveDir(process.env.LOOPS_SEARCH_ROOT ?? "/home/toxic/estate"),
+		searchRoot: resolveDir(process.env.LOOPS_SEARCH_ROOT ?? "/home/toxic/pens/estate"),
 		needles,
 		maxHitsPerNeedle: 20,
 	});

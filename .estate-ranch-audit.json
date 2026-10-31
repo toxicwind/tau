@@ -7,7 +7,7 @@
     "estate_config_exists": true,
     "omp_symlink": {
       "exists": true,
-      "target": "/home/toxic/estate/config/tau/models.yml"
+      "target": "/home/toxic/pens/estate/config/tau/models.yml"
     },
     "git": {
       "head": "eeac2e842a2e0d2ff8b1d8f2e55a1ebc66aa31e2",
