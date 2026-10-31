@@ -794,6 +794,28 @@ export async function discoverAuthStorage(
 }
 
 /**
+ * Discover models and initialize the ModelRegistry.
+ */
+export async function discoverModels(
+	authStorage?: AuthStorage,
+	agentDir: string = getAgentDir(),
+	options: { settings?: Settings; cwd?: string } = {},
+): Promise<ModelRegistry> {
+	const resolvedAuth = authStorage ?? (await discoverAuthStorage(agentDir, options));
+	const registry = new ModelRegistry(
+		resolvedAuth,
+		path.join(agentDir, "models.yml"),
+		{
+			settings: options.settings,
+			cacheDbPath: getModelDbPath(agentDir),
+		},
+	);
+	await registry.hydrateCredentialScopedModelCaches();
+	registry.refreshInBackground();
+	return registry;
+}
+
+/**
  * Discover extensions from cwd.
  */
 export async function discoverExtensions(cwd?: string): Promise<LoadExtensionsResult> {
@@ -4571,3 +4593,8 @@ function preconnectModelHost(baseUrl: string | undefined): void {
 		// Best effort.
 	}
 }
+
+export { AgentSession } from "./session/agent-session";
+export { SessionManager } from "./session/session-manager";
+export { ModelRegistry } from "./config/model-registry";
+export { SettingsManager } from "./extensibility/legacy-tau-coding-agent-shim";
