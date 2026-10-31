@@ -59,6 +59,9 @@ Full install, config, and architecture: [below](#table-of-contents).
 - **CLI + SDK** — `packages/coding-agent` ships the `tau` binary (`src/cli.ts`)
   and a programmatic SDK: read, bash, edit, write, grep, glob, task, and session
   management.
+- **Stdio MCP Server (`tau-mcp`)** — Exposes Tau as an MCP server over stdio (`bin/tau-mcp.ts` $\to$ `~/.local/bin/tau-mcp`). Federates directly into gateways like Thresher (`:25127`) with `tau_prompt` (autonomous coding execution, verification, and diff application) and `tau_status`.
+- **Programmatic Headless SDK** — Full programmatic control via `@tau/tau-coding-agent`: `createAgentSession`, `discoverModels`, `ModelRegistry`, `SessionManager`, and `SettingsManager` to embed Tau directly into custom pipelines without CLI harnesses.
+- **Virtual Tool Devices (`xd://`)** — On-demand, zero-overhead tool-device discovery and invocation via internal URIs (`read xd://<tool>` for docs/schema, `write xd://<tool>` for execution).
 - **73 models across 73 providers** — `packages/catalog` is the provider census;
   `packages/ai` carries **69 provider wire implementations**. Role-based routing:
   `smol`, `slow`, `plan`, `vision`, `task`, `advisor`, `tiny`. CLI flags `--smol`,
