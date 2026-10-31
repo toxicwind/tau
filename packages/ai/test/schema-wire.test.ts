@@ -481,4 +481,29 @@ describe("stripToolDescriptions", () => {
 		expect(tool.description).toBe("top-level tool description");
 		expect(JSON.stringify(toolWireSchema(tool))).toContain("where to read");
 	});
+
+	it("handles tools with missing/undefined parameters without throwing WeakMap error", () => {
+		const toolNoParams = {
+			name: "no-params",
+			description: "no params tool",
+		} as unknown as Tool;
+		const wire = toolWireSchema(toolNoParams);
+		expect(wire).toBeDefined();
+		expect(typeof wire).toBe("object");
+	});
+
+	it("handles tools with inputSchema instead of parameters", () => {
+		const toolInputSchema = {
+			name: "input-schema-tool",
+			description: "tool with inputSchema",
+			inputSchema: {
+				type: "object",
+				properties: { query: { type: "string" } },
+			},
+		} as unknown as Tool;
+		const wire = toolWireSchema(toolInputSchema);
+		expect(wire).toBeDefined();
+		expect(wire.type).toBe("object");
+		expect((wire.properties as Record<string, unknown>).query).toBeDefined();
+	});
 });

@@ -44,6 +44,9 @@ export class RegisteredToolAdapter implements AgentTool<any, any, any> {
 		private runner: ExtensionRunner,
 	) {
 		applyToolProxy(registeredTool.definition, this);
+		if (!this.parameters && (registeredTool.definition as any).inputSchema) {
+			this.parameters = (registeredTool.definition as any).inputSchema;
+		}
 		this.loadMode = defaultLoadModeForToolName(registeredTool.definition.name, registeredTool.definition.loadMode);
 
 		// Only define render methods when the underlying definition provides them.

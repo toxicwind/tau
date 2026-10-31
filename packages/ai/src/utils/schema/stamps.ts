@@ -17,6 +17,9 @@
 const memos = new WeakMap<object, Map<symbol, unknown>>();
 
 export function stamp<T extends object, V>(target: T, key: symbol, compute: (target: T) => V): V {
+	if (!target || typeof target !== "object") {
+		return compute(target);
+	}
 	let slots = memos.get(target);
 	if (!slots) {
 		slots = new Map();
@@ -54,6 +57,7 @@ export function epochNext(): number {
  * subsequent call within the same epoch.
  */
 export function once<T extends object>(target: T, epoch: number): boolean {
+	if (!target || typeof target !== "object") return true;
 	const cur = epochs.get(target);
 	if (cur !== undefined && cur >= epoch) return false;
 	epochs.set(target, epoch);
@@ -84,6 +88,7 @@ const depths = new WeakMap<object, number>();
  * make every later top-level walk of the same object misreport a cycle.
  */
 export function enter<T extends object>(target: T): boolean {
+	if (!target || typeof target !== "object") return true;
 	const cur = depths.get(target);
 	if (cur !== undefined && cur !== 0) return false;
 	depths.set(target, 1);
@@ -91,6 +96,7 @@ export function enter<T extends object>(target: T): boolean {
 }
 
 export function exit<T extends object>(target: T): void {
+	if (!target || typeof target !== "object") return;
 	const cur = depths.get(target);
 	if (cur === undefined) return;
 	depths.set(target, cur - 1);

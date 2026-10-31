@@ -102,8 +102,10 @@ export const LEGACY_PI_CONFIG: LegacyPiConfig = Object.freeze({
 		"tau-natives",
 		"tau-tui",
 		"tau-utils",
+		"tau-catalog",
 		"pi-agent-core",
 		"pi-ai",
+		"pi-catalog",
 		"pi-coding-agent",
 		"pi-natives",
 		"pi-tui",
@@ -126,6 +128,8 @@ export const LEGACY_PI_CONFIG: LegacyPiConfig = Object.freeze({
 		["pi-natives/", "tau-natives/"],
 		["pi-utils", "tau-utils"],
 		["pi-utils/", "tau-utils/"],
+		["pi-catalog", "tau-catalog"],
+		["pi-catalog/", "tau-catalog/"],
 		["tau-ai/utils/oauth", "tau-ai/oauth"],
 		["tau-ai/utils/oauth/", "tau-ai/oauth/"],
 		["tau-ai/compat", "tau-ai"],
@@ -173,6 +177,7 @@ export const LEGACY_PI_CONFIG: LegacyPiConfig = Object.freeze({
 		{ dir: "natives", identifier: "PiNatives", rootShim: null },
 		{ dir: "tui", identifier: "PiTui", rootShim: "legacy-tau-tui-shim.ts" },
 		{ dir: "utils", identifier: "PiUtils", rootShim: null },
+		{ dir: "catalog", identifier: "PiCatalog", rootShim: null },
 	] as readonly LegacyPiBundledPackage[],
 
 	// ── Wildcard enumeration filters ───────────────────────────────────

@@ -600,9 +600,10 @@ export function arkToWireSchema(schema: Type): Record<string, unknown> {
  * raw JSON Schema parameters are upgraded to draft 2020-12 and cached.
  */
 export function toolWireSchema(tool: Tool): Record<string, unknown> {
-	const params: TSchema = tool.parameters;
+	const params: TSchema = tool.parameters ?? (tool as { inputSchema?: unknown }).inputSchema ?? { type: "object", properties: {} };
 	if (isArkSchema(params)) return arkToWireSchema(params);
-	return stamp(params as Record<string, unknown>, kJsonWireSchema, p => {
+	const target = params && typeof params === "object" ? (params as Record<string, unknown>) : { type: "object", properties: {} };
+	return stamp(target, kJsonWireSchema, p => {
 		// Legacy schemas may carry non-cloneable metadata (helper functions); the JSON
 		// fallback drops it the same way the wire serializer always has.
 		const raw = isArkJsonAst(p) ? arkJsonAstToWire(p) : structuredCloneJSON(p);

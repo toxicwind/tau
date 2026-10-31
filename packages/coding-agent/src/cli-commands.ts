@@ -151,6 +151,16 @@ export const commands: CommandEntry[] = [
 		help: commandHelp.installHelp,
 	},
 	{
+		name: "serve",
+		load: () => import("./commands/serve").then(m => m.default),
+		help: commandHelp.serveCommandHelp,
+	},
+	{
+		name: "attach",
+		load: () => import("./commands/attach").then(m => m.default),
+		help: commandHelp.attachCommandHelp,
+	},
+	{
 		name: "join",
 		load: () => import("./commands/join").then(m => m.default),
 		help: commandHelp.joinHelp,

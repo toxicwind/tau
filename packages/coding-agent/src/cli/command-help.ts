@@ -6,6 +6,10 @@ export const acpHelp = {
 
 export const agentsHelp = { description: "Manage bundled task agents" } satisfies CommandMetadata;
 
+export const attachCommandHelp = {
+	description: "Attach to the project's session-host daemon (tau serve); Ctrl-A d detaches",
+} satisfies CommandMetadata;
+
 export const authBrokerHelp = {
 	description: "Manage the tau auth-broker (credential vault)",
 } satisfies CommandMetadata;
@@ -25,6 +29,10 @@ export const browserRelayHelp = {
 
 export const cleanseHelp = {
 	description: "Detect and fix project diagnostics with weighted parallel subagents",
+} satisfies CommandMetadata;
+
+export const serveCommandHelp = {
+	description: "Run the session-host daemon: hosts the interactive TUI under a PTY so attach clients are disposable",
 } satisfies CommandMetadata;
 
 export const collabHelp = {

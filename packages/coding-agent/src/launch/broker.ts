@@ -110,7 +110,7 @@ interface DaemonLogRead {
 	cursor: number;
 }
 
-function quoteShellArg(value: string): string {
+export function quoteShellArg(value: string): string {
 	return `'${value.replaceAll("'", `'\\''`)}'`;
 }
 

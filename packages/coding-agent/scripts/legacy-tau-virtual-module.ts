@@ -53,7 +53,7 @@ function bindingForSubpath(identifier: string, subpath: string): string {
 		.filter(Boolean)
 		.map(segment =>
 			segment
-				.split(/[-_]/)
+				.split(/[-_.]/)
 				.filter(Boolean)
 				.map(part => part.charAt(0).toUpperCase() + part.slice(1))
 				.join(""),
