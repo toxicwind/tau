@@ -456,7 +456,19 @@ function resolvePreProfileAgentDir(
 	agentDirEnv: string | undefined,
 	profileAgentDirSource: string | undefined = profile,
 ): string | undefined {
-	return isProfileDerivedAgentDir(profile ?? profileAgentDirSource, agentDirEnv) ? undefined : agentDirEnv;
+	const raw = isProfileDerivedAgentDir(profile ?? profileAgentDirSource, agentDirEnv)
+		? undefined
+		: agentDirEnv;
+	// A RELATIVE override is a footgun: resolved against the process cwd at
+	// every use, it silently points sessions at `<cwd>/.tau/agent` — config,
+	// TAUVISOR.yml, models.yml, and skills all vanish (2026-10-31: tauvisor
+	// dead in a /home/toxic/tmp session; nothing on disk ever warned).
+	// Homogeneous contract: relative overrides anchor to $HOME like every
+	// other dotfile path.
+	if (raw !== undefined && raw.length > 0 && !raw.startsWith("/")) {
+		return path.join(os.homedir(), raw);
+	}
+	return raw;
 }
 
 let activeProfile = readProfileFromEnvSafe();

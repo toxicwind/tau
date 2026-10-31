@@ -294,6 +294,12 @@ describe("profile state machine (setAgentDir snapshot)", () => {
 		setProfile(undefined);
 		expect(getActiveProfile()).toBeUndefined();
 	});
+
+	test("relative PI_CODING_AGENT_DIR anchors to HOME (cwd-independence)", () => {
+		process.env.PI_CODING_AGENT_DIR = ".tau/agent";
+		__resetDirsFromEnvForTests();
+		expect(getAgentDir()).toEqual(path.join(HOME, ".tau", "agent"));
+	});
 });
 
 describe("agent subpaths", () => {
