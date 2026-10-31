@@ -75,3 +75,25 @@ equivalent is `tau acp` (session-hosting server) + this keeper. When a real
 tau session-host daemon lands, it must mirror the kappa daemon contract:
 sessions owned by the daemon, TUI/UI as re-attachable clients, daemon
 supervised by pitchfork.
+
+## Follow-up design: session-host daemon (not yet built)
+
+The keeper survives every *catchable* signal but not SIGKILL, and the next
+`tau` cold-resumes from JSONL. The endgame is a headless session server so the
+TUI is a disposable client:
+
+- A daemon owns the `AgentSession` lifecycle in memory across client
+  connects/disconnects, scoped per project, reusing the daemon-broker socket
+  machinery (`launch/client.ts` `SocketDaemonClient`, `daemonClientForProject`,
+  token file). Disposal only on explicit server shutdown or a settled
+  `session_exit kind=normal` — never as part of "session survives".
+- `tau` with a TTY starts/adopts the server if absent; `tau --attach <id>`
+  connects to a live session. Killing the TUI closes only the client socket;
+  the server keeps running; the next `tau` re-attaches to the live
+  `AgentSession` (in-flight turn, queues, async jobs intact) instead of
+  cold-resuming. SIGINT stays the abort path; SIGTERM/SIGHUP on the client
+  just detach.
+- Scope discipline: prove single-TUI detach/re-attach first. No multi-client
+  collab, no ACP forwarding, no web UI in that change.
+- The keeper (this document) remains the fallback for TUI-owned state and the
+  safety net if the daemon is down.
