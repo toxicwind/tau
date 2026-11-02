@@ -3030,6 +3030,37 @@ export const SETTINGS_SCHEMA = {
 			description: "Model selector for extraction/consolidation, empty = smol role",
 		},
 	},
+	"sharpshooter.embeddingModel": {
+		type: "string",
+		default: undefined,
+		ui: {
+			tab: "memory",
+			group: "Sharpshooter",
+			label: "Sharpshooter Embedding Model",
+			description: "Embedding model for semantic decision search (default freeinference bge-m3)",
+		},
+	},
+	"sharpshooter.embeddingApiUrl": {
+		type: "string",
+		default: "https://freeinference.org/v1",
+		ui: {
+			tab: "memory",
+			group: "Sharpshooter",
+			label: "Sharpshooter Embedding API URL",
+			description: "OpenAI-compatible embeddings endpoint",
+		},
+	},
+	"sharpshooter.embeddingApiKey": {
+		type: "string",
+		credential: true,
+		default: undefined,
+		ui: {
+			tab: "memory",
+			group: "Sharpshooter",
+			label: "Sharpshooter Embedding API Key",
+			description: "Keyring-SSOT key for the embeddings endpoint (empty = semantic search disabled)",
+		},
+	},
 	"sharpshooter.intervalMinutes": { type: "number", default: 5 },
 	"sharpshooter.injectionTokenLimit": { type: "number", default: 15000 },
 

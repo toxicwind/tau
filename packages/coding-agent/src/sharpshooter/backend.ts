@@ -5,6 +5,7 @@ import { truncateApproxTokens } from "../mnemotau/config";
 import type { AgentSession } from "../session/agent-session";
 import { runSharpshooterConsolidation } from "./consolidate";
 import { maybeStartSharpshooterExtraction, resolveSharpshooterModel } from "./extract";
+import { embedTexts, type SemanticSearchConfig, type SemanticSearchLine } from "./semantic-search";
 import {
 	readSharpshooterState,
 	sharpshooterBankDir,
@@ -222,21 +223,29 @@ export const sharpshooterBackend: MemoryBackend = {
 		return lines.join("\n");
 	},
 
-	async search({ agentDir, cwd }, query, options) {
+	async search({ agentDir, cwd, session }, query, options) {
 		if (options?.signal?.aborted) {
 			return { backend: "sharpshooter", query, count: 0, items: [], message: "Search aborted." };
 		}
 		const needle = query.toLowerCase();
 		if (!needle) return { backend: "sharpshooter", query, count: 0, items: [] };
 		const files = await readMemoryFiles(agentDir, cwd);
-		const items: MemoryBackendSearchItem[] = [];
+		const lines: SemanticSearchLine[] = [];
 		for (const file of files) {
 			for (const line of file.content.split(/\r?\n/)) {
-				if (line.toLowerCase().includes(needle)) items.push({ content: line, source: file.name });
+				lines.push({ content: line, file: file.name });
 			}
 		}
-		const limit = Math.max(0, options?.limit ?? items.length);
-		const limited = items.slice(0, limit);
-		return { backend: "sharpshooter", query, count: limited.length, items: limited };
+		const cfg: SemanticSearchConfig = session
+			? {
+					apiUrl: session.settings.get("sharpshooter.embeddingApiUrl") ?? undefined,
+					model: session.settings.get("sharpshooter.embeddingModel") ?? undefined,
+					apiKey: session.settings.get("sharpshooter.embeddingApiKey") ?? undefined,
+				}
+			: {};
+		const limit = Math.max(0, options?.limit ?? lines.length);
+		const ranked = await semanticSearch(query, lines, cfg, { limit });
+		const items: MemoryBackendSearchItem[] = ranked.map((r) => ({ content: r.content, source: r.file }));
+		return { backend: "sharpshooter", query, count: items.length, items };
 	},
 };
