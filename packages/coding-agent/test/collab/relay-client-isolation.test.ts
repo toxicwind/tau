@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it } from "bun:test";
+import { toFetchBody } from "@tau/tau-utils";
 import { type LocalRelay, startLocalRelay } from "../../../collab-web/scripts/local-relay";
 import { generateRoomKey, importRoomKey, seal } from "../../src/collab/crypto";
 import { type CollabFrame, packEnvelope } from "../../src/collab/protocol";

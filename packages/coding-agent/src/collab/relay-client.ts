@@ -8,7 +8,7 @@
  * reconnect. Hosts discard undecryptable guest frames without closing the room.
  */
 import { getProxyForUrl } from "@tau/tau-ai/utils/proxy";
-import { logger } from "@tau/tau-utils";
+import { logger, toFetchBody } from "@tau/tau-utils";
 import { open, sealSerialized } from "./crypto";
 import type { CollabFrame, RelayControlMessage } from "./protocol";
 import { packEnvelope, unpackEnvelope } from "./protocol";

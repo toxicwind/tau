@@ -1,5 +1,6 @@
 import type { BlobDestinationId } from "./destinations";
 import type { BlobUploader, BlobUploadRequest } from "./publication";
+import { toFetchBody } from "@tau/tau-utils";
 import {
 	type DestinationRuntimeConfig,
 	DestinationUnavailableError,

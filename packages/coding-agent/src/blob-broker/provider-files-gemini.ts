@@ -1,4 +1,5 @@
 import type { Model } from "@tau/tau-ai";
+import { toFetchBody } from "@tau/tau-utils";
 import type { ProviderFileClient, ProviderFileHandle, ProviderFileUploadRequest } from "./provider-file-types";
 import type { FetchImpl } from "./uploader-runtime";
 

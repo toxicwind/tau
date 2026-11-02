@@ -1,5 +1,6 @@
 import type { BlobDestinationId } from "./destinations";
 import type { BlobPublication, BlobUploadRequest, RemoteDeleteAction } from "./publication";
+import { toFetchBody } from "@tau/tau-utils";
 
 /** Non-secret value accepted by a destination option record. */
 export type DestinationOptionValue = string | number | boolean;

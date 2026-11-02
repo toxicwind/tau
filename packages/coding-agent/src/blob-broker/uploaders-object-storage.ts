@@ -1,4 +1,5 @@
 import { type AwsCredentials, type SignedHeaders, signRequest } from "@tau/tau-ai/providers/aws-sigv4";
+import { toFetchBody } from "@tau/tau-utils";
 import type { BlobDestinationId } from "./destinations";
 import type { BlobUploader, RemoteDeleteAction } from "./publication";
 import {
@@ -254,7 +255,7 @@ function createS3Uploader(destination: BlobDestinationId, config: DestinationRun
 	};
 }
 
-function concatenate(parts: readonly Uint8Array[]): Uint8Array {
+function concatenate(parts: readonly Uint8Array[]): Uint8Array<ArrayBuffer> {
 	let length = 0;
 	for (const part of parts) length += part.byteLength;
 	const result = new Uint8Array(length);
