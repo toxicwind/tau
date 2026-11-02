@@ -3,6 +3,7 @@ export * from "./coercion";
 export * from "./demotion";
 export * from "./examples";
 export * from "./factory";
+export * from "./freeinference-coercion";
 export * from "./history";
 export * from "./inventory";
 export * from "./owned-stream";
