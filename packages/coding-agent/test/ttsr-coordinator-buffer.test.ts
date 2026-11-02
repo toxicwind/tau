@@ -430,4 +430,36 @@ describe("TTSR AST deferral", () => {
 		expect(checkAst).toHaveBeenCalledTimes(1);
 		expect(emitSessionEvent).toHaveBeenCalledTimes(1);
 	});
+
+	it("does NOT re-fire a rule whose injected reminder text matches its own condition (self-referential storm, 2026-11-02: 244 injections)", () => {
+		const manager = new TtsrManager({
+			enabled: true,
+			contextMode: "discard",
+			interruptMode: "never",
+			repeatMode: "after-gap",
+			repeatGap: 0,
+		});
+		const selfRefRule: Rule = {
+			name: "no-head-tail-self-ref",
+			description: "self-referential: the injected body contains the very tokens its condition matches",
+			condition: "\\bhead\\b|\\btail\\b",
+			scope: ["tool:bash"],
+			body: ["Never pipe through head or tail. Example: `cat x | head -25`."],
+		};
+		expect(manager.addRule(selfRefRule)).toBe(true);
+
+		const context = { source: "tool", toolName: "bash", streamKey: "call-1" } as TtsrMatchContext;
+		// First delta: plain text containing the token → rule matches.
+		const first = manager.checkSnapshot("let me head that file", context);
+		expect(first).toHaveLength(1);
+		// The coordinator injects the reminder (markInjected funnel) — the fired
+		// rule is now gated for this monotonic turn.
+		manager.markInjectedByNames(["no-head-tail-self-ref"]);
+		manager.fireThisTurn(["no-head-tail-self-ref"]);
+		// Retried response feeds the reminder text back through the same turn:
+		// with repeatGap=0 and no onTurnEnd(), messageCount never advances —
+		// the turn-fired gate must block it (the 244-storm mechanism).
+		const retry = manager.checkSnapshot("Never pipe through head or tail. Example: `cat x | head -25`.", context);
+		expect(retry).toHaveLength(0);
+	});
 });

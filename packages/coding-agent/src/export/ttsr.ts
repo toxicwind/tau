@@ -144,6 +144,10 @@ export class TtsrManager {
 	readonly #rules = new Map<string, TtsrEntry>();
 	readonly #injectionRecords = new Map<string, InjectionRecord>();
 	readonly #buffers = new Map<string, string>();
+	/** Rule names that already matched per stream buffer — upstream "settled" semantics. */
+	readonly #settledMatches = new Map<string, Set<string>>();
+	/** Rule names that fired in the current monotonic turn; cleared only on a real new turn. */
+	readonly #firedThisTurn = new Set<string>();
 	/** Last snapshot evaluated for AST conditions, keyed by stream key, to dedupe matcher runs. */
 	readonly #lastAstSnapshots = new Map<string, string>();
 	#messageCount = 0;
@@ -157,6 +161,12 @@ export class TtsrManager {
 
 	/** Check if a rule can be triggered based on repeat settings. */
 	#canTrigger(ruleName: string): boolean {
+		// A rule that already fired in this monotonic turn can never re-fire —
+		// retries restart the stream buffer, but they are not a new turn. This
+		// is the anti-storm gate (2026-11-02: 244 injections from one rule).
+		if (this.#firedThisTurn.has(ruleName)) {
+			return false;
+		}
 		const record = this.#injectionRecords.get(ruleName);
 		if (!record) {
 			return true;
@@ -618,7 +628,12 @@ export class TtsrManager {
 			return [];
 		}
 		const matches: Rule[] = [];
+		const bufferKey = this.#bufferKey(context);
+		const settled = this.#settledMatches.get(bufferKey) ?? new Set<string>();
 		for (const [name, entry] of this.#rules) {
+			if (settled.has(name)) {
+				continue;
+			}
 			if (entry.question || !this.#canTrigger(name)) {
 				continue;
 			}
@@ -633,6 +648,7 @@ export class TtsrManager {
 			}
 
 			matches.push(entry.rule);
+			settled.add(name);
 			logger.debug("TTSR condition matched", {
 				ruleName: name,
 				conditions: entry.rule.condition,
@@ -641,8 +657,20 @@ export class TtsrManager {
 				filePaths: context.filePaths,
 			});
 		}
+		this.#settledMatches.set(bufferKey, settled);
 
 		return matches;
+	}
+
+	/**
+	 * Mark a rule as fired for the current monotonic turn. Cleared only by
+	 * {@link incrementMessageCount} (a real new turn), never by stream retries.
+	 */
+	fireThisTurn(ruleNames: string[]): void {
+		for (const name of ruleNames) {
+			const trimmed = name.trim();
+			if (trimmed.length > 0) this.#firedThisTurn.add(trimmed);
+		}
 	}
 
 	/** Mark rules as injected (won't trigger again until conditions allow). */
@@ -694,6 +722,7 @@ export class TtsrManager {
 	resetBuffer(): void {
 		this.#buffers.clear();
 		this.#lastAstSnapshots.clear();
+		this.#settledMatches.clear();
 	}
 
 	/** Check if any TTSR rules are registered. */
@@ -741,6 +770,7 @@ export class TtsrManager {
 	/** Increment message counter (call after each turn). */
 	incrementMessageCount(): void {
 		this.#messageCount++;
+		this.#firedThisTurn.clear();
 	}
 
 	/** Get current message count. */

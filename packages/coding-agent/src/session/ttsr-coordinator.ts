@@ -333,6 +333,11 @@ export class TtsrCoordinator {
 			new Set(ruleNames.map(ruleName => ruleName.trim()).filter(ruleName => ruleName.length > 0)),
 		);
 		if (uniqueRuleNames.length === 0) return;
+		// Anti-storm gate: mark fired-for-this-turn at the single injection
+		// funnel. Retries call continue() without onTurnEnd(), so messageCount
+		// never advances — without this, the injected reminder text re-matches
+		// its own condition on every retry (2026-11-02: 244 injections).
+		this.#manager?.fireThisTurn(uniqueRuleNames);
 		this.#manager?.markInjectedByNames(uniqueRuleNames);
 		this.#host.sessionManager.appendTtsrInjection(uniqueRuleNames);
 	}
