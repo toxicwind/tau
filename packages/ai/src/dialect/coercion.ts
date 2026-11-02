@@ -76,7 +76,16 @@ export function decodeValue(raw: string, schema?: unknown): unknown {
 	const trimmed = raw.trim();
 	if (trimmed.length === 0) return trimmed;
 	try {
-		return JSON.parse(trimmed) as unknown;
+		const parsed = JSON.parse(trimmed) as unknown;
+		// DeepSeek-family lanes double-encode JSON containers: the value arrives
+		// as a STRING containing JSON (e.g. `"[300, 2500]"` for a number array).
+		// One parse is not enough when the result is a string that still parses.
+		// Recurse until a non-string container or a stable string (bounded).
+		if (typeof parsed === "string" && schema !== undefined && !isStringOnlySchema(schema)) {
+			const reparsed = decodeValue(parsed, schema);
+			if (reparsed !== parsed) return reparsed;
+		}
+		return parsed;
 	} catch {
 		// Fall through to markdown-list recovery below.
 	}
