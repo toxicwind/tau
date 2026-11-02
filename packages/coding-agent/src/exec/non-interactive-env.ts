@@ -121,24 +121,29 @@ export function buildNonInteractiveEnv(
 	const base =
 		baseEnv.PI_BASH_NO_CI || baseEnv.CLAUDE_BASH_NO_CI ? withoutCI(NON_INTERACTIVE_ENV) : NON_INTERACTIVE_ENV;
 
-	// Tiktoken & CLI auto-shim: ensure ~/.local/bin and python site-packages are injected
+	// Tiktoken & CLI auto-shim: ensure ~/.local/bin is on PATH and the tiktoken
+	// offline cache is set. Do NOT inject a foreign Python's site-packages into
+	// PYTHONPATH:
+	//
+	//   * It is the nvm/NODE_PATH anti-pattern — a version-manager must hand out
+	//     the right interpreter via PATH, never leak another interpreter's
+	//     site-packages into every child process.
+	//   * Every private venv / uvx MCP server relies on an *isolated*
+	//     site-packages. Merge the mise 3.14 site-packages in and ABIs collide
+	//     (`pydantic_core` compiled for one CPython build resolving under
+	//     another -> `ImportError: cannot import name 'ArgsKwargs'`), crashing
+	//     ~80 MCP servers.
+	//   * The active `python` on PATH (mise shim) already has tiktoken when
+	//     needed; token tracking here only needs TIKTOKEN_CACHE_DIR.
+	//   A caller/venv that legitimately sets PYTHONPATH keeps it untouched.
 	const home = baseEnv.HOME ?? process.env.HOME ?? "/home/toxic";
 	const localBin = `${home}/.local/bin`;
 	const existingPath = overrides?.PATH ?? baseEnv.PATH ?? process.env.PATH ?? "";
 	const pathWithLocalBin = existingPath.split(":").includes(localBin) ? existingPath : `${localBin}:${existingPath}`;
 
-	const python312Site = `${home}/.local/share/mise/installs/python/3.14.7/lib/python3.14/site-packages`;
-	const python314Site = `${home}/.local/lib/python3.14/site-packages`;
-	const existingPyPath = overrides?.PYTHONPATH ?? baseEnv.PYTHONPATH ?? process.env.PYTHONPATH ?? "";
-	const pyParts = existingPyPath.split(":").filter(Boolean);
-	for (const p of [python312Site, python314Site]) {
-		if (!pyParts.includes(p)) pyParts.push(p);
-	}
-
 	const shimOverrides: Record<string, string> = {
 		...(overrides ?? {}),
 		PATH: pathWithLocalBin,
-		PYTHONPATH: pyParts.join(":"),
 		TIKTOKEN_CACHE_DIR: overrides?.TIKTOKEN_CACHE_DIR ?? `${home}/.cache/tiktoken`,
 	};
 

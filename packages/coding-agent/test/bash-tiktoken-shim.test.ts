@@ -4,14 +4,17 @@ import { countTokens, Encoding } from "@tau/tau-natives";
 import { SETTINGS_SCHEMA } from "../src/config/settings-schema";
 
 describe("bash tiktoken auto-shim & token tracking", () => {
-	it("injects TIKTOKEN_CACHE_DIR, ~/.local/bin in PATH, and PYTHONPATH into non-interactive env", () => {
+	it("injects TIKTOKEN_CACHE_DIR + ~/.local/bin, but never a foreign Python's PYTHONPATH (venv isolation)", () => {
 		const env = buildNonInteractiveEnv();
 		expect(env.TIKTOKEN_CACHE_DIR).toBeDefined();
 		expect(env.TIKTOKEN_CACHE_DIR).toContain(".cache/tiktoken");
 		expect(env.PATH).toBeDefined();
 		expect(env.PATH).toContain(".local/bin");
-		expect(env.PYTHONPATH).toBeDefined();
-		expect(env.PYTHONPATH).toContain("site-packages");
+		// Regression: the environment must NOT merge a mise site-packages path
+		// into PYTHONPATH — that cross-Python-ABI bleed crashes every isolated
+		// venv/uvx server (pydantic_core ArgsKwargs). nvm-style: the interpreter
+		// comes from PATH; child processes keep their own clean PYTHONPATH.
+		expect(env.PYTHONPATH).toBeUndefined();
 	});
 
 	it("preserves caller overrides while retaining tiktoken shims", () => {
