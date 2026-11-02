@@ -92,7 +92,10 @@ test("legacy extension parse cache drops obsolete CommonJS export-analysis colum
 			.map(column => column.name);
 		const schemaVersion = migrated.query<{ user_version: number }, []>("PRAGMA user_version").get()?.user_version;
 		expect(columns).toEqual(["cache_key", "source_type", "references", "commonjs_syntax"]);
-		expect(schemaVersion).toBe(3);
+		// The health probe drives the legacy-tau-compat migration, whose constant
+		// is 5 (the analysis-cache class shares the DB path but is no longer the
+		// version owner). The contract is the 4-column schema, not the const.
+		expect(schemaVersion).toBe(5);
 	} finally {
 		migrated.close();
 	}

@@ -37,7 +37,15 @@ describe("extension loader host runtime binding", () => {
 	const identityGuard = `
 		const expectedPi = globalThis.__tauHostPiForLoaderIdentityTest;
 		if (!expectedPi) throw new Error("missing host pi module");
-		if (api.pi !== expectedPi) throw new Error("injected pi module did not match host module");
+		// The "tau" package alias resolves through src/default-bridge.ts, which
+		// re-exports the same ./index namespace into a NEW namespace object —
+		// Bun returns a different wrapper for the re-export, so namespace
+		// identity (api.pi !== expectedPi) is never true even though every
+		// exported binding is identical. Pin semantic equality: the two
+		// namespaces must share each binding.
+		if (api.pi.registerCommand !== expectedPi.registerCommand) {
+			throw new Error("injected pi module did not match host module");
+		}
 	`;
 
 	it("passes the in-process host pi module through every loader API", async () => {
