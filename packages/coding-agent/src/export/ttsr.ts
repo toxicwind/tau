@@ -634,9 +634,16 @@ export class TtsrManager {
 			if (settled.has(name)) {
 				continue;
 			}
-			if (entry.question || !this.#canTrigger(name)) {
+		// Self-referential contract: a rule's own injected body text must never
+		// match itself. Otherwise the reminder (which quotes the tokens as an
+		// example) re-triggers the rule on retry — the 2026-11-02 244-injection
+		// storm mechanism.
+		if (entry.rule.body?.some((b) => b.trim().length > 0 && buffer.includes(b.trim()))) {
 				continue;
 			}
+			if (entry.question || !this.#canTrigger(name)) {
+			continue;
+		}
 			if (!this.#matchesScope(entry, context)) {
 				continue;
 			}
