@@ -379,6 +379,16 @@ export function buildManagedKernelEnv(
 			hasKeys = true;
 		}
 	}
+	// 4.16 eval key RACE: allowlisted keyring secrets ride the same managed
+	// env (explicit caller values already won in the patch, so no overwrite).
+	if (options.keyringEnv) {
+		for (const [key, value] of Object.entries(options.keyringEnv)) {
+			if (typeof value === "string" && env[key] === undefined) {
+				env[key] = value;
+				hasKeys = true;
+			}
+		}
+	}
 	return hasKeys ? env : undefined;
 }
 
