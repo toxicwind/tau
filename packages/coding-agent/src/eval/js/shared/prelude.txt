@@ -849,4 +849,17 @@ if (!globalThis.__tau_js_prelude_loaded__) {
 	globalThis.mcp = mcp;
 	globalThis.ffs = ffs;
 	globalThis.evalShim = evalShim;
+	// `bun` is defined by default in every eval kernel (permanent): the Bun
+	// runtime is the host, so seal the executable path + the full Bun API so
+	// cells can use `bun`, `Bun.spawn`, `Bun.$`, etc. without re-importing.
+	globalThis.bun = {
+		execPath: process.execPath,
+		spawn: (...args) => Bun.spawn(...args),
+		spawnSync: (...args) => Bun.spawnSync(...args),
+		file: (...args) => Bun.file(...args),
+		write: (...args) => Bun.write(...args),
+	};
+	// `Bun` is already a real global in the Bun runtime — expose our alias too.
+	globalThis.bun.Bun = Bun;
+	globalThis.bun.$ = Bun.$;
 }
