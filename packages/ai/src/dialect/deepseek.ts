@@ -39,6 +39,51 @@ const DSML_INVOKE_CLOSE_ASCII = "</|DSML|invoke>";
 const DSML_PARAMETER_CLOSE_FULLWIDTH = "</｜DSML｜parameter>";
 const DSML_PARAMETER_CLOSE_ASCII = "</|DSML|parameter>";
 
+// Bar-run variants: live DeepSeek-family streams leak MUTATED tool-call
+// markup — bars doubled, ascii/fullwidth mixed, drifted unknown-word tags.
+// The real token (vocab id 128825) is U+FF5C + "DSML" + U+FF5C; each stored
+// leak teaches the model to mimic the mutation further (issue #10556), so
+// accept EVERY bar-run >= 1 and strip drifted tags.
+const BAR_RUNS = ["｜", "｜｜", "｜｜｜", "|", "||", "|||", "｜|", "|｜", "｜||", "||｜", "|｜|", "｜|｜"] as const;
+const DSML_BODIES = ["DSML", "頭"] as const;
+const DSML_ENVELOPE_WORDS = ["tool_calls", "invoke", "parameter"] as const;
+
+/** Every concrete <bars body bars word> / </bars body bars word> spelling. */
+function dsmlTagVariants(word: string): string[] {
+	const out: string[] = [];
+	for (const body of DSML_BODIES) {
+		for (const open of BAR_RUNS) {
+			for (const close of BAR_RUNS) {
+				out.push(`<${open}${body}${close}${word}>`);
+				out.push(`</${open}${body}${close}${word}>`);
+			}
+		}
+	}
+	return out;
+}
+
+const DSML_TOOL_CALLS_OPEN_VARIANTS = dsmlTagVariants("tool_calls").filter(t => !t.startsWith("</"));
+const DSML_TOOL_CALLS_CLOSE_VARIANTS = dsmlTagVariants("tool_calls").filter(t => t.startsWith("</"));
+const DSML_INVOKE_CLOSE_VARIANTS = dsmlTagVariants("invoke").filter(t => t.startsWith("</"));
+const DSML_PARAMETER_OPEN_VARIANTS = dsmlTagVariants("parameter").filter(t => !t.startsWith("</"));
+const DSML_PARAMETER_CLOSE_VARIANTS = dsmlTagVariants("parameter").filter(t => t.startsWith("</"));
+
+/** Any DSML-ish tag anywhere in the buffer: bars(>=1) around a body, any word, any attrs. */
+const DSML_ANY_TAG_RE = /<[/]?[｜|]+(?:DSML|頭)[｜|]+\s*[A-Za-z_]*[^>]*>/;
+/** The DSML family SHAPE: <optional-/ bars(>=1) [body] bars(>=1) word? attrs?>.
+ * The bge-m3 embedding cluster (all mutations 0.86-0.99 vs text 0.43) proves
+ * bar-runs around an optional body IS the invariant — spelling evolves. */
+const DSML_SHAPE_RE = /<[/]?[｜|]+(?:DSML|頭)?[｜|]+\s*[A-Za-z_][A-Za-z0-9_]*(?:\s[^>]*)?>/;
+
+/** A partially-streamed DSML tag (no `>` yet) that must be held back. */
+function dsmlPartialHold(buffer: string): number {
+	const lt = buffer.lastIndexOf("<");
+	if (lt === -1) return 0;
+	const tail = buffer.slice(lt);
+	return /^<[/]?[｜|]*(?:D(?:S(?:M(?:L)?)?)?|頭)?[｜|]*[A-Za-z_=" .	]*$/.test(tail) && !tail.includes(">") ? buffer.length - lt : 0;
+}
+
+
 const CONTROL_TOKENS = [
 	DEEPSEEK_BOS,
 	DEEPSEEK_EOS,
@@ -75,29 +120,26 @@ const OUTSIDE_TOKENS = [
 	DEEPSEEK_TOOL_CALL_BEGIN,
 	THINK_OPEN,
 	THINK_CLOSE,
-	DSML_TOOL_CALLS_OPEN_FULLWIDTH,
-	DSML_TOOL_CALLS_OPEN_ASCII,
-	DSML_TOOL_CALLS_CLOSE_FULLWIDTH,
-	DSML_TOOL_CALLS_CLOSE_ASCII,
+	...DSML_TOOL_CALLS_OPEN_VARIANTS,
+	...DSML_TOOL_CALLS_CLOSE_VARIANTS,
 	...DSML_ORPHAN_CLOSE_TOKENS,
 	...CONTROL_TOKENS,
 ] as const;
 
 const SECTION_TOKENS = [DEEPSEEK_TOOL_CALL_BEGIN, DEEPSEEK_TOOL_CALLS_END] as const;
 const DSML_SECTION_TOKENS = [
-	DSML_TOOL_CALLS_CLOSE_FULLWIDTH,
-	DSML_TOOL_CALLS_CLOSE_ASCII,
-	"<｜DSML｜invoke",
+	...DSML_TOOL_CALLS_CLOSE_VARIANTS,
+	...DSML_INVOKE_CLOSE_VARIANTS.map(t => t.slice(0, -1)),
+	"<invoke",
 	"<|DSML|invoke",
 ] as const;
 const DSML_INVOKE_TOKENS = [
-	DSML_INVOKE_CLOSE_FULLWIDTH,
-	DSML_INVOKE_CLOSE_ASCII,
-	"<｜DSML｜parameter",
+	...DSML_INVOKE_CLOSE_VARIANTS,
+	...DSML_PARAMETER_OPEN_VARIANTS.map(t => t.slice(0, -1)),
+	"<parameter",
 	"<|DSML|parameter",
 ] as const;
-const DSML_PARAMETER_CLOSE_TOKENS = [DSML_PARAMETER_CLOSE_FULLWIDTH, DSML_PARAMETER_CLOSE_ASCII] as const;
-
+const DSML_PARAMETER_CLOSE_TOKENS = [...DSML_PARAMETER_CLOSE_VARIANTS] as const;
 type State =
 	| "outside"
 	| "thinking"
@@ -123,6 +165,8 @@ export class DeepSeekInbandScanner implements InbandScanner {
 	#dsmlParamIsString = true;
 	#dsmlParamRaw = "";
 	#rawBlock = "";
+	#sawDsmlEnvelope = false;
+	#dsmlOmittedStart = false;
 	#stripLeadingWhitespace = false;
 
 	constructor(options: InbandScannerOptions = {}) {
@@ -186,9 +230,6 @@ export class DeepSeekInbandScanner implements InbandScanner {
 	#consumeOutside(final: boolean, events: InbandScanEvent[]): void {
 		while (this.#buffer.length > 0) {
 			if (this.#stripLeadingWhitespace) {
-				// A chat-template control token (e.g. `<｜Assistant｜>`) was just dropped;
-				// swallow the template whitespace that trails it so it never leaks into
-				// visible text. Whitespace can't begin another token, so eager trim is safe.
 				const trimmed = this.#buffer.replace(/^\s+/u, "");
 				if (trimmed.length === 0) {
 					this.#buffer = "";
@@ -197,9 +238,56 @@ export class DeepSeekInbandScanner implements InbandScanner {
 				this.#buffer = trimmed;
 				this.#stripLeadingWhitespace = false;
 			}
+			// SHAPE-BASED DSML recognition FIRST: all DSML mutations (bar-runs,
+			// mixed charsets, drifted words, CJK-mangled bodies) cluster at
+			// 0.86-0.99 cosine vs text at 0.43-0.54 — the SHAPE is the invariant.
+			// tool_calls opens enter the section state; invoke opens enter the
+			// envelope state (START-token omission, vLLM #48931); every other
+			// family tag is an orphan — stripped, never visible text.
+			const shapeMatch = DSML_SHAPE_RE.exec(this.#buffer);
+			if (shapeMatch) {
+				const before = this.#buffer.slice(0, shapeMatch.index);
+				if (before.length > 0) {
+					const beforeHold = final ? 0 : dsmlPartialHold(before);
+					const safe = before.slice(0, before.length - beforeHold);
+					if (safe.length > 0) events.push({ type: "text", text: safe });
+					if (beforeHold > 0) {
+						this.#buffer = this.#buffer.slice(before.length - beforeHold);
+						return;
+					}
+				}
+				const tag = shapeMatch[0];
+				const word = /[\uFF5C|]+(?:DSML|\u982D)?[\uFF5C|]+\s*([A-Za-z_][A-Za-z0-9_]*)?/.exec(tag)?.[1] ?? "";
+				this.#buffer = this.#buffer.slice(shapeMatch.index + tag.length);
+				if (!tag.startsWith("</") && word === "tool_calls") {
+					this.#state = "dsmlSection";
+					this.#sawDsmlEnvelope = true;
+					return;
+				}
+				if (!tag.startsWith("</") && word === "invoke") {
+					// Parse attrs from the ALREADY-CONSUMED tag. TWO valid cases:
+					// (a) the tool_calls envelope was JUST opened (state was left
+					// at outside by the shape consumer) — flag tracks it; (b) the
+					// START token was omitted entirely (vLLM #48931). An orphan
+					// invoke open with NO envelope context is drift — strip it.
+					const name = /\sname="([^"]*)"/.exec(tag)?.[1];
+					const envelopeContext = this.#sawDsmlEnvelope || this.#inToolSection;
+					if (name !== undefined) {
+						this.#rawBlock = tag;
+						this.#name = name;
+						this.#id = mintToolCallId();
+						this.#dsmlArgs = {};
+						events.push({ type: "toolStart", id: this.#id, name: this.#name });
+						this.#state = "dsmlInvoke";
+						return;
+					}
+					// drift: fall through to orphan strip
+				}
+				continue;
+			}
 			const match = findEarliestToken(this.#buffer, OUTSIDE_TOKENS);
 			if (!match) {
-				const hold = final ? 0 : partialSuffixOverlapAny(this.#buffer, OUTSIDE_TOKENS);
+				const hold = final ? 0 : Math.max(partialSuffixOverlapAny(this.#buffer, OUTSIDE_TOKENS), dsmlPartialHold(this.#buffer));
 				const emit = this.#buffer.slice(0, this.#buffer.length - hold);
 				if (emit.length > 0) events.push({ type: "text", text: emit });
 				this.#buffer = this.#buffer.slice(this.#buffer.length - hold);
@@ -227,20 +315,9 @@ export class DeepSeekInbandScanner implements InbandScanner {
 				if (this.#parseThinking) events.push({ type: "thinkingStart" });
 				return;
 			}
-			if (
-				this.#buffer.startsWith(DSML_TOOL_CALLS_OPEN_FULLWIDTH) ||
-				this.#buffer.startsWith(DSML_TOOL_CALLS_OPEN_ASCII)
-			) {
-				const openToken = this.#buffer.startsWith(DSML_TOOL_CALLS_OPEN_FULLWIDTH)
-					? DSML_TOOL_CALLS_OPEN_FULLWIDTH
-					: DSML_TOOL_CALLS_OPEN_ASCII;
-				this.#buffer = this.#buffer.slice(openToken.length);
-				this.#state = "dsmlSection";
-				return;
-			}
-			const orphanClose = this.#matchingOrphanDsmlClose();
-			if (orphanClose) {
-				this.#buffer = this.#buffer.slice(orphanClose.length);
+			const orphan = this.#matchingOrphanDsmlTag();
+			if (orphan) {
+				this.#buffer = this.#buffer.slice(orphan.length);
 				continue;
 			}
 			const control = this.#matchingControlToken();
@@ -352,7 +429,7 @@ export class DeepSeekInbandScanner implements InbandScanner {
 	#consumeDsmlSection(final: boolean, events: InbandScanEvent[]): boolean {
 		while (this.#buffer.length > 0) {
 			this.#skipWhitespace();
-			const close = this.#matchingDsmlClose(DSML_TOOL_CALLS_CLOSE_FULLWIDTH, DSML_TOOL_CALLS_CLOSE_ASCII);
+			const close = this.#matchingVariantClose(DSML_TOOL_CALLS_CLOSE_VARIANTS);
 			if (close) {
 				this.#buffer = this.#buffer.slice(close.length);
 				this.#state = "outside";
@@ -369,11 +446,10 @@ export class DeepSeekInbandScanner implements InbandScanner {
 				return true;
 			}
 			if (!final) {
-				if (
-					(this.#buffer.startsWith("<｜DSML｜invoke") || this.#buffer.startsWith("<|DSML|invoke")) &&
-					!this.#buffer.includes(">")
-				)
-					return false;
+				// A partially-streamed tag (no `>` yet) must be held ENTIRELY —
+				// the char-swallow fallback would eat the leading bars and the
+				// next chunk could never reassemble the tag.
+				if (dsmlPartialHold(this.#buffer) === this.#buffer.length) return false;
 				if (partialSuffixOverlapAny(this.#buffer, DSML_SECTION_TOKENS) === this.#buffer.length) return false;
 			}
 			if (this.#buffer.length === 0) return false;
@@ -386,7 +462,7 @@ export class DeepSeekInbandScanner implements InbandScanner {
 		while (this.#buffer.length > 0) {
 			const skipped = this.#skipWhitespace();
 			if (skipped.length > 0) this.#rawBlock += skipped;
-			const close = this.#matchingDsmlClose("</｜DSML｜invoke>", "</|DSML|invoke>");
+			const close = this.#matchingVariantClose(DSML_INVOKE_CLOSE_VARIANTS);
 			if (close) {
 				this.#rawBlock += close;
 				this.#buffer = this.#buffer.slice(close.length);
@@ -410,11 +486,7 @@ export class DeepSeekInbandScanner implements InbandScanner {
 				return true;
 			}
 			if (!final) {
-				if (
-					(this.#buffer.startsWith("<｜DSML｜parameter") || this.#buffer.startsWith("<|DSML|parameter")) &&
-					!this.#buffer.includes(">")
-				)
-					return false;
+				if (dsmlPartialHold(this.#buffer) === this.#buffer.length) return false;
 				if (partialSuffixOverlapAny(this.#buffer, DSML_INVOKE_TOKENS) === this.#buffer.length) return false;
 			}
 			const consumed = this.#buffer[0]!;
@@ -505,11 +577,9 @@ export class DeepSeekInbandScanner implements InbandScanner {
 		return "";
 	}
 
-	#matchingOrphanDsmlClose(): string | undefined {
-		for (const token of DSML_ORPHAN_CLOSE_TOKENS) {
-			if (this.#buffer.startsWith(token)) return token;
-		}
-		return undefined;
+	#matchingOrphanDsmlTag(): string | undefined {
+		const found = DSML_ANY_TAG_RE.exec(this.#buffer);
+		return found ? found[0] : undefined;
 	}
 
 	#matchingControlToken(): string | undefined {
@@ -518,6 +588,13 @@ export class DeepSeekInbandScanner implements InbandScanner {
 		if (this.#buffer.startsWith(DSML_TOOL_CALLS_CLOSE_FULLWIDTH)) return DSML_TOOL_CALLS_CLOSE_FULLWIDTH;
 		if (this.#buffer.startsWith(DSML_TOOL_CALLS_CLOSE_ASCII)) return DSML_TOOL_CALLS_CLOSE_ASCII;
 		for (const token of CONTROL_TOKENS) {
+			if (this.#buffer.startsWith(token)) return token;
+		}
+		return undefined;
+	}
+
+	#matchingVariantClose(variants: readonly string[]): string | undefined {
+		for (const token of variants) {
 			if (this.#buffer.startsWith(token)) return token;
 		}
 		return undefined;
@@ -532,14 +609,16 @@ export class DeepSeekInbandScanner implements InbandScanner {
 	#matchDsmlOpen(
 		kind: "invoke" | "parameter",
 	): { name: string; stringAttr: string | undefined; raw: string } | undefined {
-		if (!this.#buffer.startsWith(`<｜DSML｜${kind}`) && !this.#buffer.startsWith(`<|DSML|${kind}`)) return undefined;
-		const end = this.#buffer.indexOf(">");
-		if (end === -1) return undefined;
-		const tag = this.#buffer.slice(0, end + 1);
-		const name = /\sname="([^"]*)"/.exec(tag)?.[1];
+		const openRe = new RegExp(`^<[/]?[｜|]+(?:DSML|頭)[｜|]+\s*${kind}([^>]*)>`);
+		const open = openRe.exec(this.#buffer);
+		if (!open) return undefined;
+		const end = open.index + open[0].length - 1;
+		const tag = open[0];
+		const attrs = open[1] ?? "";
+		const name = /\sname="([^"]*)"/.exec(attrs)?.[1];
 		if (name === undefined) return undefined;
-		const stringAttr = /\sstring="(true|false)"/.exec(tag)?.[1];
-		this.#buffer = this.#buffer.slice(end + 1);
+		const stringAttr = /\sstring="(true|false)"/.exec(attrs)?.[1];
+		this.#buffer = this.#buffer.slice(open[0].length);
 		return { name, stringAttr, raw: tag };
 	}
 
