@@ -925,8 +925,12 @@ export class BashTool implements AgentTool<BashToolSchema, BashToolDetails> {
 		}
 		if (name !== undefined) {
 			if (!this.#launchEnabled) throw new ToolError("Service launch is disabled in this session.");
-			if (asyncRequested !== undefined || rawTimeout !== undefined)
-				throw new ToolError("Service mode does not accept async or timeout; use ready.timeout for readiness.");
+			// A top-level `timeout` is meaningless for a supervised service (it
+			// outlives the call; readiness is `ready.timeout`) but is harmless —
+			// reject only `async`, which would double-register the service as a
+			// background job.
+			if (asyncRequested !== undefined)
+				throw new ToolError("Service mode does not accept async; services are backgrounded by name.");
 		} else if (ready !== undefined || env !== undefined) {
 			throw new ToolError("ready and env require a service name.");
 		}

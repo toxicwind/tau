@@ -324,6 +324,12 @@ interface ManagedKernelEnvOptions {
 	bridge?: { url: string; token: string };
 	localRoots?: Record<string, string>;
 	deniedTools?: string;
+	/**
+	 * 4.16 eval key RACE: allowlisted keyring secrets resolved by the caller
+	 * (`resolveKeyringEnv`) and merged below the explicit caller patch keys —
+	 * first-writer wins, so a caller-provided value is never overwritten.
+	 */
+	keyringEnv?: Record<string, string>;
 }
 interface ManagedKernelEnvPolicy {
 	sparse?: boolean;
