@@ -287,6 +287,19 @@ function resolveTaskOrError(
 		return undefined;
 	}
 	const hit = findTaskByContent(phases, content);
+	// Exact match wins; otherwise accept a UNIQUE prefix or substring so a task
+	// text abbreviated by the transport (e.g. "Wire into moments/index.jsonl"
+	// vs "...index.jsonl if applicable") still resolves. Ambiguity is an error —
+	// never silently pick one of several candidates.
+	if (!hit) {
+		const candidates = phases.flatMap(phase =>
+			phase.tasks.filter(task => task.content.startsWith(content) || task.content.includes(content)),
+		);
+		if (candidates.length === 1) {
+			const phase = phases.find(p => p.tasks.includes(candidates[0]!));
+			if (phase) return { task: candidates[0]!, phase };
+		}
+	}
 	if (!hit) {
 		if (/^task-\d+$/.test(content)) {
 			errors.push(
@@ -337,12 +350,26 @@ function initPhases(entry: TodoOpEntryValue, errors: string[]): TodoPhase[] {
 	// that here before the flat-items recovery below.
 	let rawList: typeof entry.list = entry.list;
 	if (typeof rawList === "string") {
-		rawList = [
-			{
-				phase: entry.phase ?? DEFAULT_INIT_PHASE,
-				items: parseMarkdownList(rawList),
-			},
-		];
+		// A string `list` is either a markdown checklist (Dots/GLM/Qwen dialect)
+		// or a JSON-encoded canonical `[{phase, items}]` (transport double-encode).
+		// Try JSON first so the canonical payload is never dropped; fall back to
+		// markdown for the checklist dialect.
+		let parsed: unknown;
+		try {
+			parsed = JSON.parse(rawList);
+		} catch {
+			parsed = null;
+		}
+		if (Array.isArray(parsed) && parsed.length > 0) {
+			rawList = parsed as typeof entry.list;
+		} else {
+			rawList = [
+				{
+					phase: entry.phase ?? DEFAULT_INIT_PHASE,
+					items: parseMarkdownList(rawList),
+				},
+			];
+		}
 	}
 	const list =
 		rawList ??
@@ -524,6 +551,14 @@ function applyEntry(phases: TodoPhase[], entry: TodoOpEntryValue, errors: string
  */
 function inferTodoOp(args: Record<string, unknown>, hasExistingPhases: boolean): TodoOperation | undefined {
 	if (Array.isArray(args.list) && args.list.length > 0) return "init";
+	if (typeof args.list === "string") {
+		try {
+			const parsed = JSON.parse(args.list);
+			if (Array.isArray(parsed) && parsed.length > 0) return "init";
+		} catch {
+			// not JSON — fall through to the schema error path
+		}
+	}
 	if (Array.isArray(args.items) && args.items.length > 0) {
 		if (typeof args.phase === "string" && args.phase) return "append";
 		if (!hasExistingPhases) return "init";
@@ -542,6 +577,13 @@ function inferTodoOp(args: Record<string, unknown>, hasExistingPhases: boolean):
 function resolveTodoParams(raw: unknown, hasExistingPhases: boolean): TodoOpEntryValue | string {
 	const direct = todoSchema(raw);
 	if (!(direct instanceof type.errors)) return direct;
+	// A JSON-string list needs re-encoding to the canonical array before ANY
+	// schema pass (op present or inferred) — the schema rejects `list: string`.
+	const decoded = isRecord(raw) && typeof raw.list === "string" ? decodeJsonList(raw) : null;
+	if (decoded) {
+		const repaired = todoSchema(decoded);
+		if (!(repaired instanceof type.errors)) return repaired;
+	}
 	if (isRecord(raw) && raw.op === undefined) {
 		const inferred = inferTodoOp(raw, hasExistingPhases);
 		if (inferred) {
@@ -555,6 +597,21 @@ function resolveTodoParams(raw: unknown, hasExistingPhases: boolean): TodoOpEntr
 		if (!(repaired instanceof type.errors)) return repaired;
 	}
 	return `Invalid todo arguments: ${direct.summary}`;
+}
+
+/**
+ * Decode a JSON-string `list` into the canonical `{op: "init", list: [...]}`
+ * shape. Only JSON arrays are accepted; anything else returns null so the
+ * original schema error surfaces for a model retry.
+ */
+function decodeJsonList(raw: Record<string, unknown>): Record<string, unknown> | null {
+	try {
+		const parsed = JSON.parse(raw.list as string);
+		if (!Array.isArray(parsed) || parsed.length === 0) return null;
+		return { ...raw, op: raw.op ?? "init", list: parsed };
+	} catch {
+		return null;
+	}
 }
 
 /**
@@ -572,12 +629,24 @@ function resolveTodoParams(raw: unknown, hasExistingPhases: boolean): TodoOpEntr
  * bare-string phases anchors as the default `Tasks` phase so no task is dropped.
  */
 function coerceInitList(raw: unknown): Record<string, unknown> | null {
-	if (!isRecord(raw) || raw.op !== "init" || !Array.isArray(raw.list)) return null;
+	if (!isRecord(raw) || raw.op !== "init") return null;
+	// The model/transport can double-encode the canonical `list: [{phase, items}]`
+	// as a JSON string. Repair it here so the canonical payload is never dropped.
+	let list = raw.list;
+	if (typeof list === "string") {
+		try {
+			const parsed = JSON.parse(list);
+			if (Array.isArray(parsed)) list = parsed;
+		} catch {
+			// not JSON — fall through to schema error below
+		}
+	}
+	if (!Array.isArray(list)) return null;
 	const fallbackItems = Array.isArray(raw.items)
 		? raw.items.filter((item): item is string => typeof item === "string")
 		: [];
 	const entries: Array<{ phase: string; items: string[] }> = [];
-	for (const entry of raw.list) {
+	for (const entry of list) {
 		if (typeof entry === "string") {
 			const markdownItems = parseMarkdownList(entry);
 			if (markdownItems.length > 0) {

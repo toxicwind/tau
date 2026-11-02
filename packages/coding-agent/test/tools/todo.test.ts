@@ -1174,3 +1174,53 @@ describe("todoToolRenderer.renderCall preview sanitization", () => {
 		expect(Bun.stripANSI(rendered)).toContain("it");
 	});
 });
+
+describe("TodoTool transport-double-encode repair", () => {
+	it("accepts an init whose list arrives as a JSON-encoded string", async () => {
+		const tool = new TodoTool(createSession());
+		const encoded = JSON.stringify([{ phase: "Execution", items: ["alpha", "beta"] }]);
+		const result = await tool.execute("call-jsoninit", { op: "init", list: encoded });
+
+		const phases = result.details?.phases ?? [];
+		expect(phases).toHaveLength(1);
+		expect(phases[0]?.name).toBe("Execution");
+		expect(phases[0]?.tasks.map(task => task.content)).toEqual(["alpha", "beta"]);
+	});
+
+	it("repairs a JSON-string list even when op rides separately", async () => {
+		const tool = new TodoTool(createSession());
+		const encoded = JSON.stringify([{ phase: "Build", items: ["compile", "link"] }]);
+		const result = await tool.execute("call-jsonlist", { list: encoded });
+
+		const phases = result.details?.phases ?? [];
+		expect(phases.map(phase => phase.name)).toContain("Build");
+	});
+});
+
+describe("TodoTool unique-prefix task resolution", () => {
+	it("completes a task by unique prefix when full text is not passed", async () => {
+		const tool = new TodoTool(createSession());
+		await tool.execute("call-init", {
+			op: "init",
+			list: [{ phase: "Execution", items: ["Wire into moments/index.jsonl if applicable"] }],
+		});
+
+		const result = await tool.execute("call-done", { op: "done", task: "Wire into moments/index.jsonl" });
+		const tasks = result.details?.phases?.[0]?.tasks ?? [];
+		expect(tasks[0]?.status).toBe("completed");
+	});
+
+	it("does not silently resolve an ambiguous prefix", async () => {
+		const tool = new TodoTool(createSession());
+		await tool.execute("call-init", {
+			op: "init",
+			list: [
+				{ phase: "Execution", items: ["push gate to main", "push gate to staging"] },
+			],
+		});
+
+		const result = await tool.execute("call-done", { op: "done", task: "push gate" });
+		const tasks = result.details?.phases?.[0]?.tasks ?? [];
+		expect(tasks.every(task => task.status !== "completed")).toBe(true);
+	});
+});
