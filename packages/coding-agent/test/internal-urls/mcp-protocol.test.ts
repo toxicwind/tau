@@ -13,9 +13,11 @@ function createMockManager(opts: {
 	readResult?: MCPResourceReadResult | undefined;
 	readError?: Error;
 	ensureResources?: (name: string) => Promise<void>;
+	tools?: unknown[];
 }) {
 	return {
 		getConnectedServers: () => opts.servers ?? [],
+		getTools: () => opts.tools ?? [],
 		waitForPendingConnections: async () => {},
 		getServerResources: (name: string) => opts.resources?.get(name),
 		ensureServerResources: async (name: string) => opts.ensureResources?.(name),
@@ -52,11 +54,12 @@ describe("McpProtocolHandler", () => {
 		await expect(router.resolve("mcp://test://resource")).rejects.toThrow("No MCP manager");
 	});
 
-	it("requires resource URI in mcp URL", async () => {
+	it("lists connected servers for a bare mcp URL", async () => {
 		const manager = createMockManager({ servers: ["server-a"] });
 		MCPManager.setInstance(manager);
 		const router = InternalUrlRouter.instance();
-		await expect(router.resolve("mcp://")).rejects.toThrow("mcp:// URL requires a resource URI");
+		const res = await router.resolve("mcp://");
+		expect(res.content).toContain("1 connected server(s): server-a");
 	});
 
 	it("returns error listing available resources when no server matches", async () => {
