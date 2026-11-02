@@ -76,8 +76,51 @@ export const extractSegments = nativeBindings.extractSegments ?? missingNativeEx
 export const fuzzyFind = nativeBindings.fuzzyFind ?? missingNativeExport("fuzzyFind");
 export const getSupportedLanguages = nativeBindings.getSupportedLanguages ?? missingNativeExport("getSupportedLanguages");
 export const getWorkProfile = nativeBindings.getWorkProfile ?? missingNativeExport("getWorkProfile");
-export const glob = nativeBindings.glob ?? missingNativeExport("glob");
-export const grep = nativeBindings.grep ?? missingNativeExport("grep");
+
+// ── kitchen-sink gitignore adaptation (2026-11-02) ─────────────────────────
+// Pens use whitelist-manifest gitignores ("*" then !negations) — meaning
+// "everything except tracked metadata", NOT "junk to hide". The native
+// glob/grep honor ignore files literally, which hides 90%+ of pen content
+// from every consumer. Detection: the tree's nearest .gitignore whose first
+// effective line is exactly "*". In that case the semantic contract of
+// "ignore" is inverted, so gitignore filtering is DISABLED for the call.
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+
+function isKitchenSinkGitignore(root, maxUp = 6) {
+  let dir = root;
+  for (let i = 0; i < maxUp; i++) {
+    try {
+      const gi = readFileSync(join(dir, ".gitignore"), "utf8");
+      const firstEffective = gi
+        .split("\n")
+        .map(l => l.trim())
+        .find(l => l.length > 0 && !l.startsWith("#"));
+      if (firstEffective === "*") return true;
+    } catch {
+      // no .gitignore here; walk up
+    }
+    const parent = join(dir, "..");
+    if (parent === dir) break;
+    dir = parent;
+  }
+  return false;
+}
+
+function adaptIgnoreOptions(opts) {
+  if (opts.gitignore === false) return opts;
+  if (opts.path && isKitchenSinkGitignore(opts.path)) {
+    return { ...opts, gitignore: false };
+  }
+  return opts;
+}
+
+const rawGlob = nativeBindings.glob ?? missingNativeExport("glob");
+const rawGrep = nativeBindings.grep ?? missingNativeExport("grep");
+export const glob = (...args) => rawGlob(adaptIgnoreOptions(args[0]), ...args.slice(1));
+export const grep = (...args) => rawGrep(adaptIgnoreOptions(args[0]), ...args.slice(1));
+// ── end kitchen-sink adaptation ─────────────────────────────────────────────
+
 export const hashlineCountOps = nativeBindings.hashlineCountOps ?? missingNativeExport("hashlineCountOps");
 export const hashlineFileHash = nativeBindings.hashlineFileHash ?? missingNativeExport("hashlineFileHash");
 export const hashlineFormatHeader = nativeBindings.hashlineFormatHeader ?? missingNativeExport("hashlineFormatHeader");
