@@ -273,6 +273,35 @@ describe("ChainJudge", () => {
 		);
 	});
 
+	it("falls through to an online judge when the native lane has no credential", async () => {
+		// The native candidate is configured but the provider has NO auth —
+		// pruning the online fallback for it would starve judgment entirely
+		// (silent 0-hit find, dead rulings). The online lane must take over.
+		const settings = Settings.isolated({
+			modelRoles: { judge: "typesafe/jev-preview" },
+			"retry.fallbackChains": { judge: [`${ONLINE.provider}/${ONLINE.id}`] },
+		});
+		// No key for typesafe — only the online provider is authenticated.
+		const registry = makeRegistry([JEV_PREVIEW, ONLINE], { [ONLINE.provider]: "online-key" });
+		const online = vi.spyOn(ai, "completeSimple").mockImplementation(async (model, context) => {
+			const response = reply(model, "level: high");
+			return response;
+		});
+		const onUsage = vi.fn();
+		const judge = new ChainJudge({ settings, registry, onUsage });
+
+		const answer = await judge.withCandidate(async (candidate, kind) => {
+			const result = await candidate.judge({
+				state: "refactor the scheduler",
+				questions: { level: TIER_QUESTION },
+			});
+			return result.answers.level.choice;
+		});
+
+		expect(answer).toBe("high");
+		expect(online).toHaveBeenCalled();
+	});
+
 	it("propagates caller abort without attempting a fallback", async () => {
 		const settings = Settings.isolated({
 			modelRoles: { judge: `${ONLINE.provider}/${ONLINE.id}` },

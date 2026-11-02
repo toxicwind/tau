@@ -132,6 +132,16 @@ function judgeRoleChain(settings: Settings, registry: ModelRegistry): RoleChainC
 	const chain = resolveRoleChain("judge", settings, roleCandidatePool("judge", settings, registry));
 	const firstNative = chain.findIndex(candidate => kindOf(candidate) === "native");
 	if (firstNative < 0) return chain;
+	// Have a native candidate that could actually authenticate? Then prefer the
+	// native lane exclusively — a prompted model cannot reproduce its
+	// calibrated probabilities. But a native candidate with NO configured
+	// credential is a dead lane, not a preference: pruning the online
+	// fallbacks for it would starve judgment (silent 0-hit `find`, dead
+	// rulings) instead of degrading to a working online judge.
+	const hasViableNative = chain
+		.slice(firstNative)
+		.some(candidate => kindOf(candidate) === "native" && registry.hasConfiguredAuth(candidate.model));
+	if (!hasViableNative) return chain;
 	return chain.filter((candidate, index) => index < firstNative || kindOf(candidate) === "native");
 }
 
