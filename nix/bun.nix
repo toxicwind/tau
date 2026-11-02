@@ -169,7 +169,6 @@
     url = "https://registry.npmjs.org/@bufbuild/protobuf/-/protobuf-2.16.0.tgz";
     hash = "sha512-FWa0sPlqYGJgpTs6OxBRcL/AW4JT0OIO+W1ajerluoTVh8CV0B7XM1qsNCRgnkSCkRCgOICKHRQlY17jrsm0+Q==";
   };
-  "@cakriwut/omp-model-router" = copyPathToStore ../tau-extensions/packages/omp-model-router;
   "@connectrpc/connect@2.2.0" = fetchurl {
     url = "https://registry.npmjs.org/@connectrpc/connect/-/connect-2.2.0.tgz";
     hash = "sha512-M63OQ1ZFcPUm85CuewJ9G9CMV8LjzGR9935xOnXNQGSazAbwMb3x2W7vXBYM1zqrP7XFD8uxp/dUAhirclgwnQ==";
@@ -1244,7 +1243,6 @@
   };
   "@toxicwind/omp-edit-committer" = copyPathToStore ../tau-extensions/packages/omp-edit-committer;
   "@toxicwind/omp-kafka" = copyPathToStore ../tau-extensions/packages/omp-kafka;
-  "@toxicwind/rawhide" = copyPathToStore ../tau-extensions/packages/rawhide;
   "@toxicwind/tau-kimi-auto" = copyPathToStore ../tau-extensions/packages/tau-kimi-auto;
   "@toxicwind/tau-loops" = copyPathToStore ../tau-extensions/packages/tau-loops;
   "@ts-morph/common@0.29.0" = fetchurl {
@@ -2372,7 +2370,6 @@
     hash = "sha512-MFO/QzvtAOmJbkhOaCTvbGcFN9L9b+JunIsDwaKljSOdcLMea3NJ1k9Usz/rjdfSXTq4dfzfeS7W4p4YOAAHeA==";
   };
   "tau" = copyPathToStore ../packages/coding-agent;
-  "tau-flocksync" = copyPathToStore ../tau-extensions/packages/tau-flocksync;
   "through2@4.0.2" = fetchurl {
     url = "https://registry.npmjs.org/through2/-/through2-4.0.2.tgz";
     hash = "sha512-iOqSav00cVxEEICeD7TjLB1sueEL+81Wpzp2bY17uZjZN0pWZPuo4suZ/61VujxmqSGFfgOcNuTZ85QJwNZQpw==";
