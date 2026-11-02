@@ -4,7 +4,7 @@
  */
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { formatBytes, formatDuration, formatNumber, isEnoent } from "@tau/tau-utils";
+import { formatBytes, formatDuration, formatNumber, getConfigRootDir, isEnoent } from "@tau/tau-utils";
 import chalk from "@tau/tau-utils/chalk";
 import { ModelRegistry } from "../config/model-registry";
 import { Settings } from "../config/settings";
@@ -109,7 +109,10 @@ export async function runFindCommand(cmd: FindCommandArgs): Promise<void> {
 		// An `tau://` scope searches a temp corpus, but settings and extensions
 		// still belong to the caller's project: one base for both, or a docs
 		// scope would silently drop project extensions (and their providers).
-		const baseCwd = tauScope ? process.cwd() : root;
+		// Prefer the agent/user config root so role assignments (e.g. a custom
+		// `judge`) always apply; the search root only supplies project
+		// extensions when a real project config lives there.
+		const baseCwd = tauScope || !root ? process.cwd() : getConfigRootDir();
 		log("resolving judge");
 		const settings = await Settings.init({ cwd: baseCwd });
 		const authStorage = await discoverAuthStorage(undefined, { settings });
