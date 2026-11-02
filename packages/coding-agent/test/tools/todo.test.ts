@@ -470,6 +470,167 @@ describe("TodoTool lenient init shapes", () => {
 		expect(summary.text).toContain("Missing list for init operation");
 	});
 });
+
+describe("TodoTool init — list as an array of phase-name strings (idiot-missed dialect)", () => {
+	// Real models collapse `list` to `["Phase A", "Phase B"]` — an array of
+	// strings — believing `list` means "the list of phases". The schema
+	// (`InitListEntry.array()`) rejects this as `list[0] must be an object
+	// (was a string)` before it ever reaches `initPhases`. This pins that the
+	// array-of-strings dialect lands as real phases with no error.
+
+	it("maps each string to a phase with no tasks", async () => {
+		const tool = new TodoTool(createSession());
+		const result = (await tool.execute("call-1", {
+			op: "init",
+			list: ["Foundation", "Stack", "Ops"],
+		} as never)) as Awaited<ReturnType<TodoTool["execute"]>>;
+
+		expect(result.isError).toBeUndefined();
+		expect(result.details?.phases.map(p => p.name)).toEqual(["Foundation", "Stack", "Ops"]);
+		// A phase with no tasks is still a valid addressable grouping — it is
+		// created empty, not dropped, so a later append targets it.
+		expect(result.details?.phases.every(p => p.tasks.length === 0)).toBe(true);
+	});
+});
+
+describe("TodoTool init — list entries using the persisted TodoPhase/TodoItem shape", () => {
+	// Second common idiom: the model reuses the *internal* shapes the previous
+	// `todo` result printed (`name`/`tasks`, tasks as `{content,status}`)
+	// instead of the wire `{phase, items}`. The schema rejects this as
+	// `list[0].phase must be a string (was missing)`. Coerce the internal keys
+	// back to the wire keys so content is not lost.
+
+	it("accepts {name, tasks:[string]} entries", async () => {
+		const tool = new TodoTool(createSession());
+		const result = (await tool.execute("call-1", {
+			op: "init",
+			list: [
+				{ name: "Foundation", tasks: ["tier", "lease"] },
+				{ name: "Stack", tasks: ["rails"] },
+			],
+		} as never)) as Awaited<ReturnType<TodoTool["execute"]>>;
+
+		expect(result.isError).toBeUndefined();
+		expect(result.details?.phases.map(p => p.name)).toEqual(["Foundation", "Stack"]);
+		expect(result.details?.phases[0]?.tasks.map(t => t.content)).toEqual(["tier", "lease"]);
+		expect(result.details?.phases[1]?.tasks.map(t => t.content)).toEqual(["rails"]);
+	});
+
+	it("accepts {name, tasks:[{content,status}]} full TodoItem objects", async () => {
+		const tool = new TodoTool(createSession());
+		const result = (await tool.execute("call-1", {
+			op: "init",
+			list: [{ name: "Fix", tasks: [{ content: "auth", status: "pending" }, { content: "db" }] }],
+		} as never)) as Awaited<ReturnType<TodoTool["execute"]>>;
+
+		expect(result.isError).toBeUndefined();
+		// Only content is carried; an init rebuild is a fresh plan, so status
+		// resets to a normal auto-promoted pending/in-progress pair.
+		expect(result.details?.phases[0]?.name).toBe("Fix");
+		expect(result.details?.phases[0]?.tasks.map(t => t.content)).toEqual(["auth", "db"]);
+	});
+
+	it("accepts {phaseName, taskList} GLM/Qwen alias keys", async () => {
+		const tool = new TodoTool(createSession());
+		const result = (await tool.execute("call-1", {
+			op: "init",
+			list: [{ phaseName: "Setup", taskList: ["clone", "bun install"] }],
+		} as never)) as Awaited<ReturnType<TodoTool["execute"]>>;
+
+		expect(result.isError).toBeUndefined();
+		expect(result.details?.phases[0]?.name).toBe("Setup");
+		expect(result.details?.phases[0]?.tasks.map(t => t.content)).toEqual(["clone", "bun install"]);
+	});
+});
+
+describe("TodoTool init — ragged / mixed list arrays", () => {
+	// Models interleave dialects in one call: `["PhaseA", {phase,items}]`,
+	// `[{name,tasks}, "PhaseB"]`, or sprinkle null/numeric wash entries. None
+	// may become a hard `Invalid todo arguments` rejection; clean entries land,
+	// garbage entries are skipped.
+
+	it("accepts a string entry mixed with a canonical object entry", async () => {
+		const tool = new TodoTool(createSession());
+		const result = (await tool.execute("call-1", {
+			op: "init",
+			list: ["Foundation", { phase: "Stack", items: ["rails"] }],
+		} as never)) as Awaited<ReturnType<TodoTool["execute"]>>;
+
+		expect(result.isError).toBeUndefined();
+		expect(result.details?.phases.map(p => p.name)).toEqual(["Foundation", "Stack"]);
+		expect(result.details?.phases[1]?.tasks.map(t => t.content)).toEqual(["rails"]);
+	});
+
+	it("accepts a canonical object entry mixed with a trailing string", async () => {
+		const tool = new TodoTool(createSession());
+		const result = (await tool.execute("call-1", {
+			op: "init",
+			list: [{ phase: "Stack", items: ["rails"] }, "Ops"],
+		} as never)) as Awaited<ReturnType<TodoTool["execute"]>>;
+
+		expect(result.isError).toBeUndefined();
+		expect(result.details?.phases.map(p => p.name)).toEqual(["Stack", "Ops"]);
+	});
+
+	it("skips null / numeric wash entries without failing the whole call", async () => {
+		const tool = new TodoTool(createSession());
+		const result = (await tool.execute("call-1", {
+			op: "init",
+			list: [null, "Real", 7, { phase: "Also", items: ["x"] }],
+		} as never)) as Awaited<ReturnType<TodoTool["execute"]>>;
+
+		expect(result.isError).toBeUndefined();
+		expect(result.details?.phases.map(p => p.name)).toEqual(["Real", "Also"]);
+		expect(result.details?.phases[1]?.tasks.map(t => t.content)).toEqual(["x"]);
+	});
+
+	it("attribute flat items to a string-phase init so tasks are not lost", async () => {
+		const tool = new TodoTool(createSession());
+		const result = (await tool.execute("call-1", {
+			op: "init",
+			list: ["A", "B"],
+			items: ["x", "y"],
+		} as never)) as Awaited<ReturnType<TodoTool["execute"]>>;
+
+		// The flat `items` are the only real tasks in the call; without a phase
+		// anchor they belong to the plan as a whole. Attach them to the default
+		// (Tasks) phase rather than dropping them, so nothing is lost.
+		expect(result.isError).toBeUndefined();
+		expect(result.details?.phases.map(p => p.name)).toEqual(["Tasks", "A", "B"]);
+		expect(result.details?.phases[0]?.tasks.map(t => t.content)).toEqual(["x", "y"]);
+	});
+});
+
+describe("TodoTool init — genuinely nonsense list stays an error", () => {
+	// Every entry with no usable identity must not silently fabricate a plan;
+	// it stays a real error with a readable message instead of a crash.
+
+	it("errors when every list entry is [{}]", async () => {
+		const tool = new TodoTool(createSession());
+		const result = (await tool.execute("call-1", {
+			op: "init",
+			list: [{}],
+		} as never)) as Awaited<ReturnType<TodoTool["execute"]>>;
+
+		expect(result.isError).toBe(true);
+		const summary = result.content.find(part => part.type === "text");
+		if (summary?.type !== "text") throw new Error("Expected text summary");
+		// `[{}]` has no usable identity: it stays a readable schema error (the
+		// empty-phase/empty-items entry can't round-trip), never a crash or a
+		// silently fabricated plan.
+		expect(summary.text).toMatch(/Missing list|Invalid todo arguments/);
+	});
+
+	it("errors when every list entry is numeric", async () => {
+		const tool = new TodoTool(createSession());
+		const result = (await tool.execute("call-1", {
+			op: "init",
+			list: [1, 2],
+		} as never)) as Awaited<ReturnType<TodoTool["execute"]>>;
+
+		expect(result.isError).toBe(true);
+	});
+});
 describe("TodoTool lenient op recovery", () => {
 	// Regression: models occasionally drop `op` while sending an otherwise
 	// valid payload (e.g. `{list:[...]}`). The schema keeps `op` required, but

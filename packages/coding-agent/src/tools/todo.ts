@@ -56,7 +56,11 @@ const TodoOp = type('"init" | "start" | "done" | "rm" | "drop" | "block" | "unbl
 
 const InitListEntry = type({
 	phase: type("string"),
-	items: type("string").array().atLeastLength(1),
+	// No `atLeastLength(1)`: a model-init `list` entry can legitimately name a
+	// phase with no tasks yet (`list: ["A","B"]` -> phase-name strings). The
+	// empty-value guard lives in `initPhases` (`[{}]`, empty phase + empty
+	// items, is still an error), mirroring the top-level `items` doctrine.
+	items: type("string").array(),
 });
 
 const todoSchema = type({
@@ -349,6 +353,14 @@ function initPhases(entry: TodoOpEntryValue, errors: string[]): TodoPhase[] {
 		errors.push("Missing list for init operation");
 		return [];
 	}
+	// A list entry with neither a phase name nor any tasks is meaningless (e.g.
+	// `list: [{}]`). The schema's relaxed `items` array lets such an entry
+	// through (needed for the empty-but-named phase dialect), so reject the
+	// empty-value case here rather than fabricating a phase.
+	if (list.length === 0 || (list.length === 1 && list[0].phase.length === 0 && list[0].items.length === 0)) {
+		errors.push("Missing list for init operation");
+		return [];
+	}
 	// Duplicate phase names / task contents would be permanently unaddressable
 	// (every targeting op resolves the first match), so reject them up front.
 	const seenPhases = new Set<string>();
@@ -537,7 +549,70 @@ function resolveTodoParams(raw: unknown, hasExistingPhases: boolean): TodoOpEntr
 			if (!(repaired instanceof type.errors)) return repaired;
 		}
 	}
+	const coerced = coerceInitList(raw);
+	if (coerced) {
+		const repaired = todoSchema(coerced);
+		if (!(repaired instanceof type.errors)) return repaired;
+	}
 	return `Invalid todo arguments: ${direct.summary}`;
+}
+
+/**
+ * Repair an `init` whose `list` uses a non-canonical dialect. Models routinely
+ * collapse `list: [{phase, items}]` into:
+ *   - an array of phase-name strings (`list: ["A","B"]`) -> `list[0] must be
+ *     an object (was a string)`;
+ *   - the persisted `TodoPhase`/`TodoItem` shape (`list: [{name, tasks:[...]}]`)
+ *     or alias keys (`phaseName`/`taskList`) -> `list[0].phase must be a string
+ *     (was missing)`.
+ * The schema can't express either (and `op` is usually present, so the missing-
+ * op inference above never runs). Coerce every entry into the canonical
+ * `{phase, items}` shape and let `todoSchema` re-validate; return null when the
+ * payload isn't an init with a non-canonical list. A flat `items[]` alongside
+ * bare-string phases anchors as the default `Tasks` phase so no task is dropped.
+ */
+function coerceInitList(raw: unknown): Record<string, unknown> | null {
+	if (!isRecord(raw) || raw.op !== "init" || !Array.isArray(raw.list)) return null;
+	const fallbackItems = Array.isArray(raw.items)
+		? raw.items.filter((item): item is string => typeof item === "string")
+		: [];
+	const entries: Array<{ phase: string; items: string[] }> = [];
+	for (const entry of raw.list) {
+		if (typeof entry === "string") {
+			const markdownItems = parseMarkdownList(entry);
+			if (markdownItems.length > 0) {
+				entries.push({ phase: DEFAULT_INIT_PHASE, items: markdownItems });
+			} else {
+				entries.push({ phase: entry, items: [] });
+			}
+			continue;
+		}
+		if (!isRecord(entry)) continue;
+		const phase =
+			typeof entry.phase === "string" && entry.phase.length > 0
+				? entry.phase
+				: typeof entry.name === "string" && entry.name.length > 0
+					? entry.name
+					: typeof entry.phaseName === "string" && entry.phaseName.length > 0
+						? entry.phaseName
+						: "";
+		let items: unknown[] = [];
+		if (Array.isArray(entry.items)) items = entry.items;
+		else if (Array.isArray(entry.taskList)) items = entry.taskList;
+		else if (Array.isArray(entry.tasks)) items = entry.tasks;
+		const strings = items
+			.map(item => (isRecord(item) ? item.content : item))
+			.filter((item): item is string => typeof item === "string");
+		entries.push({ phase, items: strings });
+	}
+	const hasBareStrings = entries.some(e => e.items.length === 0);
+	if (hasBareStrings && fallbackItems.length > 0 && !entries.some(e => e.phase === DEFAULT_INIT_PHASE && e.items.length > 0)) {
+		entries.unshift({ phase: DEFAULT_INIT_PHASE, items: fallbackItems });
+	}
+	// All-nonsense arrays (`[{}]`, `[1,2]`) coerce down to nothing usable. Skip
+	// the repair so the original schema error (not a silent empty plan) surfaces.
+	if (entries.length === 0) return null;
+	return { ...raw, list: entries };
 }
 
 function applyParams(phases: TodoPhase[], params: TodoOpEntryValue): { phases: TodoPhase[]; errors: string[] } {
