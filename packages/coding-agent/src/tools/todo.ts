@@ -17,7 +17,7 @@ import type { ToolSession } from "../sdk";
 import type { SessionEntry } from "../session/session-entries";
 
 import { normalizePathLikeInput, resolveToCwd } from "./path-utils";
-import { parseMarkdownList } from "@tau/tau-ai/dialect/coercion.js";
+import { parseMarkdownItem, parseMarkdownList } from "@tau/tau-ai/dialect/coercion.js";
 
 /** Whether an unknown value is a persisted todo phase. */
 export function isTodoPhase(value: unknown): value is TodoPhase {
@@ -407,7 +407,11 @@ function initPhases(entry: TodoOpEntryValue, errors: string[]): TodoPhase[] {
 	return list.map(listEntry => ({
 		name: listEntry.phase,
 		tasks: listEntry.items.map<TodoItem>(content => ({
-			content,
+			// A single array element can arrive as a full markdown checkbox line
+			// ("- [ ] Reproduce...") when a DeepSeek-family model renders a flat
+			// string array as a checklist inside JSON. Strip the prefix so the
+			// persisted content and the exact-match targeting see the raw text.
+			content: parseMarkdownItem(content),
 			status: "pending",
 		})),
 	}));
@@ -443,7 +447,7 @@ function appendItems(phases: TodoPhase[], entry: TodoOpEntryValue, errors: strin
 	}
 
 	for (const content of entry.items) {
-		phase.tasks.push({ content, status: "pending" });
+		phase.tasks.push({ content: parseMarkdownItem(content), status: "pending" });
 	}
 	return phases;
 }
@@ -671,7 +675,8 @@ function coerceInitList(raw: unknown): Record<string, unknown> | null {
 		else if (Array.isArray(entry.tasks)) items = entry.tasks;
 		const strings = items
 			.map(item => (isRecord(item) ? item.content : item))
-			.filter((item): item is string => typeof item === "string");
+			.filter((item): item is string => typeof item === "string")
+			.map(parseMarkdownItem);
 		entries.push({ phase, items: strings });
 	}
 	const hasBareStrings = entries.some(e => e.items.length === 0);

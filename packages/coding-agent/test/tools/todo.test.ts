@@ -1197,6 +1197,82 @@ describe("TodoTool transport-double-encode repair", () => {
 	});
 });
 
+describe("TodoTool real DeepSeek-family markdown-item strip (FreeInference)", () => {
+	// Captured live from FreeInference deepseek-v4-flash (2026-11-02): the model
+	// renders a flat array-of-strings tool argument as per-item checklist lines
+	// INSIDE the JSON array — `list[].items: ["- [ ] Reproduce...", ...]` — rather
+	// than a whole checklist string. Each element carries a literal `- [ ] `
+	// prefix that must be stripped, or the persisted task content (and the
+	// exact-match targeting) breaks.
+	const REAL_PAYLOAD = {
+		op: "init",
+		list: [
+			{
+				phase: "Investigation",
+				items: [
+					"- [ ] Reproduce the reported issue locally",
+					"- [ ] Identify root cause of the bug",
+					"- [ ] Write failing test cases that capture the bug",
+				],
+			},
+			{
+				phase: "Shipping",
+				items: ["- [ ] Implement the fix / feature changes", "- [ ] Ensure all tests pass (unit, integration, regression)"],
+			},
+		],
+	};
+
+	it("strips checkbox prefixes from array item elements, not just whole-list strings", async () => {
+		const tool = new TodoTool(createSession());
+		const result = await tool.execute("call-real-init", REAL_PAYLOAD);
+
+		expect(result.isError).toBeUndefined();
+		const phases = result.details?.phases ?? [];
+		expect(phases.map(phase => phase.name)).toEqual(["Investigation", "Shipping"]);
+		const investigation = phases[0]?.tasks ?? [];
+		expect(investigation.map(task => task.content)).toEqual([
+			"Reproduce the reported issue locally",
+			"Identify root cause of the bug",
+			"Write failing test cases that capture the bug",
+		]);
+		// The persisted content must be clean so exact-match targeting works.
+		expect(investigation.every(task => !task.content.startsWith("- [ ]"))).toBe(true);
+	});
+
+	it("completes a stripped task by its clean text (exact-match survives strip)", async () => {
+		const tool = new TodoTool(createSession());
+		await tool.execute("call-real-init", REAL_PAYLOAD);
+		const result = await tool.execute("call-real-done", {
+			op: "done",
+			task: "Implement the fix / feature changes",
+		});
+		const tasks = result.details?.phases.flatMap(phase => phase.tasks) ?? [];
+		const done = tasks.find(task => task.status === "completed");
+		expect(done?.content).toBe("Implement the fix / feature changes");
+	});
+
+	it("strips markdown prefixes on append items too", async () => {
+		const tool = new TodoTool(createSession());
+		await tool.execute("call-cycle-init", { op: "init", list: [{ phase: "Work", items: ["First"] }] });
+		const result = await tool.execute("call-cycle-append", {
+			op: "append",
+			phase: "Work",
+			items: ["- [ ] Second task from stream", "* Third bullet"],
+		});
+		const tasks = result.details?.phases[0]?.tasks ?? [];
+		expect(tasks.map(task => task.content)).toEqual(["First", "Second task from stream", "Third bullet"]);
+	});
+
+	it("leaves plain task text untouched", async () => {
+		const tool = new TodoTool(createSession());
+		const result = await tool.execute("call-plain-init", {
+			op: "init",
+			list: [{ phase: "Plain", items: ["alpha", "beta"] }],
+		});
+		expect(result.details?.phases[0]?.tasks.map(task => task.content)).toEqual(["alpha", "beta"]);
+	});
+});
+
 describe("TodoTool unique-prefix task resolution", () => {
 	it("completes a task by unique prefix when full text is not passed", async () => {
 		const tool = new TodoTool(createSession());

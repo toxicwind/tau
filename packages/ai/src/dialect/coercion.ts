@@ -118,6 +118,21 @@ export function parseMarkdownList(text: string): string[] {
 	return out;
 }
 
+/**
+ * Strip a single markdown list-item prefix from a lone string: "- [ ] task",
+ * "* task", "- task", "1. task". Real DeepSeek-family streams (FreeInference /
+ * DeepSeek V4) render a flat array-of-strings tool argument as per-item
+ * checklist lines inside the JSON array (`items: ["- [ ] Reproduce...", ...]`),
+ * not as a whole checklist string. Each array element then carries a markup
+ * prefix that must be removed — otherwise the persisted value (e.g. a todo
+ * task content) keeps the literal `- [ ] ` and the displayed board is ugly and
+ * the exact-match targeting breaks.
+ */
+export function parseMarkdownItem(item: string): string {
+	const match = item.match(/^\s*(?:[-*+](?:\s+\[[ xX]\])?\s+|\d+\.\s+)(.+?)\s*$/);
+	return match ? match[1]! : item;
+}
+
 export function isArraySchema(schema: unknown): boolean {
 	return collectSchemaTypes(schema).has("array");
 }
