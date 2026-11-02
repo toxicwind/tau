@@ -73,7 +73,9 @@ const DSML_ANY_TAG_RE = /<[/]?[｜|]+(?:DSML|頭)[｜|]+\s*[A-Za-z_]*[^>]*>/;
 /** The DSML family SHAPE: <optional-/ bars(>=1) [body] bars(>=1) word? attrs?>.
  * The bge-m3 embedding cluster (all mutations 0.86-0.99 vs text 0.43) proves
  * bar-runs around an optional body IS the invariant — spelling evolves. */
-const DSML_SHAPE_RE = /<[/]?[｜|]+(?:DSML|頭)?[｜|]+\s*[A-Za-z_][A-Za-z0-9_]*(?:\s[^>]*)?>/;
+const DSML_SHAPE_RE = /<[/]?[｜|]*(?:DSML|頭)?[｜|]*\s*(?:inv|invoke|par|parameter|function_calls|tool_calls|calls)[A-Za-z_]*[^>]*>/;
+// Family membership by SHAPE: optional pipes, optional body, optional space,
+// known-or-drifted words (incl. SHORT degradation forms: <inv / <par / </inv>).
 
 /** A partially-streamed DSML tag (no `>` yet) that must be held back. */
 function dsmlPartialHold(buffer: string): number {
