@@ -33,7 +33,7 @@ Bun.plugin({
 			loader: "object",
 			exports: {
 				BUNDLED_PI_MODULE_LOADERS: {
-					"@tau/tau-tui/theme": async () => host,
+					"@tau/tau-tui/theme": async () => ({ exports: host, realPath: ${JSON.stringify(themePath)} }),
 					"@tau/tau-utils/virtual-fixture": async () => ({
 						default: value => "value=" + value,
 						double: value => value * 2,

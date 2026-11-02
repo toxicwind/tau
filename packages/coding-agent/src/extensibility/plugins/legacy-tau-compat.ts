@@ -753,6 +753,8 @@ function ensureBundledModuleLoadersLoaded(): Promise<BundledModuleLoaders> {
 	return bundledModuleLoadersPromise;
 }
 
+const bundledModuleRealPaths = new Map<string, string>();
+
 async function loadBundledModule(moduleKey: string): Promise<BundledModule> {
 	const existing = loadedBundledModules[moduleKey];
 	if (existing) return existing;
@@ -761,9 +763,51 @@ async function loadBundledModule(moduleKey: string): Promise<BundledModule> {
 	if (!loader) {
 		throw new Error(`tau:legacy-tau-shim: no bundled module registered for ${moduleKey}`);
 	}
-	const module = await loader();
+	const loaded = await loader();
+	// Loader-map entries may carry `{ realPath }` metadata alongside (or instead
+	// of) exports: dev-mode hosts use it to advertise the real on-disk file a
+	// bundled module stands in for, enabling live-binding identity re-exports.
+	if (loaded && typeof loaded === "object" && "realPath" in (loaded as Record<string, unknown>)) {
+		const meta = loaded as { realPath?: unknown };
+		if (typeof meta.realPath === "string") {
+			bundledModuleRealPaths.set(moduleKey, meta.realPath);
+		}
+		if (meta.realPath) {
+			return loaded as BundledModule;
+		}
+	}
+	const module = loaded as BundledModule;
 	loadedBundledModules[moduleKey] = module;
 	return module;
+}
+
+/**
+ * Bundled registry keys that name real on-disk files (dev mode: the loader map
+ * closes over real modules such as theme.ts) can be re-exported as true ESM so
+ * live var bindings (theme) are identity-shared with the host. Returns the real
+ * path when the key is an existing file, else null.
+ */
+function registryKeyRealPath(registryKey: string): string | null {
+	// Registry keys are canonical specifiers (e.g. "@tau/tau-tui/theme"), not
+	// paths. Dev mode can resolve them to the real source file; compiled binaries
+	// cannot (bundled inside /$bunfs) and stay on the object snapshot.
+	try {
+		const advertised = bundledModuleRealPaths.get(registryKey);
+		if (advertised) {
+			return fs.statSync(advertised).isFile() ? advertised : null;
+		}
+		const resolved = resolveCanonicalPiSpecifier(registryKey);
+		if (process.env.TAU_LEGACY_PI_DEBUG === "1") {
+			console.error(`[legacy-pi] host realPath ${registryKey} -> ${resolved}`);
+		}
+		return fs.statSync(resolved).isFile() ? resolved : null;
+	} catch {
+		try {
+			return fs.statSync(registryKey).isFile() ? registryKey : null;
+		} catch {
+			return null;
+		}
+	}
 }
 
 function bundledModuleVirtualSpecifier(moduleKey: string): string {
@@ -2692,8 +2736,23 @@ async function ensureExtensionGraphHook(entryRealPath: string): Promise<{ clear(
  */
 export async function loadLegacyPiModule(resolvedPath: string): Promise<unknown> {
 	const __norm = (v: unknown) => {
+		// Preserve live ESM bindings: spreading a module namespace SNAPSHOT-copies
+		// every export value (a later `theme = ...` assignment never lands on the
+		// copy). Add `default` via a non-enumerable getter over the ORIGINAL
+		// namespace instead — bindings stay live, identity intact.
 		if (v && typeof v === "object" && !("default" in (v as Record<string, unknown>))) {
-			return __norm({ ...(v as Record<string, unknown>), default: v } as typeof v);
+			const ns = v as Record<string, unknown>;
+			// Module namespaces are frozen — a Proxy adds `default` while reads of
+			// every other export stay LIVE on the underlying namespace.
+			return __norm(new Proxy(ns, {
+				get(target, prop, receiver) {
+					if (prop === "default") return target;
+					return Reflect.get(target, prop, receiver);
+				},
+				has(target, prop) {
+					return prop === "default" || Reflect.has(target, prop);
+				},
+			}));
 		}
 		return v;
 	};
@@ -2799,24 +2858,64 @@ export function installLegacyPiSpecifierShim(): void {
 			build.onResolve({ filter: /.*/, namespace: BUNDLED_HOST_NAMESPACE }, args =>
 				resolveBundledVirtualSpecifier(args.path, BUNDLED_HOST_NAMESPACE),
 			);
-			build.onLoad({ filter: /.*/, namespace: BUNDLED_HOST_NAMESPACE }, async args => ({
-				exports: await loadBundledModule(args.path),
-				loader: "object",
-			}));
+
+			build.onLoad({ filter: /.*/, namespace: BUNDLED_HOST_NAMESPACE }, async args => {
+				const mod = await loadBundledModule(args.path);
+				// Live-binding identity contract: an object-loader export is a frozen
+				// snapshot (`export var theme` assigned later by initThemeSync never
+				// lands), so any re-export chain through it serves a dead binding.
+				// When the registry key is a resolvable real file, re-export it via
+				// true ESM — same module instance as the host's own import, live
+				// bindings included. Object fallback for binary-bundled keys.
+				const realPath = registryKeyRealPath(args.path);
+				if (process.env.TAU_LEGACY_PI_DEBUG === "1") {
+					console.error(`[legacy-pi] host onLoad ${args.path} realPath=${realPath ?? "null"}`);
+				}
+				if (realPath) {
+					const real = JSON.stringify(realPath);
+					// Named re-exports (not `export *`): Bun drops live `export var`
+					// bindings through chained `export *` barrels. Naming each export
+					// keeps live-binding forwarding intact.
+					const keys = Object.keys(mod).filter(k => k !== "default");
+					return {
+						contents: [
+							...keys.map(k => `export { ${k} } from ${real};`),
+							...(Object.hasOwn(mod, "default") ? [`export { default } from ${real};`] : []),
+						].join("\n"),
+						loader: "js",
+					};
+				}
+				return { exports: mod, loader: "object" };
+			});
+
 			build.onLoad({ filter: /.*/, namespace: BUNDLED_VIRTUAL_NAMESPACE }, async args => {
 				const module = await loadBundledModule(args.path);
-				if (!Object.hasOwn(module, "theme") || typeof module.bindTheme !== "function") {
+				const advertised = bundledModuleRealPaths.get(args.path);
+				if (advertised) {
+					// Dev-mode realPath metadata: re-export the REAL file with named
+					// live bindings (identity-shared with the host's own import).
+					const real = JSON.stringify(advertised);
+					const realMod = await import(advertised);
+					const keys = Object.keys(realMod).filter(k => k !== "default");
+					return {
+						contents: [
+							...keys.map(k => `export { ${k} } from ${real};`),
+							...(Object.hasOwn(realMod, "default") ? [`export { default } from ${real};`] : []),
+						].join("\n"),
+						loader: "js",
+					};
+				}
+				// Identity-preserving contract (architect decision 2026-11-02): the
+				// bundled virtual module RE-EXPORTS the host module — the extension's
+				// `theme` is the HOST's live binding, not a per-module mirror.
+				// Content identity (matchesHost / render palette) follows for free.
+				if (!Object.hasOwn(module, "theme")) {
 					return { exports: module, loader: "object" };
 				}
-				// Object modules snapshot values. Keep theme as a genuine ESM
-				// binding, mirrored at assignment time before UI notifications.
 				const host = JSON.stringify(`${BUNDLED_HOST_SCHEME}${args.path}`);
 				return {
 					contents: [
 						`export * from ${host};`,
-						`import { bindTheme } from ${host};`,
-						"export let theme;",
-						"bindTheme(value => { theme = value; });",
 						...(Object.hasOwn(module, "default") ? [`export { default } from ${host};`] : []),
 					].join("\n"),
 					loader: "js",
