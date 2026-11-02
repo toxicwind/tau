@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e98f853a8ffeJJ1N561ko1WZmL
+title: Memory Phase 2 (fresh restart, C2) (@general subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_16707ac91001Zgj22LgbHoW8me, 2026-10-23T04:31:58.614Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

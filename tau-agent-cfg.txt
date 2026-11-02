@@ -1,0 +1,14 @@
+260:modelRoles:
+372:retry:
+261:  advisor: freeinference/qwen3.6-35b:low
+263:  commit: freeinference/qwen3.6-35b
+265:  fallback: freeinference/qwen3.6-35b
+267:  judge: freeinference/qwen3.6-35b
+268:  memory: freeinference/qwen3.6-35b
+269:  plan: freeinference/qwen3.6-35b
+270:  slow: freeinference/qwen3.6-35b:xhigh
+271:  smol: freeinference/minimax-m3:auto
+272:  task: freeinference/qwen3.6-35b
+273:  tiny: freeinference/qwen3.6-35b
+274:  verification: freeinference/qwen3.6-35b
+275:  vision: freeinference/minimax-m3:xhigh

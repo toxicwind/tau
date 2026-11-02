@@ -1,0 +1,10 @@
+# KAPPA SESSION ses_e937bf441ffexV6TErfSW5648l
+title: Map delendai serve + transport (@explore subagent)
+cwd: /home/toxic/tmp
+user_messages: 2
+
+--- user message 1/2 (msg msg_16c840c09001eq1siExDH4Pua0, 2026-10-24T06:05:55.607Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]
+
+--- user message 2/2 (msg msg_16c863d56001e8KZ0Qf2JJVAv5, 2026-10-24T06:08:19.289Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

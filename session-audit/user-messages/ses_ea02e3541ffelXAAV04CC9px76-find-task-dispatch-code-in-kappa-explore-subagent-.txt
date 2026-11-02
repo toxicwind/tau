@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_ea02e3541ffelXAAV04CC9px76
+title: Find task dispatch code in Kappa (@explore subagent)
+cwd: /home/toxic/tmp
+user_messages: 1
+
+--- user message 1/1 (msg msg_15fd1caca001DDGMU9As554T6k, 2026-10-21T18:55:46.891Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

@@ -1,0 +1,3 @@
+════ [kairos GUARD — URGENT, CANCELLED] ════
+  pipeline truncation (tail) — persist FULL output
+  MUST DO: run the upstream fully; read the result via ffs — never pipe tail

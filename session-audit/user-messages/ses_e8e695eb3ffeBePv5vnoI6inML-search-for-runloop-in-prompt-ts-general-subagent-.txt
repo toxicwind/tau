@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e8e695eb3ffeBePv5vnoI6inML
+title: Search for runLoop in prompt.ts (@general subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_17196a1870012QXOSaH1RKOMrW, 2026-10-25T05:44:19.596Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

@@ -1,0 +1,34 @@
+# KAPPA SESSION ses_e930e8068ffenQzELNc05n5eq4
+title: VS Code extension launch script
+cwd: /home/toxic/tmp
+user_messages: 10
+
+--- user message 1/10 (msg msg_16cf17f9c001DP6Mj7u9zVGL4r, 2026-10-24T08:05:28.604Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 2/10 (msg msg_16cf8130f001rV3n2uYHbyysER, 2026-10-24T08:12:39.567Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 3/10 (msg msg_16cfa9697001Yk8i4s4Xtkjmkg, 2026-10-24T08:15:24.311Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 4/10 (msg msg_16cfb8272001WU7aUj6EpugRzI, 2026-10-24T08:16:24.690Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 5/10 (msg msg_16cfb8caf001u1x5ylfTDziFFv, 2026-10-24T08:16:27.311Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 6/10 (msg msg_16d022107001DIvsW8NXxRn5nS, 2026-10-24T08:23:38.503Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 7/10 (msg msg_16d052efd001REiE744LoDb3bZ, 2026-10-24T08:26:58.685Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 8/10 (msg msg_16d059fc80010zyUOr6VSm5eCL, 2026-10-24T08:27:27.560Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 9/10 (msg msg_16d05b0c500164Yzbwd5QHCl5f, 2026-10-24T08:27:31.909Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 10/10 (msg msg_16d0eebb5001I64GiCJQY6W1Ef, 2026-10-24T08:37:36.821Z) ---
+[[no content field; keys: role, time, agent, model, summary]]

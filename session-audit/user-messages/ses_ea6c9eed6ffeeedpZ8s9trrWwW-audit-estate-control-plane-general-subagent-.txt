@@ -1,0 +1,10 @@
+# KAPPA SESSION ses_ea6c9eed6ffeeedpZ8s9trrWwW
+title: Audit estate control plane (@general subagent)
+cwd: /home/toxic/estate
+user_messages: 2
+
+--- user message 1/2 (msg msg_159361131001kCtnjaTjiWuS1G, 2026-10-20T12:07:58.002Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]
+
+--- user message 2/2 (msg msg_1593b3f0d001KaKDT1d6xgTtPN, 2026-10-20T12:13:37.423Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

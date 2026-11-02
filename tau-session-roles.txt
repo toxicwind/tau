@@ -1,0 +1,5 @@
+6084:	resolveRoleModel(role: string): Model | undefined {
+6085:		return this.#models.resolveRoleModel(role);
+6090:	 * Unlike resolveRoleModel(), this preserves the thinking level suffix
+6093:	resolveRoleModelWithThinking(role: string): ResolvedModelRoleValue {
+6094:		return this.#models.resolveRoleModelWithThinking(role);

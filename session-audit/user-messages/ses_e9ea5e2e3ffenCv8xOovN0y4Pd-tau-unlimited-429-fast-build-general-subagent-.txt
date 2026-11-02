@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e9ea5e2e3ffenCv8xOovN0y4Pd
+title: Tau unlimited-429 + fast build (@general subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_1615a1d51001Nlb7Nnp4SX5bFH, 2026-10-22T02:04:18.134Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

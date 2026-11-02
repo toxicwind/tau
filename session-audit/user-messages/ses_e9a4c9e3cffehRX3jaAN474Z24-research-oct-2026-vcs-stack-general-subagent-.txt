@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e9a4c9e3cffehRX3jaAN474Z24
+title: Research Oct-2026 VCS stack (@general subagent)
+cwd: /home/toxic/tmp
+user_messages: 1
+
+--- user message 1/1 (msg msg_165b361fe001t4jM5BI01gon5i, 2026-10-22T22:20:17.290Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

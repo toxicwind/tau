@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e9a7e4c90ffeNwnjxFP28KyPMn
+title: Commit Kappa marketplace (@general subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_16581b3b6001RMA2f2OSidUgfd, 2026-10-22T21:26:01.400Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

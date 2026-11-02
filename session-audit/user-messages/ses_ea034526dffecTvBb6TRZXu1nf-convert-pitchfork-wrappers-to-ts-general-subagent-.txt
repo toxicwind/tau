@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_ea034526dffecTvBb6TRZXu1nf
+title: Convert pitchfork wrappers to TS (@general subagent)
+cwd: /home/toxic/tmp
+user_messages: 1
+
+--- user message 1/1 (msg msg_15fcbad96001rdkf2Qg19VaUTW, 2026-10-21T18:49:06.199Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

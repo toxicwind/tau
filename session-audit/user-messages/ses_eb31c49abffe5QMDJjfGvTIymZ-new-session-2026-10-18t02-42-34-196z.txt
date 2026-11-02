@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_eb31c49abffe5QMDJjfGvTIymZ
+title: New session - 2026-10-18T02:42:34.196Z
+cwd: /home/toxic/kappa-verify-zqbh
+user_messages: 1
+
+--- user message 1/1 (msg msg_14ce3bdc2001fARR8Y0FRPEI6K, 2026-10-18T02:42:36.098Z) ---
+[[no content field; keys: role, time, agent, model, summary]]

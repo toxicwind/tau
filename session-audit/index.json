@@ -1,0 +1,2910 @@
+{
+  "sessions": [
+    {
+      "engine": "kappa",
+      "id": "ses_e79faf607ffePyT7bSaltUCt7G",
+      "title": "Debugging tau issues",
+      "cwd": "/home/toxic",
+      "file": "ses_e79faf607ffePyT7bSaltUCt7G-debugging-tau-issues.txt",
+      "count": 163
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e7b4d5732ffeRGSynEBYX1qFL5",
+      "title": "New session - 2026-10-28T22:47:43.565Z",
+      "cwd": "/home/toxic",
+      "file": "ses_e7b4d5732ffeRGSynEBYX1qFL5-new-session-2026-10-28t22-47-43-565z.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e7b53cf88ffeBdDZWCnpAXOqED",
+      "title": "Run cyoa-router filter (@explore subagent)",
+      "cwd": "/home/toxic/pens/estate",
+      "file": "ses_e7b53cf88ffeBdDZWCnpAXOqED-run-cyoa-router-filter-explore-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e7b53f23bffevvEtF8mSjWOH9P",
+      "title": "New session - 2026-10-28T22:40:30.661Z",
+      "cwd": "/home/toxic/pens/estate",
+      "file": "ses_e7b53f23bffevvEtF8mSjWOH9P-new-session-2026-10-28t22-40-30-661z.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e7bbcee1effe2aSYKLDoERHR2Q",
+      "title": "Audit thresher MCP tools (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e7bbcee1effe2aSYKLDoERHR2Q-audit-thresher-mcp-tools-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e7bc5831fffesNK7JNCwlW6ZWC",
+      "title": "Resume geode entrypoint map (@explore subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e7bc5831fffesNK7JNCwlW6ZWC-resume-geode-entrypoint-map-explore-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e7bc59e75ffe5mxCcc5gbn7KHa",
+      "title": "Map geode main router entrypoint (@explore subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e7bc59e75ffe5mxCcc5gbn7KHa-map-geode-main-router-entrypoint-explore-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e7c111262ffe9jcMf3QapJH2PT",
+      "title": "Map tau/kappa/qed freeinference usage (@explore subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e7c111262ffe9jcMf3QapJH2PT-map-tau-kappa-qed-freeinference-usage-explore-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e7c111fe3ffe9MHFnfNzXuy7XA",
+      "title": "Explore geode/rhodochrosite queue structure (@explore subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e7c111fe3ffe9MHFnfNzXuy7XA-explore-geode-rhodochrosite-queue-structure-explore-subagent.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e7c113560ffe4CCMusrVHgZAuG",
+      "title": "Find swarm md + no-freeinference concept (@explore subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e7c113560ffe4CCMusrVHgZAuG-find-swarm-md-no-freeinference-concept-explore-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e7c152502ffeypDhcoFlN80noV",
+      "title": "Kappa terminal audit and optimization",
+      "cwd": "/home/toxic",
+      "file": "ses_e7c152502ffeypDhcoFlN80noV-kappa-terminal-audit-and-optimization.txt",
+      "count": 90
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e7c78fe2dffeNcwr9BFzO54ec8",
+      "title": "New session - 2026-10-28T17:20:25.554Z",
+      "cwd": "/tmp",
+      "file": "ses_e7c78fe2dffeNcwr9BFzO54ec8-new-session-2026-10-28t17-20-25-554z.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e81029754ffeFhnF0yCbMpmBwk",
+      "title": "Implement urgent pens-ui master dashboard",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_e81029754ffeFhnF0yCbMpmBwk-implement-urgent-pens-ui-master-dashboard.txt",
+      "count": 5
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e813ec4ceffeB3evaqAlOAtjab",
+      "title": "Research free image-gen repos (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e813ec4ceffeB3evaqAlOAtjab-research-free-image-gen-repos-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8156ae04ffehS0bOaGdjwH0M6",
+      "title": "Investigating flailing Google tab",
+      "cwd": "/home/toxic",
+      "file": "ses_e8156ae04ffehS0bOaGdjwH0M6-investigating-flailing-google-tab.txt",
+      "count": 40
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e815d2c0fffeqbvL2TJ11k9uX9",
+      "title": "Investigating bunfs config path and global usage",
+      "cwd": "/home/toxic",
+      "file": "ses_e815d2c0fffeqbvL2TJ11k9uX9-investigating-bunfs-config-path-and-global-usage.txt",
+      "count": 52
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e81773229ffesSMJhkKpeNVcrR",
+      "title": "Fix DNS resolution for estate",
+      "cwd": "/home/toxic",
+      "file": "ses_e81773229ffesSMJhkKpeNVcrR-fix-dns-resolution-for-estate.txt",
+      "count": 20
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e81dc805effeVbuxmdEYUHaTUL",
+      "title": "Investigate OpenRouter 404 error",
+      "cwd": "/home/toxic",
+      "file": "ses_e81dc805effeVbuxmdEYUHaTUL-investigate-openrouter-404-error.txt",
+      "count": 5
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8509a5eaffeoPSGMEBdrey4at",
+      "title": "Categorize effect migration errors (@explore subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e8509a5eaffeoPSGMEBdrey4at-categorize-effect-migration-errors-explore-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e851502e1ffeDDJtCMboji32nY",
+      "title": "Check node version + MCP reload (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e851502e1ffeDDJtCMboji32nY-check-node-version-mcp-reload-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e851582faffeH28ObQBn1jfhKp",
+      "title": "New session - 2026-10-27T01:12:30.213Z",
+      "cwd": "/home/toxic",
+      "file": "ses_e851582faffeH28ObQBn1jfhKp-new-session-2026-10-27t01-12-30-213z.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8515c9d1ffeuSUVYFbsd4HcAc",
+      "title": "New session - 2026-10-27T01:12:12.078Z",
+      "cwd": "/home/toxic",
+      "file": "ses_e8515c9d1ffeuSUVYFbsd4HcAc-new-session-2026-10-27t01-12-12-078z.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8516bab0ffe4h4qhqwtVHjXCK",
+      "title": "Build kappa and smoke-test (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e8516bab0ffe4h4qhqwtVHjXCK-build-kappa-and-smoke-test-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e851aff7dffeUOY2nvZS7TWV9k",
+      "title": "Kappa v4 beta version chain analysis",
+      "cwd": "/home/toxic",
+      "file": "ses_e851aff7dffeUOY2nvZS7TWV9k-kappa-v4-beta-version-chain-analysis.txt",
+      "count": 86
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e858b6b55ffevdv2lLYV5awSQs",
+      "title": "Migrate sqlite/codemode/docs effect-4 (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e858b6b55ffevdv2lLYV5awSQs-migrate-sqlite-codemode-docs-effect-4-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e858b6b63ffebrLuunsxVq4tOG",
+      "title": "Migrate http-recorder socket effect-4 (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e858b6b63ffebrLuunsxVq4tOG-migrate-http-recorder-socket-effect-4-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e858b6b91ffemcPAH7Z0qbURtK",
+      "title": "Migrate httpapi-codegen to effect-4 (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e858b6b91ffemcPAH7Z0qbURtK-migrate-httpapi-codegen-to-effect-4-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e858b6f46ffe1EppaWs0nGPaOn",
+      "title": "OpenRouter paid model training violation (fork #1)",
+      "cwd": "/home/toxic",
+      "file": "ses_e858b6f46ffe1EppaWs0nGPaOn-openrouter-paid-model-training-violation-fork-1-.txt",
+      "count": 266
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8603070cffes0uKbenfH5a4hs",
+      "title": "Migrate sqlite/codemode/docs effect-4 (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e8603070cffes0uKbenfH5a4hs-migrate-sqlite-codemode-docs-effect-4-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e86030f89ffeEB0Fcfw8wiS9F1",
+      "title": "Migrate http-recorder socket effect-4 (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e86030f89ffeEB0Fcfw8wiS9F1-migrate-http-recorder-socket-effect-4-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e860319f3ffeiQYLDQ2Oyk27kI",
+      "title": "Migrate httpapi-codegen to effect-4 (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e860319f3ffeiQYLDQ2Oyk27kI-migrate-httpapi-codegen-to-effect-4-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e860b1d3cffe9N5L4F5ucB4XlG",
+      "title": "OpenRouter paid model training violation",
+      "cwd": "/home/toxic",
+      "file": "ses_e860b1d3cffe9N5L4F5ucB4XlG-openrouter-paid-model-training-violation.txt",
+      "count": 265
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8640d0fbffebnYR6U7557Hah4",
+      "title": "Reproduce and fix tau natives error (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e8640d0fbffebnYR6U7557Hah4-reproduce-and-fix-tau-natives-error-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e86413a62ffeSBKa3piO1H6ZFz",
+      "title": "Reproduce and fix tau natives/xdev error (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e86413a62ffeSBKa3piO1H6ZFz-reproduce-and-fix-tau-natives-xdev-error-general-subagent-.txt",
+      "count": 2
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8641f0a3ffepiAvfFSFsmzQCb",
+      "title": "Investigate tau xdev native module issue (@explore subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e8641f0a3ffepiAvfFSFsmzQCb-investigate-tau-xdev-native-module-issue-explore-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e86546b4dffeN4iGzxPFSSx43W",
+      "title": "Tau natives troubleshooting",
+      "cwd": "/home/toxic",
+      "file": "ses_e86546b4dffeN4iGzxPFSSx43W-tau-natives-troubleshooting.txt",
+      "count": 212
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e86a6940affef6nbuDVRQmV7w3",
+      "title": "New session - 2026-10-26T17:54:25.909Z",
+      "cwd": "/tmp",
+      "file": "ses_e86a6940affef6nbuDVRQmV7w3-new-session-2026-10-26t17-54-25-909z.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e86a9cd89ffevpskxM6kUws3Uq",
+      "title": "New session - 2026-10-26T17:50:54.582Z",
+      "cwd": "/home/toxic/pens/olympus/products/kappa/kappa-code/packages/cli",
+      "file": "ses_e86a9cd89ffevpskxM6kUws3Uq-new-session-2026-10-26t17-50-54-582z.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e86abe946ffeKPWaVL6MrftRNY",
+      "title": "New session - 2026-10-26T17:48:36.409Z",
+      "cwd": "/home/toxic/pens/olympus/products/kappa/kappa-code/packages/cli",
+      "file": "ses_e86abe946ffeKPWaVL6MrftRNY-new-session-2026-10-26t17-48-36-409z.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e86af1e49ffest6JXZb27LP6m1",
+      "title": "New session - 2026-10-26T17:45:06.231Z",
+      "cwd": "/home/toxic/pens/olympus/products/kappa/kappa-code/packages/cli",
+      "file": "ses_e86af1e49ffest6JXZb27LP6m1-new-session-2026-10-26t17-45-06-231z.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e86afe17effeA0SOlumM6Fi674",
+      "title": "New session - 2026-10-26T17:44:16.257Z",
+      "cwd": "/tmp",
+      "file": "ses_e86afe17effeA0SOlumM6Fi674-new-session-2026-10-26t17-44-16-257z.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e86c9822cffeMIAFh3m651Wldk",
+      "title": "New session - 2026-10-26T17:16:16.730Z",
+      "cwd": "/home/toxic/pens/olympus/products/kappa/kappa-code/packages/cli",
+      "file": "ses_e86c9822cffeMIAFh3m651Wldk-new-session-2026-10-26t17-16-16-730z.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e86cfd1c6ffegWUCu7qRwC0T6p",
+      "title": "New session - 2026-10-26T17:09:23.129Z",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_e86cfd1c6ffegWUCu7qRwC0T6p-new-session-2026-10-26t17-09-23-129z.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e86d8fb18ffepdYdAS18xPUJBA",
+      "title": "New session - 2026-10-26T16:59:22.727Z",
+      "cwd": "/tmp",
+      "file": "ses_e86d8fb18ffepdYdAS18xPUJBA-new-session-2026-10-26t16-59-22-727z.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e86dc2fcbffel7CSt2fkfdwDsa",
+      "title": "New session - 2026-10-26T16:55:52.629Z",
+      "cwd": "/tmp",
+      "file": "ses_e86dc2fcbffel7CSt2fkfdwDsa-new-session-2026-10-26t16-55-52-629z.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e86e70123ffeFAB3nR7U6YyGAG",
+      "title": "New session - 2026-10-26T16:44:03.676Z",
+      "cwd": "/home/toxic",
+      "file": "ses_e86e70123ffeFAB3nR7U6YyGAG-new-session-2026-10-26t16-44-03-676z.txt",
+      "count": 3
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e89720a23ffeh1yiQl9LLAihCD",
+      "title": "Shallow search bun bin wiring (@explore subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e89720a23ffeh1yiQl9LLAihCD-shallow-search-bun-bin-wiring-explore-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e897bbf79ffebz7RM2S3JOebQ7",
+      "title": "Find kappa session compaction (@explore subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e897bbf79ffebz7RM2S3JOebQ7-find-kappa-session-compaction-explore-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e89802919ffexS7TRp3dK77r4c",
+      "title": "Fixing lagged sessions",
+      "cwd": "/home/toxic",
+      "file": "ses_e89802919ffexS7TRp3dK77r4c-fixing-lagged-sessions.txt",
+      "count": 40
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e899ebb07ffeYK2zYLx0XtL8nR",
+      "title": "Investigating slow kappa startup time",
+      "cwd": "/home/toxic",
+      "file": "ses_e899ebb07ffeYK2zYLx0XtL8nR-investigating-slow-kappa-startup-time.txt",
+      "count": 12
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e89c4c3ddffeJ2GwB58ONAra2x",
+      "title": "Tau session audit for libva warning",
+      "cwd": "/home/toxic",
+      "file": "ses_e89c4c3ddffeJ2GwB58ONAra2x-tau-session-audit-for-libva-warning.txt",
+      "count": 16
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8a6d83a9ffe106p3Jbihp0dfK",
+      "title": "Why kappa auto indexing is disabled for the main folder",
+      "cwd": "/home/toxic",
+      "file": "ses_e8a6d83a9ffe106p3Jbihp0dfK-why-kappa-auto-indexing-is-disabled-for-the-main-folder.txt",
+      "count": 24
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8ac1e955ffei8UCRQLRIfJseJ",
+      "title": "Exploring MCP registries and upstream servers",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_e8ac1e955ffei8UCRQLRIfJseJ-exploring-mcp-registries-and-upstream-servers.txt",
+      "count": 93
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8ac4188dffeqWpM3oPea5Otr1",
+      "title": "New session - 2026-10-25T22:43:42.578Z",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_e8ac4188dffeqWpM3oPea5Otr1-new-session-2026-10-25t22-43-42-578z.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8ac469daffeA5So5ORRSP62BK",
+      "title": "New session - 2026-10-25T22:43:21.766Z",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_e8ac469daffeA5So5ORRSP62BK-new-session-2026-10-25t22-43-21-766z.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8ac4abc6ffeX0MkWu66iYv7Wr",
+      "title": "New session - 2026-10-25T22:43:04.889Z",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_e8ac4abc6ffeX0MkWu66iYv7Wr-new-session-2026-10-25t22-43-04-889z.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8ac4f6a9ffeJnan3rqXRx0kZS",
+      "title": "New session - 2026-10-25T22:42:45.718Z",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_e8ac4f6a9ffeJnan3rqXRx0kZS-new-session-2026-10-25t22-42-45-718z.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8ac530b5ffe6kztEf6P7mFgte",
+      "title": "New session - 2026-10-25T22:42:30.858Z",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_e8ac530b5ffe6kztEf6P7mFgte-new-session-2026-10-25t22-42-30-858z.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8ac627b0ffeoHyB5v6uVaULIW",
+      "title": "New session - 2026-10-25T22:41:27.632Z",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_e8ac627b0ffeoHyB5v6uVaULIW-new-session-2026-10-25t22-41-27-632z.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8ae41e06ffeLrjt4OuqpNw1pi",
+      "title": "New session - 2026-10-25T22:08:44.025Z",
+      "cwd": "/home/toxic",
+      "file": "ses_e8ae41e06ffeLrjt4OuqpNw1pi-new-session-2026-10-25t22-08-44-025z.txt",
+      "count": 7
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8b9c0132ffewmTvmOqdwTyjy7",
+      "title": "New session - 2026-10-25T18:47:52.781Z",
+      "cwd": "/home/toxic",
+      "file": "ses_e8b9c0132ffewmTvmOqdwTyjy7-new-session-2026-10-25t18-47-52-781z.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8b9e7bb3ffeyHhNsQcLAZ1qI0",
+      "title": "New session - 2026-10-25T18:45:10.348Z",
+      "cwd": "/home/toxic",
+      "file": "ses_e8b9e7bb3ffeyHhNsQcLAZ1qI0-new-session-2026-10-25t18-45-10-348z.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8ba2a52dffe5agD4gAgbu464A",
+      "title": "New session - 2026-10-25T18:40:37.586Z",
+      "cwd": "/home/toxic",
+      "file": "ses_e8ba2a52dffe5agD4gAgbu464A-new-session-2026-10-25t18-40-37-586z.txt",
+      "count": 15
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8bf43660ffedCMS49riGf6Zug",
+      "title": "hodos wire-contract rewrite (dual TDD) (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e8bf43660ffedCMS49riGf6Zug-hodos-wire-contract-rewrite-dual-tdd-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8e6402a6ffeZ48RcD1rkJ1hB9",
+      "title": "Full typecheck (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e8e6402a6ffeZ48RcD1rkJ1hB9-full-typecheck-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8e641877ffeMDlvpq4SmdEIEE",
+      "title": "Typecheck run-loop.ts (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e8e641877ffeMDlvpq4SmdEIEE-typecheck-run-loop-ts-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8e64b097ffebI8etpQzF7ukvc",
+      "title": "Typecheck specific files (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e8e64b097ffebI8etpQzF7ukvc-typecheck-specific-files-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8e64bae5ffe2idznjdmkvDTTs",
+      "title": "Typecheck the kappa-code packages (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e8e64bae5ffe2idznjdmkvDTTs-typecheck-the-kappa-code-packages-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8e68d611ffeseX730U3L8c5Nr",
+      "title": "Extract runLoop from prompt.ts (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e8e68d611ffeseX730U3L8c5Nr-extract-runloop-from-prompt-ts-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8e693f89ffeOzGrY0x167qSHL",
+      "title": "Get line count (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e8e693f89ffeOzGrY0x167qSHL-get-line-count-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8e695eb3ffeBePv5vnoI6inML",
+      "title": "Search for runLoop in prompt.ts (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e8e695eb3ffeBePv5vnoI6inML-search-for-runloop-in-prompt-ts-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8e696a15ffedyf40Jwh7pjOS8",
+      "title": "Find runLoop implementation (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e8e696a15ffedyf40Jwh7pjOS8-find-runloop-implementation-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8e6c1fe3ffew505Pf0QAaozTy",
+      "title": "Extract runLoop function (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e8e6c1fe3ffew505Pf0QAaozTy-extract-runloop-function-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8e6c6f1dffexPXyr4DM2EKapZ",
+      "title": "Extract runLoop function (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e8e6c6f1dffexPXyr4DM2EKapZ-extract-runloop-function-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8e707bdcffelQ7xK5WlQphAwb",
+      "title": "Verify thresher provider injection (@explore subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e8e707bdcffelQ7xK5WlQphAwb-verify-thresher-provider-injection-explore-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8e7bc346ffexaz1aJ3723cjce",
+      "title": "Probe untried pinax models (@explore subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e8e7bc346ffexaz1aJ3723cjce-probe-untried-pinax-models-explore-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8e7f5fc3ffepaUUHnR9xqmX3T",
+      "title": "Gatehouse audit and Exa server setup",
+      "cwd": "/home/toxic",
+      "file": "ses_e8e7f5fc3ffepaUUHnR9xqmX3T-gatehouse-audit-and-exa-server-setup.txt",
+      "count": 67
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8e81b5e5ffe9jWj539lthhOZV",
+      "title": "Check for type errors (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e8e81b5e5ffe9jWj539lthhOZV-check-for-type-errors-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8e82491bffek6UrnW7akVaR7u",
+      "title": "Research+probe theta EAP model (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e8e82491bffek6UrnW7akVaR7u-research-probe-theta-eap-model-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8e83648effe4Vc0o6x08dBNzG",
+      "title": "Relaunch thresher proxy (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e8e83648effe4Vc0o6x08dBNzG-relaunch-thresher-proxy-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8e8386baffeCe9kENdgHNdLAB",
+      "title": "Relaunch thresher gatehouse proxy (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e8e8386baffeCe9kENdgHNdLAB-relaunch-thresher-gatehouse-proxy-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8e841d95ffeF7q16qMcYGh8dV",
+      "title": "Typecheck specific files again (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e8e841d95ffeF7q16qMcYGh8dV-typecheck-specific-files-again-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8e842aedffeKkuRZSPeqpUt0L",
+      "title": "Typecheck specific files (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e8e842aedffeKkuRZSPeqpUt0L-typecheck-specific-files-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8e8447c8ffeH8ko9kWJPcEqXF",
+      "title": "Run typecheck again (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e8e8447c8ffeH8ko9kWJPcEqXF-run-typecheck-again-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8e845441ffejXRwNa3BATwx8U",
+      "title": "Typecheck the kappa-code packages (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e8e845441ffejXRwNa3BATwx8U-typecheck-the-kappa-code-packages-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8ea105a7ffebmMhq6RhCJHtCZ",
+      "title": "New session - 2026-10-25T04:43:32.312Z",
+      "cwd": "/home/toxic/pens/olympus/products/kappa/kappa-code",
+      "file": "ses_e8ea105a7ffebmMhq6RhCJHtCZ-new-session-2026-10-25t04-43-32-312z.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8eaea5a0ffecFfK7FsG02gAO0",
+      "title": "Discover AGENTS.md load paths (@explore subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e8eaea5a0ffecFfK7FsG02gAO0-discover-agents-md-load-paths-explore-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8eb03750ffe56NvXjS1w6eiyJ",
+      "title": "New session - 2026-10-25T04:26:56.559Z",
+      "cwd": "/home/toxic",
+      "file": "ses_e8eb03750ffe56NvXjS1w6eiyJ-new-session-2026-10-25t04-26-56-559z.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8eb12eb0ffeMs0AvhHpjRLu21",
+      "title": "New session - 2026-10-25T04:25:53.231Z",
+      "cwd": "/home/toxic",
+      "file": "ses_e8eb12eb0ffeMs0AvhHpjRLu21-new-session-2026-10-25t04-25-53-231z.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8f000c76ffeOaK4Fr7Nz0R3vy",
+      "title": "Phase G cross-cutting coverage (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e8f000c76ffeOaK4Fr7Nz0R3vy-phase-g-cross-cutting-coverage-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8f0017b1ffeQU9EWUso3ojZFT",
+      "title": "Phase 5 tau binary deploy (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e8f0017b1ffeQU9EWUso3ojZFT-phase-5-tau-binary-deploy-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8f0023baffeYCQ19bQTRPg7SG",
+      "title": "Phase 2b manifest generator (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e8f0023baffeYCQ19bQTRPg7SG-phase-2b-manifest-generator-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e8f002c53ffep63MGJYjdqHV2d",
+      "title": "Phase 2a estate/bin dissolve (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e8f002c53ffep63MGJYjdqHV2d-phase-2a-estate-bin-dissolve-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e905e3697ffeSBT4DkjxUxi3FW",
+      "title": "Try git-mutator with explicit path (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e905e3697ffeSBT4DkjxUxi3FW-try-git-mutator-with-explicit-path-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e905e4007ffe2TyO0MSenq1l1j",
+      "title": "Commit and push changes (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e905e4007ffe2TyO0MSenq1l1j-commit-and-push-changes-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e905e5da1ffehj32oPjFcAFMlC",
+      "title": "Run git-mutator status (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e905e5da1ffehj32oPjFcAFMlC-run-git-mutator-status-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e905e7519ffeB4xHvHZAnyoh5N",
+      "title": "Check git directory (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e905e7519ffeB4xHvHZAnyoh5N-check-git-directory-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e905e83e6ffeTBnbeywRdNRMNV",
+      "title": "Git status (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e905e83e6ffeTBnbeywRdNRMNV-git-status-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e905e9c72ffeK12ZzaUZ9dGg44",
+      "title": "Git status and commit (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e905e9c72ffeK12ZzaUZ9dGg44-git-status-and-commit-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e905ed61bffeIAKsbYMO7RINRX",
+      "title": "Test simple curl (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e905ed61bffeIAKsbYMO7RINRX-test-simple-curl-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e905ee8d6ffeN79d3ebHVLJmUt",
+      "title": "Run probe-completions for multiple models (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e905ee8d6ffeN79d3ebHVLJmUt-run-probe-completions-for-multiple-models-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e905f1421ffe9GoptTTA1XkAo4",
+      "title": "Test bun command (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e905f1421ffe9GoptTTA1XkAo4-test-bun-command-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e905f1e56ffeBwjS0Y07WGk2BQ",
+      "title": "Run probe-completions for minimax-m3 (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e905f1e56ffeBwjS0Y07WGk2BQ-run-probe-completions-for-minimax-m3-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e905f48d9ffebCHCkJp16p70cR",
+      "title": "Check API key and run probes (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e905f48d9ffebCHCkJp16p70cR-check-api-key-and-run-probes-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e905f555cffeV5n3RlD785y8Al",
+      "title": "Run probe-completions for minimax-m3 with output (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e905f555cffeV5n3RlD785y8Al-run-probe-completions-for-minimax-m3-with-output-general-sub.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e905f5fe5ffe7Xh2S8Ax0Vj1as",
+      "title": "Run probe-completions for minimax-m3 (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e905f5fe5ffe7Xh2S8Ax0Vj1as-run-probe-completions-for-minimax-m3-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e905f7f34ffeR5nmlAqJUgw2xW",
+      "title": "Make scripts executable and run completion probes (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e905f7f34ffeR5nmlAqJUgw2xW-make-scripts-executable-and-run-completion-probes-general-su.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e90646470ffeZ5d8V29h6d9N2i",
+      "title": "Investigate config and TUI effects",
+      "cwd": "/home/toxic",
+      "file": "ses_e90646470ffeZ5d8V29h6d9N2i-investigate-config-and-tui-effects.txt",
+      "count": 9
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e90d390fcffea5zB68iDoT1V1K",
+      "title": "Fix KRK left monitor audio issue",
+      "cwd": "/home/toxic/pens/estate",
+      "file": "ses_e90d390fcffea5zB68iDoT1V1K-fix-krk-left-monitor-audio-issue.txt",
+      "count": 65
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e92c9691effemw2oqC95UetcIi",
+      "title": "Extract architect intent docs (@explore subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e92c9691effemw2oqC95UetcIi-extract-architect-intent-docs-explore-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e92c99129ffeTORknR0DsK1Hmt",
+      "title": "Map router/provider product tree (@explore subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e92c99129ffeTORknR0DsK1Hmt-map-router-provider-product-tree-explore-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e92d681a6ffeKjb8spx2yHAfqP",
+      "title": "Survey router/proxy products (@explore subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e92d681a6ffeKjb8spx2yHAfqP-survey-router-proxy-products-explore-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e92f0aadaffeb6ADof2JRzYhSt",
+      "title": "Analyze pinax freeinference (@explore subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_e92f0aadaffeb6ADof2JRzYhSt-analyze-pinax-freeinference-explore-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e92f0af23ffeKbu5zT4dEzTPBE",
+      "title": "Find and read papers (@general subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_e92f0af23ffeKbu5zT4dEzTPBE-find-and-read-papers-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e92f0b4b8ffeOIGWidAAnDHrh0",
+      "title": "Read config docs (@explore subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_e92f0b4b8ffeOIGWidAAnDHrh0-read-config-docs-explore-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e92f0cc9fffeisZTgWanulfVcL",
+      "title": "Analyze freeinference config surface (@general subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_e92f0cc9fffeisZTgWanulfVcL-analyze-freeinference-config-surface-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e92f0d7baffeCxx0EHAvVk3c4d",
+      "title": "Search and read research papers (@general subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_e92f0d7baffeCxx0EHAvVk3c4d-search-and-read-research-papers-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e92f0ddc9ffeZGk4NLsLRFbvvU",
+      "title": "Read all estate model config docs (@general subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_e92f0ddc9ffeZGk4NLsLRFbvvU-read-all-estate-model-config-docs-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e930db8d1ffe4nSPc0KElNF6tG",
+      "title": "Explore kappa codebase (@explore subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_e930db8d1ffe4nSPc0KElNF6tG-explore-kappa-codebase-explore-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e930e8068ffenQzELNc05n5eq4",
+      "title": "VS Code extension launch script",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_e930e8068ffenQzELNc05n5eq4-vs-code-extension-launch-script.txt",
+      "count": 10
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e931cde96ffe82KhS1Ku15aAx5",
+      "title": "Minimax freeinference kappa audit",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_e931cde96ffe82KhS1Ku15aAx5-minimax-freeinference-kappa-audit.txt",
+      "count": 6
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e931f1e84ffeh9PdAEPIhFo3ah",
+      "title": "Research headed browserless (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e931f1e84ffeh9PdAEPIhFo3ah-research-headed-browserless-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9370c9c4ffeFxPJtnGEoPMqv4",
+      "title": "Map doorbell MCP bridge + tunnel (@explore subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_e9370c9c4ffeFxPJtnGEoPMqv4-map-doorbell-mcp-bridge-tunnel-explore-subagent-.txt",
+      "count": 2
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9373932affeyE4HhcMjHsFJx7",
+      "title": "Research estate integration (@explore subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9373932affeyE4HhcMjHsFJx7-research-estate-integration-explore-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e937531c0ffe06dSQDKKy5zX2s",
+      "title": "Explore estate structure (@explore subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e937531c0ffe06dSQDKKy5zX2s-explore-estate-structure-explore-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e937be143ffe96QKcneOwdiZK0",
+      "title": "Verify MCP SDK WS transport (@explore subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_e937be143ffe96QKcneOwdiZK0-verify-mcp-sdk-ws-transport-explore-subagent-.txt",
+      "count": 2
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e937bf441ffexV6TErfSW5648l",
+      "title": "Map delendai serve + transport (@explore subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_e937bf441ffexV6TErfSW5648l-map-delendai-serve-transport-explore-subagent-.txt",
+      "count": 2
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e938b43ccffe5q3UC2W13inovF",
+      "title": "Map estate web dashboards (@explore subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_e938b43ccffe5q3UC2W13inovF-map-estate-web-dashboards-explore-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e938c2919ffeJB7eU3X0EiKB6z",
+      "title": "Map estate web UIs and dashboards (@explore subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_e938c2919ffeJB7eU3X0EiKB6z-map-estate-web-uis-and-dashboards-explore-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e939c9dd6ffeQqmGRNthZ3aBWM",
+      "title": "Fix kappa board bridge crash-loop (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e939c9dd6ffeQqmGRNthZ3aBWM-fix-kappa-board-bridge-crash-loop-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e939cadc3ffe9JDBJC2XhavS1B",
+      "title": "Investigate Hindsight estate bank (@explore subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e939cadc3ffe9JDBJC2XhavS1B-investigate-hindsight-estate-bank-explore-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e939cbc95ffeBjf9AXGca96uSg",
+      "title": "Fix kappa board bridge crash-loop (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e939cbc95ffeBjf9AXGca96uSg-fix-kappa-board-bridge-crash-loop-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e93a656c3ffebanuLpkc6BANBL",
+      "title": "Bun canary diagnostics",
+      "cwd": "/home/toxic",
+      "file": "ses_e93a656c3ffebanuLpkc6BANBL-bun-canary-diagnostics.txt",
+      "count": 173
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e93ac3d76ffe5SxczevSzp22z9",
+      "title": "Phase 1 repoint work (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e93ac3d76ffe5SxczevSzp22z9-phase-1-repoint-work-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e93ae39d8ffeWgVozrvvdCpBm7",
+      "title": "Phase 0 ref enumeration (@explore subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e93ae39d8ffeWgVozrvvdCpBm7-phase-0-ref-enumeration-explore-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e93b26dcdffeYuaVNUfM6sAvjX",
+      "title": "Deploy tau linux-x64 binary",
+      "cwd": "/home/toxic",
+      "file": "ses_e93b26dcdffeYuaVNUfM6sAvjX-deploy-tau-linux-x64-binary.txt",
+      "count": 161
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e93f4ff07ffeXqOgf0YQ8HHcns",
+      "title": "Audit kappa CLI for same failure modes (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e93f4ff07ffeXqOgf0YQ8HHcns-audit-kappa-cli-for-same-failure-modes-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e93f5b81effePEFl2kpQd04F51",
+      "title": "Audit tau tool registration and natives (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e93f5b81effePEFl2kpQd04F51-audit-tau-tool-registration-and-natives-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e93f606b1ffe6Pm2YIBpVDjP6Y",
+      "title": "Audit tau mode_change + goal loop (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e93f606b1ffe6Pm2YIBpVDjP6Y-audit-tau-mode-change-goal-loop-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e93f6288dffeLWGnn5sQQkAgQq",
+      "title": "Audit tau abort/empty-content path (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e93f6288dffeLWGnn5sQQkAgQq-audit-tau-abort-empty-content-path-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e93f8a175ffeygZA56tCgLtVQ9",
+      "title": "Review tau report bundle",
+      "cwd": "/home/toxic",
+      "file": "ses_e93f8a175ffeygZA56tCgLtVQ9-review-tau-report-bundle.txt",
+      "count": 109
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e97df4edcffeZZap0zioO5xU24",
+      "title": "Find .tau dumps in .tau directory",
+      "cwd": "/home/toxic",
+      "file": "ses_e97df4edcffeZZap0zioO5xU24-find-tau-dumps-in-tau-directory.txt",
+      "count": 34
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9803d10bffe4YoquLwGd0hlVv",
+      "title": "New session - 2026-10-23T08:59:02.772Z",
+      "cwd": "/home/toxic",
+      "file": "ses_e9803d10bffe4YoquLwGd0hlVv-new-session-2026-10-23t08-59-02-772z.txt",
+      "count": 2
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9807ca02ffeqC7EetPiihB08E",
+      "title": "New session - 2026-10-23T08:54:42.429Z",
+      "cwd": "/home/toxic",
+      "file": "ses_e9807ca02ffeqC7EetPiihB08E-new-session-2026-10-23t08-54-42-429z.txt",
+      "count": 2
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e982567e5ffeY4B9MKcmaG99qQ",
+      "title": "Delendai work subcommands",
+      "cwd": "/home/toxic",
+      "file": "ses_e982567e5ffeY4B9MKcmaG99qQ-delendai-work-subcommands.txt",
+      "count": 59
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e982d2abfffeajOw6e0c84aCzg",
+      "title": "Unified build/deploy/health stack plan",
+      "cwd": "/home/toxic",
+      "file": "ses_e982d2abfffeajOw6e0c84aCzg-unified-build-deploy-health-stack-plan.txt",
+      "count": 8
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e98ae0777ffesR1wB2uiLSb0W1",
+      "title": "Raise LSP coverage (bg slice 2) (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e98ae0777ffesR1wB2uiLSb0W1-raise-lsp-coverage-bg-slice-2-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e98ae214fffeOfYQ2aouErsCaz",
+      "title": "Raise coverage to 90% (bg) (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e98ae214fffeOfYQ2aouErsCaz-raise-coverage-to-90-bg-general-subagent-.txt",
+      "count": 3
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e98c22a80ffelHh0NVzUelI72t",
+      "title": "Nativelink deploy + pitchfork (bg) (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e98c22a80ffelHh0NVzUelI72t-nativelink-deploy-pitchfork-bg-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e98c5116bffesYQxr6OKMjIev0",
+      "title": "No-hardcodes config settings (bg) (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e98c5116bffesYQxr6OKMjIev0-no-hardcodes-config-settings-bg-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e98cdb37cffedRLFwzTYOO9Z4x",
+      "title": "Coverage gate (bg, 90% required) (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e98cdb37cffedRLFwzTYOO9Z4x-coverage-gate-bg-90-required-general-subagent-.txt",
+      "count": 5
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e98d59132ffekWIKmnXlEQ7RnZ",
+      "title": "Repair-lane F2 (bg, C-root fixes) (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e98d59132ffekWIKmnXlEQ7RnZ-repair-lane-f2-bg-c-root-fixes-general-subagent-.txt",
+      "count": 3
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e98d5b5c8ffeMd3raXtEa7MnCo",
+      "title": "Pens sweep relaunch (bg) (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e98d5b5c8ffeMd3raXtEa7MnCo-pens-sweep-relaunch-bg-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e98e0ae7effeQkdOOOdEY4jj0a",
+      "title": "CI-fix relaunch (bg, directives) (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e98e0ae7effeQkdOOOdEY4jj0a-ci-fix-relaunch-bg-directives-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e98eaf41dffeH3JMFhw5UOXPca",
+      "title": "Pens-wide untracked track (bg) (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e98eaf41dffeH3JMFhw5UOXPca-pens-wide-untracked-track-bg-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e98f0d635ffez8fiA2TvjJFLwH",
+      "title": "CI-fix repair lane (background) (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e98f0d635ffez8fiA2TvjJFLwH-ci-fix-repair-lane-background-general-subagent-.txt",
+      "count": 3
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e98f3de30ffe1IvOBxY46NZPpm",
+      "title": "Forge release-lane drop-in (bin+rig) (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e98f3de30ffe1IvOBxY46NZPpm-forge-release-lane-drop-in-bin-rig-general-subagent-.txt",
+      "count": 2
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e98f7681cffeJbTfxqzELdS57W",
+      "title": "Backgrounder A restart (C2) (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e98f7681cffeJbTfxqzELdS57W-backgrounder-a-restart-c2-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e98f7ef18ffe4dQSQB8OeGmx5K",
+      "title": "Backgrounder + steering (fresh C2) (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e98f7ef18ffe4dQSQB8OeGmx5K-backgrounder-steering-fresh-c2-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e98f853a8ffeJJ1N561ko1WZmL",
+      "title": "Memory Phase 2 (fresh restart, C2) (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e98f853a8ffeJJ1N561ko1WZmL-memory-phase-2-fresh-restart-c2-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e99037224ffeMKiaJxVdz27qZp",
+      "title": "LSP-kairos diagnostics + right panel (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e99037224ffeMKiaJxVdz27qZp-lsp-kairos-diagnostics-right-panel-general-subagent-.txt",
+      "count": 3
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e99039cb9ffeyIKY2YJI31SMyV",
+      "title": "Memory Phase 2 into kappa core (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e99039cb9ffeyIKY2YJI31SMyV-memory-phase-2-into-kappa-core-general-subagent-.txt",
+      "count": 2
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9903b9d7ffejEsSUz04LQSeE3",
+      "title": "Runtime auto-background layer + steering (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9903b9d7ffejEsSUz04LQSeE3-runtime-auto-background-layer-steering-general-subagent-.txt",
+      "count": 14
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e990d0ec6ffeoPgkhLiSb9U0D2",
+      "title": "Build memory into kappa-code like tau (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e990d0ec6ffeoPgkhLiSb9U0D2-build-memory-into-kappa-code-like-tau-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e990d2f88ffeYfbHnnCtcoRtLv",
+      "title": "Fix kappa-code CI failures (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e990d2f88ffeYfbHnnCtcoRtLv-fix-kappa-code-ci-failures-general-subagent-.txt",
+      "count": 2
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e99261662ffedxk5H7lnyKoO5v",
+      "title": "New session - 2026-10-23T03:41:59.581Z",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_e99261662ffedxk5H7lnyKoO5v-new-session-2026-10-23t03-41-59-581z.txt",
+      "count": 24
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e99780f6bffegrOKKTBYZhxIok",
+      "title": "Wire memory via hindsight (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e99780f6bffegrOKKTBYZhxIok-wire-memory-via-hindsight-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9979c3ccffePAykVff4c37MMC",
+      "title": "Extract providers into modules (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9979c3ccffePAykVff4c37MMC-extract-providers-into-modules-general-subagent-.txt",
+      "count": 2
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e997fbcdcffev6bXo4wzsxNQBf",
+      "title": "New session - 2026-10-23T02:04:04.259Z",
+      "cwd": "/home/toxic",
+      "file": "ses_e997fbcdcffev6bXo4wzsxNQBf-new-session-2026-10-23t02-04-04-259z.txt",
+      "count": 327
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9988365effeHvs4JjojN8EW2d",
+      "title": "Add --help to all delend tools (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9988365effeHvs4JjojN8EW2d-add-help-to-all-delend-tools-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e99aebdf0ffe4emqS2PlLnLfRJ",
+      "title": "Squawk-ws: add gate + publish (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e99aebdf0ffe4emqS2PlLnLfRJ-squawk-ws-add-gate-publish-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e99aec0dfffe6YP0CQKDcqs5qW",
+      "title": "Squawk: confirm gate + publish (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e99aec0dfffe6YP0CQKDcqs5qW-squawk-confirm-gate-publish-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e99aec3e0ffeD1XYF6hutzdJ5U",
+      "title": "Pylae: add real gate + publish (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e99aec3e0ffeD1XYF6hutzdJ5U-pylae-add-real-gate-publish-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9a153f44ffeomKwmwcny8HEqM",
+      "title": "Checkpoint squawk-ws root-redirect changes (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9a153f44ffeomKwmwcny8HEqM-checkpoint-squawk-ws-root-redirect-changes-general-subagent-.txt",
+      "count": 2
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9a154189ffec31rwA2tKeciAQ",
+      "title": "Checkpoint squawk root-redirect changes (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9a154189ffec31rwA2tKeciAQ-checkpoint-squawk-root-redirect-changes-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9a15440affe5rt10exnMiIl31",
+      "title": "Checkpoint pylae changes to work-ref (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9a15440affe5rt10exnMiIl31-checkpoint-pylae-changes-to-work-ref-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9a16393effemv57LEWzDr6GEX",
+      "title": "Checkpoint squawk-ws root-redirect changes (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9a16393effemv57LEWzDr6GEX-checkpoint-squawk-ws-root-redirect-changes-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9a17a218ffeu5RbwTlByMjv0i",
+      "title": "Merge estate work to main and redeploy",
+      "cwd": "/home/toxic",
+      "file": "ses_e9a17a218ffeu5RbwTlByMjv0i-merge-estate-work-to-main-and-redeploy.txt",
+      "count": 61
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9a23ab3cffe5uEk6HqrvKZsOu",
+      "title": "Complete README rewrite (audit-first) (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9a23ab3cffe5uEk6HqrvKZsOu-complete-readme-rewrite-audit-first-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9a2bf530ffet98snVjU3km1nb",
+      "title": "New session - 2026-10-22T22:55:57.647Z",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_e9a2bf530ffet98snVjU3km1nb-new-session-2026-10-22t22-55-57-647z.txt",
+      "count": 122
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9a4bd123fferHbVXsqznlFXMt",
+      "title": "New session - 2026-10-22T22:21:09.724Z",
+      "cwd": "/home/toxic",
+      "file": "ses_e9a4bd123fferHbVXsqznlFXMt-new-session-2026-10-22t22-21-09-724z.txt",
+      "count": 3
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9a4c8440ffebZvUGdgQh66JvI",
+      "title": "Research Oct-2026 monorepo registry (@general subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_e9a4c8440ffebZvUGdgQh66JvI-research-oct-2026-monorepo-registry-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9a4c8b22ffeo378qU2NY10z0W",
+      "title": "Research Oct-2026 build+runtime (@general subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_e9a4c8b22ffeo378qU2NY10z0W-research-oct-2026-build-runtime-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9a4c9e3cffehRX3jaAN474Z24",
+      "title": "Research Oct-2026 VCS stack (@general subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_e9a4c9e3cffehRX3jaAN474Z24-research-oct-2026-vcs-stack-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9a680325ffeDwz5mwWGnJCF9E",
+      "title": "Benchmark 10+ vision models (@general subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_e9a680325ffeDwz5mwWGnJCF9E-benchmark-10-vision-models-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9a6ae9feffegcy4B22cfTS5mp",
+      "title": "Audit openbox stoplight pattern (@general subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_e9a6ae9feffegcy4B22cfTS5mp-audit-openbox-stoplight-pattern-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9a72d115ffeUUwxs0KxUjH8xh",
+      "title": "Nudge delend-coverage agent (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9a72d115ffeUUwxs0KxUjH8xh-nudge-delend-coverage-agent-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9a76a6abffeBKbtcDpfZBwu43",
+      "title": "Write neutral agent-paradigm audit report+skill (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9a76a6abffeBKbtcDpfZBwu43-write-neutral-agent-paradigm-audit-report-skill-general-suba.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9a783651ffeT6p9Wv1MgpR3BV",
+      "title": "Land Kappa marketplace to main (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9a783651ffeT6p9Wv1MgpR3BV-land-kappa-marketplace-to-main-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9a7bcbfaffe8sNaZMPOoh5PVg",
+      "title": "Add C2 UX to squawk (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9a7bcbfaffe8sNaZMPOoh5PVg-add-c2-ux-to-squawk-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9a7cab3cffeGV3SOgA1ONM9oS",
+      "title": "Resume delend 90% coverage (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9a7cab3cffeGV3SOgA1ONM9oS-resume-delend-90-coverage-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9a7d51c2ffe6hjJIbehGA7vF1",
+      "title": "Resume delend 90% coverage (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9a7d51c2ffe6hjJIbehGA7vF1-resume-delend-90-coverage-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9a7e4c90ffeNwnjxFP28KyPMn",
+      "title": "Commit Kappa marketplace (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9a7e4c90ffeNwnjxFP28KyPMn-commit-kappa-marketplace-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9a80aa9bffe1m9qUpGtTtWv0G",
+      "title": "90% coverage for delend suite (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9a80aa9bffe1m9qUpGtTtWv0G-90-coverage-for-delend-suite-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9a81eed1ffeocwz0lTRJqASap",
+      "title": "Add Kappa extension marketplace (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9a81eed1ffeocwz0lTRJqASap-add-kappa-extension-marketplace-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9a83203dffeyeAAxq0CCiYbrg",
+      "title": "Checkpoint unified tailscale routes (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9a83203dffeyeAAxq0CCiYbrg-checkpoint-unified-tailscale-routes-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9a837423ffeCAw3GGnb836rRD",
+      "title": "Replay unified tailscale endpoints (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9a837423ffeCAw3GGnb836rRD-replay-unified-tailscale-endpoints-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9a840201ffentLL2fCh02z7xE",
+      "title": "Commit Kilo hindsight plugin (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9a840201ffentLL2fCh02z7xE-commit-kilo-hindsight-plugin-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9a86fa71ffe7a96X4idnLcWm5",
+      "title": "Kilo hindsight plugin replay (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9a86fa71ffe7a96X4idnLcWm5-kilo-hindsight-plugin-replay-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9a877d74ffexJ6tFzv7RhQvbe",
+      "title": "Fix broken market-loop rig (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9a877d74ffexJ6tFzv7RhQvbe-fix-broken-market-loop-rig-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9a88012bffe0vLvNgof0sQYZ4",
+      "title": "BG: oracle hindsight reconcile (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9a88012bffe0vLvNgof0sQYZ4-bg-oracle-hindsight-reconcile-general-subagent-.txt",
+      "count": 2
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9a881cf0ffeI7d3YTVvd6VYcE",
+      "title": "BG: Kilo hindsight plugin (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9a881cf0ffeI7d3YTVvd6VYcE-bg-kilo-hindsight-plugin-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9a882d5bffeW4H7x5YFelKOUR",
+      "title": "BG: unified tailscale endpoints (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9a882d5bffeW4H7x5YFelKOUR-bg-unified-tailscale-endpoints-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9a891aecffeHCqWPBDF9gT0Jw",
+      "title": "Commit delend-oracle + iterate to main (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9a891aecffeHCqWPBDF9gT0Jw-commit-delend-oracle-iterate-to-main-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9a89d231ffeQlGZi71RqBLcV9",
+      "title": "Build delend-oracle helper (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9a89d231ffeQlGZi71RqBLcV9-build-delend-oracle-helper-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9a8a18d0ffeF51Bq4LJn2ny3d",
+      "title": "Write unified tailscale endpoints (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9a8a18d0ffeF51Bq4LJn2ny3d-write-unified-tailscale-endpoints-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9a8a259affeP39WtwuNmg2Zrb",
+      "title": "Give oracle full hindsight (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9a8a259affeP39WtwuNmg2Zrb-give-oracle-full-hindsight-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9a8a3ef2ffeYUWi2atPQjTxQ5",
+      "title": "Find+install Kilo hindsight plugin (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9a8a3ef2ffeYUWi2atPQjTxQ5-find-install-kilo-hindsight-plugin-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9a8ab771ffehmJvfPtJ5RWy0z",
+      "title": "Add positional N to delend-iterate (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9a8ab771ffehmJvfPtJ5RWy0z-add-positional-n-to-delend-iterate-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9a9132b5ffe9LycvO6e8yXcpI",
+      "title": "Add emergent unified tunnel endpoints (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9a9132b5ffe9LycvO6e8yXcpI-add-emergent-unified-tunnel-endpoints-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9d7ceb08ffe3ZfRqT2CwlLmOY",
+      "title": "Rotate + scrub committed secrets (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9d7ceb08ffe3ZfRqT2CwlLmOY-rotate-scrub-committed-secrets-general-subagent-.txt",
+      "count": 3
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9d7db3a9ffeN14SfAsC9BBVay",
+      "title": "Merge gatehouse+doorbell+mcpproxy (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9d7db3a9ffeN14SfAsC9BBVay-merge-gatehouse-doorbell-mcpproxy-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9d9a20a0ffe2d5bcClmkKOoaY",
+      "title": "Phase B rig for remaining holders (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9d9a20a0ffe2d5bcClmkKOoaY-phase-b-rig-for-remaining-holders-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9da21e71ffetYWauPqKQ33YxV",
+      "title": "Phase B rig for ranch-structure repos (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9da21e71ffetYWauPqKQ33YxV-phase-b-rig-for-ranch-structure-repos-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9da51a2effeU55X5WsWs9UGEa",
+      "title": "Phase B rig for estate-ops repos (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9da51a2effeU55X5WsWs9UGEa-phase-b-rig-for-estate-ops-repos-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9dbab360ffeHcFJNPbn19uium",
+      "title": "Verify README + repo push (@general subagent)",
+      "cwd": "/home/toxic/pens/estate",
+      "file": "ses_e9dbab360ffeHcFJNPbn19uium-verify-readme-repo-push-general-subagent-.txt",
+      "count": 2
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9dbabfe7ffe67vG7WuZRUguwg",
+      "title": "Audit gatehouse live state (@general subagent)",
+      "cwd": "/home/toxic/pens/estate",
+      "file": "ses_e9dbabfe7ffe67vG7WuZRUguwg-audit-gatehouse-live-state-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9dbc9061ffedda0aT7uW6MCzR",
+      "title": "Phase B rig for corral-orchestration repos (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9dbc9061ffedda0aT7uW6MCzR-phase-b-rig-for-corral-orchestration-repos-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9dc1aca7ffeE1RNrfGkeOWw0x",
+      "title": "Phase B rig for gatehouse-mcp repos (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9dc1aca7ffeE1RNrfGkeOWw0x-phase-b-rig-for-gatehouse-mcp-repos-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9dc69e59ffe5Tx32P4BQDn6tl",
+      "title": "Phase B rig tooling for olympus repos (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9dc69e59ffe5Tx32P4BQDn6tl-phase-b-rig-tooling-for-olympus-repos-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9dccda93ffezljtiBhXmTx2iF",
+      "title": "De-submodule migration to meta peers (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9dccda93ffezljtiBhXmTx2iF-de-submodule-migration-to-meta-peers-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9dd6d549ffeCaDZecUywDQeFU",
+      "title": "Deploy full theme map + override (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9dd6d549ffeCaDZecUywDQeFU-deploy-full-theme-map-override-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9dd79846ffekkOIRVgR65z6pg",
+      "title": "Market + daemon rig/persona audit (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9dd79846ffekkOIRVgR65z6pg-market-daemon-rig-persona-audit-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9dda30a3ffe5vmuJNm3pBS4l2",
+      "title": "Paper-finder + minimal theme design (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9dda30a3ffe5vmuJNm3pBS4l2-paper-finder-minimal-theme-design-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9e3118ecffep7NDj7pfWEPQ75",
+      "title": "Sleep 45 seconds (@general subagent)",
+      "cwd": "/home/toxic/pens/estate/ranch/kappa/kappa-code",
+      "file": "ses_e9e3118ecffep7NDj7pfWEPQ75-sleep-45-seconds-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9e311d20ffeWY3STcs23ZoJmH",
+      "title": "New session - 2026-10-22T04:11:50.879Z",
+      "cwd": "/home/toxic/pens/estate/ranch/kappa/kappa-code",
+      "file": "ses_e9e311d20ffeWY3STcs23ZoJmH-new-session-2026-10-22t04-11-50-879z.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9e31bb89ffez9q2qWvpfYMIl1",
+      "title": "Run 60s foreground sleep (@general subagent)",
+      "cwd": "/home/toxic/pens/estate/ranch/kappa/kappa-code",
+      "file": "ses_e9e31bb89ffez9q2qWvpfYMIl1-run-60s-foreground-sleep-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9e31ce68ffetRUV2NOWpjXcGm",
+      "title": "New session - 2026-10-22T04:11:05.495Z",
+      "cwd": "/home/toxic/pens/estate/ranch/kappa/kappa-code",
+      "file": "ses_e9e31ce68ffetRUV2NOWpjXcGm-new-session-2026-10-22t04-11-05-495z.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9e474485ffe7sjEkfJlFvuYj8",
+      "title": "Code-race EAP billing relink (@general subagent)",
+      "cwd": "/home/toxic/pens/estate",
+      "file": "ses_e9e474485ffe7sjEkfJlFvuYj8-code-race-eap-billing-relink-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9e4772eaffec2dj3SwmoAqWKg",
+      "title": "Relink EAP billing via raced browser (@general subagent)",
+      "cwd": "/home/toxic/pens/estate",
+      "file": "ses_e9e4772eaffec2dj3SwmoAqWKg-relink-eap-billing-via-raced-browser-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9e4902c4ffeYjicEYquNk1wy0",
+      "title": "Relink EAP project billing to Main (@general subagent)",
+      "cwd": "/home/toxic/pens/estate",
+      "file": "ses_e9e4902c4ffeYjicEYquNk1wy0-relink-eap-project-billing-to-main-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9e4a3893ffeag7KxRpAc5P9TE",
+      "title": "Relink EAP project to Main billing (@general subagent)",
+      "cwd": "/home/toxic/pens/estate",
+      "file": "ses_e9e4a3893ffeag7KxRpAc5P9TE-relink-eap-project-to-main-billing-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9e9237faffeKhC8wWoaADB3PC",
+      "title": "Organize /tmp with intent to move (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9e9237faffeKhC8wWoaADB3PC-organize-tmp-with-intent-to-move-general-subagent-.txt",
+      "count": 2
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9e969cecffe2YArG0MfTnYLVG",
+      "title": "New session - 2026-10-22T02:20:59.027Z",
+      "cwd": "/home/toxic",
+      "file": "ses_e9e969cecffe2YArG0MfTnYLVG-new-session-2026-10-22t02-20-59-027z.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9ea5e2e3ffenCv8xOovN0y4Pd",
+      "title": "Tau unlimited-429 + fast build (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9ea5e2e3ffenCv8xOovN0y4Pd-tau-unlimited-429-fast-build-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9eb003c8ffeq4SKPthclYpmd5",
+      "title": "Tau 429-retry + fast build default (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9eb003c8ffeq4SKPthclYpmd5-tau-429-retry-fast-build-default-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9eb244d4ffewWf5wieXhvZVXg",
+      "title": "Unlimited 429-retry config for Tau+Kappa (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9eb244d4ffewWf5wieXhvZVXg-unlimited-429-retry-config-for-tau-kappa-general-subagent-.txt",
+      "count": 2
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9eb40cd0ffexsJlc7ccgeiJgP",
+      "title": "Restore ctrl+b background hotkey in Kappa (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9eb40cd0ffexsJlc7ccgeiJgP-restore-ctrl-b-background-hotkey-in-kappa-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9eb49a9affeb85H1Zf36o3Nlj",
+      "title": "Harden kite-cli install from source (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9eb49a9affeb85H1Zf36o3Nlj-harden-kite-cli-install-from-source-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9eb60bb2ffegi2qVBaYiDKSjN",
+      "title": "Fuzz usage-limit as dev-env (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9eb60bb2ffegi2qVBaYiDKSjN-fuzz-usage-limit-as-dev-env-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9eb61cdaffeWQEYnnfKF8CB1q",
+      "title": "Verify+route shim stdio transport (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9eb61cdaffeWQEYnnfKF8CB1q-verify-route-shim-stdio-transport-general-subagent-.txt",
+      "count": 2
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9eb62d68ffefAHt4fJWgEGNaf",
+      "title": "Fix kite-fast raw escape hatch (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9eb62d68ffefAHt4fJWgEGNaf-fix-kite-fast-raw-escape-hatch-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9eb961f4ffeIVz1M3qLuDKRy5",
+      "title": "Cell vs yote/awrawr compute model (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9eb961f4ffeIVz1M3qLuDKRy5-cell-vs-yote-awrawr-compute-model-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9eb9798fffezbsl1675dRSIv4",
+      "title": "Persona primitive doc deep-dive (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9eb9798fffezbsl1675dRSIv4-persona-primitive-doc-deep-dive-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9ebd7d4bffechNqayqvQYeuTN",
+      "title": "Complete multi-drive storage map (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9ebd7d4bffechNqayqvQYeuTN-complete-multi-drive-storage-map-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9ebd9823ffeLMRt1X1hF2CKWS",
+      "title": "Narrator-diff fuzz against live (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9ebd9823ffeLMRt1X1hF2CKWS-narrator-diff-fuzz-against-live-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9ec16e84ffe5AyRILsYMwVULv",
+      "title": "Hunt WSS/Noise protocol across drives (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9ec16e84ffe5AyRILsYMwVULv-hunt-wss-noise-protocol-across-drives-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9ec183d9ffeRnY5B7z6lyLCLS",
+      "title": "Extend live WSS+Noise probe (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9ec183d9ffeRnY5B7z6lyLCLS-extend-live-wss-noise-probe-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9ec19737ffe2KocANUMSfVuN5",
+      "title": "Fuzz narrator claims via skill (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_e9ec19737ffe2KocANUMSfVuN5-fuzz-narrator-claims-via-skill-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9ec586ecffecYJjOkMB5IbhfU",
+      "title": "New session - 2026-10-22T01:29:44.467Z",
+      "cwd": "/home/toxic",
+      "file": "ses_e9ec586ecffecYJjOkMB5IbhfU-new-session-2026-10-22t01-29-44-467z.txt",
+      "count": 380
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9efb55f0ffeBQ544TXQ3gdecH",
+      "title": "New session - 2026-10-22T00:30:58.063Z",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_e9efb55f0ffeBQ544TXQ3gdecH-new-session-2026-10-22t00-30-58-063z.txt",
+      "count": 313
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9f14019affeaPFKvemz7baTTi",
+      "title": "New session - 2026-10-22T00:04:01.253Z",
+      "cwd": "/home/toxic",
+      "file": "ses_e9f14019affeaPFKvemz7baTTi-new-session-2026-10-22t00-04-01-253z.txt",
+      "count": 83
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9f49604effePn9yCp6SoEbPIS",
+      "title": "New session - 2026-10-21T23:05:43.601Z",
+      "cwd": "/home/toxic/pens/estate",
+      "file": "ses_e9f49604effePn9yCp6SoEbPIS-new-session-2026-10-21t23-05-43-601z.txt",
+      "count": 329
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9f509a47ffeORA74sbUp8gKiA",
+      "title": "Add gh code search to argon diag (@general subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_e9f509a47ffeORA74sbUp8gKiA-add-gh-code-search-to-argon-diag-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9f50cfa6ffey047DDJjuilXhZ",
+      "title": "Diagnose argon antigravity 404 (@general subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_e9f50cfa6ffey047DDJjuilXhZ-diagnose-argon-antigravity-404-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9f567978ffeYl82s8HvWJuyNb",
+      "title": "ffs-search tau argon antigravity (@explore subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_e9f567978ffeYl82s8HvWJuyNb-ffs-search-tau-argon-antigravity-explore-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9f56b448ffePScqs1hmhTuliW",
+      "title": "Track down tau argon antigravity (@explore subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_e9f56b448ffePScqs1hmhTuliW-track-down-tau-argon-antigravity-explore-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9f57285dffenF394OaTc91qH4",
+      "title": "Commit auto-background changes (@general subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_e9f57285dffenF394OaTc91qH4-commit-auto-background-changes-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9f57da53ffeYddRJWfEJTKdYo",
+      "title": "Verify kmake scaffold + tsgo (@general subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_e9f57da53ffeYddRJWfEJTKdYo-verify-kmake-scaffold-tsgo-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9f5911b6ffeDAUrY22AjWVU6a",
+      "title": "Typecheck changed TUI packages (@general subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_e9f5911b6ffeDAUrY22AjWVU6a-typecheck-changed-tui-packages-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9f5c250dffeogZ9GMRqx7s4MQ",
+      "title": "Verify auto-background changes (@general subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_e9f5c250dffeogZ9GMRqx7s4MQ-verify-auto-background-changes-general-subagent-.txt",
+      "count": 2
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9f5df626ffe2lY3TyPMw6YtzF",
+      "title": "Find kappa restart command (@explore subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_e9f5df626ffe2lY3TyPMw6YtzF-find-kappa-restart-command-explore-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9f5e628cffe4j4Cj581MWXUsU",
+      "title": "Check kappa restart method (@explore subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_e9f5e628cffe4j4Cj581MWXUsU-check-kappa-restart-method-explore-subagent-.txt",
+      "count": 2
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9f62b724ffecderE0t3gNKtXr",
+      "title": "Check prompt.ts and commit (@general subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_e9f62b724ffecderE0t3gNKtXr-check-prompt-ts-and-commit-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_e9f632f80ffenXSRAhCU7xMM5N",
+      "title": "Audit remaining non-Bun scripts (@explore subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_e9f632f80ffenXSRAhCU7xMM5N-audit-remaining-non-bun-scripts-explore-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea01e0204ffeOO5052W56LkPUc",
+      "title": "Final test verification (@general subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_ea01e0204ffeOO5052W56LkPUc-final-test-verification-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea01e3afeffeL9GmHVRemSyToq",
+      "title": "Final test run (@general subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_ea01e3afeffeL9GmHVRemSyToq-final-test-run-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea01e5874ffe0YGlGcx0Px1XWV",
+      "title": "Final test verification (@general subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_ea01e5874ffe0YGlGcx0Px1XWV-final-test-verification-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea01e97e9ffeZrS9Tau4f6pWrx",
+      "title": "Final test run (@general subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_ea01e97e9ffeZrS9Tau4f6pWrx-final-test-run-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea01eea68ffelSFqK1WaPhopq2",
+      "title": "Run all new tests (@general subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_ea01eea68ffelSFqK1WaPhopq2-run-all-new-tests-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea01f270affeMtNEYuXqja2lxI",
+      "title": "Re-run seed tests (@general subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_ea01f270affeMtNEYuXqja2lxI-re-run-seed-tests-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea01fa372ffeXMBFOx1z6lTXRj",
+      "title": "Run seed tests and typecheck (@general subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_ea01fa372ffeXMBFOx1z6lTXRj-run-seed-tests-and-typecheck-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea020ccdcffeKcUvb57OZSTLEN",
+      "title": "Run orchestrator-seed tests (@general subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_ea020ccdcffeKcUvb57OZSTLEN-run-orchestrator-seed-tests-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea0231243ffejHuK5zdxf1wHOl",
+      "title": "Design precompaction seed architecture (@explore subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_ea0231243ffejHuK5zdxf1wHOl-design-precompaction-seed-architecture-explore-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea0243cf3ffeZbKdrbGSl5RSXb",
+      "title": "Commit+push estate changes to main (@general subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_ea0243cf3ffeZbKdrbGSl5RSXb-commit-push-estate-changes-to-main-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea024d76bffe45ebTB64Gq97G2",
+      "title": "Verify estate gateway (@general subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_ea024d76bffe45ebTB64Gq97G2-verify-estate-gateway-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea02500f5ffePQkLhdVj869iZU",
+      "title": "Verify run + retire stray 7331 (@general subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_ea02500f5ffePQkLhdVj869iZU-verify-run-retire-stray-7331-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea0264502ffeum4dNN4uVVVCfE",
+      "title": "Run compose and start daemon (@general subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_ea0264502ffeum4dNN4uVVVCfE-run-compose-and-start-daemon-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea02c1db0ffe75Ja372OAfeaN3",
+      "title": "Compose + restart supervisor (@general subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_ea02c1db0ffe75Ja372OAfeaN3-compose-restart-supervisor-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea02dd207ffedQyBdvEivW1WUe",
+      "title": "Find state management in Kappa (@explore subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_ea02dd207ffedQyBdvEivW1WUe-find-state-management-in-kappa-explore-subagent-.txt",
+      "count": 2
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea02dd6a6ffeXfoLut6lsJR4lW",
+      "title": "Find compaction methods in Kappa (@explore subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_ea02dd6a6ffeXfoLut6lsJR4lW-find-compaction-methods-in-kappa-explore-subagent-.txt",
+      "count": 2
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea02e246affeH430SXHbqQXBF5",
+      "title": "Map Kappa orchestration infra (@explore subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_ea02e246affeH430SXHbqQXBF5-map-kappa-orchestration-infra-explore-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea02e3541ffelXAAV04CC9px76",
+      "title": "Find task dispatch code in Kappa (@explore subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_ea02e3541ffelXAAV04CC9px76-find-task-dispatch-code-in-kappa-explore-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea02e8ba2ffeBurf7A2cddpDmJ",
+      "title": "Reconcile supervisor + verify smithers (@general subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_ea02e8ba2ffeBurf7A2cddpDmJ-reconcile-supervisor-verify-smithers-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea033ed98ffemphI1SHIJJAteI",
+      "title": "Re-run tests + reconcile daemon (@general subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_ea033ed98ffemphI1SHIJJAteI-re-run-tests-reconcile-daemon-general-subagent-.txt",
+      "count": 3
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea0343dc5ffe58tjAqpTZRigzs",
+      "title": "Audit non-Bun for conversion (@general subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_ea0343dc5ffe58tjAqpTZRigzs-audit-non-bun-for-conversion-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea034526dffecTvBb6TRZXu1nf",
+      "title": "Convert pitchfork wrappers to TS (@general subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_ea034526dffecTvBb6TRZXu1nf-convert-pitchfork-wrappers-to-ts-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea035cd2dffeJMFSdk03v7CkNV",
+      "title": "Execute lifecyle and verify daemon (@general subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_ea035cd2dffeJMFSdk03v7CkNV-execute-lifecyle-and-verify-daemon-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea03752abffebJkpJLK7TUas3s",
+      "title": "Audit supervisor launch mechanism (@explore subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_ea03752abffebJkpJLK7TUas3s-audit-supervisor-launch-mechanism-explore-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea0382d56ffeby2vkX3piGAraB",
+      "title": "Execute reconcile and verify (@general subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_ea0382d56ffeby2vkX3piGAraB-execute-reconcile-and-verify-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea039d190ffedJrvtUcNR9HqZD",
+      "title": "Survey Bun-native daemon patterns (@explore subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_ea039d190ffedJrvtUcNR9HqZD-survey-bun-native-daemon-patterns-explore-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea039e56cffeGYsELYXorO04y4",
+      "title": "Research secretsmith bun API (@explore subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_ea039e56cffeGYsELYXorO04y4-research-secretsmith-bun-api-explore-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea03f2a07ffeNXoU6PORdBzEJu",
+      "title": "New session - 2026-10-21T18:37:15.640Z",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_ea03f2a07ffeNXoU6PORdBzEJu-new-session-2026-10-21t18-37-15-640z.txt",
+      "count": 73
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea278127dffeMaLEW6x9Yv0LuE",
+      "title": "Prove browserless browser lane end-to-end (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_ea278127dffeMaLEW6x9Yv0LuE-prove-browserless-browser-lane-end-to-end-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea28bb6b6ffe6STA12JWN3eg4D",
+      "title": "Land control-plane chat surfaces (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_ea28bb6b6ffe6STA12JWN3eg4D-land-control-plane-chat-surfaces-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea28c3e07ffeh1RH1TZqGegpTr",
+      "title": "Submodule browserless + modularize keeper (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_ea28c3e07ffeh1RH1TZqGegpTr-submodule-browserless-modularize-keeper-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea28cbb3fffelNuGpzTMsV3oIg",
+      "title": "Submodule browserless + import lib (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_ea28cbb3fffelNuGpzTMsV3oIg-submodule-browserless-import-lib-general-subagent-.txt",
+      "count": 2
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea292a93cffe5ynfT3KEQyqhIu",
+      "title": "Land drover tsconfig TS7 fix (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_ea292a93cffe5ynfT3KEQyqhIu-land-drover-tsconfig-ts7-fix-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea292b5bcffef8ZbOK52ZxmfA9",
+      "title": "Land estate TS7/cleanup changes (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_ea292b5bcffef8ZbOK52ZxmfA9-land-estate-ts7-cleanup-changes-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea2a4f785ffe2d2c1I6xdVhKDm",
+      "title": "Audit EAP/gemini/spark markdown (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_ea2a4f785ffe2d2c1I6xdVhKDm-audit-eap-gemini-spark-markdown-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea2d1c141ffei9CoqAByz4CEGh",
+      "title": "Rebrand squawk and estate-chat repos (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_ea2d1c141ffei9CoqAByz4CEGh-rebrand-squawk-and-estate-chat-repos-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea2d1c168ffevXH1n7Yizj3snl",
+      "title": "Promote chat web gateway into range (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_ea2d1c168ffevXH1n7Yizj3snl-promote-chat-web-gateway-into-range-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea2d1c185ffe4vGeznWGHRG4VG",
+      "title": "Build chats-core + surface generator (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_ea2d1c185ffe4vGeznWGHRG4VG-build-chats-core-surface-generator-general-subagent-.txt",
+      "count": 2
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea2d1c19dffeKuLb4tLwQuU304",
+      "title": "Estate sovereign→estate rebrand (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_ea2d1c19dffeKuLb4tLwQuU304-estate-sovereign-estate-rebrand-general-subagent-.txt",
+      "count": 2
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea2d1c25cffePjOpbl1HOyMMlD",
+      "title": "Track down Tau and Kappa web UI (fork #1)",
+      "cwd": "/home/toxic",
+      "file": "ses_ea2d1c25cffePjOpbl1HOyMMlD-track-down-tau-and-kappa-web-ui-fork-1-.txt",
+      "count": 358
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea2d29fbaffe7fN4unqpu0F2QZ",
+      "title": "Rebrand squawk and estate-chat repos (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_ea2d29fbaffe7fN4unqpu0F2QZ-rebrand-squawk-and-estate-chat-repos-general-subagent-.txt",
+      "count": 3
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea2d2e426ffeWyxnmtJgrCZ3ee",
+      "title": "Promote chat web gateway into range (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_ea2d2e426ffeWyxnmtJgrCZ3ee-promote-chat-web-gateway-into-range-general-subagent-.txt",
+      "count": 2
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea2d331ccffeO1bPvjoG2z6MR4",
+      "title": "Build chats-core + surface generator (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_ea2d331ccffeO1bPvjoG2z6MR4-build-chats-core-surface-generator-general-subagent-.txt",
+      "count": 3
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea2d37cebffev2O4Nn3sE0Mg3i",
+      "title": "Estate sovereign→estate rebrand (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_ea2d37cebffev2O4Nn3sE0Mg3i-estate-sovereign-estate-rebrand-general-subagent-.txt",
+      "count": 3
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea2de8085ffel3M2kiCjnwI3I2",
+      "title": "Track down Tau and Kappa web UI",
+      "cwd": "/home/toxic",
+      "file": "ses_ea2de8085ffel3M2kiCjnwI3I2-track-down-tau-and-kappa-web-ui.txt",
+      "count": 62
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea2eee6a0ffeE50IaUJb6Nzory",
+      "title": "New session - 2026-10-21T06:06:04.127Z",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_ea2eee6a0ffeE50IaUJb6Nzory-new-session-2026-10-21t06-06-04-127z.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea301f2d1ffePsqhsH6tyUgGlj",
+      "title": "Board-aware collab helper (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_ea301f2d1ffePsqhsH6tyUgGlj-board-aware-collab-helper-general-subagent-.txt",
+      "count": 4
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea302ee99ffeRwjJZU0HpW0k2T",
+      "title": "RANGE nesting + browserless (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_ea302ee99ffeRwjJZU0HpW0k2T-range-nesting-browserless-general-subagent-.txt",
+      "count": 2
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea314e0d1ffe35QsrHrE2Dm0ZT",
+      "title": "Coherent multi-tab dashboard (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_ea314e0d1ffe35QsrHrE2Dm0ZT-coherent-multi-tab-dashboard-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea31d288effehRNvMJWVKjtIj5",
+      "title": "Wire real control-plane API (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_ea31d288effehRNvMJWVKjtIj5-wire-real-control-plane-api-general-subagent-.txt",
+      "count": 2
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea31e735cffeDDj5SmHPWKqpdw",
+      "title": "DelendAI fix stale roost refs (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_ea31e735cffeDDj5SmHPWKqpdw-delendai-fix-stale-roost-refs-general-subagent-.txt",
+      "count": 2
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea32f4a38ffepeHRH9fEiI641g",
+      "title": "Add steer consumer verification (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_ea32f4a38ffepeHRH9fEiI641g-add-steer-consumer-verification-general-subagent-.txt",
+      "count": 2
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea333fc7bffec6AOF3azeohrSA",
+      "title": "Max-aesthetic DelendAI control SPA (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_ea333fc7bffec6AOF3azeohrSA-max-aesthetic-delendai-control-spa-general-subagent-.txt",
+      "count": 3
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea3343422ffeGGe6fB5N2a3S2p",
+      "title": "Scaffold delendai control-plane SPA (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_ea3343422ffeGGe6fB5N2a3S2p-scaffold-delendai-control-plane-spa-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea3479426ffey3RYockVz5xrHg",
+      "title": "Add kappa target to pinax codegen (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_ea3479426ffey3RYockVz5xrHg-add-kappa-target-to-pinax-codegen-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea34cd318ffeOdGNMeJaQYmY6l",
+      "title": "kappa_board as squawk chat (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_ea34cd318ffeOdGNMeJaQYmY6l-kappa-board-as-squawk-chat-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea34d48a4ffeVB9Pi50seIbKLI",
+      "title": "Fix keeper fullscreen/quickshell (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_ea34d48a4ffeVB9Pi50seIbKLI-fix-keeper-fullscreen-quickshell-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea34e9037ffekbBQfBVD4TiRn7",
+      "title": "Fix kappa board (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_ea34e9037ffekbBQfBVD4TiRn7-fix-kappa-board-general-subagent-.txt",
+      "count": 3
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea3520460ffeGxpYA5m5PIteJd",
+      "title": "DelendAI fixes keeper disconnect (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_ea3520460ffeGxpYA5m5PIteJd-delendai-fixes-keeper-disconnect-general-subagent-.txt",
+      "count": 2
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea3525a0effeEpjmwjx2RPfM2m",
+      "title": "DelendAI fixes web app 500 (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_ea3525a0effeEpjmwjx2RPfM2m-delendai-fixes-web-app-500-general-subagent-.txt",
+      "count": 3
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea354deddffe1LHsAcmRzOqa5Z",
+      "title": "Gate-fix adopted projects (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_ea354deddffe1LHsAcmRzOqa5Z-gate-fix-adopted-projects-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea3591fc9ffeFDjesbIQUKGzOE",
+      "title": "Autonomous DelendAI sweep rest (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_ea3591fc9ffeFDjesbIQUKGzOE-autonomous-delendai-sweep-rest-general-subagent-.txt",
+      "count": 6
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea35bc152ffeCTqj1ZbEWNpxWX",
+      "title": "DelendAI executor batch B (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_ea35bc152ffeCTqj1ZbEWNpxWX-delendai-executor-batch-b-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea534ab9cffeJb1xTPA6Xrr0wx",
+      "title": "Find and offload estate build artifacts (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_ea534ab9cffeJb1xTPA6Xrr0wx-find-and-offload-estate-build-artifacts-general-subagent-.txt",
+      "count": 2
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea534c710ffeK4QldtsDEMHTzR",
+      "title": "Measure archive dirs live (@general subagent)",
+      "cwd": "/home/toxic",
+      "file": "ses_ea534c710ffeK4QldtsDEMHTzR-measure-archive-dirs-live-general-subagent-.txt",
+      "count": 2
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea54f3e2bfferUUL1jGQvd9wq6",
+      "title": "Deleting package cache files to free disk space",
+      "cwd": "/home/toxic",
+      "file": "ses_ea54f3e2bfferUUL1jGQvd9wq6-deleting-package-cache-files-to-free-disk-space.txt",
+      "count": 501
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea6c9e274ffeJMs5afT0TLEj0l",
+      "title": "Audit ranch + moon + meta (@general subagent)",
+      "cwd": "/home/toxic/pens/estate",
+      "file": "ses_ea6c9e274ffeJMs5afT0TLEj0l-audit-ranch-moon-meta-general-subagent-.txt",
+      "count": 2
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea6c9eed6ffeeedpZ8s9trrWwW",
+      "title": "Audit estate control plane (@general subagent)",
+      "cwd": "/home/toxic/pens/estate",
+      "file": "ses_ea6c9eed6ffeeedpZ8s9trrWwW-audit-estate-control-plane-general-subagent-.txt",
+      "count": 2
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea6d488f5ffeSAmqkhRhSGioXe",
+      "title": "kappa config inspection - FreeInference and MCP tools",
+      "cwd": "/home/toxic/pens/estate",
+      "file": "ses_ea6d488f5ffeSAmqkhRhSGioXe-kappa-config-inspection-freeinference-and-mcp-tools.txt",
+      "count": 103
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea72999abffeIyw0pAzEHRRlbX",
+      "title": "Combining plugin architecture and multi-model",
+      "cwd": "/home/toxic",
+      "file": "ses_ea72999abffeIyw0pAzEHRRlbX-combining-plugin-architecture-and-multi-model.txt",
+      "count": 3
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea8321598fferLhvOA01KSMRDd",
+      "title": "Running kappa node after secretsmith-env setup",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_ea8321598fferLhvOA01KSMRDd-running-kappa-node-after-secretsmith-env-setup.txt",
+      "count": 2
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea83936aeffemlNeSE80Lzs728",
+      "title": "New session - 2026-10-20T05:26:47.890Z",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_ea83936aeffemlNeSE80Lzs728-new-session-2026-10-20t05-26-47-890z.txt",
+      "count": 2
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea89ec158ffeq7AQiyhM5AAdh9",
+      "title": "Kappa config oddity investigation",
+      "cwd": "/home/toxic/pens/estate",
+      "file": "ses_ea89ec158ffeq7AQiyhM5AAdh9-kappa-config-oddity-investigation.txt",
+      "count": 102
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea98f05a1ffeeM53qtKCSG4zKY",
+      "title": "List 3 prime numbers (@general subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_ea98f05a1ffeeM53qtKCSG4zKY-list-3-prime-numbers-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea98f64bcffeGKvArw83oH6beR",
+      "title": "Calculate 123 * 456 (@general subagent)",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_ea98f64bcffeGKvArw83oH6beR-calculate-123-456-general-subagent-.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea98fc3f5ffepjQz5EsUZSAqBn",
+      "title": "Subagent multiplication calculation",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_ea98fc3f5ffepjQz5EsUZSAqBn-subagent-multiplication-calculation.txt",
+      "count": 3
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ea9a18eeaffeV3VwZfCqmGhJ6g",
+      "title": "kite-cli location and purpose",
+      "cwd": "/home/toxic/tmp",
+      "file": "ses_ea9a18eeaffeV3VwZfCqmGhJ6g-kite-cli-location-and-purpose.txt",
+      "count": 202
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_ead7f6fdeffeoR9UJfWBvh0F93",
+      "title": "Shell integration cloud metadata probing",
+      "cwd": "/home/toxic",
+      "file": "ses_ead7f6fdeffeoR9UJfWBvh0F93-shell-integration-cloud-metadata-probing.txt",
+      "count": 38
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_eaf5de41fffexug1NfdA2jUu2u",
+      "title": "New session - 2026-10-18T20:09:23.680Z",
+      "cwd": "/home/toxic",
+      "file": "ses_eaf5de41fffexug1NfdA2jUu2u-new-session-2026-10-18t20-09-23-680z.txt",
+      "count": 12
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_eafb464e7ffe5PW3dY4XQ2F9mV",
+      "title": "Fixing gatehouse MCPProxy",
+      "cwd": "/home/toxic",
+      "file": "ses_eafb464e7ffe5PW3dY4XQ2F9mV-fixing-gatehouse-mcpproxy.txt",
+      "count": 89
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_eb17f970affeRERV949dnGK6I9",
+      "title": "New session - 2026-10-18T10:13:20.757Z",
+      "cwd": "/home/toxic",
+      "file": "ses_eb17f970affeRERV949dnGK6I9-new-session-2026-10-18t10-13-20-757z.txt",
+      "count": 2
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_eb18165b9ffeG6V7dv7RJa3hvP",
+      "title": "New session - 2026-10-18T10:11:22.310Z",
+      "cwd": "/home/toxic",
+      "file": "ses_eb18165b9ffeG6V7dv7RJa3hvP-new-session-2026-10-18t10-11-22-310z.txt",
+      "count": 12
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_eb181b160ffe12wwjnM48YnNtF",
+      "title": "New session - 2026-10-18T10:11:02.943Z",
+      "cwd": "/home/toxic",
+      "file": "ses_eb181b160ffe12wwjnM48YnNtF-new-session-2026-10-18t10-11-02-943z.txt",
+      "count": 2
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_eb182e373ffeuoTtrcECEXgIri",
+      "title": "New session - 2026-10-18T10:09:44.588Z",
+      "cwd": "/home/toxic",
+      "file": "ses_eb182e373ffeuoTtrcECEXgIri-new-session-2026-10-18t10-09-44-588z.txt",
+      "count": 4
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_eb18381c4ffecQTt4cvICTPT7T",
+      "title": "New session - 2026-10-18T10:09:04.061Z",
+      "cwd": "/home/toxic",
+      "file": "ses_eb18381c4ffecQTt4cvICTPT7T-new-session-2026-10-18t10-09-04-061z.txt",
+      "count": 4
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_eb21f0980ffeHW4Sl41lKr7oD7",
+      "title": "New session - 2026-10-18T07:19:11.231Z",
+      "cwd": "/home/toxic/pens/estate",
+      "file": "ses_eb21f0980ffeHW4Sl41lKr7oD7-new-session-2026-10-18t07-19-11-231z.txt",
+      "count": 2
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_eb2215464ffenUgs3pR06PdDfQ",
+      "title": "Anthropic source control redesign",
+      "cwd": "/home/toxic/pens/estate",
+      "file": "ses_eb2215464ffenUgs3pR06PdDfQ-anthropic-source-control-redesign.txt",
+      "count": 2
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_eb234729fffezztBVjpVz9cKtV",
+      "title": "Invalid nvidia model configuration warning",
+      "cwd": "/home/toxic/pens/estate",
+      "file": "ses_eb234729fffezztBVjpVz9cKtV-invalid-nvidia-model-configuration-warning.txt",
+      "count": 10
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_eb2714ea1ffejO0I2o8e7ADVYH",
+      "title": "Fix Telegram bot token rotation issues",
+      "cwd": "/home/toxic",
+      "file": "ses_eb2714ea1ffejO0I2o8e7ADVYH-fix-telegram-bot-token-rotation-issues.txt",
+      "count": 45
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_eb2750bd1ffetDXA1I13x4cWqr",
+      "title": "Step start timestamps in processor",
+      "cwd": "/home/toxic",
+      "file": "ses_eb2750bd1ffetDXA1I13x4cWqr-step-start-timestamps-in-processor.txt",
+      "count": 15
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_eb29ec7fdffeAbnp2o3X8GQsLJ",
+      "title": "Rotate compromised Telegram bot token, switch model",
+      "cwd": "/home/toxic",
+      "file": "ses_eb29ec7fdffeAbnp2o3X8GQsLJ-rotate-compromised-telegram-bot-token-switch-model.txt",
+      "count": 43
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_eb2c83dd3ffeuuyBLM8FDd3u9A",
+      "title": "New session - 2026-10-18T04:14:22.252Z",
+      "cwd": "/home/toxic/kappa-verify-zqbh",
+      "file": "ses_eb2c83dd3ffeuuyBLM8FDd3u9A-new-session-2026-10-18t04-14-22-252z.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_eb2cee069ffe64xeAEohUaL2Qt",
+      "title": "New session - 2026-10-18T04:07:07.414Z",
+      "cwd": "/home/toxic/kappa-verify-zqbh",
+      "file": "ses_eb2cee069ffe64xeAEohUaL2Qt-new-session-2026-10-18t04-07-07-414z.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_eb31c49abffe5QMDJjfGvTIymZ",
+      "title": "New session - 2026-10-18T02:42:34.196Z",
+      "cwd": "/home/toxic/kappa-verify-zqbh",
+      "file": "ses_eb31c49abffe5QMDJjfGvTIymZ-new-session-2026-10-18t02-42-34-196z.txt",
+      "count": 1
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_eb4cddf21ffelsNghcWGu918Xa",
+      "title": "Finding models.json in kappa",
+      "cwd": "/home/toxic",
+      "file": "ses_eb4cddf21ffelsNghcWGu918Xa-finding-models-json-in-kappa.txt",
+      "count": 118
+    },
+    {
+      "engine": "kappa",
+      "id": "ses_eb5a173cbfferdgxfqBEH3JRlM",
+      "title": "Confused Reactions and Continuation Request",
+      "cwd": "/home/toxic",
+      "file": "ses_eb5a173cbfferdgxfqBEH3JRlM-confused-reactions-and-continuation-request.txt",
+      "count": 20
+    },
+    {
+      "engine": "tau",
+      "id": "__advisor.jsonl",
+      "title": null,
+      "cwd": null,
+      "file": "tau--advisor.txt",
+      "count": 25
+    },
+    {
+      "engine": "tau",
+      "id": "2026-10-28T02-25-21-338Z_01a18053-8bba-73fa-b5f6-a7bf9e37f63f.jsonl",
+      "title": null,
+      "cwd": null,
+      "file": "tau-2026-10-28t02-25-21-338z-01a18053-8bba-73fa-b5f6-a7bf9e37f63.txt",
+      "count": 1
+    }
+  ],
+  "totalKappa": 5963,
+  "totalTau": 26
+}

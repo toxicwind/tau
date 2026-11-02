@@ -1,0 +1,10 @@
+# KAPPA SESSION ses_e937be143ffe96QKcneOwdiZK0
+title: Verify MCP SDK WS transport (@explore subagent)
+cwd: /home/toxic/tmp
+user_messages: 2
+
+--- user message 1/2 (msg msg_16c841f02001OBjHRDU6kTqxHt, 2026-10-24T06:06:00.463Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]
+
+--- user message 2/2 (msg msg_16c855508001jMyyT0qF8PKFmQ, 2026-10-24T06:07:19.820Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

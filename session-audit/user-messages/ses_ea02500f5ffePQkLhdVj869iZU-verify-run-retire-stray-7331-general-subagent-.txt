@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_ea02500f5ffePQkLhdVj869iZU
+title: Verify run + retire stray 7331 (@general subagent)
+cwd: /home/toxic/tmp
+user_messages: 1
+
+--- user message 1/1 (msg msg_15fdaff0e0015Ts5ExyH67pJQD, 2026-10-21T19:05:50.096Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

@@ -1,0 +1,2 @@
+332:    freeinference: 2
+451:  defaultModel: freeinference/qwen3.6-35b

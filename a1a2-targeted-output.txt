@@ -1,0 +1,42 @@
+
+=== glm-5.3-flash dialect tests ===
+  reasoning_effort=high          → 403 fr=?        comp=   0 chars=   0
+  thinking=true                  → 403 fr=?        comp=   0 chars=   0
+  thinking={type:enabled}        → 403 fr=?        comp=   0 chars=   0
+  enable_thinking=true           → 403 fr=?        comp=   0 chars=   0
+
+=== minimax-m3 dialect tests ===
+  reasoning_effort=high          → 403 fr=?        comp=   0 chars=   0
+  thinking=true                  → 403 fr=?        comp=   0 chars=   0
+  thinking={type:enabled}        → 403 fr=?        comp=   0 chars=   0
+  enable_thinking=true           → 403 fr=?        comp=   0 chars=   0
+
+=== qwen3.6-35b dialect tests ===
+  reasoning_effort=high          → 403 fr=?        comp=   0 chars=   0
+  thinking=true                  → 403 fr=?        comp=   0 chars=   0
+  thinking={type:enabled}        → 403 fr=?        comp=   0 chars=   0
+  enable_thinking=true           → 403 fr=?        comp=   0 chars=   0
+
+=== diffusiongemma dialect tests ===
+  reasoning_effort=high          → 403 fr=?        comp=   0 chars=   0
+  thinking=true                  → 403 fr=?        comp=   0 chars=   0
+  thinking={type:enabled}        → 403 fr=?        comp=   0 chars=   0
+  enable_thinking=true           → 403 fr=?        comp=   0 chars=   0
+
+=== qwen3.6-35b budget tests ===
+  mt=  500 → 403 fr=?        comp=   0 chars=   0 0ms error code: 1010
+
+  mt= 1000 → 403 fr=?        comp=   0 chars=   0 0ms error code: 1010
+
+  mt= 2000 → 403 fr=?        comp=   0 chars=   0 0ms error code: 1010
+
+
+=== diffusiongemma budget tests ===
+  mt=  500 → 403 fr=?        comp=   0 chars=   0 0ms error code: 1010
+
+  mt= 1000 → 403 fr=?        comp=   0 chars=   0 0ms error code: 1010
+
+  mt= 2000 → 403 fr=?        comp=   0 chars=   0 0ms error code: 1010
+
+
+Done. 22 targeted probes saved.

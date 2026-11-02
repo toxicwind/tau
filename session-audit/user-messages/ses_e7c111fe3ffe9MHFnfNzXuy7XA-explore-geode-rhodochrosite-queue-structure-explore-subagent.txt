@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e7c111fe3ffe9MHFnfNzXuy7XA
+title: Explore geode/rhodochrosite queue structure (@explore subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_183eee053001Y8L1uakJVaXBGT, 2026-10-28T19:13:52.724Z) ---
+[[no content field; keys: role, time, tools, agent, model]]

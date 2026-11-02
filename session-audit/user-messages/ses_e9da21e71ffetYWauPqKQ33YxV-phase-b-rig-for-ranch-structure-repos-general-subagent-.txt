@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e9da21e71ffetYWauPqKQ33YxV
+title: Phase B rig for ranch-structure repos (@general subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_1625de1c20012Xw1Pjt28cpAzK, 2026-10-22T06:48:02.247Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

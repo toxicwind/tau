@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e98ae0777ffesR1wB2uiLSb0W1
+title: Raise LSP coverage (bg slice 2) (@general subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_16751f8f1001YgLYzMdmZzN53T, 2026-10-23T05:53:07.829Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

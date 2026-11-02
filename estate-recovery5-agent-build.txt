@@ -1,0 +1,1 @@
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags '' -ldflags '-s -w -extldflags "-static" -X go.woodpecker-ci.org/woodpecker/v3/version.Version=next-ea10439d24' -o dist/woodpecker-agent go.woodpecker-ci.org/woodpecker/v3/cmd/agent

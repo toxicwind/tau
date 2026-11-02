@@ -1,0 +1,10 @@
+# KAPPA SESSION ses_ea6c9e274ffeJMs5afT0TLEj0l
+title: Audit ranch + moon + meta (@general subagent)
+cwd: /home/toxic/estate
+user_messages: 2
+
+--- user message 1/2 (msg msg_159361d90001d9xmyYKCS8m8mN, 2026-10-20T12:08:01.169Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]
+
+--- user message 2/2 (msg msg_1593ca37b0016O0u17aHTghGav, 2026-10-20T12:15:08.670Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

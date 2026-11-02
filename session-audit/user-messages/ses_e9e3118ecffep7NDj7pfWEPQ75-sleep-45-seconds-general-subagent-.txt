@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e9e3118ecffep7NDj7pfWEPQ75
+title: Sleep 45 seconds (@general subagent)
+cwd: /home/toxic/pens/estate/ranch/kappa/kappa-code
+user_messages: 1
+
+--- user message 1/1 (msg msg_161cee751001iGV6mie75rT6bJ, 2026-10-22T04:11:52.020Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

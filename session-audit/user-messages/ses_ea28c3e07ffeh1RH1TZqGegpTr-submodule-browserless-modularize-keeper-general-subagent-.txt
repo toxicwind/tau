@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_ea28c3e07ffeh1RH1TZqGegpTr
+title: Submodule browserless + modularize keeper (@general subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_15d73c1fe0013PGHbAhZ5wTvsV, 2026-10-21T07:53:49.826Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

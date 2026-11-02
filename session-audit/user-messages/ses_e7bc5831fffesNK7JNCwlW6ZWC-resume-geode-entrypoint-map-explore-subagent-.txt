@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e7bc5831fffesNK7JNCwlW6ZWC
+title: Resume geode entrypoint map (@explore subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_1843a7d0e001lZ1ZCmESl9QYns, 2026-10-28T20:36:28.050Z) ---
+[[no content field; keys: role, time, tools, agent, model]]

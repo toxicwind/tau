@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_ea02c1db0ffe75Ja372OAfeaN3
+title: Compose + restart supervisor (@general subagent)
+cwd: /home/toxic/tmp
+user_messages: 1
+
+--- user message 1/1 (msg msg_15fd3e25f001iq8gCTJ2C57KeH, 2026-10-21T18:58:04.002Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

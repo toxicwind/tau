@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e9a81eed1ffeocwz0lTRJqASap
+title: Add Kappa extension marketplace (@general subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_1657e117d001k540ce4jJ8Xj1t, 2026-10-22T21:22:03.266Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

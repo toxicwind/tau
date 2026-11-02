@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_ea01e97e9ffeZrS9Tau4f6pWrx
+title: Final test run (@general subagent)
+cwd: /home/toxic/tmp
+user_messages: 1
+
+--- user message 1/1 (msg msg_15fe16819001FQyC0jvpm135nB, 2026-10-21T19:12:50.202Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

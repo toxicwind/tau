@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e98e0ae7effeQkdOOOdEY4jj0a
+title: CI-fix relaunch (bg, directives) (@general subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_1671f51bc001elwtrE0SrkMuSv, 2026-10-23T04:57:48.223Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

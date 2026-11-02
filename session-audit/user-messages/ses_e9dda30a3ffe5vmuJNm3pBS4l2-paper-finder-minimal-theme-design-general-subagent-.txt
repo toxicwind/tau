@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e9dda30a3ffe5vmuJNm3pBS4l2
+title: Paper-finder + minimal theme design (@general subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_16225cfb0001wv3EvddCQ1rmAP, 2026-10-22T05:46:47.605Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

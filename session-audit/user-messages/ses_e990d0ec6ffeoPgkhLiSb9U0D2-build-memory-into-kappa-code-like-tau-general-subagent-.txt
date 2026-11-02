@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e990d0ec6ffeoPgkhLiSb9U0D2
+title: Build memory into kappa-code like tau (@general subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_166f2f176001J1vICHeQCw0EGA, 2026-10-23T04:09:19.992Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

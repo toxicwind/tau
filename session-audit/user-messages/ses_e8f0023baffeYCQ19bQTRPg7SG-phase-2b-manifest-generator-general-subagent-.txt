@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e8f0023baffeYCQ19bQTRPg7SG
+title: Phase 2b manifest generator (@general subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_170ffdc76001QZy72AhY6g0m4q, 2026-10-25T02:59:38.743Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

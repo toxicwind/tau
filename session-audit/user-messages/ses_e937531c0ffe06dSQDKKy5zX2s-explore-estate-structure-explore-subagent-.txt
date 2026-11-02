@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e937531c0ffe06dSQDKKy5zX2s
+title: Explore estate structure (@explore subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_16c8ace7c001r1467yMfaEVbXw, 2026-10-24T06:13:18.594Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

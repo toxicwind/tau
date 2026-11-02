@@ -1,0 +1,19 @@
+# KAPPA SESSION ses_e81dc805effeVbuxmdEYUHaTUL
+title: Investigate OpenRouter 404 error
+cwd: /home/toxic
+user_messages: 5
+
+--- user message 1/5 (msg msg_17e237fb6001fJ1eM6MWjr1SKf, 2026-10-27T16:13:38.102Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 2/5 (msg msg_17e243ad20014gmYpxJGHTSHMD, 2026-10-27T16:14:26.002Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 3/5 (msg msg_17e2463d7001FEFF5TbpvdAaDp, 2026-10-27T16:14:36.503Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 4/5 (msg msg_17e2496e6001p0qNrGurgvhqNV, 2026-10-27T16:14:49.574Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 5/5 (msg msg_17e24f88c001m0rGBJ5GwBiQQG, 2026-10-27T16:15:14.572Z) ---
+[[no content field; keys: role, time, agent, model]]

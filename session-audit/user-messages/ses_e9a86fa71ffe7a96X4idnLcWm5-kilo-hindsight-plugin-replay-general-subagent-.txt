@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e9a86fa71ffe7a96X4idnLcWm5
+title: Kilo hindsight plugin replay (@general subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_1657905e8001PAQLVJ4gfZEhDo, 2026-10-22T21:16:32.618Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

@@ -1,0 +1,10 @@
+# KAPPA SESSION ses_eb21f0980ffeHW4Sl41lKr7oD7
+title: New session - 2026-10-18T07:19:11.231Z
+cwd: /home/toxic/estate
+user_messages: 2
+
+--- user message 1/2 (msg msg_14de0f6900017hrhd6SJ16qui9, 2026-10-18T07:19:11.248Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 2/2 (msg msg_14de111da001HgZMqRB69kuY31, 2026-10-18T07:19:18.234Z) ---
+[[no content field; keys: role, time, agent, model, summary]]

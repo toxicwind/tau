@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e9e31bb89ffez9q2qWvpfYMIl1
+title: Run 60s foreground sleep (@general subagent)
+cwd: /home/toxic/pens/estate/ranch/kappa/kappa-code
+user_messages: 1
+
+--- user message 1/1 (msg msg_161ce44b5001M6dn9B63aDhjkI, 2026-10-22T04:11:10.391Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

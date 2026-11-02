@@ -1,0 +1,34 @@
+# KAPPA SESSION ses_eb234729fffezztBVjpVz9cKtV
+title: Invalid nvidia model configuration warning
+cwd: /home/toxic/estate
+user_messages: 10
+
+--- user message 1/10 (msg msg_14dcb8d85001hP8Dhk78Jo154Z, 2026-10-18T06:55:48.101Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 2/10 (msg msg_14dcc1036001gDbB9m0jF81vNm, 2026-10-18T06:56:21.558Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 3/10 (msg msg_14dcc4cb40013ax5ivFgZ1EKhX, 2026-10-18T06:56:37.044Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 4/10 (msg msg_14dcc4cb40022OgN1bi28Z3ixs, 2026-10-18T06:56:37.044Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 5/10 (msg msg_14dcc4cb5001PrIKelidWhW9Fq, 2026-10-18T06:56:37.045Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 6/10 (msg msg_14dd51daf001CGZUKnlJCMW0lk, 2026-10-18T07:06:14.831Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 7/10 (msg msg_14dd82d29001KJniAnQ0d6fOPa, 2026-10-18T07:09:35.401Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 8/10 (msg msg_14dd89a460010AlN1rhAWhTnz0, 2026-10-18T07:10:03.334Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 9/10 (msg msg_14de2900f001OVpPXFTyvMwk6x, 2026-10-18T07:20:56.079Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 10/10 (msg msg_14de354dd001ksGdbyfnPqXxOG, 2026-10-18T07:21:46.461Z) ---
+[[no content field; keys: role, time, agent, model, summary]]

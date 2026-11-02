@@ -1,0 +1,10 @@
+# KAPPA SESSION ses_ea2d1c19dffeKuLb4tLwQuU304
+title: Estate sovereign→estate rebrand (@general subagent)
+cwd: /home/toxic
+user_messages: 2
+
+--- user message 1/2 (msg msg_15d2e3e67001REaNbVAuyktU87, 2026-10-21T06:36:00.669Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]
+
+--- user message 2/2 (msg msg_15d40f0c3001qEptAxYuPnb3Aa, 2026-10-21T06:58:19.461Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

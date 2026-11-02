@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e9f56b448ffePScqs1hmhTuliW
+title: Track down tau argon antigravity (@explore subagent)
+cwd: /home/toxic/tmp
+user_messages: 1
+
+--- user message 1/1 (msg msg_160a94bba001la7bnfPcU8sGer, 2026-10-21T22:51:10.139Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

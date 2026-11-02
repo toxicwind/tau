@@ -1,0 +1,10 @@
+# KAPPA SESSION ses_e9f5c250dffeogZ9GMRqx7s4MQ
+title: Verify auto-background changes (@general subagent)
+cwd: /home/toxic/tmp
+user_messages: 2
+
+--- user message 1/2 (msg msg_160a3daf600193UL9feRoY3qtY, 2026-10-21T22:45:13.592Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]
+
+--- user message 2/2 (msg msg_160a9774f001qq988Z1okiOjR2, 2026-10-21T22:51:21.297Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

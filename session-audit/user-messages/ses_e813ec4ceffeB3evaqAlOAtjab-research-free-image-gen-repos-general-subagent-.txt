@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e813ec4ceffeB3evaqAlOAtjab
+title: Research free image-gen repos (@general subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_17ec13b6d001cXi4bRnklk2BJc, 2026-10-27T19:05:55.314Z) ---
+[[no content field; keys: role, time, tools, agent, model]]

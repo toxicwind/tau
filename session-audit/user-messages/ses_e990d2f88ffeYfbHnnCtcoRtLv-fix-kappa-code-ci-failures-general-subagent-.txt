@@ -1,0 +1,10 @@
+# KAPPA SESSION ses_e990d2f88ffeYfbHnnCtcoRtLv
+title: Fix kappa-code CI failures (@general subagent)
+cwd: /home/toxic
+user_messages: 2
+
+--- user message 1/2 (msg msg_166f2d0ae0019vjlSZQXM5MY5B, 2026-10-23T04:09:11.602Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]
+
+--- user message 2/2 (msg msg_16701342a001b3TTLwlk42ZKmC, 2026-10-23T04:24:54.570Z) ---
+[[no content field; keys: role, time, agent, model, summary]]

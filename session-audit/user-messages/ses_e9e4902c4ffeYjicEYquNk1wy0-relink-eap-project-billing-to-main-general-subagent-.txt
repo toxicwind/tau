@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e9e4902c4ffeYjicEYquNk1wy0
+title: Relink EAP project billing to Main (@general subagent)
+cwd: /home/toxic/estate
+user_messages: 1
+
+--- user message 1/1 (msg msg_161b6fd790017IErhhDnmpkjsi, 2026-10-22T03:45:44.840Z) ---
+[[no content field; keys: role, time, tools, agent, model]]

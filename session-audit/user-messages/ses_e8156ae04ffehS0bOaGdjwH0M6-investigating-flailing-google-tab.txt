@@ -1,0 +1,124 @@
+# KAPPA SESSION ses_e8156ae04ffehS0bOaGdjwH0M6
+title: Investigating flailing Google tab
+cwd: /home/toxic
+user_messages: 40
+
+--- user message 1/40 (msg msg_17ea9520f0016Seomi44WlwQO0, 2026-10-27T18:39:48.239Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 2/40 (msg msg_17ea96f4d0015qF5VkzXL5vb22, 2026-10-27T18:39:55.725Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 3/40 (msg msg_17eaad897001VrP0pj207crFlY, 2026-10-27T18:41:28.215Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 4/40 (msg msg_17eaaddf0001vA3ce6WEjZ764a, 2026-10-27T18:41:29.584Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 5/40 (msg msg_17eafebcf001lRwuK1Wi1A0T3l, 2026-10-27T18:47:00.816Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 6/40 (msg msg_17eb00feb001xYqlMCNSn8lfxG, 2026-10-27T18:47:10.059Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 7/40 (msg msg_17ebfa6cb001ZlfBal7F0GQqUV, 2026-10-27T19:04:11.723Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 8/40 (msg msg_17ec0bce4001K3mPTwtHTOpMxz, 2026-10-27T19:05:22.916Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 9/40 (msg msg_17ec0c4df001pzxfOu2T1hLBGR, 2026-10-27T19:05:24.959Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 10/40 (msg msg_17ec1775d001kczh0A9V4y73H2, 2026-10-27T19:06:10.653Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 11/40 (msg msg_17ec1add6001s00hJs0vSZ2r47, 2026-10-27T19:06:24.598Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 12/40 (msg msg_17ec1b3d4001d6js4LCF1WIXB8, 2026-10-27T19:06:26.132Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 13/40 (msg msg_17ec1e4f9001JHNw2bGPyyCpdQ, 2026-10-27T19:06:38.713Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 14/40 (msg msg_17ec1ec80001BPs95GvfYUKj1d, 2026-10-27T19:06:40.640Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 15/40 (msg msg_17ec37b02001uziN3MXG6rk4Un, 2026-10-27T19:08:22.658Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 16/40 (msg msg_17ec3cb960015cTKVXLxVjNGNq, 2026-10-27T19:08:43.286Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 17/40 (msg msg_17ec9fa7e001Z29JjPCYtkqSr4, 2026-10-27T19:15:28.510Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 18/40 (msg msg_17ecb331b001qWYUmKEsiUWxWv, 2026-10-27T19:16:48.539Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 19/40 (msg msg_17ecbab54001LIcpJY4rl5A438, 2026-10-27T19:17:19.316Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 20/40 (msg msg_17ecc4c1b0019SuxqJ8Kv1pPwp, 2026-10-27T19:18:00.475Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 21/40 (msg msg_17ecd765f001ctxZjDdGjKuGPf, 2026-10-27T19:19:16.831Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 22/40 (msg msg_17ecddb71001W627bJEsgI1Lll, 2026-10-27T19:19:42.705Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 23/40 (msg msg_17ece38db001XpfHAU5C5k2DLD, 2026-10-27T19:20:06.619Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 24/40 (msg msg_17ece6faf001me0ZO0AVVI0mCC, 2026-10-27T19:20:20.655Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 25/40 (msg msg_17ece79530012a6MNsjpk10YmJ, 2026-10-27T19:20:23.123Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 26/40 (msg msg_17ecede51001IYe01iGwvlK4Vl, 2026-10-27T19:20:48.977Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 27/40 (msg msg_17ecf6874001gsr3pVB3lM9Oil, 2026-10-27T19:21:24.340Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 28/40 (msg msg_17ed1e397001P76lUukuc2sw0X, 2026-10-27T19:24:06.935Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 29/40 (msg msg_17ed2431b001sH8PQWtWhVmZ00, 2026-10-27T19:24:31.387Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 30/40 (msg msg_17ed2b6b3001EWN3hny5bNMELw, 2026-10-27T19:25:00.979Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 31/40 (msg msg_17ed3fbb7001K3owvhjzhiYuo9, 2026-10-27T19:26:24.183Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 32/40 (msg msg_17ed92c4f0017A6qISQnrX1KVF, 2026-10-27T19:32:04.303Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 33/40 (msg msg_17ed96d08001X5wkF9Kvrads3G, 2026-10-27T19:32:20.872Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 34/40 (msg msg_17ed99a00001nwfQKhxsA84Cje, 2026-10-27T19:32:32.384Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 35/40 (msg msg_17eda5670001P1Sg8Iq2KFalij, 2026-10-27T19:33:20.624Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 36/40 (msg msg_17eda8a4b0014OwnNqxSSJ00ud, 2026-10-27T19:33:33.899Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 37/40 (msg msg_17eddfeda001W8297NCWUndGmO, 2026-10-27T19:37:20.346Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 38/40 (msg msg_17ede277d001ezu4MzklFgGS1j, 2026-10-27T19:37:30.749Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 39/40 (msg msg_17ee3032a001fcbpol3QLbhnUw, 2026-10-27T19:42:49.130Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 40/40 (msg msg_17ee324c90016BbUQAlvyNz3lx, 2026-10-27T19:42:57.737Z) ---
+[[no content field; keys: role, time, agent, model]]

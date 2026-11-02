@@ -1,0 +1,10 @@
+# KAPPA SESSION ses_ea534ab9cffeJb1xTPA6Xrr0wx
+title: Find and offload estate build artifacts (@general subagent)
+cwd: /home/toxic
+user_messages: 2
+
+--- user message 1/2 (msg msg_15acb5472001BtO1vF112I49oy, 2026-10-20T19:30:37.319Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]
+
+--- user message 2/2 (msg msg_15acc42a90012RzN0JkwrZi4f2, 2026-10-20T19:31:38.283Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

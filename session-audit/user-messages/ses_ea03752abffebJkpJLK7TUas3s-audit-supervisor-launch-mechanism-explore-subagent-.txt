@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_ea03752abffebJkpJLK7TUas3s
+title: Audit supervisor launch mechanism (@explore subagent)
+cwd: /home/toxic/tmp
+user_messages: 1
+
+--- user message 1/1 (msg msg_15fc8ad5a001diXfqQu17PrOEf, 2026-10-21T18:45:49.531Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

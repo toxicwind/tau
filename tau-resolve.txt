@@ -1,0 +1,12 @@
+cli/auth-gateway-cli.ts:287:	// shadow broker credentials. Format handlers ask `resolveModel` to translate
+cli/auth-gateway-cli.ts:319:		resolveModel: (id: string) => modelById.get(id),
+cli/auth-gateway-cli.ts:348:	// catalogs and updates `/v1/models` and `resolveModel`. `unref()` for the
+cli/bench-cli.ts:14:import { resolveModelServiceTier, streamSimple } from "@tau/tau-ai";
+cli/bench-cli.ts:30:import cacheSuffixTemplate from "../prompts/bench/cache-suffix.md" with { type: "text" };
+cli/bench-cli.ts:194:	suffixChanged: true;
+cli/bench-cli.ts:233:	/** Explicit thinking level from a `:level` selector suffix; undefined = provider default. */
+cli/bench-cli.ts:466:function cacheBenchmarkMessages(stablePrefix: string, suffix: string): Context["messages"] {
+cli/bench-cli.ts:470:		{ role: "user", content: suffix, timestamp, attribution: "user" },
+cli/bench-cli.ts:558:	/** Native TAU messages; cache mode splits the stable prefix from the suffix. */
+cli/bench-cli.ts:561:	/** Explicit effort from a `:level` selector suffix; absent = provider default. */
+cli/bench-cli.ts:563:	/** Only set for an explicit `:off` suffix — some endpoints reject disablement. */

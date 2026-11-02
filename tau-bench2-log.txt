@@ -1,0 +1,4 @@
+{"timestamp":"2026-10-26T16:35:23.552-06:00","level":"warn","pid":4084517,"message":"Fallback chain for role 'fallback' references unknown model: freeinference/qwen3.6-35b"}
+{"timestamp":"2026-10-26T16:35:23.552-06:00","level":"warn","pid":4084517,"message":"Fallback chain for role 'fallback' references unknown model: freeinference/minimax-m3"}
+{"timestamp":"2026-10-26T16:35:23.552-06:00","level":"warn","pid":4084517,"message":"Fallback chain for role 'fallback' references unknown model: freeinference/deepseek-v4-flash"}
+{"timestamp":"2026-10-26T16:35:23.609-06:00","level":"warn","pid":4084517,"message":"model discovery failed for provider","provider":"ollama","url":"http://127.0.0.1:11434","error":"Unable to connect. Is the computer able to access the url?"}

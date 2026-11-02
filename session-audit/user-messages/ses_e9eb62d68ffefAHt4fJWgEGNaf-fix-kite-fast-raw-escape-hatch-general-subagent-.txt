@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e9eb62d68ffefAHt4fJWgEGNaf
+title: Fix kite-fast raw escape hatch (@general subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_16149d2c9001s7rvs0UnA6a1hL, 2026-10-22T01:46:30.477Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

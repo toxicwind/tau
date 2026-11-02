@@ -1,0 +1,10 @@
+# KAPPA SESSION ses_ea31d288effehRNvMJWVKjtIj5
+title: Wire real control-plane API (@general subagent)
+cwd: /home/toxic
+user_messages: 2
+
+--- user message 1/2 (msg msg_15ce2d77a001Gvt79VIjLEKKUi, 2026-10-21T05:15:32.604Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]
+
+--- user message 2/2 (msg msg_15ce5aa97001VrEQmVoSlYwEn0, 2026-10-21T05:18:37.721Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e9dbabfe7ffe67vG7WuZRUguwg
+title: Audit gatehouse live state (@general subagent)
+cwd: /home/toxic/estate
+user_messages: 1
+
+--- user message 1/1 (msg msg_162454054001WY0Rey19qBv4ZH, 2026-10-22T06:21:08.068Z) ---
+[[no content field; keys: role, time, tools, agent, model]]

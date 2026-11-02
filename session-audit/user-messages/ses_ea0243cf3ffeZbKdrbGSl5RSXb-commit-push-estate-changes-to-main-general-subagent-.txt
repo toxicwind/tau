@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_ea0243cf3ffeZbKdrbGSl5RSXb
+title: Commit+push estate changes to main (@general subagent)
+cwd: /home/toxic/tmp
+user_messages: 1
+
+--- user message 1/1 (msg msg_15fdbc3110016tzz9XryZmK900, 2026-10-21T19:06:40.274Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

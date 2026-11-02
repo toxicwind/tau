@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e9f62b724ffecderE0t3gNKtXr
+title: Check prompt.ts and commit (@general subagent)
+cwd: /home/toxic/tmp
+user_messages: 1
+
+--- user message 1/1 (msg msg_1609d48e0001FOa8vBBqSSNFqu, 2026-10-21T22:38:02.977Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

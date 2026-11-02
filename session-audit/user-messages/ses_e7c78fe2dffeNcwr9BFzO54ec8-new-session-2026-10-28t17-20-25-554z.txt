@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e7c78fe2dffeNcwr9BFzO54ec8
+title: New session - 2026-10-28T17:20:25.554Z
+cwd: /tmp
+user_messages: 1
+
+--- user message 1/1 (msg msg_1838706bb001J9aHibHjK3G2wQ, 2026-10-28T17:20:26.811Z) ---
+[[no content field; keys: role, time, agent, model]]

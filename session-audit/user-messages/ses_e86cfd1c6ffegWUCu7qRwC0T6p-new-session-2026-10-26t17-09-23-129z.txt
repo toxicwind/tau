@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e86cfd1c6ffegWUCu7qRwC0T6p
+title: New session - 2026-10-26T17:09:23.129Z
+cwd: /home/toxic/tmp
+user_messages: 1
+
+--- user message 1/1 (msg msg_179302e52001Jct69hPCP7Exjg, 2026-10-26T17:09:23.154Z) ---
+[[no content field; keys: role, time, agent, model]]

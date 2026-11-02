@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e92f0af23ffeKbu5zT4dEzTPBE
+title: Find and read papers (@general subagent)
+cwd: /home/toxic/tmp
+user_messages: 1
+
+--- user message 1/1 (msg msg_16d0f510f001qu0ktuKelMzQRe, 2026-10-24T08:38:02.773Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

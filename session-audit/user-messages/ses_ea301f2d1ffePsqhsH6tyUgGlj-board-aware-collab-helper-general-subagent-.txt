@@ -1,0 +1,16 @@
+# KAPPA SESSION ses_ea301f2d1ffePsqhsH6tyUgGlj
+title: Board-aware collab helper (@general subagent)
+cwd: /home/toxic
+user_messages: 4
+
+--- user message 1/4 (msg msg_15cfe0d320010ysLBHtMvJ4Uwc, 2026-10-21T05:45:15.828Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]
+
+--- user message 2/4 (msg msg_15cff4709001DlZQJt9xx5DJG0, 2026-10-21T05:46:36.170Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]
+
+--- user message 3/4 (msg msg_15d010b28001SkIcMb9rXhWund, 2026-10-21T05:48:31.913Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]
+
+--- user message 4/4 (msg msg_15d03cbee001Gtt3B3fZjhbRFo, 2026-10-21T05:51:32.336Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

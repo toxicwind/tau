@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e9ec16e84ffe5AyRILsYMwVULv
+title: Hunt WSS/Noise protocol across drives (@general subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_1613e91b3001BpsTFS3JrnWn24, 2026-10-22T01:34:12.918Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e905f48d9ffebCHCkJp16p70cR
+title: Check API key and run probes (@general subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_16fa0b759001NvUyJujQVhsq5b, 2026-10-24T20:36:06.112Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

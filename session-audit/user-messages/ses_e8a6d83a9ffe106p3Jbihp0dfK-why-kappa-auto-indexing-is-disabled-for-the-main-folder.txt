@@ -1,0 +1,76 @@
+# KAPPA SESSION ses_e8a6d83a9ffe106p3Jbihp0dfK
+title: Why kappa auto indexing is disabled for the main folder
+cwd: /home/toxic
+user_messages: 24
+
+--- user message 1/24 (msg msg_175927c67001qDHunavT1eYWGQ, 2026-10-26T00:18:16.807Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 2/24 (msg msg_17593041f001bSvvdzsEn7pEyq, 2026-10-26T00:18:51.551Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 3/24 (msg msg_1759372640013olRJXMEpXOkyt, 2026-10-26T00:19:19.780Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 4/24 (msg msg_1759444b7001Iah5swY1xEGHWb, 2026-10-26T00:20:13.623Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 5/24 (msg msg_17594ff16001GUsKyQ9dmdKeGk, 2026-10-26T00:21:01.334Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 6/24 (msg msg_1759589f2001BaACoqAaCRLl01, 2026-10-26T00:21:36.882Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 7/24 (msg msg_1759624e1001ToYiJDV2MbQLTk, 2026-10-26T00:22:16.545Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 8/24 (msg msg_175977729001VoqK6QSJsC3nju, 2026-10-26T00:23:43.145Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 9/24 (msg msg_175981e22001hoYICRn767HVf6, 2026-10-26T00:24:25.890Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 10/24 (msg msg_17599147e001G3S6qNxnl4l4xO, 2026-10-26T00:25:28.958Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 11/24 (msg msg_1759974c6001GPuRrZFv4DgYtD, 2026-10-26T00:25:53.606Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 12/24 (msg msg_175999052001xqsyFfF9t70qur, 2026-10-26T00:26:00.658Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 13/24 (msg msg_1759b0439001JgFHgNz50iY25h, 2026-10-26T00:27:35.865Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 14/24 (msg msg_1759b5cce001Nvv4qmvQEP9M5X, 2026-10-26T00:27:58.542Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 15/24 (msg msg_1759bb547001Nbq0C7XHAgB1KE, 2026-10-26T00:28:21.191Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 16/24 (msg msg_1759c15a9001sGVsAtA9ZN1EjX, 2026-10-26T00:28:45.865Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 17/24 (msg msg_175ac7519001ncHopxU8TcrUQF, 2026-10-26T00:46:38.873Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 18/24 (msg msg_175acda81001kslYLojJlhDu7A, 2026-10-26T00:47:04.833Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 19/24 (msg msg_175aced5f001H2RM8CcuD6gUS8, 2026-10-26T00:47:09.663Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 20/24 (msg msg_175acfd76001OOs8P4agAQwK6E, 2026-10-26T00:47:13.782Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 21/24 (msg msg_175adf861001YV1YRhy0fhl2AE, 2026-10-26T00:48:18.017Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 22/24 (msg msg_175aec7b4001GWJjApGa1UI5Ow, 2026-10-26T00:49:11.092Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 23/24 (msg msg_175af083b001iIho0Wx9raD8Iq, 2026-10-26T00:49:27.611Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 24/24 (msg msg_175af86790010XA55zweNwJSYm, 2026-10-26T00:49:59.929Z) ---
+[[no content field; keys: role, time, agent, model]]

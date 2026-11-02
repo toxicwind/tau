@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e93ae39d8ffeWgVozrvvdCpBm7
+title: Phase 0 ref enumeration (@explore subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_16c51c65a0016FXnNOZi9uCuOu, 2026-10-24T05:11:00.959Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

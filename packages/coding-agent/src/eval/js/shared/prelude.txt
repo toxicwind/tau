@@ -165,6 +165,122 @@ if (!globalThis.__tau_js_prelude_loaded__) {
 		};
 	};
 
+	// Full POSIX shell lane. Bun's `$` shell parser does NOT support background
+	// jobs (`&`), process substitution, or several other real-shell features, so
+	// agents historically wrapped commands in `/bin/bash -c` (ESTATE-ANOMALY-37
+	// deny-gate evasion risk + fragile quoting). `shell()` owns that job here:
+	// it runs a command through a real `/bin/bash -c` in the worker — no wrapper
+	// string in cell code — and returns full, untruncated stdout/stderr plus the
+	// exit code and a `timedOut` flag. `opts.timeoutMs` terminates the process.
+	// `opts.shell: "sh"` selects `/bin/sh` (POSIX, no bashisms). `shell.bg(...)`
+	// returns a detached handle (`{ pid, kill, exited, wait }`) for long-running
+	// work without ever blocking a cell waiting for it.
+	const decodeOut = (buf) => {
+		try {
+			return new TextDecoder().decode(buf || new Uint8Array(0));
+		} catch {
+			return "";
+		}
+	};
+	const resolveShellBin = (name) =>
+		name === "sh" || name === "/bin/sh" ? "/bin/sh" : "/bin/bash";
+	const shell = async (command, opts = {}) => {
+		const safeOpts = isPlainObject(opts) ? opts : {};
+		const argv = Array.isArray(command) ? command.map(String) : ["-c", String(command)];
+		const shellBin = resolveShellBin(safeOpts.shell);
+		const cwd = String(safeOpts.cwd || process.cwd() || "");
+		const env = { ...(process.env || {}), ...(safeOpts.env || {}) };
+		const timeoutMs = Number(safeOpts.timeoutMs || 0);
+		let timedOut = false;
+		let proc;
+		try {
+			proc = Bun.spawn([shellBin, ...argv], {
+				cwd,
+				env,
+				stdin: "inherit",
+				stdout: "pipe",
+				stderr: "pipe",
+			});
+		} catch (error) {
+			throw new Error(`shell() could not spawn ${shellBin}: ${error instanceof Error ? error.message : String(error)}`);
+		}
+		const outcome = timeoutMs > 0
+			? await Promise.race([
+					proc.exited.then((code) => ({ code, timedOut: false })),
+					Bun.sleep(timeoutMs).then(() => {
+						timedOut = true;
+						try { proc.kill(); } catch (_) {}
+						return { code: null, timedOut: true };
+					}),
+			  ])
+			: { code: await proc.exited, timedOut: false };
+		const [stdoutBuf, stderrBuf] = await Promise.all([
+			new Response(proc.stdout).arrayBuffer().catch(() => new Uint8Array(0)),
+			new Response(proc.stderr).arrayBuffer().catch(() => new Uint8Array(0)),
+		]);
+		return {
+			exitCode: outcome.timedOut ? 124 : Number(outcome.code),
+			stdout: decodeOut(stdoutBuf),
+			stderr: decodeOut(stderrBuf),
+			timedOut: outcome.timedOut,
+		};
+	};
+	shell.bg = (command, opts = {}) => {
+		const safeOpts = isPlainObject(opts) ? opts : {};
+		const argv = Array.isArray(command) ? command.map(String) : ["-c", String(command)];
+		const shellBin = resolveShellBin(safeOpts.shell);
+		const cwd = String(safeOpts.cwd || process.cwd() || "");
+		const env = { ...(process.env || {}), ...(safeOpts.env || {}) };
+		const proc = Bun.spawn([shellBin, ...argv], {
+			cwd,
+			env,
+			stdin: "ignore",
+			stdout: "pipe",
+			stderr: "pipe",
+			detached: true,
+		});
+		let detached = false;
+		if (typeof proc.unref === "function") {
+			try { proc.unref(); detached = true; } catch (_) {}
+		}
+		return {
+			pid: proc.pid,
+			detached,
+			kill: (signal) => { try { proc.kill(signal); return true; } catch (_) { return false; } },
+			exited: proc.exited,
+			async wait() {
+				const [stdoutBuf, stderrBuf] = await Promise.all([
+					new Response(proc.stdout).arrayBuffer().catch(() => new Uint8Array(0)),
+					new Response(proc.stderr).arrayBuffer().catch(() => new Uint8Array(0)),
+				]);
+				return {
+					exitCode: Number(await proc.exited),
+					stdout: decodeOut(stdoutBuf),
+					stderr: decodeOut(stderrBuf),
+				};
+			},
+		};
+	};
+	shell.waitForHandle = async (handle, opts = {}) => {
+		const safeOpts = isPlainObject(opts) ? opts : {};
+		const timeoutMs = Number(safeOpts.timeoutMs || 0);
+		if (timeoutMs > 0 && typeof handle?.wait === "function") {
+			return await Promise.race([
+				handle.wait(),
+				Bun.sleep(timeoutMs).then(() => {
+					try { handle?.kill?.(); } catch (_) {}
+					return { exitCode: 124, stdout: "", stderr: "", timedOut: true };
+				}),
+			]);
+		}
+		return handle?.wait?.() ?? { exitCode: null, stdout: "", stderr: "" };
+	};
+	// `sh` as a friendlier alias; `bash` forces the bash binary explicitly.
+	const sh = shell;
+	globalThis.shell = shell;
+	globalThis.sh = shell;
+	globalThis.bash = (command, opts = {}) => shell(command, { ...opts, shell: "bash" });
+
 	const __tools = new Map();
 	globalThis.__tau_tools__ = __tools;
 	const registerTool = (fn, opts = {}) => {

@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e9a8a3ef2ffeYUWi2atPQjTxQ5
+title: Find+install Kilo hindsight plugin (@general subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_16575c157001MrVBGgZdgnhnnX, 2026-10-22T21:12:58.456Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

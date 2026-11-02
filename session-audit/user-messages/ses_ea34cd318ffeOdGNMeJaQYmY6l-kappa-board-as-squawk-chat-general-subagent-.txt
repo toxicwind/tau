@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_ea34cd318ffeOdGNMeJaQYmY6l
+title: kappa_board as squawk chat (@general subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_15cb32ceb001CDpNotyL8DMDtv, 2026-10-21T04:23:28.749Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

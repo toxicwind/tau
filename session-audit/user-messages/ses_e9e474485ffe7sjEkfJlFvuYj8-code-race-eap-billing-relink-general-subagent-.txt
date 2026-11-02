@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e9e474485ffe7sjEkfJlFvuYj8
+title: Code-race EAP billing relink (@general subagent)
+cwd: /home/toxic/estate
+user_messages: 1
+
+--- user message 1/1 (msg msg_161b8bbb6001aH1yM3y888x1pL, 2026-10-22T03:47:39.076Z) ---
+[[no content field; keys: role, time, tools, agent, model]]

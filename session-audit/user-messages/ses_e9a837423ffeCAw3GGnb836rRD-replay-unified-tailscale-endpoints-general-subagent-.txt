@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e9a837423ffeCAw3GGnb836rRD
+title: Replay unified tailscale endpoints (@general subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_1657c8c29001Xek5PpLFDLaUXl, 2026-10-22T21:20:23.601Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

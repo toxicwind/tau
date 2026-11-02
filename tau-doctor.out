@@ -1,0 +1,46 @@
+== listeners
+127.0.0.1:20128 (v1",pid=1723113,fd=21))
+127.0.0.1:25193 users:(("flock",pid=1195121,fd=12))
+127.0.0.1:25200 users:(("bun",pid=823915,fd=8))
+== unix sockets
+  ls: cannot access '/tmp/oracle_a2a.sock': No such file or directory
+  ls: cannot access '/tmp/yote_kite.sock': No such file or directory
+== flock with / without key
+  no key:    401
+  FLOCK key: 200
+== tau processes: FLOCK_API_KEY present in env? (count)
+  pid 1162706 /home/toxic/.local/bin/tau: 1
+  pid 1238208 bash ./tau-doctor.sh: 1
+  pid 1238209 tee tau-doctor.out: 1
+  pid 2000710 /home/toxic/.local/share/mise/installs/pitchfork/2.25.0/pitc: 0
+  pid 2000711 node /home/toxic/estate/ranch/barn/chute/chute.mjs --port 25: 0
+  pid 3933097 tau: 1
+  pid 3960680 /home/toxic/.local/bin/tau __tau_worker_daemon_broker: 1
+  pid 3986727 tau: 1
+== flock references in tau config (values redacted)
+/home/toxic/estate/config/tau/.env:46:FLOCK_BASE_URL="http://127.0.0.1:25193/v1"
+/home/toxic/estate/config/tau/.env:47:FLOCK_API_KEY=<redacted>
+/home/toxic/.tau/agent/models.yml:14:  flock:
+/home/toxic/.tau/agent/models.yml:17:    apiKey: <redacted>
+/home/toxic/.omp/config.yml:6:- name: flock
+/home/toxic/.omp/config.yml:7:  source: ./projects/range/ranch/stockyard/flock
+/home/toxic/.omp/config.yml:17:  - stockyard-flock-router
+/home/toxic/.tau/config.yml:6:- name: flock
+/home/toxic/.tau/config.yml:7:  source: ./projects/range/ranch/stockyard/flock
+/home/toxic/.tau/config.yml:17:  - stockyard-flock-router
+== newest tau log tail
+{"timestamp":"2026-10-13T22:32:14.583-06:00","level":"debug","pid":3933097,"message":"Usage fetch queued","provider":"github-copilot","credentialType":"oauth","baseUrl":"https://api.githubcopilot.com"
+{"timestamp":"2026-10-13T22:32:14.583-06:00","level":"debug","pid":3933097,"message":"Usage fetch queued","provider":"google-antigravity","credentialType":"oauth","baseUrl":"https://daily-cloudcode-pa
+{"timestamp":"2026-10-13T22:32:14.583-06:00","level":"debug","pid":3933097,"message":"Usage fetch queued","provider":"zai","credentialType":"oauth","baseUrl":"https://api.z.ai/api/anthropic","email":"
+{"timestamp":"2026-10-13T22:32:14.583-06:00","level":"debug","pid":3933097,"message":"Usage fetch queued","provider":"opencode-go","credentialType":"api_key","baseUrl":"https://opencode.ai/zen/go/v1"}
+{"timestamp":"2026-10-13T22:32:14.686-06:00","level":"debug","pid":3933097,"message":"AuthStorage usage fetch failed","provider":"opencode-go","error":"ProviderHttpError: OpenCode Go usage endpoint re
+{"timestamp":"2026-10-13T22:32:14.957-06:00","level":"warn","pid":3933097,"message":"ZAI usage response invalid 当前用户不存在coding plan","code":500}
+{"timestamp":"2026-10-13T22:32:15.603-06:00","level":"debug","pid":3933097,"message":"Usage fetch resolved","reports":[{"provider":"github-copilot","limits":1,"account":"toxicwind"},{"provider":"googl
+{"timestamp":"2026-10-13T22:34:14.585-06:00","level":"debug","pid":3933097,"message":"Usage fetch requested","providers":["github-copilot","google-antigravity","opencode-go","zai"]}
+{"timestamp":"2026-10-13T22:34:14.585-06:00","level":"debug","pid":3933097,"message":"Usage fetch queued","provider":"github-copilot","credentialType":"oauth","baseUrl":"https://api.githubcopilot.com"
+{"timestamp":"2026-10-13T22:34:14.585-06:00","level":"debug","pid":3933097,"message":"Usage fetch queued","provider":"google-antigravity","credentialType":"oauth","baseUrl":"https://daily-cloudcode-pa
+{"timestamp":"2026-10-13T22:34:14.585-06:00","level":"debug","pid":3933097,"message":"Usage fetch queued","provider":"zai","credentialType":"oauth","baseUrl":"https://api.z.ai/api/anthropic","email":"
+{"timestamp":"2026-10-13T22:34:14.585-06:00","level":"debug","pid":3933097,"message":"Usage fetch queued","provider":"opencode-go","credentialType":"api_key","baseUrl":"https://opencode.ai/zen/go/v1"}
+{"timestamp":"2026-10-13T22:34:14.702-06:00","level":"debug","pid":3933097,"message":"AuthStorage usage fetch failed","provider":"opencode-go","error":"ProviderHttpError: OpenCode Go usage endpoint re
+{"timestamp":"2026-10-13T22:34:14.959-06:00","level":"warn","pid":3933097,"message":"ZAI usage response invalid 当前用户不存在coding plan","code":500}
+{"timestamp":"2026-10-13T22:34:14.959-06:00","level":"debug","pid":3933097,"message":"Usage fetch resolved","reports":[{"provider":"github-copilot","limits":1,"account":"toxicwind"},{"provider":"googl

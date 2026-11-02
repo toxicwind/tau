@@ -114,6 +114,9 @@ const PRELUDE_GLOBAL_KEYS = [
 	"read",
 	"write",
 	"env",
+	"shell",
+	"sh",
+	"bash",
 ];
 
 /**

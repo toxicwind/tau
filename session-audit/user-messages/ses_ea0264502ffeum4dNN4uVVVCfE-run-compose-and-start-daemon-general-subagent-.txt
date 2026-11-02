@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_ea0264502ffeum4dNN4uVVVCfE
+title: Run compose and start daemon (@general subagent)
+cwd: /home/toxic/tmp
+user_messages: 1
+
+--- user message 1/1 (msg msg_15fd9bb03001qbih3NiVr62FdU, 2026-10-21T19:04:27.141Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

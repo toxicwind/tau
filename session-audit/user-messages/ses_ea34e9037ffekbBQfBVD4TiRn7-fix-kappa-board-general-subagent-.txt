@@ -1,0 +1,13 @@
+# KAPPA SESSION ses_ea34e9037ffekbBQfBVD4TiRn7
+title: Fix kappa board (@general subagent)
+cwd: /home/toxic
+user_messages: 3
+
+--- user message 1/3 (msg msg_15cb16fcc0018kwndy91VnbAGH, 2026-10-21T04:21:34.798Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]
+
+--- user message 2/3 (msg msg_15cb21f3400147j1IUFQzB0G1R, 2026-10-21T04:22:19.700Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 3/3 (msg msg_15cb2758900174vh02qD4K6ovn, 2026-10-21T04:22:41.801Z) ---
+[[no content field; keys: role, time, agent, model]]

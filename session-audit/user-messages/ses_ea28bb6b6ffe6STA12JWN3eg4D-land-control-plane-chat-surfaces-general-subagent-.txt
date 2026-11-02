@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_ea28bb6b6ffe6STA12JWN3eg4D
+title: Land control-plane chat surfaces (@general subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_15d74494d001fOsSuhm4u8abRX, 2026-10-21T07:54:24.463Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

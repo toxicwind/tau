@@ -1,0 +1,13 @@
+# KAPPA SESSION ses_ea72999abffeIyw0pAzEHRRlbX
+title: Combining plugin architecture and multi-model
+cwd: /home/toxic
+user_messages: 3
+
+--- user message 1/3 (msg msg_158d66667001nZYGHeH2w3JVch, 2026-10-20T10:23:28.359Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 2/3 (msg msg_158d733e0001g1uhTTzTIBnYQZ, 2026-10-20T10:24:20.960Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 3/3 (msg msg_158da7dfb0017F5HqKVFZ4kAya, 2026-10-20T10:27:56.539Z) ---
+[[no content field; keys: role, time, agent, model, summary]]

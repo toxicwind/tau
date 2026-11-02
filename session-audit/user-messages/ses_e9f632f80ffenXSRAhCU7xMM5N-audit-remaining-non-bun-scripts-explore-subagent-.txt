@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e9f632f80ffenXSRAhCU7xMM5N
+title: Audit remaining non-Bun scripts (@explore subagent)
+cwd: /home/toxic/tmp
+user_messages: 1
+
+--- user message 1/1 (msg msg_1609cd084001mP9dmoD5HGCakX, 2026-10-21T22:37:32.165Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

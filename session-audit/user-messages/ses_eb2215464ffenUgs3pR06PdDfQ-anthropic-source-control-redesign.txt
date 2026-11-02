@@ -1,0 +1,10 @@
+# KAPPA SESSION ses_eb2215464ffenUgs3pR06PdDfQ
+title: Anthropic source control redesign
+cwd: /home/toxic/estate
+user_messages: 2
+
+--- user message 1/2 (msg msg_14ddeabb0001jo5A9OKXVkf3vq, 2026-10-18T07:16:41.008Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 2/2 (msg msg_14ddec965001Tb3I4BRE4CPEQk, 2026-10-18T07:16:48.613Z) ---
+[[no content field; keys: role, time, agent, model, summary]]

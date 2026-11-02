@@ -1,0 +1,10 @@
+# KAPPA SESSION ses_ea3520460ffeGxpYA5m5PIteJd
+title: DelendAI fixes keeper disconnect (@general subagent)
+cwd: /home/toxic
+user_messages: 2
+
+--- user message 1/2 (msg msg_15cadfba3001KW3yOOq38UtqmX, 2026-10-21T04:17:48.452Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]
+
+--- user message 2/2 (msg msg_15cafe0100017qWoQuL1hegorl, 2026-10-21T04:19:52.464Z) ---
+[[no content field; keys: role, time, agent, model]]

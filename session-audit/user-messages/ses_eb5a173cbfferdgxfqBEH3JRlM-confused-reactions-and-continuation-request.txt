@@ -1,0 +1,64 @@
+# KAPPA SESSION ses_eb5a173cbfferdgxfqBEH3JRlM
+title: Confused Reactions and Continuation Request
+cwd: /home/toxic
+user_messages: 20
+
+--- user message 1/20 (msg msg_14a5e8c41001hcbvY21KUWlARS, 2026-10-17T14:57:52.705Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 2/20 (msg msg_14a5ece99001PwJGc1UfCJ2nkx, 2026-10-17T14:58:09.689Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 3/20 (msg msg_14a5f7842001h5I839APOGu3mb, 2026-10-17T14:58:53.122Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 4/20 (msg msg_14a60c88a001R0Eb2FOHC6aSCA, 2026-10-17T15:00:19.210Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 5/20 (msg msg_14a60f6c0001ljZpTaxmpWr24x, 2026-10-17T15:00:31.040Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 6/20 (msg msg_14a616e7c001TU6pvSTAF9ZJ3O, 2026-10-17T15:01:01.692Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 7/20 (msg msg_14a617afb0011AsdSLEFo8dB5w, 2026-10-17T15:01:04.892Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 8/20 (msg msg_14a61e58f001C4hsQ1p52MI7SI, 2026-10-17T15:01:32.175Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 9/20 (msg msg_14a632701001WLH3IfPoZQzdib, 2026-10-17T15:02:54.465Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 10/20 (msg msg_14a6332aa001NmE2chR52218l2, 2026-10-17T15:02:57.450Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 11/20 (msg msg_14a63565f001C5REQLr5GwfTgW, 2026-10-17T15:03:06.591Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 12/20 (msg msg_14a63f9960010yHR5Jb3Jx1JrW, 2026-10-17T15:03:48.374Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 13/20 (msg msg_14a6508b000171Pz58WFWX8ZwV, 2026-10-17T15:04:57.776Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 14/20 (msg msg_14a651397001lDIBgU2jOuQglI, 2026-10-17T15:05:00.567Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 15/20 (msg msg_14a666864001JLb4VNeFJHxa1e, 2026-10-17T15:06:27.812Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 16/20 (msg msg_14a66c52e001bdNcvjFL8iE7pT, 2026-10-17T15:06:51.566Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 17/20 (msg msg_14a66cf26001YkwtCb6UUfCFci, 2026-10-17T15:06:54.118Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 18/20 (msg msg_14a66db84001pWjTPwuwqQC634, 2026-10-17T15:06:57.284Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 19/20 (msg msg_14a6e7400001oolE9449gtE84E, 2026-10-17T15:15:15.072Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 20/20 (msg msg_14a6e84990019CYd1o3Gxyt7UN, 2026-10-17T15:15:19.321Z) ---
+[[no content field; keys: role, time, agent, model, summary]]

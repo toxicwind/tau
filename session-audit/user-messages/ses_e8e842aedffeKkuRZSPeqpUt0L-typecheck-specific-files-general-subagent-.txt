@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e8e842aedffeKkuRZSPeqpUt0L
+title: Typecheck specific files (@general subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_1717bd549001pdVvx3wzF1eTxr, 2026-10-25T05:15:03.374Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

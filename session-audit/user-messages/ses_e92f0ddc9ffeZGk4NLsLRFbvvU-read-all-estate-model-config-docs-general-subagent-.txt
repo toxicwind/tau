@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e92f0ddc9ffeZGk4NLsLRFbvvU
+title: Read all estate model config docs (@general subagent)
+cwd: /home/toxic/tmp
+user_messages: 1
+
+--- user message 1/1 (msg msg_16d0f226d001dHXtIVPcLWsX88, 2026-10-24T08:37:50.835Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

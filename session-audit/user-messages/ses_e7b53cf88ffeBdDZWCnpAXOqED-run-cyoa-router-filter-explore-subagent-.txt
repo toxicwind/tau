@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e7b53cf88ffeBdDZWCnpAXOqED
+title: Run cyoa-router filter (@explore subagent)
+cwd: /home/toxic/pens/estate
+user_messages: 1
+
+--- user message 1/1 (msg msg_184ac30bc001ihq3zHrWAivp8r, 2026-10-28T22:40:39.613Z) ---
+[[no content field; keys: role, time, tools, agent, model]]

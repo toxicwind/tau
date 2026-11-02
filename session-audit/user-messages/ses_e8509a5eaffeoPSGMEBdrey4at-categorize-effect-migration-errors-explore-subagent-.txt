@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e8509a5eaffeoPSGMEBdrey4at
+title: Categorize effect migration errors (@explore subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_17af65a4b001yyTrxcftNKi7ht, 2026-10-27T01:25:27.763Z) ---
+[[no content field; keys: role, time, tools, agent, model]]

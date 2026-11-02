@@ -1,0 +1,20 @@
+/home/toxic/.tau/agent
+modelRoles at line 271
+modelRoles:
+  advisor: openai-compatible/deepseek-v4-flash:low
+  bodybuilder: custom/bodybuilder
+  commit: openai-compatible/qwen3.6-35b
+  dots: custom/dots
+  fallback: openai-compatible/deepseek-v4-flash
+  image: google-antigravity/gemini-3.1-flash-image:auto
+  judge: openai-compatible/qwen3.6-35b
+  memory: openai-compatible/qwen3.6-35b
+  plan: openai-compatible/deepseek-v4-flash:low
+  slow: openai-compatible/deepseek-v4-flash:max
+  smol: openai-compatible/qwen3.6-35b
+  task: openai-compatible/qwen3.6-35b
+  tiny: openai-compatible/qwen3.6-35b
+  verification: openai-compatible/deepseek-v4-flash:low
+  vision: openai-compatible/minimax-m3:xhigh
+  web: web/exa
+  default: openai-compatible/deeps

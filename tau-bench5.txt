@@ -1,0 +1,5 @@
+Working...
+401 {"status":401,"title":"Unauthorized","detail":"Invalid JWT serialization: Missing dot delimiter(s)"}
+{"timestamp":"2026-10-26T16:42:50.399-06:00","level":"warn","pid":4150225,"message":"Fallback chain for role 'fallback' references unknown model: openai-compatible/qwen3.6-35b"}
+{"timestamp":"2026-10-26T16:42:50.399-06:00","level":"warn","pid":4150225,"message":"Fallback chain for role 'fallback' references unknown model: openai-compatible/minimax-m3"}
+{"timestamp":"2026-10-26T16:42:50.399-06:00","level":"warn","pid":4150225,"message":"Fallback chain for role 'fallback' references unknown model: openai-compatible/deepseek-v4-flash"}

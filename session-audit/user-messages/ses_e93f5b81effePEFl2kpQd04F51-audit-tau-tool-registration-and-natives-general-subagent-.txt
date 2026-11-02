@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e93f5b81effePEFl2kpQd04F51
+title: Audit tau tool registration and natives (@general subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_16c0a481a001hRJt3ZLnv8b7oW, 2026-10-24T03:52:55.580Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

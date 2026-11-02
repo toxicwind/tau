@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e905e7519ffeB4xHvHZAnyoh5N
+title: Check git directory (@general subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_16fa18b1b001Vz6tp3DvhXboDe, 2026-10-24T20:37:00.323Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

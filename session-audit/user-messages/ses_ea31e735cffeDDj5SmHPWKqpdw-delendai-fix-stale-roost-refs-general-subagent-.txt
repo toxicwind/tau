@@ -1,0 +1,10 @@
+# KAPPA SESSION ses_ea31e735cffeDDj5SmHPWKqpdw
+title: DelendAI fix stale roost refs (@general subagent)
+cwd: /home/toxic
+user_messages: 2
+
+--- user message 1/2 (msg msg_15ce18ca8001k1iUm8EgyLDr4b, 2026-10-21T05:14:07.913Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]
+
+--- user message 2/2 (msg msg_15cedfb65001GR94cRUqRHNYFX, 2026-10-21T05:27:42.695Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e9f57da53ffeYddRJWfEJTKdYo
+title: Verify kmake scaffold + tsgo (@general subagent)
+cwd: /home/toxic/tmp
+user_messages: 1
+
+--- user message 1/1 (msg msg_160a825b0001c3AQGNQLSv0I6O, 2026-10-21T22:49:54.865Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

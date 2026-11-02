@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e905f5fe5ffe7Xh2S8Ax0Vj1as
+title: Run probe-completions for minimax-m3 (@general subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_16fa0a04b001ejWZc5IqAiOMMY, 2026-10-24T20:36:00.208Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

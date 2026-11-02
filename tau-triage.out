@@ -1,0 +1,42 @@
+== 1. local gateway keys (which candidate works where)
+  flock GET /v1/models: no key → 401
+     763b…59#82c33c MCPPROXY_API_KEY(env) → 401 {"error":{"code":"unauthorized","message":"missing or invalid proxy AP
+     npk_…57#eca3df FLOCK_API_KEY(env) → 200 
+     vck_…Fy#617ee2 VERCEL_AI_GATEWAY_API_KEY(env) → 401 {"error":{"code":"unauthorized","message":"missing or invalid proxy AP
+     sk-n…FM#c48948 NIM_PROXY_API_KEY(env) → 200 
+     sove…ee#86aee5 FLOCK_API_KEY(dotenv) → 401 {"error":{"code":"unauthorized","message":"missing or invalid proxy AP
+     vr-b…8a#0b9cdf VANSROUTER_API_KEY(dotenv) → 401 {"error":{"code":"unauthorized","message":"missing or invalid proxy AP
+     $OPE…EY#284dfa PROXY_API_KEY(dotenv) → 401 {"error":{"code":"unauthorized","message":"missing or invalid proxy AP
+  vans GET /v1/models: no key → 200
+     763b…59#82c33c MCPPROXY_API_KEY(env) → 200 
+     npk_…57#eca3df FLOCK_API_KEY(env) → 200 
+     vck_…Fy#617ee2 VERCEL_AI_GATEWAY_API_KEY(env) → 200 
+     sk-n…FM#c48948 NIM_PROXY_API_KEY(env) → 200 
+     sove…ee#86aee5 FLOCK_API_KEY(dotenv) → 200 
+     vr-b…8a#0b9cdf VANSROUTER_API_KEY(dotenv) → 200 
+     $OPE…EY#284dfa PROXY_API_KEY(dotenv) → 200 
+  cuttinggate POST custom/dots: no key → 401
+     763b…59#82c33c MCPPROXY_API_KEY(env) → 502 {"error":{"code":"no_provider_serves","message":"no provider returned 
+     npk_…57#eca3df FLOCK_API_KEY(env) → 409 {"error":{"code":"model_quarantined","message":"model dots-studio/dots
+     vck_…Fy#617ee2 VERCEL_AI_GATEWAY_API_KEY(env) → 409 {"error":{"code":"model_quarantined","message":"model dots-studio/dots
+     sk-n…FM#c48948 NIM_PROXY_API_KEY(env) → 409 {"error":{"code":"model_quarantined","message":"model dots-studio/dots
+     sove…ee#86aee5 FLOCK_API_KEY(dotenv) → 409 {"error":{"code":"model_quarantined","message":"model dots-studio/dots
+     vr-b…8a#0b9cdf VANSROUTER_API_KEY(dotenv) → 409 {"error":{"code":"model_quarantined","message":"model dots-studio/dots
+     $OPE…EY#284dfa PROXY_API_KEY(dotenv) → 409 {"error":{"code":"model_quarantined","message":"model dots-studio/dots
+
+== 2. provider triage
+  DYNAMIC-KEY flock        (none)             key is a command/ref; not executed
+  BILLING     moonshot     sk-J…CY#352904     kimi-k2.7-code: 429 {"error":{"message":"Your account org-7043edfabec741f5961e4cdaac95fc44 \u003cak-fcqse4qmcn
+  DEAD        omniroute    (none)             ECONNREFUSED
+  NOMODEL     nvidia       nvap…Ty#17c1a6     ai21labs/jamba-1.5-large-instruct: 404 {"status":404,"title":"Not Found","detail":"Function '6497fc2b-7ff8-4019-8946-123dccbfc863
+  OK          groq         gsk_…Ic#f95e47     openai/gpt-oss-120b: 200 
+  BILLING     cerebras     csk-…t8#920373     gpt-oss-120b: 402 {"message":"Payment required to access this resource. Visit your billing tab.","type":"pay
+  BILLING     deepseek     sk-5…c3#ab789c     deepseek-flash: 402 {"error":{"message":"Insufficient Balance (request_id: f3a89f14-d093-4e20-a647-b2c792a160a
+  POLICY      zen          sk-r…FR#2f64bc     ling-3.1-flash-free: 403 {"type":"error","error":{"type":"FreeTierError","message":"OpenCode's free tier can only b
+  DEAD        chutes       cpk_…Mf#1da4d5     /models 404 (wrong baseUrl?)
+  UNKNOWN     cohere       cohe…qD#75de85     cohere-transcribe-03-2026: 400 {"id":"dbdd4c92-14be-4722-bed7-3637740005e9","message":"invalid request: model 'cohere-tra
+  OK          github       gith…sJ#ee1fb6     no listable model to probe
+  BILLING     parasail     psk-…ek#ea9a93     parasail-llama-33-70b-fp8: 403 {"id":"d21fe31f2c3b53c1ba1de363ed6bc58d","error":{"message":"Inference not allowed. Please
+
+wrote triage-report.json and models.yml.proposed (removes: moonshot, omniroute, cerebras, deepseek, zen, chutes, parasail). Your real models.yml was NOT modified.
+review: diff -u /home/toxic/.tau/agent/models.yml models.yml.proposed   (YAML rewrite drops comments; apply by hand if you prefer)

@@ -1,0 +1,10 @@
+# KAPPA SESSION ses_e99039cb9ffeyIKY2YJI31SMyV
+title: Memory Phase 2 into kappa core (@general subagent)
+cwd: /home/toxic
+user_messages: 2
+
+--- user message 1/2 (msg msg_166fc6380001cDCtJJHuvxj2Y3, 2026-10-23T04:19:39.010Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]
+
+--- user message 2/2 (msg msg_167057bd7001H3dqkxP8OObrWb, 2026-10-23T04:29:35.067Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

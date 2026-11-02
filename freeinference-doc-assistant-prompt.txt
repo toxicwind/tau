@@ -1,0 +1,51 @@
+I need the complete pricing metadata for your API in a machine-readable, LLM-friendly form. Please provide:
+
+## 1. Authoritative pricing table (ground truth)
+
+For EACH model you offer (glm-5.3-flash, minimax-m3, qwen3.6-35b, diffusiongemma, deepseek-v4-flash, bge-m3), give me exactly these fields in a fenced JSON block:
+
+```json
+{
+  "id": "glm-5.3-flash",
+  "context_window_tokens": 1000000,
+  "max_output_tokens": 131072,
+  "pricing_usd_per_mtok": {
+    "input": 0.3,
+    "output": 1.0,
+    "cache_read": 0.06,
+    "cache_write": 0.0
+  },
+  "pricing_semantics": {
+    "cache_write_billed_as": "separate_rate | input_rate | zero",
+    "cache_read_requires_prompt_caching": true,
+    "notes": "one line on anything ambiguous"
+  },
+  "modalities": ["text"],
+  "supports_tools": true,
+  "supports_reasoning_effort": true,
+  "reasoning_effort_values": ["minimal", "low", "medium", "high"],
+  "owned_by": "zai"
+}
+```
+
+## 2. Semantic clarifications (critical — answer each explicitly)
+
+1. **Cache-write billing**: When `input_cache_writes` is `0` in `/v1/models`, does a cache *write* get billed at the normal input rate, at a distinct write rate, or free? Your web UI table shows `Cache write $0.3` for glm-5.3-flash but the API returns `0` — which is authoritative, and does the discrepancy mean "writes billed at input rate"?
+2. **Cache-read rate**: is `input_cache_reads` the only charge for cached tokens (i.e. uncached tokens pay `prompt` rate)?
+3. **`bge-m3`**: is it an embeddings-only model (out: 0)? Does it 400 on chat/completions, and should clients route it to an embeddings endpoint? What is that endpoint path?
+4. **Context vs output**: confirm `max_output_length` is a per-request cap clients may set via `max_tokens`, or a server-enforced ceiling.
+5. **Quota/billing model**: is pricing metered per-token against a paid balance, or rate-limited free tier + paid? Where do "quota exhausted" errors surface (HTTP code + body shape) so clients can fall back?
+6. **User-agent policy**: your site says "Account using fake user agent will be banned." State exactly what UA policy API clients must follow — is an honest client UA like `tau/18.8.4 (+https://github.com/toxicwind/tau)` acceptable and preferred? Are browser-style `sec-ch-ua` client hints required or discouraged for API access?
+
+## 3. Rate limits & operational details
+
+- Requests/min, tokens/min, concurrency limits per model (or per account tier).
+- Streaming: SSE format, keep-alive behavior, max stream duration.
+- Any request headers you require or recommend (auth, attribution, idempotency).
+- Status/health endpoint for outage detection.
+
+## 4. Canonical source links
+
+Link the exact pages/endpoints where each number above lives (pricing page URL, /v1/models field names, terms-of-service section for the UA policy), so I can cite and re-verify programmatically.
+
+Output everything as one self-contained markdown document. Prefer exact numbers over prose; if something is undocumented, say `UNDOCUMENTED` rather than guessing.

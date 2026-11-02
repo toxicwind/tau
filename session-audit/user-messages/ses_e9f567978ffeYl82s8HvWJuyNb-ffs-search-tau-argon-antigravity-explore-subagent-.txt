@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e9f567978ffeYl82s8HvWJuyNb
+title: ffs-search tau argon antigravity (@explore subagent)
+cwd: /home/toxic/tmp
+user_messages: 1
+
+--- user message 1/1 (msg msg_160a9868c0016HIN4McPADdOwt, 2026-10-21T22:51:25.198Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

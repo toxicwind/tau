@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_ea039d190ffedJrvtUcNR9HqZD
+title: Survey Bun-native daemon patterns (@explore subagent)
+cwd: /home/toxic/tmp
+user_messages: 1
+
+--- user message 1/1 (msg msg_15fc62e73001xUnJOY3UTfur8T, 2026-10-21T18:43:05.972Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

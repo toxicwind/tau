@@ -1,0 +1,150 @@
+
+== 1. services
+  [OK] cuttinggate up (0ms)
+  [OK] flock up (0ms)
+  [OK] vansrouter up (2ms)
+  [WARN] omniroute http://127.0.0.1:20130/api/health → 0 ECONNREFUSED
+  cuttinggate /status: 200 {"providers":[{"provider":"nvidia","state":"closed","failures":0,"successes":0},{"provider":"nim-local","state":"closed","failures":0,"successes":0},{"provider":"openrouter","state":"closed","failures":0,"successes":0}],"quarantined":0,"leaders":[{"model":"beellama/exaone-4-0-1-2b-iq4xs","provider":
+
+== 2. flock key sources (fingerprints)
+  ~/estate/config/tau/.env: sove…ee#86aee5
+  shell env: npk_…57#eca3df
+
+== 3. ~/.tau/agent/models.yml providers (live /models + tiny tool-call chat)
+  ── flock  http://127.0.0.1:25193/v1  key=(none/dynamic)
+     GET /models → 401 252ms, live=0 configured=0
+  [BAD] flock: key rejected on /models (401)
+  ── moonshot  https://api.moonshot.ai/v1  key=sk-J…CY#352904 (env ref MOONSHOT_API_KEY)
+     GET /models → 200 320ms, live=2 configured=0
+  [BAD] moonshot/kimi-k2.7-code: http=429 240ms fin=- tool_calls=0 {"message":"Your account org-7043edfabec741f5961e4cdaac95fc44 <ak-fcqse4qmcnpi11cj7bt1> is suspended due to insufficient balance, please recharge your account o
+  [BAD] moonshot/kimi-k2.6: http=429 250ms fin=- tool_calls=0 {"message":"Your account org-7043edfabec741f5961e4cdaac95fc44 <ak-fcqse4qmcnpi11cj7bt1> is suspended due to insufficient balance, please recharge your account o
+  ── omniroute  http://127.0.0.1:20130/v1  key=(none/dynamic) (env ref OMNIROUTE_GATEWAY_KEY)
+     GET /models → 0 0ms, live=0 configured=0
+  [BAD] omniroute: /models → 0 ECONNREFUSED
+  ── nvidia  https://integrate.api.nvidia.com/v1  key=nvap…Ty#17c1a6 (env ref NVIDIA_API_KEY)
+     GET /models → 200 104ms, live=80 configured=0
+  [BAD] nvidia/01-ai/yi-large: http=404 68ms fin=- tool_calls=0 {"status":404,"title":"Not Found","detail":"Function '23bd454d-b225-49a3-8118-582a62fc51b8': Not found for account 'iuh5eKGaKSnWglC73O7UeZBzNHZ5aP7TLHyJpM-rxWY'
+  [BAD] nvidia/adept/fuyu-8b: http=404 58ms fin=- tool_calls=0 {"status":404,"title":"Not Found","detail":"Function 'e598bfc1-b058-41af-869d-556d3c7e1b48': Not found for account 'iuh5eKGaKSnWglC73O7UeZBzNHZ5aP7TLHyJpM-rxWY'
+  ── groq  https://api.groq.com/openai/v1  key=gsk_…Ic#f95e47 (env ref GROQ_API_KEY)
+     GET /models → 200 142ms, live=11 configured=0
+  [OK] groq/openai/gpt-oss-20b: http=200 239ms fin=tool_calls tool_calls=1 
+  [OK] groq/qwen/qwen3.8-27b: http=200 168ms fin=tool_calls tool_calls=1 
+  ── cerebras  https://api.cerebras.ai/v1  key=csk-…t8#920373 (env ref CEREBRAS_API_KEY)
+     GET /models → 200 155ms, live=2 configured=0
+  [BAD] cerebras/gpt-oss-120b: http=402 80ms fin=- tool_calls=0 {"message":"Payment required to access this resource. Visit your billing tab.","type":"payment_required_error","param":"quota","code":"payment_required"}
+  [BAD] cerebras/qwen-3.8-27b: http=402 74ms fin=- tool_calls=0 {"message":"Payment required to access this resource. Visit your billing tab.","type":"payment_required_error","param":"quota","code":"payment_required"}
+  ── deepseek  https://api.deepseek.com  key=sk-5…c3#ab789c (env ref DEEPSEEK_API_KEY)
+     GET /models → 200 376ms, live=2 configured=0
+  [BAD] deepseek/deepseek-flash: http=402 597ms fin=- tool_calls=0 {"message":"Insufficient Balance (request_id: 84f39e69-0376-4ec2-bfe7-09c6d2ab38fb)","type":"unknown_error","param":null,"code":"invalid_request_error"}
+  [BAD] deepseek/deepseek-v4-pro: http=402 594ms fin=- tool_calls=0 {"message":"Insufficient Balance (request_id: ea0494a3-be4a-409f-bd86-f10560ea5e6b)","type":"unknown_error","param":null,"code":"invalid_request_error"}
+  ── zen  https://opencode.ai/zen/v1  key=sk-r…FR#2f64bc (env ref OPENCODE_API_KEY)
+     GET /models → 200 178ms, live=49 configured=0
+  [BAD] zen/big-pickle: http=403 104ms fin=- tool_calls=0 {"type":"FreeTierError","message":"OpenCode's free tier can only be used from within OpenCode. Download it at https://opencode.ai and keep building."}
+  [BAD] zen/ling-3.1-flash-free: http=403 131ms fin=- tool_calls=0 {"type":"FreeTierError","message":"OpenCode's free tier can only be used from within OpenCode. Download it at https://opencode.ai and keep building."}
+  ── chutes  https://inference.chutes.ai/v1  key=cpk_…Mf#1da4d5 (env ref CHUTES_API_KEY)
+     GET /models → 404 293ms, live=0 configured=0
+  [BAD] chutes: /models → 404 {"detail":"No matching chute found!"}
+  ── cohere  https://api.cohere.com/compatibility/v1  key=cohe…qD#75de85 (env ref COHERE_API_KEY)
+     GET /models → 200 218ms, live=35 configured=0
+  [BAD] cohere/c4ai-aya-expanse-32b: http=400 55ms fin=- tool_calls=0 {"error_type":"TOOL_USE_NOT_SUPPORTED","id":"75cc439b-37db-4db8-be11-1578a660c18f","message":"invalid request: tool use is not supported by the provided model: 
+  [BAD] cohere/c4ai-aya-vision-32b: http=400 42ms fin=- tool_calls=0 {"error_type":"TOOL_USE_NOT_SUPPORTED","id":"237497bb-c70b-44c0-9555-fcced41fbce2","message":"invalid request: tool use is not supported by the provided model: 
+  ── github  https://models.github.ai/inference  key=gith…sJ#ee1fb6 (env ref GITHUB_TOKEN)
+     GET /models → 200 176ms, live=0 configured=0
+  ── parasail  https://api.parasail.io/v1  key=psk-…ek#ea9a93 (env ref PARASAIL_API_KEY)
+     GET /models → 200 235ms, live=93 configured=0
+  [BAD] parasail/parasail-llama-33-70b-fp8: http=403 39ms fin=- tool_calls=0 {"message":"Inference not allowed. Please add a valid payment method via the Parasail Web UI.","type":"invalid_request_error","param":null,"code":null,"request_
+  [BAD] parasail/meta-llama/Llama-3.3-70B-Instruct: http=403 145ms fin=- tool_calls=0 {"message":"Inference not allowed. Please add a valid payment method via the Parasail Web UI.","type":"invalid_request_error","param":null,"code":null,"request_
+
+== 4. cuttinggate custom/dots + files from the earlier edit batch
+  [WARN] custom/dots via cuttinggate → 401 0ms {"error":{"code":"auth_missing","message":"missing bearer token"}}
+  [OK] exists cuttinggate/src/dots.ts
+  [OK] exists cuttinggate/tests/dots.test.ts
+  [OK] exists flock-proxy/src/dots.rs
+  [BAD] cuttinggate bun test exit=1
+     (pass) pauser lifecycle > manual pause and resume [0.03ms]
+     (pass) pauser lifecycle > provider cascade: high failure rate -> provider pause [0.10ms]
+     (pass) pauser lifecycle > provider cascade: low failure rate -> no provider pause [0.04ms]
+     (pass) pauser lifecycle > exponential backoff on repeated failures [0.03ms]
+     
+     4 tests failed:
+     (fail) cuttinggate server sse endpoints > GET /models/sse returns text/event-stream with keep-alive and reload event [36.55ms]
+     (fail) loadLiveCatalog > accepts the canonical contract [0.20ms]
+     (fail) loadLiveCatalog > malformed JSON is a reason, not a throw [0.05ms]
+     (fail) resolve > a bare name resolves across providers rather than picking one [0.05ms]
+     
+      87 pass
+      4 fail
+      220 expect() calls
+     Ran 91 tests across 8 files. [118.00ms]
+  [OK] flock-proxy cargo check exit=0
+     ...
+     29 |     pub header_name: &'static str,
+        |         ^^^^^^^^^^^
+     30 |     /// Query param name for aut...
+     31 |     pub query_param: &'static str,
+        |         ^^^^^^^^^^^
+     32 |     /// Path appended to base_ur...
+     33 |     pub models_path: &'static str,
+        |         ^^^^^^^^^^^
+     
+     warning: constant `ROOST_ALIASES` is never used
+        --> src/roost_providers.rs:820:11
+         |
+     820 | pub const ROOST_ALIASES: &[(&str, &st...
+         |           ^^^^^^^^^^^^^
+
+== 5. ~/.tau/agent/agent.db credentials (non-secret columns only)
+  auth_credentials columns: id, provider, credential_type, data, disabled_cause, identity_key, created_at, updated_at
+    id=1 provider=github-copilot disabled_cause=null created_at=2026-10-03T02:24:17.000Z updated_at=2026-10-13T02:50:36.000Z
+    id=2 provider=openrouter disabled_cause=null created_at=2026-10-03T02:57:03.000Z updated_at=2026-10-03T02:57:03.000Z
+    id=3 provider=openrouter disabled_cause=null created_at=2026-10-03T19:33:25.000Z updated_at=2026-10-03T19:33:25.000Z
+    id=4 provider=google-antigravity disabled_cause=null created_at=2026-10-04T06:14:47.000Z updated_at=2026-10-14T04:29:30.000Z
+    id=5 provider=openrouter disabled_cause=null created_at=2026-10-05T05:38:45.000Z updated_at=2026-10-05T05:38:45.000Z
+    id=6 provider=zai disabled_cause=null created_at=2026-10-05T05:43:08.000Z updated_at=2026-10-13T21:41:33.000Z
+    id=7 provider=openrouter disabled_cause=null created_at=2026-10-05T21:22:30.000Z updated_at=2026-10-05T21:22:30.000Z
+    id=8 provider=stepfun disabled_cause=null created_at=2026-10-06T06:52:50.000Z updated_at=2026-10-06T06:52:50.000Z
+  auth_credential_blocks columns: credential_id, provider_key, block_scope, blocked_until_ms, updated_at
+    credential_id=1 block_scope= blocked_until_ms=2026-11-01T00:00:00.025Z updated_at=2026-10-03T07:49:52.000Z
+    credential_id=4 block_scope=counter:anthropic blocked_until_ms=2026-10-18T06:20:14.280Z updated_at=2026-10-13T21:08:54.000Z
+  [WARN] 2 credential block(s) recorded — blocked credentials are skipped by the router
+
+== 6. newest tau log digest (last 4000 lines, grouped)
+  tau.2026-10-13.1162706.log
+       9×  warn ZAI usage response invalid 当前用户不存在coding plan 
+       4×  warn Hindsight: auto-retain failed 
+       1×  warn agent turn ended with provider error flock
+       1×  warn agent turn ended with provider error google-antigravity
+
+  tau processes (pid, age s, rss KB):
+    1162706    1519 894292 /home/toxic/.local/bin/tau
+    1249516       0  4728 bash -c ps -eo pid,etimes,rss,args | grep -E '[t]au( |$)|tau_worker|tau-worker' | cut -c
+    1249523       0  2968 grep -E [t]au( |$)|tau_worker|tau-worker
+    2000710   77808  5668 /home/toxic/.local/share/mise/installs/pitchfork/2.25.0/pitchfork log-sink --daemon-id e
+    2000711   77808 28196 node /home/toxic/estate/ranch/barn/chute/chute.mjs --port 25111 -- /home/toxic/.local/bi
+    3933097   28010 372852 tau
+    3960680   27424 55296 /home/toxic/.local/bin/tau __tau_worker_daemon_broker
+    3986727   26861 350452 tau
+
+== VERDICT
+  BAD  flock: key rejected on /models (401)
+  BAD  moonshot/kimi-k2.7-code: http=429 240ms fin=- tool_calls=0 {"message":"Your account org-7043edfabec741f5961e4cdaac95fc44 <ak-fcqse4qmcnpi11cj7bt1> is suspended due to insufficient balance, please recharge your account o
+  BAD  moonshot/kimi-k2.6: http=429 250ms fin=- tool_calls=0 {"message":"Your account org-7043edfabec741f5961e4cdaac95fc44 <ak-fcqse4qmcnpi11cj7bt1> is suspended due to insufficient balance, please recharge your account o
+  BAD  omniroute: /models → 0 ECONNREFUSED
+  BAD  nvidia/01-ai/yi-large: http=404 68ms fin=- tool_calls=0 {"status":404,"title":"Not Found","detail":"Function '23bd454d-b225-49a3-8118-582a62fc51b8': Not found for account 'iuh5eKGaKSnWglC73O7UeZBzNHZ5aP7TLHyJpM-rxWY'
+  BAD  nvidia/adept/fuyu-8b: http=404 58ms fin=- tool_calls=0 {"status":404,"title":"Not Found","detail":"Function 'e598bfc1-b058-41af-869d-556d3c7e1b48': Not found for account 'iuh5eKGaKSnWglC73O7UeZBzNHZ5aP7TLHyJpM-rxWY'
+  BAD  cerebras/gpt-oss-120b: http=402 80ms fin=- tool_calls=0 {"message":"Payment required to access this resource. Visit your billing tab.","type":"payment_required_error","param":"quota","code":"payment_required"}
+  BAD  cerebras/qwen-3.8-27b: http=402 74ms fin=- tool_calls=0 {"message":"Payment required to access this resource. Visit your billing tab.","type":"payment_required_error","param":"quota","code":"payment_required"}
+  BAD  deepseek/deepseek-flash: http=402 597ms fin=- tool_calls=0 {"message":"Insufficient Balance (request_id: 84f39e69-0376-4ec2-bfe7-09c6d2ab38fb)","type":"unknown_error","param":null,"code":"invalid_request_error"}
+  BAD  deepseek/deepseek-v4-pro: http=402 594ms fin=- tool_calls=0 {"message":"Insufficient Balance (request_id: ea0494a3-be4a-409f-bd86-f10560ea5e6b)","type":"unknown_error","param":null,"code":"invalid_request_error"}
+  BAD  zen/big-pickle: http=403 104ms fin=- tool_calls=0 {"type":"FreeTierError","message":"OpenCode's free tier can only be used from within OpenCode. Download it at https://opencode.ai and keep building."}
+  BAD  zen/ling-3.1-flash-free: http=403 131ms fin=- tool_calls=0 {"type":"FreeTierError","message":"OpenCode's free tier can only be used from within OpenCode. Download it at https://opencode.ai and keep building."}
+  BAD  chutes: /models → 404 {"detail":"No matching chute found!"}
+  BAD  cohere/c4ai-aya-expanse-32b: http=400 55ms fin=- tool_calls=0 {"error_type":"TOOL_USE_NOT_SUPPORTED","id":"75cc439b-37db-4db8-be11-1578a660c18f","message":"invalid request: tool use is not supported by the provided model: 
+  BAD  cohere/c4ai-aya-vision-32b: http=400 42ms fin=- tool_calls=0 {"error_type":"TOOL_USE_NOT_SUPPORTED","id":"237497bb-c70b-44c0-9555-fcced41fbce2","message":"invalid request: tool use is not supported by the provided model: 
+  BAD  parasail/parasail-llama-33-70b-fp8: http=403 39ms fin=- tool_calls=0 {"message":"Inference not allowed. Please add a valid payment method via the Parasail Web UI.","type":"invalid_request_error","param":null,"code":null,"request_
+  BAD  parasail/meta-llama/Llama-3.3-70B-Instruct: http=403 145ms fin=- tool_calls=0 {"message":"Inference not allowed. Please add a valid payment method via the Parasail Web UI.","type":"invalid_request_error","param":null,"code":null,"request_
+  BAD  cuttinggate bun test exit=1
+  WARN  omniroute http://127.0.0.1:20130/api/health → 0 ECONNREFUSED
+  WARN  custom/dots via cuttinggate → 401 0ms {"error":{"code":"auth_missing","message":"missing bearer token"}}
+  WARN  2 credential block(s) recorded — blocked credentials are skipped by the router
+  9 checks OK, 3 warnings, 18 failures

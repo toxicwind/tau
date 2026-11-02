@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_ea0343dc5ffe58tjAqpTZRigzs
+title: Audit non-Bun for conversion (@general subagent)
+cwd: /home/toxic/tmp
+user_messages: 1
+
+--- user message 1/1 (msg msg_15fcbc23e001HfG2q4w03Db4u2, 2026-10-21T18:49:11.488Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

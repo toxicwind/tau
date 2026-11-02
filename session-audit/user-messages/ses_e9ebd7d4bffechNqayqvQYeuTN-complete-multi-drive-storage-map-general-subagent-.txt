@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e9ebd7d4bffechNqayqvQYeuTN
+title: Complete multi-drive storage map (@general subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_1614282eb001uFnwOwgm5SrstB, 2026-10-22T01:38:31.281Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]
