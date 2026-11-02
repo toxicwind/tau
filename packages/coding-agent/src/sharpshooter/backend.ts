@@ -5,7 +5,12 @@ import { truncateApproxTokens } from "../mnemotau/config";
 import type { AgentSession } from "../session/agent-session";
 import { runSharpshooterConsolidation } from "./consolidate";
 import { maybeStartSharpshooterExtraction, resolveSharpshooterModel } from "./extract";
-import { embedTexts, type SemanticSearchConfig, type SemanticSearchLine } from "./semantic-search";
+import {
+	embedTexts,
+	semanticSearch,
+	type SemanticSearchConfig,
+	type SemanticSearchLine,
+} from "./semantic-search";
 import {
 	readSharpshooterState,
 	sharpshooterBankDir,

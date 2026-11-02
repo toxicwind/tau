@@ -2,9 +2,9 @@ import { describe, expect, it } from "bun:test";
 import { semanticSearch, type SemanticSearchLine } from "tau/sharpshooter/semantic-search";
 
 const LINES: SemanticSearchLine[] = [
-	{ content: "Keep storage project-scoped.", source: "architecture.md" },
-	{ content: "Prefer explicit user controls.", source: "product.md" },
-	{ content: "Keep output concise.", source: "style.md" },
+	{ content: "Keep storage project-scoped.", file: "architecture.md" },
+	{ content: "Prefer explicit user controls.", file: "product.md" },
+	{ content: "Keep output concise.", file: "style.md" },
 ];
 
 // Deterministic test double (offline/CI-safe): token-overlap-aligned vectors

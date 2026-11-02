@@ -655,7 +655,7 @@ function mergeDynamicModel<TApi extends Api>(existingModel: Model<TApi>, dynamic
 		},
 		contextWindow: preferDiscoveryLimit(
 			dynamicModel.contextWindow,
-			resolveContext(dynamicModel.id) ?? existingModel.contextWindow,
+			resolveContext(dynamicModel.id)?.contextLength ?? existingModel.contextWindow,
 		),
 		maxTokens: preferDiscoveryLimit(dynamicModel.maxTokens, existingModel.maxTokens),
 		headers: resolveHeaders
