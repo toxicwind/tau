@@ -1127,7 +1127,24 @@ function getResolvedSpecifier(specifier: string): string {
 		return cached;
 	}
 
-	const resolved = Bun.resolveSync(specifier, import.meta.dir);
+	let resolved: string;
+	try {
+		resolved = Bun.resolveSync(specifier, import.meta.dir);
+	} catch {
+		// Dev mode: the canonical `@tau/tau-coding-agent` scope alias exists
+		// only inside the compiled binary ($bunfs/root / bundled virtual
+		// specifiers). In the source tree the host package publishes as `tau`
+		// (not `@tau/tau-coding-agent`), so fall back to that package root when
+		// the canonical alias fails to resolve.
+		if (specifier === `${CANONICAL_PI_SCOPE}/tau-coding-agent`) {
+			resolved = Bun.resolveSync("tau", import.meta.dir);
+		} else if (specifier.startsWith(`${CANONICAL_PI_SCOPE}/tau-coding-agent/`)) {
+			const subpath = specifier.slice(`${CANONICAL_PI_SCOPE}/tau-coding-agent/`.length);
+			resolved = Bun.resolveSync(`tau/${subpath}`, import.meta.dir);
+		} else {
+			throw new Error(`cannot resolve ${specifier} from ${import.meta.dir}`);
+		}
+	}
 	resolvedSpecifierFallbacks.set(specifier, resolved);
 	return resolved;
 }
