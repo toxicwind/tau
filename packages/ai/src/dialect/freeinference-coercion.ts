@@ -35,4 +35,31 @@ export function coerceFreeInferenceValue(raw: string, schema: unknown): unknown 
 	return coerceValue(raw, schema);
 }
 
+/**
+ * Reasoning-at-a-third doctrine (AGENTS.md): for a model whose reasoning tokens
+ * share the same max-token ceiling as its output, cap the thinking budget at
+ * ~1/3 of the effective max tokens so reasoning never starves the actual
+ * completion (the length-starvation trap — e.g. max_tokens=500 consumed wholly
+ * by reasoning). FreeInference's tool models (deepseek-v4-flash, glm-5.3-flash,
+ * qwen3.6-35b) all share this ceiling. bge-m3 is excluded: it never emits tool
+ * calls or reasons.
+ */
+export const FREEINFERENCE_THINKING_BUDGET_RATIO = 1 / 3;
+
+/**
+ * Resolve the thinking budget for a FreeInference tool model so reasoning uses
+ * at most ~1/3 of the effective max-token ceiling. Prefers an explicit caller
+ * budget when one is already set; otherwise derives the cap from the model's
+ * max tokens. Returns the platform floor when the model reports no cap.
+ */
+export function resolveFreeInferenceThinkingBudget(
+	modelMaxTokens: number | null,
+	explicitBudget?: number,
+	platformFloor = 1024,
+): number {
+	if (explicitBudget !== undefined && explicitBudget > 0) return explicitBudget;
+	const cap = modelMaxTokens === null ? platformFloor : Math.floor(modelMaxTokens * FREEINFERENCE_THINKING_BUDGET_RATIO);
+	return Math.max(cap, platformFloor);
+}
+
 export { parseMarkdownItem, parseMarkdownList, decodeValue };

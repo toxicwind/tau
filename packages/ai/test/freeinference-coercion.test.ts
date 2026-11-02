@@ -1,9 +1,11 @@
 import { describe, expect, it } from "bun:test";
 import {
 	FREEINFERENCE_TOOL_MODELS,
+	FREEINFERENCE_THINKING_BUDGET_RATIO,
 	parseMarkdownItem,
 	parseMarkdownList,
 	coerceFreeInferenceValue,
+	resolveFreeInferenceThinkingBudget,
 } from "../src/dialect/freeinference-coercion";
 
 // Real tool-call `arguments` captured live from FreeInference 2026-11-02 for
@@ -106,5 +108,27 @@ describe("parseMarkdownList vs parseMarkdownItem parity", () => {
 		const raw = "- [ ] alpha\n- [ ] beta\n1. gamma";
 		expect(parseMarkdownList(raw)).toEqual(["alpha", "beta", "gamma"]);
 		expect(raw.split("\n").map(parseMarkdownItem)).toEqual(["alpha", "beta", "gamma"]);
+	});
+});
+
+describe("resolveFreeInferenceThinkingBudget (reasoning-at-1/3)", () => {
+	it("caps the thinking budget at ~1/3 of the model max-token ceiling", () => {
+		// deepseek-v4-flash exposes an 8192 max-output ceiling on freeinference;
+		// 1/3 ≈ 2730 — reasoning must not spend the whole completion budget.
+		const budget = resolveFreeInferenceThinkingBudget(8192);
+		expect(budget).toBe(Math.floor(8192 * FREEINFERENCE_THINKING_BUDGET_RATIO));
+		expect(budget).toBeLessThan(8192);
+	});
+
+	it("prefers an explicit caller budget over the derived cap", () => {
+		expect(resolveFreeInferenceThinkingBudget(8192, 4096)).toBe(4096);
+	});
+
+	it("returns the platform floor when the model reports no cap", () => {
+		expect(resolveFreeInferenceThinkingBudget(null, undefined, 1024)).toBe(1024);
+	});
+
+	it("never returns a budget below the platform floor", () => {
+		expect(resolveFreeInferenceThinkingBudget(512)).toBeGreaterThanOrEqual(1024);
 	});
 });
