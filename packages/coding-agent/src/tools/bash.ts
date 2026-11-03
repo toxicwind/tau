@@ -943,11 +943,26 @@ export class BashTool implements AgentTool<BashToolSchema, BashToolDetails> {
 		// or the dedicated-tool command that follows the directory change.
 		if (this.session.settings.get("bashInterceptor.enabled")) {
 			const rules = this.session.settings.getBashInterceptorRules().filter(rule => !name || rule.tool !== "bash");
+			// Divergence seam (2026-11-02): forkDivergence.interceptorRewrite=true
+			// → fork policy: matched commands REWRITE to `kairos run <cmd>` (kairos
+			// applies its own ffs rewrites/detach/truncator-MITM — fix, don't
+			// scold). Flag off → upstream policy: hard block.
+			const forkRewrite = this.session.settings.get("forkDivergence.interceptorRewrite") === true;
 			const commandsToCheck = rawCommand === command ? [command] : [rawCommand, command];
 			for (const commandToCheck of commandsToCheck) {
-				const interception = checkBashInterception(commandToCheck, ctx?.toolNames ?? [], rules, rawCommand);
+				const interception = checkBashInterception(
+					commandToCheck,
+					ctx?.toolNames ?? [],
+					rules,
+					rawCommand,
+					{ rewriteToKairos: forkRewrite },
+				);
 				if (interception.block) {
 					throw new ToolError(interception.message ?? "Command blocked");
+				}
+				if (interception.rewrittenCommand) {
+					command = interception.rewrittenCommand;
+					break;
 				}
 			}
 		}

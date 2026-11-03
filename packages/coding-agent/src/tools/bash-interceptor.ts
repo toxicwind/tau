@@ -15,6 +15,20 @@ export interface InterceptionResult {
 	message?: string;
 	/** Suggested tool to use instead */
 	suggestedTool?: string;
+	/**
+	 * Fork policy (2026-11-02): when set, execute THIS command instead of the
+	 * original — the matched command wrapped as `kairos run <original>`, so
+	 * kairos applies its own autonomous machinery (banned-first ffs rewrites,
+	 * truncator MITM, detach, 4s deadline) and the agent's work never dead-ends
+	 * on a block message. Never set together with `block`.
+	 */
+	rewrittenCommand?: string;
+}
+
+/** Policy for what a matched rule DOES. */
+export interface InterceptorExecution {
+	/** Rewrite matches into `kairos run` wraps instead of blocking (fork default). */
+	rewriteToKairos: boolean;
 }
 
 /**
@@ -121,13 +135,15 @@ export function checkBashInterception(
 	availableTools: string[],
 	rules: BashInterceptorRule[] = DEFAULT_BASH_INTERCEPTOR_RULES,
 	originalCommand = command,
+	execution: InterceptorExecution = { rewriteToKairos: false },
 ): InterceptionResult {
 	const compiled = compileRules(rules);
 	const candidates = interceptionCandidates(command);
 
 	for (const { rule, regex } of compiled) {
-		// Only block if the suggested tool is actually available
-		if (!availableTools.includes(rule.tool)) {
+		// Only act if the suggested tool is actually available
+		const toolAvailable = availableTools.includes(rule.tool);
+		if (!toolAvailable && !execution.rewriteToKairos) {
 			continue;
 		}
 
@@ -135,6 +151,16 @@ export function checkBashInterception(
 			// A configured global or sticky regex carries state across calls.
 			regex.lastIndex = 0;
 			if (regex.test(candidate)) {
+				// Fork policy (fix-don't-scold): never dead-end the agent on a
+				// block message. The matched command runs wrapped in kairos,
+				// whose own rewrite layer picks the sanctioned equivalent.
+				if (execution.rewriteToKairos) {
+					return {
+						block: false,
+						rewrittenCommand: `kairos run -- ${originalCommand}`,
+						suggestedTool: rule.tool,
+					};
+				}
 				return {
 					block: true,
 					message: `Blocked: ${rule.message}\n\nOriginal command: ${originalCommand}`,

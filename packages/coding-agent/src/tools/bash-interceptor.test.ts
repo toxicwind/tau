@@ -110,3 +110,38 @@ describe("dirty flags + malformed rules", () => {
 		expect(block(checkBashInterception("cat x", ["read"], custom))).toBe(false);
 	});
 });
+
+describe("fork rewrite policy (fix-don't-scold)", () => {
+	const KAIROS = { rewriteToKairos: true };
+
+	test("matched command rewrites to kairos wrap instead of blocking", () => {
+		const r = checkBashInterception("grep -r foo .", ["grep"], DEFAULT_BASH_INTERCEPTOR_RULES, "grep -r foo .", KAIROS);
+		expect(r.block).toBe(false);
+		expect(r.rewrittenCommand).toBe("kairos run -- grep -r foo .");
+	});
+
+	test("rewrite fires even when the suggested tool is NOT available", () => {
+		// The whole point: the command still runs (under kairos), it never dead-ends.
+		const r = checkBashInterception("cat x", ["bash"], DEFAULT_BASH_INTERCEPTOR_RULES, "cat x", KAIROS);
+		expect(r.block).toBe(false);
+		expect(r.rewrittenCommand).toBe("kairos run -- cat x");
+	});
+
+	test("non-matching commands never rewrite", () => {
+		const r = checkBashInterception("git status", ALL_TOOLS, DEFAULT_BASH_INTERCEPTOR_RULES, "git status", KAIROS);
+		expect(r.block).toBe(false);
+		expect(r.rewrittenCommand).toBeUndefined();
+	});
+
+	test("env-prefixed command rewrites the FULL original", () => {
+		const r = checkBashInterception("FOO=1 grep x f", ["grep"], DEFAULT_BASH_INTERCEPTOR_RULES, "FOO=1 grep x f", KAIROS);
+		expect(r.rewrittenCommand).toBe("kairos run -- FOO=1 grep x f");
+	});
+
+	test("upstream policy (default execution arg) still hard-blocks", () => {
+		// No execution arg = upstream semantics: block with message.
+		const r = checkBashInterception("grep foo f", ["grep"]);
+		expect(block(r)).toBe(true);
+		expect(r.rewrittenCommand).toBeUndefined();
+	});
+});
