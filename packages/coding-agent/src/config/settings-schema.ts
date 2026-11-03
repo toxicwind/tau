@@ -4005,6 +4005,28 @@ export const SETTINGS_SCHEMA = {
 	},
 	"bashInterceptor.patterns": { type: "array", default: DEFAULT_BASH_INTERCEPTOR_RULES },
 
+	// ── Fork-divergence flags (2026-11-02) ────────────────────────────────────
+	// Every intentional divergence from upstream can1357/oh-my-pi is toggleable
+	// here, so `git merge upstream/main` lands without behavioral surprise:
+	// each flag defaults to the FORK's chosen semantics (true) and can be flipped
+	// to upstream behavior (false) to adopt upstream's ruling. The restored
+	// upstream contract tests ride these flags: a flag flip toggles which
+	// contract pins.
+	//
+	// Flags:
+	//   grepExclusions        fork: `!globs` in grep `path` lists are literal paths
+	//                         (upstream: `!` = ripgrep-style exclusion globs)
+	//   sedBrePerPattern      fork: sed falls back per-pattern when BRE alternation
+	//                         (`\|`) is unsupported (upstream: strict ERE translation)
+	//   interceptorRewrite    fork: interceptor redirects to kairos wrap when the
+	//                         suggested tool is unavailable (upstream: hard block only)
+	//   toolContractsKaros    fork: restored upstream tool-contract tests gate on
+	//                         this; disabled = run upstream semantics
+	"forkDivergence.grepExclusions": { type: "boolean", default: true },
+	"forkDivergence.sedBrePerPattern": { type: "boolean", default: true },
+	"forkDivergence.interceptorRewrite": { type: "boolean", default: false },
+	"forkDivergence.toolContractsKaros": { type: "boolean", default: true },
+
 	"bash.direnv": {
 		type: "enum",
 		values: ["auto", "off"] as const,
