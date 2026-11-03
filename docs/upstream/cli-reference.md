@@ -86,7 +86,7 @@ Argument handling:
 | `--smol <id>` | Smol/fast model for lightweight tasks (or `PI_SMOL_MODEL`). |
 | `--slow <id>` | Slow/reasoning model for thorough analysis (or `PI_SLOW_MODEL`). |
 | `--plan <id>` | Plan model for architectural planning (or `PI_PLAN_MODEL`). |
-| `--models <a,b,c>` | Comma-separated model patterns for `Ctrl+P` cycling. |
+| `--models <a,b,c>` | Comma-separated model patterns for `F2`/`Ctrl+P` cycling. |
 | `--provider <name>` | Provider to use (legacy; prefer `--model`). |
 | `--api-key <key>` | API key (defaults to env vars). |
 | `--provider-session-id <id>` | Reuse a specific provider-side session id for continuity and cache scoping. |

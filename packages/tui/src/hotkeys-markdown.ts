@@ -78,6 +78,7 @@ export function buildHotkeysMarkdown(bindings: HotkeysMarkdownBindings): string 
 		`| \`${hotkeyLabel(bindings, "app.model.cycleBackward")}\` | Cycle role models (backward) |`,
 		`| \`${hotkeyLabel(bindings, "app.model.selectTemporary")}\` | Select model (temporary) |`,
 		`| \`${hotkeyLabel(bindings, "app.model.select")}\` | Select model (set roles) |`,
+		`| \`${hotkeyLabel(bindings, "app.session.tree")}\` | Show session tree |`,
 		`| \`${hotkeyLabel(bindings, "app.plan.toggle")}\` | Toggle plan mode |`,
 		`| \`${hotkeyLabel(bindings, "app.history.search")}\` | Search prompt history |`,
 		`| \`${hotkeyLabel(bindings, "app.tools.expand")}\` | Toggle tool output expansion |`,

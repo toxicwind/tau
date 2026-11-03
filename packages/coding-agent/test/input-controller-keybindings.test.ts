@@ -304,6 +304,40 @@ describe("InputController keybinding setup", () => {
 		expect(spies.resetDisplayAfterAppearanceRefresh).toHaveBeenCalledTimes(1);
 	});
 
+	it("routes the shipped F9 session-tree binding to the tree selector", async () => {
+		const { InputController, ctx, customHandlers, setKeybinding } = await createContext();
+		setKeybinding("app.session.tree", ["f9"]);
+		const controller = new InputController(ctx);
+
+		controller.setupKeyHandlers();
+
+		// setupKeyHandlers wires tree keys as custom editor handlers pointing at
+		// showTreeSelector — F9 is the first shipped key the tree action ever had.
+		const treeHandler = customHandlers.get("f9");
+		expect(treeHandler).toBeDefined();
+		treeHandler?.();
+		expect(ctx.showTreeSelector).toHaveBeenCalledTimes(1);
+
+		// And the real wire forms parse to f9 (SS3/CSI-tilde/terminfo).
+		expect(customHandlers.has("\x1b[20~")).toBe(false);
+		expect(matchesKey("\x1b[20~", "f9")).toBe(true);
+	});
+
+	it("routes the shipped F6 plan-mode binding to the plan command", async () => {
+		const { InputController, ctx, customHandlers, setKeybinding } = await createContext();
+		setKeybinding("app.plan.toggle", ["f6", "alt+shift+p"]);
+		const controller = new InputController(ctx);
+
+		controller.setupKeyHandlers();
+
+		for (const key of ["f6", "alt+shift+p"]) {
+			const handler = customHandlers.get(key);
+			expect(handler).toBeDefined();
+			handler?.();
+		}
+		expect(ctx.handlePlanModeCommand).toHaveBeenCalledTimes(2);
+	});
+
 	it("does not mark pasted shell prompts as Python mode while editing", async () => {
 		const { InputController, ctx, editor } = await createContext();
 		const controller = new InputController(ctx);

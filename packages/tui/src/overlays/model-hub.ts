@@ -2206,7 +2206,7 @@ export class ModelHubComponent implements Component {
 		// segment track the ctrl+p status uses; the selected role's chip fills.
 		while (lines.length < rows - 1) lines.push("");
 		if (rows >= 2) {
-			const cycleKey = getKeybindings().getKeys("app.model.cycleForward")[0] ?? "ctrl+p";
+			const cycleKey = getKeybindings().getKeys("app.model.cycleForward")[0] ?? "f2";
 			if (cycleOrder.length > 0) {
 				const selectedRow = this.#rolesRows[this.#roleIndex];
 				const selectedRole =

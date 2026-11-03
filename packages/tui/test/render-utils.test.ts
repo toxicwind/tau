@@ -404,9 +404,9 @@ describe("formatExpandHint / expandKeyHint", () => {
 
 	it("reports the default tool-output expand key", () => {
 		setKeybindings(KeybindingsManager.inMemory());
-		expect(expandKeyHint()).toBe("Ctrl+O");
+		expect(expandKeyHint()).toBe("F7/Ctrl+O");
 		// Single bracket pair from the theme, no double-wrapping around the key.
-		expect(formatExpandHint(plainTheme, false, true)).toBe("[Ctrl+O: Expand]");
+		expect(formatExpandHint(plainTheme, false, true)).toBe("[F7/Ctrl+O: Expand]");
 	});
 
 	it("tracks a user remap of the expand binding", () => {

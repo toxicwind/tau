@@ -20,6 +20,40 @@ describe("matchesKey", () => {
 		expect(matchesKey("\x1b[Z", "shift+tab")).toBe(true);
 	});
 
+	it("parses every function-key wire form tau ships hotkeys on", () => {
+		// F1-F4: SS3 (bare, every terminal) and terminfo CSI-tilde.
+		for (const [n, ss3, csi] of [
+			[1, "\x1bOP", "\x1b[11~"],
+			[2, "\x1bOQ", "\x1b[12~"],
+			[3, "\x1bOR", "\x1b[13~"],
+			[4, "\x1bOS", "\x1b[14~"],
+		] as const) {
+			expect(parseKey(ss3)).toBe(`f${n}`);
+			expect(parseKey(csi)).toBe(`f${n}`);
+			expect(matchesKey(ss3, `f${n}`)).toBe(true);
+			expect(matchesKey(csi, `f${n}`)).toBe(true);
+		}
+		// F5-F9: CSI-tilde (xterm codes 15/17/18/19/20).
+		for (const [n, csi] of [
+			[5, "\x1b[15~"],
+			[6, "\x1b[17~"],
+			[7, "\x1b[18~"],
+			[8, "\x1b[19~"],
+			[9, "\x1b[20~"],
+		] as const) {
+			expect(parseKey(csi)).toBe(`f${n}`);
+			expect(matchesKey(csi, `f${n}`)).toBe(true);
+		}
+		// Shift+F1 under the kitty protocol's CSI-1-letter form.
+		setKittyProtocolActive(true);
+		try {
+			expect(parseKey("\x1b[1;2P")).toBe("shift+f1");
+			expect(matchesKey("\x1b[1;2P", "shift+f1")).toBe(true);
+		} finally {
+			setKittyProtocolActive(false);
+		}
+	});
+
 	it("matches pageUp legacy sequence with mixed case keyId", () => {
 		setKittyProtocolActive(false);
 		expect(matchesKey("\x1b[5~", "pageUp")).toBe(true);

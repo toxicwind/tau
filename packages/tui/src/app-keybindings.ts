@@ -106,35 +106,38 @@ export const KEYBINDINGS = {
 		description: "Reset terminal display",
 	},
 	"app.thinking.cycle": {
-		defaultKeys: "shift+tab",
-		description: "Cycle thinking level",
+		// F1 leads: function keys are delivered verbatim by every terminal (see
+		// app.retry). Shift+Tab stays as the legacy chord for muscle memory and
+		// terminals without a function row.
+		defaultKeys: ["f1", "shift+tab"],
+		description: "Cycle thinking level (off, auto, minimal..max)",
 	},
 	"app.thinking.toggle": {
-		defaultKeys: "ctrl+t",
-		description: "Toggle thinking mode",
+		defaultKeys: ["f8", "ctrl+t"],
+		description: "Toggle thinking block visibility",
 	},
 	"app.model.cycleForward": {
-		defaultKeys: "ctrl+p",
+		defaultKeys: ["f2", "ctrl+p"],
 		description: "Cycle to next model",
 	},
 	"app.model.cycleBackward": {
-		defaultKeys: "shift+ctrl+p",
+		defaultKeys: ["f3", "shift+ctrl+p"],
 		description: "Cycle to previous model",
 	},
 	"app.model.select": {
-		defaultKeys: "alt+m",
+		defaultKeys: ["f4", "alt+m"],
 		description: "Select model",
 	},
 	"app.model.selectTemporary": {
-		defaultKeys: "alt+p",
+		defaultKeys: ["alt+p"],
 		description: "Select temporary model for current session",
 	},
 	"app.tools.expand": {
-		defaultKeys: "ctrl+o",
+		defaultKeys: ["f7", "ctrl+o"],
 		description: "Expand tools",
 	},
 	"app.tools.toggleVisibility": {
-		defaultKeys: "ctrl+shift+o",
+		defaultKeys: ["ctrl+shift+o"],
 		description: "Show or hide tool activity",
 	},
 	"app.editor.external": {
@@ -149,9 +152,10 @@ export const KEYBINDINGS = {
 		description: "Send follow-up message",
 	},
 	"app.retry": {
-		// F5 leads: it is delivered verbatim by every terminal, unlike modified
-		// Enter chords (Ctrl/Alt/Cmd+Enter), which various terminals swallow or
-		// fold into plain Enter. The idle "F5 to Retry" status row advertises it.
+		// F5 leads: function keys are delivered verbatim by every terminal,
+		// unlike modified Enter chords (Ctrl/Alt/Cmd+Enter), which various
+		// terminals swallow or fold into plain Enter. The idle "F5 to Retry"
+		// status row advertises it.
 		defaultKeys: ["f5", "alt+r"],
 		description: "Retry last failed assistant turn",
 	},
@@ -182,7 +186,7 @@ export const KEYBINDINGS = {
 		description: "Create new session",
 	},
 	"app.session.tree": {
-		defaultKeys: [],
+		defaultKeys: ["f9"],
 		description: "Show session tree",
 	},
 	"app.session.fork": {
@@ -202,25 +206,30 @@ export const KEYBINDINGS = {
 		description: "Open the agent hub",
 	},
 	"app.session.togglePath": {
-		defaultKeys: "ctrl+p",
+		defaultKeys: [],
 		description: "Toggle session path display",
 	},
 	"app.session.toggleSort": {
-		defaultKeys: "ctrl+s",
+		defaultKeys: [],
 		description: "Toggle session sort order",
 	},
 	"app.session.rename": {
-		defaultKeys: "ctrl+r",
+		defaultKeys: [],
 		description: "Rename session",
 	},
 	"app.session.delete": {
-		defaultKeys: "ctrl+d",
+		defaultKeys: [],
 		description: "Delete session",
 	},
 	"app.session.deleteNoninvasive": {
-		defaultKeys: "ctrl+backspace",
+		defaultKeys: [],
 		description: "Delete session (non-invasive)",
 	},
+	// Legacy session-overlay chords: the tree/session selectors bind their own
+	// raw overlay keys, so these defaults were dead claims that collided with
+	// live bindings (ctrl+p = model cycle, ctrl+s = agent hub, ctrl+r = history
+	// search, ctrl+d = exit). Kept registered so user keybindings.yml entries
+	// using these names still migrate; nothing consumes them.
 	"app.tree.foldOrUp": {
 		defaultKeys: ["ctrl+left", "alt+left"],
 		description: "Fold or move up",
@@ -230,7 +239,7 @@ export const KEYBINDINGS = {
 		description: "Unfold or move down",
 	},
 	"app.plan.toggle": {
-		defaultKeys: "alt+shift+p",
+		defaultKeys: ["f6", "alt+shift+p"],
 		description: "Toggle plan mode",
 	},
 	"app.history.search": {
@@ -242,7 +251,7 @@ export const KEYBINDINGS = {
 		description: "Toggle speech-to-text (default gesture: hold Space)",
 	},
 	"app.live.toggle": {
-		defaultKeys: "ctrl+l",
+		defaultKeys: ["ctrl+l"],
 		description: "Start or stop live voice mode (/live)",
 	},
 } as const satisfies KeybindingDefinitions;

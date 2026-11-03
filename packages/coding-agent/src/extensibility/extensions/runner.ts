@@ -1090,6 +1090,17 @@ export class ExtensionRunner {
 		"alt+enter": true,
 		escape: true,
 		enter: true,
+		// Shipped F-key hotkey row (F1 thinking, F2/F3 model, F4 select, F5 retry,
+		// F6 plan, F7 tools, F8 thinking visibility, F9 tree).
+		f1: true,
+		f2: true,
+		f3: true,
+		f4: true,
+		f5: true,
+		f6: true,
+		f7: true,
+		f8: true,
+		f9: true,
 	};
 
 	getShortcuts(): Map<KeyId, ExtensionShortcut> {

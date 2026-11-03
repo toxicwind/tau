@@ -9,11 +9,11 @@ import {
 
 describe("parseGitHubRepo", () => {
 	test("parses HTTPS URL", () => {
-		expect(parseGitHubRepo("https://github.com/toxicwind/tau.git")).toBe("can1357/tau");
+		expect(parseGitHubRepo("https://github.com/toxicwind/tau.git")).toBe("toxicwind/tau");
 	});
 
 	test("parses HTTPS URL without .git suffix", () => {
-		expect(parseGitHubRepo("https://github.com/toxicwind/tau")).toBe("can1357/tau");
+		expect(parseGitHubRepo("https://github.com/toxicwind/tau")).toBe("toxicwind/tau");
 	});
 
 	test("parses SSH scp-style URL", () => {

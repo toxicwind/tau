@@ -21,11 +21,12 @@ describe("buildHotkeysMarkdown", () => {
 			"app.clear": "Ctrl+C",
 			"app.exit": "Ctrl+D",
 			"app.suspend": "Ctrl+Z",
-			"app.thinking.cycle": "Shift+Tab",
-			"app.model.cycleForward": "Ctrl+P",
-			"app.model.cycleBackward": "Shift+Ctrl+P",
+			"app.thinking.cycle": "F1/Shift+Tab",
+			"app.model.cycleForward": "F2/Ctrl+P",
+			"app.model.cycleBackward": "F3/Shift+Ctrl+P",
 			"app.model.selectTemporary": "Ctrl+Shift+L",
-			"app.model.select": "Alt+M",
+			"app.model.select": "F4/Alt+M",
+			"app.session.tree": "F9",
 			"app.history.search": "Ctrl+R",
 			"app.thinking.toggle": "Ctrl+T",
 			"app.editor.external": "Ctrl+G",
@@ -47,7 +48,9 @@ describe("buildHotkeysMarkdown", () => {
 		expect(lines[0]).toBe("**Navigation**");
 		expect(markdown).toContain("| `Ctrl+Shift+P` | Copy whole prompt |");
 		expect(markdown).toContain("| `Ctrl+Shift+L` | Select model (temporary) |");
-		expect(markdown).toContain("| `Alt+M` | Select model (set roles) |");
+		expect(markdown).toContain("| `F4/Alt+M` | Select model (set roles) |");
+		expect(markdown).toContain("| `F9` | Show session tree |");
+		expect(markdown).toContain("| `F1/Shift+Tab` | Cycle thinking level |");
 		expect(markdown).toContain("| `Alt+L` | Reset terminal display |");
 		expect(markdown).toContain("| `Ctrl+L` | Start/stop live voice mode (/live) |");
 		expect(markdown).toContain("| `Alt+R` | Retry last failed assistant turn |");

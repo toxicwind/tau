@@ -1,6 +1,7 @@
 import { beforeAll, describe, expect, it, vi } from "bun:test";
 import { KeybindingsManager } from "@tau/tau-tui/app-keybindings";
 import { getKeybindings, setKeybindings } from "@tau/tau-tui";
+import type { KeyId } from "@tau/tau-tui/keys";
 import { CustomEditor } from "@tau/tau-tui/prompt/custom-editor";
 import { getEditorTheme, initTheme } from "@tau/tau-tui/theme";
 
@@ -259,4 +260,75 @@ describe("shipped dequeue defaults", () => {
 
 		expect(onDequeue).toHaveBeenCalledTimes(1);
 	});
+});
+
+describe("shipped F-key defaults", () => {
+	// Function keys are delivered verbatim by every terminal (same contract that
+	// made F5 the retry lead): F1-F4 arrive as SS3 (`ESC O P..S`) or terminfo
+	// CSI-tilde (`CSI 11..14 ~`), F5-F12 as CSI-tilde. Both encodings must route
+	// through DEFAULT_ACTION_KEYS — the second defaults table custom-editor.ts
+	// seeds its match set from — without any setActionKeys call.
+	const WIRE_FORMS: Array<{ key: KeyId; label: string; bytes: string[] }> = [
+		{ key: "f1", label: "thinking cycle", bytes: ["\x1bOP", "\x1b[11~"] },
+		{ key: "f2", label: "model cycle forward", bytes: ["\x1bOQ", "\x1b[12~"] },
+		{ key: "f3", label: "model cycle backward", bytes: ["\x1bOR", "\x1b[13~"] },
+		{ key: "f4", label: "model select", bytes: ["\x1bOS", "\x1b[14~"] },
+	];
+
+	it("binds the F-key row as the leading defaults in the registry", () => {
+		const keybindings = KeybindingsManager.inMemory();
+		expect(keybindings.getKeys("app.thinking.cycle")[0]).toBe("f1");
+		expect(keybindings.getKeys("app.thinking.cycle")).toContain("shift+tab");
+		expect(keybindings.getKeys("app.model.cycleForward")[0]).toBe("f2");
+		expect(keybindings.getKeys("app.model.cycleForward")).toContain("ctrl+p");
+		expect(keybindings.getKeys("app.model.cycleBackward")[0]).toBe("f3");
+		expect(keybindings.getKeys("app.model.cycleBackward")).toContain("shift+ctrl+p");
+		expect(keybindings.getKeys("app.model.select")[0]).toBe("f4");
+		expect(keybindings.getKeys("app.plan.toggle")[0]).toBe("f6");
+		expect(keybindings.getKeys("app.tools.expand")[0]).toBe("f7");
+		expect(keybindings.getKeys("app.thinking.toggle")[0]).toBe("f8");
+		expect(keybindings.getKeys("app.session.tree")).toEqual(["f9"]);
+	});
+
+	it("does not ship dead legacy chords that collide with live bindings", () => {
+		const keybindings = KeybindingsManager.inMemory();
+		// The tree/session selectors bind their own raw overlay keys; these
+		// registry defaults used to collide with ctrl+p (model cycle), ctrl+s
+		// (agent hub), ctrl+r (history search), and ctrl+d (exit).
+		for (const action of [
+			"app.session.togglePath",
+			"app.session.toggleSort",
+			"app.session.rename",
+			"app.session.delete",
+			"app.session.deleteNoninvasive",
+		] as const) {
+			expect(keybindings.getKeys(action)).toEqual([]);
+		}
+	});
+
+	for (const { key, label, bytes } of WIRE_FORMS) {
+		for (const byteForm of bytes) {
+			it(`routes ${key} (${label}) through DEFAULT_ACTION_KEYS via ${byteForm === "\x1bOP" || byteForm === "\x1bOQ" || byteForm === "\x1bOR" || byteForm === "\x1bOS" ? "SS3" : "CSI-tilde"} wire form`, () => {
+				const editor = new CustomEditor(getEditorTheme());
+				const onCycleThinkingLevel = vi.fn();
+				const onCycleModelForward = vi.fn();
+				const onCycleModelBackward = vi.fn();
+				const onSelectModel = vi.fn();
+				editor.onCycleThinkingLevel = onCycleThinkingLevel;
+				editor.onCycleModelForward = onCycleModelForward;
+				editor.onCycleModelBackward = onCycleModelBackward;
+				editor.onSelectModel = onSelectModel;
+
+				editor.handleInput(byteForm);
+
+const expected = ({
+					f1: onCycleThinkingLevel,
+					f2: onCycleModelForward,
+					f3: onCycleModelBackward,
+					f4: onSelectModel,
+				} as Record<KeyId, ReturnType<typeof vi.fn> | undefined>)[key];
+				expect(expected).toHaveBeenCalledTimes(1);
+			});
+		}
+	}
 });
