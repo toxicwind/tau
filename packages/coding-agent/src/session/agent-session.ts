@@ -247,6 +247,7 @@ import { resolveFileDisplayMode } from "../utils/file-display-mode";
 import { extractFileMentions, generateFileMentionMessages } from "../utils/file-mentions";
 import { normalizeModelContextImages } from "../utils/image-loading";
 import { TokenRateMeter } from "../utils/token-rate";
+import { TtstRecorder, summarizeTtst } from "../utils/ttst";
 import { imageAttachmentSource } from "@tau/tau-tui/prompt/image-source";
 import { resumeCommand } from "../utils/resume-command";
 import { generateSessionTitle } from "../utils/title-generator";
@@ -1320,6 +1321,8 @@ export class AgentSession {
 
 	/** Live generation tok/s for the working row; fed by this session's own streamed deltas. */
 	readonly tokenRate: TokenRateMeter;
+	/** Per-turn tok0/tok1/inter-token-gap telemetry (the statistic nobody else records). */
+	readonly ttst = new TtstRecorder();
 
 	constructor(config: AgentSessionConfig) {
 		this.agent = config.agent;
@@ -3272,10 +3275,15 @@ export class AgentSession {
 		// the main session's reading survives focus round-trips.
 		if (event.type === "message_start" && event.message.role === "assistant") {
 			this.tokenRate.begin(event.message.timestamp);
+			this.ttst.begin(event.message.timestamp);
 		} else if (event.type === "message_update" && event.message.role === "assistant") {
 			const delta = event.assistantMessageEvent;
 			if (delta.type === "text_delta" || delta.type === "thinking_delta" || delta.type === "toolcall_delta") {
 				this.tokenRate.push(delta.delta);
+				this.ttst.push(
+					delta.type === "text_delta" ? "text" : delta.type === "thinking_delta" ? "thinking" : "toolcall",
+					delta.delta,
+				);
 			}
 		} else if (event.type === "message_end" && event.message.role === "assistant") {
 			const assistant = event.message as AssistantMessage;
@@ -3283,6 +3291,17 @@ export class AgentSession {
 				assistant.usage.output,
 				assistant.duration !== undefined ? assistant.timestamp + assistant.duration : undefined,
 			);
+			const ttstRecord = this.ttst.end();
+			if (ttstRecord && ttstRecord.gaps.length > 0) {
+				this.sendCustomMessage(
+					{
+						customType: "ttst",
+						content: JSON.stringify(summarizeTtst(ttstRecord)),
+						display: false,
+						attribution: "agent",
+					},
+				).catch(error => logger.warn("Failed to persist TTST record", { error: String(error) }));
+			}
 		}
 
 		if (event.type !== "agent_end") {

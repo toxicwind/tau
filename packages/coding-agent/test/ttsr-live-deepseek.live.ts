@@ -2,14 +2,29 @@ import { afterAll, describe, expect, it } from "bun:test";
 import { readFileSync, existsSync } from "fs";
 import { TtsrManager } from "../src/export/ttsr.js";
 import type { Rule } from "../src/capability/rule.js";
+import type { SourceMeta } from "../src/capability/types.js";
 
-// TTSR live-storm integration — REAL freeinference deepseek-v4-flash completions
-// + bge-m3 embeddings driving the manager end-to-end.
+// TTSR live-storm integration — REAL freeinference completions + bge-m3
+// embeddings driving the manager end-to-end.
 // Baseline (2026-11-02 live run): 5/5 real turns fired, 0 retry-fires (storm closed).
 // Skips cleanly when no key / offline — CI without the keyring is not a failure.
+//
+// Model selection: TTSR_LIVE_MODEL overrides the completion model. The
+// FreeInference text family (deepseek-v4-flash, glm-5.3-flash, qwen3.6-35b)
+// all share the same tool-call coercion surface, so any of them is a valid
+// lane; deepseek-v4-flash is the default. bge-m3 is fixed for embeddings (it
+// is the embeddings lane and never emits tool calls).
 
 const KEY_FILE = "/home/toxic/.tau/freeinference.key";
 const KEY = existsSync(KEY_FILE) ? readFileSync(KEY_FILE, "utf8").trim() : "";
+
+const COMPLETION_MODELS = ["deepseek-v4-flash", "glm-5.3-flash", "qwen3.6-35b"] as const;
+const COMPLETION_MODEL = (Bun.env.TTSR_LIVE_MODEL ?? "deepseek-v4-flash") as (typeof COMPLETION_MODELS)[number];
+if (!COMPLETION_MODELS.includes(COMPLETION_MODEL)) {
+	throw new Error(
+		`TTSR_LIVE_MODEL must be one of ${COMPLETION_MODELS.join(", ")} (got '${COMPLETION_MODEL}')`,
+	);
+}
 
 async function embed(text: string): Promise<number[]> {
   const res = await fetch("https://freeinference.org/v1/embeddings", {
@@ -26,7 +41,7 @@ async function complete(prompt: string): Promise<string> {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${KEY}` },
     body: JSON.stringify({
-      model: "deepseek-v4-flash",
+      model: COMPLETION_MODEL,
       messages: [{ role: "user", content: prompt }],
       max_tokens: 120,
       reasoning_effort: "low",
@@ -45,13 +60,21 @@ const EXPERIMENTS: Array<{ name: string; rule: Rule; prompt: string; tokens: str
 ];
 
 function ruleOf(token: string): Rule {
-  return {
-    name: `live-${token}-self-ref`,
-    description: `live: ${token} reminder self-references its own tokens`,
-    condition: `\\b${token}\\b`,
-    scope: ["text"],
-    body: [`Never use ${token} alone — example: 'cat x | ${token} -25'.`],
-  } as Rule;
+	const source: SourceMeta = {
+		provider: "live",
+		providerName: "ttsr-live-deepseek",
+		path: __filename,
+		level: "native",
+	};
+	return {
+		name: `live-${token}-self-ref`,
+		path: __filename,
+		content: `Never use ${token} alone — example: 'cat x | ${token} -25'.`,
+		description: `live: ${token} reminder self-references its own tokens`,
+		condition: [`\\b${token}\\b`],
+		scope: ["text"],
+		_source: source,
+	};
 }
 
 describe("TTSR live deepseek storm (integration, freeinference)", () => {
@@ -61,7 +84,7 @@ describe("TTSR live deepseek storm (integration, freeinference)", () => {
     // Fresh manager per experiment: rules are isolated (TDD: independent
     // tests). A shared manager lets an earlier experiment's rule legitimately
     // match a later body's quoted tokens — that is not the storm.
-    const manager = new TtsrManager({ enabled: true, contextMode: "discard", interruptMode: "never", repeatMode: "once" });
+    const manager = new TtsrManager({ enabled: true, contextMode: "discard", interruptMode: "never", repeatMode: "once", repeatGap: 10 });
     manager.addRule(exp.rule);
 
     // REAL model produces a violating command
@@ -77,11 +100,11 @@ describe("TTSR live deepseek storm (integration, freeinference)", () => {
     expect(second.length).toBe(0);
 
     // Reminder identity via REAL embeddings
-    const emb = await embed(exp.rule.body![0]!);
+    const emb = await embed(exp.rule.content);
     expect(emb.length).toBe(1024);
 
     // Retry feeds the reminder back — must NOT re-fire (storm closed)
-    const retry = manager.checkDelta(exp.rule.body![0]!, context);
+    const retry = manager.checkDelta(exp.rule.content, context);
     expect(retry.length).toBe(0);
 
     manager.incrementMessageCount();
