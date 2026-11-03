@@ -208,10 +208,7 @@ class FileSessionStorageWriter implements SessionStorageWriter {
 		this.#onError = options?.onError;
 		const flags = options?.flags ?? "a";
 		// Ensure parent directory exists
-		const dir = path.dirname(fpath);
-		if (!fs.existsSync(dir)) {
-			fs.mkdirSync(dir, { recursive: true });
-		}
+		fs.mkdirSync(path.dirname(fpath), { recursive: true }); // recursive=true = no-op if exists; atomic, no existsSync→mkdirSync TOCTOU race
 		// Open file once, keep fd for lifetime
 		this.#fd = fs.openSync(fpath, flags === "w" ? "w" : "a");
 		// Register for cleanup if abandoned without close()
@@ -591,9 +588,7 @@ export class FileSessionStorage implements SessionStorage {
 	}
 
 	ensureDirSync(dir: string): void {
-		if (!fs.existsSync(dir)) {
-			fs.mkdirSync(dir, { recursive: true });
-		}
+		fs.mkdirSync(dir, { recursive: true }); // no-op if exists; no existsSync→mkdirSync race
 	}
 
 	existsSync(path: string): boolean {

@@ -1168,8 +1168,10 @@ function remapLegacyPiSpecifier(specifier: string): string | null {
 function getResolvedSpecifier(specifier: string): string {
 	const cached = resolvedSpecifierFallbacks.get(specifier);
 	if (cached) {
+		if (process.env.TAU_TRACE_RESOLVE === "1") console.error(`[resolve-cache HIT] ${specifier} -> ${cached}`);
 		return cached;
 	}
+	if (process.env.TAU_TRACE_RESOLVE === "1") console.error(`[resolve MISS] ${specifier}`);
 
 	let resolved: string;
 	try {
@@ -2767,6 +2769,12 @@ export async function loadLegacyPiModule(resolvedPath: string): Promise<unknown>
 	}
 	await ensureLegacyPiOverridesReady();
 	const pendingSources = await ensureExtensionGraphHook(entryRealPath);
+	// Publish the graph's directory set for the resolve hook's scope gate while
+	// this module (and anything it pulls lazily) loads. Nested/parallel loads
+	// union their graphs — an extension importing another extension's files is
+	// legitimate graph reach, not an escape.
+	const previousGraphDirs = activeExtensionGraphDirs;
+	activeExtensionGraphDirs = new Set([...previousGraphDirs, path.dirname(entryRealPath)]);
 	try {
 		// Dynamic import is required: legacy extension entry paths are user/plugin supplied at runtime.
 		// On POSIX, use the raw filesystem path so Bun keys the `?mtime`
@@ -2778,6 +2786,7 @@ export async function loadLegacyPiModule(resolvedPath: string): Promise<unknown>
 				: entryRealPath;
 		return __norm(await import(`${entrySpecifier}?mtime=${nextLegacyPiLoadTag()}`));
 	} finally {
+		activeExtensionGraphDirs = previousGraphDirs;
 		// Drop whatever the initial import didn't consume: graph modules only
 		// reached by lazy dynamic imports must be read from disk at their actual
 		// import time, not served from this load-time snapshot.
@@ -2798,16 +2807,101 @@ function getLoader(path: string): "js" | "jsx" | "ts" | "tsx" {
 	return "js";
 }
 
+/**
+ * Reentrancy guard (upstream parity, oh-my-pi 8d1dfcd5ab lineage): the compat
+ * shims import the canonical package roots (`@tau/tau-ai` from
+ * `legacy-tau-ai-shim.ts`), and this resolver redirects those same roots onto
+ * the shims. Without the guard the shim's own import re-enters here, gets
+ * redirected onto ITSELF, and the resulting circular self-import fails
+ * named-export resolution ("Export named 'streamSimple' not found") for every
+ * `@tau/tau-ai` import evaluated after the plugin installs — including host
+ * code under `bun test` (test-order-dependent module-cache poisoning).
+ */
+let isResolvingLegacyPiSpecifier = false;
+
+/**
+ * The compat shims ARE the redirect targets for the canonical package roots,
+ * so their own imports of those roots must bind to the REAL packages, not to
+ * themselves. Without this escape the shim's static `import { streamSimple }
+ * from "@tau/tau-ai"` re-enters the hook, the override map answers with the
+ * shim path, and the resulting circular self-import fails named-export
+ * resolution for every `@tau/*` root import evaluated after the plugin
+ * installs — process-wide, order-dependent, and fatal under `bun test`
+ * ("Export named 'streamSimple' not found" / "decodeKittyPrintable not
+ * found" cascades across unrelated test files).
+ */
+const SHIM_IMPORTER_ESCAPE: ReadonlySet<string> = new Set(
+	["legacy-tau-ai-shim.ts", "legacy-tau-tui-shim.ts", "legacy-tau-coding-agent-shim.ts", "legacy-typebox.ts"].map(
+		file => path.resolve(import.meta.dir, "..", file),
+	),
+);
+
+/**
+ * Directories of the extension graphs currently being loaded. The rewrite pass
+ * scopes legacy-specifier rewriting to a loaded extension's import graph; the
+ * resolve hook is the FALLBACK for graph files whose source rewrite could not
+ * run (dynamic imports, CJS require). Answering imports from files outside
+ * every loaded graph would silently grant arbitrary code host-package access
+ * through the compat shims — the contract pinned by the sibling-file test in
+ * `legacy-tau-inplace-load.test.ts` ("does not rewrite sibling files outside
+ * the loaded extension's import graph"). Host-package files are always allowed.
+ */
+let activeExtensionGraphDirs: ReadonlySet<string> = new Set();
+const HOST_PACKAGE_ROOT = path.resolve(import.meta.dir, "..", "..", "..");
+
+/** True when `importer` is host-package code or inside a loaded extension graph. */
+function importerMayUseLegacyPiResolver(importer: string): boolean {
+	if (importer.startsWith(HOST_PACKAGE_ROOT)) return true;
+	for (const dir of activeExtensionGraphDirs) {
+		if (importer.startsWith(`${dir}/`)) return true;
+	}
+	return false;
+}
+
 function resolveLegacyPiSpecifier(args: { path: string; importer: string }): LegacyPiResolveResult | undefined {
+	// The shims themselves bind to the real host packages: never redirect
+	// imports originating from inside a shim file.
+	if (SHIM_IMPORTER_ESCAPE.has(args.importer)) {
+		return undefined;
+	}
+	// Scope gate: only host-package files and files inside a loaded extension's
+	// graph may be answered by the compat resolver. A random sibling (e.g. an
+	// un-imported file in an extension's package dir) must keep failing native
+	// resolution instead of gaining the shim surface.
+	if (!importerMayUseLegacyPiResolver(args.importer)) {
+		return undefined;
+	}
+	// A nested call comes from our own `Bun.resolveSync`: decline so Bun resolves
+	// natively from the directory that call chose (the host location first, so
+	// canonical imports keep landing on the host copy, not a shim one).
+	if (isResolvingLegacyPiSpecifier) {
+		return undefined;
+	}
 	const remappedSpecifier = remapLegacyPiSpecifier(args.path);
 	if (!remappedSpecifier) {
 		return undefined;
 	}
-
-	// Primary: resolve the canonical @tau/* specifier from the host binary
-	// location. Works in dev mode and in source-link installs.
+	isResolvingLegacyPiSpecifier = true;
 	try {
-		return toLegacyPiResolveResult(resolveCanonicalPiSpecifier(remappedSpecifier));
+		// resolveCanonicalPiSpecifier answers a filesystem PATH (string);
+		// wrap it into the plugin's {path, namespace?} shape first.
+		const resolved = toLegacyPiResolveResult(resolveCanonicalPiSpecifier(remappedSpecifier));
+		// A canonical specifier that remaps to itself and already resolves to the
+		// same host file from its importer (host code importing the bare root)
+		// has nothing to rewrite: decline and let Bun resolve it natively.
+		// Answering it anyway breaks `require()` on Bun 1.3.x, which reads the
+		// returned path back as `file:<path>` and recurses on source-link
+		// installs (`file:file:…`, upstream #12293).
+		if (!resolved.namespace && remappedSpecifier === args.path) {
+			try {
+				if (Bun.resolveSync(args.path, path.dirname(args.importer)) === resolved.path) {
+					return undefined;
+				}
+			} catch {
+				// Unresolvable from the importer: keep the host answer.
+			}
+		}
+		return resolved;
 	} catch {
 		// Fallback for compiled binary mode: the bundled packages live inside
 		// /$bunfs/root and aren't reachable by filesystem resolution. Prefer the
@@ -2825,6 +2919,8 @@ function resolveLegacyPiSpecifier(args: { path: string; importer: string }): Leg
 				return undefined;
 			}
 		}
+	} finally {
+		isResolvingLegacyPiSpecifier = false;
 	}
 }
 

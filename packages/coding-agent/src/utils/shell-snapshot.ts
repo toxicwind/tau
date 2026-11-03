@@ -231,9 +231,6 @@ export async function getOrCreateSnapshot(
 	const cacheKey = shell;
 	// Return cached snapshot if valid
 	const cached = cachedSnapshotPaths.get(cacheKey);
-	if (cached && fs.existsSync(cached)) {
-		return cached;
-	}
 	if (cached) {
 		cachedSnapshotPaths.delete(cacheKey);
 	}
