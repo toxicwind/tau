@@ -2396,11 +2396,19 @@ export class TurnRecovery {
 		if (!staleOpenAIResponsesReplayError && !switchedCredential && currentSelector) {
 			// A refusal chain stops at the retry budget: the exhausted-attempt
 			// last resort is for provider failures, not classifier decisions.
+			// A CONCURRENT_LIMIT 429 is an in-flight slot lock (Little's Law: the
+			// remote counts live sockets, not arrival rate) — it is transient by
+			// construction and a model switch cannot fix it. Never route it into
+			// the fallback chain: that is how a 600K deepseek-v4-flash:high session
+			// was silently downgraded to glm-5.3-flash on freeinference `limit: 2`
+			// (live 2026-11-02). The same-model retry window above clears it.
+			const concurrencyOnlyLock = rateLimitReason === "CONCURRENT_LIMIT";
 			if (
 				allowModelFallback &&
 				retrySettings.modelFallback &&
 				!thinkingLoop &&
 				!waitForSiblingCredential &&
+				!concurrencyOnlyLock &&
 				!(retryBudgetExhausted && classifierRefusal)
 			) {
 				if (!classifierRefusal) {

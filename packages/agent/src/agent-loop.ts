@@ -1734,7 +1734,11 @@ async function prepareProviderCall(
 
 	const llmMessages = await config.convertToLlm(messages);
 	const normalizedMessages = normalizeMessagesForProvider(llmMessages, model);
-	const ownedDialect: Dialect | undefined = config.dialect ?? resolveOwnedDialectFromEnv(Bun.env.PI_DIALECT);
+	// Dialect precedence: per-call resolver (live model — the fallback-safety
+	// net; a mid-session model swap re-resolves for the new model) > the static
+	// session dialect > the PI_DIALECT env override.
+	const ownedDialect: Dialect | undefined =
+		config.dialectResolver?.(model) ?? config.dialect ?? resolveOwnedDialectFromEnv(Bun.env.PI_DIALECT);
 	const pruneToolDescriptions = !!config.pruneToolDescriptions && !ownedDialect;
 	let llmContext: Context;
 	if (config.appendOnlyContext) {

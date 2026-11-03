@@ -441,6 +441,14 @@ export class Agent {
 	#intentTracing: boolean;
 	#pruneToolDescriptions: boolean;
 	#dialect?: Dialect;
+	/**
+	 * Per-call dialect resolver. Installed by the host (sdk.ts) with the same
+	 * `resolveDialect(tools.format, model)` semantics the session was built
+	 * with, so a mid-session model fallback re-resolves the owned dialect for
+	 * the NEW model instead of running the previous model's in-band scanner on
+	 * its stream (issue #8810). Undefined → static #dialect / PI_DIALECT only.
+	 */
+	#dialectResolver?: (model: Model) => Dialect | undefined;
 	#abortOnFabricatedToolResult?: boolean;
 	#getToolChoice?: () => ToolChoiceDirective | undefined;
 	#onToolChoiceUnavailable?: () => void;
@@ -1047,6 +1055,11 @@ export class Agent {
 		this.#syncTokenizer(model);
 	}
 
+	/** Install the per-call dialect resolver (host-owned; see #dialectResolver). */
+	setDialectResolver(resolver: (model: Model) => Dialect | undefined): void {
+		this.#dialectResolver = resolver;
+	}
+
 	setThinkingLevel(l: Effort | undefined) {
 		this.#state.thinkingLevel = l;
 	}
@@ -1624,6 +1637,9 @@ export class Agent {
 			intentTracing: this.#intentTracing,
 			pruneToolDescriptions: this.#pruneToolDescriptions,
 			dialect: this.#dialect,
+			// Re-resolved against the LIVE model on every provider call: a retry-fallback
+			// model swap re-binds the in-band scanner to the new model's dialect (#8810).
+			dialectResolver: this.#dialectResolver,
 			abortOnFabricatedToolResult: this.#abortOnFabricatedToolResult,
 			appendOnlyContext: this.#appendOnlyContext,
 			beforeToolCall: this.beforeToolCall ? (ctx, signal) => this.beforeToolCall?.(ctx, signal) : undefined,

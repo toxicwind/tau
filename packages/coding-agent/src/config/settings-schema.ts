@@ -1734,13 +1734,13 @@ export const SETTINGS_SCHEMA = {
 
 	"retry.unlimitedRetryOnConcurrency429": {
 		type: "boolean",
-		default: false,
+		default: true,
 		ui: {
 			tab: "model",
 			group: "Retry & Fallback",
 			label: "Unlimited Retry On Concurrency 429",
 			description:
-				"When a provider sheds an over-concurrency request with HTTP 429 / 'too many requests' / rate-limit wording that indicates a client-side or proxy admission cap (not a real account quota), retry indefinitely past retry.maxRetries. Honors retry-after/backoff between attempts. Default off — genuine provider rate/quota limits still bounded by retry.maxRetries.",
+				"When a provider sheds an over-concurrency request with HTTP 429 / 'too many requests' / rate-limit wording that indicates a client-side or proxy admission cap (not a real account quota), retry indefinitely past retry.maxRetries. Honors retry-after/backoff between attempts. Default on — a concurrency cap is transient (in-flight sockets, not quota); the model is never downgraded for one. Genuine provider rate/quota limits still bounded by retry.maxRetries.",
 		},
 	},
 

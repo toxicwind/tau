@@ -177,6 +177,12 @@ const PROVIDER_INFLIGHT_HEARTBEAT_MS = 5_000;
 const PROVIDER_INFLIGHT_SIGNAL_FALLBACK_MS = 250;
 const PROVIDER_INFLIGHT_HEARTBEAT_FLUSH_TIMEOUT_MS = 1_000;
 const PROVIDER_INFLIGHT_RELEASE_TIMEOUT_MS = 5_000;
+/** Post-abort drain before freeing a provider in-flight lease: lets the TCP
+ *  FIN/RST reach the upstream proxy (one RTT, ~40-180ms) so its per-key
+ *  concurrency counter decrements before a follow-up turn fires. Prevents the
+ *  interrupt → immediate retry → 429 concurrency_limit_exceeded →
+ *  model-downgrade cascade (live 2026-11-02, freeinference limit: 2). */
+const PROVIDER_INFLIGHT_ABORT_DRAIN_MS = 180;
 
 /**
  * Built-in per-provider in-flight admission caps (max concurrent requests,
@@ -708,19 +714,30 @@ function withProviderInFlightLimit<TOptions extends Pick<StreamOptions, "signal"
 			return releasePromise;
 		};
 		const releaseBestEffort = async () => {
-			try {
-				await releaseOnce();
-			} catch (releaseError) {
-				// The lease has stopped heartbeating and stale cleanup will reap it
-				// within PROVIDER_INFLIGHT_LEASE_STALE_MS. Until then, its slot may
-				// remain unavailable and waiters rely on the fallback poll.
-				// Never replace a completed response or the provider's original error
-				// with a coordination-directory cleanup failure.
-				logger.warn("Provider in-flight permit release failed", {
-					provider: model.provider,
-					error: String(releaseError),
-				});
-			}
+		// Abort drain barrier: on interrupt the caller cancels the local stream
+		// (reader.cancel → HTTP-client disconnect), but the upstream proxy only
+		// decrements its per-key concurrency counter once it observes the TCP
+		// FIN/RST — one RTT (~40-180ms). Releasing our lease immediately lets a
+		// follow-up turn fire while freeinference still counts the dead stream
+		// against `limit: 2`, eating a 429 and (previously) a model downgrade.
+		// Wait the drain only on abort — natural completion frees the slot at
+		// the provider already, so delay only when we forced the disconnect.
+		if (options?.signal?.aborted) {
+			await Bun.sleep(PROVIDER_INFLIGHT_ABORT_DRAIN_MS);
+		}
+		try {
+			await releaseOnce();
+		} catch (releaseError) {
+			// The lease has stopped heartbeating and stale cleanup will reap it
+			// within PROVIDER_INFLIGHT_LEASE_STALE_MS. Until then, its slot may
+			// remain unavailable and waiters rely on the fallback poll.
+			// Never replace a completed response or the provider's original error
+			// with a coordination-directory cleanup failure.
+			logger.warn("Provider in-flight permit release failed", {
+				provider: model.provider,
+				error: String(releaseError),
+			});
+		}
 		};
 		try {
 			const startedWaitingAt = Date.now();

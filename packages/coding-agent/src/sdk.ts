@@ -3833,6 +3833,12 @@ async function createAgentSessionScoped(options: CreateAgentSessionOptions): Pro
 			intentTracing: !!intentField,
 			pruneToolDescriptions: inlineToolDescriptors,
 			dialect: resolveDialect(settings.get("tools.format"), model),
+			// Issue #8810: the static dialect above is resolved against the
+			// session-START model. When retry-fallback swaps the model mid-session
+			// (e.g. deepseek-v4-flash:high → glm-5.3-flash on a concurrency 429),
+			// the loop must re-resolve the owned dialect for the NEW model, or it
+			// keeps running DeepSeek's scanner on a GLM stream. The resolver reads
+			// the live agent model per provider call.
 			abortOnFabricatedToolResult: settings.get("tools.abortOnFabricatedResult"),
 			speculativeToolExecution,
 			getToolChoice: () => session?.nextToolChoiceDirective(),
@@ -3844,6 +3850,11 @@ async function createAgentSessionScoped(options: CreateAgentSessionOptions): Pro
 					: undefined
 				: undefined,
 		});
+
+		// Issue #8810 fallback-safety: re-resolve the owned dialect against the
+		// LIVE model on every provider call, using the same resolveDialect
+		// semantics the static session dialect was built with.
+		agent.setDialectResolver(liveModel => resolveDialect(settings.get("tools.format"), liveModel));
 
 		cursorEventEmitter = event => agent.emitExternalEvent(event);
 

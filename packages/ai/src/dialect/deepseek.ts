@@ -1,6 +1,6 @@
 import { parseJsonWithRepair } from "@tau/tau-utils";
 import type { Message, ToolCall } from "../types";
-import { asRecord, mintToolCallId, partialSuffixOverlapAny } from "./coercion";
+import { asRecord, buildArgShapes, decodeValue, mintToolCallId, partialSuffixOverlapAny } from "./coercion";
 import dialectPrompt from "./deepseek.md" with { type: "text" };
 import { assistantTranscriptParts, collectToolResultRun, messageContentText, stringifyJson } from "./rendering";
 import type {
@@ -10,6 +10,7 @@ import type {
 	InbandScanEvent,
 	InbandScanner,
 	InbandScannerOptions,
+	InbandTool,
 } from "./types";
 
 export const DEEPSEEK_TOOL_CALLS_BEGIN = "<｜tool▁calls▁begin｜>";
@@ -170,14 +171,31 @@ export class DeepSeekInbandScanner implements InbandScanner {
 	#sawDsmlEnvelope = false;
 	#dsmlOmittedStart = false;
 	#stripLeadingWhitespace = false;
+	#stringArgs?: (toolName: string) => ReadonlySet<string>;
+	#tools?: readonly InbandTool[];
 
 	constructor(options: InbandScannerOptions = {}) {
 		this.#parseThinking = options.parseThinking ?? true;
+		// Schema-driven coercion (parity with the Anthropic XML scanner): the
+		// tool schema decides whether a parameter carries JSON or plain text.
+		// The historical DSML default (everything is a string unless
+		// `string="false"`) never matches how the prompt catalog teaches the
+		// model — it emits bare JSON containers for array/object params, which
+		// then failed AJV validation (issue #2981 coercion-pass loop).
+		this.#stringArgs = options.stringArgs;
+		this.#tools = options.tools;
 	}
 
 	feed(text: string): InbandScanEvent[] {
 		if (text.length === 0) return [];
-		this.#buffer += text;
+		// Normalize split/leaked Fireworks+V4.1 control tokens (issue #16255):
+		// <|tool_calls_cbegin|>/<|tool_calls_cend|> arrive split across SSE
+		// chunk boundaries (or as literal text) and desync the DSML state
+		// machine, dropping params or ending the turn early. Rewrite them to
+		// the canonical envelope tags the scanner owns before appending.
+		this.#buffer += text
+			.replace(/<\|tool_calls_cbegin\|>/g, DEEPSEEK_TOOL_CALLS_BEGIN)
+			.replace(/<\|tool_calls_cend\|>/g, DEEPSEEK_TOOL_CALLS_END);
 		return this.#consume(false);
 	}
 
@@ -509,7 +527,14 @@ export class DeepSeekInbandScanner implements InbandScanner {
 			return false;
 		}
 		this.#streamDsmlParam(this.#buffer.slice(0, close.index), events);
-		this.#dsmlArgs[this.#dsmlParamName] = coerceDsmlValue(this.#dsmlParamRaw, this.#dsmlParamIsString);
+		this.#dsmlArgs[this.#dsmlParamName] = coerceDsmlValue(
+			this.#dsmlParamRaw,
+			this.#dsmlParamIsString,
+			this.#name,
+			this.#dsmlParamName,
+			this.#stringArgs,
+			this.#tools,
+		);
 		this.#rawBlock += close.token;
 		this.#buffer = this.#buffer.slice(close.index + close.token.length);
 		this.#dsmlParamName = "";
@@ -656,7 +681,31 @@ function findEarliestToken(text: string, tokens: readonly string[]): { index: nu
 	return bestIndex === -1 ? undefined : { index: bestIndex, token: bestToken };
 }
 
-function coerceDsmlValue(raw: string, isString: boolean): unknown {
+export function coerceDsmlValue(
+	raw: string,
+	isString: boolean,
+	toolName: string,
+	paramName: string,
+	stringArgs?: (toolName: string) => ReadonlySet<string>,
+	tools?: readonly InbandTool[],
+): unknown {
+	// Coercion decision order (parity with the Anthropic XML scanner):
+	// 1. Schema is the authority — a string-typed param reads verbatim even
+	//    when the model tagged string="false"; a non-string param coerces even
+	//    without the attribute (the prompt catalog never teaches string="false").
+	//    The tool schema ALONE drives this: buildArgShapes derives string-args
+	//    from properties, so `tools` suffices; the separately-passed
+	//    `stringArgs` resolver is a fallback for hosts that pre-built one.
+	if (tools) {
+		const shapes = buildArgShapes(tools);
+		const shape = shapes.get(toolName);
+		if (shape) {
+			if (shape.stringArgs.has(paramName)) return raw;
+			const decoded = decodeValue(raw, shape.properties[paramName]);
+			return decoded;
+		}
+	}
+	if (stringArgs && stringArgs(toolName).has(paramName)) return raw;
 	if (isString) return raw;
 	const trimmed = raw.trim();
 	if (trimmed.length === 0) return raw;

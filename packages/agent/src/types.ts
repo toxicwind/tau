@@ -423,6 +423,15 @@ export interface AgentLoopConfig extends SimpleStreamOptions {
 	 */
 	dialect?: Dialect;
 	/**
+	 * Per-call dialect resolver, read against the LIVE model on every provider
+	 * call. Takes precedence over the static {@link dialect}. This is the
+	 * fallback-safety net: a retry-fallback model swap (e.g. deepseek-v4-flash →
+	 * glm-5.3-flash) must re-resolve the owned dialect for the NEW model, or the
+	 * loop keeps running the previous model's in-band scanner on a stream the
+	 * new model is generating (issue #8810 — dialect frozen across fallback).
+	 */
+	dialectResolver?: (model: Model) => Dialect | undefined;
+	/**
 	 * When owned (in-band) tool calling is active and the model starts
 	 * fabricating a tool result inside its own turn, control how the loop reacts:
 	 * - `true` (default): abort the provider request immediately so it stops

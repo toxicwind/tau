@@ -14,7 +14,7 @@
  *   captured response body for the strict-tools fallback and the responses
  *   chain-state detectors, which regex over `error.message`.
  */
-import { fetchWithRetry, readSseJsonOrText, type SseEventObserver } from "@tau/tau-utils";
+import { extractRetryHint, fetchWithRetry, readSseJsonOrText, type SseEventObserver } from "@tau/tau-utils";
 import * as AIError from "../error";
 import { OpenAIHttpError } from "../error";
 
@@ -49,6 +49,11 @@ const MAX_DETAIL_CHARS = 4096;
  * RPM/quota 429s carry no such marker and keep honoring `Retry-After`.
  */
 const CONCURRENCY_ADMISSION_LIMITER = "max_parallel_requests";
+/** Concurrency-admission 429 hold budget: wait up to ~30 slot-turns (~35s with
+ *  the provider's `retry-after-ms=1000` default) before ever surfacing to the
+ *  fallback router. A slot lock is transient — downgrading the model (or
+ *  failing the turn) because another request holds the lease is wrong. */
+const CONCURRENCY_HOLD_MAX_ATTEMPTS = 30;
 
 /** Body form of the marker: `"rate_limit_type": "max_parallel_requests"` (top level or under `error`). */
 const CONCURRENCY_ADMISSION_BODY_PATTERN = /"rate_limit_type"\s*:\s*"max_parallel_requests"/;
@@ -106,24 +111,43 @@ export interface OpenAIStreamHandle<TEvent> {
  * watchdog timers and abort-reason bookkeeping.
  */
 export async function postOpenAIStream<TEvent>(init: OpenAIStreamRequestInit): Promise<OpenAIStreamHandle<TEvent>> {
-	const response = await fetchWithRetry(init.url, {
-		method: "POST",
-		headers: { "Content-Type": "application/json", Accept: "text/event-stream", ...init.headers },
-		body: JSON.stringify(init.body),
-		signal: init.signal,
-		fetch: init.fetch,
-		maxAttempts: DEFAULT_MAX_ATTEMPTS,
-		// A proxy concurrency-admission 429 (`rate_limit_type: max_parallel_requests`)
-		// surfaces immediately instead of being slept-and-retried here; session
-		// recovery owns its backoff/fallback (issue #8854).
-		shouldRetryResponse: async (response, bodyText) =>
-			!isConcurrencyAdmissionRejection(response, bodyText) &&
-			(init.shouldRetryResponse === undefined || (await init.shouldRetryResponse(response, bodyText))),
-		// Bun's native fetch enforces a hard ~300s pre-response timeout (issue #2422).
-		// Cold large-context streams legitimately exceed it; the caller's
-		// `firstEventTimeoutMs`/`AbortSignal` already govern stuck requests.
-		timeout: false,
-	});
+	// Concurrency-admission 429s get an in-transport HOLD-retry on the SAME
+	// model: wait `retry-after-ms` (+ jitter) and retry the identical request,
+	// up to CONCURRENCY_HOLD_MAX_ATTEMPTS. They must never bubble to session
+	// recovery as a model fallback — a slot lock is a transient lease, not a
+	// model failure. The 2026-11-02 freeinference outage (deepseek-v4-flash:high
+	// silently downgraded to glm-5.3-flash on `limit: 2` concurrency) was this
+	// exact surface-immediately path. Genuine quota/RPM 429s (no concurrency
+	// marker) still honor Retry-After through fetchWithRetry as before.
+	let response: Response;
+	for (let holdAttempt = 0; ; holdAttempt++) {
+		response = await fetchWithRetry(init.url, {
+			method: "POST",
+			headers: { "Content-Type": "application/json", Accept: "text/event-stream", ...init.headers },
+			body: JSON.stringify(init.body),
+			signal: init.signal,
+			fetch: init.fetch,
+			maxAttempts: DEFAULT_MAX_ATTEMPTS,
+			shouldRetryResponse: async (resp, bodyText) =>
+				!isConcurrencyAdmissionRejection(resp, bodyText) &&
+				(init.shouldRetryResponse === undefined || (await init.shouldRetryResponse(resp, bodyText))),
+			// Bun's native fetch enforces a hard ~300s pre-response timeout (issue #2422).
+			// Cold large-context streams legitimately exceed it; the caller's
+			// `firstEventTimeoutMs`/`AbortSignal` already govern stuck requests.
+			timeout: false,
+		});
+		// A non-429/non-marker response is the normal path — skip the body read.
+		if (response.status !== 429) break;
+		// Distinguish a real concurrency marker from an unrelated 429: consume
+		// the body once (clone, so the error path below can still read it).
+		const bodyText = await response.clone().text().catch(() => "");
+		if (!isConcurrencyAdmissionRejection(response, bodyText)) break;
+		if (holdAttempt + 1 >= CONCURRENCY_HOLD_MAX_ATTEMPTS) break; // surfaced after the budget
+		const hintMs = extractRetryHint(response, bodyText) ?? 1000;
+		const delayMs = Math.min(Math.max(1, hintMs), 5_000) + 100 + Math.floor(Math.random() * 250);
+		if (init.signal?.aborted) break;
+		await Bun.sleep(delayMs);
+	}
 	if (!response.ok) {
 		throw await captureOpenAIHttpError(response);
 	}
