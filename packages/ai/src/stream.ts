@@ -178,7 +178,26 @@ const PROVIDER_INFLIGHT_SIGNAL_FALLBACK_MS = 250;
 const PROVIDER_INFLIGHT_HEARTBEAT_FLUSH_TIMEOUT_MS = 1_000;
 const PROVIDER_INFLIGHT_RELEASE_TIMEOUT_MS = 5_000;
 
-let configuredProviderMaxInFlightRequests: Record<string, number> = {};
+/**
+ * Built-in per-provider in-flight admission caps (max concurrent requests,
+ * shared across local tau/kappa processes via filesystem leases). Upstreams
+ * that enforce per-key concurrency admission (429
+ * `{"code":"concurrency_limit_exceeded",...}`) are seeded here with their
+ * verified live caps so parallel agents/turns queue instead of 429-thrashing.
+ * The `providers.maxInFlightRequests` settings record overrides any key
+ * (per AGENTS.md: settings are the SSOT surface; these seeds are the safe
+ * default that applies before anyone configures). Modifying this constant
+ * requires a process restart; `configureProviderMaxInFlightRequests` mutates
+ * the runtime layer on top.
+ */
+const BUILT_IN_PROVIDER_INFLIGHT_LIMITS: Record<string, number> = {
+	// freeinference.org: per-key concurrency limit=2 on the pro key, verified
+	// live 2026-11-02 (get 429 `concurrency_limit_exceeded` beyond 2 in-flight).
+	freeinference: 2,
+};
+let configuredProviderMaxInFlightRequests: Record<string, number> = {
+	...BUILT_IN_PROVIDER_INFLIGHT_LIMITS,
+};
 let providerInFlightRootOverride: string | undefined;
 let providerInFlightHeartbeatMsOverride: number | undefined;
 let providerInFlightHeartbeatFlushTimeoutMsOverride: number | undefined;
@@ -191,7 +210,17 @@ let providerInFlightLockCreatedObserverOverride: ((lockDir: string) => Promise<v
 let providerInFlightLockIdentifiedObserverOverride: ((lockDir: string) => Promise<void>) | undefined;
 
 export function configureProviderMaxInFlightRequests(limits: Record<string, number> | undefined): void {
-	configuredProviderMaxInFlightRequests = limits ?? {};
+	// `undefined` resets to the built-in seeds (the test/reset contract).
+	// An explicit map REPLACES the runtime layer entirely, but the built-in
+	// seeds are always re-applied underneath so admission-capped upstreams
+	// stay queued even when a caller configures a different provider. A value
+	// of 0 explicitly disables queueing for that provider.
+	// Explicit map replaces the runtime layer (built-ins always underneath);
+	// a provider absent from the map falls back to its built-in seed.
+	configuredProviderMaxInFlightRequests =
+		limits === undefined
+			? { ...BUILT_IN_PROVIDER_INFLIGHT_LIMITS }
+			: { ...BUILT_IN_PROVIDER_INFLIGHT_LIMITS, ...limits };
 }
 
 function resolveProviderInFlightLimit(

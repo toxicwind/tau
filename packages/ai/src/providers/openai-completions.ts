@@ -888,6 +888,13 @@ const streamOpenAICompletionsOnce = (
 						headers: headersWithTimeout,
 						body: params,
 						signal: requestSignal,
+						// Provider in-flight admission caps (freeinference limit=2)
+						// are enforced by the shared cross-process lease in
+						// withProviderInFlightLimit (see stream.ts) — seeded from the
+						// built-in registry, overridable via
+						// `providers.maxInFlightRequests` settings. Applied after
+						// copilot fallback wrap so the queued path is covered by the
+						// lease even when the fetch is wrapped for retries.
 						fetch: wrapFetchForCopilotFallback(
 							options?.fetch,
 							model.provider === "github-copilot",
