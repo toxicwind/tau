@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+### Changed
+
+- Shipped hotkeys now lead with function keys, which every terminal delivers verbatim: `F1` cycles the thinking level (off → auto → minimal..max; `Shift+Tab` still works), `F2`/`F3` cycle models forward/backward (`Ctrl+P`/`Shift+Ctrl+P` still work), `F4` opens the model selector (`Alt+M` still works), `F6` toggles plan mode, `F7` toggles tool-output expansion, `F8` toggles thinking-block visibility (`Ctrl+T` still works), and `F9` opens the session tree — previously unbound. All legacy chords remain as secondary bindings and user remaps in `keybindings.yml` keep precedence.
+- Removed dead default chords on legacy session actions (`app.session.togglePath` `Ctrl+P`, `app.session.toggleSort` `Ctrl+S`, `app.session.rename` `Ctrl+R`, `app.session.delete` `Ctrl+D`, `app.session.deleteNoninvasive` `Ctrl+Backspace`): the tree/session selectors bind their own overlay keys and nothing consumed these defaults, which only collided with live bindings. The actions stay registered for `keybindings.yml` compatibility.
+
 ## [18.3.0] - 2026-09-24
 
 ### Breaking Changes

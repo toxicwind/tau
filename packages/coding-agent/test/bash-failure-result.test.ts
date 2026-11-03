@@ -144,10 +144,16 @@ describe("BashTool execution results", () => {
 		]) {
 			const result = await tool.execute(`call-pipeline-${scenario.expected[0]}`, { command: scenario.command });
 			const text = result.content.find(c => c.type === "text")?.text ?? "";
-			const stdout = text.replace(/\n\nWall time: \d+\.\d{2} seconds$/, "").trimEnd();
 
+			// Live contract: output carries the tiktoken accounting prefix
+			// (`[Tokens: N | o200k_base | Time: …ms]`) followed by the pipeline's
+			// final-stage output. The final-stage rows must survive verbatim.
 			expect(result.isError).toBeUndefined();
-			expect(stdout).toBe(scenario.expected);
+			const prefixEnd = text.indexOf("]\n");
+			expect(prefixEnd).toBeGreaterThan(-1);
+			expect(text.slice(0, prefixEnd + 2)).toMatch(/^\[Tokens: \d[\d,]* \| o200k_base \| Time: [\d.]+ms\]\n/);
+			const body = text.slice(prefixEnd + 2).replace(/\n\nWall time: \d+\.\d{2} seconds$/, "").trimEnd();
+			expect(body).toBe(scenario.expected);
 		}
 	});
 });

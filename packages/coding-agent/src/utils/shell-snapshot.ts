@@ -77,8 +77,10 @@ function scrubSnapshotInPlace(snapshotPath: string): void {
 
 function sanitizeSnapshotEnv(env: Record<string, string | undefined>): Record<string, string | undefined> {
 	const sanitized = { ...env };
-	delete sanitized.BASH_ENV;
-	delete sanitized.ENV;
+	// BASH_ENV/ENV must survive into the snapshot subprocess: they now carry the
+	// kairos shim injected by buildNonInteractiveEnv so the snapshot captures the
+	// same shimmed shell the executor runs. Deleting them made agent shells run
+	// without kairos enforcement (no two_sec_slow, raw /usr/bin/head, no 4s race).
 	return sanitized;
 }
 
