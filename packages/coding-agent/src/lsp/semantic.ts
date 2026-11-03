@@ -86,12 +86,26 @@ export async function semanticRank(opts: SemanticRankOptions): Promise<SemanticR
 	const query = truncated(opts.queryContext);
 
 	try {
-		const [queryVec, targetVecs] = await Promise.all([
-			embedOne(query),
-			embedMany(targets.map(t => truncated(t))),
-		]);
-		if (queryVec.length !== BGE_DIM || targetVecs.some(v => v.length !== BGE_DIM)) {
-			// Unexpected dimension — don't trust partial vectors; keep structural order.
+		// SERIAL, not Promise.all (2026-11-03 audit): freeinference rate-limits
+		// CONCURRENT embed batches and answers the loser with {data:[]} — HTTP
+		// 200, empty, no error. The concurrent pair here lost a side on 3/4
+		// measured runs, and the dim-check below silently degraded to structural
+		// order — meaning the semantic re-rank almost never actually ran under
+		// load. Serialize the two calls and require the full answer (retry once
+		// for transient rate pressure; sustained short answers keep the additive
+		// degrade contract).
+		const embedFull = async (inputs: string[]): Promise<number[][]> => {
+			for (let attempt = 0; attempt < 2; attempt++) {
+				const vecs = await embedMany(inputs);
+				if (vecs.length === inputs.length && vecs.every(v => v.length === BGE_DIM)) return vecs;
+				if (attempt === 0) await new Promise(resolve => setTimeout(resolve, 900));
+			}
+			throw new Error(`embed short-answer after retry (${inputs.length} inputs)`);
+		};
+		const queryVecs = await embedFull([query]);
+		const targetVecs = await embedFull(targets.map(t => truncated(t)));
+		const queryVec = queryVecs[0];
+		if (queryVec.length !== BGE_DIM) {
 			return { ...base, note: `bge-m3 dimension mismatch (${queryVec.length}) — structural order kept` };
 		}
 		const ranked = targetVecs
