@@ -287,6 +287,7 @@ impl WalkFilter {
 			skip_node_modules_unless_seen: false,
 			mentions_node_modules: false,
 			glob: None,
+			exclude: None,
 		}
 	}
 
@@ -298,6 +299,7 @@ impl WalkFilter {
 			skip_node_modules_unless_seen: false,
 			mentions_node_modules: false,
 			glob: None,
+			exclude: None,
 		}
 	}
 
@@ -309,6 +311,7 @@ impl WalkFilter {
 			skip_node_modules_unless_seen: false,
 			mentions_node_modules: false,
 			glob: None,
+			exclude: None,
 		}
 	}
 
