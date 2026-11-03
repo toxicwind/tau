@@ -154,6 +154,10 @@ export function parseReadUrlTarget(readPath: string): ParsedReadUrlTarget | null
 	let raw = false;
 	let ranges: [LineRange, ...LineRange[]] | undefined;
 	let tail: number | undefined;
+	// Raw mode changes bare-N semantics (`:12:raw` = exactly line 12, not "from
+	// 12 onward"), so scan for the `raw` token BEFORE parsing range tokens —
+	// `:12:raw` orders the range first (upstream issue #14092 parity).
+	const hasRaw = (embedded?.sels ?? []).some(token => token.toLowerCase() === "raw");
 	for (const token of embedded?.sels ?? []) {
 		if (token.toLowerCase() === "raw") {
 			raw = true;
@@ -165,7 +169,7 @@ export function parseReadUrlTarget(readPath: string): ParsedReadUrlTarget | null
 				`URL selector has multiple range groups; combine them with commas (e.g. \`:5-10,20-30\`).`,
 			);
 		}
-		ranges = parseLineRanges(token) ?? undefined;
+		ranges = parseLineRanges(token, hasRaw ? "single" : "onward") ?? undefined;
 		if (ranges !== undefined) continue;
 		const count = parseTailCount(token);
 		if (count === null) {
@@ -1633,7 +1637,7 @@ export async function fetchReadUrl(
 		session.fetch,
 		webpExclusionForModel(session.getActiveModel?.()),
 	);
-	const output = buildUrlReadOutput(result, result.content);
+	const output = buildUrlReadOutput(result, result.content, raw);
 	const artifact = options?.ensureArtifact ? await persistReadUrlArtifact(session, output) : undefined;
 
 	return {
@@ -1668,7 +1672,11 @@ export async function materializeReadUrlToFile(
 	return { path: contentPath, details: entry.details };
 }
 
-function buildUrlReadOutput(result: FetchRenderResult, content: string): string {
+function buildUrlReadOutput(result: FetchRenderResult, content: string, raw = false): string {
+	// Raw mode returns the body verbatim — the URL/Method header block would
+	// shift line numbers so `:N:raw` selectors slice the wrong lines
+	// (upstream issue #14092 parity).
+	if (raw) return content;
 	let output = "";
 	output += `URL: ${result.finalUrl}\n`;
 	output += `Content-Type: ${result.contentType}\n`;

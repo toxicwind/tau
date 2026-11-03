@@ -25,7 +25,7 @@ export type {
 } from "./types";
 export { forkSemantics } from "./fork";
 export { upstreamSemantics } from "./upstream";
-export { exclusionsForRoot, isExclusionEntry, isExclusionPart } from "./upstream/grep-path";
+export { exclusionsForRoot, isExclusionEntry, isExclusionPart, normalizeExclusion } from "./upstream/grep-path";
 
 /** Resolve the divergence implementation the session has selected. */
 export function divergenceFor(session: Pick<ToolSession, "settings">): DivergenceContracts {

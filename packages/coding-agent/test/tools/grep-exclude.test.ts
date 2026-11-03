@@ -18,7 +18,11 @@ describe("grep `!glob` exclusions", () => {
 			hasUI: false,
 			getSessionFile: () => null,
 			getSessionSpawns: () => "*",
-			settings: Settings.isolated(),
+			settings: Settings.isolated({
+				// Upstream contract test → pin UPSTREAM semantics (the A/B side).
+				// forkDivergence.grepExclusions=false = `!glob` exclusion mode.
+				"forkDivergence.grepExclusions": false,
+			}),
 		};
 		tool = new GrepTool(session);
 		for (const name of [

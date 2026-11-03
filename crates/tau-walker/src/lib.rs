@@ -222,6 +222,13 @@ pub struct WalkFilter {
 	skip_node_modules_unless_seen: bool,
 	mentions_node_modules: bool,
 	glob: Option<CompiledWalkGlob>,
+	/// Exclusion globs (2026-11-02, upstream-parity): entries NOT matched, even
+	/// when the positive `glob` selects them. Pattern semantics mirror upstream
+	/// can1357/oh-my-pi `pi_natives::grep`: a pattern without `/` matches at any
+	/// depth (`*.test.ts`, `vendor`); a leading `/` anchors it to the walk root
+	/// (`/vendor`); a matched directory is not entered. Compiled with the same
+	/// `literal_separator` rule as the positive glob.
+	exclude: Option<CompiledWalkGlob>,
 }
 
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]

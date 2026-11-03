@@ -421,16 +421,14 @@ export function buildInMemoryTextResult(
 			result: truncation,
 			options: { direction: "head", startLine: startLineDisplay, totalFileLines: totalLines },
 		};
-	} else if (userLimitedLines !== undefined && startLine + userLimitedLines < allLines.length) {
+	} else if (!options.raw && userLimitedLines !== undefined && startLine + userLimitedLines < allLines.length) {
 		const remaining = allLines.length - (startLine + userLimitedLines);
 		const nextOffset = startLine + userLimitedLines + 1;
 
-		if (options.raw === true) {
-			rawSeenLines = contiguousLineNumbers(startLineDisplay, userLimitedLines);
-			outputText = formatText(selectedContent, startLineDisplay);
-		} else {
-			outputText = formatLineEntries(buildLineEntries(endLine), startLineDisplay);
-		}
+		// `!options.raw` guard above: raw mode never appends the "more lines"
+		// notice (verbatim-extraction contract — the caller asked for exactly
+		// those lines), so this branch is display-mode only.
+		outputText = formatLineEntries(buildLineEntries(endLine), startLineDisplay);
 		outputText += `\n\n[${remaining} more lines in ${options.entityLabel}. Use :${nextOffset} to continue]`;
 	} else {
 		if (options.raw === true) {

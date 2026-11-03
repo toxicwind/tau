@@ -27,7 +27,7 @@ import { InternalUrlRouter } from "../internal-urls/router";
 import { tryResolveInternalUrlSync } from "../internal-urls/hyperlink-targets";
 import type { InternalResource, ResolveContext } from "../internal-urls/types";
 import grepDescription from "../prompts/tools/grep.md" with { type: "text" };
-import { DEFAULT_MAX_COLUMN, truncateHead, truncateLineBytes } from "@tau/tau-tui/tools/streaming-output";
+import { DEFAULT_MAX_BYTES, DEFAULT_MAX_COLUMN, truncateHead, truncateLineBytes } from "@tau/tau-tui/tools/streaming-output";
 import { sessionDelegationBias } from "../task/prompt-policy";
 import { isScoutSpawnable } from "../task/spawn-policy";
 import { resolveFileDisplayMode } from "../utils/file-display-mode";
@@ -35,22 +35,31 @@ import type { ToolSession } from ".";
 import { getExperimentalContextSession } from "./context-notes";
 import { materializeReadUrlToFile, parseReadUrlTarget } from "./fetch";
 import { createFileRecorder, formatResultPath } from "./file-recorder";
-import { formatGroupedFiles } from "@tau/tau-tui/tools/grouped-file-output";
+import { formatFileMatches, formatGroupedFiles } from "@tau/tau-tui/tools/grouped-file-output";
 import { formatMatchLine } from "@tau/tau-tui/tools/match-line-format";
 import { isFindEnabled } from "./jfind";
 import {
 	expandDelimitedPathEntries,
 	hasGlobPathChars,
 	isLineInRanges,
+	normalizePathLikeInput,
+	parseSearchPath,
 	pathTargetsSsh,
 	probeLiteralPathExists,
+	probeLiteralPathExistsSync,
 	type ResolvedSearchTarget,
 	resolveReadPath,
 	resolveToolSearchScope,
 	splitPathAndSelPreferringLiteral,
+	splitPathAndSelPreferringLiteralSync,
 } from "./path-utils";
+import {
+	APPROVAL_ROOT_DELIMITERS,
+	approvalRootCandidates,
+	searchApprovalCacheTargets,
+} from "./search-approval-targets";
 import { type LineRange, parseLineRanges, selectorLineRanges } from "@tau/tau-tui/tools/line-ranges";
-import { splitInternalUrlSel, splitPathAndSel } from "@tau/tau-tui/tools/read";
+import { isReadableUrlPath, splitInternalUrlSel, splitPathAndSel } from "@tau/tau-tui/tools/read";
 import { toPathList } from "@tau/tau-tui/render/render-utils";
 import { isRawSelector } from "./read-selector";
 import { formatCodeFrameLine } from "@tau/tau-tui/render/render-utils";
@@ -131,6 +140,85 @@ function isReadSelectorGrammar(sel: string): boolean {
 	return lower === "raw" || lower === "conflicts" || parseLineRanges(sel) !== null;
 }
 
+/**
+ * Minimal glob matcher for JS-side `!` exclusion filtering (`*`, `?`, `**`).
+ * Upstream-parity negation without touching the fork's native walker
+ * (`CompiledWalkGlob` has no negation vector — 2026-11-02 divergence seam).
+ * `**` crosses separators; `*`/`?` stay within one segment.
+ */
+/** Names of the files a per-file cap trimmed: the first few, then a count. */
+function formatCappedFiles(paths: readonly string[]): string {
+	const shown = paths.slice(0, 5).join(", ");
+	const rest = paths.length - 5;
+	return rest > 0 ? `${shown} and ${rest} more ${rest === 1 ? "file" : "files"}` : shown;
+}
+
+/**
+ * Upstream's `isExclusionEntry` for approval-key derivation: an entry is an
+ * exclusion when it starts with `!` and names nothing on disk (selector split
+ * like `read`). Inlined here so the approval path needs no async import.
+ */
+function isExclusionPartSync(entry: string, cwd: string): boolean {
+	if (!entry.startsWith("!") || entry.length === 1) return false;
+	if (entry.includes("://")) return false;
+	return probeLiteralPathExistsSync(splitPathAndSelPreferringLiteralSync(entry, cwd).path, cwd) === "missing";
+}
+
+/**
+ * External URL entries (`https://…`) carry read's display selectors. `read`
+ * forwards `:raw` to the fetch (`parseReadUrlTarget` + `isRawSelector`), so
+ * grep forwards it too instead of rejecting the entry as an unsupported
+ * line-range selector (issue #14092). `:conflicts` is a display-only mode
+ * with no meaning for content search — the whole fetched resource is searched
+ * either way. A line range stays a JS-side match filter.
+ *
+ * Returns `null` for entries that are not external URLs, so the caller keeps
+ * its filesystem-path handling. (Upstream grep.ts port @ 83de60ad99.)
+ */
+function parseExternalUrlSpec(entry: string): { clean: string; ranges?: [LineRange, ...LineRange[]] } | null {
+	const split = splitPathAndSel(entry);
+	if (split.sel === undefined) return null;
+	// A plain line range needs no special handling — the caller filters matches
+	// by line number, exactly like it does for a filesystem path.
+	if (parseLineRanges(split.sel) !== null) return null;
+	if (!isReadableUrlPath(split.path)) return null;
+	// `:conflicts` is display-only: drop it, then read whatever selectors precede it
+	// (`…:10-20:conflicts` keeps its range, `…:-5:conflicts` is still rejected).
+	const conflicts = split.sel.toLowerCase() === "conflicts";
+	const target = parseReadUrlTarget(conflicts ? split.path : entry);
+	if (!target) return conflicts ? { clean: split.path } : null;
+	if (target.sel.kind === "tail") {
+		throw new ToolError(
+			`path entry "${entry}" has an invalid selector ":-${target.sel.count}" — use ":N-M" line ranges, ":raw"/":conflicts", a range plus ":raw", or percent-encode a literal ":" as %3A`,
+		);
+	}
+	// No URL selector left: only `:conflicts` names the whole resource; anything else (`:img`) is not URL grammar.
+	if (target.sel.kind === "none") return conflicts ? { clean: target.path } : null;
+	if (target.sel.kind === "raw") {
+		// Forward the selector verbatim — the fetch path reads it back.
+		return { clean: `${target.path}:raw` };
+	}
+	if (target.sel.kind === "lines") {
+		return {
+			clean: target.sel.raw ? `${target.path}:raw` : target.path,
+			ranges: target.sel.ranges,
+		};
+	}
+	// A selector the URL grammar does not know (`:img`, a typo) — leave it to
+	// the filesystem path handling, which rejects it with a clear message.
+	return null;
+}
+
+function globLikeMatch(value: string, pattern: string): boolean {
+	const regexSrc = pattern
+		.replace(/[.+^${}()|[\]\\]/g, "\\$&")
+		.replace(/\*\*/g, "\u0000")
+		.replace(/\*/g, "[^/]*")
+		.replace(/\u0000/g, ".*")
+		.replace(/\?/g, "[^/]");
+	return new RegExp(`^${regexSrc}$`).test(value);
+}
+
 async function parsePathSpecs(rawEntries: readonly string[], cwd: string): Promise<GrepPathSpec[]> {
 	const specs: GrepPathSpec[] = [];
 	for (const entry of rawEntries) {
@@ -163,8 +251,17 @@ async function parsePathSpecs(rawEntries: readonly string[], cwd: string): Promi
 		if (!literalFilesystemMatch && split.sel) {
 			const parsed = parseLineRanges(split.sel);
 			if (!parsed) {
+				// External URL selectors (`:raw`, `:conflicts`, range+conflicts):
+				// upstream issue #14092 parity — forward to the fetch path instead of
+				// rejecting; a line range stays a JS-side match filter; a malformed
+				// compound (`:-5:conflicts`) is rejected with read's wording.
+				const externalSpec = parseExternalUrlSpec(entry);
+				if (externalSpec) {
+					specs.push({ original: entry, clean: externalSpec.clean, ranges: externalSpec.ranges });
+					continue;
+				}
 				throw new ToolError(
-					`path entry "${entry}" — only line-range selectors like ":50-100" are supported (no ":raw"/":conflicts")`,
+					`path entry "${entry}" has an invalid selector ":${split.sel}" — use ":N-M" line ranges, ":raw"/":conflicts", a range plus ":raw", or percent-encode a literal ":" as %3A`,
 				);
 			}
 			if (hasGlobPathChars(split.path) && (await probeLiteralPathExists(split.path, cwd)) === "missing") {
@@ -234,6 +331,9 @@ async function resolveArchiveSearchPaths(
 		const spec = pathSpecs[idx];
 		if (!spec || spec.literalFilesystemMatch) continue;
 		const entry = spec.clean;
+		// URL targets are fetched whole elsewhere (materializeExternalUrlForSearch);
+		// an `:raw` URL ending in `.zip` names an HTTP body, not a local archive.
+		if (/^([a-z][a-z0-9+.-]*):\/\//i.test(entry)) continue;
 		const candidates = parseArchivePathCandidates(entry);
 		const member = candidates.find(c => c.subPath !== "" && c.archivePath !== entry);
 		if (!member) continue;
@@ -849,6 +949,42 @@ export interface GrepToolOptions {
 
 export class GrepTool implements AgentTool<typeof searchSchema, GrepToolDetails> {
 	readonly name = "grep";
+	/**
+	 * `always-ask-cached` keys: every file and folder this grep searches, so a
+	 * folder grant recorded by a `read` covers a search of it and a search of one
+	 * file shares that file's read grant. Roots are split the way `execute` splits
+	 * them and each costs a single stat; see {@link searchApprovalCacheTargets}.
+	 * (Upstream contract parity — fork approval modes stay always-ask|write|yolo.)
+	 */
+	readonly approvalCacheTargets = (args: unknown): readonly string[] | undefined => {
+		const a = args as { path?: string | string[]; paths?: string | string[] } | null | undefined;
+		const cwd = this.session.cwd;
+		const splitBase = (entry: string) => parseSearchPath(splitPathAndSel(entry).path).basePath;
+		const roots = toPathList(a?.path ?? a?.paths);
+		const exclusionParts = (list: string) =>
+			approvalRootCandidates(list)
+				.slice(1)
+				.filter(part => isExclusionPartSync(part, cwd));
+		// `!glob` exclusions search nothing and key nothing. A whole list holding one keys itself only when
+		// it is a real path (execution then searches it literally); its other parts key as usual.
+		const skipCandidate = (candidate: string, wholeList: boolean) =>
+			wholeList
+				? exclusionParts(candidate).length > 0 &&
+					probeLiteralPathExistsSync(splitPathAndSelPreferringLiteralSync(candidate, cwd).path, cwd) === "missing"
+				: isExclusionPartSync(candidate, cwd);
+		// Execution searches cwd when every entry it splits out is an exclusion, and how it splits a list
+		// depends on its own parser (braces, empty fields, which parts resolve). Rather than re-derive that,
+		// any exclusion in a list keys cwd too: over-keying only adds a prompt, under-keying auto-allows a
+		// recursive cwd read.
+		const hasExclusion = roots.some(root => {
+			const list = normalizePathLikeInput(root);
+			return (
+				isExclusionPartSync(list, cwd) ||
+				list.split(APPROVAL_ROOT_DELIMITERS).some(part => part.length > 0 && isExclusionPartSync(part, cwd))
+			);
+		});
+		return searchApprovalCacheTargets(hasExclusion ? [...roots, "."] : roots, cwd, splitBase, undefined, skipCandidate);
+	};
 	readonly approval = (args: unknown): ToolTier => {
 		const a = args as { path?: string | string[]; paths?: string | string[] };
 		return toPathList(a.path ?? a.paths).some(pathTargetsSsh) ? "exec" : "read";
@@ -910,7 +1046,32 @@ export class GrepTool implements AgentTool<typeof searchSchema, GrepToolDetails>
 			const scopedPaths = toPathList(rawPath);
 			const effectivePaths = scopedPaths.length > 0 ? scopedPaths : ["."];
 			const rawEntries = await expandDelimitedPathEntries(effectivePaths, this.session.cwd);
-			const pathSpecs = await parsePathSpecs(rawEntries, this.session.cwd);
+			// Divergence seam (2026-11-02): forkDivergence.grepExclusions=false →
+			// upstream semantics: `!glob` entries in the path list are ripgrep-style
+			// exclusions (isExclusionEntry: a `!` entry confirmed missing on disk),
+			// split out here and filtered JS-side after the native walk (the fork's
+			// walker has no negation vector). Flag true (fork default) → `!` entries
+			// are literal paths, byte-for-byte today's behavior.
+			const useUpstreamExclusions =
+				this.session.settings.get("forkDivergence.grepExclusions") !== true;
+			let exclusionPatterns: string[] | undefined;
+			let entriesForSpecs = rawEntries;
+			if (useUpstreamExclusions && rawEntries.some(entry => entry.startsWith("!"))) {
+				const { exclusionsForRoot, isExclusionEntry } = await import("../fork-divergence/index");
+				const cwd = this.session.cwd;
+				const includes: string[] = [];
+				exclusionPatterns = [];
+				for (const entry of rawEntries) {
+					if (entry.startsWith("!") && isExclusionEntry(entry, cwd)) exclusionPatterns.push(entry);
+					else includes.push(entry);
+				}
+				entriesForSpecs = includes.length > 0 ? includes : ["."];
+				// Strip the `!` here: `exclusionsForRoot` (upstream port) rebases
+				// patterns for upstream's native walker, which parses `!` as negation;
+				// this fork's JS-side filter wants bare globs with `/` anchoring.
+				exclusionPatterns = exclusionPatterns.map(p => p.slice(1));
+			}
+			const pathSpecs = await parsePathSpecs(entriesForSpecs, this.session.cwd);
 			const materializedExternalPaths = new Map<string, string>();
 			const materializeExternalUrlForSearch = async (rawPath: string) => {
 				const target = parseReadUrlTarget(rawPath);
@@ -1220,6 +1381,59 @@ export class GrepTool implements AgentTool<typeof searchSchema, GrepToolDetails>
 					throw err;
 				}
 				result = mergeGrepResults(result, virtualResult, nativeMaxCount);
+				// Upstream-parity `!glob` exclusions (forkDivergence.grepExclusions
+				// = false): filter matched files JS-side — the fork's native walker
+				// has a single positive glob and no negation vector. Patterns are
+				// rebased per search root via exclusionsForRoot (upstream port),
+				// with `/` anchoring so `!./gen` never drops `sub/gen`.
+				if (exclusionPatterns && exclusionPatterns.length > 0) {
+					const excl = await import("../fork-divergence/index");
+					const { exclusionsForRoot, normalizeExclusion } = excl;
+					const excludeForThisRoot = exclusionsForRoot(exclusionPatterns, this.session.cwd, searchPath);
+					if (excludeForThisRoot && excludeForThisRoot.length > 0) {
+						// Upstream's exclusionsForRoot returns `!`-prefixed entries (their
+						// native walker interprets `!` as negation). This JS-side filter
+						// mirrors the native-side consumption: strip the `!` before glob
+						// matching, keeping anchoring (`/`) semantics intact.
+						const exclCompiled = excludeForThisRoot.map(p => normalizeExclusion(p.startsWith("!") ? p.slice(1) : p));
+						const matchesExcluded = (relPath: string): boolean => {
+							const normalized = relPath.replace(/\\/g, "/");
+							return exclCompiled.some(pattern => {
+								const anchored = pattern.startsWith("/");
+								const bare = anchored ? pattern.slice(1) : pattern;
+								if (anchored) {
+									// Anchored: glob against root-relative path, and a pattern
+									// naming a directory (`/src/legacy`) prunes that subtree.
+									if (normalized === bare || normalized.startsWith(`${bare}/`)) return true;
+									return globLikeMatch(normalized, bare) || globLikeMatch(`${normalized}/`, `${bare}/*`);
+								}
+								// any-depth: a bare name (`vendor`, `gen`) prunes that
+								// directory anywhere in the path AND everything nested
+								// below it (`!gen` drops `tools/gen/kept.ts`); a glob
+								// (`*.test.ts`) matches the file tail at any depth.
+								const segments = normalized.split("/");
+								return segments.some(segment => segment === bare)
+									|| segments.some((_, i) => {
+										const tail = segments.slice(i).join("/");
+										return globLikeMatch(tail, bare);
+									});
+							});
+						};
+						const kept = result.matches.filter(m => {
+							const rel = path.isAbsolute(m.path)
+								? path.relative(searchPath, m.path).replace(/\\/g, "/")
+								: m.path;
+							return !matchesExcluded(rel);
+						});
+						result = {
+							matches: kept,
+							totalMatches: kept.length,
+							filesWithMatches: new Set(kept.map(m => m.path)).size,
+							filesSearched: result.filesSearched,
+							limitReached: result.limitReached,
+						};
+					}
+				}
 				if (rangesByAbsPath.size > 0) {
 					const filteredMatches: GrepMatch[] = [];
 					for (const match of result.matches) {
@@ -1275,17 +1489,23 @@ export class GrepTool implements AgentTool<typeof searchSchema, GrepToolDetails>
 					matchesByPath.get(match.path)!.push(match);
 				}
 				let perFileLimitReached = false;
+				const cappedFiles: string[] = [];
 				for (const file of fileOrder) {
 					const list = matchesByPath.get(file)!;
 					if (list.length > perFileMatchCap) {
 						perFileLimitReached = true;
+						cappedFiles.push(file);
 						list.length = perFileMatchCap;
 					}
 				}
 				const totalFiles = fileOrder.length;
-				// When native grep stopped at its internal cap, files past the cap were
-				// never surfaced — the file total is only a lower bound.
-				const totalFilesLabel = result.limitReached ? `${totalFiles}+` : `${totalFiles}`;
+				// Upstream-parity: the "+" suffix means the TOTAL cap (nativeMaxCount)
+				// bit — files past it were never surfaced, so the count is a lower
+				// bound. A per-file cap tripping (hot file trimmed) does NOT hide
+				// other files, so it must not add the "+". Fork's native limitReached
+				// fires on either; replicate upstream's narrower check (2026-11-02).
+				const totalCapReached = result.matches.length >= nativeMaxCount;
+				const totalFilesLabel = totalCapReached ? `${totalFiles}+` : `${totalFiles}`;
 				// Single-file scopes can't paginate — there is one file by definition.
 				const canPaginate = isMultiScope;
 				const skipFiles = canPaginate ? Math.min(normalizedSkip, totalFiles) : 0;
@@ -1481,44 +1701,62 @@ export class GrepTool implements AgentTool<typeof searchSchema, GrepToolDetails>
 					return { model: modelOut, display: displayOut };
 				};
 				const useGroupedOutput = isDirectory || isMultiScope;
-				if (useGroupedOutput) {
-					const grouped = formatGroupedFiles(fileList, relativePath => {
-						const rendered = renderMatchesForFile(relativePath);
-						const hashContext = hashContexts.get(relativePath);
-						return {
-							modelLines: rendered.model,
-							displayLines: rendered.display,
-							headerSuffix: hashContext?.tag ? `#${hashContext.tag}` : "",
-							skip: rendered.model.length === 0,
-						};
+				// Upstream-parity renderer: grouped mode nests via formatGroupedFiles,
+				// flat mode blank-separates with hashline headers — both track modelEnds
+				// so the cap notice can name only files whose section survived truncation.
+				const matchOutput = formatFileMatches(fileList, useGroupedOutput, relativePath => {
+					const rendered = renderMatchesForFile(relativePath);
+					const hashContext = hashContexts.get(relativePath);
+					return {
+						model: rendered.model,
+						display: rendered.display,
+						tag: hashContext?.tag,
+					};
+				});
+				outputLines.push(...matchOutput.model);
+				displayLines.push(...matchOutput.display);
+				const trailer = (shownCapped: readonly string[]): string => {
+					const capNotice =
+						shownCapped.length === 0
+							? ""
+							: useGroupedOutput
+								? `More than ${perFileMatchCap} matches in ${formatCappedFiles(shownCapped)}; grep keeps the first ${perFileMatchCap} per file when searching several. Search one file alone for up to ${SINGLE_FILE_MATCHES}.`
+								: `More than ${perFileMatchCap} matches; grep keeps the first ${perFileMatchCap} in a file. Add a line range (\`path:N-M\`) or narrow the pattern for the rest.`;
+					return [limitMessage, warningNote, capNotice]
+						.filter(Boolean)
+						.map(note => `\n\n${note}`)
+						.join("");
+				};
+				// The page, warning and cap notices sit past the byte cap so a long result
+				// cannot cut them off. A multi-file notice names only files the kept text
+				// shows with a full cap's worth of matches; a single file's notice names no
+				// file, so it stays when the byte cap cuts it (upstream parity).
+				const cappedCandidates = cappedFiles
+					.map(formatPath)
+					.filter(relativePath => fileMatchCounts.get(relativePath) === perFileMatchCap);
+				const rawOutput0 = outputLines.join("\n");
+				let suffix = trailer(cappedCandidates);
+				let truncation = truncateHead(rawOutput0, {
+					maxLines: Number.MAX_SAFE_INTEGER,
+					maxBytes: DEFAULT_MAX_BYTES - Buffer.byteLength(suffix),
+				});
+				for (;;) {
+					const reserved = Buffer.byteLength(suffix);
+					const keptLines = truncation.truncated ? (truncation.outputLines ?? 0) : outputLines.length;
+					const shownCapped = useGroupedOutput
+						? cappedCandidates.filter(
+								relativePath => (matchOutput.modelEnds?.get(relativePath) ?? Infinity) <= keptLines,
+							)
+						: cappedCandidates;
+					suffix = trailer(shownCapped);
+					// Fewer files named can still mean longer names; re-cut until the notice fits its room.
+					if (Buffer.byteLength(suffix) <= reserved) break;
+					truncation = truncateHead(rawOutput0, {
+						maxLines: Number.MAX_SAFE_INTEGER,
+						maxBytes: DEFAULT_MAX_BYTES - reserved,
 					});
-					outputLines.push(...grouped.model);
-					displayLines.push(...grouped.display);
-				} else {
-					for (const relativePath of fileList) {
-						const rendered = renderMatchesForFile(relativePath);
-						if (rendered.model.length === 0) continue;
-						if (outputLines.length > 0) {
-							outputLines.push("");
-							displayLines.push("");
-						}
-						const hashContext = hashContexts.get(relativePath);
-						if (hashContext?.tag) {
-							outputLines.push(formatHashlineHeader(relativePath, hashContext.tag));
-						}
-						outputLines.push(...rendered.model);
-						displayLines.push(...rendered.display);
-					}
 				}
-				if (limitMessage) {
-					outputLines.push("", limitMessage);
-				}
-				if (warningNote) {
-					outputLines.push("", warningNote);
-				}
-				const rawOutput = outputLines.join("\n");
-				const truncation = truncateHead(rawOutput, { maxLines: Number.MAX_SAFE_INTEGER });
-				const output = truncation.content;
+				const output = truncation.content + suffix;
 				const displayText = displayLines.join("\n");
 				let displayTargets: Record<string, string> | undefined;
 				for (const line of displayLines) {

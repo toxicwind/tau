@@ -1,6 +1,7 @@
 import * as path from "node:path";
 
 import { buildPathTree, isUrlLikePath, type PathTreeInput, walkPathTree } from "@tau/tau-utils";
+import { formatHashlineHeader } from "./hashline-format";
 
 // =============================================================================
 // Grouped file output (grep / ast-grep / ast-edit / lsp diagnostics)
@@ -26,6 +27,20 @@ export interface GroupedFileSection {
 export interface GroupedFilesOutput {
 	model: string[];
 	display: string[];
+	/**
+	 * Per file, the model-output index just past that file's last line (flat mode
+	 * and grouped mode both track it). Consumers use it to tell whether a file's
+	 * section survived a byte-cap truncation; files absent from the map (or past
+	 * a truncated point) read as `Infinity` at the callsite.
+	 */
+	modelEnds?: Map<string, number>;
+}
+
+/** One file's rendered search matches, plus its hashline tag when editable. */
+export interface FileMatchSection {
+	model: string[];
+	display: string[];
+	tag?: string;
 }
 
 /**
@@ -61,6 +76,7 @@ export function formatGroupedFiles(
 	const tree = buildPathTree(inputs);
 	const model: string[] = [];
 	const display: string[] = [];
+	const modelEnds = new Map<string, number>();
 	let emitted = false;
 
 	for (const event of walkPathTree(tree)) {
@@ -81,9 +97,50 @@ export function formatGroupedFiles(
 		const header = `${hashes} ${event.name}${section.headerSuffix ?? ""}`;
 		model.push(header, ...section.modelLines);
 		display.push(header, ...(section.displayLines ?? section.modelLines));
+		modelEnds.set(event.key, model.length);
 	}
 
-	return { model, display };
+	return { model, display, modelEnds };
+}
+
+/**
+ * Render per-file search matches (grep / ast-grep). Grouped mode nests files
+ * via {@link formatGroupedFiles}, appending `#tag` to headers; flat mode
+ * blank-separates files and prefixes each with a hashline header when tagged.
+ * Files with no model lines are omitted.
+ */
+export function formatFileMatches(
+	files: string[],
+	grouped: boolean,
+	renderFile: (filePath: string) => FileMatchSection,
+): GroupedFilesOutput {
+	if (grouped) {
+		return formatGroupedFiles(files, filePath => {
+			const rendered = renderFile(filePath);
+			return {
+				modelLines: rendered.model,
+				displayLines: rendered.display,
+				headerSuffix: rendered.tag ? `#${rendered.tag}` : "",
+				skip: rendered.model.length === 0,
+			};
+		});
+	}
+	const model: string[] = [];
+	const display: string[] = [];
+	const modelEnds = new Map<string, number>();
+	for (const filePath of files) {
+		const rendered = renderFile(filePath);
+		if (rendered.model.length === 0) continue;
+		if (model.length > 0) {
+			model.push("");
+			display.push("");
+		}
+		if (rendered.tag) model.push(formatHashlineHeader(filePath, rendered.tag));
+		model.push(...rendered.model);
+		display.push(...rendered.display);
+		modelEnds.set(filePath, model.length);
+	}
+	return { model, display, modelEnds };
 }
 
 // =============================================================================

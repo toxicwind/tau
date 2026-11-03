@@ -53,12 +53,16 @@ function parseChunk(sel: string, pinBare: boolean): LineRange | null {
  * Parse a comma-separated list of line ranges (e.g. `5-16,960-973` or `19,59`). Returns
  * the ranges in ascending order with overlapping/adjacent ranges merged so
  * downstream consumers can stream the file in a single forward pass per range.
+ *
+ * `mode` ("onward" default) pins a lone bare `N`: `"onward"` = from N to EOF,
+ * `"single"` = exactly line N (upstream raw-mode semantics: `:12:raw` extracts
+ * line 12 and nothing else).
  */
-export function parseLineRanges(sel: string): [LineRange, ...LineRange[]] | null {
+export function parseLineRanges(sel: string, mode: "onward" | "single" = "onward"): [LineRange, ...LineRange[]] | null {
 	const chunks = sel.split(",");
-	// A lone `:50` means "from line 50". Inside a comma list, a bare number is
-	// that one line; otherwise `:19,59` collapses to "from 19 through EOF".
-	const pinBare = chunks.length > 1;
+	// A lone `:50` means "from line 50" in onward mode. Inside a comma list, a
+	// bare number is that one line; in single mode every bare number is one line.
+	const pinBare = chunks.length > 1 || mode === "single";
 	const parsed: LineRange[] = [];
 	for (const chunk of chunks) {
 		const range = parseChunk(chunk, pinBare);
