@@ -58,6 +58,7 @@ import {
 	sortAndValidateTextEdits,
 } from "./edits";
 import { detectLspmux } from "./lspmux";
+import { locationContext, semanticRank } from "./semantic";
 import {
 	getLspServerForFile,
 	getLspServers,
@@ -98,6 +99,7 @@ import {
 	formatSymbolInformation,
 	formatWorkspaceEdit,
 	resolveDiagnosticTargets,
+	readLocationContext,
 	resolveSymbolColumn,
 	sortDiagnostics,
 	symbolKindToIcon,
@@ -161,6 +163,75 @@ function formatRenameStatError(error: unknown): string {
 	if (!isFsError(error)) return "unknown filesystem error";
 	const syscall = error.syscall ? ` during ${replaceTabs(error.syscall)}` : "";
 	return `${replaceTabs(error.code)}${syscall}`;
+}
+
+/**
+ * Semantic definition disambiguation via bge-m3.
+ *
+ * Builds a query context from the requested symbol's file line and per-candidate
+ * contexts from each definition location's own line, then embeds and re-ranks so
+ * the meaning-matched definition surfaces first among equally-valid structural
+ * candidates (overloads, generics, re-exports). Purely additive: the full
+ * structural set is always preserved and ordering degrades to structural when
+ * the embedding lane is unavailable.
+ */
+interface SemanticRankLocationsOptions {
+	query: string;
+	queryLocation: {
+		uri: string;
+		range: { start: { line: number; character: number }; end: { line: number; character: number } };
+	};
+	locations: Location[];
+	cwd: string;
+	signal?: AbortSignal;
+}
+
+async function semanticRankLocations(
+	opts: SemanticRankLocationsOptions,
+): Promise<{
+	orderedLocations: Location[];
+	ranked: Array<{ index: number; score: number; context: string }>;
+	embedded: boolean;
+}> {
+	const queryFile = uriToFile(opts.queryLocation.uri);
+	let queryContext = opts.query.replace(/\s+/g, " ").slice(0, 200);
+	try {
+		const [qlineContext] = await readLocationContext(queryFile, opts.queryLocation.range.start.line + 1, 1);
+		if (qlineContext) queryContext += ` — ${qlineContext}`;
+	} catch {}
+	queryContext = queryContext.slice(0, 500);
+
+	const candidateContexts: string[] = [];
+	for (const loc of opts.locations) {
+		const filePath = uriToFile(loc.uri);
+		let ctx = locationContext(loc, opts.cwd);
+		try {
+			const [lineText] = await readLocationContext(filePath, loc.range.start.line + 1, 1);
+			if (lineText) ctx += ` ${lineText}`;
+		} catch {}
+		candidateContexts.push(ctx.slice(0, 500));
+	}
+
+	const res = await semanticRank({
+		queryContext,
+		candidateContexts,
+		topN: 8,
+		maxEmbed: 16,
+		minCandidates: 2,
+		signal: opts.signal,
+	});
+
+	const orderedLocations = [...opts.locations].sort((a, b) => {
+		const ia = res.ranks.findIndex(r => r.index === opts.locations.indexOf(a));
+		const ib = res.ranks.findIndex(r => r.index === opts.locations.indexOf(b));
+		return ia === -1 ? 0 : ib === -1 ? 0 : ia - ib;
+	});
+
+	return {
+		orderedLocations: res.embedded ? orderedLocations : opts.locations,
+		ranked: res.ranks,
+		embedded: res.embedded,
+	};
 }
 
 /**
@@ -1222,10 +1293,31 @@ export class LspTool implements AgentTool<typeof lspSchema, LspToolDetails, Them
 						output = "No definition found";
 						useless = true;
 					} else {
-						const lines = await Promise.all(
-							locations.map(location => formatLocationWithContext(location, this.session.cwd)),
-						);
-						output = `Found ${locations.length} definition(s):\n${lines.join("\n")}`;
+						// Semantic disambiguation: overloads / generics / re-exported
+						// symbols legitimately resolve to several structural definitions.
+						// Embed the query symbol's context and each candidate's context
+						// (bge-m3) and re-rank by meaning — best match surfaces first.
+						// Purely additive: the full structural candidate set is always
+						// preserved and the embedding lane degrades to structural order.
+						const ranked = locations.length > 1
+							? await semanticRankLocations({
+									query: symbol ?? targetFile ?? "",
+queryLocation: { uri, range: { start: position, end: position } },
+								locations,
+								cwd: this.session.cwd,
+								signal,
+							})
+						: null;
+
+					const ordered = ranked ? ranked.orderedLocations : locations;
+					const interleaveNote =
+						ranked?.embedded && ranked.ranked.length < ordered.length
+							? `\n(semantic bge-m3: top ${ranked.ranked.length} by meaning)`
+							: "";
+					const lines = await Promise.all(
+						ordered.map(location => formatLocationWithContext(location, this.session.cwd)),
+					);
+						output = `Found ${locations.length} definition(s):\n${lines.join("\n")}${interleaveNote}`;
 					}
 					break;
 				}
@@ -1310,11 +1402,29 @@ export class LspTool implements AgentTool<typeof lspSchema, LspToolDetails, Them
 						output = "No references found";
 						useless = true;
 					} else {
+						// Semantic re-ranking: when many reference sites match, embed the
+						// queried symbol's context and each site's line (bge-m3) so the
+						// meaning-relevant uses surface first. Purely additive and bounded
+						// to REFERENCE_CONTEXT_LIMIT; the full structural set is preserved.
 						const contextualReferences = result.slice(0, REFERENCE_CONTEXT_LIMIT);
 						const plainReferences = result.slice(REFERENCE_CONTEXT_LIMIT);
+						const ranked = contextualReferences.length > 1
+							? await semanticRankLocations({
+									query: symbol ?? targetFile ?? "",
+									queryLocation: { uri, range: { start: position, end: position } },
+									locations: contextualReferences,
+									cwd: this.session.cwd,
+									signal,
+								})
+							: null;
+						const orderedContextual = ranked ? ranked.orderedLocations : contextualReferences;
 						const contextualLines = await Promise.all(
-							contextualReferences.map(location => formatLocationWithContext(location, this.session.cwd)),
+							orderedContextual.map(location => formatLocationWithContext(location, this.session.cwd)),
 						);
+						const interleaveNote =
+							ranked?.embedded && ranked.orderedLocations.length < contextualReferences.length
+								? ` (top ${ranked.orderedLocations.length} by bge-m3 meaning)`
+								: "";
 						const plainLines = plainReferences.map(location => `  ${formatLocation(location, this.session.cwd)}`);
 						const lines = plainLines.length
 							? [
@@ -1323,7 +1433,7 @@ export class LspTool implements AgentTool<typeof lspSchema, LspToolDetails, Them
 									...plainLines,
 								]
 							: contextualLines;
-						output = `Found ${result.length} reference(s):\n${lines.join("\n")}`;
+						output = `Found ${result.length} reference(s):\n${lines.join("\n")}${interleaveNote}`;
 					}
 					break;
 				}
