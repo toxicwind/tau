@@ -317,6 +317,13 @@ describe("legacy pi package root remaps (issue #1474)", () => {
 	});
 
 	it("falls back to legacy-scoped subpath peers for direct plugin imports", async () => {
+		// The test file's own static import graph (line 6-19: `@tau/tau-ai`,
+		// `@tau/tau-catalog/models`, …) resolves `@tau/tau-ai/oauth` during the
+		// import phase and the resolver memoizes it process-wide. Without this
+		// reset the primary lookup returns the cached REAL path and the mocked
+		// `Bun.resolveSync` never fires — the fixture peer is never consulted.
+		// Same pattern as the canonical-resolve test below.
+		__resetLegacyPiResolutionCache();
 		const realResolveSync = Bun.resolveSync.bind(Bun);
 		vi.spyOn(Bun, "resolveSync").mockImplementation((specifier: string, from: string) => {
 			if (specifier === "@tau/tau-ai/oauth") {

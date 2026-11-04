@@ -2583,7 +2583,12 @@ export function convertMessages(
 			params.push(assistantMsg);
 		} else if (msg.role === "toolResult") {
 			// Batch consecutive tool results and collect all images
-			const imageBlocks: Array<{ type: "image_url"; image_url: { url: string } }> = [];
+			const imageBlocks: ChatCompletionContentPart[] = [];
+			// NVIDIA's chat-completions surface rejects more than 12 images per request
+			// with "At most 12 image(s) may be provided in one prompt". Cap the hoisted
+			// tool-result images here rather than dropping them silently — extra images
+			// become a text note so the model still sees that they existed.
+			const MAX_IMAGES_PER_REQUEST = 12;
 			let j = i;
 
 			for (; j < transformedMessages.length && transformedMessages[j].role === "toolResult"; j++) {
@@ -2628,21 +2633,29 @@ export function convertMessages(
 								image_url: {
 									url: block.url ?? `data:${block.mimeType};base64,${block.data}`,
 								},
-							});
+				});
+			}
 						}
 					}
 				}
-			}
 
 			i = j - 1;
 
 			// After all consecutive tool results, add a single user message with all images
 			if (imageBlocks.length > 0) {
+				if (imageBlocks.length > MAX_IMAGES_PER_REQUEST) {
+					const excess = imageBlocks.length - MAX_IMAGES_PER_REQUEST;
+					imageBlocks.length = MAX_IMAGES_PER_REQUEST;
+					imageBlocks.push({
+						type: "text",
+						text: `(${excess} additional image${excess === 1 ? "" : "s"} omitted: request exceeds the ${MAX_IMAGES_PER_REQUEST}-image limit)`,
+					});
+				}
 				if (compat.requiresAssistantAfterToolResult) {
 					params.push({
 						role: "assistant",
 						content: "I have processed the tool results.",
-					});
+							});
 				}
 
 				params.push({
@@ -2654,7 +2667,7 @@ export function convertMessages(
 						},
 						...imageBlocks,
 					],
-				});
+					});
 				lastRole = "user";
 			} else {
 				lastRole = "toolResult";

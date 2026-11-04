@@ -16,6 +16,7 @@ import { loadSkills, type Skill, type SkillWarning, setActiveSkills } from "../e
 import { type LocalProtocolOptions } from "../internal-urls";
 import { stripXdUrlPrefix, XD_URL_PREFIX } from "@tau/tau-tui/tools/xd-url";
 import { deduplicateMCPToolsByName, resolveMCPToolAlias } from "../mcp/tool-bridge";
+import { isEvalBridgeToolCallable } from "../eval/tool-bridge-policy";
 import { resolveMemoryBackend } from "../memory-backend/resolve";
 import { MEMORY_BACKEND_TOOL_NAMES } from "../memory-backend/tool-names";
 import { invalidateToolSchemaMetadata } from "@tau/tau-tui/status-line/context-usage";
@@ -523,13 +524,14 @@ export class SessionTools {
 	/** Looks up an enabled tool through the same ACP permission gate as direct calls. */
 	getToolForEvalBridge(name: string): AgentTool | undefined {
 		if (!this.getEnabledToolNames().includes(name)) return undefined;
+		if (!isEvalBridgeToolCallable({ name })) return undefined;
 		const tool = this.#toolRegistry.get(name);
 		return tool ? this.#wrapToolForAcpPermission(tool) : undefined;
 	}
 
 	/** Canonical allowlist advertised by and enforced for the eval bridge. */
 	getEvalBridgeToolNames(): string[] {
-		return this.getEnabledToolNames();
+		return this.getEnabledToolNames().filter(name => isEvalBridgeToolCallable({ name }));
 	}
 
 	/** Tools left directly model-visible by the last applied Code Mode partition; undefined when inactive. */

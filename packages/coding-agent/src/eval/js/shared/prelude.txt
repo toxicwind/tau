@@ -852,14 +852,19 @@ if (!globalThis.__tau_js_prelude_loaded__) {
 	// `bun` is defined by default in every eval kernel (permanent): the Bun
 	// runtime is the host, so seal the executable path + the full Bun API so
 	// cells can use `bun`, `Bun.spawn`, `Bun.$`, etc. without re-importing.
-	globalThis.bun = {
-		execPath: process.execPath,
-		spawn: (...args) => Bun.spawn(...args),
-		spawnSync: (...args) => Bun.spawnSync(...args),
-		file: (...args) => Bun.file(...args),
-		write: (...args) => Bun.write(...args),
-	};
-	// `Bun` is already a real global in the Bun runtime — expose our alias too.
-	globalThis.bun.Bun = Bun;
-	globalThis.bun.$ = Bun.$;
+	// Feature-detect the host: the same prelude source ships verbatim into bare
+	// `node:vm` test sandboxes (no `process`, no `Bun`), where `bun` degrades to
+	// undefined instead of throwing at prelude-load time.
+	const __tauHostBun = typeof Bun !== "undefined" ? Bun : undefined;
+	globalThis.bun = __tauHostBun
+		? {
+				execPath: typeof process !== "undefined" ? process.execPath : undefined,
+				spawn: (...args) => __tauHostBun.spawn(...args),
+				spawnSync: (...args) => __tauHostBun.spawnSync(...args),
+				file: (...args) => __tauHostBun.file(...args),
+				write: (...args) => __tauHostBun.write(...args),
+				Bun: __tauHostBun,
+				$: __tauHostBun.$,
+			}
+		: undefined;
 }

@@ -113,7 +113,13 @@ import { registerLocalInferenceApi } from "./tiny/local-inference-api";
 import { concreteThinkingLevel, parseConfiguredThinkingLevel } from "@tau/tau-tui/thinking";
 import type { LspStartupServerInfo } from "./tools";
 import { sanitizeDisplayWarnings } from "@tau/tau-tui/render/render-utils";
-import { getChangelogPath, resolveStartupChangelogForDisplay, type StartupChangelogSelection } from "./utils/changelog";
+import {
+	getChangelogPath,
+	readLastChangelogVersion,
+	resolveStartupChangelogForDisplay,
+	type StartupChangelogSelection,
+} from "./utils/changelog";
+import { resolveFirstLaunchPythonEvalWarning } from "./eval/startup-warning";
 import { EventBus } from "./utils/event-bus";
 
 type RunAcpMode = (createSession: AcpSessionFactory) => Promise<never>;
@@ -2231,6 +2237,20 @@ export async function runRootCommand(
 					)
 				: undefined;
 
+			// Python-eval startup warning (upstream parity, 8d1dfcd5ab lineage):
+			// surface a broken enabled Python kernel at first launch instead of at
+			// first eval dispatch. Same freshness gate as the changelog step — the
+			// marker is read BEFORE the changelog step writes it.
+			const pythonEvalWarningPromise = isInteractive
+				? resolveFirstLaunchPythonEvalWarning({
+						lastChangelogVersion: await readLastChangelogVersion(),
+						args: parsedArgs,
+						cwd,
+						isEnabled: () => settingsInstance.get("eval.py"),
+						jsEnabled: settingsInstance.get("eval.js"),
+					}).catch(() => undefined)
+				: undefined;
+
 			const {
 				session,
 				setToolUIContext,
@@ -2320,6 +2340,10 @@ export async function runRootCommand(
 			} else if (isInteractive) {
 				const versionCheckPromise = checkForNewVersion(VERSION).catch(() => undefined);
 				const startupChangelog = await startupChangelogPromise;
+				const pythonEvalWarning = await pythonEvalWarningPromise;
+				if (pythonEvalWarning) {
+					notifs.push({ kind: "warn", message: pythonEvalWarning });
+				}
 
 				const modelScopeNotification = buildModelScopeNotification(
 					scopedModels,
