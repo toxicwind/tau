@@ -22,6 +22,7 @@ import {
 	parseMarkdownItem,
 	parseMarkdownList,
 } from "../src/dialect/coercion";
+import { getDesktopCommander } from "./desktop-commander-mcp-shim";
 
 const COMPLETION_MODELS = ["deepseek-v4-flash", "glm-5.3-flash", "qwen3.6-35b"] as const;
 const COMPLETION_MODEL = (Bun.env.COERCION_LIVE_MODEL ?? "deepseek-v4-flash") as (typeof COMPLETION_MODELS)[number];
@@ -110,6 +111,20 @@ describe("LIVE: freeinference coercion round-trip", () => {
 				expect(t.startsWith("* ")).toBe(false);
 				expect(t.startsWith("1. ")).toBe(false);
 			}
+
+			// DESKTOP COMMANDER WITNESS: the recovered tasks must LAND — write
+			// them to disk via desktop-commander MCP (local shim fallback) and
+			// read them back verbatim. Coercion that survives only in memory is
+			// not proven; the file round-trip is the receipt.
+			const dc = await getDesktopCommander();
+			const witnessPath = `/tmp/coercion-live-witness-${Date.now()}.md`;
+			const written = await dc.writeFile(witnessPath, tasks.map((t) => `- [ ] ${t}`).join("\n"));
+			expect(written.ok).toBe(true);
+			const readBack = await dc.readFile(witnessPath);
+			expect(readBack).not.toBeNull();
+			const reRecovered = (readBack as string).split("\n").map(parseMarkdownItem);
+			expect(reRecovered).toEqual(tasks); // verbatim round-trip
+			console.log(`[dc:${dc.via}] witness ${witnessPath}: ${tasks.length} tasks verbatim`);
 		},
 		30000,
 	);

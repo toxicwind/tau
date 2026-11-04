@@ -111,3 +111,44 @@ describe("schema helpers (provider-agnostic contracts)", () => {
 		expect(result).toBe("{not json at all");
 	});
 });
+
+const ARRAY_SCHEMA = { type: "array", items: { type: "string" } };
+
+describe("tool-call object wrapper (the live probe path, offline-pinned)", () => {
+	// The live probe coerces the `tasks` FIELD of a tool-call args object:
+	// {tasks: [...]} with field schema {type:"array", items:{type:"string"}}.
+	// These tests pin that exact path offline so a coercion regression is
+	// caught in CI, not only on the next manual live run.
+	const WRAPPER_SCHEMA = {
+		type: "object",
+		properties: { tasks: { type: "array", items: { type: "string" } } },
+		required: ["tasks"],
+	};
+
+	test("clean JSON array inside the wrapper coerces to clean strings", () => {
+		const rawArgs = JSON.stringify({ tasks: ["wash dishes", "walk dog", "write report"] });
+		const parsed = JSON.parse(rawArgs) as { tasks?: unknown };
+		const recovered = coerceValue(JSON.stringify(parsed.tasks), ARRAY_SCHEMA);
+		expect(recovered).toEqual(["wash dishes", "walk dog", "write report"]);
+	});
+
+	test("per-item prefixed array inside the wrapper strips per item (the todo-board contract)", () => {
+		const parsed = { tasks: ["- [ ] wash dishes", "- [x] walk dog", "1. write report"] };
+		const recovered = coerceValue(JSON.stringify(parsed.tasks), ARRAY_SCHEMA);
+		expect(Array.isArray(recovered)).toBe(true);
+		const clean = (recovered as string[]).map(parseMarkdownItem);
+		expect(clean).toEqual(["wash dishes", "walk dog", "write report"]);
+	});
+
+	test("whole-checklist STRING inside the wrapper recovers via list parse (live fallback lane)", () => {
+		// DeepSeek sometimes emits tasks as ONE markdown string inside the JSON
+		// wrapper — the live probe's isMarkdownList/parseMarkdownList branch.
+		const rawArgs = JSON.stringify({ tasks: "- [ ] wash dishes\n- [ ] walk dog\n- [ ] write report" });
+		const parsed = JSON.parse(rawArgs) as { tasks?: unknown };
+		const coerced = coerceValue(String(parsed.tasks), ARRAY_SCHEMA);
+		const tasks = Array.isArray(coerced)
+			? coerced.map((t) => parseMarkdownItem(String(t)))
+			: (isMarkdownList(String(coerced)) ? parseMarkdownList(String(coerced)) : [String(coerced)]);
+		expect(tasks).toEqual(["wash dishes", "walk dog", "write report"]);
+	});
+});
