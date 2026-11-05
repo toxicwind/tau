@@ -3293,14 +3293,23 @@ export class AgentSession {
 			);
 			const ttstRecord = this.ttst.end();
 			if (ttstRecord && ttstRecord.gaps.length > 0) {
-				this.sendCustomMessage(
-					{
-						customType: "ttst",
-						content: JSON.stringify(summarizeTtst(ttstRecord)),
-						display: false,
-						attribution: "agent",
-					},
-				).catch(error => logger.warn("Failed to persist TTST record", { error: String(error) }));
+				// Persist via the session manager ONLY. sendCustomMessage() would append
+				// this into agent.state.messages, where convertToLlm promotes custom
+				// messages to developer-role LLM content — injecting one telemetry JSON
+				// blob into model context per stream end and inviting the model to reply
+				// to its own latency stats (the "ttst noise loop"). display:false hides
+				// it in the TUI but never keeps it out of context.
+				try {
+					this.sessionManager.appendCustomMessageEntry(
+						"ttst",
+						JSON.stringify(summarizeTtst(ttstRecord)),
+						false,
+						undefined,
+						"agent",
+					);
+				} catch (error) {
+					logger.warn("Failed to persist TTST record", { error: String(error) });
+				}
 			}
 		}
 
