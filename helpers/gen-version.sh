@@ -7,8 +7,11 @@ SCRIPT_DIR="$(cd -P -- "$(dirname -- "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pw
 ROOT="$(cd -P -- "$SCRIPT_DIR/.." >/dev/null 2>&1 && pwd)"
 OUT_DIR="$ROOT/packages/coding-agent/src/generated"
 BASE="${TAU_VERSION_BASE:-18.8.4}"
-SHORT="$(git -C "$ROOT" rev-parse --short=8 HEAD)"
-FULL="$(git -C "$ROOT" rev-parse HEAD)"
+# Green-blue convention: the version is the ORIGIN/MAIN commit id (the
+# deployed commit), not the local HEAD. Fall back to HEAD if origin/main
+# isn't fetched.
+SHORT="$(git -C "$ROOT" rev-parse --short=8 origin/main 2>/dev/null || git -C "$ROOT" rev-parse --short=8 HEAD)"
+FULL="$(git -C "$ROOT" rev-parse origin/main 2>/dev/null || git -C "$ROOT" rev-parse HEAD)"
 mkdir -p "$OUT_DIR"
 cat > "$OUT_DIR/version.json" <<JSON
 {
