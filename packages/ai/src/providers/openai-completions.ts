@@ -2283,6 +2283,8 @@ export function convertMessages(
 				const supportsImages = isOpenAICompletionsVisionSupported(model);
 				const content: ChatCompletionContentPart[] = [];
 				let omittedImages = false;
+				const MAX_IMAGES_PER_REQUEST = 12;
+				let imageCount = 0;
 				for (const item of msg.content) {
 					if (item.type === "text") {
 						const text = item.text.toWellFormed();
@@ -2292,6 +2294,10 @@ export function convertMessages(
 							text,
 						} satisfies ChatCompletionContentPartText);
 					} else if (supportsImages) {
+						if (imageCount >= MAX_IMAGES_PER_REQUEST) {
+							omittedImages = true;
+							continue;
+						}
 						content.push({
 							type: "image_url",
 							image_url: {
@@ -2300,15 +2306,20 @@ export function convertMessages(
 								...(item.detail && item.detail !== "original" ? { detail: item.detail } : {}),
 							},
 						} satisfies ChatCompletionContentPartImage);
+						imageCount++;
 					} else {
 						omittedImages = true;
 					}
 				}
 				if (omittedImages) {
-					content.push({
-						type: "text",
-						text: NON_VISION_IMAGE_PLACEHOLDER,
-					} satisfies ChatCompletionContentPartText);
+					// Check if we already added placeholder
+					const hasPlaceholder = content.some(c => (c as any).type === 'text' && (c as any).text === NON_VISION_IMAGE_PLACEHOLDER);
+					if (!hasPlaceholder) {
+						content.push({
+							type: "text",
+							text: NON_VISION_IMAGE_PLACEHOLDER,
+						} satisfies ChatCompletionContentPartText);
+					}
 				}
 				if (content.length === 0) continue;
 				params.push({
@@ -2681,6 +2692,49 @@ export function convertMessages(
 					? "developer"
 					: "system"
 				: msg.role;
+	}
+
+	// Final global enforcement
+	// GLOBAL_MAX_IMAGES: the request-wide image ceiling (the per-message cap is
+	// MAX_IMAGES_PER_REQUEST=12 above). Was referenced but never defined —
+	// ReferenceError crashed every image-bearing request (tau session 2026-11-05).
+	const GLOBAL_MAX_IMAGES = 12;
+	let totalImgs = 0;
+	for (const m of params) {
+		if (Array.isArray((m as any).content)) {
+			for (const p of (m as any).content) {
+				if (p?.type === 'image_url') totalImgs++;
+			}
+		}
+	}
+	if (totalImgs > GLOBAL_MAX_IMAGES) {
+		let removed = totalImgs - GLOBAL_MAX_IMAGES;
+		for (let mi = params.length - 1; mi >= 0 && removed > 0; mi--) {
+			const m = params[mi] as any;
+			if (Array.isArray(m.content)) {
+				for (let ci = m.content.length - 1; ci >= 0 && removed > 0; ci--) {
+					if (m.content[ci]?.type === 'image_url') {
+						m.content.splice(ci, 1);
+						removed--;
+					}
+				}
+				if (m.content.length === 0) {
+					params.splice(mi, 1);
+				}
+			}
+		}
+		// Add note
+		let added = false;
+		for (let mi = 0; mi < params.length && !added; mi++) {
+			const m = params[mi] as any;
+			if (Array.isArray(m.content)) {
+				m.content.push({ type: 'text', text: `(${totalImgs - GLOBAL_MAX_IMAGES} additional image(s) omitted: request exceeds the ${GLOBAL_MAX_IMAGES}-image limit)` });
+				added = true;
+			}
+		}
+		if (!added) {
+			params.push({ role: 'user', content: [{ type: 'text', text: `(${totalImgs - GLOBAL_MAX_IMAGES} additional image(s) omitted: request exceeds the ${GLOBAL_MAX_IMAGES}-image limit)` }] });
+		}
 	}
 
 	return params;
