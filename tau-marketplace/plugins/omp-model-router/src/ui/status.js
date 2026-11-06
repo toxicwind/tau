@@ -1,0 +1,235 @@
+import { shimmerSegments } from "tau/modes/theme/shimmer";
+import { resolveEffectivePin } from "../routing/pin";
+import { shortenModelId, shortenModelRef, THINKING_COLOR, THINKING_ICON, PROFILE_PALETTE, makeTierPalette, } from "./theme";
+import { formatScopedPin } from "./profile";
+/**
+ * Custom TUI component driving shimmer via setInterval + tui.requestRender().
+ * Used as a widget so ANSI is preserved (setStatus strips ANSI via sanitizeStatusText).
+ */
+class ShimmerWidget {
+    #tui;
+    #theme;
+    #segments = [];
+    #suffix = "";
+    #interval;
+    constructor(tui, theme) {
+        this.#tui = tui;
+        this.#theme = theme;
+        this.#interval = setInterval(() => {
+            this.#tui.requestRender();
+        }, 80);
+    }
+    setContent(segments, suffix) {
+        this.#segments = segments;
+        this.#suffix = suffix;
+    }
+    render(_width) {
+        if (this.#segments.length === 0)
+            return [];
+        return [" " + shimmerSegments(this.#segments, this.#theme) + this.#suffix];
+    }
+    invalidate() {
+        this.#tui.requestRender();
+    }
+    dispose() {
+        if (this.#interval) {
+            clearInterval(this.#interval);
+            this.#interval = undefined;
+        }
+    }
+}
+let activeShimmerWidget;
+// ─── Format helpers ───────────────────────────────────────────────────────────
+const getEffectiveThinking = (thinkingByProfile, profileName, decision) => (thinkingByProfile[profileName]?.[decision.tier] ?? decision.thinking);
+const getDecisionFlags = (decision) => {
+    const flags = [];
+    if (decision.isFallback)
+        flags.push("fallback");
+    if (decision.isContextTriggered)
+        flags.push("ctx");
+    if (decision.isBudgetForced)
+        flags.push("budget");
+    if (decision.isRuleMatched)
+        flags.push("rule");
+    if (decision.isHeuristic)
+        flags.push("heuristic");
+    if (decision.isTelemetry)
+        flags.push("telemetry");
+    return flags;
+};
+/** Format input/output cost tokens + dollar value. */
+const formatCost = (theme, decision) => {
+    const u = decision.usage;
+    if (!u)
+        return "";
+    const cost = u.cost ?? 0;
+    // Always show token counts; cost only if non-zero
+    const inK = (u.inputTokens / 1000).toFixed(1);
+    const outK = (u.outputTokens / 1000).toFixed(1);
+    const costStr = cost > 0 ? ` $${cost.toFixed(4)}` : "";
+    return theme.fg("dim", ` ↑${inK}k ↓${outK}k${costStr}`);
+};
+// ─── Status line rendering ────────────────────────────────────────────────────
+/**
+ * Build the animated status line text for the router.
+ *
+ * During streaming (isStreaming=true), shimmer sweeps across the profile
+ * and model segments. When idle, the text is static with semantic coloring.
+ *
+ * Layout (active):
+ *   ⬡ auto  ◑ sonnet-4-6  ↑1.2k ↓0.4k $0.0012  [fallback]
+ *
+ * Layout (idle/waiting):
+ *   ⬡ auto  waiting…
+ *
+ * Layout (off):
+ *   ○ auto (off)  openai/gpt-4o
+ */
+export const buildStatusText = (theme, routerEnabled, selectedProfile, activePin, thinkingByProfile, lastDecision, lastNonRouterModel, isStreaming) => {
+    const pinSuffix = activePin ? theme.fg("accent", ` ⬣${activePin}`) : "";
+    if (!routerEnabled) {
+        const offProfile = theme.fg("dim", ` ○ ${selectedProfile}${activePin ? ` ⬣${activePin}` : ""} (off)`);
+        let model = "";
+        if (lastNonRouterModel) {
+            const slashIdx = lastNonRouterModel.indexOf("/");
+            const shortModel = slashIdx >= 0
+                ? shortenModelId(lastNonRouterModel.slice(0, slashIdx), lastNonRouterModel.slice(slashIdx + 1))
+                : lastNonRouterModel;
+            model = theme.fg("dim", `  ${shortModel}`);
+        }
+        return offProfile + model;
+    }
+    const matchesProfile = lastDecision && lastDecision.profile === selectedProfile;
+    const matchesPin = activePin ? lastDecision?.tier === activePin : true;
+    if (!lastDecision || !matchesProfile || !matchesPin) {
+        // No decision yet — profile label only
+        const profileText = ` ⬡ ${selectedProfile}`;
+        if (isStreaming) {
+            return (shimmerSegments([{ text: profileText, palette: PROFILE_PALETTE }], theme) +
+                pinSuffix +
+                theme.fg("dim", "  routing…"));
+        }
+        return theme.fg("accent", profileText) + pinSuffix + theme.fg("dim", "  waiting…");
+    }
+    const thinking = getEffectiveThinking(thinkingByProfile, selectedProfile, lastDecision);
+    const thinkingColor = THINKING_COLOR[thinking] ?? "muted";
+    const thinkingIcon = THINKING_ICON[thinking] ?? "○";
+    const shortModel = shortenModelId(lastDecision.targetProvider, lastDecision.targetModelId);
+    const flags = getDecisionFlags(lastDecision);
+    const flagText = flags.length > 0 ? " " + flags.map(f => theme.fg("warning", `[${f}]`)).join(" ") : "";
+    const profileText = ` ⬡ ${selectedProfile}`;
+    const modelText = `${thinkingIcon} ${shortModel}`;
+    const classifierSuffix = lastDecision.classifierModelRef
+        ? theme.fg("dim", ` ⚡${shortenModelRef(lastDecision.classifierModelRef)}`)
+        : "";
+    const costText = formatCost(theme, lastDecision);
+    if (isStreaming) {
+        const tierPalette = makeTierPalette(thinkingColor);
+        return (shimmerSegments([
+            { text: profileText, palette: PROFILE_PALETTE },
+            { text: "  ", palette: PROFILE_PALETTE },
+            { text: modelText, palette: tierPalette },
+        ], theme) +
+            pinSuffix +
+            classifierSuffix +
+            costText +
+            flagText);
+    }
+    return (theme.fg("accent", profileText) +
+        pinSuffix +
+        "  " +
+        theme.fg(thinkingColor, modelText) +
+        classifierSuffix +
+        costText +
+        flagText);
+};
+// ─── Widget rendering ─────────────────────────────────────────────────────────
+export const updateStatus = (ctx, routerEnabled, selectedProfile, scope, thinkingByProfile, lastDecision, lastNonRouterModel, widgetEnabled, currentConfig, isStreaming = false) => {
+    const theme = ctx.ui.theme;
+    const accumulatedCost = scope.accumulatedCost;
+    const { scopedPin } = resolveEffectivePin(scope, currentConfig);
+    const activePin = scopedPin;
+    // Active scoped pin shown prominently; floor (defaultPin) is the silent default — no badge.
+    const pinSuffix = activePin ? theme.fg("accent", ` \u2b23${activePin}`) : "";
+    if (isStreaming && routerEnabled) {
+        ctx.ui.setStatus("router", undefined);
+        const matchesProfile = lastDecision?.profile === selectedProfile;
+        const matchesPin = activePin ? lastDecision?.tier === activePin : true;
+        let segments;
+        let suffix;
+        if (!lastDecision || !matchesProfile || !matchesPin) {
+            segments = [{ text: `⬡ ${selectedProfile}`, palette: PROFILE_PALETTE }];
+            suffix = pinSuffix + theme.fg("dim", "  routing…");
+        }
+        else {
+            const thinking = getEffectiveThinking(thinkingByProfile, selectedProfile, lastDecision);
+            const thinkingColor = THINKING_COLOR[thinking] ?? "muted";
+            const thinkingIcon = THINKING_ICON[thinking] ?? "○";
+            const shortModel = shortenModelId(lastDecision.targetProvider, lastDecision.targetModelId);
+            const tierPalette = makeTierPalette(thinkingColor);
+            const costText = formatCost(theme, lastDecision);
+            const flags = getDecisionFlags(lastDecision);
+            const flagText = flags.length > 0 ? " " + flags.map(f => theme.fg("warning", `[${f}]`)).join(" ") : "";
+            const classifierSuffix = lastDecision.classifierModelRef
+                ? theme.fg("dim", ` ⚡${shortenModelRef(lastDecision.classifierModelRef)}`)
+                : "";
+            segments = [
+                { text: `⬡ ${selectedProfile}`, palette: PROFILE_PALETTE },
+                { text: "  ", palette: PROFILE_PALETTE },
+                { text: `${thinkingIcon} ${shortModel}`, palette: tierPalette },
+            ];
+            suffix = pinSuffix + classifierSuffix + costText + flagText;
+        }
+        if (activeShimmerWidget) {
+            activeShimmerWidget.setContent(segments, suffix);
+        }
+        else {
+            ctx.ui.setWidget("router", (tui, widgetTheme) => {
+                activeShimmerWidget = new ShimmerWidget(tui, widgetTheme);
+                activeShimmerWidget.setContent(segments, suffix);
+                return activeShimmerWidget;
+            });
+        }
+        return;
+    }
+    // Idle: dispose shimmer widget, show static status
+    if (activeShimmerWidget) {
+        activeShimmerWidget.dispose();
+        activeShimmerWidget = undefined;
+        ctx.ui.setWidget("router", undefined);
+    }
+    const text = buildStatusText(theme, routerEnabled, selectedProfile, activePin, thinkingByProfile, lastDecision, lastNonRouterModel, false);
+    ctx.ui.setStatus("router", text);
+    if (!widgetEnabled) {
+        ctx.ui.setWidget("router", undefined);
+        return;
+    }
+    const statusProfile = selectedProfile;
+    const widgetLines = [
+        `Router: ${routerEnabled ? "enabled" : "disabled"}`,
+        `Profile: ${statusProfile}${routerEnabled ? " (active)" : ""}`,
+        `Pin: ${formatScopedPin(scope, currentConfig)}`,
+        `Session cost: $${accumulatedCost.toFixed(4)}` +
+            (currentConfig.maxSessionBudget ? ` / $${currentConfig.maxSessionBudget.toFixed(2)}` : ""),
+    ];
+    if (lastDecision && lastDecision.profile === statusProfile) {
+        const thinking = getEffectiveThinking(thinkingByProfile, statusProfile, lastDecision);
+        const flags = getDecisionFlags(lastDecision);
+        const flagsStr = flags.length > 0 ? ` [${flags.join(",")}]` : "";
+        const u = lastDecision.usage;
+        const usageStr = u
+            ? ` ↑${u.inputTokens.toLocaleString()} ↓${u.outputTokens.toLocaleString()}` +
+                (u.cacheReadTokens > 0 ? ` 📦${u.cacheReadTokens.toLocaleString()}` : "") +
+                ` $${(u.cost ?? 0).toFixed(4)}`
+            : "";
+        widgetLines.push(`Route: ${lastDecision.tier}${flagsStr} → ${lastDecision.targetProvider}/${lastDecision.targetModelId} (${thinking})`);
+        if (lastDecision.classifierModelRef) {
+            widgetLines.push(`Classifier: ${shortenModelRef(lastDecision.classifierModelRef)}`);
+        }
+        widgetLines.push(`Phase: ${lastDecision.phase}`, `Usage:${usageStr || " —"}`);
+    }
+    else if (!routerEnabled && lastNonRouterModel) {
+        widgetLines.push(`Fallback: ${lastNonRouterModel}`);
+    }
+    ctx.ui.setWidget("router", widgetLines.map(line => theme.fg("dim", line)));
+};

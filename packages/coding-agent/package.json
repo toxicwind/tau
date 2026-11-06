@@ -542,6 +542,7 @@
 		"@tau/tau-natives": "catalog:",
 		"@tau/tau-tui": "catalog:",
 		"@tau/tau-utils": "catalog:",
+		"wasmoon": "catalog:",
 		"@tau/tau-wire": "catalog:",
 		"@tau/snapcompact": "catalog:",
 		"@opentelemetry/api": "catalog:",

@@ -1,0 +1,125 @@
+#!/usr/bin/env bun
+//
+// Render the Homebrew formula for `tau` from a published GitHub release and write
+// it to a tap checkout. The release publishes per-platform bare binaries
+// (tau-<platform>-<arch>); this reads their sha256 digests straight from the
+// release metadata so the formula never drifts from the shipped assets.
+//
+// Usage:
+//   bun scripts/ci-update-brew-formula.ts <tag> --out <path/to/Formula/tau.rb>
+//   bun scripts/ci-update-brew-formula.ts v15.10.3        # prints to stdout
+import { $ } from "bun";
+const REPO = process.env.TAU_REPO ?? "can1357/tau";
+const HOMEPAGE = "https://tau.sh";
+const DESC = "Coding agent with the IDE wired in";
+function parseArgs(argv) {
+    const rest = [...argv];
+    let out = null;
+    const outIdx = rest.indexOf("--out");
+    if (outIdx >= 0) {
+        out = rest[outIdx + 1] ?? null;
+        if (!out)
+            throw new Error("--out requires a path");
+        rest.splice(outIdx, 2);
+    }
+    const tag = rest.find(a => !a.startsWith("--"));
+    if (!tag)
+        throw new Error("usage: ci-update-brew-formula.ts <tag> [--out <file>]");
+    return { tag, out };
+}
+async function fetchAssets(tag) {
+    const res = await $ `gh release view ${tag} --repo ${REPO} --json assets`.quiet().nothrow();
+    if (res.exitCode !== 0) {
+        throw new Error(`gh release view ${tag} failed: ${res.stderr.toString().trim()}`);
+    }
+    const parsed = JSON.parse(res.stdout.toString());
+    return parsed.assets;
+}
+function sha256For(assets, name) {
+    const asset = assets.find(a => a.name === name);
+    if (!asset)
+        throw new Error(`release is missing asset ${name}`);
+    if (!asset.digest?.startsWith("sha256:")) {
+        throw new Error(`asset ${name} has no sha256 digest (got ${asset.digest ?? "none"})`);
+    }
+    return asset.digest.slice("sha256:".length);
+}
+// `${...}` is JS interpolation; the literal `#{version}` / `#{bin}` below are
+// Ruby interpolations Homebrew resolves when it evaluates the formula.
+export function renderFormula(version, sums) {
+    // Each `url` carries `using: :nounzip` because the release assets are bare
+    // Mach-O/ELF executables, not archives. Without it Homebrew's default
+    // CurlDownloadStrategy routes through UnpackStrategy::Uncompressed#extract_nestedly,
+    // which nests the file outside the staging CWD; `Dir["tau-*"].first` then
+    // returns `nil` and `bin.install nil => "tau"` raises.
+    //
+    // `with_env(HOME: buildpath)` redirects the CLI's `os.homedir()` lookup to
+    // the writable staging dir so `generate_completions_from_executable` does
+    // not touch the real `/Users/<user>/.tau` (denied by Homebrew's sandbox
+    // profile, which would otherwise fail the popen).
+    return `class Tau < Formula
+  desc "${DESC}"
+  homepage "${HOMEPAGE}"
+  version "${version}"
+  license "MIT"
+
+  on_macos do
+    on_arm do
+      url "https://github.com/${REPO}/releases/download/v#{version}/tau-darwin-arm64",
+          using: :nounzip
+      sha256 "${sums["tau-darwin-arm64"]}"
+    end
+    on_intel do
+      url "https://github.com/${REPO}/releases/download/v#{version}/tau-darwin-x64",
+          using: :nounzip
+      sha256 "${sums["tau-darwin-x64"]}"
+    end
+  end
+
+  on_linux do
+    on_arm do
+      url "https://github.com/${REPO}/releases/download/v#{version}/tau-linux-arm64",
+          using: :nounzip
+      sha256 "${sums["tau-linux-arm64"]}"
+    end
+    on_intel do
+      url "https://github.com/${REPO}/releases/download/v#{version}/tau-linux-x64",
+          using: :nounzip
+      sha256 "${sums["tau-linux-x64"]}"
+    end
+  end
+
+  def install
+    bin.install Dir["tau-*"].first => "tau"
+    (bin/"tau").chmod 0555
+    with_env(HOME: buildpath) do
+      generate_completions_from_executable(bin/"tau", "completions", shells: [:bash, :zsh, :fish])
+    end
+  end
+
+  test do
+    assert_match version.to_s, shell_output("#{bin}/tau --version")
+  end
+end
+`;
+}
+async function main() {
+    const { tag, out } = parseArgs(process.argv.slice(2));
+    const version = tag.replace(/^v/, "");
+    const assets = await fetchAssets(tag);
+    const targets = ["tau-darwin-arm64", "tau-darwin-x64", "tau-linux-arm64", "tau-linux-x64"];
+    const sums = {};
+    for (const name of targets)
+        sums[name] = sha256For(assets, name);
+    const formula = renderFormula(version, sums);
+    if (out) {
+        await Bun.write(out, formula);
+        console.log(`wrote ${out} for ${tag}`);
+    }
+    else {
+        process.stdout.write(formula);
+    }
+}
+if (import.meta.main) {
+    await main();
+}

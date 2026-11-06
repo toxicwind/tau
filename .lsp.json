@@ -1,0 +1,10 @@
+{
+  "servers": [
+    {
+      "adapter": "tsserver",
+      "command": "tsserver",
+      "languageId": "typescript",
+      "args": ["--logVerbosity", "normal"]
+    }
+  ]
+}

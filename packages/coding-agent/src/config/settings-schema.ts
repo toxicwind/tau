@@ -1866,6 +1866,17 @@ export const SETTINGS_SCHEMA = {
 			],
 		},
 	},
+	"retry.probeFallbacks": {
+		type: "boolean",
+		default: true,
+		ui: {
+			tab: "model",
+			group: "Retry & Fallback",
+			label: "Probe Fallback Models",
+			description:
+				"Before routing onto a fallback model, send a 1-token ping to verify it actually serves. A dead or wedged fallback (e.g. a router whose upstream lane is stalled) is skipped instead of burning the retry budget on a request that can never succeed. Falling back to a dead model should check it works, not error.",
+		},
+	},
 
 	"providers.anthropic.serverSideFallback": {
 		type: "boolean",
@@ -6296,6 +6307,7 @@ export interface RetrySettings {
 	usageAwareFallback: boolean;
 	usageReservePct: number;
 	usageReservePolicy: "confirm" | "auto" | "fail-closed";
+	probeFallbacks: boolean;
 }
 
 export interface MemoriesSettings {

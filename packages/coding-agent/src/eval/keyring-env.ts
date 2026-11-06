@@ -1,9 +1,9 @@
-// keyring-env.ts — merge allowlisted secretsmith keys into the eval kernel env.
+// keyring-env.ts — merge allowlisted kryptos keys into the eval kernel env.
 //
 // 4.16 eval key RACE: the kernel previously carried ZERO keyring secrets, so
-// eval cells had to `secretsmith get` per call (~600ms) or hardcode tokens.
+// eval cells had to `kryptos get` per call (~600ms) or hardcode tokens.
 // This provider resolves a config allowlist once per session via
-// `secretsmith env` (proven: materializes real values, http 200 after the
+// `kryptos env` (proven: materializes real values, http 200 after the
 // 2026-11-02 GITHUB_TOKEN sync) and merges them into the managed kernel env
 // patch so every JS/Py cell sees them with zero transport copies.
 //
@@ -11,7 +11,7 @@
 // to resolve is an error for that key, never a partial-merge of stale values.
 import { spawnSync } from "node:child_process";
 
-/** Keys the eval kernel is allowed to see, sourced from ~/.secretsmith allowlist. */
+/** Keys the eval kernel is allowed to see, sourced from the kryptos keyring. */
 export const KEYRING_KEY_ALLOWLIST = [
   // Resolved end-to-end on 2026-11-02 (Phases 3.12 / 2.6 / 2.7).
   "GITHUB_TOKEN",
@@ -26,8 +26,8 @@ export const KEYRING_KEY_ALLOWLIST = [
 export type KeyringEnvOptions = {
   /** Allowlist override (default KEYRING_KEY_ALLOWLIST). */
   allowlist?: readonly string[];
-  /** secretsmith binary path. */
-  secretsmith?: string;
+  /** kryptos binary path. */
+  kryptos?: string;
   /** timeoutsMs for the resolve call. */
   timeoutsMs?: number;
 };
@@ -39,25 +39,25 @@ export type KeyringEnvResult = {
 };
 
 /**
- * Resolve allowlisted keys via `secretsmith env` once, filter to the allowlist,
+ * Resolve allowlisted keys via `kryptos env` once, filter to the allowlist,
  * and return the merged env. Cache results for the process lifetime so a
- * session's repeated kernel boots don't re-invoke D-Bus secretsmith each time.
+ * session's repeated kernel boots don't re-invoke D-Bus kryptos each time.
  */
 const cache = new Map<string, KeyringEnvResult>();
 
 export function resolveKeyringEnv(options: KeyringEnvOptions = {}): KeyringEnvResult {
-  const secretsmith = options.secretsmith ?? "secretsmith";
+  const kryptos = options.kryptos ?? "kryptos";
   // An explicitly-empty allowlist is a real no-op; only an undefined one
   // falls back to the default allowlist.
   const allowlist = options.allowlist ?? KEYRING_KEY_ALLOWLIST;
   const timeoutsMs = options.timeoutsMs ?? 15_000;
 
-  const cacheKey = `${secretsmith}:${allowlist.join(",")}`;
+  const cacheKey = `${kryptos}:${allowlist.join(",")}`;
   const existing = cache.get(cacheKey);
   if (existing) return existing;
 
   const failures: string[] = [];
-  const raw = spawnSync(secretsmith, ["env"], {
+  const raw = spawnSync(kryptos, ["env"], {
     encoding: "utf8",
     timeout: timeoutsMs,
     stdio: ["ignore", "pipe", "pipe"],
@@ -71,7 +71,10 @@ export function resolveKeyringEnv(options: KeyringEnvOptions = {}): KeyringEnvRe
       if (eq <= 0) continue;
       const key = line.slice(0, eq);
       if (!want.has(key)) continue;
-      const value = line.slice(eq + 1).trim();
+      // kryptos env emits shell-quoted KEY='value'; strip the quotes.
+      let value = line.slice(eq + 1);
+      if (value.startsWith("'") && value.endsWith("'")) value = value.slice(1, -1);
+      value = value.trim();
       if (value) env[key] = value;
     }
     for (const key of allowlist) {

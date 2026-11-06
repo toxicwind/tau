@@ -32,25 +32,31 @@ if (!COMPLETION_MODELS.includes(COMPLETION_MODEL)) {
 	);
 }
 
+// Route through the rhodochrosite router (:25193) — the estate's canonical
+// entry. Direct freeinference.org calls competed with the router's lane,
+// causing "Provider is overloaded". The router key comes from env or
+// ~/.tau/router.key.
+const BASE_URL = Bun.env.PATCHLING_ROUTER_URL ?? "http://127.0.0.1:25193/v1";
+
 const hasKey = (() => {
 	try {
-		const p = Bun.spawnSync(["secretsmith", "env"], { stdout: "pipe", stderr: "pipe", timeout: 15000 });
-		const out = new TextDecoder().decode(p.stdout || new Uint8Array());
-		return /FREEINFERENCE_API_KEY=.+/i.test(out);
+		const f = Bun.env.PATCHLING_ROUTER_KEY_FILE ?? `${Bun.env.HOME}/.tau/router.key`;
+		const key = Bun.env.PATCHLING_ROUTER_KEY ?? Bun.env.RHODOCHROSITE_KEY;
+		return Boolean(key) || Bun.file(f).exists();
 	} catch {
 		return false;
 	}
 })();
 
-function resolveKey(): string {
-	const p = Bun.spawnSync(["secretsmith", "env"], { stdout: "pipe", timeout: 15000 });
-	const out = new TextDecoder().decode(p.stdout || new Uint8Array());
-	for (const line of out.split("\n")) {
-		if (line.startsWith("FREEINFERENCE_API_KEY=")) {
-			return line.split("=").slice(1).join("=").trim().replace(/^["']|["']$/g, "");
-		}
+async function resolveKey(): Promise<string> {
+	const envKey = Bun.env.PATCHLING_ROUTER_KEY ?? Bun.env.RHODOCHROSITE_KEY;
+	if (envKey) return envKey;
+	try {
+		const f = Bun.env.PATCHLING_ROUTER_KEY_FILE ?? `${Bun.env.HOME}/.tau/router.key`;
+		return (await Bun.file(f).text()).trim();
+	} catch {
+		return "";
 	}
-	return "";
 }
 
 const ARRAY_SCHEMA = { type: "array", items: { type: "string" } };
@@ -59,10 +65,10 @@ describe("LIVE: freeinference coercion round-trip", () => {
 	test.skipIf(!hasKey)(
 		`${COMPLETION_MODEL} emits a todo list the coercion layer recovers verbatim`,
 		async () => {
-			const key = resolveKey();
+			const key = await resolveKey();
 			expect(key).toBeTruthy();
 
-			const res = await fetch("https://freeinference.org/v1/chat/completions", {
+			const res = await fetch(`${BASE_URL}/chat/completions`, {
 				method: "POST",
 				headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json", "User-Agent": "curl/8.23.0" }, // UA needed: CF blocks default UA (anomaly #14)
 				body: JSON.stringify({

@@ -24,9 +24,9 @@ describe("resolveKeyringEnv", () => {
     expect(KEYRING_KEY_ALLOWLIST).toContain("FREEINFERENCE_API_KEY");
   });
 
-  it("returns an env record with no failures when secretsmith succeeds", () => {
+  it("returns an env record with no failures when kryptos succeeds", () => {
     // Against the LIVE keyring (Phase 3.12 proved GITHUB_TOKEN + NNTP_TORBOX_*
-    // materialize via `secretsmith env`; this is the real integration path).
+    // materialize via `kryptos env`; this is the real integration path).
     const result = resolveKeyringEnv();
     expect(typeof result.env).toBe("object");
     // MISSING keys are surfaced, not swallowed
@@ -57,8 +57,8 @@ describe("resolveKeyringEnv", () => {
     expect(merged.OTHER).toBe("x");
   });
 
-  it("records failures for every key when secretsmith is missing", () => {
-    const result = resolveKeyringEnv({ secretsmith: "/nonexistent/bin/secretsmith" });
+  it("records failures for every key when kryptos is missing", () => {
+    const result = resolveKeyringEnv({ kryptos: "/nonexistent/bin/kryptos" });
     expect(result.failures.length).toBe(KEYRING_KEY_ALLOWLIST.length);
     expect(Object.keys(result.env).length).toBe(0);
   });
@@ -69,7 +69,7 @@ describe("resolveKeyringEnv", () => {
     expect(result.failures.length).toBe(0);
   });
 
-  it("caches per secretsmith binary (no duplicate D-Bus round-trips)", () => {
+  it("caches per kryptos binary (no duplicate D-Bus round-trips)", () => {
     const a = resolveKeyringEnv();
     const b = resolveKeyringEnv();
     expect(a).toBe(b); // same cached result object

@@ -64,6 +64,7 @@ import {
 	validateRetryFallbackChains,
 } from "./retry-fallback-chains";
 import { describeUsageFallback } from "./retry-fallback-reason";
+import { probeModelReachability, probeServed } from "./strategies/probe";
 import { getLatestCompactionEntry } from "./session-context";
 import { EPHEMERAL_MODEL_CHANGE_ROLE, type SessionEntry } from "./session-entries";
 import type { SessionManager } from "./session-manager";
@@ -1990,6 +1991,23 @@ export class TurnRecovery {
 				}
 				const apiKey = await this.#host.modelRegistry.getApiKey(candidate, this.#host.sessionId());
 				if (!apiKey) continue;
+				// Never commit to a dead fallback: probe the candidate before routing
+				// onto it. A wedged provider lane (e.g. a router whose upstream is
+				// stalled) would otherwise burn the retry budget on a request that can
+				// never succeed. Skipping a dead candidate keeps the chain advancing.
+				if (this.#host.settings.get("retry.probeFallbacks")) {
+					const verdict = await probeModelReachability(candidate, apiKey);
+					if (!probeServed(verdict)) {
+						logger.warn("Skipping dead fallback candidate", {
+							selector: selector.raw,
+							reason: verdict.reason,
+							status: verdict.status,
+							latencyMs: "latencyMs" in verdict ? verdict.latencyMs : undefined,
+						});
+						this.#host.modelRegistry.suppressSelector?.(selector.raw, 30_000);
+						continue;
+					}
+				}
 				return this.applyRetryFallbackCandidate(role, selector, currentSelector, {
 					...options,
 					reason: `Request failed: ${failedMessage.errorMessage ?? "provider returned an error without details"}`,
