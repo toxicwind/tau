@@ -282,6 +282,7 @@ import type {
 	UsageFallbackConfirmer,
 } from "./agent-session-types";
 import { writeArtifact } from "./artifacts";
+import { applyLuaPolicy } from "./strategies/lua-policy-loader";
 import { formatArtifactErrorNotice, type OutputMeta, stripOutputNotice } from "@tau/tau-tui/tools/output-meta";
 import {
 	ASYNC_INLINE_RESULT_MAX_CHARS,
@@ -9135,6 +9136,11 @@ export class AgentSession {
 	}
 
 	async #setModelWithProviderSessionReset(model: Model): Promise<void> {
+		// Lua policy override: a provider's `.lua` policy may refine the model's
+		// context window / max tokens at runtime (the "no hardcoding" seam).
+		// Applied before the model is set so every downstream contextWindow read
+		// sees the overridden value. A missing policy is a no-op.
+		model = await applyLuaPolicy(model);
 		const currentModel = this.model;
 		const isChanging = !currentModel || !modelsAreEqual(currentModel, model);
 		if (currentModel) {
