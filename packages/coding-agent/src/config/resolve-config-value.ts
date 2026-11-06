@@ -100,11 +100,47 @@ async function executeCommand(valueConfig: string): Promise<string | undefined> 
 /**
  * Resolve a configuration value. Command values execute asynchronously and
  * successful stdout is cached; environment-backed and literal values stay live.
+ *
+ * Env-form values (`RHODOCHROSITE_API_KEY`, `NVIDIA_API_KEY`, …) resolve from
+ * the process env first, then fall back to the kryptos keyring so a process
+ * launched without the keyring env injected still resolves the real secret
+ * instead of sending the literal env-var *name* as the value (which upstream
+ * rejects as "****_KEY is invalid"). A value that is neither a command nor an
+ * env-var name is treated as a literal.
  */
 export async function resolveConfigValue(valueConfig: string): Promise<string | undefined> {
 	if (isCommandConfigValue(valueConfig)) return await executeCommand(valueConfig);
 	const envValue = $envExact(valueConfig);
-	return envValue || valueConfig;
+	if (envValue) return envValue;
+	if (isEnvVarName(valueConfig)) return await resolveFromKeyring(valueConfig);
+	return valueConfig;
+}
+
+/** True for `SOME_NAME` / `SOME_NAME_2` (env-var-shaped, no `!`, no dots). */
+function isEnvVarName(v: string): boolean {
+	return /^[A-Z][A-Z0-9_]*$/.test(v);
+}
+
+/** Resolve one key from the kryptos keyring (SSOT since 2026-11-02). */
+async function resolveFromKeyring(name: string): Promise<string | undefined> {
+	try {
+		const { execFile } = await import("node:child_process");
+		const value = await new Promise<string | undefined>((resolve) => {
+			execFile("kryptos", ["--json", "get", name, "--no-fuzzy"], { timeout: 8000 }, (err, stdout) => {
+				if (err) return resolve(undefined);
+				try {
+					const parsed = JSON.parse(stdout);
+					const secret = parsed?.secret ?? parsed?.value ?? parsed;
+					resolve(typeof secret === "string" && secret ? secret : undefined);
+				} catch {
+					resolve(undefined);
+				}
+			});
+		});
+		return value;
+	} catch {
+		return undefined;
+	}
 }
 
 /**
