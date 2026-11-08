@@ -2,11 +2,11 @@ import { describe, expect, it, beforeAll } from "vitest";
 import { LEGACY_PI_ROOT_EXPORTS } from "../../src/extensibility/legacy-pi-contract";
 
 describe("legacy pi loader — virtual bundle resolution", () => {
-	let mod: unknown;
+	let mod: Record<string, unknown>;
 	beforeAll(async () => {
 		// The bundled scope resolves straight to the real legacy shim; the
 		// synthetic `legacy-bundled-resolver` indirection is gone.
-		mod = await import("../../src/extensibility/legacy-tau-coding-agent-shim.ts");
+		mod = (await import("../../src/extensibility/legacy-tau-coding-agent-shim.ts")) as unknown as Record<string, unknown>;
 	});
 
 	for (const [name, kind] of Object.entries(LEGACY_PI_ROOT_EXPORTS)) {
@@ -17,7 +17,7 @@ describe("legacy pi loader — virtual bundle resolution", () => {
 				// A class is a function, but we also want to check that it's a class (constructor)
 				expect(typeof mod[name]).toBe("function");
 				// Check that it has a prototype (which is an object)
-				expect(typeof mod[name].prototype).toBe("object");
+				expect(typeof (mod[name] as Function).prototype).toBe("object");
 			} else {
 				expect(typeof mod[name]).toBe(kind);
 			}

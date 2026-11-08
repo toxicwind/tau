@@ -6,7 +6,7 @@ import { jsBackend, pythonBackend } from "tau/eval";
 import type { ExecutorBackendResult } from "tau/eval/backend";
 import type { ToolSession } from "tau/tools";
 import { EvalTool } from "tau/tools/eval";
-import { cfgToolsMaxTimeout } from "tau/tools/settings";
+// cfgToolsMaxTimeout was folded into Settings — the knob is "tools.maxTimeout".
 
 function makeSession(settings: Settings, asyncJobManager?: AsyncJobManager): ToolSession {
 	return {
@@ -88,7 +88,7 @@ describe("eval timeout admission contract", () => {
 		expect(description()).toContain("1–3600");
 		expect(description()).toContain("12");
 		expect(tool.description).toContain("12");
-		cfgToolsMaxTimeout.override(settings, 7);
+		settings.set("tools.maxTimeout", 7);
 		expect(description()).toContain("7");
 		expect(tool.description).toContain("7");
 	});
@@ -103,10 +103,10 @@ describe("eval timeout admission contract", () => {
 		});
 		const entered = Promise.withResolvers<void>();
 		let signal: AbortSignal | undefined;
-		vi.spyOn(pythonBackend, "checkAvailability").mockImplementation(async () => {
+		vi.spyOn(pythonBackend, "isAvailable").mockImplementation(async () => {
 			// A live settings update during discovery must not change an admitted deadline.
-			cfgToolsMaxTimeout.override(settings, 1);
-			return { ok: true };
+			settings.set("tools.maxTimeout", 1);
+			return true;
 		});
 		vi.spyOn(pythonBackend, "execute").mockImplementation(async (_code, options) => {
 			signal = options.signal;

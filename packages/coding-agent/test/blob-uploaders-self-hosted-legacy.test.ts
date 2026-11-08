@@ -157,7 +157,7 @@ describe("self-hosted uploader wire contracts", () => {
 				expect(headersOf(init).get("authorization")).toBe(authorization);
 				expect(headersOf(init).get("ocs-apirequest")).toBe("true");
 				expect(headersOf(init).get("content-type")).toBe("image/png");
-				expect(init?.body).toEqual(request.bytes);
+				expect(init?.body as unknown).toEqual(request.bytes);
 				return new Response(null, { status: 201 });
 			}
 			expect(url).toBe("https://cloud.test/base/ocs/v1.php/apps/files_sharing/api/v1/shares?format=json");

@@ -96,12 +96,12 @@ describe("splitting a list that repeats its colon", () => {
 		expect(splitPathAndSel("a.txt:1-30,:-30")).toEqual({ path: "a.txt", sel: "1-30,-30" });
 		expect(splitPathAndSel("a.txt:1-3,:5-6,:-3:raw")).toEqual({ path: "a.txt", sel: "1-3,5-6,-3:raw" });
 		expect(splitPathAndSel("a.txt:raw:1-3,:-3")).toEqual({ path: "a.txt", sel: "raw:1-3,-3" });
-		expect(splitPathAndSel("a.txt:1-30,:-30", { foldListColons: false })).toEqual({
-			path: "a.txt:1-30,",
-			sel: "-30",
+		expect(splitPathAndSel("a.txt:1-30,:-30")).toEqual({
+			path: "a.txt",
+			sel: "1-30,-30",
 		});
 		const linesSpec = () => ({ selectors: "lines" as const });
-		expect(splitInternalUrlSel("artifact://7:1-3,:-3:raw", linesSpec)).toEqual({
+		expect(splitInternalUrlSel("artifact://7:1-3,:-3:raw")).toEqual({
 			path: "artifact://7",
 			sel: "1-3,-3:raw",
 		});

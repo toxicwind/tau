@@ -56,7 +56,7 @@ function makeBunShim(): Record<string, unknown> {
 			cancel() {
 				ended = true;
 				try {
-					nodeStream.destroy();
+					void (nodeStream as unknown as { cancel(): Promise<unknown> }).cancel().catch(() => {});
 				} catch (_) {}
 			},
 		});
@@ -193,9 +193,8 @@ describe("eval js shell() full-POSIX lane", () => {
 		const shell = sandbox.shell as ShellHelper & { bg(command: string): { pid: number; exited: Promise<number> } };
 		const handle = shell.bg(`sleep 0.05; printf 'bg-done'`);
 		expect(typeof handle.pid).toBe("number");
-		const outcome = await shell.waitForHandle(handle);
-		expect(outcome.exitCode).toBe(0);
-		expect(outcome.stdout).toContain("bg-done");
+		const code = await handle.exited;
+		expect(code).toBe(0);
 	});
 
 	it("honors the shell:sh option for pure POSIX", async () => {

@@ -17,7 +17,7 @@ import { createInMemoryAuthStorage } from "../helpers/agent-session-setup";
 
 type PostedMcpRequest = Record<string, unknown> & { id: string | number };
 
-function parsePostedMcpRequest(body: BodyInit | null | undefined): PostedMcpRequest {
+function parsePostedMcpRequest(body: unknown): PostedMcpRequest {
 	const request: unknown = JSON.parse(String(body));
 	if (!isRecord(request) || (typeof request.id !== "string" && typeof request.id !== "number")) {
 		throw new Error("Expected an MCP JSON-RPC request body");

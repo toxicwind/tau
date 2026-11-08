@@ -13,7 +13,7 @@ type SpawnCall = { cmd: string[]; options: SpawnOptions };
 type SpawnOutput = string | Uint8Array;
 type SpawnOutputSource = SpawnOutput | SpawnOutput[] | ((cmd: string[]) => SpawnOutput);
 function streamOf(body: SpawnOutput): ReadableStream<Uint8Array> {
-	const stream = new Response(body).body;
+	const stream = new Response(body as unknown as BodyInit).body;
 	if (!stream) throw new Error("Failed to create response stream.");
 	return stream;
 }

@@ -10,7 +10,7 @@ import {
 	nextActionableTask,
 } from "/home/toxic/pens/olympus/products/tau/packages/coding-agent/src/tools/todo.ts";
 
-type Phase = { name: string; tasks: Array<{ content: string; status: string; blocker?: string }> };
+import type { TodoPhase as Phase, TodoStatus } from "@tau/tau-tui/tools/todo";
 
 function init(items: string[], phase = "Tasks"): Phase[] {
 	return applyOpsToPhases([], [{ op: "init", list: [{ phase, items }] }]).phases;
@@ -22,7 +22,7 @@ describe("todo complex: op inference ergonomics", () => {
 			{ op: "append", items: ["b"] },
 		] as never);
 		expect(errors.some(e => e.includes("phase"))).toBe(true);
-		expect(phases[0].tasks.map(t => t.content)).toEqual(["a"]);
+		expect(phases[0]!.tasks.map(t => t.content)).toEqual(["a"]);
 	});
 	test("items+phase on empty board lazily creates phase (append)", () => {
 		const { phases, errors } = applyOpsToPhases([], [
@@ -44,33 +44,33 @@ describe("todo complex: op inference ergonomics", () => {
 describe("todo complex: phase-targeted ops", () => {
 	test("done by phase completes all tasks in it", () => {
 		const phases = applyOpsToPhases(init(["a", "b", "c"]), [{ op: "done", phase: "Tasks" }] as never);
-		expect(phases.phases[0].tasks.every(t => t.status === "completed")).toBe(true);
+		expect(phases.phases[0]!.tasks.every(t => t.status === "completed")).toBe(true);
 	});
 	test("rm by phase empties only that phase", () => {
 		let r = applyOpsToPhases(init(["a"]), [{ op: "append", phase: "P2", items: ["b"] }] as never);
 		r = applyOpsToPhases(r.phases, [{ op: "rm", phase: "Tasks" }] as never);
-		expect(r.phases[0].tasks).toEqual([]);
-		expect(r.phases[1].tasks.map(t => t.content)).toEqual(["b"]);
+		expect(r.phases[0]!.tasks).toEqual([]);
+		expect(r.phases[1]!.tasks.map(t => t.content)).toEqual(["b"]);
 	});
 	test("block by phase blocks only open tasks", () => {
 		let r = applyOpsToPhases(init(["a", "b"]), [{ op: "done", task: "a" }] as never);
 		r = applyOpsToPhases(r.phases, [{ op: "block", phase: "Tasks", reason: "wait" }] as never);
-		expect(r.phases[0].tasks[0].status).toBe("completed");
-		expect(r.phases[0].tasks[1].status).toBe("blocked");
+		expect(r.phases[0]!.tasks[0]!.status).toBe("completed");
+		expect(r.phases[0]!.tasks[1]!.status).toBe("blocked");
 	});
 });
 
 describe("todo complex: blocker semantics", () => {
 	test("block task with reason then refine reason", () => {
 		let r = applyOpsToPhases(init(["a"]), [{ op: "block", task: "a" }] as never);
-		expect(r.phases[0].tasks[0].blocker).toBeUndefined();
+		expect(r.phases[0]!.tasks[0]!.blocker).toBeUndefined();
 		r = applyOpsToPhases(r.phases, [{ op: "block", task: "a", reason: "needs key" }] as never);
-		expect(r.phases[0].tasks[0].blocker).toBe("needs key");
+		expect(r.phases[0]!.tasks[0]!.blocker).toBe("needs key");
 	});
 	test("unblock clears blocker; normalize auto-promotes to in_progress", () => {
 		let r = applyOpsToPhases(init(["a"]), [{ op: "block", task: "a", reason: "x" }] as never);
 		r = applyOpsToPhases(r.phases, [{ op: "unblock", task: "a" }] as never);
-		const t = r.phases[0].tasks[0];
+		const t = r.phases[0]!.tasks[0]!;
 		expect(t.content).toBe("a");
 		expect(t.status).toBe("in_progress");
 		expect(t.blocker).toBeUndefined();
@@ -79,17 +79,17 @@ describe("todo complex: blocker semantics", () => {
 		const r = applyOpsToPhases(init(["a"]), [
 			{ op: "block", task: "a", reason: "line1\nline2\ttab" },
 		] as never);
-		expect(r.phases[0].tasks[0].blocker).toBe("line1 line2 tab");
+		expect(r.phases[0]!.tasks[0]!.blocker).toBe("line1 line2 tab");
 	});
 });
 
 describe("todo complex: maxParallel demotion", () => {
 	test("start makes target the single in_progress; earlier demoted", () => {
 		let r = applyOpsToPhases(init(["a", "b", "c"]), [{ op: "start", task: "a" }] as never);
-		expect(r.phases[0].tasks.find(t => t.content === "a").status).toBe("in_progress");
+		expect(r.phases[0]!.tasks.find(t => t.content === "a" )!.status).toBe("in_progress");
 		r = applyOpsToPhases(r.phases, [{ op: "start", task: "b" }] as never);
-		expect(r.phases[0].tasks.find(t => t.content === "b").status).toBe("in_progress");
-		expect(r.phases[0].tasks.find(t => t.content === "a").status).toBe("pending");
+		expect(r.phases[0]!.tasks.find(t => t.content === "b" )!.status).toBe("in_progress");
+		expect(r.phases[0]!.tasks.find(t => t.content === "a" )!.status).toBe("pending");
 	});
 	test("maxParallel ceiling demotes excess beyond N in_progress", () => {
 		// Hand-build two in_progress then raise ceiling via applyOpsToPhases with maxParallel on an op
@@ -102,13 +102,13 @@ describe("todo complex: maxParallel demotion", () => {
 		];
 		// op with maxParallel=1 (default) demotes b (second in_progress)
 		const r = applyOpsToPhases(phases, [{ op: "view" }] as never);
-		expect(r.phases[0].tasks.find(t => t.content === "a").status).toBe("in_progress");
-		expect(r.phases[0].tasks.find(t => t.content === "b").status).toBe("pending");
+		expect(r.phases[0]!.tasks.find(t => t.content === "a" )!.status).toBe("in_progress");
+		expect(r.phases[0]!.tasks.find(t => t.content === "b" )!.status).toBe("pending");
 	});
 	test("zero in_progress auto-promotes first pending", () => {
 		const r = applyOpsToPhases(init(["a", "b"]), [{ op: "done", task: "a" }] as never);
 		// after completing a, nothing was in_progress; normalize promotes b
-		expect(r.phases[0].tasks.find(t => t.content === "b").status).toBe("in_progress");
+		expect(r.phases[0]!.tasks.find(t => t.content === "b" )!.status).toBe("in_progress");
 	});
 });
 
@@ -123,7 +123,7 @@ describe("todo complex: markdown round-trip", () => {
 		const md = phasesToMarkdown(r.phases);
 		const back = markdownToPhases(md);
 		expect(back.errors).toEqual([]);
-		const byContent = Object.fromEntries(back.phases[0].tasks.map(t => [t.content, t]));
+		const byContent = Object.fromEntries(back.phases[0]!.tasks.map(t => [t.content, t]));
 		expect(byContent.a.status).toBe("completed");
 		expect(byContent.b.status).toBe("in_progress");
 		expect(byContent.c.status).toBe("abandoned");
@@ -134,17 +134,17 @@ describe("todo complex: markdown round-trip", () => {
 	test("escaped brackets round-trip", () => {
 		const back = markdownToPhases("# P\n- \\[x\\] escaped task");
 		expect(back.errors).toEqual([]);
-		expect(back.phases[0].tasks[0]).toEqual({ content: "escaped task", status: "completed" });
+		expect(back.phases[0]!.tasks[0]!).toEqual({ content: "escaped task", status: "completed" });
 	});
 	test("task containing 'blocker:' text is not confused with note", () => {
 		const md = "# P\n- [!] real task <!-- blocker: the note -->";
 		const back = markdownToPhases(md);
-		expect(back.phases[0].tasks[0]).toEqual({ content: "real task", status: "blocked", blocker: "the note" });
+		expect(back.phases[0]!.tasks[0]!).toEqual({ content: "real task", status: "blocked", blocker: "the note" });
 	});
 	test("empty markdown yields empty board not error", () => {
 		const back = markdownToPhases("# P\n");
 		expect(back.errors).toEqual([]);
-		expect(back.phases[0].tasks).toEqual([]);
+		expect(back.phases[0]!.tasks).toEqual([]);
 	});
 });
 
@@ -155,7 +155,7 @@ describe("todo complex: worked-ahead pointer", () => {
 		] as never);
 		r = applyOpsToPhases(r.phases, [{ op: "start", task: "b" }] as never);
 		// b in P2 is in_progress; a in P1 pending — pointer should return b
-		expect(nextActionableTask(r.phases).content).toBe("b");
+		expect(nextActionableTask(r.phases)!.content).toBe("b");
 	});
 	test("completing later phase keeps earliest open phase active", () => {
 		let r = applyOpsToPhases([], [
@@ -167,7 +167,7 @@ describe("todo complex: worked-ahead pointer", () => {
 			{ op: "done", task: "c" },
 		] as never);
 		// P2 all done; P1 still has pending a — active phase should be P1
-		expect(nextActionableTask(r.phases).content).toBe("a");
+		expect(nextActionableTask(r.phases)!.content).toBe("a");
 	});
 });
 
@@ -175,7 +175,7 @@ describe("todo complex: dedupe and batch atomicity", () => {
 	test("append duplicate across phases is fully rejected (atomic)", () => {
 		let r = applyOpsToPhases(init(["a"]), [{ op: "append", phase: "Tasks", items: ["a", "b"] }] as never);
 		expect(r.errors.some(e => e.includes("already exists"))).toBe(true);
-		expect(r.phases[0].tasks.map(t => t.content)).toEqual(["a"]);
+		expect(r.phases[0]!.tasks.map(t => t.content)).toEqual(["a"]);
 	});
 	test("init duplicate phases rejected", () => {
 		const r = applyOpsToPhases([], [

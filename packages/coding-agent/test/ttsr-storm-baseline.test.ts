@@ -6,7 +6,7 @@ import { TtsrManager } from "../src/export/ttsr.js";
 // condition matches). A correct engine fires the rule ONCE per monotonic turn and
 // never re-fires on the self-referential reminder — the 2026-11-02 244-injection
 // storm encoded as 10 deterministic manager-level expectations.
-function managerFor(condition: string): TtsrManager {
+function managerFor(condition: string[]): TtsrManager {
 	const m = new TtsrManager({
 		enabled: true,
 		contextMode: "discard",
@@ -18,10 +18,12 @@ function managerFor(condition: string): TtsrManager {
 	});
 	m.addRule({
 		name: "storm-ref",
-		description: "self-referential: body contains tokens its condition matches",
+		path: "storm-ref",
+		description: "self-referential: content contains tokens its condition matches",
 		condition,
 		scope: ["tool:bash"],
-		body: ["Never pipe through head or tail. Example: `cat x | head -25`."],
+		content: "Never pipe through head or tail. Example: `cat x | head -25`.",
+		_source: { source: "test", rulePath: "storm-ref" } as never,
 	});
 	return m;
 }
@@ -30,7 +32,7 @@ function managerFor(condition: string): TtsrManager {
 const REMINDER = "Never pipe through head or tail. Example: `cat x | head -25`.";
 
 describe("TTSR storm baseline (10 reaction cases)", () => {
-	const cases: Array<{ name: string; condition: string; hits: string[]; reminder: string }> = [
+	const cases: Array<{ name: string; condition: string | string[]; hits: string[]; reminder: string }> = [
 		{ name: "head/tail truncation rule", condition: "\\bhead\\b|\\btail\\b", hits: ["let me head that file"], reminder: REMINDER },
 		{ name: "grep pipe rule", condition: "\\bgrep\\b.*\\|", hits: ["grep -r foo | bar"], reminder: "Never run grep or pipe it; use the grep tool. Example: `grep -r x | head`." },
 		{ name: "cat command rule", condition: "\\bcat\\b", hits: ["cat important.log"], reminder: "Do not cat; use read. Example: `cat /etc/passwd`." },
@@ -45,7 +47,7 @@ describe("TTSR storm baseline (10 reaction cases)", () => {
 
 	for (const c of cases) {
 		it(`${c.name}: fires ONCE, never on self-referential reminder`, () => {
-			const m = managerFor(c.condition);
+			const m = managerFor(Array.isArray(c.condition) ? c.condition : [c.condition]);
 			const ctx = { source: "tool", toolName: "bash", streamKey: `case-${c.name.replace(/\W+/g, "-")}` } as never;
 			const first = m.checkSnapshot(c.hits[0], ctx);
 			expect(first).toHaveLength(1);

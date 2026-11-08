@@ -9,7 +9,7 @@ import { TUI } from "@tau/tau-tui";
 import { TempDir } from "@tau/tau-utils";
 import { VirtualTerminal } from "../../../tui/test/virtual-terminal";
 
-type InteractiveUi = Pick<NonNullable<AgentToolContext["ui"]>, "custom">;
+type InteractiveUi = NonNullable<AgentToolContext["ui"]>;
 
 /**
  * A UI whose `custom()` mounts the overlay factory against a headless TUI over
@@ -24,7 +24,8 @@ function headlessUi(): InteractiveUi {
 		await factory(new TUI(new VirtualTerminal(100, 30)), theme, KeybindingsManager.inMemory(), resolve);
 		return promise;
 	};
-	return { custom };
+	// The PTY path only consumes `custom`; the context type is wider for the general tool path.
+	return { custom } as unknown as InteractiveUi;
 }
 
 const ptyUnavailable = process.platform === "win32" || Bun.env.PI_NO_PTY === "1" || !fs.existsSync("/bin/bash");

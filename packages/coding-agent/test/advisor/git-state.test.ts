@@ -35,7 +35,8 @@ describe("formatAdvisorGitState", () => {
 	it("reports HEAD short sha, branch, and a clean tree", async () => {
 		const dir = await fsp.mkdtemp(path.join(os.tmpdir(), "tau-gitstate-clean-"));
 		try {
-			const git = (cmd: string) => Bun.$(cmd).cwd(dir).quiet().text();
+			const git = (strings: TemplateStringsArray, ...interp: unknown[]) =>
+				Bun.$(strings as unknown as TemplateStringsArray, ...(interp as string[])).cwd(dir).quiet().text();
 			await git`git init -q -b main`;
 			await fsp.writeFile(path.join(dir, "a.txt"), "x");
 			await git`git add .`;
@@ -53,7 +54,8 @@ describe("formatAdvisorGitState", () => {
 	it("reports a dirty tree with the modified-path count", async () => {
 		const dir = await fsp.mkdtemp(path.join(os.tmpdir(), "tau-gitstate-dirty-"));
 		try {
-			const git = (cmd: string) => Bun.$(cmd).cwd(dir).quiet().text();
+			const git = (strings: TemplateStringsArray, ...interp: unknown[]) =>
+				Bun.$(strings as unknown as TemplateStringsArray, ...(interp as string[])).cwd(dir).quiet().text();
 			await git`git init -q -b main`;
 			await fsp.writeFile(path.join(dir, "a.txt"), "x");
 			await fsp.writeFile(path.join(dir, "b.txt"), "y");
@@ -71,7 +73,8 @@ describe("formatAdvisorGitState", () => {
 	it("reports detached HEAD as (detached) without a branch", async () => {
 		const dir = await fsp.mkdtemp(path.join(os.tmpdir(), "tau-gitstate-detached-"));
 		try {
-			const git = (cmd: string) => Bun.$(cmd).cwd(dir).quiet().text();
+			const git = (strings: TemplateStringsArray, ...interp: unknown[]) =>
+				Bun.$(strings as unknown as TemplateStringsArray, ...(interp as string[])).cwd(dir).quiet().text();
 			await git`git init -q -b main`;
 			await fsp.writeFile(path.join(dir, "a.txt"), "x");
 			await git`git add .`;

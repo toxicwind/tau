@@ -3,6 +3,7 @@ import type { Agent, AgentEvent, AgentMessage } from "@tau/tau-agent-core";
 import type { AssistantMessage, AssistantMessageEvent } from "@tau/tau-ai";
 import type { Settings } from "tau/config/settings";
 import type { Rule } from "tau/capability/rule";
+import type { TtsrMatchContext } from "tau/export/ttsr";
 import { TtsrManager } from "tau/export/ttsr";
 import type { AgentSessionEvent } from "tau/session/agent-session-events";
 import { TtsrCoordinator, type TtsrCoordinatorHost } from "tau/session/ttsr-coordinator";
@@ -441,10 +442,12 @@ describe("TTSR AST deferral", () => {
 		});
 		const selfRefRule: Rule = {
 			name: "no-head-tail-self-ref",
-			description: "self-referential: the injected body contains the very tokens its condition matches",
-			condition: "\\bhead\\b|\\btail\\b",
+			path: "no-head-tail-self-ref",
+			description: "self-referential: the injected content contains the very tokens its condition matches",
+			condition: ["\\bhead\\b", "\\btail\\b"],
 			scope: ["tool:bash"],
-			body: ["Never pipe through head or tail. Example: `cat x | head -25`."],
+			content: "Never pipe through head or tail. Example: `cat x | head -25`.",
+			_source: { source: "test", rulePath: "no-head-tail-self-ref" } as never,
 		};
 		expect(manager.addRule(selfRefRule)).toBe(true);
 

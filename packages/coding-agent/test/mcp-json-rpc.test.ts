@@ -1,4 +1,3 @@
-import type { BodyInit } from "bun";
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import type { FetchImpl } from "@tau/tau-ai";
 import { fetchExaTools } from "tau/exa/mcp-client";
@@ -11,7 +10,7 @@ interface PostedJsonRpcRequest {
 	method: string;
 }
 
-function parsePostedJsonRpcRequest(body: BodyInit | null | undefined): PostedJsonRpcRequest {
+function parsePostedJsonRpcRequest(body: unknown): PostedJsonRpcRequest {
 	const request: unknown = JSON.parse(String(body));
 	if (
 		!isRecord(request) ||

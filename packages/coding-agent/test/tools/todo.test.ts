@@ -1190,7 +1190,7 @@ describe("TodoTool transport-double-encode repair", () => {
 	it("repairs a JSON-string list even when op rides separately", async () => {
 		const tool = new TodoTool(createSession());
 		const encoded = JSON.stringify([{ phase: "Build", items: ["compile", "link"] }]);
-		const result = await tool.execute("call-jsonlist", { list: encoded });
+		const result = await tool.execute("call-jsonlist", { list: encoded } as never);
 
 		const phases = result.details?.phases ?? [];
 		expect(phases.map(phase => phase.name)).toContain("Build");
@@ -1220,7 +1220,7 @@ describe("TodoTool real DeepSeek-family markdown-item strip (FreeInference)", ()
 				items: ["- [ ] Implement the fix / feature changes", "- [ ] Ensure all tests pass (unit, integration, regression)"],
 			},
 		],
-	};
+	} as never;
 
 	it("strips checkbox prefixes from array item elements, not just whole-list strings", async () => {
 		const tool = new TodoTool(createSession());

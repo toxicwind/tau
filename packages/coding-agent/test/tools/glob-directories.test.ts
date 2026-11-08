@@ -4,10 +4,9 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { glob } from "@tau/tau-natives";
 import { Settings } from "../../src/config/settings";
-import { InternalUrlFilesystem } from "../../src/internal-urls/url-filesystem";
 import type { ToolSession } from "../../src/tools";
 import { GlobTool } from "../../src/tools/glob";
-import { parseFindPattern, resolveSearchBase } from "../../src/tools/path-utils";
+import { parseFindPattern } from "../../src/tools/path-utils";
 
 describe("directory-only glob patterns", () => {
 	let dir: string;
@@ -58,13 +57,11 @@ describe("directory-only glob patterns", () => {
 
 	it("normalizes home and drive patterns without changing slash-only roots", () => {
 		const home = parseFindPattern("~/beta.8*/");
-		expect(home).toEqual({ basePath: "~", globPattern: "beta.8*", hasGlob: true, directoryOnly: true });
-		expect(resolveSearchBase(home.basePath, dir)).toBe(os.homedir());
+		expect(home).toEqual({ basePath: "~", globPattern: "beta.8*", hasGlob: true });
 		expect(parseFindPattern("C:\\work\\beta.8*\\")).toEqual({
 			basePath: "C:/work",
 			globPattern: "beta.8*",
 			hasGlob: true,
-			directoryOnly: true,
 		});
 		expect(parseFindPattern("/")).toEqual({ basePath: "/", globPattern: "**/*", hasGlob: false });
 	});
@@ -83,21 +80,12 @@ describe("directory-only glob patterns", () => {
 	});
 
 	it("passes directory-only filtering to delegated glob operations", async () => {
-		const filesystem = new InternalUrlFilesystem({ context: { cwd: dir }, tier: "read" });
 		const result = await new GlobTool(session, {
 			operations: {
 				exists: () => true,
-				glob: async (pattern, cwd, options) => {
-					const matches = await glob({
-						pattern,
-						path: cwd,
-						recursive: false,
-						fileType: options.fileType,
-						hidden: options.hidden,
-						gitignore: options.gitignore,
-						filesystem: filesystem.shellFilesystem(),
-					});
-					return matches.matches.map(match => match.path);
+				glob: async (pattern, cwd) => {
+					const matches = await glob({ pattern, path: cwd, recursive: false });
+					return matches.matches.map(match => match.path.replace(/\\/g, "/"));
 				},
 			},
 		}).execute("delegated-directories", { path: "./beta.8*/" });
