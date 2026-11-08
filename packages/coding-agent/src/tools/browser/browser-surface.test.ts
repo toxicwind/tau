@@ -271,7 +271,7 @@ describe("template marker contracts", () => {
 	});
 
 	test("declarations.d.ts no longer carries the fake default export", async () => {
-		const { default: src } = await import("./declarations.d.ts", { with: { type: "text" } });
+		const src = await import("node:fs/promises").then(m => m.readFile(new URL("./declarations.d.ts", import.meta.url), "utf8"));
 		expect(src).not.toContain("export default declarations;");
 		expect(src).not.toContain('const declarations: string = "";');
 	});

@@ -261,7 +261,7 @@ export async function resolveActionableQueryHandlerClickTarget(
 ): Promise<ElementHandle | null> {
 	const candidates: Array<{ handle: ElementHandle; x: number; y: number; owned: boolean }> = [];
 	for (const handle of handles) {
-		let candidate = handle;
+		let candidate: ElementHandle = handle;
 		let owned = false;
 		try {
 			const proxy = await handle.evaluateHandle(el =>
@@ -269,7 +269,7 @@ export async function resolveActionableQueryHandlerClickTarget(
 			);
 			const element = proxy.asElement();
 			if (element) {
-				candidate = element;
+				candidate = element as ElementHandle;
 				owned = candidate !== handle;
 			} else await proxy.dispose();
 			const rect = (await candidate.evaluate(el => {

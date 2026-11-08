@@ -260,9 +260,9 @@ async function scanSessionLinesIfPresent(file: string, onLine: (line: Uint8Array
 				// Match the native stream's byte budget, not one arbitrary chunk or
 				// a default queue that counts each potentially large chunk as size 1.
 				await scan(
-					Readable.toWeb(source, {
+					(Readable.toWeb(source as NodeJS.ReadableStream, {
 						strategy: new ByteLengthQueuingStrategy({ highWaterMark: gunzip.readableHighWaterMark }),
-					}),
+					})) as unknown as ReadableStream<Uint8Array<ArrayBufferLike>>,
 				);
 			});
 		} else {

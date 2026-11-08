@@ -669,7 +669,7 @@ async function uploadToServer(sealed: Uint8Array, base: string): Promise<string>
 		res = await fetch(base, {
 			method: "POST",
 			headers: { "Content-Type": "application/octet-stream" },
-			body: sealed,
+			body: sealed as unknown as BodyInit,
 		});
 	} catch (err) {
 		throw new Error(`Share upload to ${base} failed: ${err instanceof Error ? err.message : String(err)}`);

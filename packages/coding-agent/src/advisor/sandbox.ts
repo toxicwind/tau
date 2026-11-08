@@ -110,7 +110,8 @@ export function wrapAdvisorToolForSandbox<T extends { name: string; execute: Fun
 ): T {
 	if (sandbox.mode !== "confined" || !ADVISOR_PATH_CONFINABLE_TOOLS.has(tool.name)) return tool;
 	const name = tool.name;
-	const execute = tool.execute.bind(tool) as AgentTool["execute"];
+	const execute = tool.execute.bind(tool) as unknown as AgentTool["execute"];
+	const execImpl = execute as unknown as (args: Record<string, unknown>, context: AgentToolContext) => Promise<AgentToolResult>;
 	const wrapped: T = {
 		...tool,
 		execute: (async (args: Record<string, unknown>, context: AgentToolContext): Promise<AgentToolResult> => {
@@ -123,8 +124,8 @@ export function wrapAdvisorToolForSandbox<T extends { name: string; execute: Fun
 					typeof p === "string" ? confineAdvisorWriteTarget(p, sandbox) : p,
 				);
 			}
-			return await execute(confined, context);
-		}) as AgentTool["execute"],
+			return await execImpl(confined, context);
+		}) as unknown as AgentTool["execute"],
 	};
 	return wrapped;
 }

@@ -110,7 +110,7 @@ export class ServeServer {
 			else if (Number.isSafeInteger(pid) && pid > 0) this.#tuiPid = pid;
 			started.resolve();
 		};
-		let run: Promise<unknown>;
+		let run: Promise<{ exitCode?: number }>;
 		if (process.platform === "win32") {
 			run = pty.startArgv({ application: executable, args, cwd: this.#projectDir, env: this.#tuiEnv(), cols: 120, rows: 40 }, onChunk, onStart);
 		} else {

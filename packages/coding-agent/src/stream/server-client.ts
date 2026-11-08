@@ -101,7 +101,7 @@ export class StreamServerClient {
 		}
 		let socket: WebSocket;
 		try {
-			socket = new WebSocket(this.#options.url, { headers: { Authorization: `Bearer ${token}` } });
+			socket = new WebSocket(this.#options.url, { headers: { Authorization: `Bearer ${token}` } } as unknown as ConstructorParameters<typeof WebSocket>[1]);
 		} catch {
 			this.#scheduleReconnect();
 			return;

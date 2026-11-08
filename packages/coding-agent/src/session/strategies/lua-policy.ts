@@ -76,7 +76,7 @@ export class LuaModelPolicy {
 		for (const name of names) {
 			try {
 				const fn = await strategy.getGlobal(name);
-				if (typeof fn === "function") functions[name] = fn;
+				if (typeof fn === "function") functions[name] = fn as (...args: unknown[]) => unknown;
 			} catch {
 				// Function absent — skip.
 			}

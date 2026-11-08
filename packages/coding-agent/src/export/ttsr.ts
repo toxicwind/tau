@@ -638,7 +638,7 @@ export class TtsrManager {
 		// match itself. Otherwise the reminder (which quotes the tokens as an
 		// example) re-triggers the rule on retry — the 2026-11-02 244-injection
 		// storm mechanism.
-		if (entry.rule.body?.some((b) => b.trim().length > 0 && buffer.includes(b.trim()))) {
+		if (entry.rule.content.trim().length > 0 && buffer.includes(entry.rule.content.trim())) {
 				continue;
 			}
 			if (entry.question || !this.#canTrigger(name)) {

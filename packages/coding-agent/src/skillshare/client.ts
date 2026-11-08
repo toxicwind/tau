@@ -266,7 +266,7 @@ export class SkillshareClient {
 
 		let response: Response;
 		try {
-			response = await fetch(url, { method, headers, body, redirect: "follow" });
+			response = await fetch(url, { method, headers, body: body as unknown as BodyInit, redirect: "follow" });
 		} catch (error) {
 			throw new Error(
 				`cannot reach skill registry ${this.registryUrl}: ${error instanceof Error ? error.message : String(error)}`,

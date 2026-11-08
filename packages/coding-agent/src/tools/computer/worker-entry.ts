@@ -13,7 +13,7 @@ export function startComputerWorker(): void {
 	const inbox = consumeWorkerInbox();
 	const transport: ComputerWorkerTransport = {
 		send(message, transfer) {
-			port.postMessage(message, transfer ?? []);
+			(port.postMessage as (value: unknown, transferList?: readonly Transferable[]) => void)(message, transfer ?? []);
 		},
 		onMessage(handler) {
 			if (inbox) return inbox.bind(message => handler(message as ComputerWorkerInbound));

@@ -1,7 +1,7 @@
 import computerDescription from "../../prompts/tools/computer.md" with { type: "text" };
-// @ts-expect-error Bun imports this declaration source as text instead of a TypeScript module.
-import computerCodeModeDeclarations from "./declarations.d.ts" with { type: "text" };
-// @ts-expect-error Bun imports this JavaScript source as text instead of evaluating its module shape.
+import { readFileSync } from "node:fs";
+// `.d.ts` cannot be imported as text (TS special-cases declaration files); read at build time.
+const computerCodeModeDeclarations = readFileSync(new URL("./declarations.d.ts", import.meta.url), "utf8");
 import computerJavascript from "./prelude.js" with { type: "text" };
 import computerPython from "./prelude.py" with { type: "text" };
 

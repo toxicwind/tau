@@ -207,6 +207,6 @@ export function buildTypeBoxSpecifierFilter(): RegExp {
 }
 
 /** Build a lookup map for {@link LEGACY_PI_CONFIG}.subpathRemaps. */
-export function buildLegacyPiSubpathRemaps(): ReadonlyMap<string, string> {
+export function buildLegacyPiSubpathRemaps(): Map<string, string> {
 	return new Map<string, string>(LEGACY_PI_CONFIG.subpathRemaps);
 }

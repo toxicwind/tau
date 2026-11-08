@@ -13,7 +13,7 @@ const port = parentPort;
 const inbox = consumeWorkerInbox();
 const transport: Transport = {
 	send(msg, transferList) {
-		port.postMessage(msg, transferList ?? []);
+		(port.postMessage as (value: unknown, transferList?: readonly Transferable[]) => void)(msg, transferList ?? []);
 	},
 	onMessage(handler) {
 		if (inbox) return inbox.bind(data => handler(data as WorkerOutbound | WorkerInbound));

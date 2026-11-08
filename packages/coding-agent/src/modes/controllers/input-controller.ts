@@ -2189,14 +2189,14 @@ export class InputController {
 			// plain text rather than as a `public.file-url` (most macOS
 			// terminals do this for image clipboards).
 			const imagePath = promptTarget ? null : extractImagePathFromText(text);
-			if (imagePath) {
-				await this.handleImagePathPaste(imagePath);
+			if (typeof imagePath === "string") {
+				await this.handleImagePathPaste(imagePath!);
 				return true;
 			}
 			// Keep the initiating prompt as the only possible modal destination.
 			if (promptTarget && this.ctx.ui.getFocused() !== promptTarget) return false;
-			if (finishPaste) {
-				const accepted = finishPaste(text);
+			if (finishPaste !== undefined) {
+				const accepted = finishPaste!(text) as boolean;
 				finishPaste = undefined;
 				if (!accepted) return false;
 			} else {

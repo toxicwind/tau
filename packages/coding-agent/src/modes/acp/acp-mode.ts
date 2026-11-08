@@ -87,7 +87,7 @@ export async function runAcpMode(createSession: AcpSessionFactory, initialSessio
 	postmortem.register("acp-session-teardown", reason => agent?.dispose(reason));
 	postmortem.registerStdioDisconnectHandling();
 	const input = stream.Writable.toWeb(isolateProtocolStdout());
-	const output = stream.Readable.toWeb(process.stdin);
+	const output = stream.Readable.toWeb(process.stdin) as unknown as ReadableStream<Uint8Array>;
 	const transport = ndJsonStream(input, output);
 	const connection = createAcpConnection(transport, createSession, initialSession, createdAgent => {
 		agent = createdAgent;
