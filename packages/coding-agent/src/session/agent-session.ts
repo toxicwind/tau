@@ -403,7 +403,7 @@ import type { ShakeMode, ShakeResult } from "./shake-types";
 import { skillPromptTitleInput } from "@tau/tau-tui/chat/skill-title-input";
 import { ToolChoiceQueue } from "./tool-choice-queue";
 import { planTurnPersistence, sameMessageContent, sessionMessagePersistenceKey } from "./turn-persistence";
-import { TurnRecovery, type TurnRecoveryHost } from "./turn-recovery";
+import { TurnRecovery, type TurnRecoveryHost } from "./strategies/turn-recovery";
 import { YieldQueue } from "./yield-queue";
 
 export * from "./agent-session-events";

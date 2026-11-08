@@ -233,17 +233,6 @@ declare module "puppeteer-core" {
 	}
 }
 
-declare global {
-	interface Element extends HTMLElement {}
-	function getComputedStyle(element: Element): Record<string, unknown>;
-	var innerWidth: number;
-	var innerHeight: number;
-	var document: {
-		elementFromPoint(x: number, y: number): Element | null;
-		readonly visibilityState: "visible" | "hidden";
-	};
-}
-
 const INTERACTIVE_AX_ROLES = new Set([
 	"button",
 	"link",

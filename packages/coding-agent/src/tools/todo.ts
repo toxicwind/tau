@@ -371,11 +371,11 @@ function initPhases(entry: TodoOpEntryValue, errors: string[]): TodoPhase[] {
 			];
 		}
 	}
-	const list =
-		rawList ??
-		(entry.items && entry.items.length > 0
+	const list: (typeof InitListEntry.infer)[] =
+		Array.isArray(rawList) ? rawList
+		: entry.items && entry.items.length > 0
 			? [{ phase: entry.phase ?? DEFAULT_INIT_PHASE, items: entry.items }]
-			: undefined);
+			: [];
 	if (!list) {
 		errors.push("Missing list for init operation");
 		return [];

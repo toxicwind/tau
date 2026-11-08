@@ -23,6 +23,7 @@ import {
 } from "@tau/tau-agent-core";
 import { findCutPoint as computeCutPoint, type CutPointResult } from "@tau/tau-agent-core/compaction";
 import type { SessionEntry as CompactionSessionEntry } from "@tau/tau-agent-core/compaction/entries";
+import type { SessionEntry } from "../session/session-entries";
 import {
 	createBranchSummaryMessage,
 	createCompactionSummaryMessage,
@@ -31,7 +32,7 @@ import {
 import { type AuthCredential, SqliteAuthCredentialStore, type TSchema } from "@tau/tau-ai";
 import { piEscapeRegexLiteral, piJoinPath } from "@tau/tau-ai/providers/cursor-tau-args";
 import { getKeybindings, type Keybinding, Text } from "@tau/tau-tui";
-import { getAgentDbPath, getAgentDir, isCompiledBinary, parseFrontmatter as parseOmpFrontmatter } from "@tau/tau-utils";
+import { getAgentDbPath, getAgentDir, getProjectDir, isCompiledBinary, parseFrontmatter as parseOmpFrontmatter } from "@tau/tau-utils";
 import { AgentSession } from "../session/agent-session";
 import { getPackageDir as getOmpPackageDir } from "../config";
 import { formatKeyHints } from "@tau/tau-tui/app-keybindings";

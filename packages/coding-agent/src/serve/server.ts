@@ -39,6 +39,7 @@ interface AttachedClient {
 	owner: boolean;
 	cols: number;
 	rows: number;
+	authenticated: boolean;
 }
 
 export class ServeServer {
@@ -148,7 +149,7 @@ export class ServeServer {
 	#onConnection(socket: net.Socket): void {
 		let authenticated = false;
 		let buffer = "";
-		const client: AttachedClient = { socket, owner: false, cols: 80, rows: 24 };
+		const client: AttachedClient = { socket, owner: false, cols: 80, rows: 24, authenticated: false };
 		this.#clients.set(socket, client);
 
 		socket.on("data", chunk => {
@@ -162,7 +163,7 @@ export class ServeServer {
 					socket.destroy();
 					return;
 				}
-				if (line.length > 0) this.#onClientFrame(client, line, () => (authenticated = true));
+				if (line.length > 0) this.#onClientFrame(client, line, () => (client.authenticated = true));
 				newline = buffer.indexOf("\n");
 			}
 		});
@@ -183,7 +184,7 @@ export class ServeServer {
 			return;
 		}
 		const frame: ServeClientFrame = parsed;
-		if (!authenticated) {
+		if (!client.authenticated) {
 			if (frame.t !== "hello") {
 				client.socket.destroy();
 				return;

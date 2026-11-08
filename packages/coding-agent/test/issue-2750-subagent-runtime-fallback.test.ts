@@ -6,7 +6,7 @@ import { Settings } from "tau/config/settings";
 import * as sdkModule from "tau/sdk";
 import type { AgentSession } from "tau/session/agent-session";
 import type { ServingModel } from "tau/session/retry-fallback-chains";
-import { TurnRecovery, type TurnRecoveryHost } from "tau/session/turn-recovery";
+import { TurnRecovery, type TurnRecoveryHost } from "tau/session/strategies/turn-recovery";
 import { runSubprocess } from "tau/task/executor";
 import type { AgentDefinition } from "tau/task/types";
 import type { AgentProgress } from "@tau/tau-tui/tools/task";

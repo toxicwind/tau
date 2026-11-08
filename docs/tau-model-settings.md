@@ -85,8 +85,8 @@ Source: `~/.tau/agent/config.yml` → `providers:`.
 |---|---|---|
 | `providers.freeinference.baseUrl` | `http://127.0.0.1:25109/freeinference` | keypool lane |
 | `providers.freeinference.apiKey` | `!cat ~/.tau/freeinference.key` | key from file |
-| `providers.openai-compatible.baseUrl` | `http://127.0.0.1:25193/v1` | rhodochrosite |
-| `providers.openai-compatible.apiKey` | (corral JWT) | rhodochrosite auth |
+|| `providers.openai-compatible.baseUrl` | `http://127.0.0.1:25193/v1` | mimetite |
+|| `providers.openai-compatible.apiKey` | (corral JWT) | mimetite auth |
 | `providers.vercel-ai-gateway` | `https://ai-gateway.vercel.sh/v1` | vercel gateway |
 | `providers.maxInFlightRequests.openai-compatible` | `16` | concurrency cap |
 | `providers.anthropic.serverSideFallback` | `true` | anthropic fallback |
@@ -165,5 +165,5 @@ frontmatter model matches, it falls back to the parent's active model, then
   endpoint (400 "multimodal processing not enabled") — not a vision fallback.
   Use `nvidia/nemotron-3.5-super-vl-120b-a12b` for NVIDIA vision (content-safety
   gated).
-- The three qwen attempts in rhodochrosite are suspect (architect 2026-11-05) —
-  treat the rhodochrosite qwen provider config as unverified until live-tested.
+- The three qwen attempts in mimetite are suspect (architect 2026-11-05) —
+  -  treat the mimetite qwen provider config as unverified until live-tested.

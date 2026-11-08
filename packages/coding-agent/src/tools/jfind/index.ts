@@ -9,7 +9,7 @@ import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import { type } from "@tau/tautype";
 import type { AgentTool, AgentToolResult, AgentToolUpdateCallback } from "@tau/tau-agent-core";
-import type { FindToolDetails } from "@tau/tau-tui/tools/find";
+import type { FindHit, FindStats, FindToolDetails } from "@tau/tau-tui/tools/find";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 import { formatBytes, formatDuration, formatNumber, isEnoent } from "@tau/tau-utils";
 import { hasNativeJudge, journalJudgmentUsage, resolveJudge } from "../../judgment";

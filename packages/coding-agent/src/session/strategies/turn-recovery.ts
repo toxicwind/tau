@@ -24,15 +24,15 @@ import { resolveModelPolicy } from "@tau/tau-catalog/compat/resolve";
 import { isFireworksFastModelId, toFireworksBaseModelId } from "@tau/tau-catalog/fireworks-model-id";
 import { modelsAreEqual } from "@tau/tau-catalog/models";
 import { logger, prompt, sleepLong } from "@tau/tau-utils";
-import type { ModelRegistry } from "../config/model-registry";
-import { formatModelStringWithRouting, resolveModelOverride } from "../config/model-resolver";
+import type { ModelRegistry } from "../../config/model-registry";
+import { formatModelStringWithRouting, resolveModelOverride } from "../../config/model-resolver";
 
-import type { Settings } from "../config/settings";
-import type { RetryErrorUpdate } from "../extensibility/shared-events";
-import emptyStopRetryTemplate from "../prompts/system/empty-stop-retry.md" with { type: "text" };
-import malformedFunctionCallRetryTemplate from "../prompts/system/malformed-function-call-retry.md" with { type: "text" };
-import thinkingLoopRedirectTemplate from "../prompts/system/thinking-loop-redirect.md" with { type: "text" };
-import unexpectedStopRetryTemplate from "../prompts/system/unexpected-stop-retry.md" with { type: "text" };
+import type { Settings } from "../../config/settings";
+import type { RetryErrorUpdate } from "../../extensibility/shared-events";
+import emptyStopRetryTemplate from "../../prompts/system/empty-stop-retry.md" with { type: "text" };
+import malformedFunctionCallRetryTemplate from "../../prompts/system/malformed-function-call-retry.md" with { type: "text" };
+import thinkingLoopRedirectTemplate from "../../prompts/system/thinking-loop-redirect.md" with { type: "text" };
+import unexpectedStopRetryTemplate from "../../prompts/system/unexpected-stop-retry.md" with { type: "text" };
 import {
 	AUTO_THINKING,
 	type ConfiguredThinkingLevel,
@@ -40,13 +40,13 @@ import {
 	modelSupportsEffortCeiling,
 } from "@tau/tau-tui/thinking";
 import type { EditMode } from "@tau/tau-tui/tools/edit";
-import type { AgentSessionEvent } from "./agent-session-events";
+import type { AgentSessionEvent } from "../agent-session-events";
 import type {
 	InitialRetryFallbackState,
 	UsageFallbackConfirmation,
 	UsageFallbackConfirmer,
-} from "./agent-session-types";
-import { assistantTurnProducedOutput, isEmptyAssistantStop, isEmptyErrorTurn } from "./messages";
+} from "../agent-session-types";
+import { assistantTurnProducedOutput, isEmptyAssistantStop, isEmptyErrorTurn } from "../messages";
 import {
 	type ActiveRetryFallbackState,
 	calculateRetryBackoffDelayMs,
@@ -62,14 +62,14 @@ import {
 	resolveRetryFallbackChainKey,
 	type ServingModel,
 	validateRetryFallbackChains,
-} from "./retry-fallback-chains";
-import { describeUsageFallback } from "./retry-fallback-reason";
-import { probeModelReachability, probeServed } from "./strategies/probe";
-import { getLatestCompactionEntry } from "./session-context";
-import { EPHEMERAL_MODEL_CHANGE_ROLE, type SessionEntry } from "./session-entries";
-import type { SessionManager } from "./session-manager";
-import { sameMessageContent, sessionMessagePersistenceKey } from "./turn-persistence";
-import { classifyUnexpectedStop, isUnexpectedStopCandidate } from "./unexpected-stop-classifier";
+} from "../retry-fallback-chains";
+import { describeUsageFallback } from "../retry-fallback-reason";
+import { probeModelReachability } from "./probe";
+import { getLatestCompactionEntry } from "../session-context";
+import { EPHEMERAL_MODEL_CHANGE_ROLE, type SessionEntry } from "../session-entries";
+import type { SessionManager } from "../session-manager";
+import { sameMessageContent, sessionMessagePersistenceKey } from "../turn-persistence";
+import { classifyUnexpectedStop, isUnexpectedStopCandidate } from "../unexpected-stop-classifier";
 
 const THINKING_LOOP_REDIRECT_TYPE = "thinking-loop-redirect";
 const UNEXPECTED_STOP_MAX_RETRIES = 3;
@@ -1997,12 +1997,13 @@ export class TurnRecovery {
 				// never succeed. Skipping a dead candidate keeps the chain advancing.
 				if (this.#host.settings.get("retry.probeFallbacks")) {
 					const verdict = await probeModelReachability(candidate, apiKey);
-					if (!probeServed(verdict)) {
+					if (verdict.ok === true) {
+						// Candidate is reachable — proceed.
+					} else {
 						logger.warn("Skipping dead fallback candidate", {
 							selector: selector.raw,
 							reason: verdict.reason,
 							status: verdict.status,
-							latencyMs: "latencyMs" in verdict ? verdict.latencyMs : undefined,
 						});
 						this.#host.modelRegistry.suppressSelector?.(selector.raw, 30_000);
 						continue;

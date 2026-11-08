@@ -13,6 +13,19 @@ declare module "*.py" {
 	export default content;
 }
 
+// Browser prelude JS + TS declarations imported as text by the browser surface
+// macro (coding-agent src/tools/browser/prelude-definition.ts). `*.js` must be
+// a concrete relative pattern, not "*.js" (Bun's types claim that as a module).
+declare module "*/prelude.js" {
+	const content: string;
+	export default content;
+}
+
+declare module "*/declarations.d.ts" {
+	const content: string;
+	export default content;
+}
+
 declare module "*.rb" {
 	const content: string;
 	export default content;
