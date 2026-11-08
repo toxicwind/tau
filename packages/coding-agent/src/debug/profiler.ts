@@ -149,9 +149,17 @@ export async function startCpuProfile(): Promise<ProfilerSession> {
 	};
 }
 
-/** Numeric-only process and heap statistics for memory reports, without heap contents. */
+/** Numeric-only process and heap statistics for memory reports, without heap contents.
+ *
+ * F10 (2026-11-08): `process.memoryUsage().heapTotal` is a lagging committed
+ * figure under JSC and can report BELOW `heapUsed` (observed in the
+ * 2026-11-08 report: heapTotal 113,614,848 < heapUsed 141,500,625 — an
+ * impossible, internally inconsistent snapshot). It is therefore NOT
+ * serialized: the honest leak signal is `heap.heapSize` vs
+ * `heap.heapCapacity` (one JSC introspection, self-consistent).
+ */
 export interface MemoryStats {
-	process: NodeJS.MemoryUsage;
+	process: Pick<NodeJS.MemoryUsage, "rss" | "heapUsed" | "external" | "arrayBuffers">;
 	heap: Pick<
 		HeapStats,
 		| "heapSize"
@@ -168,10 +176,17 @@ export interface MemoryStats {
 export function collectMemoryStats(): MemoryStats {
 	Bun.gc(true);
 	const heap = heapStats();
+	const mem = process.memoryUsage();
 
 	// Never serialize a heap snapshot or runtime-derived type names: both can contain secrets.
+	// process.heapTotal is deliberately dropped (lagging, can read below heapUsed).
 	return {
-		process: process.memoryUsage(),
+		process: {
+			rss: mem.rss,
+			heapUsed: mem.heapUsed,
+			external: mem.external,
+			arrayBuffers: mem.arrayBuffers,
+		},
 		heap: {
 			heapSize: heap.heapSize,
 			heapCapacity: heap.heapCapacity,

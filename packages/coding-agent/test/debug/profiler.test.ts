@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { startCpuProfile } from "tau/debug/profiler";
+import { startCpuProfile, collectMemoryStats } from "tau/debug/profiler";
 
 describe("startCpuProfile", () => {
 	// Regression: `node:v8` `setFlagsFromString` throws on Bun
@@ -20,5 +20,27 @@ describe("startCpuProfile", () => {
 		expect(parsed.nodes.length).toBeGreaterThan(0);
 		expect(typeof profile.markdown).toBe("string");
 		expect(profile.markdown.length).toBeGreaterThan(0);
+});
+
+describe("collectMemoryStats", () => {
+	// F10 (2026-11-08): the 2026-11-08 tau report shipped a self-inconsistent
+	// memory.json — process.heapTotal (113,614,848) BELOW process.heapUsed
+	// (141,500,625) — because process.memoryUsage().heapTotal is a lagging
+	// committed figure under JSC. The report must never serialize heapTotal;
+	// the leak signal is heap.heapSize vs heap.heapCapacity (one consistent
+	// JSC introspection). Contract: serialized memory.json carries rss,
+	// heapUsed, external, arrayBuffers + the JSC heap block, and NO heapTotal.
+	it("never serializes the lagging process.heapTotal; heapSize/heapCapacity stay self-consistent", () => {
+		const stats = collectMemoryStats() as {
+			process: Record<string, number>;
+			heap: { heapSize: number; heapCapacity: number };
+		};
+		expect("heapTotal" in stats.process).toBe(false);
+		expect(typeof stats.process.rss).toBe("number");
+		expect(typeof stats.process.heapUsed).toBe("number");
+		// The consistent pair: used heap must fit inside capacity.
+		expect(stats.heap.heapSize).toBeLessThanOrEqual(stats.heap.heapCapacity);
+		expect(stats.heap.heapSize).toBeGreaterThan(0);
 	});
+});
 });
