@@ -33,4 +33,11 @@ describe("DeepSeek V4.1 Flash", () => {
 		// must not claim.
 		expect(bundled("yolo-auto", "deepseek-flash-v4").compat.stripImageInput).toBe(true);
 	});
+
+	test("deepseek-v4-flash context window is 1M (F9, 2026-11-08)", () => {
+		// The live wire accepts 1M context (probe 2026-11-08); the KDL
+		// limits-patch must cover the exact v4-flash id, not just the
+		// deepseek-flash alias, so tau's compaction math uses the true window.
+		expect(bundled("deepseek", "deepseek-v4-flash").contextWindow).toBe(1_000_000);
+	});
 });

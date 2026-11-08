@@ -42,7 +42,10 @@ provider "deepseek" {
 	// residue: the pricing page documents this SKU (DeepSeek-V4.1-Flash) as 1M
 	// context / 384K output; pinned as a reviewed correction so the documented
 	// window survives an upstream metadata gap.
-	models "deepseek-flash" {
+	// F9 (2026-11-08): deepseek-v4-flash also serves 1M on the live wire (probe
+	// 2026-11-08) — the exact v4-flash id must carry the same window so tau's
+	// compaction math uses the true limit, not a stale smaller default.
+	models "deepseek-flash" "deepseek-v4-flash" {
 		limits-patch {
 			context-window 1000000
 			max-tokens 384000
