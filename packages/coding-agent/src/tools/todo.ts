@@ -54,13 +54,25 @@ export function committedTodoPhases(result: AgentToolResult): TodoPhase[] | unde
 
 const TodoOp = type('"init" | "start" | "done" | "rm" | "drop" | "block" | "unblock" | "append" | "view"');
 
+const TodoItemLike = type("string")
+	.or(
+		type({
+			content: type("string"),
+			"status?": type('"pending" | "in_progress" | "completed" | "abandoned" | "blocked"'),
+			"blocker?": type("string"),
+			"details?": type("string"),
+			"notes?": type("string").array(),
+		}),
+	)
+	.describe("a task: plain text, or an object carrying content plus optional status/blocker/details/notes keys");
+
 const InitListEntry = type({
 	phase: type("string"),
 	// No `atLeastLength(1)`: a model-init `list` entry can legitimately name a
 	// phase with no tasks yet (`list: ["A","B"]` -> phase-name strings). The
 	// empty-value guard lives in `initPhases` (`[{}]`, empty phase + empty
 	// items, is still an error), mirroring the top-level `items` doctrine.
-	items: type("string").array(),
+	items: TodoItemLike.array(),
 });
 
 const todoSchema = type({
@@ -73,7 +85,7 @@ const todoSchema = type({
 	// No `atLeastLength(1)` here: `items` is only meaningful for `init`/`append`,
 	// and both enforce non-empty with op-specific errors. A stray `items: []` on
 	// an op that ignores it (e.g. `view`) must not be a hard schema rejection.
-	"items?": type("string").array().describe("tasks for flat init or append"),
+	"items?": TodoItemLike.array().describe("tasks for flat init or append"),
 	"reason?": type("string").describe("blocker note for block"),
 	"maxParallel?": type("number").describe(
 		"concurrency ceiling: how many tasks may stay in_progress at once (default 1 = the existing single in-progress pointer). Use to track a batch being worked in parallel; excess in_progress tasks demote to pending.",
@@ -102,9 +114,11 @@ function findPhaseByName(phases: TodoPhase[], name: string): TodoPhase | undefin
 }
 
 function cloneTask(task: TodoItem): TodoItem {
-	return task.blocker !== undefined
-		? { content: task.content, status: task.status, blocker: task.blocker }
-		: { content: task.content, status: task.status };
+	const clone: TodoItem = { content: task.content, status: task.status };
+	if (task.blocker !== undefined) clone.blocker = task.blocker;
+	if (task.details !== undefined) clone.details = task.details;
+	if (task.notes !== undefined) clone.notes = [...task.notes];
+	return clone;
 }
 
 function clonePhases(phases: TodoPhase[]): TodoPhase[] {
@@ -189,15 +203,13 @@ function todoPhasesFingerprint(phases: readonly TodoPhase[]): string {
 	return JSON.stringify(
 		phases.map(phase => ({
 			name: phase.name,
-			tasks: phase.tasks.map(task =>
-				task.blocker === undefined
-					? { content: task.content, status: task.status }
-					: {
-							content: task.content,
-							status: task.status,
-							blocker: task.blocker,
-						},
-			),
+			tasks: phase.tasks.map(task => ({
+				content: task.content,
+				status: task.status,
+				...(task.blocker === undefined ? {} : { blocker: task.blocker }),
+				...(task.details === undefined ? {} : { details: task.details }),
+				...(task.notes === undefined ? {} : { notes: task.notes }),
+			})),
 		})),
 	);
 }
@@ -277,6 +289,56 @@ export function getLatestTodoPhasesFromEntries(entries: SessionEntry[]): TodoPha
 	return [];
 }
 
+const TODO_MATCH_MIN_OVERLAP = 6;
+
+/** Minimum similarity (Dice coefficient over bigrams of normalized text) for a
+ *  fuzzy fallback that must still read as the same task. 0.66 admits the typo
+ *  class that broke live sessions ("corelele-mcp" vs "corelec-mcp") while
+ *  rejecting thin shared-token pairs ("verify live output…" vs a different
+ *  verify task). */
+const TODO_MATCH_MIN_SIMILARITY = 0.66;
+
+function normalizeForTaskMatch(value: string): string {
+	return value.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+}
+
+function bigrams(value: string): Set<string> {
+	const out = new Set<string>();
+	for (let i = 0; i < value.length - 1; i++) out.add(value.slice(i, i + 2));
+	return out;
+}
+
+/** Dice coefficient over bigrams (0..1). Catches same-length typo /
+ *  transposition drift that substring matching cannot ("corelele" vs
+ *  "corelec", "coreelec" vs "corelec"). */
+function similarity(a: string, b: string): number {
+	if (!a || !b) return 0;
+	const ba = bigrams(a);
+	const bb = bigrams(b);
+	let inter = 0;
+	for (const g of ba) if (bb.has(g)) inter++;
+	return (2 * inter) / (ba.size + bb.size);
+}
+
+/** Whether two task texts name the same work, tolerant of model-side drift
+ *  (typos, punctuation, leading "Rebuild/restart …" style suffixes). Mirrors
+ *  the tui sticky-panel matcher so the caller-facing tool and the HUD can
+ *  never disagree about what a task is. Exact normalized equality first, then
+ *  bidirectional substring with a minimum overlap on the contained side, then
+ *  bigram similarity for spelling-drift cases substring cannot catch. */
+function taskTextMatches(stored: string, attempted: string): boolean {
+	const a = normalizeForTaskMatch(stored);
+	const b = normalizeForTaskMatch(attempted);
+	if (!a || !b) return false;
+	if (a === b) return true;
+	if (a.length >= TODO_MATCH_MIN_OVERLAP && b.includes(a)) return true;
+	if (b.length >= TODO_MATCH_MIN_OVERLAP && a.includes(b)) return true;
+	if (a.length >= TODO_MATCH_MIN_OVERLAP && b.length >= TODO_MATCH_MIN_OVERLAP) {
+		return similarity(a, b) >= TODO_MATCH_MIN_SIMILARITY;
+	}
+	return false;
+}
+
 function resolveTaskOrError(
 	phases: TodoPhase[],
 	content: string | undefined,
@@ -287,18 +349,18 @@ function resolveTaskOrError(
 		return undefined;
 	}
 	const hit = findTaskByContent(phases, content);
-	// Exact match wins; otherwise accept a UNIQUE prefix or substring so a task
-	// text abbreviated by the transport (e.g. "Wire into moments/index.jsonl"
-	// vs "...index.jsonl if applicable") still resolves. Ambiguity is an error —
-	// never silently pick one of several candidates.
+	// Exact match wins; otherwise accept a UNIQUE matching task via the
+	// normalized tolerant matcher (typos, punctuation drift, a transport- or
+	// model-abbreviated variant). Ambiguity is an error — never silently pick
+	// one of several candidates.
 	if (!hit) {
-		const candidates = phases.flatMap(phase =>
-			phase.tasks.filter(task => task.content.startsWith(content) || task.content.includes(content)),
-		);
-		if (candidates.length === 1) {
-			const phase = phases.find(p => p.tasks.includes(candidates[0]!));
-			if (phase) return { task: candidates[0]!, phase };
+		const candidates: Array<{ task: TodoItem; phase: TodoPhase }> = [];
+		for (const phase of phases) {
+			for (const task of phase.tasks) {
+				if (taskTextMatches(task.content, content)) candidates.push({ task, phase });
+			}
 		}
+		if (candidates.length === 1) return candidates[0]!;
 	}
 	if (!hit) {
 		if (/^task-\d+$/.test(content)) {
@@ -338,6 +400,24 @@ function getTaskTargets(phases: TodoPhase[], entry: TodoOpEntryValue, errors: st
 
 /** Phase name for `init` given a flat `items` list with no explicit `phase`. */
 const DEFAULT_INIT_PHASE = "Tasks";
+
+// Turn a schema item (plain string, or object with content/status/blocker/
+// details/notes) into a full TodoItem, preserving every key. The string form
+// can carry a literal markdown checkbox prefix ("- [ ] Reproduce...") from
+// models that render a flat array as a checklist inside JSON; strip that so
+// the persisted content and exact-match targeting see the raw text.
+function toTodoItem(item: TodoItemLikeValue): TodoItem {
+	if (typeof item === "string") {
+		return { content: parseMarkdownItem(item), status: "pending" };
+	}
+	const out: TodoItem = { content: parseMarkdownItem(item.content), status: item.status ?? "pending" };
+	if (item.blocker !== undefined) out.blocker = item.blocker;
+	if (item.details !== undefined) out.details = item.details;
+	if (item.notes !== undefined) out.notes = [...item.notes];
+	return out;
+}
+
+type TodoItemLikeValue = NonNullable<TodoParams["items"]>[number];
 
 function initPhases(entry: TodoOpEntryValue, errors: string[]): TodoPhase[] {
 	// Models routinely flatten the single-phase init into `{op:"init", items:[...]}`
@@ -397,7 +477,8 @@ function initPhases(entry: TodoOpEntryValue, errors: string[]): TodoPhase[] {
 			errors.push(`Duplicate phase "${listEntry.phase}" in init list`);
 		}
 		seenPhases.add(listEntry.phase);
-		for (const content of listEntry.items) {
+		for (const item of listEntry.items) {
+			const content = typeof item === "string" ? item : item.content;
 			if (seenTasks.has(content)) {
 				errors.push(`Duplicate task "${content}" in init list`);
 			}
@@ -406,14 +487,7 @@ function initPhases(entry: TodoOpEntryValue, errors: string[]): TodoPhase[] {
 	}
 	return list.map(listEntry => ({
 		name: listEntry.phase,
-		tasks: listEntry.items.map<TodoItem>(content => ({
-			// A single array element can arrive as a full markdown checkbox line
-			// ("- [ ] Reproduce...") when a DeepSeek-family model renders a flat
-			// string array as a checklist inside JSON. Strip the prefix so the
-			// persisted content and the exact-match targeting see the raw text.
-			content: parseMarkdownItem(content),
-			status: "pending",
-		})),
+		tasks: listEntry.items.map<TodoItem>(toTodoItem),
 	}));
 }
 
@@ -431,7 +505,8 @@ function appendItems(phases: TodoPhase[], entry: TodoOpEntryValue, errors: strin
 	// duplicate and leaves nothing half-applied.
 	const seen = new Set<string>();
 	let hasDuplicate = false;
-	for (const content of entry.items) {
+	for (const item of entry.items) {
+		const content = typeof item === "string" ? item : item.content;
 		if (seen.has(content) || findTaskByContent(phases, content)) {
 			errors.push(`Task "${content}" already exists`);
 			hasDuplicate = true;
@@ -446,8 +521,8 @@ function appendItems(phases: TodoPhase[], entry: TodoOpEntryValue, errors: strin
 		phases.push(phase);
 	}
 
-	for (const content of entry.items) {
-		phase.tasks.push({ content: parseMarkdownItem(content), status: "pending" });
+	for (const item of entry.items) {
+		phase.tasks.push(toTodoItem(item));
 	}
 	return phases;
 }
@@ -647,9 +722,9 @@ function coerceInitList(raw: unknown): Record<string, unknown> | null {
 	}
 	if (!Array.isArray(list)) return null;
 	const fallbackItems = Array.isArray(raw.items)
-		? raw.items.filter((item): item is string => typeof item === "string")
+		? raw.items.filter((item): item is string | Record<string, unknown> => typeof item === "string" || isRecord(item))
 		: [];
-	const entries: Array<{ phase: string; items: string[] }> = [];
+	const entries: Array<{ phase: string; items: Array<string | Record<string, unknown>> }> = [];
 	for (const entry of list) {
 		if (typeof entry === "string") {
 			const markdownItems = parseMarkdownList(entry);
@@ -673,11 +748,15 @@ function coerceInitList(raw: unknown): Record<string, unknown> | null {
 		if (Array.isArray(entry.items)) items = entry.items;
 		else if (Array.isArray(entry.taskList)) items = entry.taskList;
 		else if (Array.isArray(entry.tasks)) items = entry.tasks;
-		const strings = items
-			.map(item => (isRecord(item) ? item.content : item))
-			.filter((item): item is string => typeof item === "string")
-			.map(parseMarkdownItem);
-		entries.push({ phase, items: strings });
+		// Keep object TaskItem entries whole (content/status/details/notes/blocker
+		// must survive the repair path, not collapse to their content string).
+		const kept = items
+			.map(item => (isRecord(item) && typeof item.content === "string" ? item : item))
+			.filter((item): item is string | Record<string, unknown> => typeof item === "string" || isRecord(item));
+		// A single array element can arrive as a literal checklist line; strip
+		// the checkbox prefix so persisted content is clean.
+		const normalized = kept.map(item => (typeof item === "string" ? { content: parseMarkdownItem(item) } : item));
+		entries.push({ phase, items: normalized });
 	}
 	const hasBareStrings = entries.some(e => e.items.length === 0);
 	if (hasBareStrings && fallbackItems.length > 0 && !entries.some(e => e.phase === DEFAULT_INIT_PHASE && e.items.length > 0)) {

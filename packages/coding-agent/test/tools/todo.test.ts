@@ -1300,3 +1300,71 @@ describe("TodoTool unique-prefix task resolution", () => {
 		expect(tasks.every(task => task.status !== "completed")).toBe(true);
 	});
 });
+
+describe("TodoTool tolerant task matching (2026-11-08 regression)", () => {
+	// Reproduced from a live session: the todo table rendered
+	// "Rebuild/restart corelele-mcp service" (typo'd in the init payload), the
+	// model then attempted to complete "Rebuild/restart corelec-mcp service to
+	// load new code" (corrected spelling + a trailing expansion). The old
+	// one-direction prefix/substring match failed both, and every update
+	// reported `Task "…" not found` while the HUD kept showing stale state.
+	it("resolves a task despite spelling drift and a trailing expansion", async () => {
+		const tool = new TodoTool(createSession());
+		await tool.execute("call-init", {
+			op: "init",
+			list: [{ phase: "fix", items: ["Rebuild/restart corelele-mcp service"] }],
+		});
+
+		const result = await tool.execute("call-done", {
+			op: "done",
+			task: "Rebuild/restart corelec-mcp service to load new code",
+		});
+		expect(result.isError).toBeUndefined();
+		expect(result.details?.phases?.[0]?.tasks?.[0]?.status).toBe("completed");
+	});
+
+	it("resolves a task when the model re-quotes it with a corrected spelling", async () => {
+		const tool = new TodoTool(createSession());
+		await tool.execute("call-init", {
+			op: "init",
+			list: [{ phase: "recon", items: ["Locate corelele-mcp repo + coreelec-246-recon skill"] }],
+		});
+
+		const result = await tool.execute("call-done", {
+			op: "done",
+			task: "Locate corelec-mcp repo + corelec-246-recon skill",
+		});
+		expect(result.isError).toBeUndefined();
+		expect(result.details?.phases?.[0]?.tasks?.[0]?.status).toBe("completed");
+	});
+
+	it("still reports not-found for wording too thin to be the same task", async () => {
+		const tool = new TodoTool(createSession());
+		await tool.execute("call-init", {
+			op: "init",
+			list: [{ phase: "verify", items: ["Verify live currently-playing output from the box"] }],
+		});
+
+		const result = await tool.execute("call-done", {
+			op: "done",
+			task: "Verify live output and confirm all gateway tools healthy",
+		});
+		expect(result.isError).toBe(true);
+	});
+});
+
+describe("TodoTool details/notes preservation (2026-11-08 regression)", () => {
+	it("cloneTask keeps details and notes instead of dropping them", async () => {
+		const tool = new TodoTool(createSession());
+		await tool.execute("call-init", {
+			op: "init",
+			list: [{ phase: "keep", items: [{ content: "Carry metadata", details: "debug=true", notes: ["n1"] } as never] }],
+		});
+
+		const result = await tool.execute("call-view", { op: "view" });
+		const task = result.details?.phases?.[0]?.tasks?.[0];
+		expect(task?.content).toBe("Carry metadata");
+		expect(task?.details).toBe("debug=true");
+		expect(task?.notes).toEqual(["n1"]);
+	});
+});
