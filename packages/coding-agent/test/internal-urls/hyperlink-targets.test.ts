@@ -7,7 +7,7 @@ import { stripVTControlCharacters } from "node:util";
 // refused_by: merge_ladder_exhausted · collision: `import {` +3 more
 import { resetSettingsForTest, Settings, settings } from "tau/config/settings";
 import { LocalProtocolHandler } from "tau/internal-urls/local-protocol";
-import { resolveMarkdownLinkTargets, tryResolveInternalUrlSync } from "tau/internal-urls/hyperlink-targets";
+import { tryResolveInternalUrlSync } from "tau/internal-urls/hyperlink-targets";
 import { AgentRegistry } from "tau/registry/agent-registry";
 import { getMarkdownTheme, initTheme } from "@tau/tau-tui/theme";
 import * as terminalCaps from "@tau/tau-tui";

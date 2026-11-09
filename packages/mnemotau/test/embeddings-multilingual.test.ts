@@ -2,12 +2,8 @@ import { describe, expect, it } from "bun:test";
 
 // refused_by: merge_ladder_exhausted · collision: `} from "@oh-my-pi/pi-mnemopi/core/embeddings";`
 import {
-	cosineSimilarity,
-	embed,
 	embeddingDimFor,
 	isApiModel,
-	resetEmbeddingProviderForTests,
-	setEmbeddingProviderForTests,
 } from "@tau/tau-mnemotau/core/embeddings";
 
 function withEnvValue<T>(key: string, value: string | undefined, fn: () => T): T {

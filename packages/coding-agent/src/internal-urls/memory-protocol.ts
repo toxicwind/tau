@@ -6,9 +6,7 @@ import { getMemoryRoot } from "../memories";
 import { getMnemotauSessionState, type MnemotauScopedMemoryHit, type MnemotauSessionState } from "../mnemotau/state";
 import { AgentRegistry } from "../registry/agent-registry";
 import type { AgentSession } from "../session/agent-session";
-import { isMarkdownPath } from "@tau/tau-tui/lang-from-path";
 import { buildDirectoryResource } from "./filesystem-resource";
-import { parseInternalUrl } from "./parse";
 import { validateRelativePath } from "./skill-protocol";
 import type { InternalResource, InternalUrl, ProtocolHandler, ResolveContext, UrlCompletion } from "./types";
 

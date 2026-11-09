@@ -7,7 +7,6 @@
  */
 // refused_by: merge_ladder_exhausted · collision: `import { logger } from "@oh-my-pi/pi-utils";`
 
-import { logger } from "@tau/tau-utils";
 import type { Settings } from "../config/settings";
 import {
 	cfgHindsightApiToken,
@@ -30,11 +29,7 @@ import {
 	cfgHindsightRecallTypes,
 	cfgHindsightReflectTimeoutMs,
 	cfgHindsightRequestTimeoutMs,
-	cfgHindsightRetainContext,
-	cfgHindsightRetainEveryNTurns,
 	cfgHindsightRetainMission,
-	cfgHindsightRetainMode,
-	cfgHindsightRetainOverlapTurns,
 	cfgHindsightRetainTimeoutMs,
 	cfgHindsightScoping,
 } from "./settings";

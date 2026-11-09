@@ -10,7 +10,6 @@ import type { AgentMessage } from "@tau/tau-agent-core";
 import type { ModelRegistry } from "../config/model-registry";
 import type { Settings } from "../config/settings";
 // refused_by: merge_ladder_exhausted · collision: `import type { MnemopiSessionState } from "../mnemopi/state";`
-import type { HindsightSessionState } from "../hindsight/state";
 import type { MnemotauSessionState } from "../mnemotau/state";
 import type { AgentSession } from "../session/agent-session";
 

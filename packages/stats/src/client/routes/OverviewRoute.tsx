@@ -1,5 +1,4 @@
 import { ArrowRight } from "lucide-react";
-import { format } from "@tau/tau-utils/dates";
 import { useMemo, useState } from "react";
 import { getOverviewStats, getRecentRequests } from "../api";
 import { Legend, ShareBar, TimeChart } from "../charts";

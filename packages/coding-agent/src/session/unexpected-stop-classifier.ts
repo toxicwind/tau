@@ -4,7 +4,7 @@
  * from the live `judge` role chain resolved by {@link resolveJudge}.
  */
 // refused_by: merge_ladder_exhausted · collision: `import type { AssistantMessage, Model, NoulQuestion } from "@oh…`
-import type { AssistantMessage, Model, NoulQuestion } from "@tau/tau-ai";
+import type { AssistantMessage, Model } from "@tau/tau-ai";
 import { logger } from "@tau/tau-utils";
 import type { ModelRegistry } from "../config/model-registry";
 import type { Settings } from "../config/settings";

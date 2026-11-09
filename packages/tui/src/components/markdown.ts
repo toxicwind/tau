@@ -9,7 +9,7 @@ import {
 	type Tokens,
 // refused_by: merge_ladder_exhausted · collision: `import { mathBlockAt, mathSpanAt, mathStartIndex } from "@oh-my…`
 } from "@tau/tau-utils/marked";
-import { mathBlockAt, mathSpanAt, mathStartIndex } from "@tau/tau-utils/math-delimiters";
+import { mathSpanAt, mathStartIndex } from "@tau/tau-utils/math-delimiters";
 import { latexToBlock } from "../latex-block";
 import { isBareMathEnvironment, latexToUnicode } from "../latex-to-unicode";
 import { plainText } from "../native/spans";

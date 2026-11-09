@@ -21,7 +21,6 @@ import {
 // refused_by: merge_ladder_exhausted · collision: `import { compareRevision, parseRevision } from "@oh-my-pi/pi-ca…`
 } from "@tau/tau-ai";
 import { buildAnthropicSystemBlocks, wrapFetchForCch } from "@tau/tau-ai/providers/anthropic";
-import { compareRevision, parseRevision } from "@tau/tau-catalog/identity";
 import { $env } from "@tau/tau-utils";
 import type { AnthropicApiResponse, AnthropicCitation } from "../../../web/search/types";
 import type { SearchCitation, SearchResponse, SearchSource } from "../types";

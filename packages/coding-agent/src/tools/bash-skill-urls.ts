@@ -1,4 +1,3 @@
-import { resolve } from "node:path";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import { resolveContainedPath, type ContainedPathResolution } from "../discovery/contained-path";

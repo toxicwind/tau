@@ -34,7 +34,6 @@ import { type AuthCredential, SqliteAuthCredentialStore, type TSchema } from "@t
 import { piEscapeRegexLiteral, piJoinPath } from "@tau/tau-ai/providers/cursor-tau-args";
 import { getKeybindings, type Keybinding, Text } from "@tau/tau-tui";
 import { getAgentDbPath, getAgentDir, getProjectDir, isCompiledBinary, parseFrontmatter as parseOmpFrontmatter } from "@tau/tau-utils";
-import { AgentSession } from "../session/agent-session";
 import { getPackageDir as getOmpPackageDir } from "../config";
 import { formatKeyHints } from "@tau/tau-tui/app-keybindings";
 import type { PromptTemplate } from "../config/prompt-templates";

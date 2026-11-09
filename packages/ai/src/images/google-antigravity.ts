@@ -5,7 +5,6 @@ import {
 // refused_by: merge_ladder_exhausted · collision: `import { getAntigravityUserAgent } from "@oh-my-pi/pi-catalog/w…`
 } from "@tau/tau-catalog/discovery/antigravity";
 import type { Model } from "@tau/tau-catalog/types";
-import { getAntigravityUserAgent } from "@tau/tau-catalog/wire/gemini-headers";
 import { readSseJson } from "@tau/tau-utils";
 import { withAuth } from "../auth-retry";
 import * as AIError from "../error";

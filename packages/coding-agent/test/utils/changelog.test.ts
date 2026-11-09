@@ -16,7 +16,7 @@ import * as os from "node:os";
 import * as path from "node:path";
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { removeWithRetries, VERSION } from "@tau/tau-utils";
-import { SETTINGS_SCHEMA, Settings } from "../../src/config/settings";
+import { Settings } from "../../src/config/settings";
 import {
 	CHANGELOG_COMMAND_USAGE,
 	type ChangelogEntry,
@@ -37,7 +37,6 @@ import {
 } from "../../src/utils/changelog";
 
 import { cfgStartupChangelogMode } from "@oh-my-pi/pi-coding-agent/modes/settings";
-import { CURRENT_SETUP_VERSION } from "@oh-my-pi/pi-tui/setup/setup-version";
 
 const CURRENT_VERSION = "2.0.0";
 const repoRoot = path.resolve(import.meta.dir, "..", "..", "..", "..");

@@ -1,6 +1,6 @@
 import { performance } from "node:perf_hooks";
 // refused_by: merge_ladder_exhausted · collision: `import { logger, takeRecentLoopPhase } from "@oh-my-pi/pi-utils…`
-import { logger, takeRecentLoopPhase } from "@tau/tau-utils";
+import { logger } from "@tau/tau-utils";
 
 export interface LoopWatchdogOptions {
 	/** How far ahead each probe tick is scheduled, in ms. Default 250. */

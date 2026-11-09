@@ -34,14 +34,11 @@ import { memoryStatsUnavailableMessage, resolveMemoryBackend } from "../../memor
 // refused_by: merge_ladder_exhausted · collision: `import { Loader, Markdown, padding, Spacer, Text, visibleWidth …` +5 more
 import { BashExecutionComponent, bashPtyViewport } from "@tau/tau-tui/chat/bash-execution";
 import { BorderedLoader } from "@tau/tau-tui/overlays/bordered-loader";
-import { DynamicBorder } from "@tau/tau-tui/chrome/dynamic-border";
 import { EvalExecutionComponent } from "@tau/tau-tui/chat/eval-execution";
 import { MoveOverlay, type MoveOverlayResult } from "@tau/tau-tui/overlays/move-overlay";
 import { moveDirectorySource } from "../move-directory-source";
-import { TranscriptBlock } from "@tau/tau-tui/chrome/transcript-container";
 import { getMarkdownTheme, getSymbolTheme, theme, type Theme } from "@tau/tau-tui/theme";
 import type { InteractiveModeContext } from "../../modes/types";
-import { renderContextUsage } from "@tau/tau-tui/status-line/context-usage";
 import { computeSessionContextBreakdown } from "../../session/context-usage-runtime";
 import { buildHotkeysMarkdown } from "@tau/tau-tui/hotkeys-markdown";
 import { buildToolsMarkdown } from "@tau/tau-tui/prompt/tools-markdown";

@@ -1,8 +1,7 @@
-import { afterAll, beforeAll, describe, expect, test } from "bun:test";
+import { describe, expect, test } from "bun:test";
 import * as path from "node:path";
 import { isRecord, readJsonl, TempDir } from "@tau/tau-utils";
 import { selectRpcEntries } from "tau/modes/rpc/rpc-compat";
-import { readRpcInputFrames } from "tau/modes/rpc/rpc-input";
 import { SessionManager } from "tau/session/session-manager";
 import { FileSessionStorage } from "tau/session/session-storage";
 import type { SessionEntry, SessionTreeNode } from "tau/session/session-entries";

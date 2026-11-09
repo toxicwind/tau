@@ -12,25 +12,19 @@
  */
 // refused_by: merge_ladder_exhausted · collision: `* Internal URL router for internal protocols (`agent://`, `arti…` +1 more
 import { setInternalUrlCompletionHost } from "@tau/tau-tui/prompt/internal-url-autocomplete";
-import { setInternalReadTargetPredicate } from "@tau/tau-tui/chat/read-target";
 import { AgentProtocolHandler } from "./agent-protocol";
 import { ArtifactProtocolHandler } from "./artifact-protocol";
 import { AttachmentProtocolHandler } from "./attachment-protocol";
-import { CfgProtocolHandler } from "./cfg-protocol";
 import { ConflictProtocolHandler } from "./conflict-protocol";
 import { HistoryProtocolHandler } from "./history-protocol";
 import { IssueProtocolHandler, PrProtocolHandler } from "./issue-pr-protocol";
 import { LocalProtocolHandler } from "./local-protocol";
-import { McpProtocolHandler } from "./mcp-protocol";
-import { MemoryProtocolHandler } from "./memory-protocol";
 // refused_by: merge_ladder_exhausted · collision: `* Internal URL router for internal protocols (`agent://`, `arti…` +1 more
 import { TauProtocolHandler } from "./tau-protocol";
 import { extractUriScheme, parseInternalUrl } from "./parse";
-import { ProcProtocolHandler } from "./proc-protocol";
 import { RuleProtocolHandler } from "./rule-protocol";
 import { SecurityProtocolHandler } from "./security-protocol";
 import { SkillProtocolHandler } from "./skill-protocol";
-import { SshProtocolHandler } from "./ssh-protocol";
 import type {
 	InternalResource,
 	InternalUrl,

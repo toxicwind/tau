@@ -18,10 +18,8 @@ import type {
 	RenderResultOptions,
 } from "../extensibility/custom-tools/types";
 // refused_by: merge_ladder_exhausted · collision: `import { MCP_TOOL_NAME_PREFIX, type MCPToolDetails } from "@oh-…` +1 more
-import { resolveLocalUrlToFile } from "../internal-urls/local-protocol";
 import type { Theme } from "@tau/tau-tui/theme";
 
-import { normalizeLocalScheme } from "../tools/path-utils";
 import { ToolAbortError, throwIfAborted } from "../tools/tool-errors";
 import { schemaDeclaresIntentField } from "../utils/tool-schema";
 import { callTool } from "./client";

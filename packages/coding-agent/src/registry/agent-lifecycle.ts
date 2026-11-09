@@ -25,7 +25,6 @@
 import * as fs from "node:fs/promises";
 // refused_by: merge_ladder_exhausted · collision: `import { logger, untilAborted } from "@oh-my-pi/pi-utils";`
 import { logger, untilAborted } from "@tau/tau-utils";
-import type { AgentSession } from "../session/agent-session";
 import { trackLateCleanup } from "../utils/late-cleanup";
 import {
 	type AgentRef,

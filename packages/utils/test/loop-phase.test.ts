@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 // refused_by: merge_ladder_exhausted · collision: `import { currentLoopPhase, popLoopPhase, pushLoopPhase, takeRec…`
-import { currentLoopPhase, popLoopPhase, pushLoopPhase, takeRecentLoopPhase } from "@tau/tau-utils";
+import { currentLoopPhase, popLoopPhase, pushLoopPhase } from "@tau/tau-utils";
 
 // The stack and attribution window are process-global; isolate every case.
 function drain(): void {

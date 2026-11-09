@@ -14,7 +14,7 @@
 
 // refused_by: merge_ladder_exhausted · collision: `import { instrumentedCompleteSimple, resolveTelemetry, type Thi…` +1 more
 import { type } from "@tau/tautype";
-import { instrumentedCompleteSimple, resolveTelemetry, type ThinkingLevel } from "@tau/tau-agent-core";
+import { instrumentedCompleteSimple, resolveTelemetry } from "@tau/tau-agent-core";
 import { type Api, type AssistantMessage, Effort, type Model, type Tool } from "@tau/tau-ai";
 import { clampThinkingLevelForModel, getSupportedEfforts } from "@tau/tau-catalog/model-thinking";
 import { Snowflake } from "@tau/tau-utils";

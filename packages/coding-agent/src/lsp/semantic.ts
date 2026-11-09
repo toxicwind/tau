@@ -17,7 +17,7 @@
  * unavailable (no key / timeout / 429), and only re-ranks when there is more
  * than one candidate (single candidate = unambiguous, skip embedding cost).
  */
-import { cosine, embedMany, embedOne } from "/home/toxic/pens/barn/products/forge/hf/hf";
+import { cosine, embedMany } from "/home/toxic/pens/barn/products/forge/hf/hf";
 import { logger } from "@tau/tau-utils";
 import type { Location } from "./types";
 

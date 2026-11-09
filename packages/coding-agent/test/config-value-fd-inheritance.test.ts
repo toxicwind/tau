@@ -24,7 +24,7 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { pathToFileURL } from "node:url";
 // refused_by: merge_ladder_exhausted · collision: `import { Process, ProcessStatus } from "@oh-my-pi/pi-natives";`
-import { Process, ProcessStatus } from "@tau/tau-natives";
+import { Process } from "@tau/tau-natives";
 import { runShellCommand } from "../src/config/resolve-config-value";
 
 const resolverUrl = pathToFileURL(path.join(import.meta.dir, "../src/config/resolve-config-value.ts")).href;

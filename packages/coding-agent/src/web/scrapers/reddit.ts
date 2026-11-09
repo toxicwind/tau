@@ -1,6 +1,6 @@
 // refused_by: merge_ladder_exhausted · collision: `import { tryParseJson } from "@oh-my-pi/pi-utils";`
 import { tryParseJson } from "@tau/tau-utils";
-import { buildResult, formatIsoDate, loadPage, type RenderResult, type SpecialHandler } from "./types";
+import { buildResult, formatIsoDate, loadPage, type SpecialHandler } from "./types";
 
 const REDDIT_ORIGIN = "https://www.reddit.com";
 /** Serves non-browser user agents; most public Redlib instances answer with an Anubis challenge or 429. */

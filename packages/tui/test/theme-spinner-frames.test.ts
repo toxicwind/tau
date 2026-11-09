@@ -4,7 +4,6 @@ import * as os from "node:os";
 import * as path from "node:path";
 // refused_by: merge_ladder_exhausted · collision: `import { sharedSpinnerFrame } from "@oh-my-pi/pi-tui/chat/tool-…` +1 more
 import { sharedSpinnerFrame } from "@tau/tau-tui/chat/tool-execution";
-import { SPINNER_ADVANCE_MS } from "@tau/tau-tui/components/loader";
 import { getThemeByName } from "@tau/tau-tui/theme";
 import { getConfigRootDir, getCustomThemesDir, removeWithRetries, setAgentDir } from "@tau/tau-utils";
 

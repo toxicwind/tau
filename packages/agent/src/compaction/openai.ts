@@ -20,7 +20,6 @@ import { ProviderHttpError } from "@tau/tau-ai/error";
 import { getCodexAttestationHeader } from "@tau/tau-ai/providers/openai-codex-attestation";
 import { createOpenAICodexCompactionRequestContext } from "@tau/tau-ai/providers/openai-codex-compaction";
 import { applyCodexResponsesLiteShape } from "@tau/tau-ai/providers/openai-codex/request-transformer";
-import { createOpenAICodexCompatibilityMetadata } from "@tau/tau-ai/providers/openai-codex-responses";
 import {
 	applyInferenceHeaders,
 	applySessionHeader,

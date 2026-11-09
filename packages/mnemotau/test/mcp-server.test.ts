@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 // refused_by: merge_ladder_exhausted · collision: `import { getToolDefinitions, handleToolCall } from "@oh-my-pi/p…`
 import { callToolJson, handleJsonRpc, runStdio } from "@tau/tau-mnemotau/mcp-server";
-import { getToolDefinitions, handleToolCall } from "@tau/tau-mnemotau/mcp-tools";
+import { handleToolCall } from "@tau/tau-mnemotau/mcp-tools";
 
 let dataDir: string;
 

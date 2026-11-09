@@ -1,4 +1,3 @@
-import { join } from "node:path";
 import { repairCollapsedScheme, tryExtractEmbeddedUrlSelector } from "@tau/tau-tui/tools/fetch";
 import type { ReadUrlToolDetails } from "@tau/tau-tui/tools/fetch";
 import type { Database } from "bun:sqlite";
@@ -13,7 +12,6 @@ import { $which, ptree } from "@tau/tau-utils";
 import { type ArchiveFormat, listArchiveRoot, sniffArchiveFormat } from "@tau/tau-utils/ar";
 import type { Settings } from "../config/settings";
 import type { ToolSession } from "../sdk";
-import type { AgentStorage } from "../session/agent-storage";
 import { DEFAULT_MAX_BYTES, truncateHead } from "@tau/tau-tui/tools/streaming-output";
 import { webpExclusionForModel } from "@tau/tau-tui/chat/image-loading";
 import { formatDimensionNote, resizeImage } from "../utils/image-resize";
@@ -23,7 +21,7 @@ import { decodeBody } from "../web/response-body";
 import { findFirecrawlApiKey, scrapeWithFirecrawl } from "../web/firecrawl";
 import { extractWithParallel, findParallelApiKey, getParallelExtractContent } from "../web/parallel";
 import type { RenderResult, SpecialHandler } from "../web/scrapers/types";
-import { finalizeOutput, loadPage, looksLikeHtml, MAX_BYTES } from "../web/scrapers/types";
+import { finalizeOutput, loadPage, looksLikeHtml } from "../web/scrapers/types";
 import { type BinaryFetchResult, convertWithMarkit, fetchBinary } from "../web/scrapers/utils";
 import { findCredential } from "../web/search/providers/utils";
 import { applyListLimit } from "@tau/tau-tui/tools/list-limit";
@@ -1802,7 +1800,7 @@ export async function fetchReadUrl(
 	}
 
 	const storage = session.settings.getStorage();
-	let result = await renderUrl(
+	const result = await renderUrl(
 		url,
 		effectiveTimeout,
 		raw,

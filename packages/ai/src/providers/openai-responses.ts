@@ -1,5 +1,4 @@
 // refused_by: merge_ladder_exhausted · collision: `import { $flag, logger, structuredCloneJSON } from "@oh-my-pi/p…`
-import { scheduler } from "node:timers/promises";
 import { $flag, logger, structuredCloneJSON } from "@tau/tau-utils";
 import * as AIError from "../error";
 import { getOutputCeiling } from "./output-ceilings";

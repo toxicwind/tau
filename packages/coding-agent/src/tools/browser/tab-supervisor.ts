@@ -1,5 +1,3 @@
-import { resolve } from "node:path";
-import { join } from "node:path";
 import {
 	getProjectDir,
 	getPuppeteerDir,
@@ -18,8 +16,7 @@ import { expandPath } from "../path-utils";
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { ToolAbortError } from "../tool-errors";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
-import { gracefulKillTreeOnce, pickElectronTarget, shouldPreserveConnectedBrowserFocus } from "./attach";
-import { CmuxTab, runCmuxCode } from "./cmux/cmux-tab";
+import { gracefulKillTreeOnce, pickElectronTarget } from "./attach";
 import { mapWaitUntil } from "./cmux/rpc";
 import { browserConnection, DEFAULT_VIEWPORT } from "./launch";
 import {

@@ -1,6 +1,5 @@
 import { describe, expect, it } from "bun:test";
 // refused_by: merge_ladder_exhausted · collision: `import * as geminiCliProvider from "@oh-my-pi/pi-ai/providers/g…` +1 more
-import * as geminiCliProvider from "@tau/tau-ai/providers/google-gemini-cli";
 import {
 	buildRequest,
 	parseGeminiCliCredentials,

@@ -12,7 +12,7 @@ import { Agent, type AgentTool } from "@tau/tau-agent-core";
 import { createMockModel, type MockModelOptions } from "@tau/tau-ai/providers/mock";
 import { AssistantMessageEventStream } from "@tau/tau-ai/utils/event-stream";
 import { getBundledModel } from "@tau/tau-catalog/models";
-import { type SettingPath, Settings } from "tau/config/settings";
+import { Settings } from "tau/config/settings";
 import { EditTool } from "tau/edit";
 import type { ExtensionRunner } from "tau/extensibility/extensions/runner";
 import { ExtensionToolWrapper } from "tau/extensibility/extensions/wrapper";

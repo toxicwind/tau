@@ -10,7 +10,7 @@ import { Settings } from "tau/config/settings";
 import { ExtensionRuntime, loadExtensionFromFactory } from "tau/extensibility/extensions/loader";
 import { ExtensionRunner } from "tau/extensibility/extensions/runner";
 import type { CompactOptions } from "tau/extensibility/extensions/types";
-import { AgentSession, type AgentSessionEvent } from "tau/session/agent-session";
+import { AgentSession } from "tau/session/agent-session";
 import { AuthStorage } from "tau/session/auth-storage";
 import { SessionManager } from "tau/session/session-manager";
 import * as unexpectedStopClassifier from "tau/session/unexpected-stop-classifier";

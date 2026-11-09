@@ -1,4 +1,3 @@
-import { join } from "node:path";
 /**
  * Result submission tool for subagent output.
  *

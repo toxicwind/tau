@@ -3,7 +3,6 @@ import { describe, expect, it } from "bun:test";
 import type { CompactionSettings } from "@tau/tau-agent-core/compaction/compaction";
 import {
 	DEFAULT_COMPACTION_SETTINGS,
-	DEFAULT_RESERVE_TOKENS,
 	effectiveReserveTokens,
 	resolveBudgetReserveTokens,
 	resolveThresholdTokens,

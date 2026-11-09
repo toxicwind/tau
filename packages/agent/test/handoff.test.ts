@@ -6,8 +6,6 @@ import {
 	defaultConvertToLlm,
 	generateHandoff,
 	generateHandoffFromContext,
-// refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
-	renderHandoffPrompt,
 } from "@tau/tau-agent-core/compaction";
 import { ThinkingLevel } from "@tau/tau-agent-core/thinking";
 import type { AssistantMessage, Model, ToolCall } from "@tau/tau-ai";

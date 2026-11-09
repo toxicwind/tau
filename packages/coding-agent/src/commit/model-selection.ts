@@ -12,7 +12,6 @@ import {
 import { CHAT_MODEL_ROLE_IDS } from "../config/model-roles";
 import type { Settings } from "../config/settings";
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
-import MODEL_PRIO from "../priority.json" with { type: "json" };
 import { concreteThinkingLevel } from "@tau/tau-tui/thinking";
 
 export interface ResolvedCommitModel {

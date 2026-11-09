@@ -8,7 +8,6 @@ import type { AssistantMessage } from "@tau/tau-ai";
 import * as ai from "@tau/tau-ai";
 import { getBundledModel } from "@tau/tau-catalog/models";
 import type { ModelRegistry } from "tau/config/model-registry";
-import type { Settings } from "tau/config/settings";
 import type { AgentSession } from "tau/session/agent-session";
 import { buildSharpshooterEnvelope, maybeStartSharpshooterExtraction } from "tau/sharpshooter/extract";
 import { listSharpshooterDeltas } from "tau/sharpshooter/queue";

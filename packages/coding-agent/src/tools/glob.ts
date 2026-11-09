@@ -1,4 +1,3 @@
-import { join } from "node:path";
 import type { GlobToolDetails } from "@tau/tau-tui/tools/glob";
 import * as fs from "node:fs";
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
@@ -8,7 +7,6 @@ import type { AgentTool, AgentToolContext, AgentToolResult, AgentToolUpdateCallb
 import * as natives from "@tau/tau-natives";
 import { formatGroupedPaths, hasFsCode, isEnoent, prompt, untilAborted } from "@tau/tau-utils";
 import { InternalUrlRouter } from "../internal-urls";
-import { splitMemoryGlobPattern } from "../internal-urls/memory-protocol";
 import globDescription from "../prompts/tools/glob.md" with { type: "text" };
 import { truncateHead } from "@tau/tau-tui/tools/streaming-output";
 import { sessionDelegationBias } from "../task/prompt-policy";

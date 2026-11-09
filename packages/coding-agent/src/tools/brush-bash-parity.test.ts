@@ -13,7 +13,6 @@
  */
 import { describe, expect, test } from "bun:test";
 import { executeShell } from "@tau/tau-natives";
-import { execFileSync } from "node:child_process";
 
 async function brushRun(command: string): Promise<string> {
 	let out = "";

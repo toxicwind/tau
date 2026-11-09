@@ -54,7 +54,7 @@ async function fetchUpstreamDTS(lock: Lock): Promise<string> {
 	const localPath = `/home/toxic/pens/estate/config/tau/plugins/node_modules/@${lock.repo}/dist/index.d.ts`;
 	try {
 		return await readFile(localPath, "utf-8");
-	} catch (localErr) {
+	} catch  {
 		// If local file fails, try the remote fetch
 		const url = `https://raw.githubusercontent.com/${lock.repo}/${lock.sha}/dist/index.d.ts`;
 		const res = await fetch(url);

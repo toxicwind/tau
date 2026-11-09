@@ -1,13 +1,10 @@
 import { describe, expect, it } from "bun:test";
 // refused_by: merge_ladder_exhausted · collision: `import * as Beam from "@oh-my-pi/pi-mnemopi/core/beam";` +1 more
-import * as Beam from "@tau/tau-mnemotau/core/beam";
 import {
 	explainRecallDiagnostics,
 	RECALL_TIERS,
 	RecallDiagnostics,
-	resetRecallDiagnostics,
 } from "@tau/tau-mnemotau/core/recall-diagnostics";
-import * as Db from "@tau/tau-mnemotau/db";
 
 describe("recall diagnostics counters", () => {
 	it("starts with canonical tiers and zeroed JSON-serializable snapshot", () => {

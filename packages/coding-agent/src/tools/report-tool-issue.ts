@@ -1,4 +1,3 @@
-import { join } from "node:path";
 /**
  * report_issue — automated QA backend for tracking unexpected tool behavior.
  *

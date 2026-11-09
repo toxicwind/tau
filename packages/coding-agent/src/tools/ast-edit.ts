@@ -1,7 +1,5 @@
 // refused_by: merge_ladder_exhausted · collision: `import type { AgentTool, AgentToolContext, AgentToolResult, Age…` +2 more
-import { join } from "node:path";
 import type { AstEditToolDetails } from "@tau/tau-tui/tools/ast-edit";
-import * as path from "node:path";
 import { type } from "@tau/tautype";
 import type { AgentTool, AgentToolContext, AgentToolResult, AgentToolUpdateCallback } from "@tau/tau-agent-core";
 import type { ToolExample } from "@tau/tau-ai";
@@ -23,7 +21,7 @@ import { parseReadUrlTarget } from "./fetch";
 import { createFileRecorder, formatResultPath } from "./file-recorder";
 import { formatGroupedFiles } from "@tau/tau-tui/tools/grouped-file-output";
 
-import { isInternalUrlPath, resolveToolSearchScope } from "./path-utils";
+import { resolveToolSearchScope } from "./path-utils";
 import { capParseErrors, formatCodeFrameLine, formatCount, formatParseErrors } from "@tau/tau-tui/render/render-utils";
 import { PREVIEW_PENDING_NOTICE, queueResolveHandler } from "./resolve";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";

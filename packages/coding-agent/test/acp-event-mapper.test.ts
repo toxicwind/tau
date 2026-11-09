@@ -25,7 +25,7 @@ import {
 } from "tau/modes/acp/acp-event-mapper";
 import type { AgentSession, AgentSessionEvent } from "tau/session/agent-session";
 import { SessionManager } from "tau/session/session-manager";
-import { expectAcpStructure, expectAcpStructureRejects } from "./helpers/acp-schema";
+import { expectAcpStructure } from "./helpers/acp-schema";
 
 function makeAssistantMessage(text: string) {
 	return {

@@ -9,7 +9,7 @@ import {
 	URL_PATHS,
 // refused_by: merge_ladder_exhausted · collision: `import type { Api, Model } from "@oh-my-pi/pi-catalog/types";` +1 more
 } from "@tau/tau-catalog/wire/codex";
-import { parseImageMetadata, readSseJson, USER_AGENT } from "@tau/tau-utils";
+import { readSseJson, USER_AGENT } from "@tau/tau-utils";
 import { withAuth } from "../auth-retry";
 import * as AIError from "../error";
 import { applySessionHeader } from "../providers/inference-headers";

@@ -10,7 +10,7 @@ import {
 	nextActionableTask,
 } from "/home/toxic/pens/olympus/products/tau/packages/coding-agent/src/tools/todo.ts";
 
-import type { TodoPhase as Phase, TodoStatus } from "@tau/tau-tui/tools/todo";
+import type { TodoPhase as Phase } from "@tau/tau-tui/tools/todo";
 
 function init(items: string[], phase = "Tasks"): Phase[] {
 	return applyOpsToPhases([], [{ op: "init", list: [{ phase, items }] }]).phases;
@@ -173,7 +173,7 @@ describe("todo complex: worked-ahead pointer", () => {
 
 describe("todo complex: dedupe and batch atomicity", () => {
 	test("append duplicate across phases is fully rejected (atomic)", () => {
-		let r = applyOpsToPhases(init(["a"]), [{ op: "append", phase: "Tasks", items: ["a", "b"] }] as never);
+		const r = applyOpsToPhases(init(["a"]), [{ op: "append", phase: "Tasks", items: ["a", "b"] }] as never);
 		expect(r.errors.some(e => e.includes("already exists"))).toBe(true);
 		expect(r.phases[0]!.tasks.map(t => t.content)).toEqual(["a"]);
 	});

@@ -1,7 +1,6 @@
 import { describe, expect, it } from "bun:test";
 // refused_by: merge_ladder_exhausted · collision: `} from "@oh-my-pi/pi-catalog/provider-models/openai-compat";`
 import {
-	KIMI_K27_CODE_RECOMMENDED_MAX_TOKENS,
 	veniceModelManagerOptions,
 } from "@tau/tau-catalog/provider-models/openai-compat";
 import type { FetchImpl } from "@tau/tau-catalog/types";

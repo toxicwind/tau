@@ -4,7 +4,7 @@ import * as os from "node:os";
 import * as path from "node:path";
 // refused_by: merge_ladder_exhausted · collision: `import { type AuthCredentialStore, AuthStorage, SqliteAuthCrede…`
 import { withOAuthAccess } from "@tau/tau-ai/auth-retry";
-import { type AuthCredentialStore, AuthStorage, SqliteAuthCredentialStore } from "@tau/tau-ai/auth-storage";
+import { AuthStorage, SqliteAuthCredentialStore } from "@tau/tau-ai/auth-storage";
 import * as oauthUtils from "@tau/tau-ai/registry/oauth";
 
 const PROVIDER = "unit-oauth-select";

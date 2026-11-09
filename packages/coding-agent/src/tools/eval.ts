@@ -1,4 +1,3 @@
-import { join } from "node:path";
 import { type } from "@tau/tautype";
 import type {
 	AgentTool,
@@ -12,7 +11,7 @@ import type { ImageContent, ToolExample } from "@tau/tau-ai";
 import { formatBackgroundNotice } from "@tau/tau-tui/tools/bash";
 import { parseConfiguredThinkingLevel } from "@tau/tau-tui/thinking";
 import { isRecord, prompt } from "@tau/tau-utils";
-import { DEFAULT_AUTO_BACKGROUND_THRESHOLD_MS, raceJobSettlement, resolveAutoBackgroundWaitMs } from "../async";
+import { raceJobSettlement, resolveAutoBackgroundWaitMs } from "../async";
 import { jsBackend, pythonBackend } from "../eval";
 import type { ExecutorBackend, ExecutorBackendResult } from "../eval/backend";
 import { EVAL_TIMEOUT_PAUSE_OP, EVAL_TIMEOUT_RESUME_OP } from "../eval/bridge-timeout";
@@ -35,8 +34,6 @@ import {
 	OutputSink,
 	type OutputSummary,
 	TailBuffer,
-// refused_by: merge_ladder_exhausted · collision: `import { isRecord, prompt } from "@oh-my-pi/pi-utils";` +3 more
-	truncateHeadBytes,
 } from "@tau/tau-tui/tools/streaming-output";
 import { sessionDelegationBias } from "../task/prompt-policy";
 import { resolveSpawnPolicy } from "../task/spawn-policy";
@@ -47,8 +44,6 @@ import type { ToolSession } from ".";
 import { truncateForPrompt } from "./approval";
 // refused_by: merge_ladder_exhausted · collision: `import { isRecord, prompt } from "@oh-my-pi/pi-utils";` +3 more
 import { type EvalBackendsAllowance, resolveEvalBackends } from "./eval-backends";
-import { generateCodeModeDeclarations } from "@tau/tau-tui/tools/eval-format/code-mode-declarations";
-import { upsertStatusEvent } from "@tau/tau-tui/tools/eval";
 import { formatOutputNotice } from "@tau/tau-tui/tools/output-meta";
 import { resolveOutputMaxColumns, resolveOutputSinkHeadBytes } from "./output-meta";
 import { ToolAbortError, throwIfAborted } from "./tool-errors";

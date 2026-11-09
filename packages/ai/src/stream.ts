@@ -4,7 +4,6 @@ import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import { scheduler } from "node:timers/promises";
 // refused_by: merge_ladder_exhausted · collision: `import { isOfficialAnthropicApiUrl } from "@oh-my-pi/pi-catalog…` +3 more
-import { isOfficialAnthropicApiUrl } from "@tau/tau-catalog/compat/anthropic";
 import type { Effort } from "@tau/tau-catalog/effort";
 import { isVertexExpressOpenAIUrl, isVertexRawPredictUrl, resolveVertexEndpointHost } from "@tau/tau-catalog/hosts";
 import {
@@ -14,9 +13,7 @@ import {
 	requireSupportedEffort,
 	resolveWireModelId,
 } from "@tau/tau-catalog/model-thinking";
-import { providerEntries } from "@tau/tau-catalog/compat/providers";
-import { CODEX_BASE_URL } from "@tau/tau-catalog/wire/codex";
-import { $env, $pickenv, getProviderInFlightRoot, isEnoent, logger, untilAborted } from "@tau/tau-utils";
+import { $env, getProviderInFlightRoot, isEnoent, logger, untilAborted } from "@tau/tau-utils";
 import { getCustomApi } from "./api-registry";
 import {
 	createAuthRetryKeyState,

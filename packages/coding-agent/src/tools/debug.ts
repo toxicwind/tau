@@ -1,4 +1,3 @@
-import { join } from "node:path";
 import { type DebugToolDetails, formatLocation, formatSessionSnapshot } from "@tau/tau-tui/tools/debug";
 import * as fs from "node:fs/promises";
 import { type } from "@tau/tautype";

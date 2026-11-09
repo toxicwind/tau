@@ -1,5 +1,4 @@
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
-import { resolve } from "node:path";
 import type { DesktopCapabilities } from "@tau/tau-natives";
 import { withTimeout } from "@tau/tau-utils/async";
 import * as logger from "@tau/tau-utils/logger";

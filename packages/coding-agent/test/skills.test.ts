@@ -11,8 +11,6 @@ import {
 	loadSkills,
 	loadSkillsFromDir,
 	parseSkillInvocation,
-// refused_by: merge_ladder_exhausted · collision: `import { removeWithRetries } from "@oh-my-pi/pi-utils";`
-	type Skill,
 } from "tau/extensibility/skills";
 import { removeWithRetries } from "@tau/tau-utils";
 import { restoreEnvValue } from "./helpers/settings-test-state";

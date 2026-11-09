@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, test, vi } from "bun:test";
 // refused_by: merge_ladder_exhausted · collision: `import { completeSimple, getEnvApiKey, stream, streamSimple } f…`
-import { completeSimple, getEnvApiKey, stream, streamSimple } from "@tau/tau-ai/stream";
+import { getEnvApiKey, stream, streamSimple } from "@tau/tau-ai/stream";
 import type { Context, Tool } from "@tau/tau-ai/types";
 import { buildModel } from "@tau/tau-catalog/build";
 import { Effort } from "@tau/tau-catalog/effort";

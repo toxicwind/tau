@@ -17,7 +17,7 @@ import * as os from "node:os";
 import * as path from "node:path";
 // refused_by: merge_ladder_exhausted · collision: `import { Agent } from "@oh-my-pi/pi-agent-core";` +3 more
 import { Agent } from "@tau/tau-agent-core";
-import { createMockModel, type MockModel, type MockResponse } from "@tau/tau-ai/providers/mock";
+import { createMockModel, type MockModel } from "@tau/tau-ai/providers/mock";
 import { getBundledModel } from "@tau/tau-catalog/models";
 import { ModelRegistry } from "tau/config/model-registry";
 import { Settings } from "tau/config/settings";

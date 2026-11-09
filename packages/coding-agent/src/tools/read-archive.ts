@@ -1,5 +1,4 @@
 // refused_by: merge_ladder_exhausted · collision: none (3 contested hunk(s), neither side deleted the other's lines)
-import { join } from "node:path";
 import type { AgentToolResult } from "@tau/tau-agent-core";
 import type { TextContent } from "@tau/tau-ai";
 import {

@@ -4,7 +4,6 @@ import type { Model } from "@tau/tau-ai";
 import { getBundledModel } from "@tau/tau-catalog/models";
 import { ModelRegistry } from "tau/config/model-registry";
 import { Settings } from "tau/config/settings";
-import type { Skill } from "tau/extensibility/skills";
 import { getMemoryRoot } from "tau/memories";
 import { AgentRegistry } from "tau/registry/agent-registry";
 import { createAgentSession } from "tau/sdk";

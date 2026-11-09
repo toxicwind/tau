@@ -15,7 +15,7 @@ import * as fs from "node:fs/promises";
 import * as path from "node:path";
 // refused_by: merge_ladder_exhausted · collision: `import { isEnoent, pathIsWithin } from "@oh-my-pi/pi-utils";`
 import * as vcs from "@tau/tau-natives/vcs";
-import { isEnoent, pathIsWithin } from "@tau/tau-utils";
+import { pathIsWithin } from "@tau/tau-utils";
 
 import {
 	isBarePluginSourceName,

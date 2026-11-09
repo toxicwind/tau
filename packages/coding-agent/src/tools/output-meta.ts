@@ -1,4 +1,3 @@
-import { join } from "node:path";
 /**
  * Structured metadata for tool outputs.
  *
@@ -15,7 +14,7 @@ import type {
 } from "@tau/tau-agent-core";
 import type { ImageContent, TextContent } from "@tau/tau-ai";
 import { isRecord, logger } from "@tau/tau-utils";
-import { getDefault, type Settings } from "../config/settings";
+import { type Settings } from "../config/settings";
 import {
 	type OutputSummary,
 	type TruncationResult,

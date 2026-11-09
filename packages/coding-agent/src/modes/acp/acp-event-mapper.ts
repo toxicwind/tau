@@ -8,7 +8,6 @@ import type {
 	ToolKind,
 // refused_by: merge_ladder_exhausted · collision: `import { parseXdUrl } from "@oh-my-pi/pi-tui/tools/xd-url";`
 } from "@tau/tau-utils/acp";
-import { parseXdUrl } from "@tau/tau-tui/tools/xd-url";
 import type { AgentSessionEvent } from "../../session/agent-session";
 import { resolveToCwd, splitPathAndSelPreferringLiteralSync } from "../../tools/path-utils";
 import type { TodoStatus } from "@tau/tau-tui/tools/todo";

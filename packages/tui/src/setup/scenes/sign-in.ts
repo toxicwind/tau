@@ -2,7 +2,7 @@
 import type { AuthStorage } from "@tau/tau-ai";
 import { PASTE_CODE_LOGIN_PROVIDERS } from "@tau/tau-ai";
 import type { OAuthPrompt, OAuthProvider } from "@tau/tau-ai/oauth/types";
-import { type Component, type Focusable, Container } from "../../tui";
+import { Container } from "../../tui";
 import { Spacer } from "../../components/spacer";
 import { Text } from "../../components/text";
 import { WizardStep } from "../../components/wizard-step";

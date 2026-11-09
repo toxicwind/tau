@@ -24,7 +24,7 @@ import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 import { cfgAutolearnEnabled } from "@oh-my-pi/pi-coding-agent/autolearn/settings";
 import { cfgHindsightApiUrl, cfgHindsightMentalModelsEnabled } from "@oh-my-pi/pi-coding-agent/hindsight/settings";
 import { cfgMemoryBackend } from "@oh-my-pi/pi-coding-agent/memory-backend/settings";
-import { cfgMnemopiBank, cfgMnemopiRecallLimit, cfgMnemopiScoping } from "@oh-my-pi/pi-coding-agent/mnemopi/settings";
+import { cfgMnemopiRecallLimit } from "@oh-my-pi/pi-coding-agent/mnemopi/settings";
 
 function createTool(name: string): AgentTool {
 	return {

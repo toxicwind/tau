@@ -20,7 +20,6 @@ import {
 	$flag,
 	fetchWithRetry,
 	logger,
-	parseStreamingJson,
 	parseStreamingJsonThrottled,
 	USER_AGENT,
 } from "@tau/tau-utils";

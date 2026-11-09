@@ -794,6 +794,8 @@ function resolveWorktreeBase(value: string | undefined): string | undefined {
 	else if (p.startsWith("~/") || p.startsWith("~\\")) p = os.homedir() + p.slice(1);
 	return path.isAbsolute(p) ? path.normalize(p) : undefined;
 }
+const resolveAbsoluteDir = resolveWorktreeBase;
+export { resolveAbsoluteDir };
 
 let worktreesDirOverride: string | undefined;
 
@@ -809,7 +811,7 @@ let worktreesDirOverride: string | undefined;
  * `undefined`.
  */
 export function setWorktreesDir(dir: string | undefined): string | undefined {
-	worktreesDirOverride = resolveAbsoluteDir(dir);
+	worktreesDirOverride = resolveWorktreeBase(dir);
 	return worktreesDirOverride;
 }
 
@@ -821,7 +823,6 @@ export function setWorktreesDir(dir: string | undefined): string | undefined {
  * ignored and resolution falls through.
  */
 export function getWorktreesDir(): string {
-// refused_by: statement_fold · collision: `return resolveWorktreeBase(process.env.OMP_WORKTREE_DIR) ?? wor…`
 	return resolveWorktreeBase(process.env.TAU_WORKTREE_DIR) ?? worktreesDirOverride ?? dirs.rootSubdir("wt", "data");
 }
 
@@ -957,7 +958,6 @@ export function getNativeGrammarsDir(): string {
 	return path.join(getNativesDir(), "grammars");
 }
 
-// refused_by: statement_fold · collision: `/** Get the natives directory (~/.omp/natives). */`
 /** Get the natives directory (~/.tau/natives). */
 export function getNativesDir(): string {
 	return resolveAbsoluteDir(process.env.PI_NATIVES_DIR) ?? dirs.rootSubdir("natives", "cache");

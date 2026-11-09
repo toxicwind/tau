@@ -1,5 +1,4 @@
 // refused_by: merge_ladder_exhausted · collision: `import { toNumber } from "@oh-my-pi/pi-catalog/utils";`
-import { scheduler } from "node:timers/promises";
 import { classifyModel } from "@tau/tau-catalog/compat/taxonomy";
 import { toNumber } from "@tau/tau-catalog/utils";
 import * as AIError from "../error";

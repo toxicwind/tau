@@ -22,7 +22,6 @@ import type { Tool, ToolSession } from "tau/tools";
 import { ContextNotesTool, NewContextTool } from "tau/tools/context-notes";
 import { BUILTIN_TOOL_NAMES } from "tau/tools/builtin-names";
 import { GrepTool } from "tau/tools/grep";
-import { EvalTool } from "tau/tools/eval";
 import { ReadTool } from "tau/tools/read";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 

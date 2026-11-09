@@ -14,7 +14,7 @@ const tryPort = async (p:number) => {
       }
     });
     console.log(`listening https://awrawr-pc:${s.port}/`);
-  } catch(e){
+  } catch{
     console.log(`port ${p} in use, trying ${p+1}`); await tryPort(p+1);
   }
 };

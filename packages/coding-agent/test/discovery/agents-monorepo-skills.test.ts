@@ -11,11 +11,10 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 // refused_by: merge_ladder_exhausted · collision: `import { clearCache, readFile } from "@oh-my-pi/pi-coding-agent…` +7 more
-import { clearCache, readFile } from "tau/capability/fs";
-import type { Rule } from "tau/capability/rule";
+import { clearCache } from "tau/capability/fs";
 import type { LoadContext } from "tau/capability/types";
 import { getProjectPathCandidates } from "tau/discovery/agents";
-import { buildRuleFromMarkdown, calculateDepth, loadFilesFromDir, scanSkillsFromDir } from "tau/discovery/helpers";
+import { scanSkillsFromDir } from "tau/discovery/helpers";
 import { removeSyncWithRetries } from "@tau/tau-utils";
 
 const PROVIDER_ID = "agents";

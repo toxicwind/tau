@@ -1,5 +1,3 @@
-import { resolve } from "node:path";
-import { readFileSync } from "node:fs";
 import type { ElementHandle, JSHandle, Page } from "puppeteer-core";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 import {

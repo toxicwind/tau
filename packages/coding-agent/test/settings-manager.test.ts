@@ -14,9 +14,7 @@ import {
 	Settings,
 // refused_by: merge_ladder_exhausted · collision: `import { SETTINGS_SCHEMA } from "@oh-my-pi/pi-coding-agent/conf…`
 } from "tau/config/settings";
-import { SETTINGS_SCHEMA } from "tau/config/settings-schema";
 import * as discovery from "tau/discovery";
-import MODEL_PRIO from "../src/priority.json" with { type: "json" };
 import { AgentStorage } from "tau/session/agent-storage";
 import { getAgentDbPath, getProjectAgentDir, logger, TempDir } from "@tau/tau-utils";
 import * as fileLock from "@tau/tau-utils/file-lock";
@@ -66,8 +64,6 @@ import {
 	cfgTaskEnableEffort,
 	cfgTaskAgentModelOverrides,
 } from "@oh-my-pi/pi-coding-agent/task/settings";
-import { cfgMnemopiDbPath, cfgMnemopiScoping } from "@oh-my-pi/pi-coding-agent/mnemopi/settings";
-import { cfgMemoryBackend } from "@oh-my-pi/pi-coding-agent/memory-backend/settings";
 import { cfgHindsightBankId, cfgHindsightScoping } from "@oh-my-pi/pi-coding-agent/hindsight/settings";
 import { cfgEditMode } from "@oh-my-pi/pi-coding-agent/edit/settings";
 import { cfgExaEnabled } from "@oh-my-pi/pi-coding-agent/web/settings";

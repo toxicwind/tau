@@ -2,7 +2,7 @@
 import type { AgentMessage } from "@tau/tau-agent-core";
 import type { AssistantMessage, ImageContent, Usage } from "@tau/tau-ai";
 import { getStreamingPartialJson } from "@tau/tau-ai/utils/block-symbols";
-import { type Component, Spacer, Text, TruncatedText } from "@tau/tau-tui";
+import { type Component, Text } from "@tau/tau-tui";
 import { logger } from "@tau/tau-utils";
 import type { AdvisorMessageDetails } from "../../advisor";
 import { InternalUrlRouter } from "../../internal-urls";
@@ -34,7 +34,7 @@ import { StrippedToolCallsPlaceholder } from "@tau/tau-tui/chat/stripped-tool-ca
 import { textContent } from "@tau/tau-tui/chat/transcript-entry";
 import { ToolActivityContainer } from "@tau/tau-tui/chrome/tool-activity";
 import { ToolExecutionComponent, type ToolExecutionHandle, toolRenderName } from "@tau/tau-tui/chat/tool-execution";
-import { TranscriptBlock, TranscriptContainer } from "@tau/tau-tui/chrome/transcript-container";
+import { TranscriptContainer } from "@tau/tau-tui/chrome/transcript-container";
 import { createUsageRowBlock, turnElapsedMs } from "@tau/tau-tui/overlays/usage-row";
 import { UserMessageComponent } from "@tau/tau-tui/chat/user-message";
 import { decodeStreamedToolArgs, streamingStringKeysForTool } from "../../modes/controllers/tool-args-reveal";
@@ -53,7 +53,6 @@ import {
 } from "../../session/messages";
 import type { SessionContext, StrippedToolCallsMarker } from "../../session/session-context";
 // refused_by: merge_ladder_exhausted · collision: `import { type Component, Spacer, Text, TruncatedText } from "@o…` +5 more
-import { replaceTabs } from "@tau/tau-tui/render/render-utils";
 import { buildSkillCommandPrompt, invokeSkillCommandFromText, isKnownSkillCommand } from "../skill-command";
 import {
 	createAssistantMessageComponent,

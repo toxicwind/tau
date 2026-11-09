@@ -9,13 +9,11 @@ import {
 } from "@tau/tau-mnemotau/core/llm-backends";
 import {
 	buildHostPrompt,
-	callLocalLlm,
 	callRemoteLlm,
 	chunkMemoriesByBudget,
 	cleanOutput,
 	complete,
 	llmAvailable,
-	localGgufAvailable,
 	summarizeMemories,
 } from "@tau/tau-mnemotau/core/local-llm";
 import { Mnemotau } from "@tau/tau-mnemotau/core/memory";

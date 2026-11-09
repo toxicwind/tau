@@ -5,33 +5,7 @@ import * as path from "node:path";
 import type { MnemotauOptions } from "@tau/tau-mnemotau";
 import { getMemoriesDir, logger } from "@tau/tau-utils";
 import type { Settings } from "../config/settings";
-import { expandTilde } from "../tools/path-utils";
 
-import {
-	cfgMnemopiAutoRecall,
-	cfgMnemopiAutoRetain,
-	cfgMnemopiBank,
-	cfgMnemopiDbPath,
-	cfgMnemopiDebug,
-	cfgMnemopiEmbeddingApiKey,
-	cfgMnemopiEmbeddingApiUrl,
-	cfgMnemopiEmbeddingModel,
-	cfgMnemopiEmbeddingVariant,
-	cfgMnemopiEnhancedRecall,
-	cfgMnemopiInjectionTokenLimit,
-	cfgMnemopiLlmApiKey,
-	cfgMnemopiLlmBaseUrl,
-	cfgMnemopiLlmMode,
-	cfgMnemopiLlmModel,
-	cfgMnemopiNoEmbeddings,
-	cfgMnemopiPolyphonicRecall,
-	cfgMnemopiProactiveLinking,
-	cfgMnemopiRecallContextTurns,
-	cfgMnemopiRecallLimit,
-	cfgMnemopiRecallMaxQueryChars,
-	cfgMnemopiRetainEveryNTurns,
-	cfgMnemopiScoping,
-} from "./settings";
 
 export type MnemotauLlmMode = "none" | "smol" | "remote";
 

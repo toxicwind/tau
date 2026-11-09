@@ -1,6 +1,6 @@
 import * as path from "node:path";
 // refused_by: merge_ladder_exhausted · collision: `import { DEFAULT_STREAM_URL, STREAM_TITLE_MAX } from "@oh-my-pi…`
-import { DEFAULT_STREAM_URL, STREAM_TITLE_MAX } from "@tau/tau-wire";
+import { STREAM_TITLE_MAX } from "@tau/tau-wire";
 import { CliUsageError, Command, Flags } from "@tau/tau-utils/cli";
 import { streamHelp as commandHelp } from "../cli/command-help";
 import { Settings } from "../config/settings";

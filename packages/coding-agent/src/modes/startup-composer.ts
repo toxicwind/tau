@@ -1,10 +1,6 @@
 // refused_by: merge_ladder_exhausted · collision: `import * as logger from "@oh-my-pi/pi-utils/logger";` +2 more
-import { scheduler } from "node:timers/promises";
 import type { Terminal } from "@tau/tau-tui";
-import * as logger from "@tau/tau-utils/logger";
-import type { LspServerInfo, RecentSession } from "@tau/tau-tui/prompt/welcome";
 import {
-	COMPOSER_DEFAULTS,
 	Composer,
 	type ComposerPreferences,
 	type ComposerWelcomeUpdate,
@@ -12,9 +8,6 @@ import {
 import {
 	type ComposerCache,
 	type ComposerThemePreferences,
-	readComposerStartupCache,
-	writeComposerLspCache,
-	writeComposerRecentSessionsCache,
 	writeComposerUiCache,
 } from "@tau/tau-tui/prompt/composer-cache";
 import { setMagicKeywords } from "@tau/tau-tui/prompt/magic-keywords";

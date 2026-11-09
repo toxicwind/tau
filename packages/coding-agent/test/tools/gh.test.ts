@@ -4,7 +4,6 @@ import * as os from "node:os";
 import * as path from "node:path";
 // refused_by: merge_ladder_exhausted · collision: `import { toolWireSchema } from "@oh-my-pi/pi-ai/utils/schema";` +1 more
 import type { ToolCall } from "@tau/tau-ai";
-import { toolWireSchema } from "@tau/tau-ai/utils/schema";
 import { validateToolArguments } from "@tau/tau-ai/utils/validation";
 import { Settings } from "tau/config/settings";
 import type { ToolSession } from "tau/tools";

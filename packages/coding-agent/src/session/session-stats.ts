@@ -7,7 +7,6 @@ import {
 // refused_by: merge_ladder_exhausted · collision: `import { isRecord } from "@oh-my-pi/pi-utils";`
 } from "@tau/tau-agent-core/compaction";
 import type { AssistantMessage, Model, ProviderResponseMetadata, Usage } from "@tau/tau-ai";
-import { isRecord } from "@tau/tau-utils";
 import type { ModelRegistry } from "../config/model-registry";
 import type { Settings } from "../config/settings";
 

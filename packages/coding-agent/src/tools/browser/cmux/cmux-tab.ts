@@ -1,24 +1,12 @@
-import { join } from "node:path";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 // refused_by: merge_ladder_exhausted · collision: `import { logger, postmortem, Snowflake, untilAborted } from "@o…`
-import { logger, postmortem, Snowflake, untilAborted } from "@tau/tau-utils";
-import { JsRuntime, type RuntimeHooks } from "../../../eval/js/shared/runtime";
-import { callSessionTool } from "../../../eval/js/tool-bridge";
+import { Snowflake, untilAborted } from "@tau/tau-utils";
+import { JsRuntime } from "../../../eval/js/shared/runtime";
 import { formatScreenshot, resizeImage } from "../../../utils/image-resize";
 import { resolveToCwd } from "../../path-utils";
-import {
-	bindRunFacade,
-	isBrowserRunOwnedRejection,
-	markBrowserRunRejection,
-	observeBrowserRunPromise,
-	resolvePredicateTimeout,
-	type WaitPredicateOptions,
-	waitForRun,
-	withBrowserPromiseCombinatorTracking,
-} from "../../run-scope";
-import { ToolAbortError, throwIfAborted } from "../../tool-errors";
+import { throwIfAborted } from "../../tool-errors";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 import {
 	type BrowserCaptureResult,

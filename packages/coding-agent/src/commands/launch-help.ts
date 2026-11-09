@@ -1,7 +1,6 @@
 import { Args, type CommandMetadata, Flags } from "@tau/tau-utils/cli";
 import { APP_NAME } from "@tau/tau-utils/dirs";
 import { CLI_THINKING_LEVELS } from "@tau/tau-tui/thinking";
-import { formatKeyHint } from "@oh-my-pi/pi-tui/key-hint-format";
 import { SERVICE_TIER_OPENAI_VALUES } from "../config/service-tier";
 
 export const launchHelp = {

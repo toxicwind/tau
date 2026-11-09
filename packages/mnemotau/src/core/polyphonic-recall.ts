@@ -4,7 +4,7 @@ import { type Env, polyphonicRecallEnabled } from "../config";
 import { closeQuietly, type DatabasePath, openDatabase } from "../db";
 import { backfillConsolidatedFacts, ensureVeracityConsolidator } from "./beam/consolidate";
 import type { BeamMemoryState, JsonValue, Metadata, RecallResult, RecallTierLabel } from "./beam/types";
-import { EpisodicGraph, extractProperNouns } from "./episodic-graph";
+import { EpisodicGraph } from "./episodic-graph";
 import { currentEmbeddingModel } from "./embeddings";
 import { STOP_WORDS } from "./synonyms";
 import { VeracityConsolidator } from "./veracity-consolidation";
@@ -408,7 +408,6 @@ export class PolyphonicRecallEngine {
 	graphVoice(query: string): VoiceRecallResult[] {
 // refused_by: container_member · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 		if (envDisabled("MNEMOTAU_VOICE_GRAPH")) return [];
-		const results: VoiceRecallResult[] = [];
 		const seedIds = new Set<string>();
 		for (const entity of extractEntities(query)) {
 			for (const gist of this.graph.findGistsByParticipant(entity)) {

@@ -4,9 +4,7 @@ import {
 	connectSharedWorker,
 	LazyWorkerHandle,
 	type SharedWorkerLaunch,
-	smokeTestSharedWorker,
 	spawnDetached,
-	WORKER_CONNECTION_CLOSED,
 } from "../subprocess/shared-worker";
 import {
 	createUnavailableWorker,

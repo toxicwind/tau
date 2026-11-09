@@ -10,7 +10,6 @@ import * as logger from "@tau/tau-utils/logger";
 import { peekFileEnds } from "@tau/tau-utils/peek-file";
 import { Snowflake } from "@tau/tau-utils/snowflake";
 import { toError } from "@tau/tau-utils/type-guards";
-import { isAssistantMessageLine } from "./session-entries";
 import { overlayTitleSlotContent, type SessionTitleUpdate, serializeTitleSlot } from "./session-title-slot";
 
 /** Shared base flags for the held transcript descriptor; callers add `O_APPEND` or `O_TRUNC`. */

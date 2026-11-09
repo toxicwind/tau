@@ -11,7 +11,7 @@
  *   heuristic Rule J cannot immediately re-trigger (preventing oscillation).
  */
 
-import type { RouterConfig, RouterTier, ScopedPin, ScopedPinSource } from "../types";
+import type { RouterConfig, RouterTier, ScopedPinSource } from "../types";
 import type { SessionScope } from "../state";
 
 /** Default pin timeout in milliseconds (5 minutes). */

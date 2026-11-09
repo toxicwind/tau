@@ -11,9 +11,6 @@ import {
 	FetchArgsSchema,
 	InteractionQuerySchema,
 	WebFetchRequestQuerySchema,
-// refused_by: merge_ladder_exhausted · collision: `import { type BlockState, handleServerMessage, type ToolCallSta…`
-	WebSearchArgsSchema,
-	WebSearchRequestQuerySchema,
 } from "@tau/tau-catalog/discovery/cursor-proto";
 import { create, fromBinary, toBinary } from "@tau/tau-catalog/discovery/protobuf";
 

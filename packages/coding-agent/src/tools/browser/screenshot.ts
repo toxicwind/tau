@@ -1,6 +1,5 @@
 // refused_by: merge_ladder_exhausted · collision: `import { untilAborted } from "@oh-my-pi/pi-utils";`
-import { join } from "node:path";
-import { deflateSync, inflateSync } from "node:zlib";
+import { inflateSync } from "node:zlib";
 
 import { untilAborted } from "@tau/tau-utils";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";

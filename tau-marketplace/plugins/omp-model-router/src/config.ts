@@ -4,7 +4,6 @@ import { getAgentDir } from "tau";
 import type { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
 import type {
 	AutoUpgradeConfig,
-	EmbargoConfig,
 	RouterConfig,
 	RouterProfile,
 	RoutedTierConfig,
@@ -93,15 +92,15 @@ export const mergeConfig = (base: RouterConfig, override: Partial<RouterConfig>)
 		mergedProfiles[name] = {
 			high: {
 				...(existing?.high ?? FALLBACK_CONFIG.profiles.auto.high),
-				...(nextProfile.high ?? {}),
+				...nextProfile.high,
 			},
 			medium: {
 				...(existing?.medium ?? FALLBACK_CONFIG.profiles.auto.medium),
-				...(nextProfile.medium ?? {}),
+				...nextProfile.medium,
 			},
 			low: {
 				...(existing?.low ?? FALLBACK_CONFIG.profiles.auto.low),
-				...(nextProfile.low ?? {}),
+				...nextProfile.low,
 			},
 		};
 	}

@@ -2,7 +2,6 @@ import type { AgentToolContext, ToolCallContext } from "@tau/tau-agent-core";
 import type { CustomToolContext } from "../extensibility/custom-tools/types";
 import type { ExtensionUIContext } from "../extensibility/extensions/types";
 import { trackUserWaits, type UserWaitTracker } from "../extensibility/extensions/user-wait";
-import type { CalledToolShaper } from "../spotlight";
 
 // refused_by: rename_vs_edit_guard · collision: none (both sides edited, nowhere the same lines)
 declare module "@tau/tau-agent-core" {

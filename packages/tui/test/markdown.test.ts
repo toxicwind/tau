@@ -7,8 +7,6 @@ import {
 	Markdown,
 	speculativeStreamingSource,
 	renderInlineMarkdown,
-// refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
-	urlTokenPossible,
 } from "@tau/tau-tui/components/markdown";
 import { setTerminalTextSizing, TERMINAL } from "@tau/tau-tui/terminal-capabilities";
 import { type Component, TUI } from "@tau/tau-tui/tui";

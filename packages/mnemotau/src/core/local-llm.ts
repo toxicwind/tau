@@ -11,7 +11,7 @@ import {
 import { ProviderHttpError } from "@tau/tau-ai/error";
 import { fetchWithRetry } from "@tau/tau-utils";
 import { type CompleteOptions, callHostLlm, getHostLlmBackend } from "./llm-backends";
-import { envFlag, envInt, envString } from "../util/env";
+import { envInt } from "../util/env";
 import {
 	getMnemotauRuntimeOptions,
 	isPiAiModel,

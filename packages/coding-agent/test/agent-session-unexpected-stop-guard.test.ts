@@ -5,7 +5,7 @@ import { Agent, type AgentMessage, type AgentTool } from "@tau/tau-agent-core";
 import { createMockModel, type MockModel, type MockResponse } from "@tau/tau-ai/providers/mock";
 import { getBundledModel } from "@tau/tau-catalog/models";
 import { ModelRegistry } from "tau/config/model-registry";
-import { type SettingPath, Settings } from "tau/config/settings";
+import { Settings } from "tau/config/settings";
 import { AgentSession } from "tau/session/agent-session";
 import { convertToLlm } from "tau/session/messages";
 import { SessionManager } from "tau/session/session-manager";

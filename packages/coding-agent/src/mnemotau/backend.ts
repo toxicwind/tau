@@ -11,7 +11,6 @@ import { logger } from "@tau/tau-utils";
 import type { ModelRegistry } from "../config/model-registry";
 import { roleCandidatePool } from "../config/model-roles";
 import { resolveRoleChain } from "../config/model-resolver";
-import { type JudgmentUsageLedger, journalJudgmentUsage } from "../judgment";
 import type {
 	MemoryBackend,
 	MemoryBackendSaveInput,
@@ -20,10 +19,8 @@ import type {
 	MemoryBackendStatus,
 	MemoryPromptPreparation,
 } from "../memory-backend/types";
-import { memoryToolRefs } from "../memory-backend/tool-names";
 import memoryConsolidationPrompt from "../prompts/system/memory-consolidation-system.md" with { type: "text" };
 import memoryExtractionPrompt from "../prompts/system/memory-extraction-system.md" with { type: "text" };
-import mnemopiInstructions from "../prompts/system/mnemopi-instructions.md" with { type: "text" };
 import type { AgentSession } from "../session/agent-session";
 import { tinyModelClient } from "../tiny/title-client";
 // refused_by: merge_ladder_exhausted · collision: `import { logger } from "@oh-my-pi/pi-utils";`
@@ -47,8 +44,6 @@ import {
 	setMnemotauSessionState,
 } from "./state";
 
-import { cfgMemoryBackend } from "../memory-backend/settings";
-import { cfgMnemopiInjectionTokenLimit } from "./settings";
 
 // `/diagnose` is the only user of this subpath; load it lazily alongside the
 // loaders in ./state to keep mnemotau off the CLI startup module graph.

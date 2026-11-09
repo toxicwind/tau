@@ -1,10 +1,8 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 // refused_by: merge_ladder_exhausted · collision: `import { $which, isEnoent } from "@oh-my-pi/pi-utils";` +1 more
-import { $which, isEnoent } from "@tau/tau-utils";
+import { $which } from "@tau/tau-utils";
 import { isSettingsInitialized, settings } from "../config/settings";
-import { getDefault } from "../config/settings-schema";
-import { isMarkdownPath } from "@tau/tau-tui/lang-from-path";
 import { parseInternalUrl } from "./parse";
 import type {
 	InternalResource,

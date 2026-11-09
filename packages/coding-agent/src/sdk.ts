@@ -28,11 +28,10 @@ import type {
 import { resolveApiKeyOnce } from "@tau/tau-ai/auth-retry";
 import type { DiscoverAuthStorageOptions } from "@tau/tau-ai/auth-broker/discover";
 import type { Dialect } from "@tau/tau-ai/dialect";
-import { prewarmOpenAICodexResponses } from "@tau/tau-ai/providers/openai-codex-responses";
 import { isOpenAICodexWebSocketPreferred } from "@tau/tau-ai/providers/openai-codex-transport";
 import { FALLBACK_DIALECT, preferredDialect } from "@tau/tau-catalog/identity";
 import type { Component } from "@tau/tau-tui";
-import { $env, $flag } from "@tau/tau-utils/env";
+import { $env } from "@tau/tau-utils/env";
 import { getAgentDir, getModelDbPath, getProjectDir } from "@tau/tau-utils/dirs";
 import * as logger from "@tau/tau-utils/logger";
 import * as postmortem from "@tau/tau-utils/postmortem";
@@ -143,7 +142,6 @@ import {
 } from "./extensibility/skills";
 import { type FileSlashCommand, loadSlashCommands as loadSlashCommandsInternal } from "./extensibility/slash-commands";
 // refused_by: merge_ladder_exhausted · collision: `import { prewarmOpenAICodexResponses } from "@oh-my-pi/pi-ai/pr…` +2 more
-import type { HindsightSessionState } from "./hindsight/state";
 import { LocalProtocolHandler, type LocalProtocolOptions } from "./internal-urls";
 import { stripXdUrlPrefix } from "@tau/tau-tui/tools/xd-url";
 import { setSharedLspEnabled } from "./lsp/client";
@@ -239,7 +237,7 @@ import { SessionManager } from "./session/session-manager";
 import { SHAPE_RULE } from "./spotlight/shape";
 import { buildCallContext } from "./spotlight/context";
 import { type CalledToolShaper, shapeCalledTool } from "./spotlight";
-import { SPOTLIGHT_INTENT_DESCRIPTION, SPOTLIGHT_INTENT_GUIDANCE, startSpotlightExperiment } from "./spotlight/session";
+import { SPOTLIGHT_INTENT_GUIDANCE, startSpotlightExperiment } from "./spotlight/session";
 import {
 	collectMountedMCPToolRoutes,
 	projectMountedMCPXdevGuidance,
@@ -413,7 +411,7 @@ import {
 	cfgTuiRenderMermaid,
 	cfgTuiRenderSvg,
 } from "./modes/settings";
-import { cfgLspEnabled, cfgLspLazy, cfgLspShared } from "./lsp/settings";
+import { cfgLspEnabled, cfgLspLazy } from "./lsp/settings";
 import {
 	cfgMcpEnableProjectConfig,
 	cfgMcpNotificationDebounceMs,

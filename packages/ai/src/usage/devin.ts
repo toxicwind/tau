@@ -22,7 +22,7 @@ import {
 // refused_by: merge_ladder_exhausted · collision: `import { DEVIN_DEFAULT_BASE_URL, devinCliMetadata, normalizeDev…`
 } from "@tau/tau-catalog/discovery/devin-proto";
 import { create, toBinary } from "@tau/tau-catalog/discovery/protobuf";
-import { DEVIN_DEFAULT_BASE_URL, devinCliMetadata, normalizeDevinSessionToken } from "@tau/tau-catalog/wire/devin";
+import { DEVIN_DEFAULT_BASE_URL, devinCliMetadata } from "@tau/tau-catalog/wire/devin";
 import { decodeDevinUnaryMessage } from "@tau/tau-catalog/wire/devin-proto";
 import type {
 	UsageAmount,

@@ -3,8 +3,6 @@ import { type } from "@tau/tautype";
 import {
 	buildTransformedCodexRequestBody,
 	convertCodexResponsesMessages,
-// refused_by: merge_ladder_exhausted · collision: `import type { Context, Model, ModelSpec, ProviderSessionState, …` +1 more
-	streamOpenAICodexResponses,
 } from "@tau/tau-ai/providers/openai-codex-responses";
 import { type OpenAIResponsesOptions, streamOpenAIResponses } from "@tau/tau-ai/providers/openai-responses";
 import { buildResponsesInput } from "@tau/tau-ai/providers/openai-shared";

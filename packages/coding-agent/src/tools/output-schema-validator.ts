@@ -1,4 +1,3 @@
-import { join } from "node:path";
 /**
  * Shared output-schema validation for subagent yield + executor finalization.
  *

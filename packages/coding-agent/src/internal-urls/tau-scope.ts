@@ -8,7 +8,6 @@
  * the scope grammar lives here once instead of being re-derived per caller.
  */
 import * as path from "node:path";
-import { getDocFilenames, getEmbeddedDoc } from "./docs-index";
 import type { InternalUrl, ResolveContext } from "./types";
 
 /** `tau://` prefix, case-insensitive: addresses harness docs instead of the filesystem. */

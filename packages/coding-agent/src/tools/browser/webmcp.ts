@@ -1,4 +1,3 @@
-import { join } from "node:path";
 import { truncateHeadBytes } from "@tau/tau-tui/tools/streaming-output";
 import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
 import { untilAborted } from "@oh-my-pi/pi-utils";

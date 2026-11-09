@@ -1,7 +1,5 @@
 // refused_by: merge_ladder_exhausted · collision: `import { type } from "@oh-my-pi/omptype";` +4 more
 import { beforeAll, describe, expect, it, spyOn, vi } from "bun:test";
-import { stripVTControlCharacters } from "node:util";
-import { type } from "@tau/tautype";
 import type { AgentToolContext } from "@tau/tau-agent-core";
 import { Settings } from "tau/config/settings";
 import type {
@@ -9,7 +7,7 @@ import type {
 	ExtensionUIDialogOptions,
 	ExtensionUISelectItem,
 } from "tau/extensibility/extensions";
-import { getThemeByName, initTheme, theme, type Theme } from "@tau/tau-tui/theme";
+import { initTheme } from "@tau/tau-tui/theme";
 import type { ToolSession } from "tau/tools";
 import { AskTool } from "tau/tools/ask";
 import { askToolRenderer } from "@tau/tau-tui/tools/ask";

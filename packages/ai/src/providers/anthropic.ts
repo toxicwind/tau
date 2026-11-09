@@ -1,7 +1,4 @@
 // refused_by: merge_ladder_exhausted · collision: `import { isAnthropicSigningProxyUrl, isOfficialAnthropicApiUrl …` +1 more
-import * as fs from "node:fs";
-import { scheduler } from "node:timers/promises";
-import * as tls from "node:tls";
 import { isAnthropicSigningProxyUrl, isOfficialAnthropicApiUrl } from "@tau/tau-catalog/compat/anthropic";
 import { hostMatchesUrl, isVertexRawPredictUrl } from "@tau/tau-catalog/hosts";
 import { mapEffortToAnthropicAdaptiveEffort } from "@tau/tau-catalog/model-thinking";
@@ -25,7 +22,6 @@ import { getEnvApiKey } from "../env-api-key";
 import { OUTPUT_FALLBACK_BUFFER } from "../stream";
 import { wrapFetchForRequestCompression } from "../utils/request-compression";
 import type {
-	AnthropicCompactionFiles,
 	AnthropicCompactionPayload,
 	AnthropicCompactionRequest,
 	AnthropicFallbackContent,

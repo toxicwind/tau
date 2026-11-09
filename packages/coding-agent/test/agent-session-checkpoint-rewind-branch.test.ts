@@ -13,7 +13,7 @@ import { AgentSession } from "tau/session/agent-session";
 import { AuthStorage } from "tau/session/auth-storage";
 import { convertToLlm } from "tau/session/messages";
 import { SessionManager } from "tau/session/session-manager";
-import { CheckpointTool, RewindTool, type ToolSession } from "tau/tools";
+import { RewindTool, type ToolSession } from "tau/tools";
 import { EventBus } from "tau/utils/event-bus";
 import { TempDir } from "@tau/tau-utils";
 

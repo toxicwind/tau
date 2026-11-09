@@ -1,12 +1,9 @@
-import { resolve } from "node:path";
-import { join } from "node:path";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 
 // refused_by: merge_ladder_exhausted · collision: `import { postmortem, Snowflake, untilAborted, withTimeout } fro…`
 import { postmortem, Snowflake, untilAborted, withTimeout } from "@tau/tau-utils";
-import type { HTMLElement } from "@tau/tau-utils/dom";
 import type {
 	Accessibility,
 	Browser,
@@ -63,7 +60,6 @@ import {
 	applyStealthPatches,
 	applyViewport,
 	BROWSER_PROTOCOL_TIMEOUT_MS,
-	browserConnection,
 	connectPuppeteer,
 	DEFAULT_VIEWPORT,
 	isPuppeteerHandle,

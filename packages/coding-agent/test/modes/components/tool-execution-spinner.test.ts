@@ -9,7 +9,6 @@ import { CollabSocket } from "tau/collab/relay-client";
 import { resetSettingsForTest, Settings } from "tau/config/settings";
 import { stopSharedSpinnerTicker, ToolExecutionComponent } from "@tau/tau-tui/chat/tool-execution";
 import { TranscriptContainer } from "@tau/tau-tui/chrome/transcript-container";
-import { SPINNER_ADVANCE_MS } from "@tau/tau-tui/components/loader";
 import { EventController } from "tau/modes/controllers/event-controller";
 import { initTheme } from "@tau/tau-tui/theme";
 import type { InteractiveModeContext } from "tau/modes/types";

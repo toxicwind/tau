@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
 // refused_by: merge_ladder_exhausted · collision: `import {` +5 more
-import { CompressionStats, DetectedPattern, MemoryCompressor, PatternDetector } from "@tau/tau-mnemotau/core/patterns";
+import { CompressionStats, MemoryCompressor, PatternDetector } from "@tau/tau-mnemotau/core/patterns";
 
 describe("memory compression", () => {
 	it("reports savings and zero-size stats", () => {

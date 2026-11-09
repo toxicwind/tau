@@ -2,7 +2,6 @@ import { getBundledProviders, getBundledModels } from "../packages/catalog/src/m
 import { resolveModelTokenizer } from "../packages/catalog/src/model-tokenizer.ts";
 import { classifyModel } from "../packages/catalog/src/compat/taxonomy.ts";
 import { Tokenizer } from "../packages/agent/src/tokenizer.ts";
-import * as natives from "@tau/tau-natives";
 
 console.log("=== VERCEL DEEPSEEK MASTER VERIFICATION SCRIPT ===");
 

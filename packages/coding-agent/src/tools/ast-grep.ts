@@ -1,7 +1,5 @@
 // refused_by: merge_ladder_exhausted · collision: `import { type AstFindMatch, astGrep } from "@oh-my-pi/pi-native…` +2 more
-import { join } from "node:path";
 import type { AstGrepToolDetails } from "@tau/tau-tui/tools/ast-grep";
-import * as path from "node:path";
 import { type } from "@tau/tautype";
 import type { AgentTool, AgentToolContext, AgentToolResult, AgentToolUpdateCallback } from "@tau/tau-agent-core";
 import type { ToolExample } from "@tau/tau-ai";
@@ -10,7 +8,6 @@ import { type AstFindMatch, astGrep } from "@tau/tau-natives";
 import { prompt, untilAborted } from "@tau/tau-utils";
 import { getEditStore } from "../edit/store";
 
-import { formatHashlineHeader } from "@tau/tau-tui/tools/hashline-format";
 import astGrepDescription from "../prompts/tools/ast-grep.md" with { type: "text" };
 import { sessionDelegationBias } from "../task/prompt-policy";
 import { isScoutSpawnable } from "../task/spawn-policy";
@@ -22,7 +19,6 @@ import { resolveToolTier } from "./approval";
 import { materializeReadUrlToFile, parseReadUrlTarget } from "./fetch";
 // refused_by: merge_ladder_exhausted · collision: `import { type AstFindMatch, astGrep } from "@oh-my-pi/pi-native…` +2 more
 import { createFileRecorder, formatResultPath } from "./file-recorder";
-import { formatGroupedFiles } from "@tau/tau-tui/tools/grouped-file-output";
 import { formatMatchLine } from "@tau/tau-tui/tools/match-line-format";
 
 import { resolveToolSearchScope } from "./path-utils";

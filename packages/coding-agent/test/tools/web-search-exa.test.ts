@@ -1,4 +1,3 @@
-import type { BodyInit } from "bun";
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import type { FetchImpl } from "@tau/tau-ai/types";
 import { ModelRegistry } from "tau/config/model-registry";

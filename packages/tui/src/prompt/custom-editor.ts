@@ -6,24 +6,17 @@ import {
 	Editor,
 	type EditorTextDecorationContext,
 	type EditorTheme,
-	type NativeEditorLayout,
 } from "../components/editor";
 import { addKeyAliases, canonicalKeyId, getKeybindings } from "../keybindings";
 import { type KeyId, parseKey, parseKittySequence } from "../keys";
-import { getSpaceHoldText, SpaceHoldGesture } from "../space-hold";
-import { type Component, TUI } from "../tui";
+import { TUI } from "../tui";
 import type { AppKeybinding } from "../app-keybindings";
-import { formatTooltipKey } from "../key-hint-format";
-import { MAIN_AGENT_ID } from "../overlays/agent-hub-types";
-import { compact, keyed, node, row, span } from "../native/describe";
-import type { DescribeContext, NativeNode, NativeUiEvent } from "../native/node";
-import type { ComposerFacts, ComposerFactsSource } from "../status-line/types";
+import type { NativeNode } from "../native/node";
 import { allowsModelMentions, allowsSkillTokens, SKILL_TOKEN_RE } from "./skill-tokens";
 import { expandModelMentionTags, MODEL_MENTION_RE, modelMentionToken } from "./model-mention-syntax";
 import { isVideoPath } from "./video";
 import {
 	attachmentSgr,
-	type ChipKind,
 	COMPOSER_TOKEN_REGEX,
 	chipLabel,
 	collapseImageMarkers,
@@ -31,21 +24,15 @@ import {
 	collapseSkillTokens,
 	composerTokenRegex,
 	modelChipStyle,
-	PLACEHOLDER_REGEX,
-	referencedAttachments,
 	renderPlaceholders,
 	skillChipLabel,
 	skillChipStyle,
 	skillToken,
 } from "./composer-attachments";
 import { type MacOSSpellingFeatures, MacOSSpellingProvider } from "./macos-spelling";
-import { TypingWordTracker } from "./typing-word";
-import { hasMagicKeyword, highlightMagicKeywords, magicKeywordRanges } from "./magic-keywords";
-import type { TspEditorDecoration, TspText } from "@oh-my-pi/pi-wire";
-import { motionEffectsEnabled } from "../motion-effects";
-import { isNativeRendering } from "../native/state";
+import { hasMagicKeyword, highlightMagicKeywords } from "./magic-keywords";
 import { isQueuedMessageList, parseQueueShorthand, QUEUE_LIST_MARKER_RE } from "./queue-input";
-import { type WordCompletionMethod, WordCompletionProvider } from "./word-completion";
+import { type WordCompletionMethod } from "./word-completion";
 import { fgOrPlain, theme } from "../theme/theme";
 
 /** A shell-mode draft's sigil (`!`, `!!`, `$`, `$$`) with its surrounding blanks; the mode chip stands in for it natively. */

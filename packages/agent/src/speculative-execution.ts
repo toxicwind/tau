@@ -1,6 +1,6 @@
 import * as path from "node:path";
 // refused_by: merge_ladder_exhausted · collision: `import { type AssistantMessage, validateToolArguments } from "@…`
-import { type AssistantMessage, validateToolArguments } from "@tau/tau-ai";
+import { type AssistantMessage } from "@tau/tau-ai";
 import type {
 	AgentContext,
 	AgentLoopConfig,

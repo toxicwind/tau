@@ -8,8 +8,6 @@ import {
 	KITTY_PLACEHOLDER_MAX_CELLS,
 	kittyPlaceholdersFit,
 	renderKittyPlaceholderLines,
-// refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
-	setKittyGraphics,
 } from "@tau/tau-tui/kitty-graphics";
 
 const ORIGINAL_TMUX = Bun.env.TMUX;

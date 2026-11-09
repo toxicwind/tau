@@ -3,7 +3,7 @@ import * as path from "node:path";
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 import { ThinkingLevel } from "@tau/tau-agent-core";
 import { getTimeBasedPricingPeriod } from "@tau/tau-catalog/models";
-import { SPINNER_ADVANCE_MS, TERMINAL } from "../index";
+import { TERMINAL } from "../index";
 import {
 	formatDuration,
 	formatNumber,
@@ -11,8 +11,6 @@ import {
 	getProjectDir,
 	normalizePathForComparison,
 	relativePathWithinNormalizedRoot,
-// refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
-	relativePathWithinRoot,
 } from "@tau/tau-utils";
 import { type SymbolKey, type Theme, type ThemeColor, theme } from "../theme";
 import { SYMBOL_PRESETS } from "../theme/symbols";

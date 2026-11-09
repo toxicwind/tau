@@ -1,4 +1,3 @@
-import { join } from "node:path";
 import type { ConflictBlock, ConflictEntry, ConflictScope } from "@tau/tau-tui/tools/conflict-detect";
 /**
  * Detect and resolve unresolved git merge conflicts that surface in `read`

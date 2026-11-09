@@ -1,7 +1,5 @@
 // refused_by: merge_ladder_exhausted · collision: `import type { ReadToolDetails } from "@oh-my-pi/pi-tui/tools/re…` +4 more
-import { join } from "node:path";
 import type { ReadToolDetails } from "@tau/tau-tui/tools/read";
-import { tryResolveInternalUrlSync } from "../internal-urls/hyperlink-targets";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import { type EditStore, notebookToEditableText } from "@tau/tau-natives";
@@ -66,7 +64,6 @@ import { CONVERTIBLE_EXTENSIONS, convertFileWithMarkit } from "../utils/markit";
 import { isSampleProfilePath, renderSampleProfile } from "../utils/sample-profile";
 import { buildDirectoryTree, type DirectoryTree } from "../workspace-tree";
 // refused_by: merge_ladder_exhausted · collision: `import type { ReadToolDetails } from "@oh-my-pi/pi-tui/tools/re…` +4 more
-import { type ConflictEntry, type ConflictScope, renderConflictRegion } from "@tau/tau-tui/tools/conflict-detect";
 import {
 	formatConflictSummary,
 	formatConflictWarning,
@@ -98,7 +95,7 @@ import {
 } from "./path-utils";
 // refused_by: merge_ladder_exhausted · collision: `import type { ReadToolDetails } from "@oh-my-pi/pi-tui/tools/re…` +4 more
 import { type LineRange } from "@tau/tau-tui/tools/line-ranges";
-import { splitInternalUrlSel, splitPathAndSel } from "@tau/tau-tui/tools/read";
+import { splitPathAndSel } from "@tau/tau-tui/tools/read";
 import { readArchive, resolveArchiveReadPath } from "./read-archive";
 import {
 	appendReadNotice,
@@ -178,9 +175,6 @@ import {
 import { parseSqlitePathCandidates } from "./sqlite-reader";
 // refused_by: merge_ladder_exhausted · collision: `import type { ReadToolDetails } from "@oh-my-pi/pi-tui/tools/re…` +4 more
 import { formatBytes, shortenPath } from "@tau/tau-tui/render/render-utils";
-import { REPORT_ISSUE_DEVICE_NAME } from "@tau/tau-tui/tools/report-tool-issue";
-import { reportIssueDeviceUsage } from "./report-tool-issue";
-import { isResolutionDeviceName } from "@tau/tau-tui/tools/resolve";
 import { resolutionDeviceUsage } from "./resolve";
 import { ToolAbortError, throwIfAborted } from "./tool-errors";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";

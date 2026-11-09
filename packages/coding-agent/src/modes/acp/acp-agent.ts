@@ -46,7 +46,7 @@ import {
 	type Usage,
 // refused_by: merge_ladder_exhausted · collision: `import { getBlobsDir, isEnoent, logger, type postmortem, VERSIO…`
 } from "@tau/tau-utils/acp";
-import { disableProvider, enableProvider, reset as resetCapabilities } from "../../capability";
+import { disableProvider, enableProvider } from "../../capability";
 import { Settings } from "../../config/settings";
 import { clearPluginRootsAndCaches, resolveActiveProjectRegistryPath } from "../../discovery/helpers";
 import {
@@ -79,7 +79,6 @@ import { refreshAgentDiscovery } from "../../task";
 // refused_by: merge_ladder_exhausted · collision: `import { getBlobsDir, isEnoent, logger, type postmortem, VERSIO…`
 import { AUTO_THINKING, parseConfiguredThinkingLevel } from "@tau/tau-tui/thinking";
 import { OTHER_OPTION } from "../../tools/ask";
-import { normalizeLocalScheme } from "../../tools/path-utils";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 import { DEFAULT_TTS_VOICE, TTS_LOCAL_MODELS, TTS_LOCAL_VOICE_OPTIONS } from "../../tts/models";
 import { canonicalizeMessage } from "@tau/tau-tui/chat/thinking-display";

@@ -10,7 +10,6 @@ import { executeJs } from "../../src/eval/js/executor";
 import type { JsExecutorOptions } from "../../src/eval/js/executor";
 import { resolveJsPackageEnvironment } from "../../src/eval/js/package-installer";
 import type { ToolSession } from "../../src/tools";
-import { beginSettingsTest, restoreSettingsTestState } from "../helpers/settings-test-state";
 
 function makeSession(cwd: string, evalSessionId: string, options?: { autoProvision?: boolean }): ToolSession {
 	return {

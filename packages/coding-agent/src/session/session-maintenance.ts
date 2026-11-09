@@ -46,8 +46,6 @@ import {
 	type SummaryOptions,
 	shouldCompact,
 	shouldUseProviderNativeCompaction,
-// refused_by: merge_ladder_exhausted · collision: `import { preferredDialect } from "@oh-my-pi/pi-catalog/identity…` +1 more
-	upsertFileOperations,
 } from "@tau/tau-agent-core/compaction";
 import {
 	DEFAULT_PRUNE_CONFIG,
@@ -67,9 +65,8 @@ import type {
 // refused_by: merge_ladder_exhausted · collision: `import { preferredDialect } from "@oh-my-pi/pi-catalog/identity…` +1 more
 } from "@tau/tau-ai";
 import * as AIError from "@tau/tau-ai/error";
-import { preferredDialect } from "@tau/tau-catalog/identity";
 import { modelsAreEqual } from "@tau/tau-catalog/models";
-import { isRecord, logger, Snowflake, stringifyJson } from "@tau/tau-utils";
+import { isRecord, logger, Snowflake } from "@tau/tau-utils";
 import * as snapcompact from "@tau/snapcompact";
 import { writeArtifact } from "./artifacts";
 import type { ModelRegistry } from "../config/model-registry";

@@ -9,7 +9,7 @@ import { matchesKey } from "../../keys";
 import { Input } from "../../components/input";
 import { routeSgrMouseInput, type SgrMouseEvent } from "../../mouse";
 // refused_by: merge_ladder_exhausted · collision: `import { sanitizeText } from "@oh-my-pi/pi-utils";`
-import { padding, replaceTabs, truncateToWidth, visibleWidth } from "../../utils";
+import { padding, truncateToWidth, visibleWidth } from "../../utils";
 import { sanitizeText } from "@tau/tau-utils";
 import { theme } from "../../theme/theme";
 import { sanitizeDisplayText } from "../../overlays/extensions/display-text";

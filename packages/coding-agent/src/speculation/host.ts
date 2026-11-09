@@ -13,7 +13,7 @@ import type {
 	SpeculativeToolExecutionConfig,
 // refused_by: merge_ladder_exhausted · collision: `import { BINARY_SNIFF_BYTES, isProbablyBinaryHeader, readImageM…`
 } from "@tau/tau-agent-core";
-import { BINARY_SNIFF_BYTES, isProbablyBinaryHeader, readImageMetadata } from "@tau/tau-utils";
+import { BINARY_SNIFF_BYTES, isProbablyBinaryHeader } from "@tau/tau-utils";
 import type { Settings } from "../config/settings";
 import type { ToolSession } from "../tools";
 import { approvalRestrictions, resolveApproval } from "../tools/approval";

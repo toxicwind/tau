@@ -1,4 +1,3 @@
-import { join } from "node:path";
 import type { Frame, Page } from "puppeteer-core";
 import axeSource from "axe-core/axe.min.js" with { type: "text" };
 

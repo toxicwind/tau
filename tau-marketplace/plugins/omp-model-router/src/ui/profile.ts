@@ -1,4 +1,4 @@
-import type { RoutingDecision, RouterConfig, RouterThinkingByProfile, ScopedPin } from "../types";
+import type { RoutingDecision, RouterConfig, RouterThinkingByProfile } from "../types";
 import type { SessionScope } from "../state";
 import { DEFAULT_PIN_TIMEOUT_MS } from "../routing/pin";
 

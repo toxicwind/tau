@@ -1,4 +1,3 @@
-import { join } from "node:path";
 import { renderCallChain } from "../run-code";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 

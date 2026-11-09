@@ -18,9 +18,6 @@ import {
 	renderJudgmentState,
 	type TextBackend,
 	TextJudge,
-// refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
-	TypeSafeApiError,
-	TypeSafeJudge,
 } from "@tau/tau-ai";
 
 const LEVELS = ["low", "medium", "high", "xhigh", "max"] as const;

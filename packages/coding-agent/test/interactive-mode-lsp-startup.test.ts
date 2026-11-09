@@ -15,7 +15,6 @@ import type { LspStartupServerInfo } from "tau/tools";
 import { EventBus } from "tau/utils/event-bus";
 import { TempDir } from "@tau/tau-utils";
 
-import { cfgStartupQuiet } from "@oh-my-pi/pi-coding-agent/modes/settings";
 
 // refused_by: rename_vs_edit_guard · collision: none (both sides edited, nowhere the same lines)
 describe("InteractiveMode LSP startup welcome banner", () => {

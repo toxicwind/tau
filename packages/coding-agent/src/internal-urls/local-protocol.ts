@@ -4,7 +4,6 @@ import * as path from "node:path";
 // refused_by: merge_ladder_exhausted · collision: `import { isMarkdownPath } from "@oh-my-pi/pi-tui/lang-from-path…`
 import { isEnoent } from "@tau/tau-utils";
 import { AgentRegistry } from "../registry/agent-registry";
-import { isMarkdownPath } from "@tau/tau-tui/lang-from-path";
 import { buildDirectoryResource } from "./filesystem-resource";
 import { parseInternalUrl } from "./parse";
 import type {

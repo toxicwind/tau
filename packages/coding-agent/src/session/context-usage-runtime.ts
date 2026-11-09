@@ -8,7 +8,6 @@ import {
 	type ContextSavingsEstimate,
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-tui/status-line/context-usage";
-import type { Settings } from "../config/settings";
 import type { AgentSession } from "./agent-session";
 import { resolveSpeculationMethod } from "./compaction-methods";
 import { estimateInlineSavings } from "./snapcompact-inline";

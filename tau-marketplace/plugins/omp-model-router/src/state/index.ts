@@ -8,14 +8,12 @@ import type {
 	RouterThinkingByProfile,
 	RouterTier,
 	RoutingDecision,
-	CustomSessionEntry,
 	EmbargoEntry,
-	EmbargoConfig,
 	ScopedPin,
 } from "../types";
 import { FALLBACK_CONFIG, resolveProfileName } from "../config";
 import { MAX_DEBUG_HISTORY } from "../constants";
-import { persist, restoreFromSession, buildPersistedState, appendDebugEntry } from "./persist";
+import { persist, restoreFromSession, appendDebugEntry } from "./persist";
 
 // ─── Session-scoped cost state ──────────────────────────────────────────────
 

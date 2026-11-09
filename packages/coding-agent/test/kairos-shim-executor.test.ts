@@ -14,7 +14,6 @@
  * the fix is to source the kairos shim in the agent's non-interactive env.
  */
 import { describe, expect, it } from "bun:test";
-import * as path from "node:path";
 import { buildNonInteractiveEnv } from "tau/exec/non-interactive-env";
 
 const SHIM_PATH = "/home/toxic/pens/olympus/products/kairos/shim.sh";

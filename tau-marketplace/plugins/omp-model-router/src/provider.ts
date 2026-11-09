@@ -14,7 +14,7 @@ import type { Effort } from "@oh-my-pi/pi-catalog/effort";
 import type { ExtensionAPI, ExtensionContext } from "tau";
 import type { RoutingDecision } from "./types";
 import { profileNames, parseCanonicalModelRef, ROUTER_TIERS, resolveProfileForTaskType } from "./config";
-import { resolveEffectivePin, setScopedPin } from "./routing/pin";
+import { resolveEffectivePin } from "./routing/pin";
 import { resolveRouting, extractTextFromContent, hasImageAttachment, getLastUserText, detectTaskType } from "./routing";
 import { sanitizeToolSchemas } from "./utils/schema-compat";
 import type { RouterState } from "./state";

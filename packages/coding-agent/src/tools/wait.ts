@@ -16,7 +16,6 @@ import { buildJobResult, snapshotJobs, undeliveredJobs } from "../async/job-cont
 import { hasLiveOwnedService, listServicesTolerant, waitForOwnedServiceCompletion } from "../launch/services";
 import { drainPendingInbox, messageResult } from "../irc/messaging";
 // refused_by: merge_ladder_exhausted · collision: `import { prompt } from "@oh-my-pi/pi-utils";`
-import type { AgentRegistry } from "../registry/agent-registry";
 import type { IrcMessage } from "@tau/tau-tui/tools/irc";
 import type { CoordinationDetails } from "@tau/tau-tui/tools/wait";
 import { throwIfAborted } from "./tool-errors";

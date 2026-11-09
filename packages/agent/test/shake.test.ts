@@ -7,7 +7,6 @@ import {
 	applyShakeRegion,
 	applyShakeRegions,
 	collectShakeRegions,
-	DEFAULT_SHAKE_CONFIG,
 	RESCUE_SHAKE_CONFIG,
 } from "@tau/tau-agent-core/compaction";
 import type { AssistantMessage, ImageContent, TextContent, ToolCall, ToolResultMessage } from "@tau/tau-ai";

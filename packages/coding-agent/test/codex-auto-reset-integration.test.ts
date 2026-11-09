@@ -3,8 +3,6 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } 
 import { Agent } from "@tau/tau-agent-core";
 import type { ResetCreditAccountStatus, ResetCreditTarget, UsageReport } from "@tau/tau-ai";
 import { createMockModel } from "@tau/tau-ai/providers/mock";
-import * as aiStream from "@tau/tau-ai/stream";
-import { getBundledModel } from "@tau/tau-catalog/models";
 import { ModelRegistry } from "tau/config/model-registry";
 import { Settings } from "tau/config/settings";
 import { AgentSession } from "tau/session/agent-session";

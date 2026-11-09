@@ -1,4 +1,4 @@
-import { Args, Command } from "@tau/tau-utils/cli";
+import { Command } from "@tau/tau-utils/cli";
 import { initTheme } from "@tau/tau-tui/theme";
 
 export default class Pwd extends Command {

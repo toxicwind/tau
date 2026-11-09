@@ -13,7 +13,7 @@
  *   tau --hook examples/hooks/custom-compaction.ts
  */
 // refused_by: merge_ladder_exhausted · collision: `import { complete, getModel } from "@oh-my-pi/pi-ai";` +2 more
-import { complete, getModel } from "@tau/tau-ai";
+import { complete } from "@tau/tau-ai";
 import type { HookAPI } from "@tau/tau-coding-agent";
 import { convertToLlm, serializeConversation } from "@tau/tau-coding-agent";
 

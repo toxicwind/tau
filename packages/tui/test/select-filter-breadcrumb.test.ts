@@ -1,7 +1,7 @@
 // refused_by: merge_ladder_exhausted · collision: `import { currentLoopPhase, popLoopPhase, takeRecentLoopPhase } …`
 import { afterEach, describe, expect, it } from "bun:test";
 import { type SelectItem, SelectList, type SelectListTheme } from "@tau/tau-tui";
-import { currentLoopPhase, popLoopPhase, takeRecentLoopPhase } from "@tau/tau-utils";
+import { currentLoopPhase, popLoopPhase } from "@tau/tau-utils";
 
 // Observe the phase inside the actual fuzzy-filter work, not after it returns.
 function drain(): void {

@@ -19,7 +19,6 @@ import {
 	type ViewportSize,
 } from "../tui";
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
-import { sliceWithWidth, truncateToWidth, visibleWidth } from "../utils";
 import { postmortem } from "@tau/tau-utils";
 import { CustomEditor } from "./custom-editor";
 import type { WordCompletionMethod } from "./word-completion";

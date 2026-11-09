@@ -12,7 +12,6 @@ import type {
 // refused_by: merge_ladder_exhausted · collision: `import { getBundledModel } from "@oh-my-pi/pi-catalog/models";`
 } from "@tau/tau-ai/types";
 import { createOpenAIResponsesHistoryPayload } from "@tau/tau-ai/utils";
-import { getBundledModel } from "@tau/tau-catalog/models";
 import { ModelRegistry } from "tau/config/model-registry";
 import { Settings } from "tau/config/settings";
 import { createAgentSession } from "tau/sdk";

@@ -12,8 +12,6 @@
  */
 
 // refused_by: merge_ladder_exhausted · collision: `import type { AgentRunCoverage, AgentRunSummary, ChatUsageEvent…` +1 more
-import type { AgentRunCoverage, AgentRunSummary, ChatUsageEvent } from "@tau/tau-agent-core";
-import { emptyAgentRunCoverage, emptyAgentRunSummary } from "@tau/tau-agent-core";
 import {
 	createTelemetryExportConfig,
 	flushTelemetryExport,

@@ -15,7 +15,7 @@ import type {
 	RouterThinkingByTier,
 	TaskType,
 } from "../types";
-import { hasImageAttachment, getLastUserText, countToolResults, countWords, getRecentConversationText } from "./text";
+import { getLastUserText, countToolResults, countWords, getRecentConversationText } from "./text";
 
 // ─── Keyword matching ─────────────────────────────────────────────────────────
 

@@ -22,8 +22,6 @@ import {
 	type ToolResultProviderMetadata,
 	type TSchema,
 	toolWireSchema,
-// refused_by: merge_ladder_exhausted · collision: `import { logger, sanitizeText, structuredCloneJSON } from "@oh-…`
-	validateToolArguments,
 } from "@tau/tau-ai";
 import {
 	type Dialect,

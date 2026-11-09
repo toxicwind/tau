@@ -17,11 +17,6 @@
 import { describe, expect, it } from "bun:test";
 // refused_by: merge_ladder_exhausted · collision: `} from "@oh-my-pi/pi-catalog/provider-models/openai-compat";`
 import { getBundledModel } from "@tau/tau-catalog/models";
-import {
-	clampFireworksKimiMaxTokens,
-	FIREWORKS_KIMI_MAX_TOKENS,
-	isFireworksKimiK2ModelId,
-} from "@tau/tau-catalog/provider-models/openai-compat";
 
 const FIREWORKS_KIMI_K2_MAX_TOKENS = 32_768;
 

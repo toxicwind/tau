@@ -1,8 +1,7 @@
 // refused_by: merge_ladder_exhausted · collision: `import { splitPathAndSel, splitInternalUrlSel, isReadableUrlPat…`
-import { join } from "node:path";
 import { extractUriScheme } from "../internal-urls/parse";
 import { type LineRange } from "@tau/tau-tui/tools/line-ranges";
-import { splitPathAndSel, splitInternalUrlSel, isReadableUrlPath } from "@tau/tau-tui/tools/read";
+import { splitPathAndSel, isReadableUrlPath } from "@tau/tau-tui/tools/read";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import * as url from "node:url";
@@ -18,10 +17,7 @@ import {
 	windowsPathToWslMount,
 // refused_by: merge_ladder_exhausted · collision: `import { splitPathAndSel, splitInternalUrlSel, isReadableUrlPat…`
 } from "@tau/tau-utils";
-import type { Rule } from "../capability/rule";
-import type { Skill } from "../extensibility/skills";
-import type { AgentRegistry } from "../registry/agent-registry";
-import { InternalUrlRouter, type LocalProtocolOptions } from "../internal-urls";
+import { InternalUrlRouter } from "../internal-urls";
 import { ToolAbortError } from "./tool-errors";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 

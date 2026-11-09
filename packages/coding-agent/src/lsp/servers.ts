@@ -19,7 +19,6 @@ import {
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { getServersForFile, hasRootMarkers, type LspConfig, loadConfig, resolveCommand } from "./config";
 import DEFAULTS from "./defaults.json" with { type: "json" };
-import { MUX_RESTART_METHOD } from "./mux/protocol";
 import type { LspClient, ServerConfig } from "./types";
 
 /**

@@ -3,7 +3,6 @@ import type { Api, Model } from "@tau/tau-ai/types";
 import type { ModelResolutionSource } from "@tau/tau-catalog/model-manager";
 import {
 	MODELS_DEV_CATALOG_PROVIDER_IDS,
-	type OpenAICodexAccount,
 	PROVIDER_DESCRIPTORS,
 } from "@tau/tau-catalog/provider-models";
 import type { AuthStorage, OAuthCredential } from "../session/auth-storage";

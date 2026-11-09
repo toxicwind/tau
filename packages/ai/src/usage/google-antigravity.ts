@@ -1,6 +1,5 @@
 // refused_by: merge_ladder_exhausted · collision: `import { getAntigravityUserAgent } from "@oh-my-pi/pi-catalog/w…`
 import { quotaTierFor } from "@tau/tau-catalog/compat/behavior";
-import { getAntigravityUserAgent } from "@tau/tau-catalog/wire/gemini-headers";
 import * as AIError from "../error";
 import type {
 	CredentialRankingContext,

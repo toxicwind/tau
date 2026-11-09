@@ -12,7 +12,6 @@
 // refused_by: merge_ladder_exhausted · collision: `import { parseStreamingJson } from "@oh-my-pi/pi-utils";`
 import type { Effort } from "@tau/tau-catalog/effort";
 import { appleFmAvailability, appleFmCancel, appleFmGenerate } from "@tau/tau-natives";
-import { parseStreamingJson } from "@tau/tau-utils";
 import * as AIError from "../error";
 import { parseToolCallArguments } from "../utils/tool-call-arguments";
 import type {

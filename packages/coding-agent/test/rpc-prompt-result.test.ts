@@ -2,9 +2,6 @@ import { describe, expect, test } from "bun:test";
 import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
 import {
 	RpcExtensionUserMessageTracker,
-// refused_by: merge_ladder_exhausted · collision: `} from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-mode";`
-	reportLocalOnlyPromptResult,
-	watchAndReportLocalOnlyPromptResult,
 } from "tau/modes/rpc/rpc-mode";
 import type { ExtensionActions } from "../src/extensibility/extensions/types";
 import { initializeExtensions } from "../src/modes/runtime-init";

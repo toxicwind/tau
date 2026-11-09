@@ -31,7 +31,6 @@ import { SessionProviderBoundary } from "tau/session/session-provider-boundary";
 import { TempDir } from "@tau/tau-utils";
 import { createAssistantMessage } from "./helpers/agent-session-setup";
 
-import { cfgMnemopiInjectionTokenLimit } from "@oh-my-pi/pi-coding-agent/mnemopi/settings";
 
 const BASE = ["base identity", "base tools"];
 

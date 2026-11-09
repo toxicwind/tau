@@ -3,7 +3,6 @@ import type { AssistantMessage, FetchImpl } from "@tau/tau-ai";
 import { buildModel } from "@tau/tau-catalog/build";
 import { Effort } from "@tau/tau-catalog/effort";
 import {
-	anthropicMessagesApi,
 	collapseSystemMessages,
 	contentText,
 	createInitialSystemMessage,

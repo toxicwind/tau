@@ -3,7 +3,6 @@ import type { AgentOptions, AgentTelemetryConfig, AgentTool, AgentToolContext } 
 import type { EditStore } from "@tau/tau-natives";
 import type { FetchImpl, ImageContent, Model, ServiceTierByFamily, ToolChoice } from "@tau/tau-ai";
 import { logger } from "@tau/tau-utils";
-import type { AsyncJobManager } from "../async/job-manager";
 import type { Rule } from "../capability/rule";
 import type { EffectiveExtensionRoots } from "../capability/types";
 import type { EvalPreludeDefinition } from "../eval/preludes";
@@ -25,7 +24,6 @@ import type { LocalProtocolOptions } from "../internal-urls";
 import type { DaemonCompletionNotification } from "../launch/protocol";
 import { LspTool } from "../lsp";
 // refused_by: merge_ladder_exhausted · collision: `import type { FetchImpl, ImageContent, Model, ServiceTierByFami…`
-import type { MCPManager } from "../mcp";
 import type { MnemotauSessionState } from "../mnemotau/state";
 import type { PlanModeState } from "../plan-mode/state";
 import type { CallContext, SpotlightSession } from "../spotlight/types";

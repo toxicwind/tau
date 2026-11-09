@@ -10,7 +10,7 @@
 // refused_by: merge_ladder_exhausted · collision: `import { logger } from "@oh-my-pi/pi-utils";`
 import type { AgentMessage } from "@tau/tau-agent-core";
 import { logger } from "@tau/tau-utils";
-import { onHindsightScopeChanged, type Settings } from "../config/settings";
+import { type Settings } from "../config/settings";
 import type { MemoryBackend, MemoryBackendStartOptions, MemoryPromptPreparation } from "../memory-backend/types";
 import hindsightInstructions from "../prompts/system/hindsight-instructions.md" with { type: "text" };
 import type { AgentSession } from "../session/agent-session";

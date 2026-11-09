@@ -5,7 +5,7 @@ import * as path from "node:path";
 // refused_by: merge_ladder_exhausted · collision: `import { type SettingPath, Settings } from "@oh-my-pi/pi-coding…`
 import { type } from "@tau/tautype";
 import { getManagedSkillsDir } from "tau/autolearn/managed-skills";
-import { type SettingPath, Settings } from "tau/config/settings";
+import { Settings } from "tau/config/settings";
 import { resetActiveSkillsForTests, type Skill, setActiveSkills } from "tau/extensibility/skills";
 import type { HindsightSessionState } from "tau/hindsight/state";
 import type { MnemotauSessionState } from "tau/mnemotau/state";

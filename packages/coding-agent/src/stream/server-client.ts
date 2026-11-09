@@ -6,7 +6,6 @@ import {
 	STREAM_CLOSE_PROTO_MISMATCH,
 	STREAM_CLOSE_UNAUTHORIZED,
 	STREAM_PROTO,
-	type StreamChatMessage,
 	type StreamHostFrame,
 	type StreamPaneFrame,
 	type StreamServerToHost,

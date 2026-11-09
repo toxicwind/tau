@@ -3,7 +3,6 @@ import { describe, expect, it } from "bun:test";
 import type { Api } from "@tau/tau-ai/types";
 import {
 	coerceServiceTierByFamily,
-	getPriorityPremiumRequests,
 	realizesPriorityServiceTier,
 	resolveModelServiceTier,
 	serviceTierFamily,

@@ -9,9 +9,6 @@
 // refused_by: merge_ladder_exhausted · collision: `import type { JsonValue, NoulQuestion } from "@oh-my-pi/pi-ai";`
 import type { JsonValue, NoulQuestion } from "@tau/tau-ai";
 import { prompt } from "@tau/tau-utils";
-import nameQuestionTemplate from "../../prompts/tools/find-name-question.md" with { type: "text" };
-import passageQuestionTemplate from "../../prompts/tools/find-passage-question.md" with { type: "text" };
-import sketchQuestionTemplate from "../../prompts/tools/find-sketch-question.md" with { type: "text" };
 import { type Passage, plainContent } from "./passages";
 import { type FileEntry, renderTree } from "./tree";
 

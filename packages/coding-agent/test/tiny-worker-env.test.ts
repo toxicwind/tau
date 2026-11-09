@@ -3,11 +3,8 @@ import * as path from "node:path";
 import { nativeLibraryPathOverlay, workerEnvFromParent } from "tau/subprocess/worker-client";
 import { tinyWorkerEnvOverlay } from "tau/tiny/title-client";
 import { tinyWorkerEndpoint, tinyWorkerLogPath } from "tau/tiny/title-protocol";
-import { ipcEndpoint } from "@oh-my-pi/pi-natives";
-import { sharedWorkerLogPath } from "@oh-my-pi/pi-coding-agent/subprocess/shared-worker";
 import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
 import { cfgProvidersTinyModelDevice } from "@oh-my-pi/pi-coding-agent/session/settings";
-import { tinyWorkerName } from "@oh-my-pi/pi-coding-agent/tiny/title-protocol";
 
 describe("workerEnvFromParent", () => {
 	it("drops inherited git repo-location overrides but keeps an explicit overlay", () => {

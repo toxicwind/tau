@@ -1,9 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { rewriteGitWorktreeAdd } from "./bash-worktree-rewrite";
 import {
-	extractFlatShellCommandSegments,
 	extractLeadingCdTarget,
-	extractLiteralAndChainSegments,
 	readShellWord,
 	tokenizeShellSegments,
 } from "./shell-tokenize";

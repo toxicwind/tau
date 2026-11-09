@@ -16,7 +16,6 @@ import type { SessionEntry, SessionTreeNode } from "tau/session/session-entries"
 import { ToolChoiceQueue } from "tau/session/tool-choice-queue";
 import { createTools, type ToolSession } from "tau/tools";
 import { removeWithRetries } from "@tau/tau-utils";
-import { grepToolRenderer } from "@tau/tau-tui/tools/grep";
 
 function createTestSession(cwd: string, overrides: Partial<ToolSession> = {}): ToolSession {
 	return {

@@ -89,9 +89,8 @@ import { resetOpenAICodexHistoryAfterCompaction } from "@tau/tau-ai/providers/op
 import { toolWireSchema } from "@tau/tau-ai/utils/schema";
 import { supportsOutputTokenLimit } from "@tau/tau-catalog/compat/output-limits";
 import { requiresNativeTools, requiresToolFreeHistoryForToolOptOut } from "@tau/tau-catalog/compat/tools";
-import { preferredDialect } from "@tau/tau-catalog/identity";
 import { modelsAreEqual } from "@tau/tau-catalog/models";
-import { type EditStore, PowerAssertion, type PowerAssertionOptions } from "@tau/tau-natives";
+import { type EditStore, type PowerAssertionOptions } from "@tau/tau-natives";
 import {
 	$env,
 	escapeXmlText,
@@ -120,13 +119,6 @@ import type { EffectiveExtensionRoots } from "../capability/types";
 import type { SessionAccountPoolScope } from "../config/account-pools";
 import { shouldEnableAppendOnlyContext } from "../config/append-only-context-mode";
 import type { ModelRegistry } from "../config/model-registry";
-import {
-// refused_by: merge_ladder_exhausted · collision: `import { type Effort, streamSimple } from "@oh-my-pi/pi-ai";` +6 more
-	onAppendOnlyModeChanged,
-	onCodeModeChanged,
-	onExtendedContextChanged,
-	onModelRolesChanged,
-} from "../config/settings";
 import { RawSseDebugBuffer } from "@tau/tau-tui/apps/debug/raw-sse-buffer";
 import { getEditStore } from "../edit/store";
 import { releaseCompletionHandles } from "../eval/completion-bridge";
@@ -173,7 +165,7 @@ import { GoalRuntime } from "../goals/runtime";
 import type { GoalModeState, GoalTokenUsage } from "../goals/state";
 import type { HindsightSessionState } from "../hindsight/state";
 // refused_by: merge_ladder_exhausted · collision: `import { type Effort, streamSimple } from "@oh-my-pi/pi-ai";` +6 more
-import { type LocalProtocolOptions, resolveLocalUrlToPath } from "../internal-urls";
+import { type LocalProtocolOptions } from "../internal-urls";
 import { hasNativeJudge, journalJudgmentUsage, resolveJudge } from "../judgment";
 import type { IrcMessage } from "@tau/tau-tui/tools/irc";
 import type { DaemonCompletionNotification } from "../launch/protocol";
@@ -227,11 +219,9 @@ import {
 // refused_by: merge_ladder_exhausted · collision: `import { type Effort, streamSimple } from "@oh-my-pi/pi-ai";` +6 more
 } from "@tau/tau-tui/thinking";
 import { isLowSignalTitleInput } from "../tiny/text";
-import { shutdownTinyTitleClient } from "../tiny/title-client";
 import type { ImageAttachmentEntry, ToolSession } from "../tools";
 import { resolveApproval } from "../tools/approval";
 import { type AskToolDetails } from "@tau/tau-tui/tools/ask";
-import { type AskToolInput, recoverAskQuestions } from "../tools/ask";
 import {
 	armIdleCloseForOwner,
 	cancelIdleCloseForOwner,
@@ -266,13 +256,11 @@ import type { AgentDefinition } from "../task/types";
 import type { ModelMention } from "@tau/tau-tui/prompt/model-mention-syntax";
 import { ModelMentionRegistry } from "./model-mentions";
 import { parseCommandArgs } from "../utils/command-args";
-import type { EditMode } from "@tau/tau-tui/tools/edit";
 import { resolveFileDisplayMode } from "../utils/file-display-mode";
 import { extractFileMentions, generateFileMentionMessages } from "../utils/file-mentions";
 import { normalizeModelContextImages } from "../utils/image-loading";
 import { TokenRateMeter } from "../utils/token-rate";
 import { TtstRecorder, summarizeTtst } from "../utils/ttst";
-import { imageAttachmentSource } from "@tau/tau-tui/prompt/image-source";
 import { resumeCommand } from "../utils/resume-command";
 import {
 	formatCardTitle,
@@ -450,7 +438,7 @@ import {
 	type SessionAdvisorsHost,
 } from "./session-advisors";
 // refused_by: merge_ladder_exhausted · collision: `import { type Effort, streamSimple } from "@oh-my-pi/pi-ai";` +6 more
-import type { BuildSessionContextOptions, SessionContext } from "./session-context";
+import type { SessionContext } from "./session-context";
 import { getRestorableSessionModels, isTranscriptEntry } from "./session-context";
 import { isUserRequestEntry, transcriptEntryMessage, userTurnDraft } from "@tau/tau-tui/chat/transcript-entry";
 import { formatSessionDumpText } from "./session-dump-format";
@@ -478,7 +466,6 @@ import { promptDigestOfEntry, SessionTools, type SessionToolsHost } from "./sess
 import { resolveWebsocketPreference } from "./settings-stream-fn";
 import type { ShakeMode, ShakeResult } from "./shake-types";
 // refused_by: merge_ladder_exhausted · collision: `import { type Effort, streamSimple } from "@oh-my-pi/pi-ai";` +6 more
-import { skillPromptTitleInput } from "@tau/tau-tui/chat/skill-title-input";
 import { ToolChoiceQueue } from "./tool-choice-queue";
 import { planTurnPersistence, sameMessageContent, sessionMessagePersistenceKey } from "./turn-persistence";
 import { TurnRecovery, type TurnRecoveryHost } from "./strategies/turn-recovery";
@@ -6419,7 +6406,7 @@ export class AgentSession implements SettingsScope, AgentViewSession {
 		done: PromiseWithResolvers<void>,
 		fromOutside: boolean,
 	): Promise<void> {
-		while (turn.nested.size > 0) await Promise.allSettled([...turn.nested]);
+		while (turn.nested.size > 0) await Promise.allSettled(turn.nested);
 		turn.released = true;
 		if (fromOutside) this.#queuedSessionTransitions--;
 		done.resolve();

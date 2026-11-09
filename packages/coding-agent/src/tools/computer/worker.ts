@@ -1,4 +1,3 @@
-import { resolve } from "node:path";
 import { AsyncLocalStorage } from "node:async_hooks";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
@@ -54,7 +53,7 @@ import type {
 	RunErrorPayload,
 	ToolReply,
 } from "./protocol";
-import { describeWindowMiss, matchesWindowApp } from "./window-miss";
+import { matchesWindowApp } from "./window-miss";
 
 /** A native input call; resolves to its takeover focus report when it took over. */
 type InputCall = Promise<DesktopFocusReturn | null | void>;

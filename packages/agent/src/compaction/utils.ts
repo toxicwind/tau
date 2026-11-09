@@ -6,7 +6,7 @@
 import type { Message, ToolCall } from "@tau/tau-ai";
 import { type Dialect, getDialectDefinition } from "@tau/tau-ai/dialect";
 import { escapeHarmonyControlTokens } from "@tau/tau-ai/utils/harmony-leak";
-import { formatGroupedPaths, prompt, stringifyJson } from "@tau/tau-utils";
+import { prompt, stringifyJson } from "@tau/tau-utils";
 import type { AgentMessage } from "../types";
 import summarizationSystemPrompt from "./prompts/summarization-system.md" with { type: "text" };
 

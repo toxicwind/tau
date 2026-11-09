@@ -1,7 +1,6 @@
 import { describe, expect, it } from "bun:test";
 // refused_by: merge_ladder_exhausted · collision: `import { clearBundledCommandsCache, loadBundledCommands } from …`
 import { MAGIC_KEYWORDS, renderOrchestrateNotice, renderWorkflowNotice } from "tau/modes/magic-keywords";
-import { clearBundledCommandsCache, loadBundledCommands } from "tau/task/commands";
 
 describe("magic keyword registry", () => {
 	it("keeps ids and words unique so notice types and settings keys cannot collide", () => {

@@ -2,7 +2,7 @@
 import type { AgentMessage } from "@tau/tau-agent-core";
 import type { CompactionOutcome } from "@tau/tau-agent-core/compaction";
 import type { AssistantMessage, ImageContent, Model, Usage, UsageReport } from "@tau/tau-ai";
-import type { Component, Container, EditorTheme, Loader, Spacer, Text, TUI } from "@tau/tau-tui";
+import type { Component, Container, EditorTheme, Loader, TUI } from "@tau/tau-tui";
 import type { CollabController } from "../collab/controller";
 import type { CollabGuestLink } from "../collab/guest";
 import type { CollabHost } from "../collab/host";
@@ -52,7 +52,6 @@ import type { ServedModelTracker } from "@tau/tau-tui/chat/served-model-marker";
 import type { StatusLineComponent } from "@tau/tau-tui/status-line";
 import type { ToolExecutionHandle } from "@tau/tau-tui/chat/tool-execution";
 import type { TranscriptContainer } from "@tau/tau-tui/chrome/transcript-container";
-import type { RecentSession } from "@tau/tau-tui/prompt/welcome";
 import type { EventController } from "./controllers/event-controller";
 import type { LoopConditionConfig, LoopLimitRuntime } from "@tau/tau-tui/status-line/loop";
 import type { OAuthManualInputManager } from "./oauth-manual-input";

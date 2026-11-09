@@ -13,8 +13,6 @@ import * as AIError from "@tau/tau-ai/error";
 import { createOpenAICodexCompactionRequestContext } from "@tau/tau-ai/providers/openai-codex-compaction";
 import { applyCodexResponsesLiteShape } from "@tau/tau-ai/providers/openai-codex/request-transformer";
 import {
-	createOpenAICodexCompatibilityMetadata,
-	openCodexCompactionEventStream,
 	type OpenAICodexCompactionBody,
 	type OpenAICodexCompatibilityMetadata,
 } from "@tau/tau-ai/providers/openai-codex-responses";

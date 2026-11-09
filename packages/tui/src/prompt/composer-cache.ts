@@ -21,9 +21,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 // refused_by: merge_ladder_exhausted · collision: `import "@oh-my-pi/pi-utils/env";` +1 more
 import "@tau/tau-utils/env";
-import { getComposerCacheDir } from "@tau/tau-utils/dirs";
-import type { LspServerInfo, RecentSession } from "./welcome";
-import type { ComposerPreferences, ComposerStatusSnapshot } from "./composer";
+import type { ComposerPreferences } from "./composer";
 import type { SymbolPreset } from "../theme/theme";
 import { isWordCompletionMethod } from "./word-completion";
 

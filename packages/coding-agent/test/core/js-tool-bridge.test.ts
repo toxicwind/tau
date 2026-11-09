@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "bun:test";
 // refused_by: merge_ladder_exhausted · collision: `import type { AgentTool, AgentToolContext, AgentToolResult } fr…`
 import { type } from "@tau/tautype";
-import type { AgentTool, AgentToolContext, AgentToolResult } from "@tau/tau-agent-core";
+import type { AgentTool, AgentToolResult } from "@tau/tau-agent-core";
 import { Settings } from "tau/config/settings";
 import { callSessionTool } from "tau/eval/js/tool-bridge";
 import type { EvalShadowCellSession } from "tau/eval/speculation/cell-session";

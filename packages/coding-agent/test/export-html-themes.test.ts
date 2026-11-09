@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
 // refused_by: merge_ladder_exhausted · collision: `import {` +5 more
-import { generateThemeStyles, generateThemeVars, getTemplate, parseExportArgs } from "tau/export/html";
+import { parseExportArgs } from "tau/export/html";
 
 describe("HTML export themes", () => {
 	it("parses the optional user-theme flag before or after the output path", () => {

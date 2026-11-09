@@ -32,8 +32,6 @@ import {
 	isUserTurnInitiator,
 	readQueueChipText,
 	resolveAbortLabel,
-	isUserInterruptAbort,
-	USER_INTERRUPT_LABEL,
 } from "../../session/messages";
 // refused_by: merge_ladder_exhausted · collision: `import { formatDuration, isRecord, logger, prompt, sanitizeText…` +2 more
 import { type ApprovalMode, resolveApproval } from "../../tools/approval";
@@ -55,23 +53,9 @@ import {
 	splitAssistantMessageToolTimeline,
 } from "@tau/tau-tui/chat/transcript-render-helpers";
 import { isWarpCliAgentProtocolActive } from "../warp-events";
-import { ComposerPredictionController } from "./composer-prediction-controller";
 import { StreamingRevealController } from "./streaming-reveal";
 import { streamingStringKeysForTool, ToolArgsRevealController } from "./tool-args-reveal";
-import { createToolCallBlock } from "./tool-call-block";
 
-import {
-	cfgCompletionNotify,
-	cfgDisplayCacheMissMarker,
-	cfgDisplayShowTokenUsage,
-	cfgDisplayShowTurnTime,
-	cfgDisplaySmoothStreaming,
-	cfgErrorNotify,
-	cfgTerminalShowImages,
-	cfgTerminalShowProgress,
-} from "../settings";
-import { cfgReadToolResultPreview, cfgToolsApproval, cfgToolsApprovalMode } from "../../tools/settings";
-import { cfgSpeechEnabled, cfgSpeechMode } from "../../tts/settings";
 
 type AgentSessionEventKind = AgentSessionEvent["type"];
 

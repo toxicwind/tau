@@ -5,8 +5,6 @@ import { effectiveReserveTokens, resolveThresholdTokens } from "@tau/tau-agent-c
 import type { Tool as AiTool, Model } from "@tau/tau-ai";
 import { renderToolExamples } from "@tau/tau-ai/dialect";
 import { toolWireSchema } from "@tau/tau-ai/utils/schema";
-import { formatNumber } from "@tau/tau-utils";
-import type { Theme } from "../theme";
 
 interface ContextSkill {
 	readonly name: string;

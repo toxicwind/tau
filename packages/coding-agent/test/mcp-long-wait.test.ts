@@ -13,7 +13,6 @@
  */
 import { afterEach, describe, expect, it, spyOn, vi } from "bun:test";
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
-import * as path from "node:path";
 import * as mcpTimeout from "tau/mcp/timeout";
 import { HttpTransport } from "tau/mcp/transports/http";
 import { LegacySseTransport } from "tau/mcp/transports/sse";

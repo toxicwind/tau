@@ -16,7 +16,6 @@ import {
 // refused_by: merge_ladder_exhausted · collision: `import { writeThroughActiveTerminal } from "@oh-my-pi/pi-tui";`
 } from "@tau/tau-ai";
 import { StreamMarkupHealing } from "@tau/tau-ai/utils/stream-markup-healing";
-import { writeThroughActiveTerminal } from "@tau/tau-tui";
 import { SPINNER_FRAMES } from "@tau/tau-tui/theme/symbols";
 import { $env, isTerminalHeadless, isWsl, logger, prompt } from "@tau/tau-utils";
 import type { ModelRegistry } from "../config/model-registry";

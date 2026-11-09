@@ -8,7 +8,6 @@ import { Settings } from "tau/config/settings";
 import type { ToolSession } from "tau/tools";
 import type { ReadToolDetails } from "@tau/tau-tui/tools/read";
 import { ReadTool } from "tau/tools/read";
-import { trySummarize } from "tau/tools/read-summary";
 import { removeWithRetries } from "@tau/tau-utils";
 import * as readSummary from "@oh-my-pi/pi-coding-agent/tools/read-summary";
 

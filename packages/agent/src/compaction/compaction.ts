@@ -29,11 +29,9 @@ import type { Dialect } from "@tau/tau-ai/dialect";
 import * as AIError from "@tau/tau-ai/error";
 import { createOpenAICodexCompactionRequestContext } from "@tau/tau-ai/providers/openai-codex-compaction";
 import {
-	buildTransformedCodexRequestBody,
 	type OpenAICodexCompactionBody,
 } from "@tau/tau-ai/providers/openai-codex-responses";
 import type { InputItem as CodexInputItem } from "@tau/tau-ai/providers/openai-codex/request-transformer";
-import { convertTools } from "@tau/tau-ai/providers/openai-responses";
 import { buildResponsesInput, resolveOpenAICompatPolicy } from "@tau/tau-ai/providers/openai-shared";
 import { stripOpenAIResponsesOutputOnlyStatusesForReplay } from "@tau/tau-ai/utils";
 import { preferredDialect } from "@tau/tau-catalog/identity";

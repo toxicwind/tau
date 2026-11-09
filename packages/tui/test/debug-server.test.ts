@@ -1,6 +1,5 @@
 import { expect, test } from "bun:test";
-import * as os from "node:os";
-import { IpcConnection, ipcEndpoint } from "@oh-my-pi/pi-natives";
+import { IpcConnection } from "@oh-my-pi/pi-natives";
 import { type Component, Input, Text, TUI, type TuiDebugTreeNode } from "../src";
 import { VirtualTerminal } from "./virtual-terminal";
 

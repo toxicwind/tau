@@ -13,7 +13,6 @@ import type { AgentDefinition } from "../../src/task/types";
 import type { SingleResult } from "@tau/tau-tui/tools/task";
 import { WorkPool, WorkPoolRegistry } from "../../src/task/workpool";
 import type { ToolSession } from "../../src/tools";
-import { prompt } from "@tau/tau-utils";
 
 const AGENT: AgentDefinition = {
 	name: "scout",

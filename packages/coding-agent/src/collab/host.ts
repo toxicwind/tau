@@ -38,9 +38,6 @@ import {
 	type CollabParticipant,
 	type CollabPromptDetails,
 	type CollabSessionState,
-	encodeEntryFrame,
-	encodeEventFrame,
-	encodeSnapshotChunk,
 	type EncodedFrame,
 	formatCollabLink,
 	formatCollabWebLink,
@@ -58,11 +55,8 @@ import { CollabSocket } from "./relay-client";
 import {
 	COLLAB_ENTRY_OMITTED_CUSTOM_TYPE,
 	copyForReplication,
-	MAX_REPLICATED_PAYLOAD_BYTES,
 	oversizedEntryNotice,
 	type ReplicatedEntry,
-	serializeReplicatedEntry,
-	serializeReplicatedEvent,
 } from "./replication-shrink";
 
 /** Events that change the footer state guests render. */

@@ -1,7 +1,5 @@
 import { describe, expect, it } from "bun:test";
 // refused_by: merge_ladder_exhausted · collision: `import type { Model } from "@oh-my-pi/pi-ai/types";` +1 more
-import type { Model } from "@tau/tau-ai/types";
-import MODELS_JSON from "@tau/tau-catalog/models.json" with { type: "json" };
 
 // Pins the invariant: the bundled catalog must never carry a
 // local/self-hosted provider's catalog. Those providers default to an endpoint

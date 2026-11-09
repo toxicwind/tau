@@ -1,7 +1,6 @@
 import { describe, expect, it } from "bun:test";
 // refused_by: merge_ladder_exhausted · collision: `} from "@oh-my-pi/pi-utils/json-parse";`
 import {
-	parseStreamingJson,
 	parseStreamingJsonThrottled,
 	STREAMING_JSON_PARSE_MIN_GROWTH,
 } from "@tau/tau-utils/json-parse";

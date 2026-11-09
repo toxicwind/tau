@@ -9,8 +9,6 @@ import type { FetchImpl, Model } from "@tau/tau-ai/types";
 import { buildModel } from "@tau/tau-catalog/build";
 import {
 	CLOUDFLARE_AI_GATEWAY_ANTHROPIC_BASE_URL,
-	parseCloudflareAiGatewayCredential,
-	serializeCloudflareAiGatewayCredential,
 } from "@tau/tau-catalog/wire/cloudflare-ai-gateway";
 import { withEnv } from "./helpers";
 

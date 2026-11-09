@@ -3,7 +3,6 @@ import { describe, expect, test } from "bun:test";
 import type { Api, Model } from "@tau/tau-ai";
 import { buildModel } from "@tau/tau-catalog/build";
 import type { ModelRegistry } from "tau/config/model-registry";
-import type { Settings } from "tau/config/settings";
 import { createExtensionModelQuery } from "../../src/extensibility/extensions/model-api";
 
 function model(id: string, name: string, provider: string): Model<"anthropic-messages"> {

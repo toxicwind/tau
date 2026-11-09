@@ -5,8 +5,6 @@ import {
 	MetricsPlugin,
 	MnemotauPlugin,
 	PluginManager,
-// refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
-	resetManager,
 } from "@tau/tau-mnemotau/core/plugins";
 
 class CountingPlugin extends MnemotauPlugin {

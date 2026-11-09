@@ -18,7 +18,6 @@ import { isPromise } from "node:util/types";
 import { getLogsDir, localDay } from "./dirs";
 import { RotatingFileSink } from "./logger/rotating-file";
 import { isPidAlive } from "./pid";
-import { setStderrRedirectTarget } from "./stderr-guard";
 import { drainModuleLoadEvents } from "./timing-buffer";
 import { isRecord } from "./type-guards";
 /** Severity names accepted by the centralized logger. */

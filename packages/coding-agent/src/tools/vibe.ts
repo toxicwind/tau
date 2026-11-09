@@ -1,4 +1,3 @@
-import { join } from "node:path";
 import { type VibeToolDetails } from "@tau/tau-tui/tools/vibe";
 /**
  * Vibe mode tools — the director's entire non-read surface.

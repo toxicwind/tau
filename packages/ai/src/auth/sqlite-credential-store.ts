@@ -10,7 +10,6 @@ import * as path from "node:path";
 // refused_by: merge_ladder_exhausted · collision: `import { parseCloudflareAiGatewayCredential } from "@oh-my-pi/p…`
 import { authPolicyFor } from "@tau/tau-catalog/compat/auth";
 import { parseAlibabaTokenPlanCredential } from "@tau/tau-catalog/wire/alibaba-token-plan";
-import { parseCloudflareAiGatewayCredential } from "@tau/tau-catalog/wire/cloudflare-ai-gateway";
 import {
 	getAgentDbPath,
 	getDbBusyTimeoutMs,

@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 // refused_by: merge_ladder_exhausted · collision: `import { DeltaSync, EventType, MemoryEvent, MemoryStream, SyncC…`
 import { initBeam } from "@tau/tau-mnemotau/core/beam";
-import { DeltaSync, EventType, MemoryEvent, MemoryStream, SyncCheckpoint } from "@tau/tau-mnemotau/core/streaming";
+import { DeltaSync, EventType, MemoryEvent, MemoryStream } from "@tau/tau-mnemotau/core/streaming";
 
 describe("MemoryEvent", () => {
 	it("serializes and restores Python-shaped events", () => {

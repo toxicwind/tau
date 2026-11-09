@@ -21,13 +21,14 @@ import { describe, expect, it } from "bun:test";
 import "../native";
 import type { NativeAddonStatus } from "../native/loader-state.js";
 import {
-// refused_by: merge_ladder_exhausted · collision: `import { missingNativeExport, missingNativeExportMessage, nativ…`
+	missingNativeClass,
 	missingNativeExport,
 	missingNativeExportMessage,
 	nativeAddonStatus,
+	reportStaleWorkspaceAddon,
 	sentinelMatchesExpected,
+	staleWorkspaceAddonNotice,
 } from "../native/loader-state.js";
-
 const addonPath = "/w/packages/natives/native/tau_natives.linux-x64-modern.node";
 
 function status(overrides: Partial<NativeAddonStatus> = {}): NativeAddonStatus {

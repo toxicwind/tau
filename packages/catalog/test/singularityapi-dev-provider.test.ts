@@ -2,10 +2,8 @@ import { afterEach, describe, expect, test, vi } from "bun:test";
 // refused_by: merge_ladder_exhausted · collision: `import { getEnvApiKey } from "@oh-my-pi/pi-ai/stream";` +2 more
 import { getOAuthProviders } from "@tau/tau-ai/registry/oauth";
 import { getProviderDefinition } from "@tau/tau-ai/registry";
-import { getEnvApiKey } from "@tau/tau-ai/stream";
 import { buildModel } from "@tau/tau-catalog/build";
-import { isCatalogDescriptor, resolveModelCacheProviderId } from "@tau/tau-catalog/provider-models";
-import { DEFAULT_MODEL_PER_PROVIDER, PROVIDER_DESCRIPTORS } from "@tau/tau-catalog/provider-models/descriptors";
+import { resolveModelCacheProviderId } from "@tau/tau-catalog/provider-models";
 import { singularityApiDevModelManagerOptions } from "@tau/tau-catalog/provider-models/openai-compat";
 import type { FetchImpl, ModelSpec } from "@tau/tau-catalog/types";
 import { SINGULARITYAPI_DEV_API_BASE_URL, normalizeSingularityApiBaseUrl } from "@tau/tau-catalog/wire/singularityapi";

@@ -1,9 +1,6 @@
 import { Database } from "bun:sqlite";
 import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
-import * as fs from "node:fs/promises";
-import * as os from "node:os";
-import * as path from "node:path";
 import { type } from "@tau/tautype";
 import { AuthStorage, REMOTE_REFRESH_SENTINEL, SqliteAuthCredentialStore } from "@tau/tau-ai";
 import {
@@ -20,7 +17,6 @@ import { snapshotResponseSchema } from "@tau/tau-ai/auth-broker/wire-schemas";
 import * as oauthUtils from "@tau/tau-ai/registry/oauth";
 import type { UsageLimit, UsageProvider, UsageReport } from "@tau/tau-ai/usage";
 import * as claudeUsage from "@tau/tau-ai/usage/claude";
-import { removeWithRetries } from "../../utils/src/temp";
 
 function requireLimit(report: UsageReport, id: string): UsageLimit {
 	const limit = report.limits.find(candidate => candidate.id === id);

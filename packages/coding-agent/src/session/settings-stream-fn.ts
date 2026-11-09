@@ -13,7 +13,6 @@
 // refused_by: merge_ladder_exhausted · collision: `import type { StreamFn } from "@oh-my-pi/pi-agent-core";` +2 more
 import type { StreamFn } from "@tau/tau-agent-core";
 import { type SimpleStreamOptions, streamSimple } from "@tau/tau-ai";
-import { classifyModel } from "@tau/tau-catalog/identity";
 import { type Settings, validateProviderMaxInFlightRequests } from "../config/settings";
 
 /** Apply each API's setting once; standard Responses preferences can only narrow it. */

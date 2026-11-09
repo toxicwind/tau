@@ -22,7 +22,6 @@ export { OpenAIHttpError };
 
 import type { FetchImpl } from "../types";
 import type { CapturedHttpErrorResponse } from "./http-inspector";
-import { getShouldRetryFromHeaders } from "./retry-after";
 
 /**
  * Total attempts (initial + retries). Parity with the removed SDK clients'

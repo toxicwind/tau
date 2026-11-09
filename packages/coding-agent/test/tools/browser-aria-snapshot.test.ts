@@ -1,7 +1,6 @@
 import { describe, expect, it } from "bun:test";
 import {
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
-	buildAriaSnapshotScript,
 	diffAriaSnapshot,
 	parseAriaRefSelector,
 	postProcessAriaSnapshot,

@@ -29,8 +29,6 @@ import type {
 	ExtensionUIContext,
 	InputEvent,
 	InputEventResult,
-// refused_by: merge_ladder_exhausted · collision: `import type { AgentMessage, AgentTool } from "@oh-my-pi/pi-agen…`
-	ProviderModelConfig,
 } from "tau/extensibility/extensions/types";
 import { ExtensionToolWrapper } from "tau/extensibility/extensions/wrapper";
 import { AuthStorage } from "tau/session/auth-storage";

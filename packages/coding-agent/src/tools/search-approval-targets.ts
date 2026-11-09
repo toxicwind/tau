@@ -82,7 +82,7 @@ export function isApprovalPublicUrl(url: string): boolean {
 		}
 	}
 	if (host.startsWith("[") && host.endsWith("]")) host = host.slice(1, -1);
-	return host !== "localhost" && !/^127\./.test(host) && host !== "::1" && !host.endsWith(".local");
+	return host !== "localhost" && !host.startsWith('127.') && host !== "::1" && !host.endsWith(".local");
 }
 
 /**

@@ -309,7 +309,7 @@ function runCleanup(reason: Reason, keepAlive = false): Promise<void> {
 }
 
 // CLI-owned main threads handle signals and fatal errors; workers handle exit only.
-let inspectorOpened = false;
+const inspectorOpened = false;
 
 /** Origin of an EPIPE raised by a process communication channel. */
 export type BrokenPipeSource = "ipc-send" | "stdio-write";
@@ -750,7 +750,7 @@ process.on("exit", () => {
 	void runCleanup(Reason.EXIT); // fire and forget (exit imminent)
 });
 
-let processHandlersInstalled = false;
+const processHandlersInstalled = false;
 
 /**
  * Exit through a termination signal: clean up, print the recovery hints, exit.

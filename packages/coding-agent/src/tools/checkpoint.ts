@@ -1,4 +1,3 @@
-import { join } from "node:path";
 import { type } from "@tau/tautype";
 import type { AgentTool, AgentToolContext, AgentToolResult, AgentToolUpdateCallback } from "@tau/tau-agent-core";
 import { prompt } from "@tau/tau-utils";

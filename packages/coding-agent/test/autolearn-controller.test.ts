@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
 // refused_by: merge_ladder_exhausted · collision: `import { Agent, type AgentMessage, type AgentOptions, type Agen…` +1 more
 import { type } from "@tau/tautype";
-import { Agent, type AgentMessage, type AgentOptions, type AgentTool } from "@tau/tau-agent-core";
+import { Agent, type AgentMessage, type AgentTool } from "@tau/tau-agent-core";
 import type { AssistantMessage, FetchImpl, Model, ProviderSessionState, Usage } from "@tau/tau-ai";
 import { streamGoogle } from "@tau/tau-ai/providers/google";
 import { createMockModel } from "@tau/tau-ai/providers/mock";

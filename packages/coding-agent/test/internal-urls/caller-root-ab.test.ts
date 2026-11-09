@@ -27,8 +27,6 @@ import { AgentRegistry, MAIN_AGENT_ID } from "tau/registry/agent-registry";
 import { ensurePersistedRoster } from "tau/registry/persisted-agents";
 import { CURRENT_SESSION_VERSION } from "tau/session/session-entries";
 import type { ToolSession } from "tau/tools";
-import { expandInternalUrls } from "tau/tools/bash-skill-urls";
-import { GlobTool } from "tau/tools/glob";
 import { GrepTool } from "tau/tools/grep";
 
 function sessionHeader(id: string): string {

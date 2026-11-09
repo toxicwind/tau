@@ -13,7 +13,7 @@ import { getMnemotauRuntimeOptions } from "./runtime-options";
 
 import { isRecord, withLoopPhase } from "@oh-my-pi/pi-utils";
 import { clipToWindow, DEFAULT_INPUT_CHARS } from "./text-window";
-import { envFlag, envInt, envString } from "../util/env";
+import { envInt } from "../util/env";
 
 function llmEnabled(): boolean {
 // refused_by: statement_fold · collision: `return envBool("MNEMOPI_LLM_ENABLED", true);`

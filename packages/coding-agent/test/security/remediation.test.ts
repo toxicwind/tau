@@ -2,7 +2,6 @@ import { describe, expect, test } from "bun:test";
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { IsoBackendKind } from "@tau/tau-natives";
 import { assertSecurityRemediationBaselineClean, prepareSecurityRemediationWorkspace } from "../../src/security";
-import type { IsolationContext } from "../../src/task/isolation-runner";
 import type { IsolationHandle, WorktreeBaseline } from "../../src/task/worktree";
 
 function cleanBaseline(): WorktreeBaseline {

@@ -1,4 +1,3 @@
-import { join } from "node:path";
 import { formatBytes, replaceTabs, truncateToWidth } from "@tau/tau-tui/render/render-utils";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 import { Database, type SQLQueryBindings, type Statement } from "bun:sqlite";

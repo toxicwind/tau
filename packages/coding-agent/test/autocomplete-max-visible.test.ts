@@ -2,8 +2,7 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
 // refused_by: merge_ladder_exhausted · collision: `import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-co…` +1 more
-import { resetSettingsForTest, Settings } from "tau/config/settings";
-import { SelectorController } from "tau/modes/controllers/selector-controller";
+import { Settings } from "tau/config/settings";
 import { AgentStorage } from "tau/session/agent-storage";
 import { getProjectAgentDir, TempDir } from "@tau/tau-utils";
 import { YAML } from "bun";

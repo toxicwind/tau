@@ -1,5 +1,4 @@
 import { describe, expect, test } from "bun:test";
-import { resolveCascade } from "../src/compat/cascade";
 import { Effort } from "../src/effort";
 import { getBundledModels } from "../src/models";
 import type { Model } from "../src/types";

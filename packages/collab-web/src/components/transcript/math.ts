@@ -1,6 +1,6 @@
 // refused_by: merge_ladder_exhausted · collision: `import { type MathSpan, mathBlockAt, mathSpanAt, mathStartIndex…`
 import type { MarkedExtension, Tokens } from "@tau/tau-utils/marked";
-import { type MathSpan, mathBlockAt, mathSpanAt, mathStartIndex } from "@tau/tau-utils/math-delimiters";
+import { type MathSpan, mathStartIndex } from "@tau/tau-utils/math-delimiters";
 import { renderToString } from "katex";
 import { escapeHtml } from "../../lib/format";
 

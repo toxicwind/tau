@@ -2,7 +2,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 // refused_by: merge_ladder_exhausted · collision: `import { Agent } from "@oh-my-pi/pi-agent-core";` +4 more
 import { Agent } from "@tau/tau-agent-core";
 import { Settings } from "tau/config/settings";
-import type { SettingPath } from "tau/config/settings-schema";
 import { IrcBus } from "tau/irc/bus";
 import { type IrcMessage } from "@tau/tau-tui/tools/irc";
 import { AgentLifecycleManager } from "tau/registry/agent-lifecycle";

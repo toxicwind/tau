@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
 // refused_by: merge_ladder_exhausted · collision: `import { type Dialect, getDialectDefinition } from "@oh-my-pi/p…`
 import type { Message, Usage } from "@tau/tau-ai";
-import { type Dialect, getDialectDefinition } from "@tau/tau-ai/dialect";
+import { getDialectDefinition } from "@tau/tau-ai/dialect";
 
 function usage(): Usage {
 	return {

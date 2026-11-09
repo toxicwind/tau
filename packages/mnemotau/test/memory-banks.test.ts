@@ -9,10 +9,7 @@ import {
 	bankExists,
 	createBank,
 	deleteBank,
-	getBank,
 	listBanks,
-	resetBankForTests,
-	setBank,
 	ValueError,
 } from "@tau/tau-mnemotau/core/banks";
 

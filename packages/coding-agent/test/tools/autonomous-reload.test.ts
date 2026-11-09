@@ -1,4 +1,3 @@
-import { spyOn } from "bun:test";
 import { describe, expect, test } from "bun:test";
 import { createAutonomousReloader, type AutonomousReloadDeps } from "../../src/tools/autonomous-reload";
 

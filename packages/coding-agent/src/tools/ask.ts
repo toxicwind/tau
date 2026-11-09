@@ -1,6 +1,5 @@
 // refused_by: merge_ladder_exhausted · collision: `import type { AskToolDetails, QuestionResult } from "@oh-my-pi/…` +7 more
-import { join } from "node:path";
-import type { AskToolDetails, QuestionResult } from "@tau/tau-tui/tools/ask";
+import type { AskToolDetails } from "@tau/tau-tui/tools/ask";
 /**
  * Ask Tool - the model asks the user to fill in one HTML `<form>`.
  *
@@ -15,7 +14,7 @@ import type { AskToolDetails, QuestionResult } from "@tau/tau-tui/tools/ask";
 import { type as arkType } from "@tau/tautype";
 import type { AgentTool, AgentToolContext, AgentToolResult, AgentToolUpdateCallback } from "@tau/tau-agent-core";
 import type { ToolExample } from "@tau/tau-ai";
-import { Ellipsis, replaceTabs, TERMINAL, truncateToWidth, visibleWidth } from "@tau/tau-tui";
+import { TERMINAL } from "@tau/tau-tui";
 import { prompt, untilAborted } from "@tau/tau-utils";
 
 import type { ExtensionUISelectItem } from "../extensibility/extensions";
@@ -25,7 +24,7 @@ import askHeadlessForkMessage from "../prompts/tools/ask-headless-fork.md" with 
 import { cfgSpeechEnabled } from "../tts/settings";
 import { vocalizer } from "../tts/vocalizer";
 import type { ToolSession } from ".";
-import { disambiguateDisplayLabels, sanitizeCarriageReturns, TRUNCATE_LENGTHS } from "@tau/tau-tui/render/render-utils";
+import { disambiguateDisplayLabels } from "@tau/tau-tui/render/render-utils";
 import { ToolAbortError } from "./tool-errors";
 
 /** Returned to a headless fork's model instead of aborting its run. */

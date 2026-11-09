@@ -32,7 +32,7 @@ import { create, fromBinary, toBinary } from "@tau/tau-catalog/discovery/protobu
 import { calculateCost } from "@tau/tau-catalog/models";
 import { DEVIN_DEFAULT_BASE_URL, devinCliMetadata } from "@tau/tau-catalog/wire/devin";
 import { decodeDevinUnaryMessage } from "@tau/tau-catalog/wire/devin-proto";
-import { isRecord, logger, parseStreamingJson, parseStreamingJsonThrottled, sanitizeText } from "@tau/tau-utils";
+import { isRecord, logger, parseStreamingJsonThrottled, sanitizeText } from "@tau/tau-utils";
 import * as AIError from "../error";
 import { parseToolCallArguments } from "../utils/tool-call-arguments";
 

@@ -1,6 +1,5 @@
 import { describe, expect, test } from "bun:test";
 // refused_by: merge_ladder_exhausted · collision: `import { getEnvApiKey } from "@oh-my-pi/pi-ai/stream";`
-import { getEnvApiKey } from "@tau/tau-ai/stream";
 import { aimlApiModelManagerOptions, isLikelyAimlApiChatModelId } from "@tau/tau-catalog/provider-models/openai-compat";
 
 describe("AIML API built-in provider (issue #2105)", () => {

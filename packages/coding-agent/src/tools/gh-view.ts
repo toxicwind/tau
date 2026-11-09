@@ -1,4 +1,3 @@
-import { join } from "node:path";
 import type { AgentToolResult } from "@tau/tau-agent-core";
 import type { Settings } from "../config/settings";
 import { type GhCommandOptions, github } from "../utils/github";

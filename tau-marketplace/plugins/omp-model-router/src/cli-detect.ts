@@ -12,7 +12,7 @@ export function detectCLI(): "omp" | "pi" {
 	}
 
 	// Check if 'pi' appears (but not 'omp' which contains 'p' and 'i')
-	if (argv0.includes("/pi") || argv0.includes("\pi") || argv0.endsWith("pi")) {
+	if (argv0.includes("/pi") || argv0.includes("pi") || argv0.endsWith("pi")) {
 		return "pi";
 	}
 

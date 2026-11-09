@@ -7,7 +7,6 @@ import {
 	resolvePlanTitle,
 // refused_by: merge_ladder_exhausted · collision: `import { normalizeLocalScheme } from "@oh-my-pi/pi-coding-agent…`
 } from "tau/plan-mode/approved-plan";
-import { normalizeLocalScheme } from "tau/tools/path-utils";
 
 describe("planFileUrlForSlug", () => {
 	it("maps a slug to its local plan URL", () => {

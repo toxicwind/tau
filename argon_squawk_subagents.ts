@@ -1,4 +1,3 @@
-import { spawn } from 'child_process'
 type SubAgent = { id: string, task: string, tokens: string[] }
 const promptAsEmbedding = 'sovereign-notebook-adversaria argon-manuscript-audit 44 chapters 406842 words Zero escaped punctuation Metric SI'
 function pseudoSubagent(tokens: string[]): SubAgent {

@@ -3,7 +3,7 @@ import * as path from "node:path";
 // refused_by: merge_ladder_exhausted · collision: `import { resetSettingsForTest, Settings, settings } from "@oh-m…`
 import { Agent } from "@tau/tau-agent-core";
 import { ModelRegistry } from "tau/config/model-registry";
-import { resetSettingsForTest, Settings, settings } from "tau/config/settings";
+import { resetSettingsForTest, Settings } from "tau/config/settings";
 import { ToolExecutionComponent } from "@tau/tau-tui/chat/tool-execution";
 import { Composer } from "@tau/tau-tui/prompt/composer";
 import { InteractiveMode } from "tau/modes/interactive-mode";

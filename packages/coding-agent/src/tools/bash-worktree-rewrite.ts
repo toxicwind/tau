@@ -1,4 +1,3 @@
-import { join } from "node:path";
 import { extractFlatShellCommandSegments, tokenizeShellSegments } from "./shell-tokenize";
 
 const SHELL_EXPANSION = /[$`~*?[\]{}<>]/;

@@ -1,5 +1,4 @@
 import {
-	type Focusable,
 	Editor,
 	Ellipsis,
 	matchesKey,

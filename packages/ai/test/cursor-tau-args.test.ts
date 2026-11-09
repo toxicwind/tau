@@ -2,7 +2,6 @@ import { describe, expect, it } from "bun:test";
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 import { type } from "@tau/tautype";
 import {
-	cursorEditOwnedReadPath,
 	cursorRawReadPath,
 	omitUndefinedArgs,
 	piGrepSkip,

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
 // refused_by: merge_ladder_exhausted · collision: `import { extractDateFromText, extractTemporal, parseNlDate } fr…`
-import { extractDateFromText, extractTemporal, parseNlDate } from "@tau/tau-mnemotau/core/temporal-parser";
+import { extractTemporal, parseNlDate } from "@tau/tau-mnemotau/core/temporal-parser";
 
 const REF = new Date("2026-05-20T15:30:00Z"); // Wednesday
 

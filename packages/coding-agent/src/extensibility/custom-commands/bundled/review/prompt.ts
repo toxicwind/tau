@@ -2,7 +2,7 @@ import { prompt } from "@tau/tau-utils";
 import annotationsTemplate from "./prompts/annotations.md" with { type: "text" };
 import reviewRequestTemplate from "../../../../prompts/review-request.md" with { type: "text" };
 // refused_by: merge_ladder_exhausted · collision: `import type { CodeReviewAnnotation, ReviewDiffFile } from "@oh-…`
-import type { CodeReviewAnnotation, ReviewDiffFile } from "@tau/tau-tui/overlays/annotation-types";
+import type { CodeReviewAnnotation } from "@tau/tau-tui/overlays/annotation-types";
 import { getRecommendedReviewAgentCount, getReviewDiffPreview } from "./diff";
 import type { ResolvedReviewTarget } from "./target";
 

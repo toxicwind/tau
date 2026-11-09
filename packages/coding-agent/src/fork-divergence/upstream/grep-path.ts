@@ -21,7 +21,6 @@ import {
 	resolveToCwd,
 	splitPathAndSelPreferringLiteralSync,
 } from "../../tools/path-utils";
-import { splitPathAndSel } from "@tau/tau-tui/tools/read";
 import { InternalUrlRouter } from "../../internal-urls/router";
 
 /**

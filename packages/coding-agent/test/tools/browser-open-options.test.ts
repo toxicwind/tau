@@ -7,7 +7,7 @@ import { afterAll, describe, expect, it } from "bun:test";
 import { Settings } from "tau/config/settings";
 import { disposeAllVmContexts } from "tau/eval/js/context-manager";
 import { createBrowserPrelude } from "tau/tools/browser";
-import { applyIgnoreHttpsErrors, resolveInitScriptSources } from "tau/tools/browser/open-options";
+import { resolveInitScriptSources } from "tau/tools/browser/open-options";
 import { buildHeadlessLaunchArgs } from "tau/tools/browser/launch";
 import { releaseAllTabs } from "tau/tools/browser/tab-supervisor";
 import type { ToolSession } from "tau/tools/index";

@@ -5,7 +5,6 @@ import {
 	type AssistantMessage,
 	coerceServiceTierByFamily,
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
-	getPriorityPremiumRequests,
 	resolveModelServiceTier,
 	type ServiceTierByFamily,
 	type ToolCall,

@@ -6,7 +6,6 @@ import type { AgentSession } from "../session/agent-session";
 import { runSharpshooterConsolidation } from "./consolidate";
 import { maybeStartSharpshooterExtraction, resolveSharpshooterModel } from "./extract";
 import {
-	embedTexts,
 	semanticSearch,
 	type SemanticSearchConfig,
 	type SemanticSearchLine,

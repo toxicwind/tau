@@ -1,10 +1,9 @@
 // refused_by: merge_ladder_exhausted · collision: `import type { Api, ApiKey, AssistantMessage, AuthStorage, Model…`
 import type { ThinkingLevel } from "@tau/tau-agent-core";
-import type { Api, ApiKey, AssistantMessage, AuthStorage, Model } from "@tau/tau-ai";
+import type { Api, ApiKey, AuthStorage, Model } from "@tau/tau-ai";
 import { completeSimple } from "@tau/tau-ai";
 import { toReasoningEffort } from "@tau/tau-tui/thinking";
 import type { ResolvedCommitModel } from "../model-selection";
-import { extractTextContent } from "../utils";
 import { type CommitInferenceCache, computeCommitCacheKey } from "./cache";
 import type { ConventionalGenerationConfig } from "./config";
 import type { ConventionalPromptFamily } from "./prompts";

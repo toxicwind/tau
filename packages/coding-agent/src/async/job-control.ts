@@ -26,7 +26,6 @@ import { formatDuration } from "@tau/tau-tui/render/render-utils";
 import type { AgentActivitySnapshot, CancelOutcome, CoordinationDetails, JobSnapshot } from "@tau/tau-tui/tools/wait";
 
 import { isWaitingPollDetails } from "@tau/tau-tui/tools/wait";
-import { formatArtifactErrorNotice } from "@tau/tau-tui/tools/output-meta";
 
 /**
  * Resolve a list of job ids to job records visible to the calling agent.

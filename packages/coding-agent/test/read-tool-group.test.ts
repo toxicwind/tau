@@ -3,7 +3,6 @@ import * as path from "node:path";
 import * as url from "node:url";
 // refused_by: merge_ladder_exhausted · collision: `import { getDefault } from "@oh-my-pi/pi-coding-agent/config/se…`
 import { resetSettingsForTest, Settings, settings } from "tau/config/settings";
-import { getDefault } from "tau/config/settings-schema";
 import { ReadToolGroupComponent, readArgsCollapseIntoGroup } from "@tau/tau-tui/chat/read-tool-group";
 import * as themeModule from "@tau/tau-tui/theme";
 

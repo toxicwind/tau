@@ -33,7 +33,6 @@
 import { Effort } from "@tau/tau-catalog/effort";
 import { type ModelKind, modelKind } from "@tau/tau-catalog/types";
 import { logger } from "@tau/tau-utils";
-import type { AuthStorage } from "../auth-storage";
 import { classifyGatewayError } from "../error/gateway";
 import * as anthropicMessages from "../providers/anthropic-messages-server";
 import * as openaiChat from "../providers/openai-chat-server";

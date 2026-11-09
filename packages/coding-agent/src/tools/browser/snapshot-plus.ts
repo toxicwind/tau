@@ -1,4 +1,3 @@
-import { join } from "node:path";
 const INTERACTIVE_ROLES: Readonly<Record<string, true>> = {
 	button: true,
 	link: true,

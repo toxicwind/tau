@@ -8,7 +8,7 @@ import * as zlib from "node:zlib";
 import type { AgentTool, AgentToolContext } from "@tau/tau-agent-core";
 import { createMockModel } from "@tau/tau-ai/providers/mock";
 import { AsyncJobManager } from "tau/async";
-import { DEFAULT_BASH_INTERCEPTOR_RULES, Settings } from "tau/config/settings";
+import { Settings } from "tau/config/settings";
 import { EditTool } from "tau/edit";
 import { SessionManager } from "tau/session/session-manager";
 import type { ToolSession } from "tau/tools";

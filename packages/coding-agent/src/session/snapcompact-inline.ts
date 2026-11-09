@@ -16,7 +16,7 @@
 
 // refused_by: merge_ladder_exhausted · collision: `import type { Context, ImageContent, Model, TextContent, ToolRe…`
 import { Tokenizer } from "@tau/tau-agent-core";
-import type { Context, ImageContent, Model, TextContent, ToolResultMessage, UserMessage } from "@tau/tau-ai";
+import type { Context, ImageContent, Model, TextContent, UserMessage } from "@tau/tau-ai";
 import * as snapcompact from "@tau/snapcompact";
 import type { SnapcompactFrameSink } from "../blob-broker/service";
 import contextFramesNote from "../prompts/system/snapcompact-context-frames-note.md" with { type: "text" };

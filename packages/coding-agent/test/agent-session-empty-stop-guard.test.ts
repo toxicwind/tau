@@ -6,7 +6,7 @@ import { Agent, type AgentMessage, type AgentTool } from "@tau/tau-agent-core";
 import type { ThinkingContent } from "@tau/tau-ai";
 import { createMockModel, type MockModel, type MockResponse } from "@tau/tau-ai/providers/mock";
 import { ModelRegistry } from "tau/config/model-registry";
-import { type SettingPath, Settings } from "tau/config/settings";
+import { Settings } from "tau/config/settings";
 import type { ExtensionRunner } from "tau/extensibility/extensions/runner";
 import { AgentSession, type AgentSessionEvent } from "tau/session/agent-session";
 import { AuthStorage } from "tau/session/auth-storage";

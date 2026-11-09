@@ -37,7 +37,6 @@ import { DEFAULT_MODEL_PER_PROVIDER } from "@tau/tau-catalog/provider-models";
 import { fuzzyMatch } from "@tau/tau-tui";
 import { logger } from "@tau/tau-utils";
 import chalk from "@tau/tau-utils/chalk";
-import MODEL_PRIO from "../priority.json" with { type: "json" };
 import {
 	AUTO_THINKING,
 	type ConfiguredThinkingLevel,

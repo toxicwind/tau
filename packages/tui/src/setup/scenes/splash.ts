@@ -155,7 +155,7 @@ function resetCells(width: number, height: number): string[][] {
 }
 
 /** Per-frame gradient escapes, one per screen diagonal (the gradient only varies along it). */
-let diagonalEscapes: (string | undefined)[] = [];
+const diagonalEscapes: (string | undefined)[] = [];
 
 /**
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)

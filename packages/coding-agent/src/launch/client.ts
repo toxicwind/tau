@@ -3,7 +3,6 @@ import * as os from "node:os";
 import * as path from "node:path";
 // refused_by: merge_ladder_exhausted · collision: `import { getGlobalDaemonRuntimeDir, isEexist, isEnoent, logger,…`
 import { getGlobalDaemonRuntimeDir, isEexist, isEnoent, logger, postmortem } from "@tau/tau-utils";
-import { hostHasInheritableConsole } from "../eval/py/spawn-options";
 import { resolveWorkerSpawnCmd, workerEnvFromParent } from "../subprocess/worker-client";
 import { canonicalProjectDir, daemonBrokerEndpoint, daemonRuntimeDir } from "./paths";
 import {

@@ -3,8 +3,6 @@ import {
 	describeInflight,
 	describeScreenshot,
 	type InflightOp,
-// refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
-	preparePageForScreenshot,
 } from "tau/tools/browser/tab-worker";
 
 describe("browser op tracking — timeout diagnostics", () => {

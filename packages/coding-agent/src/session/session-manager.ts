@@ -12,7 +12,6 @@ import type {
 import { createSyntheticToolResultMessage } from "@tau/tau-agent-core";
 import {
 	directoryIsEnterable,
-	directoryIsMissing,
 	getBlobsDir,
 	getProjectDir,
 	getSessionsDir,
@@ -29,8 +28,7 @@ import {
 } from "@tau/tau-utils";
 import type { StructuredSubagentSchemaMode } from "@tau/tau-tui/tools/task";
 import { moveFileAcrossDevices } from "../utils/atomic-file";
-import { hasAnnotationDraftsSync } from "../extensibility/custom-commands/bundled/annotate/draft-store";
-import { ArtifactManager, type ArtifactManagerApi } from "./artifacts";
+import { ArtifactManager } from "./artifacts";
 import { type BlobPutOptions, type BlobPutResult, BlobStore, lazyImageDataSync } from "./blob-store";
 import type { CompactionMethod } from "./compaction-methods";
 import {
@@ -44,13 +42,11 @@ import {
 	stripInternalDetailsFields,
 } from "./messages";
 import type { WorkPoolYieldItem } from "../task/workpool-yield";
-import { createInterruptedToolResults, sessionExitFollowsLastMessage } from "./exit-diagnostics";
 import type { RetryFallbackRole } from "./retry-fallback-chains";
 import {
 	type BuildSessionContextOptions,
 	buildSessionContext,
 	type SessionContext,
-	snapcompactHistoryBlockOptions,
 } from "./session-context";
 import {
 	type BranchSummaryEntry,
@@ -83,19 +79,12 @@ import {
 	type TtsrInjectionEntry,
 	type UsageStatistics,
 } from "./session-entries";
-import { currentRuntimeIdentity, type RuntimeIdentity } from "./runtime-identity";
 import {
 	findMostRecentNonEmptySession,
-	findRecentSessionContinuation,
-	findSessionContinuation,
 	isEmptySession,
 	listAllSessions,
-	listAllSessionsForPicker,
 	listSessions,
-	listSessionsForPicker,
 	movesConversation,
-	type PickerListing,
-	type SessionContinuation,
 	type SessionInfo,
 } from "./session-listing";
 import {
@@ -103,9 +92,7 @@ import {
 	loadSessionFile,
 	normalizeAssistantUsage,
 	parseSessionContent,
-	readSessionHeaderId,
 	resolveBlobRefsInEntries,
-	resolveBlobRefsInEntriesSync,
 	type SessionLoadResult,
 	visitEntriesFromFile,
 } from "./session-loader";
@@ -115,17 +102,15 @@ import {
 	hasPositiveMovedProjectEvidence,
 	readTerminalBreadcrumbEntry,
 	resolveManagedSessionRoot,
-	worktreeSessionDirs,
 	writeTerminalBreadcrumb,
 } from "./session-paths";
-import { forgetExternalizedImages, prepareEntryForPersistence } from "./session-persistence";
+import { prepareEntryForPersistence } from "./session-persistence";
 import { loadPinnedSessionIds, sortPinnedFirst } from "./session-pins";
 import {
 	FileSessionStorage,
 	MemorySessionStorage,
 	type SessionStorage,
 	type SessionStorageWriter,
-	SessionWriteConflictError,
 } from "./session-storage";
 import { type SessionTitleUpdate, serializeTitleSlot } from "./session-title-slot";
 import {

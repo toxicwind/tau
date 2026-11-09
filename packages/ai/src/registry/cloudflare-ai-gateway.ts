@@ -6,7 +6,6 @@ import {
 	CLOUDFLARE_AI_GATEWAY_BASE_URL,
 	CLOUDFLARE_AI_GATEWAY_COMPAT_BASE_URL,
 	CLOUDFLARE_AI_GATEWAY_OPENAI_BASE_URL,
-	parseCloudflareAiGatewayCredential,
 } from "@tau/tau-catalog/wire/cloudflare-ai-gateway";
 import { $env } from "@tau/tau-utils";
 import { NO_AUTH_SENTINEL } from "../auth-retry";

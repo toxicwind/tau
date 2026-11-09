@@ -1,6 +1,6 @@
 import * as path from "node:path";
 // refused_by: merge_ladder_exhausted · collision: `import { type SummaryResult, summarizeCode } from "@oh-my-pi/pi…`
-import { type SummaryResult, summarizeCode } from "@tau/tau-natives";
+import { type SummaryResult } from "@tau/tau-natives";
 import { LRUCache } from "@tau/tau-utils/lru";
 import { isMarkdownPath } from "@tau/tau-tui/theme";
 import type { ClientBridge } from "../session/client-bridge";

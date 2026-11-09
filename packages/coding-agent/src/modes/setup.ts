@@ -1,5 +1,4 @@
 // refused_by: merge_ladder_exhausted · collision: `import type { WebSearchGrounding } from "@oh-my-pi/pi-catalog/t…`
-import type { WebSearchGrounding } from "@tau/tau-catalog/types";
 import { runProviderSetupWizard as runProviderWizard } from "@tau/tau-tui/setup/lazy";
 import type { SetupHost, SetupScene } from "@tau/tau-tui/setup/scenes/types";
 import {
@@ -11,8 +10,6 @@ import {
 	type SetupSceneSelectionOptions,
 // refused_by: merge_ladder_exhausted · collision: `import type { WebSearchGrounding } from "@oh-my-pi/pi-catalog/t…`
 } from "@tau/tau-tui/setup/wizard";
-import { formatModelString, resolveModelRoleValue, rolePriorityDefaults } from "../config/model-resolver";
-import { getRoleInfo } from "../config/model-roles";
 import type { Settings } from "../config/settings";
 import { canSelfUpdate } from "../cli/update-cli";
 import { captureBrowserSession } from "../utils/browser-session";

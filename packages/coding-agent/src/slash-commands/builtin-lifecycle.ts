@@ -5,7 +5,6 @@ import * as path from "node:path";
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { CompactionCancelledError } from "@tau/tau-agent-core/compaction";
 import { logger, setProjectDir } from "@tau/tau-utils";
-import { reset as resetCapabilities } from "../capability";
 import { clearClaudePluginRootsCache } from "../discovery/helpers";
 import { rebindMemoryBackendForCwd } from "../hindsight/backend";
 import { memoryStatsUnavailableMessage, resolveMemoryBackend } from "../memory-backend";

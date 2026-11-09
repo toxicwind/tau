@@ -4,7 +4,6 @@ import * as path from "node:path";
 import { Agent, AgentBusyError } from "@tau/tau-agent-core";
 import type { ApiKey, AssistantMessage, AssistantRetryRecovery, Usage } from "@tau/tau-ai";
 import { createMockModel } from "@tau/tau-ai/providers/mock";
-import * as aiStream from "@tau/tau-ai/stream";
 import { getBundledModel } from "@tau/tau-catalog/models";
 import { ModelRegistry } from "tau/config/model-registry";
 import { Settings } from "tau/config/settings";

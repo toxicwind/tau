@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
 // refused_by: merge_ladder_exhausted · collision: `import { type SettingPath, Settings } from "@oh-my-pi/pi-coding…`
-import { type SettingPath, Settings } from "tau/config/settings";
+import { Settings } from "tau/config/settings";
 import { createTools, type ToolSession } from "tau/tools";
 
 Bun.env.PI_PYTHON_SKIP_CHECK = "1";

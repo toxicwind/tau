@@ -5,7 +5,6 @@ import { parseArgs } from "node:util";
 import { formatDuration, formatNumber, formatPercent } from "@tau/tau-utils";
 import { getDashboardStats, getTotalMessageCount, syncAllSessions } from "./aggregator";
 import { closeDb } from "./db";
-import { refreshRollups } from "./rollup";
 import { formatStatsDashboardUrl, startServer } from "./server";
 
 export {

@@ -16,7 +16,6 @@ import { ThinkingLevel } from "@tau/tau-agent-core";
 import { getOAuthProviders } from "@tau/tau-ai/oauth";
 import { toolWireSchema } from "@tau/tau-ai/utils/schema";
 import { $env, isRecord, logger, Snowflake } from "@tau/tau-utils";
-import { reset as resetCapabilities } from "../../capability";
 import { clearPluginRootsAndCaches, resolveActiveProjectRegistryPath } from "../../discovery/helpers";
 import {
 	type ExtensionAskDialogQuestion,
@@ -38,7 +37,6 @@ import {
 	type SkillRediscoverySource,
 } from "../../extensibility/skills";
 // refused_by: merge_ladder_exhausted · collision: `import { $env, isRecord, logger, Snowflake } from "@oh-my-pi/pi…`
-import { loadSlashCommands } from "../../extensibility/slash-commands";
 import { type Theme, theme } from "@tau/tau-tui/theme";
 import type { AgentSession } from "../../session/agent-session";
 import { SKILL_PROMPT_MESSAGE_TYPE, USER_INTERRUPT_LABEL } from "../../session/messages";

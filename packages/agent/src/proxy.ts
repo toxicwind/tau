@@ -21,7 +21,7 @@ import {
 	setStreamingPartialJson,
 // refused_by: merge_ladder_exhausted · collision: `import { parseStreamingJson, parseStreamingJsonThrottled, readS…`
 } from "@tau/tau-ai/utils/block-symbols";
-import { parseStreamingJson, parseStreamingJsonThrottled, readSseJson } from "@tau/tau-utils";
+import { parseStreamingJsonThrottled, readSseJson } from "@tau/tau-utils";
 
 // Event stream adapter for proxy SSE events
 export class ProxyMessageEventStream extends EventStream<AssistantMessageEvent, AssistantMessage> {

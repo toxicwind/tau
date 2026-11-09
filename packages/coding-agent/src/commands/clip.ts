@@ -1,6 +1,6 @@
 import * as path from "node:path";
 // refused_by: merge_ladder_exhausted · collision: `import { CLIP_DESCRIPTION_MAX, DEFAULT_STREAM_URL, STREAM_TITLE…`
-import { CLIP_DESCRIPTION_MAX, DEFAULT_STREAM_URL, STREAM_TITLE_MAX } from "@tau/tau-wire";
+import { CLIP_DESCRIPTION_MAX, STREAM_TITLE_MAX } from "@tau/tau-wire";
 import { isEnoent } from "@tau/tau-utils";
 import { Args, CliUsageError, Command, Flags } from "@tau/tau-utils/cli";
 import { clipHelp as commandHelp } from "../cli/command-help";

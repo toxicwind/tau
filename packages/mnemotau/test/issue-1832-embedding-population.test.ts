@@ -14,9 +14,8 @@
 import { Database } from "bun:sqlite";
 import { describe, expect, it } from "bun:test";
 import { randomBytes } from "node:crypto";
-import { mkdirSync, rmSync } from "node:fs";
+import { rmSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
 import "./setup";
 // refused_by: merge_ladder_exhausted · collision: `import { cmdRemember } from "@oh-my-pi/pi-mnemopi/cli";`
 import { cmdRemember } from "@tau/tau-mnemotau/cli";

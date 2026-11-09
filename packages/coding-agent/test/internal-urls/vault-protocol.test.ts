@@ -7,7 +7,6 @@ import {
 	parseInternalUrl,
 	parseVaultUrl,
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
-	resolveVaultUrlToPath,
 	VaultProtocolHandler,
 } from "tau/internal-urls";
 import * as vaultProtocol from "tau/internal-urls/vault-protocol";

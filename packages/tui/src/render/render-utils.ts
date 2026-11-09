@@ -11,7 +11,7 @@ import * as path from "node:path";
 import { ThinkingLevel } from "@tau/tau-agent-core";
 import type { Ellipsis } from "@tau/tau-natives";
 import { pluralize, sanitizeText } from "@tau/tau-utils";
-import { formatKeyHints, type KeyId } from "../app-keybindings";
+import { type KeyId } from "../app-keybindings";
 import { getKeybindings } from "../keybindings";
 import type { Theme, ThemeColor } from "../theme/theme";
 import type { Component } from "../tui";

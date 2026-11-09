@@ -957,7 +957,7 @@ export class DeepSeekInbandScanner implements InbandScanner {
 	#matchDsmlOpen(
 		kind: "invoke" | "parameter",
 	): { name: string; stringAttr: string | undefined; raw: string } | undefined {
-		const openRe = new RegExp(`^<[/]?[｜|]+(?:DSML|頭)[｜|]+\s*${kind}([^>]*)>`);
+		const openRe = new RegExp(`^<[/]?[｜|]+(?:DSML|頭)[｜|]+s*${kind}([^>]*)>`);
 		const open = openRe.exec(this.#buffer);
 		if (!open) return undefined;
 		const end = open.index + open[0].length - 1;

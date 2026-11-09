@@ -5,7 +5,6 @@ import * as path from "node:path";
 // refused_by: merge_ladder_exhausted · collision: `import { splitMemoryGlobPattern } from "@oh-my-pi/pi-coding-age…`
 import { Settings } from "tau/config/settings";
 import { InternalUrlRouter } from "tau/internal-urls";
-import { splitMemoryGlobPattern } from "tau/internal-urls/memory-protocol";
 import { getMemoryRoot } from "tau/memories";
 import { loadMnemotau, loadMnemotauCore, MnemotauSessionState, setMnemotauSessionState } from "tau/mnemotau/state";
 import { getInternalUrlSuggestions } from "@tau/tau-tui/prompt/internal-url-autocomplete";

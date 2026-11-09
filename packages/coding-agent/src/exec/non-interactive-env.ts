@@ -175,7 +175,7 @@ export function buildNonInteractiveEnv(
 	}
 
 	const shimOverrides: Record<string, string> = {
-		...(overrides ?? {}),
+		...overrides,
 		PATH: pathWithLocalBin,
 		TIKTOKEN_CACHE_DIR: overrides?.TIKTOKEN_CACHE_DIR ?? `${home}/.cache/tiktoken`,
 		...kairosOverrides,

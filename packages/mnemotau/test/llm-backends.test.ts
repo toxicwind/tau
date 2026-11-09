@@ -3,7 +3,6 @@ import {
 	CallableLlmBackend,
 	callHostLlm,
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
-	getHostLlmBackend,
 	resetHostLlmBackendForTests,
 	setHostLlmBackend,
 } from "@tau/tau-mnemotau/core/llm-backends";

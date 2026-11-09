@@ -4,15 +4,13 @@ import { AsyncJobManager } from "tau/async";
 import { Settings } from "tau/config/settings";
 import { runEvalAgent, type EvalAgentBridgeOptions, type EvalAgentResult } from "tau/eval/agent-bridge";
 import { runEvalWait } from "tau/eval/handle-bridge";
-import type { LocalProtocolOptions } from "tau/internal-urls";
-import type { MCPManager } from "tau/mcp";
 import { SessionManager } from "tau/session/session-manager";
 import * as taskDiscovery from "tau/task/discovery";
 import * as taskExecutor from "tau/task/executor";
 import * as isolationRunner from "tau/task/isolation-runner";
 import { runStructuredSubagent } from "tau/task/structured-subagent";
 import type { AgentDefinition } from "tau/task/types";
-import type { SingleResult, StructuredSubagentOutput } from "@tau/tau-tui/tools/task";
+import type { SingleResult } from "@tau/tau-tui/tools/task";
 import type { ToolSession } from "tau/tools";
 
 import { cfgTaskIsolationEnabled } from "@oh-my-pi/pi-coding-agent/task/settings";

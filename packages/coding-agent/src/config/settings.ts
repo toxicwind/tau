@@ -59,22 +59,14 @@ import { type EditMode } from "@tau/tau-tui/tools/edit";
 import { normalizeEditMode } from "../utils/edit-mode";
 import { stringifyYamlConfig } from "@tau/tau-utils/yaml-config";
 import { validateAgentServiceTierOverrides } from "./service-tier";
-import { STATUS_LINE_SEGMENT_IDS } from "@tau/tau-tui/status-line/schema";
 import {
 	type AnySetting,
 	all as allSettings,
-	bindEffects,
-	inheritWarnings,
 	lookup as lookupSetting,
 	resetRegistryForTest,
-	settingValuesEqual,
-	type ValueCacheEntry,
-	type WarnState,
 } from "./registry";
 // Registers every setting before any instance is read (definitions live next to their domains).
 import "./all-settings";
-import { cfgDisabledProviders, cfgModelRoles, cfgModelRoleStorage } from "./model-settings";
-import { cfgShellPath } from "../exec/settings";
 
 // ═══════════════════════════════════════════════════════════════════════════
 // Types

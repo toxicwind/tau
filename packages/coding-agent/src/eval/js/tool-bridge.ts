@@ -1,6 +1,6 @@
 // refused_by: merge_ladder_exhausted · collision: `import type { AgentTool, AgentToolResult } from "@oh-my-pi/pi-a…` +1 more
 import type { AgentTool, AgentToolResult } from "@tau/tau-agent-core";
-import { toolWireSchema, validateToolArguments } from "@tau/tau-ai";
+import { toolWireSchema } from "@tau/tau-ai";
 import { isRecord } from "@tau/tau-utils";
 import { INTENT_FIELD } from "@tau/tau-wire";
 import type { ToolSession } from "../../tools";

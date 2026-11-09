@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from "bun:test";
 // refused_by: merge_ladder_exhausted · collision: `import { mergeMCPHeaders, setGeneratedHeader } from "@oh-my-pi/…`
-import { mergeMCPHeaders, setGeneratedHeader } from "tau/mcp/transports/header-policy";
+import { setGeneratedHeader } from "tau/mcp/transports/header-policy";
 import { HttpTransport } from "tau/mcp/transports/http";
 
 const LOCALHOST_CERT = `-----BEGIN CERTIFICATE-----

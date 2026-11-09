@@ -11,7 +11,6 @@ import { Settings } from "tau/config/settings";
 import {
 	AUTO_THINKING,
 	clampAutoThinkingEffort,
-	parseCliThinkingLevel,
 	parseConfiguredThinkingLevel,
 	parseEffort,
 	parseThinkingLevel,

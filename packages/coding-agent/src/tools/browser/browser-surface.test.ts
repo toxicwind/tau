@@ -9,7 +9,7 @@
 // the returned strings.
 
 import { describe, expect, test } from "bun:test";
-import { readFileSync, readdirSync } from "node:fs";
+import { readdirSync } from "node:fs";
 import { join } from "node:path";
 
 import {
@@ -20,7 +20,6 @@ import {
 	generateFrameMethods,
 	generatePyMethods,
 	loadManifests,
-	type SurfaceManifest,
 } from "./browser-surface-macro.ts";
 
 const SURFACE_DIR = join(import.meta.dir, "surface");
@@ -304,9 +303,9 @@ describe("adversarial & boundary manifest invariants (weird tests)", () => {
 
 	test("python tuples in generatePyMethods use strictly valid syntax and no empty strings", () => {
 		const py = generatePyMethods();
-		expect(py).toMatch(/_TAB_METHODS\s*=\s*\([^\)]*\)/);
-		expect(py).toMatch(/_ELEMENT_METHODS\s*=\s*\([^\)]*\)/);
-		expect(py).toMatch(/_FRAME_METHODS\s*=\s*\([^\)]*\)/);
+		expect(py).toMatch(/_TAB_METHODS\s*=\s*\([^)]*\)/);
+		expect(py).toMatch(/_ELEMENT_METHODS\s*=\s*\([^)]*\)/);
+		expect(py).toMatch(/_FRAME_METHODS\s*=\s*\([^)]*\)/);
 		// No empty item string inside tuple `("",` or `""`
 		expect(py).not.toMatch(/\(\s*""\s*[,)]/);
 		expect(py).not.toMatch(/,\s*""\s*[,)]/);

@@ -8,7 +8,7 @@ import { resolveProviderModels } from "@tau/tau-catalog/model-manager";
 import { calculateCost, getBundledModels } from "@tau/tau-catalog/models";
 import { providerEntry } from "@tau/tau-catalog/compat/providers";
 import { DEFAULT_MODEL_PER_PROVIDER } from "@tau/tau-catalog/provider-models/descriptors";
-import { applyXaiCatalogPricing, xaiModelManagerOptions } from "@tau/tau-catalog/provider-models/openai-compat";
+import { xaiModelManagerOptions } from "@tau/tau-catalog/provider-models/openai-compat";
 import { type ModelSpec, type Usage } from "@tau/tau-catalog/types";
 
 const XAI_RESPONSES_SPEC: ModelSpec<"openai-responses"> = {

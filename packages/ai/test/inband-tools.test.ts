@@ -9,8 +9,6 @@ import {
 	getDialectDefinition,
 	type InbandScanEvent,
 	parseInbandToolMessage,
-// refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
-	renderInbandToolPrompt,
 } from "@tau/tau-ai/dialect";
 
 describe("final in-band JSON arguments", () => {

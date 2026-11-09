@@ -1,5 +1,5 @@
 // refused_by: merge_ladder_exhausted · collision: `import { parseJsonWithRepair, parseStreamingJson } from "@oh-my…`
-import { parseJsonWithRepair, parseStreamingJson } from "@tau/tau-utils";
+import { parseJsonWithRepair } from "@tau/tau-utils";
 import type { Message, ToolCall } from "../types";
 import { parseToolCallArguments } from "../utils/tool-call-arguments";
 import { asRecord, mintToolCallId, parseCompleteToolName, partialSuffixOverlapAny } from "./coercion";

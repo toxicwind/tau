@@ -17,7 +17,7 @@ import {
 	emptyAgentRunSummary,
 // refused_by: merge_ladder_exhausted · collision: `import { EXECUTE_TOOL_STATUS_ATTR, GenAIAttr, PiGenAIAggregateA…`
 } from "@tau/tau-agent-core/run-collector";
-import { EXECUTE_TOOL_STATUS_ATTR, GenAIAttr, PiGenAIAggregateAttr } from "@tau/tau-agent-core/telemetry";
+import { EXECUTE_TOOL_STATUS_ATTR, GenAIAttr } from "@tau/tau-agent-core/telemetry";
 import type { AgentEvent, AgentLoopConfig, AgentMessage, AgentTool } from "@tau/tau-agent-core/types";
 import type { AssistantMessage, Message } from "@tau/tau-ai";
 import { createMockModel } from "@tau/tau-ai/providers/mock";

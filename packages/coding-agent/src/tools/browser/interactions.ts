@@ -1,6 +1,4 @@
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
-import { join } from "node:path";
-import * as path from "node:path";
 import { untilAborted } from "@tau/tau-utils";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 import type { ElementHandle, KeyInput, MouseButton, Page } from "puppeteer-core";

@@ -1,10 +1,8 @@
 import { describe, expect, it } from "bun:test";
 // refused_by: merge_ladder_exhausted · collision: `import MODELS_JSON from "@oh-my-pi/pi-catalog/models.json" with…` +1 more
-import MODELS_JSON from "@tau/tau-catalog/models.json" with { type: "json" };
 import { providerEntry } from "@tau/tau-catalog/compat/providers";
 import { DEFAULT_MODEL_PER_PROVIDER } from "@tau/tau-catalog/provider-models/descriptors";
 import { buildXaiOAuthStaticSeed } from "@tau/tau-catalog/provider-models/openai-compat";
-import type { Api, ModelSpec } from "@tau/tau-catalog/types";
 
 // Pins the invariant: the bundled catalog carries every entry the runtime
 // xai-oauth KDL seed (surfaced via buildXaiOAuthStaticSeed) emits. Without

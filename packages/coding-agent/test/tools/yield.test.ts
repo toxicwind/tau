@@ -12,7 +12,6 @@ import type { ToolSession } from "tau/tools";
 import { buildOutputValidator } from "tau/tools/output-schema-validator";
 import { YieldTool } from "tau/tools/yield";
 import { buildWorkPoolOutputSchema } from "../../src/task/workpool-yield";
-import { arrayValuedLabels } from "../../src/task/yield-assembly";
 import { assembleYieldResult } from "@tau/tau-tui/tools/task-yield-assembly";
 
 function createSession(overrides: Partial<ToolSession> = {}): ToolSession {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
 // refused_by: merge_ladder_exhausted · collision: `import type { AssistantMessage, Usage } from "@oh-my-pi/pi-ai";`
-import type { AssistantMessage, Usage } from "@tau/tau-ai";
+import type { Usage } from "@tau/tau-ai";
 import { assistantUsageIsBilled } from "@tau/tau-tui/chat/transcript-render-helpers";
 
 function usage(overrides: Partial<Usage> = {}): Usage {

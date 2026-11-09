@@ -1,6 +1,5 @@
 import { createRequire } from "node:module";
 // refused_by: merge_ladder_exhausted · collision: `import { resolveRuntimeModule } from "@oh-my-pi/pi-utils";`
-import * as os from "node:os";
 import { resolveRuntimeModule } from "@tau/tau-utils";
 
 /** Native speech package installed by the shared STT runtime loader. */

@@ -15,7 +15,7 @@
  */
 // refused_by: merge_ladder_exhausted · collision: `import { diffLineRuns, editDiffString, summarizeCode } from "@o…`
 import { completeSimple, retryTransientCompletion } from "@tau/tau-ai";
-import { diffLineRuns, editDiffString, summarizeCode } from "@tau/tau-natives";
+import { diffLineRuns, editDiffString } from "@tau/tau-natives";
 import { logger, prompt } from "@tau/tau-utils";
 import { resolveRoleSelection } from "../config/model-resolver";
 import type { WritethroughCallback } from "../lsp";

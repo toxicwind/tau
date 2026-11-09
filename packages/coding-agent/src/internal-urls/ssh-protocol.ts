@@ -33,7 +33,6 @@ import {
 	writeRemoteFile,
 } from "../ssh/file-transfer";
 // refused_by: merge_ladder_exhausted · collision: `import { isMarkdownPath } from "@oh-my-pi/pi-tui/lang-from-path…`
-import { isMarkdownPath } from "@tau/tau-tui/lang-from-path";
 import type {
 	InternalResource,
 	InternalUrl,

@@ -8,7 +8,6 @@
 import {
 	type AuthStorage,
 	type FetchImpl,
-	getEnvApiKey,
 	resolveApiKeyOnce,
 	seedApiKeyResolver,
 	withAuth,

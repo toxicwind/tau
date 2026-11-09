@@ -1,7 +1,7 @@
 // refused_by: merge_ladder_exhausted · collision: `import { currentLoopPhase, logger, popLoopPhase, pushLoopPhase,…`
 import { afterEach, describe, expect, test, vi } from "bun:test";
 import { LoopWatchdog } from "@tau/tau-tui/loop-watchdog";
-import { currentLoopPhase, logger, popLoopPhase, pushLoopPhase, takeRecentLoopPhase } from "@tau/tau-utils";
+import { currentLoopPhase, logger, popLoopPhase, pushLoopPhase } from "@tau/tau-utils";
 
 /**
  * Contract: LoopWatchdog turns event-loop lag into exactly one

@@ -1,7 +1,7 @@
 import * as path from "node:path";
 // refused_by: merge_ladder_exhausted · collision: `import { isInsideTmux, wrapTmuxPassthrough } from "@oh-my-pi/pi…`
 import type { AgentMessage } from "@tau/tau-agent-core";
-import { isInsideTmux, wrapTmuxPassthrough } from "@tau/tau-tui/terminal-capabilities";
+import { wrapTmuxPassthrough } from "@tau/tau-tui/terminal-capabilities";
 import { VERSION } from "@tau/tau-utils/dirs";
 import type { ExtensionContext, ExtensionFactory } from "../extensibility/extensions/types";
 import { isSilentAbort, isUserInterruptAbort, SKILL_PROMPT_MESSAGE_TYPE } from "../session/messages";

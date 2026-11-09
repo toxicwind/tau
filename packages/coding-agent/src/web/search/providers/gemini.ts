@@ -18,8 +18,7 @@ import {
 	withOAuthAccess,
 // refused_by: merge_ladder_exhausted · collision: `import { parseCloudflareAiGatewayCredential } from "@oh-my-pi/p…` +1 more
 } from "@tau/tau-ai";
-import { parseCloudflareAiGatewayCredential } from "@tau/tau-catalog/wire/cloudflare-ai-gateway";
-import { getAntigravityUserAgent, getGeminiCliHeaders } from "@tau/tau-catalog/wire/gemini-headers";
+import { getGeminiCliHeaders } from "@tau/tau-catalog/wire/gemini-headers";
 import { fetchWithRetry, USER_AGENT } from "@tau/tau-utils";
 
 import type { SearchCitation, SearchResponse, SearchSource } from "../types";

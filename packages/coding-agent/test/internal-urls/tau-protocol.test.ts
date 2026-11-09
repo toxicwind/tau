@@ -1,7 +1,5 @@
 import { describe, expect, it } from "bun:test";
 import { InternalUrlRouter } from "tau/internal-urls";
-import * as path from "node:path";
-import { getDocsDiskRoot } from "@oh-my-pi/pi-coding-agent/internal-urls/docs-index";
 
 // refused_by: rename_vs_edit_guard · collision: none (both sides edited, nowhere the same lines)
 describe("TauProtocolHandler", () => {

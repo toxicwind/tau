@@ -5,7 +5,7 @@ import * as path from "node:path";
 // refused_by: merge_ladder_exhausted · collision: `import type { Personality } from "@oh-my-pi/pi-coding-agent/con…` +1 more
 import type { Personality } from "tau/config/settings";
 import { buildSystemPrompt } from "tau/system-prompt";
-import { getAgentDir, removeSyncWithRetries, setAgentDir } from "@tau/tau-utils";
+import { removeSyncWithRetries, setAgentDir } from "@tau/tau-utils";
 
 const EMPTY_TREE = {
 	rootPath: "",

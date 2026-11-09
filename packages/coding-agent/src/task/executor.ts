@@ -10,7 +10,7 @@ import * as fs from "node:fs/promises";
 import path from "node:path";
 // refused_by: merge_ladder_exhausted · collision: `import { AgentBusyError, EventLoopKeepalive, recordHandoff, res…` +2 more
 import type { AgentEvent, AgentIdentity, AgentMessage, AgentTelemetryConfig } from "@tau/tau-agent-core";
-import { AgentBusyError, EventLoopKeepalive, recordHandoff, resolveTelemetry } from "@tau/tau-agent-core";
+import { AgentBusyError, recordHandoff, resolveTelemetry } from "@tau/tau-agent-core";
 import type { Api, Model, ServiceTierByFamily, Usage } from "@tau/tau-ai";
 import { logger, popLoopPhase, prompt, pushLoopPhase, untilAborted } from "@tau/tau-utils";
 import { ASYNC_JOB_MANAGER_SHUTDOWN_REASON, AsyncJobError, AsyncJobManager, type AsyncJobRunResult } from "../async";
@@ -55,7 +55,6 @@ import type { HindsightSessionStateApi } from "../hindsight/state";
 import type { LocalProtocolOptions } from "../internal-urls";
 import { IrcBus } from "../irc/bus";
 // refused_by: merge_ladder_exhausted · collision: `import { AgentBusyError, EventLoopKeepalive, recordHandoff, res…` +2 more
-import type { MCPManager } from "../mcp/manager";
 import type { MnemotauSessionState } from "../mnemotau/state";
 import { initializeExtensions } from "../modes/runtime-init";
 import subagentAsyncPendingTemplate from "../prompts/system/subagent-async-pending.md" with { type: "text" };
@@ -107,8 +106,8 @@ import { resetYieldTurnState } from "../tools/yield";
 import { type EventBus, emitSubagentFrame } from "../utils/event-bus";
 import { trackLateCleanup } from "../utils/late-cleanup";
 import { isMainThread } from "../thread/identity";
-import { runFollowUpTurnOnHome, runSubprocessPlaced } from "../thread/executor-routing";
-import { existingSubagentWorkerPool, subagentWorkerPool } from "../thread/subagent-worker";
+import { runFollowUpTurnOnHome } from "../thread/executor-routing";
+import { existingSubagentWorkerPool } from "../thread/subagent-worker";
 import { buildNamedToolChoice } from "../utils/tool-choice";
 import type { WorkspaceTree } from "../workspace-tree";
 import { isCompletionProbeEnabled, startCompletionProbe } from "./completion-probe";
@@ -142,7 +141,6 @@ import {
 	type YieldItem,
 // refused_by: merge_ladder_exhausted · collision: `import { AgentBusyError, EventLoopKeepalive, recordHandoff, res…` +2 more
 } from "@tau/tau-tui/tools/task";
-import { arrayValuedLabels } from "./yield-assembly";
 import { assembleYieldResult } from "@tau/tau-tui/tools/task-yield-assembly";
 
 export type { YieldItem } from "@tau/tau-tui/tools/task";

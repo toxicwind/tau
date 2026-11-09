@@ -10,7 +10,6 @@ import {
 	createEnvReader,
 	expandDotenvValues,
 	filterChildShellEnv,
-	filterChildShellEnvInternal,
 	filterProcessEnv,
 	getDbBusyTimeoutMs,
 	getDotenvEnvValues,

@@ -1,6 +1,6 @@
 // refused_by: merge_ladder_exhausted · collision: `import { $env, $flag } from "@oh-my-pi/pi-utils";`
 import { classifyModel } from "@tau/tau-catalog/identity";
-import { $env, $flag } from "@tau/tau-utils";
+import { $flag } from "@tau/tau-utils";
 
 import type { EditMode } from "@tau/tau-tui/tools/edit";
 

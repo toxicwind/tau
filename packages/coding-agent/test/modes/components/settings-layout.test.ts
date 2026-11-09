@@ -1,8 +1,7 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
 // refused_by: merge_ladder_exhausted · collision: `import { SETTINGS_SCHEMA, type SettingPath } from "@oh-my-pi/pi…` +1 more
 import { resetSettingsForTest, Settings } from "tau/config/settings";
-import { SETTINGS_SCHEMA, type SettingPath } from "tau/config/settings-schema";
-import { getSettingsForTab, SETTING_TABS, type SettingTab, TAB_GROUPS } from "@tau/tau-tui/overlays/settings-defs";
+import { getSettingsForTab, SETTING_TABS, TAB_GROUPS } from "@tau/tau-tui/overlays/settings-defs";
 import { createSettingsHost } from "tau/config/settings-ui";
 import { createPluginSettingsHost } from "tau/extensibility/plugins/settings-host";
 import { SettingsSelectorComponent } from "@tau/tau-tui/overlays/settings-selector";

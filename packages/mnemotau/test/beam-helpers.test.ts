@@ -13,13 +13,11 @@ import {
 	generateStableId,
 	inMemoryVecSearch,
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
-	lexicalRelevance,
 	normalizeImportance,
 	normalizeMetadata,
 	normalizeWeights,
 	recallTokens,
 	recencyDecay,
-	strictFactMatches,
 	temporalBoost,
 	workingMemoryVecSearch,
 } from "@tau/tau-mnemotau/core/beam/helpers";

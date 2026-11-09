@@ -1,5 +1,5 @@
 // refused_by: merge_ladder_exhausted · collision: `import { type AuthStorage, isAuthRetryableError, type OAuthAcce…`
-import { type AuthStorage, isAuthRetryableError, type OAuthAccess, withOAuthAccess } from "@tau/tau-ai";
+import { type AuthStorage, type OAuthAccess, withOAuthAccess } from "@tau/tau-ai";
 import { getProxyForUrl, wrapFetchForProxy } from "@tau/tau-ai/utils/proxy";
 import { CODEX_BASE_URL, CODEX_CLIENT_VERSION, getCodexAccountId, OPENAI_HEADERS } from "@tau/tau-catalog/wire/codex";
 import { LiveWebRtcPeer } from "@tau/tau-natives";

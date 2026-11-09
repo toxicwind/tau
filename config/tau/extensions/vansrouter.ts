@@ -113,7 +113,7 @@ export default function vansrouterExtension(pi: ExtensionAPI): void {
         ctx?.ui?.notify?.(`[vansrouter] synced ${live.length} live models`);
         return;
       }
-    } catch (e) {
+    } catch  {
       // fall through
     }
     ctx?.ui?.notify?.(`[vansrouter] using ${SEED_MODELS.length} seed models`);

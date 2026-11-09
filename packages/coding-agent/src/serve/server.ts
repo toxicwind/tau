@@ -147,7 +147,7 @@ export class ServeServer {
 	}
 
 	#onConnection(socket: net.Socket): void {
-		let authenticated = false;
+		const authenticated = false;
 		let buffer = "";
 		const client: AttachedClient = { socket, owner: false, cols: 80, rows: 24, authenticated: false };
 		this.#clients.set(socket, client);

@@ -1,4 +1,3 @@
-import { resolveCascade } from "./src/compat/cascade";
 import rules from "./src/compat/rules.json";
 
 console.log("total rules:", (rules as any).rules.length);

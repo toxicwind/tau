@@ -1,12 +1,9 @@
 // refused_by: merge_ladder_exhausted · collision: `import { clearCustomApis, getCustomApi } from "@oh-my-pi/pi-ai/…` +1 more
-import { afterEach, describe, expect, test } from "bun:test";
-import { clearCustomApis, getCustomApi } from "@tau/tau-ai/api-registry";
+import { describe, expect, test } from "bun:test";
 import {
 	createMockModel,
-	isMockModel,
 	MOCK_API,
 	type MockHandler,
-	registerMockApi,
 	streamMock,
 } from "@tau/tau-ai/providers/mock";
 import type { AssistantMessage, AssistantMessageEvent, Context, ToolCall } from "@tau/tau-ai/types";

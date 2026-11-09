@@ -1,4 +1,3 @@
-import { join } from "node:path";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 
 const NON_SERIALIZABLE_RUN_ARGUMENT = "Run argument is not JSON-serializable; pass plain data";

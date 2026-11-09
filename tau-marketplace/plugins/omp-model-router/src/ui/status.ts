@@ -3,8 +3,8 @@ import type { TUI } from "@oh-my-pi/pi-tui";
 import type { ShimmerPalette } from "tau/modes/theme/shimmer";
 import { shimmerSegments } from "tau/modes/theme/shimmer";
 import type { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { RoutingDecision, RouterConfig, RouterThinkingByProfile, ScopedPin } from "../types";
-import { resolveEffectivePin, DEFAULT_PIN_TIMEOUT_MS } from "../routing/pin";
+import type { RoutingDecision, RouterConfig, RouterThinkingByProfile } from "../types";
+import { resolveEffectivePin } from "../routing/pin";
 import type { SessionScope } from "../state";
 import {
 	shortenModelId,

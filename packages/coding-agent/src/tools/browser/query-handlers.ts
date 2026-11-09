@@ -1,4 +1,3 @@
-import { join } from "node:path";
 import type { CustomQueryHandler, default as PuppeteerInstance, Puppeteer as PuppeteerClass } from "puppeteer-core";
 
 /** Root node Puppeteer passes to a custom query handler (the document for page-level queries). */
