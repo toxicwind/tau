@@ -3,14 +3,8 @@
  *
  * Handles /ssh subcommands for managing SSH host configurations.
  */
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { getProjectDir, getSSHConfigPath } from "@tau/tau-utils";
-=======
-import { getProjectDir, getSSHConfigPath } from "@oh-my-pi/pi-utils";
-import { Text } from "@oh-my-pi/pi-tui";
-import { shortenPath } from "@oh-my-pi/pi-tui/render/render-utils";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/modes/controllers/ssh-command-controller.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { reset as resetCapabilities } from "../../capability";
 import { type SSHHost, sshCapability } from "../../capability/ssh";
 import { loadCapability } from "../../discovery";
@@ -285,12 +279,8 @@ export class SSHCommandController {
 
 			// Show user-level hosts
 			if (userHosts.length > 0) {
-<<<<<<< ours — scope `#handleList` in class `SSHCommandController` (F, confidence: medium)
 // refused_by: container_member · collision: `lines.push(theme.fg("accent", "User level") + theme.fg("muted",…` +1 more
 				lines.push(theme.fg("accent", "User level") + theme.fg("muted", ` (~/.tau/agent/ssh.json):`));
-=======
-				lines.push(theme.fg("accent", "User level") + theme.fg("muted", ` (${shortenPath(userPath)}):`));
->>>>>>> theirs — scope `#handleList`
 				for (const name of userHosts) {
 					const config = userConfig.hosts![name];
 					const details = this.#formatHostDetails(config);
@@ -301,12 +291,8 @@ export class SSHCommandController {
 
 			// Show project-level hosts
 			if (projectHosts.length > 0) {
-<<<<<<< ours — scope `#handleList` in class `SSHCommandController` (F, confidence: medium)
 // refused_by: container_member · collision: `lines.push(theme.fg("accent", "User level") + theme.fg("muted",…` +1 more
 				lines.push(theme.fg("accent", "Project level") + theme.fg("muted", ` (.tau/ssh.json):`));
-=======
-				lines.push(theme.fg("accent", "Project level") + theme.fg("muted", ` (${shortenPath(projectPath)}):`));
->>>>>>> theirs — scope `#handleList`
 				for (const name of projectHosts) {
 					const config = projectConfig.hosts![name];
 					const details = this.#formatHostDetails(config);

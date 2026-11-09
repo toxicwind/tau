@@ -1,6 +1,5 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import { scheduler } from "node:timers/promises";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { Agent, AgentBusyError } from "@oh-my-pi/pi-agent-core";` +1 more
 import { Agent, AgentBusyError } from "@tau/tau-agent-core";
 import { CompactionCancelledError } from "@tau/tau-agent-core/compaction";
@@ -18,29 +17,6 @@ import * as unexpectedStopClassifier from "tau/session/unexpected-stop-classifie
 import { EventBus } from "tau/utils/event-bus";
 import { TempDir, withTimeout } from "@tau/tau-utils";
 import * as logger from "@tau/tau-utils/logger";
-=======
-import { Agent, AgentBusyError, type AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { CompactionCancelledError } from "@oh-my-pi/pi-agent-core/compaction";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { ExtensionRuntime, loadExtensionFromFactory } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
-import { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
-import type { CompactOptions } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/types";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { SessionMaintenance } from "@oh-my-pi/pi-coding-agent/session/session-maintenance";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import * as unexpectedStopClassifier from "@oh-my-pi/pi-coding-agent/session/unexpected-stop-classifier";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-import * as imageLoading from "@oh-my-pi/pi-coding-agent/utils/image-loading";
-import { TempDir, withTimeout } from "@oh-my-pi/pi-utils";
-import * as logger from "@oh-my-pi/pi-utils/logger";
-import { MAIN_AGENT_ID } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import { activateTodoTool, createAssistantMessage } from "./helpers/agent-session-setup";
-import { flush as flushEventLoop, until } from "./helpers/fake-clock";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/agent-session-auto-compaction-queue.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { mockSchedulerWaitWithClock } from "./helpers/mock-scheduler-clock";
 
 import {

@@ -1,18 +1,10 @@
 import { afterEach, describe, expect, it } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { agentLoop, agentPauseGate } from "@oh-my-pi/pi-agent-c…` +1 more
 import { type } from "@tau/tautype";
 import { agentLoop, agentPauseGate } from "@tau/tau-agent-core";
 import type { AgentContext, AgentLoopConfig, AgentMessage, AgentTool } from "@tau/tau-agent-core/types";
 import type { Message } from "@tau/tau-ai";
 import { createMockModel } from "@tau/tau-ai/providers/mock";
-=======
-import { type } from "@oh-my-pi/omptype";
-import { Agent, agentLoop, agentPauseGate } from "@oh-my-pi/pi-agent-core";
-import type { AgentContext, AgentLoopConfig, AgentMessage, AgentTool } from "@oh-my-pi/pi-agent-core/types";
-import type { Message } from "@oh-my-pi/pi-ai";
-import { createMockModel, type MockModel } from "@oh-my-pi/pi-ai/providers/mock";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/agent/test/pause-gate.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { createUserMessage } from "./helpers";
 
 function identityConverter(messages: AgentMessage[]): Message[] {

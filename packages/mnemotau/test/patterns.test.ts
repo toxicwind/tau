@@ -1,10 +1,6 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import {` +5 more
 import { CompressionStats, DetectedPattern, MemoryCompressor, PatternDetector } from "@tau/tau-mnemotau/core/patterns";
-=======
-import { CompressionStats, MemoryCompressor, PatternDetector } from "@oh-my-pi/pi-mnemopi/core/patterns";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/mnemotau/test/patterns.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 describe("memory compression", () => {
 	it("reports savings and zero-size stats", () => {

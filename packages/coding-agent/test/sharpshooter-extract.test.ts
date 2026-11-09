@@ -2,7 +2,6 @@ import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import type { Settings } from "@oh-my-pi/pi-coding-agent/config…`
 import type { AgentMessage } from "@tau/tau-agent-core";
 import type { AssistantMessage } from "@tau/tau-ai";
@@ -13,21 +12,6 @@ import type { Settings } from "tau/config/settings";
 import type { AgentSession } from "tau/session/agent-session";
 import { buildSharpshooterEnvelope, maybeStartSharpshooterExtraction } from "tau/sharpshooter/extract";
 import { listSharpshooterDeltas } from "tau/sharpshooter/queue";
-=======
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import * as ai from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import type { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import {
-	buildSharpshooterEnvelope,
-	flushSharpshooterExtraction,
-	maybeStartSharpshooterExtraction,
-} from "@oh-my-pi/pi-coding-agent/sharpshooter/extract";
-import { listSharpshooterDeltas } from "@oh-my-pi/pi-coding-agent/sharpshooter/queue";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/sharpshooter-extract.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function message(role: "user" | "assistant", content: unknown): AgentMessage {
 	return { role, content, timestamp: Date.now() } as unknown as AgentMessage;

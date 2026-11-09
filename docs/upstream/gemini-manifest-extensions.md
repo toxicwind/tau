@@ -188,20 +188,10 @@ For Gemini manifests specifically:
 does **not** identify a runnable TS/JS entry point.
 
 The Gemini provider separately populates the `extension-module` capability by
-<<<<<<< ours — heading `Boundary: manifest metadata vs runtime extension modules` (S, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 scanning the same two extension roots for direct `.ts`/`.js` files,
 `<name>/index.ts` / `index.js`, and `package.json` `tau`/`pi` extension entries.
 Those module records are independent of `gemini-extension.json`.
-=======
-scanning the enabled roots for direct `.ts`/`.js` files,
-`<name>/index.ts` / `index.js`, and `package.json` `omp`/`pi` extension entries.
-Declared package entries take precedence over an implicit index; otherwise
-`index.ts` wins over `index.js`. The shared module scanner also supports
-top-level symlinked extension directories. Those module records are independent
-of `gemini-extension.json`; the manifest scanner itself only accepts directory
-entries, not symlink entries.
->>>>>>> theirs — heading `Boundary: manifest metadata vs runtime extension modules` (S, confidence: medium) · weave: run 'weave explain docs/upstream/gemini-manifest-extensions.md' for per-hunk detail, 'weave check' to verify your resolution
 
 The ambient startup path in `discoverExtensionPaths()` currently requests only
 the `native` provider, so Gemini-discovered module records are not automatically

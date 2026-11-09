@@ -44,7 +44,6 @@ The encoding also defines (same `o200k_harmony` block, IDs `199998`–`200013`) 
 
 **Roles** (five). The instruction hierarchy used to resolve conflicts is `system` > `developer` > `user` > `assistant` > `tool`.
 
-<<<<<<< ours — scope ``{header}` always begins with the role and ma...` in heading `Roles / channels / turn structure` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `| `system` | Identity, knowledge cutoff / current date, reasoni…`
 | Role | Purpose |
 | :--- | :------ |
@@ -53,15 +52,6 @@ The encoding also defines (same `o200k_harmony` block, IDs `199998`–`200013`) 
 | `user` | End-user input. |
 | `assistant` | Model output. Carries a channel and, for tool calls, a recipient. |
 | `tool` | Output of an executed tool. The message's *author/role is the tool's own name* (e.g. `functions.get_current_weather`), not the literal word `tool`. |
-=======
-| Role        | Purpose                                                                                                                                             |
-| :---------- | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `system`    | Identity, knowledge cutoff / current date, reasoning effort, valid-channels declaration, built-in tools. NOT the user-facing "system prompt".       |
-| `developer` | The conventional "system prompt": instructions + the `# Tools` function declarations + (optional) structured-output schema.                         |
-| `user`      | End-user input.                                                                                                                                     |
-| `assistant` | Model output. Carries a channel and, for tool calls, a recipient.                                                                                   |
-| `tool`      | Output of an executed tool. The message's _author/role is the tool's own name_ (e.g. `functions.get_current_weather`), not the literal word `tool`. |
->>>>>>> theirs — scope ``{header}` always begins with the role and ma...` · weave: run 'weave explain docs/toolconv/harmony.md' for per-hunk detail, 'weave check' to verify your resolution
 
 **Channels** (assistant output only; the channel is mandatory on every assistant message):
 
@@ -139,7 +129,6 @@ Some Harmony serializers include an explicit JSON content type and place the rec
 
 The arguments body is a raw JSON object. The optional `<|constrain|>json` content-type signals JSON (and is the hook for constrained/grammar-based decoding); the content-type may also be a bare word such as `code` (seen with built-in tools). Built-in tools differ only in channel and recipient: they typically render on `analysis`, with recipient `browser.search` / `browser.open` / `browser.find` or always `python`.
 
-<<<<<<< ours — heading `OMP `harmony` dialect behavior` (S+F, confidence: low)
 // refused_by: rename_vs_edit_guard · collision: `An important owned-scanner edge case differs from canonical Har…`
 ### TAU `harmony` dialect behavior
 
@@ -148,15 +137,6 @@ TAU emits the first form above: no `<|constrain|>` marker, recipient in the chan
 Arguments are accumulated until `<|call|>`, `<|end|>`, or `<|return|>` and parsed with JSON repair. Empty arguments, or input that still cannot be parsed after repair, become `{}` rather than a scanner error. The scanner emits `toolStart` when the header completes and `toolEnd` only at the message terminator; `analysis` body chunks stream as thinking deltas, while ordinary assistant `commentary`/`final` bodies stream as text. Non-assistant messages, including tool-result envelopes, are skipped by this output scanner.
 
 An important owned-scanner edge case differs from canonical Harmony. After a recipient-bearing header reaches `<\|message\|>`, TAU has already emitted `toolStart`. If the ordinary streaming path drains the body bytes and the stream then ends without `<\|call\|>`, `<\|end\|>`, or `<\|return\|>`, `flush()` emits no `toolEnd` and does not retract the start. The Harmony scanner emits no argument deltas, so the retained canonical call still has `{}` even if unterminated body text was seen. On a normal stop, TAU changes the turn to `toolUse` and may dispatch that empty call. This is permissive and unsafe recovery behavior, not a valid Harmony terminator rule.
-=======
-### OMP `harmony` dialect behavior
-
-OMP emits the first form above: no `<|constrain|>` marker, recipient in the channel section, and compact JSON arguments. It synthesizes a call id on receipt because Harmony carries none. The stateful scanner accepts the recipient in either header section, strips a leading `functions.` from the exposed tool name, and treats any nonempty recipient other than `assistant` as a tool call (including built-ins such as `browser.search`).
-
-OMP's `HarmonyInbandScanner` (`packages/ai/src/dialect/harmony.ts`) accumulates arguments and parses them with JSON repair. Empty, non-object, or still-unparseable arguments become `{}`. It emits `toolStart` when the recipient-bearing header reaches `<|message|>` and no argument deltas. `<|call|>`, `<|end|>`, and `<|return|>` finish the body; a new `<|start|>` or `<|channel|>` also implicitly finishes it before starting another header. `analysis` chunks stream as thinking deltas, and other assistant bodies stream as visible text. Non-assistant envelopes are skipped. A completion may start with `<|channel|>` alone; an omitted role is treated as assistant, and the scanner does not require a channel. Its factory ignores `parseThinking`, so `analysis` is always parsed as thinking.
-
-EOF recovery depends on buffered bytes. If `flush()` still has body bytes, it finishes the body and emits `toolEnd` without a terminator. If the last feed already drained the buffer, `flush()` emits nothing, leaving only `toolStart`; the canonical call retains `{}` because no argument deltas were published. On a normal stop, the owned projector can retain and dispatch that call. These are permissive recovery paths, not valid Harmony terminator rules.
->>>>>>> theirs — heading `OMP `harmony` dialect behavior` (S+F, confidence: low)
 
 ## Multiple / parallel tool calls
 
@@ -181,12 +161,8 @@ The executed tool's output is fed back as a message whose **author/role is the t
 
 The header ordering is `{toolname} to=assistant<|channel|>commentary`. Built-in tool results follow the same shape (e.g. `<|start|>browser.search to=assistant<|channel|>commentary<|message|>{"result": "https://openai.com/"}<|end|>`). The minimal form the renderer accepts when channel/recipient are not set on the message is just `<|start|>{toolname}<|message|>{output}<|end|>`, but emitting the full `to=assistant<|channel|>commentary` header is what the reference parser round-trips and is recommended. After appending the result, restart generation by emitting the next `<|start|>assistant`.
 
-<<<<<<< ours — scope `OMP always renders the full canonical result ...` in heading `Tool-result format` (S, confidence: medium)
 // refused_by: statement_fold · collision: `OMP always renders the full canonical result header shown above…`
 TAU always renders the full canonical result header shown above and passes `result.text` through verbatim. Harmony has no dedicated error bit, so `isError` is not represented separately; a failure must be described in the result payload.
-=======
-OMP renders the full result header shown above and passes `result.text` through verbatim. Its `harmonyRecipient` helper prefixes every name lacking `functions.` (including a supplied `browser.search` name) with `functions.`; it does not special-case built-in recipients. Harmony has no dedicated error bit, so `isError` is not represented separately.
->>>>>>> theirs — scope `OMP always renders the full canonical result ...`
 
 ## End-to-end example
 
@@ -237,20 +213,12 @@ When a server (vLLM/SGLang/Ollama) bridges Harmony to Chat Completions JSON:
 - **`tool_call_id`**: Harmony has no native call ID. The server synthesizes one (e.g. `call_abc123`) and is responsible for correlating the follow-up `role:"tool"` message back to the Harmony tool-result envelope (recipient `to=functions.<name>` / call order).
 - **Tool result messages** (`{"role":"tool","tool_call_id":...,"content":...}`) are rendered into `<|start|>{toolname} to=assistant<|channel|>commentary<|message|>{content}<|end|>`. The server maps `tool_call_id` → the original function name to build the `{toolname}` author.
 - **Reasoning**: `analysis`-channel text is surfaced as `reasoning_content` (vLLM/SGLang) or as a `reasoning`/`thinking` field, and is generally not echoed back on subsequent requests. `final`-channel text is the normal `message.content`. `commentary` preambles, if surfaced, also map to assistant content.
-<<<<<<< ours — scope `- **OMP transcript rendering:** `developer`, ...` in heading `OpenAI-compatible API mapping` (S, confidence: medium)
 // refused_by: statement_fold · collision: `- **OMP transcript rendering:** `developer`, `user`, and other …`
 - **TAU transcript rendering:** `developer`, `user`, and other non-assistant roles map directly to Harmony envelopes. Assistant messages emit, in order, a complete `analysis` message for thinking, a complete `final` message for visible text, then one `commentary` call message per tool call. Thus visible text accompanying a tool call is rendered as `final`, not as a commentary preamble. Tool-result runs become consecutive canonical tool-author envelopes.
-=======
-- **OMP transcript rendering:** `renderTranscript` maps `developer`/`user` directly to envelopes and emits assistant thinking (`analysis`), visible text (`final`), then calls (`commentary`) in that order. Empty assistant turns become empty `final` messages. Text/analysis history messages end with `<|end|>`, call messages with `<|call|>`; tool-result runs become consecutive tool-author envelopes. It retains all supplied thinking and appends no generation prompt, unlike a reference renderer configured to drop completed-turn analysis.
->>>>>>> theirs — scope `- **OMP transcript rendering:** `developer`, ...`
 - **OMP owned request history:** `encodeInbandToolHistory` is separate: assistant turns with calls become prose plus call envelopes and lose their thinking/image blocks; call-free assistant turns remain unchanged. Tool-result runs become synthetic **user** messages containing tool-author envelopes, with result images retained separately.
 - **Native server/chat-template compilation:** on the native vLLM/SGLang path, request `tools` / `tool_choice` are compiled by the server's chat template into the developer-message `namespace functions { ... }` block; the system message gains the commentary-routing line.
-<<<<<<< ours — scope `- **OMP owned-dialect advertisement:** when O...` in heading `OpenAI-compatible API mapping` (S, confidence: medium)
 // refused_by: statement_fold · collision: `- **OMP owned-dialect advertisement:** when OMP's `harmony` dia…`
 - **TAU owned-dialect advertisement:** when TAU's `harmony` dialect is selected, TAU removes native provider tools and appends its generic compact `<tools>` JSON catalog plus the Harmony format guide to the system prompt. This path does not use the canonical developer-message namespace as its tool advertisement.
-=======
-- **OMP owned-dialect advertisement:** with tools present, owned mode omits native tools/`tool_choice` and appends the compact `<tools>` JSON catalog plus the Harmony guide to the system prompt, not the canonical developer namespace. Set `tools.format` to `harmony` to force it. Default `auto` selects an owned dialect only for `supportsTools === false`; OpenAI and GPT-OSS model classes map to `harmony`. `PI_DIALECT=harmony` is a fallback when the configured resolver returns no owned dialect.
->>>>>>> theirs — scope `- **OMP owned-dialect advertisement:** when O...`
 - **OMP stream boundary:** fabricated `<|start|>functions.` result envelopes stop projection. `tools.abortOnFabricatedResult` defaults to `true`; disabling it drains but still discards the continuation. Named native calls are forwarded if emitted despite owned mode, and the first native/in-band call channel wins.
 
 ## Parsing notes & gotchas

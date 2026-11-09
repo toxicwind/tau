@@ -14,7 +14,6 @@ import {
 	parseSgrMouse,
 	type PasteOptions,
 	type SlashCommand,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { renderSegmentTrack } from "@oh-my-pi/pi-tui/chrome/seg…` +4 more
 } from "@tau/tau-tui";
 import { isEnoent, logger, postmortem, sanitizeText } from "@tau/tau-utils";
@@ -37,35 +36,6 @@ import { expandEmoticons } from "@tau/tau-tui/prompt/emoji-autocomplete";
 import { materializeImageReferenceLinks, setCachedImageDimensions } from "@tau/tau-tui/prompt/image-references";
 import { createPromptActionAutocompleteProvider } from "@tau/tau-tui/prompt/prompt-action-autocomplete";
 import { createModelMentionSource } from "@tau/tau-tui/prompt/model-mention-autocomplete";
-=======
-} from "@oh-my-pi/pi-tui";
-import { isEnoent, logger, postmortem, sanitizeText } from "@oh-my-pi/pi-utils";
-import { formatDoubleTap } from "@oh-my-pi/pi-tui/app-keybindings";
-import { appKey, editorKey } from "@oh-my-pi/pi-tui/chrome/keybinding-hints";
-import { formatModelRoleAlias, roleCandidatePool } from "../../config/model-roles";
-import { resolveModelRoleValue } from "../../config/model-resolver";
-import { isSettingsInitialized, settings } from "../../config/settings";
-import { InternalUrlRouter, resolveLocalRoot } from "../../internal-urls";
-import { ApprovalDialogComponent } from "@oh-my-pi/pi-tui/overlays/approval-dialog";
-import { AskDialogComponent } from "@oh-my-pi/pi-tui/overlays/ask-dialog";
-import { AssistantMessageComponent } from "@oh-my-pi/pi-tui/chat/assistant-message";
-import { extractImagePathFromText } from "@oh-my-pi/pi-tui/prompt/custom-editor";
-import { HistorySearchComponent } from "@oh-my-pi/pi-tui/overlays/history-search";
-import { HookEditorComponent } from "@oh-my-pi/pi-tui/overlays/hook-editor";
-import { ReadToolGroupComponent } from "@oh-my-pi/pi-tui/chat/read-tool-group";
-import { ToolExecutionComponent } from "@oh-my-pi/pi-tui/chat/tool-execution";
-import { TreeSelectorComponent } from "@oh-my-pi/pi-tui/overlays/tree-selector";
-import {
-	chipLabel,
-	compactImageMarkers,
-	formatVisionMarker,
-	shiftImageMarkers,
-} from "@oh-my-pi/pi-tui/prompt/composer-attachments";
-import { expandEmoticons } from "@oh-my-pi/pi-tui/prompt/emoji-autocomplete";
-import { setCachedImageDimensions } from "@oh-my-pi/pi-tui/prompt/image-references";
-import { createPromptActionAutocompleteProvider } from "@oh-my-pi/pi-tui/prompt/prompt-action-autocomplete";
-import { createModelMentionSource } from "@oh-my-pi/pi-tui/prompt/model-mention-autocomplete";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/modes/controllers/input-controller.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { createModelBrowserSource } from "../model-browser-source";
 import { parseQueueShorthand, splitQueuedMessages } from "@tau/tau-tui/prompt/queue-input";
 import { invokeSkillCommandFromText, isKnownSkillCommand } from "../../modes/skill-command";
@@ -75,12 +45,8 @@ import { openLocalFileInEditor } from "../local-file-editor";
 import { AgentRegistry } from "../../registry/agent-registry";
 import type { RestoredQueuedMessage } from "../../session/agent-session-types";
 import { USER_INTERRUPT_LABEL } from "../../session/messages";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { renderSegmentTrack } from "@oh-my-pi/pi-tui/chrome/seg…` +4 more
 import { PINNED_HUD_TOGGLE_ID } from "@tau/tau-tui/prompt/composer";
-=======
-import { PINNED_HUD_TOGGLE_ID } from "../../task/output-manager";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import { pickRecentFocusableAgentId } from "./session-focus-controller";
 import { executeBuiltinSlashCommand, lookupBuiltinSlashCommand } from "../../slash-commands/builtin-registry";
 import { restoreDetachedDraft } from "../../slash-commands/helpers/draft";
@@ -102,18 +68,10 @@ import { EnhancedPasteController } from "../../utils/enhanced-paste";
 import { getEditorCommand, openInEditor } from "../../utils/external-editor";
 import { resendProgramStatus } from "../../utils/run-status";
 import { loadImageInput } from "../../utils/image-loading";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { renderSegmentTrack } from "@oh-my-pi/pi-tui/chrome/seg…` +4 more
 import { ensureSupportedImageInput, ImageInputTooLargeError } from "@tau/tau-tui/chat/image-loading";
 import { type ImageAttachmentSource, tagImageAttachmentSource } from "@tau/tau-tui/prompt/image-source";
 import { blobExtensionForImageMimeType } from "@tau/tau-tui/prompt/image-format";
-=======
-import { materializeImageChipLinks } from "../utils/ui-helpers";
-import { type ConversationPosition, continuesConversation, conversationPosition } from "../utils/conversation-position";
-import { ensureSupportedImageInput, ImageInputTooLargeError } from "@oh-my-pi/pi-tui/chat/image-loading";
-import { type ImageAttachmentSource, tagImageAttachmentSource } from "@oh-my-pi/pi-tui/prompt/image-source";
-import { blobExtensionForImageMimeType } from "@oh-my-pi/pi-tui/prompt/image-format";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import { VideoError, buildVideoContactSheetPng, probeVideo } from "../../utils/video";
 import { isVideoPath } from "@tau/tau-tui/prompt/video";
 import { resizeImage } from "../../utils/image-resize";
@@ -1840,7 +1798,6 @@ export class InputController {
 		try {
 			// SIGSTOP — not SIGTSTP — to the foreground process group (pid=0).
 			//
-<<<<<<< ours — scope `handleCtrlZ` in class `InputController` (T+F, confidence: medium)
 // refused_by: container_member · collision: `// longer stops omp: tokio swallows it and the TUI ends up torn…`
 			// SIGTSTP: brush-core (the embedded shell behind every bash tool call)
 			// installs a tokio SIGTSTP listener on `Process::wait` to detect when
@@ -1854,16 +1811,6 @@ export class InputController {
 			// while the process keeps running with no live terminal (issue
 			// [#3461]). SIGSTOP cannot be caught, blocked, or ignored, so the
 			// kernel stops the process regardless of installed handlers.
-=======
-			// SIGTSTP can be caught: any in-process listener (a tokio
-			// `signal(SIGTSTP)` registration permanently replaces the
-			// kernel-default handler for the lifetime of the process) swallows
-			// it, and the TUI ends up torn down while the process keeps running
-			// with no live terminal (issue [#3461], hit when the previous
-			// embedded shell registered such a listener on its first command).
-			// SIGSTOP cannot be caught, blocked, or ignored, so the kernel stops
-			// the process regardless of installed handlers.
->>>>>>> theirs — scope `handleCtrlZ`
 			//
 			// pid=0 (foreground process group, not just our PID): tau is not
 			// always the shell's direct child. Package-manager launchers (`npx`,
@@ -2881,16 +2828,10 @@ export class InputController {
 			// text. Covers terminals that paste the Finder file path as
 			// plain text rather than as a `public.file-url` (most macOS
 			// terminals do this for image clipboards).
-<<<<<<< ours — scope `handleImagePaste` in class `InputController` (S+F, confidence: low)
 // refused_by: container_member · collision: `await this.handleImagePathPaste(imagePath);`
 			const imagePath = promptTarget ? null : extractImagePathFromText(text);
 			if (typeof imagePath === "string") {
 				await this.handleImagePathPaste(imagePath!);
-=======
-			const imagePath = textOnlyPrompt ? null : extractImagePathFromText(text);
-			if (imagePath) {
-				await this.#pasteImagePath(imagePath, sink);
->>>>>>> theirs — scope `handleImagePaste`
 				return true;
 			}
 			// Keep the initiating prompt as the only possible modal destination.

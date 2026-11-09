@@ -1,5 +1,4 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { BlobStore, isBlobRef, lazyImageDataSync } from "@oh-my…` +1 more
 import type { AgentMessage } from "@tau/tau-agent-core";
 import type { ImageContent, TextContent } from "@tau/tau-ai";
@@ -10,26 +9,6 @@ import { prepareEntryForPersistence } from "tau/session/session-persistence";
 import { TempDir } from "@tau/tau-utils";
 import type { Archive } from "@tau/snapcompact";
 import * as snapcompact from "@tau/snapcompact";
-=======
-import * as fs from "node:fs";
-import * as path from "node:path";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { ImageContent, TextContent } from "@oh-my-pi/pi-ai";
-import { BlobStore, isBlobRef, lazyImageDataSync, parseBlobRef } from "@oh-my-pi/pi-coding-agent/session/blob-store";
-import type {
-	CompactionEntry,
-	FileEntry,
-	SessionMessageEntry,
-} from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import { resolveBlobRefsInEntries } from "@oh-my-pi/pi-coding-agent/session/session-loader";
-import {
-	forgetExternalizedImages,
-	prepareEntryForPersistence,
-} from "@oh-my-pi/pi-coding-agent/session/session-persistence";
-import { TempDir } from "@oh-my-pi/pi-utils";
-import type { Archive } from "@oh-my-pi/snapcompact";
-import * as snapcompact from "@oh-my-pi/snapcompact";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/session-persistence-images.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 type ImagePayload = { data: string; mimeType: string; type?: "image" };
 type ToolResultMessage = Extract<AgentMessage, { role: "toolResult" }>;

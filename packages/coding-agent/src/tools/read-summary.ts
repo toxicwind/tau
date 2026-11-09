@@ -1,14 +1,8 @@
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { type SummaryResult, summarizeCode } from "@oh-my-pi/pi…`
 import { type SummaryResult, summarizeCode } from "@tau/tau-natives";
 import { LRUCache } from "@tau/tau-utils/lru";
 import { isMarkdownPath } from "@tau/tau-tui/theme";
-=======
-import { type SummaryResult, summarizeCodeAsync } from "@oh-my-pi/pi-natives";
-import { LRUCache } from "@oh-my-pi/pi-utils/lru";
-import { isMarkdownPath } from "@oh-my-pi/pi-tui/theme";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/read-summary.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { ClientBridge } from "../session/client-bridge";
 import type { ToolSession } from "../sdk";
 import { resolveFileDisplayMode } from "../utils/file-display-mode";

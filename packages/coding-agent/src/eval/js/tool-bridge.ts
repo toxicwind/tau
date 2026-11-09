@@ -1,4 +1,3 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { AgentTool, AgentToolResult } from "@oh-my-pi/pi-a…` +1 more
 import type { AgentTool, AgentToolResult } from "@tau/tau-agent-core";
 import { toolWireSchema, validateToolArguments } from "@tau/tau-ai";
@@ -7,22 +6,6 @@ import { INTENT_FIELD } from "@tau/tau-wire";
 import type { ToolSession } from "../../tools";
 import { committedTodoPhases } from "../../tools/todo";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
-=======
-import {
-	type AgentTool,
-	type AgentToolResult,
-	type AgentToolUpdateCallback,
-	validateAgentToolArguments,
-} from "@oh-my-pi/pi-agent-core";
-import { type ImageContent, toolWireSchema } from "@oh-my-pi/pi-ai";
-import { isRecord } from "@oh-my-pi/pi-utils";
-import { INTENT_FIELD } from "@oh-my-pi/pi-wire";
-import type { ToolSession } from "../../tools";
-import { committedTodoPhases } from "../../tools/todo";
-import { isReplyWrite, toolResultReplies } from "@oh-my-pi/pi-tui/chat/reply-write";
-import { parseMCPProgress } from "@oh-my-pi/pi-tui/tools/mcp";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/eval/js/tool-bridge.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { schemaDeclaresIntentField } from "../../utils/tool-schema";
 import { findEnabledEvalPrelude, invokeEvalPrelude } from "../preludes";
 import { EVAL_AGENT_BRIDGE_NAME, type EvalAgentHandleResult, runEvalAgent } from "../agent-bridge";
@@ -295,15 +278,12 @@ export async function callSessionTool(name: string, args: unknown, options: Tool
 	if (name === EVAL_WORKPOOL_BRIDGE_NAME) {
 		return await runEvalWorkpool(args, options);
 	}
-<<<<<<< ours — scope `if (name === "checkpoint" || name === "rewind...` in function `callSessionTool`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	if (!isEvalBridgeToolCallable({ name })) {
 		// The session recognizes checkpoint/rewind only as direct toolResult
 		// messages; a bridged call would report success without taking effect.
 		throw new ToolError(`\`${name}\` cannot run through the eval bridge; call the direct \`${name}\` tool.`);
 	}
-=======
->>>>>>> theirs — scope `if (name === "checkpoint" || name === "rewind...` deleted in theirs
 	const tool = getTool(options.session, name);
 	// Wire aliases share every guard, status and bookkeeping path with the canonical tool.
 	name = tool.name;

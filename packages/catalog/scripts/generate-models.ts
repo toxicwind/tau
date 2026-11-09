@@ -10,7 +10,6 @@ const COPILOT_PREMIUM_MULTIPLIERS: Record<string, number> = {
 };
 
 import * as path from "node:path";
-<<<<<<< ours — interstitial `between:packages/catalog/scripts/generate-models.ts::variable::COPILOT_PREMIUM_MULTIPLIERS:packages/catalog/scripts/generate-models.ts::variable::packageRoot` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 import { discoverAuthStorage } from "@tau/tau-ai/auth-broker/discover";
 import type { OAuthAccess } from "@tau/tau-ai/auth-storage";
@@ -18,15 +17,6 @@ import type { OAuthProvider } from "@tau/tau-ai/oauth/types";
 import { getGitLabDuoModels } from "@tau/tau-ai/providers/gitlab-duo";
 import { getProviderDefinition } from "@tau/tau-ai/registry";
 import { $env } from "@tau/tau-utils";
-=======
-import { parseArgs } from "node:util";
-import { discoverAuthStorage } from "@oh-my-pi/pi-ai/auth-broker/discover";
-import type { OAuthAccess } from "@oh-my-pi/pi-ai/auth-storage";
-import type { OAuthProvider } from "@oh-my-pi/pi-ai/oauth/types";
-import { getGitLabDuoModels } from "@oh-my-pi/pi-ai/providers/gitlab-duo";
-import { getProviderDefinition } from "@oh-my-pi/pi-ai/registry";
-import { $env } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `between:packages/catalog/scripts/generate-models.ts::variable::COPILOT_PREMIUM_MULTIPLIERS:packages/catalog/scripts/generate-models.ts::variable::packageRoot` (F, confidence: medium) · weave: run 'weave explain packages/catalog/scripts/generate-models.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { buildModel } from "../src/build";
 import { isRetiredProvider } from "../src/compat/behavior";
 import { collapseVariants } from "../src/compat/collapse";
@@ -746,7 +736,6 @@ async function generateModels(selectedProvider?: string) {
 	};
 
 	const modelSpecs: Record<string, Record<string, ModelSpec>> = sortObj(providers);
-<<<<<<< ours — scope `inserted statements` in function `generateModels` (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	// Apply mimetite contextLengths as authoritative context source for all models.
 	// mimetite is the geode catalog SSOT; its contextLengths override stale bundled values.
@@ -758,21 +747,6 @@ async function generateModels(selectedProvider?: string) {
 			}
 		}
 	}
-=======
-	// Validated against the generated rows, not a descriptor list, so every
-	// source kind (descriptor, special discovery, models.dev, seed) is selectable
-	// and a typo fails before models.json is rewritten.
-	if (selectedProvider !== undefined && modelSpecs[selectedProvider] === undefined) {
-		throw new Error(`No catalog rows generated for provider: ${selectedProvider}`);
-	}
-	// A provider-only update must not re-bake unrelated snapshot metadata.
-	// Keep cross-provider inputs above for reference fills, but replace only
-	// the requested provider in the generated output.
-	const MODELS: Record<string, Record<string, Model<Api>>> = selectedProvider === undefined
-		? {}
-		: { ...prevModelsJson };
-	if (selectedProvider !== undefined) delete MODELS[selectedProvider];
->>>>>>> theirs — scope `inserted statements`
 	for (const [provider, models] of Object.entries(modelSpecs)) {
 		if (selectedProvider !== undefined && provider !== selectedProvider) continue;
 		MODELS[provider] = Object.fromEntries(

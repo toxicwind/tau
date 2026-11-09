@@ -1,14 +1,10 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `} from "@oh-my-pi/pi-utils/json-parse";`
 import {
 	parseStreamingJson,
 	parseStreamingJsonThrottled,
 	STREAMING_JSON_PARSE_MIN_GROWTH,
 } from "@tau/tau-utils/json-parse";
-=======
-import { parseStreamingJsonThrottled, STREAMING_JSON_PARSE_MIN_GROWTH } from "@oh-my-pi/pi-utils/json-parse";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/utils/test/parse-streaming-json-throttled.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 describe("parseStreamingJsonThrottled (F5)", () => {
 	it("parses the first non-empty buffer even when growth is below the threshold", () => {

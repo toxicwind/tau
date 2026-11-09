@@ -221,12 +221,8 @@ fn read_bounded(path: &Path) -> Result<Vec<u8>> {
 #[cfg(any(unix, test))]
 fn terminate_child_tree(child: &mut std::process::Child) {
 	if let Ok(pid) = i32::try_from(child.id())
-<<<<<<< ours — scope `if let Ok(pid) = i32::try_from(child.id())` in function `terminate_child_tree` (S, confidence: medium)
 // refused_by: statement_fold · collision: `&& let Some(process) = pi_shell::process::Process::from_pid(pid)`
 		&& let Some(process) = tau_shell::process::Process::from_pid(pid)
-=======
-		&& let Some(process) = pi_shell::proctree::Process::from_pid(pid)
->>>>>>> theirs — scope `if let Ok(pid) = i32::try_from(child.id())` · weave: run 'weave explain crates/tau-natives/src/oauth_callback/context.rs' for per-hunk detail, 'weave check' to verify your resolution
 	{
 		let _ = process.kill_tree(None);
 	}

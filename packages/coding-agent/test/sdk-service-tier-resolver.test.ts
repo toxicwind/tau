@@ -1,6 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { Model } from "@oh-my-pi/pi-ai";` +1 more
 import type { Model } from "@tau/tau-ai";
 import { ModelRegistry } from "tau/config/model-registry";
@@ -9,16 +8,6 @@ import { createAgentSession, type ExtensionFactory } from "tau/sdk";
 import type { AuthStorage } from "tau/session/auth-storage";
 import { SessionManager } from "tau/session/session-manager";
 import { TempDir } from "@tau/tau-utils";
-=======
-import type { Model, ServiceTierByFamily } from "@oh-my-pi/pi-ai";
-import { resolveAgentServiceTierOverride } from "@oh-my-pi/pi-coding-agent/config/service-tier";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { createAgentSession, type ExtensionFactory } from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir, withTimeout } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/sdk-service-tier-resolver.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
 const runtimeProviderExtension: ExtensionFactory = pi => {

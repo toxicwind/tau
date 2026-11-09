@@ -43,7 +43,6 @@ describe("legacy pi SettingsManager shim (issue #10397)", () => {
 		tempDir?.[Symbol.dispose]?.();
 	});
 
-<<<<<<< ours — scope `it("create(cwd) is synchronous and exposes ge...` in test_suite `legacy pi SettingsManager shim (issue #10397)`, deleted in theirs (T+S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("create(cwd) is synchronous and exposes getGlobalSettings/getProjectSettings", async () => {
 		await Settings.init({ cwd: projectDir, agentDir });
@@ -55,8 +54,6 @@ describe("legacy pi SettingsManager shim (issue #10397)", () => {
 		expect(typeof s.getGlobalSettings).toBe("function");
 		expect(typeof s.getProjectSettings).toBe("function");
 	});
-=======
->>>>>>> theirs — scope `it("create(cwd) is synchronous and exposes ge...` deleted in theirs · weave: run 'weave explain packages/coding-agent/test/extensibility/legacy-tau-settings-manager.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 	it("reads arbitrary extension-namespaced keys from the global and project layers", async () => {
 		// Keys the typed, schema-bound `get(path)` cannot reach — an extension's own block.

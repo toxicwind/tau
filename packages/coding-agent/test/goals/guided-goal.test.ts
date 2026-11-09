@@ -1,6 +1,5 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { Agent, AgentBusyError } from "@oh-my-pi/pi-agent-core";` +1 more
 import { Agent, AgentBusyError } from "@tau/tau-agent-core";
 import type { ImageContent } from "@tau/tau-ai";
@@ -15,22 +14,6 @@ import { AuthStorage } from "tau/session/auth-storage";
 import { SessionManager } from "tau/session/session-manager";
 import { createTools, type Tool, type ToolSession } from "tau/tools";
 import { TempDir } from "@tau/tau-utils";
-=======
-import { Agent, type AgentMessage, AgentBusyError } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, ImageContent } from "@oh-my-pi/pi-ai";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { GoalTool } from "@oh-my-pi/pi-coding-agent/goals/tools/goal-tool";
-import { InteractiveMode } from "@oh-my-pi/pi-coding-agent/modes/interactive-mode";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { createTools, type Tool, type ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { TempDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/goals/guided-goal.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function createToolSession(cwd: string, settings: Settings, overrides: Partial<ToolSession> = {}): ToolSession {
 	return {

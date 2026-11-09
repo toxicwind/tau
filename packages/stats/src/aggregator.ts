@@ -1,13 +1,8 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { getStatsDbPath, workerHostEntry } from "@oh-my-pi/pi-u…`
 import { getStatsDbPath, workerHostEntry } from "@tau/tau-utils";
 import { withFileLock } from "@tau/tau-utils/file-lock";
-=======
-import { getAgentDbPath, getStatsDbPath, workerHostEntry } from "@oh-my-pi/pi-utils";
-import { withFileLock } from "@oh-my-pi/pi-utils/file-lock";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/stats/src/aggregator.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	applySessionParseResults,
 	completeSessionSync,

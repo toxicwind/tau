@@ -196,7 +196,6 @@ export function buildHotkeysMarkdown(bindings: HotkeysMarkdownBindings): string 
 	}
 	return lines.join("\n");
 	const lines: string[] = [];
-<<<<<<< ours — scope `return [` in function `buildHotkeysMarkdown`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	return [
 		"**Navigation**",
@@ -252,8 +251,6 @@ export function buildHotkeysMarkdown(bindings: HotkeysMarkdownBindings): string 
 		"| `$` | Run Python in shared kernel |",
 		"| `$$` | Run Python (excluded from context) |",
 	].join("\n");
-=======
->>>>>>> theirs — scope `return [` deleted in theirs · weave: run 'weave explain packages/tui/src/hotkeys-markdown.ts' for per-hunk detail, 'weave check' to verify your resolution
 }
 
 /**

@@ -12,7 +12,6 @@
  * carry subsystem-specific message types — lives in the per-subsystem
  * `types.ts` files and is documented there.
  */
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { AgentMessage } from "@oh-my-pi/pi-agent-core";`
 import type { AgentMessage } from "@tau/tau-agent-core";
 import type { CompactionPreparation, CompactionResult } from "@tau/tau-agent-core/compaction";
@@ -22,17 +21,6 @@ import type { Goal } from "@tau/tau-tui/tools/goal";
 import type { GoalModeState } from "../goals/state";
 import type { BranchSummaryEntry, CompactionEntry, SessionEntry } from "../session/session-entries";
 import type { TodoItem } from "@tau/tau-tui/tools/todo";
-=======
-import { type AgentMessage, isNonBlankContext, joinAdditionalContext } from "@oh-my-pi/pi-agent-core";
-import type { CompactionPreparation, CompactionResult } from "@oh-my-pi/pi-agent-core/compaction";
-import type { AssistantRetryRecovery, ImageContent, TextContent, ToolResultMessage } from "@oh-my-pi/pi-ai";
-import type { Rule } from "../capability/rule";
-import type { Goal } from "@tau/tau-tui/tools/goal";
-import type { GoalModeState } from "../goals/state";
-import type { BranchSummaryEntry, CompactionEntry, SessionEntry } from "../session/session-entries";
-import type { CacheWarmingAction } from "../session/cache-warmer";
-import type { TodoItem } from "@oh-my-pi/pi-tui/tools/todo";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/extensibility/shared-events.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 // ============================================================================
 // Session Events

@@ -1,4 +1,3 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 import { buildModel } from "@tau/tau-catalog/build";
 import { apiRouteFor } from "@tau/tau-catalog/compat/behavior";
@@ -10,18 +9,6 @@ import {
 	parseCloudflareAiGatewayCredential,
 } from "@tau/tau-catalog/wire/cloudflare-ai-gateway";
 import { $env } from "@tau/tau-utils";
-=======
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { apiRouteFor } from "@oh-my-pi/pi-catalog/compat/behavior";
-import { parseCloudflareCredential } from "@oh-my-pi/pi-catalog/wire/cloudflare";
-import {
-	CLOUDFLARE_AI_GATEWAY_ANTHROPIC_BASE_URL,
-	CLOUDFLARE_AI_GATEWAY_BASE_URL,
-	CLOUDFLARE_AI_GATEWAY_COMPAT_BASE_URL,
-	CLOUDFLARE_AI_GATEWAY_OPENAI_BASE_URL,
-} from "@oh-my-pi/pi-catalog/wire/cloudflare-ai-gateway";
-import { $env } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/src/registry/cloudflare-ai-gateway.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { NO_AUTH_SENTINEL } from "../auth-retry";
 import * as AIError from "../error";
 import type { Api, Model } from "../types";

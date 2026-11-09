@@ -11,17 +11,9 @@
  * protobuf POST at both /v1/logs and /v1/metrics.
  */
 
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { AgentRunCoverage, AgentRunSummary, ChatUsageEvent…` +1 more
 import type { AgentRunCoverage, AgentRunSummary, ChatUsageEvent } from "@tau/tau-agent-core";
 import { emptyAgentRunCoverage, emptyAgentRunSummary } from "@tau/tau-agent-core";
-=======
-import { agentLoop } from "@oh-my-pi/pi-agent-core/agent-loop";
-import type { AgentContext, AgentMessage, AgentTool } from "@oh-my-pi/pi-agent-core/types";
-import { type } from "@oh-my-pi/omptype";
-import type { Message } from "@oh-my-pi/pi-ai";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/otel-signals-probe.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	createTelemetryExportConfig,
 	flushTelemetryExport,
@@ -188,7 +180,6 @@ const probeTool: AgentTool = {
 	execute: async () => ({ content: [{ type: "text", text: "ok" }], details: {} }),
 };
 const context: AgentContext = { systemPrompt: [], messages: [], tools: [probeTool] };
-<<<<<<< ours — interstitial `between:packages/coding-agent/test/otel-signals-probe.ts::variable::coverage:packages/coding-agent/test/otel-signals-probe.ts::variable::ok` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `assertSingleMetricPoint("pi.omp.agent.chat.calls");` +2 more
 config.onRunEnd?.(summary, coverage);
 
@@ -197,8 +188,6 @@ assertSingleMetricPoint("pi.tau.agent.chat.calls");
 assertSingleMetricPoint("pi.tau.agent.tool.calls");
 assertSingleMetricPoint("pi.tau.agent.tool.duration");
 await server.stop(true);
-=======
->>>>>>> theirs — interstitial `between:packages/coding-agent/test/otel-signals-probe.ts::variable::coverage:packages/coding-agent/test/otel-signals-probe.ts::variable::ok` (S+F, confidence: low)
 for await (const _event of agentLoop(
 	[{ role: "user", content: "probe", timestamp: Date.now() }],
 	context,

@@ -815,7 +815,6 @@ describe("PluginManager.install with git sources", () => {
 	}, 2000);
 
 	test("refreshes Bun's cached git clone before updating an existing plugin (#5401)", async () => {
-<<<<<<< ours — scope `test("refreshes Bun's cached git clone before...` in test_suite `PluginManager.install with git sources` (F, confidence: medium)
 // refused_by: statement_fold · collision: `JSON.stringify({ name: "@test/pi-package", version: "1.0.0" }, …` +1 more
 		const sourceDir = path.join(tmpRoot, "source");
 		const httpRoot = path.join(tmpRoot, "http");
@@ -864,9 +863,6 @@ describe("PluginManager.install with git sources", () => {
 				}
 			},
 		});
-=======
-		const remote = await serveLocalGitPackage(tmpRoot);
->>>>>>> theirs — scope `test("refreshes Bun's cached git clone before...` · weave: run 'weave explain packages/coding-agent/test/plugin-install-git.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 		try {
 			await Bun.write(
 				pluginsPkgJson,
@@ -875,7 +871,6 @@ describe("PluginManager.install with git sources", () => {
 			const cacheDir = path.join(tmpRoot, "bun-cache");
 			await Bun.write(path.join(pluginsDir, "bunfig.toml"), `[install.cache]\ndir = ${JSON.stringify(cacheDir)}\n`);
 			const mgr = new PluginManager(tmpRoot);
-<<<<<<< ours — scope `test("refreshes Bun's cached git clone before...` in test_suite `PluginManager.install with git sources` (F, confidence: medium)
 // refused_by: statement_fold · collision: `JSON.stringify({ name: "@test/pi-package", version: "1.0.0" }, …` +1 more
 			expect((await mgr.install(spec)).version).toBe("1.0.0");
 
@@ -899,9 +894,6 @@ describe("PluginManager.install with git sources", () => {
 			);
 			await runCommand(["git", "push", remoteDir, "main"], sourceDir);
 			await runCommand(["git", "update-server-info"], remoteDir);
-=======
-			expect((await mgr.install(remote.spec)).version).toBe("1.0.0");
->>>>>>> theirs — scope `test("refreshes Bun's cached git clone before...`
 
 			await remote.publish("2.0.0");
 			const reinstalled = await mgr.install(remote.spec);

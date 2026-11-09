@@ -14,20 +14,12 @@
 import { Database } from "bun:sqlite";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { formatBytes, getProjectDir, isEnoent, logger, TempDir …`
 import { Agent } from "@tau/tau-agent-core";
 import type { Terminal, TerminalAppearance, TerminalAppearanceRequestToken } from "@tau/tau-tui/terminal";
 import type { RenderScheduler } from "@tau/tau-tui/tui";
 import { formatBytes, getProjectDir, isEnoent, logger, TempDir } from "@tau/tau-utils";
 import { VERSION } from "@tau/tau-utils/dirs";
-=======
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import type { Terminal, TerminalAppearance, TerminalAppearanceRequestToken } from "@oh-my-pi/pi-tui/terminal";
-import type { RenderScheduler } from "@oh-my-pi/pi-tui/tui";
-import { formatBytes, getProjectDir, logger, TempDir } from "@oh-my-pi/pi-utils";
-import { VERSION } from "@oh-my-pi/pi-utils/dirs";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/cli/render-cli.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { ModelRegistry } from "../config/model-registry";
 import { Settings } from "../config/settings";
 import { Composer } from "@tau/tau-tui/prompt/composer";

@@ -21,21 +21,12 @@ import {
 	type ThinkingBudgets,
 	type ToolChoice,
 	type ToolResultMessage,
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-ai";
 import type { Dialect } from "@tau/tau-ai/dialect";
 import type { HarmonyAuditEvent } from "@tau/tau-ai/utils/harmony-leak";
 import { getBundledModel } from "@tau/tau-catalog/models";
 import { logger } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-ai";
-import type { Dialect } from "@oh-my-pi/pi-ai/dialect";
-import { openAIResponsesReplaysNativeHistory } from "@oh-my-pi/pi-ai/providers/openai-responses-state";
-import type { HarmonyAuditEvent } from "@oh-my-pi/pi-ai/utils/harmony-leak";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { logger } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/agent/src/agent.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	abortReasonText,
 	agentLoop,
@@ -509,7 +500,6 @@ export class Agent {
 	#intentDescription?: string;
 	#pruneToolDescriptions: boolean;
 	#dialect?: Dialect;
-<<<<<<< ours — scope `#dialectResolver` in class `Agent` (T, confidence: high)
 // refused_by: container_member · collision: none (no common ancestor text)
 	/**
 	 * Per-call dialect resolver. Installed by the host (sdk.ts) with the same
@@ -518,8 +508,6 @@ export class Agent {
 	 * the NEW model instead of running the previous model's in-band scanner on
 	 * its stream (issue #8810). Undefined → static #dialect / PI_DIALECT only.
 	 */
-=======
->>>>>>> theirs — scope `#dialectResolver`
 	#dialectResolver?: (model: Model) => Dialect | undefined;
 	#abortOnFabricatedToolResult?: boolean;
 	#getToolChoice?: () => ToolChoiceDirective | undefined;

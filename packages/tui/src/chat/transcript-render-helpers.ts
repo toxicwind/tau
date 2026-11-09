@@ -4,18 +4,10 @@
  * transcript rows from persisted message entries; holding the row construction
  * here keeps the two byte-for-byte identical.
  */
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { formatBytes, formatDuration } from "@oh-my-pi/pi-utils…`
 import type { AgentMessage } from "@tau/tau-agent-core";
 import { type Component } from "../tui";
 import { formatBytes, formatDuration } from "@tau/tau-utils";
-=======
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { TspSpan } from "@oh-my-pi/pi-wire";
-import { type Component } from "../tui";
-import { formatBytes, formatCount, formatDuration } from "@oh-my-pi/pi-utils";
-import { span } from "../native/describe";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/tui/src/chat/transcript-render-helpers.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { JobSnapshot } from "../tools/wait";
 import type { DaemonSnapshot } from "../tools/daemon";
 import { type CustomMessage, type FileMentionMessage, resolveAbortLabel, shouldRenderAbortReason } from "./messages";

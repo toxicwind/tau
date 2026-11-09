@@ -1,5 +1,4 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { LocalProtocolOptions } from "@oh-my-pi/pi-coding-…` +2 more
 import { AsyncJobManager } from "tau/async";
 import { Settings } from "tau/config/settings";
@@ -15,24 +14,6 @@ import { runStructuredSubagent } from "tau/task/structured-subagent";
 import type { AgentDefinition } from "tau/task/types";
 import type { SingleResult, StructuredSubagentOutput } from "@tau/tau-tui/tools/task";
 import type { ToolSession } from "tau/tools";
-=======
-import { AsyncJobManager } from "@oh-my-pi/pi-coding-agent/async";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import {
-	runEvalAgent,
-	type EvalAgentBridgeOptions,
-	type EvalAgentResult,
-} from "@oh-my-pi/pi-coding-agent/eval/agent-bridge";
-import { runEvalWait } from "@oh-my-pi/pi-coding-agent/eval/handle-bridge";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import * as taskDiscovery from "@oh-my-pi/pi-coding-agent/task/discovery";
-import * as taskExecutor from "@oh-my-pi/pi-coding-agent/task/executor";
-import * as isolationRunner from "@oh-my-pi/pi-coding-agent/task/isolation-runner";
-import { runStructuredSubagent } from "@oh-my-pi/pi-coding-agent/task/structured-subagent";
-import type { AgentDefinition } from "@oh-my-pi/pi-coding-agent/task/types";
-import type { SingleResult } from "@oh-my-pi/pi-tui/tools/task";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/eval/agent-bridge.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 import { cfgTaskIsolationEnabled } from "@oh-my-pi/pi-coding-agent/task/settings";
 

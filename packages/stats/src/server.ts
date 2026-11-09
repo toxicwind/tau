@@ -1,12 +1,8 @@
 import type { Dirent } from "node:fs";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { isEnoent } from "@oh-my-pi/pi-utils";`
 import { isEnoent } from "@tau/tau-utils";
-=======
-import { isEnoent, logger } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/stats/src/server.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { $, type Server } from "bun";
 import {
 	getCostDashboardStats,
@@ -71,11 +67,8 @@ const IS_PREBUILT = IS_BUN_COMPILED || Boolean(process.env.PI_BUNDLED || Bun.env
 // Sniff the base64 gzip magic instead of decoding: importing this module (every
 // TUI start) must not pay for a multi-megabyte archive nobody may serve.
 const USE_EMBEDDED_CLIENT = hasEmbeddedClientArchive(embeddedClientArchiveTxt) || IS_PREBUILT;
-<<<<<<< ours — variable `EMBEDDED_CLIENT_DIR_ROOT` (S, confidence: medium)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 const EMBEDDED_CLIENT_DIR_ROOT = path.join(os.tmpdir(), "tau-stats-client");
-=======
->>>>>>> theirs — variable `EMBEDDED_CLIENT_DIR_ROOT` (S, confidence: medium)
 
 let embeddedClientFilesPromise: Promise<Map<string, Blob>> | null = null;
 
@@ -100,7 +93,6 @@ async function getEmbeddedClientFiles(): Promise<Map<string, Blob>> {
 
 	return embeddedClientFilesPromise;
 }
-<<<<<<< ours — function `getEmbeddedClientDir` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 async function getEmbeddedClientDir(): Promise<string> {
 	if (!USE_EMBEDDED_CLIENT) return STATIC_DIR;
@@ -129,8 +121,6 @@ async function getEmbeddedClientDir(): Promise<string> {
 
 	return embeddedClientDirPromise;
 }
-=======
->>>>>>> theirs — function `getEmbeddedClientDir` (S+F, confidence: low)
 
 async function getLatestMtime(dir: string): Promise<number> {
 	let entries: Dirent[];
@@ -479,16 +469,12 @@ function createDashboardServer(port: number, hostname: string): Server<undefined
 	const server = Bun.serve({
 		port,
 		hostname,
-<<<<<<< ours — function `createDashboardServer` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 		async fetch(req) {
 			if (new URL(req.url).pathname === "/health")
 				return new Response(JSON.stringify({ ok: true, ts: Date.now() }), {
 					headers: { "content-type": "application/json" },
 				});
-=======
-		async fetch(req, server) {
->>>>>>> theirs — function `createDashboardServer` (F, confidence: medium)
 			const url = new URL(req.url);
 			const path = url.pathname;
 
@@ -591,14 +577,10 @@ function liveEventStream(headers: Record<string, string>, signal: AbortSignal): 
 	});
 }
 
-<<<<<<< ours — scope `declaration` in interface `StatsServerHandle` (S, confidence: medium)
 // refused_by: container_member · collision: `* Start the HTTP server, reusing a live dashboard or reclaiming…`
 /**
  * Start the HTTP server, reusing a live dashboard or reclaiming a stale tau listener.
  */
-=======
-/** A dashboard this process started or found; `reused` distinguishes another process's server from one we own. */
->>>>>>> theirs — scope `declaration`
 export interface StatsServerHandle {
 	hostname: string;
 	port: number;

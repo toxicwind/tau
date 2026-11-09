@@ -11,18 +11,10 @@
  *
  * The generated prompt appears as a draft in the editor for review/editing.
  */
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import type { HookAPI, SessionEntry } from "@oh-my-pi/pi-coding…` +1 more
 import { complete, type Message } from "@tau/tau-ai";
 import type { HookAPI, SessionEntry } from "@tau/tau-coding-agent";
 import { BorderedLoader, convertToLlm, serializeConversation } from "@tau/tau-coding-agent";
-=======
-import { serializeConversation } from "@oh-my-pi/pi-agent-core/compaction";
-import { complete, type Message } from "@oh-my-pi/pi-ai";
-import type { SessionEntry } from "@oh-my-pi/pi-coding-agent";
-import { BorderedLoader, convertToLlm } from "@oh-my-pi/pi-coding-agent";
-import type { HookAPI } from "@oh-my-pi/pi-coding-agent/extensibility/hooks";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/examples/hooks/handoff.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const SYSTEM_PROMPT = `You are a context transfer assistant. Given a conversation history and the user's goal for a new thread, generate a focused prompt that:
 

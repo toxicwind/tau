@@ -44,14 +44,9 @@ describe("resolvePlanPath local:// support", () => {
 
 	it("falls back to os tmp root when artifacts dir is unavailable", async () => {
 		const session = makeSession({ artifactsDir: null, sessionId: "session-42" });
-<<<<<<< ours — scope `it("falls back to os tmp root when artifacts ...` in test_suite `resolvePlanPath local:// support` (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 		expect(resolvePlanPath(session, "local://memo.txt")).toBe(
 			path.join(os.tmpdir(), "tau-local", "session-42", "memo.txt"),
-=======
-		expect(await resolvePlanPath(session, "local://memo.txt")).toBe(
-			path.join(os.tmpdir(), "omp-local", "session-42", "memo.txt"),
->>>>>>> theirs — scope `it("falls back to os tmp root when artifacts ...` · weave: run 'weave explain packages/coding-agent/test/tools/plan-mode-guard-local.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 		);
 	});
 });

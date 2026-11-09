@@ -1,7 +1,6 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, spyOn, vi } from "bun:test";
 import * as fsp from "node:fs/promises";
 import { stripVTControlCharacters } from "node:util";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { stopSharedSpinnerTicker, ToolExecutionComponent } from…` +1 more
 import { generateRoomKey, importRoomKey } from "tau/collab/crypto";
 import { CollabGuestLink } from "tau/collab/guest";
@@ -17,30 +16,6 @@ import type { InteractiveModeContext } from "tau/modes/types";
 import { UiHelpers } from "tau/modes/utils/ui-helpers";
 import type { AgentSessionEvent } from "tau/session/agent-session";
 import type { TUI } from "@tau/tau-tui";
-=======
-import { generateRoomKey, importRoomKey } from "@oh-my-pi/pi-coding-agent/collab/crypto";
-import { CollabGuestLink } from "@oh-my-pi/pi-coding-agent/collab/guest";
-import { COLLAB_PROTO, formatCollabLink } from "@oh-my-pi/pi-coding-agent/collab/protocol";
-import { CollabSocket } from "@oh-my-pi/pi-coding-agent/collab/relay-client";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import {
-	sharedSpinnerTickerArmed,
-	stopSharedSpinnerTicker,
-	ToolExecutionComponent,
-} from "@oh-my-pi/pi-tui/chat/tool-execution";
-import { TranscriptContainer } from "@oh-my-pi/pi-tui/chrome/transcript-container";
-import {
-	DEFAULT_SPINNER_INTERVAL_MS,
-	setSpinnerInterval,
-	SPINNER_INTERVAL_STATIC,
-} from "@oh-my-pi/pi-tui/spinner-clock";
-import { EventController } from "@oh-my-pi/pi-coding-agent/modes/controllers/event-controller";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { UiHelpers } from "@oh-my-pi/pi-coding-agent/modes/utils/ui-helpers";
-import type { AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import type { TUI } from "@oh-my-pi/pi-tui";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/modes/components/tool-execution-spinner.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { installInMemoryRelay, uninstallInMemoryRelay } from "../../collab/helpers/in-memory-relay";
 import { createInteractiveModeContext } from "../../helpers/interactive-mode-context";
 

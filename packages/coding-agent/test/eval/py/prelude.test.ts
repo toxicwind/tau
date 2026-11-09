@@ -10,22 +10,14 @@ async function runPrelude(
 ): Promise<{ stdout: string; stderr: string; exitCode: number }> {
 	const prelude = PYTHON_PRELUDE.replace(
 		"from __future__ import annotations",
-<<<<<<< ours — scope `const prelude = PYTHON_PRELUDE.replace(` in function `runPrelude` (F, confidence: medium)
 // refused_by: statement_fold · collision: `"from __future__ import annotations\n__omp_display = lambda *ar…`
 		"from __future__ import annotations\n__tau_display = lambda *args, **kwargs: None",
-=======
-		"from __future__ import annotations\n__omp_emit_status = __omp_emit_image = lambda *args, **kwargs: None",
->>>>>>> theirs — scope `const prelude = PYTHON_PRELUDE.replace(` · weave: run 'weave explain packages/coding-agent/test/eval/py/prelude.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 	);
 	const script = `${prelude}\n${code}`;
 	// The full prelude exceeds Windows' ~32k `python -c` command-line limit
 	// (ENAMETOOLONG); a script file behaves identically on every platform.
-<<<<<<< ours — scope `// The full prelude exceeds Windows' ~32k `py...` in function `runPrelude` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const dir = await TempDir.create("omp-py-prelude-");`
 	const dir = await TempDir.create("tau-py-prelude-");
-=======
-	const dir = await TempDir.create("@omp-py-prelude-");
->>>>>>> theirs — scope `// The full prelude exceeds Windows' ~32k `py...`
 	try {
 		const scriptPath = dir.join("script.py");
 		await Bun.write(scriptPath, script);

@@ -1,7 +1,6 @@
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 import { FileType, glob } from "@tau/tau-natives";
 import {
@@ -30,39 +29,6 @@ import type { LoadContext, LoadResult, SourceMeta } from "../capability/types";
 import { resolveClaudePaths } from "../config/claude-paths";
 import type { MCPRequestIdFormat } from "../mcp/types";
 import { type ConfiguredThinkingLevel, parseConfiguredThinkingLevel } from "@tau/tau-tui/thinking";
-=======
-import { FileType, glob } from "@oh-my-pi/pi-natives";
-import {
-	CONFIG_DIR_NAME,
-	getAgentDir,
-	getConfigDirName,
-	getPluginsDir,
-	getProjectDir,
-	isEnoent,
-	logger,
-	normalizePathForComparison,
-	parseFrontmatter,
-	pathIsWithin,
-	tryParseJson,
-} from "@oh-my-pi/pi-utils";
-import { isUserSourceEnabled } from "../capability";
-import type { ContextFile } from "../capability/context-file";
-import type { ExtensionModule } from "../capability/extension-module";
-import { invalidate as invalidateFsCache, readDirEntries, readFile } from "../capability/fs";
-import {
-	MAIN_AGENT_RULE_NAME,
-	parseRuleAgents,
-	parseRuleConditionAndScope,
-	type Rule,
-	type RuleFrontmatter,
-	SUB_AGENT_RULE_NAME,
-} from "../capability/rule";
-import type { Skill, SkillFrontmatter } from "../capability/skill";
-import type { LoadContext, LoadResult, SourceMeta } from "../capability/types";
-import { resolveClaudePaths } from "../config/claude-paths";
-import type { MCPRequestIdFormat } from "../mcp/types";
-import { type ConfiguredThinkingLevel, parseConfiguredThinkingLevel } from "@oh-my-pi/pi-tui/thinking";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/discovery/helpers.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { normalizeToolNames } from "../tools/builtin-names";
 
 import { realpathIfExists, resolveContainedPath } from "./contained-path";
@@ -1179,36 +1145,22 @@ export async function isForeignUserConfigRoot(root: string, configDirName: strin
  * Resolve the active project registry path by walking up from `cwd`.
  *
  * Walk order:
-<<<<<<< ours — scope `declaration` in function `resolveActiveProjectRegistryPath` (T, confidence: high)
 // refused_by: statement_fold · collision: none (1 contested hunk(s), neither side deleted the other's lines)
  * 1. Walk up from `cwd` looking for the nearest directory containing `.tau/`.
  *    The first match returns `<dir>/.tau/plugins/installed_plugins.json`.
  * 2. If no `.tau/` is found, rescan from `cwd` upward looking for `.git`.
  *    The git root is used as an anchor: `<gitRoot>/.tau/plugins/installed_plugins.json`.
  * 3. If neither is found, return `null` — no project context is active.
-=======
- * 1. Walk up from `cwd` looking for the nearest directory containing `.omp/`.
- *    The first match returns `<dir>/.omp/plugins/installed_plugins.json`.
- * 2. If no `.omp/` is found, rescan from `cwd` upward looking for `.git`.
- *    The git root is used as an anchor: `<gitRoot>/.omp/plugins/installed_plugins.json`.
- * 3. Stop before home or a temporary root in either pass. If neither anchor is
- *    found below that ceiling, return `null` — no project context is active.
- * Inactive `.omp/agent/` layouts are skipped only above the nearest git root,
- * or throughout an unanchored walk, so repo-local agent directories stay project scope.
->>>>>>> theirs — scope `declaration`
  *
  * This is the single source of truth for "active project root" used by install,
  * uninstall, list, upgrade, discovery, and doctor. Deterministic for a given `cwd`.
  */
 export async function resolveActiveProjectRegistryPath(cwd: string): Promise<string | null> {
 	return resolveProjectRegistryPath(cwd, getProjectDiscoveryCeilings());
-<<<<<<< ours — scope `// Pass 1: walk up looking for an existing .o...` in function `resolveActiveProjectRegistryPath`, deleted in theirs (T+F, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	// Pass 1: walk up looking for an existing .tau/ directory (nearest wins).
 	// Stop before os.homedir() — ~/.tau/ is the user-level config dir, not a project root.
 	const homeDir = os.homedir();
-=======
->>>>>>> theirs — scope `// Pass 1: walk up looking for an existing .o...` deleted in theirs
 }
 
 async function resolveProjectRegistryPath(cwd: string, ceilings: ReadonlySet<string>): Promise<string | null> {
@@ -1439,7 +1391,6 @@ export function listClaudePluginRoots(
 	home: string,
 	cwd?: string,
 ): Promise<{ roots: ClaudePluginRoot[]; warnings: string[] }> {
-<<<<<<< ours — function `listClaudePluginRoots (body partly extracted into resolvePluginRegistryFiles, readPluginRoots, loadClaudePluginRoots)` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `const ompRegistryPath = path.join(getPluginsDir(home), "install…` +15 more
 	const claudeConfigDir = resolveClaudePaths(home).configDir;
 	const tauRegistryPath = path.join(getPluginsDir(home), "installed_plugins.json");
@@ -1628,9 +1579,6 @@ export function listClaudePluginRoots(
 	const result = { roots, warnings };
 	pluginRootsCache.set(cacheKey, result);
 	return result;
-=======
-	return readPluginRoots(home, cwd, false);
->>>>>>> theirs — function `listClaudePluginRoots (body partly extracted into resolvePluginRegistryFiles, readPluginRoots, loadClaudePluginRoots)` (S+F, confidence: low)
 }
 
 /** {@link listClaudePluginRoots}; with `revalidate`, a cached result whose registry files changed is read again. */

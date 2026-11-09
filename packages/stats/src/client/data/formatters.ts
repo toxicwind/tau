@@ -1,9 +1,5 @@
-<<<<<<< ours — interstitial `file_header` (S, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { formatDistanceToNow } from "@oh-my-pi/pi-utils/dates";`
 import { formatDistanceToNow } from "@tau/tau-utils/dates";
-=======
-import { format, formatDistanceToNow } from "@oh-my-pi/pi-utils/dates";
->>>>>>> theirs — interstitial `file_header` (S, confidence: medium) · weave: run 'weave explain packages/stats/src/client/data/formatters.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { MessageStats } from "../types";
 
 /**

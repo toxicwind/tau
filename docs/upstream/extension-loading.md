@@ -39,12 +39,8 @@ Native `extension-module` discovery comes from:
 - User directory: the active agent directory's `extensions/` (default `~/.tau/agent/extensions`)
 - Native legacy/settings JSON entries: `<cwd>/.tau/settings.json#extensions` and the active agent directory's `settings.json#extensions`
 
-<<<<<<< ours — scope `The project root is the native provider's `.o...` in heading `1) Auto-discovered native extension modules` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `The project root is the native provider's `.omp` directory (`SO…`
 The project root is the native provider's `.tau` directory (`SOURCE_PATHS.native.projectDir`), cwd-only; it does not walk ancestors. The user root is the active profile's agent directory via `getAgentDir()`, so under `tau --profile <name>` it becomes `~/.tau/profiles/<name>/agent/extensions` (and it honors `PI_CODING_AGENT_DIR`). See [Profiles](./config-usage.md#profiles).
-=======
-The project root is the native provider's `.omp` directory (`SOURCE_PATHS.native.projectDir`), cwd-only; it does not walk ancestors. Native discovery uses its `LoadContext.agentDir` when supplied, otherwise `getAgentDir()`. With the default user config root, `omp --profile <name>` selects `~/.omp/profiles/<name>/agent/extensions`. `PI_CONFIG_DIR` changes that user config root; `PI_CODING_AGENT_DIR` overrides the agent directory only in the default profile, not named profiles. See [Profiles](./config-usage.md#profiles).
->>>>>>> theirs — scope `The project root is the native provider's `.o...` · weave: run 'weave explain docs/upstream/extension-loading.md' for per-hunk detail, 'weave check' to verify your resolution
 
 Notes:
 
@@ -82,14 +78,9 @@ Configured path sources in the main session startup path (`sdk.ts`):
 
 Native settings files:
 
-<<<<<<< ours — scope `declaration` in heading `4) Explicitly configured paths` (F, confidence: medium)
 // refused_by: statement_fold · collision: `- User: the active agent directory's `config.yml` (default `~/.…`
 - User: the active agent directory's `config.yml` (default `~/.tau/agent/config.yml`; with `--profile <name>`, `~/.tau/profiles/<name>/agent/config.yml`; `PI_CODING_AGENT_DIR` can override the agent directory)
 - Project/native settings capability: `<cwd>/.tau/config.yml` and `<cwd>/.tau/settings.json`
-=======
-- User: the active agent directory's `config.yml`, with `config.yaml` as a fallback (default root `~/.omp/agent`; named profiles use `~/.omp/profiles/<name>/agent`). Agent-directory overrides follow the profile rules above.
-- Project/native settings capability: `<cwd>/.omp/config.yml` and `<cwd>/.omp/settings.json`
->>>>>>> theirs — scope `declaration`
 
 Other enabled settings providers and `--config` overlays can also supply the
 effective `extensions` value. See [Settings](./config-usage.md).
@@ -110,12 +101,8 @@ extensions:
 
 ```json
 {
-<<<<<<< ours — scope `"extensions": ["./.omp/extensions/my-extra"]` in heading `4) Explicitly configured paths` (S, confidence: medium)
 // refused_by: statement_fold · collision: `"extensions": ["./.omp/extensions/my-extra"]`
   "extensions": ["./.tau/extensions/my-extra"]
-=======
-	"extensions": ["./.omp/extensions/my-extra"]
->>>>>>> theirs — scope `"extensions": ["./.omp/extensions/my-extra"]`
 }
 ```
 
@@ -297,12 +284,8 @@ registration remain sequential in the discovered order.
 
 Each candidate path is loaded via `loadLegacyPiModule()` (`src/extensibility/plugins/legacy-tau-compat.ts`):
 
-<<<<<<< ours — scope `- the entry's realpath is resolved, then dyna...` in heading `Module import and factory contract` (S, confidence: medium)
 // refused_by: statement_fold · collision: `- the entry's realpath is resolved, then dynamically imported w…`
 - the entry's realpath is resolved, then dynamically imported with an `?mtime` cache-buster so edited source reloads. Since 16.3.7 the same mtime tag propagates to every module in the extension-owned dependency graph — relative `./`/`../` imports, package `imports` aliases (`#alias/*`), and extension-local bare dependencies — via the graph-wide `onLoad` rewrite, so same-process re-imports pick up edits across the whole graph, not just the entry file. Host-resolved rewrites (legacy tau-package specifiers, the TypeBox shim) stay untagged `file://` URLs because they point at in-process host code that never changes between reloads
-=======
-- the entry's realpath is resolved, then dynamically imported with a per-load `?mtime` cache-buster. On POSIX the loader uses filesystem-path specifiers, and the same tag propagates through extension-owned relative imports, package `imports` aliases (`#alias/*`), and extension-local dependencies so same-process re-imports pick up graph edits. Windows uses `file://` specifiers, whose query strings Bun currently ignores, so the same reload guarantee does not apply there. Host-resolved rewrites (pi-package specifiers and the TypeBox shim) stay untagged because they point at in-process host code
->>>>>>> theirs — scope `- the entry's realpath is resolved, then dyna...`
 - a scoped Bun `onLoad` hook rewrites legacy tau-package specifiers (`@mariozechner/*`, `@earendil-works/*`) and bare `@sinclair/typebox` onto the host-bundled copies before evaluation. Legacy Pi package-root imports resolve through compat shims: catalog symbols that moved to `@tau/tau-catalog/models` (`calculateCost`, `modelsAreEqual`, `getBundledProviders`, plus `getModel`/`getModels` aliases) are re-exported by the legacy tau-ai shim (`src/extensibility/legacy-tau-ai-shim.ts`), and legacy `@tau/tau-coding-agent` imports — including `DefaultResourceLoader` — resolve to the compat loader in `src/extensibility/legacy-tau-coding-agent-shim.ts`
 - graph-owned CommonJS modules use synchronous Bun `onLoad` object modules exposing runtime own-string export keys, including computed and non-enumerable names; `default` remains the complete `module.exports` value. The shared evaluator preserves cycles and `require`/import identity, while required host ESM shims are prepared before synchronous evaluation. No generated facade files or AST named-export reconstruction are needed
 - bundled host modules use Bun's native object loader. Modules exporting `theme` add a thin ESM binding bridge so the existing `theme` import follows host assignments synchronously without replacing the UI's change listener

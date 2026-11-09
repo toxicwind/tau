@@ -1,17 +1,10 @@
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { acquireFileLock, type FileLockHandle, isEnoent, toErro…`
 import { type } from "@tau/tautype";
 import { type BtwHistoryRecord, type BtwHistoryTurn, getBtwLatestTurn } from "@tau/tau-tui/overlays/btw-history";
 import { acquireFileLock, type FileLockHandle, isEnoent, toError } from "@tau/tau-utils";
 import { replaceFileAtomically } from "../utils/atomic-file";
-=======
-import { type } from "@oh-my-pi/omptype";
-import { type BtwHistoryRecord, type BtwHistoryTurn, getBtwLatestTurn } from "@oh-my-pi/pi-tui/overlays/btw-history";
-import { acquireFileLock, type FileLockHandle, isEnoent, logger, toError } from "@oh-my-pi/pi-utils";
-import { writeFileAtomically } from "../utils/atomic-file";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/session/btw-history.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 export {
 	type BtwHistoryRecord,
@@ -24,12 +17,9 @@ export {
 } from "@oh-my-pi/pi-tui/overlays/btw-history";
 
 const imageSchema = type({ type: "'image'", data: "string", mimeType: "string" });
-<<<<<<< ours — interstitial `between:packages/coding-agent/src/session/btw-history.ts::export::getBtwTurns:packages/coding-agent/src/session/btw-history.ts::variable::turnFields` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `} from "@oh-my-pi/pi-tui/overlays/btw-history";`
 } from "@tau/tau-tui/overlays/btw-history";
 
-=======
->>>>>>> theirs — interstitial `between:packages/coding-agent/src/session/btw-history.ts::export::getBtwTurns:packages/coding-agent/src/session/btw-history.ts::variable::turnFields` (S+F, confidence: low)
 const turnFields = {
 	question: "string",
 	"images?": imageSchema.array(),

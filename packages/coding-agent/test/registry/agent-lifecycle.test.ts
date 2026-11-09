@@ -1,21 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fsp from "node:fs/promises";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { AgentLifecycleManager } from "@oh-my-pi/pi-coding-agen…` +1 more
 import { AgentLifecycleManager } from "tau/registry/agent-lifecycle";
 import { AgentRegistry, MAIN_AGENT_ID } from "tau/registry/agent-registry";
 import { registerPersistedSubagents } from "tau/registry/persisted-agents";
 import type { AgentSession } from "tau/session/agent-session";
 import { TempDir } from "@tau/tau-utils";
-=======
-import { type AgentLifecycleApi, AgentLifecycleManager } from "@oh-my-pi/pi-coding-agent/registry/agent-lifecycle";
-import { AgentRegistry, type AgentRegistryApi, MAIN_AGENT_ID } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import { registerPersistedSubagents } from "@oh-my-pi/pi-coding-agent/registry/persisted-agents";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import type { AgentSessionHandle } from "@oh-my-pi/pi-coding-agent/session/agent-session-handle";
-import { TempDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/registry/agent-lifecycle.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 interface SessionStub {
 	session: AgentSession;

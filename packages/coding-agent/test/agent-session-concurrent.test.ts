@@ -7,7 +7,6 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import { scheduler } from "node:timers/promises";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { Agent, type AgentMessage, type AgentTool } from "@oh-m…` +1 more
 import { type } from "@tau/tautype";
 import { Agent, type AgentMessage, type AgentTool } from "@tau/tau-agent-core";
@@ -31,38 +30,6 @@ import { convertToLlm, shouldRenderAbortReason } from "tau/session/messages";
 import { SessionManager } from "tau/session/session-manager";
 import { EventBus } from "tau/utils/event-bus";
 import { removeSyncWithRetries, Snowflake } from "@tau/tau-utils";
-=======
-import { type } from "@oh-my-pi/omptype";
-import { Agent, AgentBusyError, type AgentMessage, type AgentTool } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, AssistantMessageEvent, ToolCall } from "@oh-my-pi/pi-ai";
-import {
-	accumulateToolCallArgumentsDelta,
-	finalizeToolCallArgumentsDone,
-} from "@oh-my-pi/pi-ai/providers/openai-shared";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { kStreamingPartialJson } from "@oh-my-pi/pi-ai/utils/block-symbols";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { AsyncJobManager } from "@oh-my-pi/pi-coding-agent/async";
-import type { Rule } from "@oh-my-pi/pi-coding-agent/capability/rule";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { TtsrManager } from "@oh-my-pi/pi-coding-agent/export/ttsr";
-import { ExtensionRuntime, loadExtensionFromFactory } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
-import { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
-import { ExtensionToolWrapper } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/wrapper";
-import { GoalRuntime } from "@oh-my-pi/pi-coding-agent/goals/runtime";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import {
-	convertToLlm,
-	isUserInterruptAbort,
-	shouldRenderAbortReason,
-} from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-import { removeSyncWithRetries, Snowflake } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/agent-session-concurrent.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 // Mock stream that mimics AssistantMessageEventStream
 

@@ -3,17 +3,10 @@
 import {
 	type CompactionSettings as EngineCompactionSettings,
 	shouldUseProviderNativeCompaction,
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-agent-core/compaction";
 import type { Model } from "@tau/tau-ai";
 import type { CompactionSettings } from "../config/settings-schema";
-=======
-} from "@oh-my-pi/pi-agent-core/compaction";
-import type { Model } from "@oh-my-pi/pi-ai";
-import { sendsImageInputOnWire } from "@oh-my-pi/pi-ai/providers/vision-guard";
-import type { CompactionSettings } from "./context-settings";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/session/compaction-methods.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /** Choices presented by the ordered compaction-method setting. */
 export const COMPACTION_METHOD_CHOICES = [

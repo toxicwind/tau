@@ -241,7 +241,6 @@ RPC rejects secret prompts instead of forwarding them as ordinary input. SDK
 hosts implementing `onPrompt` must honor `secret` or reject the prompt. Masking
 does not provide encryption, memory erasure, or general log redaction.
 
-<<<<<<< ours — heading `Provider registration (body partly extracted into Command-backed providers)` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `- `pi.arktype` (the omptype `type(...)` schema builder)` +1 more
 In interactive mode, `input` handlers run before the built-in first-message auto-title check. Extensions that call `await pi.setSessionName(...)` from `input` can set the persisted session name and prevent the default auto-generated title from running for that session.
 
@@ -252,8 +251,6 @@ Also exposed:
 - `pi.zod` (Zod-compatible builder backed by tautype)
 - `pi.typebox` (legacy TypeBox-compatible shim)
 - `pi.pi` (package exports)
-=======
->>>>>>> theirs — heading `Provider registration (body partly extracted into Command-backed providers)` (S+F, confidence: low) · weave: run 'weave explain docs/upstream/extensions.md' for per-hunk detail, 'weave check' to verify your resolution
 ### Command-backed providers
 
 `registerProvider` also supports providers whose transport is implemented by the
@@ -365,11 +362,8 @@ from another agent.
 
 Payloads passed to `pi.sendMessage` are normalized before delivery
 
-<<<<<<< ours — scope ``pi.sendUserMessage(content, { deliverAs })` ...` in heading `Message delivery semantics`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 `pi.sendUserMessage(content, { deliverAs })` always goes through prompt flow. Omit `deliverAs` to start a normal prompt when idle; while streaming, omitted `deliverAs` queues the message as a steer. Set `deliverAs: "followUp"` to wait until the current run finishes. Set `deliverAs: "aside"` to inject the prompt at the next step boundary while a run is live (idle sends start a turn as usual). The message is recorded with `attribution: "user"` unless you pass `attribution: "agent"`; pass `"agent"` for text the extension generated or relayed from another agent, so consumers can tell it apart from what the architect typed.
-=======
->>>>>>> theirs — scope ``pi.sendUserMessage(content, { deliverAs })` ...` deleted in theirs
 content under the default custom type, missing `customType`/`attribution` fields
 are defaulted, and invalid content collapses to an empty string.
 (`normalizeCustomMessagePayload` in `packages/tui/src/chat/messages.ts`,
@@ -576,11 +570,8 @@ pi.on("assistant_message", event => ({
 		block.type === "text" ? { ...block, text: block.text.replaceAll("teh", "the") } : block,
 	),
 
-<<<<<<< ours — scope `If a returned override's source base changes ...` in heading `Prompt and turn lifecycle`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 If a returned override's source base changes during preparation (for example, a handler awaits `ctx.setActiveTools()`), the host discards that attempt's returned custom messages and staged memory, then repeats policy preparation from the winning base. At most three attempts run per delivery; repeated base changes raise an error without delivering the original input. Queued originals remain queued, and settling the failed turn does not retry them automatically. A new prompt or queued delivery can reopen draining, including synthetic follow-ups and custom messages from extensions or advisors; the pause is not restricted to an architect-only retry. Ordinary text is returned through the dropped-prompt callback. Unchanged base content does not trigger a retry, even if a refresh replaces the array. Preparations without an override still use the winning base without rerunning handlers or recall. Ownership is checked again synchronously before publishing results; a late change declines the delivery without committing memory or context.
-=======
->>>>>>> theirs — scope `If a returned override's source base changes ...` deleted in theirs
 }));
 ```
 
@@ -808,27 +799,8 @@ pi.registerTool({
 });
 ```
 
-<<<<<<< ours — scope `closing` in heading `Delegating to a native built-in (`ctx.invokeTool`)` (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 `tool_call`/`tool_result` intercept all tools once the registry is wrapped in `sdk.ts`, including built-ins and extension/custom tools. `ToolDefinition` also supports optional `hidden`, `defaultInactive`, `loadMode` (`"discoverable"` by default, or `"essential"`), `deferrable`, `approval` (`"exec"` by default), `strict`, `mcpServerName`, `mcpToolName`, `renderCall`, and `renderResult` fields.
-=======
-`renderCall`'s `options` argument also answers the `Theme` API, so tool renderers ported from upstream pi — declared `renderCall(args, theme, context)` — style correctly without being rewritten.
-
-`tool_call`/`tool_result` intercept registry tools in `sdk.ts`, including built-ins
-and extension/custom tools; an approval-policy denial can short-circuit before
-`tool_call`, and blocked/denied calls do not execute or emit a normal post-execution result hook.
-
-Additional `ToolDefinition` fields include:
-
-- `hidden`, `defaultInactive`: opt out of automatic activation unless explicitly requested.
-- `loadMode`: `"discoverable"` for new tool names by default; known essential built-in names retain `"essential"` when re-registered without an explicit mode (see `tools/essential-tools.ts`). Explicit modes win.
-- `deferrable`, `readsSkillUris`, `strict`.
-- `approval`: defaults to `"exec"`; accepts a tier, a decision object, or a function of the arguments.
-- `mcpServerName`, `mcpToolName`, `legacyName`, `sourcePath`: discovery, approval, and provenance metadata.
-- `shellEnv`: environment values for the interactive user-shell surface.
-- `renderCall`, `renderResult`: TUI components.
-- `describeCall`, `describeResult`: semantic tool views for TSP terminals.
->>>>>>> theirs — scope `closing`
 
 ### File write fallback (`registerFileWriteFallback`)
 
@@ -1488,12 +1460,8 @@ Provide `renderCall` / `renderResult` on `registerTool` definitions for custom t
 - `tool_call` errors and timeouts block execution (fail-closed). Its budget is `extensionHandlers.toolCallTimeoutMs` (default 30,000 ms), paused during extension UI waits.
 - Most dispatched handlers have a 30-second budget; `session_shutdown` handlers run concurrently with a 2-second budget. Timing out stops waiting and cancels handler UI, but cannot undo arbitrary extension side effects.
 - Command name conflicts with built-ins are skipped with diagnostics.
-<<<<<<< ours — scope `- Reserved shortcuts are ignored (`ctrl+c`, `...` in heading `Constraints and pitfalls` (S, confidence: medium)
 // refused_by: statement_fold · collision: `- Reserved shortcuts are ignored (`ctrl+c`, `ctrl+d`, `ctrl+z`,…`
 - Reserved shortcuts are ignored (`ctrl+c`, `ctrl+d`, `ctrl+z`, `ctrl+k`, `ctrl+p`, `ctrl+l`, `ctrl+o`, `ctrl+t`, `ctrl+g`, `ctrl+q`, `alt+m`, `shift+tab`, `shift+ctrl+p`, `alt+enter`, `escape`, `enter`, `f1`–`f9`).
-=======
-- Reserved shortcuts are ignored (`ctrl+c`, `ctrl+d`, `ctrl+z`, `ctrl+k`, `ctrl+p`, `ctrl+l`, `ctrl+o`, `ctrl+t`, `ctrl+g`, `ctrl+q`, `alt+m`, `shift+tab`, `shift+ctrl+p`, `alt+enter`, `escape`, `enter`); `getShortcutConflict` reports them as `reserved`.
->>>>>>> theirs — scope `- Reserved shortcuts are ignored (`ctrl+c`, `...`
 - Treat `ctx.reload()` as terminal for the current command handler frame.
 - Module globals are shared by parent/child bindings. Keep session-specific state in the factory closure or persisted session entries.
 

@@ -100,14 +100,8 @@ describe("multiprocess file logging", () => {
 		for (const expected of retainedNames) expect(entries).toContain(expected);
 		for (const expired of expiredNames) expect(entries).not.toContain(expired);
 		expect(entries.filter(name => name.endsWith(".log.1"))).toHaveLength(exitedPids.length);
-<<<<<<< ours — scope `it("prunes completed PID namespaces across sh...` in test_suite `multiprocess file logging` (F, confidence: medium)
 // refused_by: statement_fold · collision: `expect(entries.filter(name => name.endsWith("-audit.json"))).to…`
 		expect(entries.filter(name => name.endsWith("-audit.json"))).toEqual([`.tau.${currentPid}-audit.json`]);
-=======
-		// Completed-process audits from earlier releases are removed, and the
-		// current sink tracks its rotations in memory without writing one.
-		expect(entries.filter(name => name.endsWith("-audit.json"))).toEqual([]);
->>>>>>> theirs — scope `it("prunes completed PID namespaces across sh...` · weave: run 'weave explain packages/utils/test/logger-multiprocess.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 	});
 
 	it("ages out legacy shared daily logs and hash-named audits past the retention window", async () => {

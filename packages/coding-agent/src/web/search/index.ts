@@ -5,20 +5,12 @@
  * providers with provider-specific parameters exposed conditionally.
  */
 
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { AuthStorage } from "@oh-my-pi/pi-ai";` +1 more
 import { type } from "@tau/tautype";
 import type { AgentTool, AgentToolContext, AgentToolResult, AgentToolUpdateCallback } from "@tau/tau-agent-core";
 import type { AuthStorage } from "@tau/tau-ai";
 import { modelKind } from "@tau/tau-catalog/types";
 import { formatAge, prompt } from "@tau/tau-utils";
-=======
-import { type } from "@oh-my-pi/omptype";
-import type { AgentTool, AgentToolContext, AgentToolResult, AgentToolUpdateCallback } from "@oh-my-pi/pi-agent-core";
-import type { Api, AuthStorage, Model } from "@oh-my-pi/pi-ai";
-import { modelKind } from "@oh-my-pi/pi-catalog/types";
-import { formatAge, formatCount, prompt, truncate } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/web/search/index.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { ModelRegistry } from "../../config/model-registry";
 import { type RoleChainCandidate, resolveModelRoleValue, resolveRoleChain } from "../../config/model-resolver";
 import { roleCandidatePool } from "../../config/model-roles";

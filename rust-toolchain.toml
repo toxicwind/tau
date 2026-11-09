@@ -1,8 +1,4 @@
 [toolchain]
-<<<<<<< ours — scope `channel = "nightly-2026-08-12"` in section `toolchain` (S, confidence: medium)
 # refused_by: statement_fold · collision: `channel = "nightly-2026-08-12"`
 channel = "nightly"
-=======
-channel = "nightly-2026-11-08"
->>>>>>> theirs — scope `channel = "nightly-2026-08-12"` · weave: run 'weave explain rust-toolchain.toml' for per-hunk detail, 'weave check' to verify your resolution
 components = ["cargo", "clippy", "rustfmt", "rust-src"]

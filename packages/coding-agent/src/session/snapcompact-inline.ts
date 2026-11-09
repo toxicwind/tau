@@ -14,26 +14,10 @@
  * estimate (`estimateInlineSavings`) so the two can never disagree.
  */
 
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import type { Context, ImageContent, Model, TextContent, ToolRe…`
 import { Tokenizer } from "@tau/tau-agent-core";
 import type { Context, ImageContent, Model, TextContent, ToolResultMessage, UserMessage } from "@tau/tau-ai";
 import * as snapcompact from "@tau/snapcompact";
-=======
-import { Tokenizer } from "@oh-my-pi/pi-agent-core";
-import type { Context, ImageContent, Message, Model, TextContent, UserMessage } from "@oh-my-pi/pi-ai";
-import { sendsImageInputOnWire } from "@oh-my-pi/pi-ai/providers/vision-guard";
-import {
-	HL_FILE_HASH_LENGTH,
-	HL_FILE_HASH_SEP,
-	HL_FILE_PREFIX,
-	HL_FILE_SUFFIX,
-	HL_LINE_BODY_SEP,
-} from "@oh-my-pi/pi-tui/tools/hashline-format";
-import type { ReadToolDetails } from "@oh-my-pi/pi-tui/tools/read";
-import { prompt } from "@oh-my-pi/pi-utils";
-import * as snapcompact from "@oh-my-pi/snapcompact";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/session/snapcompact-inline.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { SnapcompactFrameSink } from "../blob-broker/service";
 import contextFramesNote from "../prompts/system/snapcompact-context-frames-note.md" with { type: "text" };
 import contextStub from "../prompts/system/snapcompact-context-stub.md" with { type: "text" };
@@ -63,12 +47,8 @@ export type SnapcompactSavingsSink = (
 	model: Model,
 ) => void;
 
-<<<<<<< ours — interstitial `between:packages/coding-agent/src/session/snapcompact-inline.ts::type::SnapcompactSavingsSink:packages/coding-agent/src/session/snapcompact-inline.ts::variable::MAX_SYSTEM_PROMPT_FRAMES` (S, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `// Per-provider image-count budgets live in @oh-my-pi/snapcompa…`
 // Per-provider image-count budgets live in @tau/snapcompact
-=======
-// Per-deployment image-count budgets come from the catalog via @oh-my-pi/snapcompact
->>>>>>> theirs — interstitial `between:packages/coding-agent/src/session/snapcompact-inline.ts::type::SnapcompactSavingsSink:packages/coding-agent/src/session/snapcompact-inline.ts::variable::MAX_SYSTEM_PROMPT_FRAMES` (S, confidence: medium)
 // (`providerImageBudget`): snapcompact frames are 1568px (<2000px) so
 // dimension/size limits never bind; only COUNT does. Once the budget is
 // spent by already-attached archive/system-prompt images, tool results ship

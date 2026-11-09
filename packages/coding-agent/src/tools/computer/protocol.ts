@@ -1,17 +1,6 @@
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { DesktopCapabilities } from "@oh-my-pi/pi-natives";`
 import type { ImageContent, TextContent } from "@tau/tau-ai";
 import type { DesktopCapabilities } from "@tau/tau-natives";
-=======
-import type { ImageContent, TextContent } from "@oh-my-pi/pi-ai";
-import type { CaptureRegion, DesktopCapabilities, DesktopScreenState } from "@oh-my-pi/pi-natives";
-import * as prompt from "@oh-my-pi/pi-utils/prompt";
-import escapeAfterCallMessage from "../../prompts/tools/computer-escape-after-call.md" with { type: "text" };
-import escapeRefusedMessage from "../../prompts/tools/computer-escape-refused.md" with { type: "text" };
-import escapeStoppedMessage from "../../prompts/tools/computer-escape-stopped.md" with { type: "text" };
-import screenLockedCaptureNote from "../../prompts/tools/computer-screen-locked-capture.md" with { type: "text" };
-import screenStateTemplate from "../../prompts/tools/computer-screen-state.md" with { type: "text" };
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/computer/protocol.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 export { COMPUTER_WORKER_ARG } from "../../cli/worker-selectors";
 

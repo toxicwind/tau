@@ -1,20 +1,9 @@
 import { afterEach, beforeAll, describe, expect, it } from "bun:test";
 import { Markdown } from "@tau/tau-tui";
 import { Settings } from "../../../src/config/settings";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { createTheme, getBuiltinThemes } from "@tau/tau-tui/theme/loader";
 import { getMarkdownTheme, getThemeByName, setMarkdownMermaidRendering, setThemeInstance } from "@tau/tau-tui/theme";
-=======
-import { fgAnsi } from "@oh-my-pi/pi-tui/theme/color";
-import { createTheme, getBuiltinThemes } from "@oh-my-pi/pi-tui/theme/loader";
-import {
-	getMarkdownTheme,
-	getThemeByName,
-	setMarkdownMermaidRendering,
-	setThemeInstance,
-} from "@oh-my-pi/pi-tui/theme";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/modes/theme/mermaid-rendering.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { buildSystemPrompt } from "../../../src/system-prompt";
 
 const workspaceTree = {

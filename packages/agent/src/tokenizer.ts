@@ -1,33 +1,9 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { Model } from "@oh-my-pi/pi-ai";` +1 more
 import type { Model } from "@tau/tau-ai";
 import type { ModelTokenizer } from "@tau/tau-catalog/types";
 import * as natives from "@tau/tau-natives";
 import { stringifyJson } from "@tau/tau-utils";
 import * as snapcompact from "@tau/snapcompact";
-=======
-import type { AssistantMessage, Model } from "@oh-my-pi/pi-ai";
-import { renderDemotedThinking } from "@oh-my-pi/pi-ai/dialect/demotion";
-import { isFactoryDroidGeminiWire, keepsFactoryGeminiReasoning } from "@oh-my-pi/pi-ai/providers/factory-droid/gemini";
-import { ollamaChatDropsOwnThinking } from "@oh-my-pi/pi-ai/providers/ollama";
-import { completionsDropsOwnThinking, isLiteLLMThinkingSignature } from "@oh-my-pi/pi-ai/providers/openai-completions";
-import {
-	getNativeResponsesHistoryItems,
-	getReplayableNativeResponsesHistoryItems,
-	replaysNativeResponsesTurn,
-} from "@oh-my-pi/pi-ai/providers/openai-shared";
-import {
-	dropsForeignReasoningPayload,
-	isSameModelTurn,
-	shouldDropTruncatedThinkingOnlyAssistant,
-} from "@oh-my-pi/pi-ai/providers/transform-messages";
-import { resolveThinkingReplayTokens, type ThinkingReplayTokens } from "@oh-my-pi/pi-catalog/compat/thinking-replay";
-import type { ModelTokenizer } from "@oh-my-pi/pi-catalog/types";
-import * as natives from "@oh-my-pi/pi-natives";
-import { materializeString, stringifyJson } from "@oh-my-pi/pi-utils";
-import { LRUCache } from "@oh-my-pi/pi-utils/lru";
-import * as snapcompact from "@oh-my-pi/snapcompact";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/agent/src/tokenizer.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { isEstimateCacheable, messageEstimateVersion } from "./compaction/message-cache";
 import { base64ImageSize, estimateImageTokens, type ImageDetail, type ImageSize } from "./image-tokens";
 import type { AgentMessage } from "./types";

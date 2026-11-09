@@ -869,7 +869,6 @@ pub struct Device {
 	thread:  Option<JoinHandle<()>>,
 	done:    Option<mpsc::Receiver<()>>,
 }
-<<<<<<< ours — impl `PlaybackDevice` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 impl PlaybackDevice {
 	/// Opens the default playback device and starts its worker thread.
@@ -957,10 +956,7 @@ impl PlaybackDevice {
 		finish(&self.device, &mut self.thread, &mut self.done)
 	}
 }
-=======
->>>>>>> theirs — impl `PlaybackDevice` (S+F, confidence: low) · weave: run 'weave explain crates/tau-voice/src/device/linux.rs' for per-hunk detail, 'weave check' to verify your resolution
 
-<<<<<<< ours — impl `CaptureDevice` (S+F, confidence: low)
 // refused_by: rename_vs_edit_guard · collision: `.name("pi-voice-capture".to_owned())`
 impl CaptureDevice {
 	/// Opens the default capture device and starts its worker thread.
@@ -1046,107 +1042,6 @@ impl CaptureDevice {
 	/// Stops capture, waiting out delivery when called off the worker thread.
 	pub fn stop(&mut self) -> VoiceResult<()> {
 		finish(&self.device, &mut self.thread, &mut self.done)
-=======
-impl Device {
-	/// Opens the default playback device and starts its worker thread.
-	pub fn start_playback(config: DeviceConfig, fill: PlaybackFill) -> VoiceResult<Self> {
-		Self::start(config, fill, &PLAYBACK)
-	}
-
-	/// Opens the default capture device and starts its worker thread.
-	pub fn start_capture(config: DeviceConfig, sink: CaptureSink) -> VoiceResult<Self> {
-		Self::start(config, sink, &CAPTURE)
-	}
-
-	fn start<C: Send + 'static>(
-		config: DeviceConfig,
-		mut callback: C,
-		direction: &Direction<C>,
-	) -> VoiceResult<Self> {
-		let &Direction { name, pulse, alsa, pulse_loop, alsa_loop } = direction;
-		let samples = config.period_samples();
-		let attr = pulse_attr(config, pulse, pulse_latency_ms(config.period_ms))?;
-		let timeout_ms = c_int::try_from(config.period_ms)
-			.unwrap_or(c_int::MAX)
-			.max(1);
-		let delivery = Arc::new((AtomicBool::new(true), parking_lot::Mutex::new(())));
-		let device = Arc::new(RunningDevice {
-			stop: AtomicBool::new(false),
-			delivery,
-			error: Mutex::new(None),
-			worker_id: OnceLock::new(),
-		});
-		let worker_device = Arc::clone(&device);
-		let (opened_tx, opened_rx) = mpsc::sync_channel(1);
-		let (done_tx, done_rx) = mpsc::channel();
-		let thread = thread::Builder::new()
-			.name(format!("pi-voice-{name}"))
-			.spawn(move || {
-				let _done = ThreadDone(done_tx);
-				let _ = worker_device.worker_id.set(thread::current().id());
-				let pulse_error = match PulseApi::get().and_then(|api| {
-					PulseStream::open(api, config, pulse, &attr).map(|stream| (api, stream))
-				}) {
-					Ok((api, stream)) => {
-						let _ = opened_tx.send(Ok(()));
-						if let Err(error) = pulse_loop(
-							api,
-							&stream,
-							&worker_device.stop,
-							worker_device.delivery.as_ref(),
-							&mut callback,
-							samples,
-						) {
-							remember_error(&worker_device.error, error);
-						}
-						return;
-					},
-					Err(error) => error,
-				};
-				match AlsaApi::get()
-					.and_then(|api| AlsaStream::open(api, config, alsa).map(|stream| (api, stream)))
-				{
-					Ok((api, stream)) => {
-						let _ = opened_tx.send(Ok(()));
-						if let Err(error) = alsa_loop(
-							api,
-							&stream,
-							&worker_device.stop,
-							worker_device.delivery.as_ref(),
-							&mut callback,
-							samples,
-							timeout_ms,
-						) {
-							remember_error(&worker_device.error, error);
-						}
-					},
-					Err(alsa_error) => {
-						let _ = opened_tx.send(Err(format!(
-							"no Linux {name} backend available; PulseAudio: {pulse_error}; ALSA: \
-							 {alsa_error}"
-						)));
-					},
-				}
-			})
-			.map_err(|error| format!("could not start {name} worker: {error}"))?;
-		match opened_rx.recv() {
-			Ok(Ok(())) => Ok(Self { running: device, thread: Some(thread), done: Some(done_rx) }),
-			Ok(Err(error)) => {
-				let _ = thread.join();
-				Err(error)
-			},
-			Err(error) => {
-				let _ = thread.join();
-				Err(format!("{name} worker exited during startup: {error}"))
-			},
-		}
-	}
-
-	/// Stops the stream, waiting out delivery when called off the worker
-	/// thread.
-	pub fn stop(&mut self) -> VoiceResult<()> {
-		finish(&self.running, &mut self.thread, &mut self.done)
->>>>>>> theirs — impl `CaptureDevice` (S+F, confidence: low)
 	}
 }
 

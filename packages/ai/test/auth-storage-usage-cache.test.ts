@@ -19,21 +19,12 @@ import {
 	AuthStorage,
 	SqliteAuthCredentialStore,
 	type StoredAuthCredential,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-ai/auth-storage";
 import type { UsageLimit, UsageProvider, UsageReport } from "@tau/tau-ai/usage";
 import { alibabaTokenPlanUsageProvider } from "@tau/tau-ai/usage/alibaba-token-plan";
 import * as claudeUsage from "@tau/tau-ai/usage/claude";
 import { serializeAlibabaTokenPlanCredential } from "@tau/tau-catalog/wire/alibaba-token-plan";
-=======
-} from "@oh-my-pi/pi-ai/auth-storage";
-import { usageCacheIdentity } from "@oh-my-pi/pi-ai/auth/usage-cache";
-import type { UsageLimit, UsageProvider, UsageReport } from "@oh-my-pi/pi-ai/usage";
-import { alibabaTokenPlanUsageProvider } from "@oh-my-pi/pi-ai/usage/alibaba-token-plan";
-import * as claudeUsage from "@oh-my-pi/pi-ai/usage/claude";
-import { serializeAlibabaTokenPlanCredential } from "@oh-my-pi/pi-catalog/wire/alibaba-token-plan";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/ai/test/auth-storage-usage-cache.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function anthropicReports(reports: UsageReport[] | null): UsageReport[] {
 	return (reports ?? []).filter(r => r.provider === "anthropic");

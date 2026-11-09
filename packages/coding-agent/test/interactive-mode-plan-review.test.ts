@@ -1,7 +1,6 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { Agent, AgentBusyError, ThinkingLevel } from "@tau/tau-agent-core";
 import type { AssistantMessage, Usage } from "@tau/tau-ai";
@@ -25,39 +24,6 @@ import { AUTO_THINKING } from "@tau/tau-tui/thinking";
 import * as clipboard from "tau/utils/clipboard";
 import { setKeybindings } from "@tau/tau-tui";
 import { formatNumber, TempDir } from "@tau/tau-utils";
-=======
-import { Agent, AgentBusyError, ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, Usage } from "@oh-my-pi/pi-ai";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { KeybindingsManager } from "@oh-my-pi/pi-tui/app-keybindings";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { ExtensionRuntime } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
-import { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
-import { resolveLocalUrlToPath } from "@oh-my-pi/pi-coding-agent/internal-urls";
-import { AssistantMessageComponent } from "@oh-my-pi/pi-tui/chat/assistant-message";
-import type { HookSelectorSlider } from "@oh-my-pi/pi-tui/overlays/hook-selector";
-import { type PlanReviewAnnotationState, PlanReviewOverlay } from "@oh-my-pi/pi-tui/overlays/plan-review-overlay";
-import { InteractiveMode } from "@oh-my-pi/pi-coding-agent/modes/interactive-mode";
-import type {
-	Extension,
-	ExtensionContext,
-	ExtensionEvent,
-	PlanReviewRequestedEvent,
-	PlanReviewResolvedEvent,
-} from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
-import { planSaveFileName } from "@oh-my-pi/pi-coding-agent/plan-mode/plan-autosave";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { SubmittedUserInput } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SILENT_ABORT_MARKER, USER_INTERRUPT_LABEL } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { AUTO_THINKING } from "@oh-my-pi/pi-tui/thinking";
-import * as clipboard from "@oh-my-pi/pi-coding-agent/utils/clipboard";
-import { setKeybindings } from "@oh-my-pi/pi-tui";
-import { formatNumber, TempDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/interactive-mode-plan-review.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 import { cfgPlanAutosave, cfgPlanAutosaveDir } from "@oh-my-pi/pi-coding-agent/plan-mode/settings";
 

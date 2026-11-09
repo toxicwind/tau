@@ -7,7 +7,6 @@ import packageJson from "../package.json" with { type: "json" };
 import { type EmbeddedAddon, extractEmbeddedAddons } from "../native/loader-state.js";
 
 describe("native addon embedding", () => {
-<<<<<<< ours — scope `it("rejects a longer release sentinel that st...` in test_suite `native addon embedding` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `const root = await fs.mkdtemp(path.join(os.tmpdir(), "pi-native…` +2 more
 	it("rejects a longer release sentinel that starts with the expected version", async () => {
 		const root = await fs.mkdtemp(path.join(os.tmpdir(), "tau-natives-embed-"));
@@ -32,26 +31,6 @@ describe("native addon embedding", () => {
 			await fs.rm(root, { recursive: true, force: true });
 		}
 	});
-=======
-	for (const [label, contents] of [
-		["a longer release stamp that starts with the expected version", `binaryPI_NATIVES_VERSION_STAMP:18.1.10\0\0`],
-		["a longer legacy sentinel export that starts with the expected version", "binary__piNativesV18_1_10\0"],
-		["an unstamped addon", `binaryPI_NATIVES_VERSION_STAMP:${"\0".repeat(39)}`],
-	] as const) {
-		it(`rejects ${label}`, async () => {
-			const nativeDir = await fs.mkdtemp(path.join(os.tmpdir(), "pi-natives-embed-"));
-			try {
-				await Bun.write(path.join(nativeDir, "pi_natives.win32-arm64.node"), contents);
-
-				await expect(
-					embeddedAddonFiles({ platform: "win32", arch: "arm64", nativeDir, version: "18.1.1" }),
-				).rejects.toThrow("does not carry the @oh-my-pi/pi-natives@18.1.1 version stamp");
-			} finally {
-				await fs.rm(nativeDir, { recursive: true, force: true });
-			}
-		});
-	}
->>>>>>> theirs — scope `it("rejects a longer release sentinel that st...` · weave: run 'weave explain packages/natives/test/embed-native.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 	it("embeds identical addon bytes identically", async () => {
 		const nativeDir = await fs.mkdtemp(path.join(os.tmpdir(), "pi-natives-embed-"));

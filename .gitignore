@@ -73,13 +73,8 @@ tau-*.html
 packages/coding-agent/export-assets/
 packages/natives/npm/
 /runs/
-<<<<<<< HEAD
 python/tau-rpc/src/tau_rpc.egg-info/
 python/tau-rpc/build/
-=======
-sdk/python/omp-rpc/src/omp_rpc.egg-info/
-sdk/python/omp-rpc/build/
->>>>>>> upstream/main
 # parallel-agent worktrees
 .wt/
 CPU*.md

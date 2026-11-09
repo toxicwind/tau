@@ -10,16 +10,10 @@
  * back to a process-local spawn.
  */
 import * as os from "node:os";
-<<<<<<< ours — imports `file_header` (T+F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { logger, ptree } from "@oh-my-pi/pi-utils";`
 import * as path from "node:path";
 import { logger, ptree } from "@tau/tau-utils";
 import { MessageFramer } from "../../jsonrpc/message-framing";
-=======
-import { IpcConnection, ipcEndpoint } from "@oh-my-pi/pi-natives";
-import { logger, ptree, toError } from "@oh-my-pi/pi-utils";
-import { encodeMessageFrame, MessageFramer } from "../../jsonrpc/message-framing";
->>>>>>> theirs — imports `file_header` (T+F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/lsp/mux/daemon.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { daemonClientForProject } from "../../launch/client";
 import { describeQuietly, stopQuietly, waitReady } from "../../launch/ensure";
 import { daemonRuntimeDir } from "../../launch/paths";
@@ -334,15 +328,11 @@ export async function connectSharedLspTransport(opts: {
 
 /** Exercise worker-host mux startup and the ping handshake for distribution smoke tests. */
 export async function smokeTestLspMux(): Promise<void> {
-<<<<<<< ours — scope `const endpoint =` in function `smokeTestLspMux` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `? `\\\\.\\pipe\\omp-lsp-mux-smoke-${process.pid.toString(16)}`` +1 more
 	const endpoint =
 		process.platform === "win32"
 			? `\\\\.\\pipe\\tau-lsp-mux-smoke-${process.pid.toString(16)}`
 			: path.join(os.tmpdir(), `tau-lsp-mux-smoke-${process.pid.toString(36)}.sock`);
-=======
-	const endpoint = ipcEndpoint(os.tmpdir(), `omp-lsp-mux-smoke-${process.pid.toString(36)}`);
->>>>>>> theirs — scope `const endpoint =`
 	const spawn = resolveWorkerSpawnCmd(LSP_MUX_WORKER_ARG);
 	const proc = ptree.spawn(spawn.cmd, {
 		cwd: spawn.cwd,

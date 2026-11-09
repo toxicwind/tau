@@ -47,7 +47,6 @@ Native PTY API changes require rebuilding the addon with
 Run its real-PTY regressions with `bun test ./.omp/tests/tui.test.ts`. CI runs
 them on Linux only; the Windows-specific cases run only on a local Windows host.
 
-<<<<<<< ours — heading `Core component contract (`@oh-my-pi/pi-tui`)` (S+F, confidence: low)
 // refused_by: rename_vs_edit_guard · collision: none (both sides edited, nowhere the same lines)
 ## Core component contract (`@tau/tau-tui`)
 
@@ -76,40 +75,6 @@ export interface Focusable {
 ```
 
 Cursor behavior uses `CURSOR_MARKER` (not `getCursorPosition`). Focused components emit the marker in rendered text; `TUI` extracts it and positions the hardware cursor.
-=======
-## Core component contract (`@oh-my-pi/pi-tui`)
-
-`packages/tui/src/tui.ts` defines:
-
-```ts
-export interface Component {
-	render(width: number): readonly string[];
-	handleInput?(data: string): void;
-	wantsKeyRelease?: boolean;
-	invalidate?(): void;
-	releaseRenderCaches?(): void;
-	setIgnoreTight?(ignore: boolean): any;
-	dispose?(): void;
-}
-```
-
-Render results are component-owned and immutable to callers. An unchanged component may (and should) return the **same array reference** it returned last time; it must return a new array whenever content changes. Reference equality enables container memoization and stable-prefix work avoidance. A component that mutates a previously returned array in place must also implement `RenderStablePrefix` and report how many leading rows survived unchanged.
-
-`releaseRenderCaches()` drops only derived rows, parsing, and formatting state. The next `render()` must reproduce the same rows from retained source state. Do not rebuild eagerly, invoke renderer callbacks, convert images, or replace or dispose children in this hook. The transcript calls it after retirement or replay batches are acknowledged, or immediately when replay has no rows to acknowledge. Semantic full renders and resized tails release committed caches after producing their rows. Tool cards can use `ToolCardOptions.onReleaseRenderCaches` to drop builder-owned memos, and `releaseRenderedStringCache()` clears a `RenderedStringCache` used for formatted strings.
-
-`Focusable` is separate:
-
-```ts
-export interface Focusable {
-	focused: boolean;
-	setUseTerminalCursor?(useTerminalCursor: boolean): void;
-}
-```
-
-Cursor behavior uses `CURSOR_MARKER` (not `getCursorPosition`). Focused components emit the marker in rendered text; `TUI` extracts it and positions the hardware cursor.
-
-Fullscreen overlays opt into the shared hardware cursor only when the user's hardware-cursor preference is enabled and the focused component implements `setUseTerminalCursor`. The focus target must be the top overlay itself or a child it owns via `OverlayFocusOwner.ownsOverlayFocusTarget`; wrappers must forward focus and cursor mode to their input. Emit `CURSOR_MARKER` at the caret without replacing the underlying glyph. With the preference disabled, keep the software cursor; losing focus or removing the marker hides the hardware cursor.
->>>>>>> theirs — heading `Core component contract (`@oh-my-pi/pi-tui`)` (S+F, confidence: low) · weave: run 'weave explain docs/upstream/tui.md' for per-hunk detail, 'weave check' to verify your resolution
 
 ## Rendering constraints (terminal safety)
 
@@ -263,7 +228,6 @@ The `/pause` screen shows the same local turn-and-job state in ANSI and TSP: dra
 
 ```ts
 import type { Component } from "@tau/tau-tui";
-<<<<<<< ours — scope `import {` in heading `Realistic custom component example (extension command)` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `} from "@oh-my-pi/pi-tui";`
 import {
   SelectList,
@@ -275,10 +239,6 @@ import {
   getSelectListTheme,
   type ExtensionAPI,
 } from "@tau/tau-coding-agent";
-=======
-import { SelectList, matchesKey, replaceTabs, truncateToWidth } from "@oh-my-pi/pi-tui";
-import { getSelectListTheme, type ExtensionAPI } from "@oh-my-pi/pi-coding-agent";
->>>>>>> theirs — scope `import {`
 
 class Picker implements Component {
 	list: SelectList;

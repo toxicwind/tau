@@ -25,18 +25,10 @@
 
 use std::{
 	borrow::Cow,
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 	collections::HashMap,
 	hash::{BuildHasherDefault, Hasher},
 	sync::OnceLock,
-=======
-	cell::RefCell,
-	cmp::Reverse,
-	collections::{BinaryHeap, HashMap},
-	hash::{BuildHasherDefault, Hash, Hasher},
-	sync::atomic::{AtomicU32, Ordering},
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain crates/tau-natives/src/utok/bpe.rs' for per-hunk detail, 'weave check' to verify your resolution
 };
 
 use crate::utok::{
@@ -327,7 +319,6 @@ impl<T, E: std::fmt::Debug> std::fmt::Debug for OnceFallible<T, E> {
 	}
 }
 
-<<<<<<< ours — impl `RankTable (both sides extracted its body — ours into read_varint, theirs into read_token)` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `p = &p[6..];` +16 more
 /// Read one LEB128-style length varint from the front of `p`.
 ///
@@ -404,60 +395,6 @@ impl RankTable {
 				}
 				let (key, rest) = p.split_at(len);
 				p = rest;
-=======
-fn read_token<'a>(p: &mut &'a [u8]) -> &'a [u8] {
-	let mut len = 0usize;
-	let mut shift = 0;
-	loop {
-		let &b = p.split_off_first().unwrap();
-		len |= ((b & 0x7f) as usize) << shift;
-		if b < 0x80 {
-			break;
-		}
-		shift += 7;
-	}
-	p.split_off(..len).unwrap()
-}
-impl RankTable {
-	/// Pieces longer than this merge through
-	/// [`merge_long`](Self::merge_long): [`merge`](Self::merge) rescans every
-	/// pair after each merge, quadratic in the piece length.
-	const LONG_PIECE: usize = 128;
-
-	/// Parse a zstd-compressed UTOK1 blob. Panics on malformed data — the
-	/// blobs are compile-time embedded, so corruption is a build error.
-	///
-	/// Zero-length entries are *skipped*: packers emit merge-unreachable
-	/// ("dead") vocab slots as empty strings to keep rank contiguity, and
-	/// those ranks must never be produced.
-	pub fn parse(zst: &[u8]) -> Self {
-		let raw = zstd::decode_all(zst).expect("utoken: zstd decode failed");
-		let mut p = &raw[..];
-		assert_eq!(&p[..6], b"UTOK1\n", "utoken: bad magic");
-		let (&n, rest) = p[6..].split_first_chunk::<4>().unwrap();
-		let n = u32::from_le_bytes(n) as usize;
-		p = rest;
-		// Size `short` to its real population: dead slots and pair/long
-		// tokens would otherwise round a sparse table up a power of two. A
-		// sparse subset table (Jev's base set: 49k short tokens over 200k
-		// ranks) still keeps half the container's slots: it answers mostly
-		// misses, which at a ~0.75 load cost Jev ~12% of its count time.
-		let short_count = {
-			let mut entries = p;
-			(0..n)
-				.map(|_| read_token(&mut entries))
-				.filter(|key| matches!(key.len(), 1 | 3..=SHORT_MAX))
-				.count()
-		};
-		let mut pairs: Box<[u32; 65536]> =
-			vec![u32::MAX; 65536].into_boxed_slice().try_into().unwrap();
-		let mut short = HashMap::with_capacity_and_hasher(short_count.max(n / 2), Fx::default());
-		let mut long = FxMap::default();
-		let mut max_token_len = 0usize;
-		for rank in 0..n as u32 {
-			let key = read_token(&mut p);
-			if !key.is_empty() {
->>>>>>> theirs — impl `RankTable (both sides extracted its body — ours into read_varint, theirs into read_token)` (S+F, confidence: low)
 				if let [a, b] = key {
 					pairs[usize::from(*a) << 8 | usize::from(*b)] = rank;
 				} else if let Some(k) = pack(key) {
@@ -465,7 +402,6 @@ impl RankTable {
 				} else {
 					long.insert(key.into(), rank);
 				}
-<<<<<<< ours — impl `RankTable (both sides extracted its body — ours into read_varint, theirs into read_token)` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `p = &p[6..];` +16 more
 				max_token_len = max_token_len.max(len);
 			}
@@ -474,14 +410,6 @@ impl RankTable {
 			return Err(BpeLoadError::TrailingBytes { family, count: p.len() });
 		}
 		Ok(Self { pairs, short, long, max_token_len })
-=======
-				max_token_len = max_token_len.max(key.len());
-			}
-		}
-		assert!(p.is_empty(), "utoken: trailing bytes in UTOK1 blob");
-		let id = NEXT_TABLE_ID.fetch_add(1, Ordering::Relaxed);
-		Self { pairs, short, long, max_token_len, id }
->>>>>>> theirs — impl `RankTable (both sides extracted its body — ours into read_varint, theirs into read_token)` (S+F, confidence: low)
 	}
 
 	/// Rank of an exact token byte sequence, if present.

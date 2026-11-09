@@ -1,6 +1,5 @@
 import { afterEach, describe, expect, it } from "bun:test";
 import * as http2 from "node:http2";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 import { streamCursor } from "@tau/tau-ai/providers/cursor";
 import type { AssistantMessage, Context, Model } from "@tau/tau-ai/types";
@@ -18,27 +17,6 @@ import {
 } from "@tau/tau-catalog/discovery/cursor-proto";
 import { create, fromBinary, toBinary } from "@tau/tau-catalog/discovery/protobuf";
 import type { ModelSpec } from "@tau/tau-catalog/types";
-=======
-import { streamCursor } from "@oh-my-pi/pi-ai/providers/cursor";
-import type { AssistantMessage, Context, Model } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import {
-	AgentClientMessageSchema,
-	type AgentRunRequest,
-	AgentServerMessageSchema,
-	CustomErrorDetailsSchema,
-	CursorError,
-	ErrorDetailsSchema,
-	ExecServerMessageSchema,
-	HeartbeatUpdateSchema,
-	InteractionUpdateSchema,
-	ReadArgsSchema,
-	TextDeltaUpdateSchema,
-	TurnEndedUpdateSchema,
-} from "@oh-my-pi/pi-catalog/discovery/cursor-proto";
-import { create, fromBinary, toBinary } from "@oh-my-pi/pi-catalog/discovery/protobuf";
-import type { ModelSpec } from "@oh-my-pi/pi-catalog/types";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/ai/test/cursor-wire-model-fallback.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const CONNECT_END_STREAM_FLAG = 0b00000010;
 

@@ -8,16 +8,10 @@ import { CLOSE_ACTION, picker, pickerAction, pickerEvent, pickerHits, pickerQuer
 import { matchesKey } from "../../keys";
 import { Input } from "../../components/input";
 import { routeSgrMouseInput, type SgrMouseEvent } from "../../mouse";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { sanitizeText } from "@oh-my-pi/pi-utils";`
 import { padding, replaceTabs, truncateToWidth, visibleWidth } from "../../utils";
 import { sanitizeText } from "@tau/tau-utils";
 import { theme } from "../../theme/theme";
-=======
-import { padding, truncateToWidth, visibleWidth } from "../../utils";
-import { isRecord, sanitizeText } from "@oh-my-pi/pi-utils";
-import { getThemeEpoch, theme } from "../../theme/theme";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/src/apps/debug/log-viewer.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { sanitizeDisplayText } from "../../overlays/extensions/display-text";
 import { DebugViewerFrame, type DebugViewerFrameContent, type DebugViewerFrameContext } from "./viewer-frame";
 import { formatDebugLogExpandedLines, parseDebugLogPid, parseDebugLogTimestampMs } from "./log-formatting";

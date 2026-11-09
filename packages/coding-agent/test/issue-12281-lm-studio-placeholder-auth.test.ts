@@ -28,16 +28,10 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test } fr
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (T+F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config…`
 import type { FetchImpl } from "@tau/tau-ai/types";
 import { ModelRegistry } from "tau/config/model-registry";
 import { AuthStorage } from "tau/session/auth-storage";
-=======
-import type { FetchImpl } from "@oh-my-pi/pi-ai/types";
-import { kNoAuth, ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
->>>>>>> theirs — interstitial `file_header` (T+F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/issue-12281-lm-studio-placeholder-auth.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const LM_KEY = "sk-lm-12281-test-key";
 const LM_MODEL = { id: "qwen3-8b", object: "model", owned_by: "local" };

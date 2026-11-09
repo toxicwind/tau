@@ -1,23 +1,10 @@
 import { createModelBrowserSource } from "../src/modes/model-browser-source";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";`
 import { beforeAll, describe, expect, test } from "bun:test";
 import { ThinkingLevel } from "@tau/tau-agent-core";
 import type { Model } from "@tau/tau-ai";
 import { buildModel } from "@tau/tau-catalog/build";
 import { Settings } from "tau/config/settings";
-=======
-import { beforeAll, describe, expect, setSystemTime, test } from "bun:test";
-import { Agent, ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { Model } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/model-browser.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	buildBrowserItems,
 	buildSearchAffinity,
@@ -26,18 +13,9 @@ import {
 	type RoleAssignments,
 	resolveRoleAssignments,
 	sortModelItems,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";`
 } from "@tau/tau-tui/overlays/model-browser";
 import { initTheme, theme } from "@tau/tau-tui/theme";
-=======
-} from "@oh-my-pi/pi-tui/overlays/model-browser";
-import { initTheme, theme } from "@oh-my-pi/pi-tui/theme";
-import {
-	createModelMentionSource,
-	getModelMentionSuggestions,
-} from "@oh-my-pi/pi-tui/prompt/model-mention-autocomplete";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 
 /** Optional presentation metadata a catalog or discovery source may attach. */
 type NativeMetadata = Pick<Model, "description" | "isNew" | "isBeta" | "isRecommended" | "int" | "tps"> &

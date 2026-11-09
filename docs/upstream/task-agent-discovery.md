@@ -41,11 +41,8 @@ Parsing comes from frontmatter via `parseAgentFields()` (`src/discovery/helpers.
 - `output` is passed through as opaque schema data
 - `read-summarize: false` (normalized to `readSummarize`) disables structural summaries for the subagent's `read` tool — `runSubprocess` applies a `read.summarize.enabled: false` override on the child's isolated settings (`src/task/executor.ts`). `scout` ships with it disabled. When absent, the child inherits the parent's read-summary setting.
 - `model` accepts one selector, CSV, or an array. Entries are tried in order after role aliases are expanded.
-<<<<<<< ours — scope `- `thinking-level` / `thinking` selects the a...` in heading `Agent definition shape`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 - `thinking-level` / `thinking` selects the agent's configured effort. When `task.enableEffort` (default `false`) exposes it, a task item's coarse `effort` (`lo`, `med`, `hi`) takes precedence at launch. TAU maps that hint to the selected model's lowest, middle, or highest supported effort, then clamps it to `task.maxEffort` (default `max`). The ceiling is carried across retry-fallback model switches. If the selected model has no supported effort at or below the ceiling, the spawn fails; models without a controllable effort surface instead fall back to their normal selector.
-=======
->>>>>>> theirs — scope `- `thinking-level` / `thinking` selects the a...` deleted in theirs · weave: run 'weave explain docs/upstream/task-agent-discovery.md' for per-hunk detail, 'weave check' to verify your resolution
 - `thinking-level` / `thinking` selects the agent's configured effort. When `task.enableEffort` (default `false`) exposes it, a task item's coarse `effort` (`lo`, `med`, `hi`) takes precedence at launch, except for a [user-tagged model agent](#effort-level-suffix) whose tag names a level. OMP maps that hint to the selected model's lowest, middle, or highest supported effort, then clamps it to `task.maxEffort` (default `max`). The ceiling is carried across retry-fallback model switches. If the selected model has no supported effort at or below the ceiling, the spawn fails; models without a controllable effort surface instead fall back to their normal selector.
 - `blocking: true` makes the parent wait for that agent even when async task execution is enabled
 - `structured: true` keeps structured results for that agent while `task.structured` (default `false`) is off: its task spawns get the `yield` tool and resolve their output schema exactly as with `task.structured: true` (see [structured-output precedence](#model-and-structured-output-precedence)). With `task.structured` on, the field changes nothing; `false` or absent follows the setting. The caller-side `outputSchema`/`schemaMode` task parameters stay hidden while the setting is off. The decision is made from the resolved agent in `resolveEffectiveSubagentPolicy()`, so plan-mode spawns keep it, and cold revival restores `yield` from the child's persisted tool list.
@@ -163,12 +160,8 @@ Because bundled parsing uses `level: "fatal"`, unrecoverable YAML errors or inva
 
 ## Filesystem and plugin discovery
 
-<<<<<<< ours — scope ``discoverAgents(cwd, home)` (`src/task/discov...` in heading `Filesystem and plugin discovery` (S, confidence: medium)
 // refused_by: statement_fold · collision: ``discoverAgents(cwd, home)` (`src/task/discovery.ts`) merges ag…`
 `discoverAgents(cwd, home)` (`src/task/discovery.ts`) merges agents from TAU-native roots, TAU extension packages, and Claude marketplace plugin roots before appending bundled definitions. Direct cross-harness roots such as `.claude/agents`, `.codex/agents`, and `.gemini/agents` are intentionally skipped — their frontmatter schema is not the TAU task-agent contract (`TASK_AGENT_CONFIG_SOURCE = ".tau"` filters the native config-dir lists).
-=======
-`discoverAgents(cwd, home, extensionRoots?)` (`src/task/discovery.ts`) merges agents from OMP-native roots, OMP extension packages, and Claude marketplace plugin roots before appending bundled definitions. Direct cross-harness roots such as `.claude/agents`, `.codex/agents`, and `.gemini/agents` are intentionally skipped — their frontmatter schema is not the OMP task-agent contract (`TASK_AGENT_CONFIG_SOURCE = ".omp"` filters the native config-dir lists).
->>>>>>> theirs — scope ``discoverAgents(cwd, home)` (`src/task/discov...`
 
 ### Discovery inputs and precedence
 
@@ -186,11 +179,8 @@ The OMP extension-package surface is disabled when the `omp-plugins` capability 
 
 Claude-dialect plugin agents discard their frontmatter `model` so Claude aliases are not misread as OMP selectors. This applies to foreign Claude roots and packages whose manifest declares the Claude format, including OMP installs or `--plugin-dir` roots. OMP-native and Agent-Plugins-standard packages retain their model selectors.
 
-<<<<<<< ours — scope `The OMP extension-package surface is disabled...` in heading `Discovery inputs and precedence`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 The TAU extension-package surface is disabled when the `tau-plugins` capability provider is disabled. Marketplace roots are excluded from `listOmpExtensionRoots` and enter only through the separately gated Claude-plugin path.
-=======
->>>>>>> theirs — scope `The OMP extension-package surface is disabled...` deleted in theirs
 
 ## Merge and collision rules
 

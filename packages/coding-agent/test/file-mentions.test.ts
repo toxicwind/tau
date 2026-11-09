@@ -2,17 +2,9 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { removeWithRetries } from "@oh-my-pi/pi-utils";`
 import { extractFileMentions, generateFileMentionMessages } from "tau/utils/file-mentions";
 import { removeWithRetries } from "@tau/tau-utils";
-=======
-import { EditStore } from "@oh-my-pi/pi-natives";
-import { encodeArchive } from "@oh-my-pi/pi-utils/ar";
-import { extractFileMentions, generateFileMentionMessages } from "@oh-my-pi/pi-coding-agent/utils/file-mentions";
-import { __resetDirsFromEnvForTests, removeWithRetries, setAgentDir } from "@oh-my-pi/pi-utils";
-import { restoreEnvValue } from "./helpers/settings-test-state";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/file-mentions.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const tempDirs: string[] = [];
 let originalAgentDir: string | undefined;

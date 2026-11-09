@@ -4,12 +4,8 @@
  * Extends the base AgentMessage type with coding-agent specific message types,
  * and provides a transformer to convert them to LLM-compatible messages.
  */
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { AgentMessage } from "@oh-my-pi/pi-agent-core";`
 import type { AgentMessage } from "@tau/tau-agent-core";
-=======
-import { type AgentMessage, isProviderRefusalMessage } from "@oh-my-pi/pi-agent-core";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/session/messages.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	isUserInterruptAbort,
 	isCustomMessageContent,
@@ -19,13 +15,8 @@ import {
 	type HookMessage,
 	type FileMentionMessage,
 	isUserInvokedSkillPrompt,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { AgentMessage } from "@oh-my-pi/pi-agent-core";`
 } from "@tau/tau-tui/chat/messages";
-=======
-	isUserTurnInitiator,
-} from "@oh-my-pi/pi-tui/chat/messages";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 export {
 	SKILL_PROMPT_MESSAGE_TYPE,
 	LSP_LATE_DIAGNOSTIC_MESSAGE_TYPE,

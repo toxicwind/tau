@@ -32,7 +32,6 @@ export class TinyWorkerServer {
 	}
 
 	/** Bind `endpoint` and serve until idle exit or `shutdown`; resolves once the socket is released. */
-<<<<<<< ours — scope `serve` in class `TinyWorkerServer` (S+F, confidence: low)
 // refused_by: container_member · collision: `process.stdout.write(`omp tiny worker listening on ${endpoint}\…`
 	async serve(endpoint: string): Promise<void> {
 		this.#endpoint = endpoint;
@@ -52,10 +51,6 @@ export class TinyWorkerServer {
 		} finally {
 			cancelCleanup();
 		}
-=======
-	serve(endpoint: string): Promise<void> {
-		return this.#server.serve(endpoint);
->>>>>>> theirs — scope `serve` · weave: run 'weave explain packages/coding-agent/src/tiny/worker-server.ts' for per-hunk detail, 'weave check' to verify your resolution
 	}
 
 	#dispatch(request: TinyWorkerRequest, reply: JsonLineReply<TinyWorkerResponse>): void {

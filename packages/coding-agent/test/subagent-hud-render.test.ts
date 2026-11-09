@@ -7,7 +7,6 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, setSystemTime, vi } from "bun:test";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { PINNED_HUD_TOGGLE_ID } from "@oh-my-pi/pi-tui/prompt/c…`
 import { Agent, ThinkingLevel } from "@tau/tau-agent-core";
 import { ModelRegistry } from "tau/config/model-registry";
@@ -26,28 +25,6 @@ import { AgentSession } from "tau/session/agent-session";
 import { AuthStorage } from "tau/session/auth-storage";
 import { SessionManager } from "tau/session/session-manager";
 import { type AgentProgress } from "@tau/tau-tui/tools/task";
-=======
-import { Agent, ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { resetHangulCompatibilityJamoWidthForTests, setHangulCompatibilityJamoWidth } from "@oh-my-pi/pi-tui";
-import type { DescribeContext } from "@oh-my-pi/pi-tui/native/node";
-import { PINNED_HUD_TOGGLE_ID } from "@oh-my-pi/pi-coding-agent/task/output-manager";
-import {
-	InteractiveMode,
-	layoutPinnedHud,
-	nextSubagentPreviewTickMs,
-	renderSubagentHudLines,
-	SubagentHudComponent,
-} from "@oh-my-pi/pi-coding-agent/modes/interactive-mode";
-import { type ObservableSession, SessionObserverRegistry } from "@oh-my-pi/pi-tui/overlays/session-observer-registry";
-import { initTheme, theme } from "@oh-my-pi/pi-tui/theme";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { type AgentProgress } from "@oh-my-pi/pi-tui/tools/task";
-import { type TodoPhase, todoToolRenderer } from "@oh-my-pi/pi-tui/tools/todo";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/subagent-hud-render.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	type SubagentLifecyclePayload,
 	type SubagentProgressPayload,

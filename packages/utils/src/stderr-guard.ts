@@ -7,7 +7,6 @@
  * decompression diagnostics on Linux. Those bytes bypass the renderer and
  * paint straight into the viewport.
  *
-<<<<<<< ours — interstitial `file_header` (T, confidence: high)
 // refused_by: merge_ladder_exhausted · collision: `* crash restore). Unlike codex we redirect to the omp log file …`
  * Fix (mirrors openai/codex#24459): while the TUI owns the terminal, dup fd 2
  * aside and dup2 a redirect target over it; restore the saved fd whenever
@@ -15,14 +14,6 @@
  * crash restore). Unlike codex we redirect to the tau log file — not
  * /dev/null — so the diagnostics stay greppable and Bun native-crash reports
  * (which abort before any JS cleanup can restore fd 2) are preserved.
-=======
- * While the TUI owns the terminal, dup fd 2 aside and dup2 a redirect target
- * over it; restore the saved fd whenever terminal ownership is released
- * (external editor, Ctrl+Z suspend, shutdown, crash restore). This mirrors
- * openai/codex#24459, but redirects to the omp log file instead of /dev/null
- * so diagnostics stay greppable and Bun native-crash reports (which abort
- * before any JS cleanup can restore fd 2) are preserved.
->>>>>>> theirs — interstitial `file_header` (T, confidence: high) · weave: run 'weave explain packages/utils/src/stderr-guard.ts' for per-hunk detail, 'weave check' to verify your resolution
  *
  * Only dup2 goes through bun:ffi. The saved copy of fd 2 comes from opening
  * `/dev/fd/2` instead of `dup(2)`, because Bun opens files close-on-exec: a
@@ -93,16 +84,8 @@ let savedStderrFd: number | null = null;
 let redirectTarget: string | null = null;
 
 export interface SuppressTerminalStderrOptions {
-<<<<<<< ours — scope `redirectPath` in interface `SuppressTerminalStderrOptions` (S, confidence: medium)
 // refused_by: container_member · collision: `/** Redirect target path; defaults to today's omp log file, the…`
 	/** Redirect target path; defaults to today's tau log file, then /dev/null. */
-=======
-	/**
-	 * Redirect target path; defaults to the log file the rotating sink last
-	 * reported (see {@link setStderrRedirectTarget}), then today's omp log
-	 * file, then /dev/null.
-	 */
->>>>>>> theirs — scope `redirectPath`
 	redirectPath?: string;
 	/** Bypass the same-terminal gate. Tests only. */
 	force?: boolean;

@@ -30,7 +30,6 @@ import { join } from "node:path";
  * queued/planning until `tool_execution_start`, and only then delegate to the
  * wrapped tool's own renderer with the decoded inner args.
  */
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { AgentToolContext, AgentToolResult, AgentToolUpdat…` +1 more
 import type {
   AgentToolContext,
@@ -44,16 +43,6 @@ import {
   toolWireSchema,
   validateToolArguments,
 } from "@tau/tau-ai";
-=======
-import {
-	type AgentToolContext,
-	type AgentToolResult,
-	type AgentToolUpdateCallback,
-	type ToolLoadMode,
-	validateAgentToolArguments,
-} from "@oh-my-pi/pi-agent-core";
-import { type Tool as AiTool, jsonSchemaToTypeScript, toolWireSchema } from "@oh-my-pi/pi-ai";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/xdev.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { schemaDeclaresIntentField } from "../utils/tool-schema";
 import { stripXdUrlPrefix, XD_URL_PREFIX } from "@tau/tau-tui/tools/xd-url";
 import { truncateHeadBytes } from "@tau/tau-tui/tools/streaming-output";
@@ -171,18 +160,11 @@ function renderDocs(
  * `__parseError`/`__rawJson` sentinels (see `validateAgentToolArguments`).
  */
 function parseDeviceArgs(
-<<<<<<< ours — scope `declaration` in function `parseDeviceArgs` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `device: AiTool,`
   device: AiTool,
   content: string,
   toolCallId: string,
   docs: () => string,
-=======
-	device: Tool,
-	content: string,
-	toolCallId: string,
-	docs: () => string,
->>>>>>> theirs — scope `declaration`
 ): Record<string, unknown> {
   let parsed: unknown;
   try {
@@ -204,7 +186,6 @@ function parseDeviceArgs(
   };
   if ("i" in args && !schemaDeclaresIntentField(toolWireSchema(device)))
     delete args.i;
-<<<<<<< ours — scope `try {` in function `parseDeviceArgs` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `return validateToolArguments(device, {` +5 more
   try {
     return validateToolArguments(device, {
@@ -219,18 +200,6 @@ function parseDeviceArgs(
       `Invalid args for ${XD_URL_PREFIX}${device.name}: ${message}\n\n${docs()}`,
     );
   }
-=======
-	try {
-		return validateAgentToolArguments(
-			device,
-			{ type: "toolCall", id: toolCallId, name: device.name, arguments: args },
-			"payload",
-		);
-	} catch (error) {
-		const message = error instanceof Error ? error.message : String(error);
-		throw new ToolError(`Invalid args for ${XD_URL_PREFIX}${device.name}: ${message}\n\n${docs()}`);
-	}
->>>>>>> theirs — scope `try {`
 }
 
 /** One-line catalog summary for a mounted tool: `summary`, else first description line. */
@@ -466,7 +435,6 @@ export function xdevDocsAll(
   mode: XdevDocsMode = "inline",
   inlinePatterns: readonly string[] = [],
 ): string {
-<<<<<<< ours — function `xdevDocsAll (body partly extracted into planXdevPromptDocs, renderXdevPromptDocs)` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `const sections: string[] = [];` +31 more
   const sections: string[] = [];
   const overflow: Tool[] = [];
@@ -507,9 +475,6 @@ export function xdevDocsAll(
     );
   }
   return sections.join("\n\n");
-=======
-	return renderXdevPromptDocs(planXdevPromptDocs(state, mode, inlinePatterns));
->>>>>>> theirs — function `xdevDocsAll (body partly extracted into planXdevPromptDocs, renderXdevPromptDocs)` (S+F, confidence: low)
 }
 
 /** Docs for selected mounted devices under the configured prompt-doc policy. */
@@ -586,7 +551,6 @@ export async function dispatchXdevTool(
       };
     }
 
-<<<<<<< ours — scope `try {` in function `dispatchXdevTool` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `const validated = parseDeviceArgs(canonical as AiTool, content,…` +1 more
     const validated = parseDeviceArgs(
       canonical as AiTool,
@@ -647,59 +611,4 @@ export async function dispatchXdevTool(
       xdev,
     };
   }
-=======
-		const validated = parseDeviceArgs(canonical, content, toolCallId, () => renderDocs(canonical));
-		// Record the wrapped tool's approval tier so the prewalk coordinator can
-		// tell a read-only device call (e.g. `lsp` navigation) from a real
-		// workspace mutation without re-decoding the payload. Best-effort: a
-		// throwing approval leaves the tier absent (prewalk then declines to
-		// switch), unlike the write gate which fails closed to `exec`.
-		let tier: ToolTier | undefined;
-		try {
-			tier = resolveToolTier(canonical, validated);
-		} catch {
-			tier = undefined;
-		}
-		// PR creation renders only its operation and repository. Keep the body
-		// in the validated execution input, not a second copy in result details.
-		const renderArgs =
-			name === "github" && validated.op === "pr_create" ? { op: validated.op, repo: validated.repo } : validated;
-		xdev = { ...xdev, args: renderArgs, tier };
-		if ("mcpReadOnlyHint" in canonical && canonical.mcpReadOnlyHint === true) xdev.readOnlyHint = true;
-		const innerOnUpdate: AgentToolUpdateCallback | undefined = onUpdate
-			? partial =>
-					onUpdate({
-						content: partial.content,
-						details: { xdev: { ...xdev, inner: partial.details } },
-						isError: partial.isError,
-					})
-			: undefined;
-		const executable = state.decorateExecution?.(canonical) ?? canonical;
-		const executionContext = context
-			? {
-					...context,
-					xdevTierResolved: (effectiveTier: ToolTier) => {
-						xdev = { ...xdev, tier: effectiveTier };
-					},
-				}
-			: undefined;
-		const result = await executable.execute(toolCallId, validated as never, signal, innerOnUpdate, executionContext);
-		return { result, xdev: { ...xdev, inner: result.details } };
-	} catch (error) {
-		if (
-			error instanceof ToolAbortError ||
-			signal?.aborted ||
-			(error instanceof Error && error.name === "AbortError")
-		) {
-			throw error;
-		}
-		return {
-			result: {
-				content: [{ type: "text", text: renderError(error) }],
-				isError: true,
-			},
-			xdev,
-		};
-	}
->>>>>>> theirs — scope `try {`
 }

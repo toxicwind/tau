@@ -12,18 +12,11 @@ import {
 	type BeforeToolCallContext,
 	type BeforeToolCallResult,
 	createToolScopedAbortReason,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-agent-core";
 import type { AssistantMessage, Judge, ToolCall } from "@tau/tau-ai";
 import { logger, prompt, relativePathWithinRoot, withTimeout } from "@tau/tau-utils";
 import type { Rule } from "../capability/rule";
-=======
-} from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, Judge, ToolCall } from "@oh-my-pi/pi-ai";
-import { logger, prompt, relativePathWithinRoot, withTimeout } from "@oh-my-pi/pi-utils";
-import { BUILTIN_DEFAULTS_PROVIDER_ID, type Rule } from "../capability/rule";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/session/ttsr-coordinator.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { Settings } from "../config/settings";
 import {
 	judgeRules,

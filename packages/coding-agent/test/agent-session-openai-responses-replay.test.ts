@@ -9,7 +9,6 @@ import type {
 	ProviderSessionState,
 	ToolResultMessage,
 	Usage,
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { getBundledModel } from "@oh-my-pi/pi-catalog/models";`
 } from "@tau/tau-ai/types";
 import { createOpenAIResponsesHistoryPayload } from "@tau/tau-ai/utils";
@@ -22,20 +21,6 @@ import { AuthStorage } from "tau/session/auth-storage";
 import type { SessionEntry, SessionMessageEntry } from "tau/session/session-entries";
 import { SessionManager } from "tau/session/session-manager";
 import { removeSyncWithRetries, Snowflake } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-ai/types";
-import { createOpenAIResponsesHistoryPayload } from "@oh-my-pi/pi-ai/utils";
-import type { Model } from "@oh-my-pi/pi-catalog/types";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { createAgentSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import type { SessionEntry, SessionMessageEntry } from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { removeSyncWithRetries, Snowflake } from "@oh-my-pi/pi-utils";
-import { getTestModel } from "./helpers/model-fixtures";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/agent-session-openai-responses-replay.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const openaiModel = getTestModel("openai", model => model.api === "openai-responses" && model.reasoning);
 const alternateOpenaiModel = getTestModel(

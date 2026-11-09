@@ -7,12 +7,8 @@
  * byte cap only fires on alternate callers that bypass StdinBuffer.
  */
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { BracketedPasteHandler } from "@oh-my-pi/pi-tui/bracket…`
 import { BracketedPasteHandler } from "@tau/tau-tui/bracketed-paste";
-=======
-import { BracketedPasteHandler, decodeReencodedPasteControls } from "@oh-my-pi/pi-tui/bracketed-paste";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/tui/test/bracketed-paste.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const PASTE_START = "\x1b[200~";
 const PASTE_END = "\x1b[201~";

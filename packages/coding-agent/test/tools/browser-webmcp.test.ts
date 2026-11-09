@@ -1,4 +1,3 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type {` +3 more
 import { afterAll, describe, expect, it } from "bun:test";
 import { Settings } from "tau/config/settings";
@@ -7,27 +6,6 @@ import { createBrowserPrelude } from "tau/tools/browser";
 import { releaseAllTabs } from "tau/tools/browser/tab-supervisor";
 import type { WebMcpEventsResult, WebMcpInvokeResult, WebMcpListResult } from "tau/tools/browser/webmcp";
 import type { ToolSession } from "tau/tools/index";
-=======
-import { afterAll, beforeAll, describe, expect, it } from "bun:test";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { disposeAllVmContexts } from "@oh-my-pi/pi-coding-agent/eval/js/context-manager";
-import { createBrowserPrelude } from "@oh-my-pi/pi-coding-agent/tools/browser";
-import {
-	acquireBrowser,
-	holdBrowser,
-	type PuppeteerBrowserHandle,
-	releaseBrowser,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/registry";
-import { releaseAllTabs } from "@oh-my-pi/pi-coding-agent/tools/browser/tab-supervisor";
-import {
-	WebMcpController,
-	type WebMcpEventsResult,
-	type WebMcpInvokeResult,
-	type WebMcpListResult,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/webmcp";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools/index";
-import { rejectionOf } from "../helpers/rejection";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/tools/browser-webmcp.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { chromiumAvailable } from "./chromium-probe";
 
 const CHROMIUM_AVAILABLE = await chromiumAvailable();

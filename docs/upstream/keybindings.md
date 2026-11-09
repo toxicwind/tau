@@ -1,11 +1,7 @@
 # Keybindings
 
-<<<<<<< ours — scope `Run `/hotkeys` inside an `omp` session to see...` in heading `Keybindings` (S, confidence: medium)
 // refused_by: statement_fold · collision: `Run `/hotkeys` inside an `omp` session to see the active chords…`
 Run `/hotkeys` inside an `tau` session to see the active chords for your current build. The list reflects any remaps loaded from disk and any bindings added by extensions.
-=======
-Run `/hotkeys` inside an `omp` session for the built-in shortcut reference. Application-action rows reflect remaps loaded from disk; navigation/editing examples use fixed chords. This is not an inventory of extension-registered shortcuts.
->>>>>>> theirs — scope `Run `/hotkeys` inside an `omp` session to see...` · weave: run 'weave explain docs/upstream/keybindings.md' for per-hunk detail, 'weave check' to verify your resolution
 
 Base editor, input, and selector actions use `tui.editor.*`, `tui.input.*`, and `tui.select.*`; application actions use `app.*`. Definitions live in `packages/tui/src/keybindings.ts` and `packages/tui/src/app-keybindings.ts`.
 
@@ -31,7 +27,6 @@ app.history.search: []
 
 ## Common action IDs
 
-<<<<<<< ours — heading `Common action IDs` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `| `app.model.cycleForward`     | `Ctrl+P`                      …` +7 more
 | Action ID                    | Default                                                               | Meaning                                                                                                                                                                              |
 | ---------------------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -58,51 +53,6 @@ app.history.search: []
 | `app.stt.toggle`             | Unbound (hold `Space`)                                                | Toggle speech-to-text. By default there is no key chord — hold the space bar to record (push-to-talk) and release to transcribe; bind a chord here for a press-to-toggle alternative |
 | `app.live.toggle`            | `Ctrl+L`                                                              | Start or stop live voice mode (same as `/live`)                                                                                                                                      |
 | `app.agents.hub`             | `Alt+A`                                                               | [Open the Agent Hub](./agent-hub.md)                                                                                                                                                 |
-=======
-| Action ID                    | Default                                                               | Meaning                                                                                                                                                |
-| ---------------------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `app.model.cycleForward`     | `Ctrl+P`                                                              | Cycle role models forward                                                                                                                              |
-| `app.model.cycleBackward`    | `Shift+Ctrl+P`                                                        | Cycle role models backward                                                                                                                             |
-| `app.model.selectTemporary`  | `Alt+P`                                                               | Pick a model temporarily for this session                                                                                                              |
-| `app.model.select`           | `Alt+M`                                                               | Open the model selector and set roles                                                                                                                  |
-| `app.plan.toggle`            | `Alt+Shift+P`                                                         | Toggle plan mode                                                                                                                                       |
-| `app.history.search`         | `Ctrl+R`                                                              | Search prompt history                                                                                                                                  |
-| `app.tools.expand`           | `Ctrl+O`                                                              | Toggle tool-output expansion                                                                                                                           |
-| `app.tools.toggleVisibility` | `Ctrl+Shift+O`                                                        | Show or hide tool activity                                                                                                                             |
-| `app.links.hint`             | `Alt+O`                                                               | Tag each [extension link](./extensions.md#extension-link-schemes) on screen; type a tag to pick it, `Esc` cancels; again or `Page Up` browses all      |
-| `app.ask.hide`               | `Alt+H`                                                               | Hide a pending `ask` question to one line (the Hide button in Tern); the same key, `Enter`, or Show brings it back                                     |
-| `app.approval.approve`       | `Ctrl+Enter`, `Ctrl+Q`                                                | Approve a pending tool call outright (the Approve button in Tern); `Esc` denies, and `Enter` takes the Approve/Deny choice highlighted with the arrows |
-| `app.thinking.toggle`        | `Ctrl+T`                                                              | Toggle thinking-block visibility                                                                                                                       |
-| `app.thinking.cycle`         | `Shift+Tab`                                                           | Cycle thinking level                                                                                                                                   |
-| `app.editor.external`        | `Ctrl+G`                                                              | Edit the draft in `$VISUAL` / `$EDITOR`                                                                                                                |
-| `app.local.open`             | `Alt+G`                                                               | Pick a session `local://` file and edit it in `$VISUAL` / `$EDITOR` (same as `/local`)                                                                 |
-| `app.message.followUp`       | `Ctrl+Q`, `Ctrl+Enter`                                                | Queue a follow-up message                                                                                                                              |
-| `app.message.dequeue`        | `Alt+Up`, `Shift+Up`                                                  | Dequeue a queued message back into the editor                                                                                                          |
-| `app.btw.inject`             | `Alt+I`                                                               | Send a `/btw` answer's steering prompt to the main session (needs `btw.inject`)                                                                        |
-| `app.retry`                  | `F5`, `Alt+R`                                                         | Retry the last failed assistant turn                                                                                                                   |
-| `app.display.reset`          | `Alt+L`                                                               | Reset terminal display                                                                                                                                 |
-| `app.clipboard.copyLine`     | `Alt+Shift+L`                                                         | Copy the current line                                                                                                                                  |
-| `app.clipboard.copyPrompt`   | `Alt+Shift+C`                                                         | Copy the whole prompt                                                                                                                                  |
-| `app.clipboard.pasteTextRaw` | `Ctrl+Shift+V`, `Alt+Shift+V`                                         | Paste clipboard text without collapsing it                                                                                                             |
-| `app.clipboard.pasteImage`   | Linux: `Ctrl+V`; macOS: `Ctrl+V`, `Cmd+V`; Windows: `Ctrl+V`, `Alt+V` | Paste from the clipboard (image preferred, text fallback)                                                                                              |
-| `app.stt.pushToTalk`         | `Space`                                                               | Hold to record and release to transcribe. Remap this action or set it to `[]` to disable push-to-talk without disabling speech-to-text.                |
-| `app.stt.toggle`             | Unbound                                                               | Start or stop speech-to-text recording with each press; independent of push-to-talk.                                                                   |
-| `app.live.toggle`            | `Ctrl+L`                                                              | Start or stop live voice mode (same as `/live`)                                                                                                        |
-| `app.agents.hub`             | `Alt+A`                                                               | [Open the Agent Hub](./agent-hub.md)                                                                                                                   |
-| `app.session.pin`            | `Alt+K`                                                               | Pin the selected session in the resume picker; pinned sessions stay on top, including in search results                                                |
-| `app.session.unpin`          | `Alt+Shift+K`                                                         | Unpin the selected session in the resume picker                                                                                                        |
-| `app.tree.previousBranch`    | Unbound                                                               | Jump to the previous visible branch in `/tree` ([details](./tree.md))                                                                                  |
-| `app.tree.nextBranch`        | Unbound                                                               | Jump to the next visible branch in `/tree` ([details](./tree.md))                                                                                      |
-
-To disable push-to-talk while keeping speech-to-text available through a separate toggle binding:
-
-```yaml
-app.stt.pushToTalk: []
-app.stt.toggle: Ctrl+Shift+S
-```
-
-While speech-to-text is enabled, non-printable keys and chords assigned to `app.stt.pushToTalk` are reserved: a tap is swallowed instead of running its normal editing or application action. A plain printable key tap still types normally. Text-assistance transformations from initial taps are preserved; only unchanged literal repeat text is removed when a hold is recognized. Each configured alternative is independent; alternating between alternatives does not combine them into one hold. Hold detection requires a terminal that delivers key auto-repeat.
->>>>>>> theirs — heading `Common action IDs` (S+F, confidence: low)
 
 ### Click to dictate in Tern
 

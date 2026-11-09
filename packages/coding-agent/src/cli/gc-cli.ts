@@ -4,13 +4,8 @@ import * as path from "node:path";
 import { Readable } from "node:stream";
 import { pipeline } from "node:stream/promises";
 import { createGunzip, createGzip } from "node:zlib";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { withStatsSyncLock } from "@tau/tau-stats/aggregator";
-=======
-import { withStatsSyncLock } from "@oh-my-pi/omp-stats/aggregator";
-import { isCompressScratchPath } from "@oh-my-pi/omp-stats/parser";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/cli/gc-cli.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	formatBytes,
 	getAgentDir,
@@ -27,13 +22,8 @@ import {
 	isPidAlive,
 	normalizePathForComparison,
 	readLines,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-utils";
-=======
-	type FileLockHandle,
-} from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import { Settings } from "../config/settings";
 import type { Setting } from "../config/registry";
 
@@ -525,7 +515,6 @@ async function collectReferencedBlobHashes(
 }
 
 /**
-<<<<<<< ours — function `collectRegisteredSessionFiles` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
  * Exact session files recorded in the persistent registry
  * (`<agentDir>/custom-session-files/*`, one marker per transcript whose
@@ -548,25 +537,6 @@ async function collectRegisteredSessionFiles(registryDir: string): Promise<strin
 		const sessionFile = path.resolve(recorded);
 		const stat = await statIfPresent(sessionFile);
 		if (!stat?.isFile()) continue;
-=======
- * Paths recorded in the persistent registry (`<agentDir>/custom-session-files/*`).
- * A first save may leave only its staging temp, so the target need not exist
- * when reclaiming crash leftovers.
- */
-async function collectRegisteredSessionPaths(registryDir: string): Promise<string[]> {
-	let entries: string[];
-	try {
-		entries = await fs.readdir(registryDir);
-	} catch (error) {
-		if (codeOf(error) === "ENOENT") return [];
-		throw error;
-	}
-	const files = new Map<string, string>();
-	for (const entry of entries) {
-		const recorded = (await readTextIfPresent(path.join(registryDir, entry))).trim();
-		if (!recorded) continue;
-		const sessionFile = path.resolve(recorded);
->>>>>>> theirs — function `collectRegisteredSessionFiles` (S+F, confidence: low)
 		files.set(normalizePathForComparison(sessionFile), sessionFile);
 	}
 	return [...files.values()];

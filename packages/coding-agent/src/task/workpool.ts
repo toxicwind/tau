@@ -1,9 +1,5 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { logger, prompt } from "@oh-my-pi/pi-utils";`
 import { logger, prompt } from "@tau/tau-utils";
-=======
-import { isRecord, logger, prompt } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/task/workpool.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { CustomTool } from "../extensibility/custom-tools/types";
 import workpoolBatchTemplate from "../prompts/tools/workpool-batch.md" with { type: "text" };
 import workpoolTurnResultTemplate from "../prompts/tools/workpool-turn-result.md" with { type: "text" };
@@ -12,15 +8,9 @@ import { AgentLifecycleManager } from "../registry/agent-lifecycle";
 import type { CustomMessage } from "../session/messages";
 import type { ToolSession } from "../tools";
 import { isIrcEnabled } from "../irc/messaging";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { logger, prompt } from "@oh-my-pi/pi-utils";`
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 import { runSubagentFollowUpTurn } from "./executor";
-=======
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
-import { isCompletionProbeEnabled } from "./completion-probe";
-import { runSubagentFollowUpTurn, softRequestBudgetFor } from "./executor";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import {
 	type EffectiveSubagentPolicy,
 	reserveStructuredSubagentId,

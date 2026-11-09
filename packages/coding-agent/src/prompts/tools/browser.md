@@ -45,18 +45,10 @@ Application modes:
 - `headed` picks a visible or hidden managed browser per open. `allow_file_access` is a launch flag and cannot change an already-running shared Chromium; use a dedicated `app.path` with `app.args`. `ignore_https_errors` applies per tab through CDP.
 - `app.path`: launch the specified browser or Electron executable. Chromium-family browsers use an tau-owned profile unless `args` supplies `--user-data-dir`.
 - `app.cdp_url`: attach to an existing CDP endpoint.
-<<<<<<< ours — scope `- `app.relay: true`: drive the user's Chrome ...` in preamble `(preamble)` (S, confidence: medium)
 // refused_by: statement_fold · collision: `- `app.relay: true`: drive the user's Chrome through the omp re…`
 - `app.relay: true`: drive the architect's Chrome through the tau relay. `app.target` selects a tab by URL/title substring; without it, the visible tab is adopted. Opening with `url` navigates that adopted tab.
-=======
-- `app.relay: true`: drive the user's Chrome through the omp relay. Without `app.target`, a new name opens omp's own background tab, leaving the user's tab alone (an outdated relay extension selects it instead); `url` navigates that tab. `app.target` borrows an existing tab by URL/title substring. Reopening an open name keeps its tab. `app.relay: false` skips the relay however the setting or `PI_BROWSER_RELAY` enables it, falling through to the next default.
->>>>>>> theirs — scope `- `app.relay: true`: drive the user's Chrome ...` · weave: run 'weave explain packages/coding-agent/src/prompts/tools/browser.md' for per-hunk detail, 'weave check' to verify your resolution
-<<<<<<< ours — scope `- Relay sessions are the user's real logged-i...` in preamble `(preamble)` (S, confidence: medium)
 // refused_by: statement_fold · collision: `- Relay sessions are the user's real logged-in browser. Sites a…`
 - Relay sessions are the architect's real logged-in browser. Sites attribute actions to the architect. Name a target or create a dedicated tab; NEVER navigate the visible tab without authorization.
-=======
-- Relay sessions are the user's real logged-in browser. Sites attribute actions to the user. NEVER navigate a borrowed tab without authorization.
->>>>>>> theirs — scope `- Relay sessions are the user's real logged-i...`
 {{#if linux}}
 - On Linux under X11, Chrome 150 and later brings its window to the front when a mouse or touch press lands in the tab a window shows (the relay's `browser.targets()` marks it `shown`) while another window is in front, and what the user types next goes to that page. Presses: `click`, `dblclick`, `tap`, `drag`, `mouseDown`, `clickAt`, `check`/`uncheck` unless the element is already in the requested state (one that refuses the change still presses; unchecking a native radio does not press), and `uploadFile` on anything but an `<input type=file>`. Keys (`type`, `fill`, `press`), `focus`, `select`, `hover`, scrolling and screenshots are not presses, and a tab its window is not showing never comes forward. There, when the user must keep their app in front, use those on a shown tab instead: `focus()` then `press("Enter")` for a button, `press("Space")` for a checkbox, `uploadFile` on the file input itself. A control that opens a new tab or popup may still bring Chrome forward, however it is activated.
 {{/if}}

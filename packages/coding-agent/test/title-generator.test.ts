@@ -1,5 +1,4 @@
 import { afterEach, beforeEach, describe, expect, it, spyOn, vi } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 import type { Api, Model } from "@tau/tau-ai";
 import * as ai from "@tau/tau-ai";
@@ -8,16 +7,6 @@ import { type GeneratedProvider, getBundledModel } from "@tau/tau-catalog/models
 import { formatModelStringWithRouting, resolveModelOverride } from "tau/config/model-resolver";
 import { Settings } from "tau/config/settings";
 import { tinyTitleClient } from "tau/tiny/title-client";
-=======
-import type { Api, Model } from "@oh-my-pi/pi-ai";
-import * as ai from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { type GeneratedProvider, getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { formatModelStringWithRouting, resolveModelOverride } from "@oh-my-pi/pi-coding-agent/config/model-resolver";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { tinyTitleClient } from "@oh-my-pi/pi-coding-agent/tiny/title-client";
-import { DEFAULT_SPINNER_INTERVAL_MS } from "@oh-my-pi/pi-tui/spinner-clock";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/title-generator.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	disposeTerminalTitleState,
 	generateSessionTitle,
@@ -28,15 +17,9 @@ import {
 	setTerminalTitlePullRequest,
 	setTerminalTitleSpinnerStyle,
 	setTerminalTitleState,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 } from "tau/utils/title-generator";
 import { isWsl, logger, setTerminalHeadless } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-coding-agent/utils/title-generator";
-import { setNativeRendering } from "@oh-my-pi/pi-tui/native/state";
-import { isWsl, logger, setTerminalHeadless } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import { mockWindowsConsoleTitle, type WindowsConsoleTitleMock } from "./terminal-title-test-utils";
 
 function getModelOrThrow(id: string): Model<Api> {

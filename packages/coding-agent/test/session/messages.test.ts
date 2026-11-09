@@ -1,12 +1,7 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { AgentMessage } from "@oh-my-pi/pi-agent-core";`
 import type { AgentMessage } from "@tau/tau-agent-core";
 import type { AssistantMessage } from "@tau/tau-ai";
-=======
-import { type AgentMessage, filterProviderReplayMessages } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/session/messages.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	buildReplanTitleContext,
 	buildTitleDriftTurns,

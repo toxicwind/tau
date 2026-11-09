@@ -1,5 +1,4 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { Text } from "@oh-my-pi/pi-tui";`
 import type { SessionSelectorComponent } from "@tau/tau-tui/overlays/session-selector";
 import { SelectorController } from "tau/modes/controllers/selector-controller";
@@ -8,19 +7,6 @@ import type { InteractiveModeContext } from "tau/modes/types";
 import type { SessionInfo } from "tau/session/session-listing";
 import { SessionManager } from "tau/session/session-manager";
 import { Text } from "@tau/tau-tui";
-=======
-import type { SessionSelectorComponent } from "@oh-my-pi/pi-tui/overlays/session-selector";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { SelectorController } from "@oh-my-pi/pi-coding-agent/modes/controllers/selector-controller";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import type { SessionInfo } from "@oh-my-pi/pi-coding-agent/session/session-listing";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { Text, type TUI } from "@oh-my-pi/pi-tui";
-import { HistorySearchComponent } from "@oh-my-pi/pi-tui/overlays/history-search";
-import { HookEditorComponent } from "@oh-my-pi/pi-tui/overlays/hook-editor";
-import type { HistoryStorage } from "@oh-my-pi/pi-coding-agent/session/history-storage";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/modes/controllers/selector-controller-overlay-focus.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 beforeAll(async () => {
 	await initTheme();

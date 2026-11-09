@@ -6,16 +6,9 @@ import type {
 	ToolCallContent,
 	ToolCallLocation,
 	ToolKind,
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { parseXdUrl } from "@oh-my-pi/pi-tui/tools/xd-url";`
 } from "@tau/tau-utils/acp";
 import { parseXdUrl } from "@tau/tau-tui/tools/xd-url";
-=======
-} from "@oh-my-pi/pi-utils/acp";
-import { InternalUrlRouter } from "../../internal-urls/router";
-import { extractUriScheme } from "../../internal-urls/parse";
-import type { SchemeSpec } from "../../internal-urls/types";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/modes/acp/acp-event-mapper.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { AgentSessionEvent } from "../../session/agent-session";
 import { resolveToCwd, splitPathAndSelPreferringLiteralSync } from "../../tools/path-utils";
 import type { TodoStatus } from "@tau/tau-tui/tools/todo";

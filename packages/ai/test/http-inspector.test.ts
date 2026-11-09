@@ -1,4 +1,3 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 import { describe, expect, it } from "bun:test";
 import {
@@ -7,21 +6,6 @@ import {
 	rewriteClinePassError,
 	shouldDumpRejectedRequest,
 } from "@tau/tau-ai/utils/http-inspector";
-=======
-import { afterEach, describe, expect, it } from "bun:test";
-import * as fs from "node:fs/promises";
-import * as os from "node:os";
-import * as path from "node:path";
-import {
-	buildHttp400DumpPayload,
-	type CapturedHttpErrorResponse,
-	finalizeErrorMessage,
-	pruneHttpRequestDumps,
-	type RawHttpRequestDump,
-	rewriteClinePassError,
-	shouldDumpRejectedRequest,
-} from "@oh-my-pi/pi-ai/utils/http-inspector";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/test/http-inspector.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 class HttpError extends Error {
 	constructor(

@@ -1,5 +1,4 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import type { Model } from "@tau/tau-ai";
 import { Agent } from "@tau/tau-agent-core";
@@ -13,36 +12,6 @@ import { expandModelMentionTags } from "@tau/tau-tui/prompt/model-mention-syntax
 import { MODEL_MENTION_ENTRY_TYPE, ModelMentionRegistry, readModelMentions } from "tau/session/model-mentions";
 import { SessionManager } from "tau/session/session-manager";
 import { getBundledAgent } from "tau/task/agents";
-=======
-import * as fs from "node:fs/promises";
-import * as os from "node:os";
-import * as path from "node:path";
-import type { Model } from "@oh-my-pi/pi-ai";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { dispatchRpcSkillPrompt } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-mode";
-import {
-	RpcExtensionUserMessageTracker,
-	RpcPromptResults,
-} from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-prompt-results";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SKILL_PROMPT_MESSAGE_TYPE } from "@oh-my-pi/pi-coding-agent/session/messages";
-import type { CustomMessage } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { expandModelMentionTags } from "@oh-my-pi/pi-tui/prompt/model-mention-syntax";
-import {
-	MODEL_MENTION_ENTRY_TYPE,
-	ModelMentionRegistry,
-	readModelMentions,
-} from "@oh-my-pi/pi-coding-agent/session/model-mentions";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { getBundledAgent } from "@oh-my-pi/pi-coding-agent/task/agents";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/session/model-mentions.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function model(provider: string, id: string, name: string, efforts?: readonly Effort[]): Model {
 	return buildModel({

@@ -24,7 +24,6 @@ import {
 	type CredentialCompletionResult,
 	completeSimple,
 	type Model,
-<<<<<<< ours — imports `file_header` (T+F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { DEFAULT_AUTH_GATEWAY_BIND, startAuthGateway } from "@o…` +2 more
 } from "@tau/tau-ai";
 import {
@@ -38,29 +37,6 @@ import { type GeneratedProvider, getBundledModels } from "@tau/tau-catalog/model
 import { type ModelKind, modelKind } from "@tau/tau-catalog/types";
 import { getConfigRootDir, isEnoent, logger, VERSION } from "@tau/tau-utils";
 import chalk from "@tau/tau-utils/chalk";
-=======
-	type OAuthRequestIdentity,
-} from "@oh-my-pi/pi-ai";
-import {
-	AuthBrokerClient,
-	loadAuthBrokerAccountPool,
-	RemoteAuthCredentialStore,
-	type SnapshotResponse,
-} from "@oh-my-pi/pi-ai/auth-broker";
-import {
-	type AuthGatewayClient,
-	DEFAULT_AUTH_GATEWAY_BIND,
-	type ModelResolveOptions,
-	parseAuthGatewayClients,
-	startAuthGateway,
-} from "@oh-my-pi/pi-ai/auth-gateway";
-import { authPolicyFor } from "@oh-my-pi/pi-catalog/compat/auth";
-import { buildModelProviderPriorityRank } from "@oh-my-pi/pi-catalog/identity";
-import { type GeneratedProvider, getBundledModels, getEffectiveTokenCost } from "@oh-my-pi/pi-catalog/models";
-import { type ModelKind, modelKind } from "@oh-my-pi/pi-catalog/types";
-import { getConfigRootDir, logger, VERSION } from "@oh-my-pi/pi-utils";
-import chalk from "@oh-my-pi/pi-utils/chalk";
->>>>>>> theirs — imports `file_header` (T+F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/cli/auth-gateway-cli.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { ModelRegistry } from "../config/model-registry";
 import { cfgDisabledProviders, cfgModelProviderOrder } from "../config/model-settings";
 import { resolveProviderModelReference } from "../config/model-resolver";
@@ -443,17 +419,10 @@ async function runServe(flags: AuthGatewayCommandArgs["flags"]): Promise<void> {
 	// out of the picture: client-side provider overrides (baseUrl/apiKey/headers/
 	// transport) and custom models must never route a broker-backed gateway or
 	// shadow broker credentials. Format handlers ask `resolveModel` to translate
-<<<<<<< ours — scope `// Build the model resolver + catalog from th...` in function `runServe` (T+F, confidence: medium)
 // refused_by: statement_fold · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 	// a client-requested `model` field into a tau-ai `Model<Api>` before dispatch;
 	// `listModels` powers `/v1/models`.
 	const registry = new ModelRegistry(storage, undefined, { ignoreLocalModelConfig: true });
-=======
-	// a client-requested `model` field into a pi-ai `Model<Api>` before dispatch;
-	// `listModels` powers `/v1/models`. `settings` carries `disabledProviders`, so
-	// discovery skips disabled providers too.
-	const registry = new ModelRegistry(storage, undefined, { ignoreLocalModelConfig: true, settings });
->>>>>>> theirs — scope `// Build the model resolver + catalog from th...`
 	let index = indexModelsByRequestId([], new Set());
 	// Rebuild the served catalog (a `registry.refresh()` pass, then re-index
 	// against the current credential set). Credential-triggered rebuilds force

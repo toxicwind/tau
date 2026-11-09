@@ -2,21 +2,12 @@ import { Database } from "bun:sqlite";
 import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { getStatsByAgentType, initDb, insertMessageStats } from…`
 import { getOverviewStats } from "@tau/tau-stats/aggregator";
 import { getStatsByAgentType, initDb, insertMessageStats } from "@tau/tau-stats/db";
 import { classifyAgentType } from "@tau/tau-stats/parser";
 import type { AgentType, MessageStats } from "@tau/tau-stats/types";
 import { getConfigRootDir, getSessionsDir, getStatsDbPath } from "@tau/tau-utils";
-=======
-import { getOverviewStats } from "@oh-my-pi/omp-stats/aggregator";
-import { initDb, insertMessageStats } from "@oh-my-pi/omp-stats/db";
-import { getStatsByAgentType } from "@oh-my-pi/omp-stats/rollup";
-import { classifyAgentType } from "@oh-my-pi/omp-stats/parser";
-import type { AgentType, MessageStats } from "@oh-my-pi/omp-stats/types";
-import { getConfigRootDir, getSessionsDir, getStatsDbPath } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/stats/test/agent-type.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { installStatsTestIsolation } from "./helpers/temp-agent";
 
 installStatsTestIsolation("@tau-stats-agent-type-");

@@ -1,11 +1,6 @@
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { logger, Snowflake, workerHostEntry } from "@oh-my-pi/p…`
 import { logger, Snowflake, workerHostEntry } from "@tau/tau-utils";
-=======
-import { MessageChannel, type MessagePort, receiveMessageOnPort } from "node:worker_threads";
-import { isRecord, logger, Snowflake, workerHostEntry } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/eval/js/context-manager.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	createWorkerHandle,
 	createWorkerSubprocess,

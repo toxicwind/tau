@@ -3,15 +3,9 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import * as tls from "node:tls";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { getEnvApiKey, streamSimple } from "@oh-my-pi/pi-ai/str…`
 import { type as arkType } from "@tau/tautype";
 import { Effort } from "@tau/tau-ai";
-=======
-import { type as arkType } from "@oh-my-pi/omptype";
-import { Effort } from "@oh-my-pi/pi-ai";
-import { NO_AUTH_SENTINEL } from "@oh-my-pi/pi-ai/auth-retry";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/ai/test/anthropic-alignment.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	applyClaudeToolPrefix,
 	buildAnthropicClientOptions,
@@ -22,20 +16,11 @@ import {
 	isClaudeCloakingUserId,
 	streamAnthropic,
 	stripClaudeToolPrefix,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { getEnvApiKey, streamSimple } from "@oh-my-pi/pi-ai/str…`
 } from "@tau/tau-ai/providers/anthropic";
 import type { MessageCreateParams } from "@tau/tau-ai/providers/anthropic-wire";
 import { getClaudeCodeVersion } from "@tau/tau-ai/providers/claude-code-fingerprint";
 import { getEnvApiKey, streamSimple } from "@tau/tau-ai/stream";
-=======
-} from "@oh-my-pi/pi-ai/providers/anthropic";
-import { buildAnthropicHeaders, mapStainlessArch, mapStainlessOs } from "@oh-my-pi/pi-ai/providers/anthropic-headers";
-import type { MessageCreateParams } from "@oh-my-pi/pi-ai/providers/anthropic-wire";
-import { getClaudeCodeVersion } from "@oh-my-pi/pi-ai/providers/claude-code-fingerprint";
-import { getEnvApiKey } from "@oh-my-pi/pi-ai/env-api-key";
-import { streamSimple } from "@oh-my-pi/pi-ai/stream";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import type {
 	AssistantMessage,
 	CacheRetention,

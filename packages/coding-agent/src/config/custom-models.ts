@@ -5,15 +5,9 @@ import {
 	getBundledModelReferenceIndex,
 	inheritReferenceThinking,
 	resolveModelReference,
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-catalog/identity";
 import { logger } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-catalog/identity";
-import { runnerApiKind } from "@oh-my-pi/pi-catalog/types";
-import { logger } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/config/custom-models.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { type ConfigHeaderResolver, type ConfigHeaderSource, createConfigHeaderResolver } from "./resolve-config-value";
 import { type ModelPatch, mergeCompat, mergeRemoteCompactionConfig } from "./model-patch";
 import { parseModelString } from "@tau/tau-tui/overlays/model-selector";

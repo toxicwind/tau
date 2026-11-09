@@ -17,28 +17,12 @@
  */
 
 import { afterEach, describe, expect, it, spyOn, vi } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import type { CmuxKind } from "tau/tools/browser/cmux/rpc";
 import { CmuxSocketClient } from "tau/tools/browser/cmux/socket-client";
 import { acquireBrowser, getBrowsersMapForTest } from "tau/tools/browser/registry";
 import { acquireTab, getTabsMapForTest, releaseTab, releaseTabsForOwner } from "tau/tools/browser/tab-supervisor";
 import { ToolAbortError } from "tau/tools/tool-errors";
-=======
-import type { CmuxKind } from "@oh-my-pi/pi-coding-agent/tools/browser/cmux/rpc";
-import { CmuxSocketClient } from "@oh-my-pi/pi-coding-agent/tools/browser/cmux/socket-client";
-import { acquireBrowser, getBrowsersMapForTest } from "@oh-my-pi/pi-coding-agent/tools/browser/registry";
-import {
-	acquireTab,
-	getTabsMapForTest,
-	releaseTab,
-	releaseTabsForOwner,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/tab-supervisor";
-import { ToolAbortError } from "@oh-my-pi/pi-coding-agent/tools/tool-errors";
-import { createBrowserPrelude } from "@oh-my-pi/pi-coding-agent/tools/browser";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/tools/browser-lifecycle-leak.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function makeSession(ownerId?: string): ToolSession {
 	return {

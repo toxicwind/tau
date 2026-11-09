@@ -2,21 +2,11 @@ import {
 	type ClipboardImage,
 	copyToClipboard as nativeCopyToClipboard,
 	readImageFromClipboard as nativeReadImageFromClipboard,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-natives/clipboard";
 import { isWsl } from "@tau/tau-utils";
 import * as logger from "@tau/tau-utils/logger";
 import { SUPPORTED_IMAGE_MIME_TYPES } from "@tau/tau-utils/mime";
-=======
-	readTextFromClipboard as nativeReadTextFromClipboard,
-} from "@oh-my-pi/pi-natives/clipboard";
-import { isSshSession } from "@oh-my-pi/pi-tui/terminal-capabilities";
-import { writeTerminalSequence } from "@oh-my-pi/pi-tui/terminal";
-import { isWsl } from "@oh-my-pi/pi-utils";
-import * as logger from "@oh-my-pi/pi-utils/logger";
-import { SUPPORTED_IMAGE_MIME_TYPES } from "@oh-my-pi/pi-utils/mime";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/utils/clipboard.ts' for per-hunk detail, 'weave check' to verify your resolution
 import MAC_FILE_URL_SCRIPT from "./mac-file-urls.applescript" with { type: "text" };
 
 type SpawnCaptureOptions = { input?: string; timeoutMs?: number; env?: Record<string, string | undefined> };

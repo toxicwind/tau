@@ -7,7 +7,6 @@ import {
 	streamSimple,
 	type Usage,
 	type UserMessage,
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-ai";
 import { unregisterCustomApis } from "@tau/tau-ai/api-registry";
@@ -16,28 +15,6 @@ import { buildLocalInferenceMessages, registerLocalInferenceApi } from "tau/tiny
 import { TINY_LOCAL_MODELS } from "tau/tiny/models";
 import { type TinyModelChatOptions, TinyTitleClient, tinyModelClient } from "tau/tiny/title-client";
 import type { TinyChatMessage, TinyWorkerRequest, TinyWorkerResponse } from "tau/tiny/title-protocol";
-=======
-} from "@oh-my-pi/pi-ai";
-import { unregisterCustomApis } from "@oh-my-pi/pi-ai/api-registry";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { type DownloadActivity, onDownloadActivity } from "@oh-my-pi/pi-coding-agent/downloads/activity";
-import { WORKER_CONNECTION_CLOSED } from "@oh-my-pi/pi-coding-agent/subprocess/shared-worker";
-import {
-	buildLocalInferenceMessages,
-	registerLocalInferenceApi,
-} from "@oh-my-pi/pi-coding-agent/tiny/local-inference-api";
-import { TINY_LOCAL_MODELS } from "@oh-my-pi/pi-coding-agent/tiny/models";
-import {
-	type TinyModelChatOptions,
-	TinyTitleClient,
-	tinyModelClient,
-} from "@oh-my-pi/pi-coding-agent/tiny/title-client";
-import type {
-	TinyChatMessage,
-	TinyWorkerRequest,
-	TinyWorkerResponse,
-} from "@oh-my-pi/pi-coding-agent/tiny/title-protocol";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/local-inference-api.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const SOURCE_ID = "tau/local-inference";
 const model = getBundledModel("local", "lfm2.5-230m")!;

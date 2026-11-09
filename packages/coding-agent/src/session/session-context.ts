@@ -1,4 +1,3 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { getAnthropicCompactionPayload, isTurnStartEntry } from…`
 import type { AgentMessage } from "@tau/tau-agent-core";
 import { customMessageEntryMessage, isUserRequestEntry } from "@tau/tau-tui/chat/transcript-entry";
@@ -6,23 +5,6 @@ import { getAnthropicCompactionPayload, isTurnStartEntry } from "@tau/tau-agent-
 import { coerceServiceTierByFamily, type OpenAIResponsesHistoryPayload, type ServiceTierByFamily } from "@tau/tau-ai";
 import * as snapcompact from "@tau/snapcompact";
 import { isRecord } from "@tau/tau-utils";
-=======
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { customMessageEntryMessage, isUserRequestEntry } from "@oh-my-pi/pi-tui/chat/transcript-entry";
-import {
-	canReplayRemoteCompaction,
-	getAnthropicCompactionPayload,
-	isTurnStartEntry,
-} from "@oh-my-pi/pi-agent-core/compaction";
-import {
-	coerceServiceTierByFamily,
-	type Model,
-	type OpenAIResponsesHistoryPayload,
-	type ServiceTierByFamily,
-} from "@oh-my-pi/pi-ai";
-import * as snapcompact from "@oh-my-pi/snapcompact";
-import { isRecord } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/session/session-context.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	createBranchSummaryMessage,
 	createCompactionSummaryMessage,

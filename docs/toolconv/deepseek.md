@@ -312,7 +312,6 @@ encoding, served in vLLM with `--tool-call-parser deepseek_v3`. The per-call bod
 
 Differences from V3.1:
 
-<<<<<<< ours — scope `Differences from V3.1:` in heading `Version differences: V3.1 vs V3-0324 / R1-0528` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `| User→assistant boundary | user turn = `<｜User｜>{q}`; `<｜Assis…`
 | Aspect | V3.1 (`deepseek_v31`) | V3-0324 / R1-0528 (`deepseek_v3`) |
 | --- | --- | --- |
@@ -323,17 +322,6 @@ Differences from V3.1:
 | User→assistant boundary | user turn = `<｜User｜>{q}`; `<｜Assistant｜></think>` added at generation | user turn = `<｜User｜>{q}<｜Assistant｜>` (assistant marker appended in the architect branch) |
 | Thinking | hybrid; `thinking` kwarg toggles `<think>` vs `</think>` prefix | R1-0528 always reasoning (bare `<｜Assistant｜>` generation prefix, model opens `<think>` itself); V3-0324 non-reasoning |
 | vLLM parser | `--tool-call-parser deepseek_v31` | `--tool-call-parser deepseek_v3` |
-=======
-| Aspect                  | V3.1 (`deepseek_v31`)                                                         | V3-0324 / R1-0528 (`deepseek_v3`)                                                                                        |
-| ----------------------- | ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| Field order in a call   | `{name}<｜tool▁sep｜>{args}`                                                  | `function<｜tool▁sep｜>{name}` (the literal `type`, then name)                                                           |
-| Arguments wrapping      | raw JSON, inline                                                              | fenced ` ```json … ``` ` block (name and args separated by `\n`)                                                         |
-| Chaining of calls       | abut directly, **no separator**                                               | each subsequent call prefixed with `\n`                                                                                  |
-| Tool results            | `<｜tool▁output▁begin｜>…<｜tool▁output▁end｜>` per message, no batch wrapper | wrapped in `<｜tool▁outputs▁begin｜>…<｜tool▁outputs▁end｜>`, results newline-separated                                  |
-| User→assistant boundary | user turn = `<｜User｜>{q}`; `<｜Assistant｜></think>` added at generation    | user turn = `<｜User｜>{q}<｜Assistant｜>` (assistant marker appended in the user branch)                                |
-| Thinking                | hybrid; `thinking` kwarg toggles `<think>` vs `</think>` prefix               | R1-0528 always reasoning (bare `<｜Assistant｜>` generation prefix, model opens `<think>` itself); V3-0324 non-reasoning |
-| vLLM parser             | `--tool-call-parser deepseek_v31`                                             | `--tool-call-parser deepseek_v3`                                                                                         |
->>>>>>> theirs — scope `Differences from V3.1:` · weave: run 'weave explain docs/toolconv/deepseek.md' for per-hunk detail, 'weave check' to verify your resolution
 
 Example R1-0528 / V3-0324 parallel call with its result batch:
 
@@ -379,7 +367,6 @@ reuse the same fullwidth pipe (`｜`, U+FF5C), but the body is an Anthropic-styl
   structured `tool_calls`. OMP's native healing is separate from selecting the owned
   `deepseek` dialect; its compatibility policy determines whether DSML recovery is enabled.
 
-<<<<<<< ours — heading `omp / pi converter behavior` (S+F, confidence: low)
 // refused_by: rename_vs_edit_guard · collision: `For V3.1 and legacy calls, omp emits `toolStart` after the head…`
 ## tau / pi converter behavior
 
@@ -415,76 +402,6 @@ renderer emits V3.1 calls, joins parallel calls without separators, and renders
 multiple results as singular output blocks separated by newlines. The DSML
 syntax is accepted for healing leaked provider output but is not the owned
 dialect's emitted history format.
-=======
-## omp / pi converter behavior
-
-The repository's `deepseek` dialect is an **owned in-band converter**, not a
-vLLM parser wrapper. Select it with `PI_DIALECT=deepseek` or the agent's
-`dialect`/`getDialect` configuration. When tools are present, the agent appends
-the dialect guide and compact tool catalog to the system prompt, removes
-native provider tools from the request, re-encodes prior calls/results with
-this syntax, and scans streamed assistant text back into canonical pi events.
-The catalog is one OpenAI-style JSON function definition per line, not the
-model card's `## Tools` block shown above.
-
-The current scanner accepts all three forms described above:
-
-- V3.1 `name<｜tool▁sep｜>{json}` calls;
-- legacy `function<｜tool▁sep｜>name` plus a fenced JSON body; and
-- fullwidth or ASCII DSML `invoke` / `parameter` blocks inside a DSML `tool_calls` wrapper.
-
-A V3.1/legacy `<｜tool▁call▁begin｜>` may also appear outside the plural wrapper.
-Names are trimmed for those forms. DSML opening tags require a double-quoted
-`name="…"` attribute; a bare DSML `invoke` without a `tool_calls` wrapper is
-not recognized. DSML values are raw text, without XML entity decoding, and
-are strings unless the tag has exactly `string="false"`. The scanner does
-not validate tool names or schemas; validation/execution happens downstream.
-
-For V3.1 calls, the scanner emits `toolStart` when `<｜tool▁sep｜>` completes
-the name; legacy calls wait until the ` ```json ` fence completes the name.
-Both buffer arguments until `<｜tool▁call▁end｜>` and then emit `toolEnd` with
-repairing-JSON-decoded arguments. Missing, invalid, or non-object completed
-arguments become `{}`.
-
-Flush emits no `toolEnd` for an unfinished call. Once `toolStart` has been
-projected, however, the canonical call remains and a normally stopped turn
-may dispatch it: unfinished V3.1/legacy calls retain `{}`, while DSML calls
-retain argument text already published through `toolArgDelta`, without
-close-time coercion. A `length` stop is not runnable. DSML is incremental:
-parameter body text is streamed as those deltas. At a completed parameter
-close, `string="false"` values are repairing-JSON-decoded, falling back to
-raw text on failure. The completed object replaces the partial raw strings
-at `</｜DSML｜invoke>` (or its ASCII equivalent). Call IDs are synthesized
-as `ptc_…`.
-
-The scanner removes leaked DeepSeek chat-template control tokens and trailing
-template whitespace from visible text. Orphan DSML `invoke`/`parameter`
-closing tags are stripped too. By default it maps `<think>…</think>` to
-thinking events; with `parseThinking: false`, it emits the body as visible
-text but still removes the thinking tags. An unclosed thinking span is
-finalized at EOF.
-
-The renderer emits V3.1 calls, joins parallel calls without separators, and
-renders multiple results as singular output blocks separated by newlines.
-Those result blocks contain only result text: ids, names, and `isError` are
-not encoded. History encoding groups consecutive results into a `user`
-message and preserves result images as separate image blocks after the text.
-Tool-calling assistant turns are replayed as prose plus rendered calls,
-without their thinking blocks.
-
-The standalone transcript renderer starts with `<｜begin▁of▁sentence｜>`,
-renders every assistant turn as `<｜Assistant｜>` + thinking/text/calls +
-`<｜end▁of▁sentence｜>`, and uses `<think>…</think>` only for nonempty thinking.
-It does not add a non-thinking `</think>` prefix or omit the assistant marker
-after results as the V3.1 reference template does. Developer text is unmarked;
-user turns use `<｜User｜>`.
-
-The owned stream cuts off fabricated results at `<｜tool▁outputs▁begin｜>` or
-`<｜tool▁output▁begin｜>` (aborting by default), retaining calls before the
-boundary. If native structured calls nevertheless arrive, the first real
-native or in-band call selects the channel for that turn, avoiding duplicate
-dispatch.
->>>>>>> theirs — heading `omp / pi converter behavior` (S+F, confidence: low)
 
 ### Native leaked-markup healing
 

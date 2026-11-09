@@ -69,16 +69,10 @@ Importing the SDK installs no signal or fatal-error handlers; the host owns its 
 If omitted, it resolves:
 
 - `cwd`: `getProjectDir()`
-<<<<<<< ours — heading `What `createAgentSession()` discovers by default` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 - `agentDir`: `~/.tau/agent` (via `getAgentDir()`)
 - `authStorage`: `discoverAuthStorage(agentDir)`
 - `modelRegistry`: `new ModelRegistry(authStorage)` + background `refreshInBackground()` when the registry is not provided
-=======
-- `agentDir`: `~/.omp/agent` (via `getAgentDir()`)
-- `authStorage`: `discoverAuthStorage(agentDir, { settings, cwd })`
-- `modelRegistry`: a `ModelRegistry` using that auth store, `<agentDir>/models.yml`, effective settings, and the agent-directory model cache; background `refreshInBackground()` when the registry is not provided
->>>>>>> theirs — heading `What `createAgentSession()` discovers by default` (F, confidence: medium) · weave: run 'weave explain docs/upstream/sdk.md' for per-hunk detail, 'weave check' to verify your resolution
 - `settings`: `await Settings.init({ cwd, agentDir })`
 - `sessionManager`: `SessionManager.create(cwd, SessionManager.getDefaultSessionDir(cwd, agentDir))` (file-backed)
 - skills/rules/context files/prompt templates/slash commands/extensions/custom TS commands
@@ -172,7 +166,6 @@ const available = modelRegistry.getAvailable();
 if (available.length === 0) throw new Error("No authenticated models available");
 const authStorage = await discoverAuthStorage();
 
-<<<<<<< ours — scope `SessionManager,` in heading `Explicit wiring` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `} from "@oh-my-pi/pi-coding-agent";`
   SessionManager,
 } from "@tau/tau-coding-agent";
@@ -184,8 +177,6 @@ await modelRegistry.refresh();
 const available = modelRegistry.getAvailable();
 if (available.length === 0)
   throw new Error("No authenticated models available");
-=======
->>>>>>> theirs — scope `SessionManager,`
 const { session } = await createAgentSession({
 	authStorage,
 	modelRegistry,
@@ -461,14 +452,9 @@ import {
 	discoverAuthStorage,
 	ModelRegistry,
 	SessionManager,
-<<<<<<< ours — scope `Settings,` in heading `Minimal controlled embed example` (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (1 contested hunk(s), neither side deleted the other's lines)
   Settings,
 } from "@tau/tau-coding-agent";
-=======
-	Settings,
-} from "@oh-my-pi/pi-coding-agent";
->>>>>>> theirs — scope `Settings,`
 
 const authStorage = await discoverAuthStorage();
 const modelRegistry = new ModelRegistry(authStorage);

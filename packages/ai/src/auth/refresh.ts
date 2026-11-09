@@ -1,10 +1,5 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { logger } from "@oh-my-pi/pi-utils";`
 import { logger } from "@tau/tau-utils";
-=======
-import { scheduler } from "node:timers/promises";
-import { isSqliteBusyError, logger, postmortem } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/src/auth/refresh.ts' for per-hunk detail, 'weave check' to verify your resolution
 import * as AIError from "../error";
 import { getOAuthProvider, normalizeOAuthCredentialExpiry, refreshOAuthToken } from "../registry/oauth";
 import type { OAuthCredentials, OAuthProvider } from "../registry/oauth/types";

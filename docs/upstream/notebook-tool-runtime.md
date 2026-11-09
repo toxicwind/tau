@@ -18,7 +18,6 @@ The critical distinction: **notebook support is file conversion/editing, not not
 
 ## 1) Runtime boundary: editing vs executing
 
-<<<<<<< ours — heading ``.ipynb` file conversion (`crates/pi-edit/src/notebook.rs`)` (S+F, confidence: low)
 // refused_by: rename_vs_edit_guard · collision: none (both sides edited, nowhere the same lines)
 ## `.ipynb` file conversion (`crates/tau-edit/src/notebook.rs`)
 
@@ -39,27 +38,6 @@ No kernel lifecycle exists in this path:
 - no code execution
 - no stream chunks from Python
 - no rich display capture
-=======
-## `.ipynb` file conversion (`crates/pi-edit/src/notebook.rs`)
-
-- `read` treats `.ipynb` files as notebooks unless the selector is `:raw`.
-- The default notebook view is editable text with markers:
-   - `# %% [code] cell:N`
-   - `# %% [markdown] cell:N`
-   - `# %% [raw] cell:N`
-- Line selectors and multi-range selectors operate on that virtual text.
-- The edit pipeline round-trips virtual text back to notebook JSON through `serialize_edited_notebook_text(...)`.
-- Existing notebook metadata is preserved when a marker references an existing unused `cell:N`; new cells get fresh empty metadata.
-- A missing notebook passed to the serializer starts from an empty nbformat 4.5 notebook.
-- The standalone `write` tool is not notebook-aware: it replaces the file content rather than converting cell markers. Use it only with valid notebook JSON, not the virtual marker representation.
-
-No kernel lifecycle exists in this path:
-
-- no kernel session ID
-- no code execution
-- no stream chunks from Python
-- no image or view capture
->>>>>>> theirs — heading ``.ipynb` file conversion (`crates/pi-edit/src/notebook.rs`)` (S+F, confidence: low) · weave: run 'weave explain docs/upstream/notebook-tool-runtime.md' for per-hunk detail, 'weave check' to verify your resolution
 - no output artifact pipeline from execution
 
 ## Kernel-backed execution path (`src/tools/eval.ts` + `src/eval/py/*`)
@@ -167,7 +145,6 @@ Cancellation/timeout:
 - if the runner does not settle after the interrupt grace window, shutdown escalates and the kernel is recreated on the next call
 - timeout output is annotated with a timeout message
 
-<<<<<<< ours — heading `5) Streaming/chunk and display handling (kernel-backed path)` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 ## 5) Streaming/chunk and display handling (kernel-backed path)
 
@@ -196,8 +173,6 @@ Cancellation/timeout:
 - if the runner does not settle after the interrupt grace window, shutdown escalates and the kernel is recreated on the next call
 - timeout output is annotated with a timeout message
 
-=======
->>>>>>> theirs — heading `5) Streaming/chunk and display handling (kernel-backed path)` (S+F, confidence: low)
 ## 6) Truncation and artifact behavior
 
 `OutputSink` in `packages/tui/src/tools/streaming-output.ts` is used by kernel execution paths:

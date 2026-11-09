@@ -6,20 +6,9 @@
  * (the auth broker, etc.) call {@link setTransports} to swap in a console
  * transport so a process supervisor (pm2, journald, k8s) captures the logs.
  *
-<<<<<<< ours — interstitial `file_header` (T+F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
  * Each entry includes `process.pid` so concurrent tau instances stay
  * traceable.
-=======
- * Each entry includes `process.pid` so concurrent omp instances stay
- * traceable, and the fields of the enclosing {@link withContext} (a session's
- * `sessionId`) so sessions sharing one process stay apart. The file is created
- * on the first record written. Records are batched — one write per second or
- * per 64 KiB — while `warn`/`error` records are written at once together with
- * everything buffered before them; exit, fatal, and signal paths flush the
- * rest. `OMP_LOG_LEVEL` optionally limits the levels written to the file
- * (default: all).
->>>>>>> theirs — interstitial `file_header` (T+F, confidence: medium) · weave: run 'weave explain packages/utils/src/logger.ts' for per-hunk detail, 'weave check' to verify your resolution
  */
 import { AsyncLocalStorage } from "node:async_hooks";
 import * as fs from "node:fs";
@@ -179,13 +168,8 @@ function dispatchToSinks(event: LogEvent): void {
 }
 
 const PROCESS_LOG_PATTERN = /^tau\.(\d{4}-\d{2}-\d{2})\.(\d+)\.log(?:\.(\d+))?$/;
-<<<<<<< ours — variable `PROCESS_AUDIT_PATTERN` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 const PROCESS_AUDIT_PATTERN = /^\.tau\.(\d+)-audit\.json$/;
-=======
-/** Per-process audit files written by earlier releases; current sinks track rotations in memory. */
-const PROCESS_AUDIT_PATTERN = /^\.omp\.(\d+)-audit\.json$/;
->>>>>>> theirs — variable `PROCESS_AUDIT_PATTERN` (S+F, confidence: low)
 /** Shared daily logs (plain, size-rolled, or gzipped) written by the winston-era logger. */
 const LEGACY_LOG_PATTERN = /^omp\.(\d{4}-\d{2}-\d{2})\.log(?:\.\d+)?(?:\.gz)?$/;
 /** Hash-named audit files written by winston-daily-rotate-file. */
@@ -457,14 +441,8 @@ function makeFileTransport(dir?: string): RotatingFileSink {
 		filenameSuffix: String(process.pid),
 		maxBytes: 10 * 1024 * 1024,
 		maxFiles: 5,
-<<<<<<< ours — scope `return new RotatingFileSink({` in function `makeFileTransport` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `auditFile: path.join(logsDir, `.omp.${process.pid}-audit.json`),`
 		auditFile: path.join(logsDir, `.tau.${process.pid}-audit.json`),
-=======
-		batch: { intervalMs: FILE_FLUSH_INTERVAL_MS, maxBytes: FILE_FLUSH_BYTES },
-		// Keep the stderr guard's fd 2 on the file this sink is writing.
-		onRotate: setStderrRedirectTarget,
->>>>>>> theirs — scope `return new RotatingFileSink({`
 	});
 }
 

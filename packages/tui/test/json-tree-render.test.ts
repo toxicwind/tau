@@ -1,18 +1,7 @@
 import { describe, expect, test } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { formatArgsInline } from "@oh-my-pi/pi-tui/tools/json-t…`
 import { INTENT_FIELD } from "@tau/tau-wire";
 import { formatArgsInline } from "@tau/tau-tui/tools/json-tree";
-=======
-import { getThemeByName } from "@oh-my-pi/pi-tui/theme";
-import {
-	describeJsonTree,
-	formatArgsInline,
-	JSON_TREE_INLINE_LEN,
-	renderJsonTreeLines,
-} from "@oh-my-pi/pi-tui/tools/json-tree";
-import { INTENT_FIELD } from "@oh-my-pi/pi-wire";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/test/json-tree-render.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /** The top-level rows of `value`'s described tree: label text, and whether it expands. */
 function treeRows(value: unknown): { text: string; expands: boolean }[] {

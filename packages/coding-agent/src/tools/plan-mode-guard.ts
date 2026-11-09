@@ -1,6 +1,5 @@
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `} from "@oh-my-pi/pi-tui/tools/hashline-format";`
 import {
 	HL_FILE_HASH_LENGTH,
@@ -17,15 +16,6 @@ import {
 import type { ToolSession } from ".";
 import { normalizeLocalScheme, resolveToCwd } from "./path-utils";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
-=======
-import { isEnoent } from "@oh-my-pi/pi-utils";
-import { InternalUrlRouter } from "../internal-urls";
-import { sessionResolveContext } from "../internal-urls/context";
-import type { ToolSession } from ".";
-import { unwrapHashlineHeaderPath } from "./hashline-header-path";
-import { resolveToCwd } from "./path-utils";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/plan-mode-guard.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /** Where a write to `absolutePath` lands: its deepest existing ancestor realpathed, with
  *  the missing tail re-appended. `undefined` when the path goes through a dangling

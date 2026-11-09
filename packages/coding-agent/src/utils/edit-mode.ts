@@ -1,17 +1,8 @@
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { $env, $flag } from "@oh-my-pi/pi-utils";`
 import { classifyModel } from "@tau/tau-catalog/identity";
 import { $env, $flag } from "@tau/tau-utils";
 
 import type { EditMode } from "@tau/tau-tui/tools/edit";
-=======
-import { classifyModel } from "@oh-my-pi/pi-catalog/identity";
-import { $flag } from "@oh-my-pi/pi-utils";
-
-import type { EditMode } from "@oh-my-pi/pi-tui/tools/edit";
-import type { Settings } from "../config/settings";
-import { cfgEditMode, type EditModeSetting, editModelVariants } from "../edit/settings";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/utils/edit-mode.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /** First `edit.modelVariants` entry whose pattern occurs in `model` (case-insensitive). */
 export function editVariantForModel(settings: Settings, model: string | undefined): EditMode | undefined {

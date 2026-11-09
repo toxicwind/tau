@@ -8,18 +8,11 @@
  * previous `<parameter>`-per-key JSON Schema dump dropped entirely.
  */
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { formatSessionDumpText } from "@oh-my-pi/pi-coding-agen…`
 import { type } from "@tau/tautype";
 import type { Model, Usage } from "@tau/tau-ai";
 import { formatSessionDumpText } from "tau/session/session-dump-format";
 import { INTENT_FIELD } from "@tau/tau-wire";
-=======
-import { type } from "@oh-my-pi/omptype";
-import type { Model, Usage } from "@oh-my-pi/pi-ai";
-import { formatSessionDumpText, formatSubagentDumpText } from "@oh-my-pi/pi-coding-agent/session/session-dump-format";
-import { INTENT_FIELD } from "@oh-my-pi/pi-wire";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/session/session-dump-format.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const ZERO_USAGE: Usage = {
 	input: 0,

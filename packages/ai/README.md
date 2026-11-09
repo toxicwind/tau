@@ -565,12 +565,7 @@ if (message.stopReason === "error" || message.stopReason === "aborted") {
 }
 ```
 
-<<<<<<< ours — heading `Error Handling` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
-=======
-If the provider discards partial output by returning an error message with empty `content`, the final result remains empty. Leaked-thinking healing does not reconstruct discarded blocks from earlier streaming deltas.
-
->>>>>>> theirs — heading `Error Handling` (F, confidence: medium) · weave: run 'weave explain packages/ai/README.md' for per-hunk detail, 'weave check' to verify your resolution
 ### Aborting Requests
 
 The abort signal allows you to cancel in-progress requests. Aborted requests have `stopReason === 'aborted'`:

@@ -1,9 +1,5 @@
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { isRecord, ptree } from "@oh-my-pi/pi-utils";`
 import { isRecord, ptree } from "@tau/tau-utils";
-=======
-import { isRecord, ptree, tryParseJson } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/web/scrapers/utils.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 export { isRecord };
 

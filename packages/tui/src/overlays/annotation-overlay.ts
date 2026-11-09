@@ -11,18 +11,9 @@ import {
 	visibleWidth,
 	wrapTextWithAnsi,
 } from "../index";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { type KeybindingsManager } from "../app-keybindings";
 import { sanitizeText } from "@tau/tau-utils";
-=======
-import { compositeLineAt } from "../render/composite";
-import { wrapLiteralLine } from "../utils";
-import { editorKey } from "../chrome/keybinding-hints";
-import { formatKeyHint, formatKeyHints, type KeybindingsManager } from "../app-keybindings";
-import type { Keybinding } from "../keybindings";
-import { sanitizeText } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/src/overlays/annotation-overlay.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { type Theme } from "../theme/theme";
 import type {
 	AnnotationOverlayDraft,
@@ -223,14 +214,9 @@ function modeSpans(mode: string): TspSpan[] {
 	return mode.split("`").flatMap((part, index) => (part ? [span(part, index % 2 === 1 ? "code" : "muted")] : []));
 }
 
-<<<<<<< ours — scope `declaration` in class `AnnotationOverlay` (S, confidence: medium)
 // refused_by: container_member · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 /** A fullscreen, annotated diff picker that only relies on public TAU APIs. */
 export class AnnotationOverlay implements Component {
-=======
-/** A fullscreen, annotated diff picker that only relies on public OMP APIs. */
-export class AnnotationOverlay implements Focusable {
->>>>>>> theirs — scope `declaration`
 	focused = false;
 	#scrollView: ScrollView;
 	#editor: Editor;

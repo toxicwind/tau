@@ -1,4 +1,3 @@
-<<<<<<< ours — heading `@oh-my-pi/pi-coding-agent` (S+F, confidence: low)
 // refused_by: rename_vs_edit_guard · collision: none (both sides edited, nowhere the same lines)
 # @tau/tau-coding-agent
 
@@ -9,19 +8,6 @@ For installation, setup, provider configuration, model roles, slash commands, an
 - [Monorepo README (GitHub)](https://github.com/toxicwind/tau#readme)
 
 Package-specific references:
-=======
-# @oh-my-pi/pi-coding-agent
-
-Core implementation package for the `omp` coding agent in the `omp` monorepo.
-
-For installation, setup, provider configuration, model roles, slash commands, and full CLI reference, see:
-
-- [Monorepo README (local)](../../README.md)
-- [Monorepo README (GitHub)](https://github.com/can1357/oh-my-pi#readme)
-
-Package-specific references:
-
->>>>>>> theirs — heading `@oh-my-pi/pi-coding-agent` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/README.md' for per-hunk detail, 'weave check' to verify your resolution
 - [CHANGELOG](./CHANGELOG.md)
 - [MCP configuration guide](../../docs/mcp-config.md)
 - [MCP runtime lifecycle](../../docs/mcp-runtime-lifecycle.md)

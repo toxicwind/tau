@@ -1,17 +1,9 @@
 import { afterEach, describe, expect, test } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { AuthStorage } from "@oh-my-pi/pi-ai";`
 import { AuthStorage } from "@tau/tau-ai";
 import { getBundledModels } from "@tau/tau-catalog/models";
 import { modelKind } from "@tau/tau-catalog/types";
 import { TempDir } from "@tau/tau-utils";
-=======
-import { type Api, AuthStorage, type Model } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { getBundledModels } from "@oh-my-pi/pi-catalog/models";
-import { modelKind } from "@oh-my-pi/pi-catalog/types";
-import { TempDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/cli/auth-gateway-catalog.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	createSerializedRebuilder,
 	gatewayRoutableModels,

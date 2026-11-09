@@ -4,25 +4,10 @@
  * Commands are sent as JSON lines on stdin.
  * Responses and events are emitted as JSON lines on stdout.
  */
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { Effort, ImageContent, Model, ToolExample } from "…`
 import type { AgentMessage, AgentToolResult, ThinkingLevel, ToolLoadMode } from "@tau/tau-agent-core";
 import type { CompactionResult } from "@tau/tau-agent-core/compaction";
 import type { Effort, ImageContent, Model, ToolExample } from "@tau/tau-ai";
-=======
-import type { AgentMessage, AgentToolResult, ThinkingLevel, ToolLoadMode } from "@oh-my-pi/pi-agent-core";
-import type { CompactionResult } from "@oh-my-pi/pi-agent-core/compaction";
-import type {
-	AssistantMessage,
-	AssistantMessageEvent,
-	Effort,
-	ImageContent,
-	Model,
-	TextContent,
-	ThinkingContent,
-	ToolExample,
-} from "@oh-my-pi/pi-ai";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/modes/rpc/rpc-types.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { BashResult } from "../../exec/bash-executor";
 import type { ContextUsage } from "../../extensibility/extensions/types";
 import type { AgentSessionEvent, SessionStats } from "../../session/agent-session";
@@ -34,14 +19,8 @@ import type { UsageLimitState } from "../../session/usage-limit";
 import type { AvailableSlashCommandSource } from "../../slash-commands/available-commands";
 import type { AgentProgress } from "@tau/tau-tui/tools/task";
 import type { SubagentEventPayload, SubagentLifecyclePayload, SubagentProgressPayload } from "../../task";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { Effort, ImageContent, Model, ToolExample } from "…`
 import type { TodoPhase } from "@tau/tau-tui/tools/todo";
-=======
-import type { TodoPhase } from "@oh-my-pi/pi-tui/tools/todo";
-import type { LogoutAccount } from "@oh-my-pi/pi-tui/overlays/logout-account-selector";
-import type { LivePhase } from "@oh-my-pi/pi-tui/apps/live-visualizer";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import type { RpcMessagesPage } from "./rpc-messages";
 import type { GoalModeState } from "../../goals/state";
 import type { RpcGoalOp, RpcGoalResult } from "./rpc-goal";

@@ -9,20 +9,12 @@
  * and binary files are staged whole.
  */
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import type { ChoiceQuestion, ScoreQuestion } from "@oh-my-pi/p…` +1 more
 import type { ChoiceQuestion, ScoreQuestion } from "@tau/tau-ai";
 import * as AIError from "@tau/tau-ai/error";
 import type { VcsHunkSelection } from "@tau/tau-natives";
 import * as vcs from "@tau/tau-natives/vcs";
 import { isEnoent, logger } from "@tau/tau-utils";
-=======
-import { judgeQuestions } from "@oh-my-pi/pi-ai";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import type { VcsHunkSelection } from "@oh-my-pi/pi-natives";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import { isEnoent, logger, toError } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/cli/git-tui/ai-stage.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { parseFileDiffs, parseFileHunks } from "../../commit/git/diff";
 import { openStandaloneJudge } from "../../judgment/standalone";
 import questionFile from "../../prompts/judge/git-stage.json" with { type: "json" };

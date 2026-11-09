@@ -53,11 +53,7 @@ export const VcsRepo = nativeBindings.VcsRepo ?? missingNativeClass("VcsRepo");
 
 // functions
 export const __tauInstallTokioRuntime = nativeBindings.__tauInstallTokioRuntime ?? missingNativeExport("__tauInstallTokioRuntime");
-<<<<<<< ours — variable `__piNativesV18_3_0` (S, confidence: medium)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
-=======
-export const __piNativesBuildVersion = nativeBindings.__piNativesBuildVersion;
->>>>>>> theirs — variable `__piNativesV18_3_0` (S, confidence: medium) · weave: run 'weave explain packages/natives/native/index.js' for per-hunk detail, 'weave check' to verify your resolution
 export const appleFmAvailability = nativeBindings.appleFmAvailability ?? missingNativeExport("appleFmAvailability");
 export const appleFmCancel = nativeBindings.appleFmCancel ?? missingNativeExport("appleFmCancel");
 export const appleFmGenerate = nativeBindings.appleFmGenerate ?? missingNativeExport("appleFmGenerate");

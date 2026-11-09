@@ -43,7 +43,6 @@ let
       withFatLto
       ;
   };
-<<<<<<< ours — binding `platform` (S+F, confidence: low)
 # refused_by: modify_delete_guard · collision: none (no common ancestor text)
   platform =
     {
@@ -67,10 +66,7 @@ let
       };
     }
     .${stdenv.hostPlatform.system} or (throw "Unsupported TAU platform: ${stdenv.hostPlatform.system}");
-=======
->>>>>>> theirs — binding `platform` (S+F, confidence: low) · weave: run 'weave explain nix/package.nix' for per-hunk detail, 'weave check' to verify your resolution
   inherit (nativeBuild) platform;
-<<<<<<< ours — binding `bunRuntimeTemplate` (S+F, confidence: low)
 # refused_by: merge_ladder_exhausted · collision: `pname = "omp-bun-runtime-template";`
   bunRuntimeTemplate = stdenvNoCC.mkDerivation {
     pname = "tau-bun-runtime-template";
@@ -88,9 +84,6 @@ let
       runHook postInstall
     '';
   };
-=======
-  bunRuntimeTemplate = callPackage ./bun-runtime.nix { inherit bun; };
->>>>>>> theirs — binding `bunRuntimeTemplate` (S+F, confidence: low)
   patchedDependencies = lib.mapAttrs (
     _: patch: source + "/${patch}"
   ) rootPackageJson.patchedDependencies;
@@ -176,21 +169,10 @@ stdenv.mkDerivation {
   buildPhase = ''
     runHook preBuild
 
-<<<<<<< ours — scope `buildPhase = ''` in binding `buildPhase` (S+F, confidence: low)
 # refused_by: statement_fold · collision: `echo "Building pi-natives"` +1 more
     echo "Building tau-natives"
     cargo build --release -p tau-natives ${lib.optionalString withWaylandScreencast "--features wayland-pipewire"}
     install -Dm755 "target/release/${platform.nativeLibrary}" \
-=======
-    echo "Preparing pi-natives"
-    install -Dm755 "${nativeBuild}/lib/${platform.nativeLibrary}" \
-      "packages/natives/native/${platform.addon}"
-    # The loader and embed-native.ts require the release version, which is
-    # written into the addon after linking (build-bindings.ts does this for
-    # local builds; this raw cargo build must do it itself). Darwin re-signs
-    # through signIfRequired below; the sandbox has no system codesign.
-    bun scripts/stamp-native-version.ts --no-sign \
->>>>>>> theirs — scope `buildPhase = ''`
       "packages/natives/native/${platform.addon}"
     ${lib.optionalString stdenv.hostPlatform.isLinux ''
       # The loader extracts this archived addon at runtime, so fix its
@@ -232,21 +214,10 @@ stdenv.mkDerivation {
   installPhase = ''
     runHook preInstall
 
-<<<<<<< ours — scope `installPhase = ''` in binding `installPhase` (S+F, confidence: low)
 # refused_by: statement_fold · collision: `install -Dm644 THIRD-PARTY-NOTICES.txt "$out/share/doc/omp/THIR…`
     install -Dm755 packages/coding-agent/dist/tau "$out/bin/tau"
     install -Dm644 LICENSE "$out/share/doc/tau/LICENSE"
     install -Dm644 THIRD-PARTY-NOTICES.txt "$out/share/doc/tau/THIRD-PARTY-NOTICES.txt"
-=======
-    install -Dm755 packages/coding-agent/dist/omp "$out/bin/omp"
-    install -Dm644 LICENSE "$out/share/doc/omp/LICENSE"
-    # The executable embeds the CLI and the native addon; ship both notices.
-    {
-      cat packages/coding-agent/THIRD-PARTY-NOTICES.txt
-      echo
-      cat packages/natives/THIRD-PARTY-NOTICES.txt
-    } > "$out/share/doc/omp/THIRD-PARTY-NOTICES.txt"
->>>>>>> theirs — scope `installPhase = ''`
 
     ${lib.optionalString stdenv.hostPlatform.isLinux ''
       # The addon is gzip-compressed inside the compiled binary, so its linked
@@ -315,7 +286,6 @@ stdenv.mkDerivation {
     grep -q "smoke-test: ok" <<<"$smokeOutput"
     BUN_BE_BUN=1 "$out/bin/omp" -e \
       'if (Bun.version !== "${bun.version}" || typeof Bun.Image !== "function") process.exit(1)'
-<<<<<<< ours — scope `installCheckPhase = ''` in binding `installCheckPhase` (S+F, confidence: low)
 # refused_by: statement_fold · collision: `# Capture rather than pipe into grep: piping masks a signal dea…` +3 more
   installCheckPhase = ''
     runHook preInstallCheck
@@ -327,8 +297,6 @@ stdenv.mkDerivation {
     grep -q "smoke-test: ok" <<<"$smokeOutput"
     BUN_BE_BUN=1 "$out/bin/tau" -e \
       'if (Bun.version !== "${bun.version}" || typeof Bun.Image !== "function") process.exit(1)'
-=======
->>>>>>> theirs — scope `installCheckPhase = ''`
     ${lib.optionalString stdenv.hostPlatform.isLinux ''
       # The addons are dlopen'd, so prove the advertised directories actually
       # resolve the libraries rather than merely carrying a plausible string.
@@ -336,27 +304,11 @@ stdenv.mkDerivation {
         'const {dlopen}=require("bun:ffi");const dirs=(process.env.TAU_NATIVE_LIBRARY_PATH||"").split(":").filter(Boolean);const need={"libstdc++.so.6":{__cxa_demangle:{args:["ptr","ptr","ptr","ptr"],returns:"ptr"}},"libgcc_s.so.1":{_Unwind_Backtrace:{args:["ptr","ptr"],returns:"i32"}}};for(const lib of Object.keys(need)){let ok=false;for(const d of dirs){try{dlopen(d+"/"+lib,need[lib]);ok=true;break}catch(e){}}if(!ok){console.error("unresolved: "+lib);process.exit(1)}}'
       # The libstdc++ preload (see postFixup) must survive: without it addons the
       # main process dlopen's directly fail to resolve libstdc++.so.6 on NixOS.
-<<<<<<< ours — scope `installCheckPhase = ''` in binding `installCheckPhase` (S+F, confidence: low)
 # refused_by: statement_fold · collision: `# Capture rather than pipe into grep: piping masks a signal dea…` +3 more
       # wrapProgram moved the real ELF to .tau-wrapped.
       patchelf --print-needed "$out/bin/.tau-wrapped" | grep -q '^libstdc++\.so\.6$'
     ''}
     runHook postInstallCheck
-=======
-      # wrapProgram moved the real ELF to .omp-wrapped.
-      patchelf --print-needed "$out/bin/.omp-wrapped" | grep -q '^libstdc++\.so\.6$'
-    ''}${
-      lib.optionalString (cudaSupport && stdenv.hostPlatform.isLinux && cudaPackages_13 != null) ''
-        # The CUDA provider must actually resolve, not merely be advertised: the
-        # wrong CUDA major is invisible at runtime (onnxruntime silently falls
-        # back to CPU), so assert the exact sonames the provider dlopens. Only the
-        # redistributable libraries are checked here — the driver's libcuda.so.1
-        # lives at the host's driver link, which does not exist in this sandbox
-        # and is not a property of the build.
-        env -u LD_LIBRARY_PATH BUN_BE_BUN=1 "$out/bin/omp" -e \
-          'const {dlopen}=require("bun:ffi");const dirs=(process.env.OMP_NATIVE_LIBRARY_PATH||"").split(":").filter(Boolean);const need={"libcublasLt.so.13":{cublasLtGetVersion:{args:[],returns:"ptr"}},"libcublas.so.13":{cublasGetVersion:{args:[],returns:"ptr"}},"libcurand.so.10":{curandGetVersion:{args:["ptr"],returns:"i32"}},"libcudart.so.13":{cudaRuntimeGetVersion:{args:["ptr"],returns:"i32"}}};for(const lib of Object.keys(need)){let ok=false;for(const d of dirs){try{dlopen(d+"/"+lib,need[lib]);ok=true;break}catch(e){}}if(!ok){console.error("unresolved: "+lib);process.exit(1)}}'
-      ''
->>>>>>> theirs — scope `installCheckPhase = ''`
     }
     ${lib.optionalString stdenv.hostPlatform.isDarwin ''
       # The smoke test above can pass in the build sandbox because

@@ -1,20 +1,7 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { currentLoopPhase, logger, popLoopPhase, pushLoopPhase,…`
 import { afterEach, describe, expect, test, vi } from "bun:test";
 import { LoopWatchdog } from "@tau/tau-tui/loop-watchdog";
 import { currentLoopPhase, logger, popLoopPhase, pushLoopPhase, takeRecentLoopPhase } from "@tau/tau-utils";
-=======
-import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
-import { LoopWatchdog } from "@oh-my-pi/pi-tui/loop-watchdog";
-import {
-	currentLoopPhase,
-	logger,
-	popLoopPhase,
-	pushLoopPhase,
-	resetLoopPhaseWindow,
-	takeLoopPhaseAttribution,
-} from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/test/loop-watchdog.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /**
  * Contract: LoopWatchdog turns event-loop lag into exactly one

@@ -1,10 +1,5 @@
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { logger, Snowflake } from "@oh-my-pi/pi-utils";`
 import { logger, Snowflake } from "@tau/tau-utils";
-=======
-import type { EvalStatusEvent, EvalView } from "@oh-my-pi/pi-tui/tools/eval";
-import { isRecord, logger, readLines, Snowflake } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/eval/kernel-base.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { Subprocess } from "bun";
 import type { ShadowBarrier, ShadowControlNode, ShadowOperation } from "./speculation/types";
 import { type EvalDisplayOutput, evalImageMetadata } from "./types";

@@ -38,7 +38,6 @@ The tiny-model CLI and source registry retain **title** and **memory** groupings
   colon-separated directories holding those libraries; tau appends it to `LD_LIBRARY_PATH` for the
   inference worker subprocesses only (never for shell/eval/daemon children). The Nix package
   (`nix/package.nix`) sets this by default.
-<<<<<<< ours — scope `- **One worker per model, keep-alive not pers...` in heading `Runtime / environment findings` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `worker process on the machine that owns the socket `~/.omp/run/…` +2 more
 - **One worker per model, keep-alive not persistent**: every local model is served by exactly one
   worker process on the machine that owns the socket `~/.tau/run/tiny/<model>-<backend>.sock`
@@ -53,24 +52,6 @@ The tiny-model CLI and source registry retain **title** and **memory** groupings
   `providers.tinyModelDevice`/`Dtype` tells the running worker to shut down and respawns it.
   Two concurrent instances with *conflicting* device settings would keep replacing each other's
   worker, so agree on one. The protocol is message-level (`load`, `chat` with messages / prefill /
-=======
-- **One text worker per model/backend, keep-alive not persistent**: each tiny text model/backend
-  pair is served by one machine-wide worker owning
-  `~/.omp/run/tiny/<model>-<backend>.sock` (Windows: a named pipe).
-  ONNX and MLX workers for the same model can coexist. The first omp process that needs
-  the pair spawns it detached (log next to the socket, `<model>-<backend>.log`);
-  other omp processes connect, so weights are not duplicated per omp instance.
-  Nothing supervises it: the worker exits on its own
-  after 15 minutes without a request (`OMP_TINY_WORKER_IDLE_MS` overrides the window for tests),
-  unlinks its socket, and the next request from any omp process spawns a fresh one. Concurrent
-  spawns race on a `.bind.lock` file lock: the loser sees a live socket and exits while its parent
-  adopts the winner. `ping` returns a launch tag (`<omp version>|onnx|<device>|<dtype>` or
-  `mlx|<mlx-lm version>|<script crc>`), so an omp upgrade or a changed
-  `providers.tinyModelDevice`/`providers.tinyModelDtype` replaces a stale ONNX worker;
-  MLX replacement follows its runtime version/script tag. Concurrent ONNX clients with
-  conflicting device/dtype settings can replace each other's worker, so agree on those settings.
-  The protocol is message-level (`load`, `chat` with messages / prefill /
->>>>>>> theirs — scope `- **One worker per model, keep-alive not pers...` · weave: run 'weave explain docs/upstream/local-models.md' for per-hunk detail, 'weave check' to verify your resolution
   stop / max tokens); prompt construction and title extraction live in the client so both worker
   kinds are interchangeable.
 - **Device policy**: local tiny models default to CPU-only inference and retry once on CPU if an
@@ -92,16 +73,10 @@ The tiny-model CLI and source registry retain **title** and **memory** groupings
   `python3 -m venv` with Python ≥ 3.10). It downloads the model's pre-quantized 4-bit MLX export
   (`mlxRepo` in the registry) into `~/.tau/agent/cache/tiny-models/mlx/` with per-byte progress,
   loads it with `mlx_lm.load`, and speaks the exact protocol the ONNX worker speaks, so titles,
-<<<<<<< ours — scope `- **MLX backend (Apple silicon)**: `PI_TINY_D...` in heading `Runtime / environment findings` (F, confidence: medium)
 // refused_by: statement_fold · collision: none (1 contested hunk(s), neither side deleted the other's lines)
   memory completions, and the `auto` thinking classifier all work unchanged and the Python process
   is the only process involved. `PI_TINY_DTYPE` is ignored. If the venv bootstrap fails (no Python,
   install error, non-Apple host) tau logs a warning and uses the ONNX CPU worker for the rest of
-=======
-  memory completions, and local typed judgments use the same backend. Inference runs in the
-  Python worker. `PI_TINY_DTYPE` is ignored by MLX. If the venv bootstrap fails (no Python,
-  install error, non-Apple host) omp logs a warning and uses the ONNX CPU worker for the rest of
->>>>>>> theirs — scope `- **MLX backend (Apple silicon)**: `PI_TINY_D...`
   the process. Measured on an M4 Max: cold venv install + LFM2.5-230M download + load 15.7s; a
   second tau instance attaches to a running worker in well under a second; titles 15–60ms after
   warmup; Qwen3-1.7B (blocked on onnxruntime-node) downloads 984MB and answers a memory
@@ -156,12 +131,8 @@ The tiny-model CLI and source registry retain **title** and **memory** groupings
 | LFM2.5-350M        | 292MB |     166 / 266ms |      4/30 | Aggressively terse, often a one-word label      |
 
 **Shipped local options**: `lfm2.5-230m`, `lfm2.5-350m`, `falcon-h1-90m`.
-<<<<<<< ours — scope `When `modelRoles.tiny` is unset, title genera...` in heading `Task 1: Session title generation (`modelRoles.tiny`)` (S, confidence: medium)
 // refused_by: statement_fold · collision: `When `modelRoles.tiny` is unset, title generation resolves its …`
 When `modelRoles.tiny` is unset, title generation resolves its built-in online role path; no local weights are downloaded automatically. The default download for a bare `tau tiny-models` command is `lfm2.5-230m`.
-=======
-When `modelRoles.tiny` is unset, title generation resolves its built-in online role path; no local weights are downloaded automatically. A local primary is an explicit no-billing boundary: if its worker fails or returns no title, the session stays untitled instead of falling through to an online model. The default download for a bare `omp tiny-models` command is `lfm2.5-230m`.
->>>>>>> theirs — scope `When `modelRoles.tiny` is unset, title genera...`
 
 ## Task 2: Mnemotau memory (`modelRoles.memory`)
 
@@ -185,23 +156,7 @@ The robust fix is a **one-item-per-line output format** (consumed by Mnemotau's 
 or a **flat JSON array of strings**. Every model also over-extracts pure small talk; an explicit
 chit-chat → NONE example is the best mitigation.
 
-<<<<<<< ours — heading `Extraction findings` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
-=======
-### Extraction findings
-
-The experiments exposed two problems with the stock 5-category JSON prompt:
-
-1. The all-empty example `{"facts":[],...}` was **copied verbatim**, producing no facts.
-2. Object-valued category entries previously became `[object Object]`.
-
-The managed memory path now puts extraction instructions in a system turn and the raw
-message in the user turn, for both local and online models. It requests **one plain-text
-fact per line**, or exactly `NO_FACTS` for greetings and other nonpersistent content.
-The current parser also accepts structured category objects with string entries or
-recognized text fields; it no longer coerces arbitrary objects to strings.
-
->>>>>>> theirs — heading `Extraction findings` (S+F, confidence: low)
 ### Technique polarity flips vs titles
 
 - At 1B+, **few-shot is the dominant quality lever**: e.g. Qwen2.5-1.5B extraction F1 0.52 → 0.83
@@ -247,15 +202,12 @@ from object-valued entries rather than returning `[object Object]`. The plain-li
 fallback still ignores lines of 10 characters or fewer, so a short fact such as
 `Name: Can` is discarded; structured string entries do not have that length gate.
 
-<<<<<<< ours — heading `Known Mnemopi parser bugs (surfaced by these experiments)` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 ### Known Mnemotau parser bugs (surfaced by these experiments)
 
 - `String(item)` produces `[object Object]` on object array items.
 - The line-fallback drops items `<=10` chars, so a correct short fact like `Name: Can` is discarded.
 
-=======
->>>>>>> theirs — heading `Known Mnemopi parser bugs (surfaced by these experiments)` (S+F, confidence: low)
 ## Local speech and dictation models
 
 The `speech` role accepts TTS catalog models and the `dictation` role accepts STT catalog models. `tau setup speech` offers the local entries accepted by those roles, persists the selected `modelRoles.speech` and `modelRoles.dictation` values, and downloads their model/runtime files.
@@ -289,15 +241,8 @@ In Tern, click the microphone beside Send, speak when **Recording · Stop** appe
 ## Integration notes
 
 - Local tiny inference for title, memory, or judgment workloads is selected with a `local/<model-id>` role assignment. An unset `tiny` role stays on its online default; an unset `memory` role follows the effective `tiny` role and can therefore become local when `tiny` is local. Unset `speech` and `dictation` roles use their own built-in priority lists, whose first candidates are local.
-<<<<<<< ours — heading `Integration notes` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 - Local inference runs **in a worker** (off the main thread); weights are downloaded only when a local candidate is used or explicitly prefetched with `tau tiny-models` or `tau setup speech`, then cached on disk.
 - Session-title generation uses `modelRoles.tiny`; Mnemotau extraction and consolidation use `modelRoles.memory` when its LLM mode is enabled. Their distinct prompts and benchmark groups do not impose separate runtime model types.
 - Auto-thinking, Smart unexpected-stop detection, typed Eval judgments, and AI-assisted git staging use the `judge` role. Assign `typesafe/jev-latest` for TypeSafe or a compatible local tiny model for on-device judgment; order alternatives under `retry.fallbackChains.judge`.
 - The memory local path applies the refined line-format and small-talk-guarded extraction prompt plus the hardened consolidation prompt; selecting an online chat model for the role keeps the online transport path.
-=======
-- Local inference runs **in a worker** (off the main thread); weights are downloaded only when a local candidate is used or explicitly prefetched with `omp tiny-models` or `omp setup speech`, then cached on disk.
-- Session-title generation uses `modelRoles.tiny`; Mnemopi extraction and consolidation use `modelRoles.memory` when its LLM mode is enabled. Their distinct prompts and benchmark groups do not impose separate runtime model types.
-- Auto-thinking, Smart unexpected-stop detection, typed Eval judgments, and AI-assisted git staging use the `judge` role. Assign `typesafe/jev-1.14.0` for TypeSafe or a compatible local tiny model for on-device judgment; order alternatives under `retry.fallbackChains.judge`.
-- Managed memory extraction uses the shared line-format, small-talk-guarded system prompt on both local and online transports. A local primary additionally selects the local consolidation prompt. Explicit external Mnemopi endpoints remain authoritative instead of being replaced by the memory role.
->>>>>>> theirs — heading `Integration notes` (F, confidence: medium)

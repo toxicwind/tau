@@ -13,22 +13,12 @@ import {
 	type Message,
 	type Model,
 	retryTransientCompletion,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { writeThroughActiveTerminal } from "@oh-my-pi/pi-tui";`
 } from "@tau/tau-ai";
 import { StreamMarkupHealing } from "@tau/tau-ai/utils/stream-markup-healing";
 import { writeThroughActiveTerminal } from "@tau/tau-tui";
 import { SPINNER_FRAMES } from "@tau/tau-tui/theme/symbols";
 import { $env, isTerminalHeadless, isWsl, logger, prompt } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-ai";
-import { StreamMarkupHealing } from "@oh-my-pi/pi-ai/utils/stream-markup-healing";
-import { writeTerminalSequence } from "@oh-my-pi/pi-tui";
-import { isNativeRendering, onNativeRenderingChange } from "@oh-my-pi/pi-tui/native/state";
-import { theme } from "@oh-my-pi/pi-tui/theme";
-import { SPINNER_FRAMES } from "@oh-my-pi/pi-tui/theme/symbols";
-import { $env, isTerminalHeadless, isWsl, logger, prompt } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/utils/title-generator.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { ModelRegistry } from "../config/model-registry";
 
 import { roleCandidatePool } from "../config/model-roles";

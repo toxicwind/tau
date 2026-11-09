@@ -22,27 +22,12 @@ import {
 	recordManualChatTelemetry,
 	resolveTelemetry,
 	type TelemetryHookContext,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import type { AgentContext, AgentEvent, AgentLoopConfig, AgentM…` +1 more
 } from "@tau/tau-agent-core/telemetry";
 import type { AgentContext, AgentEvent, AgentLoopConfig, AgentMessage, AgentTool } from "@tau/tau-agent-core/types";
 import type { Message } from "@tau/tau-ai";
 import { createMockModel } from "@tau/tau-ai/providers/mock";
 import type { EventStream } from "@tau/tau-ai/utils/event-stream";
-=======
-} from "@oh-my-pi/pi-agent-core/telemetry";
-import type {
-	AgentContext,
-	AgentEvent,
-	AgentLoopConfig,
-	AgentMessage,
-	AgentTool,
-	StreamFn,
-} from "@oh-my-pi/pi-agent-core/types";
-import type { Message } from "@oh-my-pi/pi-ai";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { AssistantMessageEventStream, type EventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/agent/test/otel.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { context, SpanStatusCode, trace } from "@opentelemetry/api";
 import { AsyncLocalStorageContextManager } from "@opentelemetry/context-async-hooks";
 import {

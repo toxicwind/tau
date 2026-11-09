@@ -1,5 +1,4 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 import { buildRequest } from "@tau/tau-ai/providers/google-gemini-cli";
 import { convertTools } from "@tau/tau-ai/providers/google-shared";
@@ -19,27 +18,6 @@ import {
 	upgradeJsonSchemaTo202012,
 } from "@tau/tau-ai/utils/schema";
 import { buildModel } from "@tau/tau-catalog/build";
-=======
-import { buildRequest } from "@oh-my-pi/pi-ai/providers/google-gemini-cli";
-import { convertTools } from "@oh-my-pi/pi-ai/providers/google-shared";
-import type { Context, Model, TJsonSchema, Tool } from "@oh-my-pi/pi-ai/types";
-import {
-	enforceStrictSchema,
-	mergeCompatibleEnumSchemas,
-	normalizeSchemaForCCA,
-	normalizeSchemaForFactoryDroid,
-	normalizeSchemaForGoogle,
-	normalizeSchemaForMCP,
-	normalizeSchemaForMoonshot,
-	sanitizeSchemaForOpenAIResponses,
-	sanitizeSchemaForStrictMode,
-	schemaNeedsDraft202012Upgrade,
-	stripResidualCombiners,
-	tryEnforceStrictSchema,
-	upgradeJsonSchemaTo202012,
-} from "@oh-my-pi/pi-ai/utils/schema";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/test/schema-normalization.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function createGoogleCliModel(id: string): Model<"google-gemini-cli"> {
 	return buildModel({

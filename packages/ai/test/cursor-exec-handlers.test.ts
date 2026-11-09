@@ -32,17 +32,10 @@ import {
 	ReadRejectedSchema,
 	ReadResultSchema,
 	ReadSuccessSchema,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 } from "@tau/tau-catalog/discovery/cursor-proto";
 import { create, encodeJsonValue } from "@tau/tau-catalog/discovery/protobuf";
 import { logger } from "@tau/tau-utils";
-=======
-	ShellArgsSchema,
-} from "@oh-my-pi/pi-catalog/discovery/cursor-proto";
-import { create, encodeJsonValue } from "@oh-my-pi/pi-catalog/discovery/protobuf";
-import { logger } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/ai/test/cursor-exec-handlers.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 afterEach(() => {
 	vi.restoreAllMocks();

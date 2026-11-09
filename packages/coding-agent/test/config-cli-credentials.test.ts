@@ -24,14 +24,9 @@ describe("credential settings", () => {
 	it("classifies UI-visible credentials through the same marker", () => {
 		// One field, not two: there is no separate UI-only masking flag that could
 		// drift away from this classification.
-<<<<<<< ours — test_suite `credential settings` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 		for (const path of ["mnemotau.embeddingApiKey", "mnemotau.llmApiKey"] as const) {
 			expect(isCredential(path)).toBe(true);
-=======
-		for (const path of ["mnemopi.embeddingApiKey", "mnemopi.llmApiKey"] as const) {
-			expect(lookup(path)?.isCredential).toBe(true);
->>>>>>> theirs — test_suite `credential settings` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/config-cli-credentials.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 		}
 	});
 

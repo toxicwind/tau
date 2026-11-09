@@ -1,6 +1,5 @@
 import { describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { Settings } from "tau/config/settings";
 import { CONTEXT_NOTES_ENTRY_TYPE, getContextNotes, MAX_CONTEXT_NOTES_BYTES } from "tau/session/context-notes";
@@ -10,24 +9,6 @@ import { SessionManager } from "tau/session/session-manager";
 import { ContextNotesTool, NewContextTool } from "tau/tools/context-notes";
 import type { ToolSession } from "tau/tools/index";
 import { TempDir } from "@tau/tau-utils";
-=======
-import { convertOpenAICodexResponsesTools } from "@oh-my-pi/pi-ai/providers/openai-codex-responses";
-import { isJsonSchemaValueValid } from "@oh-my-pi/pi-ai/utils/schema";
-import { validateToolCall } from "@oh-my-pi/pi-ai/utils/validation";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import {
-	CONTEXT_NOTES_ENTRY_TYPE,
-	getContextNotes,
-	MAX_CONTEXT_NOTES_BYTES,
-} from "@oh-my-pi/pi-coding-agent/session/context-notes";
-import type { ContextNotesEntry } from "@oh-my-pi/pi-coding-agent/session/context-notes";
-import type { CustomEntry, ResetBoundaryEntry, SessionEntry } from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { ContextNotesTool, NewContextTool } from "@oh-my-pi/pi-coding-agent/tools/context-notes";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools/index";
-import { TempDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/context-notes.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 import { cfgCompactionExperimentalContextManagement } from "@oh-my-pi/pi-coding-agent/session/context-settings";
 

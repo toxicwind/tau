@@ -1,22 +1,6 @@
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { tryParseJson } from "@oh-my-pi/pi-utils";`
 import { tryParseJson } from "@tau/tau-utils";
 import { buildResult, formatIsoDate, loadPage, type RenderResult, type SpecialHandler } from "./types";
-=======
-/**
- * Reddit reader for posts, comment threads, subreddit listings and user pages.
- *
- * Reddit refuses its JSON API to many networks ("blocked by network security"), so a read tries
- * three sources in order and renders the first that answers:
- * 1. Reddit's JSON API: live and authoritative.
- * 2. A Redlib mirror: live HTML of the same path, scraped.
- * 3. The Arctic Shift archive: Reddit-shaped JSON; scores and the newest comments may lag.
- */
-import { logger, tryParseJson } from "@oh-my-pi/pi-utils";
-import { type Element, parseHTML } from "@oh-my-pi/pi-utils/dom";
-import { ToolAbortError } from "../../tools/tool-errors";
-import { buildResult, formatIsoDate, htmlToBasicMarkdown, loadPage, type SpecialHandler } from "./types";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/web/scrapers/reddit.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const REDDIT_ORIGIN = "https://www.reddit.com";
 /** Serves non-browser user agents; most public Redlib instances answer with an Anubis challenge or 429. */

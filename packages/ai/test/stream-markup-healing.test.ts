@@ -1,5 +1,4 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { type Dialect, getDialectDefinition, type InbandScanEvent, ThinkingInbandScanner } from "@tau/tau-ai/dialect";
 import { streamGoogleGeminiCli } from "@tau/tau-ai/providers/google-gemini-cli";
@@ -10,24 +9,6 @@ import { getStreamMarkupHealingPattern, StreamMarkupHealing } from "@tau/tau-ai/
 import { buildModel } from "@tau/tau-catalog/build";
 import { getBundledModel } from "@tau/tau-catalog/models";
 import { INTENT_FIELD } from "@tau/tau-wire";
-=======
-import {
-	type Dialect,
-	getDialectDefinition,
-	type InbandScanEvent,
-	ThinkingInbandScanner,
-} from "@oh-my-pi/pi-ai/dialect";
-import { streamGoogleGeminiCli } from "@oh-my-pi/pi-ai/providers/google-gemini-cli";
-import { streamOpenAICompletions } from "@oh-my-pi/pi-ai/providers/openai-completions";
-import { stream } from "@oh-my-pi/pi-ai/stream";
-import type { Context, FetchImpl, Model, TextContent, ThinkingContent, Tool, ToolCall } from "@oh-my-pi/pi-ai/types";
-import { getStreamMarkupHealingPattern, StreamMarkupHealing } from "@oh-my-pi/pi-ai/utils/stream-markup-healing";
-import { stripDsmlToolMarkup } from "@oh-my-pi/pi-ai/utils/dsml-leak";
-import { validateToolArguments } from "@oh-my-pi/pi-ai/utils/validation";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { INTENT_FIELD } from "@oh-my-pi/pi-wire";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/test/stream-markup-healing.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 interface SseToolCallDelta {
 	index: number;

@@ -8,35 +8,12 @@
 
 import * as fs from "node:fs/promises";
 import path from "node:path";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { AgentBusyError, EventLoopKeepalive, recordHandoff, res…` +2 more
 import type { AgentEvent, AgentIdentity, AgentMessage, AgentTelemetryConfig } from "@tau/tau-agent-core";
 import { AgentBusyError, EventLoopKeepalive, recordHandoff, resolveTelemetry } from "@tau/tau-agent-core";
 import type { Api, Model, ServiceTierByFamily, Usage } from "@tau/tau-ai";
 import { logger, popLoopPhase, prompt, pushLoopPhase, untilAborted } from "@tau/tau-utils";
 import { ASYNC_JOB_MANAGER_SHUTDOWN_REASON, AsyncJobError, AsyncJobManager, type AsyncJobRunResult } from "../async";
-=======
-import type { AgentEvent, AgentIdentity, AgentMessage, AgentTelemetryConfig } from "@oh-my-pi/pi-agent-core";
-import { AgentBusyError, recordHandoff, resolveTelemetry } from "@oh-my-pi/pi-agent-core";
-import type { Api, Model, ServiceTierByFamily, Usage } from "@oh-my-pi/pi-ai";
-import { isCursorExecResolved } from "@oh-my-pi/pi-ai/utils/block-symbols";
-import {
-	isRecord,
-	logger,
-	popLoopPhase,
-	postmortem,
-	prompt,
-	pushLoopPhase,
-	sanitizeText,
-	untilAborted,
-} from "@oh-my-pi/pi-utils";
-import {
-	ASYNC_JOB_MANAGER_SHUTDOWN_REASON,
-	AsyncJobError,
-	type AsyncJobManagerApi,
-	type AsyncJobRunResult,
-} from "../async";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/task/executor.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { Rule } from "../capability/rule";
 import type { EffectiveExtensionRoots } from "../capability/types";
 import { ModelRegistry } from "../config/model-registry";
@@ -77,14 +54,9 @@ import { buildSkillPromptMessage, type Skill } from "../extensibility/skills";
 import type { HindsightSessionStateApi } from "../hindsight/state";
 import type { LocalProtocolOptions } from "../internal-urls";
 import { IrcBus } from "../irc/bus";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { AgentBusyError, EventLoopKeepalive, recordHandoff, res…` +2 more
 import type { MCPManager } from "../mcp/manager";
 import type { MnemotauSessionState } from "../mnemotau/state";
-=======
-import type { MCPManagerApi, MCPToolScope } from "../mcp/manager";
-import type { MnemopiSessionStateApi } from "../mnemopi/state";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import { initializeExtensions } from "../modes/runtime-init";
 import subagentAsyncPendingTemplate from "../prompts/system/subagent-async-pending.md" with { type: "text" };
 import subagentSystemPromptTemplate from "../prompts/system/subagent-system-prompt.md" with { type: "text" };
@@ -110,18 +82,10 @@ import type { AgentSessionDisposeOptions } from "../session/agent-session-types"
 import { type ArtifactManagerApi, writeArtifact } from "../session/artifacts";
 import { ASYNC_RESULT_MESSAGE_TYPE } from "../session/async-job-delivery";
 import type { AuthStorage } from "../session/auth-storage";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { AgentBusyError, EventLoopKeepalive, recordHandoff, res…` +2 more
 import { SKILL_PROMPT_MESSAGE_TYPE, USER_INTERRUPT_LABEL } from "../session/messages";
 import { extractSessionInit, hasConversationalHistory, SessionManager } from "../session/session-manager";
 import { truncateTail } from "@tau/tau-tui/tools/streaming-output";
-=======
-import { type CostCapRefusal, CostCapError, type CostGateApi } from "../session/cost-gate";
-import { INTERRUPTED_TURN_ERROR } from "../session/exit-diagnostics";
-import { SKILL_PROMPT_MESSAGE_TYPE } from "../session/messages";
-import { hasConversationalHistory, SessionManager } from "../session/session-manager";
-import { truncateTail } from "@oh-my-pi/pi-tui/tools/streaming-output";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import {
 	AUTO_THINKING,
 	assertModelSupportsEffortCeiling,
@@ -176,45 +140,10 @@ import {
 	type StructuredSubagentSchemaSource,
 	type TaskToolDetails,
 	type YieldItem,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { AgentBusyError, EventLoopKeepalive, recordHandoff, res…` +2 more
 } from "@tau/tau-tui/tools/task";
 import { arrayValuedLabels } from "./yield-assembly";
 import { assembleYieldResult } from "@tau/tau-tui/tools/task-yield-assembly";
-=======
-} from "@oh-my-pi/pi-tui/tools/task";
-import { yieldSectionShapes } from "./yield-assembly";
-import { assertPerCallModelApproved, PerCallModelError, type PerCallModelGrants } from "./model-approval";
-import { assembleYieldResult } from "@oh-my-pi/pi-tui/tools/task-yield-assembly";
-import {
-	cfgTaskPrewalk,
-	cfgTaskAgentPrewalk,
-	cfgTaskMaxEffort,
-	cfgTaskSoftRequestBudgetNotice,
-	cfgTaskSoftRequestBudget,
-	cfgTaskAgentSoftRequestBudget,
-	cfgTaskAgentIdleTtlMs,
-	cfgTaskMaxRuntimeMs,
-	cfgTaskMaxRecursionDepth,
-	cfgTaskAgentAdvisor,
-	cfgTaskAgentAccountPools,
-} from "./settings";
-import {
-	cfgTierSubagent,
-	cfgTierGoogle,
-	cfgTierAnthropic,
-	cfgTierOpenai,
-	cfgRetryFallbackChains,
-	cfgDefaultThinkingLevel,
-} from "../session/settings";
-import { cfgDisabledProviders } from "../config/model-settings";
-import { getRetryFallbackRole, installRetryFallbackRole } from "../session/retry-fallback-chains";
-import {
-	cfgCompactionModelThresholdsEnabled,
-	cfgCompactionThresholdPercent,
-	cfgCompactionThresholdTokens,
-} from "../session/context-settings";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 
 export type { YieldItem } from "@tau/tau-tui/tools/task";
 
@@ -642,11 +571,7 @@ export interface ExecutorOptions {
 	parentArtifactManager?: ArtifactManagerApi;
 	parentHindsightSessionState?: HindsightSessionStateApi;
 	parentMnemotauSessionState?: MnemotauSessionState;
-<<<<<<< ours — scope `parentMnemopiSessionState` in interface `ExecutorOptions`, deleted in ours (S, confidence: medium)
 // refused_by: container_member · collision: none (no common ancestor text)
-=======
-	parentMnemopiSessionState?: MnemopiSessionStateApi;
->>>>>>> theirs — scope `parentMnemopiSessionState` deleted in ours
 	/**
 	 * Parent agent's OpenTelemetry configuration. When defined, the subagent's
 	 * loop is started with the same tracer/hooks but its own agent identity
@@ -4457,7 +4382,6 @@ function createWarmSubagentReviver(capture: WarmReviveCapture): AgentReviver {
  * read from `options.settings`; a call without settings runs here.
  */
 export async function runSubprocess(options: ExecutorOptions): Promise<SingleResult> {
-<<<<<<< ours — function `runSubprocess (body partly extracted into compactionThresholdSettings, driveSessionToResult, runFollowUpTurnOnThisThread, driveFollowUpTurn, buildSubagentSessionOptions, refreshSubagentIrcRoot, createWarmSubagentReviver, runSubprocessOnThisThread)` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `systemPrompt: defaultPrompt => {` +31 more
 	const {
 		cwd,
@@ -5480,10 +5404,6 @@ export async function runSubprocess(options: ExecutorOptions): Promise<SingleRes
 	});
 	AgentRegistry.global().setHistory(id, { outputPath: result.outputPath });
 	return result;
-=======
-	const pool = isMainThread() && options.settings ? subagentWorkerPool(options.settings) : undefined;
-	return pool ? runSubprocessPlaced(pool, options, runSubprocessOnThisThread) : runSubprocessOnThisThread(options);
->>>>>>> theirs — function `runSubprocess (body partly extracted into compactionThresholdSettings, driveSessionToResult, runFollowUpTurnOnThisThread, driveFollowUpTurn, buildSubagentSessionOptions, refreshSubagentIrcRoot, createWarmSubagentReviver, runSubprocessOnThisThread)` (S+F, confidence: low)
 }
 
 /** A routed {@link runSubprocess} call as it crosses into a worker. */

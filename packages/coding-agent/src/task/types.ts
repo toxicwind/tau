@@ -6,16 +6,10 @@ export {
 export type {
 	SubagentProgressPayload,
 	SubagentLifecyclePayload,
-<<<<<<< ours — interstitial `between:packages/coding-agent/src/task/types.ts::export::SubagentLifecyclePayload:packages/coding-agent/src/task/types.ts::function::parseNumber` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { type BaseType, type } from "@oh-my-pi/omptype";` +1 more
 } from "@tau/tau-tui/overlays/session-observer-registry";
 import { type BaseType, type } from "@tau/tautype";
 import { $env } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-tui/overlays/session-observer-registry";
-import { type BaseType, type FluentType, type } from "@oh-my-pi/omptype";
-import { $env, isRecord } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `between:packages/coding-agent/src/task/types.ts::export::SubagentLifecyclePayload:packages/coding-agent/src/task/types.ts::function::parseNumber` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/task/types.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 import type { AgentSessionEvent } from "../session/agent-session";
 import type { ConfiguredThinkingLevel } from "@tau/tau-tui/thinking";

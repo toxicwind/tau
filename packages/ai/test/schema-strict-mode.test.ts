@@ -1,13 +1,7 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { type } from "@tau/tautype";
 import type { Tool, ToolCall } from "@tau/tau-ai/types";
-=======
-import { type } from "@oh-my-pi/omptype";
-import { formatLocalRefPointer, parseLocalRefPointer } from "@oh-my-pi/omptype";
-import type { Tool, ToolCall } from "@oh-my-pi/pi-ai/types";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/test/schema-strict-mode.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	adaptSchemaForStrict,
 	arkToWireSchema,

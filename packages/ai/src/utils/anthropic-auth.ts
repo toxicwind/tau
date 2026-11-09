@@ -8,18 +8,9 @@
  * `authStorage.getApiKey("anthropic", sessionId)` first, then pass the result
  * through {@link buildAnthropicAuthConfig} for header/URL shaping.
  */
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { $env } from "@tau/tau-utils";
 import { buildAnthropicHeaders, resolveAnthropicCustomHeadersForBaseUrl } from "../providers/anthropic";
-=======
-import { $env } from "@oh-my-pi/pi-utils";
-import {
-	buildAnthropicHeaders,
-	mergeHeaders,
-	resolveAnthropicCustomHeadersForBaseUrl,
-} from "../providers/anthropic-headers";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/ai/src/utils/anthropic-auth.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { normalizeAnthropicBaseUrl } from "../providers/anthropic-state";
 import { isFoundryEnabled } from "./foundry";
 

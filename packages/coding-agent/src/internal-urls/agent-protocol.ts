@@ -20,25 +20,12 @@
  */
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { isEnoent } from "@oh-my-pi/pi-utils";`
 import { isEnoent } from "@tau/tau-utils";
 import { AgentRegistry } from "../registry/agent-registry";
 import { ensurePersistedRoster } from "../registry/persisted-agents";
 import { executeSend, isIrcEnabled } from "../irc/messaging";
 import { describeForeignAgents, findForeignAgents, foreignArtifactDirs } from "../registry/world-registry-bridge";
-=======
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { fuzzyFilter } from "@oh-my-pi/pi-tui/fuzzy";
-import { formatDuration, isEnoent, prompt } from "@oh-my-pi/pi-utils";
-import { type AgentRef, AgentRegistry, type AgentRegistryApi } from "../registry/agent-registry";
-import { ensurePersistedRoster } from "../registry/persisted-agents";
-import { executeSend, isIrcEnabled } from "../irc/messaging";
-import agentPromptDoc from "../prompts/internal-urls/agent.md" with { type: "text" };
-import agentProgressTemplate from "../prompts/tools/agent-url-progress.md" with { type: "text" };
-import agentSupersededTemplate from "../prompts/tools/agent-url-superseded.md" with { type: "text" };
-import { loadSessionMessagesReadOnly } from "../session/session-loader";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/internal-urls/agent-protocol.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { artifactsDirsFromRegistry } from "./registry-helpers";
 import type {
 	InternalResource,
@@ -225,7 +212,6 @@ export class AgentProtocolHandler implements ProtocolHandler {
 
 		const extraction = hasPathExtraction(url);
 
-<<<<<<< ours — scope `resolve` in class `AgentProtocolHandler` (F, confidence: medium)
 // refused_by: container_member · collision: `throw new Error("No session - agent outputs unavailable");` +1 more
 		const registry = AgentRegistry.global();
 		const rootSessionFile = context?.sessionFile
@@ -260,24 +246,6 @@ export class AgentProtocolHandler implements ProtocolHandler {
 					? `No artifacts directory found for ${outputId}; the peer ${describeForeignAgents(foreign)} has no readable transcript.`
 					: "No session - agent outputs unavailable",
 			);
-=======
-		const dirs = await this.#outputDirs(context);
-		const scan = dirs.length > 0 ? await this.#findOutput(dirs, outputId) : undefined;
-		const registry = context?.agentRegistry ?? AgentRegistry.global();
-		if (!scan?.foundPath) {
-			// No published output yet. A registered agent (running, idle after a
-			// non-terminal yield, or parked before publishing) is the same
-			// registry `write agent://<id>` delivers to: answer with its progress.
-			const ref = registry.get(outputId);
-			if (ref && ref.kind !== "advisor") return this.#resolveProgress(url, ref, extraction);
-			if (!scan) throw new Error("No session - agent outputs unavailable");
-			if (!scan.anyDirExists) throw new Error("No artifacts directory found");
-			const registered = registry
-				.list()
-				.filter(candidate => candidate.kind !== "advisor")
-				.map(candidate => candidate.id);
-			throw notFoundError(outputId, [...scan.availableIds, ...registered]);
->>>>>>> theirs — scope `resolve`
 		}
 
 		const pathSegments = extraction ? url.pathname.split("/").filter(Boolean) : [];
@@ -289,7 +257,6 @@ export class AgentProtocolHandler implements ProtocolHandler {
 			}
 		});
 
-<<<<<<< ours — scope `resolve` in class `AgentProtocolHandler` (F, confidence: medium)
 // refused_by: container_member · collision: `throw new Error("No session - agent outputs unavailable");` +1 more
 		const scan = await this.#findOutput(dirs, outputId);
 		if (!scan.anyDirExists) {
@@ -305,8 +272,6 @@ export class AgentProtocolHandler implements ProtocolHandler {
 				foreign.length > 0 ? `\nRunning in another tau process: ${describeForeignAgents(foreign)}` : "";
 			throw new Error(`Not found: ${outputId}\nAvailable: ${availableStr}${peerHint}`);
 		}
-=======
->>>>>>> theirs — scope `resolve`
 		const rawContent = await Bun.file(scan.foundPath).text();
 		const notes: string[] = [];
 		let content = rawContent;

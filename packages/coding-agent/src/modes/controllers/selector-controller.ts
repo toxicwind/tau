@@ -1,4 +1,3 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { Model, PASTE_CODE_LOGIN_PROVIDERS as PasteCodeLog…` +14 more
 import { type AgentMessage, type AgentToolResult, ThinkingLevel } from "@tau/tau-agent-core";
 import type { CompactionOutcome } from "@tau/tau-agent-core/compaction";
@@ -9,25 +8,6 @@ import * as vcs from "@tau/tau-natives/vcs";
 import type { Component, OverlayHandle, ResizeScrollbackMode } from "@tau/tau-tui";
 import { Loader, Spacer, setTuiTight, Text } from "@tau/tau-tui";
 import { getAgentDbPath, getAgentDir, getProjectDir, normalizePathForComparison, sanitizeText } from "@tau/tau-utils";
-=======
-import { type AgentMessage, type AgentToolResult, ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { CompactionOutcome } from "@oh-my-pi/pi-agent-core/compaction";
-import type { Model, UsageReport } from "@oh-my-pi/pi-ai";
-import type { OAuthProvider } from "@oh-my-pi/pi-ai/oauth/types";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import type { Component, OverlayHandle } from "@oh-my-pi/pi-tui";
-import { Loader, Spacer, Text } from "@oh-my-pi/pi-tui";
-import { formatKeyHint } from "@oh-my-pi/pi-tui/app-keybindings";
-import { appKey, editorKey } from "@oh-my-pi/pi-tui/chrome/keybinding-hints";
-import {
-	getAgentDbPath,
-	getAgentDir,
-	getProjectDir,
-	logger,
-	normalizePathForComparison,
-	sanitizeText,
-} from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/modes/controllers/selector-controller.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	ADVISOR_DEFAULT_TOOL_NAMES,
 	discoverAdvisorConfigs,
@@ -61,7 +41,6 @@ import {
 	getPluginsCacheDir,
 	MarketplaceManager,
 } from "../../extensibility/plugins/marketplace";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { Model, PASTE_CODE_LOGIN_PROVIDERS as PasteCodeLog…` +14 more
 import {
 	getAvailableThemes,
@@ -74,16 +53,6 @@ import {
 	theme,
 } from "@tau/tau-tui/theme";
 import type { AgentHubOpenOptions, InteractiveModeContext } from "../../modes/types";
-=======
-import { getAvailableThemes, getSymbolTheme, previewTheme, theme } from "@oh-my-pi/pi-tui/theme";
-import type {
-	AgentHubOpenOptions,
-	InteractiveModeContext,
-	ResumeSessionOptions,
-	SelectOnlyModelSelectorOptions,
-	SessionPickHandler,
-} from "../../modes/types";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import type { SessionOAuthAccountList } from "../../session/agent-session-types";
 import type { ResetCreditAccountStatus, ResetCreditRedeemOutcome } from "../../session/auth-storage";
 import {
@@ -101,14 +70,9 @@ import { findSessionContinuation, readSessionInfo, type SessionInfo } from "../.
 import { SessionManager } from "../../session/session-manager";
 import { loadPinnedSessionIds, setSessionPinned } from "../../session/session-pins";
 import { FileSessionStorage } from "../../session/session-storage";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { Model, PASTE_CODE_LOGIN_PROVIDERS as PasteCodeLog…` +14 more
 import { toLogoutAccounts } from "../../slash-commands/helpers/logout";
 import type { LogoutAccount } from "@tau/tau-tui/overlays/logout-account-selector";
-=======
-import { listLogoutAccounts, logoutCredential } from "../../slash-commands/helpers/logout";
-import type { LogoutAccount } from "@oh-my-pi/pi-tui/overlays/logout-account-selector";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import { describeRedeemOutcome, toResetUsageAccounts } from "../../slash-commands/helpers/reset-usage";
 import { toSessionPinAccounts } from "../../slash-commands/helpers/session-pin";
 import {
@@ -125,7 +89,6 @@ import {
 	parseConfiguredThinkingLevel,
 } from "@tau/tau-tui/thinking";
 import type { ToolSession } from "../../tools";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { Model, PASTE_CODE_LOGIN_PROVIDERS as PasteCodeLog…` +14 more
 import { AskTool, type AskToolInput } from "../../tools/ask";
 import { type AskToolDetails } from "@tau/tau-tui/tools/ask";
@@ -176,46 +139,6 @@ import { ToolExecutionComponent } from "@tau/tau-tui/chat/tool-execution";
 import { TranscriptBlock } from "@tau/tau-tui/chrome/transcript-container";
 import { TreeSelectorComponent } from "@tau/tau-tui/overlays/tree-selector";
 import { UsageDashboardComponent } from "@tau/tau-tui/overlays/usage-dashboard";
-=======
-import { AskTool } from "../../tools/ask";
-import { type AskToolDetails } from "@oh-my-pi/pi-tui/tools/ask";
-import { sanitizeDisplayWarnings, shortenPath } from "@oh-my-pi/pi-tui/render/render-utils";
-import { sanitizeErrorLine } from "@oh-my-pi/pi-tui/chrome/error-block";
-import { ToolAbortError } from "../../tools/tool-errors";
-import { captureBrowserSession } from "../../utils/browser-session";
-import { copyToClipboard } from "../../utils/clipboard";
-import { openPath } from "../../utils/open";
-import { setSessionTerminalTitle } from "../../utils/title-generator";
-import { getAssistantMessageLinkTargets } from "@oh-my-pi/pi-tui/prompt/interactive-context-helpers";
-import { type AdvisorConfigDeps, AdvisorConfigOverlayComponent } from "@oh-my-pi/pi-tui/overlays/advisor-config";
-import { createAgentsHubDeps } from "../agents-hub-deps";
-import { getEditorCommand, openInEditor } from "../../utils/external-editor";
-import { collapseSharedUsageReports } from "@tau/tau-tui/overlays/usage-display";
-import { limitMatchesActiveAccount } from "../../slash-commands/helpers/active-oauth-account";
-import { AgentHubOverlayComponent } from "@tau/tau-tui/overlays/agent-hub";
-import { createAgentHubRuntime } from "../agent-hub-runtime";
-import { AgentsHubComponent } from "@oh-my-pi/pi-tui/overlays/agents-hub";
-import { CopySelectorComponent } from "@oh-my-pi/pi-tui/overlays/copy-selector";
-import { ExtensionDashboard } from "@oh-my-pi/pi-tui/overlays/extensions/extension-dashboard";
-import { listLiveToolRecords, liveToolRecordFromSession } from "@oh-my-pi/pi-tui/overlays/extensions/live-tool-session";
-import { createExtensionDashboardRuntime } from "../components/extensions/dashboard-runtime";
-import { HistorySearchComponent } from "@oh-my-pi/pi-tui/overlays/history-search";
-import { HookEditorComponent } from "@oh-my-pi/pi-tui/overlays/hook-editor";
-import { ModelHubComponent, type ModelRoleSelectionScope } from "@oh-my-pi/pi-tui/overlays/model-hub";
-import { createModelBrowserSource } from "../model-browser-source";
-import { formatSessionContinuationNotice } from "../persistence-failure";
-import { ModelPickerComponent } from "@oh-my-pi/pi-tui/overlays/model-picker";
-import { PluginSelectorComponent } from "@oh-my-pi/pi-tui/overlays/plugin-selector";
-import { type ResetUsageAccount, ResetUsageSelectorComponent } from "@oh-my-pi/pi-tui/overlays/reset-usage-selector";
-import { type BranchVariantPath, RewindSelectorComponent } from "@oh-my-pi/pi-tui/overlays/rewind-selector";
-import { SessionAccountSelectorComponent } from "@oh-my-pi/pi-tui/overlays/session-account-selector";
-import { SessionSelectorComponent, type SessionSelectorOptions } from "@oh-my-pi/pi-tui/overlays/session-selector";
-import { SettingsSelectorComponent } from "@oh-my-pi/pi-tui/overlays/settings-selector";
-import { TranscriptBlock } from "@oh-my-pi/pi-tui/chrome/transcript-container";
-import { TreeSelectorComponent } from "@oh-my-pi/pi-tui/overlays/tree-selector";
-import { ThinkingSelectorComponent } from "@oh-my-pi/pi-tui/overlays/thinking-selector";
-import { UsageDashboardComponent } from "@oh-my-pi/pi-tui/overlays/usage-dashboard";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import { renderUsageReports } from "./command-controller";
 import type { SessionObserverRegistry } from "@tau/tau-tui/overlays/session-observer-registry";
 
@@ -238,7 +161,6 @@ import {
 } from "../settings";
 import { cfgTaskAgentModelOverrides } from "../../task/settings";
 
-<<<<<<< ours — function `loadModelOverlayComponents` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 /** Synchronous first-use boundary for model overlays; key callbacks require immediate mounting. */
 function loadModelOverlayComponents(): ModelOverlayModules {
@@ -247,8 +169,6 @@ function loadModelOverlayComponents(): ModelOverlayModules {
 		ModelPickerComponent: require("@tau/tau-tui/overlays/model-picker.js").ModelPickerComponent,
 	};
 }
-=======
->>>>>>> theirs — function `loadModelOverlayComponents` (S+F, confidence: low)
 /** First-use boundary for provider auth catalog and dialog components. */
 async function loadProviderAuthUi() {
 	const [{ PASTE_CODE_LOGIN_PROVIDERS }, oauth, loginDialog, logoutSelector, oauthSelector] = await Promise.all([
@@ -259,7 +179,6 @@ async function loadProviderAuthUi() {
 		import("@oh-my-pi/pi-tui/overlays/oauth-selector"),
 	]);
 	return {
-<<<<<<< ours — scope `return {` in function `loadProviderAuthUi` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `PASTE_CODE_LOGIN_PROVIDERS: require("@oh-my-pi/pi-ai/index.js")…` +4 more
 		PASTE_CODE_LOGIN_PROVIDERS: require("@tau/tau-ai/index.js").PASTE_CODE_LOGIN_PROVIDERS,
 		getOAuthProviders: require("@tau/tau-ai/registry/oauth/index.js").getOAuthProviders,
@@ -267,14 +186,6 @@ async function loadProviderAuthUi() {
 		LogoutAccountSelectorComponent: require("@tau/tau-tui/overlays/logout-account-selector.js")
 			.LogoutAccountSelectorComponent,
 		OAuthSelectorComponent: require("@tau/tau-tui/overlays/oauth-selector.js").OAuthSelectorComponent,
-=======
-		PASTE_CODE_LOGIN_PROVIDERS,
-		getOAuthProviders: oauth.getOAuthProviders,
-		getOAuthCredentialProvider: oauth.getOAuthCredentialProvider,
-		LoginDialogComponent: loginDialog.LoginDialogComponent,
-		LogoutAccountSelectorComponent: logoutSelector.LogoutAccountSelectorComponent,
-		OAuthSelectorComponent: oauthSelector.OAuthSelectorComponent,
->>>>>>> theirs — scope `return {`
 	};
 }
 
@@ -429,7 +340,6 @@ export class SelectorController {
 	}
 
 	showSettingsSelector(): void {
-<<<<<<< ours — scope `showSettingsSelector` in class `SelectorController` (F, confidence: medium)
 // refused_by: container_member · collision: `settings: createSettingsHost(),`
 		getAvailableThemes().then(availableThemes => {
 			// Fullscreen settings editor on the alternate screen: the overlay
@@ -462,93 +372,6 @@ export class SelectorController {
 						if (result.success) {
 							this.ctx.statusLine.invalidate();
 							this.ctx.ui.invalidate();
-=======
-		if (this.#focusOpenMenu("settings")) return;
-		const menu = this.#claimMenu("settings");
-		getAvailableThemes()
-			.then(availableThemes => {
-				// Fullscreen settings editor on the alternate screen: the overlay
-				// enables mouse tracking (click/hover/wheel) for its lifetime and
-				// the transcript stays untouched underneath.
-				const done = () => {
-					menu.handle?.hide();
-					this.#releaseMenu("settings", menu);
-					this.focusActiveEditorArea();
-					this.ctx.ui.requestRender();
-				};
-				const selector = new SettingsSelectorComponent(
-					{
-						availableThinkingLevels: [...this.ctx.session.getAvailableThinkingLevels()],
-						thinkingLevel: this.ctx.session.thinkingLevel,
-						availableThemes,
-						providers: [...new Set(this.ctx.session.getAvailableModels().map(model => model.provider))].sort(
-							(a, b) => a.localeCompare(b),
-						),
-						settings: createSettingsHost(),
-						plugins: createPluginSettingsHost(getProjectDir()),
-						model: this.ctx.session.model,
-						imageBudget: this.ctx.ui.imageBudget,
-						requestRender: () => this.ctx.ui.requestRender(),
-						composerPreviewStatus: this.ctx.statusLine,
-					},
-					{
-						onChange: (id, value) => this.handleSettingChange(id, value),
-						onThemePreview: async themeName => {
-							const result = await previewTheme(themeName);
-							if (result.success) {
-								this.ctx.statusLine.invalidate();
-								this.ctx.ui.invalidate();
-								this.ctx.ui.requestRender();
-							}
-						},
-						onStatusLinePreview: previewSettings => {
-							// Update status line with preview settings
-							this.ctx.statusLine.updateSettings({
-								preset: cfgStatusLinePreset.get(settings),
-								leftSegments: cfgStatusLineLeftSegments.get(settings),
-								rightSegments: cfgStatusLineRightSegments.get(settings),
-								separator: cfgStatusLineSeparator.get(settings),
-								showHookStatus: cfgStatusLineShowHookStatus.get(settings),
-								sessionAccent: cfgStatusLineSessionAccent.get(settings),
-								transparent: cfgStatusLineTransparent.get(settings),
-								compactThinkingLevel: cfgStatusLineCompactThinkingLevel.get(settings),
-								contextLine: cfgStatusLineContextLine.get(settings),
-								segmentOptions: cfgStatusLineSegmentOptions.get(settings),
-								...previewSettings,
-							});
-							this.ctx.ui.requestRender();
-						},
-						getStatusLinePreview: () => {
-							// The bar exactly as the active composer shape renders it (box top
-							// border, claude rule + chip, or the plain standalone bottom bar).
-							const availableWidth = this.ctx.editor.getTopBorderAvailableWidth(this.ctx.ui.terminal.columns);
-							return this.ctx.statusLine.getPreviewLines(availableWidth).join("\n");
-						},
-						describeStatusLinePreview: () => this.ctx.statusLine.describePreview(),
-						onPluginsChanged: async () => {
-							const projectPath = await resolveActiveProjectRegistryPath(this.ctx.sessionManager.getCwd());
-							clearPluginRootsAndCaches(projectPath ? [projectPath] : undefined);
-							await this.ctx.refreshSkillState();
-							await this.ctx.refreshSlashCommandState();
-							resetCapabilities();
-							this.ctx.ui.requestRender();
-						},
-						onCancel: () => {
-							done();
-							// Restore status line to saved settings
-							this.ctx.statusLine.updateSettings({
-								preset: cfgStatusLinePreset.get(settings),
-								leftSegments: cfgStatusLineLeftSegments.get(settings),
-								rightSegments: cfgStatusLineRightSegments.get(settings),
-								separator: cfgStatusLineSeparator.get(settings),
-								showHookStatus: cfgStatusLineShowHookStatus.get(settings),
-								sessionAccent: cfgStatusLineSessionAccent.get(settings),
-								transparent: cfgStatusLineTransparent.get(settings),
-								compactThinkingLevel: cfgStatusLineCompactThinkingLevel.get(settings),
-								contextLine: cfgStatusLineContextLine.get(settings),
-								segmentOptions: cfgStatusLineSegmentOptions.get(settings),
-							});
->>>>>>> theirs — scope `showSettingsSelector`
 							this.ctx.ui.requestRender();
 						},
 					},

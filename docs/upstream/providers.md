@@ -30,7 +30,6 @@ If account rotation would narrow the selected model's context window, OMP stops 
 
 Factory's native context limits hold even when extended context is disabled. Factory GPT and Gemini routes omit output-token caps, so bounded ephemeral turns reject a `maxTokens` request instead of silently running uncapped.
 
-<<<<<<< ours — heading `How `omp` decides a provider is available` (S+F, confidence: low)
 // refused_by: rename_vs_edit_guard · collision: `2. Custom provider and model entries from `~/.omp/agent/models.…`
 ## How `tau` decides a provider is available
 
@@ -49,29 +48,6 @@ The registry can hold a model even when it is not currently selectable. A model 
 `disabledProviders` is checked _before_ credentials. If a provider ID is disabled, no stored key, OAuth session, environment variable, `.env` entry, or `models.yml` `apiKey` will make it selectable — the provider's models are dropped from availability regardless of credentials. Removing the ID from the effective list restores them.
 
 Keyless local engines are a special case: `ollama`, `llama.cpp`, and `lm-studio` are treated as keyless when no key is configured, so their discovered models are selectable as soon as the engine answers — no login required. See [Built-in local engines](#built-in-local-engines).
-=======
-## How `omp` decides a provider is available
-
-The model registry composes these sources:
-
-1. The bundled model catalog.
-2. Custom provider and model entries from the active agent directory's `models.yml` (default: `~/.omp/agent/models.yml`).
-3. Cached and runtime-discovered models for local engines and discovery-enabled hosted providers.
-4. Providers and models registered by extensions, including extension-owned discovery.
-
-Startup loads configuration and cached discovery metadata without waiting for every endpoint. Online refresh fills discovery-backed catalogs afterward. Successful authoritative discovery can replace bundled provider rows; explicit custom models and overrides are reapplied to the discovered catalog. Broker-backed gateway mode ignores local `models.yml` routing, credentials, and custom models.
-
-The registry can hold a model even when it is not currently selectable. A model becomes **available** only when both conditions hold:
-
-1. its provider ID is **not** in the effective `disabledProviders` list; **and**
-2. the provider is either **keyless** (an implicit local provider, a custom provider with `auth: none`, or an optional-key login saved in keyless mode) **or** has configured authentication.
-
-Availability is a fast configuration check, not a credential validation request: it does not execute command-backed keys or refresh OAuth tokens. An invalid configured key can therefore appear available and fail at inference.
-
-`disabledProviders` is checked _before_ credentials. If a provider ID is disabled, no stored key, OAuth session, environment variable, `.env` entry, or `models.yml` `apiKey` will make it selectable — the provider's models are dropped from availability regardless of credentials. Removing the ID from the effective list restores them.
-
-Implicit `ollama` and `lm-studio` discovery is keyless by default; implicit `llama.cpp` is keyless when no authentication is configured. Apple Foundation Models is also keyless on supported Apple Silicon systems. See [Built-in local engines](#built-in-local-engines).
->>>>>>> theirs — heading `How `omp` decides a provider is available` (S+F, confidence: low) · weave: run 'weave explain docs/upstream/providers.md' for per-hunk detail, 'weave check' to verify your resolution
 
 ## Credentials and precedence
 
@@ -85,12 +61,8 @@ When a provider needs an API key, `tau` resolves it in this order (first match w
 6. **Provider environment variable**: including values loaded from `.env` files (see [the env-var table](#environment-variables-and-env-files)).
 7. **Other stored API key**: for example, a broker-migrated key. This is a last resort so an explicit environment variable wins.
 
-<<<<<<< ours — scope `5. **Provider environment variable**: includi...` in heading `Credentials and precedence` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `Stored credentials live in the auth store at `~/.omp/agent/agen…`
 Stored credentials live in the auth store at `~/.tau/agent/agent.db` for local auth, or in the configured auth-broker snapshot when running in broker mode. (`PI_CODING_AGENT_DIR` relocates the `~/.tau/agent` base, and the auth store moves with it.)
-=======
-Local credentials live in the active auth store (default: `~/.omp/agent/agent.db`); broker mode uses the configured shared auth broker. Named profiles and Linux XDG layouts can relocate the store. In the default profile, `PI_CODING_AGENT_DIR` overrides the agent directory. See [Settings](./settings.md) and [Secrets and credentials](./secrets.md) for path resolution.
->>>>>>> theirs — scope `5. **Provider environment variable**: includi...`
 
 ### OAuth vs API key, and provider-scoped logins
 
@@ -101,23 +73,15 @@ Use the interactive slash commands inside a session:
 - `/login` — opens the OAuth/key selector. `/login <provider>` jumps straight to one provider (e.g. `/login anthropic`); for an OAuth flow that needs a pasted callback, run `/login <redirect-url>` to complete it.
 - `/logout` — opens the provider selector to remove stored credentials.
 
-<<<<<<< ours — scope `Outside a session, `omp login [<provider>]` r...` in heading `OAuth vs API key, and provider-scoped logins` (S, confidence: medium)
 // refused_by: statement_fold · collision: `Outside a session, `omp login [<provider>]` runs the same login…`
 Outside a session, `tau login [<provider>]` runs the same login from the terminal: it prints the auth URL (and opens it in your browser), reads any prompts from stdin, and saves to the same store sessions use — local `agent.db`, or the configured auth broker. Without a provider it shows a numbered picker.
-=======
-Outside a session, `omp login [<provider>]` runs the same login from the terminal, including extension-registered providers: it prints the auth URL (and opens it in your browser), reads any prompts from stdin, and saves to the same store sessions use — local `agent.db`, or the configured auth broker. Without a provider it shows a numbered picker. Successful login refreshes that provider's model catalog online so newly unlocked models are visible.
->>>>>>> theirs — scope `Outside a session, `omp login [<provider>]` r...`
 
 For headless or remote setups backed by a shared auth broker, the CLI exposes `tau auth-broker login <provider>` / `tau auth-broker logout` (and `status`, `list`, `import`, `migrate`). See [Secrets and credentials](./secrets.md) for the broker model.
 
 When a model has no credentials, `tau` tells you to run `/login` or set the provider's environment variable.
 
-<<<<<<< ours — scope `For ClinePass, set `CLINE_API_KEY` or run `/l...` in heading `OAuth vs API key, and provider-scoped logins` (S, confidence: medium)
 // refused_by: statement_fold · collision: `For ClinePass, set `CLINE_API_KEY` or run `/login cline-pass` t…`
 For ClinePass, set `CLINE_API_KEY` or run `/login cline-pass` to open the Cline dashboard and validate a newly created API key. TAU refreshes membership from Cline's public recommended-models endpoint and bundles the current sixteen-model roster with Cline-authored limits, subscription pricing, modalities, and per-model reasoning controls for offline startup. New live ids remain selectable before regeneration, using conservative metadata rather than guessed controls. `tau usage` reports five-hour, weekly, and monthly quota windows. Free-tier models are marked `(free)` and work with the same key on any Cline account; subscription models show API-equivalent reference pricing, while streamed gateway cost remains authoritative for actual billed or discounted usage. Requests mirror Cline CLI client headers and a stable per-session task id, Qwen routes use Cline's prompt-cache shape, and Qwen3.7 Plus maps thinking levels to the gateway's token-budget field.
-=======
-For ClinePass, set `CLINE_API_KEY` or run `/login cline-pass` to open the Cline dashboard and validate a newly created API key against `/users/me`, without a completion probe or subscription-quota charge. OMP refreshes membership from Cline's public recommended-models endpoint and bundles reviewed Cline metadata for offline startup. New live IDs are enriched from upstream references or use conservative metadata without invented reasoning controls. `omp usage` reports five-hour, weekly, and monthly quota windows. Free-tier models are marked `(free)` and use the same key; subscription models show API-equivalent reference pricing, while streamed gateway cost is authoritative for the actual charge. Requests mirror Cline CLI client headers and a stable per-session task ID; reasoning controls remain model-specific.
->>>>>>> theirs — scope `For ClinePass, set `CLINE_API_KEY` or run `/l...`
 
 For Command Code, set `COMMAND_CODE_API_KEY` or run `/login commandcode`; login checks the key against Command Code's `/alpha/whoami` endpoint and rejects it only on a 401, as the Command Code CLI does, so a 403 or an unreachable check keeps the key. Claude models use the Anthropic Messages endpoint, the ten GPT models use the OpenAI Responses endpoint, and every other model uses Chat Completions, the same split the Command Code CLI uses. Thinking levels, image input, output limits, and prices follow the Command Code CLI's model registry; Claude Sonnet 5.5, which that registry does not list yet, takes them from Anthropic's catalog. The GPT models can run hosted web search, but not hosted image generation, which Command Code does not serve. TypeSafe's `typesafe/jev` decision model is available to the `judge` role. `omp usage`, `/usage`, and the status line show the credit balance, plus the five-hour and weekly windows on plans that have them. These figures come from the account endpoints the Command Code CLI uses; the Provider API docs do not document them.
 
@@ -250,14 +214,8 @@ For `xai-oauth`, `XAI_API_KEY` is accepted for an explicit request but does not 
 
 `charm-hyper` is Charm's OpenAI-compatible inference gateway for coding agents. Issue or manage a key at `https://hyper.charm.land/`; the model list is discovered live from the provider's public `/v1/models` endpoint, and `HYPER_API_KEY` is accepted as a fallback alias for `CHARM_HYPER_API_KEY`.
 
-<<<<<<< ours — heading `Additional hosted providers` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 SingularityAPI sells two unrelated products behind one brand, so TAU models them as two providers: they share no key, no billing model, and no effort ladder, and neither key is accepted by the other host.
-=======
-`inception` is Inception's native Mercury API. Set `INCEPTION_API_KEY` or run `/login inception` with a key from `https://platform.inceptionlabs.ai/dashboard/api-keys`, then select `inception/mercury-3`. OMP discovers chat models from `/v1/models`, including Mercury 3, Mercury 2.5, and Mercury 2; FIM/edit and Decisions-only models are excluded. Mercury 3 supports a 1,000,000-token context and up to 131,072 output tokens. Thinking levels are `minimal`, `low`, `medium`, and `high`; `minimal` maps to Inception's `instant`, and `off` requests that lowest effort rather than disabling reasoning entirely. Mercury does not stream its reasoning, so no thinking text appears and a `high` turn can be silent for minutes before its first output; OMP waits up to 10 minutes for Mercury 3's first chunk (`providers.streamFirstEventTimeoutSeconds` overrides this). While `/v1/models` reports Mercury 3 at $0, OMP prices it at the published launch rate ($0.10 input / $0.35 output per million tokens); a tariff reported by `/v1/models` takes precedence.
-
-SingularityAPI sells two unrelated products behind one brand, so OMP models them as two providers: they share no key, no billing model, and no effort ladder, and neither key is accepted by the other host.
->>>>>>> theirs — heading `Additional hosted providers` (S+F, confidence: low)
 
 `singularityapi-dev` is the pay-as-you-go universal inference gateway (300+ models: DeepSeek, Kimi, GLM, frontier flagships). Create a key at `https://app.singularityapi.dev` (or run `/login singularityapi-dev`) and set `SINGULARITYAPI_DEV_API_KEY`; the roster, limits, and tariffs are discovered live from `https://api.singularityapi.dev/v1/models`.
 
@@ -269,42 +227,25 @@ OAuth-backed providers such as `anthropic`, `openai-codex`, `github-copilot`, `c
 
 ### `.env` discovery and precedence
 
-<<<<<<< ours — scope ``omp` eagerly loads `.env` files into the pro...` in heading ``.env` discovery and precedence` (S, confidence: medium)
 // refused_by: statement_fold · collision: ``omp` eagerly loads `.env` files into the process environment b…`
 `tau` eagerly loads `.env` files into the process environment before any provider lookup. It reads four files and, for each variable, the **first** source that defines it wins. Effective precedence, high to low:
-=======
-`omp` eagerly loads four `.env` files into the process environment before provider lookup. For each variable, the first **non-empty** source wins. Effective precedence, high to low:
->>>>>>> theirs — scope ``omp` eagerly loads `.env` files into the pro...`
 
 1. Non-empty values already in the process environment.
 
-<<<<<<< ours — scope `1. The process environment inherited by `omp`...` in heading ``.env` discovery and precedence`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 1. The process environment inherited by `tau` (already-set variables always win).
-=======
->>>>>>> theirs — scope `1. The process environment inherited by `omp`...` deleted in theirs
 2. `<project>/.env`
 4. The active config root's `.env` (default: `~/.omp/.env`).
-<<<<<<< ours — scope `3. `~/.omp/agent/.env`` in heading ``.env` discovery and precedence` (S, confidence: medium)
 // refused_by: statement_fold · collision: `3. `~/.omp/agent/.env``
 3. `~/.tau/agent/.env`
-=======
-3. The active agent directory's `.env` (default: `~/.omp/agent/.env`).
->>>>>>> theirs — scope `3. `~/.omp/agent/.env``
-<<<<<<< ours — scope `4. `~/.omp/.env`` in heading ``.env` discovery and precedence`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 4. `~/.tau/.env`
-=======
->>>>>>> theirs — scope `4. `~/.omp/.env`` deleted in theirs
 5. `~/.env`
 
 Existing non-empty process values are not overwritten; empty values can be filled by a later file. A non-empty project value beats the agent, config-root, and home files. Named profiles use their own config root and agent directory. Bun may also preload project dotenv variants before this loader; values already present are treated as process values.
 
-<<<<<<< ours — scope `A variable already present in the process env...` in heading ``.env` discovery and precedence`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 A variable already present in the process environment is never overwritten by a `.env` file. Among the files, a value set in `<cwd>/.env` wins over `~/.tau/agent/.env`, which wins over `~/.tau/.env`, which wins over `~/.env`. So a shell-exported `OPENAI_API_KEY` beats every `.env` file, and a project's `<cwd>/.env` beats your home `~/.env`.
-=======
->>>>>>> theirs — scope `A variable already present in the process env...` deleted in theirs
 
 Project-local `.env` is the simplest way to make one repository use a project-specific gateway, key, or local endpoint:
 
@@ -318,12 +259,8 @@ OLLAMA_BASE_URL=http://127.0.0.1:11434
 
 - keys must match `[A-Za-z_][A-Za-z0-9_]*` — other names are dropped;
 - values containing a NUL byte are dropped;
-<<<<<<< ours — scope `- an `OMP_`-prefixed key is also mirrored to ...` in heading ``.env` discovery and precedence` (S, confidence: medium)
 // refused_by: statement_fold · collision: `- an `OMP_`-prefixed key is also mirrored to the matching `PI_`…`
 - an `TAU_`-prefixed key is also mirrored to the matching `PI_`-prefixed name.
-=======
-- an `OMP_`-prefixed key is mirrored to the matching `PI_` name, overriding a same-file `PI_` entry.
->>>>>>> theirs — scope `- an `OMP_`-prefixed key is also mirrored to ...`
 
 ## Built-in local engines
 
@@ -535,9 +472,5 @@ disabledProviders:
 
 **A discovery provider name had no effect on models (or vice-versa).** The ID namespace is shared. `gemini`, `codex`, `claude`, `native`, and `agents` are discovery-source IDs; the Google model backend is `google`. Make sure you are disabling the right kind of provider.
 
-<<<<<<< ours — heading `Troubleshooting` (T+S, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `**A custom `models.yml` provider does not load.** A YAML or sch…`
 **A custom `models.yml` provider does not load.** A YAML or schema error makes the registry skip the custom file. Validate the file with `tau models` (use `tau models find <substr>` to scope it to one provider). A provider with custom `models` needs `baseUrl`, authentication (`apiKey`, unless `auth: none`), and `api` at provider level or on every model. A provider with no models is also valid when it defines at least one supported override (`baseUrl`, `headers`, `apiKey`, `auth: none`, `compat`, `disableStrictTools`, `remoteCompaction`, `modelOverrides`, or `discovery`). Discovery providers may omit `models`, but need provider-level `api` unless `discovery.type` is `proxy`. An explicit `ollama`, `lm-studio`, or `llama.cpp` entry intentionally replaces built-in discovery for that ID. See [Model and Provider Configuration](./models.md).
-=======
-**A custom `models.yml` provider does not load.** A YAML or schema error makes the registry skip the custom file. Validate the file with `omp models` (use `omp models find <substr>` to scope it to one provider). A provider with custom `models` needs `baseUrl`, authentication (`apiKey`, unless `auth: none` or `auth: oauth`), and `api` at provider level or on every model. A provider with no models is also valid when it defines at least one supported override (`baseUrl`, `headers`, `apiKey`, `auth: none`, `compat`, `disableStrictTools`, `guardrailIdentifier`, `requestMetadata`, `remoteCompaction`, `modelOverrides`, or `discovery`). Discovery providers may omit `models`, but need provider-level `api` unless `discovery.type` is `proxy`. An explicit `ollama`, `lm-studio`, or `llama.cpp` entry intentionally replaces built-in discovery for that ID. See [Model and Provider Configuration](./models.md).
->>>>>>> theirs — heading `Troubleshooting` (T+S, confidence: medium)

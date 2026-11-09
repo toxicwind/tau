@@ -1,6 +1,5 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { resetSettingsForTest, Settings, settings } from "@oh-m…`
 import { Agent } from "@tau/tau-agent-core";
 import { ModelRegistry } from "tau/config/model-registry";
@@ -16,26 +15,6 @@ import type { AgentProgress } from "@tau/tau-tui/tools/task";
 import { TASK_SUBAGENT_LIFECYCLE_CHANNEL } from "tau/task";
 import { EventBus } from "tau/utils/event-bus";
 import { TempDir } from "@tau/tau-utils";
-=======
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { Extension } from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
-import { ExtensionRuntime } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
-import { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
-import { cfgExtensionAssistantTextRenderers } from "@oh-my-pi/pi-coding-agent/extensibility/settings";
-import { ToolExecutionComponent } from "@oh-my-pi/pi-tui/chat/tool-execution";
-import { Composer } from "@oh-my-pi/pi-tui/prompt/composer";
-import { InteractiveMode } from "@oh-my-pi/pi-coding-agent/modes/interactive-mode";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import type { AgentProgress } from "@oh-my-pi/pi-tui/tools/task";
-import { TASK_SUBAGENT_LIFECYCLE_CHANNEL } from "@oh-my-pi/pi-coding-agent/task";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-import { TempDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/interactive-click-focus.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { VirtualTerminal } from "../../tui/test/virtual-terminal";
 
 import { cfgTuiMouse } from "@oh-my-pi/pi-coding-agent/modes/settings";

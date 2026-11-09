@@ -1,14 +1,7 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { ImageContent } from "@oh-my-pi/pi-ai";`
 import type { ImageContent } from "@tau/tau-ai";
 import * as snapcompact from "@tau/snapcompact";
-=======
-import type { ImageContent, Model } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import * as snapcompact from "@oh-my-pi/snapcompact";
-import { Agent } from "../src/agent";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/agent/test/snapcompact-frames.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { createCompactionSummaryMessage, defaultConvertToLlm } from "../src/compaction/messages";
 import { base64ImageSize } from "../src/image-tokens";
 import { Tokenizer } from "../src/tokenizer";

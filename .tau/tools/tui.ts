@@ -1,17 +1,10 @@
 /**
-<<<<<<< ours — interstitial `file_header` (T+F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `* immediate-mode hosts all behave as in production — with `OMP_…` +1 more
  * Project-local `tui` tool: run and debug tau-tui apps headlessly. Each session
  * spawns a TypeScript/JavaScript entry or executable on a Bun-native PTY — a
  * real controlling terminal, so capability probes, SIGWINCH resizes, and
  * immediate-mode hosts all behave as in production — with `TAU_TUI_DEBUG`
  * pointed at the unix socket served by an tau/tau-tui host. Injected input
-=======
- * Project-local `tui` tool: run and debug pi-tui apps headlessly. Each session
- * spawns a TypeScript/JavaScript entry or executable on a real PTY: ConPTY on
- * Windows, Bun's controlling terminal on POSIX. `OMP_TUI_DEBUG` points at the
- * local IPC endpoint served by an omp/pi-tui host. Injected input
->>>>>>> theirs — interstitial `file_header` (T+F, confidence: medium) · weave: run 'weave explain .tau/tools/tui.ts' for per-hunk detail, 'weave check' to verify your resolution
  * rides the app's own input path, while renderer and component queries inspect
  * the last painted frame.
  *
@@ -1098,7 +1091,6 @@ function bunRuntime(): string {
 }
 
 const factory = (tau: ToolHost) => {
-<<<<<<< ours — scope `const startSession = async (params: TuiParams...` in function `factory`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	const startSession = async (params: TuiParams): Promise<string> => {
 		const name = params.name ?? "main";
@@ -1218,8 +1210,6 @@ const factory = (tau: ToolHost) => {
 		}
 		return text;
 	};
-=======
->>>>>>> theirs — scope `const startSession = async (params: TuiParams...` deleted in theirs
 	const startSession = async (params: TuiParams): Promise<string> => {
 		const name = params.name ?? "main";
 		if (sessions.has(name)) {

@@ -14,12 +14,8 @@ import * as nodeFs from "node:fs";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
 
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { isEnoent } from "@oh-my-pi/pi-utils";`
 import { isEnoent } from "@tau/tau-utils";
-=======
-import { isEnoent, logger } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/extensibility/plugins/marketplace/cache.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 import { isValidNameSegment } from "./types";
 

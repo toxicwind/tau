@@ -1,16 +1,9 @@
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 import { getDaemonRuntimeDir, hasFsCode, isEacces, isEisdir, isEnoent } from "@tau/tau-utils";
 
 /** Resolve the private runtime directory shared by tau processes in one project directory. */
-=======
-import { ipcEndpoint } from "@oh-my-pi/pi-natives";
-import { getDaemonRuntimeDir, hasFsCode, isEacces, isEisdir, isEnoent } from "@oh-my-pi/pi-utils";
-
-/** Resolve the private runtime directory shared by omp processes in one project directory. */
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/launch/paths.ts' for per-hunk detail, 'weave check' to verify your resolution
 export { getDaemonRuntimeDir as daemonRuntimeDir };
 
 /** File in a broker runtime dir recording which project (or global service dir) owns the scope. */
@@ -91,13 +84,10 @@ export async function readStoredDaemonRecord(dir: string): Promise<StoredDaemonR
 
 /** Resolve the Unix socket or Windows named pipe used by one daemon broker scope. */
 export function daemonBrokerEndpoint(runtimeDir: string): string {
-<<<<<<< ours — scope `if (process.platform === "win32") {` in function `daemonBrokerEndpoint`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	if (process.platform === "win32") {
 		const key = Bun.hash.wyhash(path.resolve(projectDir)).toString(16).padStart(16, "0");
 		return `\\\\.\\pipe\\tau-daemon-${key}`;
 	}
-=======
->>>>>>> theirs — scope `if (process.platform === "win32") {` deleted in theirs
 	return ipcEndpoint(runtimeDir, "broker");
 }

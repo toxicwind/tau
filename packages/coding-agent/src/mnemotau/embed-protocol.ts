@@ -1,5 +1,4 @@
 /**
-<<<<<<< ours — interstitial `file_header` (T+F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `* Wire types between the parent (`MnemopiEmbedClient`) and the …` +1 more
  * Wire types between the parent (`MnemotauEmbedClient`) and the local
  * embeddings subprocess. The parent owns the subprocess lifecycle (graceful
@@ -9,17 +8,6 @@
  * agent address space (it crashes Bun on Windows shutdown — issue #3031, the
  * mnemotau sibling of the tiny-model fix from #1606/#1607). See
  * `embed-client.ts` for the spawn/kill glue.
-=======
- * Wire types for local mnemopi embeddings, on two legs:
- *
- * - omp process ⇄ shared embedding server (`embed-server.ts`): newline JSON
- *   over a native IPC endpoint, one server per (model, cache dir) per machine.
- * - shared server ⇄ its onnxruntime child (`embed-worker.ts`): Bun IPC. The
- *   server owns the child (hard `SIGKILL` on wedge, idle exit, or shutdown);
- *   that leg carries no close handshake so `onnxruntime-node`'s NAPI finalizer
- *   never runs (it crashes Bun on Windows shutdown — issue #3031, the mnemopi
- *   sibling of the tiny-model fix from #1606/#1607).
->>>>>>> theirs — interstitial `file_header` (T+F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/mnemotau/embed-protocol.ts' for per-hunk detail, 'weave check' to verify your resolution
  */
 import type { SharedWorkerControl, SharedWorkerPong } from "../subprocess/shared-worker";
 

@@ -1,17 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { readImageFromClipboard, readMacFileUrlsFromClipboard, readTextFromClipboard } from "tau/utils/clipboard";
 import * as native from "@tau/tau-natives/clipboard";
-=======
-import {
-	isClipboardTerminalLocal,
-	readImageFromClipboard,
-	readMacFileUrlsFromClipboard,
-	readTextFromClipboard,
-} from "@oh-my-pi/pi-coding-agent/utils/clipboard";
-import * as native from "@oh-my-pi/pi-natives/clipboard";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/utils/clipboard.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { Subprocess } from "bun";
 
 type SpawnOptions = Bun.SpawnOptions.SpawnOptions<

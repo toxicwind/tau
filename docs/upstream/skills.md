@@ -66,16 +66,10 @@ Current runtime behavior:
 
 - `name` defaults to the skill directory name
 - `description` is required for:
-<<<<<<< ours — scope `- `description` is required for:` in heading ``SKILL.md` frontmatter` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `- native `.omp` provider skill discovery (`requireDescription: …` +1 more
   - native `.tau` provider skill discovery (`requireDescription: true`)
   - `tau-plugins` extension-package skills and the `github` provider (`.github/skills/`), which also pass `requireDescription: true`
   - `skills.customDirectories` scans via `scanSkillsFromDir` in `src/discovery/helpers.ts` (non-recursive)
-=======
-   - native `.omp` provider skill discovery (`requireDescription: true`)
-   - `omp-plugins` extension-package skills and the `github` provider (`.github/skills/`), which also pass `requireDescription: true`
-   - `skills.customDirectories` scans via `scanSkillsFromDir` in `src/discovery/helpers.ts` (non-recursive)
->>>>>>> theirs — scope `- `description` is required for:` · weave: run 'weave explain docs/upstream/skills.md' for per-hunk detail, 'weave check' to verify your resolution
 - the claude/codex/agents/opencode/claude-plugins providers can load skills without description
 - `agent-plugins` validates required `name` and `description` against the Agent Skills specification
 
@@ -84,14 +78,9 @@ Current runtime behavior:
 `loadSkills()` in `packages/coding-agent/src/extensibility/skills.ts` does three passes:
 
 1. **Capability providers** via `loadCapability("skills")` (the managed/auto-learn provider's skills are skipped here and handled in pass 3)
-<<<<<<< ours — heading `Discovery pipeline` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 2. **Custom directories** via `scanSkillsFromDir(..., { requireDescription: true })` (one-level directory enumeration). A custom-directory skill overrides a same-named default provider skill; duplicate custom-directory names remain first-wins.
 3. **Managed (auto-learn) skills** (`tau-managed` provider) resolved dead-last, so any same-named enabled authored skill from a provider or custom directory takes precedence
-=======
-2. **Custom directories** via `scanSkillsFromDir(..., { requireDescription: true })` (one-level directory enumeration). A custom-directory skill overrides a same-named default provider skill; the displaced provider skill stays reachable under its namespaced name unless its body is identical.
-3. **Managed (auto-learn) skills** (`omp-managed` provider) resolved dead-last, so any same-named enabled authored skill from a provider or custom directory takes precedence
->>>>>>> theirs — heading `Discovery pipeline` (F, confidence: medium)
 
 If `skills.enabled` is `false`, discovery returns no skills.
 
@@ -103,12 +92,8 @@ Current registered skill providers:
 
 1. `native` (priority 100) — `.tau` user/project skills via `src/discovery/builtin.ts`
 2. `skillshare` (priority 95) — packages pinned in project `.omp/skills.lock.json` or the user agent directory's `skills.lock.json`, loaded from the Skillshare store; authored skills still outrank these on name collisions
-<<<<<<< ours — scope `2. `omp-plugins` (priority 90) — `skills/` bu...` in heading `Built-in skill providers and precedence` (S, confidence: medium)
 // refused_by: statement_fold · collision: `2. `omp-plugins` (priority 90) — `skills/` bundled next to exte…`
 2. `tau-plugins` (priority 90) — `skills/` bundled next to extension packages loaded through `extensions:`, `--extension`/`-e`, or installed plugins under `~/.tau/plugins/node_modules`
-=======
-3. `omp-plugins` (priority 90) — `skills/` bundled next to extension packages loaded through `extensions:`, `--extension`/`-e`, or installed plugins under `~/.omp/plugins/node_modules`
->>>>>>> theirs — scope `2. `omp-plugins` (priority 90) — `skills/` bu...`
 4. `claude` (priority 80)
 5. `agent-plugins` (priority 75) — portable packages with a standard root `plugin.json`; conventional plugin providers defer their skills/MCP discovery to this provider
 6. priority 70 group (in registration order):
@@ -117,12 +102,8 @@ Current registered skill providers:
    - `codex`
 7. `opencode` (priority 55)
 8. `github` (priority 30) — `.github/skills/<name>/SKILL.md` (GitHub Agent Skills layout, project-only)
-<<<<<<< ours — scope `7. `omp-managed` (priority 5) — auto-learn sk...` in heading `Built-in skill providers and precedence` (S, confidence: medium)
 // refused_by: statement_fold · collision: `7. `omp-managed` (priority 5) — auto-learn skills under `~/.omp…`
 7. `tau-managed` (priority 5) — auto-learn skills under `~/.tau/agent/managed-skills`, registered in `src/discovery/builtin.ts` and discovered unconditionally (only writing/nudging is gated by `autolearn.enabled`); always defers to a same-named authored skill
-=======
-9. `omp-managed` (priority 5) — auto-learn skills under `~/.omp/agent/managed-skills`, registered in `src/discovery/builtin.ts` and discovered unconditionally (only writing/nudging is gated by `autolearn.enabled`); always defers to a same-named authored skill
->>>>>>> theirs — scope `7. `omp-managed` (priority 5) — auto-learn sk...`
 
 Capability dedup key is skill name; the first item with a given name wins in the deduped `items` view. `loadSkills()` resolves same-name collisions itself (see "Collision and duplicate handling").
 
@@ -142,12 +123,8 @@ Filter order is:
 3. not ignored
 4. included (if include list present)
 
-<<<<<<< ours — scope `The `agents` provider (`.agent[s]/skills`) is...` in heading `Source toggles and filtering` (S, confidence: medium)
 // refused_by: statement_fold · collision: `The `agents` provider (`.agent[s]/skills`) is the canonical OMP…`
 The `agents` provider (`.agent[s]/skills`) is the canonical TAU-native location and has its own `enableAgentsUser`/`enableAgentsProject` toggles — disabling Claude/Codex/Pi does **not** turn it off. Foreign user-level providers are opt-in through `enabledProviders`; their project roots still load by default. Native TAU sources and marketplace plugins registered under `~/.tau/plugins` also load by default. For `claude-plugins`, the opt-in controls only plugins from Claude Code's own user registry.
-=======
-The `agents` provider (`.agent[s]/skills`) has its own `enableAgentsUser`/`enableAgentsProject` toggles — disabling Claude/Codex/Pi does **not** turn it off. Foreign user-level providers are opt-in through `enabledProviders`; their project roots still load by default. Native OMP sources and marketplace plugins registered under `~/.omp/plugins` also load by default. For `claude-plugins`, the opt-in controls only plugins from Claude Code's own user registry.
->>>>>>> theirs — scope `The `agents` provider (`.agent[s]/skills`) is...`
 
 ### Manual-only skills
 

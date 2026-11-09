@@ -1,4 +1,3 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { OAuthPrompt, OAuthProvider } from "@oh-my-pi/pi-a…` +1 more
 import type { AuthStorage } from "@tau/tau-ai";
 import { PASTE_CODE_LOGIN_PROVIDERS } from "@tau/tau-ai";
@@ -12,23 +11,6 @@ import { type SgrMouseEvent } from "../../mouse";
 import { wrapTextWithAnsi } from "../../utils";
 import { getAgentDbPath } from "@tau/tau-utils";
 import { OAuthSelectorComponent } from "../../overlays/oauth-selector";
-=======
-import type { AuthStorage } from "@oh-my-pi/pi-ai";
-import { PASTE_CODE_LOGIN_PROVIDERS } from "@oh-my-pi/pi-ai";
-import { getOAuthProviders } from "@oh-my-pi/pi-ai/oauth";
-import type { OAuthProvider } from "@oh-my-pi/pi-ai/oauth/types";
-import type { TspText } from "@oh-my-pi/pi-wire";
-import { getAgentDbPath } from "@oh-my-pi/pi-utils";
-import { Container } from "../../tui";
-import { Spacer } from "../../components/spacer";
-import { Text } from "../../components/text";
-import { WizardStep } from "../../components/wizard-step";
-import { editorKey } from "../../chrome/keybinding-hints";
-import { type SgrMouseEvent } from "../../mouse";
-import { wrapTextWithAnsi } from "../../utils";
-import { LoginDialogComponent } from "../../overlays/login-dialog";
-import { type OAuthSelectorSheet, OAuthSelectorComponent } from "../../overlays/oauth-selector";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/src/setup/scenes/sign-in.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { theme } from "../../theme/theme";
 import { col, node, span } from "../../native/describe";
 import type { DescribeContext, NativeChild, NativeNode } from "../../native/node";
@@ -305,7 +287,6 @@ export const providersSetupScene: SetupScene = {
 	minVersion: 1,
 	mount: host => new SignInScene(host),
 };
-<<<<<<< ours — class `SignInTab` (T+F, confidence: medium)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 /**
  * "Sign in" panel: lets the user authenticate one or more model providers via
@@ -612,5 +593,3 @@ export class SignInTab implements SetupTab {
 		this.#host.requestRender();
 	}
 }
-=======
->>>>>>> theirs — class `SignInTab` (T+F, confidence: medium)

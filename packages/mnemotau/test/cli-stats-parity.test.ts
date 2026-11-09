@@ -126,7 +126,6 @@ describe("CLI stats parity", () => {
 	});
 });
 
-<<<<<<< ours — test_suite `mnemopi-stats diagnostic behavior parity` (S+F, confidence: low)
 // refused_by: rename_vs_edit_guard · collision: `const dbPath = join(root, "mnemopi.db");`
 describe("mnemotau-stats diagnostic behavior parity", () => {
 	it("diagnostics return dashboard-ready structure with counts and health bounds", () => {
@@ -147,11 +146,6 @@ describe("mnemotau-stats diagnostic behavior parity", () => {
 
 	it("diagnostics initialize missing databases gracefully and report zero counts", () => {
 		const dbPath = join(root, "empty", "mnemotau.db");
-=======
-describe("mnemopi-stats diagnostic behavior parity", () => {
-	it("diagnostics initialize missing databases gracefully and report zero counts", () => {
-		const dbPath = join(root, "empty", "mnemopi.db");
->>>>>>> theirs — test_suite `mnemopi-stats diagnostic behavior parity` (S+F, confidence: low) · weave: run 'weave explain packages/mnemotau/test/cli-stats-parity.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 		mkdirSync(join(root, "empty"), { recursive: true });
 		const result = runDiagnostics({ dbPath, dataDir: join(root, "empty") });
 		expect(result.database).toBe(dbPath);

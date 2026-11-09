@@ -1,12 +1,7 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { AssistantMessage, Usage } from "@oh-my-pi/pi-ai";`
 import type { AssistantMessage, Usage } from "@tau/tau-ai";
 import { assistantUsageIsBilled } from "@tau/tau-tui/chat/transcript-render-helpers";
-=======
-import type { Usage } from "@oh-my-pi/pi-ai";
-import { assistantUsageIsBilled } from "@oh-my-pi/pi-tui/chat/transcript-render-helpers";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/test/transcript-render-helpers.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function usage(overrides: Partial<Usage> = {}): Usage {
 	return {

@@ -1,13 +1,5 @@
-<<<<<<< ours — property `name` (S+F, confidence: low)
 # refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 name: TAU Nix
-=======
-name: OMP Nix
-
-# Nightly, on-demand, and release runs only. Releases push their `v*` tag
-# atomically with main (scripts/release.ts), so the tag push is the release
-# trigger; branch pushes and pull requests never run this workflow.
->>>>>>> theirs — property `name` (S+F, confidence: low) · weave: run 'weave explain .github/workflows/nix.yml' for per-hunk detail, 'weave check' to verify your resolution
 on:
   push:
     tags: ["v*"]

@@ -1,6 +1,5 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { type } from "@tau/tautype";
 import { Agent, type AgentTool, ThinkingLevel } from "@tau/tau-agent-core";
@@ -18,40 +17,6 @@ import { executeBuiltinSlashCommand } from "tau/slash-commands/builtin-registry"
 import type { TuiSlashCommandRuntime } from "tau/slash-commands/types";
 import { AUTO_THINKING } from "@tau/tau-tui/thinking";
 import { TempDir } from "@tau/tau-utils";
-=======
-import { type } from "@oh-my-pi/omptype";
-import { Agent, type AgentTool, ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import { type Api, Effort, type Model } from "@oh-my-pi/pi-ai";
-import { createMockModel, type MockResponse } from "@oh-my-pi/pi-ai/providers/mock";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { CustomToolAdapter } from "@oh-my-pi/pi-coding-agent/extensibility/custom-tools/wrapper";
-import { DeferredMCPTool } from "@oh-my-pi/pi-coding-agent/mcp/tool-bridge";
-import { dispatchXdevTool, type XdevDispatch, type XdevState } from "@oh-my-pi/pi-coding-agent/tools/xdev";
-import { WriteTool } from "@oh-my-pi/pi-coding-agent/tools/write";
-import { IrcBus } from "@oh-my-pi/pi-coding-agent/irc/bus";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import type { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { convertToLlm } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { getRestorableSessionModels } from "@oh-my-pi/pi-coding-agent/session/session-context";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import {
-	cfgPrewalkEnabled,
-	cfgPrewalkFrom,
-	cfgPrewalkInto,
-	cfgRetryBaseDelayMs,
-	cfgRetryFallbackChains,
-	cfgRetryFallbackRevertPolicy,
-} from "@oh-my-pi/pi-coding-agent/session/settings";
-import { executeBuiltinSlashCommand } from "@oh-my-pi/pi-coding-agent/slash-commands/builtin-registry";
-import type { TuiSlashCommandRuntime } from "@oh-my-pi/pi-coding-agent/slash-commands/types";
-import { AUTO_THINKING } from "@oh-my-pi/pi-tui/thinking";
-import { TempDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/agent-session-prewalk.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 import { mockSchedulerWaitWithClock } from "./helpers/mock-scheduler-clock";
 

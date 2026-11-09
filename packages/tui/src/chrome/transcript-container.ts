@@ -1062,7 +1062,6 @@ export class TranscriptContainer extends Container {
 			}
 		}
 		let end = this.#frontier;
-<<<<<<< ours — scope `#peekBatch` in class `TranscriptContainer` (S+F, confidence: low)
 // refused_by: container_member · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 		let freed = 0;
 		let index = 0;
@@ -1095,43 +1094,6 @@ export class TranscriptContainer extends Container {
 			kind: "append",
 		};
 		this.#offered = { batch, end, kind: "commit" };
-=======
-		while (end < limit && end < this.#entries.length && this.#entries[end]!.state === "settled") end++;
-		if (split !== undefined && end !== split.index) split = undefined;
-		if (end === this.#frontier && split === undefined) {
-			if (policy === "pressure") this.#notePinnedFrontier();
-			return undefined;
-		}
-		this.#pinnedFrontier = undefined;
-		pushLoopPhase("ui.transcript-retire");
-		let rows: string[];
-		let historyEnd: RowsAbove;
-		let reached: number;
-		try {
-			// Shutdown must hand over the full prefix; a live frame stops at the
-			// budget and offers the rest on the next frames.
-			const retirement = this.#renderRange(
-				this.#frontier,
-				end,
-				width,
-				this.#historyEnd,
-				policy === "flush" ? undefined : RETIREMENT_BUDGET_MS,
-			);
-			rows = retirement.rows;
-			reached = retirement.end;
-			if (split !== undefined && reached !== split.index) split = undefined;
-			if (split === undefined) {
-				historyEnd = this.#closeRange(rows, retirement.above, reached, width);
-			} else {
-				if (separatorRows(retirement.above, isCompact(this.#entries[split.index]!.component)) > 0) rows.push("");
-				rows.push(...split.rows);
-			}
-		} finally {
-			popLoopPhase();
-		}
-		const batch: HistoryBatch = { id: this.#nextBatchId++, rows, kind: "append" };
-		this.#offered = { batch, end: reached, kind: "commit", split: split?.split, historyEnd };
->>>>>>> theirs — scope `#peekBatch` · weave: run 'weave explain packages/tui/src/chrome/transcript-container.ts' for per-hunk detail, 'weave check' to verify your resolution
 		return batch;
 	}
 
@@ -1537,7 +1499,6 @@ export class TranscriptContainer extends Container {
 		return { rows: emittedEnd > entry.emitted ? after.slice(before.length) : EMPTY_ROWS, emittedEnd };
 	}
 
-<<<<<<< ours — scope `#releaseRenderCaches` in class `TranscriptContainer` (T+S+F, confidence: low)
 // refused_by: container_member · collision: none (no common ancestor text)
 	/**
 	 * Release render caches decoupled from frontier retirement (issue #15544).
@@ -1567,20 +1528,6 @@ export class TranscriptContainer extends Container {
 					entry.stableRowCountByWidth = new Map();
 				}
 			}
-=======
-	#releaseRenderCaches(entry: TranscriptEntry): void {
-		const release = entry.component.releaseRenderCaches;
-		if (release === undefined) return;
-		try {
-			release.call(entry.component);
-		} catch (err) {
-			if (this.#releaseFailures.has(entry.component)) return;
-			this.#releaseFailures.add(entry.component);
-			logger.warn("Transcript block failed to release render caches", {
-				component: entry.component.constructor.name,
-				error: String(err),
-			});
->>>>>>> theirs — scope `#releaseRenderCaches`
 		}
 	}
 

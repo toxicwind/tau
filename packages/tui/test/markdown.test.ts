@@ -7,7 +7,6 @@ import {
 	Markdown,
 	speculativeStreamingSource,
 	renderInlineMarkdown,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 	urlTokenPossible,
 } from "@tau/tau-tui/components/markdown";
@@ -16,16 +15,6 @@ import { type Component, TUI } from "@tau/tau-tui/tui";
 import { visibleWidth } from "@tau/tau-tui/utils";
 import { Chalk } from "@tau/tau-utils/chalk";
 import { mathStartIndex } from "@tau/tau-utils/math-delimiters";
-=======
-} from "@oh-my-pi/pi-tui/components/markdown";
-import { setTerminalTextSizing, TERMINAL } from "@oh-my-pi/pi-tui/terminal-capabilities";
-import { loadTheme } from "@oh-my-pi/pi-tui/theme/loader";
-import { getSymbolTheme, setThemeInstance } from "@oh-my-pi/pi-tui/theme/theme";
-import { type Component, TUI } from "@oh-my-pi/pi-tui/tui";
-import { visibleWidth } from "@oh-my-pi/pi-tui/utils";
-import { Chalk } from "@oh-my-pi/pi-utils/chalk";
-import { mathStartIndex } from "@oh-my-pi/pi-utils/math-delimiters";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/tui/test/markdown.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { defaultMarkdownTheme } from "./test-themes.js";
 import { VirtualTerminal } from "./virtual-terminal.js";
 

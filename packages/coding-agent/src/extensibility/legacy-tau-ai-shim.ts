@@ -27,17 +27,10 @@ import {
 	type Model,
 	type SimpleStreamOptions,
 	streamSimple,
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-ai";
 import type { Effort } from "@tau/tau-catalog/effort";
 import { clampThinkingLevelForModel, getSupportedEfforts } from "@tau/tau-catalog/model-thinking";
-=======
-} from "@oh-my-pi/pi-ai";
-import { streamAnthropic } from "@oh-my-pi/pi-ai/providers/register-builtins";
-import type { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { clampThinkingLevelForModel, getSupportedEfforts } from "@oh-my-pi/pi-catalog/model-thinking";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/extensibility/legacy-tau-ai-shim.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	calculateCost,
 	getBundledModel,
@@ -115,17 +108,8 @@ export function getSupportedThinkingLevels<TApi extends Api>(model: Model<TApi>)
  * (`@earendil-works/tau-ai` `utils/retry.ts`). Legacy extensions call
  * {@link isRetryableAssistantError} to decide whether to restart a failed
  * assistant turn, so the wording tables must match the upstream semantics they
-<<<<<<< ours — scope `/**` in variable `NON_RETRYABLE_PROVIDER_LIMIT_ERROR_PATTERN` (T, confidence: high)
 // refused_by: statement_fold · collision: none (1 contested hunk(s), neither side deleted the other's lines)
  * were authored against rather than TAU's own `Error`-based classifiers.
-=======
- * were authored against rather than OMP's own `Error`-based classifiers.
- *
- * The transport wording also covers OMP's own network-failure sentences from
- * `networkFailureMessage` (offline, unreachable, refused, TLS); legacy
- * extensions must keep restarting those turns exactly as they did for the
- * bare `Connection error.` text they replaced.
->>>>>>> theirs — scope `/**`
  */
 const NON_RETRYABLE_PROVIDER_LIMIT_ERROR_PATTERN =
 	/GoUsageLimitError|FreeUsageLimitError|Monthly usage limit reached|available balance|insufficient_quota|out of budget|quota exceeded|billing/i;
@@ -201,7 +185,6 @@ export function streamSimpleOpenAIResponses(
  * legacy extensions importing it from the tau-ai root resolving through Bun's
  * static named-export check (e.g. `tau plugin install tau-blackhole`).
  *
-<<<<<<< ours — scope `/**` in export `isContextOverflow` (T+S+F, confidence: low)
 // refused_by: statement_fold · collision: `* `@oh-my-pi/pi-ai/error`) and the JSON-repair helpers that omp…` +1 more
  * This is the full set derived from an audit of the upstream root surface: the
  * error-classification predicate `isContextOverflow` (now under
@@ -209,16 +192,6 @@ export function streamSimpleOpenAIResponses(
  * `@tau/tau-utils`. Upstream root symbols with no tau equivalent are
  * intentionally not shimmed — the package has diverged and there is nothing to
  * forward.
-=======
- * The error-classification predicate `isContextOverflow` (now under
- * `@oh-my-pi/pi-ai/error`) and the JSON-repair helpers (relocated to
- * `@oh-my-pi/pi-utils`) still exist in the host graph and are re-exported.
- * Upstream pi-ai 1.x additionally exposes a transcript-replay module
- * (`src/utils/transcript.ts`, present since at least 1.0.2) that omp's fork
- * predates and has no equivalent of anywhere; that family is ported verbatim
- * in `legacy-pi-transcript.ts` (observed consumer:
- * `pi-optchat` importing `getCurrentSystemMessage`).
->>>>>>> theirs — scope `/**`
  */
 export { isContextOverflow } from "@tau/tau-ai/error";
 export { parseJsonWithRepair, parseStreamingJson, repairJson } from "@tau/tau-utils";

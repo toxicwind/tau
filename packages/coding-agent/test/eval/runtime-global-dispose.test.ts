@@ -152,7 +152,6 @@ describe("JsRuntime global disposal", () => {
 			runtime.dispose();
 		}
 	});
-<<<<<<< ours — scope `it("reports the installed bridge dispatcher i...` in test_suite `JsRuntime global disposal`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("reports the installed bridge dispatcher identity in snapshots", async () => {
 		const runtime = new JsRuntime({ initialCwd: process.cwd(), sessionId: "shadow-call-tool" });
@@ -165,8 +164,6 @@ describe("JsRuntime global disposal", () => {
 			runtime.dispose();
 		}
 	});
-=======
->>>>>>> theirs — scope `it("reports the installed bridge dispatcher i...` deleted in theirs · weave: run 'weave explain packages/coding-agent/test/eval/runtime-global-dispose.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 	it("changes the snapshot digest when Object.prototype.toString is replaced", async () => {
 		const runtime = new JsRuntime({ initialCwd: process.cwd(), sessionId: "shadow-tostring" });
 		const genuineToString = Object.prototype.toString;

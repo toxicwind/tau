@@ -1,6 +1,5 @@
 import { describe, expect, it } from "bun:test";
 
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `} from "@oh-my-pi/pi-mnemopi/core/embeddings";`
 import {
 	cosineSimilarity,
@@ -10,9 +9,6 @@ import {
 	resetEmbeddingProviderForTests,
 	setEmbeddingProviderForTests,
 } from "@tau/tau-mnemotau/core/embeddings";
-=======
-import { embeddingDimFor, isApiModel } from "@oh-my-pi/pi-mnemopi/core/embeddings";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/mnemotau/test/embeddings-multilingual.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function withEnvValue<T>(key: string, value: string | undefined, fn: () => T): T {
 	const previous = process.env[key];

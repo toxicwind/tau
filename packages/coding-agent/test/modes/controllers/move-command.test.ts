@@ -484,7 +484,6 @@ describe("CommandController /move", () => {
 		},
 	);
 
-<<<<<<< ours — scope `it("does not relocate session files or cwd wh...` in test_suite `CommandController /move`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("does not relocate session files or cwd when the BTW migration gate refuses", async () => {
 		const sourceDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-move-source-"));
@@ -516,8 +515,6 @@ describe("CommandController /move", () => {
 			await fs.rm(targetDir, { recursive: true, force: true });
 		}
 	});
-=======
->>>>>>> theirs — scope `it("does not relocate session files or cwd wh...` deleted in theirs · weave: run 'weave explain packages/coding-agent/test/modes/controllers/move-command.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 	it("preserves completed BTW state when moving the session fails", async () => {
 		const sourceDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-move-source-"));

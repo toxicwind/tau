@@ -6,13 +6,8 @@ use std::{
 	sync::{LazyLock, Mutex},
 };
 
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 use tau_ast::{
-=======
-use pi_ast::{
-	SupportLang,
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain crates/tau-edit/src/modes/hashline/syntax.rs' for per-hunk detail, 'weave check' to verify your resolution
 	block::{
 		BlockRangeOptions, EnclosingBoundaryOptions, LineRange, NodeSpan, enclosing_block_boundaries,
 		node_chain_at,

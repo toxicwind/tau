@@ -2,17 +2,10 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import type { Personality } from "@oh-my-pi/pi-coding-agent/con…` +1 more
 import type { Personality } from "tau/config/settings";
 import { buildSystemPrompt } from "tau/system-prompt";
 import { getAgentDir, removeSyncWithRetries, setAgentDir } from "@tau/tau-utils";
-=======
-import type { Personality } from "@oh-my-pi/pi-coding-agent/session/settings";
-import { buildSystemPrompt } from "@oh-my-pi/pi-coding-agent/system-prompt";
-import { __resetDirsFromEnvForTests, removeSyncWithRetries, setAgentDir } from "@oh-my-pi/pi-utils";
-import { restoreEnvValue } from "./helpers/settings-test-state";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/system-prompt-personality.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const EMPTY_TREE = {
 	rootPath: "",
@@ -38,17 +31,9 @@ describe("PERSONALITY.md override", () => {
 	let originalPiProfileEnv: string | undefined;
 
 	beforeEach(() => {
-<<<<<<< ours — test_suite `PERSONALITY.md override` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 		tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "tau-personality-"));
 		tempAgentDir = fs.mkdtempSync(path.join(os.tmpdir(), "tau-personality-agent-"));
-=======
-		originalAgentDirEnv = process.env.PI_CODING_AGENT_DIR;
-		originalOmpProfileEnv = process.env.OMP_PROFILE;
-		originalPiProfileEnv = process.env.PI_PROFILE;
-		tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "pi-personality-"));
-		tempAgentDir = fs.mkdtempSync(path.join(os.tmpdir(), "pi-personality-agent-"));
->>>>>>> theirs — test_suite `PERSONALITY.md override` (F, confidence: medium)
 		setAgentDir(tempAgentDir);
 	});
 

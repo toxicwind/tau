@@ -8,15 +8,9 @@ import type {
 	AgentToolContext,
 	AgentToolResult,
 	AgentToolUpdateCallback,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-agent-core";
 import type { Model, ToolExample } from "@tau/tau-ai";
-=======
-	ToolApprovalDecision,
-} from "@oh-my-pi/pi-agent-core";
-import type { Model, ToolExample } from "@oh-my-pi/pi-ai";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/edit/index.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	EditSession,
 	editDescription,
@@ -29,17 +23,11 @@ import {
 	type EditUrlResolution,
 	type EditWriteRequest,
 	type EditWriteResponse,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-natives";
 import { isEnoent, logger, prompt } from "@tau/tau-utils";
 import { resolveLocalRoot } from "../internal-urls";
 import { cachedVaultRoots, isVaultEnabled } from "../internal-urls/vault-protocol";
-=======
-} from "@oh-my-pi/pi-natives";
-import { isEnoent, logger, prompt } from "@oh-my-pi/pi-utils";
-import { extractUriScheme, InternalUrlRouter, type ResolveContext, sessionResolveContext } from "../internal-urls";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import { createLspWritethrough, flushLspWritethroughBatch, type WritethroughCallback, writethroughNoop } from "../lsp";
 import { type FileDiagnosticsResult } from "@tau/tau-tui/tools/lsp";
 import { FileChangeType, notifyWorkspaceWatchedFiles } from "../lsp/client";
@@ -55,7 +43,6 @@ import {
 	isPermissionDeniedError,
 	writeFileWithFallback,
 } from "../tools/file-write-fallback";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 import {
 	invalidateFsScanAfterDelete,
@@ -68,13 +55,6 @@ import { planLocalProtocolOptions } from "../tools/plan-mode-guard";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 import { type EditMode } from "@tau/tau-tui/tools/edit";
 import { normalizeEditMode, resolveEditMode } from "../utils/edit-mode";
-=======
-import { outputMeta, resolveOutputMaxColumns } from "../tools/output-meta";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
-import { DEFAULT_MAX_COLUMN } from "@oh-my-pi/pi-tui/tools/streaming-output";
-import { type EditMode } from "@oh-my-pi/pi-tui/tools/edit";
-import { resolveEditMode } from "../utils/edit-mode";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import { attemptEditAutoRepair, type EditAutoRepairOutcome } from "./auto-repair";
 import { type AppliedEditSnapshot, createEditBlackboxRecorder } from "./blackbox";
 import hashlineCompactPrompt from "./hashline-compact.md" with { type: "text" };
@@ -114,13 +94,10 @@ export type {
 	EditToolPerFileResult,
 	Operation,
 	PerFileDiffPreview,
-<<<<<<< ours — interstitial `between:packages/coding-agent/src/edit/index.ts::export::PerFileDiffPreview:packages/coding-agent/src/edit/index.ts::export::DEFAULT_EDIT_MODE` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `} from "@oh-my-pi/pi-tui/tools/edit";`
 } from "@tau/tau-tui/tools/edit";
 export * from "./schemas";
 export * from "./store";
-=======
->>>>>>> theirs — interstitial `between:packages/coding-agent/src/edit/index.ts::export::PerFileDiffPreview:packages/coding-agent/src/edit/index.ts::export::DEFAULT_EDIT_MODE` (S+F, confidence: low)
 } from "@oh-my-pi/pi-tui/tools/edit";
 export * from "./schemas";
 export * from "./store";

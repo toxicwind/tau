@@ -115,7 +115,6 @@ export const embeddedAddon = {
 	overrides[path.join(dir, "embedded-addon.js")] = manifest;
 	return overrides;
 }
-<<<<<<< ours — function `embedNativeAddon` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 /**
  * Validate and embed native addons for one standalone-binary target.
@@ -205,5 +204,3 @@ ${files}
 
 	await Bun.write(outputPath, content);
 }
-=======
->>>>>>> theirs — function `embedNativeAddon` (S+F, confidence: low) · weave: run 'weave explain packages/natives/scripts/embed-native.ts' for per-hunk detail, 'weave check' to verify your resolution

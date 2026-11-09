@@ -5,14 +5,9 @@ import {
 	buildOpenAiNativeHistory,
 	createCompactionSummaryMessage,
 	defaultConvertToLlm,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { AssistantMessage } from "@oh-my-pi/pi-ai";`
 } from "@tau/tau-agent-core/compaction";
 import type { AssistantMessage } from "@tau/tau-ai";
-=======
-} from "@oh-my-pi/pi-agent-core/compaction";
-import type { AssistantMessage, ToolResultMessage } from "@oh-my-pi/pi-ai";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/advisor/advisor.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type {
 	ResponseFileSearchToolCall,
 	ResponseFunctionWebSearch,
@@ -42,15 +37,9 @@ import {
 	quarantineAdvisorUnsafeOutput,
 	resolveAdvisorDeliveryChannel,
 } from "../../src/advisor";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { AssistantMessage } from "@oh-my-pi/pi-ai";`
 import { createAdvisorMessageCard } from "@tau/tau-tui/chat/advisor-message";
 import { getThemeByName } from "@tau/tau-tui/theme";
-=======
-import { createAdvisorMessageCard } from "@oh-my-pi/pi-tui/chat/advisor-message";
-import { setChatTranscriptDisplayPreferences } from "@oh-my-pi/pi-tui/chat/display-preferences";
-import { getThemeByName } from "@oh-my-pi/pi-tui/theme";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import { obfuscateMessages } from "../../src/secrets/message-transform";
 import { SecretObfuscator } from "../../src/secrets/obfuscator";
 import { getOpenAiRemoteCompactionPayload } from "../../src/session/session-context";

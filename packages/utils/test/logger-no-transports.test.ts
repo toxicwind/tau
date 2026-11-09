@@ -60,7 +60,6 @@ describe("logger with no transports", () => {
 		expect(noTransportWarnings).toEqual([]);
 	});
 
-<<<<<<< ours — scope `it("resumes writing once a transport is re-en...` in test_suite `logger with no transports`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("resumes writing once a transport is re-enabled", async () => {
 		logger.setTransports({ file: false, console: false });
@@ -80,6 +79,4 @@ describe("logger with no transports", () => {
 		}
 		expect(found).toBe(true);
 	});
-=======
->>>>>>> theirs — scope `it("resumes writing once a transport is re-en...` deleted in theirs · weave: run 'weave explain packages/utils/test/logger-no-transports.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 });

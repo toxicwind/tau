@@ -1,29 +1,6 @@
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { parseXdTopicUrl, parseXdUrl } from "@tau/tau-tui/tools/xd-url";
 import type { InternalResource, InternalUrl, ProtocolHandler, ResolveContext, WriteContext } from "./types";
-=======
-import type { ToolApprovalDecision } from "@oh-my-pi/pi-agent-core";
-import { isRecord } from "@oh-my-pi/pi-utils";
-import { REPORT_ISSUE_DEVICE_NAME } from "@oh-my-pi/pi-tui/tools/report-tool-issue";
-import { isResolutionDeviceName } from "@oh-my-pi/pi-tui/tools/resolve";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
-import { parseXdTopicUrl, parseXdUrl } from "@oh-my-pi/pi-tui/tools/xd-url";
-import type { ToolSession } from "../tools";
-import { resolveToolTier } from "../tools/approval";
-import { dispatchReportIssueDevice, reportIssueDeviceUsage } from "../tools/report-tool-issue";
-import { dispatchResolutionDevice, resolutionDeviceUsage } from "../tools/resolve";
-import { dispatchXdevTool, resolveXdevTool, xdevDocs, xdevListing } from "../tools/xdev";
-import type {
-	InternalResource,
-	InternalUrl,
-	InternalWriteResult,
-	ProtocolHandler,
-	ResolveContext,
-	SchemeSpec,
-	WriteContext,
-} from "./types";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/internal-urls/xd-protocol.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 // Re-exported so extensions can parse `xd://` targets through the module that
 // owns the protocol. `tau-semantic-policy` imports `parseXdUrl` from here to

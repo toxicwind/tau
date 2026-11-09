@@ -82,14 +82,8 @@ export class DownloadManager {
 	constructor(browser: Browser, page: Page, tabId: string, options: { perTab: boolean; pageEvents: boolean }) {
 		this.#browser = browser;
 		this.#page = page;
-<<<<<<< ours — scope `constructor` in class `DownloadManager` (S+F, confidence: low)
 // refused_by: container_member · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 		this.#defaultDirectory = path.join(os.tmpdir(), `tau-downloads-${tabId}`);
-=======
-		this.#defaultDirectory = path.join(os.tmpdir(), `omp-downloads-${tabId}`);
-		this.#perTab = options.perTab;
-		this.#pageEvents = options.pageEvents;
->>>>>>> theirs — scope `constructor` · weave: run 'weave explain packages/coding-agent/src/tools/browser/downloads.ts' for per-hunk detail, 'weave check' to verify your resolution
 	}
 
 	/**

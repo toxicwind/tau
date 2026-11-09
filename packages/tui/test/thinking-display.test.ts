@@ -1,14 +1,6 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { canonicalizeMessage, formatThinkingForDisplay } from "…`
 import { canonicalizeMessage, formatThinkingForDisplay } from "@tau/tau-tui/chat/thinking-display";
-=======
-import {
-	canonicalizeMessage,
-	formatThinkingForDisplay,
-	resetThinkingDisplayCacheForTests,
-} from "@oh-my-pi/pi-tui/chat/thinking-display";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/test/thinking-display.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 describe("canonicalizeMessage", () => {
 	it("returns empty string for undefined, empty, or whitespace-only", () => {

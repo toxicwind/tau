@@ -11,13 +11,8 @@
  * `prompt_cache`: the bar's `cache` marker (the cache glyph, struck through when not cached) beside the cost, followed by
  * the details rows as `/session` lists them, for each cache lifecycle.
  */
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { StatusLineComponent } from "@oh-my-pi/pi-tui/status-li…`
 import { StatusLineComponent } from "@tau/tau-tui/status-line";
-=======
-import type { PromptCacheStatus } from "@oh-my-pi/pi-tui/status-line/host";
-import { promptCacheDetails, StatusLineComponent } from "@oh-my-pi/pi-tui/status-line";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/cli/gallery-fixtures/status-line.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { statusLineHost } from "../../modes/status-line-host";
 import { theme } from "@tau/tau-tui/theme";
 import type { AgentSession } from "../../session/agent-session";

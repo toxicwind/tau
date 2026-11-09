@@ -1,15 +1,7 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { AssistantMessage, Message, Usage } from "@oh-my-p…`
 import type { AssistantMessage, Message, Usage } from "@tau/tau-ai";
 import { INTENT_FIELD } from "@tau/tau-wire";
-=======
-import type { AssistantMessage, Message, Model, ModelSpec, Usage } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { toModelSpec } from "@oh-my-pi/pi-catalog/provider-models/bundled-references";
-import { INTENT_FIELD } from "@oh-my-pi/pi-wire";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/snapcompact/test/snapcompact.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import * as snapcompact from "../src";
 
 // Small frames keep render time negligible. Legacy 5x8 shape: 320px → 64 cols

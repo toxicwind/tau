@@ -3,15 +3,9 @@
  * text-only assistant turn promised to act and then ended. The judge comes
  * from the live `judge` role chain resolved by {@link resolveJudge}.
  */
-<<<<<<< ours — interstitial `file_header` (T+F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import type { AssistantMessage, Model, NoulQuestion } from "@oh…`
 import type { AssistantMessage, Model, NoulQuestion } from "@tau/tau-ai";
 import { logger } from "@tau/tau-utils";
-=======
-import type { AgentTelemetryConfig } from "@oh-my-pi/pi-agent-core";
-import { type AssistantMessage, type JudgmentState, judgeQuestions, type Model } from "@oh-my-pi/pi-ai";
-import { logger } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (T+F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/session/unexpected-stop-classifier.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { ModelRegistry } from "../config/model-registry";
 import type { Settings } from "../config/settings";
 import { type JudgmentUsage, resolveJudge, sharedJudgmentCache } from "../judgment";

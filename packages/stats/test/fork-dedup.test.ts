@@ -2,20 +2,11 @@ import { Database } from "bun:sqlite";
 import { describe, expect, it, spyOn } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { closeDb, getOverallStats, getRecentRequests, initDb, i…`
 import { syncAllSessions } from "@tau/tau-stats/aggregator";
 import { closeDb, getOverallStats, getRecentRequests, initDb, insertMessageStats } from "@tau/tau-stats/db";
 import type { MessageStats } from "@tau/tau-stats/types";
 import { getSessionsDir, getStatsDbPath } from "@tau/tau-utils";
-=======
-import { syncAllSessions } from "@oh-my-pi/omp-stats/aggregator";
-import { closeDb, getRecentRequests, initDb, insertMessageStats } from "@oh-my-pi/omp-stats/db";
-import { getOverallStats } from "@oh-my-pi/omp-stats/rollup";
-import * as parser from "@oh-my-pi/omp-stats/parser";
-import type { MessageStats } from "@oh-my-pi/omp-stats/types";
-import { getSessionsDir, getStatsDbPath } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/stats/test/fork-dedup.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { installStatsTestIsolation } from "./helpers/temp-agent";
 
 installStatsTestIsolation("@tau-stats-fork-dedup-");

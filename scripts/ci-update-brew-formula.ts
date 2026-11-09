@@ -1,6 +1,5 @@
 #!/usr/bin/env bun
 //
-<<<<<<< ours — interstitial `file_header` (T+F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `// Render the Homebrew formula for `omp` from a published GitHu…` +1 more
 // Render the Homebrew formula for `tau` from a published GitHub release and write
 // it to a tap checkout. The release publishes per-platform bare binaries
@@ -12,30 +11,12 @@
 //   bun scripts/ci-update-brew-formula.ts v15.10.3        # prints to stdout
 
 import { $ } from "bun";
-=======
-// Render the Homebrew formula for `omp` from a build published on the build
-// service (build.stencil.so) and write it to a tap checkout. Each formula
-// target points at the build's immutable download URL
-// (`/d/omp/<build-id>/<file>`) with the sha256 the service recorded at upload,
-// so the formula never drifts from the shipped binaries. Fails when the
-// version is not published for every formula target.
-//
-// Usage:
-//   bun scripts/ci-update-brew-formula.ts <tag> --out <path/to/Formula/omp.rb>
-//   bun scripts/ci-update-brew-formula.ts v18.8.9        # prints to stdout
-//
-// Environment:
-//   BUILD_URL   service origin (default https://build.stencil.so)
->>>>>>> theirs — interstitial `file_header` (T+F, confidence: medium) · weave: run 'weave explain scripts/ci-update-brew-formula.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const PRODUCT = "omp";
 const SERVICE_URL = (process.env.BUILD_URL ?? "https://build.stencil.so").replace(/\/+$/, "");
 
-<<<<<<< ours — variable `REPO` (S, confidence: medium)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 const REPO = process.env.TAU_REPO ?? "can1357/tau";
-=======
->>>>>>> theirs — variable `REPO` (S, confidence: medium)
 const HOMEPAGE = "https://tau.sh";
 const DESC = "Coding agent with the IDE wired in";
 /** GitHub release assets: the same bytes `release_github` publishes before the build service. */
@@ -112,7 +93,6 @@ export function renderFormula(version: string, files: Record<FormulaTarget, Form
 	// the writable staging dir so `generate_completions_from_executable` does
 	// not touch the real `/Users/<user>/.tau` (denied by Homebrew's sandbox
 	// profile, which would otherwise fail the popen).
-<<<<<<< ours — scope `// Each `url` carries `using: :nounzip` becau...` in function `renderFormula` (T+F, confidence: medium)
 // refused_by: statement_fold · collision: `return `class Omp < Formula` +12 more
 	return `class Tau < Formula
   desc "${DESC}"
@@ -157,14 +137,6 @@ export function renderFormula(version: string, files: Record<FormulaTarget, Form
   test do
     assert_match version.to_s, shell_output("#{bin}/tau --version")
   end
-=======
-	//
-	// Each `mirror` points at the same file on the GitHub release. Homebrew
-	// tries it when the build-service download fails, e.g. when a proxy blocks
-	// the service's redirect to R2 storage; `sha256` still checks the bytes.
-	const mirror = (file: FormulaFile) =>
-		`${RELEASE_DOWNLOAD_URL}/v${version}/${file.url.slice(file.url.lastIndexOf("/") + 1)}`;
->>>>>>> theirs — scope `// Each `url` carries `using: :nounzip` becau...`
 	return `class Omp < Formula
   desc "${DESC}"
   homepage "${HOMEPAGE}"
@@ -227,11 +199,8 @@ async function main(): Promise<void> {
 	);
 	const formula = renderFormula(version, Object.fromEntries(entries) as Record<FormulaTarget, FormulaFile>);
 
-<<<<<<< ours — scope `const targets = ["omp-darwin-arm64", "omp-dar...` in function `main`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	const targets = ["tau-darwin-arm64", "tau-darwin-x64", "tau-linux-arm64", "tau-linux-x64"];
-=======
->>>>>>> theirs — scope `const targets = ["omp-darwin-arm64", "omp-dar...` deleted in theirs
 	if (out) {
 		await Bun.write(out, formula);
 		console.log(`wrote ${out} for ${tag}`);

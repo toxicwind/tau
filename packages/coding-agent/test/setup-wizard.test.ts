@@ -1,4 +1,3 @@
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { webModelManagerOptions } from "@oh-my-pi/pi-catalog/pr…` +3 more
 import { afterEach, describe, expect, it, mock, vi } from "bun:test";
 import type { Model } from "@tau/tau-ai";
@@ -6,14 +5,6 @@ import { buildModel } from "@tau/tau-catalog/build";
 import { webModelManagerOptions } from "@tau/tau-catalog/provider-models/special";
 import { runOnboardingSetup } from "tau/commands/setup";
 import { Settings } from "tau/config/settings";
-=======
-import { afterEach, beforeEach, describe, expect, it, mock, vi } from "bun:test";
-import type { Model } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import * as updateCli from "@oh-my-pi/pi-coding-agent/cli/update-cli";
-import { runOnboardingSetup } from "@oh-my-pi/pi-coding-agent/commands/setup";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/setup-wizard.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	ALL_SCENES,
 	createSetupHost,
@@ -23,7 +14,6 @@ import {
 	type SetupScene,
 	type SetupSceneHost,
 	selectSetupScenes,
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { webModelManagerOptions } from "@oh-my-pi/pi-catalog/pr…` +3 more
 } from "tau/modes/setup";
 import { providersSetupScene } from "@tau/tau-tui/setup/scenes/providers";
@@ -34,15 +24,6 @@ import { setTerminalGlyphProtocol } from "@tau/tau-tui/terminal-capabilities";
 import { initTheme, theme } from "@tau/tau-tui/theme";
 import type { InteractiveModeContext } from "tau/modes/types";
 import { SEARCH_PROVIDER_OPTIONS } from "@tau/tau-tui/tools/web-search";
-=======
-} from "@oh-my-pi/pi-coding-agent/modes/setup";
-import { providersSetupScene } from "@oh-my-pi/pi-tui/setup/scenes/sign-in";
-import { themeSetupScene } from "@oh-my-pi/pi-tui/setup/scenes/theme";
-import { SetupWizardComponent } from "@oh-my-pi/pi-tui/setup/wizard-overlay";
-import { setTerminalGlyphProtocol } from "@oh-my-pi/pi-tui/terminal-capabilities";
-import { initTheme, theme } from "@oh-my-pi/pi-tui/theme";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low)
 
 import { cfgSetupVersion, cfgSymbolPreset } from "@oh-my-pi/pi-coding-agent/modes/settings";
 
@@ -139,20 +120,8 @@ describe("setup wizard scene selection", () => {
 		expect(await selectSetupScenes(0, ALL_SCENES, ctx, { isTTY: false, force: true })).toEqual([]);
 	});
 
-<<<<<<< ours — test_suite `setup wizard scene selection` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 	it("drops the glyph scene once the terminal renders tau's bundled icons in-band", async () => {
-=======
-	it("skips the auto-update question where omp cannot update itself (Tern, Nix, a source checkout)", async () => {
-		vi.spyOn(updateCli, "canSelfUpdate").mockResolvedValue(false);
-		const scenes = await selectSetupScenes(0, ALL_SCENES, fakeContextWithConfiguredModel(), { isTTY: true });
-		expect(scenes.map(scene => scene.id)).toEqual(
-			ALL_SCENES.map(scene => scene.id).filter(id => id !== "auto-update"),
-		);
-	});
-
-	it("drops the glyph scene once the terminal renders omp's bundled icons in-band", async () => {
->>>>>>> theirs — test_suite `setup wizard scene selection` (F, confidence: medium)
 		setTerminalGlyphProtocol(true);
 		try {
 			const scenes = await selectSetupScenes(0, ALL_SCENES, fakeContextWithConfiguredModel(), { isTTY: true });

@@ -2,19 +2,11 @@
 //! `pkill`, `pidwait`, `kill`), and the OS process layer beneath them.
 //!
 //! One `ProcInfo` per platform, each exposing the same accessors so the
-<<<<<<< ours — interstitial `file_header` (T+S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `//! builtins above stay platform-agnostic. Lifted out of `pi-sh…` +2 more
 //! builtins above stay platform-agnostic. Lifted out of `tau-shell` when the
 //! process builtins moved into this crate; `tau-shell` keeps its own
 //! session/teardown process management (`tau_shell::process`), which is a
 //! different concern and a different type.
-=======
-//! builtins above stay platform-agnostic. The platform queries themselves —
-//! procfs parsing, pidfds, libproc, Toolhelp, process handles — live in
-//! [`sys`], which `pi-shell`'s identity-pinned process references
-//! (`pi_shell::proctree`) are built on too, so each query has one
-//! implementation and a platform fix lands once.
->>>>>>> theirs — interstitial `file_header` (T+S+F, confidence: low) · weave: run 'weave explain crates/tau-builtins/src/proc_snapshot.rs' for per-hunk detail, 'weave check' to verify your resolution
 
 // Consumers (`ps`, `top`, `pgrep`, `pkill`, `pidwait`, `kill`) are each
 // feature-gated, so a build with only some of them enabled legitimately uses
@@ -609,7 +601,6 @@ pub mod sys {
 		bsdinfo_with_zombies(pid, true)
 	}
 
-<<<<<<< ours — function `read_bsdinfo` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 	fn read_bsdinfo(pid: i32) -> Option<libc::proc_bsdinfo> {
 		if pid <= 0 {
@@ -623,20 +614,6 @@ pub mod sys {
 				pid,
 				libc::PROC_PIDTBSDINFO,
 				0,
-=======
-	fn bsdinfo_with_zombies(pid: i32, include_zombies: bool) -> Option<libc::proc_bsdinfo> {
-		if pid <= 0 {
-			return None;
-		}
-		// SAFETY: proc_bsdinfo is a C integer record valid when zeroed.
-		let mut info = unsafe { std::mem::zeroed::<libc::proc_bsdinfo>() };
-		// SAFETY: info is writable for the exact supplied size.
-		let actual = unsafe {
-			libc::proc_pidinfo(
-				pid,
-				libc::PROC_PIDTBSDINFO,
-				u64::from(include_zombies),
->>>>>>> theirs — function `read_bsdinfo` (S+F, confidence: low)
 				(&raw mut info).cast(),
 				size_of::<libc::proc_bsdinfo>() as i32,
 			)
@@ -1452,7 +1429,6 @@ pub mod sys {
 			.filter(|pid| *pid > 0)
 	}
 
-<<<<<<< ours — function `process_command_line` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 	fn process_command_line(handle: Handle) -> Option<String> {
 		const PROCESS_COMMAND_LINE_INFORMATION: u32 = 60;
@@ -1494,50 +1470,6 @@ pub mod sys {
 		let base = storage.as_ptr() as usize;
 		let end = base.checked_add(storage.len().checked_mul(size_of::<usize>())?)?;
 		let command_start = command.buffer as usize;
-=======
-	/// The process's command line, one kernel query on any handle with
-	/// `PROCESS_QUERY_LIMITED_INFORMATION`; `None` when unreadable or empty.
-	pub fn command_line(process: &OwnedHandle) -> Option<String> {
-		let handle = process.as_raw_handle();
-		let mut bytes = 0u32;
-		// SAFETY: a null sizing query writes only the required byte count.
-		unsafe {
-			NtQueryInformationProcess(
-				handle,
-				PROCESS_COMMAND_LINE_INFORMATION,
-				std::ptr::null_mut(),
-				0,
-				&raw mut bytes,
-			);
-		}
-		if bytes < size_of::<UnicodeString>() as u32 {
-			return None;
-		}
-		let words = (bytes as usize).div_ceil(size_of::<usize>());
-		let mut storage = vec![0usize; words];
-		// SAFETY: storage is aligned and writable for at least `bytes` bytes.
-		let status = unsafe {
-			NtQueryInformationProcess(
-				handle,
-				PROCESS_COMMAND_LINE_INFORMATION,
-				storage.as_mut_ptr().cast(),
-				bytes,
-				&raw mut bytes,
-			)
-		};
-		if status < 0 {
-			return None;
-		}
-		// SAFETY: a successful query initializes a UnicodeString at the buffer head.
-		let command = unsafe { &*storage.as_ptr().cast::<UnicodeString>() };
-		let length = usize::from(command.length);
-		if length == 0 || !length.is_multiple_of(size_of::<u16>()) {
-			return None;
-		}
-		let base = storage.as_ptr().addr();
-		let end = base.checked_add(storage.len().checked_mul(size_of::<usize>())?)?;
-		let command_start = command.buffer.addr();
->>>>>>> theirs — function `process_command_line` (S+F, confidence: low)
 		let command_end = command_start.checked_add(length)?;
 		if command_start < base || command_end > end {
 			return None;

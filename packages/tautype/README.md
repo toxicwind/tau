@@ -124,83 +124,9 @@ candidate was than tautype in this run. Results vary with hardware, runtime,
 thermal state, and dependency versions; use the command above for local
 measurements.
 
-<<<<<<< ours — heading `Installation` (T+F, confidence: medium)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
-=======
-## Installation
-
-```sh
-npm install @oh-my-pi/omptype
-# or
-bun add @oh-my-pi/omptype
-```
-
-Runs on Node 20+ (published as compiled ESM with bundled type declarations)
-and Bun 1.4.4+ (which resolves the TypeScript source directly via the `bun`
-export condition). No runtime dependencies.
-
->>>>>>> theirs — heading `Installation` (T+F, confidence: medium) · weave: run 'weave explain packages/tautype/README.md' for per-hunk detail, 'weave check' to verify your resolution
-<<<<<<< ours — heading `Usage` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
-=======
-## Usage
-
-```ts
-import { type } from "@oh-my-pi/omptype";
-
-const Config = type({
-	name: "string",
-	"retries?": "number.integer >= 0",
-	enabled: "boolean = true",
-});
-
-const config = Config.assert({ name: "worker" });
-// { name: "worker", enabled: true }
-
-const result = Config({ name: 42 });
-if (result instanceof type.errors) {
-	console.error(result.summary);
-}
-```
-
-Schemas are callable and expose composition (`.or()`, `.and()`, `.array()`,
-`.pipe()`, `.narrow()`), object transforms (`.pick()`, `.omit()`, `.partial()`,
-`.required()`, `.merge()`, `.map()`), refinements, semantic comparison, error
-configuration, and JSON Schema emission.
-
-Built-in keyword modules include `type.string.email`, `type.string.uuid.v4`,
-`type.string.date.iso.parse`, `type.string.normalize.NFKC`,
-`type.number.integer`, and the parsers under `type.parse`.
-
->>>>>>> theirs — heading `Usage` (S+F, confidence: low)
-<<<<<<< ours — heading `Named and recursive schemas` (T+F, confidence: medium)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
-=======
-## Named and recursive schemas
-
-```ts
-const models = type
-	.scope({
-		User: { name: "string", "manager?": "User" },
-		Users: "User[]",
-		PublicUser: "Pick<User, 'name'>",
-	})
-	.export();
-
-models.User.assert({ name: "Ada", manager: { name: "Grace" } });
-```
-
-Scopes resolve aliases lazily, including cycles. `type.module()` exports a
-scope directly, `type.define()` preserves literal definitions, and
-`type.generic("<value>", definition)` builds parameterized runtime schemas.
-
-Failed validation returns `OmpErrors`; each entry exposes `code`, `path`,
-`expected`, `actual`, `problem`, and `message`, while the aggregate exposes
-`summary` and `byPath`. `.configure()` accepts string or callback overrides for
-error text. `.toJsonSchema()` accepts `target`, `dialect`, and `fallback`
-options.
-
->>>>>>> theirs — heading `Named and recursive schemas` (T+F, confidence: medium)
 ## JSON Schema import
 
 `fromJsonSchema` turns any JSON Schema document into an omptype schema that

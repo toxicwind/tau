@@ -7,14 +7,9 @@
  * Everything credential-shaped lives here so each route drives the same
  * broker-backed rotation policy and the same usage ledger.
  */
-<<<<<<< ours — interstitial `file_header` (T+F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { extractHttpStatusFromError, logger } from "@tau/tau-utils";
 import type { ApiKeyResolver } from "../auth-retry";
-=======
-import { extractHttpStatusFromError, logger } from "@oh-my-pi/pi-utils";
-import { type ApiKeyResolver, createOAuthProvenance, NO_AUTH_SENTINEL, type ResolvedApiKey } from "../auth-retry";
->>>>>>> theirs — interstitial `file_header` (T+F, confidence: medium) · weave: run 'weave explain packages/ai/src/auth-gateway/dispatch.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { AuthApiKeyOptions, AuthStorage } from "../auth-storage";
 import * as AIError from "../error";
 import { classifyGatewayError, type GatewayErrorClassification } from "../error/gateway";
@@ -117,20 +112,12 @@ export function gatewayRequestLogFields(
 /**
  * Resolve the credential for one request from broker-backed storage.
  *
-<<<<<<< ours — scope `declaration` in function `resolveGatewayApiKey` (T, confidence: high)
 // refused_by: statement_fold · collision: none (1 contested hunk(s), neither side deleted the other's lines)
  * tau-ai clients never consult `AuthStorage`; the gateway resolves the bearer
  * (an OAuth access token refreshed through the broker when needed) and hands
  * it to the client. Returns the key, or the error classification the route
  * should encode in its own envelope: storage failures map through
  * {@link classifyGatewayError}, a provider without any credential is a 401.
-=======
- * pi-ai clients never consult `AuthStorage`; the gateway resolves the bearer
- * and its OAuth identity together (refreshing through the broker when needed).
- * Keep this selection snapshot intact even if another request replaces the
- * stored token before dispatch. Storage failures map through
- * {@link classifyGatewayError}; a provider without any credential is a 401
->>>>>>> theirs — scope `declaration`
  * unless its catalog policy allows keyless requests.
  */
 export async function resolveGatewayApiKey(

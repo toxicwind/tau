@@ -8,13 +8,8 @@
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { getSafeProjectCwd, logger, postmortem } from "@tau/tau-utils";
-=======
-import { getSafeProjectCwd, logger, postmortem } from "@oh-my-pi/pi-utils";
-import { quotePosixArgument } from "./shell-quote";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/utils/shell-snapshot.ts' for per-hunk detail, 'weave check' to verify your resolution
 import fnEnvHelper from "./shell-snapshot-fn-env.sh" with { type: "text" };
 
 interface SnapshotFailure {
@@ -93,13 +88,10 @@ while IFS= read -r __omp_f; do ${printFunction} "$__omp_f" 2>/dev/null; done < "
 rm -f "$__omp_kept"`;
 	const functionExtractor = `# Force autoload all functions first
 ${printFunction} > /dev/null 2>&1
-<<<<<<< ours — scope `# Get user function names - filter system/pri...` in function `generateSnapshotScript`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 # Get user function names - filter system/private ones
 declare -F 2>/dev/null | cut -d' ' -f3 | grep -vE '^(__)' | grep -vE '^_(2s_)?' | grep -vE '${commonToolsRegex}' | while read func; do
    declare -f "$func" 2>/dev/null
-=======
->>>>>>> theirs — scope `# Get user function names - filter system/pri...` deleted in theirs
 done
 # Preserve the kairos/two-sec guard family + doctrine wrappers even though the
 # filters above strip them (estate: the shim is the enforcement surface).
@@ -215,7 +207,6 @@ export async function getOrCreateSnapshot(
 	env: Record<string, string | undefined>,
 	timeoutMs = SNAPSHOT_TIMEOUT_MS,
 ): Promise<string | null> {
-<<<<<<< ours — function `getOrCreateSnapshot (body partly extracted into rcFileStamp, createSnapshot)` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `if (cached && fs.existsSync(cached)) {` +3 more
 	const cacheKey = shell;
 	// Return cached snapshot if valid
@@ -265,19 +256,6 @@ export async function getOrCreateSnapshot(
 		// a snapshot instead of failing the caller's command.
 		logger.debug("shell-snapshot: snapshot dir unusable", { dir: snapshotDir, err: String(err) });
 		return null;
-=======
-	// Skip on Windows (no .bashrc in standard location)
-	if (process.platform === "win32") {
-		return null;
-	}
-
-	const cacheKey = shell;
-	const cached = cachedSnapshots.get(cacheKey);
-	if (cached) {
-		// A cleaned-up snapshot must be recreated, never handed to the shell.
-		if (fs.existsSync(cached)) return cached;
-		cachedSnapshots.delete(cacheKey);
->>>>>>> theirs — function `getOrCreateSnapshot (body partly extracted into rcFileStamp, createSnapshot)` (S+F, confidence: low)
 	}
 
 	const inflight = inflightSnapshots.get(cacheKey);

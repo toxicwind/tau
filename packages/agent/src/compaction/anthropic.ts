@@ -16,21 +16,11 @@ import type {
 	Model,
 	SimpleStreamOptions,
 	Usage,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { supportsAnthropicCompaction } from "@oh-my-pi/pi-ai/pr…`
 } from "@tau/tau-ai";
 import * as AIError from "@tau/tau-ai/error";
 import { supportsAnthropicCompaction } from "@tau/tau-ai/providers/anthropic-compaction";
 import { isRecord, prompt } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-ai";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import {
-	supportsAnthropicCompaction,
-	supportsBedrockConverseCompaction,
-} from "@oh-my-pi/pi-ai/providers/anthropic-compaction";
-import { isRecord, prompt } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/agent/src/compaction/anthropic.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { type InstrumentedChatSpanOptions, instrumentedCompleteSimple } from "../telemetry";
 import type { AgentMessage } from "../types";
 import anthropicCompactionInstructionsPrompt from "./prompts/anthropic-compaction-instructions.md" with { type: "text" };

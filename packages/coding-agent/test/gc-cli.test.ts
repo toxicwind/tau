@@ -4,26 +4,10 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import { gunzipSync, gzipSync } from "node:zlib";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { withStatsSyncLock } from "@tau/tau-stats/aggregator";
 import { type GcResult, runGcCommand } from "tau/cli/gc-cli";
 import { Settings } from "tau/config/settings";
-=======
-import { withStatsSyncLock } from "@oh-my-pi/omp-stats/aggregator";
-import {
-	GC_AUTO_COMPRESS_INTERVAL_MS,
-	GC_AUTO_COMPRESS_LOG,
-	scheduleGcAutoCompress,
-} from "@oh-my-pi/pi-coding-agent/cli/gc-auto-compress";
-import { type GcResult, runGcCommand } from "@oh-my-pi/pi-coding-agent/cli/gc-cli";
-import * as gcCompress from "@oh-my-pi/pi-coding-agent/cli/gc-compress";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentStorage } from "@oh-my-pi/pi-coding-agent/session/agent-storage";
-import { BlobStore, blobStagingPath } from "@oh-my-pi/pi-coding-agent/session/blob-store";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { FileSessionStorage, sessionStagingPath } from "@oh-my-pi/pi-coding-agent/session/session-storage";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/gc-cli.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	getAgentDir,
 	getBlobsDir,

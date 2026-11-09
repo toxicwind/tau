@@ -53,12 +53,8 @@ Unused optional fields are ignored by actions that do not read them.
 
 ## Outputs and execution model
 
-<<<<<<< ours — scope `Every action returns one text content block p...` in heading `Outputs and execution model` (S, confidence: medium)
 // refused_by: statement_fold · collision: `Every action returns one text content block plus structured `de…`
 Every action returns one text content block plus structured `details` containing `action` and the action-specific object described below. The tool itself does not stream partial arguments or progress updates. `start` returns a queued operation immediately; its separately registered TAU job reports progress, and callers use `status` for durable operation state.
-=======
-Every action returns one text content block plus structured `details` containing `action` and the action-specific object described below. The tool itself does not stream partial arguments or progress updates. `start` returns an operation immediately; an OMP job reports progress when a job manager is available, otherwise the coordinator runs its local background promise. Use `status` for durable operation state.
->>>>>>> theirs — scope `Every action returns one text content block p...` · weave: run 'weave explain docs/tools/security_scan.md' for per-hunk detail, 'weave check' to verify your resolution
 
 ## Action reference
 
@@ -219,20 +215,12 @@ Plan an exact revision diff with an external output directory:
 
 ```json
 {
-<<<<<<< ours — scope `{` in heading `Examples` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `"output_root": "/tmp/omp-security-review"`
   "action": "preflight",
   "target_kind": "ref_diff",
   "base_revision": "origin/main",
   "head_revision": "HEAD",
   "output_root": "/tmp/tau-security-review"
-=======
-	"action": "preflight",
-	"target_kind": "ref_diff",
-	"base_revision": "origin/main",
-	"head_revision": "HEAD",
-	"output_root": "/tmp/omp-security-review"
->>>>>>> theirs — scope `{`
 }
 ```
 

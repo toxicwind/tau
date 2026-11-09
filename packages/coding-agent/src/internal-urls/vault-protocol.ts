@@ -1,24 +1,10 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { $which, isEnoent } from "@oh-my-pi/pi-utils";` +1 more
 import { $which, isEnoent } from "@tau/tau-utils";
 import { isSettingsInitialized, settings } from "../config/settings";
 import { getDefault } from "../config/settings-schema";
 import { isMarkdownPath } from "@tau/tau-tui/lang-from-path";
-=======
-import { $which } from "@oh-my-pi/pi-utils";
-import { isSettingsInitialized, settings } from "../config/settings";
-
-import vaultDoc from "../prompts/internal-urls/vault.md" with { type: "text" };
-import {
-	containedRealPath,
-	contentTypeForPath,
-	ensureCreatableWithinRoot,
-	ensureWithinRoot,
-	validateRelativePath,
-} from "./filesystem-resource";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/internal-urls/vault-protocol.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { parseInternalUrl } from "./parse";
 import type {
 	InternalResource,

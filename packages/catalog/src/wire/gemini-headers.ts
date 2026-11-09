@@ -39,30 +39,8 @@ export const getGeminiCliHeaders = (modelId?: string) => ({
 // launcher doesn't source tau-env.sh, so the process otherwise runs at 2.8.0
 // and returns 404 "Requested entity was not found" for argon models. 4.3.0 is
 // the value already declared in config/env/tau-env.sh and ~/.tau/.env.
-<<<<<<< ours — variable `DEFAULT_ANTIGRAVITY_VERSION` (T+S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `* Format captured from the real 2.8.0 `antigravity/hub` client:` +5 more
 export const DEFAULT_ANTIGRAVITY_VERSION = "4.3.0";
-=======
-/**
- * Antigravity / Cloud Code Assist user agent. Lives in its own file so discovery
- * and usage code can read it without pulling the heavy google-gemini-cli provider
- * (and its @google/genai → google-auth-library dependency chain) into the startup
- * parse graph.
- *
- * Format captured from the real 2.26.0 `antigravity/hub` client:
- * `antigravity/hub/2.26.0 (aidev_client; os_type=darwin; arch=arm64; cl=1005016104)`.
- * The backend gates newer models (e.g. gemini-3.7-flash) on the client version,
- * so the version tracks the latest Antigravity release via the update manifest
- * (see {@link ensureAntigravityVersion}) with `DEFAULT_ANTIGRAVITY_VERSION` as
- * the offline fallback. os_type/arch name the native build for the host OS:
- * each 2.26.0 installer ships one language-server build whose Go target is
- * stamped into the header (macOS darwin/arm64, Linux linux/amd64, Windows
- * windows/amd64; no other OS/arch builds exist); see
- * {@link getAntigravityPlatform}. The changelist is identical across those
- * builds. Overrides: PI_AI_ANTIGRAVITY_VERSION / _CL / _OS / _ARCH.
- */
-export const DEFAULT_ANTIGRAVITY_VERSION = "2.26.0";
->>>>>>> theirs — variable `DEFAULT_ANTIGRAVITY_VERSION` (T+S+F, confidence: low) · weave: run 'weave explain packages/catalog/src/wire/gemini-headers.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const ANTIGRAVITY_VERSION_MANIFEST_URL =
 	"https://antigravity-hub-auto-updater-974169037036.us-central1.run.app/manifest/latest-arm64-mac.yml";
@@ -104,7 +82,6 @@ export function parseAntigravityManifestVersion(yamlText: string): string | null
  */
 export function ensureAntigravityVersion(fetcher: FetchImpl = fetch, signal?: AbortSignal): Promise<void> {
 	if (process.env.PI_AI_ANTIGRAVITY_VERSION || discoveredAntigravityVersion) return Promise.resolve();
-<<<<<<< ours — scope `antigravityVersionFetch = (async () => {` in function `ensureAntigravityVersion` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `headers: { "Cache-Control": "no-cache", "User-Agent": "electron…`
 	antigravityVersionFetch = (async () => {
 		try {
@@ -118,29 +95,6 @@ export function ensureAntigravityVersion(fetcher: FetchImpl = fetch, signal?: Ab
 			});
 			if (response.ok) {
 				discoveredAntigravityVersion = parseAntigravityManifestVersion(await response.text());
-=======
-	if (!antigravityVersionFetch) {
-		if (
-			antigravityVersionFailedAt !== undefined &&
-			Date.now() - antigravityVersionFailedAt < ANTIGRAVITY_VERSION_RETRY_MS
-		) {
-			return Promise.resolve();
-		}
-		antigravityVersionFetch = (async () => {
-			try {
-				const response = await fetcher(ANTIGRAVITY_VERSION_MANIFEST_URL, {
-					headers: { "Cache-Control": "no-cache", "User-Agent": "electron-builder" },
-					signal: AbortSignal.timeout(ANTIGRAVITY_VERSION_FETCH_TIMEOUT_MS),
-				});
-				if (response.ok) {
-					discoveredAntigravityVersion = parseAntigravityManifestVersion(await response.text());
-				}
-			} catch {
-				// Silent: the pinned fallback remains valid when version discovery fails.
-			} finally {
-				antigravityVersionFetch = null;
-				if (!discoveredAntigravityVersion) antigravityVersionFailedAt = Date.now();
->>>>>>> theirs — scope `antigravityVersionFetch = (async () => {`
 			}
 		})();
 	}

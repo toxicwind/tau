@@ -7,7 +7,6 @@ import {
 	getSessionRollups,
 	getStatsByModel,
 	getStatsByProvider,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `} from "@oh-my-pi/omp-stats/db";` +1 more
 	initDb,
 	insertMessageStats,
@@ -15,13 +14,6 @@ import {
 import type { MessageStats } from "@tau/tau-stats/types";
 import { getBundledModel, getBundledModels } from "@tau/tau-catalog/models";
 import { getStatsDbPath } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/omp-stats/rollup";
-import type { MessageStats } from "@oh-my-pi/omp-stats/types";
-import * as catalogModels from "@oh-my-pi/pi-catalog/models";
-import { getBundledModel, getBundledModels } from "@oh-my-pi/pi-catalog/models";
-import { getStatsDbPath, VERSION } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/stats/test/db-cost.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { installStatsTestIsolation } from "./helpers/temp-agent";
 
 installStatsTestIsolation("@tau-stats-db-");

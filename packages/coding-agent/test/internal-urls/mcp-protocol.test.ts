@@ -21,7 +21,6 @@ function createMockManager(opts: {
 	readResult?: MCPResourceReadResult | undefined;
 	readError?: Error;
 	ensureResources?: (name: string) => Promise<void>;
-<<<<<<< ours — scope `ensureResources?: (name: string) => Promise<v...` in function `createMockManager` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `ensureResources?: (name: string) => Promise<void>;`
 	tools?: unknown[];
 }) {
@@ -29,13 +28,6 @@ function createMockManager(opts: {
 		getConnectedServers: () => opts.servers ?? [],
 		getTools: () => opts.tools ?? [],
 		waitForPendingConnections: async () => {},
-=======
-	waitForPendingConnections?: () => Promise<void>;
-}) {
-	return {
-		getConnectedServers: () => opts.servers ?? [],
-		waitForPendingConnections: async () => opts.waitForPendingConnections?.(),
->>>>>>> theirs — scope `ensureResources?: (name: string) => Promise<v...` · weave: run 'weave explain packages/coding-agent/test/internal-urls/mcp-protocol.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 		getServerResources: (name: string) => opts.resources?.get(name),
 		ensureServerResources: async (name: string) => opts.ensureResources?.(name),
 		readServerResource: async (_name: string, _uri: string) => {

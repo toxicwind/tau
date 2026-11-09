@@ -138,7 +138,6 @@ function foldRepeatedListColons(basePath: string, list: string, minColon: number
 	}
 	return { basePath, list: chunks.reverse().join(",") };
 }
-<<<<<<< ours — variable `INTERNAL_SCHEMES_WITH_SELECTORS` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 const INTERNAL_SCHEMES_WITH_SELECTORS: Record<string, true> = {
 	agent: true,
@@ -156,8 +155,6 @@ const INTERNAL_SCHEMES_WITH_SELECTORS: Record<string, true> = {
 	ssh: true,
 	vault: true,
 };
-=======
->>>>>>> theirs — variable `INTERNAL_SCHEMES_WITH_SELECTORS` (S+F, confidence: low) · weave: run 'weave explain packages/tui/src/tools/read.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /**
  * Split a filesystem path from its trailing read selector. `foldListColons: false`

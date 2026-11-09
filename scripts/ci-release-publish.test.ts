@@ -145,14 +145,9 @@ describe("published legal payloads", () => {
 		expect(() => legalPayloadFiles(undefined)).toThrow("Unsupported package license: <missing>");
 	});
 
-<<<<<<< ours — test_suite `published legal payloads` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 	it("stages missing legal files without replacing package-local text", async () => {
 		const root = await fs.mkdtemp(path.join(os.tmpdir(), "tau-publish-legal-"));
-=======
-	it("stages a missing license without replacing package-local text", async () => {
-		const root = await fs.mkdtemp(path.join(os.tmpdir(), "omp-publish-legal-"));
->>>>>>> theirs — test_suite `published legal payloads` (F, confidence: medium) · weave: run 'weave explain scripts/ci-release-publish.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 		const pkgDir = path.join(root, "package");
 		await fs.mkdir(pkgDir);
 		try {

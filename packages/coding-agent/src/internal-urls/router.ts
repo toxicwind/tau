@@ -1,10 +1,6 @@
 /**
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `* Internal URL router for internal protocols (`agent://`, `arti…` +1 more
  * Internal URL router for internal protocols (`agent://`, `artifact://`, `history://`, `issue://`, `local://`, `mcp://`, `memory://`, `tau://`, `pr://`, `proc://`, `rule://`, `security://`, `skill://`, `ssh://`, `vault://`, and `xd://`).
-=======
- * Internal URL router: one process-global registry of scheme handlers.
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/internal-urls/router.ts' for per-hunk detail, 'weave check' to verify your resolution
  *
  * Access via `InternalUrlRouter.instance()`. Handlers are stateless: per-session
  * state arrives through the caller's {@link ResolveContext}/{@link WriteContext}.
@@ -14,20 +10,9 @@
  * method accepts a scheme's single-slash alias (`local:/x`) and normalizes it
  * through {@link InternalUrlRouter.normalize}.
  */
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `* Internal URL router for internal protocols (`agent://`, `arti…` +1 more
 import { setInternalUrlCompletionHost } from "@tau/tau-tui/prompt/internal-url-autocomplete";
 import { setInternalReadTargetPredicate } from "@tau/tau-tui/chat/read-target";
-=======
-import * as path from "node:path";
-import type { ToolApprovalDecision, ToolTier } from "@oh-my-pi/pi-agent-core";
-import { setInternalUrlCompletionHost } from "@oh-my-pi/pi-tui/prompt/internal-url-autocomplete";
-import { splitInternalUrlSel } from "@oh-my-pi/pi-tui/tools/read";
-import { setInternalUrlSchemeHost, splitUrlScheme } from "@oh-my-pi/pi-tui/tools/url-scheme-host";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
-import type { ToolSession } from "../tools";
-import { TIER_RANK } from "../tools/approval";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low)
 import { AgentProtocolHandler } from "./agent-protocol";
 import { ArtifactProtocolHandler } from "./artifact-protocol";
 import { AttachmentProtocolHandler } from "./attachment-protocol";
@@ -38,14 +23,8 @@ import { IssueProtocolHandler, PrProtocolHandler } from "./issue-pr-protocol";
 import { LocalProtocolHandler } from "./local-protocol";
 import { McpProtocolHandler } from "./mcp-protocol";
 import { MemoryProtocolHandler } from "./memory-protocol";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `* Internal URL router for internal protocols (`agent://`, `arti…` +1 more
 import { TauProtocolHandler } from "./tau-protocol";
-=======
-import { MrProtocolHandler } from "./mr-protocol";
-import { OmpProtocolHandler } from "./omp-protocol";
-import { OutProtocolHandler } from "./out-protocol";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low)
 import { extractUriScheme, parseInternalUrl } from "./parse";
 import { ProcProtocolHandler } from "./proc-protocol";
 import { RuleProtocolHandler } from "./rule-protocol";
@@ -121,7 +100,6 @@ export class InternalUrlRouter {
 	readonly #builtinSchemes: ReadonlySet<string>;
 
 	constructor() {
-<<<<<<< ours — scope `constructor` in class `InternalUrlRouter` (F, confidence: medium)
 // refused_by: container_member · collision: `this.register(new OmpProtocolHandler());`
 		this.register(new TauProtocolHandler());
 		this.register(new AgentProtocolHandler());
@@ -132,23 +110,6 @@ export class InternalUrlRouter {
 		this.register(new SkillProtocolHandler());
 		this.register(new RuleProtocolHandler());
 		// Reserved TAU-owned security-analysis namespace; vendor adapters normalize into its store.
-=======
-		const resourceFallback = new McpProtocolHandler();
-		this.#resourceFallbackScheme = resourceFallback.scheme.toLowerCase();
-		// Registration order is system-prompt order (see describe()).
-		this.register(new SkillProtocolHandler());
-		this.register(new RuleProtocolHandler());
-		this.register(new MemoryProtocolHandler());
-		this.register(new OutProtocolHandler());
-		this.register(new AgentProtocolHandler());
-		this.register(new HistoryProtocolHandler());
-		this.register(new ArtifactProtocolHandler());
-		this.register(new LocalProtocolHandler());
-		this.register(new ProcProtocolHandler());
-		this.register(new CfgProtocolHandler());
-		this.register(new SshProtocolHandler());
-		// Reserved OMP-owned security-analysis namespace; vendor adapters normalize into its store.
->>>>>>> theirs — scope `constructor`
 		this.register(new SecurityProtocolHandler());
 		this.register(new VaultProtocolHandler());
 		this.register(new IssueProtocolHandler());

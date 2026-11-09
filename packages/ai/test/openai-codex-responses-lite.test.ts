@@ -1,7 +1,6 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import { type InputItem, transformRequestBody } from "@oh-my-pi/pi-ai/providers/openai-codex/request-transformer";
 import {
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `} from "@oh-my-pi/pi-ai/providers/openai-codex/request-transfor…` +1 more
 	type InputItem,
 	type RequestBody,
@@ -14,15 +13,6 @@ import {
 } from "@tau/tau-ai/providers/openai-codex-responses";
 import { isOpenAIResponsesProgressEvent } from "@tau/tau-ai/providers/openai-shared";
 import { configureCredentialRedaction } from "@tau/tau-ai/providers/transform-messages";
-=======
-	buildTransformedCodexRequestBody,
-	convertCodexResponsesMessages,
-	streamOpenAICodexResponses,
-} from "@oh-my-pi/pi-ai/providers/openai-codex-responses";
-import { resetOpenAICodexHistoryAfterCompaction } from "@oh-my-pi/pi-ai/providers/openai-codex-state";
-import { configureCredentialRedaction } from "@oh-my-pi/pi-ai/providers/transform-messages";
-import { isOpenAIResponsesProgressEvent } from "@oh-my-pi/pi-ai/utils/websocket";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/test/openai-codex-responses-lite.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type {
 	CodexCompactionRequestContext,
 	Context,

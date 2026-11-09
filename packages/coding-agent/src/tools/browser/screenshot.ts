@@ -1,4 +1,3 @@
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { untilAborted } from "@oh-my-pi/pi-utils";`
 import { join } from "node:path";
 import { deflateSync, inflateSync } from "node:zlib";
@@ -6,16 +5,6 @@ import { deflateSync, inflateSync } from "node:zlib";
 import { untilAborted } from "@tau/tau-utils";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 import type { ElementHandle, ElementScreenshotOptions, Page } from "puppeteer-core";
-=======
-import { inflateSync } from "node:zlib";
-
-import { logger, untilAborted } from "@oh-my-pi/pi-utils";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
-import type { CDPSession, ElementHandle, ElementScreenshotOptions, Page } from "puppeteer-core";
-import type { ScreenshotArea } from "../../utils/image-resize";
-import { encodeRawPng } from "../../utils/png-encode";
-import { untilAbortedOrReleased } from "./op-timeouts";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/browser/screenshot.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /** Options accepted by tab.screenshot(). */
 export interface ScreenshotOptions {
@@ -281,7 +270,6 @@ export async function installScreenshotAnnotations(
 	targets: readonly ScreenshotAnnotationTarget[],
 	signal: AbortSignal | undefined,
 ): Promise<() => Promise<void>> {
-<<<<<<< ours — function `installScreenshotAnnotations (body partly extracted into whileDrawing, installAnnotationOverlayInPage, removeAnnotationOverlayInPage)` (F, confidence: medium)
 // refused_by: statement_fold · collision: `root.setAttribute("data-omp-screenshot-annotations", payload.to…` +1 more
 	const token = `tau-screenshot-${crypto.randomUUID()}`;
 	await untilAborted(signal, () =>
@@ -315,12 +303,6 @@ export async function installScreenshotAnnotations(
 				doc.querySelector(`[data-tau-screenshot-annotations="${marker}"]`)?.remove();
 			}, token)
 			.catch(() => undefined);
-=======
-	const token = `omp-screenshot-${crypto.randomUUID()}`;
-	await untilAborted(signal, () => page.evaluate(installAnnotationOverlayInPage, { token, targets: [...targets] }));
-	return async () => {
-		await page.evaluate(removeAnnotationOverlayInPage, token).catch(() => undefined);
->>>>>>> theirs — function `installScreenshotAnnotations (body partly extracted into whileDrawing, installAnnotationOverlayInPage, removeAnnotationOverlayInPage)` (F, confidence: medium)
 	};
 }
 

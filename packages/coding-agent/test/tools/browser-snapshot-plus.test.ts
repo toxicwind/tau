@@ -1,18 +1,10 @@
 import { afterAll, describe, expect, test } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { createBrowserPrelude } from "@oh-my-pi/pi-coding-agent…`
 import { Settings } from "tau/config/settings";
 import { disposeAllVmContexts } from "tau/eval/js/context-manager";
 import { createBrowserPrelude } from "tau/tools/browser";
 import { releaseAllTabs } from "tau/tools/browser/tab-supervisor";
 import type { ToolSession } from "tau/tools/index";
-=======
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { disposeAllVmContexts } from "@oh-my-pi/pi-coding-agent/eval/js/context-manager";
-import { buildAriaSnapshotScript, createBrowserPrelude } from "@oh-my-pi/pi-coding-agent/tools/browser";
-import { releaseAllTabs } from "@oh-my-pi/pi-coding-agent/tools/browser/tab-supervisor";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools/index";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/tools/browser-snapshot-plus.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { chromiumAvailable } from "./chromium-probe";
 
 const CHROMIUM_AVAILABLE = await chromiumAvailable();

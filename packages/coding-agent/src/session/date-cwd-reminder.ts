@@ -13,15 +13,9 @@
  * revived subagent sends its earlier turns with the reminders they were sent
  * with instead of today's.
  */
-<<<<<<< ours — interstitial `file_header` (T+F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { prompt } from "@oh-my-pi/pi-utils";`
 import type { Context, Message, UserMessage } from "@tau/tau-ai";
 import { prompt } from "@tau/tau-utils";
-=======
-import type { Context, Message, UserMessage } from "@oh-my-pi/pi-ai";
-import { isPerCallContextMessage, markPerCallContextMessage } from "@oh-my-pi/pi-ai/utils/block-symbols";
-import { isRecord, prompt } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (T+F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/session/date-cwd-reminder.ts' for per-hunk detail, 'weave check' to verify your resolution
 import dateCwdReminderTemplate from "../prompts/system/date-cwd-reminder.md" with { type: "text" };
 import type { SessionEntry } from "./session-entries";
 

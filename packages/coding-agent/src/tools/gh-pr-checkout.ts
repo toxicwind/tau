@@ -2,18 +2,11 @@ import { join } from "node:path";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { getWorktreeDir, hashPath, isEnoent, logger } from "@oh…`
 import type { AgentToolResult } from "@tau/tau-agent-core";
 import type { IsoBackendKind, VcsGitRepo, VcsWorktreeEntry } from "@tau/tau-natives";
 import * as vcs from "@tau/tau-natives/vcs";
 import { getWorktreeDir, hashPath, isEnoent, logger } from "@tau/tau-utils";
-=======
-import type { AgentToolResult } from "@oh-my-pi/pi-agent-core";
-import type { IsoBackendKind, VcsGitRepo, VcsWorktreeEntry } from "@oh-my-pi/pi-natives";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import { getWorktreeDir, hashPath, isEnoent, logger, slugify } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/gh-pr-checkout.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { github } from "../utils/github";
 import { formatIsolationBackend, parseIsolationBackend } from "../task/worktree";
 import { withRepoLock } from "../utils/repo-lock";

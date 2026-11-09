@@ -6315,7 +6315,6 @@ fn sort_by<'a>(unsorted: &mut Vec<Line<'a>>, settings: &GlobalSettings, line_dat
 		Err(payload) if payload.is::<SortCancelled>() => false,
 		Err(payload) => std::panic::resume_unwind(payload),
 	}
-<<<<<<< ours — scope `// WASI does not support threads, so use non-...` in function `sort_by` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `// force sequential sort when pi-natives could not safely confi…`
 	// WASI does not support threads, so use non-parallel sort to avoid
 	// rayon's thread pool which triggers an unreachable trap. Windows can also
@@ -6324,14 +6323,6 @@ fn sort_by<'a>(unsorted: &mut Vec<Line<'a>>, settings: &GlobalSettings, line_dat
 	if settings.stable || settings.unique {
 		#[cfg(not(target_os = "wasi"))]
 		if rayon_global_pool_available() {
-=======
-	// WASI has no threads (rayon's pool hits an unreachable trap there), and
-	// Windows leaves the global pool unavailable when pi-natives could not
-	// safely configure it under commit pressure; both sort sequentially.
-	#[cfg(not(target_os = "wasi"))]
-	let sort_parallel = |unsorted: &mut Vec<Line<'a>>| {
-		if stable {
->>>>>>> theirs — scope `// WASI does not support threads, so use non-...` · weave: run 'weave explain crates/tau-builtins/src/sort.rs' for per-hunk detail, 'weave check' to verify your resolution
 			unsorted.par_sort_by(cmp);
 		} else {
 			unsorted.par_sort_unstable_by(cmp);

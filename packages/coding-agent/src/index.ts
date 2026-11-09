@@ -19,15 +19,12 @@ export * from "./config/model-registry";
 export type * from "./config/prompt-templates";
 export * from "./config/prompt-templates";
 export type { SkillsSettings } from "./extensibility/settings";
-<<<<<<< ours — interstitial `between:packages/coding-agent/src/index.ts::export::VERSION:packages/coding-agent/src/index.ts::export::RetrySettings` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `export * from "@oh-my-pi/pi-tui/app-keybindings";`
 export * from "@tau/tau-tui/app-keybindings";
 export * from "./config/model-registry";
 // Prompt templates
 export type * from "./config/prompt-templates";
 export * from "./config/prompt-templates";
-=======
->>>>>>> theirs — interstitial `between:packages/coding-agent/src/index.ts::export::VERSION:packages/coding-agent/src/index.ts::export::RetrySettings` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/index.ts' for per-hunk detail, 'weave check' to verify your resolution
 export type { RetrySettings } from "./session/settings";
 export { Settings, settings } from "./config/settings";
 export { Settings, settings } from "./config/settings";

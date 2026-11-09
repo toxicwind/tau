@@ -21,20 +21,11 @@ import { describe, expect, it } from "bun:test";
 import "../native";
 import type { NativeAddonStatus } from "../native/loader-state.js";
 import {
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { missingNativeExport, missingNativeExportMessage, nativ…`
 	missingNativeExport,
 	missingNativeExportMessage,
 	nativeAddonStatus,
 	sentinelMatchesExpected,
-=======
-	missingNativeClass,
-	missingNativeExport,
-	missingNativeExportMessage,
-	nativeAddonStatus,
-	reportStaleWorkspaceAddon,
-	staleWorkspaceAddonNotice,
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/natives/test/stale-addon-export.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 } from "../native/loader-state.js";
 
 const addonPath = "/w/packages/natives/native/tau_natives.linux-x64-modern.node";
@@ -42,13 +33,9 @@ const addonPath = "/w/packages/natives/native/tau_natives.linux-x64-modern.node"
 function status(overrides: Partial<NativeAddonStatus> = {}): NativeAddonStatus {
 	return {
 		path: addonPath,
-<<<<<<< ours — scope `return {` in function `status` (F, confidence: medium)
 // refused_by: statement_fold · collision: `sentinel: "__piNativesV18_1_18",` +1 more
 		sentinel: "__tauNativesV18_1_18",
 		expectedSentinel: "__tauNativesV18_2_6",
-=======
-		version: "18.1.18",
->>>>>>> theirs — scope `return {`
 		packageVersion: "18.2.6",
 		stale: true,
 		...overrides,
@@ -64,11 +51,8 @@ describe("native exports missing from a stale addon", () => {
 			addonPath,
 			"18.1.18",
 			"18.2.6",
-<<<<<<< ours — scope `it("throws a stub naming the symbol, the addo...` in test_suite `native exports missing from a stale addon` (F, confidence: medium)
 // refused_by: statement_fold · collision: `"__piNativesV18_2_6",`
 			"__tauNativesV18_2_6",
-=======
->>>>>>> theirs — scope `it("throws a stub naming the symbol, the addo...`
 			"bun run build:native",
 		]) {
 			expect(() => stub?.()).toThrow(expected);
@@ -82,12 +66,8 @@ describe("native exports missing from a stale addon", () => {
 	});
 
 	it("keeps the absence a plain undefined on a current addon", () => {
-<<<<<<< ours — scope `it("keeps the absence a plain undefined on a ...` in test_suite `native exports missing from a stale addon` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const current = status({ sentinel: "__piNativesV18_2_6", stale:…`
 		const current = status({ sentinel: "__tauNativesV18_2_6", stale: false });
-=======
-		const current = status({ version: "18.2.6", stale: false });
->>>>>>> theirs — scope `it("keeps the absence a plain undefined on a ...`
 		expect(missingNativeExport("macOSSpellCheckerAvailable", current)).toBeUndefined();
 		expect(missingNativeExportMessage("macOSSpellCheckerAvailable", current)).toContain(addonPath);
 	});
@@ -96,7 +76,6 @@ describe("native exports missing from a stale addon", () => {
 		const loaded = nativeAddonStatus();
 		expect(loaded).not.toBeNull();
 		expect(loaded?.path.endsWith(".node")).toBe(true);
-<<<<<<< ours — scope `it("reports the addon it actually loaded, not...` in test_suite `native exports missing from a stale addon` (F, confidence: medium)
 // refused_by: statement_fold · collision: `expect(loaded?.expectedSentinel).toBe(`__piNativesV${loaded?.pa…` +2 more
 		expect(loaded?.expectedSentinel).toBe(`__tauNativesV${loaded?.packageVersion.replace(/[^A-Za-z0-9]/g, "_")}`);
 		// Whatever the tree's build state, the flag the stubs branch on must be
@@ -104,11 +83,6 @@ describe("native exports missing from a stale addon", () => {
 		expect(loaded?.stale).toBe(
 			loaded?.sentinel === null || !sentinelMatchesExpected(loaded.sentinel, loaded.expectedSentinel),
 		);
-=======
-		// Whatever the tree's build state, the flag the stubs branch on must be
-		// the one the reported release implies.
-		expect(loaded?.stale).toBe(loaded?.version !== loaded?.packageVersion);
->>>>>>> theirs — scope `it("reports the addon it actually loaded, not...`
 	});
 
 	// A bare `undefined` class export reaches `new RunTrace(cmd)` in

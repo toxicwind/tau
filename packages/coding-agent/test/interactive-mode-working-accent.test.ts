@@ -43,14 +43,8 @@ async function createHarness(sessionName: string): Promise<Harness> {
 		return harness;
 	}
 
-<<<<<<< ours — function `createHarness` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 	const tempDir = TempDir.createSync("@tau-working-accent-");
-=======
-	const tempDir = TempDir.createSync("@pi-working-accent-");
-	// Settings.init keeps an instance an earlier file loaded (e.g. from the user's config).
-	resetSettingsForTest();
->>>>>>> theirs — function `createHarness` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/interactive-mode-working-accent.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 	await Settings.init({ inMemory: true, cwd: tempDir.path() });
 	await initTheme(false);
 	const sessionManager = SessionManager.inMemory(tempDir.path());

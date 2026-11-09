@@ -283,7 +283,6 @@ describe("AgentStorage model perf aggregates", () => {
 		expect(stats?.ttftMs).toBeNull();
 	});
 
-<<<<<<< ours — test_suite `AgentStorage model perf aggregates` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 	it("defers the write off the record path and lands it once the flush promise resolves", async () => {
 		const storage = await openStorage();
@@ -297,9 +296,6 @@ describe("AgentStorage model perf aggregates", () => {
 	});
 
 	it("backfills perf aggregates from an tau stats database, excluding errored and stale turns", async () => {
-=======
-	it("backfills perf aggregates from an omp stats database, excluding errored and stale turns", async () => {
->>>>>>> theirs — test_suite `AgentStorage model perf aggregates` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/agent-storage-model-perf.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 		const storage = await openStorage();
 
 		// Minimal stats.db fixture: only the columns the backfill query reads.
@@ -458,13 +454,8 @@ describe("AgentStorage model perf aggregates", () => {
 		const env = {
 			...process.env,
 			HOME: homeDir,
-<<<<<<< ours — test_suite `AgentStorage model perf aggregates` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 			TAU_PROFILE: "",
-=======
-			USERPROFILE: homeDir,
-			OMP_PROFILE: "",
->>>>>>> theirs — test_suite `AgentStorage model perf aggregates` (F, confidence: medium)
 			PI_CODING_AGENT_DIR: agentDir,
 			PI_CONFIG_DIR: ".omp",
 			PI_PROFILE: "",

@@ -6,13 +6,8 @@
  * `ssh://` reads/writes round-trip exactly — leading/trailing whitespace, tabs,
  * and final newlines are preserved.
  */
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { ptree } from "@oh-my-pi/pi-utils";`
 import { ptree } from "@tau/tau-utils";
-=======
-import { type ShellFsDirEntry, ShellFsFileType } from "@oh-my-pi/pi-natives";
-import { ConcatSink, ptree } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/ssh/file-transfer.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { buildRemoteCommand, ensureConnection, ensureHostInfo, type SSHConnectionTarget } from "./connection-manager";
 import { quotePosixArgument } from "../utils/shell-quote";
 import { wrapInPosixShell } from "./utils";
@@ -173,12 +168,8 @@ export async function writeRemoteFile(
 		throw new Error("ssh://: destination is a directory path (trailing '/'); ssh:// write requires a file path");
 	}
 	const dest = quotePosixArgument(remotePath);
-<<<<<<< ours — scope `const tmp = quotePosixPath(`${remotePath}.omp...` in function `writeRemoteFile` (S, confidence: medium)
 // refused_by: statement_fold · collision: `const tmp = quotePosixPath(`${remotePath}.omp-tmp.${crypto.rand…`
 	const tmp = quotePosixPath(`${remotePath}.tau-tmp.${crypto.randomUUID()}`);
-=======
-	const tmp = quotePosixArgument(`${remotePath}.omp-tmp.${crypto.randomUUID()}`);
->>>>>>> theirs — scope `const tmp = quotePosixPath(`${remotePath}.omp...`
 	// Stage stdin into the temp first (so the remote never blocks on an unread
 	// pipe and a dropped connection lands in the temp, never the destination).
 	// An EXIT trap removes the staged temp on every exit path (staging failure,

@@ -6,7 +6,6 @@ import { join } from "node:path";
  * contract and the model-facing report.
  */
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { formatBytes, formatDuration, formatNumber, isEnoent } …` +2 more
 import { type } from "@tau/tautype";
 import type { AgentTool, AgentToolResult, AgentToolUpdateCallback } from "@tau/tau-agent-core";
@@ -14,16 +13,6 @@ import type { FindHit, FindStats, FindToolDetails } from "@tau/tau-tui/tools/fin
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 import { formatBytes, formatDuration, formatNumber, isEnoent } from "@tau/tau-utils";
 import { hasNativeJudge, journalJudgmentUsage, resolveJudge } from "../../judgment";
-=======
-import { type } from "@oh-my-pi/omptype";
-import type { AgentTool, AgentToolResult, AgentToolUpdateCallback } from "@oh-my-pi/pi-agent-core";
-import type { FindToolDetails } from "@oh-my-pi/pi-tui/tools/find";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
-import { formatBytes, formatDuration, formatNumber } from "@oh-my-pi/pi-utils";
-import { sessionResolveContext } from "../../internal-urls/context";
-import { InternalUrlFilesystem } from "../../internal-urls/url-filesystem";
-import { hasNativeJudge, journalJudgmentUsage, resolveJudge, sharedJudgmentCache } from "../../judgment";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/jfind/index.ts' for per-hunk detail, 'weave check' to verify your resolution
 import findDescription from "../../prompts/tools/find.md" with { type: "text" };
 import { SPOTLIGHT_ENTRY } from "../../spotlight/types";
 import type { ToolSession } from "..";
@@ -36,14 +25,10 @@ import {
 } from "../path-utils";
 import { searchApprovalCacheTargets } from "../search-approval-targets";
 import { toolResult } from "../tool-result";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { formatBytes, formatDuration, formatNumber, isEnoent } …` +2 more
 import { isOmpDocsScope } from "../../internal-urls/tau-scope";
 import { runCascade } from "./cascade";
 import { materializeOmpScope, type TauScope } from "./tau-scope";
-=======
-import { type CascadeResult, runCascade } from "./cascade";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import { rankedHeat } from "./passages";
 import { resolveSearchRoot } from "./tree";
 
@@ -70,16 +55,10 @@ export const FIND_TIMEOUT_MS = 20_000;
  * in sibling tool prompts.
  */
 export function isFindEnabled(session: ToolSession): boolean {
-<<<<<<< ours — scope `* rather than a prompted small model. Gates t...` in function `isFindEnabled` (F, confidence: medium)
 // refused_by: statement_fold · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 	const mode = session.settings.get("find.enabled");
 	if (mode === "off") return false;
 	return true;
-=======
-	const mode = cfgFindEnabled.get(session.settings);
-	if (mode !== "auto") return mode === "on";
-	return session.modelRegistry !== undefined && hasNativeJudge(session.settings, session.modelRegistry);
->>>>>>> theirs — scope `* rather than a prompted small model. Gates t...`
 }
 
 /** Semantic search tool: describe a behavior, get files and line ranges that implement it. */
@@ -110,7 +89,6 @@ export class FindTool implements AgentTool<typeof findSchema, FindToolDetails> {
 		if (query.length === 0) throw new ToolError("`query` must be a non-empty description");
 		const cwd = this.session.cwd;
 		const rawScopeInput = params.path === undefined ? "" : normalizePathLikeInput(params.path);
-<<<<<<< ours — scope `execute` in class `FindTool` (S+F, confidence: low)
 // refused_by: container_member · collision: `// remap hits back to `omp://` URLs, the same shape `grep` uses…` +8 more
 		// Harness docs are virtual (no `sourcePath`), so the directory-walking
 		// cascade cannot read them in place: search a temp materialization and
@@ -200,39 +178,6 @@ export class FindTool implements AgentTool<typeof findSchema, FindToolDetails> {
 			});
 			const started = performance.now();
 			const result = await runCascade({
-=======
-		// Host paths stay native; internal URLs (`local://`, `omp://`, …) are
-		// listed, scanned, and read in place through the URL filesystem.
-		const filesystem = new InternalUrlFilesystem({
-			context: sessionResolveContext(this.session, { signal, containSkillPaths: true }),
-			tier: resolveToolTier(this, params),
-		});
-		const root = await resolveSearchRoot(filesystem, rawScopeInput, cwd);
-		const scopePath =
-			root.path === path.resolve(cwd)
-				? undefined
-				: formatPathRelativeToCwd(root.path, cwd, { trailingSlash: root.type === "directory" });
-		const registry = this.session.modelRegistry;
-		if (!registry) throw new ToolError("find has no model registry to resolve a judge from");
-		const judge = resolveJudge({
-			settings: this.session.settings,
-			registry,
-			sessionId: this.session.getSessionId?.() ?? undefined,
-			purpose: "find",
-			onUsage: journalJudgmentUsage(this.session.sessionManager),
-			telemetry: this.session.getTelemetry?.(),
-			cache: sharedJudgmentCache(),
-			costGate: this.session.costGate,
-		});
-		const experiment = this.session.spotlight;
-		const started = performance.now();
-		const deadline = AbortSignal.timeout(FIND_TIMEOUT_MS);
-		// The phase the deadline interrupts, named when nothing was verified before it.
-		let phase = "lexical scan";
-		let result: CascadeResult | undefined;
-		try {
-			result = await runCascade({
->>>>>>> theirs — scope `execute`
 				root,
 				filesystem,
 				query,
@@ -247,7 +192,6 @@ export class FindTool implements AgentTool<typeof findSchema, FindToolDetails> {
 					onUpdate?.({ content: [{ type: "text", text: message }] });
 				},
 			});
-<<<<<<< ours — scope `execute` in class `FindTool` (S+F, confidence: low)
 // refused_by: container_member · collision: `// remap hits back to `omp://` URLs, the same shape `grep` uses…` +8 more
 			const elapsedMs = performance.now() - started;
 			const { stats, threshold, keywords } = result;
@@ -276,55 +220,6 @@ export class FindTool implements AgentTool<typeof findSchema, FindToolDetails> {
 					}
 				}
 			}
-=======
-		} catch (error) {
-			if (!deadline.aborted || signal?.aborted) throw error;
-		}
-		if (!result || (result.timeout && result.hits.length === 0)) {
-			throw new ToolError(
-				`find timed out after ${formatDuration(FIND_TIMEOUT_MS)} at "${phase}", before any hit was verified. Narrow \`path\` to a smaller tree, or use grep.`,
-			);
-		}
-		const elapsedMs = performance.now() - started;
-		const { stats, threshold, keywords, coverage, ranking, timeout } = result;
-		experiment?.log(SPOTLIGHT_ENTRY.find, {
-			toolCallId,
-			ranker: ranking.ranker,
-			candidates: ranking.candidates,
-			read: ranking.read,
-			hits: result.hits.length,
-			spotlightMs: ranking.spotlight?.ms,
-			spotlightTokens: ranking.spotlight?.inputTokens,
-			spotlightCostUsd: ranking.spotlight?.costUsd,
-			spotlightError: ranking.spotlight?.error,
-			judgeRequests: stats.requests,
-			judgeRequestsSaved: ranking.judgeRequestsSaved,
-			judgeCostUsd: stats.cost - (ranking.spotlight?.costUsd ?? 0),
-			elapsedMs: Math.round(elapsedMs),
-		});
-		// Cascade paths are root-relative; the model and renderer want paths
-		// `read` resolves (cwd-relative files, URLs under URL scopes, including
-		// with `:start-end` selectors) without knowing the scope.
-		const hits = result.hits.map(hit => ({
-			...hit,
-			rel: formatPathRelativeToCwd(resolveSearchResultPath(root.path, hit.rel), cwd),
-		}));
-		const details: FindToolDetails = {
-			query,
-			keywords,
-			threshold,
-			hits,
-			coverage,
-			stats,
-			timeout,
-			elapsedMs,
-			cwd,
-			scopePath,
-		};
-		const where = scopePath === undefined ? "" : ` in ${scopePath}`;
-		const out: string[] = [];
-		if (coverage === "unavailable") {
->>>>>>> theirs — scope `execute`
 			out.push(
 				`find unavailable for "${query}"${where}: all ${stats.requests} judge requests failed, nothing was judged. This is not evidence of absence; use grep.`,
 			);
@@ -351,7 +246,6 @@ export class FindTool implements AgentTool<typeof findSchema, FindToolDetails> {
 				const span = range.start === range.end ? String(range.start) : `${range.start}-${range.end}`;
 				out.push(`  ${hit.rel}:${span}  ${range.p.toFixed(2)}  ${range.snippet}`);
 			}
-<<<<<<< ours — scope `execute` in class `FindTool` (S+F, confidence: low)
 // refused_by: container_member · collision: `// remap hits back to `omp://` URLs, the same shape `grep` uses…` +8 more
 			const builder = toolResult(details).text(out.join("\n"));
 			if (stats.requests > 0 && stats.errors === stats.requests) builder.error();
@@ -359,8 +253,6 @@ export class FindTool implements AgentTool<typeof findSchema, FindToolDetails> {
 			return builder.done();
 		} finally {
 			await tauScope?.cleanup();
-=======
->>>>>>> theirs — scope `execute`
 		}
 		const unanswered = stats.unanswered > 0 ? ` · ${stats.unanswered} unanswered` : "";
 		out.push(

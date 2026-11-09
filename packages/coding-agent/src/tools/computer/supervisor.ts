@@ -1,4 +1,3 @@
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 import { resolve } from "node:path";
 import type { DesktopCapabilities } from "@tau/tau-natives";
@@ -9,25 +8,6 @@ import { workerHostEntry } from "@tau/tau-utils/worker-host";
 import type { ToolSession } from "../index";
 import { ToolAbortError } from "../tool-errors";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
-=======
-import type { AgentToolContext } from "@oh-my-pi/pi-agent-core";
-import { postmortem, untilAborted } from "@oh-my-pi/pi-utils";
-import type { DesktopCapabilities } from "@oh-my-pi/pi-natives";
-import { closeDesktopEventTaps, desktopEscapeStops, forgetDesktopEscapeStops } from "@oh-my-pi/pi-natives/desktop";
-import { withTimeout } from "@oh-my-pi/pi-utils/async";
-import * as logger from "@oh-my-pi/pi-utils/logger";
-import { Snowflake } from "@oh-my-pi/pi-utils/snowflake";
-import { workerHostEntry } from "@oh-my-pi/pi-utils/worker-host";
-import {
-	type ApprovalContextSource,
-	type ApprovalPolicy,
-	resolveApproval,
-	resolveApprovalFromContext,
-} from "../approval";
-import type { ToolSession } from "../index";
-import { ToolAbortError, toWorkerErrorPayload } from "../tool-errors";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/computer/supervisor.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	COMPUTER_WORKER_ARG,
 	type ComputerEscapeScope,

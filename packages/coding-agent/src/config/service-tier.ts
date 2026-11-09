@@ -1,13 +1,7 @@
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import type { Model, ServiceTier, ServiceTierByFamily, ServiceTierFamily } from "@tau/tau-ai";
 // `settings-schema` pulls this module into CLI startup; import the classifier
 // from the dependency-free types module so the `tau-ai` index (and the native
-=======
-import type { Model, ServiceTier, ServiceTierByFamily, ServiceTierFamily } from "@oh-my-pi/pi-ai";
-// Setting declarations (`session/settings.ts`) pull this module into CLI startup; import the classifier
-// from the dependency-free types module so the `pi-ai` index (and the native
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/config/service-tier.ts' for per-hunk detail, 'weave check' to verify your resolution
 // addon behind it) stays lazy.
 import { serviceTierFamily } from "@tau/tau-ai/types";
 import type { SubmenuOption } from "@tau/tau-tui/overlays/settings-defs";

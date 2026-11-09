@@ -11,21 +11,11 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { applyMcpToggleRuntime } from "@oh-my-pi/pi-coding-agen…`
 import { MCPManager } from "tau/mcp/manager";
 import type { MCPStdioServerConfig } from "tau/mcp/types";
 import { applyMcpToggleRuntime } from "tau/modes/components/extensions/mcp-runtime";
 import { removeSyncWithRetries } from "@tau/tau-utils";
-=======
-import { MCPManager } from "@oh-my-pi/pi-coding-agent/mcp/manager";
-import type { MCPStdioServerConfig } from "@oh-my-pi/pi-coding-agent/mcp/types";
-import {
-	applyMcpToggleRuntime,
-	type MCPToggleSession,
-} from "@oh-my-pi/pi-coding-agent/modes/components/extensions/mcp-runtime";
-import { removeSyncWithRetries } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/mcp-incremental-connect.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { MANY_TOOL_COUNT, manyToolName } from "./fixtures/many-tools-mcp";
 
 const FIXTURE_PATH = path.join(import.meta.dir, "fixtures", "many-tools-mcp.ts");
@@ -78,16 +68,8 @@ describe("MCP incremental connectServers", () => {
 	let originalRequestTimeout: string | undefined;
 
 	beforeEach(() => {
-<<<<<<< ours — test_suite `MCP incremental connectServers` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 		workDir = fs.mkdtempSync(path.join(os.tmpdir(), "tau-mcp-incremental-"));
-=======
-		originalStartupTimeout = Bun.env.OMP_MCP_STARTUP_TIMEOUT_MS;
-		delete Bun.env.OMP_MCP_STARTUP_TIMEOUT_MS;
-		originalRequestTimeout = Bun.env.OMP_MCP_TIMEOUT_MS;
-		delete Bun.env.OMP_MCP_TIMEOUT_MS;
-		workDir = fs.mkdtempSync(path.join(os.tmpdir(), "omp-mcp-incremental-"));
->>>>>>> theirs — test_suite `MCP incremental connectServers` (F, confidence: medium)
 		manager = new MCPManager(workDir);
 	});
 

@@ -107,18 +107,8 @@ rust_library(
     proc_macro_deps = all_crate_deps(proc_macro = True),
     version = "0.2.0",
     deps = all_crate_deps(normal = True) + [
-<<<<<<< HEAD:crates/tau-builtins/BUILD.bazel
         "//crates/tau-walker",
         "//crates/vendor/brush-core",
-=======
-        "//crates/pi-ast",
-        "//crates/pi-diff",
-        "//crates/pi-walker",
-        "//crates/pi-iso",
-        "//crates/pi-vfs",
-        "//crates/vendor/jaq-core",
-        "//crates/vendor/grep-searcher",
->>>>>>> upstream/main:crates/pi-builtins/BUILD.bazel
     ],
 )
 

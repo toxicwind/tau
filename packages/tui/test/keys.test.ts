@@ -6,13 +6,8 @@ import {
 	matchesRawBackspace,
 	parseKey,
 	setKittyProtocolActive,
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-tui/keys";
-=======
-} from "@oh-my-pi/pi-tui/keys";
-import { TERMINAL_MULTIPLEXER_ENV_KEYS } from "@oh-my-pi/pi-tui/terminal-multiplexer";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/tui/test/keys.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 describe("matchesKey", () => {
 	it("matches ctrl+letter sequences", () => {

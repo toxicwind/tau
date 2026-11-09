@@ -1,17 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { currentLoopPhase, popLoopPhase, pushLoopPhase, takeRec…`
 import { currentLoopPhase, popLoopPhase, pushLoopPhase, takeRecentLoopPhase } from "@tau/tau-utils";
-=======
-import {
-	currentLoopPhase,
-	popLoopPhase,
-	pushLoopPhase,
-	resetLoopPhaseWindow,
-	takeLoopPhaseAttribution,
-	withLoopPhase,
-} from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/utils/test/loop-phase.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 // The stack and attribution window are process-global; isolate every case.
 function drain(): void {

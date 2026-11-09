@@ -1,5 +1,4 @@
 import { afterEach, describe, expect, test, vi } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { completeSimple, getEnvApiKey, stream, streamSimple } f…`
 import { completeSimple, getEnvApiKey, stream, streamSimple } from "@tau/tau-ai/stream";
 import type { Context, Tool } from "@tau/tau-ai/types";
@@ -8,16 +7,6 @@ import { Effort } from "@tau/tau-catalog/effort";
 import { getSupportedEfforts } from "@tau/tau-catalog/model-thinking";
 import { ollamaCloudModelManagerOptions } from "@tau/tau-catalog/provider-models/ollama";
 import type { FetchImpl, Model } from "@tau/tau-catalog/types";
-=======
-import { getEnvApiKey } from "@oh-my-pi/pi-ai/env-api-key";
-import { stream, streamSimple } from "@oh-my-pi/pi-ai/stream";
-import type { Context, Tool } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { getSupportedEfforts } from "@oh-my-pi/pi-catalog/model-thinking";
-import { ollamaCloudModelManagerOptions } from "@oh-my-pi/pi-catalog/provider-models/ollama";
-import type { FetchImpl, Model } from "@oh-my-pi/pi-catalog/types";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/catalog/test/ollama-cloud-provider.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const originalApiKey = Bun.env.OLLAMA_CLOUD_API_KEY;
 

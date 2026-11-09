@@ -9,12 +9,8 @@ import { AgentRegistry } from "../../src/registry/agent-registry";
 import type { AgentSession } from "../../src/session/agent-session";
 import { ArtifactManager } from "../../src/session/artifacts";
 
-<<<<<<< ours — variable `tempDir` (S, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `const tempDir = TempDir.createSync("omp-nested-agent-repro-");`
 const tempDir = TempDir.createSync("tau-nested-agent-repro-");
-=======
-const tempDir = TempDir.createSync("@omp-nested-agent-repro-");
->>>>>>> theirs — variable `tempDir` (S, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/internal-urls/agent-protocol-nested.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 afterEach(() => {
 	AgentRegistry.resetGlobalForTests();
 	resetRegisteredArtifactDirsForTests();

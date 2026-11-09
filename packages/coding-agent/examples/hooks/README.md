@@ -1,11 +1,8 @@
 # Hooks Examples
 
 Example hooks for omp-coding-agent. Hook modules load through the extension runner, so every `pi.on(...)` handler here behaves like an extension handler.
-<<<<<<< ours — scope `Example hooks for omp-coding-agent.` in heading `Hooks Examples`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 Example hooks for tau-coding-agent.
-=======
->>>>>>> theirs — scope `Example hooks for omp-coding-agent.` deleted in theirs · weave: run 'weave explain packages/coding-agent/examples/hooks/README.md' for per-hunk detail, 'weave check' to verify your resolution
 
 ## Usage
 
@@ -13,14 +10,9 @@ Example hooks for tau-coding-agent.
 # Load a hook with --hook flag
 tau --hook examples/hooks/permission-gate.ts
 
-<<<<<<< ours — scope `# Or copy to hooks directory for auto-discovery` in heading `Usage` (T+F, confidence: medium)
 // refused_by: statement_fold · collision: `cp permission-gate.ts ~/.omp/agent/hooks/`
 # Or copy to hooks directory for auto-discovery
 cp permission-gate.ts ~/.tau/agent/hooks/
-=======
-# Or copy to a hooks/pre (or hooks/post) directory for auto-discovery
-cp permission-gate.ts ~/.omp/agent/hooks/pre/
->>>>>>> theirs — scope `# Or copy to hooks directory for auto-discovery`
 ```
 
 ## Examples
@@ -44,12 +36,8 @@ cp permission-gate.ts ~/.omp/agent/hooks/pre/
 See [docs/hooks.md](../../../../docs/hooks.md) for full documentation.
 
 ```typescript
-<<<<<<< ours — scope `declaration` in heading `Writing Hooks` (S, confidence: medium)
 // refused_by: statement_fold · collision: `import type { HookAPI } from "@oh-my-pi/pi-coding-agent/hooks";`
 import type { HookAPI } from "@tau/tau-coding-agent/hooks";
-=======
-import type { HookAPI } from "@oh-my-pi/pi-coding-agent/extensibility/hooks";
->>>>>>> theirs — scope `declaration`
 
 export default function (pi: HookAPI) {
 	// Subscribe to events

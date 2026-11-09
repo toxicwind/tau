@@ -1,20 +1,9 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import { stripVTControlCharacters } from "node:util";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { UsageReport } from "@oh-my-pi/pi-ai";` +1 more
 import type { UsageReport } from "@tau/tau-ai";
 import { renderUsageReports } from "tau/modes/controllers/command-controller";
 import { getThemeByName, setThemeInstance, theme } from "@tau/tau-tui/theme";
-=======
-import { AuthStorage, type UsageReport } from "@oh-my-pi/pi-ai";
-import { CommandController, renderUsageReports } from "@oh-my-pi/pi-coding-agent/modes/controllers/command-controller";
-import { SelectorController } from "@oh-my-pi/pi-coding-agent/modes/controllers/selector-controller";
-import * as activityClient from "@oh-my-pi/pi-coding-agent/stats/activity-client";
-import { Container, visibleWidth } from "@oh-my-pi/pi-tui";
-import { UsageDashboardComponent } from "@oh-my-pi/pi-tui/overlays/usage-dashboard";
-import { getThemeByName, setThemeInstance, theme } from "@oh-my-pi/pi-tui/theme";
-import { createInteractiveModeContext } from "../../helpers/interactive-mode-context";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/modes/controllers/usage-command.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 describe("renderUsageReports content", () => {
 	beforeAll(async () => {

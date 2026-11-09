@@ -2,7 +2,6 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi 
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import * as ai from "@tau/tau-ai";
 import { Effort, type Model } from "@tau/tau-ai";
@@ -10,19 +9,6 @@ import { Settings } from "tau/config/settings";
 import { buildMemoryToolDeveloperInstructions, getMemoryRoot, startMemoryStartupTask } from "tau/memories";
 import * as memoryStorage from "tau/memories/storage";
 import { getAgentDbPath, Snowflake, TempDir } from "@tau/tau-utils";
-=======
-import * as ai from "@oh-my-pi/pi-ai";
-import { Effort, type Model } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import {
-	buildMemoryToolDeveloperInstructions,
-	getMemoryRoot,
-	startMemoryStartupTask,
-} from "@oh-my-pi/pi-coding-agent/memories";
-import * as memoryStorage from "@oh-my-pi/pi-coding-agent/memories/storage";
-import { getAgentDbPath, Snowflake, TempDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/memories-runtime.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { restoreEnvValue } from "./helpers/settings-test-state";
 
 interface SessionFixture {

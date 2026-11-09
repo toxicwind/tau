@@ -8,14 +8,8 @@ import { beforeAll, describe, expect, it } from "bun:test";
 import { initTheme, theme } from "@tau/tau-tui/theme";
 import { prompt } from "@tau/tau-utils";
 import taskSummaryTemplate from "../../coding-agent/src/prompts/tools/task-summary.md" with { type: "text" };
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { waitToolRenderer } from "@oh-my-pi/pi-tui/tools/wait";`
 import { waitToolRenderer } from "@tau/tau-tui/tools/wait";
-=======
-import type { NativeChild, NativeNode } from "@oh-my-pi/pi-tui/native/node";
-import { type CoordinationDetails, waitToolRenderer } from "@oh-my-pi/pi-tui/tools/wait";
-import { decodeBench } from "./fixtures/job-widget-views";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/tui/test/wait-render.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /** Every described node under `children`, depth first. */
 function flatten(children: readonly NativeChild[] | undefined): NativeNode[] {

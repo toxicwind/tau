@@ -1,13 +1,8 @@
 import { untilAborted, withTimeout } from "@oh-my-pi/pi-utils";
 import { MCPManager, type MCPManagerApi } from "../mcp/manager";
 import type { MCPResourceReadResult } from "../mcp/types";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { InternalResource, InternalUrl, ProtocolHandler } …`
 import type { InternalResource, InternalUrl, InternalWriteResult, ProtocolHandler, WriteContext } from "./types";
-=======
-import mcpDoc from "../prompts/internal-urls/mcp.md" with { type: "text" };
-import type { InternalResource, InternalUrl, ProtocolHandler, ResolveContext, SchemeSpec } from "./types";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/internal-urls/mcp-protocol.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 export interface McpResourceReadOptions {
 	/** Match advertised resource URIs only, never URI templates. */
@@ -242,7 +237,6 @@ export class McpProtocolHandler implements ProtocolHandler {
 		if (!mcpManager) {
 			throw new Error("No MCP manager available. MCP servers may not be configured.");
 		}
-<<<<<<< ours — scope `resolve` in class `McpProtocolHandler` (S+F, confidence: low)
 // refused_by: container_member · collision: ``No MCP server has resource "${uri}".\n\nAvailable resources:\n…`
 
 		const uri = extractResourceUri(url);
@@ -328,13 +322,6 @@ export class McpProtocolHandler implements ProtocolHandler {
 			size: Buffer.byteLength(content, "utf-8"),
 			notes: [`MCP server: ${targetServer}`],
 		};
-=======
-		const resource = await readMcpResource(mcpManager, url, { signal: context?.signal });
-		if (resource) return resource;
-		throw new McpResourceNotFoundError(
-			`No MCP server has resource "${extractResourceUri(url)}".\n\nAvailable resources:\n${formatAvailableResources(mcpManager)}`,
-		);
->>>>>>> theirs — scope `resolve`
 	}
 
 	async write(url: InternalUrl, content: string, context?: WriteContext): Promise<InternalWriteResult | void> {

@@ -289,7 +289,6 @@ describe("advisor sync backlog picker", () => {
 		expect(warnings).toEqual([]);
 	});
 });
-<<<<<<< ours — test_suite `advisor config editor warnings and synthetic default row` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 describe("advisor config editor warnings and synthetic default row", () => {
 	beforeAll(async () => {
@@ -386,5 +385,3 @@ describe("advisor config editor warnings and synthetic default row", () => {
 		expect(warnings).toEqual([]);
 	});
 });
-=======
->>>>>>> theirs — test_suite `advisor config editor warnings and synthetic default row` (S+F, confidence: low) · weave: run 'weave explain packages/tui/test/advisor-config.test.ts' for per-hunk detail, 'weave check' to verify your resolution

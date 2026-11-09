@@ -1,5 +1,4 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { USER_INTERRUPT_LABEL } from "@oh-my-pi/pi-coding-agent…` +1 more
 import { Agent, CompactionCancelledError } from "@tau/tau-agent-core";
 import { getBundledModel } from "@tau/tau-catalog/models";
@@ -14,40 +13,6 @@ import { SessionManager } from "tau/session/session-manager";
 import { ContextNotesTool, GrepTool, NewContextTool, ReadTool, type Tool, type ToolSession } from "tau/tools";
 import { EventBus } from "tau/utils/event-bus";
 import { TempDir } from "@tau/tau-utils";
-=======
-import { scheduler } from "node:timers/promises";
-import { Agent, CompactionCancelledError } from "@oh-my-pi/pi-agent-core";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { ExtensionRuntime, loadExtensionFromFactory } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
-import { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import {
-	type AsyncResultEntry,
-	buildAsyncResultBatchMessage,
-} from "@oh-my-pi/pi-coding-agent/session/async-job-delivery";
-import { SessionMaintenance } from "@oh-my-pi/pi-coding-agent/session/session-maintenance";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { convertToLlm, USER_INTERRUPT_LABEL } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import {
-	ContextNotesTool,
-	GrepTool,
-	NewContextTool,
-	ReadTool,
-	type Tool,
-	type ToolSession,
-} from "@oh-my-pi/pi-coding-agent/tools";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-import { TempDir, withTimeout } from "@oh-my-pi/pi-utils";
-
-import {
-	cfgCompactionAutoContinue,
-	cfgCompactionExperimentalContextManagement,
-} from "@oh-my-pi/pi-coding-agent/session/context-settings";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/agent-session-compaction-cancellation.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 type HookMode = "extension-veto" | "park";
 

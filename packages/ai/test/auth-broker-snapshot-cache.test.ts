@@ -3,20 +3,11 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import {
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 	readAuthBrokerSnapshotCache,
 	type SnapshotResponse,
 	writeAuthBrokerSnapshotCache,
 } from "@tau/tau-ai/auth-broker";
-=======
-	flushAuthBrokerSnapshotCacheWrites,
-	readAuthBrokerSnapshotCache,
-	type SnapshotResponse,
-	scheduleAuthBrokerSnapshotCacheWrite,
-	writeAuthBrokerSnapshotCache,
-} from "@oh-my-pi/pi-ai/auth-broker";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/ai/test/auth-broker-snapshot-cache.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { removeWithRetries } from "../../utils/src/temp";
 
 const TOKEN = "broker-cache-token";

@@ -9,7 +9,6 @@ const FILES = {
 	linuxIntel: { url: `${BASE}/omp-linux-x64`, sha256: "linux_x64_sha" },
 };
 
-<<<<<<< ours — variable `SUMS` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 const SUMS = {
 	"tau-darwin-arm64": "darwin_arm64_sha",
@@ -17,15 +16,12 @@ const SUMS = {
 	"tau-linux-arm64": "linux_arm64_sha",
 	"tau-linux-x64": "linux_x64_sha",
 };
-=======
->>>>>>> theirs — variable `SUMS` (S+F, confidence: low) · weave: run 'weave explain scripts/ci-update-brew-formula.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 describe("renderFormula", () => {
 	const formula = renderFormula("18.8.9", FILES);
 
 	// Regression: bare-binary URLs must opt out of Homebrew's UnpackStrategy.
 	// Without `using: :nounzip` the default CurlDownloadStrategy nests the file
-<<<<<<< ours — scope `// Regression: bare-binary URLs must opt out ...` in test_suite `renderFormula` (F, confidence: medium)
 // refused_by: statement_fold · collision: `for (const arch of ["omp-darwin-arm64", "omp-darwin-x64", "omp-…`
 	// outside the staging CWD, `Dir["tau-*"].first` returns `nil`, and
 	// `bin.install nil => "tau"` raises (issue #2398).
@@ -37,20 +33,6 @@ describe("renderFormula", () => {
 				new RegExp(
 					`url "https://github\\.com/[^"]+/${arch}",\\s+using: :nounzip\\s+sha256 "${SUMS[arch as keyof typeof SUMS]}"`,
 				),
-=======
-	// outside the staging CWD, `Dir["omp-*"].first` returns `nil`, and
-	// `bin.install nil => "omp"` raises (issue #2398).
-	// Each stanza falls back to the GitHub release asset when the build-service
-	// download fails (e.g. its R2 redirect blocked by a proxy, issue #15907).
-	it("attaches `using: :nounzip` and a GitHub release mirror to every per-platform url stanza", () => {
-		const matches = formula.match(/using: :nounzip/g) ?? [];
-		expect(matches).toHaveLength(4);
-		for (const key in FILES) {
-			const file = FILES[key as keyof typeof FILES];
-			const asset = file.url.slice(file.url.lastIndexOf("/") + 1);
-			expect(formula).toContain(
-				`url "${file.url}",\n          using: :nounzip\n      mirror "https://github.com/can1357/oh-my-pi/releases/download/v18.8.9/${asset}"\n      sha256 "${file.sha256}"`,
->>>>>>> theirs — scope `// Regression: bare-binary URLs must opt out ...`
 			);
 		}
 	});

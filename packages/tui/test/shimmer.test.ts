@@ -1,12 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { setShimmerMode, shimmerText } from "@oh-my-pi/pi-tui/t…`
 import type { Theme } from "@tau/tau-tui/theme";
 import { setShimmerMode, shimmerText } from "@tau/tau-tui/theme/shimmer";
-=======
-import type { Theme } from "@oh-my-pi/pi-tui/theme";
-import { setShimmerMode, shimmerSegments, shimmerText } from "@oh-my-pi/pi-tui/theme/shimmer";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/test/shimmer.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const testTheme = {
 	bold(text: string): string {

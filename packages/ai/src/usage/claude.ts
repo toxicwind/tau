@@ -1,13 +1,7 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { toNumber } from "@oh-my-pi/pi-catalog/utils";`
 import { scheduler } from "node:timers/promises";
 import { classifyModel } from "@tau/tau-catalog/compat/taxonomy";
 import { toNumber } from "@tau/tau-catalog/utils";
-=======
-import { classifyModel } from "@oh-my-pi/pi-catalog/compat/taxonomy";
-import { isAnthropicOAuthToken, toNumber } from "@oh-my-pi/pi-catalog/utils";
-import { slugify } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/src/usage/claude.ts' for per-hunk detail, 'weave check' to verify your resolution
 import * as AIError from "../error";
 import {
 	type CredentialRankingContext,

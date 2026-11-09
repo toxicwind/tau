@@ -17,19 +17,11 @@ import {
 	type AgentTelemetryConfig,
 	instrumentedCompleteSimple,
 	resolveTelemetry,
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-agent-core";
 import { sendsImageInputOnWire } from "@tau/tau-ai/providers/vision-guard";
 import type { Api, completeSimple, ImageContent, Model, TextContent } from "@tau/tau-ai";
 import { logger, prompt, toError } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-agent-core";
-import { sendsImageInputOnWire } from "@oh-my-pi/pi-ai/providers/vision-guard";
-import type { Api, completeSimple, ImageContent, Model, TextContent } from "@oh-my-pi/pi-ai";
-import { getEffectiveTokenCost, getModelPricingStatus } from "@oh-my-pi/pi-catalog/models";
-import { logger, prompt, toError } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/utils/image-vision-fallback.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { extractTextContent } from "../commit/utils";
 import type { ModelRegistry } from "../config/model-registry";
 import { expandRoleAlias, getModelMatchPreferences, resolveModelFromString } from "../config/model-resolver";

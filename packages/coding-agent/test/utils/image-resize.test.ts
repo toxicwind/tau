@@ -1,22 +1,8 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { formatScreenshot, resizeImage } from "@oh-my-pi/pi-cod…`
 import { formatScreenshot, resizeImage } from "tau/utils/image-resize";
-=======
-import * as zlib from "node:zlib";
-import { decodePng } from "@oh-my-pi/pi-coding-agent/tools/browser/screenshot";
-import {
-	fitImage,
-	formatDimensionNote,
-	formatScreenshot,
-	type ResizedImage,
-	resizeImage,
-	type ScreenshotArea,
-} from "@oh-my-pi/pi-coding-agent/utils/image-resize";
-import { encodeRawPng } from "@oh-my-pi/pi-coding-agent/utils/png-encode";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/utils/image-resize.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 describe("formatScreenshot", () => {
 	function fakeResized(

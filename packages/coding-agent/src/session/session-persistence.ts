@@ -1,12 +1,6 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { countNewlines } from "@oh-my-pi/pi-utils";`
 import { isAnthropicServerToolHistoryBlock } from "@tau/tau-ai/providers/anthropic-wire";
 import { countNewlines } from "@tau/tau-utils";
-=======
-import { isAnthropicServerToolHistoryBlock } from "@oh-my-pi/pi-ai/providers/anthropic-wire";
-import { countNewlines, isRecord, stringifyJson } from "@oh-my-pi/pi-utils";
-import { PRESERVE_KEY as SNAPCOMPACT_PRESERVE_KEY } from "@oh-my-pi/snapcompact";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/session/session-persistence.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	type BlobStore,
 	externalizeImageDataSync,

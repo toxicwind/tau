@@ -1,9 +1,5 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { $env } from "@oh-my-pi/pi-utils";`
 import { $env } from "@tau/tau-utils";
-=======
-import { $env, type ServerSentEvent } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/src/providers/azure-openai-responses.ts' for per-hunk detail, 'weave check' to verify your resolution
 import * as AIError from "../error";
 import { getEnvApiKey } from "../env-api-key";
 import type {

@@ -1081,14 +1081,11 @@ fn print_type_list<W: Write>(cli: &Rg, out: &mut W) -> Result<(), String> {
 	}
 	Ok(())
 }
-<<<<<<< ours — struct `RgWalk` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 struct RgWalk {
 	request: tau_walker::WalkRequest,
 	filters: PathFilters,
 }
-=======
->>>>>>> theirs — struct `RgWalk` (S+F, confidence: low) · weave: run 'weave explain crates/tau-builtins/src/rg.rs' for per-hunk detail, 'weave check' to verify your resolution
 
 struct PathFilters {
 	overrides:    Option<Override>,
@@ -1100,14 +1097,9 @@ struct PathFilters {
 }
 
 impl PathFilters {
-<<<<<<< ours — scope `includes` in impl `PathFilters` (S+F, confidence: low)
 // refused_by: container_member · collision: `fn includes(&self, path: &Path, file_type: pi_walker::FileType,…` +2 more
 	fn includes(&self, path: &Path, file_type: tau_walker::FileType, size: Option<f64>) -> bool {
 		let is_dir = file_type == tau_walker::FileType::Dir;
-=======
-	fn includes(&self, path: &Path, file_type: FileType, size: Option<u64>) -> bool {
-		let is_dir = file_type == FileType::Dir;
->>>>>>> theirs — scope `includes`
 		let override_match = self
 			.overrides
 			.as_ref()
@@ -1124,12 +1116,8 @@ impl PathFilters {
 		if !explicitly_included && self.explicitly_ignored(path, is_dir) {
 			return false;
 		}
-<<<<<<< ours — scope `includes` in impl `PathFilters` (S+F, confidence: low)
 // refused_by: container_member · collision: `fn includes(&self, path: &Path, file_type: pi_walker::FileType,…` +2 more
 		if file_type != tau_walker::FileType::File {
-=======
-		if file_type != FileType::File {
->>>>>>> theirs — scope `includes`
 			return true;
 		}
 		if !explicitly_included
@@ -1297,7 +1285,6 @@ async fn collect_files(
 		},
 	}
 }
-<<<<<<< ours — function `build_walk` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 fn build_walk(host: &mut Host, cli: &Rg, root: &Path) -> Result<RgWalk, String> {
 	let filters = build_path_filters(host, cli)?;
@@ -1329,8 +1316,6 @@ fn build_walk(host: &mut Host, cli: &Rg, root: &Path) -> Result<RgWalk, String> 
 		.cache(false);
 	Ok(RgWalk { request, filters })
 }
-=======
->>>>>>> theirs — function `build_walk` (S+F, confidence: low)
 
 /// Display spelling of a walked `path` under the `operand` it was found from
 /// (resolved to `root`), with `/` separators on Windows like the shell's other
@@ -1913,7 +1898,6 @@ async fn search_dir<M: Matcher<Captures: Send> + Clone + Send + Sync + 'static, 
 	}
 	Ok(SearchOutcome { any_match, had_error })
 	let mut pace = host.output_pace();
-<<<<<<< ours — scope `let streamed = match walk.request.for_each_en...` in function `search_dir`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	let streamed = match walk.request.for_each_entry_with_heartbeat(
 		|| {
@@ -1984,8 +1968,6 @@ async fn search_dir<M: Matcher<Captures: Send> + Clone + Send + Sync + 'static, 
 			}))
 		},
 	};
-=======
->>>>>>> theirs — scope `let streamed = match walk.request.for_each_en...` deleted in theirs
 }
 
 /// Hands everything written to `out` and `host.stderr` so far to the host's destinations.
@@ -2030,7 +2012,6 @@ async fn path_is_stdout(stdout: Option<&StdoutFile>, fs: &pi_vfs::Fs, path: &Pat
 		None => false,
 	}
 }
-<<<<<<< ours — function `collect_filtered_files` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 fn collect_filtered_files(host: &mut Host, cli: &Rg, root: &Path) -> io::Result<Vec<PathBuf>> {
 	let walk = build_walk(host, cli, root).map_err(io::Error::other)?;
@@ -2068,8 +2049,6 @@ fn collect_filtered_files(host: &mut Host, cli: &Rg, root: &Path) -> io::Result<
 		Err(err) => Err(io::Error::other(format!("rg: {err}"))),
 	}
 }
-=======
->>>>>>> theirs — function `collect_filtered_files` (S+F, confidence: low)
 
 async fn list_files<W: Write>(
 	host: &mut Host,
@@ -2382,7 +2361,6 @@ async fn execute_search<M: Matcher<Captures: Send> + Clone + Send + Sync + 'stat
 	exit_status(opts.quiet, any_match, had_error)
 }
 
-<<<<<<< ours — impl `Utility for Rg` (S+F, confidence: low)
 // refused_by: rename_vs_edit_guard · collision: none (both sides edited, nowhere the same lines)
 impl Utility for Rg {
 	const NAME: &'static str = "rg";
@@ -2466,84 +2444,6 @@ impl Utility for Rg {
 	match &matcher {
 		CompiledMatcher::Rust(matcher) => execute_search(host, &cli, matcher, &paths, &opts, &mut out),
 		CompiledMatcher::Pcre(matcher) => execute_search(host, &cli, matcher, &paths, &opts, &mut out),
-=======
-impl AsyncUtility for Rg {
-	const NAME: &'static str = "rg";
-	const USAGE_ERROR: u8 = 2;
-	const CHECKS_STDOUT_PATH: bool = true;
-
-	async fn run(self, host: &mut Host) -> i32 {
-		let cli = self;
-	let mut opts = search_options(&cli);
-	match parse_path_separator(cli.path_separator.as_deref()) {
-		Ok(separator) => opts.record.path_separator = separator,
-		Err(error) => {
-			let _ = writeln!(host.stderr, "rg: {error}");
-			return 2;
-		},
-	}
-	if opts.json
-		&& (cli.files
-			|| cli.type_list
-			|| opts.count
-			|| opts.count_matches
-			|| opts.files_with_matches
-			|| opts.files_without_match
-			|| opts.quiet
-			|| cli.only_matching
-			|| cli.vimgrep)
-	{
-		let _ = writeln!(host.stderr, "rg: --json cannot be combined with summary modes");
-		return 2;
-	}
-	let mut out = if cli.line_buffered && !cli.no_line_buffered {
-		StreamWriter::line(host.stdout_clone())
-	} else if cli.no_line_buffered {
-		StreamWriter::block(host.stdout_clone())
-	} else {
-		host.stdout_writer()
-	};
-	let (patterns, mut paths) = match resolve_patterns(host, &cli).await {
-		Ok(resolved) => resolved,
-		Err(error) => {
-			let _ = writeln!(host.stderr, "{error}");
-			return 2;
-		},
-	};
-	if cli.type_list {
-		return match print_type_list(&cli, &mut out) {
-			Ok(()) => 0,
-			Err(error) => {
-				let _ = writeln!(host.stderr, "rg: {error}");
-				2
-			},
-		};
-	}
-	let pattern_stdin_consumed = cli.pattern_files.iter().any(|file| file == OsStr::new("-"));
-	default_paths(
-		&mut paths,
-		!cli.files && !pattern_stdin_consumed && host.stdin_is_search_input(),
-	);
-	opts.line_number = effective_line_number(&cli);
-	if cli.files {
-		let outcome = list_files(host, &cli, &paths, &opts.record, &mut out).await;
-		let _ = out.flush();
-		return exit_status(false, outcome.any_match, outcome.had_error);
-	}
-	if patterns.is_empty() {
-		return 1;
-	}
-	let matcher = match build_matcher(host, &patterns, &cli) {
-		Ok(matcher) => matcher,
-		Err(error) => {
-			let _ = writeln!(host.stderr, "rg: {error}");
-			return 2;
-		},
-	};
-	match &matcher {
-		Engine::Rust(matcher) => execute_search(host, &cli, matcher, &paths, &opts, &mut out).await,
-		Engine::Pcre(matcher) => execute_search(host, &cli, matcher, &paths, &opts, &mut out).await,
->>>>>>> theirs — impl `Utility for Rg` (S+F, confidence: low)
 	}
 }
 }

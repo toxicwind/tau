@@ -71,9 +71,5 @@ blank_lines_upper_bound = 1
 force_explicit_abi = true
 hex_literal_case = "Lower"
 newline_style = "Unix"
-<<<<<<< ours — property `ignore` (S, confidence: medium)
 # refused_by: merge_ladder_exhausted · collision: `ignore = ["crates/vendor/brush-core/**", "crates/pi-builtins/**…`
 ignore = ["crates/vendor/brush-core/**", "crates/tau-builtins/**"]
-=======
-ignore = ["crates/pi-builtins/**"]
->>>>>>> theirs — property `ignore` (S, confidence: medium) · weave: run 'weave explain rustfmt.toml' for per-hunk detail, 'weave check' to verify your resolution

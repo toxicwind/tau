@@ -11,7 +11,6 @@
  * and its independent transport settings without bypassing model-level vetoes.
  */
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import type { FetchImpl, Model, SimpleStreamOptions } from "@oh…`
 import { Agent, type StreamFn } from "@tau/tau-agent-core";
 import type { FetchImpl, Model, SimpleStreamOptions } from "@tau/tau-ai";
@@ -23,21 +22,6 @@ import { AgentSession } from "tau/session/agent-session";
 import type { AuthStorage } from "tau/session/auth-storage";
 import { SessionManager } from "tau/session/session-manager";
 import { TempDir } from "@tau/tau-utils";
-=======
-import { Agent, type StreamFn } from "@oh-my-pi/pi-agent-core";
-import type { Context, FetchImpl, Model, SimpleStreamOptions } from "@oh-my-pi/pi-ai";
-import { streamSimple } from "@oh-my-pi/pi-ai";
-import { resolveApiKeyOnce } from "@oh-my-pi/pi-ai/auth-retry";
-import { closeModelCache } from "@oh-my-pi/pi-catalog/model-cache";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { SessionAccountPoolScope } from "@oh-my-pi/pi-coding-agent/config/account-pools";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import type { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/advisor-provider-options-parity.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 import { endpoint as responsesEndpoint } from "../../ai/test/fixtures/openai-responses-server";
 

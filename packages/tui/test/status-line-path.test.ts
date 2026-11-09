@@ -5,19 +5,8 @@ import * as path from "node:path";
 import type { SegmentContext } from "../src/status-line/segments";
 import { renderSegment } from "../src/status-line/segments";
 import { initTheme, theme } from "../src/theme";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { getProjectDir, pathIsWithin, removeSyncWithRetries, se…`
 import { getProjectDir, pathIsWithin, removeSyncWithRetries, setProjectDir } from "@tau/tau-utils";
-=======
-import { getWindowsShortPath } from "@oh-my-pi/pi-natives/path";
-import {
-	__resetProjectDirCacheForTests,
-	getProjectDir,
-	pathIsWithin,
-	removeSyncWithRetries,
-	setProjectDir,
-} from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/tui/test/status-line-path.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const originalProjectDir = getProjectDir();
 const SCRATCH_ROOT_PREFIXES: readonly string[] = [
@@ -293,7 +282,6 @@ describe("status line path segment", () => {
 		}
 	});
 
-<<<<<<< ours — scope `it("normalizes and classifies a project direc...` in test_suite `status line path segment`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("normalizes and classifies a project directory only once", () => {
 		const scratchDir = fs.mkdtempSync(path.join(os.tmpdir(), "tau-status-line-classify-"));
@@ -312,8 +300,6 @@ describe("status line path segment", () => {
 			removeSyncWithRetries(scratchDir);
 		}
 	});
-=======
->>>>>>> theirs — scope `it("normalizes and classifies a project direc...` deleted in theirs
 
 	it("keeps nested subpaths visible under a scratch root", () => {
 		const scratchDir = fs.mkdtempSync(path.join(os.tmpdir(), "tau-status-line-scratch-nest-"));

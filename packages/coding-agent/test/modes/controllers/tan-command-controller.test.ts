@@ -1,6 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import type { AssistantMessage, Model } from "@oh-my-pi/pi-ai";`
 import type { AgentMessage } from "@tau/tau-agent-core";
 import type { AssistantMessage, Model } from "@tau/tau-ai";
@@ -16,22 +15,6 @@ import type { CreateAgentSessionOptions, CreateAgentSessionResult } from "tau/sd
 import * as sdkModule from "tau/sdk";
 import { SessionManager } from "tau/session/session-manager";
 import { TempDir } from "@tau/tau-utils";
-=======
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, ImageContent, Model } from "@oh-my-pi/pi-ai";
-import type { AsyncJobRegisterOptions } from "@oh-my-pi/pi-coding-agent/async/job-manager";
-import type { EffectiveExtensionRoots } from "@oh-my-pi/pi-coding-agent/capability/types";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { PreparedExtension } from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
-import { resolveLocalRoot } from "@oh-my-pi/pi-coding-agent/internal-urls/local-protocol";
-import { TanCommandController } from "@oh-my-pi/pi-coding-agent/modes/controllers/tan-command-controller";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { AgentRegistry, MAIN_AGENT_ID } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import type { CreateAgentSessionOptions, CreateAgentSessionResult } from "@oh-my-pi/pi-coding-agent/sdk";
-import * as sdkModule from "@oh-my-pi/pi-coding-agent/sdk";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/modes/controllers/tan-command-controller.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 interface CapturedJobRunContext {
 	jobId: string;
@@ -132,13 +115,8 @@ function createContext(overrides?: {
 	effectiveExtensionRoots?: unknown;
 	extensionPaths?: unknown;
 }) {
-<<<<<<< ours — function `createContext` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 	const tempDir = TempDir.createSync("@tau-tan-controller-");
-=======
-	const tempDir = TempDir.createSync("@omp-tan-controller-");
-	harnessTempDirs.push(tempDir);
->>>>>>> theirs — function `createContext` (F, confidence: medium)
 	const parentFile = path.join(tempDir.path(), "parent.jsonl");
 	// The clone nests inside the parent's artifact directory, like a subagent.
 	const cloneFile = path.join(parentFile.slice(0, -6), "clone.jsonl");

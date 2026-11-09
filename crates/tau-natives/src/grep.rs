@@ -30,7 +30,6 @@ const STREAM_BATCH: usize = 1024;
 /// `onMatches` callback, called without the error-first slot.
 type GrepStreamCallback =
 	ThreadsafeFunction<Vec<GrepMatch>, UnknownReturnValue, Vec<GrepMatch>, Status, false, false>;
-<<<<<<< ours — static `PCRE2_JIT_ENABLED` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 /// PCRE2 JIT toggle: `TAU_PCRE2_JIT=1` forces JIT on, `0`/`false` forces it
 /// off. Unset, JIT stays on everywhere except macOS, where PCRE2's SLJIT
@@ -39,8 +38,6 @@ static PCRE2_JIT_ENABLED: LazyLock<bool> = LazyLock::new(|| match std::env::var(
 	Ok(v) if !v.is_empty() => v != "0" && !v.eq_ignore_ascii_case("false"),
 	_ => !cfg!(target_os = "macos"),
 });
-=======
->>>>>>> theirs — static `PCRE2_JIT_ENABLED` (S+F, confidence: low) · weave: run 'weave explain crates/tau-natives/src/grep.rs' for per-hunk detail, 'weave check' to verify your resolution
 
 /// Output mode for [`search`] and [`grep`] (string values match JS callers).
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -293,7 +290,6 @@ impl From<pi_walker::grep::Match> for GrepMatch {
 const fn empty_search_result(error: Option<String>) -> SearchResult {
 	SearchResult { matches: Vec::new(), match_count: 0, limit_reached: false, error }
 }
-<<<<<<< ours — function `build_grep_walk_request` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 fn build_grep_walk_request(
 	search_path: &Path,
@@ -326,9 +322,6 @@ fn build_grep_walk_request(
 		.cache(false)
 		.filter(filter))
 }
-=======
->>>>>>> theirs — function `build_grep_walk_request` (S+F, confidence: low)
-<<<<<<< ours — function `collect_grep_candidates` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 fn collect_grep_candidates(
 	search_path: &Path,
@@ -357,9 +350,6 @@ fn collect_grep_candidates(
 	}
 	Ok(Some(candidates))
 }
-=======
->>>>>>> theirs — function `collect_grep_candidates` (S+F, confidence: low)
-<<<<<<< ours — struct `PassState` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 /// Shared accumulator across both search passes.
 ///
@@ -373,9 +363,6 @@ struct PassState {
 	skipped_oversized: AtomicU64,
 	emitted:           AtomicU64,
 }
-=======
->>>>>>> theirs — struct `PassState` (S+F, confidence: low)
-<<<<<<< ours — function `search_one_file` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 /// Read one candidate per `policy` and search it, classifying the result.
 fn search_one_file<M: Matcher + Sync>(
@@ -413,9 +400,6 @@ fn search_one_file<M: Matcher + Sync>(
 		});
 	FileOutcome::Searched(search)
 }
-=======
->>>>>>> theirs — function `search_one_file` (S+F, confidence: low)
-<<<<<<< ours — function `handle_file` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 /// Search one candidate and fold its outcome into the shared [`PassState`].
 fn handle_file<M: Matcher + Sync>(
@@ -460,9 +444,6 @@ fn handle_file<M: Matcher + Sync>(
 	}
 	Ok(())
 }
-=======
->>>>>>> theirs — function `handle_file` (S+F, confidence: low)
-<<<<<<< ours — function `run_pass` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 /// Run one search pass over `candidates`, returning its path-sorted results.
 ///
@@ -511,9 +492,6 @@ fn run_pass<M: Matcher + Sync>(
 	results.sort_unstable_by(|a, b| a.relative_path.cmp(&b.relative_path));
 	Ok(results)
 }
-=======
->>>>>>> theirs — function `run_pass` (S+F, confidence: low)
-<<<<<<< ours — function `process_candidates` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 /// Search `candidates` in two passes: normal-sized files first, then oversized
 /// files (mmap of their first [`MAX_FILE_BYTES`]) deferred to the end.
@@ -581,9 +559,6 @@ fn process_candidates<M: Matcher + Sync>(
 		state.files_searched.load(Ordering::Relaxed),
 	))
 }
-=======
->>>>>>> theirs — function `process_candidates` (S+F, confidence: low)
-<<<<<<< ours — function `run_sequential_grep` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 fn run_sequential_grep<M: Matcher + Sync>(
 	search_path: &Path,
@@ -612,9 +587,6 @@ fn run_sequential_grep<M: Matcher + Sync>(
 	};
 	process_candidates(candidates, matcher, params, false, stop_after_matches, ct)
 }
-=======
->>>>>>> theirs — function `run_sequential_grep` (S+F, confidence: low)
-<<<<<<< ours — function `run_parallel_streaming_grep` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 #[allow(
 	clippy::fn_params_excessive_bools,
@@ -675,9 +647,6 @@ fn run_parallel_streaming_grep<M: Matcher + Sync>(
 		state.files_searched.load(Ordering::Relaxed),
 	))
 }
-=======
->>>>>>> theirs — function `run_parallel_streaming_grep` (S+F, confidence: low)
-<<<<<<< ours — function `flush_stream_window` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 fn flush_stream_window<M: Matcher + Sync>(
 	window: &mut Vec<tau_walker::FileCandidate>,
@@ -702,9 +671,6 @@ fn flush_stream_window<M: Matcher + Sync>(
 	window.clear();
 	Ok(total_emitted >= stop_after_matches)
 }
-=======
->>>>>>> theirs — function `flush_stream_window` (S+F, confidence: low)
-<<<<<<< ours — function `run_windowed_streaming_grep` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 #[allow(
 	clippy::fn_params_excessive_bools,
@@ -804,9 +770,6 @@ fn run_windowed_streaming_grep<M: Matcher + Sync>(
 		state.files_searched.load(Ordering::Relaxed),
 	))
 }
-=======
->>>>>>> theirs — function `run_windowed_streaming_grep` (S+F, confidence: low)
-<<<<<<< ours — function `run_streaming_grep` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 fn run_streaming_grep<M: Matcher + Sync>(
 	search_path: &Path,
@@ -860,8 +823,6 @@ fn run_streaming_grep<M: Matcher + Sync>(
 		),
 	}
 }
-=======
->>>>>>> theirs — function `run_streaming_grep` (S+F, confidence: low)
 
 fn search_sync(content: &[u8], options: SearchOptions) -> SearchResult {
 	let multiline = options.multiline.unwrap_or(false);
@@ -1162,7 +1123,6 @@ pub fn grep<'env>(
 		grep_async(filesystem, request, on_matches, on_match)
 	})
 }
-<<<<<<< ours — module `tests` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 #[cfg(test)]
 mod tests {
@@ -2197,5 +2157,3 @@ mod tests {
 		assert_eq!(result.skipped_oversized, None);
 	}
 }
-=======
->>>>>>> theirs — module `tests` (S+F, confidence: low)

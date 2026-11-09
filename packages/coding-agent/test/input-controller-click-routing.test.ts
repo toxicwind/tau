@@ -1,5 +1,4 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { PINNED_HUD_TOGGLE_ID } from "@oh-my-pi/pi-tui/prompt/c…`
 import { KeybindingsManager } from "@tau/tau-tui/app-keybindings";
 import { resetSettingsForTest, Settings, settings } from "tau/config/settings";
@@ -8,16 +7,6 @@ import { InputController } from "tau/modes/controllers/input-controller";
 import type { InteractiveModeContext } from "tau/modes/types";
 import { AgentRegistry } from "tau/registry/agent-registry";
 import type { AgentSession } from "tau/session/agent-session";
-=======
-import { KeybindingsManager } from "@oh-my-pi/pi-tui/app-keybindings";
-import { resetSettingsForTest, Settings, settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { PINNED_HUD_TOGGLE_ID } from "@oh-my-pi/pi-coding-agent/task/output-manager";
-import { InputController } from "@oh-my-pi/pi-coding-agent/modes/controllers/input-controller";
-import { SpaceHoldGesture } from "@oh-my-pi/pi-tui/space-hold";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/input-controller-click-routing.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 import { cfgTuiMouse } from "@oh-my-pi/pi-coding-agent/modes/settings";
 

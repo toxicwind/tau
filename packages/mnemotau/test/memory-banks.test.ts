@@ -2,7 +2,6 @@ import { describe, expect, it } from "bun:test";
 import { existsSync, mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `} from "@oh-my-pi/pi-mnemopi/core/banks";`
 import {
 	BankManager,
@@ -16,9 +15,6 @@ import {
 	setBank,
 	ValueError,
 } from "@tau/tau-mnemotau/core/banks";
-=======
-import { BankManager, bankDbPath, ValueError } from "@oh-my-pi/pi-mnemopi/core/banks";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/mnemotau/test/memory-banks.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 describe("BankManager", () => {
 	it("creates, lists, renames, stats, and deletes isolated bank directories", () => {
@@ -61,7 +57,6 @@ describe("BankManager", () => {
 		}
 	});
 
-<<<<<<< ours — scope `it("module-level helpers operate on the reque...` in test_suite `BankManager`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("module-level helpers operate on the requested data dir", () => {
 		const root = mkdtempSync(join(tmpdir(), "mnemotau-banks-"));
@@ -76,6 +71,4 @@ describe("BankManager", () => {
 			rmSync(root, { recursive: true, force: true });
 		}
 	});
-=======
->>>>>>> theirs — scope `it("module-level helpers operate on the reque...` deleted in theirs
 });

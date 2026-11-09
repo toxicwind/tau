@@ -1129,7 +1129,6 @@ describe("runEvalAgent isolation", () => {
 		expect(mergeSpy).toHaveBeenCalledTimes(1);
 	});
 
-<<<<<<< ours — scope `it("preserves temp artifacts for non-isolated...` in test_suite `runEvalAgent isolation`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("preserves temp artifacts for non-isolated handle outputs", async () => {
 		mockAgents();
@@ -1143,8 +1142,6 @@ describe("runEvalAgent isolation", () => {
 		);
 		expect(removedArtifactsDir).toBe(false);
 	});
-=======
->>>>>>> theirs — scope `it("preserves temp artifacts for non-isolated...` deleted in theirs · weave: run 'weave explain packages/coding-agent/test/eval/agent-bridge-policy.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 	it("forwards merge=false as patch mode and passes the worktree cwd through baseOptions", async () => {
 		mockAgents();

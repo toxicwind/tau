@@ -1,11 +1,6 @@
 [package]
-<<<<<<< ours — section `package` (S+F, confidence: low)
 # refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 name = "tau-shell"
-=======
-name = "pi-shell"
-description = "pi's embedded bash: the bash 5.3 engine, its OS and pi-vfs hosts, persistent sessions, and the shell API pi-natives exports"
->>>>>>> theirs — section `package` (S+F, confidence: low) · weave: run 'weave explain crates/tau-shell/Cargo.toml' for per-hunk detail, 'weave check' to verify your resolution
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
@@ -36,11 +31,8 @@ base64.workspace = true
 blake3.workspace = true
 bstr.workspace = true
 bytes.workspace = true
-<<<<<<< ours — scope `pi-builtins.workspace = true` in section `dependencies`, deleted in theirs (S, confidence: medium)
 # refused_by: statement_fold · collision: none (no common ancestor text)
 tau-builtins.workspace = true
-=======
->>>>>>> theirs — scope `pi-builtins.workspace = true` deleted in theirs
 clap.workspace = true
 encoding_rs.workspace = true
 flume.workspace = true

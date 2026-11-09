@@ -1233,7 +1233,6 @@ export function transformMessages<TApi extends Api>(
 
 				if (block.type === "fallback") {
 					// Server-side-fallback boundary marker (Anthropic beta
-<<<<<<< ours — scope `// First pass: transform messages (thinking b...` in function `transformMessages` (F, confidence: medium)
 // refused_by: statement_fold · collision: `// and older omp gateways whose schema pre-dates this feature)`
 					// `server-side-fallback-2026-06-01`). Only the official
 					// Anthropic endpoint accepts this block on replay: every
@@ -1246,15 +1245,6 @@ export function transformMessages<TApi extends Api>(
 					// keep it and let `convertAnthropicMessages` re-check the
 					// per-request opt-in before serializing.
 					if (isAnthropicTarget && model.compat.officialEndpoint) return block;
-=======
-					// `server-side-fallback-2026-06-01`). Keep it for every
-					// Anthropic-messages target: `convertAnthropicMessages` decides
-					// per request whether the marker can go on the wire (official
-					// endpoint + beta opt-in), and when it cannot, the boundary is
-					// what tells it which model's signed reasoning to keep. Every
-					// other API rejects the block or throws in its converter.
-					if (isAnthropicTarget) return block;
->>>>>>> theirs — scope `// First pass: transform messages (thinking b...` · weave: run 'weave explain packages/ai/src/providers/transform-messages.ts' for per-hunk detail, 'weave check' to verify your resolution
 					return [];
 				}
 

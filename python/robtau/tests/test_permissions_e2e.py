@@ -339,11 +339,8 @@ def test_git_pool_metadata_survives_root_push_and_retry_slot(
 
 def _prepare_shared_natives_cache(slot_tmp_path: Path) -> NativesCache:
     """Provision a root-only shared cache."""
-<<<<<<< ours — scope `"""Provision `/data/cache/pi-natives` shape (...` in function `_prepare_shared_natives_cache`, deleted in theirs (T, confidence: high)
 # refused_by: statement_fold · collision: none (no common ancestor text)
     """Provision `/data/cache/tau-natives` shape (root:tau, setgid 2770)."""
-=======
->>>>>>> theirs — scope `"""Provision `/data/cache/pi-natives` shape (...` deleted in theirs · weave: run 'weave explain python/robtau/tests/test_permissions_e2e.py' for per-hunk detail, 'weave check' to verify your resolution
     cache_root = slot_tmp_path / "cache" / "tau-natives"
     cache_root.mkdir(parents=True)
     os.chown(cache_root, 0, 0)
@@ -373,7 +370,6 @@ def test_natives_cache_shares_artifacts_across_slot_workspaces(
     db: Database,
     tool_loop: asyncio.AbstractEventLoop,
 ) -> None:
-<<<<<<< ours — scope `def test_natives_cache_shares_artifacts_acros...` in function `test_natives_cache_shares_artifacts_across_slot_workspaces` (F, confidence: medium)
 # refused_by: statement_fold · collision: `group `omp` setgid inheritance so any other slot can read it.` +3 more
     """End-to-end: capture under slot 1, populate under slot 2, prove that:
 
@@ -387,9 +383,6 @@ def test_natives_cache_shares_artifacts_across_slot_workspaces(
        / `installGeneratedBindings`) does NOT mutate the cached companion —
        this is exactly why companions are copied, not hardlinked.
     """
-=======
-    """Slots reuse cached artifacts without gaining access to the cache itself."""
->>>>>>> theirs — scope `def test_natives_cache_shares_artifacts_acros...`
     _require_linux_root_toolchain()
     workspaces = slot_tmp_path / "workspaces"
     natives_cache = _prepare_shared_natives_cache(slot_tmp_path)
@@ -419,16 +412,11 @@ def test_natives_cache_shares_artifacts_across_slot_workspaces(
     assert stored is not None
     cached_node = stored / "tau_natives.linux-arm64.node"
     cached_companion = stored / "index.d.ts"
-<<<<<<< ours — scope `def test_natives_cache_shares_artifacts_acros...` in function `test_natives_cache_shares_artifacts_across_slot_workspaces` (F, confidence: medium)
 # refused_by: statement_fold · collision: `group `omp` setgid inheritance so any other slot can read it.` +3 more
     # Cache root is setgid `tau`; new files inherit gid `tau` so any slot
     # with `extra_groups=[tau]` can read them.
     assert cached_node.stat().st_gid == _SHARED_OMP_GID
     assert cached_companion.stat().st_gid == _SHARED_OMP_GID
-=======
-    assert cached_node.stat().st_uid == 0
-    assert cached_companion.stat().st_uid == 0
->>>>>>> theirs — scope `def test_natives_cache_shares_artifacts_acros...`
 
     # --- Workspace 2: a different slot UID gets auto-populated on ensure. ---
     ws2 = manager.ensure_workspace(
@@ -453,16 +441,10 @@ def test_natives_cache_shares_artifacts_across_slot_workspaces(
     # The companion is COPIED: independent inode.
     assert ws2_companion.stat().st_ino != cached_companion.stat().st_ino
 
-<<<<<<< ours — scope `def test_natives_cache_shares_artifacts_acros...` in function `test_natives_cache_shares_artifacts_across_slot_workspaces` (F, confidence: medium)
 # refused_by: statement_fold · collision: `group `omp` setgid inheritance so any other slot can read it.` +3 more
     # Slot 2 must be able to read the populated artifacts (group tau + 0660
     # via setgid inheritance from the cache root).
     _run_ok(bindings2, ["test", "-r", "packages/natives/native/tau_natives.linux-arm64.node"])
-=======
-    # Slot 2 can read the workspace copies but not the root-only cache.
-    _run_ok(bindings2, ["test", "!", "-r", str(cached_node)])
-    _run_ok(bindings2, ["test", "-r", "packages/natives/native/pi_natives.linux-arm64.node"])
->>>>>>> theirs — scope `def test_natives_cache_shares_artifacts_acros...`
     _run_ok(bindings2, ["test", "-r", "packages/natives/native/index.d.ts"])
 
     # --- Rebuild simulation: napi's installBinary does temp + rename. ---

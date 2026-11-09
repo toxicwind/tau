@@ -87,7 +87,6 @@ export class LearnTool implements AgentTool<LearnSchema> {
 			if (!state) {
 				throw new Error("Mnemotau backend is not initialised for this session.");
 			}
-<<<<<<< ours — scope `execute` in class `LearnTool` (S+F, confidence: low)
 // refused_by: container_member · collision: `// disk error); mirror mnemopiBackend.save and fail loudly rath…` +1 more
 			const id = state.rememberScoped(params.memory, {
 				source: "coding-agent-learn",
@@ -109,36 +108,6 @@ export class LearnTool implements AgentTool<LearnSchema> {
 			// reporting (and minting a skill for) a lesson that was silently dropped.
 			if (!id) {
 				throw new Error("Mnemotau did not store the lesson (no memory id returned).");
-=======
-			// Resolve the target before writing, so an unsupported scoping mode is not reported as a storage failure.
-			const target = params.scope === "global" ? state.getGlobalRetainTarget() : undefined;
-			// A failed write throws (closed DB / disk error). Fail loudly with the
-			// cause rather than reporting (and minting a skill for) a lesson that was
-			// never stored.
-			try {
-				state.rememberScoped(
-					params.memory,
-					{
-						source: "coding-agent-learn",
-						importance: 0.8,
-						metadata: {
-							session_id: state.sessionId,
-							cwd: state.session.sessionManager.getCwd(),
-							context: params.context ?? null,
-							tool: "learn",
-						},
-						scope: "bank",
-						extract: true,
-						extractEntities: true,
-						veracity: "tool",
-						memoryType: "fact",
-					},
-					target,
-				);
-			} catch (error) {
-				const reason = error instanceof Error ? error.message : String(error);
-				throw new Error(`Mnemopi did not store the lesson: ${reason}`, { cause: error });
->>>>>>> theirs — scope `execute` · weave: run 'weave explain packages/coding-agent/src/tools/learn.ts' for per-hunk detail, 'weave check' to verify your resolution
 			}
 		} else if (backend === "local") {
 			const result = await localBackend.save?.(

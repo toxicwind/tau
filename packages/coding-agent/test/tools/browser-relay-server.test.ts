@@ -1,17 +1,7 @@
 import { afterEach, describe, expect, it } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { findFreeCdpPort } from "tau/tools/browser/attach";
 import { type RelayServer, type RelayUnavailableInfo, startRelayServer } from "tau/tools/browser/relay/server";
-=======
-import { findFreeCdpPort } from "@oh-my-pi/pi-coding-agent/tools/browser/attach";
-import { relayCdpClientsOf } from "@oh-my-pi/pi-coding-agent/tools/browser/relay/probe";
-import {
-	type RelayServer,
-	type RelayUnavailableInfo,
-	startRelayServer,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/relay/server";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/tools/browser-relay-server.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const EXTENSION_HELLO = {
 	t: "hello",

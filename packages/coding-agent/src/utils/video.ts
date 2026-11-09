@@ -359,12 +359,8 @@ export async function extractVideoFramePng(
 	selector: VideoSelector,
 	signal?: AbortSignal,
 ): Promise<VideoPng> {
-<<<<<<< ours — scope `const tmp = await TempDir.create("omp-video-f...` in function `extractVideoFramePng` (S, confidence: medium)
 // refused_by: statement_fold · collision: `const tmp = await TempDir.create("omp-video-frame-");`
 	const tmp = await TempDir.create("tau-video-frame-");
-=======
-	const tmp = await TempDir.create("@omp-video-frame-");
->>>>>>> theirs — scope `const tmp = await TempDir.create("omp-video-f...` · weave: run 'weave explain packages/coding-agent/src/utils/video.ts' for per-hunk detail, 'weave check' to verify your resolution
 	try {
 		const out = tmp.join("frame.png");
 		if (selector.kind === "time") {
@@ -463,12 +459,8 @@ export async function buildVideoContactSheetPng(
 	const thumbs = CONTACT_SHEET_THUMBS;
 	const cols = CONTACT_SHEET_COLS;
 	const rows = Math.ceil(thumbs / cols);
-<<<<<<< ours — scope `const tmp = await TempDir.create("omp-video-s...` in function `buildVideoContactSheetPng` (S, confidence: medium)
 // refused_by: statement_fold · collision: `const tmp = await TempDir.create("omp-video-sheet-");`
 	const tmp = await TempDir.create("tau-video-sheet-");
-=======
-	const tmp = await TempDir.create("@omp-video-sheet-");
->>>>>>> theirs — scope `const tmp = await TempDir.create("omp-video-s...`
 	try {
 		const duration = meta.durationSec;
 		const times: number[] =
@@ -640,12 +632,8 @@ export async function buildChangedFrameContactSheetPng(
 	signal?: AbortSignal,
 ): Promise<ChangedFrameContactSheet> {
 	const maxTiles = Math.max(2, Math.min(12, Math.floor(options.maxTiles ?? 12)));
-<<<<<<< ours — scope `const tmp = await TempDir.create("omp-video-c...` in function `buildChangedFrameContactSheetPng` (S, confidence: medium)
 // refused_by: statement_fold · collision: `const tmp = await TempDir.create("omp-video-change-sheet-");`
 	const tmp = await TempDir.create("tau-video-change-sheet-");
-=======
-	const tmp = await TempDir.create("@omp-video-change-sheet-");
->>>>>>> theirs — scope `const tmp = await TempDir.create("omp-video-c...`
 	try {
 		const raw = tmp.join("frames.gray");
 		await runFfmpeg(

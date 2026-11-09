@@ -1,13 +1,7 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { UsageFetchParams, UsageProvider } from "@oh-my-pi…`
 import { type AuthCredentialStore, AuthStorage, type StoredAuthCredential } from "@tau/tau-ai/auth-storage";
 import type { UsageFetchParams, UsageProvider } from "@tau/tau-ai/usage";
-=======
-import { type AuthCredentialStore, AuthStorage, type StoredAuthCredential } from "@oh-my-pi/pi-ai/auth-storage";
-import type { UsageFetchParams, UsageProvider, UsageReport } from "@oh-my-pi/pi-ai/usage";
-import { defaultRankingStrategy } from "../src/usage/registry";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/test/auth-storage-xai-oauth-usage.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { withEnv } from "./helpers";
 
 function makeStore(credentials: StoredAuthCredential[] = []): AuthCredentialStore {

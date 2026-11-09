@@ -1,23 +1,11 @@
 import { describe, expect, it } from "bun:test";
 import { gunzipSync } from "node:zlib";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import type { AssistantMessage, Context, Model } from "@oh-my-p…` +1 more
 import { streamDevin } from "@tau/tau-ai/providers/devin";
 import type { AssistantMessage, Context, Model } from "@tau/tau-ai/types";
 import { buildModel } from "@tau/tau-catalog/build";
 import { GetChatMessageRequestSchema, GetUserJwtResponseSchema } from "@tau/tau-catalog/discovery/devin-proto";
 import { create, fromBinary, toBinary } from "@tau/tau-catalog/discovery/protobuf";
-=======
-import { streamDevin } from "@oh-my-pi/pi-ai/providers/devin";
-import type { AssistantMessage, Context, Model, StreamOptions } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import {
-	type GetChatMessageRequest,
-	GetChatMessageRequestSchema,
-	GetUserJwtResponseSchema,
-} from "@oh-my-pi/pi-catalog/discovery/devin-proto";
-import { create, fromBinary, toBinary } from "@oh-my-pi/pi-catalog/discovery/protobuf";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/ai/test/devin-history.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const devinModel: Model<"devin-agent"> = buildModel({
 	id: "devin-test",

@@ -2,7 +2,6 @@ import { beforeAll, describe, expect, spyOn, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { DiffSide, DiffStream } from "@tau/tau-natives";
 import { sanitizeText } from "@tau/tau-utils";
@@ -15,22 +14,6 @@ import {
 } from "@tau/tau-tui/apps/git/diff-pane";
 import { GitModel } from "../src/cli/git-tui/state";
 import { initTheme } from "@tau/tau-tui/theme";
-=======
-import * as natives from "@oh-my-pi/pi-natives";
-import { DiffSide, DiffStream } from "@oh-my-pi/pi-natives";
-import { sanitizeText } from "@oh-my-pi/pi-utils";
-import { $ } from "bun";
-import {
-	buildDiffDocument,
-	buildLineSelectionPatch,
-	type DiffBuildOptions,
-	DiffPane,
-} from "@oh-my-pi/pi-tui/apps/git/diff-pane";
-import type { ChangedFile } from "@oh-my-pi/pi-tui/apps/git/state";
-import { GitModel } from "../src/cli/git-tui/state";
-import { ImageProtocol, TERMINAL } from "@oh-my-pi/pi-tui/terminal-capabilities";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/git-tui-stream.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const RED_PNG = Buffer.from(
 	"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGP4z8AAAAMBAQDJ/pLvAAAAAElFTkSuQmCC",

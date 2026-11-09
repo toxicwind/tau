@@ -18,28 +18,18 @@
 ## Registration / Visibility
 
 - Tool metadata: `approval = "read"`, `strict = true`, `loadMode = "discoverable"`.
-<<<<<<< ours — scope `- The tool is registered only for `memory.bac...` in heading `Registration / Visibility` (S, confidence: medium)
 // refused_by: statement_fold · collision: `- The tool is registered only for `memory.backend = "hindsight"…`
 - The tool is registered only for `memory.backend = "hindsight"` or `"mnemotau"`; it is absent for `"off"` and `"local"`.
-=======
-- The tool is registered only for `memory.backend = "hindsight"` or `"mnemopi"`; it is absent for `"off"` and `"local"`. Hindsight additionally requires a non-empty configured API URL (`isHindsightConfigured(loadHindsightConfig(...))`).
->>>>>>> theirs — scope `- The tool is registered only for `memory.bac...` · weave: run 'weave explain docs/tools/recall.md' for per-hunk detail, 'weave check' to verify your resolution
 - In unrestricted sessions with an explicit tool list, registration auto-includes the shared `recall`/`retain`/`reflect` set for either supported backend. Restricted lists are not widened.
 - In an ordinary `tools.xdev` session, discoverable built-ins may be presented as `xd://recall`; an explicitly requested tool remains top-level.
 - Execution is single-shot. The tool does not emit streaming argument/result updates.
 
 ## Inputs
 
-<<<<<<< ours — heading `Inputs` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `| `query` | `string` | Yes | Natural-language search query. The…`
 | Field | Type | Required | Description |
 |---|---|---:|---|
 | `query` | `string` | Yes | Natural-language search query. The tool passes it through unchanged except Mnemotau `per-project-tagged` may run an internal shared-bank fallback query. |
-=======
-| Field   | Type     | Required | Description                                                                                                                                             |
-| ------- | -------- | -------: | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `query` | `string` |      Yes | Natural-language search query. The tool passes it through unchanged except Mnemopi `per-project-tagged` may run an internal shared-bank fallback query. |
->>>>>>> theirs — heading `Inputs` (S+F, confidence: low)
 
 ## Outputs
 Returns a single-shot tool result.

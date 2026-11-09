@@ -1,6 +1,5 @@
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { getAgentDir, isEnoent } from "@oh-my-pi/pi-utils";` +2 more
 import { getAgentDir, isEnoent } from "@tau/tau-utils";
 import { getMemoryRoot } from "../memories";
@@ -12,33 +11,6 @@ import { buildDirectoryResource } from "./filesystem-resource";
 import { parseInternalUrl } from "./parse";
 import { validateRelativePath } from "./skill-protocol";
 import type { InternalResource, InternalUrl, ProtocolHandler, ResolveContext, UrlCompletion } from "./types";
-=======
-import { getAgentDir, isEnoent, withLoopPhase } from "@oh-my-pi/pi-utils";
-import { getMemoryRoot } from "../memories";
-import { getMnemopiSessionState, type MnemopiScopedMemoryHit, type MnemopiSessionStateApi } from "../mnemopi/state";
-import memoryDoc from "../prompts/internal-urls/memory.md" with { type: "text" };
-import { AgentRegistry } from "../registry/agent-registry";
-import { type AgentSessionHandle, isLocalAgentSession } from "../session/agent-session-handle";
-import {
-	buildDirectoryResource,
-	containedRealPath,
-	contentTypeForPath,
-	ensureCreatableWithinRoot,
-	validateRelativePath,
-} from "./filesystem-resource";
-import type {
-	InternalResource,
-	InternalUrl,
-	LocateOptions,
-	ProtocolHandler,
-	ResolveContext,
-	SchemeHost,
-	SchemeSpec,
-	UrlCompletion,
-} from "./types";
-
-import { cfgMemoryBackend } from "../memory-backend/settings";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/internal-urls/memory-protocol.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const DEFAULT_MEMORY_FILE = "memory_summary.md";
 const MEMORY_NAMESPACE = "root";
@@ -164,7 +136,6 @@ async function tryResolveInRoot(url: InternalUrl, memoryRoot: string): Promise<I
 }
 
 /**
-<<<<<<< ours — function `mnemopiSessionStatesFromRegistry` (T+F, confidence: medium)
 // refused_by: rename_vs_edit_guard · collision: `function mnemopiSessionStatesFromRegistry(): MnemopiSessionStat…` +1 more
  * Snapshot of live mnemotau session states, deduplicated. A mnemotau backend
  * always keeps its state on the {@link AgentSession} it was initialised for;
@@ -180,22 +151,6 @@ function mnemotauSessionStatesFromRegistry(): MnemotauSessionState[] {
 		const session = ref.session;
 		if (!session) continue;
 		const state = getMnemotauSessionState(session);
-=======
- * Snapshot of live mnemopi session states, deduplicated. A mnemopi backend
- * always keeps its state on the {@link AgentSession} it was initialised for;
- * subagents alias their parent's state, so different `session` objects can
- * point at the same underlying banks. The dedupe below picks the
- * canonical (non-aliased) state per bank set so `memory://<id>` resolves in
- * one pass regardless of how many subagents are alive.
- */
-function mnemopiSessionStatesFromRegistry(): MnemopiSessionStateApi[] {
-	const seen = new Set<unknown>();
-	const states: MnemopiSessionStateApi[] = [];
-	for (const ref of AgentRegistry.global().list()) {
-		const session = ref.session;
-		if (!session) continue;
-		const state = getMnemopiSessionState(session);
->>>>>>> theirs — function `mnemopiSessionStatesFromRegistry` (T+F, confidence: medium)
 		if (!state) continue;
 		const primary = state.aliasOf ?? state;
 		if (seen.has(primary)) continue;
@@ -266,20 +221,12 @@ function resolveMemoryCaller(context?: ResolveContext): MemoryCallerBinding {
 }
 
 /**
-<<<<<<< ours — function `callerMnemopiState` (S+F, confidence: low)
 // refused_by: rename_vs_edit_guard · collision: `function callerMnemopiState(session: AgentSession): MnemopiSess…`
  * Canonical mnemotau state of one session. Subagents alias their parent's
  * state, so the alias is resolved to the state that owns the banks.
  */
 function callerMnemotauState(session: AgentSession): MnemotauSessionState | undefined {
 	const state = getMnemotauSessionState(session);
-=======
- * Canonical mnemopi state of one session. Subagents alias their parent's
- * state, so the alias is resolved to the state that owns the banks.
- */
-function callerMnemopiState(session: AgentSessionHandle): MnemopiSessionStateApi | undefined {
-	const state = getMnemopiSessionState(session);
->>>>>>> theirs — function `callerMnemopiState` (S+F, confidence: low)
 	return state?.aliasOf ?? state;
 }
 
@@ -327,7 +274,6 @@ function tryResolveMnemotauMemory(id: string): MnemotauScopedMemoryHit | null {
 }
 
 /**
-<<<<<<< ours — function `renderMnemopiMemory` (S+F, confidence: low)
 // refused_by: rename_vs_edit_guard · collision: none (1 contested hunk(s), neither side deleted the other's lines)
  * Render a mnemotau memory row as text/markdown with a small YAML-front-matter
  * header. The frontmatter carries the metadata an agent needs to reason about
@@ -359,40 +305,6 @@ function renderMnemotauMemory(url: InternalUrl, hit: MnemotauScopedMemoryHit): I
 		size: Buffer.byteLength(content, "utf-8"),
 		notes: [],
 	};
-=======
- * Render a mnemopi memory row as text/markdown with a small YAML-front-matter
- * header. The frontmatter carries the metadata an agent needs to reason about
- * a working vs episodic memory (bank, store, timestamps, importance) without
- * having to reconstruct it from the recall preview.
- */
-function renderMnemopiMemory(url: InternalUrl, hit: MnemopiScopedMemoryHit): InternalResource {
-	return withLoopPhase("mnemopi.read", () => {
-		const { row, bank, store } = hit;
-		const meta = row.metadata == null ? "" : `metadata: ${JSON.stringify(row.metadata)}\n`;
-		const header =
-			"---\n" +
-			`id: ${row.id}\n` +
-			`bank: ${bank}\n` +
-			`store: ${store}\n` +
-			(row.memory_type ? `memory_type: ${row.memory_type}\n` : "") +
-			(row.source ? `source: ${row.source}\n` : "") +
-			(row.timestamp ? `timestamp: ${row.timestamp}\n` : "") +
-			(row.created_at ? `created_at: ${row.created_at}\n` : "") +
-			(row.importance != null ? `importance: ${row.importance}\n` : "") +
-			(row.veracity ? `veracity: ${row.veracity}\n` : "") +
-			(row.session_id ? `session_id: ${row.session_id}\n` : "") +
-			meta +
-			"---\n\n";
-		const content = `${header}${row.content}`;
-		return {
-			url: url.href,
-			content,
-			contentType: "text/markdown",
-			size: Buffer.byteLength(content, "utf-8"),
-			notes: [],
-		};
-	});
->>>>>>> theirs — function `renderMnemopiMemory` (S+F, confidence: low)
 }
 
 /**

@@ -8,16 +8,10 @@ use std::{
 
 use napi::bindgen_prelude::*;
 use napi_derive::napi;
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 use tau_ast::{
 	SupportLang,
 	ops::{self as shared_ops},
-=======
-use pi_ast::{
-	ops,
-	search::{self, MatchStrictness},
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain crates/tau-natives/src/ast.rs' for per-hunk detail, 'weave check' to verify your resolution
 };
 use pi_vfs::Fs;
 use pi_walker::{glob::Selector, walk::WalkError};
@@ -346,7 +340,6 @@ async fn discover(
 		.await
 		.map_err(|err| failure(ct, err))
 }
-<<<<<<< ours — function `collect_candidates` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 fn collect_candidates(
 	path: Option<String>,
@@ -408,8 +401,6 @@ fn collect_candidates(
 	files.sort_by(|a, b| a.display_path.cmp(&b.display_path));
 	Ok(files)
 }
-=======
->>>>>>> theirs — function `collect_candidates` (S+F, confidence: low)
 
 fn normalize_pattern_list(patterns: Option<Vec<String>>) -> Result<Vec<String>> {
 	let mut normalized = Vec::new();
@@ -713,7 +704,6 @@ pub fn ast_edit<'env>(
 		})
 	})
 }
-<<<<<<< ours — module `tests` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 #[cfg(test)]
 mod tests {
@@ -1017,5 +1007,3 @@ mod tests {
 		);
 	}
 }
-=======
->>>>>>> theirs — module `tests` (S+F, confidence: low)

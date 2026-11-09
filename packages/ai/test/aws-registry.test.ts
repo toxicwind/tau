@@ -2,12 +2,8 @@ import { describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { getEnvApiKey } from "@oh-my-pi/pi-ai/stream";`
 import { getEnvApiKey } from "@tau/tau-ai/stream";
-=======
-import { getEnvApiKey } from "@oh-my-pi/pi-ai/env-api-key";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/ai/test/aws-registry.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { removeWithRetries } from "../../utils/src/temp";
 import { withEnv } from "./helpers";
 

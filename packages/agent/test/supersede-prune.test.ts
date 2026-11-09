@@ -1,17 +1,7 @@
 import { describe, expect, test } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { SessionEntry, SessionMessageEntry } from "@oh-my-…` +1 more
 import { type AgentMessage, Tokenizer } from "@tau/tau-agent-core";
 import type { SessionEntry, SessionMessageEntry } from "@tau/tau-agent-core/compaction";
-=======
-import { type AgentMessage, Tokenizer } from "@oh-my-pi/pi-agent-core";
-import type {
-	BranchSummaryEntry,
-	CustomMessageEntry,
-	SessionEntry,
-	SessionMessageEntry,
-} from "@oh-my-pi/pi-agent-core/compaction";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/agent/test/supersede-prune.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	type CacheLookbackConfig,
 	type ConvertToLlm,
@@ -25,18 +15,10 @@ import {
 	type SupersedeCompleteFn,
 	type SupersedePruneConfig,
 	USELESS_NOTICE,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { SessionEntry, SessionMessageEntry } from "@oh-my-…` +1 more
 } from "@tau/tau-agent-core/compaction";
 import type { ProtectedToolContext } from "@tau/tau-agent-core/compaction/tool-protection";
 import type { AssistantMessage, TextContent, ToolResultMessage } from "@tau/tau-ai";
-=======
-} from "@oh-my-pi/pi-agent-core/compaction";
-import type { ProtectedToolContext } from "@oh-my-pi/pi-agent-core/compaction/tool-protection";
-import type { AssistantMessage, ImageContent, Message, TextContent, ToolResultMessage } from "@oh-my-pi/pi-ai";
-import { convertAnthropicMessages } from "@oh-my-pi/pi-ai/providers/anthropic";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 
 const tokenizer = new Tokenizer();
 

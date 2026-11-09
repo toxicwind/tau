@@ -20,7 +20,6 @@ export default class Update extends Command {
 		stable: Flags.boolean({ description: "Switch back to the stable channel", default: false }),
 	};
 
-<<<<<<< ours — scope `examples` in class `Update` (S+F, confidence: low)
 // refused_by: container_member · collision: `"omp update",` +3 more
 	static examples = [
 		"tau update",
@@ -28,9 +27,6 @@ export default class Update extends Command {
 		"tau update --canary",
 		"# If GitHub rate-limits release metadata, set GITHUB_TOKEN or GH_TOKEN\n  GITHUB_TOKEN=... tau update",
 	];
-=======
-	static examples = ["omp update", "omp update --check", "omp update --canary"];
->>>>>>> theirs — scope `examples` · weave: run 'weave explain packages/coding-agent/src/commands/update.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 	async run(): Promise<void> {
 		const { flags } = await this.parse(Update);

@@ -5,21 +5,12 @@ import {
 	compact,
 	DEFAULT_COMPACTION_SETTINGS,
 	generateHandoff,
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-agent-core/compaction";
 import { ThinkingLevel } from "@tau/tau-agent-core/thinking";
 import type { AssistantMessage, Model } from "@tau/tau-ai";
 import * as ai from "@tau/tau-ai";
 import { getBundledModel } from "@tau/tau-catalog/models";
-=======
-} from "@oh-my-pi/pi-agent-core/compaction";
-import * as snapcompact from "@oh-my-pi/snapcompact";
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core/thinking";
-import type { AssistantMessage, Model } from "@oh-my-pi/pi-ai";
-import * as ai from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/agent/test/compaction-thinking-level.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 // Pins fix #1 of the compaction effort-override bug. Before this fix,
 // `generateHandoff` (and the three other compaction summarizers) hardcoded

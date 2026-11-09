@@ -158,15 +158,9 @@ Set `collab.webUrl` when the browser UI is hosted separately from the websocket 
 | `collab.relayUrl`     | `wss://my.tau.sh`     | Relay used by `/collab` when no relay is passed inline                                                         |
 | `collab.webUrl`       | empty                 | Browser UI URL for `/collab` links; empty derives from relay; explicit `http://` is allowed only for localhost |
 | `collab.displayName`  | OS username           | Name shown to other participants                                                                               |
-<<<<<<< ours — heading `Settings` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 | `collab.autoStart`    | `off`                 | `view` / `control`: host every interactive session as it starts and publish it to the local registry            |
 | `share.serverUrl`     | `https://my.tau.sh/s` | Share viewer/upload base used by `/share` (links are `<base>/<id>#<key>`)                                      |
-=======
-| `collab.autoStart`    | `off`                 | `view` / `control`: host every interactive session as it starts and publish it to the local registry           |
-| `share.serverUrl`     | `https://my.omp.sh/s` | Share viewer/upload base used by `/share` (links are `<base>/<id>#<key>`)                                      |
-| `share.store`         | `blob`                | `/share` uploads to the blob server; `gist` uses an authenticated secret gist with blob fallback               |
->>>>>>> theirs — heading `Settings` (S+F, confidence: low) · weave: run 'weave explain docs/upstream/collab.md' for per-hunk detail, 'weave check' to verify your resolution
 | `share.redactSecrets` | `true`                | Run the secret obfuscator over `/share` snapshots before upload                                                |
 
 ## Self-hosting the relay

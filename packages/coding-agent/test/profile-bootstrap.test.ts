@@ -26,7 +26,6 @@ describe("extractProfileFlags", () => {
 		expect(result.profile).toBeUndefined();
 		expect(result.argv).toEqual(["--system-prompt", "--profile", "foo", "bar"]);
 	});
-<<<<<<< ours — scope `it("does not eat the value of --approval-mode...` in test_suite `extractProfileFlags`, deleted in theirs (T+S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("does not eat the value of --approval-mode", () => {
 		// `--approval-mode` is a string-valued flag in args.ts (`args[++i]` with
@@ -37,8 +36,6 @@ describe("extractProfileFlags", () => {
 		expect(result.profile).toBeUndefined();
 		expect(result.argv).toEqual(["--approval-mode", "--profile", "foo", "bar"]);
 	});
-=======
->>>>>>> theirs — scope `it("does not eat the value of --approval-mode...` deleted in theirs · weave: run 'weave explain packages/coding-agent/test/profile-bootstrap.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 	it("honors extension-shadowed --plan before a global profile", () => {
 		const extracted = extractProfileFlags(["--plan", "--profile", "work", "follow up"]);

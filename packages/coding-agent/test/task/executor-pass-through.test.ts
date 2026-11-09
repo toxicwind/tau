@@ -3,7 +3,6 @@
  * to `createAgentSession` so subagents skip the FS scans the parent already
  * paid for. Regression guard for issue #2190.
  */
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { MCPManager } from "@oh-my-pi/pi-coding-agent/mcp/…`
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import { ThinkingLevel } from "@tau/tau-agent-core";
@@ -23,33 +22,6 @@ import type { AgentSession, AgentSessionEvent, PromptOptions } from "tau/session
 import { runSubprocess } from "tau/task/executor";
 import type { AgentDefinition } from "tau/task/types";
 import { EventBus } from "tau/utils/event-bus";
-=======
-import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import * as fs from "node:fs";
-import * as os from "node:os";
-import * as path from "node:path";
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import { resolveThresholdTokens, shouldCompact } from "@oh-my-pi/pi-agent-core/compaction";
-import type { Model, ServiceTierByFamily } from "@oh-my-pi/pi-ai";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import type { Rule } from "@oh-my-pi/pi-coding-agent/capability/rule";
-import type { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { cfgCompaction } from "@oh-my-pi/pi-coding-agent/session/context-settings";
-import { parseAgentFields } from "@oh-my-pi/pi-coding-agent/discovery/helpers";
-import type { ToolPathWithSource } from "@oh-my-pi/pi-coding-agent/extensibility/custom-tools";
-import type { CustomTool } from "@oh-my-pi/pi-coding-agent/extensibility/custom-tools/types";
-import type { LoadExtensionsResult, PreparedExtension } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/types";
-import { MCPManager } from "@oh-my-pi/pi-coding-agent/mcp/manager";
-import type { MCPStdioServerConfig } from "@oh-my-pi/pi-coding-agent/mcp/types";
-import type { CreateAgentSessionOptions, CreateAgentSessionResult } from "@oh-my-pi/pi-coding-agent/sdk";
-import * as sdkModule from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AgentSession, AgentSessionEvent, PromptOptions } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { runSubprocess } from "@oh-my-pi/pi-coding-agent/task/executor";
-import type { AgentDefinition } from "@oh-my-pi/pi-coding-agent/task/types";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/task/executor-pass-through.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { createSessionDefaults } from "../helpers/session-defaults";
 import { manyToolName } from "../fixtures/many-tools-mcp";
 import { removeSyncWithRetries } from "@oh-my-pi/pi-utils";

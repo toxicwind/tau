@@ -70,14 +70,8 @@ After the success response, oversized stdout objects use an uninterrupted sequen
 }
 ```
 
-<<<<<<< ours — scope `closing` in heading `Transport and Framing` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `Clients MUST validate `chunkId`, `index`, `count`, and `byteLen…`
 Clients MUST validate `chunkId`, `index`, `count`, and `byteLength`, reject interleaved or interrupted sequences, enforce the advertised reassembly limit, concatenate decoded bytes in index order, decode them as strict UTF-8, and parse the result as one JSON object. The TypeScript `RpcFrameDecoder`, exported from `@tau/tau-coding-agent/modes/rpc/rpc-frame`, implements this validation. The bundled TypeScript and Python `RpcClient` implementations negotiate v2 automatically when the ready frame advertises it.
-=======
-Clients MUST validate `chunkId`, `index`, `count`, and `byteLength`, reject interleaved or interrupted sequences, enforce the advertised reassembly limit, concatenate decoded bytes in index order, decode them as strict UTF-8, and parse the result as one JSON object. The TypeScript `RpcFrameDecoder`, exported from `@oh-my-pi/pi-coding-agent/modes/rpc/rpc-frame`, implements this validation. The bundled TypeScript and Python `RpcClient` implementations and the Rust and Go clients negotiate v2 automatically when the ready frame advertises it.
-
-For an oversized `agent_end` in either version, the encoder first removes the leading messages already delivered unchanged in `message_end` frames and adds `messageCount` with the original count. Hosts must retain streamed messages rather than treating `agent_end.messages` as a complete transcript.
->>>>>>> theirs — scope `closing` · weave: run 'weave explain docs/upstream/rpc.md' for per-hunk detail, 'weave check' to verify your resolution
 
 Legacy clients may ignore the added ready fields and remain on v1. In v1, an oversized response becomes `success: false` with `error: "RPC response exceeded the transport limit"`; oversized events may have strings, arrays, or object fields elided. If a v2 logical frame exceeds 64 MiB after terminal-frame compaction, responses receive the same overflow error, other events produce `rpc_frame_error`, and `agent_end` falls back to an empty `messages` array plus `messageCount`. Large history APIs should use pagination rather than depending on arbitrarily large logical frames.
 
@@ -284,24 +278,9 @@ The bundled TypeScript `RpcClient.getMessages()` and Python `RpcClient.get_messa
 
 Login forwards ordinary OAuth input prompts only after the provider emits an
 authorization URL. Prompts marked `secret: true` are always rejected with a
-<<<<<<< ours — heading `Login` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 failed `login` response directing the architect to the terminal UI; no ordinary
 `input` request is emitted. RPC does not negotiate secret-input support.
-=======
-failed `login` response directing the user to the terminal UI; no ordinary
-`input` request is emitted because RPC does not negotiate whether a host masks
-`secret` inputs. (Extension and tool `input` dialogs may still attach an
-unnegotiated `secret?: boolean` hint on `extension_ui_request`; see below.)
-
-Logout works per stored credential, as `/logout` does in the TUI, because one
-provider can hold several accounts. `get_logout_accounts` lists them (`credentialId`,
-`provider`, `label`, `detail`, `type`, and `active` for credentials the session may
-be using), active first. `logout` removes one and refreshes that provider's models;
-it fails when the credential is no longer stored. `remainingSource` names the source
-that still authenticates the provider: another stored credential, an environment
-variable, or a config key.
->>>>>>> theirs — heading `Login` (F, confidence: medium)
 
 ### Word prediction
 
@@ -882,15 +861,9 @@ Scheme names are trimmed and lowercased and must match `[a-z][a-z0-9+.-]*`.
 replaces the entire previous set — schemes missing from the new list are
 unregistered; an empty list clears all host schemes.
 
-<<<<<<< ours — scope `closing` in heading ``set_host_uri_schemes` payload` (S+F, confidence: low)
 // refused_by: statement_fold · collision: ``security://` is reserved for OMP's producer-neutral software-s…`
 `security://` is reserved for TAU's producer-neutral software-security resource
 store. RPC hosts cannot register or shadow that scheme.
-=======
-Every built-in scheme (`local://`, `skill://`, `artifact://`, `security://`,
-`mcp://`, …) is reserved: RPC hosts cannot register or shadow one, and the
-request fails with `Host URI scheme is reserved by OMP: <scheme>://`.
->>>>>>> theirs — scope `closing`
 
 ## Event Stream Schema
 
@@ -1065,7 +1038,6 @@ Command discovery is intentionally an TAU dialect: Pi's `get_commands` (a
 not served because TAU's richer catalog (builtins/custom/MCP/file commands,
 broader `source` enum, no Pi `sourceInfo`) is not wire-compatible with it.
 
-<<<<<<< ours — heading `Pi-compatible history/tree commands with OMP-native entry payloads` (S+F, confidence: low)
 // refused_by: rename_vs_edit_guard · collision: `Lifecycle stays OMP: terminal settle is `agent_end` with` +1 more
 ### Tau-compatible history/tree commands with TAU-native entry payloads
 
@@ -1096,39 +1068,6 @@ Lifecycle stays TAU: terminal settle is `agent_end` with
 `isTerminal !== false`, not Pi's `agent_settled`; `prompt_result`/
 `agentInvoked`, `ready`, negotiation, chunking, host tools, and subagents are
 TAU extensions a Tau-family adapter must dialect around.
-=======
-### Pi-compatible history/tree commands with OMP-native entry payloads
-
-The commands and reconciliation semantics below are Pi-compatible, but the
-returned `SessionEntry` payload union is OMP-native, not wire-identical to
-Pi. Concretely: Pi `model_change` carries `provider` + `modelId` while OMP
-carries a combined `model` plus role/fallback metadata; Pi uses a `usage`
-entry where OMP uses `model_usage`; and OMP has additional entry types (for
-example service-tier, title, mode, credential, and reset records). A
-permissive client that consumes the common structural subset
-(`id`/`parentId` plus message entries) can share one durable-history
-algorithm across both, while a strict Pi `SessionEntry` decoder cannot assume
-identical payloads.
-
-`get_entries` reads the canonical append-history (not the active branch only)
-and returns `{ entries, leafId }`. Without `since` it returns all entries in
-append order; with `since` it returns entries strictly after the matching
-durable entry id. An unknown `since` fails explicitly with
-`code: "unknown_since"`. `get_tree` returns the raw session tree as
-`{ tree, leafId }` straight from `SessionManager`, not a UI projection.
-
-`get_available_thinking_levels` returns `{ levels }`: the selectable levels
-for the live model with `"off"` first (it is accepted by
-`set_thinking_level` but excluded from the effort-only model helper). OMP-only
-`auto`/`inherit` selectors are intentionally omitted from discovery.
-
-Lifecycle stays OMP: `agent_end` carries `isTerminal`, `yielded`, and optional
-`awaitingAsyncWork`; `prompt_result` correlates prompt completion and
-`session_settled` reports quiescence. There is no Pi `agent_settled` frame.
-These, `agentInvoked`, `open_session`, `set_event_filter`, `messageId`, `ready`,
-negotiation, chunking, host tools, and subagents are OMP extensions a
-Pi-family adapter must dialect around.
->>>>>>> theirs — heading `Pi-compatible history/tree commands with OMP-native entry payloads` (S+F, confidence: low)
 
 ### Subagent subscriptions
 
@@ -1842,12 +1781,8 @@ Current helper characteristics:
 
 ### Python package
 
-<<<<<<< ours — scope `The bundled [`omp-rpc`](../python/omp-rpc/pyp...` in heading `Python package` (S, confidence: medium)
 // refused_by: statement_fold · collision: `The bundled [`omp-rpc`](../python/omp-rpc/pyproject.toml) distr…`
 The bundled [`tau-rpc`](../python/tau-rpc/pyproject.toml) distribution provides the process-backed Python client. Its import package is `tau_rpc`; the package API, typed commands and events, host-tool/host-URI helpers, and orchestration examples are maintained in the [`tau-rpc` README](../python/tau-rpc/README.md).
-=======
-The bundled [`omp-rpc`](../sdk/python/omp-rpc/pyproject.toml) distribution provides the process-backed Python client. Its import package is `omp_rpc`; the package API, typed commands and events, host-tool/host-URI helpers, and orchestration examples are maintained in the [`omp-rpc` README](../sdk/python/omp-rpc/README.md).
->>>>>>> theirs — scope `The bundled [`omp-rpc`](../python/omp-rpc/pyp...`
 
 ```python
 from tau_rpc import RpcClient
@@ -1858,9 +1793,5 @@ with RpcClient(provider="anthropic", model="claude-sonnet-4-5") as client:
     print(turn.require_assistant_text())
 ```
 
-<<<<<<< ours — scope `By default, `RpcClient` starts `omp --mode rp...` in heading `Python package` (S, confidence: medium)
 // refused_by: statement_fold · collision: `By default, `RpcClient` starts `omp --mode rpc`; pass `command=…`
 By default, `RpcClient` starts `tau --mode rpc`; pass `command=[...]` to own the exact child command. It handles request correlation, typed notifications, v2 negotiation and chunk reassembly, message pagination, extension UI, and host-owned tools and URI schemes. The Python package owns that client API and process lifecycle; this document and `rpc-types.ts` remain the canonical wire contract. Use raw protocol frames when a client library does not wrap the surface you need.
-=======
-By default, `RpcClient` starts `omp --mode rpc`; pass `command=[...]` to own the exact child command. It handles request correlation, typed notifications, v2 negotiation and chunk reassembly, message pagination, extension UI (including the opt-in `ask` dialog), and host-owned tools and URI schemes. Its command methods and `on_<frame type>` listeners are generated from the wire schema, so it wraps every command above; the `messageUpdates: "delta"` projection stays raw-protocol only. The Python package owns that client API and process lifecycle; this document and `rpc-types.ts` remain the canonical wire contract. Use raw protocol frames when a client library does not wrap the surface you need.
->>>>>>> theirs — scope `By default, `RpcClient` starts `omp --mode rp...`

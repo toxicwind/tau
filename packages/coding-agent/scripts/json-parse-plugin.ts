@@ -14,12 +14,8 @@ const DEFAULT_MIN_BYTES = 256 * 1024;
  */
 export function createJsonParsePlugin(minBytes: number = DEFAULT_MIN_BYTES): BunPlugin {
 	return {
-<<<<<<< ours — scope `return {` in function `createJsonParsePlugin` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `name: "omp-json-parse-embed",`
 		name: "tau-json-parse-embed",
-=======
-		name: "omp-json-parse-asset",
->>>>>>> theirs — scope `return {` · weave: run 'weave explain packages/coding-agent/scripts/json-parse-plugin.ts' for per-hunk detail, 'weave check' to verify your resolution
 		target: "bun",
 		setup(build) {
 			build.onResolve({ filter: /^omp-json-asset:/ }, ({ path }) => ({

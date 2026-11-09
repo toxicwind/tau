@@ -10,13 +10,9 @@ import {
 	type StreamFn,
 	TERMINAL_TOOL_RESULT_ABORT_REASON,
 	ThinkingLevel,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { estimateToolSchemaTokens } from "@oh-my-pi/pi-tui/stat…`
 	type Tokenizer,
 } from "@tau/tau-agent-core";
-=======
-} from "@oh-my-pi/pi-agent-core";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/session/session-advisors.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	canReplayRemoteCompaction,
 	type CompactionResult,
@@ -92,12 +88,8 @@ import { serviceTierForAllFamilies, serviceTierSettingToTier } from "../config/s
 import type { Settings } from "../config/settings";
 import { CursorExecHandlers, type CursorMcpResourceAdapter } from "../cursor";
 import { bridgeToolMap } from "../cursor-bridge-tools";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { estimateToolSchemaTokens } from "@oh-my-pi/pi-tui/stat…`
 import { estimateToolSchemaTokens } from "@tau/tau-tui/status-line/context-usage";
-=======
-import { estimateContextToolSchemaTokens } from "@oh-my-pi/pi-tui/status-line/context-usage";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import type { PlanModeState } from "../plan-mode/state";
 import advisorBoundaryGuidance from "../prompts/advisor/boundary-guidance.md" with { type: "text" };
 import advisorSystemPrompt from "../prompts/advisor/system.md" with { type: "text" };
@@ -108,13 +100,8 @@ import {
 	resolveThinkingLevelForModel,
 	shouldDisableReasoning,
 	toReasoningEffort,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { estimateToolSchemaTokens } from "@oh-my-pi/pi-tui/stat…`
 } from "@tau/tau-tui/thinking";
-=======
-	automaticThinkingLevel,
-} from "@oh-my-pi/pi-tui/thinking";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import type { AgentSessionEvent } from "./agent-session-events";
 import type { ClientBridge } from "./client-bridge";
 import {
@@ -1480,7 +1467,6 @@ export class SessionAdvisors {
 				mcpResources: this.#advisorMcpResources,
 			});
 			const baseAdvisorStreamFn = this.#advisorStreamFn ?? streamSimple;
-<<<<<<< ours — scope `#buildAdvisorRuntime` in class `SessionAdvisors` (S+F, confidence: low)
 // refused_by: container_member · collision: `transformProviderContext: this.#transformProviderContext,`
 			// Git-state awareness is injected PER REQUEST (the async
 			// transformProviderContext hook), never stamped at advisor build: the
@@ -1509,14 +1495,6 @@ export class SessionAdvisors {
 				return transformed;
 			};
 			const advisorStreamFn: StreamFn = (requestModel, context, options) => {
-=======
-			const advisorStreamFn: StreamFn = (requestModel, context, streamOptions) => {
-				// Read per request so transport setting changes reach existing advisors.
-				const options = {
-					...streamOptions,
-					preferWebsockets: streamOptions?.preferWebsockets ?? this.#host.preferWebsockets(requestModel),
-				};
->>>>>>> theirs — scope `#buildAdvisorRuntime`
 				if (requestModel.api === "openai-codex-responses") {
 					return baseAdvisorStreamFn(requestModel, context, {
 						...options,
@@ -1553,14 +1531,8 @@ export class SessionAdvisors {
 				onPayload: this.#host.onPayload,
 				onResponse: this.#host.onResponse,
 				onSseEvent: this.#host.onSseEvent,
-<<<<<<< ours — scope `#buildAdvisorRuntime` in class `SessionAdvisors` (S+F, confidence: low)
 // refused_by: container_member · collision: `transformProviderContext: this.#transformProviderContext,`
 				transformProviderContext: advisorTransformProviderContext,
-=======
-				// Built per advisor: the transform keeps per-conversation state (the
-				// date/cwd reminder), and each advisor is a conversation of its own.
-				transformProviderContext: this.#createTransformProviderContext?.(),
->>>>>>> theirs — scope `#buildAdvisorRuntime`
 				intentTracing: false,
 				transformAssistantMessage: message => {
 					quarantinedAdvisorOutput = quarantineAdvisorUnsafeOutput(

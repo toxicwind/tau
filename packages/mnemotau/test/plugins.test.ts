@@ -5,13 +5,9 @@ import {
 	MetricsPlugin,
 	MnemotauPlugin,
 	PluginManager,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 	resetManager,
 } from "@tau/tau-mnemotau/core/plugins";
-=======
-} from "@oh-my-pi/pi-mnemopi/core/plugins";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/mnemotau/test/plugins.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 class CountingPlugin extends MnemotauPlugin {
 	override name = "counting";

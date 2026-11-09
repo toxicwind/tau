@@ -219,21 +219,10 @@ describe("startServer port conflicts", () => {
 			});
 			const server = await startServer(holder.port);
 
-<<<<<<< ours — scope `it("refuses to stop a newer dashboard without...` in test_suite `startServer port conflicts` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `await expect(startServer(holder.port)).rejects.toThrow("not ide…`
 		await expect(startServer(holder.port)).rejects.toThrow("not identifiable as an tau stats dashboard");
 		expect(holder.child.exitCode).toBeNull();
 	});
-=======
-			try {
-				expect(await holder.child.exited).not.toBe(0);
-				await expectCurrentDashboard(server.port);
-			} finally {
-				server.stop();
-			}
-		});
-	}
->>>>>>> theirs — scope `it("refuses to stop a newer dashboard without...` · weave: run 'weave explain packages/stats/test/server-port-conflict.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 	for (const fixture of [
 		{
@@ -254,26 +243,13 @@ describe("startServer port conflicts", () => {
 			const holder = await startBunHolder(fixture.response, { statsOwned: fixture.statsOwned });
 			const server = await startServer(holder.port);
 
-<<<<<<< ours — scope `it("refuses to stop a foreign 200 responder",...` in test_suite `startServer port conflicts` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `await expect(startServer(holder.port)).rejects.toThrow("not ide…`
 		await expect(startServer(holder.port)).rejects.toThrow("not identifiable as an tau stats dashboard");
 		expect(holder.child.exitCode).toBeNull();
 		const response = await fetch(`http://${STATS_DASHBOARD_HOSTNAME}:${holder.port}/api/stats/models`);
 		expect(await response.json()).toEqual({ app: "spa" });
 	});
-=======
-			try {
-				expect(server.port).not.toBe(holder.port);
-				expect(holder.child.exitCode).toBeNull();
-				await expectCurrentDashboard(server.port);
-			} finally {
-				server.stop();
-			}
-		}, 10_000);
-	}
->>>>>>> theirs — scope `it("refuses to stop a foreign 200 responder",...`
 
-<<<<<<< ours — scope `it("refuses to stop an unrelated Bun listener...` in test_suite `startServer port conflicts`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("refuses to stop an unrelated Bun listener that fails the probe", async () => {
 		const holder = await startBunHolder('new Response("foreign", { status: 404 })');
@@ -281,8 +257,6 @@ describe("startServer port conflicts", () => {
 		await expect(startServer(holder.port)).rejects.toThrow("not identifiable as an tau stats dashboard");
 		expect(holder.child.exitCode).toBeNull();
 	});
-=======
->>>>>>> theirs — scope `it("refuses to stop an unrelated Bun listener...` deleted in theirs
 
 	it("reclaims a confirmed stats listener that fails the probe", async () => {
 		const holder = await startBunHolder('new Response("holder", { status: 404 })', { statsOwned: true });

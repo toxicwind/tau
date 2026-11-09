@@ -1,19 +1,6 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { DEFAULT_RELAY_URL, resolveRelayKind } from "@oh-my-pi/…`
 import { describe, expect, it } from "bun:test";
 import { DEFAULT_RELAY_URL, resolveRelayKind } from "tau/tools/browser";
-=======
-import { afterEach, beforeEach, describe, expect, it } from "bun:test";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import {
-	createBrowserPrelude,
-	DEFAULT_RELAY_URL,
-	resolveBrowserKind,
-	resolveRelayKind,
-} from "@oh-my-pi/pi-coding-agent/tools/browser";
-import type { BrowserKindTag } from "@oh-my-pi/pi-coding-agent/tools/browser/registry";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools/index";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/tools/browser-relay-kind.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 describe("resolveRelayKind", () => {
 	it("is disabled by default", () => {

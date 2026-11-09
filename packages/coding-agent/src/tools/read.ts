@@ -1,11 +1,7 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { ReadToolDetails } from "@oh-my-pi/pi-tui/tools/re…` +4 more
 import { join } from "node:path";
 import type { ReadToolDetails } from "@tau/tau-tui/tools/read";
 import { tryResolveInternalUrlSync } from "../internal-urls/hyperlink-targets";
-=======
-import { isReadableUrlPath, type ReadToolDetails } from "@oh-my-pi/pi-tui/tools/read";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/read.ts' for per-hunk detail, 'weave check' to verify your resolution
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import { type EditStore, notebookToEditableText } from "@tau/tau-natives";
@@ -36,20 +32,8 @@ import {
 	parseImageMetadata,
 	prompt,
 	readImageMetadata,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { ReadToolDetails } from "@oh-my-pi/pi-tui/tools/re…` +4 more
 } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-utils";
-import { peekFile } from "@oh-my-pi/pi-utils/peek-file";
-import {
-	cfgIdaAvailable,
-	EXECUTABLE_SNIFF_BYTES,
-	isExecutableFile,
-	isExecutableHeader,
-	isIdaDatabasePath,
-} from "../ida";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import { normalizeToLF } from "../edit/normalize";
 import { getEditStore, recordFullySeenRows } from "../edit/store";
 import { extractUriScheme, InternalUrlRouter, type SchemeSpec, sessionResolveContext } from "../internal-urls";
@@ -65,19 +49,9 @@ import {
 	truncateHead,
 	truncateHeadBytes,
 	truncateLine,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { ReadToolDetails } from "@oh-my-pi/pi-tui/tools/re…` +4 more
 } from "../session/streaming-output";
 import { buildLineEntriesWithBlockContext, lineEntriesToPlainText } from "../utils/block-context";
-=======
-} from "@oh-my-pi/pi-tui/tools/streaming-output";
-import {
-	buildLineEntriesWithBlockContext,
-	lineEntriesToPlainText,
-	spansCoverEveryLine,
-	warmBlockContext,
-} from "../utils/block-context";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import { isCpuProfilePath, renderCpuProfile } from "../utils/cpuprofile";
 import { resolveFileDisplayMode } from "../utils/file-display-mode";
 import { loadHeifImageInput, loadImageInput, loadSvgImageInput } from "../utils/image-loading";
@@ -91,11 +65,8 @@ import { askImageQuestion, resolveImageQuestionModel } from "../utils/image-ques
 import { CONVERTIBLE_EXTENSIONS, convertFileWithMarkit } from "../utils/markit";
 import { isSampleProfilePath, renderSampleProfile } from "../utils/sample-profile";
 import { buildDirectoryTree, type DirectoryTree } from "../workspace-tree";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { ReadToolDetails } from "@oh-my-pi/pi-tui/tools/re…` +4 more
 import { type ConflictEntry, type ConflictScope, renderConflictRegion } from "@tau/tau-tui/tools/conflict-detect";
-=======
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import {
 	formatConflictSummary,
 	formatConflictWarning,
@@ -125,14 +96,9 @@ import {
 	splitPathAndSelPreferringLiteral,
 	splitPathAndSelPreferringLiteralSync,
 } from "./path-utils";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { ReadToolDetails } from "@oh-my-pi/pi-tui/tools/re…` +4 more
 import { type LineRange } from "@tau/tau-tui/tools/line-ranges";
 import { splitInternalUrlSel, splitPathAndSel } from "@tau/tau-tui/tools/read";
-=======
-import { type LineRange } from "@oh-my-pi/pi-tui/tools/line-ranges";
-import { splitPathAndSel } from "@oh-my-pi/pi-tui/tools/read";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import { readArchive, resolveArchiveReadPath } from "./read-archive";
 import {
 	appendReadNotice,
@@ -196,16 +162,8 @@ import {
 	resolveTailSelector,
 	selToOffsetLimit,
 } from "./read-selector";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { ReadToolDetails } from "@oh-my-pi/pi-tui/tools/re…` +4 more
 import { splitAddressableFileLines } from "@tau/tau-tui/tools/hashline-format";
-=======
-import { splitAddressableFileLines } from "@oh-my-pi/pi-tui/tools/hashline-format";
-import { formatSingleLine } from "@oh-my-pi/pi-tui/tools/read";
-import { nativeShapingOff, shapesOutput, shapeToolResult, shapingExperiment } from "../spotlight";
-import type { ShapeInput } from "../spotlight/types";
-import { readBinary, resolveBinaryViewPath } from "./read-binary";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import { readSqlite, resolveSqliteReadPath } from "./read-sqlite";
 import { parseJsonSelector, readJson, resolveJsonReadPath, splitJsonQueryTarget } from "./read-json";
 import {
@@ -218,16 +176,12 @@ import {
 	trySummarize,
 } from "./read-summary";
 import { parseSqlitePathCandidates } from "./sqlite-reader";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { ReadToolDetails } from "@oh-my-pi/pi-tui/tools/re…` +4 more
 import { formatBytes, shortenPath } from "@tau/tau-tui/render/render-utils";
 import { REPORT_ISSUE_DEVICE_NAME } from "@tau/tau-tui/tools/report-tool-issue";
 import { reportIssueDeviceUsage } from "./report-tool-issue";
 import { isResolutionDeviceName } from "@tau/tau-tui/tools/resolve";
 import { resolutionDeviceUsage } from "./resolve";
-=======
-import { formatBytes, shortenPath } from "@oh-my-pi/pi-tui/render/render-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import { ToolAbortError, throwIfAborted } from "./tool-errors";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 import { toolResult } from "./tool-result";

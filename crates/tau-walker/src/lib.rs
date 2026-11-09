@@ -48,7 +48,6 @@ pub mod pattern;
 mod testing;
 pub mod walk;
 
-<<<<<<< ours — module `cache` (T+F, confidence: medium)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 //! Reusable platform directory traversal primitives.
 //!
@@ -60,9 +59,6 @@ pub mod walk;
 //! dependencies.
 
 mod cache;
-=======
->>>>>>> theirs — module `cache` (T+F, confidence: medium) · weave: run 'weave explain crates/tau-walker/src/lib.rs' for per-hunk detail, 'weave check' to verify your resolution
-<<<<<<< ours — struct `WalkFilter` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 /// High-level entry filter applied by collection and streaming APIs.
 #[derive(Clone)]
@@ -80,9 +76,6 @@ pub struct WalkFilter {
 	/// `literal_separator` rule as the positive glob.
 	exclude: Option<CompiledWalkGlob>,
 }
-=======
->>>>>>> theirs — struct `WalkFilter` (S+F, confidence: low)
-<<<<<<< ours — impl `WalkFilter` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 impl WalkFilter {
 	/// Return a filter that accepts files and directories.
@@ -204,10 +197,7 @@ impl WalkFilter {
 		}
 	}
 }
-=======
->>>>>>> theirs — impl `WalkFilter` (S+F, confidence: low)
 
-<<<<<<< ours — module `tests` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 #[cfg(test)]
 mod tests {
@@ -1015,7 +1005,5 @@ mod tests {
 		);
 	}
 }
-=======
->>>>>>> theirs — module `tests` (S+F, confidence: low)
 
 pub use fs::{Detail, FileType, Fs};

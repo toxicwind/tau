@@ -203,14 +203,9 @@ fn grab_pipewire_frame(node: u32, fd: OwnedFd, pixels: bool) -> CoreResult<Captu
 		.map_err(|err| DesktopError::capture_failed(format!("PipeWire context: {err}")))?;
 	let core = context
 		.connect_fd_rc(fd, None)
-<<<<<<< ours — function `grab_pipewire_frame` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 		.map_err(|err| format!("PipeWire remote: {err}"))?;
 	let stream = pw::stream::StreamBox::new(&core, "tau-computer-capture", properties! {
-=======
-		.map_err(|err| DesktopError::capture_failed(format!("PipeWire remote: {err}")))?;
-	let stream = pw::stream::StreamBox::new(&core, "omp-computer-capture", properties! {
->>>>>>> theirs — function `grab_pipewire_frame` (S+F, confidence: low) · weave: run 'weave explain crates/tau-natives/src/desktop/linux/wayland/capture.rs' for per-hunk detail, 'weave check' to verify your resolution
 		*pw::keys::MEDIA_TYPE => "Video",
 		*pw::keys::MEDIA_CATEGORY => "Capture",
 		*pw::keys::MEDIA_ROLE => "Screen",

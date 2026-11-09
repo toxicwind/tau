@@ -57,6 +57,20 @@ describe("parseHunks integration", () => {
 		const first = hunks![0]!;
 		expect(nativePolicy("crates/pi-natives/src/utok/tables.rs", first).protected).toBe(true);
 	});
+	test("parses hunks with trailing weave annotations", () => {
+		const text = [
+			'<<<<<<< ours — scope `"check:types": "tsgo -p tsconfig.json --noEmit",` in object `scripts` (S, confidence: medium)',
+			'    "check:types": "bun ../../scripts/typecheck.ts . --noEmit",',
+			"=======",
+			'    "check:types": "bun check --no-script -p tsconfig.json",',
+			'>>>>>>> theirs — scope `"check:types": "tsgo -p tsconfig.json --noEmit",`',
+		].join("\n");
+		const hunks = parseHunks(text);
+		expect(hunks).not.toBeNull();
+		expect(hunks!.length).toBe(1);
+		expect(hunks![0]!.ours).toEqual(['    "check:types": "bun ../../scripts/typecheck.ts . --noEmit",']);
+		expect(hunks![0]!.theirs).toEqual(['    "check:types": "bun check --no-script -p tsconfig.json",']);
+	});
 });
 
 import { sanitizeModelOutput } from "./ai-conflict-resolver";

@@ -1,5 +1,4 @@
 /**
-<<<<<<< ours — interstitial `file_header` (T, confidence: high)
 // refused_by: merge_ladder_exhausted · collision: `* Version-sentinel helpers shared by the native loader and the …` +6 more
  * Version-sentinel helpers shared by the native loader, the embed pipeline and
  * the release tooling.
@@ -11,20 +10,6 @@
  * archive is missing, which would break `gen:native:reset` on an inconsistent
  * tree (populated manifest, deleted archive) before it can restore the
  * checked-in null stub.
-=======
- * Addon release-identity helpers shared by the native loader, the embed
- * pipeline, and the post-link stamp tool (`scripts/stamp-native-version.ts`).
- *
- * Kept in its own module so `scripts/embed-native.ts` can reuse them without
- * importing `loader-state.js` and the rest of the runtime loader.
- *
- * Current addons carry a fixed-size stamp slot (`VERSION_STAMP_MAGIC` + the
- * release version + NUL padding) written after linking and reported by
- * `__piNativesBuildVersion()`. Addons published before that exported a
- * per-release `__piNativesV{major}_{minor}_{patch}` function instead; those
- * are still recognized so an old module resident across an in-place upgrade
- * is diagnosed correctly.
->>>>>>> theirs — interstitial `file_header` (T, confidence: high) · weave: run 'weave explain packages/natives/native/version-sentinel.js' for per-hunk detail, 'weave check' to verify your resolution
  */
 
 /** Prefix every post-rebuild native addon emits. */
@@ -136,7 +121,6 @@ export function bindingsHaveReleaseIdentity(bindings) {
 	);
 }
 
-<<<<<<< ours — function `versionSentinelFor` (T+F, confidence: medium)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 /**
  * Return the version sentinel exported by an addon built for `packageVersion`.
@@ -146,8 +130,6 @@ export function bindingsHaveReleaseIdentity(bindings) {
 export function versionSentinelFor(packageVersion) {
 	return `${VERSION_SENTINEL_PREFIX}${packageVersion.replace(/[^A-Za-z0-9]/g, "_")}`;
 }
-=======
->>>>>>> theirs — function `versionSentinelFor` (T+F, confidence: medium)
 
 /**
  * Whether `name` is a release sentinel under any recognized prefix.
@@ -171,7 +153,6 @@ export function versionSentinelVersion(name) {
 	return name.slice(prefix.length).replace(/_/g, ".");
 }
 
-<<<<<<< ours — function `containsVersionSentinel` (T+F, confidence: medium)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 /**
  * Check for an exact version sentinel rather than a longer sentinel with the
@@ -193,5 +174,3 @@ export function containsVersionSentinel(bytes, expected) {
 	}
 	return false;
 }
-=======
->>>>>>> theirs — function `containsVersionSentinel` (T+F, confidence: medium)

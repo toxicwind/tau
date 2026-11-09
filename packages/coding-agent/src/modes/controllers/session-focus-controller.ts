@@ -1,23 +1,9 @@
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import type { AssistantMessage } from "@tau/tau-ai";
 import { AgentLifecycleManager } from "../../registry/agent-lifecycle";
 import { AgentRegistry, MAIN_AGENT_ID, type AgentRef, type RegistryEvent } from "../../registry/agent-registry";
 import type { AgentSession } from "../../session/agent-session";
 import { setTerminalTitleState } from "../../utils/title-generator";
-=======
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { type AgentLifecycleApi, AgentLifecycleManager } from "../../registry/agent-lifecycle";
-import {
-	AgentRegistry,
-	type AgentRegistryApi,
-	MAIN_AGENT_ID,
-	type AgentRef,
-	type RegistryEvent,
-} from "../../registry/agent-registry";
-import { type AgentViewSession, isAgentViewSession } from "../../session/agent-session-handle";
-import { setRunStatus } from "../../utils/run-status";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/modes/controllers/session-focus-controller.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { InteractiveModeContext } from "../types";
 
 /**

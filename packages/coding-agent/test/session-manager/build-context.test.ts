@@ -1,15 +1,8 @@
 import { describe, expect, it, spyOn } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { AssistantMessage } from "@oh-my-pi/pi-ai";`
 import { defaultConvertToLlm } from "@tau/tau-agent-core/compaction";
 import type { AssistantMessage } from "@tau/tau-ai";
 import { buildSessionContext } from "tau/session/session-context";
-=======
-import { defaultConvertToLlm } from "@oh-my-pi/pi-agent-core/compaction";
-import type { AssistantMessage, Model } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { buildSessionContext } from "@oh-my-pi/pi-coding-agent/session/session-context";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/session-manager/build-context.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type {
 	BranchSummaryEntry,
 	CompactionEntry,

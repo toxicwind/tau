@@ -1,10 +1,7 @@
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { getProjectDir, prompt } from "@oh-my-pi/pi-utils";`
 import { getProjectDir, prompt } from "@tau/tau-utils";
-=======
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/extensibility/skills.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	getProjectDir,
 	isEnoent,
@@ -21,30 +18,11 @@ import {
 import { reset as resetCapabilities } from "../capability";
 import { skillCapability } from "../capability/skill";
 import type { EffectiveExtensionRoots, SourceMeta } from "../capability/types";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { getProjectDir, prompt } from "@oh-my-pi/pi-utils";`
 import type { SkillsSettings } from "../config/settings";
 import { type Skill as CapabilitySkill, isUserSourceEnabled, loadCapability } from "../discovery";
 import { compareSkillOrder, scanSkillsFromDir } from "../discovery/helpers";
 import { allowsSkillTokens, SKILL_TOKEN_RE } from "@tau/tau-tui/prompt/skill-tokens";
-=======
-import type { Settings } from "../config/settings";
-import { cfgDisabledExtensions, cfgSkills, type SkillsSettings } from "./settings";
-import {
-	type Skill as CapabilitySkill,
-	isUserSourceEnabled,
-	loadCapability,
-	type SkillFrontmatter,
-} from "../discovery";
-import {
-	clearPluginRootsAndCaches,
-	compareSkillOrder,
-	isSupersededPluginPath,
-	registeredPluginRootOf,
-	scanSkillsFromDir,
-} from "../discovery/helpers";
-import { allowsSkillTokens, SKILL_TOKEN_RE } from "@oh-my-pi/pi-tui/prompt/skill-tokens";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import autoloadTemplate from "../prompts/skills/autoload.md" with { type: "text" };
 import userInvocationTemplate from "../prompts/skills/user-invocation.md" with { type: "text" };
 import { SKILLSHARE_PROVIDER_ID } from "../discovery/skillshare";

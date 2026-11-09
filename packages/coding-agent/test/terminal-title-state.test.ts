@@ -1,5 +1,4 @@
 import { afterEach, beforeEach, describe, expect, it, spyOn, vi } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 import {
 	buildTerminalTitleWithState,
@@ -11,23 +10,6 @@ import {
 	setTerminalTitleState,
 } from "tau/utils/title-generator";
 import { setTerminalHeadless } from "@tau/tau-utils";
-=======
-import * as os from "node:os";
-import { DEFAULT_SPINNER_INTERVAL_MS } from "@oh-my-pi/pi-tui/spinner-clock";
-import {
-	buildTerminalTitleWithState,
-	disposeTerminalTitleState,
-	setTerminalTitle,
-	initTerminalTitleState,
-	popTerminalTitle,
-	setSessionTerminalTitle,
-	setTerminalSessionSource,
-	setTerminalTitleSpinnerInterval,
-	setTerminalTitleSpinnerStyle,
-	setTerminalTitleState,
-} from "@oh-my-pi/pi-coding-agent/utils/title-generator";
-import { setTerminalHeadless } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/terminal-title-state.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { mockWindowsConsoleTitle, type WindowsConsoleTitleMock } from "./terminal-title-test-utils";
 
 const LABEL = "my-project";

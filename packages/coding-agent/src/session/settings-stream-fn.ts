@@ -10,42 +10,11 @@
  * OpenRouter never saw `providers.openrouterVariant`, breaking sticky routing
  * and OpenRouter response-cache hits across advisor calls.
  */
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { StreamFn } from "@oh-my-pi/pi-agent-core";` +2 more
 import type { StreamFn } from "@tau/tau-agent-core";
 import { type SimpleStreamOptions, streamSimple } from "@tau/tau-ai";
 import { classifyModel } from "@tau/tau-catalog/identity";
 import { type Settings, validateProviderMaxInFlightRequests } from "../config/settings";
-=======
-import { fitOutputTokensToContextWindow, type StreamFn, Tokenizer } from "@oh-my-pi/pi-agent-core";
-import { type Model, type SimpleStreamOptions, streamSimple } from "@oh-my-pi/pi-ai";
-import { openAIResponsesReplaysNativeHistory } from "@oh-my-pi/pi-ai/providers/openai-responses-state";
-import { serverSideFallbackModels } from "@oh-my-pi/pi-catalog/compat/server-side-fallback";
-import type { Settings } from "../config/settings";
-import { type AnthropicSlowModeLanes, anthropicSlowModeLanes } from "./anthropic-slow-mode";
-
-import {
-	cfgModelLoopGuardCheckAssistantContent,
-	cfgModelLoopGuardEnabled,
-	cfgOmitThinking,
-	cfgProvidersAnthropicServerSideFallback,
-	cfgProvidersAnthropicSlowMode,
-	cfgProvidersAntigravityEndpoint,
-	cfgProvidersCacheRetention,
-	cfgProvidersMaxInFlightRequests,
-	cfgProvidersMuseCodeStoreResponses,
-	cfgProvidersOpenaiCodexDaybreak,
-	cfgProvidersOpenaiLiveSteering,
-	cfgProvidersOpenaiResponsesWebsockets,
-	cfgProvidersOpenaiWebsockets,
-	cfgProvidersOpenrouterVariant,
-	cfgProvidersStreamFirstEventTimeoutSeconds,
-	cfgProvidersStreamIdleTimeoutSeconds,
-	cfgRetryMaxDelayMs,
-	cfgTextVerbosity,
-	validateProviderMaxInFlightRequests,
-} from "./settings";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/session/settings-stream-fn.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /** Apply each API's setting once; standard Responses preferences can only narrow it. */
 export function resolveWebsocketPreference(

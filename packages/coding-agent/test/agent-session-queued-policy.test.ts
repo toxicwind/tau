@@ -490,12 +490,8 @@ describe("queued user delivery policy", () => {
 			recalls++;
 			return `recall prefix ${"memory detail ".repeat(500)}recall overflow`;
 		});
-<<<<<<< ours — scope `it.each([64, 512])("bounds real mnemopi stage...` in test_suite `queued user delivery policy` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `session.settings.set("mnemopi.injectionTokenLimit", limit);` +1 more
 		session.settings.set("mnemotau.injectionTokenLimit", limit);
-=======
-		cfgMnemopiInjectionTokenLimit.set(session.settings, limit);
->>>>>>> theirs — scope `it.each([64, 512])("bounds real mnemopi stage...` · weave: run 'weave explain packages/coding-agent/test/agent-session-queued-policy.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 		await session.refreshBaseSystemPrompt();
 		await session.prompt("bounded first recall");
 		// The fixture's base/tool blocks precede the backend-owned instruction blocks.
@@ -508,12 +504,8 @@ describe("queued user delivery policy", () => {
 			expect(memoryPrompt).toContain("recall prefix");
 		}
 
-<<<<<<< ours — scope `it.each([64, 512])("bounds real mnemopi stage...` in test_suite `queued user delivery policy` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `session.settings.set("mnemopi.injectionTokenLimit", limit);` +1 more
 		session.settings.set("mnemotau.injectionTokenLimit", 6000);
-=======
-		cfgMnemopiInjectionTokenLimit.set(session.settings, 6000);
->>>>>>> theirs — scope `it.each([64, 512])("bounds real mnemopi stage...`
 		await session.refreshBaseSystemPrompt();
 		await session.prompt("use the committed full recall");
 		expect(recalls).toBe(1);

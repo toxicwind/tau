@@ -1,6 +1,5 @@
 import { Database } from "bun:sqlite";
 import { describe, expect, test } from "bun:test";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { mapOpenAIResponsesToolChoiceForTools } from "@oh-my-pi…` +1 more
 import { type } from "@tau/tautype";
 import { AuthStorage, SqliteAuthCredentialStore } from "@tau/tau-ai/auth-storage";
@@ -9,19 +8,6 @@ import { getProviderDefinition } from "@tau/tau-ai/registry/registry";
 import type { Tool, ToolChoice } from "@tau/tau-ai/types";
 import { buildModel } from "@tau/tau-catalog/build";
 import { seedModels } from "@tau/tau-catalog/compat/providers";
-=======
-import { type } from "@oh-my-pi/omptype";
-import { AuthStorage, SqliteAuthCredentialStore } from "@oh-my-pi/pi-ai/auth-storage";
-import {
-	buildParams,
-	mapOpenAIResponsesToolChoiceForTools,
-	streamOpenAIResponses,
-} from "@oh-my-pi/pi-ai/providers/openai-responses";
-import { getProviderDefinition } from "@oh-my-pi/pi-ai/registry/registry";
-import type { AssistantMessage, Context, FetchImpl, Tool, ToolChoice } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { seedModels } from "@oh-my-pi/pi-catalog/compat/providers";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/ai/test/muse-code-provider.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const encodedMuseCredential = JSON.stringify({
 	oauthAccessToken: "meta-account-access",

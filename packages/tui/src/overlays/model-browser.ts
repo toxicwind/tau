@@ -7,25 +7,12 @@
  * state, while the advisor config overlay embeds it as a plain "pick one
  * model" list.
  */
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { modelsAreEqual } from "@oh-my-pi/pi-catalog/models";` +1 more
 import { ThinkingLevel } from "@tau/tau-agent-core";
 import type { Model } from "@tau/tau-ai";
 import { buildModel } from "@tau/tau-catalog/build";
 import { modelsAreEqual } from "@tau/tau-catalog/models";
 import type { ModelKind } from "@tau/tau-catalog/types";
-=======
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { Model } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import {
-	getEffectiveTokenCost,
-	getFactoryDroidCreditRate,
-	getModelPricingStatus,
-	modelsAreEqual,
-} from "@oh-my-pi/pi-catalog/models";
-import { modelKind, type ModelKind, type ModelPricingStatus } from "@oh-my-pi/pi-catalog/types";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/tui/src/overlays/model-browser.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { Component } from "../tui";
 import { FuzzyCorpus, fuzzyRank } from "../fuzzy";
 import { Input } from "../components/input";
@@ -33,19 +20,9 @@ import { ScrollView } from "../components/scroll-view";
 import { matchesKey } from "../keys";
 import type { SgrMouseEvent } from "../mouse";
 import { replaceTabs, truncateToWidth, visibleWidth } from "../utils";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { modelsAreEqual } from "@oh-my-pi/pi-catalog/models";` +1 more
 import { formatNumber, sanitizeText } from "@tau/tau-utils";
 import { type ConfiguredThinkingLevel, parseConfiguredThinkingLevel } from "../thinking";
-=======
-import { formatNumber, sanitizeText } from "@oh-my-pi/pi-utils";
-import {
-	AUTO_THINKING,
-	type ConfiguredThinkingLevel,
-	getConfiguredThinkingLevelMetadata,
-	parseConfiguredThinkingLevel,
-} from "../thinking";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import { thinkingLevelGlyph } from "../render/render-utils";
 import { type Theme, type ThemeColor, theme } from "../theme/theme";
 import {

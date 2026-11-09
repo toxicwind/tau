@@ -492,7 +492,6 @@ export class RecordingController {
 		this.#starting = true;
 		let spool: TempDir | undefined;
 		try {
-<<<<<<< ours — scope `start` in class `RecordingController` (S+F, confidence: low)
 // refused_by: container_member · collision: `spool = await TempDir.create("omp-browser-recording-");`
 			spool = await TempDir.create("tau-browser-recording-");
 			session = await untilAborted(signal, () => page.createCDPSession());
@@ -509,11 +508,6 @@ export class RecordingController {
 						return { width: pageGlobal.innerWidth, height: pageGlobal.innerHeight };
 					}),
 				));
-=======
-			spool = await TempDir.create("@omp-browser-recording-");
-			if (validated.cursor) await source.installCursor(signal);
-			const viewport = await source.viewport(signal);
->>>>>>> theirs — scope `start` · weave: run 'weave explain packages/coding-agent/src/tools/browser/recording.ts' for per-hunk detail, 'weave check' to verify your resolution
 			const active: ActiveRecording = {
 				source,
 				spool,

@@ -1,4 +1,3 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import * as logger from "@oh-my-pi/pi-utils/logger";` +2 more
 import { scheduler } from "node:timers/promises";
 import type { Terminal } from "@tau/tau-tui";
@@ -20,18 +19,6 @@ import {
 } from "@tau/tau-tui/prompt/composer-cache";
 import { setMagicKeywords } from "@tau/tau-tui/prompt/magic-keywords";
 import { initThemeSync } from "@tau/tau-tui/theme";
-=======
-import type { Terminal } from "@oh-my-pi/pi-tui";
-import type { Composer, ComposerPreferences, ComposerWelcomeUpdate } from "@oh-my-pi/pi-tui/prompt/composer";
-import type * as ComposerRuntime from "@oh-my-pi/pi-tui/prompt/composer";
-import {
-	type ComposerCache,
-	type ComposerThemePreferences,
-	sharedComposerCache,
-} from "@oh-my-pi/pi-tui/prompt/composer-cache";
-import { setMagicKeywords } from "@oh-my-pi/pi-tui/prompt/magic-keywords";
-import { initThemeSync } from "@oh-my-pi/pi-tui/theme";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/modes/startup-composer.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { MAGIC_KEYWORDS } from "./magic-keywords";
 
 /** Inputs available at the CLI prepaint boundary before command modules load. */

@@ -13,17 +13,8 @@ use std::{
 
 use clap::{ArgAction, Parser, ValueEnum};
 use globset::{GlobBuilder, GlobMatcher};
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `use pi_walker::CollectedEntry;`
 use tau_walker::CollectedEntry;
-=======
-use pi_walker::{
-	FileType,
-	ignore::{Match as RuleMatch, Rules},
-	walk::{Action, Event, Follow, Order, Tree, TreeOptions, WalkError},
-};
-use pi_vfs::Metadata;
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain crates/tau-builtins/src/fd.rs' for per-hunk detail, 'weave check' to verify your resolution
 use regex::{Regex, RegexBuilder};
 
 use crate::host::{AsyncUtility, Host, forward_slash_display};
@@ -673,7 +664,6 @@ async fn search(cli: FdCli, base_dir: PathBuf, host: &mut Host) -> io::Result<Se
 		if max_results.is_some_and(|max| state.matches >= max) {
 			break;
 		}
-<<<<<<< ours — scope `for search_path in &search_paths {` in function `search` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `Err(pi_walker::WalkError::Interrupted(_)) if cancelled.load(Ord…`
 		let mut fd_ignores = FdIgnoreMatcher::new(&config.base_dir, &search_path.resolved, &cli)?;
 		let request =
@@ -682,16 +672,6 @@ async fn search(cli: FdCli, base_dir: PathBuf, host: &mut Host) -> io::Result<Se
 			Ok(outcome) => outcome,
 			Err(tau_walker::WalkError::Interrupted(_)) if cancelled.load(Ordering::Relaxed) => break,
 			Err(err) => return Err(walker_collect_error_to_io(err)),
-=======
-		let mut fd_ignores =
-			FdIgnoreMatcher::new(&config.fs, &config.base_dir, &search_path.resolved, &cli).await?;
-		let layer = pi_walker::Fs::new(&config.fs, &search_path.resolved);
-		let mut tree = match Tree::new(&layer, &search_path.resolved, &opts).await {
-			Ok(tree) => tree,
-			Err(WalkError::Root { path, error }) => {
-				return Err(io::Error::other(format!("{}: {error}", path.display())));
-			},
->>>>>>> theirs — scope `for search_path in &search_paths {`
 		};
 		let mut pace = host.output_pace();
 		while let Some(event) = tree.next().await {
@@ -755,7 +735,6 @@ fn fd_tree_options(cli: &FdCli) -> TreeOptions {
 		..TreeOptions::default()
 	}
 }
-<<<<<<< ours — function `fd_walk_request` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 fn fd_walk_request(
 	root: &Path,
@@ -780,9 +759,6 @@ fn fd_walk_request(
 		.cache(false)
 		.visit_order(tau_walker::VisitOrder::PreOrder)
 }
-=======
->>>>>>> theirs — function `fd_walk_request` (S+F, confidence: low)
-<<<<<<< ours — function `try_search_fast` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 fn try_search_fast(
 	cli: &FdCli,
@@ -850,9 +826,6 @@ fn try_search_fast(
 	stderr.write_all(&err)?;
 	Ok(Some(state))
 }
-=======
->>>>>>> theirs — function `try_search_fast` (S+F, confidence: low)
-<<<<<<< ours — function `process_walker_entry` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 fn process_walker_entry<W: Write>(
 	config: &SearchConfig,
@@ -914,9 +887,6 @@ fn process_walker_entry<W: Write>(
 	}
 	Ok(tau_walker::WalkDecision::Include)
 }
-=======
->>>>>>> theirs — function `process_walker_entry` (S+F, confidence: low)
-<<<<<<< ours — function `matches_walker_filters` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 fn matches_walker_filters(
 	config: &SearchConfig,
@@ -943,9 +913,6 @@ fn matches_walker_filters(
 	}
 	true
 }
-=======
->>>>>>> theirs — function `matches_walker_filters` (S+F, confidence: low)
-<<<<<<< ours — function `matches_walker_type_filter` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 fn matches_walker_type_filter(
 	filter: &TypeFilter,
@@ -974,9 +941,6 @@ fn matches_walker_type_filter(
 	}
 	true
 }
-=======
->>>>>>> theirs — function `matches_walker_type_filter` (S+F, confidence: low)
-<<<<<<< ours — function `cancel_heartbeat` (T+F, confidence: medium)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 /// Builds a walker heartbeat closure that observes the host cancel flag.
 ///
@@ -999,9 +963,6 @@ fn cancel_heartbeat(cancelled: &AtomicBool) -> impl Fn() -> io::Result<()> + Syn
 		}
 	}
 }
-=======
->>>>>>> theirs — function `cancel_heartbeat` (T+F, confidence: medium)
-<<<<<<< ours — function `walker_error_to_io` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 fn walker_error_to_io(err: tau_walker::WalkError<io::Error>) -> io::Error {
 	match err {
@@ -1011,9 +972,6 @@ fn walker_error_to_io(err: tau_walker::WalkError<io::Error>) -> io::Error {
 		},
 	}
 }
-=======
->>>>>>> theirs — function `walker_error_to_io` (S+F, confidence: low)
-<<<<<<< ours — function `walker_collect_error_to_io` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 fn walker_collect_error_to_io(err: tau_walker::WalkError<String>) -> io::Error {
 	match err {
@@ -1023,10 +981,7 @@ fn walker_collect_error_to_io(err: tau_walker::WalkError<String>) -> io::Error {
 		},
 	}
 }
-=======
->>>>>>> theirs — function `walker_collect_error_to_io` (S+F, confidence: low)
 
-<<<<<<< ours — function `process_collected_entry` (S+F, confidence: low)
 // refused_by: rename_vs_edit_guard · collision: `let is_directory = entry.file_type == pi_walker::FileType::Dir;`
 fn process_collected_entry<W: Write>(
 	config: &SearchConfig,
@@ -1100,57 +1055,6 @@ fn process_collected_entry<W: Write>(
 		out.write_all(b"\n")?;
 	}
 	Ok(())
-=======
-/// Decides one walked entry: prunes ignored and excluded directories, prints
-/// a match.
-#[allow(clippy::too_many_arguments)]
-async fn visit_entry<W: Write + Send>(
-	config: &SearchConfig,
-	ignore_contains: &[OsString],
-	fd_ignores: &mut FdIgnoreMatcher,
-	path: &Path,
-	depth: usize,
-	file_type: FileType,
-	out: &mut W,
-	state: &mut SearchState,
-) -> io::Result<Action> {
-	let is_directory = file_type == FileType::Dir;
-	if depth == 0 && is_directory {
-		return Ok(Action::Continue);
-	}
-	if fd_ignores.is_ignored(path, is_directory).await
-		|| config.excludes.matches(path, &config.base_dir)
-	{
-		return Ok(if is_directory { Action::SkipDir } else { Action::Skip });
-	}
-	if is_directory
-		&& (contains_ignore_marker(&config.fs, path, ignore_contains).await
-			|| (config.prune
-				&& config
-					.matcher
-					.matches(&match_target(path, &config.base_dir, config.full_path))))
-	{
-		return Ok(Action::SkipDir);
-	}
-
-	if !matches_entry(config, path, file_type).await {
-		return Ok(Action::Continue);
-	}
-
-	state.matches = state.matches.saturating_add(1);
-	if config.quiet {
-		return Ok(Action::Continue);
-	}
-	let display = display_path(config, path);
-	let text = if let Some(format) = config.format.as_deref() {
-		format_path(format, path, &display)
-	} else {
-		display
-	};
-	out.write_all(text.as_bytes())?;
-	out.write_all(if config.print0 { b"\0" } else { b"\n" })?;
-	Ok(Action::Continue)
->>>>>>> theirs — function `process_collected_entry` (S+F, confidence: low)
 }
 
 /// Whether an entry passes every filter: the ones the listing answers (kind,
@@ -1824,7 +1728,6 @@ mod tests {
 		);
 	}
 
-<<<<<<< ours — scope `walk_request` in module `tests`, deleted in theirs (T+F, confidence: medium)
 // refused_by: container_member · collision: none (no common ancestor text)
 	/// Build the same `WalkRequest` `search`/`try_search_fast` build for the
 	/// seeded tree: hidden entries included, gitignore disabled, root emitted.
@@ -1836,8 +1739,6 @@ mod tests {
 			.gitignore(false)
 			.emit_root(true)
 	}
-=======
->>>>>>> theirs — scope `walk_request` deleted in theirs
 
 	// Regression note (#3949): both call sites in this file feed the walker
 	// `cancel_heartbeat(cancelled)` — one via `collect_with_heartbeat` in the
@@ -1850,7 +1751,6 @@ mod tests {
 	// walker APIs directly with `cancel_heartbeat` so a revert to the pre-fix
 	// no-op heartbeat fails immediately.
 
-<<<<<<< ours — scope `cancel_heartbeat_aborts_collect_with_heartbeat` in module `tests`, deleted in theirs (S+F, confidence: low)
 // refused_by: container_member · collision: none (no common ancestor text)
 	#[test]
 	fn cancel_heartbeat_aborts_collect_with_heartbeat() {
@@ -1868,10 +1768,7 @@ mod tests {
 			"heartbeat interruption should surface as WalkError::Interrupted, got {err:?}"
 		);
 	}
-=======
->>>>>>> theirs — scope `cancel_heartbeat_aborts_collect_with_heartbeat` deleted in theirs
 
-<<<<<<< ours — scope `cancel_heartbeat_aborts_for_each_entry_with_heartbeat` in module `tests`, deleted in theirs (S+F, confidence: low)
 // refused_by: container_member · collision: none (no common ancestor text)
 	#[test]
 	fn cancel_heartbeat_aborts_for_each_entry_with_heartbeat() {
@@ -1901,6 +1798,4 @@ mod tests {
 			"visitor must not receive any entry once the heartbeat has aborted the walk",
 		);
 	}
-=======
->>>>>>> theirs — scope `cancel_heartbeat_aborts_for_each_entry_with_heartbeat` deleted in theirs
 }

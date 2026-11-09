@@ -2,7 +2,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import type { AssistantMessage } from "@oh-my-pi/pi-ai";`
 import { Agent } from "@tau/tau-agent-core";
 import type { AssistantMessage } from "@tau/tau-ai";
@@ -16,21 +15,6 @@ import { AgentSession } from "tau/session/agent-session";
 import { AuthStorage } from "tau/session/auth-storage";
 import { SessionManager } from "tau/session/session-manager";
 import { Snowflake } from "@tau/tau-utils";
-=======
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import type { Api, AssistantMessage, ImageContent, Model } from "@oh-my-pi/pi-ai";
-import { createMockModel, type MockHandler } from "@oh-my-pi/pi-ai/providers/mock";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { loadAdvisorTranscriptCosts } from "@oh-my-pi/pi-coding-agent/advisor/transcript-recorder";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import * as imageVisionFallback from "@oh-my-pi/pi-coding-agent/utils/image-vision-fallback";
-import { Snowflake } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/agent-session-btw-branch.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function createBtwAssistant(): AssistantMessage {
 	return {

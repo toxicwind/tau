@@ -1,9 +1,6 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { AskToolDetails, QuestionResult } from "@oh-my-pi/…` +7 more
 import { join } from "node:path";
 import type { AskToolDetails, QuestionResult } from "@tau/tau-tui/tools/ask";
-=======
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/ask.ts' for per-hunk detail, 'weave check' to verify your resolution
 /**
  * Ask Tool - the model asks the user to fill in one HTML `<form>`.
  *
@@ -14,7 +11,6 @@ import type { AskToolDetails, QuestionResult } from "@tau/tau-tui/tools/ask";
  * preselected values.
  */
 
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { AskToolDetails, QuestionResult } from "@oh-my-pi/…` +7 more
 import { type as arkType } from "@tau/tautype";
 import type { AgentTool, AgentToolContext, AgentToolResult, AgentToolUpdateCallback } from "@tau/tau-agent-core";
@@ -30,43 +26,6 @@ import { cfgSpeechEnabled } from "../tts/settings";
 import { vocalizer } from "../tts/vocalizer";
 import type { ToolSession } from ".";
 import { disambiguateDisplayLabels, sanitizeCarriageReturns, TRUNCATE_LENGTHS } from "@tau/tau-tui/render/render-utils";
-=======
-import { type as arkType } from "@oh-my-pi/omptype";
-import type { AgentTool, AgentToolContext, AgentToolResult, AgentToolUpdateCallback } from "@oh-my-pi/pi-agent-core";
-import type { ToolExample } from "@oh-my-pi/pi-ai";
-import { TERMINAL } from "@oh-my-pi/pi-tui";
-import { formatKeyHint } from "@oh-my-pi/pi-tui/app-keybindings";
-import { editorKey, editorKeys } from "@oh-my-pi/pi-tui/chrome/keybinding-hints";
-import {
-	choiceValue,
-	defaultFormData,
-	fieldQuestions,
-	fieldError,
-	formAnswers,
-	type HtmlFormData,
-	OTHER_LABEL,
-	textValue,
-} from "@oh-my-pi/pi-tui/html-form/data";
-import {
-	type ChoiceField,
-	type HtmlForm,
-	parseHtmlForm,
-	spansText,
-	type TextField,
-} from "@oh-my-pi/pi-tui/html-form/parse";
-import { disambiguateDisplayLabels } from "@oh-my-pi/pi-tui/render/render-utils";
-import { theme } from "@oh-my-pi/pi-tui/theme";
-import type { AskToolDetails } from "@oh-my-pi/pi-tui/tools/ask";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
-import { isRecord, prompt, untilAborted } from "@oh-my-pi/pi-utils";
-import type { ExtensionUIContext, ExtensionUIDialogOptions, ExtensionUISelectItem } from "../extensibility/extensions";
-import { askTimeoutMs, cfgAskNotify } from "../modes/settings";
-import askDescription from "../prompts/tools/ask.md" with { type: "text" };
-import askHeadlessForkMessage from "../prompts/tools/ask-headless-fork.md" with { type: "text" };
-import { cfgSpeechEnabled } from "../tts/settings";
-import { vocalizer } from "../tts/vocalizer";
-import type { ToolSession } from ".";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import { ToolAbortError } from "./tool-errors";
 
 /** Returned to a headless fork's model instead of aborting its run. */

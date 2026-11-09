@@ -16,14 +16,10 @@ import {
 	syncContent,
 	WARMUP_TIMEOUT_MS,
 } from "./client";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { getServersForFile, hasRootMarkers, type LspConfig, loadConfig, resolveCommand } from "./config";
 import DEFAULTS from "./defaults.json" with { type: "json" };
 import { MUX_RESTART_METHOD } from "./mux/protocol";
-=======
-import { getServersForFile, type LspConfig, loadConfig } from "./config";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/lsp/servers.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { LspClient, ServerConfig } from "./types";
 
 /**

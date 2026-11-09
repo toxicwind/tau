@@ -8,12 +8,8 @@ import type { ToolSession } from ".";
 import { isGlobalMemoryScopeAvailable } from "../memory-backend/global-scope";
 import { cfgMemoryBackend } from "../memory-backend/settings";
 
-<<<<<<< ours — variable `memoryRetainSchema` (S, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 const memoryRetainSchema = type({
-=======
-const memoryRetainSchemaBase = type({
->>>>>>> theirs — variable `memoryRetainSchema` (S, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/tools/memory-retain.ts' for per-hunk detail, 'weave check' to verify your resolution
 	items: type({
 		content: type("string").describe("information to remember"),
 		"context?": type("string").describe("source context"),
@@ -65,18 +61,11 @@ export class MemoryRetainTool implements AgentTool<MemoryRetainSchema, MemoryRet
 		return new MemoryRetainTool(session);
 	}
 
-<<<<<<< ours — scope `execute` in class `MemoryRetainTool` (S+F, confidence: low)
 // refused_by: container_member · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 	async execute(_id: string, params: MemoryRetainParams): Promise<AgentToolResult<MemoryRetainDetails>> {
 		const backend = this.session.settings.get("memory.backend");
 		if (backend === "mnemotau") {
 			const state = this.session.getMnemotauSessionState?.();
-=======
-	async execute(toolCallId: string, params: MemoryRetainParams): Promise<AgentToolResult<MemoryRetainDetails>> {
-		const backend = cfgMemoryBackend.get(this.session.settings);
-		if (backend === "mnemopi") {
-			const state = this.session.getMnemopiSessionState?.();
->>>>>>> theirs — scope `execute`
 			if (!state) {
 				throw new Error("Mnemotau backend is not initialised for this session.");
 			}

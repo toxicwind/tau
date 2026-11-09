@@ -4,7 +4,6 @@ This document covers execution/process/terminal primitives in `@tau/tau-natives`
 
 ## Implementation files
 
-<<<<<<< ours — heading `Implementation files` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 - `crates/tau-natives/src/shell.rs`
 - `crates/tau-shell/src/shell.rs`
@@ -16,32 +15,14 @@ This document covers execution/process/terminal primitives in `@tau/tau-natives`
 - `crates/tau-natives/src/ps.rs`
 - `crates/tau-natives/src/keys.rs`
 - `crates/tau-natives/src/task.rs`
-=======
-- `crates/pi-natives/src/shell.rs`
-- `crates/pi-natives/src/shell/vfs.rs` (host-injected filesystem bridge)
-- `crates/pi-vfs/` (shared filesystem abstraction)
-- `crates/pi-shell/src/shell.rs`
-- `crates/pi-shell/src/cancel.rs`
-- `crates/pi-builtins` (embedded-shell builtins: bash builtins plus in-process utility/process commands)
-- `crates/pi-shell/src/windows.rs` (Windows-only PATH enrichment)
-- `crates/pi-shell/src/process.rs`
-- `crates/pi-natives/src/pty.rs`
-- `crates/pi-natives/src/ps.rs`
-- `crates/pi-natives/src/keys.rs`
-- `crates/pi-natives/src/task.rs`
->>>>>>> theirs — heading `Implementation files` (F, confidence: medium) · weave: run 'weave explain docs/upstream/natives-shell-pty-process.md' for per-hunk detail, 'weave check' to verify your resolution
 - `packages/natives/native/index.d.ts`
 
 ## Layer ownership
 
 - **Package entrypoint** (`packages/natives/native/index.js`): loads the `.node` addon and exports generated N-API bindings.
 - **Rust N-API module layer** (`crates/tau-natives/src/*`): JS-facing shell/PTY/process/key exports and callback bridging.
-<<<<<<< ours — scope `- **Runtime core** (`crates/pi-shell/src/*`):...` in heading `Layer ownership` (S, confidence: medium)
 // refused_by: statement_fold · collision: `- **Runtime core** (`crates/pi-shell/src/*`): brush shell execu…`
 - **Runtime core** (`crates/tau-shell/src/*`): brush shell execution, cancellation cleanup, minimizer integration, command fixups, and cross-platform process references.
-=======
-- **Runtime core** (`crates/pi-shell/src/*`): the embedded bash engine and its session execution (`bash`, `sys`, `vfs`, `host`, `session`, `tools`, `extras`), cancellation cleanup, minimizer integration, command fixups, and cross-platform process references.
->>>>>>> theirs — scope `- **Runtime core** (`crates/pi-shell/src/*`):...`
 - **Consumers** (`packages/coding-agent`, `packages/tui`): higher-level session policy, output artifact/minimizer handling, render policy, and UI key handling.
 
 ## Shell subsystem (`shell`)
@@ -70,18 +51,11 @@ Rust starts a `pi_shell::session::Session` (the bash engine driven by a task on 
 - `timeout`, `nohup` (detaches its operand so it survives shell teardown; withheld when `PI_DISABLE_NOHUP_BUILTIN` is set) and an opt-in `git` as host callouts (`crates/pi-shell/src/tools`); anything a `git` layer does not take runs the git binary with the original arguments:
    - `PI_SMART_GIT` serves supported `git worktree add` invocations through `pi-vcs`: copy-on-write clone, worktree registration, and reconciliation to the target commit, with an in-process checkout fallback when cloning is unavailable;
    - `PI_GIT_GUARD` (set by the coding agent from `bash.gitGuard`; `crates/pi-shell/src/git/guard.rs`) judges git commands that discard or move work by the checkout they run in. In a repository's main checkout, which other sessions may share, it refuses with exit status 1: `stash` other than `list`/`show`/`create`, `reset --hard`, `reset` to a commit other than HEAD's, `switch` and `checkout` of a branch or commit, and `checkout` of paths and working-tree `restore` unless the repository is mid-merge/rebase/cherry-pick/revert (unmerged index entries or the operation's state files; a finished rebase's leftover `REBASE_HEAD` does not count), and even then not forced or whole-tree forms. A linked worktree of a non-bare repository, and a submodule inside one, run everything: a command that discards uncommitted tracked changes first records them as a `git stash create` commit on the `refs/omp/discarded` reflog and says so on stderr (refused instead when it recurses into submodules, through `--recurse-submodules` or `submodule.recurse`, since that record does not hold their changes), and `stash pop`/`apply`/`drop`/`branch`/`clear` refuse a stash-list entry whose `WIP on <branch>:`/`On <branch>:` subject names another branch, a detached HEAD, or no branch. It judges the expanded argv in the directory git actually runs in (`cd` and `-C` applied); `--git-dir`/`--work-tree`/`GIT_DIR`-style redirection is refused, since the repository it changes is not the one found from the directory,
-<<<<<<< ours — scope `- process builtins registered unconditionally...` in heading `Session creation and environment model`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 - process builtins registered unconditionally from `pi_builtins::process_builtins()` — `nohup`, `pgrep`, `pkill`, `pidwait`, `ps`, `sleep`, `timeout`, and `top` (`nohup` is withheld when `PI_DISABLE_NOHUP_BUILTIN` is set; `kill` comes from the default bash-mode set, where `tau-builtins`' richer implementation replaces brush's original),
-=======
->>>>>>> theirs — scope `- process builtins registered unconditionally...` deleted in theirs
 - skip-list for shell-sensitive vars (`PS1`, `PWD`, `SHLVL`, bash function exports, etc.),
-<<<<<<< ours — scope `- a non-exported `env="$env"` fallback so Pow...` in heading `Session creation and environment model` (S, confidence: medium)
 // refused_by: statement_fold · collision: `- a non-exported `env="$env"` fallback so PowerShell-style `$en…`
 - a non-exported `env="$env"` fallback so PowerShell-style `$env:NAME` survives brush parameter expansion unless the architect shadows `env`.
-=======
-- a non-exported `env="$env"` fallback so PowerShell-style `$env:NAME` survives parameter expansion unless the user shadows `env`.
->>>>>>> theirs — scope `- a non-exported `env="$env"` fallback so Pow...`
 
 URL-backed external spawns return an owned `SpawnFuture`, which the VM polls without blocking the driver. Cancelling a pending spawn drops its provider request before launching a process. External I/O pumps and decoding relays are cooperative state machines polled with the process; they do not park threads around engine I/O. Shared process-substitution feeds retain one OS pipe per engine descriptor and return unread bytes when their last holder closes. The standalone `obash` driver uses the same pollable operations without requiring a Tokio runtime.
 
@@ -91,12 +65,8 @@ Session env behavior:
 - `ShellRunOptions.env` / one-shot `env` is command-scoped: exported for the command, and every named variable is restored afterwards.
 - `PATH` is merged specially on Windows with case-insensitive dedupe.
 - Host and forwarded session environments omit Git repository-location overrides (`GIT_DIR`, `GIT_COMMON_DIR`, `GIT_WORK_TREE`, `GIT_INDEX_FILE`, `GIT_OBJECT_DIRECTORY`, `GIT_ALTERNATE_OBJECT_DIRECTORIES`), so Git rediscovers the repository from cwd. Explicit command-scoped `env` can supply them again.
-<<<<<<< ours — scope `- Windows-only path enrichment (`pi-shell/src...` in heading `Session creation and environment model` (S, confidence: medium)
 // refused_by: statement_fold · collision: `- Windows-only path enrichment (`pi-shell/src/windows.rs`) appe…`
 - Windows-only path enrichment (`tau-shell/src/windows.rs`) appends discovered Git-for-Windows paths when present and not already included.
-=======
-- Windows-only path enrichment (`crates/pi-shell/src/windows.rs`) appends discovered Git-for-Windows paths when present and not already included.
->>>>>>> theirs — scope `- Windows-only path enrichment (`pi-shell/src...`
 - `snapshotPath`, when present, is sourced during session creation with stdout/stderr/stdin wired to null files.
 
 ### Host-injected filesystem
@@ -109,36 +79,20 @@ The session filesystem is restored after a run-only override. Provider waits are
 
 ### In-process utility builtins (uutils-derived)
 
-<<<<<<< ours — scope `Beyond the bash builtins, session creation re...` in heading `In-process utility builtins (uutils-derived)` (S, confidence: medium)
 // refused_by: statement_fold · collision: `Beyond the bash builtins, session creation registers the in-pro…`
 Beyond the bash builtins, session creation registers the in-process command-line utility builtins implemented in the `tau-builtins` crate (`crates/tau-builtins`) — in-house ports of uutils coreutils/findutils/sed and jaq built on `uucore` 0.8.0. The set includes `cat`, `head`, `tail`, `wc`, `sort`, `uniq`, `ls`, `find`, `grep`, `mkdir`, `rm`, `mv`, `ln`, `sed`, `jq`, `fd`, `diff`, the checksum/`tr`/`cut`/`date` families, and more; `pi_builtins::utility_builtins()` is the authoritative list.
-=======
-Beyond the bash builtins, the session runs the in-process command-line utilities implemented in the `pi-builtins` crate (`crates/pi-builtins`) — in-house ports of uutils coreutils/findutils/sed and jaq built on `uucore` 0.8.0. The set includes `cat`, `head`, `tail`, `wc`, `sort`, `uniq`, `ls`, `find`, `grep`, `mkdir`, `rm`, `mv`, `cp`, `ln`, `sed`, `jq`, `fd`, `diff`, the checksum/`tr`/`cut`/`date` families, and more; `pi_builtins::extras::extras()` is the authoritative list.
->>>>>>> theirs — scope `Beyond the bash builtins, session creation re...`
 
 Three search-related builtins are worth calling out:
 
-<<<<<<< ours — scope `- `grep` is implemented on the ripgrep librar...` in heading `In-process utility builtins (uutils-derived)` (S, confidence: medium)
 // refused_by: statement_fold · collision: `- `grep` is implemented on the ripgrep libraries (`grep-regex`/…`
 - `grep` is implemented on the ripgrep libraries (`grep-regex`/`grep-searcher`), with recursive directory walks served by `tau-walker`.
-=======
-- `grep` is implemented on the ripgrep libraries (`grep-regex`/`grep-searcher`), with directory walks and ordered parallel search served by `pi-walker` (`rg`/`grep` output stays in path order).
->>>>>>> theirs — scope `- `grep` is implemented on the ripgrep librar...`
 - `rg` is a sibling builtin with ripgrep defaults (recursive search, ignore/hidden filtering, binary suppression) — a separate module and argument model, not an alias of `grep`.
-<<<<<<< ours — scope `- `fd` is backed by `pi-walker`, `globset`, a...` in heading `In-process utility builtins (uutils-derived)` (S, confidence: medium)
 // refused_by: statement_fold · collision: `- `fd` is backed by `pi-walker`, `globset`, and `regex`.`
 - `fd` is backed by `tau-walker`, `globset`, and `regex`.
-=======
-- `fd` is backed by `pi-walker`'s ordered `walk::tree` traversal, `globset`, and `regex`.
->>>>>>> theirs — scope `- `fd` is backed by `pi-walker`, `globset`, a...`
 - `ast-grep` (also `sg`) runs ast-grep 0.50's `run` command (`-p`/`-r`/`-U`, `--json`, context, `--heading`, `--files-with-matches`, `--stdin`) on the `pi-ast` search engine with ast-grep's piped (uncolored) output; `scan`, `test`, `new`, `lsp`, `outline`, `--config`, `--interactive`, `--kind`, `--debug-query`, and `--inspect` exit 2 as unsupported.
 
-<<<<<<< ours — scope `Each builtin runs inside the shell process (n...` in heading `In-process utility builtins (uutils-derived)` (S, confidence: medium)
 // refused_by: statement_fold · collision: `Each builtin runs inside the shell process (no `fork`/`exec`) a…`
 Each builtin runs inside the shell process (no `fork`/`exec`) against the `tau-builtins` `Host` view of the shell (`src/host.rs`): stdio routes through the command's (possibly piped/redirected) file descriptors, path operands resolve against the shell working directory, the shell's exported environment is visible, and abort/timeout cancellation is honored. Because these builtins shadow system binaries, registration is gated in `crates/tau-shell/src/shell.rs`:
-=======
-Each builtin runs inside the shell process (no `fork`/`exec`) against the `pi-builtins` `Host` view of the shell (`src/host.rs`): stdio routes through the command's (possibly piped/redirected) file descriptors, path operands resolve against the shell working directory, the shell's exported environment is visible, and abort/timeout cancellation is honored. Because these builtins shadow system binaries, registration is gated (`ExtrasGate` in `crates/pi-shell/src/extras.rs`, built in `crates/pi-shell/src/tools/mod.rs`):
->>>>>>> theirs — scope `Each builtin runs inside the shell process (n...`
 
 - `PI_DISABLE_UUTILS_BUILTINS` disables the whole utility set (bare names resolve to system binaries again),
 - `PI_DISABLE_UUTILS_DESTRUCTIVE` disables the destructive shadows (`rm`, `mv`, `cp`, which overwrites existing files, and `ln`, which can clobber via `-f`) together,

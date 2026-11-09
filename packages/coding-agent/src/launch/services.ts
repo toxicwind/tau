@@ -1,19 +1,11 @@
 /** Session-scoped service supervision through the shared project broker. */
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { getDaemonRuntimeDir, sanitizeText } from "@oh-my-pi/pi…`
 import { TERMINAL_STATES } from "@tau/tau-tui/apps/ps-data";
 import type { DaemonSnapshot, DaemonSpec } from "@tau/tau-tui/tools/daemon";
 import { formatDuration, replaceTabs } from "@tau/tau-tui/render/render-utils";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 import { getDaemonRuntimeDir, sanitizeText } from "@tau/tau-utils";
-=======
-import { TERMINAL_STATES } from "@oh-my-pi/pi-tui/apps/ps-data";
-import type { DaemonSnapshot, DaemonSpec } from "@oh-my-pi/pi-tui/tools/daemon";
-import { formatDuration, replaceTabs } from "@oh-my-pi/pi-tui/render/render-utils";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
-import { getDaemonRuntimeDir, logger, sanitizeText } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/launch/services.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { type DaemonBrokerClient, daemonClientForProject } from "./client";
 import { canonicalProjectDir } from "./paths";
 import type { DaemonOperation, DaemonRpcResult } from "./protocol";

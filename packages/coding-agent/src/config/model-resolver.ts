@@ -22,7 +22,6 @@ import {
  *   CLI flags, scope globs — onto that pipeline.
  */
 
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { ThinkingLevel } from "@tau/tau-agent-core";
 import type { ModelRoleLookup } from "@tau/tau-tui/overlays/model-browser";
@@ -39,26 +38,6 @@ import { fuzzyMatch } from "@tau/tau-tui";
 import { logger } from "@tau/tau-utils";
 import chalk from "@tau/tau-utils/chalk";
 import MODEL_PRIO from "../priority.json" with { type: "json" };
-=======
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { ModelRoleLookup } from "@oh-my-pi/pi-tui/overlays/model-browser";
-import type { Api, Effort, KnownProvider, Model, ModelSpec } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { roleDefaultModels } from "@oh-my-pi/pi-catalog/compat/behavior";
-import { resolveBareVariantSelector, resolveVariantSelector } from "@oh-my-pi/pi-catalog/compat/collapse";
-import { resolveCatalogPolicy } from "@oh-my-pi/pi-catalog/compat/catalog-policy";
-import { providerEntry } from "@oh-my-pi/pi-catalog/compat/providers";
-import { collapseVariantId, stripThinkingVariantSuffix } from "@oh-my-pi/pi-catalog/compat/taxonomy";
-import { modelMatchesHost } from "@oh-my-pi/pi-catalog/hosts";
-import { buildModelProviderPriorityRank } from "@oh-my-pi/pi-catalog/identity";
-import { clampThinkingLevelForModel } from "@oh-my-pi/pi-catalog/model-thinking";
-import { type GeneratedProvider, getBundledModels, modelsAreEqual } from "@oh-my-pi/pi-catalog/models";
-import { modelKind } from "@oh-my-pi/pi-catalog/types";
-import { DEFAULT_MODEL_PER_PROVIDER } from "@oh-my-pi/pi-catalog/provider-models";
-import { fuzzyMatch } from "@oh-my-pi/pi-tui";
-import { logger } from "@oh-my-pi/pi-utils";
-import chalk from "@oh-my-pi/pi-utils/chalk";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/config/model-resolver.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	AUTO_THINKING,
 	type ConfiguredThinkingLevel,
@@ -2248,7 +2227,6 @@ export function resolveCliModel(options: CliModelOptions): ResolveCliModelResult
 		return { model: undefined, selector: undefined, warning: undefined, error: undefined };
 	}
 
-<<<<<<< ours — function `resolveCliModel (body partly extracted into CliModelOptions, resolveCliModelInScope)` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `error: `Unknown provider "${cliProvider}". Run "omp models" to …` +2 more
 	const allModels = modelRegistry.getAll();
 	if (allModels.length === 0) {
@@ -2420,21 +2398,6 @@ export function resolveCliModel(options: CliModelOptions): ResolveCliModelResult
 			error: `Model "${display}" not found. Run "tau models" to see available models.`,
 		};
 	}
-=======
-	const scoped = { ...options, cliModel };
-	const scope: CliModelScope = {
-		all: modelRegistry.getAll(),
-		available: preferredModels ?? modelRegistry.getAvailable(),
-	};
-	const disabled = disabledProviderIds(settings);
-	if (disabled.size === 0) return resolveCliModelInScope(scoped, scope);
-
-	const enabled = resolveCliModelInScope(scoped, {
-		all: scope.all.filter(model => !disabled.has(model.provider)),
-		available: scope.available.filter(model => !disabled.has(model.provider)),
-	});
-	if (enabled.model) return enabled;
->>>>>>> theirs — function `resolveCliModel (body partly extracted into CliModelOptions, resolveCliModelInScope)` (S+F, confidence: low)
 
 	// Nothing enabled matched. An explicit `--provider` names its target
 	// directly; otherwise re-resolve unfiltered to see what the selector was

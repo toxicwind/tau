@@ -20,13 +20,8 @@ import {
 	type FileAssetSide,
 	type FileContents,
 	type FileStreamUpdate,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 } from "@tau/tau-tui/apps/git/state";
-=======
-	type MediaRef,
-} from "@oh-my-pi/pi-tui/apps/git/state";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/cli/git-tui/state.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /** SHA of git's canonical empty tree: diff base for a root commit. */
 const EMPTY_TREE = "4b825dc642cb6eb9a060e54bf8d69288fbee4904";

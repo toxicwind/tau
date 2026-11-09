@@ -1,7 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import {` +4 more
 import { buildModel } from "@tau/tau-catalog/build";
 import { resetSettingsForTest, Settings } from "tau/config/settings";
@@ -14,19 +13,6 @@ import type { PlanYolo } from "tau/session/agent-session-types";
 import { PrewalkCoordinator, type PrewalkCoordinatorHost } from "tau/session/prewalk";
 import type { SessionManager } from "tau/session/session-manager";
 import { TempDir } from "@tau/tau-utils";
-=======
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { resolveLocalUrlToPath } from "@oh-my-pi/pi-coding-agent/internal-urls";
-import { getSettingsForTab } from "@oh-my-pi/pi-tui/overlays/settings-defs";
-import { createSettingsHost } from "@oh-my-pi/pi-coding-agent/config/settings-ui";
-import { autosaveApprovedPlan, resolvePlanAutosaveDir } from "@oh-my-pi/pi-coding-agent/plan-mode/plan-autosave";
-import type { PlanModeState } from "@oh-my-pi/pi-coding-agent/plan-mode/state";
-import type { PlanYolo } from "@oh-my-pi/pi-coding-agent/session/agent-session-types";
-import { PrewalkCoordinator, type PrewalkCoordinatorHost } from "@oh-my-pi/pi-coding-agent/session/prewalk";
-import type { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/plan-autosave.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 import { cfgPlanAutosave, cfgPlanEnabled } from "@oh-my-pi/pi-coding-agent/plan-mode/settings";
 
@@ -70,7 +56,6 @@ describe("plan autosave settings UI", () => {
 });
 
 describe("resolvePlanAutosaveDir", () => {
-<<<<<<< ours — scope `it("defaults to <project>/.omp/plans when uns...` in test_suite `resolvePlanAutosaveDir`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("defaults to <project>/.tau/plans when unset", () => {
 		const cwd = makeCwd();
@@ -78,8 +63,6 @@ describe("resolvePlanAutosaveDir", () => {
 		expect(resolvePlanAutosaveDir(settings, cwd)).toBe(path.join(cwd, ".tau", "plans"));
 		expect(defaultPlanAutosaveDir(cwd)).toBe(path.join(cwd, ".tau", "plans"));
 	});
-=======
->>>>>>> theirs — scope `it("defaults to <project>/.omp/plans when uns...` deleted in theirs
 
 	it("resolves absolute, tilde, and cwd-relative custom dirs", () => {
 		const cwd = makeCwd();

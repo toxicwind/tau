@@ -1,13 +1,7 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 import { describe, expect, it } from "bun:test";
 import { customToolToDefinition } from "tau/sdk";
 import type { AgentTool, ToolApproval } from "@tau/tau-agent-core";
-=======
-import { describe, expect, it, spyOn } from "bun:test";
-import { customToolToDefinition } from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AgentTool, ToolApproval } from "@oh-my-pi/pi-agent-core";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/tools/approval.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	type ApprovalMode,
 	denyError,
@@ -17,17 +11,9 @@ import {
 	resolveApproval,
 	resolveApprovalFromContext,
 	truncateForPrompt,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 } from "tau/tools/approval";
 import { BashTool } from "tau/tools/bash";
-=======
-} from "@oh-my-pi/pi-coding-agent/tools/approval";
-import { BashTool } from "@oh-my-pi/pi-coding-agent/tools/bash";
-import { WriteTool } from "@oh-my-pi/pi-coding-agent/tools/write";
-import { DeferredMCPTool, MCPTool } from "../../src/mcp/tool-bridge";
-import type { MCPServerConnection, MCPToolDefinition } from "../../src/mcp/types";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import { Settings } from "../../src/config/settings";
 import { EditTool } from "../../src/edit";
 import type { ToolSession } from "../../src/tools";

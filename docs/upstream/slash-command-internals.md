@@ -83,16 +83,10 @@ Search roots come from `.tau` directories:
 `getConfigDirs()` returns project first, then user, so **project native commands beat user native commands** when names collide.
 The default paths above can be relocated by `PI_CONFIG_DIR`, the default-profile `PI_CODING_AGENT_DIR`, or an SDK discovery `agentDir`; the project directory remains `.omp`.
 
-<<<<<<< ours — heading ``omp-plugins` provider (`omp-plugins.ts`)` (T+F, confidence: medium)
 // refused_by: rename_vs_edit_guard · collision: none (both sides edited, nowhere the same lines)
 ## `tau-plugins` provider (`tau-plugins.ts`)
 
 Scans `commands/*.md` in configured extension-package roots and enabled npm/link plugins. Root precedence is invocation/CLI, project settings, user settings, then installed plugins. Marketplace roots are excluded here to avoid duplicate discovery and are handled by `claude-plugins`.
-=======
-## `omp-plugins` provider (`omp-plugins.ts`)
-
-Scans `commands/*.md` in explicit extension-package directories, the effective `extensions` setting, and enabled npm/link plugins, in that order. The configured array follows settings replacement precedence; project and user arrays are not concatenated. Session-supplied effective roots are reused on reload. Explicit-only discovery omits configured and installed roots, and file entrypoints contribute no subdirectory resources. Marketplace roots are excluded here to avoid duplicate discovery and are handled by `claude-plugins`.
->>>>>>> theirs — heading ``omp-plugins` provider (`omp-plugins.ts`)` (T+F, confidence: medium) · weave: run 'weave explain docs/upstream/slash-command-internals.md' for per-hunk detail, 'weave check' to verify your resolution
 
 ## `claude` provider (`claude.ts`)
 
@@ -129,12 +123,8 @@ Both sides are loaded then flattened in user-first order, so **user OpenCode com
 
 Loads roots via `listClaudePluginRoots(...)`, which reads the active Claude config directory's `plugins/installed_plugins.json`, the active OMP plugins directory's `installed_plugins.json` (profile/XDG-aware), and the nearest project `.omp/plugins/installed_plugins.json`. Claude-origin user roots require `claude` or `claude-plugins` user opt-in; OMP and explicit local roots do not. Disabled registry entries and Claude `enabledPlugins: false` entries are excluded.
 
-<<<<<<< ours — scope `Loads plugin command roots via `listClaudePlu...` in heading ``claude-plugins` provider (`claude-plugins.ts`)` (S, confidence: medium)
 // refused_by: statement_fold · collision: `Loads plugin command roots via `listClaudePluginRoots(...)`, wh…`
 Loads plugin command roots via `listClaudePluginRoots(...)`, which reads `~/.claude/plugins/installed_plugins.json`, `~/.tau/plugins/installed_plugins.json`, and the nearest project-scoped registry resolved from cwd. For each root it scans `<pluginRoot>/commands/*.md` (the directory can be remapped by plugin config keys `commands`/`slash-commands`), and command names are prefixed with the plugin name: `<plugin>:<command>`.
-=======
-For each root it normally scans `<pluginRoot>/commands/*.md`. Manifest `commands`/`slash-commands` entries can instead select directories or individual Markdown files; the first populated key wins. Command names are prefixed with the plugin name when one is present: `<plugin>:<command>`.
->>>>>>> theirs — scope `Loads plugin command roots via `listClaudePlu...`
 
 Across the three registries, roots are merged by precedence rather than sorted: `--plugin-dir` injected roots come first, then project-scoped entries (which shadow user entries for the same plugin id), then user entries, with the TAU registry authoritative over Claude's for the same plugin id. Within each registry, per-plugin entry order from the JSON data is preserved; there is no additional sort step.
 

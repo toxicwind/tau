@@ -1,11 +1,5 @@
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { HTMLElement } from "@oh-my-pi/pi-utils/dom";`
 import type { HTMLElement } from "@tau/tau-utils/dom";
-=======
-import { prompt } from "@oh-my-pi/pi-utils";
-import { settings } from "../../config/settings";
-import xReadPrompt from "../../prompts/system/x-read.md" with { type: "text" };
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/web/scrapers/twitter.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { ToolAbortError } from "../../tools/tool-errors";
 import { SEARCH_HARD_TIMEOUT_MS } from "../search/providers/utils";
 import {
@@ -128,7 +122,6 @@ export const handleTwitter: SpecialHandler = async (url, timeout, signal, _stora
 		}
 	}
 	return unavailable(url, fetchedAt, `Grok's X tools failed for ${url}: ${failures.join("; ")}`);
-<<<<<<< ours — scope `try {` in function `handleTwitter`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	try {
 		const parsed = new URL(url);
@@ -186,6 +179,4 @@ export const handleTwitter: SpecialHandler = async (url, timeout, signal, _stora
 			throw new ToolAbortError();
 		}
 	}
-=======
->>>>>>> theirs — scope `try {` deleted in theirs
 };

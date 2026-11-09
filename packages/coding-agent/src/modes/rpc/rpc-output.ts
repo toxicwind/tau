@@ -1,11 +1,7 @@
 import * as fs from "node:fs";
 import type { Writable } from "node:stream";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { logger, TempDir } from "@oh-my-pi/pi-utils";`
 import { logger, TempDir } from "@tau/tau-utils";
-=======
-import { logger, TempDir, toError } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/modes/rpc/rpc-output.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { BunFile } from "bun";
 
 const READ_BYTES = 64 * 1024;

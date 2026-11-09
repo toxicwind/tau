@@ -1,12 +1,5 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { logger } from "@oh-my-pi/pi-utils";`
 import { logger } from "@tau/tau-utils";
-=======
-import { logger, sanitizeText, truncate } from "@oh-my-pi/pi-utils";
-import { getAgentDir } from "@oh-my-pi/pi-utils/dirs";
-import { shortenPath } from "@oh-my-pi/pi-tui/render/render-utils";
-import { findPersistedRecall, persistRecall } from "../memory-backend/recall-entry";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/hindsight/state.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { MemoryPromptPreparation } from "../memory-backend/types";
 import type { AgentSession } from "../session/agent-session";
 import { type BankScope, ensureBankExists, type HindsightBankSet } from "./bank";

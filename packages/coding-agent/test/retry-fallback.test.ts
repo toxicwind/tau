@@ -1,5 +1,4 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 import { ThinkingLevel } from "@tau/tau-agent-core";
 import type { Model, ModelKind } from "@tau/tau-catalog/types";
@@ -12,20 +11,6 @@ import {
 	validateRetryFallbackChains,
 } from "tau/session/retry-fallback-chains";
 import { Settings } from "tau/config/settings";
-=======
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { Model, ModelKind } from "@oh-my-pi/pi-catalog/types";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import {
-	expandDefaultRetryFallbackChains,
-	findRetryFallbackCandidates,
-	type RetryFallbackResolutionContext,
-	parseRetryFallbackSelector,
-	resolveRetryFallbackChainKey,
-	validateRetryFallbackChains,
-} from "@oh-my-pi/pi-coding-agent/session/retry-fallback-chains";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/retry-fallback.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function createContext(
 	chains: RetryFallbackResolutionContext["chains"],

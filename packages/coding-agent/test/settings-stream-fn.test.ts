@@ -8,28 +8,12 @@
  * (can1357/tau#3639).
  */
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import type { Context, Model, SimpleStreamOptions } from "@oh-m…` +1 more
 import type { StreamFn } from "@tau/tau-agent-core";
 import type { Context, Model, SimpleStreamOptions } from "@tau/tau-ai";
 import { AssistantMessageEventStream } from "@tau/tau-ai/utils/event-stream";
 import { Settings } from "tau/config/settings";
 import { createSettingsAwareStreamFn } from "tau/session/settings-stream-fn";
-=======
-import type { StreamFn } from "@oh-my-pi/pi-agent-core";
-import { type Context, type Model, type SimpleStreamOptions, streamSimple } from "@oh-my-pi/pi-ai";
-import { configureProviderStoreResponses } from "@oh-my-pi/pi-ai/providers/openai-responses-state";
-import type { FetchImpl } from "@oh-my-pi/pi-ai/types";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { bindEffects } from "@oh-my-pi/pi-coding-agent/config/registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { cfgProvidersMuseCodeStoreResponses } from "@oh-my-pi/pi-coding-agent/session/settings";
-import {
-	createSettingsAwareStreamFn,
-	resolveWebsocketPreference,
-} from "@oh-my-pi/pi-coding-agent/session/settings-stream-fn";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/settings-stream-fn.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /** Settings whose global (persisted) layer holds `storeResponses`; a runtime override would outrank the env var. */
 function persistedStore(value: boolean | undefined): Settings {

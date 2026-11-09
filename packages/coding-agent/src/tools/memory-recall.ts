@@ -1,13 +1,7 @@
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { logger, untilAborted } from "@oh-my-pi/pi-utils";`
 import { type } from "@tau/tautype";
 import type { AgentTool, AgentToolResult } from "@tau/tau-agent-core";
 import { logger, untilAborted } from "@tau/tau-utils";
-=======
-import { type } from "@oh-my-pi/omptype";
-import type { AgentTool, AgentToolResult } from "@oh-my-pi/pi-agent-core";
-import { logger, prompt, untilAborted, toError } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/memory-recall.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { isHindsightConfigured, loadHindsightConfig } from "../hindsight/config";
 import { formatCurrentTime, formatMemories } from "../hindsight/content";
 import recallDescription from "../prompts/tools/recall.md" with { type: "text" };
@@ -47,16 +41,10 @@ export class MemoryRecallTool implements AgentTool<typeof memoryRecallSchema> {
 
 	async execute(_id: string, params: MemoryRecallParams, signal?: AbortSignal): Promise<AgentToolResult> {
 		return untilAborted(signal, async () => {
-<<<<<<< ours — scope `execute` in class `MemoryRecallTool` (F, confidence: medium)
 // refused_by: container_member · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 			const backend = this.session.settings.get("memory.backend");
 			if (backend === "mnemotau") {
 				const state = this.session.getMnemotauSessionState?.();
-=======
-			const backend = cfgMemoryBackend.get(this.session.settings);
-			if (backend === "mnemopi") {
-				const state = this.session.getMnemopiSessionState?.();
->>>>>>> theirs — scope `execute`
 				if (!state) {
 					throw new Error("Mnemotau backend is not initialised for this session.");
 				}
@@ -80,14 +68,9 @@ export class MemoryRecallTool implements AgentTool<typeof memoryRecallSchema> {
 						details: {},
 					};
 				} catch (err) {
-<<<<<<< ours — scope `execute` in class `MemoryRecallTool` (F, confidence: medium)
 // refused_by: container_member · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 					logger.warn("recall failed", { backend: "mnemotau", bank: state.config.bank, error: String(err) });
 					throw err instanceof Error ? err : new Error(String(err));
-=======
-					logger.warn("recall failed", { backend: "mnemopi", bank: state.config.bank, error: String(err) });
-					throw toError(err);
->>>>>>> theirs — scope `execute`
 				}
 			}
 

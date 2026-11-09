@@ -6,12 +6,8 @@
  */
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { logger } from "@oh-my-pi/pi-utils";`
 import { logger } from "@tau/tau-utils";
-=======
-import { isRecord, logger } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/discovery/claude-plugins.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { isUserSourceEnabled, registerProvider } from "../capability";
 import { readFile } from "../capability/fs";
 import { type Hook, hookCapability } from "../capability/hook";

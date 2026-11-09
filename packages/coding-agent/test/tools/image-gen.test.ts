@@ -1,7 +1,6 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { afterAll, describe, expect, it } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { removeWithRetries } from "@oh-my-pi/pi-utils";`
 import { type Api, type FetchImpl, type Model } from "@tau/tau-ai";
 import { buildModel } from "@tau/tau-catalog/build";
@@ -12,23 +11,6 @@ import type { CustomToolContext, CustomToolResult } from "tau/extensibility/cust
 import { SessionManager } from "tau/session/session-manager";
 import { getImageGenTools, getImageGenToolsWithRegistry, imageGenTool } from "tau/tools/image-gen";
 import { removeWithRetries } from "@tau/tau-utils";
-=======
-import { type Api, type FetchImpl, type Model } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { factoryDroidRegistry } from "@oh-my-pi/pi-catalog/compat/factory-droid";
-import { buildFactoryDroidModel } from "@oh-my-pi/pi-catalog/discovery";
-import { modelKind } from "@oh-my-pi/pi-catalog/types";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { CustomToolContext, CustomToolResult } from "@oh-my-pi/pi-coding-agent/extensibility/custom-tools";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import {
-	getImageGenTools,
-	getImageGenToolsWithRegistry,
-	imageGenTool,
-} from "@oh-my-pi/pi-coding-agent/tools/image-gen";
-import { hasFsCode, removeWithRetries, TempDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/tools/image-gen.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { createInMemoryAuthStorage } from "../helpers/agent-session-setup";
 
 const generatedImagePaths: string[] = [];

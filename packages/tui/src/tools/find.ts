@@ -46,12 +46,8 @@ export interface FindRange {
 
 /** A file whose verified passages cleared the threshold; `ranges` are merged positive spans, strongest first. */
 export interface FindHit {
-<<<<<<< ours — scope `rel` in interface `FindHit` (S, confidence: medium)
 // refused_by: container_member · collision: `/** Display path relative to {@link FindToolDetails.cwd}, or an…`
 	/** Display path relative to {@link FindToolDetails.cwd}, or an `tau://` doc URL for docs scopes. */
-=======
-	/** Display path relative to {@link FindToolDetails.cwd}, or an internal URL under URL scopes. */
->>>>>>> theirs — scope `rel` · weave: run 'weave explain packages/tui/src/tools/find.ts' for per-hunk detail, 'weave check' to verify your resolution
 	rel: string;
 	/** Filename judgment, when the name batch answered. */
 	nameScore?: number;
@@ -175,16 +171,10 @@ function findLinkTargets(details: FindToolDetails, rawDetails: unknown) {
 }
 
 function renderHit(hit: FindHit, rangeLimit: number, cwd: string | undefined, rawRel: string, theme: Theme): string[] {
-<<<<<<< ours — scope `// `omp://` hits are virtual docs, not files ...` in function `renderHit` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `// `omp://` hits are virtual docs, not files under `cwd`: link …` +1 more
 	// `tau://` hits are virtual docs, not files under `cwd`: link the URL
 	// itself instead of joining it onto a filesystem base.
 	const isOmpHit = /^tau:\/\//i.test(hit.rel);
-=======
-	// `scheme://` hits (e.g. virtual docs) are not files under `cwd`: link the
-	// URL itself instead of joining it onto a filesystem base.
-	const isUrlHit = splitUrlScheme(hit.rel) !== undefined;
->>>>>>> theirs — scope `// `omp://` hits are virtual docs, not files ...`
 	const link = (text: string, line?: number): string => {
 		if (isUrlHit) return uriHyperlink(line === undefined ? hit.rel : `${hit.rel}:${line}`, text);
 		const absPath = cwd === undefined ? undefined : path.join(cwd, rawRel);

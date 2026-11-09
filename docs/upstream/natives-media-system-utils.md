@@ -1,11 +1,7 @@
 # Natives media + system utilities
 
-<<<<<<< ours — scope `This document covers the media/system/convers...` in heading `Natives media + system utilities` (S, confidence: medium)
 // refused_by: statement_fold · collision: `This document covers the media/system/conversion exports curren…`
 This document covers the media/system/conversion exports currently present in `@tau/tau-natives`: audio capture/playback and live WebRTC media, terminal SIXEL and snapcompact PNG encoding, HTML conversion, clipboard access, token counting, DeviceCheck, macOS appearance/power helpers, and work profiling.
-=======
-This document covers the media/system/conversion exports in `@oh-my-pi/pi-natives`: audio capture/playback and live WebRTC media, terminal SIXEL conversion, SVG rasterization, snapcompact PNG rendering, HTML/PDF conversion, clipboard access, token counting, DeviceCheck, macOS appearance/power helpers, and work profiling.
->>>>>>> theirs — scope `This document covers the media/system/convers...` · weave: run 'weave explain docs/upstream/natives-media-system-utils.md' for per-hunk detail, 'weave check' to verify your resolution
 
 ## Implementation files
 
@@ -27,12 +23,8 @@ This document covers the media/system/conversion exports in `@oh-my-pi/pi-native
 - `crates/tau-natives/src/task.rs`
 - `packages/natives/native/index.d.ts`
 
-<<<<<<< ours — scope `There is no native `PhotonImage` class, `imag...` in heading `Implementation files` (S, confidence: medium)
 // refused_by: statement_fold · collision: `There is no native `PhotonImage` class, `image.rs`, or ProjFS o…`
 There is no native `PhotonImage` class, `image.rs`, or ProjFS overlay helper module in the current `tau-natives` addon. General-purpose image decode/resize/encode is expected to live outside this surface; the image-specific exports here are terminal SIXEL encoding and snapcompact PNG frame rendering.
-=======
-There is no native `PhotonImage` class or `image.rs` in the addon. General-purpose image processing stays in `Bun.Image`; the native image surface supplies SIXEL encoding/decoding, bounded SVG rasterization, and snapcompact frame rendering. Filesystem isolation is a separate subsystem.
->>>>>>> theirs — scope `There is no native `PhotonImage` class, `imag...`
 
 ## JS API ↔ Rust export/module mapping
 

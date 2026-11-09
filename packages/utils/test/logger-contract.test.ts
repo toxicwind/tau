@@ -25,17 +25,9 @@ afterEach(async () => {
 	await Promise.all(roots.splice(0).map(root => fs.rm(root, { recursive: true, force: true })));
 });
 
-<<<<<<< ours — function `runScenario` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 async function runScenario(scenario: string): Promise<ScenarioResult> {
 	const root = await fs.mkdtemp(path.join(os.tmpdir(), "tau-logger-contract-"));
-=======
-async function runScenario(
-	scenario: string,
-	options: { logLevel?: string; probe?: string; exitCode?: number; testRuntime?: boolean } = {},
-): Promise<ScenarioResult> {
-	const root = await fs.mkdtemp(path.join(os.tmpdir(), "omp-logger-contract-"));
->>>>>>> theirs — function `runScenario` (S+F, confidence: low) · weave: run 'weave explain packages/utils/test/logger-contract.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 	roots.push(root);
 	const primaryDir = path.join(root, "primary");
 	const secondaryDir = path.join(root, "secondary");
@@ -71,18 +63,8 @@ async function runScenario(
 				// Empty XDG_CACHE_HOME makes Bun's transpiler cache path relative,
 				// spewing bun/@t@/*.pile into the repo root (the child's cwd) — disable it.
 				BUN_RUNTIME_TRANSPILER_CACHE_PATH: "0",
-<<<<<<< ours — function `runScenario` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 				TAU_LOGGER_TEST_NOW: fixedNow,
-=======
-				// os.tmpdir() reads TMPDIR on POSIX and TMP/TEMP on Windows.
-				TMPDIR: tmpDir,
-				TMP: tmpDir,
-				TEMP: tmpDir,
-				PI_TEST_RUNTIME: options.testRuntime ? "1" : "",
-				OMP_LOGGER_TEST_NOW: fixedNow,
-				OMP_LOG_LEVEL: options.logLevel ?? "",
->>>>>>> theirs — function `runScenario` (S+F, confidence: low)
 				TZ: "Etc/GMT+5",
 			},
 			stdout: Bun.file(stdoutPath),
@@ -171,12 +153,8 @@ describe("central logger byte contract", () => {
 		].join("");
 		expect(log.text).toBe(expected);
 		expect(log.text.endsWith(os.EOL)).toBe(true);
-<<<<<<< ours — scope `test("pins levels, metadata normalization, ke...` in test_suite `central logger byte contract` (F, confidence: medium)
 // refused_by: statement_fold · collision: `expect(await fs.readFile(path.join(result.primaryDir, `.omp.${r…`
 		expect(await fs.readFile(path.join(result.primaryDir, `.tau.${result.pid}-audit.json`), "utf8")).not.toBe("");
-=======
-		expect((await fs.readdir(result.primaryDir)).filter(name => name.endsWith("-audit.json"))).toEqual([]);
->>>>>>> theirs — scope `test("pins levels, metadata normalization, ke...`
 	});
 
 	test("treats Winston format tokens as a splat branch and omits context", async () => {
@@ -411,7 +389,6 @@ describe("DailyRotateFile option and retention contract", () => {
 				expectedLine(result.pid, "info", `date-${day}`, {}, timestamp),
 			);
 		}
-<<<<<<< ours — scope `test("uses local-day names, a PID audit, SHA-...` in test_suite `DailyRotateFile option and retention contract` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `const auditPath = path.join(result.primaryDir, `.omp.${result.p…`
 
 		const auditPath = path.join(result.primaryDir, `.tau.${result.pid}-audit.json`);
@@ -425,9 +402,6 @@ describe("DailyRotateFile option and retention contract", () => {
 			expect(file.hash).toBe(hash);
 			expect(file.hash).toMatch(/^[0-9a-f]{64}$/);
 		}
-=======
-		expect((await fs.readdir(result.primaryDir)).sort()).toEqual(expectedNames);
->>>>>>> theirs — scope `test("uses local-day names, a PID audit, SHA-...`
 	});
 
 	test("crosses 10 MiB before rolling the following record to suffix .1", async () => {
@@ -453,19 +427,14 @@ describe("DailyRotateFile option and retention contract", () => {
 		expect(await fs.readFile(path.join(result.primaryDir, rotatedName), "utf8")).toBe(
 			expectedLine(result.pid, "info", "rotation-trigger"),
 		);
-<<<<<<< ours — scope `test("crosses 10 MiB before rolling the follo...` in test_suite `DailyRotateFile option and retention contract` (F, confidence: medium)
 // refused_by: statement_fold · collision: `await fs.readFile(path.join(result.primaryDir, `.omp.${result.p…`
 		const audit = JSON.parse(
 			await fs.readFile(path.join(result.primaryDir, `.tau.${result.pid}-audit.json`), "utf8"),
 		) as AuditFile;
 		expect(audit.keep).toEqual({ days: false, amount: 5 });
 		expect(audit.files.map(file => path.basename(file.name))).toEqual([baseName, rotatedName]);
-=======
-		expect((await fs.readdir(result.primaryDir)).sort()).toEqual([baseName, rotatedName]);
->>>>>>> theirs — scope `test("crosses 10 MiB before rolling the follo...`
 	});
 });
-<<<<<<< ours — test `root and direct source entry points expose identical public logger functions` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 test("root and direct source entry points expose identical public logger functions", async () => {
 	const root = await fs.mkdtemp(path.join(os.tmpdir(), "tau-logger-api-"));
@@ -506,5 +475,3 @@ test("root and direct source entry points expose identical public logger functio
 		],
 	});
 });
-=======
->>>>>>> theirs — test `root and direct source entry points expose identical public logger functions` (S+F, confidence: low)

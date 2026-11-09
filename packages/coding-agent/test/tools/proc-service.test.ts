@@ -1,14 +1,8 @@
 import { describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { setProcessName, TempDir } from "@oh-my-pi/pi-utils";`
 import { setProcessName, TempDir } from "@tau/tau-utils";
-=======
-import { procmgr, setProcessName, TempDir } from "@oh-my-pi/pi-utils";
-import type { AgentToolContext } from "@oh-my-pi/pi-agent-core";
-import { Settings } from "../../src/config/settings";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/tools/proc-service.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { AsyncJobManager } from "../../src/async/job-manager";
 import { ProcProtocolHandler } from "../../src/internal-urls/proc-protocol";
 import { parseInternalUrl } from "../../src/internal-urls/parse";

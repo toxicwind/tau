@@ -2,17 +2,10 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { type AuthCredentialStore, AuthStorage, SqliteAuthCrede…`
 import { withOAuthAccess } from "@tau/tau-ai/auth-retry";
 import { type AuthCredentialStore, AuthStorage, SqliteAuthCredentialStore } from "@tau/tau-ai/auth-storage";
 import * as oauthUtils from "@tau/tau-ai/registry/oauth";
-=======
-import { withOAuthAccess } from "@oh-my-pi/pi-ai/auth-retry";
-import { AuthStorage, SqliteAuthCredentialStore } from "@oh-my-pi/pi-ai/auth-storage";
-import { ProviderHttpError } from "@oh-my-pi/pi-ai/error";
-import * as oauthUtils from "@oh-my-pi/pi-ai/registry/oauth";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/ai/test/auth-storage-oauth-account-select.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const PROVIDER = "unit-oauth-select";
 

@@ -2,21 +2,12 @@ import { beforeAll, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import type { BashResult } from "@oh-my-pi/pi-coding-agent/exec…`
 import type { BashResult } from "tau/exec/bash-executor";
 import { BashExecutionComponent } from "@tau/tau-tui/chat/bash-execution";
 import { CommandController } from "tau/modes/controllers/command-controller";
 import { getThemeByName, setThemeInstance } from "@tau/tau-tui/theme";
 import type { InteractiveModeContext } from "tau/modes/types";
-=======
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { BashPtyOptions, BashResult } from "@oh-my-pi/pi-coding-agent/exec/bash-executor";
-import { BashExecutionComponent } from "@oh-my-pi/pi-tui/chat/bash-execution";
-import { CommandController } from "@oh-my-pi/pi-coding-agent/modes/controllers/command-controller";
-import { getThemeByName, setThemeInstance } from "@oh-my-pi/pi-tui/theme";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/modes/controllers/bash-command.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function createContainer() {
 	return {

@@ -1,6 +1,5 @@
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { isEnoent, logger } from "@oh-my-pi/pi-utils";` +1 more
 import { type } from "@tau/tautype";
 import { isEnoent, logger } from "@tau/tau-utils";
@@ -11,24 +10,6 @@ import { applyTauvisorPrecedence, collectConfigCandidates } from "./watchdog";
 import { applySandboxToToolGrant, classifyAdvisorSandbox, type AdvisorSandbox } from "./sandbox";
 
 import type { AdvisorConfig, AdvisorConfigScope, WatchdogConfigDoc } from "@tau/tau-tui/overlays/advisor-config";
-=======
-import { type } from "@oh-my-pi/omptype";
-import { isEnoent, logger, slugify } from "@oh-my-pi/pi-utils";
-import { YAML } from "bun";
-import { expandAtImports } from "../discovery/at-imports";
-import { BUILTIN_TOOL_NAMES, normalizeToolNames } from "../tools/builtin-names";
-import { applyTauvisorPrecedence, collectConfigCandidates } from "./watchdog";
-import { applySandboxToToolGrant, classifyAdvisorSandbox, type AdvisorSandbox } from "./sandbox";
-
-import {
-	ADVISOR_SESSION_SCOPES,
-	ADVISOR_SYNC_BACKLOG_MODES,
-	type AdvisorConfig,
-	type AdvisorConfigScope,
-	type AdvisorSyncBacklog,
-	type WatchdogConfigDoc,
-} from "@oh-my-pi/pi-tui/overlays/advisor-config";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/advisor/config.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 export {
 	ADVISOR_REVIEW_MODES,

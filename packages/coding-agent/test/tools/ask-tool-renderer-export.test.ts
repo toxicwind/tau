@@ -15,7 +15,6 @@ describe("askToolRenderer reachability from extensions (issue #12680)", () => {
 		expect(namespace.askToolRenderer).toBe(askToolRenderer);
 	});
 
-<<<<<<< ours — scope `it("carries the render surface shadow-ask ext...` in test_suite `askToolRenderer reachability from extensions (issue #12680)`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("carries the render surface shadow-ask extensions consumed before the tau-tui migration", () => {
 		const renderer = namespace.askToolRenderer as typeof askToolRenderer | undefined;
@@ -24,6 +23,4 @@ describe("askToolRenderer reachability from extensions (issue #12680)", () => {
 		expect(typeof renderer?.renderResult).toBe("function");
 		expect(renderer?.mergeCallAndResult).toBe(true);
 	});
-=======
->>>>>>> theirs — scope `it("carries the render surface shadow-ask ext...` deleted in theirs · weave: run 'weave explain packages/coding-agent/test/tools/ask-tool-renderer-export.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 });

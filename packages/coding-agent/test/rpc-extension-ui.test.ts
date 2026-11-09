@@ -1,21 +1,8 @@
 import { describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { isRecord, readJsonl, TempDir } from "@tau/tau-utils";
 import { type PendingExtensionRequest, requestRpcDialog, requestRpcSelect } from "tau/modes/rpc/rpc-mode";
-=======
-import { isRecord, readJsonl, TempDir } from "@oh-my-pi/pi-utils";
-import type { ExtensionAskDialogQuestion } from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
-import {
-	type PendingExtensionRequest,
-	type RpcExtensionUIResponse,
-	requestRpcAskDialog,
-	requestRpcDialog,
-	requestRpcInput,
-	requestRpcSelect,
-} from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-mode";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/rpc-extension-ui.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function requireRequest(frame: object | undefined): { id: string } {
 	if (!frame || !("id" in frame)) {

@@ -2,16 +2,10 @@ import { afterEach, describe, expect, it } from "bun:test";
 import * as path from "node:path";
 import * as url from "node:url";
 import { applyHyperlinkSetting } from "../src/render/hyperlink";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { grepToolRenderer } from "@oh-my-pi/pi-tui/tools/grep";`
 import { getThemeByName } from "@tau/tau-tui/theme";
 import { sanitizeText } from "@tau/tau-utils";
 import { grepToolRenderer } from "@tau/tau-tui/tools/grep";
-=======
-import { getThemeByName } from "@oh-my-pi/pi-tui/theme";
-import { sanitizeText } from "@oh-my-pi/pi-utils";
-import { type GrepToolDetails, grepToolRenderer } from "@oh-my-pi/pi-tui/tools/grep";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/tui/test/grep-render.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function extractLinkUris(text: string): string[] {
 	return [...text.matchAll(/\x1b\]8;[^;]*;([^\x1b]+)\x1b\\/g)].map(match => match[1]!);

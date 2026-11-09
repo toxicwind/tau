@@ -32,12 +32,7 @@
     "build": "bun ../../scripts/bazel-natives.ts host --dest native",
     "build:bindings": "bun scripts/build-bindings.ts",
     "check": "oxlint . && oxfmt --check --no-error-on-unmatched-pattern 'src/**/*.{ts,tsx}' '{test,bench,examples,scripts}/**/*.ts' '*.ts' && bun run check:types",
-<<<<<<< ours — scope `"check:types": "tsgo -p tsconfig.json --noEmit",` in object `scripts` (S, confidence: medium)
-// refused_by: statement_fold · collision: `"check:types": "tsgo -p tsconfig.json --noEmit",`
     "check:types": "bun ../../scripts/typecheck.ts . --noEmit",
-=======
-    "check:types": "bun check --no-script -p tsconfig.json",
->>>>>>> theirs — scope `"check:types": "tsgo -p tsconfig.json --noEmit",` · weave: run 'weave explain packages/natives/package.json' for per-hunk detail, 'weave check' to verify your resolution
     "lint": "oxlint .",
     "test": "bun test --parallel",
     "fix": "oxlint --fix --fix-suggestions . && bun run fmt",
@@ -46,7 +41,7 @@
     "bench": "bun bench/grep.ts",
     "bench:text": "bun bench/text.ts",
     "bench:ipc": "bun bench/ipc.ts"
-  }
+  },
   "devDependencies": {
     "@types/bun": "^1.4.4",
     "bun-types": "^1.4.4",

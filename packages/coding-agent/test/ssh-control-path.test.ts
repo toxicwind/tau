@@ -72,7 +72,6 @@ describe("resolveSshControlDir", () => {
 		expect(controlPathFitsBudget(choice.dir, "darwin")).toBe(true);
 	});
 
-<<<<<<< ours — scope `it("keeps distinct fallback masters for the s...` in test_suite `resolveSshControlDir`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("keeps distinct fallback masters for the same profile under different XDG state roots", () => {
 		const a = resolveSshControlDir({
@@ -89,8 +88,6 @@ describe("resolveSshControlDir", () => {
 		expect(b.shared).toBe(true);
 		expect(a.dir).not.toBe(b.dir);
 	});
-=======
->>>>>>> theirs — scope `it("keeps distinct fallback masters for the s...` deleted in theirs · weave: run 'weave explain packages/coding-agent/test/ssh-control-path.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 	it("never relocates on Windows (ControlMaster unused) even for a long path", () => {
 		const canonicalDir = "/Users/arthur/.tau/profiles/upstream/ssh-control";

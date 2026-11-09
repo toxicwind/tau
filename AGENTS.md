@@ -8,7 +8,6 @@ This repo contains multiple packages, but **`packages/coding-agent/`** is the pr
 
 ### Package Structure
 
-<<<<<<< ours — heading `Package Structure` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `| `packages/stats`        | Local observability dashboard (`omp…` +2 more
 | Package                 | Description                                                                             |
 | ----------------------- | --------------------------------------------------------------------------------------- |
@@ -22,20 +21,6 @@ This repo contains multiple packages, but **`packages/coding-agent/`** is the pr
 | `packages/tautype`      | ArkType-compatible schema validation with a lazy JIT runtime                            |
 | `packages/utils`        | Shared utilities (logger, streams, temp files)                                          |
 | `crates/tau-natives`     | Rust crate for performance-critical text/grep ops                                       |
-=======
-|Package|Description|
-|---|---|
-|`packages/ai`|Multi-provider LLM client with streaming support|
-|`packages/catalog`|Model catalog: bundled models.json, provider descriptors, model identity/classification|
-|`packages/agent`|Agent runtime with tool calling and state management|
-|`packages/coding-agent`|Main CLI application (primary focus)|
-|`packages/tui`|Terminal UI library with differential rendering|
-|`packages/natives`|Bindings for native text/image/grep operations|
-|`packages/stats`|Local observability dashboard (`omp stats`)|
-|`packages/omptype`|ArkType-compatible schema validation with a lazy JIT runtime|
-|`packages/utils`|Shared utilities (logger, streams, temp files)|
-|`crates/pi-natives`|Rust crate for performance-critical text/grep ops|
->>>>>>> theirs — heading `Package Structure` (S+F, confidence: low) · weave: run 'weave explain AGENTS.md' for per-hunk detail, 'weave check' to verify your resolution
 
 **Catalog import convention**: code in this repo imports catalog _values_ (bundled models, model-thinking helpers, identity, descriptors, model manager/cache) from `@tau/tau-catalog/<module>` — never via `@tau/tau-ai`. The tau-ai barrel re-exports only the model/effort _types_ its own signatures use (`Model`, `Api`, `ThinkingConfig`, `Effort`, …); type-only imports of those from `@tau/tau-ai` are fine.
 
@@ -65,13 +50,8 @@ When authorized to create or edit a contributor-submitted PR, follow the checkli
 - **Class privacy**: use ES `#private` fields; leave externally accessible members bare. **No `private`/`protected`/`public` keyword on fields or methods**, except on **constructor parameter properties** where TypeScript requires it (e.g. `constructor(private readonly session: ToolSession)`).
 - **Promises**: use `Promise.withResolvers()` instead of `new Promise((resolve, reject) => ...)`.
 - **Prompts**: never build prompts in code (no inline strings, template literals, or concatenation). Prompts live in static `.md` files; use Handlebars for dynamic content. Import them via `import content from "./prompt.md" with { type: "text" }` — not `readFile`.
-<<<<<<< ours — heading `Code Quality` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 - **Worker scripts**: workers re-enter the CLI entrypoint; never spawn separate worker entry modules. `cli.ts` declares itself as the worker host at startup (`declareWorkerHostEntry()` from `@tau/tau-utils/env`) and dispatches hidden argv selectors (`__tau_worker_stats_sync`, `__tau_worker_tab`, `__tau_worker_js_eval`, `__tau_worker_tiny_inference`) before loading the command registry. Spawn sites use:
-=======
-- **Judge questions**: one JSON file per feature (`src/prompts/judge/<feature>.json`) maps question ids to `{ instructions, criteria? }`. Load it with `judgeQuestions(file)` from `@oh-my-pi/pi-ai`; fill Handlebars instructions with `renderQuestion(question, context)`. `criteria` sets the kind: a list of levels → score, omitted or `true`/`false` keys only → yes/no, any other labels → choice (`{}` when the caller supplies the labels). Choice labels and answer types come from the JSON keys.
-- **Worker scripts**: workers re-enter the CLI entrypoint; never spawn separate worker entry modules. `cli.ts` declares itself as the worker host at startup (`declareWorkerHostEntry()` from `@oh-my-pi/pi-utils/env`) and dispatches hidden argv selectors (`__omp_worker_stats_sync`, `__omp_worker_tab`, `__omp_worker_js_eval`, `__omp_worker_tiny_inference`) before loading the command registry. Spawn sites use:
->>>>>>> theirs — heading `Code Quality` (F, confidence: medium)
   ```ts
   import { workerHostEntry } from "@tau/tau-utils";
   const hostEntry = workerHostEntry();
@@ -97,7 +77,6 @@ Use Bun APIs where they provide a cleaner alternative; fall back to `node:*` onl
 
 ### Quick reference
 
-<<<<<<< ours — heading `Quick reference` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `| Binary lookup   | `$which("git")` from `@oh-my-pi/pi-utils` |…`
 | Operation       | Use                                       | Not                                |
 | --------------- | ----------------------------------------- | ---------------------------------- |
@@ -113,22 +92,6 @@ Use Bun APIs where they provide a cleaner alternative; fall back to `node:*` onl
 | JSONL           | `Bun.JSONL.parse()` / `.parseChunk()`     | `text.split("\n").map(JSON.parse)` |
 | String width    | `Bun.stringWidth()`                       | `get-east-asian-width`, custom     |
 | Text wrapping   | `Bun.wrapAnsi()`                          | custom ANSI-aware wrappers         |
-=======
-|Operation|Use|Not|
-|---|---|---|
-|File read/write|`Bun.file()`, `Bun.write()`|`readFileSync`, `writeFileSync`|
-|Spawn process|`` $`cmd` ``, `Bun.spawn()`|`child_process`|
-|Sleep|`Bun.sleep(ms)`|`setTimeout` promise|
-|Binary lookup|`$which("git")` from `@oh-my-pi/pi-utils`|`spawnSync(["which", "git"])`|
-|HTTP server|`Bun.serve()`|`http.createServer()`|
-|SQLite|`bun:sqlite`|`better-sqlite3`|
-|Hashing|`Bun.hash()`, `Bun.password.*`, WebCrypto|`node:crypto`|
-|Path resolution|`import.meta.dir`, `import.meta.path`|`fileURLToPath` dance|
-|JSON5|`Bun.JSON5.parse()` / `.stringify()`|`json5` package|
-|JSONL|`Bun.JSONL.parse()` / `.parseChunk()`|`text.split("\n").map(JSON.parse)`|
-|String width|`Bun.stringWidth()`|`get-east-asian-width`, custom|
-|Text wrapping|`Bun.wrapAnsi()`|custom ANSI-aware wrappers|
->>>>>>> theirs — heading `Quick reference` (S+F, confidence: low)
 
 ### Process execution
 
@@ -264,12 +227,8 @@ logger.warn("Theme file invalid, using fallback", { path });
 logger.debug("LSP fallback triggered", { reason });
 ```
 
-<<<<<<< ours — scope `Logs go to `~/.omp/logs/omp.YYYY-MM-DD.log` w...` in heading `Logging and CLI Output` (S, confidence: medium)
 // refused_by: statement_fold · collision: `Logs go to `~/.omp/logs/omp.YYYY-MM-DD.log` with automatic rota…`
 Logs go to `~/.tau/logs/tau.YYYY-MM-DD.log` with automatic rotation. Standalone CLI commands that exit without entering the TUI MAY use `console.*` or process streams for intentional user-facing output. Keep structured stdout clean. This exception is semantic, not filename-based; shared code must use `logger` or an explicit output sink.
-=======
-Logs go to `~/.omp/logs/omp.YYYY-MM-DD.log` with automatic rotation; `bun test` processes write theirs to a per-user `omp-test-logs-<uid>/` under the OS temp dir instead. Standalone CLI commands that exit without entering the TUI MAY use `console.*` or process streams for intentional user-facing output. Keep structured stdout clean. This exception is semantic, not filename-based; shared code must use `logger` or an explicit output sink.
->>>>>>> theirs — scope `Logs go to `~/.omp/logs/omp.YYYY-MM-DD.log` w...`
 
 ## TUI Sanitization
 
@@ -304,12 +263,8 @@ For the bash tool specifically:
 
 - NEVER commit unless asked.
 - Never use `tsc`/`npx tsc` — always `bun check`.
-<<<<<<< ours — scope `- Never run `cargo test` directly for Rust te...` in heading `Commands` (S, confidence: medium)
 // refused_by: statement_fold · collision: `- Never run `cargo test` directly for Rust tests — use `bun run…`
 - Never run `cargo test` directly for Rust tests — use `bun run test:rs`. It runs `cargo nextest run` (config: `.config/nextest.toml`) followed by a `cargo test --doc` pass, because nextest does not execute doctests. The doctest pass currently executes nothing (tau-natives is a `cdylib`, which rustdoc skips; tau-builtins' examples are `ignore`d vendored uutils docs) and exists so the first runnable doctest added to a lib crate is actually run.
-=======
-- Never run `cargo test` directly for Rust tests — use `bun run test:rs`. It runs `cargo nextest run` (config: `.config/nextest.toml`) followed by a `cargo test --doc` pass, because nextest does not execute doctests. The doctest pass runs every runnable doctest in the workspace's lib crates; today that is tree-sitter-go's one example (pi-natives is a `cdylib`, which rustdoc skips; pi-builtins' examples are `ignore`d vendored uutils docs).
->>>>>>> theirs — scope `- Never run `cargo test` directly for Rust te...`
 - `bun check`'s Rust half runs only when the branch changed a Rust-affecting file (`*.rs`, `crates/`, Cargo/toolchain files) since its merge base with `upstream/main` or `origin/main`, committed or not; it always runs in GitHub Actions, when that cannot be determined (e.g. shallow clone), or with `OMP_FORCE_RUST_TASKS=1`.
 - Merge commits (maintainer merges of PRs) follow: `Merge PR #<number>: <conventional PR subject> (@<author>)` — e.g. `Merge PR #6386: feat(catalog): add native Meta Model API provider (@eggpeat)`.
 ## Rust Build Profiles
@@ -368,12 +323,9 @@ Test the contract the system exposes — not the easiest internal detail to asse
 
 Location: `packages/*/CHANGELOG.md` (per package).
 
-<<<<<<< ours — scope `Location: `packages/*/CHANGELOG.md` (per pack...` in heading `Changelog` (S, confidence: medium)
 // refused_by: statement_fold · collision: `**NEVER update changelogs unless explicitly asked.** Do not add…`
 **NEVER update changelogs unless explicitly asked.** Do not add, edit, or reorder entries as part of a feature, fix, or PR unless the architect requests it.
 
-=======
->>>>>>> theirs — scope `Location: `packages/*/CHANGELOG.md` (per pack...`
 **Format** — sections under `## [Unreleased]`:
 
 - `### Breaking Changes` (first if present)

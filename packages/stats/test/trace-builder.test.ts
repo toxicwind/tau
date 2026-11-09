@@ -8,23 +8,10 @@
 import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { buildSessionTrace, getTraceEntry, listSessionSummaries…`
 import { syncAllSessions } from "@tau/tau-stats/aggregator";
 import { buildSessionTrace, getTraceEntry, listSessionSummaries, TracePathError } from "@tau/tau-stats/trace";
 import { getSessionsDir } from "@tau/tau-utils";
-=======
-import { syncAllSessions } from "@oh-my-pi/omp-stats/aggregator";
-import {
-	buildSessionTrace,
-	buildSessionTraceFromSnapshots,
-	getTraceEntry,
-	listSessionSummaries,
-	TracePathError,
-} from "@oh-my-pi/omp-stats/trace";
-import type { SessionEntry, SessionHeader } from "@oh-my-pi/omp-stats/types";
-import { getSessionsDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/stats/test/trace-builder.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { installStatsTestIsolation } from "./helpers/temp-agent";
 
 installStatsTestIsolation("@tau-stats-trace-");

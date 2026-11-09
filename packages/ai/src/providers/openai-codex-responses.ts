@@ -1,13 +1,7 @@
 import { scheduler } from "node:timers/promises";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 import { type } from "@tau/tautype";
 import { calculateCost } from "@tau/tau-catalog/models";
-=======
-import { type } from "@oh-my-pi/omptype";
-import { getSupportedEfforts } from "@oh-my-pi/pi-catalog/model-thinking";
-import { calculateCost } from "@oh-my-pi/pi-catalog/models";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/src/providers/openai-codex-responses.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	applyCodexResidencyHeader,
 	CODEX_BASE_URL,
@@ -30,13 +24,8 @@ import {
 	structuredCloneJSON,
 	toFetchBody,
 	USER_AGENT,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-utils";
-import { LRUCache } from "@oh-my-pi/pi-utils/lru";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import * as AIError from "../error";
 import { parseToolCallArguments, replayableToolCallArguments } from "../utils/tool-call-arguments";
 import { getEnvApiKey } from "../env-api-key";
@@ -1484,12 +1473,8 @@ function applyCodexStableEffort(
 	const lowest = options?.minimizeEffort ? lowestCodexWireEffort(model) : undefined;
 	body.reasoning = {
 		...body.reasoning,
-<<<<<<< ours — scope `body.reasoning = { ...body.reasoning, effort:...` in function `applyCodexStableEffort` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `body.reasoning = { ...body.reasoning, effort: planStableOpenAIE…`
 		effort: planStableOpenAIEffort(state, body.input, effort),
-=======
-		effort: planStableOpenAIEffort(state, body.input, effort, lowest === "none" ? undefined : lowest),
->>>>>>> theirs — scope `body.reasoning = { ...body.reasoning, effort:...`
 	};
 }
 
@@ -1963,16 +1948,12 @@ async function openCodexSseTransport(
 		stream_options: wireBody.stream_options ? { ...wireBody.stream_options } : undefined,
 		service_tier: wireBody.service_tier,
 	};
-<<<<<<< ours — scope `return { eventStream: await open(wireBody), r...` in function `openCodexSseTransport` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `return { eventStream: await open(wireBody), requestBodyForState…`
 	return {
 		eventStream: await open(wireBody),
 		requestBodyForState: structuredCloneJSON(wireBody),
 		transport: "sse",
 	};
-=======
-	return { eventStream: await open(wireBody), requestBodyForState, transport: "sse" };
->>>>>>> theirs — scope `return { eventStream: await open(wireBody), r...`
 }
 
 function isJsonWhitespaceOnly(value: string): boolean {
@@ -3187,16 +3168,10 @@ class CodexStreamProcessor {
 		this.runtime.sawTerminalEvent = false;
 		resetOutputState(this.output);
 		this.firstTokenTime = undefined;
-<<<<<<< ours — scope `#tryRetryProviderError` in class `CodexStreamProcessor` (F, confidence: medium)
 // refused_by: container_member · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 		// The watchdog aborted the previous attempt's controller; mint a fresh
 		// one so the retry doesn't inherit the aborted signal.
 		this.#refreshRequestSetup();
-=======
-		if (this.requestSetup.requestAbortController.signal.aborted) {
-			this.requestSetup = createRequestSetup(this.options);
-		}
->>>>>>> theirs — scope `#tryRetryProviderError`
 		await scheduler.wait(CODEX_RETRY_DELAY_MS * this.runtime.providerRetryAttempt, {
 			signal: this.requestSetup.requestSignal,
 		});
@@ -3983,7 +3958,6 @@ class CodexWebSocketConnection {
 	}
 
 	async connect(signal?: AbortSignal): Promise<void> {
-<<<<<<< ours — scope `connect` in class `CodexWebSocketConnection` (S+F, confidence: low)
 // refused_by: container_member · collision: `reject(new CodexWebSocketTransportError(`request was aborted`, …` +3 more
 		if (this.isOpen()) return;
 		if (this.#connectPromise) {
@@ -4108,9 +4082,6 @@ class CodexWebSocketConnection {
 		};
 
 		logger.time("codexWs:awaitTcpHandshake");
-=======
-		logger.time(this.#channel.isConnecting() ? "codexWs:awaitSharedHandshake" : "codexWs:awaitTcpHandshake");
->>>>>>> theirs — scope `connect`
 		try {
 			await this.#channel.connect(signal);
 		} catch (error) {
@@ -4126,7 +4097,6 @@ class CodexWebSocketConnection {
 		onOwned?: () => void,
 		releaseReservation?: () => void,
 	): AsyncGenerator<Record<string, unknown>> {
-<<<<<<< ours — scope `streamRequest` in class `CodexWebSocketConnection` (S+F, confidence: low)
 // refused_by: container_member · collision: `throw new CodexWebSocketTransportError(`request was aborted`, {…` +1 more
 		if (!this.#socket || this.#socket.readyState !== WebSocket.OPEN) {
 			throw new CodexWebSocketTransportError(`websocket connection is unavailable`);
@@ -4162,10 +4132,6 @@ class CodexWebSocketConnection {
 			this.close("aborted");
 		};
 		if (signal) signal.addEventListener("abort", onAbort, { once: true });
-=======
-		releaseReservation?.();
-		let owned = false;
->>>>>>> theirs — scope `streamRequest`
 		try {
 			yield* this.#channel.streamRequest(
 				"send" in exchange ? exchange : { receive: true },
@@ -4260,7 +4226,6 @@ class CodexWebSocketConnection {
 		for (const waiter of waiters) waiter.reject(new CodexWebSocketTransportError(reason));
 	}
 
-<<<<<<< ours — scope `#failQueue` in class `CodexWebSocketConnection`, deleted in theirs (T+F, confidence: medium)
 // refused_by: container_member · collision: none (no common ancestor text)
 	#failQueue(error: Error, closeReason: string): void {
 		CODEX_DEBUG &&
@@ -4273,8 +4238,6 @@ class CodexWebSocketConnection {
 		this.close(closeReason);
 		this.#wakeWaiters();
 	}
-=======
->>>>>>> theirs — scope `#failQueue` deleted in theirs
 }
 
 function translateCodexWebSocketError(error: unknown): unknown {
@@ -4411,7 +4374,6 @@ async function openCodexSseEventStream(
 			sentModelsEtagHeader: headers.has(X_MODELS_ETAG_HEADER),
 		});
 
-<<<<<<< ours — scope `const send = (requestBody: string | Uint8Arra...` in function `openCodexSseEventStream`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	const send = (requestBody: string | Uint8Array): Promise<Response> =>
 		fetchWithRetry(url, {
@@ -4433,8 +4395,6 @@ async function openCodexSseEventStream(
 			fetch: fetchAttempt,
 			timeout: false,
 		});
-=======
->>>>>>> theirs — scope `const send = (requestBody: string | Uint8Arra...` deleted in theirs
 	let response: Response;
 	try {
 		response = await fetchWithRetry(url, {

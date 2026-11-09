@@ -2,7 +2,6 @@ import { beforeAll, describe, expect, it, spyOn } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { AgentSession } from "@oh-my-pi/pi-coding-agent/se…`
 import { Tokenizer } from "@tau/tau-agent-core";
 import type { ResetCreditAccountStatus, ResetCreditRedeemOutcome, ResetCreditTarget, UsageReport } from "@tau/tau-ai";
@@ -13,29 +12,6 @@ import type { AgentSession } from "tau/session/agent-session";
 import type { SessionManager } from "tau/session/session-manager";
 import { executeAcpBuiltinSlashCommand } from "tau/slash-commands/acp-builtins";
 import { getProjectDir, removeWithRetries, setProjectDir } from "@tau/tau-utils";
-=======
-import { Tokenizer } from "@oh-my-pi/pi-agent-core";
-import type {
-	ResetCreditAccountStatus,
-	ResetCreditRedeemOutcome,
-	ResetCreditTarget,
-	UsageReport,
-} from "@oh-my-pi/pi-ai";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { PluginManager } from "@oh-my-pi/pi-coding-agent/extensibility/plugins";
-import { MarketplaceManager } from "@oh-my-pi/pi-coding-agent/extensibility/plugins/marketplace";
-import type { AgentSession, AsyncJobTree } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import type { SessionDumpArchive } from "@oh-my-pi/pi-coding-agent/session/session-dump-format";
-import type { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { executeAcpBuiltinSlashCommand } from "@oh-my-pi/pi-coding-agent/slash-commands/acp-builtins";
-import { getProjectDir, removeWithRetries, setProjectDir } from "@oh-my-pi/pi-utils";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-
-import { cfgBrowserEnabled, cfgBrowserHeadless } from "@oh-my-pi/pi-coding-agent/tools/browser/settings";
-import { cfgExtendedContext } from "@oh-my-pi/pi-coding-agent/session/context-settings";
-import { cfgMemoryBackend } from "@oh-my-pi/pi-coding-agent/memory-backend/settings";
-import { cfgWorktreeCleanSource } from "@oh-my-pi/pi-coding-agent/task/settings";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/acp-builtins.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 interface FakeAcpBuiltinSession {
 	fastMode: boolean;
@@ -1224,14 +1200,9 @@ describe("wave 3 commands", () => {
 
 	it("/wt: with worktree.cleanSource=true, cleans the source checkout while preserving the worktree", async () => {
 		const { output, runtime, fakeSessionManager } = createRuntime();
-<<<<<<< ours — test_suite `wave 3 commands` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 		runtime.settings.override("worktree.cleanSource", true);
 		const root = await fs.mkdtemp(path.join(os.tmpdir(), "tau-wt-clean-"));
-=======
-		cfgWorktreeCleanSource.override(runtime.settings, true);
-		const root = await fs.mkdtemp(path.join(os.tmpdir(), "omp-wt-clean-"));
->>>>>>> theirs — test_suite `wave 3 commands` (F, confidence: medium)
 		const repoDir = path.join(root, "repo");
 		const worktreeBase = path.join(root, "wt");
 		const originalProjectDir = process.cwd();

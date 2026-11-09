@@ -1,18 +1,11 @@
 import { describe, expect, it } from "bun:test";
 import {
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 	buildAriaSnapshotScript,
 	diffAriaSnapshot,
 	parseAriaRefSelector,
 	postProcessAriaSnapshot,
 } from "tau/tools/browser";
-=======
-	diffAriaSnapshot,
-	parseAriaRefSelector,
-	postProcessAriaSnapshot,
-} from "@oh-my-pi/pi-coding-agent/tools/browser";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/tools/browser-aria-snapshot.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 describe("parseAriaRefSelector", () => {
 	it("accepts the explicit aria-ref prefixes and returns the bare id", () => {

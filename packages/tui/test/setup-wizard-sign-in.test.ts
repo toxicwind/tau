@@ -1,5 +1,4 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { SignInTab } from "@oh-my-pi/pi-tui/setup/scenes/sign-i…` +2 more
 import type { AuthStorage } from "@tau/tau-ai";
 import type { OAuthLoginCallbacks, OAuthProviderId } from "@tau/tau-ai/oauth/types";
@@ -7,23 +6,6 @@ import { SignInTab } from "@tau/tau-tui/setup/scenes/sign-in";
 import type { SetupSceneHost } from "@tau/tau-tui/setup/scenes/types";
 import { initTheme } from "@tau/tau-tui/theme";
 import type { Component } from "@tau/tau-tui";
-=======
-import type { AuthStorage } from "@oh-my-pi/pi-ai";
-import type { OAuthLoginCallbacks, OAuthProviderId } from "@oh-my-pi/pi-ai/oauth/types";
-import type { TspPickerProps } from "@oh-my-pi/pi-wire";
-import { providersSetupScene, SignInScene } from "@oh-my-pi/pi-tui/setup/scenes/sign-in";
-import type { SetupHost, SetupSceneHost } from "@oh-my-pi/pi-tui/setup/scenes/types";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { type Component, TUI } from "@oh-my-pi/pi-tui";
-import { Input } from "@oh-my-pi/pi-tui/components/input";
-import type { DescribeContext, NativeNode } from "@oh-my-pi/pi-tui/native/node";
-import { SetupWizardComponent } from "@oh-my-pi/pi-tui/setup/wizard-overlay";
-import { withoutTerminalMultiplexer } from "./helpers/terminal-multiplexer";
-import { VirtualRenderScheduler } from "./virtual-render-scheduler";
-import { VirtualTerminal } from "./virtual-terminal";
-
-withoutTerminalMultiplexer();
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/test/setup-wizard-sign-in.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 beforeAll(async () => {
 	await initTheme();
@@ -332,7 +314,6 @@ describe("fullscreen setup sign-in cursor", () => {
 		});
 	}
 });
-<<<<<<< ours — test_suite `SignInTab` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 describe("SignInTab", () => {
 	it("masks secret input and keeps the OSC8 login link and manual-code prompt above clipped rows", async () => {
@@ -514,5 +495,3 @@ describe("SignInTab", () => {
 		}
 	});
 });
-=======
->>>>>>> theirs — test_suite `SignInTab` (S+F, confidence: low)

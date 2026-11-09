@@ -53,63 +53,8 @@ resolved key.
 `transport` changes only dispatch. Pricing, context window, maximum-token and
 thinking metadata still resolve locally from the model catalog.
 
-<<<<<<< ours — heading `Removed omp tool-call dialect` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
-=======
-### Removed omp tool-call dialect
-
-Historically, "pi-native" named an in-band tool-call serialization: an XML
-dialect of `<call:NAME …>` blocks, replaced by a sigil-delimited format
-(v16.0.10, `f743ddc`, 2026-06-18), then deleted outright (v16.2.2,
-`053da98`, 2026-06-27) along with its selection knobs (`tools.format: "pi"`,
-`PI_DIALECT=pi`). Nothing in `packages/ai` emits or parses either spelling.
-Old references to `<call:…>` blocks or `§` headers as "the omp tool-call
-format" describe a format that no longer exists; the in-band dialects that
-remain serve third-party model families (the live list is the registry in
-`packages/ai/src/dialect/factory.ts`).
-
->>>>>>> theirs — heading `Removed omp tool-call dialect` (S+F, confidence: low) · weave: run 'weave explain docs/toolconv/tau-native.md' for per-hunk detail, 'weave check' to verify your resolution
-<<<<<<< ours — heading `Configuration and dispatch` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
-=======
-## Configuration and dispatch
-
-Set these fields on a provider entry in `models.yml`:
-
-```yaml
-transport: pi-native
-baseUrl: http://gateway.internal:4000
-```
-
-The provider's `transport` and gateway `baseUrl` apply to every model under
-that provider, including custom models. The resolved model carries
-`transport: "pi-native"`; this is independent of `tools.format`.
-
-`baseUrl` MUST identify an `omp auth-gateway` (or compatible service). Missing
-`baseUrl` fails with:
-
-```text
-pi-native transport requires `baseUrl` on model MODEL_ID (set it on the provider config in models.yml)
-```
-
-When `model.transport === "pi-native"`, `streamSimple` bypasses the normal
-per-API provider implementation and calls `streamPiNative`. The client removes
-trailing slashes from `baseUrl` and posts to `/v1/pi/stream`.
-
-The gateway bearer is the resolved model/API key. It is sent as
-`Authorization: Bearer …`, never in the JSON options. Model headers are also
-forwarded; an explicit `model.headers.Authorization` takes precedence over the
-resolved key.
-
-The client also sends `x-omp-install-id`, `x-omp-hostname`, and `x-omp-app`
-for usage attribution. Those identity headers are not forwarded upstream.
-
-`transport` changes only dispatch. Pricing, context window, maximum-token and
-thinking metadata still resolve locally from the model catalog.
-The wire sends only the qualified model id, not the client's model object.
-The gateway resolves its own upstream model and provider credentials.
-
->>>>>>> theirs — heading `Configuration and dispatch` (S+F, confidence: low)
 ## Request
 
 ```http
@@ -260,19 +205,4 @@ successful response with no body is also an `AuthGatewayError`.
   option allow-list, SSE and error envelopes
 - `packages/ai/src/auth-gateway/server.ts` — `/v1/pi/stream` route and gateway
   model/credential resolution
-<<<<<<< ours — heading `Source of truth` (T+F, confidence: medium)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
-=======
-## Source of truth
-
-- `packages/catalog/src/types.ts` — `Model.transport`
-- `packages/coding-agent/src/config/model-patch.ts` and `model-registry.ts` —
-  provider-wide transport and gateway URL inheritance
-- `packages/ai/src/stream.ts` — pi-native dispatch
-- `packages/ai/src/providers/pi-native-client.ts` — request, auth, SSE and
-  timeout behavior
-- `packages/ai/src/providers/pi-native-server.ts` — request validation,
-  option allow-list, SSE and error envelopes
-- `packages/ai/src/auth-gateway/server.ts` — `/v1/pi/stream` route and gateway
-  model/credential resolution
->>>>>>> theirs — heading `Source of truth` (T+F, confidence: medium)

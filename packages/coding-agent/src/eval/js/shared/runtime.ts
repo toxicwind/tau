@@ -7,15 +7,8 @@ import { Writable } from "node:stream";
 import * as util from "node:util";
 import * as vm from "node:vm";
 
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import * as logger from "@tau/tau-utils/logger";
-=======
-// Subpath imports only: the computer worker's readiness graph includes this runtime and must not
-// load pi_natives (verified under `--no-addons`); the `@oh-my-pi/pi-utils` barrel loads it eagerly.
-import * as logger from "@oh-my-pi/pi-utils/logger";
-import { isRecord } from "@oh-my-pi/pi-utils/type-guards";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/eval/js/shared/runtime.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 import type { EvalTableColumn } from "@oh-my-pi/pi-tui/tools/eval";
 import { type EvalDisplayOutput, evalImageMetadata } from "../../types";
@@ -131,14 +124,10 @@ const PRELUDE_GLOBAL_KEYS = [
 	"read",
 	"write",
 	"env",
-<<<<<<< ours — scope `const PRELUDE_GLOBAL_KEYS = [` in variable `PRELUDE_GLOBAL_KEYS` (F, confidence: medium)
 // refused_by: statement_fold · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 	"shell",
 	"sh",
 	"bash",
-=======
-	"sh",
->>>>>>> theirs — scope `const PRELUDE_GLOBAL_KEYS = [`
 ];
 
 /**
@@ -695,17 +684,11 @@ export class JsRuntime {
 				const event: JsStatusEvent = { op, ...data };
 				this.#activeHooks("emitStatus")?.onDisplay({ type: "status", event });
 			},
-<<<<<<< ours — scope `#install` in class `JsRuntime` (F, confidence: medium)
 // refused_by: container_member · collision: `__omp_display__: (value: unknown) => this.displayValue(value),`
 			__tau_log__: (level: string, ...args: unknown[]) => {
 				const prefix = level === "error" ? "[error] " : level === "warn" ? "[warn] " : "";
 				const text = `${prefix}${formatConsoleArgs(args)}`;
 				this.#activeHooks("log")?.onText(text.endsWith("\n") ? text : `${text}\n`);
-=======
-			__omp_log__: (level: string, ...args: unknown[]) => {
-				const hooks = this.#activeHooks("log");
-				if (hooks) logConsoleArgs(level, args, hooks);
->>>>>>> theirs — scope `#install`
 			},
 			__tau_table__: (...args: unknown[]) => {
 				const hooks = this.#activeHooks("table");
@@ -726,13 +709,9 @@ export class JsRuntime {
 				const table = parseConsoleTable(buffer);
 				if (table) hooks.onDisplay({ type: "view", text: buffer, view: table });
 			},
-<<<<<<< ours — scope `#install` in class `JsRuntime` (F, confidence: medium)
 // refused_by: container_member · collision: `__omp_display__: (value: unknown) => this.displayValue(value),`
 			__tau_display__: (value: unknown) => this.displayValue(value),
 			__tau_set_final_expr__: (value: unknown) => {
-=======
-			__omp_set_final_expr__: (value: unknown) => {
->>>>>>> theirs — scope `#install`
 				const context = this.#als.getStore();
 				if (!context) {
 					logger.warn("js runtime final expression set outside an active run");

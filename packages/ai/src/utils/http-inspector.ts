@@ -1,11 +1,7 @@
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { getLogsDir, isBunTestRuntime } from "@oh-my-pi/pi-util…`
 import { getLogsDir, isBunTestRuntime } from "@tau/tau-utils";
-=======
-import { getLogsDir, isBunTestRuntime, isEnoent, isRecord, logger } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/src/utils/http-inspector.ts' for per-hunk detail, 'weave check' to verify your resolution
 import * as AIError from "../error/flags";
 import { appendRetryAfterHint, errorMessageText, getHeadersFromError } from "./retry-after.js";
 

@@ -5,18 +5,10 @@
  * - `tau -p "prompt"` - text output
  * - `tau --mode json "prompt"` - JSON event stream
  */
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import type { AgentMessage } from "@tau/tau-agent-core";
 import type { ImageContent } from "@tau/tau-ai";
 import { $flag, logger, postmortem, sanitizeText } from "@tau/tau-utils";
-=======
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { ImageContent } from "@oh-my-pi/pi-ai";
-import { presentNarrationAsAnswer } from "@oh-my-pi/pi-ai/utils/narration";
-import { $flag, logger, postmortem, sanitizeText } from "@oh-my-pi/pi-utils";
-import { HINDSIGHT_NOTICE_SOURCE } from "../hindsight/state";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/modes/print-mode.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { MCPManager } from "../mcp/manager";
 import { resolveMCPTimeoutMs } from "../mcp/timeout";
 import { type AgentSession, type AgentSessionEvent, SHUTDOWN_CONSOLIDATE_BUDGET_MS } from "../session/agent-session";
@@ -167,22 +159,8 @@ export async function runPrintMode(session: AgentSession, options: PrintModeOpti
 	let signalReason: postmortem.Reason | undefined;
 	const cancelSignalTeardown = postmortem.register("print-mode-session", async reason => {
 		signalReason = reason;
-<<<<<<< ours — scope `const cancelSignalTeardown = postmortem.regis...` in function `runPrintMode` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `return session.dispose({ reason, mnemopiConsolidateTimeoutMs: S…`
 		return session.dispose({ reason, mnemotauConsolidateTimeoutMs: SHUTDOWN_CONSOLIDATE_BUDGET_MS });
-=======
-		// Join stdout only after dispose: event forwarding stays live through its
-		// bounded run drain, so a tool settling there still enqueues its terminal
-		// record. Postmortem exits once this callback settles (issue #18450).
-		try {
-			await session.dispose({ reason, mnemopiConsolidateTimeoutMs: SHUTDOWN_CONSOLIDATE_BUDGET_MS });
-		} catch (error) {
-			// The disposal failure stays primary; a write error behind it is secondary.
-			await stdout.drained().catch(() => {});
-			throw error;
-		}
-		await stdout.drained();
->>>>>>> theirs — scope `const cancelSignalTeardown = postmortem.regis...`
 	});
 	try {
 		return await runPrintModeCore(session, options, stdout, () => signalReason !== undefined);
@@ -447,17 +425,12 @@ async function runPrintModeCore(
 				`Warning: MCP server "${server}" failed to connect: ${singleLine(error)}; its tools are unavailable for this run.`,
 			);
 		}
-<<<<<<< ours — scope `if (options.mcpManager) {` in function `runPrintModeCore` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `if ($flag("OMP_MCP_REQUIRE_READY") && unavailable.length > 0) {`
 		if ($flag("TAU_MCP_REQUIRE_READY") && unavailable.length > 0) {
 			writeStderrLine(`Error: MCP servers not ready: ${unavailable.join(", ")}`);
 			strictMCPFailure = true;
 		}
 	}
-=======
-		return unavailable;
-	};
->>>>>>> theirs — scope `if (options.mcpManager) {`
 	// Readiness is evaluated lazily — before the first model turn, and again
 	// after a dispatched recovery command — never up front: `/mcp reauth` must
 	// run before the strict gate decides, or strict automation could never

@@ -2,15 +2,10 @@
 //! directory-listing reuse.
 //!
 //! # Overview
-<<<<<<< ours — interstitial `file_header` (T+F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `//! Resolves a search root, scans entries via `pi-walker`, appl…` +2 more
 //! Resolves a search root, scans entries via `tau-walker`, applies glob
 //! matching plus optional file-type filtering, and optionally streams each
 //! accepted match through a callback.
-=======
-//! Resolves a search root, runs `pi_walker::glob`, and optionally streams each
-//! returned match through a callback.
->>>>>>> theirs — interstitial `file_header` (T+F, confidence: medium) · weave: run 'weave explain crates/tau-natives/src/glob.rs' for per-hunk detail, 'weave check' to verify your resolution
 //!
 //! `pi_walker::glob` never yields `.git`, and skips `node_modules` unless the
 //! pattern or options request it.
@@ -137,7 +132,6 @@ impl GlobMatch {
 		nanos.div_euclid(1_000_000) as f64
 	}
 }
-<<<<<<< ours — function `collect_ranked_matches` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 fn collect_ranked_matches(
 	request: &tau_walker::WalkRequest,
@@ -153,9 +147,6 @@ fn collect_ranked_matches(
 		.map_err(iofs::map_walker_error)?;
 	Ok(outcome.entries.into_iter().map(GlobMatch::from).collect())
 }
-=======
->>>>>>> theirs — function `collect_ranked_matches` (S+F, confidence: low)
-<<<<<<< ours — function `collect_native_filtered_matches` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 fn collect_native_filtered_matches(
 	request: &tau_walker::WalkRequest,
@@ -180,9 +171,6 @@ fn collect_native_filtered_matches(
 	}
 	Ok(collected)
 }
-=======
->>>>>>> theirs — function `collect_native_filtered_matches` (S+F, confidence: low)
-<<<<<<< ours — function `run_glob` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 /// Executes walker-owned glob filtering plus optional native file-type
 /// filtering, then optionally streams each returned match.
@@ -257,8 +245,6 @@ fn run_glob(
 	let total_matches = matches.len().min(u32::MAX as usize) as u32;
 	Ok(GlobResult { matches, total_matches })
 }
-=======
->>>>>>> theirs — function `run_glob` (S+F, confidence: low)
 
 /// Find filesystem entries matching a glob pattern.
 ///
@@ -334,7 +320,6 @@ pub fn glob<'env>(
 		Ok(GlobResult { matches, total_matches })
 	})
 
-<<<<<<< ours — scope `task::blocking("glob", ct, move |ct| {` in function `glob`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	task::blocking("glob", ct, move |ct| {
 		run_glob(
@@ -355,10 +340,7 @@ pub fn glob<'env>(
 			ct,
 		)
 	})
-=======
->>>>>>> theirs — scope `task::blocking("glob", ct, move |ct| {` deleted in theirs
 }
-<<<<<<< ours — module `tests` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 #[cfg(test)]
 mod tests {
@@ -491,5 +473,3 @@ mod tests {
 		assert_eq!(recursive_paths, ["deep/child.txt", "deep/nested/leaf.txt", "top.txt"]);
 	}
 }
-=======
->>>>>>> theirs — module `tests` (S+F, confidence: low)

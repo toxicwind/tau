@@ -1,4 +1,3 @@
-<<<<<<< ours — interstitial `file_header` (T+F, confidence: medium)
 # refused_by: merge_ladder_exhausted · collision: `# Sign and notarize a compiled macOS `omp` binary with a Develo…` +1 more
 #!/usr/bin/env bash
 #
@@ -66,8 +65,6 @@ KEYCHAIN_PASSWORD="$(openssl rand -hex 24)"
 CERT_PATH="$WORKDIR/cert.p12"
 API_KEY_PATH="$WORKDIR/api-key.p8"
 ZIP_PATH="$WORKDIR/$(basename "$BINARY").zip"
-=======
->>>>>>> theirs — interstitial `file_header` (T+F, confidence: medium) · weave: run 'weave explain scripts/ci-macos-sign.sh' for per-hunk detail, 'weave check' to verify your resolution
 #!/usr/bin/env bash
 #
 # Sign a compiled macOS `omp` binary on Linux: with a Developer ID identity

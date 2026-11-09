@@ -17,12 +17,8 @@ A successful call is not memoized by JS. Repeated calls rely on the runtime's `r
 - `platformTag`: `${platform}-${process.arch}`;
 - package version (the expected addon release, subject to the pre-sentinel compatibility exception below);
 - package-local `nativeDir` and the directory of `process.execPath`;
-<<<<<<< ours — scope `- `nativesDir`, normally `~/.omp/natives`; it...` in heading `Loader context` (S, confidence: medium)
 // refused_by: statement_fold · collision: `- `nativesDir`, normally `~/.omp/natives`; it uses `$XDG_DATA_H…`
 - `nativesDir`, normally `~/.tau/natives`; it uses `$XDG_DATA_HOME/tau/natives` only when `$XDG_DATA_HOME/tau` exists;
-=======
-- `nativesDir`: `PI_NATIVES_DIR` first (trimmed, `~`-expanded, and normalized; empty or relative values are ignored), then `$XDG_DATA_HOME/omp/natives` only when `$XDG_DATA_HOME/omp` exists, otherwise `~/.omp/natives`;
->>>>>>> theirs — scope `- `nativesDir`, normally `~/.omp/natives`; it...` · weave: run 'weave explain docs/upstream/natives-addon-loader-runtime.md' for per-hunk detail, 'weave check' to verify your resolution
 - `versionedDir`: `<nativesDir>/<packageVersion>`;
 - legacy compiled-binary directory: `%LOCALAPPDATA%/tau` (or `~/AppData/Local/tau`) on Windows, `~/.local/bin` elsewhere;
 - workspace/install/compiled mode, optional leaf directory, Windows staging policy, CPU variant, filenames, and ordered candidates.
@@ -109,14 +105,9 @@ For each candidate:
 
 1. Emit a startup marker when enabled.
 2. `require(candidate)`.
-<<<<<<< ours — heading `Candidate validation and post-load setup` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 3. Unless this is workspace development, require the expected package-version sentinel function.
 4. Call `__tauInstallTokioRuntime()` if the addon provides it.
-=======
-3. Unless this is workspace development, require `__piNativesBuildVersion()` to return the package version. The build pipeline writes that version into a fixed 64-byte slot (`PI_NATIVES_VERSION_STAMP:<version>` + NUL padding) after linking (`scripts/stamp-native-version.ts`, called from every `scripts/bazel-natives.ts` install, the local cargo build, and the Nix package build), so a release bump edits no Rust input. Addons published before the stamp expose a per-release `__piNativesV<version_with_underscores>` export instead; those are still read as their release for diagnosis.
-4. Call `__ompInstallTokioRuntime()` if the addon provides it.
->>>>>>> theirs — heading `Candidate validation and post-load setup` (F, confidence: medium)
 5. Best-effort remove valid semantic-version cache directories older than the current version.
 6. Return the bindings.
 

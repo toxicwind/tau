@@ -16,21 +16,12 @@
  * sessions' tabs belong to their owners.
  */
 
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { acquireBrowser } from "@oh-my-pi/pi-coding-agent/tools…`
 import { afterEach, describe, expect, it, spyOn, vi } from "bun:test";
 import type { CmuxKind } from "tau/tools/browser/cmux/rpc";
 import { CmuxSocketClient } from "tau/tools/browser/cmux/socket-client";
 import { acquireBrowser } from "tau/tools/browser/registry";
 import type { BrowserHandle } from "tau/tools/browser/registry";
-=======
-import { afterAll, afterEach, beforeAll, describe, expect, it, spyOn, vi } from "bun:test";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { CmuxKind } from "@oh-my-pi/pi-coding-agent/tools/browser/cmux/rpc";
-import { CmuxSocketClient } from "@oh-my-pi/pi-coding-agent/tools/browser/cmux/socket-client";
-import { acquireBrowser, holdBrowser, releaseBrowser } from "@oh-my-pi/pi-coding-agent/tools/browser/registry";
-import type { BrowserHandle } from "@oh-my-pi/pi-coding-agent/tools/browser/registry";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/tools/browser-freeze-settle.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	acquireTab,
 	cancelIdleCloseForOwner,
@@ -828,14 +819,9 @@ describe("browser settle — lifecycle freeze via CDP", () => {
 			mockCmuxSocket();
 			// No pre-attached surface: each open mints an owned split, so
 			// the two generations land on distinct targets.
-<<<<<<< ours — scope `describe.skipIf(!CHROMIUM_AVAILABLE)("browser...` in test_suite `browser settle — lifecycle freeze via CDP` (F, confidence: medium)
 // refused_by: statement_fold · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 			const browser = await acquireBrowser(
 				{ kind: "cmux", socketPath: "/tmp/tau-test-settle-recreate.sock" },
-=======
-			const cmux = await acquireBrowser(
-				{ kind: "cmux", socketPath: "/tmp/omp-test-settle-recreate.sock" },
->>>>>>> theirs — scope `describe.skipIf(!CHROMIUM_AVAILABLE)("browser...`
 				{ cwd: "/tmp" },
 			);
 			const first = await acquireTab("settle-gone", cmux, { timeoutMs: 1_000, ownerSessionId: "session-A" });

@@ -15,13 +15,8 @@ from pathlib import Path
 
 import pytest
 
-<<<<<<< ours — imports `file_header` (T+F, confidence: medium)
 # refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 from robtau.natives_cache import (
-=======
-import robomp.natives_cache as natives_cache
-from robomp.natives_cache import (
->>>>>>> theirs — imports `file_header` (T+F, confidence: medium) · weave: run 'weave explain python/robtau/tests/test_natives_cache.py' for per-hunk detail, 'weave check' to verify your resolution
     CACHE_KEY_PATHS,
     NativesCache,
     compute_key,
@@ -191,7 +186,6 @@ def test_populate_workspace_miss_is_noop(tmp_path: Path) -> None:
     assert before == after
 
 
-<<<<<<< ours — function `test_capture_then_populate_shares_node_inode_but_copies_companions` (S+F, confidence: low)
 # refused_by: rename_vs_edit_guard · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 def test_capture_then_populate_shares_node_inode_but_copies_companions(tmp_path: Path) -> None:
     cache = _cache(tmp_path)
@@ -223,37 +217,6 @@ def test_capture_then_populate_shares_node_inode_but_copies_companions(tmp_path:
     workspace_node = dst_native / "tau_natives.linux-arm64.node"
     assert cached_node.stat().st_ino == workspace_node.stat().st_ino
     assert cached_node.stat().st_nlink >= 2
-=======
-def test_capture_then_populate_copies_artifacts(tmp_path: Path) -> None:
-    cache = _cache(tmp_path)
-    src_repo = _seed_repo(tmp_path / "src" / "repo")
-    native_dir = _populate_built_artifacts(src_repo)
-    key = compute_key(src_repo, target="linux-arm64")
-    stored = cache.capture(REPO, key, native_dir, source_workspace="src__001")
-    assert stored is not None
-    manifest = json.loads((stored / "manifest.json").read_text())
-    assert manifest["key"] == key
-    assert "pi_natives.linux-arm64.node" in manifest["node_files"]
-
-    # Populate a fresh workspace from the same source state.
-    dst_repo = src_repo.parent.parent / "dst" / "repo"
-    dst_repo.mkdir(parents=True)
-    _git(["clone", str(src_repo), str(dst_repo)], cwd=dst_repo.parent)
-    dst_native = dst_repo / "packages" / "natives" / "native"
-    dst_native.mkdir(parents=True, exist_ok=True)
-    hit = cache.populate_workspace(REPO, key, dst_native)
-    assert hit is not None
-    assert {p.name for p in hit.files} >= {
-        "pi_natives.linux-arm64.node",
-        "index.d.ts",
-        "index.js",
-        "embedded-addon.js",
-    }
-    cached_node = stored / "pi_natives.linux-arm64.node"
-    workspace_node = dst_native / "pi_natives.linux-arm64.node"
-    workspace_node.write_bytes(b"changed")
-    assert cached_node.read_bytes() == b"\x7fELF...native"
->>>>>>> theirs — function `test_capture_then_populate_shares_node_inode_but_copies_companions` (S+F, confidence: low)
     # Companions are COPIED (independent inodes): in-place rewrite in the
     # workspace (gen-enums.ts / installGeneratedBindings open-truncate-write)
     # MUST NOT mutate the cached copy.
@@ -392,7 +355,6 @@ def test_capture_is_idempotent_under_lock(tmp_path: Path) -> None:
     final_dirs = [p for p in repo_root.iterdir() if p.is_dir() and not p.name.startswith(".")]
     assert len(final_dirs) == 1
     assert final_dirs[0].name == key
-<<<<<<< ours — function `test_populate_cross_device_falls_back_to_copy` (S+F, confidence: low)
 # refused_by: modify_delete_guard · collision: none (no common ancestor text)
 def test_populate_cross_device_falls_back_to_copy(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     cache = _cache(tmp_path)
@@ -421,8 +383,6 @@ def test_populate_cross_device_falls_back_to_copy(tmp_path: Path, monkeypatch: p
     copied_node = dst_native / "tau_natives.linux-arm64.node"
     assert copied_node.exists()
     assert cached_node.stat().st_ino != copied_node.stat().st_ino
-=======
->>>>>>> theirs — function `test_populate_cross_device_falls_back_to_copy` (S+F, confidence: low)
 
 
 def test_populate_replaces_existing_file_atomically(tmp_path: Path) -> None:
@@ -495,7 +455,6 @@ def test_gc_preserves_populated_workspace(tmp_path: Path) -> None:
     cache.gc(REPO)
     assert not entry.exists()
     assert (workspace / "pi_natives.linux-arm64.node").read_bytes() == b"x" * 1024
-<<<<<<< ours — function `test_gc_preserves_workspace_hardlinks` (S+F, confidence: low)
 # refused_by: modify_delete_guard · collision: none (no common ancestor text)
 def test_gc_preserves_workspace_hardlinks(tmp_path: Path) -> None:
     """Evicting a cache entry must NOT delete the file from workspaces that
@@ -512,8 +471,6 @@ def test_gc_preserves_workspace_hardlinks(tmp_path: Path) -> None:
     assert not entry.exists()  # cache directory swept
     assert ws_node.exists()  # workspace file survives via inode refcount
     assert ws_node.read_bytes() == b"x" * 1024
-=======
->>>>>>> theirs — function `test_gc_preserves_workspace_hardlinks` (S+F, confidence: low)
 
 
 def test_gc_clears_stale_staging_dirs(tmp_path: Path) -> None:

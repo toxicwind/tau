@@ -5,17 +5,10 @@ import {
 	generateBranchSummary,
 	prepareBranchEntries,
 	type SessionEntry,
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-agent-core/compaction";
 import type { AssistantMessage, Model, Usage } from "@tau/tau-ai";
 import { buildModel } from "@tau/tau-catalog/build";
-=======
-} from "@oh-my-pi/pi-agent-core/compaction";
-import type { AssistantMessage, Model, Usage } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/agent/test/branch-summarization.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const MODEL: Model = buildModel({
 	id: "mock-model",

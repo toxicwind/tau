@@ -1,14 +1,9 @@
 /**
  * JSON tree rendering utilities shared across tool renderers.
  */
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { INTENT_FIELD } from "@oh-my-pi/pi-wire";` +1 more
 import { INTENT_FIELD } from "@tau/tau-wire";
 import { sanitizeText } from "@tau/tau-utils";
-=======
-import { INTENT_FIELD, type TspSpan, type TspTreeNode } from "@oh-my-pi/pi-wire";
-import { isRecord, sanitizeText, sanitizeTextDeep } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/src/tools/json-tree.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { TreeView, treeRowPrefix } from "../components/tree-view";
 import { truncateToWidth } from "../render/render-utils";
 import type { Theme, ThemeColor } from "../theme/theme";

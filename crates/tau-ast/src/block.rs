@@ -1218,14 +1218,9 @@ mod tests {
 		assert!(comparisons > 300, "expected a broad sweep, got {comparisons} comparisons");
 	}
 
-<<<<<<< ours — scope `pruned_walk_matches_unpruned_on_full_repo_corpus` in module `tests` (S+F, confidence: low)
 // refused_by: container_member · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 	#[test]
 	#[ignore = "full repository sweep; run with `cargo nextest run --release -p tau-ast \
-=======
-	#[tokio::test(flavor = "multi_thread")]
-	#[ignore = "full repository sweep; run with `cargo nextest run --release -p pi-ast \
->>>>>>> theirs — scope `pruned_walk_matches_unpruned_on_full_repo_corpus` · weave: run 'weave explain crates/tau-ast/src/block.rs' for per-hunk detail, 'weave check' to verify your resolution
 	            --run-ignored ignored-only`"]
 	async fn pruned_walk_matches_unpruned_on_full_repo_corpus() {
 		let files = repo_files(None).await;

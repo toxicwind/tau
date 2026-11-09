@@ -24,24 +24,12 @@ import {
 	SHAPE_VARIANT_NAMES,
 	SHAPE_VARIANTS,
 	type Shape,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 	type ShapeTarget,
 	type ShapeVariantName,
 } from "@tau/snapcompact";
 import { theme } from "../theme/theme";
 import sampleDoc from "./snapcompact-shape-preview-doc.md" with { type: "text" };
-=======
-	type ShapeGeometry,
-	type ShapeTarget,
-	type ShapeVariantName,
-} from "@oh-my-pi/snapcompact";
-import { theme } from "../theme/theme";
-import sampleDoc from "./snapcompact-shape-preview-doc.md" with { type: "text" };
-import type { DescribeContext, NativeNode } from "../native/node";
-import { col, node, span, text } from "../native/describe";
-import { nativeImageNode } from "../native/blobs";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/tui/src/overlays/snapcompact-shape-preview.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /** Mini-frame edge in px — a small page from the real rasterizer ≈ a zoomed crop. */
 const SRC_FRAME_PX = 128;

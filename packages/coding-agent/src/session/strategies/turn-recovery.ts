@@ -15,7 +15,6 @@ import type {
 	ModelUsageHealth,
 	TextContent,
 	ToolChoice,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { calculateRateLimitBackoffMs, parseRateLimitReason } fr…` +3 more
 } from "@tau/tau-ai";
 import { calculateRateLimitBackoffMs, parseRateLimitReason } from "@tau/tau-ai";
@@ -48,45 +47,6 @@ import type {
 	UsageFallbackConfirmer,
 } from "../agent-session-types";
 import { assistantTurnProducedOutput, isEmptyAssistantStop, isEmptyErrorTurn } from "../messages";
-=======
-	AnthropicFallbackCreditHandle,
-} from "@oh-my-pi/pi-ai";
-import { calculateRateLimitBackoffMs, isBillingCapUsageLimit, parseRateLimitReason } from "@oh-my-pi/pi-ai";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { shouldDropTruncatedThinkingOnlyAssistant } from "@oh-my-pi/pi-ai/providers/transform-messages";
-import { extractProviderRetryHint } from "@oh-my-pi/pi-ai/utils/retry-after";
-import { fallbackCreditTargets } from "@oh-my-pi/pi-catalog/compat/fallback-credit";
-import { resolveModelPolicy } from "@oh-my-pi/pi-catalog/compat/resolve";
-import { isFireworksFastModelId, toFireworksBaseModelId } from "@oh-my-pi/pi-catalog/fireworks-model-id";
-import { modelsAreEqual } from "@oh-my-pi/pi-catalog/models";
-import { isUnexpectedSocketCloseMessage, logger, prompt, sleepLong, sleepUntil } from "@oh-my-pi/pi-utils";
-import type { ModelRegistry } from "../config/model-registry";
-import { formatModelStringWithRouting, resolveModelOverride } from "../config/model-resolver";
-
-import type { Settings } from "../config/settings";
-import type { RetryErrorUpdate } from "../extensibility/shared-events";
-import { isEvalStateContext } from "../eval/state";
-import emptyStopRetryTemplate from "../prompts/system/empty-stop-retry.md" with { type: "text" };
-import malformedFunctionCallRetryTemplate from "../prompts/system/malformed-function-call-retry.md" with { type: "text" };
-import streamStallContinueTemplate from "../prompts/system/stream-stall-continue.md" with { type: "text" };
-import thinkingLoopRedirectTemplate from "../prompts/system/thinking-loop-redirect.md" with { type: "text" };
-import unexpectedStopRetryTemplate from "../prompts/system/unexpected-stop-retry.md" with { type: "text" };
-import {
-	AUTO_THINKING,
-	type ConfiguredThinkingLevel,
-	clampThinkingLevelToCeiling,
-	modelSupportsEffortCeiling,
-	resolveThinkingLevelForModel,
-} from "@oh-my-pi/pi-tui/thinking";
-import type { EditModeSetting } from "../edit/settings";
-import type { AgentSessionEvent } from "./agent-session-events";
-import type { ResetRecoveryResult } from "./codex-auto-reset";
-import type {
-	InitialRetryFallbackState,
-	UsageFallbackConfirmation,
-	UsageFallbackConfirmer,
-} from "./agent-session-types";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/session/strategies/turn-recovery.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	assistantTurnProducedOutput,
 	isEmptyAssistantStop,
@@ -111,7 +71,6 @@ import {
 	retryFallbackAdmits,
 	type ServingModel,
 	validateRetryFallbackChains,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { calculateRateLimitBackoffMs, parseRateLimitReason } fr…` +3 more
 } from "../retry-fallback-chains";
 import { describeUsageFallback } from "../retry-fallback-reason";
@@ -121,17 +80,6 @@ import { EPHEMERAL_MODEL_CHANGE_ROLE, type SessionEntry } from "../session-entri
 import type { SessionManager } from "../session-manager";
 import { sameMessageContent, sessionMessagePersistenceKey } from "../turn-persistence";
 import { classifyUnexpectedStop, isUnexpectedStopCandidate } from "../unexpected-stop-classifier";
-=======
-} from "./retry-fallback-chains";
-import { describeUsageFallback } from "./retry-fallback-reason";
-import { getLatestCompactionEntry } from "./session-context";
-import { EPHEMERAL_MODEL_CHANGE_ROLE, type SessionEntry } from "./session-entries";
-import type { SessionManager } from "./session-manager";
-import { isUserQueuedMessage } from "./queued-messages";
-import { sameMessageContent, sessionMessagePersistenceKey } from "./turn-persistence";
-import { journalJudgmentUsage } from "../judgment";
-import { classifyUnexpectedStop, isUnexpectedStopCandidate } from "./unexpected-stop-classifier";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 
 import {
 	cfgFeaturesUnexpectedStopDetection,
@@ -2478,7 +2426,6 @@ export class TurnRecovery {
 					if (!(error instanceof AIError.MissingApiKeyError)) throw error;
 				}
 				if (!apiKey) continue;
-<<<<<<< ours — scope `#tryRetryModelFallback` in class `TurnRecovery` (S+F, confidence: low)
 // refused_by: container_member · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 				// Never commit to a dead fallback: probe the candidate before routing
 				// onto it. A wedged provider lane (e.g. a router whose upstream is
@@ -2499,12 +2446,6 @@ export class TurnRecovery {
 					}
 				}
 				return this.applyRetryFallbackCandidate(role, selector, currentSelector, {
-=======
-				const previousEditMode = this.#host.resolveActiveEditMode();
-				const previousSystemPrompt = [...this.#host.agent.state.systemPrompt];
-				const previousTools = [...this.#host.agent.state.tools];
-				const applied = await this.applyRetryFallbackCandidate(role, selector, currentSelector, {
->>>>>>> theirs — scope `#tryRetryModelFallback`
 					...options,
 					reason: `Request failed: ${failedMessage.errorMessage ?? "provider returned an error without details"}`,
 				});
@@ -2725,7 +2666,6 @@ export class TurnRecovery {
 	 * the error without a same-model backoff retry.
 	 * @returns true if retry was initiated, false if max retries exceeded or disabled
 	 */
-<<<<<<< ours — scope `#handleRetryableError` in class `TurnRecovery` (F, confidence: medium)
 // refused_by: container_member · collision: `const retryBudgetExhausted = this.#retryAttempt > maxRetries;` +1 more
 	async #handleRetryableError(
 		message: AssistantMessage,
@@ -3117,9 +3057,6 @@ export class TurnRecovery {
 		const retryAbortController = new AbortController();
 		this.#retryAbortController?.abort();
 		this.#retryAbortController = retryAbortController;
-=======
-	async #handleRetryableError(message: AssistantMessage, options?: RetryPolicyOptions): Promise<boolean> {
->>>>>>> theirs — scope `#handleRetryableError`
 		try {
 			return await this.#applyRetryPolicy(message, options);
 		} catch (error) {

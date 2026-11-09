@@ -4,20 +4,11 @@
  * Handles `tau stats` subcommand for viewing AI usage statistics.
  */
 
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { formatDuration, formatNumber, formatPercent } from "@o…` +1 more
 import { truncateToWidth } from "@tau/tau-tui/utils";
 import { formatDuration, formatNumber, formatPercent } from "@tau/tau-utils";
 import chalk from "@tau/tau-utils/chalk";
 import { formatCost } from "@tau/tau-tui/overlays/agent-hub-renderer";
-=======
-import { formatKeyHint } from "@oh-my-pi/pi-tui/key-hint-format";
-import { truncateToWidth } from "@oh-my-pi/pi-tui/utils";
-import { postmortem } from "@oh-my-pi/pi-utils";
-import chalk from "@oh-my-pi/pi-utils/chalk";
-import { openStandaloneJudge } from "../judgment/standalone";
-import { openTernPage } from "../tools/browser/tern/user-page";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/cli/stats-cli.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { openPath } from "../utils/open";
 
 /**
@@ -79,23 +70,9 @@ export interface StatsCommandArgs {
 
 export async function runStatsCommand(cmd: StatsCommandArgs): Promise<void> {
 	// Lazy import to avoid loading stats module when not needed
-<<<<<<< ours — scope `// Lazy import to avoid loading stats module ...` in function `runStatsCommand` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `await import("@oh-my-pi/omp-stats");`
 	const { closeDb, formatStatsDashboardUrl, getDashboardStats, getTotalMessageCount, startServer, syncAllSessions } =
 		await import("@tau/tau-stats");
-=======
-	const {
-		closeDb,
-		formatStatsDashboardUrl,
-		getDashboardStats,
-		getTotalMessageCount,
-		printStatsSummary,
-		refreshRollups,
-		setStatsCloseHandler,
-		startServer,
-		syncAllSessions,
-	} = await import("@oh-my-pi/omp-stats");
->>>>>>> theirs — scope `// Lazy import to avoid loading stats module ...`
 
 	// One-shot reports need fully ingested, fully rolled-up data before printing.
 	if (cmd.json || cmd.summary) {
@@ -165,7 +142,6 @@ export async function runStatsCommand(cmd: StatsCommandArgs): Promise<void> {
 	// Keep the process alive
 	await new Promise(() => {});
 }
-<<<<<<< ours — function `printStatsSummary` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 async function printStatsSummary(): Promise<void> {
 	const { getDashboardStats } = await import("@tau/tau-stats");
@@ -208,5 +184,3 @@ async function printStatsSummary(): Promise<void> {
 
 	console.log("");
 }
-=======
->>>>>>> theirs — function `printStatsSummary` (S+F, confidence: low)

@@ -5,15 +5,10 @@ import * as path from "node:path";
 import {
 	$env,
 	$envExact,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 	createEnvService,
 	createEnvReader,
 	expandDotenvValues,
-=======
-	$otelEnv,
-	claimOmpOtelEnvFileEntry,
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/utils/test/env.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 	filterChildShellEnv,
 	filterChildShellEnvInternal,
 	filterProcessEnv,
@@ -22,13 +17,8 @@ import {
 	parseEnvFile,
 	setInteractiveHost,
 	stripGitRepoLocationEnv,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-utils/env";
-=======
-	withOmpOtelEnv,
-} from "@oh-my-pi/pi-utils/env";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 
 const tempDirs: string[] = [];
 

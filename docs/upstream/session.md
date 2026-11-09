@@ -180,7 +180,6 @@ roles under `type: "message"`:
 
 | Persisted `message.role` | Owner package | Notes                                                                             |
 | ------------------------ | ------------- | --------------------------------------------------------------------------------- |
-<<<<<<< ours — scope `closing` in heading ``message`` (F, confidence: medium)
 // refused_by: statement_fold · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 | `user`                   | tau-ai         | User/tool-feedback turn.                                                          |
 | `developer`              | tau-ai         | Developer-role instruction turn.                                                  |
@@ -190,16 +189,6 @@ roles under `type: "message"`:
 | `pythonExecution`        | coding-agent  | Standalone python run.                                                            |
 | `hookMessage`            | coding-agent  | Legacy hook-injected message, retained for migration; new code uses `custom`.     |
 | `fileMention`            | coding-agent  | Inlined `@file` mention contents.                                                 |
-=======
-| `user`                   | pi-ai         | User/tool-feedback turn.                                                          |
-| `developer`              | pi-ai         | Developer-role instruction turn.                                                  |
-| `assistant`              | pi-ai         | Model turn; tool calls live in its `content` as `{ "type": "toolCall" }` blocks.  |
-| `toolResult`             | pi-ai         | Result of one tool call — **not** `tool_result`. Carries `toolCallId`/`toolName`. |
-| `bashExecution`          | pi-tui        | Standalone `!`-bash run.                                                          |
-| `pythonExecution`        | pi-tui        | Standalone Python run.                                                            |
-| `hookMessage`            | pi-tui        | Legacy hook-injected message, retained for migration; new code uses `custom`.     |
-| `fileMention`            | pi-tui        | Inlined `@file` mention contents.                                                 |
->>>>>>> theirs — scope `closing` · weave: run 'weave explain docs/upstream/session.md' for per-hunk detail, 'weave check' to verify your resolution
 
 Branch and compaction summary roles are synthesized from dedicated top-level entries
 during session-context reconstruction. Extension messages sent through `pi.sendMessage`
@@ -275,12 +264,8 @@ default instead of restoring that role's temporary model.
 }
 ```
 
-<<<<<<< ours — scope `closing` in heading ``thinking_level_change`` (F, confidence: medium)
 // refused_by: statement_fold · collision: ``configured` may additionally preserve the selector the user ch…`
 `configured` may additionally preserve the selector the architect chose (`"auto"` or a concrete level). Readers of older entries fall back to `thinkingLevel`.
-=======
-`configured` may additionally preserve the selector the user chose (`"auto"` or a concrete level). Readers of older entries fall back to `thinkingLevel`. Both fields can be `null`; a null/missing resolved level reconstructs as `"off"`.
->>>>>>> theirs — scope `closing`
 
 ### `compaction`
 
@@ -615,12 +600,8 @@ Implementations and adapters:
 
 ### Manual storage maintenance
 
-<<<<<<< ours — scope ``omp gc` previews maintenance by default; `--...` in heading `Manual storage maintenance` (S, confidence: medium)
 // refused_by: statement_fold · collision: ``omp gc` previews maintenance by default; `--apply` is required…`
 `tau gc` previews maintenance by default; `--apply` is required to sweep unreferenced blobs, archive eligible cold sessions, or checkpoint database WALs. Storage maintenance is separate from model-context compaction.
-=======
-`omp gc` previews maintenance by default; `--apply` is required to sweep unreferenced blobs, archive eligible cold sessions, checkpoint database WALs, or prune stale state. Storage maintenance is separate from model-context compaction.
->>>>>>> theirs — scope ``omp gc` previews maintenance by default; `--...`
 
 The sessions phase also removes transcript rewrite temps (`.<name>.jsonl.<snowflake>.tmp`, and the same pattern beside registered `--session` files) once they are past the 5-minute write grace. A live rewrite renames its temp into place within milliseconds, so an older one was left by a killed or crashed writer.
 
@@ -662,21 +643,11 @@ Discovery helpers live in `session-listing.ts`; `SessionManager` exposes project
 
 `HistoryStorage` (`history-storage.ts`) is a separate SQLite subsystem for prompt recall/search, not session replay.
 
-<<<<<<< ours — heading `Related but Distinct: Prompt History Storage` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 - DB: `~/.tau/agent/history.db`
 - Table: `history(id, prompt, created_at, cwd, session_id)`
 - FTS5 index: `history_fts` with trigger-maintained sync
 - Deduplicates consecutive identical prompts using in-memory last-prompt cache
 - Inserts are batched through an async drain queue (~100 ms delay) so prompt capture does not block turn execution
-=======
-- DB: `~/.omp/agent/history.db`
-- Table: `history(id, prompt, created_at, cwd, session_id, use_count)`, with unique `prompt`
-- FTS5 index: `history_fts`; new prompts are indexed by an insert trigger
-- Normalizes line endings and surrounding/trailing whitespace, then deduplicates prompts across the database
-- Resubmission updates the latest timestamp/cwd/session provenance and increments `use_count`
-- `add()` writes synchronously before returning its resolved promise; failures are logged rather than thrown
-- The same DB also contains independent `session_titles` and append-only `session_recaps` tables. Idle recaps do not enter the session JSONL or model context.
->>>>>>> theirs — heading `Related but Distinct: Prompt History Storage` (S+F, confidence: low)
 
 Use session files for conversation graph/state replay; use `HistoryStorage` for prompt history UX.

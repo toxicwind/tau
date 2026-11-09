@@ -1,5 +1,4 @@
 import { describe, expect, test } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { getBundledModel } from "@oh-my-pi/pi-catalog/models";`
 import { buildModel } from "@tau/tau-catalog/build";
 import { Effort } from "@tau/tau-catalog/effort";
@@ -7,20 +6,6 @@ import { getSupportedEfforts } from "@tau/tau-catalog/model-thinking";
 import { getBundledModel } from "@tau/tau-catalog/models";
 import { seedModels } from "@tau/tau-catalog/compat/providers";
 import type { Api, ModelSpec } from "@tau/tau-catalog/types";
-=======
-import * as fs from "node:fs/promises";
-import * as os from "node:os";
-import * as path from "node:path";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { resolveProviderModels } from "@oh-my-pi/pi-catalog/model-manager";
-import { getSupportedEfforts } from "@oh-my-pi/pi-catalog/model-thinking";
-import { getBundledModel, getBundledModels } from "@oh-my-pi/pi-catalog/models";
-import { seedModels } from "@oh-my-pi/pi-catalog/compat/providers";
-import { openaiModelManagerOptions } from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import type { Api, ModelSpec } from "@oh-my-pi/pi-catalog/types";
-import type { FetchImpl } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/catalog/test/openai-daybreak.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { applyGeneratedModelPolicies } from "../scripts/generated-policies";
 
 const DAYBREAK_EFFORTS = [Effort.Low, Effort.Medium, Effort.High, Effort.XHigh, Effort.Max];

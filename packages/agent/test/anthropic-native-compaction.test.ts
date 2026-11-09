@@ -14,7 +14,6 @@ import {
 	shouldUseAnthropicNativeCompaction,
 	shouldUseProviderNativeCompaction,
 	withAnthropicCompactionPreserveData,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import type { AssistantMessage, Context, Message, Model, Simple…`
 } from "@tau/tau-agent-core/compaction";
 import * as ai from "@tau/tau-ai";
@@ -23,26 +22,6 @@ import type { AssistantMessage, Context, Message, Model, SimpleStreamOptions, Us
 import { buildModel } from "@tau/tau-catalog/build";
 import type { ModelSpec } from "@tau/tau-catalog/types";
 import * as snapcompact from "@tau/snapcompact";
-=======
-} from "@oh-my-pi/pi-agent-core/compaction";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import * as ai from "@oh-my-pi/pi-ai";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import type {
-	AnthropicRequestControls,
-	AssistantMessage,
-	Context,
-	Message,
-	Model,
-	SimpleStreamOptions,
-	Usage,
-} from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import type { ModelSpec } from "@oh-my-pi/pi-catalog/types";
-import * as snapcompact from "@oh-my-pi/snapcompact";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/agent/test/anthropic-native-compaction.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const ZERO_USAGE: Usage = {
 	input: 0,

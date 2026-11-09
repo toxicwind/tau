@@ -1,5 +1,4 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 import { ThinkingLevel } from "@tau/tau-agent-core";
 import * as ai from "@tau/tau-ai";
@@ -21,27 +20,6 @@ import {
 } from "@tau/tau-tui/thinking";
 import type { TinyMemoryLocalModelKey } from "tau/tiny/models";
 import { tinyModelClient } from "tau/tiny/title-client";
-=======
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import * as ai from "@oh-my-pi/pi-ai";
-import { Effort, type Model } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { classifyDifficulty } from "@oh-my-pi/pi-coding-agent/auto-thinking/classifier";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import {
-	AUTO_THINKING,
-	clampAutoThinkingEffort,
-	parseConfiguredThinkingLevel,
-	parseEffort,
-	parseThinkingLevel,
-	resolveProvisionalAutoLevel,
-	resolveTaskEffortLevel,
-} from "@oh-my-pi/pi-tui/thinking";
-import type { TinyMemoryLocalModelKey } from "@oh-my-pi/pi-coding-agent/tiny/models";
-import { tinyModelClient } from "@oh-my-pi/pi-coding-agent/tiny/title-client";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/auto-thinking-classifier.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
 describe("auto thinking classifier helpers", () => {

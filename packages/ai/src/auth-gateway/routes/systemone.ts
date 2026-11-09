@@ -4,7 +4,6 @@
  *
  * Same bearer auth, model resolution, broker credential lookup, and a/b/c
  * credential rotation as the chat routes, dispatched through
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `* {@link TypeSafeJudge} — pi-ai's client for this wire — so 401…` +1 more
  * {@link TypeSafeJudge} — tau-ai's client for this wire — so 401 rotation and
  * 429/529 backoff match tau's own judgments. A judgment is one JSON
@@ -14,18 +13,6 @@
  */
 import { calculateCost } from "@tau/tau-catalog/models";
 import { logger } from "@tau/tau-utils";
-=======
- * {@link NativeJudge} — pi-ai's client for every judgment API, which
- * translates to the resolved model's own wire (OpenAI Decisions, Workers AI)
- * — so 401 rotation and 429/529 backoff match omp's own judgments. A judgment
- * is one JSON round-trip: no stream, no provider session state. Most judgment
- * APIs report tokens only, so the cost is priced from the catalog model for the
- * response header and the broker's observed-usage ledger.
- */
-import { calculateCost } from "@oh-my-pi/pi-catalog/models";
-import { logger } from "@oh-my-pi/pi-utils";
-import * as AIError from "../../error";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/ai/src/auth-gateway/routes/systemone.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { classifyGatewayError } from "../../error/gateway";
 import { checkNativeJudgmentImages, createNativeJudge, isJudgmentApi } from "../../judgment/native";
 import * as systemOne from "../../providers/systemone-server";

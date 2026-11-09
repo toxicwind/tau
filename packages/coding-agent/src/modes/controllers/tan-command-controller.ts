@@ -1,14 +1,8 @@
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import type { AssistantMessage } from "@oh-my-pi/pi-ai";`
 import type { AssistantMessage } from "@tau/tau-ai";
 import { prompt, Snowflake, untilAborted } from "@tau/tau-utils";
-=======
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, ImageContent, TextContent } from "@oh-my-pi/pi-ai";
-import { prompt, Snowflake, untilAborted } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/modes/controllers/tan-command-controller.ts' for per-hunk detail, 'weave check' to verify your resolution
 import backgroundTanDispatchPrompt from "../../prompts/system/background-tan-dispatch.md" with { type: "text" };
 import tanContextSwitchPrompt from "../../prompts/system/tan-context-switch.md" with { type: "text" };
 import { AgentRegistry, MAIN_AGENT_ID } from "../../registry/agent-registry";

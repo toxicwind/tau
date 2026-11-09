@@ -84,11 +84,8 @@ export function sshControlFallbackDir(canonicalDir: string, uid: number, tmpBase
 		.slice(0, 20);
 	// Only ControlMaster (POSIX) platforms reach this, so the socket dir is a POSIX path.
 	return path.posix.join(tmpBase, `omp-${key}`);
-<<<<<<< ours — scope `return path.join(tmpBase, `omp-${key}`);` in function `sshControlFallbackDir`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	return path.join(tmpBase, `tau-${key}`);
-=======
->>>>>>> theirs — scope `return path.join(tmpBase, `omp-${key}`);` deleted in theirs · weave: run 'weave explain packages/coding-agent/src/ssh/connection-manager.ts' for per-hunk detail, 'weave check' to verify your resolution
 }
 
 interface ControlDirChoice {

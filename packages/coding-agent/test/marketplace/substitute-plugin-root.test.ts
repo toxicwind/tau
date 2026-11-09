@@ -8,13 +8,10 @@ const TAU_VAR = "$" + "{TAU_PLUGIN_ROOT}";
 describe("substitutePluginRoot", () => {
 	const ROOT = "/plugins/my-plugin";
 
-<<<<<<< ours — scope `it("replaces OMP_PLUGIN_ROOT in strings", () ...` in test_suite `substitutePluginRoot`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("replaces TAU_PLUGIN_ROOT in strings", () => {
 		expect(substitutePluginRoot(`${TAU_VAR}/bin/server`, ROOT)).toBe("/plugins/my-plugin/bin/server");
 	});
-=======
->>>>>>> theirs — scope `it("replaces OMP_PLUGIN_ROOT in strings", () ...` deleted in theirs · weave: run 'weave explain packages/coding-agent/test/marketplace/substitute-plugin-root.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 	it("replaces both variables in same string", () => {
 		expect(substitutePluginRoot(`${CLAUDE_VAR}:${TAU_VAR}`, ROOT)).toBe("/plugins/my-plugin:/plugins/my-plugin");

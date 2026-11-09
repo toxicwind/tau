@@ -1,14 +1,5 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { MCP_TOOL_NAME_PREFIX, type MCPToolDetails } from "@oh-…` +1 more
 import { MCP_TOOL_NAME_PREFIX, type MCPToolDetails } from "@tau/tau-tui/tools/mcp";
-=======
-import {
-	formatMCPProgress,
-	MCP_TOOL_NAME_PREFIX,
-	type MCPProgress,
-	type MCPToolDetails,
-} from "@oh-my-pi/pi-tui/tools/mcp";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/mcp/tool-bridge.ts' for per-hunk detail, 'weave check' to verify your resolution
 /**
  * MCP to CustomTool bridge.
  *
@@ -26,7 +17,6 @@ import type {
 	CustomToolResult,
 	RenderResultOptions,
 } from "../extensibility/custom-tools/types";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { MCP_TOOL_NAME_PREFIX, type MCPToolDetails } from "@oh-…` +1 more
 import { resolveLocalUrlToFile } from "../internal-urls/local-protocol";
 import type { Theme } from "@tau/tau-tui/theme";
@@ -37,17 +27,6 @@ import { schemaDeclaresIntentField } from "../utils/tool-schema";
 import { callTool } from "./client";
 import { formatMCPToolFailure, MCPTransportError } from "./errors";
 import { renderMCPCall, renderMCPResult } from "@tau/tau-tui/tools/mcp";
-=======
-import { extractUriScheme } from "../internal-urls/parse";
-import { InternalUrlRouter } from "../internal-urls/router";
-import type { Theme } from "@oh-my-pi/pi-tui/theme";
-import { formatApprovalArguments } from "../tools/approval";
-import { ToolAbortError, throwIfAborted } from "../tools/tool-errors";
-import { schemaDeclaresIntentField } from "../utils/tool-schema";
-import { callTool } from "./client";
-import { formatMCPToolFailure, MCPTransportError } from "./errors";
-import { describeMCPCall, describeMCPResult, renderMCPCall, renderMCPResult } from "@oh-my-pi/pi-tui/tools/mcp";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import type {
 	MCPAuthChallenge,
 	MCPRequestOptions,

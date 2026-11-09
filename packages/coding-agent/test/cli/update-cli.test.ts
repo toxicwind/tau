@@ -165,17 +165,9 @@ describe("getLatestRelease rename pointers", () => {
 
 		expect(release.version).toBe("999.1.0");
 		expect(release.dist).toBe("npm");
-<<<<<<< ours — scope `it("follows omp.rename to the new package and...` in test_suite `getLatestRelease rename pointers` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `"https://registry.npmjs.org/@oh-my-pi/pi-coding-agent/latest",` +1 more
 		expect(release.packages).toEqual({ pkg: "@new/tau", natives: "@new/natives" });
 		expect(urls).toEqual(["https://registry.npmjs.org/tau/latest", "https://registry.npmjs.org/@new/tau/latest"]);
-=======
-		expect(release.packages).toEqual({ pkg: "@new/omp", natives: "@new/natives" });
-		expect(urls).toEqual([
-			"https://registry.npmjs.org/@oh-my-pi%2fpi-coding-agent/latest",
-			"https://registry.npmjs.org/@new%2fomp/latest",
-		]);
->>>>>>> theirs — scope `it("follows omp.rename to the new package and...` · weave: run 'weave explain packages/coding-agent/test/cli/update-cli.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 	});
 	it("fetches the canary dist-tag when checking the canary channel", async () => {
 		const urls = stubRegistry({
@@ -184,12 +176,8 @@ describe("getLatestRelease rename pointers", () => {
 
 		await getLatestRelease({ channel: "canary", registries: npmjs });
 
-<<<<<<< ours — scope `it("fetches the canary dist-tag when checking...` in test_suite `getLatestRelease rename pointers` (F, confidence: medium)
 // refused_by: statement_fold · collision: `expect(urls).toEqual(["https://registry.npmjs.org/@oh-my-pi/pi-…`
 		expect(urls).toEqual(["https://registry.npmjs.org/tau/canary"]);
-=======
-		expect(urls).toEqual(["https://registry.npmjs.org/@oh-my-pi%2fpi-coding-agent/canary"]);
->>>>>>> theirs — scope `it("fetches the canary dist-tag when checking...`
 	});
 
 	it("ignores a rename pointer that cycles back to an already-visited package", async () => {

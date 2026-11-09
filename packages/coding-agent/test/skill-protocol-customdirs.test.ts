@@ -2,7 +2,6 @@ import { afterEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { loadSkills, resetActiveSkillsForTests, setActiveSkills…`
 import { Settings } from "tau/config/settings";
 import { loadSkills, resetActiveSkillsForTests, setActiveSkills } from "tau/extensibility/skills";
@@ -10,22 +9,6 @@ import { parseInternalUrl } from "tau/internal-urls/parse";
 import { SkillProtocolHandler } from "tau/internal-urls/skill-protocol";
 import type { ToolSession } from "tau/tools";
 import { ReadTool } from "tau/tools/read";
-=======
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import {
-	buildSkillPromptMessage,
-	loadSkills,
-	resetActiveSkillsForTests,
-	setActiveSkills,
-	type Skill,
-} from "@oh-my-pi/pi-coding-agent/extensibility/skills";
-import { parseInternalUrl } from "@oh-my-pi/pi-coding-agent/internal-urls/parse";
-import { SkillProtocolHandler } from "@oh-my-pi/pi-coding-agent/internal-urls/skill-protocol";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
-import { getThemeByName, initTheme } from "@oh-my-pi/pi-tui/theme";
-import { readToolRenderer } from "@oh-my-pi/pi-tui/tools/read";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/skill-protocol-customdirs.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function makeSkillMd(name: string, dir: string) {
 	return `---\nname: ${name}\ndescription: ${name} skill.\n---\n\n# ${name} from ${dir}\n`;
@@ -224,14 +207,9 @@ describe("skill:// resolution honors skills.customDirectories (#7190)", () => {
 		expect(text).not.toContain("tail-skill skill.");
 	});
 
-<<<<<<< ours — test_suite `skill:// resolution honors skills.customDirectories (#7190)` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 	it("keeps first-wins across multiple custom directories", async () => {
 		const dirA = await fs.mkdtemp(path.join(os.tmpdir(), "tau-custom-a-"));
-=======
-	it("keeps the first-admitted custom directory on the bare name", async () => {
-		const dirA = await fs.mkdtemp(path.join(os.tmpdir(), "pi-custom-a-"));
->>>>>>> theirs — test_suite `skill:// resolution honors skills.customDirectories (#7190)` (F, confidence: medium)
 		tempDirs.push(dirA);
 		const dirB = await fs.mkdtemp(path.join(os.tmpdir(), "tau-custom-b-"));
 		tempDirs.push(dirB);

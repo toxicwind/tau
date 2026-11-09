@@ -1,12 +1,6 @@
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { encodeSixel } from "@tau/tau-natives";
 import { $env, isBunTestRuntime, isTerminalHeadless, isWsl } from "@tau/tau-utils/env";
-=======
-import { encodeSixel } from "@oh-my-pi/pi-natives";
-import { $env, isBunTestRuntime, isTerminalHeadless, isWsl } from "@oh-my-pi/pi-utils/env";
-import { writeTerminalSequence } from "./active-terminal";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/src/terminal-capabilities.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { sendDesktopNotification, shouldDeliverDesktopNotification } from "./desktop-notify";
 import {
 	detectKittyUnicodePlaceholdersSupport,
@@ -76,11 +70,8 @@ export type TerminalId =
 	| "rex"
 	| "base"
 	| "trueColor";
-<<<<<<< ours — variable `CMUX_NOTIFICATION_TITLE` (S, confidence: medium)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 const CMUX_NOTIFICATION_TITLE = "tau";
-=======
->>>>>>> theirs — variable `CMUX_NOTIFICATION_TITLE` (S, confidence: medium)
 
 const IMAGE_MARKER_SCAN_LIMIT = 512;
 const SIXEL_MARKER_SCAN_LIMIT = 128;
@@ -1505,12 +1496,8 @@ function sanitizeOsc99Id(id: string | undefined): string {
 }
 
 function osc99Id(id: string | undefined): string {
-<<<<<<< ours — scope `return sanitizeOsc99Id(id) || `omp-${nextOsc9...` in function `osc99Id` (S, confidence: medium)
 // refused_by: statement_fold · collision: `return sanitizeOsc99Id(id) || `omp-${nextOsc99NotificationId++}…`
 	return sanitizeOsc99Id(id) || `tau-${nextOsc99NotificationId++}`;
-=======
-	return sanitizeOsc99Id(id) || `${OSC99_ID_PREFIX}-${nextOsc99NotificationId++}`;
->>>>>>> theirs — scope `return sanitizeOsc99Id(id) || `omp-${nextOsc9...`
 }
 
 function utf8CodePointBytes(char: string): number {

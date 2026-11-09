@@ -4,20 +4,12 @@
  */
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import {` +19 more
 import { type Agent, AgentBusyError, type AgentMessage, EventLoopKeepalive, ThinkingLevel } from "@tau/tau-agent-core";
 import type { CompactionOutcome } from "@tau/tau-agent-core/compaction";
 import type { AssistantMessage, ImageContent, Model, Usage, UsageReport } from "@tau/tau-ai";
 import { modelsAreEqual } from "@tau/tau-catalog/models";
 import { execReplace } from "@tau/tau-natives";
-=======
-import { type Agent, AgentBusyError, type AgentMessage, agentPauseGate, ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { CompactionOutcome } from "@oh-my-pi/pi-agent-core/compaction";
-import type { AssistantMessage, ImageContent, Model, Usage, UsageReport } from "@oh-my-pi/pi-ai";
-import { modelsAreEqual } from "@oh-my-pi/pi-catalog/models";
-import { execReplace } from "@oh-my-pi/pi-natives";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/modes/interactive-mode.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type {
 	AutocompleteProvider,
 	Component,
@@ -45,36 +37,10 @@ import {
 	type TUI,
 	visibleWidth,
 	wrapTextWithAnsi,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import {` +19 more
 } from "@tau/tau-tui";
 import type { TerminalAppearanceRequestToken } from "@tau/tau-tui/terminal";
 import { isInsideTerminalMultiplexer } from "@tau/tau-tui/terminal-capabilities";
-=======
-} from "@oh-my-pi/pi-tui";
-import type { TerminalAppearanceRequestToken } from "@oh-my-pi/pi-tui/terminal";
-import type { DescribeContext, NativeChild, NativeNode, NativeUiEvent } from "@oh-my-pi/pi-tui/native/node";
-import { col, compact, kbd, keyed, node, row, span, text } from "@oh-my-pi/pi-tui/native/describe";
-import {
-	describeJobWidgetMiniSpark,
-	describeJobWidgetsHovercard,
-	type JobWidgetEntry,
-	type JobWidgetView,
-	jobWidgetGlance,
-	jobWidgetGlanceSpans,
-	jobWidgetSummary,
-	latestJobWidget,
-} from "@oh-my-pi/pi-tui/tools/job-widget";
-import type { AsyncJobManagerApi } from "../async/job-manager";
-import type { JobWidgetRegistry } from "../job-widgets/types";
-import { sameItems } from "@oh-my-pi/pi-tui/native/memo";
-import { describeSegmentTrack, renderSegmentTrack, type TrackSegment } from "@oh-my-pi/pi-tui/chrome/segment-track";
-import type { WorkingRowSpec } from "@oh-my-pi/pi-tui/components/loader";
-import { formatDoubleTap } from "@oh-my-pi/pi-tui/key-hint-format";
-import { thinkingLevelWord } from "@oh-my-pi/pi-tui/status-line/segments";
-import type { TspChecklistItem, TspChecklistPhase, TspSpan, TspText, TspTreeNode } from "@oh-my-pi/pi-wire";
-import { isInsideTerminalMultiplexer } from "@oh-my-pi/pi-tui/terminal-capabilities";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import {
 	$env,
 	adjustHsv,
@@ -88,7 +54,6 @@ import {
 	prompt,
 	sanitizeText,
 	setProjectDir,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import {` +19 more
 } from "@tau/tau-utils";
 import chalk from "@tau/tau-utils/chalk";
@@ -106,19 +71,6 @@ import {
 	Settings,
 	settings,
 } from "../config/settings";
-=======
-} from "@oh-my-pi/pi-utils";
-import chalk from "@oh-my-pi/pi-utils/chalk";
-import { pickTableChart } from "../auto-graph/planner";
-import { restartArgv } from "../cli/flag-tables";
-import type { CollabGuestLink } from "../collab/guest";
-import { CollabController } from "../collab/controller";
-import type { CollabHost } from "../collab/host";
-import { KeybindingsManager } from "@oh-my-pi/pi-tui/app-keybindings";
-import { appKey, editorKey, rawKeyHint } from "@oh-my-pi/pi-tui/chrome/keybinding-hints";
-import { formatModelString, type ResolvedModelRoleValue, resolveModelRoleValue } from "../config/model-resolver";
-import { isSettingsInitialized, Settings, settings } from "../config/settings";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import { clearClaudePluginRootsCache } from "../discovery/helpers";
 import type {
 	AssistantTextRenderer,
@@ -147,11 +99,8 @@ import type {
 import type { Skill } from "../extensibility/skills";
 import type { FileSlashCommand } from "../extensibility/slash-commands";
 import { loadSlashCommands } from "../extensibility/slash-commands";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import {` +19 more
 import type { Goal } from "@tau/tau-tui/tools/goal";
-=======
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import type { GoalModeState } from "../goals/state";
 import { rebindMemoryBackendForCwd } from "../hindsight/backend";
 import { copyLocalArtifacts, resolveLocalRoot } from "../internal-urls";
@@ -179,19 +128,11 @@ import guidedGoalInterviewPrompt from "../prompts/goals/guided-goal-interview.md
 import planFilenamePrompt from "../prompts/system/plan-filename.md" with { type: "text" };
 import planModeApprovedPrompt from "../prompts/system/plan-mode-approved.md" with { type: "text" };
 import planModeCompactInstructionsPrompt from "../prompts/system/plan-mode-compact-instructions.md" with { type: "text" };
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import {` +19 more
 import type { AgentHubRegistry } from "@tau/tau-tui/overlays/agent-hub-types";
 import { formatCost } from "@tau/tau-tui/overlays/agent-hub-renderer";
 import { AgentRegistry, MAIN_AGENT_ID } from "../registry/agent-registry";
 import { startWorldRegistryBridge, type WorldRegistryBridge } from "../registry/world-registry-bridge";
-=======
-import type { AgentHubRegistry } from "@oh-my-pi/pi-tui/overlays/agent-hub-types";
-import { AgentRegistry, MAIN_AGENT_ID } from "../registry/agent-registry";
-import { registerPersistedSubagents } from "../registry/persisted-agents";
-import type { AgentCostSnapshot } from "@oh-my-pi/pi-tui/overlays/agent-hub-projection";
-import { sumSubagentTreeCost } from "./agent-hub-runtime";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import {
 	type AgentSession,
 	type AgentSessionEvent,
@@ -206,19 +147,12 @@ import { HistoryStorage } from "../session/history-storage";
 import { syncTextPrediction, textPredictionBackend } from "../predict/client";
 import { setWordPredictionHost } from "@oh-my-pi/pi-tui/prompt/word-completion";
 import { USER_INTERRUPT_LABEL } from "../session/messages";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import {` +19 more
 import { resolveMarkdownLinkTargets } from "../internal-urls/hyperlink-targets";
 import { modelMentionDisplayName } from "@tau/tau-tui/prompt/model-mention-syntax";
 import { modelMentionChipLabel } from "@tau/tau-tui/prompt/composer-attachments";
 import type { SessionContext } from "../session/session-context";
 import { getRecentSessions } from "../session/session-listing";
-=======
-import { resolveMarkdownLinkHrefs } from "../internal-urls/hyperlink-targets";
-import type { ResolveContext } from "../internal-urls/index";
-import { modelMentionChipLabel, shiftImageMarkers } from "@oh-my-pi/pi-tui/prompt/composer-attachments";
-import { isTranscriptEntry, type SessionContext } from "../session/session-context";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import type { SessionManager } from "../session/session-manager";
 import { loadPinnedSessionIds } from "../session/session-pins";
 import {
@@ -231,7 +165,6 @@ import {
 import type { ShakeMode } from "../session/shake-types";
 import { BUILTIN_SLASH_COMMAND_RESERVED_NAMES, buildTuiBuiltinSlashCommands } from "../slash-commands/builtin-registry";
 import { buildStaticInlineHint } from "../slash-commands/builtin-completions";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import {` +19 more
 import { formatCoarseDuration } from "@tau/tau-tui/chrome/format";
 import { STTController, type SttState } from "../stt";
@@ -240,23 +173,6 @@ import { discoverTitleSystemPromptFile, resolvePromptInput } from "../system-pro
 import { labelEchoesHandle } from "../task/label";
 import { agentTypeBadge, formatTaskId } from "@tau/tau-tui/tools/task";
 import type { ConfiguredThinkingLevel } from "@tau/tau-tui/thinking";
-=======
-import { formatCoarseDuration } from "@oh-my-pi/pi-tui/chrome/format";
-import { type DictationTarget, MicCursor, type SttCallbacks, STTController, type SttState } from "../stt";
-import type { SpaceHoldHandler } from "@oh-my-pi/pi-tui/space-hold";
-import { resolveCliEntryCmd } from "../subprocess/worker-client";
-import { discoverTitleSystemPromptFile, resolvePromptInput } from "../system-prompt";
-import { labelEchoesHandle } from "../task/label";
-import { agentTypeBadge, formatTaskId } from "@oh-my-pi/pi-tui/tools/task";
-import type { ModelRoleLookup } from "@oh-my-pi/pi-tui/overlays/model-browser";
-import {
-	AUTO_THINKING,
-	type ConfiguredThinkingLevel,
-	newSessionThinkingLevel,
-	parseConfiguredThinkingLevel,
-	resolveConfiguredThinkingLevel,
-} from "@oh-my-pi/pi-tui/thinking";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import { isMCPToolName } from "../tools/builtin-names";
 import type { LspStartupServerInfo } from "../tools";
 import { resolvePlanFilePath } from "../plan-mode/plan-files";
@@ -295,30 +211,9 @@ import {
 	todoMatchesAnyDescription,
 } from "@tau/tau-tui/tools/todo";
 import { vocalizer } from "../tts/vocalizer";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import {` +19 more
 import { applyHyperlinkSetting, fileHyperlink } from "@tau/tau-tui/render/hyperlink";
 import { renderTreeList } from "@tau/tau-tui/render/tree-list";
-=======
-import { applyFileLinkSetting, applyHyperlinkSetting, fileHyperlink } from "@oh-my-pi/pi-tui/render/hyperlink";
-import {
-	extensionLinkClicksAvailable,
-	extensionLinksRouted,
-	extensionLinksVersion,
-	setExtensionLinkPicking,
-	setExtensionLinks,
-} from "@oh-my-pi/pi-tui/render/extension-links";
-import { isNativeRendering, onNativeRenderingChange } from "@oh-my-pi/pi-tui/native/state";
-import {
-	isTranscriptPresentable,
-	messageBlock,
-	onTranscriptPresentationRedrawn,
-	onTranscriptPresentersChanged,
-	PresentedBlock,
-	setTranscriptPresenters,
-} from "@oh-my-pi/pi-tui/chat/transcript-presentation";
-import { renderTreeList } from "@oh-my-pi/pi-tui/render/tree-list";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import { formatStartupChangelogSummary, type StartupChangelogSelection } from "../utils/changelog";
 import { copyToClipboard } from "../utils/clipboard";
 import type { EventBus } from "../utils/event-bus";
@@ -354,7 +249,6 @@ import {
 	type VibeParentSession,
 	VibeSessionRegistry,
 } from "../vibe/runtime";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import {` +19 more
 import type { AssistantMessageComponent } from "@tau/tau-tui/chat/assistant-message";
 import { AttachmentChipsBand } from "@tau/tau-tui/prompt/attachment-chips";
@@ -383,49 +277,6 @@ import { Composer, PINNED_HUD_TOGGLE_ID, type ComposerStatusSnapshot } from "@ta
 import { setMagicKeywords } from "@tau/tau-tui/prompt/magic-keywords";
 import { MAGIC_KEYWORDS } from "./magic-keywords";
 import { writeComposerStatusCache, writeComposerWelcomeCache } from "@tau/tau-tui/prompt/composer-cache";
-=======
-import { AssistantMessageComponent } from "@oh-my-pi/pi-tui/chat/assistant-message";
-import { setSvgFigureRendering } from "@oh-my-pi/pi-tui/chat/svg-figure";
-import { setTableCharts } from "@oh-my-pi/pi-tui/chat/table-chart";
-import { setTranscriptActionHandler } from "@oh-my-pi/pi-tui/chat/transcript-actions";
-import { StatusNotice } from "@oh-my-pi/pi-tui/chrome/status-notice";
-import { ReadToolGroupComponent } from "@oh-my-pi/pi-tui/chat/read-tool-group";
-import { ToolExecutionComponent } from "@oh-my-pi/pi-tui/chat/tool-execution";
-import { AttachmentChipsBand } from "@oh-my-pi/pi-tui/prompt/attachment-chips";
-import type { BashExecutionComponent } from "@oh-my-pi/pi-tui/chat/bash-execution";
-import { ChatBlock, type ChatBlockHost } from "@oh-my-pi/pi-tui/chrome/chat-block";
-import { CodexResetFireworksController } from "@oh-my-pi/pi-tui/overlays/codex-reset-fireworks";
-import { type ComposerNativeState, CustomEditor } from "@oh-my-pi/pi-tui/prompt/custom-editor";
-import { DynamicBorder } from "@oh-my-pi/pi-tui/chrome/dynamic-border";
-import { EditorTopGap } from "@oh-my-pi/pi-tui/prompt/editor-top-gap";
-import type { VersionUpdate } from "@oh-my-pi/pi-tui/prompt/welcome";
-import { ErrorBannerComponent } from "@oh-my-pi/pi-tui/overlays/error-banner";
-import type { EvalExecutionComponent } from "@oh-my-pi/pi-tui/chat/eval-execution";
-import type { HookEditorComponent } from "@oh-my-pi/pi-tui/overlays/hook-editor";
-import type { HookInputComponent } from "@oh-my-pi/pi-tui/overlays/hook-input";
-import type { HookSelectorComponent, HookSelectorSlider } from "@oh-my-pi/pi-tui/overlays/hook-selector";
-import { type PlanReviewAnnotationState, PlanReviewOverlay } from "@oh-my-pi/pi-tui/overlays/plan-review-overlay";
-import { PlanSaveOverlay, type PlanSaveOverlayResult } from "@oh-my-pi/pi-tui/overlays/plan-save-overlay";
-import { ServedModelTracker } from "@oh-my-pi/pi-tui/chat/served-model-marker";
-import { SessionInfoOverlay } from "@oh-my-pi/pi-tui/overlays/session-info-overlay";
-import { JobsSheet } from "@oh-my-pi/pi-tui/overlays/jobs-panel";
-import { hasSpotlightOriginal, SpotlightSheet } from "@oh-my-pi/pi-tui/overlays/spotlight-sheet";
-import type { SpotlightDetails } from "@oh-my-pi/pi-tui/chat/spotlight";
-import { readArtifactText } from "../spotlight/sink";
-import { SkillMessageComponent } from "@oh-my-pi/pi-tui/chat/skill-message";
-import { StatusLineComponent } from "@oh-my-pi/pi-tui/status-line";
-import { statusLineHost } from "./status-line-host";
-import { stopSharedSpinnerTicker, type ToolExecutionHandle } from "@oh-my-pi/pi-tui/chat/tool-execution";
-import { TranscriptContainer } from "@oh-my-pi/pi-tui/chrome/transcript-container";
-import { Composer, type ComposerPreferences, type ComposerStatusCache } from "@oh-my-pi/pi-tui/prompt/composer";
-import { PINNED_HUD_TOGGLE_ID } from "../task/output-manager";
-import { isUserRequestEntry, type TranscriptEntryLike } from "@oh-my-pi/pi-tui/chat/transcript-entry";
-import { LinkBrowserComponent, type LinkBrowserDeps } from "@oh-my-pi/pi-tui/overlays/link-browser";
-import { getAssistantMessageLinkTargets } from "@oh-my-pi/pi-tui/prompt/interactive-context-helpers";
-import { setMagicKeywords } from "@oh-my-pi/pi-tui/prompt/magic-keywords";
-import { MAGIC_KEYWORDS } from "./magic-keywords";
-import { sharedComposerCache } from "@oh-my-pi/pi-tui/prompt/composer-cache";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import { BtwController } from "./controllers/btw-controller";
 import { CleanseCommandController } from "./controllers/cleanse-command-controller";
 import { CommandController } from "./controllers/command-controller";
@@ -440,12 +291,8 @@ import { SessionFocusController } from "./controllers/session-focus-controller";
 import { SSHCommandController } from "./controllers/ssh-command-controller";
 import { TanCommandController } from "./controllers/tan-command-controller";
 import { TodoCommandController } from "./controllers/todo-command-controller";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import {` +19 more
 import { imageReferenceHyperlink, materializeImageReferenceLinks } from "@tau/tau-tui/prompt/image-references";
-=======
-import { imageReferenceHyperlink, setImageBlobWriter } from "@oh-my-pi/pi-tui/prompt/image-references";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import { describeLoopCondition, evaluateLoopCondition, type LoopConditionVerdict } from "./loop-condition";
 import {
 	consumeLoopLimitIteration,
@@ -505,97 +352,9 @@ import type {
 	SubmittedUserInput,
 	YieldCompaction,
 } from "./types";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import {` +19 more
 import type { TodoItem, TodoPhase } from "@tau/tau-tui/tools/todo";
 import { UiHelpers } from "./utils/ui-helpers";
-=======
-import type { TodoItem, TodoPhase } from "@oh-my-pi/pi-tui/tools/todo";
-import type { ConversationPosition } from "./utils/conversation-position";
-import { materializeImageChipLinks, UiHelpers } from "./utils/ui-helpers";
-
-import {
-	askTimeoutMs,
-	cfgAutocompleteMaxVisible,
-	cfgComposerPredictionAlternatives,
-	cfgComposerPredictions,
-	cfgComposerShape,
-	cfgComposerTokenRate,
-	cfgDisplayAdvisorCollapsedLines,
-	cfgDisplayCacheMissMarker,
-	cfgDisplayCollapseCompacted,
-	cfgDisplayHideToolActivity,
-	cfgDisplayPinnedAgents,
-	cfgDisplayShellVisualization,
-	cfgDisplayShowTokenUsage,
-	cfgDisplayShowTurnTime,
-	cfgDisplaySubagentLivePreview,
-	cfgGitEnabled,
-	cfgLoopConditionTimeoutMs,
-	cfgLoopMode,
-	cfgMagicKeywordsEnabled,
-	cfgRecapEnabled,
-	cfgRecapIdleSeconds,
-	cfgShowHardwareCursor,
-	cfgSpellingAutocomplete,
-	cfgSpellingAutocorrect,
-	cfgSpellingTypoDetection,
-	cfgStartupChangelogMode,
-	cfgStartupQuiet,
-	cfgStatusLineCompactThinkingLevel,
-	cfgStatusLineContextLine,
-	cfgStatusLineLeftSegments,
-	cfgStatusLinePreset,
-	cfgStatusLineRightSegments,
-	cfgStatusLineSegmentOptions,
-	cfgStatusLineSeparator,
-	cfgStatusLineSessionAccent,
-	cfgStatusLineShowHookStatus,
-	cfgStatusLineTransparent,
-	cfgSymbolPreset,
-	cfgTerminalProgramStatus,
-	cfgTerminalShowImages,
-	cfgTuiHyperlinks,
-	cfgTuiImeSafeCursor,
-	cfgTuiMaxInlineImages,
-	cfgTuiAutoGraph,
-	cfgTuiMouse,
-	cfgTuiColorfulMarkdown,
-	cfgTuiRenderMermaid,
-	cfgTuiRenderSvg,
-	cfgTuiResizeScrollback,
-	cfgTuiCompleteScrollback,
-	cfgTuiTextSizing,
-	cfgTuiTight,
-	cfgTuiTitleSpinner,
-	cfgMotionResolved,
-	cfgTuiTitleState,
-	cfgTuiVimMode,
-	cfgTuiVimModeDisplay,
-} from "./settings";
-import { cfgTasksTodoClearDelay } from "../tools/settings";
-import { cfgWorktreeOnExit, cfgWorktreeOnStart } from "../task/settings";
-import { cfgExpandThinkingBlocks, cfgProseOnlyThinking } from "../session/settings";
-import { cfgDefaultThinkingLevel, cfgHideThinkingBlock } from "../session/settings";
-import { cfgCycleOrder, cfgModelRoles } from "../config/model-settings";
-import { cfgExtensionHandlersModeControl } from "../extensibility/settings";
-import { cfgGoalContinuationModes, cfgGoalEnabled } from "../goals/settings";
-import { goalContinuationActivity, goalFromModeData } from "../goals/state";
-import { cfgPlanDefaultOnStartup, cfgPlanEnabled } from "../plan-mode/settings";
-import { cfgStreamRedactPatterns } from "../stream/settings";
-import { cfgSttEnabled } from "../stt/settings";
-import { combine, type SettingValueOf } from "../config/registry";
-import { cfgAdvisorEnabled, cfgAdvisorMaxNotesPerUpdate } from "../advisor/settings";
-import { cfgExtensionAssistantTextRenderers, cfgExtensionTranscriptPresenters } from "../extensibility/settings";
-import { cfgTierAdvisor } from "../session/settings";
-import {
-	cfgCompactionEnabled,
-	cfgCompactionIdleEnabled,
-	cfgCompactionIdleThresholdTokens,
-	cfgCompactionIdleTimeoutSeconds,
-	cfgCompactionMethodOrder,
-} from "../session/context-settings";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 
 /**
  * Settings with live interactive-UI side effects, keyed by id. One coalesced listener applies
@@ -2288,7 +2047,6 @@ export class InteractiveMode implements InteractiveModeContext {
 			);
 		}
 
-<<<<<<< ours — scope `constructor` in class `InteractiveMode` (T+S+F, confidence: low)
 // refused_by: container_member · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 		setTuiTight(settings.get("tui.tight"));
 		setMarkdownMermaidRendering(settings.get("tui.renderMermaid"));
@@ -2301,16 +2059,6 @@ export class InteractiveMode implements InteractiveModeContext {
 		// unless the user opts in, and never emits raw escapes on other terminals.
 		setTerminalTextSizing(settings.get("tui.textSizing") && TERMINAL.supportsTextSizing);
 		// Keep generic tau-tui renderers aligned with the coding-agent setting.
-=======
-		setTuiTight(cfgTuiTight.get(settings));
-		setMarkdownColorful(cfgTuiColorfulMarkdown.get(settings));
-		setMarkdownMermaidRendering(cfgTuiRenderMermaid.get(settings));
-		setSvgFigureRendering(cfgTuiRenderSvg.get(settings));
-		this.#applyAutoGraphSetting();
-		this.#applyTextSizingSetting();
-		// Keep generic pi-tui renderers aligned with the coding-agent setting.
-		applyFileLinkSetting();
->>>>>>> theirs — scope `constructor`
 		applyHyperlinkSetting();
 		// The TUI polls the provider every frame, so it reads a field kept in sync by
 		// subscription rather than resolving the setting per render.
@@ -3103,18 +2851,10 @@ export class InteractiveMode implements InteractiveModeContext {
 				this.ui.requestRender(true, { clearScrollback: true });
 			}),
 		);
-<<<<<<< ours — scope `init` in class `InteractiveMode` (S+F, confidence: low)
 // refused_by: container_member · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 		// A confirmed Glyph Protocol handshake means tau's own icons render in
 		// this terminal without a Nerd Font, so the default `unicode` preset is
 		// upgraded to `nerd` for this session. The persisted setting is left
-=======
-		// The preset may have switched before this listener existed.
-		this.#refreshSlashCommandIcons();
-		// A confirmed Glyph Protocol handshake means omp's own icons render in
-		// this terminal without a Nerd Font, so the unconfigured `unicode` preset
-		// is upgraded to `nerd` for this session. The persisted setting is left
->>>>>>> theirs — scope `init`
 		// alone: it travels to terminals (ssh, tmux) where the upgrade would
 		// show tofu. Explicit preset choices are never touched.
 		this.ui.terminal.onGlyphProtocolReport?.(supported => {
@@ -8804,15 +8544,8 @@ export class InteractiveMode implements InteractiveModeContext {
 		// Do not force a final render during teardown: disposed session/UI state can
 		// collapse to an empty frame, clearing the viewport and leaving the parent
 		// shell prompt at row 0. Stop from the last committed frame so the terminal
-<<<<<<< ours — scope `#teardown` in class `InteractiveMode` (F, confidence: medium)
 // refused_by: container_member · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 		// hands Bash the cursor immediately after visible TAU content.
-=======
-		// hands Bash the cursor immediately after visible OMP content.
-		// Close the TSP surfaces first so the drain below also swallows what the
-		// terminal still sends them (acks, events) instead of the shell.
-		this.ui.closeNative();
->>>>>>> theirs — scope `#teardown`
 		// Drain any in-flight Kitty key release events before stopping.
 		// This prevents escape sequences from leaking to the parent shell over slow SSH.
 		await this.ui.terminal.drainInput(1000);

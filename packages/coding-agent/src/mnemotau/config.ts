@@ -1,14 +1,9 @@
 import { Database } from "bun:sqlite";
 import * as fs from "node:fs";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { getMemoriesDir, logger } from "@oh-my-pi/pi-utils";`
 import type { MnemotauOptions } from "@tau/tau-mnemotau";
 import { getMemoriesDir, logger } from "@tau/tau-utils";
-=======
-import type { MnemopiOptions } from "@oh-my-pi/pi-mnemopi";
-import { getMemoriesDir, logger, withLoopPhase } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/mnemotau/config.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { Settings } from "../config/settings";
 import { expandTilde } from "../tools/path-utils";
 
@@ -47,7 +42,6 @@ export type MnemotauProviderOptions = Pick<
 	"noEmbeddings" | "embeddingModel" | "embeddingApiUrl" | "embeddingApiKey" | "llm" | "debug"
 >;
 
-<<<<<<< ours — interface `MnemopiBackendConfig` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 export interface MnemotauBackendConfig {
 	dbPath: string;
@@ -70,29 +64,6 @@ export interface MnemotauBackendConfig {
 	debug: boolean;
 	providerOptions: MnemotauProviderOptions;
 	llmMode: MnemotauLlmMode;
-=======
-export interface MnemopiBackendConfig {
-	dbPath: string;
-	baseBank?: string;
-	bank: string;
-	globalBank?: string;
-	retainBank?: string;
-	recallBanks?: readonly string[];
-	scoping?: MnemopiScoping;
-	autoRecall: boolean;
-	autoRetain: boolean;
-	polyphonicRecall: boolean;
-	enhancedRecall: boolean;
-	proactiveLinking: boolean;
-	retainEveryNTurns: number;
-	recallLimit: number;
-	recallContextTurns: number;
-	recallMaxQueryChars: number;
-	injectionTokenLimit: number;
-	debug: boolean;
-	providerOptions: MnemopiProviderOptions;
-	llmMode: MnemopiLlmMode;
->>>>>>> theirs — interface `MnemopiBackendConfig` (S+F, confidence: low)
 	llmBaseUrl?: string;
 	llmApiKey?: string;
 	llmModel?: string;
@@ -160,69 +131,7 @@ export function loadMnemotauConfig(settings: Settings, agentDir: string): Mnemot
 		llmModel: settings.get("mnemotau.llmModel"),
 	};
 }
-<<<<<<< ours — function `loadMnemopiConfig` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
-=======
-export function loadMnemopiConfig(settings: Settings, agentDir: string): MnemopiBackendConfig {
-	const configuredDbPath = cfgMnemopiDbPath.get(settings);
-	const cwd = settings.getCwd();
-	const scoping = cfgMnemopiScoping.get(settings);
-	const dbPath = configuredDbPath?.trim()
-		? expandTilde(configuredDbPath.trim())
-		: path.join(getMemoriesDir(agentDir), "mnemopi", "mnemopi.db");
-	const scope = computeMnemopiBankScope(cfgMnemopiBank.get(settings), cwd, scoping);
-	const recallBanks =
-		scoping === "global" ? scope.recallBanks : extendRecallWithLegacyBanks(scope.recallBanks, dbPath, cwd);
-	const llmMode = cfgMnemopiLlmMode.get(settings);
-	const embeddingOverride = cfgMnemopiEmbeddingModel.get(settings);
-	const embeddingVariant = cfgMnemopiEmbeddingVariant.get(settings);
-	// Map the variant explicitly rather than indexing an object with the raw config
-	// value (which could resolve an inherited property like `__proto__`); any value
-	// other than the multilingual variant falls back to the English default.
-	const variantModel =
-		embeddingVariant === "multilingual" ? "intfloat/multilingual-e5-large" : "BAAI/bge-base-en-v1.5";
-	const embeddingModel = embeddingOverride?.trim() || variantModel;
-	return {
-		dbPath,
-		baseBank: scope.baseBank,
-		bank: scope.bank,
-		globalBank: scope.globalBank,
-		retainBank: scope.retainBank,
-		recallBanks,
-		scoping,
-		autoRecall: cfgMnemopiAutoRecall.get(settings),
-		autoRetain: cfgMnemopiAutoRetain.get(settings),
-		polyphonicRecall: cfgMnemopiPolyphonicRecall.get(settings),
-		enhancedRecall: cfgMnemopiEnhancedRecall.get(settings),
-		proactiveLinking: cfgMnemopiProactiveLinking.get(settings),
-		retainEveryNTurns: Math.max(1, Math.floor(cfgMnemopiRetainEveryNTurns.get(settings))),
-		recallLimit: Math.max(1, Math.floor(cfgMnemopiRecallLimit.get(settings))),
-		recallContextTurns: Math.max(1, Math.floor(cfgMnemopiRecallContextTurns.get(settings))),
-		recallMaxQueryChars: Math.max(256, Math.floor(cfgMnemopiRecallMaxQueryChars.get(settings))),
-		injectionTokenLimit: Math.max(256, Math.floor(cfgMnemopiInjectionTokenLimit.get(settings))),
-		debug: cfgMnemopiDebug.get(settings),
-		providerOptions: {
-			noEmbeddings: cfgMnemopiNoEmbeddings.get(settings),
-			debug: cfgMnemopiDebug.get(settings),
-			embeddingModel,
-			embeddingApiUrl: cfgMnemopiEmbeddingApiUrl.get(settings),
-			embeddingApiKey: cfgMnemopiEmbeddingApiKey.get(settings),
-			llm:
-				llmMode === "remote"
-					? {
-							baseUrl: cfgMnemopiLlmBaseUrl.get(settings),
-							apiKey: cfgMnemopiLlmApiKey.get(settings),
-							model: cfgMnemopiLlmModel.get(settings),
-						}
-					: false,
-		},
-		llmMode,
-		llmBaseUrl: cfgMnemopiLlmBaseUrl.get(settings),
-		llmApiKey: cfgMnemopiLlmApiKey.get(settings),
-		llmModel: cfgMnemopiLlmModel.get(settings),
-	};
-}
->>>>>>> theirs — function `loadMnemopiConfig` (S+F, confidence: low)
 
 const DEFAULT_SHARED_BANK = "default";
 
@@ -230,12 +139,8 @@ const DEFAULT_SHARED_BANK = "default";
 // directory cannot dominate startup latency.
 const LEGACY_BANK_SCAN_LIMIT = 64;
 
-<<<<<<< ours — interface `MnemopiBankScope` (S, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 export interface MnemotauBankScope {
-=======
-export interface MnemopiBankScope {
->>>>>>> theirs — interface `MnemopiBankScope` (S, confidence: medium)
 	baseBank: string;
 	bank: string;
 	globalBank: string;
@@ -333,7 +238,6 @@ export function extendRecallWithLegacyBanks(
 	dbPath: string,
 	cwd: string,
 ): readonly string[] {
-<<<<<<< ours — scope `*/` in function `extendRecallWithLegacyBanks` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const candidate = path.join(banksDir, entry.name, "mnemopi.db");`
 	const banksDir = path.join(path.dirname(dbPath), "banks");
 	const cwdAbs = path.resolve(cwd || ".");
@@ -354,29 +258,6 @@ export function extendRecallWithLegacyBanks(
 		if (bankOnlyHasCwd(candidate, cwdAbs)) extras.push(entry.name);
 	}
 	return extras.length === 0 ? resolved : [...resolved, ...extras];
-=======
-	return withLoopPhase("mnemopi.open", () => {
-		const banksDir = path.join(path.dirname(dbPath), "banks");
-		const cwdAbs = path.resolve(cwd || ".");
-		let entries: fs.Dirent[];
-		try {
-			entries = fs.readdirSync(banksDir, { withFileTypes: true });
-		} catch {
-			return resolved;
-		}
-		const have = new Set(resolved);
-		const extras: string[] = [];
-		let scanned = 0;
-		for (const entry of entries) {
-			if (!entry.isDirectory() || have.has(entry.name)) continue;
-			if (scanned >= LEGACY_BANK_SCAN_LIMIT) break;
-			scanned++;
-			const candidate = path.join(banksDir, entry.name, "mnemopi.db");
-			if (bankOnlyHasCwd(candidate, cwdAbs)) extras.push(entry.name);
-		}
-		return extras.length === 0 ? resolved : [...resolved, ...extras];
-	});
->>>>>>> theirs — scope `*/`
 }
 
 function bankOnlyHasCwd(dbPath: string, cwd: string): boolean {

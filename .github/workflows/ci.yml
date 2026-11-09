@@ -107,16 +107,10 @@ jobs:
    # ref (or from a tagged main HEAD) is also treated as a release.
    release_metadata:
       name: Resolve release metadata
-<<<<<<< ours — scope `declaration` in section `jobs` (T, confidence: high)
 # refused_by: statement_fold · collision: `# Hosted, not omp-kata: this ~20 s git-tag probe gates the whol…`
       # Hosted, not tau-kata: this ~20 s git-tag probe gates the whole release
       # chain, and queueing it behind the 4-runner kata pool adds dead minutes
       # to the darwin critical path.
-=======
-      # Hosted, not vmon: this ~20 s git-tag probe gates the whole release
-      # chain and needs no toolchain, so it should not wait on a vmon sandbox
-      # (team capacity, snapshot fork) on the release critical path.
->>>>>>> theirs — scope `declaration` · weave: run 'weave explain .github/workflows/ci.yml' for per-hunk detail, 'weave check' to verify your resolution
       runs-on: ubuntu-22.04
       outputs:
          is-release: ${{ steps.detect.outputs.is-release }}
@@ -166,12 +160,8 @@ jobs:
 
    check:
       name: Lint, type check & web build
-<<<<<<< ours — scope `- name: Detect release tag at HEAD` in section `jobs` (F, confidence: medium)
 # refused_by: statement_fold · collision: `runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.…` +32 more
       runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.04' || 'tau-kata' }}
-=======
-      runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.04' || 'vmon-large/from=omp-ci' }}
->>>>>>> theirs — scope `- name: Detect release tag at HEAD`
       steps:
          - uses: actions/checkout@v5
            with:
@@ -210,13 +200,8 @@ jobs:
               # cache. PR runs use a fresh GitHub-hosted runner (see runs-on
               # above) with no prior cargo work, so nothing populates the index
               # for our own graph and resolution fails. Non-PR events land on
-<<<<<<< ours — scope `- name: Detect release tag at HEAD` in section `jobs` (F, confidence: medium)
 # refused_by: statement_fold · collision: `runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.…` +32 more
               # tau-kata, whose Cargo cache is warm. Fetch first.
-=======
-              # vmon, whose omp-ci template bakes a warm Cargo registry (only
-              # crates added since the template build download). Fetch first.
->>>>>>> theirs — scope `- name: Detect release tag at HEAD`
               cargo fetch --locked
               cargo deny --locked --offline check licenses sources
          - name: Type check workspace
@@ -261,12 +246,8 @@ jobs:
    rust_validate:
       name: Validate Rust workspace (bazel)
       if: github.event_name != 'pull_request'
-<<<<<<< ours — scope `- name: Detect release tag at HEAD` in section `jobs` (F, confidence: medium)
 # refused_by: statement_fold · collision: `runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.…` +32 more
       runs-on: tau-kata
-=======
-      runs-on: vmon-large/from=omp-ci
->>>>>>> theirs — scope `- name: Detect release tag at HEAD`
       steps:
          - uses: actions/checkout@v5
            with:
@@ -282,7 +263,6 @@ jobs:
               bazelisk --bazelrc="${{ steps.cache.outputs.rc }}" test //crates/...
          # Clippy scope mirrors `cargo clippy --workspace` (libraries only, no
          # test targets) plus the strict/default split: crates with
-<<<<<<< ours — scope `- name: Detect release tag at HEAD` in section `jobs` (F, confidence: medium)
 # refused_by: statement_fold · collision: `runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.…` +32 more
          # `[lints] workspace = true` get the workspace policy, except
          # brush-core (a vendored fork excluded from the Cargo task too).
@@ -296,19 +276,6 @@ jobs:
          - name: Clippy (default lints elsewhere)
            run: |
               bazelisk query "kind('rust_library|rust_shared_library', //crates/... - (//crates/tau-ast/... + //crates/tau-diff/... + //crates/tau-edit/... + //crates/tau-iso/... + //crates/tau-natives/... + //crates/tau-shell/... + //crates/tau-vcs/... + //crates/tau-voice/... + //crates/tau-walker/...) - //crates/tau-builtins/... - //crates/vendor/brush-core/...)" \
-=======
-         # `[lints] workspace = true` get the workspace policy.
-         # pi-builtins allows every clippy group in its own manifest (ported
-         # uutils/jaq code) but is still held to zero rustc warnings;
-         # Cargo honors that via `[lints]`, Bazel via the clippy-ported config.
-         - name: Clippy (workspace lint policy on opted-in crates)
-           run: |
-              bazelisk query "kind('rust_library|rust_shared_library|rust_binary', //crates/pi-ast/... + //crates/pi-diff/... + //crates/pi-edit/... + //crates/pi-iso/... + //crates/pi-natives/... + //crates/pi-shell/... + //crates/pi-vcs/... + //crates/pi-voice/... + //crates/pi-walker/...)" \
-                | xargs bazelisk --bazelrc="${{ steps.cache.outputs.rc }}" build --config=clippy-strict --
-         - name: Clippy (default lints elsewhere)
-           run: |
-              bazelisk query "kind('rust_library|rust_shared_library', //crates/... - (//crates/pi-ast/... + //crates/pi-diff/... + //crates/pi-edit/... + //crates/pi-iso/... + //crates/pi-natives/... + //crates/pi-shell/... + //crates/pi-vcs/... + //crates/pi-voice/... + //crates/pi-walker/...) - //crates/pi-builtins/...)" \
->>>>>>> theirs — scope `- name: Detect release tag at HEAD`
                 | xargs bazelisk --bazelrc="${{ steps.cache.outputs.rc }}" build --config=clippy --
          - name: Clippy (manifest allows on ported tau-builtins)
            run: |
@@ -317,7 +284,6 @@ jobs:
          - name: Rustfmt
            run: bazelisk --bazelrc="${{ steps.cache.outputs.rc }}" build --config=rustfmt //crates/...
 
-<<<<<<< ours — scope `- name: Detect release tag at HEAD` in section `jobs` (F, confidence: medium)
 # refused_by: statement_fold · collision: `runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.…` +32 more
    # Provides the native addons every downstream TS job installs. PRs never
    # build: they fetch the latest release's Linux x64 pair from the
@@ -334,45 +300,6 @@ jobs:
          - uses: actions/checkout@v5
            with:
              submodules: recursive
-=======
-   # Provides the linux-x64 addon pair every downstream TS job installs.
-   #
-   # PRs never build. They restore the pair main built for the same native
-   # sources from actions/cache (key = hash of every native build input:
-   # toolchain and build settings plus crates/** and BUILD.bazel). With no
-   # exact entry (the PR changes native inputs, or main has not built this
-   # state yet) they take main's newest entry, and with no entry at all the
-   # latest npm release. The workspace loader skips its version sentinel for
-   # workspace loads, so any of these load under a newer checkout. Testing
-   # against main's build instead of the last release keeps merged-but-
-   # unreleased native fixes from failing every PR that did not touch Rust
-   # (a merged grep fix plus its TS test failed 75 PR runs against the
-   # 18.3.1 addon). Only main saves; see the save step for why.
-   #
-   # Main (vmon, node Bazel cache) builds only the pair here so the TS
-   # fan-out starts as soon as it links; native_addons_cross builds every
-   # other target in parallel. Job name says "bazel" for continuity
-   # with required checks.
-   native_addons:
-      name: Build native addons (bazel)
-      runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.04' || 'vmon-large/from=omp-ci' }}
-      # actions: write lets main prune superseded addon cache entries.
-      permissions:
-         contents: read
-         actions: write
-      steps:
-         - uses: actions/checkout@v4
-         - name: Compute native addon cache key
-           id: natives-key
-           shell: bash
-           env:
-              # Must stay identical on every event: PRs look up the entry main
-              # saved for the same inputs.
-              NATIVE_INPUTS_HASH: ${{ hashFiles('Cargo.toml', 'Cargo.lock', 'MODULE.bazel', 'MODULE.bazel.lock', 'rust-toolchain.toml', 'rustfmt.toml', '.bazelrc', '.bazelignore', '.bazelversion', 'bazel/**', 'crates/**', 'BUILD.bazel') }}
-           run: |
-              echo "prefix=natives-linux-x64-v1-" >> "$GITHUB_OUTPUT"
-              echo "key=natives-linux-x64-v1-$NATIVE_INPUTS_HASH" >> "$GITHUB_OUTPUT"
->>>>>>> theirs — scope `- name: Detect release tag at HEAD`
 
          # ---- PR path: main-built addons from actions/cache, else npm ----
          # `ci-natives` is a plain workspace-relative path on purpose: the
@@ -396,7 +323,6 @@ jobs:
               tarball="$(npm view @tau/tau-natives-linux-x64@latest dist.tarball)"
               echo "Fetching $tarball"
               curl -fsSL --retry 3 "$tarball" | tar -xz -C "$RUNNER_TEMP"
-<<<<<<< ours — scope `- name: Detect release tag at HEAD` in section `jobs` (F, confidence: medium)
 # refused_by: statement_fold · collision: `runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.…` +32 more
               mkdir -p bazel-bin/natives-linux-x64-baseline bazel-bin/natives-linux-x64-modern
               cp "$RUNNER_TEMP/package/tau_natives.linux-x64-baseline.node" bazel-bin/natives-linux-x64-baseline/
@@ -429,14 +355,6 @@ jobs:
          # leaving a reviewer to wonder which addons the tests exercised.
          # Best-effort: a diff-API failure must not fail the job over a notice.
          - name: Note native changes tested against release addons
-=======
-              mkdir -p ci-natives/natives-linux-x64-baseline ci-natives/natives-linux-x64-modern
-              cp "$RUNNER_TEMP/package/pi_natives.linux-x64-baseline.node" ci-natives/natives-linux-x64-baseline/
-              cp "$RUNNER_TEMP/package/pi_natives.linux-x64-modern.node" ci-natives/natives-linux-x64-modern/
-         # Make the addon source visible whenever it is not source-matched,
-         # instead of leaving a reviewer to wonder which addons the tests ran.
-         - name: Report native addon source
->>>>>>> theirs — scope `- name: Detect release tag at HEAD`
            if: github.event_name == 'pull_request'
            shell: bash
            env:
@@ -488,91 +406,11 @@ jobs:
               summary=$(sed -E 's/\x1b\[[0-9;]*m//g' "$RUNNER_TEMP/bazel-build.log" | grep -E '[0-9]+ processes:' | tail -1 || true)
               echo "::notice title=Bazel build summary::${summary:-no process summary found}"
 
-<<<<<<< ours — scope `- name: Detect release tag at HEAD` in section `jobs` (F, confidence: medium)
 # refused_by: statement_fold · collision: `runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.…` +32 more
          # Split upload: every TS test job needs only the linux-x64 pair, but
          # downloading the full ~250 MB six-addon artifact cost ~100 s per job
          # on tau-kata. The native-artifacts action fetches `native-addons`
          # (everything else) only when a consumer asks for a non-x64 target.
-=======
-         # ---- both paths ----
-         # A corrupt download or cache entry must fail here, not as a
-         # confusing dlopen error in every downstream test shard.
-         - name: Smoke native addons
-           shell: bash
-           run: |
-              set -euo pipefail
-              # NOTE: `bun -e 'require("./x.node")'` swallows dlopen failures
-              # (exit 0 on a bogus addon); a script file enforces them in
-              # both bun and node. Verified against a corrupt .node fixture.
-              cat > "$RUNNER_TEMP/smoke-addons.js" <<'EOF'
-              for (const f of process.argv.slice(2)) {
-               const m = require(f);
-               if (!m || Object.keys(m).length === 0) {
-               	console.error(`addon failed to load: ${f}`);
-               	process.exit(1);
-               }
-              }
-              EOF
-              loader=node
-              if command -v bun >/dev/null 2>&1; then loader=bun; fi
-              "$loader" "$RUNNER_TEMP/smoke-addons.js" \
-                "$PWD/ci-natives/natives-linux-x64-baseline/pi_natives.linux-x64-baseline.node" \
-                "$PWD/ci-natives/natives-linux-x64-modern/pi_natives.linux-x64-modern.node"
-         # Only main saves: an entry saved on any other ref is readable by
-         # that ref alone yet counts against the shared 10 GB repo quota,
-         # whose LRU eviction has already cost the darwin release archives.
-         # Probe first so an existing entry is not re-uploaded, then keep
-         # only the newest two entries so the footprint stays ~100 MB.
-         # The three steps below run only on main (never exercised by PR or
-         # branch runs) and are pure optimization for later PRs: a failure
-         # must never fail native_addons and with it every test job.
-         # PR runs restore this entry on GitHub-hosted runners, which read
-         # GitHub's cache; on vmon runners actions/cache goes to the node's
-         # local cache. The vmon runner hands GitHub's results URL to node
-         # actions (not run steps) as ACTIONS_RESULTS_ORL, so a script action
-         # looks it up and the probe and save below talk to GitHub.
-         - name: Locate GitHub's cache service
-           id: gh-results
-           if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
-           uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
-           with:
-              script: core.setOutput("url", process.env.ACTIONS_RESULTS_ORL || process.env.ACTIONS_RESULTS_URL)
-         - name: Probe native addon cache entry
-           id: natives-cache-probe
-           if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
-           continue-on-error: true
-           uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-           env:
-              ACTIONS_RESULTS_URL: ${{ steps.gh-results.outputs.url }}
-           with:
-              path: ci-natives
-              key: ${{ steps.natives-key.outputs.key }}
-              lookup-only: true
-         - name: Save native addon cache entry
-           if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && steps.natives-cache-probe.outputs.cache-hit != 'true'
-           continue-on-error: true
-           uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-           env:
-              ACTIONS_RESULTS_URL: ${{ steps.gh-results.outputs.url }}
-           with:
-              path: ci-natives
-              key: ${{ steps.natives-key.outputs.key }}
-         - name: Prune superseded native addon cache entries
-           if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && steps.natives-cache-probe.outputs.cache-hit != 'true'
-           continue-on-error: true
-           shell: bash
-           env:
-              GH_TOKEN: ${{ github.token }}
-              PREFIX: ${{ steps.natives-key.outputs.prefix }}
-           run: |
-              # Best-effort: a failed prune leaves eviction to GitHub's LRU.
-              gh cache list --repo "$GITHUB_REPOSITORY" --ref refs/heads/main --key "$PREFIX" \
-                  --sort created_at --order desc --limit 100 --json id --jq '.[2:][].id' \
-                | while read -r id; do
-                    gh cache delete "$id" --repo "$GITHUB_REPOSITORY" || true
-                  done || true
->>>>>>> theirs — scope `- name: Detect release tag at HEAD`
          - name: Upload linux-x64 native addon artifact
            uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
            with:
@@ -685,12 +523,8 @@ jobs:
 
    test_workspace:
       name: Test TS workspace fast
-<<<<<<< ours — scope `- name: Detect release tag at HEAD` in section `jobs` (F, confidence: medium)
 # refused_by: statement_fold · collision: `runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.…` +32 more
       runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.04' || 'tau-kata' }}
-=======
-      runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.04' || 'vmon-large/from=omp-ci' }}
->>>>>>> theirs — scope `- name: Detect release tag at HEAD`
       needs: [native_addons]
       if: ${{ !cancelled() && needs.native_addons.result == 'success' }}
       timeout-minutes: 20
@@ -714,12 +548,8 @@ jobs:
 
    test_coding_agent_singleton:
       name: Test coding-agent singleton/global-state (TS)
-<<<<<<< ours — scope `- name: Detect release tag at HEAD` in section `jobs` (F, confidence: medium)
 # refused_by: statement_fold · collision: `runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.…` +32 more
       runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.04' || 'tau-kata' }}
-=======
-      runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.04' || 'vmon-large/from=omp-ci' }}
->>>>>>> theirs — scope `- name: Detect release tag at HEAD`
       needs: [native_addons]
       if: ${{ !cancelled() && needs.native_addons.result == 'success' }}
       timeout-minutes: 20
@@ -738,12 +568,8 @@ jobs:
 
    test_ts_native:
       name: Test TS native/integration packages
-<<<<<<< ours — scope `- name: Detect release tag at HEAD` in section `jobs` (F, confidence: medium)
 # refused_by: statement_fold · collision: `runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.…` +32 more
       runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.04' || 'tau-kata' }}
-=======
-      runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.04' || 'vmon-large/from=omp-ci' }}
->>>>>>> theirs — scope `- name: Detect release tag at HEAD`
       needs: [native_addons]
       if: ${{ !cancelled() && needs.native_addons.result == 'success' }}
       timeout-minutes: 25
@@ -764,12 +590,8 @@ jobs:
 
    test_coding_agent_ui:
       name: Test coding-agent UI/TUI (TS)
-<<<<<<< ours — scope `- name: Detect release tag at HEAD` in section `jobs` (F, confidence: medium)
 # refused_by: statement_fold · collision: `runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.…` +32 more
       runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.04' || 'tau-kata' }}
-=======
-      runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.04' || 'vmon-large/from=omp-ci' }}
->>>>>>> theirs — scope `- name: Detect release tag at HEAD`
       needs: [native_addons]
       if: ${{ !cancelled() && needs.native_addons.result == 'success' }}
       timeout-minutes: 25
@@ -788,12 +610,8 @@ jobs:
 
    test_coding_agent_runtime:
       name: Test coding-agent runtime/session (TS)
-<<<<<<< ours — scope `- name: Detect release tag at HEAD` in section `jobs` (F, confidence: medium)
 # refused_by: statement_fold · collision: `runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.…` +32 more
       runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.04' || 'tau-kata' }}
-=======
-      runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.04' || 'vmon-large/from=omp-ci' }}
->>>>>>> theirs — scope `- name: Detect release tag at HEAD`
       needs: [native_addons]
       if: ${{ !cancelled() && needs.native_addons.result == 'success' }}
       timeout-minutes: 25
@@ -812,7 +630,6 @@ jobs:
               TAU_TEST_CONCURRENCY: "4"
            run: bun run ci:test:coding-agent:runtime
 
-<<<<<<< ours — scope `- name: Detect release tag at HEAD` in section `jobs` (F, confidence: medium)
 # refused_by: statement_fold · collision: `runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.…` +32 more
    test_coding_agent_native:
       name: "Test coding-agent native/unit (TS) ${{ matrix.shard }}"
@@ -844,11 +661,6 @@ jobs:
    test_smoke:
       name: Test CLI smoke (TS)
       runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.04' || 'tau-kata' }}
-=======
-   test_smoke:
-      name: Test CLI smoke (TS)
-      runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.04' || 'vmon-large/from=omp-ci' }}
->>>>>>> theirs — scope `- name: Detect release tag at HEAD`
       needs: [native_addons]
       if: ${{ !cancelled() && needs.native_addons.result == 'success' }}
       timeout-minutes: 15
@@ -865,12 +677,8 @@ jobs:
 
    install_methods:
       name: Install method smoke tests
-<<<<<<< ours — scope `- name: Detect release tag at HEAD` in section `jobs` (F, confidence: medium)
 # refused_by: statement_fold · collision: `runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.…` +32 more
       runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.04' || 'tau-kata' }}
-=======
-      runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.04' || 'vmon-large/from=omp-ci' }}
->>>>>>> theirs — scope `- name: Detect release tag at HEAD`
       needs: [native_addons]
       if: ${{ !cancelled() && needs.native_addons.result == 'success' }}
       steps:
@@ -978,7 +786,6 @@ jobs:
                     binary_path: packages/coding-agent/binaries/tau-windows-x64.exe,
                     native_targets: win32-x64-baseline,
                  }
-<<<<<<< ours — scope `- name: Detect release tag at HEAD` in section `jobs` (F, confidence: medium)
 # refused_by: statement_fold · collision: `runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.…` +32 more
       runs-on: ${{ matrix.os }}
       permissions:
@@ -1071,15 +878,6 @@ jobs:
                     platform: win32,
                     target_id: win32-arm64,
                     binary_path: packages/coding-agent/binaries/tau-windows-arm64.exe,
-=======
-               # Addon cross-built by Bazel (clang-cl + xwin arm64 splat) in
-               # native_addons_cross.
-               - {
-                    platform: win32,
-                    target_id: win32-arm64,
-                    binary_path: packages/coding-agent/binaries/omp-windows-arm64.exe,
-                    native_targets: win32-arm64,
->>>>>>> theirs — scope `- name: Detect release tag at HEAD`
                  }
       runs-on: ubuntu-22.04
       permissions:
@@ -1098,7 +896,6 @@ jobs:
               restore-keys: |
                  bun-${{ runner.os }}-
          - run: bun install --frozen-lockfile
-<<<<<<< ours — scope `closing` in section `jobs` (S+F, confidence: low)
 # refused_by: statement_fold · collision: `uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc398…` +11 more
          # Main-only save: caches saved on a tag or branch are readable only by
          # that ref yet count against the shared 10 GB quota (see bazel-cache).
@@ -1124,12 +921,6 @@ jobs:
            env:
               TAU_NATIVE_CARGO_PROFILE: ci
            run: bun scripts/bazel-natives.ts host --dest packages/natives/native
-=======
-         - name: Install prebuilt native addon(s)
-           uses: ./.github/actions/native-artifacts
-           with:
-              targets: ${{ matrix.native_targets }}
->>>>>>> theirs — scope `closing`
          - name: Build release binary
            env:
               RELEASE_TARGETS: ${{ matrix.target_id }}
@@ -1267,7 +1058,6 @@ jobs:
               if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
               & $env:BINARY --smoke-test
               if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-<<<<<<< ours — scope `closing` in section `jobs` (S+F, confidence: low)
 # refused_by: statement_fold · collision: `uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc398…` +11 more
          # Native-host addons exist only on these runners; export them so
          # release_native_leaves can publish every leaf package after the
@@ -1284,8 +1074,6 @@ jobs:
            with:
               name: tau-binary-${{ matrix.target_id }}
               path: ${{ matrix.binary_path }}
-=======
->>>>>>> theirs — scope `closing`
 
    # Publishes the six @tau/tau-natives-<tag> leaf packages once
    # validation passes and every binary built. Runs on one linux runner: leaf
@@ -1421,17 +1209,11 @@ jobs:
          - name: Generate checksums
            run: |
               bun run ci:release:checksums SHA256SUMS.txt \
-<<<<<<< ours — scope `closing` in section `jobs` (S+F, confidence: low)
 # refused_by: statement_fold · collision: `uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc398…` +11 more
                 packages/coding-agent/binaries/tau-* \
                 packages/browser-relay/dist/tau-browser-relay-extension.zip \
                 LICENSE \
                 THIRD-PARTY-NOTICES.txt
-=======
-                packages/coding-agent/binaries/omp-* \
-                packages/browser-relay/dist/omp-browser-relay-extension.zip \
-                LICENSE
->>>>>>> theirs — scope `closing`
          - name: Create GitHub Release
            uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
            with:
@@ -1466,7 +1248,6 @@ jobs:
          id-token: write
          contents: read
       steps:
-<<<<<<< ours — scope `closing` in section `jobs` (S+F, confidence: low)
 # refused_by: statement_fold · collision: `uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc398…` +11 more
          - name: Download published macOS arm64 binary
            run: |
@@ -1490,26 +1271,6 @@ jobs:
               # Informational — a bare (unstapled) Mach-O relies on the online ticket
               # lookup, so surface the result without gating the release on it.
               spctl -a -t exec -vv ./tau-darwin-arm64 || echo "spctl non-zero (expected for unstapled bare binary; ticket served online)"
-=======
-         - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
-         - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
-           with:
-              bun-version: 1.4.4
-         - name: Download release binaries
-           uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-           with:
-              pattern: omp-binary-*
-              path: packages/coding-agent/binaries
-              merge-multiple: true
-         - name: Download shared export viewer
-           uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-           with:
-              name: omp-export-viewer
-              path: packages/coding-agent/export-assets
-         # Dependency-free script (bun APIs + curl), so no `bun install`.
-         - name: Publish to build.stencil.so
-           run: bun scripts/ci-build-upload.ts "${{ needs.release_metadata.outputs.release-tag }}" packages/coding-agent/binaries/omp-*
->>>>>>> theirs — scope `closing`
 
    release_npm:
       name: Publish to npm

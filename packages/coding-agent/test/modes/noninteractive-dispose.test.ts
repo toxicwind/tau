@@ -9,15 +9,9 @@
  */
 import * as path from "node:path";
 import { describe, expect, it, spyOn } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import type { AssistantMessage } from "@tau/tau-ai";
 import { postmortem, TempDir } from "@tau/tau-utils";
-=======
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { postmortem, TempDir } from "@oh-my-pi/pi-utils";
-import { Settings } from "../../src/config/settings";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/modes/noninteractive-dispose.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { runPrintMode } from "../../src/modes/print-mode";
 import type { AgentSession } from "../../src/session/agent-session";
 import * as telemetryExport from "../../src/telemetry-export";
@@ -91,15 +85,9 @@ describe("print mode disposes the session before terminating", () => {
 		expect(stderrLines.join("")).toContain("boom");
 	});
 
-<<<<<<< ours — test_suite `print mode disposes the session before terminating` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 	it("disposes an active print session before SIGTERM exits", async () => {
 		using tempDir = TempDir.createSync("@tau-print-signal-");
-=======
-	// Windows cannot deliver a catchable SIGTERM via process.kill: libuv terminates the process outright.
-	it.skipIf(process.platform === "win32")("disposes an active print session before SIGTERM exits", async () => {
-		using tempDir = TempDir.createSync("@omp-print-signal-");
->>>>>>> theirs — test_suite `print mode disposes the session before terminating` (F, confidence: medium)
 		const marker = tempDir.join("disposed");
 		const fixture = path.join(import.meta.dir, "..", "fixtures", "print-mode-signal.js");
 		const child = Bun.spawn([process.execPath, fixture, marker], {

@@ -2,13 +2,8 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, spyOn, vi } fro
 import * as os from "node:os";
 import * as path from "node:path";
 import * as url from "node:url";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 import { getMarkdownTheme, initTheme } from "@tau/tau-tui/theme";
-=======
-import { logger } from "@oh-my-pi/pi-utils";
-import { getMarkdownTheme, initTheme } from "@oh-my-pi/pi-tui/theme";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/test/hyperlink.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	applyFileLinkSetting,
 	applyHyperlinkSetting,
@@ -20,17 +15,9 @@ import {
 	uriHyperlink,
 	urlHyperlink,
 	urlHyperlinkAlways,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-tui/render/hyperlink";
 import * as terminalCaps from "@tau/tau-tui";
-=======
-} from "@oh-my-pi/pi-tui/render/hyperlink";
-import * as terminalCaps from "@oh-my-pi/pi-tui";
-import { SkillMessageComponent } from "../src/chat/skill-message";
-import { openableImageProps } from "../src/native/blobs";
-import { fileHref } from "../src/tools/native-view";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 
 // OSC 8 sequence markers
 const OSC = "\x1b]";

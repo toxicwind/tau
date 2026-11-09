@@ -16,7 +16,6 @@ import { TempDir } from "@tau/tau-utils";
 const SHOULD_RUN = Bun.env.PI_PYTHON_INTEGRATION === "1";
 const MATPLOTLIB_TEST_CWD = process.cwd();
 
-<<<<<<< ours — function `hasMatplotlib` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 async function hasMatplotlib(cwd: string): Promise<boolean> {
 	if (!SHOULD_RUN) return false;
@@ -28,18 +27,6 @@ async function hasMatplotlib(cwd: string): Promise<boolean> {
 			if (typeof value === "string") spawnEnv[key] = value;
 		}
 		const result = Bun.spawnSync([runtime.pythonPath, "-c", "import matplotlib"], {
-=======
-async function hasModule(cwd: string, module: string): Promise<boolean> {
-	if (!SHOULD_RUN) return false;
-	try {
-		const { env } = (await Settings.init()).getShellConfig();
-		const runtime = resolvePythonRuntime(cwd, filterEnv(env));
-		const spawnEnv: Record<string, string> = {};
-		for (const [key, value] of Object.entries(runtime.env)) {
-			if (typeof value === "string") spawnEnv[key] = value;
-		}
-		const result = Bun.spawnSync([runtime.pythonPath, "-c", `import ${module}`], {
->>>>>>> theirs — function `hasMatplotlib` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/core/python-runner.integration.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 			cwd,
 			env: spawnEnv,
 			stdout: "ignore",

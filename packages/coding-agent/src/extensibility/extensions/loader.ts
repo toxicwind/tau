@@ -34,21 +34,12 @@ import { InternalUrlRouter } from "../../internal-urls/router";
 import { EventBus } from "../../utils/event-bus";
 import * as TypeBox from "../legacy-typebox";
 import { resolveExtensionDirectory } from "./directory-resolution";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 import { installLegacyPiSpecifierShim, loadLegacyPiModule } from "../plugins/legacy-tau-compat";
 import { getAllPluginExtensionPaths } from "../plugins/loader";
 
 import { resolvePath, withHostGuard } from "../utils";
 import type { ComposerShapeDefinition } from "@tau/tau-tui/overlays/composer-shape-registry";
-=======
-import { installLegacyPiSpecifierShim, loadLegacyPiModule } from "../plugins/legacy-pi-compat";
-import { getEnabledPlugins, resolvePluginExtensionPaths } from "../plugins/loader";
-
-import { resolvePath, withHostGuard } from "../utils";
-import type { ComposerShapeDefinition } from "@oh-my-pi/pi-tui/overlays/composer-shape-registry";
-import { notifyTranscriptPresentersChanged } from "@oh-my-pi/pi-tui/chat/transcript-presentation";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/extensibility/extensions/loader.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type {
 	AssistantTextRenderer,
 	AssistantThinkingRenderer,
@@ -761,7 +752,6 @@ export async function discoverExtensionPaths(
 		);
 	};
 
-<<<<<<< ours — function `discoverExtensionPaths` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `const addPath = (extPath: string): void => {` +10 more
 	const addPath = async (extPath: string): Promise<void> => {
 		if (isDisabled(extPath)) {
@@ -774,14 +764,6 @@ export async function discoverExtensionPaths(
 		} catch {
 			// Fall back to resolved string
 		}
-=======
-	// Key on the real file so a symlink and its target load once, e.g. an
-	// extensions/ symlink plus the same file passed with --extension. Missing
-	// paths keep their lexical key so the loader still reports them.
-	const addPath = async (extPath: string): Promise<void> => {
-		const resolved = path.resolve(extPath);
-		const key = await fs.realpath(resolved).catch(() => resolved);
->>>>>>> theirs — function `discoverExtensionPaths` (F, confidence: medium)
 		if (!seen.has(key)) {
 			seen.add(key);
 			allPaths.push(extPath);
@@ -790,12 +772,8 @@ export async function discoverExtensionPaths(
 
 	const addPaths = async (paths: string[]): Promise<void> => {
 		for (const extPath of paths) {
-<<<<<<< ours — function `discoverExtensionPaths` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `const addPath = (extPath: string): void => {` +10 more
 			if (isDisabled(extPath)) continue;
-=======
-			if (isDisabledName(getExtensionNameFromPath(extPath))) continue;
->>>>>>> theirs — function `discoverExtensionPaths` (F, confidence: medium)
 			await addPath(extPath);
 		}
 	};
@@ -836,7 +814,6 @@ export async function discoverExtensionPaths(
 		}
 	}
 
-<<<<<<< ours — function `discoverExtensionPaths` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `const addPath = (extPath: string): void => {` +10 more
 	// 3. Discover extension entry points from installed plugins.
 	if (ambient) {
@@ -860,13 +837,6 @@ export async function discoverExtensionPaths(
 		}
 
 		await addPath(resolved);
-=======
-	// 3–4. Installed-plugin entries (ambient only), then explicitly configured
-	// paths. Configured file paths bypass the disabled-name filter.
-	for (const module of await listPackageExtensionModules(configuredPaths, cwd, { plugins: ambient })) {
-		if (module.toggleable && isDisabledName(getExtensionNameFromPath(module.path))) continue;
-		await addPath(module.path);
->>>>>>> theirs — function `discoverExtensionPaths` (F, confidence: medium)
 	}
 
 	return allPaths;

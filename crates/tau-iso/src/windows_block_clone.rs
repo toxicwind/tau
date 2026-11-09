@@ -189,7 +189,6 @@ mod imp {
 		}
 	}
 
-<<<<<<< ours — scope `clone_dir_contents` in module `imp`, deleted in theirs (S+F, confidence: low)
 // refused_by: container_member · collision: none (no common ancestor text)
 	fn clone_dir_contents(
 		src: &Path,
@@ -232,8 +231,6 @@ mod imp {
 		}
 		Ok(())
 	}
-=======
->>>>>>> theirs — scope `clone_dir_contents` deleted in theirs · weave: run 'weave explain crates/tau-iso/src/windows_block_clone.rs' for per-hunk detail, 'weave check' to verify your resolution
 
 	/// Clones the regular file `src` into the fresh tree, then gives the clone
 	/// `src`'s timestamps and attributes through the handles the clone used.

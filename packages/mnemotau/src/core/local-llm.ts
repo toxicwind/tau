@@ -59,12 +59,8 @@ function llmEnabled(): boolean {
 	if (activeCustomCompletion() !== undefined || activePiAiModel() !== undefined) {
 		return true;
 	}
-<<<<<<< ours — scope `return envBool("MNEMOPI_LLM_ENABLED", true);` in function `llmEnabled` (S, confidence: medium)
 // refused_by: statement_fold · collision: `return envBool("MNEMOPI_LLM_ENABLED", true);`
 	return envBool("MNEMOTAU_LLM_ENABLED", true);
-=======
-	return envFlag("MNEMOPI_LLM_ENABLED", true);
->>>>>>> theirs — scope `return envBool("MNEMOPI_LLM_ENABLED", true);` · weave: run 'weave explain packages/mnemotau/src/core/local-llm.ts' for per-hunk detail, 'weave check' to verify your resolution
 }
 
 function llmMaxTokens(): number {
@@ -87,12 +83,8 @@ function hostLlmEnabled(): boolean {
 	if (active?.baseUrl !== undefined || (typeof active?.model === "string" && active.model !== "")) {
 		return false;
 	}
-<<<<<<< ours — scope `return envBool("MNEMOPI_HOST_LLM_ENABLED", fa...` in function `hostLlmEnabled` (S, confidence: medium)
 // refused_by: statement_fold · collision: `return envBool("MNEMOPI_HOST_LLM_ENABLED", false);`
 	return envBool("MNEMOTAU_HOST_LLM_ENABLED", false);
-=======
-	return envFlag("MNEMOPI_HOST_LLM_ENABLED", false);
->>>>>>> theirs — scope `return envBool("MNEMOPI_HOST_LLM_ENABLED", fa...`
 }
 
 function hostLlmContextTokens(): number {
@@ -104,12 +96,8 @@ function llmBaseUrl(): string {
 	if (active?.baseUrl !== undefined) {
 		return stripTrailingSlash(active.baseUrl);
 	}
-<<<<<<< ours — scope `return stripTrailingSlash(env("MNEMOPI_LLM_BA...` in function `llmBaseUrl` (S, confidence: medium)
 // refused_by: statement_fold · collision: `return stripTrailingSlash(env("MNEMOPI_LLM_BASE_URL"));`
 	return stripTrailingSlash(env("MNEMOTAU_LLM_BASE_URL"));
-=======
-	return stripTrailingSlash(envString("MNEMOPI_LLM_BASE_URL"));
->>>>>>> theirs — scope `return stripTrailingSlash(env("MNEMOPI_LLM_BA...`
 }
 
 function llmModelName(): string {
@@ -117,12 +105,8 @@ function llmModelName(): string {
 	if (typeof model === "string") {
 		return model;
 	}
-<<<<<<< ours — scope `return env("MNEMOPI_LLM_MODEL") || "local";` in function `llmModelName` (S, confidence: medium)
 // refused_by: statement_fold · collision: `return env("MNEMOPI_LLM_MODEL") || "local";`
 	return env("MNEMOTAU_LLM_MODEL") || "local";
-=======
-	return envString("MNEMOPI_LLM_MODEL") || "local";
->>>>>>> theirs — scope `return env("MNEMOPI_LLM_MODEL") || "local";`
 }
 
 function llmApiKey(): ApiKey {
@@ -130,21 +114,13 @@ function llmApiKey(): ApiKey {
 	if (active?.apiKey !== undefined) {
 		return active.apiKey;
 	}
-<<<<<<< ours — scope `return env("MNEMOPI_LLM_API_KEY");` in function `llmApiKey` (S, confidence: medium)
 // refused_by: statement_fold · collision: `return env("MNEMOPI_LLM_API_KEY");`
 	return env("MNEMOTAU_LLM_API_KEY");
-=======
-	return envString("MNEMOPI_LLM_API_KEY");
->>>>>>> theirs — scope `return env("MNEMOPI_LLM_API_KEY");`
 }
 
 function sleepPrompt(): string {
-<<<<<<< ours — scope `return env("MNEMOPI_SLEEP_PROMPT").trim();` in function `sleepPrompt` (S, confidence: medium)
 // refused_by: statement_fold · collision: `return env("MNEMOPI_SLEEP_PROMPT").trim();`
 	return env("MNEMOTAU_SLEEP_PROMPT").trim();
-=======
-	return envString("MNEMOPI_SLEEP_PROMPT").trim();
->>>>>>> theirs — scope `return env("MNEMOPI_SLEEP_PROMPT").trim();`
 }
 
 function memoryLines(memories: readonly string[]): string {
@@ -263,14 +239,9 @@ async function tryHostLlm(prompt: string, maxTokens: number, temperature: number
 		maxTokens,
 		temperature,
 		timeout: 15,
-<<<<<<< ours — scope `const raw = await callHostLlm(prompt, {` in function `tryHostLlm` (F, confidence: medium)
 // refused_by: statement_fold · collision: `provider: env("MNEMOPI_HOST_LLM_PROVIDER").trim() || null,` +1 more
 		provider: env("MNEMOTAU_HOST_LLM_PROVIDER").trim() || null,
 		model: env("MNEMOTAU_HOST_LLM_MODEL").trim() || null,
-=======
-		provider: envString("MNEMOPI_HOST_LLM_PROVIDER").trim() || null,
-		model: envString("MNEMOPI_HOST_LLM_MODEL").trim() || null,
->>>>>>> theirs — scope `const raw = await callHostLlm(prompt, {`
 	});
 	const text = typeof raw === "string" ? raw.trim() : "";
 	return [true, text === "" ? null : text];
@@ -441,12 +412,8 @@ async function summarizeChunk(
 		return null;
 	}
 
-<<<<<<< ours — function `summarizeChunk` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `if (llmEnabled() && llmBaseUrl() !== "" && !envBool("MNEMOPI_FO…`
 	if (llmEnabled() && llmBaseUrl() !== "" && !envBool("MNEMOTAU_FORCE_LOCAL", false)) {
-=======
-	if (llmEnabled() && llmBaseUrl() !== "" && !envFlag("MNEMOPI_FORCE_LOCAL", false)) {
->>>>>>> theirs — function `summarizeChunk` (F, confidence: medium)
 		const raw = await callRemoteLlm(prompt, 0.3, options);
 		if (raw !== null) {
 			const cleaned = cleanOutput(raw);
@@ -503,12 +470,8 @@ export async function complete(
 	if (attempted) {
 		return hostText;
 	}
-<<<<<<< ours — function `complete` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `if (llmEnabled() && llmBaseUrl() !== "" && !envBool("MNEMOPI_FO…`
 	if (llmEnabled() && llmBaseUrl() !== "" && !envBool("MNEMOTAU_FORCE_LOCAL", false)) {
-=======
-	if (llmEnabled() && llmBaseUrl() !== "" && !envFlag("MNEMOPI_FORCE_LOCAL", false)) {
->>>>>>> theirs — function `complete` (F, confidence: medium)
 		const remote = await callRemoteLlm(prompt, temperature, options);
 		return remote === null ? null : cleanOutput(remote) || null;
 	}

@@ -13,14 +13,9 @@
 import * as crypto from "node:crypto";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { isEnoent, pathIsWithin } from "@oh-my-pi/pi-utils";`
 import * as vcs from "@tau/tau-natives/vcs";
 import { isEnoent, pathIsWithin } from "@tau/tau-utils";
-=======
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import { directoryExists, directoryIsMissing, pathIsWithin } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/extensibility/plugins/marketplace/source-resolver.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 import {
 	isBarePluginSourceName,

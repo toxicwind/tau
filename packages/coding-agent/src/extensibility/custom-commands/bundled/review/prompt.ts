@@ -1,14 +1,9 @@
 import { prompt } from "@tau/tau-utils";
 import annotationsTemplate from "./prompts/annotations.md" with { type: "text" };
 import reviewRequestTemplate from "../../../../prompts/review-request.md" with { type: "text" };
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { CodeReviewAnnotation, ReviewDiffFile } from "@oh-…`
 import type { CodeReviewAnnotation, ReviewDiffFile } from "@tau/tau-tui/overlays/annotation-types";
 import { getRecommendedReviewAgentCount, getReviewDiffPreview } from "./diff";
-=======
-import type { CodeReviewAnnotation } from "@oh-my-pi/pi-tui/overlays/annotation-types";
-import { getRecommendedReviewAgentCount, getReviewDiffPreview, type ReviewDiffSnapshot } from "./diff";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/extensibility/custom-commands/bundled/review/prompt.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { ResolvedReviewTarget } from "./target";
 
 const LARGE_DIFF_CHARACTER_LIMIT = 50_000;

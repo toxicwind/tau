@@ -1,13 +1,8 @@
     (function() {
       'use strict';
 
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
       const THEME_STORAGE_KEY = 'tau-export-theme';
-=======
-      const marked = new globalThis.ompMarkdown.Marked();
-      const THEME_STORAGE_KEY = 'omp-export-theme';
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/export/html/template.js' for per-hunk detail, 'weave check' to verify your resolution
       const themeSelect = document.getElementById('theme-select');
       let themePreference = 'auto';
       try {
@@ -1552,12 +1547,8 @@
       const overlay = document.getElementById('sidebar-overlay');
       const hamburger = document.getElementById('hamburger');
       const sidebarResizer = document.getElementById('sidebar-resizer');
-<<<<<<< ours — scope `const SIDEBAR_WIDTH_STORAGE_KEY = 'pi-share:v...` in function `bootSession` (S, confidence: medium)
 // refused_by: statement_fold · collision: `const SIDEBAR_WIDTH_STORAGE_KEY = 'pi-share:v1:sidebar-width';`
       const SIDEBAR_WIDTH_STORAGE_KEY = 'tau-share:v1:sidebar-width';
-=======
-      const SIDEBAR_WIDTH_STORAGE_KEY = 'omp-export:sidebar-width';
->>>>>>> theirs — scope `const SIDEBAR_WIDTH_STORAGE_KEY = 'pi-share:v...`
       const MIN_CONTENT_WIDTH = 320;
 
       function isMobileLayout() {

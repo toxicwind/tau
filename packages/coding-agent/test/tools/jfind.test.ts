@@ -2,7 +2,6 @@ import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { isOmpDocsScope } from "@oh-my-pi/pi-coding-agent/inter…` +4 more
 import type { Judge, JudgmentRequest, JudgmentResult, NoulAnswer, Questions } from "@tau/tau-ai";
 import { tokenUsage } from "@tau/tau-ai";
@@ -17,39 +16,6 @@ import { mergeHeat, type Passage, selectWindows, sketch, windows } from "tau/too
 import { readText, ReadTextError } from "tau/tools/jfind/text";
 import { eligibleFile, renderTree } from "tau/tools/jfind/tree";
 import { removeWithRetries } from "@tau/tau-utils";
-=======
-import type { Judge, JudgmentRequest, JudgmentResult, NoulAnswer, Questions } from "@oh-my-pi/pi-ai";
-import { tokenUsage } from "@oh-my-pi/pi-ai";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { InternalUrlRouter } from "@oh-my-pi/pi-coding-agent/internal-urls/router";
-import { InternalUrlFilesystem } from "@oh-my-pi/pi-coding-agent/internal-urls/url-filesystem";
-import { ChainJudge } from "@oh-my-pi/pi-coding-agent/judgment";
-import { FIND_TIMEOUT_MS, FindTool } from "@oh-my-pi/pi-coding-agent/tools/jfind";
-import {
-	type SpotlightClient,
-	SpotlightError,
-	type SpotlightRequest,
-} from "@oh-my-pi/pi-coding-agent/spotlight/client";
-import { type CascadeSpotlight, runCascade } from "@oh-my-pi/pi-coding-agent/tools/jfind/cascade";
-import { keywordsFromQuery } from "@oh-my-pi/pi-coding-agent/tools/jfind/keywords";
-import { grepIndex } from "@oh-my-pi/pi-coding-agent/tools/jfind/lexical";
-import {
-	mergeHeat,
-	type Passage,
-	selectWindows,
-	sketch,
-	windows,
-} from "@oh-my-pi/pi-coding-agent/tools/jfind/passages";
-import { readText, ReadTextError } from "@oh-my-pi/pi-coding-agent/tools/jfind/text";
-import { eligibleFile, renderTree, resolveSearchRoot } from "@oh-my-pi/pi-coding-agent/tools/jfind/tree";
-import { ToolAbortError } from "@oh-my-pi/pi-coding-agent/tools/tool-errors";
-import { resolveSearchResultPath } from "@oh-my-pi/pi-coding-agent/tools/path-utils";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
-import { createInMemoryAuthStorage } from "../helpers/agent-session-setup";
-import { rejectionOf } from "../helpers/rejection";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/tools/jfind.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /** Read-tier URL filesystem rooted at `cwd`, as the `find` tool builds one per call. */
 function urlFs(cwd: string): InternalUrlFilesystem {
@@ -241,7 +207,6 @@ class FakeJudge implements Judge {
 function stateOf(request: JudgmentRequest): Record<string, unknown> {
 	return request.state as Record<string, unknown>;
 }
-<<<<<<< ours — function `materializedRels` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 /** Doc paths of a materialized `tau://` corpus, with `/` separators on every platform. */
 async function materializedRels(dir: string): Promise<string[]> {
@@ -249,8 +214,6 @@ async function materializedRels(dir: string): Promise<string[]> {
 		.map(file => file.split(path.sep).join("/"))
 		.sort();
 }
-=======
->>>>>>> theirs — function `materializedRels` (S+F, confidence: low)
 
 describe("jfind cascade", () => {
 	afterEach(() => {
@@ -412,7 +375,6 @@ describe("jfind cascade", () => {
 		}
 	});
 
-<<<<<<< ours — scope `it("detects omp scopes and rejects unknown do...` in test_suite `jfind cascade` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `it("detects omp scopes and rejects unknown docs and range selec…` +4 more
 	it("detects tau scopes and rejects unknown docs and range selectors before judging", async () => {
 		expect(isOmpDocsScope("tau://")).toBe(true);
@@ -420,27 +382,10 @@ describe("jfind cascade", () => {
 		expect(isOmpDocsScope("packages/tui")).toBe(false);
 		await expect(materializeOmpScope("tau://nope.md")).rejects.toThrow("Documentation file not found");
 		await expect(materializeOmpScope("tau://tools/read.md:1-10")).rejects.toThrow(
-=======
-	it("resolves URL scopes in place and rejects unknown docs and range selectors before judging", async () => {
-		const filesystem = urlFs(process.cwd());
-		expect(await resolveSearchRoot(filesystem, "omp://", process.cwd())).toEqual({
-			path: "omp://",
-			type: "directory",
-		});
-		expect(await resolveSearchRoot(filesystem, "omp://tools/read.md", process.cwd())).toMatchObject({
-			path: "omp://tools/read.md",
-			type: "file",
-		});
-		await expect(resolveSearchRoot(filesystem, "omp://nope.md", process.cwd())).rejects.toThrow(
-			"Path not found: omp://nope.md",
-		);
-		await expect(resolveSearchRoot(filesystem, "omp://tools/read.md:1-10", process.cwd())).rejects.toThrow(
->>>>>>> theirs — scope `it("detects omp scopes and rejects unknown do...`
 			"line-range selectors are not supported",
 		);
 	});
 
-<<<<<<< ours — scope `it("materializes one omp doc and remaps its c...` in test_suite `jfind cascade` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `it("materializes one omp doc and remaps its cascade hits to the…` +3 more
 	it("materializes one tau doc and remaps its cascade hits to the canonical URL", async () => {
 		const scope = await materializeOmpScope("tau://docs/tools/read.md");
@@ -459,24 +404,8 @@ describe("jfind cascade", () => {
 		} finally {
 			await scope.cleanup();
 		}
-=======
-	it("searches a single omp doc in place and reports hits as its URL", async () => {
-		const filesystem = urlFs(process.cwd());
-		const root = await resolveSearchRoot(filesystem, "omp://tools/read.md", process.cwd());
-		const result = await runCascade({
-			root,
-			filesystem,
-			query: "read the contents of a file by path",
-			extraKeywords: ["read"],
-			judge: new FakeJudge(() => 0.9),
-			includeHidden: false,
-		});
-		expect(result.stats.listed).toBe(1);
-		expect(result.hits.map(hit => resolveSearchResultPath(root.path, hit.rel))).toEqual(["omp://tools/read.md"]);
->>>>>>> theirs — scope `it("materializes one omp doc and remaps its c...`
 	});
 
-<<<<<<< ours — scope `it("expands the omp root scope to every embed...` in test_suite `jfind cascade` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `it("expands the omp root scope to every embedded doc and cleans…` +2 more
 	it("expands the tau root scope to every embedded doc and cleans up after itself", async () => {
 		const completions = (await InternalUrlRouter.instance().complete("tau", "")) ?? [];
@@ -500,32 +429,6 @@ describe("jfind cascade", () => {
 		} finally {
 			await scope.cleanup();
 		}
-=======
-	it("walks the omp root in place: every embedded doc is listed and hits resolve to doc URLs", async () => {
-		const completions = (await InternalUrlRouter.instance().complete("omp", "")) ?? [];
-		const docs = new Set(completions.map(completion => completion.value));
-		const filesystem = urlFs(process.cwd());
-		const root = await resolveSearchRoot(filesystem, "omp://", process.cwd());
-		const judge = new FakeJudge((request, key) => {
-			const state = stateOf(request);
-			if ("tree" in state) return String(state.tree).includes(`${key} read.md`) ? 0.9 : 0.1;
-			if ("files" in state) {
-				const [fileKey] = (state.passages as Record<string, [string, string]>)[key]!;
-				return (state.files as Record<string, string>)[fileKey] === "tools/read.md" ? 0.9 : 0.1;
-			}
-			return state.file === "tools/read.md" ? 0.95 : 0.1;
-		});
-		const result = await runCascade({
-			root,
-			filesystem,
-			query: "read the contents of a file by path",
-			extraKeywords: ["read"],
-			judge,
-			includeHidden: false,
-		});
-		expect(result.stats.listed).toBe(docs.size);
-		expect(result.hits.map(hit => resolveSearchResultPath(root.path, hit.rel))).toEqual(["omp://tools/read.md"]);
->>>>>>> theirs — scope `it("expands the omp root scope to every embed...`
 	});
 
 	it("rejects a missing scope path or a line selector before spending any judgment", async () => {

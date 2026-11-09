@@ -1,12 +1,6 @@
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { enclosingBlockBoundaries } from "@oh-my-pi/pi-natives";`
 import { enclosingBlockBoundaries } from "@tau/tau-natives";
 import { logger } from "@tau/tau-utils";
-=======
-import { enclosingBlockBoundaries, warmBlockParse } from "@oh-my-pi/pi-natives";
-import { logger } from "@oh-my-pi/pi-utils";
-import { ensureGrammar } from "./grammars";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/utils/block-context.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const OPEN_TO_CLOSE: Record<string, string> = {
 	"(": ")",

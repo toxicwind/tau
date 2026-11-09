@@ -67,7 +67,6 @@ export async function selectSetupScenes(
 	ctx?: SetupHost,
 	options: SetupSceneSelectionOptions = {},
 ): Promise<SetupScene[]> {
-<<<<<<< ours — function `selectSetupScenes` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `if (setupSkipEnvEnabled(options.skipEnv ?? Bun.env.OMP_SKIP_SET…`
 	const isTTY = options.isTTY ?? (process.stdin.isTTY && process.stdout.isTTY);
 	if (!isTTY) return [];
@@ -76,9 +75,6 @@ export async function selectSetupScenes(
 		if (setupSkipEnvEnabled(options.skipEnv ?? Bun.env.TAU_SKIP_SETUP)) return [];
 		if (options.setupWizardEnabled === false) return [];
 	}
-=======
-	if (!setupWizardAllowed(options)) return [];
->>>>>>> theirs — function `selectSetupScenes` (S+F, confidence: low) · weave: run 'weave explain packages/tui/src/setup/wizard.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 	const selected: SetupScene[] = [];
 	for (const scene of scenes) {

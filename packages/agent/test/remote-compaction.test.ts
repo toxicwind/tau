@@ -8,13 +8,8 @@ import {
 	NativeCompactionError,
 	prepareCompaction,
 	type SessionEntry,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `} from "@oh-my-pi/pi-ai/providers/openai-codex-responses";`
 } from "@tau/tau-agent-core/compaction";
-=======
-} from "@oh-my-pi/pi-agent-core/compaction";
-import * as snapcompact from "@oh-my-pi/snapcompact";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/agent/test/remote-compaction.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	buildCompactionV2Request,
 	buildOpenAiNativeHistory,
@@ -27,7 +22,6 @@ import {
 	shouldUseCompactionV2Streaming,
 	shouldUseOpenAiRemoteCompaction,
 	trimRemoteCompactionInputToContextWindow,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `} from "@oh-my-pi/pi-ai/providers/openai-codex-responses";`
 } from "@tau/tau-agent-core/compaction/openai";
 import * as ai from "@tau/tau-ai";
@@ -36,15 +30,6 @@ import {
 	buildTransformedCodexRequestBody,
 	getOpenAICodexTransportDetails,
 } from "@tau/tau-ai/providers/openai-codex-responses";
-=======
-} from "@oh-my-pi/pi-agent-core/compaction/openai";
-import * as ai from "@oh-my-pi/pi-ai";
-import { NO_AUTH_SENTINEL } from "@oh-my-pi/pi-ai/auth-retry";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { clearAwsCredentialCache } from "@oh-my-pi/pi-ai/providers/aws-credentials";
-import { buildTransformedCodexRequestBody } from "@oh-my-pi/pi-ai/providers/openai-codex-responses";
-import { getOpenAICodexTransportDetails } from "@oh-my-pi/pi-ai/providers/openai-codex-state";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import type {
 	AssistantMessage,
 	CodexCompactionContext,
@@ -53,20 +38,11 @@ import type {
 	ProviderSessionState,
 	ToolResultMessage,
 	UserMessage,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `} from "@oh-my-pi/pi-ai/providers/openai-codex-responses";`
 } from "@tau/tau-ai/types";
 import { buildModel } from "@tau/tau-catalog/build";
 import type { ModelSpec } from "@tau/tau-catalog/types";
 import * as piUtils from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-ai/types";
-import { __resetProxyCache } from "@oh-my-pi/pi-ai/utils/proxy";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { resolveCatalogPolicy } from "@oh-my-pi/pi-catalog/compat/catalog-policy";
-import type { ModelSpec } from "@oh-my-pi/pi-catalog/types";
-import * as piUtils from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 
 const { isRecord } = piUtils;
 const TEST_INSTALLATION_ID = "00000000-0000-4000-8000-000000000001";

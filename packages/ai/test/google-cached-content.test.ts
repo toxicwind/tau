@@ -1,5 +1,4 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { buildGoogleGenerateContentParams } from "@oh-my-pi/pi-…`
 import * as AIError from "@tau/tau-ai/error";
 import { streamGoogle } from "@tau/tau-ai/providers/google";
@@ -10,17 +9,6 @@ import { parseRequest as parsePiNativeRequest } from "@tau/tau-ai/providers/tau-
 import { streamSimple } from "@tau/tau-ai/stream";
 import type { ApiOptionsMap, AssistantMessageEvent, Context, FetchImpl, Model, Tool } from "@tau/tau-ai/types";
 import { buildModel } from "@tau/tau-catalog/build";
-=======
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { streamGoogle } from "@oh-my-pi/pi-ai/providers/google";
-import type { GoogleGeminiCliOptions } from "@oh-my-pi/pi-ai/providers/google-gemini-cli";
-import { buildGoogleGenerateContentParams, mapGoogleUsage } from "@oh-my-pi/pi-ai/providers/google-shared";
-import { streamGoogleVertex } from "@oh-my-pi/pi-ai/providers/google-vertex";
-import { parseRequest as parsePiNativeRequest } from "@oh-my-pi/pi-ai/providers/pi-native-server";
-import { streamSimple } from "@oh-my-pi/pi-ai/stream";
-import type { ApiOptionsMap, AssistantMessageEvent, Context, FetchImpl, Model, Tool } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/test/google-cached-content.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const CACHE_NAME = "cachedContents/caller-owned-corpus-abc";
 const VERTEX_CACHE_NAME = "projects/demo-project/locations/us-central1/cachedContents/caller-owned-corpus-abc";

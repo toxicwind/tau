@@ -11,15 +11,9 @@
  * massage shapes the LLM almost got right.
  */
 
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { structuredCloneJSON } from "@oh-my-pi/pi-utils";`
 import { type Type, type } from "@tau/tautype";
 import { structuredCloneJSON } from "@tau/tau-utils";
-=======
-import { type Type, type } from "@oh-my-pi/omptype";
-import { parseLocalRefPointer } from "@oh-my-pi/omptype";
-import { isRecord, structuredCloneJSON } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/ai/src/utils/validation.ts' for per-hunk detail, 'weave check' to verify your resolution
 import * as AIError from "../error";
 import type { Tool, ToolCall } from "../types";
 import { upgradeJsonSchemaTo202012 } from "./schema/draft";

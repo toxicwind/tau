@@ -1,7 +1,6 @@
 import { join } from "node:path";
 import type { GlobToolDetails } from "@tau/tau-tui/tools/glob";
 import * as fs from "node:fs";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import * as path from "node:path";
 import { type } from "@tau/tautype";
@@ -10,15 +9,6 @@ import * as natives from "@tau/tau-natives";
 import { formatGroupedPaths, hasFsCode, isEnoent, prompt, untilAborted } from "@tau/tau-utils";
 import { InternalUrlRouter } from "../internal-urls";
 import { splitMemoryGlobPattern } from "../internal-urls/memory-protocol";
-=======
-import { type } from "@oh-my-pi/omptype";
-import type { AgentTool, AgentToolContext, AgentToolResult, AgentToolUpdateCallback } from "@oh-my-pi/pi-agent-core";
-import * as natives from "@oh-my-pi/pi-natives";
-import { formatGroupedPaths, hasFsCode, isEnoent, prompt, untilAborted } from "@oh-my-pi/pi-utils";
-import { InternalUrlRouter, sessionResolveContext } from "../internal-urls";
-import { InternalUrlFilesystem, type UrlFileStat } from "../internal-urls/url-filesystem";
-import { glob as ovnfsGlob } from "../ovnfs/search";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/glob.ts' for per-hunk detail, 'weave check' to verify your resolution
 import globDescription from "../prompts/tools/glob.md" with { type: "text" };
 import { truncateHead } from "@tau/tau-tui/tools/streaming-output";
 import { sessionDelegationBias } from "../task/prompt-policy";
@@ -38,13 +28,8 @@ import {
 	resolveSearchResultPath,
 	searchPathTier,
 } from "./path-utils";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { toPathList } from "@tau/tau-tui/render/render-utils";
-=======
-import { searchApprovalCacheTargets } from "./search-approval-targets";
-import { toPathList } from "@oh-my-pi/pi-tui/render/render-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import { ToolAbortError, throwIfAborted } from "./tool-errors";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 import { toolResult } from "./tool-result";
@@ -520,7 +505,6 @@ export class GlobTool implements AgentTool<typeof findSchema, GlobToolDetails> {
 			const preparedTargets: NativePreparedTarget[] = await Promise.all(
 				targets.map(async target => {
 					throwIfAborted(signal);
-<<<<<<< ours — class `GlobTool (body partly extracted into globTimeoutNotice)` (S+F, confidence: low)
 // refused_by: container_member · collision: `return { target, result: [] };` +2 more
 					let stat: fs.Stats;
 					try {
@@ -531,32 +515,6 @@ export class GlobTool implements AgentTool<typeof findSchema, GlobToolDetails> {
 						if (isEnoent(err) || hasFsCode(err, "ENAMETOOLONG")) {
 							if (isSingle) throw new ToolError(`Path not found: ${scopePath}`);
 							return { target, result: [], gitignore: useGitignore };
-=======
-					let stat: UrlFileStat;
-					if (internalRouter.canHandle(target.searchPath)) {
-						// A URL failure carries its handler's diagnosis (`Artifact 9 not found. Available: 4`).
-						stat = await urlFilesystem.stat(target.searchPath).catch((err: unknown) => {
-							throw new ToolError(
-								`Cannot glob ${target.searchPath}: ${err instanceof Error ? err.message : String(err)}`,
-							);
-						});
-					} else {
-						try {
-							const hostStat = await this.#stat(target.searchPath);
-							stat = {
-								type: hostStat.isDirectory() ? "directory" : hostStat.isFile() ? "file" : "other",
-								size: hostStat.size,
-								mtimeMs: hostStat.mtimeMs,
-							};
-						} catch (err) {
-							// ENAMETOOLONG can never name a real target; surface a clean
-							// "Path not found" instead of leaking the raw errno (issue #7597).
-							if (isEnoent(err) || hasFsCode(err, "ENAMETOOLONG")) {
-								if (isSingle) throw new ToolError(`Path not found: ${scopePath}`);
-								return { target, result: [] };
-							}
-							throw err;
->>>>>>> theirs — class `GlobTool (body partly extracted into globTimeoutNotice)` (S+F, confidence: low)
 						}
 					}
 					if (!target.hasGlob && stat.type === "file") {
@@ -699,7 +657,6 @@ export class GlobTool implements AgentTool<typeof findSchema, GlobToolDetails> {
 				const partial = onUpdateMatches.map((entry, index) => ({ p: entry, m: onUpdateMtimes[index] ?? 0 }));
 				partial.sort((a, b) => b.m - a.m);
 				const sortedPaths = partial.map(entry => entry.p);
-<<<<<<< ours — class `GlobTool (body partly extracted into globTimeoutNotice)` (S+F, confidence: low)
 // refused_by: container_member · collision: `return { target, result: [] };` +2 more
 				const seconds = timeoutMs % 1000 === 0 ? `${timeoutMs / 1000}` : (timeoutMs / 1000).toFixed(1);
 				// Walk cost tracks directory-tree size, not pattern specificity: a
@@ -715,13 +672,6 @@ export class GlobTool implements AgentTool<typeof findSchema, GlobToolDetails> {
 					.filter((part): part is string => part !== undefined)
 					.join("\n");
 				return buildResult(sortedPaths, { notice, forceTruncated: true, timedOut: true });
-=======
-				return buildResult(sortedPaths, {
-					notice: globTimeoutNotice(sortedPaths.length, timeoutMs),
-					forceTruncated: true,
-					timedOut: true,
-				});
->>>>>>> theirs — class `GlobTool (body partly extracted into globTimeoutNotice)` (S+F, confidence: low)
 			}
 
 			// Merge per-target results: native glob already ranks each target's own

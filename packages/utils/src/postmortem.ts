@@ -767,7 +767,6 @@ async function exitAfterSignal(reason: Reason, heading: string, exitCode: number
 	exitProcess(exitCode);
 }
 
-<<<<<<< ours
 const sigintHandler = async (): Promise<void> => {
 	await runCleanup(Reason.SIGINT);
 	exitProcess(130); // 128 + SIGINT (2)
@@ -782,128 +781,6 @@ const sighupHandler = async (): Promise<void> => {
 };
 
 if (Bun.isMainThread) {
-||||||| base
-if (Bun.isMainThread) {
-=======
-/** Installs OMP's process-wide signal and fatal handlers for a CLI-owned process. */
-export function installProcessHandlers(): void {
-	if (processHandlersInstalled) return;
-	processHandlersInstalled = true;
-	removeEmbeddedRejectionListener();
-	// Workers report failures through their own error listeners to the parent.
-	if (!Bun.isMainThread) return;
-
->>>>>>> theirs · weave: run 'weave explain packages/utils/src/postmortem.ts' for per-hunk detail, 'weave check' to verify your resolution
-	process
-		.on("SIGINT", sigintHandler)
-		.on("SIGUSR1", async () => {
-			if (inspectorOpened) return;
-			inspectorOpened = true;
-			// Signal-only boundary: successful startup never constructs inspector.
-			const { default: inspector } = await import("node:inspector");
-			inspector.open(undefined, undefined, false);
-			const url = inspector.url();
-			process.stderr.write(`Inspector opened: ${url}\n`);
-		})
-		.on("uncaughtException", async thrown => {
-			// Expected cleanup is safe globally; unrelated synchronous errors stay fatal.
-			if (hasExpectedCleanupMarker(thrown)) {
-				logger.warn("Ignoring expected cleanup exception", { err: thrown });
-				return;
-			}
-			const err = toError(thrown);
-			// A worker IPC `send()` race can surface through either global error event;
-			// contain it in both. Stdout write disconnects are attributed to stdout by
-			// registerStdioDisconnectHandling's `error` listener, not classified here.
-			if (handleWorkerSendEpipe(err)) return;
-			// A malformed advanced-serialization frame from a worker subprocess
-			// surfaces here as a process-level uncaughtException (oven-sh/bun#37287)
-			// rather than in the channel's ipc() callback, and Bun gives no way to
-			// tell which channel produced it. Contain it to the worker layer: keep
-			// the session alive and conservatively fault every active advanced-IPC
-			// worker so its owning client rejects in-flight requests and recycles
-			// the subprocess — a worker that sent a bad frame but stays alive would
-			// otherwise never fire onExit and leave callers awaiting forever.
-			// See the analogous worker IPC containment in handleBrokenPipe (#9158, #2997).
-			if (isWorkerIpcDeserializeError(err)) {
-				logger.warn("Malformed worker IPC frame; faulting active worker subsystems", { err });
-				faultWorkerIpcChannels(err);
-				return;
-			}
-			if (isInternalSocketClosedError(err)) {
-				logger.warn("Ignoring async ERR_SOCKET_CLOSED from node:net internals; socket owner recovers itself", {
-					err,
-				});
-				return;
-			}
-			await exitAfterFatal(
-				formatFatalError("Uncaught Exception", err),
-				"Uncaught exception",
-				err,
-				Reason.UNCAUGHT_EXCEPTION,
-			);
-		})
-		.on("unhandledRejection", async reason => {
-			const err = toError(reason);
-			if (handleWorkerSendEpipe(err)) return;
-			if (isExpectedCleanupError(reason)) {
-				logger.warn("Ignoring expected cleanup rejection", { err });
-				return;
-			}
-			if (interceptRejection(reason)) return;
-			await exitAfterFatal(
-				formatFatalError("Unhandled Rejection", err),
-				"Unhandled rejection",
-				err,
-				Reason.UNHANDLED_REJECTION,
-			);
-		})
-<<<<<<< ours
-		.on("exit", async () => {
-			void runCleanup(Reason.EXIT); // fire and forget (exit imminent)
-		})
-		.on("SIGTERM", sigtermHandler)
-		.on("SIGHUP", sighupHandler);
-} else {
-	// Worker thread: only register exit handler for cleanup.
-	// DO NOT register uncaughtException/unhandledRejection handlers here -
-	// they would swallow errors before the worker's own handlers (self.addEventListener)
-	// can report failures back to the parent thread.
-	process.on("exit", () => {
-		void runCleanup(Reason.EXIT);
-	});
-||||||| base
-		.on("exit", async () => {
-			void runCleanup(Reason.EXIT); // fire and forget (exit imminent)
-		})
-		.on("SIGTERM", async () => {
-			await runCleanup(Reason.SIGTERM);
-			exitProcess(143); // 128 + SIGTERM (15)
-		})
-		.on("SIGHUP", async () => {
-			await runCleanup(Reason.SIGHUP);
-			exitProcess(129); // 128 + SIGHUP (1)
-		});
-} else {
-	// Worker thread: only register exit handler for cleanup.
-	// DO NOT register uncaughtException/unhandledRejection handlers here -
-	// they would swallow errors before the worker's own handlers (self.addEventListener)
-	// can report failures back to the parent thread.
-	process.on("exit", () => {
-		void runCleanup(Reason.EXIT);
-	});
-=======
-		.on("SIGTERM", async () => {
-			// A stopped session otherwise leaves its last frame above the shell prompt,
-			// which reads as a crash.
-			await exitAfterSignal(Reason.SIGTERM, "\n[Stopped by SIGTERM]", 143); // 128 + SIGTERM (15)
-		})
-		.on("SIGHUP", async () => {
-			// Same report as SIGTERM: a runtime that stops the program with a hangup
-			// keeps its screen, so the resume command survives the death.
-			await exitAfterSignal(Reason.SIGHUP, "\n[Stopped by SIGHUP]", 129); // 128 + SIGHUP (1)
-		});
->>>>>>> theirs
 }
 
 /** Controls when a registered cleanup callback participates in cleanup passes. */

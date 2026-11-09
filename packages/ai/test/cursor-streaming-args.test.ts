@@ -7,19 +7,11 @@ import {
 	synthesizeCursorExecToolCall,
 	type ToolCallState,
 	type UsageState,
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-ai/providers/cursor";
 import type { AssistantMessage, AssistantMessageEvent } from "@tau/tau-ai/types";
 import { getStreamingPartialJson, kCursorExecResolved } from "@tau/tau-ai/utils/block-symbols";
 import { AssistantMessageEventStream } from "@tau/tau-ai/utils/event-stream";
-=======
-} from "@oh-my-pi/pi-ai/providers/cursor";
-import type { AssistantMessage, AssistantMessageEvent } from "@oh-my-pi/pi-ai/types";
-import { getStreamingPartialJson, kCursorExecResolved } from "@oh-my-pi/pi-ai/utils/block-symbols";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { validateToolArguments } from "@oh-my-pi/pi-ai/utils/validation";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/ai/test/cursor-streaming-args.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 interface Harness {
 	output: AssistantMessage;

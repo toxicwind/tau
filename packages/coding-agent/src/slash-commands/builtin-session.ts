@@ -1,11 +1,5 @@
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (3 contested hunk(s), neither side deleted the other's lines)
 import { getOAuthProviders } from "@tau/tau-ai/oauth";
-=======
-import { clearSubmittedText } from "./helpers/draft";
-import { getOAuthProviders } from "@oh-my-pi/pi-ai/oauth";
-import { journalJudgmentUsage, resolveJudge, sharedJudgmentCache } from "../judgment";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/slash-commands/builtin-session.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { AgentSession } from "../session/agent-session";
 import type { SessionOAuthAccountList } from "../session/agent-session-types";
 import {
@@ -17,7 +11,6 @@ import {
 } from "../utils/changelog";
 import { formatTokenCount, refreshStatusLine } from "./builtin-modes";
 import { buildContextReportText } from "./helpers/context-report";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (3 contested hunk(s), neither side deleted the other's lines)
 import { formatCoarseDuration } from "@tau/tau-tui/chrome/format";
 import { sanitizeText } from "@tau/tau-utils";
@@ -27,25 +20,6 @@ import { openLocalFileInEditor } from "../modes/local-file-editor";
 import { commandConsumed, errorMessage, parseSubcommand, usage } from "./helpers/parse";
 import { describeRedeemOutcome, toResetUsageAccounts } from "./helpers/reset-usage";
 import type { ResetUsageAccount } from "@tau/tau-tui/overlays/reset-usage-selector";
-=======
-import { formatCoarseDuration } from "@oh-my-pi/pi-tui/chrome/format";
-import { shortenEmbeddedPaths, truncateToWidth } from "@oh-my-pi/pi-tui/render/render-utils";
-import { buildJobTree, jobTreeGuide, jobTreeIndent } from "@oh-my-pi/pi-tui/overlays/job-tree";
-import { theme } from "@oh-my-pi/pi-tui/theme";
-import { sanitizeText } from "@oh-my-pi/pi-utils";
-import { handleMcpAcp } from "./helpers/mcp";
-import { markdownFenceFor } from "../utils/markdown-fence";
-import { openLocalFileInEditor } from "../modes/local-file-editor";
-import { commandConsumed, errorMessage, parseSubcommand, usage } from "./helpers/parse";
-import {
-	describeRedeemOutcome,
-	formatResetUsageAccountLine,
-	oneLine,
-	resolveResetUsageTarget,
-	toResetUsageAccounts,
-} from "./helpers/reset-usage";
-import type { ResetUsageAccount } from "@oh-my-pi/pi-tui/overlays/reset-usage-selector";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low)
 import { matchSessionPinAccounts, toSessionPinAccounts } from "./helpers/session-pin";
 import {
 	launchStatsDashboard,

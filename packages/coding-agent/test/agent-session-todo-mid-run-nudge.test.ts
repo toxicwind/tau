@@ -1,5 +1,4 @@
 import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { Agent, type AgentTool, type AsideMessage } from "@oh-m…`
 import { Agent, type AgentTool, type AsideMessage } from "@tau/tau-agent-core";
 import type { AssistantMessage, TextContent, ToolCall } from "@tau/tau-ai";
@@ -11,18 +10,6 @@ import type { CustomMessage } from "tau/session/messages";
 import { SessionManager } from "tau/session/session-manager";
 import { TodoTool, type ToolSession } from "tau/tools";
 import { TempDir } from "@tau/tau-utils";
-=======
-import { Agent, type AgentTool, type AsideBoundary, type AsideMessage } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, TextContent, ToolCall } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession, type AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import type { CustomMessage } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TodoTool, type ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { TempDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/agent-session-todo-mid-run-nudge.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
 /**

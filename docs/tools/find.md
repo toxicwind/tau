@@ -20,36 +20,21 @@ The cascade follows the semantic-search strategy of [jegrep](https://github.com/
 
 ## CLI
 
-<<<<<<< ours — scope `## CLI` in heading `CLI` (S, confidence: medium)
 // refused_by: statement_fold · collision: ``omp find "<query>" [path] [-k keyword]... [--hidden] [--json] …`
 ## CLI
 `tau find "<query>" [path] [-k keyword]... [--hidden] [--json] [-q]` runs the same cascade from the shell (`packages/coding-agent/src/cli/find-cli.ts`): the judge resolves from your settings' `judge` role, progress goes to stderr, and the ranked digest (or `--json` with hits and stats) to stdout. Exits 1 when every judgment request failed.
-=======
-`omp find "<query>" [path] [-k keyword]... [--hidden] [--json] [-q]` runs the same cascade from the shell (`packages/coding-agent/src/cli/find-cli.ts`): progress goes to stderr and the ranked digest (or JSON with hits and stats) to stdout. A host-directory scope supplies the settings/extensions used to resolve the `judge` role; file/URL scopes use the caller's cwd. Hits are cwd-relative within the cwd, absolute outside it, or internal URLs. Exits 1 for an invalid query/root or when every judgment request failed.
->>>>>>> theirs — scope `## CLI` · weave: run 'weave explain docs/tools/find.md' for per-hunk detail, 'weave check' to verify your resolution
 
 ## Inputs
 
-<<<<<<< ours — scope `body prelude` in heading `Inputs` (S, confidence: medium)
 // refused_by: statement_fold · collision: `| `path` | `string` | No | Directory to search, or an `omp://` …`
 | Field | Type | Required | Description |
 | --- | --- | --- | --- |
 | `query` | `string` | Yes | Plain-language description of the behavior or concept to locate. Quoted phrases are matched whole in the lexical pass. Whitespace-only queries are rejected. |
 | `grep_keywords` | `string[]` | Yes | Extra identifiers or terms for the lexical pre-ranking, in addition to those derived from `query`. `[]` when nothing specific comes to mind. |
 | `path` | `string` | No | Directory to search, or an `tau://` docs scope (`tau://` for all harness docs, `tau://<file>.md` for one doc). Resolved against the session cwd (`~` expanded, a bare `/` means the workspace root). Omitted or empty defaults to the cwd. A missing path or a file is rejected. A trailing `:start-end` selector on an `tau://` scope is rejected too — `find` judges whole files. |
-=======
-| Field           | Type       | Required | Description                                                                                                                                                                                                                                                                                                                                                                                                               |
-| --------------- | ---------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `query`         | `string`   | Yes      | Plain-language description of the behavior or concept to locate. Quoted phrases are matched whole in the lexical pass. Whitespace-only queries are rejected.                                                                                                                                                                                                                                                              |
-| `grep_keywords` | `string[]` | Yes      | Extra identifiers or terms for the lexical pre-ranking, in addition to those derived from `query`. `[]` when nothing specific comes to mind.                                                                                                                                                                                                                                                                              |
-| `path`          | `string`   | No       | Directory or single file to search: a host path or an internal URL (`omp://` for all harness docs, `omp://<file>.md` for one doc, `skill://<name>`, `local://notes`). Paths resolve against the session cwd (`~` expanded, a bare `/` means the workspace root). Omitted or empty defaults to the cwd. A missing path is rejected. A trailing `:start-end` selector on a URL is rejected too — `find` judges whole files. |
->>>>>>> theirs — scope `body prelude`
 
-<<<<<<< ours — scope ``omp://` hits are canonical doc URLs (`omp://...` in heading `Inputs`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 `tau://` hits are canonical doc URLs (`tau://tools/read.md`), not cwd-relative paths — open them directly with `read`, including with `:start-end` selectors (`read tau://tools/read.md:50-100`). Hidden files are excluded. Hit paths are otherwise reported relative to the session cwd, not the searched directory, so `read` and hyperlinks resolve without knowing the scope.
-=======
->>>>>>> theirs — scope ``omp://` hits are canonical doc URLs (`omp://...` deleted in theirs
 Internal URLs are searched in place: the native listing and lexical scan and the file reads go through the session's URL filesystem (`InternalUrlFilesystem`, at the call's approval tier: `read`, or `exec` when `path` names `ssh://`, as for `grep`), which is the same one the bash tool uses. Virtual documents need no local files, and file-backed schemes resolve to their host files. Hits under a URL scope are URLs (`omp://tools/read.md`). Open them directly with `read`, including with `:start-end` selectors (`read omp://tools/read.md:50-100`). Hidden files are excluded unless the file is named as the scope. Host hit paths are cwd-relative within the session cwd and absolute outside it, not relative to the searched directory, so `read` and hyperlinks resolve without knowing the scope.
 
 `find.enabled` is `auto` by default: `find` is enabled only when the `judge` model role resolves first to a native System One model (TypeSafe `typesafe/jev-1.14.0`, directly or through OpenRouter), not a prompted on-device or chat model. `on` enables it whichever model judges; `off` disables it. Once enabled it is an essential (top-level) tool, never mounted under `xd://`.

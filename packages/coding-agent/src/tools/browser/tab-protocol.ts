@@ -108,12 +108,9 @@ export type WorkerInitPayload =
 			userDriven?: boolean;
 			/** The browser is the omp relay: downloads arrive as page events, and the relay names where Chrome saved them. */
 			relay?: boolean;
-<<<<<<< ours — scope `/** Restore focus emulation when recycling an...` in type `WorkerInitPayload`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 			/** Restore focus emulation when recycling an TAU-owned tab, never a borrowed user tab. */
 			emulateFocus?: boolean;
-=======
->>>>>>> theirs — scope `/** Restore focus emulation when recycling an...` deleted in theirs · weave: run 'weave explain packages/coding-agent/src/tools/browser/tab-protocol.ts' for per-hunk detail, 'weave check' to verify your resolution
 	  };
 
 /** Result of one host tool requested by browser-run JavaScript. */

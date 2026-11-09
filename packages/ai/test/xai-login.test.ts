@@ -1,15 +1,9 @@
 import { Database } from "bun:sqlite";
 import { afterEach, describe, expect, test, vi } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { getEnvApiKey } from "@oh-my-pi/pi-ai/stream";`
 import { AuthStorage, SqliteAuthCredentialStore } from "@tau/tau-ai/auth-storage";
 import { getEnvApiKey } from "@tau/tau-ai/stream";
 import type { FetchImpl } from "@tau/tau-ai/types";
-=======
-import { AuthStorage, SqliteAuthCredentialStore } from "@oh-my-pi/pi-ai/auth-storage";
-import { getEnvApiKey } from "@oh-my-pi/pi-ai/env-api-key";
-import type { FetchImpl } from "@oh-my-pi/pi-ai/types";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/ai/test/xai-login.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const originalXaiApiKey = Bun.env.XAI_API_KEY;
 

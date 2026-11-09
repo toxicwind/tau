@@ -1,16 +1,11 @@
 import { Database } from "bun:sqlite";
 import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import { type } from "@tau/tautype";
 import { AuthStorage, REMOTE_REFRESH_SENTINEL, SqliteAuthCredentialStore } from "@tau/tau-ai";
-=======
-import { type } from "@oh-my-pi/omptype";
-import { AuthStorage, REMOTE_REFRESH_SENTINEL, SqliteAuthCredentialStore } from "@oh-my-pi/pi-ai";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/test/remote-auth-store.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	AuthBrokerClient,
 	type AuthBrokerServerHandle,
@@ -19,7 +14,6 @@ import {
 	RemoteAuthCredentialStore,
 	type SnapshotResponse,
 	startAuthBroker,
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-ai/auth-broker";
 import { snapshotResponseSchema } from "@tau/tau-ai/auth-broker/wire-schemas";
@@ -27,13 +21,6 @@ import * as oauthUtils from "@tau/tau-ai/registry/oauth";
 import type { UsageLimit, UsageProvider, UsageReport } from "@tau/tau-ai/usage";
 import * as claudeUsage from "@tau/tau-ai/usage/claude";
 import { removeWithRetries } from "../../utils/src/temp";
-=======
-} from "@oh-my-pi/pi-ai/auth-broker";
-import { snapshotResponseSchema } from "@oh-my-pi/pi-ai/auth-broker/wire-schemas";
-import * as oauthUtils from "@oh-my-pi/pi-ai/registry/oauth";
-import type { UsageLimit, UsageProvider, UsageReport } from "@oh-my-pi/pi-ai/usage";
-import * as claudeUsage from "@oh-my-pi/pi-ai/usage/claude";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low)
 
 function requireLimit(report: UsageReport, id: string): UsageLimit {
 	const limit = report.limits.find(candidate => candidate.id === id);

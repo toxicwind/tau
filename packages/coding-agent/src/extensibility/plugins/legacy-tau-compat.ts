@@ -1,5 +1,4 @@
 // oxlint-disable-next-line typescript/triple-slash-reference -- legacy virtual module declarations.
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 /// <reference path="./legacy-tau-virtual-modules.d.ts" />
 
@@ -17,25 +16,6 @@ import {
 	logger,
 	stripWindowsExtendedLengthPathPrefix,
 } from "@tau/tau-utils";
-=======
-/// <reference path="./legacy-pi-virtual-modules.d.ts" />
-
-import { Database } from "bun:sqlite";
-import * as fs from "node:fs";
-import { createRequire, isBuiltin } from "node:module";
-import * as path from "node:path";
-import * as url from "node:url";
-import type { ParseResult, ParserPlugin } from "@babel/parser";
-import type * as BabelParser from "@babel/parser";
-import {
-	getDbBusyTimeoutMs,
-	getLegacyPiExtensionCacheDbPath,
-	isCompiledBinary,
-	isRecord,
-	logger,
-	stripWindowsExtendedLengthPathPrefix,
-} from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/extensibility/plugins/legacy-tau-compat.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { registerPluginCacheInvalidator } from "../../discovery/helpers";
 
 const USE_BUNDLED_PI_MODULES = isCompiledBinary() || Boolean(process.env.PI_BUNDLED);
@@ -882,26 +862,16 @@ function resolveBundledVirtualSpecifier(
 // scope name they happened to declare in their peerDependencies.
 const CANONICAL_PI_SCOPE = "@tau";
 
-<<<<<<< ours — interstitial `between:packages/coding-agent/src/extensibility/plugins/legacy-tau-compat.ts::variable::CANONICAL_PI_SCOPE:packages/coding-agent/src/extensibility/plugins/legacy-tau-compat.ts::variable::PI_SCOPE_ALIASES` (T, confidence: high)
 // refused_by: merge_ladder_exhausted · collision: `// of internal pi-* packages. `@oh-my-pi` is intentionally incl…`
 // Scopes that have historically been used to publish (or alias) the same set
 // of internal tau-* packages. `@tau` is intentionally included so direct
-=======
-// Scopes that have historically been used to publish (or alias) internal host
-// packages. `@oh-my-pi` is intentionally included so direct
->>>>>>> theirs — interstitial `between:packages/coding-agent/src/extensibility/plugins/legacy-tau-compat.ts::variable::CANONICAL_PI_SCOPE:packages/coding-agent/src/extensibility/plugins/legacy-tau-compat.ts::variable::PI_SCOPE_ALIASES` (T, confidence: high)
 // canonical imports still pass through the same host-bundled package resolution
 // path instead of pulling a duplicate copy from plugin node_modules.
 const PI_SCOPE_ALIASES = ["tau", "oh-my-pi", "mariozechner", "earendil-works"] as const;
 
-<<<<<<< ours — interstitial `between:packages/coding-agent/src/extensibility/plugins/legacy-tau-compat.ts::variable::PI_SCOPE_ALIASES:packages/coding-agent/src/extensibility/plugins/legacy-tau-compat.ts::variable::PI_PACKAGE_NAMES` (T, confidence: high)
 // refused_by: merge_ladder_exhausted · collision: `// Internal pi-* package basenames bundled inside the omp binar…`
 // Internal tau-* package basenames bundled inside the tau binary, plus legacy pi-* aliases.
-=======
-// Internal host package basenames bundled inside the omp binary.
->>>>>>> theirs — interstitial `between:packages/coding-agent/src/extensibility/plugins/legacy-tau-compat.ts::variable::PI_SCOPE_ALIASES:packages/coding-agent/src/extensibility/plugins/legacy-tau-compat.ts::variable::PI_PACKAGE_NAMES` (T, confidence: high)
 const PI_PACKAGE_NAMES = [
-<<<<<<< ours — variable `PI_PACKAGE_NAMES` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `const PI_PACKAGE_NAMES = ["pi-agent-core", "pi-ai", "pi-coding-…`
 	"tau-agent-core",
 	"tau-ai",
@@ -912,8 +882,6 @@ const PI_PACKAGE_NAMES = [
 	"tau-tui",
 	"tau-utils",
 	"tau-catalog",
-=======
->>>>>>> theirs — variable `PI_PACKAGE_NAMES` (S+F, confidence: low)
 	"pi-agent-core",
 	"pi-ai",
 	"pi-catalog",
@@ -2885,7 +2853,6 @@ async function ensureExtensionGraphHook(entryRealPath: string): Promise<{ clear(
  * imports keep their plain paths, so Bun evaluates them once per process and
  * every importer shares them, as a native `import()` would.
  */
-<<<<<<< ours — function `loadLegacyPiModule` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 export async function loadLegacyPiModule(resolvedPath: string): Promise<unknown> {
 	const __norm = (v: unknown) => {
@@ -2909,9 +2876,6 @@ export async function loadLegacyPiModule(resolvedPath: string): Promise<unknown>
 		}
 		return v;
 	};
-=======
-export async function loadLegacyPiModule(resolvedPath: string, options: { reload?: boolean } = {}): Promise<unknown> {
->>>>>>> theirs — function `loadLegacyPiModule` (S+F, confidence: low)
 	// Bun reports the realpath of a loaded module to `onLoad` and exposes it as
 	// `import.meta.url`. Resolve symlinks here too (macOS `/var`→`/private/var`,
 	// `bun link`/pnpm installs) so the rewrite filter matches the path Bun
@@ -2933,20 +2897,12 @@ export async function loadLegacyPiModule(resolvedPath: string, options: { reload
 		// Use the raw filesystem path so Bun keys the `?mtime` suffix as part of
 		// the module identity (on Windows too); Bun ignores query strings on
 		// `file://` specifiers, which would serve stale edited source.
-<<<<<<< ours — function `loadLegacyPiModule` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 		const entrySpecifier =
 			process.platform === "win32" || isBundledVirtualSpecifier(entryRealPath)
 				? toImportSpecifier(entryRealPath)
 				: entryRealPath;
 		return __norm(await import(`${entrySpecifier}?mtime=${nextLegacyPiLoadTag()}`));
-=======
-		const entrySpecifier = isBundledVirtualSpecifier(entryRealPath)
-			? toImportSpecifier(entryRealPath)
-			: stripWindowsExtendedLengthPathPrefix(entryRealPath);
-		if (options.reload === false) return await import(entrySpecifier);
-		return await import(`${entrySpecifier}?mtime=${nextLegacyPiLoadTag()}`);
->>>>>>> theirs — function `loadLegacyPiModule` (S+F, confidence: low)
 	} finally {
 		activeExtensionGraphDirs = previousGraphDirs;
 		// Drop whatever the initial import didn't consume: graph modules only
@@ -2972,7 +2928,6 @@ function getLoader(path: string): "js" | "jsx" | "ts" | "tsx" {
 // Set while `resolveLegacyPiSpecifier` is resolving. Every `Bun.resolveSync`
 // below targets a specifier this same hook matches, so Bun re-enters the hook
 // synchronously; the nested call must decline or it recurses.
-<<<<<<< ours — variable `isResolvingLegacyPiSpecifier` (T+S+F, confidence: low)
 // refused_by: both_added_divergent · collision: none (no common ancestor text)
 /**
  * Reentrancy guard (upstream parity, oh-my-pi 8d1dfcd5ab lineage): the compat
@@ -2984,8 +2939,6 @@ function getLoader(path: string): "js" | "jsx" | "ts" | "tsx" {
  * `@tau/tau-ai` import evaluated after the plugin installs — including host
  * code under `bun test` (test-order-dependent module-cache poisoning).
  */
-=======
->>>>>>> theirs — variable `isResolvingLegacyPiSpecifier` (T+S+F, confidence: low)
 let isResolvingLegacyPiSpecifier = false;
 
 /**
@@ -3028,7 +2981,6 @@ function importerMayUseLegacyPiResolver(importer: string): boolean {
 }
 
 function resolveLegacyPiSpecifier(args: { path: string; importer: string }): LegacyPiResolveResult | undefined {
-<<<<<<< ours — function `resolveLegacyPiSpecifier (body partly extracted into resolveRemappedLegacyPiSpecifier)` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `// Primary: resolve the canonical @oh-my-pi/* specifier from th…` +3 more
 	// The shims themselves bind to the real host packages: never redirect
 	// imports originating from inside a shim file.
@@ -3045,11 +2997,6 @@ function resolveLegacyPiSpecifier(args: { path: string; importer: string }): Leg
 	// A nested call comes from our own `Bun.resolveSync`: decline so Bun resolves
 	// natively from the directory that call chose (the host location first, so
 	// canonical imports keep landing on the host copy, not a shim one).
-=======
-	// A nested call comes from our own `Bun.resolveSync`: decline so Bun resolves
-	// natively from the directory that call chose (the host location first, so
-	// canonical imports keep landing on the host copy, not a plugin-local one).
->>>>>>> theirs — function `resolveLegacyPiSpecifier (body partly extracted into resolveRemappedLegacyPiSpecifier)` (S+F, confidence: low)
 	if (isResolvingLegacyPiSpecifier) {
 		return undefined;
 	}
@@ -3057,7 +3004,6 @@ function resolveLegacyPiSpecifier(args: { path: string; importer: string }): Leg
 	if (!remappedSpecifier) {
 		return undefined;
 	}
-<<<<<<< ours — function `resolveLegacyPiSpecifier (body partly extracted into resolveRemappedLegacyPiSpecifier)` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `// Primary: resolve the canonical @oh-my-pi/* specifier from th…` +3 more
 	isResolvingLegacyPiSpecifier = true;
 	try {
@@ -3091,21 +3037,6 @@ function resolveLegacyPiSpecifier(args: { path: string; importer: string }): Leg
 		try {
 			return toLegacyPiResolveResult(Bun.resolveSync(remappedSpecifier, importerDir));
 		} catch {
-=======
-
-	isResolvingLegacyPiSpecifier = true;
-	try {
-		const resolved = resolveRemappedLegacyPiSpecifier(remappedSpecifier, args);
-		// A canonical specifier that remaps to itself and already resolves to the
-		// same host file from its importer (host code, e.g. `/login` requiring
-		// `@oh-my-pi/pi-ai/index.js`) has nothing to rewrite: decline and let Bun
-		// resolve it natively. Answering it anyway breaks `require()` on Bun
-		// 1.3.x, which reads the returned path back as `file:<path>` and, on
-		// source-link/dev installs, recurses into `NameTooLong reading
-		// "file:file:…"` (#12293). Importers whose native resolution differs (a
-		// plugin-local copy) still get the host path.
-		if (resolved && !resolved.namespace && remappedSpecifier === args.path) {
->>>>>>> theirs — function `resolveLegacyPiSpecifier (body partly extracted into resolveRemappedLegacyPiSpecifier)` (S+F, confidence: low)
 			try {
 				if (Bun.resolveSync(args.path, path.dirname(args.importer)) === resolved.path) {
 					return undefined;
@@ -3114,11 +3045,7 @@ function resolveLegacyPiSpecifier(args: { path: string; importer: string }): Leg
 				// Unresolvable from the importer: keep the host answer.
 			}
 		}
-<<<<<<< ours — function `resolveLegacyPiSpecifier (body partly extracted into resolveRemappedLegacyPiSpecifier)` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `// Primary: resolve the canonical @oh-my-pi/* specifier from th…` +3 more
-=======
-		return resolved;
->>>>>>> theirs — function `resolveLegacyPiSpecifier (body partly extracted into resolveRemappedLegacyPiSpecifier)` (S+F, confidence: low)
 	} finally {
 		isResolvingLegacyPiSpecifier = false;
 	}

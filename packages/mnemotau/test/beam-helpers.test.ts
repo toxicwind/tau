@@ -12,7 +12,6 @@ import {
 	generateId,
 	generateStableId,
 	inMemoryVecSearch,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 	lexicalRelevance,
 	normalizeImportance,
@@ -24,16 +23,6 @@ import {
 	temporalBoost,
 	workingMemoryVecSearch,
 } from "@tau/tau-mnemotau/core/beam/helpers";
-=======
-	normalizeImportance,
-	normalizeMetadata,
-	normalizeWeights,
-	recallTokens,
-	recencyDecay,
-	temporalBoost,
-	workingMemoryVecSearch,
-} from "@oh-my-pi/pi-mnemopi/core/beam/helpers";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/mnemotau/test/beam-helpers.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 describe("beam helper ids, weights, and metadata", () => {
 	it("generates unique timed ids and deterministic stable ids", () => {

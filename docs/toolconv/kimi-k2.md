@@ -13,7 +13,6 @@ default system prompt; its current behavior is described in
 
 The five tool-call markers required for manual parsing, plus the ChatML envelope markers. Token IDs are from `tokenizer_config.json` (`added_tokens_decoder`).
 
-<<<<<<< ours — scope `The five tool-call markers required for manua...` in heading `Special tokens` (F, confidence: medium)
 // refused_by: statement_fold · collision: `| `<\|im_user\|>` | 163587 | Start marker for a user turn |`
 | Token (verbatim) | ID | Purpose |
 |---|---|---|
@@ -29,22 +28,6 @@ The five tool-call markers required for manual parsing, plus the ChatML envelope
 | `<\|im_end\|>` | 163586 | Ends any turn |
 | `[BOS]` | 163584 | Sequence-begin token (see notes; not emitted by the chat template) |
 | `[EOS]` | 163585 | Sequence-end token |
-=======
-| Token (verbatim)                 | ID     | Purpose                                                                |
-| -------------------------------- | ------ | ---------------------------------------------------------------------- |
-| `<\|tool_calls_section_begin\|>` | 163595 | Opens the tool-call section inside an assistant turn                   |
-| `<\|tool_call_begin\|>`          | 163597 | Opens one individual tool call                                         |
-| `<\|tool_call_argument_begin\|>` | 163598 | Separates the tool-call ID from its JSON arguments                     |
-| `<\|tool_call_end\|>`            | 163599 | Closes one individual tool call                                        |
-| `<\|tool_calls_section_end\|>`   | 163596 | Closes the tool-call section                                           |
-| `<\|im_system\|>`                | 163594 | Start marker for system-class turns (`system`, `tool`, `tool_declare`) |
-| `<\|im_user\|>`                  | 163587 | Start marker for a user turn                                           |
-| `<\|im_assistant\|>`             | 163588 | Start marker for an assistant turn                                     |
-| `<\|im_middle\|>`                | 163601 | Separates the role/name header from the message body                   |
-| `<\|im_end\|>`                   | 163586 | Ends any turn                                                          |
-| `[BOS]`                          | 163584 | Sequence-begin token (see notes; not emitted by the chat template)     |
-| `[EOS]`                          | 163585 | Sequence-end token                                                     |
->>>>>>> theirs — scope `The five tool-call markers required for manua...` · weave: run 'weave explain docs/toolconv/kimi-k2.md' for per-hunk detail, 'weave check' to verify your resolution
 
 Notes on exactness:
 - The five tool tokens use ASCII pipe `|` (U+007C) and underscores; reproduce them exactly. There are no fullwidth pipe (`｜`) or `▁` variants in Kimi K2.
@@ -208,7 +191,6 @@ Moonshot's hosted API (`platform.moonshot.ai`) exposes both OpenAI- and Anthropi
 - **Parser availability.** vLLM ships both a Python (`KimiK2ToolParser`) and a newer Rust tool parser; SGLang implements its own `kimi_k2` parser. All key off the same five markers and the `functions.{name}:{idx}` ID convention documented here.
 - **Whitespace artifact.** When no `system` message is supplied, the template injects the default system prompt and a small `\n  ` (newline + two spaces) can appear before the first `<|im_user|>` marker. It is harmless (tokenizes around the markers), but supplying an explicit system message yields the clean streams shown above.
 
-<<<<<<< ours — heading `omp / pi converter behavior` (S+F, confidence: low)
 // refused_by: rename_vs_edit_guard · collision: none (both sides edited, nowhere the same lines)
 ## tau / pi converter behavior
 
@@ -241,64 +223,6 @@ text, while an isolated call marker outside a section remains ordinary text.
 Thinking parsing is enabled by default and maps `<think>…</think>` to thinking
 events. `parseThinking: false` leaves those tags and their contents in visible
 text.
-=======
-## omp / pi converter behavior
-
-The repository's `kimi` dialect is an **owned in-band converter**. Select it
-with `tools.format: kimi` in agent configuration or `PI_DIALECT=kimi`.
-The default `tools.format: auto` retains provider-native tools unless the
-model has `supportsTools: false`; a model id classified as Kimi then resolves
-to `kimi`. Selection is recomputed for each provider request. `PI_DIALECT`
-is a fallback when configuration resolves to no owned dialect, so unset it
-when selecting `native` to ensure provider-native calling.
-
-With tools present, the agent appends the Kimi guide and shared compact
-`<tools>` catalog to the system prompt, removes native provider tools and
-tool choice, rewrites prior calls/results as text, and converts streamed
-output back into canonical pi events. This catalog is not the upstream
-`tool_declare` turn shown above.
-
-The renderer emits one section per assistant call batch. It preserves a
-pre-existing id that already begins with `functions.`; otherwise it generates
-`functions.{name}:{batchIndex}`. Tool results are rendered as consecutive
-`<|im_system|>{name}<|im_middle|>## Return of …<|im_end|>` turns, and canonical
-tool-result messages are collapsed into one synthetic user message containing
-that text. Result images remain image blocks after the rendered text.
-Call-bearing assistant history is reduced to prose plus rendered calls;
-its original thinking blocks are omitted. The separate `renderTranscript`
-API can render thinking and full Kimi turn envelopes.
-
-The scanner recognizes only calls inside a section. Once the argument marker
-arrives it trims the header to obtain the call id, derives the name from the
-last dot-separated segment before the first colon, and emits `toolStart`. It
-buffers the argument body until `<|tool_call_end|>`, then applies the shared
-repairing JSON parser and emits `toolEnd`; it does **not** emit incremental
-argument deltas. Invalid/non-object completed arguments normalize to `{}`.
-`toolEnd.rawBlock` retains the exact invocation, including header/argument
-whitespace, but excludes the surrounding section. The scanner does not
-validate the `functions.NAME:INDEX` convention, tool membership, or argument
-schema; even an empty header can emit `toolStart`.
-If EOF arrives after `toolStart` but before the close marker, no `toolEnd` is
-emitted, yet the canonical `{}` call remains and may be dispatched on a normal
-stop. Only incomplete input that never reaches the argument marker is
-discarded without creating a call. Section markers are suppressed from visible
-text inside a recognized section, while an isolated call or section-end
-marker outside a section remains ordinary text. Non-call text inside a
-section is discarded. Completed calls do not require the section close;
-a provider `length` stop remains `length` rather than `toolUse`.
-
-Thinking parsing is enabled by default outside tool sections and maps
-`<think>…</think>` to thinking events. An unterminated block retains its
-content and emits `thinkingEnd` on flush. `parseThinking: false` leaves
-thinking markup as visible text outside sections.
-
-The first model-authored `<|im_system|>` is a fabricated-result boundary in
-the owned stream. The default `tools.abortOnFabricatedResult: true` aborts
-generation there; disabling it drains the stream but discards the continuation.
-If the provider still emits native structured calls, the first named native
-or in-band call chooses the channel for that turn; calls from the other
-channel are dropped to avoid double dispatch.
->>>>>>> theirs — heading `omp / pi converter behavior` (S+F, confidence: low)
 
 ## Sources
 

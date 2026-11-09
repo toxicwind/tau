@@ -16,7 +16,6 @@ const RUST_AFFECTING_FILE_NAMES = [
 ] as const satisfies readonly string[];
 // Remote-tracking trunks the branch is diffed against (a local `main` can carry the commits being checked).
 const TRUNKS = ["upstream/main", "origin/main"] as const satisfies readonly string[];
-<<<<<<< ours — interstitial `between:scripts/run-rs-task.ts::variable::RUST_AFFECTING_FILE_NAMES:scripts/run-rs-task.ts::variable::VENDORED_FORK_EXCLUDES` (T, confidence: high)
 // refused_by: merge_ladder_exhausted · collision: `// pi-builtins is NOT excluded. It is first-party, and although…`
 // Vendored path-patched crates are workspace members for Bazel hermeticity
 // (path-patch rendering is machine-local), but cargo dev tasks keep their
@@ -26,8 +25,6 @@ const TRUNKS = ["upstream/main", "origin/main"] as const satisfies readonly stri
 // the workspace's pedantic/nursery lints in its own manifest (most of it is
 // ported third-party code), it is held to default clippy and to zero rustc
 // warnings like everything else.
-=======
->>>>>>> theirs — interstitial `between:scripts/run-rs-task.ts::variable::RUST_AFFECTING_FILE_NAMES:scripts/run-rs-task.ts::variable::VENDORED_FORK_EXCLUDES` (T, confidence: high) · weave: run 'weave explain scripts/run-rs-task.ts' for per-hunk detail, 'weave check' to verify your resolution
 // Vendored path-patched crates are workspace members for Bazel hermeticity
 // (path-patch rendering is machine-local), but cargo dev tasks keep their
 // historical scope: the forks are not held to workspace format/lint/test gates.
@@ -84,7 +81,6 @@ const TASK_COMMANDS = {
 			"--final-status-level=fail",
 		],
 		// nextest cannot run doctests (no stable libtest-json interface for
-<<<<<<< ours — scope `const TASK_COMMANDS = {` in variable `TASK_COMMANDS` (T+F, confidence: medium)
 // refused_by: statement_fold · collision: `// nothing: pi-natives is a `cdylib`, which rustdoc refuses to …` +1 more
 		// them), so they need their own libtest pass. Today this pass executes
 		// nothing: tau-natives is a `cdylib`, which rustdoc refuses to collect
@@ -92,15 +88,6 @@ const TASK_COMMANDS = {
 		// uutils docs. It is kept as a guard so that the first runnable
 		// doctest added to a lib crate actually runs instead of silently
 		// never executing.
-=======
-		// them), so they need their own libtest pass. It runs every runnable
-		// doctest in the workspace's lib crates; today that is tree-sitter-go's
-		// one example, since pi-natives is a `cdylib`, which rustdoc refuses to
-		// collect doctests from, and pi-builtins' 16 examples are `ignore`d
-		// vendored uutils docs. `--doc` overrides a crate's own
-		// `doctest = false`, so a vendored crate whose examples do not compile
-		// (napi-rs's) has to be in VENDORED_FORK_EXCLUDES.
->>>>>>> theirs — scope `const TASK_COMMANDS = {`
 		["cargo", "test", "--doc", "--workspace", ...VENDORED_FORK_EXCLUDES],
 	],
 } as const satisfies Record<string, readonly (readonly string[])[]>;

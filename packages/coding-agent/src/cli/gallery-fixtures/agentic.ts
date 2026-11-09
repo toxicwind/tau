@@ -1,15 +1,8 @@
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { TaskToolDetails } from "@oh-my-pi/pi-tui/tools/ta…`
 // Gallery fixtures for agentic orchestration (task, wait, goal).
 import type { Usage } from "@tau/tau-ai";
 import type { TaskToolDetails } from "@tau/tau-tui/tools/task";
 import type { CoordinationDetails } from "@tau/tau-tui/tools/wait";
-=======
-// Gallery fixtures for agentic orchestration (task, wait, goal, yield).
-import type { Usage } from "@oh-my-pi/pi-ai";
-import type { TaskToolDetails, YieldItem } from "@oh-my-pi/pi-tui/tools/task";
-import type { CoordinationDetails } from "@oh-my-pi/pi-tui/tools/wait";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/cli/gallery-fixtures/agentic.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { GalleryFixture } from "./types";
 
 /** Message/activity timestamps are offsets from load time so gallery ages stay plausible. */

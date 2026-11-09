@@ -23,22 +23,12 @@ import { join } from "node:path";
  * the dialog for headless environments.
  *
  * When the user grants consent, push is automatically active against the
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
  * bundled endpoint (`dev.autoqaPush.endpoint`, default `qa.tau.sh`). Each
  * insert schedules a background flush that POSTs pending rows and deletes them
  * on HTTP 2xx. `PI_AUTO_QA_PUSH=1` forces push in non-interactive environments
  * where the consent dialog never fires. Device execution is never blocked on
  * the network and never throws.
-=======
- * bundled endpoint (`dev.autoqaPush.endpoint`, default `qa.omp.sh`). Each
- * insert schedules a background flush that POSTs pending rows and marks them
- * pushed on HTTP 2xx. Rows the collector permanently refuses (400/413/422) are
- * isolated by bisecting the batch and parked with the server's error, so a
- * single bad row can't block the queue. `PI_AUTO_QA_PUSH=1` forces push in
- * non-interactive environments where the consent dialog never fires. Device
- * execution is never blocked on the network and never throws.
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/report-tool-issue.ts' for per-hunk detail, 'weave check' to verify your resolution
  */
 import { Database } from "bun:sqlite";
 import * as fs from "node:fs";
@@ -52,15 +42,8 @@ import type { ToolSession } from "./index";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 import type { XdevDispatch } from "./xdev";
 
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 import { REPORT_ISSUE_DEVICE_NAME, REPORT_ISSUE_DEVICE_PATH } from "@tau/tau-tui/tools/report-tool-issue";
-=======
-import { REPORT_ISSUE_DEVICE_NAME, REPORT_ISSUE_DEVICE_PATH } from "@oh-my-pi/pi-tui/tools/report-tool-issue";
-import { truncateHeadBytes } from "@oh-my-pi/pi-tui/tools/streaming-output";
-
-import { cfgDevAutoqa, cfgDevAutoqaConsent, cfgDevAutoqaPushEndpoint, cfgDevAutoqaPushToken } from "./settings";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low)
 
 /** Usage text for `read xd://report_issue`. */
 export function reportIssueDeviceUsage(): string {

@@ -1,21 +1,12 @@
 /**
  * Repro for https://github.com/toxicwind/tau/issues/4812
  *
-<<<<<<< ours — interstitial `file_header` (T, confidence: high)
 // refused_by: merge_ladder_exhausted · collision: `* the new sentinel (e.g. `__piNativesV16_3_11`), but `require` …` +1 more
  * A long-lived tau session that survives an in-place `bun install -g` upgrade
  * keeps the previous tau-natives NAPI addon resident in the process. A tab
  * worker spawned afterwards runs the freshly-installed JS loader, which expects
  * the new sentinel (e.g. `__tauNativesV16_3_11`), but `require` returns the
  * resident old exports carrying the PRIOR sentinel (`__tauNativesV16_3_10`).
-=======
- * A long-lived omp session that survives an in-place `bun install -g` upgrade
- * keeps the previous pi-natives NAPI addon resident in the process. A tab
- * the new release (e.g. `16.3.11`), but `require` returns the resident old
- * exports reporting the PRIOR release (`16.3.10`) — via
- * `__piNativesBuildVersion()`, or a legacy `__piNativesV16_3_10` export for
- * addons published before post-link stamps.
->>>>>>> theirs — interstitial `file_header` (T, confidence: high) · weave: run 'weave explain packages/natives/test/issue-4812-repro.test.ts' for per-hunk detail, 'weave check' to verify your resolution
  *
  * The contract this test pins down: `validateLoadedBindings` distinguishes a
  * process-stale mix (disk consistent — restart to re-sync) from a genuinely
@@ -43,16 +34,12 @@ async function withCandidate(contents: string, test: (candidate: string) => void
 }
 
 function ctxFor(version: string) {
-<<<<<<< ours — scope `return {` in function `ctxFor` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `versionSentinelExport: `__piNativesV${version.replace(/[^A-Za-z…`
 	return {
 		isWorkspaceLoad: false,
 		packageVersion: version,
 		versionSentinelExport: `__tauNativesV${version.replace(/[^A-Za-z0-9]/g, "_")}`,
 	};
-=======
-	return { isWorkspaceLoad: false, packageVersion: version };
->>>>>>> theirs — scope `return {`
 }
 
 /** Stamp slot bytes as `scripts/stamp-native-version.ts` leaves them. */
@@ -116,7 +103,6 @@ describe("issue 4812: pi-natives release process-stale diagnosis", () => {
 	});
 });
 
-<<<<<<< ours — test_suite `issue 4812: pi-natives sentinel process-stale diagnosis` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 describe("issue 4812: tau-natives sentinel process-stale diagnosis", () => {
 	it("accepts bindings that expose the expected sentinel", () => {
@@ -154,5 +140,3 @@ describe("issue 4812: tau-natives sentinel process-stale diagnosis", () => {
 		expect(() => validateLoadedBindings(ctx, { grep: () => {} }, unusedCandidate)).not.toThrow();
 	});
 });
-=======
->>>>>>> theirs — test_suite `issue 4812: pi-natives sentinel process-stale diagnosis` (S+F, confidence: low)

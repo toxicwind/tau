@@ -1,16 +1,8 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { Model, ModelSpec } from "@oh-my-pi/pi-ai/types";`
 import { streamAnthropic } from "@tau/tau-ai/providers/anthropic";
 import type { Model, ModelSpec } from "@tau/tau-ai/types";
 import { buildModel } from "@tau/tau-catalog/build";
-=======
-import { streamAnthropic } from "@oh-my-pi/pi-ai/providers/anthropic";
-import { completeSimple } from "@oh-my-pi/pi-ai/stream";
-import type { Context, Model, ModelSpec } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/test/anthropic-context-management-compat.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function makeModel(supportsContextManagement?: boolean): Model<"anthropic-messages"> {
 	return buildModel({

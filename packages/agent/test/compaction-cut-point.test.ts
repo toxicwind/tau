@@ -8,16 +8,10 @@ import {
 	findCutPoint,
 	prepareCompaction,
 	type SessionMessageEntry,
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-agent-core/compaction";
 import { Tokenizer } from "@tau/tau-agent-core/tokenizer";
 import { createAssistantMessage } from "./helpers";
-=======
-} from "@oh-my-pi/pi-agent-core/compaction";
-import { Tokenizer } from "@oh-my-pi/pi-agent-core/tokenizer";
-import { createAssistantMessage, createUserMessage } from "./helpers";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/agent/test/compaction-cut-point.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const tokenizer = new Tokenizer();
 

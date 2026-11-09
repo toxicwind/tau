@@ -1,20 +1,11 @@
 import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { getToolStats, getToolStatsByModel } from "@oh-my-pi/om…`
 import { getToolDashboardStats, syncAllSessions } from "@tau/tau-stats/aggregator";
 import { getToolStats, getToolStatsByModel } from "@tau/tau-stats/db";
 import type { ToolUsageStats } from "@tau/tau-stats/types";
 import { getSessionsDir } from "@tau/tau-utils";
-=======
-import { getToolDashboardStats, syncAllSessions } from "@oh-my-pi/omp-stats/aggregator";
-import { closeDb, getFrustrationByModel, getRecentRequests, initDb, setFileOffset } from "@oh-my-pi/omp-stats/db";
-import { getToolStats, getToolStatsByModel } from "@oh-my-pi/omp-stats/rollup";
-import { parseSessionFile } from "@oh-my-pi/omp-stats/parser";
-import type { ToolUsageStats } from "@oh-my-pi/omp-stats/types";
-import { getSessionsDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/stats/test/tool-stats.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { installStatsTestIsolation } from "./helpers/temp-agent";
 
 installStatsTestIsolation("@tau-stats-tool-stats-");

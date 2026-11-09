@@ -1,5 +1,4 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { Agent, type AgentEvent } from "@oh-my-pi/pi-agent-core…`
 import { Agent, type AgentEvent } from "@tau/tau-agent-core";
 import { createMockModel } from "@tau/tau-ai/providers/mock";
@@ -15,22 +14,6 @@ import { YieldTool } from "tau/tools/yield";
 import { buildWorkPoolOutputSchema } from "../../src/task/workpool-yield";
 import { arrayValuedLabels } from "../../src/task/yield-assembly";
 import { assembleYieldResult } from "@tau/tau-tui/tools/task-yield-assembly";
-=======
-import { Agent, type AgentEvent, validateAgentToolArguments } from "@oh-my-pi/pi-agent-core";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { convertOpenAICodexResponsesTools } from "@oh-my-pi/pi-ai/providers/openai-codex-responses";
-import type { Model, Tool, ToolCall } from "@oh-my-pi/pi-ai/types";
-import { enforceStrictSchema } from "@oh-my-pi/pi-ai/utils/schema";
-import { validateToolArguments } from "@oh-my-pi/pi-ai/utils/validation";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { buildOutputValidator } from "@oh-my-pi/pi-coding-agent/tools/output-schema-validator";
-import { YieldTool } from "@oh-my-pi/pi-coding-agent/tools/yield";
-import { buildWorkPoolOutputSchema } from "../../src/task/workpool-yield";
-import { yieldSectionShapes } from "../../src/task/yield-assembly";
-import { assembleYieldResult } from "@oh-my-pi/pi-tui/tools/task-yield-assembly";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/tools/yield.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function createSession(overrides: Partial<ToolSession> = {}): ToolSession {
 	return {

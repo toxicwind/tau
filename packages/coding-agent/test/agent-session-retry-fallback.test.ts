@@ -14,7 +14,6 @@ import {
 	type ModelUsageHealth,
 	type ProviderSessionState,
 	type ToolCall,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock…` +3 more
 } from "@tau/tau-ai";
 import * as AIError from "@tau/tau-ai/error";
@@ -38,39 +37,6 @@ import { SessionManager } from "tau/session/session-manager";
 import { convertToLlm } from "tau/session/messages";
 import { EventBus } from "tau/utils/event-bus";
 import { TempDir } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-ai";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { createMockModel, type MockResponse } from "@oh-my-pi/pi-ai/providers/mock";
-import { CodexApiError } from "@oh-my-pi/pi-ai/providers/openai-codex/response-handler";
-import { buildParams } from "@oh-my-pi/pi-ai/providers/openai-responses";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { writeModelCache } from "@oh-my-pi/pi-catalog/model-cache";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { resolveModelCacheProviderId } from "@oh-my-pi/pi-catalog/provider-models";
-import type { ModelSpec } from "@oh-my-pi/pi-catalog/types";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { parseModelString } from "@oh-my-pi/pi-tui/overlays/model-selector";
-import { parseModelPattern } from "@oh-my-pi/pi-coding-agent/config/model-resolver";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { editVariantForModel } from "@oh-my-pi/pi-coding-agent/utils/edit-mode";
-import { ExtensionRuntime, loadExtensionFromFactory } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
-import { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { AgentSession, type AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import {
-	type ServingModel,
-	validateRetryFallbackChains,
-} from "@oh-my-pi/pi-coding-agent/session/retry-fallback-chains";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { computerTurnInFlight, registerComputerController } from "@oh-my-pi/pi-coding-agent/tools/computer/supervisor";
-import { convertToLlm, USER_INTERRUPT_LABEL } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-import { __resetDirsFromEnvForTests, setAgentDir, TempDir, withTimeout } from "@oh-my-pi/pi-utils";
-import type { ConfiguredThinkingLevel } from "@oh-my-pi/pi-tui/thinking";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/agent-session-retry-fallback.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { mockSchedulerWaitWithClock } from "./helpers/mock-scheduler-clock";
 import { restoreEnvValue } from "./helpers/settings-test-state";
 
@@ -8855,7 +8821,6 @@ describe("AgentSession retry fallback", () => {
 	});
 
 	it("carries attribution across a fork, which continues the conversation under a new id", async () => {
-<<<<<<< ours — test_suite `AgentSession retry fallback` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 		using tempDir = TempDir.createSync("@tau-fallback-fork-");
 		const primaryModel = getBundledModel("anthropic", "claude-sonnet-4-5");
@@ -8863,18 +8828,6 @@ describe("AgentSession retry fallback", () => {
 		if (!primaryModel || !fallbackModel) {
 			throw new Error("Expected bundled test models to exist");
 		}
-=======
-		using tempDir = TempDir.createSync("@omp-fallback-fork-");
-		// Keep the fork's transcript registration inside the fork dir instead
-		// of the real custom-session-files registry.
-		setAgentDir(path.join(tempDir.path(), "agent"));
-		try {
-			const primaryModel = getBundledModel("anthropic", "claude-sonnet-4-5");
-			const fallbackModel = getBundledModel("openai", "gpt-4o-mini");
-			if (!primaryModel || !fallbackModel) {
-				throw new Error("Expected bundled test models to exist");
-			}
->>>>>>> theirs — test_suite `AgentSession retry fallback` (F, confidence: medium)
 
 			const requestedModels: string[] = [];
 			const agent = createFallbackAgent(primaryModel, requestedModels);

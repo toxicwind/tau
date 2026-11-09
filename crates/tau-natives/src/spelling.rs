@@ -44,7 +44,6 @@ mod platform {
 			.collect())
 	}
 
-<<<<<<< ours — scope `SPELLING_THREAD` in module `platform`, deleted in theirs (S+F, confidence: low)
 // refused_by: container_member · collision: none (no common ancestor text)
 	static SPELLING_THREAD: LazyLock<flume::Sender<Job>> = LazyLock::new(|| {
 		let (sender, receiver) = flume::unbounded::<Job>();
@@ -58,8 +57,6 @@ mod platform {
 			.expect("failed to spawn the native spelling thread");
 		sender
 	});
-=======
->>>>>>> theirs — scope `SPELLING_THREAD` deleted in theirs · weave: run 'weave explain crates/tau-natives/src/spelling.rs' for per-hunk detail, 'weave check' to verify your resolution
 }
 
 /// Whether the host can use Apple's native spelling service.

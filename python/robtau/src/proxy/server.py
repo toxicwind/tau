@@ -1,6 +1,5 @@
 """gh-proxy FastAPI app: HMAC-gated GitHub REST + git proxy.
 
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 # refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 Robtau calls every endpoint with HMAC headers (see `robtau.proxy_hmac`).
 Authenticated requests dispatch to a single `GitHubClient` instance holding
@@ -55,62 +54,6 @@ from robtau.github_client import GitHubClient, GitHubError
 from robtau.proxy_hmac import HEADER_SIGNATURE, HEADER_TIMESTAMP, verify
 from robtau.sandbox import _safe_directory_env, _slot_subprocess_kwargs
 from robtau.sandbox import workspace_key as compute_workspace_key
-=======
-Robomp calls every endpoint with HMAC headers (see `robomp.proxy_hmac`).
-Authenticated requests dispatch to a single `GitHubClient` instance holding
-the PAT, or to `robomp.git_ops` for git transport. The PAT never leaves
-this process.
-
-Endpoint payloads are deliberately typed (no generic GitHub passthrough):
-each one names exactly one operation robomp performs.
-"""
-
-from __future__ import annotations
-
-import asyncio
-import logging
-import os
-import re
-import subprocess
-from collections.abc import AsyncIterator
-from contextlib import asynccontextmanager
-from dataclasses import asdict, dataclass
-from pathlib import Path
-from typing import Any
-from urllib.parse import urlparse
-
-from fastapi import FastAPI, HTTPException, Request, status
-from fastapi.responses import JSONResponse
-
-from robomp.config import Settings
-from robomp.git_ops import (
-    GitCommandError,
-    HeadDriftError,
-    validate_fetch_ref,
-)
-from robomp.git_ops import (
-    clone as git_clone,
-)
-from robomp.git_ops import (
-    fetch_pr_head as git_fetch_pr_head,
-)
-from robomp.git_ops import (
-    fetch_prune as git_fetch_prune,
-)
-from robomp.git_ops import (
-    fetch_ref as git_fetch_ref,
-)
-from robomp.git_ops import (
-    push as git_push,
-)
-from robomp.git_ops import (
-    push_release as git_push_release,
-)
-from robomp.github_client import GitHubClient, GitHubError
-from robomp.proxy_hmac import HEADER_SIGNATURE, HEADER_TIMESTAMP, verify
-from robomp.sandbox import _safe_directory_env, _slot_subprocess_kwargs
-from robomp.sandbox import workspace_key as compute_workspace_key
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain python/robtau/src/proxy/server.py' for per-hunk detail, 'weave check' to verify your resolution
 
 log = logging.getLogger(__name__)
 

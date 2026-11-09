@@ -20,12 +20,7 @@
   },
   "scripts": {
     "check": "oxlint . && oxfmt --check --no-error-on-unmatched-pattern 'src/**/*.{ts,tsx}' '{test,bench,examples,scripts}/**/*.ts' '*.ts' && bun run check:types",
-<<<<<<< ours — scope `"check:types": "tsgo -p tsconfig.json --noEmi...` in object `scripts` (S, confidence: medium)
-// refused_by: statement_fold · collision: `"check:types": "tsgo -p tsconfig.json --noEmit && tsgo -p src/t…`
     "check:types": "bun ../../scripts/typecheck.ts . --noEmit && bun ../../scripts/typecheck.ts src/tb --noEmit && bun ../../scripts/typecheck.ts adapters/edit --noEmit && bun ../../scripts/typecheck.ts scripts --noEmit",
-=======
-		"check:types": "bun check --no-script -p tsconfig.json && bun check --no-script -p src/tb/tsconfig.json && bun check --no-script -p adapters/edit/tsconfig.json && bun check --no-script -p scripts/tsconfig.json",
->>>>>>> theirs — scope `"check:types": "tsgo -p tsconfig.json --noEmi...` · weave: run 'weave explain packages/metaharness/package.json' for per-hunk detail, 'weave check' to verify your resolution
     "lint": "oxlint .",
     "serve": "bun run src/server.ts",
     "bench:edit": "bun adapters/edit/cli.ts",
@@ -33,7 +28,7 @@
     "bench:tb-floor": "bun scripts/tb-floor.ts",
     "dev": "bun --hot src/server.ts",
     "test": "bun test"
-  }
+  },
   "dependencies": {
     "@tau/tau-agent-core": "catalog:",
     "@tau/tau-ai": "catalog:",
@@ -41,71 +36,25 @@
     "@tau/tau-utils": "catalog:",
     "@tau/typescript-edit-benchmark": "workspace:*",
     "@stencil-hq/vibemon": "^0.3.2",
-<<<<<<< ours — scope `"clsx": "^2.1.1",` in object `dependencies`, deleted in theirs (S, confidence: medium)
-// refused_by: statement_fold · collision: none (no common ancestor text)
     "clsx": "^2.1.1",
-=======
->>>>>>> theirs — scope `"clsx": "^2.1.1",` deleted in theirs
-<<<<<<< ours — scope `"d3-scale": "^4.0.2",` in object `dependencies`, deleted in theirs (S, confidence: medium)
-// refused_by: statement_fold · collision: none (no common ancestor text)
     "d3-scale": "^4.0.2",
-=======
->>>>>>> theirs — scope `"d3-scale": "^4.0.2",` deleted in theirs
-<<<<<<< ours — scope `"d3-shape": "^3.2.0",` in object `dependencies`, deleted in theirs (S, confidence: medium)
-// refused_by: statement_fold · collision: none (no common ancestor text)
     "d3-shape": "^3.2.0",
-=======
->>>>>>> theirs — scope `"d3-shape": "^3.2.0",` deleted in theirs
-<<<<<<< ours — scope `"diff": "catalog:",` in object `dependencies`, deleted in theirs (S, confidence: medium)
-// refused_by: statement_fold · collision: none (no common ancestor text)
     "diff": "catalog:",
-=======
->>>>>>> theirs — scope `"diff": "catalog:",` deleted in theirs
     "@tau/tau-natives": "catalog:",
-<<<<<<< ours — scope `"motion": "^12.15.0",` in object `dependencies`, deleted in theirs (S, confidence: medium)
-// refused_by: statement_fold · collision: none (no common ancestor text)
     "motion": "^12.15.0",
-=======
->>>>>>> theirs — scope `"motion": "^12.15.0",` deleted in theirs
     "react": "^19.1.0",
-<<<<<<< ours — scope `"react-dom": "^19.1.0",` in object `dependencies` (S, confidence: medium)
-// refused_by: statement_fold · collision: `"react-dom": "^19.1.0",`
     "react-dom": "^19.1.0",
-=======
-		"react-dom": "^19.1.0"
->>>>>>> theirs — scope `"react-dom": "^19.1.0",`
-<<<<<<< ours — scope `"tailwind-merge": "^3.3.0"` in object `dependencies`, deleted in theirs (S, confidence: medium)
-// refused_by: statement_fold · collision: none (no common ancestor text)
     "tailwind-merge": "^3.3.0"
-=======
->>>>>>> theirs — scope `"tailwind-merge": "^3.3.0"` deleted in theirs
-  }
+  },
   "devDependencies": {
     "@types/bun": "^1.4.4",
     "bun-types": "^1.4.4",
-<<<<<<< ours — scope `"@types/d3-scale": "^4.0.9",` in object `devDependencies`, deleted in theirs (S, confidence: medium)
-// refused_by: statement_fold · collision: none (no common ancestor text)
     "@types/d3-scale": "^4.0.9",
-=======
->>>>>>> theirs — scope `"@types/d3-scale": "^4.0.9",` deleted in theirs
-<<<<<<< ours — scope `"@types/d3-shape": "^3.1.7",` in object `devDependencies`, deleted in theirs (S, confidence: medium)
-// refused_by: statement_fold · collision: none (no common ancestor text)
     "@types/d3-shape": "^3.1.7",
-=======
->>>>>>> theirs — scope `"@types/d3-shape": "^3.1.7",` deleted in theirs
     "@types/react": "^19.1.0",
-<<<<<<< ours — scope `"@types/react-dom": "^19.1.0",` in object `devDependencies` (S, confidence: medium)
-// refused_by: statement_fold · collision: `"@types/react-dom": "^19.1.0",`
     "@types/react-dom": "^19.1.0",
-=======
-		"@types/react-dom": "^19.1.0"
->>>>>>> theirs — scope `"@types/react-dom": "^19.1.0",`
-<<<<<<< ours — scope `"react-refresh": "^0.18.0"` in object `devDependencies`, deleted in theirs (S, confidence: medium)
-// refused_by: statement_fold · collision: none (no common ancestor text)
     "react-refresh": "^0.18.0"
-=======
->>>>>>> theirs — scope `"react-refresh": "^0.18.0"` deleted in theirs
-  }
+  },
 	"engines": {
 		"bun": ">=1.4.4"
 	}

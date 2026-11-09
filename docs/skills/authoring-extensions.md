@@ -77,42 +77,23 @@ export default function myExtension(pi: ExtensionAPI) {
 
 tau loads extension modules from these sources:
 
-<<<<<<< ours — scope `1. Native `.omp` locations discovered through...` in heading `Discovery paths` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `- `<cwd>/.omp/extensions/``
 1. Native `.tau` locations discovered through the capability system:
    - `<cwd>/.tau/extensions/`
    - `~/.tau/agent/extensions/`
    - legacy extension paths listed in `.tau/settings.json#extensions` or `~/.tau/agent/settings.json#extensions`
-=======
-1. Native `.omp` locations discovered through the capability system:
-   - project/ancestor `.omp/extensions/` directories within the discovery boundary
-   - `~/.omp/agent/extensions/`
-   - legacy extension paths listed in `.omp/settings.json#extensions` or `~/.omp/agent/settings.json#extensions`
->>>>>>> theirs — scope `1. Native `.omp` locations discovered through...` · weave: run 'weave explain docs/skills/authoring-extensions.md' for per-hunk detail, 'weave check' to verify your resolution
 2. Discovered JavaScript/TypeScript hook factories (`hooks/pre/` and `hooks/post/`), bound through the extension runner.
-<<<<<<< ours — scope `2. Enabled installed plugins under `~/.omp/pl...` in heading `Discovery paths` (S, confidence: medium)
 // refused_by: statement_fold · collision: `2. Enabled installed plugins under `~/.omp/plugins/node_modules…`
 2. Enabled installed plugins under `~/.tau/plugins/node_modules` or a project plugin root — including npm, marketplace, and `tau plugin link` installs — via their `tau.extensions`/`pi.extensions` manifests.
-=======
-3. Enabled installed plugins under `~/.omp/plugins/node_modules` or a project plugin root — including npm, marketplace, and `omp plugin link` installs — via their `omp.extensions`/`pi.extensions` manifests.
->>>>>>> theirs — scope `2. Enabled installed plugins under `~/.omp/pl...`
-<<<<<<< ours — scope `3. Explicit configured paths passed by the CL...` in heading `Discovery paths` (S, confidence: medium)
 // refused_by: statement_fold · collision: `3. Explicit configured paths passed by the CLI (`omp --extensio…`
 3. Explicit configured paths passed by the CLI (`tau --extension ./my-ext.ts`, also `-e`; `--hook` is treated as an alias) and by the `extensions:` setting in config.
-=======
-4. Explicit configured paths passed by the CLI (`omp --extension ./my-ext.ts`, also `-e`; `--hook` is treated as an alias) and by the `extensions:` setting in config.
->>>>>>> theirs — scope `3. Explicit configured paths passed by the CL...`
 
 The runtime de-duplicates by resolved absolute path — first seen wins.
 
 `--no-extensions` disables ambient discovery but still permits explicit `--extension`/`--hook` paths and their bundled capabilities. For an exact module-file allowlist, repeat `--trusted-extension /absolute/path/to/module.ts`: paths must exist and be files, ambient extension discovery is disabled, and those files are not treated as package roots for sibling capability discovery. It cannot be combined with `--extension`, `-e`, or `--hook`; a trusted-module load error aborts startup. This is discovery control, not a sandbox for extension code.
 
-<<<<<<< ours — scope `The user directory is the active profile's ag...` in heading `Discovery paths` (S, confidence: medium)
 // refused_by: statement_fold · collision: `The user directory is the active profile's agent directory: the…`
 The user directory is the active profile's agent directory: the default is `~/.tau/agent`, while `tau --profile <name>` uses `~/.tau/profiles/<name>/agent` (and `PI_CODING_AGENT_DIR` overrides it).
-=======
-The user directory is the active profile's agent directory: the default is `~/.omp/agent`, while `omp --profile <name>` uses `~/.omp/profiles/<name>/agent` under the default layout. `PI_CODING_AGENT_DIR` overrides the default profile's agent directory; named profiles derive their own directory instead. Initialized XDG roots can change these locations.
->>>>>>> theirs — scope `The user directory is the active profile's ag...`
 
 When a path points to a directory, tau resolves the entry point in this order:
 
@@ -164,7 +145,6 @@ Installed-plugin manifest entries may be `.ts`, `.js`, `.mjs`, or `.cjs`; a mani
 ```ts
 pi.registerCommand("my-cmd", {
 	description: "What the command does",
-<<<<<<< ours — scope `handler: async (args, ctx) => {` in heading `Registering commands` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `// args: everything the user typed after /my-cmd`
   handler: async (args, ctx) => {
     // args: everything the architect typed after /my-cmd
@@ -173,15 +153,6 @@ pi.registerCommand("my-cmd", {
     await ctx.waitForIdle();
     await ctx.newSession();
   },
-=======
-	handler: async (args, ctx) => {
-		// args: everything the user typed after /my-cmd
-		// ctx: ExtensionCommandContext — includes ctx.ui, ctx.cwd, session controls
-		ctx.ui.notify("Running!", "info");
-		await ctx.waitForIdle();
-		await ctx.newSession();
-	},
->>>>>>> theirs — scope `handler: async (args, ctx) => {`
 });
 ```
 
@@ -287,7 +258,6 @@ Details: [transcript presenter](../extensions.md#transcript-presenter).
 
 ## Extension vs hook — when to use which
 
-<<<<<<< ours — scope `body prelude` in heading `Extension vs hook — when to use which` (F, confidence: medium)
 // refused_by: statement_fold · collision: `| Legacy hook module already exists | **Hook** (`HookAPI` from …`
 | Need | Use |
 |---|---|
@@ -296,26 +266,13 @@ Details: [transcript presenter](../extensions.md#transcript-presenter).
 | Legacy hook module already exists | **Hook** (`HookAPI` from `@tau/tau-coding-agent/extensibility/hooks`) |
 | Registering a provider, shortcut, or CLI flag | **Extension only** |
 | Shipping as a marketplace plugin | **Extension** (use `package.json` manifest) |
-=======
-| Need                                          | Use                                                                       |
-| --------------------------------------------- | ------------------------------------------------------------------------- |
-| Tools + commands + events in one module       | **Extension** (`ExtensionAPI`)                                            |
-| Pure event interception (policy, redaction)   | **Extension** or **Hook** (both work; extension is preferred)             |
-| Legacy hook module already exists             | **Hook** (`HookAPI` from `@oh-my-pi/pi-coding-agent/extensibility/hooks`) |
-| Registering a provider, shortcut, or CLI flag | **Extension only**                                                        |
-| Shipping as a marketplace plugin              | **Extension** (use `package.json` manifest)                               |
->>>>>>> theirs — scope `body prelude`
 
 New authoring should use `ExtensionAPI`. Discovered JS/TS hook factories are loaded through this API in normal sessions; the standalone `HookRunner` remains for legacy SDK consumers. Shared event names do not imply identical result-chaining behavior in both runners.
 
 ## Debugging
 
-<<<<<<< ours — scope `omp writes structured logs under the active s...` in heading `Debugging` (S, confidence: medium)
 // refused_by: statement_fold · collision: `omp writes structured logs under the active state root's `logs/…`
 tau writes structured logs under the active state root's `logs/` directory (by default `~/.tau/logs/`; debug level is always on, and nothing is written to the console because that would corrupt the TUI). Each filename includes the process ID. Tail today's default-profile logs to see extension load diagnostics:
-=======
-omp writes structured logs under the active state root's `logs/` directory (by default `~/.omp/logs/`; debug level is always on, and nothing is written to the console because that would corrupt the TUI). Records are written in batches, so a debug line can take up to a second to appear while `warn` and `error` lines are written immediately. Each filename includes the process ID, and a process creates its file only when it first logs. Tail today's default-profile logs to see extension load diagnostics:
->>>>>>> theirs — scope `omp writes structured logs under the active s...`
 
 ```
 tail -f ~/.tau/logs/tau.$(date +%F).*.log
@@ -339,12 +296,8 @@ The derived name is the filename stem (or directory name for `index.ts`-style en
 - **`tool_call` errors are fail-closed.** If a `tool_call` handler throws, the tool is blocked.
 - **Self-scheduled callbacks run in-process with no isolation.** A raw `setInterval`/`setTimeout`/detached-promise callback that throws escapes the handler-dispatch try/catch and crashes the whole session (`uncaughtException`). Use `ctx.setInterval` / `ctx.setTimeout` for background work — they contain callback throws and auto-clear on `session_shutdown`. With raw timers you must add your own `try/catch` and cleanup.
 - **Command names must not clash with built-ins.** Conflicts are skipped with a diagnostic log.
-<<<<<<< ours — scope `- **Reserved shortcuts are ignored** (`ctrl+c...` in heading `Important constraints` (S, confidence: medium)
 // refused_by: statement_fold · collision: `- **Reserved shortcuts are ignored** (`ctrl+c`, `ctrl+d`, `ctrl…`
 - **Reserved shortcuts are ignored** (`ctrl+c`, `ctrl+d`, `ctrl+z`, `ctrl+k`, `ctrl+p`, `ctrl+l`, `ctrl+o`, `ctrl+t`, `ctrl+g`, `ctrl+q`, `alt+m`, `shift+tab`, `shift+ctrl+p`, `alt+enter`, `escape`, `enter`, `f1`–`f9`).
-=======
-- **Reserved shortcuts are ignored** (`ctrl+c`, `ctrl+d`, `ctrl+z`, `ctrl+k`, `ctrl+p`, `ctrl+l`, `ctrl+o`, `ctrl+t`, `ctrl+g`, `ctrl+q`, `alt+m`, `shift+tab`, `shift+ctrl+p`, `alt+enter`, `escape`, `enter`). Check a chord with `pi.getShortcutConflict(chord)` from a handler.
->>>>>>> theirs — scope `- **Reserved shortcuts are ignored** (`ctrl+c...`
 
 ## Further reading
 

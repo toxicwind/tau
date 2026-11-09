@@ -7,7 +7,6 @@
 - Entry: `packages/coding-agent/src/tools/grep.ts`
 - Model-facing prompt: `packages/coding-agent/src/prompts/tools/grep.md`
 - Key collaborators:
-<<<<<<< ours — scope `- Key collaborators:` in heading `Source` (F, confidence: medium)
 // refused_by: statement_fold · collision: `- `crates/pi-natives/src/grep.rs` — native regex/file search im…`
   - `packages/coding-agent/src/tools/match-line-format.ts` — model-facing anchor formatting.
   - `packages/coding-agent/src/tools/path-utils.ts` — path normalization, glob splitting, internal URL resolution.
@@ -18,19 +17,6 @@
   - `packages/natives/native/index.d.ts` — native `grep()` types exposed to TS.
   - `crates/tau-natives/src/grep.rs` — native regex/file search implementation.
   - `docs/natives-text-search-pipeline.md` — native search pipeline overview.
-=======
-   - `packages/tui/src/tools/match-line-format.ts` — model-facing anchor formatting.
-   - `packages/coding-agent/src/tools/path-utils.ts` — path normalization, glob splitting (host paths and internal URLs), result-path joining.
-   - `packages/coding-agent/src/internal-urls/url-filesystem.ts` — `InternalUrlFilesystem`, the URL filesystem native grep walks and reads through.
-   - `packages/coding-agent/src/tools/file-recorder.ts` — file ordering for grouped output.
-   - `packages/tui/src/tools/grouped-file-output.ts` — grouped per-file text layout.
-   - `packages/tui/src/tools/streaming-output.ts` — inline output budgets and final byte truncation.
-   - `packages/coding-agent/src/edit/store.ts` — session-scoped native `EditStore` snapshots and seen-line tracking.
-   - `packages/coding-agent/src/tools/settings.ts` — default context lines.
-   - `packages/natives/native/index.d.ts` — native `grep()` types exposed to TS.
-   - `crates/pi-natives/src/grep.rs` — native regex/file search implementation.
-   - `docs/natives-text-search-pipeline.md` — native search pipeline overview.
->>>>>>> theirs — scope `- Key collaborators:` · weave: run 'weave explain docs/tools/grep.md' for per-hunk detail, 'weave check' to verify your resolution
 
 ## Inputs
 
@@ -75,7 +61,6 @@ The tool returns a single text block in `content[0].text` plus structured `detai
    - enables multiline only when `pattern` contains `\n` or an actual newline.
 2. Each `path` root is normalized with `normalizePathLikeInput()` again during shared scope resolution; this is a no-op for entries already normalized by delimiter expansion.
 3. Archive member paths such as `bundle.zip:src/foo.ts` are materialized to temporary UTF-8 scratch files before native grep. Binary or non-UTF-8 archive members are reported as skipped/unreadable.
-<<<<<<< ours — scope `4. Internal URLs and external URLs are resolv...` in heading `Flow` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `- `omp://` expands to every embedded documentation file via URL…`
 4. Internal URLs and external URLs are resolved before filesystem scope resolution (`resolveToolSearchScope()`):
    - glob metacharacters (`*`, `?`, `[`, `{`) are rejected for internal URLs;
@@ -85,11 +70,6 @@ The tool returns a single text block in `content[0].text` plus structured `detai
    - resources without `sourcePath` are searched in memory with JavaScript `RegExp`;
    - `tau://` expands to every embedded documentation file via URL completion;
    - immutable sources are tracked so output can suppress editable hashline numbered output per file.
-=======
-4. Each call builds one `InternalUrlFilesystem` from the session's `sessionResolveContext()` and the tier the call was approved at (`resolveToolTier()`, i.e. `router.readTier()` over the raw paths). Internal URLs stay URLs (single-slash aliases normalized by `router.normalize()`); they are never located or materialized by the tool:
-   - internal URL globs split like host globs (`parseSearchPath()`): the base stays a URL, the glob tail (percent-decoded; encoded metacharacters stay literal) matches raw entry names. `router.isGlob()` decides whether a URL globs at all, so the query (`?key=…`, e.g. `issue://?search=fix*`), fragment, and authority brackets (an IPv6 host) are never glob syntax;
-   - readable external URLs (`http(s)://`, collapsed `http(s):/host`, `www.` spellings when no local path exists) are fetched and materialized to immutable local files; `ftp`/`ws`/`wss` and declined fetches fail with an explicit error.
->>>>>>> theirs — scope `4. Internal URLs and external URLs are resolv...`
 5. For multi-path calls, `partitionExistingPaths()` stats every base through the URL filesystem and skips only ENOENT entries. If every entry is missing, the tool errors.
 6. Path resolution branches:
    - one entry: `parseSearchPath()` splits `basePath` and optional glob;
@@ -113,15 +93,11 @@ The tool returns a single text block in `content[0].text` plus structured `detai
    - `filesystem`: the URL filesystem's `shellFilesystem()`. URL paths resolve through it natively: file-backed schemes (`local://`, `skill://`, `artifact://`) redirect to their host files, virtual schemes (`omp://`, `history://`) serve rendered read-only files and enumerated directories. Host paths never leave native code.
 
 11. Grep dispatch differs by resolved path set:
-<<<<<<< ours — scope `10. Native execution happens in `crates/pi-na...` in heading `Flow` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `10. Native execution happens in `crates/pi-natives/src/grep.rs`:`
 10. Native execution happens in `crates/tau-natives/src/grep.rs`:
    - `build_matcher()` sanitizes non-quantifier braces and first tries the Rust regex engine;
    - patterns unsupported by Rust regex (including lookaround/backreferences) retry with PCRE2;
    - group-balance errors retry with literal parentheses; if both engines still reject the pattern, the original pattern is searched literally.
-=======
-- group-balance errors retry with literal parentheses; if both engines still reject the pattern, the original pattern is searched literally.
->>>>>>> theirs — scope `10. Native execution happens in `crates/pi-na...`
 - single file/directory base: one `grep()` call handles native scanning.
 
 12. Native result paths are root-relative with raw entry names; below a URL root `resolveSearchResultPath()` joins them back into full URLs with percent-encoded segments (`local://notes/a%20b.md`). Archive scratch paths are remapped back to user-facing selectors before rendering.
@@ -156,19 +132,12 @@ The tool returns a single text block in `content[0].text` plus structured `detai
 4. **Archive member paths**
    - Supported for UTF-8 text entries only. The member is extracted to a temporary scratch file for native grep, then displayed as `archive.ext:member`.
 5. **Internal URL paths**
-<<<<<<< ours — scope `5. **Internal URL paths**` in heading `Modes / Variants` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `- `omp://` expands to all embedded documentation files so it ca…`
    - Filesystem-backed resources search their resolved `sourcePath`.
    - Virtual resources without `sourcePath` search their resolved content in memory.
    - `tau://` expands to all embedded documentation files so it can be used as a docs search root.
    - No internal-URL globbing.
    - Immutable and virtual sources suppress editable hashline anchors.
-=======
-   - Native grep walks and reads them through the URL filesystem (`skill://<name>` searches the skill directory; `omp://` walks every embedded documentation file, so it works as a docs search root). Hits are named by full URL.
-   - URL globs split into base URL + glob (`local://notes/**/*.md`, `local://*.md`).
-   - Remote `ssh://` directories expose structured entries through the URL filesystem, so directory and glob scopes search real remote file contents and retain `ssh://` identities. Listing responses above 1 MiB are refused rather than silently truncated; the existing 1 MiB UTF-8 per-file limit still applies.
-   - Sources from immutable schemes suppress editable hashline anchors; `local://` hits keep them.
->>>>>>> theirs — scope `5. **Internal URL paths**`
 
 ## Side Effects
 
@@ -196,12 +165,8 @@ The tool returns a single text block in `content[0].text` plus structured `detai
 - Pagination: `skip` is a file-page offset for multi-file scopes. The result text says `Use skip=<N> for the next page` when more files remain.
 - Native directory-scan cache: disabled natively for this tool — `GrepOptions` has no `cache` field; `build_grep_walk_request` hard-codes `.cache(false)` in `crates/tau-natives/src/grep.rs`.
 - Native grep wall-clock budget: `30_000ms` per invocation (`SEARCH_GREP_TIMEOUT_MS` in `packages/coding-agent/src/tools/grep.ts`); hitting it raises `Grep timed out after 30s; ...`.
-<<<<<<< ours — scope `- Native per-file size cap: `4 * 1024 * 1024`...` in heading `Limits & Caps` (S, confidence: medium)
 // refused_by: statement_fold · collision: `- Native per-file size cap: `4 * 1024 * 1024` bytes (`MAX_FILE_…`
 - Native per-file size cap: `4 * 1024 * 1024` bytes (`MAX_FILE_BYTES` in `crates/tau-natives/src/grep.rs`, mirrored as `NATIVE_GREP_MAX_FILE_BYTES` in `grep.ts`). Oversized filesystem files are skipped and surfaced as partial coverage (names for explicit files, a count for directory scans). Oversized virtual resources are searched in line-boundary chunks for line mode; multiline virtual searches fall back to JavaScript regex.
-=======
-- Native per-file search window: `4 * 1024 * 1024` bytes (`MAX_FILE_BYTES` in `crates/pi-natives/src/grep.rs`, mirrored as `NATIVE_GREP_MAX_FILE_BYTES` in `grep.ts`). Oversized host and internal-URL files are searched only over their leading window; directory scans defer them until normal-sized files have been searched and may omit that pass once the match budget is satisfied. Explicit oversized file scopes receive a partial-coverage note; oversized files whose prefix cannot be read contribute a skipped-file count.
->>>>>>> theirs — scope `- Native per-file size cap: `4 * 1024 * 1024`...`
 
 ## Errors
 

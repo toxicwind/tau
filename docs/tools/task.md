@@ -7,7 +7,6 @@
 - Entry: `packages/coding-agent/src/task/index.ts`
 - Model-facing prompt: `packages/coding-agent/src/prompts/tools/task.md`
 - Key collaborators:
-<<<<<<< ours — scope `- Key collaborators:` in heading `Source` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `- `@oh-my-pi/pi-natives` (`crates/pi-iso`) — isolation PAL: `is…`
   - `packages/coding-agent/src/task/types.ts` — dynamic schema, progress/result types, output caps.
   - `packages/coding-agent/src/task/discovery.ts` — discover project/user/plugin/bundled agents.
@@ -26,32 +25,6 @@
   - `packages/coding-agent/src/tools/index.ts` — tool registration and recursion-depth gating.
   - `packages/coding-agent/src/sdk.ts` — child-session router/tool wiring and per-subagent `AgentOutputManager`.
   - `docs/task-agent-discovery.md` — deeper discovery and precedence notes.
-=======
-   - `packages/coding-agent/src/task/types.ts` — dynamic schema, agent definitions, output caps.
-   - `packages/tui/src/tools/task.ts` — progress/result and tool-details types.
-   - `packages/coding-agent/src/task/structured-subagent.ts` — shared task/eval preflight, model/schema policy, artifact retention, execution.
-   - `packages/coding-agent/src/task/isolation-runner.ts` — isolation capture, merge, recovery, and lifecycle ownership.
-   - `packages/coding-agent/src/task/eval-tools.ts` — expose parent-kernel tools to a child.
-   - `packages/coding-agent/src/task/discovery.ts` — discover project/user/plugin/bundled agents.
-   - `packages/coding-agent/src/task/agents.ts` — bundled agent definitions and frontmatter parsing.
-   - `packages/coding-agent/src/task/seance.ts` and `seance-policy.ts` — seance source/model resolution, cold-revival contract, and session isolation options.
-   - `packages/coding-agent/src/slash-commands/seance.ts` — `/seance` command and session-picker adapter.
-   - `packages/coding-agent/src/task/executor.ts` — create child sessions, run subagents, collect output, hand finished sessions to the lifecycle manager.
-   - `packages/coding-agent/src/thread/` — subagent worker threads: worker pool (`subagent-worker.ts`), main↔worker RPC (`rpc.ts`), run routing (`executor-routing.ts`), main-side mirrors of worker-homed sessions (`remote-agent-session.ts`), and one bridge per shared main-thread service (`services/`).
-   - `packages/coding-agent/src/registry/agent-lifecycle.ts` — idle-TTL parking and revival of finished subagents.
-   - `packages/coding-agent/src/registry/agent-registry.ts` — process-global agent directory (`running | idle | parked | aborted`).
-   - `packages/coding-agent/src/async/job-manager.ts` — background job registration, progress, and result delivery.
-   - `packages/coding-agent/src/task/parallel.ts` — `Semaphore` used for the session-scoped concurrency bound.
-   - `@oh-my-pi/pi-natives` (`crates/pi-iso`) — isolation PAL: `isoResolve` / `isoStart` / `isoStop` backend resolution and fallback.
-   - `packages/coding-agent/src/task/worktree.ts` — isolation backend mapping (`parseIsolationBackend`) and lifecycle (`ensureIsolation`/`cleanupIsolation`), patch capture, branch merge.
-   - `packages/coding-agent/src/task/output-manager.ts` — session-scoped `agent://` id allocation.
-   - `packages/coding-agent/src/task/name-generator.ts` — default AdjectiveNoun agent ids.
-   - `packages/coding-agent/src/internal-urls/agent-protocol.ts` — resolve `agent://<id>` to saved subagent output.
-   - `packages/coding-agent/src/internal-urls/history-protocol.ts` — resolve `history://<id>` to a concise transcript.
-   - `packages/coding-agent/src/tools/index.ts` — tool registration and recursion-depth gating.
-   - `packages/coding-agent/src/sdk.ts` — child-session router/tool wiring and per-subagent `AgentOutputManager`.
-   - `docs/task-agent-discovery.md` — deeper discovery and precedence notes.
->>>>>>> theirs — scope `- Key collaborators:` · weave: run 'weave explain docs/tools/task.md' for per-hunk detail, 'weave check' to verify your resolution
 
 ## Inputs
 
@@ -186,12 +159,8 @@ Artifacts and side channels:
   File-backed items wait for dispatch so their bytes are read at dispatch time. Encountering a `taskFile` item stops further speculative launches for that call.
 - Isolation is available when `task.isolation.enabled` is true: each task must set `isolated: true` to use a separate checkout; omitted or `false` tasks share the parent checkout. `isolation.backend` selects `auto`, `apfs`, `btrfs`, `zfs`, `reflink`, `overlayfs`, `projfs`, `block-clone`, or `rcopy`, and the PAL resolves the actual backend with fallback; `auto` uses ovnfs for isolated subagents when it is found (below).
 - ovnfs (active whenever the binary is found — `ovnfs.path`, default `ovnfs` on PATH): the system prompt gains a "Separate checkouts" section telling agents to open ovnfs checkouts (`ovnfs new`, `diff`, `apply`, `rm`) instead of `git worktree add`, `git clone` or `cp -r`. When `task.isolation.enabled` also allows isolated tasks and `isolation.backend` is `auto`, each isolated subagent works in an ovnfs checkout — a copy-on-write view of the repo with a private git dir, served by the ovnfs daemon — instead of a native clone. omp runs `ovnfs --json start` to make sure the daemon runs and learn its admin socket, then opens (`new`) and removes (`rm`) one checkout per run over that Unix socket. Capture, merge and apply are the same as for native workspaces. The run's task-isolation dir records the checkout (`.omp-ovnfs-checkout.json`) so `omp worktree clear` removes checkouts of crashed runs; a checkout whose changes could not be captured is kept like a native workspace. Without the binary, isolation stays native; once ovnfs is found there is no fallback: if it fails, the isolated task fails and says so.
-<<<<<<< ours — scope `- Isolation merge strategy: patch mode (captu...` in heading `Modes / Variants` (S, confidence: medium)
 // refused_by: statement_fold · collision: `- Isolation merge strategy: patch mode (capture/apply root patc…`
 - Isolation merge strategy: patch mode (capture/apply root patches) or branch mode (commit to `tau/task/<id>`, cherry-pick into parent).
-=======
-- Isolation merge strategy: `task.isolation.merge` selects patch mode (capture/apply root patches) or branch mode (commit to `omp/task/<id>`, cherry-pick into parent). `task.isolation.apply=false` retains captured changes without applying them; nested repositories get separate patch artifacts.
->>>>>>> theirs — scope `- Isolation merge strategy: patch mode (captu...`
 - Eval-defined tools: `tools` resolves names across the parent's retained Python/JS kernels. Unknown names, disabled sharing, or the same name defined in both kernels fail preflight; these tools are not available in plan mode.
 - Agent source precedence is first-wins by exact name: project `.tau/agents`; user `.tau/agent/agents`; TAU extension-package `agents/` roots in CLI → project settings → user settings → installed npm/link plugin order; Claude marketplace plugin agents (project before user); then bundled (`scout`, `reviewer`, `security-reviewer`, `task`, `sonic`).
 - Prewalk: agent frontmatter `prewalk` or `task.agentPrewalk[agentName]` can start on the normal model and hand off to a cheaper resolved model at the first edit/write. `task.prewalk` (default off) arms this behavior for the bundled generic `task` agent. Missing/unconfigured targets and exact model+effort no-ops skip the handoff rather than failing the spawn.
@@ -206,14 +175,9 @@ Artifacts and side channels:
    - Child sessions may use whichever networked tools/models their active tool set permits.
    - MCP proxy tools reuse parent connections and their configured transport deadlines, including `OMP_MCP_TIMEOUT_MS` overrides and `timeout: 0`; no separate subagent deadline caps a tool call.
 - Subprocesses / native bindings
-<<<<<<< ours — scope `- Subprocesses / native bindings` in heading `Side Effects` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `- Isolation backends run through the `pi-natives` PAL (`crates/…`
   - Isolation backends run through the `tau-natives` PAL (`crates/tau-iso`): kernel `overlay` with `fuse-overlayfs`/`fusermount[3]` fallback on Linux, APFS/Btrfs/ZFS/reflink clones, ProjFS on Windows, recursive copy as last resort.
   - Git operations for baseline capture, patch apply, worktrees, branches, stash, cherry-pick, commits.
-=======
-   - Isolation backends run through the `pi-natives` PAL (`crates/pi-iso`): kernel `overlay` with `fuse-overlayfs`/`fusermount[3]` fallback on Linux, APFS/Btrfs/ZFS/reflink clones, ProjFS on Windows, recursive copy as last resort.
-   - Git operations for baseline capture, patch apply, worktrees, branches, stash, cherry-pick, commits.
->>>>>>> theirs — scope `- Subprocesses / native bindings`
 - Session state (transcript, memory, jobs, checkpoints, registries)
    - Creates child `AgentSession` instances with isolated settings snapshots; finished sessions stay registered in the process-global `AgentRegistry` as `idle`/`parked` until process teardown or explicit release.
    - With `async.enabled=true`, registers one async job per spawn in `session.asyncJobManager`; completion is injected into the parent as an async-result message.
@@ -269,12 +233,8 @@ Artifacts and side channels:
 - Prefer messaging an existing agent via `write agent://<id>` over a fresh spawn for follow-up work: it already holds the relevant context. Bare `history://` discovers registered transcripts; messaging a parked agent revives it. `history://<id>` shows what an agent has done.
 - Peer-messaging availability is derived, not configured (`isIrcEnabled` in the messaging helper): it requires a caller with `write` and someone to message — the session can spawn subagents, or it is a subagent itself. Without peer messaging, the follow-up hint does not suggest it.
 - A subagent's result (its `yield`, or its last report turn for a message result) answers its parent. A message from anyone but its parent or its own subagents, or any `agent://all` broadcast, that is still queued when it ends a turn without tool calls gets a wake turn of its own once the result is out; so does such a message that finds its run (first run or follow-up) idle, waiting on background work included. A direct sender receives that turn's reply, a broadcaster nothing. Messages that arrive while the subagent works still reach it at the next tool-call boundary, and messages from its parent or its own subagents are answered within the run.
-<<<<<<< ours — scope `- Agent discovery precedence is first-wins by...` in heading `Notes` (S, confidence: medium)
 // refused_by: statement_fold · collision: `- Agent discovery precedence is first-wins by exact name: proje…`
 - Agent discovery precedence is first-wins by exact name: project `.tau` agents before user `.tau`, then TAU extension-package `agents/` roots in `listOmpExtensionRoots` order (CLI, project setting, user setting, installed npm/link plugins), Claude marketplace plugin agents (project before user), and bundled agents. Direct `.claude/agents`, `.codex/agents`, and `.gemini/agents` roots are skipped. Create-time discovery is memoized per cwd for the prompt description; execution-time discovery stays fresh.
-=======
-- Agent discovery precedence is first-wins by exact name: project `.omp` agents before user `.omp`, then OMP extension-package roots, Claude marketplace plugin agents (project before user), and bundled agents. Direct `.claude/agents`, `.codex/agents`, and `.gemini/agents` roots are skipped. Create-time discovery is memoized per cwd/effective extension roots; execution-time discovery stays fresh.
->>>>>>> theirs — scope `- Agent discovery precedence is first-wins by...`
 - Child sessions do not inherit conversation history. Built-in carry-over is the workspace tree/skills/rules, the parent's context files except those named `AGENTS.md` (other names and `@`-imported text pass through), the shared `local://` root, and the approved-plan reference when one exists. Without worktree isolation, the child also gets the parent's additional workspace roots and rediscovers each root's context files, again without any file named `AGENTS.md`.
 - When the parent passes `mcpManager`, child sessions disable standalone MCP discovery and get proxy tools that reuse parent connections.
 - Branch-mode merge temporarily stashes the parent repo before cherry-picking; a stash-pop conflict leaves the landed commits on HEAD and preserves the stash, reported as `stashConflict`. Patch mode uses `repo.canApplyPatch(...)` before applying the root patch; reverse-only applicability is treated as already applied, while failed forward checks retain the artifact for recovery.

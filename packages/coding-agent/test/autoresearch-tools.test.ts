@@ -1,14 +1,9 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import type { ImageContent, TextContent } from "@oh-my-pi/pi-ai…`
 import type { ImageContent, TextContent } from "@tau/tau-ai";
 import { createSessionRuntime } from "tau/autoresearch/state";
-=======
-import { type ImageContent, type TextContent, validateToolArguments } from "@oh-my-pi/pi-ai";
-import { createSessionRuntime } from "@oh-my-pi/pi-coding-agent/autoresearch/state";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/autoresearch-tools.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	type AutoresearchStorage,
 	closeAllAutoresearchStorages,

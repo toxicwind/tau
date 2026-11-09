@@ -1,16 +1,6 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { type MathSpan, mathBlockAt, mathSpanAt, mathStartIndex…`
 import type { MarkedExtension, Tokens } from "@tau/tau-utils/marked";
 import { type MathSpan, mathBlockAt, mathSpanAt, mathStartIndex } from "@tau/tau-utils/math-delimiters";
-=======
-import type { MarkedExtension, Tokens } from "@oh-my-pi/pi-utils/marked";
-import {
-	type MathSpan,
-	mathBlockInContext,
-	mathSpanInContext,
-	mathStartIndex,
-} from "@oh-my-pi/pi-utils/math-delimiters";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/collab-web/src/components/transcript/math.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { renderToString } from "katex";
 import { escapeHtml } from "../../lib/format";
 

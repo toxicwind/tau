@@ -1,14 +1,9 @@
 import { describe, expect, test } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { getEnvApiKey } from "@oh-my-pi/pi-ai/stream";` +2 more
 import { getOAuthProviders } from "@tau/tau-ai/registry/oauth";
 import { getEnvApiKey } from "@tau/tau-ai/stream";
 import { MODELS_DEV_PROVIDER_DESCRIPTORS } from "@tau/tau-catalog/provider-models/openai-compat";
 import type { OpenAICompat } from "@tau/tau-catalog/types";
-=======
-import { getOAuthProviders } from "@oh-my-pi/pi-ai/registry/oauth";
-import { getEnvApiKey } from "@oh-my-pi/pi-ai/env-api-key";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/catalog/test/issue-830-repro.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 describe("deepseek built-in provider (issue #830)", () => {
 	test("registers DeepSeek as an API-key login provider", () => {

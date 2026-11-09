@@ -7,7 +7,6 @@
  * compaction item as replacement history.
  */
 
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { $env, isUnexpectedSocketCloseMessage, logger, stringif…`
 import type { Api, CodexCompactionContext, FetchImpl, Model, ProviderSessionState } from "@tau/tau-ai";
 import * as AIError from "@tau/tau-ai/error";
@@ -26,25 +25,6 @@ import {
 	resolveOpenAIRequestSetup,
 } from "@tau/tau-ai/providers/openai-shared";
 import { captureOpenAIHttpError } from "@tau/tau-ai/utils/openai-http";
-=======
-import type { Api, CodexCompactionContext, FetchImpl, Model, ProviderSessionState } from "@oh-my-pi/pi-ai";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { createOpenAICodexCompactionRequestContext } from "@oh-my-pi/pi-ai/providers/openai-codex-compaction";
-import { applyCodexResponsesLiteShape } from "@oh-my-pi/pi-ai/providers/openai-codex/request-transformer";
-import type {
-	OpenAICodexCompactionBody,
-	OpenAICodexCompatibilityMetadata,
-} from "@oh-my-pi/pi-ai/providers/openai-codex-responses";
-import {
-	getOpenAIPromptCacheKey,
-	getOpenAIResponsesRoutingSessionId,
-	parseAzureDeploymentNameMap,
-	resolveOpenAIRequestSetup,
-} from "@oh-my-pi/pi-ai/providers/openai-shared";
-import { captureOpenAIHttpError } from "@oh-my-pi/pi-ai/utils/openai-http";
-import type { CatalogPolicyInputs } from "@oh-my-pi/pi-catalog/types";
-import { isBedrockOpenAIUrl } from "@oh-my-pi/pi-catalog/hosts";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/agent/src/compaction/compaction-v2-streaming.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	applyCodexResidencyHeader,
 	CODEX_BASE_URL,
@@ -52,16 +32,9 @@ import {
 	getCodexAccountId,
 	OPENAI_HEADER_VALUES,
 	OPENAI_HEADERS,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { $env, isUnexpectedSocketCloseMessage, logger, stringif…`
 } from "@tau/tau-catalog/wire/codex";
 import { $env, isUnexpectedSocketCloseMessage, logger, stringifyJson } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-catalog/wire/codex";
-import { $env, isUnexpectedSocketCloseMessage, logger, ptree, stringifyJson, toError } from "@oh-my-pi/pi-utils";
-import { appendAzureApiVersion, resolveAzureOpenAiBaseUrl } from "./azure-openai-endpoint";
-import { prepareBedrockCompactionRequest } from "./bedrock";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 
 // ============================================================================
 // Types & Configuration
@@ -162,14 +135,9 @@ function compactionV2Api(model: Model): Api {
 	return model.remoteCompaction?.api ?? model.api;
 }
 
-<<<<<<< ours — function `isOpenAiV2CompatibleModel` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 function isOpenAiV2CompatibleModel(model: Model): boolean {
 	const api = compactionV2Api(model);
-=======
-/** APIs that speak the OpenAI Responses compaction protocol (V1 `/responses/compact` and V2 streaming). */
-export function isOpenAiRemoteCompactionApi(api: Api | undefined): boolean {
->>>>>>> theirs — function `isOpenAiV2CompatibleModel` (S+F, confidence: low)
 	return api === "openai-responses" || api === "azure-openai-responses" || api === "openai-codex-responses";
 }
 

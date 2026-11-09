@@ -1,5 +1,4 @@
 import { afterEach, describe, expect, it } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 import type { FetchImpl } from "@tau/tau-ai";
 import {
@@ -20,28 +19,6 @@ import {
 	type ResolvedMnemotauRuntimeOptions,
 	withMnemotauRuntimeOptions,
 } from "@tau/tau-mnemotau/core/runtime-options";
-=======
-import type { FetchImpl } from "@oh-my-pi/pi-ai";
-import {
-	buildExtractionPrompt,
-	extractFacts,
-	extractFactsSafe,
-	heuristicExtractFacts,
-	parseExtractedFactCategories,
-	parseFacts,
-} from "@oh-my-pi/pi-mnemopi/core/extraction";
-import { getExtractionStats, resetExtractionStats } from "@oh-my-pi/pi-mnemopi/core/extraction/diagnostics";
-import {
-	CallableLlmBackend,
-	resetHostLlmBackendForTests,
-	setHostLlmBackend,
-} from "@oh-my-pi/pi-mnemopi/core/llm-backends";
-import {
-	type MnemopiLlmCompletionTask,
-	type ResolvedMnemopiRuntimeOptions,
-	withMnemopiRuntimeOptions,
-} from "@oh-my-pi/pi-mnemopi/core/runtime-options";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/mnemotau/test/extraction.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const OLD_ENV = { ...process.env };
 function restoreEnv(): void {

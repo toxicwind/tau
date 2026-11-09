@@ -1,5 +1,4 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { ProcessTerminal } from "@oh-my-pi/pi-tui/terminal";`
 import { extractPrintableText } from "@tau/tau-tui/keys";
 import { ProcessTerminal } from "@tau/tau-tui/terminal";
@@ -11,19 +10,6 @@ import {
 	setCellDimensions,
 } from "@tau/tau-tui/terminal-capabilities";
 import { setTerminalHeadless } from "@tau/tau-utils";
-=======
-import { extractPrintableText } from "@oh-my-pi/pi-tui/keys";
-import { ProcessTerminal, type TerminalStartOptions } from "@oh-my-pi/pi-tui/terminal";
-import {
-	type CellDimensions,
-	getCellDimensions,
-	getTerminalBackgroundColor,
-	getTerminalInfo,
-	setCellDimensions,
-	setTerminalBackgroundColor,
-} from "@oh-my-pi/pi-tui/terminal-capabilities";
-import { setTerminalHeadless } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/test/terminal-appearance.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const stdinIsTtyDescriptor = Object.getOwnPropertyDescriptor(process.stdin, "isTTY");
 const stdoutIsTtyDescriptor = Object.getOwnPropertyDescriptor(process.stdout, "isTTY");

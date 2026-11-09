@@ -201,7 +201,6 @@ describe("optional embeddings", () => {
 		}
 	});
 
-<<<<<<< ours — scope `it("uses a constructor-scoped embedding provi...` in test_suite `optional embeddings`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("uses a constructor-scoped embedding provider", async () => {
 		const memory = new Mnemotau({
@@ -216,8 +215,6 @@ describe("optional embeddings", () => {
 			memory.close();
 		}
 	});
-=======
->>>>>>> theirs — scope `it("uses a constructor-scoped embedding provi...` deleted in theirs · weave: run 'weave explain packages/mnemotau/test/optional-embeddings.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 	it("retries local model initialization after a transient failure", async () => {
 		await withEnv(

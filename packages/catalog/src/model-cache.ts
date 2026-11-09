@@ -3,14 +3,8 @@
  * Replaces per-provider JSON files with a single cache.db.
  */
 import type { Database } from "bun:sqlite";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { getModelDbPath, isSqliteCorruptionError, openSqliteDat…`
 import { getModelDbPath, isSqliteCorruptionError, openSqliteDatabaseSync, VERSION } from "@tau/tau-utils";
-=======
-import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import { getModelDbPath, isSqliteCorruptionError, logger, openSqliteDatabaseSync, VERSION } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/catalog/src/model-cache.ts' for per-hunk detail, 'weave check' to verify your resolution
 import RULES from "./compat/rules.json" with { type: "json" };
 import type { Api, Model } from "./types";
 
@@ -604,7 +598,6 @@ function withRowState<TApi extends Api>(entry: CacheEntry<TApi>, row: StoredRowS
 		: { ...entry, updatedAt, authoritative };
 }
 
-<<<<<<< ours — function `readRowUncached` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 function readRowUncached<TApi extends Api>(
 	db: Database,
@@ -643,43 +636,6 @@ function readRowUncached<TApi extends Api>(
 	} finally {
 		stmt.finalize();
 	}
-=======
-function parseCacheRow<TApi extends Api>(
-	db: Database,
-	providerId: string,
-	row: CacheRow | null,
-	ttlMs: number,
-	now: () => number,
-): CacheEntry<TApi> | null {
-	if (!row || row.version !== CACHE_SCHEMA_VERSION || row.materialization_policy !== materializationPolicy()) {
-		return null;
-	}
-	const models = parseMaterializedModels<TApi>(row.models);
-	const headerOmittedModelIds = parseModelIds(row.header_omitted_model_ids);
-	const unrestorableHeaderModelIds = parseModelIds(row.unrestorable_header_model_ids);
-	if (models === null || headerOmittedModelIds === null || unrestorableHeaderModelIds === null) {
-		// Fail closed on corrupt header provenance: treating malformed
-		// markers as empty could return a model with required credentials
-		// silently absent. Current-schema rows never persist headers, so the
-		// rejected payload needs no secure scrub.
-		db.run("DELETE FROM model_cache WHERE provider_id = ?", [providerId]);
-		return null;
-	}
-	const { updatedAt, authoritative } = rowState(row);
-	const ageMs = now() - updatedAt;
-	const fresh = Number.isFinite(ageMs) && ageMs >= 0 && ageMs <= ttlMs;
-	return {
-		models,
-		fresh,
-		authoritative,
-		payloadAuthoritative: row.authoritative === 1,
-		updatedAt,
-		headerOmittedModelIds,
-		unrestorableHeaderModelIds,
-		legacyHeaderRestoreMarkers: row.header_restore_version < HEADER_RESTORE_VERSION,
-		staticFingerprint: row.static_fingerprint ?? "",
-	};
->>>>>>> theirs — function `readRowUncached` (S+F, confidence: low)
 }
 
 /** Whether a live model carries at least one request header. */

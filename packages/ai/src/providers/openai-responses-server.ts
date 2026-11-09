@@ -9,21 +9,10 @@
  * Inverse direction (source-of-truth for item shapes): ../../providers/openai-responses.ts
  */
 
-<<<<<<< ours — imports `file_header` (T+F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { logger, structuredCloneJSON } from "@oh-my-pi/pi-utils…`
 import { type } from "@tau/tautype";
 import { logger, structuredCloneJSON } from "@tau/tau-utils";
 import { resolvePromptCacheKey } from "../auth-gateway/http";
-=======
-import { type } from "@oh-my-pi/omptype";
-import { isRecord, logger, structuredCloneJSON } from "@oh-my-pi/pi-utils";
-import {
-	isOpenAIReasoningEffort,
-	isOpenAIServiceTier,
-	openAIErrorResponse,
-	resolvePromptCacheKey,
-} from "../auth-gateway/http";
->>>>>>> theirs — imports `file_header` (T+F, confidence: medium) · weave: run 'weave explain packages/ai/src/providers/openai-responses-server.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { AuthGatewayStreamControl, AuthGatewayParsedRequest as ParsedRequest } from "../auth-gateway/types";
 import * as AIError from "../error";
 import type {
@@ -625,14 +614,9 @@ export function parseRequest(body: unknown, headers?: Headers): ParsedRequest {
 	if (cacheKey !== undefined) options.promptCacheKey = cacheKey;
 	if (data.previous_response_id !== undefined) options.previousResponseId = data.previous_response_id;
 	if (data.user !== undefined) options.user = data.user;
-<<<<<<< ours — function `parseRequest` (T+S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 	if (isObj(data.metadata)) options.metadata = data.metadata;
 	// `store` is a stateful-storage hint that tau's gateway doesn't honour;
-=======
-	if (isRecord(data.metadata)) options.metadata = data.metadata;
-	// `store` is a stateful-storage hint that omp's gateway doesn't honour;
->>>>>>> theirs — function `parseRequest` (T+S+F, confidence: low)
 	// silently accepted by the schema. No typed slot — drop.
 
 	return {

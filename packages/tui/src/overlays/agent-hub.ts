@@ -13,7 +13,6 @@
  *
  * Replaces the old SessionObserverOverlayComponent (ctrl+s observer).
  */
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { formatAge, formatNumber, getProjectDir, logger } from …`
 import type { AgentTool } from "@tau/tau-agent-core";
 import { Container, type OverlayHandle, type TUI } from "../tui";
@@ -21,23 +20,6 @@ import { matchesKey } from "../keys";
 import { routeSelectListMouse, routeSgrMouseInput, type SelectListMouseTarget } from "../mouse";
 import { padding, visibleWidth, wrapTextWithAnsi } from "../utils";
 import { formatAge, formatNumber, getProjectDir, logger } from "@tau/tau-utils";
-=======
-import type { AgentTool } from "@oh-my-pi/pi-agent-core";
-import type {
-	TspPickerAction,
-	TspPickerColumn,
-	TspPickerItem,
-	TspPickerProps,
-	TspPickerScope,
-	TspSpan,
-	TspTreeNode,
-} from "@oh-my-pi/pi-wire";
-import { Container, type OverlayHandle, type TUI } from "../tui";
-import { matchesKey } from "../keys";
-import { routeSelectListMouse, routeSgrMouseInput, type SelectListMouseTarget } from "../mouse";
-import { padding, visibleWidth, wrapTextWithAnsi } from "../utils";
-import { formatAge, formatDuration, formatNumber, getProjectDir, logger } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/tui/src/overlays/agent-hub.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	type AgentActivitySource,
 	type AgentActivityKind,

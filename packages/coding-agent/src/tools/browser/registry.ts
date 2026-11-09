@@ -1,10 +1,6 @@
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { isCompiledBinary, logger, withTimeout, workerHostEntry…`
 import { isCompiledBinary, logger, withTimeout, workerHostEntry } from "@tau/tau-utils";
-=======
-import { getLogsDir, isCompiledBinary, logger, untilAborted, workerHostEntry } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/browser/registry.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { Subprocess } from "bun";
 import type { Browser, CDPSession } from "puppeteer-core";
 import { ToolAbortError } from "../tool-errors";
@@ -423,16 +419,9 @@ async function disposeBrowserHandle(handle: BrowserHandle, opts: ReleaseBrowserO
 			// The broker owns the Chromium; this process only drops its CDP
 			// connection. `kill` is scoped to spawned-app browsers — stopping the
 			// shared daemon here would tear down every other session's tabs. The
-<<<<<<< ours — scope `if (handle.kind.kind === "headless") {` in function `disposeBrowserHandle` (T+F, confidence: medium)
 // refused_by: statement_fold · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 			// daemon dies with the last tau client in the project (broker idle
 			// teardown), or via an explicit stop (`write proc://<name>/kill`).
-=======
-			// daemon dies with the last omp client in the project (broker idle
-			// teardown), when its CDP endpoint stops answering after a failed tab
-			// cleanup (`stopSharedBrowserIfUnreachable`), or via an explicit stop
-			// (`write proc://<name>/kill`).
->>>>>>> theirs — scope `if (handle.kind.kind === "headless") {`
 			if (handle.browser.connected) {
 				try {
 					handle.browser.disconnect();
@@ -442,7 +431,6 @@ async function disposeBrowserHandle(handle: BrowserHandle, opts: ReleaseBrowserO
 			}
 			return;
 		}
-<<<<<<< ours — scope `if (handle.kind.kind === "headless") {` in function `disposeBrowserHandle` (T+F, confidence: medium)
 // refused_by: statement_fold · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 		if (handle.browser.connected) {
 			// Puppeteer's `browser.close()` resolves only once the Chromium
@@ -459,10 +447,6 @@ async function disposeBrowserHandle(handle: BrowserHandle, opts: ReleaseBrowserO
 			}
 		}
 		// TAU owns the profile directory (puppeteer's temp cleanup is disabled by
-=======
-		if (handle.browser.connected) await closeLaunchedBrowser(handle.browser);
-		// OMP owns the profile directory (puppeteer's temp cleanup is disabled by
->>>>>>> theirs — scope `if (handle.kind.kind === "headless") {`
 		// our explicit --user-data-dir), so remove it now the process tree has
 		// exited. Tolerant of the Windows lock-held window (issue #7058).
 		if (handle.userDataDir) await removeUserDataDir(handle.userDataDir);
@@ -517,12 +501,8 @@ async function openSharedHeadlessHandle(
 		});
 		if (!shared) {
 			throw new ToolError(
-<<<<<<< ours — scope `try {` in function `openSharedHeadlessHandle` (F, confidence: medium)
 // refused_by: statement_fold · collision: `"Shared browser daemon unavailable (broker start or Chromium la…`
 				"Shared browser daemon unavailable (broker start or Chromium launch failed); check `tau ps` for tau.browser.* daemons and ~/.tau/logs for details",
-=======
-				`Shared browser daemon unavailable (broker start or Chromium launch failed); check \`omp ps\` for omp.browser.* daemons and ${getLogsDir()} for details`,
->>>>>>> theirs — scope `try {`
 			);
 		}
 		const puppeteer = await loadPuppeteer();

@@ -1,18 +1,6 @@
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { toNumber } from "@tau/tau-catalog/utils";
 import { extractCursorAccessTokenUserId } from "../registry/oauth/cursor";
-=======
-import { quotaTierFor } from "@oh-my-pi/pi-catalog/compat/behavior";
-import { CURSOR_DEFAULT_BASE_URL } from "@oh-my-pi/pi-catalog/wire/cursor";
-import { toNumber } from "@oh-my-pi/pi-catalog/utils";
-import {
-	cursorConnectRequest,
-	cursorSessionHeaders,
-	extractCursorAccessTokenUserId,
-	fetchCursorAccountEmail,
-} from "../registry/oauth/cursor";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/src/usage/cursor.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type {
 	CredentialRankingContext,
 	CredentialRankingStrategy,

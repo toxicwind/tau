@@ -460,7 +460,6 @@ describe("ToolCallLoopGuard multi-call turns", () => {
 		expect(guard.recordTurn(pytest())).toMatchObject({ toolName: "bash", count: 2 });
 	});
 
-<<<<<<< ours — scope `test("resets when every call in a multi-call ...` in test_suite `ToolCallLoopGuard multi-call turns` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `const guard = new ToolCallLoopGuard({ threshold: 2, exemptTools…`
 	test("resets when every call in a multi-call turn is exempt", () => {
 		const guard = new ToolCallLoopGuard({
@@ -473,17 +472,6 @@ describe("ToolCallLoopGuard multi-call turns", () => {
 			guard.recordTurn(turn([toolCall("read", { path: "x.ts" }), toolCall("read", { path: "y.ts" })])),
 		).toBeNull();
 		expect(guard.recordTurn(turn(batch()))).toBeNull();
-=======
-	test("resets after an exempt poll that returned something, even repeated text", () => {
-		const guard = new ToolCallLoopGuard({ threshold: 2, exemptTools: ["wait"] });
-		const pytest = () => turn([toolCall("bash", { command: "pytest" })]);
-		expect(guard.recordTurn(pytest())).toBeNull();
-		// A finished service may have changed what the rerun sees.
-		expect(guard.recordTurn(waitTurn("A service finished.", false))).toBeNull();
-		expect(guard.recordTurn(pytest())).toBeNull();
-		expect(guard.recordTurn(waitTurn("A service finished.", false))).toBeNull();
-		expect(guard.recordTurn(pytest())).toBeNull();
->>>>>>> theirs — scope `test("resets when every call in a multi-call ...` · weave: run 'weave explain packages/ai/test/tool-call-loop-guard.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 	});
 
 	test("resets after an idle exempt poll that arrived with injected context", () => {

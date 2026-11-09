@@ -3,7 +3,6 @@ import { type ChildProcess, execSync, spawn } from "node:child_process";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { complete, getEnvApiKey, stream } from "@oh-my-pi/pi-ai…`
 import { type } from "@tau/tautype";
 import { Effort } from "@tau/tau-ai";
@@ -13,17 +12,6 @@ import type { Api, Context, ImageContent, Model, OptionsForApi, Tool, ToolResult
 import { buildModel } from "@tau/tau-catalog/build";
 import { getBundledModel } from "@tau/tau-catalog/models";
 import { $which } from "@tau/tau-utils";
-=======
-import { type } from "@oh-my-pi/omptype";
-import { Effort } from "@oh-my-pi/pi-ai";
-import { __resetVertexTokenCache } from "@oh-my-pi/pi-ai/providers/google-auth";
-import { getEnvApiKey } from "@oh-my-pi/pi-ai/env-api-key";
-import { complete, stream } from "@oh-my-pi/pi-ai/stream";
-import type { Api, Context, ImageContent, Model, OptionsForApi, Tool, ToolResultMessage } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { $which } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/ai/test/stream.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { removeWithRetries } from "../../utils/src/temp";
 import { e2eApiKey, resolveApiKey } from "./oauth";
 

@@ -1,23 +1,10 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 import { type AgentMessage, filterProviderReplayMessages } from "@tau/tau-agent-core";
 import type { ImageContent, Message, TextContent } from "@tau/tau-ai";
 import { inferCopilotInitiator } from "@tau/tau-ai/providers/github-copilot-headers";
 import { convertToLlm, SKILL_PROMPT_MESSAGE_TYPE, wrapSteeringForModel } from "tau/session/messages";
 import { COLLAB_PROMPT_MESSAGE_TYPE } from "@tau/tau-wire";
-=======
-import { invalidateMessageCache } from "@oh-my-pi/pi-agent-core/compaction/message-cache";
-import { type AgentMessage, filterProviderReplayMessages } from "@oh-my-pi/pi-agent-core";
-import type { ImageContent, Message, TextContent } from "@oh-my-pi/pi-ai";
-import { inferCopilotInitiator } from "@oh-my-pi/pi-ai/providers/github-copilot-headers";
-import {
-	convertToLlm,
-	SKILL_PROMPT_MESSAGE_TYPE,
-	wrapSteeringForModel,
-} from "@oh-my-pi/pi-coding-agent/session/messages";
-import { COLLAB_PROMPT_MESSAGE_TYPE } from "@oh-my-pi/pi-wire";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/session-messages.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function expectAttribution(message: Message | undefined, expected: "user" | "agent" | undefined): void {
 	expect(message).toBeDefined();

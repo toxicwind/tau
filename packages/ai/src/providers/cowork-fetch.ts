@@ -174,14 +174,10 @@ function createResponse(message: IncomingMessage, method: string, signal: AbortS
 	const status = message.statusCode;
 	if (status === undefined) throw new Error("Cowork transport received a response without an HTTP status.");
 	const hasBody = method !== "HEAD" && status !== 204 && status !== 304;
-<<<<<<< ours — scope `const body = hasBody ? stream.Readable.toWeb(...` in function `createResponse` (S, confidence: medium)
 // refused_by: statement_fold · collision: `const body = hasBody ? stream.Readable.toWeb(decodedResponseStr…`
 	const body = hasBody
 		? (stream.Readable.toWeb(decodedResponseStream(message)) as unknown as ReadableStream<Uint8Array>)
 		: null;
-=======
-	const body = hasBody ? withFetchParityErrors(stream.Readable.toWeb(decodedResponseStream(message)), signal) : null;
->>>>>>> theirs — scope `const body = hasBody ? stream.Readable.toWeb(...` · weave: run 'weave explain packages/ai/src/providers/cowork-fetch.ts' for per-hunk detail, 'weave check' to verify your resolution
 	return new Response(body, {
 		status,
 		statusText: message.statusMessage,

@@ -1,23 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, spyOn } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { generateRoomKey, importRoomKey } from "tau/collab/crypto";
 import { CollabGuestLink } from "tau/collab/guest";
 import { type AgentSnapshot, COLLAB_PROTO, type CollabFrame, formatCollabLink } from "tau/collab/protocol";
 import { CollabSocket } from "tau/collab/relay-client";
-=======
-import * as fsp from "node:fs/promises";
-import { generateRoomKey, importRoomKey } from "@oh-my-pi/pi-coding-agent/collab/crypto";
-import { CollabGuestLink } from "@oh-my-pi/pi-coding-agent/collab/guest";
-import {
-	type AgentSnapshot,
-	COLLAB_PROTO,
-	type CollabFrame,
-	formatCollabLink,
-} from "@oh-my-pi/pi-coding-agent/collab/protocol";
-import { CollabSocket } from "@oh-my-pi/pi-coding-agent/collab/relay-client";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/collab/guest-subagent-badge.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	getRunningSubagentBadgeAgentIds,
 	getRunningSubagentBadgeRegistry,

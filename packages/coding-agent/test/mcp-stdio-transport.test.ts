@@ -242,7 +242,6 @@ describe("resolveStdioSpawnCommand", () => {
 		}
 	});
 
-<<<<<<< ours — scope `it("neutralizes percent-delimited args so cmd...` in test_suite `resolveStdioSpawnCommand`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("neutralizes percent-delimited args so cmd.exe cannot expand them before the .cmd shim", async () => {
 		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-mcp-percent-"));
@@ -281,10 +280,7 @@ describe("resolveStdioSpawnCommand", () => {
 			await removeWithRetries(tempDir);
 		}
 	});
-=======
->>>>>>> theirs — scope `it("neutralizes percent-delimited args so cmd...` deleted in theirs · weave: run 'weave explain packages/coding-agent/test/mcp-stdio-transport.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
-<<<<<<< ours — scope `it("doubles embedded quotes so cmd.exe delive...` in test_suite `resolveStdioSpawnCommand`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("doubles embedded quotes so cmd.exe delivers JSON args to the .cmd shim intact", async () => {
 		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-mcp-quotes-"));
@@ -320,8 +316,6 @@ describe("resolveStdioSpawnCommand", () => {
 			await removeWithRetries(tempDir);
 		}
 	});
-=======
->>>>>>> theirs — scope `it("doubles embedded quotes so cmd.exe delive...` deleted in theirs
 
 	it("resolves extension-less absolute Windows paths to the sibling .cmd shim", async () => {
 		// Mirrors npm's Windows shim layout: bare `codegraph` (shebang script),

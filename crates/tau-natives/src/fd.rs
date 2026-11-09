@@ -384,7 +384,6 @@ async fn fuzzy_find_async(
 	let matches = scored.into_sorted_matches();
 	Ok(FuzzyFindResult { matches, total_matches })
 }
-<<<<<<< ours — function `fuzzy_find_sync` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 fn fuzzy_find_sync(config: FuzzyFindConfig, ct: task::CancelToken) -> Result<FuzzyFindResult> {
 	let root = tau_walker::resolve_search_path(&config.path).map_err(iofs::map_walker_error)?;
@@ -430,8 +429,6 @@ fn fuzzy_find_sync(config: FuzzyFindConfig, ct: task::CancelToken) -> Result<Fuz
 	let matches = scored.into_sorted_matches();
 	Ok(FuzzyFindResult { matches, total_matches })
 }
-=======
->>>>>>> theirs — function `fuzzy_find_sync` (S+F, confidence: low) · weave: run 'weave explain crates/tau-natives/src/fd.rs' for per-hunk detail, 'weave check' to verify your resolution
 
 /// Fuzzy file path search for autocomplete.
 #[napi(js_name = "fuzzyFind")]

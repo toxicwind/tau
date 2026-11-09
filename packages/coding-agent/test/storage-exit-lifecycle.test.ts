@@ -118,13 +118,8 @@ describe("storage process-exit cleanup", () => {
 		const historyDbPath = path.join(tempDir, "history.db");
 		const agentDbPath = path.join(tempDir, "agent.db");
 		const script = [
-<<<<<<< ours — scope `it("keeps stores opened after manual postmort...` in test_suite `storage process-exit cleanup` (F, confidence: medium)
 // refused_by: statement_fold · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 			'import { postmortem } from "@tau/tau-utils";',
-=======
-			'import { postmortem } from "@oh-my-pi/pi-utils";',
-			"postmortem.installProcessHandlers();",
->>>>>>> theirs — scope `it("keeps stores opened after manual postmort...` · weave: run 'weave explain packages/coding-agent/test/storage-exit-lifecycle.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 			`import { HistoryStorage } from ${JSON.stringify(HISTORY_STORAGE_MODULE)};`,
 			`import { AgentStorage } from ${JSON.stringify(AGENT_STORAGE_MODULE)};`,
 			"await postmortem.cleanup();",
@@ -162,13 +157,8 @@ describe("storage process-exit cleanup", () => {
 		const agentDbPath = path.join(tempDir, "agent.db");
 		const checkpointed = path.join(tempDir, "agent-checkpoint.db");
 		const script = [
-<<<<<<< ours — scope `it("arms storage opened while a keep-alive cl...` in test_suite `storage process-exit cleanup` (F, confidence: medium)
 // refused_by: statement_fold · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 			'import { postmortem } from "@tau/tau-utils";',
-=======
-			'import { postmortem } from "@oh-my-pi/pi-utils";',
-			"postmortem.installProcessHandlers();",
->>>>>>> theirs — scope `it("arms storage opened while a keep-alive cl...`
 			`import { AgentStorage } from ${JSON.stringify(AGENT_STORAGE_MODULE)};`,
 			"const gate = Promise.withResolvers();",
 			'postmortem.register("blocker", () => gate.promise);',
@@ -216,13 +206,8 @@ describe("storage process-exit cleanup", () => {
 		// then only a real exit flushes its deferred perf batch. If postmortem did
 		// not re-arm, the exit callback would never fire and the sample would be lost.
 		const script = [
-<<<<<<< ours — scope `it("re-arms exit cleanup for a store opened a...` in test_suite `storage process-exit cleanup` (F, confidence: medium)
 // refused_by: statement_fold · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 			'import { postmortem } from "@tau/tau-utils";',
-=======
-			'import { postmortem } from "@oh-my-pi/pi-utils";',
-			"postmortem.installProcessHandlers();",
->>>>>>> theirs — scope `it("re-arms exit cleanup for a store opened a...`
 			`import { AgentStorage } from ${JSON.stringify(AGENT_STORAGE_MODULE)};`,
 			"await postmortem.cleanup();",
 			`const agent = await AgentStorage.open(${JSON.stringify(agentDbPath)});`,
@@ -259,13 +244,8 @@ describe("storage process-exit cleanup", () => {
 		// cleanup that keeps the process running: its statements must not be
 		// finalized, so writes through the same handle keep working afterward.
 		const script = [
-<<<<<<< ours — scope `it("keeps a handle held across a manual clean...` in test_suite `storage process-exit cleanup` (F, confidence: medium)
 // refused_by: statement_fold · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 			'import { postmortem } from "@tau/tau-utils";',
-=======
-			'import { postmortem } from "@oh-my-pi/pi-utils";',
-			"postmortem.installProcessHandlers();",
->>>>>>> theirs — scope `it("keeps a handle held across a manual clean...`
 			`import { AgentStorage } from ${JSON.stringify(AGENT_STORAGE_MODULE)};`,
 			`const agent = await AgentStorage.open(${JSON.stringify(agentDbPath)});`,
 			'agent.recordUsage("command", "before-cleanup");',

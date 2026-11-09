@@ -3,17 +3,10 @@
  *
  * Handles /mcp subcommands for managing MCP servers.
  */
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (3 contested hunk(s), neither side deleted the other's lines)
 import * as path from "node:path";
 import { type Component, replaceTabs, Spacer, Text } from "@tau/tau-tui";
 import { getMCPConfigPath, getProjectDir } from "@tau/tau-utils";
-=======
-import { type Component, replaceTabs, Spacer, Text } from "@oh-my-pi/pi-tui";
-import { getMCPConfigPath, getProjectDir } from "@oh-my-pi/pi-utils";
-import { formatKeyHint } from "@oh-my-pi/pi-tui/app-keybindings";
-import { appKey } from "@oh-my-pi/pi-tui/chrome/keybinding-hints";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/modes/controllers/mcp-command-controller.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { clearCache as clearFsCache } from "../../capability/fs";
 import type { SourceMeta } from "../../capability/types";
 import {
@@ -67,7 +60,6 @@ import {
 	searchSmitheryRegistry,
 	toConfigName,
 } from "../../mcp/smithery-registry";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (3 contested hunk(s), neither side deleted the other's lines)
 import type {
 	MCPAuthChallenge,
@@ -78,11 +70,6 @@ import type {
 } from "../../mcp/types";
 import { shortenPath } from "@tau/tau-tui/render/render-utils";
 import { urlHyperlinkAlways } from "@tau/tau-tui/render";
-=======
-import type { MCPAuthChallenge, MCPConfigFile, MCPServerConfig, MCPServerConnection } from "../../mcp/types";
-import { shortenPath } from "@oh-my-pi/pi-tui/render/render-utils";
-import { urlHyperlinkAlways } from "@oh-my-pi/pi-tui/render";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low)
 import { copyToClipboard } from "../../utils/clipboard";
 import { isTimeoutError } from "../../utils/fetch-timeout";
 import { openPath } from "../../utils/open";
@@ -91,14 +78,8 @@ import { DynamicBorder } from "@tau/tau-tui/chrome/dynamic-border";
 import { MCPAddWizard } from "@tau/tau-tui/overlays/mcp-add-wizard";
 import { TranscriptBlock } from "@tau/tau-tui/chrome/transcript-container";
 import { parseCommandArgs } from "../../utils/command-args";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (3 contested hunk(s), neither side deleted the other's lines)
 import { theme } from "@tau/tau-tui/theme";
-=======
-import { theme } from "@oh-my-pi/pi-tui/theme";
-import { col, span, text } from "@oh-my-pi/pi-tui/native/describe";
-import type { NativeNode } from "@oh-my-pi/pi-tui/native/node";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low)
 import type { InteractiveModeContext } from "../types";
 import { groupBySource, parseRemoveArgs, readScopeFlag, showCommandMessage } from "./command-controller-shared";
 
@@ -826,7 +807,6 @@ export class MCPCommandController {
 					issuerUrl: opts?.issuerUrl,
 					resource: opts?.resource,
 					stripSameOriginResource: opts?.stripSameOriginResource,
-<<<<<<< ours — scope `#handleOAuthFlow` in class `MCPCommandController` (T+S+F, confidence: low)
 // refused_by: container_member · collision: `// only resolves against the OMP host), and OSC 52 is a` +1 more
 				},
 				{
@@ -912,22 +892,6 @@ export class MCPCommandController {
 				5 * 60 * 1000,
 				"OAuth flow timed out after 5 minutes",
 				() => oauthTimeout.abort("MCP OAuth flow timed out"),
-=======
-					callbackPort: opts?.callbackPort,
-					callbackPath: opts?.callbackPath,
-					redirectUri: opts?.redirectUri,
-					prompt: opts?.prompt,
-					authStorage: this.ctx.session.modelRegistry.authStorage,
-					signal: opts?.abortSignal ? AbortSignal.any([escapeSignal, opts.abortSignal]) : escapeSignal,
-					flowOwner: this.ctx.oauthManualInput,
-					pendingInput: () =>
-						this.ctx.oauthManualInput.hasPending()
-							? (this.ctx.oauthManualInput.pendingProviderId ?? "another provider")
-							: undefined,
-					onClaimed,
-					...callbacks,
-				}),
->>>>>>> theirs — scope `#handleOAuthFlow`
 			);
 		} finally {
 			release();
@@ -1081,7 +1045,6 @@ export class MCPCommandController {
 		});
 	}
 
-<<<<<<< ours — scope `#resolveServerForAuth` in class `MCPCommandController`, deleted in theirs (T+F, confidence: medium)
 // refused_by: container_member · collision: none (no common ancestor text)
 	/**
 	 * Resolve a server for an auth/test operation.
@@ -1119,10 +1082,7 @@ export class MCPCommandController {
 			discovered: true,
 		};
 	}
-=======
->>>>>>> theirs — scope `#resolveServerForAuth` deleted in theirs
 
-<<<<<<< ours — scope `#resolveOAuthEndpointsFromServer` in class `MCPCommandController`, deleted in theirs (S+F, confidence: low)
 // refused_by: container_member · collision: none (no common ancestor text)
 	async #resolveOAuthEndpointsFromServer(
 		config: MCPServerConfig,
@@ -1196,8 +1156,6 @@ export class MCPCommandController {
 
 		return oauth;
 	}
-=======
->>>>>>> theirs — scope `#resolveOAuthEndpointsFromServer` deleted in theirs
 
 	async #waitForServerConnectionWithAnimation(
 		name: string,

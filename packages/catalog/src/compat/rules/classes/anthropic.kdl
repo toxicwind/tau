@@ -367,13 +367,8 @@ class "anthropic" {
 		}
 	}
 	on "amazon-bedrock" "anthropic" "cloudflare-ai-gateway" "github-copilot" "gitlab-duo" \
-<<<<<<< HEAD
 		"google-vertex" "opencode-zen" "vercel-ai-gateway" {
 		family "haiku" priority=5 {
-=======
-		"google-vertex" "opencode-zen" "snowflake" "vercel-ai-gateway" {
-		family "haiku" {
->>>>>>> upstream/main
 			thinking-mode "budget"
 			// Haiku 5.5 is the first adaptive Haiku: `budget_tokens` is a 400.
 			// An omitted `thinking` is adaptive, but unlike Sonnet/Opus 5.5 it
@@ -402,13 +397,8 @@ class "anthropic" {
 		}
 	}
 	on "amazon-bedrock" "anthropic" "cloudflare-ai-gateway" "github-copilot" "google-vertex" \
-<<<<<<< HEAD
 		"opencode-zen" "vercel-ai-gateway" "zenmux" {
 		revision ">=4.7 <45.1" priority=10 {
-=======
-		"opencode-zen" "snowflake" "vercel-ai-gateway" "zenmux" {
-		revision ">=4.7 <45.1" {
->>>>>>> upstream/main
 			thinking-mode "anthropic-adaptive"
 		}
 	}
@@ -438,13 +428,8 @@ class "anthropic" {
 		}
 	}
 	on "anthropic" "cloudflare-ai-gateway" "github-copilot" "google-vertex" "opencode-zen" \
-<<<<<<< HEAD
 		"openrouter" "vercel-ai-gateway" "zenmux" {
 		revision ">=4.7 <45.1" priority=10 {
-=======
-		"openrouter" "snowflake" "vercel-ai-gateway" "zenmux" {
-		revision ">=4.7 <45.1" {
->>>>>>> upstream/main
 			thinking-efforts "low" "medium" "high" "xhigh" "max"
 		}
 	}
@@ -748,7 +733,6 @@ class "anthropic" {
 					}
 				}
 			}
-<<<<<<< HEAD
 			revision "=4.5" {
 				prompt-cache-mode "explicit"
 				prompt-cache-minimum-tokens 4096
@@ -786,21 +770,6 @@ class "anthropic" {
 				prompt-cache-minimum-tokens 1024
 				prompt-cache-maximum-checkpoints 4
 				supports-long-prompt-cache-retention #true
-=======
-			family "mythos" {
-				// The Mythos Preview id has no numeric revision to select.
-				models "*mythos-preview*" {
-					prompt-cache {
-						short 300
-					}
-				}
-
-				revision ">=5" {
-					prompt-cache {
-						short 300
-					}
-				}
->>>>>>> upstream/main
 			}
 		}
 	}

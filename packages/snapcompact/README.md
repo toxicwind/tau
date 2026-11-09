@@ -58,44 +58,8 @@ const result = await compact(preparation, { model });
 // result.preserveData   — bounded archive source + rendered image middle
 ```
 
-<<<<<<< ours — heading `Install` (T+F, confidence: medium)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
-=======
-## Install
-
-```sh
-bun add @oh-my-pi/snapcompact
-```
-
-Ships TypeScript source directly (no build step); requires Bun ≥ 1.4.4.
-
->>>>>>> theirs — heading `Install` (T+F, confidence: medium) · weave: run 'weave explain packages/snapcompact/README.md' for per-hunk detail, 'weave check' to verify your resolution
-<<<<<<< ours — heading `Usage` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
-=======
-## Usage
-
-Render arbitrary text into LLM image blocks:
-
-```ts
-import { renderMany, frames, resolveShape } from "@oh-my-pi/snapcompact";
-
-const images = renderMany(longText, { model }); // ImageContent[], first page first
-const count = frames(longText, { model }); // frame count without rendering
-const shape = resolveShape(model); // eval-optimal Shape for the reader
-```
-
-Run a full compaction pass over prepared messages:
-
-```ts
-import { compact } from "@oh-my-pi/snapcompact";
-
-const result = await compact(preparation, { model });
-// result.summary        — short "resume prior conversation" lead-in, reading guide, and FILES section
-// result.preserveData   — bounded archive source + rendered image middle
-```
-
->>>>>>> theirs — heading `Usage` (S+F, confidence: low)
 ## API surface
 
 - **Compaction**: `compact`, `CompactionPreparation`, `CompactionResult`, `getPreservedArchive`, `images`, `historyBlocks`, `capFrameDataBytes`

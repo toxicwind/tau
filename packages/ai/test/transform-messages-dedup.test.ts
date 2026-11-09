@@ -5,18 +5,11 @@
 // Regression for the suffix previously landing on the composite as a whole
 // (`call_x|fc_y` → `call_x|fc_y_dup1`, wire call_id `call_x` for both copies).
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import type { AssistantMessage, Message, Model, ToolResultMessa…`
 import { transformMessages } from "@tau/tau-ai/providers/transform-messages";
 import type { AssistantMessage, Message, Model, ToolResultMessage } from "@tau/tau-ai/types";
 import { normalizeResponsesToolCallId } from "@tau/tau-ai/utils";
 import { buildModel } from "@tau/tau-catalog/build";
-=======
-import { transformMessages } from "@oh-my-pi/pi-ai/providers/transform-messages";
-import type { AssistantMessage, Message, Model, ToolCall, ToolResultMessage } from "@oh-my-pi/pi-ai/types";
-import { normalizeResponsesToolCallId } from "@oh-my-pi/pi-ai/utils";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/ai/test/transform-messages-dedup.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function makeModel(): Model<"openai-responses"> {
 	return buildModel({

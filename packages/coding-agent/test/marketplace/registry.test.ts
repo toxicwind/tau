@@ -25,14 +25,10 @@ import {
 } from "tau/extensibility/plugins/marketplace";
 import { removeSyncWithRetries } from "@tau/tau-utils";
 
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `// in discovery/helpers.ts which transitively imports @oh-my-pi…`
 // Inline the parseClaudePluginsRegistry validation logic to avoid pulling
 // in discovery/helpers.ts which transitively imports @tau/tau-natives.
 // Matches the exact checks in helpers.ts parseClaudePluginsRegistry().
-=======
-// ── ID helpers ───────────────────────────────────────────────────────
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/marketplace/registry.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 describe("isValidNameSegment", () => {
 	it("accepts alphanumeric with hyphens (any case)", () => {
 		expect(isValidNameSegment("hello")).toBe(true);

@@ -10,7 +10,6 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { clearCache, readFile } from "@oh-my-pi/pi-coding-agent…` +7 more
 import { clearCache, readFile } from "tau/capability/fs";
 import type { Rule } from "tau/capability/rule";
@@ -18,13 +17,6 @@ import type { LoadContext } from "tau/capability/types";
 import { getProjectPathCandidates } from "tau/discovery/agents";
 import { buildRuleFromMarkdown, calculateDepth, loadFilesFromDir, scanSkillsFromDir } from "tau/discovery/helpers";
 import { removeSyncWithRetries } from "@tau/tau-utils";
-=======
-import { clearCache } from "@oh-my-pi/pi-coding-agent/capability/fs";
-import type { LoadContext } from "@oh-my-pi/pi-coding-agent/capability/types";
-import { getProjectPathCandidates } from "@oh-my-pi/pi-coding-agent/discovery/agents";
-import { scanSkillsFromDir } from "@oh-my-pi/pi-coding-agent/discovery/helpers";
-import { removeSyncWithRetries } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/discovery/agents-monorepo-skills.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const PROVIDER_ID = "agents";
 
@@ -132,7 +124,6 @@ describe("agents provider project-level discovery", () => {
 			expect(names).not.toContain("above-home-skill");
 		});
 
-<<<<<<< ours — scope `describe("skills", () => {` in test_suite `agents provider project-level discovery` (T+F, confidence: medium)
 // refused_by: statement_fold · collision: `// Regression for https://github.com/can1357/oh-my-pi/issues/11…`
 		test("project and user candidates do not overlap when cwd is under home", () => {
 			// Regression for https://github.com/toxicwind/tau/issues/1116.
@@ -142,8 +133,6 @@ describe("agents provider project-level discovery", () => {
 			const overlap = project.filter(p => user.includes(p));
 			expect(overlap).toEqual([]);
 		});
-=======
->>>>>>> theirs — scope `describe("skills", () => {`
 		test("returns empty when no ancestor has skills", async () => {
 			const results = await Promise.all(
 				getProjectPathCandidates(ctx, "skills").map(dir =>

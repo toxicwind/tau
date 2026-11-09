@@ -18,21 +18,11 @@ import {
 	resolveAnthropicMetadataUserId,
 	stripClaudeToolPrefix,
 	withAuth,
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { compareRevision, parseRevision } from "@oh-my-pi/pi-ca…`
 } from "@tau/tau-ai";
 import { buildAnthropicSystemBlocks, wrapFetchForCch } from "@tau/tau-ai/providers/anthropic";
 import { compareRevision, parseRevision } from "@tau/tau-catalog/identity";
 import { $env } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-ai";
-import { buildAnthropicSystemBlocks, wrapFetchForCch } from "@oh-my-pi/pi-ai/providers/anthropic";
-import {
-	anthropicApiVersionAcceptsSamplingParams,
-	resolveAnthropicApiVersion,
-} from "@oh-my-pi/pi-catalog/compat/anthropic";
-import { $env } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/web/search/providers/anthropic.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { AnthropicApiResponse, AnthropicCitation } from "../../../web/search/types";
 import type { SearchCitation, SearchResponse, SearchSource } from "../types";
 import { SearchProviderError } from "../../../web/search/types";

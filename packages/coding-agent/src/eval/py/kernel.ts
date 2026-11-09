@@ -9,12 +9,8 @@
  * timeout.
  */
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (T+F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { $flag, isBunTestRuntime, logger, Snowflake } from "@oh…`
 import { $flag, isBunTestRuntime, logger, Snowflake } from "@tau/tau-utils";
-=======
-import { $env, $flag, isBunTestRuntime, logger, Snowflake } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (T+F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/eval/py/kernel.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { Settings } from "../../config/settings";
 import {
 	BaseKernel,

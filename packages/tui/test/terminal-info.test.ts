@@ -3,15 +3,9 @@ import {
 	collectTerminalState,
 	formatTerminalState,
 	type TerminalStateInfo,
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-tui/apps/debug/terminal-info";
 import { TERMINAL } from "@tau/tau-tui";
-=======
-} from "@oh-my-pi/pi-tui/apps/debug/terminal-info";
-import { TERMINAL } from "@oh-my-pi/pi-tui";
-import { TERMINAL_MULTIPLEXER_ENV_KEYS } from "@oh-my-pi/pi-tui/terminal-multiplexer";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/tui/test/terminal-info.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const sample: TerminalStateInfo = {
 	detectedId: "kitty",

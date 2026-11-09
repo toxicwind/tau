@@ -8,12 +8,8 @@
  */
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { isEnoent, logger } from "@oh-my-pi/pi-utils";`
 import { isEnoent, logger } from "@tau/tau-utils";
-=======
-import { asStrictBytes, isEnoent, logger, postmortem } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/ai/src/auth-broker/snapshot-cache.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { SnapshotResponse } from "./types";
 
 const MAGIC = new Uint8Array([0x4f, 0x4d, 0x50, 0x53]); // "TAUS"

@@ -1,6 +1,5 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { Agent, type AgentMessage, type StreamFn } from "@tau/tau-agent-core";
 import * as compactionModule from "@tau/tau-agent-core/compaction";
@@ -18,29 +17,6 @@ import { SessionManager } from "tau/session/session-manager";
 import { EventBus } from "tau/utils/event-bus";
 import { TempDir } from "@tau/tau-utils";
 import * as snapcompact from "@tau/snapcompact";
-=======
-import { Agent, type AgentMessage, type StreamFn } from "@oh-my-pi/pi-agent-core";
-import * as compactionModule from "@oh-my-pi/pi-agent-core/compaction";
-import type { AssistantMessage, Model, ToolCall } from "@oh-my-pi/pi-ai";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import {
-	ExtensionRunner,
-	loadExtensionFromFactory,
-	loadExtensions,
-} from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
-import { SecretObfuscator } from "@oh-my-pi/pi-coding-agent/secrets";
-import { AgentSession, type AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { SessionMaintenance } from "@oh-my-pi/pi-coding-agent/session/session-maintenance";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-import { TempDir } from "@oh-my-pi/pi-utils";
-import * as snapcompact from "@oh-my-pi/snapcompact";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/agent-session-handoff.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 import {
 	cfgCompactionEnabled,

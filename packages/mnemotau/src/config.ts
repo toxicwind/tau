@@ -181,22 +181,14 @@ export function tier1Weight(env: Env = process.env): number {
 
 /** Recall-time score multiplier for an episodic row degraded to tier 2. */
 export function tier2Weight(env: Env = process.env): number {
-<<<<<<< ours — scope `return envFloat("MNEMOPI_TIER2_WEIGHT", 0.5, ...` in function `tier2Weight` (S, confidence: medium)
 // refused_by: statement_fold · collision: `return envFloat("MNEMOPI_TIER2_WEIGHT", 0.5, env);`
 	return envFloat("MNEMOTAU_TIER2_WEIGHT", 0.5, env);
-=======
-	return envFloat("MNEMOPI_TIER2_WEIGHT", 0.85, env);
->>>>>>> theirs — scope `return envFloat("MNEMOPI_TIER2_WEIGHT", 0.5, ...` · weave: run 'weave explain packages/mnemotau/src/config.ts' for per-hunk detail, 'weave check' to verify your resolution
 }
 
 /** Recall-time score multiplier for an episodic row degraded to tier 3 or beyond. */
 export function tier3Weight(env: Env = process.env): number {
-<<<<<<< ours — scope `return envFloat("MNEMOPI_TIER3_WEIGHT", 0.25,...` in function `tier3Weight` (S, confidence: medium)
 // refused_by: statement_fold · collision: `return envFloat("MNEMOPI_TIER3_WEIGHT", 0.25, env);`
 	return envFloat("MNEMOTAU_TIER3_WEIGHT", 0.25, env);
-=======
-	return envFloat("MNEMOPI_TIER3_WEIGHT", 0.7, env);
->>>>>>> theirs — scope `return envFloat("MNEMOPI_TIER3_WEIGHT", 0.25,...`
 }
 
 export function degradeBatchSize(env: Env = process.env): number {
@@ -296,21 +288,12 @@ let enhancedRecallDefault = false;
 let proactiveLinkingDefault = false;
 
 /**
-<<<<<<< ours — scope `declaration` in function `configureRecallFeatures` (S, confidence: medium)
 // refused_by: statement_fold · collision: `* (e.g. the coding-agent `mnemopi.polyphonicRecall` / `mnemopi.…` +2 more
  * Sets process-wide defaults for the env-gated recall features. Host configuration
  * (e.g. the coding-agent `mnemotau.polyphonicRecall` / `mnemotau.enhancedRecall` /
  * `mnemotau.proactiveLinking` settings) lands here; the `MNEMOTAU_POLYPHONIC_RECALL` /
  * `MNEMOTAU_ENHANCED_RECALL` / `MNEMOTAU_PROACTIVE_LINKING` environment variables still
  * win whenever they are set.
-=======
- * Sets process-wide defaults for the env-gated recall features. Hosts that open
- * several memories with different policies should pass the per-instance
- * `polyphonicRecall` / `enhancedRecall` / `proactiveLinking` options instead
- * (`Mnemopi` / `BeamMemory` constructors), which take precedence over these
- * defaults. The `MNEMOPI_POLYPHONIC_RECALL` / `MNEMOPI_ENHANCED_RECALL` /
- * `MNEMOPI_PROACTIVE_LINKING` environment variables still win whenever they are set.
->>>>>>> theirs — scope `declaration`
  */
 export function configureRecallFeatures(flags: RecallFeatureFlags): void {
 	if (flags.polyphonicRecall !== undefined) polyphonicRecallDefault = flags.polyphonicRecall;
@@ -318,40 +301,20 @@ export function configureRecallFeatures(flags: RecallFeatureFlags): void {
 	if (flags.proactiveLinking !== undefined) proactiveLinkingDefault = flags.proactiveLinking;
 }
 
-<<<<<<< ours — function `polyphonicRecallEnabled` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 export function polyphonicRecallEnabled(env: Env = process.env): boolean {
 	const value = envOptionalString("MNEMOTAU_POLYPHONIC_RECALL", env);
 	return value === undefined ? polyphonicRecallDefault : value === "1";
-=======
-/**
- * Resolves the polyphonic recall gate: the env var wins when set, then the
- * per-instance `configured` value, then the process-wide default.
- */
-export function polyphonicRecallEnabled(env: Env = process.env, configured?: boolean): boolean {
-	const value = envOptionalString("MNEMOPI_POLYPHONIC_RECALL", env);
-	return value === undefined ? (configured ?? polyphonicRecallDefault) : value === "1";
->>>>>>> theirs — function `polyphonicRecallEnabled` (S+F, confidence: low)
 }
 
 export function temporalHalflifeHours(env: Env = process.env): number {
 	return envFloat("MNEMOTAU_TEMPORAL_HALFLIFE_HOURS", 24, env);
 }
 
-<<<<<<< ours — function `enhancedRecallEnabled` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 export function enhancedRecallEnabled(env: Env = process.env): boolean {
 	const value = envOptionalString("MNEMOTAU_ENHANCED_RECALL", env);
 	return value === undefined ? enhancedRecallDefault : value === "1";
-=======
-/**
- * Resolves the enhanced recall (query result cache) gate: the env var wins when
- * set, then the per-instance `configured` value, then the process-wide default.
- */
-export function enhancedRecallEnabled(env: Env = process.env, configured?: boolean): boolean {
-	const value = envOptionalString("MNEMOPI_ENHANCED_RECALL", env);
-	return value === undefined ? (configured ?? enhancedRecallDefault) : value === "1";
->>>>>>> theirs — function `enhancedRecallEnabled` (S+F, confidence: low)
 }
 
 export function proactiveLinkingEnabled(env: Env = process.env): boolean {

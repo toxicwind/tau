@@ -28,15 +28,9 @@ import {
 	TABLE_HEADER,
 	TERMINAL_STATES,
 	tableCells,
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-tui/apps/ps-data";
 import { runPsTop, type PsTopHost } from "@tau/tau-tui/apps/ps-top";
-=======
-} from "@oh-my-pi/pi-tui/apps/ps-data";
-import { runPsTop, type PsTopHost } from "@oh-my-pi/pi-tui/apps/ps-top";
-import { isSharedBrowserDaemonName, restartSharedBrowser } from "../tools/browser/shared-daemon";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/cli/ps-cli.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { collectReports, KILL_GRACE_MS, scopeClient } from "./ps-data";
 
 export type PsAction = "list" | "info" | "logs" | "stop" | "kill" | "restart";

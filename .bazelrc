@@ -55,13 +55,8 @@ build:macos --@rules_rust//rust/settings:extra_exec_rustc_flag=-Clink-arg=-Wl,-S
 # tau-iso, tau-natives, tau-shell, tau-voice, tau-walker) get the strict workspace
 # policy
 # (clippy-strict; bazel/clippy.bazelrc is generated from Cargo.toml); everything
-<<<<<<< HEAD
 # else gets default clippy + -Dwarnings (clippy). tau-builtins allows every
 # clippy group in its manifest (ported brush/uutils/jaq code) while keeping
-=======
-# else gets default clippy + -Dwarnings (clippy). pi-builtins allows every
-# clippy group in its manifest (ported uutils/jaq code) while keeping
->>>>>>> upstream/main
 # rustc warnings at zero; the aspect ignores Cargo `[lints]`, so clippy-ported
 # re-states those allows on top of -Dwarnings.
 build:clippy --aspects=@rules_rust//rust:defs.bzl%rust_clippy_aspect
@@ -97,22 +92,12 @@ build:ci --keep_going=false
 build:ci --reuse_sandbox_directories
 
 # --- Remote cache ------------------------------------------------------------
-<<<<<<< HEAD
 # The bazel-remote endpoint is cluster-internal only; .github/actions/bazel-cache
 # composes endpoint + credentials into an rc fragment on tau-kata pods.
 # GitHub-hosted runners never use a remote cache (actions/cache-backed
 # --disk_cache instead). These configs carry only the policy bits.
 #
 # cache-rw: trusted in-cluster writers (tau-kata pods).
-=======
-# .github/actions/bazel-cache points vmon `omp-ci` runners at their node's
-# Bazel HTTP cache ($VMON_CACHE_URL/bazel) and picks one of these policies.
-# GitHub-hosted runners never use a remote cache and run no Bazel builds.
-# These configs carry only the policy bits; the endpoint comes from the
-# consumer.
-#
-# cache-rw: branch and tag jobs on vmon runners.
->>>>>>> upstream/main
 build:cache-rw --remote_upload_local_results=true
 build:cache-rw --remote_local_fallback
 # cache-ro: read-only consumers (pull request jobs, which the node refuses

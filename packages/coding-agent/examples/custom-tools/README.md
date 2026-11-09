@@ -23,19 +23,13 @@ mkdir -p /path/to/your-project/.omp/tools
 cp -r hello /path/to/your-project/.omp/tools/
 cd /path/to/your-project
 omp --tools hello
-<<<<<<< ours — scope `# Test directly (can point to any .ts file)` in heading `Usage`, deleted in theirs (T+F, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 # Test directly (can point to any .ts file)
 tau --tool examples/custom-tools/todo/index.ts
-=======
->>>>>>> theirs — scope `# Test directly (can point to any .ts file)` deleted in theirs · weave: run 'weave explain packages/coding-agent/examples/custom-tools/README.md' for per-hunk detail, 'weave check' to verify your resolution
 
-<<<<<<< ours — scope `# Or copy entire folder to tools directory fo...` in heading `Usage`, deleted in theirs (T+F, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 # Or copy entire folder to tools directory for persistent use
 cp -r todo ~/.tau/agent/tools/
-=======
->>>>>>> theirs — scope `# Or copy entire folder to tools directory fo...` deleted in theirs
 ```
 
 Or install it for every project (default profile):

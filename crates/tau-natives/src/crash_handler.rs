@@ -22,18 +22,9 @@
 //! - The crash log path mirrors the JS side (`packages/utils/src/dirs.ts`):
 //!   `$XDG_STATE_HOME/tau/logs/` on Linux / macOS when the user has migrated to
 //!   XDG (i.e. that directory already exists and `PI_CODING_AGENT_DIR` isn't
-<<<<<<< ours — interstitial `file_header` (T+F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 //!   pointed somewhere custom), otherwise `<home>/<TAU_CONFIG_DIR>/logs/`
 //!   (defaulting to `~/.tau/logs/`).
-=======
-//!   pointed somewhere custom), otherwise `<home>/<PI_CONFIG_DIR>/logs/`
-//!   (defaulting to `~/.omp/logs/`).
-//! - This crate's own unit-test build writes to a per-user temp dir instead
-//!   (see `test_logs_dir`). The release addon a `bun test` process loads is not
-//!   a test build, so its crash reports still go to the path above while that
-//!   process's JS logs go to the temp dir.
->>>>>>> theirs — interstitial `file_header` (T+F, confidence: medium) · weave: run 'weave explain crates/tau-natives/src/crash_handler.rs' for per-hunk detail, 'weave check' to verify your resolution
 //! - Hook installation is idempotent across repeated module loads.
 
 use std::{

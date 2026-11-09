@@ -19,7 +19,6 @@
  */
 
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { Agent } from "@oh-my-pi/pi-agent-core";` +1 more
 import { Agent } from "@tau/tau-agent-core";
 import { effectiveReserveTokens, prepareCompaction } from "@tau/tau-agent-core/compaction";
@@ -32,24 +31,6 @@ import { AgentSession, type AgentSessionEvent } from "tau/session/agent-session"
 import { AuthStorage } from "tau/session/auth-storage";
 import { SessionManager } from "tau/session/session-manager";
 import * as snapcompact from "@tau/snapcompact";
-=======
-import { Agent, type AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { effectiveReserveTokens, prepareCompaction, resolveThresholdTokens } from "@oh-my-pi/pi-agent-core/compaction";
-import { base64ImageSize } from "@oh-my-pi/pi-agent-core/image-tokens";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { toModelSpec } from "@oh-my-pi/pi-catalog/provider-models/bundled-references";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
-import { encodeRpcFrame, MAX_RPC_FRAME_BYTES } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-frame";
-import { computeNonMessageTokens } from "@oh-my-pi/pi-tui/status-line/context-usage";
-import { AgentSession, type AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { cfgSnapcompactShape } from "@oh-my-pi/pi-coding-agent/session/context-settings";
-import * as snapcompact from "@oh-my-pi/snapcompact";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/agent-session-snapcompact-budget.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 describe("AgentSession snapcompact frame-budget sizing", () => {
 	let session: AgentSession;

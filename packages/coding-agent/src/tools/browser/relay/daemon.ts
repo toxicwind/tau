@@ -12,13 +12,8 @@
  * the global broker lease before probing, then adopt that external server
  * without attempting another bind.
  */
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { logger } from "@tau/tau-utils";
-=======
-import { logger } from "@oh-my-pi/pi-utils";
-import { VERSION } from "@oh-my-pi/pi-utils/dirs";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/browser/relay/daemon.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { daemonClientForGlobal } from "../../../launch/client";
 import { describeQuietly, stopQuietly, waitReady } from "../../../launch/ensure";
 import { resolveWorkerSpawnCmd } from "../../../subprocess/worker-client";
@@ -42,12 +37,9 @@ function relayPort(cdpUrl: string): string | null {
 		return null;
 	}
 }
-<<<<<<< ours — variable `RELAY_DAEMON_NAME` (T+F, confidence: medium)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 /** Stable broker daemon name for the relay server. */
 export const RELAY_DAEMON_NAME = "tau.browser.relay";
-=======
->>>>>>> theirs — variable `RELAY_DAEMON_NAME` (T+F, confidence: medium)
 
 const RELAY_BROKER_SCOPE = "browser-relay";
 /** Matches the serve banner (`tau browser relay listening on http://…`). */

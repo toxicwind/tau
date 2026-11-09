@@ -1,4 +1,3 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { join } from "node:path";
 import * as path from "node:path";
@@ -6,37 +5,6 @@ import { untilAborted } from "@tau/tau-utils";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 import type { ElementHandle, KeyInput, MouseButton, Page } from "puppeteer-core";
 import { throwIfAborted } from "../tool-errors";
-=======
-import type { Protocol } from "devtools-protocol";
-import { untilAborted } from "@oh-my-pi/pi-utils";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
-import type {
-	ElementHandle,
-	Frame,
-	JSHandle,
-	KeyboardTypeOptions,
-	KeyInput,
-	KeyPressOptions,
-	MouseButton,
-	Page,
-	Realm,
-} from "puppeteer-core";
-import { ToolAbortError, throwIfAborted } from "../tool-errors";
-import { splitKeyCombo, ternKey } from "./tern/keys";
-import { devtoolsFrameId } from "./frames";
-import { untilAbortedOrReleased } from "./op-timeouts";
-import {
-	createFilePicker,
-	openUploadSources,
-	pickedFiles,
-	refuseFolders,
-	setFileInputPaths,
-	type UploadFileInfo,
-	type UploadRoute,
-	type UploadSource,
-	type UploadStaging,
-} from "./upload-files";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/browser/interactions.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /** Options accepted by coordinate-based mouse clicks. */
 export interface ClickAtOptions {

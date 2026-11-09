@@ -237,7 +237,6 @@ The integration test spawns a real `tau --mode rpc` against an
 
 ## Troubleshooting
 
-<<<<<<< ours — heading `Troubleshooting` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `| Container exits with `PI_ROOT … missing` | `/work/pi` mount e…` +4 more
 | Symptom | Check |
 |---|---|
@@ -250,19 +249,6 @@ The integration test spawns a real `tau --mode rpc` against an
 | `refusing to open PR: \`bun run test\` failed before open PR` | The repo suite is red at HEAD. Fix and commit, or `skip_checks=true` if the failure pre-exists on the default branch. |
 | `Failed to load tau_natives` | Wrong arch / missing native. `bun run tau:image` then `bun run robtau:build`. |
 | `No API key found for <provider>` | `~/.tau/agent/models.container.yml` mount missing or provider id mismatch with `ROBTAU_MODEL`. |
-=======
-| Symptom                                                       | Check                                                                                                                                                                                     |
-| ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `401 invalid signature`                                       | `GITHUB_WEBHOOK_SECRET` mismatch with the repo webhook config.                                                                                                                            |
-| Container exits with `PI_ROOT … missing`                      | `/work/pi` mount empty inside the container; on the host either run `docker compose` from `python/robomp/` so `PI_ROOT` defaults to `../..`, or export `PI_ROOT` to a valid omp checkout. |
-| `git push: Authentication required`                           | Bot PAT lacks push, or `ROBOMP_BOT_LOGIN` does not identify the PAT account's mention handle (production: `roboomp`, no `@`/`[bot]`).                                                     |
-| `refusing to push: commit author identity mismatch`           | Some commit not authored as `ROBOMP_GIT_AUTHOR_*`. The error lists the offending shas; `git commit --amend --reset-author --no-edit`.                                                     |
-| `refusing to push: working tree is dirty`                     | Uncommitted agent edits. Or just call `gh_open_pr`, which auto-commits `bun run fix` output.                                                                                              |
-| `bun check failed before PR creation`                         | Fix the reported failure and retry `gh_open_pr`.                                                                                                                                          |
-| `refusing to open PR: \`bun run test\` failed before open PR` | The repo suite is red at HEAD. Fix and commit, or `skip_checks=true` if the failure pre-exists on the default branch.                                                                     |
-| `Failed to load pi_natives`                                   | Wrong arch / missing native. `bun run pi:image` then `bun run robomp:build`.                                                                                                              |
-| `No API key found for <provider>`                             | `~/.omp/agent/models.container.yml` mount missing or provider id mismatch with `ROBOMP_MODEL`.                                                                                            |
->>>>>>> theirs — heading `Troubleshooting` (S+F, confidence: low) · weave: run 'weave explain python/robtau/README.md' for per-hunk detail, 'weave check' to verify your resolution
 
 ## Layout
 

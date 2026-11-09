@@ -14,18 +14,9 @@
  * the critical path is three dependent waves.
  */
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import type { FindHit, FindStats } from "@oh-my-pi/pi-tui/tools…`
 import type { Judge, JudgmentResult, NoulQuestion } from "@tau/tau-ai";
 import type { FindHit, FindStats } from "@tau/tau-tui/tools/find";
-=======
-import type { Judge, JudgmentResult, NoulQuestion } from "@oh-my-pi/pi-ai";
-import type { FindCoverage, FindHit, FindStats, FindTimeout } from "@oh-my-pi/pi-tui/tools/find";
-import { untilAborted } from "@oh-my-pi/pi-utils";
-import type { InternalUrlFilesystem } from "../../internal-urls/url-filesystem";
-import { type SpotlightClient, SpotlightError } from "../../spotlight/client";
-import type { SpotlightThinking } from "../../spotlight/types";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/tools/jfind/cascade.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { throwIfAborted } from "../tool-errors";
 import { fileScore, grepIndex, idf } from "./lexical";
 import { keywords as deriveKeywords } from "./keywords";

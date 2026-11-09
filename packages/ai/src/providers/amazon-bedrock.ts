@@ -12,7 +12,6 @@
  * only AWS's own regional host is re-pointed at the resolved region. SigV4 unaffected.
  */
 
-<<<<<<< ours — imports `file_header` (T+F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `} from "@oh-my-pi/pi-utils";`
 import type { Effort } from "@tau/tau-catalog/effort";
 import { mapEffortToAnthropicAdaptiveEffort, requireSupportedEffort } from "@tau/tau-catalog/model-thinking";
@@ -25,12 +24,6 @@ import {
 	parseStreamingJsonThrottled,
 	USER_AGENT,
 } from "@tau/tau-utils";
-=======
-import type { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { mapEffortToAnthropicAdaptiveEffort, requireSupportedEffort } from "@oh-my-pi/pi-catalog/model-thinking";
-import { calculateCost } from "@oh-my-pi/pi-catalog/models";
-import { $flag, fetchWithRetry, logger, parseStreamingJsonThrottled, USER_AGENT } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (T+F, confidence: medium) · weave: run 'weave explain packages/ai/src/providers/amazon-bedrock.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { renderDemotedThinking } from "../dialect/demotion";
 import * as AIError from "../error";
 import { parseToolCallArguments } from "../utils/tool-call-arguments";

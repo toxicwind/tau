@@ -6,18 +6,11 @@
  * result pairs collapsed to single lines, thinking elided, custom messages
  * as one-liners. No system prompt, no tool catalog, no config sections.
  */
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { escapeXmlText } from "@oh-my-pi/pi-utils";`
 import type { AgentMessage } from "@tau/tau-agent-core";
 import type { AssistantMessage, ImageContent, TextContent, ToolResultMessage } from "@tau/tau-ai";
 import { escapeXmlText } from "@tau/tau-utils";
 import { INTENT_FIELD } from "@tau/tau-wire";
-=======
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, ImageContent, TextContent, ToolResultMessage } from "@oh-my-pi/pi-ai";
-import { countNewlines, escapeXmlText, isRecord } from "@oh-my-pi/pi-utils";
-import { INTENT_FIELD } from "@oh-my-pi/pi-wire";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/session/session-history-format.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type {
 	BashExecutionMessage,
 	BranchSummaryMessage,

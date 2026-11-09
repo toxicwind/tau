@@ -4,16 +4,10 @@ import {
 	findTranscriptUsageAnchor,
 	isTranscriptUsageAnchor,
 	type SessionMessageEntry,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { isRecord } from "@oh-my-pi/pi-utils";`
 } from "@tau/tau-agent-core/compaction";
 import type { AssistantMessage, Model, ProviderResponseMetadata, Usage } from "@tau/tau-ai";
 import { isRecord } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-agent-core/compaction";
-import type { AssistantMessage, Model, ProviderResponseMetadata, Usage } from "@oh-my-pi/pi-ai";
-import { type } from "@oh-my-pi/omptype";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/session/session-stats.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { ModelRegistry } from "../config/model-registry";
 import type { Settings } from "../config/settings";
 

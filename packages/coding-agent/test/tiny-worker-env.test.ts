@@ -87,7 +87,6 @@ describe("nativeLibraryPathOverlay", () => {
 	});
 });
 
-<<<<<<< ours — test_suite `tinyWorkerLogPath` (T+S+F, confidence: low)
 // refused_by: rename_vs_edit_guard · collision: none (both sides edited, nowhere the same lines)
 describe("tinyWorkerLogPath", () => {
 	// Regression: the log used to be `${endpoint}.log`, which on Windows turns
@@ -106,26 +105,6 @@ describe("tinyWorkerLogPath", () => {
 		expect(logPath.includes(".sock")).toBe(false);
 		if (process.platform === "win32") {
 			expect(tinyWorkerEndpoint("/runtime", "lfm2.5-230m", "onnx").startsWith("\\\\.\\pipe\\")).toBe(true);
-=======
-describe("sharedWorkerLogPath", () => {
-	// Regression: the log used to be `${endpoint}.log`, which on Windows turns
-	// the named-pipe endpoint (`\\.\pipe\omp-tiny-…`) into an unopenable file
-	// path and crashed `--smoke-test` with ENOENT.
-	it("stays under the runtime directory instead of deriving from the endpoint", () => {
-		const runtimeDir = "/runtime";
-		const name = tinyWorkerName("lfm2.5-230m", "onnx");
-		const logPath = sharedWorkerLogPath(runtimeDir, name);
-		// `path.join` is platform-native, so assert containment through
-		// `path.relative` rather than assuming the host's separator: on Windows
-		// the same call yields `\runtime\<name>.log`.
-		const relativeToRuntime = path.relative(runtimeDir, logPath);
-		expect(path.isAbsolute(relativeToRuntime)).toBe(false);
-		expect(relativeToRuntime.startsWith("..")).toBe(false);
-		expect(logPath.endsWith(".log")).toBe(true);
-		expect(logPath.includes(".sock")).toBe(false);
-		if (process.platform === "win32") {
-			expect(ipcEndpoint(runtimeDir, name).startsWith("\\\\.\\pipe\\")).toBe(true);
->>>>>>> theirs — test_suite `tinyWorkerLogPath` (T+S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/tiny-worker-env.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 			expect(logPath.startsWith("\\\\.\\pipe\\")).toBe(false);
 		}
 	});

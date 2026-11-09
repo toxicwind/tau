@@ -9,14 +9,9 @@
 import type { AgentMessage } from "@tau/tau-agent-core";
 import type { ModelRegistry } from "../config/model-registry";
 import type { Settings } from "../config/settings";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import type { MnemopiSessionState } from "../mnemopi/state";`
 import type { HindsightSessionState } from "../hindsight/state";
 import type { MnemotauSessionState } from "../mnemotau/state";
-=======
-import type { HindsightSessionStateApi } from "../hindsight/state";
-import type { MnemopiSessionStateApi } from "../mnemopi/state";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/memory-backend/types.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { AgentSession } from "../session/agent-session";
 
 export type MemoryBackendId = "off" | "local" | "hindsight" | "mnemotau" | "sharpshooter";
@@ -96,11 +91,7 @@ export interface MemoryBackendStartOptions {
 	taskDepth: number;
 	parentHindsightSessionState?: HindsightSessionStateApi;
 	parentMnemotauSessionState?: MnemotauSessionState;
-<<<<<<< ours — scope `parentMnemopiSessionState` in interface `MemoryBackendStartOptions`, deleted in ours (S, confidence: medium)
 // refused_by: container_member · collision: none (no common ancestor text)
-=======
-	parentMnemopiSessionState?: MnemopiSessionStateApi;
->>>>>>> theirs — scope `parentMnemopiSessionState` deleted in ours
 }
 
 /** A successful recall, including an empty result, staged until user-turn delivery. */

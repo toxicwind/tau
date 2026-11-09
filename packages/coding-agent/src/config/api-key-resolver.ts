@@ -1,22 +1,9 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { ApiKeyResolution, ApiKeyResolver } from "@oh-my-p…` +1 more
 import type { ApiKeyResolution, ApiKeyResolver } from "@tau/tau-ai/auth-retry";
 import * as AIError from "@tau/tau-ai/error";
 import { isUsageLimitOutcome } from "@tau/tau-ai/error/rate-limit";
 import type { AuthStorage } from "@tau/tau-ai/auth-storage";
 import type { Api, Model } from "@tau/tau-ai/types";
-=======
-import {
-	type ApiKeyResolution,
-	type ApiKeyResolver,
-	createOAuthProvenance,
-	markAfterSiblingWait,
-} from "@oh-my-pi/pi-ai/auth-retry";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { isUsageLimitOutcome } from "@oh-my-pi/pi-ai/error/rate-limit";
-import type { AuthApiKeyOptions, AuthStorage } from "@oh-my-pi/pi-ai/auth-storage";
-import type { Api, Model } from "@oh-my-pi/pi-ai/types";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/config/api-key-resolver.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /** Model slice accepted by the model-form `resolver(model, sessionId)` overload. */
 export type ApiKeyResolverModel = Pick<Model<Api>, "provider" | "baseUrl" | "id">;

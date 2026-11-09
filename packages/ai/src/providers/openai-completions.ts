@@ -1,4 +1,3 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { $env, logger, parseStreamingJson, parseStreamingJsonTh…`
 import { resolveModelPolicy } from "@tau/tau-catalog/compat/resolve";
 import type { Effort } from "@tau/tau-catalog/effort";
@@ -7,21 +6,6 @@ import { calculateCost } from "@tau/tau-catalog/models";
 import type { ResolvedOpenAICompat } from "@tau/tau-catalog/types";
 import { clinePassClientHeaders } from "@tau/tau-catalog/wire/cline-pass";
 import { $env, logger, parseStreamingJson, parseStreamingJsonThrottled } from "@tau/tau-utils";
-=======
-import { resolveModelPolicy } from "@oh-my-pi/pi-catalog/compat/resolve";
-import type { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { resolveWireModelId } from "@oh-my-pi/pi-catalog/model-thinking";
-import { calculateCost } from "@oh-my-pi/pi-catalog/models";
-import type { ResolvedOpenAICompat } from "@oh-my-pi/pi-catalog/types";
-import { clinePassClientHeaders } from "@oh-my-pi/pi-catalog/wire/cline-pass";
-import {
-	$env,
-	logger,
-	parseStreamingJson,
-	parseStreamingJsonThrottled,
-	type ServerSentEvent,
-} from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/src/providers/openai-completions.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { renderDemotedThinking } from "../dialect/demotion";
 import { getOutputCeiling } from "./output-ceilings";
 import * as AIError from "../error";
@@ -240,19 +224,7 @@ function reasoningDetailKey(detail: unknown): string {
 	}
 	return `json:${JSON.stringify(detail) ?? "null"}`;
 }
-<<<<<<< ours — interstitial `between:packages/ai/src/providers/openai-completions.ts::function::parseStoredThoughtSignature:packages/ai/src/providers/openai-completions.ts::type::StoredGeminiSignature` (T+S, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `// encrypted `reasoning_details` entry) and a message-level `th…` +2 more
-=======
-
-// A single tool-call turn on an OpenAI-compatible Gemini wire can carry two
-// independent signatures: a per-call one (`extra_content.google|vertex` or an
-// encrypted `reasoning_details` entry) and a message-level signature
-// (`thinking_signature`, `thought_signature`, or `reasoning_signature`).
-// Both are stashed together on the originating tool call's `thoughtSignature`
-// so persistence and replay preserve each field.
-// `perCall` holds the raw extra_content object or reasoning detail; `message`
-// holds the message-level signature in its wire shape.
->>>>>>> theirs — interstitial `between:packages/ai/src/providers/openai-completions.ts::function::parseStoredThoughtSignature:packages/ai/src/providers/openai-completions.ts::type::StoredGeminiSignature` (T+S, confidence: medium)
 
 // A single tool-call turn on an OpenAI-compatible Gemini wire can carry two
 // independent signatures: a per-call one (`extra_content.google|vertex` or an
@@ -1022,7 +994,6 @@ const streamOpenAICompletionsOnce = (
 						headers: headersWithTimeout,
 						body: params,
 						signal: requestSignal,
-<<<<<<< ours — scope `(async () => {` in function `streamOpenAICompletionsOnce` (F, confidence: medium)
 // refused_by: statement_fold · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 						// Provider in-flight admission caps (freeinference limit=2)
 						// are enforced by the shared cross-process lease in
@@ -1031,9 +1002,6 @@ const streamOpenAICompletionsOnce = (
 						// `providers.maxInFlightRequests` settings. Applied after
 						// copilot fallback wrap so the queued path is covered by the
 						// lease even when the fetch is wrapped for retries.
-=======
-						maxAttempts: options?.maxHttpAttempts,
->>>>>>> theirs — scope `(async () => {`
 						fetch: wrapFetchForCopilotFallback(
 							wrapFetchForRequestCompression(options?.fetch ?? fetch, model),
 							model.provider === "github-copilot",
@@ -1981,7 +1949,6 @@ export const streamOpenAICompletions: StreamFunction<"openai-completions"> = (mo
 	const resolvedModel = resolveOpenAICompletionsCompat(model);
 	const originalToolChoice = (options as OpenAICompletionsOptions | undefined)?.toolChoice;
 	const log = (msg: string) => console.debug(msg);
-<<<<<<< ours — scope `return withReplaySafeStreamRetry(resolvedMode...` in function `streamOpenAICompletions` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `retryProviderErrors: true,`
 	const attempt = (m: typeof resolvedModel, ctx: typeof context, opts?: typeof options) =>
 		withReasoningOnlyEmptyRetry(
@@ -1996,13 +1963,6 @@ export const streamOpenAICompletions: StreamFunction<"openai-completions"> = (mo
 				}),
 			log,
 		);
-=======
-	return withReplaySafeStreamRetry(resolvedModel, context, options, streamOpenAICompletionsOnce, {
-		retryEmptyCompletion: true,
-		retryProviderErrors: options?.maxHttpAttempts === undefined,
-		maxProviderErrorRetries: 1,
-	});
->>>>>>> theirs — scope `return withReplaySafeStreamRetry(resolvedMode...`
 	// Dots 3 Note (and related) models return empty array args under forced
 	// tool_choice (e.g. {"list":[]}) but correct data under auto. Detect the
 	// degradation and retry with auto. See Dots 3 recon 2026-10-13.
@@ -2535,7 +2495,6 @@ export function convertMessages(
 	const maxNormalizedToolCallIdLength = compat.requiresMistralToolIds
 		? 9
 		: compat.usesOpenAIToolCallIdLimit
-<<<<<<< ours — function `convertMessages` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 			? 40
 			: undefined;
@@ -3102,507 +3061,6 @@ export function convertMessages(
 		if (!added) {
 			params.push({ role: 'user', content: [{ type: 'text', text: `(${totalImgs - GLOBAL_MAX_IMAGES} additional image(s) omitted: request exceeds the ${GLOBAL_MAX_IMAGES}-image limit)` }] });
 		}
-=======
-			? OPENAI_TOOL_CALL_ID_MAX_LENGTH
-			: undefined;
-	const duplicateToolCallIdSuffixPrefix = compat.requiresMistralToolIds ? "dup" : undefined;
-	const normalizeCompletionsToolCallId = (id: string, source?: AssistantMessage): string => {
-		if (compat.requiresMistralToolIds) return normalizeMistralToolId(id, true);
-
-		const isSameModelSource =
-			source !== undefined &&
-			source.provider === model.provider &&
-			source.api === model.api &&
-			source.model === model.id;
-		// Cross-model replay converts OpenAI Responses composite IDs from
-		// `{call_id}|{item_id}` to the Chat Completions `call_id`. Same-model
-		// Chat Completions IDs are provider-issued opaque correlation tokens.
-		if (!isSameModelSource && id.includes("|")) {
-			const [callId] = id.split("|");
-			return normalizeToolCallId(callId, OPENAI_TOOL_CALL_ID_MAX_LENGTH);
-		}
-
-		if (compat.usesOpenAIToolCallIdLimit)
-			return id.length > OPENAI_TOOL_CALL_ID_MAX_LENGTH ? id.slice(0, OPENAI_TOOL_CALL_ID_MAX_LENGTH) : id;
-		return id;
-	};
-	const transformedMessages = transformMessages(
-		context.messages,
-		model,
-		(id, _target, source) => normalizeCompletionsToolCallId(id, source),
-		maxNormalizedToolCallIdLength,
-		duplicateToolCallIdSuffixPrefix,
-		compat,
-	);
-
-	const remappedToolCallIds = new Map<string, string[]>();
-	let generatedToolCallIdCounter = 0;
-
-	const generateFallbackToolCallId = (seed: string): string => {
-		generatedToolCallIdCounter += 1;
-		const hash = Bun.hash(`${model.provider}:${model.id}:${seed}:${generatedToolCallIdCounter}`).toString(36);
-		return `call_${hash}`;
-	};
-
-	const rememberToolCallId = (originalId: string, normalizedId: string): void => {
-		const queue = remappedToolCallIds.get(originalId);
-		if (queue) {
-			queue.push(normalizedId);
-			return;
-		}
-		remappedToolCallIds.set(originalId, [normalizedId]);
-	};
-
-	const consumeToolCallId = (originalId: string): string | null => {
-		const queue = remappedToolCallIds.get(originalId);
-		if (!queue || queue.length === 0) return null;
-		const nextId = queue.shift() ?? null;
-		if (queue.length === 0) remappedToolCallIds.delete(originalId);
-		return nextId;
-	};
-
-	const ensureToolCallId = (rawId: string, seed: string, source?: AssistantMessage): string => {
-		const normalized = normalizeCompletionsToolCallId(rawId, source);
-		if (normalized.trim().length > 0) return normalized;
-		return generateFallbackToolCallId(seed);
-	};
-
-	const systemPrompts = normalizeSystemPrompts(context.systemPrompt);
-	if (systemPrompts.length > 0) {
-		const useDeveloperRole = model.reasoning && compat.supportsDeveloperRole;
-		const role = useDeveloperRole ? "developer" : "system";
-		// Default to one block per ordered system prompt so the leading prefix
-		// stays byte-identical between turns and the provider's KV cache can
-		// reuse it. Hosts whose chat templates reject follow-up system messages
-		// (Qwen via vLLM, MiniMax, Alibaba Dashscope, Qwen Portal, …) opt out
-		// via `compat.supportsMultipleSystemMessages = false`; in that mode we
-		// coalesce into a single message joined by `\n\n`.
-		if (compat.supportsMultipleSystemMessages) {
-			for (const systemPrompt of systemPrompts) {
-				params.push({ role, content: systemPrompt });
-			}
-		} else {
-			params.push({ role, content: systemPrompts.join("\n\n") });
-		}
-	}
-
-	let lastRole: string | null = null;
-
-	for (let i = 0; i < transformedMessages.length; i++) {
-		const msg = transformedMessages[i];
-		// Some providers (e.g. Mistral/Devstral) don't allow user messages directly after tool results
-		// Insert a synthetic assistant message to bridge the gap
-		if (
-			compat.requiresAssistantAfterToolResult &&
-			lastRole === "toolResult" &&
-			(msg.role === "user" || msg.role === "developer")
-		) {
-			params.push({
-				role: "assistant",
-				content: "I have processed the tool results.",
-			});
-		}
-
-		const devAsUser = !compat.supportsDeveloperRole;
-		if (msg.role === "user" || msg.role === "developer") {
-			const role = !devAsUser && msg.role === "developer" ? "developer" : "user";
-			if (typeof msg.content === "string") {
-				const text = msg.content.toWellFormed();
-				if (text.trim().length === 0) continue;
-				params.push({
-					role: role,
-					content: text,
-				});
-			} else {
-				const supportsImages = isOpenAICompletionsVisionSupported(model);
-				const content: ChatCompletionContentPart[] = [];
-				let omittedImages = false;
-				for (const item of msg.content) {
-					if (item.type === "text") {
-						const text = item.text.toWellFormed();
-						if (text.trim().length === 0) continue;
-						content.push({
-							type: "text",
-							text,
-						} satisfies ChatCompletionContentPartText);
-					} else if (supportsImages) {
-						content.push({
-							type: "image_url",
-							image_url: {
-								url: item.url ?? `data:${item.mimeType};base64,${item.data}`,
-								// Chat Completions has no "original"; omit it (provider default).
-								...(item.detail && item.detail !== "original" ? { detail: item.detail } : {}),
-							},
-						} satisfies ChatCompletionContentPartImage);
-					} else {
-						omittedImages = true;
-					}
-				}
-				if (omittedImages) {
-					content.push({
-						type: "text",
-						text: NON_VISION_IMAGE_PLACEHOLDER,
-					} satisfies ChatCompletionContentPartText);
-				}
-				if (content.length === 0) continue;
-				params.push({
-					role: "user",
-					content,
-				});
-			}
-		} else if (msg.role === "assistant") {
-			const assistantMsg: OpenAICompletionsAssistantMessageParam = {
-				role: "assistant",
-				content: null,
-			};
-
-			const textBlocks = msg.content.filter(b => b.type === "text") as TextContent[];
-			// Filter out empty text blocks to avoid API validation errors
-			const nonEmptyTextBlocks = textBlocks.filter(b => b.text && b.text.trim().length > 0);
-			if (nonEmptyTextBlocks.length > 0) {
-				// Always send assistant content as a plain string. Some OpenAI-compatible
-				// backends mirror array-of-text-block payloads back to the model literally,
-				// causing recursive nested content in subsequent turns.
-				// Join ordinary adjacent text blocks with no separator so bridge
-				// stitching, imported transcripts, and streaming chunks keep their
-				// original byte sequence. Demoted-thinking blocks (kDemotedThinking,
-				// synthesized by transformMessages) are the one exception: bare
-				// Anthropic-dialect reasoning would otherwise glue onto the first word
-				// of the visible answer. Insert a paragraph break after them — only
-				// when another block actually follows, so a trailing demoted block
-				// never ships trailing whitespace.
-				assistantMsg.content = nonEmptyTextBlocks
-					.map((b, i) => {
-						const text = b.text.toWellFormed();
-						return isDemotedThinking(b) && i < nonEmptyTextBlocks.length - 1 ? `${text}\n` : text;
-					})
-					.join("");
-			}
-
-			// Handle thinking blocks
-			const thinkingBlocks = msg.content.filter(b => b.type === "thinking") as ThinkingContent[];
-			// Filter out empty thinking blocks to avoid API validation errors
-			const nonEmptyThinkingBlocks = thinkingBlocks.filter(b => b.thinking && b.thinking.trim().length > 0);
-			if (compat.mistralReasoningContentParts && nonEmptyThinkingBlocks.length > 0) {
-				// Mistral Medium 3.5 reads thinking from ordered content parts,
-				// not a top-level reasoning_content field. Preserve boundaries
-				// across mixed thinking/text and tool-call assistant turns.
-				const parts: Array<ChatCompletionContentPartText | ChatCompletionMistralThinkingPart> = [];
-				for (const block of msg.content) {
-					if (block.type === "thinking" && block.thinking.trim()) {
-						parts.push({ type: "thinking", thinking: [{ type: "text", text: block.thinking.toWellFormed() }] });
-					} else if (block.type === "text" && block.text.trim()) {
-						parts.push({ type: "text", text: block.text.toWellFormed() });
-					}
-				}
-				assistantMsg.content = parts;
-			} else if (nonEmptyThinkingBlocks.length > 0) {
-				if (compat.requiresThinkingAsText) {
-					const thinkingText = nonEmptyThinkingBlocks
-						.map(b => renderDemotedThinking(model.id, b.thinking))
-						.join(" ");
-					// `content` is a plain string at this point (set above) or null —
-					// never an array. Prepend the demoted thinking to the string form.
-					assistantMsg.content =
-						typeof assistantMsg.content === "string" && assistantMsg.content.length > 0
-							? `${thinkingText} ${assistantMsg.content}`
-							: thinkingText;
-				} else if (compat.requiresReasoningContentForToolCalls) {
-					// Use the streamed signature when the backend accepts whichever
-					// recognized field name was emitted (allowsSynthetic=true). Backends
-					// like opencode-kimi-with-thinking and DeepSeek demand the exact
-					// configured `reasoningContentField` instead, so honor that here
-					// rather than echoing the upstream field name.
-					const signature = nonEmptyThinkingBlocks[0].thinkingSignature;
-					const wireField =
-						compat.allowsSyntheticReasoningContentForToolCalls &&
-						(signature === "reasoning_content" || signature === "reasoning" || signature === "reasoning_text")
-							? signature
-							: signature === "reasoning_content" || signature === "reasoning" || signature === "reasoning_text"
-								? (compat.reasoningContentField ?? "reasoning_content")
-								: undefined;
-					if (wireField) {
-						assistantMsg[wireField] = nonEmptyThinkingBlocks.map(b => b.thinking).join("\n");
-					}
-				} else if (compat.thinkingFormat === "zai" && model.reasoning) {
-					// Z.AI / Zhipu / Moonshot Kimi (native) / Xiaomi MiMo accept
-					// `reasoning_content` as a continuation hint even when they don't
-					// strictly require it. Surfacing the preserved thinking text here
-					// keeps cross-API replays (Z.AI Anthropic → Z.AI OpenAI, etc.)
-					// shipping reasoning as structured `reasoning_content` rather than
-					// folded into conversation text (#3434). Signature is irrelevant on
-					// this path: `transform-messages` strips the source wire-format
-					// signature on cross-API replays before the block reaches us.
-					const reasoningField = compat.reasoningContentField ?? "reasoning_content";
-					assistantMsg[reasoningField] = nonEmptyThinkingBlocks.map(b => b.thinking).join("\n");
-				} else if (compat.replayReasoningContent) {
-					// Local llama.cpp-style servers (llama.cpp, LM Studio, vLLM, Ollama
-					// in openai-completions mode, custom providers pointed at a
-					// loopback baseUrl) re-tokenize the entire prompt every request.
-					// Qwen3 / DeepSeek-R1 / GLM chat templates reconstruct the prior
-					// assistant turn's `<think>` block from `reasoning_content`; if we
-					// drop the field the template re-renders the assistant turn
-					// without thinking content, the rendered tokens diverge from the
-					// slot's existing KV cache, and llama.cpp falls back to full
-					// prompt re-processing (#3528). Honor the streamed signature when
-					// it identifies a recognized wire field so a model that emitted
-					// `reasoning` (some llama.cpp builds) round-trips to the same
-					// field; otherwise fall back to the configured
-					// `reasoningContentField`. Gated by the new compat flag rather
-					// than the existing `requires*` flags because local servers
-					// accept but don't validate the field — they just need it to
-					// preserve cache locality.
-					const signature = nonEmptyThinkingBlocks[0].thinkingSignature;
-					const reasoningField: OpenAICompletionsReasoningField =
-						signature === "reasoning_content" || signature === "reasoning" || signature === "reasoning_text"
-							? signature
-							: (compat.reasoningContentField ?? "reasoning_content");
-					assistantMsg[reasoningField] = nonEmptyThinkingBlocks.map(b => b.thinking).join("\n");
-				}
-			}
-
-			if (compat.requiresReasoningContentForToolCalls) {
-				const streamedReasoningField = nonEmptyThinkingBlocks[0]?.thinkingSignature;
-				const reasoningField =
-					compat.allowsSyntheticReasoningContentForToolCalls &&
-					(streamedReasoningField === "reasoning_content" ||
-						streamedReasoningField === "reasoning" ||
-						streamedReasoningField === "reasoning_text")
-						? streamedReasoningField
-						: (compat.reasoningContentField ?? "reasoning_content");
-				const reasoningContent = assistantMsg[reasoningField];
-				if (!reasoningContent) {
-					const reasoning = assistantMsg.reasoning;
-					const reasoningText = assistantMsg.reasoning_text;
-					if (reasoning && reasoningField !== "reasoning") {
-						assistantMsg[reasoningField] = reasoning;
-					} else if (reasoningText && reasoningField !== "reasoning_text") {
-						assistantMsg[reasoningField] = reasoningText;
-					} else if (nonEmptyThinkingBlocks.length > 0) {
-						assistantMsg[reasoningField] = nonEmptyThinkingBlocks.map(b => b.thinking).join("\n");
-					}
-				}
-			}
-
-			const liteLLMThinkingBlocks = encodeLiteLLMThinkingBlocks(msg.content);
-			if (liteLLMThinkingBlocks.length > 0) assistantMsg.thinking_blocks = liteLLMThinkingBlocks;
-
-			const toolCalls = msg.content.filter(b => b.type === "toolCall") as ToolCall[];
-			// Replay reasoning_content on assistant turns for backends that validate
-			// thinking-mode history. DeepSeek V4 requires reasoning_content on EVERY
-			// assistant turn once a prior turn included it — not just tool-call turns.
-			// The replay logic has three tiers:
-			//   1. Recover from thinking blocks with valid signatures (covers same-model replay
-			//      where nonEmptyThinkingBlocks may have filtered out empty-text blocks)
-			//   2. For providers that require the field but returned no reasoning at all
-			//      (e.g. proxy-stripped reasoning_content), emit an empty string
-			//   3. For providers that accept synthetic placeholders (Kimi, OpenRouter), emit "."
-			// DeepSeek V4 rejects synthetic "." placeholders — it validates the exact value —
-			// so the allowsSyntheticReasoningContentForToolCalls flag controls tier 3.
-			const canUseSyntheticReasoningContent =
-				compat.requiresReasoningContentForToolCalls &&
-				compat.allowsSyntheticReasoningContentForToolCalls &&
-				(compat.thinkingFormat === "openai" ||
-					compat.thinkingFormat === "openrouter" ||
-					compat.thinkingFormat === "zai");
-			// DeepSeek-compatible reasoning models require reasoning_content on all
-			// assistant turns. Providers that allow placeholders only need it on
-			// tool-call turns.
-			const needsReasoningOnAllTurns = compat.requiresReasoningContentForAllAssistantTurns;
-			const needsReasoningField = needsReasoningOnAllTurns || toolCalls.length > 0;
-			let hasReasoningField =
-				assistantMsg.reasoning_content !== undefined ||
-				assistantMsg.reasoning !== undefined ||
-				assistantMsg.reasoning_text !== undefined;
-			// Tier 1: Recover reasoning_content from ALL thinking blocks (including empty-text
-			// ones) when the provider requires exact replay and rejects synthetic placeholders.
-			// This covers the case where thinking blocks have valid signatures but were excluded
-			// by the nonEmptyThinkingBlocks filter above, or where thinking text is empty but
-			// the signature identifies the correct field name for replay.
-			// Only recognized OpenAI-compat reasoning field names qualify — opaque signatures
-			// from other providers (Anthropic encrypted, OpenAI Responses JSON, etc.) are not
-			// valid property names for the wire message.
-			if (
-				needsReasoningField &&
-				!hasReasoningField &&
-				compat.requiresReasoningContentForToolCalls &&
-				!compat.allowsSyntheticReasoningContentForToolCalls
-			) {
-				const allThinkingBlocks = msg.content.filter(b => b.type === "thinking") as ThinkingContent[];
-				if (allThinkingBlocks.length > 0) {
-					const signature = allThinkingBlocks[0].thinkingSignature;
-					if (signature === "reasoning_content" || signature === "reasoning" || signature === "reasoning_text") {
-						const reasoningField = compat.reasoningContentField ?? "reasoning_content";
-						assistantMsg[reasoningField] = allThinkingBlocks.map(b => b.thinking).join("\n");
-						hasReasoningField = true;
-					}
-				}
-			}
-			// Tier 2: When the provider requires reasoning_content but there are genuinely no
-			// thinking blocks at all (e.g. proxy stripped reasoning_content from the response),
-			// emit the configured fallback (empty string by default — the most honest
-			// representation of "no reasoning was captured"). Providers that validate
-			// the exact value opt in via `syntheticReasoningContentFallback` (the droid
-			// proxy's DeepSeek family requires a single space).
-			if (
-				needsReasoningField &&
-				!hasReasoningField &&
-				compat.requiresReasoningContentForToolCalls &&
-				!compat.allowsSyntheticReasoningContentForToolCalls
-			) {
-				const reasoningField = compat.reasoningContentField ?? "reasoning_content";
-				assistantMsg[reasoningField] = compat.syntheticReasoningContentFallback ?? "";
-				hasReasoningField = true;
-			}
-			// Tier 3: For providers that accept synthetic placeholders (Kimi, OpenRouter).
-			if (toolCalls.length > 0 && canUseSyntheticReasoningContent && !hasReasoningField) {
-				const reasoningField = compat.reasoningContentField ?? "reasoning_content";
-				assistantMsg[reasoningField] = ".";
-				hasReasoningField = true;
-			}
-			if (toolCalls.length > 0) {
-				assistantMsg.tool_calls = toolCalls.map((tc, toolCallIndex) => {
-					const toolCallId = ensureToolCallId(tc.id, `${i}:${toolCallIndex}:${tc.name}`, msg);
-					rememberToolCallId(tc.id, toolCallId);
-					const replayedToolCall: OpenAICompletionsFunctionToolCall = {
-						id: normalizeMistralToolId(toolCallId, compat.requiresMistralToolIds),
-						type: "function",
-						function: {
-							name: tc.name,
-							arguments: serializeToolArguments(tc.arguments),
-						},
-					};
-					const stored = normalizeStoredGeminiSignature(parseStoredThoughtSignature(tc.thoughtSignature));
-					const extraContent = getGeminiThoughtSignatureExtraContent(stored?.perCall);
-					if (extraContent) replayedToolCall.extra_content = extraContent;
-					return replayedToolCall;
-				});
-				for (const toolCall of toolCalls) {
-					const stored = normalizeStoredGeminiSignature(parseStoredThoughtSignature(toolCall.thoughtSignature));
-					const messageSignature = getGeminiMessageThoughtSignature(stored?.message);
-					if (!messageSignature) continue;
-					assistantMsg[messageSignature.field] = messageSignature.signature;
-					break;
-				}
-				const reasoningDetails = toolCalls.flatMap(tc => {
-					const stored = normalizeStoredGeminiSignature(parseStoredThoughtSignature(tc.thoughtSignature));
-					const perCall = stored?.perCall;
-					if (perCall === undefined || getGeminiThoughtSignatureExtraContent(perCall)) return [];
-					return [perCall];
-				});
-				if (reasoningDetails.length > 0) {
-					assistantMsg.reasoning_details = reasoningDetails;
-				}
-			}
-			// Some OpenAI-compatible backends concatenate assistant content as a
-			// string even for tool-call replay. OpenAI accepts an empty string here;
-			// null trips strict/proxy implementations before the tool result is read.
-			if (assistantMsg.content === null && (hasReasoningField || assistantMsg.tool_calls)) {
-				assistantMsg.content = "";
-			}
-			// Skip assistant messages that have no content, no tool calls, and no reasoning payload.
-			// Some OpenAI-compatible backends require replaying reasoning-only assistant turns
-			// so follow-up requests preserve the provider-specific reasoning field name.
-			const content = assistantMsg.content;
-			const hasContent =
-				content !== null &&
-				content !== undefined &&
-				(typeof content === "string" ? content.length > 0 : content.length > 0);
-			if (!hasContent && assistantMsg.tool_calls && compat.requiresAssistantContentForToolCalls) {
-				assistantMsg.content = ".";
-			}
-			if (!hasContent && !assistantMsg.tool_calls && !hasReasoningField) {
-				continue;
-			}
-			params.push(assistantMsg);
-		} else if (msg.role === "toolResult") {
-			// Batch consecutive tool results and collect all images
-			const imageBlocks: Array<{ type: "image_url"; image_url: { url: string } }> = [];
-			let j = i;
-
-			for (; j < transformedMessages.length && transformedMessages[j].role === "toolResult"; j++) {
-				const toolMsg = transformedMessages[j] as ToolResultMessage;
-
-				// Extract text and image content
-				const textResult = toolMsg.content
-					.filter(c => c.type === "text")
-					.map(c => (c as TextContent).text)
-					.join("\n");
-				const supportsImages = isOpenAICompletionsVisionSupported(model);
-				const hasImages = toolMsg.content.some(c => c.type === "image");
-				const omittedImages = hasImages && !supportsImages;
-
-				// Always send tool result with text (or placeholder if only images)
-				const hasText = textResult.length > 0;
-				const remappedToolCallId = consumeToolCallId(toolMsg.toolCallId);
-				const resolvedToolCallId =
-					remappedToolCallId ?? ensureToolCallId(toolMsg.toolCallId, `${j}:${toolMsg.toolName ?? "tool"}`);
-				const toolResultContent = omittedImages
-					? joinTextWithImagePlaceholder(textResult, true)
-					: hasText
-						? textResult
-						: hasImages
-							? "(see attached image)"
-							: "";
-				const toolResultMsg: OpenAICompletionsToolMessageParam = {
-					role: "tool",
-					content: toolResultContent.toWellFormed(),
-					tool_call_id: normalizeMistralToolId(resolvedToolCallId, compat.requiresMistralToolIds),
-				};
-				if (compat.requiresToolResultName && toolMsg.toolName) {
-					toolResultMsg.name = toolMsg.toolName;
-				}
-				params.push(toolResultMsg);
-
-				if (hasImages && supportsImages) {
-					for (const block of toolMsg.content) {
-						if (block.type === "image") {
-							imageBlocks.push({
-								type: "image_url",
-								image_url: {
-									url: block.url ?? `data:${block.mimeType};base64,${block.data}`,
-								},
-							});
-						}
-					}
-				}
-			}
-
-			i = j - 1;
-
-			// After all consecutive tool results, add a single user message with all images
-			if (imageBlocks.length > 0) {
-				if (compat.requiresAssistantAfterToolResult) {
-					params.push({
-						role: "assistant",
-						content: "I have processed the tool results.",
-					});
-				}
-
-				params.push({
-					role: "user",
-					content: [
-						{
-							type: "text",
-							text: "Attached image(s) from tool result:",
-						},
-						...imageBlocks,
-					],
-				});
-				lastRole = "user";
-			} else {
-				lastRole = "toolResult";
-			}
-			continue;
-		}
-
-		lastRole =
-			msg.role === "developer"
-				? model.reasoning && compat.supportsDeveloperRole
-					? "developer"
-					: "system"
-				: msg.role;
->>>>>>> theirs — function `convertMessages` (F, confidence: medium)
 	}
 
 	return params;

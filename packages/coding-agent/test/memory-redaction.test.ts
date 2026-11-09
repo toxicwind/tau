@@ -1,18 +1,6 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { redactMemorySecrets, redactMemoryTextFields, redactRememberWrite } from "tau/memory-backend/redact";
-=======
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import {
-	redactMemorySecrets,
-	redactMemoryTextFields,
-	redactRememberWrite,
-} from "@oh-my-pi/pi-coding-agent/memory-backend/redact";
-import { loadMnemopiConfig } from "@oh-my-pi/pi-coding-agent/mnemopi/config";
-import { loadMnemopi, loadMnemopiCore, MnemopiSessionState } from "@oh-my-pi/pi-coding-agent/mnemopi/state";
-import { TempDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/memory-redaction.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const NPM_TOKEN = `npm_${"a1B2c3D4e5F6g7H8i9J0kLmNoPqRsTuVwXy".slice(0, 36)}`;
 const AWS_KEY = "AKIAIOSFODNN7EXAMPLE";

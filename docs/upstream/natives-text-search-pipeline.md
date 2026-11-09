@@ -6,38 +6,23 @@ Terminology follows `docs/natives-architecture.md`:
 
 - **Generated binding**: public API in `packages/natives/native/index.d.ts`.
 - **Rust module layer**: N-API exports in `crates/tau-natives/src/*`.
-<<<<<<< ours — scope `- **Shared scan cache**: `pi-walker`-backed d...` in heading `Natives Text/Search Pipeline` (S, confidence: medium)
 // refused_by: statement_fold · collision: `- **Shared scan cache**: `pi-walker`-backed directory-entry cac…`
 - **Shared scan cache**: `tau-walker`-backed directory-entry cache (`crates/tau-walker/src/cache.rs`) used by discovery flows; N-API filesystem DTOs/conversions live in `crates/tau-natives/src/iofs.rs`.
-=======
-- **Shared listing cache**: `pi-walker`'s process-wide per-directory listing cache (`crates/pi-walker/src/walk/cache.rs`) used by discovery flows; N-API filesystem DTOs/conversions live in `crates/pi-natives/src/glob.rs`. See `docs/fs-scan-cache-architecture.md`.
->>>>>>> theirs — scope `- **Shared scan cache**: `pi-walker`-backed d...` · weave: run 'weave explain docs/upstream/natives-text-search-pipeline.md' for per-hunk detail, 'weave check' to verify your resolution
 
 ## Implementation files
 
 - `packages/natives/native/index.d.ts`
 - `crates/tau-natives/src/grep.rs`
 - `crates/tau-natives/src/glob.rs`
-<<<<<<< ours — scope `- `crates/pi-natives/src/glob_util.rs`` in heading `Implementation files`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 - `crates/tau-natives/src/glob_util.rs`
-=======
->>>>>>> theirs — scope `- `crates/pi-natives/src/glob_util.rs`` deleted in theirs
 - `crates/tau-natives/src/fd.rs`
-<<<<<<< ours — scope `- `crates/pi-natives/src/iofs.rs`` in heading `Implementation files` (S, confidence: medium)
 // refused_by: statement_fold · collision: `- `crates/pi-natives/src/iofs.rs``
 - `crates/tau-natives/src/iofs.rs`
-=======
-- `crates/pi-walker/src/fs/root.rs`
->>>>>>> theirs — scope `- `crates/pi-natives/src/iofs.rs``
 - `crates/tau-walker/src/lib.rs`
 - `crates/pi-walker/src/walk/mod.rs`
-<<<<<<< ours — scope `- `crates/pi-walker/src/cache.rs`` in heading `Implementation files` (S, confidence: medium)
 // refused_by: statement_fold · collision: `- `crates/pi-walker/src/cache.rs``
 - `crates/tau-walker/src/cache.rs`
-=======
-- `crates/pi-walker/src/walk/cache.rs`
->>>>>>> theirs — scope `- `crates/pi-walker/src/cache.rs``
 - `crates/pi-walker/src/glob.rs`
 - `crates/pi-walker/src/grep/mod.rs`
 - `crates/tau-natives/src/ast.rs`
@@ -100,13 +85,8 @@ Terminology follows `docs/natives-architecture.md`:
 
 ### Search/collection semantics
 
-<<<<<<< ours — heading `Search/collection semantics` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 - Matcher selection: the Rust regex engine is tried first, then PCRE2 for features such as lookaround/backreferences. `TAU_PCRE2_JIT=0`/`false` disables PCRE2 JIT and `1` enables it; when unset, JIT is enabled except on macOS.
-=======
-- Matcher selection: the Rust regex engine is tried first, then PCRE2 for features such as lookaround/backreferences. `OMP_PCRE2_JIT=0`/`false` disables PCRE2 JIT and `1` enables it; when unset, JIT is enabled except on macOS.
-- Filesystem grep defaults to `hidden=true`, `gitignore=true`, and `recursive=true` for simple glob filters. Directory walks skip `.git` and skip `node_modules` unless the glob mentions it.
->>>>>>> theirs — heading `Search/collection semantics` (S+F, confidence: low)
 - Context resolution:
    - `contextBefore/contextAfter` override legacy `context`.
    - Non-content modes do not collect context.
@@ -153,12 +133,8 @@ Batches flow through a bounded `tokio::sync::mpsc::Sender<Vec<Match>>` (each bat
 
 ## 2) File discovery (`glob`) and fuzzy path search (`fuzzyFind`)
 
-<<<<<<< ours — scope ``glob` and `fuzzyFind` share the optional `pi...` in heading `2) File discovery (`glob`) and fuzzy path search (`fuzzyFind`)` (S, confidence: medium)
 // refused_by: statement_fold · collision: ``glob` and `fuzzyFind` share the optional `pi-walker` scan cach…`
 `glob` and `fuzzyFind` share the optional `tau-walker` scan cache; matching logic differs. Cache use defaults to `false` for both APIs.
-=======
-`glob` and `fuzzyFind` share the optional `pi-walker` listing cache; matching logic differs. Cache use defaults to `false` for both APIs.
->>>>>>> theirs — scope ``glob` and `fuzzyFind` share the optional `pi...`
 
 ### `glob` flow
 
@@ -177,11 +153,8 @@ Batches flow through a bounded `tokio::sync::mpsc::Sender<Vec<Match>>` (each bat
 
 1. Rust implementation lives in `fd.rs`; generated export is `fuzzyFind`.
 2. Entries come from `pi_walker::walk::collect` on the native filesystem with the same cache opt-in (`FuzzyFindOptions.cache`).
-<<<<<<< ours — scope `2. Shared scan source from `pi-walker` with t...` in heading ``fuzzyFind` flow`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 2. Shared scan source from `tau-walker` with the same cache/no-cache split and walker-side stale-empty recheck policy.
-=======
->>>>>>> theirs — scope `2. Shared scan source from `pi-walker` with t...` deleted in theirs
 4. Symlink entries are excluded, but traversal follows symlinked directories. Directory result paths end in `/`; `totalMatches` counts all scored matches before the `maxResults` top-N bound (default 100).
 3. Scoring:
    - exact / starts-with / contains / subsequence-based fuzzy score;
@@ -236,7 +209,6 @@ Walk parallelism: pi-walker has no runtime of its own. Each walk starts `walk::O
 
 The cache is correct without invalidation because stamps change on every mutation, so it exposes none; direct native `astEdit` writes and agent mutations need no cache bookkeeping.
 
-<<<<<<< ours — heading `4) Shared scan/cache lifecycle (`pi-walker`)` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 ## 4) Shared scan/cache lifecycle (`tau-walker`)
 
@@ -252,8 +224,6 @@ Configuration is read from environment once:
 - `FS_SCAN_CACHE_MAX_BYTES`: maximum retained vector and path-string allocation bytes, default `67108864` (64 MiB).
 - `PI_WALK_WORKERS`: walker Rayon pool size, default `4`.
 
-=======
->>>>>>> theirs — heading `4) Shared scan/cache lifecycle (`pi-walker`)` (S+F, confidence: low)
 ## 5) ANSI text utilities (`text`)
 
 These are pure, in-memory utilities.
@@ -276,12 +246,8 @@ These are pure, in-memory utilities.
 - `sliceWithWidth`: returns `{ text, width }` for a column slice; strict width enforcement defaults to `false`.
 - `extractSegments`: extracts before/after segments around an overlay while restoring ANSI state for the `after` segment.
 - `setHangulCompatJamoWidthOverride(value)` controls U+3131–U+318E width correction for client-terminal compatibility: `0` uses the platform fallback, `1` forces one cell, `2` forces two, and `3` follows Unicode width.
-<<<<<<< ours — scope `- `sanitizeText` (ANSI/control/surrogate stri...` in heading `Key behaviors` (S, confidence: medium)
 // refused_by: statement_fold · collision: `- `sanitizeText` (ANSI/control/surrogate stripping with line-en…`
 - `sanitizeText` (ANSI/control/surrogate stripping with line-ending normalization) no longer lives in `text.rs`; it moved to `@tau/tau-utils` as a pure-JS implementation in `packages/utils/src/sanitize-text.ts`. The native binding was removed in the same change because the JS version was competitive on the benchmarked workloads, and keeping a Rust copy forced every caller (including `tau-utils`) to pull in `@tau/tau-natives`.
-=======
-- `sanitizeText` is not a native export. It lives in `@oh-my-pi/pi-utils` (`packages/utils/src/sanitize-text.ts`) and uses `Bun.stripANSI`, control-character removal, and malformed-surrogate cleanup.
->>>>>>> theirs — scope `- `sanitizeText` (ANSI/control/surrogate stri...`
 - `visibleWidth`: counts visible terminal cells using caller-supplied tab width. Width-sensitive exports clamp tab width to `1..16`; tabs occupy that fixed width rather than expanding to tab stops.
 - Text processing uses JS UTF-16 directly, with an ASCII fast path and grapheme segmentation for non-ASCII. OSC 66 scaled-text payloads contribute visible width instead of being treated as zero-width escapes.
 

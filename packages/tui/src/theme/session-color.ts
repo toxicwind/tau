@@ -1,10 +1,6 @@
 import { TERMINAL } from "../terminal-capabilities";
-<<<<<<< ours — interstitial `file_header` (S, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { hexToOklch, oklchCusp, oklchToHex, relativeLuminance }…`
 import { hexToOklch, oklchCusp, oklchToHex, relativeLuminance } from "@tau/tau-utils";
-=======
-import { hexToOklch, hueDistance, oklchCusp, oklchToHex, relativeLuminance } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (S, confidence: medium) · weave: run 'weave explain packages/tui/src/theme/session-color.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /**
  * Derive a stable 32-bit hash from a string using djb2.

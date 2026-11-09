@@ -1,6 +1,5 @@
 import { afterEach, beforeEach, describe, expect, mock, spyOn, test } from "bun:test";
 import { scheduler } from "node:timers/promises";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { Api, AssistantMessage, AssistantMessageEvent, Con…`
 import { clearCustomApis, registerCustomApi } from "@tau/tau-ai/api-registry";
 import * as AIError from "@tau/tau-ai/error";
@@ -8,15 +7,6 @@ import { createMockModel, type MockContent, registerMockApi } from "@tau/tau-ai/
 import { complete, completeSimple, stream, streamSimple } from "@tau/tau-ai/stream";
 import type { Api, AssistantMessage, AssistantMessageEvent, Context, Model } from "@tau/tau-ai/types";
 import { AssistantMessageEventStream } from "@tau/tau-ai/utils/event-stream";
-=======
-import { clearCustomApis, registerCustomApi } from "@oh-my-pi/pi-ai/api-registry";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { createMockModel, type MockContent, registerMockApi } from "@oh-my-pi/pi-ai/providers/mock";
-import { complete, completeSimple, stream, streamSimple } from "@oh-my-pi/pi-ai/stream";
-import type { Api, AssistantMessage, AssistantMessageEvent, Context, Model, ModelSpec } from "@oh-my-pi/pi-ai/types";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { wrapLeakedThinkingStream } from "@oh-my-pi/pi-ai/utils/leaked-thinking-stream";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/test/thinking-loop.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	GEMINI_HEADER_RUNAWAY_THRESHOLD,
 	GeminiHeaderRunDetector,
@@ -25,17 +15,10 @@ import {
 	THINKING_LOOP_ERROR_MARKER,
 	ThinkingLoopDetector,
 	withThinkingLoopGuard,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { Api, AssistantMessage, AssistantMessageEvent, Con…`
 } from "@tau/tau-ai/utils/thinking-loop";
 import { classifyModel } from "@tau/tau-catalog/compat/taxonomy";
 import { isRetryableError } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-ai/utils/thinking-loop";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { classifyModel } from "@oh-my-pi/pi-catalog/compat/taxonomy";
-import { isRetryableError } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 
 function context(): Context {
 	return { systemPrompt: [], messages: [{ role: "user", content: "go", timestamp: 0 }] };

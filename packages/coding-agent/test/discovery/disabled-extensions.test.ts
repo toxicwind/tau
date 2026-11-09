@@ -2,7 +2,6 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { initializeWithSettings, loadCapability } from "@oh-my-…`
 import { type ContextFile, contextFileCapability } from "tau/capability/context-file";
 import { resetSettingsForTest, Settings } from "tau/config/settings";
@@ -10,23 +9,6 @@ import { initializeWithSettings, loadCapability } from "tau/discovery";
 import { isShadowedExtension } from "@tau/tau-tui/overlays/extensions/types";
 import { loadAllExtensions } from "tau/modes/components/extensions/state-manager";
 import { __resetDirsFromEnvForTests, removeWithRetries, setAgentDir } from "@tau/tau-utils";
-=======
-import { enableUserSource } from "@oh-my-pi/pi-coding-agent/capability";
-import { type ContextFile, contextFileCapability } from "@oh-my-pi/pi-coding-agent/capability/context-file";
-import type { Skill } from "@oh-my-pi/pi-coding-agent/capability/skill";
-import type { EffectiveExtensionRoots } from "@oh-my-pi/pi-coding-agent/capability/types";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import {
-	disableProvider,
-	enableProvider,
-	initializeWithSettings,
-	loadCapability,
-} from "@oh-my-pi/pi-coding-agent/discovery";
-import { discoverExtensionPaths } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
-import { isShadowedExtension } from "@oh-my-pi/pi-tui/overlays/extensions/types";
-import { loadAllExtensions } from "@oh-my-pi/pi-coding-agent/modes/components/extensions/state-manager";
-import { __resetDirsFromEnvForTests, removeWithRetries, setAgentDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/discovery/disabled-extensions.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function restoreEnvValue(key: string, value: string | undefined): void {
 	if (value === undefined) {

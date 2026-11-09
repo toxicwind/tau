@@ -185,12 +185,9 @@ export const packages: PublishPackage[] = [
 		publishBin: { omp: "dist/cli.js" },
 		packLock: STATS_CLIENT_LOCK,
 	},
-<<<<<<< ours — scope `closing` in variable `packages` (S+F, confidence: low)
 // refused_by: container_member · collision: `{ dir: "packages/coding-agent", kind: "typescript", publishBin:…`
 	{ dir: "packages/agent", kind: "typescript" },
 	{ dir: "packages/coding-agent", kind: "typescript", publishBin: { tau: "dist/cli.js" } },
-=======
->>>>>>> theirs — scope `closing` · weave: run 'weave explain scripts/ci-release-publish.ts' for per-hunk detail, 'weave check' to verify your resolution
 ];
 
 function rewriteSrcToTypes(value: string): string {
@@ -493,7 +490,6 @@ function publishTargetJob(target: PublishTarget, packLocks: KeyedMutex): Publish
 		discard,
 	};
 }
-<<<<<<< ours — function `packAndPublish` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 async function packAndPublish(dir: string, name: string, version: string): Promise<void> {
 	if (isDryRun) {
@@ -537,8 +533,6 @@ async function packAndPublish(dir: string, name: string, version: string): Promi
 		await fs.rm(packDir, { recursive: true, force: true });
 	}
 }
-=======
->>>>>>> theirs — function `packAndPublish` (S+F, confidence: low)
 
 /**
  * npm's existing-version machine codes across supported CLI generations, plus

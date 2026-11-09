@@ -1,10 +1,6 @@
 /**
-<<<<<<< ours — interstitial `file_header` (T+F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `* omp auth-gateway HTTP server.`
  * tau auth-gateway HTTP server.
-=======
- * omp auth-gateway router and HTTP server.
->>>>>>> theirs — interstitial `file_header` (T+F, confidence: medium) · weave: run 'weave explain packages/ai/src/auth-gateway/server.ts' for per-hunk detail, 'weave check' to verify your resolution
  *
  * Accepts any provider-format request (OpenAI chat-completions, Anthropic
  * messages, OpenAI Responses) and dispatches through tau-ai's `streamSimple()`
@@ -33,18 +29,11 @@
  * serves them over HTTP behind bearer auth, `stdio.ts` over JSON lines.
  */
 
-<<<<<<< ours — interstitial `file_header` (T+F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `* omp auth-gateway HTTP server.`
 import { Effort } from "@tau/tau-catalog/effort";
 import { type ModelKind, modelKind } from "@tau/tau-catalog/types";
 import { logger } from "@tau/tau-utils";
 import type { AuthStorage } from "../auth-storage";
-=======
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { clampThinkingLevelForModel, getSupportedEfforts } from "@oh-my-pi/pi-catalog/model-thinking";
-import { type ModelKind, modelKind } from "@oh-my-pi/pi-catalog/types";
-import { logger } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (T+F, confidence: medium)
 import { classifyGatewayError } from "../error/gateway";
 import * as anthropicMessages from "../providers/anthropic-messages-server";
 import * as openaiChat from "../providers/openai-chat-server";
@@ -715,14 +704,9 @@ async function handlePiNative(
 		} catch (error) {
 			if (controller.signal.aborted) return aborted();
 			const classified = classifyGatewayError(error);
-<<<<<<< ours — function `handlePiNative` (T+F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 			logger.warn("auth-gateway non-streaming aborted", { format: "tau-native", error: classified.message, peer });
 			return piNative.formatError(classified.status, classified.type, classified.message);
-=======
-			logger.warn("auth-gateway non-streaming aborted", { format: "pi-native", error: classified.message, peer });
-			return noStoreErrorResponse(classified.status, classified.type, classified.message);
->>>>>>> theirs — function `handlePiNative` (T+F, confidence: medium)
 		} finally {
 			// Every non-streaming outcome — answered, upstream error, thrown,
 			// client gone — is done with the provider state here.
@@ -747,14 +731,9 @@ async function handlePiNative(
 			events = streamSimple(model, parsed.context, streamOpts);
 		} catch (error) {
 			const classified = classifyGatewayError(error);
-<<<<<<< ours — function `handlePiNative` (T+F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 			logger.warn("auth-gateway streamSimple threw", { format: "tau-native", error: classified.message, peer });
 			return piNative.formatError(classified.status, classified.type, classified.message);
-=======
-			logger.warn("auth-gateway streamSimple threw", { format: "pi-native", error: classified.message, peer });
-			return noStoreErrorResponse(classified.status, classified.type, classified.message);
->>>>>>> theirs — function `handlePiNative` (T+F, confidence: medium)
 		}
 		if (controller.signal.aborted) return aborted();
 		void events

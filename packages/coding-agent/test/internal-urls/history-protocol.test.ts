@@ -12,7 +12,6 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { removeWithRetries } from "@oh-my-pi/pi-utils";`
 import { Settings } from "tau/config/settings";
 import { InternalUrlRouter } from "tau/internal-urls";
@@ -24,28 +23,6 @@ import { CURRENT_SESSION_VERSION, type SessionEntry } from "tau/session/session-
 import type { ToolSession } from "tau/tools";
 import { ReadTool } from "tau/tools/read";
 import { removeWithRetries } from "@tau/tau-utils";
-=======
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { InternalUrlRouter } from "@oh-my-pi/pi-coding-agent/internal-urls";
-import { getInternalUrlSuggestions } from "@oh-my-pi/pi-tui/prompt/internal-url-autocomplete";
-import {
-	formatCurrentBranchFullHistory,
-	HistoryProtocolHandler,
-} from "@oh-my-pi/pi-coding-agent/internal-urls/history-protocol";
-import {
-	registerArtifactsDir,
-	resetRegisteredArtifactDirsForTests,
-} from "@oh-my-pi/pi-coding-agent/internal-urls/registry-helpers";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { CURRENT_SESSION_VERSION, type SessionEntry } from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
-import { removeWithRetries, TempDir } from "@oh-my-pi/pi-utils";
-
-import { cfgCompactionExperimentalContextManagement } from "@oh-my-pi/pi-coding-agent/session/context-settings";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/internal-urls/history-protocol.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 async function withTempDir<T>(fn: (dir: string) => Promise<T>): Promise<T> {
 	const dir = await fs.mkdtemp(path.join(os.tmpdir(), "history-protocol-"));

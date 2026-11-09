@@ -7,19 +7,11 @@
 
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import type { Ellipsis } from "@oh-my-pi/pi-natives";`
 import { ThinkingLevel } from "@tau/tau-agent-core";
 import type { Ellipsis } from "@tau/tau-natives";
 import { pluralize, sanitizeText } from "@tau/tau-utils";
 import { formatKeyHints, type KeyId } from "../app-keybindings";
-=======
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import { Ellipsis } from "@oh-my-pi/pi-natives";
-import { expandWindowsLongPath, getWindowsShortPath } from "@oh-my-pi/pi-natives/path";
-import { pluralize, sanitizeText } from "@oh-my-pi/pi-utils";
-import { formatKeyHint, type KeyId } from "../app-keybindings";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/tui/src/render/render-utils.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { getKeybindings } from "../keybindings";
 import type { Theme, ThemeColor } from "../theme/theme";
 import type { Component } from "../tui";

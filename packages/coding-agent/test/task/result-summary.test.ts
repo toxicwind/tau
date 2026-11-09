@@ -1,13 +1,7 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { formatTaskResultSummary } from "@oh-my-pi/pi-coding-ag…`
 import { formatTaskResultSummary } from "tau/task/result-summary";
 import type { SingleResult } from "@tau/tau-tui/tools/task";
-=======
-import { ASYNC_INLINE_RESULT_MAX_CHARS } from "@oh-my-pi/pi-coding-agent/session/async-job-delivery";
-import { formatTaskResultSummary, INLINE_OUTPUT_CHARS } from "@oh-my-pi/pi-coding-agent/task/result-summary";
-import type { SingleResult } from "@oh-my-pi/pi-tui/tools/task";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/task/result-summary.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function settledResult(output: string): SingleResult {
 	return {

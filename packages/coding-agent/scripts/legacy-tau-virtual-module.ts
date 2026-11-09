@@ -1,5 +1,4 @@
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { isEnoent } from "@tau/tau-utils/fs-error";
 import {
@@ -7,10 +6,6 @@ import {
 	LEGACY_PI_CONFIG,
 	type LegacyPiBundledPackage,
 } from "../src/extensibility/legacy-pi-config";
-=======
-import { isEnoent } from "@oh-my-pi/pi-utils/fs-error";
-import { isRecord } from "@oh-my-pi/pi-utils/type-guards";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/scripts/legacy-tau-virtual-module.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /** Build-time specifier resolved to bundled legacy Pi module namespaces. */
 export const LEGACY_PI_MODULES_SPECIFIER = LEGACY_PI_CONFIG.virtualModuleSpecifier;
@@ -29,41 +24,15 @@ const repoRoot = path.resolve(packageDir, ...LEGACY_PI_CONFIG.repoRootFromPackag
  */
 type RootWildcard = "flat" | "nested" | null;
 
-<<<<<<< ours — interface `BundledPackage` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
-=======
-interface BundledPackage {
-	readonly dir: string;
-	readonly identifier: string;
-	readonly rootShim: string | null;
-	readonly rootWildcard: RootWildcard;
-}
->>>>>>> theirs — interface `BundledPackage` (S+F, confidence: low)
 
-<<<<<<< ours — variable `BUNDLED_PACKAGES` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `{ dir: "agent", identifier: "PiAgentCore", rootShim: null },` +5 more
 const BUNDLED_PACKAGES: readonly LegacyPiBundledPackage[] = LEGACY_PI_BUNDLED_PACKAGES;
-=======
-const BUNDLED_PACKAGES: readonly BundledPackage[] = [
-	{ dir: "agent", identifier: "PiAgentCore", rootShim: null, rootWildcard: null },
-	{ dir: "ai", identifier: "PiAi", rootShim: "legacy-pi-ai-shim.ts", rootWildcard: null },
-	{ dir: "catalog", identifier: "PiCatalog", rootShim: null, rootWildcard: "flat" },
-	{ dir: "coding-agent", identifier: "PiCodingAgent", rootShim: "legacy-pi-coding-agent-shim.ts", rootWildcard: null },
-	{ dir: "natives", identifier: "PiNatives", rootShim: null, rootWildcard: null },
-	// pi-tui keeps stateful singletons (`TERMINAL`, theme, figure settings) in
-	// root-level and nested modules; extensions must share the host's records.
-	{ dir: "tui", identifier: "PiTui", rootShim: "legacy-pi-tui-shim.ts", rootWildcard: "nested" },
-	{ dir: "utils", identifier: "PiUtils", rootShim: null, rootWildcard: "flat" },
-];
->>>>>>> theirs — variable `BUNDLED_PACKAGES` (S+F, confidence: low)
 
 const TYPEBOX_MODULE_KEY = LEGACY_PI_CONFIG.typeboxModuleKey;
 const TYPEBOX_COMPAT_MODULE = LEGACY_PI_CONFIG.shims.typebox;
-<<<<<<< ours — variable `SKIPPED_WILDCARD_BASENAMES` (S, confidence: medium)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 const SKIPPED_WILDCARD_BASENAMES = new Set<string>(LEGACY_PI_CONFIG.skippedWildcardBasenames);
-=======
->>>>>>> theirs — variable `SKIPPED_WILDCARD_BASENAMES` (S, confidence: medium)
 const MAIN_THREAD_UNSAFE_WILDCARD_BASENAMES = new Set<string>(LEGACY_PI_CONFIG.mainThreadUnsafeWildcardBasenames);
 
 /** One namespace module the binary must retain for legacy extension imports. */
@@ -93,12 +62,8 @@ function bindingForSubpath(identifier: string, subpath: string): string {
 		.filter(Boolean)
 		.map(segment =>
 			segment
-<<<<<<< ours — scope `const segments = subpath` in function `bindingForSubpath` (F, confidence: medium)
 // refused_by: statement_fold · collision: `.split(/[-_]/)`
 				.split(/[-_.]/)
-=======
-				.split(/[^a-zA-Z0-9]+/)
->>>>>>> theirs — scope `const segments = subpath`
 				.filter(Boolean)
 				.map(part => part.charAt(0).toUpperCase() + part.slice(1))
 				.join(""),
@@ -144,7 +109,6 @@ function shimSpecifier(file: string): string {
 	// Static-shaped lookup: binding -> the one import target it may load. Also
 	// serves as the "binding already emitted" test.
 	const importSpecifierByBinding: Record<string, string> = {};
-<<<<<<< ours — scope `function addEntry(key: string, binding: strin...` in function `collectBundledPiEntries`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	function addEntry(key: string, binding: string, importSpecifier: string): void {
 		if (seenKeys.has(key)) return;
@@ -160,8 +124,6 @@ function shimSpecifier(file: string): string {
 		importSpecifierByBinding[binding] = importSpecifier;
 		entries.push({ key, binding, importSpecifier });
 	}
-=======
->>>>>>> theirs — scope `function addEntry(key: string, binding: strin...` deleted in theirs
  */
 export async function collectBundledPiEntries(): Promise<BundledPiEntry[]> {
 	const entries: BundledPiEntry[] = [];
@@ -202,15 +164,9 @@ export async function collectBundledPiEntries(): Promise<BundledPiEntry[]> {
 			const sourcePattern = exportImportTarget(exportsField[exportKey]);
 			if (!sourcePattern) continue;
 			const pattern = parseWildcardPattern(exportKey, sourcePattern);
-<<<<<<< ours — scope `for (const pkg of BUNDLED_PACKAGES) {` in function `collectBundledPiEntries` (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 			if (!pattern || !LEGACY_PI_CONFIG.sourceExtensionsRegex.test(pattern.sourceSuffix)) continue;
 			if (pattern.exportPrefix === "" || pattern.exportPrefix === "/") continue;
-=======
-			if (!pattern || !/\.(ts|tsx|mts|cts|js|mjs|cjs|jsx)$/.test(pattern.sourceSuffix)) continue;
-			const rootWildcard = pattern.exportPrefix === "" || pattern.exportPrefix === "/";
-			if (rootWildcard && !pkg.rootWildcard) continue;
->>>>>>> theirs — scope `for (const pkg of BUNDLED_PACKAGES) {`
 
 			const sourceDir = path.join(packageRoot, pattern.sourcePrefix);
 			try {

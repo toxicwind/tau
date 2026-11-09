@@ -4,7 +4,6 @@ import * as path from "node:path";
 import {
 	type AssistantMessage,
 	coerceServiceTierByFamily,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 	getPriorityPremiumRequests,
 	resolveModelServiceTier,
@@ -28,39 +27,6 @@ import type {
 	UserMessageStats,
 } from "./types";
 import { computeUserMessageMetrics } from "./user-metrics";
-=======
-	getPremiumServiceTierRequests,
-	type MessageAttribution,
-	parseServiceTier,
-	resolveModelServiceTier,
-	type ServiceTierByFamily,
-	type ToolCall,
-	type ToolResultMessage,
-	type Usage,
-} from "@oh-my-pi/pi-ai";
-import { classifyModel } from "@oh-my-pi/pi-catalog/compat/taxonomy";
-import { getSessionsDir, isEnoent, readLines } from "@oh-my-pi/pi-utils";
-import type {
-	AgentType,
-	MessageStatsInput,
-	SessionEntry,
-	SessionMessageEntry,
-	SessionModelUsageEntry,
-	SessionServiceTierChangeEntry,
-	ToolCallStats,
-	ToolResultLink,
-	UserMessageLink,
-	UserMessageStats,
-} from "./types";
-import {
-	emptySpotlightRows,
-	emptySpotlightState,
-	SpotlightCollector,
-	type SpotlightParseRows,
-	type SpotlightParserState,
-} from "./spotlight-ingest";
-import { computeUserMessageMetrics, judgeProse } from "./user-metrics";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/stats/src/parser.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /** Basename of an advisor agent's transcript inside a session artifacts dir. */
 const ADVISOR_TRANSCRIPT_BASENAME = "__advisor.jsonl";

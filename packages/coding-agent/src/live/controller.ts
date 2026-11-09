@@ -1,16 +1,9 @@
 import * as os from "node:os";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { prompt } from "@oh-my-pi/pi-utils";`
 import type { AgentMessage } from "@tau/tau-agent-core";
 import type { AssistantMessage } from "@tau/tau-ai";
 import { AudioCapture } from "@tau/tau-natives";
 import { prompt } from "@tau/tau-utils";
-=======
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { AudioCapture } from "@oh-my-pi/pi-natives";
-import { prompt, toError } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/live/controller.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { AgentSession } from "../session/agent-session";
 import type { AgentSessionEvent } from "../session/agent-session-events";
 import { LIVE_DELEGATION_MESSAGE_TYPE } from "../session/messages";

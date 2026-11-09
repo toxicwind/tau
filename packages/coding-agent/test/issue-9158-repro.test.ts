@@ -35,14 +35,8 @@ describe("issue #9158 — malformed worker IPC frame must not terminate the pare
 		// Runs in a spawned `bun -e` parent that installs the postmortem
 		// uncaughtException handler under test, as the CLI does at startup.
 		const wrapperScript = `
-<<<<<<< ours — scope `it("contains an advanced-serialization decode...` in test_suite `issue #9158 — malformed worker IPC frame must not terminate the parent` (F, confidence: medium)
 // refused_by: statement_fold · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 			import { createWorkerSubprocess } from "tau/subprocess/worker-client";
-=======
-			import { postmortem } from "@oh-my-pi/pi-utils";
-			import { createWorkerSubprocess } from "@oh-my-pi/pi-coding-agent/subprocess/worker-client";
-			postmortem.installProcessHandlers();
->>>>>>> theirs — scope `it("contains an advanced-serialization decode...` · weave: run 'weave explain packages/coding-agent/test/issue-9158-repro.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 			const worker = createWorkerSubprocess({
 				spawnCommand: { cmd: [process.execPath, "-e", ${JSON.stringify(childScript)}] },
 				env: {},
@@ -76,14 +70,8 @@ describe("issue #9158 — malformed worker IPC frame must not terminate the pare
 		// so a genuine bug is never silently swallowed as a worker IPC frame.
 		const repoRoot = path.resolve(import.meta.dir, "..");
 		const wrapperScript = `
-<<<<<<< ours — scope `it("still faults on an unrelated TypeError wi...` in test_suite `issue #9158 — malformed worker IPC frame must not terminate the parent` (F, confidence: medium)
 // refused_by: statement_fold · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 			import "tau/subprocess/worker-client";
-=======
-			import { postmortem } from "@oh-my-pi/pi-utils";
-			import "@oh-my-pi/pi-coding-agent/subprocess/worker-client";
-			postmortem.installProcessHandlers();
->>>>>>> theirs — scope `it("still faults on an unrelated TypeError wi...`
 			process.stdout.write("BEFORE_THROW");
 			queueMicrotask(() => { throw new TypeError("Unable to deserialize data."); });
 		`;

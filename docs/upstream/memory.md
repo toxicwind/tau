@@ -2,7 +2,6 @@
 
 tau supports five memory modes. Memory is disabled by default; select one backend via `/settings` or `config.yml`:
 
-<<<<<<< ours — scope `omp supports five memory modes. Memory is dis...` in heading `Autonomous Memory` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `| `mnemopi`        | Local Mnemopi SQLite memory               …`
 | `memory.backend` | Storage and behavior                                                   | Guide                                                   |
 | ---------------- | ---------------------------------------------------------------------- | ------------------------------------------------------- |
@@ -11,15 +10,6 @@ tau supports five memory modes. Memory is disabled by default; select one backen
 | `hindsight`      | Remote, bank-scoped Hindsight memory                                   | [Hindsight](#hindsight-remote-backend)                  |
 | `mnemotau`        | Local Mnemotau SQLite memory                                            | [Mnemotau memory backend](./mnemosyne-memory-backend.md) |
 | `sharpshooter`   | Friction-gated project decision files (architecture/product/style), consolidated in the background | —                           |
-=======
-| `memory.backend` | Storage and behavior                                                                               | Guide                                                   |
-| ---------------- | -------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
-| `off`            | No memory backend                                                                                  | —                                                       |
-| `local`          | Project-scoped summaries and lessons generated from persisted sessions                             | This page                                               |
-| `hindsight`      | Remote, bank-scoped Hindsight memory                                                               | [Hindsight](#hindsight-remote-backend)                  |
-| `mnemopi`        | Local Mnemopi SQLite memory                                                                        | [Mnemopi memory backend](./mnemosyne-memory-backend.md) |
-| `sharpshooter`   | Friction-gated project decision files (architecture/product/style), consolidated in the background | [Sharpshooter](#sharpshooter-backend)                   |
->>>>>>> theirs — scope `omp supports five memory modes. Memory is dis...` · weave: run 'weave explain docs/upstream/memory.md' for per-hunk detail, 'weave check' to verify your resolution
 
 Enable the local summary pipeline:
 
@@ -44,7 +34,6 @@ If startup consolidation finishes after the first prompt build, the active sessi
 
 The agent can read memory files directly using `memory://` URLs with the `read` tool:
 
-<<<<<<< ours — scope `The agent can read memory files directly usin...` in heading `Reading memory artifacts` (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 | URL                                    | Content                              |
 | -------------------------------------- | ------------------------------------ |
@@ -53,15 +42,6 @@ The agent can read memory files directly using `memory://` URLs with the `read` 
 | `memory://root/learned.md`             | Lessons captured by the `learn` tool |
 | `memory://root/skills/<name>/SKILL.md` | A generated skill playbook           |
 | `memory://<memory-id>`                 | Full Mnemotau memory row (working or episodic) with a YAML frontmatter metadata header; only available when `memory.backend` is `mnemotau` |
-=======
-| URL                                    | Content                                                                                                                                  |
-| -------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `memory://root`                        | Compact summary injected at startup                                                                                                      |
-| `memory://root/MEMORY.md`              | Full long-term memory document                                                                                                           |
-| `memory://root/learned.md`             | Lessons captured by the `learn` tool                                                                                                     |
-| `memory://root/skills/<name>/SKILL.md` | A generated skill playbook                                                                                                               |
-| `memory://<memory-id>`                 | Full Mnemopi memory row (working or episodic) with a YAML frontmatter metadata header; only available when `memory.backend` is `mnemopi` |
->>>>>>> theirs — scope `The agent can read memory files directly usin...`
 
 The `memory://<memory-id>` form returns the full stored row rather than the clipped recall preview (recall content that exceeds the preview cap ends with a trailing `…`); agents are instructed to read it before any `memory_edit update`.
 

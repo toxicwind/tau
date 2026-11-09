@@ -5,7 +5,6 @@ import * as os from "node:os";
 import * as path from "node:path";
 import packageJson from "../package.json" with { type: "json" };
 import { embeddedAddon } from "./embedded-addon.js";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { containsVersionSentinel, versionSentinelFor } from "./…`
 import {
 	containsVersionSentinel,
@@ -13,9 +12,6 @@ import {
 	versionSentinelFor,
 	versionSentinelVersion,
 } from "./version-sentinel.js";
-=======
-import { bindingsHaveReleaseIdentity, bindingsReleaseVersion, containsVersionStamp } from "./version-sentinel.js";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/natives/native/loader-state.js' for per-hunk detail, 'weave check' to verify your resolution
 
 /**
  * Native addon loader for `@tau/tau-natives`.
@@ -525,7 +521,6 @@ function maybeExtractEmbeddedAddon(ctx, errors, file = selectEmbeddedAddonFile(c
 		return null;
 	}
 
-<<<<<<< ours — scope `if (embeddedAddon.archive) {` in function `maybeExtractEmbeddedAddon` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `files: embeddedAddon.files,` +2 more
 	if (embeddedAddon.archive) {
 		try {
@@ -544,34 +539,18 @@ function maybeExtractEmbeddedAddon(ctx, errors, file = selectEmbeddedAddonFile(c
 			errors.push(`embedded addon archive (${embeddedAddon.archive.filename}): ${message}`);
 			return null;
 		}
-=======
-	try {
-		extractEmbeddedAddons({ files: [file], targetDir: ctx.versionedDir });
-		return targetPath;
-	} catch (err) {
-		const message = err instanceof Error ? err.message : String(err);
-		errors.push(`embedded addon extraction (${file.filename}): ${message}`);
-		return null;
->>>>>>> theirs — scope `if (embeddedAddon.archive) {`
 	}
 
-<<<<<<< ours — scope `if (isEmbeddedAddonFileCurrent(targetPath, se...` in function `maybeExtractEmbeddedAddon`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	if (isEmbeddedAddonFileCurrent(targetPath, file)) {
 		return targetPath;
 	}
-=======
->>>>>>> theirs — scope `if (isEmbeddedAddonFileCurrent(targetPath, se...` deleted in theirs
-<<<<<<< ours — scope `if (!selectedEmbeddedFile.filePath) {` in function `maybeExtractEmbeddedAddon`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	if (!file.filePath) {
 		errors.push(`embedded addon metadata missing file path for ${file.filename}`);
 		return null;
 	}
-=======
->>>>>>> theirs — scope `if (!selectedEmbeddedFile.filePath) {` deleted in theirs
 
-<<<<<<< ours — scope `try {` in function `maybeExtractEmbeddedAddon`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	try {
 		const buffer = fs.readFileSync(file.filePath);
@@ -582,8 +561,6 @@ function maybeExtractEmbeddedAddon(ctx, errors, file = selectEmbeddedAddonFile(c
 		errors.push(`embedded addon write (${file.filename}): ${message}`);
 		return null;
 	}
-=======
->>>>>>> theirs — scope `try {` deleted in theirs
 }
 
 /**
@@ -629,7 +606,6 @@ function maybeStageNodeModulesAddon(ctx, errors) {
 }
 
 
-<<<<<<< ours — function `sentinelVersion` (T+F, confidence: medium)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 /**
  * Release version encoded in a sentinel export name, or `null` when the
@@ -640,8 +616,6 @@ function maybeStageNodeModulesAddon(ctx, errors) {
 function sentinelVersion(sentinel) {
 	return versionSentinelVersion(sentinel);
 }
-=======
->>>>>>> theirs — function `sentinelVersion` (T+F, confidence: medium)
 
 /**
  * Whether `sentinel` satisfies `expected`: the exact expected name, or a
@@ -671,11 +645,8 @@ export function sentinelMatchesExpected(sentinel, expected) {
 function isCompatiblePreSentinelNativeAddon(bindings, diskHasExpectedStamp) {
 	if (diskHasExpectedStamp) return false;
 	if (bindingsHaveReleaseIdentity(bindings)) return false;
-<<<<<<< ours — scope `if (Object.keys(bindings).some(key => /^__piN...` in function `isCompatiblePreSentinelNativeAddon`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	if (Object.keys(bindings).some(key => isVersionSentinelName(key))) return false;
-=======
->>>>>>> theirs — scope `if (Object.keys(bindings).some(key => /^__piN...` deleted in theirs
 	return (
 		typeof bindings.countTokens === "function" &&
 		typeof bindings.executeShell === "function" &&
@@ -712,18 +683,10 @@ export function validateLoadedBindings(ctx, bindings, candidate) {
 	//     dynamic-loader's native-module cache. `require` returns those old
 	//     exports, which report the PRIOR release — disk is already consistent,
 	//     so reinstall is a no-op and only restarting the process re-syncs.
-<<<<<<< ours — scope `// The expected sentinel is missing. Distingu...` in function `validateLoadedBindings` (T+F, confidence: medium)
 // refused_by: statement_fold · collision: `key => key !== ctx.versionSentinelExport && VERSION_SENTINEL_AN…`
 	const residentSentinel = Object.keys(bindings).find(
 		key => key !== ctx.versionSentinelExport && isVersionSentinelName(key),
 	);
-=======
-	// Resident exports alone cannot tell these apart: `require` returns the
-	// same exports in both cases. The restart diagnosis is valid only when the
-	// selected file itself carries the current stamp; otherwise a restart would
-	// simply reload stale disk.
-	let diskHasExpectedStamp = false;
->>>>>>> theirs — scope `// The expected sentinel is missing. Distingu...`
 	try {
 		diskHasExpectedStamp = containsVersionStamp(fs.readFileSync(candidate), ctx.packageVersion);
 	} catch {
@@ -733,7 +696,6 @@ export function validateLoadedBindings(ctx, bindings, candidate) {
 	if (isCompatiblePreSentinelNativeAddon(bindings, diskHasExpectedStamp)) return;
 	if (residentVersion && diskHasExpectedStamp) {
 		throw new Error(
-<<<<<<< ours — scope `if (residentSentinel && diskHasExpectedSentin...` in function `validateLoadedBindings` (S+F, confidence: low)
 // refused_by: statement_fold · collision: ``Loaded ${candidate}, which exposes the @oh-my-pi/pi-natives@${…` +2 more
 			`Loaded ${candidate}, which exposes the @tau/tau-natives@${residentVersion} version ` +
 				`sentinel \`${residentSentinel}\` but not the @${ctx.packageVersion} sentinel ` +
@@ -741,23 +703,12 @@ export function validateLoadedBindings(ctx, bindings, candidate) {
 				`${ctx.packageVersion} while this session was running; the ${residentVersion} addon is ` +
 				"still resident in this process. Disk is already consistent — restart tau to pick up " +
 				`${ctx.packageVersion} (reinstalling changes nothing).`,
-=======
-			`Loaded ${candidate}, which reports @oh-my-pi/pi-natives@${residentVersion}, but this loader is ` +
-				`@${ctx.packageVersion}. omp was upgraded to ${ctx.packageVersion} while this session was running; ` +
-				`the ${residentVersion} addon is still resident in this process. Disk is already consistent — ` +
-				`restart omp to pick up ${ctx.packageVersion} (reinstalling changes nothing).`,
->>>>>>> theirs — scope `if (residentSentinel && diskHasExpectedSentin...`
 		);
 	}
 	throw new Error(
-<<<<<<< ours — scope `throw new Error(` in function `validateLoadedBindings` (F, confidence: medium)
 // refused_by: statement_fold · collision: ``Loaded ${candidate} but it does not expose the @oh-my-pi/pi-na…`
 		`Loaded ${candidate} but it does not expose the @tau/tau-natives@${ctx.packageVersion} ` +
 			`version sentinel \`${ctx.versionSentinelExport}\`. The .node file on disk is from a different ` +
-=======
-		`Loaded ${candidate} but it reports ${residentVersion ? `@oh-my-pi/pi-natives@${residentVersion}` : "no release version"}, ` +
-			`not the @${ctx.packageVersion} this loader expects. The .node file on disk is from a different ` +
->>>>>>> theirs — scope `throw new Error(`
 			"release than this loader — reinstall to re-sync.",
 	);
 }
@@ -776,7 +727,6 @@ let loadedAddon = null;
  * @param {string} candidate
  * @param {{ packageVersion: string }} ctx
  */
-<<<<<<< ours — scope `* @param {string} candidate` in function `describeLoadedAddon` (T+F, confidence: medium)
 // refused_by: statement_fold · collision: `const sentinel = Object.keys(bindings).find(key => VERSION_SENT…` +1 more
 export function describeLoadedAddon(bindings, candidate, ctx) {
 	const sentinel = Object.keys(bindings).find(key => isVersionSentinelName(key)) ?? null;
@@ -787,27 +737,13 @@ export function describeLoadedAddon(bindings, candidate, ctx) {
 		// A null sentinel means a pre-sentinel addon: it predates version
 		// sentinels entirely, so it cannot be shown to be this release.
 		stale: sentinel === null || !sentinelMatchesExpected(sentinel, ctx.versionSentinelExport),
-=======
-function describeLoadedAddon(bindings, candidate, ctx) {
-	const version = bindingsReleaseVersion(bindings);
-	return {
-		path: candidate,
-		version,
-		packageVersion: ctx.packageVersion,
-		stale: version !== ctx.packageVersion,
->>>>>>> theirs — scope `* @param {string} candidate`
 	};
 }
 
 /**
-<<<<<<< ours — scope `declaration` in function `nativeAddonStatus` (T, confidence: high)
 // refused_by: statement_fold · collision: none (1 contested hunk(s), neither side deleted the other's lines)
  * The addon behind this process's `@tau/tau-natives` exports.
  * @returns {{ path: string; sentinel: string | null; expectedSentinel: string; packageVersion: string; stale: boolean } | null}
-=======
- * The addon behind this process's `@oh-my-pi/pi-natives` exports.
- * @returns {{ path: string; version: string | null; packageVersion: string; stale: boolean } | null}
->>>>>>> theirs — scope `declaration`
  */
 export function nativeAddonStatus() {
 	return loadedAddon;
@@ -894,7 +830,6 @@ export function missingNativeExportMessage(symbolName, addon = loadedAddon) {
 	if (!addon.stale) {
 		return `@tau/tau-natives export \`${symbolName}\` is missing from ${addon.path}; ${rebuild}.`;
 	}
-<<<<<<< ours — scope `* wording can be pinned without a stale `.nod...` in function `missingNativeExportMessage` (F, confidence: medium)
 // refused_by: statement_fold · collision: `? `the @oh-my-pi/pi-natives@${sentinelVersion(addon.sentinel)} …`
 	const loaded = addon.sentinel
 		? `the @tau/tau-natives@${sentinelVersion(addon.sentinel)} addon`
@@ -902,14 +837,6 @@ export function missingNativeExportMessage(symbolName, addon = loadedAddon) {
 	return (
 		`@tau/tau-natives export \`${symbolName}\` is missing: ${addon.path} is ${loaded}, not ` +
 		`@${addon.packageVersion} (\`${addon.expectedSentinel}\`) — ${rebuild}.`
-=======
-	const loaded = addon.version
-		? `the @oh-my-pi/pi-natives@${addon.version} addon`
-		: "an addon without a release stamp";
-	return (
-		`@oh-my-pi/pi-natives export \`${symbolName}\` is missing: ${addon.path} is ${loaded}, not ` +
-		`@${addon.packageVersion} — ${rebuild}.`
->>>>>>> theirs — scope `* wording can be pinned without a stale `.nod...`
 	);
 }
 
@@ -1128,7 +1055,6 @@ export function initLoaderContext(overrides = {}) {
 		userDataDir,
 	});
 
-<<<<<<< ours — scope `*/` in function `initLoaderContext` (F, confidence: medium)
 // refused_by: statement_fold · collision: `// the package version (`__piNativesV{major}_{minor}_{patch}`).` +2 more
 	// Version sentinel emitted by the Rust addon under a `js_name` that encodes
 	// the package version (`__tauNativesV{major}_{minor}_{patch}`).
@@ -1141,14 +1067,6 @@ export function initLoaderContext(overrides = {}) {
 	// `version-sentinel.js` owns both prefixes and `sentinelMatchesExpected`
 	// treats a legacy-prefix sentinel at the same version as current.
 	const versionSentinelExport = versionSentinelFor(packageVersion);
-=======
-	// Release validation compares `__piNativesBuildVersion()` — the version the
-	// build pipeline stamps into the addon after linking
-	// (`scripts/stamp-native-version.ts`) — with `package.json#version`, so a
-	// `.node` from a different release is rejected at load time instead of
-	// surfacing later as a silent `<sym> is not a function` crash from a
-	// Windows locked-file update.
->>>>>>> theirs — scope `*/`
 
 	return {
 		platformTag,

@@ -2,22 +2,12 @@
  * CLI argument parsing and help display
  */
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { $env, APP_NAME, logger } from "@oh-my-pi/pi-utils";`
 import { $env, APP_NAME, logger } from "@tau/tau-utils";
 import chalk from "@tau/tau-utils/chalk";
 import type { ServiceTierOpenAISettingValue } from "../config/service-tier";
 import { CLI_THINKING_LEVELS, type ConfiguredThinkingLevel, parseCliThinkingLevel } from "@tau/tau-tui/thinking";
 import { normalizeToolNames } from "../tools/builtin-names";
-=======
-import { $env, APP_NAME } from "@oh-my-pi/pi-utils";
-import chalk from "@oh-my-pi/pi-utils/chalk";
-import type { MotionMode } from "../config/motion-presets";
-import type { ServiceTierOpenAISettingValue } from "../config/service-tier";
-import type { ApprovalMode } from "../tools/approval";
-import { CLI_THINKING_LEVELS, type ConfiguredThinkingLevel, parseCliThinkingLevel } from "@oh-my-pi/pi-tui/thinking";
-import { BUILTIN_TOOL_NAMES, normalizeToolNames } from "../tools/builtin-names";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/cli/args.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	OPTIONAL_FLAGS,
 	OPTIONAL_VALUE_FLAGS,

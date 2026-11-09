@@ -8,12 +8,8 @@
  * every gateway client's 30-day sticky row resident.
  */
 import * as os from "node:os";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { getAppName, getInstallId, logger } from "@oh-my-pi/pi-…`
 import { getAppName, getInstallId, logger } from "@tau/tau-utils";
-=======
-import { getAppName, getInstallId, logger, postmortem } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/ai/src/auth-broker/remote-store.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { AuthCredentialStore } from "../auth/store";
 import {
 	type AuthCredential,

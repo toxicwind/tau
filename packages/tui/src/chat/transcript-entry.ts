@@ -1,13 +1,7 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { MessageAttribution } from "@oh-my-pi/pi-ai";`
 import type { AgentMessage } from "@tau/tau-agent-core";
 import { createCustomMessage } from "@tau/tau-agent-core/compaction/messages";
 import type { MessageAttribution } from "@tau/tau-ai";
-=======
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { createCustomMessage } from "@oh-my-pi/pi-agent-core/compaction/messages";
-import type { ImageContent, MessageAttribution, TextContent } from "@oh-my-pi/pi-ai";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/src/chat/transcript-entry.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	type CustomMessage,
 	type CustomMessageContent,

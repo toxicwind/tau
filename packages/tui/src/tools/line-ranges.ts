@@ -61,23 +61,13 @@ export type BareLineMode = "onward" | "single";
  * `"single"` = exactly line N (upstream raw-mode semantics: `:12:raw` extracts
  * line 12 and nothing else).
  */
-<<<<<<< ours — scope `declaration` in function `parseLineRanges` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `export function parseLineRanges(sel: string): [LineRange, ...Li…`
 export function parseLineRanges(sel: string, mode: "onward" | "single" = "onward"): [LineRange, ...LineRange[]] | null {
-=======
-export function parseLineRanges(sel: string, bare: BareLineMode = "onward"): [LineRange, ...LineRange[]] | null {
->>>>>>> theirs — scope `declaration` · weave: run 'weave explain packages/tui/src/tools/line-ranges.ts' for per-hunk detail, 'weave check' to verify your resolution
 	const chunks = sel.split(",");
-<<<<<<< ours — scope `// A lone `:50` means "from line 50". Inside ...` in function `parseLineRanges` (T+F, confidence: medium)
 // refused_by: statement_fold · collision: `// A lone `:50` means "from line 50". Inside a comma list, a ba…` +2 more
 	// A lone `:50` means "from line 50" in onward mode. Inside a comma list, a
 	// bare number is that one line; in single mode every bare number is one line.
 	const pinBare = chunks.length > 1 || mode === "single";
-=======
-	// A lone `:50` means "from line 50" unless `bare` pins it. Inside a comma list,
-	// a bare number is that one line; otherwise `:19,59` collapses to "from 19 through EOF".
-	const pinBare = bare === "single" || chunks.length > 1;
->>>>>>> theirs — scope `// A lone `:50` means "from line 50". Inside ...`
 	const parsed: LineRange[] = [];
 	for (const chunk of chunks) {
 		const range = parseChunk(chunk, pinBare);

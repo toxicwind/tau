@@ -3,7 +3,6 @@ import { join } from "node:path";
 import * as fs from "node:fs/promises";
 import * as net from "node:net";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { getBrowserProfilesDir } from "@oh-my-pi/pi-utils";`
 import { Process, ProcessStatus } from "@tau/tau-natives";
 import { getBrowserProfilesDir } from "@tau/tau-utils";
@@ -11,15 +10,6 @@ import type { Socket } from "bun";
 import type { Browser, Page, Target } from "puppeteer-core";
 import { throwIfAborted } from "../tool-errors";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
-=======
-import { Process, ProcessStatus } from "@oh-my-pi/pi-natives";
-import { getBrowserProfilesDir, isRecord, untilAborted } from "@oh-my-pi/pi-utils";
-import type { Socket } from "bun";
-import type { Browser, Page, Target } from "puppeteer-core";
-import { throwIfAborted } from "../tool-errors";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
-import { isPuppeteerTimeout } from "./launch";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/browser/attach.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const ATTACH_TARGET_SKIP_PATTERN =
 	/request[\s_-]?handler|devtools|background[\s_-]?(?:page|host)|service[\s_-]?worker/i;

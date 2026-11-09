@@ -10,21 +10,10 @@ import {
 	clearAgentPluginRootCache,
 	parseAgentPluginManifest,
 	parseAgentPluginMcp,
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "tau/discovery/agent-plugin-format";
 import { clearClaudePluginRootsCache, injectPluginDirRoots, listClaudePluginRoots } from "tau/discovery/helpers";
 import { getPluginsDir, removeWithRetries } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-coding-agent/discovery/agent-plugin-format";
-import {
-	clearClaudePluginRootsCache,
-	injectPluginDirRoots,
-	listClaudePluginRoots,
-} from "@oh-my-pi/pi-coding-agent/discovery/helpers";
-import { loadSkills } from "@oh-my-pi/pi-coding-agent/extensibility/skills";
-import { getPluginsDir, removeWithRetries } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/discovery/agent-plugins.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { restoreEnvValue } from "../helpers/settings-test-state";
 import "tau/discovery/agent-plugins";
 import "tau/discovery/claude-plugins";

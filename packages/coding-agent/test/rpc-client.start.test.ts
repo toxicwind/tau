@@ -1,11 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { RpcClient } from "@oh-my-pi/pi-coding-agent/modes/rpc/…`
 import { RpcClient } from "tau/modes/rpc/rpc-client";
-=======
-import { type RpcAgentProcess, RpcClient } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-client";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/rpc-client.start.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 describe("RpcClient.start", () => {
 	test("rejects when RPC process exits immediately", async () => {

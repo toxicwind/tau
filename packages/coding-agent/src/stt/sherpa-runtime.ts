@@ -1,17 +1,7 @@
 import { createRequire } from "node:module";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { resolveRuntimeModule } from "@oh-my-pi/pi-utils";`
 import * as os from "node:os";
 import { resolveRuntimeModule } from "@tau/tau-utils";
-=======
-import * as path from "node:path";
-import {
-	ensureRuntimeInstalled,
-	getTinyModelsCacheDir,
-	resolveRuntimeModule,
-	type RuntimeInstallPhase,
-} from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/stt/sherpa-runtime.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /** Native speech package installed by the shared STT runtime loader. */
 export const SHERPA_PACKAGE = "sherpa-onnx-node";

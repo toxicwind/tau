@@ -1,9 +1,5 @@
-<<<<<<< ours — interstitial `file_header` (S, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import type { UsageLimit, UsageReport, UsageResetCredits } from…`
 import type { UsageLimit, UsageReport, UsageResetCredits } from "@tau/tau-ai";
-=======
-import type { UsageLimit, UsageReport, UsageResetCreditDetail, UsageResetCredits } from "@oh-my-pi/pi-ai";
->>>>>>> theirs — interstitial `file_header` (S, confidence: medium) · weave: run 'weave explain packages/tui/src/overlays/usage-display.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /** Include the usage tier in a limit title unless its label already names it. */
 export function formatLimitTitle(limit: UsageLimit): string {

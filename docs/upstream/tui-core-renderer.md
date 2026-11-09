@@ -124,16 +124,10 @@ The renderer never probes the user's scroll position. This keeps updates safe
 while the user is reading older terminal history and avoids terminal- or
 platform-specific finality policy.
 
-<<<<<<< ours — scope `The renderer never probes the user's scroll p...` in heading `3. Reset and resize behavior`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 The renderer never probes the architect's scroll position. This keeps updates safe
-=======
->>>>>>> theirs — scope `The renderer never probes the user's scroll p...` deleted in theirs · weave: run 'weave explain docs/upstream/tui-core-renderer.md' for per-hunk detail, 'weave check' to verify your resolution
-<<<<<<< ours — scope `while the user is reading older terminal hist...` in heading `3. Reset and resize behavior`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 while the architect is reading older terminal history and avoids terminal- or
-=======
->>>>>>> theirs — scope `while the user is reading older terminal hist...` deleted in theirs
 
 ## 4. ANSI and width invariants
 

@@ -108,7 +108,6 @@ describe("PluginListComponent", () => {
 		expect(text).toContain("shadowed");
 	});
 
-<<<<<<< ours — scope `it("empty-state mentions both npm and marketp...` in test_suite `PluginListComponent`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("empty-state mentions both npm and marketplace install commands", () => {
 		const component = new PluginListComponent([], {
@@ -122,8 +121,6 @@ describe("PluginListComponent", () => {
 		expect(text).toContain("tau plugin install <package>");
 		expect(text).toContain("tau plugin install <name>@<marketplace>");
 	});
-=======
->>>>>>> theirs — scope `it("empty-state mentions both npm and marketp...` deleted in theirs · weave: run 'weave explain packages/coding-agent/test/modes/components/plugin-list-marketplace.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 	it("routes enter on a marketplace entry to onMarketplaceSelect", () => {
 		const target = marketplace("pick@mkt");

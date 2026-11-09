@@ -76,21 +76,11 @@ describe("fromJsonSchema", () => {
 		expect(fromJsonSchema(false)("anything")).toBeInstanceOf(TauErrors);
 	});
 
-<<<<<<< ours — test_suite `fromJsonSchema` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 	it("validates string formats and patterns", () => {
 		const email = fromJsonSchema({ type: "string", format: "email" });
 		expect(email("a@tau.sh")).toBe("a@tau.sh");
 		expect(email("nope")).toBeInstanceOf(TauErrors);
-=======
-	it("asserts formats only when given a check, and always validates patterns", () => {
-		const schema = { type: "string", format: "email" };
-		expect(fromJsonSchema(schema)("nope")).toBe("nope");
-		const email = fromJsonSchema(schema, { formats: { email: value => value.includes("@") } });
-		expect(email("a@omp.sh")).toBe("a@omp.sh");
-		expect(email("nope")).toBeInstanceOf(OmpErrors);
-		expect(fromJsonSchema({ format: "email" }, { formats: { email: () => false } })(42)).toBe(42);
->>>>>>> theirs — test_suite `fromJsonSchema` (F, confidence: medium) · weave: run 'weave explain packages/tautype/test/from-json-schema.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 		const patterned = fromJsonSchema({ type: "string", pattern: "^G-[A-Z0-9]+$", minLength: 3 });
 		expect(patterned("G-X1")).toBe("G-X1");
 		expect(patterned("bad")).toBeInstanceOf(TauErrors);

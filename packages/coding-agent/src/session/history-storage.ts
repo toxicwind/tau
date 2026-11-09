@@ -1,20 +1,8 @@
 import { Database, type SQLQueryBindings, type Statement } from "bun:sqlite";
 import * as fs from "node:fs";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { checkpointWal, getHistoryDbPath, logger, openSqliteDat…`
 import { checkpointWal, getHistoryDbPath, logger, openSqliteDatabaseSync, postmortem } from "@tau/tau-utils";
-=======
-import {
-	checkpointWal,
-	getHistoryDbPath,
-	logger,
-	openSqliteDatabaseSync,
-	postmortem,
-	readSalvageableRows,
-} from "@oh-my-pi/pi-utils";
-import { closeSessionIndex, salvageSessionIndex } from "./session-index";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/session/history-storage.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /** A unique prompt with provenance from its most recent submission. */
 export interface HistoryEntry {

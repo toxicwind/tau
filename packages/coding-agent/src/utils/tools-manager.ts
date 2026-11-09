@@ -1,15 +1,9 @@
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { $which, getToolsDir, logger, ptree, TempDir, USER_AGEN…`
 import { $which, getToolsDir, logger, ptree, TempDir, USER_AGENT } from "@tau/tau-utils";
 import { extractArchive } from "@tau/tau-utils/ar";
-=======
-import { $env, $which, fetchWithRetry, getToolsDir, logger, ptree, TempDir, USER_AGENT } from "@oh-my-pi/pi-utils";
-import { extractArchive } from "@oh-my-pi/pi-utils/ar";
-import { type DownloadTracker, trackDownload, withDownload } from "../downloads/activity";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/utils/tools-manager.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const TOOLS_DIR = getToolsDir();
 const TOOL_DOWNLOAD_TIMEOUT_MS = 120_000;

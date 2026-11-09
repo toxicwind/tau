@@ -13,18 +13,10 @@ import {
 	resolveScopedModels,
 	type ScopedModelSink,
 	toSessionScopedModels,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "tau/main";
 import { SessionManager } from "tau/session/session-manager";
 import { TempDir } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-coding-agent/main";
-import { createSetupHost } from "@oh-my-pi/pi-coding-agent/modes/setup";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/main-rebuild-scoped-models.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
 function model(id: string): Model<Api> {

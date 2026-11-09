@@ -14,14 +14,8 @@ import {
 	type ExtensionWidgetContent,
 	type MessageRenderer,
 	type AssistantThinkingRenderer,
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 } from "@tau/tau-tui/chat/extension-types";
-=======
-	type AssistantTextRenderer,
-	type TranscriptPresenter,
-} from "@oh-my-pi/pi-tui/chat/extension-types";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/extensibility/extensions/types.ts' for per-hunk detail, 'weave check' to verify your resolution
 export {
 	type ExtensionUiComponent,
 	type ExtensionUiComponentFactory,
@@ -35,7 +29,6 @@ export {
 	type TranscriptBlock,
 	type TranscriptPresentation,
 	type TranscriptPresenter,
-<<<<<<< ours — interstitial `between:packages/coding-agent/src/extensibility/extensions/types.ts::export::AssistantThinkingRenderer:packages/coding-agent/src/extensibility/extensions/types.ts::export::ComposerShapeDefinition` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `} from "@oh-my-pi/pi-tui/chat/extension-types";` +12 more
 } from "@tau/tau-tui/chat/extension-types";
 import type { type as ArkType } from "@tau/tautype";
@@ -83,8 +76,6 @@ import type {
 import type { logger as PiLogger } from "@tau/tau-utils";
 import type { KeybindingsManager } from "@tau/tau-tui/app-keybindings";
 import type { ComposerShapeDefinition } from "@tau/tau-tui/overlays/composer-shape-registry";
-=======
->>>>>>> theirs — interstitial `between:packages/coding-agent/src/extensibility/extensions/types.ts::export::AssistantThinkingRenderer:packages/coding-agent/src/extensibility/extensions/types.ts::export::ComposerShapeDefinition` (S+F, confidence: low)
 } from "@oh-my-pi/pi-tui/chat/extension-types";
 import type { type as ArkType } from "@oh-my-pi/omptype";
 import type * as TypeBox from "@oh-my-pi/omptype/typebox";
@@ -217,19 +208,11 @@ import type { BashToolDetails } from "@tau/tau-tui/tools/bash";
 import type {
 } from "../shared-events";
 
-<<<<<<< ours — export `OverlayHandle` (S, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `export type { OverlayHandle, OverlayOptions } from "@oh-my-pi/p…`
 export type { OverlayHandle, OverlayOptions } from "@tau/tau-tui";
-=======
-export type { Keybinding, OverlayHandle, OverlayOptions } from "@oh-my-pi/pi-tui";
->>>>>>> theirs — export `OverlayHandle` (S, confidence: medium)
 
-<<<<<<< ours — export `OverlayOptions` (S, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `export type { OverlayHandle, OverlayOptions } from "@oh-my-pi/p…`
 export type { OverlayHandle, OverlayOptions } from "@tau/tau-tui";
-=======
-export type { Keybinding, OverlayHandle, OverlayOptions } from "@oh-my-pi/pi-tui";
->>>>>>> theirs — export `OverlayOptions` (S, confidence: medium)
 export type { AppKeybinding, KeybindingsManager } from "@tau/tau-tui/app-keybindings";
 
 export type { AppKeybinding, KeybindingsManager } from "@tau/tau-tui/app-keybindings";
@@ -249,16 +232,8 @@ export interface ExtensionUISelectOption {
 
 export type ExtensionUISelectItem = string | ExtensionUISelectOption;
 
-<<<<<<< ours — imports `between:packages/coding-agent/src/extensibility/extensions/types.ts::type::ExtensionUISelectItem:packages/coding-agent/src/extensibility/extensions/types.ts::export::ExtensionAskDialogOption` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { ExtensionAskDialogQuestion, ExtensionAskDialogRes…`
 import type { ExtensionAskDialogQuestion, ExtensionAskDialogResult } from "@tau/tau-tui/overlays/ask-dialog";
-=======
-import type {
-	ExtensionAskDialogQuestion,
-	ExtensionAskDialogResult,
-	ExtensionAskDialogSubmitResult,
-} from "@oh-my-pi/pi-tui/overlays/ask-dialog";
->>>>>>> theirs — imports `between:packages/coding-agent/src/extensibility/extensions/types.ts::type::ExtensionUISelectItem:packages/coding-agent/src/extensibility/extensions/types.ts::export::ExtensionAskDialogOption` (S+F, confidence: low)
 export type {
 	ExtensionAskDialogOption,
 	ExtensionAskDialogQuestion,
@@ -278,12 +253,9 @@ export interface ExtensionFormDialogResult {
 	data: HtmlFormData;
 	timedOut?: boolean;
 }
-<<<<<<< ours — interstitial `between:packages/coding-agent/src/extensibility/extensions/types.ts::export::ExtensionAskDialogResult:packages/coding-agent/src/extensibility/extensions/types.ts::function::getExtensionUISelectOptionLabel` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `} from "@oh-my-pi/pi-tui/overlays/ask-dialog";`
 } from "@tau/tau-tui/overlays/ask-dialog";
 
-=======
->>>>>>> theirs — interstitial `between:packages/coding-agent/src/extensibility/extensions/types.ts::export::ExtensionAskDialogResult:packages/coding-agent/src/extensibility/extensions/types.ts::function::getExtensionUISelectOptionLabel` (S+F, confidence: low)
 
 export function getExtensionUISelectOptionLabel(option: ExtensionUISelectItem): string {
 	return typeof option === "string" ? option : option.label;

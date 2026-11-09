@@ -5,17 +5,8 @@ import type {
 	AgentToolResult,
 	AgentToolUpdateCallback,
 	ToolApprovalDecision,
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";`
 } from "@tau/tau-agent-core";
-=======
-} from "@oh-my-pi/pi-agent-core";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
-import { prompt } from "@oh-my-pi/pi-utils";
-import contextNotesDescription from "../prompts/tools/context-notes.md" with { type: "text" };
-import contextNotesTextDescription from "../prompts/tools/context-notes-text.md" with { type: "text" };
-import newContextDescription from "../prompts/tools/new-context.md" with { type: "text" };
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/context-notes.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	CONTEXT_NOTES_ENTRY_TYPE,
 	type ContextNotesEntry,
@@ -25,11 +16,8 @@ import {
 import { cfgCompactionExperimentalContextManagement } from "../session/context-settings";
 import type { ToolSession } from ".";
 import { throwIfAborted } from "./tool-errors";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";`
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
-=======
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low)
 
 const contextNotesSchema = type({
 	"text?": type("string").describe(prompt.render(contextNotesTextDescription, { maxBytes: MAX_CONTEXT_NOTES_BYTES })),

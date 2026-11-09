@@ -1,5 +1,4 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 import type { CompactionSettings } from "@tau/tau-agent-core/compaction/compaction";
 import {
@@ -10,16 +9,6 @@ import {
 	resolveThresholdTokens,
 	shouldCompact,
 } from "@tau/tau-agent-core/compaction/compaction";
-=======
-import type { CompactionSettings } from "@oh-my-pi/pi-agent-core/compaction/compaction";
-import {
-	DEFAULT_COMPACTION_SETTINGS,
-	effectiveReserveTokens,
-	resolveBudgetReserveTokens,
-	resolveThresholdTokens,
-	shouldCompact,
-} from "@oh-my-pi/pi-agent-core/compaction/compaction";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/agent/test/compaction-reserve-provenance.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 describe("compaction reserve provenance", () => {
 	it("honors an explicit reserve equal to the default on a small window", () => {

@@ -1,14 +1,9 @@
 import { describe, expect, it } from "bun:test";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { AgentOutputManager } from "@oh-my-pi/pi-coding-agent/t…` +1 more
 import { AgentOutputManager } from "tau/task/output-manager";
 import { PINNED_HUD_TOGGLE_ID } from "@tau/tau-tui/prompt/composer";
 import { TempDir } from "@tau/tau-utils";
-=======
-import { AgentOutputManager, PINNED_HUD_TOGGLE_ID } from "@oh-my-pi/pi-coding-agent/task/output-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/task/output-manager.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 // Contract: subagent output ids are the requested name, used verbatim the first
 // time and suffixed (`-2`, `-3`, …) only when the same name recurs. A parent

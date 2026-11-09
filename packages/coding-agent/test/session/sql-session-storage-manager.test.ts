@@ -7,19 +7,11 @@
  */
 
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { SqlSessionStorage } from "@oh-my-pi/pi-coding-agent/se…`
 import type { Usage } from "@tau/tau-ai";
 import { SessionManager } from "tau/session/session-manager";
 import { SqlSessionStorage } from "tau/session/sql-session-storage";
 import { SessionWriteConflictError } from "tau/session/session-storage";
-=======
-import * as path from "node:path";
-import type { Usage } from "@oh-my-pi/pi-ai";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { SqlSessionStorage, type SqlSessionStorageClient } from "@oh-my-pi/pi-coding-agent/session/sql-session-storage";
-import { SessionWriteConflictError } from "@oh-my-pi/pi-coding-agent/session/session-storage";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/session/sql-session-storage-manager.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { SQL } from "bun";
 
 // Storage keys are platform paths; `/sessions/...` is only drive-relative on Windows,

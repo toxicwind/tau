@@ -10,15 +10,9 @@ type TurndownListParent = {
 const INTRAWORD_ESCAPED_UNDERSCORES = /(?<=[\p{L}\p{N}])(?:\\_)+(?=[\p{L}\p{N}])/gu;
 
 /**
-<<<<<<< ours — scope `declaration` in function `createTurndown` (T, confidence: high)
 // refused_by: statement_fold · collision: none (1 contested hunk(s), neither side deleted the other's lines)
  * Build a Turndown instance configured for GFM with the fixes tau relies on:
  * `~~strikethrough~~`, unescaped heading periods, and single-space list markers.
-=======
- * Build a Turndown instance configured for GFM with the fixes omp relies on:
- * `~~strikethrough~~`, unescaped heading periods, unescaped intraword underscores,
- * and single-space list markers.
->>>>>>> theirs — scope `declaration` · weave: run 'weave explain packages/coding-agent/src/utils/turndown.ts' for per-hunk detail, 'weave check' to verify your resolution
  *
  * Shared by the web scrapers (HTML → markdown) and the markit document engine
  * (`src/markit`). The rule set must stay identical across both call sites.

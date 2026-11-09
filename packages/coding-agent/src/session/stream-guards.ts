@@ -42,15 +42,12 @@ const STREAMING_EDIT_RECOVERY_TYPE = "streaming-edit-recovery";
 const STREAMING_EDIT_RECOVERY_LIMIT = 2;
 /** Notice `source` label for streaming-edit guard messages. */
 const STREAMING_EDIT_NOTICE_SOURCE = "streaming-edit";
-<<<<<<< ours — interstitial `between:packages/coding-agent/src/session/stream-guards.ts::variable::GEMINI_TOOL_REMINDER_TYPE:packages/coding-agent/src/session/stream-guards.ts::variable::NO_CHANGES_PREVIEW_PREFIX` (T, confidence: high)
 // refused_by: merge_ladder_exhausted · collision: `// crates/pi-edit/src/modes/replace.rs and crates/pi-edit/src/h…`
 // Prefix of the native no-op diagnostic emitted by the Rust edit engine when a
 // preview produces byte-identical content. Kept in sync with
 // crates/tau-edit/src/modes/replace.rs and crates/tau-edit/src/hashline/preview.rs
 // ("No changes would be made to <path>..."). Prefix match (not equality)
 // because the Rust messages append the path and mode-specific suffixes.
-=======
->>>>>>> theirs — interstitial `between:packages/coding-agent/src/session/stream-guards.ts::variable::GEMINI_TOOL_REMINDER_TYPE:packages/coding-agent/src/session/stream-guards.ts::variable::NO_CHANGES_PREVIEW_PREFIX` (T, confidence: high) · weave: run 'weave explain packages/coding-agent/src/session/stream-guards.ts' for per-hunk detail, 'weave check' to verify your resolution
 // Prefix of the native no-op diagnostic emitted by the Rust edit engine when a
 // preview produces byte-identical content. Kept in sync with
 // crates/pi-edit/src/modes/replace.rs and crates/pi-edit/src/hashline/preview.rs
@@ -129,14 +126,10 @@ export class StreamingEditGuard {
 				file.error.length > 0 &&
 				!file.error.startsWith(NO_CHANGES_PREVIEW_PREFIX),
 		);
-<<<<<<< ours — scope `maybeAbort` in class `StreamingEditGuard` (F, confidence: medium)
 // refused_by: container_member · collision: `if (failed) this.#abortPatch(event.toolCallId, failed.path, fai…`
 		if (failed && this.#host.settings.get("edit.streamingAbort") === true) {
 			this.#abortPatch(event.toolCallId, failed.path, failed.error);
 		}
-=======
-		if (failed) this.#abortPatch({ toolCallId: event.toolCallId, filePath: failed.path, error: failed.error });
->>>>>>> theirs — scope `maybeAbort`
 	}
 
 	#abortPatch(opts: { toolCallId: string; filePath: string; error: string }): void {

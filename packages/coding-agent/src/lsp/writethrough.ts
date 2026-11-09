@@ -1,10 +1,6 @@
 import * as fs from "node:fs";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { isEnoent, logger, once, untilAborted } from "@oh-my-pi…`
 import { isEnoent, logger, once, untilAborted } from "@tau/tau-utils";
-=======
-import { isEnoent, isRecord, logger, untilAborted } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/lsp/writethrough.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { BunFile } from "bun";
 import { isPermissionDeniedError, writeFileWithFallback } from "../tools/file-write-fallback";
 import {

@@ -5,19 +5,11 @@
  * `discoverModelsByProviderType` with a `DiscoveryContext`; built-in provider
  * discovery lives in tau-catalog's provider-models.
  */
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { KindApiKind, ModelSpec, OpenAICompat } from "@oh-…`
 import { type ApiKey, withAuth } from "@tau/tau-ai/auth-retry";
 import { getAppleFoundationModelsAvailability } from "@tau/tau-ai/providers/apple-foundation-models";
 import type { Api, FetchImpl, Model, RemoteCompactionConfig } from "@tau/tau-ai/types";
 import { buildDiscoveredModel, buildModel } from "@tau/tau-catalog/build";
-=======
-import { type ApiKey, withAuth } from "@oh-my-pi/pi-ai/auth-retry";
-import { getAppleFoundationModelsAvailability } from "@oh-my-pi/pi-ai/providers/apple-foundation-models";
-import type { Api, FetchImpl, Model, RemoteCompactionConfig } from "@oh-my-pi/pi-ai/types";
-import { buildDiscoveredModel, buildModel } from "@oh-my-pi/pi-catalog/build";
-import { resolveModelPolicy } from "@oh-my-pi/pi-catalog/compat/resolve";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/config/model-discovery.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	getBundledModelReferenceIndex,
 	inheritReferenceThinking,
@@ -31,25 +23,10 @@ import {
 	OPENAI_COMPAT_DISCOVERY_DEFAULT_CONTEXT_WINDOW,
 	OPENAI_COMPAT_DISCOVERY_DEFAULT_MAX_TOKENS,
 	resolveLiteLLMApi,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { KindApiKind, ModelSpec, OpenAICompat } from "@oh-…`
 } from "@tau/tau-catalog/provider-models/openai-compat";
 import type { KindApiKind, ModelSpec, OpenAICompat } from "@tau/tau-catalog/types";
 import { isRecord } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import {
-	type KindApiKind,
-	type ModelKind,
-	type ModelSpec,
-	type OpenAICompat,
-	type ThinkingConfig,
-	runnerApiKind,
-} from "@oh-my-pi/pi-catalog/types";
-import { Effort, THINKING_EFFORTS } from "@oh-my-pi/pi-catalog/effort";
-import { parseServiceTierIds } from "@oh-my-pi/pi-catalog/utils";
-import { isRecord } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import type { ProviderDiscovery } from "./models-config-schema";
 
 // Default cap on `max_tokens` for auto-discovered models that do not advertise

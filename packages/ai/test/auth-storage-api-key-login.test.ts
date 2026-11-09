@@ -4,70 +4,9 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 
-<<<<<<< ours
 import { AuthStorage, SqliteAuthCredentialStore } from "@tau/tau-ai/auth-storage";
 import * as aiStream from "@tau/tau-ai/stream";
 import { serializeAlibabaTokenPlanCredential } from "@tau/tau-catalog/wire/alibaba-token-plan";
-||||||| base
-import { AuthStorage, SqliteAuthCredentialStore } from "@oh-my-pi/pi-ai/auth-storage";
-import * as aiStream from "@oh-my-pi/pi-ai/stream";
-import { serializeAlibabaTokenPlanCredential } from "@oh-my-pi/pi-catalog/wire/alibaba-token-plan";
-=======
-import { AuthStorage, SqliteAuthCredentialStore } from "@oh-my-pi/pi-ai/auth-storage";
-import * as envApiKey from "@oh-my-pi/pi-ai/env-api-key";
-import * as devinCliModule from "@oh-my-pi/pi-ai/registry/oauth/devin-cli";
-import { serializeAlibabaTokenPlanCredential } from "@oh-my-pi/pi-catalog/wire/alibaba-token-plan";
->>>>>>> theirs · weave: run 'weave explain packages/ai/test/auth-storage-api-key-login.test.ts' for per-hunk detail, 'weave check' to verify your resolution
-import { removeWithRetries } from "../../utils/src/temp";
-
-function countCredentialRows(dbPath: string, provider: string): number {
-	const db = new Database(dbPath, { readonly: true });
-	try {
-		const row = db.query("SELECT COUNT(*) AS count FROM auth_credentials WHERE provider = ?").get(provider) as
-			| { count?: number }
-			| undefined;
-		return row?.count ?? 0;
-	} finally {
-		db.close();
-	}
-}
-
-function countCredentialRowsByDisabledState(dbPath: string, provider: string, disabled: boolean): number {
-	const disabledClause = disabled ? "IS NOT NULL" : "IS NULL";
-	const db = new Database(dbPath, { readonly: true });
-	try {
-		const row = db
-			.query(
-				`SELECT COUNT(*) AS count FROM auth_credentials WHERE provider = ? AND disabled_cause ${disabledClause}`,
-			)
-			.get(provider) as { count?: number } | undefined;
-		return row?.count ?? 0;
-	} finally {
-		db.close();
-	}
-}
-
-describe("AuthStorage api-key login upsert", () => {
-	// Most tests neutralize the env leg so ambient shell / ~/.env keys cannot
-	// hide the stored credential behavior under test. Login-persisted API keys
-	// have their own precedence coverage below.
-	let tempDir = "";
-	let dbPath = "";
-	let store: SqliteAuthCredentialStore | null = null;
-	let authStorage: AuthStorage | null = null;
-	let getEnvApiKeySpy: Mock<typeof envApiKey.getEnvApiKey>;
-
-	beforeEach(async () => {
-<<<<<<< ours
-		getEnvApiKeySpy = vi.spyOn(aiStream, "getEnvApiKey").mockReturnValue(undefined);
-		tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-ai-auth-api-key-login-"));
-||||||| base
-		getEnvApiKeySpy = vi.spyOn(aiStream, "getEnvApiKey").mockReturnValue(undefined);
-		tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "pi-ai-auth-api-key-login-"));
-=======
-		getEnvApiKeySpy = vi.spyOn(envApiKey, "getEnvApiKey").mockReturnValue(undefined);
-		tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "pi-ai-auth-api-key-login-"));
->>>>>>> theirs
 		dbPath = path.join(tempDir, "agent.db");
 		store = await SqliteAuthCredentialStore.open(dbPath);
 		authStorage = new AuthStorage(store);

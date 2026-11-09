@@ -15,7 +15,6 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { Agent } from "@oh-my-pi/pi-agent-core";` +3 more
 import { Agent } from "@tau/tau-agent-core";
 import { createMockModel, type MockModel, type MockResponse } from "@tau/tau-ai/providers/mock";
@@ -27,26 +26,6 @@ import { AuthStorage } from "tau/session/auth-storage";
 import { USER_INTERRUPT_LABEL } from "tau/session/messages";
 import { SessionManager } from "tau/session/session-manager";
 import { removeSyncWithRetries, Snowflake } from "@tau/tau-utils";
-=======
-import { type } from "@oh-my-pi/omptype";
-import { Agent, type AgentMessage, type AgentTool } from "@oh-my-pi/pi-agent-core";
-import { createMockModel, type MockHandler, type MockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import type { PromptTemplate } from "@oh-my-pi/pi-coding-agent/config/prompt-templates";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { InputController } from "@oh-my-pi/pi-coding-agent/modes/controllers/input-controller";
-import { tryRunRpcSkillCommand } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-mode";
-import { cfgMagicKeyword, cfgMagicKeywordsEnabled } from "@oh-my-pi/pi-coding-agent/modes/settings";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { convertToLlm, type CustomMessage, USER_INTERRUPT_LABEL } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { tagImageAttachmentSource } from "@oh-my-pi/pi-tui/prompt/image-source";
-import { removeSyncWithRetries, Snowflake, withTimeout } from "@oh-my-pi/pi-utils";
-import manualContinuePrompt from "../src/prompts/system/manual-continue.md" with { type: "text" };
-import { createInteractiveModeContext } from "./helpers/interactive-mode-context";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/agent-session-queued-steer-delivery.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const COLLAB_PROMPT_TYPE = "collab-prompt";
 const IMAGE_SOURCE_PATH = "/tmp/private-project/screenshot.png";

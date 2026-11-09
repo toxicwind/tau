@@ -2,19 +2,12 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } 
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { toolWireSchema } from "@oh-my-pi/pi-ai/utils/schema";` +1 more
 import type { ToolCall } from "@tau/tau-ai";
 import { toolWireSchema } from "@tau/tau-ai/utils/schema";
 import { validateToolArguments } from "@tau/tau-ai/utils/validation";
 import { Settings } from "tau/config/settings";
 import type { ToolSession } from "tau/tools";
-=======
-import type { ToolCall } from "@oh-my-pi/pi-ai";
-import { validateToolArguments } from "@oh-my-pi/pi-ai/utils/validation";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/tools/gh.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	buildSearchDateQualifier,
 	GithubTool,
@@ -22,7 +15,6 @@ import {
 	parsePrUnifiedDiff,
 	parseSearchDateBound,
 	resolveDefaultRepoMemoized,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { toolWireSchema } from "@oh-my-pi/pi-ai/utils/schema";` +1 more
 } from "tau/tools/gh";
 import { parseIssueUrl, parsePullRequestUrl } from "tau/tools/gh-common";
@@ -32,21 +24,6 @@ import { withRepoLock } from "tau/utils/repo-lock";
 import type { VcsGitRepo } from "@tau/tau-natives";
 import * as vcs from "@tau/tau-natives/vcs";
 import { getAgentDir, hashPath, normalizePathForComparison, removeWithRetries, setAgentDir } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-coding-agent/tools/gh";
-import {
-	parseIssueUrl,
-	parsePullRequestUrl,
-	tryResolveCurrentRepoFresh,
-} from "@oh-my-pi/pi-coding-agent/tools/gh-common";
-import { sanitizeRemoteName } from "@oh-my-pi/pi-coding-agent/tools/gh-pr-checkout";
-import { github } from "@oh-my-pi/pi-coding-agent/utils/github";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
-import { withRepoLock } from "@oh-my-pi/pi-coding-agent/utils/repo-lock";
-import type { VcsGitRepo } from "@oh-my-pi/pi-natives";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import { getAgentDir, hashPath, normalizePathForComparison, removeWithRetries, setAgentDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 
 const TINY_PNG_BASE64 =
 	"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8DwHwAFBQIAX8jx0gAAAABJRU5ErkJggg==";
@@ -1233,7 +1210,6 @@ describe("github tool", () => {
 				// Existing URL is preserved — we never overwrote it.
 				expect(runGit(fixture.repoRoot, ["remote", "get-url", "forksrc"])).toBe(fixture.forkBare);
 			});
-<<<<<<< ours — scope `describe("pr_checkout (single, cross-reposito...` in test_suite `github tool` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const fakeBin = await fs.mkdtemp(path.join(os.tmpdir(), "omp-fa…`
 			it("does not depend on localized git remote-add stderr for existing remotes", async () => {
 				// The shim is a bash script resolved via `which`; neither exists on Windows.
@@ -1269,8 +1245,6 @@ exec ${JSON.stringify(realGit)} "$@"
 					await removeWithRetries(fakeBin);
 				}
 			});
-=======
->>>>>>> theirs — scope `describe("pr_checkout (single, cross-reposito...`
 		});
 	});
 

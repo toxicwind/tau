@@ -89,12 +89,8 @@ describe("PluginManager.install load validation", () => {
 
 	test("installs npm protocol specs with the resolved package name", async () => {
 		vi.spyOn(Bun, "spawn").mockImplementation(((cmd: string[]) => {
-<<<<<<< ours — scope `test("installs npm protocol specs with the re...` in test_suite `PluginManager.install load validation` (F, confidence: medium)
 // refused_by: statement_fold · collision: `expect(cmd).toEqual(["bun", "install", "--no-cache", "npm:pi-fi…`
 			expect(cmd).toEqual(["bun", "install", "--no-cache", "npm:tau-figma-remote-auth"]);
-=======
-			expect(cmd).toEqual([process.execPath, "install", "--no-cache", "npm:pi-figma-remote-auth"]);
->>>>>>> theirs — scope `test("installs npm protocol specs with the re...` · weave: run 'weave explain packages/coding-agent/test/plugin-install-validation.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 			const prepare = (async () => {
 				await Bun.write(

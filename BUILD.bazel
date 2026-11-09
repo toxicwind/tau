@@ -14,7 +14,6 @@ exports_files([
     "rustfmt.toml",
 ])
 _ADDONS = {
-<<<<<<< HEAD
     "linux-x64-baseline": ("//bazel/platforms:linux-x64-baseline", "tau_natives.linux-x64-baseline.node"),
     "linux-x64-modern": ("//bazel/platforms:linux-x64-modern", "tau_natives.linux-x64-modern.node"),
     "linux-arm64": ("//bazel/platforms:linux-arm64", "tau_natives.linux-arm64.node"),
@@ -23,17 +22,6 @@ _ADDONS = {
     "darwin-x64-baseline": ("//bazel/platforms:darwin-x64-baseline", "tau_natives.darwin-x64-baseline.node"),
     "darwin-arm64": ("//bazel/platforms:darwin-arm64", "tau_natives.darwin-arm64.node"),
     "win32-x64-baseline": ("//bazel/platforms:win32-x64-baseline", "tau_natives.win32-x64-baseline.node"),
-=======
-    "linux-x64-baseline": ("//bazel/platforms:linux-x64-baseline", "pi_natives.linux-x64-baseline.node"),
-    "linux-x64-modern": ("//bazel/platforms:linux-x64-modern", "pi_natives.linux-x64-modern.node"),
-    "linux-arm64": ("//bazel/platforms:linux-arm64", "pi_natives.linux-arm64.node"),
-    "linux-musl-x64-baseline": ("//bazel/platforms:linux-musl-x64-baseline", "pi_natives.linux-x64-baseline.node"),
-    "linux-musl-arm64": ("//bazel/platforms:linux-musl-arm64", "pi_natives.linux-arm64.node"),
-    "darwin-x64-baseline": ("//bazel/platforms:darwin-x64-baseline", "pi_natives.darwin-x64-baseline.node"),
-    "darwin-arm64": ("//bazel/platforms:darwin-arm64", "pi_natives.darwin-arm64.node"),
-    "win32-x64-baseline": ("//bazel/platforms:win32-x64-baseline", "pi_natives.win32-x64-baseline.node"),
-    "win32-arm64": ("//bazel/platforms:win32-arm64", "pi_natives.win32-arm64.node"),
->>>>>>> upstream/main
 }
 
 [
@@ -46,13 +34,8 @@ _ADDONS = {
     for target, (platform, out) in _ADDONS.items()
 ]
 
-<<<<<<< HEAD
 # Every addon buildable from a linux-x64 host (the tau-kata pods): all linux
 # targets plus the msvc cross build. darwin addons build on mac hosts.
-=======
-# Every shipped addon. Linux hosts (the vmon CI runners) build all of them: the
-# zig, msvc and darwin cross toolchains all run there.
->>>>>>> upstream/main
 filegroup(
     name = "natives-all",
     srcs = [

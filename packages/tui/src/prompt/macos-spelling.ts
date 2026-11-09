@@ -1,12 +1,8 @@
 import * as native from "@tau/tau-natives";
 import { TERMINAL } from "../index";
 import type { EditorInlineReplacement, EditorTextAssistProvider, EditorWordReplacements } from "../components/editor";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { logger } from "@oh-my-pi/pi-utils";`
 import { logger } from "@tau/tau-utils";
-=======
-import { logger, withTimeout } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/src/prompt/macos-spelling.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { isMagicKeyword } from "./magic-keywords";
 import { maskNonProse } from "./markdown-prose";
 import { isProseWord, lineContext, ProseSource, type SpellingDecorationContext } from "./prose-gate";

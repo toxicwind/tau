@@ -1,11 +1,7 @@
 /**
  * Server side of TypeSafe's System One wire format (`POST /v1/systemone`),
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `* served by the auth-gateway so TypeSafe SDKs and omp's own `Ty…`
  * served by the auth-gateway so TypeSafe SDKs and tau's own `TypeSafeJudge`
-=======
- * served by the auth-gateway so TypeSafe SDKs and omp's own `NativeJudge`
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/src/providers/systemone-server.ts' for per-hunk detail, 'weave check' to verify your resolution
  * can point `TYPESAFE_BASE_URL` at the gateway and never hold the real key.
  *
  * Requests are validated only as far as routing needs — the `model` id, the

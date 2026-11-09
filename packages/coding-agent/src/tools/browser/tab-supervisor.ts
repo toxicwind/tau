@@ -15,19 +15,11 @@ import { callSessionTool } from "../../eval/js/tool-bridge";
 import { webpExclusionForModel } from "@tau/tau-tui/chat/image-loading";
 import type { ToolSession } from "../index";
 import { expandPath } from "../path-utils";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { ToolAbortError } from "../tool-errors";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 import { gracefulKillTreeOnce, pickElectronTarget, shouldPreserveConnectedBrowserFocus } from "./attach";
 import { CmuxTab, runCmuxCode } from "./cmux/cmux-tab";
-=======
-import { CELL_BUDGET_SLACK_MS } from "../run-scope";
-import { ToolAbortError, toWorkerErrorPayload } from "../tool-errors";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
-import { gracefulKillTreeOnce, isChromiumBrowserExecutable, pickElectronTarget } from "./attach";
-import type * as Cmux from "./cmux/cmux-tab";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/browser/tab-supervisor.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { mapWaitUntil } from "./cmux/rpc";
 import { browserConnection, DEFAULT_VIEWPORT } from "./launch";
 import {
@@ -659,13 +651,8 @@ async function acquireTabImpl(
 	};
 	attachTabWorker(tab, worker);
 	tabs.set(name, tab);
-<<<<<<< ours — function `acquireTabImpl` (T+F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 	// Durably record ownership so another live tau process can reap this page if
-=======
-	sweepClosedTabUploads();
-	// Durably record ownership so another live omp process can reap this page if
->>>>>>> theirs — function `acquireTabImpl` (T+F, confidence: medium)
 	// this process dies abnormally before its own teardown closes the tab.
 	const scope = sharedScopeOf(browser);
 	if (scope) void recordSharedTarget(scope, info.targetId);
@@ -1906,13 +1893,8 @@ async function buildInitPayload(browser: PuppeteerBrowserHandle, opts: AcquireTa
 			mode: "headless",
 			browserWSEndpoint,
 			safeDir,
-<<<<<<< ours — function `buildInitPayload` (T+S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 			// Visible launches still need an TAU-owned page, stealth setup, and
-=======
-			uploadDir,
-			// Visible launches still need an OMP-owned page, stealth setup, and
->>>>>>> theirs — function `buildInitPayload` (T+S+F, confidence: low)
 			// independent lifecycle; only their fixed device emulation is disabled.
 			emulateViewport: browser.kind.headless,
 			viewport: opts.viewport,

@@ -1,11 +1,7 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { Model } from "@oh-my-pi/pi-ai/types";` +1 more
 import type { Model } from "@tau/tau-ai/types";
 import MODELS_JSON from "@tau/tau-catalog/models.json" with { type: "json" };
-=======
-import { getBundledModels, getBundledProviders } from "@oh-my-pi/pi-catalog/models";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/test/models-json-no-local-endpoints.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 // Pins the invariant: the bundled catalog must never carry a
 // local/self-hosted provider's catalog. Those providers default to an endpoint

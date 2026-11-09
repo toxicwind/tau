@@ -1,5 +1,4 @@
 import { afterEach, describe, expect, test, vi } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { getEnvApiKey } from "@oh-my-pi/pi-ai/stream";` +2 more
 import { getOAuthProviders } from "@tau/tau-ai/registry/oauth";
 import { getProviderDefinition } from "@tau/tau-ai/registry";
@@ -10,18 +9,6 @@ import { DEFAULT_MODEL_PER_PROVIDER, PROVIDER_DESCRIPTORS } from "@tau/tau-catal
 import { singularityApiDevModelManagerOptions } from "@tau/tau-catalog/provider-models/openai-compat";
 import type { FetchImpl, ModelSpec } from "@tau/tau-catalog/types";
 import { SINGULARITYAPI_DEV_API_BASE_URL, normalizeSingularityApiBaseUrl } from "@tau/tau-catalog/wire/singularityapi";
-=======
-import { getOAuthProviders } from "@oh-my-pi/pi-ai/registry/oauth";
-import { getProviderDefinition } from "@oh-my-pi/pi-ai/registry";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { resolveModelCacheProviderId } from "@oh-my-pi/pi-catalog/provider-models";
-import { singularityApiDevModelManagerOptions } from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import type { FetchImpl, ModelSpec } from "@oh-my-pi/pi-catalog/types";
-import {
-	SINGULARITYAPI_DEV_API_BASE_URL,
-	normalizeSingularityApiBaseUrl,
-} from "@oh-my-pi/pi-catalog/wire/singularityapi";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/catalog/test/singularityapi-dev-provider.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 afterEach(() => {
 	vi.restoreAllMocks();

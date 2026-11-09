@@ -20,13 +20,10 @@ describe("parseGitHubRepo", () => {
 		expect(parseGitHubRepo("git@github.com:loftiskg/tau.git")).toBe("loftiskg/tau");
 	});
 
-<<<<<<< ours — scope `test("parses SSH scp-style URL without .git s...` in test_suite `parseGitHubRepo`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	test("parses SSH scp-style URL without .git suffix", () => {
 		expect(parseGitHubRepo("git@github.com:loftiskg/tau")).toBe("loftiskg/tau");
 	});
-=======
->>>>>>> theirs — scope `test("parses SSH scp-style URL without .git s...` deleted in theirs · weave: run 'weave explain packages/tui/test/status-line-git-utils.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 	test("parses ssh:// protocol URL", () => {
 		expect(parseGitHubRepo("ssh://git@github.com/user/repo.git")).toBe("user/repo");

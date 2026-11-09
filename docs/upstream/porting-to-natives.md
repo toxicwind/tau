@@ -41,33 +41,7 @@ Release builds use Bazel targets and publish `.node` files in platform leaf pack
 4. Let napi-rs apply the default snake_case-to-camelCase name unless a deliberate public name requires `js_name`.
 5. Preserve the JS contract: null/undefined distinctions, ordering, error versus result semantics, callback timing, and sync versus Promise behavior.
 
-<<<<<<< ours — heading `Current package and build split` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
-=======
-## Current package and build split
-
-The package has no `packages/natives/src/<module>` wrapper layer. Its entrypoints are:
-
-- eager root: `native/index.js` with generated `native/index.d.ts`;
-- lazy desktop wrapper: `native/desktop.js` / `desktop.d.ts`;
-- lazy clipboard wrapper: `native/clipboard.js` / `clipboard.d.ts`;
-- lazy Windows-path wrapper: `native/path.js` / `path.d.ts` (`@oh-my-pi/pi-natives/path`); other platforms return the input unchanged without loading;
-- lazy vcs wrapper: `native/vcs.js` / `vcs.d.ts` (`@oh-my-pi/pi-natives/vcs`).
-
-The VCS subpath exposes discovery and Git/Jujutsu operations through `git`,
-`repo`, `repoForDisplay`, `require`, `requireGit`, and `jj`, plus metadata,
-clone/detach/patch helpers, error predicates, and a head-change watcher built
-on `VcsRepo.watchTarget()`. `repoForDisplay` prefers Jujutsu on equal-root
-ties; Git-safe automation uses `repo` instead.
-
-Two commands serve different purposes:
-
-- `bun --cwd=packages/natives run build:bindings` runs napi-rs for the host, installs a local variant addon and generated declarations, and regenerates explicit ESM/enum exports. Use this when the Rust public type surface changes.
-- `bun --cwd=packages/natives run build` invokes `scripts/bazel-natives.ts host --dest native`. The host target builds through the local cargo/napi-rs backend by default and therefore also regenerates declarations and exports; `OMP_NATIVE_BUILD_BACKEND=bazel` opts into Bazel, which leaves those committed files unchanged.
-
-Release builds use Bazel targets and publish `.node` files in platform leaf packages. The core publish rewrite removes addons and injects lockstep optional dependencies generated from `LEAF_TARGETS` in `gen-npm-packages.ts`.
-
->>>>>>> theirs — heading `Current package and build split` (S+F, confidence: low) · weave: run 'weave explain docs/upstream/porting-to-natives.md' for per-hunk detail, 'weave check' to verify your resolution
 ### Work scheduling and cancellation
 
 - Use `task::blocking(tag, cancel_token, work)` for CPU-heavy or blocking work. It returns an `AsyncTask`, profiles the work, and catches panics before they cross the async-work FFI boundary.

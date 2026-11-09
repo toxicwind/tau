@@ -1,7 +1,6 @@
 import { Database } from "bun:sqlite";
 import { afterEach, beforeEach, describe, expect, it, spyOn, vi } from "bun:test";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { rebindMemoryBackendForCwd } from "@oh-my-pi/pi-coding-…`
 import { type } from "@tau/tautype";
 import { Agent, type AgentTool } from "@tau/tau-agent-core";
@@ -20,31 +19,6 @@ import { executeAcpBuiltinSlashCommand } from "tau/slash-commands/acp-builtins";
 import { BUILTIN_TOOLS, type ToolSession } from "tau/tools";
 import { resetMemoryForTests } from "@tau/tau-mnemotau";
 import { getProjectAgentDir, getProjectDir, setProjectDir, TempDir } from "@tau/tau-utils";
-=======
-import { type } from "@oh-my-pi/omptype";
-import { Agent, type AgentTool } from "@oh-my-pi/pi-agent-core";
-import * as ai from "@oh-my-pi/pi-ai";
-import type { Api, AssistantMessage, Model } from "@oh-my-pi/pi-ai";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { hindsightBackend, rebindMemoryBackendForCwd } from "@oh-my-pi/pi-coding-agent/hindsight/backend";
-import { MEMORY_BACKEND_TOOL_NAMES } from "@oh-my-pi/pi-coding-agent/memory-backend/tool-names";
-import { computeMnemopiBankScope } from "@oh-my-pi/pi-coding-agent/mnemopi/config";
-import { mnemopiBackend } from "@oh-my-pi/pi-coding-agent/mnemopi/backend";
-import { getMnemopiSessionState } from "@oh-my-pi/pi-coding-agent/mnemopi/state";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AgentStorage } from "@oh-my-pi/pi-coding-agent/session/agent-storage";
-import type { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { executeAcpBuiltinSlashCommand } from "@oh-my-pi/pi-coding-agent/slash-commands/acp-builtins";
-import { BUILTIN_TOOLS, type ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { tinyModelClient } from "@oh-my-pi/pi-coding-agent/tiny/title-client";
-import { resetMemoryForTests } from "@oh-my-pi/pi-mnemopi";
-import { getProjectAgentDir, getProjectDir, setProjectDir, TempDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/agent-session-memory-backend.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
 import { cfgAutolearnEnabled } from "@oh-my-pi/pi-coding-agent/autolearn/settings";
@@ -393,18 +367,11 @@ describe("AgentSession memory backend lifecycle", () => {
 
 	it("switches runtime state, memory tools, and prompt in one apply", async () => {
 		const current = createSession(async () =>
-<<<<<<< ours — scope `it("switches runtime state, memory tools, and...` in test_suite `AgentSession memory backend lifecycle` (F, confidence: medium)
 // refused_by: statement_fold · collision: `settings.get("memory.backend") === "mnemopi" ? [createTool("ret…` +1 more
 			settings.get("memory.backend") === "mnemotau" ? [createTool("retain"), createTool("memory_edit")] : [],
 		);
 
 		settings.override("memory.backend", "mnemotau");
-=======
-			cfgMemoryBackend.get(settings) === "mnemopi" ? [createTool("retain"), createTool("memory_edit")] : [],
-		);
-
-		cfgMemoryBackend.override(settings, "mnemopi");
->>>>>>> theirs — scope `it("switches runtime state, memory tools, and...`
 		await current.applyMemoryBackend();
 
 		expect(getMnemotauSessionState(current)).toBeDefined();
@@ -427,12 +394,8 @@ describe("AgentSession memory backend lifecycle", () => {
 		cfgMemoryBackend.override(settings, source);
 		await settings.reloadForCwd(path.join(tempDir.path(), "source"));
 		const current = createSession(async () =>
-<<<<<<< ours — scope `it.each([` in test_suite `AgentSession memory backend lifecycle` (F, confidence: medium)
 // refused_by: statement_fold · collision: `settings.get("memory.backend") === "mnemopi" ? [createTool("ret…` +2 more
 			settings.get("memory.backend") === "mnemotau" ? [createTool("retain")] : [],
-=======
-			cfgMemoryBackend.get(settings) === "mnemopi" ? [createTool("retain")] : [],
->>>>>>> theirs — scope `it.each([`
 		);
 		await current.applyMemoryBackend();
 
@@ -442,7 +405,6 @@ describe("AgentSession memory backend lifecycle", () => {
 		await settings.reloadForCwd(destinationCwd);
 		await rebindMemoryBackendForCwd(current);
 
-<<<<<<< ours — scope `it.each([` in test_suite `AgentSession memory backend lifecycle` (F, confidence: medium)
 // refused_by: statement_fold · collision: `settings.get("memory.backend") === "mnemopi" ? [createTool("ret…` +2 more
 		const state = getMnemotauSessionState(current);
 		if (destination === "mnemotau") {
@@ -450,14 +412,6 @@ describe("AgentSession memory backend lifecycle", () => {
 				settings.get("mnemotau.bank"),
 				destinationCwd,
 				settings.get("mnemotau.scoping"),
-=======
-		const state = getMnemopiSessionState(current);
-		if (destination === "mnemopi") {
-			const scope = computeMnemopiBankScope(
-				cfgMnemopiBank.get(settings),
-				destinationCwd,
-				cfgMnemopiScoping.get(settings),
->>>>>>> theirs — scope `it.each([`
 			);
 			expect(state?.config.retainBank).toBe(scope.retainBank);
 			expect(state?.config.recallBanks).toEqual(scope.recallBanks);

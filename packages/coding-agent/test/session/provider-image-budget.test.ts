@@ -1,36 +1,8 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { Context, ImageContent, TextContent } from "@oh-my…` +1 more
 import type { Context, ImageContent, TextContent } from "@tau/tau-ai";
 import { buildModel } from "@tau/tau-catalog/build";
 import { clampProviderContextImages } from "tau/session/provider-image-budget";
-=======
-import type {
-	AssistantMessage,
-	Context,
-	ImageContent,
-	Message,
-	Model,
-	ModelSpec,
-	TextContent,
-	Tool,
-} from "@oh-my-pi/pi-ai";
-import { streamAnthropic } from "@oh-my-pi/pi-ai/providers/anthropic";
-import { streamFactoryDroid } from "@oh-my-pi/pi-ai/providers/factory-droid";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { factoryDroidRegistry } from "@oh-my-pi/pi-catalog/compat/factory-droid";
-import { buildFactoryDroidModel } from "@oh-my-pi/pi-catalog/discovery";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { toModelSpec } from "@oh-my-pi/pi-catalog/provider-models/bundled-references";
-import { factoryDroidWireBaseUrl } from "@oh-my-pi/pi-catalog/wire/factory-droid";
-import { decorateContextImages } from "@oh-my-pi/pi-coding-agent/blob-broker/context-images";
-import {
-	capArchiveFrameBytes,
-	clampProviderContextImageBytes,
-	clampProviderContextImages,
-} from "@oh-my-pi/pi-coding-agent/session/provider-image-budget";
-import { isRecord } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/session/provider-image-budget.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const UMANS_MODEL = buildModel({
 	id: "umans-glm-5.2",

@@ -11,12 +11,8 @@ Primary implementation files:
 - `packages/coding-agent/src/config/model-settings.ts` — model selection settings (`modelRoles`, `enabledModels`, `enabledProviders`/`disabledProviders`, `modelProviderOrder`, `cycleOrder`)
 - `packages/coding-agent/src/session/settings.ts` — provider transport preferences (`providers.*`)
 - `packages/coding-agent/src/config/models-config.ts` and `models-config-schema-bundle.ts` — custom provider/model validation
-<<<<<<< ours — scope `- `packages/coding-agent/src/session/auth-sto...` in heading `What controls model behavior` (S, confidence: medium)
 // refused_by: statement_fold · collision: `- `packages/coding-agent/src/session/auth-storage.ts` — re-expo…`
 - `packages/coding-agent/src/session/auth-storage.ts` — re-exports `AuthStorage` from `@tau/tau-ai`; API key + OAuth resolution order
-=======
-- `packages/coding-agent/src/session/auth-storage.ts` — re-exports `AuthStorage` from `@oh-my-pi/pi-ai`; credential precedence is implemented in `packages/ai/src/auth/cascade.ts`
->>>>>>> theirs — scope `- `packages/coding-agent/src/session/auth-sto...` · weave: run 'weave explain docs/upstream/models.md' for per-hunk detail, 'weave check' to verify your resolution
 - `packages/catalog/src/compat/resolve.ts` and `compat/rules/` — compatibility and model policy resolution
 - `packages/catalog/src/models.ts` and `packages/catalog/src/types.ts` — built-in providers/models and public model types
 
@@ -53,7 +49,6 @@ providers:
 
 ```yaml
 providers:
-<<<<<<< ours — scope `providers:` in heading `Provider-level fields` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `imageInputDecoder: stb # local STB decoder; OMP converts WebP b…`
   my-provider:
     baseUrl: https://api.example.com/v1
@@ -100,52 +95,6 @@ providers:
           extraBody:
             gateway: m1-01
             controller: mlx
-=======
-   my-provider:
-      baseUrl: https://api.example.com/v1
-      apiKey: MY_PROVIDER_API_KEY
-      api: openai-completions
-      headers:
-         X-Team: platform
-      authHeader: true
-      auth: apiKey
-      disableStrictTools: false # set true for Anthropic-compatible endpoints that reject the strict field
-      discovery:
-         type: ollama
-         timeoutMs: 10000 # optional per-provider HTTP probe timeout in milliseconds
-      modelOverrides:
-         some-model-id:
-            name: Renamed model
-      models:
-         - id: some-model-id
-           name: Some Model
-           api: openai-completions
-           reasoning: false
-           input: [text]
-           imageInputDecoder: stb # local STB decoder; OMP converts WebP before dispatch
-           cost:
-              input: 0
-              output: 0
-              cacheRead: 0
-              cacheWrite: 0
-           contextWindow: 128000
-           maxContextWindow: 256000 # optional extended-context window
-           maxTokens: 16384
-           headers:
-              X-Model: value
-           compat:
-              supportsStore: true
-              supportsDeveloperRole: true
-              supportsReasoningEffort: true
-              maxTokensField: max_completion_tokens
-              openRouterRouting:
-                 only: [anthropic]
-              vercelGatewayRouting:
-                 order: [anthropic, openai]
-              extraBody:
-                 gateway: m1-01
-                 controller: mlx
->>>>>>> theirs — scope `providers:`
 ```
 
 `maxContextWindow` is available on both `models` entries and `modelOverrides`.
@@ -364,18 +313,10 @@ Loading models.yml checks a `modelOverrides` `kind` only against an api the file
 - `auth`: `apiKey` (default), `none`, or `oauth`. `none` and `oauth` waive the custom-provider `apiKey` requirement, but `oauth` does not create credentials or register a login flow. It forces OAuth-style request shaping; a usable credential must come from stored auth, environment, or a configured key. Custom `anthropic-messages` models also use OAuth-style shaping when `auth` is omitted; set `auth: apiKey` for plain API-key shaping.
 - `discovery.type`: `ollama`, `llama.cpp`, `lm-studio`, `openai-models-list`, `proxy`, `litellm`, or `apple-foundation-models`. Apple's transport is registered implicitly on supported Macs; `apple-foundation-models` is not an allowed `api` value in this YAML schema.
 - `discovery.injectV1`: optional boolean, default `true`, for `openai-models-list`. Set `false` to fetch the model list from `{baseUrl}/models` without injecting `/v1` — for gateways that root their OpenAI-compatible surface at a versioned path (e.g. `https://api.opper.ai/v3/compat`) where the forced `/v1/models` returns a different, smaller model list. Query strings in `baseUrl` are ignored, matching the default mode.
-<<<<<<< ours — heading `Allowed auth/discovery values` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 - `transport`: `tau-native` only. When set, every model under that provider is sent to an `tau auth-gateway` compatible `baseUrl` via `POST /v1/pi/stream`; `apiKey` is the gateway bearer.
 - `imageInputDecoder`: `stb` only. Set this on a custom model or `modelOverrides` entry when the serving backend uses an STB-compatible image decoder that cannot accept WebP; TAU converts attached and historical WebP images before provider dispatch.
 - `tokenizer`: opt into a specific embedded local tokenizer when a proxy's model id is ambiguous or noncanonical. Allowed values: `claude-v3`, `claude-v47`, `claude-v5`, `claude-v5-sonnet`, `qwen3`, `deepseek-v3`, `kimi-k2`, and `glm5`. Omit it to use catalog identity policy; unknown models retain the fast local estimate.
-=======
-- `discovery.advertisedReasoning`: optional boolean, default `true`, for `openai-models-list`, `lm-studio`, and `proxy`. Discovery reads what a `/v1/models` row states about its own reasoning surface (`supported_reasoning_levels` / `default_reasoning_level` / `reasoning`, top-level or under `metadata`) and lets it outrank the bundled-reference guess, so a gateway that dispatches with its own catalog offers exactly the tiers its route accepts. A row that lists `none` gets `reasoningDisableMode: none-effort`, so a thinking-off request sends the off-switch instead of being clamped to the lowest tier. An advertised ladder also pins `defaultLevel` inside itself, so catalog policy cannot inject a tier the row omits. A row reporting `reasoning: false` overrides a reasoning-enabled reference for that id. Set the flag to `false` when an endpoint advertises levels its route rejects: discovery then builds each model's thinking surface from the bundled reference alone. A row that says nothing about reasoning is unaffected either way. Explicit `modelOverrides.<id>.thinking` and `compat.supportsReasoningEffort` still win over both. `litellm` does not accept the flag: its authoritative reasoning metadata comes from `/model_group/info`, so the setting would only apply to its `/v1/models` fallback.
-- `transport`: `pi-native` only. When set, every model under that provider is sent to an `omp auth-gateway` compatible `baseUrl` via `POST /v1/pi/stream`; `apiKey` is the gateway bearer.
-- `imageInputDecoder`: `stb` only. Set this on a custom model or `modelOverrides` entry when the serving backend uses an STB-compatible image decoder that cannot accept WebP; OMP converts attached and historical WebP images before provider dispatch.
-- `imageCountBudget`: positive integer. Set this on a custom model or `modelOverrides` entry to state how many images one request to its host may carry. It replaces the catalog budget, which is 5 for a provider no catalog rule names. A gateway in front of a vendor with a higher limit needs it: once a session holds more images than the budget, OMP drops the oldest ones, which changes the cached prompt prefix.
-- `tokenizer`: opt into a specific embedded local tokenizer when a proxy's model id is ambiguous or noncanonical. Allowed values: `claude-v3`, `claude-v47`, `claude-v5`, `claude-v5-sonnet`, `qwen3`, `deepseek-v3`, `kimi-k2`, `glm5`, `cl100k` (OpenAI GPT-3.5 and GPT-4) and `o200k` (OpenAI GPT-5 and later). Omit it to use catalog identity policy; models without one count in o200k.
->>>>>>> theirs — heading `Allowed auth/discovery values` (S+F, confidence: low)
 
 ## Validation rules (current)
 
@@ -447,18 +388,11 @@ Provider `apiKey` values and provider/model `headers` values may start with `!` 
 
 ```yaml
 providers:
-<<<<<<< ours — scope `providers:` in heading `Command-resolved secrets` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `X-Team-Key: "!bw get password omp-team-key"`
   openai:
     apiKey: "!op read op://dev/openai/api-key"
     headers:
       X-Team-Key: "!bw get password tau-team-key"
-=======
-   openai:
-      apiKey: "!op read op://dev/openai/api-key"
-      headers:
-         X-Team-Key: "!bw get password omp-team-key"
->>>>>>> theirs — scope `providers:`
 ```
 
 Successful command outputs are cached for the process lifetime, and concurrent requests share an in-flight execution. Failures back off for 30 seconds. Refresh callers that request `refreshCommandCredentials` (including the model hub's explicit refresh) and 401 credential recovery invalidate the relevant cached API keys and headers; an ordinary catalog refresh does not. Runtime API-key overrides, including `--api-key`, take precedence over configured credentials.
@@ -477,12 +411,8 @@ ModelRegistry composition order:
 
 Background discovery repeats the merge with custom definitions and model overrides applied after
 the discovered rows, so explicit user configuration remains effective.
-<<<<<<< ours — scope `1. Load built-in providers/models from `@oh-m...` in heading `Merge and override order` (S, confidence: medium)
 // refused_by: statement_fold · collision: `1. Load built-in providers/models from `@oh-my-pi/pi-catalog` (…`
 1. Load built-in providers/models from `@tau/tau-catalog` (`getBundledProviders` / `getBundledModels`).
-=======
-2. Load built-in models from `@oh-my-pi/pi-catalog` (`getBundledProviders` / `getBundledModels`), applying provider overrides and context policies.
->>>>>>> theirs — scope `1. Load built-in providers/models from `@oh-m...`
 
 ### Provider-model cache and static fingerprint
 
@@ -500,12 +430,8 @@ non-authoritative snapshots use a five-minute retry interval.
 
 ### Shared catalog refresh
 
-<<<<<<< ours — scope `The bundled catalog remains the startup and o...` in heading `Shared catalog refresh` (S, confidence: medium)
 // refused_by: statement_fold · collision: `The bundled catalog remains the startup and offline baseline. A…`
 The bundled catalog remains the startup and offline baseline. After startup loads bundled and cached rows synchronously, the existing background refresh lifecycle fetches the current shared models.dev catalog for known providers. New model IDs are merged additively into each provider's bundled slice, normalized through that provider's catalog descriptor, and persisted in the model-cache database. This allows newly published models to appear without waiting for a new TAU binary.
-=======
-The bundled catalog remains the startup and offline baseline. Startup loads configuration and cached rows, materializing provider slices lazily; a local-only credential-scoped hydration pass precedes selector validation. Background refresh fetches the shared models.dev catalog through `https://catalog.stencil.so/models.json.zstd` for supported providers. New model IDs are merged additively into each provider's bundled slice, normalized through that provider's catalog descriptor, and persisted in the model-cache database. This allows newly published models to appear without waiting for a new OMP binary.
->>>>>>> theirs — scope `The bundled catalog remains the startup and o...`
 
 Remote rows can supply current limits, pricing, modalities, and capability flags for newly added IDs, but they cannot introduce code, arbitrary headers, or an unregistered provider. Providers whose descriptors declare endpoint discovery authoritative use that result for their available chat roster. The shared catalog is not authoritative: it does not remove bundled models when a remote row disappears.
 
@@ -579,12 +505,8 @@ For the first-party `deepseek` provider, the catalog follows [DeepSeek's officia
 - Flash pricing covers `deepseek-flash` and the retired-but-still-accepted `deepseek-v4-flash` and `deepseek-v4-flash-vision-exp` ids, all billed at the Flash card. Peak rates per million tokens are $0.30 uncached input, $0.006 cached input, and $1.20 output.
 - `deepseek-v4-pro` initially uses peak rates of $1.32 uncached input, $0.044 cached input, and $3.96 output per million tokens. From **2026-09-14 04:00 UTC**, its estimates use the Flash rate card, with the same peak/off-peak schedule.
 
-<<<<<<< ours — scope `For the first-party `deepseek` provider, the ...` in heading `Usage costs and time-based pricing` (F, confidence: medium)
 // refused_by: statement_fold · collision: `Local estimates use the assistant message's **request-start tim…`
 Local estimates use the assistant message's **request-start timestamp** to choose both the rate card and tariff for the whole request. This is TAU's estimation convention: DeepSeek's pricing page does not specify how its server bills a request spanning a boundary. A request whose timestamp cannot be recovered is left unpriced rather than estimated against a tariff chosen from the wall clock.
-=======
-Some catalog prices change on a date without a peak/off-peak tariff. Gemini 4 Argon on `google`, `google-vertex`, `google-antigravity`, and `cursor` is estimated at $2 input / $0.10 cached input / $10 output per million tokens through 2026-11-30, and at Google's $4 / $0.20 / $20 list price from **2026-12-01 08:00 UTC** (midnight US Pacific). The request's timestamp picks the price, so a model loaded before the change prices later requests at the new rate without a catalog update, and the model browser and `omp models --json` show the price in force.
->>>>>>> theirs — scope `For the first-party `deepseek` provider, the ...`
 
 Local estimates use the assistant message's **request-start timestamp** to choose both the rate card and tariff for the whole request. This is OMP's estimation convention: DeepSeek's pricing page does not specify how its server bills a request spanning a boundary. When importing historical usage without recorded cost, the stats importer leaves scheduled pricing unpriced if no request timestamp can be recovered, rather than choosing a wall-clock tariff.
 
@@ -810,12 +732,8 @@ Keyless providers:
 
 ### Broker mode
 
-<<<<<<< ours — scope `When `OMP_AUTH_BROKER_URL` (or `auth.broker.u...` in heading `Broker mode` (S, confidence: medium)
 // refused_by: statement_fold · collision: `When `OMP_AUTH_BROKER_URL` (or `auth.broker.url`) is set, the l…`
 When `TAU_AUTH_BROKER_URL` (or `auth.broker.url`) is set, the local SQLite credential store is replaced by `RemoteAuthCredentialStore`. Layers 3, 4, and 6 above (stored OAuth and API-key credentials) are served from a broker-supplied snapshot whose `refresh` tokens are redacted; expiry triggers `POST /v1/credential/:id/refresh` on the broker rather than a local refresh.
-=======
-When `OMP_AUTH_BROKER_URL` (or `auth.broker.url`) is set, the local SQLite credential store is replaced by `RemoteAuthCredentialStore`. Layers 3, 4, and 7 above (stored OAuth and API-key credentials) are served from a broker-supplied snapshot whose `refresh` tokens are redacted; expiry triggers `POST /v1/credential/:id/refresh` on the broker rather than a local refresh.
->>>>>>> theirs — scope `When `OMP_AUTH_BROKER_URL` (or `auth.broker.u...`
 
 `AuthStorage.keys.setConfig` lets a `models.yml` `apiKey` win over a broker-resolved OAuth token without overriding a runtime `--api-key`. See [`auth-broker-gateway.md`](./auth-broker-gateway.md) for the full broker / gateway design and env surface (`TAU_AUTH_BROKER_URL`, `TAU_AUTH_BROKER_TOKEN`, `auth.broker.url`, `auth.broker.token`).
 
@@ -966,7 +884,6 @@ disabledProviders:
 
 String entries apply everywhere. Scoped entries apply when the current working directory is the configured path or one of its subdirectories. Use `path`, `paths`, `pathPrefix`, or `pathPrefixes`; use `models` for `enabledModels`, `providers` for either provider setting, or `values` for any of them.
 
-<<<<<<< ours — heading ``/model` and `omp models`` (S+F, confidence: low)
 // refused_by: rename_vs_edit_guard · collision: `- `omp models` (default `ls` action) prints provider-grouped ta…`
 ## `/model` and `tau models`
 
@@ -974,19 +891,6 @@ Both surfaces keep provider-prefixed concrete models visible and selectable.
 
 - `/model` shows an all-models view plus one view per provider
 - `tau models` (default `ls` action) prints provider-grouped tables of every available model; `tau models find <substring>` filters by provider, id, or name; `tau models refresh` forces an online catalog re-fetch ignoring the model cache TTL; any provider name doubles as an `ls` filter (e.g. `tau models openai-codex`). Flags: `--json`, `-e <path>` (load extension, repeatable), `--no-extensions`, `--config <overlay>` (extra config overlay, repeatable)
-=======
-## `/model` and `omp models`
-
-Both surfaces keep provider-prefixed concrete models visible and selectable.
-
-- `/model` / `/models` opens the model hub with role assignments and provider catalogs; the session-only picker changes the active model without saving a role assignment.
-- `omp models` (default `ls` action) prints provider-grouped tables of available **chat** models; `--kind <kind>` selects another catalog kind and `--kind all` includes every kind.
-- `omp models find <substring>` filters by provider, id, or name; `omp models refresh` forces an online catalog re-fetch ignoring the model cache TTL; a provider name doubles as an `ls` filter (e.g. `omp models openai-codex`).
-- Other flags: `--json`, `-e <path>` / `--extension <path>` (repeatable), `--no-extensions` (skip ambient discovery; explicit `-e` still loads), and `--config <overlay>` (repeatable).
-
-JSON includes `provider`, `kind`, `id`, `selector`, `name`, limits, reasoning/thinking metadata,
-declared `input`, and `cost`; it does not expose the model's transport `api`.
->>>>>>> theirs — heading ``/model` and `omp models`` (S+F, confidence: low)
 
 Selecting a provider row stores its explicit `provider/modelId`.
 
@@ -1289,12 +1193,8 @@ not acquire that capability just from `bedrockMessagesApi`.
 
 ### Strict tool schemas (`disableStrictTools`)
 
-<<<<<<< ours — scope `Anthropic's API supports a `strict` field on ...` in heading `Strict tool schemas (`disableStrictTools`)` (S, confidence: medium)
 // refused_by: statement_fold · collision: `Anthropic's API supports a `strict` field on tool definitions t…`
 Anthropic's API supports a `strict` field on tool definitions that forces the model to always follow the provided schema exactly. TAU enables it by default for a small allowlist of high-frequency built-in `anthropic-messages` tools (`bash`, `python`, `edit`, and `find`) whose schemas fit Anthropic's strict grammar limits; other tools still send normalized schemas but omit `strict`.
-=======
-Anthropic's API supports a `strict` field on tool definitions that forces the model to always follow the provided schema exactly. OMP enables it by default for a small allowlist of high-frequency built-in `anthropic-messages` tools (`python`, `edit`, and `find`) whose schemas fit Anthropic's strict grammar limits; other tools still send normalized schemas but omit `strict`. `bash` is left out: strict decoding fixes property order, so once a call has written `async`, the `timeout` declared before it can no longer be emitted.
->>>>>>> theirs — scope `Anthropic's API supports a `strict` field on ...`
 
 Third-party providers that front the Anthropic API (AWS Bedrock, Azure, self-hosted proxies) do not always implement this field and will reject requests that include it. Set `disableStrictTools: true` at the provider level to opt out of strict mode for the allowlisted tools:
 
@@ -1419,12 +1319,8 @@ providers:
 ## Legacy consumer caveat
 
 Most model configuration now flows through `models.yml` / `models.yaml` via `ModelRegistry`.
-<<<<<<< ours — scope `Most model configuration now flows through `m...` in heading `Legacy consumer caveat` (S, confidence: medium)
 // refused_by: statement_fold · collision: `Most model configuration now flows through `models.yml` / `mode…`
 Most model configuration now flows through `models.yml` / `models.yaml` via `ModelRegistry`. Explicit `.json` / `.jsonc` paths remain supported only when passed programmatically to `ModelRegistry`; the default user config prefers `~/.tau/agent/models.yml`, then falls back to `~/.tau/agent/models.yaml`.
-=======
-Explicit `.json` / `.jsonc` paths remain supported when passed programmatically; the active agent
->>>>>>> theirs — scope `Most model configuration now flows through `m...`
 directory's `models.yml` takes precedence over `models.yaml`.
 
 ## Failure mode

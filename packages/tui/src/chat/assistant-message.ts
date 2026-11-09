@@ -1,10 +1,5 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { formatNumber } from "@oh-my-pi/pi-utils";`
 import type { AssistantMessage, ImageContent, TextContent } from "@tau/tau-ai";
-=======
-import type { AssistantMessage, ImageContent, TextContent } from "@oh-my-pi/pi-ai";
-import { presentNarrationAsAnswer } from "@oh-my-pi/pi-ai/utils/narration";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/src/chat/assistant-message.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { type Component, Container } from "../tui";
 import { Image, type ImageBudget } from "../components/image";
 import { ImageProtocol, TERMINAL } from "../terminal-capabilities";
@@ -20,28 +15,12 @@ import {
 } from "../components/markdown";
 import { Spacer } from "../components/spacer";
 import { Text } from "../components/text";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { formatNumber } from "@oh-my-pi/pi-utils";`
 import { formatNumber } from "@tau/tau-utils";
 import chalk from "@tau/tau-utils/chalk";
 import { LRUCache } from "@tau/tau-utils/lru";
 import type { AssistantThinkingRenderer } from "./extension-types";
 import { ensureThemeSync, getMarkdownTheme, theme } from "../theme";
-=======
-import { formatDuration, formatNumber, logger } from "@oh-my-pi/pi-utils";
-import chalk from "@oh-my-pi/pi-utils/chalk";
-import { LRUCache } from "@oh-my-pi/pi-utils/lru";
-import type { AssistantTextRenderer, AssistantTextRendering, AssistantThinkingRenderer } from "./extension-types";
-import { ensureThemeSync, getMarkdownTheme, getMarkdownThemeWithLinkTargets, getThemeEpoch, theme } from "../theme";
-import { card, col, elapsed, node, span, text } from "../native/describe";
-import { hasTranscriptActions, runTranscriptAction } from "./transcript-actions";
-import type { DescribeContext, NativeChild, NativeNode, NativeUiEvent } from "../native/node";
-import { isNativeRendering } from "../native/state";
-import { NativeImageCache, nativeMediaNode } from "../native/blobs";
-import { linkedImageText } from "../prompt/image-references";
-import { Memo } from "../native/memo";
-import { DEFAULT_SPINNER_INTERVAL_MS, spinnerAnimated, spinnerInterval } from "../spinner-clock";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import { EMPTY_LINK_TARGETS, resolveImageOptions } from "../render/render-utils";
 import { WidthAwareText } from "../render";
 import { cachedPngConversion, convertImageToPngShared, imagePayloadKey } from "./image-loading";

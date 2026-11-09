@@ -1,11 +1,6 @@
-<<<<<<< ours — interstitial `file_header` (S, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import type { AgentMessage } from "@oh-my-pi/pi-agent-core";` +1 more
 import type { AgentMessage } from "@tau/tau-agent-core";
 import type { AssistantMessage } from "@tau/tau-ai";
-=======
-import { createSyntheticToolResultMessage, type AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, ToolResultMessage } from "@oh-my-pi/pi-ai";
->>>>>>> theirs — interstitial `file_header` (S, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/session/exit-diagnostics.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { SessionEntry } from "./session-entries";
 
 export const TOOL_EXECUTION_START_CUSTOM_TYPE = "tool_execution_start";
@@ -235,12 +230,8 @@ export function createInterruptedTurnAbortMessage(
 			cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
 		},
 		stopReason: "aborted",
-<<<<<<< ours — scope `return {` in function `createInterruptedTurnAbortMessage` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `errorMessage: "Previous OMP process exited before completing th…`
 		errorMessage: "Previous TAU process exited before completing the turn.",
-=======
-		errorMessage: INTERRUPTED_TURN_ERROR,
->>>>>>> theirs — scope `return {`
 		timestamp: Number.isFinite(recordedAt) ? recordedAt : Date.now(),
 	};
 }

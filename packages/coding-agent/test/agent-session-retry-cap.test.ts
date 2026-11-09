@@ -1,7 +1,6 @@
 import { Database } from "bun:sqlite";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { type } from "@tau/tautype";
 import { Agent, type AgentTool } from "@tau/tau-agent-core";
@@ -23,37 +22,6 @@ import { AgentSession, type AgentSessionEvent } from "tau/session/agent-session"
 import { AuthStorage } from "tau/session/auth-storage";
 import { SessionManager } from "tau/session/session-manager";
 import { TempDir } from "@tau/tau-utils";
-=======
-import { scheduler } from "node:timers/promises";
-import { type } from "@oh-my-pi/omptype";
-import { Agent, type AgentTool } from "@oh-my-pi/pi-agent-core";
-import type {
-	ApiKey,
-	AssistantMessage,
-	TextContent,
-	ThinkingContent,
-	ToolCall,
-	ToolResultMessage,
-} from "@oh-my-pi/pi-ai";
-import { unregisterCustomApis } from "@oh-my-pi/pi-ai/api-registry";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { createMockModel, type MockResponse, registerMockApi } from "@oh-my-pi/pi-ai/providers/mock";
-import * as envApiKey from "@oh-my-pi/pi-ai/env-api-key";
-import * as aiStream from "@oh-my-pi/pi-ai/stream";
-import { kCursorExecResolved, kStreamingPartialJson } from "@oh-my-pi/pi-ai/utils/block-symbols";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { SqliteAuthCredentialStore } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { opencodeGoUsageProvider } from "@oh-my-pi/pi-ai/usage/opencode-go";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import type { Model } from "@oh-my-pi/pi-catalog/types";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
-import { AgentSession, type AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/agent-session-retry-cap.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { mockSchedulerWaitWithClock } from "./helpers/mock-scheduler-clock";
 
 type AutoRetryEndEvent = Extract<AgentSessionEvent, { type: "auto_retry_end" }>;

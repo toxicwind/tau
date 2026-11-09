@@ -6,14 +6,9 @@
  * validators see the same JSON Schema dialect.
  */
 
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { structuredCloneJSON } from "@oh-my-pi/pi-utils";`
 import type { Type } from "@tau/tautype";
 import { structuredCloneJSON } from "@tau/tau-utils";
-=======
-import type { Type } from "@oh-my-pi/omptype";
-import { isRecord, structuredCloneJSON } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/src/utils/schema/wire.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { Tool, TSchema } from "../../types";
 import { upgradeJsonSchemaTo202012 } from "./draft";
 import { stamp } from "./stamps";

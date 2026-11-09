@@ -1,14 +1,9 @@
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { getMCPConfigPath, getProjectDir, logger } from "@oh-my…`
 import type { AutocompleteItem } from "@tau/tau-tui";
 import { getMCPConfigPath, getProjectDir, logger } from "@tau/tau-utils";
-=======
-import type { AutocompleteItem } from "@oh-my-pi/pi-tui";
-import { getMCPConfigPath, getProjectDir, logger, sanitizeText } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/slash-commands/builtin-completions.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { formatModelRoleAlias, getKnownRoleIds } from "../config/model-roles";
 import { cfgCycleOrder } from "../config/model-settings";
 import { readMCPConfigFile } from "../mcp/config-writer";

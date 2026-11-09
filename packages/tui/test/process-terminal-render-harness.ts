@@ -1,15 +1,8 @@
 import { vi } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { type Component, TUI } from "@oh-my-pi/pi-tui";` +1 more
 import { type Component, TUI } from "@tau/tau-tui";
 import { ProcessTerminal } from "@tau/tau-tui/terminal";
 import { setTerminalHeadless } from "@tau/tau-utils";
-=======
-import { scheduler } from "node:timers/promises";
-import { type Component, TUI, type TUIStartOptions } from "@oh-my-pi/pi-tui";
-import { ProcessTerminal, type ProcessTerminalOptions } from "@oh-my-pi/pi-tui/terminal";
-import { setTerminalHeadless } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/test/process-terminal-render-harness.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 // Pristine descriptors, captured once at module load. Every dispose() restores
 // to these so the harness is full-suite safe across repeated create/dispose

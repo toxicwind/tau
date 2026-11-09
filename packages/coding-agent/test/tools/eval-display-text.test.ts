@@ -177,7 +177,6 @@ describe("EvalTool printed views", () => {
 		expect(text).not.toContain(base64);
 	});
 });
-<<<<<<< ours — test_suite `EvalTool display() text surfacing` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 describe("EvalTool display() text surfacing", () => {
 	afterEach(() => {
@@ -395,5 +394,3 @@ describe("EvalTool display() text surfacing", () => {
 		expect(result.details?.meta?.truncation?.artifactId).toBeUndefined();
 	});
 });
-=======
->>>>>>> theirs — test_suite `EvalTool display() text surfacing` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/tools/eval-display-text.test.ts' for per-hunk detail, 'weave check' to verify your resolution

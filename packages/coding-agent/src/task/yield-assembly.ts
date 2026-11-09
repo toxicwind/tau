@@ -1,14 +1,7 @@
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 /** Discovers array-valued output-schema labels for incremental yield assembly. */
 import { dereferenceJsonSchema } from "@tau/tau-ai/utils/schema";
 import { isRecord } from "@tau/tau-utils";
-=======
-/** Derives per-label output-schema section shapes for incremental yield assembly. */
-import { dereferenceJsonSchema } from "@oh-my-pi/pi-ai/utils/schema";
-import type { YieldSectionShapes } from "@oh-my-pi/pi-tui/tools/task-yield-assembly";
-import { isRecord } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/task/yield-assembly.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { buildOutputValidator } from "../tools/output-schema-validator";
 
 /** True when `value` is a JSON-schema node whose instances are arrays. */

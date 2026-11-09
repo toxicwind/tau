@@ -1,6 +1,5 @@
 name: "Compose bazel cache config"
 description: >
-<<<<<<< ours — property `description` (S+F, confidence: low)
 # refused_by: merge_ladder_exhausted · collision: `omp-kata jobs use the cluster remote cache. GitHub-hosted jobs …`
    Selects the CI cache backend and emits a bazelrc fragment. A shell probe
    exposes the backend through step outputs before any action condition
@@ -32,14 +31,6 @@ description: >
    shared 10 GB repo quota. A tag-dispatched release saved a ~5 GB darwin
    archive under refs/tags/v18.2.10 and GitHub's LRU eviction then dropped
    main's darwin archives, so the next release built cold.
-=======
-   Emits a bazelrc fragment wiring the vmon node's Bazel HTTP cache. Every
-   Bazel job runs on a vmon `omp-ci` sandbox (VMON_CI=1), whose template bakes
-   the repository/xwin caches at /opt/bazel-repo-cache, and whose node serves
-   a per-repository Bazel cache at $VMON_CACHE_URL/bazel: written by branch
-   and tag jobs, read-only for pull requests. Elsewhere the fragment carries
-   only --config=ci and the build runs uncached.
->>>>>>> theirs — property `description` (S+F, confidence: low) · weave: run 'weave explain .github/actions/bazel-cache/action.yml' for per-hunk detail, 'weave check' to verify your resolution
 
 outputs:
    rc:
@@ -86,7 +77,6 @@ runs:
              echo "common --remote_cache=${VMON_CACHE_URL}/bazel"
            } >> "$rc"
            echo "::notice title=Bazel cache::Using the vmon node's Bazel cache (${mode})."
-<<<<<<< ours — scope `steps:` in section `runs`, deleted in theirs (S+F, confidence: low)
 # refused_by: statement_fold · collision: none (no common ancestor text)
    steps:
       - name: Detect bazel cache backend
@@ -207,5 +197,3 @@ runs:
              echo "rc=$rc"
              echo "save-needed=$save_needed"
            } >> "$GITHUB_OUTPUT"
-=======
->>>>>>> theirs — scope `steps:` deleted in theirs

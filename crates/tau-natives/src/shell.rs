@@ -1,4 +1,3 @@
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `use pi_shell::{`
 //! Brush-based shell execution exported via N-API.
 
@@ -18,8 +17,6 @@ use tau_shell::{
 };
 
 use crate::task;
-=======
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain crates/tau-natives/src/shell.rs' for per-hunk detail, 'weave check' to verify your resolution
 //! Embedded bash engine (pi-shell) shell execution exported via N-API.
 
 pub mod vfs;

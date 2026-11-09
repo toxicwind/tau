@@ -3,7 +3,6 @@ import { type } from "@tau/tautype";
 import {
 	buildTransformedCodexRequestBody,
 	convertCodexResponsesMessages,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { Context, Model, ModelSpec, ProviderSessionState, …` +1 more
 	streamOpenAICodexResponses,
 } from "@tau/tau-ai/providers/openai-codex-responses";
@@ -14,22 +13,6 @@ import { createOpenAIResponsesHistoryPayload } from "@tau/tau-ai/utils";
 import { buildModel } from "@tau/tau-catalog/build";
 import { type GeneratedProvider, getBundledModel } from "@tau/tau-catalog/models";
 import * as piUtils from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-ai/providers/openai-codex-responses";
-import { type OpenAIResponsesOptions, streamOpenAIResponses } from "@oh-my-pi/pi-ai/providers/openai-responses";
-import { openAIResponsesReplaysNativeHistory } from "@oh-my-pi/pi-ai/providers/openai-responses-state";
-import { buildResponsesInput } from "@oh-my-pi/pi-ai/providers/openai-shared";
-import type { AssistantMessage, Context, Model, ModelSpec, ProviderSessionState, Tool } from "@oh-my-pi/pi-ai/types";
-import {
-	createOpenAIResponsesHistoryPayload,
-	sanitizeOpenAIResponsesHistoryItemsForReplay,
-} from "@oh-my-pi/pi-ai/utils";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { type GeneratedProvider, getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import * as piUtils from "@oh-my-pi/pi-utils";
-import { createCodexModel } from "./helpers";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/test/openai-responses-history-payload.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const TEST_INSTALLATION_ID = "00000000-0000-4000-8000-000000000001";
 
@@ -954,7 +937,6 @@ describe("OpenAI responses history payload", () => {
 		expect(containsAssistantOutputText(payload.input, "Canonical assistant")).toBe(false);
 	});
 
-<<<<<<< ours — scope `it("does not replay an empty Codex final_answ...` in test_suite `OpenAI responses history payload` (T+S+F, confidence: low)
 // refused_by: statement_fold · collision: `// gpt-5.6 shape captured from a live omp session: the answer l…`
 	it("does not replay an empty Codex final_answer message or its trailing reasoning item", async () => {
 		// gpt-5.6 shape captured from a live tau session: the answer landed in the
@@ -972,13 +954,6 @@ describe("OpenAI responses history payload", () => {
 			{ type: "reasoning", encrypted_content: "enc_empty_final", summary: [] },
 			{ type: "message", role: "assistant", phase: "final_answer", content: [{ type: "output_text", text: "" }] },
 		];
-=======
-	it("replays plaintext reasoning turns on a cold resumed session exactly as a warm session does", async () => {
-		// A new process resumes a session whose server returned plaintext reasoning.
-		// Rebuilding those turns dropped the reasoning and re-serialized tool
-		// arguments, so the first resumed request no longer extended the prefix the
-		// server cached and it prefilled the whole context again.
->>>>>>> theirs — scope `it("does not replay an empty Codex final_answ...`
 		const context: Context = {
 			messages: [
 				{ role: "user", content: "Read note.txt, then reply.", timestamp: Date.now() },

@@ -1,9 +1,5 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { logger } from "@oh-my-pi/pi-utils";`
 import { logger } from "@tau/tau-utils";
-=======
-import { logger, slugify } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/catalog/src/discovery/devin.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { collapseVariants, type EffortVariantFamily } from "../compat/collapse";
 import { Effort, THINKING_EFFORTS } from "../effort";
 import type { DevinCompat, FetchImpl, ModelCost, ModelSpec } from "../types";
@@ -232,17 +228,12 @@ function collectDevinFamilyLane(lanes: Map<string, DevinFamilyLane>, config: Cli
 	// effort label; its explicit Thinking axis decides whether the route is off.
 	if (thinking === false) effort = "off";
 
-<<<<<<< ours — scope `// Family label as an OMP id: "GPT-5.6 Sol" -...` in function `collectDevinFamilyLane` (T+F, confidence: medium)
 // refused_by: statement_fold · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 	// Family label as an TAU id: "GPT-5.6 Sol" -> "gpt-5-6-sol".
 	const baseId = label
 		.toLowerCase()
 		.replace(/[^a-z0-9]+/g, "-")
 		.replace(/^-+|-+$/g, "");
-=======
-	// Family label as an OMP id: "GPT-5.6 Sol" -> "gpt-5-6-sol".
-	const baseId = slugify(label);
->>>>>>> theirs — scope `// Family label as an OMP id: "GPT-5.6 Sol" -...`
 	if (!baseId) return;
 	const laneId = `${baseId}${oneMillionContext ? "-1m" : ""}${fast ? "-fast" : ""}`;
 	let lane = lanes.get(laneId);

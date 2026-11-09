@@ -10,28 +10,10 @@ import { afterEach, describe, expect, it, spyOn } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { removeUserDataDir } from "@oh-my-pi/pi-coding-agent/to…`
 import { removeUserDataDir } from "tau/tools/browser/launch";
 import { type BrowserHandle, releaseBrowser } from "tau/tools/browser/registry";
 import * as piUtils from "@tau/tau-utils";
-=======
-import { type DaemonBrokerClient, DaemonBrokerRejectedError } from "@oh-my-pi/pi-coding-agent/launch/client";
-import * as daemonClient from "@oh-my-pi/pi-coding-agent/launch/client";
-import { daemonRuntimeDir } from "@oh-my-pi/pi-coding-agent/launch/paths";
-import type { DaemonOperation, DaemonRpcResult } from "@oh-my-pi/pi-coding-agent/launch/protocol";
-import * as browserAttach from "@oh-my-pi/pi-coding-agent/tools/browser/attach";
-import * as browserLaunch from "@oh-my-pi/pi-coding-agent/tools/browser/launch";
-import { removeUserDataDir, seedOwnedProfilePreferences } from "@oh-my-pi/pi-coding-agent/tools/browser/launch";
-import { type BrowserHandle, releaseBrowser } from "@oh-my-pi/pi-coding-agent/tools/browser/registry";
-import {
-	ensureSharedBrowser,
-	restartSharedBrowser,
-	sharedBrowserDaemonName,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/shared-daemon";
-import type { DaemonSnapshot, DaemonState } from "@oh-my-pi/pi-tui/tools/daemon";
-import * as piUtils from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/tools/browser-profile-cleanup.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 async function makeProfileDir(): Promise<string> {
 	const dir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "tau-chrome-profile-test-"));

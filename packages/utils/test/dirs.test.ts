@@ -2,7 +2,6 @@ import { afterEach, describe, expect, it, spyOn, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 import {
 	__resetProjectDirCacheForTests,
@@ -11,19 +10,6 @@ import {
 	relativePathWithinRoot,
 	setProjectDir,
 } from "@tau/tau-utils/dirs";
-=======
-import * as nativePath from "@oh-my-pi/pi-natives/path";
-import {
-	__resetProjectDirCacheForTests,
-	directoryExists,
-	directoryIsMissing,
-	getLogPath,
-	getProjectDir,
-	localDay,
-	relativePathWithinRoot,
-	setProjectDir,
-} from "@oh-my-pi/pi-utils/dirs";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/utils/test/dirs.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const originalProjectDir = fs.realpathSync(process.cwd()).replace(/^\/private(?=\/)/, "");
 

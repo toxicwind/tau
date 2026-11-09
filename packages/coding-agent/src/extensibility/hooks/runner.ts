@@ -1,14 +1,9 @@
 /**
  * Hook runner - executes hooks and manages their lifecycle.
  */
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { AgentMessage } from "@oh-my-pi/pi-agent-core";`
 import type { AgentMessage } from "@tau/tau-agent-core";
 import type { Model } from "@tau/tau-ai";
-=======
-import { type AgentMessage, isNonBlankContext, joinAdditionalContext } from "@oh-my-pi/pi-agent-core";
-import type { Model } from "@oh-my-pi/pi-ai";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/extensibility/hooks/runner.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { ModelRegistry } from "../../config/model-registry";
 import type { SessionManager } from "../../session/session-manager";
 import { createNoOpUIContext } from "../utils";

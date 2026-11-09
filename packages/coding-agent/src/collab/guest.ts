@@ -20,7 +20,6 @@
  */
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import type { ImageContent } from "@oh-my-pi/pi-ai";` +1 more
 import type { ThinkingLevel } from "@tau/tau-agent-core";
 import type { ImageContent } from "@tau/tau-ai";
@@ -31,19 +30,6 @@ import { AgentRegistry } from "../registry/agent-registry";
 import type { AgentSessionEvent } from "../session/agent-session";
 import type { SessionEntry } from "../session/session-entries";
 import { shouldDisableReasoning, toReasoningEffort } from "@tau/tau-tui/thinking";
-=======
-import type { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, AssistantMessageEvent, ImageContent } from "@oh-my-pi/pi-ai";
-import { getConfigRootDir, logger, toError } from "@oh-my-pi/pi-utils";
-import type { AgentHubRemote, AgentHubRemoteTranscript } from "@oh-my-pi/pi-tui/overlays/agent-hub";
-import type { InteractiveModeContext } from "../modes/types";
-import { AgentRegistry } from "../registry/agent-registry";
-import type { AgentSessionEvent } from "../session/agent-session";
-import type { SessionEntry } from "../session/session-entries";
-import { mintSessionId, SessionManager } from "../session/session-manager";
-import { FileSessionStorage } from "../session/session-storage";
-import { shouldDisableReasoning, toReasoningEffort } from "@oh-my-pi/pi-tui/thinking";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/collab/guest.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { emitSubagentFrame } from "../utils/event-bus";
 import { GuestLifecycleEmitter } from "../extensibility/extensions/lifecycle-mirror";
 import { setSessionTerminalTitle } from "../utils/title-generator";

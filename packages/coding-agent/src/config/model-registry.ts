@@ -1,5 +1,4 @@
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { buildDiscoveredModel, buildModel } from "@oh-my-pi/pi-…` +3 more
 import type { ApiKeyResolver, FetchImpl, ResolvedApiKey, UsageProvider } from "@tau/tau-ai";
 import { registerCustomApi, unregisterCustomApis } from "@tau/tau-ai/api-registry";
@@ -7,17 +6,6 @@ import { registerOAuthProvider, unregisterOAuthProvider, unregisterOAuthProvider
 import type { OAuthCredentials, OAuthLoginCallbacks } from "@tau/tau-ai/oauth/types";
 import { setCodexAttestationProvider } from "@tau/tau-ai/providers/openai-codex-attestation";
 import { getProviderDefinition } from "@tau/tau-ai/registry";
-=======
-import type { ApiKeyResolver, FetchImpl, ResolvedApiKey, UsageProvider } from "@oh-my-pi/pi-ai";
-import { type AuthApiKeyOptions, type AuthPeekOptions, oauthAccountKey } from "@oh-my-pi/pi-ai/auth-storage";
-import { registerCustomApi, unregisterCustomApis } from "@oh-my-pi/pi-ai/api-registry";
-import { registerOAuthProvider, unregisterOAuthProvider, unregisterOAuthProviders } from "@oh-my-pi/pi-ai/oauth";
-import type { OAuthCredentials, OAuthLoginCallbacks } from "@oh-my-pi/pi-ai/oauth/types";
-import { setCodexAttestationProvider } from "@oh-my-pi/pi-ai/providers/openai-codex-attestation";
-import { getProviderDefinition } from "@oh-my-pi/pi-ai/registry";
-import { getEnvApiKey } from "@oh-my-pi/pi-ai/env-api-key";
-import { OAuthRefreshUnavailableError } from "@oh-my-pi/pi-ai/error";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/config/model-registry.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type {
 	Api,
 	Context,
@@ -26,7 +14,6 @@ import type {
 	RemoteCompactionConfig,
 	SimpleStreamOptions,
 	ThinkingConfig,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { buildDiscoveredModel, buildModel } from "@oh-my-pi/pi-…` +3 more
 } from "@tau/tau-ai/types";
 import type { AssistantMessageEventStream } from "@tau/tau-ai/utils/event-stream";
@@ -39,19 +26,6 @@ import {
 } from "@tau/tau-catalog/compat/context-window";
 import { applyCatalogMetrics, CatalogMetricsIndex } from "@tau/tau-catalog/identity/metrics";
 import { readModelCache } from "@tau/tau-catalog/model-cache";
-=======
-} from "@oh-my-pi/pi-ai/types";
-import type { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { buildDiscoveredModel, buildModel, nextBuildPriceChange } from "@oh-my-pi/pi-catalog/build";
-import { collapseBuiltVariants } from "@oh-my-pi/pi-catalog/compat/collapse";
-import {
-	clampCodexContextWindow,
-	clampsContextOverride,
-	resolveMaxContextWindow,
-} from "@oh-my-pi/pi-catalog/compat/context-window";
-import { applyCatalogMetrics, CatalogMetricsIndex, catalogMetricsOf } from "@oh-my-pi/pi-catalog/identity/metrics";
-import { getModelCacheWriteStats, readModelCache, retainModelCacheConnection } from "@oh-my-pi/pi-catalog/model-cache";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import {
 	createModelManager,
 	fingerprintStaticModels,
@@ -69,19 +43,11 @@ import {
 	PROVIDER_DESCRIPTORS,
 	resolveModelCacheProviderId,
 	resolveOllamaModelCacheProviderId,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { buildDiscoveredModel, buildModel } from "@oh-my-pi/pi-…` +3 more
 } from "@tau/tau-catalog/provider-models";
 import { toModelSpec } from "@tau/tau-catalog/provider-models/bundled-references";
 import { modelKind, type ModelKind } from "@tau/tau-catalog/types";
 import { getAgentDir, isBunTestRuntime, logger, wrapFetchForExtraCa } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-catalog/provider-models";
-import { toModelSpec } from "@oh-my-pi/pi-catalog/provider-models/bundled-references";
-import { apiServesKind, modelKind, type ModelKind } from "@oh-my-pi/pi-catalog/types";
-import { isOfficialCodexApiUrl } from "@oh-my-pi/pi-catalog/wire/codex";
-import { getAgentDir, isBunTestRuntime, logger, wrapFetchForExtraCa } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import { resolveProviderModelReference } from "../config/model-resolver";
 import { generateCodexAttestation } from "../live/attestation";
 import { redactUrlForLog } from "../mcp/json-rpc";
@@ -188,7 +154,6 @@ setCodexAttestationProvider(generateCodexAttestation);
 const MODEL_CACHE_REWRITE_LOG_THRESHOLD = 5;
 /** `scheme://user:pass@` in free text (e.g. a fetch error echoing the request URL). */
 const URL_USERINFO_RE = /([a-z][a-z0-9+.-]*:\/\/)[^\s/@]+@/gi;
-<<<<<<< ours — interstitial `between:packages/coding-agent/src/config/model-registry.ts::export::ProviderDiscoveryStatus:packages/coding-agent/src/config/model-registry.ts::variable::BUILT_IN_MODEL_MANAGER_PROVIDER_IDS` (T+S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `// requests; the pi-ai provider resolves it just-in-time per re…`
 } from "./model-provider-discovery";
 
@@ -199,8 +164,6 @@ import { type Settings, settings } from "./settings";
 // DeviceCheck attestation (`x-oai-attestation`) for ChatGPT-OAuth Codex
 // requests; the tau-ai provider resolves it just-in-time per request.
 setCodexAttestationProvider(generateCodexAttestation);
-=======
->>>>>>> theirs — interstitial `between:packages/coding-agent/src/config/model-registry.ts::export::ProviderDiscoveryStatus:packages/coding-agent/src/config/model-registry.ts::variable::BUILT_IN_MODEL_MANAGER_PROVIDER_IDS` (T+S+F, confidence: low)
 const BUILT_IN_MODEL_MANAGER_PROVIDER_IDS: Readonly<Record<string, true>> = Object.freeze(
 	Object.fromEntries(
 		[...PROVIDER_DESCRIPTORS.map(descriptor => descriptor.providerId), ...SPECIAL_MODEL_MANAGER_PROVIDER_IDS].map(
@@ -1092,7 +1055,6 @@ export class ModelRegistry {
 	}
 
 	/**
-<<<<<<< ours — scope `refreshDiscoverableProviders` in class `ModelRegistry` (T+F, confidence: medium)
 // refused_by: container_member · collision: `* discovery-backed model (e.g. on `omp --resume`) cannot wait o…`
 	 * Refresh only the named discovery-backed providers, leaving every other
 	 * provider's discovered models and any in-flight runtime discovery untouched.
@@ -1102,12 +1064,6 @@ export class ModelRegistry {
 	 * discovery-backed model (e.g. on `tau --resume`) cannot wait on — or
 	 * duplicate — an unrelated provider's network/OAuth work. Ids that are not
 	 * configured discovery providers are ignored by the underlying filter.
-=======
-	 * Refresh only named discovery providers (configured `models.yml` providers or
-	 * extension `fetchDynamicModels` managers). Unlike {@link refreshProvider},
-	 * this avoids a static reload and leaves unrelated runtime discovery alone.
-	 * Unknown ids have no effect.
->>>>>>> theirs — scope `refreshDiscoverableProviders`
 	 */
 	async refreshDiscoverableProviders(
 		providerIds: Iterable<string>,
@@ -3631,25 +3587,12 @@ export class ModelRegistry {
 	}
 
 	/**
-<<<<<<< ours — scope `isProviderDiscoveryPending` in class `ModelRegistry` (S+F, confidence: low)
 // refused_by: container_member · collision: `* catalog in this process. A cold discovery cache (e.g. after `…`
 	 * Whether a config-declared discovery provider has not yet produced a
 	 * catalog in this process. A cold discovery cache (e.g. after `tau update`
 	 * bumps the cache namespace) leaves the provider in its initial `idle`
 	 * state with no models, so a selector the provider will supply looks
 	 * unknown until background discovery lands (#10048).
-=======
-	 * Whether an unresolved selector on `provider` may still be supplied by
-	 * discovery this process has not finished. Two states qualify:
-	 * - `idle`: a config-declared provider with a cold cache has no catalog yet
-	 *   (e.g. after `omp update` bumps the cache namespace, #10048).
-	 * - `cached`/`unavailable` while the initial background refresh is in
-	 *   flight: startup replayed a cache row or fell back to the bundled
-	 *   catalog, and that refresh may still add ids (a cold namespace after an
-	 *   upgrade, or a cache row keyed to another credential). With no refresh
-	 *   running (an embedder that manages discovery itself) these states are
-	 *   final, so unresolved selectors warn immediately.
->>>>>>> theirs — scope `isProviderDiscoveryPending`
 	 */
 	isProviderDiscoveryPending(provider: string): boolean {
 		const status = this.#providerDiscoveryStates.get(provider)?.status;

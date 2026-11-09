@@ -12,7 +12,6 @@ import {
 	InternalUrlRouter,
 	LocalProtocolHandler,
 	type ProtocolHandler,
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "tau/internal-urls";
 import { AgentRegistry } from "tau/registry/agent-registry";
@@ -22,17 +21,6 @@ import type { ToolSession } from "tau/tools";
 import { formatOutputNotice } from "@tau/tau-tui/tools/output-meta";
 import { ReadTool } from "tau/tools/read";
 import { removeWithRetries } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-coding-agent/internal-urls";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import type { SessionEntry } from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import * as sshFileTransfer from "@oh-my-pi/pi-coding-agent/ssh/file-transfer";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { formatOutputNotice } from "@oh-my-pi/pi-tui/tools/output-meta";
-import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
-import { AstGrepTool } from "../../src/tools/ast-grep";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/tools/grep-internal-urls.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { GlobTool } from "../../src/tools/glob";
 import { GrepTool } from "../../src/tools/grep";
 
@@ -431,7 +419,6 @@ describe("GrepTool internal URL resolution", () => {
 		expect(text).toContain("Grep file contents with a regex across files");
 	});
 
-<<<<<<< ours — scope `it("walks skill:// directory subpaths for sea...` in test_suite `GrepTool internal URL resolution` (F, confidence: medium)
 // refused_by: statement_fold · collision: `it("expands omp://docs to grep embedded documentation files", a…` +2 more
 	it("expands tau://docs to grep embedded documentation files", async () => {
 		const session = createSession();
@@ -444,19 +431,6 @@ describe("GrepTool internal URL resolution", () => {
 
 		const text = getResultText(result);
 		expect(text).toContain("# tau://tools/read.md");
-=======
-	it("walks an omp:// docs subdirectory and names hits by URL without edit anchors", async () => {
-		const session = createSession({ hasEditTool: true });
-		const tool = new GrepTool(session);
-
-		const result = await tool.execute("test-call", {
-			pattern: "Read files, directories, archives",
-			path: "omp://tools",
-		});
-
-		const text = getResultText(result);
-		expect(result.details?.files).toContain("omp://tools/read.md");
->>>>>>> theirs — scope `it("walks skill:// directory subpaths for sea...`
 		expect(text).toContain("Read files, directories, archives");
 		expect(text).not.toMatch(/omp:\/\/tools\/read\.md#[0-9A-F]{4}/);
 	});

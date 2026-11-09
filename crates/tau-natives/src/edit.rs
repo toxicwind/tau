@@ -40,14 +40,9 @@ use napi::{
 	threadsafe_function::{ThreadsafeFunction, UnknownReturnValue},
 };
 use napi_derive::napi;
-<<<<<<< ours — imports `file_header` (T+F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 use tau_edit::{
 	EditError, EditMode, EditResult, PathPolicy, Session,
-=======
-use pi_edit::{
-	EditError, EditMode, EditResult, PathPolicy, Resolved, Session, UrlResolution,
->>>>>>> theirs — imports `file_header` (T+F, confidence: medium) · weave: run 'weave explain crates/tau-natives/src/edit.rs' for per-hunk detail, 'weave check' to verify your resolution
 	diff_string::{BlockContextSource, generate_diff_string},
 	modes::{hashline, sloppy},
 	path_policy::{RecoveryGlob, canonical_key},
@@ -920,12 +915,8 @@ pub struct EditInspection {
 pub fn edit_inspect(mode: String, args_json: String) -> Result<EditInspection> {
 	let mode = parse_mode(&mode)?;
 	let snapshot = snapshot_from_text(&args_json, false, true);
-<<<<<<< ours — scope `let engine = pi_edit::modes::engine_for(mode,...` in function `edit_inspect` (S, confidence: medium)
 // refused_by: statement_fold · collision: `let engine = pi_edit::modes::engine_for(mode, true, 0.95, false…`
 	let engine = tau_edit::modes::engine_for(mode, true, 0.95, false);
-=======
-	let engine = pi_edit::modes::engine_for(mode, true, 0.95, false, 0);
->>>>>>> theirs — scope `let engine = pi_edit::modes::engine_for(mode,...`
 	let inspection = engine.inspect(&snapshot);
 	Ok(EditInspection {
 		paths:    inspection.paths,

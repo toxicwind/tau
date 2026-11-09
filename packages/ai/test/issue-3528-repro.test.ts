@@ -399,7 +399,6 @@ describe("llama.cpp warm-prefix preservation (#3528)", () => {
 		expect(deepseek.qwenPreserveThinking).toBe(false);
 	});
 
-<<<<<<< ours — scope `it("leaves qwenPreserveThinking off for cloud...` in test_suite `llama.cpp warm-prefix preservation (#3528)`, deleted in theirs (T+S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("leaves qwenPreserveThinking off for cloud Qwen hosts", () => {
 		// Alibaba's Dashscope and Qwen Portal own the slot lifecycle on the
@@ -412,8 +411,6 @@ describe("llama.cpp warm-prefix preservation (#3528)", () => {
 		}).compat;
 		expect(dashscope.qwenPreserveThinking).toBe(false);
 	});
-=======
->>>>>>> theirs — scope `it("leaves qwenPreserveThinking off for cloud...` deleted in theirs · weave: run 'weave explain packages/ai/test/issue-3528-repro.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 	it("emits preserve_thinking on the wire for local Qwen + thinking", () => {
 		// End-to-end pin for the user's reported setup (#3541):

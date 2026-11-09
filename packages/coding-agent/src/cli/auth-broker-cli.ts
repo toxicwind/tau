@@ -30,7 +30,6 @@ import {
 	type OAuthProvider,
 	PROVIDER_REGISTRY,
 	SqliteAuthCredentialStore,
-<<<<<<< ours — imports `file_header` (T+F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { $which, APP_NAME, getAgentDbPath, getConfigRootDir, is…`
 } from "@tau/tau-ai";
 import { AuthBrokerClient, DEFAULT_AUTH_BROKER_BIND, startAuthBroker } from "@tau/tau-ai/auth-broker";
@@ -39,15 +38,6 @@ import type { OAuthCredentials } from "@tau/tau-ai/oauth/types";
 import { $which, APP_NAME, getAgentDbPath, getConfigRootDir, isEnoent, logger, VERSION } from "@tau/tau-utils";
 import chalk from "@tau/tau-utils/chalk";
 import { setTransports as setLoggerTransports } from "@tau/tau-utils/logger";
-=======
-} from "@oh-my-pi/pi-ai";
-import { AuthBrokerClient, DEFAULT_AUTH_BROKER_BIND, startAuthBroker } from "@oh-my-pi/pi-ai/auth-broker";
-import { refreshOAuthToken } from "@oh-my-pi/pi-ai/oauth";
-import type { OAuthCredentials } from "@oh-my-pi/pi-ai/oauth/types";
-import { $which, APP_NAME, getAgentDbPath, getConfigRootDir, logger, VERSION } from "@oh-my-pi/pi-utils";
-import chalk from "@oh-my-pi/pi-utils/chalk";
-import { setTransports as setLoggerTransports } from "@oh-my-pi/pi-utils/logger";
->>>>>>> theirs — imports `file_header` (T+F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/cli/auth-broker-cli.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { $ } from "bun";
 import { refreshManagedMcpOAuthCredential } from "../mcp/oauth-credentials";
 import { isManagedMCPOAuthCredentialId, mcpOAuthServerUrlFromCredentialId } from "../mcp/oauth-flow";

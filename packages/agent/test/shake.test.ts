@@ -1,5 +1,4 @@
 import { describe, expect, test } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 import { type AgentMessage, Tokenizer } from "@tau/tau-agent-core";
 import type { SessionEntry, SessionMessageEntry, ShakeConfig } from "@tau/tau-agent-core/compaction";
@@ -12,18 +11,6 @@ import {
 	RESCUE_SHAKE_CONFIG,
 } from "@tau/tau-agent-core/compaction";
 import type { AssistantMessage, ImageContent, TextContent, ToolCall, ToolResultMessage } from "@tau/tau-ai";
-=======
-import { type AgentMessage, Tokenizer } from "@oh-my-pi/pi-agent-core";
-import type { SessionEntry, SessionMessageEntry, ShakeConfig } from "@oh-my-pi/pi-agent-core/compaction";
-import {
-	AGGRESSIVE_SHAKE_CONFIG,
-	applyShakeRegion,
-	applyShakeRegions,
-	collectShakeRegions,
-	RESCUE_SHAKE_CONFIG,
-} from "@oh-my-pi/pi-agent-core/compaction";
-import type { AssistantMessage, ImageContent, TextContent, ToolCall, ToolResultMessage } from "@oh-my-pi/pi-ai";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/agent/test/shake.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { convertMessageToLlm } from "../src/compaction/messages";
 
 const tokenizer = new Tokenizer();

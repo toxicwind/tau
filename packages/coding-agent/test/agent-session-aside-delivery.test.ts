@@ -1,7 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, spyOn } from "bun:test";
 import * as path from "node:path";
 import { setImmediate } from "node:timers/promises";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { AgentSession } from "@oh-my-pi/pi-coding-agent/session…` +2 more
 import { type } from "@tau/tautype";
 import { Agent, type AgentMessage, type AgentTool } from "@tau/tau-agent-core";
@@ -21,31 +20,6 @@ import { SessionManager } from "tau/session/session-manager";
 import { EventBus } from "tau/utils/event-bus";
 import * as imageLoading from "tau/utils/image-loading";
 import { TempDir } from "@tau/tau-utils";
-=======
-import { type } from "@oh-my-pi/omptype";
-import { Agent, type AgentMessage, type AgentTool } from "@oh-my-pi/pi-agent-core";
-import { AsyncJobManager, type AsyncJobManagerApi } from "@oh-my-pi/pi-coding-agent/async";
-import type { AssistantMessage, Context, ImageContent } from "@oh-my-pi/pi-ai";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { ExtensionRuntime, loadExtensionFromFactory } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
-import { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import { AgentSession, PromptDroppedError } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { IrcBridge, type IrcBridgeHost } from "@oh-my-pi/pi-coding-agent/session/irc-bridge";
-import { convertToLlm, type CustomMessage, USER_INTERRUPT_LABEL } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionAdvisors } from "@oh-my-pi/pi-coding-agent/session/session-advisors";
-import type { IrcMessage } from "@oh-my-pi/pi-tui/tools/irc";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { WaitTool } from "@oh-my-pi/pi-coding-agent/tools/wait";
-import * as imageLoading from "@oh-my-pi/pi-coding-agent/utils/image-loading";
-import { TempDir, untilAborted } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/agent-session-aside-delivery.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const zeroUsage = {
 	input: 0,

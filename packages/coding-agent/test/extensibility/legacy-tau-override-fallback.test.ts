@@ -20,7 +20,6 @@ import {
 // specifiers instead. Those entries must always pass validation because
 // the bundled registry — not the filesystem — is the source of truth.
 describe("legacy pi compat package-root override validation (issue #2168)", () => {
-<<<<<<< ours — scope `it("keeps overrides whose filesystem targets ...` in test_suite `legacy pi compat package-root override validation (issue #2168)`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("keeps overrides whose filesystem targets exist", () => {
 		const candidates = {
@@ -30,8 +29,6 @@ describe("legacy pi compat package-root override validation (issue #2168)", () =
 		const result = __validateLegacyPiPackageRootOverrides(candidates, () => true);
 		expect(result).toEqual(candidates);
 	});
-=======
->>>>>>> theirs — scope `it("keeps overrides whose filesystem targets ...` deleted in theirs · weave: run 'weave explain packages/coding-agent/test/extensibility/legacy-tau-override-fallback.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 	it("drops overrides whose filesystem targets are missing on disk", () => {
 		const candidates = {
@@ -54,7 +51,6 @@ describe("legacy pi compat package-root override validation (issue #2168)", () =
 		expect(result).not.toHaveProperty("@tau/tau-tui");
 	});
 
-<<<<<<< ours — scope `it("drops every override when none of the fil...` in test_suite `legacy pi compat package-root override validation (issue #2168)`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("drops every override when none of the filesystem targets exist", () => {
 		const candidates = {
@@ -64,8 +60,6 @@ describe("legacy pi compat package-root override validation (issue #2168)", () =
 		const result = __validateLegacyPiPackageRootOverrides(candidates, () => false);
 		expect(result).toEqual({});
 	});
-=======
->>>>>>> theirs — scope `it("drops every override when none of the fil...` deleted in theirs
 
 	it("keeps virtual tau-legacy-tau-bundled: entries without touching the filesystem (issue #3423)", () => {
 		// Bun 1.3.14 `fs.existsSync` returns false for every bunfs path, so the

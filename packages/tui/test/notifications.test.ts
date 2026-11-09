@@ -8,15 +8,9 @@ import {
 	setOsc99Supported,
 	TERMINAL,
 	wrapTmuxPassthrough,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-tui/terminal-capabilities";
 import { setTerminalHeadless } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-tui/terminal-capabilities";
-import { TERMINAL_MULTIPLEXER_ENV_KEYS } from "@oh-my-pi/pi-tui/terminal-multiplexer";
-import { setTerminalHeadless } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/test/notifications.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const stdinIsTtyDescriptor = Object.getOwnPropertyDescriptor(process.stdin, "isTTY");
 const stdoutIsTtyDescriptor = Object.getOwnPropertyDescriptor(process.stdout, "isTTY");

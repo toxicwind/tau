@@ -31,12 +31,8 @@
 //! [`Encoding::Qwen3`]: crate::utok::Encoding::Qwen3
 
 use crate::utok::{
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `bpe::{BpeEncoding, RankTable},`
 	bpe::{BpeEncoding, BpeLoadError, OnceFallible, RankTable},
-=======
-	bpe::{self, PieceMemo, RankTable},
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain crates/tau-natives/src/utok/jev.rs' for per-hunk detail, 'weave check' to verify your resolution
 	pretoken::Splitter,
 	utf::Unit,
 };
@@ -57,15 +53,8 @@ struct Jev {
 // `OnceFallible` rather than `LazyLock`: a corrupt blob caches as a typed
 // error value here, where a `LazyLock` would poison unrecoverably and make
 // every later call fail with the same useless message.
-<<<<<<< ours — static `JEV (body partly extracted into load)` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `bpe:   BpeEncoding {` +5 more
 static JEV: OnceFallible<Jev, BpeLoadError> = OnceFallible::new();
-=======
-static JEV: LazyLock<Jev> = LazyLock::new(|| Jev {
-	base:  RankTable::parse(include_bytes!("../../data/jev_base.bin.zst")),
-	whole: RankTable::parse(include_bytes!("../../data/jev_whole.bin.zst")),
-});
->>>>>>> theirs — static `JEV (body partly extracted into load)` (S+F, confidence: low)
 
 fn load() -> Result<&'static Jev, BpeLoadError> {
 	// Const-assert both blobs before anyone can observe a half-built model.
@@ -130,9 +119,6 @@ pub fn content_token_count<U: Unit>(units: &[U]) -> Result<u32, BpeLoadError> {
 		});
 		n
 	})
-<<<<<<< ours — scope `n` in function `content_token_count`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	Ok(n)
-=======
->>>>>>> theirs — scope `n` deleted in theirs
 }

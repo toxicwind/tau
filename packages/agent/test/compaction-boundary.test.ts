@@ -4,17 +4,10 @@ import {
 	compact,
 	DEFAULT_COMPACTION_SETTINGS,
 	generateSummary,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-agent-core/compaction";
 import type { Model } from "@tau/tau-ai";
 import { getBundledModel } from "@tau/tau-catalog/models";
-=======
-} from "@oh-my-pi/pi-agent-core/compaction";
-import * as snapcompact from "@oh-my-pi/snapcompact";
-import type { Model } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/agent/test/compaction-boundary.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function getModel(): Model {
 	const model = getBundledModel("anthropic", "claude-sonnet-4-5");

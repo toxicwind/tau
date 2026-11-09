@@ -13,16 +13,10 @@
  * 94% under 150 lines; smol fixed 99% with one feedback retry, with ~12% of
  * raw candidates being reverts — hence the explicit revert rejection.
  */
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { diffLineRuns, editDiffString, summarizeCode } from "@o…`
 import { completeSimple, retryTransientCompletion } from "@tau/tau-ai";
 import { diffLineRuns, editDiffString, summarizeCode } from "@tau/tau-natives";
 import { logger, prompt } from "@tau/tau-utils";
-=======
-import { completeSimple, retryTransientCompletion } from "@oh-my-pi/pi-ai";
-import { diffLineRuns, editDiffString, parseCodeStatus } from "@oh-my-pi/pi-natives";
-import { logger, prompt } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/edit/auto-repair.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { resolveRoleSelection } from "../config/model-resolver";
 import type { WritethroughCallback } from "../lsp";
 import type { ToolSession } from "../tools";

@@ -205,21 +205,13 @@ tau acp --config ./acp-yolo.yml   # file contains tools.approvalMode: yolo
 
 Precedence is the normal settings precedence: runtime flags (`--approval-mode`, `--auto-approve`, `--yolo`) override `--config` overlays, which override project config, which overrides global config. ACP does not currently define a `session/new`, `session/load`, or `session/resume` approval-policy field, so ACP clients that need per-session yolo should launch a separate `tau acp` process with one of the flags above or with a session-specific `--config` overlay.
 
-<<<<<<< ours — scope ``tools.approvalMode: yolo` fully applies to A...` in heading `ACP sessions` (S, confidence: medium)
 // refused_by: statement_fold · collision: ``tools.approvalMode: yolo` fully applies to ACP when it is expl…`
 `tools.approvalMode: yolo` fully applies to ACP when it is explicitly configured or supplied by a runtime flag. It skips TAU's approval prompts and also skips the ACP client permission gate for `bash`, `edit`, `delete`, and `move` unless `tools.approval.<tool>` is `prompt` or `deny`. The schema default is `yolo`, but default-config ACP sessions still keep the client permission gate; set `tools.approvalMode: yolo` explicitly when the client wants unattended execution.
-=======
-`tools.approvalMode: yolo` fully applies to ACP when explicitly configured or supplied by a runtime flag: it skips ordinary tier-based OMP prompts and the ACP client gate unless the resolved tool or user policy requires a prompt or denies the call. The schema default is also `yolo`, but without an explicit opt-in, unmatched bash commands and destructive file operations still require an ACP client grant.
->>>>>>> theirs — scope ``tools.approvalMode: yolo` fully applies to A...` · weave: run 'weave explain docs/upstream/approval-mode.md' for per-hunk detail, 'weave check' to verify your resolution
 
 For `bash`, ACP resolves `bash.patterns`, critical-command overrides, per-tool policies, and the approval mode before requesting permission: `allow` runs without a card, `deny` blocks without a card, and `prompt` uses `session/request_permission`. An “Always allow” choice covers later ordinary `bash` calls in the session; critical commands and explicit prompt patterns still require a card on every call.
 
-<<<<<<< ours — scope `When ACP approval is required, OMP routes it ...` in heading `ACP sessions` (S, confidence: medium)
 // refused_by: statement_fold · collision: `When ACP approval is required, OMP routes it through the ACP cl…`
 When ACP approval is required, TAU routes it through the ACP client instead of the terminal TUI. Client-gated `bash`, `edit`, `delete`, and `move` calls use ACP `session/request_permission`; generic approval prompts use form elicitation when the client advertises `elicitation.form`. A rejected, cancelled, or unsupported prompt rejects/cancels the tool call; TAU does not silently allow it.
-=======
-For `delete`, `move`, and `edit` patches containing deletion or rename operations, the additional editor-side gate remains operation-category scoped. Ordinary file-content edits do not use that extra gate. Generic approval prompts use form elicitation when the client advertises `elicitation.form`. A rejected, cancelled, or unsupported prompt rejects or cancels the tool call.
->>>>>>> theirs — scope `When ACP approval is required, OMP routes it ...`
 
 ## Subagents
 

@@ -48,7 +48,6 @@ describe("isFastembedModelCached", () => {
 	});
 });
 
-<<<<<<< ours — test_suite `fastembed model cache repair` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 describe("fastembed model cache repair", () => {
 	it("downloads missing config and tokenizer sidecars without overwriting cached files", async () => {
@@ -107,5 +106,3 @@ describe("fastembed model cache repair", () => {
 		}
 	});
 });
-=======
->>>>>>> theirs — test_suite `fastembed model cache repair` (S+F, confidence: low) · weave: run 'weave explain packages/mnemotau/test/fastembed-model-cache.test.ts' for per-hunk detail, 'weave check' to verify your resolution

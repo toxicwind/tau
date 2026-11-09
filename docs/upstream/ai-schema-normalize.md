@@ -1,11 +1,7 @@
 # AI tool-schema normalization
 
-<<<<<<< ours — scope ``@oh-my-pi/pi-ai` exposes one unified schema ...` in heading `AI tool-schema normalization` (S, confidence: medium)
 // refused_by: statement_fold · collision: ``@oh-my-pi/pi-ai` exposes one unified schema normalizer that pr…`
 `@tau/tau-ai` exposes one unified schema normalizer that providers consume
-=======
-`@oh-my-pi/pi-ai` exposes shared schema normalization helpers that providers
->>>>>>> theirs — scope ``@oh-my-pi/pi-ai` exposes one unified schema ...` · weave: run 'weave explain docs/upstream/ai-schema-normalize.md' for per-hunk detail, 'weave check' to verify your resolution
 consume before tools are sent on the wire. The shared walkers live in
 `packages/ai/src/utils/schema/normalize.ts`; native Anthropic tool normalization
 remains in `packages/ai/src/providers/anthropic.ts`. The operational contract is

@@ -22,27 +22,11 @@ import type {
 	Question,
 	Questions,
 	ScoreQuestion,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-ai";
 import { isRecord } from "@tau/tau-utils";
 import { type ChainJudge, type JudgmentUsage, journalJudgmentUsage, resolveJudge } from "../judgment";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
-=======
-} from "@oh-my-pi/pi-ai";
-import { isRecord } from "@oh-my-pi/pi-utils";
-import { isEmbeddedImageContent } from "@oh-my-pi/pi-ai/images/shared";
-import type { LoadedImageInput } from "../utils/image-loading";
-import { loadImageAttachmentInput, loadImageInput, loadSvgImageInput } from "../utils/image-loading";
-import {
-	type ChainJudge,
-	type JudgmentUsage,
-	journalJudgmentUsage,
-	resolveJudge,
-	sharedJudgmentCache,
-} from "../judgment";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/eval/judgment-bridge.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { withBridgeTimeoutPause } from "./bridge-timeout";
 import { type EvalCompletionBridgeOptions, evalRequestSlots } from "./completion-bridge";
 

@@ -51,7 +51,6 @@ describe("documented-but-unregistered plugin verbs do not leak to launch (#2935)
 		});
 	});
 
-<<<<<<< ours — test_suite `documented-but-unregistered plugin verbs do not leak to launch (#2935)` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 	test("the hint path does not pretend these are real subcommands", () => {
 		// We surface guidance; we do not invent new top-level commands.
@@ -60,9 +59,6 @@ describe("documented-but-unregistered plugin verbs do not leak to launch (#2935)
 	});
 
 	test("multi-word `tau marketplace add xyz` hints at `tau plugin marketplace` instead of leaking to the prompt (#4845)", () => {
-=======
-	test("multi-word `omp marketplace add xyz` hints at `omp plugin marketplace` instead of leaking to the prompt (#4845)", () => {
->>>>>>> theirs — test_suite `documented-but-unregistered plugin verbs do not leak to launch (#2935)` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/plugin-verb-launch-leak.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 		const result = resolveCliArgv(["marketplace", "add", "xyz"]);
 		expect(result).not.toEqual({ argv: ["launch", "marketplace", "add", "xyz"] });
 		expect(result).not.toHaveProperty("argv");

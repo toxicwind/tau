@@ -11,7 +11,6 @@
  *    poll from the transcript; any other tool seals it in place.
  */
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-co…`
 import type { AgentMessage } from "@tau/tau-agent-core";
 import { resetSettingsForTest, Settings } from "tau/config/settings";
@@ -21,19 +20,6 @@ import { initTheme } from "@tau/tau-tui/theme";
 import { UiHelpers } from "tau/modes/utils/ui-helpers";
 import type { SessionContext } from "tau/session/session-context";
 import type { Component, TUI } from "@tau/tau-tui";
-=======
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { resetSettingsForTest, Settings, settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { ToolExecutionComponent, type ToolExecutionHandle } from "@oh-my-pi/pi-tui/chat/tool-execution";
-import { EventController } from "@oh-my-pi/pi-coding-agent/modes/controllers/event-controller";
-import { cfgDisplayShowTokenUsage } from "@oh-my-pi/pi-coding-agent/modes/settings";
-import { ChatTranscriptBuilder } from "@oh-my-pi/pi-tui/chat/chat-transcript-builder";
-import { createUsageRowBlock } from "@oh-my-pi/pi-tui/overlays/usage-row";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { UiHelpers } from "@oh-my-pi/pi-coding-agent/modes/utils/ui-helpers";
-import type { SessionContext } from "@oh-my-pi/pi-coding-agent/session/session-context";
-import type { Component, TUI } from "@oh-my-pi/pi-tui";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/job-poll-displacement.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { createInteractiveModeContext } from "./helpers/interactive-mode-context";
 
 const uiStub = { requestRender() {}, requestComponentRender() {} } as unknown as TUI;

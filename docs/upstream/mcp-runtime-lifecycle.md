@@ -102,13 +102,8 @@ For each discovered server in `connectServers()`:
 - answers server-to-client `ping` and `roots/list` requests; unsupported request methods return JSON-RPC `-32601`,
 - sends `notifications/initialized` before any further session traffic,
 - for Streamable HTTP, starts the background SSE listener only after `notifications/initialized`,
-<<<<<<< ours — heading `Per-server connect pipeline` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 - uses timeout precedence `TAU_MCP_TIMEOUT_MS`, then `config.timeout`, then 30s; `0` disables the client-side timeout,
-=======
-- uses timeout precedence `OMP_MCP_TIMEOUT_MS`, then `config.timeout`, then 30s; `0` disables the client-side timeout,
-- records the server's negotiated protocol revision; Streamable HTTP carries it on subsequent requests in `MCP-Protocol-Version`,
->>>>>>> theirs — heading `Per-server connect pipeline` (F, confidence: medium) · weave: run 'weave explain docs/upstream/mcp-runtime-lifecycle.md' for per-hunk detail, 'weave check' to verify your resolution
 - closes transport on init failure.
 
 ### Fast startup gate + deferred fallback
@@ -145,12 +140,8 @@ Each pending `toolsPromise` also has a background continuation that eventually:
 
 `createAgentSession()` then pushes these tools into `customTools`, which are wrapped and added to the runtime tool registry with names like `mcp__<server>_<tool>`.
 
-<<<<<<< ours — scope `Server and tool name components are lowercase...` in heading `Startup registration` (S, confidence: medium)
 // refused_by: statement_fold · collision: `Server and tool name components are lowercased and sanitized to…`
 Server and tool name components are lowercased and sanitized to letters/underscores. If two distinct origins mint the same runtime name, TAU logs the collision and keeps a deterministic winner based on the original server/tool identity, so reconnect ordering cannot change ownership.
-=======
-Server and tool name components are lowercased and sanitized to letters, digits, and underscores; repeated/edge underscores are collapsed/trimmed, and a redundant server prefix on the tool is stripped. Names longer than 64 characters are capped with a deterministic hash suffix. If two distinct origins mint the same runtime name, OMP logs the collision and keeps a deterministic winner based on the original server/tool identity, so reconnect ordering cannot change ownership.
->>>>>>> theirs — scope `Server and tool name components are lowercase...`
 
 Connected manager tools become enabled immediately. Presentation is reconciled with the session's current tool policy: tools may be mounted under `xd://` rather than exposed as top-level function definitions. Registry identity and original server/tool ownership remain intact regardless of presentation.
 

@@ -2,18 +2,9 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { removeWithRetries } from "@oh-my-pi/pi-utils";`
 import { removeWithRetries } from "@tau/tau-utils";
 import { collectSubSessions, exportFromFile } from "../src/export/html";
-=======
-import { APP_NAME, removeWithRetries } from "@oh-my-pi/pi-utils";
-import { $ } from "bun";
-import { exportFromFile, exportSessionToHtml, type SessionData } from "../src/export/html";
-import type { SessionHeader } from "../src/session/session-entries";
-import { SessionManager } from "../src/session/session-manager";
-import { collectSubSessions } from "../src/session/sub-sessions";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/export-subsessions.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /**
  * Contract: a session at `<dir>/<name>.jsonl` embeds subagent transcripts from

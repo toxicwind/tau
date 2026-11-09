@@ -4,19 +4,9 @@ import type { Settings } from "../config/settings";
 import { github } from "../utils/github";
 import { appendRepoFlag, ghApiHostArgs, parseRepoRef } from "./gh-common";
 import type { ViewLookupResult } from "./gh-view";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { getOrFetchView, resolveGithubCacheAuthKey } from "./github-cache";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
-=======
-import {
-	getOrFetchView,
-	getRetainedGeneration,
-	retainCachedGeneration,
-	resolveGithubCacheAuthKey,
-} from "./github-cache";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/gh-pr-diff.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 export const PR_DIFF_FILES_PAGE_SIZE = 100;
 export const PR_DIFF_FILES_MAX = 3000;

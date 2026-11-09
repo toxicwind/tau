@@ -1,5 +1,4 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 import type { AssistantMessage } from "@tau/tau-ai";
 import {
@@ -10,19 +9,6 @@ import {
 import type { PlanModeState } from "tau/plan-mode/state";
 import type { AgentSession, AgentSessionEvent } from "tau/session/agent-session";
 import type { PlanProposalHandler } from "tau/tools/resolve";
-=======
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import {
-	PRINT_MODE_ADVISOR_DRAIN_TIMEOUT_MS,
-	PRINT_MODE_ERROR_ADVISOR_DRAIN_TIMEOUT_MS,
-	runPrintMode,
-} from "@oh-my-pi/pi-coding-agent/modes/print-mode";
-import type { PlanModeState } from "@oh-my-pi/pi-coding-agent/plan-mode/state";
-import type { AgentSession, AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { CREDENTIAL_DISABLED_NOTICE_SOURCE } from "@oh-my-pi/pi-coding-agent/session/credential-disabled-notice";
-import type { PlanProposalHandler } from "@oh-my-pi/pi-coding-agent/tools/resolve";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/print-mode-working-indicator.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function makeAssistantMessage(text: string): AssistantMessage {
 	const timestamp = Date.now();

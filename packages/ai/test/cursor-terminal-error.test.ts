@@ -1,6 +1,5 @@
 import { afterEach, describe, expect, it } from "bun:test";
 import * as http2 from "node:http2";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 import * as AIError from "@tau/tau-ai/error";
 import { streamCursor } from "@tau/tau-ai/providers/cursor";
@@ -19,37 +18,6 @@ import {
 	UpdateTodosToolCallSchema,
 } from "@tau/tau-catalog/discovery/cursor-proto";
 import { create, toBinary } from "@tau/tau-catalog/discovery/protobuf";
-=======
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { streamCursor } from "@oh-my-pi/pi-ai/providers/cursor";
-import type { Context, CursorToolResultHandler, Model, ToolResultMessage } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import {
-	AgentServerMessageSchema,
-	ConversationStateStructureSchema,
-	ExecServerMessageSchema,
-	CustomErrorDetailsSchema,
-	CursorError,
-	ErrorDetailsSchema,
-	GetBlobArgsSchema,
-	HeartbeatUpdateSchema,
-	InteractionUpdateSchema,
-	KvServerMessageSchema,
-	McpArgsSchema,
-	McpToolCallSchema,
-	ReadArgsSchema,
-	StepCompletedUpdateSchema,
-	TextDeltaUpdateSchema,
-	TokenDeltaUpdateSchema,
-	ToolCallCompletedUpdateSchema,
-	ToolCallSchema,
-	ToolCallStartedUpdateSchema,
-	TurnEndedUpdateSchema,
-	UpdateTodosArgsSchema,
-	UpdateTodosToolCallSchema,
-} from "@oh-my-pi/pi-catalog/discovery/cursor-proto";
-import { create, toBinary } from "@oh-my-pi/pi-catalog/discovery/protobuf";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/ai/test/cursor-terminal-error.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const CONNECT_END_STREAM_FLAG = 0b00000010;
 

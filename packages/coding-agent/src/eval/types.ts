@@ -1,11 +1,5 @@
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { EvalLanguage, EvalStatusEvent } from "@oh-my-pi/p…`
 import type { EvalLanguage, EvalStatusEvent } from "@tau/tau-tui/tools/eval";
-=======
-import type { ImageContent } from "@oh-my-pi/pi-ai";
-import type { EvalLanguage, EvalStatusEvent, EvalView } from "@oh-my-pi/pi-tui/tools/eval";
-import { isRecord } from "@oh-my-pi/pi-utils/type-guards";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/eval/types.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /** Kernel-defined tool metadata exposed to task subagents. */
 export interface EvalToolDescriptor {

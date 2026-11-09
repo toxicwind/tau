@@ -1,10 +1,6 @@
 import type { Component } from "../tui";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { getProjectDir } from "@oh-my-pi/pi-utils";`
 import { getProjectDir } from "@tau/tau-utils";
-=======
-import { getProjectDir, jsonContainerEnd, sanitizeText } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/src/tools/bash.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { highlightCode, type Theme } from "../theme/theme";
 import { renderStatusLine } from "../render/status-line";
 import { framedToolCard, type ToolCardSnapshot } from "../render/tool-card";
@@ -661,7 +657,6 @@ export function createShellRenderer<TArgs>(config: ShellRendererConfig<TArgs>) {
 					const displayOutput = output.trimEnd();
 					const showingFullOutput = expanded && renderContext?.isFullOutput === true;
 
-<<<<<<< ours — function `createShellRenderer` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 					// Build truncation warning
 					const timeoutDisabled = details?.timeoutDisabled === true || renderContext?.timeout === 0;
@@ -699,16 +694,6 @@ export function createShellRenderer<TArgs>(config: ShellRendererConfig<TArgs>) {
 					}
 					if (isError && typeof details?.exitCode === "number") {
 						statsParts.push(`Exit: ${details.exitCode}`);
-=======
-					const statsParts = bashStatsParts(
-						details,
-						renderContext?.timeout,
-						rawOutputArtifact.artifactId,
-						isError,
-					);
-					if (elapsedSecond !== undefined && elapsedSecond > 0) {
-						statsParts.unshift(`elapsed ${formatDuration(elapsedSecond * 1000)}`);
->>>>>>> theirs — function `createShellRenderer` (F, confidence: medium)
 					}
 					const footerMeta =
 						statsParts.length > 0 ? uiTheme.fg("dim", statsParts.join(uiTheme.sep.dot)) : undefined;

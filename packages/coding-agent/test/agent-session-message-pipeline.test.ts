@@ -1,18 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import { Agent, type AgentMessage, type AgentTool, AppendOnlyContextManager, type StreamFn } from "@tau/tau-agent-core";
 import {
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
-=======
-	Agent,
-	type AgentMessage,
-	type AgentTool,
-	AppendOnlyContextManager,
-	type StreamFn,
-	ThinkingLevel,
-} from "@oh-my-pi/pi-agent-core";
-import {
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/agent-session-message-pipeline.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 	type Api,
 	type Context,
 	clearCustomApis,
@@ -37,7 +26,6 @@ import {
 	ExtensionRunner,
 	EXTENSION_HANDLER_TIMEOUT_MS,
 	testSetExtensionHandlerTimeoutMs,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 } from "tau/extensibility/extensions/runner";
 import { RegisteredToolAdapter } from "tau/extensibility/extensions/wrapper";
@@ -53,25 +41,6 @@ import { convertToLlm, wrapSteeringForModel } from "tau/session/messages";
 import { SessionManager } from "tau/session/session-manager";
 import { EventBus } from "tau/utils/event-bus";
 import { TempDir } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
-import { RegisteredToolAdapter } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/wrapper";
-import { initializeExtensions } from "@oh-my-pi/pi-coding-agent/modes/runtime-init";
-import * as memoryBackend from "@oh-my-pi/pi-coding-agent/memory-backend";
-import * as imageVisionFallback from "@oh-my-pi/pi-coding-agent/utils/image-vision-fallback";
-import { MEMORY_RECALL_CHANGES_MESSAGE_TYPE } from "@oh-my-pi/pi-coding-agent/memory-backend/recall-entry";
-import type { MemoryBackend } from "@oh-my-pi/pi-coding-agent/memory-backend/types";
-import { type MnemopiSessionState, setMnemopiSessionState } from "@oh-my-pi/pi-coding-agent/mnemopi/state";
-import { createAgentSession, type ExtensionContext, type ExtensionFactory } from "@oh-my-pi/pi-coding-agent/sdk";
-import { obfuscateProviderContext, SecretObfuscator } from "@oh-my-pi/pi-coding-agent/secrets";
-import { AgentSession, type AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { convertToLlm, wrapSteeringForModel } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-import { requestBodyText } from "@oh-my-pi/pi-ai/utils/request-body";
-import { TempDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import { createAssistantMessage } from "./helpers/agent-session-setup";
 
 function createAgent(): Agent {
@@ -2775,18 +2744,11 @@ describe("AgentSession message pipeline", () => {
 		}
 	});
 
-<<<<<<< ours — scope `it("exposes ctx.invokeTool to a re-registered...` in test_suite `AgentSession message pipeline` (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 	it("exposes ctx.invokeTool to a re-registered built-in so it can delegate to the native tool", async () => {
 		// End-to-end for the extension path: a tool that re-registers `bash` receives ctx.invokeTool
 		// (bound to its own name), delegates to the native bash, and the native output flows back.
 		using tempDir = TempDir.createSync("@tau-invoke-tool-");
-=======
-	it("exposes tool-scoped context and invokeTool to a re-registered built-in", async () => {
-		// End-to-end for the registered-tool path: the execute context forwards passive context to
-		// the agent loop and binds invokeTool to the native built-in of the same name.
-		using tempDir = TempDir.createSync("@pi-invoke-tool-");
->>>>>>> theirs — scope `it("exposes ctx.invokeTool to a re-registered...`
 		const api = "test-invoke-tool";
 		const contexts: Context[] = [];
 		registerCustomApi(api, (_model, context) => {

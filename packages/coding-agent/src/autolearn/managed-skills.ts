@@ -128,36 +128,7 @@ async function resolveManagedRoot(): Promise<string> {
 		throw err;
 	});
 }
-<<<<<<< ours — function `assertManagedRootSafe` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
-=======
-/**
- * Validate the managed-skills root before composing any child path. A symlinked
- * root is allowed when it resolves to an existing directory: the operator may
- * point the store at the shared skills tree (`~/.omp/agent/managed-skills` ->
- * `~/meta/notes/omp-skills`). Child paths stay inside that target because a
- * skill name is one safe path segment and a child directory symlink is rejected
- * at the mutation itself. A broken link or a link to a non-directory has no
- * defined write target, so it is refused.
- */
-async function assertManagedRootSafe(): Promise<void> {
-	const root = getManagedSkillsDir();
-	const rootStat = await fs.lstat(root).catch(err => {
-		if (isEnoent(err)) return null;
-		throw err;
-	});
-	if (!rootStat?.isSymbolicLink()) return;
-	const targetStat = await fs.stat(root).catch(err => {
-		if (isEnoent(err)) {
-			throw new Error(`The managed-skills root ${root} is a broken symlink; refusing to write.`);
-		}
-		throw err;
-	});
-	if (!targetStat.isDirectory()) {
-		throw new Error(`The managed-skills root ${root} links to a non-directory; refusing to write.`);
-	}
-}
->>>>>>> theirs — function `assertManagedRootSafe` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/autolearn/managed-skills.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const UPDATE_FILE_OPEN_FLAGS = fsConstants.O_WRONLY | fsConstants.O_NOFOLLOW;
 

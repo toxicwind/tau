@@ -6,17 +6,10 @@
  */
 import * as fsSync from "node:fs";
 import * as os from "node:os";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { EventLoopKeepalive } from "@oh-my-pi/pi-agent-core/uti…` +4 more
 import type { ThinkingLevel } from "@tau/tau-agent-core/thinking";
 import { EventLoopKeepalive } from "@tau/tau-agent-core/utils/yield";
 import type { ImageContent, Model } from "@tau/tau-ai";
-=======
-import type { ThinkingLevel } from "@oh-my-pi/pi-agent-core/thinking";
-import type { ImageContent, Model } from "@oh-my-pi/pi-ai";
-import { getModelPricingStatus } from "@oh-my-pi/pi-catalog/models";
-import { ensureSqliteLockShim, isEnoent, isEnotdir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/main.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	APP_NAME,
 	directoryIsMissing,
@@ -26,21 +19,12 @@ import {
 	normalizePathForComparison,
 	setProjectDir,
 	VERSION,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { EventLoopKeepalive } from "@oh-my-pi/pi-agent-core/uti…` +4 more
 } from "@tau/tau-utils/dirs";
 import { $env, isBunTestRuntime, setInteractiveHost } from "@tau/tau-utils/env";
 import * as logger from "@tau/tau-utils/logger";
 import * as postmortem from "@tau/tau-utils/postmortem";
 import chalk from "@tau/tau-utils/chalk";
-=======
-} from "@oh-my-pi/pi-utils/dirs";
-import { $env, isBunTestRuntime, isCompiledBinary, setInteractiveHost } from "@oh-my-pi/pi-utils/env";
-import * as logger from "@oh-my-pi/pi-utils/logger";
-import * as postmortem from "@oh-my-pi/pi-utils/postmortem";
-import { fuzzyFilter } from "@oh-my-pi/pi-tui/fuzzy";
-import chalk from "@oh-my-pi/pi-utils/chalk";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import { reset as resetCapabilities } from "./capability";
 import {
 	type Args,
@@ -55,7 +39,6 @@ import {
 import { applyExtensionFlags, type ExtensionFlagSink } from "./cli/extension-flags";
 import { processFileArguments } from "./cli/file-processor";
 import { buildInitialMessage } from "./cli/initial-message";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { EventLoopKeepalive } from "@oh-my-pi/pi-agent-core/uti…` +4 more
 import type { SessionPickerOptions } from "@tau/tau-tui/apps/session-picker";
 import { applyStartupCwd } from "./cli/startup-cwd";
@@ -64,17 +47,6 @@ import { getLatestRelease, isSourceCheckout, managedInstallName } from "./cli/up
 import { findConfigFile } from "./config";
 import { ModelRegistry } from "./config/model-registry";
 import { formatModelSelectorValue, parseModelString } from "@tau/tau-tui/overlays/model-selector";
-=======
-import { formatKeyHint, KeybindingsManager } from "@oh-my-pi/pi-tui/app-keybindings";
-import type { SessionPickerOptions } from "@oh-my-pi/pi-tui/apps/session-picker";
-import { fetchBuild } from "./cli/build-service";
-import { applyStartupCwd } from "./cli/startup-cwd";
-import { runAutoUpdate } from "./cli/auto-update";
-import { getLatestRelease, isSourceCheckout, managedInstallName } from "./cli/update-cli";
-import { findConfigFile } from "./config";
-import { ModelRegistry } from "./config/model-registry";
-import { formatModelSelectorValue } from "@oh-my-pi/pi-tui/overlays/model-selector";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import {
 	disabledProviderIds,
 	expandRoleAlias,
@@ -169,7 +141,6 @@ import { type RestoreOutcome, restoreSession } from "./task/restore";
 import { createTelemetryExportConfig, initTelemetryExport, isTelemetryExportEnabled } from "./telemetry-export";
 import { cfgTelemetryOtlpExportEnabled } from "./telemetry-settings";
 import { registerLocalInferenceApi } from "./tiny/local-inference-api";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { EventLoopKeepalive } from "@oh-my-pi/pi-agent-core/uti…` +4 more
 import { concreteThinkingLevel, parseConfiguredThinkingLevel } from "@tau/tau-tui/thinking";
 import type { LspStartupServerInfo } from "./tools";
@@ -181,12 +152,6 @@ import {
 	type StartupChangelogSelection,
 } from "./utils/changelog";
 import { resolveFirstLaunchPythonEvalWarning } from "./eval/startup-warning";
-=======
-import { automaticThinkingLevel, concreteThinkingLevel, parseConfiguredThinkingLevel } from "@oh-my-pi/pi-tui/thinking";
-import type { LspStartupServerInfo } from "./tools";
-import { sanitizeDisplayWarnings } from "@oh-my-pi/pi-tui/render/render-utils";
-import { getChangelogPath, readLastChangelogVersion, resolveStartupChangelogForDisplay } from "./utils/changelog";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import { EventBus } from "./utils/event-bus";
 import { resolveFirstLaunchPythonEvalWarning } from "./eval/startup-warning";
 import { CliUsageError } from "./cli/usage-error";
@@ -259,7 +224,6 @@ type SessionPicker = (
 
 /** Resume/import-only graph boundary; ordinary launches never construct a picker. */
 async function loadSessionPicker(init?: { foreign?: boolean }): Promise<SessionPicker> {
-<<<<<<< ours — scope `const [{ selectSession }, { HistoryStorage },...` in function `loadSessionPicker` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `import("@oh-my-pi/pi-tui/apps/session-picker"),`
 	const [{ selectSession }, { HistoryStorage }, { loadPinnedSessionIds }, { FileSessionStorage }] = await Promise.all([
 		import("@tau/tau-tui/apps/session-picker"),
@@ -267,15 +231,6 @@ async function loadSessionPicker(init?: { foreign?: boolean }): Promise<SessionP
 		import("./session/session-pins"),
 		import("./session/session-storage"),
 	]);
-=======
-	const [{ selectSession }, { HistoryStorage }, { loadPinnedSessionIds, setSessionPinned }, { FileSessionStorage }] =
-		await Promise.all([
-			import("@oh-my-pi/pi-tui/apps/session-picker"),
-			import("./session/history-storage"),
-			import("./session/session-pins"),
-			import("./session/session-storage"),
-		]);
->>>>>>> theirs — scope `const [{ selectSession }, { HistoryStorage },...`
 	return (sessions, options) => {
 		const storage = new FileSessionStorage();
 		// The picker runs before interactive mode loads the user's keymap, and its pin keys are remappable.
@@ -342,7 +297,6 @@ async function checkForNewVersion(currentVersion: string): Promise<string | unde
 		return undefined;
 	}
 }
-<<<<<<< ours — interstitial `between:packages/coding-agent/src/main.ts::variable::RPC_BACKGROUND_DEFAULTED_SETTING_PATHS:packages/coding-agent/src/main.ts::function::applyDefaultSettingOverrides` (T+S, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `// re-apply at startup so embedders inherit OMP's neutral defau…`
 
 // Protocol-mode hosts opt into a small set of paths whose host-default we
@@ -352,8 +306,6 @@ async function checkForNewVersion(currentVersion: string): Promise<string | unde
 // overrides, project `.claude/settings.yml`, `--config` overlays, or global
 // `config.yml` — so the host default only kicks in when nothing is set. Without
 // it the override clobbers every caller/host choice (#2598, #3207).
-=======
->>>>>>> theirs — interstitial `between:packages/coding-agent/src/main.ts::variable::RPC_BACKGROUND_DEFAULTED_SETTING_PATHS:packages/coding-agent/src/main.ts::function::applyDefaultSettingOverrides` (T+S, confidence: medium)
 
 // Protocol hosts inherit OMP's neutral defaults for settings declaring `protocolDefault`
 // instead of the local user's interactive preferences. The pin holds only while nothing
@@ -484,12 +436,8 @@ export function buildModelScopeNotification(
 			return `${scopedModel.model.id}${thinkingStr}`;
 		})
 		.join(", ");
-<<<<<<< ours — scope `return { kind: "info", message: `Model scope:...` in function `buildModelScopeNotification` (S, confidence: medium)
 // refused_by: statement_fold · collision: `return { kind: "info", message: `Model scope: ${modelList} (Ctr…`
 	return { kind: "info", message: `Model scope: ${modelList} (F2 or Ctrl+P to cycle)` };
-=======
-	return { kind: "info", message: `Model scope: ${modelList} (${formatKeyHint("ctrl+p")} to cycle)` };
->>>>>>> theirs — scope `return { kind: "info", message: `Model scope:...`
 }
 export async function submitInteractiveInput(
 	mode: Pick<
@@ -797,7 +745,6 @@ async function runInteractiveMode(
 					(startupGoal !== undefined || initialMessage !== undefined || initialMessages.length > 0),
 			}),
 		);
-<<<<<<< ours — function `runInteractiveMode` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 		void startBackgroundModelDiscovery?.();
 		// Squawk Fleet presence join — PRESENCE ONLY: the interactive TUI must
@@ -806,9 +753,6 @@ async function runInteractiveMode(
 		void import("./launch/auto-join")
 			.then(m => m.registerInteractiveTauSession({ species: "tau" }))
 			.catch(() => {});
-=======
-		startDeferredStartupWork?.(mode);
->>>>>>> theirs — function `runInteractiveMode` (S+F, confidence: low)
 
 		if (setupWizard && playStartupSplash) {
 			await setupWizard.runStartupSplash(mode);
@@ -863,16 +807,8 @@ async function runInteractiveMode(
 			}
 		}
 
-<<<<<<< ours — function `runInteractiveMode` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 		// `tau join <link>`: dispatch through the same builtin path as a typed
-=======
-		if (offersStartupWorktree) {
-			await mode.maybeAutoCreateWorktree();
-		}
-
-		// `omp join <link>`: dispatch through the same builtin path as a typed
->>>>>>> theirs — function `runInteractiveMode` (S+F, confidence: low)
 		// `/join` so collab guards and error rendering stay in one place.
 		if (joinLink !== undefined) {
 			const executeBuiltinSlashCommand = await loadBuiltinSlashCommandExecutor();
@@ -1323,14 +1259,9 @@ export function normalizeContinueSessionArgs(parsed: Args, rawArgs?: readonly st
 	parsed.continue = false;
 	parsed.messages.splice(messageIndex, 1);
 }
-<<<<<<< ours — variable `FORK_NOT_FOUND_HINT` (S+F, confidence: low)
 // refused_by: rename_vs_edit_guard · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 const FORK_NOT_FOUND_HINT =
 	"Run `tau --resume` without an argument to pick from recent sessions, or `tau` to start a new one.";
-=======
-const SESSION_NOT_FOUND_HINT =
-	"Run `omp --resume` without an argument to pick from recent sessions, or `omp` to start a new one.";
->>>>>>> theirs — variable `FORK_NOT_FOUND_HINT` (S+F, confidence: low)
 
 function validateSessionPersistenceArgs(parsed: Pick<Args, "continue" | "noSession" | "resume">): void {
 	if (!parsed.noSession) return;
@@ -1426,7 +1357,6 @@ export async function createSessionManager(
 			// A copy whose conversation moved to another machine continues as a fork.
 			return await forkIfMovedAway(manager, parsed.sessionDir);
 		}
-<<<<<<< ours — function `createSessionManager` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `"Run `omp --resume` without an argument to pick from recent ses…`
 		const match = await resolveResumableSession(sessionArg, cwd, parsed.sessionDir);
 		if (!match) {
@@ -1434,11 +1364,6 @@ export async function createSessionManager(
 				`Session "${sessionArg}" not found.`,
 				"Run `tau --resume` without an argument to pick from recent sessions, or `tau` to start a new one.",
 			);
-=======
-		const target = await resolveResumeTarget(sessionArg, cwd, parsed.sessionDir);
-		if (!target) {
-			throw new SessionResolutionError(`Session "${sessionArg}" not found.`, SESSION_NOT_FOUND_HINT);
->>>>>>> theirs — function `createSessionManager` (F, confidence: medium)
 		}
 		const { session, continuation } = target;
 		if (continuation) options.onSessionContinuation?.(continuation);
@@ -2217,19 +2142,8 @@ export async function runRootCommand(
 		normalizeContinueSessionArgs(parsedArgs, rawArgs);
 
 		// Resolve native resume/fork flags or import one foreign transcript into a
-<<<<<<< ours — scope `try {` in function `runRootCommand` (F, confidence: medium)
 // refused_by: statement_fold · collision: `// Fail fast on stale/typo flags (e.g. `omp --list-models`) now…`
 		// fresh persisted TAU session before constructing the AgentSession.
-=======
-		// fresh persisted OMP session before constructing the AgentSession.
-		const explicitSessionSelection = Boolean(
-			parsedArgs.continue ||
-			parsedArgs.resume ||
-			parsedArgs.fork ||
-			parsedArgs.restore ||
-			isForeignSessionImport(parsedArgs),
-		);
->>>>>>> theirs — scope `try {`
 		let sessionManager: SessionManager | undefined;
 		let foreignSource: ForeignSessionSource | undefined;
 		// A resumed session whose conversation went on in another file resumes that file; say so.
@@ -2643,7 +2557,6 @@ export async function runRootCommand(
 					process.stderr.write(`${chalk.yellow(`${message}\n`)}`);
 				}
 			}
-<<<<<<< ours — scope `try {` in function `runRootCommand` (F, confidence: medium)
 // refused_by: statement_fold · collision: `// Fail fast on stale/typo flags (e.g. `omp --list-models`) now…`
 			// Fail fast on stale/typo flags (e.g. `tau --list-models`) now that we
 			// know the real extension flag set. Without this check the unrecognized
@@ -2652,19 +2565,6 @@ export async function runRootCommand(
 			// tool calls (issue #2459). Exit code 2 matches the conventional
 			// "command line usage error" convention.
 			if (reportUnrecognizedFlags(initialArgs)) {
-=======
-			// Fail fast on stale/typo flags (e.g. `omp --list-models`) and invalid
-			// built-in enum values now that we know the real extension flag set —
-			// an extension may shadow `--mode`/`--thinking`/`--approval-mode`, so
-			// neither can be judged by the pre-extension parse. Without this check
-			// the unrecognized token gets silently consumed and any following
-			// positional leaks as the initial prompt — kicking off a real LLM
-			// session, MCP connection, and tool calls (issue #2459). Exit code 2
-			// matches the conventional "command line usage error" convention.
-			const invalidValues = reportInvalidFlagValues(initialArgs);
-			const unknownFlags = reportUnrecognizedFlags(initialArgs);
-			if (invalidValues || unknownFlags) {
->>>>>>> theirs — scope `try {`
 				process.exit(2);
 			}
 			rejectNoUiWithoutRpc(parsedArgs);
@@ -2732,7 +2632,6 @@ export async function runRootCommand(
 			const showsStartupChangelog =
 				isInteractive && !(parsedArgs.continue || parsedArgs.resume || isForeignSessionImport(parsedArgs));
 
-<<<<<<< ours — scope `try {` in function `runRootCommand` (F, confidence: medium)
 // refused_by: statement_fold · collision: `// Fail fast on stale/typo flags (e.g. `omp --list-models`) now…`
 			// Python-eval startup warning (upstream parity, 8d1dfcd5ab lineage):
 			// surface a broken enabled Python kernel at first launch instead of at
@@ -2747,40 +2646,6 @@ export async function runRootCommand(
 						jsEnabled: settingsInstance.get("eval.js"),
 					}).catch(() => undefined)
 				: undefined;
-=======
-			const preloadProviderRegistrations =
-				isInteractive && autoResumed ? extensionsResult.runtime.pendingProviderRegistrations.slice() : [];
-			const startupContext = {
-				eventBus,
-				subagentEventBus,
-				preloadedExtensions: extensionsResult,
-				deferredExtensionPaths: extensionsResult.deferredPaths,
-				// Validation waits for background refresh and the first interactive frame.
-				deferRetryFallbackValidation: true,
-			};
-			let createdSession: CreateAgentSessionResult;
-			try {
-				createdSession = await createSession({ ...sessionOptions, ...startupContext });
-			} catch (error) {
-				if (!isInteractive || !autoResumed || !sessionManager || !(error instanceof SessionModelRestoreError)) {
-					throw error;
-				}
-				await sessionManager.close();
-				sessionManager = undefined;
-				parsedArgs.continue = false;
-				// The failed SDK attempt consumed this queue; the fresh attempt clears
-				// source registrations again before applying it.
-				extensionsResult.runtime.pendingProviderRegistrations.unshift(...preloadProviderRegistrations);
-				const startupDeadline = sessionOptions.deadline;
-				sessionOptions = await buildStartupSessionOptions(undefined);
-				sessionOptions.deadline = startupDeadline;
-				createdSession = await createSession({ ...sessionOptions, ...startupContext });
-				notifs.push({
-					kind: "warn",
-					message: `Auto resume skipped: ${sanitizeDisplayWarnings([error.message])[0]}. Started a new session without the saved history.`,
-				});
-			}
->>>>>>> theirs — scope `try {`
 			const {
 				session,
 				setToolUIContext,
@@ -2973,15 +2838,12 @@ export async function runRootCommand(
 				});
 			} else if (isInteractive) {
 				const versionCheckPromise = checkForNewVersion(VERSION).catch(() => undefined);
-<<<<<<< ours — scope `try {` in function `runRootCommand` (F, confidence: medium)
 // refused_by: statement_fold · collision: `// Fail fast on stale/typo flags (e.g. `omp --list-models`) now…`
 				const startupChangelog = await startupChangelogPromise;
 				const pythonEvalWarning = await pythonEvalWarningPromise;
 				if (pythonEvalWarning) {
 					notifs.push({ kind: "warn", message: pythonEvalWarning });
 				}
-=======
->>>>>>> theirs — scope `try {`
 
 				const modelScopeNotification = buildModelScopeNotification(
 					scopedModels,

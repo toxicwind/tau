@@ -23,15 +23,9 @@
  */
 
 import * as fs from "node:fs/promises";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { logger, untilAborted } from "@oh-my-pi/pi-utils";`
 import { logger, untilAborted } from "@tau/tau-utils";
 import type { AgentSession } from "../session/agent-session";
-=======
-import { logger, postmortem, untilAborted } from "@oh-my-pi/pi-utils";
-import type { AgentSessionHandle } from "../session/agent-session-handle";
-import type { AgentSessionDisposeOptions } from "../session/agent-session-types";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/registry/agent-lifecycle.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { trackLateCleanup } from "../utils/late-cleanup";
 import {
 	type AgentRef,

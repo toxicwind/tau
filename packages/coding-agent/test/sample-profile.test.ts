@@ -2,7 +2,6 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import type { AgentToolResult } from "@oh-my-pi/pi-agent-core";`
 import type { AgentToolResult } from "@tau/tau-agent-core";
 import { Settings } from "tau/config/settings";
@@ -11,22 +10,6 @@ import type { ReadToolDetails } from "@tau/tau-tui/tools/read";
 import { ReadTool } from "tau/tools/read";
 import { demangleSymbol, parseSampleProfile, renderSampleProfile } from "tau/utils/sample-profile";
 import { removeWithRetries } from "@tau/tau-utils";
-=======
-import type { AgentToolContext, AgentToolResult } from "@oh-my-pi/pi-agent-core";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { EditTool } from "@oh-my-pi/pi-coding-agent/edit";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import type { ReadToolDetails } from "@oh-my-pi/pi-tui/tools/read";
-import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { wrapToolWithMetaNotice } from "@oh-my-pi/pi-coding-agent/tools/output-meta";
-import {
-	demangleSymbol,
-	parseSampleProfile,
-	renderSampleProfile,
-} from "@oh-my-pi/pi-coding-agent/utils/sample-profile";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/sample-profile.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const BOX_MEASURE = "_RNvNtCsfMEenOU8j5j_11slab_kernel6layout11box_measure";
 

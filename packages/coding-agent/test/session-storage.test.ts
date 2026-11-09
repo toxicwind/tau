@@ -7,21 +7,10 @@ import {
 	IndexedSessionStorage,
 	type SessionStorageBackend,
 	type SessionStorageIndexEntry,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { FileSessionStorage, SessionLockError } from "@oh-my-pi…`
 } from "tau/session/indexed-session-storage";
 import { FileSessionStorage, SessionLockError } from "tau/session/session-storage";
 import { type SessionTitleUpdate, serializeTitleSlot } from "tau/session/session-title-slot";
-=======
-} from "@oh-my-pi/pi-coding-agent/session/indexed-session-storage";
-import {
-	FileSessionStorage,
-	SessionLockError,
-	SessionWriteConflictError,
-	type WriteTextAtomicOptions,
-} from "@oh-my-pi/pi-coding-agent/session/session-storage";
-import { type SessionTitleUpdate, serializeTitleSlot } from "@oh-my-pi/pi-coding-agent/session/session-title-slot";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/session-storage.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 class ControlledTitleUpdateBackend implements SessionStorageBackend {
 	readonly #sessionPath: string;

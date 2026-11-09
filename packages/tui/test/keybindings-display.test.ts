@@ -1,19 +1,6 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { getDefaultPasteImageKeys, KeybindingsManager, setKeyHi…`
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { getDefaultPasteImageKeys, KeybindingsManager, setKeyHintPlatform } from "@tau/tau-tui/app-keybindings";
-=======
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
-import {
-	formatDoubleTap,
-	formatKeyHint,
-	formatTooltipKey,
-	getDefaultPasteImageKeys,
-	KeybindingsManager,
-	setKeyHintPlatform,
-} from "@oh-my-pi/pi-tui/app-keybindings";
-import { initTheme, setSymbolPreset } from "@oh-my-pi/pi-tui/theme/theme";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/test/keybindings-display.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 describe("KeybindingsManager.getDisplayString", () => {
 	beforeEach(() => setKeyHintPlatform("linux"));

@@ -1,4 +1,3 @@
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { modelKind, type ModelKind } from "@oh-my-pi/pi-catalog…`
 import type { Api, Model, ModelSpec, RemoteCompactionConfig, ThinkingConfig } from "@tau/tau-ai/types";
 import { buildModel } from "@tau/tau-catalog/build";
@@ -7,17 +6,6 @@ import { PROVIDER_DESCRIPTORS } from "@tau/tau-catalog/provider-models";
 import { toModelSpec } from "@tau/tau-catalog/provider-models/bundled-references";
 import { modelKind, type ModelKind } from "@tau/tau-catalog/types";
 import { isRecord } from "@tau/tau-utils";
-=======
-import type { Api, Model, ModelSpec, RemoteCompactionConfig, ThinkingConfig } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { isVertexExpressOpenAIUrl } from "@oh-my-pi/pi-catalog/hosts";
-import { providerEntry } from "@oh-my-pi/pi-catalog/compat/providers";
-import { PROVIDER_DESCRIPTORS } from "@oh-my-pi/pi-catalog/provider-models";
-import { openrouterDecisionsBaseUrl } from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import { toModelSpec } from "@oh-my-pi/pi-catalog/provider-models/bundled-references";
-import { apiServesKind, modelKind, type ModelKind, runnerApiKind } from "@oh-my-pi/pi-catalog/types";
-import { isRecord } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/config/model-patch.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { createConfigHeaderResolver } from "./resolve-config-value";
 import { SPECIAL_MODEL_MANAGER_PROVIDER_IDS } from "./model-provider-discovery";
 import type { ModelOverride } from "./models-config-schema";
@@ -48,15 +36,9 @@ export interface ProviderOverride {
  * `transport: "tau-native"` is provider-wide by documented contract
  * (docs/models.md): every model under the provider rides the auth-gateway,
  * so the gateway `baseUrl` follows the transport regardless of the model's
-<<<<<<< ours — scope `declaration` in function `resolveProviderBaseUrl` (T, confidence: high)
 // refused_by: statement_fold · collision: none (1 contested hunk(s), neither side deleted the other's lines)
  * own API — a model must never end up tau-native on a catalog upstream host
  * (#2555).
-=======
- * own API — a model must never end up pi-native on a catalog upstream host
- * (#2555). An unscoped override names the OpenRouter `/api/v1` chat root, so
- * Decisions models move to its `/api/alpha` sibling on the same host.
->>>>>>> theirs — scope `declaration`
  */
 export function resolveProviderBaseUrl<TApi extends Api>(
 	modelApi: TApi,

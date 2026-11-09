@@ -11,20 +11,9 @@ import type {
 	SpeculativeLaunchContext,
 	SpeculativeOperationContext,
 	SpeculativeToolExecutionConfig,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { BINARY_SNIFF_BYTES, isProbablyBinaryHeader, readImageM…`
 } from "@tau/tau-agent-core";
 import { BINARY_SNIFF_BYTES, isProbablyBinaryHeader, readImageMetadata } from "@tau/tau-utils";
-=======
-	SpeculativeToolReference,
-} from "@oh-my-pi/pi-agent-core";
-import {
-	BINARY_SNIFF_BYTES,
-	IMAGE_METADATA_HEADER_BYTES,
-	isProbablyBinaryHeader,
-	parseImageMetadata,
-} from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/speculation/host.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { Settings } from "../config/settings";
 import type { ToolSession } from "../tools";
 import { approvalRestrictions, resolveApproval } from "../tools/approval";
@@ -38,20 +27,8 @@ import {
 } from "../tools/read";
 import { isCpuProfilePath } from "../utils/cpuprofile";
 import { isSampleProfilePath } from "../utils/sample-profile";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { BINARY_SNIFF_BYTES, isProbablyBinaryHeader, readImageM…`
 import { isVideoPath } from "@tau/tau-tui/prompt/video";
-=======
-import { isVideoPath } from "@oh-my-pi/pi-tui/prompt/video";
-import { cfgTaskSpeculativeLaunch } from "../task/settings";
-
-import {
-	cfgToolsApproval,
-	cfgToolsApprovalMode,
-	cfgToolsSpeculativeExecutionEnabled,
-	cfgToolsSpeculativeExecutionMaxInFlight,
-} from "../tools/settings";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 
 type LocalReadEvidence = {
 	path: string;

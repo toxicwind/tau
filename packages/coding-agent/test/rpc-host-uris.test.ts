@@ -121,27 +121,12 @@ describe("RpcHostUriBridge", () => {
 		bridge.clear("test cleanup");
 	});
 
-<<<<<<< ours — scope `it("rejects OMP-reserved schemes", () => {` in test_suite `RpcHostUriBridge` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `it("rejects OMP-reserved schemes", () => {` +1 more
 	it("rejects TAU-reserved schemes", () => {
 		const bridge = new RpcHostUriBridge(() => {});
 		expect(() => bridge.setSchemes([{ scheme: "security" }])).toThrow(
 			"Host URI scheme is reserved by TAU: security://",
 		);
-=======
-	it("rejects every built-in scheme so hosts can neither shadow nor clear() them", () => {
-		const bridge = new RpcHostUriBridge(() => {});
-		for (const scheme of ["security", "local", "Agent", "mcp"]) {
-			expect(() => bridge.setSchemes([{ scheme, writable: true }])).toThrow(
-				`Host URI scheme is reserved by OMP: ${scheme.toLowerCase()}://`,
-			);
-		}
-		bridge.clear("test cleanup");
-		// Built-ins keep their own semantics for later sessions.
-		expect(router.normalize("local:/x")).toBe("local://x");
-		expect(router.fileWritable("local://x")).toBe(true);
-		expect(router.canHandle("agent://x")).toBe(true);
->>>>>>> theirs — scope `it("rejects OMP-reserved schemes", () => {` · weave: run 'weave explain packages/coding-agent/test/rpc-host-uris.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 	});
 
 	it("normalizes scheme casing and rejects invalid characters", () => {

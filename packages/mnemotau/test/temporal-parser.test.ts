@@ -1,10 +1,6 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { extractDateFromText, extractTemporal, parseNlDate } fr…`
 import { extractDateFromText, extractTemporal, parseNlDate } from "@tau/tau-mnemotau/core/temporal-parser";
-=======
-import { extractTemporal, parseNlDate } from "@oh-my-pi/pi-mnemopi/core/temporal-parser";
->>>>>>> theirs — interstitial `file_header` (S, confidence: medium) · weave: run 'weave explain packages/mnemotau/test/temporal-parser.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const REF = new Date("2026-05-20T15:30:00Z"); // Wednesday
 

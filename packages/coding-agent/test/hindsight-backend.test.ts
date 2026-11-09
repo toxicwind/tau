@@ -8,7 +8,6 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import type { AgentMessage } from "@tau/tau-agent-core";
 import { resetSettingsForTest, Settings } from "tau/config/settings";
@@ -16,29 +15,6 @@ import { hindsightBackend, rebindMemoryBackendForCwd, reloadMentalModelsForSessi
 import { HindsightApi } from "tau/hindsight/client";
 import { HindsightRetainQueue, type HindsightSessionState } from "tau/hindsight/state";
 import type { AgentSessionEventListener } from "tau/session/agent-session";
-=======
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import {
-	hindsightBackend,
-	rebindMemoryBackendForCwd,
-	reloadMentalModelsForSession,
-} from "@oh-my-pi/pi-coding-agent/hindsight/backend";
-import { HindsightApi } from "@oh-my-pi/pi-coding-agent/hindsight/client";
-import { HindsightRetainQueue, type HindsightSessionState } from "@oh-my-pi/pi-coding-agent/hindsight/state";
-import type { AgentSessionEventListener } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { TempDir } from "@oh-my-pi/pi-utils";
-import { getAgentDir, setAgentDir } from "@oh-my-pi/pi-utils/dirs";
-
-import {
-	cfgHindsightBankId,
-	cfgHindsightBankIdPrefix,
-	cfgHindsightBankMission,
-	cfgHindsightRecallBudget,
-	cfgHindsightRetainMission,
-	cfgHindsightScoping,
-} from "@oh-my-pi/pi-coding-agent/hindsight/settings";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/hindsight-backend.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 interface FakeSessionDeps {
 	sessionId: string | null;
@@ -649,12 +625,8 @@ describe("hindsightBackend live bank routing", () => {
 		// follow-up `set` writes to `#global` while `get` keeps returning the
 		// `#overrides` value — exactly the precedence the live settings UI
 		// does NOT have, since real config writes land in `#global`.
-<<<<<<< ours — scope `// Regression for issue #1902: changing `hind...` in test_suite `hindsightBackend live bank routing` (F, confidence: medium)
 // refused_by: statement_fold · collision: `settings.set("hindsight.bankId", "omp");`
 		settings.set("hindsight.bankId", "tau");
-=======
-		cfgHindsightBankId.set(settings, "omp");
->>>>>>> theirs — scope `// Regression for issue #1902: changing `hind...`
 		const session = makeFakeSession({ sessionId: "s-rebuild", settings });
 
 		await hindsightBackend.start({
@@ -717,12 +689,8 @@ describe("hindsightBackend live bank routing", () => {
 			"memory.backend": "hindsight",
 			"hindsight.apiUrl": "http://localhost:8888",
 		});
-<<<<<<< ours — scope `// Same setting written with the same value M...` in test_suite `hindsightBackend live bank routing` (F, confidence: medium)
 // refused_by: statement_fold · collision: `settings.set("hindsight.bankId", "omp");` +1 more
 		settings.set("hindsight.bankId", "tau");
-=======
-		cfgHindsightBankId.set(settings, "omp");
->>>>>>> theirs — scope `// Same setting written with the same value M...`
 		const session = makeFakeSession({ sessionId: "s-noop", settings });
 
 		await hindsightBackend.start({
@@ -734,14 +702,9 @@ describe("hindsightBackend live bank routing", () => {
 		});
 
 		const initial = session.getHindsightSessionState();
-<<<<<<< ours — scope `// Same setting written with the same value M...` in test_suite `hindsightBackend live bank routing` (F, confidence: medium)
 // refused_by: statement_fold · collision: `settings.set("hindsight.bankId", "omp");` +1 more
 		settings.set("hindsight.bankId", "tau"); // unchanged
 		await Bun.sleep(0);
-=======
-		cfgHindsightBankId.set(settings, "omp"); // unchanged
-		await hindsightBackend.applySettings!(session as never, ["hindsight.bankId"]);
->>>>>>> theirs — scope `// Same setting written with the same value M...`
 
 		expect(session.getHindsightSessionState()).toBe(initial);
 	});
@@ -860,14 +823,9 @@ describe("hindsightBackend live bank routing", () => {
 			"hindsight.apiUrl": "http://localhost:8888",
 			"hindsight.retainEveryNTurns": 1,
 		});
-<<<<<<< ours — scope `it("coalesces synchronous routing hooks so re...` in test_suite `hindsightBackend live bank routing` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `settings.set("hindsight.bankId", "omp");`
 		settings.set("hindsight.bankId", "tau");
 		settings.set("hindsight.scoping", "global");
-=======
-		cfgHindsightBankId.set(settings, "omp");
-		cfgHindsightScoping.set(settings, "global");
->>>>>>> theirs — scope `it("coalesces synchronous routing hooks so re...`
 		const entries = [
 			{ role: "user" as const, text: "remember this routing coalesce fact" },
 			{ role: "assistant" as const, text: "acknowledged routing coalesce fact" },

@@ -1,13 +1,7 @@
 /** Shared inference request identity headers. */
 
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { USER_AGENT } from "@oh-my-pi/pi-utils";`
 import { USER_AGENT } from "@tau/tau-utils";
-=======
-import { resolveCatalogPolicy } from "@oh-my-pi/pi-catalog/compat/catalog-policy";
-import type { CatalogPolicyInputs } from "@oh-my-pi/pi-catalog/types";
-import { APP_NAME, APP_URL, USER_AGENT } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/src/providers/inference-headers.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /** Options controlling provider and protocol inference headers. */
 export interface InferenceHeaderOptions {

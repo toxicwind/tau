@@ -1,21 +1,10 @@
 import { expect, it } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { buildResponsesInput } from "@oh-my-pi/pi-ai/providers/…`
 import type { ResponseInput } from "@tau/tau-ai/providers/openai-responses-wire";
 import { buildResponsesInput } from "@tau/tau-ai/providers/openai-shared";
 import type { AssistantMessage, Context, ToolResultMessage } from "@tau/tau-ai/types";
 import { createOpenAIResponsesHistoryPayload } from "@tau/tau-ai/utils";
 import { buildModel } from "@tau/tau-catalog/build";
-=======
-import type { ResponseInput } from "@oh-my-pi/pi-ai/providers/openai-responses-wire";
-import {
-	buildResponsesInput,
-	hoistInterleavedResponsesToolBatchMessages,
-} from "@oh-my-pi/pi-ai/providers/openai-shared";
-import type { AssistantMessage, Context, ToolResultMessage } from "@oh-my-pi/pi-ai/types";
-import { createOpenAIResponsesHistoryPayload } from "@oh-my-pi/pi-ai/utils";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/test/issue-11473-orphan-output-wedge.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 // DeepSeek via openai-responses (#11473): its validator pairs tool calls by
 // turn, so an assistant `message` wedged between a `function_call` and its
@@ -134,7 +123,6 @@ it("leaves commentary between completed sequential tool rounds in place (#13083)
 
 	expect(hoistInterleavedResponsesToolBatchMessages(input)).toEqual(input);
 });
-<<<<<<< ours — test `does not wedge a repaired orphan-output note between a call and its output (#11473)` (T+S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 it("does not wedge a repaired orphan-output note between a call and its output (#11473)", () => {
 	// One turn: model issued parallel `todo` (call_00) + `bash` (call_01). `todo`
@@ -202,5 +190,3 @@ it("does not wedge a repaired orphan-output note between a call and its output (
 	expect(lastCall).toBeLessThan(firstOutput);
 	expect(types.slice(lastCall + 1, firstOutput)).toEqual([]);
 });
-=======
->>>>>>> theirs — test `does not wedge a repaired orphan-output note between a call and its output (#11473)` (T+S+F, confidence: low)

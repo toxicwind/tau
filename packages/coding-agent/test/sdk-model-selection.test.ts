@@ -2,7 +2,6 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi 
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { getBundledModel } from "@oh-my-pi/pi-catalog/models";` +2 more
 import { Effort, type FetchImpl } from "@tau/tau-ai";
 import { buildModel } from "@tau/tau-catalog/build";
@@ -19,41 +18,6 @@ import { createAgentSession, type ExtensionFactory } from "tau/sdk";
 import type { AuthStorage } from "tau/session/auth-storage";
 import { SessionManager } from "tau/session/session-manager";
 import { removeSyncWithRetries, Snowflake } from "@tau/tau-utils";
-=======
-import { Effort, type FetchImpl } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { writeModelCache } from "@oh-my-pi/pi-catalog/model-cache";
-import { getBundledModel, getBundledModels } from "@oh-my-pi/pi-catalog/models";
-import { resolveModelCacheProviderId } from "@oh-my-pi/pi-catalog/provider-models";
-import { DEFAULT_MODEL_PER_PROVIDER } from "@oh-my-pi/pi-catalog/provider-models/descriptors";
-import { parseArgs } from "@oh-my-pi/pi-coding-agent/cli/args";
-import { ModelRegistry, type ProviderConfigInput } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { getModelMatchPreferences, resolveModelScope } from "@oh-my-pi/pi-coding-agent/config/model-resolver";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import {
-	buildSessionOptions as buildCliSessionOptions,
-	rebuildScopedModels,
-	resolveScopedModels,
-} from "@oh-my-pi/pi-coding-agent/main";
-import { createAgentSession, type ExtensionFactory } from "@oh-my-pi/pi-coding-agent/sdk";
-import * as discoveryModule from "@oh-my-pi/pi-coding-agent/task/discovery";
-import * as executorModule from "@oh-my-pi/pi-coding-agent/task/executor";
-import { getBundledAgent } from "@oh-my-pi/pi-coding-agent/task/agents";
-import { AgentStorage } from "@oh-my-pi/pi-coding-agent/session/agent-storage";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import type { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import {
-	getRetryFallbackRole,
-	installRetryFallbackRole,
-	type RetryFallbackRole,
-} from "@oh-my-pi/pi-coding-agent/session/retry-fallback-chains";
-import { getRestorableSessionModels } from "@oh-my-pi/pi-coding-agent/session/session-context";
-import { EPHEMERAL_MODEL_CHANGE_ROLE } from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import { TurnRecovery, type TurnRecoveryHost } from "@oh-my-pi/pi-coding-agent/session/turn-recovery";
-import type { AgentDefinition } from "@oh-my-pi/pi-coding-agent/task/types";
-import { removeSyncWithRetries, Snowflake } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/sdk-model-selection.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
 import {

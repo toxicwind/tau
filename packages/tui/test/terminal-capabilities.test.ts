@@ -16,14 +16,8 @@ import {
 	classifyTerminalMultiplexer,
 	hasTerminalMultiplexerSession,
 	isInsideTerminalMultiplexer,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-tui/terminal-capabilities";
-=======
-} from "@oh-my-pi/pi-tui/terminal-capabilities";
-import { TERMINAL_MULTIPLEXER_ENV_KEYS } from "@oh-my-pi/pi-tui/terminal-multiplexer";
-import { withFakeTmux } from "./helpers/fake-tmux";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/test/terminal-capabilities.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 describe("hasTerminalMultiplexerSession", () => {
 	it("recognizes Herdr session identity while ignoring client-only settings", () => {
@@ -276,7 +270,6 @@ describe("tmux client terminal resolution", () => {
 	// exercise identity resolution, so the fake tmux forwards it.
 	const PASSTHROUGH_QUERY = "show-options -Apqv allow-passthrough";
 
-<<<<<<< ours — scope `it.skipIf(process.platform === "win32")("uses...` in test_suite `tmux client terminal resolution` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `const binDir = await fs.mkdtemp(path.join(os.tmpdir(), "omp-tmu…` +1 more
 	it.skipIf(process.platform === "win32")("uses the attached client's terminal profile", async () => {
 		const binDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-tmux-client-"));
@@ -318,40 +311,6 @@ console.log(JSON.stringify({ id: TERMINAL_ID, notifyProtocol: TERMINAL.notifyPro
 				new Response(proc.stderr).text(),
 				proc.exited,
 			]);
-=======
-	async function resolveInsideFakeTmux(clientReport: string, replyDelayMs?: number): Promise<string> {
-		return withFakeTmux(
-			{ [CLIENT_QUERY]: clientReport, [PASSTHROUGH_QUERY]: "on" },
-			async binDir => {
-				const proc = Bun.spawn({
-					cmd: [
-						process.execPath,
-						"--eval",
-						`import { TERMINAL, TERMINAL_ID } from "@oh-my-pi/pi-tui/terminal-capabilities";
-console.log(JSON.stringify({ id: TERMINAL_ID, notifyProtocol: TERMINAL.notifyProtocol, imageProtocol: TERMINAL.imageProtocol }));`,
-					],
-					env: subprocessEnv({
-						PI_TEST_RUNTIME: undefined,
-						BUN_ENV: undefined,
-						NODE_ENV: undefined,
-						TERM: "tmux-256color",
-						TERM_PROGRAM: "tmux",
-						TERM_PROGRAM_VERSION: "3.6b",
-						COLORTERM: "truecolor",
-						TMUX: "/tmp/tmux-1000/default,4242,0",
-						TMUX_PANE: undefined,
-						SSH_CONNECTION: "client 1 server 22",
-						PATH: `${binDir}${path.delimiter}${Bun.env.PATH ?? ""}`,
-					}),
-					stdout: "pipe",
-					stderr: "pipe",
-				});
-				const [stdout, stderr, exitCode] = await Promise.all([
-					new Response(proc.stdout).text(),
-					new Response(proc.stderr).text(),
-					proc.exited,
-				]);
->>>>>>> theirs — scope `it.skipIf(process.platform === "win32")("uses...`
 
 				expect(stderr).toBe("");
 				expect(exitCode).toBe(0);

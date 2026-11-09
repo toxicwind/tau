@@ -1,5 +1,4 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { ResetCreditAccountStatus, ResetCreditTarget, Usag…` +1 more
 import { Agent } from "@tau/tau-agent-core";
 import type { ResetCreditAccountStatus, ResetCreditTarget, UsageReport } from "@tau/tau-ai";
@@ -12,34 +11,6 @@ import { AgentSession } from "tau/session/agent-session";
 import { AuthStorage } from "tau/session/auth-storage";
 import { type CodexAutoRedeemCoordinator, createCodexAutoRedeemCoordinator } from "tau/session/codex-auto-reset";
 import { SessionManager } from "tau/session/session-manager";
-=======
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import type {
-	ResetCreditAccountStatus,
-	ResetCreditTarget,
-	SessionRestrictionLease,
-	UsageReport,
-} from "@oh-my-pi/pi-ai";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import * as envApiKey from "@oh-my-pi/pi-ai/env-api-key";
-import { closeModelCache } from "@oh-my-pi/pi-catalog/model-cache";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { runUsageCommand } from "@oh-my-pi/pi-coding-agent/cli/usage-cli";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { ExtensionRuntime } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
-import { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
-import { initializeExtensions } from "@oh-my-pi/pi-coding-agent/modes/runtime-init";
-import * as sdkModule from "@oh-my-pi/pi-coding-agent/sdk";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import {
-	type CodexAutoRedeemCoordinator,
-	createCodexAutoRedeemCoordinator,
-} from "@oh-my-pi/pi-coding-agent/session/codex-auto-reset";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { __resetDirsFromEnvForTests, setAgentDir, TempDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/claude-auto-reset-integration.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { mockSchedulerWaitWithClock } from "./helpers/mock-scheduler-clock";
 
 import { cfgClaudeResetsAutoRedeem } from "@oh-my-pi/pi-coding-agent/session/settings";

@@ -29,15 +29,9 @@
  * `id`/`parentId` so the guest's branch chain stays connected.
  */
 import { afterEach, describe, expect, it } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { importRoomKey } from "tau/collab/crypto";
 import { CollabHost } from "tau/collab/host";
-=======
-import type { ImageContent } from "@oh-my-pi/pi-ai";
-import { importRoomKey } from "@oh-my-pi/pi-coding-agent/collab/crypto";
-import { CollabHost } from "@oh-my-pi/pi-coding-agent/collab/host";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/collab/replication-shrink.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	COLLAB_PROTO,
 	type CollabFrame,
@@ -52,7 +46,6 @@ import {
 	MAX_REPLICATED_PAYLOAD_BYTES,
 	type ReplicatedEntry,
 	replicationByteLength,
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 	shrinkReplicatedEntry,
 	shrinkReplicatedEvent,
@@ -61,16 +54,6 @@ import type { InteractiveModeContext } from "tau/modes/types";
 import type { AgentSessionEvent } from "tau/session/agent-session";
 import { SessionManager } from "tau/session/session-manager";
 import type { SessionEntry } from "tau/session/session-entries";
-=======
-	serializeReplicatedEntry,
-	serializeReplicatedEvent,
-} from "@oh-my-pi/pi-coding-agent/collab/replication-shrink";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import type { AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import type { SessionEntry } from "@oh-my-pi/pi-coding-agent/session/session-entries";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium)
 
 interface RelayData {
 	role: "host" | "guest";
@@ -379,7 +362,6 @@ describe("collab replication shrinking (#3739)", () => {
 	});
 });
 
-<<<<<<< ours — test_suite `shrinkReplicatedEntry (#11433)` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 describe("shrinkReplicatedEntry (#11433)", () => {
 	it("does not substitute a placeholder for an entry that already fits", () => {
@@ -550,184 +532,12 @@ describe("shrinkReplicatedEntry (#11433)", () => {
 		const manager = SessionManager.inMemory();
 		manager.ingestReplicatedEntry(userMessage("prior", null, "2026-09-13T00:00:00Z", "before"));
 		manager.ingestReplicatedEntry(shrinkReplicatedEntry(omitted));
-=======
-describe("serializeReplicatedEntry (#11433)", () => {
-	it("does not substitute a placeholder for an entry that already fits", () => {
-		// Negative contract: the ceiling may only rewrite a payload it cannot
-		// bound. An entry under it must reach the guest verbatim — substituting
-		// here would show every ordinary entry as "too large to replicate".
-		const small = userMessage("m1", null, "2026-09-13T00:00:00Z", "hi");
-		const shrunk = boundEntry(small);
-		expect(shrunk.type).toBe("message");
-		const serialized = JSON.stringify(shrunk);
-		expect(serialized).not.toContain(COLLAB_ENTRY_OMITTED_CUSTOM_TYPE);
-		expect(serialized).not.toContain("elided for collab session");
-	});
-
-	it("clamps a single giant string under the ceiling with an elision marker", () => {
-		const entry = userMessage("m1", null, "2026-09-13T00:00:00Z", "x".repeat(5 * 1024 * 1024));
-		const shrunk = boundEntry(entry);
-		expect(shrunk).not.toBe(entry);
-		expectBounded(shrunk);
-		if (shrunk.type !== "message" || shrunk.message.role !== "user") throw new Error("expected user message");
-		expect(shrunk.message.content).toContain("chars elided for collab session");
-	});
-
-	it("clamps a payload built of many short strings (no individual oversized)", () => {
-		// Realistic shape: a tool result content array with thousands of small
-		// text blocks. No individual string crosses the final pass's 64 B
-		// floor, so the helper MUST clip the array, not just the strings.
-		const content = Array.from({ length: 100_000 }, (_, i) => ({ type: "text", text: `block-${i}` }));
-		const entry = {
-			type: "message",
-			id: "m1",
-			parentId: null,
-			timestamp: "2026-09-13T00:00:00Z",
-			message: { role: "toolResult", content, timestamp: 0 },
-		} as unknown as ReplicatedEntry;
-		expect(replicationByteLength(entry) ?? 0).toBeGreaterThan(MAX_REPLICATED_PAYLOAD_BYTES);
-
-		const shrunk = boundEntry(entry);
-		expectBounded(shrunk);
-		if (shrunk.type !== "message") throw new Error("expected message entry");
-		const shrunkContent = (shrunk.message as unknown as { content: unknown[] }).content;
-		expect(Array.isArray(shrunkContent)).toBe(true);
-		expect(
-			shrunkContent.some(item => typeof item === "string" && item.includes("items elided for collab session")),
-		).toBe(true);
-	});
-
-	it("replaces an entry whose size lives in one giant object key", () => {
-		// Pre-fix: 17,825,798 bytes shipped untouched, because keys are identity
-		// and every pass only walked string leaves and array tails.
-		const giantKey = "k".repeat(17 * 1024 * 1024);
-		const entry = {
-			type: "message",
-			id: "m1",
-			parentId: "parent-1",
-			timestamp: "2026-09-13T00:00:00Z",
-			message: { role: "user", content: "", timestamp: 0, blob: { [giantKey]: 1 } },
-		} as unknown as ReplicatedEntry;
-
-		const shrunk = boundEntry(entry);
-		expect(shrunk.type).toBe("custom_message");
-		expectBounded(shrunk);
-		if (shrunk.type !== "custom_message") throw new Error("expected typed placeholder");
-		expect(shrunk.customType).toBe(COLLAB_ENTRY_OMITTED_CUSTOM_TYPE);
-		// Identity survives, which is what keeps the guest's branch connected.
-		expect(shrunk.id).toBe("m1");
-		expect(shrunk.parentId).toBe("parent-1");
-	});
-
-	it("replaces an entry whose size lives in the number of its keys", () => {
-		// Pre-fix: 200,000 short keys shipped as ~5 MB, untouched.
-		const blob: Record<string, number> = {};
-		for (let i = 0; i < 200_000; i++) blob[`k${i}`] = i;
-		const entry = {
-			type: "message",
-			id: "m2",
-			parentId: "parent-2",
-			timestamp: "2026-09-13T00:00:00Z",
-			message: { role: "user", content: "", timestamp: 0, blob },
-		} as unknown as ReplicatedEntry;
-
-		const shrunk = boundEntry(entry);
-		expect(shrunk.type).toBe("custom_message");
-		expectBounded(shrunk);
-		expect(shrunk.id).toBe("m2");
-	});
-
-	it("degrades a 50,000-deep entry instead of blowing the stack", () => {
-		// Pre-fix: recursive walk threw `RangeError: Maximum call stack size
-		// exceeded`, and every caller swallows it — the live path silently
-		// dropped the entry, the snapshot path stranded the joining guest
-		// without a `final` chunk.
-		let deep: unknown = "leaf";
-		for (let i = 0; i < 50_000; i++) deep = { a: deep };
-		const entry = {
-			type: "message",
-			id: "m3",
-			parentId: "parent-3",
-			timestamp: "2026-09-13T00:00:00Z",
-			message: { role: "user", content: "", timestamp: 0, blob: deep },
-		} as unknown as ReplicatedEntry;
-
-		const shrunk = boundEntry(entry);
-		// The depth cap is what makes this serializable at all: the engine's own
-		// `JSON.stringify`/`structuredClone` throw at ~40,000 levels, so the
-		// walk must emit a shallower clone than it was given.
-		expectBounded(shrunk);
-		expect(shrunk.id).toBe("m3");
-		const roundTripped = JSON.parse(JSON.stringify(shrunk)) as SessionEntry;
-		expect(roundTripped.id).toBe("m3");
-	});
-
-	it("measures the ceiling in UTF-8 bytes, not UTF-16 code units", () => {
-		// 400,000 CJK chars: ~400 KB of code units, so the old
-		// `JSON.stringify(...).length` check passed it through untouched, while
-		// the relay saw ~1.2 MB — a 3x overshoot on top of the intended cap.
-		const entry = userMessage("m4", null, "2026-09-13T00:00:00Z", "中".repeat(400_000));
-		const asJson = JSON.stringify(entry);
-		expect(asJson.length).toBeLessThanOrEqual(MAX_REPLICATED_PAYLOAD_BYTES);
-		expect(Buffer.byteLength(asJson, "utf8")).toBeGreaterThan(MAX_REPLICATED_PAYLOAD_BYTES);
-
-		const shrunk = boundEntry(entry);
-		expect(shrunk).not.toBe(entry);
-		expectBounded(shrunk);
-	});
-
-	it("degrades a cyclic payload to a marker instead of looping forever", () => {
-		// The recursive walk threw on a cycle; an iterative walk would instead
-		// follow it forever. Neither is acceptable, and an entry that only has a
-		// cycle in one branch should keep the rest of its shape.
-		const cyclic: Record<string, unknown> = { id: "m5" };
-		cyclic.self = cyclic;
-		const entry = {
-			type: "message",
-			id: "m5",
-			parentId: null,
-			timestamp: "2026-09-13T00:00:00Z",
-			message: { role: "user", content: "", timestamp: 0, blob: cyclic },
-		} as unknown as ReplicatedEntry;
-
-		// `JSON.stringify` refuses it outright, so the ceiling cannot even be
-		// measured — that is what routes it through the walk rather than
-		// returning it by reference.
-		expect(replicationByteLength(entry)).toBeNull();
-
-		const shrunk = boundEntry(entry);
-		expectBounded(shrunk);
-		expect(shrunk.id).toBe("m5");
-		if (shrunk.type !== "message") throw new Error("expected the message entry to survive");
-		const blob = (shrunk.message as unknown as { blob: { self: unknown } }).blob;
-		expect(typeof blob.self).toBe("string");
-		expect(blob.self).toContain("cyclic reference elided for collab session");
-	});
-
-	it("keeps the guest's branch connected across an omitted entry", () => {
-		// The full point of preserving id/parentId: the entry after the omitted
-		// one still resolves against a branch the guest can walk.
-		const giantKey = "k".repeat(17 * 1024 * 1024);
-		const omitted = {
-			type: "message",
-			id: "omitted",
-			parentId: "prior",
-			timestamp: "2026-09-13T00:00:00Z",
-			message: { role: "user", content: "", timestamp: 0, blob: { [giantKey]: 1 } },
-		} as unknown as ReplicatedEntry;
-		const successor = userMessage("successor", "omitted", "2026-09-13T00:00:01Z", "after");
-
-		const manager = SessionManager.inMemory();
-		manager.ingestReplicatedEntry(userMessage("prior", null, "2026-09-13T00:00:00Z", "before"));
-		manager.ingestReplicatedEntry(boundEntry(omitted));
->>>>>>> theirs — test_suite `shrinkReplicatedEntry (#11433)` (S+F, confidence: low)
 		manager.ingestReplicatedEntry(successor);
 
 		expect(manager.getBranch().map(entry => entry.id)).toEqual(["prior", "omitted", "successor"]);
 	});
 });
 
-<<<<<<< ours — test_suite `shrinkReplicatedEvent (#11433)` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 describe("shrinkReplicatedEvent (#11433)", () => {
 	it("does not substitute a notice for an event that already fits", () => {
@@ -764,43 +574,6 @@ describe("shrinkReplicatedEvent (#11433)", () => {
 		} as unknown as AgentSessionEvent;
 
 		const shrunk = shrinkReplicatedEvent(event);
-=======
-describe("serializeReplicatedEvent (#11433)", () => {
-	it("does not substitute a notice for an event that already fits", () => {
-		const event: AgentSessionEvent = { type: "agent_end", messages: [] } as unknown as AgentSessionEvent;
-		const shrunk = boundEvent(event);
-		expect(shrunk.type).toBe("agent_end");
-		expect(JSON.stringify(shrunk)).not.toContain("Host event omitted");
-	});
-
-	it("still shrinks an event whose size lives in a string leaf", () => {
-		const event = {
-			type: "tool_execution_end",
-			toolCallId: "call-1",
-			toolName: "read",
-			result: { text: "x".repeat(8 * 1024 * 1024) },
-		} as unknown as AgentSessionEvent;
-
-		const shrunk = boundEvent(event);
-		expect(shrunk).not.toBe(event);
-		expect(shrunk.type).toBe("tool_execution_end");
-		expectBounded(shrunk);
-	});
-
-	it("replaces an unshrinkable event with a notice naming the omitted type", () => {
-		// Events carry no id to preserve, and a notice never enters agent state
-		// or the model context — so the substitution stays out of the guest's
-		// conversation instead of silently diverging from the host's view.
-		const giantKey = "k".repeat(17 * 1024 * 1024);
-		const event = {
-			type: "tool_execution_end",
-			toolCallId: "call-2",
-			toolName: "read",
-			result: { [giantKey]: 1 },
-		} as unknown as AgentSessionEvent;
-
-		const shrunk = boundEvent(event);
->>>>>>> theirs — test_suite `shrinkReplicatedEvent (#11433)` (S+F, confidence: low)
 		expect(shrunk.type).toBe("notice");
 		expectBounded(shrunk);
 		if (shrunk.type !== "notice") throw new Error("expected notice event");

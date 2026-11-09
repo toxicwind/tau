@@ -1,10 +1,5 @@
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { isOfficialAnthropicApiUrl } from "@oh-my-pi/pi-catalog…`
 import { isOfficialAnthropicApiUrl } from "@tau/tau-catalog/compat/anthropic";
-=======
-import { isBedrockAnthropicRoute, isOfficialAnthropicApiUrl } from "@oh-my-pi/pi-catalog/compat/anthropic";
-import { isBedrockRouteUrl } from "@oh-my-pi/pi-catalog/hosts";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/src/providers/anthropic-compaction.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { Model } from "../types";
 import type { AnthropicMessagesClientLike } from "./anthropic-client";
 import { normalizeAnthropicBaseUrl, resolveDirectAnthropicBaseUrl } from "./anthropic-state";

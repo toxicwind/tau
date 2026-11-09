@@ -2,19 +2,11 @@ import { Database } from "bun:sqlite";
 import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { closeDb, getOverallStats, getRecentRequests } from "@o…`
 import { syncAllSessions } from "@tau/tau-stats/aggregator";
 import { closeDb, getOverallStats, getRecentRequests } from "@tau/tau-stats/db";
 import { parseSessionFile } from "@tau/tau-stats/parser";
 import { getSessionsDir, getStatsDbPath } from "@tau/tau-utils";
-=======
-import { syncAllSessions } from "@oh-my-pi/omp-stats/aggregator";
-import { closeDb, getRecentRequests } from "@oh-my-pi/omp-stats/db";
-import { getOverallStats } from "@oh-my-pi/omp-stats/rollup";
-import { parseSessionFile } from "@oh-my-pi/omp-stats/parser";
-import { getSessionsDir, getStatsDbPath } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/stats/test/priority-premium-requests.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { installStatsTestIsolation } from "./helpers/temp-agent";
 
 installStatsTestIsolation("@tau-stats-priority-");

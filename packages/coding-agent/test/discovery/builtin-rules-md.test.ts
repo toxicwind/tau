@@ -65,7 +65,6 @@ afterEach(() => {
 	removeSyncWithRetries(tempDir);
 });
 
-<<<<<<< ours — test `user ~/.omp/agent/RULES.md becomes an alwaysApply rule` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 test("user ~/.tau/agent/RULES.md becomes an alwaysApply rule", async () => {
 	writeFile(
@@ -80,10 +79,7 @@ test("user ~/.tau/agent/RULES.md becomes an alwaysApply rule", async () => {
 	expect(userRule?.alwaysApply).toBe(true);
 	expect(userRule?.content).toContain("beads task tracker");
 });
-=======
->>>>>>> theirs — test `user ~/.omp/agent/RULES.md becomes an alwaysApply rule` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/discovery/builtin-rules-md.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
-<<<<<<< ours — test `project .omp/RULES.md becomes an alwaysApply rule` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 test("project .tau/RULES.md becomes an alwaysApply rule", async () => {
 	writeFile(path.join(project, ".tau", "RULES.md"), "# Project rule\nAlways say hi.\n");
@@ -95,8 +91,6 @@ test("project .tau/RULES.md becomes an alwaysApply rule", async () => {
 	expect(projectRule?.alwaysApply).toBe(true);
 	expect(projectRule?.content).toContain("Always say hi.");
 });
-=======
->>>>>>> theirs — test `project .omp/RULES.md becomes an alwaysApply rule` (S+F, confidence: low)
 
 test("project RULES.md is found walking up from a sub-package cwd", async () => {
 	const subPkg = path.join(project, "packages", "app");

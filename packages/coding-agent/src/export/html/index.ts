@@ -1,17 +1,9 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { APP_NAME, isEnoent } from "@oh-my-pi/pi-utils";`
 import type { AgentState } from "@tau/tau-agent-core";
 import { APP_NAME, isEnoent } from "@tau/tau-utils";
 import { getResolvedThemeColors, getThemeExportColors } from "@tau/tau-tui/theme";
-=======
-import { buildSessionTraceFromSnapshots } from "@oh-my-pi/omp-stats/trace";
-import type { SessionTrace } from "@oh-my-pi/omp-stats/types";
-import type { AgentState } from "@oh-my-pi/pi-agent-core";
-import { APP_NAME, isCompiledBinary, isEnoent, VERSION } from "@oh-my-pi/pi-utils";
-import { getResolvedThemeColors, getThemeExportColors } from "@oh-my-pi/pi-tui/theme";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/export/html/index.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { SessionEntry, SessionHeader } from "../../session/session-entries";
 import { SessionManager } from "../../session/session-manager";
 import { collectSubSessions, type SubSession } from "../../session/sub-sessions";
@@ -69,12 +61,8 @@ export function getTemplate(): string {
 
 export interface ExportOptions {
 	outputPath?: string;
-<<<<<<< ours — scope `palette` in interface `ExportOptions` (S, confidence: medium)
 // refused_by: container_member · collision: `/** `"web"` bundles the omp web themes; `"theme"` bundles TUI t…`
 	/** `"web"` bundles the tau web themes; `"theme"` bundles TUI themes. */
-=======
-	/** `"web"` uses the hosted web themes; `"theme"` embeds TUI theme overrides. */
->>>>>>> theirs — scope `palette`
 	palette?: "web" | "theme";
 	/** Legacy single TUI theme name. Prefer `themeNames` for dual-theme exports. */
 	themeName?: string;

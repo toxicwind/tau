@@ -16,16 +16,10 @@
  * batch survives kernel resets (`attach(id)`) until `close()` or its owner
  * session releases it.
  */
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import type { JudgmentState, Question } from "@oh-my-pi/pi-ai";`
 import type { JudgmentState, Question } from "@tau/tau-ai";
 import { isRecord, logger, Snowflake } from "@tau/tau-utils";
 import { formatCost } from "@tau/tau-tui/overlays/agent-hub-renderer";
-=======
-import type { ImageContent, JudgmentState, Question } from "@oh-my-pi/pi-ai";
-import { isRecord, logger, Snowflake } from "@oh-my-pi/pi-utils";
-import { formatCost } from "@oh-my-pi/pi-tui/overlays/agent-hub-renderer";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/eval/judgment-batch-bridge.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { ChainJudge } from "../judgment";
 import { MAIN_AGENT_ID } from "../registry/agent-registry";
 import type { ToolSession } from "../tools";

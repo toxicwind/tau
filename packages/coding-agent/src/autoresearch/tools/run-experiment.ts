@@ -4,27 +4,12 @@ import * as path from "node:path";
 import { type } from "@tau/tautype";
 import * as vcs from "@tau/tau-natives/vcs";
 
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { formatBytes } from "@oh-my-pi/pi-utils";` +2 more
 import { formatBytes } from "@tau/tau-utils";
 import { executeBash } from "../../exec/bash-executor";
 import type { ToolDefinition } from "../../extensibility/extensions";
 
 import { DEFAULT_MAX_BYTES, DEFAULT_MAX_LINES, TailBuffer, truncateTail } from "@tau/tau-tui/tools/streaming-output";
-=======
-import { formatBytes, procmgr } from "@oh-my-pi/pi-utils";
-import { Settings } from "../../config/settings";
-import { executeBash } from "../../exec/bash-executor";
-import type { ToolDefinition } from "../../extensibility/extensions";
-
-import {
-	DEFAULT_MAX_BYTES,
-	DEFAULT_MAX_LINES,
-	TailBuffer,
-	type TruncationResult,
-	truncateTail,
-} from "@oh-my-pi/pi-tui/tools/streaming-output";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/autoresearch/tools/run-experiment.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 import { parseWorkDirDirtyPaths } from "../git";
 import {
@@ -40,14 +25,9 @@ import { buildExperimentState } from "../state";
 import { quotePosixArgument } from "../../utils/shell-quote";
 import { openAutoresearchStorageIfExists } from "../storage";
 import type { AutoresearchToolFactoryOptions } from "../types";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { formatBytes } from "@oh-my-pi/pi-utils";` +2 more
 import type { RunDetails, RunExperimentProgressDetails } from "@tau/tau-tui/tools/autoresearch";
 import { DEFAULT_HARNESS_COMMAND } from "@tau/tau-tui/tools/autoresearch";
-=======
-import type { ASIData, RunDetails, RunExperimentProgressDetails } from "@oh-my-pi/pi-tui/tools/autoresearch";
-import { DEFAULT_HARNESS_COMMAND, HARNESS_FILENAME } from "@oh-my-pi/pi-tui/tools/autoresearch";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 
 const runExperimentSchema = type({
 	"timeout_seconds?": type("number").describe("timeout in seconds (default 600)"),

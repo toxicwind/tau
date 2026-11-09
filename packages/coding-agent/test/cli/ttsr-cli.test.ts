@@ -95,7 +95,6 @@ function cleanupTmp(): void {
 	}
 }
 
-<<<<<<< ours — test_suite `omp ttsr` (T+S+F, confidence: low)
 // refused_by: rename_vs_edit_guard · collision: none (both sides edited, nowhere the same lines)
 describe("tau ttsr", () => {
 	afterEach(() => {
@@ -146,45 +145,6 @@ describe("tau ttsr", () => {
 				snippet: "const x: any = 1",
 			};
 			await run({ action: "test", test });
-=======
-describe("omp ttsr", () => {
-	afterEach(() => {
-		restoreStreams();
-		cleanupTmp();
-	});
-
-	describe("test — context inference and matching", () => {
-		it("infers tool/edit context when a positional resolves to a .ts file and --source is omitted", async () => {
-			captureStreams();
-			const rulePath = await writeTempRule(": any", ["tool:edit(*.ts)"]);
-			// Simulate `omp ttsr test --rule <rule> src/foo.ts`: the command layer
-			// resolves a file positional into `file`, but the CLI handler's own
-			// inference (source from file extension) is exercised when source is
-			// unset. Pass file + filePath so the handler infers tool context.
-			const snippetPath = await writeTempSnippet("const x: any = 1", "ts");
-			const test: TtsrTestArgs = {
-				rule: rulePath,
-				file: snippetPath,
-				source: undefined,
-			};
-			await run({ action: "test", test });
-			expect(stdout).toContain("source=tool:edit");
-			expect(stdout).toContain("Triggered");
-			expect(stdout).toContain("test-rule");
-		});
-
-		it("defaults to source=text for inline snippet with no file", async () => {
-			captureStreams();
-			const rulePath = await writeTempRule(": any", ["tool:edit(*.ts)"]);
-			const test: TtsrTestArgs = {
-				rule: rulePath,
-				snippet: "const x: any = 1",
-				source: undefined,
-			};
-			await run({ action: "test", test });
-			expect(stdout).toContain("source=text");
-			// tool-scoped rule does not fire under text source
->>>>>>> theirs — test_suite `omp ttsr` (T+S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/cli/ttsr-cli.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 			expect(stdout).toContain("No rules triggered");
 		});
 

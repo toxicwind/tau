@@ -2,25 +2,11 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import type { Context } from "@oh-my-pi/pi-ai/types";`
 import { clearCustomApis } from "@tau/tau-ai/api-registry";
 import { createMockModel, registerMockApi } from "@tau/tau-ai/providers/mock";
 import { __providerInFlightForTesting, configureProviderMaxInFlightRequests, streamSimple } from "@tau/tau-ai/stream";
 import type { Context } from "@tau/tau-ai/types";
-=======
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { clearCustomApis } from "@oh-my-pi/pi-ai/api-registry";
-import { createMockModel, registerMockApi } from "@oh-my-pi/pi-ai/providers/mock";
-import {
-	__providerInFlightForTesting,
-	configureProviderMaxInFlightRequests,
-	stream,
-	streamSimple,
-} from "@oh-my-pi/pi-ai/stream";
-import type { Context, Model, RawSseEvent } from "@oh-my-pi/pi-ai/types";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/ai/test/provider-inflight.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function context(): Context {
 	return {

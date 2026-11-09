@@ -1,4 +1,3 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 import {
 	STREAM_CLOSE_BAD_CHANNEL,
@@ -12,20 +11,6 @@ import {
 	type StreamPaneFrame,
 	type StreamServerToHost,
 } from "@tau/tau-wire";
-=======
-import { type } from "@oh-my-pi/omptype";
-import {
-	STREAM_CLOSE_BAD_CHANNEL,
-	STREAM_CLOSE_FORBIDDEN,
-	STREAM_CLOSE_HOST_CONFLICT,
-	STREAM_CLOSE_PROTO_MISMATCH,
-	STREAM_CLOSE_UNAUTHORIZED,
-	STREAM_PROTO,
-	type StreamHostFrame,
-	type StreamPaneFrame,
-	type StreamServerToHost,
-} from "@oh-my-pi/pi-wire";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/stream/server-client.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const INITIAL_RECONNECT_MS = 1_000;
 const MAX_RECONNECT_MS = 30_000;

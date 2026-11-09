@@ -1,13 +1,6 @@
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { ImageContent } from "@oh-my-pi/pi-ai";`
 import type { ImageContent } from "@tau/tau-ai";
 import { shortenPath } from "@tau/tau-tui/render/render-utils";
-=======
-import { inflateSync } from "node:zlib";
-import type { BoxEdges, ImageContent } from "@oh-my-pi/pi-ai";
-import { shortenPath } from "@oh-my-pi/pi-tui/render/render-utils";
-import { encodeRawPng } from "./png-encode";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/utils/image-resize.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 export interface ImageResizeOptions {
 	maxWidth?: number;
@@ -299,13 +292,8 @@ function encodedResult(
  *  4. If still too large, walk a dimension-scale ladder × quality ladder.
  *  5. If still too large, return the smallest variant produced.
  *
-<<<<<<< ours — scope `declaration` in function `resizeImage` (T+F, confidence: medium)
 // refused_by: statement_fold · collision: `* Set OMP_NO_WEBP to exclude WebP from encoding (llama.cpp STB …`
  * Set TAU_NO_WEBP to exclude WebP from encoding (llama.cpp STB doesn't decode it).
-=======
- * The source is decoded and resized once per target size; the format/quality ladder
- * re-encodes from a lossless intermediate at that size.
->>>>>>> theirs — scope `declaration`
  *
  * A source with translucent pixels keeps its alpha: it resizes premultiplied (`Bun.Image`
  * resamples straight alpha, bleeding the color under transparent pixels into the edges)
@@ -423,7 +411,6 @@ export async function resizeImage(
 			};
 		}
 
-<<<<<<< ours — scope `try {` in function `resizeImage` (T+S+F, confidence: low)
 // refused_by: statement_fold · collision: `// WebP usually beats JPEG by 25–35% but is disabled when OMP_N…` +1 more
 		// First-attempt encoder: try PNG and JPEG (+ WebP if not excluded) — return smallest.
 		// PNG wins for line art / few-color UI; JPEG wins for photographic content;
@@ -461,33 +448,6 @@ export async function resizeImage(
 		// Lossy encoder for quality/dimension fallback ladders. PNG is excluded since
 		// it's lossless and doesn't respond to quality parameters. WebP is included
 		// unless TAU_NO_WEBP is set (llama.cpp STB incompatibility).
-=======
-		const premultiplied = mayHaveAlpha(inputBuffer) ? await premultipliedPng(inputBuffer) : undefined;
-		const translucent = premultiplied !== undefined;
-		// No lossy format keeps a translucent image's alpha once WebP is excluded.
-		const lossy = !(translucent && opts.excludeWebP);
-
-		// The source at `width`×`height` as PNG with straight alpha; `compressionLevel` 0
-		// for ladder intermediates.
-		async function resizedPng(width: number, height: number, compressionLevel?: number): Promise<Uint8Array> {
-			if (!premultiplied) {
-				const image = new Bun.Image(inputBuffer).resize(width, height);
-				return (compressionLevel === undefined ? image.png() : image.png({ compressionLevel })).bytes();
-			}
-			const resized = await readRgba(new Bun.Image(premultiplied).resize(width, height));
-			if (!resized) throw new Error("resizeImage: a translucent resize lost its alpha channel");
-			unpremultiply(resized.pixels);
-			return encodeRawPng(resized.pixels, width, height, 4, compressionLevel);
-		}
-
-		// Lossy encoder for quality/dimension fallback ladders. PNG is excluded since
-		// it's lossless and doesn't respond to quality parameters. WebP is included
-		// unless OMP_NO_WEBP is set (llama.cpp STB incompatibility); JPEG unless the
-		// image is translucent. Ladder steps pass a lossless PNG already at the target
-		// size, so each step only decodes that small intermediate instead of re-decoding
-		// and re-resizing the source; when `width`/`height` are given the source is
-		// resized first. Call only when `lossy`.
->>>>>>> theirs — scope `try {`
 		async function encodeLossy(
 			source: Uint8Array,
 			quality: number,

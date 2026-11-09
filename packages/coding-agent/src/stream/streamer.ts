@@ -428,7 +428,6 @@ export async function runStreamConsole(options: StreamConsoleOptions): Promise<n
 		process.off("SIGTERM", stop);
 	}
 }
-<<<<<<< ours — function `clearStaleSocket` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 async function clearStaleSocket(endpoint: string): Promise<void> {
 	const status = await probeSocket(endpoint);
@@ -436,8 +435,6 @@ async function clearStaleSocket(endpoint: string): Promise<void> {
 		throw new Error(`another tau stream process is already running for this directory (${endpoint})`);
 	if (status === "stale") await fs.promises.unlink(endpoint);
 }
-=======
->>>>>>> theirs — function `clearStaleSocket` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/stream/streamer.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function formatChat(message: StreamChatMessage): string {
 	const time = new Date(message.ts);

@@ -29,7 +29,6 @@ export const LSP_MUX_READY_PATTERN = String.raw`tau lsp mux listening on \S+`;
 export function lspMuxReadyBanner(endpoint: string): string {
 	return `tau lsp mux listening on ${endpoint}`;
 }
-<<<<<<< ours — function `lspMuxEndpoint` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 /** Resolve the Unix socket or Windows named pipe for one project scope. */
 export function lspMuxEndpoint(projectDir: string, runtimeDir: string): string {
@@ -39,8 +38,6 @@ export function lspMuxEndpoint(projectDir: string, runtimeDir: string): string {
 	}
 	return path.join(runtimeDir, "lsp-mux.sock");
 }
-=======
->>>>>>> theirs — function `lspMuxEndpoint` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/lsp/mux/protocol.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 // =============================================================================
 // Mux-private JSON-RPC methods

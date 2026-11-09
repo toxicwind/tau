@@ -4,7 +4,6 @@
 
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { AgentTool } from "@oh-my-pi/pi-agent-core";`
 import { Type } from "@tau/tautype/typebox";
 import type { AgentTool } from "@tau/tau-agent-core";
@@ -14,16 +13,6 @@ import { HookToolWrapper } from "tau/extensibility/hooks/tool-wrapper";
 import { AuthStorage } from "tau/session/auth-storage";
 import { SessionManager } from "tau/session/session-manager";
 import { TempDir } from "@tau/tau-utils";
-=======
-import { Type } from "@oh-my-pi/omptype/typebox";
-import type { AgentTool, AgentToolContext } from "@oh-my-pi/pi-agent-core";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { HookRunner, type LoadedHook } from "@oh-my-pi/pi-coding-agent/extensibility/hooks";
-import { HookToolWrapper } from "@oh-my-pi/pi-coding-agent/extensibility/hooks/tool-wrapper";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/hook-tool-wrapper-input.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 describe("HookToolWrapper tool_call contract", () => {
 	let sharedTempDir: TempDir;
@@ -402,7 +391,6 @@ describe("HookToolWrapper tool_call contract", () => {
 	});
 });
 
-<<<<<<< ours — test_suite `HookToolWrapper tool_call input override` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 describe("HookToolWrapper tool_call input override", () => {
 	let sharedTempDir: TempDir;
@@ -483,5 +471,3 @@ describe("HookToolWrapper tool_call input override", () => {
 		expect(executed).toEqual([{ command: "echo original" }]);
 	});
 });
-=======
->>>>>>> theirs — test_suite `HookToolWrapper tool_call input override` (S+F, confidence: low)

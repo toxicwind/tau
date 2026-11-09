@@ -11,7 +11,6 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (T+F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { $which, removeWithRetries } from "@oh-my-pi/pi-utils";`
 import type { completeSimple } from "@tau/tau-ai";
 import { createMockModel } from "@tau/tau-ai/providers/mock";
@@ -20,16 +19,6 @@ import { InternalUrlRouter, LocalProtocolHandler, parseInternalUrl } from "tau/i
 import type { ToolSession } from "tau/tools";
 import { ReadTool } from "tau/tools/read";
 import { $which, removeWithRetries } from "@tau/tau-utils";
-=======
-import type { completeSimple } from "@oh-my-pi/pi-ai";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { InternalUrlRouter, LocalProtocolHandler, parseInternalUrl } from "@oh-my-pi/pi-coding-agent/internal-urls";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
-import { decodeStillImageJpeg } from "@oh-my-pi/pi-coding-agent/utils/video";
-import { $which, parseImageMetadata, removeWithRetries } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (T+F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/tools/read-local-image.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const hasFfprobe = Boolean($which("ffprobe"));
 

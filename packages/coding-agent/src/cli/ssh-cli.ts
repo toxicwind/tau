@@ -149,12 +149,8 @@ async function handleList(cmd: SSHCommandArgs): Promise<void> {
 	}
 
 	if (hasProject) {
-<<<<<<< ours — scope `if (hasProject) {` in function `handleList` (F, confidence: medium)
 // refused_by: statement_fold · collision: `process.stdout.write(chalk.bold("Project SSH Hosts (.omp/ssh.js…`
 		process.stdout.write(chalk.bold("Project SSH Hosts (.tau/ssh.json):\n"));
-=======
-		process.stdout.write(chalk.bold(`Project SSH Hosts (${projectPath}):\n`));
->>>>>>> theirs — scope `if (hasProject) {` · weave: run 'weave explain packages/coding-agent/src/cli/ssh-cli.ts' for per-hunk detail, 'weave check' to verify your resolution
 		printHosts(projectHosts);
 	}
 
@@ -163,12 +159,8 @@ async function handleList(cmd: SSHCommandArgs): Promise<void> {
 	}
 
 	if (hasUser) {
-<<<<<<< ours — scope `if (hasUser) {` in function `handleList` (F, confidence: medium)
 // refused_by: statement_fold · collision: `process.stdout.write(chalk.bold("User SSH Hosts (~/.omp/agent/s…`
 		process.stdout.write(chalk.bold("User SSH Hosts (~/.tau/agent/ssh.json):\n"));
-=======
-		process.stdout.write(chalk.bold(`User SSH Hosts (${userPath}):\n`));
->>>>>>> theirs — scope `if (hasUser) {`
 		printHosts(userHosts);
 	}
 }

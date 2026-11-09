@@ -3,7 +3,6 @@ import * as fsSync from "node:fs";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import { scheduler } from "node:timers/promises";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { isOfficialAnthropicApiUrl } from "@oh-my-pi/pi-catalog…` +3 more
 import { isOfficialAnthropicApiUrl } from "@tau/tau-catalog/compat/anthropic";
 import type { Effort } from "@tau/tau-catalog/effort";
@@ -18,19 +17,6 @@ import {
 import { providerEntries } from "@tau/tau-catalog/compat/providers";
 import { CODEX_BASE_URL } from "@tau/tau-catalog/wire/codex";
 import { $env, $pickenv, getProviderInFlightRoot, isEnoent, logger, untilAborted } from "@tau/tau-utils";
-=======
-import type { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { isVertexExpressOpenAIUrl, isVertexRawPredictUrl, resolveVertexEndpointHost } from "@oh-my-pi/pi-catalog/hosts";
-import {
-	defaultSupportedEffort,
-	mapEffortToAnthropicAdaptiveEffort,
-	mapEffortToGoogleThinkingLevel,
-	requireSupportedEffort,
-	resolveWireModelId,
-	withoutUnverifiedThinking,
-} from "@oh-my-pi/pi-catalog/model-thinking";
-import { $env, getProviderInFlightRoot, isEnoent, isPidAlive, logger, untilAborted } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/ai/src/stream.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { getCustomApi } from "./api-registry";
 import {
 	createAuthRetryKeyState,
@@ -862,7 +848,6 @@ function resolveVertexRequest(input: string | URL | Request): string | URL | Req
 	}
 	return rewriteUrl(input);
 }
-<<<<<<< ours — function `getEnvApiKey` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 /**
  * Get API key for provider from known environment variables, e.g. OPENAI_API_KEY.
@@ -879,9 +864,6 @@ export function getEnvApiKey(provider: string): string | undefined {
 	}
 	return resolver?.();
 }
-=======
->>>>>>> theirs — function `getEnvApiKey` (S+F, confidence: low)
-<<<<<<< ours — function `listProvidersWithEnvKey` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 /**
  * Enumerate every provider that has an env-var fallback for `getEnvApiKey`.
@@ -891,8 +873,6 @@ export function getEnvApiKey(provider: string): string | undefined {
 export function listProvidersWithEnvKey(): string[] {
 	return Object.keys(serviceProviderMap);
 }
-=======
->>>>>>> theirs — function `listProvidersWithEnvKey` (S+F, confidence: low)
 
 function withResolvedModelHeaders<TApi extends Api>(
 	model: Model<TApi>,
@@ -1219,7 +1199,6 @@ function emitBufferedEvents(stream: AssistantMessageEventStream, events: Assista
 		stream.push(event);
 	}
 }
-<<<<<<< ours — function `supportsAnthropicCacheRefresh` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 function supportsAnthropicCacheRefresh<TApi extends Api>(model: Model<TApi>): boolean {
 	return (
@@ -1229,8 +1208,6 @@ function supportsAnthropicCacheRefresh<TApi extends Api>(model: Model<TApi>): bo
 		isLeakedThinkingHealExempt(model)
 	);
 }
-=======
->>>>>>> theirs — function `supportsAnthropicCacheRefresh` (S+F, confidence: low)
 function withInferenceSessionId(options?: SimpleStreamOptions): SimpleStreamOptions {
 	if (options?.sessionId) return options;
 	return { ...options, sessionId: crypto.randomUUID() };

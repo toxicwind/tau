@@ -2,7 +2,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { resetSettingsForTest, Settings, type ShellMinimizerSet…` +1 more
 import type { ImageContent } from "@tau/tau-ai";
 import { resetSettingsForTest, Settings, type ShellMinimizerSettings } from "tau/config/settings";
@@ -20,33 +19,6 @@ import { encodeTerminalImage } from "tau/utils/terminal-graphics";
 import type { Shell, ShellRunResult } from "@tau/tau-natives";
 import * as piNatives from "@tau/tau-natives";
 import { removeSyncWithRetries } from "@tau/tau-utils";
-=======
-import type { ImageContent } from "@oh-my-pi/pi-ai";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ShellMinimizerSettings } from "@oh-my-pi/pi-coding-agent/exec/settings";
-import {
-	applyDirenvPreflight,
-	type BashResult,
-	buildMinimizerOptions,
-	executeBash,
-	isPersistentShellCdCommand,
-} from "@oh-my-pi/pi-coding-agent/exec/bash-executor";
-import * as direnvModule from "@oh-my-pi/pi-coding-agent/exec/direnv";
-import { DEFAULT_MAX_BYTES } from "@oh-my-pi/pi-tui/tools/streaming-output";
-import {
-	defaultShellVizPreferences,
-	readShellPresentation,
-	shellVisualization,
-} from "@oh-my-pi/pi-tui/tools/shell-viz";
-import * as shellSnapshot from "@oh-my-pi/pi-coding-agent/utils/shell-snapshot";
-import { encodeTerminalImage } from "@oh-my-pi/pi-coding-agent/utils/terminal-graphics";
-import type { Shell, ShellRunResult } from "@oh-my-pi/pi-natives";
-import * as piNatives from "@oh-my-pi/pi-natives";
-import { $which, removeSyncWithRetries } from "@oh-my-pi/pi-utils";
-import { isShellTrace } from "@oh-my-pi/pi-wire";
-
-import { cfgBashDirenvLoadTimeoutMs, cfgShellPath } from "@oh-my-pi/pi-coding-agent/exec/settings";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/bash-executor.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 // Matches the schema default for `tools.artifactHeadBytes` (20 KB) used by
 // OutputSink when bash-executor pulls settings via resolveOutputSinkHeadBytes.

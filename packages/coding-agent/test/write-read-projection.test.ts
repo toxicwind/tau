@@ -2,7 +2,6 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import type { AgentToolResult } from "@tau/tau-agent-core";
 import { InternalUrlRouter } from "tau/internal-urls/router";
@@ -14,27 +13,6 @@ import { wrapToolWithMetaNotice } from "tau/tools/output-meta";
 import { ReadTool } from "tau/tools/read";
 import { WriteTool } from "tau/tools/write";
 import { readArchiveEntries, writeArchive } from "@tau/tau-utils/ar";
-=======
-import type { AgentToolResult } from "@oh-my-pi/pi-agent-core";
-import * as capability from "@oh-my-pi/pi-coding-agent/capability";
-import { InternalUrlRouter } from "@oh-my-pi/pi-coding-agent/internal-urls/router";
-import type { ProtocolHandler } from "@oh-my-pi/pi-coding-agent/internal-urls/types";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ClientBridge } from "@oh-my-pi/pi-coding-agent/session/client-bridge";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { wrapToolWithMetaNotice } from "@oh-my-pi/pi-coding-agent/tools/output-meta";
-import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
-import { WriteTool } from "@oh-my-pi/pi-coding-agent/tools/write";
-import { readArchiveEntries, writeArchive } from "@oh-my-pi/pi-utils/ar";
-import { fakeSshTransport } from "./helpers/fake-ssh-transport";
-import { rejectionOf } from "./helpers/rejection";
-
-import {
-	cfgReadDefaultLimit,
-	cfgReadLineNumbers,
-	cfgToolsOutputMaxColumns,
-} from "@oh-my-pi/pi-coding-agent/tools/settings";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/write-read-projection.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function createSession(cwd: string, bridge?: ClientBridge, editMode: "replace" | "hashline" = "replace"): ToolSession {
 	return {

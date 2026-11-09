@@ -1,18 +1,8 @@
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { logger } from "@oh-my-pi/pi-utils";`
 import type { ImageContent } from "@tau/tau-ai";
 import { logger } from "@tau/tau-utils";
 import type { StructuredSubagentOutput } from "@tau/tau-tui/tools/task";
 import type { OutputMeta } from "@tau/tau-tui/tools/output-meta";
-=======
-import type { ImageContent } from "@oh-my-pi/pi-ai";
-import type { PipeStreams } from "@oh-my-pi/pi-natives";
-import { isRecord, logger } from "@oh-my-pi/pi-utils";
-import type { StructuredSubagentOutput } from "@oh-my-pi/pi-tui/tools/task";
-import type { OutputMeta } from "@oh-my-pi/pi-tui/tools/output-meta";
-import { IrcBus } from "../irc/bus";
-import type { JobWidgetInputs, JobWidgetRegistry } from "../job-widgets/types";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/async/job-manager.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const DELIVERY_RETRY_BASE_MS = 500;
 const DELIVERY_RETRY_MAX_MS = 30_000;

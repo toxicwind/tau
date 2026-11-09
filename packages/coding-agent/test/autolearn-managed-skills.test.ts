@@ -160,7 +160,6 @@ describe("managed-skills primitives", () => {
 			).rejects.toThrow(/non-empty body/);
 		});
 
-<<<<<<< ours — scope `describe("writeManagedSkill", () => {` in test_suite `managed-skills primitives` (F, confidence: medium)
 // refused_by: statement_fold · collision: `it("refuses to write when the managed-skills root itself is a s…` +3 more
 		it("writes through a symlinked root into the resolved target (pen-SSOT layout)", async () => {
 			const realRoot = await fs.mkdtemp(path.join(os.tmpdir(), "tau-realroot-"));
@@ -173,22 +172,6 @@ describe("managed-skills primitives", () => {
 				// redirect writes — this pins the resolved-target contract.
 				await writeManagedSkill({ action: "create", name: "demo", description: "d", body: "b" });
 				expect(await Bun.file(path.join(realRoot, "demo", "SKILL.md")).exists()).toBe(true);
-=======
-		it("writes through a symlinked root into its target directory", async () => {
-			const realRoot = await fs.mkdtemp(path.join(os.tmpdir(), "omp-realroot-"));
-			try {
-				await fs.mkdir(path.dirname(getManagedSkillsDir()), { recursive: true });
-				await fs.symlink(realRoot, getManagedSkillsDir());
-				await writeManagedSkill({
-					action: "create",
-					name: "demo",
-					description: "d",
-					body: "b",
-				});
-				expect(await Bun.file(path.join(realRoot, "demo", "SKILL.md")).exists()).toBe(true);
-				await deleteManagedSkill("demo");
-				expect(await Bun.file(path.join(realRoot, "demo", "SKILL.md")).exists()).toBe(false);
->>>>>>> theirs — scope `describe("writeManagedSkill", () => {` · weave: run 'weave explain packages/coding-agent/test/autolearn-managed-skills.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 			} finally {
 				await removeWithRetries(realRoot);
 			}

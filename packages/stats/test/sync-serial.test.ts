@@ -1,16 +1,10 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { getOverallStats } from "@oh-my-pi/omp-stats/db";`
 import { syncAllSessions } from "@tau/tau-stats/aggregator";
 import { getOverallStats } from "@tau/tau-stats/db";
 import { getSessionsDir } from "@tau/tau-utils";
-=======
-import { syncAllSessions } from "@oh-my-pi/omp-stats/aggregator";
-import { getOverallStats } from "@oh-my-pi/omp-stats/rollup";
-import { getSessionsDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/stats/test/sync-serial.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { installStatsTestIsolation } from "./helpers/temp-agent";
 
 installStatsTestIsolation("@tau-stats-sync-serial-");

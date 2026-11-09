@@ -1,12 +1,7 @@
 import { afterEach, describe, expect, it } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { KeybindingsManager, setKeyHintPlatform } from "@oh-my-…`
 import { KeybindingsManager, setKeyHintPlatform } from "@tau/tau-tui/app-keybindings";
 import { buildHotkeysMarkdown } from "@tau/tau-tui/hotkeys-markdown";
-=======
-import { setKeyHintPlatform } from "@oh-my-pi/pi-tui/app-keybindings";
-import { buildHotkeysMarkdown } from "@oh-my-pi/pi-tui/hotkeys-markdown";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/test/hotkeys-markdown.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /** Exit-row wiring for stubs that only care about display strings: no key claims the
  *  forward-delete role, so the exit row renders its plain "Exit" wording. */

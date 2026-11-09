@@ -1,18 +1,9 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { KeybindingsManager } from "@oh-my-pi/pi-tui/app-keybin…` +2 more
 import type { Component, OverlayHandle, TUI } from "@tau/tau-tui";
 import { Container, Spacer, Text } from "@tau/tau-tui";
 import type { CollabUiRequestDraft, CollabUiSelectItem } from "@tau/tau-wire";
 import type { CollabHost } from "../../collab/host";
 import { KeybindingsManager } from "@tau/tau-tui/app-keybindings";
-=======
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { Component, OverlayHandle, TUI } from "@oh-my-pi/pi-tui";
-import { Container, Spacer, Text } from "@oh-my-pi/pi-tui";
-import type { CollabUiRequestDraft, CollabUiSelectItem } from "@oh-my-pi/pi-wire";
-import type { CollabHost } from "../../collab/host";
-import { formatKeyHint, formatKeyHints, KeybindingsManager } from "@oh-my-pi/pi-tui/app-keybindings";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/modes/controllers/extension-ui-controller.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type {
 	CompactOptions,
 	ExtensionActions,
@@ -37,7 +28,6 @@ import type {
 	TerminalInputHandler,
 } from "../../extensibility/extensions";
 import { getSessionSlashCommands } from "../../extensibility/extensions/get-commands-handler";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { KeybindingsManager } from "@oh-my-pi/pi-tui/app-keybin…` +2 more
 import { AskDialogComponent, boundPromptTitle, normalizeDialogQuestions } from "@tau/tau-tui/overlays/ask-dialog";
 import { installExtensionComposerShape } from "@tau/tau-tui/overlays/composer-shape-registry";
@@ -46,42 +36,6 @@ import { HookEditorComponent } from "@tau/tau-tui/overlays/hook-editor";
 import { HookInputComponent } from "@tau/tau-tui/overlays/hook-input";
 import { HookSelectorComponent, type HookSelectorSlider } from "@tau/tau-tui/overlays/hook-selector";
 import { getAvailableThemesWithPaths, getThemeByName, setTheme, type Theme, theme } from "@tau/tau-tui/theme";
-=======
-import { cfgExtensionAssistantTextRenderers } from "../../extensibility/settings";
-import { AssistantMessageComponent } from "@oh-my-pi/pi-tui/chat/assistant-message";
-import { ApprovalDialogComponent } from "@oh-my-pi/pi-tui/overlays/approval-dialog";
-import {
-	type AskDialogInputGuard,
-	type AskDialogPrompt,
-	type AskDialogPromptDraft,
-	type AskDialogPromptValue,
-	AskDialogComponent,
-	normalizeDialogQuestions,
-} from "@oh-my-pi/pi-tui/overlays/ask-dialog";
-import { installExtensionComposerShape } from "@oh-my-pi/pi-tui/overlays/composer-shape-registry";
-import {
-	choiceValue,
-	fieldError,
-	fieldQuestions,
-	type HtmlFormData,
-	type HtmlFormValue,
-	textValue,
-} from "@oh-my-pi/pi-tui/html-form/data";
-import { HtmlFormDialog } from "@oh-my-pi/pi-tui/html-form/dialog";
-import {
-	type ChoiceField,
-	type HtmlForm,
-	parseHtmlForm,
-	spansText,
-	type TextField,
-} from "@oh-my-pi/pi-tui/html-form/parse";
-import { EditorTopGap } from "@oh-my-pi/pi-tui/prompt/editor-top-gap";
-import { boundPromptTitle, HookEditorComponent, type HookEditorOptions } from "@oh-my-pi/pi-tui/overlays/hook-editor";
-import { HookInputComponent } from "@oh-my-pi/pi-tui/overlays/hook-input";
-import { extensionLinkClicksAvailable } from "@oh-my-pi/pi-tui/render/extension-links";
-import { HookSelectorComponent, type HookSelectorSlider } from "@oh-my-pi/pi-tui/overlays/hook-selector";
-import { getAvailableThemesWithPaths, getThemeByName, setTheme, type Theme, theme } from "@oh-my-pi/pi-tui/theme";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import type { InteractiveModeContext, InteractiveSelectorDialogOptions } from "../../modes/types";
 import { normalizeCustomMessagePayload, USER_INTERRUPT_LABEL } from "../../session/messages";
 import { disambiguateDisplayLabels, sanitizeCarriageReturns } from "@tau/tau-tui/render/render-utils";

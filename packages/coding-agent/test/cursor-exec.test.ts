@@ -2,7 +2,6 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import type { AgentEvent, AgentTool, AgentToolContext } from "@…` +2 more
 import { type } from "@tau/tautype";
 import type { AgentEvent, AgentTool, AgentToolContext } from "@tau/tau-agent-core";
@@ -10,20 +9,6 @@ import { type BlockState, handleServerMessage, type ToolCallState } from "@tau/t
 import { piTruncation } from "@tau/tau-ai/providers/cursor/exec-modern";
 import type { AssistantMessage } from "@tau/tau-ai/types";
 import { AssistantMessageEventStream } from "@tau/tau-ai/utils/event-stream";
-=======
-import { type } from "@oh-my-pi/omptype";
-import {
-	type AgentEvent,
-	type AgentTool,
-	type AgentToolContext,
-	TOOL_RESULT_ADDITIONAL_CONTEXT,
-	type ToolResultWithAdditionalContext,
-} from "@oh-my-pi/pi-agent-core";
-import { type BlockState, handleServerMessage, type ToolCallState } from "@oh-my-pi/pi-ai/providers/cursor";
-import { buildPiReadResult, piTruncation } from "@oh-my-pi/pi-ai/providers/cursor/exec-modern";
-import type { AssistantMessage, ToolResultMessage } from "@oh-my-pi/pi-ai/types";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/cursor-exec.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	AgentClientMessageSchema,
 	AgentServerMessageSchema,
@@ -32,20 +17,11 @@ import {
 	McpArgsSchema,
 	ReadArgsSchema,
 	ShellArgsSchema,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import type { AgentEvent, AgentTool, AgentToolContext } from "@…` +2 more
 } from "@tau/tau-catalog/discovery/cursor-proto";
 import { create, fromBinary } from "@tau/tau-catalog/discovery/protobuf";
 import { Settings } from "tau/config/settings";
 import { CursorExecHandlers } from "tau/cursor";
-=======
-	WriteArgsSchema,
-} from "@oh-my-pi/pi-catalog/discovery/cursor-proto";
-import { create, fromBinary } from "@oh-my-pi/pi-catalog/discovery/protobuf";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { CursorExecHandlers } from "@oh-my-pi/pi-coding-agent/cursor";
-import { registerArtifactsDir } from "@oh-my-pi/pi-coding-agent/internal-urls/registry-helpers";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import {
 	bridgeToolMap,
 	createBridgeEditTool,
@@ -54,7 +30,6 @@ import {
 	normalizeCursorReplaceArgs,
 } from "tau/cursor-bridge-tools";
 
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import type { AgentEvent, AgentTool, AgentToolContext } from "@…` +2 more
 import { EditTool } from "tau/edit";
 import type { ExtensionRunner } from "tau/extensibility/extensions";
@@ -63,17 +38,6 @@ import { BUILTIN_TOOLS, GrepTool, ReadTool, type Tool, type ToolSession } from "
 import { BashTool } from "tau/tools/bash";
 import type { TruncationMeta } from "@tau/tau-tui/tools/output-meta";
 import { removeWithRetries } from "@tau/tau-utils";
-=======
-import { EditTool } from "@oh-my-pi/pi-coding-agent/edit";
-import type { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
-import { ExtensionToolWrapper } from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
-import { BUILTIN_TOOLS, GrepTool, ReadTool, type Tool, type ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { BashTool } from "@oh-my-pi/pi-coding-agent/tools/bash";
-import { TodoTool } from "@oh-my-pi/pi-coding-agent/tools/todo";
-import type { TruncationMeta } from "@oh-my-pi/pi-tui/tools/output-meta";
-import type { TodoPhase } from "@oh-my-pi/pi-tui/tools/todo";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import { AdviseTool } from "../src/advisor/advise-tool";
 
 function yoloToolContext(): AgentToolContext {

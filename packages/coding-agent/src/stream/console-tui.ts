@@ -9,19 +9,10 @@ import {
 	type Component,
 	type Focusable,
 	TUI,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import type { StreamChatMessage } from "@oh-my-pi/pi-wire";`
 } from "@tau/tau-tui";
 import chalk from "@tau/tau-utils/chalk";
 import type { StreamChatMessage } from "@tau/tau-wire";
-=======
-} from "@oh-my-pi/pi-tui";
-import { formatKeyHint, formatKeyHints } from "@oh-my-pi/pi-tui/app-keybindings";
-import chalk from "@oh-my-pi/pi-utils/chalk";
-import type { StreamChatMessage, TspSpan } from "@oh-my-pi/pi-wire";
-import type { NativeNode } from "@oh-my-pi/pi-tui/native/node";
-import { col, kbd, node, row, span, text } from "@oh-my-pi/pi-tui/native/describe";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/stream/console-tui.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { StreamConsoleEvent, StreamMuxHost } from "./streamer";
 
 const HISTORY_LIMIT = 50;

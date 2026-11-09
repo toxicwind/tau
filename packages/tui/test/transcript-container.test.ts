@@ -1,23 +1,10 @@
 import { beforeAll, describe, expect, it } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { TranscriptContainer, type TranscriptStableRow } from "…` +1 more
 import type { AssistantMessage } from "@tau/tau-ai";
 import { AssistantMessageComponent } from "@tau/tau-tui/chat/assistant-message";
 import { TranscriptContainer, type TranscriptStableRow } from "@tau/tau-tui/chrome/transcript-container";
 import { initTheme } from "@tau/tau-tui/theme";
 import type { Component } from "@tau/tau-tui";
-=======
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { AssistantMessageComponent } from "@oh-my-pi/pi-tui/chat/assistant-message";
-import { UserMessageComponent } from "@oh-my-pi/pi-tui/chat/user-message";
-import {
-	TranscriptContainer,
-	type TranscriptStableRow,
-	trimBlankEdges,
-} from "@oh-my-pi/pi-tui/chrome/transcript-container";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { type Component, ImageProtocol, setTerminalImageProtocol, TERMINAL } from "@oh-my-pi/pi-tui";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/test/transcript-container.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 class Block implements Component {
 	#rows: string[];

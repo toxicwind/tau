@@ -8,16 +8,10 @@
  * string twice — once from the body content, once as the styled warning line.
  */
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { type OutputMeta, stripOutputNotice } from "@oh-my-pi/p…`
 import { type OutputMeta, stripOutputNotice } from "@tau/tau-tui/tools/output-meta";
 import { formatOutputNotice } from "@tau/tau-tui/tools/output-meta";
 import { outputMeta } from "tau/tools/output-meta";
-=======
-import { type OutputMeta, stripGeneratedOutputNotice, stripOutputNotice } from "@oh-my-pi/pi-tui/tools/output-meta";
-import { formatOutputNotice } from "@oh-my-pi/pi-tui/tools/output-meta";
-import { outputMeta } from "@oh-my-pi/pi-coding-agent/tools/output-meta";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/tools/strip-output-notice.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const truncation: OutputMeta = {
 	truncation: {

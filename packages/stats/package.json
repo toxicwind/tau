@@ -36,33 +36,21 @@
     "build": "bun run build.ts",
     "dev": "bun run src/index.ts",
     "check": "oxlint . && oxfmt --check --no-error-on-unmatched-pattern 'src/**/*.{ts,tsx}' '{test,bench,examples,scripts}/**/*.ts' '*.ts' && bun run check:types",
-<<<<<<< ours — scope `"check:types": "tsgo -p tsconfig.json --noEmi...` in object `scripts` (S, confidence: medium)
-// refused_by: statement_fold · collision: `"check:types": "tsgo -p tsconfig.json --noEmit && tsgo -p tscon…`
     "check:types": "bun ../../scripts/typecheck.ts . --noEmit && bun ../../scripts/typecheck.ts tsconfig.client.json --noEmit",
-=======
-    "check:types": "bun check --no-script -p tsconfig.json && bun check --no-script -p tsconfig.client.json",
->>>>>>> theirs — scope `"check:types": "tsgo -p tsconfig.json --noEmi...` · weave: run 'weave explain packages/stats/package.json' for per-hunk detail, 'weave check' to verify your resolution
     "lint": "oxlint .",
     "fix": "oxlint --fix --fix-suggestions . && bun run fmt",
     "fmt": "oxfmt --no-error-on-unmatched-pattern 'src/**/*.{ts,tsx}' '{test,bench,examples,scripts}/**/*.ts' '*.ts'"
-  }
+  },
   "dependencies": {
-<<<<<<< ours — object `dependencies` (S+F, confidence: low)
-// refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
     "@tailwindcss/node": "catalog:",
     "@tau/tau-ai": "catalog:",
     "@tau/tau-catalog": "catalog:",
     "@tau/tau-utils": "catalog:",
     "chart.js": "catalog:",
-=======
-    "@oh-my-pi/pi-ai": "catalog:",
-    "@oh-my-pi/pi-catalog": "catalog:",
-    "@oh-my-pi/pi-utils": "catalog:",
->>>>>>> theirs — object `dependencies` (S+F, confidence: low)
     "lucide-react": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:"
-  }
+  },
   "devDependencies": {
     "@types/bun": "^1.4.4",
     "bun-types": "^1.4.4",

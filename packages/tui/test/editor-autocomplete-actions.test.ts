@@ -7,15 +7,9 @@ import {
 	type AutocompleteProvider,
 	CombinedAutocompleteProvider,
 	findLeadingSlashCommandStart,
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-tui/autocomplete";
 import { Editor } from "@tau/tau-tui/components/editor";
-=======
-} from "@oh-my-pi/pi-tui/autocomplete";
-import { Editor } from "@oh-my-pi/pi-tui/components/editor";
-import { applyEmojiCompletion, getEmojiSuggestions } from "@oh-my-pi/pi-tui/prompt/emoji-autocomplete";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/tui/test/editor-autocomplete-actions.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { defaultEditorTheme } from "./test-themes";
 
 function onceAutocompleteUpdate(editor: Editor): Promise<void> {

@@ -1,17 +1,7 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { ResetCreditAccountStatus, UsageReport, UsageReset…`
 import type { ResetCreditAccountStatus, UsageReport, UsageResetCredit } from "@tau/tau-ai";
 import { planClaudeResetRedemptions, type ClaudeResetPlanInput } from "tau/session/claude-auto-reset";
-=======
-import type { OAuthAccountSummary, ResetCreditAccountStatus, UsageReport, UsageResetCredit } from "@oh-my-pi/pi-ai";
-import {
-	claudeResetStatusesFromReports,
-	planClaudeResetRedemptions,
-	type ClaudeResetPlanInput,
-	type ClaudeResetSkipReason,
-} from "@oh-my-pi/pi-coding-agent/session/claude-auto-reset";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/claude-auto-reset.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const NOW = 1_700_000_040_000;
 const HOUR = 3_600_000;

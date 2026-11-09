@@ -4,13 +4,8 @@ import {
 	formatBackgroundNotice,
 	formatWallTimeNotice,
 	formatExitCodeNotice,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `} from "@oh-my-pi/pi-tui/tools/streaming-output";`
 } from "@tau/tau-tui/tools/bash";
-=======
-	WALL_TIME_NOTICE_MIN_MS,
-} from "@oh-my-pi/pi-tui/tools/bash";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/bash.ts' for per-hunk detail, 'weave check' to verify your resolution
 import * as fs from "node:fs";
 import { countTokens, Encoding } from "@tau/tau-natives";
 import { type } from "@tau/tautype";
@@ -20,22 +15,12 @@ import type {
 	AgentToolResult,
 	AgentToolUpdateCallback,
 	ToolApprovalDecision,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `} from "@oh-my-pi/pi-tui/tools/streaming-output";`
 } from "@tau/tau-agent-core";
 import type { ImageContent } from "@tau/tau-ai";
 import { isEnoent, logger, prompt } from "@tau/tau-utils";
 import { isPosixShell } from "@tau/tau-utils/procmgr";
 import { DEFAULT_AUTO_BACKGROUND_THRESHOLD_MS, raceJobSettlement, resolveAutoBackgroundWaitMs } from "../async";
-=======
-	ToolTier,
-} from "@oh-my-pi/pi-agent-core";
-import type { ImageContent } from "@oh-my-pi/pi-ai";
-import { PipeStreams } from "@oh-my-pi/pi-natives";
-import { isEnoent, logger, prompt } from "@oh-my-pi/pi-utils";
-import { isPosixShell } from "@oh-my-pi/pi-utils/procmgr";
-import { raceJobSettlement, resolveAutoBackgroundWaitMs } from "../async";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import type { Settings } from "../config/settings";
 import { applyDirenvPreflight, type BashResult, executeBash } from "../exec/bash-executor";
 import { InternalUrlRouter } from "../internal-urls";
@@ -48,7 +33,6 @@ import type {
 	ClientBridgeTerminalHandle,
 	ClientBridgeTerminalOutput,
 } from "../session/client-bridge";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `} from "@oh-my-pi/pi-tui/tools/streaming-output";`
 import {
 	DEFAULT_MAX_BYTES,
@@ -56,9 +40,6 @@ import {
 	streamTailUpdates,
 	TailBuffer,
 } from "@tau/tau-tui/tools/streaming-output";
-=======
-import { DEFAULT_MAX_BYTES, enforceInlineByteCap } from "@oh-my-pi/pi-tui/tools/streaming-output";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import { resolveCliEntryCmd } from "../subprocess/worker-client";
 import { TerminalGraphicsDecoder } from "../utils/terminal-graphics";
 import type { ToolSession } from ".";
@@ -72,25 +53,12 @@ import { resolveEvalBackends } from "./eval-backends";
 import { invalidateGithubCacheForBashCommand, invalidateGithubCacheForBashResult } from "./gh-cache-invalidation";
 import { serviceLogs, startService, type ServiceReady } from "../launch/services";
 import { isFindEnabled } from "./jfind";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `} from "@oh-my-pi/pi-tui/tools/streaming-output";`
 import { formatArtifactErrorNotice } from "@tau/tau-tui/tools/output-meta";
 import { formatOutputNotice } from "@tau/tau-tui/tools/output-meta";
 import { resolveInlineByteCapBudget } from "./output-meta";
 import { resolveToCwd } from "./path-utils";
 import { extractLeadingCdTarget, extractLiteralAndChainSegments, tokenizeShellSegments } from "./shell-tokenize";
-=======
-import { formatArtifactErrorNotice } from "@oh-my-pi/pi-tui/tools/output-meta";
-import { formatOutputNotice } from "@oh-my-pi/pi-tui/tools/output-meta";
-import { outputMeta, resolveInlineByteCapBudget } from "./output-meta";
-import { resolveShellDirectory, resolveToCwd } from "./path-utils";
-import {
-	extractLeadingCdTarget,
-	extractLiteralAndChainSegments,
-	type LiteralShellCommandSegment,
-	tokenizeShellSegments,
-} from "./shell-tokenize";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import { ToolAbortError } from "./tool-errors";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 import { toolResult } from "./tool-result";
@@ -213,12 +181,8 @@ export function wrapShellLineForClientTerminal(
 }
 
 /**
-<<<<<<< ours — scope `declaration` in function `shellBuiltinsDisabled` (T, confidence: high)
 // refused_by: statement_fold · collision: `* Mirrors pi-shell's `uutils_env_disabled` gate for `PI_DISABLE…`
  * Mirrors tau-shell's `uutils_env_disabled` gate for `PI_DISABLE_UUTILS_BUILTINS`:
-=======
- * Mirrors pi-shell's `env_flag` gate for `PI_DISABLE_UUTILS_BUILTINS`:
->>>>>>> theirs — scope `declaration`
  * session shell env first, then process env; truthy = present and not "", "0",
  * or "false". Controls whether the prompt advertises the in-process builtins.
  */
@@ -937,7 +901,6 @@ export class BashTool implements AgentTool<BashToolSchema, BashToolDetails> {
 				outputLines.push("", `[${message}]`);
 			}
 			const timeoutOutputText = await enforceInlineByteCap(outputLines.join("\n"), inlineCap);
-<<<<<<< ours — scope `#buildCompletedResult` in class `BashTool` (S+F, confidence: low)
 // refused_by: container_member · collision: `.content([{ type: "text", text: timeoutOutputText }, ...(result…`
 			let finalTimeoutText = timeoutOutputText;
 			const tiktokenEnabled = this.session.settings.get("bash.tiktokenShim.enabled") !== false;
@@ -953,14 +916,6 @@ export class BashTool implements AgentTool<BashToolSchema, BashToolDetails> {
 				.truncationFromSummary(result, { direction: "tail" })
 				.error()
 				.done();
-=======
-			const timeoutBuilder = toolResult(details).content([
-				{ type: "text", text: timeoutOutputText },
-				...(result.images ?? []),
-			]);
-			if (!shaped?.whole) timeoutBuilder.truncationFromSummary(result, { direction: "tail" });
-			return timeoutBuilder.error().done();
->>>>>>> theirs — scope `#buildCompletedResult`
 		}
 
 		// Non-timeout cancellations and missing exit status still propagate as thrown errors.
@@ -981,16 +936,9 @@ export class BashTool implements AgentTool<BashToolSchema, BashToolDetails> {
 		}
 
 		const resultBuilder = toolResult(details)
-<<<<<<< ours — scope `#buildCompletedResult` in class `BashTool` (S+F, confidence: low)
 // refused_by: container_member · collision: `.content([{ type: "text", text: timeoutOutputText }, ...(result…`
 			.content([{ type: "text", text: finalOutputText }, ...(result.images ?? [])])
 			.truncationFromSummary(result, { direction: "tail" });
-=======
-			.content([{ type: "text", text: cappedOutputText }, ...(result.images ?? [])])
-			.minimized("minimized" in result ? result.minimized : undefined);
-		// Output shaped from the whole spilled artifact no longer matches the sink's line ranges.
-		if (!shaped?.whole) resultBuilder.truncationFromSummary(result, { direction: "tail" });
->>>>>>> theirs — scope `#buildCompletedResult`
 		if (failedExit) resultBuilder.error();
 		return resultBuilder.done();
 	}
@@ -1295,7 +1243,6 @@ export class BashTool implements AgentTool<BashToolSchema, BashToolDetails> {
 		onUpdate?: AgentToolUpdateCallback<BashToolDetails>,
 		ctx?: AgentToolContext,
 	): Promise<AgentToolResult<BashToolDetails>> {
-<<<<<<< ours — scope `execute` in class `BashTool` (S+F, confidence: low)
 // refused_by: container_member · collision: `if (asyncRequested !== undefined || rawTimeout !== undefined)` +3 more
 		let command = rawCommand;
 
@@ -1478,23 +1425,6 @@ export class BashTool implements AgentTool<BashToolSchema, BashToolDetails> {
 		const clientBridge = this.session.getClientBridge?.();
 		const bridgeTerminalAvailable = Boolean(
 			clientBridge?.capabilities.terminal && clientBridge.createTerminal && !pty,
-=======
-		// The directory the command actually ran in, set once resolved. A hoisted
-		// `cd <dir>; …` runs only the remainder, so renderers drawing the executed
-		// script read the directory from here instead of re-parsing the command.
-		const ran: { cwd?: string; cdSeparator?: ";" } = {};
-		const stamp = (details: BashToolDetails | undefined): BashToolDetails | undefined =>
-			ran.cwd === undefined
-				? details
-				: { ...details, cwd: ran.cwd, ...(ran.cdSeparator ? { cdSeparator: ran.cdSeparator } : {}) };
-		const result = await this.#execute(
-			toolCallId,
-			input,
-			ran,
-			signal,
-			onUpdate && (update => onUpdate({ ...update, details: stamp(update.details) })),
-			ctx,
->>>>>>> theirs — scope `execute`
 		);
 		return { ...result, details: stamp(result.details) };
 	}

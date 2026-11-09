@@ -12,7 +12,6 @@ import {
 	__physicalTargetSegmentsForTesting,
 	resetSettingsForTest,
 	Settings,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { SETTINGS_SCHEMA } from "@oh-my-pi/pi-coding-agent/conf…`
 } from "tau/config/settings";
 import { SETTINGS_SCHEMA } from "tau/config/settings-schema";
@@ -21,19 +20,6 @@ import MODEL_PRIO from "../src/priority.json" with { type: "json" };
 import { AgentStorage } from "tau/session/agent-storage";
 import { getAgentDbPath, getProjectAgentDir, logger, TempDir } from "@tau/tau-utils";
 import * as fileLock from "@tau/tau-utils/file-lock";
-=======
-} from "@oh-my-pi/pi-coding-agent/config/settings";
-import { bindEffects } from "@oh-my-pi/pi-coding-agent/config/registry";
-
-import * as discovery from "@oh-my-pi/pi-coding-agent/discovery";
-import { editVariantForModel } from "@oh-my-pi/pi-coding-agent/utils/edit-mode";
-import { roleDefaultModels } from "@oh-my-pi/pi-catalog/compat/behavior";
-import { getBundledModels } from "@oh-my-pi/pi-catalog/models";
-import { resolveRoleChain } from "@oh-my-pi/pi-coding-agent/config/model-resolver";
-import { AgentStorage } from "@oh-my-pi/pi-coding-agent/session/agent-storage";
-import { getAgentDbPath, getProjectAgentDir, logger, TempDir } from "@oh-my-pi/pi-utils";
-import * as fileLock from "@oh-my-pi/pi-utils/file-lock";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/settings-manager.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { YAML } from "bun";
 import { beginSettingsTest, restoreSettingsTestState, type SettingsTestState } from "./helpers/settings-test-state";
 import {
@@ -2319,16 +2305,10 @@ describe("Settings", () => {
 
 			const settings = await Settings.init({ cwd: projectDir, agentDir });
 
-<<<<<<< ours — scope `describe("migrations", () => {` in test_suite `Settings` (F, confidence: medium)
 // refused_by: statement_fold · collision: `expect(settings.get("memory.backend")).toBe("mnemopi");` +3 more
 			expect(settings.get("memory.backend")).toBe("mnemotau");
 			expect(settings.get("mnemotau.dbPath")).toBe("/tmp/old.db");
 			expect(settings.get("mnemotau.scoping")).toBe("global");
-=======
-			expect(cfgMemoryBackend.get(settings)).toBe("mnemopi");
-			expect(cfgMnemopiDbPath.get(settings)).toBe("/tmp/old.db");
-			expect(cfgMnemopiScoping.get(settings)).toBe("global");
->>>>>>> theirs — scope `describe("migrations", () => {`
 		});
 
 		it("does not clobber an explicit mnemotau block when the legacy mnemosyne block is also present", async () => {
@@ -2339,12 +2319,8 @@ describe("Settings", () => {
 
 			const settings = await Settings.init({ cwd: projectDir, agentDir });
 
-<<<<<<< ours — scope `describe("migrations", () => {` in test_suite `Settings` (F, confidence: medium)
 // refused_by: statement_fold · collision: `expect(settings.get("memory.backend")).toBe("mnemopi");` +3 more
 			expect(settings.get("mnemotau.dbPath")).toBe("/tmp/new.db");
-=======
-			expect(cfgMnemopiDbPath.get(settings)).toBe("/tmp/new.db");
->>>>>>> theirs — scope `describe("migrations", () => {`
 		});
 
 		it("migrates boolean task.eager/todo.eager true to always", async () => {

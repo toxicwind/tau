@@ -1,19 +1,11 @@
 import { expect, it } from "bun:test";
 import {
 	enforceStrictSchema,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 	schemaNeedsDraft202012Upgrade,
 	stripSchemaDescriptions,
 	toolWireSchema,
 } from "@tau/tau-ai/utils/schema";
-=======
-	normalizeSchemaForMCP,
-	schemaNeedsDraft202012Upgrade,
-	stripSchemaDescriptions,
-	toolWireSchema,
-} from "@oh-my-pi/pi-ai/utils/schema";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/ai/test/schema-immutability.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 it("normalizes frozen tool parameters without modifying caller-owned required fields", () => {
 	const parameters = Object.freeze({

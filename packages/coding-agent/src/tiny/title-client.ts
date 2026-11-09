@@ -8,16 +8,12 @@
  * die on its own once idle. Prompt construction and title extraction live
  * here so both workers only ever see message-level `chat` requests.
  */
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import * as fs from "node:fs";
 import type * as net from "node:net";
 import * as path from "node:path";
 import type { Subprocess } from "bun";
 import { $env, getTinyWorkerRuntimeDir, logger, prompt } from "@tau/tau-utils";
-=======
-import { $env, getTinyWorkerRuntimeDir, logger, prompt } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tiny/title-client.ts' for per-hunk detail, 'weave check' to verify your resolution
 import packageJson from "../../package.json" with { type: "json" };
 import type { Setting } from "../config/registry";
 import { isSettingsInitialized, settings } from "../config/settings";
@@ -119,7 +115,6 @@ function normalizeTinyTitleGenerateOptions(
 /** Setting value (its env var included); only the env var when settings are uninitialized (e.g. `omp --smoke-test`). */
 function readTinyModelSetting(setting: Setting<string>): string | undefined {
 	return isSettingsInitialized() ? setting.get(settings) : setting.envValue();
-<<<<<<< ours — scope `try {` in function `readTinyModelSetting`, deleted in theirs (T+S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	try {
 		const value = settings.get(path);
@@ -128,8 +123,6 @@ function readTinyModelSetting(setting: Setting<string>): string | undefined {
 		// Settings may be uninitialized (e.g. `tau --smoke-test`); fall back to env/default.
 		return undefined;
 	}
-=======
->>>>>>> theirs — scope `try {` deleted in theirs
 }
 
 /**
@@ -193,7 +186,6 @@ export function tinyWorkerUsesMlx(): boolean {
 export interface TinyWorkerLaunch extends SharedWorkerLaunch {
 	backend: TinyWorkerBackend;
 }
-<<<<<<< ours — function `spawnDetached` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 /** Detach a worker so it outlives this tau process; its output goes to a per-worker log file. */
 function spawnDetached(
@@ -220,8 +212,6 @@ function spawnDetached(
 		fs.closeSync(log);
 	}
 }
-=======
->>>>>>> theirs — function `spawnDetached` (S+F, confidence: low)
 
 /** How to start the ONNX worker for `modelKey` with the resolved device/dtype env. @internal */
 export function onnxLaunch(modelKey: TinyLocalModelKey, modelEnv: Record<string, string>): TinyWorkerLaunch {
@@ -288,7 +278,6 @@ function mlxLaunch(
 		},
 	};
 }
-<<<<<<< ours — function `logTail` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 /** Last 500 chars of a worker's log, minus its readiness banner; `""` when absent or empty. */
 async function logTail(logPath: string): Promise<string> {
@@ -304,10 +293,7 @@ async function logTail(logPath: string): Promise<string> {
 		return "";
 	}
 }
-=======
->>>>>>> theirs — function `logTail` (S+F, confidence: low)
 
-<<<<<<< ours — scope `declaration` in function `connectTinyWorker` (S, confidence: medium)
 // refused_by: statement_fold · collision: `* replacing it when its launch tag is stale. A concurrent omp p…`
 /**
  * Connect to the worker serving `modelKey`, spawning it when absent or
@@ -317,16 +303,10 @@ async function logTail(logPath: string): Promise<string> {
  */
 export async function connectTinyWorker(
 	launch: WorkerLaunch,
-=======
-/** Connect to the machine-shared worker serving `modelKey` on `launch.backend`, spawning or replacing it as needed. */
-export function connectTinyWorker(
-	launch: TinyWorkerLaunch,
->>>>>>> theirs — scope `declaration`
 	modelKey: TinyLocalModelKey,
 	runtimeDir = getTinyWorkerRuntimeDir(),
 ): Promise<WorkerHandle> {
 	return connectSharedWorker(launch, runtimeDir, tinyWorkerName(modelKey, launch.backend));
-<<<<<<< ours — scope `while (Date.now() < deadline) {` in function `connectTinyWorker`, deleted in theirs (T+S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	while (Date.now() < deadline) {
 		const result = await probeTinyWorker(endpoint, launch.tag);
@@ -341,8 +321,6 @@ export function connectTinyWorker(
 		}
 		await Bun.sleep(PROBE_INTERVAL_MS);
 	}
-=======
->>>>>>> theirs — scope `while (Date.now() < deadline) {` deleted in theirs
 }
 
 // ── Prompt construction / output parsing ─────────────────────────────

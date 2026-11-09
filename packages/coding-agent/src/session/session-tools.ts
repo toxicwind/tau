@@ -1,16 +1,9 @@
 import { AsyncLocalStorage } from "node:async_hooks";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { Agent, AgentTool, AgentToolContext } from "@oh-my…` +1 more
 import type { Agent, AgentTool, AgentToolContext } from "@tau/tau-agent-core";
 import type { Model } from "@tau/tau-ai";
 import { resolveDelegationBias } from "@tau/tau-catalog/compat/delegation";
 import { isRecord, logger, prompt, stringProperty, structuredCloneJSON, untilAborted } from "@tau/tau-utils";
-=======
-import type { Agent, AgentMessage, AgentTool, AgentToolContext } from "@oh-my-pi/pi-agent-core";
-import type { Model } from "@oh-my-pi/pi-ai";
-import { resolveDelegationBias } from "@oh-my-pi/pi-catalog/compat/delegation";
-import { isRecord, logger, prompt, stringProperty, structuredCloneJSON, untilAborted } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/session/session-tools.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { reset as resetCapabilities } from "../capability";
 import type { EffectiveExtensionRoots } from "../capability/types";
 import { shouldInlineToolDescriptors } from "../config/inline-tool-descriptors-mode";
@@ -38,18 +31,9 @@ import { deduplicateMCPToolsByName, resolveMCPToolAlias } from "../mcp/tool-brid
 import { isEvalBridgeToolCallable } from "../eval/tool-bridge-policy";
 import { resolveMemoryBackend } from "../memory-backend/resolve";
 import { MEMORY_BACKEND_TOOL_NAMES } from "../memory-backend/tool-names";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { Agent, AgentTool, AgentToolContext } from "@oh-my…` +1 more
 import { invalidateToolSchemaMetadata } from "@tau/tau-tui/status-line/context-usage";
 import type { MemoryBackendStartOptions } from "../memory-backend/types";
-=======
-import { invalidateToolSchemaMetadata } from "@oh-my-pi/pi-tui/status-line/context-usage";
-import type { MemoryBackendStartOptions, MemoryPromptPreparation } from "../memory-backend/types";
-import type { AgentDefinition } from "../task/types";
-import evalPreludeNoticePrompt from "../prompts/system/eval-prelude-notice.md" with { type: "text" };
-import sessionAgentNoticePrompt from "../prompts/system/session-agent-notice.md" with { type: "text" };
-import skillNoticePrompt from "../prompts/system/skill-notice.md" with { type: "text" };
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import toolRosterNoticePrompt from "../prompts/system/tool-roster-notice.md" with { type: "text" };
 import xdevMountNoticePrompt from "../prompts/system/xdev-mount-notice.md" with { type: "text" };
 import { isMCPToolName, normalizeToolNames } from "../tools/builtin-names";
@@ -65,23 +49,10 @@ import { wrapToolWithMetaNotice } from "../tools/output-meta";
 import { isFilesystemSourcePath } from "../tools/path-utils";
 import { supportsExternalThinking } from "../tools/think";
 import { ToolAbortError } from "../tools/tool-errors";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { Agent, AgentTool, AgentToolContext } from "@oh-my…` +1 more
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 import { isMountableUnderXdev, listXdevTools, type XdevState, xdevDocsFor, xdevEntries } from "../tools/xdev";
 import { type EditMode } from "@tau/tau-tui/tools/edit";
-=======
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
-import {
-	isMountableUnderXdev,
-	listXdevTools,
-	planXdevPromptDocs,
-	type XdevState,
-	xdevDocsFor,
-	xdevEntries,
-} from "../tools/xdev";
-import type { EditModeSetting } from "../edit/settings";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import { resolveEditMode } from "../utils/edit-mode";
 import {
 	extractPermissionLocations,
@@ -897,42 +868,17 @@ export class SessionTools {
 	 * mounted devices), so an alias two enabled tools answer resolves to nothing.
 	 */
 	getToolForEvalBridge(name: string): AgentTool | undefined {
-<<<<<<< ours — scope `getToolForEvalBridge` in class `SessionTools` (S+F, confidence: low)
 // refused_by: container_member · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 		if (!this.getEnabledToolNames().includes(name)) return undefined;
 		if (!isEvalBridgeToolCallable({ name })) return undefined;
 		const tool = this.#toolRegistry.get(name);
 		return tool ? this.#wrapToolForAcpPermission(tool) : undefined;
-=======
-		const bareName = stripXdUrlPrefix(name);
-		const enabled = new Set(this.getEnabledToolNames());
-		const named = this.#resolveToolWireName(bareName);
-		// A registered name never falls through to an alias guess, even when disabled.
-		if (named) return enabled.has(named.name) ? this.#wrapToolForAcpPermission(named) : undefined;
-		const alias = resolveMCPToolAlias(bareName, candidate =>
-			enabled.has(candidate) ? this.#toolRegistry.get(candidate) : undefined,
-		);
-		return alias && this.#wrapToolForAcpPermission(alias);
->>>>>>> theirs — scope `getToolForEvalBridge`
 	}
 
 	/** Canonical and unambiguous wire names accepted by the eval bridge. */
 	getEvalBridgeToolNames(): string[] {
-<<<<<<< ours — scope `getEvalBridgeToolNames` in class `SessionTools` (S+F, confidence: low)
 // refused_by: container_member · collision: `return this.getEnabledToolNames();`
 		return this.getEnabledToolNames().filter(name => isEvalBridgeToolCallable({ name }));
-=======
-		const names = new Set<string>();
-		for (const name of this.getEnabledToolNames()) {
-			const tool = this.#toolRegistry.get(name);
-			if (!tool || !isEvalBridgeToolCallable(tool)) continue;
-			names.add(name);
-			if (tool.customWireName && this.#resolveToolWireName(tool.customWireName) === tool) {
-				names.add(tool.customWireName);
-			}
-		}
-		return [...names];
->>>>>>> theirs — scope `getEvalBridgeToolNames`
 	}
 
 	/** Exact registry names shadow wire aliases, including when the exact tool is disabled. */

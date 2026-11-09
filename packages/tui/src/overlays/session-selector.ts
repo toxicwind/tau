@@ -13,28 +13,8 @@ import {
 	truncateToWidth,
 	visibleWidth,
 } from "../index";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { formatBytes } from "@oh-my-pi/pi-utils";`
 import { formatBytes } from "@tau/tau-utils";
-=======
-import * as path from "node:path";
-import { formatBytes, getProjectDir } from "@oh-my-pi/pi-utils";
-import type { TspPickerGroup, TspPickerItem, TspSpan, TspText, TspTone } from "@oh-my-pi/pi-wire";
-import { compact, kv, md, node, span } from "../native/describe";
-import {
-	bindingKeys,
-	picker,
-	pickerAction,
-	pickerAge,
-	pickerDate,
-	type PickerEvent,
-	pickerEvent,
-	pickerHits,
-} from "../native/picker";
-import type { DescribeContext, NativeChild, NativeNode, NativeUiEvent } from "../native/node";
-import { actionHint, hintsRow, type NativeHint, overlayCard } from "../native/overlay";
-import { plainText } from "../native/spans";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/src/overlays/session-selector.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { theme } from "../theme/theme";
 import { contentRowWidth } from "../chrome/selector-helpers";
 import { matchesAppInterrupt, matchesSelectDown, matchesSelectUp } from "../keybinding-matchers";

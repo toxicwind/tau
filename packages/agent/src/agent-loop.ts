@@ -22,14 +22,9 @@ import {
 	type ToolResultProviderMetadata,
 	type TSchema,
 	toolWireSchema,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { logger, sanitizeText, structuredCloneJSON } from "@oh-…`
 	validateToolArguments,
 } from "@tau/tau-ai";
-=======
-	type UserMessage,
-} from "@oh-my-pi/pi-ai";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/agent/src/agent-loop.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	type Dialect,
 	encodeInbandToolHistory,
@@ -37,7 +32,6 @@ import {
 	renderInbandToolPrompt,
 	renderToolExamples,
 	wrapInbandToolStream,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { logger, sanitizeText, structuredCloneJSON } from "@oh-…`
 } from "@tau/tau-ai/dialect";
 import * as AIError from "@tau/tau-ai/error";
@@ -49,19 +43,6 @@ import {
 } from "@tau/tau-ai/utils/block-symbols";
 import { stamp } from "@tau/tau-ai/utils/schema/stamps";
 import { type ArgumentChunkPlan, planArgumentChunks } from "@tau/tau-ai/utils/chunk-tool-args";
-=======
-} from "@oh-my-pi/pi-ai/dialect";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { appendDuplicateSuffix, MAX_TOOL_CALL_ID_LENGTH } from "@oh-my-pi/pi-ai/providers/transform-messages";
-import {
-	type CursorExecResolvedCarrier,
-	copyCursorExecResolved,
-	getStreamingPartialJson,
-	kCursorExecResolved,
-} from "@oh-my-pi/pi-ai/utils/block-symbols";
-import { schemaDefinesProperty } from "@oh-my-pi/pi-ai/utils/schema/json-schema-validator";
-import { stamp } from "@oh-my-pi/pi-ai/utils/schema/stamps";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import {
 	createHarmonyAuditEvent,
 	detectHarmonyLeakInAssistantMessage,
@@ -71,18 +52,10 @@ import {
 	isHarmonyLeakMitigationTarget,
 	recoverHarmonyToolCall,
 	signalListLabel,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { logger, sanitizeText, structuredCloneJSON } from "@oh-…`
 } from "@tau/tau-ai/utils/harmony-leak";
 import { logger, sanitizeText, structuredCloneJSON } from "@tau/tau-utils";
 import { INTENT_FIELD } from "@tau/tau-wire";
-=======
-} from "@oh-my-pi/pi-ai/utils/harmony-leak";
-import { isDsmlLeakRecoveryTarget, removeDsmlToolMarkupLeak } from "@oh-my-pi/pi-ai/utils/dsml-leak";
-import { cloneJsonTree, logger, sanitizeText, structuredCloneJSON, toError } from "@oh-my-pi/pi-utils";
-import { INTENT_FIELD } from "@oh-my-pi/pi-wire";
-import { LiveSteeringChannel } from "./live-steering";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import { agentPauseGate } from "./pause";
 import { type AgentRunCoverage, type AgentRunSummary, ToolCallBlockedError } from "./run-collector";
 import { SpeculativeOperationCoordinator } from "./speculative-execution";
@@ -2025,17 +1998,12 @@ async function prepareProviderCall(
 
 	const llmMessages = await config.convertToLlm(messages);
 	const normalizedMessages = normalizeMessagesForProvider(llmMessages, model);
-<<<<<<< ours — scope `const ownedDialect: Dialect | undefined = con...` in function `prepareProviderCall` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `const ownedDialect: Dialect | undefined = config.dialect ?? res…`
 	// Dialect precedence: per-call resolver (live model — the fallback-safety
 	// net; a mid-session model swap re-resolves for the new model) > the static
 	// session dialect > the PI_DIALECT env override.
 	const ownedDialect: Dialect | undefined =
 		config.dialectResolver?.(model) ?? config.dialect ?? resolveOwnedDialectFromEnv(Bun.env.PI_DIALECT);
-=======
-	const ownedDialect: Dialect | undefined =
-		(config.getDialect ? config.getDialect(model) : config.dialect) ?? resolveOwnedDialectFromEnv(Bun.env.PI_DIALECT);
->>>>>>> theirs — scope `const ownedDialect: Dialect | undefined = con...`
 	const pruneToolDescriptions = !!config.pruneToolDescriptions && !ownedDialect;
 	let llmContext: Context;
 	if (config.appendOnlyContext) {
@@ -3761,7 +3729,6 @@ async function executeToolCalls(
 					}
 					let rawResult: unknown;
 					try {
-<<<<<<< ours — scope `const runTool = async (record: (typeof record...` in function `executeToolCalls` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `stream.push({` +1 more
 						const emitPartial = (args: Record<string, unknown>) => (partialResult: unknown) => {
 							stream.push({
@@ -3793,29 +3760,6 @@ async function executeToolCalls(
 									emitPartial(executionArgs as Record<string, unknown>),
 									toolContext,
 								);
-=======
-						// Context construction and stream cleanup can also cancel;
-						// nothing may await or call host code after this final check.
-						if (abortBeforeToolExecution()) return;
-						executionStarted = true;
-						rawResult = await tool.execute(
-							toolCall.id,
-							executionArgs,
-							record.signal,
-							partialResult => {
-								const event: Extract<AgentEvent, { type: "tool_execution_update" }> = {
-									type: "tool_execution_update",
-									toolCallId: toolCall.id,
-									toolName: toolCall.name,
-									args: executionArgs,
-									partialResult: coerceToolResult(partialResult).result,
-								};
-								if (stream.done) config.onDetachedToolUpdate?.(event);
-								else stream.push(event);
-							},
-							toolContext,
-						);
->>>>>>> theirs — scope `const runTool = async (record: (typeof record...`
 					} finally {
 						await streamSession?.discard("outer tool completed without committing stream speculation");
 					}

@@ -13,7 +13,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (T+F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { AgentSession } from "@oh-my-pi/pi-coding-agent/session…`
 import { Agent } from "@tau/tau-agent-core";
 import { createMockModel } from "@tau/tau-ai/providers/mock";
@@ -26,24 +25,6 @@ import { AgentSession } from "tau/session/agent-session";
 import { AuthStorage } from "tau/session/auth-storage";
 import { SessionManager } from "tau/session/session-manager";
 import { EventBus } from "tau/utils/event-bus";
-=======
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ExtensionAPI } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/types";
-import { ExtensionRuntime, loadExtensionFromFactory } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
-import { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
-import { initializeExtensions } from "@oh-my-pi/pi-coding-agent/modes/runtime-init";
-import { RpcPromptResults, reportPromptResult } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-prompt-results";
-import type { RpcPromptResultFrame } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-types";
-import { AgentSession, PromptDroppedError } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-import * as imageLoading from "@oh-my-pi/pi-coding-agent/utils/image-loading";
->>>>>>> theirs — interstitial `file_header` (T+F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/agent-session-prompt-dispatch-race.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { assistantMsg } from "./utilities";
 
 interface BtwBranchResult {

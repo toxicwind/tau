@@ -1,11 +1,6 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 import type { AssistantMessage, Context, ToolCall, ToolResultMessage, Usage } from "@tau/tau-ai";
-=======
-import type { AssistantMessage, Context, ToolCall, ToolResultMessage, Usage } from "@oh-my-pi/pi-ai";
-import { validateToolArguments } from "@oh-my-pi/pi-ai/utils/validation";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/test/inband-tools.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	createInbandScanner,
 	type Dialect,
@@ -14,13 +9,9 @@ import {
 	getDialectDefinition,
 	type InbandScanEvent,
 	parseInbandToolMessage,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 	renderInbandToolPrompt,
 } from "@tau/tau-ai/dialect";
-=======
-} from "@oh-my-pi/pi-ai/dialect";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 
 describe("final in-band JSON arguments", () => {
 	const raw = '{"path":"repaired.txt","content":"hello';

@@ -7,14 +7,9 @@ import {
 	resolveApiKeyOnce,
 	withAuth,
 	withOAuthAccess,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { OAuthError, ProviderHttpError } from "@oh-my-pi/pi-ai/…`
 } from "@tau/tau-ai";
 import { OAuthError, ProviderHttpError } from "@tau/tau-ai/error";
-=======
-} from "@oh-my-pi/pi-ai";
-import { MissingApiKeyError, OAuthError, ProviderHttpError } from "@oh-my-pi/pi-ai/error";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/test/auth-retry.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function authError(status = 401): Error & { status: number } {
 	return Object.assign(new Error(`${status} authentication_error`), { status });

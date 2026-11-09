@@ -6,15 +6,9 @@ import {
 	type UsageLimit,
 	type UsageReport,
 	type UsageResetCredit,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 } from "@tau/tau-ai";
 import { claudeRankingStrategy } from "@tau/tau-ai/usage/claude";
-=======
-	type UsageResetCreditDetail,
-} from "@oh-my-pi/pi-ai";
-import { claudeRankingStrategy } from "@oh-my-pi/pi-ai/usage/claude";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/session/claude-auto-reset.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	ATTEMPT_COOLDOWN_MS,
 	DEBOUNCE_BUCKET_MS,

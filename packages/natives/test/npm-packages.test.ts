@@ -98,14 +98,9 @@ describe("generated native npm leaf packages", () => {
 		}
 	});
 
-<<<<<<< ours — test_suite `generated native npm leaf packages` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 	it("uses the repository notice when direct generation has only package-local licenses", async () => {
 		const root = await fs.mkdtemp(path.join(os.tmpdir(), "tau-natives-npm-notice-"));
-=======
-	it("refuses to stand in another notice for the natives package's own", async () => {
-		const root = await fs.mkdtemp(path.join(os.tmpdir(), "pi-natives-npm-notice-"));
->>>>>>> theirs — test_suite `generated native npm leaf packages` (F, confidence: medium) · weave: run 'weave explain packages/natives/test/npm-packages.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 		const packageDir = path.join(root, "packages/natives");
 		try {
 			await fs.mkdir(path.join(packageDir, "native"), { recursive: true });

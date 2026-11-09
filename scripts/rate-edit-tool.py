@@ -23,16 +23,10 @@ from rich.table import Table
 from rich.text import Text
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-<<<<<<< ours — interstitial `file_header` (S, confidence: medium)
 # refused_by: merge_ladder_exhausted · collision: `sys.path.insert(0, str(REPO_ROOT / "python/omp-rpc/src"))`
 sys.path.insert(0, str(REPO_ROOT / "python/tau-rpc/src"))
 
 from tau_rpc import (  # noqa: E402
-=======
-sys.path.insert(0, str(REPO_ROOT / "sdk/python/omp-rpc/src"))
-
-from omp_rpc import (  # noqa: E402
->>>>>>> theirs — interstitial `file_header` (S, confidence: medium) · weave: run 'weave explain scripts/rate-edit-tool.py' for per-hunk detail, 'weave check' to verify your resolution
     AgentEndEvent,
     AutoRetryEndEvent,
     AutoRetryStartEvent,

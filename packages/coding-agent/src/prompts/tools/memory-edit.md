@@ -1,9 +1,5 @@
-<<<<<<< ours — scope `Edit Mnemopi long-term memories by id. Only i...` in preamble `(preamble)` (S, confidence: medium)
 // refused_by: statement_fold · collision: `Edit Mnemopi long-term memories by id. Only ids returned by `re…`
 Edit Mnemotau long-term memories by id. Only ids returned by `recall`.
-=======
-Edit Mnemopi long-term memories by id. Only ids returned by `{{toolRefs.recall}}`.
->>>>>>> theirs — scope `Edit Mnemopi long-term memories by id. Only i...` · weave: run 'weave explain packages/coding-agent/src/prompts/tools/memory-edit.md' for per-hunk detail, 'weave check' to verify your resolution
 
 Operations:
 - `update`: working memory; replace content and/or importance.

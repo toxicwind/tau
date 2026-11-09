@@ -1,11 +1,6 @@
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { type AssistantMessage, validateToolArguments } from "@…`
 import { type AssistantMessage, validateToolArguments } from "@tau/tau-ai";
-=======
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { validateAgentToolArguments } from "./tool-arguments";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/agent/src/speculative-execution.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type {
 	AgentContext,
 	AgentLoopConfig,

@@ -1,5 +1,4 @@
 import { describe, expect, it, vi } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { describe, expect, it } from "bun:test";` +5 more
 import type { AgentToolContext } from "@tau/tau-agent-core";
 import { validateToolArguments } from "@tau/tau-ai/utils/validation";
@@ -11,18 +10,6 @@ import { ExtensionToolWrapper } from "tau/extensibility/extensions/wrapper";
 import type { Tool, ToolSession } from "tau/tools";
 import { BashTool, type BashToolInput } from "tau/tools/bash";
 import { checkBashInterception } from "tau/tools/bash-interceptor";
-=======
-import type { AgentToolContext } from "@oh-my-pi/pi-agent-core";
-import { validateToolArguments } from "@oh-my-pi/pi-ai/utils/validation";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { BashInterceptorRule } from "@oh-my-pi/pi-coding-agent/exec/settings";
-import { DEFAULT_BASH_INTERCEPTOR_RULES } from "@oh-my-pi/pi-coding-agent/exec/settings";
-import type { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
-import { ExtensionToolWrapper } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/wrapper";
-import type { Tool, ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { BashTool, type BashToolInput } from "@oh-my-pi/pi-coding-agent/tools/bash";
-import { checkBashInterception } from "@oh-my-pi/pi-coding-agent/tools/bash-interceptor";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/tools/bash-interceptor.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function createBashTool(rules: BashInterceptorRule[]): BashTool {
 	const session = {

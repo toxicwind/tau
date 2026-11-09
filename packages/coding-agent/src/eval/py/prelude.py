@@ -8,7 +8,6 @@ if "__tau_prelude_loaded__" not in globals():
     from urllib.parse import unquote
 
 
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 # refused_by: merge_ladder_exhausted · collision: `# __omp_display is injected by runner.py before the prelude exe…` +1 more
     # __tau_display is injected by runner.py before the prelude executes; it
     # mirrors IPython's display() semantics with the same MIME bundle output.
@@ -24,14 +23,7 @@ if "__tau_prelude_loaded__" not in globals():
         "_repr_svg_",
         "_repr_latex_",
     )
-=======
-    # __omp_emit_status / __omp_emit_image are injected by runner.py before the
-    # prelude executes; they write `status` / `image` frames for the current cell.
-    _emit_status = __omp_emit_status  # type: ignore[name-defined]
-    _emit_image = __omp_emit_image  # type: ignore[name-defined]
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/eval/py/prelude.py' for per-hunk detail, 'weave check' to verify your resolution
 
-<<<<<<< ours — function `display` (S+F, confidence: low)
 # refused_by: modify_delete_guard · collision: none (no common ancestor text)
     def display(value):
         """Render a value. Falls back to a JSON+text/plain bundle for plain dict/list/tuple."""
@@ -46,15 +38,10 @@ if "__tau_prelude_loaded__" not in globals():
             except Exception:
                 pass
         _tau_display(value)
-=======
->>>>>>> theirs — function `display` (S+F, confidence: low)
-<<<<<<< ours — function `_emit_status` (S+F, confidence: low)
 # refused_by: modify_delete_guard · collision: none (no common ancestor text)
     def _emit_status(op: str, **data):
         """Emit structured status event for TUI rendering."""
         _tau_display({"application/x-tau-status": {"op": op, **data}}, raw=True)
-=======
->>>>>>> theirs — function `_emit_status` (S+F, confidence: low)
     def env(key: str | None = None, value: str | None = None):
         """Get/set environment variables."""
         if key is None:
@@ -80,13 +67,10 @@ if "__tau_prelude_loaded__" not in globals():
         except (ValueError, TypeError):
             return {}
         return roots if isinstance(roots, dict) else {}
-<<<<<<< ours — interstitial `between:packages/coding-agent/src/eval/py/prelude.py::function::env:packages/coding-agent/src/eval/py/prelude.py::function::_should_delegate_read` (S+F, confidence: low)
 # refused_by: merge_ladder_exhausted · collision: `_OMP_INTERNAL_URL_RE = re.compile(r"^([a-z][a-z0-9+.-]*)://(.*)…`
 
     _TAU_INTERNAL_URL_RE = re.compile(r"^([a-z][a-z0-9+.-]*)://(.*)$", re.IGNORECASE)
 
-=======
->>>>>>> theirs — interstitial `between:packages/coding-agent/src/eval/py/prelude.py::function::env:packages/coding-agent/src/eval/py/prelude.py::function::_should_delegate_read` (S+F, confidence: low)
 
     def _should_delegate_read(path: str | Path) -> bool:
         """Delegate `scheme://` reads to the read tool unless the scheme has an injected root.
@@ -102,15 +86,12 @@ if "__tau_prelude_loaded__" not in globals():
         if scheme not in _omp_url_roots():
             return True
         return scheme == "artifact" and not _OMP_ARTIFACT_ID_RE.match(match.group(2))
-<<<<<<< ours — scope `return (` in function `_should_delegate_read`, deleted in theirs (S+F, confidence: low)
 # refused_by: statement_fold · collision: none (no common ancestor text)
         return (
             isinstance(path, str)
             and _TAU_INTERNAL_URL_RE.match(path) is not None
             and not path.lower().startswith("local://")
         )
-=======
->>>>>>> theirs — scope `return (` deleted in theirs
 
     def _read_line_selector(offset: int, limit: int | None) -> str | None:
         if offset <= 1 and limit is None:
@@ -148,7 +129,6 @@ if "__tau_prelude_loaded__" not in globals():
         selector = _read_line_selector(offset, limit)
         return _read_tool_text(path if selector is None else f"{path}:{selector}")
 
-<<<<<<< ours — function `_resolve_omp_path` (S+F, confidence: low)
 # refused_by: rename_vs_edit_guard · collision: none (both sides edited, nowhere the same lines)
     def _resolve_tau_path(path: str | Path) -> Path:
         """Map a helper path to a real filesystem Path.
@@ -170,25 +150,6 @@ if "__tau_prelude_loaded__" not in globals():
             roots = {}
         root = roots.get(scheme) if isinstance(roots, dict) else None
         if not root:
-=======
-    def _resolve_omp_path(path: str | Path) -> Path:
-        """Map a helper path to a real filesystem Path.
-
-        A `scheme://…` whose scheme has an injected on-disk root (via
-        PI_EVAL_LOCAL_ROOTS) is rewritten under that root so it lands where
-        `read scheme://…` resolves — not a literal `scheme:/` directory under
-        the cwd (which `Path("scheme://x")` collapses to). Plain paths pass
-        through unchanged; any other `scheme://` is rejected, as is
-        `artifact://`, whose root is a lookup dir for reads, not a path prefix."""
-        if not isinstance(path, str):
-            return Path(path)
-        match = _OMP_INTERNAL_URL_RE.match(path)
-        if not match:
-            return Path(path)
-        scheme = match.group(1).lower()
-        root = _omp_url_roots().get(scheme)
-        if not root or scheme == "artifact":
->>>>>>> theirs — function `_resolve_omp_path` (S+F, confidence: low)
             raise ValueError(f"Protocol paths are not supported by this helper: {path}")
         relative = unquote(match.group(2).replace("\\", "/"))
         # Mirror the host `path.resolve`/`resolveLocalUrlToPath`: normalize and
@@ -226,11 +187,8 @@ if "__tau_prelude_loaded__" not in globals():
             return _read_through_tool(path, offset, limit)
         else:
             p = _resolve_omp_path(path)
-<<<<<<< ours — scope `p = _resolve_omp_path(path)` in function `read`, deleted in theirs (S, confidence: medium)
 # refused_by: statement_fold · collision: none (no common ancestor text)
         p = _resolve_tau_path(path)
-=======
->>>>>>> theirs — scope `p = _resolve_omp_path(path)` deleted in theirs
         data = p.read_text(encoding="utf-8")
         lines = data.splitlines(keepends=True)
         if offset > 1 or limit is not None:
@@ -599,7 +557,6 @@ if "__tau_prelude_loaded__" not in globals():
             return value
         shown = 0
         for image in images:
-<<<<<<< ours — scope `for image in images:` in function `_surface_bridged_tool_images` (S+F, confidence: low)
 # refused_by: statement_fold · collision: `_omp_display({mime_type: data}, raw=True)`
             if not isinstance(image, dict):
                 continue
@@ -609,10 +566,6 @@ if "__tau_prelude_loaded__" not in globals():
                 continue
             _tau_display({mime_type: data}, raw=True)
             displayed += 1
-=======
-            if isinstance(image, dict) and isinstance(image.get("data"), str) and _emit_image(image):
-                shown += 1
->>>>>>> theirs — scope `for image in images:`
         if shown == 0:
             return value
         surfaced = {key: item for key, item in value.items() if key != "images"}

@@ -1,11 +1,6 @@
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { logger } from "@oh-my-pi/pi-utils";`
 import type { AssistantMessage } from "@tau/tau-ai";
 import { logger } from "@tau/tau-utils";
-=======
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { logger, toError } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/modes/controllers/live-command-controller.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { LiveSessionController, type LiveSessionControllerOptions, type LiveTranscript } from "../../live/controller";
 import { LIVE_MODEL } from "../../live/protocol";
 import { LiveVisualizer } from "@tau/tau-tui/apps/live-visualizer";

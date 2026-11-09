@@ -1,5 +1,4 @@
 import { describe, expect, it, spyOn } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { Context, ImageContent, Message, TextContent, Tool…`
 import type { Context, ImageContent, Message, TextContent, ToolResultMessage } from "@tau/tau-ai";
 import { buildModel } from "@tau/tau-catalog/build";
@@ -10,31 +9,6 @@ import {
 	SnapcompactInlineTransformer,
 } from "tau/session/snapcompact-inline";
 import * as snapcompact from "@tau/snapcompact";
-=======
-import { Tokenizer } from "@oh-my-pi/pi-agent-core";
-import type {
-	AssistantMessage,
-	Context,
-	ImageContent,
-	Message,
-	Model,
-	TextContent,
-	ToolResultMessage,
-} from "@oh-my-pi/pi-ai";
-import { transformMessages } from "@oh-my-pi/pi-ai/providers/transform-messages";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import toolResultNote from "../src/prompts/system/snapcompact-toolresult-note.md" with { type: "text" };
-import {
-	estimateInlineSavings,
-	planInlineSwaps,
-	type SnapcompactInlineOptions,
-	SnapcompactInlineTransformer,
-} from "@oh-my-pi/pi-coding-agent/session/snapcompact-inline";
-import type { ReadToolDetails } from "@oh-my-pi/pi-tui/tools/read";
-import * as snapcompact from "@oh-my-pi/snapcompact";
-import { createAssistantMessage } from "./helpers/agent-session-setup";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/snapcompact-inline.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /**
  * Token-dense deterministic word salad: each word is `w` + ≤5 digits, ~7

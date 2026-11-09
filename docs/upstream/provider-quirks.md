@@ -151,436 +151,11 @@ Provider-specific overrides in `packages/catalog/src/compat/rules/providers/azur
 - **Deployment-name mapping**: Azure OpenAI requires deployment names in request payloads. `resolveDeploymentName` (`packages/ai/src/providers/azure-openai-responses.ts`) checks `options.azureDeploymentName`, then checks the `AZURE_OPENAI_DEPLOYMENT_NAME_MAP` environment variable (parsed by `parseAzureDeploymentNameMap` in `openai-shared.ts` into a map of `modelId=deploymentName` pairs, e.g. `gpt-5-mini=my-mini-dep,o3=my-o3-dep`), and defaults to `model.id`.
 - **Base-URL / resource resolution**: `resolveAzureConfig` (`packages/ai/src/providers/azure-openai-responses.ts`) checks `options.azureBaseUrl` or `$env.AZURE_OPENAI_BASE_URL`. If missing, it constructs `https://${resourceName}.openai.azure.com/openai/v1` from `options.azureResourceName` or `$env.AZURE_OPENAI_RESOURCE_NAME`. If still missing, it falls back to `model.baseUrl`, throwing `AIError.ConfigurationError` if no endpoint is found. Trailing slashes are stripped.
 - **API-version handling**: `resolveAzureConfig` resolves the API version from `options.azureApiVersion`, `$env.AZURE_OPENAI_API_VERSION`, or defaults to `"v1"`. It is passed as the `api-version` URL query parameter on the request (`${baseUrl}/responses?api-version=${apiVersion}`), not as an HTTP header.
-<<<<<<< ours
 - **Strict responses tool-pairing**: Enabled by default for Azure OpenAI models via `buildOpenAIResponsesCompat` (`packages/catalog/src/compat/openai.ts`, `isAzure = true`). In `buildResponsesInput` / `appendResponsesToolResultMessages` (`packages/ai/src/providers/openai-shared.ts`), unpaired tool outputs (results whose `callId` was not emitted by a prior assistant `function_call` item) are rejected by Azure's strict backend. Tau folds orphan tool results into synthetic assistant note messages (`[Orphan <tool> result; call_id=<id>]: <text>` up to 16,000 characters, or `[Orphan computer result; call_id=<id>]`) rather than sending un-paired output items.
-||||||| base
-- **Strict responses tool-pairing**: Enabled by default for Azure OpenAI models via `buildOpenAIResponsesCompat` (`packages/catalog/src/compat/openai.ts`, `isAzure = true`). In `buildResponsesInput` / `appendResponsesToolResultMessages` (`packages/ai/src/providers/openai-shared.ts`), unpaired tool outputs (results whose `callId` was not emitted by a prior assistant `function_call` item) are rejected by Azure's strict backend. Omp folds orphan tool results into synthetic assistant note messages (`[Orphan <tool> result; call_id=<id>]: <text>` up to 16,000 characters, or `[Orphan computer result; call_id=<id>]`) rather than sending un-paired output items.
-=======
->>>>>>> theirs · weave: run 'weave explain docs/upstream/provider-quirks.md' for per-hunk detail, 'weave check' to verify your resolution
-- **Image detail clamps**: In `appendResponsesToolResultMessages` / `convertResponsesInputContent`, `clampResponsesImageDetail` clamps `detail: "original"` to `"auto"` if `supportsImageDetailOriginal` is `false`. For Azure OpenAI, `supportsImageDetailOriginal` is `true` (unlike GitHub Copilot and xAI OAuth), preserving original image resolution.
-- **Computer-tool fallback mapping**: `modelForAzureEndpoint` (`packages/ai/src/providers/azure-openai-responses.ts`) verifies that the resolved endpoint host ends with `.openai.azure.com` or `models.inference.ai.azure.com`. If routed through an unrecognized proxy, `supportsComputerUse` is disabled. In `buildParams`, if a tool has `native.type === "computer"` and `model.supportsComputerUse` is `true`, it is serialized as `{ type: "computer" }`. If `supportsComputerUse` is `false`, it falls back to serializing the computer tool as a standard `{ type: "function", name: tool.name, ... }` tool. `tool_choice` is automatically translated between `computer` and `function` targets.
-- **Differences from plain Responses (`openai-responses`)**: Uses the `api-key` header (never `Authorization: Bearer`), uses a fixed endpoint path `${baseUrl}/responses?api-version=...` (the `/responses` path is non-deployment-scoped, unlike Chat Completions `/deployments/{dep}/chat/completions`), passes the deployment name inside the request body as `model`, performs dynamic runtime endpoint construction from env/options, and defaults `strictResponsesPairing` to `true`.
-
-### Stream behavior
-
-- **Event processing**: Uses `processResponsesStream` in `packages/ai/src/providers/openai-shared.ts` to consume SSE stream events (`response.created`, `response.output_item.added`, `response.content_part.added`, `response.output_text.delta`, `response.completed`, `response.incomplete`). Terminal `response.incomplete` events (output-token truncation) update usage counters and set `stopReason: "length"`.
-- **Idle & first-event watchdogs**: Wrapped with `iterateWithIdleTimeout`. If the first SSE event does not arrive within `streamFirstEventTimeoutMs`, aborts with `"Azure OpenAI responses stream timed out while waiting for the first event"`.
-- **Untyped SSE payload resolution**: `onSseEvent` inspects untyped JSON event data (`type` or `object` properties) to attach the event type tag when missing from standard SSE header lines.
-- **Reasoning effort fallback**: Catches `OpenAIHttpError` during stream initiation. If the endpoint rejects the requested reasoning effort (e.g. `xhigh`), `resolveOpenAIReasoningEffortFallback` determines a lower effort level, steps down `params.reasoning`, and retries the request using `createOpenAIReasoningEffortFallbackKey("azure-responses", url, model)`.
-
-### Auth & usage
-
-- **Credential source**: Sourced from `options.apiKey` or `$env.AZURE_OPENAI_API_KEY` (retrieved via `getEnvApiKey(model.provider)` in `packages/ai/src/stream.ts` or `buildAzureResponsesRequest`). Sent as the `api-key` header.
-- **Usage tracking**: Extracted directly from terminal `response.completed` / `response.incomplete` stream events (`input_tokens`, `output_tokens`, `reasoning_tokens`, `cached_tokens`) by `processResponsesStream`. No separate usage tracker exists under `packages/ai/src/usage/`.
-- **Prompt caching controls**: `prompt_cache_key` is generated via `getOpenAIPromptCacheKey(options)`. Explicit prompt caching mode is rejected (`AIError.ConfigurationError`) because Azure Responses does not support explicit cache control headers or retention directives.
-
-### Catalog model handling
-
-- **Provider entry (`azure`)**: `packages/catalog/src/compat/rules/providers/azure.kdl` declares default model `gpt-5.5`. Environment keys: `AZURE_OPENAI_API_KEY`.
-- **Why bundled models carry no `baseUrl`**: Azure OpenAI endpoints are resource-specific and unknown during catalog generation (`models.json` stores `baseUrl: ""`). Runtime resolution resolves endpoints from `AZURE_OPENAI_BASE_URL` or `AZURE_OPENAI_RESOURCE_NAME`. Compat detection (`isAzure` in `packages/catalog/src/compat/resolve.ts`) matches `provider === "azure"`, ensuring bundled models with empty `baseUrl` still receive Azure compat flags (`strictResponsesPairing`, `supportsDeveloperRole`, `supportsStrictMode`).
-
-## Anthropic Messages
-
-The Anthropic provider (`packages/ai/src/providers/anthropic.ts`) implements the Anthropic Messages API protocol over HTTPS POST to `/v1/messages` (or `/v1/messages?beta=true`) using Server-Sent Events (SSE) for streaming. Custom HTTP client transport is provided by `AnthropicMessagesClient` (`packages/ai/src/providers/anthropic-client.ts`), replacing `@anthropic-ai/sdk` with built-in retry and timeout logic. Wire structures and SSE payloads are typed in `packages/ai/src/providers/anthropic-wire.ts`. Client fingerprinting constants (version, user agent, tool prefix) live in `packages/ai/src/providers/claude-code-fingerprint.ts`, while `packages/ai/src/providers/anthropic-http-options.ts` owns endpoint resolution and the shared certificate cache used by connection prewarming and streaming.
-
-### Special casings
-
-- **OAuth vs API-key paths**: `buildAnthropicHeaders` in `packages/ai/src/providers/anthropic-headers.ts` detects OAuth through `options.isOAuth ?? isAnthropicOAuthToken(apiKey)`. OAuth enforces Bearer authorization and defaults to `Accept: application/json`; API-key requests to the official endpoint use `X-Api-Key`. Non-official endpoints ordinarily use Bearer authorization. Caller authorization is honored outside OAuth and Cloudflare branches; Cloudflare uses `cf-aig-authorization`. Controlled OAuth fingerprint overrides are permitted only on non-official, non-Cloudflare endpoints.
-- **Claude Code fingerprint**: OAuth uses `getClaudeCodeUserAgent()` from `packages/ai/src/providers/claude-code-fingerprint.ts`: `claude-cli/<version> (external, cli)`, with fallback version `2.1.280`. `PI_AI_CLAUDE_CODE_VERSION` overrides it; a newer version required by a server rejection can be adopted. `buildClaudeCodeBetas` in `anthropic-headers.ts` distinguishes agent and utility calls; agent calls include the OAuth, Claude Code, interleaved-thinking, token-count, context-management, prompt-cache-scope, and mid-conversation-system betas, adding effort for thinking and fallback-credit support. The 1M-context beta is intentionally omitted for subscription credentials. Billing attestation and metadata use `generateClaudeCloakingUserId`, `deriveClaudeDeviceId`, and `resolveAnthropicMetadataUserId`.
-- **System-Prompt Injection**: `buildAnthropicSystemBlocks` (`packages/ai/src/providers/anthropic.ts`) automatically prepends `claudeCodeSystemInstruction` ("You are Claude Code, Anthropic's official CLI for Claude.") as `system[0]` for OAuth credentials. Mid-conversation system messages in turn history are enabled for Opus 4.8+ / Sonnet 5+ via `mid-conversation-system-2026-04-07`.
-- **Thinking Signatures & Redacted Thinking**: Replaying modified or unsigned thinking blocks causes Anthropic API errors (`invalid signature in thinking block`). `convertAnthropicMessages` converts `ThinkingContent` and `RedactedThinkingContent` (`type: "redacted_thinking"`, `data`). `maybeAddReplayUnsignedThinkingHint` attaches recovery hints on signature errors, while `unwrapAnthropicThinkingEnvelope` strips legacy `<thinking>` XML wrappers.
-- **Tool Use Replay & Prefixes**: `encodeAnthropicToolName` / `decodeAnthropicToolName` (`packages/ai/src/providers/anthropic.ts`) prefixes custom tool names with `_` (`claudeToolPrefix`) when using OAuth to prevent collisions with built-in tools (`web_search`, `code_execution`, `text_editor`, `computer`). Server-executed web searches and tool searches (`AnthropicServerToolHistoryBlockParam` in `anthropic-wire.ts`) are detected via `isAnthropicServerToolHistoryBlock` for turn replay. Empty tool errors are filled by `ensureErrorToolResultWireContent`.
-- **Strict-Tool Schema Normalization & Fallback**: `normalizeAnthropicToolSchema` and `normalizeAnthropicStrictSchema` strip unsupported JSON schema keywords (e.g. `minItems`/`maxItems` on objects) for the `structured-outputs-2025-12-15` beta. If a strict tool schema causes HTTP 400, `streamAnthropicOnce` calls `dropAnthropicStrictTools` and automatically retries without strict mode.
-- **Adaptive vs Budget Thinking**: `ThinkingConfigParam` (`anthropic-wire.ts`) supports budget thinking (`{ type: "enabled", budget_tokens: N }` enforced by `ensureMaxTokensForThinking`) and adaptive thinking (`{ type: "adaptive" }` paired with `output_config: { effort: level }` via `effort-2025-11-24` beta). Forced tool choices (`disableThinkingIfToolChoiceForced`) automatically disable thinking. Thinking and visible output share `max_tokens`, so `streamSimple` treats a caller's `maxTokens` as the output it wants and adds the effort's thinking budget on top on every `anthropic-messages` thinking path and for adaptive Claude on Bedrock (capped at the model ceiling); without it, adaptive thinking can spend the whole cap and return nothing — an on-demand compaction then ends at `max_tokens` with no `compaction` block.
-- **Message threads**: `AnthropicThreadTurn` (`packages/ai/src/providers/anthropic-threads.ts`) shapes each request of a session (`sessionId` + `providerSessionState`) against the full body built as usual. A turn continues (`thread: {type: "continue", previous_message_id}` with only the appended messages) when the previous response is under 4.5 minutes old, the fixed fields and beta set are unchanged, and the full messages extend the stored conversation ignoring `cache_control`; otherwise it creates. API-key continues omit `system`/`tools`; OAuth continues resend them as Claude Code does. Refused continues (`thread_not_found`, fingerprint, already continued, in flight) replay as a create in the same turn; `thread_unsupported_request`, a refused create, or a second refused continue after a replay stops threading the session; an unexplained 400 on a thread request resends once without `thread` and disables the chain only if that succeeds. Compaction, non-`clear_thinking` context edits, `clear_at` messages, per-call context messages and fallback-credit redemptions go without a thread. Chains are account-scoped (`resetAnthropicThreads`). Prompt caching inside a thread (measured against the API): only the create's system, tools and non-last message breakpoints keep working on later turns; a continue's breakpoints act on that request alone with the usual ~20-block lookback, so `continueBreakpoints` marks the first appended block (it reaches the previous request's cache entry past the stored response) plus the newest block, and drops the rest to stay within four.
-- **Prompt cache breakpoints**: `applyPromptCaching` in `packages/ai/src/providers/anthropic.ts` shares a four-breakpoint budget with system/tool markers. It selects eligible rolling-tail messages and stable historical checkpoints every 15 conversational user turns; turn-scoped/per-call messages and tool-control messages are excluded from tail anchors. A trailing synthetic `Continue.` pad is skipped. Thinking, redacted-thinking, and fallback content are not cache anchors. Long retention uses `ttl: "1h"` only when supported.
-
-### Stream behavior
-
-- **Event Protocol**: SSE streams in `streamAnthropicOnce` (`packages/ai/src/providers/anthropic.ts`) emit standard framing events: `message_start` (delivering initial input and cache usage), `content_block_start` (initializing block types: text, thinking, tool_use, redacted_thinking, fallback), `content_block_delta` (streaming `text_delta`, `thinking_delta`, `signature_delta`, `input_json_delta`), `message_delta` (delivering `stop_reason` and final `output_tokens`), `content_block_stop`, `message_stop`, and `ping`.
-- **Fine-Grained Tool Streaming**: Enabled via `fine-grained-tool-streaming-2025-05-14` beta. Incoming `input_json_delta` chunks accumulate in `kStreamingPartialJson`, parsed continuously by `parseStreamingJsonThrottled` to surface streaming tool arguments.
-- **Server-side fallback handoff**: a model that declines mid-response hands it to the fallback model at a `fallback` content block. The finished turn (`done` or `error`) drops the declining model's thinking, redacted thinking and tool calls before the last marker and keeps its text (`withoutDeclinedFallbackOutput`). Requests that carry `fallbacks` hold `toolcall_*` events until the stream ends and release only the retained calls, with the stream's own content indices; the live `partial` message keeps every streamed block.
-- **Stream Watchdogs & Healing**: Streams are monitored for stall timeouts using `getStreamFirstEventTimeoutMs` and `getStreamIdleTimeoutMs` inside `iterateWithIdleTimeout`. `ping` events (`ANTHROPIC_PING_EVENT`) reset idle timeout multipliers. Empty completion responses (0 tokens) trigger automatic retry via `withReplaySafeStreamRetry`. Fast mode (`speed: "fast"`) failures clear session fast mode state (`clearAnthropicFastModeFallback`, `dropAnthropicFastMode`) to fallback to standard execution.
-
-### Auth & usage
-
-- **OAuth authentication**: `packages/catalog/src/compat/rules/auth/anthropic.kdl` declares PKCE authorization and token exchange, executed by the generic OAuth-code engine. Identity is resolved by `anthropicIdentityHook` and `fetchAnthropicBootstrapIdentity` in `packages/ai/src/registry/oauth/anthropic.ts`. The grant TTL is 30 days (`ANTHROPIC_OAUTH_GRANT_TTL_MS` in `anthropic-constants.ts`), independent of refresh-token rotation.
-- **Quota Tracking & Account Rotation**: `packages/ai/src/usage/claude.ts` polls `https://api.anthropic.com/api/oauth/usage` to track rolling `five_hour`, `seven_day`, `limits[]` (`weekly_scoped`), and `anthropic-ratelimit-unified-*` headers. Errors matching `isUsageLimitOutcome` (`packages/ai/src/error/rate-limit.ts`) and `parseRateLimitReason` (`QUOTA_EXHAUSTED`) trigger automatic credential rotation.
-- **Error Classification**: HTTP errors are categorized by `parseRateLimitReason` (`packages/ai/src/error/rate-limit.ts`) into `QUOTA_EXHAUSTED` (30m backoff / rotation), `RATE_LIMIT_EXCEEDED` (30s backoff), `CONCURRENT_LIMIT` (5s backoff), and `MODEL_CAPACITY_EXHAUSTED` (45s ± 15s backoff). Transient HTTP 408/409/429/5xx errors are retried by `AnthropicMessagesClient` (`packages/ai/src/providers/anthropic-client.ts`), respecting `retry-after-ms` / `retry-after` headers.
-
-### Catalog model handling
-
-- **Provider entry (`anthropic`)**: `packages/catalog/src/compat/rules/providers/anthropic.kdl` declares default model `claude-opus-5-5`. Environment keys: `ANTHROPIC_API_KEY`.
-- **Authored seeds**: `claude-sonnet-5`, `claude-sonnet-5-5`, `claude-fable-5`, `claude-mythos-5`, `claude-fable-5-1`, `claude-mythos-5-1`; bundle policy `always`. Limits, capabilities, and prices are authored alongside these rows.
-- **Pricing & Multipliers**: `COPILOT_PREMIUM_MULTIPLIERS` in `packages/catalog/scripts/generate-models.ts` assigns premium multipliers for GitHub Copilot Anthropic models (e.g. `claude-opus-4.6`: 3x, `claude-haiku-4.5`: 0.33x) during model catalog generation.
-
-## Google Gemini
-
-Google Gemini integrations use REST/SSE over HTTP (`POST https://generativelanguage.googleapis.com/v1beta/models/{model}:streamGenerateContent?alt=sse`). Core provider entry points are `packages/ai/src/providers/google.ts` (`streamGoogle`), `packages/ai/src/providers/google-shared.ts` (`streamGoogleGenAI`, `buildGoogleGenerateContentParams`, `convertMessages`, `consumeGoogleStream`), and `packages/ai/src/providers/google-types.ts`.
-
-### Special casings
-
-Provider-specific overrides in `packages/catalog/src/compat/rules/providers/google.kdl` (more-specific selectors override provider defaults):
-
-- For class unknown: `thinking.efforts=["minimal","low","medium","high"]`, `thinking.mode="budget"`.
-- For models *latest: `thinking.efforts=["minimal","low","medium","high"]`, `thinking.mode="budget"`.
-- For models gemini-2.5-computer-use-preview-10-2025, gemini-robotics-er-1.6-preview: `thinking.efforts=["minimal","low","medium","high"]`.
-
-- **`generateContent` protocol**: System prompts are lifted into `{ systemInstruction: { parts: [{ text }] } }` in `buildGoogleGenerateContentParams`. Tools are formatted into `tools[].functionDeclarations` using `parametersJsonSchema` (sanitized via `normalizeSchemaForGoogle` in `packages/ai/src/utils/schema/normalize.ts`).
-- **`thinkingConfig` mapping**: `buildGoogleGenerateContentParams` sets `includeThoughts: !options.hideThinkingSummary`. Gemini 3 models map `options.thinking.level` to `thinkingLevel` (`THINKING_LEVEL_UNSPECIFIED`, `MINIMAL`, `LOW`, `MEDIUM`, `HIGH`). Gemini 2.x models map `options.thinking.budgetTokens` to `thinkingBudget`. Cloud Code Assist providers (`google-gemini-cli.ts`) map `thinking.suppress` to explicit `includeThoughts: false` with level/budget when disabled (`suppressWhenOff`).
-- **Contiguous `functionResponse` rule**: Gemini requires parallel tool call results to reside in a single contiguous `user` role message. `convertMessages` in `google-shared.ts` inspects `lastContent` and merges `functionResponse` parts into existing `user` turns (`lastContent.parts.push(functionResponsePart)`). Gemini pairs id-less responses with calls by position, so `FunctionCallOrder` sorts each merged turn's responses (and Gemini < 3's buffered tool-result images) into call order. The agent loop already stores results in call order; this guards histories that arrive out of order (sessions saved before 18.4.2, SDK-built contexts). The Factory Droid Gemini wire does the same.
-- **Safety settings & Prompt feedback**: Safety blocks in `PromptFeedback` (`blockReason`, `blockReasonMessage`) throw `AIError.ProviderResponseError` with `kind: "content-blocked"`. `FinishReason` values (`SAFETY`, `BLOCKLIST`, `PROHIBITED_CONTENT`, `SPII`, `IMAGE_SAFETY`, `RECITATION`, `MALFORMED_FUNCTION_CALL`, `UNEXPECTED_TOOL_CALL`, `NO_IMAGE`, `OTHER`) map to `stopReason: "error"` in `mapStopReason`.
-
-### Stream behavior
-
-- **`streamGenerateContent` SSE protocol**: Streams are consumed via `readSseJson<GenerateContentResponse>` in `streamGoogleGenAI`.
-- **Thought parts & signature retention**: `isThinkingPart` identifies reasoning text when `part.thought === true`. `GoogleTextBlocks` folds streamed text and thought parts into blocks and keeps each `part.thoughtSignature` on the block whose part carried it, including the empty text part Gemini sends after a text reply's last chunk to sign the reply. In `convertMessages`, thought signatures are retained only when message provider/model match the target (`msg.provider === model.provider && msg.model === model.id`) and pass `isValidThoughtSignature` (base64 check); that model's own thinking replays as a `thought: true` part, signed or not, while other models' thinking arrives already demoted to text by `transformMessages`. For Gemini 3 tool calls lacking a valid signature, the public Gemini API emits the `skip_thought_signature_validator` bypass sentinel on every unsigned call. Cloud Code Assist / Antigravity emits it only when the first call of a turn is unsigned; signed-first parallel turns omit it from unsigned secondary calls. Vertex AI always omits the sentinel (#9638, #10602).
-- **Empty response retry loop**: `streamGoogleGenAI` guards against Gemini returning `finishReason: STOP` with blank content without calling tools. `hasMeaningfulGoogleContent` validates output; if empty, `streamGoogleGenAI` retries up to `MAX_EMPTY_STREAM_RETRIES` (2 retries, 3 total attempts) with exponential backoff (`EMPTY_STREAM_BASE_DELAY_MS * 2^attempt`) after resetting stream output via `resetGoogleStreamOutputForRetry`.
-- **Thinking loop guard**: Implemented in `packages/ai/src/utils/thinking-loop.ts` (`ThinkingLoopDetector`). The `thinking-loop-guard` catalog axis sets the level per model line (`loopGuardLevel`): Gemini, DeepSeek, and Grok are `semantic` (all shapes below), Claude is `off`, and every other model gets shape 1 only:
-   1. _Verbatim tail repetition_ (`EXACT_TAIL_WINDOW = 4096`, >= 180 repeated chars; >= 1024 when the cycle is long or spans a line break, since summarizers repeat status lines).
-   2. _Near-duplicate segments_ (trigram Jaccard similarity >= 0.8 across last 16 segments).
-   3. _Progress-lexicon stall_ (novelty <= 0.2 without new concrete reference anchors over 8 consecutive segments).
-   4. Gemini's `GEMINI_HEADER_RUNAWAY_THRESHOLD = 24` halts streams emitting excessive titled reasoning summaries without acting. Triggers emit a synthetic retryable `error` tagged with `AIError.Flag.ThinkingLoop`.
-- **Finish reason mapping & incomplete streams**: `candidate.finishReason` is mapped via `mapStopReason`; `stop`/`length` reasons upgrade to `toolUse` if output contains tool calls. Drops without `finishReason` throw `ProviderResponseError` with `kind: "incomplete-stream"`.
-- **UsageMetadata accounting**: Attached to trailing chunks in `consumeGoogleStream`. `input` is calculated as `promptTokenCount - (cachedContentTokenCount || 0)`; `output` as `candidatesTokenCount + (thoughtsTokenCount || 0)`; `cacheRead` as `cachedContentTokenCount || 0`; and `reasoningTokens` as `thoughtsTokenCount`. Token costs are computed via `calculateCost(model, output.usage)`.
-
-### Auth & usage
-
-- **Credential source**: Directly authenticates via `x-goog-api-key: apiKey` header (or `GEMINI_API_KEY` environment variable retrieved via `getEnvApiKey(model.provider)` in `packages/ai/src/providers/google.ts`).
-- **Usage tracker**: `googleGeminiCliUsageProvider` in `packages/ai/src/usage/gemini.ts` monitors OAuth-backed Cloud Code Assist usage by calling `POST /v1internal:loadCodeAssist` (for project resolution) and `POST /v1internal:retrieveUserQuota`. Quota buckets are mapped to tiers (`Flash`, `Pro`, `3-Flash`) with remaining fraction usage percentages and reset windows (`parseWindow`).
-
-### Catalog model handling
-
-- **Provider entry (`google`)**: `packages/catalog/src/compat/rules/providers/google.kdl` declares default model `gemini-3.1-pro-preview`. Environment keys: `GEMINI_API_KEY`.
-
-## Google Vertex AI
-
-The Google Vertex AI provider enables streaming generation for Gemini models hosted on Google Cloud Vertex AI as well as third-party models (such as Anthropic Claude) served via Vertex endpoints. Entry points include `streamGoogleVertex` in `packages/ai/src/providers/google-vertex.ts` for Gemini models (API type `"google-vertex"`), `streamAnthropic` via `createVertexAuthenticatedFetch` in `packages/ai/src/stream.ts` for Claude models (API type `"anthropic-messages"`), and ADC authentication in `packages/ai/src/providers/google-auth.ts`. Transport uses HTTPS REST / SSE with either Application Default Credentials (ADC OAuth Bearer tokens) or Vertex Express Mode API key (`x-goog-api-key`).
-
-### Special casings
-
-- **Endpoint & Project/Location Resolution**: In ADC mode (`packages/ai/src/providers/google-vertex.ts`), request URLs follow `https://${host}/v1/projects/${project}/locations/${location}/publishers/google/models/${model.id}:streamGenerateContent?alt=sse`. `project` is resolved from `options.project`, `$env.GOOGLE_CLOUD_PROJECT`, `$env.GCP_PROJECT`, or `$env.GCLOUD_PROJECT` (throws `ConfigurationError` if missing). `location` is resolved from `options.location`, `$env.GOOGLE_VERTEX_LOCATION`, `$env.GOOGLE_CLOUD_LOCATION`, or `$env.VERTEX_LOCATION` (throws `ConfigurationError` if missing). In Express Mode (API Key mode via `options.apiKey` or `$env.GOOGLE_CLOUD_API_KEY`), URL follows `https://${host}/v1/publishers/google/models/${model.id}:streamGenerateContent?alt=sse` with `x-goog-api-key` header and defaults `location` to `"global"` with global endpoint fallback if an ambient region host fails.
-- **Endpoint Host Resolution**: `resolveVertexEndpointHost(location)` in `packages/catalog/src/hosts.ts` maps locations to hostnames: `"global"` → `aiplatform.googleapis.com`; multi-regions `"eu"` / `"us"` → `aiplatform.{location}.rep.googleapis.com` (preventing 404s from standard interpolation); regional (e.g. `"us-central1"`, `"europe-west4"`) → `${location}-aiplatform.googleapis.com`.
-- **Function Call & Response ID Stripping**: `supportsFunctionPartId(model)` in `packages/ai/src/providers/google-shared.ts` returns `false` for `google-vertex`. `convertMessages` explicitly deletes `part.functionCall.id` and `functionResponsePart.functionResponse.id` before wire serialisation because Vertex AI returns `400 INVALID_ARGUMENT` when function parts contain an `id` field.
-- **Safety Settings Defaults**: `streamGoogleVertex` in `packages/ai/src/providers/google-vertex.ts` automatically injects safety settings disabling all harm categories (`HARM_CATEGORY_HATE_SPEECH`, `HARM_CATEGORY_DANGEROUS_CONTENT`, `HARM_CATEGORY_SEXUALLY_EXPLICIT`, `HARM_CATEGORY_HARASSMENT` set to `threshold: "OFF"`) into `params.config.safetySettings` if unconfigured.
-- **Service Tier Priority Header**: Direct `serviceTier` request-body fields are ignored by Vertex; `options.serviceTier === "priority"` is transmitted as the request header `X-Vertex-AI-LLM-Shared-Request-Type: priority` (`google-vertex.ts`). `flex` has no documented control and is a no-op.
-- **Cached Content Passthrough**: Passes caller-supplied `cachedContent` resource names opaquely into `params.config.cachedContent` (`google-shared.ts`), bypassing creation/refresh lifecycle.
-
-### Stream behavior
-
-- **Gemini Streaming Execution**: Delegated to `streamGoogleGenAI` and `consumeGoogleStream` in `packages/ai/src/providers/google-shared.ts`. Handles SSE chunk parsing, text/thinking block aggregation (`thoughtSignature`), tool-call ID synthesis (generating IDs when Vertex omits them), and finish reasons.
-- **Anthropic-on-Vertex RawPredict Handling**: `isGoogleVertexAuthenticatedModel` in `packages/ai/src/stream.ts` matches `model.provider === "google-vertex"` with `anthropic-messages` API and `:streamRawPredict` baseUrl. Requests route through `streamAnthropic` using `apiKey: "vertex-adc"` and `createVertexAuthenticatedFetch`.
-- **Anthropic Request Rewriting**: `createVertexAuthenticatedFetch` in `packages/ai/src/stream.ts` invokes `resolveVertexRequest` to substitute `{project}` and `{location}` placeholders in URL, normalizes `:streamRawPredict/v1/messages` path to `:streamRawPredict`, and applies `transformVertexAnthropicBody` to strip `payload.model` (encoded in URL path) and inject `payload.anthropic_version = "vertex-2023-10-16"` into the JSON body.
-- **Anthropic Effort Beta Gating**: Vertex `rawPredict` rejects `anthropic-beta` HTTP headers with a 400 error. In `packages/ai/src/providers/anthropic.ts`, `effortBeta` (`effort-2025-11-24`), `contextManagementBeta`, and `output_config.effort` fields are gated off for `model.provider === "google-vertex"`. Fallback payloads in `anthropic.ts` also scrub `output_config.effort` on Vertex requests (#5614).
-
-### Auth & usage
-
-- **ADC Resolution Ladder**: `packages/ai/src/providers/google-auth.ts` resolves credentials in priority order:
-   1. `GOOGLE_APPLICATION_CREDENTIALS` env pointing to JSON credentials file. Supports `type: "service_account"` (RS256 JWT assertion signed via WebCrypto `crypto.subtle` exchanged at `https://oauth2.googleapis.com/token`), `type: "authorized_user"` (refresh-token exchange), or `type: "impersonated_service_account"` (exchanges source credentials then calls GCP IAM `generateAccessToken`).
-   2. User ADC file `~/.config/gcloud/application_default_credentials.json` (`authorized_user` flow).
-   3. GCE / Cloud Run metadata server (`http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token`).
-- **Explicit Access Token Override**: `GOOGLE_CLOUD_ACCESS_TOKEN` or `CLOUDSDK_AUTH_ACCESS_TOKEN` environment variables bypass file/metadata lookup and caching entirely.
-- **Token Caching & In-flight Deduplication**: Access tokens are stored in `tokenCache` (Map) keyed by resolved source and refreshed `GOOGLE_VERTEX_REFRESH_SKEW_MS` before expiry (default 60s). Concurrent resolution requests share a single in-flight promise in `inflight` Map, bounded by `SHARED_TOKEN_RESOLVE_TIMEOUT_MS` (30s). Individual callers race their abort signals against the shared promise via `raceWithSignal` so one caller's abort does not cancel batch resolution. OAuth scope requested: `https://www.googleapis.com/auth/cloud-platform`.
-- **Usage & Token Normalization**: `consumeGoogleStream` in `packages/ai/src/providers/google-shared.ts` extracts `usageMetadata` from responses: `input` is calculated as `promptTokenCount - cachedContentTokenCount`, `output` as `candidatesTokenCount + thoughtsTokenCount`, `cacheRead` as `cachedContentTokenCount`, and `reasoningTokens` as `thoughtsTokenCount`. Passes normalized usage to `calculateCost(model, output.usage)`.
-
-### Catalog model handling
-
-- **Provider entry (`google-vertex`)**: `packages/catalog/src/compat/rules/providers/google-vertex.kdl` declares default model `gemini-3.1-pro-preview`. Model management permits unauthenticated access.
-
-* **Catalog API Resolution**: `resolveGoogleVertexApi` in `packages/catalog/src/provider-models/openai-compat.ts` routes `@ai-sdk/google-vertex/anthropic` npm package models to `api: "anthropic-messages"` with `GOOGLE_VERTEX_ANTHROPIC_BASE_URL` (`https://{location}-aiplatform.googleapis.com/v1/projects/{project}/locations/{location}/publishers/anthropic/models/{model}:streamRawPredict`). Models with slash IDs or `@ai-sdk/openai-compatible` route to `api: "openai-completions"`. All other models route to `api: "google-vertex"` with `GOOGLE_VERTEX_BASE_URL` (`https://{location}-aiplatform.googleapis.com`).
-* **Registry Credentials Guard**: Declared in `packages/catalog/src/compat/rules/auth/google-vertex.kdl` via `env hook="google-vertex-adc"` (`packages/ai/src/registry/hooks/env.ts`). Returns `$env.GOOGLE_CLOUD_API_KEY` if set, or `AUTHENTICATED_SENTINEL` (`"<authenticated>"`) if ADC credentials exist (`hasVertexAdcCredentials()`) AND project env (`GOOGLE_CLOUD_PROJECT`/`GCP_PROJECT`/`GCLOUD_PROJECT`) AND location env (`GOOGLE_VERTEX_LOCATION`/`GOOGLE_CLOUD_LOCATION`/`VERTEX_LOCATION`) are present. Returns `undefined` otherwise, preventing models from appearing in catalog listings without proper auth.
-
-## Google Gemini CLI / Antigravity
-
-Google Cloud Code Assist (CCA) transport wrapper accessing Gemini and Claude models over `/v1internal:streamGenerateContent` SSE endpoints. Implementation spans `packages/ai/src/providers/google-gemini-cli.ts` (shared execution engine, request construction, stream parsing, and planning leak filters), `packages/catalog/src/compat/rules/auth/google-gemini-cli.kdl` & `packages/catalog/src/compat/rules/auth/google-antigravity.kdl` (auth policy declarations), `packages/ai/src/registry/oauth/google-gemini-cli.ts` & `google-antigravity.ts` (OAuth hooks, project discovery, and onboarding), `packages/ai/src/usage/google-antigravity.ts` & `packages/ai/src/usage/gemini.ts` (quota tracking and credential ranking), and `packages/catalog/src/discovery/antigravity.ts` (model catalog discovery).
-
-### Special casings
-
-Provider-specific overrides in `packages/catalog/src/compat/rules/providers/google-gemini-cli.kdl` (more-specific selectors override provider defaults):
-
-- For class gemini; revision >=3.0.0: `requiresSkipThoughtSignatureOnFirstFunctionCall=true`.
-
-Provider-specific overrides in `packages/catalog/src/compat/rules/providers/google-antigravity.kdl` (more-specific selectors override provider defaults):
-
-- For class anthropic; family opus: `thinking.mode="budget"`.
-- For class gemini; revision >=3.0.0: `requiresSkipThoughtSignatureOnFirstFunctionCall=true`.
-- For class gemini; family flash; revision >=3.0.0 <3.6.0: `thinking.effortBudgets={"high":10000,"low":1000,"medium":4000,"minimal":1000}`, `thinking.mode="budget"`, `thinking.suppressWhenOff=true`.
-- For class gemini; family flash; revision >=3.6.0: `thinking.mode="google-level"`, `thinking.requiresEffort=true`.
-- For class gemini; family pro; revision >=3.0.0 <3.2.0: `thinking.suppressWhenOff=true`.
-- For models claude-opus-4-6: `thinking.efforts=["minimal","low","medium","high"]`.
-- For models gemini-3-pro: `thinking.mode="google-level"`.
-- For models gemini-3.1-flash-lite: `thinking.mode="google-level"`, `thinking.requiresEffort=true`.
-- For models gemini-3.1-pro: `thinking.effortBudgets={"high":10001,"low":1001}`, `thinking.mode="budget"`.
-
-- **CCA JSON Schema Normalization**: `normalizeSchemaForCCA` (`packages/ai/src/utils/schema/normalize.ts`) recursively strips unsupported JSON Schema keywords (`propertyNames`, `additionalProperties`, `patternProperties`, `$schema`, `title`, `description`, etc.) to prevent HTTP 400 errors from CCA. Accurately tracks context inside properties named `properties` to avoid premature re-assertion of property stripping. Tools are normalized in `buildRequest` (`packages/ai/src/providers/google-gemini-cli.ts`) via `normalizeSchemaForCCA`.
-- **Provider Protocol & Request Envelope**:
-   - **Endpoints**: `google-gemini-cli` defaults to `https://cloudcode-pa.googleapis.com`. `google-antigravity` uses auto-failover across `https://daily-cloudcode-pa.googleapis.com` (primary) and `https://daily-cloudcode-pa.sandbox.googleapis.com` (sandbox), persisting `lastGoodEndpoint` in `AntigravityProviderSessionState`.
-   - **Headers & User-Agent**: `google-gemini-cli` sends `getGeminiCliHeaders()` (`GeminiCLI/0.46.0/<modelId> (platform; arch; terminal)`). `google-antigravity` requests (chat, discovery, quota, onboarding, image, web search) send `getAntigravityHeaders()`: `getAntigravityUserAgent()` (`antigravity/hub/<version> (aidev_client; os_type=<os>; arch=<arch>; cl=<cl>)`) plus `Accept-Encoding: gzip` and no explicit `Accept`, like the native Go client (Bun still adds `Accept: */*`); the backend gates newer models (e.g. gemini-3.7-flash) on the client version. `os_type`/`arch` name the native build for the host OS (`getAntigravityPlatform`: macOS `darwin`/`arm64`, Linux `linux`/`amd64`, Windows `windows`/`amd64`, the only builds Antigravity ships; other OSes report the Linux build). Reasoning Claude 4.x models on Antigravity send `anthropic-beta: interleaved-thinking-2025-05-14` (the Claude-thinking header gate); Claude 5.x sends none, like the native client, and still streams interleaved thinking.
-   - **System Instructions**: Antigravity tags system instructions with `role: "user"`. No identity prompt is injected by the client.
-   - **Request Envelope & Session State**: Antigravity wraps requests in `buildAntigravityRequestEnvelope`: `project` (projectId), `requestId` (`agent/<agentId>/<ts>/<trajectoryId>/<step>`, where `<step>` counts the conversation's steps so far, one per user turn, model turn and tool result: 1 on the first request, 3 after one tool round trip, never moving backwards), `userAgent` (`antigravity`), and `labels` (`cascade_id` and `root_cascade_id` = `agentId`, `last_execution_id`, `last_step_index` = step − 1, `model_enum`, `request_id` = `<trajectoryId>-<n>` with `n` the 0-based request count in the trajectory, `trajectory_id`, `used_claude`, `used_claude_conservative`, `used_non_gemini_model`). `requestType` is omitted; the official client sends `requestType: "agent"`, but omp omits it because it draws false 429 `RESOURCE_EXHAUSTED` errors. State maintains the monotonic `stepIndex`, the request counter, persistent `agentId`, `trajectoryId`, and signed-decimal `sessionId` (`deriveAntigravitySessionId`).
-   - **Wire Profiles**: each Antigravity SKU's request constants come from the account's `fetchAvailableModels` roster: discovery records `model` (the `model_enum` label), `maxOutputTokens`, `thinkingLevel` (1/2/3 → `LOW`/`MEDIUM`/`HIGH`) and `thinkingBudget` per wire ID in `Model.antigravityWireProfiles`, and collapse keeps every routed member's entry. `getAntigravityModelWireProfile` (`packages/catalog/src/wire/gemini-headers.ts`) reads that map, falling back to `ANTIGRAVITY_MODEL_WIRE_PROFILES` for rows that predate discovery profiles (the bundled snapshot). The output cap is always sent. Claude 4.6 wire IDs cap `maxOutputTokens` at `64000` (backend rejects >64000 with 400).
-- **Thinking Configuration & Wire Suppression**: Gemini 2.x models send `thinkingConfig.thinkingBudget`, while Gemini 3 models send `thinkingConfig.thinkingLevel`. On Antigravity, a tier SKU (a family routing efforts to two or more distinct SKUs: Gemini 3.8 Flash, Gemini 4 Argon, Claude 5.5) sends the thinking setting the SKU advertises, like the native client: its level when it has one, else its budget (`-1` is dynamic). Families routing every effort to one SKU (GPT-OSS, Gemini 2.5 Flash, Claude 4.5) keep the effort's own budget. When reasoning is disabled for models with `thinking.suppressWhenOff`, `buildRequest` emits explicit wire suppression (`includeThoughts: false` with level/budget). Omitting `thinkingConfig` causes CCA to re-apply server defaults and silently bill thinking tokens.
-
-### Stream behavior
-
-- **Transport & SSE Protocol**: Consumes `POST /v1internal:streamGenerateContent?alt=sse` via `readSseJson<CloudCodeAssistResponseChunk>`. Chunks deliver `candidates[0].content.parts`, `usageMetadata`, `modelVersion`, `responseId`, `promptFeedback`, or top-level `error`.
-- **In-band Errors & Block Reasons**: `chunk.error` status/code >=400 throws `AIError.GeminiCliApiError` or `AIError.ProviderResponseError`. `promptFeedback.blockReason` throws `AIError.ProviderResponseError` with `kind: "content-blocked"`.
-- **Planning Leak Detection & Filtering**: Flash models (`isFlashLeakModel`) can stream raw JSON internal planning blocks into visible text parts. `consumePlanningBuffer` checks prefixes starting with `{` or `"thought":` using `isPlanningLeakPrefix` and `splitLeadingJsonObject`. If parsed JSON contains `thought`, `call` (matching active tool names), `_i`, `paths`, `command`, or `path`/`content`, the object is classified as `kind: "leak"` and stripped from visible output.
-- **Thinking Parts & Signature Retention**: Parts with `thought: true` or `isThinkingPart()` route to thinking blocks. `thoughtSignature` on text, thinking, or toolCall parts is retained via `retainThoughtSignature`. Inline `<thinking>` tags are processed using `StreamMarkupHealing`.
-- **Empty stream retry**: CCA uses `MAX_EMPTY_STREAM_RETRIES = 2` and `EMPTY_STREAM_BASE_DELAY_MS = 500`, imported from `google-shared.ts`: three total attempts, with exponential backoff, for empty stop responses.
-- **Pre-Response Watchdogs**: Arms `armPreResponseTimeout` with `getStreamFirstEventTimeoutMs` (5-minute ceiling) to prevent hung HTTP proxy connections before the first SSE chunk arrives. Native Bun fetch pre-response timeout is disabled (`timeout: false`).
-
-### Auth & usage
-
-- **Credential Model & Token Expiry**: Credentials stored as JSON (`parseGeminiCliCredentials`): `{ token, projectId, refreshToken, expiresAt, email }`. AuthStorage is the sole refresh authority. `shouldRefreshGeminiCliCredentials` checks token expiry with a 60s skew (`ANTIGRAVITY_REFRESH_SKEW_MS` / `GOOGLE_GEMINI_REFRESH_SKEW_MS`). Stale tokens fail fast before making HTTP requests.
-- **OAuth Installed-App Flow**: Callback ports are `8085` (`google-gemini-cli`, `/oauth2callback`) and `51121` (`google-antigravity`, `/oauth-callback`). Supports paste code flow (`pasteCodeFlow: true`). Authorizes via Google OAuth 2.0 (`accounts.google.com/o/oauth2/v2/auth`); `google-antigravity` sends S256 PKCE like the native client. Antigravity scopes are `cloud-platform`, `userinfo.email`, `userinfo.profile`, `cclog`, `experimentsandconfigs`, and `aicode`.
-- **Project Discovery & Onboarding**:
-   - `google-gemini-cli` (`packages/catalog/src/compat/rules/auth/google-gemini-cli.kdl`, hook in `packages/ai/src/registry/oauth/google-gemini-cli.ts`): calls `POST /v1internal:loadCodeAssist` with `$GOOGLE_CLOUD_PROJECT` fallback. If project absent, calls `POST /v1internal:onboardUser` with `tierId` (`free-tier`, `legacy-tier`, `standard-tier`) and polls `LongRunningOperationResponse` via `pollOperation` (up to `POLL_MAX_ATTEMPTS = 24` at 5s intervals). Detects VPC-SC restriction (`SECURITY_POLICY_VIOLATED`).
-   - `google-antigravity` (`packages/catalog/src/compat/rules/auth/google-antigravity.kdl`, hook in `packages/ai/src/registry/oauth/google-antigravity.ts`): mirrors the native `antigravity/hub` flow against `https://daily-cloudcode-pa.googleapis.com`: `loadCodeAssist` requests carry `{ metadata: { ideType: "ANTIGRAVITY" } }`, repeat with `cloudaicompanionProject` when the response lacks `paidTier`, and refresh after resolving the account state. Accounts without `currentTier` are provisioned once with `onboardUser` and `tierId: "free-tier"`; its long-running operation is polled with `GET /v1internal/{operation.name}` every second under one 30-second deadline.
-- **Usage & Quota Tracking (`google-antigravity`)**: `antigravityUsageProvider` (`packages/ai/src/usage/google-antigravity.ts`) queries `POST /v1internal:fetchAvailableModels`. Normalizes quota buckets into daily (24h) and weekly (7d) windows. Deduplicates quotas into backend counter keys (`Anthropic`, `Google`, `OpenAI`). `antigravityRankingStrategy` scopes ranking by requested model family (`getAntigravityCounterKeyForModel`: `claude-` → Anthropic, `gemini-`/`gemma-` → Google, `gpt-`/`openai/` → OpenAI), selecting stored OAuth credentials with available quota headroom.
-- **Usage & Quota Tracking (`google-gemini-cli`)**: `googleGeminiCliUsageProvider` (`packages/ai/src/usage/gemini.ts`) queries `loadCodeAssist` and `retrieveUserQuota`, surfacing quota percentages per model tier (`3-Flash`, `Flash`, `Pro`).
-
-### Catalog model handling
-
-- **Provider entry (`google-gemini-cli`)**: `packages/catalog/src/compat/rules/providers/google-gemini-cli.kdl` declares default model `gemini-3.1-pro-preview`.
-- **Provider entry (`google-antigravity`)**: `packages/catalog/src/compat/rules/providers/google-antigravity.kdl` declares default model `gemini-3.1-pro`.
-- **Authored seeds**: `gemini-3-pro-image`; bundle policy `always`. Limits, capabilities, and prices are authored alongside these rows.
-- **Model Resolution & Discovery**: `googleAntigravityModelManagerOptions` & `googleGeminiCliModelManagerOptions` (`packages/catalog/src/provider-models/google.ts`) invoke `fetchAntigravityDiscoveryModels` (`packages/catalog/src/discovery/antigravity.ts`), which posts `{ project }` to `fetchAvailableModels` when the account's project is known (`{}` otherwise), as the native client does.
-- **Variant Collapsing**: Effort-tier variants are collapsed into logical specs at discovery (`packages/catalog/src/compat/collapse.ts`):
-   - `gemini-3.5-flash`: collapses `gemini-3.5-flash-extra-low`, `gemini-3.5-flash-low`, `gemini-3-flash-agent`. Antigravity budget mode maps Minimal/Low → `extra-low` (1000 tokens), Medium → `low` (4000 tokens), High → `agent` (10000 tokens). Gemini CLI maps to level transport. Alias: `gemini-3-flash`. Antigravity retired these wire ids while its roster still lists them, so `exclude-models` drops `gemini-3.5-flash` and `gemini-3-flash` from that provider's discovery and bundle.
-   - `gemini-3.6-flash`: collapses `gemini-3.6-flash-low`, `-medium`, `-high`, `-tiered` into `gemini-3.6-flash` with `google-level` mode.
-   - `gemini-3.1-pro`: collapses `gemini-3.1-pro-low`, `gemini-pro-agent`, `gemini-3.1-pro-high`. High effort routes to `gemini-pro-agent` because upstream `gemini-3.1-pro-high` deployment returns INVALID_ARGUMENT on streamGenerateContent.
-   - `claude-*`: bare and `-thinking` pairs collapse into `claude-*` using reviewed thinking-pair collapse (`preserveAbsentEffortRoutes: true`).
-- **Catalog Generator Integration**: `fetchAntigravityModels` (`packages/catalog/scripts/generate-models.ts`) fetches models via discovery token (falling back from `google-antigravity` to `google-gemini-cli` OAuth credentials) and fixes `baseUrl` to `https://daily-cloudcode-pa.googleapis.com`.
-
-## Amazon Bedrock
-
-Amazon Bedrock (`amazon-bedrock` provider, `bedrock-converse-stream` API) communicates directly with `bedrock-runtime.{region}.amazonaws.com/model/{modelId}/converse-stream` via HTTPS POST requests using AWS SigV4 signatures or explicit bearer tokens, decoding binary `application/vnd.amazon.eventstream` responses. The implementation bypasses heavy AWS SDK dependencies (`@aws-sdk/*`, `@smithy/*`), executing native fetches signed with WebCrypto and decoded via a lightweight eventstream parser. Entry modules comprise `packages/ai/src/providers/amazon-bedrock.ts` (`streamBedrock`), `packages/ai/src/registry/amazon-bedrock.ts` (`amazonBedrockTransport`), auth policy in `packages/catalog/src/compat/rules/auth/amazon-bedrock.kdl`, `packages/ai/src/registry/aws.ts`, `packages/ai/src/providers/aws-credentials.ts` (`resolveAwsCredentials`), `packages/ai/src/providers/aws-eventstream.ts` (`decodeEventStream`), and `packages/ai/src/providers/aws-sigv4.ts` (`signRequest`).
-
-### Special casings
-
-Provider-specific overrides in `packages/catalog/src/compat/rules/providers/amazon-bedrock.kdl` (more-specific selectors override provider defaults):
-
-- For class anthropic; family opus; revision >=4.6.0 <4.7.0: `thinking.mode="anthropic-adaptive"`.
-- For class anthropic; revision >=4.7.0 <5.1.0: `streamIdleTimeoutMs=900000`, `thinking.efforts=["low","medium","high","max"]`.
-- For class anthropic; revision >=5.1.0: `thinking.efforts=["low","medium","high","xhigh","max"]`.
-- For class xai; family grok; revision >=4.6.0: `thinking.mode="effort"`, `thinking.efforts=["low","medium","high","xhigh"]`.
-- For class openai: `thinking.mode="effort"`.
-- For class deepseek: `requiresReasoningContentForAllAssistantTurns=true`, `thinking.efforts=["minimal","low","medium","high"]`.
-- For class minimax; family m2: `thinking.mode="budget"`.
-- For class unknown: `thinking.efforts=["minimal","low","medium","high"]`, `thinking.mode="budget"`.
-- For models moonshot.kimi-k2-thinking: `thinking.requiresEffort=true`.
-- Provider defaults: `streamRevision="possible"`.
-
-- **Converse API Payload & Message Mapping**: Requests build a `ConverseStreamRequest` with `messages`, `system`, `inferenceConfig` (`maxTokens`, `temperature`, `topP`), `toolConfig`, and `additionalModelRequestFields`. System prompts normalize to `SystemContent[]` with text blocks and `CachePoint` markers (`{ cachePoint: { type: "default", ttl?: "1h" } }`). User content maps to `text`, `image` (`jpeg`/`png`/`gif`/`webp` base64 via `createImageBlock`), `toolResult`, or `cachePoint`. Bedrock requires consecutive tool result blocks to be consolidated into a single `user` role `WireMessage` (`convertMessages` loops to merge adjacent `toolResult` turns). Empty text blocks and empty content arrays are filtered to avoid HTTP 400 validation failures.
-- **Anthropic Messages route (`/anthropic`)**: `anthropic-messages` models under this provider send to `https://bedrock-runtime.{region}.amazonaws.com/anthropic` through the Anthropic transport instead of Converse. That route rejects the tool `strict` field and any `metadata.user_id` outside Bedrock's request-metadata pattern. `compat.bedrockMessagesApi` (detected from the `baseUrl`, overridable in `models.yml`) makes the Anthropic transport drop `strict` and fit the metadata to that pattern (`fitBedrockAnthropicPayload`, `packages/ai/src/providers/bedrock-anthropic.ts`) after any `onPayload` hook. It supports on-demand compaction. See [Models](./models.md#claude-on-bedrocks-anthropic-messages-api-anthropic).
-- **Converse compaction**: Bedrock's compaction-only streaming Runtime route and opt-out are described in [Compaction](./compaction.md#summary-generation).
-- **NO_TOOLS_SENTINEL (`__no_tools__`)**: Bedrock validates that any request containing prior `toolUse` or `toolResult` blocks must supply a `toolConfig`. When tools are disabled (`toolChoice: "none"`) or empty on a turn with tool history, `planToolConfig` injects a placeholder tool `NO_TOOLS_SENTINEL` (`name: "__no_tools__"`, dummy schema). Per-request flag `sentinelInjected` tracks injection (so caller tools named `__no_tools__` work normally). When `sentinelInjected` is true, `handleContentBlockStart` ignores synthetic tool-use start events, and `messageStop` demotes `stopReason: "tool_use"` to `"stop"`.
-- **Thinking & Reasoning (`additionalModelRequestFields`)**:
-   - `anthropic-adaptive` models (Claude Opus 4.7+, Sonnet/Opus 5, Fable/Mythos 5): mapped to `{ thinking: { type: "adaptive", display? }, output_config: { effort } }` via `mapEffortToAnthropicAdaptiveEffort`. `thinkingDisplay` defaults to `"summarized"` on display-supporting models so silent reasoning streams under Anthropic's `"omitted"` default are avoided (issue #1373).
-   - Budget-mode models (e.g. Claude 3.7 / 4.6): mapped to `{ thinking: { type: "enabled", budget_tokens, display }, anthropic_beta? }`. Sets `anthropic_beta: ["interleaved-thinking-2025-05-14"]` when `interleavedThinking` is true.
-   - Forced Tool Choice Conflict: Bedrock rejects thinking when `toolChoice` forces tool execution (`any` or named `{ tool: { name } }`). `streamBedrock` clears `additionalModelRequestFields` when forced tool choice is active.
-   - Thinking Signatures & Demotion: Assistant thinking blocks without `thinkingSignature` on Claude models (signature-capable wire models) are demoted to text via `renderDemotedThinking`. Non-Claude models (Nova, Titan, Llama, Mistral) reject thinking signatures and receive unsigned `reasoningContent`.
-- **Region & Inference-Profile Resolution**: `resolveBedrockRegion` resolves runtime regions in order: explicit `options.region` -> ARN-embedded region (`inferRegionFromBedrockArn`) -> ambient environment/profile region (`resolveAwsAmbientRegion`). For geo-prefixed cross-region inference profiles (`us.`, `us-gov.`, `eu.`, `apac.`, `au.`, `jp.`), `regionServesGeo` verifies ambient region compatibility; mismatched or missing ambient regions fallback to geo-default endpoints (`INFERENCE_PROFILE_GEO_DEFAULT_REGION`: `us` -> `us-east-1`, `us-gov` -> `us-gov-west-1`, `eu` -> `eu-west-1`, `apac` -> `ap-southeast-1`, `au` -> `ap-southeast-2`, `jp` -> `ap-northeast-1`). `global.` profiles use ambient region or `us-east-1`.
-
-### Stream behavior
-
-- **AWS Eventstream Binary Decoding**: Framed as big-endian integers (`[total len u32][headers len u32][prelude CRC u32][headers][payload][message CRC u32]`). `decodeMessage` in `packages/ai/src/providers/aws-eventstream.ts` checks total length (minimum 16 bytes), computes IEEE 802.3 CRC32 via `Bun.hash.crc32(bytes) >>> 0` (`crc32`), and verifies both prelude (first 8 bytes) and message CRCs (entire frame minus 4 bytes). Header parser (`parseHeaders`) reads typed headers (bool, byte, short, int, long, byte-array, string, timestamp, uuid). `decodeEventStream` yields messages from a `ReadableStream<Uint8Array>` using a growable Uint8Array buffer and cancels reader lock on abort.
-- **Event Dispatch & Error Handling**: Stream messages carrying `:message-type = "event"` dispatch:
-   - `messageStart`: verifies `role === "assistant"` and pushes stream `start`.
-   - `contentBlockStart`: pushes `toolcall_start` (skipping sentinel).
-   - `contentBlockDelta`: pushes `text_delta` (creates text block if absent), `toolcall_delta` (accumulates JSON input delta in `kStreamingPartialJson`, throttled via `parseStreamingJsonThrottled`), or `thinking_delta` (accumulates reasoning text and signature).
-   - `contentBlockStop`: parses tool JSON via `parseStreamingJson` and pushes `text_end`/`thinking_end`/`toolcall_end`.
-   - `messageStop`: maps `stopReason` (`end_turn`/`stop_sequence` -> `stop`, `max_tokens`/`model_context_window_exceeded` -> `length`, `tool_use` -> `toolUse`).
-   - `metadata`: extracts usage (`inputTokens`, `outputTokens`, `cacheReadInputTokens`, `cacheWriteInputTokens`) and invokes `calculateCost`.
-   - `:message-type = "exception"` extracts `:exception-type` and error payload to throw `BedrockApiError` (400). `:message-type = "error"` extracts `:error-code` and `:error-message`.
-
-### Auth & usage
-
-- **Dual Auth Modes**:
-   - Bearer Token: If `options.bearerToken`, `options.apiKey`, or `$env.AWS_BEARER_TOKEN_BEDROCK` is present (`resolveAwsBearerToken`), sets `Authorization: Bearer <token>` and bypasses SigV4 signing.
-   - AWS SigV4 Signing: `signRequest` (`packages/ai/src/providers/aws-sigv4.ts`) signs headers using WebCrypto (`crypto.subtle`). Computes SHA-256 payload digest (`x-amz-content-sha256`), date (`x-amz-date`), host, and security token (`x-amz-security-token`). Derives HMAC-SHA256 signing key chain (`AWS4` + `secretAccessKey` -> `kDate` -> `kRegion` -> `kService` ("bedrock") -> `kSigning`).
-- **5-Tier Credential Resolution Chain**: `resolveAwsCredentials` (`packages/ai/src/providers/aws-credentials.ts`) caches resolved credentials per `profile\0region\0config` key with a 60s refresh skew (`REFRESH_SKEW_MS`) and single-flight inflight deduplication bounded by 30s timeout (`SHARED_RESOLVE_TIMEOUT_MS`). Chain precedence:
-   1. Environment Variables: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, optional `AWS_SESSION_TOKEN`.
-   2. Web Identity / OIDC: `AWS_WEB_IDENTITY_TOKEN_FILE`, `AWS_ROLE_ARN`, `AWS_ROLE_SESSION_NAME`. Calls STS `AssumeRoleWithWebIdentity` on `sts.{region}.amazonaws.com`.
-   3. Shared Config / Profile (`~/.aws/credentials`, `~/.aws/config` parsed via `parseAwsIni`): Static keys (file session tokens capped at 5 min TTL via `FILE_SESSION_CREDS_TTL_MS`), AWS SSO (`sso_account_id`, `sso_role_name`, legacy `sso_start_url`/`sso_region` or `sso-session` block; reads cached token from `~/.aws/sso/cache/*.json` and calls `portal.sso.{ssoRegion}.amazonaws.com/federation/credentials`), or `credential_process` (spawns external process using POSIX tokenization `tokenizeCredentialProcessCommand`; Windows `.cmd`/`.bat` routed through `cmd.exe /c`; expects Version 1 JSON envelope).
-   4. ECS / Container: `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` (on `http://169.254.170.2/`) or `AWS_CONTAINER_CREDENTIALS_FULL_URI` with optional auth token/file.
-   5. EC2 IMDSv2: `169.254.169.254` (or IPv6 `[fd00:ec2::254]`), requests PUT token from `latest/api/token` with 1s timeout (`IMDS_TIMEOUT_MS`).
-- **Cache Invalidation & Registry Status**: On 401/403 HTTP response, `streamBedrock` calls `invalidateAwsCredentialCache({ profile, region })` to drop cached credentials so subsequent turns re-resolve fresh credentials. Auth resolution in `packages/catalog/src/compat/rules/auth/amazon-bedrock.kdl` (`env hook="aws-bedrock"`) evaluates `hasAwsCredentialSource()` (`packages/ai/src/registry/aws.ts`) to return `AUTHENTICATED_SENTINEL` when valid credentials or environment tokens exist.
-
-### Catalog model handling
-
-- **Provider entry (`amazon-bedrock`)**: `packages/catalog/src/compat/rules/providers/amazon-bedrock.kdl` declares default model `us.anthropic.claude-opus-5-5`.
-- **models.dev Mapping & Cross-Region Profiles**: `MODELS_DEV_PROVIDER_DESCRIPTORS` (`packages/catalog/src/provider-models/openai-compat.ts`) maps `modelsDevKey: "amazon-bedrock"` to API `bedrock-converse-stream`. `bedrockCrossRegionId` prefixes `global.` or `us.` for matching models. For `anthropic.claude-*` models, `transformModel` automatically emits EU (`eu.`) and AWS GovCloud (`us-gov.`) cross-region inference-profile spec variants. Non-tool and legacy models (`ai21.jamba`, `titan-text-express`, `mistral-7b`) are filtered out.
-
-## Amazon Bedrock Mantle
-
-Amazon Bedrock Mantle is AWS's gateway endpoint serving OpenAI-compatible models (such as `openai.gpt-5.4`, `openai.gpt-5.5`, and `openai.gpt-5.6` Luna/Sol/Terra variants) over the OpenAI Responses API (`openai-responses`) protocol rather than Bedrock's native Converse JSON transport (`amazon-bedrock`). Requests target region-interpolated endpoints (`https://bedrock-mantle.{region}.api.aws/openai/v1`) with OpenAI Responses API payloads (`/responses`). Entry modules are `packages/ai/src/providers/bedrock-mantle.ts`, `packages/ai/src/registry/bedrock-mantle.ts`, and catalog setup in `packages/catalog/src/provider-models/openai-compat.ts`.
-
-### Special casings
-
-Provider-specific overrides in `packages/catalog/src/compat/rules/providers/bedrock-mantle.kdl` (more-specific selectors override provider defaults):
-
-- For class unknown: `thinking.mode="effort"`.
-- For models openai.gpt-5.4, openai.gpt-5.5: `thinking.efforts=["low","medium","high","xhigh"]`.
-- For models openai.gpt-5.6*: `thinking.efforts=["low","medium","high","xhigh","max"]`.
-
-- **Endpoint Structure**: Unlike standard Bedrock Converse endpoints (`bedrock-runtime.{region}.amazonaws.com`), Mantle requests target `https://bedrock-mantle.{region}.api.aws/openai/v1`. The `{region}` template placeholder in `model.baseUrl` is dynamically replaced at request preparation time in `prepareBedrockMantleRequest` (`packages/ai/src/providers/bedrock-mantle.ts`).
-- **Anthropic Messages route**: Mantle also serves Claude over the Anthropic Messages API at `https://bedrock-mantle.{region}.api.aws/anthropic` (model ids like `anthropic.claude-opus-5-5`). `anthropic-messages` models configured there use the Anthropic transport. The route rejects the tool `strict` field (dropped under `compat.bedrockMessagesApi`, as on bedrock-runtime), verifies thinking signatures, and supports on-demand compaction. See [Models](./models.md#claude-on-bedrocks-anthropic-messages-api-anthropic).
-- **Native Compaction**: `openai-responses` models on this route use OpenAI's native compaction (V2 streamed `compaction_trigger`, then V1 `/responses/compact`) by default, detected by `isBedrockOpenAIUrl` (`packages/catalog/src/hosts.ts`). Only for these Bedrock URLs, the compaction requests first run `prepareBedrockCompactionRequest` (`packages/agent/src/compaction/bedrock.ts`), which applies the provider's hooks, so `{region}` and bearer/SigV4 auth match normal turns; other providers' compaction requests keep their own transport. `enabled: false` disables both methods; `v2StreamingEnabled: false` disables only V2. See [compaction](./compaction.md).
-- **Region Resolution Hierarchy**: Region substitution in `resolveAwsRegion` (`packages/ai/src/utils/aws-profile.ts`) evaluates in order: explicit `providerOptions.region` -> `AWS_REGION` -> `AWS_DEFAULT_REGION` -> region from active AWS shared-config profile in `~/.aws/config` (`resolveAwsProfileRegion`) -> fallback default `"us-east-1"`.
-- **401/403 Credential Invalidation**: When using SigV4 signed requests in `createSignedFetch` (`packages/ai/src/providers/bedrock-mantle.ts`), an HTTP 401 or 403 response triggers `invalidateAwsCredentialCache({ profile, region })` (`packages/ai/src/providers/aws-credentials.ts`) so subsequent attempts re-resolve fresh credentials from profile, environment, or STS roles.
-- **Registry Sentinel & Auth Flag**: `packages/catalog/src/compat/rules/auth/bedrock-mantle.kdl` sets `allows-missing-api-key #true` and `env hook="aws-bedrock-mantle"` (with transport in `packages/ai/src/registry/bedrock-mantle.ts`). When ambient AWS credentials exist (`hasAwsCredentialSource` in `packages/ai/src/registry/aws.ts`), `resolveAwsRegistryApiKey` returns `AUTHENTICATED_SENTINEL`. `resolveAwsBearerToken` strips this sentinel value so SigV4 authentication is selected unless an actual bearer token is present.
-
-### Stream behavior
-
-- **Transport**: Delegated to the `openai-responses` provider pipeline (`packages/ai/src/providers/openai-responses.ts`), consuming SSE stream events like `response.created`, `response.text.delta`, `response.output_item.added`, and `response.completed`.
-- **Error Handling**: Non-2xx SSE streams pass error status codes back to the stream result handler; 401/403 status codes invalidate the cached AWS credential state in `createSignedFetch`.
-
-### Auth & usage
-
-- **Dual Authentication Modes**:
-   - **Bearer Token**: Evaluated by `resolveBearerToken` (`packages/ai/src/providers/bedrock-mantle.ts`). Active when `AWS_BEARER_TOKEN_BEDROCK`, `providerOptions.bearerToken`, or an explicit non-sentinel `apiKey` is provided. `createBedrockMantleAuthenticatedFetch` injects `Authorization: Bearer <token>`.
-   - **AWS SigV4 Signing**: Active when no bearer token exists but ambient credentials pass `hasAwsCredentialSource`. Request headers are signed by `signRequest` (`packages/ai/src/providers/aws-sigv4.ts`) using service name `"bedrock-mantle"`, setting `Authorization: AWS4-HMAC-SHA256 ...` and `x-amz-security-token` (when using session credentials).
-- **Authentication Precedence**: Bearer token takes precedence over SigV4 signing when both are available.
-- **Usage Tracking**: Input, output, cached, and reasoning token usages are parsed directly from the standard OpenAI Responses wire payload (`usage.input_tokens`, `usage.output_tokens`, `usage.input_tokens_details.cached_tokens`, `usage.output_token_details.reasoning_tokens`) by `openai-responses`.
-
-### Catalog model handling
-
-- **Provider entry (`bedrock-mantle`)**: `packages/catalog/src/compat/rules/providers/bedrock-mantle.kdl` declares default model `openai.gpt-5.6-terra`. Environment keys: `AWS_BEARER_TOKEN_BEDROCK`.
-- **Discovery replacement**: Successful authoritative discovery replaces fallback provider rows rather than retaining retired seed models.
-- **Authored seeds**: `openai.gpt-5.4`, `openai.gpt-5.5`, `openai.gpt-5.6-luna`, `openai.gpt-5.6-sol`, `openai.gpt-5.6-terra`; bundle policy `always`. Limits, capabilities, and prices are authored alongside these rows.
-- **Authenticated Model Discovery**:
-   - `prepareModelDiscovery` in `packages/ai/src/registry/bedrock-mantle.ts` requires a valid bearer token (`resolveAwsBearerToken`). If unauthenticated or SigV4-only, `authenticated: false` is returned and discovery is bypassed.
-   - When authenticated, discovery strips `/openai/v1` to call `https://bedrock-mantle.{region}.api.aws/v1/models` via `fetchOpenAICompatibleModels`.
-- **Authoritative Dynamic Model Replacement**: `dynamicModelsAuthoritative: true` in `bedrockMantleModelManagerOptions` causes successful dynamic discovery responses to **replace** static seeds entirely, pruning models not enabled for the AWS account/token.
-- **Reference Attribute Merging**: `mapWithBundledReference` merges statically defined costs, thinking configs, and context windows onto dynamically discovered model definitions matching `BEDROCK_MANTLE_MODEL_BY_ID`.
-
-## Kimi Code
-
-Kimi Code (`kimi-code`) and Moonshot (`moonshot`) provide access to Moonshot AI's model family through dual-transport execution—wrapping OpenAI-compatible chat completions (`/coding/v1/chat/completions`) and Anthropic-compatible messages (`/coding/v1/messages`). Entry points are `packages/ai/src/providers/kimi.ts` (`streamKimi`) and `packages/ai/src/providers/openai-anthropic-shim.ts` (`streamOpenAIAnthropicShim`), with model discovery and catalog descriptors configured in `packages/catalog/src/provider-models/descriptors.ts` and `packages/catalog/src/provider-models/openai-compat.ts`.
-
-### Special casings
-
-Provider-specific overrides in `packages/catalog/src/compat/rules/providers/kimi-code.kdl` (more-specific selectors override provider defaults):
-
-- For class kimi; family k3: `thinkingFormat="openai"`.
-- For class kimi: `thinkingFormat="zai"`.
-- For class unknown: `reasoningContentField="reasoning_content"`, `supportsDeveloperRole=false`, `thinkingFormat="kimi"`, `thinking.efforts=["minimal","low","medium","high"]`.
-- For models kimi-for*: `reasoningContentField="reasoning_content"`, `supportsDeveloperRole=false`, `thinkingFormat="zai"`, `thinking.efforts=["minimal","low","medium","high"]`.
-- Provider defaults: `kimiApiFormat="anthropic"`, `supportsPromptCacheKey=true`, `thinking.mode="effort"`.
-
-Provider-specific overrides in `packages/catalog/src/compat/rules/providers/moonshot.kdl` (more-specific selectors override provider defaults):
-
-- For class kimi; family k3: `thinkingFormat="openai"`.
-- For class kimi: `thinkingFormat="zai"`, `thinking.mode="effort"`.
-
-- **Dual Transport Routing**: `streamKimi` delegates to `streamOpenAIAnthropicShim` in `packages/ai/src/providers/openai-anthropic-shim.ts`, selecting format from `model.compat.kimiApiFormat` or explicit `options.format` in `KimiOptions`.
-   - `anthropic`: Reconstructs model spec with `api: "anthropic-messages"`, adjusts base URL via `model.baseUrl.replace(/\/v1\/?$/, "")` (`https://api.kimi.com/coding`), injects `getKimiCommonHeaders()`, maps thinking format to `anthropic-adaptive`, computes token budgets via `ANTHROPIC_THINKING`, and streams via `streamAnthropic`.
-   - `openai`: Retains `model.baseUrl` (`https://api.kimi.com/coding/v1`), injects `getKimiCommonHeaders()`, passes `reasoning` effort, and streams via `streamOpenAICompletions`.
-- **Turn & Token Invariants**:
-   - `alwaysSendMaxTokens: isKimiModel` in `packages/catalog/src/compat/resolve.ts`: Kimi calculates rate limits (TPM) based on `max_tokens` rather than emitted tokens, requiring explicit max tokens on every request.
-   - `requiresReasoningContentForToolCalls`: True for Kimi models on non-OpenCode providers (`packages/catalog/src/compat/resolve.ts`). Prior assistant tool-call turns must carry `reasoning_content` on thinking follow-ups, with synthetic placeholder `"."` allowed when raw reasoning is missing (`allowsSyntheticReasoningContentForToolCalls`).
-   - `requiresAssistantContentForToolCalls`: Forces non-empty text content in assistant tool-calling turns.
-
-### Stream behavior
-
-- **Inband Control Tag & Thinking Scanning**: `KimiInbandScanner` in `packages/ai/src/dialect/kimi.ts` processes raw output streams for XML-like tool control tags (`<|tool_calls_section_begin|>`, `<|tool_call_begin|>`, `<|tool_call_argument_begin|>`, `<|tool_call_end|>`, `<|tool_calls_section_end|>`) and `<think>...</think>` thinking blocks, emitting structured `InbandScanEvent` events (`text`, `thinkingStart`, `thinkingDelta`, `thinkingEnd`, `toolStart`, `toolEnd`).
-- **Idle Watchdog Timeout**: `streamIdleTimeoutMs` floor is extended to 300s for native K2.7 Code models (`packages/catalog/src/compat/resolve.ts`) to prevent premature stream aborts during long initial reasoning generation.
-
-### Auth & usage
-
-- **Device OAuth Flow**: Declared in `packages/catalog/src/compat/rules/auth/kimi-code.kdl` as a `login "device-code"` rule (`packages/ai/src/registry/engine/device-code.ts`) with headers hook in `packages/ai/src/registry/oauth/kimi.ts`. Uses OAuth 2.0 Device Authorization Grant (`urn:ietf:params:oauth:grant-type:device_code`) with client ID `17e5f671-d194-4dfb-9706-5516cb48c098` against host `${resolveOAuthHost()}` (`https://auth.kimi.com`, configurable via `KIMI_CODE_OAUTH_HOST` or `KIMI_OAUTH_HOST`).
-   - Initiates via `POST /api/oauth/device_authorization`, prompts user with `userCode` and `verificationUriComplete`, and polls `POST /api/oauth/token` with backoff on `authorization_pending` and `slow_down`. Token refresh uses `grant_type: "refresh_token"`.
-- **Fingerprinting Headers & Device ID**: `getKimiCommonHeaders()` in `packages/ai/src/registry/oauth/kimi.ts` injects device tracking headers: `User-Agent: KimiCLI/<ver>`, `X-Msh-Platform: kimi_cli`, `X-Msh-Version`, `X-Msh-Device-Name`, `X-Msh-Device-Model`, `X-Msh-Os-Version`, and `X-Msh-Device-Id`. `getDeviceId` persists a random hex UUID to `path.join(getAgentDir(), "kimi-device-id")` (mode 0600) or falls back to an ephemeral process UUID.
-- **Usage & Quota Tracker**: `kimiUsageProvider` in `packages/ai/src/usage/kimi.ts` targets `GET /coding/v1/usages` (`https://api.kimi.com/coding/v1/usages`, configurable via `KIMI_CODE_BASE_URL`) with OAuth bearer token and `getKimiCommonHeaders()`.
-   - Short-circuits when credentials are expired (`credential.expiresAt <= nowMs`). Parses `KimiUsagePayload`: maps `usage` object to a `Total quota` summary row and `limits` array (extracting `detail` and `window` duration/timeUnit) into `UsageLimit` entries, resolving reset timestamps via `parseResetTime` (`reset_at`, `resetTime`, `ttl`).
-
-### Catalog model handling
-
-- **Provider entry (`kimi-code`)**: `packages/catalog/src/compat/rules/providers/kimi-code.kdl` declares default model `kimi-for-coding`.
-- **Provider entry (`moonshot`)**: `packages/catalog/src/compat/rules/providers/moonshot.kdl` declares default model `kimi-k2.7-code`. Environment keys: `MOONSHOT_API_KEY`, `KIMI_API_KEY`.
-- **K2.x vs K3 Reasoning Differences**:
-   - **K2.x**: Native Moonshot K2.x models use binary thinking (`thinking: { type: "enabled" | "disabled" }`) via `thinkingFormat: "zai"` in `packages/catalog/src/compat/resolve.ts`. Configured with 4-tier effort range `[Minimal, Low, Medium, High]` in `moonshotModelManagerOptions`. K2.6 retains full thinking context (`thinkingKeep: "all"`).
-   - **K3**: K3 models use OpenAI-style `reasoning_effort` (`thinkingFormat: "openai"`). Configured with 3-tier wire scale `[low, high, max]`, `defaultLevel: Effort.Max`, and mandatory reasoning (`thinking.requiresEffort: true`). `moonshotModelManagerOptions` stamps 1M context window, 131,072 maxTokens, and vision input (`["text", "image"]`).
-
-## Ollama
-
-The Ollama integration consists of two distinct provider definitions in `packages/ai`: `ollama` for local Ollama instances (using `openai-responses` or `openai-completions` API via `baseUrl` pointing to local endpoint `/v1`, defaulting to `http://127.0.0.1:11434/v1`), and `ollama-cloud` for Ollama Cloud (using native `ollama-chat` API transport at `https://ollama.com/api/chat`). Entry modules are `packages/ai/src/providers/ollama.ts` for native streaming, `packages/catalog/src/provider-models/openai-compat.ts` for local Ollama catalog options (`ollamaModelManagerOptions`), and `packages/catalog/src/provider-models/ollama.ts` for Ollama Cloud catalog options (`ollamaCloudModelManagerOptions`).
-
-### Special casings
-
-Provider-specific overrides in `packages/catalog/src/compat/rules/providers/ollama.kdl` (more-specific selectors override provider defaults):
-
-- Provider defaults: `emptyLengthFinishIsContextError=true`, `thinking.efforts=["low","medium","high","max"]`.
-
-Provider-specific overrides in `packages/catalog/src/compat/rules/providers/ollama-cloud.kdl` (more-specific selectors override provider defaults):
-
-- For class unknown: `thinking.efforts=["minimal","low","medium","high"]`.
-- For models deepseek-v4-pro:preview: `thinking.efforts=["low","high","max"]`.
-- For models glm-4*, glm-5, glm-5.1: `thinking.efforts=["minimal","low","medium","high"]`.
-- For models glm-5.2: `thinking.efforts=["high","max"]`.
-- Provider defaults: `thinking.mode="effort"`.
-
-- **Transport Routing**: Local `ollama` defaults to OpenAI-compatible paths (`openai-responses` / `openai-completions`), while `ollama-cloud` uses the native `ollama-chat` protocol.
-- **Tool Choice Emulation**: `selectToolsForToolChoice` in `packages/ai/src/providers/ollama.ts` manually filters `context.tools` down to the target tool when a specific named tool choice is requested (`{ type: "function", function: { name } }` or `{ name }`). Map `toolChoice` maps `"none"` to `"none"`, `"required"`/`"any"`/named object to `"required"`, and `"auto"` to `undefined`.
-- **Developer Role & History Sanitization**: Developer system prompts stay on Ollama's `system` role if they are initial system prompts or agent-attributed, but user-attributed developer turns demote to `user` for stable prefix caching. If no `user` role exists, `convertMessages` demotes the last system turn to `user` to prevent Ollama from emitting `done_reason: "load"` without generating output. For `ollama-cloud`, `thinking` fields are stripped from assistant history messages (`convertMessages`) because Ollama Cloud rejects incoming history carrying `thinking` with HTTP 400.
-- **Schema Sanitization**: Tool schemas pass through `sanitizeSchemaForOllama(toolWireSchema(tool))` to ensure compatibility.
-- **Model Loading / `keep_alive` & Error Rewriting**: When a request contains no user turn or Ollama generates zero tokens, Ollama returns `done_reason: "load"`, mapped to stopReason `"error"` with `EMPTY_OLLAMA_LOAD_COMPLETION_MESSAGE`. Malformed tool-call JSON errors from local llama.cpp backend (HTTP 500) are rewritten by `rewriteOllamaToolCallJsonError` in `packages/ai/src/error/format.ts`. `shouldRetryOllamaResponse` retries 5xx errors unless matched by `LLAMA_CPP_TOOL_CALL_PARSE_PATTERN`.
-
-### Stream behavior
-
-- **NDJSON / JSONL Event Protocol**: Native `ollama-chat` streams NDJSON chunks parsed via `readJsonl<OllamaChatChunk>`.
-- **Reasoning vs Content Handling**: Reasoning chunks arrive as `chunk.message.thinking` (yielding `thinking_start`, `thinking_delta`, `thinking_end`). Content text arrives as `chunk.message.content`. Structured tool calls arrive as `chunk.message.tool_calls`.
-- **Stream Markup Healing**: Stream markup healing (`StreamMarkupHealing` using `getStreamMarkupHealingPattern`) is engaged for text-channel tool call and reasoning recovery. When native `chunk.message.thinking` is present, `suppressHealedThinking` is set to `true` to avoid double-counting reasoning blocks.
-- **Finish Reason Mapping**: `mapDoneReason` maps `done_reason`: `"length"` -> `"length"`, `"tool_calls"` -> `"toolUse"`, `"load"` -> `"error"`, and `undefined` with tool calls -> `"toolUse"`. Natural `stop` with produced tool calls is promoted to `"toolUse"`.
-- **Watchdogs & Local Prefill**: Pre-response timeout is armed via `armPreResponseTimeout` with `firstEventTimeoutMs` (derived from `PI_STREAM_FIRST_EVENT_TIMEOUT_MS` or `idleTimeoutMs`) while `timeout: false` is passed to `fetchWithRetry` to avoid premature Bun fetch timeout aborts during heavy local prefill. Retries use delays `[2000, 5000, 10000]`.
-- **Empty Completion Retry**: `streamOllama` is wrapped with `withReplaySafeStreamRetry` to transparently retry EOS-only empty completions.
-
-### Auth & usage
-
-- **Credential Source**: Declared in `packages/catalog/src/compat/rules/auth/ollama.kdl` as a `login "api-key"` rule (`packages/ai/src/registry/engine/api-key.ts`) prompting for an optional API key (`allowEmpty: true`), defaulting to no-auth local usage with `envVars: ["OLLAMA_API_KEY"]`. `packages/catalog/src/compat/rules/auth/ollama-cloud.kdl` mandates an API key created at `https://ollama.com/settings/keys` with `envVars: ["OLLAMA_CLOUD_API_KEY"]`.
-- **Authentication Headers**: Local requests attach `Authorization: Bearer ${apiKey}` if provided; `ollama-cloud` requires `Authorization: Bearer ${apiKey}`.
-- **Usage & Quota**: Quota tracking is registered via `ollamaUsageProvider` and `ollamaCloudUsageProvider` in `packages/ai/src/usage/ollama.ts`. Neither provider exposes a standalone usage/quota API (`validatesCredentials: false`, empty `limits`), relying on per-response `prompt_eval_count` (input) and `eval_count` (output) returned in stream completion chunks.
-
-### Catalog model handling
-
-- **Provider entry (`ollama`)**: `packages/catalog/src/compat/rules/providers/ollama.kdl` declares default model `gpt-oss:20b`. Environment keys: `OLLAMA_API_KEY`. Model management permits unauthenticated access.
-- **Provider entry (`ollama-cloud`)**: `packages/catalog/src/compat/rules/providers/ollama-cloud.kdl` declares default model `gpt-oss:120b`. Environment keys: `OLLAMA_CLOUD_API_KEY`.
-- **Local Catalog Discovery**: `ollamaModelManagerOptions` in `packages/catalog/src/provider-models/openai-compat.ts` attempts `fetchOpenAICompatibleModels` at `/v1/models` first. If unavailable, it falls back to native `fetchOllamaNativeModels` querying `/api/tags`.
-- **Cloud Catalog Discovery**: `ollamaCloudModelManagerOptions` in `packages/catalog/src/provider-models/ollama.ts` queries `/api/tags` on `https://ollama.com` using `OLLAMA_CLOUD_API_KEY`.
-- **Context-Length & Capability Detection via `/api/show`**: Both local and cloud discovery query Ollama's `/api/show` for each model to inspect `model_info` and `capabilities`.
-   - Context length is extracted from `model_info` keys ending in `.context_length`, `.num_ctx`, or `.context_window`. Fallback context window is `128_000` (`OLLAMA_FALLBACK_CONTEXT_WINDOW`).
-   - Capability stamping: `capabilities.includes("thinking")` sets `reasoning: true` and configures `thinking` effort config (`[minimal, low, medium, high]`). `capabilities.includes("vision")` stamps `input: ["text", "image"]`.
-- **Output Token Ceiling Capping**: Ollama Cloud enforces `OLLAMA_CLOUD_MAX_OUTPUT_TOKENS = 65_536` for DeepSeek V4 Pro/Flash models (`isOllamaCloudOutputCapped`). `ollamaCloudModelManagerOptions` caps `maxTokens` at `min(contextWindow, 65536)` and sets `omitMaxOutputTokens: true`. `createChatBody` in `packages/ai/src/providers/ollama.ts` further clamps `num_predict` on wire payloads to `65_536`.
-- **Cache Provider ID**: Resolved by `resolveModelCacheProviderId` in `packages/catalog/src/provider-models/cache-provider-id.ts` using `http://127.0.0.1:11434` for `ollama` or endpoint hash.
-
-## Cursor
-
-Cursor's integration in `packages/ai` operates over an HTTP/2 Connect RPC transport (`/agent.v1.AgentService/Run`) sending length-prefixed binary Protobuf messages (`AgentClientMessage` and `AgentServerMessage`). Key implementation entry points include `packages/ai/src/providers/cursor.ts` for connection lifecycle, Connect message streaming, and frame dispatching; `packages/ai/src/providers/cursor-tau-args.ts` for pure argument and path transformations; `packages/ai/src/providers/cursor/exec-modern.ts` for local tool result frame builders; auth policy in `packages/catalog/src/compat/rules/auth/cursor.kdl` (`login "custom" hook="cursor"`) and `packages/ai/src/registry/oauth/cursor.ts` for PKCE browser authentication and token refresh; `packages/ai/src/usage/cursor.ts` for multi-endpoint quota tracking; and `packages/catalog/src/discovery/cursor.ts` for Connect RPC model discovery.
-
-### Special casings
-<<<<<<< ours
-- **Pure Argument Translation (`cursor-tau-args.ts`)**: Path and argument formatting functions (`piReadPath`, `piReadPathHasRange`, `piReadDisplayPath`, `piGrepSkip`, `piJoinPath`, `piLsPath`, `piEscapeRegexLiteral`, `piLimit`, `piTimeout`) are kept strictly independent of Protobuf imports so legacy shims can share them without bundling protobuf schemas into virtual registries.
-||||||| base
-- **Pure Argument Translation (`cursor-pi-args.ts`)**: Path and argument formatting functions (`piReadPath`, `piReadPathHasRange`, `piReadDisplayPath`, `piGrepSkip`, `piJoinPath`, `piLsPath`, `piEscapeRegexLiteral`, `piLimit`, `piTimeout`) are kept strictly independent of Protobuf imports so legacy shims can share them without bundling protobuf schemas into virtual registries.
-=======
-
-- **Pure Argument Translation (`cursor-pi-args.ts`)**: Path and argument formatting functions (`piReadPath`, `piReadPathHasRange`, `piReadDisplayPath`, `piGrepSkip`, `piJoinPath`, `piLsPath`, `piEscapeRegexLiteral`, `piLimit`, `piTimeout`) are kept strictly independent of Protobuf imports so legacy shims can share them without bundling protobuf schemas into virtual registries.
->>>>>>> theirs
 - **Empty Grep Pattern Rejection**: `grepArgs` frames with an empty `pattern` and non-empty `glob` are rejected up front (`emptyGrepPatternRejection`) with a descriptive error, forcing the model to retry or switch tools rather than triggering local tool failure after block persistence.
 - **Native Tools & `SoftToolRequirement` Interplay**:
-<<<<<<< ours
   - Native tools (`CURSOR_NATIVE_TOOL_NAMES`: `bash`, `read`, `write`, `delete`, `ls`, `grep`, `todo`) are omitted when building `requestContext` MCP tool definitions.
   - **Exception**: `write` is explicitly re-included in `buildMcpToolDefinitions` whenever tau-agent tools are advertised. `write` acts as the `xd://` transport for staged previews (e.g. `ast_edit`). Without `write`, staged previews cannot be resolved and `SoftToolRequirement('write')` escalation aborts the turn.
-||||||| base
-  - Native tools (`CURSOR_NATIVE_TOOL_NAMES`: `bash`, `read`, `write`, `delete`, `ls`, `grep`, `todo`) are omitted when building `requestContext` MCP tool definitions.
-  - **Exception**: `write` is explicitly re-included in `buildMcpToolDefinitions` whenever pi-agent tools are advertised. `write` acts as the `xd://` transport for staged previews (e.g. `ast_edit`). Without `write`, staged previews cannot be resolved and `SoftToolRequirement('write')` escalation aborts the turn.
-=======
-   - Native tools (`CURSOR_NATIVE_TOOL_NAMES`: `bash`, `read`, `write`, `delete`, `ls`, `grep`, `todo`) are omitted when building `requestContext` MCP tool definitions.
-   - **External executor (auth-gateway)**: every context tool, native names included, is advertised as MCP, and the run is sent `x-cursor-agent-allowed-tools: mcp_tool_call,get_mcp_tools_tool_call`. Cursor's built-in tools (file, shell, edit, todo, web fetch, SCM) are therefore unavailable through the gateway; the client's own tools stand in for them.
-   - **Exception**: `write` is explicitly re-included in `buildMcpToolDefinitions` whenever pi-agent tools are advertised. `write` acts as the `xd://` transport for staged previews (e.g. `ast_edit`). Without `write`, staged previews cannot be resolved and `SoftToolRequirement('write')` escalation aborts the turn.
->>>>>>> theirs
 - **`rootPromptMessagesJson` & Blob Store**:
    - `buildGrpcRequest` passes conversation history as SHA-256 binary blob IDs (`blobStore`) in `rootPromptMessagesJson` and `turns`.
    - System prompts are stored as individual JSON blobs (`buildCursorSystemPromptJsons`), allowing independent server-side prefix blob caching hits when only downstream prompts change.
@@ -730,82 +305,32 @@ GitLab Duo is integrated via two distinct providers in TAU: **GitLab Duo Non-Age
 - **Catalog Generation Rules**: `scripts/generate-models.ts` excludes `gitlab-duo-agent` from static generation discovery to prevent bundling single-account namespace models into static catalogs, bundling only `buildGitLabDuoWorkflowFallbackModel` as a generic fallback seed.
 
 ## Pi Native
-<<<<<<< ours
 Pi Native is a lossless internal server/client transport protocol used when a tau-ai client (such as containerized `tau` or a sidecar agent slot) delegates request execution to an `tau auth-gateway` holding real provider credentials. Activated when a `Model` sets `transport: "tau-native"`, `streamSimple` in `packages/ai/src/stream.ts` short-circuits local provider resolution and POSTs the canonical `Context` directly to `/v1/pi/stream`. Primary entry modules are `packages/ai/src/providers/tau-native-client.ts` (`streamPiNative`) on the client side, `packages/ai/src/providers/tau-native-server.ts` (`parseRequest`, `encodeStream`, `formatError`) on the wire framing side, and `packages/ai/src/auth-gateway/server.ts` (`POST /v1/pi/stream` route handler) on the server side.
-||||||| base
-Pi Native is a lossless internal server/client transport protocol used when a pi-ai client (such as containerized `omp` or a sidecar agent slot) delegates request execution to an `omp auth-gateway` holding real provider credentials. Activated when a `Model` sets `transport: "pi-native"`, `streamSimple` in `packages/ai/src/stream.ts` short-circuits local provider resolution and POSTs the canonical `Context` directly to `/v1/pi/stream`. Primary entry modules are `packages/ai/src/providers/pi-native-client.ts` (`streamPiNative`) on the client side, `packages/ai/src/providers/pi-native-server.ts` (`parseRequest`, `encodeStream`, `formatError`) on the wire framing side, and `packages/ai/src/auth-gateway/server.ts` (`POST /v1/pi/stream` route handler) on the server side.
-=======
-
-Pi Native is a lossless internal server/client transport protocol used when a pi-ai client (such as containerized `omp` or a sidecar agent slot) delegates request execution to an `omp auth-gateway` holding real provider credentials. Activated when a `Model` sets `transport: "pi-native"`, `streamSimple` in `packages/ai/src/stream.ts` short-circuits local provider resolution and POSTs the canonical `Context` directly to `/v1/pi/stream`. Primary entry modules are `packages/ai/src/providers/pi-native-client.ts` (`streamPiNative`) on the client side, `packages/ai/src/providers/pi-native-server.ts` (`parseRequest`, `encodeStream`, `formatError`) on the wire framing side, and `packages/ai/src/auth-gateway/server.ts` (`POST /v1/pi/stream` route handler) on the server side.
->>>>>>> theirs
 
 ### Special casings
-<<<<<<< ours
 - **Lossless Pass-through & Dialect Absence**: Unlike OpenAI/Anthropic routes, `tau-native` is not a textual tool-call dialect (`docs/toolconv/tau-native.md`). Tool calls remain canonical tau-ai `ToolCall` content blocks inside `Context` and `AssistantMessageEvent`. It preserves first-class tau-ai fields (service tier, cache markers, thinking budgets, tool-choice variants, image blocks, tool-call IDs) without foreign-wire quantization.
 - **Wire Request & Minimal Boundary Validation**: Client POSTs `{ modelId: "${provider}/${id}", context, options, stream: true }` to `${model.baseUrl}/v1/pi/stream` (`packages/ai/src/providers/tau-native-client.ts` `resolveStreamUrl`). `packages/ai/src/providers/tau-native-server.ts` `parseRequest` accepts `modelId`, `model.id`, or string `model` (supporting `streamProxy` target swaps). Validation checks only object shapes and arrays (`context.messages`, optional `context.systemPrompt`, `context.tools`), leaving message/tool internals unvalidated until downstream provider execution.
 - **Option Allow-list & Non-Wire Key Stripping**: Server filters `options` against `ALLOWED_OPTION_KEYS` (31 keys) in `packages/ai/src/providers/tau-native-server.ts` `parseRequest`, silently dropping unknown keys for cross-version compatibility. Client strips runtime-only and function-valued fields (`signal`, `apiKey`, `fetch`, `onPayload`, `onResponse`, `onSseEvent`, `execHandlers`, `cursorExecHandlers`, `cursorOnToolResult`, `providerSessionState`) via `NON_WIRE_KEYS` in `packages/ai/src/providers/tau-native-client.ts` `buildWireOptions`.
-||||||| base
-- **Lossless Pass-through & Dialect Absence**: Unlike OpenAI/Anthropic routes, `pi-native` is not a textual tool-call dialect (`docs/toolconv/pi-native.md`). Tool calls remain canonical pi-ai `ToolCall` content blocks inside `Context` and `AssistantMessageEvent`. It preserves first-class pi-ai fields (service tier, cache markers, thinking budgets, tool-choice variants, image blocks, tool-call IDs) without foreign-wire quantization.
-- **Wire Request & Minimal Boundary Validation**: Client POSTs `{ modelId: "${provider}/${id}", context, options, stream: true }` to `${model.baseUrl}/v1/pi/stream` (`packages/ai/src/providers/pi-native-client.ts` `resolveStreamUrl`). `packages/ai/src/providers/pi-native-server.ts` `parseRequest` accepts `modelId`, `model.id`, or string `model` (supporting `streamProxy` target swaps). Validation checks only object shapes and arrays (`context.messages`, optional `context.systemPrompt`, `context.tools`), leaving message/tool internals unvalidated until downstream provider execution.
-- **Option Allow-list & Non-Wire Key Stripping**: Server filters `options` against `ALLOWED_OPTION_KEYS` (31 keys) in `packages/ai/src/providers/pi-native-server.ts` `parseRequest`, silently dropping unknown keys for cross-version compatibility. Client strips runtime-only and function-valued fields (`signal`, `apiKey`, `fetch`, `onPayload`, `onResponse`, `onSseEvent`, `execHandlers`, `cursorExecHandlers`, `cursorOnToolResult`, `providerSessionState`) via `NON_WIRE_KEYS` in `packages/ai/src/providers/pi-native-client.ts` `buildWireOptions`.
-=======
-
-- **Lossless Pass-through & Dialect Absence**: Unlike OpenAI/Anthropic routes, `pi-native` is not a textual tool-call dialect (`docs/toolconv/pi-native.md`). Tool calls remain canonical pi-ai `ToolCall` content blocks inside `Context` and `AssistantMessageEvent`. It preserves first-class pi-ai fields (service tier, cache markers, thinking budgets, tool-choice variants, image blocks, tool-call IDs) without foreign-wire quantization.
-- **Wire Request & Minimal Boundary Validation**: Client POSTs `{ modelId: "${provider}/${id}", context, options, stream: true }` to `${model.baseUrl}/v1/pi/stream` (`packages/ai/src/providers/pi-native-client.ts` `resolveStreamUrl`). `packages/ai/src/providers/pi-native-server.ts` `parseRequest` accepts `modelId`, `model.id`, or string `model` (supporting `streamProxy` target swaps). Validation checks only object shapes and arrays (`context.messages`, optional `context.systemPrompt`, `context.tools`), leaving message/tool internals unvalidated until downstream provider execution.
-- **Option Allow-list & Non-Wire Key Stripping**: Server filters `options` against `ALLOWED_OPTION_KEYS` in `packages/ai/src/providers/pi-native-server.ts` `parseRequest`, silently dropping unknown keys for cross-version compatibility. Client strips runtime-only and function-valued fields (`signal`, `apiKey`, `fetch`, `onPayload`, `onResponse`, `onSseEvent`, `execHandlers`, `cursorExecHandlers`, `cursorOnToolResult`, `providerSessionState`) via `NON_WIRE_KEYS` in `packages/ai/src/providers/pi-native-client.ts` `buildWireOptions`.
->>>>>>> theirs
 - **Gateway Options Modification**: On the auth-gateway (`packages/ai/src/auth-gateway/server.ts`), sampling controls (`temperature`, `topP`, `topK`, `minP`, `stopSequences`, penalties) are stripped for `openai-codex-responses` models to prevent 400 errors, and passthrough request headers are captured (`captureRequestHeaders`) and merged under client headers.
 - **Dispatch Precedence & Cache Bypass**: In `packages/ai/src/stream.ts` `streamSimple`, `model.transport === "tau-native"` takes precedence over extension-registered custom APIs (`getCustomApi`). `packages/ai/src/stream.ts` `assertExplicitOpenAIResponsesPromptCacheSupport` explicitly bypasses prompt cache assertions for `tau-native` transports because validation is deferred to the gateway-resolved model.
 
 ### Stream behavior
-<<<<<<< ours
 - **Verbatim SSE Framing**: Server's `encodeStream` (`packages/ai/src/providers/tau-native-server.ts`) streams each canonical `AssistantMessageEvent` verbatim as JSON-serialized SSE frames (`data: ${JSON.stringify(event)}\n\n`) terminated by `data: [DONE]\n\n`. Client (`packages/ai/src/providers/tau-native-client.ts` `streamPiNative`) uses `readSseJson` and pushes events directly into `AssistantMessageEventStream`.
-||||||| base
-- **Verbatim SSE Framing**: Server's `encodeStream` (`packages/ai/src/providers/pi-native-server.ts`) streams each canonical `AssistantMessageEvent` verbatim as JSON-serialized SSE frames (`data: ${JSON.stringify(event)}\n\n`) terminated by `data: [DONE]\n\n`. Client (`packages/ai/src/providers/pi-native-client.ts` `streamPiNative`) uses `readSseJson` and pushes events directly into `AssistantMessageEventStream`.
-=======
-
-- **Verbatim SSE Framing**: Server's `encodeStream` (`packages/ai/src/providers/pi-native-server.ts`) streams each canonical `AssistantMessageEvent` verbatim as JSON-serialized SSE frames (`data: ${JSON.stringify(event)}\n\n`) terminated by `data: [DONE]\n\n`. Client (`packages/ai/src/providers/pi-native-client.ts` `streamPiNative`) uses `readSseJson` and pushes events directly into `AssistantMessageEventStream`.
->>>>>>> theirs
 - **Quadratic Partial Framing**: Delta events include rolling `partial: AssistantMessage` snapshots, making wire bandwidth O(N²) in turn length. This overhead is accepted for loopback / sidecar topologies where provider latency dominates.
-<<<<<<< ours
 - **Idle & First-Event Watchdogs**: Client wraps SSE streams with `iterateWithIdleTimeout` using `PI_STREAM_FIRST_EVENT_TIMEOUT_MS` and `PI_STREAM_IDLE_TIMEOUT_MS`. `isPiNativeProgressEvent` in `packages/ai/src/providers/tau-native-client.ts` ignores `type: "start"` events so initial setup does not reset the idle timeout.
 - **Synthetic Terminal Boundaries**: If the SSE stream closes without a `done` or `error` event, client's `streamPiNative` constructs a synthetic assistant message via `makeSyntheticAssistant`. It pushes `{ type: "error", reason: "aborted", error: { ..., stopReason: "aborted", errorMessage: "stream closed without terminal event" } }` if caller aborted, or `{ type: "done", reason: "stop", message: { ..., stopReason: "stop" } }` on ungraceful clean close.
-||||||| base
-- **Idle & First-Event Watchdogs**: Client wraps SSE streams with `iterateWithIdleTimeout` using `PI_STREAM_FIRST_EVENT_TIMEOUT_MS` and `PI_STREAM_IDLE_TIMEOUT_MS`. `isPiNativeProgressEvent` in `packages/ai/src/providers/pi-native-client.ts` ignores `type: "start"` events so initial setup does not reset the idle timeout.
-- **Synthetic Terminal Boundaries**: If the SSE stream closes without a `done` or `error` event, client's `streamPiNative` constructs a synthetic assistant message via `makeSyntheticAssistant`. It pushes `{ type: "error", reason: "aborted", error: { ..., stopReason: "aborted", errorMessage: "stream closed without terminal event" } }` if caller aborted, or `{ type: "done", reason: "stop", message: { ..., stopReason: "stop" } }` on ungraceful clean close.
-=======
-- **Idle & First-Event Watchdogs**: Client wraps SSE streams with `iterateWithIdleTimeout` using `PI_STREAM_FIRST_EVENT_TIMEOUT_MS` and `PI_STREAM_IDLE_TIMEOUT_MS`. `isPiNativeProgressEvent` in `packages/ai/src/providers/pi-native-client.ts` ignores `type: "start"` events so initial setup does not reset the idle timeout.
-- **Missing terminal event**: If pi-native SSE closes without `done` or `error`, a caller abort produces a synthetic aborted error. Otherwise `streamPiNative` fails with `AIError.ProviderResponseError`, `kind: "incomplete-stream"`, rather than inventing a successful completion.
->>>>>>> theirs
 - **Server Iterator Exception Fallback**: If the server's `encodeStream` event iterator throws, it enqueues `data: {"type":"error","reason":"error","errorMessage":"..."}\n\n` followed by `data: [DONE]\n\n` so client iterators resolve instead of hanging.
 - **Thinking loop guard**: `packages/ai/src/stream.ts` `streamSimple` wraps `streamPiNative` with `withThinkingLoopGuard` and `withProviderInFlightLimit`, ensuring Gemini, DeepSeek, and Grok runaway thinking streams abort with empty-content retryable errors.
 
 ### Auth & usage
-<<<<<<< ours
 - **Bearer Token Authorization**: Client (`packages/ai/src/providers/tau-native-client.ts` `buildHeaders`) passes `options.apiKey` (the gateway bearer token) in `Authorization: Bearer <apiKey>`, unless `model.headers.Authorization` is explicitly provided.
 - **Gateway Credential Resolution**: Server route handler (`packages/ai/src/auth-gateway/server.ts`) validates the gateway bearer first. Missing/invalid tokens return `401` via `packages/ai/src/providers/tau-native-server.ts` `formatError`. Valid requests instantiate `buildGatewayApiKeyResolver` to fetch target provider credentials from `AuthStorage` using `sessionId`/`promptCacheKey` and format `"tau-native"`.
-||||||| base
-- **Bearer Token Authorization**: Client (`packages/ai/src/providers/pi-native-client.ts` `buildHeaders`) passes `options.apiKey` (the gateway bearer token) in `Authorization: Bearer <apiKey>`, unless `model.headers.Authorization` is explicitly provided.
-- **Gateway Credential Resolution**: Server route handler (`packages/ai/src/auth-gateway/server.ts`) validates the gateway bearer first. Missing/invalid tokens return `401` via `packages/ai/src/providers/pi-native-server.ts` `formatError`. Valid requests instantiate `buildGatewayApiKeyResolver` to fetch target provider credentials from `AuthStorage` using `sessionId`/`promptCacheKey` and format `"pi-native"`.
-=======
-
-- **Bearer Token Authorization**: Client (`packages/ai/src/providers/pi-native-client.ts` `buildHeaders`) passes `options.apiKey` (the gateway bearer token) in `Authorization: Bearer <apiKey>`, unless `model.headers.Authorization` is explicitly provided.
-- **Gateway Credential Resolution**: Server route handler (`packages/ai/src/auth-gateway/server.ts`) validates the gateway bearer first. Missing/invalid tokens return `401` via `packages/ai/src/providers/pi-native-server.ts` `formatError`. Valid requests instantiate `buildGatewayApiKeyResolver` to fetch target provider credentials from `AuthStorage` using `sessionId`/`promptCacheKey` and format `"pi-native"`.
->>>>>>> theirs
 - **Error Envelope & Gateway Mapping**: Server emits errors via `formatError` as `{ error: { type, message } }` with HTTP status, `application/json`, and `Cache-Control: no-store`. Client's `decodeGatewayError` converts non-2xx responses into `AIError.AuthGatewayError`, preserving HTTP status, headers, and error `type`.
 - **Usage & Header Tracking**: Token usage (`input`, `output`, `cacheRead`, `cacheWrite`, `cost`) is carried directly inside canonical `AssistantMessage` events. Client notifies response metadata (`x-request-id`, headers) via `notifyProviderResponse`.
 
 ### Catalog model handling
-<<<<<<< ours
 - **No Catalog Provider Entry**: `tau-native` is NOT a provider in `packages/catalog` (absent from `descriptors.ts` `CATALOG_PROVIDERS`, `src/provider-models/*`, `src/identity/classify.ts`, `src/model-thinking.ts`, and `scripts/generate-models.ts`).
 - **Transport Override Property**: Defined solely as `transport?: "tau-native"` on the `Model` interface in `packages/catalog/src/types.ts`.
-||||||| base
-- **No Catalog Provider Entry**: `pi-native` is NOT a provider in `packages/catalog` (absent from `descriptors.ts` `CATALOG_PROVIDERS`, `src/provider-models/*`, `src/identity/classify.ts`, `src/model-thinking.ts`, and `scripts/generate-models.ts`).
-- **Transport Override Property**: Defined solely as `transport?: "pi-native"` on the `Model` interface in `packages/catalog/src/types.ts`.
-=======
-
-- **Transport Override Property**: Defined solely as `transport?: "pi-native"` on the `Model` interface in `packages/catalog/src/types.ts`.
->>>>>>> theirs
 - **Local Catalog Resolution**: Metadata (pricing, context windows, max tokens, thinking configurations in `ThinkingConfig`, capability flags, provider priority) resolves locally from the catalog model definition (e.g. `anthropic/claude-3-5-sonnet`), while execution dispatch is routed to the gateway `baseUrl`.
 
 ---
@@ -967,14 +492,7 @@ Provider-specific overrides in `packages/catalog/src/compat/rules/providers/cere
 - **Manager Options & Discovery**: `cerebrasModelManagerOptions` in `packages/catalog/src/provider-models/openai-compat.ts` uses `createOpenAICompatibleModelManagerOptions` with `providerId: "cerebras"` and default base URL `https://api.cerebras.ai/v1`.
 
 ## Cloudflare AI Gateway (`cloudflare-ai-gateway`)
-<<<<<<< ours
 Cloudflare AI Gateway proxies requests through Cloudflare's edge infrastructure to model providers, utilizing the Anthropic Messages transport. Base URLs require substituting `<account>` and `<gateway>` path placeholders with the architect's specific Cloudflare account ID and gateway slug in model configurations.
-||||||| base
-Cloudflare AI Gateway proxies requests through Cloudflare's edge infrastructure to model providers, utilizing the Anthropic Messages transport. Base URLs require substituting `<account>` and `<gateway>` path placeholders with the user's specific Cloudflare account ID and gateway slug in model configurations.
-=======
-
-Cloudflare AI Gateway proxies requests through Cloudflare's edge infrastructure to model providers, utilizing the Anthropic Messages transport. Base URLs require substituting `<account>` and `<gateway>` path placeholders with the user's specific Cloudflare account ID and gateway slug in model configurations.
->>>>>>> theirs
 
 ### Special casings
 
@@ -993,16 +511,8 @@ Provider-specific overrides in `packages/catalog/src/compat/rules/providers/clou
 ### Auth & usage
 
 - **Authentication Prompt**: Declared in `packages/catalog/src/compat/rules/auth/cloudflare-ai-gateway.kdl` (`login "custom" hook="cloudflare-ai-gateway"`), implemented in `packages/ai/src/registry/oauth/cloudflare-ai-gateway.ts` (with transport in `packages/ai/src/registry/cloudflare-ai-gateway.ts`), prompting for a Cloudflare AI Gateway token/API key (`cf-aig-...`) and directing users to Cloudflare's authentication documentation.
-<<<<<<< ours
 - **Environment Variable**: Reads API key credentials from `CLOUDFLARE_AI_GATEWAY_API_KEY` (`packages/catalog/src/provider-models/descriptors.ts`).
 - **Account & Gateway Resolution**: Uses `https://gateway.ai.cloudflare.com/v1/<account>/<gateway>/anthropic` as the base URL template where `<account>` and `<gateway>` placeholders are replaced with the architect's Cloudflare account ID and gateway slug (`packages/catalog/src/provider-models/openai-compat.ts:cloudflareAiGatewayModelManagerOptions`).
-||||||| base
-- **Environment Variable**: Reads API key credentials from `CLOUDFLARE_AI_GATEWAY_API_KEY` (`packages/catalog/src/provider-models/descriptors.ts`).
-- **Account & Gateway Resolution**: Uses `https://gateway.ai.cloudflare.com/v1/<account>/<gateway>/anthropic` as the base URL template where `<account>` and `<gateway>` placeholders are replaced with the user's Cloudflare account ID and gateway slug (`packages/catalog/src/provider-models/openai-compat.ts:cloudflareAiGatewayModelManagerOptions`).
-=======
-- **Environment Variable**: Reads API key credentials from `CLOUDFLARE_AI_GATEWAY_API_KEY` (`packages/catalog/src/compat/rules/providers/cloudflare-ai-gateway.kdl`).
-- **Account & Gateway Resolution**: Uses `https://gateway.ai.cloudflare.com/v1/<account>/<gateway>/anthropic` as the base URL template where `<account>` and `<gateway>` placeholders are replaced with the user's Cloudflare account ID and gateway slug (`packages/catalog/src/provider-models/openai-compat.ts:cloudflareAiGatewayModelManagerOptions`).
->>>>>>> theirs
 
 ### Catalog model handling
 
@@ -1177,19 +687,9 @@ Provider-specific overrides in `packages/catalog/src/compat/rules/providers/gith
 ### Special casings
 
 - **Model ID Mapping & Routing:** `MODEL_MAPPINGS` in `packages/ai/src/providers/gitlab-duo.ts` maps Duo model identifiers (`duo-chat-opus-4-6`, `duo-chat-sonnet-4-6`, `duo-chat-opus-4-5`, `duo-chat-sonnet-4-5`, `duo-chat-haiku-4-5`, `duo-chat-gpt-5-1`, `duo-chat-gpt-5-2`, `duo-chat-gpt-5-mini`, `duo-chat-gpt-5-codex`, `duo-chat-gpt-5-2-codex`) to backend providers (`anthropic` or `openai`), underlying model IDs, API schemas (`anthropic-messages`, `openai-completions`, `openai-responses`), and proxy target URLs (`ANTHROPIC_PROXY_URL` = `https://cloud.gitlab.com/ai/v1/proxy/anthropic/` or `OPENAI_PROXY_URL` = `https://cloud.gitlab.com/ai/v1/proxy/openai/v1`).
-<<<<<<< ours
 - **Canonical Model Alias Lookup:** `getModelMapping` in `packages/ai/src/providers/gitlab-duo.ts` resolves model mappings by matching either the Duo alias key or the underlying canonical model ID string (e.g. `gpt-5-codex` or `claude-sonnet-4-5-20250929`).
 - **Direct Access Token Exchange & Caching:** `getDirectAccessToken` in `packages/ai/src/providers/gitlab-duo.ts` exchanges an architect's GitLab access token for a short-lived direct access token via `POST https://gitlab.com/api/v4/ai/third_party_agents/direct_access` with `{ feature_flags: { DuoAgentPlatformNext: true } }`. The resulting token and headers are cached in `directAccessCache` for 25 minutes (`DIRECT_ACCESS_TTL_MS`).
 - **Delegated Stream Dispatch:** `streamGitLabDuo` in `packages/ai/src/providers/gitlab-duo.ts` validates the architect token (`MissingApiKeyError`), fetches direct access headers, translates Anthropic tool choice via `mapAnthropicToolChoice` (`packages/ai/src/stream.ts`), and dispatches to `streamAnthropic`, `streamOpenAICompletions`, or `streamOpenAIResponses` (`packages/ai/src/providers/register-builtins.ts`) using synthesized model specs (`buildModel`).
-||||||| base
-- **Canonical Model Alias Lookup:** `getModelMapping` in `packages/ai/src/providers/gitlab-duo.ts` resolves model mappings by matching either the Duo alias key or the underlying canonical model ID string (e.g. `gpt-5-codex` or `claude-sonnet-4-5-20250929`).
-- **Direct Access Token Exchange & Caching:** `getDirectAccessToken` in `packages/ai/src/providers/gitlab-duo.ts` exchanges a user's GitLab access token for a short-lived direct access token via `POST https://gitlab.com/api/v4/ai/third_party_agents/direct_access` with `{ feature_flags: { DuoAgentPlatformNext: true } }`. The resulting token and headers are cached in `directAccessCache` for 25 minutes (`DIRECT_ACCESS_TTL_MS`).
-- **Delegated Stream Dispatch:** `streamGitLabDuo` in `packages/ai/src/providers/gitlab-duo.ts` validates the user token (`MissingApiKeyError`), fetches direct access headers, translates Anthropic tool choice via `mapAnthropicToolChoice` (`packages/ai/src/stream.ts`), and dispatches to `streamAnthropic`, `streamOpenAICompletions`, or `streamOpenAIResponses` (`packages/ai/src/providers/register-builtins.ts`) using synthesized model specs (`buildModel`).
-=======
-- **Canonical model aliases**: The GitLab Duo transport maps catalog Duo IDs to underlying model IDs and wire APIs before dispatch; the mappings are authored in its catalog provider policy and consumed by the transport.
-- **Direct Access Token Exchange & Caching:** `getDirectAccessToken` in `packages/ai/src/providers/gitlab-duo.ts` exchanges a user's GitLab access token for a short-lived direct access token via `POST https://gitlab.com/api/v4/ai/third_party_agents/direct_access` with `{ feature_flags: { DuoAgentPlatformNext: true } }`. The resulting token and headers are cached in `directAccessCache` for 25 minutes (`DIRECT_ACCESS_TTL_MS`).
-- **Delegated Stream Dispatch:** `streamGitLabDuo` in `packages/ai/src/providers/gitlab-duo.ts` validates the user token (`MissingApiKeyError`), fetches direct access headers, translates Anthropic tool choice via `mapAnthropicToolChoice` (`packages/ai/src/stream.ts`), and dispatches to `streamAnthropic`, `streamOpenAICompletions`, or `streamOpenAIResponses` (`packages/ai/src/providers/register-builtins.ts`) using synthesized model specs (`buildModel`).
->>>>>>> theirs
 
 ### Auth & usage
 
@@ -1203,14 +703,7 @@ Provider-specific overrides in `packages/catalog/src/compat/rules/providers/gith
 - **Provider entry (`gitlab-duo`)**: `packages/catalog/src/compat/rules/providers/gitlab-duo.kdl` declares default model `duo-chat-opus-4-6`. Environment keys: `GITLAB_TOKEN`.
 
 ## GitLab Duo Agent (`gitlab-duo-agent`)
-<<<<<<< ours
 The `gitlab-duo-agent` provider connects TAU to the GitLab Duo Workflow Service (DWS) for agentic execution over a WebSocket action-bridge protocol. It rides the `GitLab Duo` transport section.
-||||||| base
-The `gitlab-duo-agent` provider connects OMP to the GitLab Duo Workflow Service (DWS) for agentic execution over a WebSocket action-bridge protocol. It rides the `GitLab Duo` transport section.
-=======
-
-The `gitlab-duo-agent` provider connects OMP to the GitLab Duo Workflow Service (DWS) for agentic execution over a WebSocket action-bridge protocol. It rides the `GitLab Duo` transport section.
->>>>>>> theirs
 
 ### Special casings
 
@@ -1362,30 +855,8 @@ Provider-specific overrides in `packages/catalog/src/compat/rules/providers/hugg
 Kilo Gateway (`kilo`) is an AI model aggregator and proxy service (`https://api.kilo.ai/api/gateway`) using the OpenAI Chat Completions transport (`api: "openai-completions"`). It supports authentication via `KILO_API_KEY` or device-code OAuth flow (`/login kilo`), and allows unauthenticated dynamic model discovery from its OpenAI-compatible `/models` catalog endpoint.
 
 ### Special casings
-<<<<<<< ours
 - **Device-Code OAuth Authentication**: Declared in `packages/catalog/src/compat/rules/auth/kilo.kdl` (`login "custom" hook="kilo"`) and implemented in `packages/ai/src/registry/oauth/kilo.ts` (`loginKilo`), initiating device authorization via `POST https://api.kilo.ai/api/device-auth/codes`, returning an architect `code`, `verificationUrl`, and `expiresIn` seconds. It displays instructions via `callbacks.onAuth` and polls `GET https://api.kilo.ai/api/device-auth/codes/<userCode>` every 5,000ms until expiration. Handles HTTP 202 (pending), 403/410 (denied/expired), and rate limiting (HTTP 429), returning access tokens with 1-year expiration upon approval (`pollData.status === "approved"`). Supports cancellation via `callbacks.signal`.
 - **Non-Standard Host Classification**: `modelMatchesHost(hostModel, "kilo")` sets `isKilo` in `packages/catalog/src/compat/openai.ts`, placing Kilo among non-standard OpenAI-compatible providers (`isNonStandard`) to govern transport compatibility behavior.
-||||||| base
-- **Device-Code OAuth Authentication**: Declared in `packages/catalog/src/compat/rules/auth/kilo.kdl` (`login "custom" hook="kilo"`) and implemented in `packages/ai/src/registry/oauth/kilo.ts` (`loginKilo`), initiating device authorization via `POST https://api.kilo.ai/api/device-auth/codes`, returning a user `code`, `verificationUrl`, and `expiresIn` seconds. It displays instructions via `callbacks.onAuth` and polls `GET https://api.kilo.ai/api/device-auth/codes/<userCode>` every 5,000ms until expiration. Handles HTTP 202 (pending), 403/410 (denied/expired), and rate limiting (HTTP 429), returning access tokens with 1-year expiration upon approval (`pollData.status === "approved"`). Supports cancellation via `callbacks.signal`.
-- **Non-Standard Host Classification**: `modelMatchesHost(hostModel, "kilo")` sets `isKilo` in `packages/catalog/src/compat/openai.ts`, placing Kilo among non-standard OpenAI-compatible providers (`isNonStandard`) to govern transport compatibility behavior.
-=======
-
-Provider-specific overrides in `packages/catalog/src/compat/rules/providers/kilo.kdl` (more-specific selectors override provider defaults):
-
-- For models moonshotai/kimi-k2.6: `streamIdleTimeoutMs=300000`.
-- For class glm; family turbo: `thinking.efforts=["minimal","low","medium","high","xhigh"]`.
-- For class unknown: `thinking.efforts=["minimal","low","medium","high","xhigh"]`.
-- For models *thinking-2507, arcee-ai/trinity-large-thinking, nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free: `thinking.requiresEffort=true`.
-- For models deepseek/deepseek-chat-v3.1: `requiresReasoningContentForAllAssistantTurns=true`, `thinking.efforts=["high","max"]`.
-- For models deepseek/deepseek-r1, deepseek/deepseek-r1-0528, deepseek/deepseek-v3.1-terminus, deepseek/deepseek-v3.2, deepseek/deepseek-v3.2-exp, deepseek/deepseek-v4-flash, deepseek/deepseek-v4-flash-0731, deepseek/deepseek-v4-flash:discounted, ~deepseek/deepseek-v4-flash-latest: `requiresReasoningContentForAllAssistantTurns=true`.
-- For models openai/gpt-5.1-codex, openai/gpt-5.1-codex-max: `thinking.efforts=["minimal","low","medium","high"]`.
-- For models openai/gpt-5.1-codex-mini: `thinking.efforts=["medium","high"]`.
-- For models z-ai/glm-4.5*, z-ai/glm-4.7*, ~google*, ~openai*, z-ai/glm-4.6, z-ai/glm-4.6v, z-ai/glm-5, z-ai/glm-5.1, ~moonshotai/kimi-latest: `thinking.efforts=["minimal","low","medium","high","xhigh"]`.
-- For models z-ai/glm-5.2: `thinking.efforts=["minimal","low","medium","high","max"]`.
-- Provider defaults: `thinking.mode="effort"`.
-
-- **Device-Code OAuth Authentication**: Declared in `packages/catalog/src/compat/rules/auth/kilo.kdl` (`login "custom" hook="kilo"`) and implemented in `packages/ai/src/registry/oauth/kilo.ts` (`loginKilo`), initiating device authorization via `POST https://api.kilo.ai/api/device-auth/codes`, returning a user `code`, `verificationUrl`, and `expiresIn` seconds. It displays instructions via `callbacks.onAuth` and polls `GET https://api.kilo.ai/api/device-auth/codes/<userCode>` every 5,000ms until expiration. Handles HTTP 202 (pending), 403/410 (denied/expired), and rate limiting (HTTP 429), returning access tokens with 1-year expiration upon approval (`pollData.status === "approved"`). Supports cancellation via `callbacks.signal`.
->>>>>>> theirs
 - **Host URL Matching**: Host mapping in `packages/catalog/src/hosts.ts` associates URL marker `api.kilo.ai` with provider `"kilo"`.
 - **Provider Priority**: Included in `packages/catalog/src/identity/priority.ts` provider priority sequence (`"opencode-go"`, `"kilo"`, `"vercel-ai-gateway"`).
 
@@ -1513,20 +984,9 @@ Provider-specific overrides in `packages/catalog/src/compat/rules/providers/mini
 - **Gateway API overrides**: `OPENCODE_ZEN_API_RESOLUTION` and `OPENCODE_GO_API_RESOLUTION` in `packages/catalog/src/provider-models/openai-compat.ts` force `minimax-m3` / `minimax-m3-free` / `minimax-m2.7` on OpenCode gateways to route over `openai-completions` at `/v1/chat/completions` instead of Anthropic `/v1/messages`.
 
 ### Auth & usage
-<<<<<<< ours
 - **Auth keys**: Uses `MINIMAX_API_KEY` (`minimax`), `MINIMAX_CODE_API_KEY` (`minimax-code`), and `MINIMAX_CODE_CN_API_KEY` (`minimax-code-cn`) declared in `packages/catalog/src/provider-models/descriptors.ts`.
 - **Token Plan login**: Declared in `packages/catalog/src/compat/rules/auth/minimax-code.kdl` and `minimax-code-cn.kdl` as `login "api-key"` rules (`packages/ai/src/registry/engine/api-key.ts`), driving prompts linking to `https://platform.minimax.io/subscribe/token-plan` (international) and `https://platform.minimaxi.com/subscribe/token-plan` (China) and validating API key setup against model `MiniMax-M3`.
 - **Usage quota**: `minimaxCodeUsageProvider` in `packages/ai/src/usage/minimax-code.ts` polls `GET /v1/token_plan/remains` at `https://api.minimax.io` (or China equivalent), parsing rolling interval and weekly usage windows per plan bucket into remaining percentages for `tau usage`.
-||||||| base
-- **Auth keys**: Uses `MINIMAX_API_KEY` (`minimax`), `MINIMAX_CODE_API_KEY` (`minimax-code`), and `MINIMAX_CODE_CN_API_KEY` (`minimax-code-cn`) declared in `packages/catalog/src/provider-models/descriptors.ts`.
-- **Token Plan login**: Declared in `packages/catalog/src/compat/rules/auth/minimax-code.kdl` and `minimax-code-cn.kdl` as `login "api-key"` rules (`packages/ai/src/registry/engine/api-key.ts`), driving prompts linking to `https://platform.minimax.io/subscribe/token-plan` (international) and `https://platform.minimaxi.com/subscribe/token-plan` (China) and validating API key setup against model `MiniMax-M3`.
-- **Usage quota**: `minimaxCodeUsageProvider` in `packages/ai/src/usage/minimax-code.ts` polls `GET /v1/token_plan/remains` at `https://api.minimax.io` (or China equivalent), parsing rolling interval and weekly usage windows per plan bucket into remaining percentages for `omp usage`.
-=======
-
-- **Auth keys**: Uses `MINIMAX_API_KEY` (`minimax`), `MINIMAX_CODE_API_KEY` (`minimax-code`), and `MINIMAX_CODE_CN_API_KEY` (`minimax-code-cn`) declared in `packages/catalog/src/compat/rules/providers/minimax.kdl`.
-- **Token Plan login**: Declared in `packages/catalog/src/compat/rules/auth/minimax-code.kdl` and `minimax-code-cn.kdl` as `login "api-key"` rules (`packages/ai/src/registry/engine/api-key.ts`), driving prompts linking to `https://platform.minimax.io/subscribe/token-plan` (international) and `https://platform.minimaxi.com/subscribe/token-plan` (China) and validating the key with a `MiniMax-M3` Anthropic Messages request (`validate "anthropic-messages"`).
-- **Usage quota**: `minimaxCodeUsageProvider` in `packages/ai/src/usage/minimax-code.ts` polls `GET /v1/token_plan/remains` at the host root of the configured `minimax-code` base URL (default `https://api.minimax.io`; trailing `/v1`, `/anthropic`, and `/anthropic/v1` suffixes are stripped), parsing rolling interval and weekly usage windows per plan bucket into remaining percentages for `omp usage`. Only the international provider is registered; `minimax-code-cn` has no usage provider.
->>>>>>> theirs
 
 ### Catalog model handling
 
@@ -1535,14 +995,7 @@ Provider-specific overrides in `packages/catalog/src/compat/rules/providers/mini
 - **OpenAI-route flags**: For Token Plan rows still on `openai-completions` (legacy `*-lightning`), `classes/minimax.kdl` sets `supports-store #false`, `supports-developer-role #false`, `supports-reasoning-effort #false`, and `reasoning-content-field "reasoning_content"`.
 
 ## MiniMax Token Plan (`minimax-code`)
-<<<<<<< ours
 The MiniMax Token Plan provider (`minimax-code`, alongside its mainland China regional variant `minimax-code-cn`) provides access to MiniMax subscription models such as `MiniMax-M3` and `MiniMax-M2.5` using the OpenAI Chat Completions transport over HTTP POST SSE (`https://api.minimax.io/v1` for international, `https://api.minimaxi.com/v1` for China). In contrast to plain `minimax` (which routes over the Anthropic Messages transport using standard static API key authentication), `minimax-code` uses an interactive subscription login flow and features token plan quota monitoring via `tau usage`.
-||||||| base
-The MiniMax Token Plan provider (`minimax-code`, alongside its mainland China regional variant `minimax-code-cn`) provides access to MiniMax subscription models such as `MiniMax-M3` and `MiniMax-M2.5` using the OpenAI Chat Completions transport over HTTP POST SSE (`https://api.minimax.io/v1` for international, `https://api.minimaxi.com/v1` for China). In contrast to plain `minimax` (which routes over the Anthropic Messages transport using standard static API key authentication), `minimax-code` uses an interactive subscription login flow and features token plan quota monitoring via `omp usage`.
-=======
-
-The MiniMax Token Plan provider (`minimax-code`, alongside its mainland China regional variant `minimax-code-cn`) provides access to MiniMax subscription models such as `MiniMax-M3.1-Flash`, `MiniMax-M3`, and `MiniMax-M2.5` over the Anthropic Messages transport (`https://api.minimax.io/anthropic` for international, `https://api.minimaxi.com/anthropic` for China), the same transport as plain `minimax`. Unlike plain `minimax` (static pay-as-you-go API key), `minimax-code` uses an interactive subscription login flow and features token plan quota monitoring via `omp usage`.
->>>>>>> theirs
 
 ### Special casings
 
@@ -1832,18 +1285,8 @@ Provider-specific overrides in `packages/catalog/src/compat/rules/providers/open
 - **`X-Api-Key` Auth Normalization**: In `packages/ai/src/providers/anthropic.ts`, when `model.provider === "opencode-go"`, the transport deletes auto-generated `Authorization` Bearer headers so `AnthropicMessagesClient` emits `X-Api-Key`. Bearer-only requests to OpenCode Anthropic endpoints fail with HTTP `401 Missing API key` (#6510).
 
 ### Auth & usage
-<<<<<<< ours
 - **API Key Login Flow**: Declared in `packages/catalog/src/compat/rules/auth/opencode-go.kdl` as a `login "api-key"` rule (`packages/ai/src/registry/engine/api-key.ts`). It directs the architect to `https://opencode.ai/auth`, prompts for the API key, and returns the trimmed key stored under `OPENCODE_API_KEY`.
 - **Spend Windows**: `opencodeGoUsageProvider` (`packages/ai/src/usage/opencode-go.ts`) polls `GET /zen/go/v1/usage` per stored key (Bearer + `User-Agent` + `x-opencode-session`) and decodes the three server-computed windows (`rolling` → `rolling-5h`, `weekly`, `monthly`; each `{status: "ok" | "rate-limited", percent: 0-100, resetsAt}`) into percent limits with `resetsAt` deadlines. Ranking (`opencodeGoRankingStrategy`) uses rolling/weekly headroom; `monthly` is display-only because an exhausted monthly can still serve when the console "Use balance" fallback is on — hard monthly failures still rotate via the `401 Insufficient balance` usage-limit classification (#3169). Reactive quota 429s (`GoUsageLimitError`, `Resets in …`) rotate through `markUsageLimitReached`, with the server-stated window parsed by `extractRetryHint` (`packages/utils/src/fetch-retry.ts`).
-||||||| base
-- **API Key Login Flow**: Declared in `packages/catalog/src/compat/rules/auth/opencode-go.kdl` as a `login "api-key"` rule (`packages/ai/src/registry/engine/api-key.ts`). It directs the user to `https://opencode.ai/auth`, prompts for the API key, and returns the trimmed key stored under `OPENCODE_API_KEY`.
-- **Spend Windows**: `opencodeGoUsageProvider` (`packages/ai/src/usage/opencode-go.ts`) polls `GET /zen/go/v1/usage` per stored key (Bearer + `User-Agent` + `x-opencode-session`) and decodes the three server-computed windows (`rolling` → `rolling-5h`, `weekly`, `monthly`; each `{status: "ok" | "rate-limited", percent: 0-100, resetsAt}`) into percent limits with `resetsAt` deadlines. Ranking (`opencodeGoRankingStrategy`) uses rolling/weekly headroom; `monthly` is display-only because an exhausted monthly can still serve when the console "Use balance" fallback is on — hard monthly failures still rotate via the `401 Insufficient balance` usage-limit classification (#3169). Reactive quota 429s (`GoUsageLimitError`, `Resets in …`) rotate through `markUsageLimitReached`, with the server-stated window parsed by `extractRetryHint` (`packages/utils/src/fetch-retry.ts`).
-=======
-
-- **API Key Login Flow**: Declared in `packages/catalog/src/compat/rules/auth/opencode-go.kdl` as a `login "api-key"` rule (`packages/ai/src/registry/engine/api-key.ts`). It directs the user to `https://opencode.ai/auth`, prompts for the API key, and returns the trimmed key stored under `OPENCODE_API_KEY`.
-- **Spend Windows**: `opencodeGoUsageProvider` (`packages/ai/src/usage/opencode-go.ts`) polls the account endpoint `GET https://opencode.ai/zen/go/v1/usage` per stored key (Bearer + `User-Agent` + `x-opencode-session`). Bundled `/inference/go[/v1]` model URLs map back to this route; user-configured proxy URLs retain their own prefixes. The response's `rolling`, `weekly`, and `monthly` windows (`{status, percent, resetsAt}`) become percent limits with reset deadlines. Ranking uses rolling/weekly headroom; monthly is display-only because the console's "Use balance" fallback can still serve on an exhausted monthly window.
-- **Account funds 402**: Go can return `402 Upstream request failed: Insufficient account funds (type=server_error)` when an account cannot fund a request. OMP treats this as an account-local usage cap and retries a stored sibling API key instead of backing off on the exhausted key (#13019).
->>>>>>> theirs
 
 ### Catalog model handling
 
@@ -1885,16 +1328,8 @@ Provider-specific overrides in `packages/catalog/src/compat/rules/providers/open
 - **Anthropic Proxy Header & Beta Handling**: In `packages/ai/src/providers/anthropic.ts`, `opencode-zen` deletes default `Authorization` headers (`delete defaultHeaders.Authorization`) and supplies `apiKey` to emit `X-Api-Key` headers. Thinking requests on `opencode-zen` suppress the `context_management_20251015` beta header and body field (`context_management`) because the Zen Anthropic proxy rejects unrecognized fields with `400 Extra inputs are not permitted` (#6510).
 
 ### Auth & usage
-<<<<<<< ours
 - **API Key Manual Auth**: Configured via the `OPENCODE_API_KEY` environment variable (`CATALOG_PROVIDERS` descriptor in `packages/catalog/src/provider-models/descriptors.ts`).
 - **Interactive CLI Login Flow**: Declared in `packages/catalog/src/compat/rules/auth/opencode-zen.kdl` as a `login "api-key"` rule (`packages/ai/src/registry/engine/api-key.ts`): it opens `https://opencode.ai/auth` in the browser and prompts the architect to paste their API key.
-||||||| base
-- **API Key Manual Auth**: Configured via the `OPENCODE_API_KEY` environment variable (`CATALOG_PROVIDERS` descriptor in `packages/catalog/src/provider-models/descriptors.ts`).
-- **Interactive CLI Login Flow**: Declared in `packages/catalog/src/compat/rules/auth/opencode-zen.kdl` as a `login "api-key"` rule (`packages/ai/src/registry/engine/api-key.ts`): it opens `https://opencode.ai/auth` in the browser and prompts the user to paste their API key.
-=======
-
-- **Interactive CLI Login Flow**: Declared in `packages/catalog/src/compat/rules/auth/opencode-zen.kdl` as a `login "api-key"` rule (`packages/ai/src/registry/engine/api-key.ts`): it opens `https://opencode.ai/auth` in the browser and prompts the user to paste their API key.
->>>>>>> theirs
 - **Wire Authentication**: Credentials across both Anthropic and OpenAI-compatible protocol endpoints are passed via `X-Api-Key` headers rather than standard Bearer tokens.
 
 ### Catalog model handling
@@ -2097,21 +1532,9 @@ StepFun is the OpenAI-compatible Open Platform endpoint at `https://api.stepfun.
 - **No Usage Tracking**: No dedicated quota or usage resolution module is present under `packages/ai/src/usage/`; prompt caching is billed by StepFun as the cache-miss input rate, so rows carry `cacheWrite: 0`.
 
 ### Catalog model handling
-<<<<<<< ours
 - **Descriptor Configuration**: `stepfunModelManagerOptions` is registered in `packages/catalog/src/provider-models/descriptors.ts` with `defaultModel: "step-5-preview"`, `envVars: ["STEPFUN_API_KEY"]`, and discovery label `StepFun`.
 - **Seeded Bundle**: `providers/stepfun.kdl` carries `seed bundle="always"` rows with StepFun's published model-card limits and prices (`https://platform.stepfun.ai/docs/en/guides/pricing/details`, limits as catalogued on models.dev), so the provider is selectable before first discovery.
 - **Live Discovery**: `stepfunModelManagerOptions` in `packages/catalog/src/provider-models/openai-compat.ts` treats a successful `/v1/models` snapshot as authoritative (`dynamicModelsAuthoritative`): it replaces the seed rows, hydrated by `mapWithBundledReference`, so retired models leave the picker and models StepFun ships later become selectable without an tau release.
-||||||| base
-- **Descriptor Configuration**: `stepfunModelManagerOptions` is registered in `packages/catalog/src/provider-models/descriptors.ts` with `defaultModel: "step-5-preview"`, `envVars: ["STEPFUN_API_KEY"]`, and discovery label `StepFun`.
-- **Seeded Bundle**: `providers/stepfun.kdl` carries `seed bundle="always"` rows with StepFun's published model-card limits and prices (`https://platform.stepfun.ai/docs/en/guides/pricing/details`, limits as catalogued on models.dev), so the provider is selectable before first discovery.
-- **Live Discovery**: `stepfunModelManagerOptions` in `packages/catalog/src/provider-models/openai-compat.ts` treats a successful `/v1/models` snapshot as authoritative (`dynamicModelsAuthoritative`): it replaces the seed rows, hydrated by `mapWithBundledReference`, so retired models leave the picker and models StepFun ships later become selectable without an omp release.
-=======
-
-- **Provider entry (`stepfun`)**: `packages/catalog/src/compat/rules/providers/stepfun.kdl` declares default model `step-5-preview`. Environment keys: `STEPFUN_API_KEY`.
-- **Discovery replacement**: Successful authoritative discovery replaces fallback provider rows rather than retaining retired seed models.
-- **Authored seeds**: `step-5-preview`, `step-3.7-flash`, `step-3.5-flash`, `step-3.5-flash-2603`; bundle policy `always`. Limits, capabilities, and prices are authored alongside these rows.
-- **Live Discovery**: `stepfunModelManagerOptions` in `packages/catalog/src/provider-models/openai-compat.ts` treats a successful `/v1/models` snapshot as authoritative (`dynamicModelsAuthoritative`): it replaces the seed rows, hydrated by `mapWithBundledReference`, so retired models leave the picker and models StepFun ships later become selectable without an omp release.
->>>>>>> theirs
 
 ## Synthetic (`synthetic`)
 
@@ -2154,14 +1577,7 @@ Provider-specific overrides in `packages/catalog/src/compat/rules/providers/toge
 - Provider defaults: `supportsStrictMode=true`, `thinking.mode="effort"`.
 
 ### Auth & usage
-<<<<<<< ours
 - **API Key Auth**: Authenticates using the `TOGETHER_API_KEY` environment variable or API key input during `tau-ai login together`.
-||||||| base
-- **API Key Auth**: Authenticates using the `TOGETHER_API_KEY` environment variable or API key input during `pi-ai login together`.
-=======
-
-- **API Key Auth**: Authenticates using the `TOGETHER_API_KEY` environment variable or API key input during `pi-ai login together`.
->>>>>>> theirs
 - **Validation**: Validates keys in `packages/catalog/src/compat/rules/auth/together.kdl` as a `login "api-key"` rule (`packages/ai/src/registry/engine/api-key.ts`) against `https://api.together.xyz/v1/models`.
 - **API Base URL**: `https://api.together.xyz/v1`.
 
@@ -2250,14 +1666,7 @@ Provider-specific overrides in `packages/catalog/src/compat/rules/providers/vllm
 - For class qwen: `thinkingFormat="qwen-chat-template"`.
 
 ### Auth & usage
-<<<<<<< ours
 - **Credential Resolution & Defaults**: Declared in `packages/catalog/src/compat/rules/auth/vllm.kdl` as a `login "api-key"` rule (`packages/ai/src/registry/engine/api-key.ts`). Reads optional API keys from the `VLLM_API_KEY` environment variable or credentials stored via `tau auth-broker login vllm`.
-||||||| base
-- **Credential Resolution & Defaults**: Declared in `packages/catalog/src/compat/rules/auth/vllm.kdl` as a `login "api-key"` rule (`packages/ai/src/registry/engine/api-key.ts`). Reads optional API keys from the `VLLM_API_KEY` environment variable or credentials stored via `omp auth-broker login vllm`.
-=======
-
-- **Credential Resolution & Defaults**: Declared in `packages/catalog/src/compat/rules/auth/vllm.kdl` as a `login "api-key"` rule (`packages/ai/src/registry/engine/api-key.ts`). Reads optional API keys from the `VLLM_API_KEY` environment variable or credentials stored via `omp auth-broker login vllm`.
->>>>>>> theirs
 - **Unauthenticated Local Mode**: Defaults to base URL `http://127.0.0.1:8000/v1` and placeholder token `"vllm-local"` (`DEFAULT_LOCAL_TOKEN`) when no key is supplied (`emptyKeyFallback: "vllm-local"`). Descriptor settings specify `catalogDiscovery: { label: "vLLM", allowUnauthenticated: true }`.
 - **Documentation & Endpoint Setup**: The login helper points to `https://docs.vllm.ai/en/latest/serving/openai_compatible_server.html` for configuring local vLLM OpenAI-compatible server endpoints.
 
@@ -2390,14 +1799,7 @@ Provider-specific overrides in `packages/catalog/src/compat/rules/providers/xiao
 - **Host Matching**: `modelMatchesHost` (`packages/catalog/src/hosts.ts`) matches `xiaomi` provider IDs, `xiaomi-token-plan-` provider prefixes, and `xiaomimimo.com` URL markers to the `xiaomi` host class.
 
 ## Xiaomi Token Plan (Europe) (`xiaomi-token-plan-ams`)
-<<<<<<< ours
 Xiaomi Token Plan (Europe) (`xiaomi-token-plan-ams`) provides regional access to Xiaomi's MiMo model family (such as `mimo-v2.5` and `mimo-v2-omni`) via Xiaomi's European Token Plan gateway (`https://token-plan-ams.xiaomimimo.com/v1`). It uses the OpenAI Chat Completions transport (`api: "openai-completions"`). This regional provider allows CLI login (`tau login`) and dynamic model lookup to store and validate `tp-` API keys against the European cluster without falling back across regions.
-||||||| base
-Xiaomi Token Plan (Europe) (`xiaomi-token-plan-ams`) provides regional access to Xiaomi's MiMo model family (such as `mimo-v2.5` and `mimo-v2-omni`) via Xiaomi's European Token Plan gateway (`https://token-plan-ams.xiaomimimo.com/v1`). It uses the OpenAI Chat Completions transport (`api: "openai-completions"`). This regional provider allows CLI login (`omp login`) and dynamic model lookup to store and validate `tp-` API keys against the European cluster without falling back across regions.
-=======
-
-Xiaomi Token Plan (Europe) (`xiaomi-token-plan-ams`) provides regional access to Xiaomi's MiMo model family (such as `mimo-v2.5` and `mimo-v2-omni`) via Xiaomi's European Token Plan gateway (`https://token-plan-ams.xiaomimimo.com/v1`). It uses the OpenAI Chat Completions transport (`api: "openai-completions"`). This regional provider allows CLI login (`omp login`) and dynamic model lookup to store and validate `tp-` API keys against the European cluster without falling back across regions.
->>>>>>> theirs
 
 ### Special casings
 
@@ -2501,19 +1903,9 @@ Provider-specific overrides in `packages/catalog/src/compat/rules/providers/zai.
 - **Credential ranking**: `zaiRankingStrategy` (`packages/ai/src/usage/zai.ts`, registered in `packages/ai/src/auth-storage.ts`) ranks request limits via `rankZaiRequestLimits` (falling back to the full credential limit set — tokens/requests/credits — when no request quotas exist), selecting primary 5-hour and secondary weekly quota windows.
 
 ### Catalog model handling
-<<<<<<< ours
 - **Descriptor & PAYG pricing**: `MODELS_DEV_PROVIDER_DESCRIPTORS_CODING_PLANS` in `packages/catalog/src/provider-models/openai-compat.ts` defines `anthropicMessagesDescriptor("zai", "zai", "https://api.z.ai/api/anthropic")`, mapping models.dev `zai` pay-as-you-go pricing key instead of `zai-coding-plan` to avoid surfacing subscription rates as all-$0 Free models (#5598).
 - **Default model & context policy**: `PROVIDER_DESCRIPTORS` in `packages/catalog/src/provider-models/descriptors.ts` sets default model `glm-5.2`. `generated-policies.ts` (`packages/catalog/scripts/generated-policies.ts`) pins `glm-5.2` context window to 1,000,000 tokens, while `dropUnusableZaiContextTierIds` (`packages/catalog/scripts/generate-models.ts`) filters out `[1m]` context tier ID suffixes.
 - **GLM-5.2 effort support**: `getModelDefinedEfforts` in `packages/catalog/src/model-thinking.ts` (checked via `isAnthropicMessagesGlm52ReasoningEffortModel`) assigns `HIGH_MAX_REASONING_EFFORTS` (`["high", "max"]`) to `glm-5.2`, treating `"none"` as the disabled state rather than an architect tier level.
-||||||| base
-- **Descriptor & PAYG pricing**: `MODELS_DEV_PROVIDER_DESCRIPTORS_CODING_PLANS` in `packages/catalog/src/provider-models/openai-compat.ts` defines `anthropicMessagesDescriptor("zai", "zai", "https://api.z.ai/api/anthropic")`, mapping models.dev `zai` pay-as-you-go pricing key instead of `zai-coding-plan` to avoid surfacing subscription rates as all-$0 Free models (#5598).
-- **Default model & context policy**: `PROVIDER_DESCRIPTORS` in `packages/catalog/src/provider-models/descriptors.ts` sets default model `glm-5.2`. `generated-policies.ts` (`packages/catalog/scripts/generated-policies.ts`) pins `glm-5.2` context window to 1,000,000 tokens, while `dropUnusableZaiContextTierIds` (`packages/catalog/scripts/generate-models.ts`) filters out `[1m]` context tier ID suffixes.
-- **GLM-5.2 effort support**: `getModelDefinedEfforts` in `packages/catalog/src/model-thinking.ts` (checked via `isAnthropicMessagesGlm52ReasoningEffortModel`) assigns `HIGH_MAX_REASONING_EFFORTS` (`["high", "max"]`) to `glm-5.2`, treating `"none"` as the disabled state rather than a user tier level.
-=======
-
-- **Provider entry (`zai`)**: `packages/catalog/src/compat/rules/providers/zai.kdl` declares default model `glm-5.3`. Environment keys: `ZAI_API_KEY`.
-- **Authored seeds**: `glm-5.3`, `glm-5.3-flash`; bundle policy `always`. Limits, capabilities, and prices are authored alongside these rows.
->>>>>>> theirs
 
 ## ZenMux (`zenmux`)
 

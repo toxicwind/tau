@@ -3,13 +3,9 @@ import {
 	describeInflight,
 	describeScreenshot,
 	type InflightOp,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 	preparePageForScreenshot,
 } from "tau/tools/browser/tab-worker";
-=======
-} from "@oh-my-pi/pi-coding-agent/tools/browser/tab-worker";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/tools/browser-op-tracking.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 describe("browser op tracking — timeout diagnostics", () => {
 	it("labels a screenshot op by its distinguishing argument", () => {

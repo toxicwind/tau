@@ -1,12 +1,7 @@
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { $which, logger } from "@oh-my-pi/pi-utils";`
 import { $which, logger } from "@tau/tau-utils";
-=======
-import { inflateSync } from "node:zlib";
-import { $which, isEnoent, logger } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/exec/direnv.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /** Default cap on a single `direnv` invocation. The first export for a devenv
  *  `.envrc` can build a shell; callers may raise this via `bash.direnvLoadTimeoutMs`. */

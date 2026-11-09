@@ -10,14 +10,9 @@ import type {
 	ToolResultMessage,
 	Usage,
 	UserMessage,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { isRecord, parseJsonlLenient } from "@oh-my-pi/pi-utils…`
 } from "@tau/tau-ai";
 import { isRecord, parseJsonlLenient } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-ai";
-import { isRecord, parseJsonlLenient, sanitizeText } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/session/claude-session-store.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { resolveClaudePaths } from "../config/claude-paths";
 import { collectForeignJsonRecords, type ForeignJsonRecord, readForeignJsonRecords } from "./foreign-session-jsonl";
 import type { ForeignSessionInfo, ForeignSessionStore } from "./foreign-session-store";

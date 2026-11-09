@@ -2,31 +2,12 @@ import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { Settings } from "tau/config/settings";
 import { disposeAllVmContexts } from "tau/eval/js/context-manager";
 import { createBrowserPrelude } from "tau/tools/browser";
 import { releaseAllTabs } from "tau/tools/browser/tab-supervisor";
 import type { ToolSession } from "tau/tools/index";
-=======
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { disposeAllVmContexts } from "@oh-my-pi/pi-coding-agent/eval/js/context-manager";
-import { createBrowserPrelude } from "@oh-my-pi/pi-coding-agent/tools/browser";
-import { CmuxTab } from "@oh-my-pi/pi-coding-agent/tools/browser/cmux/cmux-tab";
-import {
-	clickElement,
-	clickQueryHandlerText,
-	fillViaHandle,
-	resolveActionableQueryHandlerClickTarget,
-	TypingInterruptedError,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/interactions";
-import { acquireBrowser, releaseBrowser } from "@oh-my-pi/pi-coding-agent/tools/browser/registry";
-import { releaseAllTabs } from "@oh-my-pi/pi-coding-agent/tools/browser/tab-supervisor";
-import { TERN_KIT_SOURCE } from "@oh-my-pi/pi-coding-agent/tools/browser/tern/page-kit";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools/index";
-import { rejectionOf } from "../helpers/rejection";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/tools/browser-interactions.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { chromiumAvailable } from "./chromium-probe";
 
 const CHROMIUM_AVAILABLE = await chromiumAvailable();

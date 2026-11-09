@@ -1,5 +1,4 @@
 import { afterEach, describe, expect, test, vi } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { getEnvApiKey, streamSimple } from "@oh-my-pi/pi-ai/str…` +1 more
 import { getOAuthProviders } from "@tau/tau-ai/registry/oauth";
 import { getProviderDefinition } from "@tau/tau-ai/registry";
@@ -9,18 +8,6 @@ import { getBundledModels } from "@tau/tau-catalog/models";
 import { DEFAULT_MODEL_PER_PROVIDER, PROVIDER_DESCRIPTORS } from "@tau/tau-catalog/provider-models/descriptors";
 import { commandCodeModelManagerOptions } from "@tau/tau-catalog/provider-models/openai-compat";
 import type { FetchImpl } from "@tau/tau-catalog/types";
-=======
-import { getOAuthProviders } from "@oh-my-pi/pi-ai/registry/oauth";
-import { getProviderDefinition } from "@oh-my-pi/pi-ai/registry";
-import { getEnvApiKey } from "@oh-my-pi/pi-ai/env-api-key";
-import { streamSimple } from "@oh-my-pi/pi-ai/stream";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { getBundledModels } from "@oh-my-pi/pi-catalog/models";
-import { DEFAULT_MODEL_PER_PROVIDER, PROVIDER_DESCRIPTORS } from "@oh-my-pi/pi-catalog/provider-models/descriptors";
-import { commandCodeModelManagerOptions } from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import type { FetchImpl, ModelSpec } from "@oh-my-pi/pi-catalog/types";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/catalog/test/commandcode-provider.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const originalPrimaryKey = Bun.env.COMMAND_CODE_API_KEY;
 const originalLegacyKey = Bun.env.COMMANDCODE_API_KEY;

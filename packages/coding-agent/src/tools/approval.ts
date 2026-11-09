@@ -7,40 +7,8 @@ import { join } from "node:path";
  * - compare a tool capability tier against the active approval mode,
  * - format the generic approval prompt body.
  */
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { AgentTool, ToolApprovalDecision, ToolTier } from …`
 import type { AgentTool, ToolApprovalDecision, ToolTier } from "@tau/tau-agent-core";
-=======
-import { isRecord, prompt, sanitizeText } from "@oh-my-pi/pi-utils";
-import { replaceTabs } from "@oh-my-pi/pi-tui";
-import { shortenPath } from "@oh-my-pi/pi-tui/render/render-utils";
-import approvalFolderTemplate from "../prompts/tools/approval-folder.md" with { type: "text" };
-import type { AgentTool, AgentToolContext, ToolApprovalDecision, ToolTier } from "@oh-my-pi/pi-agent-core";
-import * as path from "node:path";
-import type { Settings } from "../config/settings";
-import { normalizeToLF } from "../edit/normalize";
-import type {
-	ExtensionApprovalAnswer,
-	ExtensionApprovalGrant,
-	ExtensionApprovalPrompt,
-	ExtensionUIContext,
-} from "../extensibility/extensions/types";
-
-import {
-	type ApprovalGrantStore,
-	type ApprovalGrants,
-	approvalCacheKeyForPath,
-	approvalGrantKey,
-} from "./approval-cache";
-import { cfgToolsApproval, cfgToolsApprovalMode, cfgToolsRestrictedFolders } from "./settings";
-import {
-	approvalFolderListing,
-	type ApprovalFolderListing,
-	approvalTargetNamesFile,
-	approvalTreeSearchFolderKey,
-} from "./approval-targets";
-import { expandTilde, resolveToCwd } from "./path-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/approval.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 export type { ToolApproval, ToolApprovalDecision, ToolTier } from "@tau/tau-agent-core";
 

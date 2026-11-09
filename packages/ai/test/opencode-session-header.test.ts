@@ -1,5 +1,4 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { resolveOpenAIRequestSetup } from "@oh-my-pi/pi-ai/prov…` +2 more
 import { completeSimple, stream } from "@tau/tau-ai";
 import { buildAnthropicClientOptions } from "@tau/tau-ai/providers/anthropic";
@@ -8,20 +7,6 @@ import type { Model } from "@tau/tau-ai/types";
 import { opencodeGoUsageProvider } from "@tau/tau-ai/usage/opencode-go";
 import { buildModel } from "@tau/tau-catalog/build";
 import { USER_AGENT } from "@tau/tau-utils";
-=======
-import { completeSimple, stream } from "@oh-my-pi/pi-ai";
-import { buildAnthropicClientOptions } from "@oh-my-pi/pi-ai/providers/anthropic";
-import { applyInferenceHeaders, resolveOpenCodeGoCacheAffinity } from "@oh-my-pi/pi-ai/providers/inference-headers";
-import {
-	normalizeOpenAIPromptCacheKey,
-	resolveOpenAIRequestSetup,
-	type OpenAIRequestSetupModel,
-} from "@oh-my-pi/pi-ai/providers/openai-shared";
-import type { Api, Model } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { resolveCatalogPolicy } from "@oh-my-pi/pi-catalog/compat/catalog-policy";
-import { USER_AGENT } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/test/opencode-session-header.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 import { withEnv } from "./helpers";
 
@@ -1022,7 +1007,6 @@ describe("custom provider backend identity on the OpenCode affinity lanes", () =
 		expect(setup.headers["User-Agent"]).toBe(USER_AGENT);
 	});
 });
-<<<<<<< ours — test_suite `usage fetch carries attribution headers` (T+S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 describe("usage fetch carries attribution headers", () => {
 	it("sends User-Agent and a stable x-opencode-session on usage polls", async () => {
@@ -1051,5 +1035,3 @@ describe("usage fetch carries attribution headers", () => {
 		expect(seen[0]?.[OPENCODE_SESSION_HEADER]?.length).toBeGreaterThan(0);
 	});
 });
-=======
->>>>>>> theirs — test_suite `usage fetch carries attribution headers` (T+S+F, confidence: low)

@@ -1,5 +1,4 @@
 import { describe, expect, it, vi } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { AgentTool, AgentToolContext, AgentToolResult } fr…`
 import { type } from "@tau/tautype";
 import type { AgentTool, AgentToolContext, AgentToolResult } from "@tau/tau-agent-core";
@@ -9,17 +8,6 @@ import type { EvalShadowCellSession } from "tau/eval/speculation/cell-session";
 import { type TodoPhase } from "@tau/tau-tui/tools/todo";
 import { TodoTool, type ToolSession } from "tau/tools";
 import { INTENT_FIELD } from "@tau/tau-wire";
-=======
-import { type } from "@oh-my-pi/omptype";
-import type { AgentTool, AgentToolResult } from "@oh-my-pi/pi-agent-core";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { EVAL_TIMEOUT_PAUSE_OP, EVAL_TIMEOUT_RESUME_OP } from "@oh-my-pi/pi-coding-agent/eval/bridge-timeout";
-import { callSessionTool } from "@oh-my-pi/pi-coding-agent/eval/js/tool-bridge";
-import type { EvalShadowCellSession } from "@oh-my-pi/pi-coding-agent/eval/speculation/cell-session";
-import { type TodoPhase } from "@oh-my-pi/pi-tui/tools/todo";
-import { TodoTool, type ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { INTENT_FIELD } from "@oh-my-pi/pi-wire";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/core/js-tool-bridge.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function createTool(name: string, execute: AgentTool["execute"]): AgentTool {
 	return {

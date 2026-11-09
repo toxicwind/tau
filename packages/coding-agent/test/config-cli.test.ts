@@ -1,17 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { getConfigRootDir, setAgentDir, TempDir } from "@oh-my-…`
 import { runConfigCommand } from "tau/cli/config-cli";
 import { resetSettingsForTest } from "tau/config/settings";
 import { AgentStorage } from "tau/session/agent-storage";
 import { getConfigRootDir, setAgentDir, TempDir } from "@tau/tau-utils";
-=======
-import { runConfigCommand } from "@oh-my-pi/pi-coding-agent/cli/config-cli";
-import { resetSettingsForTest } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentStorage } from "@oh-my-pi/pi-coding-agent/session/agent-storage";
-import { getConfigRootDir, getProjectDir, setAgentDir, setProjectDir, TempDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/config-cli.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 let testAgentDir: TempDir | undefined;
 const originalAgentDir = process.env.PI_CODING_AGENT_DIR;

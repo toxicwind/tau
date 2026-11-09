@@ -9,7 +9,6 @@ import type {
 	ToolResultMessage,
 	ToolResultProviderMetadata,
 	UserMessage,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { providerImageBudget } from "@oh-my-pi/snapcompact";`
 } from "@tau/tau-ai";
 import { decodeDataUri } from "@tau/tau-ai/providers/openai-data-uri";
@@ -18,21 +17,6 @@ import { LRUCache } from "@tau/tau-utils/lru";
 import { providerImageBudget } from "@tau/snapcompact";
 import { supportsRemoteImageUrls } from "../blob-broker/context-images";
 import { imageDecodeFailureReason } from "@tau/tau-tui/chat/image-loading";
-=======
-} from "@oh-my-pi/pi-ai";
-import { reachesBudgetedHost } from "@oh-my-pi/pi-ai";
-import { adoptFactoryReplay, toGeminiTools } from "@oh-my-pi/pi-ai/providers/factory-droid/gemini";
-import { decodeDataUri } from "@oh-my-pi/pi-ai/providers/openai-data-uri";
-import { resolveFactoryDroidPolicy } from "@oh-my-pi/pi-catalog/compat/factory-droid";
-import { resolveModelPolicy } from "@oh-my-pi/pi-catalog/compat/resolve";
-import { resolveInlineImageByteBudget, resolveRequestBodyByteLimit } from "@oh-my-pi/pi-catalog/compat/request-size";
-import { isRecord } from "@oh-my-pi/pi-utils";
-import { LRUCache } from "@oh-my-pi/pi-utils/lru";
-import { capFrameDataBytes, frameDataBytesBudget, providerImageBudget } from "@oh-my-pi/snapcompact";
-import { supportsRemoteImageUrls } from "../blob-broker/context-images";
-import { declaredTools } from "../utils/tool-declarations";
-import { imageDecodeFailureReason } from "@oh-my-pi/pi-tui/chat/image-loading";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/session/provider-image-budget.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const IMAGE_OMISSION: TextContent = {
 	type: "text",

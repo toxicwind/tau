@@ -40,19 +40,9 @@ export type RelayRpcRequest =
 	| { op: "activateTab"; tabId: number }
 	/** Add tabs to the per-window tau group (created/reused by title), remembering prior membership. */
 	| { op: "group"; tabIds: number[]; title: string; color: string }
-<<<<<<< ours — type `RelayRpcRequest` (T+S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 	/** Return tabs to their pre-tau group (or ungroup); no-op for tabs the relay never grouped. */
 	| { op: "ungroup"; tabIds: number[] };
-=======
-	/** Return tabs to their pre-omp group (or ungroup); no-op for tabs the relay never grouped. */
-	| { op: "ungroup"; tabIds: number[] }
-	/**
-	 * Where Chrome saved the download a driven page reported as `guid` (`Page.downloadWillBegin`), as a
-	 * {@link FoundDownload}.
-	 */
-	| { op: "findDownload"; guid: string };
->>>>>>> theirs — type `RelayRpcRequest` (T+S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/browser/relay/protocol.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /** The extension's answer to `findDownload`: null when it paired no Chrome download with that report. */
 export type FoundDownload = { filename: string; state: "in_progress" | "interrupted" | "complete" } | null;

@@ -31,33 +31,7 @@ agent.subscribe((event) => {
 await agent.prompt("Hello!");
 ```
 
-<<<<<<< ours — heading `Quick Start` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
-=======
-## Quick Start
-
-```typescript
-import { Agent } from "@oh-my-pi/pi-agent";
-import { getModel } from "@oh-my-pi/pi-ai";
-
-const agent = new Agent({
-	initialState: {
-		systemPrompt: ["You are a helpful assistant."],
-		model: getModel("anthropic", "claude-sonnet-4-20250514"),
-	},
-});
-
-agent.subscribe(event => {
-	if (event.type === "message_update" && event.assistantMessageEvent.type === "text_delta") {
-		// Stream just the new text chunk
-		process.stdout.write(event.assistantMessageEvent.delta);
-	}
-});
-
-await agent.prompt("Hello!");
-```
-
->>>>>>> theirs — heading `Quick Start` (S+F, confidence: low) · weave: run 'weave explain packages/agent/README.md' for per-hunk detail, 'weave check' to verify your resolution
 ## Core Concepts
 
 ### AgentMessage vs LLM Message
@@ -181,15 +155,9 @@ const agent = new Agent({
   // Dynamic model-scoped API key resolution (for expiring OAuth tokens)
   getApiKey: async (model) => tokenForModel(model),
 
-<<<<<<< ours — heading `Agent Options` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
   // Tool execution context (late-bound UI/session access)
   getToolContext: () => ({ /* app-defined */ }),
-=======
-  // Tool execution context (late-bound UI/session access). Surface the loop's
-  // passive-context sink so tools can call ctx.addAdditionalContext(...).
-  getToolContext: toolCall => ({ addAdditionalContext: toolCall?.addAdditionalContext /* app-defined */ }),
->>>>>>> theirs — heading `Agent Options` (F, confidence: medium)
 });
 ```
 
@@ -211,10 +179,7 @@ interface AgentState {
 
 Access via `agent.state`. During streaming, `streamMessage` contains the partial assistant message.
 
-<<<<<<< ours — heading `Agent State` (?, confidence: unknown)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
-=======
->>>>>>> theirs — heading `Agent State` (?, confidence: unknown)
 ## Methods
 
 ### Prompting
@@ -288,14 +253,7 @@ agent.followUp({
 Steering messages are checked after each tool call by default. Set `interruptMode` to `"wait"` to defer
 steering until the current turn completes.
 
-<<<<<<< ours — heading `Steering & Follow-up` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
-=======
-Hosts can use `setQueuedMessageGrouping((previous, next) => boolean)` to keep adjacent companion
-records and their prompt together in `one-at-a-time` mode. Without a grouping predicate, records
-remain separate. `replaceQueue("steering" | "followUp", messages)` replaces only the selected queue.
-
->>>>>>> theirs — heading `Steering & Follow-up` (F, confidence: medium)
 ## Custom Message Types
 
 Extend `AgentMessage` via declaration merging:
@@ -353,37 +311,7 @@ const readFileTool: AgentTool = {
 agent.setTools([readFileTool]);
 ```
 
-<<<<<<< ours — heading `Custom Message Types` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
-=======
-## Custom Message Types
-
-Extend `AgentMessage` via declaration merging:
-
-```typescript
-declare module "@oh-my-pi/pi-agent" {
-	interface CustomAgentMessages {
-		notification: { role: "notification"; text: string; timestamp: number };
-	}
-}
-
-// Now valid
-const msg: AgentMessage = { role: "notification", text: "Info", timestamp: Date.now() };
-```
-
-Handle custom types in `convertToLlm`:
-
-```typescript
-const agent = new Agent({
-	convertToLlm: messages =>
-		messages.flatMap(m => {
-			if (m.role === "notification") return []; // Filter out
-			return [m];
-		}),
-});
-```
-
->>>>>>> theirs — heading `Custom Message Types` (S+F, confidence: low)
 ### Error Handling
 
 **Throw an error** when a tool fails. Do not return error messages as content.
@@ -447,40 +375,7 @@ for await (const event of agentLoopContinue(context, config)) {
 }
 ```
 
-<<<<<<< ours — heading `Low-Level API` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
-=======
-## Low-Level API
-
-For direct control without the Agent class:
-
-```typescript
-import { agentLoop, agentLoopContinue } from "@oh-my-pi/pi-agent";
-
-const context: AgentContext = {
-	systemPrompt: ["You are helpful."],
-	messages: [],
-	tools: [],
-};
-
-const config: AgentLoopConfig = {
-	model: getModel("openai", "gpt-4o"),
-	convertToLlm: msgs => msgs.filter(m => ["user", "assistant", "toolResult"].includes(m.role)),
-};
-
-const userMessage = { role: "user", content: "Hello", timestamp: Date.now() };
-
-for await (const event of agentLoop([userMessage], context, config)) {
-	console.log(event.type);
-}
-
-// Continue from existing context
-for await (const event of agentLoopContinue(context, config)) {
-	console.log(event.type);
-}
-```
-
->>>>>>> theirs — heading `Low-Level API` (S+F, confidence: low)
 ## Run-level telemetry
 
 Every `invoke_agent` produces two values alongside the OTEL spans:
@@ -563,7 +458,6 @@ for (const target of targets) {
 	const result = await detailed();
 	if (result.telemetry) summaries.push(result.telemetry);
 	if (result.coverage) coverages.push(result.coverage);
-<<<<<<< ours — scope `aggregateAgentRunCoverage,` in heading `Multi-run aggregation`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	aggregateAgentRunCoverage,
 } from "@tau/tau-agent";
@@ -571,8 +465,6 @@ for (const target of targets) {
 const summaries: AgentRunSummary[] = [];
 const coverages: AgentRunCoverage[] = [];
 for (const target of targets) {
-=======
->>>>>>> theirs — scope `aggregateAgentRunCoverage,` deleted in theirs
 }
 const runSummary = aggregateAgentRunSummaries(summaries);
 const runCoverage = aggregateAgentRunCoverage(coverages);

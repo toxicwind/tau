@@ -5,7 +5,6 @@ import type { Database } from "bun:sqlite";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { DEFAULT_MAX_BYTES, truncateHead } from "@oh-my-pi/pi-t…`
 import type { AgentToolResult } from "@tau/tau-agent-core";
 import { type FetchImpl, getEnvApiKey, type ImageContent, type TextContent } from "@tau/tau-ai";
@@ -17,20 +16,6 @@ import type { ToolSession } from "../sdk";
 import type { AgentStorage } from "../session/agent-storage";
 import { DEFAULT_MAX_BYTES, truncateHead } from "@tau/tau-tui/tools/streaming-output";
 import { webpExclusionForModel } from "@tau/tau-tui/chat/image-loading";
-=======
-import type { AgentToolResult } from "@oh-my-pi/pi-agent-core";
-import { type FetchImpl, getEnvApiKey, type ImageContent, type TextContent } from "@oh-my-pi/pi-ai";
-import { htmlToMarkdown, notebookToEditableText } from "@oh-my-pi/pi-natives";
-import { $which, ptree } from "@oh-my-pi/pi-utils";
-import { type ArchiveFormat, listArchiveRoot, sniffArchiveFormat } from "@oh-my-pi/pi-utils/ar";
-import type { Element } from "@oh-my-pi/pi-utils/dom";
-import type { ModelRegistry } from "../config/model-registry";
-import type { Settings } from "../config/settings";
-import type { ToolSession } from "../sdk";
-import type { AgentStorageApi } from "../session/agent-storage";
-import { DEFAULT_MAX_BYTES, truncateHead, truncateHeadBytes } from "@oh-my-pi/pi-tui/tools/streaming-output";
-import { webpExclusionForModel } from "@oh-my-pi/pi-tui/chat/image-loading";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/fetch.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { formatDimensionNote, resizeImage } from "../utils/image-resize";
 import { CONVERTIBLE_EXTENSIONS } from "../utils/markit";
 import { ensureTool } from "../utils/tools-manager";
@@ -187,12 +172,8 @@ export function parseReadUrlTarget(readPath: string): ParsedReadUrlTarget | null
 				`URL selector has multiple range groups; combine them with commas (e.g. \`:5-10,20-30\`).`,
 			);
 		}
-<<<<<<< ours — scope `for (const token of embedded?.sels ?? []) {` in function `parseReadUrlTarget` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `ranges = parseLineRanges(token) ?? undefined;`
 		ranges = parseLineRanges(token, hasRaw ? "single" : "onward") ?? undefined;
-=======
-		ranges = parseLineRanges(token, raw ? "single" : "onward") ?? undefined;
->>>>>>> theirs — scope `for (const token of embedded?.sels ?? []) {`
 		if (ranges !== undefined) continue;
 		const count = parseTailCount(token);
 		if (count === null) {
@@ -1832,15 +1813,7 @@ export async function fetchReadUrl(
 		session.fetch,
 		webpExclusionForModel(session.getActiveModel?.()),
 	);
-<<<<<<< ours — function `fetchReadUrl` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `const output = buildUrlReadOutput(result, result.content);`
-=======
-	if (result.truncated) {
-		// Covers special handlers and every renderUrl branch, whichever response supplied the content.
-		const cutNote = `Response body exceeded ${formatBytes(MAX_BYTES)} and was cut mid-stream; content is incomplete`;
-		result = { ...result, notes: [...result.notes, cutNote] };
-	}
->>>>>>> theirs — function `fetchReadUrl` (F, confidence: medium)
 	const output = buildUrlReadOutput(result, result.content, raw);
 	const artifact = options?.ensureArtifact ? await persistReadUrlArtifact(session, output) : undefined;
 
@@ -1877,19 +1850,12 @@ export async function materializeReadUrlToFile(
 	return { path: contentPath, details: entry.details };
 }
 
-<<<<<<< ours — scope `declaration` in function `buildUrlReadOutput` (S, confidence: medium)
 // refused_by: statement_fold · collision: `function buildUrlReadOutput(result: FetchRenderResult, content:…`
 function buildUrlReadOutput(result: FetchRenderResult, content: string, raw = false): string {
-=======
-function buildUrlReadOutput(result: FetchRenderResult, content: string, raw: boolean): string {
->>>>>>> theirs — scope `declaration`
-<<<<<<< ours — scope `inserted statements` in function `buildUrlReadOutput` (T+S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	// Raw mode returns the body verbatim — the URL/Method header block would
 	// shift line numbers so `:N:raw` selectors slice the wrong lines
 	// (upstream issue #14092 parity).
-=======
->>>>>>> theirs — scope `inserted statements`
 	if (raw) return content;
 	let output = "";
 	output += `URL: ${result.finalUrl}\n`;

@@ -2,7 +2,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import path from "node:path";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { BeforeSubagentSpawnEvent } from "@oh-my-pi/pi-cod…` +1 more
 import { Settings } from "tau/config/settings";
 import type { BeforeSubagentSpawnEvent } from "tau/extensibility/extensions/types";
@@ -22,62 +21,6 @@ import {
 import type { AgentDefinition } from "tau/task/types";
 import type { SingleResult } from "@tau/tau-tui/tools/task";
 import type { ToolSession } from "tau/tools";
-=======
-import { unregisterCustomApis } from "@oh-my-pi/pi-ai/api-registry";
-import { createMockModel, registerMockApi } from "@oh-my-pi/pi-ai/providers/mock";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { closeModelCache } from "@oh-my-pi/pi-catalog/model-cache";
-import {
-	disableProvider,
-	enableProvider,
-	getDisabledProviders,
-	isProviderEnabled,
-	setDisabledProviders,
-} from "@oh-my-pi/pi-coding-agent/capability";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { getBundledAgent } from "@oh-my-pi/pi-coding-agent/task/agents";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { AgentCompactionThresholdOverride } from "@oh-my-pi/pi-coding-agent/config/compaction-threshold";
-import type {
-	BeforeSubagentSpawnEvent,
-	LoadExtensionsResult,
-} from "@oh-my-pi/pi-coding-agent/extensibility/extensions/types";
-import {
-	artifactsDirsFromRegistry,
-	resetRegisteredArtifactDirsForTests,
-} from "@oh-my-pi/pi-coding-agent/internal-urls/registry-helpers";
-import * as planHandoff from "@oh-my-pi/pi-coding-agent/plan-mode/plan-handoff";
-import { AgentLifecycleManager } from "@oh-my-pi/pi-coding-agent/registry/agent-lifecycle";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import { AgentStorage } from "@oh-my-pi/pi-coding-agent/session/agent-storage";
-import * as sdkModule from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AgentSession, AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-
-import { TaskTool } from "@oh-my-pi/pi-coding-agent/task";
-import * as discoveryModule from "@oh-my-pi/pi-coding-agent/task/discovery";
-import { createEvalCustomTools } from "@oh-my-pi/pi-coding-agent/task/eval-tools";
-import * as executorModule from "@oh-my-pi/pi-coding-agent/task/executor";
-import * as isolationRunner from "@oh-my-pi/pi-coding-agent/task/isolation-runner";
-import {
-	buildStructuredSubagentRecoveryHint,
-	resolveEffectiveSubagentPolicy,
-	runStructuredSubagent,
-	StructuredSubagentError,
-	type StructuredSubagentRequest,
-} from "@oh-my-pi/pi-coding-agent/task/structured-subagent";
-import type { AgentDefinition } from "@oh-my-pi/pi-coding-agent/task/types";
-import type { SingleResult, TaskParams } from "@oh-my-pi/pi-tui/tools/task";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { __resetDirsFromEnvForTests, removeWithRetries, setAgentDir } from "@oh-my-pi/pi-utils";
-import { createInMemoryAuthStorage } from "../helpers/agent-session-setup";
-import { createSessionDefaults } from "../helpers/session-defaults";
-
-import { cfgRetryModelFallback } from "@oh-my-pi/pi-coding-agent/session/settings";
-import { cfgTaskAgentModelOverrides, cfgTaskEnableEffort } from "@oh-my-pi/pi-coding-agent/task/settings";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/task/structured-subagent.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const AGENT: AgentDefinition = {
 	name: "worker",

@@ -1,14 +1,8 @@
 #!/usr/bin/env bun
 
 import { parseArgs } from "node:util";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { formatDuration, formatNumber, formatPercent } from "@o…`
 import { formatDuration, formatNumber, formatPercent } from "@tau/tau-utils";
-=======
-import { formatDuration, formatNumber, formatPercent, normalizePremiumRequests } from "@oh-my-pi/pi-utils";
-import chalk from "@oh-my-pi/pi-utils/chalk";
-import { formatErrorRate } from "./client/data/formatters";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/stats/src/index.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { getDashboardStats, getTotalMessageCount, syncAllSessions } from "./aggregator";
 import { closeDb } from "./db";
 import { refreshRollups } from "./rollup";
@@ -152,7 +146,6 @@ async function main(): Promise<void> {
 
 	if (values.help) {
 		console.log(`
-<<<<<<< ours — function `main` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 tau-stats - AI Usage Statistics Dashboard
 
@@ -224,75 +217,6 @@ Examples:
 			closeDb();
 			process.exit(0);
 		});
-=======
-omp-stats - AI Usage Statistics Dashboard
-
-Usage:
-  omp-stats [options]
-
-Options:
-  -p, --port <port>  Port for the dashboard server (default: 3847)
-  --host <host>       Host to bind (default: 127.0.0.1)
-  -j, --json         Output stats as JSON and exit
-  -s, --sync         Sync session files and show summary
-  -h, --help         Show this help message
-
-Examples:
-  omp-stats              # Start dashboard server
-  omp-stats --json       # Print stats as JSON
-  omp-stats --host 0.0.0.0 # Explicitly expose on all IPv4 interfaces
-  omp-stats --sync       # Sync and show summary
-`);
-		return;
-	}
-
-	try {
-		if (!values.json && !values.sync) {
-			// The dashboard ingests sessions in the background and streams progress to the page.
-			const { port: actualPort } = await startServer(values.port, values.host);
-			console.log(`Dashboard available at: ${formatStatsDashboardUrl(values.host, actualPort)}`);
-			console.log("Press Ctrl+C to stop\n");
-			process.on("SIGINT", () => {
-				console.log("\nShutting down...");
-				closeDb();
-				process.exit(0);
-			});
-			return;
-		}
-
-		// One-shot reports need fully ingested, fully rolled-up data before printing.
-		const tty = process.stderr.isTTY === true;
-		process.stderr.write("Syncing session files...\n");
-		let lastWidth = 0;
-		let lastRender = 0;
-		const { processed, files } = await syncAllSessions({
-			onProgress: event => {
-				if (!tty) return;
-				const now = Date.now();
-				if (event.current < event.total && now - lastRender < 33) return;
-				lastRender = now;
-				const marker = "/sessions/";
-				const idx = event.sessionFile.indexOf(marker);
-				const short = idx >= 0 ? event.sessionFile.slice(idx + marker.length) : event.sessionFile;
-				const pct = ((event.current / event.total) * 100).toFixed(0).padStart(3, " ");
-				const line = `[${event.current}/${event.total}] ${pct}%  ${short}`;
-				const columns = process.stderr.columns ?? 120;
-				const clipped = line.length > columns - 1 ? `${line.slice(0, columns - 2)}\u2026` : line;
-				process.stderr.write(`\r${clipped.padEnd(lastWidth)}`);
-				lastWidth = clipped.length;
-			},
-		});
-		if (tty && lastWidth > 0) process.stderr.write(`\r${" ".repeat(lastWidth)}\r`);
-		await refreshRollups();
-		const total = await getTotalMessageCount();
-		process.stderr.write(`Synced ${processed} new entries from ${files} files (${total} total)\n\n`);
-
-		if (values.json) {
-			console.log(JSON.stringify(await getDashboardStats(), null, 2));
-		} else {
-			await printStatsSummary();
-		}
->>>>>>> theirs — function `main` (F, confidence: medium)
 	} catch (error) {
 		console.error("Error:", error);
 		closeDb();

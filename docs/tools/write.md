@@ -7,7 +7,6 @@
 - Entry: `packages/coding-agent/src/tools/write.ts`
 - Model-facing prompt: `packages/coding-agent/src/prompts/tools/write.md`
 - Key collaborators:
-<<<<<<< ours — scope `- Key collaborators:` in heading `Source` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `- `packages/utils/src/ar` (`@oh-my-pi/pi-utils/ar`) — unified a…`
   - `packages/utils/src/ar` (`@tau/tau-utils/ar`) — unified archive registry: `parseArchivePathCandidates()` parses archive selectors, `readArchiveEntries()`/`writeArchive()` rewrite containers atomically.
   - `packages/coding-agent/src/tools/sqlite-reader.ts` — detect SQLite paths and perform row insert/update/delete.
@@ -17,15 +16,6 @@
   - `packages/coding-agent/src/tools/auto-generated-guard.ts` — block overwriting generated files.
   - `packages/coding-agent/src/tools/fs-cache-invalidation.ts` — invalidate shared FS scan caches after writes.
   - `packages/coding-agent/src/tools/plan-mode-guard.ts` — resolve paths and enforce plan-mode write policy.
-=======
-   - `packages/utils/src/ar` (`@oh-my-pi/pi-utils/ar`) — archive selector parsing, member loading, and serialization; the write tool supplies the atomic temp-file/rename boundary.
-   - `packages/coding-agent/src/tools/sqlite-reader.ts` — detect SQLite paths and perform row insert/update/delete.
-   - `packages/coding-agent/src/tools/conflict-detect.ts` / `conflict-uri.ts` — register/validate conflict regions, expand side tokens, and resolve writes through the internal URL handler.
-   - `packages/coding-agent/src/internal-urls/router.ts` / `packages/coding-agent/src/tools/xdev.ts` — writable internal resources and `xd://` tool-device dispatch.
-   - `packages/coding-agent/src/lsp/writethrough.ts` — format-on-write and diagnostics writethrough.
-   - `packages/coding-agent/src/tools/auto-generated-guard.ts` — block overwriting generated files.
-   - `packages/coding-agent/src/tools/plan-mode-guard.ts` — resolve paths and enforce plan-mode write policy.
->>>>>>> theirs — scope `- Key collaborators:` · weave: run 'weave explain docs/tools/write.md' for per-hunk detail, 'weave check' to verify your resolution
 
 ## Inputs
 

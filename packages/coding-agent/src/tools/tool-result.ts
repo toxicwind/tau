@@ -1,15 +1,8 @@
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { OutputMeta } from "@oh-my-pi/pi-tui/tools/output-…`
 import type { AgentToolResult } from "@tau/tau-agent-core";
 import type { ImageContent, TextContent } from "@tau/tau-ai";
 import type { OutputSummary, TruncationResult } from "@tau/tau-tui/tools/streaming-output";
 import type { OutputMeta } from "@tau/tau-tui/tools/output-meta";
-=======
-import type { AgentToolResult } from "@oh-my-pi/pi-agent-core";
-import type { ImageContent, TextContent } from "@oh-my-pi/pi-ai";
-import type { OutputSummary, TruncationResult } from "@oh-my-pi/pi-tui/tools/streaming-output";
-import type { MinimizedMeta, OutputMeta } from "@oh-my-pi/pi-tui/tools/output-meta";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/tool-result.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { LimitsInput, TruncationMetaInput, TruncationSummaryOptions, TruncationTextOptions } from "./output-meta";
 import { outputMeta } from "./output-meta";
 

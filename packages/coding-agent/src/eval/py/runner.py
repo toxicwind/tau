@@ -1151,11 +1151,8 @@ def cell_magic(
 
 def _emit_status(op: str, **data: Any) -> None:
     """Emit a structured status event for TUI rendering."""
-<<<<<<< ours — scope `bundle = {"application/x-omp-status": {"op": ...` in function `_emit_status`, deleted in theirs (S, confidence: medium)
 # refused_by: statement_fold · collision: none (no common ancestor text)
     bundle = {"application/x-tau-status": {"op": op, **data}}
-=======
->>>>>>> theirs — scope `bundle = {"application/x-omp-status": {"op": ...` deleted in theirs · weave: run 'weave explain packages/coding-agent/src/eval/py/runner.py' for per-hunk detail, 'weave check' to verify your resolution
     rid = _CURRENT_RID.get()
     if rid is None:
         return
@@ -1779,12 +1776,8 @@ def _run_shell_body(body: str, *, shell_arg: str) -> int:
     return proc.returncode
 
 
-<<<<<<< ours — function `__omp_magic` (S, confidence: medium)
 # refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 def __tau_magic(name: str, args: str) -> Any:
-=======
-def __omp_magic(name: str, args: str) -> Any:
->>>>>>> theirs — function `__omp_magic` (S, confidence: medium)
     fn = _LINE_MAGICS.get(name)
     if fn is None:
         raise NameError(f"UsageError: Line magic function '%{name}' not found.")
@@ -1796,12 +1789,8 @@ async def __tau_magic_async(name: str, args: str) -> Any:
     return await result if inspect.isawaitable(result) else result
 
 
-<<<<<<< ours — function `__omp_magic_cell` (S, confidence: medium)
 # refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 def __tau_magic_cell(name: str, args: str, body: str) -> Any:
-=======
-def __omp_magic_cell(name: str, args: str, body: str) -> Any:
->>>>>>> theirs — function `__omp_magic_cell` (S, confidence: medium)
     fn = _CELL_MAGICS.get(name)
     if fn is None:
         raise NameError(f"UsageError: Cell magic function '%%{name}' not found.")
@@ -1886,22 +1875,12 @@ def _emit_view(text: str, view: dict) -> None:
     _emit({"type": "view", "id": rid, "text": text, "view": view})
 
 
-<<<<<<< ours — function `_emit_display` (S+F, confidence: low)
 # refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 def _emit_display(bundle: dict, *, kind: str = "display") -> None:
     rid = _CURRENT_RID.get()
     if rid is None:
         return
     _emit({"type": kind, "id": rid, "bundle": bundle})
-=======
-def _emit_image(image: dict) -> None:
-    """Emit an image payload ``{mimeType, data(base64), detail?, url?, providerFile?}``."""
-    rid = _CURRENT_RID.get()
-    if rid is None:
-        return
-    _flush_stdout_proxy(rid)
-    _emit({"type": "image", "id": rid, "image": image})
->>>>>>> theirs — function `_emit_display` (S+F, confidence: low)
 
 
 def _image_base64(data: Any) -> str | None:
@@ -2404,7 +2383,6 @@ def _echo_value(value: Any) -> None:
         _emit_rich(text, parts)
 
 
-<<<<<<< ours — function `__omp_display` (S+F, confidence: low)
 # refused_by: modify_delete_guard · collision: none (no common ancestor text)
 def __tau_display(value: Any, *, raw: bool = False, kind: str = "display") -> None:
     if raw:
@@ -2416,8 +2394,6 @@ def __tau_display(value: Any, *, raw: bool = False, kind: str = "display") -> No
         _emit_display(bundle, kind=kind)
         return
     _emit_display(_mime_bundle(value), kind=kind)
-=======
->>>>>>> theirs — function `__omp_display` (S+F, confidence: low)
 
 
 # ---------------------------------------------------------------------------
@@ -2466,17 +2442,10 @@ os.environ.setdefault("MPLBACKEND", "Agg")
 
 def _install_builtins(ns: dict) -> None:
     ns["__omp_emit_status"] = _emit_status
-<<<<<<< ours — scope `ns["display"] = __omp_display` in function `_install_builtins`, deleted in theirs (S, confidence: medium)
 # refused_by: statement_fold · collision: none (no common ancestor text)
     ns["display"] = __tau_display
-=======
->>>>>>> theirs — scope `ns["display"] = __omp_display` deleted in theirs
-<<<<<<< ours — scope `ns["__omp_display"] = __omp_display` in function `_install_builtins` (S, confidence: medium)
 # refused_by: statement_fold · collision: `ns["__omp_display"] = __omp_display`
     ns["__tau_display"] = __tau_display
-=======
-    ns["__omp_emit_image"] = _emit_image_dict
->>>>>>> theirs — scope `ns["__omp_display"] = __omp_display`
     ns["__tau_magic"] = __tau_magic
     ns["__tau_magic_async"] = __tau_magic_async
     ns["__tau_magic_cell"] = __tau_magic_cell
@@ -2668,12 +2637,8 @@ def _exec_source(source: str, ns: dict) -> None:
     if has_expr and expr_code is not None:
         value = _run_compiled_sync(expr_code, ns, want_value=True)
         if value is not None:
-<<<<<<< ours — scope `if has_expr and expr_code is not None:` in function `_exec_source` (F, confidence: medium)
 # refused_by: statement_fold · collision: `__omp_display(value, kind="result")`
             __tau_display(value, kind="result")
-=======
-            _echo_value(value)
->>>>>>> theirs — scope `if has_expr and expr_code is not None:`
 
 
 async def _exec_source_async(
@@ -2683,14 +2648,9 @@ async def _exec_source_async(
     filename: str = "<cell>",
     linecache_source: str | None = None,
 ) -> None:
-<<<<<<< ours — scope `async def _exec_source_async(` in function `_exec_source_async` (F, confidence: medium)
 # refused_by: statement_fold · collision: `its value through ``__omp_display`` so dataframes/figures rende…` +1 more
     """Compile + execute ``source``; if the last node is an expression, route
     its value through ``__tau_display`` so dataframes/figures render rich.
-=======
-    """Compile + execute ``source``; if the last node is an expression, echo
-    its value like ``print(repr(value))`` (with the same images and views).
->>>>>>> theirs — scope `async def _exec_source_async(`
     Top-level ``await`` / ``async for`` / ``async with`` is permitted; awaited
     regions yield to other requests in the runner's persistent event loop."""
     _restore_call_site_helper(ns)
@@ -2703,12 +2663,8 @@ async def _exec_source_async(
     if has_expr and expr_code is not None:
         value = await _run_compiled_async(expr_code, ns, want_value=True)
         if value is not None:
-<<<<<<< ours — scope `async def _exec_source_async(` in function `_exec_source_async` (F, confidence: medium)
 # refused_by: statement_fold · collision: `its value through ``__omp_display`` so dataframes/figures rende…` +1 more
             __tau_display(value, kind="result")
-=======
-            _echo_value(value)
->>>>>>> theirs — scope `async def _exec_source_async(`
 
 
 # ---------------------------------------------------------------------------
@@ -3211,7 +3167,6 @@ def _read_stdin(loop: asyncio.AbstractEventLoop, queue: asyncio.Queue, stdin) ->
         if req is None:
             continue
         if req.get("type") == "tool":
-<<<<<<< ours — scope `for raw_line in stdin:` in function `_read_stdin` (F, confidence: medium)
 # refused_by: statement_fold · collision: `name=f"omp-tool-{req.get('id')}",`
             threading.Thread(
                 target=_handle_tool_request,
@@ -3219,9 +3174,6 @@ def _read_stdin(loop: asyncio.AbstractEventLoop, queue: asyncio.Queue, stdin) ->
                 name=f"tau-tool-{req.get('id')}",
                 daemon=True,
             ).start()
-=======
-            _start_tool_request(req)
->>>>>>> theirs — scope `for raw_line in stdin:`
             continue
         if req.get("type") == "tool_cancel":
             _cancel_tool_request(str(req.get("id")))
@@ -3325,7 +3277,6 @@ async def _serve_windows(loop: asyncio.AbstractEventLoop, stdin) -> None:
             _emit_shadow_plan(req)
             continue
         if req.get("type") == "tool":
-<<<<<<< ours — scope `while True:` in function `_serve_windows` (F, confidence: medium)
 # refused_by: statement_fold · collision: `name=f"omp-tool-{req.get('id')}",`
             threading.Thread(
                 target=_handle_tool_request,
@@ -3333,12 +3284,6 @@ async def _serve_windows(loop: asyncio.AbstractEventLoop, stdin) -> None:
                 name=f"tau-tool-{req.get('id')}",
                 daemon=True,
             ).start()
-=======
-            _start_tool_request(req)
-            continue
-        if req.get("type") == "tool_cancel":
-            _cancel_tool_request(str(req.get("id")))
->>>>>>> theirs — scope `while True:`
             continue
         if req.get("type") == "interrupt":
             continue  # read only between cells, after the cell it named settled

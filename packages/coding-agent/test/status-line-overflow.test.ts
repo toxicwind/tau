@@ -290,7 +290,6 @@ describe("path segment truncation at varying maxLength", () => {
 		expect(visibleWidth(rendered.content)).toBeGreaterThan(0);
 	});
 });
-<<<<<<< ours — test_suite `overflow: path shrinks before git is dropped` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 describe("overflow: path shrinks before git is dropped", () => {
 	let tmpDir: string;
@@ -463,8 +462,6 @@ describe("overflow: path shrinks before git is dropped", () => {
 		}
 	});
 });
-=======
->>>>>>> theirs — test_suite `overflow: path shrinks before git is dropped` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/status-line-overflow.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 describe("overflow: path survives before model", () => {
 	it("drops the model segment before the cwd path when both cannot fit", () => {

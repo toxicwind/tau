@@ -1023,7 +1023,6 @@ describe("DebugTool launch validation", () => {
 		}
 	});
 
-<<<<<<< ours — scope `it("shows supported install options when the ...` in test_suite `DebugTool launch validation`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("shows supported install options when the JavaScript debug adapter is unavailable", async () => {
 		const launchSpy = spyOn(dapModule, "selectLaunchAdapter").mockReturnValue({
@@ -1054,8 +1053,6 @@ describe("DebugTool launch validation", () => {
 			launchSpy.mockRestore();
 		}
 	});
-=======
->>>>>>> theirs — scope `it("shows supported install options when the ...` deleted in theirs · weave: run 'weave explain packages/coding-agent/test/debug/dap-launch-failures.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 	it("points to DAP configuration when a custom adapter command is unavailable", async () => {
 		const launchSpy = spyOn(dapModule, "selectLaunchAdapter").mockReturnValue({
@@ -1087,7 +1084,6 @@ describe("DebugTool launch validation", () => {
 		}
 	});
 
-<<<<<<< ours — scope `it("shows the rdbg install command for explic...` in test_suite `DebugTool launch validation`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("shows the rdbg install command for explicit Ruby attach", async () => {
 		const attachSpy = spyOn(dapModule, "selectAttachAdapter").mockReturnValue(null);
@@ -1113,8 +1109,6 @@ describe("DebugTool launch validation", () => {
 			attachSpy.mockRestore();
 		}
 	});
-=======
->>>>>>> theirs — scope `it("shows the rdbg install command for explic...` deleted in theirs
 
 	it("falls back to the generic 'No debugger adapter' error when adapter is unspecified", async () => {
 		const launchSpy = spyOn(dapModule, "selectLaunchAdapter").mockReturnValue({ kind: "none" });

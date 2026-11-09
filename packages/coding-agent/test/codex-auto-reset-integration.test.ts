@@ -1,5 +1,4 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import * as aiStream from "@oh-my-pi/pi-ai/stream";` +1 more
 import { Agent } from "@tau/tau-agent-core";
 import type { ResetCreditAccountStatus, ResetCreditTarget, UsageReport } from "@tau/tau-ai";
@@ -12,27 +11,6 @@ import { AgentSession } from "tau/session/agent-session";
 import { AuthStorage } from "tau/session/auth-storage";
 import { type CodexAutoRedeemCoordinator, createCodexAutoRedeemCoordinator } from "tau/session/codex-auto-reset";
 import { SessionManager } from "tau/session/session-manager";
-=======
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import type { ResetCreditAccountStatus, ResetCreditTarget, UsageReport } from "@oh-my-pi/pi-ai";
-import * as envApiKey from "@oh-my-pi/pi-ai/env-api-key";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { ExtensionRuntime } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
-import { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
-import { createAcpExtensionUiContext } from "@oh-my-pi/pi-coding-agent/modes/acp/acp-agent";
-import { initializeExtensions } from "@oh-my-pi/pi-coding-agent/modes/runtime-init";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import {
-	type CodexAutoRedeemCoordinator,
-	createCodexAutoRedeemCoordinator,
-} from "@oh-my-pi/pi-coding-agent/session/codex-auto-reset";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
-import type { AgentSideConnection, CreateElicitationRequest } from "@oh-my-pi/pi-utils/acp";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/codex-auto-reset-integration.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { mockSchedulerWaitWithClock } from "./helpers/mock-scheduler-clock";
 import { getTestModel } from "./helpers/model-fixtures";
 

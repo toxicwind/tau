@@ -1,5 +1,4 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/regist…`
 import { Settings } from "tau/config/settings";
 import { IrcBus } from "tau/irc/bus";
@@ -10,17 +9,6 @@ import type { AgentSession } from "tau/session/agent-session";
 import type { ToolSession } from "tau/tools";
 import { WriteTool } from "tau/tools/write";
 import type { IrcMessage } from "@tau/tau-tui/tools/irc";
-=======
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { IrcBus } from "@oh-my-pi/pi-coding-agent/irc/bus";
-import { AgentProtocolHandler } from "@oh-my-pi/pi-coding-agent/internal-urls/agent-protocol";
-import { AgentLifecycleManager } from "@oh-my-pi/pi-coding-agent/registry/agent-lifecycle";
-import { AgentRegistry, type AgentRegistryApi } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { WriteTool } from "@oh-my-pi/pi-coding-agent/tools/write";
-import type { IrcMessage } from "@oh-my-pi/pi-tui/tools/irc";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/tools/agent-message.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const received = new Map<string, IrcMessage[]>();
 let registry: AgentRegistryApi;

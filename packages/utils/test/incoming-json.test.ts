@@ -1,12 +1,7 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { IncomingDoc, IncomingJsonError } from "@oh-my-pi/pi-ut…`
 import { IncomingDoc, IncomingJsonError } from "@tau/tau-utils/incoming-json";
 import { parseJsonWithRepair } from "@tau/tau-utils/json-parse";
-=======
-import { IncomingDoc, IncomingJsonError, rescannedMembers } from "@oh-my-pi/pi-utils/incoming-json";
-import { parseJsonWithRepair } from "@oh-my-pi/pi-utils/json-parse";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/utils/test/incoming-json.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /** Whether `promise` is still unsettled after the microtask queue and one macrotask drain. */
 async function pending(promise: Promise<unknown>): Promise<boolean> {

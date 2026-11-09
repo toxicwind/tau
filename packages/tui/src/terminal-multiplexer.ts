@@ -21,14 +21,9 @@ const registry = [
 	orcaMultiplexer,
 ] as const satisfies readonly TerminalMultiplexerModule[];
 
-<<<<<<< ours — scope `/** Terminal multiplexers omp recognizes as o...` in type `TerminalMultiplexer` (T+F, confidence: medium)
 // refused_by: statement_fold · collision: `/** Terminal multiplexers omp recognizes as owning the screen g…`
 /** Terminal multiplexers tau recognizes as owning the screen grid. */
 export type TerminalMultiplexer = "herdr" | "tmux" | "screen" | "zellij" | "cmux" | "wmux";
-=======
-/** Terminal multiplexers omp recognizes. */
-export type TerminalMultiplexer = (typeof registry)[number]["id"];
->>>>>>> theirs — scope `/** Terminal multiplexers omp recognizes as o...` · weave: run 'weave explain packages/tui/src/terminal-multiplexer.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const TERMINAL_MULTIPLEXERS: readonly TerminalMultiplexerModule<TerminalMultiplexer>[] = registry;
 const MULTIPLEXERS_BY_ID = Object.fromEntries(

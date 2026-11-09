@@ -1,16 +1,9 @@
 /**
  * Types for the internal URL routing system.
  *
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `* Internal URLs (`agent://`, `artifact://`, `history://`, `issu…`
  * Internal URLs (`agent://`, `artifact://`, `history://`, `issue://`, `local://`, `mcp://`, `memory://`, `tau://`, `pr://`, `proc://`, `rule://`, `security://`, `skill://`, `ssh://`, `vault://`, and `xd://`) are resolved by tools like read,
  * providing access to agent outputs and server resources without exposing filesystem paths.
-=======
- * Every scheme is a {@link ProtocolHandler} registered with the router. Its
- * {@link SchemeSpec} declares how tools may consume it (backing, selectors,
- * write policy), so tools consult the router instead of branching on scheme
- * names, and the system prompt lists schemes from {@link ProtocolHandler.promptDoc}.
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/internal-urls/types.ts' for per-hunk detail, 'weave check' to verify your resolution
  */
 
 import type {
@@ -28,17 +21,9 @@ import type { AgentRegistryApi } from "../registry/agent-registry";
 import type { LocalProtocolOptions } from "./local-protocol";
 import type { SessionEntry } from "../session/session-entries";
 import type { ToolSession } from "../tools";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `* Internal URLs (`agent://`, `artifact://`, `history://`, `issu…`
 import type { CoordinationDetails } from "@tau/tau-tui/tools/wait";
 import type { ProcReadDetails, ProcWriteDetails } from "@tau/tau-tui/tools/proc-render";
-=======
-import type { CoordinationDetails } from "@oh-my-pi/pi-tui/tools/wait";
-import type { ProcReadDetails, ProcWriteDetails } from "@oh-my-pi/pi-tui/tools/proc-render";
-import type { CfgReadDetails, CfgWriteDetails } from "@oh-my-pi/pi-tui/tools/cfg-render";
-import type { XdevRenderDispatch } from "@oh-my-pi/pi-tui/tools/xdev";
-import type { SchemeWriteScope } from "@oh-my-pi/pi-tui/tools/url-scheme-host";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low)
 
 /** Transcript-only render state a handler write attaches to the `write` tool result. */
 export interface InternalWriteDetails {

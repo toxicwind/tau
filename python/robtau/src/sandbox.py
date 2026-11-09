@@ -76,14 +76,9 @@ from robtau.git_ops import (
 from robtau.git_ops import (
     push_release as git_push_release,
 )
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 # refused_by: merge_ladder_exhausted · collision: `from robomp.natives_cache import CacheHit, NativesCache`
 from robtau.natives_cache import CacheHit, NativesCache
 from robtau.natives_cache import compute_key as natives_compute_key
-=======
-from robomp.natives_cache import NativesCache
-from robomp.natives_cache import compute_key as natives_compute_key
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain python/robtau/src/sandbox.py' for per-hunk detail, 'weave check' to verify your resolution
 
 log = logging.getLogger(__name__)
 
@@ -1050,16 +1045,12 @@ class SandboxManager:
                 repo_full_name=repo,
                 issue_number=number,
             )
-<<<<<<< ours — scope `ensure_workspace` in class `SandboxManager` (S+F, confidence: low)
 # refused_by: container_member · collision: `# keeps its `root:omp` ownership (the slot reads through group …`
             # Best-effort: hardlink pre-built natives in if we've cached this
             # source state before. Runs AFTER the slot chown so the cache inode
             # keeps its `root:tau` ownership (the slot reads through group `tau`);
             # write-temp + rename in the napi build replaces with a new inode if
             # the agent rebuilds, so the cached file is never mutated.
-=======
-            # Populate independent native artifact copies after workspace ownership is set.
->>>>>>> theirs — scope `ensure_workspace`
             self._populate_natives_cache(workspace, slot_uid=slot_uid)
             return workspace
 
@@ -1142,7 +1133,6 @@ class SandboxManager:
             return workspace
 
     def _populate_natives_cache(self, workspace: Workspace, *, slot_uid: int | None = None) -> None:
-<<<<<<< ours — scope `_populate_natives_cache` in class `SandboxManager` (S+F, confidence: low)
 # refused_by: container_member · collision: `"""Try to hardlink cached pi-natives artifacts into the worktre…` +2 more
         """Try to hardlink cached tau-natives artifacts into the worktree.
 
@@ -1158,9 +1148,6 @@ class SandboxManager:
         would chown the cache file too (shared inode), breaking the
         cross-slot sharing model. The slot reads them via group `tau`.
         """
-=======
-        """Copy cached native artifacts into the worktree on a cache hit."""
->>>>>>> theirs — scope `_populate_natives_cache`
         cache = self.natives_cache
         if cache is None:
             return
@@ -1198,7 +1185,6 @@ class SandboxManager:
             },
         )
 
-<<<<<<< ours — scope `_chown_natives_for_slot` in class `SandboxManager`, deleted in theirs (S+F, confidence: low)
 # refused_by: container_member · collision: none (no common ancestor text)
     @staticmethod
     def _chown_natives_for_slot(native_dir: Path, hit: CacheHit, *, slot_uid: int) -> None:
@@ -1227,8 +1213,6 @@ class SandboxManager:
                     "natives_cache chown companion failed",
                     extra={"file": str(child), "err": str(exc)},
                 )
-=======
->>>>>>> theirs — scope `_chown_natives_for_slot` deleted in theirs
 
     def remove_workspace(self, *, repo: str, number: int | str) -> None:
         with self._repo_lock(repo):

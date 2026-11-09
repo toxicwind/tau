@@ -195,7 +195,6 @@ export async function diagnoseCellSyntaxError(code: string): Promise<SyntaxError
 	// Babel recovers from some errors (e.g. `break;` outside a loop) and reports them on the AST.
 	return buildCellSyntaxError(code, parsed.recovered[0]);
 }
-<<<<<<< ours — interstitial `between:packages/coding-agent/src/eval/js/shared/rewrite-imports.ts::function::parseProgram:packages/coding-agent/src/eval/js/shared/rewrite-imports.ts::variable::DYNAMIC_IMPORT_CALLEE` (T+S, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `// worker-injected `__omp_import__` global does not exist. The …`
 
 // Callee substituted for dynamic `import(...)` calls. Functions handed to puppeteer
@@ -204,8 +203,6 @@ export async function diagnoseCellSyntaxError(code: string): Promise<SyntaxError
 // worker-injected `__tau_import__` global does not exist. The swap therefore guards on the
 // helper's presence and falls back to native dynamic import, so serialized code keeps
 // working in foreign realms while in-worker code still resolves against the session cwd.
-=======
->>>>>>> theirs — interstitial `between:packages/coding-agent/src/eval/js/shared/rewrite-imports.ts::function::parseProgram:packages/coding-agent/src/eval/js/shared/rewrite-imports.ts::variable::DYNAMIC_IMPORT_CALLEE` (T+S, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/eval/js/shared/rewrite-imports.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 // Callee substituted for dynamic `import(...)` calls. Functions handed to puppeteer
 // (`tab.evaluate`, `page.evaluate`, `waitForFunction`, `$$eval`, ...) are serialized with

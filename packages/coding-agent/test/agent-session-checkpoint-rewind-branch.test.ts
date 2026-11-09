@@ -1,6 +1,5 @@
 import { afterEach, describe, expect, it } from "bun:test";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { CheckpointTool, RewindTool, type ToolSession } from "@…`
 import { type } from "@tau/tautype";
 import { Agent, type AgentMessage, type AgentTool } from "@tau/tau-agent-core";
@@ -17,28 +16,6 @@ import { SessionManager } from "tau/session/session-manager";
 import { CheckpointTool, RewindTool, type ToolSession } from "tau/tools";
 import { EventBus } from "tau/utils/event-bus";
 import { TempDir } from "@tau/tau-utils";
-=======
-import { type } from "@oh-my-pi/omptype";
-import { Agent, type AgentMessage, type AgentTool } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, Message, ThinkingContent } from "@oh-my-pi/pi-ai";
-import {
-	createMockModel,
-	type MockContent,
-	type MockModel,
-	type MockResponseSource,
-} from "@oh-my-pi/pi-ai/providers/mock";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { ExtensionRuntime, loadExtensionFromFactory } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
-import { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { convertToLlm } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { RewindTool, type ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-import { TempDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/agent-session-checkpoint-rewind-branch.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const checkpointSchema = type({ goal: type("string") });
 const rewindSchema = type({ report: type("string") });

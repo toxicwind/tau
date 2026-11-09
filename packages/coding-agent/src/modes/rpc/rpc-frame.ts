@@ -1,10 +1,6 @@
 import { isDeepStrictEqual } from "node:util";
-<<<<<<< ours — interstitial `file_header` (S, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { isRecord } from "@oh-my-pi/pi-utils";`
 import { isRecord } from "@tau/tau-utils";
-=======
-import { isRecord } from "@oh-my-pi/pi-utils/type-guards";
->>>>>>> theirs — interstitial `file_header` (S, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/modes/rpc/rpc-frame.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { RpcChunkFrame } from "./rpc-types";
 
 /** Maximum UTF-8 size of one newline-delimited RPC frame, including the newline. */

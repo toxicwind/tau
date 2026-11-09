@@ -3,7 +3,6 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { getBundledModel } from "@oh-my-pi/pi-catalog/models";` +3 more
 import type { FetchImpl, Model } from "@tau/tau-ai";
 import type { OAuthCredentials } from "@tau/tau-ai/oauth/types";
@@ -20,37 +19,6 @@ import { ProviderDiscoverySchema } from "tau/config/models-config-schema";
 import { resetSettingsForTest } from "tau/config/settings";
 import { AuthStorage } from "tau/session/auth-storage";
 import { removeSyncWithRetries, Snowflake } from "@tau/tau-utils";
-=======
-import type { FetchImpl, Model } from "@oh-my-pi/pi-ai";
-import { createNativeJudge } from "@oh-my-pi/pi-ai/judgment";
-import type { OAuthCredentials } from "@oh-my-pi/pi-ai/oauth/types";
-import { resolveOpenAIRequestSetup } from "@oh-my-pi/pi-ai/providers/openai-shared";
-import { streamOpenAICompletions } from "@oh-my-pi/pi-ai/providers/openai-completions";
-import { streamSimple } from "@oh-my-pi/pi-ai/stream";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { writeModelCache } from "@oh-my-pi/pi-catalog/model-cache";
-import { fingerprintStaticModels } from "@oh-my-pi/pi-catalog/model-manager";
-import { getBundledModel, getBundledModels } from "@oh-my-pi/pi-catalog/models";
-import {
-	cursorModelManagerOptions,
-	resolveModelCacheProviderId,
-	resolveOllamaModelCacheProviderId,
-} from "@oh-my-pi/pi-catalog/provider-models";
-import type { ModelKind, ModelSpec, OpenAICompat } from "@oh-my-pi/pi-catalog/types";
-import { CODEX_CLIENT_VERSION } from "@oh-my-pi/pi-catalog/wire/codex";
-import {
-	discoverLiteLLMModels,
-	discoverOpenAIModelsList,
-	discoveryProbeTimeoutMs,
-} from "@oh-my-pi/pi-coding-agent/config/model-discovery";
-import { kNoAuth, ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { resolveCliModel } from "@oh-my-pi/pi-coding-agent/config/model-resolver";
-import { ProviderDiscoverySchema } from "@oh-my-pi/pi-coding-agent/config/models-config-schema";
-import { resetSettingsForTest } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { removeSyncWithRetries, Snowflake } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/model-discovery.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 describe("ModelRegistry runtime discovery", () => {
 	let tempDir: string;
@@ -73,15 +41,8 @@ describe("ModelRegistry runtime discovery", () => {
 		delete Bun.env.OLLAMA_HOST;
 		delete Bun.env.OLLAMA_CONTEXT_LENGTH;
 		delete Bun.env.ANTHROPIC_API_KEY;
-<<<<<<< ours — test_suite `ModelRegistry runtime discovery` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 		tempDir = path.join(os.tmpdir(), `tau-test-model-registry-${Snowflake.next()}`);
-=======
-		// The developer's shell or ~/.omp/agent/.env must not redirect llama.cpp discovery probes.
-		originalLlamaCppBaseUrl = Bun.env.LLAMA_CPP_BASE_URL;
-		delete Bun.env.LLAMA_CPP_BASE_URL;
-		tempDir = path.join(os.tmpdir(), `pi-test-model-registry-${Snowflake.next()}`);
->>>>>>> theirs — test_suite `ModelRegistry runtime discovery` (F, confidence: medium)
 		fs.mkdirSync(tempDir, { recursive: true });
 		modelsJsonPath = path.join(tempDir, "models.json");
 		cacheDbPath = path.join(tempDir, "models.db");

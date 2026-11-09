@@ -1,14 +1,7 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { $env, $envExact } from "@oh-my-pi/pi-utils";`
 import { authPolicyFor } from "@tau/tau-catalog/compat/auth";
 import { $env, $envExact } from "@tau/tau-utils";
 import type { ApiKeyResolver, ResolvedApiKey } from "../auth-retry";
-=======
-import { authPolicyFor } from "@oh-my-pi/pi-catalog/compat/auth";
-import { $env, $envExact, logger } from "@oh-my-pi/pi-utils";
-import { type ApiKeyResolver, createOAuthProvenance, markAfterSiblingWait, type ResolvedApiKey } from "../auth-retry";
-import { getEnvApiKey, getEnvApiKeyName } from "../env-api-key";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/src/auth/cascade.ts' for per-hunk detail, 'weave check' to verify your resolution
 import * as AIError from "../error";
 import { isUsageLimitOutcome } from "../error/rate-limit";
 import { AUTHENTICATED_SENTINEL } from "../registry/types";

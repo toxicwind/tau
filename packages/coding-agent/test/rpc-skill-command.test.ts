@@ -2,21 +2,10 @@ import { describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `dispatchRpcSkillPrompt,` +2 more
 import { dispatchRpcSkillPrompt, RpcExtensionUserMessageTracker, tryRunRpcSkillCommand } from "tau/modes/rpc/rpc-mode";
 import { type CustomMessage, SKILL_PROMPT_MESSAGE_TYPE } from "tau/session/messages";
 import { removeWithRetries, Snowflake } from "@tau/tau-utils";
-=======
-import { buildSkillPromptMessage, renderSkillPromptMessage } from "@oh-my-pi/pi-coding-agent/extensibility/skills";
-import { dispatchRpcSkillPrompt, tryRunRpcSkillCommand } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-mode";
-import {
-	RpcExtensionUserMessageTracker,
-	RpcPromptResults,
-} from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-prompt-results";
-import { type CustomMessage, SKILL_PROMPT_MESSAGE_TYPE } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { removeWithRetries, Snowflake } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/rpc-skill-command.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const skillPromptBuilder = {
 	buildUserSkillPrompt: buildSkillPromptMessage,
@@ -224,14 +213,9 @@ function promptResultsFor(id: string, frames: object[] = []) {
 }
 
 describe("dispatchRpcSkillPrompt", () => {
-<<<<<<< ours — test_suite `dispatchRpcSkillPrompt` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 	test("answers the prompt command before the skill dispatch completes", async () => {
 		const dir = await fs.mkdtemp(path.join(os.tmpdir(), `tau-rpc-skill-${Snowflake.next()}-`));
-=======
-	test("answers the prompt command once admitted, before the skill dispatch completes", async () => {
-		const dir = await fs.mkdtemp(path.join(os.tmpdir(), `omp-rpc-skill-${Snowflake.next()}-`));
->>>>>>> theirs — test_suite `dispatchRpcSkillPrompt` (F, confidence: medium)
 		const skillPath = path.join(dir, "SKILL.md");
 		await Bun.write(
 			skillPath,

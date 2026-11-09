@@ -607,20 +607,11 @@ export async function runIsolatedSubprocess(opts: IsolatedRunOptions): Promise<S
 				// other copy of those objects — is destroyed by the `finally`
 				// below, so deleting the branch unconditionally turned a
 				// recoverable merge conflict into permanent loss of committed
-<<<<<<< ours — scope `* returns `branchName` + `nestedPatches` (+ `...` in function `runIsolatedSubprocess` (F, confidence: medium)
 // refused_by: statement_fold · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 				// work (#8868). Delete only when nothing is at stake.
 				const baseSha = taskBaseline.root.headCommit;
 				const branchName = `tau/task/${opts.agentId}`;
 				const rescueBranch = await rescueTaskBranch(opts.context.repoRoot, branchName, baseSha);
-=======
-				// work (#8868). Delete only when nothing is at stake. Without a
-				// baseline no branch was started.
-				const branchName = `omp/task/${opts.agentId}`;
-				const rescueBranch = baseline
-					? await rescueTaskBranch(opts.context.repoRoot, branchName, baseline.root.headCommit)
-					: undefined;
->>>>>>> theirs — scope `* returns `branchName` + `nestedPatches` (+ `...` · weave: run 'weave explain packages/coding-agent/src/task/isolation-runner.ts' for per-hunk detail, 'weave check' to verify your resolution
 				const msg = mergeErr instanceof Error ? mergeErr.message : String(mergeErr);
 				try {
 					const capture = await writeIsolationPatch(runChanges, opts.artifactsDir, opts.agentId);

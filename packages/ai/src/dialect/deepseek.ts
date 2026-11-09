@@ -1,14 +1,7 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { parseJsonWithRepair } from "@oh-my-pi/pi-utils";`
 import { parseJsonWithRepair } from "@tau/tau-utils";
 import type { Message, ToolCall } from "../types";
 import { asRecord, buildArgShapes, decodeValue, mintToolCallId, partialSuffixOverlapAny } from "./coercion";
-=======
-import { classifyJsonPrefix, parseJsonWithRepair } from "@oh-my-pi/pi-utils";
-import type { Message, ToolCall } from "../types";
-import { parseToolCallArguments } from "../utils/tool-call-arguments";
-import { asRecord, mintToolCallId, partialSuffixOverlapAny } from "./coercion";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/src/dialect/deepseek.ts' for per-hunk detail, 'weave check' to verify your resolution
 import dialectPrompt from "./deepseek.md" with { type: "text" };
 import { assistantTranscriptParts, collectToolResultRun, messageContentText, stringifyJson } from "./rendering";
 import { TerminatorWait } from "./terminator-wait";
@@ -415,7 +408,6 @@ export class DeepSeekInbandScanner implements InbandScanner {
 
 	feed(text: string): InbandScanEvent[] {
 		if (text.length === 0) return [];
-<<<<<<< ours — scope `feed` in class `DeepSeekInbandScanner` (S+F, confidence: low)
 // refused_by: container_member · collision: `this.#buffer += text;`
 		// Normalize split/leaked Fireworks+V4.1 control tokens (issue #16255):
 		// <|tool_calls_cbegin|>/<|tool_calls_cend|> arrive split across SSE
@@ -426,18 +418,6 @@ export class DeepSeekInbandScanner implements InbandScanner {
 			.replace(/<\|tool_calls_cbegin\|>/g, DEEPSEEK_TOOL_CALLS_BEGIN)
 			.replace(/<\|tool_calls_cend\|>/g, DEEPSEEK_TOOL_CALLS_END);
 		return this.#consume(false);
-=======
-		if (this.#closeWait.absorb(text)) return [];
-		this.#buffer = this.#closeWait.release(this.#buffer) + text;
-		const events = this.#consume(false);
-		// Arguments end at a template token in any accepted spelling, so defer
-		// deltas until a bar arrives — unless a fragment already pending at the
-		// tail could complete without one (`<tool_call_end` + `｜>`).
-		if ((this.#state === "args" || this.#state === "legacyArgs") && templateTokenPartialLength(this.#buffer) === 0) {
-			this.#closeWait.arm(TEMPLATE_TOKEN_BAR, this.#buffer);
-		}
-		return events;
->>>>>>> theirs — scope `feed`
 	}
 
 	flush(): InbandScanEvent[] {
@@ -506,7 +486,6 @@ export class DeepSeekInbandScanner implements InbandScanner {
 				this.#buffer = trimmed;
 				this.#stripLeadingWhitespace = false;
 			}
-<<<<<<< ours — scope `#consumeOutside` in class `DeepSeekInbandScanner` (F, confidence: medium)
 // refused_by: container_member · collision: `const hold = final ? 0 : partialSuffixOverlapAny(this.#buffer, …` +11 more
 			// SHAPE-BASED DSML recognition FIRST: all DSML mutations (bar-runs,
 			// mixed charsets, drifted words, CJK-mangled bodies) cluster at
@@ -560,22 +539,6 @@ export class DeepSeekInbandScanner implements InbandScanner {
 				const hold = final ? 0 : Math.max(partialSuffixOverlapAny(this.#buffer, OUTSIDE_TOKENS), dsmlPartialHold(this.#buffer));
 				const emit = this.#buffer.slice(0, this.#buffer.length - hold);
 				if (emit.length > 0) events.push({ type: "text", text: emit });
-=======
-			const match = this.#findOutsideToken(final);
-			if (typeof match === "number") {
-				this.#emitText(this.#buffer.slice(0, match), events);
-				this.#buffer = this.#buffer.slice(match);
-				return;
-			}
-			if (!match) {
-				const hold = final
-					? 0
-					: Math.max(
-							partialSuffixOverlapAny(this.#buffer, OUTSIDE_TOKENS),
-							templateTokenPartialLength(this.#buffer),
-						);
-				this.#emitText(this.#buffer.slice(0, this.#buffer.length - hold), events);
->>>>>>> theirs — scope `#consumeOutside`
 				this.#buffer = this.#buffer.slice(this.#buffer.length - hold);
 				return;
 			}
@@ -603,20 +566,10 @@ export class DeepSeekInbandScanner implements InbandScanner {
 				if (this.#parseThinking) events.push({ type: "thinkingStart" });
 				return;
 			}
-<<<<<<< ours — scope `#consumeOutside` in class `DeepSeekInbandScanner` (F, confidence: medium)
 // refused_by: container_member · collision: `const hold = final ? 0 : partialSuffixOverlapAny(this.#buffer, …` +11 more
 			const orphan = this.#matchingOrphanDsmlTag();
 			if (orphan) {
 				this.#buffer = this.#buffer.slice(orphan.length);
-=======
-			if (match.token === DSML_TOOL_CALLS_OPEN_FULLWIDTH || match.token === DSML_TOOL_CALLS_OPEN_ASCII) {
-				this.#pendingDsmlSection = match.raw;
-				this.#state = "dsmlSection";
-				return;
-			}
-			if ((DSML_ORPHAN_CLOSE_TOKENS as readonly string[]).includes(match.token)) {
-				if (this.#bareDsmlOpenVisible) this.#emitText(match.raw, events);
->>>>>>> theirs — scope `#consumeOutside`
 				continue;
 			}
 			if (
@@ -815,21 +768,12 @@ export class DeepSeekInbandScanner implements InbandScanner {
 				return true;
 			}
 			if (!final) {
-<<<<<<< ours — scope `#consumeDsmlSection` in class `DeepSeekInbandScanner` (S+F, confidence: low)
 // refused_by: container_member · collision: `return false;`
 				// A partially-streamed tag (no `>` yet) must be held ENTIRELY —
 				// the char-swallow fallback would eat the leading bars and the
 				// next chunk could never reassemble the tag.
 				if (dsmlPartialHold(this.#buffer) === this.#buffer.length) return false;
 				if (partialSuffixOverlapAny(this.#buffer, DSML_SECTION_TOKENS) === this.#buffer.length) return false;
-=======
-				if (
-					(this.#buffer.startsWith("<｜DSML｜invoke") || this.#buffer.startsWith("<|DSML|invoke")) &&
-					!this.#buffer.includes(">")
-				)
-					break;
-				if (partialSuffixOverlapAny(this.#buffer, DSML_SECTION_TOKENS) === this.#buffer.length) break;
->>>>>>> theirs — scope `#consumeDsmlSection`
 			}
 			if (this.#buffer.length === 0) break;
 			this.#buffer = this.#buffer.slice(1);

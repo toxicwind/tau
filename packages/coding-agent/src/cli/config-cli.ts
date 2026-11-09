@@ -1,7 +1,6 @@
 /**
  * Config CLI command handlers.
  *
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { APP_NAME, getAgentDir } from "@oh-my-pi/pi-utils";`
  * Handles `tau config <command>` subcommands for managing settings.
  * Uses the settings schema as the source of truth for available settings.
@@ -23,18 +22,6 @@ import {
 } from "../config/settings";
 import { SETTINGS_SCHEMA } from "../config/settings-schema";
 import { theme } from "@tau/tau-tui/theme";
-=======
- * Handles `omp config <command>` subcommands for managing settings.
- * The settings registry (`config/registry.ts`) is the source of truth for available settings.
- */
-
-import { APP_NAME, getAgentDir, isRecord } from "@oh-my-pi/pi-utils";
-import chalk from "@oh-my-pi/pi-utils/chalk";
-import { orderedSettings } from "../config/all-settings";
-import { type AnySetting, lookup } from "../config/registry";
-import { Settings, settings } from "../config/settings";
-import { theme } from "@oh-my-pi/pi-tui/theme";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/cli/config-cli.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { initXdg } from "./commands/init-xdg";
 
 // =============================================================================

@@ -2,13 +2,8 @@ import { afterEach, beforeEach, describe, expect, it, spyOn, vi } from "bun:test
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { CombinedAutocompleteProvider } from "@oh-my-pi/pi-tui/…`
 import { CombinedAutocompleteProvider } from "@tau/tau-tui/autocomplete";
-=======
-import * as natives from "@oh-my-pi/pi-natives";
-import { type AutocompleteItem, CombinedAutocompleteProvider } from "@oh-my-pi/pi-tui/autocomplete";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/test/autocomplete.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 describe("CombinedAutocompleteProvider", () => {
 	describe("extractPathPrefix", () => {

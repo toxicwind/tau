@@ -1,6 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import { scheduler } from "node:timers/promises";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (3 contested hunk(s), neither side deleted the other's lines)
 import { completeSimple, streamSimple } from "@tau/tau-ai";
 import * as AIError from "@tau/tau-ai/error";
@@ -11,24 +10,6 @@ import {
 	prewarmOpenAICodexResponses,
 	streamOpenAICodexResponses,
 } from "@tau/tau-ai/providers/openai-codex-responses";
-=======
-import { completeSimple, streamSimple } from "@oh-my-pi/pi-ai";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import * as codexAttestation from "@oh-my-pi/pi-ai/providers/openai-codex-attestation";
-import {
-	buildTransformedCodexRequestBody,
-	createOpenAICodexCompatibilityMetadata,
-	openCodexCompactionEventStream,
-	prewarmOpenAICodexResponses,
-	streamOpenAICodexResponses,
-} from "@oh-my-pi/pi-ai/providers/openai-codex-responses";
-import {
-	getCodexProviderSessionState,
-	getOpenAICodexTransportDetails,
-	getOpenAICodexWebSocketDebugStats,
-	resetOpenAICodexHistoryAfterCompaction,
-} from "@oh-my-pi/pi-ai/providers/openai-codex-state";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/ai/test/openai-codex-stream.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type {
 	CodexCompactionRequestContext,
 	Context,
@@ -36,22 +17,12 @@ import type {
 	Model,
 	ModelSpec,
 	ProviderSessionState,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (3 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-ai/types";
 import { __resetProxyCache } from "@tau/tau-ai/utils/proxy";
 import { buildModel } from "@tau/tau-catalog/build";
 import { Effort } from "@tau/tau-catalog/effort";
 import * as piUtils from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-ai/types";
-import { __resetProxyCache } from "@oh-my-pi/pi-ai/utils/proxy";
-import { extractProviderRetryHint } from "@oh-my-pi/pi-ai/utils/retry-after";
-import { validateToolArguments } from "@oh-my-pi/pi-ai/utils/validation";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import * as piUtils from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import { withEnv } from "./helpers";
 
 const { getAgentDir, setAgentDir, TempDir } = piUtils;
@@ -435,12 +406,8 @@ describe("openai-codex streaming", () => {
 	);
 
 	it("normalizes Codex response endpoint base URLs", async () => {
-<<<<<<< ours — scope `it("normalizes Codex response endpoint base U...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("normalizes Codex response endpoint base U...`
 		setAgentDir(tempDir.path());
 		const token = createCodexTestToken();
 		const context = createCodexTestContext();
@@ -474,12 +441,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("omits chatgpt account headers for opaque custom provider API keys", async () => {
-<<<<<<< ours — scope `it("omits chatgpt account headers for opaque ...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("omits chatgpt account headers for opaque ...`
 		setAgentDir(tempDir.path());
 		const context = createCodexTestContext();
 		const model: Model<"openai-codex-responses"> = buildModel({
@@ -518,13 +481,9 @@ describe("openai-codex streaming", () => {
 		expect(requestUrl).toBe("http://127.0.0.1:2455/backend-api/codex/responses");
 		expect(requestHeaders?.get("Authorization")).toBe("Bearer opaque-proxy-key");
 		expect(requestHeaders?.has("chatgpt-account-id")).toBe(false);
-<<<<<<< ours — scope `it("omits chatgpt account headers for opaque ...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		expect(requestHeaders?.get("OpenAI-Beta")).toBe("responses=experimental");
 		expect(requestHeaders?.get("originator")).toBe("tau");
-=======
-		expect(requestHeaders?.get("originator")).toBe("omp");
->>>>>>> theirs — scope `it("omits chatgpt account headers for opaque ...`
 		// An opaque proxy key is not a JWT, so no residency claim to declare.
 		expect(requestHeaders?.has("x-openai-internal-codex-residency")).toBe(false);
 	});
@@ -533,12 +492,8 @@ describe("openai-codex streaming", () => {
 		// A region-pinned enterprise workspace answers 401 `Workspace is not
 		// authorized in this region.` when the request egresses elsewhere and the
 		// client did not declare the residency the token already carries.
-<<<<<<< ours — scope `it("declares the workspace data residency par...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("declares the workspace data residency par...`
 		setAgentDir(tempDir.path());
 		const context = createCodexTestContext();
 		const model = { ...createCodexTestModel(), preferWebsockets: false };
@@ -561,12 +516,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("omits the residency header for accounts without the claim", async () => {
-<<<<<<< ours — scope `it("omits the residency header for accounts w...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("omits the residency header for accounts w...`
 		setAgentDir(tempDir.path());
 		const context = createCodexTestContext();
 		const model = { ...createCodexTestModel(), preferWebsockets: false };
@@ -589,12 +540,8 @@ describe("openai-codex streaming", () => {
 
 	it("keeps a caller-supplied residency header over the token claim", async () => {
 		// A proxy fronting Codex may need a different value than the token states.
-<<<<<<< ours — scope `it("keeps a caller-supplied residency header ...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("keeps a caller-supplied residency header ...`
 		setAgentDir(tempDir.path());
 		const context = createCodexTestContext();
 		const model = { ...createCodexTestModel(), preferWebsockets: false };
@@ -617,12 +564,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("omits chatgpt account headers on opaque custom provider websockets", async () => {
-<<<<<<< ours — scope `it("omits chatgpt account headers on opaque c...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("omits chatgpt account headers on opaque c...`
 		setAgentDir(tempDir.path());
 		let capturedHeaders: WsHeaders | undefined;
 		class OpaqueKeyWebSocket extends MockWebSocket {
@@ -671,12 +614,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("declares the workspace data residency on the websocket handshake", async () => {
-<<<<<<< ours — scope `it("declares the workspace data residency on ...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("declares the workspace data residency on ...`
 		setAgentDir(tempDir.path());
 		let capturedHeaders: WsHeaders | undefined;
 		class ResidencyWebSocket extends MockWebSocket {
@@ -707,12 +646,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("sends an async onPayload replacement body", async () => {
-<<<<<<< ours — scope `it("sends an async onPayload replacement body...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("sends an async onPayload replacement body...`
 		setAgentDir(tempDir.path());
 		const token = createCodexTestToken();
 		const context = createCodexTestContext();
@@ -742,12 +677,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("forwards SimpleStreamOptions textVerbosity into the Codex request body", async () => {
-<<<<<<< ours — scope `it("forwards SimpleStreamOptions textVerbosit...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("forwards SimpleStreamOptions textVerbosit...`
 		setAgentDir(tempDir.path());
 		const token = createCodexTestToken();
 		const context = createCodexTestContext();
@@ -773,12 +704,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("omits optional response controls from default SimpleStreamOptions", async () => {
-<<<<<<< ours — scope `it("omits optional response controls from def...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("omits optional response controls from def...`
 		setAgentDir(tempDir.path());
 		const token = createCodexTestToken();
 		const context = createCodexTestContext();
@@ -1291,12 +1218,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("maps end_turn=false on the terminal event to a pause_turn stop", async () => {
-<<<<<<< ours — scope `it("maps end_turn=false on the terminal event...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("maps end_turn=false on the terminal event...`
 		setAgentDir(tempDir.path());
 		const token = createCodexTestToken();
 		const model = { ...createCodexTestModel("https://chatgpt.com/backend-api"), preferWebsockets: false };
@@ -1350,12 +1273,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("persists final tool-call args when SSE finalizes via output_item.done without an args.done event", async () => {
-<<<<<<< ours — scope `it("persists final tool-call args when SSE fi...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("persists final tool-call args when SSE fi...`
 		setAgentDir(tempDir.path());
 		const token = createCodexTestToken();
 		const context = createCodexTestContext();
@@ -1519,12 +1438,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("routes interleaved function-call argument deltas to the matching open item", async () => {
-<<<<<<< ours — scope `it("routes interleaved function-call argument...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("routes interleaved function-call argument...`
 		setAgentDir(tempDir.path());
 		const token = createCodexTestToken();
 		const context = createCodexTestContext();
@@ -1637,12 +1552,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("uses output_index to finalize idless function and custom tool calls", async () => {
-<<<<<<< ours — scope `it("uses output_index to finalize idless func...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("uses output_index to finalize idless func...`
 		setAgentDir(tempDir.path());
 		const token = createCodexTestToken();
 		const context = createCodexTestContext();
@@ -1707,12 +1618,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("routes fully keyless deltas/done to the latest open item via currentEntry", async () => {
-<<<<<<< ours — scope `it("routes fully keyless deltas/done to the l...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("routes fully keyless deltas/done to the l...`
 		setAgentDir(tempDir.path());
 		const token = createCodexTestToken();
 		const context = createCodexTestContext();
@@ -1761,12 +1668,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("prefers a later id-only current item over an older output_index entry on unkeyed events", async () => {
-<<<<<<< ours — scope `it("prefers a later id-only current item over...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("prefers a later id-only current item over...`
 		setAgentDir(tempDir.path());
 		const token = createCodexTestToken();
 		const context = createCodexTestContext();
@@ -1833,12 +1736,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("waits for caller abort when SSE streams only no-progress status events", async () => {
-<<<<<<< ours — scope `it("waits for caller abort when SSE streams o...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("waits for caller abort when SSE streams o...`
 		setAgentDir(tempDir.path());
 		const token = createCodexTestToken();
 		const context = createCodexTestContext();
@@ -1921,12 +1820,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("parses websocket JSON from non-string payloads", async () => {
-<<<<<<< ours — scope `it("parses websocket JSON from non-string pay...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("parses websocket JSON from non-string pay...`
 		setAgentDir(tempDir.path());
 		const token = createCodexTestToken();
 		class BinaryPayloadWebSocket extends MockWebSocket {
@@ -1983,12 +1878,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("forwards websocket frames through onSseEvent for the raw-SSE debug viewer", async () => {
-<<<<<<< ours — scope `it("forwards websocket frames through onSseEv...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("forwards websocket frames through onSseEv...`
 		setAgentDir(tempDir.path());
 		const token = createCodexTestToken();
 
@@ -2042,12 +1933,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("separates websocket terminal orchestration usage from prompt cache buckets", async () => {
-<<<<<<< ours — scope `it("separates websocket terminal orchestratio...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("separates websocket terminal orchestratio...`
 		setAgentDir(tempDir.path());
 		const token = createCodexTestToken();
 
@@ -2099,12 +1986,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("omits request-body headers and replaces stale beta headers for websocket handshakes", async () => {
-<<<<<<< ours — scope `it("omits request-body headers and replaces s...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("omits request-body headers and replaces s...`
 		setAgentDir(tempDir.path());
 		const token = createCodexTestToken();
 		let capturedHeaders: Record<string, string> | undefined;
@@ -2257,12 +2140,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("sends the Responses Lite marker on the upgrade and in response.create client_metadata", async () => {
-<<<<<<< ours — scope `it("sends the Responses Lite marker on the up...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");` +1 more
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("sends the Responses Lite marker on the up...`
 		setAgentDir(tempDir.path());
 		const token = createCodexTestToken();
 		let capturedHeaders: WsHeaders | undefined;
@@ -2325,15 +2204,12 @@ describe("openai-codex streaming", () => {
 		// x-codex-turn-metadata JSON blob.
 		expect(metadata.parent_turn_id).toBe("turn_parent-1");
 		expect(turnMetadata.parent_turn_id).toBe("turn_parent-1");
-<<<<<<< ours — scope `it("sends the Responses Lite marker on the up...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");` +1 more
 		// `code_mode_tool_names` is likewise reserved (codex-rs
 		// CODE_MODE_TOOL_NAMES_KEY, #35271): TAU never emits it, and caller extras
 		// cannot smuggle it into either projection.
 		expect(metadata.code_mode_tool_names).toBeUndefined();
 		expect(turnMetadata.code_mode_tool_names).toBeUndefined();
-=======
->>>>>>> theirs — scope `it("sends the Responses Lite marker on the up...`
 		expect(capturedHeaders?.["x-codex-installation-id"]).toBeUndefined();
 		expect(metadata.session_id).toBe(capturedHeaders?.["session-id"]);
 		expect(metadata.thread_id).toBe(capturedHeaders?.["thread-id"]);
@@ -2342,12 +2218,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("streams SSE responses into AssistantMessageEventStream", async () => {
-<<<<<<< ours — scope `it("streams SSE responses into AssistantMessa...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("streams SSE responses into AssistantMessa...`
 		setAgentDir(tempDir.path());
 
 		const payload = Buffer.from(
@@ -2416,13 +2288,9 @@ describe("openai-codex streaming", () => {
 				const headers = init?.headers instanceof Headers ? init.headers : undefined;
 				expect(headers?.get("Authorization")).toBe(`Bearer ${token}`);
 				expect(headers?.get("chatgpt-account-id")).toBe("acc_test");
-<<<<<<< ours — scope `it("streams SSE responses into AssistantMessa...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 				expect(headers?.get("OpenAI-Beta")).toBe("responses=experimental");
 				expect(headers?.get("originator")).toBe("tau");
-=======
-				expect(headers?.get("originator")).toBe("omp");
->>>>>>> theirs — scope `it("streams SSE responses into AssistantMessa...`
 				expect(headers?.get("accept")).toBe("text/event-stream");
 				expect(headers?.has("x-api-key")).toBe(false);
 				return new Response(stream, {
@@ -2480,12 +2348,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("includes the default service_tier in SSE payloads and the routing hint header when requested", async () => {
-<<<<<<< ours — scope `it("includes the default service_tier in SSE ...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("includes the default service_tier in SSE ...`
 		setAgentDir(tempDir.path());
 
 		const payload = Buffer.from(
@@ -2543,14 +2407,9 @@ describe("openai-codex streaming", () => {
 		expect(result.usage.cost.output).toBeCloseTo(0.000012);
 		expect(result.usage.cost.total).toBeCloseTo(0.000022);
 	});
-<<<<<<< ours — scope `it("bills priority turns at the model's baked...` in test_suite `openai-codex streaming` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 	it("bills priority turns at the model's baked serviceTierCost multiplier (gpt-5.5 = 2.5x)", async () => {
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-	it("bills priority turns at the Codex provider's baked 2.5x serviceTierCost multiplier", async () => {
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("bills priority turns at the model's baked...`
 		setAgentDir(tempDir.path());
 
 		const payload = Buffer.from(
@@ -2767,12 +2626,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("fails truncated SSE streams that never emit a terminal response event", async () => {
-<<<<<<< ours — scope `it("fails truncated SSE streams that never em...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("fails truncated SSE streams that never em...`
 		setAgentDir(tempDir.path());
 
 		const payload = Buffer.from(
@@ -2840,12 +2695,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("retries a replay-safe SSE stream that ends before its terminal event", async () => {
-<<<<<<< ours — scope `it("retries a replay-safe SSE stream that end...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("retries a replay-safe SSE stream that end...`
 		setAgentDir(tempDir.path());
 		vi.spyOn(scheduler, "wait").mockResolvedValue(undefined);
 		const token = createCodexTestToken();
@@ -2881,12 +2732,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("stops reading SSE responses after a terminal response event", async () => {
-<<<<<<< ours — scope `it("stops reading SSE responses after a termi...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("stops reading SSE responses after a termi...`
 		setAgentDir(tempDir.path());
 
 		const payload = Buffer.from(
@@ -2933,12 +2780,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("surfaces 429 errors after retry budget checks without body reuse failures", async () => {
-<<<<<<< ours — scope `it("surfaces 429 errors after retry budget ch...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("surfaces 429 errors after retry budget ch...`
 		setAgentDir(tempDir.path());
 
 		const payload = Buffer.from(
@@ -3029,12 +2872,8 @@ describe("openai-codex streaming", () => {
 			},
 		],
 	])("completeSimple retries transient %s SSE events before surfacing an error", async (_label, errorEvent) => {
-<<<<<<< ours — scope `it.each([` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it.each([`
 		setAgentDir(tempDir.path());
 		vi.spyOn(scheduler, "wait").mockResolvedValue(undefined);
 
@@ -3167,12 +3006,8 @@ describe("openai-codex streaming", () => {
 	);
 
 	it("retries a pre-response watchdog timeout with a fresh attempt signal", async () => {
-<<<<<<< ours — scope `it("retries a pre-response watchdog timeout w...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("retries a pre-response watchdog timeout w...`
 		setAgentDir(tempDir.path());
 		const token = createCodexTestToken();
 		vi.useFakeTimers();
@@ -3304,12 +3139,8 @@ describe("openai-codex streaming", () => {
 		["non-retryable 403 parsed by CodexApiError.fromResponse", 403],
 		["retryable 503 inspected by fetchWithRetry", 503],
 	] as const)("bounds a stalled error body with the pre-response deadline (%s)", async (_label, status) => {
-<<<<<<< ours — scope `it.each([` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it.each([`
 		setAgentDir(tempDir.path());
 		const token = createCodexTestToken();
 		vi.spyOn(scheduler, "wait").mockResolvedValue(undefined);
@@ -3351,12 +3182,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("bounds Codex SSE socket-close attempts and preserves the default when omitted", async () => {
-<<<<<<< ours — scope `it("bounds Codex SSE socket-close attempts an...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("bounds Codex SSE socket-close attempts an...`
 		setAgentDir(tempDir.path());
 		const token = createCodexTestToken();
 		vi.spyOn(scheduler, "wait").mockResolvedValue(undefined);
@@ -3414,12 +3241,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("does not retry a caller abort before response headers", async () => {
-<<<<<<< ours — scope `it("does not retry a caller abort before resp...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("does not retry a caller abort before resp...`
 		setAgentDir(tempDir.path());
 		const token = createCodexTestToken();
 		const controller = new AbortController();
@@ -3456,12 +3279,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("sets conversation_id/session_id headers and prompt_cache_key when sessionId is provided", async () => {
-<<<<<<< ours — scope `it("sets conversation_id/session_id headers a...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("sets conversation_id/session_id headers a...`
 		setAgentDir(tempDir.path());
 
 		const payload = Buffer.from(
@@ -3563,12 +3382,8 @@ describe("openai-codex streaming", () => {
 		await streamResult.result();
 	});
 	it("keeps prompt_cache_key separate from Codex conversation headers", async () => {
-<<<<<<< ours — scope `it("keeps prompt_cache_key separate from Code...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("keeps prompt_cache_key separate from Code...`
 		setAgentDir(tempDir.path());
 
 		const token = createCodexTestToken();
@@ -3685,12 +3500,8 @@ describe("openai-codex streaming", () => {
 		// `{"detail":"Unsupported parameter: temperature"}` 400 for any of
 		// these keys, so the provider MUST drop them even when the caller's
 		// `StreamOptions` carries non-default values.
-<<<<<<< ours — scope `it("omits unsupported sampling keys (temperat...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("omits unsupported sampling keys (temperat...`
 		setAgentDir(tempDir.path());
 
 		const token = createCodexTestToken();
@@ -3735,12 +3546,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("rejects gpt-5.3-codex minimal reasoning effort instead of clamping", async () => {
-<<<<<<< ours — scope `it("rejects gpt-5.3-codex minimal reasoning e...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("rejects gpt-5.3-codex minimal reasoning e...`
 		setAgentDir(tempDir.path());
 
 		const payload = Buffer.from(
@@ -3837,12 +3644,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("does not set conversation_id/session_id headers when sessionId is not provided", async () => {
-<<<<<<< ours — scope `it("does not set conversation_id/session_id h...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("does not set conversation_id/session_id h...`
 		setAgentDir(tempDir.path());
 
 		const payload = Buffer.from(
@@ -3928,12 +3731,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("falls back to SSE when websocket connect fails", async () => {
-<<<<<<< ours — scope `it("falls back to SSE when websocket connect ...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("falls back to SSE when websocket connect ...`
 		setAgentDir(tempDir.path());
 		const payload = Buffer.from(
 			JSON.stringify({ "https://api.openai.com/auth": { chatgpt_account_id: "acc_test" } }),
@@ -4008,12 +3807,8 @@ describe("openai-codex streaming", () => {
 	it.each(["during handshake", "before request", "during request"] as const)(
 		"preserves timeout classification when compaction is aborted %s",
 		async phase => {
-<<<<<<< ours — scope `it.each(["during handshake", "before request"...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 			const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-			using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it.each(["during handshake", "before request"...`
 			setAgentDir(tempDir.path());
 			const controller = new AbortController();
 			const timeout = new DOMException("The operation timed out.", "TimeoutError");
@@ -4072,12 +3867,8 @@ describe("openai-codex streaming", () => {
 	);
 
 	it("keeps caller cancellation distinct from a compaction timeout", async () => {
-<<<<<<< ours — scope `it("keeps caller cancellation distinct from a...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("keeps caller cancellation distinct from a...`
 		setAgentDir(tempDir.path());
 		const controller = new AbortController();
 		const providerSessionState = new Map<string, ProviderSessionState>();
@@ -4123,12 +3914,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("carries fatal websocket fallback into isolated compaction transport", async () => {
-<<<<<<< ours — scope `it("carries fatal websocket fallback into iso...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("carries fatal websocket fallback into iso...`
 		setAgentDir(tempDir.path());
 
 		const payload = Buffer.from(
@@ -4217,12 +4004,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("isolates compaction transport and preserves main mid-turn state", async () => {
-<<<<<<< ours — scope `it("isolates compaction transport and preserv...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("isolates compaction transport and preserv...`
 		setAgentDir(tempDir.path());
 
 		const payload = Buffer.from(
@@ -4434,12 +4217,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("seeds the first sample from pre-turn compaction turn-state", async () => {
-<<<<<<< ours — scope `it("seeds the first sample from pre-turn comp...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("seeds the first sample from pre-turn comp...`
 		setAgentDir(tempDir.path());
 		const token = createCodexTestToken();
 		const websocketInstances: MockWebSocket[] = [];
@@ -4562,12 +4341,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("includes service_tier in websocket payloads when requested", async () => {
-<<<<<<< ours — scope `it("includes service_tier in websocket payloa...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("includes service_tier in websocket payloa...`
 		setAgentDir(tempDir.path());
 
 		const payload = Buffer.from(
@@ -4731,12 +4506,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("continues websocket chains across Standard → Fast → Standard service tiers", async () => {
-<<<<<<< ours — scope `it("continues websocket chains across Standar...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("continues websocket chains across Standar...`
 		setAgentDir(tempDir.path());
 		const sentRequests: Array<Record<string, unknown>> = [];
 		const fetchMock = vi.fn(async () => {
@@ -4942,12 +4713,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("records websocket delta request and usage diagnostics", async () => {
-<<<<<<< ours — scope `it("records websocket delta request and usage...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("records websocket delta request and usage...`
 		setAgentDir(tempDir.path());
 		const payload = Buffer.from(
 			JSON.stringify({ "https://api.openai.com/auth": { chatgpt_account_id: "acc_test" } }),
@@ -5100,12 +4867,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("breaks websocket chaining when replay sanitization removes an output item", async () => {
-<<<<<<< ours — scope `it("breaks websocket chaining when replay san...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("breaks websocket chaining when replay san...`
 		setAgentDir(tempDir.path());
 		const sentRequests: Array<Record<string, unknown>> = [];
 		const fetchMock = vi.fn(async () => {
@@ -5269,12 +5032,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("replays full context rather than chaining when an oversized call id requires wire rewriting", async () => {
-<<<<<<< ours — scope `it("replays full context rather than chaining...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("replays full context rather than chaining...`
 		setAgentDir(tempDir.path());
 		const sentRequests: Array<Record<string, unknown>> = [];
 		const longCallId = `call_${"x".repeat(80)}`;
@@ -5388,12 +5147,8 @@ describe("openai-codex streaming", () => {
 		expect(typeof callItem?.call_id === "string" && callItem.call_id.length <= 64).toBe(true);
 	});
 	it("chains websocket custom-tool output when live replay retains the provider item id", async () => {
-<<<<<<< ours — scope `it("chains websocket custom-tool output when ...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-custom-append-");`
 		const tempDir = TempDir.createSync("@tau-codex-custom-append-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-custom-append-");
->>>>>>> theirs — scope `it("chains websocket custom-tool output when ...`
 		setAgentDir(tempDir.path());
 		const sentRequests: Array<Record<string, unknown>> = [];
 		const customInput = "print('ok')";
@@ -5499,12 +5254,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("does not enable websocket append state for a non-replayable response", async () => {
-<<<<<<< ours — scope `it("does not enable websocket append state fo...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("does not enable websocket append state fo...`
 		setAgentDir(tempDir.path());
 
 		class NonReplayableResponseWebSocket extends MockWebSocket {
@@ -5548,12 +5299,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("drops a stale terminal frame from the prior response leaking onto a reused websocket", async () => {
-<<<<<<< ours — scope `it("drops a stale terminal frame from the pri...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stale-frame-");`
 		const tempDir = TempDir.createSync("@tau-codex-stale-frame-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stale-frame-");
->>>>>>> theirs — scope `it("drops a stale terminal frame from the pri...`
 		setAgentDir(tempDir.path());
 		const token = createCodexTestToken();
 		const fetchMock = vi.fn(async () => {
@@ -5649,12 +5396,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("applies onPayload to the final chained websocket frame", async () => {
-<<<<<<< ours — scope `it("applies onPayload to the final chained we...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-ws-payload-hook-"…`
 		const tempDir = TempDir.createSync("@tau-codex-ws-payload-hook-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-ws-payload-hook-");
->>>>>>> theirs — scope `it("applies onPayload to the final chained we...`
 		setAgentDir(tempDir.path());
 		const token = createCodexTestToken();
 		const sentRequests: Array<Record<string, unknown>> = [];
@@ -5771,12 +5514,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("preserves turn-state when append matching falls back to full context", async () => {
-<<<<<<< ours — scope `it("preserves turn-state when append matching...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("preserves turn-state when append matching...`
 		setAgentDir(tempDir.path());
 		const sentRequests: Array<Record<string, unknown>> = [];
 		const fetchMock = vi.fn(async () => {
@@ -5874,12 +5613,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("retries websocket continuations with full context when previous_response_id expires", async () => {
-<<<<<<< ours — scope `it("retries websocket continuations with full...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("retries websocket continuations with full...`
 		setAgentDir(tempDir.path());
 		const token = createCodexTestToken();
 		const sentRequests: Array<Record<string, unknown>> = [];
@@ -5996,12 +5731,8 @@ describe("openai-codex streaming", () => {
 		["a pre-response rate_limit_exceeded rejection", "rate_limit_exceeded", false],
 		["slow_down interrupts response progress", "slow_down", true],
 	] as const)("preserves websocket continuation when %s", async (_case, code, emitPartialResponse) => {
-<<<<<<< ours — scope `it.each([` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it.each([`
 		setAgentDir(tempDir.path());
 		const sentRequests: Array<Record<string, unknown>> = [];
 		const fetchMock = vi.fn(async () => {
@@ -6117,12 +5848,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("retries websocket continuations when a proxy reports a stale previous response anchor", async () => {
-<<<<<<< ours — scope `it("retries websocket continuations when a pr...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("retries websocket continuations when a pr...`
 		setAgentDir(tempDir.path());
 		const token = createCodexTestToken();
 		const sentRequests: Array<Record<string, unknown>> = [];
@@ -6230,14 +5957,9 @@ describe("openai-codex streaming", () => {
 		});
 	});
 
-<<<<<<< ours — scope `it("uses websocket v2 beta header when v2 mod...` in test_suite `openai-codex streaming` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 	it("uses websocket v2 beta header when v2 mode is enabled", async () => {
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-	it("starts an independent turn when the native turn lane rejects a chained request", async () => {
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("uses websocket v2 beta header when v2 mod...`
 		setAgentDir(tempDir.path());
 		const token = createCodexTestToken();
 		const sentRequests: Array<Record<string, unknown>> = [];
@@ -6352,12 +6074,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("waits for caller abort when a prewarmed websocket is silent before its first event", async () => {
-<<<<<<< ours — scope `it("waits for caller abort when a prewarmed w...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("waits for caller abort when a prewarmed w...`
 		setAgentDir(tempDir.path());
 
 		const payload = Buffer.from(
@@ -6424,12 +6142,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("surfaces a websocket idle-timeout error when status events never make semantic progress", async () => {
-<<<<<<< ours — scope `it("surfaces a websocket idle-timeout error w...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("surfaces a websocket idle-timeout error w...`
 		setAgentDir(tempDir.path());
 		const token = createCodexTestToken();
 		const fetchMock = vi.fn(async () => {
@@ -6506,12 +6220,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("retries, then surfaces an error, when whitespace-only tool-call argument deltas never recover", async () => {
-<<<<<<< ours — scope `it("retries, then surfaces an error, when whi...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("retries, then surfaces an error, when whi...`
 		setAgentDir(tempDir.path());
 		const token = createCodexTestToken();
 		const fetchMock = vi.fn(async () => {
@@ -6575,12 +6285,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("drops the degenerate tool call and recovers when a retried websocket stream completes", async () => {
-<<<<<<< ours — scope `it("drops the degenerate tool call and recove...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("drops the degenerate tool call and recove...`
 		setAgentDir(tempDir.path());
 		const token = createCodexTestToken();
 		const fetchMock = vi.fn(async () => {
@@ -6711,12 +6417,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("interrupts whitespace-only custom tool input deltas", async () => {
-<<<<<<< ours — scope `it("interrupts whitespace-only custom tool in...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("interrupts whitespace-only custom tool in...`
 		setAgentDir(tempDir.path());
 		const token = createCodexTestToken();
 		const fetchMock = vi.fn(async () => {
@@ -6767,12 +6469,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("delivers a queued terminal event when the server closes immediately after it", async () => {
-<<<<<<< ours — scope `it("delivers a queued terminal event when the...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("delivers a queued terminal event when the...`
 		setAgentDir(tempDir.path());
 		const token = createCodexTestToken();
 		const fetchMock = vi.fn(async () => {
@@ -6815,12 +6513,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("surfaces a connection-limit error instead of replaying a delivered tool call over SSE", async () => {
-<<<<<<< ours — scope `it("surfaces a connection-limit error instead...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("surfaces a connection-limit error instead...`
 		setAgentDir(tempDir.path());
 		const token = createCodexTestToken();
 		const fetchMock = vi.fn(async () => {
@@ -6869,13 +6563,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("joins an in-flight websocket handshake instead of tearing it down", async () => {
-<<<<<<< ours — scope `it("joins an in-flight websocket handshake in...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		vi.spyOn(codexAttestation, "getCodexAttestationHeader").mockResolvedValue(undefined);
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("joins an in-flight websocket handshake in...`
 		setAgentDir(tempDir.path());
 		const token = createCodexTestToken();
 		const fetchMock = vi.fn(async () => {
@@ -6962,12 +6651,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("surfaces a whitespace flood arriving after a delivered tool call instead of replaying", async () => {
-<<<<<<< ours — scope `it("surfaces a whitespace flood arriving afte...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");`
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("surfaces a whitespace flood arriving afte...`
 		setAgentDir(tempDir.path());
 		const token = createCodexTestToken();
 		const fetchMock = vi.fn(async () => {
@@ -7026,12 +6711,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("resets websocket append state after an aborted request closes the connection", async () => {
-<<<<<<< ours — scope `it("resets websocket append state after an ab...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");` +10 more
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("resets websocket append state after an ab...`
 		setAgentDir(tempDir.path());
 
 		const payload = Buffer.from(
@@ -7158,12 +6839,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("replays over SSE when websocket closes after buffered output without a terminal event", async () => {
-<<<<<<< ours — scope `it("resets websocket append state after an ab...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");` +10 more
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("resets websocket append state after an ab...`
 		setAgentDir(tempDir.path());
 
 		const payload = Buffer.from(
@@ -7241,12 +6918,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("resets append state and stale turn headers when websocket requests diverge", async () => {
-<<<<<<< ours — scope `it("resets websocket append state after an ab...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");` +10 more
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("resets websocket append state after an ab...`
 		setAgentDir(tempDir.path());
 
 		const payload = Buffer.from(
@@ -7353,12 +7026,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("reuses a prewarmed websocket connection across turns", async () => {
-<<<<<<< ours — scope `it("resets websocket append state after an ab...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");` +10 more
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("resets websocket append state after an ab...`
 		setAgentDir(tempDir.path());
 
 		const payload = Buffer.from(
@@ -7591,12 +7260,8 @@ describe("openai-codex streaming", () => {
 	);
 
 	it("does not throw when closing a stale socket", async () => {
-<<<<<<< ours — scope `it("resets websocket append state after an ab...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");` +10 more
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("resets websocket append state after an ab...`
 		setAgentDir(tempDir.path());
 		const fetchMock = vi.fn(async () => {
 			throw new Error("SSE fallback should not be called");
@@ -7647,12 +7312,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("scopes x-codex-turn-state to the current turn on SSE requests", async () => {
-<<<<<<< ours — scope `it("resets websocket append state after an ab...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");` +10 more
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("resets websocket append state after an ab...`
 		setAgentDir(tempDir.path());
 
 		const payload = Buffer.from(
@@ -7766,12 +7427,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("isolates turn-state by credential, backend, model, and Responses Lite mode", async () => {
-<<<<<<< ours — scope `it("resets websocket append state after an ab...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");` +10 more
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("resets websocket append state after an ab...`
 		setAgentDir(tempDir.path());
 		const firstModel: Model<"openai-codex-responses"> = {
 			...createCodexTestModel("https://chatgpt.com/backend-api"),
@@ -7877,12 +7534,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("isolates standalone compaction from a live turn-state", async () => {
-<<<<<<< ours — scope `it("resets websocket append state after an ab...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");` +10 more
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("resets websocket append state after an ab...`
 		setAgentDir(tempDir.path());
 		const requestTurnStates: Array<string | null> = [];
 		let requestCount = 0;
@@ -7965,12 +7618,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("drops stale turn-state when direct pre-turn compaction opens the next turn", async () => {
-<<<<<<< ours — scope `it("resets websocket append state after an ab...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");` +10 more
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("resets websocket append state after an ab...`
 		setAgentDir(tempDir.path());
 		const requestTurnStates: Array<string | null> = [];
 		let requestCount = 0;
@@ -8051,12 +7700,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("captures x-codex-turn-state from response.metadata event headers", async () => {
-<<<<<<< ours — scope `it("resets websocket append state after an ab...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");` +10 more
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("resets websocket append state after an ab...`
 		setAgentDir(tempDir.path());
 
 		const requestTurnStates: Array<string | null> = [];
@@ -8131,12 +7776,8 @@ describe("openai-codex streaming", () => {
 	});
 
 	it("drops stale frames from a prior response before sending the next websocket request", async () => {
-<<<<<<< ours — scope `it("resets websocket append state after an ab...` in test_suite `openai-codex streaming` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-stream-");` +10 more
 		const tempDir = TempDir.createSync("@tau-codex-stream-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-stream-");
->>>>>>> theirs — scope `it("resets websocket append state after an ab...`
 		setAgentDir(tempDir.path());
 
 		const payload = Buffer.from(
@@ -8600,12 +8241,8 @@ describe("openai-codex SSE statelessness", () => {
 		// (codex-rs carries it only on websocket `response.create` frames);
 		// strict chatgpt.com gateway validators 400 it with
 		// `{"detail":"Unsupported parameter: previous_response_id"}`.
-<<<<<<< ours — scope `it("never sends previous_response_id over SSE...` in test_suite `openai-codex SSE statelessness` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@pi-codex-sse-stateless-");`
 		const tempDir = TempDir.createSync("@tau-codex-sse-stateless-");
-=======
-		using tempDir = TempDir.createSync("@pi-codex-sse-stateless-");
->>>>>>> theirs — scope `it("never sends previous_response_id over SSE...`
 		setAgentDir(tempDir.path());
 		const sentRequests: Array<Record<string, unknown>> = [];
 		const fetchMock = createCapturingFetch(sentRequests);

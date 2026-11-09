@@ -124,15 +124,9 @@ Theme lookup order (`loadThemeJson`):
 
 Custom themes directory comes from `getCustomThemesDir()`:
 
-<<<<<<< ours — heading `Built-in vs custom theme sources` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 - default: `~/.tau/agent/themes`
 - overridden by `PI_CODING_AGENT_DIR` (`$PI_CODING_AGENT_DIR/themes`)
-=======
-- default: `~/.omp/agent/themes`
-- default-profile override: `PI_CODING_AGENT_DIR` (`$PI_CODING_AGENT_DIR/themes`)
-- named profile: `~/.omp/profiles/<name>/agent/themes` (under the configured root); named profiles derive their own agent directory
->>>>>>> theirs — heading `Built-in vs custom theme sources` (F, confidence: medium) · weave: run 'weave explain docs/upstream/theme.md' for per-hunk detail, 'weave check' to verify your resolution
 
 `getAvailableThemes()` returns merged built-in + custom names, sorted, with built-ins taking precedence on name collision.
 

@@ -18,16 +18,8 @@ cargo_build_script(
 )
 
 rust_library(
-<<<<<<< HEAD:crates/tau-shell/BUILD.bazel
     name = "tau-shell",
     srcs = glob(["src/**/*.rs"]),
-=======
-    name = "pi-shell",
-    srcs = glob(
-        ["src/**/*.rs"],
-        exclude = ["src/bin/**"],
-    ),
->>>>>>> upstream/main:crates/pi-shell/BUILD.bazel
     aliases = aliases(),
     compile_data = glob([
         "src/minimizer/filters/fixtures/**",
@@ -48,14 +40,8 @@ rust_library(
     version = "18.15.0",
     deps = all_crate_deps(normal = True) + [
         ":build_script",
-<<<<<<< HEAD:crates/tau-shell/BUILD.bazel
         "//crates/tau-builtins",
         "//crates/vendor/brush-core",
-=======
-        "//crates/pi-builtins",
-        "//crates/pi-vcs",
-        "//crates/pi-vfs",
->>>>>>> upstream/main:crates/pi-shell/BUILD.bazel
     ],
 )
 
@@ -84,20 +70,8 @@ rust_binary(
 # `src/**/suites`, which read their data at compile time (syntax goldens,
 # zsh glob tables) and at run time (testkit fixtures).
 rust_test(
-<<<<<<< HEAD:crates/tau-shell/BUILD.bazel
     name = "tau-shell_test",
     crate = ":tau-shell",
-=======
-    name = "pi-shell_test",
-    compile_data = glob([
-        "src/bash/syntax/suites/data/**",
-        "src/bash/pattern/zsh/testdata/**",
-        "src/bash/vm/zle/testdata/**",
-        "src/testkit/fixtures/**",
-    ]),
-    crate = ":pi-shell",
-    data = glob(["src/testkit/fixtures/**"]),
->>>>>>> upstream/main:crates/pi-shell/BUILD.bazel
     edition = "2024",
     proc_macro_deps = all_crate_deps(proc_macro_dev = True),
     rustc_flags = select({

@@ -14,7 +14,6 @@
  * Throws on any failure (no judge, no key, unparseable output, abort/timeout);
  * the caller falls back to a concrete level and continues the turn.
  */
-<<<<<<< ours — interstitial `file_header` (T+F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { type ChoiceQuestion, Effort, type Model } from "@oh-my…`
 import { type ChoiceQuestion, Effort, type Model } from "@tau/tau-ai";
 import { getSupportedEfforts } from "@tau/tau-catalog/model-thinking";
@@ -22,16 +21,6 @@ import type { ModelRegistry } from "../config/model-registry";
 import type { Settings } from "../config/settings";
 import { type JudgmentUsage, resolveJudge } from "../judgment";
 import { clampAutoThinkingEffort } from "@tau/tau-tui/thinking";
-=======
-import type { AgentTelemetryConfig } from "@oh-my-pi/pi-agent-core";
-import { type ChoiceQuestion, Effort, judgeQuestions, type Model, renderQuestion } from "@oh-my-pi/pi-ai";
-import { getSupportedEfforts } from "@oh-my-pi/pi-catalog/model-thinking";
-import type { ModelRegistry } from "../config/model-registry";
-import type { Settings } from "../config/settings";
-import { type JudgmentUsage, resolveJudge, sharedJudgmentCache } from "../judgment";
-import questionFile from "../prompts/judge/auto-thinking.json" with { type: "json" };
-import { clampAutoThinkingEffort } from "@oh-my-pi/pi-tui/thinking";
->>>>>>> theirs — interstitial `file_header` (T+F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/auto-thinking/classifier.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { preprocessTinyMessage } from "../tiny/message-preproc";
 
 import { cfgProvidersAutoThinkingMaxEffort } from "../session/settings";

@@ -1,4 +1,3 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 import type { TUI } from "@tau/tau-tui";
 import { AnnotationOverlay } from "@tau/tau-tui/overlays/annotation-overlay";
@@ -8,19 +7,6 @@ import type {
 	TextReviewOverlayResult,
 	TextReviewSource,
 } from "@tau/tau-tui/overlays/annotation-types";
-=======
-import * as path from "node:path";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import type { TUI } from "@oh-my-pi/pi-tui";
-import { AnnotationOverlay } from "@oh-my-pi/pi-tui/overlays/annotation-overlay";
-import type { CustomCommandContext } from "../../../../extensibility/custom-commands/types";
-import type {
-	CodeReviewOverlayResult,
-	TextReviewOverlayResult,
-	TextReviewSource,
-	TextReviewSourceProvenance,
-} from "@oh-my-pi/pi-tui/overlays/annotation-types";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/extensibility/custom-commands/bundled/annotate/fullscreen.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { ResolvedReviewTarget } from "../review/target";
 import { getEditorCommand, openEditorOnPath, openInEditor } from "../../../../utils/external-editor";
 import { type AnnotationDraft, openAnnotationDraft } from "./draft-store";

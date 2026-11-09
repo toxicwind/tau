@@ -1,10 +1,5 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { mathBlockAt, mathSpanAt, mathStartIndex } from "@oh-my…`
 import { LRUCache } from "@tau/tau-utils/lru";
-=======
-import { stripVTControlCharacters } from "node:util";
-import { LRUCache } from "@oh-my-pi/pi-utils/lru";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/src/components/markdown.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	Lexer,
 	Marked,
@@ -12,27 +7,9 @@ import {
 	type TokenizerAndRendererExtension,
 	type TokenizerThis,
 	type Tokens,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { mathBlockAt, mathSpanAt, mathStartIndex } from "@oh-my…`
 } from "@tau/tau-utils/marked";
 import { mathBlockAt, mathSpanAt, mathStartIndex } from "@tau/tau-utils/math-delimiters";
-=======
-	type TokensList,
-} from "@oh-my-pi/pi-utils/marked";
-import {
-	type MathBlockOpener,
-	type MathOpener,
-	mathBlockCloserIndex,
-	mathBlockInContext,
-	mathBlockMayCloseAt,
-	mathBlockOpenerAt,
-	mathOpenerAt,
-	mathSpanAt,
-	mathSpanInContext,
-	mathStartIndex,
-} from "@oh-my-pi/pi-utils/math-delimiters";
-import { listMayContinueAt } from "@oh-my-pi/pi-utils/marked-list";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import { latexToBlock } from "../latex-block";
 import { isBareMathEnvironment, latexToUnicode } from "../latex-to-unicode";
 import { plainText } from "../native/spans";

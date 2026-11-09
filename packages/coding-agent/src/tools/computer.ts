@@ -7,13 +7,8 @@ import type { DesktopCapabilities } from "@tau/tau-natives";
 import { once } from "@tau/tau-utils";
 import { callSessionTool } from "../eval/js/tool-bridge";
 import type { EvalPreludeContext, EvalPreludeDefinition } from "../eval/preludes";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 import { enforceInlineByteCap } from "@tau/tau-tui/tools/streaming-output";
-=======
-import computerUsePrompt from "../prompts/system/computer-use.md" with { type: "text" };
-import { enforceInlineByteCap } from "@oh-my-pi/pi-tui/tools/streaming-output";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/computer.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { type ComputerCallStep, isReadOnlyComputerCall, renderComputerCall } from "./computer/call";
 import { type ComputerScreenshot, type ComputerSessionSnapshot, screenStateNotice } from "./computer/protocol";
 import {

@@ -107,13 +107,9 @@ export function hostTargetName(host: HostInfo): string {
 		if (host.arch === "x64") return "win32-x64-baseline";
 		if (host.arch === "arm64") return "win32-arm64";
 	}
-<<<<<<< ours — function `hostTargetName` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 	if (host.platform === "win32" && host.arch === "x64") return "win32-x64-baseline";
 	throw new Error(`No tau_natives addon target for host ${host.platform}-${host.arch}`);
-=======
-	throw new Error(`No pi_natives addon target for host ${host.platform}-${host.arch}`);
->>>>>>> theirs — function `hostTargetName` (S+F, confidence: low) · weave: run 'weave explain scripts/bazel-natives.ts' for per-hunk detail, 'weave check' to verify your resolution
 }
 
 /** Expand pseudo-targets and map names to //:natives-* labels (deduplicated). */

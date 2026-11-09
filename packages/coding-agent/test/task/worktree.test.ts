@@ -16,19 +16,11 @@ import {
 	IsolationBaselineTooLargeError,
 	mergeTaskBranches,
 	parseIsolationBackend,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "tau/task/worktree";
 import * as natives from "@tau/tau-natives";
 import * as vcs from "@tau/tau-natives/vcs";
 import { removeWithRetries, setWorktreesDir } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-coding-agent/task/worktree";
-import { readRetainedMountBackend } from "@oh-my-pi/pi-coding-agent/task/isolation-ownership";
-import * as natives from "@oh-my-pi/pi-natives";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import { removeWithRetries, setWorktreesDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/task/worktree.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const tempDirs: string[] = [];
 
@@ -225,14 +217,9 @@ describe("worktree isolation helpers", () => {
 		let initialSha: string;
 
 		beforeAll(async () => {
-<<<<<<< ours — scope `// Real git worktree/stash/merge I/O is the c...` in test_suite `worktree isolation helpers` (F, confidence: medium)
 // refused_by: statement_fold · collision: `expect(stashList).toContain("omp-task-merge");` +1 more
 			repo = await fs.mkdtemp(path.join(os.tmpdir(), "tau-worktree-"));
 			await runGit(repo, ["init", "-q", "-b", BASE_BRANCH]);
-=======
-			repo = await fs.mkdtemp(path.join(os.tmpdir(), "omp-worktree-"));
-			await initRepo(repo, BASE_BRANCH);
->>>>>>> theirs — scope `// Real git worktree/stash/merge I/O is the c...`
 			await runGit(repo, ["config", "user.email", "test@example.com"]);
 			await runGit(repo, ["config", "user.name", "Test User"]);
 			await Promise.all([
@@ -373,7 +360,6 @@ describe("worktree isolation helpers", () => {
 				expect(content).toBe("user wip\n");
 				expect(status).toBe("M merged.txt");
 				expect(unmerged).toBe("");
-<<<<<<< ours — scope `// Real git worktree/stash/merge I/O is the c...` in test_suite `worktree isolation helpers` (F, confidence: medium)
 // refused_by: statement_fold · collision: `expect(stashList).toContain("omp-task-merge");` +1 more
 				// Working tree matches the merged HEAD, and the WIP is preserved
 				// as a stash entry for the user to reconcile manually.
@@ -391,9 +377,6 @@ describe("worktree isolation helpers", () => {
 				const delta = await captureDeltaPatch(repo, baseline);
 				expect(delta.rootPatch).not.toContain("diff --cc");
 				expect(delta.rootPatch).toContain("+downstream edit");
-=======
-				expect(stashList).toBe("");
->>>>>>> theirs — scope `// Real git worktree/stash/merge I/O is the c...`
 			});
 
 			it("lands a pick next to unrelated unstaged and untracked edits without touching them", async () => {
@@ -404,7 +387,6 @@ describe("worktree isolation helpers", () => {
 
 				const result = await mergeTaskBranches(repo, [{ branchName: TASK_BRANCH, taskId: "task-1" }]);
 
-<<<<<<< ours — scope `// Real git worktree/stash/merge I/O is the c...` in test_suite `worktree isolation helpers` (F, confidence: medium)
 // refused_by: statement_fold · collision: `expect(stashList).toContain("omp-task-merge");` +1 more
 					const [status, unmerged, stashList, headContent, magicExists, buildLogExists] = await Promise.all([
 						runGit(repo, ["status", "--porcelain=v1"]),
@@ -431,16 +413,6 @@ describe("worktree isolation helpers", () => {
 						fs.rm(buildLog, { force: true }),
 					]);
 				}
-=======
-				const [status, merged] = await Promise.all([
-					runGit(repo, ["status", "--porcelain=v1"]),
-					fs.readFile(path.join(repo, "merged.txt"), "utf8"),
-				]);
-				expect(result).toEqual({ failed: [], merged: [TASK_BRANCH] });
-				expect(merged).toBe("task branch change\n");
-				expect(status).toBe("M staged.txt\n?? scratch.txt");
-				await fs.rm(path.join(repo, "scratch.txt"));
->>>>>>> theirs — scope `// Real git worktree/stash/merge I/O is the c...`
 			});
 
 			it("commits isolated edits when parent dirt only changes nearby context", async () => {
@@ -1254,14 +1226,9 @@ describe("commitToBranch preserves agent commits", () => {
 	let isolation: string;
 
 	beforeAll(async () => {
-<<<<<<< ours — test_suite `commitToBranch preserves agent commits` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 		fixtureRepo = await fs.mkdtemp(path.join(os.tmpdir(), "tau-commit-fixture-"));
 		await runGit(fixtureRepo, ["init", "-q", "-b", "main"]);
-=======
-		fixtureRepo = await fs.mkdtemp(path.join(os.tmpdir(), "omp-commit-fixture-"));
-		await initRepo(fixtureRepo);
->>>>>>> theirs — test_suite `commitToBranch preserves agent commits` (F, confidence: medium)
 		await runGit(fixtureRepo, ["config", "user.email", "test@example.com"]);
 		await runGit(fixtureRepo, ["config", "user.name", "Test User"]);
 		// `git commit` kicks off `git maintenance run --auto`, which writes

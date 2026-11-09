@@ -1,15 +1,9 @@
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { getBlobsDir, isEnoent, logger, type postmortem, VERSIO…`
 import { AgentBusyError, type AgentToolResult } from "@tau/tau-agent-core";
 import type { AssistantMessage, Model } from "@tau/tau-ai";
 import { getBlobsDir, isEnoent, logger, type postmortem, VERSION } from "@tau/tau-utils";
-=======
-import { AgentBusyError, type AgentToolResult } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, Model } from "@oh-my-pi/pi-ai";
-import { getAgentDir, getBlobsDir, isEnoent, logger, type postmortem, VERSION } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/modes/acp/acp-agent.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	type Agent,
 	type AgentSideConnection,
@@ -50,14 +44,9 @@ import {
 	type SetSessionModeRequest,
 	type SetSessionModeResponse,
 	type Usage,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { getBlobsDir, isEnoent, logger, type postmortem, VERSIO…`
 } from "@tau/tau-utils/acp";
 import { disableProvider, enableProvider, reset as resetCapabilities } from "../../capability";
-=======
-} from "@oh-my-pi/pi-utils/acp";
-import { disableProvider, enableProvider } from "../../capability";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import { Settings } from "../../config/settings";
 import { clearPluginRootsAndCaches, resolveActiveProjectRegistryPath } from "../../discovery/helpers";
 import {
@@ -87,7 +76,6 @@ import { executeAcpBuiltinSlashCommand } from "../../slash-commands/acp-builtins
 import { buildAvailableSlashCommands, toAcpAvailableCommands } from "../../slash-commands/available-commands";
 import { DEFAULT_STT_MODEL_KEY, STT_MODELS } from "../../stt/models";
 import { refreshAgentDiscovery } from "../../task";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { getBlobsDir, isEnoent, logger, type postmortem, VERSIO…`
 import { AUTO_THINKING, parseConfiguredThinkingLevel } from "@tau/tau-tui/thinking";
 import { OTHER_OPTION } from "../../tools/ask";
@@ -95,32 +83,6 @@ import { normalizeLocalScheme } from "../../tools/path-utils";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 import { DEFAULT_TTS_VOICE, TTS_LOCAL_MODELS, TTS_LOCAL_VOICE_OPTIONS } from "../../tts/models";
 import { canonicalizeMessage } from "@tau/tau-tui/chat/thinking-display";
-=======
-import { AUTO_THINKING, parseConfiguredThinkingLevel } from "@oh-my-pi/pi-tui/thinking";
-import {
-	choiceValue,
-	defaultFormData,
-	fieldQuestions,
-	type HtmlFormData,
-	type HtmlFormValue,
-	isArrayChoice,
-	OTHER_LABEL,
-	textValue,
-} from "@oh-my-pi/pi-tui/html-form/data";
-import { type ChoiceField, type HtmlForm, parseHtmlForm, spansText } from "@oh-my-pi/pi-tui/html-form/parse";
-import { resolvePlanFilePath } from "../../plan-mode/plan-files";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
-import {
-	DEFAULT_TTS_SPEED,
-	DEFAULT_TTS_VOICE,
-	TTS_LOCAL_MODELS,
-	TTS_LOCAL_VOICE_OPTIONS,
-	TTS_SPEED_MAX,
-	TTS_SPEED_MIN,
-	TTS_SPEED_OPTIONS,
-} from "../../tts/models";
-import { canonicalizeMessage } from "@oh-my-pi/pi-tui/chat/thinking-display";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import { createAcpClientBridge } from "./acp-client-bridge";
 import {
 	extractAssistantMessageText,
@@ -1071,14 +1033,9 @@ export class AcpAgent implements Agent {
 		return {
 			protocolVersion: PROTOCOL_VERSION,
 			agentInfo: {
-<<<<<<< ours — scope `initialize` in class `AcpAgent` (F, confidence: medium)
 // refused_by: container_member · collision: `name: "oh-my-pi",`
 				name: "tau",
 				title: "tau",
-=======
-				name: "omp",
-				title: "omp",
->>>>>>> theirs — scope `initialize`
 				version: VERSION,
 			},
 			authMethods,

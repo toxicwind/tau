@@ -1,6 +1,5 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import type { ApiKey, AssistantMessage, AssistantRetryRecovery,…` +2 more
 import { Agent, AgentBusyError } from "@tau/tau-agent-core";
 import type { ApiKey, AssistantMessage, AssistantRetryRecovery, Usage } from "@tau/tau-ai";
@@ -16,22 +15,6 @@ import { SILENT_ABORT_MARKER } from "tau/session/messages";
 import type { SessionMessageEntry } from "tau/session/session-entries";
 import { SessionManager } from "tau/session/session-manager";
 import { TempDir } from "@tau/tau-utils";
-=======
-import { Agent, AgentBusyError } from "@oh-my-pi/pi-agent-core";
-import type { ApiKey, AssistantMessage, AssistantRetryRecovery, Model, Usage } from "@oh-my-pi/pi-ai";
-import { createMockModel, type MockResponse } from "@oh-my-pi/pi-ai/providers/mock";
-import * as envApiKey from "@oh-my-pi/pi-ai/env-api-key";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { resolveAssistantErrorPresentation } from "@oh-my-pi/pi-tui/chat/transcript-render-helpers";
-import { AgentSession, type AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SILENT_ABORT_MARKER } from "@oh-my-pi/pi-coding-agent/session/messages";
-import type { SessionMessageEntry } from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/agent-session-retry-recovery.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { mockSchedulerWaitWithClock } from "./helpers/mock-scheduler-clock";
 
 type AutoRetryEndEvent = Extract<AgentSessionEvent, { type: "auto_retry_end" }>;

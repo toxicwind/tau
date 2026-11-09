@@ -116,13 +116,8 @@ const BROWSER_RUN_SCOPE: readonly string[] = ["tab", "page", "browser", "wait", 
 const appSchema = type({
 	"path?": type("string").describe("binary path to spawn"),
 	"cdp_url?": type("string").describe("existing cdp endpoint"),
-<<<<<<< ours — scope `type` in variable `appSchema` (S+F, confidence: low)
 // refused_by: container_member · collision: `"relay?": type("boolean").describe("drive the user's own tabs v…`
 	"relay?": type("boolean").describe("drive the user's own tabs via the tau browser relay"),
-=======
-	"relay?": type("boolean").describe(
-		"true drives the user's own tabs via the omp browser relay; false skips a relay the settings enable",
->>>>>>> theirs — scope `type` · weave: run 'weave explain packages/coding-agent/src/tools/browser.ts' for per-hunk detail, 'weave check' to verify your resolution
 	),
 	"tern?": type("boolean").describe("inside Tern: true forces a Tern picture-in-picture, false opts out"),
 	"args?": type("string[]").describe("extra cli args"),

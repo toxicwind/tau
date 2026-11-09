@@ -1,6 +1,5 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `} from "@oh-my-pi/pi-utils";`
 import {
 	getActiveProfile,
@@ -10,15 +9,6 @@ import {
 	logger,
 	stringifyYamlConfig,
 } from "@tau/tau-utils";
-=======
-// Subpaths, not the `@oh-my-pi/pi-utils` barrel: the barrel loads the native
-// addon (file-lock), and key-hint formatting runs on addon-free CLI paths
-// (`omp --version`, help) through cli/command-help.ts.
-import { getActiveProfile, getAgentDir, getProfileRootDir } from "@oh-my-pi/pi-utils/dirs";
-import { isEnoent } from "@oh-my-pi/pi-utils/fs-error";
-import * as logger from "@oh-my-pi/pi-utils/logger";
-import { stringifyYamlConfig } from "@oh-my-pi/pi-utils/yaml-config";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/tui/src/app-keybindings.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { JSONC, YAML } from "bun";
 import { formatKeyHints } from "./key-hint-format";
 import {
@@ -279,7 +269,6 @@ export const KEYBINDINGS = {
 		defaultKeys: [],
 		description: "Jump to the next branch in /tree",
 	},
-<<<<<<< ours — scope `"app.tree.foldOrUp":` in variable `KEYBINDINGS`, deleted in theirs (S+F, confidence: low)
 // refused_by: container_member · collision: none (no common ancestor text)
 	// Legacy session-overlay chords: the tree/session selectors bind their own
 	// raw overlay keys, so these defaults were dead claims that collided with
@@ -290,8 +279,6 @@ export const KEYBINDINGS = {
 		defaultKeys: ["ctrl+left", "alt+left"],
 		description: "Fold or move up",
 	},
-=======
->>>>>>> theirs — scope `"app.tree.foldOrUp":` deleted in theirs
 	"app.plan.toggle": {
 		defaultKeys: ["f6", "alt+shift+p"],
 		description: "Toggle plan mode",

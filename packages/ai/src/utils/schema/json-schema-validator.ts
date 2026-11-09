@@ -12,16 +12,9 @@
  * Compared to AJV this is single-pass, synchronous, dependency-free, and
  * tolerates non-standard shapes (`nullable`) that LLM-emitted schemas carry.
  */
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { logger } from "@oh-my-pi/pi-utils";`
 import { logger } from "@tau/tau-utils";
 import { areJsonValuesEqual } from "./equality";
-=======
-import { parseLocalRefPointer } from "@oh-my-pi/omptype";
-import { isRecord, logger } from "@oh-my-pi/pi-utils";
-import { areJsonValuesEqual } from "./equality";
-import { stamp } from "./stamps";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/src/utils/schema/json-schema-validator.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 export interface JsonSchemaValidationIssue {
 	path: PropertyKey[];

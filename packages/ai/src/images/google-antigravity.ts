@@ -2,18 +2,11 @@ import {
 	ANTIGRAVITY_PRIMARY_ENDPOINT,
 	ANTIGRAVITY_SANDBOX_ENDPOINT,
 	fetchAntigravityImageModel,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { getAntigravityUserAgent } from "@oh-my-pi/pi-catalog/w…`
 } from "@tau/tau-catalog/discovery/antigravity";
 import type { Model } from "@tau/tau-catalog/types";
 import { getAntigravityUserAgent } from "@tau/tau-catalog/wire/gemini-headers";
 import { readSseJson } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-catalog/discovery/antigravity";
-import type { Model } from "@oh-my-pi/pi-catalog/types";
-import { getAntigravityHeaders } from "@oh-my-pi/pi-catalog/wire/gemini-headers";
-import { readSseJson } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/src/images/google-antigravity.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { withAuth } from "../auth-retry";
 import * as AIError from "../error";
 import { errorMessage, ImageApiError, usageFromWire, validateImageInput } from "./shared";

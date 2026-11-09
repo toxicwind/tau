@@ -17,12 +17,8 @@ import {
 	WRITE_TOKEN_BYTES,
 } from "@tau/tau-wire";
 
-<<<<<<< ours — export `COLLAB_PROTO` (S, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `export { COLLAB_PROTO } from "@oh-my-pi/pi-wire";`
 export { COLLAB_PROTO } from "@tau/tau-wire";
-=======
-export { COLLAB_PROTO, packEnvelope, rewriteEnvelopePeer, unpackEnvelope } from "@oh-my-pi/pi-wire";
->>>>>>> theirs — export `COLLAB_PROTO` (S, confidence: medium) · weave: run 'weave explain packages/collab-web/src/lib/link.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 export { COLLAB_PROTO, packEnvelope, rewriteEnvelopePeer, unpackEnvelope } from "@oh-my-pi/pi-wire";
 

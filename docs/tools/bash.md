@@ -58,18 +58,11 @@ The tool returns a `text` content block plus optional `details` and image blocks
    - `details.meta.minimized`: present when the shell minimizer's text replaced the output; `{ filter, inputBytes, outputBytes, artifactId }` names the native filter (`chain` for a minimized `&&`/`;` chain), the raw and minimized byte counts, and the `bash-original` artifact holding the raw capture.
    - non-zero exits and timeouts return a tool result marked `isError`; definite non-zero output ends with `Command exited with code <n>`.
 - Success, background start (`async: true` or auto-background):
-<<<<<<< ours — heading `Outputs` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
   - `content[0].text`: optional preview tail and notices, followed by `Backgrounded as job <id>; result will be delivered automatically.`
   - `details.async`: `{ state: "running", jobId, type: "bash" }`.
   - `read proc://` lists owned jobs and project services; `read proc://<id>` inspects status/output without consuming result delivery; `write proc://<id>/kill` cancels the job without requiring `content`.
 - Success, named service (`name`): executes `command` through the architect's shell under the launch broker, returning readiness, exit, or readiness timeout with state and log tail. A live name is stopped and restarted with the new spec; exit notifications still auto-deliver. `read proc://<name>` inspects status/logs; `write proc://<name>` sends stdin (appends Enter unless content already ends with newline, including empty content); `write proc://<name>/kill` stops it. `write proc://<name>/mode` accepts `persist`, `session`, or `detached`.
-=======
-   - `content[0].text`: optional preview tail and notices, followed by `Backgrounded as job <id> (killed once it has run <n>s in total; …)` — or `(no deadline)` under `timeout: 0` — and the no-polling instruction (`formatBackgroundNotice` in `packages/tui/src/tools/bash.ts`), so the model sees the job's deadline before it waits on the result. The deadline counts from job start, so an auto-backgrounded command has already spent its foreground wait.
-   - `details.async`: `{ state: "running", jobId, type: "bash" }`.
-   - `read proc://` lists owned jobs and project services; `read proc://<id>` inspects status/output without consuming result delivery; `write proc://<id>/kill` cancels the job without requiring `content`.
-- Success, named service (`name`): executes `command` through the user's shell under the launch broker, returning readiness, exit, or readiness timeout with state and log tail. A live name is stopped and restarted with the new spec; exit notifications still auto-deliver. `read proc://<name>` inspects status/logs; `write proc://<name>` sends stdin (appends Enter unless content already ends with newline, including empty content); `write proc://<name>/kill` stops it. `write proc://<name>/mode` accepts `persist`, `session`, or `detached`.
->>>>>>> theirs — heading `Outputs` (S+F, confidence: low) · weave: run 'weave explain docs/tools/bash.md' for per-hunk detail, 'weave check' to verify your resolution
 - Background progress / completion:
    - delivered through `onUpdate` / async job manager, not the initial return.
    - running updates contain tail text and `details.async.state: "running"` only after the job is considered backgrounded.
@@ -152,7 +145,6 @@ Choose the setting by the desired outcome:
 - Use `bash.patterns` when the question is **whether the command may execute**.
 - Use `bashInterceptor.patterns` when the question is **which tool should perform the operation**.
 
-<<<<<<< ours — heading `Interaction and selection guide (body partly extracted into Flow)` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `1. `BashTool.execute()` in `packages/coding-agent/src/tools/bas…`
 1. `BashTool.execute()` in `packages/coding-agent/src/tools/bash.ts` reads `command`. A `name` selects supervised service mode (through the architect's shell and launch broker); normal Bash execution defaults `timeout` to `300`.
 2. If `cwd` is absent, it rewrites a leading `cd <path> && ...` into the structured `cwd` field and strips that prefix from `command`.
@@ -174,8 +166,6 @@ Choose the setting by the desired outcome:
 14. Client-terminal bridge mode calls `session.getClientBridge().createTerminal(...)`, emits `terminalId` updates, polls output until exit/timeout/abort, maps signal exits to `137`, and releases the handle in `finally`.
 15. On completion, `#buildCompletedResult()` formats `(no output)` when needed, attaches truncation metadata from the output summary, appends wall-time/timeout/exit notices, and re-checks unfinished status before returning.
 16. Local/PTY timeout outcomes become `isError` results with `details.timedOut`; client-terminal timeout and cancellation/missing exit status paths throw with captured output when available.
-=======
->>>>>>> theirs — heading `Interaction and selection guide (body partly extracted into Flow)` (S+F, confidence: low)
 ## Flow
 
 1. `BashTool.execute()` in `packages/coding-agent/src/tools/bash.ts` reads `command`. A `name` selects supervised service mode (through the user's shell and launch broker); normal Bash execution defaults `timeout` to `300`.
@@ -235,18 +225,11 @@ Choose the setting by the desired outcome:
    - `scheme://` paths are served per operation by `InternalUrlFilesystem`: file-backed schemes redirect to their backing files (writes only for mutable file-written schemes such as `local://`, within the approved tier); rendered resources are read-only; `realpath`/`readlink` print the physical backing path of file-backed URLs.
    - A redirect to `out://` (`printf '…' > out://`) opens a write-only handle; on close its text becomes a reply shown to the user as assistant prose after the call. Replies ride every progress frame and the result as `details.replies`, so the transcript draws each once, live and on rebuild. They are accepted only while the call waits on the command (a backgrounded job's writes fail), and a reply past 64 KiB fails with `EFBIG` and is dropped whole.
 - Subprocesses / native bindings / client terminal
-<<<<<<< ours — scope `- Subprocesses / native bindings / client ter...` in heading `Side Effects` (S, confidence: medium)
 // refused_by: statement_fold · collision: `- Non-PTY local execution uses native shell execution via `@oh-…`
   - Non-PTY local execution uses native shell execution via `@tau/tau-natives` (`Shell.run()` or `executeShell()`).
   - PTY uses native `PtySession.start()`.
   - Client-terminal mode delegates process execution to the connected client terminal capability.
   - Named services run in the project-scoped launch broker and retain logs/status for `proc://`.
-=======
-   - Non-PTY local execution uses native shell execution via `@oh-my-pi/pi-natives` (`Shell.run()` or `executeShell()`).
-   - PTY uses native `PtySession.start()`.
-   - Client-terminal mode delegates process execution to the connected client terminal capability.
-   - Named services run in the project-scoped launch broker and retain logs/status for `proc://`.
->>>>>>> theirs — scope `- Subprocesses / native bindings / client ter...`
 - Session state
    - Reads session settings for async, auto-background, interceptor, direnv, global timeout cap, tool availability, and shell configuration.
    - Registers jobs with `session.asyncJobManager` for explicit/auto background runs.
@@ -304,11 +287,7 @@ Choose the setting by the desired outcome:
    - `sed -i`, `perl -i`, `awk -i inplace` -> `edit`
    - `echo|printf|cat` whose stdout goes to a file (`echo x > f`, `cat > f`, `cat 2>err > f`, `cat <<EOF > f`) -> `write`; redirects of other fds (`2>err.log`), fd duplication, `/dev` sinks and redirects after `;`, `&&`, `|` or a newline do not count
 - PTY mode is ignored in non-UI contexts and when `PI_NO_PTY=1` (gated by `canUseInteractiveBashPty()`); the tool falls back to non-PTY execution and appends a `pty requested but unavailable in this environment; ran without a terminal` notice.
-<<<<<<< ours — scope `- Non-PTY runs layer `NON_INTERACTIVE_ENV` vi...` in heading `Notes` (S, confidence: medium)
 // refused_by: statement_fold · collision: `- Non-PTY runs layer `NON_INTERACTIVE_ENV` via `buildNonInterac…`
 - Non-PTY runs layer `NON_INTERACTIVE_ENV` via `buildNonInteractiveEnv()`; PTY runs instead inherit the architect environment with `TERM=xterm-256color` prepended before any direnv-provided values.
-=======
-- Non-PTY runs layer `NON_INTERACTIVE_ENV` via `buildNonInteractiveEnv()`; PTY runs instead get the shell spawn environment (`getShellConfig().env`) minus `GIT_EDITOR`, `GPG_TTY`, `CI`, and `NO_COLOR`, then `TERM=xterm-256color`, then any direnv-provided values, which win.
->>>>>>> theirs — scope `- Non-PTY runs layer `NON_INTERACTIVE_ENV` vi...`
 - When the shell minimizer rewrites output inside `executeBash()`, the visible output is replaced with minimized text and a `[raw output: artifact://<id>]` footer may be appended if `onMinimizedSave` persisted the original text.
 - For executor internals that are not tool-specific — shell session reuse keys, snapshots, prefix handling, and native timeout behavior — see `docs/bash-tool-runtime.md`.

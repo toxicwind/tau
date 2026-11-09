@@ -90,14 +90,9 @@ class CdpConnection {
 	autoAttach = false;
 	/** Minted pseudo-sessions owned by this connection. */
 	readonly sessions = new Map<string, SessionRef>();
-<<<<<<< ours — scope `claims` in class `CdpConnection` (T+F, confidence: medium)
 // refused_by: container_member · collision: `/** Tabs this connection claimed as drive targets (`OMP.claimTa…`
 	/** Tabs this connection claimed as drive targets (`TAU.claimTarget` / `Target.createTarget`). */
 	readonly claims = new Set<number>();
-=======
-	/** Tabs this connection claimed as drive targets (`/cdp?claim=` / `Target.createTarget`). */
-	readonly claims = new Set<string>();
->>>>>>> theirs — scope `claims` · weave: run 'weave explain packages/coding-agent/src/tools/browser/relay/bridge.ts' for per-hunk detail, 'weave check' to verify your resolution
 	/** Real child session id → the session it was announced on; its events and detach go there. */
 	readonly childParents = new Map<string, string>();
 
@@ -885,13 +880,8 @@ export class RelayBridge {
 			if (ref.interceptsFileChooser) intercepting.add(ref.tabKey);
 		}
 		conn.sessions.clear();
-<<<<<<< ours — scope `cdpClosed` in class `RelayBridge` (S+F, confidence: low)
 // refused_by: container_member · collision: none (both sides edited, nowhere the same lines)
 		// Tabs this client claimed leave the tau group unless another claimant
-=======
-		for (const tabKey of intercepting) this.#releaseFileChooserInterception(tabKey);
-		// Tabs this client claimed leave the omp group unless another claimant
->>>>>>> theirs — scope `cdpClosed`
 		// remains — session holders don't count: the long-lived registry
 		// connection holds sessions on every tab without driving any of them.
 		for (const tabId of conn.claims) {
@@ -1139,19 +1129,11 @@ export class RelayBridge {
 			this.#reply(conn, msg, {});
 			return true;
 		}
-<<<<<<< ours — scope `#forwardToTab` in class `RelayBridge` (S+F, confidence: low)
 // refused_by: container_member · collision: `// Relay-private claim: the omp tab worker marks the page it wa…`
 		// Relay-private claim: the tau tab worker marks the page it was spawned
 		// to drive. Never forwarded — real Chrome rejects the unknown method.
 		if (msg.method === "TAU.claimTarget") {
 			this.#claimTab(conn, tabId);
-=======
-		// Relay-private claim the omp tab worker sends on the page it adopted. A worker of this version claims at
-		// connect already (`/cdp?claim=`); one of an older version, sharing this relay, claims only here. Never
-		// forwarded — real Chrome rejects the unknown method.
-		if (msg.method === "OMP.claimTarget") {
-			this.#claimTab(conn, tabKey);
->>>>>>> theirs — scope `#forwardToTab`
 			this.#reply(conn, msg, {});
 			return true;
 		}
@@ -1629,19 +1611,10 @@ export class RelayBridge {
 		tab.attached = false;
 		tab.attaching = null;
 		this.#resetRuntime(tab);
-<<<<<<< ours — scope `#onTabDetached` in class `RelayBridge` (T+S+F, confidence: low)
 // refused_by: container_member · collision: `// down): release the tab's omp-group membership too.`
 		tab.banned = true;
 		// The user dismissed the debugger infobar (or the attach was torn
 		// down): release the tab's tau-group membership too.
-=======
-		// Only the user pressing Cancel on Chrome's debugging bar is a refusal. Chrome also detaches when
-		// another extension's frame (a password manager's inline menu) starts loading in the tab: that tab
-		// stays adoptable and is announced again at once; an attach Chrome refuses still bans it (#ensureAttached).
-		const cancelledByUser = reason === "canceled_by_user";
-		if (cancelledByUser) tab.refusal = "the user cancelled Chrome's debugging bar";
-		// A user cancel releases the tab's omp-group membership; any other detach keeps it.
->>>>>>> theirs — scope `#onTabDetached`
 		this.#syncTabGrouping(tab);
 		// Relay-private event, ahead of the sessions' detach: a client driving the tab learns that Chrome
 		// ended the attachment, not the page, and can re-adopt it instead of waiting on a dead session. A tab
@@ -1678,14 +1651,9 @@ export class RelayBridge {
 			tab = new TabState(instanceId, inst.code, snap.tabId, snap);
 			this.#tabs.set(key, tab);
 		} else {
-<<<<<<< ours — scope `#onTabUpsert` in class `RelayBridge` (S+F, confidence: low)
 // refused_by: container_member · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 			if (tab.url !== snap.url) tab.banned = false;
 			// The user dragging a tab out of the tau group is an opt-out; the
-=======
-			if (tab.url !== snap.url) tab.refusal = undefined;
-			// The user dragging a tab out of the omp group is an opt-out; the
->>>>>>> theirs — scope `#onTabUpsert`
 			// relay never fights the user over grouping.
 			if (tab.grouped && tab.tauGroupId !== undefined && snap.groupId !== tab.tauGroupId) {
 				tab.grouped = false;
@@ -1814,7 +1782,6 @@ export class RelayBridge {
 		try {
 			while (this.#groupQueue.length > 0) {
 				const batch = this.#groupQueue.splice(0);
-<<<<<<< ours — scope `#drainGroupQueue` in class `RelayBridge` (F, confidence: medium)
 // refused_by: container_member · collision: `tab.ompGroupId = groupId;`
 				const tabIds = batch.map(tab => tab.tabId);
 				try {
@@ -1833,21 +1800,6 @@ export class RelayBridge {
 						if (typeof groupId !== "number") continue;
 						tab.grouped = true;
 						tab.tauGroupId = groupId;
-=======
-				// Group RPCs address tabs by chrome tabId within one browser
-				// instance, so a mixed batch is split per instance.
-				const byInstance = new Map<string, TabState[]>();
-				for (const tab of batch) {
-					const tabs = byInstance.get(tab.instanceId);
-					if (tabs) tabs.push(tab);
-					else byInstance.set(tab.instanceId, [tab]);
-				}
-				for (const [instanceId, tabs] of byInstance) {
-					const inst = this.#instances.get(instanceId);
-					if (!inst?.socket) {
-						for (const tab of tabs) tab.grouping = false;
-						continue;
->>>>>>> theirs — scope `#drainGroupQueue`
 					}
 					const tabIds = tabs.map(tab => tab.tabId);
 					try {

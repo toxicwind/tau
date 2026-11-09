@@ -15,7 +15,6 @@
  *      `fireworks/kimi-k2.5` / `fireworks/kimi-k2.6` entries.
  */
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (T+F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `} from "@oh-my-pi/pi-catalog/provider-models/openai-compat";`
 import { getBundledModel } from "@tau/tau-catalog/models";
 import {
@@ -23,10 +22,6 @@ import {
 	FIREWORKS_KIMI_MAX_TOKENS,
 	isFireworksKimiK2ModelId,
 } from "@tau/tau-catalog/provider-models/openai-compat";
-=======
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
->>>>>>> theirs — interstitial `file_header` (T+F, confidence: medium) · weave: run 'weave explain packages/catalog/test/issue-1849-repro.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const FIREWORKS_KIMI_K2_MAX_TOKENS = 32_768;
 

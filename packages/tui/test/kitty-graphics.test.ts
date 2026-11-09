@@ -8,13 +8,9 @@ import {
 	KITTY_PLACEHOLDER_MAX_CELLS,
 	kittyPlaceholdersFit,
 	renderKittyPlaceholderLines,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 	setKittyGraphics,
 } from "@tau/tau-tui/kitty-graphics";
-=======
-} from "@oh-my-pi/pi-tui/kitty-graphics";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/test/kitty-graphics.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const ORIGINAL_TMUX = Bun.env.TMUX;
 

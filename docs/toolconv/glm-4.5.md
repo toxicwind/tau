@@ -10,7 +10,6 @@ The native template/server sections below provide format background. OMP impleme
 
 Token IDs are from `tokenizer_config.json` (`added_tokens_decoder`). Note the split: the turn/role markers are registered as **special** tokens, whereas the structural tool-call and thinking tags are each a single dedicated vocabulary token but flagged **`special: false`** (they are emitted/printed as ordinary text, not stripped as control tokens).
 
-<<<<<<< ours — scope `Token IDs are from `tokenizer_config.json` (`...` in heading `Special tokens` (F, confidence: medium)
 // refused_by: statement_fold · collision: `| `<\|user\|>` | 151336 | true | Opens a user turn (also an EOS…`
 | Token (verbatim) | ID | `special` | Purpose |
 |---|---|---|---|
@@ -33,29 +32,6 @@ Token IDs are from `tokenizer_config.json` (`added_tokens_decoder`). Note the sp
 | `<tool_response>` | 151354 | false | Wraps one tool result inside an observation turn |
 | `</tool_response>` | 151355 | false | Closes a tool result |
 | `/nothink` | 151360 | true | Soft switch appended to user text to suppress thinking |
-=======
-| Token (verbatim)    | ID     | `special` | Purpose                                                               |
-| ------------------- | ------ | --------- | --------------------------------------------------------------------- |
-| `[gMASK]`           | 151331 | true      | GLM prefix / blank-infilling sentinel; first token of every prompt    |
-| `<sop>`             | 151333 | true      | "Start of piece" — immediately follows `[gMASK]` to open the sequence |
-| `<eop>`             | 151334 | true      | "End of piece" (not emitted by the chat template)                     |
-| `<\|system\|>`      | 151335 | true      | Opens a system turn (and the injected tools turn)                     |
-| `<\|user\|>`        | 151336 | true      | Opens a user turn (also an EOS id — see below)                        |
-| `<\|assistant\|>`   | 151337 | true      | Opens an assistant turn / generation prompt                           |
-| `<\|observation\|>` | 151338 | true      | Opens a tool-result (observation) turn (also an EOS id)               |
-| `<\|endoftext\|>`   | 151329 | true      | End-of-text; `eos_token` and `pad_token`                              |
-| `<think>`           | 151350 | false     | Opens the reasoning span inside an assistant turn                     |
-| `</think>`          | 151351 | false     | Closes the reasoning span                                             |
-| `<tool_call>`       | 151352 | false     | Opens one tool call; function name follows on the same line           |
-| `</tool_call>`      | 151353 | false     | Closes one tool call                                                  |
-| `<arg_key>`         | 151356 | false     | Opens an argument-name element                                        |
-| `</arg_key>`        | 151357 | false     | Closes an argument-name element                                       |
-| `<arg_value>`       | 151358 | false     | Opens an argument-value element                                       |
-| `</arg_value>`      | 151359 | false     | Closes an argument-value element                                      |
-| `<tool_response>`   | 151354 | false     | Wraps one tool result inside an observation turn                      |
-| `</tool_response>`  | 151355 | false     | Closes a tool result                                                  |
-| `/nothink`          | 151360 | true      | Soft switch appended to user text to suppress thinking                |
->>>>>>> theirs — scope `Token IDs are from `tokenizer_config.json` (`...` · weave: run 'weave explain docs/toolconv/glm-4.5.md' for per-hunk detail, 'weave check' to verify your resolution
 
 Notes on exactness:
 - All pipes are ASCII `|` (U+007C); GLM uses no fullwidth `｜` (U+FF5C) or `▁` (U+2581) variants (unlike DeepSeek). Reproduce `<|system|>`, `<|user|>`, `<|assistant|>`, `<|observation|>` exactly, and `[gMASK]` with literal square brackets.
@@ -322,7 +298,6 @@ With a server parser active (`--tool-call-parser glm45 --reasoning-parser glm45`
   it accepts newline, `<arg_key>`, or `</tool_call>` as the name delimiter, so
   the same `glm` dialect scanner handles both layouts.
 
-<<<<<<< ours — heading `omp / pi converter behavior` (S+F, confidence: low)
 // refused_by: rename_vs_edit_guard · collision: `private call state. If `toolStart` was already emitted, OMP ret…`
 ## tau / pi converter behavior
 
@@ -359,62 +334,6 @@ Thinking parsing is enabled by default and excludes `<think>…</think>` from
 visible text. If `<tool_response>` appears in assistant output, the scanner
 drops that tag and the remainder of the currently buffered chunk rather than
 treating the hallucinated result as assistant content.
-=======
-## omp / pi converter behavior
-
-The repository's `glm` dialect is an **owned in-band converter**. Set
-`tools.format` to `glm` to force it. `PI_DIALECT=glm` (also `1` or `true`) is
-consulted when the configured dialect resolver returns no owned dialect.
-The default `auto` uses native calls unless `supportsTools === false`, then
-selects the model-class dialect; GLM affinity and unknown-class fallback select
-`glm`. With tools present, the agent appends the compact normalized tool
-catalog and GLM guide, omits native tools/`tool_choice`, rewrites history, and
-projects assistant text back into canonical pi events.
-
-The owned renderer always emits the GLM-4.5 newline layout. It consults each
-tool's normalized schema: string-only properties are emitted raw, while all
-other values are JSON-serialized. Parallel calls are newline-separated. In
-owned history, result batches become a synthetic user message containing
-`<observation>` with one `<tool_response>` per result; the lower-level GLM
-transcript renderer uses the model-native `<|observation|>` role marker
-instead.
-
-These are separate paths: `encodeInbandToolHistory` converts assistant turns
-with calls to prose plus call blocks, dropping their thinking/image blocks;
-call-free assistant turns stay unchanged, and result images follow the
-synthetic user message's text. `renderTranscript` maps developer to system,
-renders all supplied assistant thinking without the upstream template's
-last-user trimming or empty-think prefill, and appends no generation prompt.
-Neither path injects `/nothink` into user text.
-
-`GLMInbandScanner` synthesizes `ptc_…` ids, emits `toolStart` once the name
-delimiter arrives, and streams argument bodies as keyed `toolArgDelta` events.
-Schema properties whose collected types are string-only after removing null
-stay verbatim; all other completed values use strict `JSON.parse` after
-trimming, falling back to the original raw text on failure. This is not the
-reference parsers' Python-literal fallback.
-
-At EOF, a nonempty name with no delimiter is accepted as a zero-argument call
-and emits both start/end without `</tool_call>`. Other unfinished calls may
-emit no end: an unfinished key/value can drop the scanner's private call state,
-but already-published starts/deltas are not retracted. A normal stop may retain
-and dispatch that canonical call; its streamed arguments remain raw strings
-until a `toolEnd` replaces them with the decoded object.
-
-Healing is limited to `</arg_key>` wrongly closing a value when followed by
-another key, a tool closer, or the real value closer; and a missing value
-closer before a complete next key/value opener. A bare `</tool_call>` inside
-an unclosed value is not itself a repair signature.
-
-Thinking parsing is enabled by default and excludes `<think>…</think>` from
-visible text. With `parseThinking: false`, the think markers remain visible
-and calls inside them can be scanned. A standalone `<tool_response>` makes
-the scanner drop the rest of its currently buffered chunk. The owned stream
-detects that fabricated-result boundary across chunks and discards the entire
-continuation; `tools.abortOnFabricatedResult` defaults to `true` and aborts the
-provider there (when false, it drains instead). Named native calls are still
-forwarded if the provider emits them; the first native/in-band channel wins.
->>>>>>> theirs — heading `omp / pi converter behavior` (S+F, confidence: low)
 
 ## Sources
 

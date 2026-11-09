@@ -1,6 +1,5 @@
 import { beforeAll, beforeEach, describe, expect, afterEach, it } from "bun:test";
 import { stripVTControlCharacters } from "node:util";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { KeybindingsManager } from "@oh-my-pi/pi-tui/app-keybin…`
 import { KeybindingsManager } from "@tau/tau-tui/app-keybindings";
 import { getKeybindings, setKeybindings, type TUI } from "@tau/tau-tui";
@@ -12,20 +11,6 @@ import type {
 	TextReviewOverlayResult,
 	TextReviewSource,
 } from "@tau/tau-tui/overlays/annotation-types";
-=======
-import { formatKeyHint, KeybindingsManager } from "@oh-my-pi/pi-tui/app-keybindings";
-import { getKeybindings, setKeybindings, type TUI } from "@oh-my-pi/pi-tui";
-import { getThemeByName, setThemeInstance, type Theme } from "@oh-my-pi/pi-tui/theme";
-import { AnnotationOverlay, type AnnotationOverlayCallbacks } from "@oh-my-pi/pi-tui/overlays/annotation-overlay";
-import type {
-	CodeReviewOverlayResult,
-	ReviewDiffFile,
-	TextReviewOverlayResult,
-	TextReviewSource,
-} from "@oh-my-pi/pi-tui/overlays/annotation-types";
-import type { NativeUiEvent } from "../src/native/node";
-import { sliceByColumn, visibleWidth } from "../src/utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/tui/test/annotation-overlay.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const ENTER = "\r";
 const TAB = "\t";

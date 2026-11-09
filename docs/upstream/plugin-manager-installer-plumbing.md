@@ -9,12 +9,8 @@ There are two plugin-management implementations in the codebase:
 1. **Active path used by CLI commands**: `PluginManager` (`src/extensibility/plugins/manager.ts`)
 2. **Legacy helper module**: installer functions (`src/extensibility/plugins/installer.ts`)
 
-<<<<<<< ours — scope ``omp plugin` npm/git/link actions go through ...` in heading `Scope and architecture` (S, confidence: medium)
 // refused_by: statement_fold · collision: ``omp plugin` npm/git/link actions go through `PluginManager`; m…`
 `tau plugin` npm/git/link actions go through `PluginManager`; marketplace actions go through `MarketplaceManager`. `install` classifies each target (`classifyInstallTarget` in `cli/classify-install-target.ts`): `name@marketplace` routes to the marketplace manager, local paths route to `PluginManager.link()`, git and npm specs to `PluginManager.install()`.
-=======
-`omp plugin` npm/git/link actions go through `PluginManager`; marketplace actions go through `MarketplaceManager`. `install` classifies each target (`classifyInstallTarget` in `cli/classify-install-target.ts`): local paths route to `PluginManager.link()`, and `name@marketplace` routes to the marketplace manager only when the marketplace is configured. Scoped npm specs, common npm dist-tags, and version-like suffixes remain npm targets. Git and npm specs go to `PluginManager.install()`.
->>>>>>> theirs — scope ``omp plugin` npm/git/link actions go through ...` · weave: run 'weave explain docs/upstream/plugin-manager-installer-plumbing.md' for per-hunk detail, 'weave check' to verify your resolution
 
 `installer.ts` still documents important safety checks and filesystem behavior, but it is not the path used by `src/commands/plugin.ts` + `src/cli/plugin-cli.ts`.
 
@@ -33,15 +29,9 @@ tau plugin <npm/link action> ...
 tau plugin install name@marketplace / tau install name@marketplace
   -> MarketplaceManager
   -> mutate scope registry and shared cache
-<<<<<<< ours — scope `omp plugin install name@marketplace / omp ins...` in heading `Lifecycle: from CLI invocation to runtime availability` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `-> `claude-plugins` discovery loads marketplace skills/commands…`
   -> symlink the cached package into the scope's node_modules and update tau-plugins.lock.json
   -> `claude-plugins` discovery loads marketplace skills/commands/hooks/tools/MCP; task discovery loads `agents/`; extension loader imports `package.json#tau.extensions`
-=======
-  -> symlink the cached package into the scope's node_modules and update omp-plugins.lock.json
-  -> `claude-plugins` discovery loads legacy marketplace content; `agent-plugins` handles portable skills/MCP for standard root plugin.json packages
-  -> task discovery loads `agents/`; extension loader imports `package.json#omp.extensions`
->>>>>>> theirs — scope `omp plugin install name@marketplace / omp ins...`
 ```
 
 ### Command entrypoints
@@ -54,12 +44,8 @@ tau plugin install name@marketplace / tau install name@marketplace
 
 ## On-disk model
 
-<<<<<<< ours — scope `User plugin state lives under the plugins dat...` in heading `On-disk model` (S, confidence: medium)
 // refused_by: statement_fold · collision: `User plugin state lives under the plugins data root (`~/.omp/pl…`
 User plugin state lives under the plugins data root (`~/.tau/plugins` by default). On Linux and macOS, `tau config init-xdg` initializes the XDG data, state, and cache roots but does not move existing data; with the XDG variables set, initialized roots store new user plugin state under `$XDG_DATA_HOME/tau/plugins`:
-=======
-User plugin state lives under the plugins data root (`~/.omp/plugins` by default). On Linux and macOS, `omp config init-xdg` initializes the XDG data, state, and cache roots but does not move existing plugin trees. With `XDG_DATA_HOME` set and its `omp/` directory initialized, default-profile state resolves under `$XDG_DATA_HOME/omp/plugins`. Named profiles use their own roots and require a profile-specific XDG directory to opt into that routing. The marketplace registry helper separately copies a legacy `marketplaces.json` best-effort when its XDG target is absent.
->>>>>>> theirs — scope `User plugin state lives under the plugins dat...`
 
 The plugin root contains:
 
@@ -70,12 +56,8 @@ The plugin root contains:
    - selected feature set per plugin
    - persisted plugin settings
 
-<<<<<<< ours — scope `When a project anchor (`.omp/` or `.git/`) ex...` in heading `On-disk model` (S, confidence: medium)
 // refused_by: statement_fold · collision: `When a project anchor (`.omp/` or `.git/`) exists at or above c…`
 When a project anchor (`.tau/` or `.git/`) exists at or above cwd, project runtime plugins live in `<anchor>/.tau/plugins/{node_modules,tau-plugins.lock.json}`. Marketplace project installs populate this root; enabled project packages shadow user packages with the same package name.
-=======
-Project-root resolution first walks upward for the nearest `.omp/`; only when none exists does it use the nearest `.git` anchor. Project runtime plugins live in `<anchor>/.omp/plugins/{node_modules,omp-plugins.lock.json}`. Explicit marketplace project installs can create `<cwd>/.omp/plugins/` when neither anchor exists (except when cwd is home). Enabled project packages shadow user packages with the same package name; disabled project packages do not. npm/git/link CLI operations remain user-scoped; their install handler warns and ignores `--scope`.
->>>>>>> theirs — scope `When a project anchor (`.omp/` or `.git/`) ex...`
 
 Project-local overrides are searched through project config directories as `plugin-overrides.json` (normally `<project>/.tau/plugin-overrides.json`). Overrides are read-only from manager/loader perspective and can disable plugins or override features/settings.
 
@@ -131,11 +113,8 @@ Every Bun package-manager call below (`install`, `update`, `uninstall`, `pm cach
 2. Validate the spec: git specs via `validateGitSpec`; npm specs against the package-name regex + shell-metacharacter denylist.
 3. Ensure plugin `package.json` exists (`tau-plugins`, private dependencies map).
 4. Run `bun install --no-cache <packageSpec>` for npm, or `bun install <gitSpec>` for Git, in the user plugins directory; `--force` is forwarded when requested. Reinstalls prune stale dependency entries first. Reinstalling an existing Git plugin also refreshes Bun's matching Git cache and runs `bun update <resolved-name>` to refresh the lockfile revision.
-<<<<<<< ours — scope `4. Run `bun install <packageSpec>` in `~/.omp...` in heading `Install/update flow (`PluginManager.install`)`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 4. Run `bun install <packageSpec>` in `~/.tau/plugins`.
-=======
->>>>>>> theirs — scope `4. Run `bun install <packageSpec>` in `~/.omp...` deleted in theirs
 5. Resolve the installed package name (npm: strip version via `extractPackageName`; git: diff `dependencies` before/after) and read `node_modules/<name>/package.json`.
 6. Resolve manifest and compute `enabledFeatures`:
    - `[*]`: all declared features (or `null` if no feature map)
@@ -150,11 +129,8 @@ Every Bun package-manager call below (`install`, `update`, `uninstall`, `pm cach
 - `omp plugin upgrade <package-name>` uses the source recorded in `plugins/package.json`: npm moves to the latest published version, while Git re-resolves its recorded ref. It preserves enablement and feature selection, removing selected features absent from a new feature map. Local links and `file:`/`link:`/`workspace:`/`portal:` dependencies have nothing to upgrade and are rejected.
 - Upgrade compares both package version and Bun lockfile resolution, so a moving Git ref can report a changed revision without a version bump.
 
-<<<<<<< ours — scope `- `omp plugin install pkg@newVersion` updates...` in heading `Update semantics`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 - `tau plugin install pkg@newVersion` updates dependency and lockfile version.
-=======
->>>>>>> theirs — scope `- `omp plugin install pkg@newVersion` updates...` deleted in theirs
 - `omp plugin install pkg@newVersion` updates the dependency and runtime version. A plain reinstall resets enablement to true and feature selection to defaults unless explicitly supplied; settings remain in the separate settings map.
 - Install snapshots the prior package tree, `package.json`, and `bun.lock`. Failure during installation, feature/extension validation, or runtime-config save attempts to restore all three.
 - No separate npm-plugin startup update check or migration action exists.
@@ -240,12 +216,8 @@ Manifest entries may point to a file. Tool/hook/command directories require a di
 
 - Manifest-declared **tools** feed `discoverAndLoadCustomTools` through `getAllPluginToolPaths(cwd)`.
 - Manifest-declared **extensions** feed `discoverAndLoadExtensions` through `listPackageExtensionModules()` (which `/extensions` also lists).
-<<<<<<< ours — scope `- The `omp-plugins` capability provider separ...` in heading `Current runtime wiring` (S, confidence: medium)
 // refused_by: statement_fold · collision: `- The `omp-plugins` capability provider separately scans conven…`
 - The `tau-plugins` capability provider separately scans conventional `skills/`, `hooks/pre|post/`, `tools/`, `commands/`, `rules/`, `prompts/`, and `.mcp.json` under enabled npm/link plugin roots. Task-agent discovery scans the same roots' `agents/`. Marketplace roots are excluded there and handled through `claude-plugins` plus marketplace task-agent discovery instead.
-=======
-- The `omp-plugins` capability provider separately scans conventional `skills/`, `hooks/pre|post/`, `tools/`, `commands/`, `rules/`, `prompts/`, and `.mcp.json`/`mcp.json` under enabled npm/link plugin roots. Task-agent discovery scans the same roots' `agents/`. Marketplace roots are excluded there and handled through `claude-plugins` plus marketplace task-agent discovery instead.
->>>>>>> theirs — scope `- The `omp-plugins` capability provider separ...`
 - Packages whose root `plugin.json` targets Agent Plugins 1.0.0 use `agent-plugins` for portable `skills/` and root `mcp.json`, from both marketplace and extension-package roots. Legacy providers skip those two surfaces but can still load client-specific content from hybrid packages; fatally invalid standard manifests suppress legacy discovery.
 - Manifest hook/command path resolvers remain exported, but runtime hook/slash discovery uses the conventional capability-provider scans rather than `getAllPluginHookPaths()` or `getAllPluginCommandPaths()`.
 - Direct custom-tool and extension path lists are de-duplicated by resolved absolute path (`seen`, first path wins).
@@ -305,20 +277,12 @@ Operationally, `doctor --fix` can repair some drift (`bun install`, orphaned con
 
 ## Malformed/missing manifest behavior summary
 
-<<<<<<< ours — heading `Malformed/missing manifest behavior summary` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 - Missing `tau`/`pi` field:
   - install/list: tolerated (minimal manifest)
   - runtime enabled-plugin discovery: skipped as non-plugin
 - Missing feature referenced by install spec or `features --set/--enable`: hard error with available feature list
 - Invalid `plugin-overrides.json`: ignored with fallback to `{}` in both manager and loader paths
-=======
-- Missing `omp`/`pi` field:
-   - install/list: tolerated (minimal manifest)
-   - runtime enabled-plugin discovery: skipped as non-plugin
-- Unknown feature referenced by install spec or feature mutation: hard error with available feature list when the manifest declares a feature map; without a map, names can be retained without validation
-- Invalid or unreadable `plugin-overrides.json`: logged with its path and error, then ignored with fallback to the next project config path or `{}`. Missing files remain silent.
->>>>>>> theirs — heading `Malformed/missing manifest behavior summary` (S+F, confidence: low)
 - Missing tool/hook/command file paths referenced by manifest: silently ignored during resolver expansion; flagged as errors only by `doctor`
 
 ## Mode differences and precedence

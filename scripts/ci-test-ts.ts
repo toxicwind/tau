@@ -111,13 +111,10 @@ const projectToolTestCommand: TestCommand = {
 	command: ["bun", "test", ...onlyFailuresArgs, "./.omp/tests/tui.test.ts"],
 	parallel: 1,
 };
-<<<<<<< ours — interstitial `between:scripts/ci-test-ts.ts::variable::nativeAndIntegrationPackages:scripts/ci-test-ts.ts::variable::localOnlyWorkspacePackages` (T+S, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `// cover. robomp-web lives under python/robomp and is outside e…`
 
 // Packages the CI buckets deliberately skip but a local full run should still
 // cover. robtau-web lives under python/robtau and is outside every CI TS bucket.
-=======
->>>>>>> theirs — interstitial `between:scripts/ci-test-ts.ts::variable::nativeAndIntegrationPackages:scripts/ci-test-ts.ts::variable::localOnlyWorkspacePackages` (T+S, confidence: medium) · weave: run 'weave explain scripts/ci-test-ts.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 // Packages the CI buckets deliberately skip but a local full run should still
 // cover. robomp-web lives under python/robomp and is outside every CI TS bucket.
@@ -385,14 +382,9 @@ async function commandsForMode(mode: Mode): Promise<TestCommand[]> {
 	}
 }
 
-<<<<<<< ours — interstitial `between:scripts/ci-test-ts.ts::function::commandsForMode:scripts/ci-test-ts.ts::variable::SCRUBBED_ENV_PREFIXES` (T, confidence: high)
 // refused_by: merge_ladder_exhausted · collision: `// The omp-kata runner pods may inject cloud credentials (`AWS_…`
 // The tau-kata runner pods may inject cloud credentials (`AWS_*`) pod-wide via
 // `envFrom`, GitHub Actions injects `GITHUB_TOKEN`,
-=======
-// Self-hosted runners may carry cloud credentials (`AWS_*`) in their
-// environment, GitHub Actions injects `GITHUB_TOKEN`,
->>>>>>> theirs — interstitial `between:scripts/ci-test-ts.ts::function::commandsForMode:scripts/ci-test-ts.ts::variable::SCRUBBED_ENV_PREFIXES` (T, confidence: high)
 // and a host may carry provider API keys. Any of these make env-sensitive code
 // non-deterministic in tests — e.g. leaked AWS creds make `amazon-bedrock` look
 // authenticated and win the provider startup fallback over `anthropic`. Run the
@@ -628,28 +620,15 @@ function isCI(): boolean {
 	return normalized !== "" && normalized !== "0" && normalized !== "false";
 }
 
-<<<<<<< ours — interstitial `between:scripts/ci-test-ts.ts::function::isCI:scripts/ci-test-ts.ts::function::testConcurrency` (T+S, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `// Defaults to the machine's available parallelism; `OMP_TEST_C…`
 // Fan-out width for the local parallel path, clamped to the command count.
 // Defaults to the machine's available parallelism; `TAU_TEST_CONCURRENCY`
 // overrides it — a positive integer to pick an exact width (dial down on a
 // memory-constrained laptop), or `all`/`max` to launch every chunk at once.
-=======
-// Fan-out width for the local parallel path, clamped to the command count and
-// to `cores`. Defaults to `cores`; `OMP_TEST_CONCURRENCY` (`spec`) dials it down
-// on a memory-constrained machine, and `all`/`max` name the cap explicitly.
-// Never wider than `cores`: every chunk is a full `bun test` process (~1 GB
-// resident on coding-agent), so launching all ~190 at once only trades a
-// CPU-bound run for an OOM kill.
->>>>>>> theirs — interstitial `between:scripts/ci-test-ts.ts::function::isCI:scripts/ci-test-ts.ts::function::testConcurrency` (T+S, confidence: medium)
 function testConcurrency(total: number, spec: string | undefined, cores: number): number {
 	const cap = Math.min(Math.max(1, cores), total);
-<<<<<<< ours — scope `const raw = Bun.env.OMP_TEST_CONCURRENCY?.tri...` in function `testConcurrency` (S, confidence: medium)
 // refused_by: statement_fold · collision: `const raw = Bun.env.OMP_TEST_CONCURRENCY?.trim().toLowerCase();`
 	const raw = Bun.env.TAU_TEST_CONCURRENCY?.trim().toLowerCase();
-=======
-	const raw = spec?.trim().toLowerCase();
->>>>>>> theirs — scope `const raw = Bun.env.OMP_TEST_CONCURRENCY?.tri...`
 	if (!raw || raw === "all" || raw === "max") return cap;
 	const override = Number(raw);
 	if (Number.isFinite(override) && override >= 1) {
@@ -868,12 +847,8 @@ async function runTestCommandsInParallel(commands: TestCommand[], concurrency: n
 	const fileWidths = [...new Set(commands.map(c => c.parallel).filter(p => p !== undefined))].sort((a, b) => a - b);
 	console.log(
 		`Running ${commands.length} test command(s), up to ${concurrency} in parallel ` +
-<<<<<<< ours — scope `console.log(` in function `runTestCommandsInParallel` (F, confidence: medium)
 // refused_by: statement_fold · collision: ``(OMP_TEST_CONCURRENCY=<n>|all to change); ${os.availableParall…`
 			`(TAU_TEST_CONCURRENCY=<n>|all to change); ${os.availableParallelism()} cores, ` +
-=======
-			`(OMP_TEST_CONCURRENCY=<n> to lower); ${os.availableParallelism()} cores, ` +
->>>>>>> theirs — scope `console.log(`
 			`--parallel=${fileWidths.join("/") || "n/a"} per chunk.`,
 	);
 
@@ -955,12 +930,8 @@ async function runTestCommandsInParallel(commands: TestCommand[], concurrency: n
 		return {
 			exitCode,
 			timedOut,
-<<<<<<< ours — scope `// One spawn of a chunk: pipes drained into b...` in function `runTestCommandsInParallel` (F, confidence: medium)
 // refused_by: statement_fold · collision: `output: `${stdout.text}${stderr.text}${timedOut ? `\n[watchdog]…`
 			output: `${stdout.text}${stderr.text}${timedOut ? `\n[watchdog] chunk exceeded ${Math.round(chunkTimeoutMs() / 1000)}s; killed with SIGKILL (TAU_TEST_CHUNK_TIMEOUT to change)\n` : ""}`,
-=======
-			output: `${stdout.text}${stderr.text}${timedOut ? `\n${stuckTree}[watchdog] chunk exceeded ${Math.round(chunkTimeoutMs() / 1000)}s; killed with SIGKILL (OMP_TEST_CHUNK_TIMEOUT to change)\n` : ""}`,
->>>>>>> theirs — scope `// One spawn of a chunk: pipes drained into b...`
 		};
 	}
 

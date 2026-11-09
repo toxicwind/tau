@@ -158,7 +158,6 @@ fn workspace_tree_options(config: &WorkspaceConfig) -> pi_walker::walk::TreeOpti
 		..Default::default()
 	}
 }
-<<<<<<< ours — function `build_workspace_walk_request` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 fn build_workspace_walk_request(config: &WorkspaceConfig) -> tau_walker::WalkRequest {
 	tau_walker::WalkRequest::new(config.root.clone())
@@ -174,9 +173,6 @@ fn build_workspace_walk_request(config: &WorkspaceConfig) -> tau_walker::WalkReq
 		.directory_errors(tau_walker::DirectoryErrorMode::SkipSkippable)
 		.cache(false)
 }
-=======
->>>>>>> theirs — function `build_workspace_walk_request` (S+F, confidence: low) · weave: run 'weave explain crates/tau-natives/src/workspace.rs' for per-hunk detail, 'weave check' to verify your resolution
-<<<<<<< ours — function `glob_match_from_path` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 fn glob_match_from_path(root: &Path, path: &Path) -> Option<GlobMatch> {
 	let relative = tau_walker::normalize_relative_path(root, path);
@@ -191,8 +187,6 @@ fn glob_match_from_path(root: &Path, path: &Path) -> Option<GlobMatch> {
 		size: size.map(|value| value as f64),
 	})
 }
-=======
->>>>>>> theirs — function `glob_match_from_path` (S+F, confidence: low)
 
 fn is_file_or_file_symlink(path: &Path, file_type: FileType) -> bool {
 	match file_type {
@@ -260,7 +254,6 @@ async fn run_list_workspace(
 	if let Some(err) = fatal {
 		return Err(err);
 	}
-<<<<<<< ours — scope `build_workspace_walk_request(&config)` in function `run_list_workspace` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `return Ok(pi_walker::WalkDecision::SkipDescend);` +2 more
 	build_workspace_walk_request(&config)
 		.for_each_entry_with_heartbeat(
@@ -269,38 +262,6 @@ async fn run_list_workspace(
 				let file_type = iofs::from_walker_file_type(entry.file_type);
 				if is_excluded_workspace_entry(entry.relative_path, file_type) {
 					return Ok(tau_walker::WalkDecision::SkipDescend);
-=======
-	while let Some(event) = tree.next().await {
-		let prune = match event {
-			pi_walker::walk::Event::Entry(entry) => {
-				let relative = String::from_utf8_lossy(entry.path);
-				let file_type = FileType::from(entry.file_type);
-				if is_excluded_workspace_entry(&relative, file_type, config.prune_excluded_dirs) {
-					true
-				} else {
-					if file_type == FileType::Dir {
-						if config.collect_agents_md && entry.depth == config.walk_max_depth {
-							probe_agents_md_at_walk_limit(entry.abs, &relative, entry.depth, &mut results);
-						}
-					} else if config.collect_agents_md
-						&& entry.name() == AGENTS_MD_FILENAME.as_bytes()
-						// AGENTS.md directory depth: root AGENTS.md is depth 0, child dir
-						// AGENTS.md is depth 1, and so on. Only depths 1..=4 are surfaced.
-						&& (AGENTS_MD_MIN_DEPTH..=AGENTS_MD_MAX_DEPTH).contains(&(entry.depth - 1))
-						&& is_file_or_file_symlink(entry.abs, file_type)
-					{
-						results.insert_agents_md(relative.clone().into_owned());
-					}
-					if entry.depth <= config.max_depth {
-						results.insert_entry(GlobMatch {
-							path: relative.into_owned(),
-							file_type,
-							mtime: entry.mtime.map(GlobMatch::millis),
-							size: entry.size.map(|size| size as f64),
-						});
-					}
-					false
->>>>>>> theirs — scope `build_workspace_walk_request(&config)`
 				}
 			},
 			pi_walker::walk::Event::Error(error) => {
@@ -323,22 +284,12 @@ async fn run_list_workspace(
 						message: error.error.to_string(),
 					});
 				}
-<<<<<<< ours — scope `build_workspace_walk_request(&config)` in function `run_list_workspace` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `return Ok(pi_walker::WalkDecision::SkipDescend);` +2 more
 				Ok(tau_walker::WalkDecision::Include)
 			},
 			|_| Ok(tau_walker::WalkDecision::Include),
 		)
 		.map_err(iofs::map_walker_error)?;
-=======
-				false
-			},
-		};
-		if prune {
-			tree.skip_dir();
-		}
-	}
->>>>>>> theirs — scope `build_workspace_walk_request(&config)`
 
 	Ok(ListWorkspaceResult {
 		entries: results.entries.into_values().collect(),
@@ -385,7 +336,6 @@ pub fn list_workspace<'env>(
 		} else {
 			max_depth
 		};
-<<<<<<< ours — scope `task::blocking("listWorkspace", ct, move |ct| {` in function `list_workspace` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `root: pi_walker::resolve_search_path(&path).map_err(crate::iofs…`
 		run_list_workspace(
 			WorkspaceConfig {
@@ -398,22 +348,6 @@ pub fn list_workspace<'env>(
 			},
 			ct,
 		)
-=======
-		let root = pi_walker::fs::resolve_dir(&fs, Path::new(&path))
-			.await
-			.map_err(task::walk_failure)?;
-		run_list_workspace(&fs, WorkspaceConfig {
-			root,
-			max_depth,
-			walk_max_depth,
-			include_hidden: hidden.unwrap_or(false),
-			use_gitignore: gitignore.unwrap_or(true),
-			prune_excluded_dirs: prune_excluded_dirs.unwrap_or(true),
-			collect_agents_md,
-			report_directory_errors,
-		})
-		.await
->>>>>>> theirs — scope `task::blocking("listWorkspace", ct, move |ct| {`
 	})
 }
 

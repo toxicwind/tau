@@ -2,18 +2,11 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, type 
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { computeBankScope, deriveBankId, ensureBankExists } fro…`
 import { computeBankScope, deriveBankId, ensureBankExists } from "tau/hindsight/bank";
 import { HindsightApi } from "tau/hindsight/client";
 import type { HindsightConfig } from "tau/hindsight/config";
 import { removeWithRetries } from "@tau/tau-utils";
-=======
-import { computeBankScope, ensureBankExists } from "@oh-my-pi/pi-coding-agent/hindsight/bank";
-import { HindsightApi } from "@oh-my-pi/pi-coding-agent/hindsight/client";
-import type { HindsightConfig } from "@oh-my-pi/pi-coding-agent/hindsight/config";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/hindsight-bank.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 // Isolate `git` invocations in this file from the host's global config —
 // `~/.gitconfig` commit signing or template hooks would otherwise turn the
@@ -260,7 +253,6 @@ describe("computeBankScope", () => {
 		});
 	});
 });
-<<<<<<< ours — test_suite `deriveBankId (legacy wrapper)` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 describe("deriveBankId (legacy wrapper)", () => {
 	it("returns the bankId field of the resolved scope", () => {
@@ -269,8 +261,6 @@ describe("deriveBankId (legacy wrapper)", () => {
 		expect(deriveBankId(baseConfig({ scoping: "per-project-tagged" }), "/work/proj")).toBe("tau");
 	});
 });
-=======
->>>>>>> theirs — test_suite `deriveBankId (legacy wrapper)` (S+F, confidence: low)
 
 describe("ensureBankExists", () => {
 	let client: HindsightApi;

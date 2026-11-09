@@ -7,7 +7,6 @@
 - Entry: `packages/coding-agent/src/tools/gh.ts`
 - Model-facing prompt: `packages/coding-agent/src/prompts/tools/github.md`
 - Key collaborators:
-<<<<<<< ours — scope `- Key collaborators:` in heading `Source` (F, confidence: medium)
 // refused_by: statement_fold · collision: `- `@oh-my-pi/pi-natives/vcs` — git operations (`vcs.git()` / `v…`
   - `packages/coding-agent/src/tools/gh-format.ts` — shorten commit SHAs for summaries.
   - `packages/coding-agent/src/tools/gh-renderer.ts` — TUI rendering, especially `run_watch` live/result views.
@@ -18,22 +17,6 @@
   - `packages/utils/src/dirs.ts` — base directory for dedicated PR worktrees.
   - `packages/coding-agent/src/sdk.ts` — session artifact allocation hook.
   - `packages/coding-agent/src/session/artifacts.ts` — artifact filename format `<id>.<toolType>.log`.
-=======
-   - `packages/tui/src/tools/gh-format.ts` — shorten commit SHAs and format summary fields.
-   - `packages/tui/src/tools/github.ts` — result types and TUI rendering, especially `run_watch` live/result views.
-   - `packages/coding-agent/src/tools/gh-view.ts` — repository summaries and cached issue/PR view fetchers.
-   - `packages/coding-agent/src/tools/gh-search.ts` — date qualifiers, search validation, and search operations.
-   - `packages/coding-agent/src/tools/gh-pr-checkout.ts` — PR create/checkout/push operations.
-   - `packages/coding-agent/src/tools/gh-run-watch.ts` — Actions polling and failed-job logs.
-   - `packages/coding-agent/src/tools/github-cache.ts` — credential-scoped issue/PR/diff caching and invalidation.
-   - `packages/coding-agent/src/utils/github.ts` — `gh` process wrapper (`github.run/json/text()`), non-interactive env, command deadline, bounded output capture.
-   - `packages/coding-agent/src/tools/gh-common.ts` — shared helpers, current-repo resolution, result building.
-   - `packages/coding-agent/src/utils/repo-lock.ts` — per-repo write serialization (`withRepoLock`).
-   - `@oh-my-pi/pi-natives/vcs` — git operations (`vcs.git()` / `vcs.requireGit()`: branch/worktree/config/push).
-   - `packages/utils/src/dirs.ts` — base directory for dedicated PR worktrees.
-   - `packages/coding-agent/src/sdk.ts` — session artifact allocation hook.
-   - `packages/coding-agent/src/session/artifacts.ts` — artifact filename format `<id>.<toolType>.log`.
->>>>>>> theirs — scope `- Key collaborators:` · weave: run 'weave explain docs/tools/github.md' for per-hunk detail, 'weave check' to verify your resolution
 
 ## Availability and approval
 
@@ -101,18 +84,11 @@ Most operations return a text result built by `buildTextResult()` in `packages/c
 6. PR diffs use `pr://<N>/diff` (changed files), `pr://<N>/diff/<i>` (one file, 1-indexed), or `pr://<N>/diff/all` (full unified diff) — see [read](read.md). All variants share the `pr-diff` cache row; a fresh fetch normally runs `gh pr diff`, with a files-API fallback for oversized aggregate diffs.
    A `bash` command that exits 0 and contains `git push` drops the live `pr`/`pr-diff` rows of each pushed repository, so the next unpinned read fetches the new head. The destination follows git: the positional remote/URL (over `--repo`), `git -C`, then `branch.<name>.pushRemote`, `remote.pushDefault`, `branch.<name>.remote`, the only remote, `origin`; `remote.<name>.pushurl` beats the fetch URL. Dry runs and non-zero exits keep the cache. Issue rows, other repositories, and retained `?at=` snapshots are untouched. Any cache invalidation also stops in-flight fetches from storing their pre-invalidation results.
 7. `pr_checkout` resolves PR metadata first, then enters `withRepoLock()` (`packages/coding-agent/src/utils/repo-lock.ts`) before any git mutation so parallel checkout calls for the same primary repo do not race on shared `.git` state.
-<<<<<<< ours — heading `Flow` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 8. `pr_push` reads PR head metadata back from git branch config, derives a refspec, pushes with `repository.push()` (`@tau/tau-natives/vcs`), then invalidates the cached `pr://` rows for the pushed PR via `invalidateAllForNumber()` so the next `pr://` read reflects the push.
 9. `pr_create` shells out once, then best-effort re-reads the created PR for a richer summary.
 10. `run_watch` chooses either run mode (`run` supplied) or commit mode (`run` omitted), polls GitHub Actions APIs every 3 seconds for the first minute and every 15 seconds after that, emits streaming updates, and may save a full failed-log artifact before returning.
 11. Final text goes through `toolResult().text(...)`; if `session.allocateOutputArtifact()` returns a slot, failed-log text is persisted with `Bun.write()`.
-=======
-8. `pr_push` reads PR head metadata back from git branch config, derives a refspec, pushes with `repository.push()` (`@oh-my-pi/pi-natives/vcs`), then invalidates the cached `pr://` rows for the pushed PR via `invalidateAllForNumber()` so the next `pr://` read reflects the push.
-9. `pr_create` shells out once, then best-effort fetches only the created PR's summary metadata.
-10.   `run_watch` chooses either run mode (`run` supplied) or commit mode (`run` omitted), polls GitHub Actions APIs every 3 seconds for the first minute and every 15 seconds after that, emits streaming updates, and may save a full failed-log artifact before returning.
-11.   Final text goes through `toolResult().text(...)`; if `session.allocateOutputArtifact()` returns a slot, failed-log text is persisted with `Bun.write()`.
->>>>>>> theirs — heading `Flow` (S+F, confidence: low)
 
 ## Modes / Variants
 
@@ -176,7 +152,6 @@ Worktree and metadata behavior:
 - New worktree creation calls `repository.worktreeAdd(finalWorktreePath, localBranch, { detach: false, clone, backend }, signal)` after choosing an unused path. `clone` follows `worktree.clone` (default `true`); `backend` follows `isolation.backend` (default `"auto"`). Clone failure falls back to plain checkout with a warning; successful clone metadata appears as `clonedWith`.
 - For same-repo PRs, remote is `origin`. For cross-repo PRs, the tool resolves a clone URL for the head repo, reuses an existing remote with the same URL when possible, or creates `fork-<owner>` / `fork-<owner>-<n>`.
 - The branch push metadata is persisted with `git config` under the repository's shared `.git/config` as:
-<<<<<<< ours — scope `- The branch push metadata is persisted with ...` in heading ``pr_checkout`` (F, confidence: medium)
 // refused_by: statement_fold · collision: `- `branch.pr-<number>.ompPrHeadRef`` +3 more
   - `branch.pr-<number>.remote`
   - `branch.pr-<number>.merge`
@@ -185,15 +160,6 @@ Worktree and metadata behavior:
   - `branch.pr-<number>.tauPrUrl`
   - `branch.pr-<number>.tauPrIsCrossRepository`
   - `branch.pr-<number>.tauPrMaintainerCanModify`
-=======
-   - `branch.pr-<number>.remote`
-   - `branch.pr-<number>.merge`
-   - `branch.pr-<number>.pushRemote`
-   - `branch.pr-<number>.ompPrHeadRef`
-   - `branch.pr-<number>.ompPrUrl`
-   - `branch.pr-<number>.ompPrIsCrossRepository`
-   - `branch.pr-<number>.ompPrMaintainerCanModify`
->>>>>>> theirs — scope `- The branch push metadata is persisted with ...`
 - When no matching worktree exists, an existing `refs/heads/pr-<number>` at a different commit fails unless `force=true`, which resets the branch to the fetched head.
 - An existing matching worktree is reused with `reused: true`; the remote is fetched and push metadata refreshed, but its local branch is not reset, even with `force=true`.
 
@@ -294,28 +260,17 @@ Watch flow:
 ## Side Effects
 
 - Filesystem
-<<<<<<< ours — scope `## Side Effects` in heading `Side Effects` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `- `pr_checkout` may create worktree directories named `<pr-numb…`
   - `pr_create` may create a temp dir under `os.tmpdir()` named `gh-pr-body-*`, write `body.md`, then remove the dir in `finally`.
   - `pr_checkout` may create worktree directories named `<pr-number>-<repo-hash>` under the base selected by `TAU_WORKTREE_DIR`, then `worktree.base`, then the profile/XDG-aware default (normally `~/.tau/wt`), and add git worktrees there.
   - `run_watch` may write a session artifact with full failed-job logs.
-=======
-   - `pr_create` may create a temp dir under `os.tmpdir()` named `gh-pr-body-*`, write `body.md`, then remove the dir in `finally`.
-   - `pr_checkout` may create worktree directories named `<pr-number>-<repo-hash>` under the base selected by `OMP_WORKTREE_DIR`, then `worktree.base`, then the profile/XDG-aware default (normally `~/.omp/wt`), and add git worktrees there.
-   - `run_watch` may write a session artifact with captured failed-job logs and/or fetch diagnostics.
->>>>>>> theirs — scope `## Side Effects`
 - Network
    - Every op shells out to `gh`, which then talks to GitHub APIs except `pr_push`.
    - `pr_push` uses git network transport to the configured remote.
 - Subprocesses / native bindings
-<<<<<<< ours — scope `- Subprocesses / native bindings` in heading `Side Effects` (F, confidence: medium)
 // refused_by: statement_fold · collision: `- `pr_checkout` and `pr_push` also invoke git operations via `@…`
   - All `gh` calls use `Bun.spawn(["gh", ...args])`.
   - `pr_checkout` and `pr_push` also invoke git operations via `@tau/tau-natives/vcs` (`vcs.requireGit()`), serialized by `withRepoLock()` from `packages/coding-agent/src/utils/repo-lock.ts`.
-=======
-   - All `gh` calls use `Bun.spawn(["gh", ...args])`.
-   - `pr_checkout` and `pr_push` invoke git operations via `@oh-my-pi/pi-natives/vcs` (`vcs.requireGit()`). Checkout mutations use in-process `withRepoLock()`; `pr_push` does not acquire that lock.
->>>>>>> theirs — scope `- Subprocesses / native bindings`
 - Session state (transcript, memory, jobs, checkpoints, registries)
    - `run_watch` consumes `session.allocateOutputArtifact()` when failed-job logs are persisted.
    - Returned `details` objects carry run/checkouts metadata for the renderer/UI.
@@ -350,7 +305,6 @@ Watch flow:
    - otherwise stderr/stdout text, or fallback `GitHub CLI command failed: gh ...`
 - `json()` also throws on empty stdout or invalid JSON.
 - Local validation errors throw `ToolError`, including:
-<<<<<<< ours — scope `- Local validation errors throw `ToolError`, ...` in heading `Errors` (F, confidence: medium)
 // refused_by: statement_fold · collision: `- `pr_push` on a branch without `ompPrHeadRef` metadata`
   - missing required per-op fields (`path` for `file_read`, `query` for `search_code`, `title` unless `fill=true`)
   - invalid numeric `limit` / `tail`
@@ -361,19 +315,6 @@ Watch flow:
   - `pr_push` on a branch without `tauPrHeadRef` metadata
   - conflicting existing worktree path or branch without `force`
   - an absolute `file_read` path (a leading `/`)
-=======
-   - missing required per-op fields (`path` for `file_read`, `query` for `search_code`, query/date bounds for other searches, `title` unless `fill=true`)
-   - invalid numeric `limit` / `tail`
-   - invalid `since` / `until` date bound
-   - invalid `run` format
-   - `fill` combined with `title` or `body`
-   - missing git repo / branch / HEAD context for checkout, push, or watch
-   - `pr_push` on a branch without `ompPrHeadRef` metadata
-   - an existing PR branch at a different commit without `force` when no matching worktree exists, or exhaustion of the 100 worktree-path candidates
-   - PR identifiers beginning with `-`
-   - an absolute `file_read` path (a leading `/`) or a contents-API response that is not a file
-   - `run_watch` without `branch` / `run` when the current checkout does not match the requested repo
->>>>>>> theirs — scope `- Local validation errors throw `ToolError`, ...`
 - `run_watch` treats failed-job log fetches specially: missing log content does not fail the watch; it marks that log `available: false` and prints `Log tail unavailable.` / `Full log unavailable.` with a bounded reason. Artifact labels distinguish full, partial, and unavailable logs in both watch modes.
 - `pr_create` swallows only the post-create best-effort `gh pr view` refresh; the create step itself still fails normally.
 

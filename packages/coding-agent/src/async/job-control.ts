@@ -21,24 +21,12 @@ import { parseConfiguredThinkingLevel } from "@tau/tau-tui/thinking";
 
 import type { ToolSession } from "../tools";
 
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { formatDuration } from "@oh-my-pi/pi-tui/render/render-…` +1 more
 import { formatDuration } from "@tau/tau-tui/render/render-utils";
 import type { AgentActivitySnapshot, CancelOutcome, CoordinationDetails, JobSnapshot } from "@tau/tau-tui/tools/wait";
 
 import { isWaitingPollDetails } from "@tau/tau-tui/tools/wait";
 import { formatArtifactErrorNotice } from "@tau/tau-tui/tools/output-meta";
-=======
-import { formatDuration, formatNumber } from "@oh-my-pi/pi-tui/render/render-utils";
-import type {
-	AgentActivitySnapshot,
-	CancelOutcome,
-	CoordinationDetails,
-	JobSnapshot,
-} from "@oh-my-pi/pi-tui/tools/wait";
-
-import { isWaitingPollDetails } from "@oh-my-pi/pi-tui/tools/wait";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/async/job-control.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /**
  * Resolve a list of job ids to job records visible to the calling agent.

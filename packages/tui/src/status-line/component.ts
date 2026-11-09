@@ -1,5 +1,4 @@
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { VcsRepo } from "@oh-my-pi/pi-natives";`
 import type { AgentMessage } from "@tau/tau-agent-core";
 import type { AssistantMessage, UsageLimit, UsageReport } from "@tau/tau-ai";
@@ -8,18 +7,6 @@ import { getNextTimeBasedPricingTransition } from "@tau/tau-catalog/models";
 import type { Model, ModelCost } from "@tau/tau-catalog/types";
 import type { VcsRepo } from "@tau/tau-natives";
 import * as vcs from "@tau/tau-natives/vcs";
-=======
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, UsageLimit, UsageReport } from "@oh-my-pi/pi-ai";
-import {
-	getAntigravityCounterKeyForModel,
-	scopeAntigravityLimitsForModel,
-} from "@oh-my-pi/pi-ai/usage/google-antigravity";
-import { getNextTimeBasedPricingTransition } from "@oh-my-pi/pi-catalog/models";
-import type { Model, ModelCost } from "@oh-my-pi/pi-catalog/types";
-import type { VcsGitRepo, VcsRepo } from "@oh-my-pi/pi-natives";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/src/status-line/component.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	type Component,
 	type ComposerStyle,

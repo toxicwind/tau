@@ -8,10 +8,6 @@ import cliNotices from "../../THIRD-PARTY-NOTICES.txt" with { type: "text" };
  */
 export function formatLicenseOutput(): string {
 	const sections = [license, cliNotices, nativesNotices].map(text => text.trimEnd());
-<<<<<<< ours — scope `return `OMP License and Third-Party Notices\n...` in function `formatLicenseOutput` (S, confidence: medium)
 // refused_by: statement_fold · collision: `return `OMP License and Third-Party Notices\n\n${rootLicense.tr…`
 	return `TAU License and Third-Party Notices\n\n${rootLicense.trimEnd()}\n\n${thirdPartyNotices.trimEnd()}\n`;
-=======
-	return `OMP License and Third-Party Notices\n\n${sections.join("\n\n")}\n`;
->>>>>>> theirs — scope `return `OMP License and Third-Party Notices\n...` · weave: run 'weave explain packages/coding-agent/src/cli/license.ts' for per-hunk detail, 'weave check' to verify your resolution
 }

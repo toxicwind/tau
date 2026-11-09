@@ -5,20 +5,11 @@
  */
 
 import { isPromise } from "node:util/types";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { isRecord, ptree, readJsonl } from "@oh-my-pi/pi-utils";`
 import type { AgentEvent, AgentMessage, AgentToolResult, ThinkingLevel } from "@tau/tau-agent-core";
 import type { CompactionResult } from "@tau/tau-agent-core/compaction";
 import type { ImageContent, Model } from "@tau/tau-ai";
 import { isRecord, ptree, readJsonl } from "@tau/tau-utils";
-=======
-import type { AgentEvent, AgentMessage, AgentToolResult, ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { CompactionResult } from "@oh-my-pi/pi-agent-core/compaction";
-import type { ImageContent, Model } from "@oh-my-pi/pi-ai";
-import { isRecord, ptree, readJsonl, toError } from "@oh-my-pi/pi-utils";
-import type { LogoutAccount } from "@oh-my-pi/pi-tui/overlays/logout-account-selector";
-import type { TodoPhase } from "@oh-my-pi/pi-tui/tools/todo";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/modes/rpc/rpc-client.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { FileSink } from "bun";
 import type { BashResult } from "../../exec/bash-executor";
 import type { AgentSessionEvent, SessionStats } from "../../session/agent-session";

@@ -32,14 +32,8 @@ import {
 	statRemotePath,
 	writeRemoteFile,
 } from "../ssh/file-transfer";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { isMarkdownPath } from "@oh-my-pi/pi-tui/lang-from-path…`
 import { isMarkdownPath } from "@tau/tau-tui/lang-from-path";
-=======
-import sshDoc from "../prompts/internal-urls/ssh.md" with { type: "text" };
-import { decodeUtf8Text } from "../tools/read-format";
-import { contentTypeForPath, formatDirectoryListing } from "./filesystem-resource";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/internal-urls/ssh-protocol.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type {
 	InternalResource,
 	InternalUrl,

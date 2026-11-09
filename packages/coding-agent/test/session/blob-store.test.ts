@@ -1,22 +1,8 @@
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { describe, expect, it } from "bun:test";
 import { BlobStore, externalizeImageData, parseBlobRef, resolveImageData } from "tau/session/blob-store";
 import { blobExtensionForImageMimeType } from "@tau/tau-tui/prompt/image-format";
 import { TempDir } from "@tau/tau-utils";
-=======
-import { describe, expect, it, vi } from "bun:test";
-import * as fs from "node:fs";
-import * as path from "node:path";
-import {
-	BlobStore,
-	externalizeImageData,
-	parseBlobRef,
-	resolveImageData,
-} from "@oh-my-pi/pi-coding-agent/session/blob-store";
-import { blobExtensionForImageMimeType } from "@oh-my-pi/pi-tui/prompt/image-format";
-import { TempDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/session/blob-store.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 describe("BlobStore image display paths", () => {
 	it("creates an extension-bearing sidecar for image blobs while keeping canonical refs extensionless", async () => {

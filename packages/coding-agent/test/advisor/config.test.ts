@@ -253,7 +253,6 @@ describe("getOrCreateAdvisorProviderSessionId", () => {
 	});
 });
 
-<<<<<<< ours — test_suite `WATCHDOG.yml file round-trip` (S+F, confidence: low)
 // refused_by: rename_vs_edit_guard · collision: none (both sides edited, nowhere the same lines)
 describe("advisor config file round-trip (TAUVISOR.yml canonical)", () => {
 	let tmp: string;
@@ -349,130 +348,10 @@ describe("advisor config file round-trip (TAUVISOR.yml canonical)", () => {
 		);
 		expect(advisorConfigFilePath("user", { projectDir: "/repo", agentDir: "/home/.tau" })).toBe(
 			path.join("/home/.tau", "TAUVISOR.yml"),
-=======
-describe("WATCHDOG.yml file round-trip", () => {
-	let tmp: string;
-	beforeEach(async () => {
-		tmp = await fsp.mkdtemp(path.join(os.tmpdir(), "omp-advisor-file-"));
-		await fsp.mkdir(path.join(tmp, ".git"));
-	});
-	afterEach(async () => {
-		await fsp.rm(tmp, { recursive: true, force: true });
-	});
-
-	const doc: WatchdogConfigDoc = {
-		instructions: 'Shared baseline.\n\nSecond line with: a colon and "quotes".',
-		advisors: [
-			{
-				name: "Architecture",
-				model: "x-ai/grok-code-fast:high",
-				reviewMode: "agent-end",
-				reviewInterval: 3,
-				instructions: "Watch module boundaries.\nReport coupling.",
-			},
-			{ name: "Security", tools: ["read", "grep"], reviewInterval: 2 },
-		],
-	};
-
-	it("saves and reloads a doc byte-equivalently (incl. multiline and special chars)", async () => {
-		const file = path.join(tmp, "WATCHDOG.yml");
-		await saveWatchdogConfigFile(file, doc);
-		const loaded = await loadWatchdogConfigFile(file);
-		expect(loaded).toEqual(doc);
-	});
-
-	it("round-trips positive safe-integer interval boundaries through editing and discovery", async () => {
-		const boundaryDoc: WatchdogConfigDoc = {
-			advisors: [
-				{ name: "Minimum", reviewInterval: 1 },
-				{ name: "Maximum", reviewInterval: Number.MAX_SAFE_INTEGER },
-			],
-		};
-		await saveWatchdogConfigFile(path.join(tmp, "WATCHDOG.yml"), boundaryDoc);
-		expect(await loadWatchdogConfigFile(path.join(tmp, "WATCHDOG.yml"))).toEqual(boundaryDoc);
-		const { advisors } = await discoverAdvisorConfigs(tmp, tmp);
-		expect(advisors.map(advisor => advisor.reviewInterval)).toEqual([1, Number.MAX_SAFE_INTEGER]);
-	});
-
-	it("rejects invalid intervals on save without replacing the existing roster", async () => {
-		const file = path.join(tmp, "WATCHDOG.yml");
-		await saveWatchdogConfigFile(file, doc);
-		for (const interval of [0, -1, 1.5, Number.NaN, Number.POSITIVE_INFINITY, Number.MAX_SAFE_INTEGER + 1]) {
-			await expect(
-				saveWatchdogConfigFile(file, { advisors: [{ name: "Invalid", reviewInterval: interval }] }),
-			).rejects.toThrow();
-			expect(await loadWatchdogConfigFile(file)).toEqual(doc);
-		}
-	});
-
-	it("serializes block-style YAML that the discovery path also parses", async () => {
-		const file = path.join(tmp, "WATCHDOG.yml");
-		await saveWatchdogConfigFile(file, doc);
-		const text = await Bun.file(file).text();
-		// Block style (not the flow `{...}` form), so it stays hand-editable.
-		expect(text).toContain("advisors:");
-		expect(text).not.toMatch(/^\{/);
-		expect(text).toContain("reviewMode: agent-end");
-		expect(text).toContain("reviewInterval: 3");
-		expect(text).toContain('instructions: |2-\n  Shared baseline.\n  \n  Second line with: a colon and "quotes".');
-		expect(text).toContain("    instructions: |2-\n      Watch module boundaries.\n      Report coupling.");
-		expect(text).not.toContain("\\n");
-		const { advisors, sharedInstructions } = await discoverAdvisorConfigs(tmp, tmp);
-		expect(advisors.map(a => a.name)).toEqual(["Architecture", "Security"]);
-		expect(sharedInstructions).toContain("Shared baseline.");
-	});
-
-	it("preserves significant leading whitespace and trailing newlines in block scalars", async () => {
-		const file = path.join(tmp, "WATCHDOG.yml");
-		const whitespaceDoc: WatchdogConfigDoc = {
-			instructions: "  indented first line\nplain second line\n\n",
-			advisors: [{ name: "Whitespace", instructions: "\n  indented after blank\nplain" }],
-		};
-
-		await saveWatchdogConfigFile(file, whitespaceDoc);
-		expect(await loadWatchdogConfigFile(file)).toEqual(whitespaceDoc);
-	});
-
-	it("round-trips an explicit empty tools list without collapsing it into the default", async () => {
-		const file = path.join(tmp, "WATCHDOG.yml");
-		const explicitNoToolsDoc: WatchdogConfigDoc = {
-			advisors: [{ name: "No Tools", tools: [] }, { name: "Default Tools" }],
-		};
-
-		await saveWatchdogConfigFile(file, explicitNoToolsDoc);
-		const serializedDoc = await loadWatchdogConfigFile(file);
-		expect(serializedDoc).toEqual(explicitNoToolsDoc);
-
-		const { advisors } = await discoverAdvisorConfigs(tmp, tmp);
-		expect(advisors.find(a => a.name === "No Tools")?.tools).toEqual([]);
-		expect(advisors.find(a => a.name === "Default Tools")?.tools).toBeUndefined();
-	});
-
-	it("removes the file when the doc is empty so legacy discovery resumes", async () => {
-		const file = path.join(tmp, "WATCHDOG.yml");
-		await saveWatchdogConfigFile(file, doc);
-		await saveWatchdogConfigFile(file, { advisors: [] });
-		expect(await Bun.file(file).exists()).toBe(false);
-		// Loading a missing file yields an empty doc, never throws.
-		expect(await loadWatchdogConfigFile(file)).toEqual({ advisors: [] });
-	});
-
-	it("returns an empty serialization for an empty doc", () => {
-		expect(serializeWatchdogConfig({ advisors: [] })).toBe("");
-	});
-
-	it("resolves project and user scope paths", () => {
-		expect(advisorConfigFilePath("project", { projectDir: "/repo", agentDir: "/home/.omp" })).toBe(
-			path.join("/repo", "WATCHDOG.yml"),
-		);
-		expect(advisorConfigFilePath("user", { projectDir: "/repo", agentDir: "/home/.omp" })).toBe(
-			path.join("/home/.omp", "WATCHDOG.yml"),
->>>>>>> theirs — test_suite `WATCHDOG.yml file round-trip` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/advisor/config.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 		);
 	});
 });
 
-<<<<<<< ours — test_suite `resolveAdvisorConfigEditPath` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 describe("resolveAdvisorConfigEditPath (TAUVISOR canonical, legacy in-place)", () => {
 	let tmp: string;
@@ -503,31 +382,6 @@ describe("resolveAdvisorConfigEditPath (TAUVISOR canonical, legacy in-place)", (
 
 	it("edits legacy WATCHDOG.yml in place when it is the only file", async () => {
 		await Bun.write(path.join(tmp, "WATCHDOG.yml"), "advisors: []\n");
-=======
-describe("resolveAdvisorConfigEditPath", () => {
-	let tmp: string;
-	beforeEach(async () => {
-		tmp = await fsp.mkdtemp(path.join(os.tmpdir(), "omp-advisor-resolve-"));
-	});
-	afterEach(async () => {
-		await fsp.rm(tmp, { recursive: true, force: true });
-	});
-
-	const dirs = (d: string) => ({ projectDir: d, agentDir: d });
-
-	it("defaults to .yml when neither file exists", async () => {
-		expect(await resolveAdvisorConfigEditPath("project", dirs(tmp))).toBe(path.join(tmp, "WATCHDOG.yml"));
-	});
-
-	it("edits an existing .yaml in place when only it exists", async () => {
-		await Bun.write(path.join(tmp, "WATCHDOG.yaml"), "advisors: []\n");
-		expect(await resolveAdvisorConfigEditPath("project", dirs(tmp))).toBe(path.join(tmp, "WATCHDOG.yaml"));
-	});
-
-	it("prefers the canonical .yml when both exist", async () => {
-		await Bun.write(path.join(tmp, "WATCHDOG.yml"), "advisors: []\n");
-		await Bun.write(path.join(tmp, "WATCHDOG.yaml"), "advisors: []\n");
->>>>>>> theirs — test_suite `resolveAdvisorConfigEditPath` (S+F, confidence: low)
 		expect(await resolveAdvisorConfigEditPath("project", dirs(tmp))).toBe(path.join(tmp, "WATCHDOG.yml"));
 	});
 });

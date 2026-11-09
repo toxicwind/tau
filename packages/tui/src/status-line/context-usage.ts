@@ -1,4 +1,3 @@
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { toolWireSchema } from "@oh-my-pi/pi-ai/utils/schema";` +1 more
 import type { AgentMessage, Tokenizer } from "@tau/tau-agent-core";
 import type { CompactionSettings } from "@tau/tau-agent-core/compaction";
@@ -8,14 +7,6 @@ import { renderToolExamples } from "@tau/tau-ai/dialect";
 import { toolWireSchema } from "@tau/tau-ai/utils/schema";
 import { formatNumber } from "@tau/tau-utils";
 import type { Theme } from "../theme";
-=======
-import type { AgentMessage, Tokenizer } from "@oh-my-pi/pi-agent-core";
-import type { CompactionSettings } from "@oh-my-pi/pi-agent-core/compaction";
-import { effectiveReserveTokens, resolveThresholdTokens } from "@oh-my-pi/pi-agent-core/compaction";
-import type { Tool as AiTool, Model } from "@oh-my-pi/pi-ai";
-import { renderToolExamples } from "@oh-my-pi/pi-ai/dialect";
-import { stripSchemaDescriptions, toolWireSchema } from "@oh-my-pi/pi-ai/utils/schema";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/src/status-line/context-usage.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 interface ContextSkill {
 	readonly name: string;

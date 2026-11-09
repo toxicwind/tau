@@ -1,15 +1,9 @@
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 import { ThinkingLevel } from "@tau/tau-agent-core";
 import { getTimeBasedPricingPeriod } from "@tau/tau-catalog/models";
 import { SPINNER_ADVANCE_MS, TERMINAL } from "../index";
-=======
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import { getTimeBasedPricingPeriod } from "@oh-my-pi/pi-catalog/models";
-import { sharedSpinnerFrame, TERMINAL } from "../index";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/tui/src/status-line/segments.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	formatDuration,
 	formatNumber,
@@ -17,13 +11,9 @@ import {
 	getProjectDir,
 	normalizePathForComparison,
 	relativePathWithinNormalizedRoot,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 	relativePathWithinRoot,
 } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import { type SymbolKey, type Theme, type ThemeColor, theme } from "../theme";
 import { SYMBOL_PRESETS } from "../theme/symbols";
 import { shortenPath, TRUNCATE_LENGTHS, truncateToWidth } from "../render/render-utils";
@@ -237,16 +227,11 @@ const piSegment: StatusLineSegment = {
 		// trailing space here would double the gap at the first separator (#11103).
 		const content =
 			ctx.turnElapsedMs != null
-<<<<<<< ours — scope `render` in variable `piSegment` (F, confidence: medium)
 // refused_by: container_member · collision: `: theme.icon.omp` +1 more
 				? `${brandSpinnerFrame(ctx.now?.getTime())} ${statusValue(ctx, brandTimer(ctx.turnElapsedMs))}`
 				: theme.icon.tau
 					? theme.icon.tau
 					: "";
-=======
-				? `${brandMark(brandSpinnerFrame(ctx.now?.getTime()), profile)} ${brandTimer(ctx.turnElapsedMs)}`
-				: brandMark(theme.icon.omp, profile);
->>>>>>> theirs — scope `render`
 		return { content: `${fgAnsi}${content}\x1b[39m`, visible: true };
 	},
 	describe(ctx) {

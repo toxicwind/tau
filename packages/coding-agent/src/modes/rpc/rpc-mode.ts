@@ -11,24 +11,12 @@
  * - Prompt completion: one `prompt_result` per accepted prompt, correlated by the command `id`
  * - Extension UI: Extension UI requests are emitted, client responds with extension_ui_response
  */
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { $env, isRecord, logger, Snowflake } from "@oh-my-pi/pi…`
 import { ThinkingLevel } from "@tau/tau-agent-core";
 import { getOAuthProviders } from "@tau/tau-ai/oauth";
 import { toolWireSchema } from "@tau/tau-ai/utils/schema";
 import { $env, isRecord, logger, Snowflake } from "@tau/tau-utils";
 import { reset as resetCapabilities } from "../../capability";
-=======
-import * as fs from "node:fs";
-import * as path from "node:path";
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { Model } from "@oh-my-pi/pi-ai";
-import { getOAuthProviders } from "@oh-my-pi/pi-ai/oauth";
-import type { ImageContent } from "@oh-my-pi/pi-ai";
-import { toolWireSchema } from "@oh-my-pi/pi-ai/utils/schema";
-import { modelsAreEqual } from "@oh-my-pi/pi-catalog/models";
-import { $env, isRecord, logger, Snowflake, toError } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/modes/rpc/rpc-mode.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { clearPluginRootsAndCaches, resolveActiveProjectRegistryPath } from "../../discovery/helpers";
 import {
 	type ExtensionAskDialogQuestion,
@@ -49,30 +37,10 @@ import {
 	type SkillPromptInput,
 	type SkillRediscoverySource,
 } from "../../extensibility/skills";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { $env, isRecord, logger, Snowflake } from "@oh-my-pi/pi…`
 import { loadSlashCommands } from "../../extensibility/slash-commands";
 import { type Theme, theme } from "@tau/tau-tui/theme";
 import type { AgentSession } from "../../session/agent-session";
-=======
-import { type Theme, theme } from "@oh-my-pi/pi-tui/theme";
-import { AgentLifecycleManager } from "../../registry/agent-lifecycle";
-import {
-	type WordCompletionEngine,
-	type WordCompletionMethod,
-	type WordCompletionQuery,
-	wordCompletionQuery,
-} from "@oh-my-pi/pi-tui/prompt/word-completion";
-import { requestTextPrediction, textPredictionBackend } from "../../predict/client";
-import { type AgentSession, type NavigateTreeResult, SessionBusyError } from "../../session/agent-session";
-import type { AgentSessionHandle } from "../../session/agent-session-handle";
-import type { MCPManager } from "../../mcp/manager";
-import { reconnectMcpManagerServer } from "../../mcp/oauth-reauth";
-import type { RestoredQueuedMessage } from "../../session/agent-session-types";
-import { CACHE_WARMING_MODES } from "../../session/cache-warmer";
-import { findMostRecentNonEmptySession, findRecentSessionContinuation } from "../../session/session-listing";
-import { probeSessionLeases } from "../../session/session-storage";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import { SKILL_PROMPT_MESSAGE_TYPE, USER_INTERRUPT_LABEL } from "../../session/messages";
 import { executeAcpBuiltinSlashCommand } from "../../slash-commands/acp-builtins";
 import { buildAvailableSlashCommands } from "../../slash-commands/available-commands";

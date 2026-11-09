@@ -3,20 +3,12 @@ import type { Dirent } from "node:fs";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { formatBytes, getWorktreeDir, logger, Snowflake } from …`
 import type { VcsCommitAuthor, VcsGitRepo } from "@tau/tau-natives";
 import * as natives from "@tau/tau-natives";
 import * as vcs from "@tau/tau-natives/vcs";
 import { formatBytes, getWorktreeDir, logger, Snowflake } from "@tau/tau-utils";
 import type { SettingValue } from "../config/settings-schema";
-=======
-import type { VcsCommitAuthor, VcsGitRepo } from "@oh-my-pi/pi-natives";
-import * as natives from "@oh-my-pi/pi-natives";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import { formatBytes, getWorktreeDir, isEnoent, logger, Snowflake } from "@oh-my-pi/pi-utils";
-import type { SettingValueOf } from "../config/registry";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/task/worktree.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { withRepoLock } from "../utils/repo-lock";
 import { needsNativeTeardown, writeIsolationOwner, writeRetainedBackend } from "./isolation-ownership";
 import { mapWithConcurrencyLimit } from "./parallel";
@@ -925,11 +917,8 @@ async function replayFilteredAgentCommits(opts: FilteredAgentReplayOptions): Pro
 	const msg = (opts.commitMessage && (await opts.commitMessage(leftoverPatch))) || opts.fallbackMessage;
 	return commitPatch(opts.repoRoot, tip, opts.taskId, leftoverPatch, msg);
 
-<<<<<<< ours — scope `const tmpDir = path.join(os.tmpdir(), `omp-br...` in function `replayFilteredAgentCommits`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	const tmpDir = path.join(os.tmpdir(), `tau-branch-${Snowflake.next()}`);
-=======
->>>>>>> theirs — scope `const tmpDir = path.join(os.tmpdir(), `omp-br...` deleted in theirs
 
 	for (const commitSha of agentCommits) {
 		const taskStatePatch = await diffTreeOrEmpty(isolationRepo, dirtyBaselineTree, `${commitSha}^{tree}`);
@@ -1009,7 +998,6 @@ export async function commitToBranch(
 	const branchName = `tau/task/${taskId}`;
 	const fallbackMessage = description || taskId;
 
-<<<<<<< ours — scope `* nested-repo patches are returned separately...` in function `commitToBranch` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `const tmpDir = path.join(os.tmpdir(), `omp-branch-${Snowflake.n…` +1 more
 	let branchCreated = false;
 
@@ -1071,46 +1059,6 @@ export async function commitToBranch(
 			await tryRemoveWorktree(repo, tmpDir);
 			await fs.rm(tmpDir, { recursive: true, force: true });
 		}
-=======
-	let tip: string;
-	if (agentCommitted && baselineHasRootWip(baseline.root)) {
-		tip = await replayFilteredAgentCommits({
-			baseline,
-			commitMessage,
-			fallbackMessage,
-			isolationDir,
-			isolationHead,
-			repoRoot,
-			rootPatch,
-			taskId,
-		});
-	} else if (agentCommitted) {
-		// Transfer the agent's commit objects (which live in isolation's `.git`,
-		// stranded once `cleanupIsolation` tears the workspace down) into the
-		// parent repo's object DB and create the branch at the agent's HEAD.
-		// `+HEAD:…` force-overwrites a stale branch from a prior run.
-		await repo.fetch(isolationDir, "HEAD", `refs/heads/${branchName}`, GIT_NETWORK_TIMEOUT_MS);
-		tip = isolationHead;
-		// Leftover = anything still uncommitted in isolation on top of the
-		// agent's last commit (staged, unstaged, untracked). The agent didn't
-		// commit it, so it goes in as one AI-summarized trailing commit.
-		const leftoverPatch = await captureRepoDeltaPatch(isolationDir, {
-			repoRoot: isolationDir,
-			headCommit: isolationHead,
-			staged: "",
-			unstaged: "",
-			untracked: [],
-			untrackedPatch: "",
-		});
-		if (leftoverPatch.trim()) {
-			const msg = (commitMessage && (await commitMessage(leftoverPatch))) || fallbackMessage;
-			tip = await commitPatch(repoRoot, tip, taskId, leftoverPatch, msg);
-		}
-	} else {
-		const msg = (commitMessage && (await commitMessage(rootPatch))) || fallbackMessage;
-		const wip = baselineHasRootWip(baseline.root) ? baseline.root : undefined;
-		tip = await commitPatch(repoRoot, baselineSha, taskId, rootPatch, msg, undefined, wip);
->>>>>>> theirs — scope `* nested-repo patches are returned separately...`
 	}
 
 	if (tip === baselineSha) return { rootPatch, baseSha: baselineSha, nestedPatches };
@@ -1146,7 +1094,6 @@ export async function mergeTaskBranches(
 	return withRepoLock(repoRoot, async () => {
 		const repo = vcs.requireGit(repoRoot);
 		const merged: string[] = [];
-<<<<<<< ours — function `mergeTaskBranches` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `const didStash = await repo.stashPush("omp-task-merge");`
 		const failed: string[] = [];
 
@@ -1169,12 +1116,6 @@ export async function mergeTaskBranches(
 						}
 					}
 				} catch (error) {
-=======
-		for (const { branchName, baseSha } of branches) {
-			try {
-				const revisions = baseSha ? await repo.revListRange(baseSha, branchName) : [branchName];
-				for (const revision of revisions) {
->>>>>>> theirs — function `mergeTaskBranches` (S+F, confidence: low)
 					try {
 						await repo.cherryPick(revision);
 					} catch (error) {

@@ -1,11 +1,5 @@
-<<<<<<< ours — preamble `(preamble)` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 Ask only for materially different tradeoffs the architect must decide. Default: act using code/config/docs/history and conventions. Several viable choices: pick conservative/standard, proceed, state choice.
-=======
-Ask the user to fill in one HTML form; blocks until they submit or cancel.
-
-Ask only for materially different tradeoffs the user must decide. Default: act using code/config/docs/history and conventions. Several viable choices: pick conservative/standard, proceed, state choice.
->>>>>>> theirs — preamble `(preamble)` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/prompts/tools/ask.md' for per-hunk detail, 'weave check' to verify your resolution
 
 <instruction>
 - `html`: one `<form>` of plain semantic HTML, rendered natively in the user's terminal. NEVER `<script>`, `<style>`, or `style=`.

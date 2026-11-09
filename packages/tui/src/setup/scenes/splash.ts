@@ -1,12 +1,7 @@
 import { centerLine, visibleWidth } from "../../utils";
 import { padToWidth } from "../../render/utils";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { gradientEscape, gradientLogo, PI_LOGO, type ShineConfi…`
 import { gradientEscape, gradientLogo, TAU_LOGO, type ShineConfig } from "../../prompt/welcome";
-=======
-import { APP_NAME, VERSION } from "@oh-my-pi/pi-utils";
-import { gradientEscape, gradientLogo, lockupNode, PI_LOGO, type ShineConfig } from "../../prompt/welcome";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/tui/src/setup/scenes/splash.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { theme } from "../../theme/theme";
 import { formatKeyHint } from "../../app-keybindings";
 import { col, kbd, keyed, node, row, span, text } from "../../native/describe";
@@ -163,7 +158,6 @@ function resetCells(width: number, height: number): string[][] {
 let diagonalEscapes: (string | undefined)[] = [];
 
 /**
-<<<<<<< ours — function `renderSetupSplash` (T+F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
  * Animated setup splash, in the spirit of the tau landing page: the brand π
  * mark rendered with the live diagonal gradient + shine sweep, rising out of a
@@ -231,94 +225,6 @@ export function renderSetupSplash(width: number, height: number, elapsedMs: numb
 	for (let x = hintStart - 1; x <= hintStart + hintWidth; x++) put(x, hintRow, " ");
 	let col = hintStart;
 	for (const ch of SKIP_HINT) put(col++, hintRow, ch === " " ? " " : theme.fg("dim", ch));
-=======
- * Animated setup splash, in the spirit of the omp landing page: the brand π
- * mark rendered with the live diagonal gradient + shine sweep, rising out of a
- * rippling, gradient-lit water surface, under a faint twinkling starfield. The
- * mark and water share one continuous gradient so the sweep reads across the
- * whole scene; the water surface drifts each frame.
- */
-export function renderSetupSplash(width: number, height: number, elapsedMs: number): string[] {
-	const w = Math.max(1, width);
-	const h = Math.max(1, height);
-	const progress = Math.max(0, Math.min(1, elapsedMs / SETUP_SPLASH_MS));
-	const phase = progress * 1.8;
-	const shine: ShineConfig = { pos: (progress * 2.5) % 1, strength: Math.max(0, 1 - progress * 0.35) };
-
-	if (w < MIN_SCENE_WIDTH || h < MIN_SCENE_HEIGHT) return renderCompactSplash(w, h, phase, shine);
-
-	const frame = Math.floor(elapsedMs / SETUP_TICK_MS);
-	const cx = Math.floor(w / 2);
-	const surfaceTime = frame * 0.13;
-
-	const cells = resetCells(w, h);
-	const put = (x: number, y: number, glyph: string): void => {
-		if (y >= 0 && y < h && x >= 0 && x < w) cells[y][x] = glyph;
-	};
-	// Every cell on a diagonal shares one gradient position, so resolve each
-	// escape once per frame instead of once per cell.
-	const diagonals = w + h - 1;
-	if (diagonalEscapes.length !== diagonals) diagonalEscapes = Array.from({ length: diagonals });
-	else diagonalEscapes.fill(undefined);
-	const escapes = diagonalEscapes;
-	const gradient = (x: number, y: number): string => {
-		const d = x + (h - 1 - y);
-		let escape = escapes[d];
-		if (escape === undefined) {
-			escape = gradientEscape(screenGradientT(x, y, w, h, phase), shine);
-			escapes[d] = escape;
-		}
-		return escape;
-	};
-
-	const hx = Math.floor((w - LOGO_WIDTH) / 2);
-	const hy = Math.max(2, Math.floor(h * 0.16));
-	const waterTop = hy + LOGO_HEIGHT;
-
-	// 1. rippling water surface (shares the screen-wide gradient with the mark)
-	const field = getWaterField(w, h, cx, waterTop);
-	const tDiagonal = surfaceTime * 0.7;
-	const tCross = surfaceTime * 1.4;
-	for (let y = waterTop; y < h; y++) {
-		const row = y - waterTop;
-		const fade = field.fade[row];
-		for (let x = 0; x < w; x++) {
-			const i = row * w + x;
-			const wave =
-				0.5 * Math.sin(field.radial[i] - surfaceTime) +
-				0.3 * Math.sin(field.diagonal[i] - tDiagonal) +
-				0.2 * Math.sin(field.cross[i] - tCross);
-			const level = 0.5 + 0.5 * wave;
-			const char = waterChar(level * field.edge[x] * fade + field.jitter[i]);
-			if (char) cells[y][x] = gradient(x, y) + char + RESET;
-		}
-	}
-	// 2. twinkling starfield in the sky above the water
-	for (let y = 0; y < waterTop - 1; y++) {
-		for (let x = 0; x < w; x++) {
-			const star = skyGlyph(x, y, frame >> 3);
-			if (star) put(x, y, star);
-		}
-	}
-	// 3. hero — the brand mark with the live gradient + shine sweep
-	LARGE_LOGO.forEach((line, row) => {
-		let col = 0;
-		for (const ch of line) {
-			const x = hx + col;
-			const y = hy + row;
-			if (ch !== " " && y >= 0 && y < h && x >= 0 && x < w) cells[y][x] = gradient(x, y) + ch + RESET;
-			col++;
-		}
-	});
-	// 4. skip hint on a cleared strip at the bottom so it stays legible over the water
-	const hint = skipHint();
-	const hintWidth = visibleWidth(hint);
-	const hintStart = Math.floor((w - hintWidth) / 2);
-	const hintRow = h - 1;
-	for (let x = hintStart - 1; x <= hintStart + hintWidth; x++) put(x, hintRow, " ");
-	let col = hintStart;
-	for (const ch of hint) put(col++, hintRow, ch === " " ? " " : theme.fg("dim", ch));
->>>>>>> theirs — function `renderSetupSplash` (T+F, confidence: medium)
 
 	return cells.map(row => row.join(""));
 }

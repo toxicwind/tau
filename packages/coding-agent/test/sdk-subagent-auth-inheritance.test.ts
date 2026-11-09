@@ -1,6 +1,5 @@
 import { Database } from "bun:sqlite";
 import { afterEach, describe, expect, it, vi } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { OAuthCredential } from "@oh-my-pi/pi-ai";`
 import type { OAuthCredential } from "@tau/tau-ai";
 import { resolveApiKeyOnce } from "@tau/tau-ai/auth-retry";
@@ -18,26 +17,6 @@ import type { AgentDefinition } from "tau/task/types";
 import type { SingleResult } from "@tau/tau-tui/tools/task";
 import { TempDir } from "@tau/tau-utils";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
-=======
-import type { OAuthCredential, UsageReport } from "@oh-my-pi/pi-ai";
-import { resolveApiKeyOnce } from "@oh-my-pi/pi-ai/auth-retry";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentLifecycleManager } from "@oh-my-pi/pi-coding-agent/registry/agent-lifecycle";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import { createAgentSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage, SqliteAuthCredentialStore } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { credentialPinHash, recordCredentialPin } from "@oh-my-pi/pi-coding-agent/session/credential-pin";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import * as discoveryModule from "@oh-my-pi/pi-coding-agent/task/discovery";
-import * as executorModule from "@oh-my-pi/pi-coding-agent/task/executor";
-import type { AgentDefinition } from "@oh-my-pi/pi-coding-agent/task/types";
-import type { SingleResult } from "@oh-my-pi/pi-tui/tools/task";
-import { TempDir } from "@oh-my-pi/pi-utils";
-import { createAssistantMessage, createInMemoryAuthStorage } from "./helpers/agent-session-setup";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/sdk-subagent-auth-inheritance.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const taskAgent: AgentDefinition = {
 	name: "task",

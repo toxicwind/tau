@@ -1,13 +1,7 @@
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { currentLoopPhase, popLoopPhase, takeRecentLoopPhase } …`
 import { afterEach, describe, expect, it } from "bun:test";
 import { type SelectItem, SelectList, type SelectListTheme } from "@tau/tau-tui";
 import { currentLoopPhase, popLoopPhase, takeRecentLoopPhase } from "@tau/tau-utils";
-=======
-import { afterEach, beforeEach, describe, expect, it } from "bun:test";
-import { type SelectItem, SelectList, type SelectListTheme } from "@oh-my-pi/pi-tui";
-import { currentLoopPhase, popLoopPhase, resetLoopPhaseWindow } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/test/select-filter-breadcrumb.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 // Observe the phase inside the actual fuzzy-filter work, not after it returns.
 function drain(): void {

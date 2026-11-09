@@ -15,13 +15,10 @@ describe("powerAssertionOptions", () => {
 		expect(powerAssertionOptions("system")).toMatchObject({ idle: true, display: true, system: true, user: true });
 	});
 
-<<<<<<< ours — scope `it("names the session so platform power diagn...` in test_suite `powerAssertionOptions`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("names the session so platform power diagnostics can attribute the assertion", () => {
 		expect(powerAssertionOptions("idle")?.reason).toBe("tau agent session");
 	});
-=======
->>>>>>> theirs — scope `it("names the session so platform power diagn...` deleted in theirs · weave: run 'weave explain packages/coding-agent/test/power-assertion-options.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 });
 
 describe("startPowerAssertion", () => {

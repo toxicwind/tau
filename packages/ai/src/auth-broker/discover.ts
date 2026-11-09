@@ -295,7 +295,6 @@ export async function loadAuthBrokerAccountPool(): Promise<AuthBrokerAccountPool
 				"TAU_AUTH_BROKER_ACCOUNT_POOL_FILE contains a provider id with surrounding whitespace",
 			);
 		}
-<<<<<<< ours — function `loadAuthBrokerAccountPool (body partly extracted into parseAccountPoolIdentities)` (S+F, confidence: low)
 // refused_by: statement_fold · collision: ``OMP_AUTH_BROKER_ACCOUNT_POOL_FILE entry for ${provider} must b…` +2 more
 		if (!Array.isArray(value)) {
 			throw new AIError.ConfigurationError(
@@ -317,9 +316,6 @@ export async function loadAuthBrokerAccountPool(): Promise<AuthBrokerAccountPool
 			identities.add(identity);
 		}
 		accountPool.set(provider, identities);
-=======
-		accountPool.set(provider, parseAccountPoolEntry(provider, value));
->>>>>>> theirs — function `loadAuthBrokerAccountPool (body partly extracted into parseAccountPoolIdentities)` (S+F, confidence: low) · weave: run 'weave explain packages/ai/src/auth-broker/discover.ts' for per-hunk detail, 'weave check' to verify your resolution
 	}
 	return accountPool;
 }

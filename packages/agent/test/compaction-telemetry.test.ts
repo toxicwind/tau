@@ -15,13 +15,8 @@ import {
 	generateBranchSummary,
 	generateHandoff,
 	generateSummary,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-agent-core/compaction";
-=======
-} from "@oh-my-pi/pi-agent-core/compaction";
-import * as snapcompact from "@oh-my-pi/snapcompact";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/agent/test/compaction-telemetry.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	type AgentTelemetryConfig,
 	GenAIAttr,

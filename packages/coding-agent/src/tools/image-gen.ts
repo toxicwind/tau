@@ -1,9 +1,5 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { isEnoent, logger, parseImageMetadata, prompt, ptree, S…`
 import { join } from "node:path";
-=======
-import * as fs from "node:fs/promises";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/image-gen.ts' for per-hunk detail, 'weave check' to verify your resolution
 import * as os from "node:os";
 import * as path from "node:path";
 import { type } from "@tau/tautype";
@@ -16,28 +12,11 @@ import {
 	isImageGenerationApi,
 	type Model,
 	parseAntigravityCredentials,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { isEnoent, logger, parseImageMetadata, prompt, ptree, S…`
 } from "@tau/tau-ai";
 import { ProviderHttpError } from "@tau/tau-ai/error";
 import { isEnoent, logger, parseImageMetadata, prompt, ptree, Snowflake, untilAborted } from "@tau/tau-utils";
 import { resolveModelRoleValue, resolveRoleChain } from "../config/model-resolver";
-=======
-} from "@oh-my-pi/pi-ai";
-import { ProviderHttpError } from "@oh-my-pi/pi-ai/error";
-import { getEffectiveTokenCost } from "@oh-my-pi/pi-catalog/models";
-import {
-	isEnoent,
-	logger,
-	parseImageMetadata,
-	prompt,
-	ptree,
-	Snowflake,
-	truncate,
-	untilAborted,
-} from "@oh-my-pi/pi-utils";
-import { type RoleChainCandidate, resolveModelRoleValue, resolveRoleChain } from "../config/model-resolver";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import { roleCandidatePool } from "../config/model-roles";
 import { isAuthenticated, type ModelRegistry } from "../config/model-registry";
 import { settings } from "../config/settings";

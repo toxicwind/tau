@@ -1,14 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, mock, spyOn } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/regist…`
 import { IrcBus } from "tau/irc/bus";
 import { AgentLifecycleManager } from "tau/registry/agent-lifecycle";
 import { AgentRegistry } from "tau/registry/agent-registry";
-=======
-import { IrcBus } from "@oh-my-pi/pi-coding-agent/irc/bus";
-import { AgentLifecycleManager } from "@oh-my-pi/pi-coding-agent/registry/agent-lifecycle";
-import { AgentRegistry, type AgentRegistryApi } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/tools/irc-roster-activity.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 describe("IRC roster activity", () => {
 	let registry: AgentRegistryApi;

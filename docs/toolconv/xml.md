@@ -15,19 +15,8 @@ tools:
 
 `tools.format: xml` forces the generic XML owned dialect for the session. `auto` does **not** choose generic XML as its unknown-family fallback: when a model has `supportsTools: false`, the resolver chooses the known model-family dialect or GLM if there is no specific affinity. Use `xml` explicitly when this grammar is required. See [`tools.format`](../settings.md#tools-and-approvals).
 
-<<<<<<< ours — scope ``tools.format: xml` forces the generic XML ow...` in heading `Selection and request conversion` (F, confidence: medium)
 // refused_by: statement_fold · collision: `When selected, OMP removes native structured tools from the pro…`
 When selected, TAU removes native structured tools from the provider request, appends the in-band tool catalog and XML guide to the system prompt, converts prior structured calls/results to text, and scans assistant text back into structured tool-call events.
-=======
-`PI_DIALECT=xml` is also supported as a fallback when configuration resolves
-to no owned dialect. Unset it when choosing `native`, since it still applies
-after `tools.format` resolves to native tools. Selection runs per request.
-
-With a non-empty tool list, OMP removes native structured tools and tool choice
-from the request, appends the in-band catalog and XML guide to the system
-prompt, converts prior calls/results to text, and scans assistant text back
-into structured tool-call events.
->>>>>>> theirs — scope ``tools.format: xml` forces the generic XML ow...` · weave: run 'weave explain docs/toolconv/xml.md' for per-hunk detail, 'weave check' to verify your resolution
 
 ## Tool definitions and prompt injection
 
@@ -49,20 +38,12 @@ One call is one invoke:
 <invoke name="read"><parameter name="path">src/main.ts</parameter><parameter name="count">40</parameter></invoke>
 ```
 
-<<<<<<< ours — scope ````` in heading `Canonical call format` (F, confidence: medium)
 // refused_by: statement_fold · collision: `| `<tool_calls>…</tool_calls>` | Optional model-emitted wrapper…`
 | Element | Meaning |
 | --- | --- |
 | `<invoke name="TOOL">…</invoke>` | One tool call. The prompt contract requires a listed tool name. |
 | `<parameter name="ARG">VALUE</parameter>` | One named argument. |
 | `<tool_calls>…</tool_calls>` | Optional model-emitted wrapper accepted by the guide/scanner; TAU's renderer does not add it. |
-=======
-| Element                                   | Meaning                                                                                       |
-| ----------------------------------------- | --------------------------------------------------------------------------------------------- |
-| `<invoke name="TOOL">…</invoke>`          | One tool call. The prompt contract requires a listed tool name.                               |
-| `<parameter name="ARG">VALUE</parameter>` | One named argument.                                                                           |
-| `<tool_calls>…</tool_calls>`              | Optional model-emitted wrapper accepted by the guide/scanner; OMP's renderer does not add it. |
->>>>>>> theirs — scope `````
 
 `renderAssistantToolCalls` emits consecutive invokes separated by newlines, with no outer wrapper. The default scanner also accepts `<function_calls>` as a wrapper alias, `antml:`-prefixed variants of the Anthropic tags, and a bare invoke. Its accepted input is deliberately wider than the canonical renderer output.
 

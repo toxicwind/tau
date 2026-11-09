@@ -2,14 +2,9 @@ import { blobExtensionForImageMimeType, normalizeBlobExtension } from "@tau/tau-
 import * as fs from "node:fs";
 import * as fsp from "node:fs/promises";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { isEnoent, logger } from "@oh-my-pi/pi-utils";`
 import { isEnoent, logger } from "@tau/tau-utils";
 import type { LazyFrameData } from "@tau/snapcompact";
-=======
-import { isEexist, isEnoent, logger, Snowflake } from "@oh-my-pi/pi-utils";
-import type { LazyFrameData } from "@oh-my-pi/snapcompact";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/session/blob-store.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const BLOB_PREFIX = "blob:sha256:";
 

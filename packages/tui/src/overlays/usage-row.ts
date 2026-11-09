@@ -1,14 +1,7 @@
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { Usage } from "@oh-my-pi/pi-ai";`
 import type { Usage } from "@tau/tau-ai";
 import { Container, Spacer } from "../index";
 import { formatDuration, formatNumber } from "@tau/tau-utils";
-=======
-import type { AssistantMessage, Usage } from "@oh-my-pi/pi-ai";
-import { Container } from "../tui";
-import { Spacer } from "../components/spacer";
-import { formatDuration, formatNumber } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/src/overlays/usage-row.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { theme } from "../theme/theme";
 import { formatMetricRow, MetricRow, type MetricSpec } from "../components/metric";
 import { node, row, span, text } from "../native/describe";

@@ -4,14 +4,9 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { postmortem, Snowflake, untilAborted, withTimeout } fro…`
 import { postmortem, Snowflake, untilAborted, withTimeout } from "@tau/tau-utils";
 import type { HTMLElement } from "@tau/tau-utils/dom";
-=======
-import { formatBytes, isRecord, postmortem, Snowflake, untilAborted, withTimeout } from "@oh-my-pi/pi-utils";
-import type { HTMLElement } from "@oh-my-pi/pi-utils/dom";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/browser/tab-worker.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type {
 	Accessibility,
 	Browser,
@@ -1248,7 +1243,6 @@ async function targetIdForPage(page: Page): Promise<string> {
 	return await targetIdForTarget(page.target());
 }
 
-<<<<<<< ours — function `createTrackedHeadlessPage` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 async function createTrackedHeadlessPage(browser: Browser, reportTarget: (targetId: string) => void): Promise<Page> {
 	const session = await browser.target().createCDPSession();
@@ -1267,41 +1261,6 @@ async function createTrackedHeadlessPage(browser: Browser, reportTarget: (target
 		}));
 	const page = await target.page();
 	if (!page) throw new ToolError(`Created headless target ${targetId} did not expose a page`);
-=======
-async function createTrackedPage(
-	browser: Browser,
-	attach: { nearTargetId?: string } | undefined,
-	reportTarget: (targetId: string) => void,
-): Promise<Page> {
-	let targetId: string;
-	if (attach) {
-		// Attached browsers may have no page or browser target yet. Create through
-		// the root CDP connection; the relay also uses nearTargetId to choose Chrome.
-		const params: Protocol.Target.CreateTargetRequest & { nearTargetId?: string } = {
-			url: "about:blank",
-			background: true,
-			nearTargetId: attach.nearTargetId,
-		};
-		({ targetId } = await browserConnection(browser).send("Target.createTarget", params));
-		reportTarget(targetId);
-	} else {
-		const session = await browser.target().createCDPSession();
-		try {
-			({ targetId } = await session.send("Target.createTarget", { url: "about:blank" }));
-			reportTarget(targetId);
-		} finally {
-			await session.detach().catch(() => undefined);
-		}
-	}
-	const existing = browser.targets().find(target => privateTargetId(target) === targetId);
-	const target =
-		existing ??
-		(await browser.waitForTarget(candidate => privateTargetId(candidate) === targetId, {
-			timeout: BROWSER_PROTOCOL_TIMEOUT_MS,
-		}));
-	const page = await target.page();
-	if (!page) throw new ToolError(`Created target ${targetId} did not expose a page`);
->>>>>>> theirs — function `createTrackedHeadlessPage` (S+F, confidence: low)
 	return page;
 }
 
@@ -1921,17 +1880,10 @@ export class WorkerCore {
 	}
 
 	/**
-<<<<<<< ours — scope `#claimRelayTarget` in class `WorkerCore` (T+F, confidence: medium)
 // refused_by: container_member · collision: `* Tell the omp browser relay this worker drives the adopted pag…` +1 more
 	 * Tell the tau browser relay this worker drives the adopted page, so the
 	 * relay adds it to the per-window "tau" tab group. Best-effort: plain CDP
 	 * backends (real Chrome, cmux) reject the relay-private method.
-=======
-	 * Tell the omp browser relay this worker drives the adopted page, so the relay adds it to the per-window "omp"
-	 * tab group. The supervisor's connect URL claims it already (`?claim=`); an older relay still serving this
-	 * machine ignores that and learns of the claim only here. Best-effort: plain CDP backends (real Chrome, cmux)
-	 * reject the relay-private method.
->>>>>>> theirs — scope `#claimRelayTarget`
 	 */
 	async #claimRelayTarget(page: Page): Promise<void> {
 		let session: CDPSession | undefined;

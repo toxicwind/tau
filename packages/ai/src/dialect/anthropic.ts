@@ -1,9 +1,5 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { parseJsonWithRepair } from "@oh-my-pi/pi-utils";`
 import { parseJsonWithRepair } from "@tau/tau-utils";
-=======
-import { escapeXmlText, parseJsonWithRepair } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/src/dialect/anthropic.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { Message, ToolCall } from "../types";
 import dialectPrompt from "./anthropic.md" with { type: "text" };
 import { buildArgShapes, buildStringArgsResolver, mintToolCallId } from "./coercion";

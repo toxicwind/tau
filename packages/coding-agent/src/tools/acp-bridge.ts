@@ -25,17 +25,10 @@ export async function shouldRouteWriteThroughBridge(
 	session: ToolSession,
 	requestedPath: string,
 	absolutePath: string,
-<<<<<<< ours — function `shouldRouteWriteThroughBridge` (T+S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 ): boolean {
 	if (isInternalUrlPath(requestedPath)) return false;
 	// TAU-owned session artifacts (plan files, scratch notes) must stay off the
-=======
-): Promise<boolean> {
-	const router = InternalUrlRouter.instance();
-	if (router.canHandle(requestedPath)) return false;
-	// OMP-owned session artifacts (plan files, scratch notes) must stay off the
->>>>>>> theirs — function `shouldRouteWriteThroughBridge` (T+S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/acp-bridge.ts' for per-hunk detail, 'weave check' to verify your resolution
 	// editor buffer even when addressed by their absolute sandbox path — e.g.
 	// after tag-based path recovery rebinds a bare `plan.md#tag` onto the
 	// `local://` artifact, `requestedPath` is the absolute path, not the URL.

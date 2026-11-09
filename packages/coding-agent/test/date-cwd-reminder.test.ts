@@ -1,4 +1,3 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { Api, Context, Message, Model, ModelSpec } from "@…` +2 more
 import { afterEach, describe, expect, it } from "bun:test";
 import type { Api, Context, Message, Model, ModelSpec } from "@tau/tau-ai";
@@ -14,33 +13,6 @@ import { SessionManager } from "tau/session/session-manager";
 import { formatLocalCalendarDate } from "@tau/tau-tui/chrome/local-date";
 import { normalizePromptPath } from "tau/utils/prompt-path";
 import { TempDir } from "@tau/tau-utils";
-=======
-import { afterEach, describe, expect, it, setSystemTime } from "bun:test";
-import type { Api, AssistantMessage, Context, Message, Model, ModelSpec } from "@oh-my-pi/pi-ai";
-import { clearCustomApis, registerCustomApi } from "@oh-my-pi/pi-ai";
-import { streamAnthropic } from "@oh-my-pi/pi-ai/providers/anthropic";
-import type { MessageCreateParams } from "@oh-my-pi/pi-ai/providers/anthropic-wire";
-import { isPerCallContextMessage, markPerCallContextMessage } from "@oh-my-pi/pi-ai/utils/block-symbols";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { requestBodyText } from "@oh-my-pi/pi-ai/utils/request-body";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { createAgentSession, type ExtensionFactory } from "@oh-my-pi/pi-coding-agent/sdk";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import {
-	createSessionDateCwdReminderJournal,
-	DateCwdReminderInjector,
-	type DateCwdReminderJournal,
-	type DateCwdReminderPlacement,
-	isDateCwdReminderControl,
-	renderDateCwdReminder,
-} from "@oh-my-pi/pi-coding-agent/session/date-cwd-reminder";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { formatLocalCalendarDate } from "@oh-my-pi/pi-tui/chrome/local-date";
-import { normalizePromptPath } from "@oh-my-pi/pi-coding-agent/utils/prompt-path";
-import { TempDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/date-cwd-reminder.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { createAssistantMessage } from "./helpers/agent-session-setup";
 
 describe("date-cwd-reminder", () => {
@@ -1151,7 +1123,6 @@ describe("date-cwd-reminder", () => {
 		});
 	});
 
-<<<<<<< ours — scope `describe("renderDateCwdReminder", () => {` in test_suite `date-cwd-reminder`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	describe("renderDateCwdReminder", () => {
 		it("renders a system-reminder block carrying the date and cwd with a do-not-repeat instruction", () => {
@@ -1164,10 +1135,7 @@ describe("date-cwd-reminder", () => {
 			expect(reminder).toContain("Do not repeat");
 		});
 	});
-=======
->>>>>>> theirs — scope `describe("renderDateCwdReminder", () => {` deleted in theirs
 
-<<<<<<< ours — scope `describe("DateCwdReminderInjector", () => {` in test_suite `date-cwd-reminder`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	describe("DateCwdReminderInjector", () => {
 		it("injects the first reminder without mutating the context", () => {
@@ -1257,8 +1225,6 @@ describe("date-cwd-reminder", () => {
 			expect(replay.messages[0]).toBe(first.messages[0]);
 		});
 	});
-=======
->>>>>>> theirs — scope `describe("DateCwdReminderInjector", () => {` deleted in theirs
 });
 
 describe("date-cwd reminder on the provider wire", () => {

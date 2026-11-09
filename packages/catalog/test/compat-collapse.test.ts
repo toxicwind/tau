@@ -22,21 +22,11 @@ import {
 	defaultSupportedEffort,
 	mapEffortToGoogleThinkingLevel,
 	resolveWireModelId,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { googleGeminiCliModelManagerOptions } from "@oh-my-pi/p…`
 } from "@tau/tau-catalog/model-thinking";
 import { getBundledModel, getBundledModels } from "@tau/tau-catalog/models";
 import { googleGeminiCliModelManagerOptions } from "@tau/tau-catalog/provider-models/google";
 import type { ModelSpec } from "@tau/tau-catalog/types";
-=======
-} from "@oh-my-pi/pi-catalog/model-thinking";
-import { getBundledModel, getBundledModels } from "@oh-my-pi/pi-catalog/models";
-import {
-	googleAntigravityModelManagerOptions,
-	googleGeminiCliModelManagerOptions,
-} from "@oh-my-pi/pi-catalog/provider-models/google";
-import type { ModelSpec } from "@oh-my-pi/pi-catalog/types";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/catalog/test/compat-collapse.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function requireReviewedTable(provider: string): VariantCollapseTable {
 	const table = reviewedCollapseTable(provider);

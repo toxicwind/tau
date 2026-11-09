@@ -1,14 +1,8 @@
 import * as fs from "node:fs/promises";
 import http2 from "node:http2";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 import { isCursorMaxModeWireId } from "@tau/tau-catalog/compat/collapse";
 import { classifyModel, collapseVariantId } from "@tau/tau-catalog/compat/taxonomy";
-=======
-import { cursorModelParameters } from "@oh-my-pi/pi-catalog/compat/behavior";
-import { isCursorMaxModeWireId } from "@oh-my-pi/pi-catalog/compat/collapse";
-import { classifyModel, collapseVariantId } from "@oh-my-pi/pi-catalog/compat/taxonomy";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/ai/src/providers/cursor.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type {
 	ConversationStep,
 	CursorRule,
@@ -186,14 +180,8 @@ import {
 	parseJsonWithRepair,
 	parseStreamingJsonThrottled,
 	sanitizeText,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-utils";
-import { classifyJsonPrefix } from "@oh-my-pi/pi-utils/json-parse";
-import { LRUCache } from "@oh-my-pi/pi-utils/lru";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import * as AIError from "../error";
 import { parseToolCallArguments } from "../utils/tool-call-arguments";
 import type {
@@ -6397,17 +6385,11 @@ function resolveCursorRecordReplays(
 /**
  * Cursor AgentService reconstructs the model prompt from `requestContext.rules`,
  * not from the client-supplied `rootPromptMessagesJson` system blobs. Map each
-<<<<<<< ours — scope `declaration` in function `buildCursorRequestContextRules` (S, confidence: medium)
 // refused_by: statement_fold · collision: none (1 contested hunk(s), neither side deleted the other's lines)
  * TAU system-prompt entry to a global CursorRule so always-apply rules survive
  * that reconstruction.
  */
 export function buildCursorRequestContextRules(systemPrompt: readonly string[] | undefined): CursorRule[] {
-=======
- * OMP system-prompt entry to a global CursorRule so always-apply rules survive
- * that reconstruction. The server only does this while the root carries no
- * history; later turns rely on {@link buildCursorRulesEntryJson}.
->>>>>>> theirs — scope `declaration`
  */
 export function buildCursorRequestContextRules(systemPrompt: readonly string[] | undefined): CursorRule[] {
 	return normalizeSystemPrompts(systemPrompt).map((content, index) =>
@@ -7182,7 +7164,6 @@ function resolveCursorMaxMode(model: Model<"cursor-agent">, wireModelId: string)
 /**
  * Resolve Cursor's paired model identities and rich parameter list.
  *
-<<<<<<< ours — scope `declaration` in function `resolveCursorWireModel` (T, confidence: high)
 // refused_by: statement_fold · collision: `* slugs (`gpt-5.4-mini-low`, `gpt-5.6-sol-high`), and OMP copie…`
  * Cursor's `GetUsableModels` lists reasoning models as per-effort sibling
  * slugs (`gpt-5.4-mini-low`, `gpt-5.6-sol-high`), and TAU copies those ids 1:1.
@@ -7192,17 +7173,6 @@ function resolveCursorMaxMode(model: Model<"cursor-agent">, wireModelId: string)
  * for OpenAI-family ids: split the tier with the compiled catalog policy
  * (`collapseVariantId`, KDL suffix/lane rules) and emit
  * `{ id: "reasoning", value: <effort> }`. The off tier (`-none`) is a sibling
-=======
- * Cursor validates both fields independently: legacy `modelDetails.modelId`
- * retains the account-usable sibling slug, while `requestedModel.modelId`
- * carries the rich base id plus its parameter values. Sending the base id in
- * both fields produces `BAD_MODEL_NAME`; sending an OpenAI effort sibling in
- * both produces resource exhaustion (errorId 528384).
- *
- * Rich discovery supplies the exact pair. Legacy discovery has only sibling
- * slugs, so OpenAI-family ids strip a trailing effort tier into
- * `{ id: "reasoning", value: <effort> }`. Other legacy ids pass through
->>>>>>> theirs — scope `declaration`
  * unchanged because guessing their extra `thinking`, `context`, or `fast`
  * parameters would recreate the same wire failures.
  */
@@ -7266,21 +7236,11 @@ function resolveCursorWireModel(
 			};
 		}
 	}
-<<<<<<< ours — scope `* slug too, so it normalizes to the bare (lan...` in function `resolveCursorWireModel` (T+S+F, confidence: low)
 // refused_by: statement_fold · collision: `// (can1357/oh-my-pi#9012). Pin the Standard tier explicitly; `…`
 	// A bare `composer-2.5` id resolves to the Fast variant server-side
 	// (can1357/tau#9012). Pin the Standard tier explicitly; `-fast`
 	// selections keep the Fast lane by omitting the parameter.
 	if (wireModelId === "composer-2.5") {
-=======
-	// Fixed per-model parameters come from catalog KDL (`cursor-model-parameter`
-	// in `runtime/behavior.kdl`). A bare `composer-2.5` id resolves to the Fast
-	// variant server-side (can1357/oh-my-pi#9012), so the catalog pins the
-	// Standard tier with `fast=false`; `-fast` selections keep the Fast lane by
-	// declaring no parameter.
-	const fixedParameters = cursorModelParameters(wireModelId);
-	if (fixedParameters.length > 0) {
->>>>>>> theirs — scope `* slug too, so it normalizes to the bare (lan...`
 		return {
 			modelId: wireModelId,
 			modelDetailsId: wireModelId,

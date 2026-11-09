@@ -16,20 +16,11 @@ import {
 	type OAuthAccess,
 	withAuth,
 	withOAuthAccess,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { parseCloudflareAiGatewayCredential } from "@oh-my-pi/p…` +1 more
 } from "@tau/tau-ai";
 import { parseCloudflareAiGatewayCredential } from "@tau/tau-catalog/wire/cloudflare-ai-gateway";
 import { getAntigravityUserAgent, getGeminiCliHeaders } from "@tau/tau-catalog/wire/gemini-headers";
 import { fetchWithRetry, USER_AGENT } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-ai";
-import { clampThinkingLevelForModel, resolveWireModelId } from "@oh-my-pi/pi-catalog/model-thinking";
-import { parseCloudflareCredential } from "@oh-my-pi/pi-catalog/wire/cloudflare";
-import { getAntigravityHeaders, getGeminiCliHeaders } from "@oh-my-pi/pi-catalog/wire/gemini-headers";
-import { type ConfiguredThinkingLevel, concreteThinkingLevel, toReasoningEffort } from "@oh-my-pi/pi-tui/thinking";
-import { fetchWithRetry, USER_AGENT } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/web/search/providers/gemini.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 import type { SearchCitation, SearchResponse, SearchSource } from "../types";
 import type { ModelRegistry } from "../../../config/model-registry";

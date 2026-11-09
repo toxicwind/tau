@@ -2,7 +2,6 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, mock,
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { type CustomTool, createAgentSession } from "@oh-my-pi/…`
 import { type } from "@tau/tautype";
 import type { AuthStorage } from "@tau/tau-ai";
@@ -12,19 +11,6 @@ import { Settings } from "tau/config/settings";
 import { type CustomTool, createAgentSession } from "tau/sdk";
 import { SessionManager } from "tau/session/session-manager";
 import { removeSyncWithRetries, Snowflake } from "@tau/tau-utils";
-=======
-import { type } from "@oh-my-pi/omptype";
-import type { AuthStorage } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { MCPManager } from "@oh-my-pi/pi-coding-agent/mcp/manager";
-import type { MCPToolDefinition } from "@oh-my-pi/pi-coding-agent/mcp/types";
-import { type CustomTool, type ExtensionFactory, createAgentSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { removeSyncWithRetries, Snowflake } from "@oh-my-pi/pi-utils";
-import { getAgentDir, setAgentDir } from "@oh-my-pi/pi-utils/dirs";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/sdk-mcp-defer.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
 // Contract for B1 (interactive MCP deferral): when `hasUI` is true, MCP

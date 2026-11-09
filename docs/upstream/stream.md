@@ -6,12 +6,8 @@ Stream is independent from [Collab](collab.md). Collab replicates the session it
 
 ## Quick start
 
-<<<<<<< ours — scope `Streaming needs a stencil.so account. Sign in...` in heading `Quick start` (S, confidence: medium)
 // refused_by: statement_fold · collision: `Streaming needs a stencil.so account. Sign in once from any omp…`
 Streaming needs a stencil.so account. Sign in once from any tau session with `/login` → **Stencil (stencil.so account)**; the credential is stored with your other logins and refreshed automatically. For scripts and local development, `STENCIL_API_KEY=<token>` overrides the stored credential; `STENCIL_AUTH_URL` re-bases the sign-in (`auth.stencil.so`) and `STENCIL_BASE_URL` the Stencil API (`api.stencil.so`) at a local server.
-=======
-Streaming needs a stencil.so account. Sign in once from any omp session with `/login` → **Stencil (invite only)**; the credential is stored with your other logins and refreshed automatically. For scripts and local development, `STENCIL_API_KEY=<token>` overrides the stored credential; `STENCIL_AUTH_URL` re-bases the sign-in (`auth.stencil.so`) and `STENCIL_BASE_URL` the Stencil API (`api.stencil.so`) at a local server.
->>>>>>> theirs — scope `Streaming needs a stencil.so account. Sign in...` · weave: run 'weave explain docs/upstream/stream.md' for per-hunk detail, 'weave check' to verify your resolution
 
 Your Stencil username is the channel. The server derives it from the bearer token, so `tau stream` takes no channel argument.
 
@@ -28,12 +24,8 @@ prints
   waiting for sessions in /work/proj …
 ```
 
-<<<<<<< ours — scope `Then start omp in the same directory from ano...` in heading `Quick start` (S, confidence: medium)
 // refused_by: statement_fold · collision: `Then start omp in the same directory from another terminal (as …`
 Then start tau in the same directory from another terminal (as many times as you like). Each session started while `tau stream` runs attaches automatically and shows `● LIVE 3` in its footer (`3` = current viewers). The viewer page shows each session as its own pane; a pane disappears when its session exits. Ctrl-C in the streamer ends the broadcast and every attached session drops its badge.
-=======
-Then start interactive omp in the same directory from another terminal (as many times as you like). Each interactive session started while `omp stream` runs attaches automatically and shows `● LIVE 3` in its footer (`3` = current viewers). The viewer page shows each session as its own pane; a pane disappears when its session exits. Ctrl-C in the streamer ends the broadcast and every attached session drops its badge.
->>>>>>> theirs — scope `Then start omp in the same directory from ano...`
 
 Sessions that were already running before `tau stream` started are not attached — restart them.
 
@@ -54,7 +46,6 @@ On a terminal, `tau stream` is a full-screen chat console: header with the live 
 
 ### Options and settings
 
-<<<<<<< ours — heading `Options and settings` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `| `stream.serverUrl`        | Default server, `https://live.omp…`
 | Flag / setting            | Meaning                                                                          |
 | ------------------------- | -------------------------------------------------------------------------------- |
@@ -65,17 +56,6 @@ On a terminal, `tau stream` is a full-screen chat console: header with the live 
 | `STENCIL_API_KEY`         | Bearer token override; otherwise the `/login` Stencil credential is used         |
 | `stream.serverUrl`        | Default server, `https://live.tau.sh`                                            |
 | `stream.redactPatterns`   | Extra regular expressions masked from every streamed row                         |
-=======
-| Flag / setting          | Meaning                                                                  |
-| ----------------------- | ------------------------------------------------------------------------ |
-| Channel                 | Your Stencil username, derived by the server from the bearer token       |
-| `--title <text>`        | Stream title (default: directory name; maximum 120 characters)           |
-| `--server <url>`        | Stream server base (default: `stream.serverUrl`)                         |
-| `--no-tui`              | Line-log console instead of the full-screen chat                         |
-| `STENCIL_API_KEY`       | Bearer token override; otherwise the `/login` Stencil credential is used |
-| `stream.serverUrl`      | Default server, `https://live.omp.sh`                                    |
-| `stream.redactPatterns` | Extra regular expressions masked from every streamed row                 |
->>>>>>> theirs — heading `Options and settings` (S+F, confidence: low)
 
 ## What leaves the machine
 
@@ -86,12 +66,8 @@ The screen feed contains terminal rows and pane metadata (title and dimensions),
 3. **Redacts** the row (below).
 4. Diffs against the last sent viewport and sends row patches — never session entries, prompts, tool arguments, or file contents as data.
 
-<<<<<<< ours — scope `Rows cross a private local socket (`0600`, un...` in heading `What leaves the machine` (S, confidence: medium)
 // refused_by: statement_fold · collision: `Rows cross a private local socket (`0600`, under the per-direct…`
 Rows cross a private local socket (`0600`, under the per-directory tau runtime dir) to the `tau stream` process, which multiplexes sessions into panes and forwards them to the server in plaintext over WSS. The server keeps each pane's viewport and the last 2000 history rows in memory so late viewers get a snapshot; nothing is persisted.
-=======
-Rows cross a private local Unix socket (`0600`, under the per-directory omp runtime dir; a named pipe on Windows) to the `omp stream` process, which multiplexes sessions into panes and forwards JSON screen frames to the server over WSS by default. Custom `http`/`ws` servers use unencrypted WS. The server keeps each pane's viewport and the last 2000 history rows in memory so late viewers get a snapshot; nothing is persisted.
->>>>>>> theirs — scope `Rows cross a private local socket (`0600`, un...`
 
 ### Redaction
 
@@ -128,12 +104,8 @@ tau clip                                          # newest recording
 tau clip <file> -t "Streaming the lexer" -d "…"   # title and description
 ```
 
-<<<<<<< ours — scope ``omp clip` uploads a recording to `live.omp.s...` in heading `Clips` (S, confidence: medium)
 // refused_by: statement_fold · collision: ``omp clip` uploads a recording to `live.omp.sh` with the same S…`
 `tau clip` uploads a recording to `live.tau.sh` with the same Stencil credential as `tau stream` and prints its page, `live.tau.sh/c/<id>`. The page plays the clip in the live viewer's terminal pane, with the title, description, and a comment thread underneath; signing in with Stencil lets viewers comment and the owner edit the title and description. Rows were already redacted when recorded; nothing is re-read from your machine at upload time.
-=======
-`omp clip` uploads a recording to `live.omp.sh` with the same Stencil credential as `omp stream` and prints its page, `live.omp.sh/c/<id>`. `--server <url>` overrides `stream.serverUrl`; titles are limited to 120 characters and descriptions to 5000. The page plays the clip in the live viewer's terminal pane, with the title, description, and a comment thread underneath; signing in with Stencil lets viewers comment and the owner edit the title and description. Rows were already redacted when recorded; nothing is re-read from your machine at upload time.
->>>>>>> theirs — scope ``omp clip` uploads a recording to `live.omp.s...`
 
 ## Server
 

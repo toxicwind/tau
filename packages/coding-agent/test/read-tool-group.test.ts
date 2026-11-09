@@ -1,23 +1,11 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
 import * as url from "node:url";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { getDefault } from "@oh-my-pi/pi-coding-agent/config/se…`
 import { resetSettingsForTest, Settings, settings } from "tau/config/settings";
 import { getDefault } from "tau/config/settings-schema";
 import { ReadToolGroupComponent, readArgsCollapseIntoGroup } from "@tau/tau-tui/chat/read-tool-group";
 import * as themeModule from "@tau/tau-tui/theme";
-=======
-import { resetSettingsForTest, Settings, settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-// Installs the pi-tui scheme host that decides which reads collapse into the group.
-import "@oh-my-pi/pi-coding-agent/internal-urls/router";
-
-import { ReadToolGroupComponent, readArgsCollapseIntoGroup } from "@oh-my-pi/pi-tui/chat/read-tool-group";
-import * as themeModule from "@oh-my-pi/pi-tui/theme";
-import { FILE_NAME_COLOR } from "@oh-my-pi/pi-tui/render/render-utils";
-import { cfgReadToolResultPreview } from "@oh-my-pi/pi-coding-agent/tools/settings";
-import { cfgTuiHyperlinks } from "@oh-my-pi/pi-coding-agent/modes/settings";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/read-tool-group.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function extractLinkUris(text: string): string[] {
 	return [...text.matchAll(/\x1b\]8;[^;]*;([^\x1b]+)\x1b\\/g)].map(match => match[1]!);

@@ -4,7 +4,6 @@ import { join } from "node:path";
  *
  * Subagents can call this tool incrementally or terminally depending on `type`.
  */
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { AgentTool, AgentToolContext, AgentToolResult, Age…` +1 more
 import type { AgentTool, AgentToolContext, AgentToolResult, AgentToolUpdateCallback } from "@tau/tau-agent-core";
 import type { TSchema } from "@tau/tau-ai/types";
@@ -16,24 +15,6 @@ import {
 	tryEnforceStrictSchema,
 } from "@tau/tau-ai/utils/schema";
 import { prompt } from "@tau/tau-utils";
-=======
-import type {
-	AgentMessage,
-	AgentTool,
-	AgentToolContext,
-	AgentToolResult,
-	AgentToolUpdateCallback,
-} from "@oh-my-pi/pi-agent-core";
-import type { TSchema } from "@oh-my-pi/pi-ai/types";
-import {
-	dereferenceJsonSchema,
-	isValidJsonSchema,
-	type JsonSchemaValidationResult,
-	sanitizeSchemaForStrictMode,
-	tryEnforceStrictSchema,
-} from "@oh-my-pi/pi-ai/utils/schema";
-import { isRecord, prompt } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/yield.ts' for per-hunk detail, 'weave check' to verify your resolution
 import yieldDescription from "../prompts/tools/yield.md" with { type: "text" };
 import yieldDataErrorConflictMessage from "../prompts/tools/yield-data-error-conflict.md" with { type: "text" };
 import { subprocessToolRegistry } from "../task/subprocess-tool-registry";

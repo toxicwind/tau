@@ -24,15 +24,9 @@
  * await auth.credentials.reload();
  * const apiKey = await auth.keys.get("anthropic", sessionId, { modelId });
  */
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { logger } from "@tau/tau-utils";
 import { SessionAffinity } from "./auth/affinity";
-=======
-import { logger } from "@oh-my-pi/pi-utils";
-import type { AuthAccountPolicyConfig } from "./auth-broker/discover";
-import { SessionAffinity, type SessionRestrictions } from "./auth/affinity";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/ai/src/auth-storage.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { BlockStoreHealth, CredentialBlocks } from "./auth/blocks";
 import { KeyCascade, KeyOverrides } from "./auth/cascade";
 import { CredentialHealth } from "./auth/health";

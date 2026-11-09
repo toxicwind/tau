@@ -1,12 +1,6 @@
-<<<<<<< HEAD
 /* Design tokens — tau brand palette: deep-purple surfaces, pink accent, cyan
  * focus ring. Dark is the default; `[data-theme="light"]` and the
  * prefers-color-scheme light fallback flip to light surfaces.
-=======
-/* Design tokens — pure-black chassis, one inset panel, alpha hairlines, and
- * one omp accent gradient (cyan → pink). Dark is the default;
- * `[data-theme="light"]` and the prefers-color-scheme fallback flip to light.
->>>>>>> upstream/main
  * The ONLY file allowed to contain raw color values. */
 :root {
 	color-scheme: dark;

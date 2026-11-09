@@ -39,16 +39,10 @@ export default class Say extends Command {
 	};
 
 	static examples = [
-<<<<<<< ours — scope `examples` in class `Say` (F, confidence: medium)
 // refused_by: container_member · collision: `"omp say --file notes.md --voice bm_fable",`
 		'tau say "hello world"',
 		"tau say --file notes.md --voice bm_fable",
 		'tau say "hello world" --out /tmp/hello.wav',
-=======
-		'omp say "hello world"',
-		"omp say --file notes.md --voice bm_fable --speed 1.25",
-		'omp say "hello world" --out /tmp/hello.wav',
->>>>>>> theirs — scope `examples` · weave: run 'weave explain packages/coding-agent/src/commands/say.ts' for per-hunk detail, 'weave check' to verify your resolution
 	];
 
 	async run(): Promise<void> {

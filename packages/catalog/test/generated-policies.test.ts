@@ -1,13 +1,7 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { Api, Model, ModelSpec, Provider } from "@oh-my-pi…`
 import { Effort } from "@tau/tau-catalog/effort";
 import type { Api, Model, ModelSpec, Provider } from "@tau/tau-catalog/types";
-=======
-import { calculateCost } from "@oh-my-pi/pi-catalog/models";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import type { Api, Model, ModelSpec, Provider, Usage } from "@oh-my-pi/pi-catalog/types";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/catalog/test/generated-policies.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	applyGeneratedModelPolicies,
 	applyOllamaCloudOutputCap,

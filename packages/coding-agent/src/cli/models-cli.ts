@@ -11,7 +11,6 @@
  * `ls`/`find` use the cache when fresh (`online-if-uncached`); only `refresh`
  * forces the network (`online`).
  */
-<<<<<<< ours — interstitial `file_header` (T+F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { modelKind, type ModelKind } from "@oh-my-pi/pi-catalog…`
 import type { Api, Effort, Model } from "@tau/tau-ai";
 import { sendsImageInputOnWire } from "@tau/tau-ai/providers/vision-guard";
@@ -19,15 +18,6 @@ import { getSupportedEfforts } from "@tau/tau-catalog/model-thinking";
 import { modelKind, type ModelKind } from "@tau/tau-catalog/types";
 import { formatNumber, getProjectDir } from "@tau/tau-utils";
 import chalk from "@tau/tau-utils/chalk";
-=======
-import type { Api, Effort, Model } from "@oh-my-pi/pi-ai";
-import { sendsImageInputOnWire } from "@oh-my-pi/pi-ai/providers/vision-guard";
-import { getEffectiveTokenCost, getModelPricingStatus } from "@oh-my-pi/pi-catalog/models";
-import { getSupportedEfforts } from "@oh-my-pi/pi-catalog/model-thinking";
-import { type ModelKind, type ModelPricingStatus, modelKind } from "@oh-my-pi/pi-catalog/types";
-import { formatNumber, getProjectDir } from "@oh-my-pi/pi-utils";
-import chalk from "@oh-my-pi/pi-utils/chalk";
->>>>>>> theirs — interstitial `file_header` (T+F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/cli/models-cli.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { ConfigError } from "../config/config-file";
 import { ModelRegistry } from "../config/model-registry";
 import { Settings } from "../config/settings";

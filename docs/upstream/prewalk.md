@@ -25,21 +25,12 @@ prewalk:
 prewalk:
    from: "@slow"
    into: "@default"
-<<<<<<< ours — scope `omp --prewalk` in heading `Enable prewalk`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 tau --prewalk
-=======
->>>>>>> theirs — scope `omp --prewalk` deleted in theirs · weave: run 'weave explain docs/upstream/prewalk.md' for per-hunk detail, 'weave check' to verify your resolution
-<<<<<<< ours — scope `omp --prewalk-into @smol` in heading `Enable prewalk`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 tau --prewalk-into @smol
-=======
->>>>>>> theirs — scope `omp --prewalk-into @smol` deleted in theirs
-<<<<<<< ours — scope `omp --prewalk-into openai/gpt-5-mini` in heading `Enable prewalk`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 tau --prewalk-into openai/gpt-5-mini
-=======
->>>>>>> theirs — scope `omp --prewalk-into openai/gpt-5-mini` deleted in theirs
 ```
 
 The configured setting arms new sessions, not resumed/imported sessions. Explicit session flags can arm either:
@@ -66,20 +57,13 @@ At startup, OMP resolves the target with the normal model-role and model-matchin
 
 Any model or thinking-level change made after the handoff counts as a replacement, including the switches plan mode makes on entry and exit. Automatic retry fallback, fallback restoration, and context promotion do not; if the session is back on the handoff model and thinking level when you run `/new`, it still restores the planning model.
 
-<<<<<<< ours — scope `At startup, OMP resolves the target with the ...` in heading `Enable prewalk`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 At startup, TAU resolves the target with the normal model-role and model-matching rules. If the target cannot be resolved or has no configured credentials, TAU prints a warning and starts with prewalk unarmed.
-=======
->>>>>>> theirs — scope `At startup, OMP resolves the target with the ...` deleted in theirs
 
 ## Handoff trigger
 
-<<<<<<< ours — scope `An armed prewalk injects a planning nudge. Wh...` in heading `Handoff trigger` (S, confidence: medium)
 // refused_by: statement_fold · collision: `An armed prewalk injects a planning nudge. When the `todo` tool…`
 An armed prewalk injects a planning nudge. When the `todo` tool is active, any successful `todo` call—including the read-only `view` operation—opens the handoff gate. TAU then switches models after the first completed `edit` or `write` call.
-=======
-An armed prewalk injects a planning nudge. When the `todo` tool is active, any successful `todo` call—including the read-only `view` operation—opens the handoff gate. Without an active `todo` tool, the gate is already open.
->>>>>>> theirs — scope `An armed prewalk injects a planning nudge. Wh...`
 
 OMP switches at the completed assistant-turn boundary containing the first eligible `edit` or `write` result, after persisting that turn's assistant message and tool results. Unlike the todo gate, the edit/write trigger does not require a successful result.
 
@@ -95,12 +79,8 @@ In a top-level session, changing `prewalk.enabled` live also takes effect:
 turning it on arms the `prewalk.into` target when none is armed; turning it off
 disarms a pending handoff. This does not control subagent prewalk.
 
-<<<<<<< ours — scope `Run either slash command without restarting OMP:` in heading `Arm from an active session` (S, confidence: medium)
 // refused_by: statement_fold · collision: `Run either slash command without restarting OMP:`
 Run either slash command without restarting TAU:
-=======
-Run these slash commands without restarting OMP:
->>>>>>> theirs — scope `Run either slash command without restarting OMP:`
 
 ```text
 /prewalk [into]

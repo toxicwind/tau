@@ -3,17 +3,10 @@ import { beforeEach, describe, expect, it, spyOn } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { closeDb, getFileOffset, getOverallStats, getRecentRequ…`
 import { syncAllSessions } from "@tau/tau-stats/aggregator";
 import { closeDb, getFileOffset, getOverallStats, getRecentRequests, initDb } from "@tau/tau-stats/db";
 import { getSessionsDir, getStatsDbPath } from "@tau/tau-utils";
-=======
-import { syncAllSessions } from "@oh-my-pi/omp-stats/aggregator";
-import { closeDb, getFileOffset, getRecentRequests, initDb } from "@oh-my-pi/omp-stats/db";
-import { getOverallStats } from "@oh-my-pi/omp-stats/rollup";
-import { getSessionsDir, getStatsDbPath } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/stats/test/incremental-tail.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { installStatsTestIsolation } from "./helpers/temp-agent";
 
 const isolation = installStatsTestIsolation("@tau-stats-tail-");

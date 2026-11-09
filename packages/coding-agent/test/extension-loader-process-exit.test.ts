@@ -239,7 +239,6 @@ void withHostGuard(async () => {
 		expect(stderr).not.toContain("ExtensionExitError");
 	});
 
-<<<<<<< ours — scope `it("exits cleanly on host SIGHUP when postmor...` in test_suite `extension/hook loader process.exit guard (#3680)` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `"globalThis.__ompNativeReallyExit = process.reallyExit;\n" +`
 	it("exits cleanly on host SIGHUP when postmortem initialized inside a guard window (#7393)", async () => {
 		// Mirror the shipped bundle: postmortem's exit primitive is first resolved
@@ -257,24 +256,6 @@ void withHostGuard(async () => {
 		const { exitCode, stdout, stderr } = await runProbe(
 			`
 import { postmortem } from "@tau/tau-utils";
-=======
-	// Windows has no SIGHUP delivery: process.kill(pid, "SIGHUP") fails with ENOSYS.
-	it.skipIf(process.platform === "win32")(
-		"exits cleanly on host SIGHUP when postmortem initialized inside a guard window (#7393)",
-		async () => {
-			// Mirror the shipped bundle: install handlers while the preload guards
-			// process.reallyExit, then restore it before the SIGHUP exit path resolves
-			// the native primitive.
-			const preload = writeModule(
-				"guard-init-preload.ts",
-				"globalThis.__ompNativeReallyExit = process.reallyExit;\n" +
-					'process.reallyExit = (() => { throw new Error("guarded during init"); });\n',
-			);
-			const { exitCode, stdout, stderr } = await runProbe(
-				`
-import { postmortem } from "@oh-my-pi/pi-utils";
-postmortem.installProcessHandlers();
->>>>>>> theirs — scope `it("exits cleanly on host SIGHUP when postmor...` · weave: run 'weave explain packages/coding-agent/test/extension-loader-process-exit.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 postmortem.register("probe", reason => process.stdout.write(\`cleanup:\${reason}\\n\`));
 process.reallyExit = globalThis.__tauNativeReallyExit;
 process.stdout.write("armed\\n");

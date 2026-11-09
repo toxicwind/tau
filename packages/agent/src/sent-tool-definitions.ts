@@ -1,9 +1,5 @@
-<<<<<<< ours — interstitial `file_header` (S, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import type { Message, Tool } from "@oh-my-pi/pi-ai";`
 import type { Message, Tool } from "@tau/tau-ai";
-=======
-import type { Context, Message, Tool } from "@oh-my-pi/pi-ai";
->>>>>>> theirs — interstitial `file_header` (S, confidence: medium) · weave: run 'weave explain packages/agent/src/sent-tool-definitions.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /**
  * Last wire definition this Agent sent for each tool name, so a provider that keeps

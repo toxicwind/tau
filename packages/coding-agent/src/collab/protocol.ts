@@ -37,25 +37,12 @@ export type {
 	RelayControlMessage,
 	RelayControlToGuest,
 	RelayControlToHost,
-<<<<<<< ours — interstitial `between:packages/coding-agent/src/collab/protocol.ts::export::RelayControlToHost:packages/coding-agent/src/collab/protocol.ts::export::COLLAB_PROMPT_MESSAGE_TYPE` (S, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-wire";
-=======
-} from "@oh-my-pi/pi-wire";
-export {
->>>>>>> theirs — interstitial `between:packages/coding-agent/src/collab/protocol.ts::export::RelayControlToHost:packages/coding-agent/src/collab/protocol.ts::export::COLLAB_PROMPT_MESSAGE_TYPE` (S, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/collab/protocol.ts' for per-hunk detail, 'weave check' to verify your resolution
-<<<<<<< ours — export `COLLAB_PROMPT_MESSAGE_TYPE` (S, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `export { COLLAB_PROMPT_MESSAGE_TYPE, COLLAB_PROTO } from "@oh-m…`
 export { COLLAB_PROMPT_MESSAGE_TYPE, COLLAB_PROTO } from "@tau/tau-wire";
-=======
-	COLLAB_PROMPT_MESSAGE_TYPE,
->>>>>>> theirs — export `COLLAB_PROMPT_MESSAGE_TYPE` (S, confidence: medium)
-<<<<<<< ours — export `COLLAB_PROTO` (S, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `export { COLLAB_PROMPT_MESSAGE_TYPE, COLLAB_PROTO } from "@oh-m…`
 export { COLLAB_PROMPT_MESSAGE_TYPE, COLLAB_PROTO } from "@tau/tau-wire";
-=======
-	COLLAB_PROTO,
->>>>>>> theirs — export `COLLAB_PROTO` (S, confidence: medium)
 	packEnvelope,
 	rewriteEnvelopePeer,
 	unpackEnvelope,

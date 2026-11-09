@@ -1,9 +1,5 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { parseJsonWithRepair, parseStreamingJson } from "@oh-my…`
 import { parseJsonWithRepair, parseStreamingJson } from "@tau/tau-utils";
-=======
-import { parseJsonWithRepair } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/src/dialect/hermes.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { Message, ToolCall } from "../types";
 import { parseToolCallArguments } from "../utils/tool-call-arguments";
 import { asRecord, mintToolCallId, parseCompleteToolName, partialSuffixOverlapAny } from "./coercion";

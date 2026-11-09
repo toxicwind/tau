@@ -6,14 +6,9 @@ import {
 	type CompactionBoundaries,
 	type ContextBreakdown,
 	type ContextSavingsEstimate,
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-tui/status-line/context-usage";
 import type { Settings } from "../config/settings";
-=======
-} from "@oh-my-pi/pi-tui/status-line/context-usage";
-import type { ScopeLike } from "../config/registry";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/session/context-usage-runtime.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { AgentSession } from "./agent-session";
 import { resolveSpeculationMethod } from "./compaction-methods";
 import { estimateInlineSavings } from "./snapcompact-inline";

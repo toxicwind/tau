@@ -1299,7 +1299,6 @@ mod tests {
 		assert_eq!(isolated(Ok(()), disturbed()).unwrap_err().message, "focus moved");
 	}
 }
-<<<<<<< ours — impl `MpxSession` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 impl<'a> MpxSession<'a> {
 	fn create(conn: &'a RustConnection, root: Window) -> CoreResult<Self> {
@@ -1497,5 +1496,3 @@ impl<'a> MpxSession<'a> {
 		let _ = (self.master_keyboard, self.slave);
 	}
 }
-=======
->>>>>>> theirs — impl `MpxSession` (S+F, confidence: low) · weave: run 'weave explain crates/tau-natives/src/desktop/linux/x11/input.rs' for per-hunk detail, 'weave check' to verify your resolution

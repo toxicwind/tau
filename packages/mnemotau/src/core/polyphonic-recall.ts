@@ -335,17 +335,9 @@ export class PolyphonicRecallEngine {
 		return results;
 	}
 
-<<<<<<< ours — scope `vectorVoice` in class `PolyphonicRecallEngine` (S+F, confidence: low)
 // refused_by: container_member · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 	vectorVoice(queryEmbedding: readonly number[] | Float32Array | null): VoiceRecallResult[] {
 		if (envDisabled("MNEMOTAU_VOICE_VECTOR") || queryEmbedding === null) return [];
-=======
-	vectorVoice(
-		queryEmbedding: readonly number[] | Float32Array | null,
-		options: PolyphonicCallOptions = {},
-	): VoiceRecallResult[] {
-		if (envDisabled("MNEMOPI_VOICE_VECTOR") || queryEmbedding === null) return [];
->>>>>>> theirs — scope `vectorVoice` · weave: run 'weave explain packages/mnemotau/src/core/polyphonic-recall.ts' for per-hunk detail, 'weave check' to verify your resolution
 		const queryUnit = normalizeVector(queryEmbedding);
 		if (queryUnit === null) return [];
 		const now = new Date().toISOString();
@@ -414,21 +406,11 @@ export class PolyphonicRecallEngine {
 	 * same bounded work as sparse ones.
 	 */
 	graphVoice(query: string): VoiceRecallResult[] {
-<<<<<<< ours — scope `graphVoice` in class `PolyphonicRecallEngine` (S+F, confidence: low)
 // refused_by: container_member · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 		if (envDisabled("MNEMOTAU_VOICE_GRAPH")) return [];
 		const results: VoiceRecallResult[] = [];
 		const seedIds = new Set<string>();
 		for (const entity of extractEntities(query)) {
-=======
-		if (envDisabled("MNEMOPI_VOICE_GRAPH")) return [];
-		const seeds = new Map<string, VoiceRecallResult>();
-		const addSeed = (hit: VoiceRecallResult): void => {
-			const existing = seeds.get(hit.memoryId);
-			if (existing === undefined || hit.score > existing.score) seeds.set(hit.memoryId, hit);
-		};
-		for (const entity of extractProperNouns(query)) {
->>>>>>> theirs — scope `graphVoice`
 			for (const gist of this.graph.findGistsByParticipant(entity)) {
 				const memoryId = gist.id.startsWith("gist_") ? gist.id.slice(5) : gist.id;
 				addSeed({ memoryId, score: 0.6, voice: "graph", metadata: { entity, gist: gist.text } });
@@ -506,22 +488,10 @@ export class PolyphonicRecallEngine {
 		}
 		return [...byId.values()].sort((a, b) => b.score - a.score || a.memoryId.localeCompare(b.memoryId));
 	}
-<<<<<<< ours — scope `temporalVoice` in class `PolyphonicRecallEngine` (S+F, confidence: low)
 // refused_by: container_member · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 	temporalVoice(query: string): VoiceRecallResult[] {
 		if (envDisabled("MNEMOTAU_VOICE_TEMPORAL") || !looksTemporal(query)) return [];
 		const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-=======
-	temporalVoice(query: string, options: PolyphonicCallOptions = {}): VoiceRecallResult[] {
-		if (envDisabled("MNEMOPI_VOICE_TEMPORAL") || !looksTemporal(query)) return [];
-		const anchor = anchorTime(options.queryTime);
-		const anchorMs = anchor ?? Date.now();
-		const windowStart = new Date(anchorMs - TEMPORAL_WINDOW_MS).toISOString();
-		const visibility = this.#visibility("", options.channelId);
-		// An explicit anchor bounds the window on both sides; "now" leaves it open-ended.
-		const upperBound = anchor === null ? "" : "AND timestamp <= ?";
-		const upperParams = anchor === null ? [] : [new Date(anchor).toISOString()];
->>>>>>> theirs — scope `temporalVoice`
 		let rows: TemporalRow[] = [];
 		try {
 			rows = this.db

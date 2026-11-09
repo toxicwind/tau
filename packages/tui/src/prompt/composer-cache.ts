@@ -19,22 +19,11 @@
 import type { Database, Statement } from "bun:sqlite";
 import * as fs from "node:fs";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import "@oh-my-pi/pi-utils/env";` +1 more
 import "@tau/tau-utils/env";
 import { getComposerCacheDir } from "@tau/tau-utils/dirs";
 import type { LspServerInfo, RecentSession } from "./welcome";
 import type { ComposerPreferences, ComposerStatusSnapshot } from "./composer";
-=======
-import { getComposerCacheDbPath } from "@oh-my-pi/pi-utils/dirs";
-import { isBunTestRuntime } from "@oh-my-pi/pi-utils/env";
-import * as logger from "@oh-my-pi/pi-utils/logger";
-import * as postmortem from "@oh-my-pi/pi-utils/postmortem";
-import { openSqliteDatabaseSync } from "@oh-my-pi/pi-utils/sqlite";
-import { isRecord } from "@oh-my-pi/pi-utils/type-guards";
-import type { ComposerPreferences, ComposerStatusCache } from "./composer";
-import { readStatusLineStartupData } from "../status-line/startup";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/src/prompt/composer-cache.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { SymbolPreset } from "../theme/theme";
 import { isWordCompletionMethod } from "./word-completion";
 

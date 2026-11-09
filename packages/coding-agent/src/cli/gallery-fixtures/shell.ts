@@ -111,7 +111,6 @@ export const shellFixtures: Record<string, GalleryFixture> = {
 			content: [
 				{
 					type: "text",
-<<<<<<< ours — scope `eval` in variable `shellFixtures` (F, confidence: medium)
 // refused_by: container_member · collision: `text: ["@oh-my-pi/coding-agent v0.42.0", "37 dependencies"].joi…` +2 more
 					text: ["@tau/coding-agent v0.42.0", "37 dependencies"].join("\n"),
 				},
@@ -120,14 +119,6 @@ export const shellFixtures: Record<string, GalleryFixture> = {
 				language: "python",
 				languages: ["python"],
 				jsonOutputs: [["@ai-sdk/anthropic", "@tau/tau-ai", "@tau/tau-tui"]],
-=======
-					text: ["@oh-my-pi/coding-agent v0.42.0", "37 dependencies", GALLERY_DEPS_TEXT].join("\n"),
-				},
-			],
-			details: {
-				language: "python",
-				languages: ["python"],
->>>>>>> theirs — scope `eval` · weave: run 'weave explain packages/coding-agent/src/cli/gallery-fixtures/shell.ts' for per-hunk detail, 'weave check' to verify your resolution
 				cells: [
 					{
 						index: 0,
@@ -143,13 +134,8 @@ export const shellFixtures: Record<string, GalleryFixture> = {
 							'print(f"{len(deps)} dependencies")',
 							"print({k: deps[k] for k in sorted(deps)[:3]})",
 						].join("\n"),
-<<<<<<< ours — scope `eval` in variable `shellFixtures` (F, confidence: medium)
 // refused_by: container_member · collision: `text: ["@oh-my-pi/coding-agent v0.42.0", "37 dependencies"].joi…` +2 more
 						output: ["@tau/coding-agent v0.42.0", "37 dependencies"].join("\n"),
-=======
-						output: ["@oh-my-pi/coding-agent v0.42.0", "37 dependencies", GALLERY_DEPS_TEXT].join("\n"),
-						views: [{ text: GALLERY_DEPS_TEXT, view: { kind: "json", value: GALLERY_DEPS } }],
->>>>>>> theirs — scope `eval`
 						status: "complete",
 						durationMs: 64,
 						exitCode: 0,

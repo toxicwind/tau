@@ -16,15 +16,10 @@ try {
  */
 import type * as WorkerThreads from "node:worker_threads";
 import type { MessagePort } from "node:worker_threads";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import type { Process, ProcessStatus } from "@oh-my-pi/pi-nativ…`
 import type { Process, ProcessStatus } from "@tau/tau-natives";
 import type { CliConfig, CommandMetadata } from "@tau/tau-utils/cli";
 import type * as Postmortem from "@tau/tau-utils/postmortem";
-=======
-import type { CliConfig, CommandMetadata } from "@oh-my-pi/pi-utils/cli";
-import type * as Postmortem from "@oh-my-pi/pi-utils/postmortem";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/cli.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	APP_NAME,
 	getActiveProfile,
@@ -34,14 +29,8 @@ import {
 	VERSION,
 } from "@tau/tau-utils/dirs";
 
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import type { Process, ProcessStatus } from "@oh-my-pi/pi-nativ…`
 import { declareWorkerHostEntry, installWorkerInbox, isWorkerHostSelector } from "@tau/tau-utils/worker-host";
-=======
-import { declareWorkerHostEntry, installWorkerInbox, isWorkerHostSelector } from "@oh-my-pi/pi-utils/worker-host";
-import { installSqliteLockShim } from "@oh-my-pi/pi-natives/sqlite-locks";
-import { isNativeShell, runNativeShell } from "./cli/native-shell";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium)
 import { extractProfileFlags } from "./cli/profile-bootstrap";
 import {
 	AUTO_UPDATE_WORKER_ARG,
@@ -458,7 +447,6 @@ async function runIpcSubprocessWorker<In, Out>(
 		clearInterval(keepalive);
 	}
 	process.kill(process.pid, "SIGKILL");
-<<<<<<< ours — scope `onMessage(handler) {` in function `runIpcSubprocessWorker`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 		onMessage(handler) {
 			const wrap = (data: unknown): void => handler(data as In);
@@ -540,8 +528,6 @@ async function runIpcSubprocessWorker<In, Out>(
 		if (parentWatchdog) clearInterval(parentWatchdog);
 	}
 	process.kill(process.pid, "SIGKILL");
-=======
->>>>>>> theirs — scope `onMessage(handler) {` deleted in theirs
 }
 
 /**
@@ -675,7 +661,6 @@ export async function runCli(argv: string[]): Promise<void> {
 	// The speculative composer owns stdin before either loader yields, so input
 	// typed during initialization stays buffered. Neither graph is needed to
 	// produce that frame.
-<<<<<<< ours — scope `// The speculative composer owns stdin before...` in function `runCli` (F, confidence: medium)
 // refused_by: statement_fold · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 	const helpOrVersion =
 		resolvedArgv[0] === "--help" ||
@@ -684,9 +669,6 @@ export async function runCli(argv: string[]): Promise<void> {
 		resolvedArgv[0] === "-v" ||
 		resolvedArgv[0] === "--tau-version" ||
 		resolvedArgv[0] === "help";
-=======
-	await Promise.all([setFullProcessName(), helpOrVersion ? Promise.resolve() : installNetworkBootstrap()]);
->>>>>>> theirs — scope `// The speculative composer owns stdin before...`
 
 	if (resolvedArgv[0] === "--smoke-test") {
 		await runSmokeTest();
@@ -717,7 +699,6 @@ export async function runCli(argv: string[]): Promise<void> {
 		stopStartupComposer?.();
 	}
 }
-<<<<<<< ours — interstitial `between:packages/coding-agent/src/cli.ts::function::runCli:packages/coding-agent/src/cli.ts::variable::{ registerStdioDisconnectHandling }` (T+S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `// A one-shot CLI run (`omp --help | head`, `omp --version | tr…`
 
 // Floating call instead of top-level await: TLA forces `--bytecode` (CJS
@@ -736,8 +717,6 @@ if (isProcessEntry || !Bun.isMainThread) {
 	// terminal lifetime; help/version/subcommand launches never start one. See #10930. The
 	// registration lives for the process — a one-shot entry exits right after runCli settles.
 	if (isProcessEntry) {
-=======
->>>>>>> theirs — interstitial `between:packages/coding-agent/src/cli.ts::function::runCli:packages/coding-agent/src/cli.ts::variable::{ registerStdioDisconnectHandling }` (T+S+F, confidence: low)
 
 // Floating call instead of top-level await: TLA forces `--bytecode` (CJS
 // lowering) builds to fail, and the entrypoint needs nothing after this.
@@ -751,12 +730,8 @@ if (isProcessEntry || !Bun.isMainThread) {
 // their entry with `import.meta.main === false`, so the worker-host dispatch
 // is admitted via `!Bun.isMainThread`.
 if (isProcessEntry || !Bun.isMainThread) {
-<<<<<<< ours — variable `{ registerStdioDisconnectHandling }` (S+F, confidence: low)
 // refused_by: rename_vs_edit_guard · collision: `const { registerStdioDisconnectHandling }: typeof Postmortem = …`
 		const { registerStdioDisconnectHandling }: typeof Postmortem = require("@tau/tau-utils/postmortem.js");
-=======
-	const postmortem: typeof Postmortem = require("@oh-my-pi/pi-utils/postmortem.js");
->>>>>>> theirs — variable `{ registerStdioDisconnectHandling }` (S+F, confidence: low)
 	postmortem.installProcessHandlers();
 	// A one-shot CLI run (`omp --help | head`, `omp --version | true`, `omp <sub> | grep -m1`)
 	// whose stdout consumer closes before the write drains gets an EPIPE that Bun surfaces as

@@ -12,13 +12,8 @@ import {
 	listCollabHosts,
 	publishCollabHost,
 	resolveCollabHostLink,
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "tau/collab/registry";
-=======
-} from "@oh-my-pi/pi-coding-agent/collab/registry";
-import { IpcConnection, IpcServer, ipcEndpoint } from "@oh-my-pi/pi-natives";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/collab/registry.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const cleanupDirs: string[] = [];
 const openPublications: CollabHostPublication[] = [];
@@ -123,13 +118,10 @@ async function rawRequest(endpoint: string, request: object): Promise<string> {
 
 function auxEndpoint(dir: string, label: string): string {
 	return ipcEndpoint(dir, `${label}-${crypto.randomBytes(4).toString("hex")}`);
-<<<<<<< ours — scope `return process.platform === "win32"` in function `auxEndpoint`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	return process.platform === "win32"
 		? `\\\\.\\pipe\\tau-collab-test-${label}-${id}`
 		: path.join(dir, `${label}-${id}.sock`);
-=======
->>>>>>> theirs — scope `return process.platform === "win32"` deleted in theirs
 }
 
 /** Forwards to the real {@link IpcConnection.connect}; captured before any spy replaces it. */
@@ -702,19 +694,12 @@ describe("collab registry", () => {
 			const f = makeFixture({ instanceId: "deep-config-root" });
 			const pub = await publish(dir, f);
 
-<<<<<<< ours — scope `it.skipIf(process.platform === "win32")(` in test_suite `collab registry` (F, confidence: medium)
 // refused_by: statement_fold · collision: `expect(path.basename(path.dirname(pub.endpoint))).toMatch(/^omp…`
 			// Relocated under the (short, in production `/tmp`) fallback base, in a
 			// deterministic owner-only directory keyed by this registry directory.
 			expect(path.dirname(path.dirname(pub.endpoint))).toBe(fallbackBase);
 			expect(path.basename(path.dirname(pub.endpoint))).toMatch(/^tau-collab-[0-9a-f]{20}$/);
 			expect((await fs.stat(path.dirname(pub.endpoint))).mode & 0o777).toBe(0o700);
-=======
-			const [metaName] = (await fs.readdir(dir)).filter(n => n.endsWith(".json"));
-			expect(pub.endpoint).toBe(ipcEndpoint(dir, path.basename(metaName ?? "", ".json")));
-			expect(pub.endpoint.startsWith(dir + path.sep)).toBe(false);
-			expect((await fs.stat(pub.endpoint)).mode & 0o777).toBe(0o600);
->>>>>>> theirs — scope `it.skipIf(process.platform === "win32")(`
 			expect(await listCollabHosts({ dir })).toMatchObject([{ instanceId: "deep-config-root" }]);
 			expect(await resolveCollabHostLink("deep-config-root", "control", { dir })).toMatchObject({
 				url: f.controlUrl,

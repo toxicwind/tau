@@ -42,64 +42,8 @@ This document describes how `crates/tau-natives` schedules native work and how c
    - `CancelToken::aborted()` provides a non-blocking signal/deadline check, and `into_core()` transfers the token to `tau-shell`.
    - `AbortToken::abort(reason)` lets external code request abort. Reasons are `Unknown`, `Timeout`, `Signal`, and `User`.
 
-<<<<<<< ours — heading `Implementation files` (T+F, confidence: medium)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
-=======
-## Implementation files
-
-- `crates/pi-natives/src/task.rs`
-- `crates/pi-shell/src/cancel.rs`
-- `crates/pi-shell/src/shell.rs`
-- `crates/pi-natives/src/vcs.rs`
-- `crates/pi-natives/src/grep.rs`
-- `crates/pi-natives/src/glob.rs`
-- `crates/pi-natives/src/fd.rs`
-- `crates/pi-natives/src/ast.rs`
-- `crates/pi-natives/src/workspace.rs`
-- `crates/pi-natives/src/shell.rs`
-- `crates/pi-natives/src/pty.rs`
-- `crates/pi-natives/src/html.rs`
-- `crates/pi-natives/src/sixel.rs`
-- `crates/pi-natives/src/clipboard.rs`
-- `crates/pi-natives/src/text.rs`
-- `crates/pi-natives/src/ps.rs`
-
->>>>>>> theirs — heading `Implementation files` (T+F, confidence: medium) · weave: run 'weave explain docs/upstream/natives-rust-task-cancellation.md' for per-hunk detail, 'weave check' to verify your resolution
-<<<<<<< ours — heading `Core primitives (`task.rs`)` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
-=======
-## Core primitives (`task.rs`)
-
-`task.rs` defines:
-
-1. `task::blocking(tag, cancel_token, work)`
-   - Wraps `napi::AsyncTask` / `Task`.
-   - `compute()` runs on libuv worker threads.
-   - Returns a JS `Promise<T>` for exported functions.
-   - Records a profiling sample through `profile_region(tag)`.
-   - Catches worker panics at the N-API async-work FFI boundary and rejects with ``native task `<tag>` panicked: <message>``.
-   - Before resolving on the JS thread, checks explicit abort-flag state again. An abort after worker completion rejects as an `AbortError`; a deadline that elapsed only while JS was busy settling a completed result does not invalidate that result.
-
-2. `task::future(env, tag, work)`
-   - Wraps `env.spawn_future(...)`.
-   - Runs async work on Tokio's runtime.
-   - Returns `PromiseRaw<'env, T>`.
-   - Records a profiling sample through `profile_region(tag)`.
-
-3. `CancelToken` / `AbortToken` / `AbortReason`
-   - `CancelToken::new(timeout_ms, signal)` wraps the shared `pi_shell::cancel::CancelToken`, adding an optional JS `AbortSignal` bridge. Already-aborted signals set the flag immediately; invalid optional signal values are tolerated rather than rejecting the operation.
-   - `CancelToken::heartbeat()` is cooperative cancellation for blocking loops.
-   - `CancelToken::wait()` asynchronously waits for signal or timeout.
-   - `CancelToken::abort_token()` returns an abort handle backed by the shared flag when one already exists; without a flag, the handle is inert. `emplace_abort_token()` lazily installs the flag and returns a live handle. `CancelToken::new` uses the latter to bridge a JS `AbortSignal` to `AbortReason::Signal`.
-   - `CancelToken::aborted()` provides a non-blocking signal/deadline check. `abort_reason()` checks only the explicit flag, excluding deadlines; `into_core()` transfers the token to `pi-shell`.
-   - `AbortToken::abort(reason)` lets external code request abort. Reasons are `Unknown`, `Timeout`, `Signal`, and `User`.
-
-4. `task::blocking_mapped(tag, cancel_token, reject_hook, cancel_hook, work)`
-   - Uses the same libuv execution/profiling and panic guard as `blocking`.
-   - Converts typed domain failures into rich JS errors through `reject_hook(env, error)` on the JS thread.
-   - Uses `cancel_hook(env, reason)` for explicit cancellation noticed at result settlement. Native VCS exports use this path.
-
->>>>>>> theirs — heading `Core primitives (`task.rs`)` (S+F, confidence: low)
 ## `blocking` vs `future`: execution model and selection
 
 ### Use `task::blocking`

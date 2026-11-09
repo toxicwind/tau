@@ -1,4 +1,3 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 import { describe, expect, it } from "bun:test";
 import { getBundledModel } from "@tau/tau-catalog/models";
@@ -12,30 +11,6 @@ import {
 } from "tau/session/session-storage";
 import { TempDir } from "@tau/tau-utils";
 import type { SessionTitleUpdate } from "tau/session/session-title-slot";
-=======
-import { describe, expect, it, vi } from "bun:test";
-import * as path from "node:path";
-import * as fs from "node:fs/promises";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import {
-	IndexedSessionStorage,
-	type SessionStorageBackend,
-} from "@oh-my-pi/pi-coding-agent/session/indexed-session-storage";
-import {
-	SessionManager,
-	SessionPersistenceIndeterminateError,
-	type SessionPersistenceNotice,
-} from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import {
-	FileSessionStorage,
-	MemorySessionStorage,
-	type SessionStorageWriter,
-	type WriteTextAtomicOptions,
-} from "@oh-my-pi/pi-coding-agent/session/session-storage";
-import { TempDir } from "@oh-my-pi/pi-utils";
-import type { SessionEntry } from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import type { SessionTitleUpdate } from "@oh-my-pi/pi-coding-agent/session/session-title-slot";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/session-manager-atomic-rewrite-race.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 interface DetachableWriter extends SessionStorageWriter {
 	detach(): void;
@@ -443,7 +418,6 @@ describe("SessionManager cross-process rewrite freshness", () => {
 		}
 	}
 
-<<<<<<< ours — scope `it("refuses to erase a durable turn appended ...` in test_suite `SessionManager cross-process rewrite freshness` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@omp-session-rewrite-confli…`
 	it("refuses to erase a durable turn appended by another manager", async () => {
 		const tempDir = TempDir.createSync("@tau-session-rewrite-conflict-");
@@ -452,16 +426,6 @@ describe("SessionManager cross-process rewrite freshness", () => {
 			await first.ensureOnDisk();
 			const sessionFile = first.getSessionFile();
 			if (!sessionFile) throw new Error("Expected session file");
-=======
-	it("moves to a sibling instead of re-serializing forever when a writer without the lease races every retry", async () => {
-		using tempDir = TempDir.createSync("@omp-session-rewrite-raced-");
-		const creator = SessionManager.create(tempDir.path(), tempDir.path(), new FileSessionStorage());
-		await creator.ensureOnDisk();
-		const contested = creator.getSessionFile();
-		if (!contested) throw new Error("Expected session file");
-		creator.appendMessage(userTurn("our turn before the conflict"));
-		await creator.close();
->>>>>>> theirs — scope `it("refuses to erase a durable turn appended ...`
 
 		const storage = new RacedStorage();
 		const ours = await SessionManager.open(contested, tempDir.path(), storage, { suppressBreadcrumb: true });

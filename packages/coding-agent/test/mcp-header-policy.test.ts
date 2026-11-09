@@ -1,15 +1,7 @@
 import { afterEach, describe, expect, it } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { mergeMCPHeaders, setGeneratedHeader } from "@oh-my-pi/…`
 import { mergeMCPHeaders, setGeneratedHeader } from "tau/mcp/transports/header-policy";
 import { HttpTransport } from "tau/mcp/transports/http";
-=======
-import { setGeneratedHeader } from "@oh-my-pi/pi-coding-agent/mcp/transports/header-policy";
-import { HttpTransport } from "@oh-my-pi/pi-coding-agent/mcp/transports/http";
-import * as fs from "node:fs/promises";
-import * as os from "node:os";
-import * as path from "node:path";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/mcp-header-policy.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const LOCALHOST_CERT = `-----BEGIN CERTIFICATE-----
 MIIBjjCCATSgAwIBAgIUDqCmhiK21hvtyURmE/76OrsM3uAwCgYIKoZIzj0EAwIw

@@ -1,10 +1,6 @@
 import { performance } from "node:perf_hooks";
-<<<<<<< ours — interstitial `file_header` (S, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { logger, takeRecentLoopPhase } from "@oh-my-pi/pi-utils…`
 import { logger, takeRecentLoopPhase } from "@tau/tau-utils";
-=======
-import { logger, resetLoopPhaseWindow, takeLoopPhaseAttribution } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (S, confidence: medium) · weave: run 'weave explain packages/tui/src/loop-watchdog.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 export interface LoopWatchdogOptions {
 	/** How far ahead each probe tick is scheduled, in ms. Default 250. */

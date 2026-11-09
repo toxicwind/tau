@@ -117,7 +117,6 @@ Tools are passed in the top-level `tools` array. Each user-defined (client) tool
 
 Anthropic-schema client tools (`bash`, `text_editor`, `computer`, `memory`) and server tools (`web_search`, `web_fetch`, `code_execution`, `tool_search`) instead carry a versioned `type`, e.g. `{"type": "web_search_20250305", "name": "web_search"}`.
 
-<<<<<<< ours — heading `OMP native-adapter schema normalization` (S+F, confidence: low)
 // refused_by: rename_vs_edit_guard · collision: none (both sides edited, nowhere the same lines)
 ### TAU native-adapter schema normalization
 
@@ -140,38 +139,6 @@ TAU sends `strict: true` only for eligible built-in tools (`bash`, `python`, `ed
 - `{"type":"none"}` — no tools (default when no `tools`).
 
 With `any` or `tool` the API prefills the assistant turn, so no leading natural-language text precedes the `tool_use` block. Add `"disable_parallel_tool_use": true` inside `tool_choice` to cap at one tool per turn. (Extended thinking only supports `auto`/`none`.)
-=======
-### OMP native-adapter schema normalization
-
-The native Anthropic provider does not forward a pi tool's JSON Schema unchanged. Before placing it in `input_schema`, OMP keeps these keywords:
-
-- on every node: `$ref`, `$defs`, `$schema`, `definitions`, `type`, `enum`, `const`, `description`, `title`, `default`, and `nullable`;
-- nested `anyOf` and `allOf` (root combinators are not retained, and `oneOf` is not retained at any depth);
-- on objects: `properties`, `required`, and `additionalProperties`;
-- on arrays: `items`, `prefixItems`, and `minItems` only when it is `0` or `1`;
-- on strings: `format` only for `date-time`, `time`, `date`, `duration`, `email`, `hostname`, `uri`, `ipv4`, `ipv6`, or `uuid`.
-
-Other constraints—including `pattern`, string-length limits, numeric ranges, `maxItems`, unsupported formats, and unsupported combinators—are appended to that node's `description`. They remain model-visible guidance but are no longer machine-enforced schema keywords. Object nodes default to `additionalProperties: false`; an explicit `true` or schema-valued `additionalProperties` remains open (an empty schema normalizes to `true`).
-
-OMP sends `strict: true` only for eligible built-in tools (`bash`, `python`, `edit`, and `find`) when neither `PI_NO_STRICT` nor provider compatibility/runtime fallback has disabled strict tools, the tool has not opted out, the raw schema avoids `oneOf`, `allOf`, `$ref`, `patternProperties`, and `propertyNames`, and every object is closed. Selection is capped at 20 strict tools per request and shares budgets of 24 optional properties and 16 union uses: after the optional budget is exhausted, another optional property must be converted to required-and-nullable using union budget or that tool remains non-strict. Other tools use the normalized non-strict schema. OMP sends `eager_input_streaming: true` only when the model compatibility data and effective endpoint support it: first-party Anthropic endpoints qualify, as do custom endpoints explicitly configured for that capability; a canonical model rerouted to an unqualified non-Anthropic endpoint does not.
-
-`tool_choice` controls invocation (four options):
-
-- `{"type":"auto"}` — model decides (default when `tools` present).
-- `{"type":"any"}` — must call some tool.
-- `{"type":"tool","name":"get_weather"}` — must call that specific tool.
-- `{"type":"none"}` — no tools (default when no `tools`).
-
-With `any` or `tool` the API prefills the assistant turn, so no leading natural-language text precedes the `tool_use` block. Add `"disable_parallel_tool_use": true` inside `tool_choice` to cap at one tool per turn. (Extended thinking only supports `auto`/`none`.)
-
-OMP's `AnthropicOptions.toolChoice` accepts `"auto"`, `"any"`, `"none"`, or `{ type: "tool", name }`. Forced choices are downgraded to `auto` for compaction requests or models whose compatibility data disables forced tool choice. Otherwise OMP removes explicit thinking configuration for forced choices; adaptive-only models that support output effort are pinned to `effort: "low"`. The high-level option does not expose `disable_parallel_tool_use`.
-
-The native adapter maps `tool_use` blocks to canonical `toolCall` blocks and projects `input_json_delta` as `toolcall_delta`. It maintains best-effort argument objects during streaming and finalizes with the repairing JSON parser, rather than requiring every fragment to be valid JSON. A failed final parse preserves recovered arguments; if none were recovered, it supplies `__parseError` and a bounded `__rawJson` excerpt.
-
-Consecutive canonical `toolResult` messages become one `user` message of `tool_result` blocks. Empty successful results use `content: ""`; empty errors become `"Tool failed with no output."`. Images from error results are moved after the result blocks. Endpoints with `requiresToolResultId` also receive an `id` matching `tool_use_id`. Tools marked `deferLoading` are sent with `defer_loading: true`.
-
-Native stop reasons map to pi's `stopReason`: `tool_use` → `toolUse`; `max_tokens` and `model_context_window_exceeded` → `length`; `refusal` and `sensitive` → `error`; `end_turn`, `stop_sequence`, `pause_turn`, and `compaction` → `stop`. Unknown reasons are reported and treated as `stop`.
->>>>>>> theirs — heading `OMP native-adapter schema normalization` (S+F, confidence: low) · weave: run 'weave explain docs/toolconv/anthropic.md' for per-hunk detail, 'weave check' to verify your resolution
 
 ### How the API turns this into a prompt (the bridge to XML)
 
@@ -240,7 +207,6 @@ Before the API converts it, the model literally emits an XML block. The current 
 
 Current Claude models prefix these tags with an `antml:` XML namespace prefix (e.g. `antml:function_calls`, `antml:invoke name="…"`, `antml:parameter name="…"`). The API strips all of this and exposes only the JSON `tool_use` block; integrators should target the JSON, not the XML.
 
-<<<<<<< ours — heading `OMP `anthropic` dialect` (S+F, confidence: low)
 // refused_by: rename_vs_edit_guard · collision: `OMP operates on the underlying prompt-driven XML rather than Me…`
 ### TAU `anthropic` dialect
 
@@ -249,23 +215,6 @@ TAU operates on the underlying prompt-driven XML rather than Messages API conten
 The scanner mints call ids because this XML has none. It scans streamed text statefully, emits `toolArgDelta` events while each parameter body arrives, and publishes the coerced argument object with `toolEnd` after `</invoke>`. A parameter value is capped at 1,000,000 JavaScript string code units; overflow gains an explicit truncation suffix. JSON-like values are parsed with repair, while schema-declared strings stay strings. With `parseThinking: true`, `<thinking>`, `<think>`, and `<scratchpad>` (prefixed or unprefixed) become thinking events; otherwise those tags remain visible text.
 
 `</invoke>` gates `toolEnd`, but it does not gate creation of the canonical call. Once an opening `<invoke name="…">` has emitted `toolStart`, EOF only resets scanner-local state. On a normally stopped stream, TAU retains that call, changes the turn to `toolUse`, and may dispatch it even though no `toolEnd` arrived. Any `toolArgDelta` text already accumulated survives in the call (without the close-time coercion); a call with no accumulated parameter text runs with `{}`. A `length` stop remains non-runnable.
-=======
-### OMP `anthropic` dialect
-
-Select the owned dialect with `PI_DIALECT=anthropic` or the agent's `dialect`/`getDialect` configuration. When tools are present, the agent appends the dialect guide and a compact JSON tool catalog to the system prompt, removes native tools from the request, and re-encodes prior tool calls/results as text. This is separate from the native `anthropic-messages` adapter.
-
-The dialect renderer always emits the unprefixed attribute form above, wraps multiple calls in one `<function_calls>` block, and renders each argument as a `<parameter name="…">` child. With a tool schema, string-only arguments (including nullable strings) are inserted as literal text; other values are JSON-serialized. Tool and parameter names are XML-attribute-escaped, but parameter bodies are not XML-escaped. The scanner does not decode XML entities. It accepts `antml:`-prefixed tags, `<tool_calls>` as a wrapper alias, and a bare `<invoke name="…">` outside either wrapper. The child-tag legacy `<invoke><tool_name>…` format is not supported.
-
-The scanner mints `ptc_…` call ids because this XML has none. It scans streamed text statefully, emits `toolArgDelta` events while each named parameter body arrives, and publishes the coerced argument object with `toolEnd` after `</invoke>`. A parameter value is capped at 1,000,000 JavaScript string code units; overflow gains an explicit truncation suffix. Schema-declared strings stay strings; other nonempty values use repairing JSON parsing and fall back to raw text on failure. An explicit `string` attribute overrides the schema: `false`, `0`, and `no` (case-insensitive) enable parsing; other supplied values keep the body as a string. Empty bodies stay strings.
-
-Standalone `AnthropicInbandScanner` defaults to `parseThinking: false`; the owned-stream projector enables it. With `parseThinking: true`, `<thinking>`, `<think>`, and `<scratchpad>` (prefixed or unprefixed) become thinking events. With it disabled, those tags remain visible outside tool wrappers; incidental text inside a tool wrapper is discarded.
-
-`</invoke>` gates `toolEnd`, but it does not gate creation of the canonical call. Once an opening `<invoke name="…">` has emitted `toolStart`, EOF only resets scanner-local state. On a normally stopped stream, OMP retains that call, changes the turn to `toolUse`, and may dispatch it even though no `toolEnd` arrived. Any `toolArgDelta` text already accumulated survives in the call (without the close-time coercion); a call with no accumulated parameter text runs with `{}`. A `length` stop remains non-runnable.
-
-History encoding groups consecutive results into a `user` message, keeping result images as separate image blocks after the XML. A tool-calling assistant turn is replayed as text plus rendered calls, without its thinking blocks. The standalone transcript renderer is a different surface: it uses `Human:` / `Assistant:` text turns and renders thinking as `<thinking>…</thinking>`, not Messages API JSON.
-
-The owned stream cuts off fabricated results at `<function_results>` or `<tool_response>` (aborting by default), retaining calls parsed before that boundary. If a provider nevertheless returns native structured calls, the first real native or in-band call chooses the channel for that turn, preventing duplicate dispatch.
->>>>>>> theirs — heading `OMP `anthropic` dialect` (S+F, confidence: low)
 
 ---
 

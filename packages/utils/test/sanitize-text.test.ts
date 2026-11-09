@@ -1,11 +1,6 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { sanitizeText } from "@oh-my-pi/pi-utils/sanitize-text";`
 import { sanitizeText } from "@tau/tau-utils/sanitize-text";
-=======
-import { sanitizeText, sanitizeTextDeep } from "@oh-my-pi/pi-utils/sanitize-text";
-import { isRecord } from "@oh-my-pi/pi-utils/type-guards";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/utils/test/sanitize-text.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 describe("sanitizeText", () => {
 	it("strips ANSI CSI and removes C0/C1 control chars while keeping tab + LF", () => {

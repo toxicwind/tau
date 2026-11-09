@@ -6,24 +6,10 @@
  * internals, which massively overcounts.
  */
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { type } from "@tau/tautype";
 import { Tokenizer } from "@tau/tau-agent-core";
 import { arkToWireSchema } from "@tau/tau-ai/utils/schema";
-=======
-import { type } from "@oh-my-pi/omptype";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import type { Model, ModelSpec } from "@oh-my-pi/pi-catalog/types";
-import { Tokenizer } from "@oh-my-pi/pi-agent-core";
-import { normalizeTools } from "@oh-my-pi/pi-agent-core/agent-loop";
-import {
-	compactionContextTokens,
-	DEFAULT_COMPACTION_SETTINGS,
-	shouldCompact,
-} from "@oh-my-pi/pi-agent-core/compaction";
-import { arkToWireSchema } from "@oh-my-pi/pi-ai/utils/schema";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/tui/test/context-usage.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	type NonMessageTokenSource,
 	computeNonMessageBreakdown,

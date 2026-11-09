@@ -26,7 +26,6 @@ import {
 	type ModelAssignment,
 	PromptCacheOptionsSchema,
 	StopReason,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { isRecord, logger, parseStreamingJson, parseStreamingJs…`
 } from "@tau/tau-catalog/discovery/devin-proto";
 import { create, fromBinary, toBinary } from "@tau/tau-catalog/discovery/protobuf";
@@ -34,14 +33,6 @@ import { calculateCost } from "@tau/tau-catalog/models";
 import { DEVIN_DEFAULT_BASE_URL, devinCliMetadata } from "@tau/tau-catalog/wire/devin";
 import { decodeDevinUnaryMessage } from "@tau/tau-catalog/wire/devin-proto";
 import { isRecord, logger, parseStreamingJson, parseStreamingJsonThrottled, sanitizeText } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-catalog/discovery/devin-proto";
-import { create, fromBinary, toBinary } from "@oh-my-pi/pi-catalog/discovery/protobuf";
-import { calculateCost } from "@oh-my-pi/pi-catalog/models";
-import { DEVIN_DEFAULT_BASE_URL, devinCliMetadata } from "@oh-my-pi/pi-catalog/wire/devin";
-import { decodeDevinUnaryMessage } from "@oh-my-pi/pi-catalog/wire/devin-proto";
-import { isRecord, logger, parseStreamingJsonThrottled, sanitizeText } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/src/providers/devin.ts' for per-hunk detail, 'weave check' to verify your resolution
 import * as AIError from "../error";
 import { parseToolCallArguments } from "../utils/tool-call-arguments";
 

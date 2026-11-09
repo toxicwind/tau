@@ -2,7 +2,6 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import type { AgentEvent, AgentMessage } from "@tau/tau-agent-core";
 import { type AssistantMessage, Effort, type TextContent } from "@tau/tau-ai";
@@ -10,20 +9,6 @@ import { type CompactionEntry, type FileEntry, parseSessionEntries, type Session
 import { RpcClient } from "tau/modes/rpc/rpc-client";
 import type { BashExecutionMessage } from "tau/session/messages";
 import { removeSyncWithRetries, Snowflake } from "@tau/tau-utils";
-=======
-import type { AgentEvent, AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { type AssistantMessage, Effort, type TextContent } from "@oh-my-pi/pi-ai";
-import {
-	type CompactionEntry,
-	type FileEntry,
-	parseSessionEntries,
-	type SessionMessageEntry,
-} from "@oh-my-pi/pi-coding-agent";
-import { RpcClient } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-client";
-import type { BashExecutionMessage } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { removeSyncWithRetries, Snowflake } from "@oh-my-pi/pi-utils";
-import { rejectionOf } from "./helpers/rejection";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/rpc.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { e2eApiKey } from "./utilities";
 
 type MessageEndEvent = Extract<AgentEvent, { type: "message_end" }>;

@@ -1,9 +1,5 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { Api, Model } from "@oh-my-pi/pi-catalog/types";` +1 more
 import type { Api, Model } from "@tau/tau-catalog/types";
-=======
-import { type Api, type Model, modelKind } from "@oh-my-pi/pi-catalog/types";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/src/images/openai-hosted.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	applyCodexResidencyHeader,
 	CODEX_BASE_URL,
@@ -11,14 +7,9 @@ import {
 	OPENAI_HEADER_VALUES,
 	OPENAI_HEADERS,
 	URL_PATHS,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { Api, Model } from "@oh-my-pi/pi-catalog/types";` +1 more
 } from "@tau/tau-catalog/wire/codex";
 import { parseImageMetadata, readSseJson, USER_AGENT } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-catalog/wire/codex";
-import { prompt, readSseJson, USER_AGENT } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import { withAuth } from "../auth-retry";
 import * as AIError from "../error";
 import { applySessionHeader } from "../providers/inference-headers";

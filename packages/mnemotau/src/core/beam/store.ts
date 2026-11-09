@@ -1,10 +1,6 @@
 import type { Database, SQLQueryBindings } from "bun:sqlite";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { logger } from "@oh-my-pi/pi-utils";`
 import { logger } from "@tau/tau-utils";
-=======
-import { logger, withLoopPhase } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/mnemotau/src/core/beam/store.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { transaction } from "../../db";
 import { toUtcIso } from "../../util/datetime";
 import { generateId } from "../../util/ids";
@@ -365,21 +361,12 @@ const EMBED_REBUILD_BATCH = 128;
  *
  * Runs once per store open; a fresh store (no embeddings) or an already-current
  * store is a no-op. The destructive wipe is skipped whenever it could not be
-<<<<<<< ours — scope `declaration` in function `reconcileEmbeddingModel` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `* `MNEMOPI_NO_EMBEDDINGS` env, or an unresolved (empty) active …`
  * rebuilt — embeddings disabled via the runtime option OR the
  * `MNEMOTAU_NO_EMBEDDINGS` env, or an unresolved (empty) active model — so a
  * stale-but-valid corpus is never destroyed without a replacement. MUST run
  * inside the active runtime-options scope so `currentEmbeddingModel()` /
  * `embeddingsDisabled()` reflect the per-instance configuration.
-=======
- * rebuilt: embeddings disabled via the runtime option OR the `MNEMOPI_NO_EMBEDDINGS`
- * env, an unresolved (empty) active model, or a provider that does not answer the
- * probe (missing key, unreachable endpoint). A stale-but-valid corpus is never
- * destroyed without a replacement. MUST run inside the active runtime-options scope
- * so `currentEmbeddingModel()` / `embeddingsDisabled()` reflect the per-instance
- * configuration.
->>>>>>> theirs — scope `declaration`
  */
 export function reconcileEmbeddingModel(beam: BeamMemoryState): void {
 	if (embeddingsDisabled()) return;
@@ -445,7 +432,6 @@ export function reconcileEmbeddingModel(beam: BeamMemoryState): void {
 					});
 				}
 
-<<<<<<< ours — scope `if (mismatch) {` in function `reconcileEmbeddingModel` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `logger.info("mnemopi: embedding model changed, rebuilding", {`
 		logger.info("mnemotau: embedding model changed, rebuilding", {
 			from: staleModels.map(row => row.model ?? "(unstamped)"),
@@ -453,61 +439,6 @@ export function reconcileEmbeddingModel(beam: BeamMemoryState): void {
 			count: live.length,
 		});
 		rebuild(live);
-=======
-				transaction(beam.db, () => {
-					// Only stale-model rows go. A vector that a concurrent remember() or update() stamped
-					// under the active model survives. Each staged insert also revalidates its source text.
-					beam.db.query("DELETE FROM memory_embeddings WHERE model IS NOT ?").run(active);
-					beam.db.run("UPDATE episodic_memory SET binary_vector = NULL");
-					if (vecAvailable(beam.db)) {
-						try {
-							beam.db.run("DELETE FROM vec_episodes");
-						} catch {
-							// sqlite-vec cleanup is best-effort; rebuild correctness takes precedence.
-						}
-					}
-					using insertEmbedding = beam.db.prepare(`
-						INSERT OR REPLACE INTO memory_embeddings(memory_id, embedding_json, model)
-						SELECT ?, ?, ?
-						WHERE EXISTS (
-							SELECT 1 FROM working_memory
-							WHERE id = ? AND superseded_by IS NULL AND COALESCE(embed_text, content) = ?
-						) OR EXISTS (
-							SELECT 1 FROM episodic_memory
-							WHERE id = ? AND superseded_by IS NULL AND content = ?
-						)
-					`);
-					for (const row of staged) {
-						insertEmbedding.run(
-							row.memoryId,
-							row.json,
-							active,
-							row.memoryId,
-							row.content,
-							row.memoryId,
-							row.content,
-						);
-					}
-				});
-				beam.caches.queryCache?.invalidate();
-
-				logger.info("mnemopi: embedding model changed, rebuilt", {
-					from: staleModels.map(row => row.model ?? "(unstamped)"),
-					to: active,
-					count: staged.length,
-				});
-			} catch (error) {
-				// A store closed during shutdown lands here; the next open resumes from the stamps.
-				logger.debug("mnemopi: embedding migration aborted", { error: String(error) });
-			}
-		};
-		const task = withMnemopiRuntimeOptions(getMnemopiRuntimeOptions(), migrate);
-		const pending = beam.pendingExtractions;
-		if (pending !== undefined) {
-			pending.add(task);
-			void task.finally(() => pending.delete(task));
-		}
->>>>>>> theirs — scope `if (mismatch) {`
 		return;
 	}
 

@@ -4,25 +4,9 @@ import { readFileSync } from "node:fs";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { $which, getPuppeteerDir, logger, removeWithRetries } f…`
 import { $which, getPuppeteerDir, logger, removeWithRetries } from "@tau/tau-utils";
 import type * as BrowsersNs from "@tau/tau-utils/browsers";
-=======
-import {
-	$which,
-	getPuppeteerDir,
-	isEnoent,
-	isRecord,
-	logger,
-	removeWithRetries,
-	toError,
-	untilAborted,
-	withTimeout,
-} from "@oh-my-pi/pi-utils";
-import type * as BrowsersNs from "@oh-my-pi/pi-utils/browsers";
-import type { BunFile } from "bun";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/browser/launch.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type {
 	Browser,
 	CDPSession,
@@ -50,14 +34,8 @@ import stealthPluginsScript from "../puppeteer/10_stealth_plugins.txt" with { ty
 import stealthHardwareScript from "../puppeteer/11_stealth_hardware.txt" with { type: "text" };
 import stealthCodecsScript from "../puppeteer/12_stealth_codecs.txt" with { type: "text" };
 import stealthWorkerScript from "../puppeteer/13_stealth_worker.txt" with { type: "text" };
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { $which, getPuppeteerDir, logger, removeWithRetries } f…`
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
-=======
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
-import { withDownload } from "../../downloads/activity";
-import { findUserDataDirInArgs, gracefulKillTreeOnce, probeCdpResponse } from "./attach";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 
 export const DEFAULT_VIEWPORT = { width: 1365, height: 768, deviceScaleFactor: 1.25 };
 
@@ -699,16 +677,9 @@ export async function launchHeadlessBrowser(opts: LaunchHeadlessOptions): Promis
 	// unhandled EBUSY when Chromium still holds the profile lock on Windows
 	// (issue #7058). `removeUserDataDir` cleans it up on our terms instead.
 	let userDataDir: string | undefined;
-<<<<<<< ours — function `launchHeadlessBrowser` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 	if (!launchArgs.some(arg => arg.startsWith("--user-data-dir"))) {
 		userDataDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "tau-chrome-profile-"));
-=======
-	let profileDir = findUserDataDirInArgs(launchArgs);
-	if (!profileDir) {
-		userDataDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "omp-chrome-profile-"));
-		profileDir = userDataDir;
->>>>>>> theirs — function `launchHeadlessBrowser` (F, confidence: medium)
 		launchArgs.push(`--user-data-dir=${userDataDir}`);
 	}
 	// Puppeteer picks the pipe transport from `--remote-debugging-pipe`. Chromium

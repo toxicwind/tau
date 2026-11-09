@@ -9,7 +9,6 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { Transform } from "node:stream";
 import { pipeline } from "node:stream/promises";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { $env, $which, APP_NAME, compareVersions, isEnoent, VER…` +1 more
 import { $env, $which, APP_NAME, compareVersions, isEnoent, VERSION } from "@tau/tau-utils";
 import chalk from "@tau/tau-utils/chalk";
@@ -17,26 +16,6 @@ import { withFileLock } from "@tau/tau-utils/file-lock";
 import { $ } from "bun";
 import { settings } from "../config/settings";
 import { theme } from "@tau/tau-tui/theme";
-=======
-import { applyBinaryPatch } from "@oh-my-pi/pi-natives";
-import {
-	$which,
-	APP_NAME,
-	compareVersions,
-	formatBytes,
-	getProjectDir,
-	getUpdateStateDir,
-	isCompiledBinary,
-	isEnoent,
-	VERSION,
-	WhichCachePolicy,
-} from "@oh-my-pi/pi-utils";
-import chalk from "@oh-my-pi/pi-utils/chalk";
-import { type FileLockHandle, tryAcquireFileLock, withFileLock } from "@oh-my-pi/pi-utils/file-lock";
-import { $ } from "bun";
-import { Settings, settings } from "../config/settings";
-import { theme } from "@oh-my-pi/pi-tui/theme";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/cli/update-cli.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	isTimeoutError,
 	isUnsupportedProxyError,
@@ -54,11 +33,8 @@ import {
 
 import { cfgUpdateChannel } from "../modes/settings";
 
-<<<<<<< ours — variable `REPO` (S, confidence: medium)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 const REPO = "can1357/tau";
-=======
->>>>>>> theirs — variable `REPO` (S, confidence: medium)
 const PACKAGE = "@tau/tau-coding-agent";
 const HOMEBREW_FORMULA = "can1357/tap/tau";
 const MISE_TOOL = "github:can1357/tau";
@@ -1192,11 +1168,8 @@ export async function verifyInstalledVersion(expectedVersion: string): Promise<I
 	// A fresh lookup: the install may have moved what PATH resolves to (a Windows
 	// shim takeover retires `omp.cmd` for `omp.exe`) since the target was resolved.
 	const ompPath = $which(APP_NAME, { cache: WhichCachePolicy.Fresh }) ?? undefined;
-<<<<<<< ours — scope `const ompPath = resolveOmpPath();` in function `verifyInstalledVersion`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	const tauPath = resolveOmpPath();
-=======
->>>>>>> theirs — scope `const ompPath = resolveOmpPath();` deleted in theirs
 	if (!tauPath) return { ok: false };
 	const binaryPath = tryRealpath(tauPath) ?? tauPath;
 	return await verifyBinaryAtPath(binaryPath, expectedVersion);
@@ -1973,7 +1946,6 @@ export async function updateViaBinaryAt(
 	options: BuildDownloadOptions & {
 		/** Refuse replacement unless the existing path is a non-script TAU executable. */
 		validateExistingTarget?: boolean;
-<<<<<<< ours — scope `verifyInstalledVersion?: typeof verifyInstall...` in function `updateViaBinaryAt`, deleted in theirs (T+S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 		verifyInstalledVersion?: typeof verifyInstalledVersion;
 	} = {},
@@ -1993,8 +1965,6 @@ export async function updateViaBinaryAt(
 	const tempPath = `${targetPath}.${attempt}.new`;
 	const backupPath = `${targetPath}.${attempt}.bak`;
 	const asset = await getReleaseBinaryAsset(
-=======
->>>>>>> theirs — scope `verifyInstalledVersion?: typeof verifyInstall...` deleted in theirs
 		verifyInstalledVersion?: typeof verifyInstalledVersion;
 	} = {},
 ): Promise<void> {
@@ -2450,7 +2420,6 @@ export async function runUpdateCommand(opts: UpdateOptions): Promise<UpdateOutco
 		onProgress: opts.onProgress,
 	};
 
-<<<<<<< ours — function `runUpdateCommand (body partly extracted into installFromPatch, UpdateRequest, UpdateOptions, announceOffer, runBinaryUpdate, updateToStandaloneBinary, runManagedUpdate)` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `// Choose update method based on the prioritized omp binary in …` +1 more
 	// Check for updates
 	let release: ReleaseInfo;
@@ -2544,16 +2513,6 @@ export async function runUpdateCommand(opts: UpdateOptions): Promise<UpdateOutco
 					),
 				);
 			}
-=======
-	const lock = opts.check ? undefined : acquireInstallLock();
-	try {
-		let target: UpdateTarget | undefined;
-		let targetError: unknown;
-		try {
-			target = await resolveUpdateTarget({ allowPackageManagers: true });
-		} catch (err) {
-			targetError = err;
->>>>>>> theirs — function `runUpdateCommand (body partly extracted into installFromPatch, UpdateRequest, UpdateOptions, announceOffer, runBinaryUpdate, updateToStandaloneBinary, runManagedUpdate)` (S+F, confidence: low)
 		}
 		if (target?.method === "binary") return await runBinaryUpdate(target, targetError, request);
 		if (!target && isCompiledBinary()) return await runBinaryUpdate(undefined, targetError, request);

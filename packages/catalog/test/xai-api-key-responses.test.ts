@@ -2,7 +2,6 @@ import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { applyXaiCatalogPricing, xaiModelManagerOptions } from …`
 import { buildModel } from "@tau/tau-catalog/build";
 import { resolveProviderModels } from "@tau/tau-catalog/model-manager";
@@ -11,16 +10,6 @@ import { providerEntry } from "@tau/tau-catalog/compat/providers";
 import { DEFAULT_MODEL_PER_PROVIDER } from "@tau/tau-catalog/provider-models/descriptors";
 import { applyXaiCatalogPricing, xaiModelManagerOptions } from "@tau/tau-catalog/provider-models/openai-compat";
 import { type ModelSpec, type Usage } from "@tau/tau-catalog/types";
-=======
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { resolveProviderModels } from "@oh-my-pi/pi-catalog/model-manager";
-import { calculateCost, getBundledModels } from "@oh-my-pi/pi-catalog/models";
-import { providerEntry } from "@oh-my-pi/pi-catalog/compat/providers";
-import { DEFAULT_MODEL_PER_PROVIDER } from "@oh-my-pi/pi-catalog/provider-models/descriptors";
-import { xaiModelManagerOptions } from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import { type ModelSpec, type Usage } from "@oh-my-pi/pi-catalog/types";
-import { applyPricingPeerFallback } from "../scripts/generated-policies";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/catalog/test/xai-api-key-responses.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const XAI_RESPONSES_SPEC: ModelSpec<"openai-responses"> = {
 	id: "grok-4.5",

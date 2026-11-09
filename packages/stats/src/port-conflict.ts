@@ -1,12 +1,8 @@
 import type { Dirent } from "node:fs";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { $which } from "@oh-my-pi/pi-utils";`
 import { $which } from "@tau/tau-utils";
-=======
-import { $which, logger } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/stats/src/port-conflict.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { $ } from "bun";
 
 /**
@@ -272,7 +268,6 @@ async function reclaimStatsPort(port: number, probe: "replaceable" | "occupied")
 		normalizedImage === "tau-stats" ||
 		/(?:^|[/"'\s])tau-stats(?:\.exe)?(?:["'\s]|$)/.test(normalizedCommand) ||
 		/\/packages\/stats\/src\/index\.ts(?:["'\s]|$)/.test(normalizedCommand) ||
-<<<<<<< ours — scope `const hasStatsIdentity =` in function `reclaimStatsPort` (S+F, confidence: low)
 // refused_by: statement_fold · collision: ``Port ${port} is in use by ${holder.image} (PID ${holder.pid}),…`
 		(normalizedImage === "tau" && /(?:^|\s)stats(?:\s|$)/.test(normalizedCommand)) ||
 		/(?:^|\/)tau(?:\.exe)?["'\s]+stats(?:["'\s]|$)/.test(normalizedCommand);
@@ -280,14 +275,6 @@ async function reclaimStatsPort(port: number, probe: "replaceable" | "occupied")
 		throw new Error(
 			`Port ${port} is in use by ${holder.image} (PID ${holder.pid}), which is not identifiable as an tau stats dashboard; refusing to stop it.`,
 		);
-=======
-		(normalizedImage === "omp" && /(?:^|\s)stats(?:\s|$)/.test(normalizedCommand)) ||
-		/(?:^|\/)omp(?:\.exe)?["'\s]+stats(?:["'\s]|$)/.test(normalizedCommand);
-	const hasDashboardIdentity = probe === "replaceable";
-	if (!STATS_RUNTIME_IMAGES[normalizedImage] || (!hasStatsIdentity && !hasDashboardIdentity)) {
-		logger.debug("Stats dashboard port held by an unidentified process", { port, holder });
-		return "fallback";
->>>>>>> theirs — scope `const hasStatsIdentity =`
 	}
 
 	try {

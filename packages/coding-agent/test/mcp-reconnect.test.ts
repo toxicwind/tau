@@ -1,16 +1,7 @@
 import { describe, expect, it, vi } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { createMCPJsonRpcError, MCPTransportError } from "@oh-m…`
 import { createMCPJsonRpcError, MCPTransportError } from "tau/mcp/errors";
 import type { MCPReconnect } from "tau/mcp/tool-bridge";
-=======
-import {
-	createMCPJsonRpcError,
-	MCPTransportError,
-	normalizeMCPTransportError,
-} from "@oh-my-pi/pi-coding-agent/mcp/errors";
-import type { MCPReconnect } from "@oh-my-pi/pi-coding-agent/mcp/tool-bridge";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/mcp-reconnect.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	createLegacyMCPToolName,
 	createMCPToolName,
@@ -18,22 +9,12 @@ import {
 	deduplicateMCPToolsByName,
 	isRetriableConnectionError,
 	MCPTool,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { createMCPJsonRpcError, MCPTransportError } from "@oh-m…`
 } from "tau/mcp/tool-bridge";
 import type { MCPImageContent } from "@tau/tau-tui/tools/mcp";
 import type { MCPServerConnection, MCPToolCallResult, MCPTransport } from "tau/mcp/types";
 import { ToolAbortError } from "tau/tools/tool-errors";
 import { logger } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-coding-agent/mcp/tool-bridge";
-import type { MCPImageContent } from "@oh-my-pi/pi-tui/tools/mcp";
-import { HttpTransport } from "@oh-my-pi/pi-coding-agent/mcp/transports/http";
-import { LegacySseTransport } from "@oh-my-pi/pi-coding-agent/mcp/transports/sse";
-import type { MCPServerConnection, MCPToolCallResult, MCPTransport } from "@oh-my-pi/pi-coding-agent/mcp/types";
-import { ToolAbortError } from "@oh-my-pi/pi-coding-agent/tools/tool-errors";
-import { logger } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 
 // ---------------------------------------------------------------------------
 // Helpers

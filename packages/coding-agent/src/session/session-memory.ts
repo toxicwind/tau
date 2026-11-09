@@ -204,16 +204,7 @@ export class SessionMemory {
 		this.#host.getMnemotauSessionState()?.setSessionId(sid);
 	}
 
-<<<<<<< ours — scope `#rekeyMnemopiMemoryForCurrentSessionId` in class `SessionMemory`, deleted in ours (T+F, confidence: medium)
 // refused_by: container_member · collision: none (no common ancestor text)
-=======
-	#rekeyMnemopiMemoryForCurrentSessionId(): void {
-		if (cfgMemoryBackend.get(this.#host.settings) !== "mnemopi") return;
-		const sid = this.#host.agent.sessionId;
-		if (!sid) return;
-		this.#host.getMnemopiSessionState()?.setSessionId(sid);
-	}
->>>>>>> theirs — scope `#rekeyMnemopiMemoryForCurrentSessionId` deleted in ours · weave: run 'weave explain packages/coding-agent/src/session/session-memory.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 	/** New transcript: reset Hindsight counters and reload its frozen mental-model snapshot. */
 	#resetHindsightConversationTrackingIfHindsight(): boolean {
@@ -236,17 +227,7 @@ export class SessionMemory {
 		return true;
 	}
 
-<<<<<<< ours — scope `#resetMnemopiConversationTrackingIfMnemopi` in class `SessionMemory`, deleted in ours (T+F, confidence: medium)
 // refused_by: container_member · collision: none (no common ancestor text)
-=======
-	#resetMnemopiConversationTrackingIfMnemopi(): boolean {
-		if (cfgMemoryBackend.get(this.#host.settings) !== "mnemopi") return false;
-		const state = this.#host.getMnemopiSessionState();
-		if (!state || state.aliasOf) return false;
-		state.resetConversationTracking();
-		return true;
-	}
->>>>>>> theirs — scope `#resetMnemopiConversationTrackingIfMnemopi` deleted in ours
 
 	/** Resets transcript-scoped memory counters and removes a promoted prompt. */
 	async resetContextForNewTranscript(): Promise<void> {
@@ -311,7 +292,6 @@ export class SessionMemory {
 
 	/**
 	 * Apply the selected memory backend to runtime state, tools, and prompt.
-<<<<<<< ours — scope `applyMemoryBackend` in class `SessionMemory` (S+F, confidence: low)
 // refused_by: container_member · collision: `* Cwd rebinding can disable Mnemopi auto-retention without skip…` +1 more
 	 * Concurrent settings changes run in order and settle before the next turn.
 	 * Cwd rebinding can disable Mnemotau auto-retention without skipping its drain.
@@ -324,28 +304,6 @@ export class SessionMemory {
 			() => undefined,
 		);
 		await transition;
-=======
-	 * Concurrent settings changes run in order and settle before the next turn;
-	 * requests arriving while an apply is still queued join it, since it reads
-	 * settings only once it starts. Cwd rebinding can disable Mnemopi
-	 * auto-retention without skipping its drain.
-	 */
-	async applyMemoryBackend(options: { retainMnemotau?: boolean } = {}): Promise<void> {
-		if (this.#host.isDisposed()) return;
-		const retainMnemopi = options.retainMnemopi !== false;
-		const queued = this.#queuedApply;
-		if (queued) {
-			queued.retainMnemopi &&= retainMnemopi;
-			return queued.done;
-		}
-		const request = { retainMnemopi, done: Promise.resolve() };
-		this.#queuedApply = request;
-		request.done = this.#enqueueTransition(() => {
-			this.#queuedApply = undefined;
-			return this.#applyMemoryBackend(request.retainMnemopi);
-		});
-		await request.done;
->>>>>>> theirs — scope `applyMemoryBackend`
 	}
 
 	/** Runs `work` after every earlier transition; its failure does not block later ones. */
@@ -358,7 +316,6 @@ export class SessionMemory {
 		return transition;
 	}
 
-<<<<<<< ours — scope `#applyMemoryBackend` in class `SessionMemory` (S+F, confidence: low)
 // refused_by: container_member · collision: `async #applyMemoryBackend(retainMnemopi = true): Promise<void> {` +1 more
 	async #applyMemoryBackend(retainMnemotau = true): Promise<void> {
 		if (this.#host.isDisposed()) return;
@@ -368,17 +325,6 @@ export class SessionMemory {
 		const retain = retainMnemopi && (this.#runtimeCwd ?? cwd) === cwd;
 		try {
 			await this.#disposeMemoryBackendState(true, retainMnemotau);
-=======
-	async #applyMemoryBackend(retainMnemopi: boolean): Promise<void> {
-		if (this.#host.isDisposed()) return;
-		const cwd = this.#host.cwd();
-		// A cwd move (or its rollback) may reach here before the rebind does:
-		// drain the outgoing state without capturing the transcript under a stale scope.
-		const retain = retainMnemopi && (this.#runtimeCwd ?? cwd) === cwd;
-		try {
-			await this.#disposeMemoryBackendState(true, retain);
-			this.#runtimeCwd = cwd;
->>>>>>> theirs — scope `#applyMemoryBackend`
 			if (this.#memoryAgentDir && this.#memoryTaskDepth === 0 && !this.#host.isDisposed()) {
 				const backend = await resolveMemoryBackend(this.#host.settings);
 				await backend.start({

@@ -84,12 +84,8 @@ The dedicated fallback provider in `src/discovery/mcp-json.ts` reads project-roo
 
 In practice MCP servers also come from higher-priority providers (for example native `.tau/...` and tool-specific config dirs). Authoring guidance:
 
-<<<<<<< ours — scope `- Prefer `.omp/mcp.json` (project) or `~/.omp...` in heading ``.mcp.json` and related files` (S, confidence: medium)
 // refused_by: statement_fold · collision: `- Prefer `.omp/mcp.json` (project) or `~/.omp/agent/mcp.json` (…`
 - Prefer `.tau/mcp.json` (project) or `~/.tau/agent/mcp.json` (user) for explicit control.
-=======
-- Prefer `.omp/mcp.json` (project) or `<getAgentDir()>/mcp.json` (user, default `~/.omp/agent/mcp.json`) for explicit control. Native user MCP config follows the active profile.
->>>>>>> theirs — scope `- Prefer `.omp/mcp.json` (project) or `~/.omp...` · weave: run 'weave explain docs/upstream/mcp-server-tool-authoring.md' for per-hunk detail, 'weave check' to verify your resolution
 - Use root `mcp.json` / `.mcp.json` when you need fallback compatibility.
 - Reusing the same server name in multiple sources causes precedence shadowing, not merge.
 
@@ -120,12 +116,8 @@ Invalid `enabled`/`timeout` values are ignored with warnings rather than failing
 
 For `http`/`sse` servers, an `auth: { type: "oauth", credentialId: "..." }`
 block is optional. An explicit `auth.type: "apikey"` disables OAuth credential
-<<<<<<< ours — scope `block is optional. OMP honors an explicit arb...` in heading `OAuth credential injection` (S, confidence: medium)
 // refused_by: statement_fold · collision: `block is optional. OMP honors an explicit arbitrary or legacy c…`
 block is optional. TAU honors an explicit arbitrary or legacy credential ID when
-=======
-lookup. OMP honors an explicit arbitrary or legacy OAuth credential ID when
->>>>>>> theirs — scope `block is optional. OMP honors an explicit arb...`
 it resolves. A managed, profile-scoped
 `mcp_oauth:profile:<profile>:<url>` ID is accepted only when its profile is
 active and its URL matches the server's expanded or literal URL; a mismatch is

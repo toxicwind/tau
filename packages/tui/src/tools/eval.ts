@@ -1,24 +1,8 @@
 import type { Component } from "../index";
 import { Markdown, Text } from "../index";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { sanitizeText } from "@tau/tau-utils";
 import type { RenderResultOptions, ToolRenderer } from "./renderer";
-=======
-import { sanitizeText } from "@oh-my-pi/pi-utils";
-import type {
-	NativeToolHead,
-	NativeToolView,
-	RenderResultContextOptions,
-	RenderResultOptions,
-	ToolRenderer,
-} from "./renderer";
-import type { TspSpan } from "@oh-my-pi/pi-wire";
-import { code, compact, keyed, md, node, span, text } from "../native/describe";
-import type { NativeChild, NativeNode } from "../native/node";
-import { plainText } from "../native/spans";
-import { resultText, runBox, runFoot, type RunFootInput, runInput, runOutput, type RunState } from "./native-view";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/tui/src/tools/eval.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { renderAgentTreeRow } from "./agent-tree";
 import { truncateToVisualLines } from "../chrome/visual-truncate";
 import { getMarkdownTheme, type Theme } from "../theme/theme";

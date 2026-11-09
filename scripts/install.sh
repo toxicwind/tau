@@ -1,15 +1,9 @@
 #!/bin/sh
 set -e
 
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 # refused_by: merge_ladder_exhausted · collision: `# Usage: curl -fsSL https://raw.githubusercontent.com/can1357/o…`
 # TAU Coding Agent Installer
 # Usage: curl -fsSL https://raw.githubusercontent.com/can1357/tau/main/scripts/install.sh | sh
-=======
-# OMP Coding Agent Installer
-# Usage: curl -fsSL https://omp.sh/install | sh
-#        curl -fsSL https://omp.sh/install | sh -s -- --binary --ref v18.8.9
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain scripts/install.sh' for per-hunk detail, 'weave check' to verify your resolution
 #
 # Options:
 #   --source       Install via bun (installs bun if needed)
@@ -281,13 +275,9 @@ install_binary() {
         fi
     fi
 
-<<<<<<< ours — scope `case "$OS" in` in function `install_binary` (S+F, confidence: low)
 # refused_by: statement_fold · collision: `BINARY="omp-${PLATFORM}-${ARCH}"` +2 more
     BINARY="tau-${PLATFORM}-${ARCH}"
     # Get release tag
-=======
-    TARGET="${PLATFORM}-${TARGET_ARCH}"
->>>>>>> theirs — scope `case "$OS" in`
     if [ -n "$REF" ]; then
         if ! printf '%s\n' "$REF" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$'; then
             echo "Binary installs take a release tag (v<version>) for --ref, got: $REF"
@@ -325,20 +315,9 @@ install_binary() {
     DOWNLOAD_PATH="${INSTALL_DIR}/.omp.download.$$"
     trap 'rm -f "$DOWNLOAD_PATH"' EXIT
     echo "Downloading ${BINARY}..."
-<<<<<<< ours — scope `case "$OS" in` in function `install_binary` (S+F, confidence: low)
 # refused_by: statement_fold · collision: `BINARY="omp-${PLATFORM}-${ARCH}"` +2 more
     curl -fsSL --connect-timeout 10 --speed-limit 1024 --speed-time 30 "$BINARY_URL" -o "${INSTALL_DIR}/tau"
     chmod +x "${INSTALL_DIR}/tau"
-=======
-    curl -fsSL --connect-timeout 10 --speed-limit 1024 --speed-time 30 "$DOWNLOAD_URL" -o "$DOWNLOAD_PATH"
-    ACTUAL_SHA256="$(sha256_of "$DOWNLOAD_PATH")"
-    if [ "$ACTUAL_SHA256" != "$EXPECTED_SHA256" ]; then
-        echo "Checksum mismatch for ${BINARY}: expected ${EXPECTED_SHA256}, got ${ACTUAL_SHA256}"
-        exit 1
-    fi
-    chmod +x "$DOWNLOAD_PATH"
-    mv -f "$DOWNLOAD_PATH" "${INSTALL_DIR}/omp"
->>>>>>> theirs — scope `case "$OS" in`
 
     # Verify the freshly installed binary can actually start before reporting
     # success. Bun's musl-target binaries link libstdc++/libgcc dynamically,

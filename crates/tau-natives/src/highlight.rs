@@ -14,15 +14,11 @@ use std::{
 use napi::{JsString, Result};
 use napi_derive::napi;
 use rayon::prelude::*;
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 use syntect::parsing::{
 	ParseState, Scope, ScopeStack, ScopeStackOp, SyntaxDefinition, SyntaxReference, SyntaxSet,
 };
 use tau_shell::rayon_global_pool_available;
-=======
-use syntect::parsing::{ParseState, Scope, ScopeStack, SyntaxReference, SyntaxSet};
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain crates/tau-natives/src/highlight.rs' for per-hunk detail, 'weave check' to verify your resolution
 
 use crate::{
 	js::{self, InlineStr},

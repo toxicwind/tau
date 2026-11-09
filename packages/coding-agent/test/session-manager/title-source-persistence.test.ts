@@ -7,7 +7,6 @@ import {
 	SESSION_TITLE_SLOT_BYTES,
 	type SessionHeader,
 	TITLE_CHANGE_ENTRY_TYPE,
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "tau/session/session-entries";
 import { loadEntriesFromFile } from "tau/session/session-loader";
@@ -15,15 +14,6 @@ import { SessionManager } from "tau/session/session-manager";
 import { FileSessionStorage, type WriteTextAtomicOptions } from "tau/session/session-storage";
 import type { SessionTitleUpdate } from "tau/session/session-title-slot";
 import { getConfigRootDir, removeSyncWithRetries, setAgentDir } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import { closeSessionIndex } from "@oh-my-pi/pi-coding-agent/session/session-index";
-import { loadEntriesFromFile } from "@oh-my-pi/pi-coding-agent/session/session-loader";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { FileSessionStorage, type WriteTextAtomicOptions } from "@oh-my-pi/pi-coding-agent/session/session-storage";
-import type { SessionTitleUpdate } from "@oh-my-pi/pi-coding-agent/session/session-title-slot";
-import { getConfigRootDir, removeSyncWithRetries, setAgentDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/session-manager/title-source-persistence.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 import { makeAssistantMessage } from "./helpers";
 

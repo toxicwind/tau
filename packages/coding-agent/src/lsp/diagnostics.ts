@@ -1,12 +1,8 @@
 import { type FileDiagnosticsResult } from "@tau/tau-tui/tools/lsp";
 import * as fs from "node:fs";
 import path from "node:path";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { logger, untilAborted } from "@oh-my-pi/pi-utils";`
 import { logger, untilAborted } from "@tau/tau-utils";
-=======
-import { isRecord, logger, untilAborted, toError } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/lsp/diagnostics.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { formatPathRelativeToCwd } from "../tools/path-utils";
 import { throwIfAborted } from "../tools/tool-errors";
 import {

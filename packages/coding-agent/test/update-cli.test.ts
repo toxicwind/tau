@@ -3,15 +3,9 @@ import * as nodeFs from "node:fs";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import * as pluginCli from "tau/cli/plugin-cli";
 import * as updateCli from "tau/cli/update-cli";
-=======
-import type { BuildAnswer, BuildPatch, Fetch } from "@oh-my-pi/pi-coding-agent/cli/build-service";
-import * as pluginCli from "@oh-my-pi/pi-coding-agent/cli/plugin-cli";
-import * as updateCli from "@oh-my-pi/pi-coding-agent/cli/update-cli";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/update-cli.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	type BinaryPatchApplier,
 	buildBunInstallArgs,
@@ -43,21 +37,12 @@ import {
 	updateViaBinaryAt,
 	updateViaManager,
 	updateViaShimTakeover,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "tau/cli/update-cli";
 import Update from "tau/commands/update";
 import { $which, removeWithRetries } from "@tau/tau-utils";
 import type { CliConfig } from "@tau/tau-utils/cli";
 import { getThemeByName, setThemeInstance } from "@tau/tau-tui/theme";
-=======
-	verifyInstalledVersion,
-} from "@oh-my-pi/pi-coding-agent/cli/update-cli";
-import Update from "@oh-my-pi/pi-coding-agent/commands/update";
-import { $which, removeWithRetries } from "@oh-my-pi/pi-utils";
-import type { CliConfig } from "@oh-my-pi/pi-utils/cli";
-import { getThemeByName, setThemeInstance } from "@oh-my-pi/pi-tui/theme";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 
 const miseBinary = Bun.env.MISE_BIN ?? $which("mise");
 const npmBinary = $which("npm");
@@ -200,18 +185,11 @@ describe("parseUpdateArgs", () => {
 describe("parseReportedVersion", () => {
 	it("preserves the prerelease suffix so a canary launcher verifies as up to date", () => {
 		// Regression: dropping `-canary.1` made a correctly installed canary
-<<<<<<< ours — scope `it("preserves the prerelease suffix so a cana...` in test_suite `parseReportedVersion` (T+F, confidence: medium)
 // refused_by: statement_fold · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 		// build look like a stale `X.Y.Z` launcher, triggering a binary repair
 		// that rejects the prerelease GitHub release.
 		expect(parseReportedVersion("tau/18.0.6-canary.1")).toBe("18.0.6-canary.1");
 		expect(parseReportedVersion("tau/18.0.5")).toBe("18.0.5");
-=======
-		// build look like a stale `X.Y.Z` launcher, triggering a needless
-		// binary repair.
-		expect(parseReportedVersion("omp/18.0.6-canary.1")).toBe("18.0.6-canary.1");
-		expect(parseReportedVersion("omp/18.0.5")).toBe("18.0.5");
->>>>>>> theirs — scope `it("preserves the prerelease suffix so a cana...`
 		expect(parseReportedVersion("not a version")).toBeUndefined();
 	});
 
@@ -255,7 +233,6 @@ describe("update-cli install target detection", () => {
 		// Regression: with `npm prefix -g` pointed at the installer's default
 		// (~/.local), directory containment alone misclassified the standalone
 		// binary as npm-managed, so `npm install -g` failed with EEXIST refusing
-<<<<<<< ours — scope `it("uses binary update when a plain file in t...` in test_suite `update-cli install target detection` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const method = resolveUpdateMethodForTest("/home/u/.local/bin/o…` +1 more
 		// to overwrite the existing executable.
 		const method = resolveUpdateMethodForTest("/home/u/.local/bin/tau", undefined, {
@@ -270,26 +247,6 @@ describe("update-cli install target detection", () => {
 		const method = resolveUpdateMethodForTest("/home/u/.local/bin/tau", "/home/u/.local/bin", {
 			tauIsRegularFile: true,
 		});
-=======
-		// to overwrite the existing executable. POSIX layout: on Windows an
-		// extensionless launcher is npm's sh shim (covered by the win32 cases).
-		const method = withPlatform("linux", () =>
-			resolveUpdateMethodForTest("/home/u/.local/bin/omp", undefined, {
-				npmBinDir: "/home/u/.local/bin",
-				ompIsRegularFile: true,
-			}),
-		);
-
-		expect(method).toBe("binary");
-	});
-
-	it("uses binary update when a plain file in the bun global bin dir is the standalone binary", () => {
-		const method = withPlatform("linux", () =>
-			resolveUpdateMethodForTest("/home/u/.local/bin/omp", "/home/u/.local/bin", {
-				ompIsRegularFile: true,
-			}),
-		);
->>>>>>> theirs — scope `it("uses binary update when a plain file in t...`
 
 		expect(method).toBe("binary");
 	});
@@ -300,16 +257,10 @@ describe("update-cli install target detection", () => {
 		// off file type — it keys off bun's `<name>.bunx` metadata sidecar, which
 		// only a bun-managed launcher has. Paths use forward slashes so the
 		// lexical containment check works on the POSIX host running this suite.
-<<<<<<< ours — scope `it("keeps bun update for regular-file entries...` in test_suite `update-cli install target detection` (F, confidence: medium)
 // refused_by: statement_fold · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 		const method = withWin32(() =>
 			resolveUpdateMethodForTest("C:/Users/test/.bun/bin/tau.exe", "C:/Users/test/.bun/bin", {
 				tauIsRegularFile: true,
-=======
-		const method = withPlatform("win32", () =>
-			resolveUpdateMethodForTest("C:/Users/test/.bun/bin/omp.exe", "C:/Users/test/.bun/bin", {
-				ompIsRegularFile: true,
->>>>>>> theirs — scope `it("keeps bun update for regular-file entries...`
 				bunShimMarker: true,
 			}),
 		);
@@ -323,16 +274,10 @@ describe("update-cli install target detection", () => {
 		// update back through `bun install -g`, which cannot overwrite the
 		// running .exe — bun tolerates that EBUSY — so the install stayed pinned
 		// to the old version with no way forward.
-<<<<<<< ours — scope `it("uses binary update for a Windows .exe in ...` in test_suite `update-cli install target detection` (F, confidence: medium)
 // refused_by: statement_fold · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 		const method = withWin32(() =>
 			resolveUpdateMethodForTest("C:/Users/test/.bun/bin/tau.exe", "C:/Users/test/.bun/bin", {
 				tauIsRegularFile: true,
-=======
-		const method = withPlatform("win32", () =>
-			resolveUpdateMethodForTest("C:/Users/test/.bun/bin/omp.exe", "C:/Users/test/.bun/bin", {
-				ompIsRegularFile: true,
->>>>>>> theirs — scope `it("uses binary update for a Windows .exe in ...`
 			}),
 		);
 
@@ -374,14 +319,9 @@ describe("update-cli install target detection", () => {
 	it("keeps an npm-linked checkout under npm management instead of overwriting its resolved script", async () => {
 		const dir = await makeTempDir();
 		const npmPrefix = path.join(dir, ".npm-global");
-<<<<<<< ours — scope `it("keeps an npm-linked checkout under npm ma...` in test_suite `update-cli install target detection` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const packagePath = path.join(npmPrefix, "lib", "node_modules",…`
 		const npmBinDir = path.join(npmPrefix, "bin");
 		const packagePath = path.join(npmPrefix, "lib", "node_modules", "@tau", "tau-coding-agent");
-=======
-		const { binDir: npmBinDir, nodeModulesDir } = npmGlobalLayout(npmPrefix);
-		const packagePath = path.join(nodeModulesDir, "@oh-my-pi", "pi-coding-agent");
->>>>>>> theirs — scope `it("keeps an npm-linked checkout under npm ma...`
 		const checkoutPath = path.join(dir, "checkout");
 		const checkoutCli = path.join(checkoutPath, "dist", "cli.js");
 		const aliasPath = path.join(npmBinDir, "tau");
@@ -470,13 +410,9 @@ describe("update-cli install target detection", () => {
 			if (target.method !== "binary") throw new Error("Expected binary update target");
 
 			await expect(
-<<<<<<< ours — scope `it.skipIf(process.platform === "win32")(` in test_suite `update-cli install target detection` (F, confidence: medium)
 // refused_by: statement_fold · collision: `binaryName: "omp-linux-x64",`
 				updateViaBinaryAt(target.path, "18.1.13", {
 					binaryName: "tau-linux-x64",
-=======
-				updateViaBinaryAt(target.path, buildAnswer("18.1.13", "new binary"), {
->>>>>>> theirs — scope `it.skipIf(process.platform === "win32")(`
 					fetchImpl,
 					validateExistingTarget: target.validateExistingTarget,
 				}),
@@ -490,17 +426,9 @@ describe("update-cli install target detection", () => {
 		"refuses a foreign native target that does not report an TAU version",
 		async () => {
 			const dir = await makeTempDir();
-<<<<<<< ours — scope `it.skipIf(process.platform === "win32")(` in test_suite `update-cli install target detection` (F, confidence: medium)
 // refused_by: statement_fold · collision: `binaryName: "omp-linux-x64",`
 			const aliasPath = path.join(dir, "tau");
 			await fs.symlink(process.execPath, aliasPath);
-=======
-			const foreignPath = path.join(dir, "foreign");
-			const aliasPath = path.join(dir, "omp");
-			await fs.copyFile(process.execPath, foreignPath);
-			await fs.chmod(foreignPath, 0o755);
-			await fs.symlink(foreignPath, aliasPath);
->>>>>>> theirs — scope `it.skipIf(process.platform === "win32")(`
 			const fetchImpl = vi.fn(async () => new Response());
 			const target = resolveUpdateTargetFromPath(aliasPath, undefined, {
 				allowPackageManagers: true,
@@ -508,13 +436,9 @@ describe("update-cli install target detection", () => {
 			if (target.method !== "binary") throw new Error("Expected binary update target");
 
 			await expect(
-<<<<<<< ours — scope `it.skipIf(process.platform === "win32")(` in test_suite `update-cli install target detection` (F, confidence: medium)
 // refused_by: statement_fold · collision: `binaryName: "omp-linux-x64",`
 				updateViaBinaryAt(target.path, "18.1.13", {
 					binaryName: "tau-linux-x64",
-=======
-				updateViaBinaryAt(target.path, buildAnswer("18.1.13", "new binary"), {
->>>>>>> theirs — scope `it.skipIf(process.platform === "win32")(`
 					fetchImpl,
 					validateExistingTarget: target.validateExistingTarget,
 				}),
@@ -529,16 +453,10 @@ describe("update-cli install target detection", () => {
 		// launcher is deliberately replaced in place, keeping the PATH entry live.
 		const dir = await makeTempDir();
 		const npmPrefix = path.join(dir, ".npm-global");
-<<<<<<< ours — scope `it("takes over a package-manager launcher in ...` in test_suite `update-cli install target detection` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const managedBinary = path.join(npmPrefix, "lib", "node_modules…`
 		const npmBinDir = path.join(npmPrefix, "bin");
 		const managedBinary = path.join(npmPrefix, "lib", "node_modules", "@tau", "tau-coding-agent", "tau");
 		const aliasPath = path.join(npmBinDir, "tau");
-=======
-		const { binDir: npmBinDir, nodeModulesDir } = npmGlobalLayout(npmPrefix);
-		const managedBinary = path.join(nodeModulesDir, "@oh-my-pi", "pi-coding-agent", "omp");
-		const aliasPath = path.join(npmBinDir, "omp");
->>>>>>> theirs — scope `it("takes over a package-manager launcher in ...`
 		await fs.mkdir(npmBinDir, { recursive: true });
 		await fs.mkdir(path.dirname(managedBinary), { recursive: true });
 		await Bun.write(managedBinary, "binary");
@@ -955,14 +873,8 @@ describe("migrateRenamedInstall transaction", () => {
 		vi.spyOn(console, "log").mockImplementation(() => {});
 		const { steps, calls } = scriptedSteps({ install: [0, 0], verify: [false, false] });
 
-<<<<<<< ours — scope `it("aborts with a recovery hint when verifica...` in test_suite `migrateRenamedInstall transaction` (F, confidence: medium)
 // refused_by: statement_fold · collision: `await expect(migrateRenamedInstall(release, steps)).rejects.toT…`
 		await expect(migrateRenamedInstall(release, steps)).rejects.toThrow("curl -fsSL https://tau.sh/install");
-=======
-		await withPlatformAsync("linux", async () => {
-			await expect(migrateRenamedInstall(release, steps)).rejects.toThrow("curl -fsSL https://omp.sh/install");
-		});
->>>>>>> theirs — scope `it("aborts with a recovery hint when verifica...`
 		expect(calls).toEqual(["install", "removeOld", "verify", "install", "verify"]);
 	});
 
@@ -1162,11 +1074,8 @@ describe("update-cli bun cache pruning", () => {
 describe("update-cli release binary integrity", () => {
 	const binaryName = "tau-linux-x64";
 	const url = "https://r2.test/omp-linux-x64";
-<<<<<<< ours — scope `const url = `https://github.com/can1357/oh-my...` in test_suite `update-cli release binary integrity`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	const url = `https://github.com/toxicwind/tau/releases/download/${tag}/${binaryName}`;
-=======
->>>>>>> theirs — scope `const url = `https://github.com/can1357/oh-my...` deleted in theirs
 	const content = "verified binary";
 	const digest = `sha256:${Bun.SHA256.hash(content, "hex")}`;
 
@@ -1196,7 +1105,6 @@ describe("update-cli release binary integrity", () => {
 		expect(received).toEqual([9, 15]);
 	});
 
-<<<<<<< ours — scope `it("rejects a draft, a stable-channel prerele...` in test_suite `update-cli release binary integrity`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("rejects a draft, a stable-channel prerelease, and metadata without one exact asset", () => {
 		expect(() => resolveReleaseBinaryAsset({ ...releaseAsset(), draft: true }, tag, binaryName)).toThrow(
@@ -1223,8 +1131,6 @@ describe("update-cli release binary integrity", () => {
 			),
 		).toThrow("has an unexpected download URL");
 	});
-=======
->>>>>>> theirs — scope `it("rejects a draft, a stable-channel prerele...` deleted in theirs
 
 	it("writes a download only after its size and digest match", async () => {
 		const dir = await makeTempDir();
@@ -1709,16 +1615,10 @@ describe("update-cli script-shim takeover", () => {
 		const build = buildAnswer(version, content);
 		return { build, fetchImpl: serveDownload(build, content) };
 	}
-<<<<<<< ours — scope `const binaryName = "omp-windows-x64.exe";` in test_suite `update-cli script-shim takeover`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	const binaryName = "tau-windows-x64.exe";
-=======
->>>>>>> theirs — scope `const binaryName = "omp-windows-x64.exe";` deleted in theirs
-<<<<<<< ours — scope `const url = `https://github.com/can1357/oh-my...` in test_suite `update-cli script-shim takeover`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	const url = `https://github.com/toxicwind/tau/releases/download/v${version}/${binaryName}`;
-=======
->>>>>>> theirs — scope `const url = `https://github.com/can1357/oh-my...` deleted in theirs
 
 	const shims: Record<string, string> = {
 		tau: "#!/bin/sh\nnode tau.js\n",
@@ -1754,18 +1654,12 @@ describe("update-cli script-shim takeover", () => {
 		// renamed away, so a PATH re-resolution would fail here.
 		const exe = `#!/bin/sh\necho tau/${version}\n`;
 
-<<<<<<< ours — scope `it("installs omp.exe beside the shims and ret...` in test_suite `update-cli script-shim takeover` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `await updateViaShimTakeover(path.join(dir, "omp.cmd"), version,…`
 		await updateViaShimTakeover(path.join(dir, "tau.cmd"), version, {
 			binaryName,
 			fetchImpl: makeFetch(exe),
 			githubToken: "test-token",
 		});
-=======
-		const { build, fetchImpl } = offer(exe);
-
-		await updateViaShimTakeover(path.join(dir, "omp.cmd"), build, { fetchImpl, verifyBinary });
->>>>>>> theirs — scope `it("installs omp.exe beside the shims and ret...`
 
 		expect(await Bun.file(path.join(dir, "tau.exe")).text()).toBe(exe);
 		for (const name in shims) {
@@ -1775,7 +1669,6 @@ describe("update-cli script-shim takeover", () => {
 		expect(residue).toEqual([]);
 	});
 
-<<<<<<< ours — scope `it("installs a canary prerelease binary only ...` in test_suite `update-cli script-shim takeover`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("installs a canary prerelease binary only when the caller opts in", async () => {
 		const dir = await makeTempDir();
@@ -1803,8 +1696,6 @@ describe("update-cli script-shim takeover", () => {
 		});
 		expect(await Bun.file(path.join(dir, "tau.exe")).text()).toBe(exe);
 	});
-=======
->>>>>>> theirs — scope `it("installs a canary prerelease binary only ...` deleted in theirs
 
 	it("drops bun's launcher metadata when the standalone binary takes the .exe over", async () => {
 		// After the takeover the launcher is no longer bun-managed. A leftover
@@ -1850,7 +1741,6 @@ describe("update-cli script-shim takeover", () => {
 		const dir = await makeTempDir();
 		await writeShims(dir);
 		// Executable runs but reports the previous version -> full rollback.
-<<<<<<< ours — scope `it("restores the shims and removes the exe wh...` in test_suite `update-cli script-shim takeover` (F, confidence: medium)
 // refused_by: statement_fold · collision: `updateViaShimTakeover(path.join(dir, "omp.cmd"), version, {`
 		const exe = "#!/bin/sh\necho tau/17.2.12\n";
 
@@ -1861,14 +1751,6 @@ describe("update-cli script-shim takeover", () => {
 				githubToken: "test-token",
 			}),
 		).rejects.toThrow(/still reports 17\.2\.12 \(expected 18\.0\.0\); restored previous tau launcher/);
-=======
-		const exe = "#!/bin/sh\necho omp/17.2.12\n";
-		const { build, fetchImpl } = offer(exe);
-
-		await expect(
-			updateViaShimTakeover(path.join(dir, "omp.cmd"), build, { fetchImpl, verifyBinary }),
-		).rejects.toThrow(/still reports 17\.2\.12 \(expected 18\.0\.0\); restored previous omp launcher/);
->>>>>>> theirs — scope `it("restores the shims and removes the exe wh...`
 
 		expect(await Bun.file(path.join(dir, "tau.exe")).exists()).toBe(false);
 		for (const name in shims) {
@@ -1895,16 +1777,12 @@ describe("update-cli script-shim takeover", () => {
 		const renameSpy = renameLockingPs1();
 		const { build, fetchImpl } = offer(exe);
 		try {
-<<<<<<< ours — scope `it("rewrites an immovable precedence-winning ...` in test_suite `update-cli script-shim takeover` (F, confidence: medium)
 // refused_by: statement_fold · collision: `await updateViaShimTakeover(path.join(dir, "omp.cmd"), version,…`
 			await updateViaShimTakeover(path.join(dir, "tau.cmd"), version, {
 				binaryName,
 				fetchImpl: makeFetch(exe),
 				githubToken: "test-token",
 			});
-=======
-			await updateViaShimTakeover(path.join(dir, "omp.cmd"), build, { fetchImpl, verifyBinary });
->>>>>>> theirs — scope `it("rewrites an immovable precedence-winning ...`
 		} finally {
 			renameSpy.mockRestore();
 		}
@@ -1925,7 +1803,6 @@ describe("update-cli script-shim takeover", () => {
 		const { build, fetchImpl } = offer(exe);
 		try {
 			await expect(
-<<<<<<< ours — scope `it("restores a forwarded shim's original body...` in test_suite `update-cli script-shim takeover` (F, confidence: medium)
 // refused_by: statement_fold · collision: `updateViaShimTakeover(path.join(dir, "omp.cmd"), version, {`
 				updateViaShimTakeover(path.join(dir, "tau.cmd"), version, {
 					binaryName,
@@ -1933,10 +1810,6 @@ describe("update-cli script-shim takeover", () => {
 					githubToken: "test-token",
 				}),
 			).rejects.toThrow("restored previous tau launcher");
-=======
-				updateViaShimTakeover(path.join(dir, "omp.cmd"), build, { fetchImpl, verifyBinary }),
-			).rejects.toThrow("restored previous omp launcher");
->>>>>>> theirs — scope `it("restores a forwarded shim's original body...`
 		} finally {
 			renameSpy.mockRestore();
 		}
@@ -1950,16 +1823,10 @@ describe("update-cli script-shim takeover", () => {
 
 describe("update-cli concurrent binary updates", () => {
 	const version = "999.0.0";
-<<<<<<< ours — scope `const binaryName = "omp-linux-x64";` in test_suite `update-cli concurrent binary updates`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	const binaryName = "tau-linux-x64";
-=======
->>>>>>> theirs — scope `const binaryName = "omp-linux-x64";` deleted in theirs
-<<<<<<< ours — scope `const url = `https://github.com/can1357/oh-my...` in test_suite `update-cli concurrent binary updates`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	const url = `https://github.com/toxicwind/tau/releases/download/v${version}/${binaryName}`;
-=======
->>>>>>> theirs — scope `const url = `https://github.com/can1357/oh-my...` deleted in theirs
 	const payload = Buffer.alloc(2048, 0x41);
 	const build = buildAnswer(version, payload);
 	const fastFetch = serveDownload(build, payload);

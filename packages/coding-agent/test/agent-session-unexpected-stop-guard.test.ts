@@ -1,5 +1,4 @@
 import { afterAll, afterEach, describe, expect, it, vi } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { type SettingPath, Settings } from "@oh-my-pi/pi-coding…`
 import { type } from "@tau/tautype";
 import { Agent, type AgentMessage, type AgentTool } from "@tau/tau-agent-core";
@@ -12,20 +11,6 @@ import { convertToLlm } from "tau/session/messages";
 import { SessionManager } from "tau/session/session-manager";
 import * as unexpectedStopClassifier from "tau/session/unexpected-stop-classifier";
 import { logger, TempDir } from "@tau/tau-utils";
-=======
-import { type } from "@oh-my-pi/omptype";
-import { Agent, type AgentMessage, type AgentTool } from "@oh-my-pi/pi-agent-core";
-import * as ai from "@oh-my-pi/pi-ai";
-import { createMockModel, type MockModel, type MockResponse } from "@oh-my-pi/pi-ai/providers/mock";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { convertToLlm } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import * as unexpectedStopClassifier from "@oh-my-pi/pi-coding-agent/session/unexpected-stop-classifier";
-import { logger, TempDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/agent-session-unexpected-stop-guard.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
 const recordToolSchema = type({ value: type("string") });

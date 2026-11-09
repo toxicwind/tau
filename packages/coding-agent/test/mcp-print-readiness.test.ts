@@ -210,14 +210,8 @@ describe("headless MCP readiness", () => {
 		using tempDir = TempDir.createSync("@tau-mcp-reconnect-readiness-");
 		const manager = new MCPManager(tempDir.path());
 		managers.push(manager);
-<<<<<<< ours — scope `it("waits through a timed-out handshake's rec...` in test_suite `headless MCP readiness` (F, confidence: medium)
 // refused_by: statement_fold · collision: `Bun.env.OMP_MCP_TIMEOUT_MS = "200";`
 		Bun.env.TAU_MCP_TIMEOUT_MS = "200";
-=======
-		// The first launch never answers; the reconnect's handshake, process start included, must fit this
-		// timeout even on a CPU-starved runner.
-		Bun.env.OMP_MCP_TIMEOUT_MS = "1000";
->>>>>>> theirs — scope `it("waits through a timed-out handshake's rec...` · weave: run 'weave explain packages/coding-agent/test/mcp-print-readiness.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 		await manager.connectServers(
 			{
 				recover: {
@@ -238,13 +232,8 @@ describe("headless MCP readiness", () => {
 	}, 8_000);
 
 	it("lets the environment startup window override a shorter setting during discovery", async () => {
-<<<<<<< ours — scope `it("lets the environment startup window overr...` in test_suite `headless MCP readiness` (F, confidence: medium)
 // refused_by: statement_fold · collision: `Bun.env.OMP_MCP_STARTUP_TIMEOUT_MS = "1500";`
 		Bun.env.TAU_MCP_STARTUP_TIMEOUT_MS = "1500";
-=======
-		// Far above the 50 ms setting, and above slowstart's 600 ms plus a loaded runner's process start.
-		Bun.env.OMP_MCP_STARTUP_TIMEOUT_MS = "4000";
->>>>>>> theirs — scope `it("lets the environment startup window overr...`
 		const manager = new MCPManager(import.meta.dir);
 		managers.push(manager);
 		const result = await manager.connectServers({ slowstart: server("slowstart", 600) }, {}, undefined, 50);

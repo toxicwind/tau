@@ -261,7 +261,6 @@ describe("InputController orphaned submit", () => {
 		expect(ctx.editor.pendingImages).toEqual([image]);
 		expect(ctx.editor.pendingImageLinks).toEqual([undefined]);
 	});
-<<<<<<< ours — scope `it("skips automatic titles only for locally c...` in test_suite `InputController orphaned submit`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("skips automatic titles only for locally consumed extension commands", async () => {
 		const previousNoTitle = Bun.env.PI_NO_TITLE;
@@ -366,6 +365,4 @@ describe("InputController orphaned submit", () => {
 			}
 		}
 	});
-=======
->>>>>>> theirs — scope `it("skips automatic titles only for locally c...` deleted in theirs · weave: run 'weave explain packages/coding-agent/test/input-controller-orphan-submit.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 });

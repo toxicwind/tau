@@ -1,10 +1,5 @@
-<<<<<<< ours — interstitial `file_header` (T+S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { prompt } from "@tau/tau-utils";
-=======
-import { prompt } from "@oh-my-pi/pi-utils";
-import chillaxNotice from "../prompts/system/chillax-notice.md" with { type: "text" };
->>>>>>> theirs — interstitial `file_header` (T+S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/modes/magic-keywords.ts' for per-hunk detail, 'weave check' to verify your resolution
 import jevifyNotice from "../prompts/system/jevify-notice.md" with { type: "text" };
 import orchestrateNotice from "../prompts/system/orchestrate-notice.md" with { type: "text" };
 import ultrathinkNotice from "../prompts/system/ultrathink-notice.md" with { type: "text" };

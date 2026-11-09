@@ -7,13 +7,8 @@
  * - Convenience helpers: captureText / execText, AbortSignal, timeouts.
  */
 
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { Process } from "@oh-my-pi/pi-natives";`
 import { Process } from "@tau/tau-natives";
-=======
-import * as os from "node:os";
-import { Process, type ProcessTerminateOptions } from "@oh-my-pi/pi-natives";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/utils/src/ptree.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { Spawn, Subprocess } from "bun";
 
 type InMask = "pipe" | "ignore" | Buffer | Uint8Array | null;

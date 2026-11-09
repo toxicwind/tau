@@ -12,7 +12,6 @@
  * frame is observable.
  */
 import { afterEach, beforeEach, describe, expect, it, spyOn } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 import { generateRoomKey, importRoomKey } from "tau/collab/crypto";
 import { CollabGuestLink } from "tau/collab/guest";
@@ -25,21 +24,6 @@ import {
 	parseCollabLink,
 } from "tau/collab/protocol";
 import { CollabSocket } from "tau/collab/relay-client";
-=======
-import * as fsp from "node:fs/promises";
-import { generateRoomKey, importRoomKey } from "@oh-my-pi/pi-coding-agent/collab/crypto";
-import { CollabGuestLink } from "@oh-my-pi/pi-coding-agent/collab/guest";
-import { CollabHost } from "@oh-my-pi/pi-coding-agent/collab/host";
-import {
-	COLLAB_PROTO,
-	type CollabFrame,
-	type CollabSessionState,
-	formatCollabLink,
-	parseCollabLink,
-} from "@oh-my-pi/pi-coding-agent/collab/protocol";
-import { CollabSocket } from "@oh-my-pi/pi-coding-agent/collab/relay-client";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/collab/guest-ui-request.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type {
 	ExtensionAskDialogQuestion,
 	ExtensionUIDialogOptions,

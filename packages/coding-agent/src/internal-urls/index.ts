@@ -19,23 +19,5 @@ export * from "./issue-pr-protocol";
 export * from "./local-protocol";
 export * from "./mcp-protocol";
 export * from "./memory-protocol";
-<<<<<<< ours
 export * from "./tau-protocol";
 export * from "./tau-scope";
-||||||| base
-export * from "./omp-protocol";
-export * from "./omp-scope";
-=======
-export * from "./omp-protocol";
-export * from "./omp-scope";
-export * from "./out-protocol";
->>>>>>> theirs · weave: run 'weave explain packages/coding-agent/src/internal-urls/index.ts' for per-hunk detail, 'weave check' to verify your resolution
-export * from "./parse";
-export * from "./router";
-export * from "./rule-protocol";
-export * from "./security-protocol";
-export * from "./skill-protocol";
-export * from "./ssh-protocol";
-export type * from "./types";
-export * from "./vault-protocol";
-export * from "./xd-protocol";

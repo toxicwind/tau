@@ -14,7 +14,6 @@ import { afterEach, beforeEach, describe, expect, it, type Mock, spyOn, vi } fro
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { getProjectDir, setProjectDir } from "@oh-my-pi/pi-util…`
 import { CollabController } from "tau/collab/controller";
 import { importRoomKey } from "tau/collab/crypto";
@@ -37,34 +36,6 @@ import { AuthStorage } from "tau/session/auth-storage";
 import { executeBuiltinSlashCommand } from "tau/slash-commands/builtin-registry";
 import { getProjectDir, setProjectDir } from "@tau/tau-utils";
 import * as utils from "@tau/tau-utils";
-=======
-import { closeModelCache } from "@oh-my-pi/pi-catalog/model-cache";
-import { CollabController } from "@oh-my-pi/pi-coding-agent/collab/controller";
-import { importRoomKey } from "@oh-my-pi/pi-coding-agent/collab/crypto";
-import { CollabGuestLink } from "@oh-my-pi/pi-coding-agent/collab/guest";
-import { CollabHost, CollabHostStoppedError } from "@oh-my-pi/pi-coding-agent/collab/host";
-import { COLLAB_PROTO, type CollabFrame, parseCollabLink } from "@oh-my-pi/pi-coding-agent/collab/protocol";
-import * as registry from "@oh-my-pi/pi-coding-agent/collab/registry";
-import { CollabSocket } from "@oh-my-pi/pi-coding-agent/collab/relay-client";
-import { parseArgs } from "@oh-my-pi/pi-coding-agent/cli/args";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import * as pluginHelpers from "@oh-my-pi/pi-coding-agent/discovery/helpers";
-import { clearOmpExtensionCliRoots } from "@oh-my-pi/pi-coding-agent/discovery/omp-extension-roots";
-import { runRootCommand } from "@oh-my-pi/pi-coding-agent/main";
-import { Composer } from "@oh-my-pi/pi-tui/prompt/composer";
-import { InteractiveMode } from "@oh-my-pi/pi-coding-agent/modes/interactive-mode";
-import { beginStartupComposer, stopPendingStartupComposer } from "@oh-my-pi/pi-coding-agent/modes/startup-composer";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { AgentStorage } from "@oh-my-pi/pi-coding-agent/session/agent-storage";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { HistoryStorage } from "@oh-my-pi/pi-coding-agent/session/history-storage";
-import { closeSessionIndex } from "@oh-my-pi/pi-coding-agent/session/session-index";
-import { executeBuiltinSlashCommand } from "@oh-my-pi/pi-coding-agent/slash-commands/builtin-registry";
-import { getProjectDir, isInteractiveHost, setInteractiveHost, setProjectDir } from "@oh-my-pi/pi-utils";
-import * as utils from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/collab/controller.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { VirtualTerminal } from "../../../tui/test/virtual-terminal";
 import { createTestSession, type TestSessionContext } from "../utilities";
 import { FakeWebSocket, installInMemoryRelay, uninstallInMemoryRelay } from "./helpers/in-memory-relay";
@@ -265,14 +236,8 @@ let capturedSockets: FakeWebSocket[] = [];
 let savedInteractiveHost: boolean;
 
 beforeEach(async () => {
-<<<<<<< ours — test_hook `beforeEach` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 	tmp = await fs.mkdtemp(path.join(os.tmpdir(), "tau-collabctl-"));
-=======
-	savedInteractiveHost = isInteractiveHost();
-	tmp = await fs.mkdtemp(path.join(os.tmpdir(), "omp-collabctl-"));
-	utils.setAgentDir(path.join(tmp, "agent"));
->>>>>>> theirs — test_hook `beforeEach` (F, confidence: medium)
 	installInMemoryRelay();
 	// Record every fake socket so a test can drive a terminal close on the host's transport.
 	capturedSockets = [];

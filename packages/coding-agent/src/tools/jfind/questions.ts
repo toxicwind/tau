@@ -6,22 +6,12 @@
  * State objects are built with alphabetically ordered keys, so the wire bytes
  * are deterministic.
  */
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { JsonValue, NoulQuestion } from "@oh-my-pi/pi-ai";`
 import type { JsonValue, NoulQuestion } from "@tau/tau-ai";
 import { prompt } from "@tau/tau-utils";
 import nameQuestionTemplate from "../../prompts/tools/find-name-question.md" with { type: "text" };
 import passageQuestionTemplate from "../../prompts/tools/find-passage-question.md" with { type: "text" };
 import sketchQuestionTemplate from "../../prompts/tools/find-sketch-question.md" with { type: "text" };
-=======
-import { type JsonValue, judgeQuestions, type NoulQuestion, renderQuestion } from "@oh-my-pi/pi-ai";
-import { prompt } from "@oh-my-pi/pi-utils";
-import questionFile from "../../prompts/judge/find.json" with { type: "json" };
-import spotlightProbe from "../../prompts/tools/find-spotlight-probe.md" with { type: "text" };
-import spotlightTask from "../../prompts/tools/find-spotlight-task.md" with { type: "text" };
-import type { SpotlightRequest } from "../../spotlight/client";
-import type { SpotlightThinking } from "../../spotlight/types";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/jfind/questions.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { type Passage, plainContent } from "./passages";
 import { type FileEntry, renderTree } from "./tree";
 

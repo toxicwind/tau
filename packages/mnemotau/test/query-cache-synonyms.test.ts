@@ -3,14 +3,9 @@ import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { isEnhancedRecallEnabled, isQueryCacheEnabled, QueryCac…`
 import { isEnhancedRecallEnabled, isQueryCacheEnabled, QueryCache } from "@tau/tau-mnemotau/core/query-cache";
 import { expandQuery, getSynonyms, normalizeQuery } from "@tau/tau-mnemotau/core/synonyms";
-=======
-import { QueryCache } from "@oh-my-pi/pi-mnemopi/core/query-cache";
-import { expandQuery, getSynonyms, normalizeQuery } from "@oh-my-pi/pi-mnemopi/core/synonyms";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/mnemotau/test/query-cache-synonyms.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const openCaches: QueryCache[] = [];
 
@@ -197,7 +192,6 @@ describe("QueryCache", () => {
 		});
 	});
 
-<<<<<<< ours — scope `it("keeps enhanced recall and query cache dis...` in test_suite `QueryCache`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("keeps enhanced recall and query cache disabled unless the Python env gate is set", () => {
 		expect(isEnhancedRecallEnabled({})).toBe(false);
@@ -206,6 +200,4 @@ describe("QueryCache", () => {
 		expect(isQueryCacheEnabled(false, { MNEMOTAU_ENHANCED_RECALL: "1" })).toBe(false);
 		expect(isQueryCacheEnabled(true, { MNEMOTAU_ENHANCED_RECALL: "1" })).toBe(true);
 	});
-=======
->>>>>>> theirs — scope `it("keeps enhanced recall and query cache dis...` deleted in theirs
 });

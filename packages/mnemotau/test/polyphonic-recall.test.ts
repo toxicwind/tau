@@ -1,4 +1,3 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `} from "@oh-my-pi/pi-mnemopi/core/polyphonic-recall";`
 import { afterEach, describe, expect, it } from "bun:test";
 import { type BeamMemoryState, initBeam } from "@tau/tau-mnemotau/core/beam";
@@ -8,14 +7,6 @@ import {
 	polyphonicRecallIsEnabled,
 } from "@tau/tau-mnemotau/core/polyphonic-recall";
 import { closeQuietly, openDatabase } from "@tau/tau-mnemotau/db";
-=======
-import { afterEach, describe, expect, it, spyOn } from "bun:test";
-import { type BeamMemoryState, initBeam } from "@oh-my-pi/pi-mnemopi/core/beam";
-import { currentEmbeddingModel } from "@oh-my-pi/pi-mnemopi/core/embeddings";
-import { PolyphonicRecallEngine, polyphonicRecall } from "@oh-my-pi/pi-mnemopi/core/polyphonic-recall";
-import { closeQuietly, openDatabase } from "@oh-my-pi/pi-mnemopi/db";
-import { currentLoopPhase } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/mnemotau/test/polyphonic-recall.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function makeBeam(): BeamMemoryState {
 	const db = openDatabase(":memory:", { create: true, readwrite: true });
@@ -91,19 +82,13 @@ function seedPolyphonicFixture(beam: BeamMemoryState): PolyphonicRecallEngine {
 	);
 	return engine;
 }
-<<<<<<< ours — variable `previousPolyphonic` (S, confidence: medium)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 const previousPolyphonic = process.env.MNEMOTAU_POLYPHONIC_RECALL;
-=======
->>>>>>> theirs — variable `previousPolyphonic` (S, confidence: medium)
 
 afterEach(() => {
-<<<<<<< ours — scope `if (previousPolyphonic === undefined) delete ...` in test_hook `afterEach`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	if (previousPolyphonic === undefined) delete process.env.MNEMOTAU_POLYPHONIC_RECALL;
 	else process.env.MNEMOTAU_POLYPHONIC_RECALL = previousPolyphonic;
-=======
->>>>>>> theirs — scope `if (previousPolyphonic === undefined) delete ...` deleted in theirs
 	delete process.env.MNEMOTAU_VOICE_VECTOR;
 	delete process.env.MNEMOTAU_VOICE_GRAPH;
 	delete process.env.MNEMOTAU_VOICE_FACT;
@@ -111,7 +96,6 @@ afterEach(() => {
 });
 
 describe("PolyphonicRecallEngine", () => {
-<<<<<<< ours — scope `it("reads the polyphonic recall gate per call...` in test_suite `PolyphonicRecallEngine`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("reads the polyphonic recall gate per call", () => {
 		delete process.env.MNEMOTAU_POLYPHONIC_RECALL;
@@ -121,8 +105,6 @@ describe("PolyphonicRecallEngine", () => {
 		process.env.MNEMOTAU_POLYPHONIC_RECALL = "1";
 		expect(polyphonicRecallIsEnabled()).toBe(true);
 	});
-=======
->>>>>>> theirs — scope `it("reads the polyphonic recall gate per call...` deleted in theirs
 
 	it("fuses the four voices with RRF and preserves voice attribution order", () => {
 		const beam = makeBeam();

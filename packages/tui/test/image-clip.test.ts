@@ -10,15 +10,8 @@ import {
 	setCellDimensions,
 	TERMINAL,
 	wrapTmuxPassthrough,
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-tui/terminal-capabilities";
-=======
-} from "@oh-my-pi/pi-tui/terminal-capabilities";
-import { type HistoryBatch, TUI } from "@oh-my-pi/pi-tui/tui";
-import { VirtualRenderScheduler } from "./virtual-render-scheduler";
-import { VirtualTerminal } from "./virtual-terminal";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/test/image-clip.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { withoutTerminalMultiplexer } from "./helpers/terminal-multiplexer";
 
 withoutTerminalMultiplexer();

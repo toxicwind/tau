@@ -2,12 +2,8 @@
 
 Tool-calling convention of Google's **Gemma 4** open-weights family (`google/gemma-4-*-it`). It differs from the prompt-driven Pythonic `tool_code` convention for Gemma 3 and malformed hosted Gemini output (see [gemini.md](gemini.md)): calls use **token-delimited brace syntax**, and strings use `<|"|>` rather than ASCII quotes. The model emits `<|tool_call>call:NAME{key:value,…}<tool_call|>`; the app parses it, runs the tool, and appends `<|tool_response>response:NAME{output:…}<tool_response|>`. Hosted Gemini's native structured API is separate from both text dialects.
 
-<<<<<<< ours — scope `Verified against the OMP `gemma` dialect (`pa...` in heading `Gemma 4 tool-calling format (token-delimited `call:NAME{…}`)` (S, confidence: medium)
 // refused_by: statement_fold · collision: `Verified against the OMP `gemma` dialect (`packages/ai/src/dial…`
 Verified against the TAU `gemma` dialect (`packages/ai/src/dialect/gemma.ts`): the streaming scanner that parses these blocks and the `renderAssistantToolCalls` / `renderToolResults` / `renderTranscript` renderers that produce them. The example streams below match that implementation; the worked model id is `google/gemma-4-E2B-it`.
-=======
-OMP's `gemma` dialect is implemented in `packages/ai/src/dialect/gemma.ts`: `GemmaInbandScanner` parses these blocks, and `renderAssistantToolCalls`, `renderToolResults`, and `renderTranscript` produce them. OMP matches decoded marker strings rather than tokenizer IDs.
->>>>>>> theirs — scope `Verified against the OMP `gemma` dialect (`pa...` · weave: run 'weave explain docs/toolconv/gemma.md' for per-hunk detail, 'weave check' to verify your resolution
 
 ## Special tokens
 
@@ -70,11 +66,8 @@ The TAU parser is the streaming `GemmaInbandScanner` (`packages/ai/src/dialect/g
    Calls are emitted only after the complete close marker arrives; there are no partial-argument events. If the stream is flushed with an unterminated tool block, OMP drops that incomplete block. A syntactically closed block with a missing final argument brace is still parsed from the available body.
 
 The call name and object keys must match `[A-Za-z_]\w*`; segments with invalid keys or no top-level colon are skipped. This restriction also applies to nested object keys. The parser tolerates missing list/object closing delimiters once the tool close marker is present; malformed heads are consumed without a call.
-<<<<<<< ours — scope `Calls are emitted only after the complete clo...` in heading `Tool-call format`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 Calls are emitted only after the complete close marker arrives; there are no partial-argument events. If the stream is flushed with an unterminated tool block, TAU drops that incomplete block. A syntactically closed block with a missing final argument brace is still parsed from the available body.
-=======
->>>>>>> theirs — scope `Calls are emitted only after the complete clo...` deleted in theirs
 
 ## Multiple / parallel tool calls
 
@@ -108,18 +101,11 @@ The current weather in Tokyo is 15 degrees Celsius and sunny.<turn|>
 - **String delimiter is a token, not a quote.** Inside `<|"|>…<|"|>` the bytes `"` and `,` are literal data — the example `<|"|>The city and state, e.g. "San Francisco, CA"…<|"|>` contains both. Split arguments on `,`/`}` only **outside** a `<|"|>…<|"|>` span.
 - **Asymmetric pipes.** The closer is `<tool_call|>`, not `</tool_call>` or `<|tool_call>`. Matching the wrong pipe side will never close the block.
 - **One call per block.** Unlike a JSON `tool_calls[]` array, parallelism is "more blocks", not "more entries in one block".
-<<<<<<< ours — heading `Parsing notes & gotchas` (S, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 - **Bare scalars.** A value not wrapped in `<|"|>` is `true`/`false` → bool, `null`/`none` → null, numeric → number, otherwise a bare string (e.g. an unquoted enum or type name like `STRING`).
 - **Tool-call ids are synthesized.** The format carries no id; after receiving a complete closed block, TAU parses it and emits adjacent `toolStart`/`toolEnd` events with a newly minted id. Rendered responses are correlated by surrounding message order/name.
 - **Not Gemma 3 / hosted Gemini.** Those use the Pythonic `tool_code` / `default_api` form in `gemini.md`. Gemma 4 replaced it with this token syntax; the two are not interchangeable.
 - **Gemma 3 automatic-selection caveat.** TAU's current family affinity maps Gemma 3 and Gemma 4 model IDs to `gemma`. If a Gemma 3 model is marked `supportsTools: false`, `tools.format=auto` therefore chooses this Gemma 4 grammar even though Gemma 3 requires the Pythonic convention in `gemini.md`; set `tools.format=gemini` explicitly.
-=======
-- **Bare scalars.** A value not wrapped in `<|"|>` is `true`/`false` → bool, `null`/`none`/`None` → null, numeric → number, otherwise a bare string (e.g. an unquoted enum or type name like `STRING`).
-- **Tool-call ids are synthesized.** The format carries no id; after receiving a complete closed block, OMP parses it and emits adjacent `toolStart`/`toolEnd` events with a newly minted id. Rendered responses are correlated by surrounding message order/name.
-- **Not the Gemini dialect.** Gemma 3's Pythonic prompting uses the convention in [gemini.md](gemini.md); hosted Gemini native tool calls use structured API parts. Neither is this token syntax.
-- **Gemma 3 automatic-selection caveat.** OMP's current family affinity maps Gemma 3 and Gemma 4 model IDs to `gemma`. If a Gemma 3 model is marked `supportsTools: false`, `tools.format=auto` therefore chooses this Gemma 4 grammar even though Gemma 3 requires the Pythonic convention in `gemini.md`; set `tools.format=gemini` explicitly.
->>>>>>> theirs — heading `Parsing notes & gotchas` (S, confidence: medium)
 
 ## omp / pi converter behavior
 
@@ -131,11 +117,7 @@ The owned stream enables thinking parsing and discards output from a fabricated 
 
 ## Sources
 
-<<<<<<< ours — scope `- OMP `gemma` dialect implementation: `packag...` in heading `Sources` (S, confidence: medium)
 // refused_by: statement_fold · collision: `- OMP `gemma` dialect implementation: `packages/ai/src/dialect/…`
 - TAU `gemma` dialect implementation: `packages/ai/src/dialect/gemma.ts` (scanner + renderers), `packages/ai/src/dialect/catalog.ts` + `packages/ai/src/dialect/prompt-template.md` (tool catalog), `packages/ai/src/dialect/gemma.md` (format guide).
-=======
-- OMP `gemma` dialect: `packages/ai/src/dialect/gemma.ts` (scanner/renderers), `catalog.ts` + `prompt-template.md` (tool catalog), `gemma.md` (format guide), `history.ts` (provider history), `owned-stream.ts` (projection); selection: `packages/catalog/src/identity/dialect.ts`, `packages/coding-agent/src/sdk.ts` (`resolveDialect`), `packages/agent/src/agent-loop.ts` (`resolveOwnedDialectFromEnv`).
->>>>>>> theirs — scope `- OMP `gemma` dialect implementation: `packag...`
 - Function calling with Gemma 4: https://ai.google.dev/gemma/docs/capabilities/text/function-calling-gemma4
 - Gemma 4 prompt formatting: https://ai.google.dev/gemma/docs/core/prompt-formatting-gemma4

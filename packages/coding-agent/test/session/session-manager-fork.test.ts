@@ -1,14 +1,9 @@
 import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { collectPendingToolCalls } from "@oh-my-pi/pi-coding-ag…`
 import { isSyntheticToolResultMessage } from "@tau/tau-agent-core";
 import { collectPendingToolCalls } from "tau/session/exit-diagnostics";
-=======
-import type { Usage } from "@oh-my-pi/pi-ai";
-import { isSyntheticToolResultMessage } from "@oh-my-pi/pi-agent-core";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/session/session-manager-fork.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	collectPendingToolCalls,
 	createInterruptedToolResults,
@@ -22,22 +17,12 @@ import {
 	type SessionEntry,
 	type SessionHeader,
 	type SessionMessageEntry,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { collectPendingToolCalls } from "@oh-my-pi/pi-coding-ag…`
 } from "tau/session/session-entries";
 import { loadEntriesFromFile } from "tau/session/session-loader";
 import { SessionManager } from "tau/session/session-manager";
 import { getTerminalId } from "@tau/tau-tui";
 import { getAgentDir, getTerminalSessionsDir, removeWithRetries, setAgentDir, TempDir } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import { loadEntriesFromFile } from "@oh-my-pi/pi-coding-agent/session/session-loader";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { FileSessionStorage, MemorySessionStorage } from "@oh-my-pi/pi-coding-agent/session/session-storage";
-import { getTerminalId } from "@oh-my-pi/pi-tui";
-import { isTaskToolDetails, type TaskToolDetails } from "@oh-my-pi/pi-tui/tools/task";
-import { getAgentDir, getTerminalSessionsDir, removeWithRetries, setAgentDir, TempDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 
 interface JsonlMessageEntry {
 	type: "message";
@@ -603,74 +588,9 @@ describe("SessionManager.forkFrom", () => {
 		await sourceManager.close();
 	});
 
-<<<<<<< ours — test_suite `SessionManager.forkFrom` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 	it("pairs an unresolved tool call with a synthetic aborted result only when repair is requested", async () => {
 		using tempDir = TempDir.createSync("@tau-session-fork-repair-");
-=======
-	for (const { name, createStorage, padding } of [
-		{ name: "buffered file", createStorage: () => new FileSessionStorage(), padding: "" },
-		{ name: "streamed file", createStorage: () => new FileSessionStorage(), padding: "x".repeat(8 * 1024 * 1024) },
-		{ name: "memory", createStorage: () => new MemorySessionStorage(), padding: "" },
-	]) {
-		it(`keeps independently loaded ${name} entries unchanged when the fork migrates and branches`, async () => {
-			using tempDir = TempDir.createSync("@omp-session-fork-ownership-");
-			const cwd = tempDir.path();
-			const sessionDir = path.join(cwd, "sessions");
-			const sourceFile = path.join(sessionDir, "source.jsonl");
-			const storage = createStorage();
-			const timestamp = new Date().toISOString();
-			const sourceText =
-				[
-					{ type: "session", version: 2, id: "legacy-source", timestamp, cwd },
-					{
-						type: "message",
-						id: "user",
-						parentId: null,
-						timestamp,
-						message: { role: "user", content: "source", timestamp: 1 },
-					},
-					{
-						type: "message",
-						id: "hook",
-						parentId: "user",
-						timestamp,
-						message: {
-							role: "hookMessage",
-							customType: "legacy",
-							content: padding || "legacy output",
-							display: true,
-							timestamp: 2,
-						},
-					},
-				]
-					.map(entry => JSON.stringify(entry))
-					.join("\n") + "\n";
-			await storage.writeText(sourceFile, sourceText);
-			const loadedBeforeFork = await loadEntriesFromFile(sourceFile, storage);
-			const forked = await SessionManager.forkFrom(sourceFile, cwd, path.join(cwd, "forks"), storage, {
-				suppressBreadcrumb: true,
-				copyArtifacts: false,
-			});
-			const migrated = forked.getEntries().find(entry => entry.id === "hook");
-			expect(migrated).toMatchObject({ type: "message", message: { role: "custom", customType: "legacy" } });
-			forked.branch("user");
-			forked.appendMessage({ role: "user", content: "fork-only continuation", timestamp: 3 });
-			expect(forked.buildSessionContext().messages).toMatchObject([
-				{ role: "user", content: "source" },
-				{ role: "user", content: "fork-only continuation" },
-			]);
-			await forked.close();
-			expect(loadedBeforeFork[0]).toMatchObject({ type: "session", version: 2 });
-			expect(loadedBeforeFork[2]).toMatchObject({ type: "message", message: { role: "hookMessage" } });
-			expect(loadedBeforeFork).toEqual(await loadEntriesFromFile(sourceFile, storage));
-			expect(await storage.readText(sourceFile)).toBe(sourceText);
-		});
-	}
-
-	it("pairs an unresolved tool call with an unknown-outcome result only when repair is requested", async () => {
-		using tempDir = TempDir.createSync("@omp-session-fork-repair-");
->>>>>>> theirs — test_suite `SessionManager.forkFrom` (F, confidence: medium)
 		const cwd = path.join(tempDir.path(), "project");
 		const sessionDir = path.join(tempDir.path(), "sessions");
 		await fs.mkdir(sessionDir, { recursive: true });
@@ -1029,14 +949,9 @@ describe("SessionManager.forkFrom", () => {
 		).toBe(false);
 	});
 
-<<<<<<< ours — test_suite `SessionManager.forkFrom` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 	it("leaves an already-terminal tail untouched when repair is requested", async () => {
 		using tempDir = TempDir.createSync("@tau-session-fork-terminal-");
-=======
-	it("leaves an already-terminal tail with a completed tool call untouched when repair is requested", async () => {
-		using tempDir = TempDir.createSync("@omp-session-fork-terminal-");
->>>>>>> theirs — test_suite `SessionManager.forkFrom` (F, confidence: medium)
 		const cwd = path.join(tempDir.path(), "project");
 		const sessionDir = path.join(tempDir.path(), "sessions");
 		await fs.mkdir(sessionDir, { recursive: true });

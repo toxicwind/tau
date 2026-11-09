@@ -1,20 +1,7 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { RelayBridge, type RelaySocket } from "@oh-my-pi/pi-cod…`
 import { describe, expect, it } from "bun:test";
 import { RelayBridge, type RelaySocket } from "tau/tools/browser/relay/bridge";
 import type { RelayRpcRequest, RelayToExtMessage, TabSnapshot } from "tau/tools/browser/relay/protocol";
-=======
-import { describe, expect, it, jest } from "bun:test";
-import { createHash } from "node:crypto";
-import { closeRelayTarget } from "@oh-my-pi/pi-coding-agent/tools/browser/orphan-registry";
-import { type FrontApp, RelayBridge, type RelaySocket } from "@oh-my-pi/pi-coding-agent/tools/browser/relay/bridge";
-import type {
-	RelayRpcRequest,
-	RelayToExtMessage,
-	TabSnapshot,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/relay/protocol";
-import type { CDPSession } from "puppeteer-core";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/tools/browser-relay-bridge.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /** Same derivation as the bridge: target ids embed this per-instance code. */
 function instanceCode(instanceId: string): string {
@@ -179,7 +166,6 @@ function pageId(tabId: number, instanceId = "anon"): string {
 	return `PAGE${instanceCode(instanceId)}.${tabId}`;
 }
 
-<<<<<<< ours — function `claimTab` (T+S+F, confidence: low)
 // refused_by: rename_vs_edit_guard · collision: `* Emulate the omp tab worker adopting a tab: attach to its page…` +1 more
 /**
  * Emulate the tau tab worker adopting a tab: attach to its page target, then
@@ -195,13 +181,6 @@ async function claimTab(
 	const sessionId = await attachPage(bridge, ext, cdp, connId, tabId);
 	bridge.cdpMessage(connId, JSON.stringify({ id: ++msgSeq, sessionId, method: "TAU.claimTarget" }));
 	await flush();
-=======
-/** Emulate the omp tab worker adopting a tab: connect claiming it (`/cdp?claim=`), then attach to its page. */
-async function driveTab(bridge: RelayBridge, ext: FakeExtSocket, cdp: FakeCdpSocket, tabId: number): Promise<number> {
-	const connId = bridge.cdpConnected(cdp, pageId(tabId));
-	await attachPage(bridge, ext, cdp, connId, tabId);
-	return connId;
->>>>>>> theirs — function `claimTab` (T+S+F, confidence: low)
 }
 
 describe("RelayBridge target discovery", () => {
@@ -441,14 +420,9 @@ describe("RelayBridge tab grouping", () => {
 		await driveTab(bridge, ext, cdp, 1);
 		expect(ext.rpcs("group")).toHaveLength(1);
 		// Concurrent group RPCs race Chrome's non-atomic query→create→set-title
-<<<<<<< ours — scope `it("never overlaps group RPCs: a tab claimed ...` in test_suite `RelayBridge tab grouping` (F, confidence: medium)
 // refused_by: statement_fold · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 		// and mint duplicate "tau" groups; the second request must queue.
 		await claimTab(bridge, ext, cdp, connId, 2);
-=======
-		// and mint duplicate "omp" groups; the second request must queue.
-		await driveTab(bridge, ext, new FakeCdpSocket(), 2);
->>>>>>> theirs — scope `it("never overlaps group RPCs: a tab claimed ...`
 		expect(ext.rpcs("group")).toHaveLength(1);
 		ack(bridge, ext, "group", { grouped: { "1": 42 } });
 		await flush();

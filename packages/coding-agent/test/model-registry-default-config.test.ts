@@ -1,19 +1,10 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config…`
 import { ModelRegistry } from "tau/config/model-registry";
 import { AuthStorage } from "tau/session/auth-storage";
 import { getAgentDir, setAgentDir, TempDir } from "@tau/tau-utils";
-=======
-import { ModelRegistry, type ProviderConfigInput } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { getAgentDir, setAgentDir, TempDir } from "@oh-my-pi/pi-utils";
-import type { Model } from "@oh-my-pi/pi-catalog/types";
-import type { SimpleStreamOptions } from "@oh-my-pi/pi-ai";
-import { CacheWarmer, getPromptCacheTtlMs } from "../src/session/cache-warmer";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/model-registry-default-config.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const originalAgentDir = getAgentDir();
 const originalAgentDirEnv = process.env.PI_CODING_AGENT_DIR;

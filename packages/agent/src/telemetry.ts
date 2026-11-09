@@ -38,13 +38,8 @@ import {
 	shouldSendServiceTier,
 	type ToolChoice,
 	type Usage,
-<<<<<<< ours — interstitial `file_header` (T+F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-ai";
-=======
-} from "@oh-my-pi/pi-ai";
-import { $otelEnv } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (T+F, confidence: medium) · weave: run 'weave explain packages/agent/src/telemetry.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	type Attributes,
 	type AttributeValue,

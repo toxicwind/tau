@@ -62,19 +62,11 @@ changes/
 
 # Generated, regenerated in-image.
 packages/ai/test/.temp-images/
-<<<<<<< HEAD
 python/tau-rpc/src/tau_rpc.egg-info/
 python/robtau/data/
 python/robtau/.cache/
 python/robtau/src/robtau/static/
 python/robtau/web/dist/
-=======
-sdk/python/omp-rpc/src/omp_rpc.egg-info/
-python/robomp/data/
-python/robomp/.cache/
-python/robomp/src/robomp/static/
-python/robomp/web/dist/
->>>>>>> upstream/main
 
 # Scratch files the repo creates ad-hoc.
 syntax.jsonl

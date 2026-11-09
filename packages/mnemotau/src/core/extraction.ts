@@ -16,21 +16,13 @@ import { clipToWindow, DEFAULT_INPUT_CHARS } from "./text-window";
 import { envFlag, envInt, envString } from "../util/env";
 
 function llmEnabled(): boolean {
-<<<<<<< ours — scope `return envBool("MNEMOPI_LLM_ENABLED", true);` in function `llmEnabled` (S, confidence: medium)
 // refused_by: statement_fold · collision: `return envBool("MNEMOPI_LLM_ENABLED", true);`
 	return envBool("MNEMOTAU_LLM_ENABLED", true);
-=======
-	return envFlag("MNEMOPI_LLM_ENABLED", true);
->>>>>>> theirs — scope `return envBool("MNEMOPI_LLM_ENABLED", true);` · weave: run 'weave explain packages/mnemotau/src/core/extraction.ts' for per-hunk detail, 'weave check' to verify your resolution
 }
 
 function hostLlmEnabled(): boolean {
-<<<<<<< ours — scope `return envBool("MNEMOPI_HOST_LLM_ENABLED", fa...` in function `hostLlmEnabled` (S, confidence: medium)
 // refused_by: statement_fold · collision: `return envBool("MNEMOPI_HOST_LLM_ENABLED", false);`
 	return envBool("MNEMOTAU_HOST_LLM_ENABLED", false);
-=======
-	return envFlag("MNEMOPI_HOST_LLM_ENABLED", false);
->>>>>>> theirs — scope `return envBool("MNEMOPI_HOST_LLM_ENABLED", fa...`
 }
 
 function llmMaxTokens(): number {
@@ -38,14 +30,9 @@ function llmMaxTokens(): number {
 }
 
 export const EXTRACTION_PROMPT_TEMPLATE =
-<<<<<<< ours — scope `export const EXTRACTION_PROMPT_TEMPLATE =` in variable `EXTRACTION_PROMPT_TEMPLATE` (F, confidence: medium)
 // refused_by: statement_fold · collision: `env("MNEMOPI_EXTRACTION_PROMPT") ||`
 	env("MNEMOTAU_EXTRACTION_PROMPT") ||
 	`You are an expert structured memory extractor for Mnemotau v3.0+ MEMORIA tables.
-=======
-	envString("MNEMOPI_EXTRACTION_PROMPT") ||
-	`You are an expert structured memory extractor for Mnemopi v3.0+ MEMORIA tables.
->>>>>>> theirs — scope `export const EXTRACTION_PROMPT_TEMPLATE =`
 The user message below may be in English, German, Russian, or another language.
 First detect the language, then extract ONLY high-signal, long-term relevant items.
 Categories to extract (return valid JSON only, no extra text):
@@ -339,14 +326,9 @@ async function tryHostExtraction(prompt: string): Promise<[boolean, string | nul
 		maxTokens: llmMaxTokens(),
 		temperature: 0,
 		timeout: 15,
-<<<<<<< ours — scope `const raw = await callHostLlm(prompt, {` in function `tryHostExtraction` (F, confidence: medium)
 // refused_by: statement_fold · collision: `provider: env("MNEMOPI_HOST_LLM_PROVIDER").trim() || null,` +1 more
 		provider: env("MNEMOTAU_HOST_LLM_PROVIDER").trim() || null,
 		model: env("MNEMOTAU_HOST_LLM_MODEL").trim() || null,
-=======
-		provider: envString("MNEMOPI_HOST_LLM_PROVIDER").trim() || null,
-		model: envString("MNEMOPI_HOST_LLM_MODEL").trim() || null,
->>>>>>> theirs — scope `const raw = await callHostLlm(prompt, {`
 	});
 	const text = typeof raw === "string" ? raw.trim() : "";
 	return [true, text === "" ? null : text];

@@ -1,25 +1,8 @@
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { AgentMessage } from "@oh-my-pi/pi-agent-core";`
 import { describe, expect, it } from "bun:test";
 import type { AgentMessage } from "@tau/tau-agent-core";
 import { IrcBridge, type IrcBridgeHost } from "tau/session/irc-bridge";
 import type { CustomMessage } from "tau/session/messages";
-=======
-import { afterEach, beforeAll, describe, expect, it } from "bun:test";
-import type { Agent, AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { TUI } from "@oh-my-pi/pi-tui";
-import { ChatTranscriptBuilder } from "@oh-my-pi/pi-tui/chat/chat-transcript-builder";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { EventController } from "@oh-my-pi/pi-coding-agent/modes/controllers/event-controller";
-import { UiHelpers } from "@oh-my-pi/pi-coding-agent/modes/utils/ui-helpers";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { IrcBridge, type IrcBridgeHost } from "@oh-my-pi/pi-coding-agent/session/irc-bridge";
-import type { AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session-events";
-import type { CustomMessage } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { VirtualTerminal } from "../../../tui/test/virtual-terminal";
-import { createInteractiveModeContext } from "../helpers/interactive-mode-context";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/session/irc-bridge-relay.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 beforeAll(() => initTheme());
 function makeBridge() {

@@ -1,16 +1,8 @@
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { OAuthAccessResolution } from "@oh-my-pi/pi-ai";`
 import type { AgentOptions } from "@tau/tau-agent-core";
 import type { OAuthAccessResolution } from "@tau/tau-ai";
 import type { ApiKeyResolver } from "@tau/tau-ai/auth-retry";
 import { getProviderDefinition } from "@tau/tau-ai/registry";
-=======
-import type { AgentOptions } from "@oh-my-pi/pi-agent-core";
-import type { OAuthAccessResolution, OAuthRefreshReason } from "@oh-my-pi/pi-ai";
-import type { ApiKeyResolver } from "@oh-my-pi/pi-ai/auth-retry";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { getProviderDefinition } from "@oh-my-pi/pi-ai/registry";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/security/auth.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { AuthStorage } from "../session/auth-storage";
 import type { SecurityAccountRef, SecurityAuthRef } from "./contracts";
 

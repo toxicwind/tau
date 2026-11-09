@@ -1,13 +1,8 @@
 import * as stream from "node:stream";
 import { inspect } from "node:util";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { postmortem } from "@oh-my-pi/pi-utils";`
 import { postmortem } from "@tau/tau-utils";
 import { AgentSideConnection, ndJsonStream, type Stream } from "@tau/tau-utils/acp";
-=======
-import { getLogsDir, postmortem } from "@oh-my-pi/pi-utils";
-import { AgentSideConnection, ndJsonStream, type Stream } from "@oh-my-pi/pi-utils/acp";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/modes/acp/acp-mode.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { ExtensionUIContext } from "../../extensibility/extensions/types";
 import type { AgentSession } from "../../session/agent-session";
 import { AcpAgent } from "./acp-agent";
@@ -86,12 +81,8 @@ export async function runAcpMode(createSession: AcpSessionFactory, initialSessio
 		process.stderr.write(
 			"tau acp: ACP server speaking JSON-RPC over stdio.\n" +
 				'This command is meant to be spawned by an ACP client (e.g. Zed\'s "agent_servers" config), not run directly.\n' +
-<<<<<<< ours — scope `// Humans who run `omp acp` by hand see a sil...` in function `runAcpMode` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `"Waiting for protocol frames on stdin; logs: ~/.omp/logs/\n",`
 				"Waiting for protocol frames on stdin; logs: ~/.tau/logs/\n",
-=======
-				`Waiting for protocol frames on stdin; logs: ${getLogsDir()}\n`,
->>>>>>> theirs — scope `// Humans who run `omp acp` by hand see a sil...`
 		);
 	}
 	let agent: AcpAgent | undefined;

@@ -2,7 +2,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { type SettingPath, Settings } from "@oh-my-pi/pi-coding…`
 import { type SettingPath, Settings } from "tau/config/settings";
 import type { ToolSession } from "tau/tools";
@@ -13,17 +12,6 @@ import * as scrapers from "tau/web/scrapers/types";
 import * as scraperUtils from "tau/web/scrapers/utils";
 import * as natives from "@tau/tau-natives";
 import { ptree, removeSyncWithRetries, Snowflake } from "@tau/tau-utils";
-=======
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
-import * as imageResize from "@oh-my-pi/pi-coding-agent/utils/image-resize";
-import * as toolsManager from "@oh-my-pi/pi-coding-agent/utils/tools-manager";
-import * as scrapers from "@oh-my-pi/pi-coding-agent/web/scrapers/types";
-import * as scraperUtils from "@oh-my-pi/pi-coding-agent/web/scrapers/utils";
-import * as natives from "@oh-my-pi/pi-natives";
-import { ptree, removeSyncWithRetries, Snowflake } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/tools/fetch-kagi-toggle.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { asGlobalFetch } from "../helpers/fetch-mock";
 
 const withMissingSystemPython = () => {

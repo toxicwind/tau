@@ -15,20 +15,12 @@ import {
 	aggregateAgentRunSummaries,
 	emptyAgentRunCoverage,
 	emptyAgentRunSummary,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { EXECUTE_TOOL_STATUS_ATTR, GenAIAttr, PiGenAIAggregateA…`
 } from "@tau/tau-agent-core/run-collector";
 import { EXECUTE_TOOL_STATUS_ATTR, GenAIAttr, PiGenAIAggregateAttr } from "@tau/tau-agent-core/telemetry";
 import type { AgentEvent, AgentLoopConfig, AgentMessage, AgentTool } from "@tau/tau-agent-core/types";
 import type { AssistantMessage, Message } from "@tau/tau-ai";
 import { createMockModel } from "@tau/tau-ai/providers/mock";
-=======
-} from "@oh-my-pi/pi-agent-core/run-collector";
-import { EXECUTE_TOOL_STATUS_ATTR, GenAIAttr, OmpGenAIAggregateAttr } from "@oh-my-pi/pi-agent-core/telemetry";
-import type { AgentEvent, AgentLoopConfig, AgentMessage, AgentTool } from "@oh-my-pi/pi-agent-core/types";
-import type { AssistantMessage, Message } from "@oh-my-pi/pi-ai";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/agent/test/run-summary.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type {
 	AttributeValue,
 	Context as OtelContext,

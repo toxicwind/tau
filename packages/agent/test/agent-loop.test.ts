@@ -18,7 +18,6 @@ import type {
 	AgentToolContext,
 	SpeculativePhysicalOutcome,
 	ToolCallContext,
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-agent-core/types";
 import { ASIDE_MESSAGE_COMMIT, ASIDE_MESSAGE_DISCARD, SPECULATIVE_STREAM_SESSION } from "@tau/tau-agent-core/types";
@@ -27,18 +26,6 @@ import { createMockModel, type MockResponse } from "@tau/tau-ai/providers/mock";
 import { kCursorExecResolved, setStreamingPartialJson } from "@tau/tau-ai/utils/block-symbols";
 import { AssistantMessageEventStream } from "@tau/tau-ai/utils/event-stream";
 import { INTENT_FIELD } from "@tau/tau-wire";
-=======
-} from "@oh-my-pi/pi-agent-core/types";
-import { ASIDE_MESSAGE_COMMIT, ASIDE_MESSAGE_DISCARD, SPECULATIVE_STREAM_SESSION } from "@oh-my-pi/pi-agent-core/types";
-import type { AssistantMessage, AssistantMessageEvent, Context, Message, ToolResultMessage } from "@oh-my-pi/pi-ai";
-import { createMockModel, type MockResponse } from "@oh-my-pi/pi-ai/providers/mock";
-import { transformMessages } from "@oh-my-pi/pi-ai/providers/transform-messages";
-import { kCursorExecResolved, setStreamingPartialJson } from "@oh-my-pi/pi-ai/utils/block-symbols";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import type { HarmonyDetection } from "@oh-my-pi/pi-ai/utils/harmony-leak";
-import * as harmonyLeak from "@oh-my-pi/pi-ai/utils/harmony-leak";
-import { INTENT_FIELD } from "@oh-my-pi/pi-wire";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/agent/test/agent-loop.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { createAssistantMessage, createHarmonyMitigationModel, createUserMessage } from "./helpers";
 
 declare module "@tau/tau-agent-core/types" {

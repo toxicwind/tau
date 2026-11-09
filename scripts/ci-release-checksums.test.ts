@@ -12,7 +12,6 @@ afterEach(async () => {
 });
 
 describe("formatChecksums", () => {
-<<<<<<< ours — scope `it("sorts entries by basename and formats as ...` in test_suite `formatChecksums`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("sorts entries by basename and formats as `sha256sum -c`-compatible lines", () => {
 		const output = formatChecksums([
@@ -21,8 +20,6 @@ describe("formatChecksums", () => {
 		]);
 		expect(output).toBe(`${"a".repeat(64)}  tau-darwin-arm64\n${"b".repeat(64)}  tau-linux-x64\n`);
 	});
-=======
->>>>>>> theirs — scope `it("sorts entries by basename and formats as ...` deleted in theirs · weave: run 'weave explain scripts/ci-release-checksums.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 	it("hashes assets and writes a sorted checksum manifest", async () => {
 		const dir = await mkdtemp(path.join(tmpdir(), "tau-release-checksums-"));

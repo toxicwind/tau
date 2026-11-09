@@ -1,12 +1,6 @@
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { SessionState } from "@oh-my-pi/pi-wire";`
 import type { Model } from "@tau/tau-ai";
 import type { SessionState } from "@tau/tau-wire";
-=======
-import type { Model } from "@oh-my-pi/pi-ai";
-import type { SessionState, TspSpan, TspTone } from "@oh-my-pi/pi-wire";
-import type { NativeNode, NativeUiEvent } from "../native/node";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/src/status-line/types.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { ContextLineMode, StatusLinePreset, StatusLineSegmentId, StatusLineSeparatorStyle } from "./schema";
 import type { ActiveRepoContext, PromptCacheStatus, StatusLineSession } from "./host";
 import type { LoopConditionConfig, LoopLimitRuntime } from "./loop";

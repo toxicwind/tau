@@ -381,7 +381,6 @@ it("continues once on a late nit at advisor.continueSeverity=nit without re-revi
 	// Only the user-started turn is reviewed; the advisor-started continuation is not.
 	expect(reviewStarts).toBe(1);
 });
-<<<<<<< ours — interstitial `between:packages/coding-agent/test/agent-session-advisor-terminal-unwind.test.ts::test_hook::afterEach:packages/coding-agent/test/agent-session-advisor-terminal-unwind.test.ts::property::feedback` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `const temp = TempDir.createSync("@pi-advisor-terminal-unwind-");`
 
 it.each(["concern", "nit", "blocker"] as const)(
@@ -396,5 +395,3 @@ it.each(["concern", "nit", "blocker"] as const)(
 		const terminalTurnEnd = Promise.withResolvers<void>();
 		const advisorStarted = Promise.withResolvers<void>();
 		const releaseAdvisor = Promise.withResolvers<void>();
-=======
->>>>>>> theirs — interstitial `between:packages/coding-agent/test/agent-session-advisor-terminal-unwind.test.ts::test_hook::afterEach:packages/coding-agent/test/agent-session-advisor-terminal-unwind.test.ts::property::feedback` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/agent-session-advisor-terminal-unwind.test.ts' for per-hunk detail, 'weave check' to verify your resolution

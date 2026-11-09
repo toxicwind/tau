@@ -251,7 +251,6 @@ describe("fetchMarketplace", () => {
 		expect(result.catalog.name).toBe("from-tau-plugin");
 	});
 
-<<<<<<< ours — scope `it("falls back to .claude-plugin/marketplace....` in test_suite `fetchMarketplace`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("falls back to .claude-plugin/marketplace.json when .tau-plugin is absent", async () => {
 		// The shared fixture only ships .claude-plugin/marketplace.json — confirms
@@ -259,8 +258,6 @@ describe("fetchMarketplace", () => {
 		const result = await fetchMarketplace(FIXTURE_DIR, tmpDir);
 		expect(result.catalog.name).toBe("test-marketplace");
 	});
-=======
->>>>>>> theirs — scope `it("falls back to .claude-plugin/marketplace....` deleted in theirs · weave: run 'weave explain packages/coding-agent/test/marketplace/fetcher.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 	it("error message names both candidate paths when neither exists", async () => {
 		const empty = path.join(tmpDir, "empty-dir");

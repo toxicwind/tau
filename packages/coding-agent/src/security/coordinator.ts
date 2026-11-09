@@ -1,19 +1,11 @@
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { logger, prompt } from "@oh-my-pi/pi-utils";`
 import type { Model } from "@tau/tau-ai";
 import type { VcsGitRepo } from "@tau/tau-natives";
 import * as vcs from "@tau/tau-natives/vcs";
 import { logger, prompt } from "@tau/tau-utils";
 import type { AsyncJobManager } from "../async/job-manager";
-=======
-import type { Model } from "@oh-my-pi/pi-ai";
-import type { VcsGitRepo } from "@oh-my-pi/pi-natives";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import { logger, prompt, untilAborted } from "@oh-my-pi/pi-utils";
-import type { AsyncJobManagerApi } from "../async/job-manager";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/security/coordinator.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { ModelRegistry } from "../config/model-registry";
 import type { Settings } from "../config/settings";
 import type { ToolDefinition } from "../extensibility/extensions";

@@ -1,7 +1,6 @@
 import { randomUUID } from "node:crypto";
 import * as fs from "node:fs";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { sanitizeText } from "@oh-my-pi/pi-utils";`
 import type {
 	AgentEvent,
@@ -10,19 +9,6 @@ import type {
 	AgentToolResult,
 	AgentToolUpdateCallback,
 } from "@tau/tau-agent-core";
-=======
-import {
-	type AgentEvent,
-	type AgentTool,
-	type AgentToolContext,
-	type AgentToolResult,
-	type AgentToolUpdateCallback,
-	joinAdditionalContext,
-	TOOL_RESULT_ADDITIONAL_CONTEXT,
-	type ToolResultWithAdditionalContext,
-	validateAgentToolArguments,
-} from "@oh-my-pi/pi-agent-core";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/cursor.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type {
 	CursorExecFrameContext,
 	CursorMcpCall,
@@ -43,7 +29,6 @@ import {
 	piLsPath,
 	piReadPath,
 	piTimeout,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { sanitizeText } from "@oh-my-pi/pi-utils";`
 } from "@tau/tau-ai/providers/cursor-tau-args";
 import { sanitizeText } from "@tau/tau-utils";
@@ -53,31 +38,6 @@ import type { MCPResourceReadResult } from "./mcp/types";
 import { resolveApproval, resolveApprovalFromContext } from "./tools/approval";
 import { confineToWorkspace, resolveToCwd } from "./tools/path-utils";
 import type { TodoPhase, TodoStatus } from "@tau/tau-tui/tools/todo";
-=======
-	shellDeadlineSeconds,
-} from "@oh-my-pi/pi-ai/providers/cursor-pi-args";
-import { editDiffString } from "@oh-my-pi/pi-natives";
-import { isEnoent, sanitizeText } from "@oh-my-pi/pi-utils";
-import { cursorMcpPrefersReplaceEdit, normalizeCursorReplaceArgs } from "./cursor-bridge-tools";
-import { normalizeToLF, stripBom } from "./edit/normalize";
-import type { MCPResourceReadResult } from "./mcp/types";
-import {
-	approvalRestrictions,
-	resolveApproval,
-	resolveApprovalFromContext,
-	restrictedFolderReason,
-} from "./tools/approval";
-import { approvalTargetKey } from "./tools/approval-targets";
-import { getApprovalGrants } from "./tools/approval-cache";
-import {
-	confineToWorkspace,
-	resolveReadPathAsync,
-	resolveToCwd,
-	splitPathAndSelPreferringLiteral,
-} from "./tools/path-utils";
-import type { EditToolDetails } from "@oh-my-pi/pi-tui/tools/edit";
-import type { TodoPhase, TodoStatus } from "@oh-my-pi/pi-tui/tools/todo";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 
 /** Phase used for Cursor-owned tasks with no local phase grouping. */
 const CURSOR_TODO_PHASE = "Tasks";

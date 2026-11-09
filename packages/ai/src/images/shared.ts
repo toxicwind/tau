@@ -1,11 +1,6 @@
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { parseImageMetadata, USER_AGENT } from "@oh-my-pi/pi-ut…`
 import type { FetchImpl, Model, Usage } from "@tau/tau-catalog/types";
 import { parseImageMetadata, USER_AGENT } from "@tau/tau-utils";
-=======
-import type { FetchImpl, Model, Usage } from "@oh-my-pi/pi-catalog/types";
-import { base64ImageDataFailureReason, isRecord, parseImageMetadata, USER_AGENT } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/src/images/shared.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { ApiKey } from "../auth-retry";
 import { withAuth } from "../auth-retry";
 import * as AIError from "../error";

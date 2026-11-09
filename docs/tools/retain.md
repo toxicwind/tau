@@ -16,30 +16,18 @@
    - `packages/coding-agent/src/hindsight/mental-models.ts` — bank-scoped mental-model seeding and cache rendering.
    - `packages/coding-agent/src/hindsight/seeds.json` — built-in mental-model seed definitions.
    - `packages/coding-agent/src/hindsight/transcript.ts` — extracts user/assistant turns for auto-retain.
-<<<<<<< ours — scope `- Mnemopi collaborators:` in heading `Source` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `- `packages/coding-agent/src/mnemopi/backend.ts` — local backen…` +3 more
 - Mnemotau collaborators:
   - `packages/coding-agent/src/mnemotau/backend.ts` — local backend bootstrap, prompt injection, subagent aliasing, enqueue/clear.
   - `packages/coding-agent/src/mnemotau/state.ts` — scoped recall/retain state and local writes.
   - `packages/coding-agent/src/mnemotau/config.ts` — local SQLite path, bank, scoping, provider settings.
   - `packages/mnemotau/src/core/memory.ts` — local memory runtime used by `remember(...)`.
-=======
-- Mnemopi collaborators:
-   - `packages/coding-agent/src/mnemopi/backend.ts` — local backend bootstrap, prompt injection, subagent aliasing, enqueue/clear.
-   - `packages/coding-agent/src/mnemopi/state.ts` — scoped recall/retain state and local writes.
-   - `packages/coding-agent/src/mnemopi/config.ts` — local SQLite path, bank, scoping, provider settings.
-   - `packages/mnemopi/src/core/memory.ts` — local memory runtime used by `remember(...)`.
->>>>>>> theirs — scope `- Mnemopi collaborators:` · weave: run 'weave explain docs/tools/retain.md' for per-hunk detail, 'weave check' to verify your resolution
 
 ## Registration / Visibility
 
 - Tool metadata: `strict = true`, `loadMode = "discoverable"`. Approval is dynamic: a call with any `scope: "global"` item has `approval = "write"`, because the write reaches every project's recall; otherwise `approval = "read"`, even though successful calls enqueue or perform memory writes.
-<<<<<<< ours — scope `- The tool is registered only for `memory.bac...` in heading `Registration / Visibility` (S, confidence: medium)
 // refused_by: statement_fold · collision: `- The tool is registered only for `memory.backend = "hindsight"…`
 - The tool is registered only for `memory.backend = "hindsight"` or `"mnemotau"`; it is absent for `"off"` and `"local"`.
-=======
-- The tool is registered only for `memory.backend = "hindsight"` or `"mnemopi"`; it is absent for `"off"` and `"local"`. Hindsight additionally requires a non-empty configured API URL (`isHindsightConfigured(loadHindsightConfig(...))`).
->>>>>>> theirs — scope `- The tool is registered only for `memory.bac...`
 - In unrestricted sessions with an explicit tool list, registration auto-includes the shared `recall`/`retain`/`reflect` set for either supported backend. Restricted lists are not widened.
 - In an ordinary `tools.xdev` session, discoverable built-ins may be presented as `xd://retain`; an explicitly requested tool remains top-level.
 - Execution returns one final result and has no progress callback or cancellation parameter.
@@ -61,12 +49,8 @@ Hindsight:
 - `details = { count: number }`
 - The items are on disk before the tool returns; server delivery is not confirmed. Delivery failures emit a session warning notice and are not returned to the model.
 
-<<<<<<< ours — heading `Outputs` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 Mnemotau:
-=======
-Mnemopi:
->>>>>>> theirs — heading `Outputs` (S+F, confidence: low)
 - `content[0].type = "text"`
 - `content[0].text = "<count> memory stored."` or `"<count> memories stored."`
 - `details = { count: number }`
@@ -74,28 +58,15 @@ Mnemopi:
 
 ## Flow
 
-<<<<<<< ours — scope `## Flow` in heading `Flow` (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 ## Flow
 1. `MemoryRetainTool.createIf(...)` exposes the tool when `memory.backend` is either `"hindsight"` or `"mnemotau"`.
-=======
-1. `MemoryRetainTool.createIf(...)` exposes the tool when `memory.backend` is either `"hindsight"` or `"mnemopi"`.
->>>>>>> theirs — scope `## Flow`
 2. `execute(...)` re-reads `memory.backend` and dispatches to the matching session state.
-<<<<<<< ours — scope `3. If the backend is `mnemopi`:` in heading `Flow` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `- writes go to the scoped retain bank; exact duplicate content …`
 3. If the backend is `mnemotau`:
    - it fetches `session.getMnemotauSessionState()` and throws if the backend was not started;
    - for each item, it calls `state.rememberScoped(item.content, ...)` with `source: "coding-agent-retain"`, `importance: 0.75`, `scope: "bank"`, `extract: true`, `extractEntities: true`, `veracity: "tool"`, `memoryType: "fact"`, and metadata `{ session_id, cwd, context, tool: "retain" }`;
    - writes go to the scoped retain bank; exact duplicate content in the same session updates the existing working-memory row in the Mnemotau core.
-=======
-3. If the backend is `mnemopi`:
-   - it fetches `session.getMnemopiSessionState()` and throws if the backend was not started;
-   - if any item has `scope: "global"`, it resolves `state.getGlobalRetainTarget()` first; under `per-project` scoping that throws `Mnemopi global scope requires global or per-project-tagged scoping.` and nothing in the batch is stored;
-   - for each item, it calls `state.rememberScoped(item.content, ...)` with `source: "coding-agent-retain"`, `importance: 0.75`, `scope: "bank"`, `extract: true`, `extractEntities: true`, `veracity: "tool"`, `memoryType: "fact"`, and metadata `{ session_id, cwd, context, tool: "retain" }`;
-   - project items go to the scoped retain bank and global items to the global target (passed as `rememberScoped`'s third argument); exact duplicate content in the same session updates the existing working-memory row in the Mnemopi core.
-   - content and options are passed through `redactRememberWrite(...)` before storage.
->>>>>>> theirs — scope `3. If the backend is `mnemopi`:`
 4. If the backend is `hindsight`:
    - it fetches `session.getHindsightSessionState()` and throws if the backend was not started;
    - if any item has `scope: "global"`, it calls `state.assertGlobalRetainAvailable()` first, which throws `Hindsight global scope is off; set hindsight.globalScope to true to enable it.` while `hindsight.globalScope` is off and `Hindsight global scope requires global or per-project-tagged scoping.` under `per-project` scoping; either way nothing in the batch is queued;
@@ -118,70 +89,36 @@ Mnemopi:
    - `per-project-tagged` — retain writes to the cwd-derived project bank, or to the shared bank for `scope: "global"` items; recall also reads the shared bank.
    - Per-project recall may add safe legacy banks whose stored working-memory rows all match the active cwd; scanning is capped at 64 candidate bank directories.
 - Session scope:
-<<<<<<< ours — scope `- Session scope:` in heading `Modes / Variants` (F, confidence: medium)
 // refused_by: statement_fold · collision: `- persisted Mnemopi memories are local SQLite data;`
   - tool-called retains are per-session work for the active backend;
   - persisted Hindsight memories are cross-session server-side bank data;
   - persisted Mnemotau memories are local SQLite data;
   - subagents alias parent memory state for both supported backends.
-=======
-   - tool-called retains are per-session work for the active backend;
-   - persisted Hindsight memories are cross-session server-side bank data;
-   - persisted Mnemopi memories are local SQLite data;
-   - subagents alias parent memory state for both supported backends.
->>>>>>> theirs — scope `- Session scope:`
 
 ## Side Effects
 
-<<<<<<< ours — scope `## Side Effects` in heading `Side Effects` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `- Mnemopi: writes to local SQLite under `mnemopi.dbPath`, defau…`
 ## Side Effects
 - Filesystem
   - Hindsight: none for retained memories. No local memory file is written.
   - Mnemotau: writes to local SQLite under `mnemotau.dbPath`, defaulting beneath the agent memories directory (`mnemotau/mnemotau.db`) with one database file per scoped bank when needed.
-=======
-- Filesystem
-   - Hindsight: undelivered tool retains as JSON event files under `<agentDir>/hindsight-outbox/` (directories 0700, files 0600); refused, malformed and expired events move to `hindsight-outbox/quarantine/`, which deletes them 30 days later.
-   - Mnemopi: writes to local SQLite under `mnemopi.dbPath`, defaulting beneath the agent memories directory (`mnemopi/mnemopi.db`) with one database file per scoped bank when needed.
->>>>>>> theirs — scope `## Side Effects`
 - Network
-<<<<<<< ours — scope `- Network` in heading `Side Effects` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `- Mnemopi: none unless configured embedding or LLM providers ma…`
   - Hindsight: `POST /v1/default/banks/{bank_id}/memories` via `retainBatch(...)`, plus optional `PUT /v1/default/banks/{bank_id}` via `ensureBankExists(...)` before the first write per bank per session state (the set is created with the primary session state and shared with subagent aliases).
   - Mnemotau: none unless configured embedding or LLM providers make calls during extraction.
-=======
-   - Hindsight: `POST /v1/default/banks/{bank_id}/memories` via `retainBatch(...)`, plus optional `PUT /v1/default/banks/{bank_id}` via `ensureBankExists(...)` before the first write per bank per session state (the set is created with the primary session state and shared with subagent aliases).
-   - Mnemopi: none unless configured embedding or LLM providers make calls during extraction.
->>>>>>> theirs — scope `- Network`
 - Session state
-<<<<<<< ours — scope `- Session state` in heading `Side Effects` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `- Mnemopi: writes through the session's scoped `Mnemopi` instan…`
   - Hindsight: appends to the in-memory `HindsightRetainQueue`, includes `metadata.session_id`, and shares parent state for subagents.
   - Mnemotau: writes through the session's scoped `Mnemotau` instance, includes `session_id`, `cwd`, and optional `context`, and shares scoped resources with subagents.
-=======
-   - Hindsight: records each event's scope, captured tags, original timestamp, context and `metadata.session_id` before acknowledging; subagents share the parent's destination.
-   - Mnemopi: writes through the session's scoped `Mnemopi` instance, includes `session_id`, `cwd`, and optional `context`, and shares scoped resources with subagents.
->>>>>>> theirs — scope `- Session state`
 - User-visible prompts / interactive UI
-<<<<<<< ours — scope `- User-visible prompts / interactive UI` in heading `Side Effects` (F, confidence: medium)
 // refused_by: statement_fold · collision: `- Mnemopi write failures are logged by `rememberInScope(...)`; …`
   - Hindsight async flush failures emit `session.emitNotice("warning", ...)`; the model is not told.
   - Mnemotau write failures are logged by `rememberInScope(...)`; the tool response does not expose per-item failures.
-=======
-   - Hindsight async flush failures emit `session.emitNotice("warning", ...)`; the model is not told.
-   - Mnemopi explicit write failures are returned as tool errors with partial-batch information; earlier successful writes are not rolled back.
->>>>>>> theirs — scope `- User-visible prompts / interactive UI`
 - Background work / cancellation
-<<<<<<< ours — scope `- Background work / cancellation` in heading `Side Effects` (F, confidence: medium)
 // refused_by: statement_fold · collision: `- Mnemopi fact/entity extraction and embedding may continue aft…`
   - Hindsight flush runs later on the debounce timer or queue-size threshold; backend `enqueue(...)` and `clear(...)` explicitly drain it. A session-ownership mismatch at flush time logs and drops the batch.
   - Mnemotau fact/entity extraction and embedding may continue after the synchronous row write. Backend `enqueue(...)` requests full consolidation; backend clear disposes scoped instances before deleting their database files.
   - `retain.execute()` itself has no abort-signal handling.
-=======
-   - Hindsight flush runs on the debounce timer, the queue-size threshold, primary-state installation, agent end, and session disposal; backend `enqueue(...)` and `clear(...)` explicitly drain it. Undelivered events survive the session and process; nothing delivers while no omp process runs.
-   - Mnemopi fact/entity extraction and embedding may continue after the synchronous row write. Backend `enqueue(...)` requests full consolidation; backend clear disposes scoped instances before deleting their database files.
-   - `retain.execute()` itself has no abort-signal handling.
->>>>>>> theirs — scope `- Background work / cancellation`
 
 ## Limits & Caps
 
@@ -193,53 +130,31 @@ Mnemopi:
 - Hindsight queue debounce: `RETAIN_FLUSH_INTERVAL_MS = 5_000`.
 - Hindsight queue writes use `retainBatch(..., { async: true })`; the client request timeout defaults to `hindsight.retainTimeoutMs = 60_000`, but it does not wait for server-side consolidation.
 - Hindsight auto-retain settings:
-<<<<<<< ours — scope `- Hindsight auto-retain settings:` in heading `Limits & Caps` (F, confidence: medium)
 // refused_by: statement_fold · collision: `- `hindsight.retainContext = "omp"``
   - `hindsight.autoRetain = true`
   - `hindsight.retainEveryNTurns = 3`
   - `hindsight.retainOverlapTurns = 2`
   - `hindsight.retainContext = "tau"`
   - `hindsight.retainMode = "full-session"`
-=======
-   - `hindsight.autoRetain = true`
-   - `hindsight.retainEveryNTurns = 3`
-   - `hindsight.retainOverlapTurns = 2`
-   - `hindsight.retainContext = "omp"`
-   - `hindsight.retainMode = "full-session"`
->>>>>>> theirs — scope `- Hindsight auto-retain settings:`
-<<<<<<< ours — scope `- Mnemopi retain settings:` in heading `Limits & Caps` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `- `mnemopi.autoRetain = true`` +2 more
 - Mnemotau retain settings:
   - `mnemotau.autoRetain = true`
   - `mnemotau.retainEveryNTurns = 4`
   - `mnemotau.scoping = "per-project"`
-=======
-- Mnemopi retain settings:
-   - `mnemopi.autoRetain = true`
-   - `mnemopi.retainEveryNTurns = 4`
-   - `mnemopi.scoping = "per-project"`
->>>>>>> theirs — scope `- Mnemopi retain settings:`
 
 ## Errors
 
-<<<<<<< ours — scope `## Errors` in heading `Errors` (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 ## Errors
 - Throws `Mnemotau backend is not initialised for this session.` when `memory.backend == "mnemotau"` but no state exists.
-=======
-- Throws `Mnemopi backend is not initialised for this session.` when `memory.backend == "mnemopi"` but no state exists.
->>>>>>> theirs — scope `## Errors`
 - Throws `Hindsight backend is not initialised for this session.` when `memory.backend == "hindsight"` but no state exists.
 - Hindsight queue enqueue on disposed state throws `Hindsight retain queue is closed.`
 - Hindsight enqueue fails the tool call when the outbox is full or cannot be written (`Hindsight outbox full (...)` / `Hindsight outbox write failed; memory NOT queued.`); nothing from the call is kept.
 - Hindsight HTTP 400, 413 and 422 refuse the request body: the refused event moves to quarantine with a warning notice; a refused multi-item request is resent item by item so only refused items move. Every other failure (connection errors, timeouts, 401/403/404, 408, 429, 5xx) keeps the events and stops the drain; the queue retries with exponential backoff from 5 seconds up to 30 minutes (±20% jitter) and warns once per outage with the count kept.
 - Hindsight bank/mission creation failures are logged at debug level and swallowed in `ensureBankExists(...)`; the later write still runs.
 - Mnemopi explicit `rememberScoped(...)` failures stop the batch and throw `Mnemopi did not store item <n> of <total>: <reason>. ...`, identifying earlier stored ids and unattempted items. Background auto-retain instead uses `rememberInScope(...)`, which logs and swallows storage failures.
-<<<<<<< ours — scope `- Mnemopi `remember(...)` failures are caught...` in heading `Errors`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 - Mnemotau `remember(...)` failures are caught in `MnemotauSessionState.rememberInScope(...)`, logged, and not rethrown to the tool caller.
-=======
->>>>>>> theirs — scope `- Mnemopi `remember(...)` failures are caught...` deleted in theirs
 
 ## Notes
 

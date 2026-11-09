@@ -1,4 +1,3 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { clearCustomApis, getCustomApi } from "@oh-my-pi/pi-ai/…` +1 more
 import { afterEach, describe, expect, test } from "bun:test";
 import { clearCustomApis, getCustomApi } from "@tau/tau-ai/api-registry";
@@ -11,11 +10,6 @@ import {
 	streamMock,
 } from "@tau/tau-ai/providers/mock";
 import type { AssistantMessage, AssistantMessageEvent, Context, ToolCall } from "@tau/tau-ai/types";
-=======
-import { describe, expect, test } from "bun:test";
-import { createMockModel, MOCK_API, type MockHandler, streamMock } from "@oh-my-pi/pi-ai/providers/mock";
-import type { AssistantMessage, AssistantMessageEvent, Context, ToolCall } from "@oh-my-pi/pi-ai/types";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/test/mock-provider.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function emptyContext(): Context {
 	return {

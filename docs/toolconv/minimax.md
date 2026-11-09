@@ -15,17 +15,8 @@ tools:
 
 `tools.format: minimax` forces this owned dialect for the session. In `auto` mode, TAU keeps provider-native tool calling unless the selected model explicitly has `supportsTools: false`; for a MiniMax-family model id, that fallback resolves to `minimax`. See [`tools.format`](../settings.md#tools-and-approvals).
 
-<<<<<<< ours — scope ``tools.format: minimax` forces this owned dia...` in heading `Selection and request conversion` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `When an owned dialect is active, OMP:`
 When an owned dialect is active, TAU:
-=======
-`PI_DIALECT=minimax` also selects it when configuration resolves to no owned
-dialect. Unset that environment variable when choosing `native`: the agent
-uses it as a fallback even when `tools.format` resolves to native tools.
-Dialect resolution runs for each provider request.
-
-With an owned dialect and a non-empty tool list, OMP:
->>>>>>> theirs — scope ``tools.format: minimax` forces this owned dia...` · weave: run 'weave explain docs/toolconv/minimax.md' for per-hunk detail, 'weave check' to verify your resolution
 
 1. removes the native structured `tools` field and tool choice from the provider request;
 2. appends an in-band tool catalog and the MiniMax format guide to the system prompt;
@@ -173,14 +164,9 @@ Important failure behavior:
 - **Missing call name:** no tool lifecycle is emitted for that invoke.
 - **Missing parameter name:** that parameter is ignored.
 - **Malformed JSON:** falls back to the original parameter text.
-<<<<<<< ours — heading `Streaming, malformed output, and recovery` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 - **Very large parameter:** input is capped at 1,000,000 JavaScript string code units; overflow is replaced by the accepted prefix plus an explicit truncation marker.
 - **Incomplete invoke:** flush resets scanner-local call state and emits no `toolEnd`. However, TAU's stream projector has already materialized a call from `toolStart`; on a normally stopped response it retains that partial call, marks the turn as tool use, and may dispatch it. Already streamed argument text remains uncoerced, and a call with no argument text has `{}`. A provider `length` stop remains `length` rather than becoming runnable tool use.
-=======
-- **Very large parameter:** the retained parameter value and its argument deltas are capped at 1,000,000 JavaScript string code units; the completed value gets an explicit truncation marker on overflow. The diagnostic `rawBlock` still retains the full invoke, so this is not a cap on total input or raw capture.
-- **Incomplete invoke:** flush resets scanner-local call state and emits no `toolEnd`. However, OMP's stream projector has already materialized a call from `toolStart`; on a normally stopped response it retains that partial call, marks the turn as tool use, and may dispatch it. Already streamed argument text remains uncoerced, and a call with no argument text has `{}`. A provider `length` stop remains `length` rather than becoming runnable tool use.
->>>>>>> theirs — heading `Streaming, malformed output, and recovery` (F, confidence: medium)
 - **Incomplete wrapper after complete invokes:** already closed invokes remain valid; the wrapper close is not required to emit their `toolEnd` events.
 - **Incomplete thinking:** retained as thinking and logically ended at flush.
 

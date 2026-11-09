@@ -1,14 +1,5 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { prompt } from "@oh-my-pi/pi-utils";`
 import { prompt } from "@tau/tau-utils";
-=======
-import * as fs from "node:fs";
-import * as path from "node:path";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import { replaceTabs, shortenPath, TRUNCATE_LENGTHS, truncateToWidth } from "@oh-my-pi/pi-tui/render/render-utils";
-import { isRecord, prompt } from "@oh-my-pi/pi-utils";
-import { findScopedSettings } from "../../../../config/settings";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/extensibility/custom-commands/bundled/review/index.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { CustomCommand, CustomCommandAPI } from "../../../../extensibility/custom-commands/types";
 import type { HookCommandContext } from "../../../../extensibility/hooks/types";
 import { parseMrUrl } from "../../../../internal-urls/mr-protocol";

@@ -1,7 +1,6 @@
 import { afterEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 import { Agent } from "@tau/tau-agent-core";
 import type { AssistantMessage } from "@tau/tau-ai";
@@ -22,29 +21,6 @@ import {
 import { convertToLlm } from "tau/session/messages";
 import { SessionManager } from "tau/session/session-manager";
 import { postmortem, TempDir } from "@tau/tau-utils";
-=======
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { createSessionTeardown } from "@oh-my-pi/pi-coding-agent/modes/session-teardown";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import {
-	collectPendingToolCalls,
-	createInterruptedToolResults,
-	createInterruptedTurnAbortMessage,
-	describePendingToolCalls,
-	hasRestorableTurn,
-	SESSION_EXIT_CUSTOM_TYPE,
-	TOOL_EXECUTION_START_CUSTOM_TYPE,
-	type ToolExecutionStartData,
-} from "@oh-my-pi/pi-coding-agent/session/exit-diagnostics";
-import { convertToLlm } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { postmortem, TempDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/session-exit-diagnostics.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const pendingAssistant: AssistantMessage = {
 	role: "assistant",

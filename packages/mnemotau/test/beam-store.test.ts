@@ -16,19 +16,11 @@ import {
 	scratchpadRead,
 	scratchpadWrite,
 	updateWorking,
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-mnemotau/core/beam/store";
 import type { BeamEvent, BeamMemoryState } from "@tau/tau-mnemotau/core/beam/types";
 import { EpisodicGraph } from "@tau/tau-mnemotau/core/episodic-graph";
 import { openDatabase } from "@tau/tau-mnemotau/db";
-=======
-} from "@oh-my-pi/pi-mnemopi/core/beam/store";
-import type { BeamEvent, BeamMemoryState } from "@oh-my-pi/pi-mnemopi/core/beam/types";
-import { EpisodicGraph } from "@oh-my-pi/pi-mnemopi/core/episodic-graph";
-import { Mnemopi } from "@oh-my-pi/pi-mnemopi/core/memory";
-import { openDatabase } from "@oh-my-pi/pi-mnemopi/db";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/mnemotau/test/beam-store.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const states: BeamMemoryState[] = [];
 

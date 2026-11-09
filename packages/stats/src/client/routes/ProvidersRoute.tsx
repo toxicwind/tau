@@ -1051,7 +1051,6 @@ const ACCOUNT_COLUMNS: Column<AccountRow>[] = [
 		render: r => <span className="muted">{r.latest ? formatRelativeTime(r.latest.timestamp) : "–"}</span>,
 	},
 ];
-<<<<<<< ours — function `WindowInsightsPanel` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 function WindowInsightsPanel({ insights }: { insights: ProviderWindowInsight[] }) {
 	const columns: DataTableColumn<ProviderWindowInsight>[] = [
@@ -1128,5 +1127,3 @@ function WindowInsightsPanel({ insights }: { insights: ProviderWindowInsight[] }
 		</Panel>
 	);
 }
-=======
->>>>>>> theirs — function `WindowInsightsPanel` (S+F, confidence: low) · weave: run 'weave explain packages/stats/src/client/routes/ProvidersRoute.tsx' for per-hunk detail, 'weave check' to verify your resolution

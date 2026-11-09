@@ -7,26 +7,10 @@ import {
 	hasPositiveMovedProjectEvidence,
 	readCwdIdentity,
 	writeTerminalBreadcrumb,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { FileSessionStorage } from "@oh-my-pi/pi-coding-agent/s…` +1 more
 } from "tau/session/session-paths";
 import { FileSessionStorage } from "tau/session/session-storage";
 import { getAgentDir, getCustomSessionFilesDir, getSessionsDir, hashPath, setAgentDir } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-coding-agent/session/session-paths";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { FileSessionStorage, MemorySessionStorage } from "@oh-my-pi/pi-coding-agent/session/session-storage";
-import { getTerminalId } from "@oh-my-pi/pi-tui";
-import {
-	getAgentDir,
-	getCustomSessionFilesDir,
-	getSessionsDir,
-	getTerminalSessionsDir,
-	hashPath,
-	setAgentDir,
-} from "@oh-my-pi/pi-utils";
-import { resolveEquivalentPath } from "@oh-my-pi/pi-utils/dirs";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/session-paths.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const cleanup: string[] = [];
 

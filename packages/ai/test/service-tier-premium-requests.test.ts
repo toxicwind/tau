@@ -1,5 +1,4 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 import type { Api } from "@tau/tau-ai/types";
 import {
@@ -11,18 +10,6 @@ import {
 	shouldSendServiceTier,
 } from "@tau/tau-ai/types";
 import { classifyModel } from "@tau/tau-catalog/compat/taxonomy";
-=======
-import type { Api } from "@oh-my-pi/pi-ai/types";
-import {
-	coerceServiceTierByFamily,
-	getPremiumServiceTierRequests,
-	realizesPriorityServiceTier,
-	resolveModelServiceTier,
-	serviceTierFamily,
-	shouldSendServiceTier,
-} from "@oh-my-pi/pi-ai/types";
-import { classifyModel } from "@oh-my-pi/pi-catalog/compat/taxonomy";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/test/service-tier-premium-requests.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const m = (provider: string, api: Api, id: string) => ({
 	provider,

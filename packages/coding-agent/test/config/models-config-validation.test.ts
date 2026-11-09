@@ -1,19 +1,9 @@
 import { describe, expect, test } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { validateProviderConfiguration } from "@oh-my-pi/pi-cod…`
 import { TauErrors } from "@tau/tautype";
 import { getModelsConfigSchema } from "tau/config/models-config-schema-bundle";
 import { validateProviderConfiguration } from "tau/config/models-config";
 import { type ModelsConfig, ModelsConfigSchema } from "tau/config/models-config-schema";
-=======
-import { OmpErrors } from "@oh-my-pi/omptype";
-import { getModelsConfigSchema } from "@oh-my-pi/pi-coding-agent/config/models-config-schema-bundle";
-import {
-	type ProviderValidationConfig,
-	validateProviderConfiguration,
-} from "@oh-my-pi/pi-coding-agent/config/models-config";
-import { type ModelsConfig, ModelsConfigSchema } from "@oh-my-pi/pi-coding-agent/config/models-config-schema";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/config/models-config-validation.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const models = [{ id: "grok-4", api: "openai-completions" as const }];
 const baseUrl = "https://api.example.invalid/v1";

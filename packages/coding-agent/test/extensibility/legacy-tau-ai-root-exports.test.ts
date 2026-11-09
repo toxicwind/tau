@@ -25,14 +25,8 @@ import {
 	resolveTranscript,
 	resolveTranscriptTools,
 	streamSimpleOpenAIResponses,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "tau/extensibility/legacy-tau-ai-shim";
-=======
-	toToolDeclaration,
-	withoutInitialSystemMessage,
-} from "@oh-my-pi/pi-coding-agent/extensibility/legacy-pi-ai-shim";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/extensibility/legacy-tau-ai-root-exports.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 // Issue #6859: pi extensions import runtime helpers from the `@earendil-works/tau-ai`
 // (aliased to `@tau/tau-ai`) package root that tau's barrel no longer forwards.
@@ -63,7 +57,6 @@ function createErrorMessage(errorMessage: string): AssistantMessage {
 	};
 }
 
-<<<<<<< ours — test_suite `legacy pi-ai shim root exports` (S+F, confidence: low)
 // refused_by: rename_vs_edit_guard · collision: none (both sides edited, nowhere the same lines)
 describe("legacy tau-ai shim root exports", () => {
 	it("re-exports isContextOverflow with its classification behavior", () => {
@@ -82,69 +75,6 @@ describe("legacy tau-ai shim root exports", () => {
 		// parseStreamingJson completes a truncated object at the streaming edge.
 		expect(parseStreamingJson<{ a: number }>('{"a": 1')).toEqual({ a: 1 });
 	});
-=======
-describe("legacy pi-ai shim root exports", () => {
-	it("re-exports isContextOverflow with its classification behavior", () => {
-		expect(isContextOverflow(createErrorMessage("prompt is too long: 300000 tokens > 200000 maximum"))).toBe(true);
-		expect(isContextOverflow(createErrorMessage("400 Bad Request: invalid API key"))).toBe(false);
-	});
-
-	it("re-exports the JSON-repair helpers that upstream exposed at the pi-ai root", () => {
-		// repairJson escapes a raw control char inside a string so JSON.parse stops throwing.
-		const broken = `{"a": "b${String.fromCharCode(1)}c"}`;
-		expect(() => JSON.parse(broken)).toThrow();
-		expect(JSON.parse(repairJson(broken))).toEqual({ a: "b\u0001c" });
-		// parseJsonWithRepair tolerates trailing commas / unquoted keys.
-		expect(parseJsonWithRepair<{ a: number }>("{a: 1,}")).toEqual({ a: 1 });
-		// parseStreamingJson completes a truncated object at the streaming edge.
-		expect(parseStreamingJson<{ a: number }>('{"a": 1')).toEqual({ a: 1 });
-	});
-
-	it.each(["stream", "streamSimple"])("runs the host Anthropic transport through legacy %s", async method => {
-		const urls: string[] = [];
-		const fetchMock: FetchImpl = Object.assign(
-			async (input: string | URL | Request) => {
-				urls.push(input instanceof Request ? input.url : input.toString());
-				return new Response(
-					JSON.stringify({
-						type: "error",
-						error: { type: "invalid_request_error", message: "intentional test response" },
-					}),
-					{ status: 400, headers: { "content-type": "application/json" } },
-				);
-			},
-			{ preconnect: fetch.preconnect },
-		);
-		const model = buildModel({
-			id: "legacy-anthropic-adapter",
-			name: "Legacy Anthropic Adapter",
-			api: "anthropic-messages",
-			provider: "anthropic",
-			baseUrl: "https://anthropic.example.test",
-			reasoning: false,
-			input: ["text"],
-			cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
-			contextWindow: 200_000,
-			maxTokens: 8_192,
-		});
-
-		const api = anthropicMessagesApi();
-		const stream = method === "stream" ? api.stream : api.streamSimple;
-		const result = await stream(
-			model,
-			{ messages: [{ role: "user", content: "hello", timestamp: 0 }] },
-			{
-				apiKey: "test-key",
-				fetch: fetchMock,
-			},
-		).result();
-
-		expect(result.stopReason).toBe("error");
-		expect(result.errorMessage).toContain("intentional test response");
-		expect(urls).toEqual(["https://anthropic.example.test/v1/messages"]);
-	});
-
->>>>>>> theirs — test_suite `legacy pi-ai shim root exports` (S+F, confidence: low)
 	it("maps legacy simple options before streaming OpenAI Responses", async () => {
 		const requests: unknown[] = [];
 		const fetchMock: FetchImpl = Object.assign(

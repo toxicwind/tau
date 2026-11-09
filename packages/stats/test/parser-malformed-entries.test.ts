@@ -10,17 +10,10 @@ import {
 	initDb,
 	insertMessageStats,
 	insertToolCalls,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-stats/db";
 import { parseSessionFile } from "@tau/tau-stats/parser";
 import { getSessionsDir, getStatsDbPath } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/omp-stats/db";
-import { getOverallStats } from "@oh-my-pi/omp-stats/rollup";
-import { parseSessionFile } from "@oh-my-pi/omp-stats/parser";
-import { getSessionsDir, getStatsDbPath } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/stats/test/parser-malformed-entries.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { installStatsTestIsolation } from "./helpers/temp-agent";
 
 installStatsTestIsolation("@tau-stats-malformed-");

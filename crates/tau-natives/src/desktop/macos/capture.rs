@@ -654,7 +654,6 @@ mod tests {
 		assert_eq!(key_window(&[41, 42], Some(99)), None);
 	}
 }
-<<<<<<< ours — function `run_screencapture` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 fn run_screencapture(args: &[String]) -> CoreResult<RgbaImage> {
 	let file = tempfile::Builder::new()
@@ -713,5 +712,3 @@ fn run_screencapture(args: &[String]) -> CoreResult<RgbaImage> {
 		})
 		.map(DynamicImage::into_rgba8)
 }
-=======
->>>>>>> theirs — function `run_screencapture` (S+F, confidence: low) · weave: run 'weave explain crates/tau-natives/src/desktop/macos/capture.rs' for per-hunk detail, 'weave check' to verify your resolution

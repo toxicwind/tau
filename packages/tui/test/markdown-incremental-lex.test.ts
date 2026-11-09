@@ -1,15 +1,6 @@
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { clearRenderCache, Markdown } from "@oh-my-pi/pi-tui/co…`
 import { describe, expect, it } from "bun:test";
 import { clearRenderCache, Markdown } from "@tau/tau-tui/components/markdown";
-=======
-import { describe, expect, it, vi } from "bun:test";
-import { clearRenderCache, Markdown, type MarkdownTheme } from "@oh-my-pi/pi-tui/components/markdown";
-import { getMarkdownTheme, getMarkdownThemeWithLinkTargets, theme } from "@oh-my-pi/pi-tui/theme";
-import { TERMINAL } from "@oh-my-pi/pi-tui/terminal-capabilities";
-import * as latexBlock from "@oh-my-pi/pi-tui/latex-block";
-import { Lexer } from "@oh-my-pi/pi-utils/marked";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/test/markdown-incremental-lex.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { defaultMarkdownTheme } from "./test-themes.js";
 
 // E2 contract: the streaming incremental lexer (lex(prefix) ++ lex(tail), reusing

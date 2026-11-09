@@ -1,13 +1,8 @@
 import type { LineRange } from "@tau/tau-tui/tools/line-ranges";
 import { parseTailCount } from "./path-utils";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { parseLineRanges } from "@oh-my-pi/pi-tui/tools/line-ra…`
 import { parseLineRanges } from "@tau/tau-tui/tools/line-ranges";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
-=======
-import { mergeLineRanges, parseLineRanges } from "@oh-my-pi/pi-tui/tools/line-ranges";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/read-selector.ts' for per-hunk detail, 'weave check' to verify your resolution
 /** Parsed representation of a path-embedded selector. */
 export type ParsedSelector =
 	| { kind: "none" }
@@ -78,11 +73,7 @@ function parseRangeOrTail(chunk: string, raw: boolean): ParsedSelector | null {
 	// Upstream raw-mode semantics: in raw extraction a bare `N` is exactly line N
 	// (verbatim-extraction contract), not "from N onward".
 	const ranges = parseLineRanges(chunk, raw ? "single" : "onward");
-<<<<<<< ours — scope `const ranges = parseLineRanges(chunk);` in function `parseRangeOrTail`, deleted in ours (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
-=======
-	const ranges = parseLineRanges(chunk, raw ? "single" : "onward");
->>>>>>> theirs — scope `const ranges = parseLineRanges(chunk);` deleted in ours
 	if (ranges) return raw ? { kind: "lines", ranges, raw } : { kind: "lines", ranges };
 	// A list with tails (`1-12,-15`, `-15`) keeps the longest tail; in a list of
 	// several chunks a bare `N` stays that one line, as in a plain range list.

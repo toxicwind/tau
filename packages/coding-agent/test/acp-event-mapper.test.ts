@@ -13,7 +13,6 @@ const arkSessionNotification = type({
 	},
 });
 
-<<<<<<< ours — interstitial `between:packages/coding-agent/test/acp-event-mapper.test.ts::variable::arkSessionNotification:packages/coding-agent/test/acp-event-mapper.test.ts::function::makeAssistantMessage` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 import type { Model } from "@tau/tau-ai";
 import { buildModel } from "@tau/tau-catalog/build";
@@ -27,21 +26,6 @@ import {
 import type { AgentSession, AgentSessionEvent } from "tau/session/agent-session";
 import { SessionManager } from "tau/session/session-manager";
 import { expectAcpStructure, expectAcpStructureRejects } from "./helpers/acp-schema";
-=======
-import type { Model } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AcpAgent } from "@oh-my-pi/pi-coding-agent/modes/acp/acp-agent";
-import {
-	buildToolCallStartUpdate,
-	mapAgentSessionEventToAcpSessionUpdates,
-	mapToolKind,
-	normalizeReplayToolArguments,
-} from "@oh-my-pi/pi-coding-agent/modes/acp/acp-event-mapper";
-import type { AgentSession, AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { expectAcpStructure } from "./helpers/acp-schema";
->>>>>>> theirs — interstitial `between:packages/coding-agent/test/acp-event-mapper.test.ts::variable::arkSessionNotification:packages/coding-agent/test/acp-event-mapper.test.ts::function::makeAssistantMessage` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/acp-event-mapper.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function makeAssistantMessage(text: string) {
 	return {

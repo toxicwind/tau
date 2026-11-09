@@ -23,12 +23,9 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import { pathToFileURL } from "node:url";
-<<<<<<< ours — interstitial `file_header` (T+F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { Process, ProcessStatus } from "@oh-my-pi/pi-natives";`
 import { Process, ProcessStatus } from "@tau/tau-natives";
 import { runShellCommand } from "../src/config/resolve-config-value";
-=======
->>>>>>> theirs — interstitial `file_header` (T+F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/config-value-fd-inheritance.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const resolverUrl = pathToFileURL(path.join(import.meta.dir, "../src/config/resolve-config-value.ts")).href;
 
@@ -80,7 +77,6 @@ console.log(value === undefined ? "RESOLVED-UNDEFINED" : "LEAKED:" + value);
 	},
 );
 
-<<<<<<< ours — interstitial `file_footer` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `const root = await fs.promises.mkdtemp(path.join(os.tmpdir(), "…` +3 more
 test.skipIf(process.platform === "win32")("a timed-out !command kills the descendant it backgrounded", async () => {
 	const root = await fs.promises.mkdtemp(path.join(os.tmpdir(), "tau-config-treekill-"));
@@ -198,8 +194,6 @@ test.skipIf(process.platform === "win32")(
 		}
 	},
 );
-=======
->>>>>>> theirs — interstitial `file_footer` (F, confidence: medium)
 test.skipIf(process.platform === "win32")("resolves !commands when PATH omits the shell entirely", async () => {
 	// A launcher may supply a minimal tool-only PATH; the resolver must still
 	// find the OS shell. Probing in a subprocess so the stripped PATH cannot

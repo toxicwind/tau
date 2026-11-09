@@ -100,7 +100,6 @@ describe("AuthStorage openai-codex email dedupe", () => {
 		authStorage = new AuthStorage(store);
 	});
 
-<<<<<<< ours — scope `beforeEach(async () => {` in test_suite `AuthStorage openai-codex email dedupe`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	beforeEach(async () => {
 		tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-ai-auth-email-dedupe-"));
@@ -108,8 +107,6 @@ describe("AuthStorage openai-codex email dedupe", () => {
 		store = await SqliteAuthCredentialStore.open(dbPath);
 		authStorage = new AuthStorage(store);
 	});
-=======
->>>>>>> theirs — scope `beforeEach(async () => {` deleted in theirs · weave: run 'weave explain packages/ai/test/auth-storage-email-dedupe.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 	afterEach(() => {
 		store?.close();
@@ -724,13 +721,10 @@ describe("AuthStorage openai-codex email dedupe", () => {
 
 describe("AuthStorage OAuth login upgrade and multi-account coexistence", () => {
 
-<<<<<<< ours — scope `beforeEach(async () => {` in test_suite `AuthStorage OAuth login upgrade and multi-account coexistence`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	beforeEach(async () => {
 		tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-auth-login-test-"));
 	});
-=======
->>>>>>> theirs — scope `beforeEach(async () => {` deleted in theirs
 	afterEach(() => {
 		unregisterOAuthProviders("auth-storage-login-upgrade-test");
 	});

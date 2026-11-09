@@ -143,18 +143,11 @@ export async function installJsPackages(options: InstallJsPackagesOptions): Prom
 		async () => {
 			options.signal?.throwIfAborted();
 			if (mode === "managed") await ensureManagedManifest(environment, options.autoProvision, options.signal);
-<<<<<<< ours — function `installJsPackages` (T+F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 			const result = await ptree.exec(
 				[resolveExecutablePath(), "add", "--cwd", environment.root, "--ignore-scripts", ...packages],
 				{
 					// In a compiled distribution the resolved executable is tau.
-=======
-			const tracker = trackDownload("npm packages", { detail: packages.join(" ") });
-			const result = await ptree
-				.exec([resolveExecutablePath(), "add", "--cwd", environment.root, "--ignore-scripts", ...packages], {
-					// In a compiled distribution the resolved executable is omp.
->>>>>>> theirs — function `installJsPackages` (T+F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/eval/js/package-installer.ts' for per-hunk detail, 'weave check' to verify your resolution
 					// BUN_BE_BUN re-enters Bun's real package-manager
 					// CLI instead of recursively dispatching tau's command parser.
 					env: { ...Bun.env, BUN_BE_BUN: "1" },

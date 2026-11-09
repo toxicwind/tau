@@ -1,21 +1,7 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 import { afterEach, beforeAll, describe, expect, it } from "bun:test";
 import { agentPauseGate } from "@tau/tau-agent-core";
 import type { Component } from "@tau/tau-tui";
-=======
-import { afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
-import { agentPauseGate } from "@oh-my-pi/pi-agent-core";
-import type { Component } from "@oh-my-pi/pi-tui";
-import { TspDocument } from "@oh-my-pi/pi-tui/native/apply";
-import type { DescribeContext, NativeChild, NativeNode } from "@oh-my-pi/pi-tui/native/node";
-import { Reconciler } from "@oh-my-pi/pi-tui/native/reconcile";
-import type { TspNode } from "@oh-my-pi/pi-wire";
-import { BUILTIN_CONTROL_SLASH_COMMANDS } from "@oh-my-pi/pi-coding-agent/slash-commands/builtin-control";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import type { TuiSlashCommandRuntime } from "@oh-my-pi/pi-coding-agent/slash-commands/types";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/modes/components/pause-screen.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { Settings } from "../../../src/config/settings";
 import {
 	PauseScreenComponent,
@@ -23,15 +9,9 @@ import {
 	type PauseWorkStatus,
 	renderPauseScreen,
 	runPauseScreen,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-tui/overlays/pause-screen";
 import { getThemeByName, setThemeInstance } from "@tau/tau-tui/theme";
-=======
-} from "@oh-my-pi/pi-tui/overlays/pause-screen";
-import { setNativeRendering } from "@oh-my-pi/pi-tui/native/state";
-import { getThemeByName, setThemeInstance } from "@oh-my-pi/pi-tui/theme";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 
 // Strip SGR colors so assertions see visible text only.
 const stripAnsi = (text: string): string => text.replace(/\x1b\[[0-9;]*m/g, "");

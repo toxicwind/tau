@@ -1,12 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import { scheduler } from "node:timers/promises";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { convertAnthropicMessages, streamAnthropic } from "@tau/tau-ai/providers/anthropic";
-=======
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { convertAnthropicMessages, streamAnthropic } from "@oh-my-pi/pi-ai/providers/anthropic";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/ai/test/anthropic-stream-envelope.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	AnthropicMessages,
 	type AnthropicMessagesClientLike,
@@ -15,19 +10,11 @@ import {
 import type {
 	ToolSearchToolResultBlockParam,
 	WebSearchToolResultBlockParam,
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-ai/providers/anthropic-wire";
 import type { AssistantMessageEvent, Context, Model, ModelSpec, ProviderSessionState } from "@tau/tau-ai/types";
 import { buildModel } from "@tau/tau-catalog/build";
 import { structuredCloneJSON } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-ai/providers/anthropic-wire";
-import type { AssistantMessageEvent, Context, Model, ModelSpec, ProviderSessionState } from "@oh-my-pi/pi-ai/types";
-import { validateToolArguments } from "@oh-my-pi/pi-ai/utils/validation";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { structuredCloneJSON } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium)
 import { withEnv, withOfficialAnthropicEndpoint } from "./helpers";
 
 const model: Model<"anthropic-messages"> = buildModel({

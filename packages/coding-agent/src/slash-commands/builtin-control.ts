@@ -1,14 +1,5 @@
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { runPauseScreen } from "@oh-my-pi/pi-tui/overlays/pause…`
 import { runPauseScreen } from "@tau/tau-tui/overlays/pause-screen";
-=======
-import { type PauseWorkStatus, runPauseScreen } from "@oh-my-pi/pi-tui/overlays/pause-screen";
-import { AgentRegistry } from "../registry/agent-registry";
-import type { AgentSession } from "../session/agent-session";
-import type { AgentSessionHandle } from "../session/agent-session-handle";
-import { clearApprovalGrants } from "../tools/approval-cache";
-import { clearSubmittedText } from "./helpers/draft";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/slash-commands/builtin-control.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { shutdownHandlerTui } from "./builtin-lifecycle";
 import { commandConsumed, errorMessage, usage } from "./helpers/parse";
 import type { SlashCommandSpec } from "./types";

@@ -1,4 +1,3 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { AssistantMessage, Usage } from "@oh-my-pi/pi-ai";` +1 more
 import { afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
 import type { AssistantMessage, Usage } from "@tau/tau-ai";
@@ -14,35 +13,6 @@ import { initTheme } from "@tau/tau-tui/theme";
 import type { InteractiveModeContext } from "tau/modes/types";
 import * as clipboard from "tau/utils/clipboard";
 import { Container, replaceTabs, type TUI } from "@tau/tau-tui";
-=======
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
-import type { AssistantMessage, ImageContent, Usage } from "@oh-my-pi/pi-ai";
-import * as fs from "node:fs/promises";
-import * as os from "node:os";
-import * as path from "node:path";
-import { BtwHistoryPanel } from "@oh-my-pi/pi-tui/overlays/btw-history-panel";
-import { KeybindingsManager } from "@oh-my-pi/pi-tui/app-keybindings";
-import { BtwHistoryStore } from "@oh-my-pi/pi-coding-agent/session/btw-history";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { BtwPanelComponent } from "@oh-my-pi/pi-tui/overlays/btw-panel";
-import { BTW_INJECT_LABEL, BTW_INJECTED_LABEL } from "@oh-my-pi/pi-tui/overlays/btw-inject";
-import { BtwController } from "@oh-my-pi/pi-coding-agent/modes/controllers/btw-controller";
-import { APPROVE_ARM_MS, ApprovalDialogComponent } from "@oh-my-pi/pi-tui/overlays/approval-dialog";
-import { cfgBtwInject } from "@oh-my-pi/pi-coding-agent/modes/settings";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import * as clipboard from "@oh-my-pi/pi-coding-agent/utils/clipboard";
-import {
-	Container,
-	getKeybindings,
-	type KeybindingsManager as TuiKeybindingsManager,
-	replaceTabs,
-	setKeybindings,
-	type TUI,
-} from "@oh-my-pi/pi-tui";
-import type { NativeChild, NativeNode } from "@oh-my-pi/pi-tui/native/node";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/modes/controllers/btw-controller.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const usage: Usage = {
 	input: 0,

@@ -1,22 +1,10 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { LiveSessionController } from "@oh-my-pi/pi-coding-agen…`
 import { Settings } from "tau/config/settings";
 import { LiveSessionController } from "tau/live/controller";
 import { LiveVisualizer } from "@tau/tau-tui/apps/live-visualizer";
 import { LiveCommandController } from "tau/modes/controllers/live-command-controller";
 import type { InteractiveModeContext } from "tau/modes/types";
-=======
-import type { ExtensionLiveStartOptions } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/types";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { LiveSessionController, type LiveSessionControllerOptions } from "@oh-my-pi/pi-coding-agent/live/controller";
-import type { LiveServerEvent } from "@oh-my-pi/pi-coding-agent/live/protocol";
-import * as liveTransport from "@oh-my-pi/pi-coding-agent/live/transport";
-import type { LiveTransportOptions } from "@oh-my-pi/pi-coding-agent/live/transport";
-import { LiveVisualizer } from "@oh-my-pi/pi-tui/apps/live-visualizer";
-import { LiveCommandController } from "@oh-my-pi/pi-coding-agent/modes/controllers/live-command-controller";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/modes/controllers/live-command-controller.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /** Fake InteractiveModeContext plus typed capture channels for focus/mount traffic. */
 interface ContextHarness {

@@ -310,7 +310,6 @@ pub fn pi_natives_build_version() -> Option<String> {
 	String::from_utf8(payload).ok()
 }
 
-<<<<<<< ours — function `pi_natives_version_sentinel` (T+F, confidence: medium)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 /// Version sentinel — exists solely so the JS loader can prove at load time
 /// that the `.node` file on disk is from the same package release as the
@@ -336,8 +335,6 @@ pub fn pi_natives_build_version() -> Option<String> {
 /// prefix and the loader accepts it at the same version.
 #[napi(js_name = "__tauNativesV18_3_0")]
 pub const fn tau_natives_version_sentinel() {}
-=======
->>>>>>> theirs — function `pi_natives_version_sentinel` (T+F, confidence: medium) · weave: run 'weave explain crates/tau-natives/src/lib.rs' for per-hunk detail, 'weave check' to verify your resolution
 
 /// Native module entry point: install crash diagnostics before any tool can
 /// invoke a panicking or allocating native call. This runs during `.node`

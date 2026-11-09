@@ -1,17 +1,9 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { FetchImpl, ImageContent, Model, ServiceTierByFami…`
 import type { AgentOptions, AgentTelemetryConfig, AgentTool, AgentToolContext } from "@tau/tau-agent-core";
 import type { EditStore } from "@tau/tau-natives";
 import type { FetchImpl, ImageContent, Model, ServiceTierByFamily, ToolChoice } from "@tau/tau-ai";
 import { logger } from "@tau/tau-utils";
 import type { AsyncJobManager } from "../async/job-manager";
-=======
-import type { AgentOptions, AgentTelemetryConfig, AgentTool, AgentToolContext } from "@oh-my-pi/pi-agent-core";
-import type { EditStore } from "@oh-my-pi/pi-natives";
-import type { FetchImpl, ImageContent, Message, Model, ServiceTierByFamily, ToolChoice } from "@oh-my-pi/pi-ai";
-import { logger } from "@oh-my-pi/pi-utils";
-import type { AsyncJobManagerApi } from "../async/job-manager";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/index.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { Rule } from "../capability/rule";
 import type { EffectiveExtensionRoots } from "../capability/types";
 import type { EvalPreludeDefinition } from "../eval/preludes";
@@ -32,15 +24,9 @@ import type { HindsightSessionState } from "../hindsight/state";
 import type { LocalProtocolOptions } from "../internal-urls";
 import type { DaemonCompletionNotification } from "../launch/protocol";
 import { LspTool } from "../lsp";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { FetchImpl, ImageContent, Model, ServiceTierByFami…`
 import type { MCPManager } from "../mcp";
 import type { MnemotauSessionState } from "../mnemotau/state";
-=======
-import type { MCPManagerApi, MCPToolScope } from "../mcp";
-import { MEMORY_BACKEND_TOOL_NAMES } from "../memory-backend/tool-names";
-import type { MnemopiSessionState } from "../mnemopi/state";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import type { PlanModeState } from "../plan-mode/state";
 import type { CallContext, SpotlightSession } from "../spotlight/types";
 import type { AgentLifecycleApi } from "../registry/agent-lifecycle";
@@ -892,7 +878,6 @@ export async function createTools(session: ToolSession, toolNames?: string[]): P
 		session.deviceOnlyWrite = undefined;
 		session.pendingFullWriteDescription = undefined;
 	}
-<<<<<<< ours — scope `// Auto-include AST counterparts when their t...` in function `createTools`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	// Auto-include AST counterparts when their text-based sibling is present.
 	// Restricted callers own the active list and must not have it widened.
@@ -949,11 +934,8 @@ export async function createTools(session: ToolSession, toolNames?: string[]): P
 			}
 		}
 	}
-=======
->>>>>>> theirs — scope `// Auto-include AST counterparts when their t...` deleted in theirs
 	const allTools: Record<string, ToolFactory> = { ...BUILTIN_TOOLS, ...HIDDEN_TOOLS };
 	const baseEntries = names.map(name => [name, allTools[name]] as const);
-<<<<<<< ours — scope `const isToolAllowed = (name: string) => {` in function `createTools`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	const isToolAllowed = (name: string) => {
 		// Never in the default set. Explicitly activatable while goal.enabled and
@@ -1018,8 +1000,6 @@ export async function createTools(session: ToolSession, toolNames?: string[]): P
 		}
 		return true;
 	};
-=======
->>>>>>> theirs — scope `const isToolAllowed = (name: string) => {` deleted in theirs
 
 	const activeToolNames = new Set(names);
 	if (session.setActiveToolNames) {
@@ -1120,24 +1100,14 @@ export async function createTools(session: ToolSession, toolNames?: string[]): P
 	return tools;
 }
 
-<<<<<<< ours — export `AskToolDetails` (S, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `export type { AskToolDetails, QuestionResult } from "@oh-my-pi/…`
 export type { AskToolDetails, QuestionResult } from "@tau/tau-tui/tools/ask";
-=======
-export type { AskToolDetails } from "@oh-my-pi/pi-tui/tools/ask";
->>>>>>> theirs — export `AskToolDetails` (S, confidence: medium)
-<<<<<<< ours — export `QuestionResult` (S, confidence: medium)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 export type { AskToolDetails, QuestionResult } from "@tau/tau-tui/tools/ask";
-=======
->>>>>>> theirs — export `QuestionResult` (S, confidence: medium)
-<<<<<<< ours — interstitial `between:packages/coding-agent/src/tools/index.ts::export::QuestionResult:packages/coding-agent/src/tools/index.ts::export::askToolRenderer` (T, confidence: high)
 // refused_by: merge_ladder_exhausted · collision: `// package). Re-export it so the pi-tui renderer migration does…`
 // Issue #12680: extensions that shadow the built-in ask tool reach the native
 // renderer through the injected pi.pi namespace (the root barrel of this
 // package). Re-export it so the tau-tui renderer migration doesn't drop it.
-=======
->>>>>>> theirs — interstitial `between:packages/coding-agent/src/tools/index.ts::export::QuestionResult:packages/coding-agent/src/tools/index.ts::export::askToolRenderer` (T, confidence: high)
 // Issue #12680: extensions that shadow the built-in ask tool reach the native
 // renderer through the injected pi.pi namespace (the root barrel of this
 // package). Re-export it so the pi-tui renderer migration doesn't drop it.

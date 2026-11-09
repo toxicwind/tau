@@ -1,12 +1,8 @@
 /**
  * Shell CLI command handlers.
  *
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `* Handles `omp shell` subcommand for testing the native brush-c…`
  * Handles `tau shell` subcommand for testing the native brush-core shell.
-=======
- * Handles `omp shell` subcommand for testing the native embedded bash engine.
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/cli/shell-cli.ts' for per-hunk detail, 'weave check' to verify your resolution
  */
 import * as path from "node:path";
 import { createInterface } from "node:readline/promises";

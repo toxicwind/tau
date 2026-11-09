@@ -372,7 +372,6 @@ describe("uploaders", () => {
 		expect(extractUploadUrl("progress 10%\nprogress 99%")).toBeNull();
 	});
 
-<<<<<<< ours — scope `it("runs a command uploader end to end agains...` in test_suite `uploaders`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("runs a command uploader end to end against a stub binary", async () => {
 		const stub = path.join(os.tmpdir(), `tau-test-uploader-${process.pid}.sh`);
@@ -395,8 +394,6 @@ describe("uploaders", () => {
 			bytes: 7,
 		});
 	});
-=======
->>>>>>> theirs — scope `it("runs a command uploader end to end agains...` deleted in theirs · weave: run 'weave explain packages/coding-agent/test/blob-broker.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 	it("runs a command uploader end to end against a stub binary", async () => {
 		const stubDir = fs.mkdtempSync(path.join(os.tmpdir(), "omp-test-uploader-"));

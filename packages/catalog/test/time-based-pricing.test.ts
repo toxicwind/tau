@@ -2,7 +2,6 @@ import { describe, expect, it, spyOn } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 import { applyCatalogCorrections, buildModel } from "@tau/tau-catalog/build";
 import { resolveProviderModels } from "@tau/tau-catalog/model-manager";
@@ -17,22 +16,6 @@ import {
 } from "@tau/tau-catalog/models";
 import type { ModelCost, ModelSpec, Usage } from "@tau/tau-catalog/types";
 import { Effort } from "@tau/tau-catalog/effort";
-=======
-import { applyCatalogCorrections, buildModel } from "@oh-my-pi/pi-catalog/build";
-import { resolveProviderModels } from "@oh-my-pi/pi-catalog/model-manager";
-import {
-	calculateCost,
-	calculateUncachedInputCost,
-	calculateUsageCost,
-	getBundledModel,
-	getEffectiveTokenCost,
-	getBundledModels,
-	getNextTimeBasedPricingTransition,
-	getTimeBasedPricingPeriod,
-} from "@oh-my-pi/pi-catalog/models";
-import type { ModelCost, ModelSpec, Usage } from "@oh-my-pi/pi-catalog/types";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/catalog/test/time-based-pricing.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { isTimeBasedCost, materializeTimeBasedCost } from "../src/pricing";
 
 function spec(id = "deepseek-v4-flash", provider = "deepseek"): ModelSpec<"openai-completions"> {

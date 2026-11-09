@@ -358,13 +358,10 @@ When native compaction starts from an ordinary local summary, that summary is in
 For speculative native compaction, `providerReplayThroughEntryId` records the snapshot's last entry, not the later commit position. Context rebuilding and the next compaction preparation both include messages appended between those positions, followed by post-commit messages. The native payload and uncovered interval are replayed once each; `/clear` discards both when it supersedes that compaction.
 
 Advisor runtimes retain native `preserveData` for subsequent maintenance and attach its provider payload to the in-memory compaction summary for the next model request. Native replay already contains the retained tail, so advisors do not also append that tail as raw messages. Local summaries still keep recent messages separately. Advisor requests use the shared message converter so both textual compaction summaries and native payloads reach the provider.
-<<<<<<< ours — scope `- **Custom remote endpoint**: if `compaction....` in heading `Summary generation`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 - **Custom remote endpoint**: if `compaction.remoteEndpoint` is set and remote compaction is enabled, local summary generation POSTs one of two wire formats:
    - custom tau summarizer endpoints receive `{ systemPrompt, prompt }` and must return JSON containing at least `{ summary }`.
    - OpenAI-compatible endpoints whose path ends in `/chat/completions` receive `{ model, messages, stream: false }`, where `messages` contains one system prompt and one user prompt. The summary is read from `choices[0].message.content`, which lets self-hosted servers such as llama.cpp and vLLM act as remote compactors without a separate summarizer shim.
-=======
->>>>>>> theirs — scope `- **Custom remote endpoint**: if `compaction....` deleted in theirs · weave: run 'weave explain docs/upstream/compaction.md' for per-hunk detail, 'weave check' to verify your resolution
 
 ### Handoff generation
 

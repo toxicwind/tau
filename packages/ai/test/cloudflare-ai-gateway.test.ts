@@ -1,6 +1,5 @@
 import { Database } from "bun:sqlite";
 import { describe, expect, test } from "bun:test";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `} from "@oh-my-pi/pi-catalog/wire/cloudflare-ai-gateway";`
 import { AuthStorage, SqliteAuthCredentialStore } from "@tau/tau-ai/auth-storage";
 import { getProviderDefinition } from "@tau/tau-ai/registry";
@@ -13,16 +12,6 @@ import {
 	parseCloudflareAiGatewayCredential,
 	serializeCloudflareAiGatewayCredential,
 } from "@tau/tau-catalog/wire/cloudflare-ai-gateway";
-=======
-import { AuthStorage, SqliteAuthCredentialStore } from "@oh-my-pi/pi-ai/auth-storage";
-import { getProviderDefinition } from "@oh-my-pi/pi-ai/registry";
-import type { OAuthController } from "@oh-my-pi/pi-ai/oauth/types";
-import { stream } from "@oh-my-pi/pi-ai/stream";
-import type { FetchImpl, Model } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { parseCloudflareCredential, serializeCloudflareCredential } from "@oh-my-pi/pi-catalog/wire/cloudflare";
-import { CLOUDFLARE_AI_GATEWAY_ANTHROPIC_BASE_URL } from "@oh-my-pi/pi-catalog/wire/cloudflare-ai-gateway";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/ai/test/cloudflare-ai-gateway.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { withEnv } from "./helpers";
 
 const ANTHROPIC_MODEL = buildModel({

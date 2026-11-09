@@ -176,14 +176,9 @@ describe("LspMuxServer", () => {
 	const clients: MuxTestClient[] = [];
 
 	beforeEach(async () => {
-<<<<<<< ours — test_suite `LspMuxServer` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 		tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-lsp-mux-test-"));
 		socketPath = path.join(tmpDir, "mux.sock");
-=======
-		tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "omp-lsp-mux-test-"));
-		endpoint = ipcEndpoint(tmpDir, "mux");
->>>>>>> theirs — test_suite `LspMuxServer` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/lsp-mux.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 		connectParams = { command: process.execPath, args: ["run", fixturePath], cwd: tmpDir };
 		server = new LspMuxServer();
 		await server.listen(endpoint);

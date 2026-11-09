@@ -6,15 +6,9 @@ import type {
 	StopReason,
 	TextContent,
 	Usage,
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-ai";
 import type { StructuredSubagentSchemaMode } from "@tau/tau-tui/tools/task";
-=======
-} from "@oh-my-pi/pi-ai";
-import type { StructuredSubagentSchemaMode } from "@oh-my-pi/pi-tui/tools/task";
-import type { ConfiguredThinkingLevel } from "@oh-my-pi/pi-tui/thinking";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/session/session-entries.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { CompactionMethod } from "./compaction-methods";
 import type { WorkPoolYieldItem } from "../task/workpool-yield";
 import type { RetryFallbackRole } from "./retry-fallback-chains";

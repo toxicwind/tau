@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # TAU Coding Agent Installer for Windows
 # Usage: irm https://raw.githubusercontent.com/can1357/tau/main/scripts/install.ps1 | iex
 #
@@ -8,22 +7,6 @@
 #   & ([scriptblock]::Create((irm https://raw.githubusercontent.com/can1357/tau/main/scripts/install.ps1))) -Source -Ref v3.20.1
 #   & ([scriptblock]::Create((irm https://raw.githubusercontent.com/can1357/tau/main/scripts/install.ps1))) -Source -Ref main
 #   & ([scriptblock]::Create((irm https://raw.githubusercontent.com/can1357/tau/main/scripts/install.ps1))) -Binary -Ref v3.20.1
-=======
-# OMP Coding Agent Installer for Windows
-# Usage: irm https://omp.sh/install.ps1 | iex
-#
-# Or with options:
-#   & ([scriptblock]::Create((irm https://omp.sh/install.ps1))) -Source
-#   & ([scriptblock]::Create((irm https://omp.sh/install.ps1))) -Binary
-#   & ([scriptblock]::Create((irm https://omp.sh/install.ps1))) -Source -Ref v18.8.9
-#   & ([scriptblock]::Create((irm https://omp.sh/install.ps1))) -Source -Ref main
-#   & ([scriptblock]::Create((irm https://omp.sh/install.ps1))) -Binary -Ref v18.8.9
-#
-# -Ref takes any tag/commit/branch with -Source; binary installs take a release
-# tag (v<version>). Prebuilt binaries come from the build service
-# ($env:PI_BUILD_URL, default https://build.stencil.so) and are checked against
-# its sha256 before install.
->>>>>>> upstream/main
 
 param(
     [switch]$Source,
@@ -41,16 +24,9 @@ if ($PSVersionTable.PSVersion -lt [version]"5.1") {
     throw "Windows PowerShell 5.1 or newer is required (found $($PSVersionTable.PSVersion)). Install PowerShell 7 from https://aka.ms/powershell and re-run the installer."
 }
 
-<<<<<<< HEAD
 $Repo = "can1357/tau"
 $Package = "@tau/tau-coding-agent"
 $InstallDir = if ($env:PI_INSTALL_DIR) { $env:PI_INSTALL_DIR } else { "$env:LOCALAPPDATA\tau" }
-=======
-$Repo = "can1357/oh-my-pi"
-$Package = "@oh-my-pi/pi-coding-agent"
-$InstallDir = if ($env:PI_INSTALL_DIR) { $env:PI_INSTALL_DIR } else { "$env:LOCALAPPDATA\omp" }
-$BuildUrl = if ($env:PI_BUILD_URL) { $env:PI_BUILD_URL.TrimEnd("/") } else { "https://build.stencil.so" }
->>>>>>> upstream/main
 # Windows PowerShell 5.1 (.NET Framework) does not reliably resolve
 # [System.Runtime.InteropServices.RuntimeInformation] without an
 # assembly-qualified name, while PowerShell 7+ (Core) loads that type from a
@@ -70,12 +46,8 @@ $BuildTarget = switch ($RawArchitecture.ToUpperInvariant()) {
     "ARM64" { "windows-arm64" }
     default { throw "Unsupported Windows architecture: $RawArchitecture" }
 }
-<<<<<<< HEAD
 $BinaryName = "tau-windows-$NativeArchitecture.exe"
 $MinimumBunVersion = "1.3.14"
-=======
-$MinimumBunVersion = "1.4.4"
->>>>>>> upstream/main
 
 # PowerShell 5.1 raises a terminating NativeCommandError for any line a native
 # executable writes to stderr while $ErrorActionPreference is "Stop", regardless
@@ -341,23 +313,8 @@ function Install-Binary {
     # Download next to the destination and move it into place only once the
     # checksum matches, so a bad download never replaces a working omp.
     Write-Host "Downloading $BinaryName..."
-<<<<<<< HEAD
     $OutPath = Join-Path $InstallDir "tau.exe"
     Invoke-WebRequest -Uri $BinaryUrl -OutFile $OutPath -TimeoutSec 900
-=======
-    $OutPath = Join-Path $InstallDir "omp.exe"
-    $DownloadPath = Join-Path $InstallDir ".omp.download.exe"
-    try {
-        Invoke-WebRequest -Uri $DownloadUrl -OutFile $DownloadPath -TimeoutSec 900
-        $ActualSha256 = (Get-FileHash -Algorithm SHA256 -LiteralPath $DownloadPath).Hash.ToLowerInvariant()
-        if ($ActualSha256 -ne $ExpectedSha256) {
-            throw "Checksum mismatch for ${BinaryName}: expected $ExpectedSha256, got $ActualSha256"
-        }
-        Move-Item -Force -LiteralPath $DownloadPath -Destination $OutPath
-    } finally {
-        Remove-Item -Force -LiteralPath $DownloadPath -ErrorAction SilentlyContinue
-    }
->>>>>>> upstream/main
 
     Write-Host ""
     Write-Host "[OK] Installed tau to $OutPath" -ForegroundColor Green

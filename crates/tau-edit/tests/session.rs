@@ -5,12 +5,8 @@
 mod common;
 
 use common::{DiskWriter, Workspace};
-<<<<<<< ours — interstitial `between:crates/tau-edit/tests/session.rs::module::common:crates/tau-edit/tests/session.rs::constant::SOURCE` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `use pi_edit::{ApplyRequest, EditMode, FileOp, session::PreviewB…`
 use tau_edit::{ApplyRequest, EditMode, FileOp, session::PreviewBatch};
-=======
-use pi_edit::{ApplyRequest, EditError, EditMode, FileOp, UrlResolution, session::PreviewBatch};
->>>>>>> theirs — interstitial `between:crates/tau-edit/tests/session.rs::module::common:crates/tau-edit/tests/session.rs::constant::SOURCE` (F, confidence: medium) · weave: run 'weave explain crates/tau-edit/tests/session.rs' for per-hunk detail, 'weave check' to verify your resolution
 
 const SOURCE: &str = "fn main() {\n    let x = 1;\n    println!(\"{x}\");\n}\n";
 

@@ -90,11 +90,8 @@ factories from the hook capability are appended to the extension pipeline.
 Explicit extension paths use the shared module resolver. See
 [Extension Loading](./extension-loading.md) for load order and disable controls.
 
-<<<<<<< ours — scope `So `<cwd>/.omp/hooks/psy-guards.ts` (no `pre/...` in heading `Native discovery location`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 So `<cwd>/.tau/hooks/psy-guards.ts` (no `pre/`/`post/` subdirectory) loads nothing and reports no error — move it into `pre/` or `post/`, e.g. `<cwd>/.tau/hooks/pre/psy-guards.ts`. This mirrors `.claude/hooks/pre|post/`. Only `.ts`/`.js` factories are appended to the extension pipeline and bound through the extension runner. See [Extension Loading](./extension-loading.md) for the shared module pipeline these factories flow through (native `.tau/extensions/` roots, plugin entries, configured paths, load order, and disable controls).
-=======
->>>>>>> theirs — scope `So `<cwd>/.omp/hooks/psy-guards.ts` (no `pre/...` deleted in theirs · weave: run 'weave explain docs/upstream/hooks.md' for per-hunk detail, 'weave check' to verify your resolution
 
 The legacy `discoverAndLoadHooks(configuredPaths, cwd)` helper still exists and does:
 

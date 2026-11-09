@@ -14,15 +14,9 @@ import { Buffer } from "node:buffer";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { removeWithRetries, VERSION } from "@tau/tau-utils";
 import { SETTINGS_SCHEMA, Settings } from "../../src/config/settings";
-=======
-import { removeWithRetries, VERSION } from "@oh-my-pi/pi-utils";
-import { lookup } from "../../src/config/registry";
-import { Settings } from "../../src/config/settings";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/utils/changelog.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	CHANGELOG_COMMAND_USAGE,
 	type ChangelogEntry,
@@ -403,7 +397,6 @@ describe.skipIf(!hasPtyHarness)("interactive startup changelog PTY smoke", () =>
 	test(
 		"does not dump packaged changelog history on first install with uncollapsed notes",
 		async () => {
-<<<<<<< ours — scope `await withTempAgentDir(async agentDir => {` in test `does not dump packaged changelog history on first install with uncollapsed notes` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `const root = await fs.mkdtemp(path.join(os.tmpdir(), "omp-chang…`
 		await withTempAgentDir(async agentDir => {
 			const root = await fs.mkdtemp(path.join(os.tmpdir(), "tau-changelog-pty-"));
@@ -412,20 +405,6 @@ describe.skipIf(!hasPtyHarness)("interactive startup changelog PTY smoke", () =>
 				await fs.mkdir(path.join(root, "xdg-state"), { recursive: true });
 				await fs.mkdir(path.join(root, "xdg-data"), { recursive: true });
 				await Bun.write(path.join(agentDir, "config.yml"), "setupVersion: 1\ncollapseChangelog: false\n");
-=======
-			await withTempAgentDir(async agentDir => {
-				const root = await fs.mkdtemp(path.join(os.tmpdir(), "omp-changelog-pty-"));
-				try {
-					await fs.mkdir(path.join(root, "xdg-config"), { recursive: true });
-					await fs.mkdir(path.join(root, "xdg-state"), { recursive: true });
-					await fs.mkdir(path.join(root, "xdg-data"), { recursive: true });
-					// Setup already completed, so the interactive transcript (where the startup
-					// changelog renders) comes up instead of the animated setup wizard.
-					await Bun.write(
-						path.join(agentDir, "config.yml"),
-						`setupVersion: ${CURRENT_SETUP_VERSION}\ncollapseChangelog: false\n`,
-					);
->>>>>>> theirs — scope `await withTempAgentDir(async agentDir => {`
 
 					const proc = Bun.spawn(["script", "-q", "-c", `bun ${JSON.stringify(cliEntry)}`, "/dev/null"], {
 						cwd: repoRoot,

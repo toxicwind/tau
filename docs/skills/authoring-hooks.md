@@ -14,18 +14,11 @@ Hooks are event-driven interceptors that run alongside the agent loop. They are 
 ```ts
 import type { HookAPI } from "@tau/tau-coding-agent/extensibility/hooks";
 
-<<<<<<< ours — scope `export default function myHook(omp: HookAPI):...` in heading `Factory signature` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `omp.on("tool_call", async (event, ctx) => {`
 export default function myHook(tau: HookAPI): void {
   tau.on("tool_call", async (event, ctx) => {
     // intercept every tool call
   });
-=======
-export default function myHook(omp: HookAPI): void {
-	omp.on("tool_call", async (event, ctx) => {
-		// intercept every tool call
-	});
->>>>>>> theirs — scope `export default function myHook(omp: HookAPI):...` · weave: run 'weave explain docs/skills/authoring-hooks.md' for per-hunk detail, 'weave check' to verify your resolution
 }
 ```
 
@@ -70,7 +63,6 @@ export default function myExtension(pi: ExtensionAPI): void {
 
 ### Agent/turn lifecycle
 
-<<<<<<< ours — scope `body prelude` in heading `Agent/turn lifecycle` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `| `turn_start` | Start of a user→agent turn | — |` +1 more
 | Event | Fires | Can return |
 |---|---|---|
@@ -86,22 +78,6 @@ export default function myExtension(pi: ExtensionAPI): void {
 | `auto_retry_end` | Auto-retry ends | — |
 | `ttsr_triggered` | TTSR (too-short response) triggered | — |
 | `todo_reminder` | Todo reminder fires | — |
-=======
-| Event                   | Fires                                                                                                                                                                         | Can return                                                              |
-| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| `before_agent_start`    | Before agent starts a turn                                                                                                                                                    | `{ message?: { customType; content; display; details; attribution? } }` |
-| `agent_start`           | Agent loop starts                                                                                                                                                             | —                                                                       |
-| `agent_end`             | Agent loop ends (`willContinue` signals the loop is not settled; `awaitingAsyncWork` marks a wait on background jobs rather than an already-scheduled automatic continuation) | —                                                                       |
-| `turn_start`            | Start of an assistant-response/tool-result iteration within the loop                                                                                                          | —                                                                       |
-| `turn_end`              | End of that iteration; carries the message and tool results                                                                                                                   | —                                                                       |
-| `context`               | Before each LLM API call                                                                                                                                                      | `{ messages?: Message[] }`                                              |
-| `auto_compaction_start` | Auto-compaction begins                                                                                                                                                        | —                                                                       |
-| `auto_compaction_end`   | Auto-compaction ends                                                                                                                                                          | —                                                                       |
-| `auto_retry_start`      | Auto-retry begins                                                                                                                                                             | —                                                                       |
-| `auto_retry_end`        | Auto-retry ends                                                                                                                                                               | —                                                                       |
-| `ttsr_triggered`        | TTSR (too-short response) triggered                                                                                                                                           | —                                                                       |
-| `todo_reminder`         | Todo reminder fires                                                                                                                                                           | —                                                                       |
->>>>>>> theirs — scope `body prelude`
 
 Extension-only events such as `tool_execution_start`, `tool_execution_update`, `tool_execution_end`, `input`, `user_bash`, and `user_python` require `ExtensionAPI`.
 
@@ -110,7 +86,6 @@ Extension-only events such as `tool_execution_start`, `tool_execution_update`, `
 Return `{ block: true, reason: "..." }` from a `tool_call` handler to prevent execution:
 
 ```ts
-<<<<<<< ours — heading `Pre-tool blocking contract` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 tau.on("tool_call", async (event, ctx) => {
   if (event.toolName === "bash") {
@@ -119,15 +94,6 @@ tau.on("tool_call", async (event, ctx) => {
       return { block: true, reason: "Refusing to delete root filesystem" };
     }
   }
-=======
-omp.on("tool_call", async (event, ctx) => {
-	if (event.toolName === "bash") {
-		const cmd = String(event.input.command ?? "");
-		if (/\brm\s+-rf\s+\//.test(cmd)) {
-			return { block: true, reason: "Refusing rm -rf with an absolute-path target" };
-		}
-	}
->>>>>>> theirs — heading `Pre-tool blocking contract` (F, confidence: medium)
 });
 ```
 
@@ -145,7 +111,6 @@ Contract:
 Return `{ content, details, isError, additionalContext }` from a `tool_result` handler to patch what the LLM sees and/or attach trusted guidance outside the tool output:
 
 ```ts
-<<<<<<< ours — heading `Post-tool override contract` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 tau.on("tool_result", async (event, ctx) => {
   if (event.toolName === "read" && !event.isError) {
@@ -158,22 +123,6 @@ tau.on("tool_result", async (event, ctx) => {
     });
     return { content: redacted };
   }
-=======
-omp.on("tool_result", async (event, ctx) => {
-	if (event.toolName === "read" && !event.isError) {
-		const redacted = event.content.map(chunk => {
-			if (chunk.type !== "text") return chunk;
-			return {
-				...chunk,
-				text: chunk.text.replace(/(?:sk|pk)-[a-zA-Z0-9]{20,}/g, "[REDACTED_API_KEY]"),
-			};
-		});
-		return {
-			content: redacted,
-			additionalContext: "Use the redacted result for subsequent reasoning.",
-		};
-	}
->>>>>>> theirs — heading `Post-tool override contract` (S+F, confidence: low)
 });
 ```
 
@@ -191,7 +140,6 @@ Contract:
 Return `{ messages: [...] }` from a `context` handler to rewrite the message list before each LLM API call. Use `ExtensionAPI` when filtering custom session messages, as in this example:
 
 ```ts
-<<<<<<< ours — scope `omp.on("context", async (event, ctx) => {` in heading `Context modification contract` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `omp.on("context", async (event, ctx) => {`
 tau.on("context", async (event, ctx) => {
   // Remove debug-only custom messages from LLM context
@@ -199,12 +147,6 @@ tau.on("context", async (event, ctx) => {
     msg => !(msg.role === "custom" && msg.customType === "debug-only")
   );
   return { messages: filtered };
-=======
-pi.on("context", async (event, ctx) => {
-	// Remove debug-only custom messages from LLM context
-	const filtered = event.messages.filter(msg => !(msg.role === "custom" && msg.customType === "debug-only"));
-	return { messages: filtered };
->>>>>>> theirs — scope `omp.on("context", async (event, ctx) => {`
 });
 ```
 
@@ -223,16 +165,10 @@ This narrow regex matches `rm -rf` followed by any absolute path, including `/tm
 ```ts
 import type { HookAPI } from "@tau/tau-coding-agent/extensibility/hooks";
 
-<<<<<<< ours — scope `export default function rmRfBlocker(omp: Hook...` in heading `1. rm-rf blocker` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `omp.on("tool_call", async (event, ctx) => {`
 export default function rmRfBlocker(tau: HookAPI): void {
   tau.on("tool_call", async (event, ctx) => {
     if (event.toolName !== "bash") return;
-=======
-export default function rmRfBlocker(omp: HookAPI): void {
-	omp.on("tool_call", async (event, ctx) => {
-		if (event.toolName !== "bash") return;
->>>>>>> theirs — scope `export default function rmRfBlocker(omp: Hook...`
 
 		const cmd = String(event.input.command ?? "");
 		if (!/\brm\s+-rf\s+\//.test(cmd)) return;
@@ -268,16 +204,10 @@ const SECRET_PATTERNS = [
 	/\b[a-zA-Z0-9_-]{20,}\s*=\s*["']?[a-zA-Z0-9._/+=-]{20,}["']?/g,
 ];
 
-<<<<<<< ours — scope `export default function apiKeyRedactor(omp: H...` in heading `2. API-key redactor` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `omp.on("tool_result", async (event) => {`
 export default function apiKeyRedactor(tau: HookAPI): void {
   tau.on("tool_result", async (event) => {
     if (event.isError) return;
-=======
-export default function apiKeyRedactor(omp: HookAPI): void {
-	omp.on("tool_result", async event => {
-		if (event.isError) return;
->>>>>>> theirs — scope `export default function apiKeyRedactor(omp: H...`
 
 		let changed = false;
 		const redacted = event.content.map(chunk => {
@@ -303,16 +233,10 @@ export default function apiKeyRedactor(omp: HookAPI): void {
 ```ts
 import type { HookAPI } from "@tau/tau-coding-agent/extensibility/hooks";
 
-<<<<<<< ours — scope `export default function contextFilter(omp: Ho...` in heading `3. Context filter` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `omp.on("context", async (event) => {`
 export default function contextFilter(tau: HookAPI): void {
   tau.on("context", async (event) => {
     const MAX_TOOL_OUTPUT_CHARS = 8_000;
-=======
-export default function contextFilter(omp: HookAPI): void {
-	omp.on("context", async event => {
-		const MAX_TOOL_OUTPUT_CHARS = 8_000;
->>>>>>> theirs — scope `export default function contextFilter(omp: Ho...`
 
 		const trimmed = event.messages.map(msg => {
 			// Truncate very large tool results to keep context manageable

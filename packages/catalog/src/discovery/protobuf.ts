@@ -829,7 +829,6 @@ class Writer {
 		this.#length += chunk.byteLength;
 	}
 
-<<<<<<< ours — scope `finish` in class `Writer` (S+F, confidence: low)
 // refused_by: container_member · collision: `finish(): Uint8Array {` +1 more
 	finish(): Uint8Array<ArrayBuffer> {
 		// Always allocate a fresh ArrayBuffer-backed buffer so the returned view
@@ -837,12 +836,6 @@ class Writer {
 		// an arbitrary backing store. (The DOM `BodyInit`/`Request` types require
 		// the concrete `ArrayBuffer` bound, so protobuf encode results are safely
 		// usable as fetch bodies.)
-=======
-	/** Wire bytes on a plain `ArrayBuffer`, so they satisfy `fetch`'s `BodyInit` as-is. */
-	finish(): Uint8Array<ArrayBuffer> {
-		const [only] = this.#chunks;
-		if (this.#chunks.length === 1 && isArrayBufferBacked(only)) return only;
->>>>>>> theirs — scope `finish` · weave: run 'weave explain packages/catalog/src/discovery/protobuf.ts' for per-hunk detail, 'weave check' to verify your resolution
 		const result = new Uint8Array(this.#length);
 		let offset = 0;
 		for (const chunk of this.#chunks) {

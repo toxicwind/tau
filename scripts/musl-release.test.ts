@@ -38,7 +38,6 @@ describe("musl release artifacts", () => {
 		);
 	});
 
-<<<<<<< ours — scope `test("selects the musl asset when the Linux h...` in test_suite `musl release artifacts`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	test("selects the musl asset when the Linux host reports musl", async () => {
 		const dir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-musl-install-"));
@@ -74,6 +73,4 @@ esac
 		expect(result.stdout).toContain("Downloading tau-linux-musl-x64...");
 		expect(await Bun.file(path.join(installDir, "tau")).text()).toBe('#!/bin/sh\necho "tau v1.0.0"\n');
 	});
-=======
->>>>>>> theirs — scope `test("selects the musl asset when the Linux h...` deleted in theirs · weave: run 'weave explain scripts/musl-release.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 });

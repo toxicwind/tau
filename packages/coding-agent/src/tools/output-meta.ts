@@ -11,7 +11,6 @@ import type {
 	AgentToolExecFn,
 	AgentToolResult,
 	AgentToolUpdateCallback,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { formatOutputNotice, type OutputMeta, type TruncationMe…`
 } from "@tau/tau-agent-core";
 import type { ImageContent, TextContent } from "@tau/tau-ai";
@@ -24,25 +23,6 @@ import {
 	truncateTail,
 } from "@tau/tau-tui/tools/streaming-output";
 import { formatOutputNotice, type OutputMeta, type TruncationMeta } from "@tau/tau-tui/tools/output-meta";
-=======
-} from "@oh-my-pi/pi-agent-core";
-import type { ImageContent, TextContent } from "@oh-my-pi/pi-ai";
-import { isRecord, logger } from "@oh-my-pi/pi-utils";
-import type { Setting } from "../config/registry";
-import type { Settings } from "../config/settings";
-import {
-	type OutputSummary,
-	type TruncationResult,
-	truncateMiddle,
-	truncateTail,
-} from "@oh-my-pi/pi-tui/tools/streaming-output";
-import {
-	formatOutputNotice,
-	type MinimizedMeta,
-	type OutputMeta,
-	type TruncationMeta,
-} from "@oh-my-pi/pi-tui/tools/output-meta";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/output-meta.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { renderError } from "./tool-errors";
 import {
 	cfgToolsArtifactHeadBytes,

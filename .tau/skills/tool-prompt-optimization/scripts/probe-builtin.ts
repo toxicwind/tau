@@ -18,16 +18,10 @@
  * The heavy coding-agent import lives here; probe.ts stays tau-ai-only.
  */
 import { parseArgs } from "node:util";
-<<<<<<< ours — interstitial `file_header` (T+F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { BUILTIN_TOOLS, GithubTool, HIDDEN_TOOLS, IrcTool, type…`
 import { toolWireSchema } from "@tau/tau-ai";
 import { Settings } from "@tau/tau-coding-agent/config/settings";
 import { BUILTIN_TOOLS, GithubTool, HIDDEN_TOOLS, IrcTool, type Tool, type ToolFactory, type ToolSession } from "@tau/tau-coding-agent/tools";
-=======
-import { toolWireSchema } from "@oh-my-pi/pi-ai";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { BUILTIN_TOOLS, GithubTool, HIDDEN_TOOLS, type Tool, type ToolFactory, type ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
->>>>>>> theirs — interstitial `file_header` (T+F, confidence: medium) · weave: run 'weave explain .tau/skills/tool-prompt-optimization/scripts/probe-builtin.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { probe } from "./probe.ts";
 
 const OPEN_TAG = /^<[a-z_][\w-]*>$/i;

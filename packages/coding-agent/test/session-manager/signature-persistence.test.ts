@@ -1,18 +1,11 @@
 import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import type { AssistantMessage, ImageContent } from "@oh-my-pi/…`
 import type { AssistantMessage, ImageContent } from "@tau/tau-ai";
 import type { SessionMessageEntry } from "tau/session/session-entries";
 import { SessionManager } from "tau/session/session-manager";
 import { getBlobsDir, TempDir } from "@tau/tau-utils";
-=======
-import type { AssistantMessage, CursorHistoryPayload, GeminiNativeContentPayload, ImageContent } from "@oh-my-pi/pi-ai";
-import type { SessionMessageEntry } from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { getBlobsDir, TempDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/session-manager/signature-persistence.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function isAssistantSessionEntry(entry: unknown): entry is SessionMessageEntry & { message: AssistantMessage } {
 	return (

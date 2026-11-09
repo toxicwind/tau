@@ -2,7 +2,6 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import type { Api, AssistantMessage, completeSimple, Model } from "@tau/tau-ai";
 import type { ModelSpec } from "@tau/tau-ai/types";
@@ -10,18 +9,6 @@ import { buildModel } from "@tau/tau-catalog/build";
 import { Settings } from "tau/config/settings";
 import { type DescribeAttachedImagesDeps, describeAttachedImagesForTextModel } from "tau/utils/image-vision-fallback";
 import { removeWithRetries } from "@tau/tau-utils";
-=======
-import type { Api, AssistantMessage, completeSimple, Model } from "@oh-my-pi/pi-ai";
-import type { ModelSpec } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import {
-	type DescribeAttachedImagesDeps,
-	describeAttachedImagesForTextModel,
-} from "@oh-my-pi/pi-coding-agent/utils/image-vision-fallback";
-import { CostGate } from "@oh-my-pi/pi-coding-agent/session/cost-gate";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/utils/image-vision-fallback.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 // 1x1 transparent PNG.
 const TINY_PNG_BASE64 =

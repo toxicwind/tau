@@ -26,7 +26,6 @@ rust_test(
     proc_macro_deps = all_crate_deps(proc_macro_dev = True),
     deps = all_crate_deps(normal_dev = True) + ["//crates/vendor/grep-searcher"],
 )
-<<<<<<< HEAD:crates/tau-walker/BUILD.bazel
 
 [
     rust_test(
@@ -41,5 +40,3 @@ rust_test(
         "perf",
     ]
 ]
-=======
->>>>>>> upstream/main:crates/pi-walker/BUILD.bazel

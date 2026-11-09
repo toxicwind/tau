@@ -598,7 +598,6 @@ pub fn source_parses(code: &str, path: &str) -> bool {
 	let code = if code.is_empty() { "\n" } else { code };
 	pi_ast::summary::parse_code_status(code, None, Some(path))
 		.is_ok_and(|language| language.is_some())
-<<<<<<< ours — scope `pi_ast::summary::summarize_code(pi_ast::summa...` in function `source_parses`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	tau_ast::summary::summarize_code(tau_ast::summary::SummaryOptions {
 		code:               code.to_owned(),
@@ -610,8 +609,6 @@ pub fn source_parses(code: &str, path: &str) -> bool {
 		unfold_limit_lines: None,
 	})
 	.is_ok_and(|summary| summary.parsed)
-=======
->>>>>>> theirs — scope `pi_ast::summary::summarize_code(pi_ast::summa...` deleted in theirs · weave: run 'weave explain crates/tau-edit/src/session.rs' for per-hunk detail, 'weave check' to verify your resolution
 }
 
 /// The persisted bytes differ from what was sent (an editor reformatted on

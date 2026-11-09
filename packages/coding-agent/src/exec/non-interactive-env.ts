@@ -131,7 +131,6 @@ export function buildNonInteractiveEnv(
 	// `PI_BASH_NO_CI` (and its legacy alias) opts out of the automatic `CI=true`
 	// injection. Mirrors the session-env gate in `procmgr.ts` so the opt-out
 	// reaches the per-command env, which otherwise overrides the session value.
-<<<<<<< ours — function `buildNonInteractiveEnv` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `return overrides ? { ...base, ...overrides } : base;` +1 more
 	const base =
 		baseEnv.PI_BASH_NO_CI || baseEnv.CLAUDE_BASH_NO_CI ? withoutCI(NON_INTERACTIVE_ENV) : NON_INTERACTIVE_ENV;
@@ -194,27 +193,6 @@ export function buildNonInteractiveEnv(
 		for (const [key, value] of group) {
 			env[key] = value;
 		}
-=======
-	const env: Record<string, string> =
-		baseEnv.PI_BASH_NO_CI || baseEnv.CLAUDE_BASH_NO_CI ? withoutCI(NON_INTERACTIVE_ENV) : { ...NON_INTERACTIVE_ENV };
-
-	// Agent commands pin the locale whatever the launcher inherited, so sort
-	// order, number formats, and messages do not vary by machine; a locale in
-	// the command's own env opts out. Inherited-locale commands still get UTF-8
-	// on Windows when nothing names a locale.
-	const pinLocale = !inheritLocale || (platform === "win32" && !hasLocaleEnvValue(baseEnv, platform));
-	if (pinLocale && !hasLocaleEnvValue(overrides, platform)) {
-		env.LANG = AGENT_LOCALE;
-		env.LC_ALL = AGENT_LOCALE;
-	}
-
-	if (
-		platform === "win32" &&
-		!hasEnvGroupValue(baseEnv, WINDOWS_PYTHON_UTF8_ENV, platform) &&
-		!hasEnvGroupValue(overrides, WINDOWS_PYTHON_UTF8_ENV, platform)
-	) {
-		Object.assign(env, WINDOWS_PYTHON_UTF8_ENV);
->>>>>>> theirs — function `buildNonInteractiveEnv` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/exec/non-interactive-env.ts' for per-hunk detail, 'weave check' to verify your resolution
 	}
 	return { ...env, ...shimOverrides };
 }

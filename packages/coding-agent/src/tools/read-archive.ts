@@ -1,4 +1,3 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (3 contested hunk(s), neither side deleted the other's lines)
 import { join } from "node:path";
 import type { AgentToolResult } from "@tau/tau-agent-core";
@@ -13,23 +12,6 @@ import {
 import type { ToolSession } from "../sdk";
 import { truncateHead } from "@tau/tau-tui/tools/streaming-output";
 import { applyListLimit } from "@tau/tau-tui/tools/list-limit";
-=======
-import type { AgentToolResult } from "@oh-my-pi/pi-agent-core";
-import type { TextContent } from "@oh-my-pi/pi-ai";
-import { TempDir } from "@oh-my-pi/pi-utils";
-import {
-	type ArchiveFormat,
-	type ArchiveReader,
-	formatArchiveEntryLines,
-	openArchive,
-	parseArchivePathCandidates,
-} from "@oh-my-pi/pi-utils/ar";
-import { LRUCache } from "@oh-my-pi/pi-utils/lru";
-import type { ToolSession } from "../sdk";
-import { convertBufferWithMarkit } from "../utils/markit";
-import { truncateHead } from "@oh-my-pi/pi-tui/tools/streaming-output";
-import { applyListLimit } from "@oh-my-pi/pi-tui/tools/list-limit";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/read-archive.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { resolveReadPath } from "./path-utils";
 import type { ReadToolDetails } from "@tau/tau-tui/tools/read";
 import {
@@ -46,14 +28,8 @@ import {
 	type SuffixMatchCache,
 } from "./read-path-resolution";
 import { isMultiRange, type ParsedSelector, parseSel, resolveTailSelector, selToOffsetLimit } from "./read-selector";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (3 contested hunk(s), neither side deleted the other's lines)
 import { formatBytes } from "@tau/tau-tui/render/render-utils";
-=======
-import { type PdfImageReadTarget, type PdfPageReadOptions, splitPdfImageReadPath } from "./read-pdf";
-import { cfgReadRenderMarkdown } from "./settings";
-import { formatBytes } from "@oh-my-pi/pi-tui/render/render-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import { throwIfAborted } from "./tool-errors";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 import { toolResult } from "./tool-result";

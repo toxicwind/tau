@@ -5183,7 +5183,6 @@ fn find_tree_options(config: &Config) -> pi_walker::walk::TreeOptions {
 		..pi_walker::walk::TreeOptions::default()
 	}
 }
-<<<<<<< ours — function `walker_follow_links` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 fn walker_follow_links(follow: Follow) -> tau_walker::FollowLinks {
 	match follow {
@@ -5192,9 +5191,6 @@ fn walker_follow_links(follow: Follow) -> tau_walker::FollowLinks {
 		Follow::Always => tau_walker::FollowLinks::Always,
 	}
 }
-=======
->>>>>>> theirs — function `walker_follow_links` (S+F, confidence: low) · weave: run 'weave explain crates/tau-builtins/src/find.rs' for per-hunk detail, 'weave check' to verify your resolution
-<<<<<<< ours — function `build_find_walk_request` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 fn build_find_walk_request(config: &Config, root: &Path) -> tau_walker::WalkRequest {
 	tau_walker::WalkRequest::new(root)
@@ -5220,8 +5216,6 @@ fn build_find_walk_request(config: &Config, root: &Path) -> tau_walker::WalkRequ
 		.same_file_system(config.same_file_system)
 		.cache(false)
 }
-=======
->>>>>>> theirs — function `build_find_walk_request` (S+F, confidence: low)
 
 async fn process_dir_walk_request(
 	config: &Config,
@@ -5244,7 +5238,6 @@ async fn process_dir_walk_request(
 			ret = 1;
 			let _ = writeln!(host.stderr, "Error: {}: {error}", path.display());
 		},
-<<<<<<< ours — scope `let status = request.for_each_entry_with_hear...` in function `process_dir_walk_request` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `|entry: pi_walker::EntryMeta<'_>| {` +5 more
 		|entry: tau_walker::EntryMeta<'_>| {
 			let walk_entry =
@@ -5279,56 +5272,6 @@ async fn process_dir_walk_request(
 			Ok(tau_walker::WalkDecision::Include)
 		},
 	);
-=======
-		Ok(mut tree) => {
-			let mut pace = host.output_pace();
-			while let Some(event) = tree.next().await {
-				match event {
-					pi_walker::walk::Event::Entry(entry) => {
-						let walk_entry =
-							WalkEntry::new(Arc::clone(&fs), entry.abs.to_path_buf(), entry.depth, config.follow)
-								.with_listed_type(entry.file_type);
-						let (should_quit, should_skip_current_dir) = apply_find_entry(
-							walk_entry,
-							entry.path,
-							operand,
-							resolved_root,
-							deps,
-							host,
-							matcher,
-							&mut current_dir,
-							&mut ret,
-						)
-						.await;
-						// A provider tree's next listing may wait, so its
-						// output is delivered per entry.
-						let _ = if layer.is_native() {
-							host.pace_output(&mut pace).await
-						} else {
-							host.flush_output().await
-						};
-						if host.sigpipe_hit() {
-							break;
-						}
-						if should_quit {
-							*quit = true;
-							break;
-						}
-						if should_skip_current_dir {
-							tree.skip_dir();
-						}
-					},
-					pi_walker::walk::Event::Error(error) => {
-						ret = 1;
-						let _ = writeln!(host.stderr, "Error: {}: {}", error.path.display(), error.error);
-						let _ = host.flush_output().await;
-					},
-				}
-			}
-		},
-	}
->>>>>>> theirs — scope `let status = request.for_each_entry_with_hear...`
-<<<<<<< ours — scope `match status {` in function `process_dir_walk_request`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	match status {
 		Ok(tau_walker::WalkStatus::Complete | tau_walker::WalkStatus::Stopped) => {
@@ -5351,8 +5294,6 @@ async fn process_dir_walk_request(
 			ret_value
 		},
 	}
-=======
->>>>>>> theirs — scope `match status {` deleted in theirs
 }
 
 async fn process_dir(

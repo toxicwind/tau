@@ -1,12 +1,7 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { type Dialect, getDialectDefinition } from "@oh-my-pi/p…`
 import type { Message, Usage } from "@tau/tau-ai";
 import { type Dialect, getDialectDefinition } from "@tau/tau-ai/dialect";
-=======
-import type { Message, Usage } from "@oh-my-pi/pi-ai";
-import { getDialectDefinition } from "@oh-my-pi/pi-ai/dialect";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/test/transcript-render.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function usage(): Usage {
 	return {

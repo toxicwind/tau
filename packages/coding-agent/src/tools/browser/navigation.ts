@@ -1,12 +1,6 @@
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { untilAborted } from "@oh-my-pi/pi-utils";`
 import { untilAborted } from "@tau/tau-utils";
 import type { Page } from "puppeteer-core";
-=======
-import { untilAborted, withTimeout } from "@oh-my-pi/pi-utils";
-import type { Page, WaitForOptions } from "puppeteer-core";
-import { puppeteerTimeoutError } from "./launch";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/browser/navigation.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 declare module "puppeteer-core" {
 	interface Frame {

@@ -2,19 +2,11 @@
  * Shared utilities for compaction and branch summarization.
  */
 
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { formatGroupedPaths, prompt, stringifyJson } from "@oh-…`
 import type { Message, ToolCall } from "@tau/tau-ai";
 import { type Dialect, getDialectDefinition } from "@tau/tau-ai/dialect";
 import { escapeHarmonyControlTokens } from "@tau/tau-ai/utils/harmony-leak";
 import { formatGroupedPaths, prompt, stringifyJson } from "@tau/tau-utils";
-=======
-import type { Message, ToolCall } from "@oh-my-pi/pi-ai";
-import { type Dialect, getDialectDefinition } from "@oh-my-pi/pi-ai/dialect";
-import { escapeHarmonyControlTokens } from "@oh-my-pi/pi-ai/utils/harmony-leak";
-import { prompt, stringifyJson } from "@oh-my-pi/pi-utils";
-import * as snapcompact from "@oh-my-pi/snapcompact";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/agent/src/compaction/utils.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { AgentMessage } from "../types";
 import summarizationSystemPrompt from "./prompts/summarization-system.md" with { type: "text" };
 

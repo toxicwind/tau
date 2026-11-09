@@ -73,10 +73,10 @@ const THEIRS_SCOPE = "@oh-my-pi/";
  * ours — which is why `Hunk` tracks `base` separately and the resolver drops
  * it rather than mistaking it for our own code.
  */
-const OURS_MARKER = "<<<<<<< ours";
-const BASE_MARKER = "||||||| base";
-const MID_MARKER = "=======";
-const THEIRS_MARKER = ">>>>>>> theirs";
+const isOursMarker = (l: string): boolean => l.startsWith("<<<<<<< ours") || l.startsWith("<<<<<<< ");
+const isBaseMarker = (l: string): boolean => l.startsWith("||||||| base") || l.startsWith("|||||||");
+const isMidMarker = (l: string): boolean => l.startsWith("=======");
+const isTheirsMarker = (l: string): boolean => l.startsWith(">>>>>>> theirs") || l.startsWith(">>>>>>> ");
 
 export interface Hunk {
 	/** 1-based line of the `<<<<<<<` marker. */
@@ -97,22 +97,21 @@ export function parseHunks(text: string): Hunk[] | null {
 	const hunks: Hunk[] = [];
 
 	for (let i = 0; i < lines.length; i++) {
-		if (lines[i] !== OURS_MARKER) continue;
+		if (!isOursMarker(lines[i]!)) continue;
 		const start = i;
 		i++;
 		const ours: string[] = [];
 		const theirs: string[] = [];
 		let side: "ours" | "theirs" = "ours";
 
-		while (i < lines.length && lines[i] !== THEIRS_MARKER) {
-			const l = lines[i];
-			if (l === BASE_MARKER) {
-				// Context for a human only; not a third opinion.
-				while (i < lines.length && lines[i] !== MID_MARKER) i++;
+		while (i < lines.length && !isTheirsMarker(lines[i]!)) {
+			const l = lines[i]!;
+			if (isBaseMarker(l)) {
+				while (i < lines.length && !isMidMarker(lines[i]!)) i++;
 				side = "theirs";
 				continue;
 			}
-			if (l === MID_MARKER) side = "theirs";
+			if (isMidMarker(l)) side = "theirs";
 			else if (side === "ours") ours.push(l);
 			else theirs.push(l);
 			i++;

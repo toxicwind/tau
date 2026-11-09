@@ -1,36 +1,9 @@
 import { describe, expect, test } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { getBundledModels } from "@oh-my-pi/pi-catalog/models";`
 import type { Api, Model } from "@tau/tau-ai";
 import { getBundledModels } from "@tau/tau-catalog/models";
 import { DEFAULT_MODEL_PER_PROVIDER } from "@tau/tau-catalog/provider-models";
 import { pickDefaultAvailableModel } from "tau/config/model-resolver";
-=======
-import type { Api, Model } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { fetchCursorUsableModels } from "@oh-my-pi/pi-catalog/discovery/cursor";
-import {
-	AvailableModelsResponse_ModelDetailsSchema,
-	AvailableModelsResponseSchema,
-	GetDefaultModelForCliResponseSchema,
-	GetUsableModelsResponseSchema,
-	ModelDetailsSchema,
-} from "@oh-my-pi/pi-catalog/discovery/cursor-proto";
-import { fetchDevinModels } from "@oh-my-pi/pi-catalog/discovery/devin";
-import {
-	type ClientModelConfig,
-	ClientModelConfigSchema,
-	DefaultOverrideModelConfigSchema,
-	GetCliModelConfigsResponseSchema,
-	ModelFamilyMetadataEntrySchema,
-	ModelFamilyMetadataSchema,
-	ModelFamilyMetadataValueSchema,
-} from "@oh-my-pi/pi-catalog/discovery/devin-proto";
-import { create, toBinary } from "@oh-my-pi/pi-catalog/discovery/protobuf";
-import { getBundledModel, getBundledModels } from "@oh-my-pi/pi-catalog/models";
-import { DEFAULT_MODEL_PER_PROVIDER } from "@oh-my-pi/pi-catalog/provider-models";
-import { pickDefaultAvailableModel } from "@oh-my-pi/pi-coding-agent/config/model-resolver";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/provider-default-selection.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /** One `GetCliModelConfigs` row; `effort` files it as a lane of a server-declared family. */
 function devinConfig(

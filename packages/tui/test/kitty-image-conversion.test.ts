@@ -1,20 +1,10 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { ImageContent } from "@oh-my-pi/pi-ai";`
 import type { ImageContent } from "@tau/tau-ai";
 import { AssistantMessageComponent } from "@tau/tau-tui/chat/assistant-message";
 import { ToolExecutionComponent } from "@tau/tau-tui/chat/tool-execution";
 import { initTheme } from "@tau/tau-tui/theme";
 import { ImageProtocol, setTerminalImageProtocol, TERMINAL } from "@tau/tau-tui";
-=======
-import type { AssistantMessage, ImageContent } from "@oh-my-pi/pi-ai";
-import { AssistantMessageComponent } from "@oh-my-pi/pi-tui/chat/assistant-message";
-import { ToolExecutionComponent } from "@oh-my-pi/pi-tui/chat/tool-execution";
-import { TranscriptContainer } from "@oh-my-pi/pi-tui/chrome/transcript-container";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { Text } from "@oh-my-pi/pi-tui/components/text";
-import { ImageProtocol, setTerminalImageProtocol, TERMINAL } from "@oh-my-pi/pi-tui";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/test/kitty-image-conversion.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const IMAGE: ImageContent = {
 	type: "image",

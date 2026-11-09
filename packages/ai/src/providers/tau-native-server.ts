@@ -268,7 +268,6 @@ export function encodeStream(
 
 /** @deprecated Use `noStoreErrorResponse` from `auth-gateway/http`. */
 export { noStoreErrorResponse as formatError } from "../auth-gateway/http";
-<<<<<<< ours — function `formatError` (T+F, confidence: medium)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 /**
  * Tau-native error envelope:
@@ -287,5 +286,3 @@ export function formatError(status: number, type: string, message: string): Resp
 		},
 	});
 }
-=======
->>>>>>> theirs — function `formatError` (T+F, confidence: medium) · weave: run 'weave explain packages/ai/src/providers/tau-native-server.ts' for per-hunk detail, 'weave check' to verify your resolution

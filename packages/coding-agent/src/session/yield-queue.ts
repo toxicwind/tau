@@ -1,11 +1,6 @@
-<<<<<<< ours — interstitial `file_header` (S, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { logger } from "@oh-my-pi/pi-utils";`
 import { type AgentMessage, ASIDE_MESSAGE_COMMIT, ASIDE_MESSAGE_DISCARD } from "@tau/tau-agent-core";
 import { logger } from "@tau/tau-utils";
-=======
-import { type AgentMessage, ASIDE_MESSAGE_COMMIT, ASIDE_MESSAGE_DISCARD } from "@oh-my-pi/pi-agent-core";
-import { logger, toError } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (S, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/session/yield-queue.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 export interface YieldDispatcher<P> {
 	/** Drop entries already delivered through another path. Called per-entry at flush time. */

@@ -22,14 +22,9 @@
  */
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (T+F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { isEnoent, logger } from "@oh-my-pi/pi-utils";`
 import { isEnoent, logger } from "@tau/tau-utils";
 import type { Browser } from "puppeteer-core";
-=======
-import { isEnoent, isPidAlive, logger } from "@oh-my-pi/pi-utils";
-import type { Browser, CDPSession } from "puppeteer-core";
->>>>>>> theirs — interstitial `file_header` (T+F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/tools/browser/orphan-registry.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { daemonRuntimeDir } from "../../launch/paths";
 
 /** Identifies one shared-browser daemon's target registry. */

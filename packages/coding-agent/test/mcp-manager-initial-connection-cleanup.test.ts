@@ -2,19 +2,11 @@ import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { removeWithRetries } from "@oh-my-pi/pi-utils";`
 import * as mcpClient from "tau/mcp/client";
 import { MCPManager } from "tau/mcp/manager";
 import type { MCPServerConnection, MCPStdioServerConfig, MCPTransport } from "tau/mcp/types";
 import { removeWithRetries } from "@tau/tau-utils";
-=======
-import * as configValue from "@oh-my-pi/pi-coding-agent/config/resolve-config-value";
-import * as mcpClient from "@oh-my-pi/pi-coding-agent/mcp/client";
-import { MCPManager } from "@oh-my-pi/pi-coding-agent/mcp/manager";
-import type { MCPServerConnection, MCPStdioServerConfig, MCPTransport } from "@oh-my-pi/pi-coding-agent/mcp/types";
-import { removeWithRetries, withTimeout } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/mcp-manager-initial-connection-cleanup.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { TOOL_NAME as DELAYED_TOOL_NAME } from "./fixtures/delayed-tool-mcp";
 
 const CONFIG: MCPStdioServerConfig = {

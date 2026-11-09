@@ -2,23 +2,11 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi 
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { createMockModel, type MockResponseSource, registerMock…`
 import { unregisterCustomApis } from "@tau/tau-ai/api-registry";
 import { type AuthCredentialStore, AuthStorage, SqliteAuthCredentialStore } from "@tau/tau-ai/auth-storage";
 import { createMockModel, type MockResponseSource, registerMockApi } from "@tau/tau-ai/providers/mock";
 import { getBundledModel } from "@tau/tau-catalog/models";
-=======
-import { unregisterCustomApis } from "@oh-my-pi/pi-ai/api-registry";
-import { type AuthCredentialStore, AuthStorage, SqliteAuthCredentialStore } from "@oh-my-pi/pi-ai/auth-storage";
-import {
-	createMockModel,
-	type MockHandler,
-	type MockResponseSource,
-	registerMockApi,
-} from "@oh-my-pi/pi-ai/providers/mock";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/security/coordinator.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { $ } from "bun";
 import { ModelRegistry } from "../../src/config/model-registry";
 import { Settings } from "../../src/config/settings";

@@ -201,16 +201,10 @@ export type VersionUpdate =
 	| { phase: "failed"; version: string };
 
 /**
-<<<<<<< ours — scope `declaration` in class `WelcomeComponent` (T+S, confidence: medium)
 // refused_by: container_member · collision: `* Premium welcome screen with block-based OMP logo and two-colu…`
  * Premium welcome screen with block-based TAU logo and two-column layout.
  */
 export class WelcomeComponent implements Component {
-=======
- * The session's welcome banner. In a terminal: the gradient logo beside the
- * `omp` wordmark with the version under it (the logo alone when the lockup does
- * not fit), any {@link VersionUpdate} after the version, and the tip of the
->>>>>>> theirs — scope `declaration` · weave: run 'weave explain packages/tui/src/prompt/welcome.ts' for per-hunk detail, 'weave check' to verify your resolution
  * session (dropped below {@link TIP_MIN_COLUMNS} columns). Natively: a card
  * with the same logo, wordmark, version and tip ({@link WelcomeComponent.describe}).
  */
@@ -676,15 +670,8 @@ function introLogoFrame(progress: number): string[] {
 	const phase = ((((1 - eased) * INTRO_SWEEPS) % 1) + 1) % 1;
 	const shinePos = (((progress * INTRO_SHINE_TRAVERSALS) % 1) + 1) % 1;
 	const shineStrength = (1 - eased) ** 1.5;
-<<<<<<< ours — scope `return gradientLogo(PI_LOGO, phase, { strengt...` in function `introLogoFrame` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `return gradientLogo(PI_LOGO, phase, { strength: shineStrength, …`
 	return gradientLogo(TAU_LOGO, phase, { strength: shineStrength, pos: shinePos });
-=======
-	return gradientLogo(PI_LOGO, phase, {
-		strength: shineStrength,
-		pos: shinePos,
-	});
->>>>>>> theirs — scope `return gradientLogo(PI_LOGO, phase, { strengt...`
 }
 
 /** Resting gradient frame, cached for re-renders outside of the intro. */

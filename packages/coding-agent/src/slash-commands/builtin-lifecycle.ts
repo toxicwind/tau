@@ -2,15 +2,10 @@ import { SEANCE_SLASH_COMMAND } from "./seance";
 import { clearSubmittedText, refuseImages, restoreDetachedDraft, runWithDetachedDraft } from "./helpers/draft";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { CompactionCancelledError } from "@tau/tau-agent-core/compaction";
 import { logger, setProjectDir } from "@tau/tau-utils";
 import { reset as resetCapabilities } from "../capability";
-=======
-import { CompactionCancelledError } from "@oh-my-pi/pi-agent-core/compaction";
-import { logger, setProjectDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/slash-commands/builtin-lifecycle.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { clearClaudePluginRootsCache } from "../discovery/helpers";
 import { rebindMemoryBackendForCwd } from "../hindsight/backend";
 import { memoryStatsUnavailableMessage, resolveMemoryBackend } from "../memory-backend";
@@ -898,12 +893,8 @@ export const BUILTIN_LIFECYCLE_SLASH_COMMANDS: ReadonlyArray<SlashCommandSpec> =
 	},
 	{
 		name: "exit",
-<<<<<<< ours — scope `description` in variable `BUILTIN_LIFECYCLE_SLASH_COMMANDS` (S, confidence: medium)
 // refused_by: container_member · collision: `description: "Restart omp with the same launch flags, resuming …`
 		description: "Restart tau with the same launch flags, resuming this session",
-=======
-		description: "Exit the application",
->>>>>>> theirs — scope `description`
 		handleTui: shutdownHandlerTui,
 	},
 	{

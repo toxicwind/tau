@@ -17,12 +17,8 @@ OMP matches these markers as literal decoded text; its scanner does not inspect 
 
 There is **no** per-call id in this text convention. Native Gemini thought summaries use parts marked `thought: true`; a `thoughtSignature` is opaque replay metadata and does not itself identify a thinking part.
 
-<<<<<<< ours — scope `> **OMP dialect note:** because this conventi...` in heading `"Special" tokens` (S, confidence: medium)
 // refused_by: statement_fold · collision: `> **OMP dialect note:** because this convention carries no nati…`
 > **TAU dialect note:** because this convention carries no native in-band reasoning marker, the TAU `gemini` dialect layers a sibling fenced ` ```thinking ` block (closed by a bare ` ``` `, exactly like ` ```tool_code `) so prompt-driven Gemini / Gemma-3 deployments can express reasoning in-band. This is an TAU convention, not part of Google's format.
-=======
-> **OMP dialect note:** the `gemini` dialect adds a fenced ` ```thinking ` block for in-band reasoning. Its opener requires a newline, and parsing is enabled unless `parseThinking: false`. The thinking close-matcher preserves nested language-tagged Markdown fences; a bare nested backtick fence is indistinguishable from the outer closer. Unterminated thinking is ended on flush. This is an OMP convention, not the native Gemini API format.
->>>>>>> theirs — scope `> **OMP dialect note:** because this conventi...` · weave: run 'weave explain docs/toolconv/gemini.md' for per-hunk detail, 'weave check' to verify your resolution
 
 ## Roles / turn structure
 
@@ -45,12 +41,8 @@ Tools are advertised in the prompt as a JSON-Schema catalog. Gemma 3's official 
 2. **JSON** (the sibling convention — see `qwen3.md` for the closely related Hermes shape):
    > … you MUST put it in the format of `{"name": function name, "parameters": dictionary of argument name and its value}`
 
-<<<<<<< ours — scope `Hosted Gemini wraps the same idea in markdown...` in heading `Tool definitions` (S, confidence: medium)
 // refused_by: statement_fold · collision: `Hosted Gemini wraps the same idea in markdown fences and the `d…`
 Hosted Gemini wraps the same idea in markdown fences and the `default_api` namespace. The function signatures themselves are passed as OpenAI-style tool JSON (`{"type":"function","function":{name,description,parameters}}`). TAU's renderer emits `default_api.NAME(...)` without `print`; its scanner also accepts the wrapped and bare variants below.
-=======
-OMP's owned prompt advertises tools as one compact OpenAI-style JSON object per line inside `<tools>` (`{"type":"function","function":{name,description,parameters}}`), using each tool's normalized wire schema, followed by the Gemini format guide. Native Gemini requests instead use `functionDeclarations`. OMP's text renderer emits `default_api.NAME(...)` without `print`; its scanner also accepts the wrapped and bare variants below.
->>>>>>> theirs — scope `Hosted Gemini wraps the same idea in markdown...`
 
 ## Tool-call format
 
@@ -100,21 +92,13 @@ Two encodings occur inside a single `tool_code` block:
    ```
    ````
 
-<<<<<<< ours — scope `The OMP scanner extracts top-level call expre...` in heading `Multiple / parallel tool calls` (S, confidence: medium)
 // refused_by: statement_fold · collision: `The OMP scanner extracts top-level call expressions in source o…`
 The TAU scanner extracts top-level call expressions in source order from either form. It mints a tool-call id for each parsed call; the text convention itself has no id.
-=======
-The OMP scanner extracts calls in source order from either form, skipping strings and Python comments. It records the final identifier before each matching call parenthesis, ignores the `print` wrapper, and skips over a recovered call's argument body. It does not evaluate Python expressions. Each parsed call gets a synthesized `ptc_…` id; the text convention itself has no id.
->>>>>>> theirs — scope `The OMP scanner extracts top-level call expre...`
 
 ## Tool-result format
 
-<<<<<<< ours — scope `Executed results are returned to the model in...` in heading `Tool-result format` (S, confidence: medium)
 // refused_by: statement_fold · collision: `Executed results are returned to the model in ```` ```tool_outp…`
 Executed results are returned to the model in ```` ```tool_outputs ```` blocks. TAU renders one complete block per result, in call order; it does not encode `isError` separately. Gemma 3 docs also show assignment-style values (`result = 92.3`), while opaque output can be returned as text/JSON:
-=======
-Executed results are returned to the model in ` ```tool_outputs ` blocks. OMP renders one complete block per result, in call order; it does not encode `isError` separately. Gemma 3 docs also show assignment-style values (`result = 92.3`), while opaque output can be returned as text/JSON:
->>>>>>> theirs — scope `Executed results are returned to the model in...`
 
 ````text
 ```tool_outputs
@@ -146,12 +130,8 @@ It's currently 11.4°C in London.
 
 ## OpenAI-compatible / native API mapping
 
-<<<<<<< ours — scope `- Hosted Gemini's native API normally returns...` in heading `OpenAI-compatible / native API mapping` (S, confidence: medium)
 // refused_by: statement_fold · collision: `- Hosted Gemini's native API normally returns a structured `fun…`
 - Hosted Gemini's native API normally returns a structured `functionCall` part (`{name, args}`). On direct Gemini Generative AI requests, Gemini 3 calls carry an `id` that TAU echoes in the matching `functionResponse`; their `thoughtSignature` must also be preserved. TAU's Vertex adapter is the exception: Vertex GenerateContent rejects function-part IDs, so TAU omits `id` from both `functionCall` and `functionResponse`, retains the originating function name, and relies on function name/order for matching. Thought signatures are still preserved.
-=======
-- Hosted Gemini's native API returns structured `functionCall` parts (`{name, args, id?}`). OMP preserves a supplied unique id or synthesizes one, retains `thoughtSignature`, and echoes call/result ids only when the model's `compat.supportsFunctionPartId` permits them. `convertMessages` in `packages/ai/src/providers/google-shared.ts` uses the originating call's name for `functionResponse` and preserves valid same-model/provider signatures. Native result payloads use `{output: text}` or `{error: text}`, unlike the text dialect's untyped `tool_outputs` blocks.
->>>>>>> theirs — scope `- Hosted Gemini's native API normally returns...`
 - When parsed out of an OpenAI-compatible shim, each recovered call becomes `tool_calls[i] = {id (server-minted), type:"function", function:{name, arguments:<JSON string>}}` — the Python kwargs are re-serialized to a JSON string at that boundary.
 - Feed results back as the deployment's tool/`functionResponse` turn (hosted) or a `tool_outputs` block in the next user turn (prompt-driven).
 
@@ -163,12 +143,8 @@ It's currently 11.4°C in London.
 - **Fence ambiguity.** A `tool_code` body terminates at the first ` ``` ` substring, even inside an argument string or mid-line. This is separate from the fence-aware thinking close-matcher.
 - **Text vs native calls.** Malformed hosted responses may expose the text convention. OMP's owned stream also forwards named native tool calls if a provider emits them despite native tools being absent; the first native/in-band call channel wins, preventing double dispatch.
 - **TAU streaming behavior.** The scanner buffers the entire `tool_code` body and emits tool events only after the closing fence; it does not stream partial arguments. An unterminated block is discarded on flush rather than exposed as text. Positional arguments and malformed keyword segments are skipped. In addition to ordinary quoted strings, the literal decoder accepts Python raw/byte/unicode prefixes, triple quotes, octal escapes, and `\x`/`\u`/`\U` escapes.
-<<<<<<< ours — scope `- **Transcript rendering.** OMP wraps the tra...` in heading `Parsing notes & gotchas` (S, confidence: medium)
 // refused_by: statement_fold · collision: `- **Transcript rendering.** OMP wraps the transcript in `<bos>`…`
 - **Transcript rendering.** TAU wraps the transcript in `<bos>` and Gemma-style `<start_of_turn>user|model` turns. `developer` text is prepended to the next user turn (or emitted as its own user turn if no user message follows); consecutive tool results become one user turn containing their separate `tool_outputs` blocks.
-=======
-- **Transcript rendering.** `renderTranscript` wraps history in `<bos>` and Gemma-style `<start_of_turn>user|model` turns. `developer` text is prepended to the next user turn, or emitted as its own user turn before an intervening assistant/result; consecutive results become one user turn. Thinking precedes visible text and calls. Currently even an assistant without calls gets an empty `tool_code` list (`[]`); the renderer does not append a generation prompt.
->>>>>>> theirs — scope `- **Transcript rendering.** OMP wraps the tra...`
 - **Owned request history.** `encodeInbandToolHistory` is separate from `renderTranscript`: assistant turns with calls become prose plus a fenced call block, dropping their thinking/image blocks; call-free assistant turns remain unchanged. Consecutive results become one synthetic user message, with result images retained after the text.
 - **Fabricated results.** The owned stream discards assistant output from ` ```tool_outputs ` onward. `tools.abortOnFabricatedResult` defaults to `true` and aborts the provider there; disabling it drains the provider but still discards that continuation.
 - **Variant divergence.** Gemma **4** uses the token-delimited brace syntax (`<|tool_call>call:NAME{…}<tool_call|>`) documented in [gemma.md](gemma.md), not this Pythonic text dialect.

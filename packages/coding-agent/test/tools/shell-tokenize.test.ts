@@ -1,10 +1,6 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { extractLeadingCdTarget, readShellWord } from "@oh-my-p…`
 import { extractLeadingCdTarget, readShellWord } from "tau/tools/shell-tokenize";
-=======
-import { extractLeadingCdTarget, lexShellCommand, readShellWord } from "@oh-my-pi/pi-coding-agent/tools/shell-tokenize";
->>>>>>> theirs — interstitial `file_header` (S, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/tools/shell-tokenize.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 describe("lexShellCommand", () => {
 	it("splits words from separators, keeping verbatim spelling beside the quote-removed value", () => {

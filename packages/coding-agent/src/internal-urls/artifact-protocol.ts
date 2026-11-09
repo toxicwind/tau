@@ -11,14 +11,8 @@
  */
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { isEnoent } from "@tau/tau-utils";
-=======
-import { isEnoent } from "@oh-my-pi/pi-utils";
-import { LRUCache } from "@oh-my-pi/pi-utils/lru";
-import artifactDoc from "../prompts/internal-urls/artifact.md" with { type: "text" };
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/internal-urls/artifact-protocol.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { artifactsDirsFromRegistry } from "./registry-helpers";
 import type {
 	InternalResource,

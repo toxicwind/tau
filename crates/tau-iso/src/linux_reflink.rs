@@ -149,7 +149,6 @@ mod imp {
 		}
 	}
 
-<<<<<<< ours — scope `recursive_reflink` in module `imp`, deleted in theirs (S+F, confidence: low)
 // refused_by: container_member · collision: none (no common ancestor text)
 	fn recursive_reflink(
 		src: &Path,
@@ -194,8 +193,6 @@ mod imp {
 		let _ = set_times_nofollow(dst, &meta);
 		Ok(())
 	}
-=======
->>>>>>> theirs — scope `recursive_reflink` deleted in theirs · weave: run 'weave explain crates/tau-iso/src/linux_reflink.rs' for per-hunk detail, 'weave check' to verify your resolution
 
 	/// Clones the regular file `src` into the fresh tree, then gives the clone
 	/// `src`'s mode and timestamps through the descriptors the clone used.

@@ -1,17 +1,6 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { AgentTool, AgentToolContext, AgentToolResult, Age…`
 import { type } from "@tau/tautype";
 import type { AgentTool, AgentToolContext, AgentToolResult, AgentToolUpdateCallback } from "@tau/tau-agent-core";
-=======
-import { type } from "@oh-my-pi/omptype";
-import type {
-	AgentTool,
-	AgentToolContext,
-	AgentToolResult,
-	AgentToolUpdateCallback,
-	ToolTier,
-} from "@oh-my-pi/pi-agent-core";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/goals/tools/goal-tool.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 import { prompt } from "@tau/tau-utils";
 

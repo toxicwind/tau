@@ -6,14 +6,9 @@ import {
 	getTinyModelsCacheDir,
 	installRuntimeModuleResolver,
 	resolveRuntimeModule,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-utils";
 import packageJson from "../../package.json" with { type: "json" };
-=======
-} from "@oh-my-pi/pi-utils";
-import type { ProgressInfo } from "./transformers-types";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/subprocess/worker-runtime.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /**
  * Child-side scaffolding shared by the ONNX inference worker bodies
@@ -421,7 +416,6 @@ export function loadTransformersRuntime<T extends ConfigurableTransformers, K>(
 	modelKey: K,
 	runtimeDir: () => string,
 ): Promise<T> {
-<<<<<<< ours — scope `return holder.load(async () => {` in function `loadTransformersRuntime` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `__ompRuntimeNodeModules: path.join(installedDir, "node_modules"…` +2 more
 	return holder.load(async () => {
 		if (!isCompiledBinary()) {
@@ -463,49 +457,5 @@ export function loadTransformersRuntime<T extends ConfigurableTransformers, K>(
 			__tauRuntimeNodeModules: path.join(installedDir, "node_modules"),
 			__tauTransformersEntry: entry,
 			__tauCudaRepairError: cudaRepairError,
-=======
-	return holder
-		.load(async () => {
-			const installedDir = await ensureRuntimeInstalled({
-				runtimeDir: runtimeDir(),
-				install: {
-					dependencies: { [TRANSFORMERS_PACKAGE]: TRANSFORMERS_VERSION },
-					trustedDependencies: ["onnxruntime-node"],
-				},
-				probePackage: TRANSFORMERS_PACKAGE,
-				onPhase: phase =>
-					transport.send({
-						type: "progress",
-						id: requestId,
-						event: {
-							modelKey,
-							status: phase,
-							name: `${TRANSFORMERS_PACKAGE}@${TRANSFORMERS_VERSION}`,
-						},
-					}),
-			});
-			let cudaRepairError: string | undefined;
-			try {
-				await ensureOnnxRuntimeCudaProviders(installedDir);
-			} catch (repairError) {
-				// Deferred failure: keep loading Transformers so `loadPipelineWithDeviceFallback`
-				// still gets its CUDA→CPU retry. The error is surfaced through the CUDA
-				// diagnostics attached to the runtime metadata.
-				cudaRepairError = errorMessage(repairError);
-			}
-			const entry = await prepareInstalledRuntime(installedDir, TRANSFORMERS_PACKAGE);
-			const require_ = createRequire(entry);
-			return attachTransformersRuntimeMetadata(configureTransformers(require_(entry) as T), {
-				__ompRuntimeNodeModules: path.join(installedDir, "node_modules"),
-				__ompTransformersEntry: entry,
-				__ompCudaRepairError: cudaRepairError,
-			});
-		})
-		.catch(error => {
-			throw new Error(
-				`Unable to install or load ${TRANSFORMERS_PACKAGE}@${TRANSFORMERS_VERSION}: ${errorMessage(error)}`,
-				{ cause: error },
-			);
->>>>>>> theirs — scope `return holder.load(async () => {`
 		});
 }

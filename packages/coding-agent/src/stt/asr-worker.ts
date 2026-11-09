@@ -6,14 +6,10 @@ import type {
 	AutomaticSpeechRecognitionOutput,
 	AutomaticSpeechRecognitionPipeline,
 	ProgressInfo,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import {` +5 more
 } from "@huggingface/transformers";
 import { ensureRuntimeInstalled, getTinyModelsCacheDir, isCompiledBinary, resolveRuntimeModule } from "@tau/tau-utils";
 import packageJson from "../../package.json" with { type: "json" };
-=======
-} from "../subprocess/transformers-types";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/stt/asr-worker.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	errorMessage,
 	errorText,

@@ -11,18 +11,11 @@ import type {
 	ServiceTierByFamily,
 	SimpleStreamOptions,
 	ToolChoice,
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-ai";
 import type { postmortem } from "@tau/tau-utils";
 import type { AdvisorConfig } from "@tau/tau-tui/overlays/advisor-config";
 import type { AsyncJob, AsyncJobDeliveryState, AsyncJobManager } from "../async";
-=======
-} from "@oh-my-pi/pi-ai";
-import type { postmortem } from "@oh-my-pi/pi-utils";
-import type { AdvisorConfig } from "@oh-my-pi/pi-tui/overlays/advisor-config";
-import type { AsyncJob, AsyncJobDeliveryState, AsyncJobManager, AsyncJobManagerApi } from "../async";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/session/agent-session-types.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { EffectiveExtensionRoots } from "../capability/types";
 import type { AgentDefinition } from "../task/types";
 import type { AgentRegistryApi } from "../registry/agent-registry";
@@ -44,13 +37,8 @@ import type { SkillDescriptionCatalog } from "../extensibility/skill-description
 import type { Skill, SkillWarning } from "../extensibility/skills";
 import type { FileSlashCommand } from "../extensibility/slash-commands";
 import type { SecretObfuscator } from "../secrets/obfuscator";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 import type { ConfiguredThinkingLevel } from "@tau/tau-tui/thinking";
-=======
-import type { ConfiguredThinkingLevel } from "@oh-my-pi/pi-tui/thinking";
-import type { JobWidgetView } from "@oh-my-pi/pi-tui/tools/job-widget";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low)
 import type { ToolSession } from "../tools";
 import type { XdevState } from "../tools/xdev";
 import type { CodexAutoRedeemCoordinator } from "./codex-auto-reset";

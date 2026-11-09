@@ -1,13 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { Image, ImageBudget } from "@oh-my-pi/pi-tui/components…`
 import { Image, ImageBudget } from "@tau/tau-tui/components/image";
 import { getKittyGraphics, setKittyGraphics } from "@tau/tau-tui/kitty-graphics";
-=======
-import { rasterizeSvg } from "@oh-my-pi/pi-natives";
-import { Image, ImageBudget, renderForScrollback } from "@oh-my-pi/pi-tui/components/image";
-import { getKittyGraphics, setKittyGraphics } from "@oh-my-pi/pi-tui/kitty-graphics";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/test/image-render.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	type CellDimensions,
 	getCellDimensions,
@@ -17,16 +11,8 @@ import {
 	setCellDimensions,
 	setTerminalBackgroundColor,
 	TERMINAL,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { Image, ImageBudget } from "@oh-my-pi/pi-tui/components…`
 } from "@tau/tau-tui/terminal-capabilities";
-=======
-} from "@oh-my-pi/pi-tui/terminal-capabilities";
-import { parseSixelPalettePercent } from "./helpers/sixel-palette";
-import { withoutTerminalMultiplexer } from "./helpers/terminal-multiplexer";
-
-withoutTerminalMultiplexer();
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 
 type MutableTerminalInfo = {
 	imageProtocol: ImageProtocol | null;

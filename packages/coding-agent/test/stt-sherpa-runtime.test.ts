@@ -31,7 +31,6 @@ describe("sherpa on-demand runtime", () => {
 		expect(install).toHaveBeenCalledTimes(1);
 	});
 });
-<<<<<<< ours — test_suite `sherpa source runtime resolution` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 describe("sherpa source runtime resolution", () => {
 	let tmp = "";
@@ -89,5 +88,3 @@ describe("sherpa source runtime resolution", () => {
 		expect(runtime.OfflineRecognizer.createAsync.name).toBe("nestedRuntime");
 	});
 });
-=======
->>>>>>> theirs — test_suite `sherpa source runtime resolution` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/stt-sherpa-runtime.test.ts' for per-hunk detail, 'weave check' to verify your resolution

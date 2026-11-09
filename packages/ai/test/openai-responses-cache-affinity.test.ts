@@ -771,7 +771,6 @@ describe("openai-responses cache affinity", () => {
 		expect(captured.body?.cache_control).toEqual({ type: "ephemeral", ttl: "1h" });
 	});
 
-<<<<<<< ours — scope `it("applies OpenRouter Responses model varian...` in test_suite `openai-responses cache affinity`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("applies OpenRouter Responses model variants and provider routing to the body", async () => {
 		const routedModel: Model<"openai-responses"> = {
@@ -791,8 +790,6 @@ describe("openai-responses cache affinity", () => {
 			allow_fallbacks: false,
 		});
 	});
-=======
->>>>>>> theirs — scope `it("applies OpenRouter Responses model varian...` deleted in theirs · weave: run 'weave explain packages/ai/test/openai-responses-cache-affinity.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 	it("keeps OpenRouter session_id on values longer than OpenAI prompt cache keys", async () => {
 		const longSessionId = "s".repeat(100);

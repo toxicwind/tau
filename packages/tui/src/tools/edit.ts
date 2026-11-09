@@ -5,27 +5,9 @@
 import { type EditInspection, editInspect } from "@tau/tau-natives";
 import type { Component } from "../tui";
 import { sliceWithWidth, visibleWidth, wrapTextWithAnsi } from "../utils";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { sanitizeText } from "@tau/tau-utils";
 import type { RenderResultOptions, ToolRenderer } from "./renderer";
-=======
-import { sanitizeText } from "@oh-my-pi/pi-utils";
-import type { NativeToolHead, NativeToolView, RenderResultOptions, ToolRenderer } from "./renderer";
-import { code, compact, node, span } from "../native/describe";
-import type { NativeChild, NativeNode } from "../native/node";
-import {
-	diagnosticsBadge,
-	diagnosticsSection,
-	diffStatsMeta,
-	displayPath,
-	errorText,
-	fileDiffSection,
-	fileHref,
-	noteText,
-	resultText,
-} from "./native-view";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/src/tools/edit.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { FileDiagnosticsResult } from "./lsp";
 import { nativeDiff, renderDiff as renderDiffColored } from "../chrome/diff";
 import { getLanguageFromPath } from "../lang-from-path";

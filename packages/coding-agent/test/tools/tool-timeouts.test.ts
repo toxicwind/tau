@@ -1,11 +1,6 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { clampTimeout, TOOL_TIMEOUTS } from "@oh-my-pi/pi-codin…`
 import { clampTimeout, TOOL_TIMEOUTS } from "tau/tools/tool-timeouts";
-=======
-import { deferredDiagnosticsWaitMs } from "@oh-my-pi/pi-coding-agent/lsp/diagnostics";
-import { clampTimeout, resolveLspTimeouts, TOOL_TIMEOUTS } from "@oh-my-pi/pi-coding-agent/tools/tool-timeouts";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/tools/tool-timeouts.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 describe("clampTimeout", () => {
 	it("returns the per-tool default when no raw timeout is given", () => {

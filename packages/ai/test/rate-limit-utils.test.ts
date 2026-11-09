@@ -11,16 +11,8 @@ import {
 	isUsageLimitStatus,
 	matchesUsageLimitText,
 	parseRateLimitReason,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-ai/error/rate-limit";
-=======
-} from "@oh-my-pi/pi-ai/error/rate-limit";
-import { streamGoogle } from "@oh-my-pi/pi-ai/providers/google";
-import { streamGoogleGeminiCli } from "@oh-my-pi/pi-ai/providers/google-gemini-cli";
-import type { Context, FetchImpl, Model } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/test/rate-limit-utils.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 // MiniMax CN (minimax-code-cn) Token Plan exhaustion (2067): phrased 用量上限,
 // not 使用上限 like Zhipu.

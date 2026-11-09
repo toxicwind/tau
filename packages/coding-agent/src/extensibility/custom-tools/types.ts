@@ -15,7 +15,6 @@ import type {
 	ToolApprovalDecision,
 	ToolLoadMode,
 	ToolTier,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { RenderResultOptions } from "@oh-my-pi/pi-tui/tool…`
 } from "@tau/tau-agent-core";
 import type { CompactionResult } from "@tau/tau-agent-core/compaction";
@@ -23,14 +22,6 @@ import type { FetchImpl, Model, Static, TSchema } from "@tau/tau-ai";
 import type { Component } from "@tau/tau-tui";
 import type { RenderResultOptions } from "@tau/tau-tui/tools/renderer";
 import type { logger as PiLogger } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-agent-core";
-import type { CompactionResult } from "@oh-my-pi/pi-agent-core/compaction";
-import type { FetchImpl, Model, Static, TSchema } from "@oh-my-pi/pi-ai";
-import type { Component } from "@oh-my-pi/pi-tui";
-import type { NativeToolView, RenderResultOptions } from "@oh-my-pi/pi-tui/tools/renderer";
-import type { logger as PiLogger } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/extensibility/custom-tools/types.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { Rule } from "../../capability/rule";
 import type { ModelRegistry } from "../../config/model-registry";
 import type { Settings } from "../../config/settings";

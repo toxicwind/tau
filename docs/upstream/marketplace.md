@@ -15,31 +15,19 @@ In the TUI, `/marketplace` with no arguments opens the interactive plugin browse
 
 A **marketplace** is a Git repository (or local directory) containing a catalog file at `.tau-plugin/marketplace.json` (preferred) or `.claude-plugin/marketplace.json` (Claude Code-compatible fallback). The catalog lists available plugins with their sources, descriptions, and metadata.
 
-<<<<<<< ours — scope `A **plugin** is a directory containing Claude...` in heading `Concepts` (S, confidence: medium)
 // refused_by: statement_fold · collision: `A **plugin** is a directory containing Claude/OMP plugin conten…`
 A **plugin** is a directory containing Claude/TAU plugin content such as skills, commands, agents, rules, hooks, tools, MCP servers, or LSP servers. Marketplace installs also load extension modules declared by `package.json` `tau.extensions`: installation symlinks the cached plugin into the scope's `node_modules` tree and records it in `tau-plugins.lock.json`, the same runtime surfaces used by npm-installed and `tau plugin link`ed plugins. Plugins are identified by `name@marketplace` (e.g. `code-review@claude-plugins-official`).
-=======
-A **plugin** is a directory containing Claude/OMP plugin content such as skills, commands, agents, rules, hooks, tools, MCP servers, LSP servers, or DAP adapters. Root `plugin.json` packages declaring the Agent Plugins 1.0.0 schema use the portable `agent-plugins` discovery provider for skills and `mcp.json`; hybrid packages can still expose OMP-specific content. Marketplace installs also load extension modules declared by `package.json` `omp.extensions`: installation symlinks the cached plugin into the scope's `node_modules` tree and records it in `omp-plugins.lock.json`, the same runtime surfaces used by npm-installed and `omp plugin link`ed plugins. Plugins are identified by `name@marketplace` (e.g. `code-review@claude-plugins-official`).
->>>>>>> theirs — scope `A **plugin** is a directory containing Claude...` · weave: run 'weave explain docs/upstream/marketplace.md' for per-hunk detail, 'weave check' to verify your resolution
 
 **Scopes**: marketplace plugins can be installed at two scopes:
 
 - **user** (default) -- available in all projects, stored in the architect plugins data root's `installed_plugins.json` (`~/.tau/plugins/installed_plugins.json` by default)
-<<<<<<< ours — scope `- **project** -- available only in the active...` in heading `Concepts` (S, confidence: medium)
 // refused_by: statement_fold · collision: `- **project** -- available only in the active project, stored i…`
 - **project** -- available only in the active project, stored in the nearest project `.tau/plugins/installed_plugins.json`
-=======
-- **project** -- available only in the active project, stored in `.omp/plugins/installed_plugins.json` under the nearest ancestor with `.omp/`, or the nearest Git root if no `.omp/` exists. An explicit project install can create this tree in cwd when neither anchor exists; the home directory is not treated as a project.
->>>>>>> theirs — scope `- **project** -- available only in the active...`
 
 Enabled project-scoped installs shadow enabled user-scoped installs of the same plugin. A disabled project install does not shadow the architect install.
 
-<<<<<<< ours — scope `On Linux and macOS, `omp config init-xdg` ini...` in heading `Concepts` (S, confidence: medium)
 // refused_by: statement_fold · collision: `On Linux and macOS, `omp config init-xdg` initializes the XDG d…`
 On Linux and macOS, `tau config init-xdg` initializes the XDG data, state, and cache roots; it does not move existing data. With `XDG_DATA_HOME`, `XDG_STATE_HOME`, and `XDG_CACHE_HOME` set, initialized roots store new user marketplace/plugin state under `$XDG_DATA_HOME/tau` (including `marketplaces.json` and `plugins/`). The `~/.tau` paths below are the non-XDG defaults.
-=======
-On Linux and macOS, `omp config init-xdg` initializes the XDG data, state, and cache roots; it does not move existing data. With `XDG_DATA_HOME` set and its `omp/` directory initialized, user marketplace/plugin state resolves under `$XDG_DATA_HOME/omp` (including `marketplaces.json` and `plugins/`). Named profiles use their own roots; XDG routing requires the corresponding `omp/profiles/<name>/` directory. The `~/.omp` paths below are the default-profile, non-XDG defaults.
->>>>>>> theirs — scope `On Linux and macOS, `omp config init-xdg` ini...`
 
 On first XDG registry resolution, an existing config-root `marketplaces.json` is copied best-effort if the XDG target is absent; the old file remains. Plugin installation trees are not copied by this helper.
 
@@ -83,24 +71,12 @@ tau plugin marketplace remove <name>
 tau plugin marketplace update [name]
 tau plugin marketplace list
 tau plugin discover [marketplace]
-<<<<<<< ours — scope `omp plugin install [--force] [--scope user|pr...` in heading `CLI equivalents` (S, confidence: medium)
 // refused_by: statement_fold · collision: `omp plugin install [--force] [--scope user|project] name@market…`
 tau plugin install [--force] [--scope user|project] name@marketplace
-=======
-omp plugin install [--dry-run] [--force] [--scope user|project] name@marketplace
->>>>>>> theirs — scope `omp plugin install [--force] [--scope user|pr...`
-<<<<<<< ours — scope `omp plugin uninstall [--scope user|project] n...` in heading `CLI equivalents` (S, confidence: medium)
 // refused_by: statement_fold · collision: `omp plugin uninstall [--scope user|project] name@marketplace`
 tau plugin uninstall [--scope user|project] name@marketplace
-=======
-omp plugin uninstall [--dry-run] [--scope user|project] name@marketplace
->>>>>>> theirs — scope `omp plugin uninstall [--scope user|project] n...`
-<<<<<<< ours — scope `omp plugin upgrade [--scope user|project] [na...` in heading `CLI equivalents` (S, confidence: medium)
 // refused_by: statement_fold · collision: `omp plugin upgrade [--scope user|project] [name@marketplace]`
 tau plugin upgrade [--scope user|project] [name@marketplace]
-=======
-omp plugin upgrade [--dry-run] [--scope user|project] [name@marketplace]
->>>>>>> theirs — scope `omp plugin upgrade [--scope user|project] [na...`
 tau plugin enable [--scope user|project] name@marketplace
 tau plugin disable [--scope user|project] name@marketplace
 tau plugin list
@@ -255,17 +231,10 @@ Invalid catalog JSON or invalid required top-level fields reject the catalog. An
 ## Updates, removal, and scope
 
 - `/marketplace update [name]` refreshes catalogs only; it does not reinstall plugins.
-<<<<<<< ours — heading `Updates, removal, and scope` (S, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 - `tau plugin upgrade name@marketplace` reinstalls every installed scope when `--scope` is omitted. `/marketplace upgrade name@marketplace`, uninstall, and enable/disable require `--scope user|project` when the plugin exists in both scopes.
 - Upgrading all plugins compares only catalog entries that declare `version`. Semver versions must be newer; non-semver versions are treated as changed when unequal. Per-plugin failures are skipped, so an all-plugin upgrade can partially succeed.
 - `marketplace.autoUpdate` controls startup checks: `off`, `notify` (default), or `auto`. Catalogs older than 24 hours are refreshed best-effort before version checks. Despite its name, current `notify` mode writes update availability only to the debug log; it does not show an architect-facing notification.
-=======
-- `omp plugin upgrade name@marketplace` reinstalls every installed scope when `--scope` is omitted. `/marketplace upgrade name@marketplace`, uninstall, and enable/disable require `--scope user|project` when the plugin exists in both scopes.
-- Upgrading all plugins compares only catalog entries that declare `version`. Semver versions must be newer; non-semver versions are treated as changed when unequal. Each installed scope is checked independently. Per-plugin failures are skipped, so an all-plugin upgrade can partially succeed. CLI `--scope` is ignored when upgrading all plugins.
-- Reinstall/upgrade preserves disabled state, feature selection, and settings. User and project installs share version-keyed cache directories, so forcing a reinstall of the same version replaces content used by both scopes. Runtime package-name and cache-path collisions with other plugins are rejected.
-- `marketplace.autoUpdate` controls startup checks: `off`, `notify` (default), or `auto`. Catalogs older than 24 hours are refreshed best-effort before version checks. Despite its name, current `notify` mode writes update availability only to the debug log; it does not show a user-facing notification.
->>>>>>> theirs — heading `Updates, removal, and scope` (S, confidence: medium)
 - Removing a marketplace removes its registry entry and catalog cache; it does not uninstall plugins already cached and registered.
 
 ## On-disk layout
@@ -275,12 +244,8 @@ Invalid catalog JSON or invalid required top-level fields reject the catalog. An
   marketplaces.json              # Registry of added marketplaces
   plugins/
     installed_plugins.json       # User-scoped marketplace plugins (version: 2)
-<<<<<<< ours — scope `~/.omp/` in heading `On-disk layout` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `omp-plugins.lock.json         # Runtime enable/feature state`
     tau-plugins.lock.json         # Runtime enable/feature state
-=======
-    omp-plugins.lock.json         # Runtime enable/feature state and plugin settings
->>>>>>> theirs — scope `~/.omp/`
     node_modules/<package>        # Symlink to the cached plugin
     cache/
       marketplaces/<name>/       # Cached marketplace clone/catalog

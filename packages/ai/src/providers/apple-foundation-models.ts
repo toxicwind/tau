@@ -9,16 +9,10 @@
  * Tool calls are returned, not executed, so the agent loop runs them and
  * resumes by sending their outputs in the next request.
  */
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { parseStreamingJson } from "@oh-my-pi/pi-utils";`
 import type { Effort } from "@tau/tau-catalog/effort";
 import { appleFmAvailability, appleFmCancel, appleFmGenerate } from "@tau/tau-natives";
 import { parseStreamingJson } from "@tau/tau-utils";
-=======
-import type { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { appleFmAvailability, appleFmCancel, appleFmGenerate } from "@oh-my-pi/pi-natives";
-import { parseStreamingJsonThrottled } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/ai/src/providers/apple-foundation-models.ts' for per-hunk detail, 'weave check' to verify your resolution
 import * as AIError from "../error";
 import { parseToolCallArguments } from "../utils/tool-call-arguments";
 import type {

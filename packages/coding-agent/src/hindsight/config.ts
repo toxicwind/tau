@@ -5,12 +5,9 @@
  * environment variable, which wins over the settings layers because operators frequently
  * override per-shell (CI, prod) without touching the persisted settings file.
  */
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { logger } from "@oh-my-pi/pi-utils";`
 
 import { logger } from "@tau/tau-utils";
-=======
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/hindsight/config.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { Settings } from "../config/settings";
 import {
 	cfgHindsightApiToken,
@@ -110,18 +107,11 @@ export function loadHindsightConfig(settings: Settings): HindsightConfig {
 		autoRecall: cfgHindsightAutoRecall.get(settings),
 		autoRetain: cfgHindsightAutoRetain.get(settings),
 
-<<<<<<< ours — scope `* `process.env` per case.` in function `loadHindsightConfig` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `retainContext: settings.get("hindsight.retainContext") ?? "omp",`
 		retainMode: retainModeEnv ?? settingsRetainMode ?? "full-session",
 		retainEveryNTurns: retainEveryNTurnsEnv ?? settings.get("hindsight.retainEveryNTurns"),
 		retainOverlapTurns: settings.get("hindsight.retainOverlapTurns"),
 		retainContext: settings.get("hindsight.retainContext") ?? "tau",
-=======
-		retainMode: cfgHindsightRetainMode.get(settings),
-		retainEveryNTurns: cfgHindsightRetainEveryNTurns.get(settings),
-		retainOverlapTurns: cfgHindsightRetainOverlapTurns.get(settings),
-		retainContext: cfgHindsightRetainContext.get(settings),
->>>>>>> theirs — scope `* `process.env` per case.`
 
 		recallBudget: cfgHindsightRecallBudget.get(settings),
 		recallMaxTokens: cfgHindsightRecallMaxTokens.get(settings),

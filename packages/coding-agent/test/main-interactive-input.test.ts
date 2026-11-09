@@ -2,7 +2,6 @@ import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import type { Skill } from "@oh-my-pi/pi-coding-agent/extensibi…` +6 more
 import type { Skill } from "tau/extensibility/skills";
 import { parseArgs } from "tau/cli/args";
@@ -16,20 +15,6 @@ import type { CreateAgentSessionOptions } from "tau/sdk";
 import { AuthStorage } from "tau/session/auth-storage";
 import { SessionManager } from "tau/session/session-manager";
 import { removeWithRetries } from "@tau/tau-utils";
-=======
-import { buildSkillPromptMessage, type Skill } from "@oh-my-pi/pi-coding-agent/extensibility/skills";
-import { parseArgs } from "@oh-my-pi/pi-coding-agent/cli/args";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { buildSessionOptions, readPipedInput, submitInteractiveInput } from "@oh-my-pi/pi-coding-agent/main";
-import type { SubmittedUserInput } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { SKILL_PROMPT_MESSAGE_TYPE } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { discoverTitleSystemPromptFile } from "@oh-my-pi/pi-coding-agent/system-prompt";
-import type { CreateAgentSessionOptions } from "@oh-my-pi/pi-coding-agent/sdk";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/main-interactive-input.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const cleanupDirs: string[] = [];
 

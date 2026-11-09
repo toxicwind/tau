@@ -1,14 +1,9 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { getProjectDir, logger, Snowflake } from "@oh-my-pi/pi-…`
 import { getProjectDir, logger, Snowflake } from "@tau/tau-utils";
 import type { OutputArtifactError } from "@tau/tau-tui/tools/streaming-output";
-=======
-import { getProjectDir, isRecord, logger, Snowflake } from "@oh-my-pi/pi-utils";
-import type { OutputArtifactError } from "@oh-my-pi/pi-tui/tools/streaming-output";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/eval/py/executor.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { ToolSession } from "../../tools";
 import {
 	abortReasonError,

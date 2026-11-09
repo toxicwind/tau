@@ -26,14 +26,8 @@
 import * as crypto from "node:crypto";
 import * as fs from "node:fs";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { getBaseConfigRoot, isEnoent } from "@oh-my-pi/pi-utils…`
 import { getBaseConfigRoot, isEnoent } from "@tau/tau-utils";
-=======
-import { type } from "@oh-my-pi/omptype";
-import { IpcConnection, IpcServer, ipcEndpoint } from "@oh-my-pi/pi-natives";
-import { getBaseConfigRoot, isEnoent, isFsError } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/collab/registry.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /** Discovery metadata / IPC protocol version. Mixed tau versions fail safely. */
 export const COLLAB_REGISTRY_VERSION = 1;
@@ -388,7 +382,6 @@ function removeFilesSync(files: string[]): void {
 		}
 	}
 }
-<<<<<<< ours — function `socketFallbackDir` (T+F, confidence: medium)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 /**
  * Short owner-private socket directory for registries whose canonical path
@@ -404,9 +397,6 @@ function socketFallbackDir(dir: string, base: string): string {
 		.slice(0, 20);
 	return path.join(base, `tau-collab-${key}`);
 }
-=======
->>>>>>> theirs — function `socketFallbackDir` (T+F, confidence: medium)
-<<<<<<< ours — function `resolveSocketEndpoint` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 /**
  * Where this publication's Unix socket lives. The canonical location is next
@@ -422,8 +412,6 @@ async function resolveSocketEndpoint(dir: string, entryId: string, fallbackBase:
 	await ensurePrivateDir(shortDir);
 	return path.join(shortDir, `${entryId}.sock`);
 }
-=======
->>>>>>> theirs — function `resolveSocketEndpoint` (S+F, confidence: low)
 
 /**
  * Publish a live Collab host to the local registry.
@@ -449,17 +437,11 @@ export async function publishCollabHost(
 	// lister pruning the stale entry can never remove the live successor's.
 	const entryId = crypto.randomBytes(8).toString("hex");
 	const token = crypto.randomBytes(32).toString("hex");
-<<<<<<< ours — scope `* exit hook removes the on-disk state for nor...` in function `publishCollabHost` (F, confidence: medium)
 // refused_by: statement_fold · collision: `? `\\\\.\\pipe\\omp-collab-${entryId}``
 	const endpoint =
 		process.platform === "win32"
 			? `\\\\.\\pipe\\tau-collab-${entryId}`
 			: await resolveSocketEndpoint(dir, entryId, options?.socketFallbackBase ?? DEFAULT_SOCKET_FALLBACK_BASE);
-=======
-	// `<dir>/<entryId>.sock` on Unix (natively relocated when it would overflow
-	// `sun_path`); listers never guess it, the metadata records the endpoint.
-	const endpoint = ipcEndpoint(dir, entryId);
->>>>>>> theirs — scope `* exit hook removes the on-disk state for nor...`
 	const metaPath = path.join(dir, `${entryId}.json`);
 
 	const liveConnections = new Set<IpcConnection>();

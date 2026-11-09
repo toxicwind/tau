@@ -2,7 +2,6 @@ import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { clearCustomApis } from "@tau/tau-ai/api-registry";
 import { startAuthGateway } from "@tau/tau-ai/auth-gateway";
@@ -14,25 +13,6 @@ import type { AssistantMessage, Context, ModelSpec } from "@tau/tau-ai/types";
 import { AssistantMessageEventStream } from "@tau/tau-ai/utils/event-stream";
 import { buildModel } from "@tau/tau-catalog/build";
 import { Effort } from "@tau/tau-catalog/effort";
-=======
-import { clearCustomApis } from "@oh-my-pi/pi-ai/api-registry";
-import { startAuthGateway } from "@oh-my-pi/pi-ai/auth-gateway";
-import { AuthStorage } from "@oh-my-pi/pi-ai/auth-storage";
-import { createMockModel, registerMockApi } from "@oh-my-pi/pi-ai/providers/mock";
-import {
-	buildTransformedCodexRequestBody,
-	convertCodexResponsesMessages,
-	convertOpenAICodexResponsesTools,
-} from "@oh-my-pi/pi-ai/providers/openai-codex-responses";
-import { encodeResponse, encodeStream, parseRequest } from "@oh-my-pi/pi-ai/providers/openai-responses-server";
-import { buildResponsesInput } from "@oh-my-pi/pi-ai/providers/openai-shared";
-import type { AssistantMessage, Context, ModelSpec } from "@oh-my-pi/pi-ai/types";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { createCodexModel } from "./helpers";
-import capturedCodex0154Tools from "./fixtures/codex-0154-additional-tools.json" with { type: "json" };
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/ai/test/auth-gateway-openai-responses.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function zeroUsage(): AssistantMessage["usage"] {
 	return {

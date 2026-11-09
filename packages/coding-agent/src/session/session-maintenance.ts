@@ -9,13 +9,8 @@ import {
 	resolveTelemetry,
 	type StreamFn,
 	type ThinkingLevel,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { preferredDialect } from "@oh-my-pi/pi-catalog/identity…` +1 more
 } from "@tau/tau-agent-core";
-=======
-	Tokenizer,
-} from "@oh-my-pi/pi-agent-core";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/session/session-maintenance.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	AGGRESSIVE_SHAKE_CONFIG,
 	AUTO_HANDOFF_THRESHOLD_FOCUS,
@@ -51,13 +46,9 @@ import {
 	type SummaryOptions,
 	shouldCompact,
 	shouldUseProviderNativeCompaction,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { preferredDialect } from "@oh-my-pi/pi-catalog/identity…` +1 more
 	upsertFileOperations,
 } from "@tau/tau-agent-core/compaction";
-=======
-} from "@oh-my-pi/pi-agent-core/compaction";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import {
 	DEFAULT_PRUNE_CONFIG,
 	type PruneResult,
@@ -73,7 +64,6 @@ import type {
 	Message,
 	Model,
 	ProviderSessionState,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { preferredDialect } from "@oh-my-pi/pi-catalog/identity…` +1 more
 } from "@tau/tau-ai";
 import * as AIError from "@tau/tau-ai/error";
@@ -81,18 +71,6 @@ import { preferredDialect } from "@tau/tau-catalog/identity";
 import { modelsAreEqual } from "@tau/tau-catalog/models";
 import { isRecord, logger, Snowflake, stringifyJson } from "@tau/tau-utils";
 import * as snapcompact from "@tau/snapcompact";
-=======
-} from "@oh-my-pi/pi-ai";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { replaysNativeResponsesHistory } from "@oh-my-pi/pi-ai/providers/openai-shared";
-import { openAIResponsesReplaysNativeHistory } from "@oh-my-pi/pi-ai/providers/openai-responses-state";
-import { sendsImageInputOnWire } from "@oh-my-pi/pi-ai/providers/vision-guard";
-import { resolvePromptCacheLookback } from "@oh-my-pi/pi-catalog/compat/prompt-cache-lookback";
-import { modelsAreEqual } from "@oh-my-pi/pi-catalog/models";
-import type { CatalogPolicyInputs } from "@oh-my-pi/pi-catalog/types";
-import { isRecord, logger, prompt, Snowflake, toError } from "@oh-my-pi/pi-utils";
-import * as snapcompact from "@oh-my-pi/snapcompact";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import { writeArtifact } from "./artifacts";
 import type { ModelRegistry } from "../config/model-registry";
 import { CHAT_MODEL_ROLE_IDS } from "../config/model-roles";
@@ -102,18 +80,10 @@ import type { CompactOptions, ContextUsage } from "../extensibility/extensions/t
 import type { GoalModeState } from "../goals/state";
 import { resolveMemoryBackend } from "../memory-backend/resolve";
 import type { MemoryBackendOperationContext } from "../memory-backend/types";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { preferredDialect } from "@oh-my-pi/pi-catalog/identity…` +1 more
 import { computeNonMessageTokens, type NonMessageTokenSource } from "@tau/tau-tui/status-line/context-usage";
 import { createPlanReadMatcher } from "../plan-mode/plan-protection";
 import type { ConfiguredThinkingLevel } from "@tau/tau-tui/thinking";
-=======
-import { customMessageEntryMessage } from "@oh-my-pi/pi-tui/chat/transcript-entry";
-import { computeNonMessageTokens, type NonMessageTokenSource } from "@oh-my-pi/pi-tui/status-line/context-usage";
-import { createPlanReadMatcher } from "../plan-mode/plan-protection";
-import { isCompleteReadResult } from "../tools/read-supersede";
-import type { ConfiguredThinkingLevel } from "@oh-my-pi/pi-tui/thinking";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import type { AgentSessionEvent } from "./agent-session-events";
 import type { ContextUsageBreakdown, HandoffResult, SessionHandoffOptions } from "./agent-session-types";
 import { findCompactMode } from "./compact-modes";

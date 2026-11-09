@@ -16,7 +16,6 @@ import { taskSubprocessRenderer } from "@tau/tau-tui/tools/subprocess";
  *   - Progress tracking via JSON events
  *   - Session artifacts for debugging
  */
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { AgentTool, AgentToolResult, AgentToolUpdateCallba…` +2 more
 import path from "node:path";
 import type { AgentTool, AgentToolResult, AgentToolUpdateCallback } from "@tau/tau-agent-core";
@@ -26,22 +25,6 @@ import type { ToolSession } from "..";
 import type { EffectiveExtensionRoots } from "../capability/types";
 import type { Theme } from "@tau/tau-tui/theme";
 import subagentUserPromptTemplate from "../prompts/system/subagent-user-prompt.md" with { type: "text" };
-=======
-import * as fs from "node:fs/promises";
-import * as path from "node:path";
-import type {
-	AgentTool,
-	AgentToolResult,
-	AgentToolUpdateCallback,
-	ToolSpeculationPolicy,
-} from "@oh-my-pi/pi-agent-core";
-import type { Usage } from "@oh-my-pi/pi-ai";
-import { $env, hasFsCode, isRecord, logger, prompt, sanitizeText } from "@oh-my-pi/pi-utils";
-import type { ToolSession } from "..";
-import type { EffectiveExtensionRoots } from "../capability/types";
-import type { Settings } from "../config/settings";
-import type { Theme } from "@oh-my-pi/pi-tui/theme";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/task/index.ts' for per-hunk detail, 'weave check' to verify your resolution
 import taskDescriptionTemplate from "../prompts/tools/task.md" with { type: "text" };
 import taskAsyncContractTemplate from "../prompts/tools/task-async-contract.md" with { type: "text" };
 import taskCoordinationAdvisoryTemplate from "../prompts/tools/task-coordination-advisory.md" with { type: "text" };
@@ -58,7 +41,6 @@ import { isScoutSpawnable, type ResolvedSpawnPolicy, resolveSpawnPolicy } from "
 import { isBundledSeance, seanceTaskGuidance, seanceTaskSchemaFields, validateSeanceParams } from "./seance";
 import { SEANCE_AGENT_NAME } from "./seance-policy";
 import {
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { AgentTool, AgentToolResult, AgentToolUpdateCallba…` +2 more
 	type AgentProgress,
 	type SingleResult,
@@ -67,16 +49,6 @@ import {
 	type TaskToolDetails,
 } from "@tau/tau-tui/tools/task";
 import { AsyncJobError, type AsyncJobManager } from "../async";
-=======
-	type AgentDefinition,
-	canSpawnAtDepth,
-	getTaskSchema,
-	MAX_TASK_FILE_BYTES,
-	type TaskToolSchemaInstance,
-} from "./types";
-import type { AgentProgress, SingleResult, TaskItem, TaskParams, TaskToolDetails } from "@oh-my-pi/pi-tui/tools/task";
-import { AsyncJobError, type AsyncJobManagerApi } from "../async";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import { hasResolvableTranscript } from "../internal-urls/registry-helpers";
 import { sessionResolveContext } from "../internal-urls/context";
 import { InternalUrlRouter } from "../internal-urls/router";
@@ -94,45 +66,10 @@ import { getPerCallModelAdvertisement, type PerCallModelAdvertisement } from "./
 import { generateTaskName } from "./name-generator";
 import { AgentOutputManager } from "./output-manager";
 import { mapWithConcurrencyLimitAllSettled, Semaphore } from "./parallel";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { AgentTool, AgentToolResult, AgentToolUpdateCallba…` +2 more
 import { renderResult, renderCall as renderTaskCall } from "@tau/tau-tui/tools/task";
 import { repairTaskParams } from "@tau/tau-tui/tools/task-repair-args";
 import { resolveEffectiveSubagentPolicy, runStructuredSubagent, StructuredSubagentError } from "./structured-subagent";
-=======
-import { renderResult, renderCall as renderTaskCall } from "@oh-my-pi/pi-tui/tools/task";
-import { repairTaskParams } from "@oh-my-pi/pi-tui/tools/task-repair-args";
-import {
-	invalidModelSelectorReason,
-	renderSubagentUserPrompt,
-	resolveEffectiveSubagentPolicy,
-	runStructuredSubagent,
-	StructuredSubagentError,
-	type StructuredSubagentRequest,
-} from "./structured-subagent";
-import { SpawnRun, type SpawnPermit } from "./spawn-run";
-import { type TaskLauncher, TaskLaunchSession } from "./speculative-launch";
-import type { TextTap } from "../job-widgets/text-tap";
-import type { SubagentToolResult } from "./executor";
-import { appendToolResult, createTaskWidgetInputs } from "./widget-inputs";
-
-import { cfgAsyncEnabled } from "../tools/settings";
-import {
-	cfgTaskBatch,
-	cfgTaskDisabledAgents,
-	cfgTaskEnableEffort,
-	cfgTaskEnableLsp,
-	cfgTaskFile,
-	cfgTaskIsolationApply,
-	cfgTaskIsolationEnabled,
-	cfgTaskMaxConcurrency,
-	cfgTaskMaxRecursionDepth,
-	cfgTaskMaxRuntimeMs,
-	cfgTaskSpeculativeLaunch,
-	cfgTaskStructured,
-	perCallModelEnabled,
-} from "./settings";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 
 function createUsageTotals(): Usage {
 	return {

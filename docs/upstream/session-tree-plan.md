@@ -111,7 +111,6 @@ The separate `AgentSession.branch(entryId)` API, used by extension/hook command 
 - Persistent mode: writes new JSONL file and switches manager to it; returns new file path.
 - In-memory mode: replaces in-memory entries; returns `undefined`.
 
-<<<<<<< ours — heading ``/branch` behavior (new session file in the default configuration)` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 ## `/branch` behavior (new session file in the default configuration)
 
@@ -137,8 +136,6 @@ Configuration caveat: when `doubleEscapeAction=tree`, the `/branch` registry ent
 - Persistent mode: writes new JSONL file and switches manager to it; returns new file path.
 - In-memory mode: replaces in-memory entries; returns `undefined`.
 
-=======
->>>>>>> theirs — heading ``/branch` behavior (new session file in the default configuration)` (S+F, confidence: low) · weave: run 'weave explain docs/upstream/session-tree-plan.md' for per-hunk detail, 'weave check' to verify your resolution
 ## Context reconstruction and summary/custom integration
 
 `buildSessionContext()` (in `session-context.ts`, exposed via `SessionManager.buildSessionContext()`) resolves the active root→leaf path and builds effective LLM context state:
@@ -177,12 +174,8 @@ Tree selector behavior (`tree-selector.ts`):
 Command routing:
 
 - `/tree` always opens the tree selector.
-<<<<<<< ours — scope `- `/branch` normally opens the user-message/f...` in heading `Labels and tree UI behavior` (S, confidence: medium)
 // refused_by: statement_fold · collision: `- `/branch` normally opens the user-message/file-branch selecto…`
 - `/branch` normally opens the architect-message/file-branch selector. With `doubleEscapeAction=tree`, it opens the tree selector and performs same-file navigation instead.
-=======
-- `/branch` (alias `/rewind`) always opens the transcript rewind selector and performs same-file navigation.
->>>>>>> theirs — scope `- `/branch` normally opens the user-message/f...`
 
 ## Extension and hook touchpoints for tree operations
 

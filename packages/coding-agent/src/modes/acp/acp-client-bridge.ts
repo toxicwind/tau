@@ -4,7 +4,6 @@
  * `AgentSession`) can route through the client when it advertises the
  * relevant capabilities at `initialize` time.
  */
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 import type {
 	PermissionOption as AcpPermissionOption,
@@ -14,18 +13,6 @@ import type {
 	RequestPermissionRequest,
 	ToolCallUpdate,
 } from "@tau/tau-utils/acp";
-=======
-import { RequestError } from "@oh-my-pi/pi-utils/acp";
-import type {
-	PermissionOption as AcpPermissionOption,
-	TerminalHandle as AcpTerminalHandle,
-	AgentSideConnection,
-	ClientCapabilities,
-	RequestPermissionRequest,
-	RequestPermissionResponse,
-	ToolCallUpdate,
-} from "@oh-my-pi/pi-utils/acp";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/modes/acp/acp-client-bridge.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type {
 	ClientBridge,
 	ClientBridgeCapabilities,

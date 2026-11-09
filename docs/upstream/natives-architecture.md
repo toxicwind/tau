@@ -71,12 +71,8 @@ The published core package contains loader JS, declarations, and metadata but no
 
 For a normal installed package, the platform leaf is probed before the core package's `native/` directory and `process.execPath` directory. Workspace development skips leaf resolution so local artifacts win.
 
-<<<<<<< ours — scope `Compiled mode is detected by a populated embe...` in heading `Candidate ownership and order` (S, confidence: medium)
 // refused_by: statement_fold · collision: `Compiled mode is detected by a populated embedded manifest, `PI…`
 Compiled mode is detected by a populated embedded manifest, `PI_COMPILED`, or a Bun embedded marker in `import.meta.url`. It probes the versioned cache and legacy user-data directory before package/executable locations. `getNativesDir()` is `$XDG_DATA_HOME/tau/natives` only when `$XDG_DATA_HOME/tau` already exists; otherwise it is `~/.tau/natives`.
-=======
-Compiled mode is detected by a populated embedded manifest, `PI_COMPILED`, or a Bun embedded marker in `import.meta.url`. It probes the versioned cache and legacy user-data directory before package/executable locations. `getNativesDir()` first honors `PI_NATIVES_DIR` (trimmed, `~`-expanded, and normalized; empty or relative values are ignored), then uses `$XDG_DATA_HOME/omp/natives` only when `$XDG_DATA_HOME/omp` already exists; otherwise it is `~/.omp/natives`.
->>>>>>> theirs — scope `Compiled mode is detected by a populated embe...` · weave: run 'weave explain docs/upstream/natives-architecture.md' for per-hunk detail, 'weave check' to verify your resolution
 
 A populated manifest references one `<addon>.node.zst` zstd frame per embedded variant. Extraction accepts only basename manifest filenames, decompresses missing or wrong-sized files atomically into `<getNativesDir()>/<version>`, and validates their sizes. On Windows `node_modules` installs, the loader instead stages a leaf/core addon in that versioned directory so a running process does not lock the copy Bun must replace during an update.
 
@@ -86,12 +82,8 @@ After an addon loads successfully, the loader best-effort removes cache director
 
 Install and compiled candidates normally must report `package.json#version` from `__piNativesBuildVersion()` or a legacy release sentinel. A pre-sentinel addon with no release identity can also pass a narrow compatibility check for token counting, shell execution, text width, and the legacy desktop methods, provided the disk file does not carry the expected current stamp. The version is not compiled in: `scripts/stamp-native-version.ts` writes it into a fixed placeholder slot after linking, during stamp-capable `scripts/bazel-natives.ts` installs, local Cargo binding builds, and Nix package builds (`nix/package.nix`), so a release bump does not recompile the addon crate. Workspace loads skip this check. The loader does not validate a complete symbol list.
 
-<<<<<<< ours — scope `After `require(...)` and sentinel validation,...` in heading `Load validation and runtime initialization` (S, confidence: medium)
 // refused_by: statement_fold · collision: `After `require(...)` and sentinel validation, the loader calls …`
 After `require(...)` and sentinel validation, the loader calls `__tauInstallTokioRuntime()` when present. Rust deliberately avoids creating worker threads during `#[module_init]`, while the dynamic-loader lock is held. The post-load hook installs bounded Windows Tokio/Rayon pools; older addons without the hook use napi-rs defaults. Hook failure is best-effort and appears only in startup markers when enabled.
-=======
-After `require(...)` and version validation, the loader calls `__ompInstallTokioRuntime()` when present. Rust deliberately avoids creating worker threads during `#[module_init]`, while the dynamic-loader lock is held. The post-load hook installs bounded Windows Tokio/Rayon pools; older addons without the hook use napi-rs defaults. Hook failure is best-effort and appears only in startup markers when enabled.
->>>>>>> theirs — scope `After `require(...)` and sentinel validation,...`
 
 Set `PI_DEBUG_STARTUP` to emit synchronous `[startup]` markers to stderr around addon loading, extraction, and runtime installation.
 
@@ -109,14 +101,9 @@ Rust `#[napi]` functions, classes, objects, and enums generate the declaration s
 
 ## Ownership boundaries
 
-<<<<<<< ours — heading `Ownership boundaries` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 - **Package/scripts** own binary selection, CPU variants, optional leaf resolution, embedded extraction, Windows staging, declarations, and explicit ESM exports.
 - **`tau-natives` and supporting crates** own algorithms, native resources, platform behavior, cancellation, and N-API conversion.
-=======
-- **Package/scripts** own binary selection, CPU variants, optional leaf resolution, embedded extraction, Windows staging, desktop ABI adaptation, declarations, and explicit ESM exports.
-- **`pi-natives` and supporting crates** own algorithms, native resources, platform behavior, cancellation, and N-API conversion.
->>>>>>> theirs — heading `Ownership boundaries` (F, confidence: medium)
 - **Consumers** own higher-level tool policy, rendering, artifacts, and user-facing fallbacks not encoded in a primitive.
 
 For the supporting-crate map, see [`native-crates.md`](./native-crates.md). For exact loader diagnostics, see [`natives-addon-loader-runtime.md`](./natives-addon-loader-runtime.md).

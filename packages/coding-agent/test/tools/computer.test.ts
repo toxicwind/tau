@@ -4,7 +4,6 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { inspect } from "node:util";
 import { createContext, runInContext } from "node:vm";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 import { Settings } from "tau/config/settings";
 import type { EvalPreludeDefinition } from "tau/eval/preludes";
@@ -20,35 +19,6 @@ import type {
 } from "tau/tools/computer/protocol";
 import { type ComputerController, ComputerSupervisor, type ComputerWorkerHandle } from "tau/tools/computer/supervisor";
 import { ComputerWorkerCore, type NativeDesktopSession } from "tau/tools/computer/worker";
-=======
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { EvalPreludeDefinition } from "@oh-my-pi/pi-coding-agent/eval/preludes";
-import { disposeAllKernelSessions, executePython } from "@oh-my-pi/pi-coding-agent/eval/py/executor";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { computerApproval, createComputerPrelude } from "@oh-my-pi/pi-coding-agent/tools/computer";
-import { isReadOnlyComputerCall, renderComputerCall } from "@oh-my-pi/pi-coding-agent/tools/computer/call";
-import {
-	type ComputerSessionSnapshot,
-	type ComputerWorkerInbound,
-	type ComputerWorkerOutbound,
-	type ComputerWorkerTransport,
-	ESCAPE_AFTER_CALL_MESSAGE,
-	ESCAPE_STOPPED_MESSAGE,
-	SCREEN_LOCKED_CAPTURE_NOTE,
-} from "@oh-my-pi/pi-coding-agent/tools/computer/protocol";
-import {
-	beginComputerTurnForOwner,
-	type ComputerController,
-	type ComputerEscapeStops,
-	ComputerSupervisor,
-	type ComputerWorkerHandle,
-	endComputerTurnForOwner,
-	registerComputerController,
-	resumeComputerUseForOwner,
-} from "@oh-my-pi/pi-coding-agent/tools/computer/supervisor";
-import { ComputerWorkerCore, type NativeDesktopSession } from "@oh-my-pi/pi-coding-agent/tools/computer/worker";
-import * as clipboard from "@oh-my-pi/pi-coding-agent/utils/clipboard";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/tools/computer.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type {
 	ApplicationOpenOptions,
 	AxNode,
@@ -1503,16 +1473,9 @@ describe("computer worker round trips", () => {
 		const texts = result.payload.displays.filter(block => block.type === "text");
 		const images = result.payload.displays.filter(block => block.type === "image");
 		expect(texts).toHaveLength(1);
-<<<<<<< ours — scope `it("lists windows and returns screenshot capt...` in test_suite `computer worker round trips` (F, confidence: medium)
 // refused_by: statement_fold · collision: `expect(texts[0]?.text).toMatch(/^screenshot desktop 64×32 → .*o…`
 		expect(texts[0]?.text).toMatch(/^screenshot desktop 64×32 → .*tau-computer-.*\.png$/);
 		expect(images).toEqual([{ type: "image", data: "iVBORw==", mimeType: "image/png" }]);
-=======
-		expect(texts[0]?.text).toMatch(
-			/^screenshot desktop 64×32; coordinateWidth=64 coordinateHeight=32 → .*omp-computer-.*\.png$/,
-		);
-		expect(images).toEqual([{ type: "image", data: "iVBORw==", mimeType: "image/png", detail: "original" }]);
->>>>>>> theirs — scope `it("lists windows and returns screenshot capt...`
 		expect(result.payload.screenshots).toHaveLength(1);
 		expect(result.payload.screenshots[0]).toMatchObject({ width: 64, height: 32, target: "desktop" });
 		expect(result.payload.screenshots[0]?.path).toMatch(/tau-computer-.*\.png$/);
@@ -1531,14 +1494,8 @@ describe("computer worker round trips", () => {
 		expect(result.payload.displays[0]).toEqual(
 			expect.objectContaining({
 				type: "text",
-<<<<<<< ours — scope `it("reports source dimensions when a screensh...` in test_suite `computer worker round trips` (F, confidence: medium)
 // refused_by: statement_fold · collision: `text: expect.stringMatching(/^screenshot desktop 64×32 \(scaled…`
 				text: expect.stringMatching(/^screenshot desktop 64×32 \(scaled from 128×64\) → .*tau-computer-.*\.png$/),
-=======
-				text: expect.stringMatching(
-					/^screenshot desktop 64×32 \(scaled from 128×64\); coordinateWidth=64 coordinateHeight=32 → .*omp-computer-.*\.png$/,
-				),
->>>>>>> theirs — scope `it("reports source dimensions when a screensh...`
 			}),
 		);
 		expect(result.payload.screenshots[0]).toMatchObject({

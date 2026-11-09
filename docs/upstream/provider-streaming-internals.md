@@ -5,12 +5,8 @@ This document explains how token/tool streaming is normalized in `@tau/tau-ai`, 
 ## End-to-end flow
 
 1. `streamSimple()` (`packages/ai/src/stream.ts`) resolves credentials, maps generic options, and dispatches to a provider stream function. Built-ins use the eagerly imported adapters in `packages/ai/src/providers/register-builtins.ts`; routing wrappers and extension-registered APIs have their own dispatch paths. Shared dispatch also applies provider in-flight limits, leaked-thinking healing, and thinking-loop guards.
-<<<<<<< ours — scope `2. Provider stream functions translate provid...` in heading `End-to-end flow` (S, confidence: medium)
 // refused_by: statement_fold · collision: `2. Provider stream functions translate provider-native stream e…`
 2. Provider stream functions translate provider-native stream events into the unified `AssistantMessageEvent` sequence. Current built-ins include Anthropic, OpenAI Responses/Completions/Codex/Azure Responses, Google Gemini/Gemini CLI/Vertex, Bedrock Converse, Ollama, Cursor, Devin, tau-native gateway transport, plus GitLab Duo, GitLab Duo Workflow, Kimi, and Synthetic wrappers, and extension-registered custom APIs. (xAI Grok has no dedicated wrapper: both `xai-oauth` and API-key `xai` models are catalog specs with `api: "openai-responses"` at `https://api.x.ai/v1`, riding the shared OpenAI Responses path with catalog-level compat.)
-=======
-2. Provider stream functions translate provider-native stream events into the unified `AssistantMessageEvent` sequence. Built-ins include Anthropic, OpenAI Responses/Completions/Codex/Azure Responses, Google Gemini/Gemini CLI/Vertex, Bedrock Converse, Ollama, Cursor, Devin, Apple Foundation Models, and pi-native gateway transport, plus GitLab Duo, GitLab Duo Workflow, Kimi, and Synthetic wrappers. xAI Grok uses the shared OpenAI Responses path with catalog-level compat. OpenRouter defaults to Responses; `PI_OPENROUTER_RESPONSES=0` selects Chat Completions.
->>>>>>> theirs — scope `2. Provider stream functions translate provid...` · weave: run 'weave explain docs/upstream/provider-streaming-internals.md' for per-hunk detail, 'weave check' to verify your resolution
 3. Each provider pushes events into `AssistantMessageEventStream` (`packages/ai/src/utils/event-stream.ts`), which exposes:
    - async iteration for incremental updates
    - `result()` for the final `AssistantMessage`
@@ -18,7 +14,6 @@ This document explains how token/tool streaming is normalized in `@tau/tau-ai`, 
 5. `agentLoop` (`packages/agent/src/agent-loop.ts`) consumes those events, updates in-flight assistant state, and emits `message_update` events carrying read-only snapshots of the assistant event and message. Open blocks are copied incrementally; finalized blocks are shared between snapshots.
 6. `AgentSession` (`packages/coding-agent/src/session/agent-session.ts`) subscribes to agent events, persists messages, drives extension hooks, and applies session behaviors (retry, compaction, TTSR, streaming-edit abort checks).
 
-<<<<<<< ours — heading `Unified stream contract in `@oh-my-pi/pi-ai`` (S+F, confidence: low)
 // refused_by: rename_vs_edit_guard · collision: none (both sides edited, nowhere the same lines)
 ## Unified stream contract in `@tau/tau-ai`
 
@@ -33,21 +28,6 @@ All providers emit the same shape (`AssistantMessageEvent` in `packages/ai/src/t
 - terminal event:
   - `done` with `reason: "stop" | "length" | "toolUse"`
   - or `error` with `reason: "aborted" | "error"`
-=======
-## Unified stream contract in `@oh-my-pi/pi-ai`
-
-All providers emit the same shape (`AssistantMessageEvent` in `packages/ai/src/types.ts`):
-
-- `start`
-- content block lifecycle triplets:
-   - text: `text_start` → `text_delta`\* → `text_end`
-   - thinking: `thinking_start` → `thinking_delta`\* → `thinking_end`
-   - tool call: `toolcall_start` → `toolcall_delta`\* → `toolcall_end`
-- complete image blocks: `image_end`
-- terminal event:
-   - `done` with `reason: "stop" | "length" | "toolUse"`
-   - or `error` with `reason: "aborted" | "error"`
->>>>>>> theirs — heading `Unified stream contract in `@oh-my-pi/pi-ai`` (S+F, confidence: low)
 
 `AssistantMessageEventStream` guarantees:
 
@@ -348,12 +328,8 @@ Provider-specific (not fully abstracted):
 - [`packages/ai/src/providers/anthropic.ts`](../packages/ai/src/providers/anthropic.ts) — Anthropic event translation and tool JSON accumulation.
 - [`packages/ai/src/providers/openai-shared.ts`](../packages/ai/src/providers/openai-shared.ts) — shared Responses event translation; [`openai-responses.ts`](../packages/ai/src/providers/openai-responses.ts), [`openai-codex-responses.ts`](../packages/ai/src/providers/openai-codex-responses.ts), and [`azure-openai-responses.ts`](../packages/ai/src/providers/azure-openai-responses.ts) — transport/request variants.
 - [`packages/ai/src/providers/google-shared.ts`](../packages/ai/src/providers/google-shared.ts) — shared Gemini conversion and event translation; [`google.ts`](../packages/ai/src/providers/google.ts), [`google-gemini-cli.ts`](../packages/ai/src/providers/google-gemini-cli.ts), and [`google-vertex.ts`](../packages/ai/src/providers/google-vertex.ts) — request/transport variants.
-<<<<<<< ours — scope `- [`../../ai/src/providers/amazon-bedrock.ts`...` in heading `Implementation files` (S, confidence: medium)
 // refused_by: statement_fold · collision: `- [`../../ai/src/providers/amazon-bedrock.ts`](../packages/ai/s…`
 - [`../../ai/src/providers/amazon-bedrock.ts`](../packages/ai/src/providers/amazon-bedrock.ts), [`openai-completions.ts`](../packages/ai/src/providers/openai-completions.ts), [`ollama.ts`](../packages/ai/src/providers/ollama.ts), [`cursor.ts`](../packages/ai/src/providers/cursor.ts), [`tau-native-client.ts`](../packages/ai/src/providers/tau-native-client.ts) — additional built-in stream adapters using the same event contract.
-=======
-- [`amazon-bedrock.ts`](../packages/ai/src/providers/amazon-bedrock.ts), [`openai-completions.ts`](../packages/ai/src/providers/openai-completions.ts), [`ollama.ts`](../packages/ai/src/providers/ollama.ts), [`cursor.ts`](../packages/ai/src/providers/cursor.ts), [`apple-foundation-models.ts`](../packages/ai/src/providers/apple-foundation-models.ts), and [`pi-native-client.ts`](../packages/ai/src/providers/pi-native-client.ts) — additional stream adapters.
->>>>>>> theirs — scope `- [`../../ai/src/providers/amazon-bedrock.ts`...`
 - [`packages/ai/src/providers/register-builtins.ts`](../packages/ai/src/providers/register-builtins.ts) and [`packages/ai/src/utils/idle-iterator.ts`](../packages/ai/src/utils/idle-iterator.ts) — built-in forwarding, shared first-progress/idle watchdogs, and local-work-aware stall handling.
 - [`packages/agent/src/agent-loop.ts`](../packages/agent/src/agent-loop.ts) — provider stream consumption and `message_update` snapshots.
 - [`packages/coding-agent/src/session/agent-session.ts`](../packages/coding-agent/src/session/agent-session.ts), [`stream-guards.ts`](../packages/coding-agent/src/session/stream-guards.ts), and [`ttsr-coordinator.ts`](../packages/coding-agent/src/session/ttsr-coordinator.ts) — session updates, guards, abort, and persistence.

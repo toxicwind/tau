@@ -1,16 +1,10 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `} from "@oh-my-pi/pi-catalog/provider-models/openai-compat";`
 import {
 	KIMI_K27_CODE_RECOMMENDED_MAX_TOKENS,
 	veniceModelManagerOptions,
 } from "@tau/tau-catalog/provider-models/openai-compat";
 import type { FetchImpl } from "@tau/tau-catalog/types";
-=======
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { veniceModelManagerOptions } from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import type { FetchImpl } from "@oh-my-pi/pi-catalog/types";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/catalog/test/venice-provider.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 describe("Venice provider catalog", () => {
 	it("caps Kimi K2.7 Code discovered at its context-sized output budget", async () => {

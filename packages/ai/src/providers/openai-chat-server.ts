@@ -1,17 +1,7 @@
 import { randomUUID } from "node:crypto";
-<<<<<<< ours — interstitial `file_header` (T+S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { type } from "@tau/tautype";
 import { resolvePromptCacheKey } from "../auth-gateway/http";
-=======
-import { type } from "@oh-my-pi/omptype";
-import {
-	isOpenAIReasoningEffort,
-	isOpenAIServiceTier,
-	openAIErrorResponse,
-	resolvePromptCacheKey,
-} from "../auth-gateway/http";
->>>>>>> theirs — interstitial `file_header` (T+S+F, confidence: low) · weave: run 'weave explain packages/ai/src/providers/openai-chat-server.ts' for per-hunk detail, 'weave check' to verify your resolution
 /**
  * Parsed inbound OpenAI chat-completions request, ready to feed into tau-ai
  * `stream(model, context, options)`.

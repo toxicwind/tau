@@ -129,7 +129,6 @@ process.stdout.write(String(await probeRelayServer(url)));`,
 		}
 	});
 
-<<<<<<< ours — scope `it("surfaces stderr when a consumer exits bef...` in test_suite `browser relay daemon`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("surfaces stderr when a consumer exits before becoming ready", async () => {
 		const home = await fs.mkdtemp(path.join(os.tmpdir(), "tau-relay-failed-consumer-"));
@@ -148,8 +147,6 @@ process.stdout.write(String(await probeRelayServer(url)));`,
 			await fs.rm(home, { recursive: true, force: true });
 		}
 	});
-=======
->>>>>>> theirs — scope `it("surfaces stderr when a consumer exits bef...` deleted in theirs · weave: run 'weave explain packages/coding-agent/test/tools/browser-relay-daemon.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 	it("keeps one port's relay running when another relay starts on a different port", async () => {
 		const home = await fs.mkdtemp(path.join(os.tmpdir(), "omp-relay-ports-"));

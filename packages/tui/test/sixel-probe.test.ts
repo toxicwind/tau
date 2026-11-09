@@ -1,11 +1,6 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { ImageProtocol, setTerminalImageProtocol, TERMINAL, TUI…`
 import { afterEach, describe, expect, it } from "bun:test";
 import { ImageProtocol, setTerminalImageProtocol, TERMINAL, TUI } from "@tau/tau-tui";
-=======
-import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import { ImageProtocol, resolveImageProtocol, setTerminalImageProtocol, TERMINAL, TUI } from "@oh-my-pi/pi-tui";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/test/sixel-probe.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { VirtualTerminal } from "./virtual-terminal";
 import {
 	createProcessTerminalRenderHarness,

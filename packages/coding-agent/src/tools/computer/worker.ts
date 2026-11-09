@@ -29,19 +29,10 @@ import type {
 	DesktopWindow,
 	OpenedApplication,
 	PointerOptions,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-natives";
 import * as postmortem from "@tau/tau-utils/postmortem";
 import { Snowflake } from "@tau/tau-utils/snowflake";
-=======
-} from "@oh-my-pi/pi-natives";
-import { isEnoent } from "@oh-my-pi/pi-utils/fs-error";
-import { expandTilde } from "@oh-my-pi/pi-utils/path";
-import { truncate } from "@oh-my-pi/pi-utils/format";
-import * as postmortem from "@oh-my-pi/pi-utils/postmortem";
-import { Snowflake } from "@oh-my-pi/pi-utils/snowflake";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/computer/worker.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { JsRuntime, type RuntimeHooks } from "../../eval/js/shared/runtime";
 import { cloneSafe, RunOutput } from "../browser/run-output";
 import {
@@ -52,7 +43,6 @@ import {
 	waitForRun,
 } from "../run-scope";
 import { ToolAbortError, throwIfAborted } from "../tool-errors";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 import { isHyprlandActive, hyprListWindows, hyprListDisplays, hyprFocusWindow, hyprCaptureRegion } from "./hyprland";
@@ -63,22 +53,6 @@ import type {
 	ComputerWorkerTransport,
 	RunErrorPayload,
 	ToolReply,
-=======
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
-import {
-	type ComputerEscapeScope,
-	type ComputerScreenshot,
-	type ComputerSessionSnapshot,
-	type ComputerWorkerInbound,
-	type ComputerWorkerTransport,
-	type ControlVerdict,
-	ESCAPE_AFTER_CALL_MESSAGE,
-	ESCAPE_STOPPED_MESSAGE,
-	type RunErrorPayload,
-	SCREEN_LOCKED_CAPTURE_NOTE,
-	screenStateNotice,
-	type ToolReply,
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 } from "./protocol";
 import { describeWindowMiss, matchesWindowApp } from "./window-miss";
 
@@ -671,7 +645,6 @@ async function captureScreenshot(
 	region?: CaptureRegion,
 ): Promise<ScreenshotResult> {
 	const context = getContext();
-<<<<<<< ours — function `captureScreenshot (body partly extracted into sendInput, emitScreenshot)` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `const destination = path.join(os.tmpdir(), `omp-computer-${Snow…`
 	const destination = path.join(os.tmpdir(), `tau-computer-${Snowflake.next()}.png`);
 	if (target !== "desktop" && target.startsWith("0x") && isHyprlandActive()) {
@@ -731,16 +704,6 @@ async function captureScreenshot(
 		});
 	}
 	return { path: destination, width: frame.width, height: frame.height };
-=======
-	const caps = {
-		maxWidth: context.snapshot.captureMaxWidth,
-		maxHeight: context.snapshot.captureMaxHeight,
-	};
-	const frame = await nativeCall(context.signal, () =>
-		region === undefined ? session.capture(target, caps) : session.captureRegion(target, region, caps),
-	);
-	return await emitScreenshot(context, frame, options);
->>>>>>> theirs — function `captureScreenshot (body partly extracted into sendInput, emitScreenshot)` (S+F, confidence: low)
 }
 
 async function emitScreenshot(
@@ -1373,21 +1336,11 @@ class Win {
 	async raise(): Promise<void> {
 		const context = this.#getContext();
 		guardRun(context, "raise");
-<<<<<<< ours — scope `raise` in class `Win` (S+F, confidence: low)
 // refused_by: container_member · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 		if (isHyprlandActive() && this.id.startsWith("0x")) {
 			await hyprFocusWindow(this.id);
 			return;
 		}
-=======
-		refuseForeground(
-			context,
-			"raise()",
-			"bring the window's application to the front",
-			RAISE_ROUTE,
-			`window ${this.id}`,
-		);
->>>>>>> theirs — scope `raise`
 		await nativeCall(context.signal, () => this.#session.raiseWindow(this.id));
 	}
 
@@ -1492,15 +1445,9 @@ export class ComputerWorkerCore {
 				// The worker must answer its readiness handshake without loading the native
 				// addon; normal CLI startup and selector pings never execute desktop code.
 				const createSession =
-<<<<<<< ours — scope `#ensureSession` in class `ComputerWorkerCore` (S+F, confidence: low)
 // refused_by: container_member · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 					this.#createSession ?? (await import("@tau/tau-natives/desktop")).createDesktopSession;
 				const session = await createSession({ display: snapshot.display });
-=======
-					this.#createSession ?? (await import("@oh-my-pi/pi-natives/desktop")).createDesktopSession;
-				const session = await createSession({ display: snapshot.display, escapeStopKey: escape.key });
-				const guarded = this.#guard(session);
->>>>>>> theirs — scope `#ensureSession`
 				this.#session = session;
 				this.#guarded = guarded;
 				return session;
@@ -2002,7 +1949,6 @@ export class ComputerWorkerCore {
 			},
 			windows: async (filter?: WindowFilter): Promise<DesktopWindow[]> => {
 				const { signal } = getContext();
-<<<<<<< ours — scope `#createDesktopScope` in class `ComputerWorkerCore` (F, confidence: medium)
 // refused_by: container_member · collision: `return (await nativeCall(signal, () => session.listWindows())).…` +4 more
 				let list = await nativeCall(signal, () => session.listWindows());
 				if (list.length === 0 && isHyprlandActive()) {
@@ -2026,42 +1972,6 @@ export class ComputerWorkerCore {
 							)
 						: windows.filter(window => matchesFilter(window, selector));
 				if (matches.length === 0) throw new ToolError(`no window matches ${JSON.stringify(selector)}`);
-=======
-				const { matches } = await listWindows(filter, signal);
-				return matches.slice(0, MAX_LISTED_WINDOWS);
-			},
-			window: async (selector: string | number | WindowFilter): Promise<Win> => {
-				const { signal } = getContext();
-				const id = typeof selector === "string" || typeof selector === "number" ? String(selector) : undefined;
-				const wait = typeof selector === "object" && selector !== null ? windowWait(selector.wait) : 0;
-				// Monotonic, like the run deadline: a wall-clock step must not end or stretch the wait.
-				const deadline = performance.now() + wait;
-				let windows: DesktopWindow[];
-				let matches: DesktopWindow[];
-				let appPids: ReadonlySet<number> | undefined;
-				for (;;) {
-					const listed = await listWindows(id === undefined ? (selector as WindowFilter) : { id }, signal);
-					({ windows, matches, appPids } = listed);
-					// The last interval sleeps only what is left, so the final listing lands at the deadline.
-					const remaining = deadline - performance.now();
-					if (matches.length > 0 || remaining <= 0) break;
-					await waitForRun(Math.min(WINDOW_WAIT_INTERVAL_MS, remaining), signal);
-				}
-				// Untyped scripts may pass nothing or `null`, which `matchesFilter` accepts as no filter: a desktop with one
-				// window returns it, and otherwise the error names the missing selector.
-				const unfiltered =
-					selector == null
-						? "computer.window() without an id or { app, title } filter matches every open window"
-						: "";
-				if (matches.length === 0) {
-					const app = typeof selector === "object" ? selector?.app : undefined;
-					const route = session.capabilities.backend === "quartz" ? "shows-window" : "launches";
-					const lead = unfiltered
-						? `${unfiltered}, and none is open`
-						: `no window matches ${JSON.stringify(selector)}`;
-					throw new ToolError(`${lead}\n${describeWindowMiss(windows, app, route, appPids)}`);
-				}
->>>>>>> theirs — scope `#createDesktopScope`
 				if (matches.length > 1) {
 					const candidates = matches
 						.slice(0, MAX_LISTED_WINDOWS)

@@ -1,11 +1,5 @@
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 import { formatDuration } from "@tau/tau-tui/render/render-utils";
-=======
-import { formatDuration } from "@oh-my-pi/pi-tui/render/render-utils";
-import type { DaemonSnapshot } from "@oh-my-pi/pi-tui/tools/daemon";
-import { formatBytes, logger, sanitizeText, truncate } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/internal-urls/proc-protocol.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { AsyncJob } from "../async";
 import {
 	agentStaleNote,
@@ -25,13 +19,8 @@ import {
 	serviceStatus,
 	stopService,
 } from "../launch/services";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 import type { ProcReadDetails } from "@tau/tau-tui/tools/proc-render";
-=======
-import type { ProcReadDetails } from "@oh-my-pi/pi-tui/tools/proc-render";
-import procPromptDoc from "../prompts/internal-urls/proc.md" with { type: "text" };
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low)
 import type { ToolSession } from "../tools";
 import type {
 	InternalResource,

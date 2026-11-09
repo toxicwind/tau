@@ -112,24 +112,13 @@ pub fn iso_probe(kind: Option<IsoBackendKind>) -> IsoProbeResult {
 	}
 }
 
-<<<<<<< ours — scope `declaration` in function `iso_resolve` (T+F, confidence: medium)
 // refused_by: statement_fold · collision: `/// a hint — see [`pi_iso::resolve`] for the exact priority rul…`
 /// Pick the best backend available right now. `preferred` is treated as
 /// a hint — see [`tau_iso::resolve`] for the exact priority rules.
-=======
-/// Pick the best backend available right now.
-///
-/// `preferred` is treated as a hint — see [`pi_iso::resolve`] for the exact
-/// priority rules. Backend probes may spawn CLIs, so they run on the native
-/// blocking pool.
->>>>>>> theirs — scope `declaration` · weave: run 'weave explain crates/tau-natives/src/iso.rs' for per-hunk detail, 'weave check' to verify your resolution
 #[napi]
 pub fn iso_resolve(preferred: Option<IsoBackendKind>) -> task::Promise<IsoResolveResult> {
-<<<<<<< ours — scope `let resolution = pi_iso::resolve(preferred.ma...` in function `iso_resolve`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	let resolution = tau_iso::resolve(preferred.map(from_napi_kind));
-=======
->>>>>>> theirs — scope `let resolution = pi_iso::resolve(preferred.ma...` deleted in theirs
 	task::blocking("iso.resolve", (), move |_| {
 		let resolution = pi_iso::resolve(preferred.map(from_napi_kind));
 		Ok(IsoResolveResult {

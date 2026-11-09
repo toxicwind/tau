@@ -1,13 +1,8 @@
 import type { ThinkingLevel } from "@tau/tau-agent-core";
 import type { Model } from "@tau/tau-ai";
 import type { ModelRegistry } from "../config/model-registry";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { formatModelSelectorValue, parseModelString } from "@tau/tau-tui/overlays/model-selector";
-=======
-import { cfgModelRoles } from "../config/model-settings";
-import { formatModelSelectorValue, parseModelString } from "@oh-my-pi/pi-tui/overlays/model-selector";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/session/retry-fallback-chains.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { formatModelString, formatModelStringWithRouting } from "../config/model-resolver";
 import type { Settings } from "../config/settings";
 import {
@@ -251,21 +246,12 @@ function providerScopedPool(
  * Validates configured fallback chains and reports each warning via `warn`.
  *
  * `options.isDiscoveryPending` suppresses "unknown model" warnings for
-<<<<<<< ours — function `validateRetryFallbackChains` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `* registry (a cold discovery cache after `omp update` bumps the…`
  * selectors whose config-declared discovery provider has not yet populated the
  * registry (a cold discovery cache after `tau update` bumps the cache
  * namespace, #10048). Such selectors are re-checked once background discovery
  * settles. Logging is the caller's responsibility so a post-discovery re-run
  * does not double-log persistent warnings.
-=======
- * selectors whose provider discovery has not settled yet: a cold discovery
- * cache after `omp update` bumps the cache namespace (#10048), or a startup
- * cache replay the pending online refresh may still extend. Such selectors
- * are re-checked once background discovery settles. Logging is the caller's
- * responsibility so a post-discovery re-run does not double-log persistent
- * warnings.
->>>>>>> theirs — function `validateRetryFallbackChains` (S+F, confidence: low)
  */
 export function validateRetryFallbackChains(
 	settings: Settings,

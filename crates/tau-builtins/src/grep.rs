@@ -1,15 +1,7 @@
 //! `grep` builtin implemented on top of the ripgrep libraries.
 //!
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `//! Matching uses `grep-regex`/`grep-searcher`; recursive walks…`
 //! Matching uses `grep-regex`/`grep-searcher`; recursive walks use `tau-walker`.
-=======
-//! Matching uses `grep-regex`/`grep-searcher`; recursive searches walk
-//! through `pi-walker` and search the files inline, moving to parallel
-//! workers once the search runs long, printing files in path order. Also hosts
-//! the plumbing `rg` shares with it: exit status, record layout, and the
-//! line-length bound.
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain crates/tau-builtins/src/grep.rs' for per-hunk detail, 'weave check' to verify your resolution
 
 
 use std::{
@@ -177,7 +169,6 @@ pub(crate) fn for_each_nonempty_match<M: Matcher>(
 	Ok(())
 }
 
-<<<<<<< ours — function `pcre2_jit_enabled` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 /// PCRE2 JIT toggle: `TAU_PCRE2_JIT=1` forces JIT on, `0`/`false` forces it
 /// off. Unset, JIT stays on everywhere except macOS, where PCRE2's SLJIT
@@ -188,8 +179,6 @@ pub(crate) fn pcre2_jit_enabled(host: &Host) -> bool {
 		_ => !cfg!(target_os = "macos"),
 	}
 }
-=======
->>>>>>> theirs — function `pcre2_jit_enabled` (S+F, confidence: low)
 
 #[derive(Parser, Debug)]
 #[command(
@@ -202,7 +191,6 @@ pub(crate) fn pcre2_jit_enabled(host: &Host) -> bool {
 )]
 struct GrepArgs {
 	/// Use PATTERN for matching (may be repeated; all patterns are OR-ed).
-<<<<<<< ours — scope `patterns` in struct `GrepArgs` (S+F, confidence: low)
 // refused_by: container_member · collision: `#[arg(short = 'e', long = "regexp", value_name = "PATTERN")]`
 	///
 	/// `allow_hyphen_values` with an explicit `num_args = 1` is what GNU
@@ -211,9 +199,6 @@ struct GrepArgs {
 	/// with a usage error. `num_args = 1` keeps the option from swallowing
 	/// the flags that follow it.
 	#[arg(short = 'e', long = "regexp", value_name = "PATTERN", num_args = 1, allow_hyphen_values = true)]
-=======
-	#[arg(short = 'e', long = "regexp", value_name = "PATTERN", allow_hyphen_values = true)]
->>>>>>> theirs — scope `patterns`
 	patterns: Vec<String>,
 
 	/// Read patterns from FILE, one per line.
@@ -685,66 +670,35 @@ fn resolve_directory_action(cli: &GrepArgs, matches: &ArgMatches) -> DirectoryAc
 	selected.1
 }
 
-<<<<<<< ours — scope `declaration` in function `resolve_follow_links` (S, confidence: medium)
 // refused_by: statement_fold · collision: `fn resolve_follow_links(cli: &GrepArgs, matches: &ArgMatches) -…`
 fn resolve_follow_links(cli: &GrepArgs, matches: &ArgMatches) -> tau_walker::FollowLinks {
-=======
-/// Whether a recursive search follows symbolic links met below its operands
-/// (`-R`, `-S`); a directory operand that is itself a link is always followed.
-fn resolve_follow_links(cli: &GrepArgs, matches: &ArgMatches) -> bool {
->>>>>>> theirs — scope `declaration`
-<<<<<<< ours — scope `let mut selected = (0, pi_walker::FollowLinks...` in function `resolve_follow_links` (S, confidence: medium)
 // refused_by: statement_fold · collision: `let mut selected = (0, pi_walker::FollowLinks::Roots);`
 	let mut selected = (0, tau_walker::FollowLinks::Roots);
-=======
-	let mut selected = (0, false);
->>>>>>> theirs — scope `let mut selected = (0, pi_walker::FollowLinks...`
-<<<<<<< ours — scope `choose_latest(&mut selected, last_index(match...` in function `resolve_follow_links` (S, confidence: medium)
 // refused_by: statement_fold · collision: `choose_latest(&mut selected, last_index(matches, "recursive"), …`
 	choose_latest(&mut selected, last_index(matches, "recursive"), tau_walker::FollowLinks::Roots);
-=======
-	choose_latest(&mut selected, last_index(matches, "recursive"), false);
->>>>>>> theirs — scope `choose_latest(&mut selected, last_index(match...`
-<<<<<<< ours — scope `choose_latest(` in function `resolve_follow_links` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `pi_walker::FollowLinks::Always,`
 	choose_latest(
 		&mut selected,
 		last_index(matches, "dereference_recursive"),
 		tau_walker::FollowLinks::Always,
 	);
-=======
-	choose_latest(&mut selected, last_index(matches, "dereference_recursive"), true);
->>>>>>> theirs — scope `choose_latest(`
 	if cli.directories == Some(DirectoryAction::Recurse) {
-<<<<<<< ours — scope `if cli.directories == Some(DirectoryAction::R...` in function `resolve_follow_links` (F, confidence: medium)
 // refused_by: statement_fold · collision: `pi_walker::FollowLinks::Roots,`
 		choose_latest(
 			&mut selected,
 			last_index(matches, "directories"),
 			tau_walker::FollowLinks::Roots,
 		);
-=======
-		choose_latest(&mut selected, last_index(matches, "directories"), false);
->>>>>>> theirs — scope `if cli.directories == Some(DirectoryAction::R...`
 	}
-<<<<<<< ours — scope `choose_latest(` in function `resolve_follow_links` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `pi_walker::FollowLinks::Roots,`
 	choose_latest(
 		&mut selected,
 		last_index(matches, "follow_command_line"),
 		tau_walker::FollowLinks::Roots,
 	);
-=======
-	choose_latest(&mut selected, last_index(matches, "follow_command_line"), false);
->>>>>>> theirs — scope `choose_latest(`
-<<<<<<< ours — scope `choose_latest(&mut selected, last_index(match...` in function `resolve_follow_links` (S, confidence: medium)
 // refused_by: statement_fold · collision: `choose_latest(&mut selected, last_index(matches, "no_follow"), …`
 	choose_latest(&mut selected, last_index(matches, "no_follow"), tau_walker::FollowLinks::Never);
 	choose_latest(&mut selected, last_index(matches, "follow_all"), tau_walker::FollowLinks::Always);
-=======
-	choose_latest(&mut selected, last_index(matches, "no_follow"), false);
-	choose_latest(&mut selected, last_index(matches, "follow_all"), true);
->>>>>>> theirs — scope `choose_latest(&mut selected, last_index(match...`
 	selected.1
 }
 
@@ -1123,7 +1077,6 @@ impl<M: Matcher, W: Write> Sink for GrepSink<'_, M, W> {
 				self.write_path_record()?;
 			}
 		} else if self.opts.count {
-<<<<<<< ours — scope `finish` in impl `Sink for GrepSink<'_, M, W>` (F, confidence: medium)
 // refused_by: container_member · collision: none (both sides edited, nowhere the same lines)
 			// GNU reads `-m 0` as "select nothing" and then prints no count
 			// record at all, rather than a misleading zero. `-l` and `-L`
@@ -1142,13 +1095,6 @@ impl<M: Matcher, W: Write> Sink for GrepSink<'_, M, W> {
 			}
 			write!(self.out, "{}", self.match_count)?;
 			self.out.write_all(&[self.opts.record_terminator])?;
-=======
-			self.opts.record.write_count_record(
-				self.out,
-				self.opts.prefix_filename.then_some(self.display),
-				self.match_count,
-			)?;
->>>>>>> theirs — scope `finish`
 			self.flush_record()?;
 		}
 		Ok(())
@@ -1401,7 +1347,6 @@ impl<M: Matcher + Send + Sync + 'static> DirSearch<M> {
 		}
 	}
 }
-<<<<<<< ours — function `grep_walk_request` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 fn grep_walk_request(root: &Path, follow_links: tau_walker::FollowLinks) -> tau_walker::WalkRequest {
 	tau_walker::WalkRequest::new(root)
@@ -1420,8 +1365,6 @@ fn grep_walk_request(root: &Path, follow_links: tau_walker::FollowLinks) -> tau_
 		.cache(false)
 		.filter(tau_walker::WalkFilter::all())
 }
-=======
->>>>>>> theirs — function `grep_walk_request` (S+F, confidence: low)
 
 /// Recursively searches a directory operand ([`exec::adaptive`]: inline, then on parallel workers), pruning
 /// excluded directories and writing each file's output in path order.
@@ -1434,13 +1377,8 @@ async fn search_dir<M: Matcher + Clone + Send + Sync + 'static, W: Write + Send>
 	searcher: &SearcherBuilder,
 	opts: &Options,
 	rules: &PathRules,
-<<<<<<< ours — scope `declaration` in function `search_dir` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `follow_links: pi_walker::FollowLinks,`
 	follow_links: tau_walker::FollowLinks,
-=======
-	follow_links: bool,
-	outer: &Arc<AtomicBool>,
->>>>>>> theirs — scope `declaration`
 	out: &mut W,
 	had_error: &mut bool,
 ) -> io::Result<bool> {
@@ -1543,7 +1481,6 @@ async fn search_dir<M: Matcher + Clone + Send + Sync + 'static, W: Write + Send>
 	}
 	Ok(any)
 	let mut pace = host.output_pace();
-<<<<<<< ours — scope `let walk = request.for_each_entry_with_heartb...` in function `search_dir`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	let walk = request.for_each_entry_with_heartbeat(
 		|| {
@@ -1603,9 +1540,6 @@ async fn search_dir<M: Matcher + Clone + Send + Sync + 'static, W: Write + Send>
 		},
 	);
 	*had_error |= had_error_state.get();
-=======
->>>>>>> theirs — scope `let walk = request.for_each_entry_with_heartb...` deleted in theirs
-<<<<<<< ours — scope `match walk {` in function `search_dir`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	match walk {
 		Ok(tau_walker::WalkStatus::Complete | tau_walker::WalkStatus::Stopped) => Ok(any),
@@ -1640,8 +1574,6 @@ async fn search_dir<M: Matcher + Clone + Send + Sync + 'static, W: Write + Send>
 			Ok(any)
 		},
 	}
-=======
->>>>>>> theirs — scope `match walk {` deleted in theirs
 }
 
 async fn read_auxiliary_file(host: &mut Host, path: &OsStr) -> Result<Vec<u8>, String> {
@@ -1906,12 +1838,8 @@ async fn execute_search<M: Matcher + Clone + Send + Sync + 'static>(
 	matcher: &M,
 	files: &[OsString],
 	directory_action: DirectoryAction,
-<<<<<<< ours — scope `declaration` in function `execute_search` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `follow_links: pi_walker::FollowLinks,`
 	follow_links: tau_walker::FollowLinks,
-=======
-	follow_links: bool,
->>>>>>> theirs — scope `declaration`
 	rules: &PathRules,
 	opts: &Options,
 	max_count: Option<u64>,
@@ -1958,7 +1886,6 @@ async fn execute_search<M: Matcher + Clone + Send + Sync + 'static>(
 		match fs.metadata(&resolved).await {
 			Ok(metadata) if metadata.is_dir() => match directory_action {
 				DirectoryAction::Recurse => {
-<<<<<<< ours — scope `for operand in files {` in function `execute_search` (F, confidence: medium)
 // refused_by: statement_fold · collision: `&mut searcher,` +1 more
 					// A directory named on the command line is always descended
 					// into; `--include-dir` / `--exclude-dir` filter what the walk
@@ -1982,27 +1909,6 @@ async fn execute_search<M: Matcher + Clone + Send + Sync + 'static>(
 					) {
 						Ok(matched) => any_match |= matched,
 						Err(_) => return crate::host::SIGPIPE_EXIT_CODE,
-=======
-					if rules.allows_dir(Path::new(operand)) {
-						match search_dir(
-							host,
-							operand.as_os_str(),
-							&resolved,
-							matcher,
-							&builder,
-							opts,
-							rules,
-							follow_links,
-							&outer,
-							&mut out,
-							&mut had_error,
-						)
-						.await
-						{
-							Ok(matched) => any_match |= matched,
-							Err(_) => return crate::host::SIGPIPE_EXIT_CODE,
-						}
->>>>>>> theirs — scope `for operand in files {`
 					}
 				},
 				DirectoryAction::Skip => {},
@@ -2099,7 +2005,6 @@ async fn execute_search<M: Matcher + Clone + Send + Sync + 'static>(
 	exit_status(opts.quiet, any_match, had_error)
 }
 
-<<<<<<< ours — impl `Utility for Grep` (S+F, confidence: low)
 // refused_by: rename_vs_edit_guard · collision: none (both sides edited, nowhere the same lines)
 impl Utility for Grep {
 	const NAME: &'static str = "grep";
@@ -2229,124 +2134,6 @@ impl Utility for Grep {
 			&opts,
 			max_count,
 		),
-=======
-impl AsyncUtility for Grep {
-	const NAME: &'static str = "grep";
-	const USAGE_ERROR: u8 = 2;
-
-	fn rewrite_argv(argv: Vec<OsString>) -> Result<Vec<OsString>, String> {
-		Ok(normalize_context_args(argv))
-	}
-
-	async fn run(self, host: &mut Host) -> i32 {
-		let cli = self.cli;
-		let matches = self.matches;
-
-	let (mut patterns, mut files) = match resolve_patterns(host, &cli).await {
-		Ok(resolved) => resolved,
-		Err(error) => {
-			let _ = writeln!(host.stderr, "grep: {error}");
-			return 2;
-		},
-	};
-	let directory_action = resolve_directory_action(&cli, &matches);
-	if files.is_empty() {
-		files.push(OsString::from(if directory_action == DirectoryAction::Recurse {
-			"."
-		} else {
-			"-"
-		}));
-	}
-
-	let max_count = match resolve_max_count(&cli) {
-		Ok(max_count) => max_count,
-		Err(error) => {
-			let _ = writeln!(host.stderr, "grep: {error}");
-			return 2;
-		},
-	};
-	let rules = match build_path_rules(host, &cli, &matches).await {
-		Ok(rules) => rules,
-		Err(error) => {
-			let _ = writeln!(host.stderr, "grep: {error}");
-			return 2;
-		},
-	};
-	let matcher = match build_matcher(
-		host,
-		&patterns,
-		&cli,
-		resolve_match_mode(&matches),
-		resolve_ignore_case(&matches),
-	) {
-		Ok(matcher) => matcher,
-		Err(error) => {
-			let _ = writeln!(host.stderr, "grep: {error}");
-			return 2;
-		},
-	};
-	patterns.clear();
-
-	let (files_with_matches, files_without_match) = resolve_file_list_modes(&matches);
-	let suppress_context =
-		cli.count || files_with_matches || files_without_match || cli.quiet || cli.only_matching;
-	let (before, after) = if suppress_context {
-		(0, 0)
-	} else {
-		resolve_context(&cli, &matches)
-	};
-	let prefix_filename = resolve_filename_prefix(&matches)
-		.unwrap_or(directory_action == DirectoryAction::Recurse || files.len() > 1);
-	let opts = Options {
-		line_number: cli.line_number,
-		byte_offset: cli.byte_offset,
-		count: cli.count,
-		files_with_matches,
-		files_without_match,
-		only_matching: cli.only_matching,
-		before,
-		after,
-		no_messages: cli.no_messages,
-		quiet: cli.quiet,
-		prefix_filename,
-		initial_tab: cli.initial_tab,
-		record: RecordFormat {
-			path_separator: None,
-			null_paths:     cli.null_paths,
-			terminator:     if cli.null_data { b'\0' } else { b'\n' },
-		},
-		group_separator: resolve_group_separator(&cli, &matches),
-		line_buffered: cli.line_buffered,
-		binary_files: resolve_binary_files(&cli, &matches),
-	};
-	let follow_links = resolve_follow_links(&cli, &matches);
-
-	match matcher {
-		Engine::Rust(matcher) => execute_search(
-			host,
-			&cli,
-			&matcher,
-			&files,
-			directory_action,
-			follow_links,
-			&rules,
-			&opts,
-			max_count,
-		)
-		.await,
-		Engine::Pcre(matcher) => execute_search(
-			host,
-			&cli,
-			&matcher,
-			&files,
-			directory_action,
-			follow_links,
-			&rules,
-			&opts,
-			max_count,
-		)
-		.await,
->>>>>>> theirs — impl `Utility for Grep` (S+F, confidence: low)
 	}
 }
 }
@@ -2651,7 +2438,6 @@ mod tests {
 		let (code, out, err) = run(&["-c", r"tools.xdev\|tools.toolbox"], input).await;
 		assert_eq!(code, 0, "{err}");
 		assert_eq!(out, "2\n");
-<<<<<<< ours — scope `gnu_basic_alternation_and_color_aliases_are_supported` in module `tests` (S+F, confidence: low)
 // refused_by: container_member · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 		// The spellings that leave redirected output uncolored stay accepted,
 		// `--colour` included. `--color=always` is deliberately absent: this
@@ -2660,10 +2446,6 @@ mod tests {
 		// `unimplemented_options_are_hard_errors_not_silent_no_ops`.
 		for color in ["--color=auto", "--color=never", "--color", "--colour=never", "--colour"] {
 			let (code, out, err) = run(&[color, "foo"], "foo\nbar\n");
-=======
-		for color in ["--color=auto", "--color=always", "--color=never", "--color"] {
-			let (code, out, err) = run(&[color, "foo"], "foo\nbar\n").await;
->>>>>>> theirs — scope `gnu_basic_alternation_and_color_aliases_are_supported`
 			assert_eq!(code, 0, "{err}");
 			assert_eq!(out, "foo\n", "{color}");
 		}

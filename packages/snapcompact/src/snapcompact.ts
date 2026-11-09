@@ -53,32 +53,12 @@
  * re-attached to the compaction summary message on every context rebuild.
  */
 
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import type { Api, ImageContent, Message, TextContent } from "@…` +1 more
 import type { Api, ImageContent, Message, TextContent } from "@tau/tau-ai";
 import { classifyModel, compareRevision, parseRevision } from "@tau/tau-catalog/identity";
 import { renderSnapcompactPng, snapcompactSupportedChars } from "@tau/tau-natives";
 import { formatGroupedPaths, prompt } from "@tau/tau-utils";
 import { INTENT_FIELD } from "@tau/tau-wire";
-=======
-import { type } from "@oh-my-pi/omptype";
-import type { Api, ImageContent, Message, Model, TextContent } from "@oh-my-pi/pi-ai";
-import { reachesBudgetedHost } from "@oh-my-pi/pi-ai/providers/anthropic-state";
-import { resolveCatalogPolicy } from "@oh-my-pi/pi-catalog/compat/catalog-policy";
-import {
-	type ImageSize,
-	type ImageTokenization,
-	type ImageTokenizationTarget,
-	imageTokens,
-	resolveImageMaxEdge,
-	resolveImageTokenization,
-} from "@oh-my-pi/pi-catalog/compat/image-tokenization";
-import { resolveImageCountBudget, resolveInlineImageByteBudget } from "@oh-my-pi/pi-catalog/compat/request-size";
-import { classifyModel, compareRevision, parseRevision } from "@oh-my-pi/pi-catalog/identity";
-import { renderSnapcompactPng, snapcompactSupportedChars } from "@oh-my-pi/pi-natives";
-import { formatGroupedPaths, isRecord, prompt } from "@oh-my-pi/pi-utils";
-import { INTENT_FIELD } from "@oh-my-pi/pi-wire";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/snapcompact/src/snapcompact.ts' for per-hunk detail, 'weave check' to verify your resolution
 import fileOperationsTemplate from "./prompts/file-operations.md" with { type: "text" };
 import snapcompactSummaryPrompt from "./prompts/snapcompact-summary.md" with { type: "text" };
 
@@ -441,19 +421,11 @@ export interface ShapeTarget {
  * Pick the frame shape for a reader. An explicit `variant` (anything but
  * `"auto"`) forces that geometry; otherwise the model id selects the
  * eval-winning shape — and frame size — for its model line, falling back to
-<<<<<<< ours — scope `declaration` in function `resolveShape` (T, confidence: high)
 // refused_by: statement_fold · collision: `* the request, computed for the resolved frame size. Accepts a …`
  * the API family's winner when the model is unmeasured. Billing (token
  * estimate, detail hint) always follows the API family actually carrying
  * the request, computed for the resolved frame size. Accepts a full tau-ai
  * `Model` or any `{ api, id }` subset.
-=======
- * the API family's winner when the model is unmeasured. Either way the frame
- * is no wider than the host's catalog `image-max-edge`. Billing (token
- * estimate, detail hint) is computed for the resolved frame size from the
- * model's catalog image rule. Accepts a full pi-ai `Model` or any
- * `{ api, id }` subset.
->>>>>>> theirs — scope `declaration`
  */
 export function resolveShape(model?: ShapeTarget, variant?: ShapeVariantName | "auto"): Shape {
 	if (variant && variant !== "auto") return priceShape(fitHostImageEdge(SHAPE_VARIANTS[variant], model), model);

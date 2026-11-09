@@ -362,7 +362,6 @@ describe("InputController keybinding setup", () => {
 		expect(spies.resetDisplayAfterAppearanceRefresh).toHaveBeenCalledTimes(1);
 	});
 
-<<<<<<< ours — scope `inserted statements` in test_suite `InputController keybinding setup` (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("routes the shipped F9 session-tree binding to the tree selector", async () => {
 		const { InputController, ctx, customHandlers, setKeybinding } = await createContext();
@@ -396,25 +395,6 @@ describe("InputController keybinding setup", () => {
 			handler?.();
 		}
 		expect(ctx.handlePlanModeCommand).toHaveBeenCalledTimes(2);
-=======
-	it("enters Python mode only once whitespace follows a typed sigil", async () => {
-		const { InputController, ctx, editor } = await createContext();
-		const controller = new InputController(ctx);
-
-		controller.setupKeyHandlers();
-
-		for (const draft of ["$", "$H", "$$", "$$a"]) {
-			editor.onChange?.(draft);
-			expect(ctx.isPythonMode).toBe(false);
-		}
-		expect(ctx.updateEditorBorderColor).not.toHaveBeenCalled();
-
-		editor.onChange?.("$$ ");
-		expect(ctx.isPythonMode).toBe(true);
-		editor.onChange?.("$$ a");
-		expect(ctx.isPythonMode).toBe(true);
-		expect(ctx.updateEditorBorderColor).toHaveBeenCalledTimes(1);
->>>>>>> theirs — scope `inserted statements` · weave: run 'weave explain packages/coding-agent/test/input-controller-keybindings.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 	});
 
 	it("does not mark pasted shell prompts as Python mode while editing", async () => {

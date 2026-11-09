@@ -1,18 +1,9 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { getProjectDir } from "@oh-my-pi/pi-utils";`
 import { disposeAllKernelSessions, executePython } from "tau/eval/py/executor";
 import type { KernelExecuteResult } from "tau/eval/py/kernel";
 import * as pythonKernel from "tau/eval/py/kernel";
 import { getProjectDir } from "@tau/tau-utils";
-=======
-import * as fs from "node:fs/promises";
-import * as path from "node:path";
-import { disposeAllKernelSessions, executePython } from "@oh-my-pi/pi-coding-agent/eval/py/executor";
-import type { KernelExecuteResult } from "@oh-my-pi/pi-coding-agent/eval/py/kernel";
-import * as pythonKernel from "@oh-my-pi/pi-coding-agent/eval/py/kernel";
-import { getProjectDir, TempDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/core/python-executor-lifecycle.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 class FakeKernel {
 	execute = vi.fn(async () => this.result);

@@ -1,9 +1,5 @@
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { AgentSnapshot, SessionEntry, SubagentProgressPayl…`
 import type { AgentSnapshot, SessionEntry, SubagentProgressPayload } from "@tau/tau-wire";
-=======
-import type { AgentSnapshot, SessionEntry, SubagentLifecyclePayload, SubagentProgressPayload } from "@oh-my-pi/pi-wire";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/collab-web/src/components/agents/AgentDrawer.tsx' for per-hunk detail, 'weave check' to verify your resolution
 import { OctagonX, RotateCcw, SendHorizontal, X } from "lucide-react";
 import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";

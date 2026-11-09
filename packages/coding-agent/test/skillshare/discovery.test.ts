@@ -2,7 +2,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import "tau/discovery";
 import { clearCache as clearFsCache } from "tau/capability/fs";
@@ -11,23 +10,6 @@ import { loadSkills } from "tau/extensibility/skills";
 import { getSkillStorePath, STORE_INTEGRITY_FILE, type SkillsLock, writeSkillsLock } from "tau/skillshare/manifest";
 import { removeWithRetries } from "@tau/tau-utils";
 import { getAgentDir, setAgentDir } from "@tau/tau-utils/dirs";
-=======
-import "@oh-my-pi/pi-coding-agent/discovery";
-import { clearCache as clearFsCache } from "@oh-my-pi/pi-coding-agent/capability/fs";
-import { loadSkillshareSkills } from "@oh-my-pi/pi-coding-agent/discovery/skillshare";
-import { loadSkills } from "@oh-my-pi/pi-coding-agent/extensibility/skills";
-import { SkillProtocolHandler } from "@oh-my-pi/pi-coding-agent/internal-urls/skill-protocol";
-import { parseInternalUrl } from "@oh-my-pi/pi-coding-agent/internal-urls/parse";
-import {
-	getSkillshareStoreDir,
-	getSkillStorePath,
-	STORE_INTEGRITY_FILE,
-	type SkillsLock,
-	writeSkillsLock,
-} from "@oh-my-pi/pi-coding-agent/skillshare/manifest";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
-import { getAgentDir, setAgentDir } from "@oh-my-pi/pi-utils/dirs";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/skillshare/discovery.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function lockEntry(scope: string, name: string, version: string) {
 	return {

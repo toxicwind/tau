@@ -1,24 +1,7 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { encodeResponse, encodeStream, parseRequest } from "@oh…`
 import { encodeResponse, encodeStream, parseRequest } from "@tau/tau-ai/providers/openai-chat-server";
 import type { AssistantMessage, AssistantMessageEvent, AssistantMessageEventStream, ToolCall } from "@tau/tau-ai/types";
-=======
-import {
-	adoptReplayedGeminiSignatures,
-	encodeResponse,
-	encodeStream,
-	parseRequest,
-} from "@oh-my-pi/pi-ai/providers/openai-chat-server";
-import { transformMessages } from "@oh-my-pi/pi-ai/providers/transform-messages";
-import type {
-	AssistantMessage,
-	AssistantMessageEvent,
-	AssistantMessageEventStream,
-	ToolCall,
-} from "@oh-my-pi/pi-ai/types";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/test/auth-gateway-openai-chat.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function makeEventStream(events: AssistantMessageEvent[], final: AssistantMessage): AssistantMessageEventStream {
 	async function* iter() {

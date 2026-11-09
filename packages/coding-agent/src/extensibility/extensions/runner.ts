@@ -2,7 +2,6 @@
  * Extension runner - executes extensions and manages their lifecycle.
  */
 import { AsyncLocalStorage } from "node:async_hooks";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import type { CredentialDisabledEvent, ImageContent, Model, Pro…` +1 more
 import type {
 	AgentMessage,
@@ -33,57 +32,6 @@ import { accumulateToolCallResult, buildAggregatedToolCallResult } from "../shar
 import { ManagedTimers } from "./managed-timers";
 import { createExtensionModelQuery } from "./model-api";
 import type { ComposerShapeDefinition } from "@tau/tau-tui/overlays/composer-shape-registry";
-=======
-import {
-	type AgentMessage,
-	type AgentTool,
-	type AgentToolContext,
-	type AgentToolResult,
-	type AgentToolUpdateCallback,
-	isNonBlankContext,
-	joinAdditionalContext,
-} from "@oh-my-pi/pi-agent-core";
-import type {
-	AssistantMessage,
-	CredentialDisabledEvent,
-	ImageContent,
-	Model,
-	ProviderResponseMetadata,
-	TextContent,
-} from "@oh-my-pi/pi-ai";
-import {
-	clearContextHistoryIndex,
-	getContextHistoryIndex,
-	markPerCallContextMessage,
-	setContextHistoryIndex,
-} from "@oh-my-pi/pi-ai/utils/block-symbols";
-import { addKeyAliases, canonicalKeyId, type KeyId, type Keybinding } from "@oh-my-pi/pi-tui";
-import { KEYBINDINGS, KeybindingsManager } from "@oh-my-pi/pi-tui/app-keybindings";
-import { appApproveKeys, appFollowUpKeys } from "@oh-my-pi/pi-tui/keybinding-matchers";
-import { logger } from "@oh-my-pi/pi-utils";
-import { refreshShellConfigCache } from "@oh-my-pi/pi-utils/procmgr";
-import { MAIN_AGENT_RULE_NAME } from "../../capability/rule";
-import type { ModelRegistry } from "../../config/model-registry";
-import { type Settings, withActiveSettings } from "../../config/settings";
-import type { LocalProtocolOptions } from "../../internal-urls/local-protocol";
-import type { MemoryRuntimeContext } from "../../memory-backend";
-import { type Theme, theme } from "@oh-my-pi/pi-tui/theme";
-import type { AsyncJobSnapshot, SendUserMessageOptions } from "../../session/agent-session";
-import { MAIN_AGENT_ID } from "../../registry/agent-registry";
-import type { SessionManager } from "../../session/session-manager";
-import { addFileDeleteFallback, addFileWriteFallback } from "../../tools/file-write-fallback";
-import type { BranchHandler, NavigateTreeHandler, NewSessionHandler } from "../session-handler-types";
-import { accumulateToolCallResult, buildAggregatedToolCallResult } from "../shared-events";
-import { ManagedTimers } from "./managed-timers";
-import { createExtensionModelQuery } from "./model-api";
-import { trackUserWaits, type UserWaitTracker } from "./user-wait";
-import type { ComposerShapeDefinition } from "@oh-my-pi/pi-tui/overlays/composer-shape-registry";
-import { extensionLinkClicksAvailable } from "@oh-my-pi/pi-tui/render/extension-links";
-import {
-	notifyTranscriptPresentersChanged,
-	readTranscriptPresentation,
-} from "@oh-my-pi/pi-tui/chat/transcript-presentation";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/extensibility/extensions/runner.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type {
 	AfterProviderResponseEvent,
 	AssistantMessageRewriteEvent,
@@ -1480,7 +1428,6 @@ export class ExtensionRunner {
 		this.runtime.flagValues.set(name, value);
 	}
 
-<<<<<<< ours — scope `#RESERVED_SHORTCUTS` in class `ExtensionRunner` (S+F, confidence: low)
 // refused_by: container_member · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 	static readonly #RESERVED_SHORTCUTS: Record<string, true> = {
 		"ctrl+c": true,
@@ -1512,30 +1459,6 @@ export class ExtensionRunner {
 		f8: true,
 		f9: true,
 	};
-=======
-	/** Chords omp keeps for itself, canonicalized so every modifier spelling matches. */
-	static readonly #RESERVED_SHORTCUTS: ReadonlySet<string> = new Set(
-		[
-			"ctrl+c",
-			"ctrl+d",
-			"ctrl+z",
-			"ctrl+k",
-			"ctrl+p",
-			"ctrl+l",
-			"ctrl+o",
-			"ctrl+t",
-			"ctrl+g",
-			"alt+m",
-			// Default chord for `app.message.followUp` (Windows Terminal can't deliver Ctrl+Enter; #1903).
-			"ctrl+q",
-			"shift+tab",
-			"shift+ctrl+p",
-			"alt+enter",
-			"escape",
-			"enter",
-		].map(canonicalKeyId),
-	);
->>>>>>> theirs — scope `#RESERVED_SHORTCUTS`
 
 	/**
 	 * Keymap actions the main editor answers to, where extension shortcuts are bound: app actions,

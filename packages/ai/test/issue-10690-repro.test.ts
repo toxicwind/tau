@@ -3,20 +3,11 @@ import { streamOpenAIResponses } from "@tau/tau-ai/providers/openai-responses";
 import {
 	convertResponsesAssistantMessage,
 	SYNTHETIC_REASONING_REPLAY_PLACEHOLDER,
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-ai/providers/openai-shared";
 import type { AssistantMessage, Context, Model } from "@tau/tau-ai/types";
 import { Effort } from "@tau/tau-catalog/effort";
 import { getBundledModel } from "@tau/tau-catalog/models";
-=======
-} from "@oh-my-pi/pi-ai/providers/openai-shared";
-import { createOpenAIResponsesHistoryPayload } from "@oh-my-pi/pi-ai/utils";
-import type { AssistantMessage, Context, Model } from "@oh-my-pi/pi-ai/types";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/test/issue-10690-repro.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 // Issue #10690: follow-up to #8248. The Responses reasoning synthesizer replays a
 // reasoning item for each assistant turn a DeepSeek-family target requires. When

@@ -54,15 +54,9 @@ describe("issue 823: standalone-binary native loader path resolution", () => {
 					files: [
 						{
 							variant: "modern",
-<<<<<<< ours — scope `it("detects compiled-binary mode from embedde...` in test_suite `issue 823: standalone-binary native loader path resolution` (F, confidence: medium)
 // refused_by: statement_fold · collision: `filePath: "/$bunfs/root/packages/natives/native/pi_natives.linu…`
 							filename: "tau_natives.linux-x64-modern.node",
 							filePath: "/$bunfs/root/packages/natives/native/tau_natives.linux-x64-modern.node",
-=======
-							filename: "pi_natives.linux-x64-modern.node",
-							size: 1,
-							zstdPath: "/$bunfs/root/pi_natives.linux-x64-modern-a1b2c3d4.node.zst",
->>>>>>> theirs — scope `it("detects compiled-binary mode from embedde...` · weave: run 'weave explain packages/natives/test/issue-823-repro.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 						},
 					],
 				},
@@ -130,7 +124,6 @@ describe("issue 823: standalone-binary native loader path resolution", () => {
 		expect(candidates.indexOf(versionedModern)).toBeLessThan(candidates.indexOf(buildHostModern));
 	});
 
-<<<<<<< ours — scope `it("does not probe user-data candidates when ...` in test_suite `issue 823: standalone-binary native loader path resolution`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("does not probe user-data candidates when running outside a standalone binary", () => {
 		const versionedDir = "/home/u/.tau/natives/14.5.2";
@@ -146,8 +139,6 @@ describe("issue 823: standalone-binary native loader path resolution", () => {
 		expect(candidates).not.toContain(path.join(versionedDir, "tau_natives.linux-x64-baseline.node"));
 		expect(candidates).not.toContain(path.join(userDataDir, "tau_natives.linux-x64-baseline.node"));
 	});
-=======
->>>>>>> theirs — scope `it("does not probe user-data candidates when ...` deleted in theirs
 
 	it("prefers platform leaf package candidates ahead of core nativeDir candidates on npm installs", () => {
 		const leafPackageDir = "/app/node_modules/@tau/tau-natives-linux-x64";

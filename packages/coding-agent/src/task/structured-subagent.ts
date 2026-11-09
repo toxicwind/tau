@@ -7,27 +7,9 @@
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import type { TaskEffort } from "@oh-my-pi/pi-tui/thinking";`
 import { $env, prompt, Snowflake } from "@tau/tau-utils";
 import { resolveAgentModelSelection, resolveConfiguredModelPatterns } from "../config/model-resolver";
-=======
-import { $env, prompt, Snowflake } from "@oh-my-pi/pi-utils";
-import { shortenPath } from "@oh-my-pi/pi-tui/render/render-utils";
-import { modelKind } from "@oh-my-pi/pi-catalog/types";
-import {
-	resolveAgentModelSelection,
-	resolveConfiguredModelPatterns,
-	resolveExplicitModelRole,
-	getModelMatchPreferences,
-	resolveModelOverride,
-} from "../config/model-resolver";
-import { type OAuthAccountPools, validateAgentAccountPools } from "../config/account-pools";
-import {
-	type CompactionThresholdPair,
-	validateAgentCompactionThresholdOverrides,
-} from "../config/compaction-threshold";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/task/structured-subagent.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { type ServiceTierInheritSettingValue, validateAgentServiceTierOverrides } from "../config/service-tier";
 import type { Settings } from "../config/settings";
 import { isProviderEnabled, isUserSourceEnabled } from "../capability";
@@ -40,15 +22,9 @@ import { loadOverallPlanReference } from "../plan-mode/plan-handoff";
 import planModeSubagentPrompt from "../prompts/system/plan-mode-subagent.md" with { type: "text" };
 import subagentUserPromptTemplate from "../prompts/system/subagent-user-prompt.md" with { type: "text" };
 import isolationRecoveryHintTemplate from "../prompts/tools/isolation-recovery-hint.md" with { type: "text" };
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import type { TaskEffort } from "@oh-my-pi/pi-tui/thinking";`
 import { MAIN_AGENT_ID } from "../registry/agent-registry";
 import type { TaskEffort } from "@tau/tau-tui/thinking";
-=======
-import salvagedChildHintTemplate from "../prompts/tools/salvaged-child-hint.md" with { type: "text" };
-import { AgentRegistry, MAIN_AGENT_ID } from "../registry/agent-registry";
-import { AUTO_THINKING, type TaskEffort } from "@oh-my-pi/pi-tui/thinking";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import type { ToolSession } from "../tools";
 import { isIrcEnabled } from "../irc/messaging";
 import { buildOutputValidator } from "../tools/output-schema-validator";

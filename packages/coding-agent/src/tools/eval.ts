@@ -6,7 +6,6 @@ import type {
 	AgentToolResult,
 	AgentToolUpdateCallback,
 	ToolSpeculationPolicy,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { isRecord, prompt } from "@oh-my-pi/pi-utils";` +3 more
 } from "@tau/tau-agent-core";
 import type { ImageContent, ToolExample } from "@tau/tau-ai";
@@ -14,20 +13,6 @@ import { formatBackgroundNotice } from "@tau/tau-tui/tools/bash";
 import { parseConfiguredThinkingLevel } from "@tau/tau-tui/thinking";
 import { isRecord, prompt } from "@tau/tau-utils";
 import { DEFAULT_AUTO_BACKGROUND_THRESHOLD_MS, raceJobSettlement, resolveAutoBackgroundWaitMs } from "../async";
-=======
-} from "@oh-my-pi/pi-agent-core";
-import type { ImageContent, ToolExample } from "@oh-my-pi/pi-ai";
-import { formatBackgroundNotice } from "@oh-my-pi/pi-tui/tools/bash";
-import {
-	replaceTabs,
-	shortenEmbeddedPaths,
-	TRUNCATE_LENGTHS,
-	truncateToWidth,
-} from "@oh-my-pi/pi-tui/render/render-utils";
-import { parseConfiguredThinkingLevel } from "@oh-my-pi/pi-tui/thinking";
-import { isRecord, prompt, sanitizeText } from "@oh-my-pi/pi-utils";
-import { raceJobSettlement, resolveAutoBackgroundWaitMs } from "../async";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/eval.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { jsBackend, pythonBackend } from "../eval";
 import type { ExecutorBackend, ExecutorBackendResult } from "../eval/backend";
 import { EVAL_TIMEOUT_PAUSE_OP, EVAL_TIMEOUT_RESUME_OP } from "../eval/bridge-timeout";
@@ -38,18 +23,8 @@ import type { BackendProbeOptions } from "../eval/probe";
 import { defaultEvalSessionId } from "../eval/session-id";
 import { EvalShadowCellSession } from "../eval/speculation/cell-session";
 import { runWithEvalShadowCell } from "../eval/speculation/runtime-context";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { isRecord, prompt } from "@oh-my-pi/pi-utils";` +3 more
 import type { EvalCellResult, EvalLanguage, EvalStatusEvent, EvalToolDetails } from "@tau/tau-tui/tools/eval";
-=======
-import type {
-	EvalCellResult,
-	EvalLanguage,
-	EvalStatusEvent,
-	EvalToolDetails,
-	EvalViewEntry,
-} from "@oh-my-pi/pi-tui/tools/eval";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import evalDescription from "../prompts/tools/eval.md" with { type: "text" };
 import evalAgentsTopic from "../prompts/tools/eval-agents.md" with { type: "text" };
 import evalJudgeTopic from "../prompts/tools/eval-judge.md" with { type: "text" };
@@ -60,13 +35,9 @@ import {
 	OutputSink,
 	type OutputSummary,
 	TailBuffer,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { isRecord, prompt } from "@oh-my-pi/pi-utils";` +3 more
 	truncateHeadBytes,
 } from "@tau/tau-tui/tools/streaming-output";
-=======
-} from "@oh-my-pi/pi-tui/tools/streaming-output";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import { sessionDelegationBias } from "../task/prompt-policy";
 import { resolveSpawnPolicy } from "../task/spawn-policy";
 import { canSpawnAtDepth } from "../task/types";
@@ -74,19 +45,12 @@ import { webpExclusionForModel } from "@tau/tau-tui/chat/image-loading";
 import { formatDimensionNote, resizeImage } from "../utils/image-resize";
 import type { ToolSession } from ".";
 import { truncateForPrompt } from "./approval";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { isRecord, prompt } from "@oh-my-pi/pi-utils";` +3 more
 import { type EvalBackendsAllowance, resolveEvalBackends } from "./eval-backends";
 import { generateCodeModeDeclarations } from "@tau/tau-tui/tools/eval-format/code-mode-declarations";
 import { upsertStatusEvent } from "@tau/tau-tui/tools/eval";
 import { formatOutputNotice } from "@tau/tau-tui/tools/output-meta";
 import { resolveOutputMaxColumns, resolveOutputSinkHeadBytes } from "./output-meta";
-=======
-import { type EvalBackendsAllowance, resolveAdvertisedEvalBackends, resolveEvalBackends } from "./eval-backends";
-import { recordStatusEvent, type StatusEventLog } from "@oh-my-pi/pi-tui/tools/eval";
-import { formatOutputNotice } from "@oh-my-pi/pi-tui/tools/output-meta";
-import { resolveOutputMaxColumns, resolveOutputSinkArtifactMaxBytes, resolveOutputSinkHeadBytes } from "./output-meta";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import { ToolAbortError, throwIfAborted } from "./tool-errors";
 import { hasWaitTool } from "./wait";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";

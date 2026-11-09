@@ -2,7 +2,6 @@
  * End-to-end coverage for running every external command of the embedded
  * bash engine in its own session.
  *
-<<<<<<< ours — interstitial `file_header` (T+F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `* verified at the unit level by `pi-natives::shell::tests::chil…` +1 more
  * The fix lives in `crates/vendor/brush-core/src/commands.rs` and is
  * verified at the unit level by `tau-natives::shell::tests::child_session_action`
@@ -17,22 +16,6 @@
  *           → executeBash
  *             → tau-natives `Shell.run` (real native binding)
  *               → brush-core::execute_external_command (the patched code)
-=======
- * pi-shell's host spawns externals with `Sessions::Detach`
- * (`crates/pi-shell/src/host.rs`), which `setsid`s the child before exec
- * (`crates/pi-shell/src/sys/spawn/unix.rs`). That is verified at the unit
- * level by pi-shell's `embedded_external_command_runs_in_its_own_session`
- * (real spawn). This test pulls the behavior end-to-end through the OMP
- * coding agent stack:
- *
- *   AgentSession.prompt
- *     → Agent.prompt (real)
- *       → Agent loop dispatches a tool call
- *         → BashTool.execute
- *           → executeBash
- *             → pi-natives `Shell.run` (real native binding)
- *               → pi-shell host spawn (`Sessions::Detach`)
->>>>>>> theirs — interstitial `file_header` (T+F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/agent-session-bash-detach.test.ts' for per-hunk detail, 'weave check' to verify your resolution
  *                 → spawned child reports getsid()/getpid()
  *
  * The assistant's first turn is one scripted `bash` tool call that runs both

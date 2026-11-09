@@ -12,7 +12,6 @@
 import type * as fsTypes from "node:fs";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { isEnoent } from "@oh-my-pi/pi-utils";` +1 more
 import { isEnoent } from "@tau/tau-utils";
 import { resolveContainedPath } from "../discovery/contained-path";
@@ -20,38 +19,6 @@ import { getActiveSkills } from "../extensibility/skills";
 import { isMarkdownPath } from "@tau/tau-tui/lang-from-path";
 import { buildDirectoryResource } from "./filesystem-resource";
 import type { InternalResource, InternalUrl, ProtocolHandler, ResolveContext, UrlCompletion } from "./types";
-=======
-import { isEnoent, logger, withTimeout } from "@oh-my-pi/pi-utils";
-import { resolveContainedPath } from "../discovery/contained-path";
-import {
-	findStaleSkillStandIn,
-	getActiveSkills,
-	isSkillSuperseded,
-	rediscoverSkills,
-	type Skill,
-	type SkillRediscoveryHost,
-} from "../extensibility/skills";
-import { MCPManager, type MCPManagerApi } from "../mcp/manager";
-import skillDoc from "../prompts/internal-urls/skill.md" with { type: "text" };
-import {
-	buildDirectoryResource,
-	contentTypeForPath,
-	ensureCreatableWithinRoot,
-	UrlContainmentError,
-	validateRelativePath,
-} from "./filesystem-resource";
-import { readMcpResource } from "./mcp-protocol";
-import type {
-	InternalResource,
-	InternalUrl,
-	LocateOptions,
-	ProtocolHandler,
-	ResolveContext,
-	SchemeHost,
-	SchemeSpec,
-	UrlCompletion,
-} from "./types";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/internal-urls/skill-protocol.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /** No loaded skill owns the URL's name; the only miss an MCP server may fill. */
 class UnknownSkillError extends Error {}

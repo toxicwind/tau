@@ -1,19 +1,8 @@
 import { afterEach, describe, expect, it, setSystemTime, spyOn, vi } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { Container, TUI } from "@tau/tau-tui";
 import { Loader, type LoaderMessageColorFn } from "@tau/tau-tui/components/loader";
 import { visibleWidth } from "@tau/tau-tui/utils";
-=======
-import { Container, TUI } from "@oh-my-pi/pi-tui";
-import { Loader, type LoaderMessageColorFn } from "@oh-my-pi/pi-tui/components/loader";
-import {
-	DEFAULT_SPINNER_INTERVAL_MS,
-	setSpinnerInterval,
-	SPINNER_INTERVAL_STATIC,
-} from "@oh-my-pi/pi-tui/spinner-clock";
-import { visibleWidth } from "@oh-my-pi/pi-tui/utils";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/test/loader.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { VirtualTerminal } from "./virtual-terminal";
 
 describe("Loader component", () => {

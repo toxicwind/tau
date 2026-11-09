@@ -1,6 +1,5 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "bun:test";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import type { Model } from "@tau/tau-ai";
 import { buildModel } from "@tau/tau-catalog/build";
@@ -10,18 +9,6 @@ import type { AgentSession } from "tau/session/agent-session";
 import type { AuthStorage } from "tau/session/auth-storage";
 import { SessionManager } from "tau/session/session-manager";
 import { TempDir } from "@tau/tau-utils";
-=======
-import type { Model } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { lookup } from "@oh-my-pi/pi-coding-agent/config/registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { clearOmpExtensionCliRoots } from "@oh-my-pi/pi-coding-agent/discovery/omp-extension-roots";
-import { createAcpConnection } from "@oh-my-pi/pi-coding-agent/modes/acp/acp-mode";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import type { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/acp-lazy-startup.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	type Client,
 	ClientSideConnection,
@@ -396,11 +383,8 @@ describe("ACP lazy startup", () => {
 			expect(initializeResponse).toEqual(
 				expect.objectContaining({
 					protocolVersion: 1,
-<<<<<<< ours — scope `it("answers initialize before creating the fi...` in test_suite `ACP lazy startup` (F, confidence: medium)
 // refused_by: statement_fold · collision: `agentInfo: expect.objectContaining({ name: "oh-my-pi" }),`
 					agentInfo: expect.objectContaining({ name: "tau" }),
-=======
->>>>>>> theirs — scope `it("answers initialize before creating the fi...`
 				}),
 			);
 			expect(createCalls).toBe(0);

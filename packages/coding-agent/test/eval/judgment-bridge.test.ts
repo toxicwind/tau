@@ -1,14 +1,9 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
 import * as vm from "node:vm";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { Api, AssistantMessage, Model } from "@oh-my-pi/pi…`
 import type { Api, AssistantMessage, Model } from "@tau/tau-ai";
 import * as ai from "@tau/tau-ai";
-=======
-import * as ai from "@oh-my-pi/pi-ai";
-import type { Api, AssistantMessage, ImageContent, Model } from "@oh-my-pi/pi-ai";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/eval/judgment-bridge.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { ModelRegistry } from "../../src/config/model-registry";
 import { Settings } from "../../src/config/settings";
 import { runEvalJudgment } from "../../src/eval/judgment-bridge";

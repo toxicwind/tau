@@ -166,16 +166,10 @@ Side-channel artifacts outside the model tool result:
    - Delve uses `mode: "debug"` for directories and `.go` sources, and `mode: "exec"` for existing compiled binaries, overriding its static launch default.
    - `attach`: explicit `adapter` wins; otherwise remote `port` prefers `debugpy`, then native debuggers, then first available adapter.
 - **Custom adapter config**
-<<<<<<< ours — scope `declaration` in heading `Modes / Variants` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `- Search order mirrors LSP config: project root, project config…`
   - Debug adapters can be added or overridden with `dap.json`, `.dap.json`, `dap.yaml`, `.dap.yaml`, `dap.yml`, or `.dap.yml`.
   - Search order mirrors LSP config: project root, project config dirs (`.tau/`, `.claude/`, `.codex/`, `.gemini/`), user config dirs (`~/.tau/agent/`, `~/.claude/`, `~/.codex/`, `~/.gemini/`), plugin roots, then home-root fallback. Files are merged from lowest to highest priority.
   - Config shape may be either `{ "adapters": { ... } }` or a top-level adapter map.
-=======
-   - Debug adapters can be added or overridden with `dap.json`, `.dap.json`, `dap.yaml`, `.dap.yaml`, `dap.yml`, or `.dap.yml`.
-   - Search order: selected cwd, its project config dirs (`.omp/`, `.claude/`, `.codex/`, `.gemini/`), enabled user config dirs (`~/.omp/agent/`, Claude's active config directory, `~/.codex/`, `~/.gemini/`), plugin roots, then home-root fallback. `CLAUDE_CONFIG_DIR` overrides Claude's user directory. Files are merged from lowest to highest priority.
-   - Config shape may be either `{ "adapters": { ... } }` or a top-level adapter map.
->>>>>>> theirs — scope `declaration` · weave: run 'weave explain docs/tools/debug.md' for per-hunk detail, 'weave check' to verify your resolution
    - Adapter fields:
       - `command`: executable name or path. Required.
       - `args`: adapter argv.
@@ -283,7 +277,6 @@ GDB example for an OpenOCD remote target:
    - Socket/TCP-mode adapters bind or connect local sockets; remote attach may connect through the adapter to a remote debug port.
    - The UI-only `remote-debugger` route opens a process-wide JavaScriptCore inspector on a randomly reserved `127.0.0.1` TCP port. It probes the socket for readiness and has no stop operation.
 - Subprocesses / native bindings
-<<<<<<< ours — scope `- Subprocesses / native bindings` in heading `Side Effects` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `- `getWorkProfile(30)` comes from `@oh-my-pi/pi-natives`.` +1 more
   - Spawns debugger adapters (`gdb`, `lldb-dap`, `python -m debugpy.adapter`, `dlv`, and others from `defaults.json`) detached.
   - Reverse DAP `runInTerminal` requests spawn the debuggee detached via `ptree.spawn()`.
@@ -291,14 +284,6 @@ GDB example for an OpenOCD remote target:
   - CPU profiling uses `node:inspector/promises`; memory statistics use `process.memoryUsage()` and numeric counters from `bun:jsc`'s `heapStats()` after GC; raw/log viewers sanitize text via `sanitizeText()` from `@tau/tau-utils`.
   - `openPath()` launches the OS default file/browser handler for artifact dirs and SVGs.
   - Log/raw-SSE viewers can call `copyToClipboard()`.
-=======
-   - Spawns debugger adapters (`gdb`, `lldb-dap`, `python -m debugpy.adapter`, `dlv`, and others from `defaults.json`) detached.
-   - Reverse DAP `runInTerminal` requests spawn the debuggee detached via `ptree.spawn()`; its stdout is consumed in a background drain for its lifetime.
-   - `getWorkProfile(30)` comes from `@oh-my-pi/pi-natives`.
-   - CPU profiling uses `node:inspector/promises`; memory statistics use `process.memoryUsage()` and numeric counters from `bun:jsc`'s `heapStats()` after GC; raw/log viewers sanitize text via `sanitizeText()` from `@oh-my-pi/pi-utils`.
-   - `openPath()` launches the OS default file/browser handler for artifact dirs and SVGs.
-   - Log/raw-SSE viewers can call `copyToClipboard()`.
->>>>>>> theirs — scope `- Subprocesses / native bindings`
 - Session state (transcript, memory, jobs, checkpoints, registries)
    - `DapSessionManager` keeps session summaries, breakpoints, threads, stack frames, stop location, output capture, capabilities, and last-used timestamps in memory.
    - Active-session id is global to the singleton `dapSessionManager`.
@@ -325,16 +310,10 @@ GDB example for an OpenOCD remote target:
 - Initial stop capture timeout after launch/attach: `STOP_CAPTURE_TIMEOUT_MS = 5_000`.
 - Socket-mode adapter readiness timeout: `10_000` ms in `waitForCondition()` and TCP connect timeout logic in `packages/coding-agent/src/dap/client.ts`.
 - Raw SSE buffer caps in `packages/tui/src/apps/debug/raw-sse-buffer.ts`:
-<<<<<<< ours — scope `- Raw SSE buffer caps in `packages/tui/src/ap...` in heading `Limits & Caps` (S, confidence: medium)
 // refused_by: statement_fold · collision: `- `MAX_RAW_SSE_EVENT_CHARS = 64_000` per event; over-budget eve…`
   - `MAX_RAW_SSE_EVENTS = 1_000`
   - `MAX_RAW_SSE_CHARS = 512_000`
   - `MAX_RAW_SSE_EVENT_CHARS = 64_000` per event; over-budget events first get `tools` schemas compacted (name kept, schema/description elided), then a head+tail trim that keeps the first and last portions with a `: tau-debug-elided chars=...` comment in the middle and a final `: tau-debug-truncated originalChars=...` marker
-=======
-   - `MAX_RAW_SSE_EVENTS = 1_000`
-   - `MAX_RAW_SSE_CHARS = 512_000`
-   - `MAX_RAW_SSE_EVENT_CHARS = 64_000` per event; over-budget events first compact long `tools` schemas/descriptions to 200-character previews (name/type retained), then, if still oversized, use head+tail trimming with `: omp-debug-elided chars=...`. Trimmed events end with `: omp-debug-truncated originalChars=...`.
->>>>>>> theirs — scope `- Raw SSE buffer caps in `packages/tui/src/ap...`
 - Log viewer window in `packages/tui/src/apps/debug/log-viewer.ts`:
    - `INITIAL_LOG_CHUNK = 50`
    - `LOAD_OLDER_CHUNK = 50`
@@ -384,7 +363,6 @@ GDB example for an OpenOCD remote target:
 ## Notes
 
 - `packages/coding-agent/src/prompts/tools/debug.md` tells the model only one active root session is supported. Adapter-requested child sessions belong to that root tree.
-<<<<<<< ours — scope `- The default JavaScript/TypeScript adapter r...` in heading `Notes` (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 - The default JavaScript/TypeScript adapter runs vscode-js-debug's `dapDebugServer.js` over TCP. Install it one of these ways; the first and last are auto-discovered by `resolveJsDebugServerPath()` in `packages/coding-agent/src/dap/config.ts`. (Don't try `npm i -g js-debug-adapter` — it 404s; `js-debug-adapter` is the tau adapter id, not an npm package.)
   - Release tarball, extracted so `dapDebugServer.js` lands at `~/.local/opt/js-debug/src/dapDebugServer.js`:
@@ -396,18 +374,6 @@ GDB example for an OpenOCD remote target:
     Replace `v1.117.0` with the latest tag from the [releases page](https://github.com/microsoft/vscode-js-debug/releases).
   - Any other location via `JS_DEBUG_DAP_SERVER=<path-to-dapDebugServer.js>`.
   - Neovim users with Mason: `:MasonInstall js-debug-adapter` → discovered at `~/.local/share/nvim/mason/packages/js-debug-adapter/js-debug/src/dapDebugServer.js`.
-=======
-- The default JavaScript/TypeScript adapter runs vscode-js-debug's `dapDebugServer.js` over TCP. Install it one of these ways; the first and last are auto-discovered by `resolveJsDebugServerPath()` in `packages/coding-agent/src/dap/config.ts`. (Don't try `npm i -g js-debug-adapter` — it 404s; `js-debug-adapter` is the omp adapter id, not an npm package.)
-   - Release tarball, extracted so `dapDebugServer.js` lands at `~/.local/opt/js-debug/src/dapDebugServer.js`:
-      ```sh
-      curl -sL -o js-debug-dap.tar.gz \
-        https://github.com/microsoft/vscode-js-debug/releases/download/v1.117.0/js-debug-dap-v1.117.0.tar.gz
-      mkdir -p ~/.local/opt && tar -xzf js-debug-dap.tar.gz -C ~/.local/opt
-      ```
-      Replace `v1.117.0` with the latest tag from the [releases page](https://github.com/microsoft/vscode-js-debug/releases).
-   - Any other location via `JS_DEBUG_DAP_SERVER=<path-to-dapDebugServer.js>`.
-   - Neovim users with Mason: `:MasonInstall js-debug-adapter` → discovered at `~/.local/share/nvim/mason/packages/js-debug-adapter/js-debug/src/dapDebugServer.js`.
->>>>>>> theirs — scope `- The default JavaScript/TypeScript adapter r...`
 - The adapter runs under `node` if on `PATH`, otherwise under the tau host (Bun); `resolveDefaultJsDebugAdapter()` falls back to `process.execPath`, so a Bun-only setup is supported.
 - `configurationDone` is sent automatically during root and child launch/attach handshakes and lazily before later requests if the initial handshake did not complete.
 - `startDebugging` reverse requests create recursive child sessions on the same TCP server; a stopped child becomes the target for thread-level actions.

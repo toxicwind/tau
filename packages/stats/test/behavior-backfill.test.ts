@@ -2,17 +2,10 @@ import { Database } from "bun:sqlite";
 import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { closeDb, getBehaviorOverall, getFileOffset, initDb } f…`
 import { syncAllSessions } from "@tau/tau-stats/aggregator";
 import { closeDb, getBehaviorOverall, getFileOffset, initDb } from "@tau/tau-stats/db";
 import { getAgentDir, getStatsDbPath } from "@tau/tau-utils";
-=======
-import { syncAllSessions } from "@oh-my-pi/omp-stats/aggregator";
-import { closeDb, getFileOffset, getFrustrationOverall, initDb } from "@oh-my-pi/omp-stats/db";
-import { getFrustrationDashboardStats } from "@oh-my-pi/omp-stats/frustration";
-import { getAgentDir, getStatsDbPath } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/stats/test/behavior-backfill.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { installStatsTestIsolation } from "./helpers/temp-agent";
 
 installStatsTestIsolation("@tau-stats-behavior-backfill-");

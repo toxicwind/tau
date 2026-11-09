@@ -628,7 +628,6 @@ def fetch_ref(
     and re-indexing the ref's entire history on every call.) The on-disk
     partial-clone config is untouched, so ``fetch_prune`` stays cheap.
 
-<<<<<<< ours — scope `def fetch_ref(` in function `fetch_ref` (F, confidence: medium)
 # refused_by: statement_fold · collision: `(oh-my-pi#1818). ``--refetch`` forces a fresh negotiation that …`
     (tau#1818). ``--refetch`` forces a fresh negotiation that ignores
     "we already have this commit", and ``--no-filter`` overrides the inherited
@@ -637,11 +636,6 @@ def fetch_ref(
     refresh. Best-effort: a non-zero exit is logged and swallowed because the
     caller still attempts the checkout (and a stale-ref worktree add will
     surface a more actionable error than this fetch ever could).
-=======
-    Best-effort: a failure is logged and swallowed because the caller still
-    attempts the checkout, and a stale-ref worktree add surfaces a more
-    actionable error than this fetch ever could.
->>>>>>> theirs — scope `def fetch_ref(` · weave: run 'weave explain python/robtau/src/git_ops.py' for per-hunk detail, 'weave check' to verify your resolution
     """
     remote = remote_url or "origin"
     extra_env = _explicit_remote_env(remote_url, cwd=repo_dir)
@@ -713,19 +707,11 @@ def fetch_pr_head(
     """Fetch the PR head, falling back to a verified same-repo branch.
 
     Immediately followed by ``git worktree add --detach FETCH_HEAD`` for PR
-<<<<<<< ours — scope `def fetch_pr_head(` in function `fetch_pr_head` (S+F, confidence: low)
 # refused_by: statement_fold · collision: `(oh-my-pi#1818).`
     review checkouts. See :func:`fetch_ref` for why ``--refetch --no-filter``
     is required: without the blob backfill, the worktree-add triggers a
     promisor lazy fetch that fails under proxy-transport deployments
     (tau#1818).
-=======
-    review checkouts, so the head's tree blobs are backfilled the same way as
-    :func:`fetch_ref`; without them the worktree-add triggers a promisor lazy
-    fetch that fails under proxy-transport deployments (oh-my-pi#1818).
-
-    Raises ``GitCommandError`` when fetching, SHA verification, or backfill fails.
->>>>>>> theirs — scope `def fetch_pr_head(`
     """
     if pr_number <= 0:
         raise ValueError(f"invalid pr_number={pr_number!r}")

@@ -1,27 +1,8 @@
 import { afterEach, describe, expect, it } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { waitForRelayExtension } from "@oh-my-pi/pi-coding-agen…`
 import { findFreeCdpPort } from "tau/tools/browser/attach";
 import { waitForRelayExtension } from "tau/tools/browser/relay/probe";
 import { type RelayServer, type RelayUnavailableInfo, startRelayServer } from "tau/tools/browser/relay/server";
-=======
-import { VERSION } from "@oh-my-pi/pi-utils/dirs";
-import { findFreeCdpPort } from "@oh-my-pi/pi-coding-agent/tools/browser/attach";
-import {
-	relayExtensionNotice,
-	UPDATE_RELAY_EXTENSION,
-	waitForRelayExtension,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/relay/probe";
-import {
-	DISCARDED_TABS_PROTOCOL_VERSION,
-	isOlderOmpVersion,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/relay/protocol";
-import {
-	type RelayServer,
-	type RelayUnavailableInfo,
-	startRelayServer,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/relay/server";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/tools/browser-relay-probe.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const EXTENSION_HELLO = {
 	t: "hello",

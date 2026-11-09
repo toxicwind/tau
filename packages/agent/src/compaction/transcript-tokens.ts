@@ -18,12 +18,8 @@
  * - `hasContextTokenUsage(usage)`: the report must carry usable context numbers.
  */
 
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import type { AssistantMessage } from "@oh-my-pi/pi-ai";`
 import type { AssistantMessage } from "@tau/tau-ai";
-=======
-import type { AssistantMessage, Message } from "@oh-my-pi/pi-ai";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/agent/src/compaction/transcript-tokens.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { MessageCountOptions, Tokenizer } from "../tokenizer";
 import type { AgentMessage } from "../types";
 import { calculateContextTokens, hasContextTokenUsage } from "./compaction";

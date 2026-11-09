@@ -42,19 +42,12 @@ export function ConnectScreen({ defaultName, error, onConnect }: ConnectScreenPr
 			</div>
 			<form className="sh-connect-card" onSubmit={submit}>
 				<div className="sh-connect-head">
-<<<<<<< ours — scope `return (` in function `ConnectScreen` (F, confidence: medium)
 // refused_by: statement_fold · collision: `<span className="sh-lockup-pi">π</span> omp collab` +1 more
 					<div className="sh-lockup">
 						<span className="sh-lockup-mark" aria-hidden="true" />
 						<span className="sh-lockup-pi">π</span> tau collab
 					</div>
 					<ThemeToggle />
-=======
-					<h1 className="sh-connect-title">Join a live session</h1>
-					<p className="sh-connect-sub">
-						Watch an omp agent work in real time — transcript, tool calls and subagents — and prompt it from here.
-					</p>
->>>>>>> theirs — scope `return (` · weave: run 'weave explain packages/collab-web/src/components/shell/ConnectScreen.tsx' for per-hunk detail, 'weave check' to verify your resolution
 				</div>
 				<label className="sh-field">
 					<span className="sh-field-label">Join link</span>
@@ -68,14 +61,8 @@ export function ConnectScreen({ defaultName, error, onConnect }: ConnectScreenPr
 						autoComplete="off"
 						autoFocus
 					/>
-<<<<<<< ours — scope `return (` in function `ConnectScreen` (F, confidence: medium)
 // refused_by: statement_fold · collision: `<span className="sh-lockup-pi">π</span> omp collab` +1 more
 					<span className="sh-field-hint">paste a /collab link from any tau session</span>
-=======
-					<span className="sh-field-hint">
-						Run <code>/collab</code> in any omp session to get one.
-					</span>
->>>>>>> theirs — scope `return (`
 				</label>
 				<label className="sh-field">
 					<span className="sh-field-label">Display name</span>

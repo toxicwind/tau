@@ -7,18 +7,10 @@
 import type { Dirent } from "node:fs";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { APP_NAME, getLogPath, getLogsDir, getReportsDir, isEno…`
 import type { WorkProfile } from "@tau/tau-natives";
 import { APP_NAME, getLogPath, getLogsDir, getReportsDir, isEnoent } from "@tau/tau-utils";
 import { writeArchive } from "@tau/tau-utils/ar";
-=======
-import type { WorkProfile } from "@oh-my-pi/pi-natives";
-import { APP_NAME, getLogPath, getLogsDir, getReportsDir, isEnoent, localDay, logger } from "@oh-my-pi/pi-utils";
-import { writeArchive } from "@oh-my-pi/pi-utils/ar";
-import { readSessionHeaderId } from "../session/session-loader";
-import { collectSubSessions } from "../session/sub-sessions";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/debug/report-bundle.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { CpuProfile, MemoryStats } from "./profiler";
 import { collectSystemInfo, sanitizeEnv } from "./system-info";
 
@@ -83,7 +75,6 @@ export interface DebugLogSource {
  * - artifacts/: Current session's artifacts subtree (recursive), including any
  *   subagent session transcripts nested under it
  * - logs.txt: Recent log entries
-<<<<<<< ours — function `createReportBundle` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
  * - system.json: OS, arch, CPU, memory, versions
  * - env.json: Sanitized environment variables
@@ -152,82 +143,6 @@ export async function createReportBundle(options: ReportBundleOptions): Promise<
 		// sessions in the sessions root are never touched (#8648).
 		const artifactsDir = options.sessionFile.slice(0, -6);
 		await addDirectoryToArchive(data, files, artifactsDir, "artifacts");
-=======
- * - session-logs.txt: Today's log records of this session and its subagents
- * - system.json: OS, arch, CPU, memory, versions
- * - env.json: Sanitized environment variables
- * - config.json: Resolved settings
- * - profile.cpuprofile: CPU profile (performance report only)
- * - raw-sse.txt: Recent raw provider SSE diagnostics (when captured)
- * - profile.md: Markdown CPU profile (performance report only)
- * - memory.json: Numeric process and heap statistics (memory report only)
- * - work.folded: Work profile folded stacks (work report only)
- * - work.md: Work profile summary (work report only)
- * - work.svg: Work profile flamegraph (work report only)
- */
-export async function createReportBundle(options: ReportBundleOptions): Promise<ReportBundleResult> {
-	const reportsDir = getReportsDir();
-	await fs.mkdir(reportsDir, { recursive: true });
-
-	const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
-	const outputPath = path.join(reportsDir, `omp-report-${timestamp}.tar.gz`);
-
-	const data: Record<string, string | Uint8Array> = {};
-	const files: string[] = [];
-
-	// Collect system info
-	const systemInfo = await collectSystemInfo();
-	data["system.json"] = JSON.stringify(systemInfo, null, 2);
-	files.push("system.json");
-
-	// Sanitized environment
-	data["env.json"] = JSON.stringify(sanitizeEnv(Bun.env as Record<string, string>), null, 2);
-	files.push("env.json");
-
-	// Settings/config
-	if (options.settings) {
-		data["config.json"] = JSON.stringify(options.settings, null, 2);
-		files.push("config.json");
-	}
-
-	// Recent raw provider SSE diagnostics
-	if (options.rawSseText && options.rawSseText.trim().length > 0) {
-		data["raw-sse.txt"] = options.rawSseText;
-		files.push("raw-sse.txt");
-	}
-
-	// Session file
-	if (options.sessionFile) {
-		try {
-			const sessionContent = await Bun.file(options.sessionFile).text();
-			data["session.jsonl"] = sessionContent;
-			files.push("session.jsonl");
-		} catch {
-			// Session file might not exist yet
-		}
-
-		// Artifacts subtree (same path without .jsonl). Recursing captures the
-		// current session's nested subagent transcripts and their artifacts while
-		// staying inside this session's own directory — unrelated co-located
-		// sessions in the sessions root are never touched (#8648).
-		const artifactsDir = options.sessionFile.slice(0, -6);
-		await addDirectoryToArchive(data, files, artifactsDir, "artifacts");
-	}
-
-	// Recent logs (last 1000 lines) across every same-day process. PID-qualified
-	// filenames mean a report generated from a later invocation must still gather
-	// the crashed process's log, so read all of today's files, not just our own.
-	// Every record those files hold for this session or its subagents goes to
-	// session-logs.txt, however far back in the file it sits.
-	const { tails, sessionLines } = await collectSameDayLogs(1000, await collectSessionIds(options.sessionFile));
-	if (tails) {
-		data["logs.txt"] = tails;
-		files.push("logs.txt");
-	}
-	if (sessionLines) {
-		data["session-logs.txt"] = sessionLines;
-		files.push("session-logs.txt");
->>>>>>> theirs — function `createReportBundle` (F, confidence: medium)
 	}
 
 	// CPU profile

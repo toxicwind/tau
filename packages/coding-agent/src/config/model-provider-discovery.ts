@@ -1,4 +1,3 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `} from "@oh-my-pi/pi-catalog/provider-models";`
 import type { Api, Model } from "@tau/tau-ai/types";
 import type { ModelResolutionSource } from "@tau/tau-catalog/model-manager";
@@ -7,13 +6,6 @@ import {
 	type OpenAICodexAccount,
 	PROVIDER_DESCRIPTORS,
 } from "@tau/tau-catalog/provider-models";
-=======
-import type { OAuthAccess } from "@oh-my-pi/pi-ai";
-import type { Api, Model } from "@oh-my-pi/pi-ai/types";
-import { authProviders } from "@oh-my-pi/pi-catalog/compat/auth";
-import type { ModelResolutionSource } from "@oh-my-pi/pi-catalog/model-manager";
-import { MODELS_DEV_CATALOG_PROVIDER_IDS, PROVIDER_DESCRIPTORS } from "@oh-my-pi/pi-catalog/provider-models";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/config/model-provider-discovery.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { AuthStorage, OAuthCredential } from "../session/auth-storage";
 
 /**

@@ -2,23 +2,12 @@ import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import type { FetchImpl } from "@oh-my-pi/pi-catalog/types";`
 import { startAuthGateway } from "@tau/tau-ai/auth-gateway";
 import { AuthStorage } from "@tau/tau-ai/auth-storage";
 import { createMockModel } from "@tau/tau-ai/providers/mock";
 import { getBundledModel } from "@tau/tau-catalog/models";
 import type { FetchImpl } from "@tau/tau-catalog/types";
-=======
-import { NativeJudge, type ImageContent, type JudgmentRequest } from "@oh-my-pi/pi-ai";
-import { startAuthGateway } from "@oh-my-pi/pi-ai/auth-gateway";
-import { buildGatewayApiKeyResolver } from "@oh-my-pi/pi-ai/auth-gateway/dispatch";
-import { AuthStorage } from "@oh-my-pi/pi-ai/auth-storage";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import type { FetchImpl, ModelSpec } from "@oh-my-pi/pi-catalog/types";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/ai/test/auth-gateway-systemone.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const REQUEST = {
 	state: "Help! My payouts have been failing for 3 days.",

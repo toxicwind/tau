@@ -7,7 +7,6 @@
 - Entry: `packages/coding-agent/src/tools/ast-grep.ts`
 - Model-facing prompt: `packages/coding-agent/src/prompts/tools/ast-grep.md`
 - Key collaborators:
-<<<<<<< ours — scope `- Key collaborators:` in heading `Source` (F, confidence: medium)
 // refused_by: statement_fold · collision: `- `crates/pi-natives/src/ast.rs` — native scan, parse, match en…` +1 more
   - `crates/tau-natives/src/ast.rs` — native scan, parse, match engine
   - `crates/tau-ast/src/language/mod.rs` — language aliases and extension inference used by the native wrapper.
@@ -16,17 +15,6 @@
   - `packages/coding-agent/src/tools/match-line-format.ts` — hashline match rendering
   - `packages/coding-agent/src/utils/file-display-mode.ts` — hashline vs line-number output mode
   - `packages/natives/native/index.d.ts` — JS-visible native binding contract
-=======
-   - `crates/pi-natives/src/ast.rs` — native scan, parse, match engine
-   - `crates/pi-ast/src/language/mod.rs` — language aliases and extension inference used by the native wrapper.
-   - `crates/pi-ast/src/ops.rs` — pattern compilation and JSON member-fragment fallback
-   - `packages/coding-agent/src/tools/path-utils.ts` — path/glob parsing (host paths and internal URLs) and multi-path resolution
-   - `packages/coding-agent/src/internal-urls/url-filesystem.ts` — `InternalUrlFilesystem`, the URL filesystem native ast-grep walks and reads through
-   - `packages/tui/src/render/render-utils.ts` — parse-error dedupe and display caps
-   - `packages/tui/src/tools/match-line-format.ts` — hashline match rendering
-   - `packages/coding-agent/src/utils/file-display-mode.ts` — hashline vs line-number output mode
-   - `packages/natives/native/index.d.ts` — JS-visible native binding contract
->>>>>>> theirs — scope `- Key collaborators:` · weave: run 'weave explain docs/tools/ast-grep.md' for per-hunk detail, 'weave check' to verify your resolution
 
 ## Inputs
 
@@ -45,15 +33,9 @@ Pattern grammar and language support exposed to the model:
 - `$$$` — match zero or more AST nodes without binding.
 - Metavariable names must be uppercase and must stand for whole AST nodes, not partial tokens or string fragments.
 - Reusing the same metavariable requires identical code at each occurrence.
-<<<<<<< ours — heading `Inputs` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 - Patterns must parse as one valid AST node for the inferred target language.
 - Supported canonical languages come from `SupportLang::all_langs()` in `crates/tau-ast/src/language/mod.rs`: `astro`, `bash`, `c`, `cmake`, `cpp`, `csharp`, `dart`, `clojure`, `css`, `diff`, `dockerfile`, `emacs-lisp`, `elixir`, `erlang`, `fortran`, `go`, `graphql`, `haskell`, `hcl`, `html`, `ini`, `java`, `javascript`, `json`, `just`, `julia`, `kotlin`, `lua`, `make`, `markdown`, `nix`, `objc`, `ocaml`, `odin`, `php`, `powershell`, `protobuf`, `python`, `r`, `regex`, `ruby`, `rust`, `scala`, `solidity`, `sql`, `starlark`, `svelte`, `swift`, `toml`, `tlaplus`, `tsx`, `typescript`, `verilog`, `vue`, `xml`, `yaml`, `zig`.
-=======
-- Prompt guidance requires one valid AST node for the inferred or explicitly selected language. The native compiler also accepts JSON member fragments such as `"key": $V` by wrapping them in an object and selecting the `pair` node; this fallback applies only to `MultipleNode` parse failures.
-- `.cu` and `.cuh` infer as C++; C++ expression-statement patterns need their trailing `;`.
-- Supported canonical languages come from `SupportLang::all_langs()` in `crates/pi-ast/src/language/mod.rs`: `astro`, `bash`, `c`, `cmake`, `cpp`, `csharp`, `dart`, `clojure`, `css`, `diff`, `dockerfile`, `emacs-lisp`, `elixir`, `erlang`, `fortran`, `go`, `graphql`, `haskell`, `hcl`, `html`, `ini`, `java`, `javascript`, `json`, `just`, `julia`, `kotlin`, `lua`, `make`, `markdown`, `nix`, `objc`, `ocaml`, `odin`, `php`, `powershell`, `protobuf`, `python`, `r`, `regex`, `ruby`, `rust`, `scala`, `solidity`, `sql`, `starlark`, `svelte`, `swift`, `toml`, `tlaplus`, `tsx`, `typescript`, `verilog`, `vue`, `xml`, `yaml`, `zig`.
->>>>>>> theirs — heading `Inputs` (S+F, confidence: low)
 
 `ast_grep` is disabled by default (`astGrep.enabled = false`) and is a discoverable tool when enabled.
 
@@ -81,15 +63,9 @@ Pattern grammar and language support exposed to the model:
 5. The wrapper stats the resolved base path through the URL filesystem to decide whether output should be grouped as a directory result.
 6. Execution dispatches to either:
    - one native `astGrep(...)` call for a single resolved base, or
-<<<<<<< ours — heading `Flow` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
    - `runMultiTargetAstGrep(...)`, which calls the native binding once per target, rebases paths back to the common root, sorts globally, then applies `skip` and the wrapper limit.
 7. Native `ast_grep` in `crates/tau-natives/src/ast.rs`:
-=======
-   - `runMultiTargetAstGrep(...)`, which calls the native binding once per target, rebases host paths back to the common root (URL hits stay full URLs), sorts globally, then applies `skip` and the wrapper limit.
-     Every native call gets `filesystem: urlFilesystem.shellFilesystem()`.
-7. Native `ast_grep` in `crates/pi-natives/src/ast.rs`:
->>>>>>> theirs — heading `Flow` (S+F, confidence: low)
    - normalizes and deduplicates patterns,
    - resolves a `MatchStrictness` (`smart` by default),
    - collects candidate files from a file or gitignore-aware directory scan,

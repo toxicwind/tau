@@ -10,14 +10,8 @@ import {
 	getProjectPluginOverridesPath,
 	isEnoent,
 	logger,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-utils";
-=======
-	normalizePathForComparison,
-} from "@oh-my-pi/pi-utils";
-import { JSONC } from "bun";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/extensibility/plugins/manager.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { resolveActiveProjectRegistryPath } from "../../discovery/helpers";
 import { loadExtensions } from "../extensions/loader";
 import { runBunCli } from "./bun-cli";

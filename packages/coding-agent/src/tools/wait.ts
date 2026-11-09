@@ -4,16 +4,10 @@ import {
 	type AgentToolResult,
 	type AgentToolUpdateCallback,
 	TOOL_INTERRUPT_ABORT_REASON,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { prompt } from "@oh-my-pi/pi-utils";`
 } from "@tau/tau-agent-core";
 import { prompt } from "@tau/tau-utils";
 import { IrcBus } from "../irc/bus";
-=======
-} from "@oh-my-pi/pi-agent-core";
-import { formatDuration, prompt } from "@oh-my-pi/pi-utils";
-import { IrcBus, ircWaitAccepts } from "../irc/bus";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/wait.ts' for per-hunk detail, 'weave check' to verify your resolution
 import waitDescription from "../prompts/tools/wait.md" with { type: "text" };
 import waitIdleTemplate from "../prompts/tools/wait-idle.md" with { type: "text" };
 import type { ToolSession } from ".";
@@ -21,17 +15,10 @@ import type { AsyncJob, AsyncJobManagerApi } from "../async/job-manager";
 import { buildJobResult, snapshotJobs, undeliveredJobs } from "../async/job-control";
 import { hasLiveOwnedService, listServicesTolerant, waitForOwnedServiceCompletion } from "../launch/services";
 import { drainPendingInbox, messageResult } from "../irc/messaging";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { prompt } from "@oh-my-pi/pi-utils";`
 import type { AgentRegistry } from "../registry/agent-registry";
 import type { IrcMessage } from "@tau/tau-tui/tools/irc";
 import type { CoordinationDetails } from "@tau/tau-tui/tools/wait";
-=======
-import { USER_AWAIT_ID } from "../registry/agent-awaits";
-import type { AgentRegistryApi } from "../registry/agent-registry";
-import type { IrcMessage } from "@oh-my-pi/pi-tui/tools/irc";
-import type { CoordinationDetails } from "@oh-my-pi/pi-tui/tools/wait";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import { throwIfAborted } from "./tool-errors";
 
 import { cfgLaunchEnabled } from "./settings";

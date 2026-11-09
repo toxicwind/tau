@@ -1,7 +1,6 @@
 /**
  * JSON Schema → tautype importer.
  *
-<<<<<<< ours — interstitial `file_header` (T+F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `* `Type.toJsonSchema()` for the dialect omptype (and its Zod/Ty…` +2 more
  * Rebuilds a callable schema from JSON Schema documents — the inverse of
  * `Type.toJsonSchema()` for the dialect tautype (and its Zod/TypeBox
@@ -16,38 +15,10 @@
 import { TauTypeError } from "./errors";
 import { type EmbeddableSchema, type IR, IR_BRAND, type PropIR, type TupleItemIR } from "./ir";
 import { keywordIR, patternIR } from "./keywords";
-=======
- * Validates exactly as JSON Schema drafts 2020-12 and 7 specify: every
- * keyword including `$dynamicRef`, `unevaluatedProperties`/`unevaluatedItems`,
- * `$id`/`$anchor` resolution, remote references, and vocabularies declared by
- * meta-schemas. Validation runs on an eval-free closure engine and moves to
- * generated code once a schema is hot (see `jsonschema/`).
- *
- * The result is a regular omptype schema: callable, composable, emitting the
- * source document from `toJsonSchema()`, and filling absent properties from
- * their `default` when called (never in `allows`).
- *
- * # Example
- * ```ts
- * const read = fromJsonSchema({
- * 	type: "object",
- * 	properties: { path: { type: "string" }, offset: { type: "integer", minimum: 0 } },
- * 	required: ["path"],
- * });
- * read.allows({ path: "a.ts" }); // true
- * read({ offset: -1 }); // OmpErrors: path missing, offset below 0
- * ```
- */
-import { OmpErrors } from "./errors";
-import { type EmbeddableSchema, type IR, IR_BRAND } from "./ir";
-import type { Issue } from "./jsonschema/interpret";
-import { Validator, type ValidatorOptions } from "./jsonschema/validator";
->>>>>>> theirs — interstitial `file_header` (T+F, confidence: medium) · weave: run 'weave explain packages/tautype/src/from-json-schema.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { type BaseType, type } from "./type";
 
 /** Options for {@link fromJsonSchema}. */
 export type FromJsonSchemaOptions = ValidatorOptions;
-<<<<<<< ours — class `Importer` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 class Importer {
 	readonly #root: JsonSchema;
@@ -230,24 +201,13 @@ class Importer {
 		return ir;
 	}
 }
-=======
->>>>>>> theirs — class `Importer` (S+F, confidence: low)
 
 /**
  * Build a callable tautype schema from a JSON Schema document.
  *
  * # Errors
-<<<<<<< ours — scope `declaration` in function `fromJsonSchema` (T+S, confidence: medium)
 // refused_by: statement_fold · collision: `* Throws {@link OmpTypeError} on malformed nodes, unresolvable …`
  * Throws {@link TauTypeError} on malformed nodes, unresolvable `$ref`s, or
-=======
- * Throws `OmpTypeError` when a `$ref` is malformed or names a document or
- * location that neither `schema` nor `options.schemas` contains, when a
- * `pattern` is not a regular expression, or when a schema node is neither a
- * boolean nor an object.
- */
-export function fromJsonSchema(schema: unknown, options?: FromJsonSchemaOptions): BaseType {
->>>>>>> theirs — scope `declaration`
 	// Runs after 64 checks, long after `imported` below exists.
 	const validator = new Validator(schema, options, compiled => {
 		imported.allows = compiled;
@@ -278,7 +238,6 @@ export function fromJsonSchema(schema: unknown, options?: FromJsonSchemaOptions)
 	// Once generated code exists, `onCompile` above rebinds `allows` to it.
 	Object.defineProperty(imported, "allows", { value: check, writable: true, configurable: true });
 	return imported;
-<<<<<<< ours — scope `* types omptype cannot represent.` in function `fromJsonSchema`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
  * types tautype cannot represent.
  */
@@ -292,8 +251,6 @@ export function fromJsonSchema(schema: unknown): BaseType {
 		run: value => value,
 	};
 	return type.raw(embedded);
-=======
->>>>>>> theirs — scope `* types omptype cannot represent.` deleted in theirs
 }
 
 function toErrors(issues: readonly Issue[], value: unknown): OmpErrors {

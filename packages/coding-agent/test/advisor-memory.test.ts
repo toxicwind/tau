@@ -124,7 +124,6 @@ describe("advisor memory context", () => {
 		expect(names).not.toContain("edit");
 	});
 
-<<<<<<< ours — scope `it("keeps the advisor read hint tracking the ...` in test_suite `advisor memory context`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("keeps the advisor read hint tracking the primary snapshot", async () => {
 		tempDir = TempDir.createSync("@tau-advisor-hint-");
@@ -156,8 +155,6 @@ describe("advisor memory context", () => {
 		await session.refreshBaseSystemPrompt();
 		expect(schema()).toContain("skill://");
 	});
-=======
->>>>>>> theirs — scope `it("keeps the advisor read hint tracking the ...` deleted in theirs · weave: run 'weave explain packages/coding-agent/test/advisor-memory.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 	it.each(["hindsight", "mnemotau"])("keeps in-memory advisor URL tools bound to the %s session", async backend => {
 		tempDir = TempDir.createSync("@tau-advisor-memory-urls-");

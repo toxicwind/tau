@@ -2,7 +2,6 @@ import { afterAll, beforeAll, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { AuthStorage } from "@oh-my-pi/pi-ai";`
 import { AuthStorage } from "@tau/tau-ai";
 import { getBundledModel } from "@tau/tau-catalog/models";
@@ -13,18 +12,6 @@ import { createAgentSession } from "tau/sdk";
 import type { AgentSession } from "tau/session/agent-session";
 import { SessionManager } from "tau/session/session-manager";
 import { removeSyncWithRetries, Snowflake } from "@tau/tau-utils";
-=======
-import { AuthStorage, type Context } from "@oh-my-pi/pi-ai";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { MCPManager } from "@oh-my-pi/pi-coding-agent/mcp/manager";
-import { createAgentSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { removeSyncWithRetries, Snowflake } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/sdk-computer-prelude-toggle.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 import { cfgBrowserEnabled } from "@oh-my-pi/pi-coding-agent/tools/browser/settings";
 import { cfgComputerEnabled } from "@oh-my-pi/pi-coding-agent/tools/settings";

@@ -1,5 +1,4 @@
 #!/bin/sh
-<<<<<<< ours — interstitial `file_header` (T, confidence: high)
 # refused_by: merge_ladder_exhausted · collision: `# Builds the Apple Foundation Models bridge static library for …` +1 more
 # Builds the Apple Foundation Models bridge static library for tau-natives.
 # Shared by build.rs and the Bazel `applefm_bridge` genrule/repository rule.
@@ -9,18 +8,6 @@
 #       build bridge.swift (Swift 6.4+ with the macOS 27+ SDK), or nothing.
 #       Candidates: $TAU_APPLEFM_SWIFTC with $SDKROOT (or the selected SDK), the
 #       xcode-select'ed toolchain, then the Command Line Tools. Probes versions
-=======
-# Builds the Apple Foundation Models bridge dylib that pi-natives embeds.
-# Shared by build.rs and the Bazel `applefm_bridge` genrule/repository rule.
-#
-#   build-bridge.sh detect
-#       Prints "<swiftc>\t<sdk>\t<fingerprint>" for the first toolchain able to
-#       build bridge.swift (Swift 6.4+ with the macOS 27+ SDK), or nothing.
-#       Candidates: $OMP_APPLEFM_SWIFTC and the xcode-select'ed toolchain with
-#       the selected SDK, then the Command Line Tools with their own SDK. A set
-#       $SDKROOT is the SDK for every candidate, so the bridge never links
-#       against a different SDK than the rest of the addon. Probes versions
->>>>>>> theirs — interstitial `file_header` (T, confidence: high) · weave: run 'weave explain crates/tau-natives/src/applefm/build-bridge.sh' for per-hunk detail, 'weave check' to verify your resolution
 #       only; never compiles.
 #
 #   build-bridge.sh build <out.dylib> <arch> [<swiftc> <sdk> [<swiftc arg>...]]
@@ -84,20 +71,12 @@ build() {
 	shift $(($# < 4 ? $# : 4))
 	rm -f "$out"
 	if [ "$arch" = arm64 ] && [ -n "$swiftc" ]; then
-<<<<<<< ours — scope `if [ "$arch" = arm64 ] && [ -n "$swiftc" ]; then` in function `build` (S+F, confidence: low)
 # refused_by: statement_fold · collision: `"$swiftc" -emit-library -static -parse-as-library -module-name …`
 		cache=${TAU_APPLEFM_MODULE_CACHE:-${TMPDIR:-/tmp}/tau-applefm-module-cache}
 		# FoundationModels is weak-linked by the addon link step instead of
 		# autolinked, so the addon still loads on macOS releases without it.
 		"$swiftc" -emit-library -static -parse-as-library -module-name TauAppleFm \
 			-sdk "$sdk" -target arm64-apple-macos12.0 -swift-version 6 -O \
-=======
-		cache=${OMP_APPLEFM_MODULE_CACHE:-${TMPDIR:-/tmp}/omp-applefm-module-cache}
-		# Loaded only on macOS 27+, so it targets 27 and needs no Swift
-		# back-deployment runtime.
-		"$swiftc" -emit-library -parse-as-library -module-name OmpAppleFm \
-			-sdk "$sdk" -target arm64-apple-macos27.0 -swift-version 6 -O \
->>>>>>> theirs — scope `if [ "$arch" = arm64 ] && [ -n "$swiftc" ]; then`
 			-module-cache-path "$cache" \
 			-Xlinker -install_name -Xlinker @rpath/libomp_applefm.dylib \
 			"$@" "$here/bridge.swift" -o "$out"

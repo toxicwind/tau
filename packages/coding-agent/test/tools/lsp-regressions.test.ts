@@ -3,7 +3,6 @@ import * as fs from "node:fs";
 import * as fsp from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { LspTool } from "@oh-my-pi/pi-coding-agent/lsp";` +7 more
 import type { AgentToolResult, RenderResultOptions } from "@tau/tau-agent-core";
 import { arkToWireSchema } from "@tau/tau-ai/utils/schema";
@@ -15,20 +14,6 @@ import * as lspClient from "tau/lsp/client";
 import * as lspConfig from "tau/lsp/config";
 import { configCache, getConfig, getServersForFile, type LspConfig, loadConfig } from "tau/lsp/config";
 import { waitForDiagnostics } from "tau/lsp/diagnostics";
-=======
-import type { AgentToolResult, RenderResultOptions } from "@oh-my-pi/pi-agent-core";
-import { arkToWireSchema } from "@oh-my-pi/pi-ai/utils/schema";
-import { validateToolArguments } from "@oh-my-pi/pi-ai/utils/validation";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { preloadPluginRoots } from "@oh-my-pi/pi-coding-agent/discovery/helpers";
-import { rejectionOf, trackUnhandled } from "../helpers/rejection";
-import { restoreEnvValue } from "../helpers/settings-test-state";
-import { createLspWritethrough, LspTool } from "@oh-my-pi/pi-coding-agent/lsp";
-import * as lspClient from "@oh-my-pi/pi-coding-agent/lsp/client";
-import * as lspConfig from "@oh-my-pi/pi-coding-agent/lsp/config";
-import { configCache, getServersForFile, type LspConfig, loadConfig } from "@oh-my-pi/pi-coding-agent/lsp/config";
-import { waitForDiagnostics } from "@oh-my-pi/pi-coding-agent/lsp/diagnostics";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/tools/lsp-regressions.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	applyTextEditsToString,
 	applyWorkspaceEdit,
@@ -715,7 +700,6 @@ describe("lsp regressions", () => {
 		}
 	});
 
-<<<<<<< ours — scope `it("rearms the idle checker when starting a c...` in test_suite `lsp regressions` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@omp-lsp-rearm-");`
 	it("rearms the idle checker when starting a client after global shutdown without clobbering other workspaces (#8389)", async () => {
 		const tempDir = TempDir.createSync("@tau-lsp-rearm-");
@@ -725,10 +709,6 @@ describe("lsp regressions", () => {
 			fileTypes: ["ts"],
 			rootMarkers: [],
 		};
-=======
-	it("tears down a server that stops reading stdin while an idle document closes", async () => {
-		const tempDir = TempDir.createSync("@omp-lsp-idle-docs-wedge-");
->>>>>>> theirs — scope `it("rearms the idle checker when starting a c...`
 		try {
 			const server = installHandshakeLsp();
 			const config: ServerConfig = { command: "fake-lsp", fileTypes: [".ts"], rootMarkers: [] };
@@ -757,7 +737,6 @@ describe("lsp regressions", () => {
 		}
 	});
 
-<<<<<<< ours — scope `it("isolates idle timeout per workspace clien...` in test_suite `lsp regressions` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `const tempDirA = TempDir.createSync("@omp-lsp-iso-a-");` +1 more
 	it("isolates idle timeout per workspace client without global cross-contamination (#8389)", async () => {
 		const tempDirA = TempDir.createSync("@tau-lsp-iso-a-");
@@ -772,10 +751,6 @@ describe("lsp regressions", () => {
 			fileTypes: ["ts"],
 			rootMarkers: [],
 		};
-=======
-	it("sends an idle document's close even when the opener that chose it is cancelled first", async () => {
-		const tempDir = TempDir.createSync("@omp-lsp-idle-docs-aborted-");
->>>>>>> theirs — scope `it("isolates idle timeout per workspace clien...`
 		try {
 			const server = installHandshakeLsp();
 			const config: ServerConfig = { command: "fake-lsp", fileTypes: [".ts"], rootMarkers: [] };
@@ -850,7 +825,6 @@ describe("lsp regressions", () => {
 		}
 	});
 
-<<<<<<< ours — scope `it("re-arms the idle checker after a config-o...` in test_suite `lsp regressions` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@omp-lsp-rearm-config-");`
 	it("re-arms the idle checker after a config-only reload when timeout is added (#8389)", async () => {
 		const tempDir = TempDir.createSync("@tau-lsp-rearm-config-");
@@ -859,10 +833,6 @@ describe("lsp regressions", () => {
 			fileTypes: ["ts"],
 			rootMarkers: [],
 		};
-=======
-	it("refreshes a document whose close outlived its cancelled opener by reopening it", async () => {
-		const tempDir = TempDir.createSync("@omp-lsp-idle-docs-refresh-race-");
->>>>>>> theirs — scope `it("re-arms the idle checker after a config-o...`
 		try {
 			const server = installHandshakeLsp();
 			const config: ServerConfig = { command: "fake-lsp", fileTypes: [".ts"], rootMarkers: [] };
@@ -1626,7 +1596,6 @@ describe("lsp regressions", () => {
 		}
 	});
 
-<<<<<<< ours — scope `it("opens rust-analyzer Cargo workspace files...` in test_suite `lsp regressions`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("opens rust-analyzer Cargo workspace files before polling workspace readiness", async () => {
 		const tempDir = TempDir.createSync("@tau-lsp-rust-workspace-");
@@ -1729,8 +1698,6 @@ describe("lsp regressions", () => {
 			tempDir.removeSync();
 		}
 	});
-=======
->>>>>>> theirs — scope `it("opens rust-analyzer Cargo workspace files...` deleted in theirs
 
 	it("skips rust-analyzer workspace polling for standalone Rust files", async () => {
 		const tempDir = TempDir.createSync("@tau-lsp-rust-standalone-");
@@ -2662,7 +2629,6 @@ describe("lsp regressions", () => {
 		}
 	}, 10_000);
 
-<<<<<<< ours — scope `for (const scenario of [` in test_suite `lsp regressions` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@omp-lsp-failed-pull-");`
 	for (const scenario of [
 		{
@@ -2741,23 +2707,6 @@ describe("lsp regressions", () => {
 						} else if (message.method === "exit") {
 							server.exit(0);
 						}
-=======
-	it("rejects a diagnostics wait cancelled during a rust-analyzer cold load with an abort, leaking no rejection", async () => {
-		const tempDir = TempDir.createSync("@omp-lsp-ra-load-cancel-");
-		const target = path.join(tempDir.path(), "lib.rs");
-		const unhandled = trackUnhandled();
-		try {
-			await Bun.write(target, "fn run() {}\n");
-			installFakeLsp((message, server) => {
-				if (message.method === "initialize") {
-					server.send({ jsonrpc: "2.0", id: message.id, result: { capabilities: { diagnosticProvider: true } } });
-				} else if (message.method === "textDocument/didOpen") {
-					// The workspace load starts on open and never finishes here.
-					server.send({
-						jsonrpc: "2.0",
-						method: "$/progress",
-						params: { token: "fetch", value: { kind: "begin" } },
->>>>>>> theirs — scope `for (const scenario of [`
 					});
 				} else if (message.method === "shutdown") {
 					server.send({ jsonrpc: "2.0", id: message.id, result: null });
@@ -4577,7 +4526,6 @@ describe("lsp regressions", () => {
 		}
 	});
 
-<<<<<<< ours — scope `it("skips disk reconciliation while an OMP wr...` in test_suite `lsp regressions`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("skips disk reconciliation while an TAU write holds the overlay ahead of disk", async () => {
 		const tempDir = TempDir.createSync("@tau-lsp-pending-write-");
@@ -4643,10 +4591,7 @@ describe("lsp regressions", () => {
 			tempDir.removeSync();
 		}
 	});
-=======
->>>>>>> theirs — scope `it("skips disk reconciliation while an OMP wr...` deleted in theirs
 
-<<<<<<< ours — scope `it("waits for reconciled diagnostics before b...` in test_suite `lsp regressions` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `const tempDir = TempDir.createSync("@omp-lsp-codeaction-reconci…`
 	it("waits for reconciled diagnostics before building the code-action context", async () => {
 		const tempDir = TempDir.createSync("@tau-lsp-codeaction-reconcile-");
@@ -4656,25 +4601,6 @@ describe("lsp regressions", () => {
 		let openVersion = 1;
 		// context.diagnostics length seen by the most recent codeAction request.
 		let contextDiagnosticsCount = -1;
-=======
-	it("syncs open consumers edited outside OMP before references and workspace symbols", async () => {
-		const tempDir = TempDir.createSync("@omp-lsp-external-consumer-sync-");
-		const definitionPath = path.join(tempDir.path(), "target.py");
-		const consumerPath = path.join(tempDir.path(), "consumer.py");
-		const consumer = "from target import target\nvalue = target()\n";
-		// What the server holds for each open document: its answers are computed from these.
-		const overlays = new Map<string, string>();
-		/** Every `target` occurrence in the server's documents, at the line it holds them. */
-		const occurrences = () =>
-			Array.from(overlays, ([uri, text]) =>
-				text.split("\n").flatMap((lineText, line) => {
-					const character = lineText.indexOf("target()");
-					return character < 0
-						? []
-						: [{ uri, range: { start: { line, character }, end: { line, character: character + 6 } } }];
-				}),
-			).flat();
->>>>>>> theirs — scope `it("waits for reconciled diagnostics before b...`
 		try {
 			await Bun.write(definitionPath, "def target():\n    return 1\n");
 			await Bun.write(consumerPath, consumer);
@@ -4748,7 +4674,6 @@ describe("lsp regressions", () => {
 		}
 	});
 
-<<<<<<< ours — scope `it("flushes pending descendant text edits bef...` in test_suite `lsp regressions`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("flushes pending descendant text edits before a folder rename", async () => {
 		const tempDir = TempDir.createSync("@tau-lsp-folder-rename-");
@@ -4802,10 +4727,7 @@ describe("lsp regressions", () => {
 			tempDir.removeSync();
 		}
 	});
-=======
->>>>>>> theirs — scope `it("flushes pending descendant text edits bef...` deleted in theirs
 
-<<<<<<< ours — scope `it("flushes pending edits queued against a re...` in test_suite `lsp regressions`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("flushes pending edits queued against a rename target before performing the rename", async () => {
 		// LSP §3.16.2: documentChanges run in declared order. When a TextDocumentEdit
@@ -4864,10 +4786,7 @@ describe("lsp regressions", () => {
 			tempDir.removeSync();
 		}
 	});
-=======
->>>>>>> theirs — scope `it("flushes pending edits queued against a re...` deleted in theirs
 
-<<<<<<< ours — scope `it("validates every file's edits before writi...` in test_suite `lsp regressions`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("validates every file's edits before writing any workspace-edit file", async () => {
 		const tempDir = TempDir.createSync("@tau-lsp-atomic-validate-");
@@ -4907,10 +4826,7 @@ describe("lsp regressions", () => {
 			tempDir.removeSync();
 		}
 	});
-=======
->>>>>>> theirs — scope `it("validates every file's edits before writi...` deleted in theirs
 
-<<<<<<< ours — scope `it("round-trips file URIs containing percent ...` in test_suite `lsp regressions`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("round-trips file URIs containing percent and hash characters", () => {
 		const tricky = path.resolve(os.tmpdir(), "tau uri", "100% #1.ts");
@@ -4923,10 +4839,7 @@ describe("lsp regressions", () => {
 		const plain = path.resolve(os.tmpdir(), "tau uri", "plain.ts");
 		expect(uriToFile(fileToUri(plain).replaceAll("%20", " "))).toBe(plain);
 	});
-=======
->>>>>>> theirs — scope `it("round-trips file URIs containing percent ...` deleted in theirs
 
-<<<<<<< ours — scope `it("resolves $-prefixed identifiers past comp...` in test_suite `lsp regressions`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("resolves $-prefixed identifiers past compound matches", async () => {
 		// Pre-fix, BARE_IDENTIFIER_RE rejected leading `$`, so requireWordBoundary
@@ -4953,10 +4866,7 @@ describe("lsp regressions", () => {
 			tempDir.removeSync();
 		}
 	});
-=======
->>>>>>> theirs — scope `it("resolves $-prefixed identifiers past comp...` deleted in theirs
 
-<<<<<<< ours — scope `it("applies a create op followed by a text ed...` in test_suite `lsp regressions`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("applies a create op followed by a text edit for the same URI in declared order", async () => {
 		// LSP §3.16.2 motivating case for the rewrite: "Extract to new file"
@@ -5006,10 +4916,7 @@ describe("lsp regressions", () => {
 			tempDir.removeSync();
 		}
 	});
-=======
->>>>>>> theirs — scope `it("applies a create op followed by a text ed...` deleted in theirs
 
-<<<<<<< ours — scope `it("honors CreateFile overwrite and ignoreIfE...` in test_suite `lsp regressions`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("honors CreateFile overwrite and ignoreIfExists options", async () => {
 		const tempDir = TempDir.createSync("@tau-lsp-create-options-");
@@ -5043,10 +4950,7 @@ describe("lsp regressions", () => {
 			tempDir.removeSync();
 		}
 	});
-=======
->>>>>>> theirs — scope `it("honors CreateFile overwrite and ignoreIfE...` deleted in theirs
 
-<<<<<<< ours — scope `it("honors RenameFile overwrite and ignoreIfE...` in test_suite `lsp regressions`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("honors RenameFile overwrite and ignoreIfExists options", async () => {
 		const tempDir = TempDir.createSync("@tau-lsp-rename-options-");
@@ -5095,10 +4999,7 @@ describe("lsp regressions", () => {
 			tempDir.removeSync();
 		}
 	});
-=======
->>>>>>> theirs — scope `it("honors RenameFile overwrite and ignoreIfE...` deleted in theirs
 
-<<<<<<< ours — scope `it("keeps overlays open when ignoreIfExists s...` in test_suite `lsp regressions`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("keeps overlays open when ignoreIfExists skips a rename", async () => {
 		// A RenameFile with ignoreIfExists:true whose target exists performs no
@@ -5151,10 +5052,7 @@ describe("lsp regressions", () => {
 			tempDir.removeSync();
 		}
 	});
-=======
->>>>>>> theirs — scope `it("keeps overlays open when ignoreIfExists s...` deleted in theirs
 
-<<<<<<< ours — scope `it("reconciles the executed prefix when a wor...` in test_suite `lsp regressions`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("reconciles the executed prefix when a workspace edit fails partway", async () => {
 		// A text edit to an open file inside `src/` is flushed to disk before the
@@ -5218,10 +5116,7 @@ describe("lsp regressions", () => {
 			tempDir.removeSync();
 		}
 	});
-=======
->>>>>>> theirs — scope `it("reconciles the executed prefix when a wor...` deleted in theirs
 
-<<<<<<< ours — scope `it("honors DeleteFile recursive and ignoreIfN...` in test_suite `lsp regressions`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("honors DeleteFile recursive and ignoreIfNotExists options", async () => {
 		const tempDir = TempDir.createSync("@tau-lsp-delete-options-");
@@ -5251,10 +5146,7 @@ describe("lsp regressions", () => {
 			tempDir.removeSync();
 		}
 	});
-=======
->>>>>>> theirs — scope `it("honors DeleteFile recursive and ignoreIfN...` deleted in theirs
 
-<<<<<<< ours — scope `it("does not delete the source when a rename ...` in test_suite `lsp regressions`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("does not delete the source when a rename target resolves to the same file", async () => {
 		// A case-only rename on a case-insensitive filesystem yields distinct path
@@ -5288,10 +5180,7 @@ describe("lsp regressions", () => {
 			tempDir.removeSync();
 		}
 	});
-=======
->>>>>>> theirs — scope `it("does not delete the source when a rename ...` deleted in theirs
 
-<<<<<<< ours — scope `it("restores an overwritten rename target whe...` in test_suite `lsp regressions`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("restores an overwritten rename target when the final rename fails", async () => {
 		// An overwrite rename displaces the existing destination before moving the
@@ -5337,10 +5226,7 @@ describe("lsp regressions", () => {
 			tempDir.removeSync();
 		}
 	});
-=======
->>>>>>> theirs — scope `it("restores an overwritten rename target whe...` deleted in theirs
 
-<<<<<<< ours — scope `it("flushes pending descendant text edits bef...` in test_suite `lsp regressions`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("flushes pending descendant text edits before a folder delete", async () => {
 		// Mirror of the folder-rename subtree-flush test for the `delete` arm:
@@ -5391,10 +5277,7 @@ describe("lsp regressions", () => {
 			tempDir.removeSync();
 		}
 	});
-=======
->>>>>>> theirs — scope `it("flushes pending descendant text edits bef...` deleted in theirs
 
-<<<<<<< ours — scope `it("rename_file skips the LSP loop when no co...` in test_suite `lsp regressions`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("rename_file skips the LSP loop when no configured server handles the file extension", async () => {
 		const tempDir = TempDir.createSync("@tau-lsp-rename-irrelevant-");
@@ -5435,10 +5318,7 @@ describe("lsp regressions", () => {
 			tempDir.removeSync();
 		}
 	});
-=======
->>>>>>> theirs — scope `it("rename_file skips the LSP loop when no co...` deleted in theirs
 
-<<<<<<< ours — scope `it("rename_file reports an unreadable source ...` in test_suite `lsp regressions`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("rename_file reports an unreadable source as a read failure, not a missing path", async () => {
 		const tempDir = TempDir.createSync("@tau-lsp-rename-source-eacces-");
@@ -5479,10 +5359,7 @@ describe("lsp regressions", () => {
 			tempDir.removeSync();
 		}
 	});
-=======
->>>>>>> theirs — scope `it("rename_file reports an unreadable source ...` deleted in theirs
 
-<<<<<<< ours — scope `it("rename_file refuses to rename when the de...` in test_suite `lsp regressions`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("rename_file refuses to rename when the destination cannot be inspected", async () => {
 		const tempDir = TempDir.createSync("@tau-lsp-rename-dest-eacces-");
@@ -5524,10 +5401,7 @@ describe("lsp regressions", () => {
 			tempDir.removeSync();
 		}
 	});
-=======
->>>>>>> theirs — scope `it("rename_file refuses to rename when the de...` deleted in theirs
 
-<<<<<<< ours — scope `it("rename_file treats a dangling destination...` in test_suite `lsp regressions`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("rename_file treats a dangling destination symlink as an existing path", async () => {
 		const tempDir = TempDir.createSync("@tau-lsp-rename-dangling-dest-");
@@ -5558,10 +5432,7 @@ describe("lsp regressions", () => {
 			tempDir.removeSync();
 		}
 	});
-=======
->>>>>>> theirs — scope `it("rename_file treats a dangling destination...` deleted in theirs
 
-<<<<<<< ours — scope `it("workspace reload replaces a client whose ...` in test_suite `lsp regressions`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("workspace reload replaces a client whose process or initialization config changed", async () => {
 		const tempDir = TempDir.createSync("@tau-lsp-reload-identity-");
@@ -5612,10 +5483,7 @@ describe("lsp regressions", () => {
 			tempDir.removeSync();
 		}
 	});
-=======
->>>>>>> theirs — scope `it("workspace reload replaces a client whose ...` deleted in theirs
 
-<<<<<<< ours — scope `it("workspace reload blocks fresh client crea...` in test_suite `lsp regressions`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("workspace reload blocks fresh client creation until stale teardown finishes", async () => {
 		const tempDir = TempDir.createSync("@tau-lsp-reload-fresh-race-");
@@ -5661,10 +5529,7 @@ describe("lsp regressions", () => {
 			tempDir.removeSync();
 		}
 	});
-=======
->>>>>>> theirs — scope `it("workspace reload blocks fresh client crea...` deleted in theirs
 
-<<<<<<< ours — scope `it("workspace reload failure keeps fresh clie...` in test_suite `lsp regressions`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("workspace reload failure keeps fresh client creation blocked", async () => {
 		const tempDir = TempDir.createSync("@tau-lsp-reload-failed-teardown-");
@@ -5702,10 +5567,7 @@ describe("lsp regressions", () => {
 			tempDir.removeSync();
 		}
 	}, 10_000);
-=======
->>>>>>> theirs — scope `it("workspace reload failure keeps fresh clie...` deleted in theirs
 
-<<<<<<< ours — scope `it("workspace reload waits for a stale pendin...` in test_suite `lsp regressions`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("workspace reload waits for a stale pending client before starting its replacement", async () => {
 		const tempDir = TempDir.createSync("@tau-lsp-reload-pending-");
@@ -5758,10 +5620,7 @@ describe("lsp regressions", () => {
 			tempDir.removeSync();
 		}
 	});
-=======
->>>>>>> theirs — scope `it("workspace reload waits for a stale pendin...` deleted in theirs
 
-<<<<<<< ours — scope `it("workspace reload deadline interrupts a st...` in test_suite `lsp regressions`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("workspace reload deadline interrupts a stale pending initializer and prevents late publication", async () => {
 		const tempDir = TempDir.createSync("@tau-lsp-reload-pending-abort-");
@@ -5796,10 +5655,7 @@ describe("lsp regressions", () => {
 			tempDir.removeSync();
 		}
 	});
-=======
->>>>>>> theirs — scope `it("workspace reload deadline interrupts a st...` deleted in theirs
 
-<<<<<<< ours — scope `it("workspace reload rediscovers LSP servers ...` in test_suite `lsp regressions`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("workspace reload rediscovers LSP servers after an empty config was cached", async () => {
 		const tempDir = TempDir.createSync("@tau-lsp-reload-redetect-");
@@ -5850,10 +5706,7 @@ describe("lsp regressions", () => {
 			tempDir.removeSync();
 		}
 	});
-=======
->>>>>>> theirs — scope `it("workspace reload rediscovers LSP servers ...` deleted in theirs
 
-<<<<<<< ours — scope `it("reload * invalidates the per-cwd config c...` in test_suite `lsp regressions`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("reload * invalidates the per-cwd config cache so newly written .tau/lsp.json is observed", async () => {
 		// #3546: `getConfig` caches the first `loadConfig` result per cwd
@@ -5924,10 +5777,7 @@ describe("lsp regressions", () => {
 			tempDir.removeSync();
 		}
 	});
-=======
->>>>>>> theirs — scope `it("reload * invalidates the per-cwd config c...` deleted in theirs
 
-<<<<<<< ours — scope `describe("reload cancellation and truthful te...` in test_suite `lsp regressions`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	describe("reload cancellation and truthful teardown (#6369)", () => {
 		// A JSON-RPC error response the client maps to isMethodNotFoundError, so a
@@ -6229,9 +6079,6 @@ describe("lsp regressions", () => {
 			}
 		}, 15_000);
 	});
-=======
->>>>>>> theirs — scope `describe("reload cancellation and truthful te...` deleted in theirs
-<<<<<<< ours — scope `describe("reader exit ordering and initializa...` in test_suite `lsp regressions`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	describe("reader exit ordering and initialization backoff (#7041)", () => {
 		it("surfaces the process diagnostic when stdout closes before exit publication", async () => {
@@ -6329,8 +6176,6 @@ describe("lsp regressions", () => {
 			}
 		});
 	});
-=======
->>>>>>> theirs — scope `describe("reader exit ordering and initializa...` deleted in theirs
 
 	describe("files in another checkout", () => {
 		/** Session checkout `main/` and a linked worktree `feature/` (a `.git` file), each with `src/target.py`. */
@@ -9294,7 +9139,6 @@ describe("ty python lsp", () => {
 		expect(names).toContain("ty");
 	});
 
-<<<<<<< ours — scope `it("auto-detects ty when its binary and Pytho...` in test_suite `ty python lsp`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("auto-detects ty when its binary and Python root markers are present", async () => {
 		const tempDir = TempDir.createSync("@tau-lsp-ty-detect-");
@@ -9313,8 +9157,6 @@ describe("ty python lsp", () => {
 			tempDir.removeSync();
 		}
 	});
-=======
->>>>>>> theirs — scope `it("auto-detects ty when its binary and Pytho...` deleted in theirs
 
 	it("coexists with ruff: ty is primary, ruff is linter, both auto-detected", async () => {
 		const tempDir = TempDir.createSync("@tau-lsp-ty-ruff-");

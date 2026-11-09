@@ -166,7 +166,6 @@ impl PathPolicy {
 		lexical_absolute(Path::new(&expanded), &self.cwd)
 	}
 
-<<<<<<< ours — scope `recover_missing` in impl `PathPolicy`, deleted in theirs (S+F, confidence: low)
 // refused_by: container_member · collision: none (no common ancestor text)
 	/// Locate a missing authored path by unique trailing-suffix match under
 	/// `cwd`.
@@ -206,8 +205,6 @@ impl PathPolicy {
 		let display = result.entries.into_iter().next()?.path;
 		Some(Resolved { absolute: self.cwd.join(&display), display })
 	}
-=======
->>>>>>> theirs — scope `recover_missing` deleted in theirs · weave: run 'weave explain crates/tau-edit/src/path_policy.rs' for per-hunk detail, 'weave check' to verify your resolution
 
 	/// Enforce plan-mode write restrictions: renames and deletes are refused;
 	/// other writes are allowed only for URL targets whose host answer in

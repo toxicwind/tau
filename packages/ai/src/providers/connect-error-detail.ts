@@ -1,9 +1,5 @@
-<<<<<<< ours — interstitial `file_header` (S, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { truncate } from "@oh-my-pi/pi-utils";`
 import { truncate } from "@tau/tau-utils";
-=======
-import { isRecord, truncate } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (S, confidence: medium) · weave: run 'weave explain packages/ai/src/providers/connect-error-detail.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /**
  * Connect-protocol end-stream error formatting.

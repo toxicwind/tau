@@ -1,22 +1,11 @@
 import { dlopen, FFIType, ptr } from "bun:ffi";
 import * as fs from "node:fs";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { TtyWriter } from "@tau/tau-natives";
 import { $env, isBunTestRuntime, isTerminalHeadless, isWsl } from "@tau/tau-utils/env";
 import * as logger from "@tau/tau-utils/logger";
 import * as postmortem from "@tau/tau-utils/postmortem";
 import { restoreTerminalStderr, suppressTerminalStderr } from "@tau/tau-utils/stderr-guard";
-=======
-import { TtyWriter } from "@oh-my-pi/pi-natives";
-import { $env, isBunTestRuntime, isTerminalHeadless, isWsl } from "@oh-my-pi/pi-utils/env";
-import * as logger from "@oh-my-pi/pi-utils/logger";
-import { popLoopPhase, pushLoopPhase } from "@oh-my-pi/pi-utils/loop-phase";
-import * as postmortem from "@oh-my-pi/pi-utils/postmortem";
-import { restoreTerminalStderr, suppressTerminalStderr } from "@oh-my-pi/pi-utils/stderr-guard";
-import { TSP_VERSION } from "@oh-my-pi/pi-wire";
-import { getActiveTerminal, registerStdoutErrorHandler, setActiveTerminal } from "./active-terminal";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/tui/src/terminal.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	encodeBundledGlyphRegistrations,
 	encodeGlyphCoverageQuery,
@@ -591,16 +580,9 @@ export interface Terminal {
 	 * Take ownership of stdin after a `deferInput` start: enable raw mode,
 	 * attach input handlers, and run the capability probes start() skipped.
 	 * Bytes the user typed in cooked mode meanwhile are replayed through
-<<<<<<< ours — scope `enableInput` in interface `Terminal` (T, confidence: high)
 // refused_by: container_member · collision: `* Terminals built against older pi-tui versions keep working.`
 	 * `onInput`. No-op when input was never deferred. Optional so custom
 	 * Terminals built against older tau-tui versions keep working.
-=======
-	 * `onInput`. No-op when input was never deferred. Like {@link start}, the
-	 * probes may leave concealed bytes on the cursor row, so the caller
-	 * repaints afterwards. Optional so custom Terminals built against older
-	 * pi-tui versions keep working.
->>>>>>> theirs — scope `enableInput`
 	 */
 	enableInput?(): void;
 
@@ -1181,15 +1163,10 @@ export class ProcessTerminal implements Terminal {
 			}
 		}
 
-<<<<<<< ours — scope `start` in class `ProcessTerminal` (T+F, confidence: medium)
 // refused_by: container_member · collision: `// stderr-guard in pi-utils (mirrors openai/codex#24459).`
 		// Keep unmanaged fd-2 writes (macOS libmalloc/framework diagnostics) off
 		// the viewport while we own the terminal; released in stop(). See
 		// stderr-guard in tau-utils (mirrors openai/codex#24459).
-=======
-		// Keep unmanaged native fd-2 writes off the viewport while we own the
-		// terminal; released in stop(). See stderr-guard in pi-utils.
->>>>>>> theirs — scope `start`
 		suppressTerminalStderr();
 
 		// Set up resize handler immediately. The OS refreshes process.stdout

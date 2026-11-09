@@ -1,5 +1,4 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { AgentSession, AgentSessionEvent, PromptOptions } …`
 import { AsyncJobManager } from "tau/async";
 import type { ModelRegistry } from "tau/config/model-registry";
@@ -14,27 +13,6 @@ import { runSubprocess } from "tau/task/executor";
 import type { AgentDefinition } from "tau/task/types";
 import { EventBus } from "tau/utils/event-bus";
 import { TempDir } from "@tau/tau-utils";
-=======
-import { AsyncJobManager } from "@oh-my-pi/pi-coding-agent/async";
-import type { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { LoadExtensionsResult } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/types";
-import { AgentLifecycleManager } from "@oh-my-pi/pi-coding-agent/registry/agent-lifecycle";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import type { CreateAgentSessionResult } from "@oh-my-pi/pi-coding-agent/sdk";
-import * as sdkModule from "@oh-my-pi/pi-coding-agent/sdk";
-import {
-	type AgentSession,
-	type AgentSessionEvent,
-	PromptDroppedError,
-	type PromptOptions,
-} from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { runSubprocess } from "@oh-my-pi/pi-coding-agent/task/executor";
-import type { AgentDefinition } from "@oh-my-pi/pi-coding-agent/task/types";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-import { TempDir } from "@oh-my-pi/pi-utils";
-import { drive } from "../helpers/fake-clock";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/task/executor-yield-loop.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { createSessionDefaults } from "../helpers/session-defaults";
 
 /**
@@ -154,14 +132,8 @@ describe("runSubprocess incremental yield loops", () => {
 		AgentRegistry.resetGlobalForTests();
 		AgentLifecycleManager.resetGlobalForTests();
 		AsyncJobManager.resetForTests();
-<<<<<<< ours — test_suite `runSubprocess incremental yield loops` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 		tempDir = TempDir.createSync("@tau-yield-loop-");
-=======
-		tempDir = TempDir.createSync("@pi-yield-loop-");
-		// Drop recovery backs off on timers; `drive` advances the fake clock.
-		vi.useFakeTimers();
->>>>>>> theirs — test_suite `runSubprocess incremental yield loops` (F, confidence: medium)
 	});
 	afterEach(() => {
 		vi.useRealTimers();

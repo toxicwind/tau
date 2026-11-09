@@ -11,19 +11,10 @@ import {
 	loadSkills,
 	loadSkillsFromDir,
 	parseSkillInvocation,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { removeWithRetries } from "@oh-my-pi/pi-utils";`
 	type Skill,
 } from "tau/extensibility/skills";
 import { removeWithRetries } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-coding-agent/extensibility/skills";
-import { parseInternalUrl } from "@oh-my-pi/pi-coding-agent/internal-urls/parse";
-import { SkillProtocolHandler } from "@oh-my-pi/pi-coding-agent/internal-urls/skill-protocol";
-import { buildSystemPrompt } from "@oh-my-pi/pi-coding-agent/system-prompt";
-import { CombinedAutocompleteProvider } from "@oh-my-pi/pi-tui/autocomplete";
-import { __resetDirsFromEnvForTests, removeWithRetries, setAgentDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/skills.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { restoreEnvValue } from "./helpers/settings-test-state";
 const fixturesDir = path.resolve(import.meta.dirname, "fixtures/skills");
 const collisionFixturesDir = path.resolve(import.meta.dirname, "fixtures/skills-collision");
@@ -253,7 +244,6 @@ describe("skills", () => {
 			}
 		});
 
-<<<<<<< ours — scope `describe("loadSkills with options", () => {` in test_suite `skills` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const tempHostHome = await fs.mkdtemp(path.join(os.tmpdir(), "p…` +1 more
 		it("should load Windows host ~/.agents/skills when running under WSL (#3779)", async () => {
 			const tempHostHome = await fs.mkdtemp(path.join(os.tmpdir(), "tau-agents-wsl-host-"));
@@ -296,54 +286,6 @@ describe("skills", () => {
 				await removeWithRetries(tempCwd);
 			}
 		});
-=======
-		// The WSL candidate maps USERPROFILE to `/mnt/<drive>/...`, which a Windows
-		// host cannot resolve; the pure mapping is covered by the tests below.
-		it.skipIf(process.platform === "win32")(
-			"should load Windows host ~/.agents/skills when running under WSL (#3779)",
-			async () => {
-				const tempHostHome = await fs.mkdtemp(path.join(os.tmpdir(), "pi-agents-wsl-host-"));
-				const tempCwd = await fs.mkdtemp(path.join(os.tmpdir(), "pi-agents-wsl-cwd-"));
-				const skillDir = path.join(tempHostHome, ".agents", "skills", "wsl-host-skill");
-				await fs.mkdir(skillDir, { recursive: true });
-				await fs.writeFile(
-					path.join(skillDir, "SKILL.md"),
-					["---", "description: Loaded from WSL host USERPROFILE", "---", "", "# wsl-host-skill"].join("\n"),
-				);
-				const previousWslDistroName = process.env.WSL_DISTRO_NAME;
-				const previousWslInterop = process.env.WSL_INTEROP;
-				const previousUserProfile = process.env.USERPROFILE;
-				const previousPlatform = process.platform;
-				Object.defineProperty(process, "platform", { value: "linux" });
-				process.env.WSL_DISTRO_NAME = "Ubuntu";
-				delete process.env.WSL_INTEROP;
-				process.env.USERPROFILE = tempHostHome;
-				try {
-					const { skills } = await loadSkills({
-						enableCodexUser: false,
-						enableClaudeUser: false,
-						enableClaudeProject: false,
-						enablePiUser: false,
-						enablePiProject: false,
-						cwd: tempCwd,
-					});
-					const skill = skills.find(s => s.name === "wsl-host-skill");
-					expect(skill?.source).toBe("agents:user");
-					expect(skill?.filePath).toBe(path.join(skillDir, "SKILL.md"));
-				} finally {
-					if (previousWslDistroName === undefined) delete process.env.WSL_DISTRO_NAME;
-					else process.env.WSL_DISTRO_NAME = previousWslDistroName;
-					if (previousWslInterop === undefined) delete process.env.WSL_INTEROP;
-					else process.env.WSL_INTEROP = previousWslInterop;
-					if (previousUserProfile === undefined) delete process.env.USERPROFILE;
-					else process.env.USERPROFILE = previousUserProfile;
-					Object.defineProperty(process, "platform", { value: previousPlatform });
-					await removeWithRetries(tempHostHome);
-					await removeWithRetries(tempCwd);
-				}
-			},
-		);
->>>>>>> theirs — scope `describe("loadSkills with options", () => {`
 
 		it("converts Windows USERPROFILE paths to the default WSL mount (#3779)", () => {
 			const resolved = getWslWindowsHomeCandidate({

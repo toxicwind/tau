@@ -103,13 +103,9 @@ export type SymbolKey =
 	| "icon.advisor"
 	| "icon.advisorClosed"
 	| "icon.time"
-<<<<<<< ours — scope `/**` in type `SymbolKey` (F, confidence: medium)
 // refused_by: statement_fold · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 	| "icon.tau"
 	| "icon.esc"
-=======
-	| "icon.omp"
->>>>>>> theirs — scope `/**` · weave: run 'weave explain packages/tui/src/theme/symbols.ts' for per-hunk detail, 'weave check' to verify your resolution
 	| "icon.ghost"
 	| "icon.agents"
 	| "icon.job"

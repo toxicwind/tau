@@ -66,7 +66,6 @@ async function updateSessionPin(
 	});
 }
 
-<<<<<<< ours — scope `declaration` in function `toggleSessionPin` (T+S+F, confidence: low)
 // refused_by: statement_fold · collision: `* writer: two omp instances toggling pins concurrently can no l…`
 /**
  * Toggle one session's pin and persist the set; returns the new pinned state.
@@ -79,9 +78,6 @@ async function updateSessionPin(
  * an empty set. The replace preserves the destination across Windows
  * EPERM/EEXIST rename failures (`replaceFileAtomically`).
  */
-=======
-/** Toggle one session's pin; returns the new pinned state. */
->>>>>>> theirs — scope `declaration` · weave: run 'weave explain packages/coding-agent/src/session/session-pins.ts' for per-hunk detail, 'weave check' to verify your resolution
 export async function toggleSessionPin(sessionId: string, agentDir: string = getAgentDir()): Promise<boolean> {
 	return !(await updateSessionPin(sessionId, pinned => !pinned, agentDir));
 }

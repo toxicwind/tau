@@ -18,18 +18,10 @@ import {
 	renderJudgmentState,
 	type TextBackend,
 	TextJudge,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 	TypeSafeApiError,
 	TypeSafeJudge,
 } from "@tau/tau-ai";
-=======
-} from "@oh-my-pi/pi-ai";
-import type { ImageContent } from "@oh-my-pi/pi-ai/types";
-import { ConfigurationError, ValidationError } from "@oh-my-pi/pi-ai/error";
-import { withCredentialRedaction } from "@oh-my-pi/pi-ai/providers/transform-messages";
-import { withEnv } from "./helpers";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/test/judgment.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const LEVELS = ["low", "medium", "high", "xhigh", "max"] as const;
 

@@ -4,17 +4,13 @@ Tool-calling convention originated by NousResearch's **Hermes 2 Pro** (Llama-3-b
 
 The classic format examples below come from the NousResearch `Hermes-Function-Calling` README. OMP's current implementation is `packages/ai/src/dialect/hermes.ts`; its owned prompt and provider-history behavior differ from the classic template as described below.
 
-<<<<<<< ours — scope `Verified against: the NousResearch `Hermes-Fu...` in heading `Hermes tool-calling format`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 Verified against: the NousResearch `Hermes-Function-Calling` README (read in full — the canonical system prompts, the call/result formats, and the inference example below are quoted from it), the vLLM tool-calling docs (`hermes` parser), and the tau implementation on `main` @ `4324de2` (every tau claim below carries a `file:line` reference).
-=======
->>>>>>> theirs — scope `Verified against: the NousResearch `Hermes-Fu...` deleted in theirs · weave: run 'weave explain docs/toolconv/hermes.md' for per-hunk detail, 'weave check' to verify your resolution
 
 ## Special tokens
 
 Only the ChatML markers are control tokens; the tool and reasoning markers are text-level strings inside the turn body. Token **IDs are model-specific** (each Hermes release has its own tokenizer), so they are deliberately not listed here.
 
-<<<<<<< ours — scope `Only the ChatML markers are control tokens; t...` in heading `Special tokens` (F, confidence: medium)
 // refused_by: statement_fold · collision: `| `<think>` … `</think>` | Not in the Hermes 2 Pro spec | Think…`
 | Marker (verbatim) | Kind | Purpose |
 |---|---|---|
@@ -27,19 +23,6 @@ Only the ChatML markers are control tokens; the tool and reasoning markers are t
 | `<tools>` … `</tools>` | Plain text | Wrapper around the tool list in the system turn |
 | `<scratch_pad>` … `</scratch_pad>` | Text-level marker (Hermes 3) | GOAP reasoning sections before calls |
 | `<think>` … `</think>` | Not in the Hermes 2 Pro spec | Thinking markers recognized by the tau scanner (R1-style fine-tunes) |
-=======
-| Marker (verbatim)                  | Kind                         | Purpose                                                              |
-| ---------------------------------- | ---------------------------- | -------------------------------------------------------------------- |
-| `<\|im_start\|>`                   | ChatML control token         | Start of a turn; followed immediately by the role name + `\n`        |
-| `<\|im_end\|>`                     | ChatML control token         | End of a turn                                                        |
-| `<tool_call>`                      | Text-level marker            | Opens one tool call                                                  |
-| `</tool_call>`                     | Text-level marker            | Closes one tool call                                                 |
-| `<tool_response>`                  | Text-level marker            | Opens one tool result                                                |
-| `</tool_response>`                 | Text-level marker            | Closes one tool result                                               |
-| `<tools>` … `</tools>`             | Plain text                   | Wrapper around the tool list in the system turn                      |
-| `<scratch_pad>` … `</scratch_pad>` | Text-level marker (Hermes 3) | GOAP reasoning sections before calls                                 |
-| `<think>` … `</think>`             | Not in the Hermes 2 Pro spec | Thinking markers recognized by the omp scanner (R1-style fine-tunes) |
->>>>>>> theirs — scope `Only the ChatML markers are control tokens; t...`
 
 Notes on exactness:
 
@@ -155,16 +138,10 @@ Serving engines expose this convention through the **`hermes` tool-call parser**
 - `message.tool_calls[]`: one entry per `<tool_call>` block, each with a server-generated `id` (the model emits none), `type: "function"`, `function.name`, and `function.arguments` re-serialized as a **JSON string** at the API boundary (`json.loads(...)` it before use).
 - Feeding results back: append `{"role": "tool", "content": <result>, "tool_call_id": <id-from-the-call>}` for each result; the engine renders it into the `<tool_response>` shape above.
 
-<<<<<<< ours — heading `omp / pi converter behavior` (S+F, confidence: low)
 // refused_by: rename_vs_edit_guard · collision: none (both sides edited, nowhere the same lines)
 ## tau / pi converter behavior
 
 The repository's `hermes` dialect is an **owned in-band converter**, registered in `packages/ai/src/dialect/factory.ts:16` and defined in `packages/ai/src/dialect/hermes.ts:195-206`. With tools present, the agent appends the Hermes format guide and compact tool catalog to the system prompt, removes native provider tools, rewrites earlier calls and results as text in this syntax, and scans streamed output back into canonical pi tool-call events. `qwen3` remains a separate selectable dialect even though both emit the same basic JSON-in-`<tool_call>` convention.
-=======
-## omp / pi converter behavior
-
-The `hermes` dialect is registered in `packages/ai/src/dialect/factory.ts` and implemented in `packages/ai/src/dialect/hermes.ts`. With tools present, owned mode appends a format guide/catalog to the system prompt, omits native tools and `tool_choice`, rewrites call/result history into text, and projects assistant output back into canonical pi events. `qwen3` is a separate selectable dialect despite sharing the basic JSON-in-`<tool_call>` shape.
->>>>>>> theirs — heading `omp / pi converter behavior` (S+F, confidence: low)
 
 ### Selection
 
@@ -186,28 +163,8 @@ The renderer always writes:
 
 Two deliberate divergences from classic Hermes 2 Pro rendering: result bodies are **bare text** (not the `{"name": …, "content": …}` wrapper — the injected format guide shows the model the bare form), and the tool advertisement is tau's `# Tools` catalog. An assistant turn renders thinking first, then prose, then calls (`rendering.ts:116-123`); stored thinking round-trips as `<think>\n{text}\n</think>` with nested blocks unwrapped and joined by newlines (`hermes.ts:182-184` → `renderDelimitedThinking`, `rendering.ts:250-273`).
 
-<<<<<<< ours — heading `Prompt and catalog` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
-=======
-### Prompt and catalog
-
-`renderInbandToolPrompt` in `packages/ai/src/dialect/catalog.ts` uses `prompt-template.md`: a `# Tools` header, one compact OpenAI-style tool JSON object per line in `<tools>`, then `hermes.md`'s format guide. Tool schemas are normalized with `toolWireSchema`. The guide requires an object-valued `arguments`, normal JSON string escaping rather than HTML escaping, complete calls before stopping, and no model-authored `<tool_response>`. This is OMP's prompt, not the classic 2 Pro prose/`FunctionCall` schema.
-
->>>>>>> theirs — heading `Prompt and catalog` (S+F, confidence: low)
-<<<<<<< ours — heading `Rendering` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
-=======
-### Rendering
-
-The dialect writes:
-
-- calls as `<tool_call>\n{single-line JSON}\n</tool_call>` with nested `arguments`; parallel calls are newline-separated;
-- results as `<tool_response>\n{bare result text}\n</tool_response>`, without the classic `{"name": …, "content": …}` wrapper or a separate error bit;
-- lower-level `renderTranscript` output as ChatML, with `developer` mapped to `system` and consecutive results coalesced into one **`tool`** turn. Assistant thinking precedes prose and calls. Thinking renders through `renderDelimitedThinking` as `<think>\n{text}\n</think>`, unwrapping nested/repeated surrounding think blocks. No generation prompt is appended.
-
-Provider-request history uses **`encodeInbandToolHistory`**, not that transcript renderer (`packages/ai/src/dialect/history.ts`). Assistant turns with calls become prose plus call blocks and lose their thinking/image blocks; call-free assistant turns stay unchanged. Result runs become one synthetic **`user`** message containing the bare response blocks, with result images retained after the text. Thus the dedicated `tool` role above describes the transcript renderer, not the owned request path.
-
->>>>>>> theirs — heading `Rendering` (S+F, confidence: low)
 ### Scanning
 
 `HermesInbandScanner` recognizes literal `<tool_call>`/`</tool_call>` and optionally `<think>`/`</think>`, holding back partial marker suffixes across chunks. It mints `ptc_…` ids and emits `toolStart` as soon as `parseStreamingJson` recovers a nonempty string `name`; that can be an incomplete name string. It emits no argument deltas. At `</tool_call>`, `parseJsonWithRepair` parses the body, reparses stringified `arguments`, and normalizes missing/non-object arguments to `{}`. A successful `toolEnd` preserves the raw block and replaces the projected name/arguments with the final parsed values.
@@ -224,40 +181,21 @@ This is the inverse of the sibling dialects, whose scanners default it ON: `qwen
 
 tau's own agent flow is unaffected either way: the owned-tool stream always constructs its scanners with `parseThinking: true` (`owned-stream.ts:200-204`), so under `tools.format: hermes` the agent loop parses `<think>` blocks into thinking events exactly like its siblings. The off-by-default constructor only matters for direct scanner consumers. When parsing is on, thinking events stream incrementally and an unterminated `<think>` block is logically closed on flush (`hermes.ts:48-75`).
 
-<<<<<<< ours — heading `Thinking parsing default` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
-=======
-### Thinking parsing default
-
-The direct scanner defaults thinking parsing **off**: its constructor uses `options.parseThinking === true`. Without that option, `<think>` remains visible text and calls inside it can still be scanned. `<scratch_pad>` is never a thinking delimiter for this scanner.
-
-The owned projector always passes `parseThinking: true`, so agent use routes `<think>` contents to thinking events and does not scan calls inside that span. A direct scanner only emits an EOF `thinkingEnd` when there is buffered text to consume; if the last feed already drained the buffer inside thinking, `flush()` emits none. The owned projector closes any remaining thinking block when finishing the message.
-
->>>>>>> theirs — heading `Thinking parsing default` (S+F, confidence: low)
 ## Parsing notes & gotchas
 
 - **Arguments object vs string:** on the wire `arguments` is a nested JSON object; the OpenAI layer hands it back as a JSON string. Code that reads the raw stream must parse an object; code that reads the API must `json.loads` the string. Do not double-encode. (tau's scanner tolerates the stringified form for robustness; its renderer never emits it.)
 - **`<tools>` is not a control token.** Only `<|im_start|>`/`<|im_end|>` delimit turns; everything else is substring matching on decoded text.
 - **Regex/streaming parse:** the vLLM `hermes` parser keys on the literal `<tool_call>`/`</tool_call>` substrings and JSON-decodes the body, buffering from `<tool_call>` until it can incrementally parse `name` then `arguments` — full detail in [qwen3.md](qwen3.md) §Parsing notes.
 - **Result binding:** classic Hermes 2 Pro includes the function name as metadata in the `{"name": …, "content": …}` nesting under a `tool` turn, but call/result binding remains positional because names need not be unique. Qwen3 also relies on ordering, with bare content under a `user` turn.
-<<<<<<< ours — scope `- **No thinking channel in the spec:** Hermes...` in heading `Parsing notes & gotchas` (S, confidence: medium)
 // refused_by: statement_fold · collision: `- **No thinking channel in the spec:** Hermes 2 Pro's function-…`
 - **No thinking channel in the spec:** Hermes 2 Pro's function-calling prompt defines none, and Hermes 3's `<scratch_pad>` GOAP markup is **not** parsed by tau's hermes scanner (it recognizes only `<tool_call>` and `<think>`, `hermes.ts:15-19`) — scratchpad text stays visible. R1-style `<think>` blocks are handled (see the thinking default above).
-=======
-- **No classic thinking channel:** Hermes 2 Pro defines none. OMP leaves `<scratch_pad>` markup in visible text; R1-style `<think>` is handled only when thinking parsing is enabled.
->>>>>>> theirs — scope `- **No thinking channel in the spec:** Hermes...`
 - **Transcript vs request history:** `renderTranscript` renders thinking for every stored assistant turn. Owned provider history strips thinking from assistant turns containing calls, while leaving call-free turns unchanged.
 - **Robustness:** malformed closed blocks may produce no `toolEnd`, and incomplete blocks may leave an already-started call with empty arguments. Parsing tolerances are not schema validation.
-<<<<<<< ours — scope `- **History rerender:** omp re-renders stored...` in heading `Parsing notes & gotchas`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 - **History rerender:** tau re-renders stored `<think>` blocks for **every** assistant turn (`rendering.ts:116-123`), unlike Qwen3's chat template, which trims reasoning from all but the trailing assistant turns — keep that asymmetry in mind when comparing transcripts across the two dialects.
-=======
->>>>>>> theirs — scope `- **History rerender:** omp re-renders stored...` deleted in theirs
-<<<<<<< ours — scope `- **Robustness:** the format is prompt-driven...` in heading `Parsing notes & gotchas`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 - **Robustness:** the format is prompt-driven, so malformed output is possible (truncated JSON, missing `</tool_call>`, prose mixed into a call, stringified arguments). tau's scanner consumes a recognized block and emits no call when the outer JSON/name cannot be recovered; EOF mid-call leaves a started call with empty arguments (see Scanning).
-=======
->>>>>>> theirs — scope `- **Robustness:** the format is prompt-driven...` deleted in theirs
 
 ## Sources
 
@@ -265,8 +203,5 @@ The owned projector always passes `parseThinking: true`, so agent use routes `<t
 - vLLM tool-calling docs (`hermes` parser, auto tool choice): https://docs.vllm.ai/en/latest/features/tool_calling/
 - [qwen3.md](qwen3.md) — Qwen3's adoption of this convention, shared vLLM parser behavior, and the `qwen3`/`hermes` dialect split
 - OMP implementation: `packages/ai/src/dialect/hermes.ts`, `factory.ts`, `rendering.ts`, `catalog.ts`, `history.ts`, `owned-stream.ts`; JSON parsing: `packages/utils/src/json-parse.ts`; selection: `packages/catalog/src/identity/dialect.ts`, `packages/coding-agent/src/sdk.ts` (`resolveDialect`), `packages/agent/src/agent-loop.ts` (`resolveOwnedDialectFromEnv`).
-<<<<<<< ours — scope `- omp implementation on `main` @ `4324de2` — ...` in heading `Sources`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 - tau implementation on `main` @ `4324de2` — every tau-specific claim above is cited `file:line` inline
-=======
->>>>>>> theirs — scope `- omp implementation on `main` @ `4324de2` — ...` deleted in theirs

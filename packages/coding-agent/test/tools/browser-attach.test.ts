@@ -23,14 +23,9 @@ import {
 	probeCdpStatus,
 	resolveSpawnArgs,
 	waitForCdp,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { ensureChromiumExecutable } from "@oh-my-pi/pi-coding-a…` +1 more
 } from "tau/tools/browser/attach";
 import { ensureChromiumExecutable } from "tau/tools/browser/launch";
-=======
-	waitForMainFrame,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/attach";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/tools/browser-attach.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	ensureChromiumExecutable,
 	loadPuppeteer,
@@ -41,26 +36,11 @@ import {
 	type BrowserHandle,
 	normalizeConnectedCdpUrl,
 	releaseBrowser,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { ensureChromiumExecutable } from "@oh-my-pi/pi-coding-a…` +1 more
 } from "tau/tools/browser/registry";
 import { acquireTab } from "tau/tools/browser/tab-supervisor";
 import { Process, ProcessStatus } from "@tau/tau-natives";
 import type { Browser, HTTPRequest, Page, Target } from "puppeteer-core";
-=======
-} from "@oh-my-pi/pi-coding-agent/tools/browser/registry";
-import { acquireTab, getTab } from "@oh-my-pi/pi-coding-agent/tools/browser/tab-supervisor";
-import { Process, ProcessStatus } from "@oh-my-pi/pi-natives";
-import {
-	type Browser,
-	type ConnectionTransport,
-	type HTTPRequest,
-	type Page,
-	type Target,
-	TimeoutError,
-} from "puppeteer-core";
-import { rejectionOf } from "../helpers/rejection";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import { chromiumAvailable } from "./chromium-probe";
 
 const CHROMIUM_AVAILABLE = await chromiumAvailable();

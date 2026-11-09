@@ -1,5 +1,4 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 import { type } from "@tau/tautype";
 import {
@@ -9,18 +8,6 @@ import {
 	piGrepSkip,
 	piReadPath,
 } from "../src/providers/cursor-tau-args";
-=======
-import { type } from "@oh-my-pi/omptype";
-import {
-	cursorExecReadPath,
-	cursorRawReadPath,
-	isXdDevicePath,
-	omitUndefinedArgs,
-	piGrepSkip,
-	piReadDisplayPath,
-	piReadPath,
-} from "../src/providers/cursor-pi-args";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/test/cursor-tau-args.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 import type { Tool } from "../src/types";
 import { validateToolArguments } from "../src/utils/validation";

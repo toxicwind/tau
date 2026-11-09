@@ -181,7 +181,6 @@ impl Libei {
 			disconnected: false,
 			portal_session,
 		};
-<<<<<<< ours — scope `new` in impl `Libei` (S+F, confidence: low)
 // refused_by: container_member · collision: `.handshake_tokio("omp-computer", ei::handshake::ContextType::Se…`
 		let (_connection, mut events) = runtime
 			.block_on(
@@ -189,19 +188,6 @@ impl Libei {
 					.context
 					.handshake_tokio("tau-computer", ei::handshake::ContextType::Sender),
 			)
-=======
-		let (connection, mut events) = runtime
-			.block_on(cancellable(async {
-				tokio::time::timeout(
-					Duration::from_secs(5),
-					backend
-						.context
-						.handshake_tokio("omp-computer", ei::handshake::ContextType::Sender),
-				)
-				.await
-			}))?
-			.map_err(|_| DesktopError::input_failed("libei handshake timed out"))?
->>>>>>> theirs — scope `new` · weave: run 'weave explain crates/tau-natives/src/desktop/linux/wayland/libei.rs' for per-hunk detail, 'weave check' to verify your resolution
 			.map_err(|err| DesktopError::input_failed(format!("libei handshake: {err}")))?;
 		backend.connection = Some(connection);
 		backend.discover_devices(runtime, &mut events, targets)?;

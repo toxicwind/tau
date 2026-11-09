@@ -4,7 +4,6 @@ import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { COMPOSER_DEFAULTS, type ComposerStatusSnapshot } from …` +2 more
 import { COMPOSER_DEFAULTS, type ComposerStatusSnapshot } from "@tau/tau-tui/prompt/composer";
 import {
@@ -16,10 +15,6 @@ import {
 	writeComposerWelcomeCache,
 } from "@tau/tau-tui/prompt/composer-cache";
 import { getComposerCacheDir } from "@tau/tau-utils/dirs";
-=======
-import { COMPOSER_DEFAULTS, type ComposerStatusCache } from "@oh-my-pi/pi-tui/prompt/composer";
-import { ComposerCache } from "@oh-my-pi/pi-tui/prompt/composer-cache";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/test/composer-cache.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function statusFor(thinkingLevel: ThinkingLevel): ComposerStatusCache {
 	return {
@@ -50,7 +45,6 @@ describe("composer startup cache", () => {
 		await fs.rm(root, { recursive: true, force: true });
 	});
 
-<<<<<<< ours — scope `it("round-trips per-project UI, status, recen...` in test_suite `composer startup cache` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "omp-compos…`
 	it("round-trips per-project UI, status, recent-session JSONL, and LSP speculation", async () => {
 		const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "tau-composer-cache-"));
@@ -78,14 +72,6 @@ describe("composer startup cache", () => {
 				writeComposerStatusCache(cwd, status),
 				writeComposerWelcomeCache(cwd, { modelName: "Claude Fable 5", providerName: "anthropic" }),
 			]);
-=======
-	it("round-trips per-project speculation and serves settings-derived rows to projects without their own", () => {
-		const project = path.join(root, "project");
-		const other = path.join(root, "other");
-		const preferences = { ...COMPOSER_DEFAULTS, composerShape: "rail", autocompleteMaxVisible: 7 };
-		const theme = { symbolPreset: "ascii" as const, colorBlindMode: true, darkTheme: "dark", lightTheme: "light" };
-		const status = statusFor(ThinkingLevel.High);
->>>>>>> theirs — scope `it("round-trips per-project UI, status, recen...`
 
 		const writer = ComposerCache.open(dbPath);
 		writer.writeUi(project, preferences, theme);
@@ -170,7 +156,6 @@ describe("composer startup cache", () => {
 		cache.close();
 	});
 
-<<<<<<< ours — scope `it("ignores legacy status snapshots", async (...` in test_suite `composer startup cache`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("ignores legacy status snapshots", async () => {
 		const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "tau-composer-cache-legacy-status-"));
@@ -195,13 +180,10 @@ describe("composer startup cache", () => {
 			]);
 		}
 	});
-=======
->>>>>>> theirs — scope `it("ignores legacy status snapshots", async (...` deleted in theirs
 
 	it("loads XDG_CACHE_HOME from the home .env before the first cache access", async () => {
 		if (process.platform === "win32") return;
 
-<<<<<<< ours — scope `it("loads XDG_CACHE_HOME from the home .env b...` in test_suite `composer startup cache` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const root = await fs.mkdtemp(path.join(os.tmpdir(), "omp-compo…` +4 more
 		const root = await fs.mkdtemp(path.join(os.tmpdir(), "tau-composer-cache-dotenv-"));
 		const home = path.join(root, "home");
@@ -242,45 +224,6 @@ describe("composer startup cache", () => {
 				new Response(proc.stderr).text(),
 				proc.exited,
 			]);
-=======
-		const home = path.join(root, "home");
-		const xdgCache = path.join(root, "xdg-cache");
-		const project = path.join(root, "project");
-		await Promise.all([
-			fs.mkdir(home, { recursive: true }),
-			fs.mkdir(path.join(xdgCache, "omp"), { recursive: true }),
-		]);
-		await Bun.write(path.join(home, ".env"), `XDG_CACHE_HOME=${xdgCache}\n`);
-
-		const composerCacheModule = Bun.resolveSync("@oh-my-pi/pi-tui/prompt/composer-cache", import.meta.dir);
-		const script = [
-			'import * as path from "node:path";',
-			`import { ComposerCache } from ${JSON.stringify(composerCacheModule)};`,
-			"const cache = ComposerCache.open();",
-			`cache.writeUi(${JSON.stringify(project)}, {}, {});`,
-			"cache.close();",
-			`const expected = path.join(${JSON.stringify(xdgCache)}, "omp", "cache", "composer.db");`,
-			"process.stdout.write(String(await Bun.file(expected).exists()));",
-		].join("\n");
-		const proc = Bun.spawn([process.execPath, "--no-env-file", "--no-install", "--eval", script], {
-			cwd: root,
-			env: {
-				...process.env,
-				HOME: home,
-				XDG_CACHE_HOME: undefined,
-				PI_CODING_AGENT_DIR: undefined,
-				OMP_PROFILE: undefined,
-				PI_PROFILE: undefined,
-			},
-			stdout: "pipe",
-			stderr: "pipe",
-		});
-		const [stdout, stderr, exitCode] = await Promise.all([
-			new Response(proc.stdout).text(),
-			new Response(proc.stderr).text(),
-			proc.exited,
-		]);
->>>>>>> theirs — scope `it("loads XDG_CACHE_HOME from the home .env b...`
 
 		expect(exitCode, stderr).toBe(0);
 		expect(stdout).toBe("true");

@@ -5,14 +5,9 @@ import {
 	planFileUrlForSlug,
 	resolveApprovedPlan,
 	resolvePlanTitle,
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { normalizeLocalScheme } from "@oh-my-pi/pi-coding-agent…`
 } from "tau/plan-mode/approved-plan";
 import { normalizeLocalScheme } from "tau/tools/path-utils";
-=======
-} from "@oh-my-pi/pi-coding-agent/plan-mode/approved-plan";
-import { InternalUrlRouter } from "@oh-my-pi/pi-coding-agent/internal-urls/router";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/plan-mode/approved-plan.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 describe("planFileUrlForSlug", () => {
 	it("maps a slug to its local plan URL", () => {

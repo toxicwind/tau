@@ -28,17 +28,10 @@ import {
 	getAuthBrokerTokenFilePath,
 	openAuthCredentialStore,
 	resolveAuthBrokerConfig as resolveAuthBrokerConfigShared,
-<<<<<<< ours — imports `file_header` (T+F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { getAgentDir } from "@oh-my-pi/pi-utils";`
 } from "@tau/tau-ai/auth-broker/discover";
 import { MissingApiKeyError } from "@tau/tau-ai/error";
 import { getAgentDir } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-ai/auth-broker/discover";
-import { MissingApiKeyError } from "@oh-my-pi/pi-ai/error";
-import { getAgentDir, logger } from "@oh-my-pi/pi-utils";
-import { combine, type ScopeLike } from "../config/registry";
->>>>>>> theirs — imports `file_header` (T+F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/session/auth-broker-config.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { resolveConfigValue } from "../config/resolve-config-value";
 import { Settings } from "../config/settings";
 import type { AuthStorage } from "./auth-storage";

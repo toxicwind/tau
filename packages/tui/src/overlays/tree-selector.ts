@@ -10,12 +10,8 @@ import {
 	TruncatedText,
 	truncateToWidth,
 } from "../index";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { isRecord, sanitizeText } from "@oh-my-pi/pi-utils";`
 import { isRecord, sanitizeText } from "@tau/tau-utils";
-=======
-import { isRecord, oklabDistance, sanitizeText } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/src/overlays/tree-selector.ts' for per-hunk detail, 'weave check' to verify your resolution
 /** Available session-tree display filters. */
 export const TREE_FILTER_MODES = ["default", "no-tools", "user-only", "labeled-only", "all"] as const;
 /** Session-tree display filter. */

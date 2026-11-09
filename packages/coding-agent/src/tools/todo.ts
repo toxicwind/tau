@@ -423,7 +423,6 @@ function initPhases(entry: TodoOpEntryValue, errors: string[]): TodoPhase[] {
 	// Models routinely flatten the single-phase init into `{op:"init", items:[...]}`
 	// (optionally with a bare `phase`) instead of the canonical
 	// `list: [{phase, items}]`. Accept that shape by synthesizing a one-phase list
-<<<<<<< ours — scope `// Models routinely flatten the single-phase ...` in function `initPhases` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const list =` +4 more
 	// so a common, recoverable mistake isn't a hard error.
 	//
@@ -431,12 +430,6 @@ function initPhases(entry: TodoOpEntryValue, errors: string[]): TodoPhase[] {
 	// `list` itself as a markdown checklist string instead of JSON. Normalize
 	// that here before the flat-items recovery below.
 	let rawList: typeof entry.list = entry.list;
-=======
-	// so a common, recoverable mistake isn't a hard error. Models also fill unused
-	// params with `[]`, so an empty `list` must not shadow non-empty `items`.
-	const flat = entry.items && entry.items.length > 0 ? [{ phase: entry.phase, items: entry.items }] : undefined;
->>>>>>> theirs — scope `// Models routinely flatten the single-phase ...` · weave: run 'weave explain packages/coding-agent/src/tools/todo.ts' for per-hunk detail, 'weave check' to verify your resolution
-<<<<<<< ours — scope `inserted statements` in function `initPhases` (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	if (typeof rawList === "string") {
 		// A string `list` is either a markdown checklist (Dots/GLM/Qwen dialect)
@@ -465,9 +458,6 @@ function initPhases(entry: TodoOpEntryValue, errors: string[]): TodoPhase[] {
 		: entry.items && entry.items.length > 0
 			? [{ phase: entry.phase ?? DEFAULT_INIT_PHASE, items: entry.items }]
 			: [];
-=======
-	const list = entry.list?.length ? entry.list : (flat ?? entry.list);
->>>>>>> theirs — scope `inserted statements`
 	if (!list) {
 		errors.push("Missing list for init operation");
 		return [];
@@ -505,14 +495,11 @@ function initPhases(entry: TodoOpEntryValue, errors: string[]): TodoPhase[] {
 		phases.push({ name, tasks });
 	}
 	return phases;
-<<<<<<< ours — scope `return list.map(listEntry => ({` in function `initPhases`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	return list.map(listEntry => ({
 		name: listEntry.phase,
 		tasks: listEntry.items.map<TodoItem>(toTodoItem),
 	}));
-=======
->>>>>>> theirs — scope `return list.map(listEntry => ({` deleted in theirs
 }
 
 function appendItems(phases: TodoPhase[], entry: TodoOpEntryValue, errors: string[]): TodoPhase[] {

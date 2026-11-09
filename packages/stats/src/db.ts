@@ -1,6 +1,5 @@
 import { Database } from "bun:sqlite";
 import * as fs from "node:fs/promises";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import type { Usage } from "@oh-my-pi/pi-ai";` +1 more
 import type { Usage } from "@tau/tau-ai";
 import {
@@ -11,20 +10,6 @@ import {
 } from "@tau/tau-catalog/models";
 import type { ModelCost } from "@tau/tau-catalog/types";
 import { getConfigRootDir, getStatsDbPath } from "@tau/tau-utils";
-=======
-import type { ServiceTier, Usage } from "@oh-my-pi/pi-ai";
-import { pricingPeerFor } from "@oh-my-pi/pi-catalog/compat/behavior";
-import {
-	calculateUncachedInputCost,
-	calculateUsageCost,
-	type GeneratedProvider,
-	getBundledModel,
-	hasRecurringTariff,
-} from "@oh-my-pi/pi-catalog/models";
-import type { ModelCost } from "@oh-my-pi/pi-catalog/types";
-import { getConfigRootDir, getStatsDbPath, VERSION } from "@oh-my-pi/pi-utils";
-import { ChunkedInsert } from "./chunked-insert";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/stats/src/db.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { classifyAgentType, type ParseSessionResult, type SessionParserState } from "./parser";
 import { ensureRollupSchema, getDailyActivityFromRollup } from "./rollup";
 import {

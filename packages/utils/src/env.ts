@@ -4,13 +4,7 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { parseEnv } from "node:util";
 import { getAgentDir, getConfigRootDir, getProjectDir, refreshDirsFromEnv } from "./dirs";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
-=======
-import { isBunTestRuntime } from "./test-runtime";
-
-export * from "./test-runtime";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/utils/src/env.ts' for per-hunk detail, 'weave check' to verify your resolution
 export * from "./worker-host";
 
 // ─── MONADIC ERROR HANDLING ───────────────────────────────────────
@@ -515,15 +509,12 @@ export function $envpos(name: string, defaultValue: number): number {
 }
 
 // ─── RUNTIME STATE ────────────────────────────────────────────────
-<<<<<<< ours — function `isBunTestRuntime` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 export function isBunTestRuntime(): boolean {
 	if (Bun.env.PI_TEST_RUNTIME === "1") return true;
 	const hasTestEnvironment = Bun.env.BUN_ENV === "test" || Bun.env.NODE_ENV === "test";
 	return hasTestEnvironment && BUN_TEST_ENTRY_PATTERN.test(Bun.main);
 }
-=======
->>>>>>> theirs — function `isBunTestRuntime` (S+F, confidence: low)
 
 let terminalHeadless = isBunTestRuntime();
 let interactiveHost = false;

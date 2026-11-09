@@ -1,12 +1,7 @@
 # macOS signing & notarization
 
-<<<<<<< ours — scope `The compiled macOS `omp` binaries shipped on ...` in heading `macOS signing & notarization` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `The compiled macOS `omp` binaries shipped on GitHub Releases ca…`
 The compiled macOS `tau` binaries shipped on GitHub Releases can be signed with a
-=======
-The compiled macOS `omp` binaries (served by build.stencil.so and attached to
-GitHub Releases) can be signed with a
->>>>>>> theirs — scope `The compiled macOS `omp` binaries shipped on ...` · weave: run 'weave explain docs/upstream/macos-signing-notarization.md' for per-hunk detail, 'weave check' to verify your resolution
 **Developer ID Application** certificate and **notarized** by Apple. This makes
 them eligible for Gatekeeper acceptance when the notarization ticket is
 available. The repository also maintains a Homebrew tap; formula installs
@@ -21,7 +16,6 @@ implementation of `codesign` and `notarytool`, pinned and sha256-checked by the
 script). With all five `APPLE_*` repository secrets below configured, the
 script signs with the Developer ID and notarizes; with none, it signs ad hoc
 (same entitlements) so releases still run. A partial set is an error.
-<<<<<<< ours — scope `submission (see [#776](https://github.com/can...` in heading `macOS signing & notarization`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 submission (see [#776](https://github.com/toxicwind/tau/issues/776)).
 
@@ -30,8 +24,6 @@ Signing happens in CI in the Darwin legs of the `release_binary_hosted` matrix
 **auto-skips** unless all five `APPLE_*` repository secrets below are configured,
 so releases remain ad-hoc signed when credentials are absent. The script itself
 does not skip: invoking it without any required credential is an error.
-=======
->>>>>>> theirs — scope `submission (see [#776](https://github.com/can...` deleted in theirs
 
 ## How it works
 
@@ -68,14 +60,9 @@ bridge, so the hardened runtime needs:
 | -------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `com.apple.security.cs.allow-jit`                        | JavaScriptCore JITs at runtime.                                                                                                                                                                                                                                                                                               |
 | `com.apple.security.cs.allow-unsigned-executable-memory` | JSC executable memory pages.                                                                                                                                                                                                                                                                                                  |
-<<<<<<< ours — scope `bridge, so the hardened runtime needs:` in heading `Why the entitlements are mandatory` (F, confidence: medium)
 // refused_by: statement_fold · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 | `com.apple.security.automation.apple-events`             | Allows macOS to prompt for Automation permission when `xcrun mcpbridge` connects to Xcode; without it, first-time Xcode MCP initialization hangs until timeout.                                                                                                                                                                |
 | `com.apple.security.cs.disable-library-validation`       | tau extracts its native addon (`pi_natives.<triple>.node`) and other optional dylibs to a runtime cache and `dlopen()`s them. They do not share the main binary's Team ID, so without this the hardened runtime aborts with _"mapping process and mapped file have different Team IDs"_ — breaking effectively every command. |
-=======
-| `com.apple.security.automation.apple-events`             | Allows macOS to prompt for Automation permission when `xcrun mcpbridge` connects to Xcode; without it, first-time Xcode MCP initialization hangs until timeout.                                                                                                                                                               |
-| `com.apple.security.cs.disable-library-validation`       | omp extracts its native addon (`pi_natives.<triple>.node`) and other optional dylibs to a runtime cache and `dlopen()`s them. They do not share the main binary's Team ID, so without this the hardened runtime aborts with _"mapping process and mapped file have different Team IDs"_ — breaking effectively every command. |
->>>>>>> theirs — scope `bridge, so the hardened runtime needs:`
 
 Without `disable-library-validation`, a signed+notarized binary signs and
 notarizes fine but **fails at first real use**. `release_smoke` runs
@@ -157,7 +144,6 @@ default input directory; `OMP_REPO=owner/repo` changes the target repository
 (default `can1357/oh-my-pi`). The validation path requires macOS `security`;
 uploading also requires an authenticated `gh` CLI.
 
-<<<<<<< ours — heading `Uploading without printing secret values` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 ### Uploading without printing secret values
 
@@ -173,8 +159,6 @@ gh secret list --repo can1357/tau                       # confirm
 
 Re-run it whenever the certificate is renewed.
 
-=======
->>>>>>> theirs — heading `Uploading without printing secret values` (S+F, confidence: low)
 ### Finding your signing identity / Team ID (sanity check)
 
 ```sh

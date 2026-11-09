@@ -1,4 +1,3 @@
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { afterEach, beforeAll, beforeEach, describe, expect, it, spyOn } from "bun:test";
 import type { AssistantMessage } from "@tau/tau-ai";
@@ -6,19 +5,6 @@ import { resetSettingsForTest, Settings } from "tau/config/settings";
 import { AssistantMessageComponent, resetThinkingSpeedTracker } from "@tau/tau-tui/chat/assistant-message";
 import { initTheme } from "@tau/tau-tui/theme";
 import { setTerminalImageProtocol, TERMINAL } from "@tau/tau-tui";
-=======
-import { afterEach, beforeAll, beforeEach, describe, expect, it, spyOn, vi } from "bun:test";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AssistantMessageComponent, resetThinkingSpeedTracker } from "@oh-my-pi/pi-tui/chat/assistant-message";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { setTerminalImageProtocol, TERMINAL } from "@oh-my-pi/pi-tui";
-import {
-	DEFAULT_SPINNER_INTERVAL_MS,
-	setSpinnerInterval,
-	SPINNER_INTERVAL_STATIC,
-} from "@oh-my-pi/pi-tui/spinner-clock";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/modes/components/assistant-message-error.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const originalImageProtocol = TERMINAL.imageProtocol;
 

@@ -1,6 +1,5 @@
 import * as os from "node:os";
 import { beforeAll, describe, expect, it } from "bun:test";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import type { DailyActivityPoint } from "@oh-my-pi/pi-tui/overl…` +1 more
 import type { DailyActivityPoint } from "@tau/tau-tui/overlays/usage-dashboard";
 import type { UsageReport } from "@tau/tau-ai";
@@ -12,20 +11,6 @@ import {
 } from "@tau/tau-tui/overlays/usage-dashboard";
 import { initTheme } from "@tau/tau-tui/theme";
 import { visibleWidth } from "@tau/tau-tui/utils";
-=======
-import type { DescribeContext } from "../src/native/node";
-import type { TspText } from "@oh-my-pi/pi-wire";
-import type { DailyActivityPoint, UnavailableUsageAccount } from "@oh-my-pi/pi-tui/overlays/usage-dashboard";
-import type { UsageReport } from "@oh-my-pi/pi-ai";
-import {
-	buildHeatmapLayout,
-	buildProviderCards,
-	formatActivityErrorDetail,
-	UsageDashboardComponent,
-} from "@oh-my-pi/pi-tui/overlays/usage-dashboard";
-import { initTheme, theme } from "@oh-my-pi/pi-tui/theme";
-import { visibleWidth } from "@oh-my-pi/pi-tui/utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/tui/test/usage-dashboard.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function day(day: string, cost: number, requests = 1): DailyActivityPoint {
 	return { day, cost, requests };

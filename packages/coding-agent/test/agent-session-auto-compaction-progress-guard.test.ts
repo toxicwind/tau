@@ -1,7 +1,6 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
 import { scheduler } from "node:timers/promises";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { Agent } from "@tau/tau-agent-core";
 import * as compactionModule from "@tau/tau-agent-core/compaction";
@@ -16,38 +15,6 @@ import { AuthStorage } from "tau/session/auth-storage";
 import type { CompactionEntry } from "tau/session/session-entries";
 import { SessionManager } from "tau/session/session-manager";
 import { INCOMPLETE_RECOVERY_MAX_RETRIES } from "tau/session/session-maintenance";
-=======
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import * as compactionModule from "@oh-my-pi/pi-agent-core/compaction";
-import { type CompactionPreparation, resolveThresholdTokens, shouldCompact } from "@oh-my-pi/pi-agent-core/compaction";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { TempDir } from "@oh-my-pi/pi-utils";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { runPrintMode } from "@oh-my-pi/pi-coding-agent/modes/print-mode";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import type { CompactionEntry } from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { INCOMPLETE_RECOVERY_MAX_RETRIES } from "@oh-my-pi/pi-coding-agent/session/session-maintenance";
-import * as telemetryExport from "../src/telemetry-export";
-
-import {
-	cfgCompactionAsyncEnabled,
-	cfgCompactionAutoContinue,
-	cfgCompactionDropUseless,
-	cfgCompaction,
-	cfgCompactionEnabled,
-	cfgCompactionKeepRecentTokens,
-	cfgCompactionMethodOrder,
-	cfgCompactionReserveTokens,
-	cfgCompactionSupersedeReads,
-	cfgCompactionThresholdPercent,
-	cfgCompactionThresholdTokens,
-	cfgContextPromotionEnabled,
-} from "@oh-my-pi/pi-coding-agent/session/context-settings";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/agent-session-auto-compaction-progress-guard.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 it("clamps a reserve exceeding the window for small-window threshold recovery bands", () => {
 	const settings = {

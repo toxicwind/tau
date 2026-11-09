@@ -373,7 +373,6 @@ impl Drain {
 		std::mem::take(&mut *self.bytes.lock().unwrap_or_else(PoisonError::into_inner))
 	}
 }
-<<<<<<< ours — function `git_apply_with_program` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 fn git_apply_with_program(
 	program: &Path,
@@ -433,8 +432,6 @@ fn git_apply_with_program(
 	}
 	Err(command_failed("git apply", status.code().unwrap_or(-1), &stderr))
 }
-=======
->>>>>>> theirs — function `git_apply_with_program` (S+F, confidence: low) · weave: run 'weave explain crates/tau-iso/src/rcopy.rs' for per-hunk detail, 'weave check' to verify your resolution
 
 /// Copy a single path (regular file, symlink, or directory) from `src`
 /// to `dst`, preserving mtime. Used by the untracked-files pass;

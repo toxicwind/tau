@@ -36,18 +36,11 @@ Obfuscate-mode plain values and regex matches shorter than 8 characters are igno
 
 Define custom secret entries in YAML. Two locations are checked:
 
-<<<<<<< ours — scope `Define custom secret entries in YAML. Two loc...` in heading `secrets.yml` (F, confidence: medium)
 // refused_by: statement_fold · collision: `| Global  | `~/.omp/agent/secrets.yml` | Secrets across all pro…` +1 more
 | Level   | Path                       | Purpose                     |
 | ------- | -------------------------- | --------------------------- |
 | Global  | `~/.tau/agent/secrets.yml` | Secrets across all projects |
 | Project | `<cwd>/.tau/secrets.yml`   | Project-specific secrets    |
-=======
-| Level   | Path                                                                   | Purpose                                            |
-| ------- | ---------------------------------------------------------------------- | -------------------------------------------------- |
-| Global  | `<active-agent-dir>/secrets.yml` (normally `~/.omp/agent/secrets.yml`) | Secrets across projects using that agent directory |
-| Project | `<cwd>/.omp/secrets.yml`                                               | Project-specific secrets                           |
->>>>>>> theirs — scope `Define custom secret entries in YAML. Two loc...` · weave: run 'weave explain docs/upstream/secrets.md' for per-hunk detail, 'weave check' to verify your resolution
 
 Project entries override global entries with matching `content`. The global location follows the session's agent directory, including named profiles and explicit SDK agent-directory overrides.
 

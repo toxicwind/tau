@@ -19,7 +19,6 @@ import * as fs from "node:fs";
 import * as fsp from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { AgentRegistry, MAIN_AGENT_ID } from "@oh-my-pi/pi-codi…` +2 more
 import { Settings } from "tau/config/settings";
 import { InternalUrlRouter } from "tau/internal-urls";
@@ -31,18 +30,6 @@ import type { ToolSession } from "tau/tools";
 import { expandInternalUrls } from "tau/tools/bash-skill-urls";
 import { GlobTool } from "tau/tools/glob";
 import { GrepTool } from "tau/tools/grep";
-=======
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { InternalUrlRouter } from "@oh-my-pi/pi-coding-agent/internal-urls";
-import { resetRegisteredArtifactDirsForTests } from "@oh-my-pi/pi-coding-agent/internal-urls/registry-helpers";
-import { InternalUrlFilesystem } from "@oh-my-pi/pi-coding-agent/internal-urls/url-filesystem";
-import { AgentRegistry, type AgentRegistryApi, MAIN_AGENT_ID } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import { ensurePersistedRoster } from "@oh-my-pi/pi-coding-agent/registry/persisted-agents";
-import { CURRENT_SESSION_VERSION } from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { GrepTool } from "@oh-my-pi/pi-coding-agent/tools/grep";
-import { ShellFsOp } from "@oh-my-pi/pi-natives";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/internal-urls/caller-root-ab.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function sessionHeader(id: string): string {
 	return JSON.stringify({

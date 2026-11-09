@@ -1,4 +1,3 @@
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 # refused_by: merge_ladder_exhausted · collision: `The napi-rs build of ``pi_natives.<platform>-<arch>[-variant].n…` +2 more
 """Content-addressed cache of pre-built ``packages/natives/native/`` artifacts.
 
@@ -23,13 +22,6 @@ alive after the cache directory is rmtree'd.
 Ownership: cache root is provisioned ``root:tau 02770`` by ``entrypoint.sh``
 so slot subprocesses (group ``tau``) can capture under setgid inheritance.
 Same shape as ``/data/cache/cargo``.
-=======
-"""Shared content-addressed cache of native artifacts.
-
-Artifacts are copied or reflinked into independent workspace inodes. Capture
-accepts slot-produced artifacts, so tasks sharing a key also share their trust
-domain. The cache directory must be inaccessible to slots.
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain python/robtau/src/natives_cache.py' for per-hunk detail, 'weave check' to verify your resolution
 """
 
 from __future__ import annotations
@@ -394,7 +386,6 @@ class NativesCache:
                 if not node_names or any(name not in os.listdir(source) for name in _CACHED_COMPANION_FILES):
                     return None
 
-<<<<<<< ours — scope `capture` in class `NativesCache` (T+S+F, confidence: low)
 # refused_by: container_member · collision: `# the setgid `omp` model that lets other slots read it.` +1 more
             final = self.entry_dir(repo, key)
             staging = repo_root / f".{key}.tmp.{os.getpid()}"
@@ -430,42 +421,6 @@ class NativesCache:
                 raise
             self._gc_locked(repo)
             return final
-=======
-                repo_root = self.repo_root(repo)
-                repo_root.mkdir(parents=True, exist_ok=True)
-                with _flock(self.lockfile(repo)):
-                    existing = self.lookup(repo, key)
-                    if existing is not None:
-                        return existing
-                    final = self.entry_dir(repo, key)
-                    staging = repo_root / f".{key}.tmp.{os.getpid()}"
-                    if staging.exists():
-                        shutil.rmtree(staging, ignore_errors=True)
-                    staging.mkdir(parents=True)
-                    try:
-                        with _directory(staging) as dest:
-                            for name in (*node_names, *_CACHED_COMPANION_FILES):
-                                _copy_file(source, dest, name, expected_uid=expected_uid)
-                        manifest = {
-                            "key": key,
-                            "target": target_triple(),
-                            "captured_at": time.time(),
-                            "source_workspace": source_workspace,
-                            "commit": commit,
-                            "node_files": node_names,
-                        }
-                        (staging / _MANIFEST_FILENAME).write_text(
-                            json.dumps(manifest, indent=2, sort_keys=True), encoding="utf-8"
-                        )
-                        os.replace(staging, final)
-                    except Exception:
-                        shutil.rmtree(staging, ignore_errors=True)
-                        raise
-                    self._gc_locked(repo)
-                    return final
-        except FileNotFoundError:
-            return None
->>>>>>> theirs — scope `capture`
 
     # ---- gc ----
     def gc(self, repo: str | None = None) -> int:

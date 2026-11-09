@@ -2,16 +2,9 @@
  * Wipe-and-rebuild reconcile: each `memory_embeddings` row is stamped with the
  * model that produced it. When the configured embedding model changes the vector
  * dimension changes too, so on store open `reconcileEmbeddingModel` (wired into
-<<<<<<< ours — interstitial `file_header` (T+F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `* the `Mnemopi` constructor) wipes every stale vector and enque…`
  * the `Mnemotau` constructor) wipes every stale vector and enqueues all live
  * memories for re-embedding under the new model. A matching model is a no-op.
-=======
- * the `Mnemopi` constructor) probes the new model, then embeds the whole corpus with it.
- * Only when every batch returns does it swap the stale vectors for the new ones in one
- * transaction. A provider that fails any request leaves the stale vectors in place.
- * A matching model is a no-op.
->>>>>>> theirs — interstitial `file_header` (T+F, confidence: medium) · weave: run 'weave explain packages/mnemotau/test/embedding-model-reconcile.test.ts' for per-hunk detail, 'weave check' to verify your resolution
  */
 
 import { Database } from "bun:sqlite";

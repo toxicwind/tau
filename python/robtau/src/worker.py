@@ -23,13 +23,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 # refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 from tau_rpc import (
-=======
-from omp_rpc import (
-    HostToolCompletedEvent,
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain python/robtau/src/worker.py' for per-hunk detail, 'weave check' to verify your resolution
     MessageUpdateEvent,
     RpcClient,
     RpcError,
@@ -566,7 +561,6 @@ def _run_rpc_blocking(
 
     def _on_tool_end(event: ToolExecutionEndEvent) -> None:
         tool_name = event.tool_name
-<<<<<<< ours — scope `def _on_tool_end(event: ToolExecutionEndEvent...` in function `_run_rpc_blocking` (T+S, confidence: medium)
 # refused_by: statement_fold · collision: `# `tool_name` is transport-normalized by omp_rpc: an xd:// devi…`
         # `tool_name` is transport-normalized by tau_rpc: an xd:// device
         # dispatch (`write xd://submit_pr_review`) reports the host tool that
@@ -574,13 +568,6 @@ def _run_rpc_blocking(
         # failed execution (`is_error`) does not count as reaching the
         # terminal action — a rejected submit must still trigger the
         # completion reminder.
-=======
-        # `tool_name` is transport-normalized by omp_rpc for top-level and
-        # xd:// device dispatches, but an eval-bridged host tool only surfaces
-        # as the enclosing `eval`; terminal-action detection therefore relies
-        # on `_on_host_tool_completed`. A failed execution (`is_error`) does
-        # not count — a rejected submit must still trigger the reminder.
->>>>>>> theirs — scope `def _on_tool_end(event: ToolExecutionEndEvent...`
         ok = event.result is not None and not event.is_error
         if ok:
             tools_called.add(tool_name)

@@ -61,7 +61,6 @@ Key properties:
 1. **[01-vmon-runners.md](01-vmon-runners.md)** — `runs-on` labels, which jobs run where, the vmon-side setup (GitHub App, team link, public-repo policy, limits), the PR trust split, and operations.
 2. **[02-omp-ci-template.md](02-omp-ci-template.md)** — what the `omp-ci` template bakes, and how to build, publish, verify and roll it back.
 3. **[03-caching.md](03-caching.md)** — every cache CI uses: template-baked, the node's Actions cache, and the node's Bazel cache.
-<<<<<<< ours — heading `Self-hosted Kata CI` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 # Self-hosted Kata CI
 
@@ -69,5 +68,3 @@ This is a self-hosted GitHub Actions setup where **every CI job on the self-host
 
 These docs are written as a **from-scratch setup guide**: read this overview first, then follow the numbered guides in order to reproduce the system on your own host.
 
-=======
->>>>>>> theirs — heading `Self-hosted Kata CI` (S+F, confidence: low) · weave: run 'weave explain infra/docs/README.md' for per-hunk detail, 'weave check' to verify your resolution

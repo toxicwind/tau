@@ -404,7 +404,6 @@ describe("TTSR AST deferral", () => {
 
 		expect(checkAst).not.toHaveBeenCalled();
 	});
-<<<<<<< ours — test_suite `TTSR AST deferral` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 
 	it("runs AST matching once on the finalized toolcall_end", async () => {
@@ -465,6 +464,4 @@ describe("TTSR AST deferral", () => {
 		const retry = manager.checkSnapshot("Never pipe through head or tail. Example: `cat x | head -25`.", context);
 		expect(retry).toHaveLength(0);
 	});
-=======
->>>>>>> theirs — test_suite `TTSR AST deferral` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/ttsr-coordinator-buffer.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 });

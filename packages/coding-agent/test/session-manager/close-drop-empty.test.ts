@@ -293,7 +293,6 @@ describe("SessionManager close() drops empty metadata-only sessions", () => {
 		expect(await fileExists(sessionFile)).toBe(true);
 	});
 
-<<<<<<< ours — scope `it("keeps a handoff custom message even befor...` in test_suite `SessionManager close() drops empty metadata-only sessions`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("keeps a handoff custom message even before the next user turn", async () => {
 		using tempDir = TempDir.createSync("@tau-session-close-keep-handoff-");
@@ -308,8 +307,6 @@ describe("SessionManager close() drops empty metadata-only sessions", () => {
 
 		expect(await fileExists(sessionFile)).toBe(true);
 	});
-=======
->>>>>>> theirs — scope `it("keeps a handoff custom message even befor...` deleted in theirs · weave: run 'weave explain packages/coding-agent/test/session-manager/close-drop-empty.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 	// Never-materialized sessions (no draft ever saved, no assistant reply)
 	// must not be summoned into existence by close() itself.

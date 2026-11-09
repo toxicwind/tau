@@ -1747,7 +1747,6 @@ async function fetchDeepinfraModels(options: {
 	const fetchImpl = discoveryFetch(options.fetch);
 	let payload: unknown;
 	try {
-<<<<<<< ours — scope `references: Map<string, ModelSpec<"openai-com...` in function `fetchDeepinfraModels` (F, confidence: medium)
 // refused_by: statement_fold · collision: `fetchImpl(`${options.baseUrl}/models${DEEPINFRA_MODELS_QUERY}`,…`
 		const response = await withCatalogDiscoveryTimeout(DEFAULT_OPENAI_COMPATIBLE_DISCOVERY_TIMEOUT_MS, signal =>
 			fetchImpl(`${options.baseUrl}/models${DEEPINFRA_MODELS_QUERY}`, {
@@ -1755,11 +1754,6 @@ async function fetchDeepinfraModels(options: {
 				headers,
 				signal,
 			}),
-=======
-		const response = await withOpenAICompatibleDiscoveryTimeout(
-			DEFAULT_OPENAI_COMPATIBLE_DISCOVERY_TIMEOUT_MS,
-			signal => fetchImpl(`${options.baseUrl}/models${DEEPINFRA_MODELS_QUERY}`, { method: "GET", headers, signal }),
->>>>>>> theirs — scope `references: Map<string, ModelSpec<"openai-com...` · weave: run 'weave explain packages/catalog/src/provider-models/openai-compat.ts' for per-hunk detail, 'weave check' to verify your resolution
 		);
 		if (!response.ok) {
 			return null;
@@ -2464,7 +2458,6 @@ export function zhipuCodingPlanModelManagerOptions(
 		}),
 	};
 }
-<<<<<<< ours — variable `FIREWORKS_KIMI_MAX_TOKENS` (T+F, confidence: medium)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 /**
  * Fireworks-published cap for the Kimi K2 family. Fireworks' `/v1/models`
@@ -2475,8 +2468,6 @@ export function zhipuCodingPlanModelManagerOptions(
  * See https://github.com/toxicwind/tau/issues/1849.
  */
 export const FIREWORKS_KIMI_MAX_TOKENS = 32_768;
-=======
->>>>>>> theirs — variable `FIREWORKS_KIMI_MAX_TOKENS` (T+F, confidence: medium)
 
 // ---------------------------------------------------------------------------
 // 7.5 Fireworks
@@ -2514,31 +2505,7 @@ const FIREWORKS_FAST_VARIANT_SPECS: ReadonlyArray<{
 		base: "glm-5.2",
 		name: "GLM-5.2 Fast",
 		cost: { input: 2.1, output: 6.6, cacheRead: 0.21 },
-<<<<<<< ours — scope `/**` in variable `FIREWORKS_FAST_VARIANT_SPECS`, deleted in ours (T+F, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
-=======
-/**
- * Fireworks Fast variants we surface: the Fast table on
- * https://docs.fireworks.ai/serverless/serverless-modes, minus the US-only
- * router (it needs the `us.api.fireworks.ai` host). That table, not a request
- * outcome, decides membership: add or drop a row when Fireworks changes it.
- * Each inherits the base model's limits/modalities/thinking and overrides
- * only the cost with the Fast prices from the Serverless pricing table;
- * `cacheWrite` stays 0 (Fireworks bills no cache-write). Derived from the
- * bundled base entries so metadata stays in lockstep, and the runtime
- * auto-falls back to the base id on a failed fast request.
- * See https://docs.fireworks.ai/serverless/pricing.
- */
-const FIREWORKS_FAST_VARIANT_SPECS: ReadonlyArray<{
-	base: string;
-	name: string;
-	cost: { input: number; output: number; cacheRead: number };
-}> = [
-	{ base: "kimi-k3", name: "Kimi K3 Fast", cost: { input: 4.5, output: 22.5, cacheRead: 0.45 } },
-	{ base: "glm-5.3", name: "GLM-5.3 Fast", cost: { input: 2.1, output: 6.6, cacheRead: 0.39 } },
-	{ base: "glm-5.2", name: "GLM-5.2 Fast", cost: { input: 2.1, output: 6.6, cacheRead: 0.21 } },
-];
->>>>>>> theirs — scope `/**` deleted in ours
 	},
 ];
 
@@ -3110,17 +3077,12 @@ async function fetchClinePassModels(
 	// The roster is authoritative for ids; the live reference catalog is a pure
 	// enrichment tier fetched alongside and tolerated away (offline → bundle).
 	const [response, liveCatalog] = await Promise.all([
-<<<<<<< ours — scope `// The roster is authoritative for ids; the l...` in function `fetchClinePassModels` (F, confidence: medium)
 // refused_by: statement_fold · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 		withCatalogDiscoveryTimeout(5_000, signal =>
 			fetchImpl(CLINEPASS_MODELS_URL, {
 				signal,
 				headers: clinePassClientHeaders(),
 			}),
-=======
-		withOpenAICompatibleDiscoveryTimeout(5_000, signal =>
-			fetchImpl(CLINEPASS_MODELS_URL, { signal, headers: clinePassClientHeaders() }),
->>>>>>> theirs — scope `// The roster is authoritative for ids; the l...`
 		),
 		fetchClinePassLiveCatalog(fetchImpl),
 	]);
@@ -5238,7 +5200,6 @@ export interface MoonshotModelManagerConfig {
  * use the K2.x binary `thinking: { type }` block, so the wire path routes it
  * through OpenAI-style `reasoning_effort` (see `buildOpenAICompat`).
  */
-<<<<<<< ours — scope `/**` in variable `MOONSHOT_KIMI_K3_COST` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const MOONSHOT_KIMI_K3_COST = { input: 3, output: 15, cacheRead…`
 const MOONSHOT_KIMI_K3_COST = {
 	input: 3,
@@ -5246,9 +5207,6 @@ const MOONSHOT_KIMI_K3_COST = {
 	cacheRead: 0.3,
 	cacheWrite: 0,
 } as const;
-=======
-const MOONSHOT_KIMI_K3_COST = { input: 3, output: 15, cacheRead: 0.3, cacheWrite: 3 } as const;
->>>>>>> theirs — scope `/**`
 export function moonshotModelManagerOptions(
 	config?: MoonshotModelManagerConfig,
 ): ModelManagerOptions<"openai-completions"> {
@@ -6432,7 +6390,6 @@ async function fetchLiteLLMRichEndpoint<TApi extends Api>(
 			return { failure: { endpoint, reason: "invalid-json", status: response.status, error } };
 		}
 	};
-<<<<<<< ours — scope `if (!response.ok) {` in function `fetchLiteLLMRichEndpoint`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	if (!response.ok) {
 		return response.status === 404
@@ -6441,9 +6398,6 @@ async function fetchLiteLLMRichEndpoint<TApi extends Api>(
 					failure: { endpoint, reason: "http-status", status: response.status },
 				};
 	}
-=======
->>>>>>> theirs — scope `if (!response.ok) {` deleted in theirs
-<<<<<<< ours — scope `try {` in function `fetchLiteLLMRichEndpoint`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	try {
 		payload = await response.json();
@@ -6457,8 +6411,6 @@ async function fetchLiteLLMRichEndpoint<TApi extends Api>(
 			},
 		};
 	}
-=======
->>>>>>> theirs — scope `try {` deleted in theirs
 	const entries = extractLiteLLMRichEntries(firstPage.payload);
 	if (!entries || entries.length === 0) {
 		return null;
@@ -6799,27 +6751,12 @@ export function nanoGptModelManagerOptions(
 					query: { detailed: "true" },
 					mapModel: (entry, defaults) => {
 						const reference = resolveReference(defaults.id);
-<<<<<<< ours — scope `return {` in function `nanoGptModelManagerOptions` (F, confidence: medium)
 // refused_by: statement_fold · collision: `return { ...mapped, api: "openai-completions", provider: "nanog…`
 						const mapped = mapWithBundledReference(entry, defaults, reference);
 						return {
 							...mapped,
 							api: "openai-completions",
 							provider: "nanogpt",
-=======
-						// The detailed roster names its output cap `max_output_tokens`.
-						const maxOutputTokens = entry.max_output_tokens ?? entry.max_completion_tokens;
-						const mapped = mapWithBundledReference(
-							{ ...entry, max_completion_tokens: maxOutputTokens },
-							defaults,
-							reference,
-						);
-						return {
-							...mapped,
-							api: "openai-completions",
-							provider: "nanogpt",
-							cost: { ...mapped.cost, ...nanoGptPricingCost(entry.pricing, mapped.cost) },
->>>>>>> theirs — scope `return {`
 						};
 					},
 					filterModel: (_entry, model) => {
@@ -7031,18 +6968,11 @@ export function githubCopilotModelManagerOptions(config?: GithubCopilotModelMana
 	const resolveReference = createReferenceResolver(getProviderReferences);
 	return {
 		providerId: "github-copilot",
-<<<<<<< ours — function `githubCopilotModelManagerOptions` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 		cacheProviderId: resolveModelCacheProviderId("github-copilot", {
 			apiKey: rawApiKey,
 			baseUrl,
 		}),
-=======
-		cacheProviderId: resolveModelCacheProviderId("github-copilot", { apiKey: rawApiKey, baseUrl }),
-		// Copilot discovery pre-applies the correct image fallback for omitted
-		// `supports.vision`; the live row's modality is authoritative.
-		dynamicInputAuthoritative: true,
->>>>>>> theirs — function `githubCopilotModelManagerOptions` (F, confidence: medium)
 		dropCachedModelIdsOnStaticMismatch: COPILOT_CACHE_INVALIDATED_MODEL_IDS,
 		// COPILOT_API_HEADERS are compile-time wire identity constants, not
 		// credentials. The cache omits all request headers for

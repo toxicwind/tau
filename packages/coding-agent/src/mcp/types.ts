@@ -1,15 +1,5 @@
-<<<<<<< ours — interstitial `file_header` (S, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import type { MCPContent, MCPImageContent, MCPResourceContent, …`
 import type { MCPContent, MCPImageContent, MCPResourceContent, MCPTextContent } from "@tau/tau-tui/tools/mcp";
-=======
-import type {
-	MCPContent,
-	MCPImageContent,
-	MCPProgress,
-	MCPResourceContent,
-	MCPTextContent,
-} from "@oh-my-pi/pi-tui/tools/mcp";
->>>>>>> theirs — interstitial `file_header` (S, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/mcp/types.ts' for per-hunk detail, 'weave check' to verify your resolution
 /**
  * MCP (Model Context Protocol) type definitions.
  *

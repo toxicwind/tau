@@ -1,11 +1,6 @@
-<<<<<<< ours — interstitial `file_header` (S, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { $env, isRecord, logger } from "@oh-my-pi/pi-utils";`
 import type { TSchema } from "@tau/tau-ai";
 import { $env, isRecord, logger } from "@tau/tau-utils";
-=======
-import type { TSchema } from "@oh-my-pi/pi-ai";
-import { $env, isRecord, logger, tryParseJson } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (S, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/exa/mcp-client.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { CustomTool, CustomToolResult } from "../extensibility/custom-tools/types";
 import { type CallMcpOptions, callMCP } from "../mcp/json-rpc";
 import type { ExaSearchResponse, MCPTool, MCPToolWrapperConfig } from "./types";

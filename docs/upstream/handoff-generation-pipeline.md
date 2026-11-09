@@ -126,12 +126,8 @@ If auto generation returns no document, maintenance advances to the next configu
 
 `CommandController.handleHandoffCommand` behavior:
 
-<<<<<<< ours — scope `- Refuses with a warning when `session.isStre...` in heading `Controller/UI behavior` (S, confidence: medium)
 // refused_by: statement_fold · collision: `- Refuses with a warning when `session.isStreaming` (matches `/…`
 - Refuses with a warning when `session.isStreaming` (matches `/fork` and `/move`) — the architect must finish or abort the response before handing off.
-=======
-- Refuses with a warning when `session.isStreaming` or `session.isCompacting` — finish or abort the response, or finish/cancel context maintenance, before handing off.
->>>>>>> theirs — scope `- Refuses with a warning when `session.isStre...` · weave: run 'weave explain docs/upstream/handoff-generation-pipeline.md' for per-hunk detail, 'weave check' to verify your resolution
 - Shows a status loader: `Generating handoff… (esc to cancel)`.
 - Calls `await session.handoff(customInstructions)`.
 - If result is `undefined`: `showError("Handoff cancelled")`.

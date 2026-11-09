@@ -13,14 +13,9 @@
  * `OTEL_EXPORTER_OTLP*_PROTOCOL` of `grpc` or `http/json` declines rather than
  * misrouting protobuf payloads.
  */
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { logger } from "@oh-my-pi/pi-utils";`
 import type { AgentTelemetryConfig } from "@tau/tau-agent-core";
 import { logger } from "@tau/tau-utils";
-=======
-import type { AgentTelemetryConfig } from "@oh-my-pi/pi-agent-core";
-import { $otelEnv, logger } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/telemetry-export.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /** Whether the model registered under a provider id and requested model id has known pricing. */
 export type TelemetryModelPricingResolver = (providerId: string, modelId: string) => boolean;

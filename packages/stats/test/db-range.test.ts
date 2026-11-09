@@ -1,15 +1,9 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { FolderStats, MessageStats } from "@oh-my-pi/omp-s…`
 import { getDashboardStats, getFolderStats } from "@tau/tau-stats/aggregator";
 import { initDb, insertMessageStats } from "@tau/tau-stats/db";
 import type { FolderStats, MessageStats } from "@tau/tau-stats/types";
 import { handleApi } from "../src/server";
-=======
-import { getDashboardStats, getFolderStats } from "@oh-my-pi/omp-stats/aggregator";
-import { initDb, insertMessageStats } from "@oh-my-pi/omp-stats/db";
-import type { MessageStats } from "@oh-my-pi/omp-stats/types";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/stats/test/db-range.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { installStatsTestIsolation } from "./helpers/temp-agent";
 
 installStatsTestIsolation("@tau-stats-db-range-");

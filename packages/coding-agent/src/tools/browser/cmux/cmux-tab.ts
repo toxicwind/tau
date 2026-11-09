@@ -2,7 +2,6 @@ import { join } from "node:path";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { logger, postmortem, Snowflake, untilAborted } from "@o…`
 import { logger, postmortem, Snowflake, untilAborted } from "@tau/tau-utils";
 import { JsRuntime, type RuntimeHooks } from "../../../eval/js/shared/runtime";
@@ -21,14 +20,6 @@ import {
 } from "../../run-scope";
 import { ToolAbortError, throwIfAborted } from "../../tool-errors";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
-=======
-import { Snowflake, untilAborted } from "@oh-my-pi/pi-utils";
-import { JsRuntime } from "../../../eval/js/shared/runtime";
-import { formatScreenshot, resizeImage } from "../../../utils/image-resize";
-import { resolveToCwd } from "../../path-utils";
-import { throwIfAborted } from "../../tool-errors";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/browser/cmux/cmux-tab.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	type BrowserCaptureResult,
 	type BrowserConsoleEntry,

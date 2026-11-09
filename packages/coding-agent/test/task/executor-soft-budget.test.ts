@@ -1,5 +1,4 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { buildBudgetNotice, resolveSoftRequestBudget, runSubpro…`
 import { ASYNC_JOB_MANAGER_SHUTDOWN_REASON, AsyncJobManager } from "tau/async";
 import type { ModelRegistry } from "tau/config/model-registry";
@@ -21,35 +20,6 @@ import type { AgentDefinition } from "tau/task/types";
 import { TASK_SUBAGENT_LIFECYCLE_CHANNEL } from "tau/task/types";
 import { EventBus } from "tau/utils/event-bus";
 import { TempDir } from "@tau/tau-utils";
-=======
-import * as path from "node:path";
-import { ASYNC_JOB_MANAGER_SHUTDOWN_REASON, AsyncJobManager } from "@oh-my-pi/pi-coding-agent/async";
-import type { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { LoadExtensionsResult } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/types";
-import { IrcBus } from "@oh-my-pi/pi-coding-agent/irc/bus";
-import { RpcSubagentRegistry } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-subagents";
-import type { RpcSubagentFrame } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-types";
-import { AgentLifecycleManager } from "@oh-my-pi/pi-coding-agent/registry/agent-lifecycle";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import { registerPersistedSubagents } from "@oh-my-pi/pi-coding-agent/registry/persisted-agents";
-import type { CreateAgentSessionResult } from "@oh-my-pi/pi-coding-agent/sdk";
-import * as sdkModule from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AgentSession, AgentSessionEvent, PromptOptions } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import type { CustomMessage } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import {
-	attachIrcWakeTurnMonitor,
-	buildBudgetNotice,
-	resolveSoftRequestBudget,
-	runSubprocess,
-} from "@oh-my-pi/pi-coding-agent/task/executor";
-import { cfgTaskAgentSoftRequestBudget } from "@oh-my-pi/pi-coding-agent/task/settings";
-import type { AgentDefinition } from "@oh-my-pi/pi-coding-agent/task/types";
-import { TASK_SUBAGENT_LIFECYCLE_CHANNEL } from "@oh-my-pi/pi-coding-agent/task/types";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-import { TempDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/task/executor-soft-budget.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { createSessionDefaults } from "../helpers/session-defaults";
 
 /**
@@ -226,13 +196,8 @@ describe("runSubprocess soft request budget", () => {
 		AgentRegistry.resetGlobalForTests();
 		AgentLifecycleManager.resetGlobalForTests();
 		AsyncJobManager.resetForTests();
-<<<<<<< ours — test_suite `runSubprocess soft request budget` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 		tempDir = TempDir.createSync("@tau-soft-budget-");
-=======
-		IrcBus.resetGlobalForTests();
-		tempDir = TempDir.createSync("@pi-soft-budget-");
->>>>>>> theirs — test_suite `runSubprocess soft request budget` (F, confidence: medium)
 	});
 	afterEach(() => {
 		vi.restoreAllMocks();

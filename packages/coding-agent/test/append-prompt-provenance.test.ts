@@ -1,10 +1,6 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { composeAppendPrompt, USER_APPEND_HEADING } from "@oh-m…`
 import { composeAppendPrompt, USER_APPEND_HEADING } from "tau/system-prompt";
-=======
-import { composeAppendPrompt } from "@oh-my-pi/pi-coding-agent/system-prompt";
->>>>>>> theirs — interstitial `file_header` (S, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/append-prompt-provenance.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /**
  * The generated blocks that precede a user's append prompt end with the MCP

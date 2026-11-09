@@ -1,7 +1,6 @@
 mod common;
 
 use common::{DiskWriter, Workspace, run_fixture};
-<<<<<<< ours — imports `between:crates/tau-edit/tests/sloppy.rs::module::common:crates/tau-edit/tests/sloppy.rs::function::apply_fixtures` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 use serde_json::json;
 use tau_edit::{
@@ -15,20 +14,6 @@ use tau_edit::{
 	path_policy::canonical_key,
 	stream_json::ArgSnapshot,
 };
-=======
-use pi_edit::{
-	EditError, EditMode, EditStore, ModeEngine,
-	files::FileCache,
-	modes::sloppy::{
-		SloppyEngine,
-		apply::{Applied, ApplyContext, apply_sloppy, normalize_text},
-		parse::extract_inline_sloppy_regions,
-	},
-	path_policy::canonical_key,
-	stream_json::ArgSnapshot,
-};
-use serde_json::json;
->>>>>>> theirs — imports `between:crates/tau-edit/tests/sloppy.rs::module::common:crates/tau-edit/tests/sloppy.rs::function::apply_fixtures` (F, confidence: medium) · weave: run 'weave explain crates/tau-edit/tests/sloppy.rs' for per-hunk detail, 'weave check' to verify your resolution
 
 #[tokio::test]
 async fn apply_fixtures() {

@@ -9,7 +9,6 @@ import { describe, expect, it, vi } from "bun:test";
 import * as fsp from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { loadSessionFile } from "@oh-my-pi/pi-coding-agent/sess…`
 import type { Args } from "tau/cli/args";
 import type { Settings } from "tau/config/settings";
@@ -18,19 +17,6 @@ import * as sessionListingModule from "tau/session/session-listing";
 import { loadSessionFile } from "tau/session/session-loader";
 import { ForkSourceNotFoundError, SessionManager } from "tau/session/session-manager";
 import { FileSessionStorage } from "tau/session/session-storage";
-=======
-import type { Args } from "@oh-my-pi/pi-coding-agent/cli/args";
-import type { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { createSessionManager, SessionResolutionError, writeStartupNotice } from "@oh-my-pi/pi-coding-agent/main";
-import {
-	collectPendingToolCalls,
-	TOOL_EXECUTION_START_CUSTOM_TYPE,
-} from "@oh-my-pi/pi-coding-agent/session/exit-diagnostics";
-import * as sessionListingModule from "@oh-my-pi/pi-coding-agent/session/session-listing";
-import { loadEntriesFromFile, loadSessionFile } from "@oh-my-pi/pi-coding-agent/session/session-loader";
-import { ForkSourceNotFoundError, SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { FileSessionStorage } from "@oh-my-pi/pi-coding-agent/session/session-storage";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/main-session-resolution-error.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function buildResumeArgs(resume: string, sessionDir?: string): Args {
 	return {
@@ -440,7 +426,6 @@ describe("createSessionManager — missing session (#2084)", () => {
 		}
 	});
 
-<<<<<<< ours — scope `it("propagates ENOTDIR on ordinary session lo...` in test_suite `createSessionManager — missing session (#2084)` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `const cwd = await fsp.mkdtemp(path.join(os.tmpdir(), "omp-enotd…`
 	it("propagates ENOTDIR on ordinary session loads when throwIfMissing is false (#11491)", async () => {
 		const cwd = await fsp.mkdtemp(path.join(os.tmpdir(), "tau-enotdir-ordinary-"));
@@ -455,25 +440,6 @@ describe("createSessionManager — missing session (#2084)", () => {
 			await fsp.rm(cwd, { recursive: true, force: true });
 		}
 	});
-=======
-	// Windows reports a path through a regular file as ENOENT, never ENOTDIR.
-	it.skipIf(process.platform === "win32")(
-		"propagates ENOTDIR on ordinary session loads when throwIfMissing is false (#11491)",
-		async () => {
-			const cwd = await fsp.mkdtemp(path.join(os.tmpdir(), "omp-enotdir-ordinary-"));
-			const regularFile = path.join(cwd, "file.txt");
-			await Bun.write(regularFile, "not a directory");
-			const enotdirChild = path.join(regularFile, "child.jsonl");
-			try {
-				await expect(loadSessionFile(enotdirChild)).rejects.toMatchObject({
-					code: "ENOTDIR",
-				});
-			} finally {
-				await fsp.rm(cwd, { recursive: true, force: true });
-			}
-		},
-	);
->>>>>>> theirs — scope `it("propagates ENOTDIR on ordinary session lo...`
 
 	it("rejects --resume combined with --no-session instead of silently discarding it (#12008)", async () => {
 		await expect(

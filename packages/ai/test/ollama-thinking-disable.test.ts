@@ -1,17 +1,9 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { streamOllama } from "@oh-my-pi/pi-ai/providers/ollama";`
 import type { AssistantMessage, Context, Tool, ToolResultMessage, Usage } from "@tau/tau-ai";
 import { streamOllama } from "@tau/tau-ai/providers/ollama";
 import { NON_VISION_IMAGE_PLACEHOLDER } from "@tau/tau-ai/providers/vision-guard";
 import { buildModel } from "@tau/tau-catalog/build";
-=======
-import type { AssistantMessage, Context, Tool, ToolResultMessage, Usage } from "@oh-my-pi/pi-ai";
-import { ollamaChatDropsOwnThinking, streamOllama } from "@oh-my-pi/pi-ai/providers/ollama";
-import { NON_VISION_IMAGE_PLACEHOLDER } from "@oh-my-pi/pi-ai/providers/vision-guard";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/test/ollama-thinking-disable.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 interface OllamaChatMessagePayload {
 	thinking?: unknown;

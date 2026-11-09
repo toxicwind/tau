@@ -4,12 +4,8 @@
  * Primary provider for TAU native configs. Supports all capabilities.
  */
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { getAgentDir, logger, parseFrontmatter, tryParseJson } …`
 import { getAgentDir, logger, parseFrontmatter, tryParseJson } from "@tau/tau-utils";
-=======
-import { getAgentDir, logger, normalizePathForComparison, parseFrontmatter, tryParseJson } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/discovery/builtin.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { YAML } from "bun";
 import { getManagedSkillsDir, MANAGED_SKILLS_PROVIDER_ID } from "../autolearn/managed-skills";
 import { registerProvider } from "../capability";
@@ -72,15 +68,9 @@ async function getConfigDirs(ctx: LoadContext): Promise<Array<{ dir: string; lev
 			: await ifNonEmptyDir(ctx.cwd, PATHS.projectDir);
 	if (projectDir) result.push({ dir: projectDir, level: "project" });
 	// Native user config is profile-scoped: getAgentDir() points at the active
-<<<<<<< ours — scope `// Native user config is profile-scoped: getA...` in function `getConfigDirs` (T+F, confidence: medium)
 // refused_by: statement_fold · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 	// profile's agent dir (~/.tau/profiles/<name>/agent), like sessions and MCP.
 	const userDir = await ifNonEmptyDir(getAgentDir());
-=======
-	// profile's agent dir (~/.omp/profiles/<name>/agent), like sessions and MCP.
-	// A load that carries its own agentDir (an SDK session created with one) reads that dir.
-	const userDir = await ifNonEmptyDir(ctx.agentDir ?? getAgentDir());
->>>>>>> theirs — scope `// Native user config is profile-scoped: getA...`
 	if (userDir) {
 		result.push({ dir: userDir, level: "user" });
 	}
@@ -329,12 +319,9 @@ async function loadSkills(ctx: LoadContext): Promise<LoadResult<Skill>> {
 	// Walk up from cwd finding .omp/skills/ in ancestors (closest first). Home is
 	// the user config root, never a project (see findNearestProjectConfigDir).
 	const projectScans: Promise<LoadResult<Skill>>[] = [];
-<<<<<<< ours — scope `// Walk up from cwd finding .omp/skills/ in a...` in function `loadSkills`, deleted in theirs (T+F, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	// Walk up from cwd finding .tau/skills/ in ancestors (closest first)
 	const ancestors = getAncestorDirs(ctx.cwd, ctx.repoRoot ?? ctx.home);
-=======
->>>>>>> theirs — scope `// Walk up from cwd finding .omp/skills/ in a...` deleted in theirs
 	for await (const { dir } of getProjectAncestorDirs(ctx)) {
 		projectScans.push(
 			scanSkillsFromDir(ctx, {
@@ -443,16 +430,10 @@ async function loadRules(ctx: LoadContext): Promise<LoadResult<Rule>> {
 	// https://tau.sh/docs/context-files: its full body is carried on every
 	// request (system-prompt text, or image frames under snapcompact
 	// system-prompt imaging) so it keeps its hold across long sessions.
-<<<<<<< ours — scope `// Top-level RULES.md is a sticky always-appl...` in function `loadRules` (T+F, confidence: medium)
 // refused_by: statement_fold · collision: `// User scope:    ~/.omp/agent/RULES.md`
 	// User scope:    ~/.tau/agent/RULES.md
 	// Project scope: nearest .tau/RULES.md walking up from cwd to repoRoot
 	const userRulesFile = path.join(getAgentDir(), "RULES.md");
-=======
-	// User scope:    <agentDir>/RULES.md (~/.omp/agent/RULES.md by default)
-	// Project scope: nearest .omp/RULES.md walking up from cwd to repoRoot
-	const userRulesFile = path.join(ctx.agentDir ?? getAgentDir(), "RULES.md");
->>>>>>> theirs — scope `// Top-level RULES.md is a sticky always-appl...`
 	const userRule = await loadStickyRulesFile(userRulesFile, "user");
 	if (userRule) items.push(userRule);
 

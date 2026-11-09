@@ -1007,7 +1007,6 @@ export declare function __ompSetGrammarDir(dir: string): void
  */
 export declare function __piNativesBuildVersion(): string | null
 
-<<<<<<< ours — function `__piNativesV18_3_0` (T+F, confidence: medium)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 /**
  * Version sentinel — exists solely so the JS loader can prove at load time
@@ -1034,8 +1033,6 @@ export declare function __piNativesBuildVersion(): string | null
  * prefix and the loader accepts it at the same version.
  */
 export declare function __tauNativesV18_3_0(): void
-=======
->>>>>>> theirs — function `__piNativesV18_3_0` (T+F, confidence: medium) · weave: run 'weave explain packages/natives/native/index.d.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /**
  * Reports whether the on-device model can generate, as an `availability`
@@ -2735,17 +2732,9 @@ export interface IsoProbeResult {
 }
 
 /**
-<<<<<<< ours — scope `/**` in function `isoResolve` (T+F, confidence: medium)
 // refused_by: statement_fold · collision: `* a hint — see [`pi_iso::resolve`] for the exact priority rules.`
  * Pick the best backend available right now. `preferred` is treated as
  * a hint — see [`tau_iso::resolve`] for the exact priority rules.
-=======
- * Pick the best backend available right now.
- *
- * `preferred` is treated as a hint — see [`pi_iso::resolve`] for the exact
- * priority rules. Backend probes may spawn CLIs, so they run on the native
- * blocking pool.
->>>>>>> theirs — scope `/**`
  */
 export declare function isoResolve(preferred?: IsoBackendKind | undefined | null): Promise<IsoResolveResult>
 

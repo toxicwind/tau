@@ -1,17 +1,7 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { AgentSideConnection, RequestPermissionRequest } f…`
 import { createAcpClientBridge } from "tau/modes/acp/acp-client-bridge";
 import type { AgentSideConnection, RequestPermissionRequest } from "@tau/tau-utils/acp";
-=======
-import { createAcpClientBridge } from "@oh-my-pi/pi-coding-agent/modes/acp/acp-client-bridge";
-import {
-	RequestError,
-	type AgentSideConnection,
-	type RequestPermissionRequest,
-	type RequestPermissionResponse,
-} from "@oh-my-pi/pi-utils/acp";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/acp-client-bridge.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const ALLOW_SELECTED: RequestPermissionResponse = { outcome: { outcome: "selected", optionId: "allow_once" } };
 

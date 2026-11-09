@@ -6,7 +6,6 @@ import {
 	handleServerMessage,
 	processInteractionUpdate,
 	type ToolCallState,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 } from "@tau/tau-ai/providers/cursor";
 import type { AssistantMessage, CursorExecHandlers, ToolResultMessage } from "@tau/tau-ai/types";
@@ -69,70 +68,6 @@ import {
 	WebFetchAllowlistPrecheckArgsSchema,
 } from "@tau/tau-catalog/discovery/cursor-proto";
 import { create, fromBinary, toBinary } from "@tau/tau-catalog/discovery/protobuf";
-=======
-} from "@oh-my-pi/pi-ai/providers/cursor";
-import type { AssistantMessage, CursorExecHandlers, ToolResultMessage } from "@oh-my-pi/pi-ai/types";
-import { kCursorExecResolved, setStreamingPartialJson } from "@oh-my-pi/pi-ai/utils/block-symbols";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import {
-	type AgentClientMessage,
-	AgentClientMessageSchema,
-	AgentServerMessageSchema,
-	AgentStoreConflictArgsSchema,
-	CanvasDiagnosticsArgsSchema,
-	ComputerUseArgsSchema,
-	ConnectScmArgsSchema,
-	DeleteArgsSchema,
-	ConnectScmErrorSchema,
-	ConnectScmGithubRepositorySchema,
-	ConnectScmGithubSchema,
-	ConnectScmRejectedSchema,
-	ConnectScmResultSchema,
-	ConnectScmSuccessSchema,
-	ConnectScmToolCallSchema,
-	ConversationSearchArgsSchema,
-	ConversationStateStructureSchema,
-	ConversationTokenDetailsSchema,
-	type CursorRule,
-	type ExecServerMessage,
-	ExecServerMessageSchema,
-	ExecuteHookArgsSchema,
-	ExecuteHookRequestSchema,
-	ForceBackgroundShellArgsSchema,
-	ForceBackgroundShellStatus,
-	ForceBackgroundSubagentArgsSchema,
-	ForceBackgroundSubagentStatus,
-	GetDiffRequestSchema,
-	GrepArgsSchema,
-	ListMcpResourcesExecArgsSchema,
-	McpAllowlistPrecheckArgsSchema,
-	McpArgsSchema,
-	McpStateExecArgsSchema,
-	type McpToolDefinition,
-	McpToolDefinitionSchema,
-	PiBashExecArgsSchema,
-	PiEditExecArgsSchema,
-	PiEditReplacementSchema,
-	PiFindExecArgsSchema,
-	PiGrepExecArgsSchema,
-	PiLsExecArgsSchema,
-	PiReadExecArgsSchema,
-	PiWriteExecArgsSchema,
-	PostToolUseRequestQuerySchema,
-	ReadArgsSchema,
-	ReadMcpResourceExecArgsSchema,
-	RecordScreenArgsSchema,
-	RequestContextArgsSchema,
-	ShellAllowlistPrecheckArgsSchema,
-	ShellArgsSchema,
-	SmartModeClassifierArgsSchema,
-	SubagentArgsSchema,
-	SubagentAwaitArgsSchema,
-	ToolCallSchema,
-	WebFetchAllowlistPrecheckArgsSchema,
-} from "@oh-my-pi/pi-catalog/discovery/cursor-proto";
-import { create, fromBinary, toBinary } from "@oh-my-pi/pi-catalog/discovery/protobuf";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/ai/test/cursor-exec-modern.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /**
  * Drive one `ExecServerMessage` through the real dispatcher and decode every

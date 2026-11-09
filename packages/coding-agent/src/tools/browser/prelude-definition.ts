@@ -5,7 +5,6 @@ import { redactUrlForLog } from "../../mcp/json-rpc";
 import relayGuidance from "../../prompts/system/browser-relay.md" with { type: "text" };
 import browserDescription from "../../prompts/tools/browser.md" with { type: "text" };
 import type { ToolSession } from "../../sdk";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `// @ts-expect-error Bun imports this declaration source as text…` +1 more
 import preludeJsTemplate from "./prelude.js" with { type: "text" };
 import preludePyTemplate from "./prelude.py" with { type: "text" };
@@ -22,14 +21,6 @@ import {
 	generatePyMethods,
 	generateDeclarations,
 } from "./browser-surface-macro.ts";
-=======
-// @ts-expect-error Bun imports this JavaScript source as text instead of evaluating its module shape.
-import browserJavascript from "./prelude.js" with { type: "text" };
-import browserPython from "./prelude.py" with { type: "text" };
-import type { BrowserKind } from "./registry";
-import { isLoopbackRelayUrl } from "./relay/daemon";
-import { cfgBrowserCdpUrl, cfgBrowserEnabled, cfgBrowserRelayUrl } from "./settings";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/browser/prelude-definition.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /**
  * The browser eval documentation. Its Linux X11 notes follow the browser's host: they reach agents on Linux, and
@@ -87,7 +78,6 @@ export function createBrowserPreludeDefinition(
 		invoke: host.invoke,
 		status: host.status,
 	};
-<<<<<<< ours — scope `return {` in function `createBrowserPreludeDefinition`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	return {
 		name: "browser",
@@ -101,6 +91,4 @@ export function createBrowserPreludeDefinition(
 		invoke: host.invoke,
 		status: host.status,
 	};
-=======
->>>>>>> theirs — scope `return {` deleted in theirs
 }

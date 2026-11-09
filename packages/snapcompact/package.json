@@ -24,34 +24,19 @@
   "types": "./src/index.ts",
   "scripts": {
     "check": "oxlint . && oxfmt --check --no-error-on-unmatched-pattern 'src/**/*.{ts,tsx}' '{test,bench,examples,scripts}/**/*.ts' '*.ts' && bun run check:types",
-<<<<<<< ours — scope `"check:types": "tsgo -p tsconfig.json --noEmit",` in object `scripts` (S, confidence: medium)
-// refused_by: statement_fold · collision: `"check:types": "tsgo -p tsconfig.json --noEmit",`
     "check:types": "bun ../../scripts/typecheck.ts . --noEmit",
-=======
-    "check:types": "bun check --no-script -p tsconfig.json",
->>>>>>> theirs — scope `"check:types": "tsgo -p tsconfig.json --noEmit",` · weave: run 'weave explain packages/snapcompact/package.json' for per-hunk detail, 'weave check' to verify your resolution
     "lint": "oxlint .",
     "test": "bun test --parallel",
     "fix": "oxlint --fix --fix-suggestions . && bun run fmt",
     "fmt": "oxfmt --no-error-on-unmatched-pattern 'src/**/*.{ts,tsx}' '{test,bench,examples,scripts}/**/*.ts' '*.ts'"
-  }
+  },
   "dependencies": {
-<<<<<<< ours — object `dependencies` (S+F, confidence: low)
-// refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
     "@tau/tau-ai": "catalog:",
     "@tau/tau-catalog": "catalog:",
     "@tau/tau-natives": "catalog:",
     "@tau/tau-utils": "catalog:",
     "@tau/tau-wire": "catalog:"
-=======
-    "@oh-my-pi/omptype": "catalog:",
-    "@oh-my-pi/pi-ai": "catalog:",
-    "@oh-my-pi/pi-catalog": "catalog:",
-    "@oh-my-pi/pi-natives": "catalog:",
-    "@oh-my-pi/pi-utils": "catalog:",
-    "@oh-my-pi/pi-wire": "catalog:"
->>>>>>> theirs — object `dependencies` (S+F, confidence: low)
-  }
+  },
   "devDependencies": {
     "@types/bun": "^1.4.4",
     "bun-types": "^1.4.4"

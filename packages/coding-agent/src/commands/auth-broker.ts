@@ -56,7 +56,6 @@ export default class AuthBroker extends Command {
 	};
 
 	static examples = [
-<<<<<<< ours — scope `examples` in class `AuthBroker` (S+F, confidence: low)
 // refused_by: container_member · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 		"# Boot the broker against the local SQLite store\n  tau auth-broker serve",
 		"# Boot on a non-default port\n  tau auth-broker serve --bind=127.0.0.1:9000",
@@ -72,23 +71,6 @@ export default class AuthBroker extends Command {
 		"# Preview a migration from local store + env vars to the configured broker\n  tau auth-broker migrate --from-local --include-env --dry-run",
 		"# Apply the migration\n  tau auth-broker migrate --from-local --include-env",
 		"# Health-check the configured remote broker\n  tau auth-broker status",
-=======
-		"# Boot the broker against the local SQLite store\n  omp auth-broker serve",
-		"# Boot on a non-default port\n  omp auth-broker serve --bind=127.0.0.1:9000",
-		"# Trust client IP headers from a trusted reverse proxy\n  omp auth-broker serve --trust-proxy-headers",
-		"# Print the bearer token\n  omp auth-broker token",
-		"# Rotate the bearer token\n  omp auth-broker token --regenerate",
-		"# List supported OAuth providers\n  omp auth-broker list",
-		"# Local login (run on the broker host)\n  omp auth-broker login anthropic",
-		"# Interactive provider selection\n  omp auth-broker login",
-		"# Remote login over SSH tunnel\n  omp auth-broker login anthropic --via=user@broker",
-		"# Log out of a provider (interactive without provider arg)\n  omp auth-broker logout anthropic",
-		"# Import a CLIProxyAPI auth dump\n  omp auth-broker import ~/.cliproxy/auth",
-		"# Import a single CLIProxyAPI JSON, overriding the provider mapping\n  omp auth-broker import ~/.cliproxy/auth/claude-foo.json --provider anthropic",
-		"# Preview a migration from local store + env vars to the configured broker\n  omp auth-broker migrate --from-local --include-env --dry-run",
-		"# Apply the migration\n  omp auth-broker migrate --from-local --include-env",
-		"# Health-check the configured remote broker\n  omp auth-broker status",
->>>>>>> theirs — scope `examples` · weave: run 'weave explain packages/coding-agent/src/commands/auth-broker.ts' for per-hunk detail, 'weave check' to verify your resolution
 	];
 
 	async run(): Promise<void> {

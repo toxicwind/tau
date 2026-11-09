@@ -1,11 +1,6 @@
-<<<<<<< ours — interstitial `file_header` (S, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { formatBytes, parseImageMetadata, SUPPORTED_IMAGE_MIME_…`
 import type { ImageContent, Model } from "@tau/tau-ai";
 import { formatBytes, parseImageMetadata, SUPPORTED_IMAGE_MIME_TYPES } from "@tau/tau-utils";
-=======
-import type { ImageContent, Model } from "@oh-my-pi/pi-ai";
-import { decodeBase64ImageData, formatBytes, parseImageMetadata, SUPPORTED_IMAGE_MIME_TYPES } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (S, confidence: medium) · weave: run 'weave explain packages/tui/src/chat/image-loading.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 export const MAX_IMAGE_INPUT_BYTES = 20 * 1024 * 1024;
 

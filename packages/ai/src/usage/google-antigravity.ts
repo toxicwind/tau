@@ -1,11 +1,6 @@
-<<<<<<< ours — imports `file_header` (S, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { getAntigravityUserAgent } from "@oh-my-pi/pi-catalog/w…`
 import { quotaTierFor } from "@tau/tau-catalog/compat/behavior";
 import { getAntigravityUserAgent } from "@tau/tau-catalog/wire/gemini-headers";
-=======
-import { quotaTierFor } from "@oh-my-pi/pi-catalog/compat/behavior";
-import { getAntigravityHeaders } from "@oh-my-pi/pi-catalog/wire/gemini-headers";
->>>>>>> theirs — imports `file_header` (S, confidence: medium) · weave: run 'weave explain packages/ai/src/usage/google-antigravity.ts' for per-hunk detail, 'weave check' to verify your resolution
 import * as AIError from "../error";
 import type {
 	CredentialRankingContext,

@@ -38,14 +38,10 @@ allow = [
 # (packages/natives/THIRD-PARTY-NOTICES.txt) rather than globally admitting
 # copyleft dependencies.
 exceptions = [
-<<<<<<< ours — scope `# inferno is CDDL-1.0-licensed. Keep this` in section `licenses` (T+S+F, confidence: low)
 # refused_by: statement_fold · collision: none (1 contested hunk(s), neither side deleted the other's lines)
     { allow = ["CDDL-1.0"], crate = "inferno@0.12.8" },
     { allow = ["WTFPL"], crate = "terminfo@0.9.0" },
     # uluru (via tau-vcs → jj-lib → gix → gix-pack) is MPL-2.0: file-level
-=======
-    # uluru (via pi-vcs → jj-lib → gix → gix-pack) is MPL-2.0: file-level
->>>>>>> theirs — scope `# inferno is CDDL-1.0-licensed. Keep this` · weave: run 'weave explain deny.toml' for per-hunk detail, 'weave check' to verify your resolution
     # copyleft, satisfied by upstream source availability; no obligations
     # attach to our unmodified use.
     { allow = ["MPL-2.0"], crate = "uluru@3.1.0" },

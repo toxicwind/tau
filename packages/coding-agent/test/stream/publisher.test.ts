@@ -18,15 +18,10 @@ afterEach(async () => {
 
 describe("StreamPublisher", () => {
 	it("publishes viewport deltas and ordered resets, then detaches when the streamer closes", async () => {
-<<<<<<< ours — test_suite `StreamPublisher` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 		const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "tau-stream-publisher-"));
 		const endpoint = await streamSocketEndpoint(cwd, { create: true });
 		await fs.rm(endpoint, { force: true });
-=======
-		const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "omp-stream-publisher-"));
-		const endpoint = await streamSocketEndpoint(cwd);
->>>>>>> theirs — test_suite `StreamPublisher` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/stream/publisher.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 		const frames: StreamSessionFrame[] = [];
 		const frameWaiters: Array<{ count: number; resolve: () => void }> = [];
 		const waitForFrameCount = (count: number): Promise<void> => {

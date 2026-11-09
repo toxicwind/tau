@@ -16,7 +16,6 @@ import {
 	TERMINAL,
 	type TerminalNotification,
 	Text,
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-tui";
 import { getSessionsDir } from "@tau/tau-utils";
@@ -24,15 +23,6 @@ import { DynamicBorder } from "@tau/tau-tui/chrome/dynamic-border";
 import { OverlayPanel } from "@tau/tau-tui/chrome/overlay-box";
 import { TranscriptBlock } from "@tau/tau-tui/chrome/transcript-container";
 import { getSelectListTheme, getSymbolTheme, theme } from "@tau/tau-tui/theme";
-=======
-} from "@oh-my-pi/pi-tui";
-import { getSessionsDir } from "@oh-my-pi/pi-utils";
-import { editorKey } from "@oh-my-pi/pi-tui/chrome/keybinding-hints";
-import { DynamicBorder } from "@oh-my-pi/pi-tui/chrome/dynamic-border";
-import { OverlayPanel } from "@oh-my-pi/pi-tui/chrome/overlay-box";
-import { TranscriptBlock } from "@oh-my-pi/pi-tui/chrome/transcript-container";
-import { getSelectListTheme, getSymbolTheme, theme } from "@oh-my-pi/pi-tui/theme";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/debug/index.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { InteractiveModeContext } from "../modes/types";
 import { formatBytes } from "@tau/tau-tui/render/render-utils";
 import { openPath } from "../utils/open";

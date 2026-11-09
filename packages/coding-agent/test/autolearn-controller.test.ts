@@ -1,5 +1,4 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { Agent, type AgentMessage, type AgentOptions, type Agen…` +1 more
 import { type } from "@tau/tautype";
 import { Agent, type AgentMessage, type AgentOptions, type AgentTool } from "@tau/tau-agent-core";
@@ -12,30 +11,6 @@ import { Settings } from "tau/config/settings";
 import { createAutoLearnCaptureRunner } from "tau/sdk";
 import type { AgentSession, AgentSessionEvent } from "tau/session/agent-session";
 import { convertToLlm } from "tau/session/messages";
-=======
-import { type } from "@oh-my-pi/omptype";
-import { Agent, type AgentMessage, type AgentTool } from "@oh-my-pi/pi-agent-core";
-import type {
-	AssistantMessage,
-	FetchImpl,
-	Model,
-	ProviderSessionState,
-	Tool,
-	ToolResultMessage,
-	Usage,
-} from "@oh-my-pi/pi-ai";
-import { streamGoogle } from "@oh-my-pi/pi-ai/providers/google";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { streamOpenAIResponses } from "@oh-my-pi/pi-ai/providers/openai-responses";
-import type { ResponseInput, ResponseOutputItem } from "@oh-my-pi/pi-ai/providers/openai-responses-wire";
-import { createOpenAIResponsesHistoryPayload } from "@oh-my-pi/pi-ai/utils";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { AutoLearnController, buildAutoLearnInstructions } from "@oh-my-pi/pi-coding-agent/autolearn/controller";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { createAutoLearnCaptureRunner } from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AgentSession, AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { convertToLlm } from "@oh-my-pi/pi-coding-agent/session/messages";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/autolearn-controller.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 import { cfgAutolearnEnabled } from "@oh-my-pi/pi-coding-agent/autolearn/settings";
 

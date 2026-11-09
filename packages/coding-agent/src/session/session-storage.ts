@@ -2,7 +2,6 @@ import * as fs from "node:fs";
 import * as fsp from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { withFileLockSync } from "@oh-my-pi/pi-utils/file-lock";` +1 more
 import { FileLock as NativeFileLock } from "@tau/tau-natives";
 import { withFileLockSync } from "@tau/tau-utils/file-lock";
@@ -13,29 +12,6 @@ import { Snowflake } from "@tau/tau-utils/snowflake";
 import { toError } from "@tau/tau-utils/type-guards";
 import { isAssistantMessageLine } from "./session-entries";
 import { overlayTitleSlotContent, type SessionTitleUpdate, serializeTitleSlot } from "./session-title-slot";
-=======
-import { FileLock as NativeFileLock } from "@oh-my-pi/pi-natives";
-import { getSessionOwnersDir } from "@oh-my-pi/pi-utils/dirs";
-import { isBunTestRuntime } from "@oh-my-pi/pi-utils/env";
-import {
-	type FileLockHandle,
-	isFileLockHeld,
-	tryAcquireFileLock,
-	withFileLockSync,
-} from "@oh-my-pi/pi-utils/file-lock";
-import { type FsError, hasFsCode, isEnoent } from "@oh-my-pi/pi-utils/fs-error";
-import * as logger from "@oh-my-pi/pi-utils/logger";
-import { peekFileEnds } from "@oh-my-pi/pi-utils/peek-file";
-import { isPidAlive } from "@oh-my-pi/pi-utils/pid";
-import { Snowflake } from "@oh-my-pi/pi-utils/snowflake";
-import { toError } from "@oh-my-pi/pi-utils/type-guards";
-import {
-	overlayTitleSlotContent,
-	parseTitleSlotFromContent,
-	type SessionTitleUpdate,
-	serializeTitleSlot,
-} from "./session-title-slot";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/session/session-storage.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /** Shared base flags for the held transcript descriptor; callers add `O_APPEND` or `O_TRUNC`. */
 const SESSION_WRITE_FLAGS = fs.constants.O_WRONLY | fs.constants.O_CREAT;

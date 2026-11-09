@@ -78,12 +78,8 @@ os_display = "0.1.4"
 parse_datetime = "0.16"
 pi-ast = { workspace = true, optional = true }
 pi-diff.workspace = true
-<<<<<<< ours — scope `pi-walker = { path = "../pi-walker" }` in section `dependencies` (S, confidence: medium)
 # refused_by: statement_fold · collision: `pi-walker = { path = "../pi-walker" }`
 tau-walker = { path = "../tau-walker" }
-=======
-pi-walker.workspace = true
->>>>>>> theirs — scope `pi-walker = { path = "../pi-walker" }` · weave: run 'weave explain crates/tau-builtins/Cargo.toml' for per-hunk detail, 'weave check' to verify your resolution
 pi-vfs.workspace = true
 rand = { version = "0.10.0", features = ["std_rng"] }
 rayon = "1.10"

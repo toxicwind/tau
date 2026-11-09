@@ -2,14 +2,9 @@ import { afterEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { getConfigRootDir, getLogsDir, removeWithRetries, setAg…`
 import { createReportBundle } from "tau/debug/report-bundle";
 import { getConfigRootDir, getLogsDir, removeWithRetries, setAgentDir } from "@tau/tau-utils";
-=======
-import { createReportBundle } from "@oh-my-pi/pi-coding-agent/debug/report-bundle";
-import { getConfigRootDir, getLogsDir, localDay, logger, removeWithRetries, setAgentDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/debug/report-bundle-logs.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const originalAgentDir = process.env.PI_CODING_AGENT_DIR;
 const originalXdgStateHome = process.env.XDG_STATE_HOME;
@@ -61,7 +56,6 @@ afterEach(async () => {
 
 describe("report bundle logs", () => {
 	it("collects every same-day PID log, not only the current process", async () => {
-<<<<<<< ours — test_suite `report bundle logs (body partly extracted into isolateLogsRoot)` (F, confidence: medium)
 // refused_by: statement_fold · collision: `await fs.mkdir(path.join(xdgStateHome, "omp"), { recursive: tru…`
 		cleanupRoot = await fs.mkdtemp(path.join(os.tmpdir(), "tau-report-logs-"));
 		const xdgStateHome = path.join(cleanupRoot, "state");
@@ -73,17 +67,6 @@ describe("report bundle logs", () => {
 		await fs.mkdir(logsDir, { recursive: true });
 		const today = new Date().toISOString().slice(0, 10);
 		const crashedName = `tau.${today}.4242.log`;
-=======
-		cleanupRoot = await fs.mkdtemp(path.join(os.tmpdir(), "omp-report-logs-"));
-		await isolateLogsRoot(cleanupRoot);
-
-		const logsDir = getLogsDir();
-		await fs.mkdir(logsDir, { recursive: true });
-		// Log files are named with the local day (RotatingFileSink naming); same-day
-		// collection must match them with the local day too, not the UTC key.
-		const today = localDay(new Date());
-		const crashedName = `omp.${today}.4242.log`;
->>>>>>> theirs — test_suite `report bundle logs (body partly extracted into isolateLogsRoot)` (F, confidence: medium)
 		const rotatedName = `${crashedName}.1`;
 		const currentName = `tau.${today}.${process.pid}.log`;
 		await Bun.write(path.join(logsDir, crashedName), '{"pid":4242,"message":"fatal in crashed pid"}\n');

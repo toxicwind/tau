@@ -4,18 +4,10 @@ import * as path from "node:path";
 const repoRoot = path.resolve(import.meta.dir, "../../../..");
 
 const probe = `
-<<<<<<< ours — scope `declaration` in variable `probe` (S, confidence: medium)
 // refused_by: container_member · collision: `import { CmuxTab, runCmuxCode } from "@oh-my-pi/pi-coding-agent…`
 import { CmuxTab, runCmuxCode } from "tau/tools/browser/cmux/cmux-tab";
-=======
-import { CmuxTab } from "@oh-my-pi/pi-coding-agent/tools/browser/cmux/cmux-tab";
->>>>>>> theirs — scope `declaration` · weave: run 'weave explain packages/coding-agent/test/tools/browser-cmux-guest-rejection.test.ts' for per-hunk detail, 'weave check' to verify your resolution
-<<<<<<< ours — scope `import` in variable `probe` (S, confidence: medium)
 // refused_by: container_member · collision: `import { CmuxSocketClient } from "@oh-my-pi/pi-coding-agent/too…`
 import { CmuxSocketClient } from "tau/tools/browser/cmux/socket-client";
-=======
-import { runInProcessTab } from "@oh-my-pi/pi-coding-agent/tools/browser/in-process-run";
->>>>>>> theirs — scope `import`
 import { CmuxSocketClient } from "@oh-my-pi/pi-coding-agent/tools/browser/cmux/socket-client";
 
 const cwd = process.cwd();

@@ -5,7 +5,6 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { AgentMessage, AgentTool } from "@oh-my-pi/pi-agen…`
 import { Type } from "@tau/tautype/typebox";
 import type { AgentMessage, AgentTool } from "@tau/tau-agent-core";
@@ -17,19 +16,6 @@ import { convertToLlm, wrapSteeringForModel } from "tau/session/messages";
 import { ModelRegistry } from "tau/config/model-registry";
 import { Settings } from "tau/config/settings";
 import { ExtensionRuntime, loadExtensions } from "tau/extensibility/extensions/loader";
-=======
-import { Type } from "@oh-my-pi/omptype/typebox";
-import type { AgentMessage, AgentTool, AgentToolContext } from "@oh-my-pi/pi-agent-core";
-import { streamAnthropic } from "@oh-my-pi/pi-ai/providers/anthropic";
-import type { MessageCreateParams } from "@oh-my-pi/pi-ai/providers/anthropic-wire";
-import type { ImageContent, TextContent } from "@oh-my-pi/pi-ai";
-import { kCursorExecResolved } from "@oh-my-pi/pi-ai/utils/block-symbols";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { convertToLlm, wrapSteeringForModel } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { ExtensionRuntime, loadExtensions } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/extensions-runner.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	EXTENSION_HANDLER_TIMEOUT_MS,
 	ExtensionRunner,
@@ -43,7 +29,6 @@ import type {
 	ExtensionUIContext,
 	InputEvent,
 	InputEventResult,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { AgentMessage, AgentTool } from "@oh-my-pi/pi-agen…`
 	ProviderModelConfig,
 } from "tau/extensibility/extensions/types";
@@ -51,14 +36,6 @@ import { ExtensionToolWrapper } from "tau/extensibility/extensions/wrapper";
 import { AuthStorage } from "tau/session/auth-storage";
 import { SessionManager } from "tau/session/session-manager";
 import { getProjectAgentDir, logger, TempDir } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-coding-agent/extensibility/extensions/types";
-import { ExtensionToolWrapper } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/wrapper";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { getProjectAgentDir, logger, TempDir } from "@oh-my-pi/pi-utils";
-import { createAssistantMessage } from "./helpers/agent-session-setup";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 
 describe("ExtensionRunner", () => {
 	let tempDir: TempDir;

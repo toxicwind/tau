@@ -35,11 +35,8 @@ from tau_rpc import (
     SubagentLifecycleEvent,
     host_tool,
 )
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 # refused_by: merge_ladder_exhausted · collision: `from omp_rpc.client import _RpcFrameDecoder`
 from tau_rpc.client import _RpcFrameDecoder
-=======
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain python/omp-rpc/tests/test_client.py' for per-hunk detail, 'weave check' to verify your resolution
 
 from omp_rpc.client import (
     _RpcFrameDecoder,

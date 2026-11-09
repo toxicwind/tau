@@ -23,7 +23,6 @@ async function runRegistryProbe(entries: BundledPiEntry[], source: string): Prom
 		await fs.rm(registryPath, { force: true });
 	}
 }
-<<<<<<< ours — interstitial `between:packages/coding-agent/test/extensibility/legacy-tau-bundled-subpath-overrides.test.ts::variable::bundledModuleKeys:packages/coding-agent/test/extensibility/legacy-tau-bundled-subpath-overrides.test.ts::test_suite::legacy pi compat compiled-mode subpath overrides (issue #3442)` (T+S, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `// failed to resolve `@earendil-works/pi-ai/oauth` because the …` +1 more
 
 // Regression for issue #3442: extension validation in compiled-binary mode
@@ -35,8 +34,6 @@ async function runRegistryProbe(entries: BundledPiEntry[], source: string): Prom
 // derives every module key from current package exports, so subpaths route to
 // the same `tau-legacy-tau-bundled:` virtual namespace as package roots without
 // a generated registry or duplicate key list.
-=======
->>>>>>> theirs — interstitial `between:packages/coding-agent/test/extensibility/legacy-tau-bundled-subpath-overrides.test.ts::variable::bundledModuleKeys:packages/coding-agent/test/extensibility/legacy-tau-bundled-subpath-overrides.test.ts::test_suite::legacy pi compat compiled-mode subpath overrides (issue #3442)` (T+S, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/extensibility/legacy-tau-bundled-subpath-overrides.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 // Regression for issue #3442: extension validation in compiled-binary mode
 // failed to resolve `@earendil-works/pi-ai/oauth` because the override map
@@ -177,7 +174,6 @@ export const observed = {
 		const entry = bundledEntries.find(candidate => candidate.key === key);
 		expect(entry).toBeDefined();
 
-<<<<<<< ours — scope `it("actually loads the shim's shared Pi trans...` in test_suite `legacy pi compat compiled-mode subpath overrides (issue #3442)` (F, confidence: medium)
 // refused_by: statement_fold · collision: `const registryPath = path.join(packageRoot, `.probe-legacy-pi-a…`
 		// The rendered registry imports by bare specifier, exactly as the real
 		// bundle does, so it must run somewhere those specifiers resolve — the
@@ -202,15 +198,6 @@ export const observed = [
 		} finally {
 			await fs.rm(registryPath, { force: true });
 		}
-=======
-		expect(
-			await runRegistryProbe(
-				[entry!],
-				`const mod = await BUNDLED_PI_MODULE_LOADERS[${JSON.stringify(key)}]();
-export const observed = [mod.piEscapeRegexLiteral("a.b*c"), mod.piJoinPath("src", "*.ts")];`,
-			),
-		).toEqual(["a\\.b\\*c", path.join("src", "*.ts")]);
->>>>>>> theirs — scope `it("actually loads the shim's shared Pi trans...`
 
 		const overrides = __buildLegacyPiPackageRootOverrides(true, bundledModuleKeys);
 		expect(overrides[key]).toBe(`tau-legacy-tau-bundled:${key}`);
@@ -279,7 +266,6 @@ export const observed = buildModel({
 		expect(overrides[key]).toBe(`tau-legacy-tau-bundled:${key}`);
 	});
 
-<<<<<<< ours — scope `it("does not enumerate root catch-all wildcar...` in test_suite `legacy pi compat compiled-mode subpath overrides (issue #3442)` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `// pi-* files directly, so we keep those routed via `Bun.resolv…` +1 more
 	it("does not enumerate root catch-all wildcards (./* / ./*.js)", () => {
 		// Root `./*` / `./*.js` patterns would static-import top-level files
@@ -289,15 +275,6 @@ export const observed = buildModel({
 		// Concrete check: `tau/cli` is NOT bundled.
 		expect(bundledModuleKeys.has("tau/cli")).toBe(false);
 		expect(bundledModuleKeys.has("tau/main")).toBe(false);
-=======
-	it("keeps coding-agent's root catch-all wildcards (./* / ./*.js) out of the bundle", () => {
-		// coding-agent exposes CLI entrypoints at the root; importing one from
-		// the virtual registry would expand the binary entry's transitive graph.
-		expect(bundledModuleKeys.has("@oh-my-pi/pi-coding-agent/cli")).toBe(false);
-		expect(bundledModuleKeys.has("@oh-my-pi/pi-coding-agent/main")).toBe(false);
-		expect(bundledModuleKeys.has("@oh-my-pi/pi-coding-agent/cli.js")).toBe(false);
-		expect(bundledModuleKeys.has("@oh-my-pi/pi-coding-agent/main.js")).toBe(false);
->>>>>>> theirs — scope `it("does not enumerate root catch-all wildcar...`
 	});
 
 	it("does not bundle main-thread-unsafe worker entrypoints", () => {
@@ -331,7 +308,6 @@ export const observed = buildModel({
 		expect(missing).toEqual([]);
 	});
 
-<<<<<<< ours — scope `it("keeps pi-ai/pi-coding-agent/pi-tui roots ...` in test_suite `legacy pi compat compiled-mode subpath overrides (issue #3442)`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("keeps tau-ai/tau-coding-agent/tau-tui roots routed to their compat shims in compiled mode", () => {
 		// The shim entries themselves resolve to virtual bundled specifiers in
@@ -345,8 +321,6 @@ export const observed = buildModel({
 		expect(overrides["tau"]).toBeDefined();
 		expect(overrides["@tau/tau-tui"]).toBeDefined();
 	});
-=======
->>>>>>> theirs — scope `it("keeps pi-ai/pi-coding-agent/pi-tui roots ...` deleted in theirs
 
 	it("does not register subpath overrides in dev/install mode", () => {
 		const overrides = __buildLegacyPiPackageRootOverrides(false);
@@ -372,18 +346,13 @@ export const observed = buildModel({
 		// top level left every nested key out of the compiled registry, so the
 		// import resolved from source and failed inside a binary — which is how
 		// a real extension (`quota-hud.ts`) broke on this exact specifier.
-<<<<<<< ours — scope `it("bundles nested wildcard subpaths so a com...` in test_suite `legacy pi compat compiled-mode subpath overrides (issue #3442)` (F, confidence: medium)
 // refused_by: statement_fold · collision: `expect(bundledModuleKeys.has("@oh-my-pi/pi-tui/theme/defaults/i…`
 		expect(bundledModuleKeys.has("tau/slash-commands/helpers/active-oauth-account")).toBe(true);
 		// Directory index modules stay excluded: `./x/*` must not serve `x/y`
 		// from `y/index.ts`, which Node would not resolve either.
 		expect(bundledModuleKeys.has("@tau/tau-tui/theme/defaults/index")).toBe(false);
-=======
-		expect(bundledModuleKeys.has("@oh-my-pi/pi-coding-agent/slash-commands/helpers/active-oauth-account")).toBe(true);
->>>>>>> theirs — scope `it("bundles nested wildcard subpaths so a com...`
 	});
 
-<<<<<<< ours — scope `inserted statements` in test_suite `legacy pi compat compiled-mode subpath overrides (issue #3442)` (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("registers the rebranded package under its previously published name", () => {
 		// The tau->tau rebrand renamed the coding-agent manifest to `tau`, but the
@@ -425,53 +394,5 @@ export const observed = buildModel({
 
 		const overrides = __buildLegacyPiPackageRootOverrides(true, bundledModuleKeys);
 		expect(overrides[`${legacyPrefix}/tools`]).toBe(`tau-legacy-tau-bundled:${legacyPrefix}/tools`);
-=======
-	it("loads pi-tui native/* modules through the bundled registry in compiled mode (issue #14834)", async () => {
-		// `native/*` was only reachable through pi-tui's root `./*` catch-all, which
-		// the generator skips, so extensions importing it failed inside the binary.
-		const keys = ["@oh-my-pi/pi-tui/native/overlay", "@oh-my-pi/pi-tui/native/spans"] as const;
-		const entries = bundledEntries.filter(entry => (keys as readonly string[]).includes(entry.key));
-		expect(entries.map(entry => entry.key).sort()).toEqual([...keys]);
-
-		const observed = await runRegistryProbe(
-			entries,
-			`const { actionBar, actionButton } = await BUNDLED_PI_MODULE_LOADERS["@oh-my-pi/pi-tui/native/overlay"]();
-const { plainLine } = await BUNDLED_PI_MODULE_LOADERS["@oh-my-pi/pi-tui/native/spans"]();
-export const observed = { role: actionBar([actionButton("Go", "go")]).p.role, line: plainLine("\\x1b[1ma\\n b\\x1b[0m") };`,
-		);
-		expect(observed).toEqual({ role: "omp.actions", line: "a b" });
-		const overrides = __buildLegacyPiPackageRootOverrides(true, bundledModuleKeys);
-		for (const key of keys) expect(overrides[key]).toBe(`omp-legacy-pi-bundled:${key}`);
-	});
-
-	it("serves pi-tui root-level, nested, and index spellings from the host graph (issue #15659)", async () => {
-		// pi-tui's root `./*` catch-all and `x/index` spellings used to stay out of
-		// the registry, so a compiled extension loaded those specifiers from its
-		// own node_modules and saw a second `TERMINAL` / theme record.
-		const keys = [
-			"@oh-my-pi/pi-tui/terminal-capabilities",
-			"@oh-my-pi/pi-tui/chat/svg-figure",
-			"@oh-my-pi/pi-tui/theme",
-			"@oh-my-pi/pi-tui/theme/index",
-		] as const;
-		const entries = bundledEntries.filter(entry => (keys as readonly string[]).includes(entry.key));
-		expect(entries.map(entry => entry.key).sort()).toEqual([...keys].sort());
-
-		const observed = await runRegistryProbe(
-			entries,
-			`const theme = await BUNDLED_PI_MODULE_LOADERS["@oh-my-pi/pi-tui/theme"]();
-const themeIndex = await BUNDLED_PI_MODULE_LOADERS["@oh-my-pi/pi-tui/theme/index"]();
-const svg = await BUNDLED_PI_MODULE_LOADERS["@oh-my-pi/pi-tui/chat/svg-figure"]();
-const caps = await BUNDLED_PI_MODULE_LOADERS["@oh-my-pi/pi-tui/terminal-capabilities"]();
-export const observed = {
-	theme: theme.setThemeInstance === themeIndex.setThemeInstance,
-	svg: typeof svg.svgFigurePalette,
-	caps: typeof caps.setTerminalImageProtocol,
-};`,
-		);
-		expect(observed).toEqual({ theme: true, svg: "function", caps: "function" });
-		const overrides = __buildLegacyPiPackageRootOverrides(true, bundledModuleKeys);
-		for (const key of keys) expect(overrides[key]).toBe(`omp-legacy-pi-bundled:${key}`);
->>>>>>> theirs — scope `inserted statements`
 	});
 });

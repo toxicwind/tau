@@ -1,5 +1,4 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { type } from "@tau/tautype";
 import { Agent, type AgentMessage, type AgentTool } from "@tau/tau-agent-core";
@@ -17,30 +16,6 @@ import { SessionManager } from "tau/session/session-manager";
 import { collectMountedMCPToolRoutes, projectMountedMCPXdevGuidance } from "tau/session/session-tools";
 import { listXdevTools, XDEV_EXTERNAL_DESCRIPTION_CAP, type XdevState } from "tau/tools/xdev";
 import { logger } from "@tau/tau-utils";
-=======
-import { type } from "@oh-my-pi/omptype";
-import { Agent, type AgentMessage, type AgentTool } from "@oh-my-pi/pi-agent-core";
-import type { Message, Model } from "@oh-my-pi/pi-ai";
-import { createMockModel, type MockResponseSource } from "@oh-my-pi/pi-ai/providers/mock";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { CustomTool } from "@oh-my-pi/pi-coding-agent/extensibility/custom-tools/types";
-import type { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
-import type { Skill } from "@oh-my-pi/pi-coding-agent/extensibility/skills";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { type CustomMessage, convertToLlm } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionMaintenance } from "@oh-my-pi/pi-coding-agent/session/session-maintenance";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import {
-	collectMountedMCPToolRoutes,
-	projectMountedMCPXdevGuidance,
-} from "@oh-my-pi/pi-coding-agent/session/session-tools";
-import { listXdevTools, XDEV_EXTERNAL_DESCRIPTION_CAP, type XdevState } from "@oh-my-pi/pi-coding-agent/tools/xdev";
-import { EvalTool } from "@oh-my-pi/pi-coding-agent/tools/eval";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools/index";
-import { logger } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/agent-session-tool-rebuild-skip.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 import { cfgSkillful } from "@oh-my-pi/pi-coding-agent/session/settings";
 import { cfgStartupQuiet } from "@oh-my-pi/pi-coding-agent/modes/settings";

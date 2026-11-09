@@ -1,13 +1,6 @@
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { replaceTabs, TRUNCATE_LENGTHS, truncateToWidth } from …`
 import { sanitizeText } from "@tau/tau-utils";
 import { replaceTabs, TRUNCATE_LENGTHS, truncateToWidth } from "@tau/tau-tui/render/render-utils";
-=======
-import { sanitizeText } from "@oh-my-pi/pi-utils";
-import { replaceTabs, shortenPath, TRUNCATE_LENGTHS, truncateToWidth } from "@oh-my-pi/pi-tui/render/render-utils";
-import type { SessionContinuation } from "../session/session-listing";
-import type { SessionPersistenceNotice } from "../session/session-manager";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/modes/persistence-failure.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /**
  * First-failure notice. The store keeps the unlanded entries in memory and

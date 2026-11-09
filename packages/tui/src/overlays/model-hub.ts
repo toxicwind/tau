@@ -10,7 +10,6 @@ import { parseModelString, splitUpstreamRouting, formatModelSelectorValue } from
  * Fully mouse-navigable (hover, wheel, click). Session-only switching lives
  * in the compact alt+p picker ({@link ./model-picker}).
  */
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { ThinkingLevel } from "@tau/tau-agent-core";
 import type { KeysApi, Model } from "@tau/tau-ai";
@@ -18,23 +17,6 @@ import { getOAuthProviders } from "@tau/tau-ai/oauth";
 import { getSupportedEfforts } from "@tau/tau-catalog/model-thinking";
 import { providerEntry } from "@tau/tau-catalog/compat/providers";
 import { MODEL_KINDS, modelKind, type ModelKind } from "@tau/tau-catalog/types";
-=======
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type {
-	TspPickerAction,
-	TspPickerColumn,
-	TspPickerGroup,
-	TspPickerItem,
-	TspPickerProps,
-	TspPickerScope,
-	TspSpan,
-} from "@oh-my-pi/pi-wire";
-import type { KeysApi, Model } from "@oh-my-pi/pi-ai";
-import { getOAuthProviders } from "@oh-my-pi/pi-ai/oauth";
-import { getSupportedEfforts } from "@oh-my-pi/pi-catalog/model-thinking";
-import { providerEntry } from "@oh-my-pi/pi-catalog/compat/providers";
-import { MODEL_KINDS, modelKind, type ModelKind } from "@oh-my-pi/pi-catalog/types";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/tui/src/overlays/model-hub.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { Component, TUI } from "../tui";
 import { extractPrintableText, matchesKey } from "../keys";
 import { FuzzyCorpus } from "../fuzzy";
@@ -2717,12 +2699,8 @@ export class ModelHubComponent implements Component {
 		// segment track the ctrl+p status uses; the selected role's chip fills.
 		while (lines.length < rows - 1) lines.push("");
 		if (rows >= 2) {
-<<<<<<< ours — scope `#renderRolesView` in class `ModelHubComponent` (F, confidence: medium)
 // refused_by: container_member · collision: `const cycleKey = getKeybindings().getKeys("app.model.cycleForwa…`
 			const cycleKey = getKeybindings().getKeys("app.model.cycleForward")[0] ?? "f2";
-=======
-			const cycleKey = editorKey("app.model.cycleForward") || formatKeyHint("ctrl+p");
->>>>>>> theirs — scope `#renderRolesView`
 			if (cycleOrder.length > 0) {
 				const selectedRow = this.#rolesRows[this.#roleIndex];
 				const selectedRole =

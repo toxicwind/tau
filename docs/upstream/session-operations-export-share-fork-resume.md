@@ -19,7 +19,6 @@ This document describes operator-visible behavior for session export, sharing, c
 
 ## Operation matrix
 
-<<<<<<< ours — heading `Operation matrix` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `| `/restart`                              | Interactive slash c…`
 | Operation                               | Entry path                   | Session mutation                              | Session file creation/switch                                                               | Output artifact                                                                     |
 | --------------------------------------- | ---------------------------- | --------------------------------------------- | ------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------- |
@@ -38,27 +37,6 @@ This document describes operator-visible behavior for session export, sharing, c
 | `--resume <id\|path>`                   | CLI startup                  | Yes after session creation                    | Opens existing session; a missing recorded cwd may be re-rooted into the current directory | None                                                                                |
 | `/restart`                              | Interactive slash command    | Yes (process relaunches)                      | Relaunches tau with the original launch flags and resumes the current session in place     | None                                                                                |
 | `--continue`                            | CLI startup                  | Yes after session creation                    | Opens terminal breadcrumb or most-recent session; creates new one if none exists           | None                                                                                |
-=======
-| Operation                                 | Entry path                   | Session mutation                              | Session file creation/switch                                                                                                                                                 | Output artifact                                                                     |
-| ----------------------------------------- | ---------------------------- | --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| `/dump [all]`                             | Slash command (TUI/headless) | No                                            | No                                                                                                                                                                           | Clipboard/command text plus best-effort temporary JSON sidecar; `all`: temp zip     |
-| `/export [--themes] [path]`               | Slash command (TUI/headless) | No                                            | No                                                                                                                                                                           | HTML file                                                                           |
-| `--export <session.jsonl> [outputPath]`   | CLI startup fast-path        | No runtime session mutation                   | No active session; reads target file                                                                                                                                         | HTML file                                                                           |
-| `/share`                                  | Slash command (TUI/headless) | No                                            | No                                                                                                                                                                           | Encrypted share link (gist or share server); temp HTML only for TUI custom handlers |
-| `/new`                                    | Interactive slash command    | Yes (starts an empty conversation)            | Switches identity and materializes a new header in persistent mode                                                                                                           | None                                                                                |
-| `/fresh`                                  | Slash command (TUI/headless) | Yes (provider-facing in-memory id/state only) | No; keeps current session file/header                                                                                                                                        | None                                                                                |
-| `/clear`                                  | Interactive slash command    | Yes (clears live/model conversation context)  | Retains identity/file/history; a lazy session still follows the normal persistence gate                                                                                      | Appends `reset_boundary`                                                            |
-| `/delete`                                 | Interactive slash command    | Yes (starts an empty conversation)            | Attempts to delete the current persisted session and artifacts, then switches to a lazy successor (no empty file until content)                                              | None                                                                                |
-| `/fork`                                   | Interactive slash command    | Yes (active session identity changes)         | Creates new session file and switches current session to it (persistent mode only)                                                                                           | Copies artifact directory to new session namespace when present                     |
-| `/fork pane`, `/fork window`, `/fork tab` | Interactive slash command    | No (parent session retained)                  | Opens a child OMP process from the flushed current transcript in a multiplexer pane/group (tmux window, Zellij/Herdr/Orca tab, or CMUX workspace)                            | Child receives a separate forked session                                            |
-| `--fork <id\|path>`                       | CLI startup                  | Yes after session creation                    | Creates a new session fork from the selected source into current cwd/session dir                                                                                             | Copies source artifacts recursively by default                                      |
-| `/seance [id\|path] [--model sel]`        | Interactive slash command    | No (active session and model unchanged)       | Forks the source transcript into a read-only consultant subagent under the current session                                                                                   | None; the consultant reads the source's artifacts in place                          |
-| `/resume [id\|@claude\|@codex]`           | Interactive slash command    | Yes (active in-memory state replaced)         | Switches to a selected/matched session, or imports a selected foreign session                                                                                                | None                                                                                |
-| `--resume`                                | CLI startup picker           | Yes after session creation                    | Opens selected existing session file (picker opens in current-folder scope; the global list is preloaded only for the empty-everything early exit and instant Tab switching) | None                                                                                |
-| `--resume <id\|path>`                     | CLI startup                  | Yes after session creation                    | Opens existing session; a missing recorded cwd may be re-rooted into the current directory                                                                                   | None                                                                                |
-| `/restart`                                | Interactive slash command    | Yes (process relaunches)                      | Keeps configuration flags; restores a materialized session (`--restore`), otherwise starts fresh                                                                             | None                                                                                |
-| `--continue`                              | CLI startup                  | Yes after session creation                    | Opens terminal breadcrumb or most-recent session; creates new one if none exists                                                                                             | None                                                                                |
->>>>>>> theirs — heading `Operation matrix` (S+F, confidence: low) · weave: run 'weave explain docs/upstream/session-operations-export-share-fork-resume.md' for per-hunk detail, 'weave check' to verify your resolution
 
 ## Export and dump
 
@@ -84,11 +62,8 @@ Behavior details:
 - The bottom **Timeline** drawer and **Trace** view reuse `/trace`'s span assembly and viewer: duration/turn/call axes, idle compression, search, zoom, nested tracks, entry details, and tool aggregates. **Jump to transcript** opens the corresponding session and message. All transcript and trace data remain embedded; no stats server is needed. Both development and release exports load shared libraries from `stencil.so`, so opening the HTML requires network access.
 - Tool calls use `<omp-tool-view>` (shared with collab-web); traces use `<omp-session-trace>` (shared with stats). `bun gen:export-viewer` bundles these with the shell, styles and default themes. A source checkout inlines the generated viewer into each export; packaged releases load their versioned viewer from `build.stencil.so`. Both load shared Markdown and highlighting libraries from content-addressed `stencil.so/assets/omp/` URLs, pinned with Subresource Integrity. Only viewer code is uploaded, never session data.
 - Packaged exports add roughly 2 KiB of fixed HTML overhead; source exports also contain the generated viewer. `--themes` embeds the selected TUI theme overrides in addition to the session data.
-<<<<<<< ours — scope `- Tool calls render through the `<omp-tool-vi...` in heading ``/export [--themes] [outputPath]` (slash command)`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 - Tool calls render through the `<tau-tool-view>` web component — the React per-tool renderers shared with collab-web (`packages/collab-web/src/tool-render/`), prebuilt into `src/export/html/tool-views.generated.js` by `bun run gen:tool-views`.
-=======
->>>>>>> theirs — scope `- Tool calls render through the `<omp-tool-vi...` deleted in theirs
 - No session entries are appended during export.
 - The default filename is `omp-session-<session-file-stem>.html` in the current directory. HTML export is not secret-redacted or encrypted; it can contain raw context, image data, and extension payloads.
 
@@ -156,12 +131,8 @@ a viewer link. Implementation: [`../packages/coding-agent/src/export/share.ts`](
 
 ### TUI phase 1: custom share handler (if present)
 
-<<<<<<< ours — scope `The interactive TUI's `loadCustomShare()` che...` in heading `TUI phase 1: custom share handler (if present)` (S, confidence: medium)
 // refused_by: statement_fold · collision: `The interactive TUI's `loadCustomShare()` checks `~/.omp/agent`…`
 The interactive TUI's `loadCustomShare()` checks `~/.tau/agent` for the first existing candidate:
-=======
-The interactive TUI's `loadCustomShare()` checks the active agent directory
->>>>>>> theirs — scope `The interactive TUI's `loadCustomShare()` che...`
 (default `~/.omp/agent`) for the first existing candidate:
 
 - `share.ts`
@@ -214,15 +185,9 @@ For headless execution, or in the TUI only when no custom share handler is found
      fails rather than uploading an oversized blob.
    - **Secret gist** (`store: "gist"`) — when `gh` is installed and
      authenticated, the sealed blob is pushed base64-encoded as
-<<<<<<< ours — scope `4. Upload target is chosen by `share.store`:` in heading `Default encrypted share` (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (1 contested hunk(s), neither side deleted the other's lines)
      `session.taushare.txt` (budget 5 MB sealed; gist raw fetches cap at
      10 MB), falling back to the share server when `gh` is unusable.
-=======
-     `session.ompshare.txt` (budget 5 MB sealed; gist raw fetches cap at
-     10 MB), falling back to the share server when `gh` is unusable or gist
-     creation fails.
->>>>>>> theirs — scope `4. Upload target is chosen by `share.store`:`
 5. The link is `<share.serverUrl>/<id>#<base64url key>` in both cases. The
    viewer page served there fetches the blob (hex ids via the GitHub gist
    API, anything else from the server's blob store) and decrypts it
@@ -276,15 +241,10 @@ keeping the conversation you can see.
   abort it first.
 - Closes every cached provider-session state entry (server-side conversation /
   prompt-cache handles) and reports how many were pruned.
-<<<<<<< ours — scope `- Mints a fresh provider session id and re-ke...` in heading `Fresh` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `- Mints a fresh provider session id and re-keys hindsight and m…`
 - Mints a fresh provider session id and re-keys hindsight and mnemotau memory to
   it, and invalidates the append-only context so the next turn re-sends the full
   local transcript to the provider.
-=======
-- Mints a fresh provider session id, re-keys memory state, and invalidates the
-  append-only context so the next turn rebuilds from the local conversation.
->>>>>>> theirs — scope `- Mints a fresh provider session id and re-ke...`
 - Leaves the local transcript, session file, and OMP session-manager identity
   unchanged; the provider-facing `AgentSession.sessionId` changes.
 
@@ -482,7 +442,6 @@ With an argument:
 - `/resume <id>` resolves an id/filename prefix with local-first, then global fallback, and opens the copy `resolveResumeTarget` picks, the same one the CLI's `--resume <id>` opens (see CLI `--resume <value>`); an unknown value reports `Session "<value>" not found`.
 - `/resume @claude` and `/resume @codex` open a foreign-session picker. Selecting one converts and persists it under a fresh OMP session identity, then switches to that new session.
 
-<<<<<<< ours — scope `1. Opens the session selector populated via `...` in heading `Interactive `/resume [value]``, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 1. Opens the session selector populated via `SessionManager.list(currentCwd, currentSessionDir)`. The picker always opens in current-folder scope; the empty state (`No sessions in current folder. Press Tab to view all.`) invites Tab into all-projects instead of auto-switching (issue #3099).
 2. Tab toggles to all-projects scope, lazily loading and caching `SessionManager.listAll()`.
@@ -493,20 +452,14 @@ With an argument:
 
 - `/resume <id>` resolves an id/filename prefix with local-first, then global fallback and switches directly to the matched file; an unknown value reports `Session "<value>" not found`.
 - `/resume @claude` and `/resume @codex` open a foreign-session picker. Selecting one converts and persists it under a fresh TAU session identity, then switches to that new session.
-=======
->>>>>>> theirs — scope `1. Opens the session selector populated via `...` deleted in theirs
 
 ## CLI `--resume`
 
 ### `--resume` (no value)
 
-<<<<<<< ours — scope `- `main.ts` lists sessions for the current cw...` in heading ``--resume` (no value)` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `- `main.ts` lists sessions for the current cwd/sessionDir and o…`
 - `main.ts` lists sessions for the current cwd/sessionDir and opens the picker in current-folder scope. When that list is empty it preloads `SessionManager.listAll()` so an architect-initiated Tab switch to all-projects scope is immediate; it does not auto-switch scopes (issue #3099). `No sessions found` is printed only when the global list is also empty.
 - Selected path is opened with `SessionManager.open(selectedPath)` before session creation; the process/project scope then switches to the resumed session's cwd (`switchToResumedProject`), reloading cwd-scoped settings and plugin caches and re-resolving scoped models.
-=======
-- `main.ts` uses `SessionManager.listForPicker()` for the current cwd/sessionDir and opens the picker in current-folder scope. When that list is empty it preloads `SessionManager.listAllForPicker()` so a user-initiated Tab switch is immediate; it does not auto-switch scopes. `No sessions found` is printed only when the global picker list is also empty.
->>>>>>> theirs — scope `- `main.ts` lists sessions for the current cw...`
 - Selected path is opened with `SessionManager.open(selectedPath)` before session creation; the process/project scope then switches to the resumed session's cwd (`switchToResumedProject`), reloading cwd-scoped settings and plugin caches and re-resolving scoped models.
 
 ### `--resume <value>`
@@ -538,13 +491,10 @@ fails with `Session "<path>" not found.`; an existing empty file or malformed
 non-empty headers fail closed without modifying the file, unless the file was
 replaced under a session that went on in a sibling (see above).
 
-<<<<<<< ours — scope `- If the matched session's recorded directory...` in heading ``--resume <value>``, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 - If the matched session's recorded directory no longer exists, CLI asks `Session's directory no longer exists (...). Move (re-root) it into the current directory? [Y/n]`.
   - On yes (default), `SessionManager.open(match.path)` followed by `manager.moveTo(cwd)` re-roots the existing session into the current directory without duplicating it.
   - On no, startup is cancelled. In non-TTY mode, startup fails with an error directing the architect to run interactively.
-=======
->>>>>>> theirs — scope `- If the matched session's recorded directory...` deleted in theirs
 
 ## CLI `--restore`
 

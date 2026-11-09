@@ -2,26 +2,12 @@ import { afterEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { Settings } from "tau/config/settings";
 import { createSpeculativeToolExecutionConfig } from "tau/speculation/host";
 import type { ToolSession } from "tau/tools";
 import { ReadTool } from "tau/tools/read";
 import { removeWithRetries } from "@tau/tau-utils";
-=======
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { createSpeculativeToolExecutionConfig } from "@oh-my-pi/pi-coding-agent/speculation/host";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
-import { cfgTaskSpeculativeLaunch } from "@oh-my-pi/pi-coding-agent/task/settings";
-
-import {
-	cfgToolsSpeculativeExecutionEnabled,
-	cfgToolsSpeculativeExecutionMaxInFlight,
-} from "@oh-my-pi/pi-coding-agent/tools/settings";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/speculative-live-config.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const temporaryDirectories: string[] = [];
 

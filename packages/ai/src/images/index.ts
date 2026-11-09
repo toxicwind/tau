@@ -1,9 +1,5 @@
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { Api, Model } from "@oh-my-pi/pi-catalog/types";`
 import type { Api, Model } from "@tau/tau-catalog/types";
-=======
-import { type Api, IMAGE_GENERATION_APIS, type ImageGenerationApi, type Model } from "@oh-my-pi/pi-catalog/types";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/src/images/index.ts' for per-hunk detail, 'weave check' to verify your resolution
 import * as AIError from "../error";
 import { isFactoryDroidModel } from "../providers/factory-droid";
 import { generateFactoryDroidImage } from "./factory-droid";

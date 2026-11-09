@@ -1,5 +1,4 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 import type { FetchImpl } from "@tau/tau-ai/types";
 import {
@@ -10,18 +9,6 @@ import {
 	fetchResourceMetadataScopes,
 	rfc9728ProtectedResourceMetadataUrl,
 } from "tau/mcp/oauth-discovery";
-=======
-import type { FetchImpl } from "@oh-my-pi/pi-ai/types";
-import {
-	analyzeAuthError,
-	discoverOAuthEndpoints,
-	extractMcpAuthServerUrl,
-	extractOAuthChallengeScopes,
-	fetchResourceMetadataScopes,
-	OAuthIssuerMismatchError,
-	rfc9728ProtectedResourceMetadataUrl,
-} from "@oh-my-pi/pi-coding-agent/mcp/oauth-discovery";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/oauth-discovery.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { type FetchInput, mockFetch } from "./helpers/fetch-mock";
 
 describe("mcp oauth discovery", () => {

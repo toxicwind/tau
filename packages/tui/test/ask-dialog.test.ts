@@ -1,22 +1,12 @@
 import type { ImageContent } from "@oh-my-pi/pi-ai";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import { stripVTControlCharacters } from "node:util";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { setKeybindings } from "@oh-my-pi/pi-tui";`
 import { KeybindingsManager } from "@tau/tau-tui/app-keybindings";
 import type { ExtensionAskDialogQuestion } from "@tau/tau-tui/overlays/ask-dialog";
 import { AskDialogComponent } from "@tau/tau-tui/overlays/ask-dialog";
 import { getThemeByName, setThemeInstance } from "@tau/tau-tui/theme";
 import { setKeybindings } from "@tau/tau-tui";
-=======
-import { KeybindingsManager } from "@oh-my-pi/pi-tui/app-keybindings";
-import type { ExtensionAskDialogQuestion } from "@oh-my-pi/pi-tui/overlays/ask-dialog";
-import { AskDialogComponent } from "@oh-my-pi/pi-tui/overlays/ask-dialog";
-import { getThemeByName, setThemeInstance } from "@oh-my-pi/pi-tui/theme";
-import { setKeybindings, type TerminalFrameProvider } from "@oh-my-pi/pi-tui";
-import type { NativeSurfaceProvider, NativeUiEvent } from "../src/native/node";
-import { TspHarness } from "./native/tsp-harness";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/test/ask-dialog.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const DOWN = "\x1b[B";
 const UP = "\x1b[A";

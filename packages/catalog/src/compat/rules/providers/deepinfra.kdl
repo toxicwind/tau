@@ -1,19 +1,7 @@
 // Catalog entry for "deepinfra".
 
 provider "deepinfra" {
-<<<<<<< HEAD
-=======
-	default-model "deepseek-ai/DeepSeek-V4-Flash-0731"
-	env "DEEPINFRA_API_KEY"
-	dynamic-models-authoritative #true
-	discovery label="DeepInfra" allow-unauthenticated=#true
-	kind-apis {
-		image "openai-images"
-		tts "openai-speech"
-	}
-	// Same-provider image-generation swap target for chat models.
-	image-model "black-forest-labs/FLUX-2-pro"
->>>>>>> upstream/main
+
 
 
 	models "black-forest-labs/FLUX-2-pro" {

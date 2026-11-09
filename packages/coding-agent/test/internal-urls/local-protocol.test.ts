@@ -2,20 +2,9 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { InternalUrlRouter, LocalProtocolHandler, resolveLocalRoot, resolveLocalUrlToPath } from "tau/internal-urls";
 import { removeWithRetries } from "@tau/tau-utils";
-=======
-import {
-	InternalUrlRouter,
-	LocalProtocolHandler,
-	resolveLocalRoot,
-	listLocalFiles,
-	resolveLocalUrlToPath,
-} from "@oh-my-pi/pi-coding-agent/internal-urls";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/internal-urls/local-protocol.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 async function withTempDir<T>(fn: (dir: string) => Promise<T>): Promise<T> {
 	const dir = await fs.mkdtemp(path.join(os.tmpdir(), "local-protocol-"));

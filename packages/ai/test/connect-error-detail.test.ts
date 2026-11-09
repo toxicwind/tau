@@ -1,14 +1,6 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { formatConnectEndStreamError, summarizeConnectErrorDetails } from "@tau/tau-ai/providers/connect-error-detail";
-=======
-import {
-	formatConnectEndStreamError,
-	hasRetryableCursorErrorDetail,
-	summarizeConnectErrorDetails,
-} from "@oh-my-pi/pi-ai/providers/connect-error-detail";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/test/connect-error-detail.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 describe("formatConnectEndStreamError", () => {
 	it("keeps the legacy prefix for a plain code/message error", () => {

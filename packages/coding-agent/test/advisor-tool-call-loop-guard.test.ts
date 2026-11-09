@@ -1,5 +1,4 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { Agent, type AgentMessage, type AgentTool, type AgentTu…`
 import { type } from "@tau/tautype";
 import { Agent, type AgentMessage, type AgentTool, type AgentTurnEndContext } from "@tau/tau-agent-core";
@@ -12,27 +11,6 @@ import { AgentSession } from "tau/session/agent-session";
 import type { AuthStorage } from "tau/session/auth-storage";
 import { SessionManager } from "tau/session/session-manager";
 import { TempDir } from "@tau/tau-utils";
-=======
-import { type } from "@oh-my-pi/omptype";
-import {
-	Agent,
-	type AgentMessage,
-	type AgentTool,
-	type AgentTurnEndContext,
-	type StreamFn,
-} from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, Context, ToolResultMessage } from "@oh-my-pi/pi-ai";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import type { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { finalizeSubagentLifecycle } from "@oh-my-pi/pi-coding-agent/task/executor";
-import { TempDir } from "@oh-my-pi/pi-utils";
-import type { AdvisorConfig } from "@oh-my-pi/pi-tui/overlays/advisor-config";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/advisor-tool-call-loop-guard.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { AdvisorLoopGuard } from "../src/advisor/loop-guard";
 import { cfgAdvisorReviewInterval } from "../src/advisor/settings";
 import { activateTodoTool, createInMemoryAuthStorage } from "./helpers/agent-session-setup";

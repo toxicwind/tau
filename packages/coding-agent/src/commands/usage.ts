@@ -44,7 +44,6 @@ export default class Usage extends Command {
 	};
 
 	static examples = [
-<<<<<<< ours — scope `examples` in class `Usage` (F, confidence: medium)
 // refused_by: container_member · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 		"# Detailed per-account usage breakdown across all providers\n  tau usage",
 		"# Only Anthropic accounts\n  tau usage --provider anthropic",
@@ -54,19 +53,6 @@ export default class Usage extends Command {
 		"# Per-client token burn (which machine/app spent what) over the last 30 days\n  tau usage clients --days 30",
 		"# Invalidate cached usage reports for all providers\n  tau usage invalidate",
 		"# Invalidate cached usage reports for a specific provider\n  tau usage invalidate --provider anthropic",
-=======
-		"# Detailed per-account usage breakdown across all providers\n  omp usage",
-		"# Only Anthropic accounts\n  omp usage --provider anthropic",
-		"# Redact account identifiers for screenshots\n  omp usage --redact",
-		"# Machine-readable output\n  omp usage --json",
-		"# Usage-limit trend over the last 30 days\n  omp usage --history --days 30",
-		"# Per-client token burn (which machine/app spent what) over the last 30 days\n  omp usage clients --days 30",
-		"# OAuth identity keys for task.agentAccountPools (no tokens)\n  omp usage accounts",
-		"# Saved Codex and Claude rate-limit resets per account, with each account's credential id\n  omp usage reset",
-		"# Spend one saved reset on a listed account\n  omp usage reset codex/3",
-		"# Invalidate cached usage reports for all providers\n  omp usage invalidate",
-		"# Invalidate cached usage reports for a specific provider\n  omp usage invalidate --provider anthropic",
->>>>>>> theirs — scope `examples` · weave: run 'weave explain packages/coding-agent/src/commands/usage.ts' for per-hunk detail, 'weave check' to verify your resolution
 	];
 
 	async run(): Promise<void> {

@@ -711,17 +711,8 @@ export function getUpdateStateDir(): string {
 	return dirs.rootSubdir("update", "state");
 }
 
-<<<<<<< ours — scope `declaration` in function `getLogsDir` (S, confidence: medium)
 // refused_by: statement_fold · collision: `/** Get the logs directory (~/.omp/logs). */`
 /** Get the logs directory (~/.tau/logs). */
-=======
-/**
- * Get the logs directory (~/.omp/logs). `bun test` processes get
- * `<tmpdir>/omp-test-logs-<uid>` instead, so suites never write into the
- * developer's real logs; the uid suffix (as for the test session-owners dir)
- * keeps users of a shared `/tmp` from owning each other's directory.
- */
->>>>>>> theirs — scope `declaration` · weave: run 'weave explain packages/utils/src/dirs.ts' for per-hunk detail, 'weave check' to verify your resolution
 export function getLogsDir(): string {
 	if (isBunTestRuntime()) {
 		const uid = typeof process.getuid === "function" ? process.getuid() : os.userInfo().username;
@@ -742,12 +733,8 @@ export function localDay(date: Date): string {
 	return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 }
 
-<<<<<<< ours — scope `declaration` in function `getLogPath` (S, confidence: medium)
 // refused_by: statement_fold · collision: `/** Get this process's dated log path (~/.omp/logs/omp.YYYY-MM-…`
 /** Get this process's dated log path (~/.tau/logs/tau.YYYY-MM-DD.PID.log). */
-=======
-/** Get this process's dated log path (~/.omp/logs/omp.YYYY-MM-DD.PID.log, local-day named like the rotating sink). */
->>>>>>> theirs — scope `declaration`
 export function getLogPath(date = new Date(), pid = process.pid): string {
 	return path.join(getLogsDir(), `${APP_NAME}.${localDay(date)}.${pid}.log`);
 }
@@ -793,7 +780,6 @@ export function getRemoteDir(): string {
  * Expand a leading `~` and require an absolute result. Returns `undefined` for
  * empty/whitespace input or a path that is still relative after expansion.
  *
-<<<<<<< ours — function `resolveWorktreeBase` (S+F, confidence: low)
 // refused_by: rename_vs_edit_guard · collision: `* (PR checkout, task isolation) and cleanup (`omp worktree`). A…` +1 more
  * A worktree base is process-global and consumed by both creation
  * (PR checkout, task isolation) and cleanup (`tau worktree`). A relative value
@@ -801,16 +787,6 @@ export function getRemoteDir(): string {
  * cleanup could disagree — we refuse it rather than silently bind it to cwd.
  */
 function resolveWorktreeBase(value: string | undefined): string | undefined {
-=======
- * Worktree bases and the natives directory are process-global: a worktree base
- * is consumed by both creation (PR checkout, task isolation) and cleanup
- * (`omp worktree`), and every launch extracts or loads the native addon from
- * the same natives directory. A relative value would resolve against whatever
- * cwd happened to launch `omp`, so those readers could disagree — we refuse it
- * rather than silently bind it to cwd.
- */
-function resolveAbsoluteDir(value: string | undefined): string | undefined {
->>>>>>> theirs — function `resolveWorktreeBase` (S+F, confidence: low)
 	const trimmed = value?.trim();
 	if (!trimmed) return undefined;
 	let p = trimmed;
@@ -845,12 +821,8 @@ export function setWorktreesDir(dir: string | undefined): string | undefined {
  * ignored and resolution falls through.
  */
 export function getWorktreesDir(): string {
-<<<<<<< ours — scope `return resolveWorktreeBase(process.env.OMP_WO...` in function `getWorktreesDir` (S, confidence: medium)
 // refused_by: statement_fold · collision: `return resolveWorktreeBase(process.env.OMP_WORKTREE_DIR) ?? wor…`
 	return resolveWorktreeBase(process.env.TAU_WORKTREE_DIR) ?? worktreesDirOverride ?? dirs.rootSubdir("wt", "data");
-=======
-	return resolveAbsoluteDir(process.env.OMP_WORKTREE_DIR) ?? worktreesDirOverride ?? dirs.rootSubdir("wt", "data");
->>>>>>> theirs — scope `return resolveWorktreeBase(process.env.OMP_WO...`
 }
 
 /** Get the SSH control socket directory (~/.tau/ssh-control). */
@@ -985,12 +957,8 @@ export function getNativeGrammarsDir(): string {
 	return path.join(getNativesDir(), "grammars");
 }
 
-<<<<<<< ours — scope `declaration` in function `getNativesDir` (S, confidence: medium)
 // refused_by: statement_fold · collision: `/** Get the natives directory (~/.omp/natives). */`
 /** Get the natives directory (~/.tau/natives). */
-=======
-/** Get the natives directory. PI_NATIVES_DIR overrides the usual cache root; relative values are ignored. */
->>>>>>> theirs — scope `declaration`
 export function getNativesDir(): string {
 	return resolveAbsoluteDir(process.env.PI_NATIVES_DIR) ?? dirs.rootSubdir("natives", "cache");
 }
@@ -1078,14 +1046,11 @@ export function getPredictStateDir(agentDir: string | undefined, method: string)
 	adoptLegacyDir(path.join(agentDir ?? dirs.agentDir, subdir), stateDir);
 	return stateDir;
 }
-<<<<<<< ours — function `getComposerCacheDir` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 /** Get the per-project composer speculative cache directory (~/.tau/agent/cache/composer; XDG default: $XDG_CACHE_HOME/tau/cache/composer). */
 export function getComposerCacheDir(agentDir?: string): string {
 	return dirs.agentSubdir(agentDir, path.join("cache", "composer"), "cache");
 }
-=======
->>>>>>> theirs — function `getComposerCacheDir` (S+F, confidence: low)
 
 /** Get the sessions directory (~/.tau/agent/sessions). */
 export function getSessionsDir(agentDir?: string): string {

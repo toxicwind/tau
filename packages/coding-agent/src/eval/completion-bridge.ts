@@ -12,20 +12,12 @@
  * in, text (or, with `schema`, a structured object) out.
  */
 
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { instrumentedCompleteSimple, resolveTelemetry, type Thi…` +1 more
 import { type } from "@tau/tautype";
 import { instrumentedCompleteSimple, resolveTelemetry, type ThinkingLevel } from "@tau/tau-agent-core";
 import { type Api, type AssistantMessage, Effort, type Model, type Tool } from "@tau/tau-ai";
 import { clampThinkingLevelForModel, getSupportedEfforts } from "@tau/tau-catalog/model-thinking";
 import { Snowflake } from "@tau/tau-utils";
-=======
-import { type } from "@oh-my-pi/omptype";
-import { instrumentedCompleteSimple, resolveTelemetry } from "@oh-my-pi/pi-agent-core";
-import { type Api, type AssistantMessage, Effort, type Model, type Tool } from "@oh-my-pi/pi-ai";
-import { clampThinkingLevelForModel, getSupportedEfforts } from "@oh-my-pi/pi-catalog/model-thinking";
-import { Snowflake } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/eval/completion-bridge.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { extractTextContent, extractToolCall, parseJsonPayload } from "../commit/utils";
 
 import type { ModelRegistry } from "../config/model-registry";
@@ -49,17 +41,8 @@ import {
 	type RetryFallbackResolutionContext,
 	resolveRetryFallbackChainKey,
 } from "../session/retry-fallback-chains";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { instrumentedCompleteSimple, resolveTelemetry, type Thi…` +1 more
 import { shouldDisableReasoning, toReasoningEffort } from "@tau/tau-tui/thinking";
-=======
-import {
-	AUTO_THINKING,
-	type ConfiguredThinkingLevel,
-	shouldDisableReasoning,
-	toReasoningEffort,
-} from "@oh-my-pi/pi-tui/thinking";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import type { JsStatusEvent } from "./js/shared/types";
 
 import { cfgDisabledProviders } from "../config/model-settings";

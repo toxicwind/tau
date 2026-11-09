@@ -385,7 +385,6 @@ async function cmdRelease(versionOrBump: string): Promise<void> {
 	}
 	console.log();
 
-<<<<<<< ours — scope `rootPkgRaw = rootPkgRaw.replace(/("@oh-my-pi\...` in function `cmdRelease` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `// 3b. Rename the pi-natives version sentinel so any `.node` le…` +8 more
 	// 3b. Rename the tau-natives version sentinel so any `.node` left on disk from
 	// a previous release physically cannot expose the symbol the new `index.js`
@@ -415,12 +414,6 @@ async function cmdRelease(versionOrBump: string): Promise<void> {
 		process.exit(1);
 	}
 	console.log(`  sentinel: ${sentinelName}\n`);
-=======
-	// pi-natives addons carry no per-release Rust edit: every install stamps
-	// `packages/natives/package.json#version` into the addon post-link
-	// (scripts/stamp-native-version.ts via scripts/bazel-natives.ts), so the
-	// version bump above is the only native-facing change.
->>>>>>> theirs — scope `rootPkgRaw = rootPkgRaw.replace(/("@oh-my-pi\...` · weave: run 'weave explain scripts/release.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 	// 4. Regenerate lockfiles and generated configs
 	// Only workspace member versions change here; third-party deps are refreshed

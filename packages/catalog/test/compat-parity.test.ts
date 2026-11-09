@@ -22,7 +22,6 @@ import type { Api, Model, ModelSpec } from "../src/types";
 /** Fields retired from the engine — still present in pre-engine baked rows. */
 const RETIRED_COMPAT_FIELDS = new Set(["clampOutputToModelMax"]);
 
-<<<<<<< ours — variable `NEW_COMPAT_FIELDS` (T+F, confidence: medium)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 /** Fields introduced by the compat engine — absent from pre-engine baked rows. */
 const NEW_COMPAT_FIELDS = new Set([
@@ -45,8 +44,6 @@ const NEW_COMPAT_FIELDS = new Set([
 	"antigravityClaudeToolMode",
 	"antigravityUsageLabel",
 ]);
-=======
->>>>>>> theirs — variable `NEW_COMPAT_FIELDS` (T+F, confidence: medium) · weave: run 'weave explain packages/catalog/test/compat-parity.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 function jsonClone<T>(value: T): unknown {
 	return value === undefined ? undefined : JSON.parse(JSON.stringify(value));
 }
@@ -63,12 +60,9 @@ function diffValues(prefix: string, baked: unknown, engine: unknown, out: string
 	) {
 		const keys = new Set([...Object.keys(baked), ...Object.keys(engine)]);
 		for (const key of keys) {
-<<<<<<< ours — function `diffValues` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 			if (NEW_COMPAT_FIELDS.has(key)) continue;
 			if (RETIRED_COMPAT_FIELDS.has(key)) continue;
-=======
->>>>>>> theirs — function `diffValues` (F, confidence: medium)
 			diffValues(
 				`${prefix}.${key}`,
 				(baked as Record<string, unknown>)[key],

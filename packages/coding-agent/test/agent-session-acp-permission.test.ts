@@ -6,7 +6,6 @@
  * behavior they have in the TUI.
  */
 import { afterAll, afterEach, beforeAll, expect, it, spyOn } from "bun:test";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { Agent, type AgentTool } from "@oh-my-pi/pi-agent-core";` +2 more
 import { type } from "@tau/tautype";
 import { Agent, type AgentTool } from "@tau/tau-agent-core";
@@ -28,33 +27,6 @@ import { SessionManager } from "tau/session/session-manager";
 import type { ToolSession } from "tau/tools";
 import { dispatchXdevTool, resolveMountedXdevExecutable, type XdevState } from "tau/tools/xdev";
 import { TempDir } from "@tau/tau-utils";
-=======
-import { type } from "@oh-my-pi/omptype";
-import { Agent, type AgentTool, type AgentToolContext } from "@oh-my-pi/pi-agent-core";
-import { createMockModel, type MockModelOptions } from "@oh-my-pi/pi-ai/providers/mock";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { EditTool } from "@oh-my-pi/pi-coding-agent/edit";
-import { callSessionTool } from "@oh-my-pi/pi-coding-agent/eval/js/tool-bridge";
-import type { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
-import { ExtensionToolWrapper } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/wrapper";
-import { createMCPToolName } from "@oh-my-pi/pi-coding-agent/mcp/tool-bridge";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import type {
-	ClientBridge,
-	ClientBridgePermissionOutcome,
-	ClientBridgePermissionToolCall,
-} from "@oh-my-pi/pi-coding-agent/session/client-bridge";
-import { convertToLlm } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { BashTool } from "@oh-my-pi/pi-coding-agent/tools/bash";
-import { EvalTool } from "@oh-my-pi/pi-coding-agent/tools/eval";
-import { computerTurnInFlight, registerComputerController } from "@oh-my-pi/pi-coding-agent/tools/computer/supervisor";
-import { dispatchXdevTool, resolveMountedXdevExecutable, type XdevState } from "@oh-my-pi/pi-coding-agent/tools/xdev";
-import { TempDir, withTimeout } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/agent-session-acp-permission.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 // ---------------------------------------------------------------------------
 // Shared setup

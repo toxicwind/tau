@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import unittest
 
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 # refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 from tau_rpc import (
     AgentEndEvent,
@@ -17,48 +16,6 @@ from tau_rpc import (
     parse_notification,
     parse_session_state,
 )
-=======
-from omp_rpc import (
-    AgentEndEvent,
-    AskOption,
-    AutoCompactionEndEvent,
-    AutoCompactionStartEvent,
-    CacheWarmingEndEvent,
-    ExtensionUiRequest,
-    GoalUpdatedEvent,
-    IrcMessageEvent,
-    LiveTranscriptEvent,
-    MessageEndEvent,
-    MessageStartEvent,
-    MessageUpdateEvent,
-    PromptError,
-    PromptResultEvent,
-    NoticeEvent,
-    SessionSettledEvent,
-    SessionState,
-    SubagentEvent,
-    ThinkingLevelChangedEvent,
-    TodoReminderEvent,
-    ToolStreamUpdateEvent,
-    UnknownNotification,
-    assistant_text,
-    assistant_text_with_thinking,
-    parse_notification,
-    parse_session_state,
-)
-
-
-GOAL = {
-    "id": "goal-1",
-    "objective": "Ship the parser",
-    "status": "paused",
-    "tokenBudget": 5000,
-    "tokensUsed": 1200,
-    "timeUsedSeconds": 42.5,
-    "createdAt": 1,
-    "updatedAt": 2,
-}
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain python/omp-rpc/tests/test_protocol.py' for per-hunk detail, 'weave check' to verify your resolution
 
 
 class ProtocolParsingTests(unittest.TestCase):

@@ -1,6 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { Model } from "@oh-my-pi/pi-ai";` +1 more
 import { Agent } from "@tau/tau-agent-core";
 import type { Model } from "@tau/tau-ai";
@@ -12,20 +11,6 @@ import { AgentSession } from "tau/session/agent-session";
 import { AuthStorage } from "tau/session/auth-storage";
 import { SessionManager } from "tau/session/session-manager";
 import { TempDir } from "@tau/tau-utils";
-=======
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, Model } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { SecretObfuscator } from "@oh-my-pi/pi-coding-agent/secrets";
-import { AgentSession, type AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { CacheWarmer } from "@oh-my-pi/pi-coding-agent/session/cache-warmer";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/session/rpc-auto-maintenance-scope.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 import { cfgCompactionEnabled } from "@oh-my-pi/pi-coding-agent/session/context-settings";
 import {
@@ -259,7 +244,6 @@ describe("AgentSession auto-maintenance controls and cache-warming retention", (
 	});
 });
 
-<<<<<<< ours — test_suite `AgentSession auto-maintenance controls are session-scoped by default` (T+F, confidence: medium)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 /**
  * Regression guard for #11431: `set_auto_compaction`/`set_auto_retry` (which drive
@@ -334,5 +318,3 @@ describe("AgentSession auto-maintenance controls are session-scoped by default",
 		expect(onDisk).toContain("enabled: true");
 	});
 });
-=======
->>>>>>> theirs — test_suite `AgentSession auto-maintenance controls are session-scoped by default` (T+F, confidence: medium)

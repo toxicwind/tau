@@ -23,7 +23,6 @@ import type {
 	ServiceTier,
 	ServiceTierByFamily,
 	SimpleStreamOptions,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { prewarmOpenAICodexResponses } from "@oh-my-pi/pi-ai/pr…` +2 more
 } from "@tau/tau-ai";
 import { resolveApiKeyOnce } from "@tau/tau-ai/auth-retry";
@@ -40,27 +39,6 @@ import * as postmortem from "@tau/tau-utils/postmortem";
 import * as prompt from "@tau/tau-utils/prompt";
 import { Snowflake } from "@tau/tau-utils/snowflake";
 import { INTENT_FIELD } from "@tau/tau-wire";
-=======
-} from "@oh-my-pi/pi-ai";
-import { resolveApiKeyOnce } from "@oh-my-pi/pi-ai/auth-retry";
-import type { DiscoverAuthStorageOptions } from "@oh-my-pi/pi-ai/auth-broker/discover";
-import type { Dialect } from "@oh-my-pi/pi-ai/dialect";
-import { anthropicHostRunsTool } from "@oh-my-pi/pi-ai/providers/anthropic";
-import { prewarmModelConnection } from "@oh-my-pi/pi-ai/providers/connection-prewarm";
-import { isOpenAICodexWebSocketPreferred } from "@oh-my-pi/pi-ai/providers/openai-codex-transport";
-import { withCredentialRedaction } from "@oh-my-pi/pi-ai/providers/transform-messages";
-import { sendsImageInputOnWire } from "@oh-my-pi/pi-ai/providers/vision-guard";
-import { FALLBACK_DIALECT, preferredDialect } from "@oh-my-pi/pi-catalog/identity";
-import type { Component } from "@oh-my-pi/pi-tui";
-import { $env } from "@oh-my-pi/pi-utils/env";
-import { getAgentDir, getModelDbPath, getProjectDir } from "@oh-my-pi/pi-utils/dirs";
-import * as logger from "@oh-my-pi/pi-utils/logger";
-import * as postmortem from "@oh-my-pi/pi-utils/postmortem";
-import * as prompt from "@oh-my-pi/pi-utils/prompt";
-import { Snowflake } from "@oh-my-pi/pi-utils/snowflake";
-import { INTENT_FIELD } from "@oh-my-pi/pi-wire";
-import { DEFAULT_FRAME_DATA_BYTES_BUDGET, frameDataBytesBudget } from "@oh-my-pi/snapcompact";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/sdk.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	discoverAdvisorConfigs,
 	discoverWatchdogFiles,
@@ -164,18 +142,11 @@ import {
 	setActiveSkills,
 } from "./extensibility/skills";
 import { type FileSlashCommand, loadSlashCommands as loadSlashCommandsInternal } from "./extensibility/slash-commands";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { prewarmOpenAICodexResponses } from "@oh-my-pi/pi-ai/pr…` +2 more
 import type { HindsightSessionState } from "./hindsight/state";
 import { LocalProtocolHandler, type LocalProtocolOptions } from "./internal-urls";
 import { stripXdUrlPrefix } from "@tau/tau-tui/tools/xd-url";
 import { setSharedLspEnabled } from "./lsp/client";
-=======
-import type { HindsightSessionStateApi } from "./hindsight/state";
-import { LocalProtocolHandler, type LocalProtocolOptions, outRepliesActive } from "./internal-urls";
-import { stripXdUrlPrefix } from "@oh-my-pi/pi-tui/tools/xd-url";
-import { holdSharedLsp } from "./lsp/client";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import { LSP_STARTUP_EVENT_CHANNEL, type LspStartupEvent } from "./lsp/startup-events";
 import {
 	deduplicateMCPToolsByName,
@@ -189,7 +160,6 @@ import {
 	type MCPToolsLoadResult,
 	shouldFilterBrowserMCPForPrelude,
 } from "./mcp";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { prewarmOpenAICodexResponses } from "@oh-my-pi/pi-ai/pr…` +2 more
 import { parseMCPToolName } from "@tau/tau-tui/tools/mcp";
 import { MCP_CONNECTION_STATUS_EVENT_CHANNEL, type McpConnectionStatusEvent } from "./mcp/startup-events";
@@ -197,16 +167,6 @@ import { resolveMCPToolAlias } from "./mcp/tool-bridge";
 import { createSessionMemoryRuntimeContext, resolveMemoryBackend } from "./memory-backend";
 import { MEMORY_BACKEND_TOOL_NAMES } from "./memory-backend/tool-names";
 import type { MnemotauSessionState } from "./mnemotau/state";
-=======
-import { parseMCPToolName } from "@oh-my-pi/pi-tui/tools/mcp";
-import { mapPromptArguments } from "./mcp/prompt-args";
-import { MCP_CONNECTION_STATUS_EVENT_CHANNEL, type McpConnectionStatusEvent } from "./mcp/startup-events";
-import { resolveMCPToolAlias } from "./mcp/tool-bridge";
-import { createSessionMemoryRuntimeContext, resolveMemoryBackend } from "./memory-backend";
-import { MEMORY_BACKEND_TOOL_NAMES } from "./memory-backend/tool-names";
-import type { MnemopiSessionStateApi } from "./mnemopi/state";
-import autolearnCaptureRefused from "./prompts/system/autolearn-capture-refused.md" with { type: "text" };
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import mcpXdevGuidanceTemplate from "./prompts/system/mcp-xdev-guidance.md" with { type: "text" };
 import lateDiagnosticTemplate from "./prompts/tools/lsp-late-diagnostic.md" with { type: "text" };
 import { AgentLifecycleManager } from "./registry/agent-lifecycle";
@@ -307,13 +267,8 @@ import { AgentOutputManager } from "./task/output-manager";
 import { wrapStreamFnWithProviderConcurrency } from "./task/provider-concurrency";
 import { sessionDelegationBias } from "./task/prompt-policy";
 import { isScoutSpawnable } from "./task/spawn-policy";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { prewarmOpenAICodexResponses } from "@oh-my-pi/pi-ai/pr…` +2 more
 import type { StructuredSubagentSchemaMode } from "@tau/tau-tui/tools/task";
-=======
-import { isMainThread } from "./thread/identity";
-import type { StructuredSubagentSchemaMode } from "@oh-my-pi/pi-tui/tools/task";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import {
 	AUTO_THINKING,
 	type ConfiguredThinkingLevel,
@@ -929,12 +884,7 @@ export interface CreateAgentSessionOptions {
 	parentHindsightSessionState?: HindsightSessionStateApi;
 	/** Parent Mnemotau state to alias for subagent memory tools. */
 	parentMnemotauSessionState?: MnemotauSessionState;
-<<<<<<< ours — scope `parentMnemopiSessionState` in interface `CreateAgentSessionOptions`, deleted in ours (S, confidence: medium)
 // refused_by: container_member · collision: none (no common ancestor text)
-=======
-	/** Parent Mnemopi state: subagents alias it; a top-level fork (`/tan`) inherits its delivered recall. */
-	parentMnemopiSessionState?: MnemopiSessionStateApi;
->>>>>>> theirs — scope `parentMnemopiSessionState` deleted in ours
 	/** Pre-allocated agent identity for IRC routing. Default: "Main" for top-level, parentTaskPrefix-derived for sub. */
 	agentId?: string;
 	/** Display name for the agent in IRC. Default: "main" or "sub". */
@@ -3040,7 +2990,6 @@ async function createAgentSessionScoped(options: CreateAgentSessionOptions): Pro
 		let customToolPaths: ToolPathWithSource[] = [];
 		const inlineExtensions: ExtensionFactory[] = [];
 		if (!restrictToolNames) {
-<<<<<<< ours — scope `try {` in function `createAgentSessionScoped` (F, confidence: medium)
 // refused_by: statement_fold · collision: `// `omp models` (which awaits discovery) lists the model. Await…` +1 more
 			// Add image tools when generation is enabled and either no explicit tool
 			// whitelist was given or it names `generate_image`. Unlike built-in tools
@@ -3060,9 +3009,6 @@ async function createAgentSessionScoped(options: CreateAgentSessionOptions): Pro
 			}
 
 			// Discover custom tools from `.tau/tools/`, `.claude/tools/`, plugins, etc.
-=======
-			// Discover custom tools from `.omp/tools/`, `.claude/tools/`, plugins, etc.
->>>>>>> theirs — scope `try {`
 			// Subagents reuse the parent's scan via `preloadedCustomToolPaths` to skip
 			// the FS walk, but ALWAYS re-call `loadCustomTools` here so factories bind
 			// to THIS session's `CustomToolAPI` (cwd, exec, pushPendingAction, UI).
@@ -3733,7 +3679,6 @@ async function createAgentSessionScoped(options: CreateAgentSessionOptions): Pro
 				// llama.cpp, or an openai-compat proxy) ships no static models, so
 				// the static+cached catalog resolved nothing above. Background
 				// discovery in main.ts fires only AFTER createAgentSession returns,
-<<<<<<< ours — scope `try {` in function `createAgentSessionScoped` (F, confidence: medium)
 // refused_by: statement_fold · collision: `// `omp models` (which awaits discovery) lists the model. Await…` +1 more
 				// so on a cache-cold boot the configured default stays unresolved
 				// and `pick` silently degrades to an unrelated authed provider's
@@ -3743,11 +3688,6 @@ async function createAgentSessionScoped(options: CreateAgentSessionOptions): Pro
 				// configured (must win over `pick`) or nothing resolved at all.
 				// The common path — role already resolved, or a `pick` with no
 				// configured default — never pays for it.
-=======
-				// so on a cache-cold boot the configured default stays unresolved.
-				// Await one cache-aware discovery pass before choosing either its
-				// configured retry fallback or an unrelated provider default.
->>>>>>> theirs — scope `try {`
 				const defaultRoleConfigured = Boolean(settings.getModelRole("default"));
 				if (
 					!hasExplicitModel &&
@@ -4346,7 +4286,6 @@ async function createAgentSessionScoped(options: CreateAgentSessionOptions): Pro
 			xdev,
 		): Promise<BuildSystemPromptResult> => {
 			const promptCwd = sessionManager.getCwd();
-<<<<<<< ours — scope `try {` in function `createAgentSessionScoped` (F, confidence: medium)
 // refused_by: statement_fold · collision: `// `omp models` (which awaits discovery) lists the model. Await…` +1 more
 			const activeRepoContext = hasSession
 				? await logger.time("resolveActiveRepoContext", resolveRepoContext, promptCwd)
@@ -4361,12 +4300,6 @@ async function createAgentSessionScoped(options: CreateAgentSessionOptions): Pro
 			// Re-discover rules from disk on every session-scoped rebuild, mirroring the
 			// context-file refresh above. The rule buckets are otherwise frozen at
 			// session creation, so a `RULES.md` (or any rule) created or edited while tau
-=======
-			let activeRepoContext = initialActiveRepoContext;
-			// Re-discover rules and context files from disk on every session-scoped
-			// rebuild. The rule buckets are otherwise frozen at
-			// session creation, so a `RULES.md` (or any rule) created or edited while omp
->>>>>>> theirs — scope `try {`
 			// runs never reaches the prompt on /clear or /new until restart (issue #10940).
 			// resetCapabilities() clears the fs cache at those boundaries, so this observes
 			// the current file. TTSR registrations are replaced from the new snapshot while
@@ -5076,7 +5009,6 @@ async function createAgentSessionScoped(options: CreateAgentSessionOptions): Pro
 			transformAssistantMessagePreservesToolCalls: true,
 			resolveFallbackTool: resolveDeviceTool,
 			suggestFallbackToolNames: suggestDeviceToolNames,
-<<<<<<< ours — scope `try {` in function `createAgentSessionScoped` (F, confidence: medium)
 // refused_by: statement_fold · collision: `// `omp models` (which awaits discovery) lists the model. Await…` +1 more
 			intentTracing: !!intentField,
 			pruneToolDescriptions: inlineToolDescriptors,
@@ -5088,15 +5020,6 @@ async function createAgentSessionScoped(options: CreateAgentSessionOptions): Pro
 			// keeps running DeepSeek's scanner on a GLM stream. The resolver reads
 			// the live agent model per provider call.
 			abortOnFabricatedToolResult: settings.get("tools.abortOnFabricatedResult"),
-=======
-			intentTracing: cfgToolsIntentTracing.get(settings),
-			intentDescription: spotlightExperiment ? SPOTLIGHT_INTENT_DESCRIPTION : undefined,
-			pruneToolDescriptions: resolveInlineToolDescriptors(),
-			// Per request against the model actually requested, so `tools.format`
-			// changes and model switches reach the next provider call.
-			dialectResolver: dialectModel => resolveDialect(cfgToolsFormat.get(settings), dialectModel),
-			abortOnFabricatedToolResult: cfgToolsAbortOnFabricatedResult.get(settings),
->>>>>>> theirs — scope `try {`
 			speculativeToolExecution,
 			getToolChoice: () => session?.nextToolChoiceDirective(),
 			onToolChoiceUnavailable: () => session?.toolChoiceQueue.reject("unavailable"),
@@ -5781,27 +5704,11 @@ async function createAgentSessionScoped(options: CreateAgentSessionOptions): Pro
 			}
 		}
 
-<<<<<<< ours — scope `try {` in function `createAgentSessionScoped` (F, confidence: medium)
 // refused_by: statement_fold · collision: `// `omp models` (which awaits discovery) lists the model. Await…` +1 more
 		// Broker-shared language servers: one server per project, multiplexed
 		// across tau instances by the LSP mux daemon. Session-level because the
 		// flag lives in module state consulted on every client cold-start.
 		setSharedLspEnabled(enableLsp && settings.get("lsp.shared"));
-=======
-		// Broker-shared language servers (see lsp/mux/protocol.ts). The mode is
-		// process state read on every client cold start, so only a session that binds
-		// process state holds it, until disposed. A subagent or helper session (usually
-		// enableLsp=false) must not switch the parent's later cold starts to private
-		// servers. Re-applied live on `lsp.shared` changes; running clients keep
-		// their transport until they exit or idle out.
-		if (bindsProcessState) {
-			const sharedLsp = holdSharedLsp(enableLsp && cfgLspShared.get(settings));
-			disposeCallbacks.add(sharedLsp.release);
-			if (enableLsp) {
-				cfgLspShared.listen(session, shared => sharedLsp.set(shared));
-			}
-		}
->>>>>>> theirs — scope `try {`
 
 		// Start LSP warmup in the background so startup does not block on language server initialization.
 		// With `lsp.lazy` (the default) the warmup is skipped: recognized servers are still discovered and

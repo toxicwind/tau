@@ -147,11 +147,8 @@ fn build_applefm_bridge() {
 	);
 
 	println!("cargo:rustc-env=OMP_APPLEFM_BRIDGE={}", library.display());
-<<<<<<< ours — scope `println!("cargo:rustc-link-lib=static=omp_app...` in function `build_applefm_bridge`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	println!("cargo:rustc-link-lib=static=tau_applefm");
-=======
->>>>>>> theirs — scope `println!("cargo:rustc-link-lib=static=omp_app...` deleted in theirs · weave: run 'weave explain crates/tau-natives/build.rs' for per-hunk detail, 'weave check' to verify your resolution
 }
 
 /// Returns `(swiftc, sdk)` for the first toolchain `build-bridge.sh detect`
@@ -187,16 +184,12 @@ fn build_oauth_callback_relay(target_os: &str) {
 		&name,
 		"OMP_OAUTH_RELAY_BINARY",
 	);
-<<<<<<< ours — scope `let mut output = PathBuf::from(env::var_os("O...` in function `build_oauth_callback_relay`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	let mut output = PathBuf::from(env::var_os("OUT_DIR").expect("OUT_DIR should be set"))
 		.join("tau-oauth-callback-relay");
-=======
->>>>>>> theirs — scope `let mut output = PathBuf::from(env::var_os("O...` deleted in theirs
 	if target_os == "windows" {
 		name.push_str(".exe");
 	}
-<<<<<<< ours — scope `command` in function `build_oauth_callback_relay`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	command
 		.current_dir(&manifest_dir)
@@ -213,13 +206,8 @@ fn build_oauth_callback_relay(target_os: &str) {
 		.arg(&relay_source)
 		.arg("-o")
 		.arg(&output);
-=======
->>>>>>> theirs — scope `command` deleted in theirs
-<<<<<<< ours — scope `println!("cargo:rustc-env=OMP_OAUTH_RELAY_BIN...` in function `build_oauth_callback_relay`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	println!("cargo:rustc-env=TAU_OAUTH_RELAY_BINARY={}", output.display());
-=======
->>>>>>> theirs — scope `println!("cargo:rustc-env=OMP_OAUTH_RELAY_BIN...` deleted in theirs
 }
 
 /// Compiles the standalone binary rooted at `root` (with the modules it
@@ -310,17 +298,11 @@ fn build_darwin_oauth_callback_helper() {
 		&["AppKit"],
 		"12.0",
 	);
-<<<<<<< ours — scope `let output = PathBuf::from(env::var_os("OUT_D...` in function `build_darwin_oauth_callback_helper`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	let output = PathBuf::from(env::var_os("OUT_DIR").expect("OUT_DIR should be set"))
 		.join("tau-oauth-callback-darwin-helper");
-=======
->>>>>>> theirs — scope `let output = PathBuf::from(env::var_os("OUT_D...` deleted in theirs
-<<<<<<< ours — scope `println!("cargo:rustc-env=OMP_OAUTH_DARWIN_HE...` in function `build_darwin_oauth_callback_helper`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	println!("cargo:rustc-env=TAU_OAUTH_DARWIN_HELPER={}", output.display());
-=======
->>>>>>> theirs — scope `println!("cargo:rustc-env=OMP_OAUTH_DARWIN_HE...` deleted in theirs
 }
 
 fn build_darwin_native_helper(

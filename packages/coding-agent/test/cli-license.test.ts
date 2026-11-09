@@ -25,7 +25,6 @@ it("prints the OMP license with the CLI and native addon notices on the exact to
 	expect(stdout).toBe(`OMP License and Third-Party Notices\n\n${sections.join("\n\n")}\n`);
 });
 
-<<<<<<< ours — test `prints the embedded OMP license and aggregate notices on the exact top-level flag path` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 it("prints the embedded TAU license and aggregate notices on the exact top-level flag path", async () => {
 	const proc = Bun.spawn([process.execPath, cliEntry, "--license"], {
@@ -45,5 +44,3 @@ it("prints the embedded TAU license and aggregate notices on the exact top-level
 	expect(stderr).toBe("");
 	expect(stdout).toBe(`TAU License and Third-Party Notices\n\n${license.trimEnd()}\n\n${notices.trimEnd()}\n`);
 });
-=======
->>>>>>> theirs — test `prints the embedded OMP license and aggregate notices on the exact top-level flag path` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/cli-license.test.ts' for per-hunk detail, 'weave check' to verify your resolution

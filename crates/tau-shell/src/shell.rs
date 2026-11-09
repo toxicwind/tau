@@ -20,12 +20,8 @@ use anyhow::{Error, Result};
 use bstr::{BString, ByteSlice};
 use bytes::Bytes;
 use flume::Sender;
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `use pi_builtins::{BuiltinSet, default_builtins};`
 use tau_builtins::{BuiltinSet, default_builtins};
-=======
-use pi_vfs::Fs;
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain crates/tau-shell/src/shell.rs' for per-hunk detail, 'weave check' to verify your resolution
 #[cfg(not(unix))]
 use tokio::io::AsyncReadExt as _;
 use tokio::{sync::Mutex as TokioMutex, time};
@@ -756,7 +752,6 @@ async fn create_session(config: &ShellConfig) -> Result<ShellSessionCore> {
 	create_session_for_run(config, None).await
 }
 
-<<<<<<< ours — function `copy_env_into_shell` (T+F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 /// Copies the host environment into `shell`, merging duplicate `PATH` values
 /// and registering the merged `PATH` last.
@@ -813,54 +808,6 @@ fn copy_env_into_shell(
 	}
 
 	Ok(())
-=======
-/// Copies the host environment into `vars` (the shell's starting
-/// environment, every entry exported), merging duplicate `PATH` values and
-/// setting the merged `PATH` last.
-///
-/// Entries whose key or value is not valid Unicode are skipped: a corrupt
-/// entry carries no usable meaning, and `std::env::vars()` — the naive way to
-/// read the host environment — panics on the first one before any command can
-/// run. `vars_os()` yields the raw entries without panicking, leaving the
-/// skip decision here. Shell-owned variables ([`should_skip_env_var`]) and
-/// git repository-location overrides are not inherited.
-fn copy_env_into(
-	vars: &mut HashMap<String, String>,
-	env: impl Iterator<Item = (std::ffi::OsString, std::ffi::OsString)>,
-) {
-	let mut merged_path: Option<String> = None;
-	for (key, value) in env {
-		// A key or value that cannot be decoded as Unicode is unusable; drop
-		// it rather than panicking startup for a corrupt host environment.
-		let (Some(key), Some(value)) = (key.to_str(), value.to_str()) else {
-			continue;
-		};
-		let normalized_key = normalize_inherited_env_key(key);
-		if should_skip_env_var(normalized_key) || is_git_repo_location_var(normalized_key) {
-			continue;
-		}
-		if normalized_key == "PATH" {
-			merged_path = Some(match merged_path {
-				Some(existing) => merge_path_values(&existing, value),
-				None => value.to_string(),
-			});
-			continue;
-		}
-		let value = inherited_env_value(normalized_key, value);
-		vars.insert(normalized_key.to_owned(), value.into_owned());
-	}
-
-	#[cfg(windows)]
-	if merged_path.is_none()
-		&& let Some(value) = std::env::var_os("Path").or_else(|| std::env::var_os("PATH"))
-	{
-		merged_path = Some(value.to_string_lossy().into_owned());
-	}
-
-	if let Some(path_value) = merged_path {
-		vars.insert("PATH".to_owned(), path_value);
-	}
->>>>>>> theirs — function `copy_env_into_shell` (T+F, confidence: medium)
 }
 
 /// Apply the caller's session env over the inherited one, with the same skips
@@ -961,7 +908,6 @@ async fn create_session_for_run(
 		return Err(Error::msg("Shell setup was cancelled"));
 	}
 	Ok(core)
-<<<<<<< ours — scope `// Process inspection and control (see `pi_bu...` in function `create_session_for_run`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	// Process inspection and control (see `tau_builtins::process_builtins`).
 	// `nohup` is withheld when PI_DISABLE_NOHUP_BUILTIN asks for the system one;
@@ -973,9 +919,6 @@ async fn create_session_for_run(
 		}
 		shell.register_builtin(name, registration);
 	}
-=======
->>>>>>> theirs — scope `// Process inspection and control (see `pi_bu...` deleted in theirs
-<<<<<<< ours — scope `// In-process command-line utility builtins (see` in function `create_session_for_run`, deleted in theirs (T+F, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	// In-process command-line utility builtins (see
 	// `tau_builtins::utility_builtins`): consistent, cross-platform
@@ -1003,8 +946,6 @@ async fn create_session_for_run(
 			}
 		}
 	}
-=======
->>>>>>> theirs — scope `// In-process command-line utility builtins (see` deleted in theirs
 }
 
 /// Run a setup command of a new session with null stdio.
@@ -1020,7 +961,6 @@ async fn run_setup(
 	core.cwd = outcome.cwd;
 	Ok(())
 }
-<<<<<<< ours — function `source_snapshot` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 async fn source_snapshot(
 	shell: &mut BrushShell,
@@ -1048,8 +988,6 @@ async fn source_snapshot(
 		.map_err(|err| Error::msg(format!("Failed to source snapshot: {err}")))?;
 	Ok(())
 }
-=======
->>>>>>> theirs — function `source_snapshot` (S+F, confidence: low)
 
 /// Define `env` as a shell variable expanding to the literal `$env` so that
 /// POSIX parameter expansion preserves PowerShell-style `$env:NAME`
@@ -1358,7 +1296,6 @@ async fn run_shell_command_single(
 			};
 			// Surface telemetry only when the filter actually rewrote the output
 			// and kept the original buffer — same contract as
-<<<<<<< ours — scope `{` in function `run_shell_command_single` (T+S+F, confidence: low)
 // refused_by: statement_fold · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 			// `apply_shell_minimizer` in `tau-natives`. A supported filter that
 			// runs but leaves the output unchanged (e.g. a short `git diff
@@ -1366,11 +1303,6 @@ async fn run_shell_command_single(
 			// and must NOT set `minimized`, or API consumers keying off
 			// `result.minimized` are misled. The separate `too-large` reason
 			// path above is unaffected.
-=======
-			// `apply_shell_minimizer` in `pi-natives`. A supported filter that
-			// runs but leaves the output unchanged reports `changed: false` with
-			// no `original_text` and must NOT set `minimized`.
->>>>>>> theirs — scope `{`
 			if minimized.changed
 				&& let Some(original_text) = minimized.original_text
 			{
@@ -1617,11 +1549,8 @@ async fn run_shell_command_once(
 	}
 	// Release the extra writer so the reader can reach EOF.
 	drop(diagnostics);
-<<<<<<< ours — scope `let source_info = SourceInfo::from("pi-native...` in function `run_shell_command_once`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	let source_info = SourceInfo::from("tau-natives:command");
-=======
->>>>>>> theirs — scope `let source_info = SourceInfo::from("pi-native...` deleted in theirs
 
 	// The foreground command can complete while background jobs keep the
 	// stdout/stderr pipe open. Don't hang forever waiting for EOF; drain output
@@ -1692,11 +1621,8 @@ async fn run_shell_command_streams(
 	install_run_filesystem(session, options, &cancel_token);
 	restore_session_filesystem(session);
 	result
-<<<<<<< ours — scope `let source_info = SourceInfo::from("pi-shell:...` in function `run_shell_command_streams`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	let source_info = SourceInfo::from("tau-shell:streams");
-=======
->>>>>>> theirs — scope `let source_info = SourceInfo::from("pi-shell:...` deleted in theirs
 	let result =
 		run_shell_command_streams_in_filesystem(session, options, streams, cancel_token).await;
 }
@@ -1892,7 +1818,6 @@ async fn read_output_bytes(
 		}
 	}
 }
-<<<<<<< ours — constant `GIT_REPO_LOCATION_ENV_VARS` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 /// Git variables that pin a repository location to the launch checkout.
 ///
@@ -1908,8 +1833,6 @@ pub const GIT_REPO_LOCATION_ENV_VARS: [&str; 6] = [
 	"GIT_OBJECT_DIRECTORY",
 	"GIT_ALTERNATE_OBJECT_DIRECTORIES",
 ];
-=======
->>>>>>> theirs — constant `GIT_REPO_LOCATION_ENV_VARS` (S+F, confidence: low)
 
 fn ensure_trailing_newline_for_heredoc(command: &mut String) {
 	if command.ends_with('\n')
@@ -2209,7 +2132,6 @@ mod tests;
 		.collect()
 	}
 
-<<<<<<< ours — scope `/// The per-session env overlay is built from...` in module `tests`, deleted in theirs (T+F, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	/// The per-session env overlay is built from the same host environment, so
 	/// it must not reintroduce the repo-location overrides.
@@ -2241,10 +2163,7 @@ mod tests;
 
 		assert_eq!(fs::read_to_string(&out).expect("probe output"), "unset|kept");
 	}
-=======
->>>>>>> theirs — scope `/// The per-session env overlay is built from...` deleted in theirs
 
-<<<<<<< ours — scope `#[cfg(unix)]` in module `tests`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	#[cfg(unix)]
 	async fn wait_for_process_name(pid: i32, expected: &str) {
@@ -2263,10 +2182,7 @@ mod tests;
 		.await
 		.expect("child did not enter expected executable");
 	}
-=======
->>>>>>> theirs — scope `#[cfg(unix)]` deleted in theirs
 
-<<<<<<< ours — scope `/// The kill builtin accepts a numeric signal...` in module `tests`, deleted in theirs (T+F, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	/// The kill builtin accepts a numeric signal and applies it to every process
 	/// operand.
@@ -2314,10 +2230,7 @@ mod tests;
 		assert_eq!(first_status.expect("first wait").signal(), Some(libc::SIGKILL));
 		assert_eq!(second_status.expect("second wait").signal(), Some(libc::SIGKILL));
 	}
-=======
->>>>>>> theirs — scope `/// The kill builtin accepts a numeric signal...` deleted in theirs
 
-<<<<<<< ours — scope `/// The kill builtin defaults to SIGTERM so p...` in module `tests`, deleted in theirs (T+F, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	/// The kill builtin defaults to SIGTERM so processes can shut down
 	/// gracefully.
@@ -2366,10 +2279,7 @@ mod tests;
 		assert_eq!(code, 0, "default kill should succeed");
 		assert_eq!(status.expect("checked timeout").expect("child wait").code(), Some(42));
 	}
-=======
->>>>>>> theirs — scope `/// The kill builtin defaults to SIGTERM so p...` deleted in theirs
 
-<<<<<<< ours — scope `/// A negative PID after `--` targets a proce...` in module `tests`, deleted in theirs (T+F, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	/// A negative PID after `--` targets a process group per `kill(2)` instead
 	/// of being parsed as a numeric signal, and a plain PID in the same command
@@ -2439,10 +2349,7 @@ mod tests;
 		assert_eq!(group_status.expect("group wait").code(), Some(42));
 		assert_eq!(plain_status.expect("plain wait").code(), Some(42));
 	}
-=======
->>>>>>> theirs — scope `/// A negative PID after `--` targets a proce...` deleted in theirs
 
-<<<<<<< ours — scope `/// When clap consumes the `--` marker before...` in module `tests`, deleted in theirs (T+F, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	/// When clap consumes the `--` marker before `execute` (the default-signal
 	/// and `-s SIG` forms), a following negative PID is still an operand, not a
@@ -2518,10 +2425,7 @@ mod tests;
 		assert_eq!(default_status.expect("default wait").code(), Some(42));
 		assert_eq!(named_status.expect("named wait").code(), Some(42));
 	}
-=======
->>>>>>> theirs — scope `/// When clap consumes the `--` marker before...` deleted in theirs
 
-<<<<<<< ours — scope `#[cfg(unix)]` in module `tests`, deleted in theirs (T+F, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	#[cfg(unix)]
 	#[tokio::test(flavor = "multi_thread")]
@@ -2607,10 +2511,7 @@ mod tests;
 			assert!(process::Process::from_pid(pid).is_none(), "pipeline process {pid} survived");
 		}
 	}
-=======
->>>>>>> theirs — scope `#[cfg(unix)]` deleted in theirs
 
-<<<<<<< ours — scope `/// A failed target makes `kill` return non-z...` in module `tests`, deleted in theirs (T+F, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	/// A failed target makes `kill` return non-zero without preventing later
 	/// process operands from receiving the selected signal.
@@ -2659,10 +2560,7 @@ mod tests;
 		assert_eq!(first_status.expect("first wait").signal(), Some(libc::SIGKILL));
 		assert_eq!(second_status.expect("second wait").signal(), Some(libc::SIGKILL));
 	}
-=======
->>>>>>> theirs — scope `/// A failed target makes `kill` return non-z...` deleted in theirs
 
-<<<<<<< ours — scope `/// `cmp` remains available with no executabl...` in module `tests`, deleted in theirs (T+F, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	/// `cmp` remains available with no executable search path, proving the shell
 	/// dispatches the in-process builtin rather than a platform binary.
@@ -2704,10 +2602,7 @@ mod tests;
 			.expect("different cmp");
 		assert_eq!(exit_code(&different), 1);
 	}
-=======
->>>>>>> theirs — scope `/// `cmp` remains available with no executabl...` deleted in theirs
 
-<<<<<<< ours — scope `/// The moreutils-style builtins (`ts`, `spon...` in module `tests`, deleted in theirs (T+F, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	/// The moreutils-style builtins (`ts`, `sponge`, `isutf8`, `combine`,
 	/// `ifne`, `errno`) dispatch in-process: the script runs with no usable
@@ -2758,10 +2653,7 @@ mod tests;
 			assert_eq!(exit_code(&errno), 0);
 		}
 	}
-=======
->>>>>>> theirs — scope `/// The moreutils-style builtins (`ts`, `spon...` deleted in theirs
 
-<<<<<<< ours — scope `/// `sort --compress-program` spawns real chi...` in module `tests`, deleted in theirs (T+F, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	/// `sort --compress-program` spawns real children from inside the
 	/// external-sort temp-file machinery. Those children must inherit the
@@ -2857,10 +2749,7 @@ mod tests;
 
 		let _ = std::fs::remove_dir_all(&tmp);
 	}
-=======
->>>>>>> theirs — scope `/// `sort --compress-program` spawns real chi...` deleted in theirs
 
-<<<<<<< ours — scope `/// The uutils-backed `mkdir` builtin must (1...` in module `tests`, deleted in theirs (T+F, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	/// The uutils-backed `mkdir` builtin must (1) create directories under the
 	/// shell's working directory rather than the host process cwd, (2) route
@@ -2904,10 +2793,7 @@ mod tests;
 
 		let _ = std::fs::remove_dir_all(&tmp);
 	}
-=======
->>>>>>> theirs — scope `/// The uutils-backed `mkdir` builtin must (1...` deleted in theirs
 
-<<<<<<< ours — scope `/// `command -v`/`-V` must iterate over every...` in module `tests`, deleted in theirs (T+F, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	/// `command -v`/`-V` must iterate over every operand like bash/zsh, printing
 	/// one line per name that resolves and skipping the misses, rather than
@@ -2958,10 +2844,7 @@ mod tests;
 
 		let _ = std::fs::remove_dir_all(&tmp);
 	}
-=======
->>>>>>> theirs — scope `/// `command -v`/`-V` must iterate over every...` deleted in theirs
 
-<<<<<<< ours — scope `/// Every utility `pi-builtins` offers must a...` in module `tests`, deleted in theirs (T+F, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	/// Every utility `tau-builtins` offers must actually be dispatchable in
 	/// process, under the name it is registered as.
@@ -3095,10 +2978,7 @@ mod tests;
 
 		let _ = std::fs::remove_dir_all(&tmp);
 	}
-=======
->>>>>>> theirs — scope `/// Every utility `pi-builtins` offers must a...` deleted in theirs
 
-<<<<<<< ours — scope `/// Every process builtin `pi-builtins` offer...` in module `tests`, deleted in theirs (T+F, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	/// Every process builtin `tau-builtins` offers must be installed and
 	/// dispatch in process.
@@ -3170,10 +3050,7 @@ mod tests;
 
 		let _ = std::fs::remove_dir_all(&tmp);
 	}
-=======
->>>>>>> theirs — scope `/// Every process builtin `pi-builtins` offer...` deleted in theirs
 
-<<<<<<< ours — scope `/// Regression test for issue #5819: `mkdir -...` in module `tests`, deleted in theirs (T+F, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	/// Regression test for issue #5819: `mkdir -p ~/proj/{a,b}` must create both
 	/// `a` and `b` under `$HOME/proj`. Brace expansion runs before tilde
@@ -3218,10 +3095,7 @@ mod tests;
 
 		let _ = std::fs::remove_dir_all(&base);
 	}
-=======
->>>>>>> theirs — scope `/// Regression test for issue #5819: `mkdir -...` deleted in theirs
 
-<<<<<<< ours — scope `/// `mkdir --help` and an invalid flag must b...` in module `tests`, deleted in theirs (T+F, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	/// `mkdir --help` and an invalid flag must be handled in-process: rendered
 	/// to the command streams and returned as an exit code. The upstream
@@ -3265,10 +3139,7 @@ mod tests;
 
 		let _ = std::fs::remove_dir_all(&tmp);
 	}
-=======
->>>>>>> theirs — scope `/// `mkdir --help` and an invalid flag must b...` deleted in theirs
 
-<<<<<<< ours — scope `/// The uutils-backed `head` builtin must rea...` in module `tests`, deleted in theirs (T+F, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	/// The uutils-backed `head` builtin must read piped stdin through the
 	/// context, read file operands resolved against the shell working directory,
@@ -3321,10 +3192,7 @@ mod tests;
 
 		let _ = std::fs::remove_dir_all(&tmp);
 	}
-=======
->>>>>>> theirs — scope `/// The uutils-backed `head` builtin must rea...` deleted in theirs
 
-<<<<<<< ours — scope `/// `head --help` / invalid flag must be hand...` in module `tests`, deleted in theirs (T+F, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	/// `head --help` / invalid flag must be handled in-process (rendered to the
 	/// command streams, returned as an exit code) — head has its own `run`
@@ -3366,10 +3234,7 @@ mod tests;
 
 		let _ = std::fs::remove_dir_all(&tmp);
 	}
-=======
->>>>>>> theirs — scope `/// `head --help` / invalid flag must be hand...` deleted in theirs
 
-<<<<<<< ours — scope `/// Smoke-test the read-only uutils filter/li...` in module `tests`, deleted in theirs (T+F, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	/// Smoke-test the read-only uutils filter/listing builtins end-to-end
 	/// through the shell: piped stdin (sort/wc/tail), file reads + cwd
@@ -3467,10 +3332,7 @@ mod tests;
 
 		let _ = std::fs::remove_dir_all(&tmp);
 	}
-=======
->>>>>>> theirs — scope `/// Smoke-test the read-only uutils filter/li...` deleted in theirs
 
-<<<<<<< ours — scope `/// `rg` is not an alias for `grep`: it recur...` in module `tests`, deleted in theirs (T+F, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	/// `rg` is not an alias for `grep`: it recurses by default, respects
 	/// ripgrep's ignore/hidden/binary filters, and keeps `-h` as help.
@@ -3544,10 +3406,7 @@ mod tests;
 
 		let _ = std::fs::remove_dir_all(&tmp);
 	}
-=======
->>>>>>> theirs — scope `/// `rg` is not an alias for `grep`: it recur...` deleted in theirs
 
-<<<<<<< ours — scope `/// `fd` recurses from the shell working dire...` in module `tests`, deleted in theirs (T+F, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	/// `fd` recurses from the shell working directory, respects hidden and
 	/// ignore filters (including `.fdignore`), preserves explicit search-path
@@ -3664,10 +3523,7 @@ mod tests;
 
 		let _ = std::fs::remove_dir_all(&tmp);
 	}
-=======
->>>>>>> theirs — scope `/// `fd` recurses from the shell working dire...` deleted in theirs
 
-<<<<<<< ours — scope `/// Plain `rg PATTERN` uses the shell working...` in module `tests`, deleted in theirs (T+F, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	/// Plain `rg PATTERN` uses the shell working directory when the host wired
 	/// stdin to null, but a real pipeline remains stdin input. Pattern stdin
@@ -3723,10 +3579,7 @@ mod tests;
 
 		let _ = std::fs::remove_dir_all(&tmp);
 	}
-=======
->>>>>>> theirs — scope `/// Plain `rg PATTERN` uses the shell working...` deleted in theirs
 
-<<<<<<< ours — scope `/// `grep -q` must suppress all stdout and dr...` in module `tests`, deleted in theirs (T+F, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	/// `grep -q` must suppress all stdout and drive the exit status (0 on match,
 	/// 1 otherwise) so shell conditionals work; `-x` must anchor whole lines.
@@ -3786,10 +3639,7 @@ mod tests;
 
 		let _ = std::fs::remove_dir_all(&tmp);
 	}
-=======
->>>>>>> theirs — scope `/// `grep -q` must suppress all stdout and dr...` deleted in theirs
 
-<<<<<<< ours — scope `/// The destructive uutils builtins (`rm`, `m...` in module `tests`, deleted in theirs (T+F, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	/// The destructive uutils builtins (`rm`, `mv`) must operate on paths
 	/// resolved against the shell working directory, not the host process cwd.
@@ -3834,10 +3684,7 @@ mod tests;
 
 		let _ = std::fs::remove_dir_all(&tmp);
 	}
-=======
->>>>>>> theirs — scope `/// The destructive uutils builtins (`rm`, `m...` deleted in theirs
 
-<<<<<<< ours — scope `/// Removing a nonexistent file must print ex...` in module `tests`, deleted in theirs (T+F, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	/// Removing a nonexistent file must print exactly one diagnostic (like GNU
 	/// rm) and exit non-zero — not a second, message-less `rm:` line. Regression
@@ -3872,10 +3719,7 @@ mod tests;
 
 		let _ = std::fs::remove_dir_all(&tmp);
 	}
-=======
->>>>>>> theirs — scope `/// Removing a nonexistent file must print ex...` deleted in theirs
 
-<<<<<<< ours — scope `/// The find display/match surface must use t...` in module `tests`, deleted in theirs (T+F, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	/// The find display/match surface must use the operand-relative path while
 	/// filesystem actions still target the real (resolved) path: `-path` and
@@ -3964,10 +3808,7 @@ mod tests;
 
 		let _ = std::fs::remove_dir_all(&tmp);
 	}
-=======
->>>>>>> theirs — scope `/// The find display/match surface must use t...` deleted in theirs
 
-<<<<<<< ours — scope `/// The vendored `sed` builtin must stream pi...` in module `tests`, deleted in theirs (T+F, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	/// The vendored `sed` builtin must stream pipeline stdin through scripts and
 	/// perform `-i` in-place edits (with backup suffix) against the shell
@@ -4008,10 +3849,7 @@ mod tests;
 
 		let _ = std::fs::remove_dir_all(&tmp);
 	}
-=======
->>>>>>> theirs — scope `/// The vendored `sed` builtin must stream pi...` deleted in theirs
 
-<<<<<<< ours — scope `/// The `xargs` builtin spawns real child pro...` in module `tests`, deleted in theirs (T+F, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	/// The `xargs` builtin spawns real child processes, but their stdout must
 	/// flow back into the shell pipeline (ctx streams, not the host fds), items
@@ -4062,10 +3900,7 @@ mod tests;
 
 		let _ = std::fs::remove_dir_all(&tmp);
 	}
-=======
->>>>>>> theirs — scope `/// The `xargs` builtin spawns real child pro...` deleted in theirs
 
-<<<<<<< ours — scope `/// The `jq` builtin must evaluate filters ov...` in module `tests`, deleted in theirs (T+F, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	/// The `jq` builtin must evaluate filters over piped JSON, resolve file
 	/// operands against the shell working directory, and propagate `-e`'s
@@ -4112,10 +3947,7 @@ mod tests;
 
 		let _ = std::fs::remove_dir_all(&tmp);
 	}
-=======
->>>>>>> theirs — scope `/// The `jq` builtin must evaluate filters ov...` deleted in theirs
 
-<<<<<<< ours — scope `/// A stdin-reading builtin blocked on an ope...` in module `tests`, deleted in theirs (T+F, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	/// A stdin-reading builtin blocked on an open pipe must honor abort/timeout:
 	/// the context's cancel flag makes the read return EOF so the utility
@@ -4162,10 +3994,7 @@ mod tests;
 			"cancelled stdin read should report a non-zero (interrupted) status"
 		);
 	}
-=======
->>>>>>> theirs — scope `/// A stdin-reading builtin blocked on an ope...` deleted in theirs
 
-<<<<<<< ours — scope `/// The disable env vars must actually gate r...` in module `tests`, deleted in theirs (T+F, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	/// The disable env vars must actually gate registration: the global switch
 	/// drops the whole set, and the per-utility destructive switches drop only
@@ -4209,10 +4038,7 @@ mod tests;
 		assert!(rm_off.shell.builtin_mut("mv").is_some(), "mv stays enabled");
 		assert!(rm_off.shell.builtin_mut("head").is_some(), "head stays enabled");
 	}
-=======
->>>>>>> theirs — scope `/// The disable env vars must actually gate r...` deleted in theirs
 
-<<<<<<< ours — scope `/// Truth-table coverage for `brush_core::com...` in module `tests`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	/// Truth-table coverage for `brush_core::commands::child_session_action`.
 	///
@@ -4278,10 +4104,7 @@ mod tests;
 			assert_eq!(child_session_action(false, false, true), ChildSessionAction::DetachSession,);
 		}
 	}
-=======
->>>>>>> theirs — scope `/// Truth-table coverage for `brush_core::com...` deleted in theirs
 
-<<<<<<< ours — scope `#[cfg(unix)]` in module `tests`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	#[cfg(unix)]
 	fn unique_temp_dir(prefix: &str) -> std::path::PathBuf {
@@ -4294,10 +4117,7 @@ mod tests;
 		std::fs::create_dir_all(&path).expect("create temp dir");
 		path
 	}
-=======
->>>>>>> theirs — scope `#[cfg(unix)]` deleted in theirs
 
-<<<<<<< ours — scope `/// Regression: a `&&` / `;` chain whose late...` in module `tests`, deleted in theirs (T+F, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	/// Regression: a `&&` / `;` chain whose later pipeline stage is a compound
 	/// command (`while … done`) must execute instead of failing with
@@ -4325,9 +4145,6 @@ mod tests;
 		// Ran whole (unsegmented), so nothing was minimized.
 		assert!(result.minimized.is_none());
 	}
-=======
->>>>>>> theirs — scope `/// Regression: a `&&` / `;` chain whose late...` deleted in theirs
-<<<<<<< ours — scope `/// End-to-end verification that brush, when ...` in module `tests`, deleted in theirs (T+F, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	/// End-to-end verification that brush, when embedded as a non-interactive
 	/// library (`interactive: false`, exactly what `create_session` produces),
@@ -4451,10 +4268,7 @@ mod tests;
 			"child PID {child_pid} should be its own session leader after setsid",
 		);
 	}
-=======
->>>>>>> theirs — scope `/// End-to-end verification that brush, when ...` deleted in theirs
 
-<<<<<<< ours — scope `/// Regression for the `suspended (tty input)...` in module `tests`, deleted in theirs (T+F, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	/// Regression for the `suspended (tty input)` bug: an **interactive child
 	/// inside a pipeline** (`zsh -i ... | awk`) used to stay in the host
@@ -4578,10 +4392,7 @@ mod tests;
 			"pipeline stage PID {child_pid} should be its own session leader after setsid",
 		);
 	}
-=======
->>>>>>> theirs — scope `/// Regression for the `suspended (tty input)...` deleted in theirs
 
-<<<<<<< ours — scope `#[cfg(unix)]` in module `tests`, deleted in theirs (T+F, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	#[cfg(unix)]
 	#[tokio::test(flavor = "multi_thread")]
@@ -4932,5 +4743,3 @@ mod tests;
 		assert!(!result.timed_out);
 		assert_eq!(received, TOTAL_BYTES, "streamed bytes were dropped under backpressure");
 	}
-=======
->>>>>>> theirs — scope `#[cfg(unix)]` deleted in theirs

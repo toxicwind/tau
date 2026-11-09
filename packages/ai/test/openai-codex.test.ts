@@ -1,5 +1,4 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { createOpenAICodexAuthorizationUrl, formatOpenAICodexTokenEndpointError } from "@tau/tau-ai/oauth/openai-codex";
 import { type RequestBody, transformRequestBody } from "@tau/tau-ai/providers/openai-codex/request-transformer";
@@ -7,19 +6,6 @@ import { CodexApiError, parseCodexError } from "@tau/tau-ai/providers/openai-cod
 import { convertOpenAICodexResponsesTools } from "@tau/tau-ai/providers/openai-codex-responses";
 import type { Tool } from "@tau/tau-ai/types";
 import { OPENAI_HEADER_VALUES } from "@tau/tau-catalog/wire/codex";
-=======
-import {
-	createOpenAICodexAuthorizationUrl,
-	formatOpenAICodexTokenEndpointError,
-} from "@oh-my-pi/pi-ai/oauth/openai-codex";
-import { type RequestBody, transformRequestBody } from "@oh-my-pi/pi-ai/providers/openai-codex/request-transformer";
-import { CodexApiError, parseCodexError } from "@oh-my-pi/pi-ai/providers/openai-codex/response-handler";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { convertOpenAICodexResponsesTools } from "@oh-my-pi/pi-ai/providers/openai-codex-responses";
-import type { Tool } from "@oh-my-pi/pi-ai/types";
-import { extractProviderRetryHint } from "@oh-my-pi/pi-ai/utils/retry-after";
-import { OPENAI_HEADER_VALUES } from "@oh-my-pi/pi-catalog/wire/codex";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/test/openai-codex.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { createCodexModel } from "./helpers";
 
 const DEFAULT_PROMPT_PREFIX =

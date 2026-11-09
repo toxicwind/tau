@@ -1,6 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { Agent } from "@tau/tau-agent-core";
 import * as compactionModule from "@tau/tau-agent-core/compaction";
@@ -12,55 +11,6 @@ import { AgentSession } from "tau/session/agent-session";
 import { AuthStorage } from "tau/session/auth-storage";
 import { SessionManager } from "tau/session/session-manager";
 import { TempDir } from "@tau/tau-utils";
-=======
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import * as compactionModule from "@oh-my-pi/pi-agent-core/compaction";
-import type { Message, Model } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
-import * as snapcompact from "@oh-my-pi/snapcompact";
-import { rejectionOf } from "./helpers/rejection";
-
-/**
- * Regression for issue #5064.
- *
- * Manual `/compact` with the default snapcompact strategy hard-threw
- * ("snapcompact cannot run locally: <id> is text-only") when the active model
- * lacked image input, even though the auto-compaction path already downgraded
- * to LLM-backed compaction in the same situation. The manual path MUST mirror
- * that behavior: warn, then summarize via the LLM fallback candidate chain
- * (which tries the active text→text model first).
- *
- * An *explicit* `/compact snapcompact` (mode override) is a deliberate no-LLM
- * archive request, so it MUST keep failing locally instead of silently
- * shipping the transcript to a provider.
- *
- * A model whose wire strips images (`compat.stripImageInput`) declares image
- * input but is text-only on the wire, so it takes the same path.
- */
-describe.each([
-	{
-		label: "text-only",
-		provider: "aimlapi",
-		id: "alibaba/qwen3-coder-480b-a35b-instruct",
-		reason: "alibaba/qwen3-coder-480b-a35b-instruct is text-only",
-	},
-	{
-		label: "wire-stripped",
-		provider: "deepseek",
-		id: "deepseek-v4-flash",
-		reason: "deepseek-v4-flash's provider strips image input",
-	},
-] as const)("AgentSession manual snapcompact $label fallback", ({ provider, id, reason }) => {
-	let session: AgentSession | undefined;
-	let authStorage: AuthStorage | undefined;
-	let tempDir: TempDir | undefined;
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/agent-session-manual-snapcompact-fallback.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 	afterEach(async () => {
 		try {
@@ -174,7 +124,6 @@ describe.each([
 		expect(harness.sessionManager.getBranch().find(entry => entry.type === "compaction")).toBeUndefined();
 	});
 
-<<<<<<< ours — test_suite `AgentSession manual snapcompact text-only fallback` (T+F, confidence: medium)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 /**
  * Regression for issue #5064.
@@ -307,6 +256,4 @@ describe("AgentSession manual snapcompact text-only fallback", () => {
 		expect(harness.sessionManager.getBranch().find(entry => entry.type === "compaction")).toBeUndefined();
 	});
 });
-=======
->>>>>>> theirs — test_suite `AgentSession manual snapcompact text-only fallback` (T+F, confidence: medium)
 });

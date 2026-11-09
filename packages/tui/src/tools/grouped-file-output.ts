@@ -1,28 +1,8 @@
 import * as path from "node:path";
 
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { buildPathTree, isUrlLikePath, type PathTreeInput, walk…`
 import { buildPathTree, isUrlLikePath, type PathTreeInput, walkPathTree } from "@tau/tau-utils";
 import { formatHashlineHeader } from "./hashline-format";
-=======
-import {
-	buildPathTree,
-	isRecord,
-	isUrlLikePath,
-	type PathTreeInput,
-	sanitizeText,
-	walkPathTree,
-} from "@oh-my-pi/pi-utils";
-import type { TspTone } from "@oh-my-pi/pi-wire";
-import { code, col, keyed } from "../native/describe";
-import type { NativeNode } from "../native/node";
-import { getLanguageFromPath } from "../lang-from-path";
-import { fileHyperlink, uriHyperlink } from "../render/hyperlink";
-import { FILE_NAME_COLOR, formatMoreItems, formatStyledPath, replaceTabs } from "../render/render-utils";
-import { highlightCode, isHighlightLanguage, type Theme, type ThemeColor } from "../theme/theme";
-import { formatHashlineHeader, HASHLINE_TAG_SUFFIX_RE } from "./hashline-format";
-import { fileRow } from "./native-view";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/src/tools/grouped-file-output.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 // =============================================================================
 // Grouped file output (grep / ast-grep / ast-edit / lsp diagnostics)
@@ -48,7 +28,6 @@ export interface GroupedFileSection {
 export interface GroupedFilesOutput {
 	model: string[];
 	display: string[];
-<<<<<<< ours — scope `modelEnds` in interface `GroupedFilesOutput` (S, confidence: medium)
 // refused_by: container_member · collision: none (no common ancestor text)
 	/**
 	 * Per file, the model-output index just past that file's last line (flat mode
@@ -57,10 +36,6 @@ export interface GroupedFilesOutput {
 	 * a truncated point) read as `Infinity` at the callsite.
 	 */
 	modelEnds?: Map<string, number>;
-=======
-	/** Per file, the `model` index just past its last line: a head cut keeping `n` lines shows it whole when this is <= n. */
-	modelEnds: Map<string, number>;
->>>>>>> theirs — scope `modelEnds`
 }
 
 /** One file's rendered search matches, plus its hashline tag when editable. */

@@ -1,6 +1,5 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { Agent } from "@oh-my-pi/pi-agent-core";` +2 more
 import { Agent } from "@tau/tau-agent-core";
 import { type Api, type AssistantMessage, Effort, type Model } from "@tau/tau-ai";
@@ -15,25 +14,6 @@ import { EPHEMERAL_MODEL_CHANGE_ROLE } from "tau/session/session-entries";
 import { SessionManager } from "tau/session/session-manager";
 import { AUTO_THINKING } from "@tau/tau-tui/thinking";
 import { TempDir } from "@tau/tau-utils";
-=======
-import { Agent, type AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { type Api, type AssistantMessage, type Context, Effort, type ImageContent, type Model } from "@oh-my-pi/pi-ai";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { type CreateAgentSessionResult, createAgentSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { getRestorableSessionModels } from "@oh-my-pi/pi-coding-agent/session/session-context";
-import { EPHEMERAL_MODEL_CHANGE_ROLE } from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { encodeRawPng } from "@oh-my-pi/pi-coding-agent/utils/png-encode";
-import { AUTO_THINKING, resolveProvisionalAutoLevel } from "@oh-my-pi/pi-tui/thinking";
-import { TempDir } from "@oh-my-pi/pi-utils";
-import * as snapcompact from "@oh-my-pi/snapcompact";
-import { createAssistantMessage } from "./helpers/agent-session-setup";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/agent-session-model-persistence.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 describe("AgentSession model persistence", () => {
 	let tempDir: TempDir;

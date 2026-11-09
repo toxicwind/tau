@@ -1,5 +1,4 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { SETTINGS_SCHEMA, type SettingPath } from "@oh-my-pi/pi…` +1 more
 import { resetSettingsForTest, Settings } from "tau/config/settings";
 import { SETTINGS_SCHEMA, type SettingPath } from "tau/config/settings-schema";
@@ -8,18 +7,6 @@ import { createSettingsHost } from "tau/config/settings-ui";
 import { createPluginSettingsHost } from "tau/extensibility/plugins/settings-host";
 import { SettingsSelectorComponent } from "@tau/tau-tui/overlays/settings-selector";
 import { initTheme, setTheme } from "@tau/tau-tui/theme";
-=======
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { all } from "@oh-my-pi/pi-coding-agent/config/registry";
-
-import { getSettingsForTab, SETTING_TABS, TAB_GROUPS } from "@oh-my-pi/pi-tui/overlays/settings-defs";
-import { createSettingsHost } from "@oh-my-pi/pi-coding-agent/config/settings-ui";
-import { createPluginSettingsHost } from "@oh-my-pi/pi-coding-agent/extensibility/plugins/settings-host";
-import { SettingsSelectorComponent } from "@oh-my-pi/pi-tui/overlays/settings-selector";
-import { initTheme, setTheme } from "@oh-my-pi/pi-tui/theme";
-import { cfgRetryUsageAwareFallback } from "@oh-my-pi/pi-coding-agent/session/settings";
-import { cfgAdvisorEnabled } from "@oh-my-pi/pi-coding-agent/advisor/settings";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/modes/components/settings-layout.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 beforeAll(async () => {
 	await initTheme();

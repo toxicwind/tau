@@ -45,13 +45,8 @@ import {
 	TERMINAL_TOOL_RESULT_ABORT_REASON,
 	type ThinkingLevel,
 	type ToolChoiceDirective,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { type Effort, streamSimple } from "@oh-my-pi/pi-ai";` +6 more
 } from "@tau/tau-agent-core";
-=======
-	wireToolsFingerprint,
-} from "@oh-my-pi/pi-agent-core";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/session/agent-session.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	type CompactionPreparation,
 	type CompactionResult,
@@ -86,7 +81,6 @@ import type {
 	ToolResultMessage,
 	UsageReport,
 	UserMessage,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { type Effort, streamSimple } from "@oh-my-pi/pi-ai";` +6 more
 } from "@tau/tau-ai";
 import { type Effort, streamSimple } from "@tau/tau-ai";
@@ -98,22 +92,6 @@ import { requiresNativeTools, requiresToolFreeHistoryForToolOptOut } from "@tau/
 import { preferredDialect } from "@tau/tau-catalog/identity";
 import { modelsAreEqual } from "@tau/tau-catalog/models";
 import { type EditStore, PowerAssertion, type PowerAssertionOptions } from "@tau/tau-natives";
-=======
-} from "@oh-my-pi/pi-ai";
-import { type Effort, serviceTierFamily, streamSimple } from "@oh-my-pi/pi-ai";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { prewarmModelConnection } from "@oh-my-pi/pi-ai/providers/connection-prewarm";
-import { resetOpenAICodexHistoryAfterCompaction } from "@oh-my-pi/pi-ai/providers/openai-codex-state";
-import { withCredentialRedaction } from "@oh-my-pi/pi-ai/providers/transform-messages";
-import { markPerCallContextMessage } from "@oh-my-pi/pi-ai/utils/block-symbols";
-import { toolWireSchema } from "@oh-my-pi/pi-ai/utils/schema";
-import { resolveCatalogPolicy } from "@oh-my-pi/pi-catalog/compat/catalog-policy";
-import { supportsOutputTokenLimit } from "@oh-my-pi/pi-catalog/compat/output-limits";
-import { requiresNativeTools, requiresToolFreeHistoryForToolOptOut } from "@oh-my-pi/pi-catalog/compat/tools";
-import { modelsAreEqual } from "@oh-my-pi/pi-catalog/models";
-import type { CatalogPolicyInputs } from "@oh-my-pi/pi-catalog/types";
-import { type EditStore, type PowerAssertionOptions } from "@oh-my-pi/pi-natives";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import {
 	$env,
 	escapeXmlText,
@@ -130,19 +108,10 @@ import {
 	toError,
 	untilAborted,
 	withTimeout,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { type Effort, streamSimple } from "@oh-my-pi/pi-ai";` +6 more
 } from "@tau/tau-utils";
 import type { AdvisorConfig } from "@tau/tau-tui/overlays/advisor-config";
 import { formatUsageResetWindow } from "@tau/tau-tui/overlays/usage-display";
-=======
-	withFileLock,
-} from "@oh-my-pi/pi-utils";
-import { writeArchive } from "@oh-my-pi/pi-utils/ar";
-import { frameDataBytesBudget, readerIncludesThinking } from "@oh-my-pi/snapcompact";
-import type { AdvisorConfig } from "@oh-my-pi/pi-tui/overlays/advisor-config";
-import { formatUsageResetWindow } from "@oh-my-pi/pi-tui/overlays/usage-display";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import { loadAdvisorTranscriptCosts } from "../advisor";
 import { ASYNC_JOB_MANAGER_SHUTDOWN_REASON, type AsyncJob, AsyncJobManager, type AsyncJobManagerApi } from "../async";
 import { classifyAutoPrewalk } from "../auto-prewalk/classifier";
@@ -152,7 +121,6 @@ import type { SessionAccountPoolScope } from "../config/account-pools";
 import { shouldEnableAppendOnlyContext } from "../config/append-only-context-mode";
 import type { ModelRegistry } from "../config/model-registry";
 import {
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { type Effort, streamSimple } from "@oh-my-pi/pi-ai";` +6 more
 	onAppendOnlyModeChanged,
 	onCodeModeChanged,
@@ -160,20 +128,6 @@ import {
 	onModelRolesChanged,
 } from "../config/settings";
 import { RawSseDebugBuffer } from "@tau/tau-tui/apps/debug/raw-sse-buffer";
-=======
-	disabledProviderIds,
-	getModelMatchPreferences,
-	type ResolvedModelRoleValue,
-	resolveCliModel,
-	resolveSessionModelSelector,
-	sessionModelDiscoveryProviders,
-} from "../config/model-resolver";
-import { expandPromptTemplate, type PromptTemplate } from "../config/prompt-templates";
-import { buildServiceTierByFamily, isServiceTierForFamily, serviceTierSettingToTier } from "../config/service-tier";
-import { combine, type SettingsScope } from "../config/registry";
-import { type Settings, withActiveSettings } from "../config/settings";
-import { RawSseDebugBuffer } from "@oh-my-pi/pi-tui/apps/debug/raw-sse-buffer";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import { getEditStore } from "../edit/store";
 import { releaseCompletionHandles } from "../eval/completion-bridge";
 import { releaseJudgmentBatches } from "../eval/judgment-batch-bridge";
@@ -218,7 +172,6 @@ import { normalizeToolEventInput, resolveToolEventInput } from "../extensibility
 import { GoalRuntime } from "../goals/runtime";
 import type { GoalModeState, GoalTokenUsage } from "../goals/state";
 import type { HindsightSessionState } from "../hindsight/state";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { type Effort, streamSimple } from "@oh-my-pi/pi-ai";` +6 more
 import { type LocalProtocolOptions, resolveLocalUrlToPath } from "../internal-urls";
 import { hasNativeJudge, journalJudgmentUsage, resolveJudge } from "../judgment";
@@ -226,16 +179,6 @@ import type { IrcMessage } from "@tau/tau-tui/tools/irc";
 import type { DaemonCompletionNotification } from "../launch/protocol";
 import { shutdownMnemotauEmbedClient } from "../mnemotau/embed-client";
 import { getMnemotauSessionState, type MnemotauSessionState, setMnemotauSessionState } from "../mnemotau/state";
-=======
-import { InternalUrlRouter, type LocalProtocolOptions } from "../internal-urls";
-import { type ChainJudge, hasNativeJudge, journalJudgmentUsage, resolveJudge, sharedJudgmentCache } from "../judgment";
-import type { IrcMessage } from "@oh-my-pi/pi-tui/tools/irc";
-import type { JobWidgetEntry } from "@oh-my-pi/pi-tui/tools/job-widget";
-import type { DaemonCompletionNotification } from "../launch/protocol";
-import { MEMORY_RECALL_CHANGES_MESSAGE_TYPE } from "../memory-backend/recall-entry";
-import { shutdownMnemopiEmbedClient } from "../mnemopi/embed-client";
-import { getMnemopiSessionState, type MnemopiSessionState, setMnemopiSessionState } from "../mnemopi/state";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import { MAGIC_KEYWORDS, type MagicKeywordContext, type MagicKeywordId } from "../modes/magic-keywords";
 import { containsMagicKeyword } from "@tau/tau-tui/prompt/magic-keywords";
 import { theme } from "@tau/tau-tui/theme";
@@ -281,7 +224,6 @@ import {
 	parseConfiguredThinkingLevel,
 	shouldDisableReasoning,
 	toReasoningEffort,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { type Effort, streamSimple } from "@oh-my-pi/pi-ai";` +6 more
 } from "@tau/tau-tui/thinking";
 import { isLowSignalTitleInput } from "../tiny/text";
@@ -290,15 +232,6 @@ import type { ImageAttachmentEntry, ToolSession } from "../tools";
 import { resolveApproval } from "../tools/approval";
 import { type AskToolDetails } from "@tau/tau-tui/tools/ask";
 import { type AskToolInput, recoverAskQuestions } from "../tools/ask";
-=======
-} from "@oh-my-pi/pi-tui/thinking";
-import { isAttachmentOnlyTitleInput, isLowSignalTitleInput } from "../tiny/text";
-import type { ImageAttachmentEntry, ToolSession } from "../tools";
-import { resolveApproval } from "../tools/approval";
-import { type ApprovalGrantStore, getApprovalGrants } from "../tools/approval-cache";
-import { type AskToolDetails } from "@oh-my-pi/pi-tui/tools/ask";
-import { recoverAskHtml } from "../tools/ask";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import {
 	armIdleCloseForOwner,
 	cancelIdleCloseForOwner,
@@ -325,7 +258,6 @@ import {
 } from "../tools/resolve";
 import { PROPOSE_DEVICE_NAME } from "@tau/tau-tui/tools/resolve";
 import { supportsExternalThinking } from "../tools/think";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { type Effort, streamSimple } from "@oh-my-pi/pi-ai";` +6 more
 import type { TodoPhase } from "@tau/tau-tui/tools/todo";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
@@ -341,25 +273,6 @@ import { normalizeModelContextImages } from "../utils/image-loading";
 import { TokenRateMeter } from "../utils/token-rate";
 import { TtstRecorder, summarizeTtst } from "../utils/ttst";
 import { imageAttachmentSource } from "@tau/tau-tui/prompt/image-source";
-=======
-import { USER_TODO_EDIT_CUSTOM_TYPE } from "../tools/todo";
-import type { TodoPhase } from "@oh-my-pi/pi-tui/tools/todo";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
-import { currentThreadId, isMainThread } from "../thread/identity";
-import { registerLocalSession } from "../thread/session-directory";
-import { prewarmSubagentWorker } from "../thread/subagent-worker";
-import { SubagentSpawnSignal } from "../thread/subagent-spawn-signal";
-import type { WorkPoolYieldItem } from "../task/workpool-yield";
-import type { AgentDefinition } from "../task/types";
-import type { ModelMention } from "@oh-my-pi/pi-tui/prompt/model-mention-syntax";
-import { ModelMentionRegistry, type ResolvedModelMention } from "./model-mentions";
-import { parseCommandArgs } from "../utils/command-args";
-import type { EditModeSetting } from "../edit/settings";
-import { resolveFileDisplayMode } from "../utils/file-display-mode";
-import { extractFileMentions, generateFileMentionMessages } from "../utils/file-mentions";
-import { normalizeModelContextImages } from "../utils/image-loading";
-import { TokenRateMeter } from "../utils/token-rate";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import { resumeCommand } from "../utils/resume-command";
 import {
 	formatCardTitle,
@@ -411,16 +324,9 @@ import type {
 	UsageFallbackConfirmer,
 } from "./agent-session-types";
 import { writeArtifact } from "./artifacts";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { type Effort, streamSimple } from "@oh-my-pi/pi-ai";` +6 more
 import { applyLuaPolicy } from "./strategies/lua-policy-loader";
 import { formatArtifactErrorNotice, type OutputMeta, stripOutputNotice } from "@tau/tau-tui/tools/output-meta";
-=======
-import { type PowerAssertionHandle, startPowerAssertion } from "./power-assertion-backend";
-import { renderAttachmentSourceNotice } from "./attachment-source-notice";
-import { formatArtifactErrorNotice, type OutputMeta, stripOutputNotice } from "@oh-my-pi/pi-tui/tools/output-meta";
-import { truncateMiddle } from "@oh-my-pi/pi-tui/tools/streaming-output";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import {
 	ASYNC_INLINE_RESULT_MAX_CHARS,
 	ASYNC_PREVIEW_MAX_CHARS,
@@ -543,40 +449,12 @@ import {
 	SessionAdvisors,
 	type SessionAdvisorsHost,
 } from "./session-advisors";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { type Effort, streamSimple } from "@oh-my-pi/pi-ai";` +6 more
 import type { BuildSessionContextOptions, SessionContext } from "./session-context";
 import { getRestorableSessionModels, isTranscriptEntry } from "./session-context";
 import { isUserRequestEntry, transcriptEntryMessage, userTurnDraft } from "@tau/tau-tui/chat/transcript-entry";
 import { formatSessionDumpText } from "./session-dump-format";
 import type { BranchSummaryEntry, NewSessionOptions } from "./session-entries";
-=======
-import type { SessionContext, TranscriptSessionContextOptions } from "./session-context";
-import { buildSessionContext, getRestorableSessionModels, isTranscriptEntry } from "./session-context";
-import {
-	type CacheRefreshOutcome,
-	type CacheWarmer,
-	type CacheWarmingMode,
-	type CacheWarmingStatus,
-	observedPromptCacheTier,
-	type PromptCacheChange,
-	type PromptCacheEntry,
-	promptTokensOf,
-	resolvePromptCacheTier,
-} from "./cache-warmer";
-import { type ObservedPromptCacheEntry, promptCacheStatus } from "./prompt-cache-status";
-import type { PromptCacheStatus } from "@oh-my-pi/pi-tui/status-line/host";
-import { isUserRequestEntry, transcriptEntryMessage, userTurnDraft } from "@oh-my-pi/pi-tui/chat/transcript-entry";
-import { anonymizeSessionTranscripts } from "./session-anonymizer";
-import {
-	formatSessionDumpText,
-	formatSubagentDumpText,
-	type SessionDumpArchive,
-	type SessionDumpLiveState,
-} from "./session-dump-format";
-import { collectSubSessions, type SubSession } from "./sub-sessions";
-import type { BranchSummaryEntry, NewSessionOptions, SessionEntry } from "./session-entries";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import { SessionHandoff, type SessionHandoffHost } from "./session-handoff";
 import {
 	COMPACTION_CHECK_NONE,
@@ -599,11 +477,8 @@ import { SessionStatsTracker, type SessionStatsTrackerHost } from "./session-sta
 import { promptDigestOfEntry, SessionTools, type SessionToolsHost } from "./session-tools";
 import { resolveWebsocketPreference } from "./settings-stream-fn";
 import type { ShakeMode, ShakeResult } from "./shake-types";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { type Effort, streamSimple } from "@oh-my-pi/pi-ai";` +6 more
 import { skillPromptTitleInput } from "@tau/tau-tui/chat/skill-title-input";
-=======
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import { ToolChoiceQueue } from "./tool-choice-queue";
 import { planTurnPersistence, sameMessageContent, sessionMessagePersistenceKey } from "./turn-persistence";
 import { TurnRecovery, type TurnRecoveryHost } from "./strategies/turn-recovery";
@@ -6905,21 +6780,7 @@ export class AgentSession implements SettingsScope, AgentViewSession {
 		}
 	}
 
-<<<<<<< ours — scope `#disposeMnemopi` in class `AgentSession`, deleted in ours (T+S+F, confidence: low)
 // refused_by: container_member · collision: none (no common ancestor text)
-=======
-	async #disposeMnemopi(
-		state: MnemopiSessionState | undefined,
-		consolidateTimeoutMs: number | undefined,
-	): Promise<void> {
-		try {
-			await state?.dispose({ timeoutMs: consolidateTimeoutMs });
-		} finally {
-			// Consolidation may embed final memories, so drop the embedding-server connection only afterward.
-			await shutdownMnemopiEmbedClient();
-		}
-	}
->>>>>>> theirs — scope `#disposeMnemopi` deleted in ours
 
 	async #doDispose(options: AgentSessionDisposeOptions = {}): Promise<void> {
 		this.#commandContextAbort.abort(new DOMException("Agent session disposed", "AbortError"));

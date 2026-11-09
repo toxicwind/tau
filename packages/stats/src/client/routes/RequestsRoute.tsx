@@ -213,7 +213,6 @@ export function RequestsRoute({ active, range, onRequestClick }: RequestsRoutePr
 		</div>
 	);
 
-<<<<<<< ours — scope `return (` in function `RequestsRoute`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	return (
 		<div className="stats-route-container">
@@ -231,8 +230,6 @@ export function RequestsRoute({ active, range, onRequestClick }: RequestsRoutePr
 			</Panel>
 		</div>
 	);
-=======
->>>>>>> theirs — scope `return (` deleted in theirs · weave: run 'weave explain packages/stats/src/client/routes/RequestsRoute.tsx' for per-hunk detail, 'weave check' to verify your resolution
 }
 
 const REQUEST_COLUMNS: readonly Column<MessageStats>[] = [

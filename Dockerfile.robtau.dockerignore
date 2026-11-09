@@ -66,19 +66,11 @@ packages/natives/native/.build/
 packages/natives/native/tau_natives.darwin-*.node
 packages/natives/native/tau_natives.dev.node
 packages/ai/test/.temp-images/
-<<<<<<< HEAD:Dockerfile.robtau.dockerignore
 python/tau-rpc/src/tau_rpc.egg-info/
 python/robtau/data/
 python/robtau/.cache/
 python/robtau/src/robtau/static/
 python/robtau/web/dist/
-=======
-sdk/python/omp-rpc/src/omp_rpc.egg-info/
-python/robomp/data/
-python/robomp/.cache/
-python/robomp/src/robomp/static/
-python/robomp/web/dist/
->>>>>>> upstream/main:Dockerfile.robomp.dockerignore
 
 # Scratch files the repo creates ad-hoc.
 syntax.jsonl

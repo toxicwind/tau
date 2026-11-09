@@ -1,13 +1,7 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { WebSearchGrounding } from "@oh-my-pi/pi-catalog/t…`
 import type { WebSearchGrounding } from "@tau/tau-catalog/types";
 import { runProviderSetupWizard as runProviderWizard } from "@tau/tau-tui/setup/lazy";
 import type { SetupHost, SetupScene } from "@tau/tau-tui/setup/scenes/types";
-=======
-import { getOAuthCredentialProvider } from "@oh-my-pi/pi-ai/oauth";
-import { runProviderSetupWizard as runProviderWizard } from "@oh-my-pi/pi-tui/setup/lazy";
-import type { SetupHost, SetupScene } from "@oh-my-pi/pi-tui/setup/scenes/types";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/modes/setup.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	ALL_SCENES,
 	CURRENT_SETUP_VERSION,
@@ -15,15 +9,10 @@ import {
 	type RunSetupWizardOptions,
 	selectSetupScenes as selectScenes,
 	type SetupSceneSelectionOptions,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { WebSearchGrounding } from "@oh-my-pi/pi-catalog/t…`
 } from "@tau/tau-tui/setup/wizard";
 import { formatModelString, resolveModelRoleValue, rolePriorityDefaults } from "../config/model-resolver";
 import { getRoleInfo } from "../config/model-roles";
-=======
-	setupWizardAllowed,
-} from "@oh-my-pi/pi-tui/setup/wizard";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import type { Settings } from "../config/settings";
 import { canSelfUpdate } from "../cli/update-cli";
 import { captureBrowserSession } from "../utils/browser-session";

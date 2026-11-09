@@ -1,4 +1,3 @@
-<<<<<<< ours — heading `pi-builtins` (S+F, confidence: low)
 // refused_by: rename_vs_edit_guard · collision: none (both sides edited, nowhere the same lines)
 # tau-builtins
 
@@ -13,19 +12,6 @@ Every builtin the embedded shell installs. Two layers:
    moreutils set, and ~50 more. One module per command, in `src/<command>.rs`.
 
 The second layer exists so the shell never has to fork: a long-lived embedded
-=======
-# pi-builtins
-
-pi's extras for the embedded shell, whose engine implements the bash builtins
-itself:
-
-1. **In-process command-line utilities** — `cat`, `grep`/`rg`, `ast-grep`/`sg`,
-   `sed`, `ls`, `find`, `sort`, `jq`, `fd`, `diff`, `xargs`, the moreutils set,
-   and ~50 more. One module per command, in `src/<command>.rs`.
-2. **Process builtins** — `ps`, `top`, `sleep`, `pgrep`, `pkill`, `pidwait`.
-
-They exist so the shell never has to fork: a long-lived embedded
->>>>>>> theirs — heading `pi-builtins` (S+F, confidence: low) · weave: run 'weave explain crates/tau-builtins/README.md' for per-hunk detail, 'weave check' to verify your resolution
 shell resolves these names itself, on every platform, whether or not the host
 has the real binaries. They were previously ~50 separate vendored crates driven
 through a thread-local I/O shim; consolidating them here removed the shim.

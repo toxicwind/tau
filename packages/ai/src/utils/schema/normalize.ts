@@ -6,13 +6,8 @@
  * exposes one option-driven core plus thin dispatchers that pin the option set
  * for each target.
  */
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 import { logger } from "@tau/tau-utils";
-=======
-import { parseLocalRefPointer } from "@oh-my-pi/omptype";
-import { logger } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/src/utils/schema/normalize.ts' for per-hunk detail, 'weave check' to verify your resolution
 import * as AIError from "../../error";
 import { dereferenceJsonSchema } from "./dereference";
 import { upgradeJsonSchemaTo202012 } from "./draft";
@@ -543,7 +538,6 @@ function normalizeSchemaObjectNode(value: JsonObject, options: NormalizeSchemaWa
 		if (types.includes("null") && !options.stripNullableKeyword) {
 			result.nullable = true;
 		}
-<<<<<<< ours — function `normalizeSchemaObjectNode` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 		if (result.items !== undefined && nonNull.includes("array")) {
 			result.type = "array";
@@ -552,10 +546,6 @@ function normalizeSchemaObjectNode(value: JsonObject, options: NormalizeSchemaWa
 		} else {
 			result.type = nonNull[0] ?? types[0];
 		}
-=======
-		result.type = nonNull[0] ?? types[0];
-		if (typeof result.type === "string") dropForeignTypeKeywords(result, result.type);
->>>>>>> theirs — function `normalizeSchemaObjectNode` (F, confidence: medium)
 	}
 	if (constValue !== undefined) {
 		// Copy before pushing: `result.enum` may alias the caller's array (the

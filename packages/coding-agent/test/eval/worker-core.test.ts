@@ -190,7 +190,6 @@ console.log(JSON.stringify(messages));
 		expect(text.filter(message => message.chunk === "42\n")).toHaveLength(3);
 	});
 
-<<<<<<< ours — scope `it("reports same-realm cwd conflicts through ...` in test_suite `WorkerCore` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `(globalThis as { __omp_worker_core_gate?: { entered(): void; wa…` +3 more
 	it("reports same-realm cwd conflicts through the worker protocol", async () => {
 		const first = createWorkerHarness();
@@ -212,27 +211,6 @@ console.log(JSON.stringify(messages));
 				code: "globalThis.__tau_worker_core_gate.entered(); await globalThis.__tau_worker_core_gate.wait;",
 				filename: "[same-realm-first].js",
 				snapshot: { cwd, sessionId: "same-realm-first", localRoots: {} },
-=======
-	it("delivers a completion handle id after its creating cell finishes", async () => {
-		const harness = createWorkerHarness();
-		const snapshot = { cwd: process.cwd(), sessionId: `late-handle-${crypto.randomUUID()}`, localRoots: {} };
-		await initializeWorker(harness, snapshot);
-		const toolCall = waitForMessage(
-			harness,
-			message => message.type === "tool-call" && message.name === "__completion__",
-		);
-		const firstResult = waitForMessage(
-			harness,
-			message => message.type === "result" && message.runId === "create-handle",
-		);
-		try {
-			harness.send({
-				type: "run",
-				runId: "create-handle",
-				code: 'var lateHandle = completion("hi"); print("started");',
-				filename: "[create-handle].js",
-				snapshot,
->>>>>>> theirs — scope `it("reports same-realm cwd conflicts through ...` · weave: run 'weave explain packages/coding-agent/test/eval/worker-core.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 			});
 			const call = await toolCall;
 			expect(await firstResult).toMatchObject({ type: "result", ok: true });
@@ -254,16 +232,12 @@ console.log(JSON.stringify(messages));
 			expect(await text).toMatchObject({ chunk: "late-1\n" });
 			expect(await result).toMatchObject({ ok: true });
 		} finally {
-<<<<<<< ours — scope `it("reports same-realm cwd conflicts through ...` in test_suite `WorkerCore` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `(globalThis as { __omp_worker_core_gate?: { entered(): void; wa…` +3 more
 			gate.resolve();
 			delete (globalThis as { __tau_worker_core_gate?: { entered(): void; wait: Promise<void> } })
 				.__tau_worker_core_gate;
 			first.send({ type: "close" });
 			second.send({ type: "close" });
-=======
-			harness.send({ type: "close" });
->>>>>>> theirs — scope `it("reports same-realm cwd conflicts through ...`
 		}
 	});
 

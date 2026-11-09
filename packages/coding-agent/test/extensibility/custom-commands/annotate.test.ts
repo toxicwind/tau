@@ -2,7 +2,6 @@ import { afterEach, beforeAll, describe, expect, it, spyOn, vi } from "bun:test"
 import { mkdir, mkdtemp, realpath, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { TUI } from "@oh-my-pi/pi-tui";`
 import type { AgentMessage } from "@tau/tau-agent-core";
 import { KeybindingsManager } from "@tau/tau-tui/app-keybindings";
@@ -19,38 +18,6 @@ import type { SessionPick } from "tau/extensibility/custom-commands/bundled/anno
 import { AnnotateCommand, runAnnotateCommand } from "tau/extensibility/custom-commands/bundled/annotate";
 import type { CustomCommandAPI, CustomCommandContext } from "tau/extensibility/custom-commands/types";
 import type { ReviewPrRef } from "tau/extensibility/custom-commands/bundled/review";
-=======
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { VcsRepo } from "@oh-my-pi/pi-natives";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import { KeybindingsManager } from "@oh-my-pi/pi-tui/app-keybindings";
-import { getKeybindings, setKeybindings, TUI } from "@oh-my-pi/pi-tui";
-import type {
-	ExtensionCustomOptions,
-	ExtensionUIContext,
-	ExtensionUiComponent,
-} from "@oh-my-pi/pi-coding-agent/extensibility/extensions/types";
-import type { Theme } from "@oh-my-pi/pi-tui/theme";
-import { initTheme, theme } from "@oh-my-pi/pi-tui/theme";
-import { CopySelectorComponent } from "@oh-my-pi/pi-tui/overlays/copy-selector";
-import type { SessionPick } from "@oh-my-pi/pi-coding-agent/extensibility/custom-commands/bundled/annotate/text-source";
-import {
-	AnnotateCommand,
-	runAnnotateCommand,
-} from "@oh-my-pi/pi-coding-agent/extensibility/custom-commands/bundled/annotate";
-import {
-	type AnnotationOverlayContext,
-	showCodeReviewOverlay,
-	showTextReviewOverlay,
-} from "@oh-my-pi/pi-coding-agent/extensibility/custom-commands/bundled/annotate/fullscreen";
-import { loadAnnotationDrafts } from "@oh-my-pi/pi-coding-agent/extensibility/custom-commands/bundled/annotate/draft-store";
-import * as externalEditor from "@oh-my-pi/pi-coding-agent/utils/external-editor";
-import type {
-	CustomCommandAPI,
-	CustomCommandContext,
-} from "@oh-my-pi/pi-coding-agent/extensibility/custom-commands/types";
-import type { ReviewPrRef } from "@oh-my-pi/pi-coding-agent/extensibility/custom-commands/bundled/review";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/extensibility/custom-commands/annotate.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	createResolvedReviewTarget,
 	type ResolvedReviewTarget,
@@ -62,14 +29,8 @@ import type {
 	CodeReviewAnnotation,
 	TextReviewAnnotation,
 	TextReviewSource,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { TUI } from "@oh-my-pi/pi-tui";`
 } from "@tau/tau-tui/overlays/annotation-types";
-=======
-} from "@oh-my-pi/pi-tui/overlays/annotation-types";
-import * as gh from "@oh-my-pi/pi-coding-agent/tools/gh";
-import { github } from "@oh-my-pi/pi-coding-agent/utils/github";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import { VirtualTerminal } from "../../../../tui/test/virtual-terminal";
 
 const ENTER = "\r";

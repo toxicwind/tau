@@ -23,14 +23,9 @@ import {
 	matchesKey as matchesKeyNative,
 	parseKey as parseKeyNative,
 	parseKittySequence as parseKittySequenceNative,
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-natives";
 import { isInsideTerminalMultiplexer } from "./terminal-capabilities";
-=======
-} from "@oh-my-pi/pi-natives";
-import { isInsideTerminalMultiplexer, isSshSession } from "./terminal-capabilities";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/tui/src/keys.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 // =============================================================================
 // Platform Detection

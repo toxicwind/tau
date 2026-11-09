@@ -1,17 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-co…` +1 more
 import { resetSettingsForTest, Settings } from "tau/config/settings";
 import { SelectorController } from "tau/modes/controllers/selector-controller";
 import { AgentStorage } from "tau/session/agent-storage";
 import { getProjectAgentDir, TempDir } from "@tau/tau-utils";
-=======
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentStorage } from "@oh-my-pi/pi-coding-agent/session/agent-storage";
-import { getProjectAgentDir, TempDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/autocomplete-max-visible.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { YAML } from "bun";
 import { beginSettingsTest, restoreSettingsTestState, type SettingsTestState } from "./helpers/settings-test-state";
 

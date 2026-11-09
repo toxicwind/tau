@@ -2,22 +2,9 @@ import { describe, expect, it, spyOn } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { createLinuxSubreaperScript, exec, NonZeroExitError, sp…`
 import { Process, ProcessStatus } from "@tau/tau-natives";
 import { createLinuxSubreaperScript, exec, NonZeroExitError, spawn, TimeoutError } from "@tau/tau-utils/ptree";
-=======
-import { Process, ProcessStatus } from "@oh-my-pi/pi-natives";
-import {
-	AbortError,
-	ChildProcess,
-	createLinuxSubreaperScript,
-	exec,
-	NonZeroExitError,
-	spawn,
-	TimeoutError,
-} from "@oh-my-pi/pi-utils/ptree";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/utils/test/ptree-timeout.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 async function supportsLinuxMountNamespaces(): Promise<boolean> {
 	if (process.platform !== "linux") return false;

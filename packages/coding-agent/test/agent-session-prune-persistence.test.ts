@@ -1,6 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { Agent } from "@oh-my-pi/pi-agent-core";` +1 more
 import { Agent } from "@tau/tau-agent-core";
 import { USELESS_NOTICE } from "@tau/tau-agent-core/compaction/pruning";
@@ -11,21 +10,6 @@ import { AgentSession } from "tau/session/agent-session";
 import { AuthStorage } from "tau/session/auth-storage";
 import { SessionManager } from "tau/session/session-manager";
 import { TempDir } from "@tau/tau-utils";
-=======
-import { Agent, type AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { USELESS_NOTICE } from "@oh-my-pi/pi-agent-core/compaction/pruning";
-import type { Context } from "@oh-my-pi/pi-ai";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { AdvisorOutputQuarantinedError, AdvisorRuntime } from "@oh-my-pi/pi-coding-agent/advisor/runtime";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { logger, TempDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/agent-session-prune-persistence.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /**
  * Regression: the per-turn supersede/useless prune pass rewrote the LIVE agent

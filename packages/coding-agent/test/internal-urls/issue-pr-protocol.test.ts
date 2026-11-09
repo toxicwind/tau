@@ -9,27 +9,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { resetForTests as resetCacheForTests } from "@oh-my-pi/…`
 import { Settings } from "tau/config/settings";
 import { InternalUrlRouter } from "tau/internal-urls";
 import { resetForTests as resetCacheForTests } from "tau/tools/github-cache";
 import { github } from "tau/utils/github";
 import { removeWithRetries } from "@tau/tau-utils";
-=======
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { InternalUrlRouter } from "@oh-my-pi/pi-coding-agent/internal-urls";
-import { parsePrUnifiedDiff, retainPrDiffGeneration } from "@oh-my-pi/pi-coding-agent/tools/gh-pr-diff";
-import {
-	getCached,
-	getCachedGeneration,
-	putCached,
-	resetForTests as resetCacheForTests,
-	resolveGithubCacheAuthKey,
-} from "@oh-my-pi/pi-coding-agent/tools/github-cache";
-import { github } from "@oh-my-pi/pi-coding-agent/utils/github";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/internal-urls/issue-pr-protocol.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 let tempDir: string;
 let originalEnv: string | undefined;

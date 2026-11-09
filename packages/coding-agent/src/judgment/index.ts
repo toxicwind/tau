@@ -45,22 +45,11 @@ import {
 	TYPESAFE_PROVIDER,
 	tokenUsage,
 	type Usage,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { logger, prompt } from "@oh-my-pi/pi-utils";`
 } from "@tau/tau-ai";
 import * as AIError from "@tau/tau-ai/error";
 import { calculateCost } from "@tau/tau-catalog/models";
 import { logger, prompt } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-ai";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { isEmbeddedImageContent } from "@oh-my-pi/pi-ai/images/shared";
-import { sendsImageInputOnWire } from "@oh-my-pi/pi-ai/providers/vision-guard";
-import { calculateCost } from "@oh-my-pi/pi-catalog/models";
-import { logger, prompt, untilAborted } from "@oh-my-pi/pi-utils";
-import { normalizeModelContextImages } from "../utils/image-loading";
-import { type FittedImage, fitImage } from "../utils/image-resize";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/judgment/index.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { ModelRegistry } from "../config/model-registry";
 import { cfgJudgmentAttemptTimeoutMs } from "../config/model-settings";
 import { formatModelStringWithRouting, resolveRoleChain, type RoleChainCandidate } from "../config/model-resolver";
@@ -357,7 +346,6 @@ function unfitBox(box: BoxEdges, content: BoxEdges): BoxEdges {
 }
 
 function judgeRoleChain(settings: Settings, registry: ModelRegistry): RoleChainCandidate[] {
-<<<<<<< ours — function `judgeRoleChain` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 	const chain = resolveRoleChain("judge", settings, roleCandidatePool("judge", settings, registry));
 	const firstNative = chain.findIndex(candidate => kindOf(candidate) === "native");
@@ -373,9 +361,6 @@ function judgeRoleChain(settings: Settings, registry: ModelRegistry): RoleChainC
 		.some(candidate => kindOf(candidate) === "native" && registry.hasConfiguredAuth(candidate.model));
 	if (!hasViableNative) return chain;
 	return chain.filter((candidate, index) => index < firstNative || kindOf(candidate) === "native");
-=======
-	return textJudgeRoleChain(resolveRoleChain("judge", settings, roleCandidatePool("judge", settings, registry)));
->>>>>>> theirs — function `judgeRoleChain` (S+F, confidence: low)
 }
 
 /**

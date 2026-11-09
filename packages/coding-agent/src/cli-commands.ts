@@ -366,12 +366,8 @@ const RESERVED_TOP_LEVEL_WORDS: Record<string, string> = {
 	discover:
 		'`tau discover` is not a top-level command. Use `tau plugin discover [marketplace]` to browse available plugins, or run `tau launch discover` if you meant to send "discover" as a prompt.',
 	upgrade:
-<<<<<<< ours — scope `upgrade` in variable `RESERVED_TOP_LEVEL_WORDS` (F, confidence: medium)
 // refused_by: container_member · collision: `'`omp upgrade` is not a top-level command. Use `omp plugin upgr…`
 		'`tau upgrade` is not a top-level command. Use `tau plugin upgrade [name@marketplace]` to upgrade plugins, or run `tau launch upgrade` if you meant to send "upgrade" as a prompt.',
-=======
-		'`omp upgrade` is not a top-level command. Use `omp plugin upgrade [name]` to upgrade plugins, or run `omp launch upgrade` if you meant to send "upgrade" as a prompt.',
->>>>>>> theirs — scope `upgrade` · weave: run 'weave explain packages/coding-agent/src/cli-commands.ts' for per-hunk detail, 'weave check' to verify your resolution
 	enable:
 		'`tau enable` is not a top-level command. Use `tau plugin enable <name@marketplace>` to enable a plugin, or run `tau launch enable` if you meant to send "enable" as a prompt.',
 	disable:

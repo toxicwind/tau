@@ -429,13 +429,9 @@ pub fn generate_diff_string(
 	source: &BlockContextSource<'_>,
 ) -> DiffOutput {
 	LineDiff::new(old, new).numbered(context_lines, source)
-<<<<<<< ours — scope `let parts = pi_diff::line_changes_str(old, new);` in function `generate_diff_string`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	let parts = tau_diff::line_changes_str(old, new);
-=======
->>>>>>> theirs — scope `let parts = pi_diff::line_changes_str(old, new);` deleted in theirs · weave: run 'weave explain crates/tau-edit/src/diff_string.rs' for per-hunk detail, 'weave check' to verify your resolution
 }
-<<<<<<< ours — function `generate_unified_diff_string` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 /// Generate numbered unified hunks without file headers.
 pub fn generate_unified_diff_string(
@@ -485,8 +481,6 @@ pub fn generate_unified_diff_string(
 	add_matching_bracket_context_rows(&mut output, &old_lines, &new_lines, source);
 	DiffOutput { diff: output.join("\n"), first_changed_line }
 }
-=======
->>>>>>> theirs — function `generate_unified_diff_string` (S+F, confidence: low)
 
 #[derive(Clone, Copy, Debug)]
 struct LineSpan {

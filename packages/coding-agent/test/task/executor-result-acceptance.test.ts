@@ -5,7 +5,6 @@
  * and on an autonomous IRC wake turn.
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import type { AssistantMessage } from "@oh-my-pi/pi-ai";`
 import type { AssistantMessage } from "@tau/tau-ai";
 import { AsyncJobManager } from "tau/async/job-manager";
@@ -19,36 +18,6 @@ import type { AgentSession, AgentSessionEvent } from "tau/session/agent-session"
 import { attachIrcWakeTurnMonitor, runSubagentFollowUpTurn, runSubprocess } from "tau/task/executor";
 import type { AgentDefinition } from "tau/task/types";
 import { EventBus } from "tau/utils/event-bus";
-=======
-import * as path from "node:path";
-import type { AssistantMessage, ToolCall } from "@oh-my-pi/pi-ai";
-import { type CursorExecResolvedCarrier, kCursorExecResolved } from "@oh-my-pi/pi-ai/utils/block-symbols";
-import { AsyncJobManager } from "@oh-my-pi/pi-coding-agent/async/job-manager";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { InternalUrlRouter } from "@oh-my-pi/pi-coding-agent/internal-urls";
-import { resetRegisteredArtifactDirsForTests } from "@oh-my-pi/pi-coding-agent/internal-urls/registry-helpers";
-import { IrcBus } from "@oh-my-pi/pi-coding-agent/irc/bus";
-import type { LoadExtensionsResult } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/types";
-import type { IrcMessage } from "@oh-my-pi/pi-tui/tools/irc";
-import { AgentLifecycleManager } from "@oh-my-pi/pi-coding-agent/registry/agent-lifecycle";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import type { CreateAgentSessionResult } from "@oh-my-pi/pi-coding-agent/sdk";
-import * as sdkModule from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { AgentSession, AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { IrcBridge, type IrcBridgeHost } from "@oh-my-pi/pi-coding-agent/session/irc-bridge";
-import {
-	attachIrcWakeTurnMonitor,
-	runSubagentFollowUpTurn,
-	runSubprocess,
-} from "@oh-my-pi/pi-coding-agent/task/executor";
-import type { AgentDefinition } from "@oh-my-pi/pi-coding-agent/task/types";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { WaitTool } from "@oh-my-pi/pi-coding-agent/tools/wait";
-import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-import { TempDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/task/executor-result-acceptance.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const AGENT_ID = "accepted-result";
 

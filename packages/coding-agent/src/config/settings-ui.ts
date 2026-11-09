@@ -1,17 +1,6 @@
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { TERMINAL } from "@tau/tau-tui";
 import { SETTING_TABS, type SettingsDisplayEntry, type SettingsHost } from "@tau/tau-tui/overlays/settings-defs";
-=======
-import { TERMINAL } from "@oh-my-pi/pi-tui";
-import { isNativeRendering } from "@oh-my-pi/pi-tui/native/state";
-import { SETTING_TABS, type SettingsDisplayEntry, type SettingsHost } from "@oh-my-pi/pi-tui/overlays/settings-defs";
-import { isSettingsInitialized, Settings, settings } from "./settings";
-import { orderedSettings } from "./all-settings";
-import { type AnySetting, lookup } from "./registry";
-
-import { cfgPlanAutosave, cfgPlanEnabled } from "../plan-mode/settings";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/config/settings-ui.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	cfgRetryUsageAwareFallback,
 	cfgDefaultThinkingLevel,
@@ -66,18 +55,9 @@ function envNote(setting: AnySetting): string {
 		: ` $${setting.envName} overrides this setting while it is set.`;
 }
 
-<<<<<<< ours — scope `declaration` in function `createSettingsHost` (S, confidence: medium)
 // refused_by: statement_fold · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 /** Adapt the application schema and settings store to the terminal overlay. */
 export function createSettingsHost(settingsInstance?: Settings): SettingsHost {
-=======
-/**
- * Adapt the application schema and settings store to the terminal overlay. The panel shows and
- * edits the value of the settings layers, never an environment-supplied one (so an env credential
- * is never pre-filled or written to config); descriptions note an active environment variable.
- */
-export function createSettingsHost(): SettingsHost {
->>>>>>> theirs — scope `declaration`
 	const entries: SettingsDisplayEntry[] = [];
 	for (const tab of SETTING_TABS) {
 		for (const setting of orderedSettings()) {
@@ -102,7 +82,6 @@ export function createSettingsHost(): SettingsHost {
 	};
 	return {
 		entries,
-<<<<<<< ours — scope `return {` in function `createSettingsHost` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `get: path => settings.get(path as SettingPath),` +1 more
 		get: path => {
 			try {
@@ -113,11 +92,6 @@ export function createSettingsHost(): SettingsHost {
 		},
 		set: (path, value) =>
 			(settingsInstance ?? Settings.instance ?? settings).set(path as SettingPath, value as never),
-=======
-		get: path => lookup(path)?.layered(settings),
-		set: (path, value) => resolve(path).set(settings, value),
-		unset: path => resolve(path).unset(settings),
->>>>>>> theirs — scope `return {`
 		normalizeProviderLimits: normalizeProviderMaxInFlightRequests,
 		validateProviderLimits: validateProviderMaxInFlightRequests,
 	};

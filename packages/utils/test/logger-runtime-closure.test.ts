@@ -19,14 +19,9 @@ async function makeRoot(prefix: string): Promise<string> {
 	return root;
 }
 
-<<<<<<< ours — function `runProbe` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 async function runProbe(scenario: "import" | "console" | "file"): Promise<ProbeResult> {
 	const root = await makeRoot("tau-logger-cache-");
-=======
-async function runProbe(scenario: "import" | "console" | "file"): Promise<LoggerCacheSnapshot> {
-	const root = await makeRoot("omp-logger-cache-");
->>>>>>> theirs — function `runProbe` (S+F, confidence: low) · weave: run 'weave explain packages/utils/test/logger-runtime-closure.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 	const outputPath = path.join(root, "result.json");
 	const logsDir = path.join(root, "logs");
 	await fs.mkdir(logsDir);

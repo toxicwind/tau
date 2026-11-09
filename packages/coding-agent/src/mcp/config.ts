@@ -4,12 +4,8 @@
  * Uses the capability system to load MCP servers from multiple sources.
  */
 
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { getMCPConfigPath } from "@oh-my-pi/pi-utils";`
 import { getMCPConfigPath } from "@tau/tau-utils";
-=======
-import { getMCPConfigPath, logger } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/mcp/config.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { mcpCapability } from "../capability/mcp";
 import type { EffectiveExtensionRoots, SourceMeta } from "../capability/types";
 import type { MCPServer } from "../discovery";

@@ -49,55 +49,5 @@ mkdir -p /data/workspaces /data/workspaces/_pool /data/logs
 # so every per-issue worktree shares one cargo target/toolchain. Bun install
 # cache is workspace-private; a shared cache is unsafe across slot users
 # because bun may chmod/chown its cache root to the first writer.
-<<<<<<< ours
 mkdir -p /data/cache/cargo /data/cache/cargo-target /data/cache/rustup /data/cache/tau-natives
 chown -R root:tau /data/cache /data/workspaces/_pool
-||||||| base
-mkdir -p /data/cache/cargo /data/cache/cargo-target /data/cache/rustup /data/cache/pi-natives
-chown -R root:omp /data/cache /data/workspaces/_pool
-=======
-mkdir -p /data/cache/cargo /data/cache/cargo-target /data/cache/rustup /data/natives-cache
-chown root:root /data/natives-cache
-chmod 0700 /data/natives-cache
-chown -R root:omp /data/cache /data/workspaces/_pool
->>>>>>> theirs · weave: run 'weave explain python/robtau/entrypoint.sh' for per-hunk detail, 'weave check' to verify your resolution
-find /data/cache /data/workspaces/_pool -type d -exec chmod 2770 {} +
-find /data/cache /data/workspaces/_pool -type f -perm /111 -exec chmod 0770 {} +
-find /data/cache /data/workspaces/_pool -type f ! -perm /111 -exec chmod 0660 {} +
-chmod 0700 /data/logs
-
-
-rm -rf /srv/agent-home/.agent /srv/agent-home/.tau/agent
-mkdir -p /srv/agent-home/.agent /srv/agent-home/.tau/agent
-if [ -e /srv/agent-home-stage/.agent ]; then
-    cp -a /srv/agent-home-stage/.agent/. /srv/agent-home/.agent/
-fi
-if [ -e /srv/agent-home-stage/.tau/agent ]; then
-    cp -a /srv/agent-home-stage/.tau/agent/. /srv/agent-home/.tau/agent/
-fi
-chown -R root:root /srv/agent-home || true
-find /srv/agent-home -type d -exec chmod 0755 {} +
-find /srv/agent-home -type f -exec chmod 0644 {} +
-
-# tau registers daemon project presence under ~/.tau/run at startup, nesting
-# per-project dirs (daemons/<hash>/clients) that any slot user must be able to
-# create and enter regardless of which slot first made them: setgid + group
-# tau keeps the whole tree group-writable (entrypoint umask 0002 carries into
-# slot processes, so new entries stay group-writable too).
-mkdir -p /srv/agent-home/.tau/run
-chgrp -R tau /srv/agent-home/.tau/run
-chmod -R g+rwX /srv/agent-home/.tau/run
-find /srv/agent-home/.tau/run -type d -exec chmod g+s {} +
-chmod 2770 /srv/agent-home/.tau/run
-
-touch /data/robtau.sqlite
-chown root:root /data/robtau.sqlite
-chmod 0600 /data/robtau.sqlite
-for db_file in /data/robtau.sqlite-wal /data/robtau.sqlite-shm; do
-    if [ -e "$db_file" ]; then
-        chown root:root "$db_file"
-        chmod 0600 "$db_file"
-    fi
-done
-
-exec "$@"

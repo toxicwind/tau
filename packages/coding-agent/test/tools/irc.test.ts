@@ -1,5 +1,4 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { Agent } from "@oh-my-pi/pi-agent-core";` +4 more
 import { Agent } from "@tau/tau-agent-core";
 import { Settings } from "tau/config/settings";
@@ -12,23 +11,6 @@ import { AgentSession, type AgentSessionEvent } from "tau/session/agent-session"
 import { IrcBridge } from "tau/session/irc-bridge";
 import type { CustomMessage } from "tau/session/messages";
 import { SessionManager } from "tau/session/session-manager";
-=======
-import { Agent, type AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { AsyncJobManager } from "@oh-my-pi/pi-coding-agent/async/job-manager";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { IrcBus, type IrcBusApi } from "@oh-my-pi/pi-coding-agent/irc/bus";
-import { executeSend } from "@oh-my-pi/pi-coding-agent/irc/messaging";
-import { type IrcMessage } from "@oh-my-pi/pi-tui/tools/irc";
-import { AgentLifecycleManager } from "@oh-my-pi/pi-coding-agent/registry/agent-lifecycle";
-import { AgentRegistry, type AgentRegistryApi } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import { AgentSession, type AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { IrcBridge, type IrcBridgeHost } from "@oh-my-pi/pi-coding-agent/session/irc-bridge";
-import type { CustomMessage } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { attachIrcWakeTurnMonitor } from "@oh-my-pi/pi-coding-agent/task/executor";
-import type { AgentDefinition } from "@oh-my-pi/pi-coding-agent/task/types";
-import { createSessionDefaults } from "../helpers/session-defaults";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/tools/irc.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 type IrcWakeObserver = (records: AgentMessage[]) => ((error?: unknown) => void | Promise<void>) | undefined;
 

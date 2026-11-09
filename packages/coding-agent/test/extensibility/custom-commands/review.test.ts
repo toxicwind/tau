@@ -90,20 +90,8 @@ describe("ReviewCommand", () => {
 	let retainGeneration!: Mock<typeof gh.retainPrDiffGeneration>;
 
 	beforeAll(async () => {
-<<<<<<< ours — test_suite `ReviewCommand` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 		tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-review-command-"));
-=======
-		tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "omp-review-command-"));
-		// Menu targets need a checkout; fixture subdirectories stand in for worktrees.
-		await $`git init -q`.cwd(tmpDir).quiet();
-	});
-
-	beforeEach(() => {
-		// PR review cases call the real generation writer. Keep that off the
-		// developer cache; the one case that resolves pinned links restores it.
-		retainGeneration = spyOn(gh, "retainPrDiffGeneration").mockReturnValue(1);
->>>>>>> theirs — test_suite `ReviewCommand` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/extensibility/custom-commands/review.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 	});
 
 	afterEach(() => {

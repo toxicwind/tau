@@ -15,19 +15,12 @@
  *   with `{ summary, shortSummary? }`.
  */
 
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { ProviderHttpError } from "@oh-my-pi/pi-ai/error";` +2 more
 import { ProviderHttpError } from "@tau/tau-ai/error";
 import { getCodexAttestationHeader } from "@tau/tau-ai/providers/openai-codex-attestation";
 import { createOpenAICodexCompactionRequestContext } from "@tau/tau-ai/providers/openai-codex-compaction";
 import { applyCodexResponsesLiteShape } from "@tau/tau-ai/providers/openai-codex/request-transformer";
 import { createOpenAICodexCompatibilityMetadata } from "@tau/tau-ai/providers/openai-codex-responses";
-=======
-import { attach, create, Flag, ProviderHttpError } from "@oh-my-pi/pi-ai/error";
-import { getCodexAttestationHeader } from "@oh-my-pi/pi-ai/providers/openai-codex-attestation";
-import { createOpenAICodexCompactionRequestContext } from "@oh-my-pi/pi-ai/providers/openai-codex-compaction";
-import { applyCodexResponsesLiteShape } from "@oh-my-pi/pi-ai/providers/openai-codex/request-transformer";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/agent/src/compaction/openai.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	applyInferenceHeaders,
 	applySessionHeader,
@@ -48,13 +41,8 @@ import type {
 	Message,
 	Model,
 	ProviderSessionState,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { ProviderHttpError } from "@oh-my-pi/pi-ai/error";` +2 more
 } from "@tau/tau-ai/types";
-=======
-	SimpleStreamOptions,
-} from "@oh-my-pi/pi-ai/types";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import {
 	dropMalformedOpenAIResponsesToolCalls,
 	getOpenAIResponsesHistoryItems,
@@ -62,16 +50,9 @@ import {
 	normalizeResponsesToolCallId,
 	stripOpenAIResponsesInternalMetadataForReplay,
 	stripOpenAIResponsesOutputOnlyStatusesForReplay,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { ProviderHttpError } from "@oh-my-pi/pi-ai/error";` +2 more
 } from "@tau/tau-ai/utils";
 import { captureOpenAIHttpError } from "@tau/tau-ai/utils/openai-http";
-=======
-	truncateResponseItemId,
-} from "@oh-my-pi/pi-ai/utils";
-import { captureOpenAIHttpError } from "@oh-my-pi/pi-ai/utils/openai-http";
-import { isBedrockOpenAIUrl } from "@oh-my-pi/pi-catalog/hosts";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import {
 	applyCodexResidencyHeader,
 	CODEX_BASE_URL,
@@ -79,24 +60,9 @@ import {
 	getCodexAccountId,
 	OPENAI_HEADER_VALUES,
 	OPENAI_HEADERS,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { ProviderHttpError } from "@oh-my-pi/pi-ai/error";` +2 more
 } from "@tau/tau-catalog/wire/codex";
 import { $env, isRecord, logger, prompt, stringifyJson, structuredCloneJSON } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-catalog/wire/codex";
-import {
-	$env,
-	isRecord,
-	logger,
-	prompt,
-	ptree,
-	stringifyJson,
-	structuredCloneJSON,
-	untilAborted,
-} from "@oh-my-pi/pi-utils";
-import { dataUrlImageSize } from "../image-tokens";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import { Tokenizer } from "../tokenizer";
 import { appendAzureApiVersion, resolveAzureOpenAiBaseUrl } from "./azure-openai-endpoint";
 import { prepareBedrockCompactionRequest } from "./bedrock";

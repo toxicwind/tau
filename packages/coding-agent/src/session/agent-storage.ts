@@ -4,7 +4,6 @@ import * as path from "node:path";
 import {
 	type AuthCredential,
 	type AuthCredentialStore,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 	SqliteAuthCredentialStore,
 	type StoredAuthCredential,
@@ -20,24 +19,6 @@ import {
 	openSqliteDatabase,
 	postmortem,
 } from "@tau/tau-utils";
-=======
-	parseServiceTier,
-	SqliteAuthCredentialStore,
-	type ServiceTier,
-	type StoredAuthCredential,
-} from "@oh-my-pi/pi-ai";
-import {
-	AsyncDrain,
-	checkpointWal,
-	getAgentDbPath,
-	getDbBusyTimeoutMs,
-	getStatsDbPath,
-	isRecord,
-	logger,
-	openSqliteDatabase,
-	postmortem,
-} from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/session/agent-storage.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { RawSettings as Settings } from "../config/settings";
 
 /** Row shape for settings table queries */

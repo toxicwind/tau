@@ -1,21 +1,9 @@
 import { beforeAll, describe, expect, it } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { type Component, Container, Text } from "@oh-my-pi/pi-t…`
 import { COMPOSER_DEFAULTS, Composer } from "@tau/tau-tui/prompt/composer";
 import { TranscriptContainer } from "@tau/tau-tui/chrome/transcript-container";
 import { initTheme } from "@tau/tau-tui/theme";
 import { type Component, Container, Text } from "@tau/tau-tui";
-=======
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { AssistantMessageComponent } from "@oh-my-pi/pi-tui/chat/assistant-message";
-import { COMPOSER_DEFAULTS, Composer } from "@oh-my-pi/pi-tui/prompt/composer";
-import { EditorTopGap } from "@oh-my-pi/pi-tui/prompt/editor-top-gap";
-import { TranscriptContainer } from "@oh-my-pi/pi-tui/chrome/transcript-container";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { type Component, Container, getKeybindings, setKeybindings, Text } from "@oh-my-pi/pi-tui";
-import { KeybindingsManager } from "@oh-my-pi/pi-tui/app-keybindings";
-import { AskDialogComponent } from "@oh-my-pi/pi-tui/overlays/ask-dialog";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/test/composer-inline-shrink.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { VirtualRenderScheduler } from "./virtual-render-scheduler";
 import { VirtualTerminal } from "./virtual-terminal";
 import { withoutTerminalMultiplexer } from "./helpers/terminal-multiplexer";

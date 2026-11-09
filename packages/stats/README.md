@@ -23,35 +23,8 @@ Local observability dashboard for AI usage statistics.
 
 Subscription-backed models use matching public API prices when an exact public model exists; these values estimate API-equivalent usage rather than the architect's bill. Subscription-only models without a public price are reported as N/A and excluded from dollar totals.
 
-<<<<<<< ours — heading `Features` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
-=======
-## Features
-
-- **Session log parsing**: Reads JSONL session logs from `~/.omp/agent/sessions/`
-- **SQLite aggregation**: Stats storage in `bun:sqlite`, with hourly rollups so any range queries in milliseconds
-- **Live web dashboard**: Opens instantly, ingests sessions in the background (newest first) and streams progress and updates to the page
-- **Incremental sync**: Only processes new/modified log entries; a watcher re-syncs transcripts as they are written
-
->>>>>>> theirs — heading `Features` (S+F, confidence: low) · weave: run 'weave explain packages/stats/README.md' for per-hunk detail, 'weave check' to verify your resolution
-<<<<<<< ours — heading `Metrics Tracked` (T+F, confidence: medium)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
-=======
-## Metrics Tracked
-
-| Metric                  | Calculation                                                                |
-| ----------------------- | -------------------------------------------------------------------------- |
-| Tokens/s                | `output_tokens / (duration / 1000)`                                        |
-| Cache Rate              | `cache_read / (input + cache_read) * 100`                                  |
-| Cache Savings           | `(uncached prompt cost - actual prompt cost) / uncached prompt cost * 100` |
-| Error Rate              | `count(stopReason=error) / total_calls * 100`                              |
-| API-equivalent estimate | Sum of token usage priced with the matching public API rate card           |
-| Avg Latency             | Mean of `duration`                                                         |
-| TTFT                    | Mean of `ttft` (time to first token)                                       |
-
-Subscription-backed models use matching public API prices when an exact public model exists; these values estimate API-equivalent usage rather than the user's bill. Subscription-only models without a public price are reported as N/A and excluded from dollar totals.
-
->>>>>>> theirs — heading `Metrics Tracked` (T+F, confidence: medium)
 ## Usage
 
 ### Via CLI
@@ -101,21 +74,7 @@ console.log(stats.byModel[0].avgTokensPerSecond);
 - **Session logs**: `~/.tau/agent/sessions/` (JSONL files)
 - **Stats database**: `~/.tau/stats.db` (SQLite)
 
-<<<<<<< ours — heading `Data Storage` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
-=======
-## Data Storage
-
-- **Session logs**: `~/.omp/agent/sessions/` (JSONL files)
-- **Stats database**: `~/.omp/stats.db` (SQLite)
-
-Synchronization fetches file metadata and saved cursors in bounded batches and overlaps transcript reads, including on macOS without worker threads. Statistics and cursors commit atomically; unchanged files are skipped, and interrupted batches are retried without double-counting usage.
-
-Full reconciliation replays still scan every transcript. Unchanged transcripts retain their indexed rows while missing or stale records and unfinished links are repaired; modified transcripts are rebuilt. Parsing discards message bodies after extracting statistics rather than retaining entire decoded transcripts.
-
-Range queries read `message_rollup` / `tool_rollup` / `session_rollup`, maintained from the raw tables: triggers mark touched hours and transcripts dirty (from any omp process), and the dashboard re-rolls them newest-first in short transactions. Reads stay exact by aggregating the few dirty hours raw; during an initial build the header shows the indexing backlog.
-
->>>>>>> theirs — heading `Data Storage` (S+F, confidence: low)
 ## Dashboard
 
 Pages: Overview, Models, Providers, Costs, Requests, Errors, Traces, Tools, Frustration, Projects and Gain. `1`–`6` pick the time range; `g` then a letter jumps to a page. Every page revalidates when the live data version moves, so there is no refresh button.

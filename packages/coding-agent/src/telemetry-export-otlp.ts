@@ -20,14 +20,9 @@ import type {
 	CostEstimate,
 	CostEstimatorContext,
 	ToolStatus,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { logger, postmortem } from "@oh-my-pi/pi-utils";`
 } from "@tau/tau-agent-core";
 import { logger, postmortem } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-agent-core";
-import { $otelEnv, logger, postmortem, untilAborted, withOmpOtelEnv } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/telemetry-export-otlp.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	type Attributes,
 	type AttributeValue,
@@ -236,7 +231,6 @@ export async function registerProviders(signalConfig: TelemetrySignalConfig): Pr
 		}
 	});
 
-<<<<<<< ours — scope `if (signalConfig.metric) {` in function `registerProviders`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	if (signalConfig.metric) {
 		const exporter = new OTLPMetricExporter();
@@ -247,10 +241,7 @@ export async function registerProviders(signalConfig: TelemetrySignalConfig): Pr
 		metrics.setGlobalMeterProvider(meterProvider);
 		metricRecorder = new AgentMetricRecorder(metrics.getMeter("@tau/tau-coding-agent"));
 	}
-=======
->>>>>>> theirs — scope `if (signalConfig.metric) {` deleted in theirs
 
-<<<<<<< ours — scope `if (signalConfig.log) {` in function `registerProviders`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	if (signalConfig.log) {
 		const exporter = new OTLPLogExporter();
@@ -270,8 +261,6 @@ export async function registerProviders(signalConfig: TelemetrySignalConfig): Pr
 			);
 		});
 	}
-=======
->>>>>>> theirs — scope `if (signalConfig.log) {` deleted in theirs
 }
 
 class AgentMetricRecorder {
@@ -290,7 +279,6 @@ class AgentMetricRecorder {
 			description: "Token usage reported by GenAI chat calls.",
 			unit: "{token}",
 		});
-<<<<<<< ours — scope `constructor` in class `AgentMetricRecorder` (F, confidence: medium)
 // refused_by: container_member · collision: `this.#chatCostUsd = meter.createCounter("pi.omp.agent.chat.cost…` +7 more
 		this.#chatCostUsd = meter.createCounter("pi.tau.agent.chat.cost.estimated_usd", {
 			description: "Estimated USD cost for completed chat calls.",
@@ -321,37 +309,6 @@ class AgentMetricRecorder {
 			unit: "ms",
 		});
 		this.#errors = meter.createCounter("pi.tau.agent.errors", {
-=======
-		this.#chatCostUsd = meter.createCounter("omp.agent.chat.cost.estimated_usd", {
-			description: "Estimated USD cost for completed chat calls.",
-			unit: "USD",
-		});
-		this.#runs = meter.createCounter("omp.agent.runs", {
-			description: "Completed agent runs.",
-			unit: "{run}",
-		});
-		this.#steps = meter.createCounter("omp.agent.steps", {
-			description: "Agent loop steps completed inside a run.",
-			unit: "{step}",
-		});
-		this.#chatCalls = meter.createCounter("omp.agent.chat.calls", {
-			description: "Chat calls completed inside agent runs.",
-			unit: "{call}",
-		});
-		this.#chatDurationMs = meter.createHistogram("omp.agent.chat.duration", {
-			description: "Total chat latency observed in an agent run.",
-			unit: "ms",
-		});
-		this.#toolCalls = meter.createCounter("omp.agent.tool.calls", {
-			description: "Tool calls completed inside agent runs.",
-			unit: "{call}",
-		});
-		this.#toolDurationMs = meter.createHistogram("omp.agent.tool.duration", {
-			description: "Total tool latency observed in an agent run.",
-			unit: "ms",
-		});
-		this.#errors = meter.createCounter("omp.agent.errors", {
->>>>>>> theirs — scope `constructor`
 			description: "Errors observed in chat and tool execution.",
 			unit: "{error}",
 		});
@@ -381,20 +338,12 @@ class AgentMetricRecorder {
 
 	recordRun(summary: AgentRunSummary, coverage: AgentRunCoverage): void {
 		const runAttrs = metricAttributes({
-<<<<<<< ours — scope `recordRun` in class `AgentMetricRecorder` (S+F, confidence: low)
 // refused_by: container_member · collision: `"pi.omp.agent.models_used.count": coverage.modelsUsed.length,` +5 more
 			"pi.tau.agent.models_used.count": coverage.modelsUsed.length,
 			"pi.tau.agent.providers_used.count": coverage.providersUsed.length,
 			"pi.tau.agent.tools_available.count": coverage.toolsAvailable.length,
 			"pi.tau.agent.tools_invoked.count": coverage.toolsInvoked.length,
 			"pi.tau.agent.tools_unused.count": coverage.toolsUnused.length,
-=======
-			"omp.agent.models_used.count": coverage.modelsUsed.length,
-			"omp.agent.providers_used.count": coverage.providersUsed.length,
-			"omp.agent.tools_available.count": coverage.toolsAvailable.length,
-			"omp.agent.tools_invoked.count": coverage.toolsInvoked.length,
-			"omp.agent.tools_unused.count": coverage.toolsUnused.length,
->>>>>>> theirs — scope `recordRun`
 		});
 
 		this.#runs.add(1, runAttrs);
@@ -412,12 +361,8 @@ class AgentMetricRecorder {
 			if (counters.totalLatencyMs > 0) this.#toolDurationMs.record(counters.totalLatencyMs, toolAttrs);
 			for (const status of TOOL_STATUSES) {
 				const count = counters[status];
-<<<<<<< ours — scope `recordRun` in class `AgentMetricRecorder` (S+F, confidence: low)
 // refused_by: container_member · collision: `"pi.omp.agent.models_used.count": coverage.modelsUsed.length,` +5 more
 				if (count > 0) this.#toolCalls.add(count, metricAttributes({ ...toolAttrs, "pi.tau.tool.status": status }));
-=======
-				if (count > 0) this.#toolCalls.add(count, metricAttributes({ ...toolAttrs, "omp.tool.status": status }));
->>>>>>> theirs — scope `recordRun`
 			}
 		}
 		for (const errorType in summary.errors.byType) {
@@ -452,7 +397,6 @@ function emitRunSummaryLog(summary: AgentRunSummary, coverage: AgentRunCoverage)
 		"info",
 		"agent run completed",
 		{
-<<<<<<< ours — scope `emitOtelLog(` in function `emitRunSummaryLog` (F, confidence: medium)
 // refused_by: statement_fold · collision: `"pi.omp.agent.step_count": summary.stepCount,` +25 more
 			"pi.tau.agent.step_count": summary.stepCount,
 			"pi.tau.agent.chats.total": summary.chats.total,
@@ -481,35 +425,6 @@ function emitRunSummaryLog(summary: AgentRunSummary, coverage: AgentRunCoverage)
 			"pi.tau.agent.coverage.providers_used": coverage.providersUsed.join(","),
 		},
 		"pi.tau.agent.run.completed",
-=======
-			"omp.agent.step_count": summary.stepCount,
-			"omp.agent.chats.total": summary.chats.total,
-			"omp.agent.chats.total_latency_ms": summary.chats.totalLatencyMs,
-			"omp.agent.tools.total": summary.tools.total,
-			"omp.agent.tools.ok": summary.tools.ok,
-			"omp.agent.tools.error": summary.tools.error,
-			"omp.agent.tools.skipped": summary.tools.skipped,
-			"omp.agent.tools.blocked": summary.tools.blocked,
-			"omp.agent.tools.timeout": summary.tools.timeout,
-			"omp.agent.tools.aborted": summary.tools.aborted,
-			"omp.agent.tools.total_latency_ms": summary.tools.totalLatencyMs,
-			"omp.agent.usage.input_tokens": summary.usage.inputTokens,
-			"omp.agent.usage.output_tokens": summary.usage.outputTokens,
-			"omp.agent.usage.cached_input_tokens": summary.usage.cachedInputTokens,
-			"omp.agent.usage.cache_write_tokens": summary.usage.cacheWriteTokens,
-			"omp.agent.usage.reasoning_output_tokens": summary.usage.reasoningOutputTokens,
-			"omp.agent.usage.total_tokens": summary.usage.totalTokens,
-			"omp.agent.cost.estimated_usd": summary.cost.estimatedUsd,
-			"omp.agent.cost.unavailable_reasons": summary.cost.unavailableReasons.join(","),
-			"omp.agent.errors.total": summary.errors.total,
-			"omp.agent.coverage.tools_available": coverage.toolsAvailable.join(","),
-			"omp.agent.coverage.tools_invoked": coverage.toolsInvoked.join(","),
-			"omp.agent.coverage.tools_unused": coverage.toolsUnused.join(","),
-			"omp.agent.coverage.models_used": coverage.modelsUsed.join(","),
-			"omp.agent.coverage.providers_used": coverage.providersUsed.join(","),
-		},
-		"omp.agent.run.completed",
->>>>>>> theirs — scope `emitOtelLog(`
 	);
 }
 
@@ -518,12 +433,8 @@ function emitTelemetryWarningLog(warning: AgentTelemetryWarning): void {
 		code: warning.code,
 		error: warning.error,
 	});
-<<<<<<< ours — scope `emitOtelLog("warn", warning.message, attrs, "...` in function `emitTelemetryWarningLog` (S, confidence: medium)
 // refused_by: statement_fold · collision: `emitOtelLog("warn", warning.message, attrs, "pi.omp.telemetry.w…`
 	emitOtelLog("warn", warning.message, attrs, "pi.tau.telemetry.warning");
-=======
-	emitOtelLog("warn", warning.message, attrs, "omp.telemetry.warning");
->>>>>>> theirs — scope `emitOtelLog("warn", warning.message, attrs, "...`
 }
 
 function emitOtelLog(

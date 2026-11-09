@@ -5,12 +5,8 @@
  */
 import * as path from "node:path";
 import * as url from "node:url";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { getProjectDir, logger, withTimeout } from "@oh-my-pi/p…`
 import { getProjectDir, logger, withTimeout } from "@tau/tau-utils";
-=======
-import { getProjectDir, logger, untilAborted, withTimeout } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/mcp/client.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { describeMCPTimeout, isMCPTimeoutEnabled, resolveMCPTimeoutMs } from "./timeout";
 import { createHttpTransport } from "./transports/http";
 import { LegacySseConnectionTimeoutError, createSseTransport } from "./transports/sse";
@@ -156,31 +152,11 @@ async function initializeConnection(
 			throw options.signal.reason instanceof Error ? options.signal.reason : new Error("Aborted");
 		}
 
-<<<<<<< ours — scope `throw options.signal.reason instanceof Error ...` in function `initializeConnection` (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 		// Echo the negotiated protocol version on every subsequent request. The MCP
 		// Streamable HTTP spec requires the MCP-Protocol-Version header after
 		// initialize; transports that don't need it ignore this.
 		transport.setProtocolVersion?.(result.protocolVersion);
-=======
-		throw options.signal.reason instanceof Error ? options.signal.reason : new Error("Aborted");
-	}
-
-	// Echo the negotiated protocol version on every subsequent request. The MCP
-	// Streamable HTTP spec requires the MCP-Protocol-Version header after
-	// initialize; transports that don't need it ignore this.
-	transport.setProtocolVersion?.(result.protocolVersion);
-
-	// Send initialized before opening the optional GET SSE stream. Servers may
-	// reject or terminate sessions that receive session traffic before this
-	// notification; POST response streams already carry messages during setup.
-	await transport.notify("notifications/initialized");
-	options?.signal?.throwIfAborted();
-
-	await options?.onInitialized?.();
-
-	return result;
->>>>>>> theirs — scope `throw options.signal.reason instanceof Error ...`
 }
 
 /** Identifies an MCP server whose initial handshake exceeded its configured timeout. */

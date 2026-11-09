@@ -92,7 +92,6 @@ async function captureStreamHeaders(
 }
 
 describe("resolveOpenAIRequestSetup User-Agent", () => {
-<<<<<<< ours — scope `test("sets omp User-Agent on xAI when none is...` in test_suite `resolveOpenAIRequestSetup User-Agent`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	test("sets tau User-Agent on xAI when none is provided", () => {
 		for (const provider of ["xai", "xai-oauth"] as const) {
@@ -104,8 +103,6 @@ describe("resolveOpenAIRequestSetup User-Agent", () => {
 			expect(setup.requestHeaders["User-Agent"]).toBe(USER_AGENT);
 		}
 	});
-=======
->>>>>>> theirs — scope `test("sets omp User-Agent on xAI when none is...` deleted in theirs · weave: run 'weave explain packages/ai/test/openai-compat-user-agent.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 	test("does not override a caller-supplied xAI User-Agent", () => {
 		const setup = resolveOpenAIRequestSetup(
 			{

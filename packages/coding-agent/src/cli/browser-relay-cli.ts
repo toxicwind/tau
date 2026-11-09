@@ -4,12 +4,8 @@
  * intentional user-facing output.
  */
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (T+F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { getBrowserRelayDir } from "@oh-my-pi/pi-utils";`
 import { getBrowserRelayDir } from "@tau/tau-utils";
-=======
-import { VERSION } from "@oh-my-pi/pi-utils/dirs";
->>>>>>> theirs — interstitial `file_header` (T+F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/cli/browser-relay-cli.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { probeRelayServer } from "../tools/browser/relay/daemon";
 import { defaultRelayExtensionDir, writeRelayExtension } from "../tools/browser/relay/extension-files";
 import { DEFAULT_RELAY_URL } from "../tools/browser/relay/kind";

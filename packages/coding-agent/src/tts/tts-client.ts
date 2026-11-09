@@ -1,9 +1,5 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { logger } from "@oh-my-pi/pi-utils";`
 import { logger } from "@tau/tau-utils";
-=======
-import { logger, toError } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tts/tts-client.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	type ModelWorkerMessage,
 	ModelWorkerHost,
@@ -282,7 +278,6 @@ export class TtsClient {
 		return this.#host.terminate();
 	}
 
-<<<<<<< ours — scope `#syncWorkerRef` in class `TtsClient`, deleted in theirs (T+F, confidence: medium)
 // refused_by: container_member · collision: none (no common ancestor text)
 	/**
 	 * The TTS subprocess is spawned `unref`'d so an idle worker never blocks
@@ -299,8 +294,6 @@ export class TtsClient {
 		if (shouldRef) worker.ref();
 		else worker.unref();
 	}
-=======
->>>>>>> theirs — scope `#syncWorkerRef` deleted in theirs
 
 	#handleMessage(message: ModelWorkerMessage<TtsWorkerOutbound>): void {
 		const pending = this.#host.pending.get(message.id);

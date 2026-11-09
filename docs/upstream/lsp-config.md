@@ -42,50 +42,8 @@ The native user config directory follows `TAU_CONFIG_DIR` and active profiles; `
 
 > **Note:** Auto-detection mode is skipped only when at least one readable config contributes a non-empty server map. A config that only sets `idleTimeoutMs` still uses built-in auto-detection. With server overrides, TAU first merges them onto all defaults, then keeps servers whose root markers match the cwd, whose binary resolves, and whose merged config is not `disabled`.
 
-<<<<<<< ours — heading `Auto-detection` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
-=======
-## Auto-detection
-
-OMP starts from the built-in server definitions, applies config overrides, then keeps enabled servers that meet both conditions:
-
-1. The current working directory contains at least one of the server's `rootMarkers`.
-2. The server binary is available — checked in supported project-local bin directories first (for example `node_modules/.bin/`, Python virtual environments, Ruby binstubs, and project `bin/` for Go), then `$PATH`.
-
-Root-marker detection at startup is cwd-only; it does not search parent directories. Wildcard markers such as `*.cabal` match entries directly inside the cwd and do not recurse. No configuration is required for common setups; see [`defaults.json`](../packages/coding-agent/src/lsp/defaults.json) for the full built-in set.
-
->>>>>>> theirs — heading `Auto-detection` (S+F, confidence: low) · weave: run 'weave explain docs/upstream/lsp-config.md' for per-hunk detail, 'weave check' to verify your resolution
-<<<<<<< ours — heading `Config file locations` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
-=======
-## Config file locations
-
-OMP merges LSP config from multiple sources, lowest to highest precedence:
-
-| Precedence | Location                                                                                                     |
-| ---------: | ------------------------------------------------------------------------------------------------------------ |
-|     Lowest | `~/lsp.json`, `~/.lsp.json`, `~/lsp.yaml`, `~/.lsp.yaml`, `~/lsp.yml`, `~/.lsp.yml`                          |
-|            | Plugin LSP configs (marketplace / `--plugin-dir` roots)                                                      |
-|            | User config dirs: active native agent directory, then `~/.claude/lsp.*`, `~/.codex/lsp.*`, `~/.gemini/lsp.*` |
-|            | Cwd config dirs: `<cwd>/.omp/lsp.*`, `<cwd>/.claude/lsp.*`, `<cwd>/.codex/lsp.*`, `<cwd>/.gemini/lsp.*`      |
-|    Highest | Cwd root: `<cwd>/lsp.*` and `<cwd>/.lsp.*`                                                                   |
-
-Within each config-directory row, directories are listed highest to lowest priority. Each location accepts `.json`, `.yaml`, and `.yml`, including hidden variants. When multiple variants coexist in one location, precedence from highest to lowest is `lsp.json`, `.lsp.json`, `lsp.yaml`, `.lsp.yaml`, `lsp.yml`, `.lsp.yml`. All readable variants are merged; this is not a first-file-only search.
-
-Merging is shallow per server: a higher-precedence server object overrides only its top-level fields, but object-valued fields such as `settings`, `initOptions`, `capabilities`, and `workspaceReadyTimings` replace the lower value as a whole rather than deep-merging it. Servers absent from override files remain at built-in defaults.
-
-The native user config directory follows `PI_CONFIG_DIR` and active profiles; `~/.omp/agent/lsp.json` is the default-profile spelling. This shared config lookup does not use `PI_CODING_AGENT_DIR` as an arbitrary replacement base. Claude's user directory honors `CLAUDE_CONFIG_DIR`. Foreign user sources (Claude, Codex, Gemini) are opt-in through the enabled-provider configuration; setting `CLAUDE_CONFIG_DIR` also opts Claude in unless explicitly disabled. Project and cwd sources do not walk ancestors and are not subject to that user-source opt-in.
-
-**Recommended locations:**
-
-- User-wide preferences → active native agent directory's `lsp.json`
-- Project-specific overrides → `<cwd>/.omp/lsp.json`
-
-> **Note:** There is no separate configured-server mode: built-in defaults, partial overrides, and new custom servers all pass through the same root-marker/binary/`disabled` filter. A config that only sets `idleTimeoutMs` leaves server selection unchanged.
-
-Config is cached per cwd. After changing LSP files, root markers, or installed binaries, call the `lsp` tool with `action: "reload", file: "*"` (or omit `file`) to reread config and shut down clients whose configuration is no longer current.
-
->>>>>>> theirs — heading `Config file locations` (S+F, confidence: low)
 ## File shape
 
 Both JSON and YAML are accepted. The top-level object can use either a `servers` wrapper key or a flat map directly:

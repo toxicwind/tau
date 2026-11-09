@@ -315,7 +315,6 @@ fn simple_segment(pipeline: Pipeline<'_>, src: &str) -> Option<(String, String)>
 	}
 	Some((command.to_owned(), program.to_owned()))
 }
-<<<<<<< ours — function `reconstruction_reparses_to_same_shape` (T+F, confidence: medium)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 /// Confirm a reconstructed segment string re-parses to the *same shape* it was
 /// built from: exactly one sequential top-level pipeline with `expected_stages`
@@ -351,8 +350,6 @@ fn reconstruction_reparses_to_same_shape(reconstructed: &str, expected_stages: u
 	let pipeline = &and_or.first;
 	!pipeline.bang && pipeline.timed.is_none() && pipeline.seq.len() == expected_stages
 }
-=======
->>>>>>> theirs — function `reconstruction_reparses_to_same_shape` (T+F, confidence: medium) · weave: run 'weave explain crates/tau-shell/src/minimizer/plan.rs' for per-hunk detail, 'weave check' to verify your resolution
 
 fn classify_pipeline(pipeline: Pipeline<'_>, src: &str) -> Option<CommandPlan> {
 	let stages = pipeline.stages();

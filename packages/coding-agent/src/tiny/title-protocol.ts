@@ -38,7 +38,6 @@ export type TinyWorkerBackend = "onnx" | "mlx";
 export function tinyWorkerName(modelKey: TinyLocalModelKey, backend: TinyWorkerBackend): string {
 	return `${modelKey}-${backend}`;
 }
-<<<<<<< ours — function `tinyWorkerEndpoint` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 /** Resolve the Unix socket or Windows named pipe for one (model, backend) worker. */
 export function tinyWorkerEndpoint(
@@ -53,8 +52,6 @@ export function tinyWorkerEndpoint(
 	}
 	return path.join(runtimeDir, `${name}.sock`);
 }
-=======
->>>>>>> theirs — function `tinyWorkerEndpoint` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tiny/title-protocol.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 export type TinyTitleProgressStatus =
 	| "initiate"

@@ -1,5 +1,4 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { AssistantMessage, Model, UserMessage } from "@oh-…` +1 more
 import { Agent, type AgentMessage } from "@tau/tau-agent-core";
 import * as compactionModule from "@tau/tau-agent-core/compaction";
@@ -13,23 +12,6 @@ import { convertToLlm } from "tau/session/messages";
 import { SessionMaintenance, type SessionMaintenanceHost } from "tau/session/session-maintenance";
 import { SessionManager } from "tau/session/session-manager";
 import * as snapcompactModule from "@tau/snapcompact";
-=======
-import { Agent, type AgentMessage } from "@oh-my-pi/pi-agent-core";
-import * as compactionModule from "@oh-my-pi/pi-agent-core/compaction";
-import type { AssistantMessage, Context, Model, UserMessage } from "@oh-my-pi/pi-ai";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { type CompactionMethod, resolveSpeculationMethod } from "@oh-my-pi/pi-coding-agent/session/compaction-methods";
-import { convertToLlm } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionMaintenance, type SessionMaintenanceHost } from "@oh-my-pi/pi-coding-agent/session/session-maintenance";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { cfgMemoryBackend } from "@oh-my-pi/pi-coding-agent/memory-backend/settings";
-import { hindsightBackend } from "@oh-my-pi/pi-coding-agent/hindsight/backend";
-import * as snapcompactModule from "@oh-my-pi/snapcompact";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/compaction-speculation.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 import {
 	cfgCompaction,

@@ -1,5 +1,4 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import * as Beam from "@oh-my-pi/pi-mnemopi/core/beam";` +1 more
 import * as Beam from "@tau/tau-mnemotau/core/beam";
 import {
@@ -9,13 +8,6 @@ import {
 	resetRecallDiagnostics,
 } from "@tau/tau-mnemotau/core/recall-diagnostics";
 import * as Db from "@tau/tau-mnemotau/db";
-=======
-import {
-	explainRecallDiagnostics,
-	RECALL_TIERS,
-	RecallDiagnostics,
-} from "@oh-my-pi/pi-mnemopi/core/recall-diagnostics";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/mnemotau/test/recall-diagnostics.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 describe("recall diagnostics counters", () => {
 	it("starts with canonical tiers and zeroed JSON-serializable snapshot", () => {

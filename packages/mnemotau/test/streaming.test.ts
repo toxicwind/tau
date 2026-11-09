@@ -3,14 +3,9 @@ import { describe, expect, it } from "bun:test";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { DeltaSync, EventType, MemoryEvent, MemoryStream, SyncC…`
 import { initBeam } from "@tau/tau-mnemotau/core/beam";
 import { DeltaSync, EventType, MemoryEvent, MemoryStream, SyncCheckpoint } from "@tau/tau-mnemotau/core/streaming";
-=======
-import { initBeam } from "@oh-my-pi/pi-mnemopi/core/beam";
-import { DeltaSync, EventType, MemoryEvent, MemoryStream } from "@oh-my-pi/pi-mnemopi/core/streaming";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/mnemotau/test/streaming.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 describe("MemoryEvent", () => {
 	it("serializes and restores Python-shaped events", () => {

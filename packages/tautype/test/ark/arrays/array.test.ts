@@ -1,10 +1,6 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { scope, type } from "@oh-my-pi/omptype/ark";`
 import { scope, type } from "@tau/tautype/ark";
-=======
-import { type } from "@oh-my-pi/omptype/ark";
->>>>>>> theirs — interstitial `file_header` (S, confidence: medium) · weave: run 'weave explain packages/tautype/test/ark/arrays/array.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { Eq } from "../type-assert";
 
 describe("variadic tuple", () => {

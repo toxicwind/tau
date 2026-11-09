@@ -7,7 +7,6 @@
  */
 import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from "bun:test";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import type { Skill } from "@oh-my-pi/pi-coding-agent/extensibi…` +1 more
 import { Agent } from "@tau/tau-agent-core";
 import type { ImageContent, TextContent } from "@tau/tau-ai";
@@ -26,29 +25,6 @@ import { SKILL_PROMPT_MESSAGE_TYPE, type SkillPromptDetails } from "tau/session/
 import { SessionManager } from "tau/session/session-manager";
 import { Container } from "@tau/tau-tui";
 import { TempDir } from "@tau/tau-utils";
-=======
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import type { ImageContent, TextContent } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { buildSkillPromptMessage, type Skill } from "@oh-my-pi/pi-coding-agent/extensibility/skills";
-import { EventController } from "@oh-my-pi/pi-coding-agent/modes/controllers/event-controller";
-import { InputController } from "@oh-my-pi/pi-coding-agent/modes/controllers/input-controller";
-import { getThemeByName, setThemeInstance } from "@oh-my-pi/pi-tui/theme";
-import type { CompactionQueuedMessage, InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { UiHelpers } from "@oh-my-pi/pi-coding-agent/modes/utils/ui-helpers";
-import { AgentSession, type AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import {
-	SKILL_PROMPT_MESSAGE_TYPE,
-	type SkillPromptDetails,
-	USER_INTERRUPT_LABEL,
-} from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { Container } from "@oh-my-pi/pi-tui";
-import { TempDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/input-controller-skill-queue.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { createInteractiveModeContext } from "./helpers/interactive-mode-context";
 
 type StubEditor = {

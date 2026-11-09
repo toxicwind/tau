@@ -1,14 +1,7 @@
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { tryParseJson } from "@oh-my-pi/pi-utils";`
 import { tryParseJson } from "@tau/tau-utils";
 import type { RenderResult, SpecialHandler } from "./types";
 import { buildResult, formatNumber, htmlToBasicMarkdown, loadPage } from "./types";
-=======
-import { tryParseJson, untilAborted } from "@oh-my-pi/pi-utils";
-import type { LoadPageResult, RenderResult, SpecialHandler } from "./types";
-import { buildResult, formatNumber, htmlToBasicMarkdown, loadPage } from "./types";
-import { isConclusiveProbeStatus, PlatformProbeCache } from "./utils";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/web/scrapers/mastodon.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 interface MastodonAccount {
 	id: string;

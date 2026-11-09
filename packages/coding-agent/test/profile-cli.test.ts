@@ -144,7 +144,6 @@ describe("global --profile flag", () => {
 		expect(output).not.toContain(`${APP_NAME}/${VERSION}`);
 	});
 
-<<<<<<< ours — scope `it("installs a shell alias when launch is exp...` in test_suite `global --profile flag`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("installs a shell alias when launch is explicit", async () => {
 		const installSpy = vi.spyOn(profileAliasCli, "installProfileAlias").mockResolvedValue({
@@ -170,10 +169,7 @@ describe("global --profile flag", () => {
 		expect(output).toContain("Created tau-work");
 		expect(output).not.toContain(`${APP_NAME}/${VERSION}`);
 	});
-=======
->>>>>>> theirs — scope `it("installs a shell alias when launch is exp...` deleted in theirs · weave: run 'weave explain packages/coding-agent/test/profile-cli.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
-<<<<<<< ours — scope `it("installs a shell alias when acp is explic...` in test_suite `global --profile flag`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("installs a shell alias when acp is explicit", async () => {
 		const installSpy = vi.spyOn(profileAliasCli, "installProfileAlias").mockResolvedValue({
@@ -200,8 +196,6 @@ describe("global --profile flag", () => {
 		expect(output).toContain("Created tau-work");
 		expect(output).not.toContain(`${APP_NAME}/${VERSION}`);
 	});
-=======
->>>>>>> theirs — scope `it("installs a shell alias when acp is explic...` deleted in theirs
 
 	it("rejects missing profile values without dispatching", async () => {
 		const errSpy = vi.spyOn(process.stderr, "write").mockImplementation(() => true);

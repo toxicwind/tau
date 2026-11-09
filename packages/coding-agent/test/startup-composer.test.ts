@@ -1,6 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { getProjectDir, setProjectDir } from "@oh-my-pi/pi-util…`
 import { parseArgs } from "tau/cli/args";
 import { importRoomKey } from "tau/collab/crypto";
@@ -25,34 +24,6 @@ import { initTheme } from "@tau/tau-tui/theme";
 import { AgentLifecycleManager } from "tau/registry/agent-lifecycle";
 import { AuthStorage } from "tau/session/auth-storage";
 import { getProjectDir, setProjectDir } from "@tau/tau-utils";
-=======
-import { parseArgs } from "@oh-my-pi/pi-coding-agent/cli/args";
-import { importRoomKey } from "@oh-my-pi/pi-coding-agent/collab/crypto";
-import { COLLAB_PROTO, type CollabFrame, parseCollabLink } from "@oh-my-pi/pi-coding-agent/collab/protocol";
-import * as registry from "@oh-my-pi/pi-coding-agent/collab/registry";
-import { CollabSocket } from "@oh-my-pi/pi-coding-agent/collab/relay-client";
-import { KeybindingsManager } from "@oh-my-pi/pi-tui/app-keybindings";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import * as pluginHelpers from "@oh-my-pi/pi-coding-agent/discovery/helpers";
-import { clearOmpExtensionCliRoots } from "@oh-my-pi/pi-coding-agent/discovery/omp-extension-roots";
-import { runRootCommand } from "@oh-my-pi/pi-coding-agent/main";
-import { Composer, type ComposerPreferences } from "@oh-my-pi/pi-tui/prompt/composer";
-import * as composerCache from "@oh-my-pi/pi-tui/prompt/composer-cache";
-import { InteractiveMode } from "@oh-my-pi/pi-coding-agent/modes/interactive-mode";
-import {
-	applyStartupComposerPreferences,
-	beginStartupComposer,
-	ComposerLease,
-	stopPendingStartupComposer,
-	takeStartupComposerLease,
-} from "@oh-my-pi/pi-coding-agent/modes/startup-composer";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { AgentLifecycleManager } from "@oh-my-pi/pi-coding-agent/registry/agent-lifecycle";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { getProjectDir, isInteractiveHost, setInteractiveHost, setProjectDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/startup-composer.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { VirtualTerminal } from "../../tui/test/virtual-terminal";
 import { installInMemoryRelay, uninstallInMemoryRelay } from "./collab/helpers/in-memory-relay";
 import { cfgTierOpenai } from "@oh-my-pi/pi-coding-agent/session/settings";
@@ -760,7 +731,6 @@ describe("Composer prepaint", () => {
 			.getViewport()
 			.map(r => Bun.stripANSI(r))
 			.join("\n");
-<<<<<<< ours — scope `it("renders the complete interactive welcome ...` in test_suite `Composer prepaint` (F, confidence: medium)
 // refused_by: statement_fold · collision: `expect(output).toContain("omp");`
 		expect(output).toContain("Welcome back!");
 		expect(output).toContain("tau");
@@ -768,10 +738,6 @@ describe("Composer prepaint", () => {
 		expect(output).toContain("prior work");
 		expect(output).not.toContain("Starting TAU");
 		expect(output).toContain("╭");
-=======
-		expect(output).not.toContain("Starting OMP");
-		expect(output).toContain("╰");
->>>>>>> theirs — scope `it("renders the complete interactive welcome ...`
 		const initialEditorRow = terminal
 			.getViewport()
 			.map(row => Bun.stripANSI(row))

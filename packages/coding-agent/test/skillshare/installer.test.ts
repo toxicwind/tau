@@ -2,7 +2,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 import { SkillshareClient } from "tau/skillshare/client";
 import {
@@ -26,31 +25,6 @@ import { writeTar } from "tau/skillshare/tar";
 import { removeWithRetries } from "@tau/tau-utils";
 import { getAgentDir, setAgentDir } from "@tau/tau-utils/dirs";
 import type { SkillPackument, SkillVersionManifest, SkillVersionSummary } from "@tau/tau-wire/skillshare";
-=======
-import { SkillshareClient } from "@oh-my-pi/pi-coding-agent/skillshare/client";
-import {
-	computeIntegrity,
-	installSkillPackages,
-	resolveSkillVersion,
-	type SkillInstallHooks,
-	uninstallSkillPackages,
-	updateSkillPackages,
-} from "@oh-my-pi/pi-coding-agent/skillshare/installer";
-import {
-	getSkillStorePath,
-	getSkillshareStoreDir,
-	getProjectSkillsInstallPaths,
-	readSkillsLock,
-	readSkillsManifest,
-	type SkillsLock,
-	writeSkillsLock,
-	writeSkillsManifest,
-} from "@oh-my-pi/pi-coding-agent/skillshare/manifest";
-import { writeTar } from "@oh-my-pi/pi-coding-agent/skillshare/tar";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
-import { getAgentDir, setAgentDir } from "@oh-my-pi/pi-utils/dirs";
-import type { SkillPackument, SkillVersionManifest, SkillVersionSummary } from "@oh-my-pi/pi-wire/skillshare";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/skillshare/installer.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const SCOPE = "alice";
 const NAME = "pdf-tools";

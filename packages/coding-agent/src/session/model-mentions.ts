@@ -1,12 +1,6 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 import type { Model } from "@tau/tau-ai";
 import { isRecord, prompt } from "@tau/tau-utils";
-=======
-import type { Model } from "@oh-my-pi/pi-ai";
-import { getSupportedEfforts } from "@oh-my-pi/pi-catalog/model-thinking";
-import { isRecord, prompt } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/session/model-mentions.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { ModelRegistry } from "../config/model-registry";
 import { formatModelString } from "../config/model-resolver";
 import modelMentionDescription from "../prompts/agents/model-mention.md" with { type: "text" };
@@ -18,13 +12,8 @@ import {
 	modelMentionDisplayName,
 	modelMentionName,
 	modelMentionTag,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-tui/prompt/model-mention-syntax";
-=======
-} from "@oh-my-pi/pi-tui/prompt/model-mention-syntax";
-import { AUTO_THINKING, parseEffort } from "@oh-my-pi/pi-tui/thinking";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import type { SessionEntry } from "./session-entries";
 import type { SessionManager } from "./session-manager";
 

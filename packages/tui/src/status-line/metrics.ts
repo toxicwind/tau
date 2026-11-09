@@ -1,9 +1,5 @@
-<<<<<<< ours — interstitial `file_header` (S, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { formatNumber } from "@oh-my-pi/pi-utils";`
 import { formatNumber } from "@tau/tau-utils";
-=======
-import { formatNumber, normalizePremiumRequests } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (S, confidence: medium) · weave: run 'weave explain packages/tui/src/status-line/metrics.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { Theme } from "../theme";
 
 export { normalizePremiumRequests } from "@oh-my-pi/pi-utils";

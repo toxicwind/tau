@@ -25,7 +25,6 @@ import {
 	type AuthBrokerServerHandle,
 	RemoteAuthCredentialStore,
 	startAuthBroker,
-<<<<<<< ours — interstitial `file_header` (T+F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { refreshBrokerOAuthCredential } from "@oh-my-pi/pi-codi…`
 } from "@tau/tau-ai/auth-broker";
 import { refreshBrokerOAuthCredential } from "tau/cli/auth-broker-cli";
@@ -33,14 +32,6 @@ import { MCPManager } from "tau/mcp/manager";
 import { mcpOAuthCredentialId } from "tau/mcp/oauth-flow";
 import type { MCPServerConfig } from "tau/mcp/types";
 import { removeWithRetries } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-ai/auth-broker";
-import { createBrokerAuthStorage, refreshBrokerOAuthCredential } from "@oh-my-pi/pi-coding-agent/cli/auth-broker-cli";
-import { MCPManager } from "@oh-my-pi/pi-coding-agent/mcp/manager";
-import { mcpOAuthCredentialId } from "@oh-my-pi/pi-coding-agent/mcp/oauth-flow";
-import type { MCPServerConfig } from "@oh-my-pi/pi-coding-agent/mcp/types";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (T+F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/mcp-broker-oauth-refresh.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { Server } from "bun";
 
 const SERVER_URL = "https://mcp.granola.ai/mcp";

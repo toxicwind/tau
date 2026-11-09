@@ -5,29 +5,12 @@
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { $env, getAgentDir, getProjectDir, hasFsCode, isEnoent,…`
 import type { AgentTool } from "@tau/tau-agent-core";
 import type { ToolExample, TSchema } from "@tau/tau-ai";
 import { renderToolInventory } from "@tau/tau-ai/dialect";
 import type { DelegationBias } from "@tau/tau-catalog/compat/delegation";
 import { $env, getAgentDir, getProjectDir, hasFsCode, isEnoent, logger, prompt } from "@tau/tau-utils";
-=======
-import type { AgentTool } from "@oh-my-pi/pi-agent-core";
-import type { ToolExample, TSchema } from "@oh-my-pi/pi-ai";
-import { renderToolInventory } from "@oh-my-pi/pi-ai/dialect";
-import type { DelegationBias } from "@oh-my-pi/pi-catalog/compat/delegation";
-import {
-	$env,
-	getAgentDir,
-	getProjectDir,
-	hasFsCode,
-	isEnoent,
-	isInteractiveHost,
-	logger,
-	prompt,
-} from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/system-prompt.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { contextFileCapability } from "./capability/context-file";
 import { systemPromptCapability } from "./capability/system-prompt";
 import { findConfigFile } from "./config";
@@ -49,13 +32,8 @@ import projectPromptTemplate from "./prompts/system/project-prompt.md" with { ty
 import systemPromptTemplate from "./prompts/system/system-prompt.md" with { type: "text" };
 import userAppendPromptTemplate from "./prompts/system/user-append.md" with { type: "text" };
 import { normalizeConcurrencyLimit } from "./task/parallel";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { $env, getAgentDir, getProjectDir, hasFsCode, isEnoent,…`
 import type { ActiveRepoContext } from "@tau/tau-tui/status-line/host";
-=======
-import type { ActiveRepoContext } from "@oh-my-pi/pi-tui/status-line/host";
-import { XD_URL_PREFIX } from "@oh-my-pi/pi-tui/tools/xd-url";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import { resolveActiveRepoContext } from "./utils/active-repo-context";
 import { normalizePromptPath } from "./utils/prompt-path";
 import { AGENTS_MD_LIMIT, buildWorkspaceTree, type WorkspaceTree } from "./workspace-tree";

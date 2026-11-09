@@ -1,11 +1,6 @@
 {
 	"name": "tau",
-<<<<<<< ours — property `version` (S, confidence: medium)
-// refused_by: merge_ladder_exhausted · collision: `"version": "18.3.0"`
-	"version": "18.8.4+sovereign.tau.4132f2eb"
-=======
-	"version": "18.18.3"
->>>>>>> theirs — property `version` (S, confidence: medium) · weave: run 'weave explain packages/coding-agent/package.json' for per-hunk detail, 'weave check' to verify your resolution
+	"version": "18.8.4+sovereign.tau.4132f2eb",
 	"type": "module",
 	"description": "Coding agent CLI with read, bash, edit, write tools and session management",
 	"author": {
@@ -526,12 +521,7 @@
 	"scripts": {
 		"build": "bun scripts/build-binary.ts",
 		"check": "oxlint . && oxfmt --check --no-error-on-unmatched-pattern 'src/**/*.{ts,tsx}' '{test,bench,examples,scripts}/**/*.ts' '*.ts' && bun run check:types",
-<<<<<<< ours — scope `"check:types": "tsgo -p tsconfig.json --noEmit",` in object `scripts` (S, confidence: medium)
-// refused_by: statement_fold · collision: `"check:types": "tsgo -p tsconfig.json --noEmit",`
 		"check:types": "bun ../../scripts/typecheck.ts . --noEmit",
-=======
-		"check:types": "bun check --no-script -p tsconfig.json",
->>>>>>> theirs — scope `"check:types": "tsgo -p tsconfig.json --noEmit",`
 		"lint": "oxlint .",
 		"test": "bun ../../scripts/ci-test-ts.ts coding-agent-heavy --full",
 		"fix": "oxlint --fix --fix-suggestions . && bun run fmt",
@@ -542,7 +532,7 @@
 		"gen:rpc": "bun scripts/gen-rpc/index.ts",
 		"prepack": "bun run gen:export-viewer && bun run gen:bundle",
 		"bench:guard": "bun scripts/bench-guard.ts"
-	}
+	},
 	"engines": {
 		"bun": ">=1.4.4"
 	},

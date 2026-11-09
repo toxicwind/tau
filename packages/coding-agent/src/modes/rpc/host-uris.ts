@@ -16,12 +16,9 @@ import type {
 } from "./rpc-types";
 
 type RpcHostUriOutput = (frame: RpcHostUriRequest | RpcHostUriCancelRequest) => void;
-<<<<<<< ours — variable `RESERVED_HOST_URI_SCHEMES` (S, confidence: medium)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 /** TAU-owned namespaces that RPC hosts may not replace. */
 const RESERVED_HOST_URI_SCHEMES: ReadonlySet<string> = new Set(["security"]);
-=======
->>>>>>> theirs — variable `RESERVED_HOST_URI_SCHEMES` (S, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/modes/rpc/host-uris.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 type PendingUriRequest = {
 	operation: "read" | "write";
@@ -107,16 +104,9 @@ export class RpcHostUriBridge {
 			if (!/^[a-z][a-z0-9+.-]*$/.test(scheme)) {
 				throw new Error(`Host URI scheme contains invalid characters: ${raw.scheme}`);
 			}
-<<<<<<< ours — scope `setSchemes` in class `RpcHostUriBridge` (F, confidence: medium)
 // refused_by: container_member · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 			if (RESERVED_HOST_URI_SCHEMES.has(scheme)) {
 				throw new Error(`Host URI scheme is reserved by TAU: ${scheme}://`);
-=======
-			// Built-in schemes are OMP-owned: a host shadowing one would change its semantics for
-			// the whole process, and `clear()` would then delete it for later sessions.
-			if (this.#router.isBuiltin(scheme)) {
-				throw new Error(`Host URI scheme is reserved by OMP: ${scheme}://`);
->>>>>>> theirs — scope `setSchemes`
 			}
 			normalized.set(scheme, {
 				scheme,

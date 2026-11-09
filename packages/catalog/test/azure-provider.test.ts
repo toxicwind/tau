@@ -1,5 +1,4 @@
 import { describe, expect, test } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 import { buildModel } from "@tau/tau-catalog/build";
 import { resolveModelPolicy } from "@tau/tau-catalog/compat/resolve";
@@ -12,24 +11,6 @@ import {
 	PROVIDER_DESCRIPTORS,
 } from "@tau/tau-catalog/provider-models";
 import type { ModelSpec } from "@tau/tau-catalog/types";
-=======
-import * as fs from "node:fs/promises";
-import * as os from "node:os";
-import * as path from "node:path";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { resolveModelPolicy } from "@oh-my-pi/pi-catalog/compat/resolve";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { resolveProviderModels } from "@oh-my-pi/pi-catalog/model-manager";
-import {
-	DEFAULT_MODEL_PER_PROVIDER,
-	MODELS_DEV_PROVIDER_DESCRIPTORS,
-	mapModelsDevToModels,
-	modelsDevCatalogFallback,
-	PROVIDER_DESCRIPTORS,
-} from "@oh-my-pi/pi-catalog/provider-models";
-import type { ModelSpec } from "@oh-my-pi/pi-catalog/types";
-import { removeWithRetries } from "../../utils/src/temp";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/catalog/test/azure-provider.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 // A stencil.so "azure" payload: two OpenAI-family models (one reasoning), a
 // non-tool-capable instruct model, and a Foundry-hosted third party served via

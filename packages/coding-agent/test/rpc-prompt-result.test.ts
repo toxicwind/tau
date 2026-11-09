@@ -2,17 +2,10 @@ import { describe, expect, test } from "bun:test";
 import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
 import {
 	RpcExtensionUserMessageTracker,
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `} from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-mode";`
 	reportLocalOnlyPromptResult,
 	watchAndReportLocalOnlyPromptResult,
 } from "tau/modes/rpc/rpc-mode";
-=======
-	RpcPromptResults,
-	reportPromptResult,
-} from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-prompt-results";
-import { RpcSessionSettleWatcher } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-session-settle";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/rpc-prompt-result.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { ExtensionActions } from "../src/extensibility/extensions/types";
 import { initializeExtensions } from "../src/modes/runtime-init";
 import type { AgentSession, AgentSessionEvent } from "../src/session/agent-session";

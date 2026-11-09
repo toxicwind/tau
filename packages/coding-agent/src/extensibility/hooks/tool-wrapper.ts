@@ -1,19 +1,9 @@
 /**
  * Tool wrapper - wraps tools with hook callbacks for interception.
  */
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { AgentTool, AgentToolContext, AgentToolUpdateCallb…`
 import type { AgentTool, AgentToolContext, AgentToolUpdateCallback } from "@tau/tau-agent-core";
 import type { Static, TSchema } from "@tau/tau-ai";
-=======
-import {
-	type AgentTool,
-	type AgentToolContext,
-	type AgentToolUpdateCallback,
-	isNonBlankContext,
-} from "@oh-my-pi/pi-agent-core";
-import type { Static, TSchema } from "@oh-my-pi/pi-ai";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/extensibility/hooks/tool-wrapper.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { normalizeToolEventInput, resolveToolEventInput } from "../tool-event-input";
 import { applyToolProxy } from "../tool-proxy";
 import type { HookRunner } from "./runner";

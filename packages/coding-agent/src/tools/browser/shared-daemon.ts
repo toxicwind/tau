@@ -10,16 +10,10 @@
  */
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { logger } from "@oh-my-pi/pi-utils";`
 import { logger } from "@tau/tau-utils";
 import { daemonClientForProject } from "../../launch/client";
 import { describeQuietly, stopQuietly, waitReady } from "../../launch/ensure";
-=======
-import { acquireFileLock, type FileLockHandle, logger, withTimeout } from "@oh-my-pi/pi-utils";
-import { type DaemonBrokerClient, daemonClientForProject } from "../../launch/client";
-import { describeDaemon, describeQuietly, stopQuietly, waitReady } from "../../launch/ensure";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/browser/shared-daemon.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { daemonRuntimeDir } from "../../launch/paths";
 import type { DaemonSnapshot } from "@tau/tau-tui/tools/daemon";
 import { throwIfAborted } from "../tool-errors";

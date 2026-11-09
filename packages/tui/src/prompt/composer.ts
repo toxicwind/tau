@@ -18,16 +18,9 @@ import {
 	type TUIOptions,
 	type ViewportSize,
 } from "../tui";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { sliceWithWidth, truncateToWidth, visibleWidth } from "../utils";
 import { postmortem } from "@tau/tau-utils";
-=======
-import { wrapLiteralLine } from "../utils";
-import type { DescribeContext, NativeChild, NativeSurface, NativeSurfaceProvider } from "../native/node";
-import { sameItems } from "../native/memo";
-import { postmortem } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/src/prompt/composer.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { CustomEditor } from "./custom-editor";
 import type { WordCompletionMethod } from "./word-completion";
 import { type AnimationFrame, TranscriptContainer } from "../chrome/transcript-container";
@@ -199,7 +192,6 @@ export function routeViewportClick(spans: readonly ViewportClickSpan[], index: n
  * their tags could fit side by side, so no tags were drawn.
  */
 export type LinkHintsEnd = (reason?: "crowded") => void;
-<<<<<<< ours — variable `PINNED_HUD_TOGGLE_ID` (T+F, confidence: medium)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 /**
  * Reserved click-candidate id for the pinned HUD expander row. Checked before
@@ -207,8 +199,6 @@ export type LinkHintsEnd = (reason?: "crowded") => void;
  * ids (word names, numeric and `-N` suffixes, dotted nesting).
  */
 export const PINNED_HUD_TOGGLE_ID = "@tau:toggle-pinned-hud";
-=======
->>>>>>> theirs — variable `PINNED_HUD_TOGGLE_ID` (T+F, confidence: medium)
 
 /**
  * Nested background opens inside a hovered row. The band wraps the line, so a

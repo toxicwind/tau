@@ -201,7 +201,6 @@ describe("auth-broker migrate", () => {
 		expect(brokerStore!.getOAuth(provider)?.refresh).toBe("refresh-broker-newer");
 	});
 });
-<<<<<<< ours — test_suite `auth-broker migrate (org-only dedupe)` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 describe("auth-broker migrate (org-only dedupe)", () => {
 	let agentDir = "";
@@ -289,5 +288,3 @@ describe("auth-broker migrate (org-only dedupe)", () => {
 		expect(brokerStore!.listAuthCredentials("anthropic")).toHaveLength(1);
 	});
 });
-=======
->>>>>>> theirs — test_suite `auth-broker migrate (org-only dedupe)` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/auth-broker-migrate.test.ts' for per-hunk detail, 'weave check' to verify your resolution

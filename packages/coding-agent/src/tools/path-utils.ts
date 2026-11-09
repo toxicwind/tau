@@ -1,16 +1,8 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { splitPathAndSel, splitInternalUrlSel, isReadableUrlPat…`
 import { join } from "node:path";
 import { extractUriScheme } from "../internal-urls/parse";
 import { type LineRange } from "@tau/tau-tui/tools/line-ranges";
 import { splitPathAndSel, splitInternalUrlSel, isReadableUrlPath } from "@tau/tau-tui/tools/read";
-=======
-import type { ToolTier } from "@oh-my-pi/pi-agent-core";
-import { extractUriScheme } from "../internal-urls/parse";
-import { type LineRange } from "@oh-my-pi/pi-tui/tools/line-ranges";
-import { splitPathAndSel, isReadableUrlPath } from "@oh-my-pi/pi-tui/tools/read";
-import { toPathList } from "@oh-my-pi/pi-tui/render/render-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/path-utils.ts' for per-hunk detail, 'weave check' to verify your resolution
 import * as fs from "node:fs";
 import * as path from "node:path";
 import * as url from "node:url";
@@ -24,18 +16,12 @@ import {
 	isWsl,
 	stripWindowsExtendedLengthPathPrefix,
 	windowsPathToWslMount,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { splitPathAndSel, splitInternalUrlSel, isReadableUrlPat…`
 } from "@tau/tau-utils";
 import type { Rule } from "../capability/rule";
 import type { Skill } from "../extensibility/skills";
 import type { AgentRegistry } from "../registry/agent-registry";
 import { InternalUrlRouter, type LocalProtocolOptions } from "../internal-urls";
-=======
-} from "@oh-my-pi/pi-utils";
-import { InternalUrlRouter } from "../internal-urls";
-import { type InternalUrlFilesystem, joinUrlPath, UrlFsError } from "../internal-urls/url-filesystem";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import { ToolAbortError } from "./tool-errors";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 

@@ -30,7 +30,6 @@ describe.skipIf(process.platform === "win32")("fatal stderr terminal handoff", (
 				closed.resolve();
 			},
 		});
-<<<<<<< ours — scope `const proc = Bun.spawn([process.execPath, `${...` in test `keeps the composer boundary intact in a real PTY` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `OMP_TUI_DEBUG: undefined,`
 		const proc = Bun.spawn([process.execPath, `${import.meta.dir}/fixtures/fatal-tui.ts`], {
 			cwd: process.cwd(),
@@ -45,62 +44,6 @@ describe.skipIf(process.platform === "win32")("fatal stderr terminal handoff", (
 				NODE_ENV: undefined,
 			},
 			terminal,
-=======
-		try {
-			const proc = Bun.spawn([process.execPath, `${import.meta.dir}/fixtures/fatal-tui.ts`], {
-				cwd: process.cwd(),
-				// This is a real-terminal contract test: shed the test-runtime markers so
-				// the fixture's ProcessTerminal paints instead of going headless
-				// (ci-test-ts children inherit PI_TEST_RUNTIME=1).
-				env: {
-					...process.env,
-					OMP_TUI_DEBUG: undefined,
-					PI_TEST_RUNTIME: undefined,
-					BUN_ENV: undefined,
-					NODE_ENV: undefined,
-					// Bun's PTY and the VT parser do not implement native TSP surfaces.
-					// A parent running in Tern must not turn the fixture's rows into APC JSON.
-					TERM: "xterm-256color",
-					TERM_PROGRAM: undefined,
-					OMP_TUI_NATIVE: "0",
-					PI_TUI_NATIVE: "0",
-				},
-				terminal,
-			});
-
-			try {
-				// Wait for a painted composer row, not merely matching bytes inside an
-				// escape payload; a fixed delay also races the first paint on slow CI.
-				await Promise.race([
-					composerSeen.promise,
-					proc.exited.then(code => {
-						throw new Error(`Fatal PTY fixture exited before painting the composer (exit ${code})`);
-					}),
-				]);
-				terminal.write("\r");
-
-				const exitCode = await proc.exited;
-				terminal.close();
-				await closed.promise;
-				await screenWritten;
-				expect(exitCode).toBe(1);
-
-				const lines = terminalLines(screen);
-				const composerRow = lines.indexOf("╰─");
-				const errorRow = lines.findIndex(line => line?.includes("error: fatal PTY fixture") === true);
-
-				expect(composerRow).toBeGreaterThanOrEqual(0);
-				expect(errorRow).toBeGreaterThan(composerRow);
-			} finally {
-				if (proc.exitCode === null) proc.kill();
-				await proc.exited;
-			}
-		} finally {
-			terminal.close();
-			await closed.promise;
-			await screenWritten;
-			screen.dispose();
->>>>>>> theirs — scope `const proc = Bun.spawn([process.execPath, `${...` · weave: run 'weave explain packages/coding-agent/test/fatal-stderr-pty.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 		}
 	}, 30_000);
 });

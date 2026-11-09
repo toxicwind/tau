@@ -21,7 +21,6 @@
 
 The form is plain semantic HTML. Controls: `<input type="radio">` (one-of), `type="checkbox"` (many-of when several share a name, a yes/no flag alone), `<select>` / `<select multiple>`, text-like inputs (`text`, `number`, `range`, `date`, `email`, `url`, …), `<textarea>`, and `type="hidden"`. `checked`, `selected` and `value` preselect answers; `required`, `min`/`max`, `minlength`/`maxlength` and `pattern` are enforced. Context renders from `<p>`, headings, lists, `<pre>`, `<table>`, and `<fieldset>`/`<legend>` groups. Pictures render from `<img src>` (an http(s) URL, a `data:` URI, a `file:` URL, or a path resolved against the session's working directory) and inline `<svg>`; an image inside a `<label>` contributes only its `alt` text. `<script>`, `<style>` and buttons are dropped.
 
-<<<<<<< ours — heading ``Question`` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 ### `Question`
 
@@ -34,8 +33,6 @@ The form is plain semantic HTML. Controls: `<input type="radio">` (one-of), `typ
 | `multi` | `boolean` | No | Enables multi-select mode. Default: `false`. |
 | `recommended` | `number` | No | Zero-based recommended/default option index. Invalid indexes are ignored for selection; the fallback selector marks a valid single-select option with ` (Recommended)`. |
 
-=======
->>>>>>> theirs — heading ``Question`` (S+F, confidence: low) · weave: run 'weave explain docs/tools/ask.md' for per-hunk detail, 'weave check' to verify your resolution
 ## Outputs
 
 - Single-shot result.
@@ -62,12 +59,8 @@ The form is plain semantic HTML. Controls: `<input type="radio">` (one-of), `typ
    - text answers are re-asked with the validation error until valid
 8. A timeout submits the form's current values: in the fallback the unanswered fields keep their defaults and a checkbox group keeps what was checked so far. `details.timedOut` is set.
 5. If the session has a local UI and `ask.notify` is not `off`, it sends a terminal notification: `Waiting for input`. When `speech.enabled` is true, it speaks the field questions.
-<<<<<<< ours — scope `9. If the user cancels without timeout, `exec...` in heading `Flow` (S, confidence: medium)
 // refused_by: statement_fold · collision: `9. If the user cancels without timeout, `execute()` aborts the …`
 9. If the architect cancels without timeout, `execute()` aborts the tool context and throws `ToolAbortError("Ask tool was cancelled by the architect")`.
-=======
-9. A user cancel aborts the tool context and throws `ToolAbortError("Ask tool was cancelled by the user")`.
->>>>>>> theirs — scope `9. If the user cancels without timeout, `exec...`
 
 ## Side Effects
 
@@ -87,22 +80,15 @@ The form is plain semantic HTML. Controls: `<input type="radio">` (one-of), `typ
 - `ask.timeout` defaults to `0` seconds (disabled). Plan mode always disables it.
 - In the fallback, `editor` prompts (textareas, prefilled inputs) have no timeout; `select` and `input` prompts do. Prompt surfaces that report presentation/reset events start or re-arm the deadline at those events; otherwise the timer starts when the prompt is requested.
 - Pictures load in the background while the form is open: at most 10 MiB each, remote ones within 10 s; PNG, JPEG, GIF, WebP and SVG. One that fails shows its `alt` and the reason. Only the interactive TUI/Tern form draws them; the fallback prompts and ACP show none.
-<<<<<<< ours — scope `- Fallback timeout only applies to the option...` in heading `Limits & Caps`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 - Fallback timeout only applies to the option picker; once the architect chooses `Other`, the editor has no timeout.
-=======
->>>>>>> theirs — scope `- Fallback timeout only applies to the option...` deleted in theirs
 - `AskTool.concurrency = "exclusive"`: the tool runs alone in its tool batch because the dialog surface is shared.
 
 ## Errors
 
 - Missing interactive UI: throws `ToolAbortError("Ask tool requires interactive mode")`.
-<<<<<<< ours — scope `- User cancels picker/editor without timeout:...` in heading `Errors` (S, confidence: medium)
 // refused_by: statement_fold · collision: `- User cancels picker/editor without timeout: throws `ToolAbort…`
 - User cancels picker/editor without timeout: throws `ToolAbortError("Ask tool was cancelled by the architect")`.
-=======
-- User cancels: throws `ToolAbortError("Ask tool was cancelled by the user")`.
->>>>>>> theirs — scope `- User cancels picker/editor without timeout:...`
 - Abort signal during input: converted to `ToolAbortError("Ask input was cancelled")`.
 - No named control: text error result, `details.answers` empty.
 

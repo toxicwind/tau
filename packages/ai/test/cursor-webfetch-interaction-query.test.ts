@@ -1,21 +1,9 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { type BlockState, handleServerMessage, type ToolCallSta…`
 import { type BlockState, handleServerMessage, type ToolCallState } from "@tau/tau-ai/providers/cursor";
 import type { AssistantMessage } from "@tau/tau-ai/types";
 import { AssistantMessageEventStream } from "@tau/tau-ai/utils/event-stream";
 import type { InteractionQuery, InteractionResponse } from "@tau/tau-catalog/discovery/cursor-proto";
-=======
-import {
-	type BlockState,
-	handleServerMessage,
-	processInteractionUpdate,
-	type ToolCallState,
-} from "@oh-my-pi/pi-ai/providers/cursor";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai/types";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import type { InteractionQuery, InteractionResponse } from "@oh-my-pi/pi-catalog/discovery/cursor-proto";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/test/cursor-webfetch-interaction-query.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	type AgentClientMessage,
 	AgentClientMessageSchema,
@@ -23,16 +11,11 @@ import {
 	FetchArgsSchema,
 	InteractionQuerySchema,
 	WebFetchRequestQuerySchema,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { type BlockState, handleServerMessage, type ToolCallSta…`
 	WebSearchArgsSchema,
 	WebSearchRequestQuerySchema,
 } from "@tau/tau-catalog/discovery/cursor-proto";
 import { create, fromBinary, toBinary } from "@tau/tau-catalog/discovery/protobuf";
-=======
-} from "@oh-my-pi/pi-catalog/discovery/cursor-proto";
-import { create, fromBinary, toBinary } from "@oh-my-pi/pi-catalog/discovery/protobuf";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 
 function cursorAssistantMessage(): AssistantMessage {
 	return {

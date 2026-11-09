@@ -5,19 +5,9 @@ import {
 	MAX_TINY_MESSAGE_CHARS,
 	preprocessTinyMessage,
 	stripCodeBlocks,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { isLowSignalTitleInput, NO_TITLE_SENTINEL, normalizeGen…`
 } from "tau/tiny/message-preproc";
 import { isLowSignalTitleInput, NO_TITLE_SENTINEL, normalizeGeneratedTitle } from "tau/tiny/text";
-=======
-} from "@oh-my-pi/pi-coding-agent/tiny/message-preproc";
-import {
-	isAttachmentOnlyTitleInput,
-	isLowSignalTitleInput,
-	NO_TITLE_SENTINEL,
-	normalizeGeneratedTitle,
-} from "@oh-my-pi/pi-coding-agent/tiny/text";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/tiny-text.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 describe("stripCodeBlocks", () => {
 	it("drops fenced code blocks but keeps the surrounding prose", () => {

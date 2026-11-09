@@ -10,17 +10,12 @@ Four similarly named things behave differently. Keep them straight:
 
 - **Context files** are read as plain Markdown and shown to the agent in generated project instructions (inside `<repo-rules>` with the default prompt template). They are session-opening instructions and background for repository work.
 - **Sticky rules** come from a top-level native `RULES.md`. They are converted into an always-apply rule whose full body is carried on every request, so it stays in context and keeps its hold even after the visible conversation grows. See "Sticky rules vs normal context" below.
-<<<<<<< ours — scope `- **Discovery providers** are the config-sour...` in heading `How context files relate to other concepts` (S, confidence: medium)
 // refused_by: statement_fold · collision: `- **Discovery providers** are the config-source adapters that k…`
 - **Discovery providers** are the config-source adapters that know where each tool keeps its files. The full registry is `native`, `tau-plugins`, `claude`, `agent-plugins`, `codex`, `agents`, `claude-plugins`, `gemini`, `opencode`, `cursor`, `windsurf`, `cline`, `github`, `vscode`, `agents-md`, `mcp-json`, `ssh-json`, and `builtin-defaults`. Only some contribute context files (`native`, `claude`, `codex`, `gemini`, `opencode`, `github`, `agents`, `agents-md`); the rest contribute other capabilities such as rules, MCP servers, skills, commands, hooks, tools, or SSH hosts. The same provider that contributes context files may also contribute MCP servers, slash commands, skills, hooks, tools, prompts, and settings.
-=======
-- **Discovery providers** are the config-source adapters that know where each tool keeps its files. The full registry is `native`, `omp-plugins`, `claude`, `agent-plugins`, `codex`, `agents`, `claude-plugins`, `gemini`, `opencode`, `cursor`, `windsurf`, `cline`, `github`, `vscode`, `agents-md`, `claude-md`, `custom-context`, `mcp-json`, `ssh-json`, and `builtin-defaults`. Only some contribute context files (`native`, `claude`, `codex`, `gemini`, `opencode`, `github`, `agents`, `agents-md`, `claude-md`, `custom-context`); the rest contribute other capabilities such as rules, MCP servers, skills, commands, hooks, tools, or SSH hosts. The same provider that contributes context files may also contribute MCP servers, slash commands, skills, hooks, tools, prompts, and settings.
->>>>>>> theirs — scope `- **Discovery providers** are the config-sour...` · weave: run 'weave explain docs/upstream/context-files.md' for per-hunk detail, 'weave check' to verify your resolution
 - **Model providers** are inference backends such as `anthropic`, `openai`, `google`, `groq`, `ollama`, and `openrouter`. They have nothing to do with context files except that both kinds of id share the one `disabledProviders` list — see "Disabling discovery providers" below and [Providers](./providers.md).
 
 Authoring **skills** and **rule** files (as opposed to the sticky `RULES.md`) is covered in [Skills](./skills.md). Customizing the system prompt with `SYSTEM.md` is covered in [System prompt customization](./system-prompt-customization.md).
 
-<<<<<<< ours — heading `Native `.omp` files` (S+F, confidence: low)
 // refused_by: rename_vs_edit_guard · collision: `| `~/.omp/agent/AGENTS.md`                      | User    | Use…` +3 more
 ## Native `.tau` files
 
@@ -39,25 +34,6 @@ Two details matter:
 - **Empty directories and files contribute nothing.** An empty `.tau/` directory is skipped during the walk. In the selected non-empty directory, an empty `AGENTS.md` or `RULES.md` contributes nothing.
 
 `~/.tau/agent` is shorthand for the active native agent directory. `PI_CODING_AGENT_DIR` relocates it. A named profile (`tau --profile <name>`, `TAU_PROFILE`, or `PI_PROFILE`) uses `~/.tau/profiles/<name>/agent` by default; external-tool user bases such as `~/.claude` are not profile-scoped.
-=======
-## Native `.omp` files
-
-The native provider is the recommended format for new projects. It reads from your user agent directory and from `.omp/` directories inside a project, and it has the highest discovery priority, so its files win over every other convention at the same scope.
-
-| File                                          | Scope   | Behavior                                                                                                                                                                                                                                                                                                                      |
-| --------------------------------------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `~/.omp/agent/AGENTS.md`                      | User    | User-level context unless the `native` provider is disabled. Main sessions and advisors receive it; task subagents do not, including when they rediscover additional workspace roots. See [Inputs by session type](system-prompt-customization.md#inputs-by-session-type).                                                    |
-| `<nearest-non-empty-ancestor>/.omp/AGENTS.md` | Project | Project context, but only when `AGENTS.md` exists in the **nearest non-empty `.omp/` directory** found while walking from cwd toward the repository root. OMP does not continue to a farther `.omp/` directory when the nearest one lacks this file. Main sessions and advisors receive it; task subagents do not inherit it. |
-| `~/.omp/agent/RULES.md`                       | User    | User-level sticky rule content. Loaded as an always-apply rule, not as a context file.                                                                                                                                                                                                                                        |
-| `<nearest-non-empty-ancestor>/.omp/RULES.md`  | Project | Project sticky content, but only when `RULES.md` exists in the same nearest non-empty `.omp/` directory selected by the walk.                                                                                                                                                                                                 |
-
-Two details matter:
-
-- **The nearest non-empty `.omp/` directory owns native project discovery.** Discovery starts in the current working directory and climbs toward the repository root. Once it finds a non-empty `.omp/`, it stops; native `AGENTS.md` and `RULES.md` are each read from that directory only. A missing file does not make discovery continue upward.
-- **Empty directories and files contribute nothing.** An empty `.omp/` directory is skipped during the walk. In the selected non-empty directory, an empty `AGENTS.md` or `RULES.md` contributes nothing.
-
-`~/.omp/agent` is shorthand for the active native agent directory. `PI_CODING_AGENT_DIR` relocates it. A named profile (`omp --profile <name>`, `OMP_PROFILE`, or `PI_PROFILE`) uses `~/.omp/profiles/<name>/agent` by default; external-tool user bases such as `~/.claude` are not profile-scoped.
->>>>>>> theirs — heading `Native `.omp` files` (S+F, confidence: low)
 
 ### Monorepo example
 
@@ -78,29 +54,7 @@ Starting a session in `repo/packages/api`:
 
 Put broad, durable project background in `AGENTS.md`. Reserve `RULES.md` for short, hard requirements that must stay visible across long conversations.
 
-<<<<<<< ours — heading `Monorepo example` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
-=======
-### Monorepo example
-
-```text
-repo/
-  .omp/
-    AGENTS.md
-    RULES.md
-  packages/api/
-    .omp/
-      AGENTS.md
-```
-
-Starting a session in `repo/packages/api`:
-
-- The native context file is `repo/packages/api/.omp/AGENTS.md` (the nearest one). `repo/.omp/AGENTS.md` is **not** also included.
-- Because `repo/packages/api/.omp/` is the nearest non-empty native directory, project sticky content can only come from `repo/packages/api/.omp/RULES.md`. If that file is absent, `repo/.omp/RULES.md` is **not** used.
-
-Put broad, durable project background in `AGENTS.md`. Reserve `RULES.md` for short, hard requirements that must stay visible across long conversations. Task subagents drop every context file named `AGENTS.md` — inherited from the parent or discovered for an additional workspace root — but still get `RULES.md`, so put anything helpers must follow in `RULES.md`. The filter is by file name only: `AGENTS.md` text pulled in through an `@` import from another file (such as `CLAUDE.md`) and `contextFiles.extra` files such as `AGENTS.local.md` still reach subagents.
-
->>>>>>> theirs — heading `Monorepo example` (S+F, confidence: low)
 ## Other supported context conventions
 
 `omp` also discovers the context and rule files of other agent tools so existing projects keep working without migration.
@@ -113,7 +67,6 @@ enabledProviders:
    - github
 ```
 
-<<<<<<< ours — scope ``omp` also discovers the context and rule fil...` in heading `Other supported context conventions` (S+F, confidence: low)
 // refused_by: statement_fold · collision: ``omp` also discovers the context and rule files of other agent …` +4 more
 `tau` also discovers the context and rule files of other agent tools so existing projects keep working without migration.
 
@@ -129,23 +82,6 @@ enabledProviders:
 | `agents-md` | `AGENTS.md`                                 | Project        | Standalone (non-config-directory) `AGENTS.md` files, discovered by walking up from the current directory to the repository root and, when that repository is nested under the architect's home directory, through enclosing workspace directories up to but not including the home directory. With no repository root, discovery uses the home directory as the boundary for sessions under home and includes that boundary file. Files whose parent directory name starts with `.` are ignored — those belong to a config-directory provider instead.                                                                   |
 | `claude-md` | `CLAUDE.md`                                 | Project        | Standalone (non-config-directory) `CLAUDE.md` files, discovered by walking up from the current directory to the repository root and, when that repository is nested under the architect's home directory, through enclosing workspace directories up to but not including the home directory. With no repository root, discovery uses the home directory as the boundary for sessions under home and includes that boundary file. Files whose parent directory name starts with `.` are ignored — those belong to a config-directory provider instead. |
 | `github`    | `.github/instructions/**/*.instructions.md` | Project rules  | GitHub Copilot / VS Code instruction files become rules. `applyTo: '*'`, `applyTo: '**'`, or `applyTo: '**/*'` is injected as always-apply content; other `applyTo` globs are listed in the rulebook with a generated description when needed and are readable as `rule://<name>`. Missing `applyTo` also produces a rulebook entry and a discovery warning. |
-=======
-`"*"` or `"all"` opts in every foreign user source. `disabledProviders` still wins over opt-in.
-
-| Provider id      | Convention path                             | Scope          | Notes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| ---------------- | ------------------------------------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `native`         | `.omp/AGENTS.md`                            | User + project | Recommended OMP format. User file in the active native agent directory; project file is read only from the nearest non-empty `.omp/` directory walking toward the repo root.                                                                                                                                                                                                                                                                                                                                                                      |
-| `claude`         | `.claude/CLAUDE.md`                         | User + project | User file `~/.claude/CLAUDE.md`; project file `<cwd>/.claude/CLAUDE.md` only (no ancestor walk-up).                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| `codex`          | `.codex/AGENTS.md`                          | User           | User file `~/.codex/AGENTS.md` only. Project-level Codex context comes from a standalone `AGENTS.md` via the `agents-md` provider, not from `<cwd>/.codex/AGENTS.md`.                                                                                                                                                                                                                                                                                                                                                                             |
-| `gemini`         | `.gemini/GEMINI.md`                         | User + project | User file `~/.gemini/GEMINI.md`; project file `<cwd>/.gemini/GEMINI.md` only (no ancestor walk-up).                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| `opencode`       | `.config/opencode/AGENTS.md`                | User           | User file `~/.config/opencode/AGENTS.md` only.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| `github`         | `.github/copilot-instructions.md`           | User + project | Project file `<cwd>/.github/copilot-instructions.md` only (no ancestor walk-up), plus a user-global `~/.copilot/copilot-instructions.md` (relocate with `COPILOT_HOME`). `AGENTS.md` candidates from `COPILOT_CUSTOM_INSTRUCTIONS_DIRS` are also considered at user scope, where normal one-user-file deduplication applies.                                                                                                                                                                                                                      |
-| `agents`         | `.agent/AGENTS.md`, `.agents/AGENTS.md`     | User + project | User files from `~/.agent/` and `~/.agents/`; project files discovered while walking up from the current directory to the repository root.                                                                                                                                                                                                                                                                                                                                                                                                        |
-| `agents-md`      | `AGENTS.md`                                 | Project        | Standalone (non-config-directory) `AGENTS.md` files, discovered by walking up from the current directory to the repository root and, when that repository is nested under the user's home directory, through enclosing workspace directories up to but not including the home directory. With no repository root, discovery uses the home directory as the boundary for sessions under home and includes that boundary file. Files whose parent directory name starts with `.` are ignored — those belong to a config-directory provider instead. |
-| `claude-md`      | `CLAUDE.md`                                 | Project        | Standalone (non-config-directory) `CLAUDE.md` files, discovered by walking up from the current directory to the repository root and, when that repository is nested under the user's home directory, through enclosing workspace directories up to but not including the home directory. With no repository root, discovery uses the home directory as the boundary for sessions under home and includes that boundary file. Files whose parent directory name starts with `.` are ignored — those belong to a config-directory provider instead. |
-| `custom-context` | names in `contextFiles.extra`               | User + project | Opt-in basenames such as `AGENTS.local.md`. Project walk matches `agents-md`. Also the user agent directory, and the primary checkout root when the session is a linked worktree. Additive: does not take or shadow the one-per-depth slot. Empty until configured.                                                                                                                                                                                                                                                                               |
-| `github`         | `.github/instructions/**/*.instructions.md` | Project rules  | GitHub Copilot / VS Code instruction files become rules. `applyTo: '*'`, `applyTo: '**'`, or `applyTo: '**/*'` is injected as always-apply content; other `applyTo` globs are listed in the rulebook with a generated description when needed and are readable as `rule://<name>`. Missing `applyTo` also produces a rulebook entry and a discovery warning.                                                                                                                                                                                      |
->>>>>>> theirs — scope ``omp` also discovers the context and rule fil...`
 
 Providers marked "(no ancestor walk-up)" only look in the current working directory's config directory. If you need ancestor walk-up behavior, prefer the native `.tau/AGENTS.md` format or a standalone `AGENTS.md` or `CLAUDE.md` (the `agents-md` / `claude-md` providers), or launch `tau` from the directory that holds the config directory.
 
@@ -181,7 +117,6 @@ Turn one name off with `disabledExtensions` (`context-file:project:AGENTS.local.
 
 When two providers describe the _same_ scope, the higher-priority provider wins. Full registry priorities:
 
-<<<<<<< ours — scope `When two providers describe the _same_ scope,...` in heading `Load order and shadowing` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `|       90 | `omp-plugins`                                     …`
 | Priority | Provider id                                        |
 | -------: | -------------------------------------------------- |
@@ -200,26 +135,6 @@ When two providers describe the _same_ scope, the higher-priority provider wins.
 |       10 | `claude-md`                                        |
 |        5 | `mcp-json`, `ssh-json`                             |
 |        1 | `builtin-defaults`                                 |
-=======
-| Priority | Provider id                         |
-| -------: | ----------------------------------- |
-|      100 | `native`                            |
-|       90 | `omp-plugins`                       |
-|       80 | `claude`                            |
-|       75 | `agent-plugins`                     |
-|       70 | `agents`, `claude-plugins`, `codex` |
-|       60 | `gemini`                            |
-|       55 | `opencode`                          |
-|       50 | `cursor`, `windsurf`                |
-|       40 | `cline`                             |
-|       30 | `github`                            |
-|       20 | `vscode`                            |
-|       10 | `agents-md`                         |
-|       10 | `claude-md`                         |
-|        9 | `custom-context`                    |
-|        5 | `mcp-json`, `ssh-json`              |
-|        1 | `builtin-defaults`                  |
->>>>>>> theirs — scope `When two providers describe the _same_ scope,...`
 
 Discovered files are then deduplicated by scope:
 
@@ -312,12 +227,8 @@ Do not edit generated files.
 - It is loaded as an **always-apply rule**, not as a context file, so its full body is carried on every request — never demoted to an on-demand rulebook entry — and keeps its hold across long sessions. By default it rides in the system prompt; on vision models with `snapcompact.systemPrompt` imaging enabled the system prompt (this rule included) may instead ship as attached image frames, but the body travels with the request either way.
 - It is re-discovered from disk when a session starts and on session-scoped rebuilds such as `/clear` and `/new`, so creating or editing it while TAU is running takes effect at the next reset — no restart required.
 - It is **always sticky**: frontmatter cannot make it non-sticky. If you want conditional or opt-in behavior, write a normal rule file instead (see [Skills](./skills.md)).
-<<<<<<< ours — scope `- Both top-level candidates are synthesized w...` in heading `Sticky rules vs normal context` (S, confidence: medium)
 // refused_by: statement_fold · collision: `- Both top-level candidates are synthesized with the rule name …`
 - Both top-level candidates are synthesized with the rule name `RULES`, and rule deduplication is name-based. In the usual case, an architect `RULES.md` shadows the project `RULES.md`; they are not concatenated. Avoid naming a regular file under `.tau/rules/` or the architect `rules/` directory `RULES.md`, because native regular rules load earlier and can shadow both sticky candidates.
-=======
-- User and project candidates have distinct rule names: `RULES` and `RULES@project`. Both can load together. Rule deduplication is name-based, so avoid regular rules with these names: native regular rules load earlier and can shadow a sticky candidate.
->>>>>>> theirs — scope `- Both top-level candidates are synthesized w...`
 - Always-apply content already present in a custom prompt, append text, or context file is omitted from the generated always-apply section by normalized paragraph containment; the content still travels in the source that contains it.
 
 Keep `RULES.md` short. Long background belongs in `AGENTS.md`; both generated context and always-apply rules occupy system-prompt context on requests.
@@ -407,12 +318,8 @@ At one user scope or project depth, the higher-priority provider shadows the oth
 
 ### User context disappeared
 
-<<<<<<< ours — scope `Only one user-level context file survives, an...` in heading `User context disappeared` (S, confidence: medium)
 // refused_by: statement_fold · collision: `Only one user-level context file survives, and `~/.omp/agent/AG…`
 Only one user-level context file survives, and `~/.tau/agent/AGENTS.md` has the highest priority. If it exists, it shadows user-level `~/.claude/CLAUDE.md`, `~/.codex/AGENTS.md`, `~/.gemini/GEMINI.md`, `~/.config/opencode/AGENTS.md`, `~/.copilot/copilot-instructions.md`, and `~/.agent`/`~/.agents` files. Consolidate user guidance into the native file or remove the native one if you prefer another tool's file.
-=======
-Only one user-level context file survives, and `~/.omp/agent/AGENTS.md` has the highest priority. Foreign user sources must also be opted in through `enabledProviders`. If the native file exists, it shadows user-level `~/.claude/CLAUDE.md`, `~/.codex/AGENTS.md`, `~/.gemini/GEMINI.md`, `~/.config/opencode/AGENTS.md`, `~/.copilot/copilot-instructions.md`, and `~/.agent`/`~/.agents` files. Consolidate user guidance into the native file or remove the native one if you prefer another tool's file.
->>>>>>> theirs — scope `Only one user-level context file survives, an...`
 
 ### A `RULES.md` file is ignored
 

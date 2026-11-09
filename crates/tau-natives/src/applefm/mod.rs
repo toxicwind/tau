@@ -272,7 +272,6 @@ mod platform {
 			unsafe { &*callback }.call(Ok(event), ThreadsafeFunctionCallMode::NonBlocking);
 		}
 	}
-<<<<<<< ours — scope `trailing members` in module `platform` (S+F, confidence: low)
 // refused_by: container_member · collision: `fn omp_applefm_availability() -> *mut c_char;` +3 more
 
 	unsafe extern "C" {
@@ -285,10 +284,7 @@ mod platform {
 		);
 		fn tau_applefm_cancel(handle: u64);
 		fn tau_applefm_free(pointer: *mut c_char);
-=======
->>>>>>> theirs — scope `trailing members` · weave: run 'weave explain crates/tau-natives/src/applefm/mod.rs' for per-hunk detail, 'weave check' to verify your resolution
 }
-<<<<<<< ours — function `availability` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 	pub(super) fn availability() -> String {
 		// SAFETY: the bridge returns a NUL-terminated heap string (or null) that
@@ -303,9 +299,6 @@ mod platform {
 			json
 		}
 	}
-=======
->>>>>>> theirs — function `availability` (S+F, confidence: low)
-<<<<<<< ours — function `generate` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 	pub(super) fn generate(request: &str, on_event: ThreadsafeFunction<String>) -> Result<u32> {
 		let request =
@@ -318,16 +311,11 @@ mod platform {
 		unsafe { tau_applefm_generate(u64::from(handle), request.as_ptr(), context, emit) };
 		Ok(handle)
 	}
-=======
->>>>>>> theirs — function `generate` (S+F, confidence: low)
-<<<<<<< ours — function `cancel` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 	pub(super) fn cancel(handle: u32) {
 		// SAFETY: cancellation of unknown handles is a no-op in the bridge.
 		unsafe { tau_applefm_cancel(u64::from(handle)) };
 	}
-=======
->>>>>>> theirs — function `cancel` (S+F, confidence: low)
 
 #[cfg(not(target_os = "macos"))]
 mod platform {

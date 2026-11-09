@@ -13,13 +13,9 @@ import type {
 	TextGenerationPipeline,
 	TextGenerationStringOutput,
 	StoppingCriteria as TransformersStoppingCriteria,
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { getTinyModelsCacheDir, logger, setProcessName } from "…`
 } from "@huggingface/transformers";
 import { getTinyModelsCacheDir, logger, setProcessName } from "@tau/tau-utils";
-=======
-} from "../subprocess/transformers-types";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/tiny/worker.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	errorMessage,
 	errorText,

@@ -5,15 +5,12 @@ import { getThemeByName, initTheme } from "@oh-my-pi/pi-tui/theme";
 import { type MCPToolDetails, renderMCPResult } from "@oh-my-pi/pi-tui/tools/mcp";
 
 import { resetSettingsForTest, Settings } from "../../src/config/settings";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { renderMCPResult } from "@oh-my-pi/pi-tui/tools/mcp";` +2 more
 import { renderMCPResult } from "@tau/tau-tui/tools/mcp";
 import { MCPTool } from "../../src/mcp/tool-bridge";
 import { type MCPToolDetails } from "@tau/tau-tui/tools/mcp";
 import type { MCPServerConnection, MCPToolCallResult, MCPToolDefinition } from "../../src/mcp/types";
 import { getThemeByName, initTheme } from "@tau/tau-tui/theme";
-=======
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/mcp/tool-bridge-structured-content.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { CustomToolContext, CustomToolResult } from "../../src/extensibility/custom-tools/types";
 import { CustomToolAdapter } from "../../src/extensibility/custom-tools/wrapper";
 import { bridgeValueFromToolResult } from "../../src/eval/js/tool-bridge";

@@ -1,15 +1,9 @@
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { isEnoent, logger, postmortem, ptree, stableStringifyJson, untilAborted } from "@tau/tau-utils";
 import { MessageFramer } from "../jsonrpc/message-framing";
-=======
-import { glob } from "@oh-my-pi/pi-natives";
-import { isEnoent, logger, postmortem, ptree, stableStringifyJson, untilAborted } from "@oh-my-pi/pi-utils";
-import { encodeMessageFrame, MessageFramer } from "../jsonrpc/message-framing";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/lsp/client.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { ToolAbortError, throwIfAborted } from "../tools/tool-errors";
 import { resolveSyscallTarget } from "../tools/path-utils";
 import { findRepoRoot } from "../capability/fs";
@@ -166,15 +160,12 @@ function updateSharedLspHolds(mutate: () => void): void {
 		}
 	}
 }
-<<<<<<< ours — interstitial `between:packages/coding-agent/src/lsp/client.ts::variable::IDLE_CHECK_INTERVAL_MS:packages/coding-agent/src/lsp/client.ts::variable::sharedLspEnabled` (T+S, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `// omp instance through the LSP mux daemon). Off by default so …`
 
 // Broker-shared server mode (one language server per project shared by every
 // tau instance through the LSP mux daemon). Off by default so embedders and
 // tests that drive getOrCreateClient directly never touch the daemon broker;
 // the SDK turns it on from the `lsp.shared` setting at session creation.
-=======
->>>>>>> theirs — interstitial `between:packages/coding-agent/src/lsp/client.ts::variable::IDLE_CHECK_INTERVAL_MS:packages/coding-agent/src/lsp/client.ts::variable::sharedLspEnabled` (T+S, confidence: medium)
 
 /**
  * Configure the global fallback idle timeout for LSP clients (used in tests/overrides).
@@ -1757,20 +1748,11 @@ export async function ensureFileOpen(client: LspClient, filePath: string, signal
  * positions from disk. This reads the file and, when its contents diverge from the
  * text last sent to the server, pushes a `didChange` so the server's copy matches
  * the disk text the position was derived from. Untracked files fall through to
-<<<<<<< ours — function `reconcileFileFromDisk (body partly extracted into addWorkspaceFolders, closeIdleFiles, trackOpenedFile, syncOpenFileFromDisk, refreshDocument, closeDocument, sendRequestOnce)` (T+F, confidence: medium)
 // refused_by: statement_fold · collision: `// An in-flight OMP write has already synced newer (possibly fo…`
  * {@link ensureFileOpen}; unchanged files send nothing.
  * Returns `true` only when a `didChange` was pushed for a reconciled overlay — the
  * caller can then wait for fresh diagnostics, since the stale ones were dropped.
  * A file with an in-flight TAU write ({@link beginPendingDiskWrite}) is skipped
-=======
- * {@link ensureFileOpen}; unchanged files send nothing; a tracked file gone from
- * disk is closed so the server stops answering for it.
- * Returns `true` when the caller should wait for fresh diagnostics because the stale
- * ones were dropped: a `didChange` was pushed for a reconciled overlay, or a document
- * closed for idleness was reopened.
- * A file with an in-flight OMP write ({@link beginPendingDiskWrite}) is skipped
->>>>>>> theirs — function `reconcileFileFromDisk (body partly extracted into addWorkspaceFolders, closeIdleFiles, trackOpenedFile, syncOpenFileFromDisk, refreshDocument, closeDocument, sendRequestOnce)` (T+F, confidence: medium)
  * entirely: its overlay leads disk, so reading disk back would revert the server
  * to pre-write content.
  */
@@ -1787,7 +1769,6 @@ export async function reconcileFileFromDisk(
 		await ensureFileOpen(client, filePath, signal);
 		return reopening && client.openFiles.has(uri);
 	}
-<<<<<<< ours — function `reconcileFileFromDisk (body partly extracted into addWorkspaceFolders, closeIdleFiles, trackOpenedFile, syncOpenFileFromDisk, refreshDocument, closeDocument, sendRequestOnce)` (T+F, confidence: medium)
 // refused_by: statement_fold · collision: `// An in-flight OMP write has already synced newer (possibly fo…`
 
 	// An in-flight TAU write has already synced newer (possibly formatted) text to
@@ -1853,10 +1834,6 @@ export async function reconcileFileFromDisk(
 		fileOperationLocks.delete(lockKey);
 	}
 	return didChange;
-=======
-	openFile.lastUsedAt = Date.now();
-	return syncOpenFileFromDisk(client, filePath, uri, "throw", signal);
->>>>>>> theirs — function `reconcileFileFromDisk (body partly extracted into addWorkspaceFolders, closeIdleFiles, trackOpenedFile, syncOpenFileFromDisk, refreshDocument, closeDocument, sendRequestOnce)` (T+F, confidence: medium)
 }
 
 /** What a sync does with an open document whose file can no longer be read as text. */

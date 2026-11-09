@@ -16,27 +16,12 @@
  *     otherwise it drops the marker and keeps one model's reasoning.
  */
 import { afterEach, describe, expect, it, vi } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import type { AssistantMessage, Context, Model, ToolResultMessa…`
 import { convertAnthropicMessages, streamAnthropic } from "@tau/tau-ai/providers/anthropic";
 import { AnthropicMessages } from "@tau/tau-ai/providers/anthropic-client";
 import type { MessageParam } from "@tau/tau-ai/providers/anthropic-wire";
 import type { AssistantMessage, Context, Model, ToolResultMessage } from "@tau/tau-ai/types";
 import { buildModel } from "@tau/tau-catalog/build";
-=======
-import { convertAnthropicMessages, streamAnthropic } from "@oh-my-pi/pi-ai/providers/anthropic";
-import { AnthropicMessages } from "@oh-my-pi/pi-ai/providers/anthropic-client";
-import type { MessageParam } from "@oh-my-pi/pi-ai/providers/anthropic-wire";
-import type {
-	AssistantMessage,
-	Context,
-	Message,
-	Model,
-	ProviderSessionState,
-	ToolResultMessage,
-} from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/ai/test/anthropic-server-side-fallback.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const fableModel: Model<"anthropic-messages"> = buildModel({
 	id: "claude-fable-5",

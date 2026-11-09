@@ -1,4 +1,3 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `} from "@oh-my-pi/pi-tui/prompt/macos-spelling";`
 import { describe, expect, it, mock } from "bun:test";
 import {
@@ -7,12 +6,6 @@ import {
 	type SpellingDecorationContext,
 } from "@tau/tau-tui/prompt/macos-spelling";
 import { setMagicKeywords } from "@tau/tau-tui/prompt/magic-keywords";
-=======
-import { describe, expect, it, mock, vi } from "bun:test";
-import { MacOSSpellingProvider, type SpellingBackend } from "@oh-my-pi/pi-tui/prompt/macos-spelling";
-import type { SpellingDecorationContext } from "@oh-my-pi/pi-tui/prompt/prose-gate";
-import { setMagicKeywords } from "@oh-my-pi/pi-tui/prompt/magic-keywords";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/test/macos-spelling.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function backend(overrides: Partial<SpellingBackend>): SpellingBackend {
 	return {

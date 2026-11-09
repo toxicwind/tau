@@ -2,7 +2,6 @@
  * `tau find`: run the semantic `find` tool's cascade from the shell. Same
  * search as the tool, printed as a ranked, colored digest (or JSON).
  */
-<<<<<<< ours — interstitial `file_header` (T+F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { formatBytes, formatDuration, formatNumber, isEnoent } …` +2 more
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
@@ -16,16 +15,6 @@ import { isOmpDocsScope } from "../internal-urls/tau-scope";
 import { expandPath } from "../tools/path-utils";
 import { type CascadeResult, runCascade } from "../tools/jfind/cascade";
 import { materializeOmpScope, type TauScope } from "../tools/jfind/tau-scope";
-=======
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
-import { formatBytes, formatDuration, formatNumber } from "@oh-my-pi/pi-utils";
-import chalk from "@oh-my-pi/pi-utils/chalk";
-import { InternalUrlFilesystem, isUrlPath } from "../internal-urls/url-filesystem";
-import { openStandaloneJudge } from "../judgment/standalone";
-import { standaloneFindSpotlight } from "../spotlight/session";
-import { formatPathRelativeToCwd, resolveSearchResultPath } from "../tools/path-utils";
-import { type CascadeResult, runCascade } from "../tools/jfind/cascade";
->>>>>>> theirs — interstitial `file_header` (T+F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/cli/find-cli.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { rankedHeat } from "../tools/jfind/passages";
 import { resolveSearchRoot, type SearchRoot } from "../tools/jfind/tree";
 
@@ -118,21 +107,14 @@ export async function runFindCommand(cmd: FindCommandArgs): Promise<void> {
 	log("resolving judge");
 	const { judge, settings, close } = await openStandaloneJudge(baseCwd, "find");
 	const spotlight = standaloneFindSpotlight(settings);
-<<<<<<< ours — scope `let ompScope: OmpScope | undefined;` in function `runFindCommand`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	let tauScope: TauScope | undefined;
-=======
->>>>>>> theirs — scope `let ompScope: OmpScope | undefined;` deleted in theirs
-<<<<<<< ours — scope `if (isOmpDocsScope(cmd.path)) {` in function `runFindCommand`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	if (isOmpDocsScope(cmd.path)) {
 		log("materializing tau:// docs");
 		tauScope = await materializeOmpScope(cmd.path, { cwd: process.cwd() });
 	}
-=======
->>>>>>> theirs — scope `if (isOmpDocsScope(cmd.path)) {` deleted in theirs
 	try {
-<<<<<<< ours — scope `try {` in function `runFindCommand` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `const root = ompScope?.dir ?? path.resolve(expandPath(cmd.path)…` +8 more
 		const root = tauScope?.dir ?? path.resolve(expandPath(cmd.path));
 		try {
@@ -190,37 +172,5 @@ export async function runFindCommand(cmd: FindCommandArgs): Promise<void> {
 		if (result.coverage === "unavailable") process.exitCode = 1;
 	} finally {
 		await tauScope?.cleanup();
-=======
-		const started = performance.now();
-		const raw = await runCascade({
-			root,
-			filesystem,
-			query: cmd.query.trim(),
-			extraKeywords: cmd.keywords,
-			judge,
-			spotlight,
-			includeHidden: cmd.hidden,
-			onProgress: log,
-		});
-		// Hits print as paths usable from the caller's cwd: relative files or URLs.
-		const result: CascadeResult = {
-			...raw,
-			hits: raw.hits.map(hit => ({
-				...hit,
-				rel: formatPathRelativeToCwd(resolveSearchResultPath(root.path, hit.rel), cwd),
-			})),
-		};
-		const elapsedMs = performance.now() - started;
-		if (cmd.json) {
-			console.log(JSON.stringify({ query: cmd.query, root: root.path, elapsedMs, ...result }, null, 2));
-		} else {
-			printReport(cmd, formatPathRelativeToCwd(root.path, cwd), result, elapsedMs);
-		}
-		// `exitCode`, not `exit`: process.exit skips the finally below, and with it close().
-		if (result.coverage === "unavailable") process.exitCode = 1;
-	} finally {
-		spotlight?.client.close();
-		close();
->>>>>>> theirs — scope `try {`
 	}
 }

@@ -47,48 +47,7 @@ const pdf = await pdfToMarkdown(pdfBytes);
 console.log(pdf.markdown, pdf.pagesNeedingOcr);
 ```
 
-<<<<<<< ours — heading `Usage` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
-=======
-## Usage
-
-```typescript
-import { encodeSixelAsync, grep, pdfToMarkdown } from "@oh-my-pi/pi-natives";
-
-// Grep for a pattern
-const results = await grep({
-	pattern: "TODO",
-	path: "/path/to/project",
-	glob: "*.ts",
-	context: 2,
-});
-
-// Find files
-const files = await find({
-	pattern: "*.rs",
-	path: "/path/to/project",
-	fileType: "file",
-});
-
-// SIXEL encode for a terminal cell box (px), off the JS thread
-// (`encodeSixel` is the synchronous form)
-const backgroundRgb = 0x202040; // Actual terminal background, packed 0xRRGGBB
-const sequence = await encodeSixelAsync(pngBytes, widthPx, heightPx, backgroundRgb);
-
-// Extract PDF text and identify pages that still need OCR
-const pdf = await pdfToMarkdown(pdfBytes);
-console.log(pdf.markdown, pdf.pagesNeedingOcr);
-```
-
-Both SIXEL encoder forms require the terminal background as a fourth argument,
-packed as a 24-bit `0xRRGGBB` number. When resizing images with alpha, RGB is
-premultiplied before Lanczos filtering so transparent pixels cannot darken or
-discolor visible edges. After resizing, the terminal background is composited
-without applying alpha twice. Fully transparent pixels remain transparent;
-unscaled images retain their existing blending path. Re-encode when the terminal
-background RGB changes.
-
->>>>>>> theirs — heading `Usage` (S+F, confidence: low) · weave: run 'weave explain packages/natives/README.md' for per-hunk detail, 'weave check' to verify your resolution
 ### PTY dimensions
 
 `normalizePtyDimensions(cols, rows)` returns `{ cols, rows }` with fractional
@@ -143,35 +102,4 @@ and `package.json`. Release publishing generates one leaf package per supported
 `optionalDependencies`, so package managers install only the host platform's
 native addon. x64 leaves include every built ISA variant, and the loader keeps
 choosing between `baseline` and `modern` at runtime.
-<<<<<<< ours — heading `Architecture` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
-=======
-## Architecture
-
-`@oh-my-pi/pi-natives` publishes a small core package plus generated
-platform-specific optional dependency packages:
-
-```
-crates/pi-natives/       # Rust source (workspace member)
-  src/lib.rs             # N-API exports
-  src/sixel.rs           # SIXEL terminal-image encoding
-  Cargo.toml             # Rust dependencies
-native/                  # Core loader files and local/CI native build outputs
-  index.js               # Public native export surface
-  loader-state.js        # Platform, ISA variant, and addon resolution
-  embedded-addon.js      # Null embed stub; binary builds replace it in memory
-  pi_natives.<platform>-<arch>-modern.node   # x64 modern ISA (local/CI artifact)
-  pi_natives.<platform>-<arch>-baseline.node # x64 baseline ISA (local/CI artifact)
-  pi_natives.<platform>-<arch>.node          # non-x64 build artifact
-npm/<platform>-<arch>/   # Generated at publish time, not committed
-  package.json           # @oh-my-pi/pi-natives-<platform>-<arch>
-  *.node                 # Only that platform's addon binary or x64 ISA variants
-```
-
-The published core package contains only the JS loader, declarations, README,
-and `package.json`. Release publishing generates one leaf package per supported
-`os`/`cpu` pair and injects those leaves into the core manifest as pinned
-`optionalDependencies`, so package managers install only the host platform's
-native addon. x64 leaves include every built ISA variant, and the loader keeps
-choosing between `baseline` and `modern` at runtime.
->>>>>>> theirs — heading `Architecture` (S+F, confidence: low)

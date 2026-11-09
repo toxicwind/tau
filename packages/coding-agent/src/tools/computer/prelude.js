@@ -28,12 +28,8 @@
 	const invoke = async (action, options) => {
 		const response = await globalThis.__tau_prelude__("computer", { ...options, action });
 		if (response && typeof response.text === "string" && response.text.length > 0) {
-<<<<<<< ours — scope `if (response && typeof response.text === "str...` in function `invoke` (F, confidence: medium)
 // refused_by: statement_fold · collision: `globalThis.__omp_display__(response.text);`
 			globalThis.__tau_display__(response.text);
-=======
-			globalThis.__omp_log__("log", response.text);
->>>>>>> theirs — scope `if (response && typeof response.text === "str...` · weave: run 'weave explain packages/coding-agent/src/tools/computer/prelude.js' for per-hunk detail, 'weave check' to verify your resolution
 		}
 		return response && typeof response.details === "object" && response.details !== null ? response.details : {};
 	};

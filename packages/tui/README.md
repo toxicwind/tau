@@ -38,35 +38,7 @@ tui.addChild(editor);
 tui.start();
 ```
 
-<<<<<<< ours — heading `Quick Start` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
-=======
-## Quick Start
-
-```typescript
-import { TUI, Text, Editor, ProcessTerminal } from "@oh-my-pi/pi-tui";
-
-// Create terminal
-const terminal = new ProcessTerminal();
-
-// Create TUI
-const tui = new TUI(terminal);
-
-// Add components
-tui.addChild(new Text("Welcome to my app!"));
-
-const editor = new Editor(editorTheme);
-editor.onSubmit = text => {
-	console.log("Submitted:", text);
-	tui.addChild(new Text(`You said: ${text}`));
-};
-tui.addChild(editor);
-
-// Start
-tui.start();
-```
-
->>>>>>> theirs — heading `Quick Start` (S+F, confidence: low) · weave: run 'weave explain packages/tui/README.md' for per-hunk detail, 'weave check' to verify your resolution
 ## SIXEL transparency and terminal backgrounds
 
 SIXEL has binary transparency, not fractional alpha. omp blends partially
@@ -664,10 +636,7 @@ interface Terminal {
 - `ProcessTerminal` - Uses `process.stdin/stdout`
 - `VirtualTerminal` - For testing (uses kitty-vt-wasm)
 
-<<<<<<< ours — heading `Terminal Interface` (?, confidence: unknown)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
-=======
->>>>>>> theirs — heading `Terminal Interface` (?, confidence: unknown)
 ## Utilities
 
 ```typescript
@@ -818,10 +787,7 @@ Run it:
 npx tsx test/chat-simple.ts
 ```
 
-<<<<<<< ours — heading `Example` (?, confidence: unknown)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
-=======
->>>>>>> theirs — heading `Example` (?, confidence: unknown)
 ## Development
 
 ```bash
@@ -834,7 +800,4 @@ npm run check
 # Run the demo
 npx tsx test/chat-simple.ts
 ```
-<<<<<<< ours — heading `Development` (?, confidence: unknown)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
-=======
->>>>>>> theirs — heading `Development` (?, confidence: unknown)

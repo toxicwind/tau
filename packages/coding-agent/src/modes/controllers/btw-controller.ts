@@ -1,14 +1,8 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { AssistantMessage, Message } from "@oh-my-pi/pi-ai…` +1 more
 import type { AssistantMessage, Message } from "@tau/tau-ai";
 import { type OverlayHandle, replaceTabs } from "@tau/tau-tui";
 import { logger, prompt, Snowflake, toError, withTimeout } from "@tau/tau-utils";
 import btwUserPrompt from "../../prompts/system/btw-user.md" with { type: "text" };
-=======
-import type { AssistantMessage, ImageContent } from "@oh-my-pi/pi-ai";
-import { type OverlayHandle, replaceTabs } from "@oh-my-pi/pi-tui";
-import { logger, toError, withTimeout } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/modes/controllers/btw-controller.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	type BtwHistoryRecord,
 	type BtwHistoryTurn,
@@ -19,27 +13,12 @@ import {
 	getBtwTurnKey,
 	getBtwTurns,
 } from "../../session/btw-history";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { AssistantMessage, Message } from "@oh-my-pi/pi-ai…` +1 more
 import { TRUNCATE_LENGTHS } from "@tau/tau-tui/render/render-utils";
 import { copyToClipboard } from "../../utils/clipboard";
 import { BtwHistoryPanel } from "@tau/tau-tui/overlays/btw-history-panel";
 import { BtwPanelComponent } from "@tau/tau-tui/overlays/btw-panel";
 import { sanitizeErrorLine } from "@tau/tau-tui/chrome/error-block";
-=======
-import { beginBtwTurn, patchLatestBtwTurn, runBtwTurn } from "../../session/btw-turn";
-import { TRUNCATE_LENGTHS } from "@oh-my-pi/pi-tui/render/render-utils";
-import { copyToClipboard } from "../../utils/clipboard";
-import { BtwHistoryPanel } from "@oh-my-pi/pi-tui/overlays/btw-history-panel";
-import { focusActiveEditorArea } from "./selector-controller";
-import { BtwPanelComponent } from "@oh-my-pi/pi-tui/overlays/btw-panel";
-import type { BtwInjectState } from "@oh-my-pi/pi-tui/overlays/btw-inject";
-import { sanitizeErrorLine } from "@oh-my-pi/pi-tui/chrome/error-block";
-import { appKey } from "@oh-my-pi/pi-tui/chrome/keybinding-hints";
-import type { AgentViewSession, AgentViewSessionManager } from "../../session/agent-session-handle";
-import type { DroppedPrompt } from "../../session/agent-session-types";
-import { cfgBtwInject } from "../settings";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import type { InteractiveModeContext } from "../types";
 
 interface BtwRequest {

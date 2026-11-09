@@ -1,28 +1,12 @@
 import { mkdirSync } from "node:fs";
 import * as fsp from "node:fs/promises";
 import * as nodePath from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { type ApiKey, getOpenRouterHeaders, withAuth } from "@tau/tau-ai";
 import { ProviderHttpError } from "@tau/tau-ai/error";
 import { hostMatchesUrl } from "@tau/tau-catalog/hosts";
 import { $env, $flag, extractHttpStatusFromError, fetchWithRetry, getFastembedCacheDir, logger } from "@tau/tau-utils";
 import { LRUCache } from "@tau/tau-utils/lru";
-=======
-import { type ApiKey, getOpenRouterHeaders, withAuth } from "@oh-my-pi/pi-ai";
-import { ProviderHttpError } from "@oh-my-pi/pi-ai/error";
-import { hostMatchesUrl } from "@oh-my-pi/pi-catalog/hosts";
-import {
-	$env,
-	$flag,
-	extractHttpStatusFromError,
-	fetchWithRetry,
-	getFastembedCacheDir,
-	logger,
-	withLoopPhase,
-} from "@oh-my-pi/pi-utils";
-import { LRUCache } from "@oh-my-pi/pi-utils/lru";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/mnemotau/src/core/embeddings.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { EmbeddingModel } from "fastembed";
 import { loadFastembed, withEmbedSessionBudget } from "./fastembed-runtime";
 import {
@@ -101,7 +85,6 @@ export async function quarantineCorruptModelFile(message: string, cacheDir?: str
 	}
 	return true;
 }
-<<<<<<< ours — function `clearIncompleteModelCache` (T+F, confidence: medium)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 /**
  * Recover from a partially-extracted fastembed model cache. An interrupted
@@ -137,8 +120,6 @@ export async function clearIncompleteModelCache(message: string, cacheDir?: stri
 	}
 	return true;
 }
-=======
->>>>>>> theirs — function `clearIncompleteModelCache` (T+F, confidence: medium)
 
 /**
  * Shared local-model initializer: FlagEmbedding.init with a corrupt-cache heal.
@@ -452,7 +433,6 @@ async function embedApi(texts: readonly string[]): Promise<EmbeddingMatrix | nul
 		matrix.push(...part);
 	}
 	return matrix;
-<<<<<<< ours — scope `try {` in function `embedApi`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	try {
 		// withAuth re-resolves the key on 401 (force-refresh, then sibling
@@ -493,8 +473,6 @@ async function embedApi(texts: readonly string[]): Promise<EmbeddingMatrix | nul
 		logger.debug("mnemotau embedding request failed", { status: extractHttpStatusFromError(error) });
 		return null;
 	}
-=======
->>>>>>> theirs — scope `try {` deleted in theirs
 }
 
 async function embedApiBatch(texts: readonly string[]): Promise<EmbeddingMatrix | null> {

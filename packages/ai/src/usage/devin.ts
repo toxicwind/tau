@@ -19,18 +19,11 @@ import {
 	type PlanStatus,
 	TeamsTier,
 	type Timestamp,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { DEVIN_DEFAULT_BASE_URL, devinCliMetadata, normalizeDev…`
 } from "@tau/tau-catalog/discovery/devin-proto";
 import { create, toBinary } from "@tau/tau-catalog/discovery/protobuf";
 import { DEVIN_DEFAULT_BASE_URL, devinCliMetadata, normalizeDevinSessionToken } from "@tau/tau-catalog/wire/devin";
 import { decodeDevinUnaryMessage } from "@tau/tau-catalog/wire/devin-proto";
-=======
-} from "@oh-my-pi/pi-catalog/discovery/devin-proto";
-import { create, toBinary } from "@oh-my-pi/pi-catalog/discovery/protobuf";
-import { DEVIN_DEFAULT_BASE_URL, devinCliMetadata } from "@oh-my-pi/pi-catalog/wire/devin";
-import { decodeDevinUnaryMessage } from "@oh-my-pi/pi-catalog/wire/devin-proto";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/ai/src/usage/devin.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type {
 	UsageAmount,
 	UsageCredential,

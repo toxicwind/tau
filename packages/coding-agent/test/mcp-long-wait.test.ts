@@ -12,17 +12,11 @@
  * than the POST — so the cancellation paths are pinned here alongside the wait.
  */
 import { afterEach, describe, expect, it, spyOn, vi } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import * as path from "node:path";
 import * as mcpTimeout from "tau/mcp/timeout";
 import { HttpTransport } from "tau/mcp/transports/http";
 import { LegacySseTransport } from "tau/mcp/transports/sse";
-=======
-import * as mcpTimeout from "@oh-my-pi/pi-coding-agent/mcp/timeout";
-import { HttpTransport } from "@oh-my-pi/pi-coding-agent/mcp/transports/http";
-import { LegacySseTransport } from "@oh-my-pi/pi-coding-agent/mcp/transports/sse";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/mcp-long-wait.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 interface StallingServer {
 	server: Bun.Server<undefined>;
@@ -113,7 +107,6 @@ function pinDeadline(ms: number): void {
 }
 
 describe("MCP waits that outlast the socket idle timer", () => {
-<<<<<<< ours — scope `it(` in test_suite `MCP waits that outlast the socket idle timer`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it(
 		"delivers the answer on every MCP transport after a silence past the runtime's idle default",
@@ -179,8 +172,6 @@ describe("MCP waits that outlast the socket idle timer", () => {
 		},
 		CHILD_TEST_MS,
 	);
-=======
->>>>>>> theirs — scope `it(` deleted in theirs
 
 	it("lets caller cancellation end a wait that was given no deadline", async () => {
 		pinDeadline(0);

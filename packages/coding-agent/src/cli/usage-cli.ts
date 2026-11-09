@@ -22,7 +22,6 @@ import {
 	type UsageLimit,
 	type UsageReport,
 	type UsageUnit,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { AuthBrokerClient } from "@oh-my-pi/pi-ai/auth-broker";` +1 more
 } from "@tau/tau-ai";
 import { AuthBrokerClient } from "@tau/tau-ai/auth-broker";
@@ -35,50 +34,6 @@ import { Settings } from "../config/settings";
 import { discoverAuthStorage, loadCliExtensionProviders } from "../sdk";
 import { resolveAuthBrokerConfig } from "../session/auth-broker-config";
 import { collapseSharedUsageReports, summarizeUsageResetCredits } from "@tau/tau-tui/overlays/usage-display";
-=======
-} from "@oh-my-pi/pi-ai";
-import { AuthBrokerClient, AuthBrokerError } from "@oh-my-pi/pi-ai/auth-broker";
-import type { ClientUsageClientSummary } from "@oh-my-pi/pi-ai/usage";
-import { formatProviderName } from "@oh-my-pi/pi-tui/chrome/format";
-import { peakBuckets, renderSparkline } from "@oh-my-pi/pi-tui/components/sparkline";
-import { formatDuration, formatNumber, getProjectDir, sanitizeText } from "@oh-my-pi/pi-utils";
-import chalk from "@oh-my-pi/pi-utils/chalk";
-import { ModelRegistry } from "../config/model-registry";
-import { Settings } from "../config/settings";
-import { discoverAuthStorage, loadCliExtensionProviders } from "../sdk";
-import { resolveAuthBrokerConfig } from "../session/auth-broker-config";
-import { resetAccountLockKey } from "../session/codex-auto-reset";
-import { checkCodexBalance, type ResetMarker, resetLockPath, withResetFence } from "../session/reset-fence";
-import { collapseSharedUsageReports, summarizeUsageResetCredits } from "@oh-my-pi/pi-tui/overlays/usage-display";
-import { reportMatchesStatus } from "../session/claude-auto-reset";
-import {
-	classifyResetExpiry,
-	type ResetExpiryWarning,
-	type ResetSpendVerdict,
-	resetSpendVerdict,
-} from "../session/reset-expiry";
-import { formatCodexUsageReportLabel, usageReportIdentity } from "../slash-commands/helpers/active-oauth-account";
-import { errorMessage } from "../slash-commands/helpers/parse";
-import {
-	describeRedeemOutcome,
-	formatResetProviderName,
-	formatResetUsageAccountLine,
-	normalizeResetProvider,
-	oneLine,
-	parseResetUsageTarget,
-	resolveResetUsageTarget,
-	toResetUsageAccount,
-} from "../slash-commands/helpers/reset-usage";
-import {
-	accountIdentityLabel,
-	collectStoredAccounts,
-	collectUnreportedAccounts,
-	selectReportableAccounts,
-	type UsageAccountIdentity,
-} from "../slash-commands/helpers/usage-accounts";
-
-import { cfgRetryUsageReservePct } from "../session/settings";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/cli/usage-cli.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const BAR_WIDTH = 28;
 
@@ -1160,7 +1115,6 @@ function formatNoProviderCredentials(provider: string, storedAccounts: UsageAcco
 			: "Run `omp` and use /login to add accounts.";
 	return `No credentials stored for provider "${provider}". ${hint}\n`;
 }
-<<<<<<< ours — function `selectReportableAccounts` (T+F, confidence: medium)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 /**
  * Keep only accounts worth a usage row: those whose provider has a usage
@@ -1183,8 +1137,6 @@ export function selectReportableAccounts(
 	if (explicitProvider) return accounts;
 	return accounts.filter(account => hasUsageProvider(account.provider));
 }
-=======
->>>>>>> theirs — function `selectReportableAccounts` (T+F, confidence: medium)
 
 /** Apply a redaction mask to an optional identity field. */
 function maskIdentity(redaction: Map<string, string>, value: string | undefined): string | undefined {
@@ -1764,7 +1716,6 @@ export async function runUsageCommand(cmd: UsageCommandArgs): Promise<void> {
 		}
 
 		if (filteredReports.length === 0 && accounts.length === 0) {
-<<<<<<< ours — scope `try {` in function `runUsageCommand` (F, confidence: medium)
 // refused_by: statement_fold · collision: `: `No credentials found${scope}. Run \`omp\` and use /login to …`
 			const scope = cmd.provider ? ` for provider "${cmd.provider}"` : "";
 			// Credentials exist but every one is for a provider without a usage
@@ -1773,19 +1724,6 @@ export async function runUsageCommand(cmd: UsageCommandArgs): Promise<void> {
 				storedAccounts.length > 0
 					? `No usage data${scope}. Stored credentials are for providers without a usage endpoint.\n`
 					: `No credentials found${scope}. Run \`tau\` and use /login to add accounts.\n`;
-=======
-			// An explicit --provider keeps every stored account of that provider, so
-			// reaching here with one means none is stored for it. Without one,
-			// credentials may exist only for providers without a usage endpoint.
-			let message: string;
-			if (cmd.provider) {
-				message = formatNoProviderCredentials(cmd.provider, storedAccounts);
-			} else if (storedAccounts.length > 0) {
-				message = "No usage data. Stored credentials are for providers without a usage endpoint.\n";
-			} else {
-				message = "No credentials found. Run `omp` and use /login to add accounts.\n";
-			}
->>>>>>> theirs — scope `try {`
 			process.stderr.write(chalk.yellow(message));
 			process.exitCode = 1;
 			return;

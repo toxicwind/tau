@@ -1,4 +1,3 @@
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { ServingModel } from "@oh-my-pi/pi-coding-agent/se…`
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import { ThinkingLevel } from "@tau/tau-agent-core";
@@ -12,32 +11,6 @@ import { TurnRecovery, type TurnRecoveryHost } from "tau/session/strategies/turn
 import { runSubprocess } from "tau/task/executor";
 import type { AgentDefinition } from "tau/task/types";
 import type { AgentProgress } from "@tau/tau-tui/tools/task";
-=======
-import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import * as fs from "node:fs/promises";
-import * as os from "node:os";
-import * as path from "node:path";
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { Api, AssistantMessage, Model } from "@oh-my-pi/pi-ai";
-import { unregisterCustomApis } from "@oh-my-pi/pi-ai/api-registry";
-import { createMockModel, registerMockApi } from "@oh-my-pi/pi-ai/providers/mock";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { closeModelCache } from "@oh-my-pi/pi-catalog/model-cache";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import * as sdkModule from "@oh-my-pi/pi-coding-agent/sdk";
-import { AgentLifecycleManager } from "@oh-my-pi/pi-coding-agent/registry/agent-lifecycle";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import { AgentStorage } from "@oh-my-pi/pi-coding-agent/session/agent-storage";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import type { RetryFallbackRole, ServingModel } from "@oh-my-pi/pi-coding-agent/session/retry-fallback-chains";
-import { TurnRecovery, type TurnRecoveryHost } from "@oh-my-pi/pi-coding-agent/session/turn-recovery";
-import { runSubprocess } from "@oh-my-pi/pi-coding-agent/task/executor";
-import type { AgentDefinition } from "@oh-my-pi/pi-coding-agent/task/types";
-import type { AgentProgress } from "@oh-my-pi/pi-tui/tools/task";
-import { __resetDirsFromEnvForTests, removeWithRetries, setAgentDir } from "@oh-my-pi/pi-utils";
-import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/issue-2750-subagent-runtime-fallback.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { createSessionDefaults } from "./helpers/session-defaults";
 
 import { cfgRetryFallbackChains } from "@oh-my-pi/pi-coding-agent/session/settings";

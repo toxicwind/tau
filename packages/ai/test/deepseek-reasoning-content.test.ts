@@ -1,5 +1,4 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { convertMessages } from "@oh-my-pi/pi-ai/providers/open…` +1 more
 import { renderDemotedThinking } from "@tau/tau-ai/dialect";
 import { convertMessages } from "@tau/tau-ai/providers/openai-completions";
@@ -7,15 +6,6 @@ import type { AssistantMessage, Model, ModelSpec, ThinkingContent, ToolCall } fr
 import { buildModel } from "@tau/tau-catalog/build";
 import { Effort } from "@tau/tau-catalog/effort";
 import { getBundledModel } from "@tau/tau-catalog/models";
-=======
-import { renderDemotedThinking } from "@oh-my-pi/pi-ai/dialect";
-import { convertMessages, streamOpenAICompletions } from "@oh-my-pi/pi-ai/providers/openai-completions";
-import type { AssistantMessage, FetchImpl, Model, ModelSpec, ThinkingContent, ToolCall } from "@oh-my-pi/pi-ai/types";
-import { removeDsmlToolMarkupLeak } from "@oh-my-pi/pi-ai/utils/dsml-leak";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/test/deepseek-reasoning-content.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 interface OpenAICompletionAssistantWireMessage {
 	role: "assistant";

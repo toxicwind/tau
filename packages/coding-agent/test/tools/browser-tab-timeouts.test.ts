@@ -1,13 +1,7 @@
 import { describe, expect, it, vi } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import {` +5 more
 import { dispatchScroll, normalizeSelector, resolveOpTimeouts, resolveWaitTimeout } from "tau/tools/browser/tab-worker";
 import { resolvePredicateTimeout } from "tau/tools/run-scope";
-=======
-import { resolveOpTimeouts, resolveWaitTimeout } from "@oh-my-pi/pi-coding-agent/tools/browser/op-timeouts";
-import { dispatchScroll, normalizeSelector } from "@oh-my-pi/pi-coding-agent/tools/browser/tab-worker";
-import { resolvePredicateTimeout } from "@oh-my-pi/pi-coding-agent/tools/run-scope";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/tools/browser-tab-timeouts.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 // Regression coverage for the "weird timeouts" failure mode: interactive `tab.*` helpers
 // used to run with the full cell budget as their internal puppeteer timeout, so a stalled

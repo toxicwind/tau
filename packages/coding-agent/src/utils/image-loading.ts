@@ -8,18 +8,11 @@ import {
 	imageDecodeFailureReason,
 } from "@tau/tau-tui/chat/image-loading";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { isRecord, logger, readImageMetadata } from "@oh-my-pi/…`
 import type { Context, ImageContent, Message, Model, ProviderPayload, TextContent } from "@tau/tau-ai";
 import { rasterizeSvg } from "@tau/tau-natives";
 import { isRecord, logger, readImageMetadata } from "@tau/tau-utils";
 import { LRUCache } from "@tau/tau-utils/lru";
-=======
-import type { Context, ImageContent, Message, Model, ProviderPayload, TextContent } from "@oh-my-pi/pi-ai";
-import { rasterizeSvg } from "@oh-my-pi/pi-natives";
-import { $which, isRecord, logger, readImageMetadata } from "@oh-my-pi/pi-utils";
-import { LRUCache } from "@oh-my-pi/pi-utils/lru";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/utils/image-loading.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { resolveReadPath } from "../tools/path-utils";
 import { formatDimensionNote, type ImageResizeOptions, resizeImage } from "./image-resize";
 import { decodeStillImageJpeg, VideoError } from "./video";

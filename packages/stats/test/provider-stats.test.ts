@@ -2,16 +2,10 @@ import { Database } from "bun:sqlite";
 import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { getProviderDashboardStats } from "@oh-my-pi/omp-stats/…`
 import { getProviderDashboardStats } from "@tau/tau-stats/aggregator";
 import { initDb, insertMessageStats } from "@tau/tau-stats/db";
 import type { MessageStats } from "@tau/tau-stats/types";
-=======
-import { getProviderDashboardStats, getProviderWindowStats } from "@oh-my-pi/omp-stats/aggregator";
-import { initDb, insertMessageStats } from "@oh-my-pi/omp-stats/db";
-import type { MessageStats } from "@oh-my-pi/omp-stats/types";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/stats/test/provider-stats.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	computeUsageWindowStats,
 	readUsageSnapshots,

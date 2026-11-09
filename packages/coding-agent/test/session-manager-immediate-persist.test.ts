@@ -389,14 +389,9 @@ describe("SessionManager JSONL software-crash durability", () => {
 		}
 	});
 
-<<<<<<< ours — test_suite `SessionManager JSONL software-crash durability` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 	it("reparents metadata children when durably discarding an entry", async () => {
 		const cwd = makeTempDir("@tau-discard-metadata-cwd-");
-=======
-	it("reparents metadata children and keeps billed usage when durably discarding an entry", async () => {
-		const cwd = makeTempDir("@pi-discard-metadata-cwd-");
->>>>>>> theirs — test_suite `SessionManager JSONL software-crash durability` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/session-manager-immediate-persist.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 		const sessionDir = path.join(cwd, "sessions");
 		const manager = SessionManager.create(cwd, sessionDir);
 		const sessionFile = manager.getSessionFile();

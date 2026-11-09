@@ -2,22 +2,11 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { sharedSpinnerFrame } from "@oh-my-pi/pi-tui/chat/tool-…` +1 more
 import { sharedSpinnerFrame } from "@tau/tau-tui/chat/tool-execution";
 import { SPINNER_ADVANCE_MS } from "@tau/tau-tui/components/loader";
 import { getThemeByName } from "@tau/tau-tui/theme";
 import { getConfigRootDir, getCustomThemesDir, removeWithRetries, setAgentDir } from "@tau/tau-utils";
-=======
-import {
-	DEFAULT_SPINNER_INTERVAL_MS,
-	setSpinnerInterval,
-	sharedSpinnerFrame,
-	SPINNER_INTERVAL_STATIC,
-} from "@oh-my-pi/pi-tui/spinner-clock";
-import { getThemeByName } from "@oh-my-pi/pi-tui/theme";
-import { getConfigRootDir, getCustomThemesDir, removeWithRetries, setAgentDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/tui/test/theme-spinner-frames.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 // Path of the built-in dark theme JSON, used as a known-valid base we can
 // extend with custom `symbols.spinnerFrames` shapes.

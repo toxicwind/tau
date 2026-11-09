@@ -37,19 +37,11 @@ import type {
 	ProviderSessionState,
 	Tool,
 	ToolResultMessage,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-ai/types";
 import { AssistantMessageEventStream } from "@tau/tau-ai/utils/event-stream";
 import { buildModel } from "@tau/tau-catalog/build";
 import { extractHttpStatusFromError } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-ai/types";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { validateToolArguments } from "@oh-my-pi/pi-ai/utils/validation";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { extractHttpStatusFromError } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/ai/test/gitlab-duo-workflow-provider.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 beforeAll(() => configureCredentialRedaction(true));
 afterAll(() => configureCredentialRedaction(false));

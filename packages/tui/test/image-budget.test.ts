@@ -1,17 +1,8 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { TUI } from "@oh-my-pi/pi-tui";`
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import { TUI } from "@tau/tau-tui";
 import { Image, ImageBudget } from "@tau/tau-tui/components/image";
 import { Text } from "@tau/tau-tui/components/text";
-=======
-import { afterEach, beforeEach, describe, expect, it, spyOn, vi } from "bun:test";
-import * as natives from "@oh-my-pi/pi-natives";
-import { Container, TUI } from "@oh-my-pi/pi-tui";
-import { TranscriptContainer } from "@oh-my-pi/pi-tui/chrome/transcript-container";
-import { Image, ImageBudget } from "@oh-my-pi/pi-tui/components/image";
-import { Text } from "@oh-my-pi/pi-tui/components/text";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/test/image-budget.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	encodeKittyVirtualPlacement,
 	getKittyGraphics,

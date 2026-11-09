@@ -1,6 +1,5 @@
 import { describe, expect, it } from "bun:test";
 import { gunzipSync } from "node:zlib";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 import { streamDevin } from "@tau/tau-ai/providers/devin";
 import type { Context, Model } from "@tau/tau-ai/types";
@@ -20,27 +19,6 @@ import {
 } from "@tau/tau-catalog/discovery/devin-proto";
 import { create, fromBinary, toBinary } from "@tau/tau-catalog/discovery/protobuf";
 import type { DevinCompat } from "@tau/tau-catalog/types";
-=======
-import { streamDevin } from "@oh-my-pi/pi-ai/providers/devin";
-import type { Context, Model } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import {
-	type AssignModelRequest,
-	AssignModelRequestSchema,
-	AssignModelResponseSchema,
-	ChatMessageSource,
-	type GetChatMessageRequest,
-	GetChatMessageRequestSchema,
-	GetChatMessageResponseSchema,
-	type GetUserJwtRequest,
-	GetUserJwtRequestSchema,
-	GetUserJwtResponseSchema,
-	ModelAssignmentSchema,
-	StopReason,
-} from "@oh-my-pi/pi-catalog/discovery/devin-proto";
-import { create, fromBinary, toBinary } from "@oh-my-pi/pi-catalog/discovery/protobuf";
-import type { DevinCompat } from "@oh-my-pi/pi-catalog/types";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/ai/test/devin-router.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const AUTH_PAYLOAD = toBinary(GetUserJwtResponseSchema, create(GetUserJwtResponseSchema, { userJwt: "user-jwt" }));
 

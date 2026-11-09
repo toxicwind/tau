@@ -6,19 +6,12 @@ import {
 	InternalUrlRouter,
 	parseInternalUrl,
 	parseVaultUrl,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 	resolveVaultUrlToPath,
 	VaultProtocolHandler,
 } from "tau/internal-urls";
 import * as vaultProtocol from "tau/internal-urls/vault-protocol";
 import { $which, removeWithRetries } from "@tau/tau-utils";
-=======
-	VaultProtocolHandler,
-} from "@oh-my-pi/pi-coding-agent/internal-urls";
-import * as vaultProtocol from "@oh-my-pi/pi-coding-agent/internal-urls/vault-protocol";
-import { $which, removeWithRetries } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/internal-urls/vault-protocol.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 async function withTempDir<T>(fn: (dir: string) => Promise<T>): Promise<T> {
 	const dir = await fs.mkdtemp(path.join(os.tmpdir(), "vault-protocol-"));

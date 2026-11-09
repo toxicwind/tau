@@ -7,16 +7,10 @@
 import type { Database, Statement } from "bun:sqlite";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { parseCloudflareAiGatewayCredential } from "@oh-my-pi/p…`
 import { authPolicyFor } from "@tau/tau-catalog/compat/auth";
 import { parseAlibabaTokenPlanCredential } from "@tau/tau-catalog/wire/alibaba-token-plan";
 import { parseCloudflareAiGatewayCredential } from "@tau/tau-catalog/wire/cloudflare-ai-gateway";
-=======
-import { authPolicyFor } from "@oh-my-pi/pi-catalog/compat/auth";
-import { parseAlibabaTokenPlanCredential } from "@oh-my-pi/pi-catalog/wire/alibaba-token-plan";
-import { parseCloudflareCredential } from "@oh-my-pi/pi-catalog/wire/cloudflare";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/ai/src/auth/sqlite-credential-store.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	getAgentDbPath,
 	getDbBusyTimeoutMs,
@@ -24,14 +18,9 @@ import {
 	isSqliteCorruptionError,
 	logger,
 	openSqliteDatabase,
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { parseCloudflareAiGatewayCredential } from "@oh-my-pi/p…`
 } from "@tau/tau-utils";
 import type { AuthCredentialStore, CredentialRefreshLeaseFence } from "./store";
-=======
-} from "@oh-my-pi/pi-utils";
-import type { AuthCredentialStore, CredentialRefreshLeaseFence, CredentialRefreshLeaseHolder } from "./store";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium)
 import type {
 	AuthCredential,
 	DisabledCredentialSummary,
@@ -129,7 +118,6 @@ const CODEX_METER_BLOCK_SCOPES = ["chat", "spark"] as const;
  * must not take the SQLite write lock on every selection.
  */
 const CREDENTIAL_BLOCK_SWEEP_INTERVAL_MS = 60_000;
-<<<<<<< ours — interstitial `between:packages/ai/src/auth/sqlite-credential-store.ts::variable::CODEX_METER_BLOCK_SCOPES:packages/ai/src/auth/sqlite-credential-store.ts::function::normalizeStoredAccountId` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `// SQLite error classifiers live in pi-utils so the credential …` +1 more
 
 // SQLite error classifiers live in tau-utils so the credential store and the
@@ -137,8 +125,6 @@ const CREDENTIAL_BLOCK_SWEEP_INTERVAL_MS = 60_000;
 // pre-existing `@tau/tau-ai/auth-storage` surface.
 export { isSqliteBusyError, isSqliteCorruptionError };
 
-=======
->>>>>>> theirs — interstitial `between:packages/ai/src/auth/sqlite-credential-store.ts::variable::CODEX_METER_BLOCK_SCOPES:packages/ai/src/auth/sqlite-credential-store.ts::function::normalizeStoredAccountId` (S+F, confidence: low)
 
 // SQLite error classifiers live in pi-utils so the credential store and the
 // model cache share one implementation; re-exported here to preserve the

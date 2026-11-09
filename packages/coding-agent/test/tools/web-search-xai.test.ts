@@ -1,5 +1,4 @@
 import { Database } from "bun:sqlite";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { searchXAI, XAIProvider } from "@oh-my-pi/pi-coding-age…`
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import { AuthStorage, type FetchImpl, type Model, SqliteAuthCredentialStore } from "@tau/tau-ai";
@@ -7,16 +6,6 @@ import { buildModel } from "@tau/tau-catalog/build";
 import { ModelRegistry } from "tau/config/model-registry";
 import { searchXAI, XAIProvider } from "tau/web/search/providers/xai";
 import { SearchProviderError } from "tau/web/search/types";
-=======
-import { afterEach, beforeEach, describe, expect, it, setSystemTime, vi } from "bun:test";
-import { AuthStorage, type FetchImpl, type Model, SqliteAuthCredentialStore } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { cfgModelProviderOrder } from "@oh-my-pi/pi-coding-agent/config/model-settings";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { rankXAIProviders, searchXAI, XAIProvider } from "@oh-my-pi/pi-coding-agent/web/search/providers/xai";
-import { SearchProviderError } from "@oh-my-pi/pi-coding-agent/web/search/types";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/tools/web-search-xai.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 type CapturedRequest = {
 	url: string;

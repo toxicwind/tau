@@ -1,5 +1,4 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { CURSOR_MARKER } from "@oh-my-pi/pi-tui";` +2 more
 import type { ImageContent } from "@tau/tau-ai";
 import { CURSOR_MARKER } from "@tau/tau-tui";
@@ -12,21 +11,6 @@ import {
 	modelMentionChipLabel,
 	skillChipLabel,
 } from "@tau/tau-tui/prompt/composer-attachments";
-=======
-import type { ImageContent } from "@oh-my-pi/pi-ai";
-import { CURSOR_MARKER, getKeybindings, setKeybindings } from "@oh-my-pi/pi-tui";
-import { setKittyProtocolActive } from "@oh-my-pi/pi-tui/keys";
-import { $ } from "bun";
-import { KeybindingsManager, getDefaultPasteImageKeys } from "@oh-my-pi/pi-tui/app-keybindings";
-import {
-	chipLabel,
-	COMPOSER_TOKEN_REGEX,
-	modelMentionChipLabel,
-	skillChipLabel,
-} from "@oh-my-pi/pi-tui/prompt/composer-attachments";
-import { setMotionEffects } from "@oh-my-pi/pi-tui/motion-effects";
-import { setMagicKeywords } from "@oh-my-pi/pi-tui/prompt/magic-keywords";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/test/custom-editor.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	CustomEditor,
 	extractBracketedImagePastePaths,
@@ -40,14 +24,9 @@ import {
 	SPACE_HOLD_RELEASE_MS,
 	SPACE_HOLD_STALL_SLACK_MS,
 	SPACE_REPEAT_MAX_GAP_MS,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { CURSOR_MARKER } from "@oh-my-pi/pi-tui";` +2 more
 } from "@tau/tau-tui/prompt/custom-editor";
 import { getEditorTheme, initTheme, theme } from "@tau/tau-tui/theme";
-=======
-} from "@oh-my-pi/pi-tui/space-hold";
-import { getEditorTheme, initTheme, theme } from "@oh-my-pi/pi-tui/theme";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 
 function makeEditor(holdEnabled = true) {
 	const editor = new CustomEditor(getEditorTheme());

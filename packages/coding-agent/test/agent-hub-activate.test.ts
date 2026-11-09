@@ -7,7 +7,6 @@ import { createAgentHubRuntime } from "tau/modes/agent-hub-runtime";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { AgentSession } from "@oh-my-pi/pi-coding-agent/se…`
 import { resetSettingsForTest, Settings } from "tau/config/settings";
 import { IrcBus } from "tau/irc/bus";
@@ -22,32 +21,6 @@ import { visitEntriesFromFileStream } from "tau/session/session-loader";
 import { SessionManager } from "tau/session/session-manager";
 import { getBundledAgent } from "tau/task/agents";
 import { TempDir } from "@tau/tau-utils";
-=======
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, Model, Usage } from "@oh-my-pi/pi-ai";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { IrcBus } from "@oh-my-pi/pi-coding-agent/irc/bus";
-import { AgentHubOverlayComponent } from "@oh-my-pi/pi-tui/overlays/agent-hub";
-import { SelectorController } from "@oh-my-pi/pi-coding-agent/modes/controllers/selector-controller";
-import { SessionObserverRegistry } from "@oh-my-pi/pi-tui/overlays/session-observer-registry";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { AgentLifecycleManager } from "@oh-my-pi/pi-coding-agent/registry/agent-lifecycle";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { visitEntriesFromFileStream } from "@oh-my-pi/pi-coding-agent/session/session-loader";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { getBundledAgent } from "@oh-my-pi/pi-coding-agent/task/agents";
-import { TempDir } from "@oh-my-pi/pi-utils";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import {
-	aggregateMetrics,
-	hubFallbackStatsSession,
-	hubRowMetrics,
-	type AgentMetrics,
-} from "@oh-my-pi/pi-tui/overlays/agent-hub-projection";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/agent-hub-activate.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const AGENT_ID = "Worker";
 const TEST_CWD = path.resolve("agent-hub-cwd");

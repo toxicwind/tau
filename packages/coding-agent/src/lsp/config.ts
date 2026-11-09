@@ -405,7 +405,6 @@ function marketplaceConfigSource(root: ClaudePluginRoot): ConfigFileSource<Norma
 		read: () => readMarketplaceLspConfig(root),
 	};
 }
-<<<<<<< ours — function `getConfigSources` (T+S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 /**
  * Configuration sources in priority order.
@@ -452,8 +451,6 @@ function getConfigSources(cwd: string): ConfigSource[] {
 
 	return sources;
 }
-=======
->>>>>>> theirs — function `getConfigSources` (T+S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/lsp/config.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /**
  * Load LSP configuration.

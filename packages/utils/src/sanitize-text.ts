@@ -14,7 +14,6 @@
 
 import { isRecord } from "./type-guards";
 
-<<<<<<< ours — variable `ESC_CHAR` (T+S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `* `crates/pi-natives/src/text.rs::sanitize_text`). JavaScript s…`
 /**
  * Strip ANSI escape sequences, remove control characters / lone surrogates,
@@ -29,8 +28,6 @@ import { isRecord } from "./type-guards";
  * Fast path: well-formed input with no controls or ANSI returns the original
  * string after the control probe.
  */
-=======
->>>>>>> theirs — variable `ESC_CHAR` (T+S+F, confidence: low) · weave: run 'weave explain packages/utils/src/sanitize-text.ts' for per-hunk detail, 'weave check' to verify your resolution
 const ESC_CHAR = "\x1b";
 
 // Well-formed strings only need control/ANSI detection: C0 (excl. \t \n),

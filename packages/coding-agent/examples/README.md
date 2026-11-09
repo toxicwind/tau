@@ -1,11 +1,7 @@
 # Examples
 
-<<<<<<< ours — scope `Example code for omp-coding-agent SDK, hooks,...` in heading `Examples` (S, confidence: medium)
 // refused_by: statement_fold · collision: `Example code for omp-coding-agent SDK, hooks, and custom tools.`
 Example code for tau-coding-agent SDK, hooks, and custom tools.
-=======
-Example code for omp-coding-agent SDK, extensions, hooks, and custom tools.
->>>>>>> theirs — scope `Example code for omp-coding-agent SDK, hooks,...` · weave: run 'weave explain packages/coding-agent/examples/README.md' for per-hunk detail, 'weave check' to verify your resolution
 
 ## Directories
 

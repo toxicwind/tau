@@ -2,14 +2,9 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { getToolDefinitions, handleToolCall } from "@oh-my-pi/p…`
 import { callToolJson, handleJsonRpc, runStdio } from "@tau/tau-mnemotau/mcp-server";
 import { getToolDefinitions, handleToolCall } from "@tau/tau-mnemotau/mcp-tools";
-=======
-import { callToolJson, handleJsonRpc, runStdio } from "@oh-my-pi/pi-mnemopi/mcp-server";
-import { handleToolCall } from "@oh-my-pi/pi-mnemopi/mcp-tools";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/mnemotau/test/mcp-server.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 let dataDir: string;
 
@@ -90,7 +85,6 @@ describe("MCP JSON handlers", () => {
 		expect(payload.bank).toBe("server");
 	});
 
-<<<<<<< ours — scope `it("dispatches remember, recall, stats, sleep...` in test_suite `MCP JSON handlers`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	it("dispatches remember, recall, stats, sleep, scratchpad, and bank operations", async () => {
 		const remembered = await handleToolCall("mnemotau_remember", {
@@ -130,8 +124,6 @@ describe("MCP JSON handlers", () => {
 		expect(sleep.dry_run).toBe(true);
 		expect(sleep.bank).toBe("work");
 	});
-=======
->>>>>>> theirs — scope `it("dispatches remember, recall, stats, sleep...` deleted in theirs
 
 	it("uses MNEMOTAU_MCP_BANK when a call omits bank", async () => {
 		process.env.MNEMOTAU_MCP_BANK = "env-bank";

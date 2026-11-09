@@ -18,7 +18,6 @@ import {
 	type TruncationResult,
 	truncateHead,
 	truncateHeadBytes,
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-tui/tools/streaming-output";
 import { buildLineEntriesWithBlockContext, type LineEntry, lineEntriesToPlainText } from "../utils/block-context";
@@ -29,24 +28,6 @@ import type { ReadToolDetails, ReadTruncationStats } from "@tau/tau-tui/tools/re
 import { isRawSelector, type ParsedSelector, resolveTailSelector, selToOffsetLimit } from "./read-selector";
 import { formatBytes, shortenPath } from "@tau/tau-tui/render/render-utils";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
-=======
-} from "@oh-my-pi/pi-tui/tools/streaming-output";
-import {
-	buildLineEntriesWithBlockContext,
-	type LineEntry,
-	lineEntriesToPlainText,
-	spansCoverEveryLine,
-	warmBlockContext,
-} from "../utils/block-context";
-import { resolveFileDisplayMode } from "../utils/file-display-mode";
-import { formatPathRelativeToCwd } from "./path-utils";
-import { type LineRange } from "@tau/tau-tui/tools/line-ranges";
-import type { ReadToolDetails, ReadTruncationStats } from "@tau/tau-tui/tools/read";
-import { isRawSelector, type ParsedSelector, resolveTailSelector, selToOffsetLimit } from "./read-selector";
-import { formatBytes, shortenPath } from "@oh-my-pi/pi-tui/render/render-utils";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
-import type { TruncationMetaInput } from "./output-meta";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/read-format.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { toolResult } from "./tool-result";
 
 import { cfgReadRenderMarkdown } from "./settings";
@@ -555,7 +536,6 @@ export async function buildInMemoryTextResult(
 				maxBytes: DEFAULT_MAX_BYTES,
 			},
 		};
-<<<<<<< ours — scope `if (truncation.firstLineExceedsLimit) {` in function `buildInMemoryTextResult` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `} else if (userLimitedLines !== undefined && startLine + userLi…` +3 more
 	} else if (!options.raw && userLimitedLines !== undefined && startLine + userLimitedLines < allLines.length) {
 		const remaining = allLines.length - (startLine + userLimitedLines);
@@ -565,18 +545,6 @@ export async function buildInMemoryTextResult(
 		// notice (verbatim-extraction contract — the caller asked for exactly
 		// those lines), so this branch is display-mode only.
 		outputText = formatLineEntries(buildLineEntries(endLine), startLineDisplay);
-=======
-	} else if (!rawDisplay && userLimitedLines !== undefined && startLine + userLimitedLines < totalLines) {
-		const remaining = totalLines - (startLine + userLimitedLines);
-		const nextOffset = startLine + userLimitedLines + 1;
-
-		if (!allLines) {
-			rawSeenLines = contiguousLineNumbers(startLineDisplay, userLimitedLines);
-			outputText = formatText(joinSelectedLines(), startLineDisplay);
-		} else {
-			outputText = formatLineEntries(buildLineEntries(allLines, endLine), startLineDisplay);
-		}
->>>>>>> theirs — scope `if (truncation.firstLineExceedsLimit) {`
 		outputText += `\n\n[${remaining} more lines in ${options.entityLabel}. Use :${nextOffset} to continue]`;
 	} else {
 		if (!allLines) {

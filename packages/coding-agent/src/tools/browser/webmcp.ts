@@ -5,7 +5,6 @@ import { untilAborted } from "@oh-my-pi/pi-utils";
 import type { Protocol } from "devtools-protocol";
 import type { CDPSession, Frame, Page } from "puppeteer-core";
 
-<<<<<<< ours — module `"puppeteer-core"` (T+S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 declare module "puppeteer-core" {
 	interface Frame {
@@ -13,13 +12,8 @@ declare module "puppeteer-core" {
 		mainRealm(): Realm;
 	}
 }
-=======
->>>>>>> theirs — module `"puppeteer-core"` (T+S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/browser/webmcp.ts' for per-hunk detail, 'weave check' to verify your resolution
-<<<<<<< ours — variable `BRIDGE_KEY` (S, confidence: medium)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 const BRIDGE_KEY = "__tauWebMcpBridge_v1";
-=======
->>>>>>> theirs — variable `BRIDGE_KEY` (S, confidence: medium)
 const MAX_RESULT_BYTES = 64 * 1024;
 const MAX_SUMMARY_BYTES = 4 * 1024;
 const MAX_SUMMARY_DESCRIPTION_BYTES = 160;

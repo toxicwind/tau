@@ -1,4 +1,3 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { AgentTool, AgentToolContext, AgentToolResult, Age…` +2 more
 import { join } from "node:path";
 import type { AstEditToolDetails } from "@tau/tau-tui/tools/ast-edit";
@@ -12,26 +11,6 @@ import { $envpos, prompt, untilAborted } from "@tau/tau-utils";
 import { getEditStore } from "../edit/store";
 import { normalizeToLF } from "../edit/normalize";
 import { formatHashlineHeader } from "@tau/tau-tui/tools/hashline-format";
-=======
-import type { AstEditToolDetails } from "@oh-my-pi/pi-tui/tools/ast-edit";
-import { type } from "@oh-my-pi/omptype";
-import type {
-	AgentTool,
-	AgentToolContext,
-	AgentToolResult,
-	AgentToolUpdateCallback,
-	ToolApprovalDecision,
-} from "@oh-my-pi/pi-agent-core";
-import type { ToolExample } from "@oh-my-pi/pi-ai";
-import { type AstReplaceChange, type AstReplaceFileChange, astEdit, type ShellFilesystem } from "@oh-my-pi/pi-natives";
-
-import { $envpos, isRecord, prompt, untilAborted } from "@oh-my-pi/pi-utils";
-import { getEditStore } from "../edit/store";
-import { normalizeToLF } from "../edit/normalize";
-import { InternalUrlRouter, sessionResolveContext } from "../internal-urls";
-import { InternalUrlFilesystem } from "../internal-urls/url-filesystem";
-import { formatHashlineHeader } from "@oh-my-pi/pi-tui/tools/hashline-format";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/ast-edit.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 import astEditDescription from "../prompts/tools/ast-edit.md" with { type: "text" };
 
@@ -40,25 +19,12 @@ import { missingGrammarsNote, rerunWithGrammars } from "../utils/grammars";
 import type { ToolSession } from ".";
 import { resolveToolTier, strictestApproval, truncateForPrompt } from "./approval";
 import { parseReadUrlTarget } from "./fetch";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { AgentTool, AgentToolContext, AgentToolResult, Age…` +2 more
 import { createFileRecorder, formatResultPath } from "./file-recorder";
 import { formatGroupedFiles } from "@tau/tau-tui/tools/grouped-file-output";
 
 import { isInternalUrlPath, resolveToolSearchScope } from "./path-utils";
 import { capParseErrors, formatCodeFrameLine, formatCount, formatParseErrors } from "@tau/tau-tui/render/render-utils";
-=======
-import { createFileRecorder, formatResultPath, resultSnapshotPath } from "./file-recorder";
-import { formatGroupedFiles } from "@oh-my-pi/pi-tui/tools/grouped-file-output";
-
-import { relativeSearchResultPath, resolveSearchResultPath, resolveToolSearchScope } from "./path-utils";
-import {
-	capParseErrors,
-	formatCodeFrameLine,
-	formatCount,
-	formatParseErrors,
-} from "@oh-my-pi/pi-tui/render/render-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import { PREVIEW_PENDING_NOTICE, queueResolveHandler } from "./resolve";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 import { toolResult } from "./tool-result";

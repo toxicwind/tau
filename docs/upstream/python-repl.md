@@ -39,12 +39,8 @@ The session-scoped wire schema advertises only enabled runtimes ("py" and "js").
 
 ## Kernel lifecycle
 
-<<<<<<< ours — scope `Each Python kernel is a single subprocess: `<...` in heading `Kernel lifecycle` (S, confidence: medium)
 // refused_by: statement_fold · collision: `Each Python kernel is a single subprocess: `<resolved-python> -…`
 Each Python kernel is a single subprocess: `<resolved-python> -u <runner.py>`. The runner is bundled with the host binary (Bun text import), written to an `tau-python-runner` cache under the OS temp directory once per script hash, and reused by subsequent spawns.
-=======
-Each Python kernel is a single subprocess: `<resolved-python> -u <runner.py>`. The runner is bundled with the host binary (Bun text import), written to a per-user `omp-python-runner-<uid>` cache under the OS temp directory once per script hash, and reused by subsequent spawns.
->>>>>>> theirs — scope `Each Python kernel is a single subprocess: `<...` · weave: run 'weave explain docs/upstream/python-repl.md' for per-hunk detail, 'weave check' to verify your resolution
 
 Kernel startup sequence:
 
@@ -86,12 +82,8 @@ Runner → host:
 
 - `view` carries a pretty rendering of `text`, which the cell already printed through `stdout`; the host never adds `text` to the output stream again. The runner flushes buffered stdout before a `view` or `image`, so the text precedes it.
 - `image` reaches both the model and the user.
-<<<<<<< ours — scope `Status events the prelude emits (e.g. `_emit_...` in heading `Wire protocol (NDJSON, host ↔ runner)` (S, confidence: medium)
 // refused_by: statement_fold · collision: `Status events the prelude emits (e.g. `_emit_status("find", cou…`
 Status events the prelude emits (e.g. `_emit_status("find", count=…)`) ship inside display bundles under `application/x-tau-status` so the existing TUI status renderer keeps working.
-=======
-- `status` carries the structured events prelude helpers and magics emit (`_emit_status("find", count=…)`) for the TUI status renderer.
->>>>>>> theirs — scope `Status events the prelude emits (e.g. `_emit_...`
 - `reply` answers a tool request (see [Tool availability and mode selection](#tool-availability-and-mode-selection)); `kernel-base.ts` returns it as `KernelExecuteResult.reply`.
 
 ## Magics
@@ -177,11 +169,8 @@ Python prelude helpers include `agent(prompt, *, agent=None, label=None, schema=
 
 The runner accepts a `{"type": "tool", "id", "op": "describe"|"call", ...}` request alongside cell requests. It is served on a dedicated daemon thread (POSIX; between cells on Windows) against the kernel's `__omp_tools__` registry, replies with a `reply` frame (`{ok, tools, missing}` or `{ok, value}`), and reports a raising tool as an `error` frame without touching the running cell. See [Eval tool](./tools/eval.md) for the caller-facing contract.
 
-<<<<<<< ours — scope `The runner accepts a `{"type": "tool", "id", ...` in heading `Tool availability and mode selection`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 The runner accepts a `{"type": "tool", "id", "op": "describe"|"call", ...}` request alongside cell requests. It is served on a dedicated daemon thread (POSIX; between cells on Windows) against the kernel's `__tau_tools__` registry, replies with an `application/json` display bundle (`{ok, tools, missing}` or `{ok, value}`), and reports a raising tool as an `error` frame without touching the running cell. See `docs/tools/eval.md` for the caller-facing contract.
-=======
->>>>>>> theirs — scope `The runner accepts a `{"type": "tool", "id", ...` deleted in theirs
 
 ## Execution flow and cancellation/timeout
 
@@ -221,16 +210,10 @@ From runner frames:
 - `image` → image payloads for the model and the user
 - `error` → traceback text
 - `status` → structured status events
-<<<<<<< ours — scope `- `application/x-omp-status` MIME inside `dis...` in heading `Captured output classes`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 - `application/x-tau-status` MIME inside `display` → structured status events
-=======
->>>>>>> theirs — scope `- `application/x-omp-status` MIME inside `dis...` deleted in theirs
-<<<<<<< ours — scope `- `application/x-omp-status` → status events` in heading `Captured output classes`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 - `application/x-tau-status` → status events
-=======
->>>>>>> theirs — scope `- `application/x-omp-status` → status events` deleted in theirs
 
 ### Rich print
 
@@ -271,12 +254,8 @@ Output is streamed through `OutputSink` in `packages/tui/src/tools/streaming-out
 ## Operational troubleshooting
 
 - **Python backend not available** — Check `eval.py`, `PI_PY`, and that `python`/`python3` is on PATH. If another backend is enabled, use its advertised language token.
-<<<<<<< ours — scope `- **No Python on PATH** — Install a system Py...` in heading `Operational troubleshooting` (S, confidence: medium)
 // refused_by: statement_fold · collision: `- **No Python on PATH** — Install a system Python 3.10+ or plac…`
 - **No Python on PATH** — Install a system Python 3.10+ or place a compatible venv at `~/.tau/python-env`. `tau setup python --check` reports the resolved interpreter.
-=======
-- **No working Python** — Install a modern Python 3 interpreter, configure `python.interpreter`, or place a compatible venv at the managed Python path (default `~/.omp/python-env`). `omp setup python --check` reports the resolved interpreter.
->>>>>>> theirs — scope `- **No Python on PATH** — Install a system Py...`
 - **Execution hangs then times out** — Increase `timeout` for legitimate work or set it to `0` to disable the watchdog. For stuck native code, cancellation sends `SIGINT` first and then escalates; session mode recreates the kernel on the next request if it had to be killed.
 - **Memory grows during a long session** — In `session` mode, top-level Python values stay in the retained subprocess. Output truncation and shadow-snapshot limits do not bound its live memory, and there is no automatic memory limit or warning. Use `%whos` to inspect retained names and `del name` for values no longer needed. To release the interpreter's memory, save any state you need, wait for active cells to finish, then run a new eval call with `reset: true` (for example, `{"language":"py","code":"print('ready')","reset":true}`). Reset discards user-defined Python globals and may interrupt other work sharing that kernel.
 - **stdin/input prompts in Python code** — `input()` is not supported; pass data programmatically.

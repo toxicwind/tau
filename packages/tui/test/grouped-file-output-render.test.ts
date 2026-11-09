@@ -104,16 +104,10 @@ describe("classifyGroupedLines", () => {
 		expect(ctx[0]).toMatchObject({ kind: "content", filePath: searchBase });
 	});
 
-<<<<<<< ours — test_suite `classifyGroupedLines` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 	it("flags url-like headers for caller-side resolution without a filesystem path", () => {
 		const ctx = classifyGroupedLines(["# tau://docs/", "  body"], REPO_ROOT);
 		expect(ctx[0]).toMatchObject({ kind: "file", isUrl: true });
-=======
-	it("leaves url-like headers and their body lines to caller-side resolution", () => {
-		const ctx = classifyGroupedLines(["# omp://docs/", "  body"], REPO_ROOT);
-		expect(ctx[0]).toMatchObject({ kind: "file", url: "omp://docs/" });
->>>>>>> theirs — test_suite `classifyGroupedLines` (F, confidence: medium) · weave: run 'weave explain packages/tui/test/grouped-file-output-render.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 		expect(ctx[0]?.headerPath).toBeUndefined();
 		expect(ctx[1]).toMatchObject({ kind: "content", url: "omp://docs/", filePath: undefined });
 	});

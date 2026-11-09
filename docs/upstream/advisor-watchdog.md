@@ -27,12 +27,8 @@ The subsystem requires `advisor.enabled: true`. RPC and ACP hosts use protocol d
 
 Model selection depends on the roster:
 
-<<<<<<< ours — scope `- Without any discovered `WATCHDOG.yml` advis...` in heading `Enabling the advisor` (S, confidence: medium)
 // refused_by: statement_fold · collision: `- Without any discovered `WATCHDOG.yml` advisor entries, OMP cr…`
 - Without any discovered `WATCHDOG.yml` advisor entries, TAU creates the legacy/default advisor and resolves its model from `modelRoles.advisor`.
-=======
-- Without any discovered `WATCHDOG.yml` advisor entries, OMP creates the legacy/default advisor and resolves the `advisor` role.
->>>>>>> theirs — scope `- Without any discovered `WATCHDOG.yml` advis...` · weave: run 'weave explain docs/upstream/advisor-watchdog.md' for per-hunk detail, 'weave check' to verify your resolution
 - With a roster, each enabled entry uses its explicit `model` when present, otherwise the `advisor` role. An unresolvable entry is reported as `no_model` without preventing other entries from running.
 - `advisors[].enabled: false` keeps an entry visible as paused but does not build its runtime.
 
@@ -99,12 +95,8 @@ persisting `advisor.enabled`:
 tau -p --advisor "Review this task."
 ```
 
-<<<<<<< ours — scope `While a primary prompt is running, eligible a...` in heading `Headless runs` (S, confidence: medium)
 // refused_by: statement_fold · collision: `While a primary prompt is running, eligible advisor notes can s…`
 While a primary prompt is running, eligible advisor notes can steer that run. After the final prompt settles, print mode preserves late advisor notes without starting hidden primary turns, then waits up to ten minutes for final reviews before disposing the session. Error exits use a 30-second drain budget so failed automation can terminate. If either deadline expires, TAU logs the reviews that disposal will abandon; completed reviews retain their transcript and token/cost usage.
-=======
-While a primary prompt is running, eligible advisor notes can steer that run. After the final prompt settles, print mode preserves late advisor notes without starting hidden primary turns, sends updates the review cadence skipped (so an `agent-end` or interval reviewer still reviews the final answer), then waits up to ten minutes for final reviews before disposing the session. That wait covers a failing advisor's retries and [backup reviewer](#backup-reviewer) switch, so a review that fails on the advisor's model finishes on its fallback instead of being abandoned. Error exits use a 30-second drain budget so failed automation can terminate. An advisor whose catch-up policy is `strict` is waited on without either budget; aborts, halts, and quota pauses still end its wait. If a budget expires, or the advisor stops for good (halted or quota-paused), OMP logs the reviews that disposal will abandon; completed reviews retain their transcript and token/cost usage.
->>>>>>> theirs — scope `While a primary prompt is running, eligible a...`
 
 Slash commands:
 

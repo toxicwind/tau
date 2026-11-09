@@ -1,4 +1,3 @@
-<<<<<<< ours — heading `omptype Guide (schema authoring in this repo)` (S+F, confidence: low)
 // refused_by: rename_vs_edit_guard · collision: none (both sides edited, nowhere the same lines)
 # tautype Guide (schema authoring in this repo)
 
@@ -6,13 +5,6 @@ Internal schemas use **`@tau/tautype`** — an ArkType-compatible validator
 with a lazy JIT runtime (`packages/tautype`). Author types with
 `import { type } from "@tau/tautype"`.
 
-=======
-# omptype Guide (schema authoring in this repo)
-
-Internal schemas use **`@oh-my-pi/omptype`** — an ArkType-compatible validator
-with a lazy JIT runtime (`packages/omptype`). Author types with
-`import { type } from "@oh-my-pi/omptype"`.
->>>>>>> theirs — heading `omptype Guide (schema authoring in this repo)` (S+F, confidence: low) · weave: run 'weave explain docs/upstream/tautype-guide.md' for per-hunk detail, 'weave check' to verify your resolution
 
 ## Why omptype (runtime contract)
 
@@ -24,7 +16,6 @@ with a lazy JIT runtime (`packages/omptype`). Author types with
   existed to dodge. Import `type` directly. (`ScopeOptions` accepts a `jitless`
   flag for ArkType compatibility, but the runtime never reads it.)
 
-<<<<<<< ours — heading `Why omptype (perf contract)` (T+F, confidence: medium)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 ## Why tautype (perf contract)
 
@@ -36,8 +27,6 @@ with a lazy JIT runtime (`packages/omptype`). Author types with
   existed to dodge. Import `type` directly. (`ScopeOptions` accepts a `jitless`
   flag for ArkType compatibility, but the runtime never reads it.)
 
-=======
->>>>>>> theirs — heading `Why omptype (perf contract)` (T+F, confidence: medium)
 ## The detection contract (don't break it)
 
 `packages/ai/src/utils/schema/wire.ts` distinguishes two schema kinds:
@@ -50,24 +39,7 @@ At the provider boundary, `toolWireSchema()` calls `toJsonSchema()`, prunes
 `additionalProperties: false`. Predicates (`.narrow`) and morphs (`.pipe`)
 validate locally but degrade to their base schema on the wire.
 
-<<<<<<< ours — heading `The detection contract (donbreak it)` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
-=======
-## The detection contract (don't break it)
-
-`packages/ai/src/utils/schema/wire.ts` distinguishes two schema kinds:
-
-- **omptype** = a callable function with `.toJsonSchema` and `.assert` methods (`isArkSchema`).
-- **JSON Schema** = a plain object.
-
-At the provider boundary, `toolWireSchema()` requests draft-2020-12 JSON Schema,
-prunes unconstrained `T | undefined` branches without changing required keys,
-and closes declared objects with `additionalProperties: false` only when they
-have no explicit additional/pattern-property policy. Predicates (`.narrow`)
-and opaque morphs (`.pipe`) validate locally but expose their structural input
-schema on the wire.
-
->>>>>>> theirs — heading `The detection contract (donbreak it)` (S+F, confidence: low)
 ## Definition language (arktype-compatible subset)
 
 | Construct                 | Form                                                                                              |
@@ -110,33 +82,7 @@ if (out instanceof type.errors) {
 - Definition mistakes (bad DSL, illegal composition) throw `TauTypeError` at
   `type()` time.
 
-<<<<<<< ours — heading `Validating (same as arktype)` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
-=======
-## Validating (same as arktype)
-
-```ts
-import { type } from "@oh-my-pi/omptype";
-const out = schema(value);
-if (out instanceof type.errors) {
-	// out.summary → human message; entries have .path (array) and .problem
-	throw new Error(out.summary);
-}
-// `out` is the validated/morphed value (defaults filled, extras stripped)
-```
-
-- Failure returns an `OmpErrors` (array of `OmpError`); `type.errors === OmpErrors`.
-- Structural validation is fast-fail; predicates/morphs may return custom `OmpErrors`.
-- Built-in defaults and `"+": "delete"` produce transformed copies by default.
-  User `.pipe()` callbacks are not automatically cloned; do not mutate their
-  input. A scope's `clone` option can supply a cloning function, while
-  `clone: false` explicitly writes object/array transformations back to the input.
-- NEVER use `.allows()` for tool validation — it skips morphs/defaults/pipes.
-- `.infer` / `.inferIn` are inference-only properties.
-- Definition mistakes (bad DSL, illegal composition) throw `OmpTypeError` at
-  `type()` time.
-
->>>>>>> theirs — heading `Validating (same as arktype)` (S+F, confidence: low)
 ## Methods
 
 `.describe(d)`, `.default(v | () => v)`, `.or(TypeOrStringDef)`, `.and(Type)`,

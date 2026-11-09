@@ -1,5 +1,4 @@
 import { describe, expect, test, vi } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import type { AgentMessage } from "@tau/tau-agent-core";
 import {
@@ -11,20 +10,6 @@ import {
 import type { AssistantMessage, Model } from "@tau/tau-ai";
 import * as ai from "@tau/tau-ai";
 import { getBundledModel } from "@tau/tau-catalog/models";
-=======
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import {
-	canReplayRemoteCompactionFrom,
-	DEFAULT_COMPACTION_SETTINGS,
-	findReadableCompactionIndex,
-	generateSummary,
-	prepareCompaction,
-	type SessionEntry,
-} from "@oh-my-pi/pi-agent-core/compaction";
-import type { AssistantMessage, Model } from "@oh-my-pi/pi-ai";
-import * as ai from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/agent/test/compaction-oversized-input.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function createAssistantMessage(text: string): AssistantMessage {
 	return {

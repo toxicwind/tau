@@ -6,20 +6,8 @@
  */
 import * as fs from "node:fs";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { getPluginsDir, getPluginsLockfile, hasFsCode, isEacces…`
 import { getPluginsDir, getPluginsLockfile, hasFsCode, isEacces, isEnoent, logger } from "@tau/tau-utils";
-=======
-import {
-	getPluginsDir,
-	getPluginsLockfile,
-	hasFsCode,
-	isEacces,
-	isEnoent,
-	logger,
-	normalizePathForComparison,
-} from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/extensibility/plugins/loader.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { getConfigDirPaths } from "../../config";
 import { registerPluginCacheInvalidator, resolveActiveProjectRegistryPath } from "../../discovery/helpers";
 import { findExtensionDirectoryIndex, resolveExtensionDirectory } from "../extensions/directory-resolution";

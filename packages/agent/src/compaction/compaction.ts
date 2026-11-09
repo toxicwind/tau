@@ -23,7 +23,6 @@ import {
 	type Tool,
 	type Usage,
 	withAuth,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `} from "@oh-my-pi/pi-ai/providers/openai-codex-responses";` +1 more
 } from "@tau/tau-ai";
 import type { Dialect } from "@tau/tau-ai/dialect";
@@ -41,22 +40,6 @@ import { preferredDialect } from "@tau/tau-catalog/identity";
 import { clampThinkingLevelForModel } from "@tau/tau-catalog/model-thinking";
 import { isRecord, logger, prompt } from "@tau/tau-utils";
 import * as snapcompact from "@tau/snapcompact";
-=======
-} from "@oh-my-pi/pi-ai";
-import type { Dialect } from "@oh-my-pi/pi-ai/dialect";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { createOpenAICodexCompactionRequestContext } from "@oh-my-pi/pi-ai/providers/openai-codex-compaction";
-import type { OpenAICodexCompactionBody } from "@oh-my-pi/pi-ai/providers/openai-codex-responses";
-import type { InputItem as CodexInputItem } from "@oh-my-pi/pi-ai/providers/openai-codex/request-transformer";
-import { buildResponsesInput, resolveOpenAICompatPolicy } from "@oh-my-pi/pi-ai/providers/openai-shared";
-import { isSurvivingAssistant } from "@oh-my-pi/pi-ai/providers/transform-messages";
-import { stripOpenAIResponsesOutputOnlyStatusesForReplay } from "@oh-my-pi/pi-ai/utils";
-import { resolveCatalogPolicy } from "@oh-my-pi/pi-catalog/compat/catalog-policy";
-import { preferredDialect } from "@oh-my-pi/pi-catalog/identity";
-import { clampThinkingLevelForModel } from "@oh-my-pi/pi-catalog/model-thinking";
-import { isRecord, logger, prompt } from "@oh-my-pi/pi-utils";
-import * as snapcompact from "@oh-my-pi/snapcompact";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/agent/src/compaction/compaction.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { type AgentTelemetry, instrumentedCompleteSimple } from "../telemetry";
 import { ThinkingLevel } from "../thinking";
 import { Tokenizer } from "../tokenizer";

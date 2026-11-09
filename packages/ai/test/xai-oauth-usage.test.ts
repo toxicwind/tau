@@ -1,17 +1,9 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { xaiOauthUsageProvider } from "@oh-my-pi/pi-ai/usage/xa…`
 import { buildXAICliBillingUrl } from "@tau/tau-ai/oauth/xai-oauth";
 import type { FetchImpl } from "@tau/tau-ai/types";
 import type { UsageFetchParams } from "@tau/tau-ai/usage";
 import { xaiOauthUsageProvider } from "@tau/tau-ai/usage/xai-oauth";
-=======
-import { buildXAICliBillingUrl } from "@oh-my-pi/pi-ai/oauth/xai-oauth";
-import type { FetchImpl } from "@oh-my-pi/pi-ai/types";
-import type { UsageFetchParams } from "@oh-my-pi/pi-ai/usage";
-import { xaiOauthRankingStrategy, xaiOauthUsageProvider } from "@oh-my-pi/pi-ai/usage/xai-oauth";
-import { isUsageLimitReached, reserveUsageLimits } from "../src/auth/usage-report";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/test/xai-oauth-usage.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const USER_ID = "cf12ecb5-cca4-4ba0-9f02-298071a2d052";
 

@@ -1,10 +1,6 @@
 /** Shared assistant transcript construction and model-authored link caching. */
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { AssistantMessage, Model } from "@oh-my-pi/pi-ai";`
 import type { AssistantMessage, Model } from "@tau/tau-ai";
-=======
-import type { AssistantMessage, Model, TextContent } from "@oh-my-pi/pi-ai";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/src/prompt/interactive-context-helpers.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { getMarkdownLinkUrls } from "../index";
 import { EMPTY_LINK_TARGETS } from "../render/render-utils";
 import type { ImageBudget } from "../components/image";

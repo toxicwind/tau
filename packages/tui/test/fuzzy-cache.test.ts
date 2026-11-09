@@ -1,10 +1,6 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { fuzzyMatch, fuzzyRank, resetFuzzyIndexCache } from "@o…`
 import { fuzzyMatch, fuzzyRank, resetFuzzyIndexCache } from "@tau/tau-tui/fuzzy";
-=======
-import { FuzzyQuery, FuzzyText, fuzzyMatch, fuzzyRank, resetFuzzyIndexCache } from "@oh-my-pi/pi-tui/fuzzy";
->>>>>>> theirs — interstitial `file_header` (S, confidence: medium) · weave: run 'weave explain packages/tui/test/fuzzy-cache.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 describe("fuzzy index cache", () => {
 	it("produces identical ordering whether the cache is cold or warm", () => {

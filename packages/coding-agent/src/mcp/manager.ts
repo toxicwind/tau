@@ -6,14 +6,9 @@
  */
 import * as path from "node:path";
 import * as url from "node:url";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { logger } from "@oh-my-pi/pi-utils";`
 import type { TSchema } from "@tau/tau-ai";
 import { logger } from "@tau/tau-utils";
-=======
-import type { TSchema } from "@oh-my-pi/pi-ai";
-import { logger, untilAborted } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/mcp/manager.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { EffectiveExtensionRoots, SourceMeta } from "../capability/types";
 import { resolveConfigValue } from "../config/resolve-config-value";
 import type { CustomTool } from "../extensibility/custom-tools/types";
@@ -49,14 +44,9 @@ import type { MCPStoredOAuthCredential } from "./oauth-flow";
 import type { McpConnectionStatusEvent } from "./startup-events";
 import { resolveMCPStartupTimeoutMs } from "./timeout";
 
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { logger } from "@oh-my-pi/pi-utils";`
 import type { MCPToolDetails } from "@tau/tau-tui/tools/mcp";
 import { DeferredMCPTool, MCPTool } from "./tool-bridge";
-=======
-import type { MCPToolDetails } from "@oh-my-pi/pi-tui/tools/mcp";
-import { DeferredMCPTool, MCPTool, type MCPToolCallObserver } from "./tool-bridge";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import type { MCPToolCache } from "./tool-cache";
 import { setGeneratedHeader } from "./transports/header-policy";
 import type {

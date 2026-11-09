@@ -1,7 +1,6 @@
 /**
  * Tool wrappers for extensions.
  */
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { sanitizeText, untilAborted } from "@oh-my-pi/pi-utils";`
 import type {
 	AgentTool,
@@ -13,20 +12,6 @@ import type {
 import type { ComputerSafetyCheck, ImageContent, Static, TextContent, TSchema } from "@tau/tau-ai";
 import { sanitizeText, untilAborted } from "@tau/tau-utils";
 import type { Theme } from "@tau/tau-tui/theme";
-=======
-import {
-	type AgentTool,
-	type AgentToolContext,
-	type AgentToolResult,
-	type AgentToolUpdateCallback,
-	isNonBlankContext,
-	type ToolLoadMode,
-} from "@oh-my-pi/pi-agent-core";
-import type { ComputerSafetyCheck, ImageContent, Static, TextContent, TSchema } from "@oh-my-pi/pi-ai";
-import { prompt, sanitizeText, untilAborted, toError } from "@oh-my-pi/pi-utils";
-import type { Theme } from "@oh-my-pi/pi-tui/theme";
-import nativeDelegationTemplate from "../../prompts/tools/native-delegation.md" with { type: "text" };
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/extensibility/extensions/wrapper.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	approvalRestrictions,
 	denyError,

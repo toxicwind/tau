@@ -1,10 +1,6 @@
 import type { Database } from "bun:sqlite";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { logger } from "@oh-my-pi/pi-utils";`
 import { logger } from "@tau/tau-utils";
-=======
-import { logger, withLoopPhase } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/mnemotau/src/core/beam/helpers.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { generateId as generateTimedId, sha256Hex16, stableMemoryId } from "../../util/ids";
 import { cjkFtsTerms, containsSpacelessCjk, ftsQueryTerms, hasCjk, isCjkChar, recallTokens } from "../../util/regex";
 import { currentEmbeddingModel, embed } from "../embeddings";

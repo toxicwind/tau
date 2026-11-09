@@ -1,14 +1,9 @@
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { getGlobalDaemonRuntimeDir, isEexist, isEnoent, logger,…`
 import { getGlobalDaemonRuntimeDir, isEexist, isEnoent, logger, postmortem } from "@tau/tau-utils";
 import { hostHasInheritableConsole } from "../eval/py/spawn-options";
-=======
-import { IpcConnection } from "@oh-my-pi/pi-natives";
-import { getGlobalDaemonRuntimeDir, isEexist, isEnoent, logger, postmortem, toError } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/launch/client.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { resolveWorkerSpawnCmd, workerEnvFromParent } from "../subprocess/worker-client";
 import { canonicalProjectDir, daemonBrokerEndpoint, daemonRuntimeDir } from "./paths";
 import {

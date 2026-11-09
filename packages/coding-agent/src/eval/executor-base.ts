@@ -1,9 +1,5 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { logger } from "@oh-my-pi/pi-utils";`
 import { logger } from "@tau/tau-utils";
-=======
-import { logger, toError } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/eval/executor-base.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { Settings } from "../config/settings";
 import { type OutputArtifactError, OutputSink } from "@tau/tau-tui/tools/streaming-output";
 import { statusEventKey } from "@tau/tau-tui/tools/eval";

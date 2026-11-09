@@ -9,15 +9,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { Settings } from "tau/config/settings";
 import { getOrFetchIssue, getOrFetchPr } from "tau/tools/gh";
-=======
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { getOrFetchIssue, getOrFetchPr } from "@oh-my-pi/pi-coding-agent/tools/gh";
-import { Database } from "bun:sqlite";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/tools/github-cache.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	getCached,
 	getCachedGeneration,
@@ -27,20 +21,11 @@ import {
 	openDb,
 	putCached,
 	resetForTests as resetCacheForTests,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "tau/tools/github-cache";
 import { ToolAbortError, throwIfAborted } from "tau/tools/tool-errors";
 import { github } from "tau/utils/github";
 import { removeWithRetries } from "@tau/tau-utils";
-=======
-	resolveGitlabCacheAuthKey,
-	retainCachedGeneration,
-} from "@oh-my-pi/pi-coding-agent/tools/github-cache";
-import { ToolAbortError, throwIfAborted } from "@oh-my-pi/pi-coding-agent/tools/tool-errors";
-import { github } from "@oh-my-pi/pi-coding-agent/utils/github";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 
 const TEST_REPO = "owner/example";
 const TEST_AUTH_KEY = "test-auth";

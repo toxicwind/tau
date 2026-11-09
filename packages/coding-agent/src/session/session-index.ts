@@ -23,22 +23,10 @@
 import { Database, type SQLQueryBindings, type Statement } from "bun:sqlite";
 import * as fs from "node:fs";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { getDbBusyTimeoutMs } from "@oh-my-pi/pi-utils/env";`
 import { getHistoryDbPath } from "@tau/tau-utils/dirs";
 import { getDbBusyTimeoutMs } from "@tau/tau-utils/env";
 import * as logger from "@tau/tau-utils/logger";
-=======
-import {
-	isSqliteBusyError,
-	readSalvageableRows,
-	sqliteFileIdentity,
-	type SqliteFileIdentity,
-} from "@oh-my-pi/pi-utils";
-import { getHistoryDbPath } from "@oh-my-pi/pi-utils/dirs";
-import { getDbBusyTimeoutMs, isBunTestRuntime } from "@oh-my-pi/pi-utils/env";
-import * as logger from "@oh-my-pi/pi-utils/logger";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/session/session-index.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const SESSION_INDEX_DDL = `
 CREATE TABLE IF NOT EXISTS session_titles (

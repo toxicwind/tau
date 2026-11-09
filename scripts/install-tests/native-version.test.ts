@@ -20,7 +20,6 @@ describe("native addon release version", () => {
 	});
 });
 
-<<<<<<< ours — test_suite `native addon release sentinel` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 describe("native addon release sentinel", () => {
 	it("normalizes the unique version sentinel", () => {
@@ -39,5 +38,3 @@ describe("native addon release sentinel", () => {
 		expect(nativeVersionFromExports(["__tauNativesV17_2_6", "__piNativesV17_2_7"])).toBeUndefined();
 	});
 });
-=======
->>>>>>> theirs — test_suite `native addon release sentinel` (S+F, confidence: low) · weave: run 'weave explain scripts/install-tests/native-version.test.ts' for per-hunk detail, 'weave check' to verify your resolution

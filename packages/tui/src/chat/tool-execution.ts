@@ -1,16 +1,5 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { getProjectDir, isRecord, logger, sanitizeText } from "…`
 import type { AgentTool } from "@tau/tau-agent-core";
-=======
-import { RunTrace } from "@oh-my-pi/pi-natives";
-import { isShellTrace, type ShellTrace, type ShellVizPreferences, type ShellVizPresentation } from "@oh-my-pi/pi-wire";
-import { defaultShellVizPreferences, readShellPresentation, shellVisualization } from "../tools/shell-viz";
-import { changeShellVizPreferences, shellVizEventAction } from "../tools/shell-trace";
-import { ShellVisualizer } from "../apps/shell-visualizer";
-import { chatTranscriptDisplayPreferences } from "./display-preferences";
-import type { ImageContent } from "@oh-my-pi/pi-ai";
-import type { AgentTool } from "@oh-my-pi/pi-agent-core";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/src/chat/tool-execution.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { Box } from "../components/box";
 import {
 	onSpinnerIntervalChange,
@@ -25,12 +14,8 @@ import { Text } from "../components/text";
 import { getImageDimensions, ImageProtocol, imageFallback, TERMINAL } from "../terminal-capabilities";
 import { type Component, Container, type TUI } from "../tui";
 import { truncateToWidth } from "../utils";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { getProjectDir, isRecord, logger, sanitizeText } from "…`
 import { getProjectDir, isRecord, logger, sanitizeText } from "@tau/tau-utils";
-=======
-import { getProjectDir, isRecord, logger, sanitizeText, sanitizeTextDeep } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import type { Theme } from "../theme/theme";
 import { ensureThemeSync, getThemeEpoch, theme } from "../theme/theme";
 import {

@@ -47,39 +47,22 @@ CustomTool.execute(toolCallId, params, onUpdate, ctx, signal)
 `discoverAndLoadCustomTools(configuredPaths, cwd, builtInToolNames, pushPendingAction?, agentDir?)` merges:
 
 1. Capability providers (`toolCapability`), including:
-<<<<<<< ours — scope `1. Capability providers (`toolCapability`), i...` in heading `Discovery locations (loader API)` (F, confidence: medium)
 // refused_by: statement_fold · collision: `- Native OMP config (`~/.omp/agent/tools`, `.omp/tools`)`
    - Native TAU config (`~/.tau/agent/tools`, `.tau/tools`)
    - Claude config (`~/.claude/tools`, `.claude/tools`)
-=======
-   - Native OMP config (`<agentDir>/tools`, default `~/.omp/agent/tools`; `.omp/tools`)
-   - Claude config (`<Claude config dir>/tools`, default `~/.claude/tools`; `.claude/tools`)
->>>>>>> theirs — scope `1. Capability providers (`toolCapability`), i...` · weave: run 'weave explain docs/upstream/custom-tools.md' for per-hunk detail, 'weave check' to verify your resolution
    - Codex config (`~/.codex/tools`, `.codex/tools`)
    - OMP package roots and Claude marketplace plugins
 2. Enabled installed plugin manifests (user `~/.omp/plugins` and the active project `.omp/plugins` registry via the plugin loader; project packages shadow same-named user packages)
-<<<<<<< ours — scope `2. Installed plugin manifests (`~/.omp/plugin...` in heading `Discovery locations (loader API)`, deleted in theirs (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 2. Installed plugin manifests (`~/.tau/plugins/node_modules/*` via plugin loader)
-=======
->>>>>>> theirs — scope `2. Installed plugin manifests (`~/.omp/plugin...` deleted in theirs
 3. Explicit configured paths passed to the loader
 
 ### Important behavior
 
-<<<<<<< ours — heading `Important behavior` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 - Duplicate resolved paths are deduplicated.
 - Tool name conflicts are rejected against built-ins and already-loaded custom tools.
 - Automatic tool-directory scans discover `.ts` and `.js` modules; native TAU discovery also checks immediate subdirectories for `index.ts`. Executable discovery excludes `.d.ts` and filters out metadata and scripts before tool-name deduplication. Declarative metadata such as `.md` and `.json` remains available to capability consumers but is not loaded as executable tools.
-=======
-- Foreign user directories are opt-in via `enabledProviders` (for example `"claude"` or `"codex"`); project directories remain discoverable unless the whole provider is disabled. `CLAUDE_CONFIG_DIR` also opts in the Claude user source.
-- Native user discovery follows the active profile and the supplied `agentDir`.
-- Duplicate resolved paths are deduplicated by discovery; `loadCustomTools` itself loads the supplied path list.
-- Filesystem tool name conflicts are rejected against the supplied built-in names and already-loaded custom tools. Configured paths are appended, not name overrides.
-- Invalid factory results are reported per array entry; valid entries from the same factory can still load. Import/factory failures are collected in `errors` without stopping later modules.
-- Automatic tool-directory scans discover `.ts` and `.js` modules; native OMP discovery also checks immediate subdirectories for `index.ts`. Executable discovery excludes `.d.ts` and filters out metadata and scripts before tool-name deduplication. Declarative metadata such as `.md` and `.json` remains available to capability consumers but is not loaded as executable tools.
->>>>>>> theirs — heading `Important behavior` (F, confidence: medium)
 - `.mjs` and `.cjs` modules can be loaded through explicitly configured paths or declared plugin tool entries, but the tool-directory scans above do not discover them automatically. Explicitly configured `.md` or `.json` paths still produce a load error.
 - Relative configured paths are resolved from `cwd`; `~` is expanded.
 
@@ -129,14 +112,8 @@ const factory: CustomToolFactory = pi => ({
 export default factory;
 ```
 
-<<<<<<< ours — scope `closing` in heading `Module contract` (S, confidence: medium)
 // refused_by: statement_fold · collision: none (both sides edited, nowhere the same lines)
 Parameter schemas may use the Zod-compatible tautype builder (`pi.zod`), native tautype builder (`pi.arktype`), or legacy-compatible TypeBox shim (`pi.typebox`) and flow through the shared validation/wire pipeline.
-=======
-Value imports of `@oh-my-pi/*` host packages (and their legacy `@mariozechner/*` / `@earendil-works/*` scopes) resolve to the copy omp itself runs, including in the compiled binary; the tool's other dependencies resolve from its own location. A tool module and its relative imports are evaluated once per process; each session calls the factory again.
-
-Parameter schemas may use the Zod-compatible omptype builder (`pi.zod`), native omptype builder (`pi.arktype`), or legacy-compatible TypeBox shim (`pi.typebox`) and flow through the shared validation/wire pipeline.
->>>>>>> theirs — scope `closing`
 
 Factory return type:
 
@@ -153,13 +130,8 @@ From `types.ts` and `loader.ts`:
 - `ui`: UI context (can be no-op in headless modes)
 - `hasUI`: `false` in non-interactive flows
 - `logger`: shared file logger
-<<<<<<< ours — heading `API surface passed to factories (`CustomToolAPI`)` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 - `arktype`: injected tautype `type(...)` builder
-=======
-- `arktype`: injected omptype `type(...)` builder
-- `zod`: injected Zod-compatible omptype builder
->>>>>>> theirs — heading `API surface passed to factories (`CustomToolAPI`)` (F, confidence: medium)
 - `typebox`: compatibility shim for legacy TypeBox-style schemas
 - `pi`: injected `@tau/tau-coding-agent` exports
 - `pushPendingAction(action)`: stage a preview action that is finalized by writing a plain-text reason to `xd://resolve` or `xd://reject`
@@ -208,11 +180,7 @@ Optional rendering hooks:
 
 The normal SDK and filesystem-discovery paths wrap custom tools as extensions. On those paths, `renderResult` receives only the three arguments above; the bridge does not forward the original tool arguments. The public `CustomTool` type retains an optional fourth `args` parameter for direct `CustomToolAdapter` consumers.
 
-<<<<<<< ours — scope ``renderCall`'s `options` argument additionall...` in heading `Rendering hooks`, deleted in ours (S, confidence: medium)
 // refused_by: statement_fold · collision: none (no common ancestor text)
-=======
-On extension-adapter paths, `renderCall`'s `options` argument additionally answers the `Theme` API, allowing upstream pi renderers to use their second argument for styling. The third argument remains the theme, not upstream pi's context object.
->>>>>>> theirs — scope ``renderCall`'s `options` argument additionall...` deleted in ours
 
 Runtime behavior in TUI:
 

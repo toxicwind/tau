@@ -8,13 +8,8 @@ import {
 	handleServerMessage,
 	processInteractionUpdate,
 	type ToolCallState,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { create } from "@oh-my-pi/pi-catalog/discovery/protobuf…`
 } from "@tau/tau-ai/providers/cursor";
-=======
-} from "@oh-my-pi/pi-ai/providers/cursor";
-import { CursorExecOrder } from "@oh-my-pi/pi-ai/providers/cursor/exec-order";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/test/cursor-edit-tool-call.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type {
 	AssistantMessage,
 	CursorExecHandlers,
@@ -34,14 +29,9 @@ import {
 	ShellArgsSchema,
 	ToolCallSchema,
 	WriteArgsSchema,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { create } from "@oh-my-pi/pi-catalog/discovery/protobuf…`
 } from "@tau/tau-catalog/discovery/cursor-proto";
 import { create } from "@tau/tau-catalog/discovery/protobuf";
-=======
-} from "@oh-my-pi/pi-catalog/discovery/cursor-proto";
-import { create, fromBinary } from "@oh-my-pi/pi-catalog/discovery/protobuf";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 
 const EDIT_ID = "tool_7aef3020-f275-4579-887c-34106e146f7";
 const ENVELOPE_ID = "call-edit-1";

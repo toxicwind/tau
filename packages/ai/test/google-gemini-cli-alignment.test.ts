@@ -1,5 +1,4 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import * as geminiCliProvider from "@oh-my-pi/pi-ai/providers/g…` +1 more
 import * as geminiCliProvider from "@tau/tau-ai/providers/google-gemini-cli";
 import {
@@ -11,25 +10,6 @@ import {
 import { getOAuthApiKey } from "@tau/tau-ai/registry/oauth";
 import type { AssistantMessageEvent, Context, FetchImpl, Model, TJsonSchema } from "@tau/tau-ai/types";
 import { buildModel } from "@tau/tau-catalog/build";
-=======
-import {
-	buildRequest,
-	parseGeminiCliCredentials,
-	shouldRefreshGeminiCliCredentials,
-	streamGoogleGeminiCli,
-} from "@oh-my-pi/pi-ai/providers/google-gemini-cli";
-import { getOAuthApiKey } from "@oh-my-pi/pi-ai/registry/oauth";
-import type {
-	AssistantMessageEvent,
-	Context,
-	FetchImpl,
-	Model,
-	ProviderSessionState,
-	TJsonSchema,
-	Usage,
-} from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/test/google-gemini-cli-alignment.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function createModel(
 	provider: "google-gemini-cli" | "google-antigravity",

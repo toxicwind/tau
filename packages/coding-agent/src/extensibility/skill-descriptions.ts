@@ -1,24 +1,9 @@
 import { Database, type Statement } from "bun:sqlite";
 import * as fs from "node:fs";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { type Api, completeSimple, type Model } from "@oh-my-pi…` +1 more
 import { type Api, completeSimple, type Model } from "@tau/tau-ai";
 import { getAgentDir, logger, prompt } from "@tau/tau-utils";
-=======
-import { type AgentTelemetry, instrumentedCompleteSimple } from "@oh-my-pi/pi-agent-core";
-import type { Api, AssistantMessage, Model } from "@oh-my-pi/pi-ai";
-import { transportFetch } from "@oh-my-pi/pi-ai/utils/transport-fetch";
-import {
-	getAgentDir,
-	getSkillDescriptionsDbPath,
-	isBunTestRuntime,
-	isEexist,
-	logger,
-	postmortem,
-	prompt,
-} from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/extensibility/skill-descriptions.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { ModelRegistry } from "../config/model-registry";
 import {
 	resolveConfiguredModelPatterns,
@@ -143,7 +128,6 @@ export function createSkillDescriptionCompressor(
 				if (refused.signal.aborted) throw refused.signal.reason;
 				throw error;
 			}
-<<<<<<< ours — scope `return async (_name, _description, request) => {` in function `createSkillDescriptionCompressor` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `if (!selected) throw new Error("No smol or tiny model available…` +1 more
 		}
 		const selected =
@@ -184,20 +168,6 @@ export function createSkillDescriptionCompressor(
 			.filter(block => block.type === "text")
 			.map(block => block.text)
 			.join("");
-=======
-			if (refused.signal.aborted) throw refused.signal.reason;
-			if (response.stopReason === "length") {
-				throw new SkillDescriptionLengthError("Model stopped: length");
-			}
-			if (response.stopReason !== "stop") {
-				throw new Error(`Model stopped: ${response.stopReason} ${response.errorMessage ?? ""}`);
-			}
-			return response.content
-				.filter(block => block.type === "text")
-				.map(block => block.text)
-				.join("");
-		},
->>>>>>> theirs — scope `return async (_name, _description, request) => {`
 	};
 }
 

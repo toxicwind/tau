@@ -216,7 +216,6 @@ describe("createAgentSession cwd after /move", () => {
 						}),
 					),
 				),
-<<<<<<< ours — scope `it.each(["hindsight", "mnemopi"] as const)("k...` in test_suite `createAgentSession cwd after /move` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `const sessionManager = SessionManager.create(cwdA, path.join(te…`
 			);
 			const settings = await Settings.loadIsolated({ cwd: cwdA, agentDir });
@@ -225,41 +224,6 @@ describe("createAgentSession cwd after /move", () => {
 			const { session } = await createAgentSession({
 				cwd: cwdA,
 				agentDir,
-=======
-			),
-		);
-		const settings = await Settings.loadIsolated({ cwd: cwdA, agentDir });
-		const sessionManager = SessionManager.create(cwdA, SessionManager.getDefaultSessionDir(cwdA, agentDir));
-		const authStorage = createInMemoryAuthStorage();
-		const { session } = await createAgentSession({
-			cwd: cwdA,
-			agentDir,
-			sessionManager,
-			authStorage,
-			modelRegistry: new ModelRegistry(authStorage, path.join(tempDir, "models.yml")),
-			settings,
-			model: getBundledModel("openai", "gpt-4o-mini"),
-			restrictToolNames: true,
-			toolNames: ["read"],
-			disableExtensionDiscovery: true,
-			skills: [],
-			contextFiles: [],
-			promptTemplates: [],
-			slashCommands: [],
-			enableMCP: false,
-			enableLsp: false,
-			skipPythonPreflight: true,
-			rules: [],
-			preloadedCustomToolPaths: [],
-		});
-		const originalProjectDir = getProjectDir();
-		try {
-			expect(session.getHindsightSessionState()).toBeUndefined();
-			expect(session.getMnemopiSessionState()).toBeUndefined();
-			const output: string[] = [];
-			await executeAcpBuiltinSlashCommand("/move " + cwdB, {
-				session,
->>>>>>> theirs — scope `it.each(["hindsight", "mnemopi"] as const)("k...` · weave: run 'weave explain packages/coding-agent/test/sdk-move-cwd.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 				sessionManager,
 				authStorage,
 				modelRegistry: new ModelRegistry(authStorage, path.join(tempDir, "models.yml")),
@@ -278,23 +242,8 @@ describe("createAgentSession cwd after /move", () => {
 				rules: [],
 				preloadedCustomToolPaths: [],
 			});
-<<<<<<< ours — scope `it.each(["hindsight", "mnemopi"] as const)("k...` in test_suite `createAgentSession cwd after /move` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `const sessionManager = SessionManager.create(cwdA, path.join(te…`
 			const originalProjectDir = getProjectDir();
-=======
-			expect(output.join("\n")).toContain("Moved to ");
-			expect(sessionManager.getCwd()).toBe(cwdB);
-			expect(sessionManager.getSessionDir().startsWith(`${agentDir}${path.sep}`)).toBe(true);
-			expect(session.getHindsightSessionState()).toBeUndefined();
-			expect(session.getMnemopiSessionState()).toBeUndefined();
-			// Explicit backend reapplication must preserve the same startup policy.
-			await session.applyMemoryBackend();
-			expect(session.getHindsightSessionState()).toBeUndefined();
-			expect(session.getMnemopiSessionState()).toBeUndefined();
-			expect(session.getActiveToolNames()).toEqual(["read"]);
-		} finally {
-			setProjectDir(originalProjectDir);
->>>>>>> theirs — scope `it.each(["hindsight", "mnemopi"] as const)("k...`
 			try {
 				expect(session.getHindsightSessionState()).toBeUndefined();
 				expect(session.getMnemotauSessionState()).toBeUndefined();

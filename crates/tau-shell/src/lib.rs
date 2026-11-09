@@ -59,7 +59,6 @@ pub mod taps;
 #[cfg(windows)]
 pub mod windows;
 
-<<<<<<< ours — interstitial `file_footer` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 pub use brush_core::commands::{ChildSessionAction, child_session_action};
 pub use shell::{
@@ -71,18 +70,3 @@ pub use shell::{
 pub use tau_builtins::{
 	panic_scope_active, rayon_global_pool_available, set_rayon_global_pool_available,
 };
-=======
-pub use child_session::{ChildSessionAction, child_session_action};
-// Windows path spellings for host paths presented by the CLI.
-pub use paths::{expand_to_long_path, get_short_path};
-// Re-exported for `pi-natives`: the builtins live in `pi-builtins`,
-// but the native layer only ever depends on the shell.
-pub use pi_builtins::{
-	panic_scope_active, rayon_global_pool_available, set_rayon_global_pool_available,
-};
-pub use shell::{
-	MinimizerResult, Shell, ShellExecuteOptions, ShellExecuteResult, ShellOptions, ShellRunOptions,
-	ShellRunResult, StreamSinks, execute_shell, execute_shell_streams,
-};
-pub use taps::{PipeStreamInfo, PipeStreamRead, PipeTaps};
->>>>>>> theirs — interstitial `file_footer` (S+F, confidence: low) · weave: run 'weave explain crates/tau-shell/src/lib.rs' for per-hunk detail, 'weave check' to verify your resolution

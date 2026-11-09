@@ -1,5 +1,4 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { Agent, AgentBusyError, type AgentEvent, type AgentTool…` +1 more
 import { type } from "@tau/tautype";
 import { Agent, AgentBusyError, type AgentEvent, type AgentTool, ThinkingLevel } from "@tau/tau-agent-core";
@@ -7,22 +6,6 @@ import type { SimpleStreamOptions, ToolResultMessage } from "@tau/tau-ai";
 import { createMockModel } from "@tau/tau-ai/providers/mock";
 import { kCursorExecResolved } from "@tau/tau-ai/utils/block-symbols";
 import { AssistantMessageEventStream } from "@tau/tau-ai/utils/event-stream";
-=======
-import { type } from "@oh-my-pi/omptype";
-import {
-	Agent,
-	AgentBusyError,
-	type AgentEvent,
-	type AgentTool,
-	ThinkingLevel,
-	TOOL_RESULT_ADDITIONAL_CONTEXT,
-	type ToolResultWithAdditionalContext,
-} from "@oh-my-pi/pi-agent-core";
-import type { Context, Message, SimpleStreamOptions, ToolResultMessage } from "@oh-my-pi/pi-ai";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { kCursorExecResolved } from "@oh-my-pi/pi-ai/utils/block-symbols";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/agent/test/agent.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { createAssistantMessage, createUserMessage } from "./helpers";
 
 describe("Agent", () => {

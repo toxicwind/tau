@@ -1,25 +1,7 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { ConcatSink, getBlobsDir, isEnoent, isEnotdir, parseJso…`
 import type { AgentMessage } from "@tau/tau-agent-core";
 import { ConcatSink, getBlobsDir, isEnoent, isEnotdir, parseJsonlLenient } from "@tau/tau-utils";
 import * as snapcompact from "@tau/snapcompact";
-=======
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import * as fs from "node:fs/promises";
-import * as path from "node:path";
-import {
-	ConcatSink,
-	getBlobsDir,
-	isEisdir,
-	isEnoent,
-	isEnotdir,
-	jsonContainerEnd,
-	parseJsonlLenient,
-	peekFile,
-	tryParseJson,
-} from "@oh-my-pi/pi-utils";
-import * as snapcompact from "@oh-my-pi/snapcompact";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/session/session-loader.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { Semaphore } from "../task/parallel";
 import {
 	BlobStore,

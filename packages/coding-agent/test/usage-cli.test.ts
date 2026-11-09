@@ -2,12 +2,9 @@ import { Database } from "bun:sqlite";
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
 import { stripVTControlCharacters } from "node:util";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { UsageReport } from "@oh-my-pi/pi-ai";` +1 more
 import type { UsageReport } from "@tau/tau-ai";
 import { TempDir } from "@tau/tau-utils";
-=======
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/usage-cli.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	AuthStorage,
 	type OAuthCredential,
@@ -27,23 +24,8 @@ import {
 	formatUsageHistory,
 	runUsageCommand,
 	type UsagePolicyDiagnosticsOptions,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { UsageReport } from "@oh-my-pi/pi-ai";` +1 more
 } from "tau/cli/usage-cli";
-=======
-	type UsageResetExpiryOptions,
-} from "@oh-my-pi/pi-coding-agent/cli/usage-cli";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import * as sdkModule from "@oh-my-pi/pi-coding-agent/sdk";
-import { resetAccountLockKey } from "@oh-my-pi/pi-coding-agent/session/codex-auto-reset";
-import { claimResetExpiryNotice } from "@oh-my-pi/pi-coding-agent/session/reset-expiry";
-import { resetLockPath } from "@oh-my-pi/pi-coding-agent/session/reset-fence";
-import {
-	collectUnreportedAccounts,
-	type UsageAccountIdentity,
-} from "@oh-my-pi/pi-coding-agent/slash-commands/helpers/usage-accounts";
-import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 
 const HOUR = 3_600_000;
 const FIVE_HOURS = 5 * HOUR;

@@ -1,16 +1,6 @@
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 import { describe, expect, test } from "bun:test";
 import { RpcHostToolBridge } from "tau/modes/rpc/host-tools";
-=======
-import { describe, expect, spyOn, test } from "bun:test";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { RpcHostToolBridge } from "@oh-my-pi/pi-coding-agent/modes/rpc/host-tools";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/rpc-input-frame.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	dispatchRpcInputFrame,
 	type PendingExtensionRequest,
@@ -25,16 +15,8 @@ import type {
 	RpcHostToolCallRequest,
 	RpcHostToolCancelRequest,
 	RpcResponse,
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 } from "tau/modes/rpc/rpc-types";
-=======
-} from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-types";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import * as imageLoading from "@oh-my-pi/pi-coding-agent/utils/image-loading";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low)
 
 type OutputFrame = RpcResponse | object;
 

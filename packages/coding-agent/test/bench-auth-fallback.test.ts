@@ -9,7 +9,6 @@ import type {
 	AssistantMessageEventStream,
 	Model,
 	SimpleStreamOptions,
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-ai";
 import { buildModel } from "@tau/tau-catalog/build";
@@ -20,19 +19,6 @@ import { type BenchSummary, runBenchCommand } from "tau/cli/bench-cli";
 import { type BenchModelRegistry, resolveBenchTargets } from "tau/cli/bench-runtime";
 import { Settings } from "tau/config/settings";
 import { getModelDbPath, TempDir } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import type { ModelSpec } from "@oh-my-pi/pi-catalog/types";
-import { writeModelCache } from "@oh-my-pi/pi-catalog/model-cache";
-import { resolveModelCacheProviderId } from "@oh-my-pi/pi-catalog/provider-models";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { type BenchSummary, runBenchCommand } from "@oh-my-pi/pi-coding-agent/cli/bench-cli";
-import { type BenchModelRegistry, resolveBenchTargets } from "@oh-my-pi/pi-coding-agent/cli/bench-runtime";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { getModelDbPath, TempDir } from "@oh-my-pi/pi-utils";
-import { endpoint as responsesEndpoint } from "../../ai/test/fixtures/openai-responses-server";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/bench-auth-fallback.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function fakeModel(provider: string, id: string): Model<Api> {
 	return buildModel({

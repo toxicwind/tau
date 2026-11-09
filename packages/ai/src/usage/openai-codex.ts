@@ -1,15 +1,8 @@
 import { Buffer } from "node:buffer";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { USER_AGENT } from "@oh-my-pi/pi-utils";`
 import { planRequirementFor, quotaTierFor } from "@tau/tau-catalog/compat/behavior";
 import { toNumber } from "@tau/tau-catalog/utils";
 import { USER_AGENT } from "@tau/tau-utils";
-=======
-import { planRequirementFor, quotaTierFor } from "@oh-my-pi/pi-catalog/compat/behavior";
-import { toNumber } from "@oh-my-pi/pi-catalog/utils";
-import { slugify, USER_AGENT } from "@oh-my-pi/pi-utils";
-import { ProviderHttpError } from "../error";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/src/usage/openai-codex.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type {
 	CredentialRankingContext,
 	CredentialRankingStrategy,

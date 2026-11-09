@@ -7,17 +7,10 @@
  * owner instead of a parallel session-id registry.
  */
 
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { logger } from "@oh-my-pi/pi-utils";`
 import type { AgentMessage } from "@tau/tau-agent-core";
 import { logger } from "@tau/tau-utils";
 import { onHindsightScopeChanged, type Settings } from "../config/settings";
-=======
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { logger, prompt } from "@oh-my-pi/pi-utils";
-import type { Settings } from "../config/settings";
-import { memoryToolRefs } from "../memory-backend/tool-names";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/hindsight/backend.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { MemoryBackend, MemoryBackendStartOptions, MemoryPromptPreparation } from "../memory-backend/types";
 import hindsightInstructions from "../prompts/system/hindsight-instructions.md" with { type: "text" };
 import type { AgentSession } from "../session/agent-session";
@@ -253,14 +246,9 @@ export async function rebindMemoryBackendForCwd(session: AgentSession): Promise<
 	await awaitPrimaryStateRebuild(session);
 
 	// Startup is best-effort, but a move must not commit an unusable memory backend.
-<<<<<<< ours — scope `// Startup is best-effort, but a move must no...` in function `rebindMemoryBackendForCwd` (S+F, confidence: low)
 // refused_by: statement_fold · collision: `if (session.settings.get("memory.backend") === "mnemopi" && !se…`
 	if (session.settings.get("memory.backend") === "mnemotau" && !session.getMnemotauSessionState()) {
 		throw new Error("Mnemotau backend failed to initialise for the destination cwd.");
-=======
-	if (cfgMemoryBackend.get(session.settings) === "mnemopi" && !session.getMnemopiSessionState()) {
-		throw new Error("Mnemopi backend failed to initialise for the destination cwd.");
->>>>>>> theirs — scope `// Startup is best-effort, but a move must no...`
 	}
 }
 

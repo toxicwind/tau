@@ -11,12 +11,8 @@ import viewerAsset from "../src/export/html/viewer.generated.json" with { type: 
 const bundleDistUrl = new URL("../scripts/bundle-dist.ts", import.meta.url).href;
 const probePath = path.resolve(import.meta.dir, "fixtures", "html-export-template-probe.ts");
 const packageDir = path.resolve(import.meta.dir, "..");
-<<<<<<< ours — variable `tempRoot` (S, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "omp-htm…`
 const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "tau-html-template-"));
-=======
-const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "omp-html-template-"));
->>>>>>> theirs — variable `tempRoot` (S, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/export-html-template.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 const unrelatedCwd = path.join(tempRoot, "unrelated-cwd");
 const bundleDir = path.join(tempRoot, "bundle");
 const compiledPath = path.join(tempRoot, "compiled-template-probe");
@@ -31,7 +27,6 @@ const dependencyStubs: Record<string, string> = {
 	"../../session/session-manager":
 		"export class SessionManager { static async open() { return new SessionManager(); } }",
 };
-<<<<<<< ours — variable `bundledDependencyStubs` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 const bundledDependencyStubs: Record<string, string> = {
 	"@tau/tau-utils": 'export const APP_NAME = "tau"; export const isEnoent = () => false;',
@@ -43,8 +38,6 @@ const bundledDependencyStubs: Record<string, string> = {
 	"./args": "export const parseExportArgs = () => undefined;",
 	"./web-palette": 'export const webExportThemeVars = () => "";',
 };
-=======
->>>>>>> theirs — variable `bundledDependencyStubs` (S+F, confidence: low)
 const focusedBundlePlugin: BunPlugin = {
 	name: "html-template-focused-bundle",
 	setup(build) {
@@ -167,7 +160,6 @@ describe("HTML export template", () => {
 			expect(script.hasAttribute("defer")).toBe(true);
 		}
 	});
-<<<<<<< ours — scope `test("composes the exact source template once...` in test_suite `HTML export template`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	test("composes the exact source template once and returns the cached bytes", async () => {
 		const expected = composeExpectedTemplate();
@@ -184,8 +176,6 @@ describe("HTML export template", () => {
 		expect(repeated).toBe(first);
 		expect(await runProbe([process.execPath, templateProbePath])).toEqual(expectedTemplate);
 	});
-=======
->>>>>>> theirs — scope `test("composes the exact source template once...` deleted in theirs
 
 	test("npm-style bundle and compiled binary export identical hosted HTML from an unrelated directory", async () => {
 		const expected = await runProbe([process.execPath, bundlePath]);

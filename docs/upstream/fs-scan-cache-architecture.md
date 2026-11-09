@@ -1,13 +1,7 @@
-<<<<<<< ours — heading `Filesystem scan cache architecture contract` (T+F, confidence: medium)
 // refused_by: rename_vs_edit_guard · collision: `This document defines the shared Rust filesystem scan cache imp…`
 # Filesystem scan cache architecture contract
 
 This document defines the shared Rust filesystem scan cache implemented by `crates/tau-walker` and consumed by native discovery APIs exposed to `packages/coding-agent`.
-=======
-# Filesystem listing cache architecture contract
-
-This document defines the shared directory-listing cache implemented by `crates/pi-walker` and consumed by native discovery APIs exposed to `packages/coding-agent`.
->>>>>>> theirs — heading `Filesystem scan cache architecture contract` (T+F, confidence: medium) · weave: run 'weave explain docs/upstream/fs-scan-cache-architecture.md' for per-hunk detail, 'weave check' to verify your resolution
 
 ## Ownership and data model
 
@@ -75,7 +69,6 @@ Native walks open child directories with `openat` relative to the parent handle 
 ## Measuring
 
 `crates/pi-walker/examples/bench.rs` (walk/glob timing) and `crates/pi-walker/examples/search_bench.rs` (content-search timing) are the timing harnesses; run them with `cargo run --release -p pi-walker --example bench` / `--example search_bench`. Neither modifies the tree it measures.
-<<<<<<< ours — heading `Ownership and data model` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 ## Ownership and data model
 
@@ -91,9 +84,6 @@ Current native consumers:
 
 The N-API DTO layer that bridges walker results to JavaScript lives in `crates/tau-natives/src/iofs.rs`; per its own header, "`tau-walker` owns traversal and cache policy" and `iofs.rs` keeps only the JS-facing shapes and conversions. The public invalidation binding remains `invalidateFsScanCache(path?)` — declared in `iofs.rs` (forwarding to `pi_walker::invalidate_path_string` / `pi_walker::invalidate_all`) and exported in `packages/natives/native/index.d.ts` / `index.js`. Coding-agent mutation helpers live in `packages/coding-agent/src/tools/fs-cache-invalidation.ts`.
 
-=======
->>>>>>> theirs — heading `Ownership and data model` (S+F, confidence: low)
-<<<<<<< ours — heading `Collection behavior` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 ## Collection behavior
 
@@ -108,12 +98,7 @@ Traversal-adjacent parallel work uses a shared Rayon pool:
 - `1` forces serial work
 - helper operations parallelize only at 256 or more items
 
-=======
->>>>>>> theirs — heading `Collection behavior` (S+F, confidence: low)
-<<<<<<< ours — heading `Measuring the budget` (T+F, confidence: medium)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 ## Measuring the budget
 
 Run `FS_SCAN_CACHE_TTL_MS=60000 cargo run -p tau-walker --example scan-cache-bench -- /path/to/tree` to measure scan allocation bytes, owned-vector copying, and cache hits across 16 traversal-option partitions. Set `FS_SCAN_CACHE_MAX_BYTES` to compare budgets. The example leaves the supplied tree unchanged; use an optimized Cargo profile for timing comparisons.
-=======
->>>>>>> theirs — heading `Measuring the budget` (T+F, confidence: medium)

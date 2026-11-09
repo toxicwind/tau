@@ -171,7 +171,6 @@ function sessionKeys(request: AuthGatewaySessionStateRequest): string[] {
 	// Scoped keys get their own leading tag, so none can equal an unscoped one.
 	return client === undefined ? keys : keys.map(key => `s\u0000${client}\u0000${key}`);
 	const { client } = request;
-<<<<<<< ours — scope `for (const message of context.messages) {` in function `sessionKeys`, deleted in theirs (S+F, confidence: low)
 // refused_by: statement_fold · collision: none (no common ancestor text)
 	for (const message of context.messages) {
 		// Role + content only: tau re-stamps `timestamp` and provider metadata on
@@ -180,8 +179,6 @@ function sessionKeys(request: AuthGatewaySessionStateRequest): string[] {
 		hash = Bun.hash(JSON.stringify({ role: message.role, content: message.content }), hash);
 		keys.push(`h\u0000${scope}\u0000${hash.toString(36)}`);
 	}
-=======
->>>>>>> theirs — scope `for (const message of context.messages) {` deleted in theirs · weave: run 'weave explain packages/ai/src/auth-gateway/session-state.ts' for per-hunk detail, 'weave check' to verify your resolution
 }
 
 /** {@link sessionKeys} of one conversation, before any client scope. */

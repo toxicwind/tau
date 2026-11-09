@@ -1,16 +1,10 @@
 import { afterAll, afterEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import type { Api, AssistantMessage, Model } from "@oh-my-pi/pi…`
 import * as vm from "node:vm";
 import type { Api, AssistantMessage, Model } from "@tau/tau-ai";
 import * as ai from "@tau/tau-ai";
 import { TempDir } from "@tau/tau-utils";
-=======
-import type { Api, AssistantMessage, ImageContent, Model } from "@oh-my-pi/pi-ai";
-import * as ai from "@oh-my-pi/pi-ai";
-import { TempDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/eval/judgment-batch-bridge.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { $ } from "bun";
 import { AsyncJobManager } from "../../src/async";
 import { ModelRegistry } from "../../src/config/model-registry";
@@ -684,7 +678,6 @@ describe("judgeBatch() JS runtime", () => {
 		}
 	});
 });
-<<<<<<< ours — test_suite `judgeBatch() JS prelude` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 describe("judgeBatch() JS prelude", () => {
 	it("maps states to keyed items and drainIter stops on an empty drain", async () => {
@@ -749,8 +742,6 @@ describe("judgeBatch() JS prelude", () => {
 		expect(drainCalls[0]?.args.timeoutMs).toBeLessThanOrEqual(30_000);
 	});
 });
-=======
->>>>>>> theirs — test_suite `judgeBatch() JS prelude` (S+F, confidence: low)
 async function runPythonJudgeBatchInSubprocess(tempDir: TempDir): Promise<PythonResult> {
 	const repoRoot = path.resolve(import.meta.dir, "../../..");
 	const scriptPath = path.join(tempDir.path(), "run-python-judge-batch.ts");

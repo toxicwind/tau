@@ -10,28 +10,10 @@ import {
 	resolveUsedFraction,
 	type UsageLimit,
 	type UsageReport,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { Loader, Markdown, padding, Spacer, Text, visibleWidth …` +5 more
 } from "@tau/tau-ai";
 import { Loader, Markdown, padding, Spacer, Text, visibleWidth } from "@tau/tau-tui";
 import { formatDuration, logger, Snowflake, sanitizeText } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-ai";
-import {
-	type Component,
-	Loader,
-	Markdown,
-	padding,
-	parseSgrMouse,
-	Spacer,
-	Text,
-	visibleWidth,
-	wrapTextWithAnsi,
-} from "@oh-my-pi/pi-tui";
-import { formatDuration, logger, Snowflake, sanitizeText } from "@oh-my-pi/pi-utils";
-import { getActiveProfile, getConfigDirName } from "@oh-my-pi/pi-utils/dirs";
-import { classifyTerminalMultiplexer } from "@oh-my-pi/pi-tui/terminal-multiplexer";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/modes/controllers/command-controller.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { shouldEnableAppendOnlyContext } from "../../config/append-only-context-mode";
 import { type BashResult, isPersistentShellCdCommand } from "../../exec/bash-executor";
 import { type LoadedCustomShare, loadCustomShare } from "../../export/custom-share";
@@ -49,7 +31,6 @@ import {
 	summarizeMentalModel,
 } from "../../hindsight";
 import { memoryStatsUnavailableMessage, resolveMemoryBackend } from "../../memory-backend";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { Loader, Markdown, padding, Spacer, Text, visibleWidth …` +5 more
 import { BashExecutionComponent, bashPtyViewport } from "@tau/tau-tui/chat/bash-execution";
 import { BorderedLoader } from "@tau/tau-tui/overlays/bordered-loader";
@@ -64,28 +45,6 @@ import { renderContextUsage } from "@tau/tau-tui/status-line/context-usage";
 import { computeSessionContextBreakdown } from "../../session/context-usage-runtime";
 import { buildHotkeysMarkdown } from "@tau/tau-tui/hotkeys-markdown";
 import { buildToolsMarkdown } from "@tau/tau-tui/prompt/tools-markdown";
-=======
-import { BashExecutionComponent, bashPtyViewport } from "@oh-my-pi/pi-tui/chat/bash-execution";
-import { appKey } from "@oh-my-pi/pi-tui/chrome/keybinding-hints";
-import { BorderedLoader } from "@oh-my-pi/pi-tui/overlays/bordered-loader";
-import { EvalExecutionComponent } from "@oh-my-pi/pi-tui/chat/eval-execution";
-import { promptCacheDetails } from "@oh-my-pi/pi-tui/status-line/prompt-cache";
-import { messageBlock, PresentedBlock } from "@oh-my-pi/pi-tui/chat/transcript-presentation";
-import { MoveOverlay, type MoveOverlayResult } from "@oh-my-pi/pi-tui/overlays/move-overlay";
-import { moveDirectorySource } from "../move-directory-source";
-import { getMarkdownTheme, getSymbolTheme, theme, type Theme } from "@oh-my-pi/pi-tui/theme";
-import type { InteractiveModeContext } from "../../modes/types";
-import { continuesConversation } from "../utils/conversation-position";
-import { ContextViewer } from "@oh-my-pi/pi-tui/overlays/context-viewer";
-import type { OverlayHandle } from "@oh-my-pi/pi-tui";
-import { ReportPanel } from "@oh-my-pi/pi-tui/overlays/report-panel";
-import type { TspText } from "@oh-my-pi/pi-wire";
-import { computeSessionContextBreakdown } from "../../session/context-usage-runtime";
-import { buildSessionContextView } from "../../session/context-view";
-import { buildHotkeysMarkdown, HotkeysSheetComponent } from "@oh-my-pi/pi-tui/hotkeys-markdown";
-import { isNativeRendering } from "@oh-my-pi/pi-tui/native/state";
-import { buildToolsMarkdown } from "@oh-my-pi/pi-tui/prompt/tools-markdown";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import type { AsyncJobSnapshotItem } from "../../session/agent-session";
 import { buildJobTree, jobTreeGuide, jobTreeIndent } from "@oh-my-pi/pi-tui/overlays/job-tree";
 import type { AuthStorage, OAuthAccountIdentity } from "../../session/auth-storage";
@@ -105,7 +64,6 @@ import {
 	type SessionWorktree,
 } from "../../session/session-worktree";
 import { formatShakeSummary, type ShakeMode, type ShakeResult } from "../../session/shake-types";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { Loader, Markdown, padding, Spacer, Text, visibleWidth …` +5 more
 import { formatActiveAccountLabel, limitMatchesActiveAccount } from "../../slash-commands/helpers/active-oauth-account";
 import { formatProviderName } from "@tau/tau-tui/chrome/format";
@@ -113,21 +71,6 @@ import { formatCompactQuota } from "@tau/tau-tui/overlays/advisor-config";
 import { outputMeta } from "../../tools/output-meta";
 import { resolveToCwd, stripOuterDoubleQuotes } from "../../tools/path-utils";
 import { replaceTabs, truncateToWidth } from "@tau/tau-tui/render/render-utils";
-=======
-import {
-	codexUsagePlan,
-	formatActiveAccountLabel,
-	formatCodexUsageReportLabel,
-	limitMatchesActiveAccount,
-} from "../../slash-commands/helpers/active-oauth-account";
-import { formatProviderName } from "@oh-my-pi/pi-tui/chrome/format";
-import { formatCompactQuota } from "@oh-my-pi/pi-tui/overlays/advisor-config";
-import { resolveTernPane } from "../../tools/browser/tern/kind";
-import { TernError, type TernErrorKind, TernSocketClient } from "../../tools/browser/tern/wire";
-import { outputMeta } from "../../tools/output-meta";
-import { resolveToCwd, stripOuterDoubleQuotes } from "../../tools/path-utils";
-import { replaceTabs, shortenEmbeddedPaths, truncateToWidth } from "@oh-my-pi/pi-tui/render/render-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import {
 	getChangelogPath,
 	parseChangelog,
@@ -144,29 +87,9 @@ import {
 	collapseSharedUsageReports,
 	formatLimitTitle,
 	summarizeUsageResetCredits,
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { Loader, Markdown, padding, Spacer, Text, visibleWidth …` +5 more
 } from "@tau/tau-tui/overlays/usage-display";
 import { formatRemainingOnlyTotal, isUsedOnlyAbsoluteAmount } from "@tau/tau-tui/prompt/usage-amounts";
-=======
-} from "@oh-my-pi/pi-tui/overlays/usage-display";
-import { formatRemainingOnlyTotal, isUsedOnlyAbsoluteAmount } from "@oh-my-pi/pi-tui/prompt/usage-amounts";
-import type { UnavailableUsageAccount } from "@oh-my-pi/pi-tui/overlays/usage-dashboard";
-
-import { cfgTerminalShowImages } from "../settings";
-import { cfgProviderAppendOnlyContext } from "../../session/settings";
-import { cfgShareRedactSecrets, cfgShareServerUrl, cfgShareStore } from "../../commands/settings";
-import { flagConsumesValue, restartArgv } from "../../cli/flag-tables";
-import {
-	createDefaultTerminalLaunchRequest,
-	getTerminalLaunchPlacement,
-	launchTerminal,
-	TerminalLaunchError,
-	type TerminalLaunchRequest,
-	type TerminalLaunchResult,
-} from "../../subprocess/terminal-launch";
-import { resolveCliEntryCmd } from "../../subprocess/worker-client";
->>>>>>> theirs — imports `file_header` (F, confidence: medium)
 
 /** How long `/fork` waits for Tern to open the fork's pane. */
 const TERN_FORK_TIMEOUT_MS = 10_000;

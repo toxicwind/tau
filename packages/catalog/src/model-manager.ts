@@ -1,11 +1,6 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { VERSION } from "@oh-my-pi/pi-utils";`
 import { resolveContext } from "@toxicwind/mimetite";
 import { VERSION } from "@tau/tau-utils";
-=======
-import { type } from "@oh-my-pi/omptype";
-import { logger, VERSION } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/catalog/src/model-manager.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { buildModel } from "./build";
 import { collapseBuiltVariants } from "./compat/collapse";
 import { applyCatalogMetrics, CatalogMetricsIndex } from "./identity/metrics";

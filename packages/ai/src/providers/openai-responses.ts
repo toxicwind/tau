@@ -1,25 +1,9 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { $flag, logger, structuredCloneJSON } from "@oh-my-pi/p…`
 import { scheduler } from "node:timers/promises";
 import { $flag, logger, structuredCloneJSON } from "@tau/tau-utils";
 import * as AIError from "../error";
 import { getOutputCeiling } from "./output-ceilings";
 import { getEnvApiKey } from "../stream";
-=======
-import { resolveCatalogPolicy } from "@oh-my-pi/pi-catalog/compat/catalog-policy";
-import { resolveResponsesWebSocketPreference } from "@oh-my-pi/pi-catalog/compat/responses-websocket";
-import type { Effort } from "@oh-my-pi/pi-catalog/effort";
-import {
-	$flag,
-	cloneJsonTree,
-	isUnexpectedSocketCloseMessage,
-	logger,
-	type ServerSentEvent,
-	structuredCloneJSON,
-} from "@oh-my-pi/pi-utils";
-import * as AIError from "../error";
-import { getEnvApiKey } from "../env-api-key";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/src/providers/openai-responses.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type {
 	AssistantMessage,
 	CacheRetention,
@@ -135,18 +119,8 @@ import {
 	shouldRetryWithoutStrictTools,
 	throwOpenAIResponsesEventError,
 } from "./openai-shared";
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { $flag, logger, structuredCloneJSON } from "@oh-my-pi/p…`
 import { applyOpenRouterRequestShaping } from "./openrouter-coercion";
-=======
-import { readOpenRouterGenerationError } from "./openrouter-generation";
-import {
-	OPENAI_RESPONSES_PROVIDER_SESSION_STATE_PREFIX,
-	resetOpenAIResponsesChainState,
-	storesResponsesServerSide,
-} from "./openai-responses-state";
-import { isResponsesWebSocketProgressEvent, ResponsesWebSocketTransportError } from "./responses-websocket-connection";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 
 // OpenAI Responses-specific options
 export interface OpenAIResponsesOptions extends StreamOptions {

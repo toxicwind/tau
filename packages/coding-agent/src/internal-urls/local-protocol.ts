@@ -1,26 +1,11 @@
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { isMarkdownPath } from "@oh-my-pi/pi-tui/lang-from-path…`
 import { isEnoent } from "@tau/tau-utils";
 import { AgentRegistry } from "../registry/agent-registry";
 import { isMarkdownPath } from "@tau/tau-tui/lang-from-path";
 import { buildDirectoryResource } from "./filesystem-resource";
-=======
-import { isEnoent } from "@oh-my-pi/pi-utils";
-import { LRUCache } from "@oh-my-pi/pi-utils/lru";
-import localDoc from "../prompts/internal-urls/local.md" with { type: "text" };
-import { AgentRegistry } from "../registry/agent-registry";
-import {
-	buildDirectoryResource,
-	containedRealPath,
-	contentTypeForPath,
-	ensureCreatableWithinRoot,
-	ensureWithinRoot,
-	validateRelativePath,
-} from "./filesystem-resource";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/internal-urls/local-protocol.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { parseInternalUrl } from "./parse";
 import type {
 	InternalResource,

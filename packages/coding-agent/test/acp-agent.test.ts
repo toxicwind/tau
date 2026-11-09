@@ -2,7 +2,6 @@ import { afterEach, describe, expect, it, spyOn, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { SILENT_ABORT_MARKER } from "@oh-my-pi/pi-coding-agent/…`
 import { AgentBusyError } from "@tau/tau-agent-core";
 import type { Model } from "@tau/tau-ai";
@@ -18,40 +17,6 @@ import { SessionManager } from "tau/session/session-manager";
 import { TaskTool } from "tau/task";
 import type { ToolSession } from "tau/tools";
 import { getConfigRootDir, setAgentDir } from "@tau/tau-utils";
-=======
-import { AgentBusyError } from "@oh-my-pi/pi-agent-core";
-import { Database } from "bun:sqlite";
-import { AuthStorage, SqliteAuthCredentialStore } from "@oh-my-pi/pi-ai";
-import type { Model } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import type { ExtensionUIContext } from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
-import { cfgExtensions } from "@oh-my-pi/pi-coding-agent/extensibility/settings";
-import { ExtensionRuntime } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
-import { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
-import { buildSkillPromptMessage } from "@oh-my-pi/pi-coding-agent/extensibility/skills";
-import { resolveLocalUrlToPath } from "@oh-my-pi/pi-coding-agent/internal-urls";
-import * as oauthFlowModule from "@oh-my-pi/pi-coding-agent/mcp/oauth-flow";
-import {
-	ACP_BOOTSTRAP_RACE_GUARD_MS,
-	AcpAgent,
-	createAcpExtensionUiContext,
-} from "@oh-my-pi/pi-coding-agent/modes/acp/acp-agent";
-import type { PlanModeState } from "@oh-my-pi/pi-coding-agent/plan-mode/state";
-import type {
-	AgentSession,
-	AgentSessionEvent,
-	UsageFallbackConfirmation,
-} from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { SILENT_ABORT_MARKER, USER_INTERRUPT_LABEL } from "@oh-my-pi/pi-coding-agent/session/messages";
-import type { ClientBridge } from "@oh-my-pi/pi-coding-agent/session/client-bridge";
-import { closeSessionIndex } from "@oh-my-pi/pi-coding-agent/session/session-index";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TaskTool } from "@oh-my-pi/pi-coding-agent/task";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { getConfigRootDir, setAgentDir } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/acp-agent.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type {
 	AgentSideConnection,
 	ClientCapabilities,

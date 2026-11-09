@@ -1,11 +1,7 @@
 # Magic keywords
 
-<<<<<<< ours — scope `Magic keywords are standalone prose words in ...` in heading `Magic keywords` (S, confidence: medium)
 // refused_by: statement_fold · collision: `Magic keywords are standalone prose words in a user prompt that…`
 Magic keywords are standalone prose words in an architect prompt that can add hidden, user-attributed instructions for that turn. Notice injection is enabled by default. The TUI highlights recognized words with animated gradients while editing and static gradients in sent messages; highlighting is a visual affordance and currently remains even when notice injection is disabled in settings. Recognized words are also exempt from macOS spelling autocorrect and typo underlines, so `workflowz` and `jevify` are never rewritten into dictionary words.
-=======
-Magic keywords are standalone prose words in a user prompt that can add hidden, user-attributed instructions for that turn. Notice injection is enabled by default. The TUI animates recognized words while the editor is focused and shows static highlights in sent messages. Disabling the global switch stops editor animation and hidden notices, but leaves static highlighting and spelling exemptions in place. Recognized words are exempt from macOS spelling autocorrect and typo underlines, so `workflowz` and `jevify` are never rewritten into dictionary words.
->>>>>>> theirs — scope `Magic keywords are standalone prose words in ...` · weave: run 'weave explain docs/upstream/magic-keywords.md' for per-hunk detail, 'weave check' to verify your resolution
 
 The full list — trigger word, gradient, settings copy, required tools, and notice — lives in one table, `packages/coding-agent/src/modes/magic-keywords.ts`; every other surface (settings, notice injection, editor highlighting) derives from it.
 
@@ -40,15 +36,9 @@ Matching is deliberate so source code and paths do not accidentally change agent
 - Use the exact lowercase spelling. `Ultrathink`, `Chillax`, `Orchestrate`, `Workflowz`, and `Jevify` do not trigger.
 - The keyword must be standalone prose. Sentence punctuation and quotes may touch it, but letters, digits, underscores, slashes, backslashes, hyphens, file extensions, symbol references, and call syntax do not match. For example, `orchestrate,` matches; `orchestrated`, `orchestrate.ts`, `foo::orchestrate`, and `orchestrate()` do not.
 - Fenced code blocks (backticks or tildes), inline code spans, HTML/XML comments/tags/elements, and their contents are ignored.
-<<<<<<< ours — heading `Matching rules` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 - All enabled keywords in one prompt may add their own notice. The visible word remains in the architect message; hidden notices are non-displayed custom messages attributed to the architect.
 - The instruction applies only to the turn containing the keyword.
-=======
-- All enabled keywords in one prompt may add their own notice. The visible word remains in the user message; hidden notices are non-displayed custom messages attributed to the user.
-- Matching uses the expanded prompt, after slash-command and prompt-template expansion. Synthetic, agent-initiated prompts do not trigger notices.
-- The instruction applies only to the turn containing the keyword. `chillax` on a pinned thinking level is the exception: the lowered level stays until changed.
->>>>>>> theirs — heading `Matching rules` (F, confidence: medium)
 
 ## Configuration
 
@@ -66,9 +56,5 @@ tau config set magicKeywords.workflow false
 tau config set magicKeywords.jevify false
 ```
 
-<<<<<<< ours — scope `The global switch and four per-keyword switch...` in heading `Configuration` (S, confidence: medium)
 // refused_by: statement_fold · collision: `The global switch and four per-keyword switches default to `tru…`
 The global switch and four per-keyword switches default to `true`. The global switch gates every hidden notice; a per-keyword switch gates only that notice (and ultrathink's maximum-auto-thinking override). These settings do not currently disable the editor/message gradient. Run `tau config list` to inspect every setting and its current value. See [Settings](./settings.md) for configuration scopes, precedence, and project-local overrides.
-=======
-The global switch and five per-keyword switches default to `true`. The global switch gates every hidden notice and editor animation; a per-keyword switch gates only that notice (and the thinking changes of ultrathink and chillax). Static highlighting and spelling exemptions remain. `workflowz` uses the settings key `magicKeywords.workflow`; its notice adapts to the active task batching, scout availability, and Eval kernel-tool settings. Run `omp config list` to inspect every setting and its current value. See [Settings](./settings.md) for configuration scopes, precedence, and project-local overrides.
->>>>>>> theirs — scope `The global switch and four per-keyword switch...`

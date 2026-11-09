@@ -4,7 +4,6 @@ import * as os from "node:os";
 import * as path from "node:path";
 import * as url from "node:url";
 import { stripVTControlCharacters } from "node:util";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import {` +3 more
 import { resetSettingsForTest, Settings, settings } from "tau/config/settings";
 import { LocalProtocolHandler } from "tau/internal-urls/local-protocol";
@@ -14,18 +13,6 @@ import { getMarkdownTheme, initTheme } from "@tau/tau-tui/theme";
 import * as terminalCaps from "@tau/tau-tui";
 import { isHyperlinkEnabled } from "@tau/tau-tui/render/hyperlink";
 import { isFeedModelBadgeEnabled, resolveImageOptions } from "@tau/tau-tui/render/render-utils";
-=======
-import { resetSettingsForTest, Settings, settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { LocalProtocolHandler } from "@oh-my-pi/pi-coding-agent/internal-urls/local-protocol";
-import { getDocsDiskRoot } from "@oh-my-pi/pi-coding-agent/internal-urls/docs-index";
-import { resolveMarkdownLinkHrefs } from "@oh-my-pi/pi-coding-agent/internal-urls/hyperlink-targets";
-import { InternalUrlRouter } from "@oh-my-pi/pi-coding-agent/internal-urls/router";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import { getMarkdownTheme, initTheme } from "@oh-my-pi/pi-tui/theme";
-import * as terminalCaps from "@oh-my-pi/pi-tui";
-import { isHyperlinkEnabled } from "@oh-my-pi/pi-tui/render/hyperlink";
-import { isFeedModelBadgeEnabled, resolveImageOptions } from "@oh-my-pi/pi-tui/render/render-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/internal-urls/hyperlink-targets.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 import { cfgTaskShowResolvedModelBadge } from "@oh-my-pi/pi-coding-agent/task/settings";
 import {
@@ -48,7 +35,6 @@ afterAll(() => {
 	resetSettingsForTest();
 });
 
-<<<<<<< ours — test_suite `tryResolveInternalUrlSync` (S+F, confidence: low)
 // refused_by: rename_vs_edit_guard · collision: `expect(tryResolveInternalUrlSync("omp://docs.md")).toBeUndefine…`
 describe("tryResolveInternalUrlSync", () => {
 	// The "no session options" contract below asserts on process-global state
@@ -87,38 +73,6 @@ describe("tryResolveInternalUrlSync", () => {
 	it("swallows errors from malformed URLs", () => {
 		// Malformed input should not throw, just return undefined.
 		expect(tryResolveInternalUrlSync("local://%ZZ")).toBeUndefined();
-=======
-describe("InternalUrlRouter.locateSync", () => {
-	// The "no session options" contract below asserts on process-global state
-	// (AgentRegistry main session, LocalProtocolHandler override) that sibling
-	// test files in the same worker may have populated. Pin the premise
-	// explicitly so the test is full-suite safe, not just file-local safe.
-	beforeEach(() => {
-		AgentRegistry.resetGlobalForTests();
-		LocalProtocolHandler.resetOverrideForTests();
-	});
-
-	afterEach(() => {
-		AgentRegistry.resetGlobalForTests();
-		LocalProtocolHandler.resetOverrideForTests();
-	});
-
-	it("returns undefined for non-internal URLs", () => {
-		const router = InternalUrlRouter.instance();
-		expect(router.locateSync("/abs/path/file.ts")).toBeUndefined();
-		expect(router.locateSync("relative/path.ts")).toBeUndefined();
-		expect(router.locateSync("https://example.com/foo")).toBeUndefined();
-	});
-
-	it("returns undefined when local:// resolution has no session options", () => {
-		// No AgentRegistry main session in this unit test, no override installed.
-		expect(InternalUrlRouter.instance().locateSync("local://foo.md")).toBeUndefined();
-	});
-
-	it("swallows errors from malformed URLs", () => {
-		// Malformed input should not throw, just return undefined.
-		expect(InternalUrlRouter.instance().locateSync("local://%ZZ")).toBeUndefined();
->>>>>>> theirs — test_suite `tryResolveInternalUrlSync` (S+F, confidence: low)
 	});
 });
 

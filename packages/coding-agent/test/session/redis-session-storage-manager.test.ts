@@ -9,22 +9,11 @@
  */
 
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 import type { Usage } from "@tau/tau-ai";
 import { RedisSessionStorage, type RedisSessionStorageClient } from "tau/session/redis-session-storage";
 import { SessionManager } from "tau/session/session-manager";
 import { SessionWriteConflictError } from "tau/session/session-storage";
-=======
-import * as path from "node:path";
-import type { Usage } from "@oh-my-pi/pi-ai";
-import {
-	RedisSessionStorage,
-	type RedisSessionStorageClient,
-} from "@oh-my-pi/pi-coding-agent/session/redis-session-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { SessionWriteConflictError } from "@oh-my-pi/pi-coding-agent/session/session-storage";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/session/redis-session-storage-manager.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 interface FakeRedis extends RedisSessionStorageClient {
 	strings: Map<string, string>;

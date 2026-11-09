@@ -1,15 +1,7 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { clearBundledCommandsCache, loadBundledCommands } from …`
 import { MAGIC_KEYWORDS, renderOrchestrateNotice, renderWorkflowNotice } from "tau/modes/magic-keywords";
 import { clearBundledCommandsCache, loadBundledCommands } from "tau/task/commands";
-=======
-import {
-	MAGIC_KEYWORDS,
-	renderOrchestrateNotice,
-	renderWorkflowNotice,
-} from "@oh-my-pi/pi-coding-agent/modes/magic-keywords";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/modes/magic-keywords.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 describe("magic keyword registry", () => {
 	it("keeps ids and words unique so notice types and settings keys cannot collide", () => {

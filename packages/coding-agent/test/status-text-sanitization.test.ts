@@ -1,10 +1,6 @@
 import { describe, expect, it } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { sanitizeStatusText } from "@oh-my-pi/pi-tui/chrome/sha…`
 import { sanitizeStatusText } from "@tau/tau-tui/chrome/shared";
-=======
-import { sanitizeHookStatusText, sanitizeStatusText } from "@oh-my-pi/pi-tui/chrome/shared";
->>>>>>> theirs — interstitial `file_header` (S, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/status-text-sanitization.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const ESCAPE_FIXTURE =
 	"prefix " +

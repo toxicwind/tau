@@ -3,14 +3,9 @@
  */
 
 import { scheduler } from "node:timers/promises";
-<<<<<<< ours — imports `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { readSseJson } from "@oh-my-pi/pi-utils";`
 import { calculateCost } from "@tau/tau-catalog/models";
 import { readSseJson } from "@tau/tau-utils";
-=======
-import { calculateCost } from "@oh-my-pi/pi-catalog/models";
-import { readSseJson, type SseEventObserver } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/ai/src/providers/google-shared.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { renderDemotedThinking } from "../dialect/demotion";
 import { ThinkingFenceStripper } from "../dialect/thinking-fence-strip";
 import * as AIError from "../error";

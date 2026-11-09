@@ -1,5 +1,4 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "bun:test";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { Agent } from "@oh-my-pi/pi-agent-core";`
 import { Agent } from "@tau/tau-agent-core";
 import type { AssistantMessage, Message, Model, Usage, UserMessage } from "@tau/tau-ai";
@@ -9,18 +8,6 @@ import { AgentSession } from "tau/session/agent-session";
 import { AuthStorage } from "tau/session/auth-storage";
 import { SessionManager } from "tau/session/session-manager";
 import { TempDir } from "@tau/tau-utils";
-=======
-import { type } from "@oh-my-pi/omptype";
-import { Agent, type AgentTool } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, Message, Model, Usage, UserMessage } from "@oh-my-pi/pi-ai";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
-import { estimateToolSchemaTokens } from "@oh-my-pi/pi-tui/status-line/context-usage";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/agent-session-stats.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 describe("AgentSession session stats", () => {
 	let authStorage: AuthStorage;

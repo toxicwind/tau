@@ -3,15 +3,10 @@
  * - `dist/extension/` — unpacked extension (load via chrome://extensions)
  * - `dist/tau-browser-relay-extension.zip` — packaged extension for GH releases
  * - `../coding-agent/src/tools/browser/relay/extension-assets/*.txt` —
-<<<<<<< ours — interstitial `file_header` (T+F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
  *   generated text assets embedded into the tau CLI so `tau browser-relay
  *   install` works from the compiled binary (same committed-generated-output
  *   pattern as tool-views.generated.js). Re-run this script after touching
-=======
- *   generated text assets embedded into the omp CLI so `omp browser-relay
- *   install` works from the compiled binary. Re-run this script after touching
->>>>>>> theirs — interstitial `file_header` (T+F, confidence: medium) · weave: run 'weave explain packages/browser-relay/scripts/build-extension.ts' for per-hunk detail, 'weave check' to verify your resolution
  *   anything under `extension/` and commit the regenerated assets.
  *
  * Dependency-free on purpose: CI runs this without `bun install`.

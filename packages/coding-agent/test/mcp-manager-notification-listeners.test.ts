@@ -2,16 +2,10 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `import { removeSyncWithRetries } from "@oh-my-pi/pi-utils";`
 import { MCPManager } from "tau/mcp/manager";
 import type { MCPServerConfig } from "tau/mcp/types";
 import { removeSyncWithRetries } from "@tau/tau-utils";
-=======
-import { MCPManager } from "@oh-my-pi/pi-coding-agent/mcp/manager";
-import type { MCPServerConfig } from "@oh-my-pi/pi-coding-agent/mcp/types";
-import { isRecord, removeSyncWithRetries } from "@oh-my-pi/pi-utils";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/mcp-manager-notification-listeners.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { CUSTOM_NOTIFICATION_METHOD, CUSTOM_NOTIFICATION_PAYLOAD } from "./fixtures/notifications-mcp";
 
 const FIXTURE_PATH = path.join(import.meta.dir, "fixtures", "notifications-mcp.ts");

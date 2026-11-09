@@ -191,16 +191,10 @@ routing, model ids, or usage accounting.
 - The public `recommended-models` endpoint is authoritative for membership. The required `clinePass` bucket supplies subscription models and the optional `free` bucket supplies free models. A missing subscription bucket or one with no valid IDs is rejected so the generated fallback survives; invalid individual entries are skipped.
 - Known IDs use a Cline-authored metadata snapshot for exact limits, subscription pricing, input modalities, and reasoning controls. Unknown IDs are enriched from bundled upstream references and live OpenRouter metadata, then fall back to conservative limits without invented reasoning controls.
 - Subscription models display Cline's API-equivalent list price, but streamed `usage.cost` is the authoritative billed/discounted charge. Free-tier models remain genuinely $0.
-<<<<<<< ours — heading `ClinePass` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 - Reasoning is model-specific: effort models send only their advertised wire tiers, Qwen3.7 Plus maps TAU efforts to Cline's nested `reasoning.max_tokens` budget, and thinking-off sends `reasoning: { enabled: false }` where Cline advertises a toggle.
 - Cline-hosted Qwen routes receive Anthropic-style ephemeral cache breakpoints. Reasoning continuations replay through `delta.reasoning` only for families that require it.
 - Login validates the key against `/users/me`; inference validation then proves model access without consuming quota.
-=======
-- Reasoning is model-specific: effort models send only their advertised wire tiers, Qwen3.7 Plus maps OMP efforts to Cline's nested `reasoning.max_tokens` budget, and thinking-off sends `reasoning: { enabled: false }` where Cline advertises a toggle.
-- Cline-hosted Qwen and Anthropic routes receive Anthropic-style ephemeral cache breakpoints. Required reasoning history replays in assistant `reasoning`; incoming reasoning text is read from `delta.reasoning`.
-- Login validates the key against `/users/me`, without a completion probe or subscription-quota charge. It does not prove access to every roster model.
->>>>>>> theirs — heading `ClinePass` (S+F, confidence: low) · weave: run 'weave explain docs/upstream/provider-endpoint-constraints.md' for per-hunk detail, 'weave check' to verify your resolution
 - Subscription-window exhaustion (`clinepass limit`) and free-tier caps (`free limit reached on model ...`) classify as usage limits. Roster rotation and account-policy errors receive provider-specific recovery guidance.
 - The dashboard's `/users/me/plan/usage-limits` route accepts the inference API key and reports five-hour, weekly, and monthly utilization; `/users/me` supplies the account label. Usage reporting does not require account OAuth.
 

@@ -19,17 +19,10 @@ import {
 	WebFetchRequestResponseSchema,
 	WebSearchRequestResponse_ApprovedSchema,
 	WebSearchRequestResponseSchema,
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { $env } from "@oh-my-pi/pi-utils";`
 } from "@tau/tau-catalog/discovery/cursor-proto";
 import { create, toBinary } from "@tau/tau-catalog/discovery/protobuf";
 import { $env } from "@tau/tau-utils";
-=======
-} from "@oh-my-pi/pi-catalog/discovery/cursor-proto";
-import { create, toBinary } from "@oh-my-pi/pi-catalog/discovery/protobuf";
-import { $env, logger } from "@oh-my-pi/pi-utils";
-import { frameConnectMessage } from "../connect-frame";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/src/providers/cursor/interaction-query.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const NOT_IMPLEMENTED_SUFFIX = "not implemented by this client";
 

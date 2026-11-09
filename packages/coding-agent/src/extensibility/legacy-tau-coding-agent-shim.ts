@@ -28,7 +28,6 @@ import {
 	createBranchSummaryMessage,
 	createCompactionSummaryMessage,
 	createCustomMessage,
-<<<<<<< ours — imports `file_header` (T+F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-agent-core/compaction/messages";
 import { type AuthCredential, SqliteAuthCredentialStore, type TSchema } from "@tau/tau-ai";
@@ -36,22 +35,6 @@ import { piEscapeRegexLiteral, piJoinPath } from "@tau/tau-ai/providers/cursor-t
 import { getKeybindings, type Keybinding, Text } from "@tau/tau-tui";
 import { getAgentDbPath, getAgentDir, getProjectDir, isCompiledBinary, parseFrontmatter as parseOmpFrontmatter } from "@tau/tau-utils";
 import { AgentSession } from "../session/agent-session";
-=======
-} from "@oh-my-pi/pi-agent-core/compaction/messages";
-import { type AuthCredential, SqliteAuthCredentialStore, type TSchema } from "@oh-my-pi/pi-ai";
-import { piEscapeRegexLiteral, piJoinPath } from "@oh-my-pi/pi-ai/providers/cursor-pi-args";
-import { getKeybindings, type Keybinding, Text } from "@oh-my-pi/pi-tui";
-import {
-	escapeXmlText,
-	getAgentDbPath,
-	getAgentDir,
-	getProjectDir,
-	isCompiledBinary,
-	parseFrontmatter as parseOmpFrontmatter,
-	prompt,
-} from "@oh-my-pi/pi-utils";
-import legacyAvailableSkillsTemplate from "./legacy-pi-available-skills.md" with { type: "text" };
->>>>>>> theirs — imports `file_header` (T+F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/extensibility/legacy-tau-coding-agent-shim.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { getPackageDir as getOmpPackageDir } from "../config";
 import { formatKeyHints } from "@tau/tau-tui/app-keybindings";
 import type { PromptTemplate } from "../config/prompt-templates";
@@ -840,7 +823,6 @@ function withLegacyShellAccessors(settings: Settings): Settings & LegacyShellAcc
 	});
 }
 
-<<<<<<< ours — scope `declaration` in variable `SettingsManager` (S, confidence: medium)
 // refused_by: container_member · collision: `* `get(path)`). OMP's `Settings` is that manager, so the shim r…` +1 more
 /**
  * Legacy pi `SettingsManager` shim.
@@ -855,8 +837,6 @@ function withLegacyShellAccessors(settings: Settings): Settings & LegacyShellAcc
  * handler (#10397); selecting a process-global instance would leak one session's
  * settings into another.
  */
-=======
->>>>>>> theirs — scope `declaration`
 export const SettingsManager = {
 	create(cwd?: string, agentDir?: string): Settings & LegacyShellAccessors {
 		return withLegacyShellAccessors(findScopedSettings(cwd, agentDir) ?? Settings.isolated());

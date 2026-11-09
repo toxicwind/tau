@@ -1,4 +1,3 @@
-<<<<<<< ours — imports `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { type } from "@oh-my-pi/omptype";` +4 more
 import { beforeAll, describe, expect, it, spyOn, vi } from "bun:test";
 import { stripVTControlCharacters } from "node:util";
@@ -16,25 +15,6 @@ import { AskTool } from "tau/tools/ask";
 import { askToolRenderer } from "@tau/tau-tui/tools/ask";
 import { ToolAbortError } from "tau/tools/tool-errors";
 import { TERMINAL } from "@tau/tau-tui";
-=======
-import { afterEach, beforeAll, describe, expect, it, spyOn, vi } from "bun:test";
-import { agentLoop, type AgentToolContext } from "@oh-my-pi/pi-agent-core";
-import type { AgentLoopConfig } from "@oh-my-pi/pi-agent-core/types";
-import type { Message } from "@oh-my-pi/pi-ai";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type {
-	ExtensionFormDialogResult,
-	ExtensionUIDialogOptions,
-	ExtensionUISelectItem,
-} from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { AskTool, recoverAskHtml } from "@oh-my-pi/pi-coding-agent/tools/ask";
-import { ToolAbortError } from "@oh-my-pi/pi-coding-agent/tools/tool-errors";
-import { TERMINAL } from "@oh-my-pi/pi-tui";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
->>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/tools/ask.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const DB_FORM = `<form>
   <p>Sessions live in memory.</p>
@@ -496,7 +476,6 @@ describe("recoverAskHtml", () => {
 		expect(recoverAskHtml("<form></form>")).toBeUndefined();
 	});
 });
-<<<<<<< ours — test_suite `AskTool option descriptions` (S+F, confidence: low)
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
 describe("AskTool option descriptions", () => {
 	it("passes descriptions to the selector while returning selected labels", async () => {
@@ -630,5 +609,3 @@ describe("AskTool option descriptions", () => {
 		expect(typeof alphaOption === "object" ? alphaOption.description : undefined).toBe("First choice detail.");
 	});
 });
-=======
->>>>>>> theirs — test_suite `AskTool option descriptions` (S+F, confidence: low)

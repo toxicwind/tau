@@ -178,7 +178,6 @@ pub(super) fn restore(context: &Context, snapshot: &Snapshot) -> Result<()> {
 	// retries the same failed recovery.
 	let (command, legacy_command) = if let Ok(normalized) =
 		relay_command(&context.helper_path, &context.callback_path)
-<<<<<<< ours — scope `// Pre-#11907 binaries registered the verbati...` in function `restore` (T+S+F, confidence: low)
 // refused_by: statement_fold · collision: `// normalized command fits but the legacy one exceeds the comma…` +5 more
 	{
 		// The legacy encoding is 8 units longer on verbatim disk paths; if the
@@ -196,31 +195,6 @@ pub(super) fn restore(context: &Context, snapshot: &Snapshot) -> Result<()> {
 		let legacy = legacy_relay_command(&context.helper_path, &context.callback_path)?;
 		(legacy.clone(), Some(legacy))
 	};
-=======
-	// Pre-#11907 binaries registered the verbatim paths from `fs::canonicalize`
-	// as-is; the shell fix normalizes them before quoting. A stale journal left
-	// by an older binary still has the verbatim command in HKCU, so recovery
-	// must recognize both encodings as owned — otherwise the project's own value
-	// looks externally changed, the journal is retained, and every later start
-	// retries the same failed recovery.
-	let (command, legacy_command) =
-		if let Ok(normalized) = relay_command(&context.helper_path, &context.callback_path) {
-			// The legacy encoding is 8 units longer on verbatim disk paths; if the
-			// normalized command fits but the legacy one exceeds the command
-			// limit, no older binary could have installed it, so treat it as no
-			// match rather than failing recovery.
-			let legacy = legacy_relay_command(&context.helper_path, &context.callback_path)
-				.ok()
-				.filter(|legacy| *legacy != normalized);
-			(normalized, legacy)
-		} else {
-			// The only way the normalized form fails while the legacy form
-			// succeeds is the shell refusal of volume/device paths; fall back so
-			// those dead registrations still clean up instead of wedging recovery.
-			let legacy = legacy_relay_command(&context.helper_path, &context.callback_path)?;
-			(legacy.clone(), Some(legacy))
-		};
->>>>>>> theirs — scope `// Pre-#11907 binaries registered the verbati...` · weave: run 'weave explain crates/tau-natives/src/oauth_callback/windows.rs' for per-hunk detail, 'weave check' to verify your resolution
 	let owned = owned_values(context, &command);
 	let legacy_owned = legacy_command
 		.as_ref()

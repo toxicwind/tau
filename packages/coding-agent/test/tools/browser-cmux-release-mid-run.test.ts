@@ -32,7 +32,6 @@ import { afterEach, describe, expect, it, spyOn, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import type { CmuxKind } from "tau/tools/browser/cmux/rpc";
 import { CmuxSocketClient } from "tau/tools/browser/cmux/socket-client";
@@ -40,21 +39,6 @@ import { acquireBrowser } from "tau/tools/browser/registry";
 import { acquireTab, getTabsMapForTest, releaseTab, runInTab } from "tau/tools/browser/tab-supervisor";
 import type { ToolSession } from "tau/tools/index";
 import * as logger from "@tau/tau-utils/logger";
-=======
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { CmuxKind } from "@oh-my-pi/pi-coding-agent/tools/browser/cmux/rpc";
-import { CmuxSocketClient } from "@oh-my-pi/pi-coding-agent/tools/browser/cmux/socket-client";
-import { acquireBrowser } from "@oh-my-pi/pi-coding-agent/tools/browser/registry";
-import {
-	acquireTab,
-	getTabsMapForTest,
-	releaseTab,
-	runInTab,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/tab-supervisor";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools/index";
-import { encodeRawPng } from "@oh-my-pi/pi-coding-agent/utils/png-encode";
-import * as logger from "@oh-my-pi/pi-utils/logger";
->>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/tools/browser-cmux-release-mid-run.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function makeKind(socketSuffix: string): CmuxKind {
 	return {

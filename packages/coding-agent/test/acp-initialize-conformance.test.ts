@@ -236,13 +236,9 @@ describe("ACP initialize conformance", () => {
 		const pkg = (await Bun.file(pkgPath).json()) as { version: string };
 		expect(response.agentInfo).toEqual(
 			expect.objectContaining({
-<<<<<<< ours — test_suite `ACP initialize conformance` (F, confidence: medium)
 // refused_by: merge_ladder_exhausted · collision: `name: "oh-my-pi",`
 				name: "tau",
 				title: "tau",
-=======
-				title: "omp",
->>>>>>> theirs — test_suite `ACP initialize conformance` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/acp-initialize-conformance.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 				version: VERSION,
 			}),
 		);

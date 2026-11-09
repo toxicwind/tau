@@ -1,16 +1,8 @@
 import * as path from "node:path";
-<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
 // refused_by: merge_ladder_exhausted · collision: `import { isInsideTmux, wrapTmuxPassthrough } from "@oh-my-pi/pi…`
 import type { AgentMessage } from "@tau/tau-agent-core";
 import { isInsideTmux, wrapTmuxPassthrough } from "@tau/tau-tui/terminal-capabilities";
 import { VERSION } from "@tau/tau-utils/dirs";
-=======
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { writeTerminalSequence } from "@oh-my-pi/pi-tui/terminal";
-import { hasTerminalMultiplexerSession } from "@oh-my-pi/pi-tui/terminal-multiplexer";
-import { wrapTmuxPassthrough } from "@oh-my-pi/pi-tui/terminal-capabilities";
-import { VERSION } from "@oh-my-pi/pi-utils/dirs";
->>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/modes/warp-events.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { ExtensionContext, ExtensionFactory } from "../extensibility/extensions/types";
 import { isSilentAbort, isUserInterruptAbort, SKILL_PROMPT_MESSAGE_TYPE } from "../session/messages";
 
