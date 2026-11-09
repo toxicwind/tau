@@ -266,13 +266,18 @@ export function preferOursVocabulary(hunk: Hunk): boolean {
 
 export interface ModelSpec {
 	baseUrl: string;
-	apiKeyEnv: string;
+	apiKeyEnv?: string;
 	model: string;
 	maxTokens: number;
 }
 
 /** Candidate lanes in preference order; the first that answers wins. */
 export const MODEL_LANES: ModelSpec[] = [
+	{
+		baseUrl: process.env.FLUXLING_ROUTER_URL ?? "http://127.0.0.1:25193/v1",
+		model: "freeinference/qwen3.6-35b",
+		maxTokens: 4096,
+	},
 	{ baseUrl: "https://api.groq.com/openai/v1", apiKeyEnv: "GROQ_API_KEY", model: "qwen/qwen3.8-27b", maxTokens: 4096 },
 	{
 		baseUrl: "https://api.openrouter.ai/api/v1",
@@ -281,6 +286,7 @@ export const MODEL_LANES: ModelSpec[] = [
 		maxTokens: 4096,
 	},
 ];
+
 
 export interface ModelAnswer {
 	text: string;
@@ -322,17 +328,19 @@ export function sanitizeModelOutput(raw: string): string {
 export async function askModel(prompt: string, timeoutMs = 60_000): Promise<ModelAnswer> {
 	const failures: string[] = [];
 	for (const lane of MODEL_LANES) {
-		const key = process.env[lane.apiKeyEnv];
-		if (!key) {
+		const key = lane.apiKeyEnv ? process.env[lane.apiKeyEnv] : (process.env.RHODOCHROSITE_API_KEY ?? "loopback");
+		if (lane.apiKeyEnv && !key) {
 			failures.push(`${lane.model}: no ${lane.apiKeyEnv} in the environment`);
 			continue;
 		}
 		const ac = new AbortController();
 		const timer = setTimeout(() => ac.abort(), timeoutMs);
 		try {
+			const headers: Record<string, string> = { "Content-Type": "application/json" };
+			if (key) headers.Authorization = `Bearer ${key}`;
 			const res = await fetch(`${lane.baseUrl}/chat/completions`, {
 				method: "POST",
-				headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+				headers,
 				body: JSON.stringify({
 					model: lane.model,
 					messages: [

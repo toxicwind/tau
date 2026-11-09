@@ -58,3 +58,20 @@ describe("parseHunks integration", () => {
 		expect(nativePolicy("crates/pi-natives/src/utok/tables.rs", first).protected).toBe(true);
 	});
 });
+
+import { sanitizeModelOutput } from "./ai-conflict-resolver";
+
+describe("sanitizeModelOutput", () => {
+	test("strips markdown fences and conflict markers emitted by model", () => {
+		const dirty = [
+			"```ts",
+			"<<<<<<< ours",
+			"const a = 1;",
+			"=======",
+			"const a = 2;",
+			">>>>>>> theirs",
+			"```",
+		].join("\n");
+		expect(sanitizeModelOutput(dirty)).toBe("const a = 1;\n\nconst a = 2;");
+	});
+});

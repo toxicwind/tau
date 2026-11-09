@@ -97,15 +97,21 @@ import { dirname, join, relative } from "node:path";
 import { hasMarkers, resolveFile, type Strategy } from "./ai-conflict-resolver.ts";
 import { derivePathMap, parseRenameRecords, realignPath } from "./upstream-pull-paths.ts";
 
+import {
+	type Finding,
+	type PathKind,
+	CONFLICT_RE,
+	MANIFEST_RE,
+	TEXT_RE,
+	classifyFromBooleans,
+	gateUniversalFromLines,
+	invertMap,
+} from "./upstream-pull-core.ts";
 const REPO_ROOT = join(import.meta.dir, "..");
 const SYNC_RECORD = join(REPO_ROOT, ".upstream-sync.json");
 const UPSTREAM_REMOTE = "upstream";
 const UPSTREAM_BRANCH = "main";
 const FORK_ROOT_SUBJECT = "Initial commit: Tau";
-/** Non-code files that always take the semantic path. See the header. */
-const MANIFEST_RE = /(^|\/)(package\.json|tsconfig[^/]*\.json|Cargo\.toml|pyproject\.toml)$/;
-/** Extensions a rename can legitimately rewrite. */
-const TEXT_RE = /\.(ts|tsx|mts|cts|js|jsx|mjs|cjs|json|toml|ya?ml|md|sh|ps1|nix|txt)$/;
 /** How many findings each gate prints before summarizing the rest. */
 const REPORT_LIMIT = 25;
 
@@ -315,11 +321,7 @@ function deriveRenames(baseRoot: string, oursRoot: string): Record<string, strin
 	return map;
 }
 
-const invert = (m: Record<string, string>): Record<string, string> => {
-	const out: Record<string, string> = {};
-	for (const [from, to] of Object.entries(m)) out[to] = from;
-	return out;
-};
+const invert = invertMap;
 
 /**
  * Rename whole directories from one vocabulary to the other.
@@ -379,7 +381,6 @@ function pruneEmptyDirs(root: string, dirs: string[]): void {
 
 // ----------------------------------------------------------------- the merge --
 
-type PathKind = "keep-ours" | "upstream-only" | "deleted-upstream" | "suture" | "weave" | "binary" | "conflict";
 
 interface Outcome {
 	rel: string;
@@ -387,8 +388,6 @@ interface Outcome {
 	detail?: string;
 }
 
-/** weave leaves standard git conflict markers; they are the authority on residue. */
-const CONFLICT_RE = /^(<{7} |={7}\r?$|>{7} )/m;
 
 interface Engines {
 	weave: string;
@@ -396,17 +395,15 @@ interface Engines {
 }
 
 function classify(stage: string, rel: string): PathKind {
-	const inBase = has(at(stage, "base"), rel);
-	const inOurs = has(at(stage, "ours"), rel);
-	const inTheirs = has(at(stage, "theirs"), rel);
-	if (!inTheirs) return "deleted-upstream";
-	if (!inOurs) return inBase ? "deleted-upstream" : "upstream-only";
-	if (isBinary(at(stage, "ours"), rel) || isBinary(at(stage, "theirs"), rel)) return "binary";
-	if (sameBytes(at(stage, "base"), at(stage, "ours")) || !inBase) return "upstream-only";
-	if (sameBytes(at(stage, "base"), at(stage, "theirs"))) return "keep-ours";
-	// A manifest is a dependency graph. Whether our rename and their catalog
-	// bump agree is not a byte question, so never take the fast path here.
-	return MANIFEST_RE.test(rel) ? "weave" : "suture";
+	return classifyFromBooleans({
+		inBase: has(at(stage, "base"), rel),
+		inOurs: has(at(stage, "ours"), rel),
+		inTheirs: has(at(stage, "theirs"), rel),
+		isBinary: isBinary(at(stage, "ours"), rel) || isBinary(at(stage, "theirs"), rel),
+		sameOursBase: sameBytes(at(stage, "base"), at(stage, "ours")),
+		sameTheirsBase: sameBytes(at(stage, "base"), at(stage, "theirs")),
+		isManifest: MANIFEST_RE.test(rel),
+	});
 }
 
 /**
@@ -633,35 +630,9 @@ function reportManifests(issues: ManifestIssue[]): void {
 
 // ------------------------------------------------------ correctness gates ---
 
-interface Finding {
-	gate: "parsable" | "universal" | "idempotent";
-	rel: string;
-	problem: string;
-}
 
-const snippet = (line: string): string => `\`${line.trim().slice(0, 72)}\``;
 
 /** Multiset line difference, as counts so repeated lines are not conflated. */
-function lineDelta(from: string[], to: string[]): { removed: string[]; added: string[] } {
-	const count = (xs: string[]): Map<string, number> => {
-		const m = new Map<string, number>();
-		for (const x of xs) m.set(x, (m.get(x) ?? 0) + 1);
-		return m;
-	};
-	const a = count(from);
-	const b = count(to);
-	const removed: string[] = [];
-	const added: string[] = [];
-	for (const [k, n] of a) {
-		const d = n - (b.get(k) ?? 0);
-		for (let i = 0; i < d; i++) removed.push(k);
-	}
-	for (const [k, n] of b) {
-		const d = n - (a.get(k) ?? 0);
-		for (let i = 0; i < d; i++) added.push(k);
-	}
-	return { removed, added };
-}
 
 const lines = (p: string): string[] => readFileSync(p, "utf8").split("\n");
 
@@ -699,48 +670,13 @@ function gateUniversal(
 	mergedPath: string,
 ): Finding[] {
 	if (!basePath) return [];
-	const b = lines(basePath);
-	const o = lines(oursPath);
-	const t = lines(theirsPath);
-	const m = lines(mergedPath);
-	const oursDelta = lineDelta(b, o);
-	const theirsDelta = lineDelta(b, t);
-	const mergedCount = new Map<string, number>();
-	for (const l of m) mergedCount.set(l, (mergedCount.get(l) ?? 0) + 1);
-	const oursHas = new Set(o);
-	const theirsHas = new Set(t);
-	const findings: Finding[] = [];
-
-	for (const line of theirsDelta.added) {
-		if (theirsHas.has(line) && !oursHas.has(line) && (mergedCount.get(line) ?? 0) === 0) {
-			findings.push({
-				gate: "universal",
-				rel,
-				problem: `upstream added ${snippet(line)} and our side never had it, but it is absent from the merge`,
-			});
-		}
-	}
-	for (const line of oursDelta.removed) {
-		if (theirsHas.has(line) && (mergedCount.get(line) ?? 0) > 0) {
-			findings.push({
-				gate: "universal",
-				rel,
-				problem: `we deleted ${snippet(line)}, upstream kept it, yet the merge restored it`,
-			});
-		}
-	}
-	const oursAdded = new Set(oursDelta.added);
-	for (const line of theirsDelta.added) {
-		if (!oursAdded.has(line)) continue;
-		if ((mergedCount.get(line) ?? 0) > 1) {
-			findings.push({
-				gate: "universal",
-				rel,
-				problem: `${snippet(line)} was added by both sides and occurs ${mergedCount.get(line)} times — a shared edit applied more than once`,
-			});
-		}
-	}
-	return findings;
+	return gateUniversalFromLines(
+		rel,
+		lines(basePath),
+		lines(oursPath),
+		lines(theirsPath),
+		lines(mergedPath),
+	);
 }
 
 /** GATE: idempotent. Re-merge against the same theirs; the result must not drift. */
