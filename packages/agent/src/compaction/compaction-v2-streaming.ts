@@ -134,9 +134,13 @@ function compactionV2Api(model: Model): Api {
 }
 
 // refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
-function isOpenAiV2CompatibleModel(model: Model): boolean {
-	const api = compactionV2Api(model);
+/** Whether an API supports OpenAI remote compaction (both V1 `/responses/compact` and V2 streaming). */
+export function isOpenAiRemoteCompactionApi(api: Api | undefined): boolean {
 	return api === "openai-responses" || api === "azure-openai-responses" || api === "openai-codex-responses";
+}
+
+function isOpenAiV2CompatibleModel(model: Model): boolean {
+	return isOpenAiRemoteCompactionApi(compactionV2Api(model));
 }
 
 function shouldUseCodexProviderTransport(model: Model): model is Model<"openai-codex-responses"> {

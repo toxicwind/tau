@@ -76,8 +76,8 @@ num-traits = "0.2"
 onig = { version = "6.4", default-features = false }
 os_display = "0.1.4"
 parse_datetime = "0.16"
-pi-ast = { workspace = true, optional = true }
-pi-diff.workspace = true
+tau-ast = { workspace = true, optional = true }
+tau-diff.workspace = true
 # refused_by: statement_fold · collision: `pi-walker = { path = "../pi-walker" }`
 tau-walker = { path = "../tau-walker" }
 pi-vfs.workspace = true
@@ -132,7 +132,7 @@ features = [
 
 [target."cfg(any(unix, windows))".dependencies]
 # `cp`'s copy-on-write clones (`pi_iso::cow`).
-pi-iso.workspace = true
+tau-iso.workspace = true
 # `rsync`: strong checksums, daemon auth digests, token compression.
 base64.workspace = true
 flate2 = { version = "1.1", default-features = false, features = ["zlib-rs"] }
@@ -185,7 +185,7 @@ default = ["utils"]
 # ── Utility builtins ──────────────────────────────────────────────────────────
 # One feature per ported utility so a single utility can be built (and checked)
 # in isolation. `utils` turns on the whole set and is part of `default`.
-"util.ast-grep" = ["dep:pi-ast"]
+"util.ast-grep" = ["dep:tau-ast"]
 "util.b2sum" = ["util.cksum"]
 "util.base32" = []
 "util.base64" = ["util.base32"]

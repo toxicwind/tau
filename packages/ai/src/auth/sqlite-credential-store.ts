@@ -124,12 +124,6 @@ const CREDENTIAL_BLOCK_SWEEP_INTERVAL_MS = 60_000;
 // pre-existing `@tau/tau-ai/auth-storage` surface.
 export { isSqliteBusyError, isSqliteCorruptionError };
 
-
-// SQLite error classifiers live in pi-utils so the credential store and the
-// model cache share one implementation; re-exported here to preserve the
-// pre-existing `@oh-my-pi/pi-ai/auth-storage` surface.
-export { isSqliteBusyError, isSqliteCorruptionError };
-
 function normalizeStoredAccountId(accountId: string | null | undefined): string | null {
 	const normalized = accountId?.trim();
 	return normalized && normalized.length > 0 ? normalized : null;

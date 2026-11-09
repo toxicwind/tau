@@ -31,8 +31,6 @@ base64.workspace = true
 blake3.workspace = true
 bstr.workspace = true
 bytes.workspace = true
-# refused_by: statement_fold · collision: none (no common ancestor text)
-tau-builtins.workspace = true
 clap.workspace = true
 encoding_rs.workspace = true
 flume.workspace = true
@@ -42,8 +40,8 @@ libm.workspace = true
 parking_lot.workspace = true
 # zsh/pcre (`pcre_compile`, `pcre_match`, `-pcre-match`).
 pcre2-sys.workspace = true
-pi-builtins.workspace = true
-pi-vcs.workspace = true
+tau-builtins.workspace = true
+tau-vcs.workspace = true
 pi-vfs.workspace = true
 postcard.workspace = true
 regex.workspace = true
@@ -67,20 +65,3 @@ winreg.workspace = true
 [dev-dependencies]
 tempfile.workspace = true
 
-# The engine benches print their own statistics.
-[[bench]]
-name = "frames"
-harness = false
-[[bench]]
-name = "create"
-harness = false
-# Safepoint overhead needs a second run with `--features no-safepoint-check`.
-[[bench]]
-name = "overhead"
-harness = false
-[[bench]]
-name = "memory"
-harness = false
-[[bench]]
-name = "sys_spawn"
-harness = false

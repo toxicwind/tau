@@ -6914,3 +6914,7 @@ function mapStopReason(reason: string): StopReason {
 			return "stop";
 	}
 }
+export {
+	buildAnthropicHeaders,
+	resolveAnthropicCustomHeadersForBaseUrl,
+};

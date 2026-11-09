@@ -37,17 +37,17 @@ export type {
 	RelayControlMessage,
 	RelayControlToGuest,
 	RelayControlToHost,
-// refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-wire";
-// refused_by: merge_ladder_exhausted · collision: `export { COLLAB_PROMPT_MESSAGE_TYPE, COLLAB_PROTO } from "@oh-m…`
-export { COLLAB_PROMPT_MESSAGE_TYPE, COLLAB_PROTO } from "@tau/tau-wire";
-// refused_by: merge_ladder_exhausted · collision: `export { COLLAB_PROMPT_MESSAGE_TYPE, COLLAB_PROTO } from "@oh-m…`
-export { COLLAB_PROMPT_MESSAGE_TYPE, COLLAB_PROTO } from "@tau/tau-wire";
+export {
+	COLLAB_PROMPT_MESSAGE_TYPE,
+	COLLAB_PROTO,
+	DEFAULT_RELAY_URL,
+	ENVELOPE_HEADER_LENGTH,
+	ROOM_ID_BYTES,
 	packEnvelope,
 	rewriteEnvelopePeer,
 	unpackEnvelope,
-} from "@oh-my-pi/pi-wire";
-export { DEFAULT_RELAY_URL, ENVELOPE_HEADER_LENGTH, ROOM_ID_BYTES };
+} from "@tau/tau-wire";
 
 export type CollabParticipant = Participant;
 export type AgentSnapshot = WireAgentSnapshot;

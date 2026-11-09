@@ -10,13 +10,12 @@
     "crates/tau-edit",
     "crates/tau-iso",
     "crates/tau-natives",
-    "crates/tau-predict",
+    "crates/pi-predict",
     "crates/tau-shell",
     "crates/tau-vcs",
-    "crates/tau-vfs",
+    "crates/pi-vfs",
     "crates/tau-voice",
     "crates/tau-walker",
-    "crates/vendor/brush-core",
     "crates/vendor/cfg_aliases",
     "crates/vendor/grep-searcher",
     "crates/vendor/jaq-core",
@@ -366,6 +365,7 @@ windows-sys = { version = "0.61", features = [
 # find-msvc-tools 0.1.13 retyped that constant to i32, breaking every Windows
 # build. tree-sitter-sequel caps cc at ~1.2.1 so the fixed cc 1.4.x line is
 # out of reach; hold 0.1.12 until upstream ships a compatible release.
+find-msvc-tools = "=0.1.12"
 winreg = "0.56"
 
 # ──────────────────────────────────────────────────────────────────────────────

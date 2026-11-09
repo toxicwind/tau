@@ -22,7 +22,7 @@ anyhow.workspace = true
 ast-grep-core.workspace = true
 futures.workspace = true
 phf.workspace = true
-pi-walker.workspace = true
+tau-walker.workspace = true
 pi-vfs.workspace = true
 serde.workspace = true
 # Match the host semver features used by wasmtime's build dependencies.

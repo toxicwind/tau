@@ -83,28 +83,30 @@ export function parseAntigravityManifestVersion(yamlText: string): string | null
 export function ensureAntigravityVersion(fetcher: FetchImpl = fetch, signal?: AbortSignal): Promise<void> {
 	if (process.env.PI_AI_ANTIGRAVITY_VERSION || discoveredAntigravityVersion) return Promise.resolve();
 // refused_by: statement_fold · collision: `headers: { "Cache-Control": "no-cache", "User-Agent": "electron…`
-	antigravityVersionFetch = (async () => {
-		try {
-			const timeoutSignal = AbortSignal.timeout(ANTIGRAVITY_VERSION_FETCH_TIMEOUT_MS);
-			const response = await fetcher(ANTIGRAVITY_VERSION_MANIFEST_URL, {
-				headers: {
-					"Cache-Control": "no-cache",
-					"User-Agent": "electron-builder",
-				},
-				signal: signal ? AbortSignal.any([signal, timeoutSignal]) : timeoutSignal,
-			});
-			if (response.ok) {
-				discoveredAntigravityVersion = parseAntigravityManifestVersion(await response.text());
-			}
+	if (!antigravityVersionFetch) {
+		antigravityVersionFetch = (async () => {
+			try {
+				const timeoutSignal = AbortSignal.timeout(ANTIGRAVITY_VERSION_FETCH_TIMEOUT_MS);
+				const response = await fetcher(ANTIGRAVITY_VERSION_MANIFEST_URL, {
+					headers: {
+						"Cache-Control": "no-cache",
+						"User-Agent": "electron-builder",
+					},
+					signal: signal ? AbortSignal.any([signal, timeoutSignal]) : timeoutSignal,
+				});
+				if (response.ok) {
+					discoveredAntigravityVersion = parseAntigravityManifestVersion(await response.text());
+				}
+			} catch {}
 		})();
 	}
+	const lookup = antigravityVersionFetch;
 	if (!signal) return lookup;
 	if (signal.aborted) return Promise.resolve();
 	const { promise: aborted, resolve } = Promise.withResolvers<void>();
 	const onAbort = () => resolve();
 	signal.addEventListener("abort", onAbort, { once: true });
 	return Promise.race([lookup, aborted]).finally(() => signal.removeEventListener("abort", onAbort));
-	const lookup = antigravityVersionFetch;
 }
 
 /**

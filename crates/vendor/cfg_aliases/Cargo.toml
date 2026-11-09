@@ -19,5 +19,3 @@ nursery = { level = "allow", priority = -1 }
 pedantic = { level = "allow", priority = -1 }
 cargo = { level = "allow", priority = -1 }
 
-[lints]
-workspace = true

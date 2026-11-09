@@ -6110,12 +6110,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "peg-runtime"
-version = "0.8.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7011d97b484a5ebdc4b1fdb3b12d5e4bbbea56e9d22b688f2e79e04b65a7d8a6"
-
-[[package]]
 name = "pem"
 version = "3.0.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -6247,7 +6241,37 @@ dependencies = [
 ]
 
 [[package]]
+name = "pi-predict"
+version = "18.18.3"
+dependencies = [
+ "anyhow",
+ "candle-core",
+ "candle-nn",
+ "flume",
+ "objc2",
+ "objc2-app-kit",
+ "objc2-foundation",
+ "rayon",
+ "regex",
+ "serde",
+ "serde_json",
+ "zstd",
+]
 
+[[package]]
+name = "pi-vfs"
+version = "18.18.3"
+dependencies = [
+ "async-trait",
+ "libc",
+ "parking_lot",
+ "tokio",
+ "tokio-util",
+ "windows-sys 0.61.2",
+ "xattr",
+]
+
+[[package]]
 name = "pico-args"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -7758,99 +7782,64 @@ checksum = "adb6935a6f5c20170eeceb1a3835a49e12e19d792f6dd344ccc76a985ca5a6ca"
 
 [[package]]
 name = "tau-ast"
-version = "18.3.0"
+version = "18.18.3"
 dependencies = [
  "anyhow",
  "ast-grep-core",
- "globset",
- "ignore",
- "phf 0.14.0",
+ "async-trait",
+ "futures",
+ "parking_lot",
+ "phf",
+ "pi-vfs",
+ "semver",
  "serde",
+ "tau-walker",
+ "tokio",
+ "tokio-util",
  "tree-sitter",
- "tree-sitter-astro-next",
  "tree-sitter-bash",
  "tree-sitter-c",
- "tree-sitter-c-sharp",
- "tree-sitter-clojure",
- "tree-sitter-cmake",
  "tree-sitter-cpp",
  "tree-sitter-css",
- "tree-sitter-dart",
  "tree-sitter-diff",
- "tree-sitter-dockerfile-updated",
  "tree-sitter-elisp",
- "tree-sitter-elixir",
- "tree-sitter-erlang",
  "tree-sitter-fortran",
  "tree-sitter-go",
- "tree-sitter-graphql",
- "tree-sitter-haskell",
- "tree-sitter-hcl",
  "tree-sitter-html",
- "tree-sitter-ini",
  "tree-sitter-java",
  "tree-sitter-javascript",
  "tree-sitter-json",
- "tree-sitter-julia",
- "tree-sitter-just",
- "tree-sitter-kotlin-sg",
- "tree-sitter-lua",
- "tree-sitter-make",
  "tree-sitter-md",
- "tree-sitter-nix",
- "tree-sitter-objc",
- "tree-sitter-ocaml",
- "tree-sitter-odin",
- "tree-sitter-php",
- "tree-sitter-powershell",
- "tree-sitter-proto",
  "tree-sitter-python",
- "tree-sitter-r",
  "tree-sitter-regex",
  "tree-sitter-ruby",
  "tree-sitter-rust",
- "tree-sitter-scala",
- "tree-sitter-sequel",
- "tree-sitter-solidity",
- "tree-sitter-starlark",
- "tree-sitter-svelte-next",
  "tree-sitter-swift",
- "tree-sitter-tlaplus",
  "tree-sitter-toml-ng",
  "tree-sitter-typescript",
- "tree-sitter-verilog",
- "tree-sitter-vue-next",
- "tree-sitter-xml",
  "tree-sitter-yaml",
- "tree-sitter-zig",
+ "xutf",
  "xxhash-rust",
 ]
 
 [[package]]
 name = "tau-builtins"
-version = "18.3.0"
+version = "18.18.3"
 dependencies = [
  "ansi-width",
  "anyhow",
  "argmax",
+ "async-trait",
+ "base64 0.23.1",
  "bigdecimal",
- "binary-heap-plus",
- "brush-core",
- "brush-parser",
  "bstr",
- "bytecount",
- "cfg-if",
  "chrono",
  "clap",
- "codesnake",
- "compare",
  "dns-lookup",
- "faccess",
  "fancy-regex 0.17.0",
- "filetime",
+ "flate2",
  "flume",
  "foldhash 0.2.0",
- "fs_extra",
  "futures",
  "glob",
  "globset",
@@ -7861,8 +7850,10 @@ dependencies = [
  "grep-regex",
  "grep-searcher",
  "hex",
- "hifijson",
- "hostname",
+ "icu_collator",
+ "icu_decimal",
+ "icu_locale_core",
+ "icu_provider",
  "ignore",
  "indicatif",
  "itertools 0.14.0",
@@ -7872,8 +7863,10 @@ dependencies = [
  "jiff",
  "libc",
  "lscolors",
+ "lz4_flex",
+ "md-5 0.10.6",
+ "md4",
  "memchr",
- "memmap2",
  "nix 0.31.3",
  "nom 8.0.0",
  "notify",
@@ -7883,47 +7876,44 @@ dependencies = [
  "os_display",
  "parking_lot",
  "parse_datetime",
- "platform-info",
- "pretty_assertions",
- "procfs",
+ "pi-vfs",
  "rand 0.10.3",
  "rayon",
  "regex",
- "rlimit",
  "rustc-hash",
  "rustix 1.1.5",
- "same-file",
  "self_cell",
  "serde_json",
- "similar 3.2.0",
+ "sha1",
+ "sha2 0.10.9",
  "smallvec",
- "strum",
- "strum_macros",
+ "tau-ast",
+ "tau-diff",
+ "tau-iso",
  "tau-walker",
  "tempfile",
  "thiserror 2.0.21",
  "tokio",
  "tokio-util",
- "tracing",
  "uucore",
  "uutils_term_grid",
  "windows-sys 0.61.2",
  "xutf",
- "yansi",
+ "xxhash-rust",
+ "zstd",
 ]
 
 [[package]]
 name = "tau-diff"
-version = "18.3.0"
+version = "18.18.3"
 
 [[package]]
 name = "tau-edit"
-version = "18.3.0"
+version = "18.18.3"
 dependencies = [
  "async-trait",
  "parking_lot",
  "regex",
- "serde",
  "serde_json",
  "tau-ast",
  "tau-diff",
@@ -7931,58 +7921,52 @@ dependencies = [
  "tempfile",
  "thiserror 2.0.21",
  "tokio",
+ "tree-sitter-lua",
  "xutf",
  "xxhash-rust",
 ]
 
 [[package]]
 name = "tau-iso"
-version = "18.3.0"
+version = "18.18.3"
 dependencies = [
  "async-trait",
  "libc",
  "parking_lot",
- "similar 3.2.0",
+ "tau-diff",
  "tokio",
  "windows-sys 0.61.2",
 ]
 
 [[package]]
 name = "tau-natives"
-version = "18.3.0"
+version = "18.18.3"
 dependencies = [
  "anyhow",
  "arboard",
  "ashpd",
- "ast-grep-core",
  "async-trait",
  "atspi",
  "base64 0.23.1",
- "clap",
+ "block2",
  "clipboard-win",
- "core-graphics",
  "enigo",
- "fancy-regex 0.16.2",
+ "fancy-regex 0.17.0",
+ "find-msvc-tools",
  "flume",
  "fontdue",
- "foreign-types",
  "futures",
- "globset",
  "grep-matcher",
- "grep-pcre2",
- "grep-regex",
- "grep-searcher",
- "heapless 0.9.3",
+ "html-escape",
  "html-to-markdown-rs",
- "icy_sixel",
- "ignore",
  "image",
- "inferno",
  "libc",
  "log",
+ "memchr",
  "napi",
  "napi-build",
  "napi-derive",
+ "notify",
  "objc2",
  "objc2-app-kit",
  "objc2-application-services",
@@ -7991,7 +7975,9 @@ dependencies = [
  "objc2-foundation",
  "parking_lot",
  "pdf-inspector",
- "phf 0.14.0",
+ "phf",
+ "pi-predict",
+ "pi-vfs",
  "pipewire",
  "png",
  "portable-pty",
@@ -8005,6 +7991,7 @@ dependencies = [
  "smallvec",
  "syntect",
  "tau-ast",
+ "tau-builtins",
  "tau-diff",
  "tau-edit",
  "tau-iso",
@@ -8012,13 +7999,13 @@ dependencies = [
  "tau-vcs",
  "tau-voice",
  "tau-walker",
- "tempfile",
  "tiktoken-rs",
  "tinyvec",
  "tokio",
  "tokio-util",
- "toml",
  "uiautomation",
+ "unicode-bidi",
+ "windows 0.62.2",
  "windows-sys 0.61.2",
  "winreg 0.56.0",
  "x11rb",
@@ -8033,24 +8020,34 @@ dependencies = [
 
 [[package]]
 name = "tau-shell"
-version = "18.3.0"
+version = "18.18.3"
 dependencies = [
  "anyhow",
- "brush-core",
- "brush-parser",
+ "async-trait",
+ "base64 0.23.1",
+ "blake3",
+ "bstr",
  "bytes",
  "clap",
+ "encoding_rs",
  "flume",
+ "hashbrown 0.17.1",
  "jiff",
  "libc",
- "os_pipe",
+ "libm",
  "parking_lot",
+ "pcre2-sys",
+ "pi-vfs",
+ "postcard",
  "regex",
  "serde",
  "serde_json",
  "smallvec",
+ "strum",
  "tau-builtins",
+ "tau-vcs",
  "tempfile",
+ "thiserror 2.0.21",
  "tokio",
  "tokio-util",
  "toml",
@@ -8061,8 +8058,9 @@ dependencies = [
 
 [[package]]
 name = "tau-vcs"
-version = "18.3.0"
+version = "18.18.3"
 dependencies = [
+ "futures",
  "gix",
  "gix-utils",
  "jj-lib",
@@ -8076,7 +8074,7 @@ dependencies = [
 
 [[package]]
 name = "tau-voice"
-version = "18.3.0"
+version = "18.18.3"
 dependencies = [
  "bytes",
  "flume",
@@ -8090,13 +8088,23 @@ dependencies = [
 
 [[package]]
 name = "tau-walker"
-version = "18.3.0"
+version = "18.18.3"
 dependencies = [
+ "async-trait",
+ "flume",
+ "futures",
  "globset",
+ "grep-matcher",
+ "grep-pcre2",
+ "grep-regex",
+ "grep-searcher",
  "ignore",
  "libc",
+ "memchr",
  "parking_lot",
- "rayon",
+ "pi-vfs",
+ "regex",
+ "tokio",
  "windows-sys 0.61.2",
 ]
 
