@@ -142,7 +142,8 @@
     "fix:py": "ruff check --fix python && ruff format python",
     "tau:image": "docker build -t \"${TAU_IMAGE:-tau/tau:dev}\" .",
     "tau:run": "docker run --rm -it \"${TAU_IMAGE:-tau/tau:dev}\"",
-    "prepare": "bun run gen:tool-views",
+    "prepare": "bun run gen:export-viewer",
+    "gen:export-viewer": "bun --cwd=packages/collab-web run gen:export-viewer",
     "publish": "bun run prepublishOnly && npm publish -ws --access public",
     "publish:dry": "bun run prepublishOnly && npm publish -ws --access public --dry-run",
     "release": "bun scripts/release.ts",
@@ -153,7 +154,6 @@
     "gen:stats:reset": "bun --cwd=packages/stats run gen:stats:reset",
     "gen:changelog": "bun scripts/rewrite-changelog.ts",
     "gen:nix": "bun scripts/gen-nix-bun.ts",
-    "gen:tool-views": "bun --cwd=packages/collab-web run gen:tool-views",
     "gen:bundle": "bun --cwd=packages/coding-agent run gen:bundle",
     "gen:native": "bun --cwd=packages/natives run gen:native",
     "gen:native:reset": "bun --cwd=packages/natives run gen:native:reset",
@@ -171,6 +171,7 @@
   },
   "dependencies": {
     "@huggingface/transformers": "catalog:",
+    "jaccard": "^0.4.0",
     "sherpa-onnx": "1.13.2",
     "sherpa-onnx-darwin-arm64": "1.13.3",
     "sherpa-onnx-node": "1.13.2"

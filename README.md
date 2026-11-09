@@ -1,4 +1,3 @@
-// refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 <div align="center">
 
 # tau
@@ -403,6 +402,3 @@ Use `--no-extensions` to skip ambient extension discovery; or use `--trusted-ext
 
 ---
 
-// refused_by: modify_delete_guard · collision: none (no common ancestor text)
-// refused_by: modify_delete_guard · collision: none (no common ancestor text)
-// refused_by: modify_delete_guard · collision: none (no common ancestor text)

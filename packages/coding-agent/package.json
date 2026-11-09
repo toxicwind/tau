@@ -1,6 +1,6 @@
 {
 	"name": "tau",
-	"version": "18.8.4+sovereign.tau.4132f2eb",
+	"version": "18.18.3",
 	"type": "module",
 	"description": "Coding agent CLI with read, bash, edit, write tools and session management",
 	"author": {
