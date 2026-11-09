@@ -52,13 +52,16 @@ export async function embeddedAddonFiles({
 	version = packageJson.version,
 }: EmbedOptions): Promise<Record<string, string | Uint8Array>> {
 	const platformTag = `${platform}-${arch}`;
-	const candidates =
-		arch === "x64"
-			? [
-					{ variant: "modern", filename: `pi_natives.${platformTag}-modern.node` },
-					{ variant: "baseline", filename: `pi_natives.${platformTag}-baseline.node` },
-				]
-			: [{ variant: "default", filename: `pi_natives.${platformTag}.node` }];
+	const prefixes = ["tau_natives", "pi_natives"];
+	const candidates: Array<{ variant: "modern" | "baseline" | "default"; filename: string }> = prefixes.flatMap(
+		prefix =>
+			arch === "x64"
+				? [
+						{ variant: "modern", filename: `${prefix}.${platformTag}-modern.node` },
+						{ variant: "baseline", filename: `${prefix}.${platformTag}-baseline.node` },
+					]
+				: [{ variant: "default", filename: `${prefix}.${platformTag}.node` }],
+	);
 
 	// Override keys must equal the bundler's symlink-resolved module paths.
 	const dir = await fs.realpath(nativeDir);

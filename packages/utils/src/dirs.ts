@@ -243,6 +243,37 @@ export function relativePathWithinRoot(root: string, candidate: string): string 
 let projectDir: string | undefined;
 
 /** Get the project directory. */
+export function resolveConfiguredDefaultDir(): string | undefined {
+	const envOverride = process.env.TAU_WORKSPACE_DIR || process.env.TAU_DEFAULT_DIR;
+	if (envOverride?.trim()) {
+		let p = envOverride.trim();
+		if (p === "~") p = os.homedir();
+		else if (p.startsWith("~/") || p.startsWith("~\\")) p = path.join(os.homedir(), p.slice(2));
+		if (path.isAbsolute(p) && fs.existsSync(p)) return p;
+	}
+
+	try {
+		const agentDir = dirs.agentDir;
+		for (const name of ["config.yml", "config.yaml", "settings.json"]) {
+			const filePath = path.join(agentDir, name);
+			if (!fs.existsSync(filePath)) continue;
+			const content = fs.readFileSync(filePath, "utf8");
+			const match =
+				content.match(/^\s*(?:defaultWorkspace|defaultDir|workspace\.defaultDir)\s*:\s*["']?([^"'\r\n]+)["']?/m) ||
+				content.match(/^\s*workspace\s*:\s*\n(?:\s+.*\n)*?\s+defaultDir\s*:\s*["']?([^"'\r\n]+)["']?/m);
+			if (match?.[1]) {
+				let p = match[1].trim();
+				if (p === "~") p = os.homedir();
+				else if (p.startsWith("~/") || p.startsWith("~\\")) p = path.join(os.homedir(), p.slice(2));
+				if (path.isAbsolute(p) && fs.existsSync(p)) return p;
+			}
+		}
+	} catch {}
+
+	return undefined;
+}
+
+/** Get the project directory. */
 export function getProjectDir(): string {
 	if (projectDir === undefined) {
 		let cwd: string | undefined;
@@ -265,6 +296,20 @@ export function getProjectDir(): string {
 				throw new Error("Unable to determine an accessible working directory");
 			}
 		}
+
+		if (!isBunTestRuntime()) {
+			const configuredDefault = resolveConfiguredDefaultDir();
+			if (configuredDefault) {
+				const homedir = os.homedir();
+				if (cwd === homedir || cwd === path.join(homedir, "tmp") || cwd === "/tmp") {
+					try {
+						process.chdir(configuredDefault);
+						cwd = configuredDefault;
+					} catch {}
+				}
+			}
+		}
+
 		// Normalize outside the fallback: a native-addon failure is not an inaccessible cwd,
 		// and must surface as itself instead of relocating the process.
 		projectDir = standardizeProjectPath(cwd);
