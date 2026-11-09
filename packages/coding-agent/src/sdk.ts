@@ -4285,7 +4285,7 @@ async function createAgentSessionScoped(options: CreateAgentSessionOptions): Pro
 		): Promise<BuildSystemPromptResult> => {
 			const promptCwd = sessionManager.getCwd();
 // refused_by: statement_fold · collision: `// `omp models` (which awaits discovery) lists the model. Await…` +1 more
-			const activeRepoContext = hasSession
+			let activeRepoContext = hasSession
 				? await logger.time("resolveActiveRepoContext", resolveRepoContext, promptCwd)
 				: initialActiveRepoContext;
 			if (hasSession && options.contextFiles === undefined) {
