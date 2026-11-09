@@ -5,7 +5,12 @@
  */
 import * as path from "node:path";
 import * as url from "node:url";
+<<<<<<< ours — imports `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import { getProjectDir, logger, withTimeout } from "@oh-my-pi/p…`
 import { getProjectDir, logger, withTimeout } from "@tau/tau-utils";
+=======
+import { getProjectDir, logger, untilAborted, withTimeout } from "@oh-my-pi/pi-utils";
+>>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/mcp/client.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { describeMCPTimeout, isMCPTimeoutEnabled, resolveMCPTimeoutMs } from "./timeout";
 import { createHttpTransport } from "./transports/http";
 import { LegacySseConnectionTimeoutError, createSseTransport } from "./transports/sse";
@@ -70,16 +75,16 @@ async function defaultRequestHandler(method: string, _params: unknown): Promise<
 /**
  * Create a transport for the given server config.
  */
-async function createTransport(config: MCPServerConfig): Promise<MCPTransport> {
+async function createTransport(config: MCPServerConfig, signal?: AbortSignal): Promise<MCPTransport> {
 	const serverType = config.type ?? "stdio";
 
 	switch (serverType) {
 		case "stdio":
-			return createStdioTransport(config as MCPStdioServerConfig);
+			return createStdioTransport(config as MCPStdioServerConfig, signal);
 		case "http":
 			return createHttpTransport(config as MCPHttpServerConfig);
 		case "sse":
-			return createSseTransport(config as MCPSseServerConfig);
+			return createSseTransport(config as MCPSseServerConfig, signal);
 		default:
 			throw new Error(`Unknown server type: ${serverType}`);
 	}
@@ -110,15 +115,6 @@ async function initializeConnection(
 			params as unknown as Record<string, unknown>,
 			{ signal: options?.signal },
 		);
-
-		if (options?.signal?.aborted) {
-			throw options.signal.reason instanceof Error ? options.signal.reason : new Error("Aborted");
-		}
-
-		// Echo the negotiated protocol version on every subsequent request. The MCP
-		// Streamable HTTP spec requires the MCP-Protocol-Version header after
-		// initialize; transports that don't need it ignore this.
-		transport.setProtocolVersion?.(result.protocolVersion);
 
 		// Send initialized before opening the optional GET SSE stream.
 		try {
@@ -155,6 +151,36 @@ async function initializeConnection(
 		}
 		throw err;
 	}
+
+		if (options?.signal?.aborted) {
+			throw options.signal.reason instanceof Error ? options.signal.reason : new Error("Aborted");
+		}
+
+<<<<<<< ours — scope `throw options.signal.reason instanceof Error ...` in function `initializeConnection` (S+F, confidence: low)
+// refused_by: statement_fold · collision: none (1 contested hunk(s), neither side deleted the other's lines)
+		// Echo the negotiated protocol version on every subsequent request. The MCP
+		// Streamable HTTP spec requires the MCP-Protocol-Version header after
+		// initialize; transports that don't need it ignore this.
+		transport.setProtocolVersion?.(result.protocolVersion);
+=======
+		throw options.signal.reason instanceof Error ? options.signal.reason : new Error("Aborted");
+	}
+
+	// Echo the negotiated protocol version on every subsequent request. The MCP
+	// Streamable HTTP spec requires the MCP-Protocol-Version header after
+	// initialize; transports that don't need it ignore this.
+	transport.setProtocolVersion?.(result.protocolVersion);
+
+	// Send initialized before opening the optional GET SSE stream. Servers may
+	// reject or terminate sessions that receive session traffic before this
+	// notification; POST response streams already carry messages during setup.
+	await transport.notify("notifications/initialized");
+	options?.signal?.throwIfAborted();
+
+	await options?.onInitialized?.();
+
+	return result;
+>>>>>>> theirs — scope `throw options.signal.reason instanceof Error ...`
 }
 
 /** Identifies an MCP server whose initial handshake exceeded its configured timeout. */
@@ -184,12 +210,21 @@ export async function connectToServer(
 		onRequest?: (method: string, params: unknown) => Promise<unknown>;
 	},
 ): Promise<MCPServerConnection> {
+	// `withTimeout` rejects a pre-aborted signal without observing `connect()`; never start one.
+	options?.signal?.throwIfAborted();
 	const timeoutMs = resolveMCPTimeoutMs(config.timeout);
 	const timeoutError = new MCPConnectionTimeoutError(name, timeoutMs);
+	const controller = new AbortController();
+	const signal = options?.signal ? AbortSignal.any([options.signal, controller.signal]) : controller.signal;
 	let transport: MCPTransport | undefined;
+	let closePromise: Promise<void> | undefined;
+	const closeTransport = () => {
+		if (transport) closePromise ??= transport.close();
+		return closePromise;
+	};
 
 	const connect = async (): Promise<MCPServerConnection> => {
-		transport = await createTransport(config);
+		transport = await createTransport(config, signal);
 		if (options?.onNotification) {
 			transport.onNotification = options.onNotification;
 		}
@@ -200,8 +235,9 @@ export async function connectToServer(
 		transport.onRequest = options?.onRequest ?? defaultRequestHandler;
 
 		try {
+			signal.throwIfAborted();
 			const initResult = await initializeConnection(transport, {
-				signal: options?.signal,
+				signal,
 				async onInitialized() {
 					// Open the optional GET SSE stream only after the initialized
 					// notification makes the session ready for further traffic.
@@ -220,22 +256,22 @@ export async function connectToServer(
 				instructions: initResult.instructions,
 			};
 		} catch (error) {
-			await transport.close();
+			await closeTransport();
 			throw error;
 		}
 	};
 
 	try {
+		// Race the whole handshake against the signal: the steps after `initialize` (the
+		// initialized notification, the SSE listener) do not observe it themselves.
 		if (!isMCPTimeoutEnabled(timeoutMs)) {
-			return await connect();
+			return await untilAborted(options?.signal, connect());
 		}
 		return await withTimeout(connect(), timeoutMs, timeoutError, options?.signal);
 	} catch (error) {
-		// If withTimeout rejected (timeout/abort) while connect() was still pending,
-		// the transport may be alive with an open SSE listener. Close it.
-		if (transport) {
-			void transport.close().catch(() => {});
-		}
+		controller.abort(error);
+		// Close an existing transport; in-flight creation observes the aborted signal.
+		void closeTransport()?.catch(() => {});
 		throw error instanceof LegacySseConnectionTimeoutError ? timeoutError : error;
 	}
 }

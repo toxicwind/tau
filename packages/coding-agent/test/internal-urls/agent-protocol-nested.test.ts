@@ -3,12 +3,18 @@ import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import { TempDir } from "@tau/tau-utils";
 import { AgentProtocolHandler } from "../../src/internal-urls/agent-protocol";
+import { InternalUrlRouter } from "../../src/internal-urls/router";
 import { resetRegisteredArtifactDirsForTests } from "../../src/internal-urls/registry-helpers";
 import { AgentRegistry } from "../../src/registry/agent-registry";
 import type { AgentSession } from "../../src/session/agent-session";
 import { ArtifactManager } from "../../src/session/artifacts";
 
+<<<<<<< ours — variable `tempDir` (S, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `const tempDir = TempDir.createSync("omp-nested-agent-repro-");`
 const tempDir = TempDir.createSync("tau-nested-agent-repro-");
+=======
+const tempDir = TempDir.createSync("@omp-nested-agent-repro-");
+>>>>>>> theirs — variable `tempDir` (S, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/internal-urls/agent-protocol-nested.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 afterEach(() => {
 	AgentRegistry.resetGlobalForTests();
 	resetRegisteredArtifactDirsForTests();
@@ -184,4 +190,50 @@ it("agent:// path extraction prefers the <id>.json sidecar over the markdown bod
 	// A corrupt sidecar falls back to <id>.md instead of surfacing its own parse error.
 	await fs.writeFile(path.join(rootArtifactsDir, "Worker.json"), "{not json");
 	await expect(handler.resolve(new URL("agent://Worker/count") as never)).rejects.toThrow(/Worker is not valid JSON/);
+});
+
+it("agent:// marks a published output as the previous run while the agent streams a newer turn", async () => {
+	const root = tempDir.path();
+	const rootSessionFile = path.join(root, "superseded-session.jsonl");
+	const rootArtifactsDir = rootSessionFile.slice(0, -6);
+	await fs.mkdir(rootArtifactsDir, { recursive: true });
+	const sharedArtifactManager = new ArtifactManager(rootArtifactsDir);
+	const published = JSON.stringify({ status: "partial", summary: "run budget ran out" });
+	await fs.writeFile(path.join(rootArtifactsDir, "Visuals.md"), published);
+
+	const mainSession = {
+		sessionManager: { getArtifactsDir: () => sharedArtifactManager.dir },
+	} as unknown as AgentSession;
+	const wokenSession = {
+		sessionManager: { getArtifactsDir: () => sharedArtifactManager.dir },
+		isStreaming: true,
+	} as unknown as AgentSession;
+	const registry = AgentRegistry.global();
+	registry.register({
+		id: "Main",
+		displayName: "main",
+		kind: "main",
+		session: mainSession,
+		sessionFile: rootSessionFile,
+	});
+	registry.register({ id: "Visuals", displayName: "sub", kind: "sub", parentId: "Main", session: wokenSession });
+
+	const handler = new AgentProtocolHandler();
+	const whileRunning = await handler.resolve(new URL("agent://Visuals") as never);
+	expect(whileRunning.content).toStartWith("> `Visuals` is running a newer turn.");
+	expect(whileRunning.content).toContain("PREVIOUS run");
+	expect(whileRunning.content.endsWith(published)).toBe(true);
+	// `read` reads a located file directly, skipping resolve(): a superseded
+	// output must route as a resource so the banner reaches the reader.
+	const router = InternalUrlRouter.instance();
+	expect((await router.target("agent://Visuals"))?.kind).toBe("resource");
+	// JSON-path reads stay machine-parseable.
+	const field = await handler.resolve(new URL("agent://Visuals/status") as never);
+	expect(field.content).toBe("partial");
+
+	// Once the turn ends, the file is the current result again.
+	registry.setStatus("Visuals", "idle");
+	const settled = await handler.resolve(new URL("agent://Visuals") as never);
+	expect(settled.content).toBe(published);
+	expect((await router.target("agent://Visuals"))?.kind).toBe("file");
 });

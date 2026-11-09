@@ -4,9 +4,17 @@ import { getOAuthApiKey, getOAuthProvider } from "../registry/oauth";
 import type { OAuthCredentials, OAuthProvider } from "../registry/oauth/types";
 import type { Provider } from "../types";
 import type { CredentialRankingContext, CredentialRankingStrategy, PlanGate, UsageReport } from "../usage";
+import { isWithinUsageReserve } from "../usage";
 import type { RankingStrategyResolver } from "../usage/registry";
 import type { SessionAffinity } from "./affinity";
-import { credentialBlockScopesForRequest, DEFAULT_BLOCK_MS, providerTypeKey, type CredentialBlocks } from "./blocks";
+import { raceSignal } from "./abort";
+import {
+	AUTH_BLOCK_SCOPE,
+	credentialBlockScopesForRequest,
+	DEFAULT_BLOCK_MS,
+	providerTypeKey,
+	type CredentialBlocks,
+} from "./blocks";
 import type { AccountPolicies } from "./policy";
 import { authCredentialEquals, type CredentialPool } from "./pool";
 import {
@@ -22,7 +30,14 @@ import {
 } from "./rank";
 import { mergeRefreshedCredential, OAUTH_REFRESH_SKEW_MS, type OAuthRefresher } from "./refresh";
 import type { AuthCredentialStore } from "./store";
-import type { ApiKeyCredential, AuthApiKeyOptions, AuthCredential, OAuthCredential } from "./types";
+import {
+	type ApiKeyCredential,
+	type AuthApiKeyOptions,
+	type AuthCredential,
+	type OAuthCredential,
+	oauthAccountKey,
+	type StoredAuthCredential,
+} from "./types";
 import type { UsageService } from "./usage";
 import {
 	isUsageLimitReached,
@@ -53,6 +68,8 @@ export type TryOAuthOptions = {
 	blockScopes?: readonly string[];
 	/** When false, a definitive failure of THIS credential returns undefined instead of falling back to the ranked/round-robin selector (target-only resolution). */
 	allowFallback?: boolean;
+	/** Receives a non-definitive refresh failure that left this credential unusable; the caller filters for retryable ones. */
+	onTransientRefreshFailure?: (error: unknown) => void;
 };
 
 /** Services consulted by CredentialSelector for policy, usage, blocks, refresh, and session affinity. */
@@ -128,7 +145,11 @@ export class CredentialSelector {
 	/**
 	 * Selects a credential of the specified type for a provider.
 	 * Returns both the credential and its index in the original array (for updates/removal).
-	 * Uses deterministic hashing for session stickiness and skips blocked credentials when possible.
+	 * With `sessionId` the scan starts at the session's hashed index; without one it starts at the
+	 * first stored credential and never advances round-robin. Model discovery peeks through this,
+	 * and credential-scoped catalogs (e.g. GitHub Copilot) key their cache rows on the credential
+	 * picked, so a rotating pick would read another account's cache namespace on every pass.
+	 * Blocked credentials are skipped when possible.
 	 */
 	selectByType<T extends AuthCredential["type"]>(
 		provider: string,
@@ -155,7 +176,9 @@ export class CredentialSelector {
 		if (credentials.length === 1) return credentials[0];
 
 		const providerKey = providerTypeKey(provider, type);
-		const order = this.#getCredentialOrder(providerKey, sessionId, credentials.length);
+		const order = sessionId
+			? this.#getCredentialOrder(providerKey, sessionId, credentials.length)
+			: credentials.map((_, index) => index);
 		const fallback = credentials[order[0]];
 
 		for (const idx of order) {
@@ -261,6 +284,7 @@ export class CredentialSelector {
 				blockedUntil,
 				inReserve: false,
 				accountPriority: 0,
+				allowanceSpent: remainingUsageFraction(strategy, usage, args.rankingContext, nowMs) === 0,
 				usageMeasured,
 				hasPriorityBoost: strategy.hasPriorityBoost?.(primary, primaryUncapped, args.rankingContext) ?? false,
 				planPriority: 0,
@@ -324,6 +348,87 @@ export class CredentialSelector {
 		return candidates[0]?.selection ?? fallback;
 	}
 
+	#oauthUsagePolicy(
+		provider: string,
+		credentials: readonly OAuthSelection[],
+		strategy: CredentialRankingStrategy | undefined,
+		hasPlanRequirement: boolean,
+	): { policyReserveEnabled: boolean; checkUsage: boolean } {
+		const hasAccountPolicy = credentials.some(
+			({ credential }) => this.#deps.policies.forCredential(provider, credential) !== undefined,
+		);
+		const canFetchPolicyUsage = strategy !== undefined || this.#deps.usage.canFetchOAuthUsage(provider);
+		const policyReserveEnabled = hasAccountPolicy && canFetchPolicyUsage;
+		return {
+			policyReserveEnabled,
+			checkUsage: (strategy !== undefined || policyReserveEnabled) && (credentials.length > 1 || hasPlanRequirement),
+		};
+	}
+
+	async #fetchOAuthSelectionUsage(
+		provider: string,
+		providerKey: string,
+		selection: OAuthSelection,
+		blockScopes: string | readonly string[] | undefined,
+		options?: AuthApiKeyOptions,
+	): Promise<UsageRankingResult<OAuthCredential>> {
+		let blockedUntil = this.#deps.blocks.blockedUntil(provider, providerKey, selection.index, blockScopes);
+		let usage: UsageReport | null = null;
+		let usageChecked = false;
+		if (
+			blockedUntil !== undefined &&
+			this.#deps.blocks.canHeal(provider, providerKey, selection.index, blockScopes)
+		) {
+			usage = await this.#deps.usage.report(provider, selection.credential, {
+				...options,
+				timeoutMs: this.#deps.usage.requestTimeoutMs,
+			});
+			usageChecked = true;
+			blockedUntil = this.#deps.blocks.blockedUntil(provider, providerKey, selection.index, blockScopes);
+		}
+		if (blockedUntil === undefined && !usageChecked) {
+			usage = await this.#deps.usage.report(provider, selection.credential, {
+				...options,
+				timeoutMs: this.#deps.usage.requestTimeoutMs,
+			});
+			usageChecked = true;
+		}
+		return { selection, usage, usageChecked, blockedUntil };
+	}
+
+	/** Warm exactly the usage fetches a fresh, unpinned OAuth ranking pass needs. */
+	async prefetchUsage(provider: string, sessionId?: string, options?: AuthApiKeyOptions): Promise<void> {
+		options?.signal?.throwIfAborted();
+		await this.#deps.pool.adoptExternalChanges();
+		options?.signal?.throwIfAborted();
+		// A working pin needs only its own report; leave that path to resolution
+		// rather than introducing sibling probes during resumed-session startup.
+		if (this.#deps.affinity.get(provider, sessionId) !== undefined) return;
+		const credentials = this.#deps.pool
+			.credentials(provider)
+			.map((credential, index) => ({ credential, index }))
+			.filter(
+				(entry): entry is OAuthSelection =>
+					entry.credential.type === "oauth" && this.#deps.affinity.allows(provider, sessionId, entry.credential),
+			);
+		const strategy = this.#deps.strategies(provider);
+		const rankingContext: CredentialRankingContext = { modelId: options?.modelId };
+		const planGate = strategy?.planGate?.(rankingContext);
+		if (!this.#oauthUsagePolicy(provider, credentials, strategy, planGate !== undefined).checkUsage) return;
+		const blockScope = strategy?.blockScope?.(rankingContext);
+		const blockScopes = credentialBlockScopesForRequest(provider, strategy, rankingContext, blockScope);
+		const providerKey = providerTypeKey(provider, "oauth");
+		await raceSignal(
+			Promise.all(
+				credentials.map(selection =>
+					this.#fetchOAuthSelectionUsage(provider, providerKey, selection, blockScopes, options),
+				),
+			),
+			options?.signal,
+			"usage prefetch aborted",
+		);
+	}
+
 	async #rankOAuthSelections(args: {
 		providerKey: string;
 		provider: string;
@@ -347,52 +452,17 @@ export class CredentialSelector {
 		// than to hang the agent waiting for rate-limited usage endpoints.
 		const usageTimeout = Math.max(5000, this.#deps.usage.requestTimeoutMs * 1.5);
 		const usagePromise = Promise.all(
-			args.order.map(async idx => {
+			args.order.map(idx => {
 				const selection = args.credentials[idx];
-				if (!selection) return null;
-				let blockedUntil = this.#deps.blocks.blockedUntil(
-					args.provider,
-					args.providerKey,
-					selection.index,
-					args.blockScopes ?? args.blockScope,
-				);
-				let usage: UsageReport | null = null;
-				let usageChecked = false;
-				if (
-					blockedUntil !== undefined &&
-					this.#deps.blocks.canHeal(
-						args.provider,
-						args.providerKey,
-						selection.index,
-						args.blockScopes ?? args.blockScope,
-					)
-				) {
-					usage = await this.#deps.usage.report(args.provider, selection.credential, {
-						...args.options,
-						timeoutMs: this.#deps.usage.requestTimeoutMs,
-					});
-					usageChecked = true;
-					blockedUntil = this.#deps.blocks.blockedUntil(
-						args.provider,
-						args.providerKey,
-						selection.index,
-						args.blockScopes ?? args.blockScope,
-					);
-				}
-				if (blockedUntil !== undefined) return { selection, usage, usageChecked, blockedUntil };
-				if (!usageChecked) {
-					usage = await this.#deps.usage.report(args.provider, selection.credential, {
-						...args.options,
-						timeoutMs: this.#deps.usage.requestTimeoutMs,
-					});
-					usageChecked = true;
-				}
-				return {
-					selection,
-					usage,
-					usageChecked,
-					blockedUntil: undefined as number | undefined,
-				};
+				return selection
+					? this.#fetchOAuthSelectionUsage(
+							args.provider,
+							args.providerKey,
+							selection,
+							args.blockScopes ?? args.blockScope,
+							args.options,
+						)
+					: null;
 			}),
 		);
 		const timeoutSignal = Promise.withResolvers<null>();
@@ -460,9 +530,17 @@ export class CredentialSelector {
 				blocked,
 				blockedUntil,
 				inReserve:
-					reserveFraction !== undefined && remainingFraction !== undefined && remainingFraction <= reserveFraction,
+					reserveFraction !== undefined &&
+					remainingFraction !== undefined &&
+					isWithinUsageReserve(remainingFraction, reserveFraction),
 				reserveMeasured: reserveFraction !== undefined && remainingFraction !== undefined,
 				accountPriority: policy?.priority === undefined || !Number.isFinite(policy.priority) ? 0 : policy.priority,
+				allowanceSpent: remainingFraction === 0,
+				reclaimReady:
+					!blocked &&
+					policy?.reclaimAbovePct !== undefined &&
+					remainingFraction !== undefined &&
+					remainingFraction * 100 >= policy.reclaimAbovePct,
 				usageMeasured,
 				hasPriorityBoost: strategy?.hasPriorityBoost?.(primary, primaryUncapped, args.rankingContext) ?? false,
 				planPriority: planPriority(args.planGate, usage),
@@ -485,9 +563,9 @@ export class CredentialSelector {
 	 * 1. strict: unblocked credentials only, usage limits respected, plan
 	 *    filter enforced (when any account is confirmed eligible);
 	 * 2. plan-fitting last resort: same plan filter, but blocked/exhausted
-	 *    accounts are allowed (blocked candidates rank earliest-unblocking
-	 *    first) so the caller gets real usage-limit semantics from the wire
-	 *    instead of a missing key;
+	 *    accounts are allowed (an explicit session pin first, then blocked
+	 *    candidates earliest-unblocking first) so the caller gets real
+	 *    usage-limit semantics from the wire instead of a missing key;
 	 * 3. unfiltered last resort: the plan filter matched nothing usable —
 	 *    skip it and try every account once; the server is the final arbiter
 	 *    of model access.
@@ -502,16 +580,22 @@ export class CredentialSelector {
 		options?: AuthApiKeyOptions,
 	): Promise<OAuthResolutionResult | undefined> {
 		await this.#deps.pool.adoptExternalChanges();
-		const credentials = this.#deps.pool
+		const stored = this.#deps.pool
 			.credentials(provider)
 			.map((credential, index) => ({ credential, index }))
 			.filter((entry): entry is { credential: OAuthCredential; index: number } => entry.credential.type === "oauth");
 		this.#deps.policies.validateFor(
 			provider,
-			credentials.map(entry => entry.credential),
+			stored.map(entry => entry.credential),
 		);
+		// A session restriction drops every other account before ranking, pins,
+		// and the fallback passes below, so none of them can route back to it.
+		const credentials = stored.filter(entry => this.#deps.affinity.allows(provider, sessionId, entry.credential));
 
 		if (credentials.length === 0) return undefined;
+		// Ranking and preflight both await provider work; preserve the row each
+		// selection started with even if a peer reorders the live pool.
+		const credentialIds = this.#deps.pool.entries(provider).map(entry => entry.id);
 		this.#deps.policies.validateUsageCapability(provider, this.#deps.usage.canFetchOAuthUsage(provider));
 
 		const providerKey = providerTypeKey(provider, "oauth");
@@ -528,19 +612,19 @@ export class CredentialSelector {
 		const accountIds = options?.accountIds?.length ? new Set(options.accountIds) : undefined;
 		const enforceAccounts =
 			accountIds !== undefined &&
-			credentials.some(
-				({ credential }) => credential.accountId !== undefined && accountIds.has(credential.accountId),
-			);
-		const hasAccountPolicy = credentials.some(
-			({ credential }) => this.#deps.policies.forCredential(provider, credential) !== undefined,
-		);
+			credentials.some(({ credential }) => {
+				const accountKey = oauthAccountKey(credential);
+				return accountKey !== undefined && accountIds.has(accountKey);
+			});
 		const hasPriorityPolicy = credentials.some(
 			({ credential }) => this.#deps.policies.forCredential(provider, credential)?.priority !== undefined,
 		);
-		const canFetchPolicyUsage = strategy !== undefined || this.#deps.usage.canFetchOAuthUsage(provider);
-		const policyReserveEnabled = hasAccountPolicy && canFetchPolicyUsage;
-		const checkUsage =
-			(strategy !== undefined || policyReserveEnabled) && (credentials.length > 1 || hasPlanRequirement);
+		const { policyReserveEnabled, checkUsage } = this.#oauthUsagePolicy(
+			provider,
+			credentials,
+			strategy,
+			hasPlanRequirement,
+		);
 		const sessionCredential = this.#deps.affinity.get(provider, sessionId);
 		const sessionPreferredIndex = sessionCredential?.type === "oauth" ? sessionCredential.index : undefined;
 		const sessionPreferredCredential =
@@ -567,12 +651,27 @@ export class CredentialSelector {
 			sessionPreferredCanRefreshOrUse &&
 			!this.#deps.blocks.isBlocked(provider, providerKey, sessionPreferredIndex, blockScopes);
 		const sessionPinIsExplicit = sessionCredential?.type === "oauth" && sessionCredential.explicit === true;
+		const rankDespitePin =
+			!sessionPreferredIsAvailable ||
+			!sessionPreferredIsWarm ||
+			hasPlanRequirement ||
+			(policyReserveEnabled && !sessionPinIsExplicit);
+		// A warm automatic pin whose allowance is spent keeps serving on paid overage
+		// (Codex credits) and is never blocked, so check it and rank when spent: a
+		// sibling with renewable allowance left must take over (#13889). tryOAuth
+		// reads this same report for the pin, so it is handed on below.
+		const sessionPreferredUsage =
+			checkUsage && !rankDespitePin && !sessionPinIsExplicit && sessionPreferredCredential
+				? await this.#deps.usage.report(provider, sessionPreferredCredential, {
+						...options,
+						timeoutMs: this.#deps.usage.requestTimeoutMs,
+					})
+				: undefined;
 		const shouldRank =
 			checkUsage &&
-			(!sessionPreferredIsAvailable ||
-				!sessionPreferredIsWarm ||
-				hasPlanRequirement ||
-				(policyReserveEnabled && !sessionPinIsExplicit));
+			(rankDespitePin ||
+				(sessionPreferredUsage !== undefined &&
+					remainingUsageFraction(strategy, sessionPreferredUsage, rankingContext, Date.now()) === 0));
 		// When ranking, seed the pinned credential first in the evaluation order so it wins genuine
 		// ties (the ranked comparator falls back to `orderPos`) without overriding a strictly-better
 		// sibling — this respects the residual value of a same-account shared static prefix that other
@@ -615,12 +714,25 @@ export class CredentialSelector {
 			: policyOrder
 					.map(idx => credentials[idx])
 					.filter((selection): selection is { credential: OAuthCredential; index: number } => Boolean(selection))
-					.map(selection => ({
-						selection,
-						usage: null,
-						usageChecked: false,
-					}));
+					.map(selection =>
+						selection.index === sessionPreferredIndex && sessionPreferredUsage !== undefined
+							? { selection, usage: sessionPreferredUsage, usageChecked: true }
+							: { selection, usage: null, usageChecked: false },
+					);
+		// Keep the candidate object: preflight may rebind its positional index
+		// after a peer changes the credential pool.
+		const explicitPin = sessionPinIsExplicit
+			? candidates.find(candidate => candidate.selection.index === sessionPreferredIndex)
+			: undefined;
 		const preflightFailures = new Set<OAuthCandidate>();
+		// The last retryable refresh error (network, timeout, 5xx) that removed a candidate.
+		// When no candidate resolves, it is rethrown so callers retry instead of reporting
+		// a missing key. Refresher outcomes after a dead grant (row disabled, CAS lost) are
+		// classified auth failures and keep resolving to undefined.
+		let transientRefreshFailure: unknown;
+		const recordTransientRefreshFailure = (error: unknown): void => {
+			if (AIError.retriable(AIError.classify(error))) transientRefreshFailure = error;
+		};
 
 		const sessionPreferredCandidate = candidates.findIndex(
 			candidate =>
@@ -628,23 +740,48 @@ export class CredentialSelector {
 				candidate.selection.index === sessionPreferredIndex,
 		);
 		const preferredCandidate = sessionPreferredCandidate === -1 ? undefined : candidates[sessionPreferredCandidate];
-		const reserveWouldEvictAutomaticPin = (excludePreflightFailures: boolean): boolean =>
-			!sessionPinIsExplicit &&
-			preferredCandidate?.inReserve === true &&
-			candidates.some(
+		// A warm automatic pin normally wins. Three policies may evict it, each only
+		// while a sibling is confirmed better: reserve (sibling measured outside
+		// reserve), spent allowance (unblocked sibling with allowance left), and
+		// opt-in reclaim (the sibling ranking picks next has higher priority and is
+		// measured at or above its `reclaimAbovePct`).
+		const automaticPinWouldBeEvicted = (excludePreflightFailures: boolean): boolean => {
+			if (sessionPinIsExplicit || preferredCandidate === undefined) return false;
+			const rankedWinner = candidates.find(
 				candidate =>
 					candidate !== preferredCandidate &&
-					(!excludePreflightFailures || !preflightFailures.has(candidate)) &&
-					candidate.reserveMeasured === true &&
-					candidate.inReserve === false,
+					!(excludePreflightFailures && preflightFailures.has(candidate)) &&
+					!this.#deps.blocks.isBlocked(provider, providerKey, candidate.selection.index, blockScopes),
 			);
-		const reserveWouldEvictBeforePreflight = reserveWouldEvictAutomaticPin(false);
-		// A warm automatic pin normally wins. Reserve is the one policy allowed
-		// to evict it, and only while a sibling is confirmed outside reserve.
+			if (
+				rankedWinner?.reclaimReady === true &&
+				(rankedWinner.accountPriority ?? 0) > (preferredCandidate.accountPriority ?? 0)
+			) {
+				return true;
+			}
+			return candidates.some(candidate => {
+				if (candidate === preferredCandidate) return false;
+				if (excludePreflightFailures && preflightFailures.has(candidate)) return false;
+				if (
+					preferredCandidate.inReserve === true &&
+					candidate.reserveMeasured === true &&
+					candidate.inReserve === false
+				) {
+					return true;
+				}
+				return (
+					preferredCandidate.allowanceSpent === true &&
+					candidate.usage !== null &&
+					candidate.allowanceSpent === false &&
+					!this.#deps.blocks.isBlocked(provider, providerKey, candidate.selection.index, blockScopes)
+				);
+			});
+		};
+		const pinEvictedBeforePreflight = automaticPinWouldBeEvicted(false);
 		if (
 			!hasPlanRequirement &&
 			sessionPreferredCandidate > 0 &&
-			(!shouldRank || sessionPinIsExplicit || (sessionPreferredIsWarm && !reserveWouldEvictBeforePreflight))
+			(!shouldRank || sessionPinIsExplicit || (sessionPreferredIsWarm && !pinEvictedBeforePreflight))
 		) {
 			const [preferred] = candidates.splice(sessionPreferredCandidate, 1);
 			candidates.unshift(preferred);
@@ -656,16 +793,29 @@ export class CredentialSelector {
 		const forceRefreshIndex = options?.forceRefresh
 			? (sessionPreferredIndex ?? candidates[0]?.selection.index)
 			: undefined;
+		// Candidate IDs were captured before ranking. Their synchronous rebinds
+		// share one provider re-list; resyncs after refresh await re-read the store.
+		let preflightRows: StoredAuthCredential[] | undefined;
 		await Promise.all(
 			candidates.map(async candidate => {
 				const force = forceRefreshIndex !== undefined && candidate.selection.index === forceRefreshIndex;
-				const initialCredentialId = this.#deps.pool.entries(provider)[candidate.selection.index]?.id;
-				let syncedPeerCredential = false;
-				if (initialCredentialId !== undefined) {
-					const beforeSync = candidate.selection.credential;
-					if (!this.#syncOAuthSelectionFromStore(provider, candidate.selection, initialCredentialId)) return;
-					syncedPeerCredential = !authCredentialEquals(beforeSync, candidate.selection.credential);
+				const initialCredentialId = credentialIds[candidate.selection.index];
+				if (initialCredentialId === undefined) {
+					preflightFailures.add(candidate);
+					return;
 				}
+				const beforeSync = candidate.selection.credential;
+				preflightRows ??= this.#reloadProviderRows(provider);
+				if (!this.#rebindOAuthSelection(preflightRows, candidate.selection, initialCredentialId)) {
+					preflightFailures.add(candidate);
+					return;
+				}
+				// A peer row is a replacement only when its access token is not the one the
+				// provider rejected: a peer may change just the expiry, metadata or refresh token.
+				const rejectedAccess = force ? options?.rejectedAccessToken : undefined;
+				const syncedPeerCredential =
+					!authCredentialEquals(beforeSync, candidate.selection.credential) &&
+					(rejectedAccess === undefined || candidate.selection.credential.access !== rejectedAccess);
 				const hasFreshAccess = Date.now() + OAUTH_REFRESH_SKEW_MS < candidate.selection.credential.expires;
 				if ((!force || syncedPeerCredential) && hasFreshAccess) return;
 				const latestCredential = this.#deps.pool.credentials(provider)[candidate.selection.index];
@@ -691,8 +841,19 @@ export class CredentialSelector {
 						refreshTarget,
 						credentialId,
 						options?.signal,
+						force ? options?.refreshReason : undefined,
+						rejectedAccess,
 					);
-					const updated = mergeRefreshedCredential(candidate.selection.credential, refreshedCredentials);
+					const beforeRefresh = candidate.selection.credential;
+					const updated = mergeRefreshedCredential(beforeRefresh, refreshedCredentials);
+					if (credentialId !== undefined && authCredentialEquals(beforeRefresh, updated)) {
+						// The await may have allowed a peer to replace/remove this row or
+						// compact its index. Rebind by id without writing the cached result.
+						if (!this.#syncOAuthSelectionFromStore(provider, candidate.selection, credentialId)) {
+							preflightFailures.add(candidate);
+						}
+						return;
+					}
 					candidate.selection.credential = updated;
 					if (credentialId !== undefined) {
 						const idx = this.#deps.pool.replaceById(provider, credentialId, updated);
@@ -741,16 +902,21 @@ export class CredentialSelector {
 							// to a sibling account with the wrong prefetched usage/plan.
 							return;
 						}
-					} else if (credentialId !== undefined) {
-						const latestIndex = this.#deps.pool.entries(provider).findIndex(entry => entry.id === credentialId);
-						if (latestIndex !== -1) {
-							this.#deps.blocks.mark(
-								provider,
-								providerKey,
-								latestIndex,
-								Date.now() + OAUTH_REFRESH_FAILURE_BACKOFF_MS,
-								blockScope,
-							);
+					} else {
+						recordTransientRefreshFailure(error);
+						if (credentialId !== undefined) {
+							const latestIndex = this.#deps.pool
+								.entries(provider)
+								.findIndex(entry => entry.id === credentialId);
+							if (latestIndex !== -1) {
+								this.#deps.blocks.mark(
+									provider,
+									providerKey,
+									latestIndex,
+									Date.now() + OAUTH_REFRESH_FAILURE_BACKOFF_MS,
+									AUTH_BLOCK_SCOPE,
+								);
+							}
 						}
 					}
 					preflightFailures.add(candidate);
@@ -758,14 +924,14 @@ export class CredentialSelector {
 			}),
 		);
 
-		const reserveWouldEvictAfterPreflight = reserveWouldEvictAutomaticPin(true);
+		const pinEvictedAfterPreflight = automaticPinWouldBeEvicted(true);
 		if (
 			!hasPlanRequirement &&
 			preferredCandidate !== undefined &&
 			!preflightFailures.has(preferredCandidate) &&
 			sessionPreferredIsWarm &&
 			!sessionPinIsExplicit &&
-			!reserveWouldEvictAfterPreflight
+			!pinEvictedAfterPreflight
 		) {
 			const preferredIndex = candidates.indexOf(preferredCandidate);
 			if (preferredIndex > 0) {
@@ -787,7 +953,7 @@ export class CredentialSelector {
 		// unenforced and the pin is not known-ineligible) so an active session never
 		// silently migrates accounts mid-conversation; blocked, exhausted, or
 		// known-ineligible pins still fall through to the ranked sibling.
-		if (hasPlanRequirement && sessionPreferredCandidate > 0 && !reserveWouldEvictAfterPreflight) {
+		if (hasPlanRequirement && sessionPreferredCandidate > 0 && !pinEvictedAfterPreflight) {
 			const preferred = candidates[sessionPreferredCandidate]!;
 			const planEligibility = planGate?.(preferred.usage);
 			if (planEligibility === true || (!enforcePlanRequirement && planEligibility !== false)) {
@@ -796,22 +962,25 @@ export class CredentialSelector {
 			}
 		}
 
-		const passes: Array<{
-			allowBlocked: boolean;
-			enforcePlanRequirement: boolean;
-			enforceAccounts: boolean;
-		}> = [
-			{ allowBlocked: false, enforcePlanRequirement, enforceAccounts },
-			{ allowBlocked: true, enforcePlanRequirement, enforceAccounts },
-		];
+		const passes = [{ allowBlocked: false, enforcePlanRequirement, enforceAccounts }];
+		// Discovery may have observed only part of the pool. Try other unblocked
+		// accounts before reusing a blocked discovery match, without relaxing plan gates.
+		if (enforceAccounts) passes.push({ allowBlocked: false, enforcePlanRequirement, enforceAccounts: false });
+		passes.push({ allowBlocked: true, enforcePlanRequirement, enforceAccounts });
 		if (enforcePlanRequirement) passes.push({ allowBlocked: true, enforcePlanRequirement: false, enforceAccounts });
 		if (enforceAccounts) passes.push({ allowBlocked: true, enforcePlanRequirement: false, enforceAccounts: false });
+		// Blocked candidates rank earliest-unblock first, which would route a
+		// blocked explicit pin to an equally blocked sibling. Once the strict
+		// pass finds no unblocked account, the user's pin goes first.
+		const lastResortCandidates = explicitPin
+			? [explicitPin, ...candidates.filter(candidate => candidate !== explicitPin)]
+			: candidates;
 
 		for (const pass of passes) {
-			for (const candidate of candidates) {
+			for (const candidate of pass.allowBlocked ? lastResortCandidates : candidates) {
 				if (preflightFailures.has(candidate)) continue;
-				const candidateAccountId = candidate.selection.credential.accountId;
-				if (pass.enforceAccounts && (candidateAccountId === undefined || !accountIds?.has(candidateAccountId)))
+				const candidateAccountKey = oauthAccountKey(candidate.selection.credential);
+				if (pass.enforceAccounts && (candidateAccountKey === undefined || !accountIds?.has(candidateAccountKey)))
 					continue;
 				const resolved = await this.tryOAuth(provider, candidate.selection, providerKey, sessionId, options, {
 					checkUsage,
@@ -824,11 +993,15 @@ export class CredentialSelector {
 					rankingContext,
 					blockScope,
 					blockScopes,
+					onTransientRefreshFailure: recordTransientRefreshFailure,
 				});
 				if (resolved) return resolved;
 			}
 		}
 
+		if (transientRefreshFailure !== undefined) {
+			throw new AIError.OAuthRefreshUnavailableError(provider, transientRefreshFailure);
+		}
 		return undefined;
 	}
 
@@ -837,11 +1010,25 @@ export class CredentialSelector {
 		selection: { credential: OAuthCredential; index: number },
 		credentialId: number,
 	): boolean {
+		return this.#rebindOAuthSelection(this.#reloadProviderRows(provider), selection, credentialId);
+	}
+
+	/** Re-list one provider's active rows and adopt them in the pool. */
+	#reloadProviderRows(provider: string): StoredAuthCredential[] {
 		const latestRows = this.#deps.store.listAuthCredentials(provider);
 		this.#deps.pool.replace(
 			provider,
 			latestRows.map(row => ({ id: row.id, credential: row.credential })),
 		);
+		return latestRows;
+	}
+
+	/** Point `selection` at row `credentialId` in `latestRows`; false when it is gone or no longer OAuth. */
+	#rebindOAuthSelection(
+		latestRows: readonly StoredAuthCredential[],
+		selection: { credential: OAuthCredential; index: number },
+		credentialId: number,
+	): boolean {
 		const latestIndex = latestRows.findIndex(row => row.id === credentialId);
 		if (latestIndex === -1) return false;
 		const latest = latestRows[latestIndex];
@@ -1011,7 +1198,9 @@ export class CredentialSelector {
 				}
 			}
 			this.#deps.pool.noteBearer(provider, result.apiKey, credentialId);
-			this.#deps.affinity.record(provider, sessionId, "oauth", selection.index);
+			if (options?.recordAffinity !== false) {
+				this.#deps.affinity.record(provider, sessionId, "oauth", selection.index);
+			}
 			return { apiKey: result.apiKey, credential: updated, credentialId };
 		} catch (error) {
 			const errorMsg = String(error);
@@ -1043,12 +1232,14 @@ export class CredentialSelector {
 					if (allowFallback) return this.resolveOAuth(provider, sessionId, options);
 				}
 			} else {
+				usageOptions.onTransientRefreshFailure?.(error);
 				// Block temporarily for transient failures (5 minutes)
 				this.#deps.blocks.mark(
 					provider,
 					providerKey,
 					selection.index,
 					Date.now() + OAUTH_REFRESH_FAILURE_BACKOFF_MS,
+					AUTH_BLOCK_SCOPE,
 				);
 			}
 		}

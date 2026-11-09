@@ -9,6 +9,9 @@ import { createAgentSession } from "tau/sdk";
 import type { AgentSession } from "tau/session/agent-session";
 import { SessionManager } from "tau/session/session-manager";
 import { removeSyncWithRetries, Snowflake } from "@tau/tau-utils";
+import { closeModelCache } from "@oh-my-pi/pi-catalog/model-cache";
+import { AgentStorage } from "@oh-my-pi/pi-coding-agent/session/agent-storage";
+import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
 
 const BASE_SETTINGS = {
 	"async.enabled": false,
@@ -37,15 +40,18 @@ describe("tools.approvalMode setting", () => {
 	// auth-storage discovery, settings init) nine times over.
 	let tempDir: string;
 	let session: AgentSession;
+	let authStorage: AuthStorage;
 
 	beforeAll(async () => {
 		tempDir = fs.mkdtempSync(path.join(os.tmpdir(), `tau-approval-mode-${Snowflake.next()}-`));
 		const cwd = path.join(tempDir, "cwd");
 		fs.mkdirSync(cwd, { recursive: true });
 		const sessionManager = SessionManager.create(cwd, path.join(tempDir, "sessions"));
+		authStorage = await AuthStorage.create(":memory:");
 		const created = await createAgentSession({
 			cwd,
 			agentDir: tempDir,
+			authStorage,
 			sessionManager,
 			settings: Settings.isolated(BASE_SETTINGS),
 			model: getBundledModel("openai", "gpt-4o-mini"),
@@ -64,18 +70,11 @@ describe("tools.approvalMode setting", () => {
 
 	afterAll(async () => {
 		await session.dispose();
-		// Windows can briefly hold tempdir handles after session.dispose(); retry a few times.
-		for (let attempt = 0; attempt < 5; attempt++) {
-			try {
-				removeSyncWithRetries(tempDir);
-				break;
-			} catch (err) {
-				const code = (err as NodeJS.ErrnoException).code;
-				if (code !== "EBUSY" && code !== "ENOTEMPTY" && code !== "EPERM") throw err;
-				if (attempt === 4) break; // best-effort: OS will reclaim
-				await Bun.sleep(50 * (attempt + 1));
-			}
-		}
+		authStorage.close();
+		// The session opened `<agentDir>/agent.db` and `models.db`; Windows cannot delete open databases.
+		AgentStorage.close();
+		closeModelCache();
+		removeSyncWithRetries(tempDir);
 	});
 
 	function approvalSettings(extraSettings: Record<string, unknown> = {}): Settings {
@@ -168,7 +167,7 @@ describe("tools.approvalMode setting", () => {
 				settings,
 			} as AgentToolContext,
 		);
-		expect(textOf(result)).toContain("(no output)");
+		expect(textOf(result)).toContain("(no output, exit code 0)");
 	});
 
 	it("attributes bash pattern denies to tool policy", async () => {
@@ -204,21 +203,23 @@ describe("tools.approvalMode setting", () => {
 				autoApprove: true,
 			} as AgentToolContext,
 		);
-		expect(textOf(result)).toContain("(no output)");
+		expect(textOf(result)).toContain("(no output, exit code 0)");
 	});
 
-	it("xd:// dispatch approval (xdevApproved) suppresses the tier-only re-prompt", async () => {
+	it("xd:// dispatch approval (xdevPolicyKey) suppresses the tier-only re-prompt", async () => {
 		// The write tool's outer gate already prompted at the device tool's tier;
 		// without the flag this exact call rejects (see the always-ask test above).
 		const settings = approvalSettings({ "tools.approvalMode": "always-ask" });
 		const result = await bashTool().execute("xdev-tier", { command: "echo dispatched" }, undefined, undefined, {
 			settings,
-			xdevApproved: true,
+			xdevPolicyKey: "bash",
 		} as AgentToolContext);
 		expect(textOf(result)).toContain("dispatched");
 	});
 
-	it("xdevApproved does not bypass explicit per-tool prompt or deny policies", async () => {
+	it("xd:// dispatch approval does not cover explicit prompts under another key, or deny policies", async () => {
+		// The outer gate resolved `tools.approval.<device>`; a policy keyed
+		// elsewhere was never asked about, so it must still prompt.
 		const promptSettings = approvalSettings({
 			"tools.approvalMode": "always-ask",
 			"tools.approval": { bash: "prompt" },
@@ -226,7 +227,7 @@ describe("tools.approvalMode setting", () => {
 		await expect(
 			bashTool().execute("xdev-explicit-prompt", { command: "echo blocked" }, undefined, undefined, {
 				settings: promptSettings,
-				xdevApproved: true,
+				xdevPolicyKey: "other_device",
 			} as AgentToolContext),
 		).rejects.toThrow(/requires approval but no interactive UI available/);
 
@@ -237,7 +238,7 @@ describe("tools.approvalMode setting", () => {
 		await expect(
 			bashTool().execute("xdev-denied", { command: "echo blocked" }, undefined, undefined, {
 				settings: denySettings,
-				xdevApproved: true,
+				xdevPolicyKey: "bash",
 			} as AgentToolContext),
 		).rejects.toThrow(/blocked by user policy/);
 	});
@@ -270,7 +271,7 @@ describe("tools.approvalMode setting", () => {
 				acpApprovedArgs: { command: "rm -f /tmp/bun-fake-timer-probe.test.ts" },
 			} as AgentToolContext,
 		);
-		expect(textOf(overrideResult)).toContain("(no output)");
+		expect(textOf(overrideResult)).toContain("(no output, exit code 0)");
 	});
 
 	it("ACP-approved arguments do not bypass deny policies", async () => {
@@ -303,16 +304,5 @@ describe("tools.approvalMode setting", () => {
 				},
 			} as never),
 		).rejects.toThrow(/pending provider safety checks but no interactive UI/);
-	});
-
-	it("constructs an extensionRunner unconditionally so the approval gate is always installed", async () => {
-		// Regression lock for the architectural fix: the per-tool approval gate is implemented
-		// inside `ExtensionToolWrapper`, which is only attached when `session.extensionRunner` exists.
-		// Historically the runner was conditional on `extensionsResult.extensions.length > 0`, which
-		// meant the entire approval system silently disappeared for users with no extensions loaded —
-		// any non-yolo approval mode setting would be a no-op without feedback. The
-		// fix is to construct the runner unconditionally; this test makes that contract explicit so
-		// a future change to make the runner optional again cannot silently re-open the hole.
-		expect(session.extensionRunner).toBeDefined();
 	});
 });

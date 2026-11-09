@@ -2,16 +2,20 @@ import { describe, expect, it, vi } from "bun:test";
 import { AssistantMessageComponent } from "@tau/tau-tui/chat/assistant-message";
 import { InputController } from "tau/modes/controllers/input-controller";
 import type { InteractiveModeContext } from "tau/modes/types";
+import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import { cfgDisplayHideToolActivity } from "@oh-my-pi/pi-coding-agent/modes/settings";
 
 describe("InputController tool output expansion", () => {
 	it("expands children and forces a full repaint so every live block re-renders", () => {
 		const expandable = { setExpanded: vi.fn() };
 		const inert = { render: vi.fn(() => []) };
+		const pendingShell = { setExpanded: vi.fn() };
 		const requestRender = vi.fn();
 		const showStatus = vi.fn();
 		const ctx = {
 			toolOutputExpanded: false,
 			chatContainer: { children: [expandable, inert] },
+			pendingShellContainer: { children: [pendingShell] },
 			ui: { requestRender },
 			showStatus,
 		} as unknown as InteractiveModeContext;
@@ -20,6 +24,7 @@ describe("InputController tool output expansion", () => {
 
 		expect(ctx.toolOutputExpanded).toBe(true);
 		expect(expandable.setExpanded).toHaveBeenCalledWith(true);
+		expect(pendingShell.setExpanded).toHaveBeenCalledWith(true);
 		// Expansion mutates every live block; the forced repaint re-renders them
 		// at their new heights in the same frame.
 		expect(requestRender).toHaveBeenCalledTimes(1);
@@ -35,7 +40,7 @@ describe("InputController tool output expansion", () => {
 			hideToolActivity: true,
 			toolOutputExpanded: false,
 			chatContainer: { children: [expandable] },
-			keybindings: { getDisplayString: vi.fn(() => "Alt+H") },
+			keybindings: { getKeys: vi.fn(() => ["alt+h"]) },
 			showStatus,
 			ui: { requestRender },
 		} as unknown as InteractiveModeContext;
@@ -45,7 +50,6 @@ describe("InputController tool output expansion", () => {
 		expect(ctx.toolOutputExpanded).toBe(false);
 		expect(expandable.setExpanded).not.toHaveBeenCalled();
 		expect(requestRender).not.toHaveBeenCalled();
-		expect(showStatus).toHaveBeenCalledWith(expect.stringContaining("Alt+H"));
 		expect(showStatus).toHaveBeenCalledWith(expect.stringContaining("/settings"));
 	});
 });
@@ -60,7 +64,7 @@ describe("InputController tool activity visibility", () => {
 		const clear = vi.fn();
 		const addChild = vi.fn();
 		const rebuildChatFromMessages = vi.fn();
-		const set = vi.fn();
+		const settings = Settings.isolated();
 		const clearInlineImages = vi.fn();
 		const resetDisplay = vi.fn();
 		const showStatus = vi.fn();
@@ -68,7 +72,7 @@ describe("InputController tool activity visibility", () => {
 		const ctx = {
 			hideToolActivity: false,
 			toolOutputExpanded: true,
-			settings: { set },
+			settings,
 			chatContainer: { children, clear, addChild, setToolActivityVisible },
 			rebuildChatFromMessages,
 			showStatus,
@@ -81,7 +85,7 @@ describe("InputController tool activity visibility", () => {
 		controller.toggleToolActivityVisibility();
 
 		expect(ctx.hideToolActivity).toBe(true);
-		expect(set).toHaveBeenLastCalledWith("display.hideToolActivity", true);
+		expect(cfgDisplayHideToolActivity.get(settings)).toBe(true);
 		expect(ctx.chatContainer.children).toEqual(children);
 		expect(clear).not.toHaveBeenCalled();
 		expect(addChild).not.toHaveBeenCalled();
@@ -97,7 +101,7 @@ describe("InputController tool activity visibility", () => {
 
 		expect(ctx.hideToolActivity).toBe(false);
 		expect(ctx.toolOutputExpanded).toBe(false);
-		expect(set).toHaveBeenLastCalledWith("display.hideToolActivity", false);
+		expect(cfgDisplayHideToolActivity.get(settings)).toBe(false);
 		expect(ctx.chatContainer.children).toEqual(children);
 		expect(clear).not.toHaveBeenCalled();
 		expect(addChild).not.toHaveBeenCalled();

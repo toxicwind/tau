@@ -1,6 +1,8 @@
 mod common;
 
 use common::{DiskWriter, Workspace, run_fixture};
+<<<<<<< ours — imports `between:crates/tau-edit/tests/sloppy.rs::module::common:crates/tau-edit/tests/sloppy.rs::function::apply_fixtures` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 use serde_json::json;
 use tau_edit::{
 	EditError, EditMode, EditStore, ModeEngine,
@@ -13,6 +15,20 @@ use tau_edit::{
 	path_policy::canonical_key,
 	stream_json::ArgSnapshot,
 };
+=======
+use pi_edit::{
+	EditError, EditMode, EditStore, ModeEngine,
+	files::FileCache,
+	modes::sloppy::{
+		SloppyEngine,
+		apply::{Applied, ApplyContext, apply_sloppy, normalize_text},
+		parse::extract_inline_sloppy_regions,
+	},
+	path_policy::canonical_key,
+	stream_json::ArgSnapshot,
+};
+use serde_json::json;
+>>>>>>> theirs — imports `between:crates/tau-edit/tests/sloppy.rs::module::common:crates/tau-edit/tests/sloppy.rs::function::apply_fixtures` (F, confidence: medium) · weave: run 'weave explain crates/tau-edit/tests/sloppy.rs' for per-hunk detail, 'weave check' to verify your resolution
 
 #[tokio::test]
 async fn apply_fixtures() {
@@ -97,6 +113,32 @@ async fn trailing_end_patch_closes_a_wrapped_insert_instead_of_being_inserted() 
 			"  case 'a':\n    break;\n  case 'b':\n",
 			"{closer:?}"
 		);
+	}
+}
+
+#[tokio::test]
+async fn end_sentinels_close_put_bodies_but_stay_literal_in_find() {
+	for (before, input, expected) in [
+		// Models that close every body with `*** End …`: neither leaks into the
+		// file nor swallows the operations after it.
+		(
+			"one\ntwo\nthree\nfour\n",
+			"*** Edit File: a.txt\n*** Find\none\n*** Replace\nONE\n*** End Patch\n*** \
+			 Find\ntwo\n*** Replace\nTWO\n*** End\n*** Find\nthree\n*** Insert After\n3.5\n*** \
+			 End\n*** Find\nfour\n*** Replace\nFOUR\n*** End\n",
+			"ONE\nTWO\nthree\n3.5\nFOUR\n",
+		),
+		// A Find body is matched as written, so a literal sentinel line can be
+		// removed.
+		("a\n*** End\nb\n", "*** Edit File: a.txt\n*** Find\na\n*** End\n*** Replace\na\n", "a\nb\n"),
+	] {
+		let workspace = Workspace::new(EditMode::Sloppy);
+		workspace.write("a.txt", before);
+		workspace
+			.apply_json(&json!({ "input": input }), &DiskWriter::default())
+			.await
+			.expect("sentinel-closed payload");
+		assert_eq!(workspace.read("a.txt").unwrap(), expected, "{input:?}");
 	}
 }
 
@@ -225,7 +267,7 @@ async fn after_preview_matches_application_and_supports_inline_payloads() {
 }
 
 #[tokio::test]
-async fn after_and_put_use_original_anchors_and_fail_atomically_across_files() {
+async fn after_and_put_use_original_anchors_and_reject_a_missing_anchor_alone() {
 	let workspace = Workspace::new(EditMode::Sloppy);
 	workspace.write("a.txt", "anchor\nnext\n");
 	workspace.write("b.txt", "original\n");
@@ -236,19 +278,14 @@ async fn after_and_put_use_original_anchors_and_fail_atomically_across_files() {
 	let invalid =
 		format!("{input}*** Edit File: b.txt\n*** Find\nmissing\n*** Insert After\nadded\n");
 	let writer = DiskWriter::default();
-	workspace
+	let outcome = workspace
 		.apply_json(&json!({ "input": invalid }), &writer)
 		.await
-		.expect_err("a failing sibling prevents every write");
-	assert!(writer.requests.lock().is_empty());
-	assert_eq!(workspace.read("a.txt").unwrap(), "anchor\nnext\n");
-	assert_eq!(workspace.read("b.txt").unwrap(), "original\n");
-
-	workspace
-		.apply_json(&json!({ "input": input }), &writer)
-		.await
-		.expect("mixed actions apply to the original source");
+		.expect("a failing sibling file does not block the others");
+	assert!(outcome.text.contains("Operation 1 did not match b.txt"), "{}", outcome.text);
+	assert_eq!(writer.requests.lock().len(), 1);
 	assert_eq!(workspace.read("a.txt").unwrap(), "anchor\nadded\nchanged\n");
+	assert_eq!(workspace.read("b.txt").unwrap(), "original\n");
 }
 
 #[tokio::test]
@@ -287,7 +324,7 @@ async fn no_op_recovery_respects_utf8_boundaries_in_source_and_replacement() {
 			.apply_raw(&input, &writer)
 			.await
 			.expect_err("an unchanged edit reports a no-op instead of panicking");
-		assert!(matches!(error, EditError::Match(_)));
+		assert_eq!(error.kind(), "no_change", "{error}");
 		assert!(writer.requests.lock().is_empty());
 		assert_eq!(workspace.read("a.txt").unwrap(), before);
 	}
@@ -309,6 +346,26 @@ async fn overlapping_desired_matches_are_rejected_without_collapsing_source() {
 	assert_eq!(workspace.read("a.txt").unwrap(), before);
 }
 
+#[tokio::test]
+async fn a_staged_insertion_is_not_dropped_by_a_later_replace_on_the_same_find() {
+	let workspace = Workspace::new(EditMode::Sloppy);
+	let before = "old\nkeep\n";
+	workspace.write("a.txt", before);
+	let writer = DiskWriter::default();
+	let error = workspace
+		.apply_raw(
+			"*** Edit File: a.txt\n*** Find\nold\n*** Insert Before\nstaged\n*** Replace\nnew\n",
+			&writer,
+		)
+		.await
+		.expect_err("two operators on one *** Find cannot both apply");
+	assert!(matches!(error, EditError::Parse { .. }));
+	assert!(error.to_string().contains("*** Insert Before"), "{error}");
+	assert!(error.to_string().contains("*** Replace"), "{error}");
+	assert!(writer.requests.lock().is_empty());
+	assert_eq!(workspace.read("a.txt").unwrap(), before);
+}
+
 #[test]
 fn correctly_maps_source_spans_across_multi_byte_astral_characters_emoji() {
 	let source = "😀 const oldValue = 1;";
@@ -324,25 +381,30 @@ fn correctly_maps_source_spans_across_multi_byte_astral_characters_emoji() {
 fn escalates_the_third_identical_no_op_with_stop_guidance() {
 	let dir = tempfile::tempdir().expect("tempdir");
 	let path = dir.path().join("noop.ts");
-	std::fs::write(&path, "const value = current;\n").expect("fixture");
+	let content = "const a = current;\nconst b = current;\n";
+	std::fs::write(&path, content).expect("fixture");
 	let canonical = canonical_key(&path);
 	let store = EditStore::new();
-	let input = "«\nconst value = current;\n»\nconst value = current;";
+	// Two no-op operations per payload still count as one repeat per attempt.
+	let input =
+		"«\nconst a = current;\n»\nconst a = current;\n«\nconst b = current;\n»\nconst b = current;";
 	for attempt in 1..=3 {
 		let mut notes = Vec::new();
-		let error = apply_sloppy("const value = current;\n", input, ApplyContext {
+		let applied = apply_sloppy(content, input, ApplyContext {
 			path:      "noop.ts",
 			notes:     &mut notes,
 			store:     &store,
 			canonical: &canonical,
+			streaming: false,
 		})
-		.expect_err("no-op must fail");
+		.expect("payload parses");
+		let Applied::Unchanged(error) = applied else {
+			panic!("no-op must change nothing: {applied:?}");
+		};
 		if attempt < 3 {
-			assert!(
-				error
-					.to_string()
-					.contains("Operation 1 makes no change to noop.ts.")
-			);
+			let message = error.to_string();
+			assert!(message.contains("Operation 1 makes no change to noop.ts."), "{message}");
+			assert!(message.contains("Operation 2 makes no change to noop.ts."), "{message}");
 		} else {
 			assert!(
 				error
@@ -397,6 +459,61 @@ async fn returns_a_diff_for_an_applicable_section_and_an_error_for_a_miss() {
 	};
 	let preview = engine.preview(&partial, true, &mut files, &workspace.store);
 	assert!(preview.is_empty());
+}
+
+#[tokio::test]
+async fn streaming_preview_keeps_finished_ops_while_the_next_find_streams() {
+	let workspace = Workspace::new(EditMode::Sloppy);
+	workspace.write("a.txt", "alpha\nbeta\ngamma\n");
+	let mut files = FileCache::new(workspace.config.policy.clone());
+	let engine = SloppyEngine { allow_fuzzy: true, fuzzy_threshold: 0.95 };
+	// The second Find is still streaming; its Replace has not arrived. The
+	// preview keeps showing the finished first op: the unfinished one is
+	// neither guessed into an edit of the similar `gamma` line nor allowed to
+	// fail the whole section.
+	let partial = ArgSnapshot {
+		input: Some(
+			"*** Edit File: a.txt\n*** Find\nalpha\n*** Replace\nALPHA\n*** Find\ngamma2\n".to_owned(),
+		),
+		..ArgSnapshot::default()
+	};
+	let preview = engine.preview(&partial, true, &mut files, &workspace.store);
+	assert_eq!(preview.len(), 1);
+	let diff = preview[0].diff.as_deref().expect("first op previews");
+	assert!(diff.contains("+1|ALPHA"), "{diff}");
+	assert!(!diff.contains("-3|gamma") && !diff.contains("gamma2"), "{diff}");
+}
+
+#[tokio::test]
+async fn streaming_preview_recovers_a_bare_find_in_a_closed_section() {
+	let workspace = Workspace::new(EditMode::Sloppy);
+	workspace.write("a.txt", "alpha one two three\n");
+	workspace.write("b.txt", "beta\n");
+	let mut files = FileCache::new(workspace.config.policy.clone());
+	let engine = SloppyEngine { allow_fuzzy: true, fuzzy_threshold: 0.95 };
+	// The `b.txt` header closes the a.txt section, so its bare Find is final
+	// and recovers exactly as it will on apply; only the last section may
+	// still be streaming.
+	let args = ArgSnapshot {
+		input: Some(
+			"*** Edit File: a.txt\n*** Find\nalpha one two threX\n*** Edit File: b.txt\n*** \
+			 Find\nbeta\n*** Replace\nBETA\n"
+				.to_owned(),
+		),
+		..ArgSnapshot::default()
+	};
+	let streaming = engine.preview(&args, true, &mut files, &workspace.store);
+	let finished = engine.preview(&args, false, &mut files, &workspace.store);
+	let a_txt = |preview: &[pi_edit::PreviewFile]| {
+		preview
+			.iter()
+			.find(|file| file.display == "a.txt")
+			.cloned()
+			.expect("a.txt previews")
+	};
+	let streamed = a_txt(&streaming);
+	assert_eq!(streamed.error, None, "{streamed:?}");
+	assert_eq!(streamed.diff, a_txt(&finished).diff);
 }
 
 #[test]

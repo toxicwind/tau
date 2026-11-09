@@ -8,7 +8,9 @@ import { createAgentSession } from "tau/sdk";
 import { AuthStorage } from "tau/session/auth-storage";
 import { SessionManager } from "tau/session/session-manager";
 import { removeSyncWithRetries, Snowflake } from "@tau/tau-utils";
+import { AgentStorage } from "@oh-my-pi/pi-coding-agent/session/agent-storage";
 import { YAML } from "bun";
+import { cfgDisabledProviders, cfgEnabledModels } from "@oh-my-pi/pi-coding-agent/config/model-settings";
 
 /**
  * Issue #1022: when path-scoped `enabledModels`/`disabledProviders` are
@@ -38,6 +40,8 @@ describe("issue #1022 — path-scoped enabledModels respected by default fallbac
 
 	afterEach(() => {
 		resetSettingsForTest();
+		// `Settings.init` opened `<agentDir>/agent.db`; Windows cannot delete it while open.
+		AgentStorage.close();
 		if (fs.existsSync(testDir)) removeSyncWithRetries(testDir);
 	});
 
@@ -54,8 +58,8 @@ describe("issue #1022 — path-scoped enabledModels respected by default fallbac
 
 		const settings = await Settings.init({ cwd, agentDir });
 		// Sanity-check the path-scoped values resolved correctly for this cwd.
-		expect(settings.get("enabledModels")).toEqual(["openai-codex"]);
-		expect(settings.get("disabledProviders")).toEqual(["github-copilot"]);
+		expect(cfgEnabledModels.get(settings)).toEqual(["openai-codex"]);
+		expect(cfgDisabledProviders.get(settings)).toEqual(["github-copilot"]);
 
 		const authStorage = await AuthStorage.create(":memory:");
 		// Only anthropic has credentials. Per `enabledModels` the path allows

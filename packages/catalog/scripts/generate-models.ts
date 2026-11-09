@@ -10,20 +10,33 @@ const COPILOT_PREMIUM_MULTIPLIERS: Record<string, number> = {
 };
 
 import * as path from "node:path";
+<<<<<<< ours — interstitial `between:packages/catalog/scripts/generate-models.ts::variable::COPILOT_PREMIUM_MULTIPLIERS:packages/catalog/scripts/generate-models.ts::variable::packageRoot` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 import { discoverAuthStorage } from "@tau/tau-ai/auth-broker/discover";
 import type { OAuthAccess } from "@tau/tau-ai/auth-storage";
 import type { OAuthProvider } from "@tau/tau-ai/oauth/types";
 import { getGitLabDuoModels } from "@tau/tau-ai/providers/gitlab-duo";
 import { getProviderDefinition } from "@tau/tau-ai/registry";
 import { $env } from "@tau/tau-utils";
+=======
+import { parseArgs } from "node:util";
+import { discoverAuthStorage } from "@oh-my-pi/pi-ai/auth-broker/discover";
+import type { OAuthAccess } from "@oh-my-pi/pi-ai/auth-storage";
+import type { OAuthProvider } from "@oh-my-pi/pi-ai/oauth/types";
+import { getGitLabDuoModels } from "@oh-my-pi/pi-ai/providers/gitlab-duo";
+import { getProviderDefinition } from "@oh-my-pi/pi-ai/registry";
+import { $env } from "@oh-my-pi/pi-utils";
+>>>>>>> theirs — interstitial `between:packages/catalog/scripts/generate-models.ts::variable::COPILOT_PREMIUM_MULTIPLIERS:packages/catalog/scripts/generate-models.ts::variable::packageRoot` (F, confidence: medium) · weave: run 'weave explain packages/catalog/scripts/generate-models.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { buildModel } from "../src/build";
 import { isRetiredProvider } from "../src/compat/behavior";
 import { collapseVariants } from "../src/compat/collapse";
 import { providerEntries, providerEntry, seedModels } from "../src/compat/providers";
 import type { CompiledProvider } from "../src/compat/types";
 import { ANTIGRAVITY_PRIMARY_ENDPOINT, fetchAntigravityDiscoveryModels } from "../src/discovery/antigravity";
+import { encodeModelCatalog } from "../src/model-catalog-format";
 import { createModelManager } from "../src/model-manager";
-import prevModelsJson from "../src/models.json" with { type: "json" };
+import { resolveModelTokenizer } from "../src/model-tokenizer";
+import { getBundledModels, getBundledProviders } from "../src/models";
 import { toModelSpec } from "../src/provider-models/bundled-references";
 import {
 	allowsUnauthenticatedCatalogDiscovery,
@@ -34,17 +47,13 @@ import {
 import { PROVIDER_DESCRIPTORS } from "../src/provider-models/descriptors";
 import { filterModelsDevCatalogRows } from "../src/provider-models/models-dev-policies";
 import {
-	applyXaiCatalogPricing,
 	buildFireworksFastSeed,
 	buildXaiOAuthStaticSeed,
-	clampFireworksKimiMaxTokens,
-	clampKimiK27CodeMaxTokens,
 	fetchWellKnownModels,
-	isFireworksKimiK2ModelId,
-	isKimiK27CodeModelId,
 	kimiCodeMaxTokens,
 	MODELS_DEV_PROVIDER_DESCRIPTORS,
 	mapModelsDevToModels,
+	openCodeGoBaseUrlForApi,
 	projectOpenAIProReasoningAliases,
 	stripFireworksDeepSeekThinkingToggle,
 } from "../src/provider-models/openai-compat";
@@ -54,15 +63,23 @@ import type { Api, Model, ModelSpec } from "../src/types";
 import { cleanModelName } from "../src/utils";
 import { mergeCopilotApiHeaders } from "../src/wire/github-copilot";
 import {
-	applyAntigravityPricingFallback,
 	applyCanonicalLimitFallback,
 	applyGeneratedModelPolicies,
 	applyOllamaCloudOutputCap,
+	applyPricingPeerFallback,
 	hasBillableCost,
 	linkOpenAIPromotionTargets,
 } from "./generated-policies";
 
 const packageRoot = path.join(import.meta.dir, "..");
+
+// Generator policies may mutate nested specs, so each snapshot row owns its values.
+const prevModelsJson: Record<string, Record<string, Model<Api>>> = Object.fromEntries(
+	getBundledProviders().map(provider => [
+		provider,
+		Object.fromEntries(getBundledModels(provider).map(model => [model.id, structuredClone(model)])),
+	]),
+);
 
 /**
  * Local/self-hosted providers (Ollama, vLLM, LM Studio, LiteLLM). Their model
@@ -84,7 +101,14 @@ const DISCOVERY_ONLY_PROVIDERS = new Set(["ollama", "vllm", "lm-studio", "litell
  * runtime discovery is authoritative per credential (mirrors the GitLab Duo
  * fallback-only policy below).
  */
-const CREDENTIAL_SCOPED_PROVIDERS = new Set(["devin"]);
+const CREDENTIAL_SCOPED_PROVIDERS = new Set(["devin", "sambanova"]);
+/**
+ * Providers whose authored seed is the complete documented fallback
+ * catalog: their previous-snapshot rows are never resurrected, so an id
+ * the host retired (e.g. CoralBricks' GLM 5.3 Flash, 2026-10-07) cannot
+ * return as a previous-snapshot zombie.
+ */
+const STATIC_SEED_COMPLETE_PROVIDERS = new Set(["yolo-auto", "coralbricks"]);
 
 /**
  * The rows one provider's authored seed (`rules/providers/<id>.kdl`) contributes
@@ -92,6 +116,7 @@ const CREDENTIAL_SCOPED_PROVIDERS = new Set(["devin"]);
  * - `always`: every regen (same-id upstream/discovery rows still win dedup).
  * - `fallback`: only when the provider's authoritative discovery did not succeed.
  * - `empty`: only when no other source produced a row for the provider.
+ * - `never`: runtime-only rows the provider's model manager serves itself.
  *
  * xai-oauth projects curated chat rows into Responses specs while preserving
  * runner seed transports. The bundle carries both so configured roles resolve
@@ -104,6 +129,7 @@ function bundledSeedRows(
 ): readonly ModelSpec[] {
 	switch (entry.seed?.bundle) {
 		case undefined:
+		case "never":
 			return [];
 		case "fallback":
 			if (authoritativeProviders.has(entry.id)) return [];
@@ -147,9 +173,7 @@ export function mergePreviousSnapshotModels(
 				!fetchedKeys.has(`${model.provider}/${model.id}`) &&
 				!DISCOVERY_ONLY_PROVIDERS.has(model.provider) &&
 				!CREDENTIAL_SCOPED_PROVIDERS.has(model.provider) &&
-				// Yolo-Auto's documented static seed is the complete fallback
-				// catalog; never resurrect retired ids from the previous snapshot.
-				model.provider !== "yolo-auto" &&
+				!STATIC_SEED_COMPLETE_PROVIDERS.has(model.provider) &&
 				!isRetiredProvider(model.provider) &&
 				!excludedProviders.has(model.provider)
 			) {
@@ -403,28 +427,15 @@ function applyCodexPricingFallback(models: readonly ModelSpec[]): ModelSpec[] {
 }
 
 /**
- * Provider discovery sometimes reports context-sized Kimi output ceilings. Keep
- * the bundled catalog at the documented/provider-safe caps so request builders
- * that always send `max_tokens` do not over-allocate.
+ * Kimi Code discovery snapshots carried maxTokens=32000 uniformly (#6711); pin
+ * the documented per-family output ceilings and leave legacy K2 rows as-is.
+ * Other hosts' Kimi output caps are rule-owned (`max-tokens-ceiling`).
  */
-function applyKimiMaxTokensCap(models: readonly ModelSpec[]): ModelSpec[] {
-	const FIREWORKS_KIMI_PROVIDERS = new Set(["fireworks", "firepass"]);
+function applyKimiCodeMaxTokens(models: readonly ModelSpec[]): ModelSpec[] {
 	return models.map(model => {
-		if (FIREWORKS_KIMI_PROVIDERS.has(model.provider) && isFireworksKimiK2ModelId(model.id)) {
-			const capped = clampFireworksKimiMaxTokens(model.id, model.maxTokens);
-			return capped === model.maxTokens ? model : { ...model, maxTokens: capped };
-		}
-		if (model.provider === "venice" && isKimiK27CodeModelId(model.id)) {
-			const capped = clampKimiK27CodeMaxTokens(model.id, model.maxTokens);
-			return capped === model.maxTokens ? model : { ...model, maxTokens: capped };
-		}
-		if (model.provider === "kimi-code") {
-			// Discovery snapshots carried maxTokens=32000 uniformly (#6711); pin the
-			// documented per-family output ceilings and leave legacy K2 rows as-is.
-			const capped = kimiCodeMaxTokens(model.id, model.maxTokens);
-			return capped === model.maxTokens ? model : { ...model, maxTokens: capped };
-		}
-		return model;
+		if (model.provider !== "kimi-code") return model;
+		const capped = kimiCodeMaxTokens(model.id, model.maxTokens);
+		return capped === model.maxTokens ? model : { ...model, maxTokens: capped };
 	});
 }
 
@@ -492,15 +503,16 @@ async function fetchAntigravityModels(): Promise<ModelSpec<"google-gemini-cli">[
 		console.log("Fetching models from Antigravity API...");
 		const discovered = await fetchAntigravityDiscoveryModels({
 			token: access.accessToken,
+			projectId: access.projectId,
 			endpoint: ANTIGRAVITY_ENDPOINT,
 		});
-		if (discovered === null) {
+		if (discovered === null || discovered.rejectedStatus !== undefined) {
 			console.warn("Antigravity API fetch failed, will use previous models");
 			return [];
 		}
-		if (discovered.length > 0) {
-			console.log(`Fetched ${discovered.length} models from Antigravity API`);
-			return discovered;
+		if (discovered.models.length > 0) {
+			console.log(`Fetched ${discovered.models.length} models from Antigravity API`);
+			return discovered.models;
 		}
 		console.warn("Antigravity API returned no models, will use previous models");
 		return [];
@@ -556,14 +568,15 @@ async function fetchCodexDiscoveryModels(): Promise<ModelSpec<"openai-codex-resp
 	return [...models];
 }
 
-async function generateModels() {
+async function generateModels(selectedProvider?: string) {
 	// Fetch models from dynamic sources.
 	const modelsDevModels = await loadModelsDevData();
 	const catalogProviderDescriptors = PROVIDER_DESCRIPTORS.filter(
 		(descriptor): descriptor is CatalogProviderDescriptor =>
 			isCatalogDescriptor(descriptor) &&
 			!DISCOVERY_ONLY_PROVIDERS.has(descriptor.providerId) &&
-			!CREDENTIAL_SCOPED_PROVIDERS.has(descriptor.providerId),
+			!CREDENTIAL_SCOPED_PROVIDERS.has(descriptor.providerId) &&
+			(selectedProvider === undefined || descriptor.providerId === selectedProvider),
 	);
 	const catalogProviderModelBatches = await Promise.all(
 		catalogProviderDescriptors.map(async descriptor => ({
@@ -614,12 +627,14 @@ async function generateModels() {
 		{ label: "Codex", providerId: "openai-codex", authoritative: true, fetch: fetchCodexDiscoveryModels },
 	] as const;
 	const specialDiscoveries = await Promise.all(
-		specialDiscoverySources.map(async source => ({
-			label: source.label,
-			providerId: source.providerId,
-			authoritative: source.authoritative,
-			models: await source.fetch(),
-		})),
+		specialDiscoverySources
+			.filter(source => selectedProvider === undefined || source.providerId === selectedProvider)
+			.map(async source => ({
+				label: source.label,
+				providerId: source.providerId,
+				authoritative: source.authoritative,
+				models: await source.fetch(),
+			})),
 	);
 	const authoritativeSpecialDiscoveryProviders = new Set<string>();
 	for (const discovery of specialDiscoveries) {
@@ -653,11 +668,7 @@ async function generateModels() {
 	// Previous-snapshot entries may carry an older ThinkingConfig vocabulary;
 	// applyGeneratedModelPolicies re-bakes `thinking` for every model, so the
 	// inbound shape is irrelevant beyond identity/pricing/compat fields.
-	allModels = mergePreviousSnapshotModels(
-		allModels,
-		prevModelsJson as unknown as Record<string, Record<string, Model<Api>>>,
-		previousSnapshotExcludedProviders,
-	);
+	allModels = mergePreviousSnapshotModels(allModels, prevModelsJson, previousSnapshotExcludedProviders);
 	allModels = applyGlobalModelsDevFallback(allModels, modelsDevModels);
 	// Previous-snapshot fallbacks can retain a retired client fingerprint. Force
 	// every bundled Copilot model onto the same identity used by live discovery.
@@ -672,13 +683,17 @@ async function generateModels() {
 	}
 	allModels = applyUmansPricingFallback(allModels, modelsDevModels);
 	allModels = applyPremiumMultiplierOverrides(allModels);
-	allModels = applyXaiCatalogPricing(allModels);
 	allModels = applyCodexPricingFallback(allModels);
-	allModels = applyAntigravityPricingFallback(allModels);
-	allModels = applyKimiMaxTokensCap(allModels);
+	allModels = applyPricingPeerFallback(allModels);
+	allModels = applyKimiCodeMaxTokens(allModels);
 	allModels = applyFireworksDeepSeekReasoningShape(allModels);
 	allModels = filterModelsDevCatalogRows(allModels);
 	allModels = normalizeAntigravityEndpoint(allModels);
+	// Previous-snapshot fallbacks keep their old baseUrl; re-base every OpenCode
+	// Go row so retained rows follow gateway endpoint moves (#15722).
+	allModels = allModels.map(model =>
+		model.provider === "opencode-go" ? { ...model, baseUrl: openCodeGoBaseUrlForApi(model.api) } : model,
+	);
 	// Normalize display names: gateway author prefixes ("OpenAI: …"), alias
 	// markers ("(latest)"), provider attribution ("(Antigravity)"), and
 	// price/promo tags are model-extrinsic — strip them from the bundle.
@@ -731,6 +746,8 @@ async function generateModels() {
 	};
 
 	const modelSpecs: Record<string, Record<string, ModelSpec>> = sortObj(providers);
+<<<<<<< ours — scope `inserted statements` in function `generateModels` (S+F, confidence: low)
+// refused_by: statement_fold · collision: none (no common ancestor text)
 	// Apply mimetite contextLengths as authoritative context source for all models.
 	// mimetite is the geode catalog SSOT; its contextLengths override stale bundled values.
 	for (const models of Object.values(modelSpecs)) {
@@ -741,20 +758,36 @@ async function generateModels() {
 			}
 		}
 	}
-	const MODELS: Record<string, Record<string, Model<Api>>> = {};
+=======
+	// Validated against the generated rows, not a descriptor list, so every
+	// source kind (descriptor, special discovery, models.dev, seed) is selectable
+	// and a typo fails before models.json is rewritten.
+	if (selectedProvider !== undefined && modelSpecs[selectedProvider] === undefined) {
+		throw new Error(`No catalog rows generated for provider: ${selectedProvider}`);
+	}
+	// A provider-only update must not re-bake unrelated snapshot metadata.
+	// Keep cross-provider inputs above for reference fills, but replace only
+	// the requested provider in the generated output.
+	const MODELS: Record<string, Record<string, Model<Api>>> = selectedProvider === undefined
+		? {}
+		: { ...prevModelsJson };
+	if (selectedProvider !== undefined) delete MODELS[selectedProvider];
+>>>>>>> theirs — scope `inserted statements`
 	for (const [provider, models] of Object.entries(modelSpecs)) {
+		if (selectedProvider !== undefined && provider !== selectedProvider) continue;
 		MODELS[provider] = Object.fromEntries(
-			Object.entries(sortObj(models)).map(([id, model]) => [id, buildModel(model)]),
+			Object.entries(sortObj(models)).map(([id, model]) => [id, buildGeneratedModel(model)]),
 		);
 	}
 
 	// Generate JSON file
-	await Bun.write(path.join(packageRoot, "src/models.json"), JSON.stringify(MODELS));
+	await Bun.write(path.join(packageRoot, "src/models.json"), encodeModelCatalog(sortObj(MODELS)));
 	console.log("Generated src/models.json");
 
-	// Print statistics
-	const totalModels = allModels.length;
-	const reasoningModels = allModels.filter(m => m.reasoning).length;
+	// Print statistics for the rows this run regenerated.
+	const writtenModels = selectedProvider === undefined ? allModels : Object.values(MODELS[selectedProvider] ?? {});
+	const totalModels = writtenModels.length;
+	const reasoningModels = writtenModels.filter(m => m.reasoning).length;
 
 	console.log(`
 Model Statistics:`);
@@ -762,6 +795,7 @@ Model Statistics:`);
 	console.log(`  Reasoning-capable models: ${reasoningModels}`);
 
 	for (const [provider, models] of Object.entries(MODELS)) {
+		if (selectedProvider !== undefined && provider !== selectedProvider) continue;
 		console.log(`  ${provider}: ${Object.keys(models).length} models`);
 	}
 }
@@ -783,6 +817,27 @@ function canonicalizeModelCompat(model: ModelSpec<Api>): void {
 	}
 }
 
+/**
+ * Materialize one bundled row. Prompt-cache lifetimes are rule-owned output,
+ * not snapshot input: stale lifetimes and configuration provenance from a
+ * previous snapshot (or a copied reference row) are dropped so `buildModel`
+ * reapplies only the current KDL policy. A tokenizer the row's own id resolves
+ * is policy output too; a copied one survives only for ids policy cannot
+ * classify (e.g. GitLab Duo aliases of Claude models).
+ */
+export function buildGeneratedModel(model: ModelSpec<Api>): Model<Api> {
+	const spec = { ...model };
+	if (resolveModelTokenizer(spec.requestModelId ?? spec.id, spec.provider) !== undefined) delete spec.tokenizer;
+	delete spec.promptCache;
+	delete spec.promptCacheConfig;
+	delete spec.kindConfig;
+	return buildModel(spec);
+}
+
 if (import.meta.main) {
-	generateModels().catch(console.error);
+	const { values } = parseArgs({ args: Bun.argv.slice(2), options: { provider: { type: "string" } } });
+	generateModels(values.provider).catch(error => {
+		console.error(error);
+		process.exitCode = 1;
+	});
 }

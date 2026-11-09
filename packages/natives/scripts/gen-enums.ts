@@ -36,11 +36,21 @@ const CLASS_RE = /^export declare class (\w+)/gm;
 const FUNCTION_RE = /^export declare function (\w+)/gm;
 
 /**
+<<<<<<< ours — variable `VERSION_SENTINEL_NAME_RE` (T+F, confidence: medium)
+// refused_by: rename_vs_edit_guard · collision: `const VERSION_SENTINEL_NAME_RE = /^__piNativesV/;`
  * The release sentinel answers "which build is this addon?", so it must stay a
  * raw passthrough: a stub there would report presence for an addon that has it
  * not, defeating the loader's own staleness diagnosis.
  */
 const VERSION_SENTINEL_NAME_RE = new RegExp(`^(?:${VERSION_SENTINEL_PREFIXES.join("|")})`);
+=======
+ * The release identity export (`__piNativesBuildVersion`, and the legacy
+ * per-release `__piNativesV*` names) answers "which build is this addon?", so
+ * it must stay a raw passthrough: a stub there would report presence for an
+ * addon that has it not, defeating the loader's own staleness diagnosis.
+ */
+const RELEASE_IDENTITY_NAME_RE = /^__piNatives(?:BuildVersion$|V)/;
+>>>>>>> theirs — variable `VERSION_SENTINEL_NAME_RE` (T+F, confidence: medium) · weave: run 'weave explain packages/natives/scripts/gen-enums.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 interface EnumExport {
 	name: string;
@@ -95,8 +105,15 @@ function buildGeneratedBlock(dts: string): string {
 	if (classes.length > 0) {
 		lines.push("// classes");
 		for (const name of classes) {
+			// `DesktopSession` keeps its adapter: that already turns an addon
+			// without the current desktop ABI into a throwing class naming the
+			// rebuild, which covers the absent-class case too. Every other
+			// class gets `missingNativeClass`, the constructor-side twin of
+			// the function stub below. See `loader-state.js`.
 			const binding =
-				name === "DesktopSession" ? `adaptDesktopSession(nativeBindings.${name})` : `nativeBindings.${name}`;
+				name === "DesktopSession"
+					? `adaptDesktopSession(nativeBindings.${name})`
+					: `nativeBindings.${name} ?? missingNativeClass("${name}")`;
 			lines.push(`export const ${name} = ${binding};`);
 		}
 	}
@@ -108,7 +125,7 @@ function buildGeneratedBlock(dts: string): string {
 			// throwing stub on a stale one, so capability probes
 			// (`typeof native.x === "function"`) keep their meaning and only the
 			// stale case gains an actionable failure. See `loader-state.js`.
-			const fallback = VERSION_SENTINEL_NAME_RE.test(name) ? "" : ` ?? missingNativeExport("${name}")`;
+			const fallback = RELEASE_IDENTITY_NAME_RE.test(name) ? "" : ` ?? missingNativeExport("${name}")`;
 			lines.push(`export const ${name} = nativeBindings.${name}${fallback};`);
 		}
 	}

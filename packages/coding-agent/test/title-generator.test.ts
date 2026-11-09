@@ -1,4 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, spyOn, vi } from "bun:test";
+<<<<<<< ours — imports `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 import type { Api, Model } from "@tau/tau-ai";
 import * as ai from "@tau/tau-ai";
 import { buildModel } from "@tau/tau-catalog/build";
@@ -6,6 +8,16 @@ import { type GeneratedProvider, getBundledModel } from "@tau/tau-catalog/models
 import { formatModelStringWithRouting, resolveModelOverride } from "tau/config/model-resolver";
 import { Settings } from "tau/config/settings";
 import { tinyTitleClient } from "tau/tiny/title-client";
+=======
+import type { Api, Model } from "@oh-my-pi/pi-ai";
+import * as ai from "@oh-my-pi/pi-ai";
+import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import { type GeneratedProvider, getBundledModel } from "@oh-my-pi/pi-catalog/models";
+import { formatModelStringWithRouting, resolveModelOverride } from "@oh-my-pi/pi-coding-agent/config/model-resolver";
+import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import { tinyTitleClient } from "@oh-my-pi/pi-coding-agent/tiny/title-client";
+import { DEFAULT_SPINNER_INTERVAL_MS } from "@oh-my-pi/pi-tui/spinner-clock";
+>>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/title-generator.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	disposeTerminalTitleState,
 	generateSessionTitle,
@@ -13,10 +25,18 @@ import {
 	setExtensionTerminalTitle,
 	setSessionTerminalTitle,
 	setTerminalTitle,
+	setTerminalTitlePullRequest,
 	setTerminalTitleSpinnerStyle,
 	setTerminalTitleState,
+<<<<<<< ours — imports `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 } from "tau/utils/title-generator";
 import { isWsl, logger, setTerminalHeadless } from "@tau/tau-utils";
+=======
+} from "@oh-my-pi/pi-coding-agent/utils/title-generator";
+import { setNativeRendering } from "@oh-my-pi/pi-tui/native/state";
+import { isWsl, logger, setTerminalHeadless } from "@oh-my-pi/pi-utils";
+>>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import { mockWindowsConsoleTitle, type WindowsConsoleTitleMock } from "./terminal-title-test-utils";
 
 function getModelOrThrow(id: string): Model<Api> {
@@ -376,7 +396,7 @@ describe("title generator", () => {
 		expect(warnSpy).toHaveBeenCalledWith(
 			"title-generator: no API key",
 			expect.objectContaining({
-				sessionId: "session-1",
+				titleSessionId: "session-1",
 				provider: model.provider,
 				id: model.id,
 				reason: "missing-api-key",
@@ -410,7 +430,7 @@ describe("title generator", () => {
 		expect(warnSpy).toHaveBeenCalledWith(
 			"title-generator: error",
 			expect.objectContaining({
-				sessionId: "session-2",
+				titleSessionId: "session-2",
 				provider: model.provider,
 				id: model.id,
 				reason: "exception",
@@ -1004,7 +1024,7 @@ describe("terminal title runtime", () => {
 			expect(emittedTitles()).toEqual(["π ⠋ windows-project"]);
 
 			resetEmitted();
-			vi.advanceTimersByTime(160);
+			vi.advanceTimersByTime(DEFAULT_SPINNER_INTERVAL_MS * 2);
 			const titles = emittedTitles();
 			expect(titles.length).toBeGreaterThan(0);
 			expect(titles.every(title => SPINNER_FRAMES.some(frame => title.includes(frame)))).toBe(true);
@@ -1049,6 +1069,33 @@ describe("terminal title runtime", () => {
 			expect(native.titles).toEqual(["native Ω"]);
 			expect(writes).toEqual([]);
 		} finally {
+			Object.defineProperty(process, "platform", { value: originalPlatform, configurable: true });
+		}
+	});
+
+	it("reclaims the Windows console title after another process replaces it", () => {
+		// Issue #16842: a child omp (worker, `browser-relay`) attached to the
+		// pane's console retitled it to `omp`; under a TSP terminal every later
+		// emit composes the same title, so the dedupe cache must not swallow it.
+		const originalPlatform = process.platform;
+		const native = windowsTitleMock;
+		if (!native) throw new Error("Windows console title mock not initialized");
+		try {
+			Object.defineProperty(process, "platform", { value: "win32", configurable: true });
+			setNativeRendering(true);
+			setSessionTerminalTitle("HOST: Summarize self-host blog post");
+			resetEmitted();
+
+			// Untouched console: the repeat stays deduped.
+			setTerminalTitleState("working");
+			expect(native.titles).toEqual([]);
+
+			native.current = "omp";
+			setTerminalTitleState("idle");
+			expect(native.titles).toEqual(["HOST: Summarize self-host blog post"]);
+			expect(writes).toEqual([]);
+		} finally {
+			setNativeRendering(false);
 			Object.defineProperty(process, "platform", { value: originalPlatform, configurable: true });
 		}
 	});
@@ -1156,5 +1203,29 @@ describe("terminal title runtime", () => {
 		expect(last).toBeDefined();
 		expect(last).toContain("my-session");
 		expectWorkingSeparator(last, "my-session");
+	});
+
+	it("titles the tab with the bare session name while a TSP terminal renders, and restores the run state after", () => {
+		setSessionTerminalTitle("Ack path refactor");
+		setTerminalTitleState("working");
+		try {
+			setNativeRendering(true);
+			resetEmitted();
+			// The terminal shows run state itself: no brand, no spinner ticks.
+			vi.advanceTimersByTime(400);
+			setTerminalTitlePullRequest(412);
+			expect(emittedTitles()).toEqual(["Ack path refactor · #412"]);
+
+			setSessionTerminalTitle("Renamed");
+			expect(emittedTitles().at(-1)).toBe("Renamed · #412");
+			setSessionTerminalTitle(undefined);
+			setTerminalTitlePullRequest(undefined);
+			expect(emittedTitles().at(-1)).toBe("omp");
+			setSessionTerminalTitle("Renamed");
+		} finally {
+			setNativeRendering(false);
+			setTerminalTitlePullRequest(undefined);
+		}
+		expectWorkingSeparator(emittedTitles().at(-1), "Renamed");
 	});
 });

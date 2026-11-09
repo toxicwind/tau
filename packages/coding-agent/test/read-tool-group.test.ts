@@ -1,10 +1,23 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
 import * as url from "node:url";
+<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import { getDefault } from "@oh-my-pi/pi-coding-agent/config/se…`
 import { resetSettingsForTest, Settings, settings } from "tau/config/settings";
 import { getDefault } from "tau/config/settings-schema";
 import { ReadToolGroupComponent, readArgsCollapseIntoGroup } from "@tau/tau-tui/chat/read-tool-group";
 import * as themeModule from "@tau/tau-tui/theme";
+=======
+import { resetSettingsForTest, Settings, settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+// Installs the pi-tui scheme host that decides which reads collapse into the group.
+import "@oh-my-pi/pi-coding-agent/internal-urls/router";
+
+import { ReadToolGroupComponent, readArgsCollapseIntoGroup } from "@oh-my-pi/pi-tui/chat/read-tool-group";
+import * as themeModule from "@oh-my-pi/pi-tui/theme";
+import { FILE_NAME_COLOR } from "@oh-my-pi/pi-tui/render/render-utils";
+import { cfgReadToolResultPreview } from "@oh-my-pi/pi-coding-agent/tools/settings";
+import { cfgTuiHyperlinks } from "@oh-my-pi/pi-coding-agent/modes/settings";
+>>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/read-tool-group.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function extractLinkUris(text: string): string[] {
 	return [...text.matchAll(/\x1b\]8;[^;]*;([^\x1b]+)\x1b\\/g)].map(match => match[1]!);
@@ -24,7 +37,7 @@ describe("ReadToolGroupComponent", () => {
 	});
 
 	afterEach(() => {
-		settings.clearOverride("tui.hyperlinks");
+		cfgTuiHyperlinks.clearOverride(settings);
 		vi.restoreAllMocks();
 	});
 
@@ -33,7 +46,7 @@ describe("ReadToolGroupComponent", () => {
 	});
 
 	it("keeps inline read previews disabled by default", () => {
-		expect(getDefault("read.toolResultPreview")).toBe(false);
+		expect(cfgReadToolResultPreview.default).toBe(false);
 
 		const component = new ReadToolGroupComponent();
 		const examplePath = path.resolve("/tmp/example.ts");
@@ -53,7 +66,7 @@ describe("ReadToolGroupComponent", () => {
 		expect(rendered.toLowerCase()).not.toContain("ctrl+o");
 	});
 
-	it("uses the enabled dot for completed reads", () => {
+	it("marks a completed read with the green success glyph", () => {
 		const component = new ReadToolGroupComponent();
 		const examplePath = path.resolve("/tmp/example.ts");
 		component.updateArgs({ path: examplePath }, "read-success");
@@ -68,10 +81,8 @@ describe("ReadToolGroupComponent", () => {
 		const rendered = component.render(120).join("\n");
 		const plain = Bun.stripANSI(rendered);
 
-		expect(plain).toContain(themeModule.theme.status.enabled);
-		expect(plain).not.toContain(themeModule.theme.status.success);
-		expect(rendered).toContain(themeModule.theme.fg("text", themeModule.theme.status.enabled));
-		expect(rendered).not.toContain(themeModule.theme.fg("success", themeModule.theme.status.enabled));
+		expect(plain).toContain(`${themeModule.theme.status.success} Read`);
+		expect(rendered).toContain(themeModule.theme.fg("success", themeModule.theme.status.success));
 	});
 
 	it("omits duplicate success marks from multi-read child rows", () => {
@@ -88,8 +99,8 @@ describe("ReadToolGroupComponent", () => {
 		expect(plain).toContain("Read (2)");
 		expect(plain).toContain(`${themeModule.theme.tree.branch} ${onePath}`);
 		expect(plain).toContain(`${themeModule.theme.tree.last} ${twoPath}`);
-		expect(plain).not.toContain(`${themeModule.theme.tree.branch} ${themeModule.theme.status.enabled}`);
-		expect(plain).not.toContain(`${themeModule.theme.tree.last} ${themeModule.theme.status.enabled}`);
+		expect(plain).not.toContain(`${themeModule.theme.tree.branch} ${themeModule.theme.status.success}`);
+		expect(plain).not.toContain(`${themeModule.theme.tree.last} ${themeModule.theme.status.success}`);
 	});
 
 	it("nests one usage row beneath the last path from each read-only turn", () => {
@@ -191,6 +202,21 @@ describe("ReadToolGroupComponent", () => {
 		expect(plain).not.toContain("1210-1240");
 	});
 
+	it("styles grouped rows' paths and mutes their selectors, merged lists included", () => {
+		const { theme } = themeModule;
+		const component = new ReadToolGroupComponent();
+		const renderPath = path.resolve("/tmp/render.ts");
+		component.updateArgs({ path: `${renderPath}:507-605` }, "read-one");
+		component.updateArgs({ path: `${renderPath}:1070-1194,1210-1240,1270-1274` }, "read-more");
+		// A second file keeps the reads as group rows rather than one header line.
+		component.updateArgs({ path: path.resolve("/tmp/other.ts") }, "read-other");
+
+		const rendered = component.render(120).join("\n");
+
+		expect(rendered).toContain(theme.fg(FILE_NAME_COLOR, "render.ts"));
+		expect(rendered).toContain(theme.fg("muted", ":507-605,1070-1194,…,1270-1274"));
+	});
+
 	it("uses result-provided recovered targets for delimited reads", () => {
 		const component = new ReadToolGroupComponent();
 		const onePath = path.resolve("/tmp/one.ts");
@@ -213,7 +239,7 @@ describe("ReadToolGroupComponent", () => {
 	});
 
 	it("links every grouped delimited row from result-provided link paths", () => {
-		settings.override("tui.hyperlinks", "always");
+		cfgTuiHyperlinks.override(settings, "always");
 		const component = new ReadToolGroupComponent();
 		const oneLink = path.resolve("/workspace/src/one.ts");
 		const twoLink = path.resolve("/workspace/src/two.ts");
@@ -284,7 +310,7 @@ describe("ReadToolGroupComponent", () => {
 		expect(highlightedInput).toBe("line 1\nline 2\nline 3");
 		expect(rendered).toContain("line 1");
 		expect(rendered).not.toContain("line 4");
-		expect(rendered.toLowerCase()).toContain("ctrl+o");
+		expect(rendered).toContain("2 more lines");
 	});
 
 	it("does not render a duplicate summary row when inline previews are enabled", () => {
@@ -335,7 +361,7 @@ describe("ReadToolGroupComponent", () => {
 	});
 
 	it("links grouped summary paths to resolved filesystem paths and selector lines", () => {
-		settings.override("tui.hyperlinks", "always");
+		cfgTuiHyperlinks.override(settings, "always");
 		const component = new ReadToolGroupComponent();
 		const examplePath = path.resolve("/workspace/src/example.ts");
 		component.updateArgs({ path: "src/example.ts:7-9" }, "read-link");
@@ -358,7 +384,7 @@ describe("ReadToolGroupComponent", () => {
 	});
 
 	it("links inline preview titles when the summary row is suppressed", () => {
-		settings.override("tui.hyperlinks", "always");
+		cfgTuiHyperlinks.override(settings, "always");
 		const component = new ReadToolGroupComponent({ showContentPreview: true });
 		const previewPath = path.resolve("/workspace/src/preview.ts");
 		component.updateArgs({ path: "src/preview.ts:20-22" }, "read-preview-link");
@@ -378,6 +404,50 @@ describe("ReadToolGroupComponent", () => {
 		expect(extractLinkUris(rendered)).toContain(previewUri);
 		expect(extractLinkTexts(rendered)).toContain("src/preview.ts");
 		expect(extractLinkTexts(rendered)).not.toContain("src/preview.ts:20-22");
+	});
+
+	// #15007: plain-file reads land in the group, so its preview must honor read.renderMarkdown.
+	it("previews Markdown-tagged reads as rendered Markdown unless raw source was requested", () => {
+		const markdown = "# Title\n\nSome **bold** text.";
+		const preview = (args: { path: string; raw?: boolean }): string => {
+			const component = new ReadToolGroupComponent({ showContentPreview: true });
+			component.updateArgs(args, "read-md");
+			component.updateResult(
+				{ content: [{ type: "text", text: markdown }], details: { contentType: "text/markdown" } },
+				false,
+				"read-md",
+			);
+			return Bun.stripANSI(component.render(120).join("\n"));
+		};
+		const readme = path.resolve("/tmp/README.md");
+
+		const rendered = preview({ path: readme });
+		expect(rendered).toContain("Some bold text.");
+		expect(rendered).not.toContain("# Title");
+
+		for (const args of [{ path: `${readme}:raw` }, { path: readme, raw: true }]) {
+			const source = preview(args);
+			expect(source).toContain("# Title");
+			expect(source).toContain("Some **bold** text.");
+		}
+	});
+
+	it("switches a Markdown preview back to source when raw args arrive after the result", () => {
+		const component = new ReadToolGroupComponent({ showContentPreview: true });
+		const readme = path.resolve("/tmp/README.md");
+		component.updateArgs({ path: readme }, "read-md");
+		component.updateResult(
+			{
+				content: [{ type: "text", text: "# Title\n\nSome **bold** text." }],
+				details: { contentType: "text/markdown" },
+			},
+			false,
+			"read-md",
+		);
+		expect(Bun.stripANSI(component.render(120).join("\n"))).not.toContain("# Title");
+
+		component.updateArgs({ path: readme, raw: true }, "read-md");
+		expect(Bun.stripANSI(component.render(120).join("\n"))).toContain("Some **bold** text.");
 	});
 });
 

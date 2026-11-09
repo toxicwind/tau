@@ -1,9 +1,16 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
+<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import { getOverallStats } from "@oh-my-pi/omp-stats/db";`
 import { syncAllSessions } from "@tau/tau-stats/aggregator";
 import { getOverallStats } from "@tau/tau-stats/db";
 import { getSessionsDir } from "@tau/tau-utils";
+=======
+import { syncAllSessions } from "@oh-my-pi/omp-stats/aggregator";
+import { getOverallStats } from "@oh-my-pi/omp-stats/rollup";
+import { getSessionsDir } from "@oh-my-pi/pi-utils";
+>>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/stats/test/sync-serial.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { installStatsTestIsolation } from "./helpers/temp-agent";
 
 installStatsTestIsolation("@tau-stats-sync-serial-");
@@ -59,6 +66,21 @@ describe("stats sync serial mode", () => {
 		expect(workerSpy).not.toHaveBeenCalled();
 	});
 
+	it("skips gc compress scratch copies but keeps transcripts in other dot directories", async () => {
+		await writeSessionFile();
+		const folder = path.join(getSessionsDir(), "--tmp--sync-serial");
+		const scratch = path.join(folder, ".omp-gc-compress-a1b2c3");
+		const hidden = path.join(folder, "session", ".runs");
+		await fs.mkdir(scratch);
+		await fs.mkdir(hidden, { recursive: true });
+		await fs.copyFile(path.join(folder, "session.jsonl"), path.join(scratch, "session.jsonl"));
+		await fs.copyFile(path.join(folder, "session.jsonl"), path.join(hidden, "child.jsonl"));
+
+		const synced = await syncAllSessions({ workers: 1 });
+
+		expect(synced.files).toBe(2);
+	});
+
 	it("syncs legacy session usage without a cost breakdown", async () => {
 		await writeSessionFile({ includeCost: false });
 
@@ -80,6 +102,30 @@ describe("stats sync serial mode", () => {
 
 		expect(synced.files).toBe(1);
 		expect(overall.totalRequests).toBe(1);
+		expect(workerSpy).not.toHaveBeenCalled();
+	});
+
+	it("spawns no worker when every transcript is unchanged", async () => {
+		await writeSessionFile();
+		await syncAllSessions({ workers: 1 });
+		const workerSpy = vi.spyOn(globalThis, "Worker");
+
+		const synced = await syncAllSessions({ workers: 2 });
+
+		expect(synced).toEqual({ processed: 0, files: 0 });
+		expect(workerSpy).not.toHaveBeenCalled();
+	});
+
+	it("parses a few already-tracked transcripts inline by default", async () => {
+		await writeSessionFile();
+		await syncAllSessions({ workers: 1 });
+		const sessionFile = path.join(getSessionsDir(), "--tmp--sync-serial", "session.jsonl");
+		await fs.appendFile(sessionFile, "\n");
+		vi.spyOn(process, "platform", "get").mockReturnValue("linux");
+		const workerSpy = vi.spyOn(globalThis, "Worker");
+
+		await syncAllSessions({ files: [sessionFile] });
+
 		expect(workerSpy).not.toHaveBeenCalled();
 	});
 

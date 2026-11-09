@@ -1,7 +1,8 @@
 /**
- * Bake↔runtime consistency gate: for every bundled models.json row, the compat
+ * Bake↔runtime consistency gate: for every bundled catalog row, the compat
  * engine (`resolveModelPolicy`) must reproduce the row's baked `compat` and
- * `thinking` values exactly, for every field that existed before the engine.
+ * `thinking` values exactly, so a rule change that is not re-baked into the
+ * bundle fails here.
  *
  * Thinking is derived from scratch (`thinking: undefined`), mirroring the
  * generator's `rebakeModelThinking`, except its documented provider-authored
@@ -9,17 +10,20 @@
  *
  * Hermetic (no network). Zero diffs required — a failure names each divergent
  * field as `provider/model.field: baked=X engine=Y`; fix the KDL rules (or a
- * host-detection seam in `resolve.ts`), never the baked values.
+ * host-detection seam in `resolve.ts`) or regenerate the provider's rows
+ * (`bun run gen:models --provider <id>`), never hand-edit the baked values.
  */
 import { describe, expect, test } from "bun:test";
 import { isCollapsedVariantSpec } from "../src/compat/collapse";
 import { resolveModelPolicy } from "../src/compat/resolve";
-import models from "../src/models.json";
+import { getBundledModels, getBundledProviders } from "../src/models";
 import type { Api, Model, ModelSpec } from "../src/types";
 
 /** Fields retired from the engine — still present in pre-engine baked rows. */
 const RETIRED_COMPAT_FIELDS = new Set(["clampOutputToModelMax"]);
 
+<<<<<<< ours — variable `NEW_COMPAT_FIELDS` (T+F, confidence: medium)
+// refused_by: modify_delete_guard · collision: none (no common ancestor text)
 /** Fields introduced by the compat engine — absent from pre-engine baked rows. */
 const NEW_COMPAT_FIELDS = new Set([
 	"requiresEffort",
@@ -41,10 +45,8 @@ const NEW_COMPAT_FIELDS = new Set([
 	"antigravityClaudeToolMode",
 	"antigravityUsageLabel",
 ]);
-
-/** APIs whose compat record is new with the engine (no baked baseline). */
-const NEW_COMPAT_APIS = new Set(["google-generative-ai", "google-vertex", "google-gemini-cli"]);
-
+=======
+>>>>>>> theirs — variable `NEW_COMPAT_FIELDS` (T+F, confidence: medium) · weave: run 'weave explain packages/catalog/test/compat-parity.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 function jsonClone<T>(value: T): unknown {
 	return value === undefined ? undefined : JSON.parse(JSON.stringify(value));
 }
@@ -61,8 +63,12 @@ function diffValues(prefix: string, baked: unknown, engine: unknown, out: string
 	) {
 		const keys = new Set([...Object.keys(baked), ...Object.keys(engine)]);
 		for (const key of keys) {
+<<<<<<< ours — function `diffValues` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 			if (NEW_COMPAT_FIELDS.has(key)) continue;
 			if (RETIRED_COMPAT_FIELDS.has(key)) continue;
+=======
+>>>>>>> theirs — function `diffValues` (F, confidence: medium)
 			diffValues(
 				`${prefix}.${key}`,
 				(baked as Record<string, unknown>)[key],
@@ -80,7 +86,7 @@ interface RowLike {
 	provider: string;
 	api: Api;
 	compat?: unknown;
-	compatConfig?: { thinkingFormat?: string };
+	compatConfig?: { thinkingFormat?: string; trustExplicitThinkingOnly?: boolean };
 	thinking?: Model<Api>["thinking"];
 	[key: string]: unknown;
 }
@@ -91,7 +97,11 @@ interface RowLike {
  */
 function keepsExplicitThinking(row: RowLike): boolean {
 	if (isCollapsedVariantSpec(row as unknown as ModelSpec<Api>)) return true;
-	if (row.compatConfig?.thinkingFormat === "chat-template" && row.thinking) return true;
+	if (
+		(row.compatConfig?.thinkingFormat === "chat-template" || row.compatConfig?.thinkingFormat === "kimi") &&
+		row.thinking
+	)
+		return true;
 	if (
 		row.provider === "alibaba-token-plan" &&
 		(row.id === "qwen3.8-max-preview" || row.id === "qwen3.8-max") &&
@@ -100,20 +110,20 @@ function keepsExplicitThinking(row: RowLike): boolean {
 		return true;
 	}
 	if (row.provider === "cline-pass" && row.thinking) return true;
+	if (row.compatConfig?.trustExplicitThinkingOnly === true) return true;
 	if (row.provider === "openrouter" && row.thinking?.requiresEffort === true) return true;
 	return false;
 }
 
 describe("compat parity", () => {
-	test("engine reproduces every baked models.json compat/thinking value", () => {
+	test("engine reproduces every baked catalog compat/thinking value", () => {
 		const diffs: string[] = [];
 		let rows = 0;
-		for (const provider in models) {
-			const providerModels = models[provider as keyof typeof models] as Record<string, unknown>;
-			for (const modelId in providerModels) {
-				const row = providerModels[modelId] as unknown as Model<Api> & RowLike;
+		for (const provider of getBundledProviders()) {
+			for (const model of getBundledModels(provider)) {
+				const row = model as unknown as RowLike;
 				rows++;
-				const label = `${provider}/${modelId}`;
+				const label = `${provider}/${row.id}`;
 				const {
 					compat: _compat,
 					compatConfig,
@@ -140,9 +150,7 @@ describe("compat parity", () => {
 				}
 				let thinking = policy.thinking;
 				if (!exempt && umansAuthored && thinking) thinking = { ...thinking, requiresEffort: true };
-				if (!NEW_COMPAT_APIS.has(row.api)) {
-					diffValues(`${label}.compat`, jsonClone(row.compat), jsonClone(policy.compat), diffs);
-				}
+				diffValues(`${label}.compat`, jsonClone(row.compat), jsonClone(policy.compat), diffs);
 				diffValues(`${label}.thinking`, jsonClone(row.thinking), jsonClone(thinking), diffs);
 			}
 		}

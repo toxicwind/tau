@@ -5,6 +5,9 @@ import type { ToolSession } from "tau/tools";
 import { GrepTool } from "tau/tools/grep";
 import { ReadTool } from "tau/tools/read";
 import { WriteTool } from "tau/tools/write";
+import { AstGrepTool } from "@oh-my-pi/pi-coding-agent/tools/ast-grep";
+import { GlobTool } from "@oh-my-pi/pi-coding-agent/tools/glob";
+import { FindTool } from "@oh-my-pi/pi-coding-agent/tools/jfind";
 
 // Minimal ToolSession stub (block-images.test.ts shape). Approval functions are
 // pure over their args, and the write-execute selector reject throws before any
@@ -43,10 +46,26 @@ describe("ssh:// tools require exec-tier approval", () => {
 		const tool = new GrepTool(createTestToolSession(os.tmpdir()));
 		// The delimited string is one entry at approval time (expansion happens
 		// later), so an anchored check would miss it — the substring scan must not.
+		expect(callApproval(tool, { path: "src,ssh://icaro/etc/hosts" })).toBe("exec");
+		expect(callApproval(tool, { path: "src;ssh://icaro/etc/hosts" })).toBe("exec");
+		// Unvalidated args may still carry a list or the legacy `paths` key.
+		expect(callApproval(tool, { path: ["src", "ssh://icaro/etc/hosts"] })).toBe("exec");
 		expect(callApproval(tool, { paths: "src,ssh://icaro/etc/hosts" })).toBe("exec");
-		expect(callApproval(tool, { paths: ["src", "ssh://icaro/etc/hosts"] })).toBe("exec");
-		expect(callApproval(tool, { paths: ["src", "lib"] })).toBe("read");
-		expect(callApproval(tool, { paths: "src" })).toBe("read");
+		expect(callApproval(tool, { path: '["src","ssh:\\/\\/icaro\\/etc\\/hosts"]' })).toBe("exec");
+		expect(callApproval(tool, { path: "src,lib" })).toBe("read");
+		expect(callApproval(tool, { path: "src" })).toBe("read");
+		expect(callApproval(tool, {})).toBe("read");
+	});
+
+	it.each([
+		["find", (session: ToolSession) => new FindTool(session)],
+		["glob", (session: ToolSession) => new GlobTool(session)],
+		["ast_grep", (session: ToolSession) => new AstGrepTool(session)],
+	])("%s: an ssh:// path is exec, local paths stay read", (_name, create) => {
+		const tool = create(createTestToolSession(os.tmpdir()));
+		expect(callApproval(tool, { path: "ssh://icaro/etc" })).toBe("exec");
+		expect(callApproval(tool, { path: "src,ssh://icaro/etc" })).toBe("exec");
+		expect(callApproval(tool, { path: "src" })).toBe("read");
 		expect(callApproval(tool, {})).toBe("read");
 	});
 

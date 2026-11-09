@@ -5,16 +5,20 @@
 use std::{
 	cmp::Ordering,
 	ffi::{OsStr, OsString},
-	fs::{self, File},
 	io::{self, BufRead, BufReader, Read, Write},
 	path::Path,
+	sync::Arc,
 };
 
-use brush_core::{ShellExtensions, builtins::Registration};
 use clap::{Arg, ArgAction, ArgMatches, Command};
+use icu_collator::CollatorBorrowed;
+use pi_vfs::BlockingFs;
 use uucore::{display::Quotable, line_ending::LineEnding};
 
-use crate::host::{Host, Utility, format_usage, matches_parser, util};
+use crate::{
+	host::{Host, Utility, format_usage, matches_parser},
+	locale::shell_collator,
+};
 
 mod options {
 	pub const COLUMN_1: &str = "1";
@@ -44,6 +48,25 @@ impl FileNumber {
 	}
 }
 
+/// The order `sort` writes lines in for the shell's `LC_COLLATE`: its
+/// collation with bytes breaking ties, or bytes alone. Line endings are left
+/// out of the comparison, as GNU's are.
+struct LineOrder {
+	collator: Option<Arc<CollatorBorrowed<'static>>>,
+	ending:   u8,
+}
+
+impl LineOrder {
+	fn cmp(&self, a: &[u8], b: &[u8]) -> Ordering {
+		let a = a.strip_suffix(&[self.ending]).unwrap_or(a);
+		let b = b.strip_suffix(&[self.ending]).unwrap_or(b);
+		match &self.collator {
+			Some(collator) => collator.compare_utf8(a, b).then_with(|| a.cmp(b)),
+			None => a.cmp(b),
+		}
+	}
+}
+
 struct OrderChecker {
 	last_line:   Vec<u8>,
 	file_num:    FileNumber,
@@ -56,12 +79,12 @@ impl OrderChecker {
 		Self { last_line: Vec::new(), file_num, check_order, has_error: false }
 	}
 
-	fn verify_order(&mut self, line: &[u8], stderr: &mut impl Write) -> bool {
+	fn verify_order(&mut self, line: &[u8], order: &LineOrder, stderr: &mut impl Write) -> bool {
 		if self.last_line.is_empty() {
 			self.last_line = line.to_vec();
 			return true;
 		}
-		let ordered = line >= self.last_line.as_slice();
+		let ordered = order.cmp(line, &self.last_line).is_ge();
 		if !ordered && !self.has_error {
 			let _ = writeln!(stderr, "comm: file {} is not in sorted order", self.file_num.as_str());
 			self.has_error = true;
@@ -91,14 +114,14 @@ impl<'a> LineReader<'a> {
 	}
 }
 
-fn files_identical(path1: &Path, path2: &Path) -> io::Result<bool> {
-	let m1 = fs::metadata(path1)?;
-	let m2 = fs::metadata(path2)?;
+fn files_identical(fs: &BlockingFs, path1: &Path, path2: &Path) -> io::Result<bool> {
+	let m1 = fs.metadata(path1)?;
+	let m2 = fs.metadata(path2)?;
 	if !m1.is_file() || !m2.is_file() || m1.len() != m2.len() {
 		return Ok(false);
 	}
-	let mut a = BufReader::new(File::open(path1)?);
-	let mut b = BufReader::new(File::open(path2)?);
+	let mut a = BufReader::new(fs.open(path1)?);
+	let mut b = BufReader::new(fs.open(path2)?);
 	let mut ba = [0; 8192];
 	let mut bb = [0; 8192];
 	loop {
@@ -139,6 +162,7 @@ fn compare(
 	name2: &OsStr,
 	delim: &str,
 	opts: &ArgMatches,
+	order: &LineOrder,
 	identical: bool,
 	stdout: &mut impl Write,
 	stderr: &mut impl Write,
@@ -163,11 +187,11 @@ fn compare(
 		let ord = match (na, nb) {
 			(0, _) => Ordering::Greater,
 			(_, 0) => Ordering::Less,
-			_ => ra.cmp(&rb),
+			_ => order.cmp(&ra, &rb),
 		};
 		match ord {
 			Ordering::Less => {
-				if should_check && !c1.verify_order(&ra, stderr) {
+				if should_check && !c1.verify_order(&ra, order, stderr) {
 					break;
 				}
 				if !opts.get_flag(options::COLUMN_1) {
@@ -178,7 +202,7 @@ fn compare(
 				n1 += 1;
 			},
 			Ordering::Greater => {
-				if should_check && !c2.verify_order(&rb, stderr) {
+				if should_check && !c2.verify_order(&rb, order, stderr) {
 					break;
 				}
 				if !opts.get_flag(options::COLUMN_2) {
@@ -191,7 +215,7 @@ fn compare(
 			},
 			Ordering::Equal => {
 				if should_check
-					&& (!c1.verify_order(&ra, stderr) || !c2.verify_order(&rb, stderr))
+					&& (!c1.verify_order(&ra, order, stderr) || !c2.verify_order(&rb, order, stderr))
 				{
 					break;
 				}
@@ -227,6 +251,7 @@ fn compare(
 }
 
 fn open_file<'a>(
+	fs: &BlockingFs,
 	name: &OsStr,
 	resolved: &Path,
 	stdin: Option<&'a mut dyn Read>,
@@ -235,10 +260,10 @@ fn open_file<'a>(
 	if name == "-" {
 		return Ok(LineReader::new(Box::new(BufReader::new(stdin.expect("stdin operand"))), ending));
 	}
-	if fs::metadata(resolved)?.is_dir() {
+	if fs.metadata(resolved)?.is_dir() {
 		return Err(io::Error::other("is a directory"));
 	}
-	Ok(LineReader::new(Box::new(BufReader::new(File::open(resolved)?)), ending))
+	Ok(LineReader::new(Box::new(BufReader::new(fs.open(resolved)?)), ending))
 }
 
 /// Parsed `comm` invocation.
@@ -260,6 +285,9 @@ impl Utility for Comm {
 		}
 		let path1 = host.resolve(name1);
 		let path2 = host.resolve(name2);
+		// Cloned so opening files does not hold a `host` borrow alongside the
+		// `&mut host.stdin` handed to one of the readers.
+		let fs = host.fs().clone();
 		let delimiters: Vec<_> = self
 			.matches
 			.get_many::<String>(options::DELIMITER)
@@ -273,33 +301,34 @@ impl Utility for Comm {
 		let identical = if name1 == "-" || name2 == "-" {
 			false
 		} else {
-			files_identical(&path1, &path2).unwrap_or(false)
+			files_identical(&fs, &path1, &path2).unwrap_or(false)
 		};
 		let ending = LineEnding::from_zero_flag(self.matches.get_flag(options::ZERO_TERMINATED));
+		let order = LineOrder { collator: shell_collator(host), ending: ending.into() };
 		// Taken before the `LineReader`s below hold `&mut host.stdin`; a
 		// method borrow of `host` would otherwise conflict with them.
 		let mut stdout = host.stdout_writer();
 		let opened: Result<_, (&OsStr, io::Error)> = if name1 == "-" {
-			open_file(name2, &path2, None, ending)
+			open_file(&fs, name2, &path2, None, ending)
 				.map_err(|e| (name2.as_os_str(), e))
 				.and_then(|f2| {
-					open_file(name1, &path1, Some(&mut host.stdin), ending)
+					open_file(&fs, name1, &path1, Some(&mut host.stdin), ending)
 						.map(|f1| (f1, f2))
 						.map_err(|e| (name1.as_os_str(), e))
 				})
 		} else if name2 == "-" {
-			open_file(name1, &path1, None, ending)
+			open_file(&fs, name1, &path1, None, ending)
 				.map_err(|e| (name1.as_os_str(), e))
 				.and_then(|f1| {
-					open_file(name2, &path2, Some(&mut host.stdin), ending)
+					open_file(&fs, name2, &path2, Some(&mut host.stdin), ending)
 						.map(|f2| (f1, f2))
 						.map_err(|e| (name2.as_os_str(), e))
 				})
 		} else {
-			open_file(name1, &path1, None, ending)
+			open_file(&fs, name1, &path1, None, ending)
 				.map_err(|e| (name1.as_os_str(), e))
 				.and_then(|f1| {
-					open_file(name2, &path2, None, ending)
+					open_file(&fs, name2, &path2, None, ending)
 						.map(|f2| (f1, f2))
 						.map_err(|e| (name2.as_os_str(), e))
 				})
@@ -318,6 +347,7 @@ impl Utility for Comm {
 			name2,
 			delim,
 			&self.matches,
+			&order,
 			identical,
 			&mut stdout,
 			&mut host.stderr,
@@ -351,17 +381,12 @@ fn app() -> Command {
 		.arg(Arg::new(options::NO_CHECK_ORDER).long(options::NO_CHECK_ORDER).help("do not check that input is correctly sorted").action(ArgAction::SetTrue).conflicts_with(options::CHECK_ORDER))
 }
 
-/// Creates the `comm` builtin registration.
-pub(crate) fn comm_builtin<SE: ShellExtensions>() -> Registration<SE> {
-	util::<Comm, SE>()
-}
-
 #[cfg(test)]
 mod tests {
 	use std::fs;
 
-	use super::Comm;
-	use crate::host::run_util;
+	use super::{Comm, app};
+	use crate::host::{Host, Utility, run_util};
 
 	#[test]
 	fn compares_three_columns_and_resolves_relative_paths() {
@@ -411,6 +436,32 @@ mod tests {
 		let (code, capture) = run_util::<Comm>(&["--check-order", "a", "b"], "", dir.path());
 		assert_eq!(code, 1);
 		assert!(capture.err().contains("file 1 is not in sorted order"));
+	}
+
+	// Failure mode: `comm` merged by bytes while `sort` ordered by the shell's
+	// collation, so under a UTF-8 locale `comm -12` on two `sort` outputs
+	// warned "not in sorted order" and dropped common lines.
+	#[cfg(unix)]
+	#[test]
+	fn merges_lines_in_the_shell_collation() {
+		if !crate::locale::locale_loadable("en_US.UTF-8", libc::LC_ALL_MASK) {
+			eprintln!("skipping: en_US.UTF-8 not installed");
+			return;
+		}
+		// en_US order, as `sort` writes it: case and punctuation sort after
+		// letters and digits, unlike byte order.
+		let dir = tempfile::tempdir().unwrap();
+		fs::write(dir.path().join("a"), "a\nB\nPASS3-r140\nPASS3-r14-moe\n").unwrap();
+		fs::write(dir.path().join("b"), "B\nPASS3-r14-moe\nzzz\n").unwrap();
+		let matches = app().try_get_matches_from(["comm", "-12", "a", "b"]).unwrap();
+		let (mut host, capture) = Host::for_test("comm", "", dir.path());
+		host.set_test_var("LANG", "en_US.UTF-8");
+
+		let code = Comm { matches }.run(&mut host);
+
+		assert_eq!(capture.err(), "");
+		assert_eq!(code, 0);
+		assert_eq!(capture.out(), "B\nPASS3-r14-moe\n");
 	}
 
 	#[test]

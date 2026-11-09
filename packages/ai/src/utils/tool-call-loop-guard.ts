@@ -15,6 +15,8 @@ export interface ToolCallLoopGuardOptions {
 export interface ToolCallLoopTurn {
 	readonly message: AssistantMessage;
 	readonly toolResults: readonly ToolResultMessage[];
+	/** The turn also delivered context outside its tool results (extension `additionalContext`). */
+	readonly injectedContext?: boolean;
 }
 
 /** Details needed to steer the model away from a repeated tool call. */
@@ -93,7 +95,23 @@ export class ToolCallLoopGuard {
 			return null;
 		}
 		if (toolCalls.every(tc => this.#exemptTools.has(tc.name))) {
+<<<<<<< ours — scope `recordTurn` in class `ToolCallLoopGuard` (F, confidence: medium)
+// refused_by: container_member · collision: `this.#lastHash = undefined;` +1 more
 			this.#reset();
+=======
+			// An exempt poll its tool flagged useless (a wait that elapsed or found
+			// nothing to wait for) is skipped, so alternating it with a repeated call
+			// cannot hide the loop. Any other exempt turn, failures included, may have
+			// changed state (finished jobs, a message, injected context), so it ends
+			// the repetition.
+			const idle =
+				!turn.injectedContext &&
+				toolCalls.every(tc => turn.toolResults.find(result => result.toolCallId === tc.id)?.useless === true);
+			if (!idle) {
+				this.#lastHash = undefined;
+				this.#count = 0;
+			}
+>>>>>>> theirs — scope `recordTurn` · weave: run 'weave explain packages/ai/src/utils/tool-call-loop-guard.ts' for per-hunk detail, 'weave check' to verify your resolution
 			return null;
 		}
 

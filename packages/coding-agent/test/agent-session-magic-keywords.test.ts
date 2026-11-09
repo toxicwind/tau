@@ -14,6 +14,10 @@ import { AuthStorage } from "tau/session/auth-storage";
 import { SessionManager } from "tau/session/session-manager";
 import { AUTO_THINKING } from "@tau/tau-tui/thinking";
 import { removeWithRetries } from "@tau/tau-utils";
+import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
+import { convertToLlm } from "@oh-my-pi/pi-coding-agent/session/messages";
+import { cfgMagicKeyword, cfgMagicKeywordsEnabled } from "@oh-my-pi/pi-coding-agent/modes/settings";
+import { cfgTaskDisabledAgents } from "@oh-my-pi/pi-coding-agent/task/settings";
 
 const mockTaskTool: AgentTool = {
 	name: "task",
@@ -34,11 +38,12 @@ const mockEvalTool: AgentTool = {
 async function createMagicKeywordSession(
 	modelRegistry: ModelRegistry,
 	tools: AgentTool[] = [mockTaskTool, mockEvalTool],
+	modelId = "claude-sonnet-4-5",
 ): Promise<{
 	session: AgentSession;
 	settings: Settings;
 }> {
-	const model = getBundledModel("anthropic", "claude-sonnet-4-5");
+	const model = getBundledModel("anthropic", modelId);
 	if (!model) throw new Error("Expected bundled Claude Sonnet model");
 	const agent = new Agent({
 		initialState: {
@@ -86,7 +91,7 @@ describe("AgentSession magic keyword settings", () => {
 	it("does not append magic keyword notices when disabled", async () => {
 		const created = await createMagicKeywordSession(modelRegistry);
 		session = created.session;
-		created.settings.set("magicKeywords.enabled", false);
+		cfgMagicKeywordsEnabled.set(created.settings, false);
 		const promptSpy = vi.spyOn(session.agent, "prompt").mockResolvedValue(undefined);
 
 		await session.prompt("please workflowz this and ultrathink through it");
@@ -98,8 +103,8 @@ describe("AgentSession magic keyword settings", () => {
 	it("honors non-ultrathink per-keyword notice toggles", async () => {
 		const created = await createMagicKeywordSession(modelRegistry);
 		session = created.session;
-		created.settings.set("magicKeywords.orchestrate", false);
-		created.settings.set("magicKeywords.workflow", false);
+		cfgMagicKeyword.orchestrate.set(created.settings, false);
+		cfgMagicKeyword.workflow.set(created.settings, false);
 		const promptSpy = vi.spyOn(session.agent, "prompt").mockResolvedValue(undefined);
 
 		await session.prompt("please orchestrate and workflowz this");
@@ -125,7 +130,7 @@ describe("AgentSession magic keyword settings", () => {
 	it("updates the workflowz notice when scout is disabled during the session", async () => {
 		const created = await createMagicKeywordSession(modelRegistry);
 		session = created.session;
-		created.settings.set("task.disabledAgents", ["scout"]);
+		cfgTaskDisabledAgents.set(created.settings, ["scout"]);
 		const promptSpy = vi.spyOn(session.agent, "prompt").mockResolvedValue(undefined);
 
 		await session.prompt("please workflowz this");
@@ -193,7 +198,7 @@ describe("AgentSession magic keyword settings", () => {
 	it("does not use a disabled ultrathink keyword to force auto thinking", async () => {
 		const created = await createMagicKeywordSession(modelRegistry);
 		session = created.session;
-		created.settings.set("magicKeywords.ultrathink", false);
+		cfgMagicKeyword.ultrathink.set(created.settings, false);
 		vi.spyOn(session.agent, "prompt").mockResolvedValue(undefined);
 		const classifierSpy = vi.spyOn(autoThinkingClassifier, "classifyDifficulty").mockResolvedValue(Effort.Low);
 		session.setThinkingLevel(AUTO_THINKING);
@@ -203,6 +208,55 @@ describe("AgentSession magic keyword settings", () => {
 		expect(classifierSpy).toHaveBeenCalledTimes(1);
 		expect(session.thinkingLevel).toBe(Effort.Low);
 		expect(session.autoResolvedThinkingLevel()).toBe(Effort.Low);
+	});
+
+	it.each([
+		["takes per-message effort", "claude-sonnet-5-5", Effort.Low],
+		["needs a stable effort", "claude-sonnet-4-5", Effort.High],
+	] as const)(
+		"a chillax steer mid-turn on a model that %s sets the next request's effort",
+		async (_label, id, next) => {
+			const mock = createMockModel({ responses: [{ content: ["working"] }, { content: ["relaxed"] }] });
+			const agent = new Agent({
+				getApiKey: () => "test-key",
+				initialState: { model: getBundledModel("anthropic", id), systemPrompt: ["Test"], tools: [] },
+				convertToLlm,
+				streamFn: mock.stream,
+			});
+			session = new AgentSession({
+				agent,
+				sessionManager: SessionManager.inMemory(),
+				settings: Settings.isolated({ "compaction.enabled": false }),
+				modelRegistry,
+			});
+			session.setThinkingLevel(Effort.High);
+			let steered = false;
+			const active = session;
+			active.agent.setOnBeforeYield(async () => {
+				if (steered) return;
+				steered = true;
+				await active.prompt("chillax, just wrap it up", { streamingBehavior: "steer" });
+			});
+
+			await active.prompt("refactor the parser");
+
+			expect(mock.calls.map(call => call.options?.reasoning)).toEqual([Effort.High, next]);
+			expect(active.thinkingLevel).toBe(next);
+		},
+	);
+
+	it("resolves an auto chillax turn to the model floor without classifying", async () => {
+		const created = await createMagicKeywordSession(modelRegistry, [], "claude-sonnet-5-5");
+		session = created.session;
+		vi.spyOn(session.agent, "prompt").mockResolvedValue(undefined);
+		const classifierSpy = vi.spyOn(autoThinkingClassifier, "classifyDifficulty").mockResolvedValue(Effort.High);
+		session.setThinkingLevel(AUTO_THINKING);
+
+		await session.prompt("chillax and rename the flag");
+
+		expect(classifierSpy).not.toHaveBeenCalled();
+		expect(session.thinkingLevel).toBe(Effort.Low);
+		expect(session.configuredThinkingLevel()).toBe(AUTO_THINKING);
 	});
 
 	it("queues the magic-keyword notice before the user message", async () => {

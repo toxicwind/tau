@@ -2,11 +2,13 @@ import { describe, expect, it } from "bun:test";
 
 import { BeamMemory } from "@tau/tau-mnemotau/core/beam";
 import { PolyphonicRecallEngine } from "@tau/tau-mnemotau/core/polyphonic-recall";
+import { currentEmbeddingModel } from "@oh-my-pi/pi-mnemopi/core/embeddings";
 
 function seedEmbedding(beam: BeamMemory, memoryId: string, vector: readonly number[]): void {
-	beam.db.run("INSERT OR REPLACE INTO memory_embeddings (memory_id, embedding_json, model) VALUES (?, ?, 'test')", [
+	beam.db.run("INSERT OR REPLACE INTO memory_embeddings (memory_id, embedding_json, model) VALUES (?, ?, ?)", [
 		memoryId,
 		JSON.stringify(vector),
+		currentEmbeddingModel(),
 	]);
 }
 

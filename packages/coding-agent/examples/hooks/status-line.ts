@@ -4,7 +4,13 @@
  * Demonstrates ctx.ui.setStatus() for displaying persistent status text in the footer.
  * Shows plain-text turn progress across session and turn events.
  */
+<<<<<<< ours
 import type { HookAPI } from "@tau/tau-coding-agent";
+||||||| base
+import type { HookAPI } from "@oh-my-pi/pi-coding-agent";
+=======
+import type { HookAPI } from "@oh-my-pi/pi-coding-agent/extensibility/hooks";
+>>>>>>> theirs · weave: run 'weave explain packages/coding-agent/examples/hooks/status-line.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 export default function (pi: HookAPI) {
 	let turnCount = 0;

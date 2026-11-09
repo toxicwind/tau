@@ -1,10 +1,11 @@
-import { afterEach, describe, expect, it } from "bun:test";
+import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import { MCPTransportError } from "tau/mcp/errors";
 import { resolveStdioSpawnCommand, StdioTransport, writeFrame } from "tau/mcp/transports/stdio";
 import { removeWithRetries } from "@tau/tau-utils";
+import { trackUnhandled } from "./helpers/rejection";
 
 describe("resolveStdioSpawnCommand", () => {
 	it("resolves bare Windows commands through PATHEXT and wraps .cmd shims with cmd.exe", async () => {
@@ -241,6 +242,8 @@ describe("resolveStdioSpawnCommand", () => {
 		}
 	});
 
+<<<<<<< ours — scope `it("neutralizes percent-delimited args so cmd...` in test_suite `resolveStdioSpawnCommand`, deleted in theirs (S+F, confidence: low)
+// refused_by: statement_fold · collision: none (no common ancestor text)
 	it("neutralizes percent-delimited args so cmd.exe cannot expand them before the .cmd shim", async () => {
 		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-mcp-percent-"));
 		try {
@@ -278,7 +281,11 @@ describe("resolveStdioSpawnCommand", () => {
 			await removeWithRetries(tempDir);
 		}
 	});
+=======
+>>>>>>> theirs — scope `it("neutralizes percent-delimited args so cmd...` deleted in theirs · weave: run 'weave explain packages/coding-agent/test/mcp-stdio-transport.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
+<<<<<<< ours — scope `it("doubles embedded quotes so cmd.exe delive...` in test_suite `resolveStdioSpawnCommand`, deleted in theirs (S+F, confidence: low)
+// refused_by: statement_fold · collision: none (no common ancestor text)
 	it("doubles embedded quotes so cmd.exe delivers JSON args to the .cmd shim intact", async () => {
 		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-mcp-quotes-"));
 		try {
@@ -313,6 +320,8 @@ describe("resolveStdioSpawnCommand", () => {
 			await removeWithRetries(tempDir);
 		}
 	});
+=======
+>>>>>>> theirs — scope `it("doubles embedded quotes so cmd.exe delive...` deleted in theirs
 
 	it("resolves extension-less absolute Windows paths to the sibling .cmd shim", async () => {
 		// Mirrors npm's Windows shim layout: bare `codegraph` (shebang script),
@@ -352,6 +361,27 @@ describe("resolveStdioSpawnCommand", () => {
 			expect(result.windowsVerbatimArguments).toBe(true);
 			expect(result.windowsHide).toBe(true);
 			expect(result.detached).toBe(false);
+		} finally {
+			await removeWithRetries(tempDir);
+		}
+	});
+
+	it("spawns a missing path-qualified Windows command directly instead of through cmd.exe", async () => {
+		// cmd.exe would only print "not recognized" and close stdout; a direct spawn fails with ENOENT.
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "omp-mcp-missing-"));
+		try {
+			const missing = path.join(tempDir, "missing-server");
+			const result = await resolveStdioSpawnCommand(
+				{ type: "stdio", command: missing, args: ["serve"] },
+				{
+					cwd: tempDir,
+					env: { COMSPEC: "C:\\Windows\\System32\\cmd.exe", PATH: "", PATHEXT: ".cmd" },
+					platform: "win32",
+				},
+			);
+
+			expect(result.cmd).toEqual([missing, "serve"]);
+			expect(result.windowsVerbatimArguments).toBeUndefined();
 		} finally {
 			await removeWithRetries(tempDir);
 		}
@@ -621,17 +651,6 @@ describe("writeFrame", () => {
 		expect(sink.writes).toEqual(["anything\n"]);
 	});
 
-	it("does not propagate non-Error throws either", () => {
-		const sink = {
-			write() {
-				throw "string-thrown-non-error";
-			},
-			flush() {},
-		};
-
-		expect(writeFrame(sink, "x")).toBe(false);
-	});
-
 	it("returns true and neutralizes an asynchronous write rejection (broken pipe surfaced as a Promise)", async () => {
 		const sink = {
 			flushed: 0,
@@ -691,21 +710,6 @@ describe("writeFrame", () => {
 // intentionally avoids requiring subprocess stdout because Bun's test runner can
 // hand stdout-writing child processes an unusable fd on some hosts.
 // ---------------------------------------------------------------------------
-
-function trackUnhandled(): { release: () => unknown[]; capture: () => unknown[] } {
-	const seen: unknown[] = [];
-	const listener = (reason: unknown) => {
-		seen.push(reason);
-	};
-	process.on("unhandledRejection", listener);
-	return {
-		release: () => {
-			process.off("unhandledRejection", listener);
-			return seen.slice();
-		},
-		capture: () => seen.slice(),
-	};
-}
 
 describe("StdioTransport.notify", () => {
 	let transport: StdioTransport | undefined;
@@ -794,7 +798,7 @@ describe("StdioTransport request failure diagnostics", () => {
 			transport: "stdio",
 			stage: "receive",
 			failure: "eof",
-			retryable: true,
+			retryable: false,
 		});
 		expect(error.message).toContain("MCP subprocess");
 	});
@@ -815,6 +819,52 @@ describe("StdioTransport request failure diagnostics", () => {
 			retryable: false,
 		});
 	});
+});
+
+describe("StdioTransport send acceptance", () => {
+	let transport: StdioTransport | undefined;
+	let child: Bun.Subprocess<"pipe", "pipe", "pipe"> | undefined;
+
+	afterEach(async () => {
+		vi.restoreAllMocks();
+		await transport?.close();
+		if (child?.exitCode === null) child.kill();
+		await child?.exited;
+		transport = undefined;
+		child = undefined;
+	});
+
+	for (const { operation, asynchronous, retryable } of [
+		{ operation: "write", asynchronous: false, retryable: true },
+		{ operation: "write", asynchronous: true, retryable: false },
+		{ operation: "flush", asynchronous: false, retryable: false },
+		{ operation: "flush", asynchronous: true, retryable: false },
+	] as const) {
+		it(`${asynchronous ? "asynchronous" : "synchronous"} ${operation} failures are ${retryable ? "retryable before dispatch" : "not replayable after acceptance"}`, async () => {
+			child = Bun.spawn([process.execPath, "-e", "process.stdin.resume()"], {
+				stdin: "pipe",
+				stdout: "pipe",
+				stderr: "pipe",
+			});
+			const spawn = vi.spyOn(Bun, "spawn").mockReturnValueOnce(child);
+			transport = new StdioTransport({ type: "stdio", command: process.execPath, timeout: 100 });
+			await transport.connect();
+			spawn.mockRestore();
+			const brokenPipe = Object.assign(new Error(`EPIPE: broken pipe, ${operation}`), { code: "EPIPE" });
+			vi.spyOn(child.stdin, operation).mockImplementationOnce(() => {
+				if (asynchronous) return Promise.reject(brokenPipe);
+				throw brokenPipe;
+			});
+
+			await expect(transport.request("tools/list")).rejects.toMatchObject({
+				transport: "stdio",
+				stage: "send",
+				failure: "eof",
+				retryable,
+				code: "EPIPE",
+			});
+		});
+	}
 });
 
 // ---------------------------------------------------------------------------

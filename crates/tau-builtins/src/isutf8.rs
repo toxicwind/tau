@@ -19,7 +19,6 @@
 
 use std::{
 	ffi::{OsStr, OsString},
-	fs::File,
 	io::{self, Read, Write},
 	sync::{
 		Arc,
@@ -27,10 +26,9 @@ use std::{
 	},
 };
 
-use brush_core::{ShellExtensions, builtins::Registration};
 use clap::{Arg, ArgAction, ArgMatches, Command, builder::ValueParser};
 
-use crate::host::{Host, Utility, format_usage, matches_parser, util};
+use crate::host::{Host, Utility, format_usage, matches_parser};
 
 const OPT_QUIET: &str = "quiet";
 const OPT_LIST: &str = "list";
@@ -63,7 +61,7 @@ impl Utility for Isutf8 {
 		let files: Vec<OsString> = self
 			.matches
 			.get_many::<OsString>(ARG_FILES)
-			.map_or_else(Vec::new, |values| values.cloned().collect());
+			.map_or_default(|values| values.cloned().collect());
 		let cancel = host.cancel_flag();
 
 		let mut any_failed = false;
@@ -92,9 +90,15 @@ impl Utility for Isutf8 {
 				let result = if name == "-" {
 					validate(&mut host.stdin, &cancel)
 				} else {
-					File::open(host.resolve(name)).and_then(|mut file| validate(&mut file, &cancel))
+					host
+						.fs()
+						.open(host.resolve(name))
+						.and_then(|mut file| validate(&mut file, &cancel))
 				};
 				let verdict = match result {
+					// A cancelled provider operation is the shell abort itself,
+					// not an I/O failure of this operand.
+					Err(err) if pi_vfs::is_cancelled(&err) => return 130,
 					Err(err) => {
 						host.error(format!("{display}: {err}"), 2);
 						io_error = true;
@@ -252,11 +256,6 @@ fn display_name(name: &OsStr) -> String {
 	} else {
 		name.to_string_lossy().into_owned()
 	}
-}
-
-/// Creates the `isutf8` builtin registration.
-pub(crate) fn isutf8_builtin<SE: ShellExtensions>() -> Registration<SE> {
-	util::<Isutf8, SE>()
 }
 
 #[cfg(test)]

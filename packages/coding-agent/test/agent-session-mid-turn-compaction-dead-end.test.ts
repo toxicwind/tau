@@ -14,6 +14,7 @@ import { AuthStorage } from "tau/session/auth-storage";
 import { convertToLlm } from "tau/session/messages";
 import { SessionManager } from "tau/session/session-manager";
 import { getProjectAgentDir, TempDir } from "@tau/tau-utils";
+import { cfgCompaction } from "@oh-my-pi/pi-coding-agent/session/context-settings";
 
 const noopSchema = type({});
 const noopTool: AgentTool<typeof noopSchema, undefined> = {
@@ -240,7 +241,7 @@ describe("AgentSession mid-turn compaction dead-end", () => {
 				isSplitTurn: false,
 				tokensBefore: 190_000,
 				fileOps: { read: new Set(), written: new Set(), edited: new Set() },
-				settings: session.settings.getGroup("compaction"),
+				settings: cfgCompaction.get(session.settings),
 			};
 		});
 

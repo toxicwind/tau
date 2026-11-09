@@ -19,11 +19,19 @@
  *    missing reasoning must fall back to the empty string.
  */
 import { describe, expect, it } from "bun:test";
+<<<<<<< ours — interstitial `file_header` (T+F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import { getBundledModel } from "@oh-my-pi/pi-catalog/models";`
 import { convertMessages, streamOpenAICompletions } from "@tau/tau-ai/providers/openai-completions";
 import type { AssistantMessage, Context, FetchImpl, Model, ThinkingContent, ToolCall } from "@tau/tau-ai/types";
 import { buildModel } from "@tau/tau-catalog/build";
 import { Effort } from "@tau/tau-catalog/effort";
 import { getBundledModel } from "@tau/tau-catalog/models";
+=======
+import { convertMessages, streamOpenAICompletions } from "@oh-my-pi/pi-ai/providers/openai-completions";
+import type { AssistantMessage, Context, FetchImpl, Model, ThinkingContent, ToolCall } from "@oh-my-pi/pi-ai/types";
+import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import { Effort } from "@oh-my-pi/pi-catalog/effort";
+>>>>>>> theirs — interstitial `file_header` (T+F, confidence: medium) · weave: run 'weave explain packages/ai/test/deepinfra-reasoning-contract.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const DEEPINFRA_BASE_URL = "https://api.deepinfra.com/v1/openai";
 
@@ -137,6 +145,8 @@ function findAssistantWireMessage(messages: readonly unknown[] | undefined): Ass
 	);
 }
 
+<<<<<<< ours — test_suite `DeepInfra reasoning wire contract (oh-my-pi#9522)` (S+F, confidence: low)
+// refused_by: rename_vs_edit_guard · collision: none (both sides edited, nowhere the same lines)
 describe("DeepInfra reasoning wire contract (tau#9522)", () => {
 	it("resolves the DeepSeek replay contract on the deepinfra host", () => {
 		const compat = deepinfraDeepseekModel().compat;
@@ -222,6 +232,83 @@ describe("DeepInfra reasoning wire contract (tau#9522)", () => {
 				type: "thinking",
 				thinking: '1. The user asks "What is 2+2?" Trivial arithmetic.',
 				thinkingSignature: "reasoning_content",
+=======
+describe("DeepInfra reasoning wire contract (oh-my-pi#9522)", () => {
+	it("resolves the DeepSeek replay contract on the deepinfra host", () => {
+		const compat = deepinfraDeepseekModel().compat;
+		// Plain OpenAI dialect — the server owns DeepSeek-specific encoding.
+		expect(compat.thinkingFormat).toBe("openai");
+		expect(compat.supportsReasoningEffort).toBe(true);
+		// Tool-turn replay is the load-bearing client behavior; synthetic
+		// placeholders are rejected upstream.
+		expect(compat.requiresReasoningContentForToolCalls).toBe(true);
+		expect(compat.requiresReasoningContentForAllAssistantTurns).toBe(true);
+		expect(compat.allowsSyntheticReasoningContentForToolCalls).toBe(false);
+		expect(compat.reasoningContentField).toBe("reasoning_content");
+	});
+
+	it("resolves DeepSeek's wire-exact low/high/max tiers through the compat engine", () => {
+		const model = deepinfraDeepseekModel();
+		// V4 Flash's real tiers are low/high (default thinking mode) and max
+		// (max-effort mode). The wire literals pass through unmapped —
+		// DeepInfra accepts them verbatim (`max` aliases `xhigh`).
+		expect(model.thinking?.efforts).toEqual([Effort.Low, Effort.High, Effort.Max]);
+		expect(model.thinking?.effortMap).toBeUndefined();
+	});
+
+	it("gates thinking on via bare reasoning_effort with no DeepSeek-dialect fields", async () => {
+		const { url, payload } = await captureRequestPayload(deepinfraDeepseekModel(), { reasoning: "high" });
+		// The captured accepted request: POST /v1/openai/chat/completions with
+		// messages + reasoning_effort only.
+		expect(url).toBe(`${DEEPINFRA_BASE_URL}/chat/completions`);
+		expect(payload.reasoning_effort).toBe("high");
+		// No alternate thinking dialects may leak onto the wire.
+		expect(payload.thinking).toBeUndefined();
+		expect(payload.reasoning).toBeUndefined();
+		expect(payload.enable_thinking).toBeUndefined();
+		expect(payload.chat_template_kwargs).toBeUndefined();
+	});
+
+	it("sends the max-effort tier as the literal `max`", async () => {
+		const { payload } = await captureRequestPayload(deepinfraDeepseekModel(), { reasoning: "max" });
+		expect(payload.reasoning_effort).toBe("max");
+	});
+
+	it("omits reasoning_effort entirely when no effort is requested (off is the model default)", async () => {
+		const { payload } = await captureRequestPayload(deepinfraDeepseekModel(), {});
+		expect(payload.reasoning_effort).toBeUndefined();
+		expect(payload.thinking).toBeUndefined();
+		expect(payload.reasoning).toBeUndefined();
+	});
+
+	it("parses streamed delta.reasoning_content into a thinking block ahead of content", async () => {
+		const model = deepinfraDeepseekModel();
+		const fetchMock: FetchImpl = Object.assign(
+			async (_input: string | URL | Request, _init?: RequestInit): Promise<Response> =>
+				createSseResponse([
+					// Captured response shape, thinking on: reasoning_content
+					// streams first, content carries only the final answer.
+					deltaChunk(model, { reasoning_content: '1. The user asks "What is 2+2?"' }),
+					deltaChunk(model, { reasoning_content: " Trivial arithmetic." }),
+					deltaChunk(model, { content: "4" }),
+					finishChunk(model),
+					"[DONE]",
+				]),
+			{ preconnect: fetch.preconnect },
+		);
+		const result = await streamOpenAICompletions(model, capturedUserTurn, {
+			apiKey: "test-key",
+			fetch: fetchMock,
+			reasoning: "high",
+		}).result();
+		expect(result.stopReason).toBe("stop");
+		expect(result.content).toEqual([
+			{
+				type: "thinking",
+				thinking: '1. The user asks "What is 2+2?" Trivial arithmetic.',
+				thinkingSignature: "reasoning_content",
+				summary: false,
+>>>>>>> theirs — test_suite `DeepInfra reasoning wire contract (oh-my-pi#9522)` (S+F, confidence: low)
 			},
 			{ type: "text", text: "4" },
 		]);

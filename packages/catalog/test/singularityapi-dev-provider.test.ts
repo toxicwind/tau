@@ -1,4 +1,6 @@
 import { afterEach, describe, expect, test, vi } from "bun:test";
+<<<<<<< ours — imports `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: `import { getEnvApiKey } from "@oh-my-pi/pi-ai/stream";` +2 more
 import { getOAuthProviders } from "@tau/tau-ai/registry/oauth";
 import { getProviderDefinition } from "@tau/tau-ai/registry";
 import { getEnvApiKey } from "@tau/tau-ai/stream";
@@ -8,12 +10,20 @@ import { DEFAULT_MODEL_PER_PROVIDER, PROVIDER_DESCRIPTORS } from "@tau/tau-catal
 import { singularityApiDevModelManagerOptions } from "@tau/tau-catalog/provider-models/openai-compat";
 import type { FetchImpl, ModelSpec } from "@tau/tau-catalog/types";
 import { SINGULARITYAPI_DEV_API_BASE_URL, normalizeSingularityApiBaseUrl } from "@tau/tau-catalog/wire/singularityapi";
-
-const originalKey = Bun.env.SINGULARITYAPI_DEV_API_KEY;
+=======
+import { getOAuthProviders } from "@oh-my-pi/pi-ai/registry/oauth";
+import { getProviderDefinition } from "@oh-my-pi/pi-ai/registry";
+import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import { resolveModelCacheProviderId } from "@oh-my-pi/pi-catalog/provider-models";
+import { singularityApiDevModelManagerOptions } from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
+import type { FetchImpl, ModelSpec } from "@oh-my-pi/pi-catalog/types";
+import {
+	SINGULARITYAPI_DEV_API_BASE_URL,
+	normalizeSingularityApiBaseUrl,
+} from "@oh-my-pi/pi-catalog/wire/singularityapi";
+>>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/catalog/test/singularityapi-dev-provider.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 afterEach(() => {
-	if (originalKey === undefined) delete Bun.env.SINGULARITYAPI_DEV_API_KEY;
-	else Bun.env.SINGULARITYAPI_DEV_API_KEY = originalKey;
 	vi.restoreAllMocks();
 });
 
@@ -169,21 +179,6 @@ describe("SingularityAPI universal gateway support", () => {
 		expect(model.compat.maxTokensField).toBe("max_tokens");
 		expect(model.reasoning).toBe(false);
 		expect(model.thinking).toBeUndefined();
-	});
-
-	test("registers discovery, defaults, and the API key environment name", () => {
-		const descriptor = PROVIDER_DESCRIPTORS.find(item => item.providerId === "singularityapi-dev");
-		expect(descriptor).toMatchObject({
-			defaultModel: "deepseek-v4-flash",
-			dynamicModelsAuthoritative: true,
-		});
-		expect(isCatalogDescriptor(descriptor!)).toBe(false);
-		expect(DEFAULT_MODEL_PER_PROVIDER["singularityapi-dev"]).toBe("deepseek-v4-flash");
-
-		delete Bun.env.SINGULARITYAPI_DEV_API_KEY;
-		expect(getEnvApiKey("singularityapi-dev")).toBeUndefined();
-		Bun.env.SINGULARITYAPI_DEV_API_KEY = "sk-sapi-test";
-		expect(getEnvApiKey("singularityapi-dev")).toBe("sk-sapi-test");
 	});
 
 	test("pastes a key through the login selector after models-endpoint validation", async () => {

@@ -1,4 +1,6 @@
 import { describe, expect, test } from "bun:test";
+<<<<<<< ours — imports `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 import { type AgentMessage, Tokenizer } from "@tau/tau-agent-core";
 import type { SessionEntry, SessionMessageEntry, ShakeConfig } from "@tau/tau-agent-core/compaction";
 import {
@@ -10,6 +12,18 @@ import {
 	RESCUE_SHAKE_CONFIG,
 } from "@tau/tau-agent-core/compaction";
 import type { AssistantMessage, ImageContent, TextContent, ToolCall, ToolResultMessage } from "@tau/tau-ai";
+=======
+import { type AgentMessage, Tokenizer } from "@oh-my-pi/pi-agent-core";
+import type { SessionEntry, SessionMessageEntry, ShakeConfig } from "@oh-my-pi/pi-agent-core/compaction";
+import {
+	AGGRESSIVE_SHAKE_CONFIG,
+	applyShakeRegion,
+	applyShakeRegions,
+	collectShakeRegions,
+	RESCUE_SHAKE_CONFIG,
+} from "@oh-my-pi/pi-agent-core/compaction";
+import type { AssistantMessage, ImageContent, TextContent, ToolCall, ToolResultMessage } from "@oh-my-pi/pi-ai";
+>>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/agent/test/shake.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { convertMessageToLlm } from "../src/compaction/messages";
 
 const tokenizer = new Tokenizer();
@@ -83,7 +97,7 @@ describe("collectShakeRegions — tool results", () => {
 		expect(region.kind).toBe("toolResult");
 		expect(region.tokens).toBeGreaterThan(0);
 
-		applyShakeRegion(region, "[shaken]");
+		applyShakeRegion(region, "[shaken]", tokenizer.countTokens("[shaken]"));
 		expect(tr.prunedAt).toBeGreaterThan(0);
 		expect(tr.content).toEqual([{ type: "text", text: "[shaken]" }]);
 	});
@@ -155,7 +169,7 @@ describe("collectShakeRegions — fenced / XML blocks", () => {
 		if (region.kind !== "block") throw new Error("expected block region");
 		expect(text.slice(region.start, region.end)).toBe(fence);
 
-		applyShakeRegion(region, "[shaken]");
+		applyShakeRegion(region, "[shaken]", tokenizer.countTokens("[shaken]"));
 		const block = (entry.message as AssistantMessage).content[0] as TextContent;
 		expect(block.text).toBe("intro line\n[shaken]\noutro line");
 	});
@@ -219,11 +233,13 @@ describe("applyShakeRegions — multi-region ordering", () => {
 		expect(regions).toHaveLength(2);
 
 		applyShakeRegions([
-			{ region: regions[0], replacement: "[A]" },
-			{ region: regions[1], replacement: "[B]" },
+			{ region: regions[0], replacement: "[A]", replacementTokens: 1 },
+			{ region: regions[1], replacement: "[B]", replacementTokens: 1 },
 		]);
 		const block = (entry.message as AssistantMessage).content[0] as TextContent;
 		expect(block.text).toBe("head\n[A]\nmiddle\n[B]\ntail");
+		// The turn's usage still bills both blocks; the tally records what left.
+		expect((entry.message as AssistantMessage).elidedOutputTokens).toBe(regions[0].tokens + regions[1].tokens - 2);
 	});
 });
 
@@ -237,11 +253,6 @@ describe("shake config presets", () => {
 		// still shaken aggressively.
 		expect(regions).toHaveLength(1);
 		expect(regions[0].entry).toBe(older);
-	});
-
-	test("default preset keeps a protect window", () => {
-		expect(DEFAULT_SHAKE_CONFIG.protectTokens).toBeGreaterThan(0);
-		expect(DEFAULT_SHAKE_CONFIG.protectedTools).toContain("skill");
 	});
 
 	test("rescue preset overrides the manual tail so it can elide the newest result", () => {

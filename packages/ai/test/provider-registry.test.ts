@@ -7,9 +7,16 @@ import {
 	refreshOAuthToken,
 	registerOAuthProvider,
 	unregisterOAuthProviders,
+<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import { getEnvApiKey } from "@oh-my-pi/pi-ai/stream";`
 } from "@tau/tau-ai/registry/oauth";
 import type { OAuthCredentials, OAuthProvider } from "@tau/tau-ai/registry/oauth/types";
 import { getEnvApiKey } from "@tau/tau-ai/stream";
+=======
+} from "@oh-my-pi/pi-ai/registry/oauth";
+import type { OAuthCredentials, OAuthProvider } from "@oh-my-pi/pi-ai/registry/oauth/types";
+import { getEnvApiKey } from "@oh-my-pi/pi-ai/env-api-key";
+>>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/ai/test/provider-registry.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const FIXTURE_SOURCE = "provider-registry-test";
 const ENV_KEYS = [
@@ -82,6 +89,7 @@ describe("provider registry auth surface", () => {
 				"google-gemini-cli",
 				"openai-codex",
 				"openrouter",
+				"snowflake",
 				"stencil",
 				"zai-coding-plan",
 			].sort(),

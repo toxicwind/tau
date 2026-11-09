@@ -3,6 +3,8 @@ import { type ChildProcess, execSync, spawn } from "node:child_process";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
+<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import { complete, getEnvApiKey, stream } from "@oh-my-pi/pi-ai…`
 import { type } from "@tau/tautype";
 import { Effort } from "@tau/tau-ai";
 import { __resetVertexTokenCache } from "@tau/tau-ai/providers/google-auth";
@@ -11,6 +13,17 @@ import type { Api, Context, ImageContent, Model, OptionsForApi, Tool, ToolResult
 import { buildModel } from "@tau/tau-catalog/build";
 import { getBundledModel } from "@tau/tau-catalog/models";
 import { $which } from "@tau/tau-utils";
+=======
+import { type } from "@oh-my-pi/omptype";
+import { Effort } from "@oh-my-pi/pi-ai";
+import { __resetVertexTokenCache } from "@oh-my-pi/pi-ai/providers/google-auth";
+import { getEnvApiKey } from "@oh-my-pi/pi-ai/env-api-key";
+import { complete, stream } from "@oh-my-pi/pi-ai/stream";
+import type { Api, Context, ImageContent, Model, OptionsForApi, Tool, ToolResultMessage } from "@oh-my-pi/pi-ai/types";
+import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+import { $which } from "@oh-my-pi/pi-utils";
+>>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/ai/test/stream.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { removeWithRetries } from "../../utils/src/temp";
 import { e2eApiKey, resolveApiKey } from "./oauth";
 
@@ -560,13 +573,13 @@ describe("Generate E2E Tests", () => {
 			const originalLocation = Bun.env.VERTEX_LOCATION;
 			const originalApiKey = Bun.env.GOOGLE_CLOUD_API_KEY;
 			const originalGac = Bun.env.GOOGLE_APPLICATION_CREDENTIALS;
+			const originalAppData = Bun.env.APPDATA;
 			// Force the GCE/Cloud Run metadata-server token path: neutralize any host
 			// ADC so resolveAccessTokenUncached() falls through to fetchMetadataToken().
-			// Without this the test reads ~/.config/gcloud/application_default_credentials.json
+			// Without this the test reads the user ADC (~/.config/gcloud or %APPDATA%\gcloud)
 			// when present and hangs on the OAuth exchange (form body, not JSON).
-			const homedirSpy = spyOn(os, "homedir").mockReturnValue(
-				path.join(os.tmpdir(), `vertex-adc-absent-${location}-${Date.now()}`),
-			);
+			const absentAdcHome = path.join(os.tmpdir(), `vertex-adc-absent-${location}-${Date.now()}`);
+			const homedirSpy = spyOn(os, "homedir").mockReturnValue(absentAdcHome);
 			const model: Model<"anthropic-messages"> = buildModel({
 				id: "claude-sonnet-4@20250514",
 				name: "Claude Sonnet 4",
@@ -597,6 +610,7 @@ describe("Generate E2E Tests", () => {
 				delete Bun.env.VERTEX_LOCATION;
 				delete Bun.env.GOOGLE_CLOUD_API_KEY;
 				delete Bun.env.GOOGLE_APPLICATION_CREDENTIALS;
+				Bun.env.APPDATA = absentAdcHome;
 
 				const events = stream(
 					model,
@@ -666,6 +680,8 @@ describe("Generate E2E Tests", () => {
 				else Bun.env.GOOGLE_CLOUD_API_KEY = originalApiKey;
 				if (originalGac === undefined) delete Bun.env.GOOGLE_APPLICATION_CREDENTIALS;
 				else Bun.env.GOOGLE_APPLICATION_CREDENTIALS = originalGac;
+				if (originalAppData === undefined) delete Bun.env.APPDATA;
+				else Bun.env.APPDATA = originalAppData;
 			}
 		});
 
@@ -1211,14 +1227,6 @@ describe("Generate E2E Tests", () => {
 			{ retry: 3 },
 		);
 
-		it.skip(
-			"should handle thinking mode",
-			async () => {
-				await handleThinking(llm, { reasoning: Effort.Medium });
-			},
-			{ retry: 3 },
-		);
-
 		it(
 			"should handle multi-turn with thinking and tools",
 			async () => {
@@ -1355,8 +1363,8 @@ describe("Generate E2E Tests", () => {
 		);
 	});
 
-	describe("Anthropic OAuth Provider (claude-sonnet-4-20250514)", () => {
-		const model = getBundledModel("anthropic", "claude-sonnet-4-20250514");
+	describe("Anthropic OAuth Provider (claude-sonnet-4-5-20250929)", () => {
+		const model = getBundledModel("anthropic", "claude-sonnet-4-5-20250929");
 
 		it.skipIf(!anthropicOAuthToken)(
 			"should complete basic text generation",

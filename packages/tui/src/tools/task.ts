@@ -1,5 +1,5 @@
 import type { Usage } from "@tau/tau-ai";
-import { isRecord } from "@tau/tau-utils";
+import { type } from "@oh-my-pi/omptype";
 import type { ThemeColor } from "../theme/theme";
 import type { ConfiguredThinkingLevel } from "../render/render-utils";
 import type { ToolRenderer } from "./renderer";
@@ -28,11 +28,17 @@ import {
 	formatFeedModelBadge,
 	formatMoreItems,
 	formatNumber,
+	formatStatusIcon,
 	isFeedModelBadgeEnabled,
+	pluralize,
 	previewLine,
+	clipCollapsed,
+	flattenLine,
 	previewWindowRows,
 	replaceTabs,
+	shortenEmbeddedPaths,
 	shortenPath,
+	shortenToolArgumentPaths,
 	type ToolUIStatus,
 	TRUNCATE_LENGTHS,
 	truncateToWidth,
@@ -42,7 +48,16 @@ import { framedToolCard } from "../render/tool-card";
 import { formatOutputInline, renderJsonTreeLines } from "./json-tree";
 import { repairDoubleEncodedJsonString } from "./task-repair-args";
 import { getSubprocessToolRenderer } from "./subprocess";
-import { assembleYieldResult } from "./task-yield-assembly";
+import { assembleYieldResult, type YieldSectionShapes } from "./task-yield-assembly";
+import type { TspAgentProps, TspProps, TspTone } from "@oh-my-pi/pi-wire";
+import { compact, kv, md, node, propNode, span, text } from "../native/describe";
+import type { NativeNode } from "../native/node";
+import { OwnerMemo, sameItems } from "../native/memo";
+import { plainText } from "../native/spans";
+import { errorText, noteText, resultText } from "./native-view";
+import { describeJsonValue } from "./json-tree";
+import { taskSummary } from "../overlays/agent-hub-renderer";
+import type { NativeToolView, ToolRenderResult } from "./renderer";
 
 /** Render context threaded in from `ToolExecutionComponent.#buildRenderContext`. */
 interface TaskRenderContext {
@@ -98,8 +113,13 @@ function normalizeFindings(value: unknown): FindingDetails[] {
 	return findings;
 }
 
-/** Reviewer output declares `findings` as an array, so a lone finding section still assembles as a list. */
-const REVIEWER_ARRAY_LABELS: ReadonlySet<string> = new Set(["findings"]);
+/** Reviewer output shapes: `findings` is an array (a lone finding still assembles as a list); the verdict fields are scalars. */
+const REVIEWER_SECTION_SHAPES: YieldSectionShapes = new Map([
+	["findings", "array"],
+	["overall_correctness", "scalar"],
+	["explanation", "scalar"],
+	["confidence", "scalar"],
+]);
 
 function extractIncrementalReviewResult(
 	items: RenderYieldItem[],
@@ -110,7 +130,7 @@ function extractIncrementalReviewResult(
 		status: item.status === "aborted" ? "aborted" : item.status === "success" ? "success" : undefined,
 		useLastTurn: item.useLastTurn,
 	}));
-	const assembled = assembleYieldResult(yieldItems, undefined, REVIEWER_ARRAY_LABELS);
+	const assembled = assembleYieldResult(yieldItems, undefined, REVIEWER_SECTION_SHAPES);
 	const data = assembled?.data;
 	if (!data || typeof data !== "object" || Array.isArray(data)) return undefined;
 	const record = data as Record<string, unknown>;
@@ -229,6 +249,39 @@ function renderTypedYieldSections(value: unknown, continuePrefix: string, expand
 	return lines;
 }
 
+/**
+ * Per-frame memo for derived agent rows. Live task cards re-render at spinner
+ * cadence, while yield/recent-output arrays only change when the subagent
+ * reports. Entries are keyed by the source array (or object) and validated
+ * against a shallow snapshot of its elements plus the render deps, so in-place
+ * pushes/shifts invalidate correctly.
+ */
+interface SnapshotMemoEntry<T> {
+	items: unknown[];
+	deps: unknown[];
+	value: T;
+}
+
+function memoBySnapshot<T>(
+	cache: WeakMap<object, SnapshotMemoEntry<T>>,
+	source: unknown,
+	deps: unknown[],
+	compute: () => T,
+): T {
+	if (source === null || typeof source !== "object") return compute();
+	const items: unknown[] = Array.isArray(source) ? source.slice() : [source];
+	const entry = cache.get(source);
+	if (entry && sameItems(entry.items, items) && sameItems(entry.deps, deps)) return entry.value;
+	const value = compute();
+	cache.set(source, { items, deps, value });
+	return value;
+}
+
+const yieldSectionsMemo = new WeakMap<object, SnapshotMemoEntry<string[]>>();
+const completedReviewMemo = new WeakMap<object, SnapshotMemoEntry<string[] | null>>();
+const recentOutputMemo = new WeakMap<object, SnapshotMemoEntry<string[]>>();
+const agentResultMemo = new WeakMap<object, SnapshotMemoEntry<string[]>>();
+
 /** Formats sanitized task identifiers as hierarchy breadcrumbs. */
 export function formatTaskId(id: string): string {
 	// Ids are name-based (e.g. "Anna", "Anna-2"); a "." separates nesting levels
@@ -299,9 +352,9 @@ function renderOutputSection(
 	if (warning) {
 		lines.push(`${continuePrefix}${theme.fg("dim", "Output")}`);
 		lines.push(
-			`${continuePrefix}  ${theme.fg("warning", theme.status.warning)} ${theme.fg(
+			`${continuePrefix}  ${formatStatusIcon("warning", theme)} ${theme.fg(
 				"dim",
-				truncateToWidth(sanitizeText(warning), 80),
+				clipCollapsed(sanitizeText(warning), 80, expanded),
 			)}`,
 		);
 
@@ -345,7 +398,7 @@ function renderOutputSection(
 		const outputLines = trimmedOutput.split("\n");
 		const previewCount = expanded ? maxExpanded : maxCollapsed;
 		for (const line of outputLines.slice(0, previewCount)) {
-			lines.push(`${continuePrefix}  ${theme.fg("dim", truncateToWidth(replaceTabs(line), 70))}`);
+			lines.push(`${continuePrefix}  ${theme.fg("dim", clipCollapsed(replaceTabs(line), 70, expanded))}`);
 		}
 
 		if (outputLines.length > previewCount) {
@@ -398,7 +451,7 @@ function renderOutputSection(
 	const outputLines = trimmedOutput.split("\n");
 	const previewCount = expanded ? maxExpanded : maxCollapsed;
 	for (const line of outputLines.slice(0, previewCount)) {
-		lines.push(`${continuePrefix}  ${theme.fg("dim", truncateToWidth(replaceTabs(line), 70))}`);
+		lines.push(`${continuePrefix}  ${theme.fg("dim", clipCollapsed(replaceTabs(line), 70, expanded))}`);
 	}
 
 	if (outputLines.length > previewCount) {
@@ -422,13 +475,19 @@ function renderTaskSection(
 	lines.push(`${continuePrefix}${theme.fg("dim", "Task")}`);
 	const taskLines = trimmed.split("\n");
 	for (const line of taskLines.slice(0, maxExpanded)) {
-		lines.push(`${continuePrefix}  ${theme.fg("dim", truncateToWidth(replaceTabs(line), 70))}`);
+		lines.push(`${continuePrefix}  ${theme.fg("dim", replaceTabs(line))}`);
 	}
 	if (taskLines.length > maxExpanded) {
 		lines.push(`${continuePrefix}  ${theme.fg("dim", formatMoreItems(taskLines.length - maxExpanded, "line"))}`);
 	}
 
 	return lines;
+}
+
+function taskPreviewText(task: unknown, taskFile: unknown): string {
+	if (typeof task === "string") return task;
+	if (typeof taskFile !== "string") return "";
+	return flattenLine(replaceTabs(shortenPath(sanitizeText(taskFile))));
 }
 
 /**
@@ -471,7 +530,7 @@ function renderTaskCallLines(args: Partial<TaskParams> | undefined, theme: Theme
 
 	const rawName = typeof args.name === "string" ? args.name.trim() : "";
 	const idLabel = rawName ? formatTaskId(rawName) : "";
-	const brief = taskFirstLine(args.task);
+	const brief = taskFirstLine(taskPreviewText(args.task, args.taskFile));
 	if (idLabel || brief) {
 		let line = `${bullet} ${theme.fg("accent", theme.bold(idLabel || "agent"))}`;
 		if (brief) {
@@ -507,7 +566,7 @@ function renderTaskItemLines(tasks: TaskItem[] | undefined, theme: Theme): strin
 		const rawName = typeof item?.name === "string" ? item.name.trim() : "";
 		const idLabel = rawName ? formatTaskId(rawName) : `#${i + 1}`;
 		let line = `${bullet} ${theme.fg("accent", theme.bold(idLabel))}`;
-		const brief = taskFirstLine(item?.task);
+		const brief = taskFirstLine(taskPreviewText(item?.task, item?.taskFile));
 		if (brief) {
 			line += `: ${theme.fg("muted", previewLine(brief, 64))}`;
 		}
@@ -553,7 +612,7 @@ function createAssignmentSectionRenderer(
 }
 
 /**
- * Build the shared-context section (the `# Goal / # Constraints` background a
+ * Build the shared-context section (the `# Goal / # Contract` background a
  * batch call hands every subagent). Rendered like the assignment brief so the
  * shared background stays visible for the whole task lifecycle.
  */
@@ -648,6 +707,11 @@ function renderRouteLine(route: string | undefined, continuePrefix: string, maxW
 	];
 }
 
+/** A tool call's own intent, else its argument, with home paths shortened as the subagent HUD does. */
+function toolCallDetail(intent: string | undefined, args: string | undefined, argsKey: string | undefined): string {
+	return intent ? shortenEmbeddedPaths(intent) : shortenToolArgumentPaths(args ?? "", argsKey);
+}
+
 /**
  * Render streaming progress for a single agent.
  */
@@ -693,6 +757,7 @@ function renderAgentProgress(
 					? ` ${theme.fg("muted", previewLine(sanitizeText(progress.assignment ?? progress.task), 40))}`
 					: undefined,
 			stats: progress.status === "running" || progress.status === "completed" ? progress : undefined,
+			completionPercent: progress.completionPercent,
 		},
 		theme,
 	);
@@ -706,9 +771,22 @@ function renderAgentProgress(
 
 	// Current tool (if running) or most recent completed tool
 	if (progress.status === "running") {
+		if (progress.stage) {
+			lines.push(
+				truncateTaskRow(
+					`${continuePrefix}${theme.fg("muted", replaceTabs(sanitizeText(progress.stage)))}`,
+					maxWidth,
+					"",
+				),
+			);
+		}
 		if (progress.currentTool) {
 			let toolLine = `${continuePrefix}${theme.tree.hook} ${theme.fg("muted", sanitizeText(progress.currentTool))}`;
-			const toolDetail = progress.lastIntent ?? progress.currentToolArgs;
+			const toolDetail = toolCallDetail(
+				progress.currentToolIntent,
+				progress.currentToolArgs,
+				progress.currentToolArgsKey,
+			);
 			if (toolDetail) {
 				toolLine += `: ${theme.fg("dim", previewLine(sanitizeText(toolDetail), 40))}`;
 			}
@@ -723,7 +801,7 @@ function renderAgentProgress(
 			// Show most recent completed tool when idle between tools
 			const recent = progress.recentTools[0];
 			let toolLine = `${continuePrefix}${theme.tree.hook} ${theme.fg("dim", sanitizeText(recent.tool))}`;
-			const toolDetail = progress.lastIntent ?? recent.args;
+			const toolDetail = toolCallDetail(recent.intent, recent.args, recent.argsKey);
 			if (toolDetail) {
 				toolLine += `: ${theme.fg("dim", previewLine(sanitizeText(toolDetail), 40))}`;
 			}
@@ -753,27 +831,32 @@ function renderAgentProgress(
 		// For completed tasks, render review verdicts assembled from incremental
 		// yield sections.
 		if (progress.status === "completed") {
-			const completeData = normalizeYieldData(progress.extractedToolData.yield);
-			const incrementalReview = extractIncrementalReviewResult(completeData);
-			if (incrementalReview) {
-				lines.push(
-					...renderReviewResult(
-						incrementalReview.summary,
-						incrementalReview.findings,
-						continuePrefix,
-						expanded,
-						theme,
-					),
-				);
-				return lines; // Review result handles its own rendering
-			}
-			const reviewData = completeData
-				.map(c => c.data as SubmitReviewDetails)
-				.filter(d => d && typeof d === "object" && "overall_correctness" in d);
-			if (reviewData.length > 0) {
-				const summary = reviewData[reviewData.length - 1];
-				const findings: FindingDetails[] = [];
-				lines.push(...renderReviewResult(summary, findings, continuePrefix, expanded, theme));
+			const yieldValue = progress.extractedToolData.yield;
+			const reviewLines = memoBySnapshot(
+				completedReviewMemo,
+				yieldValue,
+				[continuePrefix, expanded, theme],
+				(): string[] | null => {
+					const completeData = normalizeYieldData(yieldValue);
+					const incrementalReview = extractIncrementalReviewResult(completeData);
+					if (incrementalReview) {
+						return renderReviewResult(
+							incrementalReview.summary,
+							incrementalReview.findings,
+							continuePrefix,
+							expanded,
+							theme,
+						);
+					}
+					const reviewData = completeData
+						.map(c => c.data as SubmitReviewDetails)
+						.filter(d => d && typeof d === "object" && "overall_correctness" in d);
+					if (reviewData.length === 0) return null;
+					return renderReviewResult(reviewData[reviewData.length - 1], [], continuePrefix, expanded, theme);
+				},
+			);
+			if (reviewLines) {
+				lines.push(...reviewLines);
 				return lines; // Review result handles its own rendering
 			}
 		}
@@ -781,7 +864,11 @@ function renderAgentProgress(
 		for (const toolName in progress.extractedToolData) {
 			const dataArray = progress.extractedToolData[toolName];
 			if (toolName === "yield") {
-				lines.push(...renderTypedYieldSections(dataArray, continuePrefix, expanded, theme));
+				lines.push(
+					...memoBySnapshot(yieldSectionsMemo, dataArray, [continuePrefix, expanded, theme], () =>
+						renderTypedYieldSections(dataArray, continuePrefix, expanded, theme),
+					),
+				);
 				continue;
 			}
 
@@ -839,15 +926,19 @@ function renderAgentProgress(
 	// Expanded view: recent output and tools
 	if (expanded && progress.status === "running") {
 		const previewRows = previewWindowRows();
-		const output = capPreviewLines(
-			sanitizeRecentOutput([...progress.recentOutput].reverse().join("\n")).split("\n"),
-			theme,
-			{
-				max: previewRows,
-				expandHint: false,
-			},
-		).join("\n");
-		lines.push(...renderOutputSection(output, continuePrefix, expanded, theme, 2, previewRows));
+		lines.push(
+			...memoBySnapshot(recentOutputMemo, progress.recentOutput, [continuePrefix, theme, previewRows], () => {
+				const output = capPreviewLines(
+					sanitizeRecentOutput([...progress.recentOutput].reverse().join("\n")).split("\n"),
+					theme,
+					{
+						max: previewRows,
+						expandHint: false,
+					},
+				).join("\n");
+				return renderOutputSection(output, continuePrefix, expanded, theme, 2, previewRows);
+			}),
+		);
 	}
 
 	return lines;
@@ -868,9 +959,7 @@ function renderReviewResult(
 	// Verdict line
 	const verdictColor = summary.overall_correctness === "correct" ? "success" : "error";
 	const isCorrect = summary.overall_correctness === "correct";
-	const verdictIcon = isCorrect
-		? theme.styledSymbol("status.done", "accent")
-		: theme.fg(verdictColor, theme.status.error);
+	const verdictIcon = formatStatusIcon(isCorrect ? "success" : "error", theme);
 	lines.push(
 		`${continuePrefix} Patch is ${theme.fg(verdictColor, summary.overall_correctness)} ${verdictIcon} ${theme.fg(
 			"dim",
@@ -969,13 +1058,15 @@ function renderAgentResult(
 	const mergeFailed = !aborted && result.exitCode === 0 && !!result.error;
 	const success = !aborted && result.exitCode === 0 && !result.error;
 	const needsWarning = Boolean(missingCompleteWarning) && success;
-	const icon = aborted
-		? theme.status.aborted
-		: needsWarning
-			? theme.status.warning
+	// A merge failure is a warning: the agent's work succeeded, only folding it back did not.
+	const iconStatus: ToolUIStatus = aborted
+		? "aborted"
+		: needsWarning || mergeFailed
+			? "warning"
 			: success
-				? theme.styledSymbol("status.done", "text")
-				: theme.status.error;
+				? "success"
+				: "error";
+	const icon = formatStatusIcon(iconStatus, theme);
 	const iconColor = needsWarning ? "warning" : success ? "success" : mergeFailed ? "warning" : "error";
 	const statusText = aborted
 		? "aborted"
@@ -1019,7 +1110,7 @@ function renderAgentResult(
 			? fullDescription
 			: undefined;
 	const titlePart = description ? `${theme.bold(displayId)}: ${description}` : displayId;
-	let statusLine = `${indent}${theme.fg(iconColor, icon)} ${modelLead}${theme.fg(
+	let statusLine = `${indent}${icon} ${modelLead}${theme.fg(
 		success && !needsWarning ? "text" : "accent",
 		titlePart,
 	)}${badges}`;
@@ -1048,9 +1139,9 @@ function renderAgentResult(
 
 	if (aborted && result.abortReason) {
 		lines.push(
-			`${continuePrefix}${theme.fg("error", theme.status.aborted)} ${theme.fg(
+			`${continuePrefix}${formatStatusIcon("aborted", theme)} ${theme.fg(
 				"dim",
-				previewLine(sanitizeText(result.abortReason), 80),
+				clipCollapsed(flattenLine(sanitizeText(result.abortReason)), 80, expanded),
 			)}`,
 		);
 	}
@@ -1140,9 +1231,9 @@ function renderAgentResult(
 
 	if (hasCustomRendering && missingCompleteWarning) {
 		lines.push(
-			`${continuePrefix}${theme.fg("warning", theme.status.warning)} ${theme.fg(
+			`${continuePrefix}${formatStatusIcon("warning", theme)} ${theme.fg(
 				"dim",
-				truncateToWidth(sanitizeText(missingCompleteWarning), 80),
+				clipCollapsed(sanitizeText(missingCompleteWarning), 80, expanded),
 			)}`,
 		);
 	}
@@ -1182,7 +1273,7 @@ function renderAgentResult(
 	// Error message
 	if (result.error && (!success || mergeFailed) && (!aborted || result.error !== result.abortReason)) {
 		lines.push(
-			`${continuePrefix}${theme.fg(mergeFailed ? "warning" : "error", previewLine(sanitizeText(result.error), 70))}`,
+			`${continuePrefix}${theme.fg(mergeFailed ? "warning" : "error", clipCollapsed(flattenLine(sanitizeText(result.error)), 70, expanded))}`,
 		);
 	}
 
@@ -1280,16 +1371,10 @@ export function renderResult(
 	if (!details) {
 		const text = result.content.find(c => c.type === "text")?.text || "";
 		const errored = result.isError === true;
-		const header = errored
-			? renderStatusLine({ icon: "error", title: "Task", description: agentLabel }, theme)
-			: renderStatusLine(
-					{
-						iconOverride: theme.styledSymbol("status.done", "accent"),
-						title: "Task",
-						description: agentLabel,
-					},
-					theme,
-				);
+		const header = renderStatusLine(
+			{ icon: errored ? "error" : "success", title: "Task", description: agentLabel },
+			theme,
+		);
 		return framedToolCard(theme, ({ width }) => ({
 			header,
 			sections: [
@@ -1334,21 +1419,35 @@ export function renderResult(
 	const metaLabel = countLabel ?? agentLabel;
 	const header = renderStatusLine(
 		{
-			icon: icon === "success" || icon === "running" ? undefined : icon,
 			// While agents are in flight the header shows the dispatch glyph, not a
 			// spinner: async spawns return immediately, so "running" means
 			// "delegated to peers", not "this call is blocking the turn".
-			iconOverride:
-				icon === "running"
-					? theme.styledSymbol("tool.task", "accent")
-					: icon === "success"
-						? theme.styledSymbol("status.done", "accent")
-						: undefined,
+			icon: icon === "running" ? undefined : icon,
+			iconOverride: icon === "running" ? theme.styledSymbol("tool.task", "accent") : undefined,
 			title: "Task",
 			meta: metaLabel ? [metaLabel] : undefined,
 		},
 		theme,
 	);
+
+	// Fallback text is fixed for this snapshot; derive its trailing notice rows
+	// once instead of re-splitting on every spinner frame.
+	const fallbackExtraLines: string[] = [];
+	if (fallbackText.trim()) {
+		const summaryLines = fallbackText.split("\n");
+		const markerIndex = summaryLines.findIndex(
+			line =>
+				line.includes("<system-notification>") ||
+				line.startsWith("Applied patches:") ||
+				line.startsWith("No changes to apply."),
+		);
+		if (markerIndex >= 0) {
+			for (let i = markerIndex; i < summaryLines.length; i++) {
+				const line = summaryLines[i];
+				if (line.trim()) fallbackExtraLines.push(theme.fg("dim", line));
+			}
+		}
+	}
 
 	return framedToolCard(theme, ({ width, contentWidth }) => {
 		const { expanded, isPartial, spinnerFrame } = options;
@@ -1391,7 +1490,11 @@ export function renderResult(
 			const ordered = orderResultsForDisplay(details.results);
 			const visible = expanded ? ordered : selectCollapsedResults(ordered);
 			for (const res of visible) {
-				lines.push(...renderAgentResult(res, "", "  ", expanded, theme, undefined, 0, contentWidth));
+				lines.push(
+					...memoBySnapshot(agentResultMemo, res, [expanded, theme, contentWidth, isFeedModelBadgeEnabled()], () =>
+						renderAgentResult(res, "", "  ", expanded, theme, undefined, 0, contentWidth),
+					),
+				);
 			}
 			if (visible.length < ordered.length) {
 				const hint = formatExpandHint(theme, false, true);
@@ -1404,11 +1507,14 @@ export function renderResult(
 			// (their payloads deliver through jobs) — keep their rows visible
 			// beside the finalized inline results, live while running and
 			// settled once their jobs finish.
-			const supplementalProgress = details.progress
-				? orderProgressForDisplay(
-						details.progress.filter(progress => !details.results.some(res => res.id === progress.id)),
-					)
-				: [];
+			let supplementalProgress: AgentProgress[] = [];
+			if (details.progress) {
+				const resultIds = new Set<string>();
+				for (const res of details.results) resultIds.add(res.id);
+				supplementalProgress = orderProgressForDisplay(
+					details.progress.filter(progress => !resultIds.has(progress.id)),
+				);
+			}
 			for (const progress of supplementalProgress) {
 				lines.push(
 					...renderAgentProgress(
@@ -1461,22 +1567,7 @@ export function renderResult(
 			};
 		}
 
-		if (fallbackText.trim()) {
-			const summaryLines = fallbackText.split("\n");
-			const markerIndex = summaryLines.findIndex(
-				line =>
-					line.includes("<system-notification>") ||
-					line.startsWith("Applied patches:") ||
-					line.startsWith("No changes to apply."),
-			);
-			if (markerIndex >= 0) {
-				const extra = summaryLines.slice(markerIndex);
-				for (const line of extra) {
-					if (!line.trim()) continue;
-					lines.push(theme.fg("dim", line));
-				}
-			}
-		}
+		for (const line of fallbackExtraLines) lines.push(line);
 
 		while (lines.length > 0 && lines[0].trim() === "") lines.shift();
 		return {
@@ -1676,11 +1767,438 @@ function renderNestedTaskTree(
 	return lines;
 }
 
+// =============================================================================
+// Native (TSP) description: one `agent` node per subagent (§7.6)
+// =============================================================================
+
+/** Theme token for a thinking level's model-chip dot. */
+function thinkingToken(level: ConfiguredThinkingLevel | undefined): string | undefined {
+	switch (level) {
+		case "minimal":
+			return "thinkingMinimal";
+		case "low":
+			return "thinkingLow";
+		case "medium":
+			return "thinkingMedium";
+		case "high":
+			return "thinkingHigh";
+		case "xhigh":
+		case "max":
+			return "thinkingXhigh";
+		default:
+			return undefined;
+	}
+}
+
+/** The shared batch context as one quiet line above the agents. */
+function describeContext(raw: unknown): NativeNode | undefined {
+	const source = typeof raw === "string" ? sanitizeText(repairDoubleEncodedJsonString(raw)) : "";
+	const line = source.replace(/\s+/g, " ").trim();
+	return line ? text([span(line, "muted")], { wrap: "word", lines: 2, role: "omp.tool.context" }) : undefined;
+}
+
+/** The full assignment, markdown: an agent's first expanded child and its row's hover card. */
+function describeAssignment(raw: string | undefined): NativeNode | undefined {
+	const source = raw ? sanitizeText(repairDoubleEncodedJsonString(raw)).trim() : "";
+	return source ? md(source, { role: "omp.task.assignment" }) : undefined;
+}
+
+/** Context-window stats: the fill fraction and its `19K / 200K` label. */
+function contextStats(
+	tokens: number | undefined,
+	window: number | undefined,
+): { context?: number; contextLabel?: string } {
+	if (!tokens || tokens <= 0) return {};
+	if (!window || window <= 0) return { contextLabel: formatNumber(tokens) };
+	return {
+		context: Math.min(1, tokens / window),
+		contextLabel: `${formatNumber(tokens)} / ${formatNumber(window)}`,
+	};
+}
+
+/** Agent badges: `background` for async jobs, `isolated` worktrees. */
+function agentBadges(background: boolean, isolated: boolean | undefined): TspAgentProps["badges"] {
+	const badges: { text: string; tone?: TspTone }[] = [];
+	if (background) badges.push({ text: "background" });
+	if (isolated) badges.push({ text: "isolated" });
+	return badges.length > 0 ? badges : undefined;
+}
+
+interface AgentDescribeState {
+	readonly seen: WeakSet<object>;
+	readonly nowMs: number;
+	readonly expanded: boolean;
+	readonly background: boolean;
+	/** The host draws the `json` kind. */
+	readonly json: boolean;
+}
+
+/** Settled and in-flight child snapshots a subagent carries, as nested agent nodes. */
+function describeNestedTasks(
+	source: { extractedToolData?: Record<string, unknown[]>; inflightTaskDetails?: TaskToolDetails },
+	state: AgentDescribeState,
+	depth: number,
+): NativeNode[] {
+	const nested: TaskToolDetails[] = [];
+	const settled = source.extractedToolData?.task;
+	if (Array.isArray(settled)) for (const entry of settled) if (isTaskToolDetails(entry)) nested.push(entry);
+	if (source.inflightTaskDetails) nested.push(source.inflightTaskDetails);
+	const out: NativeNode[] = [];
+	for (const details of nested) {
+		if (state.seen.has(details)) {
+			out.push(noteText("↻ nested task cycle", "dim"));
+			continue;
+		}
+		if (depth >= MAX_NESTED_TASK_RENDER_DEPTH) {
+			out.push(noteText("… nested task depth limit reached", "dim"));
+			continue;
+		}
+		state.seen.add(details);
+		out.push(...describeAgents(details, state, depth + 1));
+		state.seen.delete(details);
+	}
+	return out;
+}
+
+/** Earliest start seen per running subagent (`nowMs - durationMs`), so a snapshot with a stale or zero `durationMs` can't restart its timer. */
+const runStartMs = new Map<string, number>();
+
+function runningAge(progress: { id: string; durationMs: number }, nowMs: number): number {
+	const start = nowMs - Math.max(0, progress.durationMs);
+	const known = runStartMs.get(progress.id);
+	const anchor = known === undefined ? start : Math.min(known, start);
+	runStartMs.set(progress.id, anchor);
+	return Math.max(0, nowMs - anchor);
+}
+
+/** An `agent` node; its row's hover card shows the whole `assignment` the row only summarizes. */
+function agentNode(
+	p: TspAgentProps,
+	assignment: NativeNode | undefined,
+	children: readonly (NativeNode | undefined)[],
+	key: string,
+): NativeNode {
+	const props: TspProps<"agent"> = assignment ? { ...p, hovercard: propNode(assignment) } : p;
+	return node("agent", props, compact(children), key);
+}
+
+function describeProgressAgent(progress: AgentProgress, state: AgentDescribeState, depth: number): NativeNode {
+	const { nowMs } = state;
+	const running = progress.status === "running";
+	const status: TspAgentProps["status"] =
+		progress.status === "completed" ? "done" : progress.status === "failed" ? "failed" : progress.status;
+	const tool =
+		running && progress.currentTool
+			? {
+					name: plainText(progress.currentTool),
+					intent:
+						plainText(
+							toolCallDetail(progress.currentToolIntent, progress.currentToolArgs, progress.currentToolArgsKey),
+						) || undefined,
+					age: progress.currentToolStartMs ? Math.max(0, nowMs - progress.currentToolStartMs) : undefined,
+				}
+			: null;
+	const summary = taskSummary(progress.description || progress.assignment || progress.task);
+	// The agent's own stage line (from its completion probe) rides beside the task while it runs.
+	const stage = running && progress.stage ? plainText(progress.stage) : "";
+	const assignment = describeAssignment(progress.assignment ?? progress.task);
+	const retry =
+		running && progress.retryState
+			? {
+					attempt: progress.retryState.attempt,
+					max: progress.retryState.maxAttempts,
+					age: Math.max(0, nowMs - progress.retryState.startedAtMs),
+					delay: progress.retryState.delayMs,
+					error: plainText(progress.retryState.errorMessage),
+				}
+			: null;
+	return agentNode(
+		{
+			name: formatTaskId(progress.id),
+			agent: progress.agent || undefined,
+			task: stage ? (summary ? [span(summary), span(` · ${stage}`, "muted")] : stage) : summary || undefined,
+			status,
+			model: progress.resolvedModelIdentity ?? progress.resolvedModel,
+			thinking: thinkingToken(progress.resolvedThinkingLevel),
+			tool,
+			stats: {
+				tools: progress.toolCount || undefined,
+				requests: progress.requests || undefined,
+				tokens: progress.tokens || undefined,
+				...contextStats(progress.contextTokens, progress.contextWindow),
+				done: running && progress.completionPercent !== undefined ? progress.completionPercent / 100 : undefined,
+				cost: progress.cost > 0 ? progress.cost : undefined,
+				...(running ? { age: runningAge(progress, nowMs) } : { took: progress.durationMs }),
+			},
+			retry,
+			badges: agentBadges(state.background, undefined),
+			depth: depth > 0 ? depth : undefined,
+			collapsible: true,
+			collapsed: !state.expanded,
+		},
+		assignment,
+		[
+			assignment,
+			progress.resolvedModelRoute ? noteText(progress.resolvedModelRoute, "dim") : undefined,
+			!running && progress.retryFailure
+				? text(
+						[
+							span(
+								`auto-retry gave up after ${progress.retryFailure.attempt} ${pluralize("attempt", progress.retryFailure.attempt)}: ${plainText(progress.retryFailure.errorMessage)}`,
+								"error",
+							),
+						],
+						{ wrap: "word", role: "omp.tool.error" },
+					)
+				: undefined,
+			...describeNestedTasks(progress, state, depth),
+		],
+		progress.id,
+	);
+}
+
+function describeResultAgent(result: SingleResult, state: AgentDescribeState, depth: number): NativeNode {
+	const { warning, rest } = extractMissingYieldWarning(result.output);
+	const aborted = result.aborted ?? false;
+	const mergeFailed = !aborted && result.exitCode === 0 && !!result.error;
+	const success = !aborted && result.exitCode === 0 && !result.error;
+	const status: TspAgentProps["status"] = aborted ? "aborted" : success || mergeFailed ? "done" : "failed";
+	const structured = result.structuredOutput?.data;
+	const output = sanitizeText(stripGeneratedOutputNotice(rest)).trim();
+	const errorLine = (message: string, token = "error"): NativeNode =>
+		text([span(plainText(message), token)], { wrap: "word", role: "omp.tool.error" });
+	const badges: { text: string; tone?: TspTone }[] = [...(agentBadges(state.background, result.isolated) ?? [])];
+	if (mergeFailed) badges.push({ text: "merge failed", tone: "warning" });
+	else if (warning && success) badges.push({ text: "warning", tone: "warning" });
+	if (result.truncated) badges.push({ text: "truncated", tone: "warning" });
+	const cost = result.usage?.cost.total ?? 0;
+	const assignment = describeAssignment(result.assignment ?? result.task);
+	return agentNode(
+		{
+			name: formatTaskId(result.id),
+			agent: result.agent || undefined,
+			task: taskSummary(result.description || result.assignment || result.task) || undefined,
+			status,
+			model: result.resolvedModelIdentity ?? result.resolvedModel,
+			thinking: thinkingToken(result.resolvedThinkingLevel),
+			tool: null,
+			stats: {
+				requests: result.requests || undefined,
+				tokens: result.tokens || undefined,
+				...contextStats(result.contextTokens, result.contextWindow),
+				cost: cost > 0 ? cost : undefined,
+				took: result.durationMs,
+			},
+			retry: null,
+			badges: badges.length > 0 ? badges : undefined,
+			depth: depth > 0 ? depth : undefined,
+			collapsible: true,
+			collapsed: !state.expanded,
+		},
+		assignment,
+		[
+			assignment,
+			result.resolvedModelRoute ? noteText(result.resolvedModelRoute, "dim") : undefined,
+			aborted && result.abortReason ? errorLine(result.abortReason) : undefined,
+			warning ? errorLine(warning, "warning") : undefined,
+			result.error ? errorLine(result.error) : undefined,
+			result.retryFailure ? errorLine(`auto-retry gave up: ${result.retryFailure.errorMessage}`) : undefined,
+			// The structured result is the agent's answer: its containers open one level, as in the fallback tree.
+			structured !== undefined
+				? describeJsonValue(structured, { native: state.json, open: 1 })
+				: output
+					? md(output, { role: "omp.task.output" })
+					: undefined,
+			result.stderr.trim() && !success ? node("ansi", { text: result.stderr, preview: { lines: 6 } }) : undefined,
+			kv([
+				[
+					"Patch",
+					result.patchPath && result.hasRootChanges !== false && success
+						? shortenPath(result.patchPath)
+						: undefined,
+				],
+				["Branch", result.branchName && success ? plainText(result.branchName) : undefined],
+			]),
+			...describeNestedTasks(result, state, depth),
+		],
+		result.id,
+	);
+}
+
+/** Agent nodes for one snapshot: settled results, then progress rows that have no result yet. */
+function describeAgents(details: TaskToolDetails, state: AgentDescribeState, depth: number): NativeNode[] {
+	const results = details.results ?? [];
+	const agents = orderResultsForDisplay(results).map(res => describeResultAgent(res, state, depth));
+	for (const progress of orderProgressForDisplay(details.progress ?? [])) {
+		if (!results.some(res => res.id === progress.id)) agents.push(describeProgressAgent(progress, state, depth));
+	}
+	return agents;
+}
+
+function agentCountLabel(count: number): string {
+	return `${count} ${pluralize("agent", count)}`;
+}
+
+/** Streaming call: the context line, then a pending agent per requested spawn. */
+function describeTaskCall(args: TaskParams | undefined): NativeToolView {
+	const agents: NativeNode[] = [];
+	const pending = (name: string, agent: unknown, brief: unknown, isolated: unknown, key: string): NativeNode =>
+		agentNode(
+			{
+				name,
+				agent: typeof agent === "string" && agent.trim() ? agent.trim() : undefined,
+				task: typeof brief === "string" ? taskSummary(brief) || undefined : undefined,
+				status: "pending",
+				badges: agentBadges(false, isolated === true),
+			},
+			describeAssignment(typeof brief === "string" ? brief : undefined),
+			[],
+			key,
+		);
+	const flatName = typeof args?.name === "string" ? args.name.trim() : "";
+	const flatBrief = taskPreviewText(args?.task, args?.taskFile);
+	if (flatName || taskFirstLine(flatBrief)) {
+		agents.push(
+			pending(
+				flatName ? formatTaskId(flatName) : "agent",
+				args?.agent,
+				flatBrief,
+				args?.isolated,
+				flatName || "agent",
+			),
+		);
+	}
+	if (Array.isArray(args?.tasks)) {
+		args.tasks.forEach((entry, index) => {
+			const name = typeof entry?.name === "string" ? entry.name.trim() : "";
+			agents.push(
+				pending(
+					name ? formatTaskId(name) : `#${index + 1}`,
+					entry?.agent,
+					taskPreviewText(entry?.task, entry?.taskFile),
+					entry?.isolated,
+					name || `#${index + 1}`,
+				),
+			);
+		});
+	}
+	const target = agents.length > 1 ? agentCountLabel(agents.length) : formatAgentHeaderLabel(args);
+	return {
+		tool: { title: "Task", target, targetKind: target ? "text" : undefined },
+		body: compact([describeContext(args?.context), ...agents]),
+	};
+}
+
+function describeTaskResult(
+	result: ToolRenderResult<TaskToolDetails>,
+	options: TaskRenderOptions,
+	args: TaskParams | undefined,
+): NativeToolView {
+	const details = result.details;
+	const context = describeContext(args?.context);
+	const agentLabel = formatAgentHeaderLabel(args);
+	if (!details) {
+		const fallback = resultText(result).trim();
+		if (result.isError) {
+			return {
+				tool: { title: "Task", target: agentLabel, targetKind: "text" },
+				tone: "error",
+				body: compact([context, errorText(fallback || "Task failed")]),
+			};
+		}
+		return {
+			tool: { title: "Task", target: agentLabel, targetKind: agentLabel ? "text" : undefined },
+			body: compact([context, fallback ? noteText(fallback, "dim") : undefined]),
+		};
+	}
+	// Ages are sampled once per snapshot; the terminal advances them.
+	const background = details.async !== undefined;
+	const agents = describeAgents(
+		details,
+		{
+			seen: new WeakSet<object>(),
+			nowMs: options.renderContext?.nowMs ?? Date.now(),
+			expanded: options.expanded,
+			background,
+			json: options.json === true,
+		},
+		0,
+	);
+	const count = agents.length;
+	let failed = 0;
+	let aborted = 0;
+	let succeeded = 0;
+	let requests = 0;
+	for (const res of details.results ?? []) {
+		requests += res.requests ?? 0;
+		if (res.aborted) aborted++;
+		else if (res.exitCode !== 0) failed++;
+		else if (!res.error) succeeded++;
+	}
+	const summary: string[] = [];
+	if ((details.results ?? []).length > 0) {
+		if (succeeded) summary.push(`${succeeded} succeeded`);
+		if (failed) summary.push(`${failed} failed`);
+		if (aborted) summary.push(`${aborted} aborted`);
+		if (requests) summary.push(`${formatNumber(requests)} req`);
+		summary.push(formatDuration(details.totalDurationMs));
+	}
+	const fallback = resultText(result);
+	const lines = fallback.split("\n");
+	const notice = lines.findIndex(
+		line =>
+			line.includes("<system-notification>") ||
+			line.startsWith("Applied patches:") ||
+			line.startsWith("No changes to apply."),
+	);
+	const trailer =
+		notice >= 0
+			? lines
+					.slice(notice)
+					.filter(line => line.trim())
+					.join("\n")
+			: "";
+	const target = count > 0 ? agentCountLabel(count) : agentLabel;
+	return {
+		tool: {
+			title: "Task",
+			target,
+			targetKind: target ? "text" : undefined,
+			meta: summary.length > 0 ? [summary.join(" · ")] : undefined,
+			badges: background ? [{ text: "background" }] : undefined,
+		},
+		tone: aborted + failed > 0 ? "error" : undefined,
+		preview: "none",
+		body: compact([
+			context,
+			...agents,
+			count === 0 ? noteText(fallback.trim() || "No results", "dim") : undefined,
+			trailer ? text([span(plainText(trailer), "muted")], { wrap: "word", role: "omp.tool.stats" }) : undefined,
+		]),
+	};
+}
+
+const taskCallMemo = new OwnerMemo<NativeToolView | undefined>();
+const taskResultMemo = new OwnerMemo<NativeToolView | undefined>();
+
 /** Renders task calls and their live or settled agent results. */
-export const taskToolRenderer = { renderCall, renderResult, mergeCallAndResult: true } satisfies ToolRenderer<
-	TaskParams,
-	TaskToolDetails
->;
+export const taskToolRenderer = {
+	renderCall,
+	renderResult,
+	describeCall(args: TaskParams, options: RenderResultOptions): NativeToolView | undefined {
+		return taskCallMemo.get(args, [options.argsComplete], () => describeTaskCall(args));
+	},
+	describeResult(
+		result: ToolRenderResult<TaskToolDetails>,
+		options: TaskRenderOptions,
+		args?: TaskParams,
+	): NativeToolView | undefined {
+		return taskResultMemo.get(result, [options.renderContext?.nowMs, options.expanded, options.json], () =>
+			describeTaskResult(result, options, args),
+		);
+	},
+	mergeCallAndResult: true,
+} satisfies ToolRenderer<TaskParams, TaskToolDetails>;
 
 /** Source of an agent definition */
 export type AgentSource = "bundled" | "user" | "project";
@@ -1724,8 +2242,15 @@ export interface TaskItem {
 	name?: string;
 	/** Agent type to run this item (e.g. "scout"). Defaults to the spawn policy's default agent. */
 	agent?: string;
-	/** The work; required by the schema. */
+	/** Historical source session selected by the bundled consult agent. */
+	sourceSession?: string;
+	/** Bundled seance: override for the source session's saved model. Any other agent: one exact per-call model, gated by `task.perCallModel`. */
+	model?: string | string[];
+	/** Inline instructions; exactly one of task or taskFile is required. */
 	task?: string;
+	taskFile?: string;
+	/** How open-ended the work is; required by the schema and the child's sole `auto` thinking classification input. */
+	solutionSpace?: string;
 	/** Per-spawn thinking effort: lowest/middle/highest level the resolved model supports. Overrides the agent's default selector (e.g. `auto`). */
 	effort?: "lo" | "med" | "hi";
 	/** Caller-provided output schema; its presence overrides the selected agent's schema. */
@@ -1749,8 +2274,16 @@ export interface TaskParams {
 	name?: string;
 	/** Agent type to spawn (flat form); omitted values resolve from the session spawn policy. */
 	agent?: string;
+	/** Historical source session selected by the bundled consult agent. */
+	sourceSession?: string;
+	/** See {@link TaskItem.model}. */
+	model?: string | string[];
 	/** The work (flat form). */
 	task?: string;
+	/** Absolute path or local:// URL to a UTF-8 file (flat form), mutually exclusive with task. */
+	taskFile?: string;
+	/** How open-ended the work is (flat form); see {@link TaskItem.solutionSpace}. */
+	solutionSpace?: string;
 	/** Per-spawn thinking effort (flat form): lowest/middle/highest level the resolved model supports. */
 	effort?: "lo" | "med" | "hi";
 	/** Caller-provided output schema; its presence overrides the selected agent's schema. */
@@ -1837,12 +2370,26 @@ export interface AgentProgress {
 	status: "pending" | "running" | "completed" | "failed" | "aborted";
 	task: string;
 	assignment?: string;
+	taskFile?: string;
+	/** SHA-256 of the exact task file bytes before decoding and trimming. */
+	taskFileSha256?: string;
 	description?: string;
 	lastIntent?: string;
 	currentTool?: string;
 	currentToolArgs?: string;
+	/** Argument key selected for the display preview, when known. */
+	currentToolArgsKey?: string;
+	/** Intent the model attached to the current call; undefined when that call carried none. */
+	currentToolIntent?: string;
 	currentToolStartMs?: number;
-	recentTools: Array<{ tool: string; args: string; endMs: number }>;
+	recentTools: Array<{
+		tool: string;
+		args: string;
+		argsKey?: string;
+		intent?: string;
+		isError?: boolean;
+		endMs: number;
+	}>;
 	recentOutput: string[];
 	toolCount: number;
 	/** Count of assistant requests (assistant message_end events) across the run. Drives the soft request budget guard. */
@@ -1876,6 +2423,20 @@ export interface AgentProgress {
 	resolvedModelRoute?: string;
 	/** True when a live advisor was attached to this run's session, not merely enabled in settings. */
 	advisor?: boolean;
+	/** The agent's latest self-estimate of task completion (0–100), from the periodic `task.completionProbe` side request. */
+	completionPercent?: number;
+	/**
+	 * The agent's current step in its own words (one line, ≤ 80 chars), from the
+	 * same probe reply as {@link completionPercent}. Running rows prefer it over
+	 * `lastIntent`; the job widget uses it as its stage line.
+	 */
+	stage?: string;
+	/**
+	 * What the agent says shows its progress live (one line, ≤ 200 chars), e.g.
+	 * "BENCH lines in bg_2 pipe:1, tok_s higher is better, target 70% of roofline";
+	 * from the probe reply. Feeds the job widget author's brief; never rendered.
+	 */
+	watch?: string;
 	/** Data extracted by registered subprocess tool handlers (keyed by tool name) */
 	extractedToolData?: Record<string, unknown[]>;
 	/**
@@ -1920,6 +2481,8 @@ export interface SingleResult {
 	agentSource: AgentSource;
 	task: string;
 	assignment?: string;
+	taskFile?: string;
+	taskFileSha256?: string;
 	description?: string;
 	lastIntent?: string;
 	exitCode: number;
@@ -2070,55 +2633,22 @@ export interface FindingDetails {
 	line_end: number;
 }
 
-function normalizeFindingPriority(value: unknown): FindingPriority | undefined {
-	if (isFindingPriority(value)) return value;
-	if (value === 0) return "P0";
-	if (value === 1) return "P1";
-	if (value === 2) return "P2";
-	if (value === 3) return "P3";
-	return undefined;
-}
+const FindingDetailsShape = type({
+	"+": "delete",
+	title: "string",
+	body: "string",
+	// Older reports wrote the severity as its ordinal.
+	priority: type("'P0' | 'P1' | 'P2' | 'P3'").or(type("0 | 1 | 2 | 3").pipe(ordinal => PRIORITY_LABELS[ordinal])),
+	confidence: "0 <= number <= 1",
+	file_path: "string > 0",
+	line_start: "number",
+	line_end: "number",
+});
 
 /** Validates and normalizes a persisted review finding. */
 export function parseFindingDetails(value: unknown): FindingDetails | undefined {
-	if (!isRecord(value)) return undefined;
-
-	const title = typeof value.title === "string" ? value.title : undefined;
-	const body = typeof value.body === "string" ? value.body : undefined;
-	const priority = normalizeFindingPriority(value.priority);
-	const confidence =
-		typeof value.confidence === "number" &&
-		Number.isFinite(value.confidence) &&
-		value.confidence >= 0 &&
-		value.confidence <= 1
-			? value.confidence
-			: undefined;
-	const filePath = typeof value.file_path === "string" && value.file_path.length > 0 ? value.file_path : undefined;
-	const lineStart =
-		typeof value.line_start === "number" && Number.isFinite(value.line_start) ? value.line_start : undefined;
-	const lineEnd = typeof value.line_end === "number" && Number.isFinite(value.line_end) ? value.line_end : undefined;
-
-	if (
-		title === undefined ||
-		body === undefined ||
-		priority === undefined ||
-		confidence === undefined ||
-		filePath === undefined ||
-		lineStart === undefined ||
-		lineEnd === undefined
-	) {
-		return undefined;
-	}
-
-	return {
-		title,
-		body,
-		priority,
-		confidence,
-		file_path: filePath,
-		line_start: lineStart,
-		line_end: lineEnd,
-	};
+	const details = FindingDetailsShape(value);
+	return details instanceof type.errors ? undefined : details;
 }
 /** SubmitReviewDetails - used for rendering review results from yield tool */
 export interface SubmitReviewDetails {

@@ -2,9 +2,11 @@ import { Database } from "bun:sqlite";
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import { AuthStorage, type FetchImpl, type Model, SqliteAuthCredentialStore } from "@tau/tau-ai";
 import { buildModel } from "@tau/tau-catalog/build";
-import { serializeCloudflareAiGatewayCredential } from "@tau/tau-catalog/wire/cloudflare-ai-gateway";
 import { ModelRegistry } from "tau/config/model-registry";
 import { GeminiProvider, searchGemini } from "tau/web/search/providers/gemini";
+import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
+import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+import { serializeCloudflareCredential } from "@oh-my-pi/pi-catalog/wire/cloudflare";
 
 const SSE_RESPONSE =
 	'data: {"response":{"candidates":[{"content":{"role":"model","parts":[{"text":"Gemini answer"}]}}],"modelVersion":"gemini-2.5-flash"}}\n\n';
@@ -147,7 +149,7 @@ describe("searchGemini tools serialization", () => {
 			.mockResolvedValueOnce({ apiKey: "initial-gemini-key" })
 			.mockResolvedValueOnce({ apiKey: "refreshed-gemini-key" })
 			.mockResolvedValueOnce({ apiKey: "rotated-gemini-key" });
-		const rotateSpy = vi.spyOn(apiKeyAuthStorage.limits, "rotate").mockResolvedValue(true);
+		const rotateSpy = vi.spyOn(apiKeyAuthStorage.limits, "rotate").mockResolvedValue({ switched: true });
 		const fetchMock: FetchImpl = (url, init) => {
 			requestCount += 1;
 			requestUrls.push(String(url));
@@ -181,7 +183,7 @@ describe("searchGemini tools serialization", () => {
 		const gatewayAuthStorage = new AuthStorage(new SqliteAuthCredentialStore(new Database(":memory:")));
 		gatewayAuthStorage.keys.setRuntime(
 			"cloudflare-ai-gateway",
-			serializeCloudflareAiGatewayCredential("test-cloudflare-key", "account", "gateway"),
+			serializeCloudflareCredential({ token: "test-cloudflare-key", accountId: "account", gatewayId: "gateway" }),
 		);
 		const gatewayRegistry = new ModelRegistry(gatewayAuthStorage);
 		const gatewayModel = geminiDeveloperModel(
@@ -281,6 +283,47 @@ describe("searchGemini tools serialization", () => {
 		});
 	});
 
+	it("uses the collapsed OAuth model's default wire id", async () => {
+		const fetchMock = mockGeminiFetch();
+		const selectedModel = getBundledModel("google-antigravity", "gemini-3.8-flash");
+		await searchGemini({
+			...makeParams("collapsed OAuth model", selectedModel),
+			fetch: fetchMock,
+		});
+
+		expect(capturedRequest?.body).toMatchObject({
+			model: "gemini-3.8-flash-low",
+		});
+	});
+
+	it("routes an explicit thinking level to the matching OAuth wire id", async () => {
+		const fetchMock = mockGeminiFetch();
+		const selectedModel = getBundledModel("google-antigravity", "gemini-3.8-flash");
+		await searchGemini({
+			...makeParams("collapsed OAuth model", selectedModel),
+			thinkingLevel: ThinkingLevel.High,
+			fetch: fetchMock,
+		});
+
+		expect(capturedRequest?.body).toMatchObject({
+			model: "gemini-3.8-flash-high",
+		});
+	});
+
+	it("clamps an unsupported thinking level onto the nearest routed wire id", async () => {
+		const fetchMock = mockGeminiFetch();
+		const selectedModel = getBundledModel("google-antigravity", "gemini-3.8-flash");
+		await searchGemini({
+			...makeParams("collapsed OAuth model", selectedModel),
+			thinkingLevel: ThinkingLevel.XHigh,
+			fetch: fetchMock,
+		});
+
+		expect(capturedRequest?.body).toMatchObject({
+			model: "gemini-3.8-flash-high",
+		});
+	});
+
 	it("sends default googleSearch tool when no passthrough payloads are provided", async () => {
 		const fetchMock = mockGeminiFetch();
 		await searchGemini({ ...makeParams("default tools"), fetch: fetchMock });
@@ -369,5 +412,16 @@ describe("searchGemini tools serialization", () => {
 				fetch: mockGeminiFetch("data: {}\n\n"),
 			}),
 		).rejects.toThrow("Gemini API returned an empty grounded response");
+	});
+
+	it("does not tag Antigravity search requests with the requestType that draws false 429 quota errors", async () => {
+		const fetchMock = mockGeminiFetch();
+		await searchGemini({
+			...makeParams("antigravity search", getBundledModel("google-antigravity", "gemini-3.8-flash")),
+			fetch: fetchMock,
+		});
+
+		expect(capturedRequest?.body?.userAgent).toBe("antigravity");
+		expect(capturedRequest?.body?.requestType).toBeUndefined();
 	});
 });

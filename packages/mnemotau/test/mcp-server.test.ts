@@ -2,8 +2,14 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import { getToolDefinitions, handleToolCall } from "@oh-my-pi/p…`
 import { callToolJson, handleJsonRpc, runStdio } from "@tau/tau-mnemotau/mcp-server";
 import { getToolDefinitions, handleToolCall } from "@tau/tau-mnemotau/mcp-tools";
+=======
+import { callToolJson, handleJsonRpc, runStdio } from "@oh-my-pi/pi-mnemopi/mcp-server";
+import { handleToolCall } from "@oh-my-pi/pi-mnemopi/mcp-tools";
+>>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/mnemotau/test/mcp-server.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 let dataDir: string;
 
@@ -42,28 +48,7 @@ async function runStdioText(input: string): Promise<unknown[]> {
 	return trimmed.length === 0 ? [] : trimmed.split("\n").map(line => JSON.parse(line) as unknown);
 }
 
-describe("MCP tool definitions", () => {
-	it("returns JSON-serializable MCP schemas", () => {
-		const tools = getToolDefinitions();
-		expect(tools).toHaveLength(23);
-		for (const tool of tools) {
-			const schema = JSON.parse(JSON.stringify(tool.inputSchema)) as {
-				type: string;
-				properties: unknown;
-			};
-			expect(schema.type).toBe("object");
-			expect(schema.properties).toBeDefined();
-		}
-	});
-});
-
 describe("MCP JSON handlers", () => {
-	it("lists tools through JSON-RPC", async () => {
-		const response = await handleJsonRpc({ jsonrpc: "2.0", id: 1, method: "tools/list" });
-		if (response === null) throw new Error("expected tools/list response");
-		expect(response.error).toBeUndefined();
-		expect((response.result as { tools: unknown[] }).tools).toHaveLength(23);
-	});
 
 	it("does not write a response for notifications but still answers requests", async () => {
 		const responses = await runStdioText(
@@ -105,6 +90,8 @@ describe("MCP JSON handlers", () => {
 		expect(payload.bank).toBe("server");
 	});
 
+<<<<<<< ours — scope `it("dispatches remember, recall, stats, sleep...` in test_suite `MCP JSON handlers`, deleted in theirs (S+F, confidence: low)
+// refused_by: statement_fold · collision: none (no common ancestor text)
 	it("dispatches remember, recall, stats, sleep, scratchpad, and bank operations", async () => {
 		const remembered = await handleToolCall("mnemotau_remember", {
 			content: "MCP server test remembers kombucha preference",
@@ -143,6 +130,8 @@ describe("MCP JSON handlers", () => {
 		expect(sleep.dry_run).toBe(true);
 		expect(sleep.bank).toBe("work");
 	});
+=======
+>>>>>>> theirs — scope `it("dispatches remember, recall, stats, sleep...` deleted in theirs
 
 	it("uses MNEMOTAU_MCP_BANK when a call omits bank", async () => {
 		process.env.MNEMOTAU_MCP_BANK = "env-bank";

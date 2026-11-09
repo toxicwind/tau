@@ -4,7 +4,7 @@
 //!
 //! - `iso_backend()` — kind enum of the platform-native backend.
 //! - `iso_resolve(preferred?)` — let the PAL pick the best backend (or honour a
-//!   hint) and report any fallback to the caller.
+//!   hint) and report any fallback to the caller; probes run off the JS thread.
 //! - `iso_probe(kind?)` — backend availability, with an optional explicit kind
 //!   override; falls back to the native backend when omitted.
 //! - `iso_start(kind?, lower, merged)` / `iso_stop(kind?, merged)` — sync
@@ -22,7 +22,7 @@ use napi::bindgen_prelude::*;
 use napi_derive::napi;
 use tau_iso::{BackendKind, ChangeKind, Diff, FileChange, IsoError, IsolationBackend};
 
-use crate::js;
+use crate::{js, task};
 
 const ISO_UNAVAILABLE_PREFIX: &str = "ISO_UNAVAILABLE:";
 const ISO_UNAVAILABLE_WITH_LEADING_SPACE: &str = " ISO_UNAVAILABLE:";
@@ -112,21 +112,37 @@ pub fn iso_probe(kind: Option<IsoBackendKind>) -> IsoProbeResult {
 	}
 }
 
+<<<<<<< ours — scope `declaration` in function `iso_resolve` (T+F, confidence: medium)
+// refused_by: statement_fold · collision: `/// a hint — see [`pi_iso::resolve`] for the exact priority rul…`
 /// Pick the best backend available right now. `preferred` is treated as
 /// a hint — see [`tau_iso::resolve`] for the exact priority rules.
+=======
+/// Pick the best backend available right now.
+///
+/// `preferred` is treated as a hint — see [`pi_iso::resolve`] for the exact
+/// priority rules. Backend probes may spawn CLIs, so they run on the native
+/// blocking pool.
+>>>>>>> theirs — scope `declaration` · weave: run 'weave explain crates/tau-natives/src/iso.rs' for per-hunk detail, 'weave check' to verify your resolution
 #[napi]
-pub fn iso_resolve(preferred: Option<IsoBackendKind>) -> IsoResolveResult {
+pub fn iso_resolve(preferred: Option<IsoBackendKind>) -> task::Promise<IsoResolveResult> {
+<<<<<<< ours — scope `let resolution = pi_iso::resolve(preferred.ma...` in function `iso_resolve`, deleted in theirs (S, confidence: medium)
+// refused_by: statement_fold · collision: none (no common ancestor text)
 	let resolution = tau_iso::resolve(preferred.map(from_napi_kind));
-	IsoResolveResult {
-		kind:       to_napi_kind(resolution.kind),
-		candidates: resolution
-			.candidates
-			.into_iter()
-			.map(to_napi_kind)
-			.collect(),
-		fell_back:  resolution.fell_back,
-		reason:     resolution.reason,
-	}
+=======
+>>>>>>> theirs — scope `let resolution = pi_iso::resolve(preferred.ma...` deleted in theirs
+	task::blocking("iso.resolve", (), move |_| {
+		let resolution = pi_iso::resolve(preferred.map(from_napi_kind));
+		Ok(IsoResolveResult {
+			kind:       to_napi_kind(resolution.kind),
+			candidates: resolution
+				.candidates
+				.into_iter()
+				.map(to_napi_kind)
+				.collect(),
+			fell_back:  resolution.fell_back,
+			reason:     resolution.reason,
+		})
+	})
 }
 
 /// Materialise `merged` as a writable view of `lower` using the requested

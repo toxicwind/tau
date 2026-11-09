@@ -2,6 +2,8 @@
  * `tau find`: run the semantic `find` tool's cascade from the shell. Same
  * search as the tool, printed as a ranked, colored digest (or JSON).
  */
+<<<<<<< ours — interstitial `file_header` (T+F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import { formatBytes, formatDuration, formatNumber, isEnoent } …` +2 more
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import { formatBytes, formatDuration, formatNumber, getConfigRootDir, isEnoent } from "@tau/tau-utils";
@@ -14,7 +16,18 @@ import { isOmpDocsScope } from "../internal-urls/tau-scope";
 import { expandPath } from "../tools/path-utils";
 import { type CascadeResult, runCascade } from "../tools/jfind/cascade";
 import { materializeOmpScope, type TauScope } from "../tools/jfind/tau-scope";
+=======
+import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { formatBytes, formatDuration, formatNumber } from "@oh-my-pi/pi-utils";
+import chalk from "@oh-my-pi/pi-utils/chalk";
+import { InternalUrlFilesystem, isUrlPath } from "../internal-urls/url-filesystem";
+import { openStandaloneJudge } from "../judgment/standalone";
+import { standaloneFindSpotlight } from "../spotlight/session";
+import { formatPathRelativeToCwd, resolveSearchResultPath } from "../tools/path-utils";
+import { type CascadeResult, runCascade } from "../tools/jfind/cascade";
+>>>>>>> theirs — interstitial `file_header` (T+F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/cli/find-cli.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { rankedHeat } from "../tools/jfind/passages";
+import { resolveSearchRoot, type SearchRoot } from "../tools/jfind/tree";
 
 export interface FindCommandArgs {
 	query: string;
@@ -39,17 +52,14 @@ function gauge(p: number): string {
 	return scoreStyle(p)("━".repeat(filled)) + chalk.dim("─".repeat(GAUGE_WIDTH - filled));
 }
 
-function printReport(
-	cmd: FindCommandArgs,
-	root: string,
-	result: CascadeResult,
-	elapsedMs: number,
-	scopeLabel?: string,
-): void {
-	const { hits, stats, threshold } = result;
-	const rel = scopeLabel ?? (path.relative(process.cwd(), root) || ".");
+function printReport(cmd: FindCommandArgs, rel: string, result: CascadeResult, elapsedMs: number): void {
+	const { hits, stats, threshold, coverage } = result;
 	console.log("");
-	if (hits.length === 0) {
+	if (coverage === "unavailable") {
+		console.log(
+			`${chalk.red("find unavailable")} ${chalk.dim(`for "${cmd.query}" in ${rel}: all ${stats.requests} judge requests failed, nothing was judged; use grep`)}`,
+		);
+	} else if (hits.length === 0) {
 		console.log(
 			`${chalk.yellow("no hits")} ${chalk.dim(`for "${cmd.query}" in ${rel} · τ ${threshold.toFixed(2)}`)}`,
 		);
@@ -71,28 +81,59 @@ function printReport(
 			}
 		}
 	}
+	if (coverage === "partial") {
+		console.log(chalk.yellow(`partial: ${stats.failed} of ${stats.requests} judge requests failed`));
+	}
 	console.log("");
 	console.log(
 		chalk.dim(
-			`listed ${stats.listed} · judged ${stats.judged} · read ${stats.filesRead} files (${formatBytes(stats.fileBytes)}) · ${stats.requests} requests · ${formatNumber(stats.inputTokens)} tokens · $${stats.cost.toFixed(4)} · ${formatDuration(elapsedMs)} wall / ${formatDuration(stats.apiMs)} api`,
+			`listed ${stats.listed} · judged ${stats.judged} · read ${stats.filesRead} files (${formatBytes(stats.fileBytes)}) · ${stats.requests} requests${stats.unanswered > 0 ? ` · ${stats.unanswered} unanswered` : ""} · ${formatNumber(stats.inputTokens)} tokens · $${stats.cost.toFixed(4)} · ${formatDuration(elapsedMs)} wall / ${formatDuration(stats.apiMs)} api`,
 		),
 	);
 	for (const failure of stats.failures) console.log(chalk.yellow(failure));
 }
 
-/** Run one search and print it. Exits non-zero on a bad root or when every judgment failed. */
+/** Run one search and print it. Exits non-zero on a bad root or when every judge request failed. */
 export async function runFindCommand(cmd: FindCommandArgs): Promise<void> {
 	if (!cmd.query.trim()) {
 		console.error(chalk.red("Error: query is required"));
 		process.exit(1);
 	}
 	const log = cmd.quiet ? () => {} : (message: string) => console.error(chalk.dim(message));
+	const cwd = process.cwd();
+	// Internal URLs (`omp://`, `local://`, …) are searched in place; `find` only reads.
+	const filesystem = new InternalUrlFilesystem({ context: { cwd }, tier: "read" });
+	let root: SearchRoot;
+	try {
+		root = await resolveSearchRoot(filesystem, cmd.path, cwd);
+	} catch (error) {
+		if (!(error instanceof ToolError)) throw error;
+		console.error(chalk.red(`Error: ${error.message}`));
+		process.exit(1);
+	}
+
+	// Settings and extensions belong to the searched project; a file or URL
+	// scope has none of its own, so it keeps the caller's.
+	const baseCwd = root.type === "directory" && !isUrlPath(root.path) ? root.path : cwd;
+	log("resolving judge");
+	const { judge, settings, close } = await openStandaloneJudge(baseCwd, "find");
+	const spotlight = standaloneFindSpotlight(settings);
+<<<<<<< ours — scope `let ompScope: OmpScope | undefined;` in function `runFindCommand`, deleted in theirs (S, confidence: medium)
+// refused_by: statement_fold · collision: none (no common ancestor text)
 	let tauScope: TauScope | undefined;
+=======
+>>>>>>> theirs — scope `let ompScope: OmpScope | undefined;` deleted in theirs
+<<<<<<< ours — scope `if (isOmpDocsScope(cmd.path)) {` in function `runFindCommand`, deleted in theirs (S+F, confidence: low)
+// refused_by: statement_fold · collision: none (no common ancestor text)
 	if (isOmpDocsScope(cmd.path)) {
 		log("materializing tau:// docs");
 		tauScope = await materializeOmpScope(cmd.path, { cwd: process.cwd() });
 	}
+=======
+>>>>>>> theirs — scope `if (isOmpDocsScope(cmd.path)) {` deleted in theirs
 	try {
+<<<<<<< ours — scope `try {` in function `runFindCommand` (S+F, confidence: low)
+// refused_by: statement_fold · collision: `const root = ompScope?.dir ?? path.resolve(expandPath(cmd.path)…` +8 more
 		const root = tauScope?.dir ?? path.resolve(expandPath(cmd.path));
 		try {
 			if (!(await fs.stat(root)).isDirectory()) {
@@ -145,7 +186,41 @@ export async function runFindCommand(cmd: FindCommandArgs): Promise<void> {
 		} finally {
 			authStorage.close();
 		}
+		// `exitCode`, not `exit`: process.exit skips the finally below, and with it close().
+		if (result.coverage === "unavailable") process.exitCode = 1;
 	} finally {
 		await tauScope?.cleanup();
+=======
+		const started = performance.now();
+		const raw = await runCascade({
+			root,
+			filesystem,
+			query: cmd.query.trim(),
+			extraKeywords: cmd.keywords,
+			judge,
+			spotlight,
+			includeHidden: cmd.hidden,
+			onProgress: log,
+		});
+		// Hits print as paths usable from the caller's cwd: relative files or URLs.
+		const result: CascadeResult = {
+			...raw,
+			hits: raw.hits.map(hit => ({
+				...hit,
+				rel: formatPathRelativeToCwd(resolveSearchResultPath(root.path, hit.rel), cwd),
+			})),
+		};
+		const elapsedMs = performance.now() - started;
+		if (cmd.json) {
+			console.log(JSON.stringify({ query: cmd.query, root: root.path, elapsedMs, ...result }, null, 2));
+		} else {
+			printReport(cmd, formatPathRelativeToCwd(root.path, cwd), result, elapsedMs);
+		}
+		// `exitCode`, not `exit`: process.exit skips the finally below, and with it close().
+		if (result.coverage === "unavailable") process.exitCode = 1;
+	} finally {
+		spotlight?.client.close();
+		close();
+>>>>>>> theirs — scope `try {`
 	}
 }

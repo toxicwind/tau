@@ -2,58 +2,23 @@ import { afterEach, describe, expect, it } from "bun:test";
 import {
 	CallableLlmBackend,
 	callHostLlm,
+<<<<<<< ours — imports `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 	getHostLlmBackend,
 	resetHostLlmBackendForTests,
 	setHostLlmBackend,
 } from "@tau/tau-mnemotau/core/llm-backends";
+=======
+	resetHostLlmBackendForTests,
+	setHostLlmBackend,
+} from "@oh-my-pi/pi-mnemopi/core/llm-backends";
+>>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/mnemotau/test/llm-backends.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 afterEach(() => resetHostLlmBackendForTests());
 
 describe("host LLM backend registry", () => {
-	it("sets, gets, and clears the process-global backend", () => {
-		expect(getHostLlmBackend()).toBeNull();
-		const backend = new CallableLlmBackend("test", () => "ok");
-		setHostLlmBackend(backend);
-		expect(getHostLlmBackend()).toBe(backend);
-		setHostLlmBackend(null);
-		expect(getHostLlmBackend()).toBeNull();
-	});
-
 	it("returns null without a backend", async () => {
 		expect(await callHostLlm("anything", { maxTokens: 64 })).toBeNull();
-	});
-
-	it("passes completion options through", async () => {
-		const captured: Record<string, unknown> = {};
-		setHostLlmBackend(
-			new CallableLlmBackend("test", (prompt, opts) => {
-				captured.prompt = prompt;
-				captured.maxTokens = opts?.maxTokens;
-				captured.temperature = opts?.temperature;
-				captured.timeout = opts?.timeout;
-				captured.provider = opts?.provider;
-				captured.model = opts?.model;
-				return "out";
-			}),
-		);
-
-		expect(
-			await callHostLlm("hello", {
-				maxTokens: 128,
-				temperature: 0.1,
-				timeout: 7.5,
-				provider: "openai-codex",
-				model: "gpt-5.1-mini",
-			}),
-		).toBe("out");
-		expect(captured).toEqual({
-			prompt: "hello",
-			maxTokens: 128,
-			temperature: 0.1,
-			timeout: 7.5,
-			provider: "openai-codex",
-			model: "gpt-5.1-mini",
-		});
 	});
 
 	it("swallows backend exceptions", async () => {

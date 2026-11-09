@@ -1,65 +1,36 @@
 /**
  * `!command` config values must not leak inherited file descriptors into the
- * credential-resolving child, and a timed-out command must not leave
- * descendants running.
+ * credential-resolving child.
  *
  * A launcher can legitimately hand tau an open descriptor (for example a
  * credential bundle) that is meant to stay single-consumer. The child spawned
  * for `auth.broker.url` / header `!command` resolution used to run through the
- * natives brush shell (executeShell), whose children inherit every inheritable
+ * natives embedded shell (executeShell), whose children inherit every inheritable
  * descriptor; the models.yml apiKey resolver (execSync) already spawned with
  * stdio pipes only. The fix converges the config-value path on ptree, which
  * keeps piped-only stdio while preserving executeShell's process-tree
  * termination on timeout.
  *
  * Oracle notes: the fd oracle must be an external helper script whose body is
- * `cat <&3` — brush rejects inline `<&3` in the command string while still
- * passing inherited fds to external children. A positive control runs first so
+ * `cat <&3`, so it observes the descriptors an external child inherits rather
+ * than the embedded shell's own redirection handling. A positive control runs first so
  * the fd assertion cannot pass vacuously (e.g. if the resolver stopped
- * executing commands at all). The tree-kill oracle mirrors the contract pinned
- * by packages/natives/test/native.test.ts for executeShell. No /proc
- * dependency, so both oracles discriminate on every non-Windows platform.
+ * executing commands at all). No /proc dependency, so the oracle
+ * discriminates on every non-Windows platform.
  */
 import { afterEach, expect, test } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import { pathToFileURL } from "node:url";
+<<<<<<< ours — interstitial `file_header` (T+F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import { Process, ProcessStatus } from "@oh-my-pi/pi-natives";`
 import { Process, ProcessStatus } from "@tau/tau-natives";
 import { runShellCommand } from "../src/config/resolve-config-value";
+=======
+>>>>>>> theirs — interstitial `file_header` (T+F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/config-value-fd-inheritance.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const resolverUrl = pathToFileURL(path.join(import.meta.dir, "../src/config/resolve-config-value.ts")).href;
-
-/**
- * Budget for the descendant-escape oracles below. The command must outlive it
- * (each keeps its shell alive with `sleep 10` and its worker with `sleep 30`),
- * so the timeout always fires with the descendant alive — but it must also
- * cover starting a `sh` and a worker script on a loaded CI runner, because
- * those oracles wait for the worker *inside* the timed command. 150 ms did not,
- * and the tests flaked whenever the worker lost the race (#10259).
- */
-const ESCAPE_TIMEOUT_MS = 3000;
-
-/** How long a killed descendant may take to actually leave `Running`. */
-const DEATH_GRACE_MS = 2000;
-
-/**
- * Assert an escaped descendant does not survive the timeout.
- *
- * Sampling `status()` once on the tick `runShellCommand` resolves is racy in
- * the *failing* direction: signal delivery and reaping are asynchronous, so a
- * descendant that is being killed can still read `Running` for a few
- * milliseconds. Poll instead of sampling. This keeps full discriminating
- * power — the worker `sleep 30`s, far beyond this window, so a descendant the
- * product genuinely fails to kill is still `Running` when the grace expires.
- */
-async function expectDescendantDead(escaped: Process | null, pid: number, label: string): Promise<void> {
-	const deadline = Date.now() + DEATH_GRACE_MS;
-	while (Date.now() < deadline && escaped?.status() === ProcessStatus.Running) {
-		await Bun.sleep(25);
-	}
-	expect(escaped?.status(), `${label} descendant ${pid} survived the timeout`).not.toBe(ProcessStatus.Running);
-}
 
 const roots: string[] = [];
 
@@ -109,6 +80,8 @@ console.log(value === undefined ? "RESOLVED-UNDEFINED" : "LEAKED:" + value);
 	},
 );
 
+<<<<<<< ours — interstitial `file_footer` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `const root = await fs.promises.mkdtemp(path.join(os.tmpdir(), "…` +3 more
 test.skipIf(process.platform === "win32")("a timed-out !command kills the descendant it backgrounded", async () => {
 	const root = await fs.promises.mkdtemp(path.join(os.tmpdir(), "tau-config-treekill-"));
 	roots.push(root);
@@ -225,7 +198,8 @@ test.skipIf(process.platform === "win32")(
 		}
 	},
 );
-
+=======
+>>>>>>> theirs — interstitial `file_footer` (F, confidence: medium)
 test.skipIf(process.platform === "win32")("resolves !commands when PATH omits the shell entirely", async () => {
 	// A launcher may supply a minimal tool-only PATH; the resolver must still
 	// find the OS shell. Probing in a subprocess so the stripped PATH cannot

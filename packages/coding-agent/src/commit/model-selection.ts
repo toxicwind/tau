@@ -1,5 +1,12 @@
+<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 import type { ThinkingLevel } from "@tau/tau-agent-core";
 import type { Api, ApiKey, Model } from "@tau/tau-ai";
+=======
+import type { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
+import type { Api, ApiKey, Model } from "@oh-my-pi/pi-ai";
+import { roleDefaultModels } from "@oh-my-pi/pi-catalog/compat/behavior";
+>>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/commit/model-selection.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { ApiKeyResolverRegistry } from "../config/api-key-resolver";
 import {
 	getModelMatchPreferences,
@@ -10,8 +17,13 @@ import {
 } from "../config/model-resolver";
 import { CHAT_MODEL_ROLE_IDS } from "../config/model-roles";
 import type { Settings } from "../config/settings";
+<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 import MODEL_PRIO from "../priority.json" with { type: "json" };
 import { concreteThinkingLevel } from "@tau/tau-tui/thinking";
+=======
+import { concreteThinkingLevel } from "@oh-my-pi/pi-tui/thinking";
+>>>>>>> theirs — interstitial `file_header` (S+F, confidence: low)
 
 export interface ResolvedCommitModel {
 	model: Model<Api>;
@@ -79,7 +91,7 @@ export async function resolveSmolModel(
 	}
 
 	const matchPreferences = getModelMatchPreferences(settings);
-	for (const pattern of MODEL_PRIO.smol) {
+	for (const pattern of roleDefaultModels().smol) {
 		const candidate = parseModelPattern(pattern, available, matchPreferences).model;
 		if (!candidate) continue;
 		const apiKey = await modelRegistry.getApiKey(candidate);

@@ -2,6 +2,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { getAgentDir, isEnoent, ptree, withFileLock, writeRuntimeManifest } from "@tau/tau-utils";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
+import { trackDownload } from "../../downloads/activity";
 import { resolveExecutablePath } from "../../subprocess/worker-client";
 import { normalizePackageRequirements } from "../package-requirements";
 
@@ -142,19 +143,38 @@ export async function installJsPackages(options: InstallJsPackagesOptions): Prom
 		async () => {
 			options.signal?.throwIfAborted();
 			if (mode === "managed") await ensureManagedManifest(environment, options.autoProvision, options.signal);
+<<<<<<< ours — function `installJsPackages` (T+F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 			const result = await ptree.exec(
 				[resolveExecutablePath(), "add", "--cwd", environment.root, "--ignore-scripts", ...packages],
 				{
 					// In a compiled distribution the resolved executable is tau.
+=======
+			const tracker = trackDownload("npm packages", { detail: packages.join(" ") });
+			const result = await ptree
+				.exec([resolveExecutablePath(), "add", "--cwd", environment.root, "--ignore-scripts", ...packages], {
+					// In a compiled distribution the resolved executable is omp.
+>>>>>>> theirs — function `installJsPackages` (T+F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/eval/js/package-installer.ts' for per-hunk detail, 'weave check' to verify your resolution
 					// BUN_BE_BUN re-enters Bun's real package-manager
 					// CLI instead of recursively dispatching tau's command parser.
 					env: { ...Bun.env, BUN_BE_BUN: "1" },
 					signal: options.signal,
 					allowNonZero: true,
 					stderr: "full",
-				},
-			);
-			if (!result.ok) throw installFailure(environment, result.stdout, result.stderr, result.exitCode);
+				})
+				.catch((error: unknown) => {
+					tracker.fail(error);
+					throw error;
+				});
+			if (!result.ok) {
+				// Bun's own `error: …` line names the failing package; the thrown error carries the full log.
+				const bunError = result.stderr.split("\n").findLast(line => line.startsWith("error:"));
+				tracker.fail(
+					bunError?.slice("error:".length).trim() || `bun add exited ${result.exitCode ?? "abnormally"}`,
+				);
+				throw installFailure(environment, result.stdout, result.stderr, result.exitCode);
+			}
+			tracker.done();
 			options.signal?.throwIfAborted();
 			const dependencies = await currentDependencies(environment.root);
 			options.signal?.throwIfAborted();

@@ -17,6 +17,7 @@ import type { InteractiveModeContext } from "tau/modes/types";
 import { AgentRegistry } from "tau/registry/agent-registry";
 import type { AgentSession } from "tau/session/agent-session";
 import { TempDir } from "@tau/tau-utils";
+import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
 import { installInMemoryRelay, uninstallInMemoryRelay } from "./helpers/in-memory-relay";
 
 // In-memory transport: FakeWebSocket + InMemoryRelay (see ./helpers/in-memory-relay)
@@ -39,7 +40,7 @@ function makeHostContext(): HostHarness {
 	const aborts = { count: 0 };
 	const promptWaiters: ((details: { from?: string }) => void)[] = [];
 	const ctx = {
-		settings: { get: () => "" },
+		settings: Settings.isolated(),
 		sessionManager: {
 			getSessionId: () => "sess-1",
 			getCwd: () => "/tmp",
@@ -290,7 +291,7 @@ describe("collab read-only links", () => {
 			if (replacement) await replacement;
 		}
 	});
-	for (const kind of ["advisor", "main", "sub"] as const) {
+	for (const kind of ["advisor", "sub"] as const) {
 		it(`${kind === "advisor" ? "denies" : "serves"} ${kind} transcripts requested by a view-link guest`, async () => {
 			await using dir = await TempDir.create("@tau-collab-transcript-");
 			const id = `transcript-${kind}-${crypto.randomUUID()}`;

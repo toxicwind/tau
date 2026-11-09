@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 //
+<<<<<<< ours — interstitial `file_header` (T+F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `// Render the Homebrew formula for `omp` from a published GitHu…` +1 more
 // Render the Homebrew formula for `tau` from a published GitHub release and write
 // it to a tap checkout. The release publishes per-platform bare binaries
 // (tau-<platform>-<arch>); this reads their sha256 digests straight from the
@@ -10,17 +12,61 @@
 //   bun scripts/ci-update-brew-formula.ts v15.10.3        # prints to stdout
 
 import { $ } from "bun";
+=======
+// Render the Homebrew formula for `omp` from a build published on the build
+// service (build.stencil.so) and write it to a tap checkout. Each formula
+// target points at the build's immutable download URL
+// (`/d/omp/<build-id>/<file>`) with the sha256 the service recorded at upload,
+// so the formula never drifts from the shipped binaries. Fails when the
+// version is not published for every formula target.
+//
+// Usage:
+//   bun scripts/ci-update-brew-formula.ts <tag> --out <path/to/Formula/omp.rb>
+//   bun scripts/ci-update-brew-formula.ts v18.8.9        # prints to stdout
+//
+// Environment:
+//   BUILD_URL   service origin (default https://build.stencil.so)
+>>>>>>> theirs — interstitial `file_header` (T+F, confidence: medium) · weave: run 'weave explain scripts/ci-update-brew-formula.ts' for per-hunk detail, 'weave check' to verify your resolution
 
+const PRODUCT = "omp";
+const SERVICE_URL = (process.env.BUILD_URL ?? "https://build.stencil.so").replace(/\/+$/, "");
+
+<<<<<<< ours — variable `REPO` (S, confidence: medium)
+// refused_by: modify_delete_guard · collision: none (no common ancestor text)
 const REPO = process.env.TAU_REPO ?? "can1357/tau";
+=======
+>>>>>>> theirs — variable `REPO` (S, confidence: medium)
 const HOMEPAGE = "https://tau.sh";
 const DESC = "Coding agent with the IDE wired in";
+/** GitHub release assets: the same bytes `release_github` publishes before the build service. */
+const RELEASE_DOWNLOAD_URL = "https://github.com/can1357/oh-my-pi/releases/download";
 
-interface ReleaseAsset {
-	name: string;
-	digest?: string;
+/** Build-service target of each formula stanza. */
+const FORMULA_TARGETS = {
+	macosArm: "macos-arm64",
+	macosIntel: "macos-x86_64",
+	linuxArm: "linux-arm64",
+	linuxIntel: "linux-x86_64",
+} as const;
+
+type FormulaTarget = keyof typeof FORMULA_TARGETS;
+
+/** A formula `url` stanza: where Homebrew downloads the binary and its sha256. */
+export interface FormulaFile {
+	url: string;
+	sha256: string;
 }
 
-function parseArgs(argv: readonly string[]): { tag: string; out: string | null } {
+/** The fields of a build-service version answer the formula needs. */
+interface VersionAnswer {
+	build: { id: string };
+	file: { name: string; sha256: string };
+}
+
+function parseArgs(argv: readonly string[]): {
+	tag: string;
+	out: string | null;
+} {
 	const rest = [...argv];
 	let out: string | null = null;
 	const outIdx = rest.indexOf("--out");
@@ -34,28 +80,29 @@ function parseArgs(argv: readonly string[]): { tag: string; out: string | null }
 	return { tag, out };
 }
 
-async function fetchAssets(tag: string): Promise<ReleaseAsset[]> {
-	const res = await $`gh release view ${tag} --repo ${REPO} --json assets`.quiet().nothrow();
-	if (res.exitCode !== 0) {
-		throw new Error(`gh release view ${tag} failed: ${res.stderr.toString().trim()}`);
+/** The formula file for `target` of `version`; throws when the service has not published it. */
+async function resolveFile(version: string, target: string): Promise<FormulaFile> {
+	const url = `${SERVICE_URL}/api/products/${PRODUCT}/versions/${encodeURIComponent(version)}/${target}`;
+	const response = await fetch(url);
+	if (!response.ok) {
+		throw new Error(
+			`${PRODUCT} ${version} is not published for ${target}: HTTP ${response.status} ${(await response.text()).trim()}`,
+		);
 	}
-	const parsed = JSON.parse(res.stdout.toString()) as { assets: ReleaseAsset[] };
-	return parsed.assets;
+	const answer = (await response.json()) as VersionAnswer;
+	if (!/^[0-9a-f]{64}$/.test(answer.file.sha256)) {
+		throw new Error(`${url} answered no sha256 for ${answer.file.name}`);
+	}
+	return {
+		url: `${SERVICE_URL}/d/${PRODUCT}/${encodeURIComponent(answer.build.id)}/${encodeURIComponent(answer.file.name)}`,
+		sha256: answer.file.sha256,
+	};
 }
 
-function sha256For(assets: readonly ReleaseAsset[], name: string): string {
-	const asset = assets.find(a => a.name === name);
-	if (!asset) throw new Error(`release is missing asset ${name}`);
-	if (!asset.digest?.startsWith("sha256:")) {
-		throw new Error(`asset ${name} has no sha256 digest (got ${asset.digest ?? "none"})`);
-	}
-	return asset.digest.slice("sha256:".length);
-}
-
-// `${...}` is JS interpolation; the literal `#{version}` / `#{bin}` below are
-// Ruby interpolations Homebrew resolves when it evaluates the formula.
-export function renderFormula(version: string, sums: Record<string, string>): string {
-	// Each `url` carries `using: :nounzip` because the release assets are bare
+// `${...}` is JS interpolation; the literal `#{bin}` below is a Ruby
+// interpolation Homebrew resolves when it evaluates the formula.
+export function renderFormula(version: string, files: Record<FormulaTarget, FormulaFile>): string {
+	// Each `url` carries `using: :nounzip` because the build files are bare
 	// Mach-O/ELF executables, not archives. Without it Homebrew's default
 	// CurlDownloadStrategy routes through UnpackStrategy::Uncompressed#extract_nestedly,
 	// which nests the file outside the staging CWD; `Dir["tau-*"].first` then
@@ -65,6 +112,8 @@ export function renderFormula(version: string, sums: Record<string, string>): st
 	// the writable staging dir so `generate_completions_from_executable` does
 	// not touch the real `/Users/<user>/.tau` (denied by Homebrew's sandbox
 	// profile, which would otherwise fail the popen).
+<<<<<<< ours — scope `// Each `url` carries `using: :nounzip` becau...` in function `renderFormula` (T+F, confidence: medium)
+// refused_by: statement_fold · collision: `return `class Omp < Formula` +12 more
 	return `class Tau < Formula
   desc "${DESC}"
   homepage "${HOMEPAGE}"
@@ -108,6 +157,61 @@ export function renderFormula(version: string, sums: Record<string, string>): st
   test do
     assert_match version.to_s, shell_output("#{bin}/tau --version")
   end
+=======
+	//
+	// Each `mirror` points at the same file on the GitHub release. Homebrew
+	// tries it when the build-service download fails, e.g. when a proxy blocks
+	// the service's redirect to R2 storage; `sha256` still checks the bytes.
+	const mirror = (file: FormulaFile) =>
+		`${RELEASE_DOWNLOAD_URL}/v${version}/${file.url.slice(file.url.lastIndexOf("/") + 1)}`;
+>>>>>>> theirs — scope `// Each `url` carries `using: :nounzip` becau...`
+	return `class Omp < Formula
+  desc "${DESC}"
+  homepage "${HOMEPAGE}"
+  version "${version}"
+  license "MIT"
+
+  on_macos do
+    on_arm do
+      url "${files.macosArm.url}",
+          using: :nounzip
+      mirror "${mirror(files.macosArm)}"
+      sha256 "${files.macosArm.sha256}"
+    end
+    on_intel do
+      url "${files.macosIntel.url}",
+          using: :nounzip
+      mirror "${mirror(files.macosIntel)}"
+      sha256 "${files.macosIntel.sha256}"
+    end
+  end
+
+  on_linux do
+    on_arm do
+      url "${files.linuxArm.url}",
+          using: :nounzip
+      mirror "${mirror(files.linuxArm)}"
+      sha256 "${files.linuxArm.sha256}"
+    end
+    on_intel do
+      url "${files.linuxIntel.url}",
+          using: :nounzip
+      mirror "${mirror(files.linuxIntel)}"
+      sha256 "${files.linuxIntel.sha256}"
+    end
+  end
+
+  def install
+    bin.install Dir["omp-*"].first => "omp"
+    (bin/"omp").chmod 0555
+    with_env(HOME: buildpath) do
+      generate_completions_from_executable(bin/"omp", "completions", shells: [:bash, :zsh, :fish])
+    end
+  end
+
+  test do
+    assert_match version.to_s, shell_output("#{bin}/omp --version")
+  end
 end
 `;
 }
@@ -115,13 +219,19 @@ end
 async function main(): Promise<void> {
 	const { tag, out } = parseArgs(process.argv.slice(2));
 	const version = tag.replace(/^v/, "");
-	const assets = await fetchAssets(tag);
 
+	const entries = await Promise.all(
+		(Object.entries(FORMULA_TARGETS) as [FormulaTarget, string][]).map(
+			async ([key, target]) => [key, await resolveFile(version, target)] as const,
+		),
+	);
+	const formula = renderFormula(version, Object.fromEntries(entries) as Record<FormulaTarget, FormulaFile>);
+
+<<<<<<< ours — scope `const targets = ["omp-darwin-arm64", "omp-dar...` in function `main`, deleted in theirs (S, confidence: medium)
+// refused_by: statement_fold · collision: none (no common ancestor text)
 	const targets = ["tau-darwin-arm64", "tau-darwin-x64", "tau-linux-arm64", "tau-linux-x64"];
-	const sums: Record<string, string> = {};
-	for (const name of targets) sums[name] = sha256For(assets, name);
-
-	const formula = renderFormula(version, sums);
+=======
+>>>>>>> theirs — scope `const targets = ["omp-darwin-arm64", "omp-dar...` deleted in theirs
 	if (out) {
 		await Bun.write(out, formula);
 		console.log(`wrote ${out} for ${tag}`);

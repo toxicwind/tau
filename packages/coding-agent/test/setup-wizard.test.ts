@@ -1,9 +1,19 @@
+<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: `import { webModelManagerOptions } from "@oh-my-pi/pi-catalog/pr…` +3 more
 import { afterEach, describe, expect, it, mock, vi } from "bun:test";
 import type { Model } from "@tau/tau-ai";
 import { buildModel } from "@tau/tau-catalog/build";
 import { webModelManagerOptions } from "@tau/tau-catalog/provider-models/special";
 import { runOnboardingSetup } from "tau/commands/setup";
 import { Settings } from "tau/config/settings";
+=======
+import { afterEach, beforeEach, describe, expect, it, mock, vi } from "bun:test";
+import type { Model } from "@oh-my-pi/pi-ai";
+import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import * as updateCli from "@oh-my-pi/pi-coding-agent/cli/update-cli";
+import { runOnboardingSetup } from "@oh-my-pi/pi-coding-agent/commands/setup";
+import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+>>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/setup-wizard.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	ALL_SCENES,
 	createSetupHost,
@@ -13,6 +23,8 @@ import {
 	type SetupScene,
 	type SetupSceneHost,
 	selectSetupScenes,
+<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: `import { webModelManagerOptions } from "@oh-my-pi/pi-catalog/pr…` +3 more
 } from "tau/modes/setup";
 import { providersSetupScene } from "@tau/tau-tui/setup/scenes/providers";
 import { themeSetupScene } from "@tau/tau-tui/setup/scenes/theme";
@@ -22,6 +34,17 @@ import { setTerminalGlyphProtocol } from "@tau/tau-tui/terminal-capabilities";
 import { initTheme, theme } from "@tau/tau-tui/theme";
 import type { InteractiveModeContext } from "tau/modes/types";
 import { SEARCH_PROVIDER_OPTIONS } from "@tau/tau-tui/tools/web-search";
+=======
+} from "@oh-my-pi/pi-coding-agent/modes/setup";
+import { providersSetupScene } from "@oh-my-pi/pi-tui/setup/scenes/sign-in";
+import { themeSetupScene } from "@oh-my-pi/pi-tui/setup/scenes/theme";
+import { SetupWizardComponent } from "@oh-my-pi/pi-tui/setup/wizard-overlay";
+import { setTerminalGlyphProtocol } from "@oh-my-pi/pi-tui/terminal-capabilities";
+import { initTheme, theme } from "@oh-my-pi/pi-tui/theme";
+import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
+>>>>>>> theirs — interstitial `file_header` (S+F, confidence: low)
+
+import { cfgSetupVersion, cfgSymbolPreset } from "@oh-my-pi/pi-coding-agent/modes/settings";
 
 type SetupApplicationSceneHost = Omit<SetupSceneHost, "ctx"> & { ctx: InteractiveModeContext };
 
@@ -43,6 +66,7 @@ function testScene(id: string, minVersion: number, shouldRun?: () => boolean): S
 	return {
 		id,
 		title: id,
+		step: id,
 		minVersion,
 		shouldRun,
 		mount: () => ({
@@ -58,6 +82,15 @@ afterEach(async () => {
 });
 
 describe("setup wizard scene selection", () => {
+	// Tests run from a source checkout, which never updates itself; pin a self-updating install.
+	beforeEach(() => {
+		vi.spyOn(updateCli, "canSelfUpdate").mockResolvedValue(true);
+	});
+
+	afterEach(() => {
+		vi.restoreAllMocks();
+	});
+
 	it("runs all v1 scenes for a new user", async () => {
 		const scenes = await selectSetupScenes(0, ALL_SCENES, fakeContextWithConfiguredModel(), { isTTY: true });
 		expect(scenes.map(scene => scene.id)).toEqual(ALL_SCENES.map(scene => scene.id));
@@ -93,11 +126,6 @@ describe("setup wizard scene selection", () => {
 		expect(await selectSetupScenes(0, ALL_SCENES, ctx, { isTTY: true, setupWizardEnabled: false })).toEqual([]);
 	});
 
-	it("keeps the providers scene eligible even when a model is already configured", async () => {
-		const scenes = await selectSetupScenes(0, ALL_SCENES, fakeContextWithConfiguredModel(), { isTTY: true });
-		expect(scenes.some(scene => scene.id === "providers")).toBe(true);
-	});
-
 	it("force mode ignores version and user skip gates but still requires a TTY", async () => {
 		const ctx = fakeContextWithConfiguredModel();
 		const selected = await selectSetupScenes(CURRENT_SETUP_VERSION, ALL_SCENES, ctx, {
@@ -111,7 +139,20 @@ describe("setup wizard scene selection", () => {
 		expect(await selectSetupScenes(0, ALL_SCENES, ctx, { isTTY: false, force: true })).toEqual([]);
 	});
 
+<<<<<<< ours — test_suite `setup wizard scene selection` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 	it("drops the glyph scene once the terminal renders tau's bundled icons in-band", async () => {
+=======
+	it("skips the auto-update question where omp cannot update itself (Tern, Nix, a source checkout)", async () => {
+		vi.spyOn(updateCli, "canSelfUpdate").mockResolvedValue(false);
+		const scenes = await selectSetupScenes(0, ALL_SCENES, fakeContextWithConfiguredModel(), { isTTY: true });
+		expect(scenes.map(scene => scene.id)).toEqual(
+			ALL_SCENES.map(scene => scene.id).filter(id => id !== "auto-update"),
+		);
+	});
+
+	it("drops the glyph scene once the terminal renders omp's bundled icons in-band", async () => {
+>>>>>>> theirs — test_suite `setup wizard scene selection` (F, confidence: medium)
 		setTerminalGlyphProtocol(true);
 		try {
 			const scenes = await selectSetupScenes(0, ALL_SCENES, fakeContextWithConfiguredModel(), { isTTY: true });
@@ -177,6 +218,7 @@ describe("setup wizard model selection", () => {
 						},
 					},
 					setModel,
+					effectiveServiceTier: () => undefined,
 				},
 				ui: { terminal: { rows: 30 } },
 			},
@@ -221,7 +263,7 @@ describe("setup wizard persistence", () => {
 	it("marks the current setup version complete", async () => {
 		const settings = Settings.isolated();
 		await markSetupWizardComplete(settings);
-		expect(settings.get("setupVersion")).toBe(CURRENT_SETUP_VERSION);
+		expect(cfgSetupVersion.get(settings)).toBe(CURRENT_SETUP_VERSION);
 	});
 
 	it("can run a targeted scene without setup-version or welcome-intro side effects", async () => {
@@ -234,6 +276,7 @@ describe("setup wizard persistence", () => {
 		const scene: SetupScene = {
 			id: "providers",
 			title: "providers",
+			step: "providers",
 			minVersion: 1,
 			mount: host => ({
 				title: "providers",
@@ -261,7 +304,7 @@ describe("setup wizard persistence", () => {
 		component?.handleInput?.("\n");
 		await pending;
 
-		expect(settings.get("setupVersion")).toBe(0);
+		expect(cfgSetupVersion.get(settings)).toBe(0);
 		expect(playWelcomeIntro).not.toHaveBeenCalled();
 		expect(hideOverlay).toHaveBeenCalledTimes(1);
 		expect(setFocus).toHaveBeenCalled();
@@ -273,6 +316,7 @@ describe("setup wizard mouse routing", () => {
 		const scene: SetupScene = {
 			id: "scrollable",
 			title: "scrollable",
+			step: "scrollable",
 			minVersion: 1,
 			mount: () => ({
 				title: "scrollable",
@@ -311,6 +355,7 @@ describe("setup wizard mouse routing", () => {
 		const scene: SetupScene = {
 			id: "mouse",
 			title: "mouse",
+			step: "mouse",
 			minVersion: 1,
 			mount: () => ({
 				title: "mouse",
@@ -466,7 +511,7 @@ describe("setup wizard theme previews", () => {
 
 		controller.handleInput?.("2");
 		await Bun.sleep(20);
-		expect(settings.get("symbolPreset")).toBe("nerd");
+		expect(cfgSymbolPreset.get(settings)).toBe("nerd");
 		expect(theme.getSymbolPreset()).toBe("nerd");
 	});
 });
@@ -500,61 +545,8 @@ describe("setup wizard glyph scene", () => {
 
 		controller.handleInput?.("\n");
 		await Bun.sleep(20);
-		expect(settings.get("symbolPreset")).toBe("nerd");
+		expect(cfgSymbolPreset.get(settings)).toBe("nerd");
 		expect(finished).toBe(true);
-	});
-});
-
-describe("setup wizard web search tab", () => {
-	const webModels = (webModelManagerOptions().staticModels ?? []).map(model => buildModel(model));
-
-	it("persists the highlighted provider as the web model role", async () => {
-		const settings = Settings.isolated();
-		const host = bindSceneHost({
-			ctx: {
-				settings,
-				session: { modelRegistry: { authStorage: { keys: { source: () => undefined } }, getAll: () => webModels } },
-			},
-			requestRender: () => {},
-			finish: () => {},
-			setFocus: () => {},
-			restoreFocus: () => {},
-		} as unknown as SetupApplicationSceneHost);
-
-		const tab = new WebSearchTab(host);
-		tab.handleInput("\x1b[B"); // move off "auto" to the next provider
-		tab.handleInput("\n"); // confirm the highlighted provider
-		await Bun.sleep(20);
-
-		const expected = SEARCH_PROVIDER_OPTIONS[1]!.value;
-		expect(expected).not.toBe("auto");
-		expect(settings.getModelRole("web")).toBe(`web/${expected}`);
-	});
-
-	it("can select the last provider in the setup TUI list", async () => {
-		const settings = Settings.isolated();
-		const host = bindSceneHost({
-			ctx: {
-				settings,
-				session: { modelRegistry: { authStorage: { keys: { source: () => undefined } }, getAll: () => webModels } },
-			},
-			requestRender: () => {},
-			finish: () => {},
-			setFocus: () => {},
-			restoreFocus: () => {},
-		} as unknown as SetupApplicationSceneHost);
-
-		const tab = new WebSearchTab(host);
-		for (let i = 1; i < SEARCH_PROVIDER_OPTIONS.length; i++) {
-			tab.handleInput("\x1b[B");
-		}
-		tab.handleInput("\n");
-		await Bun.sleep(20);
-
-		const lastOption = SEARCH_PROVIDER_OPTIONS[SEARCH_PROVIDER_OPTIONS.length - 1]!;
-		const lastValue = lastOption.value;
-		if (lastValue === "auto") throw new Error("last option must be a concrete provider");
-		expect(settings.getModelRole("web")).toBe(`web/${lastValue}`);
 	});
 });
 

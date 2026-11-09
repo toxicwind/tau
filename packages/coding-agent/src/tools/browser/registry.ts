@@ -1,5 +1,10 @@
 import * as path from "node:path";
+<<<<<<< ours — imports `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: `import { isCompiledBinary, logger, withTimeout, workerHostEntry…`
 import { isCompiledBinary, logger, withTimeout, workerHostEntry } from "@tau/tau-utils";
+=======
+import { getLogsDir, isCompiledBinary, logger, untilAborted, workerHostEntry } from "@oh-my-pi/pi-utils";
+>>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/browser/registry.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { Subprocess } from "bun";
 import type { Browser, CDPSession } from "puppeteer-core";
 import { ToolAbortError } from "../tool-errors";
@@ -9,6 +14,8 @@ import type { CmuxKind } from "./cmux/rpc";
 import { CmuxSocketClient } from "./cmux/socket-client";
 import {
 	BROWSER_PROTOCOL_TIMEOUT_MS,
+	closeLaunchedBrowser,
+	connectPuppeteer,
 	DEFAULT_VIEWPORT,
 	launchHeadlessBrowser,
 	loadPuppeteer,
@@ -16,10 +23,12 @@ import {
 	type UserAgentOverride,
 } from "./launch";
 import { reapOrphanSharedTargets } from "./orphan-registry";
-import { ensureRelayDaemon, isLoopbackRelayUrl } from "./relay/daemon";
+import { ensureRelayDaemon, isLoopbackRelayUrl, restartRelayDaemon } from "./relay/daemon";
 import type { RelayKind } from "./relay/kind";
-import { waitForRelayExtension } from "./relay/probe";
+import { UPDATE_RELAY_EXTENSION, waitForRelayExtension } from "./relay/probe";
 import { ensureSharedBrowser } from "./shared-daemon";
+import type { TernKind } from "./tern/kind";
+import { TernSocketClient } from "./tern/wire";
 
 export type PuppeteerBrowserKind =
 	| {
@@ -34,16 +43,9 @@ export type PuppeteerBrowserKind =
 	| { kind: "connected"; cdpUrl: string }
 	| RelayKind;
 
-export type BrowserKind = PuppeteerBrowserKind | CmuxKind;
+export type BrowserKind = PuppeteerBrowserKind | CmuxKind | TernKind;
 
 export type BrowserKindTag = BrowserKind["kind"];
-
-/**
- * Upper bound on `browser.close()` for headless Chromium. Puppeteer waits for
- * the process to fully exit; a wedged Chromium would otherwise hang cleanup
- * forever (issue #5260), so we cap the wait and force-kill on timeout.
- */
-const HEADLESS_CLOSE_TIMEOUT_MS = 5_000;
 
 interface BrowserHandleCommon {
 	key: string;
@@ -54,6 +56,8 @@ interface BrowserHandleCommon {
 export interface PuppeteerBrowserHandle extends BrowserHandleCommon {
 	kind: PuppeteerBrowserKind;
 	browser: Browser;
+	/** Browser-level WebSocket endpoint tab workers attach through. */
+	wsEndpoint: string;
 	cdpUrl?: string;
 	pid?: number;
 	/** TAU-owned temp Chromium profile directory removed on dispose (process-local headless launches). */
@@ -70,7 +74,14 @@ export interface CmuxBrowserHandle extends BrowserHandleCommon {
 	surface?: string;
 }
 
-export type BrowserHandle = PuppeteerBrowserHandle | CmuxBrowserHandle;
+/** A connection to the Tern daemon whose browser PiPs host this handle's tabs. */
+export interface TernBrowserHandle extends BrowserHandleCommon {
+	kind: TernKind;
+	/** The daemon connection every tab of this handle drives its PiP through. */
+	tern: TernSocketClient;
+}
+
+export type BrowserHandle = PuppeteerBrowserHandle | CmuxBrowserHandle | TernBrowserHandle;
 
 /** Controls bounded browser-handle teardown and identifies the owning resource in timeout diagnostics. */
 export interface ReleaseBrowserOptions {
@@ -80,8 +91,11 @@ export interface ReleaseBrowserOptions {
 }
 
 const browsers = new Map<string, BrowserHandle>();
-/** In-flight opens by browser key, so concurrent acquisitions share one launch instead of storming Chromium. */
-const pendingOpens = new Map<string, Promise<BrowserHandle>>();
+/**
+ * In-flight opens by browser key, so concurrent acquisitions share one launch instead of storming Chromium.
+ * `settled` resolves once the open settles or its caller aborts, whichever comes first.
+ */
+const pendingOpens = new Map<string, { settled: Promise<void> }>();
 
 export function browserKey(kind: BrowserKind): string {
 	switch (kind.kind) {
@@ -95,6 +109,8 @@ export function browserKey(kind: BrowserKind): string {
 			return `relay:${kind.cdpUrl}`;
 		case "cmux":
 			return `cmux:${kind.socketPath}`;
+		case "tern":
+			return `tern:${kind.socketPath}:${kind.pane}`;
 	}
 }
 
@@ -102,6 +118,8 @@ export interface AcquireBrowserOptions {
 	cwd: string;
 	viewport?: { width: number; height: number; deviceScaleFactor?: number };
 	signal?: AbortSignal;
+	/** Start, or replace an outdated, loopback relay daemon when a relay is not serving. Default true. */
+	startRelay?: boolean;
 }
 
 export async function acquireBrowser(kind: BrowserKind, opts: AcquireBrowserOptions): Promise<BrowserHandle> {
@@ -111,7 +129,7 @@ export async function acquireBrowser(kind: BrowserKind, opts: AcquireBrowserOpti
 		const existing = browsers.get(key);
 		if (existing) {
 			if ("client" in existing) return existing;
-			if (existing.browser.connected) return existing;
+			if ("tern" in existing ? existing.tern.connected : existing.browser.connected) return existing;
 			browsers.delete(key);
 			await disposeBrowserHandle(existing, { kill: false });
 			continue;
@@ -127,12 +145,33 @@ export async function acquireBrowser(kind: BrowserKind, opts: AcquireBrowserOpti
 		// leaking the rest as unreferenced process trees.
 		const pending = pendingOpens.get(key);
 		if (pending) {
-			await pending.catch(() => undefined);
+			await untilAborted(opts.signal, () => pending.settled);
 			continue;
 		}
-		const open = openBrowserHandle(kind, opts).finally(() => pendingOpens.delete(key));
-		pendingOpens.set(key, open);
-		const handle = await open;
+		const open = openBrowserHandle(kind, opts);
+		const settled = Promise.withResolvers<void>();
+		const entry = { settled: settled.promise };
+		// An open whose caller aborted is disposed below, never published, so it
+		// stops being this key's single flight the moment its caller gives up:
+		// waiters start a fresh attempt instead of waiting out a launch or connect
+		// that may never return. Only the registered entry is removed, so a late
+		// settlement cannot drop a replacement already in flight. A spawned app
+		// keeps its key until its abandoned open has been disposed: that kills
+		// the app, which a fresh attempt could otherwise adopt as a reusable endpoint.
+		const clearEntry = () => {
+			opts.signal?.removeEventListener("abort", clearEntry);
+			if (pendingOpens.get(key) === entry) pendingOpens.delete(key);
+			settled.resolve();
+		};
+		if (kind.kind !== "spawned") opts.signal?.addEventListener("abort", clearEntry, { once: true });
+		pendingOpens.set(key, entry);
+		let handle: BrowserHandle;
+		try {
+			handle = await open;
+		} catch (error) {
+			clearEntry();
+			throw error;
+		}
 		// The launch may resolve AFTER the caller has already aborted (the outer
 		// `untilAborted` rejects immediately on abort but does not cancel the
 		// inner promise, and `launchHeadlessBrowser` does not accept a signal).
@@ -147,9 +186,11 @@ export async function acquireBrowser(kind: BrowserKind, opts: AcquireBrowserOpti
 					error: err instanceof Error ? err.message : String(err),
 				});
 			});
+			clearEntry();
 			throw new ToolAbortError("Browser open aborted");
 		}
 		browsers.set(key, handle);
+		clearEntry();
 		return handle;
 	}
 }
@@ -176,6 +217,11 @@ async function openBrowserHandle(kind: BrowserKind, opts: AcquireBrowserOptions)
 			refCount: 0,
 		};
 	}
+	if (kind.kind === "tern") {
+		const tern = new TernSocketClient({ socketPath: kind.socketPath });
+		await tern.connect();
+		return { key: browserKey(kind), kind, tern, refCount: 0 };
+	}
 	if (kind.kind === "headless") {
 		// Every real tau process (session, subagent, worker — anything with a CLI
 		// worker host) MUST go through the project-shared broker-owned Chromium:
@@ -185,7 +231,7 @@ async function openBrowserHandle(kind: BrowserKind, opts: AcquireBrowserOptions)
 		if (isCompiledBinary() || workerHostEntry() !== null) {
 			return await openSharedHeadlessHandle(kind, opts);
 		}
-		const { browser, userDataDir } = await launchHeadlessBrowser({
+		const { browser, wsEndpoint, userDataDir } = await launchHeadlessBrowser({
 			headless: kind.headless,
 			viewport: opts.viewport,
 			ignoreHttpsErrors: kind.ignoreHttpsErrors,
@@ -195,6 +241,7 @@ async function openBrowserHandle(kind: BrowserKind, opts: AcquireBrowserOptions)
 			key: browserKey(kind),
 			kind,
 			browser,
+			wsEndpoint,
 			userDataDir,
 			refCount: 0,
 			stealth: { browserSession: null, override: null },
@@ -204,7 +251,7 @@ async function openBrowserHandle(kind: BrowserKind, opts: AcquireBrowserOptions)
 		const cdpUrl = normalizeConnectedCdpUrl(kind.cdpUrl);
 		await waitForCdp(cdpUrl, 5_000, opts.signal);
 		const puppeteer = await loadPuppeteer();
-		const browser = await puppeteer.connect({
+		const browser = await connectPuppeteer(puppeteer, {
 			browserURL: cdpUrl,
 			defaultViewport: null,
 			protocolTimeout: BROWSER_PROTOCOL_TIMEOUT_MS,
@@ -213,6 +260,7 @@ async function openBrowserHandle(kind: BrowserKind, opts: AcquireBrowserOptions)
 			key: browserKey(kind),
 			kind,
 			browser,
+			wsEndpoint: browser.wsEndpoint(),
 			cdpUrl,
 			refCount: 0,
 			stealth: { browserSession: null, override: null },
@@ -224,13 +272,25 @@ async function openBrowserHandle(kind: BrowserKind, opts: AcquireBrowserOptions)
 		// on demand (the extension dials in on its own). Hosts without a CLI
 		// worker entry (bun test, SDK embedding) never spawn brokers. Remote
 		// relay URLs must already be serving.
-		if (isLoopbackRelayUrl(cdpUrl) && (isCompiledBinary() || workerHostEntry() !== null)) {
+		const autoStart =
+			opts.startRelay !== false && isLoopbackRelayUrl(cdpUrl) && (isCompiledBinary() || workerHostEntry() !== null);
+		if (autoStart) {
 			await ensureRelayDaemon({ cdpUrl, signal: opts.signal });
 		}
 		// The relay answers /json/version with 503 until its extension dials in;
 		// the wait fails fast when nothing serves the port or the server has
 		// already outlived the window an installed extension needs to connect.
-		const outcome = await waitForRelayExtension(cdpUrl, opts.signal);
+		let outcome = await waitForRelayExtension(cdpUrl, opts.signal);
+		// A broker-owned relay outlives omp upgrades; replace an incompatible one
+		// with this version's once, and a compatible older one only while no CDP
+		// client uses it. A manually started relay is left to its owner.
+		if (outcome === "outdated-relay" && autoStart && (await restartRelayDaemon({ cdpUrl, signal: opts.signal }))) {
+			outcome = await waitForRelayExtension(cdpUrl, opts.signal);
+		} else if (outcome === "idle-older-relay" && autoStart) {
+			// Probe again even when it was kept: another omp may have replaced it since.
+			await restartRelayDaemon({ cdpUrl, signal: opts.signal, idleOnly: true });
+			outcome = await waitForRelayExtension(cdpUrl, opts.signal);
+		}
 		if (outcome === "unreachable") {
 			throw new ToolError(
 				`tau browser relay is not reachable at ${cdpUrl}. Start it with \`tau browser-relay\` (or check the endpoint), and make sure the TAU Browser Relay extension is loaded in Chrome.`,
@@ -241,8 +301,21 @@ async function openBrowserHandle(kind: BrowserKind, opts: AcquireBrowserOptions)
 				`tau browser relay is serving at ${cdpUrl} but its extension never connected. Install it with \`tau browser-relay install\` and check the toolbar badge shows "on".`,
 			);
 		}
+		if (outcome === "extension-gone") {
+			throw new ToolError(
+				`omp browser relay is serving at ${cdpUrl} but its extension disconnected and has not come back. Open Chrome with the OMP Browser Relay extension and check the toolbar badge shows "on".`,
+			);
+		}
+		if (outcome === "outdated-relay") {
+			throw new ToolError(
+				`The browser relay at ${cdpUrl} is out of date. Restart the relay under this OMP version, then retry.`,
+			);
+		}
+		if (outcome === "outdated-extension") {
+			throw new ToolError(`The OMP Browser Relay extension is out of date. ${UPDATE_RELAY_EXTENSION}`);
+		}
 		const puppeteer = await loadPuppeteer();
-		const browser = await puppeteer.connect({
+		const browser = await connectPuppeteer(puppeteer, {
 			browserURL: cdpUrl,
 			defaultViewport: null,
 			protocolTimeout: BROWSER_PROTOCOL_TIMEOUT_MS,
@@ -251,6 +324,7 @@ async function openBrowserHandle(kind: BrowserKind, opts: AcquireBrowserOptions)
 			key: browserKey(kind),
 			kind,
 			browser,
+			wsEndpoint: browser.wsEndpoint(),
 			cdpUrl,
 			refCount: 0,
 			stealth: { browserSession: null, override: null },
@@ -298,7 +372,7 @@ async function openBrowserHandle(kind: BrowserKind, opts: AcquireBrowserOptions)
 	const puppeteer = await loadPuppeteer();
 	let browser: Browser;
 	try {
-		browser = await puppeteer.connect({
+		browser = await connectPuppeteer(puppeteer, {
 			browserURL: cdpUrl,
 			defaultViewport: null,
 			protocolTimeout: BROWSER_PROTOCOL_TIMEOUT_MS,
@@ -311,6 +385,7 @@ async function openBrowserHandle(kind: BrowserKind, opts: AcquireBrowserOptions)
 		key: browserKey(kind),
 		kind,
 		browser,
+		wsEndpoint: browser.wsEndpoint(),
 		cdpUrl,
 		pid,
 		subprocess,
@@ -339,13 +414,25 @@ async function disposeBrowserHandle(handle: BrowserHandle, opts: ReleaseBrowserO
 		handle.client.close();
 		return;
 	}
+	if ("tern" in handle) {
+		handle.tern.close();
+		return;
+	}
 	if (handle.kind.kind === "headless") {
 		if (handle.sharedDaemon) {
 			// The broker owns the Chromium; this process only drops its CDP
 			// connection. `kill` is scoped to spawned-app browsers — stopping the
 			// shared daemon here would tear down every other session's tabs. The
+<<<<<<< ours — scope `if (handle.kind.kind === "headless") {` in function `disposeBrowserHandle` (T+F, confidence: medium)
+// refused_by: statement_fold · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 			// daemon dies with the last tau client in the project (broker idle
 			// teardown), or via an explicit stop (`write proc://<name>/kill`).
+=======
+			// daemon dies with the last omp client in the project (broker idle
+			// teardown), when its CDP endpoint stops answering after a failed tab
+			// cleanup (`stopSharedBrowserIfUnreachable`), or via an explicit stop
+			// (`write proc://<name>/kill`).
+>>>>>>> theirs — scope `if (handle.kind.kind === "headless") {`
 			if (handle.browser.connected) {
 				try {
 					handle.browser.disconnect();
@@ -355,6 +442,8 @@ async function disposeBrowserHandle(handle: BrowserHandle, opts: ReleaseBrowserO
 			}
 			return;
 		}
+<<<<<<< ours — scope `if (handle.kind.kind === "headless") {` in function `disposeBrowserHandle` (T+F, confidence: medium)
+// refused_by: statement_fold · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 		if (handle.browser.connected) {
 			// Puppeteer's `browser.close()` resolves only once the Chromium
 			// process fully exits. A wedged Chromium (a known Windows failure
@@ -370,6 +459,10 @@ async function disposeBrowserHandle(handle: BrowserHandle, opts: ReleaseBrowserO
 			}
 		}
 		// TAU owns the profile directory (puppeteer's temp cleanup is disabled by
+=======
+		if (handle.browser.connected) await closeLaunchedBrowser(handle.browser);
+		// OMP owns the profile directory (puppeteer's temp cleanup is disabled by
+>>>>>>> theirs — scope `if (handle.kind.kind === "headless") {`
 		// our explicit --user-data-dir), so remove it now the process tree has
 		// exited. Tolerant of the Windows lock-held window (issue #7058).
 		if (handle.userDataDir) await removeUserDataDir(handle.userDataDir);
@@ -424,11 +517,16 @@ async function openSharedHeadlessHandle(
 		});
 		if (!shared) {
 			throw new ToolError(
+<<<<<<< ours — scope `try {` in function `openSharedHeadlessHandle` (F, confidence: medium)
+// refused_by: statement_fold · collision: `"Shared browser daemon unavailable (broker start or Chromium la…`
 				"Shared browser daemon unavailable (broker start or Chromium launch failed); check `tau ps` for tau.browser.* daemons and ~/.tau/logs for details",
+=======
+				`Shared browser daemon unavailable (broker start or Chromium launch failed); check \`omp ps\` for omp.browser.* daemons and ${getLogsDir()} for details`,
+>>>>>>> theirs — scope `try {`
 			);
 		}
 		const puppeteer = await loadPuppeteer();
-		const browser = await puppeteer.connect({
+		const browser = await connectPuppeteer(puppeteer, {
 			browserWSEndpoint: shared.wsEndpoint,
 			defaultViewport: kind.headless
 				? {
@@ -448,6 +546,7 @@ async function openSharedHeadlessHandle(
 			key: browserKey(kind),
 			kind,
 			browser,
+			wsEndpoint: shared.wsEndpoint,
 			sharedDaemon: { name: shared.daemonName, projectDir: shared.projectDir },
 			refCount: 0,
 			stealth: { browserSession: null, override: null },

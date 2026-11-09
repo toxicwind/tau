@@ -1,7 +1,13 @@
 import type { LineRange } from "@tau/tau-tui/tools/line-ranges";
 import { parseTailCount } from "./path-utils";
+<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: `import { parseLineRanges } from "@oh-my-pi/pi-tui/tools/line-ra…`
 import { parseLineRanges } from "@tau/tau-tui/tools/line-ranges";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
+=======
+import { mergeLineRanges, parseLineRanges } from "@oh-my-pi/pi-tui/tools/line-ranges";
+import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+>>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/read-selector.ts' for per-hunk detail, 'weave check' to verify your resolution
 /** Parsed representation of a path-embedded selector. */
 export type ParsedSelector =
 	| { kind: "none" }
@@ -9,8 +15,11 @@ export type ParsedSelector =
 	| { kind: "conflicts" }
 	| { kind: "image" }
 	| { kind: "lines"; ranges: [LineRange, ...LineRange[]]; raw?: boolean }
-	/** `:-N` — the last N lines. Needs the source's line count before it can be sliced. */
-	| { kind: "tail"; count: number; raw?: boolean };
+	/**
+	 * `:-N` — the last N lines. Needs the source's line count before it can be sliced.
+	 * `ranges` holds the other chunks of a comma list that mixes them in (`:1-12,-15`).
+	 */
+	| { kind: "tail"; count: number; ranges?: [LineRange, ...LineRange[]]; raw?: boolean };
 
 /**
  * A selector whose bounds are absolute — every kind except `tail`. Slicing
@@ -26,7 +35,9 @@ export function isRawSelector(parsed: ParsedSelector): boolean {
 
 /** Returns true when the selector requested multiple line ranges. */
 export function isMultiRange(parsed: ParsedSelector): boolean {
-	return parsed.kind === "lines" && parsed.ranges.length > 1;
+	return (
+		(parsed.kind === "lines" && parsed.ranges.length > 1) || (parsed.kind === "tail" && parsed.ranges !== undefined)
+	);
 }
 
 /**
@@ -34,12 +45,15 @@ export function isMultiRange(parsed: ParsedSelector): boolean {
  * lines; every other selector passes through unchanged. The last N lines become
  * one inclusive range clamped to the source (`totalLines - N + 1` .. `totalLines`),
  * so downstream slicing, context expansion, and out-of-bounds reporting behave
- * exactly as for an explicit `:N-M`.
+ * exactly as for an explicit `:N-M`. Ranges listed with the tail join it in
+ * ascending order, merged where they overlap or touch.
  */
 export function resolveTailSelector(parsed: ParsedSelector, totalLines: number): ResolvedSelector {
 	if (parsed.kind !== "tail") return parsed;
 	const startLine = Math.max(1, totalLines - parsed.count + 1);
-	return { kind: "lines", ranges: [{ startLine, endLine: Math.max(startLine, totalLines) }], raw: parsed.raw };
+	const endLine = Math.max(startLine, totalLines);
+	if (!parsed.ranges) return { kind: "lines", ranges: [{ startLine, endLine }], raw: parsed.raw };
+	return { kind: "lines", ranges: mergeLineRanges([...parsed.ranges, { startLine, endLine }]), raw: parsed.raw };
 }
 
 function selectorChunkLooksReadLike(chunk: string): boolean {
@@ -59,15 +73,32 @@ function invalidSelector(sel: string): ToolError {
 	);
 }
 
-/** Parse a bare (non-compound) chunk as a line-range list or a tail count. */
+/** Parse a bare (non-compound) chunk as a line-range list, a tail count, or a list mixing both. */
 function parseRangeOrTail(chunk: string, raw: boolean): ParsedSelector | null {
 	// Upstream raw-mode semantics: in raw extraction a bare `N` is exactly line N
 	// (verbatim-extraction contract), not "from N onward".
 	const ranges = parseLineRanges(chunk, raw ? "single" : "onward");
+<<<<<<< ours — scope `const ranges = parseLineRanges(chunk);` in function `parseRangeOrTail`, deleted in ours (S, confidence: medium)
+// refused_by: statement_fold · collision: none (no common ancestor text)
+=======
+	const ranges = parseLineRanges(chunk, raw ? "single" : "onward");
+>>>>>>> theirs — scope `const ranges = parseLineRanges(chunk);` deleted in ours
 	if (ranges) return raw ? { kind: "lines", ranges, raw } : { kind: "lines", ranges };
-	const count = parseTailCount(chunk);
-	if (count !== null) return raw ? { kind: "tail", count, raw } : { kind: "tail", count };
-	return null;
+	// A list with tails (`1-12,-15`, `-15`) keeps the longest tail; in a list of
+	// several chunks a bare `N` stays that one line, as in a plain range list.
+	const parts = chunk.split(",");
+	let count = 0;
+	const listed: string[] = [];
+	for (const part of parts) {
+		const partCount = parseTailCount(part);
+		if (partCount !== null) count = Math.max(count, partCount);
+		else listed.push(part);
+	}
+	// Beside a tail the list has several chunks, so a lone listed `N` is still one line.
+	const listedRanges = listed.length > 0 ? parseLineRanges(listed.join(","), "single") : undefined;
+	if (count === 0) return null;
+	return { kind: "tail", count, ...(listedRanges && { ranges: listedRanges }), ...(raw && { raw }) };
+	if (listedRanges === null) return null;
 }
 
 export function parseSel(sel: string | undefined): ParsedSelector {

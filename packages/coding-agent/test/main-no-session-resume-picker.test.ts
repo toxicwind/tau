@@ -5,13 +5,14 @@
  * (extension-flag-aware) persistence validation, so it has to be skipped under
  * `--no-session`.
  */
-import { describe, expect, it, vi } from "bun:test";
+import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
 import { parseArgs } from "tau/cli/args";
 import { Settings } from "tau/config/settings";
 import { runRootCommand } from "tau/main";
 import { AuthStorage } from "tau/session/auth-storage";
 import { TempDir } from "@tau/tau-utils";
+import { clearOmpExtensionCliRoots } from "@oh-my-pi/pi-coding-agent/discovery/omp-extension-roots";
 
 class ProcessExitSignal extends Error {
 	constructor(readonly code: number) {
@@ -19,6 +20,11 @@ class ProcessExitSignal extends Error {
 		this.name = "ProcessExitSignal";
 	}
 }
+
+// `runRootCommand` registers the CLI's extension roots (`--no-extensions` → explicit-only) process-wide.
+afterEach(() => {
+	clearOmpExtensionCliRoots();
+});
 
 describe("runRootCommand — --no-session --resume", () => {
 	it("rejects a bare native --resume without invoking the picker", async () => {

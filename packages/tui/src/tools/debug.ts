@@ -10,8 +10,15 @@ import {
 	replaceTabs,
 	TRUNCATE_LENGTHS,
 	truncateToWidth,
+	clipCollapsed,
 } from "../render/render-utils";
-import type { RenderResultOptions, ToolRenderer } from "./renderer";
+import { sanitizeText } from "@oh-my-pi/pi-utils";
+import { singleLine } from "../utils";
+import type { NativeToolView, RenderResultOptions, ToolRenderer, ToolRenderResult } from "./renderer";
+import { ansi, kv } from "../native/describe";
+import type { NativeChild } from "../native/node";
+import { OwnerMemo } from "../native/memo";
+import { errorView, noteText, resultText, toolHead } from "./native-view";
 
 /** Display fields captured from a debugger session. */
 export interface DebugSessionSnapshot {
@@ -83,37 +90,90 @@ export function formatSessionSnapshot(snapshot: DebugSessionSnapshot): string[] 
 	return lines;
 }
 
-function summarizeDebugCall(args: DebugRenderArgs): string {
-	const action = args.action ? args.action.replaceAll("_", " ") : "request";
-	if (args.program) {
-		return `${action} ${truncateToWidth(args.program, TRUNCATE_LENGTHS.TITLE)}`;
-	}
-	if (args.file && args.line !== undefined) {
-		return `${action} ${truncateToWidth(`${args.file}:${args.line}`, TRUNCATE_LENGTHS.TITLE)}`;
-	}
-	if (args.function) {
-		return `${action} ${truncateToWidth(args.function, TRUNCATE_LENGTHS.TITLE)}`;
-	}
-	if (args.expression) {
-		return `${action} ${truncateToWidth(args.expression, TRUNCATE_LENGTHS.TITLE)}`;
-	}
-	if (args.command) {
-		return `${action} ${truncateToWidth(args.command, TRUNCATE_LENGTHS.TITLE)}`;
-	}
-	if (args.memory_reference) {
-		return `${action} ${truncateToWidth(args.memory_reference, TRUNCATE_LENGTHS.TITLE)}`;
-	}
-	if (args.instruction_reference) {
-		return `${action} ${truncateToWidth(args.instruction_reference, TRUNCATE_LENGTHS.TITLE)}`;
-	}
-	if (args.data_id) {
-		return `${action} ${truncateToWidth(args.data_id, TRUNCATE_LENGTHS.TITLE)}`;
-	}
-	if (args.name) {
-		return `${action} ${truncateToWidth(args.name, TRUNCATE_LENGTHS.TITLE)}`;
-	}
-	return action;
+/**
+ * Model-authored arg text is untrusted: strip ANSI escapes and control
+ * characters, then hand the value to the shared single-line projection
+ * (`singleLine`: tab expansion + line-break collapse) before it lands in a
+ * card row or native head (same treatment as every sibling renderer, e.g.
+ * `replaceTabs` in bash.ts).
+ */
+function sanitizeDebugArg(value: string): string {
+	return singleLine(sanitizeText(value));
 }
+
+/** Highest-precedence identifying arg for a debug call head; mirrors the summary field order. */
+function debugCallTarget(args: DebugRenderArgs): string | undefined {
+	return (
+		args.program ||
+		(args.file && args.line !== undefined ? `${args.file}:${args.line}` : undefined) ||
+		args.function ||
+		args.expression ||
+		args.command ||
+		args.memory_reference ||
+		args.instruction_reference ||
+		args.data_id ||
+		args.name ||
+		undefined
+	);
+}
+
+function summarizeDebugCall(args: DebugRenderArgs): string {
+	const action = args.action ? sanitizeDebugArg(args.action.replaceAll("_", " ")) : "request";
+	const target = debugCallTarget(args);
+	return target ? `${action} ${truncateToWidth(sanitizeDebugArg(target), TRUNCATE_LENGTHS.TITLE)}` : action;
+}
+
+/** Untruncated `[action, target]` for native heads; mirrors {@link summarizeDebugCall}'s field precedence. */
+function debugCallParts(args: DebugRenderArgs | undefined, fallbackAction: string): [string, string | undefined] {
+	const action = sanitizeDebugArg((args?.action ?? fallbackAction).replaceAll("_", " "));
+	if (!args) return [action, undefined];
+	const target = debugCallTarget(args);
+	return [action, target === undefined ? undefined : sanitizeDebugArg(target)];
+}
+
+function describeDebugResult(
+	result: ToolRenderResult<DebugToolDetails>,
+	args: DebugRenderArgs | undefined,
+): NativeToolView {
+	const [action, target] = debugCallParts(args, result.details?.action ?? "debug");
+	const output = resultText(result);
+	if (result.isError) return errorView("Debug", output || "Debug failed", action, target);
+	const snapshot = result.details?.snapshot;
+	const body: NativeChild[] = [];
+	let sessionRows = 0;
+	if (snapshot) {
+		const location = formatLocation(snapshot);
+		const rows: [string, string | undefined][] = [
+			["Session", snapshot.id],
+			["Adapter", snapshot.adapter],
+			["Status", snapshot.status],
+			["CWD", snapshot.cwd],
+			["Program", snapshot.program],
+			["Stop reason", snapshot.stopReason],
+			["Frame", snapshot.frameName],
+			["Instruction pointer", snapshot.instructionPointerReference],
+			["Location", location ?? undefined],
+			[
+				"Configuration",
+				snapshot.needsConfigurationDone ? "pending configurationDone; set breakpoints, then continue." : undefined,
+			],
+			["Exit code", snapshot.exitCode !== undefined ? String(snapshot.exitCode) : undefined],
+		];
+		const grid = kv(rows);
+		if (grid) {
+			body.push(grid);
+			sessionRows = rows.filter(([, value]) => value).length;
+		}
+	}
+	body.push(output ? ansi(output) : noteText("No output"));
+	return {
+		head: toolHead("Debug", action, target),
+		body,
+		preview: { lines: sessionRows + PREVIEW_LIMITS.COLLAPSED_LINES },
+	};
+}
+
+const debugResultMemo = new OwnerMemo<NativeToolView | undefined>();
 
 /** Renders debugger calls and captured execution snapshots. */
 export const debugToolRenderer = {
@@ -130,7 +190,7 @@ export const debugToolRenderer = {
 		args?: DebugRenderArgs,
 	): Component {
 		return framedToolCard(theme, () => {
-			const action = (args?.action ?? result.details?.action ?? "debug").replaceAll("_", " ");
+			const action = sanitizeDebugArg((args?.action ?? result.details?.action ?? "debug").replaceAll("_", " "));
 			const success = !options.isPartial && !result.isError;
 			const statusIcon = success
 				? theme.styledSymbol("tool.debug", "accent")
@@ -144,7 +204,7 @@ export const debugToolRenderer = {
 			const previewLimit = options.expanded ? PREVIEW_LIMITS.EXPANDED_LINES : PREVIEW_LIMITS.COLLAPSED_LINES;
 			const displayedLines = rawLines
 				.slice(0, previewLimit)
-				.map(line => truncateToWidth(line, TRUNCATE_LENGTHS.LINE));
+				.map(line => clipCollapsed(line, TRUNCATE_LENGTHS.LINE, options.expanded));
 			const remaining = rawLines.length - displayedLines.length;
 			if (remaining > 0) {
 				displayedLines.push(
@@ -161,6 +221,17 @@ export const debugToolRenderer = {
 				applyBg: false,
 			};
 		});
+	},
+	describeCall(args: DebugRenderArgs): NativeToolView {
+		const [action, target] = debugCallParts(args, "request");
+		return { head: toolHead("Debug", action, target) };
+	},
+	describeResult(
+		result: ToolRenderResult<DebugToolDetails>,
+		_options: RenderResultOptions,
+		args?: DebugRenderArgs,
+	): NativeToolView | undefined {
+		return debugResultMemo.get(result, [], () => describeDebugResult(result, args));
 	},
 	mergeCallAndResult: true,
 	inline: true,

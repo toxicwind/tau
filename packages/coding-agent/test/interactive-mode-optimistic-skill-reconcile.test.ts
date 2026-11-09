@@ -20,6 +20,7 @@ import { AuthStorage } from "tau/session/auth-storage";
 import { SKILL_PROMPT_MESSAGE_TYPE, type SkillPromptDetails } from "tau/session/messages";
 import { SessionManager } from "tau/session/session-manager";
 import { TempDir } from "@tau/tau-utils";
+import { PresentedBlock } from "@oh-my-pi/pi-tui/chat/transcript-presentation";
 
 const WIDTH = 80;
 
@@ -35,9 +36,10 @@ function skillMessage(timestamp: number): AgentMessage {
 	} as AgentMessage;
 }
 
-function skillCards(mode: InteractiveMode): SkillMessageComponent[] {
-	return mode.chatContainer.children.filter((child): child is SkillMessageComponent => {
-		return child instanceof SkillMessageComponent;
+/** The transcript's skill blocks (each wraps its card for extension presenters). */
+function skillCards(mode: InteractiveMode): PresentedBlock<SkillMessageComponent>[] {
+	return mode.chatContainer.children.filter((child): child is PresentedBlock<SkillMessageComponent> => {
+		return child instanceof PresentedBlock && child.inner instanceof SkillMessageComponent;
 	});
 }
 
@@ -93,7 +95,7 @@ describe("InteractiveMode optimistic skill reconcile (#11217)", () => {
 	it("keeps the optimistic row live so a retirement pass cannot commit it before reconcile", () => {
 		mode.renderOptimisticSkillMessage(skillMessage(1));
 		const [card] = skillCards(mode);
-		expect(card).toBeInstanceOf(SkillMessageComponent);
+		expect(card?.inner).toBeInstanceOf(SkillMessageComponent);
 		// Unfinalized while pending: the transcript keeps it removable.
 		expect(card!.isTranscriptBlockFinalized()).toBe(false);
 
@@ -109,11 +111,11 @@ describe("InteractiveMode optimistic skill reconcile (#11217)", () => {
 	it("adopts the optimistic row in place instead of duplicating it when it already retired", () => {
 		mode.renderOptimisticSkillMessage(skillMessage(1));
 		const [card] = skillCards(mode);
-		expect(card).toBeInstanceOf(SkillMessageComponent);
+		expect(card?.inner).toBeInstanceOf(SkillMessageComponent);
 
 		// Residual race: the row finalized and retired into immutable scrollback
 		// before the canonical message_start arrived.
-		card!.markTranscriptBlockFinalized();
+		card!.inner.markTranscriptBlockFinalized();
 		retireToScrollback(mode);
 		expect(mode.chatContainer.canRemoveBlock(card!)).toBe(false);
 
@@ -122,6 +124,8 @@ describe("InteractiveMode optimistic skill reconcile (#11217)", () => {
 		const cards = skillCards(mode);
 		expect(cards).toHaveLength(1);
 		expect(cards[0]).toBe(card);
+		// Presenters key it by the canonical message, the id a resumed transcript gives it.
+		expect(cards[0]!.block.id).toBe("2");
 	});
 
 	it("appends the canonical card when a transcript rebuild detached the optimistic row", () => {

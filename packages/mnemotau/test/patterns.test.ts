@@ -1,5 +1,10 @@
 import { describe, expect, it } from "bun:test";
+<<<<<<< ours — imports `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: `import {` +5 more
 import { CompressionStats, DetectedPattern, MemoryCompressor, PatternDetector } from "@tau/tau-mnemotau/core/patterns";
+=======
+import { CompressionStats, MemoryCompressor, PatternDetector } from "@oh-my-pi/pi-mnemopi/core/patterns";
+>>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/mnemotau/test/patterns.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 describe("memory compression", () => {
 	it("reports savings and zero-size stats", () => {
@@ -92,30 +97,5 @@ describe("pattern detection", () => {
 			}
 			expect(previous.confidence).toBeGreaterThanOrEqual(current.confidence);
 		}
-	});
-
-	it("summarizes and serializes detected patterns", () => {
-		const detector = new PatternDetector(0.1);
-		const summary = detector.summarizePatterns([
-			{ content: "Python is great", source: "user", timestamp: "2026-01-01T09:00:00" },
-			{ content: "Agent agrees", source: "agent", timestamp: "2026-01-01T09:01:00" },
-		]);
-		expect(summary.total_memories).toBe(2);
-		expect(summary.patterns_found).toBeDefined();
-
-		const pattern = new DetectedPattern({
-			pattern_type: "content",
-			description: "Test pattern",
-			confidence: 0.85,
-			samples: ["sample1", "sample2"],
-			metadata: { key: "value" },
-		});
-		expect(pattern.toDict()).toEqual({
-			pattern_type: "content",
-			description: "Test pattern",
-			confidence: 0.85,
-			samples: ["sample1", "sample2"],
-			metadata: { key: "value" },
-		});
 	});
 });

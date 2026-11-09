@@ -20,6 +20,10 @@
 //!    short-circuited ([`RankTable::count_merged`]): `token` is a whole word
 //!    but not a base token, so `tokenize` costs 3.
 //!
+//! Both sets are o200k subsets but keep their own rank tables: merging
+//! through the shared o200k table behind a rank-membership filter priced
+//! every lookup twice and counted ~23% slower.
+//!
 //! Counts are state *content*: the request frame (question text, template,
 //! 269 tokens for a minimal one-noul request) is excluded, matching the
 //! other families' "no chat-template frame" semantics.
@@ -27,7 +31,12 @@
 //! [`Encoding::Qwen3`]: crate::utok::Encoding::Qwen3
 
 use crate::utok::{
+<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `bpe::{BpeEncoding, RankTable},`
 	bpe::{BpeEncoding, BpeLoadError, OnceFallible, RankTable},
+=======
+	bpe::{self, PieceMemo, RankTable},
+>>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain crates/tau-natives/src/utok/jev.rs' for per-hunk detail, 'weave check' to verify your resolution
 	pretoken::Splitter,
 	utf::Unit,
 };
@@ -39,9 +48,8 @@ use crate::utok::{
 const WINDOW: usize = 512;
 
 struct Jev {
-	/// Base merge table (o200k ranks, non-base slots empty) plus the shared
-	/// Qwen3.5 splitter and NFC contract.
-	bpe:   BpeEncoding,
+	/// Base merge table (o200k ranks, non-base slots empty).
+	base:  RankTable,
 	/// Whole-word entries; only membership is read.
 	whole: RankTable,
 }
@@ -49,7 +57,15 @@ struct Jev {
 // `OnceFallible` rather than `LazyLock`: a corrupt blob caches as a typed
 // error value here, where a `LazyLock` would poison unrecoverably and make
 // every later call fail with the same useless message.
+<<<<<<< ours — static `JEV (body partly extracted into load)` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: `bpe:   BpeEncoding {` +5 more
 static JEV: OnceFallible<Jev, BpeLoadError> = OnceFallible::new();
+=======
+static JEV: LazyLock<Jev> = LazyLock::new(|| Jev {
+	base:  RankTable::parse(include_bytes!("../../data/jev_base.bin.zst")),
+	whole: RankTable::parse(include_bytes!("../../data/jev_whole.bin.zst")),
+});
+>>>>>>> theirs — static `JEV (body partly extracted into load)` (S+F, confidence: low)
 
 fn load() -> Result<&'static Jev, BpeLoadError> {
 	// Const-assert both blobs before anyone can observe a half-built model.
@@ -100,13 +116,23 @@ fn load() -> Result<&'static Jev, BpeLoadError> {
 /// excluding the request frame. Valid text counts flavor-invariantly.
 pub fn content_token_count<U: Unit>(units: &[U]) -> Result<u32, BpeLoadError> {
 	let jev = load()?;
-	let mut n = 0u32;
-	jev.bpe.run(units, &mut |base, piece| {
-		n += if jev.whole.rank(piece).is_some() {
-			1
-		} else {
-			piece.chunks(WINDOW).map(|w| base.count_merged(w)).sum()
-		};
-	});
+	PieceMemo::with(|memo| {
+		let mut n = 0u32;
+		bpe::for_each_piece(&Splitter::Qwen, true, units, &mut |piece| {
+			n += if jev.whole.rank(piece).is_some() {
+				1
+			} else {
+				piece
+					.chunks(WINDOW)
+					.map(|w| jev.base.count_merged(w, memo))
+					.sum()
+			};
+		});
+		n
+	})
+<<<<<<< ours — scope `n` in function `content_token_count`, deleted in theirs (S, confidence: medium)
+// refused_by: statement_fold · collision: none (no common ancestor text)
 	Ok(n)
+=======
+>>>>>>> theirs — scope `n` deleted in theirs
 }

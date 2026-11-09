@@ -163,6 +163,23 @@ describe("parseMarketplaceCatalog", () => {
 		expect(catalog.plugins[0].name).toBe("p1");
 	});
 
+	it("keeps bare-name sources only when metadata.pluginRoot is set", () => {
+		const plugins = [
+			{ name: "bare", source: "formatter" },
+			{ name: "nested", source: "team-a/formatter" },
+		];
+		const withRoot = parseMarketplaceCatalog(
+			JSON.stringify({ name: "m", owner: { name: "x" }, metadata: { pluginRoot: "./plugins" }, plugins }),
+			"/f.json",
+		);
+		expect(withRoot.plugins.map(plugin => plugin.name)).toEqual(["bare"]);
+		const withoutRoot = parseMarketplaceCatalog(
+			JSON.stringify({ name: "m", owner: { name: "x" }, plugins }),
+			"/f.json",
+		);
+		expect(withoutRoot.plugins).toHaveLength(0);
+	});
+
 	it("throws on invalid JSON", () => {
 		expect(() => parseMarketplaceCatalog("{not json", "/f.json")).toThrow(
 			"Failed to parse marketplace catalog at /f.json",
@@ -196,12 +213,6 @@ describe("fetchMarketplace", () => {
 	it("throws a clear error for nonexistent local directory", async () => {
 		const missing = path.join(tmpDir, "nonexistent");
 		await expect(fetchMarketplace(missing, tmpDir)).rejects.toThrow(/Marketplace catalog not found/);
-	});
-
-	it("throws a clear error for relative nonexistent path", async () => {
-		// Use a path that resolves within tmpDir but doesn't exist
-		const fakeSrc = path.join(tmpDir, "ghost-marketplace");
-		await expect(fetchMarketplace(fakeSrc, tmpDir)).rejects.toThrow(/Marketplace catalog not found/);
 	});
 
 	it("loads catalog from .tau-plugin/marketplace.json when present", async () => {
@@ -240,12 +251,16 @@ describe("fetchMarketplace", () => {
 		expect(result.catalog.name).toBe("from-tau-plugin");
 	});
 
+<<<<<<< ours — scope `it("falls back to .claude-plugin/marketplace....` in test_suite `fetchMarketplace`, deleted in theirs (S+F, confidence: low)
+// refused_by: statement_fold · collision: none (no common ancestor text)
 	it("falls back to .claude-plugin/marketplace.json when .tau-plugin is absent", async () => {
 		// The shared fixture only ships .claude-plugin/marketplace.json — confirms
 		// the legacy path still loads unchanged.
 		const result = await fetchMarketplace(FIXTURE_DIR, tmpDir);
 		expect(result.catalog.name).toBe("test-marketplace");
 	});
+=======
+>>>>>>> theirs — scope `it("falls back to .claude-plugin/marketplace....` deleted in theirs · weave: run 'weave explain packages/coding-agent/test/marketplace/fetcher.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 	it("error message names both candidate paths when neither exists", async () => {
 		const empty = path.join(tmpDir, "empty-dir");
@@ -273,23 +288,37 @@ describe("fetchMarketplace", () => {
 		}
 	});
 
-	// Network-dependent tests — skip in CI / offline environments.
-	// These verify real git clone and HTTP fetch error handling.
-	it.skip("github source throws on nonexistent repo", async () => {
-		await expect(fetchMarketplace("nonexistent-owner-xyz/nonexistent-repo-xyz", tmpDir)).rejects.toThrow(
-			/git clone failed/,
-		);
+	it("removes a partial checkout when cloning fails", async () => {
+		const cloneSpy = spyOn(vcs, "clone").mockImplementation(async (_url, targetDir) => {
+			fs.writeFileSync(path.join(targetDir, "partial"), "unfinished");
+			throw new Error("clone failed");
+		});
+		try {
+			await expect(fetchMarketplace("owner/repo", tmpDir)).rejects.toThrow("clone failed");
+			expect(fs.readdirSync(tmpDir)).toEqual([]);
+		} finally {
+			cloneSpy.mockRestore();
+		}
 	});
 
-	it.skip("git source throws on nonexistent repo", async () => {
-		await expect(
-			fetchMarketplace("git@github.com:nonexistent-owner-xyz/nonexistent-repo-xyz.git", tmpDir),
-		).rejects.toThrow(/git clone failed/);
-	});
-
-	it.skip("url source throws on non-2xx response", async () => {
-		await expect(fetchMarketplace("https://example.com/nonexistent-catalog-xyz.json", tmpDir)).rejects.toThrow(
-			/HTTP [45]\d\d/,
-		);
+	it("keeps simultaneous clone checkouts isolated", async () => {
+		const cloneSpy = spyOn(vcs, "clone").mockImplementation(async (_url, targetDir) => {
+			fs.mkdirSync(path.join(targetDir, ".omp-plugin"));
+			fs.writeFileSync(
+				path.join(targetDir, ".omp-plugin", "marketplace.json"),
+				JSON.stringify({ name: "test-marketplace", owner: { name: "Test" }, plugins: [] }),
+			);
+		});
+		try {
+			const [first, second] = await Promise.all([
+				fetchMarketplace("owner/repo", tmpDir),
+				fetchMarketplace("owner/repo", tmpDir),
+			]);
+			expect(first.clonePath).not.toBe(second.clonePath);
+			expect(fs.existsSync(path.join(first.clonePath!, ".omp-plugin", "marketplace.json"))).toBe(true);
+			expect(fs.existsSync(path.join(second.clonePath!, ".omp-plugin", "marketplace.json"))).toBe(true);
+		} finally {
+			cloneSpy.mockRestore();
+		}
 	});
 });

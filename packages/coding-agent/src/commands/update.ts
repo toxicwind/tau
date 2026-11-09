@@ -3,6 +3,7 @@
  */
 
 import { Command, Flags } from "@tau/tau-utils/cli";
+import chalk from "@oh-my-pi/pi-utils/chalk";
 import { updateHelp as commandHelp } from "../cli/command-help";
 import * as pluginCli from "../cli/plugin-cli";
 import * as updateCli from "../cli/update-cli";
@@ -19,25 +20,35 @@ export default class Update extends Command {
 		stable: Flags.boolean({ description: "Switch back to the stable channel", default: false }),
 	};
 
+<<<<<<< ours — scope `examples` in class `Update` (S+F, confidence: low)
+// refused_by: container_member · collision: `"omp update",` +3 more
 	static examples = [
 		"tau update",
 		"tau update --check",
 		"tau update --canary",
 		"# If GitHub rate-limits release metadata, set GITHUB_TOKEN or GH_TOKEN\n  GITHUB_TOKEN=... tau update",
 	];
+=======
+	static examples = ["omp update", "omp update --check", "omp update --canary"];
+>>>>>>> theirs — scope `examples` · weave: run 'weave explain packages/coding-agent/src/commands/update.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 	async run(): Promise<void> {
 		const { flags } = await this.parse(Update);
 		await initTheme();
 		if (flags.canary && flags.stable) throw new CliUsageError("--canary and --stable are mutually exclusive");
 		if (flags.plugins) {
-			await pluginCli.runPluginCommand({ action: "upgrade", args: [], flags: {} });
+			await pluginCli.runPluginCommand({ action: "upgrade", args: [], flags: flags.check ? { dryRun: true } : {} });
 		} else {
-			await updateCli.runUpdateCommand({
-				force: flags.force,
-				check: flags.check,
-				channel: flags.canary ? "canary" : flags.stable ? "stable" : undefined,
-			});
+			try {
+				await updateCli.runUpdateCommand({
+					force: flags.force,
+					check: flags.check,
+					channel: flags.canary ? "canary" : flags.stable ? "stable" : undefined,
+				});
+			} catch (err) {
+				console.error(chalk.red(err instanceof Error ? err.message : String(err)));
+				process.exit(1);
+			}
 		}
 	}
 }

@@ -1,6 +1,6 @@
 # Secret Obfuscation
 
-Prevents sensitive values (API keys, tokens, passwords) from being sent to LLM providers. When enabled, configured secrets and built-in credential-shaped token patterns are replaced before provider-visible text leaves the process. Reversible placeholders are restored in model-authored tool arguments before execution and when local session context is rebuilt for display or resume.
+Redacts sensitive values (API keys, tokens, passwords) in conversation messages sent to LLM providers. When enabled, configured secrets and built-in credential-shaped token patterns are replaced in supported message and replay text fields. Static system prompts, static tool definitions, and binary payloads are not redacted by this subsystem. Reversible placeholders are restored in model-authored tool arguments before execution and when local session context is rebuilt for display or resume.
 
 ## Enabling
 
@@ -8,7 +8,7 @@ Disabled by default. Toggle via `/settings` UI or directly in `config.yml`:
 
 ```yaml
 secrets:
-  enabled: true
+   enabled: true
 ```
 
 ## How it works
@@ -17,7 +17,7 @@ secrets:
    - **Environment variables** whose names match common secret patterns (`KEY`, `SECRET`, `TOKEN`, `PASSWORD`, `PASS`, `AUTH`, `CREDENTIAL`, `PRIVATE`, `OAUTH`) with values at least 8 characters long
    - **`secrets.yml` files** (see below)
    - Built-in reversible regexes for common credential shapes that appear only in session content or tool results: GitHub, GitLab, OpenAI, and Anthropic tokens, AWS access keys, Google API keys, Slack tokens, npm tokens, Stripe secret and restricted keys and webhook secrets, Hugging Face tokens, SendGrid keys, JWTs, Bearer header tokens, and PEM private key blocks
-   - Passwords embedded in connection-URL environment values — any variable holding a `scheme://user:password@host`-style value (for example `DATABASE_URL`) has its password registered as a secret regardless of the variable name
+   - Passwords embedded in connection-URL environment values — any variable holding a `scheme://user:password@host`-style value (for example `DATABASE_URL`) has its password registered regardless of the variable name when it is at least 8 characters long. Both raw and percent-decoded forms are collected when they meet that limit.
 
 2. Provider-visible text has matching values replaced with deterministic placeholders such as `$$3P8W5JH1TK2Q$$`, `$$3P8W5JH1TK2Q:L$$`, or `$$GITHUBTOKEN_3P8W5JH1TK2Q:L$$`.
 
@@ -36,12 +36,20 @@ Obfuscate-mode plain values and regex matches shorter than 8 characters are igno
 
 Define custom secret entries in YAML. Two locations are checked:
 
+<<<<<<< ours — scope `Define custom secret entries in YAML. Two loc...` in heading `secrets.yml` (F, confidence: medium)
+// refused_by: statement_fold · collision: `| Global  | `~/.omp/agent/secrets.yml` | Secrets across all pro…` +1 more
 | Level   | Path                       | Purpose                     |
 | ------- | -------------------------- | --------------------------- |
 | Global  | `~/.tau/agent/secrets.yml` | Secrets across all projects |
 | Project | `<cwd>/.tau/secrets.yml`   | Project-specific secrets    |
+=======
+| Level   | Path                                                                   | Purpose                                            |
+| ------- | ---------------------------------------------------------------------- | -------------------------------------------------- |
+| Global  | `<active-agent-dir>/secrets.yml` (normally `~/.omp/agent/secrets.yml`) | Secrets across projects using that agent directory |
+| Project | `<cwd>/.omp/secrets.yml`                                               | Project-specific secrets                           |
+>>>>>>> theirs — scope `Define custom secret entries in YAML. Two loc...` · weave: run 'weave explain docs/upstream/secrets.md' for per-hunk detail, 'weave check' to verify your resolution
 
-Project entries override global entries with matching `content`.
+Project entries override global entries with matching `content`. The global location follows the session's agent directory, including named profiles and explicit SDK agent-directory overrides.
 
 ### Schema
 
@@ -144,7 +152,9 @@ Environment variables are collected first, file-defined entries follow, and the 
 - `packages/coding-agent/src/secrets/index.ts` -- loading, merging, env var collection
 - `packages/coding-agent/src/secrets/obfuscator.ts` -- `SecretObfuscator` class, placeholder generation, message obfuscation
 - `packages/coding-agent/src/secrets/regex.ts` -- regex literal parsing and compilation
-- `packages/coding-agent/src/config/settings-schema.ts` -- `secrets.enabled` setting definition
+- `packages/coding-agent/src/secrets/message-transform.ts` -- provider-context and local-context transforms
+- `packages/coding-agent/src/secrets/patterns.ts` -- built-in credential patterns
+- `packages/coding-agent/src/secrets/settings.ts` -- `secrets.enabled` setting definition
 
 ## See also
 

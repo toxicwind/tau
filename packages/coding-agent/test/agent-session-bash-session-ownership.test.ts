@@ -14,6 +14,7 @@ import type { AuthStorage } from "tau/session/auth-storage";
 import { SessionManager } from "tau/session/session-manager";
 import { TempDir } from "@tau/tau-utils";
 import { createAssistantMessage, createInMemoryAuthStorage } from "./helpers/agent-session-setup";
+import { cfgShellPath } from "@oh-my-pi/pi-coding-agent/exec/settings";
 
 const bashResult = {
 	output: "old-output",
@@ -121,7 +122,7 @@ describe("AgentSession bash session ownership", () => {
 		// BashRunner delegates execution to the global Settings-backed executor, so
 		// keep this extension-env contract independent of the developer's shell rc.
 		const shell = process.platform === "win32" ? (Bun.env.ComSpec ?? "cmd.exe") : "/bin/sh";
-		Settings.instance.set("shellPath", shell);
+		cfgShellPath.set(Settings.instance, shell);
 		vi.spyOn(Settings.prototype, "getShellConfig").mockReturnValue({
 			shell,
 			args: process.platform === "win32" ? ["/c"] : ["-c"],
@@ -163,7 +164,7 @@ describe("AgentSession bash session ownership", () => {
 		// filtered spawn env) never contained it — so user shells lost the
 		// variable entirely (the secretsd session-token incident).
 		const shell = process.platform === "win32" ? (Bun.env.ComSpec ?? "cmd.exe") : "/bin/sh";
-		Settings.instance.set("shellPath", shell);
+		cfgShellPath.set(Settings.instance, shell);
 		vi.spyOn(Settings.prototype, "getShellConfig").mockReturnValue({
 			shell,
 			args: process.platform === "win32" ? ["/c"] : ["-c"],
@@ -208,7 +209,7 @@ describe("AgentSession bash session ownership", () => {
 		// value again, it now looks unchanged against the poisoned baseline,
 		// and the adapter silently drops it from the forwarded env.
 		const shell = process.platform === "win32" ? (Bun.env.ComSpec ?? "cmd.exe") : "/bin/sh";
-		Settings.instance.set("shellPath", shell);
+		cfgShellPath.set(Settings.instance, shell);
 		const cachedShellConfig = {
 			shell,
 			args: process.platform === "win32" ? ["/c"] : ["-c"],
@@ -368,6 +369,8 @@ describe("AgentSession bash session ownership", () => {
 					break;
 				case "switch": {
 					const targetManager = SessionManager.create(tempDir.path(), sessionDir);
+					// The mock reply's model id is not registered; record one the switch can restore.
+					targetManager.appendModelChange("anthropic/claude-sonnet-4-5");
 					targetManager.appendMessage({ role: "user", content: "target", timestamp: Date.now() });
 					targetManager.appendMessage(createAssistantMessage("target reply"));
 					await targetManager.ensureOnDisk();
@@ -411,6 +414,53 @@ describe("AgentSession bash session ownership", () => {
 			});
 		},
 	);
+
+	/** A persisted session the test can switch back to; the mock reply's model id is not registered. */
+	async function createSwitchableSession(extensionRunner?: ExtensionRunner): Promise<string> {
+		const manager = SessionManager.create(tempDir.path(), path.join(tempDir.path(), "sessions"));
+		manager.appendModelChange("anthropic/claude-sonnet-4-5");
+		manager.appendMessage({ role: "user", content: "seed", timestamp: Date.now() });
+		manager.appendMessage(createAssistantMessage("seed reply"));
+		await manager.ensureOnDisk();
+		const sessionFile = manager.getSessionFile();
+		if (!sessionFile) throw new Error("Expected persisted session file");
+		createSession(manager, extensionRunner);
+		return sessionFile;
+	}
+
+	it("starts a fresh shell when it returns to a session it left", async () => {
+		const oldSessionFile = await createSwitchableSession();
+		const oldSessionId = session.sessionId;
+		await session.executeBash("PI_LEFT_SESSION_MARK=kept");
+
+		await session.newSession();
+		await session.switchSession(oldSessionFile);
+
+		expect(session.sessionId).toBe(oldSessionId);
+		const result = await session.executeBash('printf "[%s]" "$PI_LEFT_SESSION_MARK"');
+		expect(result.output).toBe("[]");
+	});
+
+	it("starts a fresh shell after a command that was pending when its session was left", async () => {
+		const hook = Promise.withResolvers<undefined>();
+		const extensionRunner = {
+			hasHandlers: vi.fn((eventType: string) => eventType === "user_bash"),
+			// The first command waits in its hook until the session has changed, then runs.
+			emitUserBash: vi.fn().mockReturnValueOnce(hook.promise).mockResolvedValue(undefined),
+			emit: vi.fn().mockResolvedValue(undefined),
+			emitBeforeAgentStart: vi.fn().mockResolvedValue(undefined),
+		} as unknown as ExtensionRunner;
+		const oldSessionFile = await createSwitchableSession(extensionRunner);
+		const pending = session.executeBash("PI_LEFT_SESSION_MARK=kept");
+
+		await session.newSession();
+		hook.resolve(undefined);
+		await pending;
+		await session.switchSession(oldSessionFile);
+
+		const result = await session.executeBash('printf "[%s]" "$PI_LEFT_SESSION_MARK"');
+		expect(result.output).toBe("[]");
+	});
 
 	it("stores minimized bash output with the originating session", async () => {
 		const sessionDir = path.join(tempDir.path(), "sessions");

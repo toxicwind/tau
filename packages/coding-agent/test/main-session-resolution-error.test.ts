@@ -9,6 +9,8 @@ import { describe, expect, it, vi } from "bun:test";
 import * as fsp from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
+<<<<<<< ours — imports `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import { loadSessionFile } from "@oh-my-pi/pi-coding-agent/sess…`
 import type { Args } from "tau/cli/args";
 import type { Settings } from "tau/config/settings";
 import { createSessionManager, SessionResolutionError, writeStartupNotice } from "tau/main";
@@ -16,6 +18,19 @@ import * as sessionListingModule from "tau/session/session-listing";
 import { loadSessionFile } from "tau/session/session-loader";
 import { ForkSourceNotFoundError, SessionManager } from "tau/session/session-manager";
 import { FileSessionStorage } from "tau/session/session-storage";
+=======
+import type { Args } from "@oh-my-pi/pi-coding-agent/cli/args";
+import type { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import { createSessionManager, SessionResolutionError, writeStartupNotice } from "@oh-my-pi/pi-coding-agent/main";
+import {
+	collectPendingToolCalls,
+	TOOL_EXECUTION_START_CUSTOM_TYPE,
+} from "@oh-my-pi/pi-coding-agent/session/exit-diagnostics";
+import * as sessionListingModule from "@oh-my-pi/pi-coding-agent/session/session-listing";
+import { loadEntriesFromFile, loadSessionFile } from "@oh-my-pi/pi-coding-agent/session/session-loader";
+import { ForkSourceNotFoundError, SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
+import { FileSessionStorage } from "@oh-my-pi/pi-coding-agent/session/session-storage";
+>>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/main-session-resolution-error.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function buildResumeArgs(resume: string, sessionDir?: string): Args {
 	return {
@@ -25,6 +40,7 @@ function buildResumeArgs(resume: string, sessionDir?: string): Args {
 		fileArgs: [],
 		unknownFlags: new Map(),
 		unrecognizedFlags: [],
+		invalidFlagValues: [],
 	};
 }
 
@@ -36,6 +52,7 @@ function buildContinueArgs(message: string, sessionDir?: string): Args {
 		fileArgs: [],
 		unknownFlags: new Map(),
 		unrecognizedFlags: [],
+		invalidFlagValues: [],
 	};
 }
 function buildForkArgs(fork: string, noSession = false, sessionDir?: string): Args {
@@ -47,6 +64,7 @@ function buildForkArgs(fork: string, noSession = false, sessionDir?: string): Ar
 		fileArgs: [],
 		unknownFlags: new Map(),
 		unrecognizedFlags: [],
+		invalidFlagValues: [],
 	};
 }
 
@@ -198,6 +216,118 @@ describe("createSessionManager — missing session (#2084)", () => {
 			hint: undefined,
 		});
 	});
+	it.each(["path", "selector"] as const)(
+		"preserves an unknown started-tool outcome in a CLI --fork via %s",
+		async route => {
+			const cwd = await fsp.mkdtemp(path.join(os.tmpdir(), "omp-fork-live-tail-"));
+			const sessionDir = path.join(cwd, "sessions");
+			const source = path.join(sessionDir, "source.jsonl");
+			const id = "019ea530-0000-7000-0000-000000000000";
+			const timestamp = new Date().toISOString();
+			const sourceEntries = [
+				{ type: "session", version: 3, id, timestamp, cwd },
+				{
+					type: "message",
+					id: "m1",
+					parentId: null,
+					timestamp,
+					message: {
+						role: "assistant",
+						content: [{ type: "toolCall", id: "toolu_live", name: "bash", arguments: { command: "sleep 40" } }],
+						api: "anthropic-messages",
+						provider: "anthropic",
+						model: "claude",
+						stopReason: "toolUse",
+						timestamp: Date.now(),
+						usage: {
+							input: 10,
+							output: 5,
+							cacheRead: 0,
+							cacheWrite: 0,
+							totalTokens: 15,
+							cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
+						},
+					},
+				},
+				{
+					type: "custom",
+					id: "m2",
+					parentId: "m1",
+					timestamp,
+					customType: TOOL_EXECUTION_START_CUSTOM_TYPE,
+					data: { toolCallId: "toolu_live", toolName: "bash", startedAt: timestamp },
+				},
+			];
+			const sourceText = `${sourceEntries.map(entry => JSON.stringify(entry)).join("\n")}\n`;
+			await Bun.write(source, sourceText);
+			if (route === "selector") {
+				vi.spyOn(sessionListingModule, "resolveResumableSession").mockResolvedValue({
+					session: {
+						id,
+						path: source,
+						cwd,
+						title: "live parent",
+						created: new Date(0),
+						modified: new Date(0),
+						messageCount: 1,
+						size: 0,
+						firstMessage: "",
+						allMessagesText: "",
+					},
+					scope: "local",
+				});
+			}
+			try {
+				const forked = await createSessionManager(
+					buildForkArgs(route === "path" ? source : id, false, sessionDir),
+					cwd,
+					stubSettings,
+				);
+				if (!forked) throw new Error("Expected a persisted fork");
+				const branch = forked.getBranch();
+				expect(branch.some(entry => entry.type === "message" && entry.message.role === "assistant")).toBe(true);
+				expect(collectPendingToolCalls(branch)).toEqual([]);
+				expect(await Bun.file(source).text()).toBe(sourceText);
+
+				const resultEntry = branch.find(
+					entry =>
+						entry.type === "message" &&
+						entry.message.role === "toolResult" &&
+						entry.message.toolCallId === "toolu_live",
+				);
+				if (resultEntry?.type !== "message" || resultEntry.message.role !== "toolResult") {
+					throw new Error("expected the unknown tool result");
+				}
+				expect(resultEntry.message.isError).toBe(true);
+				expect(resultEntry.message).not.toHaveProperty("details");
+				expect(
+					resultEntry.message.content.some(
+						block => block.type === "text" && block.text.includes("may still be running this tool"),
+					),
+				).toBe(true);
+
+				const forkFile = forked.getSessionFile();
+				if (!forkFile) throw new Error("Expected a persisted fork file");
+				const persistedEntries = await loadEntriesFromFile(forkFile);
+				const forkHeader = persistedEntries.find(entry => entry.type === "session");
+				expect(forkHeader?.parentSession).toBe(id);
+				const persistedResult = persistedEntries.find(
+					entry =>
+						entry.type === "message" &&
+						entry.message.role === "toolResult" &&
+						entry.message.toolCallId === "toolu_live",
+				);
+				if (persistedResult?.type !== "message" || persistedResult.message.role !== "toolResult") {
+					throw new Error("expected the unknown result to be persisted");
+				}
+				expect(persistedResult.message.isError).toBe(true);
+				expect(persistedResult.message).not.toHaveProperty("details");
+			} finally {
+				vi.restoreAllMocks();
+				await fsp.rm(cwd, { recursive: true, force: true });
+			}
+		},
+	);
 	it("rejects --fork with missing path without writing a session (#11491)", async () => {
 		const cwd = await fsp.mkdtemp(path.join(os.tmpdir(), "tau-fork-missing-path-"));
 		const sessionDir = path.join(cwd, "sessions");
@@ -310,6 +440,8 @@ describe("createSessionManager — missing session (#2084)", () => {
 		}
 	});
 
+<<<<<<< ours — scope `it("propagates ENOTDIR on ordinary session lo...` in test_suite `createSessionManager — missing session (#2084)` (S+F, confidence: low)
+// refused_by: statement_fold · collision: `const cwd = await fsp.mkdtemp(path.join(os.tmpdir(), "omp-enotd…`
 	it("propagates ENOTDIR on ordinary session loads when throwIfMissing is false (#11491)", async () => {
 		const cwd = await fsp.mkdtemp(path.join(os.tmpdir(), "tau-enotdir-ordinary-"));
 		const regularFile = path.join(cwd, "file.txt");
@@ -323,6 +455,25 @@ describe("createSessionManager — missing session (#2084)", () => {
 			await fsp.rm(cwd, { recursive: true, force: true });
 		}
 	});
+=======
+	// Windows reports a path through a regular file as ENOENT, never ENOTDIR.
+	it.skipIf(process.platform === "win32")(
+		"propagates ENOTDIR on ordinary session loads when throwIfMissing is false (#11491)",
+		async () => {
+			const cwd = await fsp.mkdtemp(path.join(os.tmpdir(), "omp-enotdir-ordinary-"));
+			const regularFile = path.join(cwd, "file.txt");
+			await Bun.write(regularFile, "not a directory");
+			const enotdirChild = path.join(regularFile, "child.jsonl");
+			try {
+				await expect(loadSessionFile(enotdirChild)).rejects.toMatchObject({
+					code: "ENOTDIR",
+				});
+			} finally {
+				await fsp.rm(cwd, { recursive: true, force: true });
+			}
+		},
+	);
+>>>>>>> theirs — scope `it("propagates ENOTDIR on ordinary session lo...`
 
 	it("rejects --resume combined with --no-session instead of silently discarding it (#12008)", async () => {
 		await expect(

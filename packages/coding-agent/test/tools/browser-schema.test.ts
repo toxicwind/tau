@@ -1,8 +1,15 @@
-import { describe, expect, it } from "bun:test";
+import { afterEach, describe, expect, it, spyOn, vi } from "bun:test";
 import { createContext, runInContext } from "node:vm";
 import { Settings } from "tau/config/settings";
 import type { ToolSession } from "tau/sdk";
 import { createBrowserPrelude } from "tau/tools/browser";
+import { resolveWaitTimeout } from "@oh-my-pi/pi-coding-agent/tools/browser/op-timeouts";
+import { cfgBrowserEnabled } from "@oh-my-pi/pi-coding-agent/tools/browser/settings";
+import * as supervisor from "@oh-my-pi/pi-coding-agent/tools/browser/tab-supervisor";
+
+afterEach(() => {
+	vi.restoreAllMocks();
+});
 
 function makeSession(settings = Settings.isolated({ "browser.enabled": true })): ToolSession {
 	return {
@@ -17,11 +24,11 @@ function makeSession(settings = Settings.isolated({ "browser.enabled": true })):
 describe("browser prelude", () => {
 	it("tracks the live browser capability setting", () => {
 		const settings = Settings.isolated();
-		settings.set("browser.enabled", false);
+		cfgBrowserEnabled.set(settings, false);
 		const prelude = createBrowserPrelude(makeSession(settings));
 
 		expect(prelude.enabled?.()).toBe(false);
-		settings.set("browser.enabled", true);
+		cfgBrowserEnabled.set(settings, true);
 		expect(prelude.enabled?.()).toBe(true);
 	});
 
@@ -75,10 +82,54 @@ describe("browser prelude", () => {
 		]);
 	});
 
+	it("gives a direct wait helper the budget its explicit timeout needs (#17617)", async () => {
+		const budgets: number[] = [];
+		spyOn(supervisor, "runInTab").mockImplementation(async (_name, opts) => {
+			budgets.push(opts.timeoutMs);
+			return { displays: [], returnValue: true, screenshots: [] };
+		});
+		const effectiveWait = async (parameters: Record<string, unknown>, waitTimeout: number): Promise<number> => {
+			const session = makeSession();
+			await createBrowserPrelude(session).invoke(
+				{ action: "call", name: "docs", ...parameters },
+				{ session, toolCallId: "browser-call-budget" },
+			);
+			return resolveWaitTimeout(budgets.at(-1)!, waitTimeout);
+		};
+		const waitChain = [{ method: "waitForSelector", args: ["#closed", { timeout: 50_000 }] }];
+
+		// Eval's `tab.waitForSelector(sel, { timeout: 50000 })` used to stop at 29000ms.
+		expect(await effectiveWait({ chain: waitChain }, 50_000)).toBe(50_000);
+	});
+
+	it("preserves an infinite wait's bounded timeout through the rendered browser call", async () => {
+		let actualWaitMs: number | undefined;
+		spyOn(supervisor, "runInTab").mockImplementation(async (_name, opts) => {
+			const waitForSelector = (_selector: string, options: { timeout: number }): object => {
+				actualWaitMs = resolveWaitTimeout(opts.timeoutMs, options.timeout);
+				return {};
+			};
+			const tab = { waitForSelector };
+			const returnValue = await runInContext(`(async () => { ${opts.code} })()`, createContext({ tab }));
+			return { displays: [], returnValue, screenshots: [] };
+		});
+		const session = makeSession();
+		const call = async (chain: unknown[]): Promise<void> => {
+			await createBrowserPrelude(session).invoke(
+				{ action: "call", name: "docs", chain },
+				{ session, toolCallId: "browser-infinite-wait" },
+			);
+		};
+
+		await call([{ method: "waitForSelector", args: ["#closed", { timeout: Infinity }] }]);
+		expect(actualWaitMs).toBe(299_000);
+	});
+
 	it("owns actions and exposes tab handles instead of browser.run", async () => {
 		const calls: unknown[] = [];
 		const displayed: unknown[] = [];
 		const context = createContext({
+			__omp_log__: (_level: string, value: unknown) => displayed.push(value),
 			__tau_display__: (value: unknown) => displayed.push(value),
 			__tau_prelude__: async (name: string, parameters: unknown) => {
 				calls.push({ name, parameters });

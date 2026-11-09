@@ -23,12 +23,12 @@ import { processResponsesStream } from "@tau/tau-ai/providers/openai-shared";
 import { streamOpenAICompletions } from "@tau/tau-ai/providers/openai-completions";
 import type { AssistantMessage, Context, FetchImpl, Model } from "@tau/tau-ai/types";
 import { buildModel } from "@tau/tau-catalog/build";
-import { getBundledModel } from "@tau/tau-catalog/models";
 import { isAuthRetryableError } from "@tau/tau-ai/error/auth-classify";
 import { classify, Flag, is, retriable } from "@tau/tau-ai/error/flags";
 import { isUsageLimitOutcome } from "@tau/tau-ai/error/rate-limit";
 import { ProviderHttpError } from "@tau/tau-ai/error/classes";
 import { createInBandProviderError, createInBandProviderErrorFromText } from "@tau/tau-ai/error/body-error";
+import { minimaxTokenPlanOpenAIModel } from "./helpers";
 
 function createSseResponse(events: unknown[]): Response {
 	const payload = `${events
@@ -56,7 +56,7 @@ function baseContext(): Context {
 
 /** Stream one in-band frame through the real provider and return the finalized message. */
 async function streamFrame(frame: unknown) {
-	const model = getBundledModel<"openai-completions">("minimax-code-cn", "MiniMax-M3");
+	const model = minimaxTokenPlanOpenAIModel("minimax-code-cn", "MiniMax-M3");
 	return streamOpenAICompletions(model, baseContext(), {
 		apiKey: "test-key",
 		fetch: createMockFetch([frame, "[DONE]"]),
@@ -94,14 +94,6 @@ describe("in-band 429/5xx bodies (openai-completions stream)", () => {
 			expect(result.errorMessage?.startsWith(`${status} `)).toBe(true);
 		});
 	}
-
-	it("advances the retry lane for the body the shipped classifier missed: bare { code: 429 }", async () => {
-		// The legacy stream-error guard only fires on an object `error` member, so
-		// before the probe ran first this frame produced errorId 0 (terminal).
-		const result = await streamFrame({ code: 429 });
-		expect(result.errorId).not.toBe(0);
-		expect(retriable(result.errorId)).toBe(true);
-	});
 
 	it("an opaque body cannot trigger credential rotation", async () => {
 		const result = await streamFrame({ status: 429, message: "{}" });

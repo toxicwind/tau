@@ -385,6 +385,30 @@ describe("OpenAI Responses explicit prompt cache policy", () => {
 		expect(JSON.stringify(params.input)).not.toContain("prompt_cache_breakpoint");
 	});
 
+	it("maps long retention to the 12h lifetime instead of the legacy 24h field", () => {
+		const params = buildParams(
+			openAI56ResponsesModel,
+			historicalContext,
+			{ sessionId: "cache-key", cacheRetention: "long" },
+			undefined,
+		).params;
+
+		expect(params.prompt_cache_options).toEqual({ mode: "implicit", ttl: "12h" });
+		expect(params.prompt_cache_retention).toBeUndefined();
+		expect(JSON.stringify(params.input)).not.toContain("prompt_cache_breakpoint");
+	});
+
+	it("lets an explicit policy ttl override long retention", () => {
+		const params = buildParams(
+			openAI56ResponsesModel,
+			historicalContext,
+			{ sessionId: "cache-key", cacheRetention: "long", promptCache: { mode: "explicit", ttl: "30m" } },
+			undefined,
+		).params;
+
+		expect(params.prompt_cache_options).toEqual({ mode: "explicit", ttl: "30m" });
+	});
+
 	it("marks the latest eligible stable history block", () => {
 		const params = buildParams(
 			openAI56ResponsesModel,
@@ -747,23 +771,8 @@ describe("openai-responses cache affinity", () => {
 		expect(captured.body?.cache_control).toEqual({ type: "ephemeral", ttl: "1h" });
 	});
 
-	it("lets explicit headers override OpenRouter Responses defaults", async () => {
-		const captured = await captureOpenAIResponseHeaders(
-			{
-				headers: {
-					"HTTP-Referer": "https://example.test/",
-					"X-OpenRouter-Title": "Custom App",
-					"X-OpenRouter-Cache": "false",
-				},
-			},
-			openRouterResponsesModel,
-		);
-
-		expect(getHeader(captured.headers, "HTTP-Referer")).toBe("https://example.test/");
-		expect(getHeader(captured.headers, "X-OpenRouter-Title")).toBe("Custom App");
-		expect(getHeader(captured.headers, "X-OpenRouter-Cache")).toBe("false");
-	});
-
+<<<<<<< ours — scope `it("applies OpenRouter Responses model varian...` in test_suite `openai-responses cache affinity`, deleted in theirs (S+F, confidence: low)
+// refused_by: statement_fold · collision: none (no common ancestor text)
 	it("applies OpenRouter Responses model variants and provider routing to the body", async () => {
 		const routedModel: Model<"openai-responses"> = {
 			...openRouterResponsesModel,
@@ -782,6 +791,8 @@ describe("openai-responses cache affinity", () => {
 			allow_fallbacks: false,
 		});
 	});
+=======
+>>>>>>> theirs — scope `it("applies OpenRouter Responses model varian...` deleted in theirs · weave: run 'weave explain packages/ai/test/openai-responses-cache-affinity.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 	it("keeps OpenRouter session_id on values longer than OpenAI prompt cache keys", async () => {
 		const longSessionId = "s".repeat(100);

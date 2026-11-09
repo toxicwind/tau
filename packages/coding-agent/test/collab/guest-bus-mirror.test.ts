@@ -7,6 +7,8 @@ import type { InteractiveModeContext } from "tau/modes/types";
 import { AgentRegistry } from "tau/registry/agent-registry";
 import { TASK_SUBAGENT_LIFECYCLE_CHANNEL } from "tau/task/types";
 import { EventBus } from "tau/utils/event-bus";
+import * as fsp from "node:fs/promises";
+import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
 import { installInMemoryRelay, uninstallInMemoryRelay } from "./helpers/in-memory-relay";
 
 // The guest mirrors host EventBus traffic onto the local session and
@@ -26,7 +28,7 @@ function makeState(): Extract<CollabFrame, { t: "welcome" }>["state"] {
 function makeGuestContext(eventBus: EventBus): InteractiveModeContext {
 	const ctx = {
 		collabGuest: undefined as CollabGuestLink | undefined,
-		settings: { get: () => "" },
+		settings: Settings.isolated(),
 		sessionManager: {
 			getSessionFile: () => null,
 			getSessionName: () => "local session",
@@ -44,6 +46,7 @@ function makeGuestContext(eventBus: EventBus): InteractiveModeContext {
 			},
 		},
 		statusContainer: { clear: () => {} },
+		pendingShellContainer: { clear: () => {} },
 		pendingMessagesContainer: { clear: () => {} },
 		compactionQueuedMessages: [],
 		streamingComponent: undefined,
@@ -71,8 +74,15 @@ function makeGuestContext(eventBus: EventBus): InteractiveModeContext {
 		showError: () => {},
 		updateEditorTopBorder: () => {},
 		updateEditorBorderColor: () => {},
-		eventController: { handleEvent: () => Promise.resolve(), takeDisplaceableComponents: () => [] },
+		eventController: {
+			dispatchSessionEvent: () => Promise.resolve(),
+			takeDisplaceableComponents: () => [],
+			resetTranscriptAnchors: () => {},
+		},
 		syncRunningSubagentBadge: () => {},
+		setCollabGuest: (guest: InteractiveModeContext["collabGuest"]) => {
+			Object.assign(ctx, { collabGuest: guest });
+		},
 		eventBus,
 		subagentEventBus: eventBus,
 	} as unknown as InteractiveModeContext;
@@ -92,6 +102,7 @@ afterEach(() => {
 describe("collab guest bus mirror", () => {
 	it("emits an aliased bus frame exactly once", async () => {
 		const writeSpy = spyOn(Bun, "write").mockResolvedValue(0);
+		const renameSpy = spyOn(fsp, "rename").mockResolvedValue(undefined);
 		const roomId = "bus-mirror-room-1";
 		const roomKey = generateRoomKey();
 		const cryptoKey = await importRoomKey(roomKey);
@@ -151,6 +162,7 @@ describe("collab guest bus mirror", () => {
 		} finally {
 			hostSocket.close();
 			writeSpy.mockRestore();
+			renameSpy.mockRestore();
 			await guest.leave("test cleanup").catch(() => {});
 		}
 	});

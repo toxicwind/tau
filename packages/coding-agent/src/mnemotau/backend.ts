@@ -1,5 +1,7 @@
 import { rm } from "node:fs/promises";
 import * as path from "node:path";
+<<<<<<< ours — imports `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import { logger } from "@oh-my-pi/pi-utils";`
 import { type ApiKeyResolver, completeSimple, retryTransientCompletion } from "@tau/tau-ai";
 import { hostMatchesUrl } from "@tau/tau-catalog/hosts";
 import type { Mnemotau } from "@tau/tau-mnemotau";
@@ -7,9 +9,20 @@ import type { MnemotauLlmCompleteOptions } from "@tau/tau-mnemotau/core/runtime-
 import type * as MnemotauDiagnoseNs from "@tau/tau-mnemotau/diagnose";
 import type { DiagnosticSummary } from "@tau/tau-mnemotau/diagnose";
 import { logger } from "@tau/tau-utils";
+=======
+import { type ApiKeyResolver, completeSimple, retryTransientCompletion } from "@oh-my-pi/pi-ai";
+import { hostMatchesUrl } from "@oh-my-pi/pi-catalog/hosts";
+import { clampThinkingLevelForModel } from "@oh-my-pi/pi-catalog/model-thinking";
+import type { Mnemopi } from "@oh-my-pi/pi-mnemopi";
+import type { MnemopiLlmCompleteOptions } from "@oh-my-pi/pi-mnemopi/core/runtime-options";
+import type * as MnemopiDiagnoseNs from "@oh-my-pi/pi-mnemopi/diagnose";
+import type { DiagnosticSummary } from "@oh-my-pi/pi-mnemopi/diagnose";
+import { logger, prompt, withLoopPhase } from "@oh-my-pi/pi-utils";
+>>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/mnemotau/backend.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { ModelRegistry } from "../config/model-registry";
 import { roleCandidatePool } from "../config/model-roles";
 import { resolveRoleChain } from "../config/model-resolver";
+import { type JudgmentUsageLedger, journalJudgmentUsage } from "../judgment";
 import type {
 	MemoryBackend,
 	MemoryBackendSaveInput,
@@ -18,11 +31,19 @@ import type {
 	MemoryBackendStatus,
 	MemoryPromptPreparation,
 } from "../memory-backend/types";
+import { memoryToolRefs } from "../memory-backend/tool-names";
 import memoryConsolidationPrompt from "../prompts/system/memory-consolidation-system.md" with { type: "text" };
 import memoryExtractionPrompt from "../prompts/system/memory-extraction-system.md" with { type: "text" };
+import mnemopiInstructions from "../prompts/system/mnemopi-instructions.md" with { type: "text" };
 import type { AgentSession } from "../session/agent-session";
 import { tinyModelClient } from "../tiny/title-client";
+<<<<<<< ours — imports `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import { logger } from "@oh-my-pi/pi-utils";`
 import { shortenPath } from "@tau/tau-tui/render/render-utils";
+=======
+import { shortenPath } from "@oh-my-pi/pi-tui/render/render-utils";
+import { concreteThinkingLevel, shouldDisableReasoning, toReasoningEffort } from "@oh-my-pi/pi-tui/thinking";
+>>>>>>> theirs — imports `file_header` (F, confidence: medium)
 import {
 	loadMnemotauConfig,
 	type MnemotauBackendConfig,
@@ -30,6 +51,8 @@ import {
 	truncateApproxTokens,
 } from "./config";
 import {
+<<<<<<< ours — imports `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import { logger } from "@oh-my-pi/pi-utils";`
 	getMnemotauScopedBanks,
 	getMnemotauScopedDbPaths,
 	getMnemotauSessionState,
@@ -39,7 +62,23 @@ import {
 	requireMnemotau,
 	requireMnemotauCore,
 	setMnemotauSessionState,
+=======
+	getMnemopiScopedBanks,
+	getMnemopiScopedDbPaths,
+	getMnemopiSessionState,
+	loadMnemopi,
+	loadMnemopiCore,
+	type MnemopiBankStats,
+	MnemopiSessionState,
+	type MnemopiSessionStateApi,
+	requireMnemopi,
+	requireMnemopiCore,
+	setMnemopiSessionState,
+>>>>>>> theirs — imports `file_header` (F, confidence: medium)
 } from "./state";
+
+import { cfgMemoryBackend } from "../memory-backend/settings";
+import { cfgMnemopiInjectionTokenLimit } from "./settings";
 
 // `/diagnose` is the only user of this subpath; load it lazily alongside the
 // loaders in ./state to keep mnemotau off the CLI startup module graph.
@@ -52,6 +91,8 @@ async function loadMnemotauDiagnose(): Promise<typeof MnemotauDiagnoseNs> {
 	return mnemotauDiagnoseMod;
 }
 
+<<<<<<< ours — variable `STATIC_INSTRUCTIONS` (S+F, confidence: low)
+// refused_by: modify_delete_guard · collision: none (no common ancestor text)
 const STATIC_INSTRUCTIONS = [
 	"# Memory",
 	"This agent has local Mnemotau long-term memory.",
@@ -63,6 +104,8 @@ const STATIC_INSTRUCTIONS = [
 	"- Durable project facts, preferences, and decisions are retained automatically from completed turns.",
 	"",
 ].join("\n");
+=======
+>>>>>>> theirs — variable `STATIC_INSTRUCTIONS` (S+F, confidence: low)
 
 /** Prompt turns for one Mnemotau completion. */
 export interface MemoryCompletionInput {
@@ -85,6 +128,8 @@ export function resolveMemoryCompletionInput(
 	return { prompt };
 }
 
+<<<<<<< ours — function `installMnemopiState` (S+F, confidence: low)
+// refused_by: rename_vs_edit_guard · collision: `async function installMnemopiState(session: AgentSession, confi…` +1 more
 async function installMnemotauState(
 	session: AgentSession,
 	config: MnemotauBackendConfig,
@@ -100,11 +145,43 @@ async function installMnemotauState(
 		return state;
 	} catch (error) {
 		setMnemotauSessionState(session, undefined);
+=======
+/**
+ * Installs a session-owned Mnemopi state. `inherited` is the state of a session this
+ * one was forked from with its system prompt copied (`/tan`): that prompt already
+ * carries the parent's recall, so the fork starts with it delivered instead of
+ * recalling again and appending a duplicate block that breaks the shared cache prefix.
+ */
+async function installMnemopiState(
+	session: AgentSession,
+	config: MnemopiBackendConfig,
+	inherited?: MnemopiSessionStateApi,
+): Promise<MnemopiSessionState> {
+	const state = new MnemopiSessionState({
+		sessionId: session.sessionId,
+		config,
+		session,
+		hasRecalledForFirstTurn: inherited?.hasRecalledForFirstTurn,
+	});
+	state.lastRecallSnippet = inherited?.lastRecallSnippet;
+	const previous = setMnemopiSessionState(session, state);
+	await previous?.dispose();
+	try {
+		state.attachSessionListeners();
+		// Promote age-eligible working memory to episodic before the session's
+		// first write can TTL-trim unconsolidated retain/learn rows (#10770).
+		state.promoteEligibleWorkingMemory();
+		return state;
+	} catch (error) {
+		setMnemopiSessionState(session, undefined);
+>>>>>>> theirs — function `installMnemopiState` (S+F, confidence: low)
 		await state.dispose({ consolidate: false });
 		throw error;
 	}
 }
 
+<<<<<<< ours — variable `mnemopiBackend` (S+F, confidence: low)
+// refused_by: rename_vs_edit_guard · collision: `const config = await loadMnemopiConfigWithProviders(settings, a…` +11 more
 export const mnemotauBackend: MemoryBackend = {
 	id: "mnemotau",
 
@@ -334,14 +411,268 @@ export const mnemotauBackend: MemoryBackend = {
 	async preCompactionContext(messages, _settings, session): Promise<string | undefined> {
 		const state = getMnemotauSessionState(session);
 		return await state?.recallForCompaction(messages);
+=======
+export const mnemopiBackend: MemoryBackend = {
+	id: "mnemopi",
+
+	async start(options: MemoryBackendStartOptions): Promise<void> {
+		const { session, settings, agentDir, modelRegistry } = options;
+		const sessionId = session.sessionId;
+		if (!sessionId) return;
+
+		if (options.taskDepth > 0) {
+			const parent = getMnemopiSessionStateFromParent(options);
+			if (!parent) return;
+			const previous = setMnemopiSessionState(
+				session,
+				new MnemopiSessionState({
+					sessionId,
+					config: parent.config,
+					session,
+					aliasOf: parent,
+					hasRecalledForFirstTurn: true,
+				}),
+			);
+			await previous?.dispose();
+			return;
+		}
+
+		try {
+			const config = await loadMnemopiConfigWithProviders(
+				settings,
+				agentDir,
+				modelRegistry,
+				sessionId,
+				session.sessionManager,
+			);
+			await Promise.all([loadMnemopi(), loadMnemopiCore()]);
+			await installMnemopiState(session, config, getMnemopiSessionStateFromParent(options));
+		} catch (error) {
+			logger.warn("Mnemopi: backend startup failed; memory backend inert.", { error: String(error) });
+		}
+	},
+
+	async buildDeveloperInstructions(_agentDir, _cwd, settings, session): Promise<string | undefined> {
+		return withLoopPhase("mnemopi.recall", () => {
+			const state = getMnemopiSessionState(session);
+			const primary = state?.aliasOf ?? state;
+			const parts = [
+				prompt.render(mnemopiInstructions, { toolRefs: memoryToolRefs(session?.getXdevToolEntries()) }),
+			];
+			if (primary?.lastRecallSnippet) parts.push(primary.lastRecallSnippet);
+			const rendered = parts.join("\n\n").trim();
+			if (!rendered) return undefined;
+			return truncateApproxTokens(rendered, cfgMnemopiInjectionTokenLimit.get(settings));
+		});
+	},
+
+	async beforeAgentStartPrompt(session, promptText, signal): Promise<MemoryPromptPreparation | undefined> {
+		const state = getMnemopiSessionState(session);
+		const preparation = await state?.beforeAgentStartPrompt(promptText, signal);
+		if (!state || !preparation) return undefined;
+		return {
+			context: preparation.context,
+			notice: preparation.notice,
+			commit: () => getMnemopiSessionState(session) === state && preparation.commit(),
+		};
+	},
+
+	async clear(agentDir, _cwd, session): Promise<void> {
+		const previous = session ? setMnemopiSessionState(session, undefined) : undefined;
+		await previous?.dispose({ consolidate: false });
+		const config = previous?.config ?? (session ? loadMnemopiConfig(session.settings, agentDir) : undefined);
+		if (!config) return;
+		await loadMnemopiCore();
+		// Close the cached default Mnemopi instance so its SQLite handle doesn't
+		// keep the DB files locked on Windows when removeDbFiles tries to delete.
+		// Use the core module (already awaited via loadMnemopiCore above):
+		// requireMnemopi() throws "module not loaded" when clear() runs before the
+		// fire-and-forget start() has awaited loadMnemopi() (autolearn disabled, or
+		// taskDepth > 0). resetMemoryForTests is re-exported identically from core.
+		requireMnemopiCore().resetMemoryForTests();
+		await Bun.sleep(0);
+		await removeDbFiles(getMnemopiScopedDbPaths(config));
+		if (!session?.sessionId || previous?.aliasOf || cfgMemoryBackend.get(session.settings) !== "mnemopi") return;
+		try {
+			await Promise.all([loadMnemopi(), loadMnemopiCore()]);
+			await installMnemopiState(session, config);
+		} catch (error) {
+			logger.warn("Mnemopi: clear rehydrate failed; memory backend inert.", { error: String(error) });
+		}
+	},
+
+	async enqueue(agentDir, _cwd, session): Promise<void> {
+		try {
+			let state = getMnemopiSessionState(session);
+			if (!state && session?.sessionId) {
+				const config = await loadMnemopiConfigWithProviders(
+					session.settings,
+					agentDir,
+					session.modelRegistry,
+					session.sessionId,
+					session.sessionManager,
+				);
+				await Promise.all([loadMnemopi(), loadMnemopiCore()]);
+				state = await installMnemopiState(session, config);
+			}
+			await state?.consolidate({ full: true, retain: true });
+		} catch (error) {
+			logger.warn("Mnemopi: enqueue failed.", { error: String(error) });
+		}
+	},
+
+	async stats(agentDir, _cwd, session): Promise<string | undefined> {
+		await Promise.all([loadMnemopi(), loadMnemopiCore()]);
+		const banks = collectBankStats(agentDir, session);
+		if (banks.length === 0) return undefined;
+		return renderMnemopiStats(banks);
+	},
+
+	async diagnose(agentDir, _cwd, session): Promise<string | undefined> {
+		const state = getMnemopiSessionState(session);
+		const config = state?.config ?? (session ? loadMnemopiConfig(session.settings, agentDir) : undefined);
+		if (!config) return undefined;
+		const [{ inspectDatabase }] = await Promise.all([loadMnemopiDiagnose(), loadMnemopiCore()]);
+		const banks = getMnemopiScopedBanks(config);
+		const dbPaths = getMnemopiScopedDbPaths(config);
+		const summaries = withLoopPhase("mnemopi.stats", () =>
+			dbPaths.map((dbPath, index) => ({
+				bank: banks[index] ?? "unknown",
+				summary: inspectDatabase({ dbPath, initialize: false }),
+			})),
+		);
+		return renderMnemopiDiagnostics(summaries);
+	},
+
+	async status({ agentDir, session }): Promise<MemoryBackendStatus> {
+		const state = getMnemopiSessionState(session);
+		const primary = state?.aliasOf ?? state;
+		if (!primary) {
+			return {
+				backend: "mnemopi",
+				active: false,
+				writable: false,
+				searchable: false,
+				message: "Mnemopi backend is not initialised for this session.",
+			};
+		}
+
+		const banks = collectBankStats(agentDir, session);
+		if (banks.length === 0) {
+			return {
+				backend: "mnemopi",
+				active: false,
+				writable: false,
+				searchable: false,
+				message: "Mnemopi backend is configured but not initialised for this session.",
+			};
+		}
+		return summarizeMnemopiStatus(banks, session);
+	},
+
+	async search({ session }, query, options) {
+		const state = getMnemopiSessionState(session);
+		const primary = state?.aliasOf ?? state;
+		if (!primary) {
+			return {
+				backend: "mnemopi",
+				query,
+				count: 0,
+				items: [],
+				message: "Mnemopi backend is not initialised for this session.",
+			};
+		}
+		if (options?.signal?.aborted) {
+			return { backend: "mnemopi", query, count: 0, items: [], message: "Search aborted." };
+		}
+		const limit = clampLimit(options?.limit);
+		const results = (await primary.recallResultsScoped(query)).slice(0, limit);
+		if (options?.signal?.aborted) {
+			return { backend: "mnemopi", query, count: 0, items: [], message: "Search aborted." };
+		}
+		const items: MemoryBackendSearchItem[] = results.map(result => ({
+			id: result.id,
+			content: result.content,
+			source: result.source ?? undefined,
+			timestamp: result.timestamp ?? undefined,
+			score: result.score,
+		}));
+		return { backend: "mnemopi", query, count: items.length, items };
+	},
+
+	async save({ cwd, session }, input: MemoryBackendSaveInput) {
+		const state = getMnemopiSessionState(session);
+		const primary = state?.aliasOf ?? state;
+		if (!primary) {
+			return {
+				backend: "mnemopi",
+				stored: 0,
+				message: "Mnemopi backend is not initialised for this session.",
+			};
+		}
+		const content = input.content.trim();
+		if (!content) return { backend: "mnemopi", stored: 0, message: "Memory content is empty." };
+		let id: string;
+		try {
+			id = primary.rememberScoped(content, {
+				source: input.source || "coding-agent-memory-command",
+				importance: normalizeImportance(input.importance),
+				metadata: {
+					session_id: primary.sessionId,
+					cwd,
+					context: input.context ?? null,
+					operation: "memory.save",
+				},
+				scope: "bank",
+				extract: true,
+				extractEntities: true,
+				veracity: "stated",
+				memoryType: "fact",
+			});
+		} catch (error) {
+			const reason = error instanceof Error ? error.message : String(error);
+			return { backend: "mnemopi", stored: 0, ids: [], message: `Mnemopi did not store the memory: ${reason}` };
+		}
+		return { backend: "mnemopi", stored: 1, ids: [id] };
+	},
+
+	async preCompactionContext(messages, _settings, session, signal): Promise<string | undefined> {
+		const state = getMnemopiSessionState(session);
+		return await state?.recallForCompaction(messages, signal);
+>>>>>>> theirs — variable `mnemopiBackend` (S+F, confidence: low)
 	},
 };
 
+/**
+ * Stats of the session's scoped banks: through its live state (an alias's come from the
+ * parent's banks), else from stores opened for this read and closed again.
+ */
+function collectBankStats(agentDir: string, session: AgentSession | undefined): MnemopiBankStats[] {
+	const state = getMnemopiSessionState(session);
+	if (state) return withLoopPhase("mnemopi.open", () => state.getScopedStats());
+	if (!session) return [];
+	const config = loadMnemopiConfig(session.settings, agentDir);
+	const owned = withLoopPhase("mnemopi.open", () =>
+		getMnemopiScopedBanks(config).map(bank => ({ bank, memory: createStatsMemory(config, bank) })),
+	);
+	try {
+		return owned.map(({ bank, memory }) => ({ bank, stats: memory.getStats() }));
+	} finally {
+		for (const { memory } of owned) memory.close();
+	}
+}
+
+<<<<<<< ours — interface `MnemopiStatsTarget` (S+F, confidence: low)
+// refused_by: modify_delete_guard · collision: none (no common ancestor text)
 interface MnemotauStatsTarget {
 	bank: string;
 	memory: Mnemotau;
 }
+=======
+>>>>>>> theirs — interface `MnemopiStatsTarget` (S+F, confidence: low)
 
+<<<<<<< ours — function `createStatsTargets` (S+F, confidence: low)
+// refused_by: modify_delete_guard · collision: none (no common ancestor text)
 function createStatsTargets(
 	agentDir: string,
 	session: AgentSession | undefined,
@@ -361,6 +692,8 @@ function createStatsTargets(
 	}));
 	return { targets, owned: targets.map(target => target.memory) };
 }
+=======
+>>>>>>> theirs — function `createStatsTargets` (S+F, confidence: low)
 
 function createStatsMemory(config: MnemotauBackendConfig, bank: string): Mnemotau {
 	const providerOptions = config.providerOptions as Record<string, unknown>;
@@ -383,7 +716,8 @@ function resolveBankDbPath(config: MnemotauBackendConfig, bank: string): string 
 	const { BankManager } = requireMnemotauCore();
 	return new BankManager(path.dirname(config.dbPath)).getBankDbPath(bank);
 }
-
+<<<<<<< ours — function `dedupeStatsTargets` (S+F, confidence: low)
+// refused_by: modify_delete_guard · collision: none (no common ancestor text)
 function dedupeStatsTargets(targets: readonly MnemotauStatsTarget[]): MnemotauStatsTarget[] {
 	const seen = new Set<string>();
 	const unique: MnemotauStatsTarget[] = [];
@@ -394,7 +728,11 @@ function dedupeStatsTargets(targets: readonly MnemotauStatsTarget[]): MnemotauSt
 	}
 	return unique;
 }
+=======
+>>>>>>> theirs — function `dedupeStatsTargets` (S+F, confidence: low)
 
+<<<<<<< ours — function `renderMnemopiStats` (S+F, confidence: low)
+// refused_by: rename_vs_edit_guard · collision: `function renderMnemopiStats(targets: readonly MnemopiStatsTarge…`
 function renderMnemotauStats(targets: readonly MnemotauStatsTarget[]): string {
 	const lines = [
 		"# Mnemotau Memory Stats",
@@ -406,6 +744,18 @@ function renderMnemotauStats(targets: readonly MnemotauStatsTarget[]): string {
 		const stats = target.memory.getStats();
 		lines.push(
 			`| ${escapeMarkdownTableCell(target.bank)} | ${statCount(stats.beam.working_memory)} | ${statCount(
+=======
+function renderMnemopiStats(banks: readonly MnemopiBankStats[]): string {
+	const lines = [
+		"# Mnemopi Memory Stats",
+		"",
+		"| Bank | Working | Episodic | Triples | Last memory | Database |",
+		"|---|---:|---:|---:|---|---|",
+	];
+	for (const { bank, stats } of banks) {
+		lines.push(
+			`| ${escapeMarkdownTableCell(bank)} | ${statCount(stats.beam.working_memory)} | ${statCount(
+>>>>>>> theirs — function `renderMnemopiStats` (S+F, confidence: low)
 				stats.beam.episodic_memory,
 			)} | ${stats.beam.triples.total} | ${escapeMarkdownTableCell(stats.last_memory ?? "never")} | ${escapeMarkdownTableCell(shortenPath(stats.database))} |`,
 		);
@@ -413,6 +763,8 @@ function renderMnemotauStats(targets: readonly MnemotauStatsTarget[]): string {
 	return lines.join("\n");
 }
 
+<<<<<<< ours — function `summarizeMnemopiStatus` (S+F, confidence: low)
+// refused_by: rename_vs_edit_guard · collision: `targets: readonly MnemopiStatsTarget[],`
 function summarizeMnemotauStatus(
 	targets: readonly MnemotauStatsTarget[],
 	session: AgentSession | undefined,
@@ -440,6 +792,34 @@ function summarizeMnemotauStatus(
 		scope: primary?.config.scoping,
 		retainBank: primary?.getScopedRetainTarget().bank ?? targets[0]?.bank,
 		recallBanks: primary?.getScopedRecallTargets().map(target => target.bank) ?? targets.map(target => target.bank),
+=======
+function summarizeMnemopiStatus(
+	banks: readonly MnemopiBankStats[],
+	session: AgentSession | undefined,
+): MemoryBackendStatus {
+	let workingCount = 0;
+	let episodicCount = 0;
+	let tripleCount = 0;
+	let lastMemory: string | undefined;
+	let database: string | undefined;
+	for (const { stats } of banks) {
+		workingCount += statCount(stats.beam.working_memory);
+		episodicCount += statCount(stats.beam.episodic_memory);
+		tripleCount += stats.beam.triples.total;
+		lastMemory ??= stats.last_memory ?? undefined;
+		database ??= stats.database ? shortenPath(stats.database) : undefined;
+	}
+	const state = getMnemopiSessionState(session);
+	const primary = state?.aliasOf ?? state;
+	return {
+		backend: "mnemopi",
+		active: true,
+		writable: true,
+		searchable: true,
+		scope: primary?.config.scoping,
+		retainBank: primary?.getScopedRetainTarget().bank ?? banks[0]?.bank,
+		recallBanks: primary?.getScopedRecallTargets().map(target => target.bank) ?? banks.map(({ bank }) => bank),
+>>>>>>> theirs — function `summarizeMnemopiStatus` (S+F, confidence: low)
 		workingCount,
 		episodicCount,
 		tripleCount,
@@ -459,9 +839,16 @@ function normalizeImportance(value: number | undefined): number {
 	return Math.max(0, Math.min(1, value ?? 0.75));
 }
 
+<<<<<<< ours — function `renderMnemopiDiagnostics` (S, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 function renderMnemotauDiagnostics(entries: readonly { bank: string; summary: DiagnosticSummary }[]): string {
 	const lines = [
 		"# Mnemotau Memory Diagnostics",
+=======
+function renderMnemopiDiagnostics(entries: readonly { bank: string; summary: DiagnosticSummary }[]): string {
+	const lines = [
+		"# Mnemopi Memory Diagnostics",
+>>>>>>> theirs — function `renderMnemopiDiagnostics` (S, confidence: medium)
 		"",
 		"| Bank | Passed | Failed | Integrity | Database |",
 		"|---|---:|---:|---|---|",
@@ -492,6 +879,8 @@ function escapeMarkdownTableCell(value: string): string {
 	return value.replaceAll("|", "\\|").replaceAll("\n", " ");
 }
 
+<<<<<<< ours — function `loadMnemopiConfigWithProviders` (S+F, confidence: low)
+// refused_by: rename_vs_edit_guard · collision: `config.providerOptions = await resolveMnemopiProviderOptions(co…`
 async function loadMnemotauConfigWithProviders(
 	settings: MemoryBackendStartOptions["settings"],
 	agentDir: string,
@@ -500,6 +889,23 @@ async function loadMnemotauConfigWithProviders(
 ): Promise<MnemotauBackendConfig> {
 	const config = loadMnemotauConfig(settings, agentDir);
 	config.providerOptions = await resolveMnemotauProviderOptions(config, settings, modelRegistry, sessionId);
+=======
+async function loadMnemopiConfigWithProviders(
+	settings: MemoryBackendStartOptions["settings"],
+	agentDir: string,
+	modelRegistry: ModelRegistry,
+	sessionId: string,
+	usageLedger: Partial<JudgmentUsageLedger>,
+): Promise<MnemopiBackendConfig> {
+	const config = loadMnemopiConfig(settings, agentDir);
+	config.providerOptions = await resolveMnemopiProviderOptions(
+		config,
+		settings,
+		modelRegistry,
+		sessionId,
+		usageLedger,
+	);
+>>>>>>> theirs — function `loadMnemopiConfigWithProviders` (S+F, confidence: low)
 	return config;
 }
 
@@ -522,6 +928,8 @@ async function openrouterKeyResolver(
 	return modelRegistry.resolver("openrouter", { sessionId });
 }
 
+<<<<<<< ours — function `resolveMnemopiProviderOptions` (S+F, confidence: low)
+// refused_by: rename_vs_edit_guard · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 async function resolveMnemotauProviderOptions(
 	config: MnemotauBackendConfig,
 	settings: MemoryBackendStartOptions["settings"],
@@ -660,6 +1068,170 @@ async function resolveMnemotauProviderOptions(
 		};
 	} catch (error) {
 		logger.warn("Mnemotau: memory LLM resolution failed; continuing without LLM.", { error: String(error) });
+=======
+async function resolveMnemopiProviderOptions(
+	config: MnemopiBackendConfig,
+	settings: MemoryBackendStartOptions["settings"],
+	modelRegistry: ModelRegistry,
+	sessionId: string,
+	usageLedger: Partial<JudgmentUsageLedger>,
+): Promise<MnemopiProviderOptions> {
+	const base: MnemopiProviderOptions = {
+		noEmbeddings: config.providerOptions.noEmbeddings,
+		embeddingModel: config.providerOptions.embeddingModel,
+		embeddingApiUrl: config.providerOptions.embeddingApiUrl,
+		embeddingApiKey:
+			config.providerOptions.embeddingApiKey ??
+			(await openrouterKeyResolver(modelRegistry, sessionId, config.providerOptions.embeddingApiUrl)),
+		llm: false,
+	};
+
+	if (config.llmMode === "none") return base;
+
+	// An explicitly configured external Mnemopi endpoint remains authoritative;
+	// role selection only supplies the normal managed-model path.
+	if (config.llmMode === "remote") {
+		return {
+			...base,
+			llm: {
+				baseUrl: config.llmBaseUrl,
+				apiKey:
+					config.llmApiKey ??
+					(config.llmBaseUrl === undefined
+						? undefined
+						: await openrouterKeyResolver(modelRegistry, sessionId, config.llmBaseUrl)),
+				model: config.llmModel,
+			},
+		};
+	}
+
+	try {
+		const candidates = resolveRoleChain("memory", settings, roleCandidatePool("memory", settings, modelRegistry));
+		const primary = candidates[0]?.model;
+		if (!primary) {
+			logger.warn("Mnemopi: llmMode=smol but no memory model resolved; continuing without LLM.");
+			return base;
+		}
+
+		const complete = async (prompt: string, opts?: MnemopiLlmCompleteOptions): Promise<string | null> => {
+			// journalJudgmentUsage snapshots the session id. /new, fork, and session
+			// switch keep this function, so bind inside each call. An in-flight call
+			// keeps the callback it already created and still journals to its start.
+			const { onUsage, request, signal } = {
+				onUsage: journalJudgmentUsage(usageLedger),
+				request: resolveMemoryCompletionInput(prompt, opts),
+				signal:
+					typeof opts?.timeout === "number" && Number.isFinite(opts.timeout) && opts.timeout > 0
+						? AbortSignal.timeout(opts.timeout)
+						: undefined,
+			};
+
+			for (const { model, thinkingLevel } of candidates) {
+				if (signal?.aborted) return null;
+				try {
+					if (model.api === "local-inference") {
+						const result = await tinyModelClient.complete(model.id, request.prompt, {
+							maxTokens: opts?.maxTokens,
+							systemPrompt: request.systemPrompt,
+							signal,
+						});
+						if (result !== null) return result;
+						if (signal?.aborted) return null;
+						logger.warn("Mnemopi: local memory completion failed; trying the next configured fallback.", {
+							provider: model.provider,
+							model: model.id,
+						});
+						continue;
+					}
+
+					const hasApiKey = await modelRegistry.getApiKey(model, sessionId);
+					if (!hasApiKey) {
+						logger.warn("Mnemopi: memory completion model has no current API key; trying the next fallback.", {
+							provider: model.provider,
+							model: model.id,
+						});
+						continue;
+					}
+					// `auto` has no per-request classifier here, so it sends no effort, like an omitted suffix.
+					const level = concreteThinkingLevel(thinkingLevel);
+					const message = await retryTransientCompletion(
+						() =>
+							withLoopPhase("mnemopi.extract", () =>
+								completeSimple(
+									model,
+									{
+										...(request.systemPrompt ? { systemPrompt: [request.systemPrompt] } : {}),
+										messages: [{ role: "user", content: request.prompt, timestamp: Date.now() }],
+									},
+									{
+										apiKey: modelRegistry.resolver(model, sessionId),
+										sessionId,
+										maxTokens: opts?.maxTokens,
+										temperature: opts?.temperature,
+										reasoning: clampThinkingLevelForModel(model, toReasoningEffort(level)),
+										disableReasoning: shouldDisableReasoning(level) ? true : undefined,
+										signal,
+										onAttempt: message =>
+											onUsage?.({
+												purpose: "memory",
+												role: "memory",
+												api: model.api,
+												provider: model.provider,
+												model: model.id,
+												usage: message.usage,
+												stopReason: message.stopReason,
+												errorMessage: message.errorMessage,
+											}),
+									},
+								),
+							),
+						{ provider: model.provider, signal },
+					);
+					if (message.stopReason === "aborted" || signal?.aborted) return null;
+					if (message.stopReason === "error") {
+						logger.warn("Mnemopi: memory completion model failed; trying the next configured fallback.", {
+							provider: model.provider,
+							model: model.id,
+							error: message.errorMessage,
+						});
+						continue;
+					}
+					return message.content
+						.filter(
+							(block): block is Extract<(typeof message.content)[number], { type: "text" }> =>
+								block.type === "text",
+						)
+						.map(block => block.text)
+						.join("\n")
+						.trim();
+				} catch (error) {
+					if (signal?.aborted) return null;
+					logger.warn("Mnemopi: memory completion model threw; trying the next configured fallback.", {
+						provider: model.provider,
+						model: model.id,
+						error: error instanceof Error ? error.message : String(error),
+					});
+				}
+			}
+			return null;
+		};
+
+		return {
+			...base,
+			llm:
+				primary.api === "local-inference"
+					? {
+							complete,
+							// No `extractionPrompt`: resolveMemoryCompletionInput supplies the
+							// instructions as a system turn for every extraction call, so anything
+							// rendered here would be built in code and then discarded.
+							consolidationPrompt: memoryConsolidationPrompt,
+						}
+					: complete,
+		};
+	} catch (error) {
+		logger.warn("Mnemopi: memory LLM resolution failed; continuing without LLM.", { error: String(error) });
+>>>>>>> theirs — function `resolveMnemopiProviderOptions` (S+F, confidence: low)
 		return base;
 	}
 }
@@ -668,6 +1240,14 @@ function getMnemotauSessionStateFromParent(options: MemoryBackendStartOptions): 
 	const parent = options.parentMnemotauSessionState;
 	return parent?.aliasOf ?? parent;
 }
+<<<<<<< ours — function `getMnemopiSessionStateFromParent` (S+F, confidence: low)
+// refused_by: modify_delete_guard · collision: none (no common ancestor text)
+=======
+function getMnemopiSessionStateFromParent(options: MemoryBackendStartOptions): MnemopiSessionStateApi | undefined {
+	const parent = options.parentMnemopiSessionState;
+	return parent?.aliasOf ?? parent;
+}
+>>>>>>> theirs — function `getMnemopiSessionStateFromParent` (S+F, confidence: low)
 
 export function getMnemotauDbDirForTests(session: AgentSession): string | undefined {
 	const state = getMnemotauSessionState(session);

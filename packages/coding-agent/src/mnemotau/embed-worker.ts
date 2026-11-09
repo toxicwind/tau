@@ -1,4 +1,6 @@
 /**
+<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: `* Mnemopi local-embeddings worker. Loaded inside the dedicated …` +2 more
  * Mnemotau local-embeddings worker. Loaded inside the dedicated subprocess
  * spawned by `embed-client.ts` (re-entered through the agent CLI's hidden
  * `__tau_worker_mnemotau_embed` selector). The whole point of this module is
@@ -7,6 +9,16 @@
  * parent `SIGKILL`s us on shutdown so the destructor that crashes Bun on
  * Windows shutdown (issue #3031, mnemotau sibling of #1606/#1607) never runs
  * in either process.
+=======
+ * Mnemopi local-embeddings worker: the onnxruntime child of the machine-shared
+ * embedding server (`embed-server.ts`), re-entered through the agent CLI's
+ * hidden `__omp_worker_mnemopi_embed` selector. The whole point of this module
+ * is that `loadFastembed()` — and therefore `onnxruntime-node`'s NAPI
+ * constructor + finalizer — only ever runs in this child address space. The
+ * server `SIGKILL`s us on wedge, idle exit, and shutdown so the destructor
+ * that crashes Bun on Windows shutdown (issue #3031, mnemopi sibling of
+ * #1606/#1607) never runs in any process.
+>>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/mnemotau/embed-worker.ts' for per-hunk detail, 'weave check' to verify your resolution
  */
 
 import { defaultLocalModelInitializer, type StandardEmbeddingModel } from "@tau/tau-mnemotau/core";

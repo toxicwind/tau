@@ -27,10 +27,20 @@ Webhook → durable queue → async dispatcher → per-issue git worktree → ta
 
 ## Development Commands
 
+<<<<<<< ours — scope `Task runner is `bun` against the **monorepo r...` in heading `Development Commands` (S, confidence: medium)
+// refused_by: statement_fold · collision: `Task runner is `bun` against the **monorepo root** `package.jso…`
 Task runner is `bun` against the **monorepo root** `package.json`. roboomp itself no longer ships a `package.json`; every recipe lives at the root under the `robtau:*` namespace. Local venv (no docker): `bun run robtau:install` runs `pip install -e 'python/robtau[dev]'`. From there:
+=======
+Task runner is `bun` against the **monorepo root** `package.json`. roboomp itself no longer ships a `package.json`; every recipe lives at the root under the `robomp:*` namespace. Local venv (no docker): `bun run robomp:install` runs `pip install -e sdk/python/omp-rpc -e 'python/robomp[dev]'` (the local `omp-rpc` is not on the package index). From there:
+>>>>>>> theirs — scope `Task runner is `bun` against the **monorepo r...` · weave: run 'weave explain python/robtau/AGENTS.md' for per-hunk detail, 'weave check' to verify your resolution
 
 ```
+<<<<<<< ours — scope `bun run test:py                   # pytest -x...` in heading `Development Commands` (S, confidence: medium)
+// refused_by: statement_fold · collision: `bun run test:py                   # pytest -x python/omp-rpc/te…`
 bun run test:py                   # pytest -x python/tau-rpc/tests python/robtau/tests
+=======
+bun run test:py                   # pytest -x sdk/python/omp-rpc/tests python/robomp/tests
+>>>>>>> theirs — scope `bun run test:py                   # pytest -x...`
 bun run robtau:test:integration   # ROBTAU_INTEGRATION=1, requires tau on PATH
 bun run robtau:serve              # python -m robtau serve on the host
 ```
@@ -108,7 +118,12 @@ Lint + format: TypeScript via Biome (config in `biome.json`), Python via Ruff (c
 - **Python**: 3.11+ source target, 3.12 in container. Setuptools src layout (`pyproject.toml` `[tool.setuptools] package-dir = { "" = "src" }`).
 - **Package manager**: `pip` only. No poetry / uv / pdm files; don't introduce one.
 - **Task runner**: `bun` (root `package.json` `scripts`). Always reach for an existing `bun run` recipe before invoking `docker compose` or `pytest` directly.
+<<<<<<< ours — scope `- **Container runtime**: Docker Compose v2. T...` in heading `Runtime/Tooling Preferences` (S, confidence: medium)
+// refused_by: statement_fold · collision: `- **Container runtime**: Docker Compose v2. The image embeds Bu…`
 - **Container runtime**: Docker Compose v2. The image embeds Bun 1.3.14 + a rustup launcher and exposes `tau` via a `/usr/local/bin/tau` shim; `ROBTAU_OMP_COMMAND=tau` should not need changing.
+=======
+- **Container runtime**: Docker Compose v2. The image embeds Bun 1.4.4 + a rustup launcher and exposes `omp` via a `/usr/local/bin/omp` shim; `ROBOMP_OMP_COMMAND=omp` should not need changing.
+>>>>>>> theirs — scope `- **Container runtime**: Docker Compose v2. T...`
 - **Required env** (set in `.env`, see `.env.example`): `GITHUB_WEBHOOK_SECRET`, `ROBTAU_BOT_LOGIN`, `ROBTAU_GIT_AUTHOR_NAME`, `ROBTAU_GIT_AUTHOR_EMAIL`, `ROBTAU_REPO_ALLOWLIST`, plus model knobs (`ROBTAU_MODEL`, `ROBTAU_THINKING`, optional `ROBTAU_PROVIDER`) and rate-limit / concurrency / timeout overrides. Set `ROBTAU_BOT_LOGIN` to the lowercase mention handle (`roboomp` in production, no leading `@` or `[bot]`; config normalizes common variants). `ROBTAU_MAINTAINER_LOGINS` is optional comma-separated bare logins (`@`/`[bot]` optional, case-insensitive) for non-owner implementation authorizers. **GitHub auth is mode-exclusive**: either set `ROBTAU_GH_PROXY_URL` + `ROBTAU_GH_PROXY_HMAC_KEY` (gh-proxy mode; PAT lives only in the sidecar container — the bundled compose default), or set `GITHUB_TOKEN` directly (single-process PAT mode). `Settings._validate_proxy_or_pat` rejects a `.env` that sets both.
 - **PI_ROOT resolution**: roboomp lives inside the tau monorepo at `python/robtau/`. `bun run tau:image` builds the parent monorepo (`../..`) as its docker build context to produce `tau/tau:dev`; `docker-compose.yml` extends that image via `TAU_BASE` and mounts the same parent path read-only at `/work/pi` for the orchestrator to see live source. Override `PI_ROOT` only when pointing the build/mount at a different tau checkout. Inside the container the path is always `/work/pi`. Build invalidation stays bounded: Python-only edits in roboomp never trigger a natives recompile.
 - **Forbidden**: no docker-in-docker, no extra service containers, no new background workers outside `WorkerPool`. The container itself is the isolation boundary; per-issue isolation is the git worktree.

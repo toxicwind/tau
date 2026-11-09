@@ -16,10 +16,20 @@ import {
 	type OAuthAccess,
 	withAuth,
 	withOAuthAccess,
+<<<<<<< ours — imports `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import { parseCloudflareAiGatewayCredential } from "@oh-my-pi/p…` +1 more
 } from "@tau/tau-ai";
 import { parseCloudflareAiGatewayCredential } from "@tau/tau-catalog/wire/cloudflare-ai-gateway";
 import { getAntigravityUserAgent, getGeminiCliHeaders } from "@tau/tau-catalog/wire/gemini-headers";
 import { fetchWithRetry, USER_AGENT } from "@tau/tau-utils";
+=======
+} from "@oh-my-pi/pi-ai";
+import { clampThinkingLevelForModel, resolveWireModelId } from "@oh-my-pi/pi-catalog/model-thinking";
+import { parseCloudflareCredential } from "@oh-my-pi/pi-catalog/wire/cloudflare";
+import { getAntigravityHeaders, getGeminiCliHeaders } from "@oh-my-pi/pi-catalog/wire/gemini-headers";
+import { type ConfiguredThinkingLevel, concreteThinkingLevel, toReasoningEffort } from "@oh-my-pi/pi-tui/thinking";
+import { fetchWithRetry, USER_AGENT } from "@oh-my-pi/pi-utils";
+>>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/web/search/providers/gemini.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 import type { SearchCitation, SearchResponse, SearchSource } from "../types";
 import type { ModelRegistry } from "../../../config/model-registry";
@@ -75,6 +85,7 @@ export interface GeminiSearchParams extends GeminiToolParams {
 	timeoutMs?: number;
 	authStorage: AuthStorage;
 	model: Model<Api>;
+	thinkingLevel?: ConfiguredThinkingLevel;
 	modelRegistry: ModelRegistry;
 	sessionId?: string;
 	fetch?: FetchImpl;
@@ -387,11 +398,12 @@ async function callGeminiSearch(
 	timeoutMs: number | undefined,
 ): Promise<GeminiSearchResult> {
 	const endpoint = baseUrl.replace(/\/+$/, "");
-	const headers = auth.isAntigravity ? { "User-Agent": getAntigravityUserAgent() } : getGeminiCliHeaders();
+	const headers = auth.isAntigravity
+		? getAntigravityHeaders()
+		: { Accept: "text/event-stream", ...getGeminiCliHeaders() };
 
 	const requestMetadata = auth.isAntigravity
 		? {
-				requestType: "agent",
 				userAgent: "antigravity",
 				requestId: `agent-${crypto.randomUUID()}`,
 			}
@@ -442,7 +454,6 @@ async function callGeminiSearch(
 			...configuredHeaders,
 			Authorization: `Bearer ${auth.accessToken}`,
 			"Content-Type": "application/json",
-			Accept: "text/event-stream",
 			...headers,
 		},
 		body: JSON.stringify(requestBody),
@@ -551,7 +562,12 @@ async function callGeminiDeveloperSearch(
  * Executes a web search using Google Gemini with Google Search grounding.
  */
 export async function searchGemini(params: GeminiSearchParams): Promise<SearchResponse> {
-	const selectedModel = params.model.id;
+	// Clamp like chat does so an unsupported level (`:xhigh` on a high-capped
+	// family) lands on the nearest routed tier instead of the default wire id.
+	const selectedModel = resolveWireModelId(
+		params.model,
+		clampThinkingLevelForModel(params.model, toReasoningEffort(concreteThinkingLevel(params.thinkingLevel))),
+	);
 	// Gemini's googleSearch grounding forwards the query to Google Search, which
 	// understands the classic operator set natively. Normalize directive aliases
 	// (domain: → site:, since: → after:, …) to canonical Google forms; leave
@@ -606,9 +622,7 @@ export async function searchGemini(params: GeminiSearchParams): Promise<SearchRe
 			keyOrResolver,
 			async storedApiKey => {
 				const configuredHeaders = await params.modelRegistry.resolveModelHeaders(params.model, params.signal);
-				const apiKey = endpoint.isCloudflareGateway
-					? parseCloudflareAiGatewayCredential(storedApiKey)?.token
-					: storedApiKey;
+				const apiKey = endpoint.isCloudflareGateway ? parseCloudflareCredential(storedApiKey)?.token : storedApiKey;
 				if (!apiKey) {
 					throw new SearchProviderError("gemini", "Selected Gemini credential is empty", 401);
 				}
@@ -694,6 +708,7 @@ export class GeminiProvider extends SearchProvider {
 			timeoutMs: params.timeoutMs,
 			authStorage: params.authStorage,
 			model: params.model,
+			thinkingLevel: params.thinkingLevel,
 			modelRegistry: params.modelRegistry,
 			sessionId: params.sessionId,
 			fetch: params.fetch,

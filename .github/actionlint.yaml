@@ -1,6 +1,19 @@
+<<<<<<< ours — chunk `(preamble)` (T, confidence: high)
+# refused_by: merge_ladder_exhausted · collision: `# runner scale set (infra/docs/04-arc-and-caching.md) so `runs-…`
 # actionlint only knows GitHub-hosted labels; register the self-hosted ARC
 # runner scale set (infra/docs/04-arc-and-caching.md) so `runs-on: tau-kata`
 # lints clean.
+=======
+# actionlint only knows GitHub-hosted labels; register the vmon runner labels
+# (infra/docs/01-vmon-runners.md) so `runs-on: vmon-large/from=omp-ci` lints
+# clean.
+>>>>>>> theirs — chunk `(preamble)` (T, confidence: high) · weave: run 'weave explain .github/actionlint.yaml' for per-hunk detail, 'weave check' to verify your resolution
 self-hosted-runner:
    labels:
+      - vmon-large/from=omp-ci
+<<<<<<< ours — scope `labels:` in section `self-hosted-runner`, deleted in theirs (S+F, confidence: low)
+# refused_by: statement_fold · collision: none (no common ancestor text)
+   labels:
       - tau-kata
+=======
+>>>>>>> theirs — scope `labels:` deleted in theirs

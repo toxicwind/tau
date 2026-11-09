@@ -1,5 +1,11 @@
+<<<<<<< ours — interstitial `file_header` (S, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import { $env, isRecord, logger } from "@oh-my-pi/pi-utils";`
 import type { TSchema } from "@tau/tau-ai";
 import { $env, isRecord, logger } from "@tau/tau-utils";
+=======
+import type { TSchema } from "@oh-my-pi/pi-ai";
+import { $env, isRecord, logger, tryParseJson } from "@oh-my-pi/pi-utils";
+>>>>>>> theirs — interstitial `file_header` (S, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/exa/mcp-client.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { CustomTool, CustomToolResult } from "../extensibility/custom-tools/types";
 import { type CallMcpOptions, callMCP } from "../mcp/json-rpc";
 import type { ExaSearchResponse, MCPTool, MCPToolWrapperConfig } from "./types";
@@ -34,14 +40,6 @@ function toolsFromMcpResult(result: unknown): MCPTool[] {
 	return result.tools.filter(isMcpTool);
 }
 
-function parseJsonContent(text: string): unknown | null {
-	try {
-		return JSON.parse(text);
-	} catch {
-		return null;
-	}
-}
-
 /**
  * Normalize tools/call payloads across MCP servers.
  *
@@ -50,7 +48,7 @@ function parseJsonContent(text: string): unknown | null {
  * - structured payload under result.structuredContent / result.data / result.result
  * - JSON payload embedded as text in result.content[]
  */
-function normalizeMcpToolPayload(payload: unknown): unknown {
+export function normalizeMcpToolPayload(payload: unknown): unknown {
 	const candidates: unknown[] = [];
 	const root = asRecord(payload);
 
@@ -67,7 +65,7 @@ function normalizeMcpToolPayload(payload: unknown): unknown {
 				if (!part) continue;
 				const text = part.text;
 				if (typeof text !== "string" || text.trim().length === 0) continue;
-				const parsed = parseJsonContent(text);
+				const parsed = tryParseJson(text);
 				if (parsed !== null) candidates.push(parsed);
 			}
 		}

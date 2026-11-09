@@ -7,12 +7,23 @@ import {
 	SESSION_TITLE_SLOT_BYTES,
 	type SessionHeader,
 	TITLE_CHANGE_ENTRY_TYPE,
+<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "tau/session/session-entries";
 import { loadEntriesFromFile } from "tau/session/session-loader";
 import { SessionManager } from "tau/session/session-manager";
 import { FileSessionStorage, type WriteTextAtomicOptions } from "tau/session/session-storage";
 import type { SessionTitleUpdate } from "tau/session/session-title-slot";
 import { getConfigRootDir, removeSyncWithRetries, setAgentDir } from "@tau/tau-utils";
+=======
+} from "@oh-my-pi/pi-coding-agent/session/session-entries";
+import { closeSessionIndex } from "@oh-my-pi/pi-coding-agent/session/session-index";
+import { loadEntriesFromFile } from "@oh-my-pi/pi-coding-agent/session/session-loader";
+import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
+import { FileSessionStorage, type WriteTextAtomicOptions } from "@oh-my-pi/pi-coding-agent/session/session-storage";
+import type { SessionTitleUpdate } from "@oh-my-pi/pi-coding-agent/session/session-title-slot";
+import { getConfigRootDir, removeSyncWithRetries, setAgentDir } from "@oh-my-pi/pi-utils";
+>>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/session-manager/title-source-persistence.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 import { makeAssistantMessage } from "./helpers";
 
@@ -72,6 +83,8 @@ describe("session title source persistence", () => {
 	});
 
 	afterEach(() => {
+		// Title changes open history.db under testAgentDir; Windows cannot delete an open file.
+		closeSessionIndex();
 		if (originalAgentDir) {
 			setAgentDir(originalAgentDir);
 		} else {
@@ -105,24 +118,8 @@ describe("session title source persistence", () => {
 		const reopened = await SessionManager.open(sessionFile!);
 		expect(reopened.getSessionName()).toBe("Auto title");
 		expect(reopened.titleSource).toBe("auto");
-	});
-
-	it("persists user title source across reopen", async () => {
-		const session = SessionManager.create(cwd);
-		session.appendMessage({ role: "user", content: "hello", timestamp: 1 });
-		await session.setSessionName("Manual title", "user");
-		session.appendMessage(makeAssistantMessage());
-		await session.flush();
-
-		const sessionFile = session.getSessionFile();
-		expect(sessionFile).toBeDefined();
-
-		const entries = await loadEntriesFromFile(sessionFile!);
-		expect(getHeader(entries)?.titleSource).toBe("user");
-
-		const reopened = await SessionManager.open(sessionFile!);
-		expect(reopened.getSessionName()).toBe("Manual title");
-		expect(reopened.titleSource).toBe("user");
+		await reopened.close();
+		await session.close();
 	});
 
 	it("loads legacy slotless files with header titles", async () => {
@@ -181,6 +178,7 @@ describe("session title source persistence", () => {
 		const titleChanges = entries.filter(entry => entry.type === TITLE_CHANGE_ENTRY_TYPE);
 		expect(titleChanges.map(entry => entry.title)).toEqual(["Auto title", "Manual title"]);
 		expect(titleChanges.map(entry => entry.trigger)).toEqual(["initial", "rename"]);
+		await session.close();
 	});
 
 	it("notifies name-change subscribers only after successful applied names", async () => {

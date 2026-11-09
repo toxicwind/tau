@@ -1,10 +1,18 @@
 import * as path from "node:path";
+<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: `import { DEFAULT_STREAM_URL, STREAM_TITLE_MAX } from "@oh-my-pi…`
 import { DEFAULT_STREAM_URL, STREAM_TITLE_MAX } from "@tau/tau-wire";
 import { CliUsageError, Command, Flags } from "@tau/tau-utils/cli";
+=======
+import { STREAM_TITLE_MAX } from "@oh-my-pi/pi-wire";
+import { CliUsageError, Command, Flags } from "@oh-my-pi/pi-utils/cli";
+>>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/commands/stream.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { streamHelp as commandHelp } from "../cli/command-help";
 import { Settings } from "../config/settings";
 import { StencilCredential } from "../stencil/credential";
 import { resolveStreamUrls, runStreamConsole, type StreamUrls } from "../stream/streamer";
+
+import { cfgStreamServerUrl } from "../stream/settings";
 
 export default class Stream extends Command {
 	static description = commandHelp.description;
@@ -31,7 +39,7 @@ export default class Stream extends Command {
 		const settings = await Settings.loadReadOnly({ cwd });
 		let urls: StreamUrls;
 		try {
-			urls = resolveStreamUrls(flags.server ?? settings.get("stream.serverUrl") ?? DEFAULT_STREAM_URL);
+			urls = resolveStreamUrls(flags.server ?? cfgStreamServerUrl.get(settings));
 		} catch (error) {
 			throw new CliUsageError(error instanceof Error ? error.message : String(error));
 		}

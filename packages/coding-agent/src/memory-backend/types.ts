@@ -9,8 +9,14 @@
 import type { AgentMessage } from "@tau/tau-agent-core";
 import type { ModelRegistry } from "../config/model-registry";
 import type { Settings } from "../config/settings";
+<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import type { MnemopiSessionState } from "../mnemopi/state";`
 import type { HindsightSessionState } from "../hindsight/state";
 import type { MnemotauSessionState } from "../mnemotau/state";
+=======
+import type { HindsightSessionStateApi } from "../hindsight/state";
+import type { MnemopiSessionStateApi } from "../mnemopi/state";
+>>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/memory-backend/types.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { AgentSession } from "../session/agent-session";
 
 export type MemoryBackendId = "off" | "local" | "hindsight" | "mnemotau" | "sharpshooter";
@@ -88,13 +94,24 @@ export interface MemoryBackendStartOptions {
 	modelRegistry: ModelRegistry;
 	agentDir: string;
 	taskDepth: number;
-	parentHindsightSessionState?: HindsightSessionState;
+	parentHindsightSessionState?: HindsightSessionStateApi;
 	parentMnemotauSessionState?: MnemotauSessionState;
+<<<<<<< ours — scope `parentMnemopiSessionState` in interface `MemoryBackendStartOptions`, deleted in ours (S, confidence: medium)
+// refused_by: container_member · collision: none (no common ancestor text)
+=======
+	parentMnemopiSessionState?: MnemopiSessionStateApi;
+>>>>>>> theirs — scope `parentMnemopiSessionState` deleted in ours
 }
 
 /** A successful recall, including an empty result, staged until user-turn delivery. */
 export interface MemoryPromptPreparation {
 	context?: string;
+	/**
+	 * Model-facing note delivered with this turn's user message, e.g. what changed in the
+	 * memories a reused recall holds. Persisted in the transcript as a hidden custom message
+	 * whose `details` carry the backend's bookkeeping, so both land only once delivered.
+	 */
+	notice?: { content: string; details: unknown };
 	/** Commit synchronously after delivery validation; false rejects lost ownership without state writes. */
 	commit(): boolean;
 }
@@ -114,9 +131,11 @@ export interface MemoryBackend {
 	/**
 	 * Markdown injected as the system-prompt append section.
 	 * Returned on every prompt rebuild via `refreshBaseSystemPrompt()`.
+	 * `cwd` is the session's project directory and selects project-scoped memory.
 	 */
 	buildDeveloperInstructions(
 		agentDir: string,
+		cwd: string,
 		settings: Settings,
 		session?: AgentSession,
 	): Promise<string | undefined>;
@@ -169,11 +188,21 @@ export interface MemoryBackend {
 	 * Returning a string appends one entry to the compaction's `extraContext`
 	 * list (which becomes part of the summarization prompt). Return `undefined`
 	 * to inject nothing — the local backend takes this branch because its
-	 * summary is already part of the system prompt.
+	 * summary is already part of the system prompt. `signal` aborts when the
+	 * compaction pass is cancelled or superseded.
 	 */
 	preCompactionContext?(
 		messages: AgentMessage[],
 		settings: Settings,
 		session?: AgentSession,
+		signal?: AbortSignal,
 	): Promise<string | undefined>;
+
+	/**
+	 * Optional hook to apply live edits to this backend's own `<id>.*` settings
+	 * (`changed` lists them) in a running top-level session. When omitted, the
+	 * session re-applies the whole backend (`applyMemoryBackend`), which rebuilds
+	 * its runtime state, memory tools, and prompt from the current settings.
+	 */
+	applySettings?(session: AgentSession, changed: readonly string[]): Promise<void>;
 }

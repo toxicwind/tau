@@ -10,6 +10,8 @@ import { createAgentSession } from "tau/sdk";
 import type { AgentSession } from "tau/session/agent-session";
 import { SessionManager } from "tau/session/session-manager";
 import { TempDir } from "@tau/tau-utils";
+import { cfgAdvisorEnabled } from "@oh-my-pi/pi-coding-agent/advisor/settings";
+import { cfgDisabledExtensions } from "@oh-my-pi/pi-coding-agent/extensibility/settings";
 
 const INITIAL_CONTEXT = "reload-context-initial-marker";
 const UPDATED_CONTEXT = "reload-context-updated-marker";
@@ -24,7 +26,7 @@ async function createContextSession(
 	const model = getBundledModel("openai", "gpt-4o-mini");
 	if (options.advisor) {
 		authStorage.keys.setRuntime("openai", "test-key");
-		settings.set("advisor.enabled", true);
+		cfgAdvisorEnabled.set(settings, true);
 		settings.setModelRole("advisor", `${model.provider}/${model.id}`);
 	}
 	const modelRegistry = new ModelRegistry(authStorage, `${cwd}/models.json`);
@@ -79,7 +81,7 @@ describe("context-file prompt refresh", () => {
 		try {
 			expect(session.systemPrompt.join("\n")).toContain(INITIAL_CONTEXT);
 
-			settings.set("disabledExtensions", [PROJECT_CONTEXT_EXTENSION_ID]);
+			cfgDisabledExtensions.set(settings, [PROJECT_CONTEXT_EXTENSION_ID]);
 			await session.refreshSkills();
 
 			expect(session.systemPrompt.join("\n")).not.toContain(INITIAL_CONTEXT);

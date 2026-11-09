@@ -13,6 +13,7 @@ import type { SearchParams } from "tau/web/search/provider";
 import * as provider from "tau/web/search/provider";
 import type { SearchProviderId, SearchResponse, SearchSource } from "tau/web/search/types";
 import { createInMemoryAuthStorage } from "../../helpers/agent-session-setup";
+import { cfgRetryFallbackChains } from "@oh-my-pi/pi-coding-agent/session/settings";
 
 const SOURCES: SearchSource[] = [
 	{ title: "Docs page", url: "https://docs.example.com/guide" },
@@ -24,7 +25,7 @@ const openAuthStorages: AuthStorage[] = [];
 async function stubRoleProvider(id: SearchProviderId, behaviour: (params: SearchParams) => Promise<SearchResponse>) {
 	const settings = await Settings.init({ inMemory: true });
 	settings.setModelRole("web", `web/${id}`);
-	settings.set("retry.fallbackChains", { web: [] });
+	cfgRetryFallbackChains.set(settings, { web: [] });
 	const authStorage = createInMemoryAuthStorage();
 	openAuthStorages.push(authStorage);
 	const modelRegistry = new ModelRegistry(authStorage, undefined, { settings });
@@ -75,6 +76,25 @@ describe("web search directive pipeline", () => {
 		expect(result.content[0]?.text).toStartWith(
 			"Note: no results matched `site:nowhere.example`; the constraint was relaxed",
 		);
+	});
+
+	it.each<[string, string, SearchProviderId]>([
+		["routes an X-only query to xAI ahead of the role's engine", "tern site:x.com", "xai"],
+		["keeps the role's engine for queries that are not X-only", "tern site:x.com site:github.com", "brave"],
+	])("%s", async (_caseName, query, expectedProvider) => {
+		const context = await stubRoleProvider("brave", async () => ({ provider: "brave", sources: SOURCES }));
+		context.authStorage.keys.setRuntime("xai", "test-xai-key");
+		vi.spyOn(provider, "getGroundedSearchProvider").mockImplementation(async grounding => ({
+			id: "xai",
+			label: grounding,
+			isAvailable: () => true,
+			isExplicitlyAvailable: () => true,
+			search: async () => ({ provider: "xai", sources: [{ title: "Post", url: "https://x.com/jack/status/20" }] }),
+		}));
+
+		const result = await runSearchQuery({ query }, context);
+
+		expect(result.details.response.provider).toBe(expectedProvider);
 	});
 
 	it("uses a request model override instead of modelRoles.web", async () => {

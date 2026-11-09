@@ -2,8 +2,19 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
+<<<<<<< ours — imports `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import type { SessionInfo } from "tau/session/session-listing";
 import { loadPinnedSessionIds, sortPinnedFirst, toggleSessionPin } from "tau/session/session-pins";
+=======
+import type { SessionInfo } from "@oh-my-pi/pi-coding-agent/session/session-listing";
+import {
+	loadPinnedSessionIds,
+	setSessionPinned,
+	sortPinnedFirst,
+	toggleSessionPin,
+} from "@oh-my-pi/pi-coding-agent/session/session-pins";
+>>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/session-pins.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 describe("session-pins", () => {
 	let tempDir: string;
@@ -53,6 +64,17 @@ describe("session-pins", () => {
 		expect(loaded.has(id1)).toBe(false);
 		expect(loaded.has(id2)).toBe(true);
 		expect(loaded.size).toBe(1);
+	});
+
+	it("sets an explicit pin state instead of toggling when repeated", async () => {
+		await setSessionPinned("kept", true, tempDir);
+		await setSessionPinned("s", true, tempDir);
+		await setSessionPinned("s", true, tempDir);
+		expect(await loadPinnedSessionIds(tempDir)).toEqual(new Set(["kept", "s"]));
+
+		await setSessionPinned("s", false, tempDir);
+		await setSessionPinned("s", false, tempDir);
+		expect(await loadPinnedSessionIds(tempDir)).toEqual(new Set(["kept"]));
 	});
 
 	it("sorts pinned sessions first while preserving relative recency order", () => {

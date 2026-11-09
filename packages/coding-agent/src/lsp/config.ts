@@ -1,10 +1,14 @@
 import * as fs from "node:fs";
-import * as os from "node:os";
 import * as path from "node:path";
 import { $which, isRecord, logger, pathIsWithin, type WhichOptions } from "@tau/tau-utils";
 import { YAML } from "bun";
-import { getConfigDirPaths } from "../config";
-import { type ClaudePluginRoot, getPreloadedPluginRoots } from "../discovery/helpers";
+import type { ClaudePluginRoot } from "../discovery/helpers";
+import {
+	type ConfigFileAdapter,
+	type ConfigFileSource,
+	configFileSources,
+	readConfigFile,
+} from "../utils/config-file-sources";
 import { BiomeClient } from "./clients/biome-client";
 import { SwiftLintClient } from "./clients/swiftlint-client";
 import DEFAULTS from "./defaults.json" with { type: "json" };
@@ -32,7 +36,8 @@ interface NormalizedConfig {
 	idleTimeoutMs?: number;
 }
 
-function parseConfigContent(content: string, filePath: string): unknown {
+/** Parse a config file as YAML (`.yaml`/`.yml`) or JSON. */
+export function parseConfigContent(content: string, filePath: string): unknown {
 	const extension = path.extname(filePath).toLowerCase();
 	if (extension === ".yaml" || extension === ".yml") {
 		return YAML.parse(content) as unknown;
@@ -102,15 +107,8 @@ function normalizeServerConfig(name: string, config: RawServerConfig): ServerCon
 	};
 }
 
-function readConfigFile(filePath: string): NormalizedConfig | null {
-	try {
-		const content = fs.readFileSync(filePath, "utf-8");
-		const parsed = parseConfigContent(content, filePath);
-		return normalizeConfig(parsed);
-	} catch {
-		return null;
-	}
-}
+const adaptConfig: ConfigFileAdapter<NormalizedConfig> = (content, filePath) =>
+	normalizeConfig(parseConfigContent(content, filePath));
 
 function coerceServerConfigs(servers: Record<string, RawServerConfig>): Record<string, ServerConfig> {
 	const result: Record<string, ServerConfig> = {};
@@ -340,38 +338,35 @@ function typescriptPackageDir(tscPath: string): string | null {
 /**
  * Whether the `tsc` at `tscPath` speaks LSP itself. TypeScript 7 dropped the JS
  * `lib/tsserver.js` that typescript-language-server wraps and exposes
- * `tsc --lsp --stdio` from its native binary instead; older releases reject the
- * flag with TS5023.
+ * `tsc --lsp --stdio` instead; older releases reject the flag with TS5023.
+ * Outside an npm layout (e.g. nixpkgs) ask the compiler for its version, run in
+ * `cwd` so version-manager shims resolve the project's pinned TypeScript.
  */
-function typescriptSpeaksLsp(tscPath: string): boolean {
+function typescriptSpeaksLsp(tscPath: string, cwd: string): boolean {
 	const packageDir = typescriptPackageDir(tscPath);
-	return packageDir !== null && !fs.existsSync(path.join(packageDir, "lib", "tsserver.js"));
+	if (packageDir !== null) return !fs.existsSync(path.join(packageDir, "lib", "tsserver.js"));
+	try {
+		const { stdout } = Bun.spawnSync([tscPath, "--version"], { cwd, stderr: "ignore", timeout: 3_000 });
+		const major = /^Version (\d+)\./.exec(stdout.toString())?.[1];
+		return major !== undefined && Number(major) >= 7;
+	} catch {
+		return false;
+	}
 }
 
 /**
  * Keep exactly one TypeScript server. `typescript-language-server` needs
  * `lib/tsserver.js`, which a TypeScript 7 workspace no longer ships, so it fails
- * at initialize there; `tsc --lsp` exits on older TypeScript. Pick by inspecting
- * the resolved `tsc` install rather than spawning both.
+ * at initialize there; `tsc --lsp` exits on older TypeScript.
  */
-function selectTypescriptServer(servers: Record<string, ServerConfig>): void {
+function selectTypescriptServer(servers: Record<string, ServerConfig>, cwd: string): void {
 	const native = servers["typescript-native"];
 	if (!native?.resolvedCommand) return;
-	if (typescriptSpeaksLsp(native.resolvedCommand)) {
+	if (typescriptSpeaksLsp(native.resolvedCommand, cwd)) {
 		delete servers["typescript-language-server"];
 	} else {
 		delete servers["typescript-native"];
 	}
-}
-
-interface ConfigSource {
-	read(): NormalizedConfig | null;
-}
-
-function fileConfigSource(filePath: string): ConfigSource {
-	return {
-		read: () => readConfigFile(filePath),
-	};
 }
 
 function readMarketplaceLspConfig(root: ClaudePluginRoot): NormalizedConfig | null {
@@ -392,7 +387,7 @@ function readMarketplaceLspConfig(root: ClaudePluginRoot): NormalizedConfig | nu
 				if (typeof lspServers === "string") {
 					const configPath = path.resolve(root.path, lspServers);
 					if (!pathIsWithin(root.path, configPath)) return null;
-					return readConfigFile(configPath);
+					return readConfigFile(configPath, adaptConfig);
 				}
 				if (isRecord(lspServers)) {
 					return normalizeConfig({ servers: lspServers });
@@ -405,12 +400,13 @@ function readMarketplaceLspConfig(root: ClaudePluginRoot): NormalizedConfig | nu
 	return null;
 }
 
-function marketplaceConfigSource(root: ClaudePluginRoot): ConfigSource {
+function marketplaceConfigSource(root: ClaudePluginRoot): ConfigFileSource<NormalizedConfig> {
 	return {
 		read: () => readMarketplaceLspConfig(root),
 	};
 }
-
+<<<<<<< ours — function `getConfigSources` (T+S+F, confidence: low)
+// refused_by: modify_delete_guard · collision: none (no common ancestor text)
 /**
  * Configuration sources in priority order.
  * Supports both visible and hidden variants at each config location.
@@ -456,6 +452,8 @@ function getConfigSources(cwd: string): ConfigSource[] {
 
 	return sources;
 }
+=======
+>>>>>>> theirs — function `getConfigSources` (T+S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/lsp/config.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /**
  * Load LSP configuration.
@@ -492,7 +490,9 @@ function getConfigSources(cwd: string): ConfigSource[] {
 export function loadConfig(cwd: string): LspConfig {
 	let mergedServers = coerceServerConfigs(DEFAULTS);
 
-	const configSources = getConfigSources(cwd).reverse();
+	const configSources = configFileSources("lsp", cwd, adaptConfig, {
+		pluginRootSource: marketplaceConfigSource,
+	}).reverse();
 
 	let idleTimeoutMs: number | undefined;
 	for (const source of configSources) {
@@ -515,7 +515,7 @@ export function loadConfig(cwd: string): LspConfig {
 		if (!resolved) continue;
 		servers[name] = { ...config, resolvedCommand: resolved };
 	}
-	selectTypescriptServer(servers);
+	selectTypescriptServer(servers, cwd);
 
 	return { servers, idleTimeoutMs };
 }

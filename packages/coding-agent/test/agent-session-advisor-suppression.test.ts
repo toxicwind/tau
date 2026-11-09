@@ -44,6 +44,7 @@ const mockYieldParameters = type({
 });
 
 const ADVISOR_TYPE = "advisor";
+const BACKGROUND_TYPE = "test-background";
 
 interface ParkedHarness {
 	session: AgentSession;
@@ -122,6 +123,21 @@ describe("AgentSession advisor auto-resume suppression", () => {
 		return { session, sessionManager, mock, streamStarted: started.promise };
 	}
 
+	/** Stands in for a background job result (async-result, launch completion): the
+	 *  delivery the yield queue's idle flush injects once the session is idle. */
+	function registerBackgroundDelivery(target: AgentSession): void {
+		target.yieldQueue.register<string>(BACKGROUND_TYPE, {
+			build: entries => ({
+				role: "custom",
+				customType: BACKGROUND_TYPE,
+				content: entries.join("\n"),
+				display: true,
+				attribution: "agent",
+				timestamp: Date.now(),
+			}),
+		});
+	}
+
 	function isYieldType(value: unknown): value is string | string[] {
 		return (
 			typeof value === "string" ||
@@ -167,10 +183,15 @@ describe("AgentSession advisor auto-resume suppression", () => {
 		};
 	}
 
+	/** Completed one-answer session whose advisor raises one `severity` note (default `nit`, below the default continue threshold). */
 	async function createCompletedAdvisorSession(
-		severity: "concern" | "blocker" = "concern",
-		extensionRunner?: AdvisorTestExtensionRunner,
+		opts: {
+			severity?: "nit" | "concern" | "blocker";
+			continueSeverity?: "nit" | "concern" | "blocker";
+			extensionRunner?: AdvisorTestExtensionRunner;
+		} = {},
 	): Promise<CompletedAdvisorHarness> {
+		const { severity = "nit", continueSeverity, extensionRunner } = opts;
 		const model = getBundledModel("anthropic", "claude-sonnet-4-5")!;
 		const mock = createMockModel({
 			responses: [
@@ -189,8 +210,10 @@ describe("AgentSession advisor auto-resume suppression", () => {
 						},
 					],
 				},
-				{ content: [], stopReason: "stop" },
 			],
+			// Any further review stays silent; the advise-only turn above ends
+			// its own review without a follow-up request.
+			handler: () => ({ content: [], stopReason: "stop" }),
 		});
 		const agent = new Agent({
 			getApiKey: () => "test-key",
@@ -198,7 +221,11 @@ describe("AgentSession advisor auto-resume suppression", () => {
 			streamFn: mock.stream,
 		});
 		const sessionManager = SessionManager.inMemory();
-		const settings = Settings.isolated({ "compaction.enabled": false, "retry.enabled": false });
+		const settings = Settings.isolated({
+			"compaction.enabled": false,
+			"retry.enabled": false,
+			...(continueSeverity ? { "advisor.continueSeverity": continueSeverity } : {}),
+		});
 		settings.setModelRole("advisor", "anthropic/claude-sonnet-4-5");
 		const authStorage = await AuthStorage.create(":memory:");
 		authStorages.push(authStorage);
@@ -273,8 +300,8 @@ describe("AgentSession advisor auto-resume suppression", () => {
 						},
 					],
 				},
-				{ content: [], stopReason: "stop" },
 			],
+			handler: () => ({ content: [], stopReason: "stop" }),
 		});
 		const agent = new Agent({
 			getApiKey: () => "test-key",
@@ -304,15 +331,18 @@ describe("AgentSession advisor auto-resume suppression", () => {
 		await session.prompt("yield the final result");
 		expect(await session.waitForAdvisorCatchup(1000)).toBe(true);
 
-		expect(advisorMock.calls).toHaveLength(2);
+		expect(advisorMock.calls).toHaveLength(1);
 		expect(mock.calls).toHaveLength(1);
 		const advisorCards = session.agent.state.messages.filter(isAdvisorCard);
 		expect(advisorCards).toHaveLength(1);
 		expect(advisorCards[0].content).toContain("Final yield needs correction");
 	});
 
-	it("preserves a late advisor concern after a terminal answer without waking the primary", async () => {
-		const { session, sessionManager, mock, advisorMock } = await createCompletedAdvisorSession();
+	it("preserves a late advisor concern below advisor.continueSeverity without waking the primary", async () => {
+		const { session, sessionManager, mock, advisorMock } = await createCompletedAdvisorSession({
+			severity: "concern",
+			continueSeverity: "blocker",
+		});
 		const persisted = capturePersistedAdvice(sessionManager);
 
 		await session.prompt("read five fixture files and answer with exactly one line");
@@ -345,7 +375,7 @@ describe("AgentSession advisor auto-resume suppression", () => {
 				await releaseHook.promise;
 			},
 		};
-		const { session, sessionManager, mock } = await createCompletedAdvisorSession("concern", extensionRunner);
+		const { session, sessionManager, mock } = await createCompletedAdvisorSession({ extensionRunner });
 		const persisted = capturePersistedAdvice(sessionManager);
 
 		expect(session.setAdvisorEnabled(true)).toBe(true);
@@ -383,7 +413,7 @@ describe("AgentSession advisor auto-resume suppression", () => {
 				await releaseHook.promise;
 			},
 		};
-		const { session, mock } = await createCompletedAdvisorSession("concern", extensionRunner);
+		const { session, mock } = await createCompletedAdvisorSession({ extensionRunner });
 
 		expect(session.setAdvisorEnabled(true)).toBe(true);
 		await session.prompt("answer with exactly one line");
@@ -402,24 +432,27 @@ describe("AgentSession advisor auto-resume suppression", () => {
 		expect(mock.calls).toHaveLength(1);
 	});
 
-	it("steers a late advisor blocker after a terminal answer so the primary corrects it", async () => {
-		const { session, mock } = await createCompletedAdvisorSession("blocker");
+	it.each([{ severity: "concern" }, { severity: "blocker", continueSeverity: "blocker" }] as const)(
+		"steers late advice at advisor.continueSeverity after a terminal answer %j",
+		async opts => {
+			const { session, mock } = await createCompletedAdvisorSession(opts);
 
-		await session.prompt("read five fixture files and answer with exactly one line");
-		await session.waitForIdle();
-		expect(mock.calls.length).toBe(1);
+			await session.prompt("read five fixture files and answer with exactly one line");
+			await session.waitForIdle();
+			expect(mock.calls.length).toBe(1);
 
-		expect(session.setAdvisorEnabled(true)).toBe(true);
-		const advisor = session.getAdvisorAgent();
-		if (!advisor) throw new Error("Expected advisor agent to be live");
+			expect(session.setAdvisorEnabled(true)).toBe(true);
+			const advisor = session.getAdvisorAgent();
+			if (!advisor) throw new Error("Expected advisor agent to be live");
 
-		await advisor.prompt("inspect the completed turn");
-		await session.waitForIdle();
+			await advisor.prompt("inspect the completed turn");
+			await session.waitForIdle();
 
-		expect(mock.calls.length).toBe(2);
-	});
+			expect(mock.calls.length).toBe(2);
+		},
+	);
 
-	it("preserves another late advisor concern after an existing advisor card", async () => {
+	it("preserves another late advisor note after an existing advisor card", async () => {
 		const { session, mock } = await createCompletedAdvisorSession();
 
 		await session.prompt("answer with exactly one line");
@@ -636,6 +669,100 @@ describe("AgentSession advisor auto-resume suppression", () => {
 		expect(mock.calls.length).toBe(1);
 	});
 
+	it("releases a strict final-review wait on user stop and preserves its blocker without restarting the run", async () => {
+		// A strict catch-up wait has no wall-clock cap: only an explicit release
+		// (here a user interrupt) may unblock the boundary. The stop must also
+		// stay authoritative at the boundary flush afterwards: the blocker the
+		// review already delivered is preserved as a visible card, never steered
+		// into a continuation of the run the user just stopped.
+		const model = getBundledModel("anthropic", "claude-sonnet-4-5")!;
+		const mock = createMockModel({
+			responses: [
+				{ content: ["FINAL ANSWER"], stopReason: "stop" },
+				{ content: ["must not run"], stopReason: "stop" },
+			],
+		});
+		const reviewParked = Promise.withResolvers<void>();
+		const releaseReview = Promise.withResolvers<void>();
+		// An advise-only advisor turn ends the review, so the review is held open
+		// by a sibling tool call in the same turn. `exclusive` runs it after the
+		// advise call settles: the blocker is already routed (buffered at the open
+		// boundary) while this tool parks the strict wait.
+		const parkTool: AgentTool = {
+			name: "read",
+			label: "Read",
+			description: "Parks until released",
+			parameters: type({ "path?": "string" }),
+			concurrency: "exclusive",
+			execute: async () => {
+				reviewParked.resolve();
+				await releaseReview.promise;
+				return { content: [{ type: "text" as const, text: "audit.sql" }] };
+			},
+		};
+		const advisorMock = createMockModel({
+			responses: [
+				{
+					content: [
+						{
+							type: "toolCall",
+							name: "advise",
+							arguments: { note: "shipped code deletes the audit table", severity: "blocker" },
+						},
+						{ type: "toolCall", name: "read", arguments: { path: "audit.sql" } },
+					],
+				},
+				{ content: [], stopReason: "stop" },
+			],
+		});
+		const agent = new Agent({
+			getApiKey: () => "test-key",
+			initialState: { model, systemPrompt: ["Test"], tools: [] },
+			streamFn: mock.stream,
+		});
+		const sessionManager = SessionManager.inMemory();
+		const settings = Settings.isolated({
+			"advisor.syncBacklog": "strict",
+			"compaction.enabled": false,
+			"retry.enabled": false,
+		});
+		settings.setModelRole("advisor", "anthropic/claude-sonnet-4-5");
+		const authStorage = await AuthStorage.create(":memory:");
+		authStorages.push(authStorage);
+		authStorage.keys.setRuntime("anthropic", "test-key");
+		const modelRegistry = new ModelRegistry(authStorage, tempDir.join("models.yml"));
+		session = new AgentSession({
+			agent,
+			sessionManager,
+			settings,
+			modelRegistry,
+			advisorTools: [parkTool],
+			advisorStreamFn: advisorMock.stream,
+		});
+		expect(session.setAdvisorEnabled(true)).toBe(true);
+
+		const running = session.prompt("finish the task");
+		// The primary answered; the strict boundary wait is now parked on the
+		// review's sibling tool call. Without a release this would hang forever.
+		await reviewParked.promise;
+
+		await session.abort({ reason: USER_INTERRUPT_LABEL });
+		await session.waitForIdle();
+		await running.catch(() => {});
+
+		// The explicit stop released the strict wait; the buffered blocker was
+		// preserved as a visible card and did NOT restart the stopped run.
+		expect(mock.calls.length).toBe(1);
+		const cards = session.agent.state.messages.filter(isAdvisorCard);
+		expect(cards.some(card => card.content.includes("deletes the audit table"))).toBe(true);
+
+		// Releasing the parked review afterwards still starts nothing: the note
+		// was already delivered and no new advice arrives.
+		releaseReview.resolve();
+		expect(await session.waitForAdvisorCatchup(1000)).toBe(true);
+		expect(mock.calls.length).toBe(1);
+	});
+
 	it("wakes a turn for an IRC aside stranded across a user interrupt", async () => {
 		const { session, mock, streamStarted } = await createParkedSession([{ content: ["replying to peer"] }]);
 		const running = session.prompt("do the thing");
@@ -724,5 +851,192 @@ describe("AgentSession advisor auto-resume suppression", () => {
 		expect(userMessageText([...session.agent.peekFollowUpQueue()])).toContain("then add the test");
 		expect(userMessageText(session.agent.state.messages)).not.toContain("then add the test");
 		expect(mock.calls.length).toBe(2);
+	});
+
+	it("keeps a follow-up the editor took back while parked behind an IRC wake turn out of the queue", async () => {
+		const { session, streamStarted } = await createParkedSession([{ content: ["replying to peer"] }]);
+		const running = session.prompt("do the thing");
+		await streamStarted;
+		await session.prompt("then add the test", { streamingBehavior: "followUp" });
+		const followUp = session.agent.peekFollowUpQueue().at(-1);
+		if (!followUp) throw new Error("follow-up not queued");
+		await session.deliverIrcMessage({ id: "m3", from: "peer", to: "me", body: "ping", ts: Date.now() } as IrcMessage);
+		// The wake turn starts with the blocked follow-up parked aside; the editor takes it back then.
+		const withdrawn: boolean[] = [];
+		const unsubscribe = session.subscribe(event => {
+			if (event.type === "agent_start" && withdrawn.length === 0 && session.agent.peekFollowUpQueue().length === 0) {
+				withdrawn.push(session.withdrawQueuedMessage(followUp));
+			}
+		});
+		await session.abort({ reason: USER_INTERRUPT_LABEL });
+		await session.waitForIdle();
+		await running.catch(() => {});
+		unsubscribe();
+
+		expect(withdrawn).toEqual([true]);
+		expect(session.agent.peekFollowUpQueue()).not.toContain(followUp);
+		expect(userMessageText(session.agent.state.messages)).not.toContain("then add the test");
+		// Neither queued nor held any more: gone for good.
+		expect(session.withdrawQueuedMessage(followUp)).toBe(false);
+	});
+
+	it("folds a background completion into context after a user interrupt instead of restarting the run", async () => {
+		// Reported bug: Esc stopped the main agent, then the next background subagent
+		// completion (async-result via the yield queue's idle flush) started a fresh
+		// turn on its own. While the interrupt is in effect the completion must land in
+		// context (and the session file) without a model call.
+		const { session, sessionManager, mock, streamStarted } = await createParkedSession([
+			{ content: ["must not auto-resume"] },
+		]);
+		registerBackgroundDelivery(session);
+
+		const running = session.prompt("do the thing");
+		await streamStarted;
+		await session.abort({ reason: USER_INTERRUPT_LABEL });
+		await session.waitForIdle();
+		await running.catch(() => {});
+
+		await session.yieldQueue.enqueueWithReceipt(BACKGROUND_TYPE, "subagent finished");
+		await session.waitForIdle();
+
+		expect(mock.calls.length).toBe(1);
+		expect(
+			session.agent.state.messages.filter(m => "customType" in m && m.customType === BACKGROUND_TYPE),
+		).toHaveLength(1);
+		expect(
+			sessionManager
+				.getEntries()
+				.filter(entry => entry.type === "custom_message" && entry.customType === BACKGROUND_TYPE),
+		).toHaveLength(1);
+	});
+
+	it("wakes on a background completion when the user interrupt stopped nothing", async () => {
+		// Reported bug: one Esc on an idle session killed every later background wake for
+		// the rest of that session's life. An interrupt with nothing streaming and nothing
+		// queued stops nothing, so it has no run to protect from a background completion.
+		const model = getBundledModel("anthropic", "claude-sonnet-4-5")!;
+		const mock = createMockModel({ responses: [{ content: ["reading the background result"] }] });
+		const agent = new Agent({
+			getApiKey: () => "test-key",
+			initialState: { model, systemPrompt: ["Test"], tools: [] },
+			streamFn: mock.stream,
+		});
+		const sessionManager = SessionManager.inMemory();
+		const settings = Settings.isolated({ "compaction.enabled": false });
+		const authStorage = await AuthStorage.create(":memory:");
+		authStorages.push(authStorage);
+		authStorage.keys.setRuntime("anthropic", "test-key");
+		const modelRegistry = new ModelRegistry(authStorage, tempDir.join("models.yml"));
+		session = new AgentSession({ agent, sessionManager, settings, modelRegistry });
+		registerBackgroundDelivery(session);
+
+		expect(session.isStreaming).toBe(false);
+		expect(session.agent.hasQueuedMessages()).toBe(false);
+		await session.abort({ reason: USER_INTERRUPT_LABEL });
+		await session.waitForIdle();
+
+		await session.yieldQueue.enqueueWithReceipt(BACKGROUND_TYPE, "hourly job finished");
+		await session.waitForIdle();
+
+		// A turn ran, and it ran on top of the delivered completion: the model was asked
+		// to read the result instead of it sitting unread in the transcript.
+		expect(mock.calls.length).toBe(1);
+		expect(session.agent.state.messages.map(m => ("customType" in m ? m.customType : m.role))).toEqual([
+			BACKGROUND_TYPE,
+			"assistant",
+		]);
+	});
+
+	it("resumes background wakes once a turn has run and ended since the user interrupt", async () => {
+		// The interrupt that DID stop a run still folds the completion that lands while the
+		// session sits where the user stopped it. Once a later turn has run and ended on its
+		// own, that run is over, so the next completion wakes the session instead.
+		const { session, mock, streamStarted } = await createParkedSession([
+			{ content: ["replying to peer"] },
+			{ content: ["reading the background result"] },
+		]);
+		registerBackgroundDelivery(session);
+
+		const running = session.prompt("do the thing");
+		await streamStarted;
+		await session.abort({ reason: USER_INTERRUPT_LABEL });
+		await session.waitForIdle();
+		await running.catch(() => {});
+
+		await session.yieldQueue.enqueueWithReceipt(BACKGROUND_TYPE, "first job finished");
+		await session.waitForIdle();
+		expect(mock.calls.length).toBe(1);
+
+		await session.deliverIrcMessage({ id: "m1", from: "peer", to: "me", body: "ping", ts: Date.now() } as IrcMessage);
+		await session.waitForIdle();
+		expect(mock.calls.length).toBe(2);
+
+		await session.yieldQueue.enqueueWithReceipt(BACKGROUND_TYPE, "second job finished");
+		await session.waitForIdle();
+		expect(mock.calls.length).toBe(3);
+		expect(session.agent.state.messages.at(-1)?.role).toBe("assistant");
+		expect(
+			session.agent.state.messages.filter(m => "customType" in m && m.customType === BACKGROUND_TYPE),
+		).toHaveLength(2);
+	});
+
+	it("keeps background wakes after an interrupt that lands while the finished turn still settles", async () => {
+		// The session reports streaming for the whole post-turn unwind — extension hooks,
+		// compaction, the advisor drain — long after the turn reached its own end. An Esc
+		// there stops nothing a background completion could restart, and no later turn end
+		// would lift the suppression again, so the wake must survive it.
+		const settling = Promise.withResolvers<void>();
+		const releaseSettle = Promise.withResolvers<void>();
+		const extensionRunner: AdvisorTestExtensionRunner = {
+			hasHandlers: () => true,
+			emitBeforeAgentStart: async () => undefined,
+			emit: async event => {
+				if (event.type !== "agent_end") return;
+				settling.resolve();
+				await releaseSettle.promise;
+			},
+		};
+		const model = getBundledModel("anthropic", "claude-sonnet-4-5")!;
+		const mock = createMockModel({
+			responses: [{ content: ["done"] }, { content: ["reading the background result"] }],
+		});
+		const agent = new Agent({
+			getApiKey: () => "test-key",
+			initialState: { model, systemPrompt: ["Test"], tools: [] },
+			streamFn: mock.stream,
+		});
+		const sessionManager = SessionManager.inMemory();
+		const settings = Settings.isolated({ "compaction.enabled": false, "retry.enabled": false });
+		const authStorage = await AuthStorage.create(":memory:");
+		authStorages.push(authStorage);
+		authStorage.keys.setRuntime("anthropic", "test-key");
+		const modelRegistry = new ModelRegistry(authStorage, tempDir.join("models.yml"));
+		session = new AgentSession({
+			agent,
+			sessionManager,
+			settings,
+			modelRegistry,
+			extensionRunner: extensionRunner as never,
+		});
+		registerBackgroundDelivery(session);
+
+		const running = session.prompt("do the thing");
+		await settling.promise;
+		expect(session.isStreaming).toBe(true);
+		expect(session.agent.state.isStreaming).toBe(false);
+
+		// Arming reads the session synchronously, before abort's first await; the settle it
+		// is waiting on only finishes once the hook is released.
+		const aborting = session.abort({ reason: USER_INTERRUPT_LABEL });
+		releaseSettle.resolve();
+		await aborting;
+		await running.catch(() => {});
+		await session.waitForIdle();
+
+		await session.yieldQueue.enqueueWithReceipt(BACKGROUND_TYPE, "hourly job finished");
+		await session.waitForIdle();
+
+		expect(mock.calls.length).toBe(2);
+		expect(session.agent.state.messages.at(-1)?.role).toBe("assistant");
 	});
 });

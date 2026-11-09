@@ -17,9 +17,17 @@ import type {
 	AgentTelemetryConfig,
 	AgentTelemetryWarning,
 	ChatUsageEvent,
+	CostEstimate,
+	CostEstimatorContext,
 	ToolStatus,
+<<<<<<< ours — imports `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import { logger, postmortem } from "@oh-my-pi/pi-utils";`
 } from "@tau/tau-agent-core";
 import { logger, postmortem } from "@tau/tau-utils";
+=======
+} from "@oh-my-pi/pi-agent-core";
+import { $otelEnv, logger, postmortem, untilAborted, withOmpOtelEnv } from "@oh-my-pi/pi-utils";
+>>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/telemetry-export-otlp.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	type Attributes,
 	type AttributeValue,
@@ -39,7 +47,7 @@ import { BatchLogRecordProcessor, LoggerProvider } from "@opentelemetry/sdk-logs
 import { MeterProvider, PeriodicExportingMetricReader } from "@opentelemetry/sdk-metrics";
 import { BatchSpanProcessor } from "@opentelemetry/sdk-trace-base";
 import { NodeTracerProvider } from "@opentelemetry/sdk-trace-node";
-import type { TelemetrySignalConfig } from "./telemetry-export";
+import type { TelemetryModelPricingResolver, TelemetrySignalConfig } from "./telemetry-export";
 
 /**
  * Periodic flush interval. A long-lived `tau` process (the ACP server is
@@ -47,6 +55,8 @@ import type { TelemetrySignalConfig } from "./telemetry-export";
  * telemetry until a batch window elapses or the process exits.
  */
 const FLUSH_INTERVAL_MS = 30_000;
+/** OTLP delivery is best-effort at process exit; a stalled collector must not hold the terminal open. */
+const SHUTDOWN_EXPORT_BUDGET_MS = 750;
 
 const SERVICE_NAME = "tau";
 
@@ -84,18 +94,50 @@ export function isTelemetryExportEnabled(): boolean {
 }
 
 /**
+ * Report the request's provider-computed `Usage.cost` as the telemetry cost.
+ *
+ * The resolver only decides whether the model's price is known, by registry
+ * provider id and requested model id. The USD values are the ones the
+ * provider already computed and persisted, never a recomputation.
+ */
+export function estimateProviderCost(
+	context: CostEstimatorContext,
+	modelPricingResolver: TelemetryModelPricingResolver,
+): CostEstimate {
+	const providerId = context.providerId ?? context.provider;
+	const modelId = context.modelId ?? context.model;
+	if (!modelPricingResolver(providerId, modelId) && context.usageCost.total === 0) {
+		return { unavailable: "model_price_unavailable" };
+	}
+	return {
+		usd: context.usageCost.total,
+		inputUsd: context.usageCost.input,
+		outputUsd: context.usageCost.output,
+	};
+}
+
+/**
  * Merge OTLP metrics/log hooks into an existing agent telemetry config.
  *
- * The caller still owns content-capture policy, cost estimation, and custom
- * attributes. This only appends host-level metrics/log forwarding for the
- * providers registered by {@link registerProviders}.
+ * The caller still owns content-capture policy and custom attributes, and its
+ * own `costEstimator` wins. Without one, `modelPricingResolver` installs
+ * {@link estimateProviderCost}. Beyond that, this only appends host-level
+ * metrics/log forwarding for the providers registered by
+ * {@link registerProviders}.
  */
 export function createTelemetryExportConfig(
 	config: AgentTelemetryConfig | undefined,
+	modelPricingResolver?: TelemetryModelPricingResolver,
 ): AgentTelemetryConfig | undefined {
 	if (!isTelemetryExportEnabled()) return config;
+	const costEstimator =
+		config?.costEstimator ??
+		(modelPricingResolver
+			? (context: CostEstimatorContext) => estimateProviderCost(context, modelPricingResolver)
+			: undefined);
 	return {
 		...config,
+		...(costEstimator ? { costEstimator } : {}),
 		onChatUsage: async event => {
 			await config?.onChatUsage?.(event);
 			metricRecorder?.recordChatUsage(event);
@@ -112,25 +154,90 @@ export function createTelemetryExportConfig(
 	};
 }
 
-/** Register global trace/log/meter providers for the enabled signals. */
+/**
+ * Register global trace/log/meter providers for the enabled signals.
+ *
+ * The OpenTelemetry SDK reads its `OTEL_*` configuration (exporter endpoint,
+ * headers, timeouts, resource attributes, sampler, batch limits) from
+ * `process.env` at construction. OMP keeps the values from its own `.env` files
+ * out of the process environment, so everything that constructs SDK objects runs
+ * in one synchronous {@link withOmpOtelEnv} window. Nothing here awaits, and the
+ * SDK reads no `OTEL_*` setting at export time; `test/otel-env-window.test.ts`
+ * guards the latter.
+ */
 export async function registerProviders(signalConfig: TelemetrySignalConfig): Promise<void> {
-	// `envDetector` parses OTEL_RESOURCE_ATTRIBUTES (percent-decoded, per spec) and
-	// OTEL_SERVICE_NAME; merged last so both take precedence over the fallback
-	// service.name — with OTEL_SERVICE_NAME still winning service.name inside the
-	// detector itself.
-	const resource = resourceFromAttributes({ "service.name": SERVICE_NAME }).merge(
-		detectResources({ detectors: [envDetector] }),
-	);
+	withOmpOtelEnv(() => {
+		// `envDetector` parses OTEL_RESOURCE_ATTRIBUTES (percent-decoded, per spec) and
+		// OTEL_SERVICE_NAME; merged last so both take precedence over the fallback
+		// service.name — with OTEL_SERVICE_NAME still winning service.name inside the
+		// detector itself.
+		const resource = resourceFromAttributes({ "service.name": SERVICE_NAME }).merge(
+			detectResources({ detectors: [envDetector] }),
+		);
 
-	if (signalConfig.trace) {
-		const exporter = new OTLPTraceExporter();
-		traceProvider = new NodeTracerProvider({
-			resource,
-			spanProcessors: [new BatchSpanProcessor(exporter)],
-		});
-		traceProvider.register({ contextManager: new AsyncLocalStorageContextManager().enable() });
-	}
+		if (signalConfig.trace) {
+			const exporter = new OTLPTraceExporter();
+			traceProvider = new NodeTracerProvider({
+				resource,
+				spanProcessors: [new BatchSpanProcessor(exporter)],
+			});
+			traceProvider.register({ contextManager: new AsyncLocalStorageContextManager().enable() });
+		}
 
+		if (signalConfig.metric) {
+			const exporter = new OTLPMetricExporter();
+			meterProvider = new MeterProvider({
+				resource,
+				readers: [new PeriodicExportingMetricReader({ exporter })],
+			});
+			metrics.setGlobalMeterProvider(meterProvider);
+			metricRecorder = new AgentMetricRecorder(metrics.getMeter("@oh-my-pi/pi-coding-agent"));
+		}
+
+		if (signalConfig.log) {
+			const exporter = new OTLPLogExporter();
+			logProvider = new LoggerProvider({
+				resource,
+				processors: [new BatchLogRecordProcessor({ exporter })],
+			});
+			logs.setGlobalLoggerProvider(logProvider);
+			otelLogger = logProvider.getLogger("@oh-my-pi/pi-coding-agent");
+			unregisterLogSink = logger.registerLogSink(event => {
+				emitOtelLog(
+					event.level,
+					event.message,
+					logAttributesFromContext(event.context),
+					"omp.log",
+					event.timestamp,
+				);
+			});
+		}
+	});
+
+	const flushTimer = setInterval(() => {
+		flushTelemetryExport().catch(() => {});
+	}, FLUSH_INTERVAL_MS);
+	flushTimer.unref();
+
+	postmortem.register("otel-export", async () => {
+		clearInterval(flushTimer);
+		unregisterLogSink?.();
+		unregisterLogSink = undefined;
+		const shutdowns: Promise<void>[] = [];
+		if (traceProvider) shutdowns.push(traceProvider.shutdown());
+		if (logProvider) shutdowns.push(logProvider.shutdown());
+		if (meterProvider) shutdowns.push(meterProvider.shutdown());
+		const timeout = AbortSignal.timeout(SHUTDOWN_EXPORT_BUDGET_MS);
+		try {
+			await untilAborted(timeout, Promise.all(shutdowns));
+		} catch (error) {
+			if (!timeout.aborted) throw error;
+			logger.warn("OTLP export did not finish before process exit", { timeoutMs: SHUTDOWN_EXPORT_BUDGET_MS });
+		}
+	});
+
+<<<<<<< ours — scope `if (signalConfig.metric) {` in function `registerProviders`, deleted in theirs (S+F, confidence: low)
+// refused_by: statement_fold · collision: none (no common ancestor text)
 	if (signalConfig.metric) {
 		const exporter = new OTLPMetricExporter();
 		meterProvider = new MeterProvider({
@@ -140,7 +247,11 @@ export async function registerProviders(signalConfig: TelemetrySignalConfig): Pr
 		metrics.setGlobalMeterProvider(meterProvider);
 		metricRecorder = new AgentMetricRecorder(metrics.getMeter("@tau/tau-coding-agent"));
 	}
+=======
+>>>>>>> theirs — scope `if (signalConfig.metric) {` deleted in theirs
 
+<<<<<<< ours — scope `if (signalConfig.log) {` in function `registerProviders`, deleted in theirs (S+F, confidence: low)
+// refused_by: statement_fold · collision: none (no common ancestor text)
 	if (signalConfig.log) {
 		const exporter = new OTLPLogExporter();
 		logProvider = new LoggerProvider({
@@ -159,22 +270,8 @@ export async function registerProviders(signalConfig: TelemetrySignalConfig): Pr
 			);
 		});
 	}
-
-	const flushTimer = setInterval(() => {
-		flushTelemetryExport().catch(() => {});
-	}, FLUSH_INTERVAL_MS);
-	flushTimer.unref();
-
-	postmortem.register("otel-export", async () => {
-		clearInterval(flushTimer);
-		unregisterLogSink?.();
-		unregisterLogSink = undefined;
-		const shutdowns: Promise<void>[] = [];
-		if (traceProvider) shutdowns.push(traceProvider.shutdown());
-		if (logProvider) shutdowns.push(logProvider.shutdown());
-		if (meterProvider) shutdowns.push(meterProvider.shutdown());
-		await Promise.all(shutdowns);
-	});
+=======
+>>>>>>> theirs — scope `if (signalConfig.log) {` deleted in theirs
 }
 
 class AgentMetricRecorder {
@@ -193,6 +290,8 @@ class AgentMetricRecorder {
 			description: "Token usage reported by GenAI chat calls.",
 			unit: "{token}",
 		});
+<<<<<<< ours — scope `constructor` in class `AgentMetricRecorder` (F, confidence: medium)
+// refused_by: container_member · collision: `this.#chatCostUsd = meter.createCounter("pi.omp.agent.chat.cost…` +7 more
 		this.#chatCostUsd = meter.createCounter("pi.tau.agent.chat.cost.estimated_usd", {
 			description: "Estimated USD cost for completed chat calls.",
 			unit: "USD",
@@ -222,6 +321,37 @@ class AgentMetricRecorder {
 			unit: "ms",
 		});
 		this.#errors = meter.createCounter("pi.tau.agent.errors", {
+=======
+		this.#chatCostUsd = meter.createCounter("omp.agent.chat.cost.estimated_usd", {
+			description: "Estimated USD cost for completed chat calls.",
+			unit: "USD",
+		});
+		this.#runs = meter.createCounter("omp.agent.runs", {
+			description: "Completed agent runs.",
+			unit: "{run}",
+		});
+		this.#steps = meter.createCounter("omp.agent.steps", {
+			description: "Agent loop steps completed inside a run.",
+			unit: "{step}",
+		});
+		this.#chatCalls = meter.createCounter("omp.agent.chat.calls", {
+			description: "Chat calls completed inside agent runs.",
+			unit: "{call}",
+		});
+		this.#chatDurationMs = meter.createHistogram("omp.agent.chat.duration", {
+			description: "Total chat latency observed in an agent run.",
+			unit: "ms",
+		});
+		this.#toolCalls = meter.createCounter("omp.agent.tool.calls", {
+			description: "Tool calls completed inside agent runs.",
+			unit: "{call}",
+		});
+		this.#toolDurationMs = meter.createHistogram("omp.agent.tool.duration", {
+			description: "Total tool latency observed in an agent run.",
+			unit: "ms",
+		});
+		this.#errors = meter.createCounter("omp.agent.errors", {
+>>>>>>> theirs — scope `constructor`
 			description: "Errors observed in chat and tool execution.",
 			unit: "{error}",
 		});
@@ -229,12 +359,12 @@ class AgentMetricRecorder {
 
 	recordChatUsage(event: ChatUsageEvent): void {
 		const baseAttrs = metricAttributes({
-			"gen_ai.operation.name": "chat",
+			"gen_ai.operation.name": event.operation,
 			"gen_ai.provider.name": event.provider,
 			"gen_ai.request.model": event.model,
 			"gen_ai.response.service_tier": event.serviceTier,
-			"pi.gen_ai.agent.id": event.agent?.id,
-			"pi.gen_ai.agent.name": event.agent?.name,
+			"omp.gen_ai.agent.id": event.agent?.id,
+			"omp.gen_ai.agent.name": event.agent?.name,
 		});
 
 		this.#recordToken(event.usage.inputTokens, baseAttrs, "input");
@@ -251,11 +381,20 @@ class AgentMetricRecorder {
 
 	recordRun(summary: AgentRunSummary, coverage: AgentRunCoverage): void {
 		const runAttrs = metricAttributes({
+<<<<<<< ours — scope `recordRun` in class `AgentMetricRecorder` (S+F, confidence: low)
+// refused_by: container_member · collision: `"pi.omp.agent.models_used.count": coverage.modelsUsed.length,` +5 more
 			"pi.tau.agent.models_used.count": coverage.modelsUsed.length,
 			"pi.tau.agent.providers_used.count": coverage.providersUsed.length,
 			"pi.tau.agent.tools_available.count": coverage.toolsAvailable.length,
 			"pi.tau.agent.tools_invoked.count": coverage.toolsInvoked.length,
 			"pi.tau.agent.tools_unused.count": coverage.toolsUnused.length,
+=======
+			"omp.agent.models_used.count": coverage.modelsUsed.length,
+			"omp.agent.providers_used.count": coverage.providersUsed.length,
+			"omp.agent.tools_available.count": coverage.toolsAvailable.length,
+			"omp.agent.tools_invoked.count": coverage.toolsInvoked.length,
+			"omp.agent.tools_unused.count": coverage.toolsUnused.length,
+>>>>>>> theirs — scope `recordRun`
 		});
 
 		this.#runs.add(1, runAttrs);
@@ -273,7 +412,12 @@ class AgentMetricRecorder {
 			if (counters.totalLatencyMs > 0) this.#toolDurationMs.record(counters.totalLatencyMs, toolAttrs);
 			for (const status of TOOL_STATUSES) {
 				const count = counters[status];
+<<<<<<< ours — scope `recordRun` in class `AgentMetricRecorder` (S+F, confidence: low)
+// refused_by: container_member · collision: `"pi.omp.agent.models_used.count": coverage.modelsUsed.length,` +5 more
 				if (count > 0) this.#toolCalls.add(count, metricAttributes({ ...toolAttrs, "pi.tau.tool.status": status }));
+=======
+				if (count > 0) this.#toolCalls.add(count, metricAttributes({ ...toolAttrs, "omp.tool.status": status }));
+>>>>>>> theirs — scope `recordRun`
 			}
 		}
 		for (const errorType in summary.errors.byType) {
@@ -308,6 +452,8 @@ function emitRunSummaryLog(summary: AgentRunSummary, coverage: AgentRunCoverage)
 		"info",
 		"agent run completed",
 		{
+<<<<<<< ours — scope `emitOtelLog(` in function `emitRunSummaryLog` (F, confidence: medium)
+// refused_by: statement_fold · collision: `"pi.omp.agent.step_count": summary.stepCount,` +25 more
 			"pi.tau.agent.step_count": summary.stepCount,
 			"pi.tau.agent.chats.total": summary.chats.total,
 			"pi.tau.agent.chats.total_latency_ms": summary.chats.totalLatencyMs,
@@ -335,6 +481,35 @@ function emitRunSummaryLog(summary: AgentRunSummary, coverage: AgentRunCoverage)
 			"pi.tau.agent.coverage.providers_used": coverage.providersUsed.join(","),
 		},
 		"pi.tau.agent.run.completed",
+=======
+			"omp.agent.step_count": summary.stepCount,
+			"omp.agent.chats.total": summary.chats.total,
+			"omp.agent.chats.total_latency_ms": summary.chats.totalLatencyMs,
+			"omp.agent.tools.total": summary.tools.total,
+			"omp.agent.tools.ok": summary.tools.ok,
+			"omp.agent.tools.error": summary.tools.error,
+			"omp.agent.tools.skipped": summary.tools.skipped,
+			"omp.agent.tools.blocked": summary.tools.blocked,
+			"omp.agent.tools.timeout": summary.tools.timeout,
+			"omp.agent.tools.aborted": summary.tools.aborted,
+			"omp.agent.tools.total_latency_ms": summary.tools.totalLatencyMs,
+			"omp.agent.usage.input_tokens": summary.usage.inputTokens,
+			"omp.agent.usage.output_tokens": summary.usage.outputTokens,
+			"omp.agent.usage.cached_input_tokens": summary.usage.cachedInputTokens,
+			"omp.agent.usage.cache_write_tokens": summary.usage.cacheWriteTokens,
+			"omp.agent.usage.reasoning_output_tokens": summary.usage.reasoningOutputTokens,
+			"omp.agent.usage.total_tokens": summary.usage.totalTokens,
+			"omp.agent.cost.estimated_usd": summary.cost.estimatedUsd,
+			"omp.agent.cost.unavailable_reasons": summary.cost.unavailableReasons.join(","),
+			"omp.agent.errors.total": summary.errors.total,
+			"omp.agent.coverage.tools_available": coverage.toolsAvailable.join(","),
+			"omp.agent.coverage.tools_invoked": coverage.toolsInvoked.join(","),
+			"omp.agent.coverage.tools_unused": coverage.toolsUnused.join(","),
+			"omp.agent.coverage.models_used": coverage.modelsUsed.join(","),
+			"omp.agent.coverage.providers_used": coverage.providersUsed.join(","),
+		},
+		"omp.agent.run.completed",
+>>>>>>> theirs — scope `emitOtelLog(`
 	);
 }
 
@@ -343,7 +518,12 @@ function emitTelemetryWarningLog(warning: AgentTelemetryWarning): void {
 		code: warning.code,
 		error: warning.error,
 	});
+<<<<<<< ours — scope `emitOtelLog("warn", warning.message, attrs, "...` in function `emitTelemetryWarningLog` (S, confidence: medium)
+// refused_by: statement_fold · collision: `emitOtelLog("warn", warning.message, attrs, "pi.omp.telemetry.w…`
 	emitOtelLog("warn", warning.message, attrs, "pi.tau.telemetry.warning");
+=======
+	emitOtelLog("warn", warning.message, attrs, "omp.telemetry.warning");
+>>>>>>> theirs — scope `emitOtelLog("warn", warning.message, attrs, "...`
 }
 
 function emitOtelLog(
@@ -354,7 +534,7 @@ function emitOtelLog(
 	timestamp = new Date(),
 ): void {
 	if (!otelLogger) return;
-	const minLevel = parseOtelLogLevel(process.env.OTEL_LOG_LEVEL);
+	const minLevel = parseOtelLogLevel($otelEnv("OTEL_LOG_LEVEL"));
 	if (minLevel === "none") return;
 	if (LOG_LEVEL_WEIGHT[level] > LOG_LEVEL_WEIGHT[minLevel]) return;
 	otelLogger.emit({

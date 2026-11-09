@@ -5,8 +5,14 @@ import {
 	buildOpenAiNativeHistory,
 	createCompactionSummaryMessage,
 	defaultConvertToLlm,
+<<<<<<< ours — imports `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: `import type { AssistantMessage } from "@oh-my-pi/pi-ai";`
 } from "@tau/tau-agent-core/compaction";
 import type { AssistantMessage } from "@tau/tau-ai";
+=======
+} from "@oh-my-pi/pi-agent-core/compaction";
+import type { AssistantMessage, ToolResultMessage } from "@oh-my-pi/pi-ai";
+>>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/advisor/advisor.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type {
 	ResponseFileSearchToolCall,
 	ResponseFunctionWebSearch,
@@ -26,6 +32,7 @@ import {
 	type AdvisorRuntimeHost,
 	advisorTranscriptFilename,
 	buildAdvisorQuarantineSourceText,
+	compareAdvisorNotes,
 	deriveAdvisorTelemetry,
 	formatAdvisorBatchContent,
 	formatAdvisorContextPrompt,
@@ -35,8 +42,15 @@ import {
 	quarantineAdvisorUnsafeOutput,
 	resolveAdvisorDeliveryChannel,
 } from "../../src/advisor";
+<<<<<<< ours — imports `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: `import type { AssistantMessage } from "@oh-my-pi/pi-ai";`
 import { createAdvisorMessageCard } from "@tau/tau-tui/chat/advisor-message";
 import { getThemeByName } from "@tau/tau-tui/theme";
+=======
+import { createAdvisorMessageCard } from "@oh-my-pi/pi-tui/chat/advisor-message";
+import { setChatTranscriptDisplayPreferences } from "@oh-my-pi/pi-tui/chat/display-preferences";
+import { getThemeByName } from "@oh-my-pi/pi-tui/theme";
+>>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import { obfuscateMessages } from "../../src/secrets/message-transform";
 import { SecretObfuscator } from "../../src/secrets/obfuscator";
 import { getOpenAiRemoteCompactionPayload } from "../../src/session/session-context";
@@ -64,6 +78,23 @@ function promptText(input: string | AgentMessage[]): string {
 			return String(m);
 		})
 		.join("\n");
+}
+
+/** High-entropy secret with no repeated 8-char window, so any surviving window is a leak. */
+function distinctSecret(length: number): string {
+	let secret = "";
+	for (let i = 0; secret.length < length; i++) secret += Bun.hash(`secret-${i}`).toString(36);
+	return secret.slice(0, length);
+}
+
+/** 8-char windows of `secret` present in `text`: a truncation cut leaks a secret as fragments, not whole. */
+function leakedSecretPieces(text: string, secret: string): string[] {
+	const pieces: string[] = [];
+	for (let i = 0; i + 8 <= secret.length; i++) {
+		const piece = secret.slice(i, i + 8);
+		if (text.includes(piece)) pieces.push(piece);
+	}
+	return pieces;
 }
 
 describe("advisor", () => {
@@ -317,13 +348,7 @@ describe("advisor", () => {
 					id: "ask-1",
 					name: "ask",
 					arguments: {
-						questions: [
-							{
-								id: "deploy",
-								question: "Authorize deployment?",
-								options: [{ label: "Yes" }, { label: "No" }],
-							},
-						],
+						html: '<form><p>Authorize deployment?</p><label><input type="radio" name="deploy" value="yes"> Yes</label><label><input type="radio" name="deploy" value="no"> No</label></form>',
 					},
 				},
 			],
@@ -333,8 +358,8 @@ describe("advisor", () => {
 			role: "toolResult",
 			toolCallId: "ask-1",
 			toolName: "ask",
-			content: [{ type: "text", text: "User selected: Yes" }],
-			details: { selectedOptions: ["Yes"] },
+			content: [{ type: "text", text: 'User answers:\n{\n  "deploy": "yes"\n}' }],
+			details: { answers: [{ name: "deploy", question: "Authorize deployment?", answer: "Yes" }] },
 			isError: false,
 			timestamp: 2,
 		} as unknown as AgentMessage;
@@ -346,28 +371,22 @@ describe("advisor", () => {
 				expandToolIO: true,
 			});
 
-			expect(compact).not.toContain("User selected: Yes");
-			expect(expanded).toContain('"question": "Authorize deployment?"');
-			expect(expanded).toContain('"label": "Yes"');
-			expect(expanded).toContain("User selected: Yes");
+			expect(compact).not.toContain('"deploy": "yes"');
+			expect(expanded).toContain("<p>Authorize deployment?</p>");
+			expect(expanded).toContain('value="no"> No</label>');
+			expect(expanded).toContain('"deploy": "yes"');
 		});
 
-		it("bounds long ask questions and custom answers with visible head and tail context", () => {
+		it("bounds long ask forms and answers with visible head and tail context", () => {
 			const questionEnd = "question-at-end";
 			const answerEnd = "answer-at-end";
 			const longQuestion = {
-				...(askCall as unknown as { content: { arguments: { questions: unknown[] } }[] }),
+				...(askCall as unknown as Record<string, unknown>),
 				content: [
 					{
 						...(askCall as unknown as { content: Record<string, unknown>[] }).content[0],
 						arguments: {
-							questions: [
-								{
-									id: "deploy",
-									question: `question-start ${"context ".repeat(1200)}${questionEnd}`,
-									options: [{ label: "Custom" }],
-								},
-							],
+							html: `<form><p>question-start ${"context\n".repeat(1200)}${questionEnd}</p><textarea name="answer"></textarea></form>`,
 						},
 					},
 				],
@@ -392,18 +411,8 @@ describe("advisor", () => {
 				role: "toolResult",
 				toolCallId: "ask-orphan",
 				toolName: "ask",
-				content: [{ type: "text", text: "deploy: Yes" }],
-				details: {
-					results: [
-						{
-							id: "deploy",
-							question: "Authorize production deployment?",
-							options: ["Yes", "No"],
-							multi: false,
-							selectedOptions: ["Yes"],
-						},
-					],
-				},
+				content: [{ type: "text", text: 'User answers:\n{\n  "deploy": "yes"\n}' }],
+				details: { answers: [{ name: "deploy", question: "Authorize production deployment?", answer: "Yes" }] },
 				isError: false,
 				timestamp: 2,
 			} as unknown as AgentMessage;
@@ -411,7 +420,7 @@ describe("advisor", () => {
 			const expanded = formatSessionHistoryMarkdown([orphan], { expandToolIO: true });
 
 			expect(expanded).toContain("Authorize production deployment?");
-			expect(expanded).toContain("deploy: Yes");
+			expect(expanded).toContain('"deploy": "yes"');
 		});
 
 		it("bounds expanded tool results with visible head and tail context", () => {
@@ -677,7 +686,7 @@ describe("advisor", () => {
 			await tool.execute("tc-2", { note, severity: "nit" });
 
 			expect(onAdvice).toHaveBeenCalledTimes(1);
-			expect(onAdvice).toHaveBeenCalledWith(note, "nit");
+			expect(onAdvice).toHaveBeenCalledWith(note, "nit", undefined);
 		});
 
 		it("allows the same advice after delivered-note memory resets", async () => {
@@ -690,8 +699,8 @@ describe("advisor", () => {
 			await tool.execute("tc-2", { note, severity: "nit" });
 
 			expect(onAdvice).toHaveBeenCalledTimes(2);
-			expect(onAdvice).toHaveBeenNthCalledWith(1, note, "nit");
-			expect(onAdvice).toHaveBeenNthCalledWith(2, note, "nit");
+			expect(onAdvice).toHaveBeenNthCalledWith(1, note, "nit", undefined);
+			expect(onAdvice).toHaveBeenNthCalledWith(2, note, "nit", undefined);
 		});
 
 		it("forwards escalations of an already-delivered note and suppresses downgrades", async () => {
@@ -707,9 +716,9 @@ describe("advisor", () => {
 			await tool.execute("tc-5", { note, severity: "nit" });
 
 			expect(onAdvice).toHaveBeenCalledTimes(3);
-			expect(onAdvice).toHaveBeenNthCalledWith(1, note, "nit");
-			expect(onAdvice).toHaveBeenNthCalledWith(2, note, "concern");
-			expect(onAdvice).toHaveBeenNthCalledWith(3, note, "blocker");
+			expect(onAdvice).toHaveBeenNthCalledWith(1, note, "nit", undefined);
+			expect(onAdvice).toHaveBeenNthCalledWith(2, note, "concern", undefined);
+			expect(onAdvice).toHaveBeenNthCalledWith(3, note, "blocker", undefined);
 		});
 
 		it("routes a same-text blocker escalation of an already-delivered note with the production guard", async () => {
@@ -754,7 +763,7 @@ describe("advisor", () => {
 
 			// Deferred notes are NOT delivered mid-turn; blocker still goes through.
 			expect(onAdvice).toHaveBeenCalledTimes(1);
-			expect(onAdvice).toHaveBeenCalledWith("A destructive command is running.", "blocker");
+			expect(onAdvice).toHaveBeenCalledWith("A destructive command is running.", "blocker", undefined);
 			// The tool tells the advisor the note is deferred, not silently "Recorded.".
 			expect(JSON.stringify(deferred.content)).toContain("Queued for the end of the turn");
 
@@ -766,8 +775,8 @@ describe("advisor", () => {
 			// oldest first — no reliance on the advisor model re-raising them.
 			tool.beginUpdate(false);
 			expect(onAdvice).toHaveBeenCalledTimes(3);
-			expect(onAdvice).toHaveBeenNthCalledWith(2, note, "concern");
-			expect(onAdvice).toHaveBeenNthCalledWith(3, "Minor naming cleanup.", "nit");
+			expect(onAdvice).toHaveBeenNthCalledWith(2, note, "concern", undefined);
+			expect(onAdvice).toHaveBeenNthCalledWith(3, "Minor naming cleanup.", "nit", undefined);
 
 			// A later explicit re-raise of the same note is deduped (already delivered).
 			await tool.execute("tc-4", { note, severity: "concern" });
@@ -787,7 +796,7 @@ describe("advisor", () => {
 			tool.beginUpdate(false);
 			// Identical note queued once, flushed once.
 			expect(onAdvice).toHaveBeenCalledTimes(1);
-			expect(onAdvice).toHaveBeenCalledWith(note, "concern");
+			expect(onAdvice).toHaveBeenCalledWith(note, "concern", undefined);
 		});
 
 		it("retains the highest severity when duplicate deferred advice escalates", async () => {
@@ -800,7 +809,7 @@ describe("advisor", () => {
 
 			tool.beginUpdate(false);
 			expect(onAdvice).toHaveBeenCalledTimes(1);
-			expect(onAdvice).toHaveBeenCalledWith("Same point raised repeatedly.", "concern");
+			expect(onAdvice).toHaveBeenCalledWith("Same point raised repeatedly.", "concern", undefined);
 		});
 
 		it("flushes one deferred concern per update past the per-update emission budget on a late catch-up", async () => {
@@ -1398,6 +1407,24 @@ describe("advisor", () => {
 			expect(content.split('advisor="').length - 1).toBe(1);
 			expect(content).toContain("default note");
 		});
+
+		it("orders merged notes newest-turn-first then severity, marking age", () => {
+			// Merged boundary batches surface the newest review first — it describes
+			// the current state of the work — with `turns_ago` marking how stale each
+			// older note is, so the primary can discount superseded ones.
+			const notes = [
+				{ note: "old blocker", severity: "blocker" as const, turn: 3 },
+				{ note: "new nit", severity: "nit" as const, turn: 5 },
+				{ note: "new blocker", severity: "blocker" as const, turn: 5 },
+			].sort(compareAdvisorNotes);
+			const content = formatAdvisorBatchContent(notes, { currentTurn: 6 });
+			expect(content.indexOf("new blocker")).toBeLessThan(content.indexOf("new nit"));
+			expect(content.indexOf("new nit")).toBeLessThan(content.indexOf("old blocker"));
+			expect(content).toContain('turns_ago="3"');
+			// Both current-turn-5 notes are one turn old at delivery turn 6.
+			expect(content.match(/turns_ago="1"/g)?.length).toBe(2);
+			expect(content.split("turns_ago=").length - 1).toBe(3);
+		});
 	});
 
 	describe("deriveAdvisorTelemetry", () => {
@@ -1587,6 +1614,130 @@ describe("advisor", () => {
 			releasePrompt.resolve();
 			await settleUntil(() => runtime.backlog === 0);
 		});
+		it("waits without a wall-clock deadline until abort releases strict catch-up", async () => {
+			const promptStarted = Promise.withResolvers<void>();
+			const releasePrompt = Promise.withResolvers<void>();
+			const messages: AgentMessage[] = [{ role: "user", content: "first", timestamp: 1 } as AgentMessage];
+			const agent: AdvisorAgent = {
+				prompt: async () => {
+					promptStarted.resolve();
+					await releasePrompt.promise;
+				},
+				abort: () => {},
+				reset: () => {},
+				state: { messages: [] },
+			};
+			const runtime = new AdvisorRuntime(agent, {
+				snapshotMessages: () => messages,
+			});
+
+			runtime.onTurnEnd();
+			await promptStarted.promise;
+			const controller = new AbortController();
+			let settled = false;
+			vi.useFakeTimers();
+			try {
+				const catchup = runtime.waitForCatchup(undefined, 1, controller.signal).then(caughtUp => {
+					settled = true;
+					return caughtUp;
+				});
+				vi.advanceTimersByTime(60_000);
+				await Promise.resolve();
+				expect(settled).toBe(false);
+
+				controller.abort();
+				expect(await catchup).toBe(false);
+			} finally {
+				releasePrompt.resolve();
+				vi.useRealTimers();
+			}
+			await settleUntil(() => runtime.backlog === 0);
+		});
+
+		it("reviews a cadence-held tool result as the primary saw it after an in-place prune", async () => {
+			const promptInputs: Array<string | AgentMessage[]> = [];
+			const agent = makeAgent(promptInputs);
+			const readResult = {
+				role: "toolResult",
+				toolCallId: "read-1",
+				toolName: "read",
+				content: [{ type: "text", text: "export const retries = 3;" }],
+				isError: false,
+				timestamp: 2,
+			} as unknown as ToolResultMessage;
+			const messages: AgentMessage[] = [
+				{ role: "user", content: "inspect the retry config", timestamp: 1 } as AgentMessage,
+				readResult as AgentMessage,
+			];
+			const runtime = new AdvisorRuntime(agent, { snapshotMessages: () => messages });
+
+			runtime.onTurnEnd(messages, { willContinue: true, dispatch: false });
+			await Promise.resolve();
+			expect(promptInputs).toHaveLength(0);
+
+			// The primary's per-turn prune blanks the superseded result in place and
+			// realigns delivered prefixes before the scheduled review renders.
+			readResult.content = [{ type: "text", text: "[superseded by a newer read]" }];
+			readResult.prunedAt = Date.now();
+			runtime.rebaseDeliveredPrefix("prune-stale-tool-results");
+			messages.push({ role: "user", content: "now raise the limit", timestamp: 3 } as AgentMessage);
+			runtime.onTurnEnd(messages);
+			await runtime.waitForCatchup(1_000, 1);
+
+			expect(promptInputs).toHaveLength(1);
+			const review = promptText(promptInputs[0]);
+			expect(review).toContain("export const retries = 3;");
+			expect(review).not.toContain("superseded by a newer read");
+			expect(review).toContain("inspect the retry config");
+			expect(review).toContain("now raise the limit");
+		});
+		it("omits primary thinking blocks when includeReasoning is false, including across model switches", async () => {
+			const promptInputs: Array<string | AgentMessage[]> = [];
+			const agent = makeAgent(promptInputs);
+			let currentModelIdentity = "anthropic/claude-opus-5-5";
+			const messages: AgentMessage[] = [
+				{ role: "user", content: "verify the patch", timestamp: 1 } as AgentMessage,
+				{
+					role: "assistant",
+					content: [
+						{ type: "thinking", thinking: "Internal hypothesis that might anchor the reviewer." },
+						{ type: "text", text: "Observable answer with file:line evidence." },
+					],
+					timestamp: 2,
+				} as unknown as AgentMessage,
+			];
+			const runtime = new AdvisorRuntime(agent, {
+				snapshotMessages: () => messages,
+				includeReasoning: false,
+				getModelIdentity: () => currentModelIdentity,
+			});
+
+			runtime.onTurnEnd(messages);
+			await runtime.waitForCatchup(1_000, 1);
+			expect(promptInputs).toHaveLength(1);
+			const firstReview = promptText(promptInputs[0]);
+			expect(firstReview).toContain("Observable answer with file:line evidence.");
+			expect(firstReview).not.toContain("Internal hypothesis that might anchor the reviewer.");
+			expect(firstReview).not.toContain("_thinking:_");
+
+			// Switch advisor model identity and verify includeReasoning: false stays enforced
+			currentModelIdentity = "google-antigravity/gemini-4-argon";
+			messages.push({
+				role: "assistant",
+				content: [
+					{ type: "thinking", thinking: "Second turn private reasoning." },
+					{ type: "text", text: "Second turn observable output." },
+				],
+				timestamp: 3,
+			} as unknown as AgentMessage);
+			runtime.onTurnEnd(messages);
+			await runtime.waitForCatchup(1_000, 1);
+			expect(promptInputs).toHaveLength(2);
+			const secondReview = promptText(promptInputs[1]);
+			expect(secondReview).toContain("Second turn observable output.");
+			expect(secondReview).not.toContain("Second turn private reasoning.");
+		});
+
 		it("preserves the next user turn when an accepted empty stop is pruned", async () => {
 			const promptInputs: Array<string | AgentMessage[]> = [];
 			const agent = makeAgent(promptInputs);
@@ -2029,6 +2180,66 @@ describe("advisor", () => {
 			expect(promptText(promptInputs[0])).not.toContain(secret);
 		});
 
+		it("drops a tool call's replay signature when it rewrites the call arguments", async () => {
+			const secret = "ADVISOR_SIGNED_ARG_SECRET_123";
+			const obfuscator = new SecretObfuscator([{ type: "plain", content: secret }]);
+			const promptInputs: Array<string | AgentMessage[]> = [];
+			// The Gemini signature attests to the arguments it was computed over,
+			// so it cannot ride along once those arguments are rewritten.
+			// https://ai.google.dev/gemini-api/docs/thought-signatures
+			const assistant = {
+				role: "assistant",
+				content: [
+					{
+						type: "toolCall",
+						id: "call_1",
+						name: "bash",
+						arguments: { command: `deploy --token ${secret}` },
+						thoughtSignature: "c2lnbmVkLW9yaWdpbmFsLWNhbGw=",
+					},
+				],
+				api: "google-generative-ai",
+				provider: "google",
+				model: "gemini-3.5-flash",
+				usage: {
+					input: 1,
+					output: 1,
+					cacheRead: 0,
+					cacheWrite: 0,
+					totalTokens: 2,
+					cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
+				},
+				stopReason: "toolUse",
+				timestamp: 1,
+			} as AssistantMessage;
+			// The advisor's own conversation replays this history to its model, so
+			// it goes through the same re-obfuscation the primary transcript does.
+			const agent: AdvisorAgent = {
+				prompt: async input => {
+					promptInputs.push(input);
+				},
+				abort: () => {},
+				reset: () => {},
+				state: { messages: [assistant] as AgentMessage[] },
+			};
+			const host: AdvisorRuntimeHost = {
+				snapshotMessages: () => [{ role: "user", content: "deploy it", timestamp: 2 } as AgentMessage],
+				obfuscator,
+			};
+			const runtime = new AdvisorRuntime(agent, host);
+
+			runtime.onTurnEnd();
+			await Promise.resolve();
+
+			expect(promptText(promptInputs[0])).not.toContain(secret);
+			const replayed = agent.state.messages[0];
+			expect(replayed?.role).toBe("assistant");
+			const block = (replayed as AssistantMessage).content[0];
+			expect(block?.type).toBe("toolCall");
+			expect(JSON.stringify(block?.type === "toolCall" ? block.arguments : {})).not.toContain(secret);
+			expect(block?.type === "toolCall" ? block.thoughtSignature : "kept").toBeUndefined();
+		});
+
 		it("falls back to one redacted update when a regex secret spans source messages", async () => {
 			const obfuscator = new SecretObfuscator([{ type: "regex", content: "BEGIN[\\s\\S]*END" }]);
 			const promptInputs: Array<string | AgentMessage[]> = [];
@@ -2274,6 +2485,210 @@ describe("advisor", () => {
 			expect(rendered).toContain(placeholder);
 			expect(rendered).not.toContain("BEGIN_SECRET_");
 			expect(rendered).not.toContain("_END_SECRET");
+		});
+
+		it("redacts an expanded edit diff before middle truncation", async () => {
+			// One giant diff line; the secret straddles the tail window's cut, so
+			// truncating first would leave its suffix, which no redaction pass can match.
+			const secret = distinctSecret(2_000);
+			const obfuscator = new SecretObfuscator([{ type: "plain", content: secret }]);
+			const diff = `--- a/big.ts\n+++ b/big.ts\n@@ -1 +1 @@\n+${".".repeat(10_000)}${secret}${".".repeat(3_000)}`;
+			const promptInputs: Array<string | AgentMessage[]> = [];
+			const agent = makeAgent(promptInputs);
+			const messages: AgentMessage[] = [
+				{
+					role: "assistant",
+					content: [{ type: "toolCall", id: "c1", name: "edit", arguments: { path: "big.ts" } }],
+					timestamp: 1,
+				} as unknown as AgentMessage,
+				{
+					role: "toolResult",
+					toolCallId: "c1",
+					toolName: "edit",
+					content: "ok",
+					details: { diff },
+					isError: false,
+					timestamp: 2,
+				} as unknown as AgentMessage,
+			];
+			const runtime = new AdvisorRuntime(agent, { snapshotMessages: () => messages, obfuscator });
+
+			runtime.onTurnEnd();
+			await runtime.waitForCatchup(1_000, 1);
+
+			const rendered = promptText(promptInputs[0]);
+			expect(rendered).toContain("elided");
+			expect(leakedSecretPieces(rendered, secret)).toEqual([]);
+		});
+
+		it("redacts one-line command previews before truncating them", async () => {
+			// Both secrets start inside the ~120-char preview and end past its cut.
+			const toolSecret = distinctSecret(120);
+			const userSecret = distinctSecret(240).slice(120);
+			const obfuscator = new SecretObfuscator([
+				{ type: "plain", content: toolSecret },
+				{ type: "plain", content: userSecret },
+			]);
+			const promptInputs: Array<string | AgentMessage[]> = [];
+			const agent = makeAgent(promptInputs);
+			const messages: AgentMessage[] = [
+				{
+					role: "assistant",
+					content: [
+						{
+							type: "toolCall",
+							id: "c1",
+							name: "bash",
+							arguments: {
+								command: `cd /srv/app/releases/current && env DEPLOY_TOKEN=${toolSecret} ./deploy.sh`,
+							},
+						},
+					],
+					timestamp: 1,
+				} as unknown as AgentMessage,
+				{
+					role: "toolResult",
+					toolCallId: "c1",
+					toolName: "bash",
+					content: "deployed",
+					isError: false,
+					timestamp: 2,
+				} as unknown as AgentMessage,
+				{
+					role: "bashExecution",
+					command: `curl -sS https://api.example.com/v1/rotate -H "Authorization: Bearer ${userSecret}"`,
+					output: "rotated",
+					exitCode: 0,
+					cancelled: false,
+					truncated: false,
+					timestamp: 3,
+				} as unknown as AgentMessage,
+			];
+			const runtime = new AdvisorRuntime(agent, { snapshotMessages: () => messages, obfuscator });
+
+			runtime.onTurnEnd();
+			await runtime.waitForCatchup(1_000, 1);
+
+			const rendered = promptText(promptInputs[0]);
+			expect(rendered).toContain("→ bash(cd /srv/app/releases/current && env DEPLOY_TOKEN=");
+			expect(rendered).toContain("→ user-bash! curl -sS https://api.example.com/v1/rotate");
+			expect(leakedSecretPieces(rendered, toolSecret)).toEqual([]);
+			expect(leakedSecretPieces(rendered, userSecret)).toEqual([]);
+		});
+
+		it("redacts preview secrets that cross the cut at a space or run past any fixed window", async () => {
+			// Reviewer repros: a two-word plain secret straddling the cut, a regex
+			// secret longer than 8 KiB starting inside the visible part, a regex
+			// whose lookahead context lies past the cut (the secret itself fits),
+			// and a short replacement that pulls a later secret into view.
+			const spaced = "SECRETONE SECRETTWO";
+			const longToken = `tok_${"z".repeat(9 * 1024)}`;
+			const pulledIn = `SECRET_${"b".repeat(200)}`;
+			const obfuscator = new SecretObfuscator([
+				{ type: "plain", content: spaced },
+				{ type: "plain", content: pulledIn },
+				{ type: "regex", content: "tok_[a-z0-9]+" },
+				{ type: "regex", content: "LOOKSECRET(?= LOOKTAIL)" },
+				{ type: "regex", content: "A{100}(?= x{40}END)", mode: "replace", replacement: "[redacted]" },
+			]);
+			const promptInputs: Array<string | AgentMessage[]> = [];
+			const agent = makeAgent(promptInputs);
+			const messages: AgentMessage[] = [
+				{
+					role: "assistant",
+					content: [
+						{
+							type: "toolCall",
+							id: "c1",
+							name: "bash",
+							arguments: { command: `${"p".repeat(110)}${spaced} suffix` },
+						},
+						{
+							type: "toolCall",
+							id: "c2",
+							name: "bash",
+							arguments: { command: `${"r".repeat(109)}LOOKSECRET LOOKTAIL suffix` },
+						},
+					],
+					timestamp: 1,
+				} as unknown as AgentMessage,
+				{
+					role: "toolResult",
+					toolCallId: "c1",
+					toolName: "bash",
+					content: "ok",
+					isError: false,
+					timestamp: 2,
+				} as unknown as AgentMessage,
+				{
+					role: "toolResult",
+					toolCallId: "c2",
+					toolName: "bash",
+					content: "ok",
+					isError: false,
+					timestamp: 2,
+				} as unknown as AgentMessage,
+				{
+					role: "bashExecution",
+					command: `${"q".repeat(100)} ${longToken}`,
+					output: "",
+					exitCode: 0,
+					timestamp: 3,
+				} as unknown as AgentMessage,
+				{
+					role: "bashExecution",
+					command: `${"A".repeat(100)} ${"x".repeat(40)}END ${pulledIn} suffix`,
+					output: "",
+					exitCode: 0,
+					timestamp: 4,
+				} as unknown as AgentMessage,
+			];
+			const runtime = new AdvisorRuntime(agent, { snapshotMessages: () => messages, obfuscator });
+
+			runtime.onTurnEnd();
+			await runtime.waitForCatchup(1_000, 1);
+
+			const rendered = promptText(promptInputs[0]);
+			expect(rendered).toContain(`→ bash(${"p".repeat(110)}`);
+			expect(rendered).toContain(`→ user-bash! ${"q".repeat(100)}`);
+			expect(rendered).not.toContain("SECRETONE");
+			expect(rendered).not.toContain("LOOKSECRET");
+			expect(rendered).not.toContain("tok_zzz");
+			expect(rendered).not.toContain("SECRET_b");
+		});
+
+		it("redacts user execution sources in advisor history before cutting their previews", async () => {
+			const secret = distinctSecret(80);
+			const obfuscator = new SecretObfuscator([{ type: "plain", content: secret }]);
+			const promptInputs: Array<string | AgentMessage[]> = [];
+			const agent = makeAgent(promptInputs);
+			const prefix = "x".repeat(103);
+			agent.state.messages.push(
+				{
+					role: "bashExecution",
+					command: `echo ${prefix}${secret}`,
+					exitCode: 0,
+					timestamp: 1,
+				} as unknown as AgentMessage,
+				{
+					role: "pythonExecution",
+					code: `print("${prefix}${secret}")`,
+					exitCode: 0,
+					timestamp: 2,
+				} as unknown as AgentMessage,
+			);
+			const runtime = new AdvisorRuntime(agent, {
+				snapshotMessages: () => [{ role: "user", content: "review the execution", timestamp: 3 } as AgentMessage],
+				obfuscator,
+			});
+
+			runtime.onTurnEnd();
+			await runtime.waitForCatchup(1_000, 1);
+
+			const bash = agent.state.messages[0] as AgentMessage & { command: string };
+			const python = agent.state.messages[1] as AgentMessage & { code: string };
+			expect(leakedSecretPieces(bash.command, secret)).toEqual([]);
+			expect(leakedSecretPieces(python.code, secret)).toEqual([]);
 		});
 		it("does not scan tool-call arguments hidden by the primary-argument preview", async () => {
 			const obfuscator = new SecretObfuscator([
@@ -4014,30 +4429,6 @@ describe("advisor", () => {
 			expect(runtime.backlog).toBe(0);
 		});
 
-		it("drops backlog after 3 consecutive failures to prevent permanent stall", async () => {
-			const promptInputs: Array<string | AgentMessage[]> = [];
-			const agent: AdvisorAgent = {
-				prompt: async input => {
-					promptInputs.push(input);
-					throw new Error("fail");
-				},
-				abort: () => {},
-				reset: () => {},
-				state: { messages: [] },
-			};
-			const messages: AgentMessage[] = [{ role: "user", content: "aaa", timestamp: 1 } as AgentMessage];
-			const host: AdvisorRuntimeHost = {
-				snapshotMessages: () => messages,
-			};
-			const runtime = new AdvisorRuntime(agent, host, 0);
-
-			runtime.onTurnEnd(messages);
-			await settleUntil(() => promptInputs.length === 3 && runtime.backlog === 0);
-
-			expect(promptInputs).toHaveLength(3);
-			expect(runtime.backlog).toBe(0);
-		});
-
 		it("notifies the host once when consecutive prompt failures make the advisor unavailable", async () => {
 			const promptInputs: Array<string | AgentMessage[]> = [];
 			const failures: unknown[] = [];
@@ -4214,6 +4605,82 @@ describe("advisor", () => {
 			const again = performance.now();
 			await runtime.waitForCatchup(60_000, 1);
 			expect(performance.now() - again).toBeLessThan(100);
+			runtime.dispose();
+		}, 10_000);
+
+		it("holds a recovery-aware catch-up through the failure but releases it on a terminal quota pause", async () => {
+			// Headless shutdown drains wait through a failing turn so disposal cannot
+			// abort the host's fallback switch. A recovery that ends in a quota pause
+			// can never drain, so the waiter must be released then — not held to its
+			// (ten-minute, in print mode) deadline.
+			const agent: AdvisorAgent = {
+				prompt: async () => {
+					throw new Error("insufficient_quota: you have exceeded your rate limit");
+				},
+				abort: () => {},
+				reset: () => {},
+				state: { messages: [] },
+			};
+			const messages: AgentMessage[] = [{ role: "user", content: "quota-turn", timestamp: 1 } as AgentMessage];
+			const recoveryStarted = Promise.withResolvers<void>();
+			const recoveryResult = Promise.withResolvers<boolean>();
+			const host: AdvisorRuntimeHost = {
+				snapshotMessages: () => messages,
+				onTurnError: () => {
+					recoveryStarted.resolve();
+					return recoveryResult.promise;
+				},
+				notifyQuotaExhausted: () => {},
+			};
+			const runtime = new AdvisorRuntime(agent, host, 0);
+
+			runtime.onTurnEnd(messages);
+			let settled = false;
+			const catchup = runtime.waitForCatchup(60_000, 1, undefined, { waitThroughRecovery: true }).then(caughtUp => {
+				settled = true;
+				return caughtUp;
+			});
+			// A failure-released waiter settles before onTurnError runs, so its
+			// continuation is already queued ahead of this one.
+			await recoveryStarted.promise;
+			expect(settled).toBe(false);
+
+			// No fallback available: the runtime latches its quota pause.
+			const released = performance.now();
+			recoveryResult.resolve(false);
+			expect(await catchup).toBe(false);
+			expect(performance.now() - released).toBeLessThan(2_000);
+			expect(runtime.quotaExhausted).toBe(true);
+			runtime.dispose();
+		}, 10_000);
+
+		it("releases a recovery-aware catch-up created while a session transition is paused", async () => {
+			// A paused runtime cannot drain until the transition resumes, which never
+			// happens on a shutdown path. A drain waiter created after the pause must
+			// release at once instead of parking for its (ten-minute) budget.
+			let abortPrompt: ((reason: unknown) => void) | undefined;
+			const agent: AdvisorAgent = {
+				prompt: () => {
+					const { promise, reject } = Promise.withResolvers<void>();
+					abortPrompt = reject;
+					return promise;
+				},
+				abort: reason => abortPrompt?.(new Error(String(reason))),
+				reset: () => {},
+				state: { messages: [] },
+			};
+			const messages: AgentMessage[] = [{ role: "user", content: "paused-turn", timestamp: 1 } as AgentMessage];
+			const host: AdvisorRuntimeHost = { snapshotMessages: () => messages };
+			const runtime = new AdvisorRuntime(agent, host, 0);
+
+			runtime.onTurnEnd(messages);
+			await settleUntil(() => abortPrompt !== undefined);
+			await runtime.pauseForSessionTransition();
+			expect(runtime.backlog).toBeGreaterThan(0);
+
+			const started = performance.now();
+			expect(await runtime.waitForCatchup(60_000, 1, undefined, { waitThroughRecovery: true })).toBe(false);
+			expect(performance.now() - started).toBeLessThan(100);
 			runtime.dispose();
 		}, 10_000);
 
@@ -4882,6 +5349,60 @@ describe("advisor", () => {
 			// Refuse, strip-and-resend, refuse again, then the swapped model answers.
 			expect(fallbackCalls).toBe(1);
 			expect(promptInputs).toHaveLength(3);
+			expect(failures).toEqual([]);
+		});
+
+		it("goes straight to the model fallback when the refused batch carried no reasoning", async () => {
+			const promptInputs: Array<string | AgentMessage[]> = [];
+			const failures: unknown[] = [];
+			const state: { messages: AgentMessage[]; error?: string } = { messages: [] };
+			let modelRefuses = true;
+			const agent: AdvisorAgent = {
+				prompt: async input => {
+					promptInputs.push(input);
+					state.error = modelRefuses ? "Refusal (bio): blocked under Anthropic's Usage Policy" : undefined;
+					state.messages.push({
+						role: "assistant",
+						content: [],
+						stopReason: modelRefuses ? "error" : "stop",
+						stopDetails: modelRefuses ? { type: "refusal", category: "bio" } : undefined,
+						errorMessage: state.error,
+						timestamp: promptInputs.length + 1,
+					} as unknown as AgentMessage);
+				},
+				abort: () => {},
+				reset: () => {},
+				rollbackTo: count => {
+					state.messages.length = count;
+					state.error = undefined;
+				},
+				state,
+			};
+			const messages = [
+				{ role: "assistant", content: [{ type: "text", text: "answer" }], timestamp: 1 } as AgentMessage,
+			];
+			let fallbackCalls = 0;
+			const runtime = new AdvisorRuntime(
+				agent,
+				{
+					snapshotMessages: () => messages,
+					notifyFailure: error => failures.push(error),
+					onTurnError: async () => {
+						fallbackCalls++;
+						modelRefuses = false;
+						return true;
+					},
+				},
+				0,
+			);
+
+			runtime.onTurnEnd(messages);
+			await settleUntil(() => runtime.backlog === 0);
+
+			// Stripping reasoning cannot change this batch, so the refused request is
+			// not resent byte-for-byte: refuse, switch models, the fallback answers.
+			expect(fallbackCalls).toBe(1);
+			expect(promptInputs).toHaveLength(2);
 			expect(failures).toEqual([]);
 		});
 
@@ -5935,6 +6456,56 @@ describe("advisor", () => {
 			expect(promptText(promptInputs.at(-1) as string | AgentMessage[])).toContain("quota-turn");
 		});
 
+		it("renders the quota-requeued batch against the advisor regex values it was prepared under", async () => {
+			// The requeued single-block text is rendered lazily on the quota path. It
+			// must be rendered BEFORE the advisor seen-state (and its retained regex
+			// values) is cleared; rendering after the clear would mint a
+			// friendly-prefixed placeholder that collides with a previously
+			// delivered replace-regex value.
+			const obfuscator = new SecretObfuscator([
+				{ type: "plain", content: "OTHERSECRET", friendlyName: "TOKABC123" },
+				{ type: "regex", content: "tok_[a-z0-9]+", mode: "replace" },
+			]);
+			const obfuscate = vi.spyOn(obfuscator, "obfuscate");
+			const promptInputs: Array<string | AgentMessage[]> = [];
+			let shouldFail = false;
+			const agent: AdvisorAgent = {
+				prompt: async input => {
+					promptInputs.push(input);
+					if (shouldFail) throw new Error("insufficient_quota: rate limit exceeded");
+				},
+				abort: () => {},
+				reset: () => {},
+				state: { messages: [] },
+			};
+			const messages: AgentMessage[] = [{ role: "user", content: "first tok_abc123", timestamp: 1 } as AgentMessage];
+			const host: AdvisorRuntimeHost = {
+				snapshotMessages: () => messages,
+				obfuscator,
+				notifyQuotaExhausted: () => {},
+			};
+			const runtime = new AdvisorRuntime(agent, host, 0);
+			runtime.onTurnEnd();
+			await runtime.waitForCatchup(1000, 1);
+			expect(promptInputs).toHaveLength(1);
+
+			shouldFail = true;
+			obfuscate.mockClear();
+			messages.push({ role: "user", content: "then OTHERSECRET", timestamp: 2 } as AgentMessage);
+			runtime.onTurnEnd();
+			await settleUntil(() => runtime.quotaExhausted && promptInputs.length === 2);
+
+			const rendered = obfuscate.mock.results.flatMap(result =>
+				result.type === "return" && typeof result.value === "string" ? [result.value] : [],
+			);
+			const requeued = rendered.findLast(text => obfuscator.deobfuscate(text).includes("then OTHERSECRET"));
+			expect(requeued).toBeDefined();
+			expect(requeued).not.toContain("OTHERSECRET");
+			expect(requeued).not.toContain("TOKABC123_");
+			expect(promptText(promptInputs[1])).not.toContain("TOKABC123_");
+			runtime.dispose();
+		});
+
 		it("resolves waitForCatchup immediately when quota is exhausted", async () => {
 			const agent: AdvisorAgent = {
 				prompt: async () => {
@@ -6349,6 +6920,24 @@ describe("advisor", () => {
 			const text = strip(card.render(30));
 			expect(text).toContain("truncated.");
 		});
+
+		it("caps collapsed note rows at advisorCollapsedLines and shows every row when expanded", async () => {
+			const uiTheme = await getThemeByName("dark");
+			if (!uiTheme) throw new Error("theme unavailable");
+			const note =
+				"This is a very long advisor note that will definitely exceed the restricted width constraint of thirty characters and should therefore wrap across multiple lines rather than getting truncated.";
+			const details = { notes: [{ note, severity: "concern" as const }] };
+			try {
+				setChatTranscriptDisplayPreferences({ advisorCollapsedLines: 1 });
+				const rows = createAdvisorMessageCard(details, () => false, uiTheme).render(30);
+				expect(rows.length).toBe(2);
+				expect(strip(rows)).not.toContain("truncated.");
+				const expanded = createAdvisorMessageCard(details, () => true, uiTheme);
+				expect(strip(expanded.render(30))).toContain("truncated.");
+			} finally {
+				setChatTranscriptDisplayPreferences({ advisorCollapsedLines: 0 });
+			}
+		});
 	});
 
 	// Regression: the advisor must not withhold interrupting advice from a turn
@@ -6369,6 +6958,7 @@ describe("advisor", () => {
 				expect(
 					resolveAdvisorDeliveryChannel({
 						severity,
+						continueSeverity: "nit",
 						autoResumeSuppressed: false,
 						streaming: false,
 						aborting: false,
@@ -6383,6 +6973,7 @@ describe("advisor", () => {
 			expect(
 				resolveAdvisorDeliveryChannel({
 					severity: "nit",
+					continueSeverity: "concern",
 					autoResumeSuppressed: false,
 					streaming: true,
 					aborting: false,
@@ -6393,6 +6984,7 @@ describe("advisor", () => {
 				expect(
 					resolveAdvisorDeliveryChannel({
 						severity,
+						continueSeverity: "concern",
 						autoResumeSuppressed: false,
 						streaming: true,
 						aborting: false,
@@ -6402,10 +6994,12 @@ describe("advisor", () => {
 			}
 		});
 
-		it("routes a non-interrupting nit to the aside queue regardless of state", () => {
+		it("routes a non-interrupting nit to the aside queue unless the primary is idle on a terminal answer", () => {
+			// A `nit` continue threshold only governs the terminal-answer case.
 			expect(
 				resolveAdvisorDeliveryChannel({
 					severity: "nit",
+					continueSeverity: "nit",
 					autoResumeSuppressed: true,
 					streaming: true,
 					aborting: true,
@@ -6414,6 +7008,7 @@ describe("advisor", () => {
 			expect(
 				resolveAdvisorDeliveryChannel({
 					severity: undefined,
+					continueSeverity: "nit",
 					autoResumeSuppressed: false,
 					streaming: false,
 					aborting: false,
@@ -6427,6 +7022,7 @@ describe("advisor", () => {
 					expect(
 						resolveAdvisorDeliveryChannel({
 							severity,
+							continueSeverity: "blocker",
 							autoResumeSuppressed: false,
 							streaming,
 							aborting: false,
@@ -6436,27 +7032,44 @@ describe("advisor", () => {
 			}
 		});
 
-		it("preserves a late concern when the primary already ended with a terminal answer", () => {
-			expect(
-				resolveAdvisorDeliveryChannel({
-					severity: "concern",
-					autoResumeSuppressed: false,
-					streaming: false,
-					aborting: false,
-					terminalAnswerNoQueuedWork: true,
-				}),
-			).toBe("preserve");
-		});
+		it.each([
+			{ severity: undefined, continueSeverity: "nit", channel: "steer" },
+			{ severity: "nit", continueSeverity: "concern", channel: "preserve" },
+			{ severity: "concern", continueSeverity: "concern", channel: "steer" },
+			{ severity: "concern", continueSeverity: "blocker", channel: "preserve" },
+			// #5628: a blocker always continues the run past a terminal answer.
+			{ severity: "blocker", continueSeverity: "blocker", channel: "steer" },
+		] as const)(
+			"after a terminal answer, $severity at continueSeverity=$continueSeverity → $channel",
+			({ severity, continueSeverity, channel }) => {
+				expect(
+					resolveAdvisorDeliveryChannel({
+						severity,
+						continueSeverity,
+						autoResumeSuppressed: false,
+						streaming: false,
+						aborting: false,
+						terminalAnswerNoQueuedWork: true,
+					}),
+				).toBe(channel);
+			},
+		);
 
-		it("steers a late blocker after a terminal answer so the primary continues and acknowledges it (#5628)", () => {
+		it("preserves a terminal continuation blocked by stop suppression, preserveOnly, or the cooldown", () => {
+			const terminal = {
+				severity: "concern",
+				continueSeverity: "concern",
+				autoResumeSuppressed: false,
+				streaming: false,
+				aborting: false,
+				terminalAnswerNoQueuedWork: true,
+			} as const;
+			expect(resolveAdvisorDeliveryChannel({ ...terminal, autoResumeSuppressed: true })).toBe("preserve");
+			expect(resolveAdvisorDeliveryChannel({ ...terminal, preserveOnly: true })).toBe("preserve");
+			// An aside would sit unseen in the idle yield queue; the card stays visible.
+			expect(resolveAdvisorDeliveryChannel({ ...terminal, interruptImmuneTurnActive: true })).toBe("preserve");
 			expect(
-				resolveAdvisorDeliveryChannel({
-					severity: "blocker",
-					autoResumeSuppressed: false,
-					streaming: false,
-					aborting: false,
-					terminalAnswerNoQueuedWork: true,
-				}),
+				resolveAdvisorDeliveryChannel({ ...terminal, severity: "blocker", interruptImmuneTurnActive: true }),
 			).toBe("steer");
 		});
 
@@ -6464,6 +7077,7 @@ describe("advisor", () => {
 			expect(
 				resolveAdvisorDeliveryChannel({
 					severity: "concern",
+					continueSeverity: "concern",
 					autoResumeSuppressed: false,
 					streaming: true,
 					aborting: false,
@@ -6473,6 +7087,7 @@ describe("advisor", () => {
 			expect(
 				resolveAdvisorDeliveryChannel({
 					severity: "blocker",
+					continueSeverity: "concern",
 					autoResumeSuppressed: false,
 					streaming: false,
 					aborting: false,
@@ -6482,6 +7097,7 @@ describe("advisor", () => {
 			expect(
 				resolveAdvisorDeliveryChannel({
 					severity: "blocker",
+					continueSeverity: "concern",
 					autoResumeSuppressed: true,
 					streaming: false,
 					aborting: false,
@@ -6494,6 +7110,7 @@ describe("advisor", () => {
 				expect(
 					resolveAdvisorDeliveryChannel({
 						severity,
+						continueSeverity: "concern",
 						autoResumeSuppressed: true,
 						streaming: false,
 						aborting: false,
@@ -6508,6 +7125,7 @@ describe("advisor", () => {
 			expect(
 				resolveAdvisorDeliveryChannel({
 					severity: "blocker",
+					continueSeverity: "concern",
 					autoResumeSuppressed: true,
 					streaming: true,
 					aborting: true,
@@ -6520,6 +7138,7 @@ describe("advisor", () => {
 				expect(
 					resolveAdvisorDeliveryChannel({
 						severity,
+						continueSeverity: "concern",
 						autoResumeSuppressed: true,
 						streaming: true,
 						aborting: false,

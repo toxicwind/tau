@@ -20,6 +20,15 @@ export type UsageCandidate<T extends AuthCredential> = {
 	inReserve?: boolean;
 	/** True only when reserve ranking had a usable remaining-fraction measurement. */
 	reserveMeasured?: boolean;
+	/**
+	 * Present after ranking: the account's renewable allowance for this request is
+	 * spent, so if it still serves it draws on paid overage such as Codex credits.
+	 */
+	allowanceSpent?: boolean;
+	/** Present after policy-aware ranking: the account's configured `priority` (0 when unset). */
+	accountPriority?: number;
+	/** Present after policy-aware ranking: unblocked and measured at or above its `reclaimAbovePct`. */
+	reclaimReady?: boolean;
 };
 
 /** OAuth credential eligible for usage ranking. */
@@ -39,6 +48,7 @@ export type UsageRankedCandidate<T extends AuthCredential> = UsageCandidate<T> &
 	reserveMeasured?: boolean;
 	accountPriority: number;
 	hasPriorityBoost: boolean;
+	allowanceSpent: boolean;
 	usageMeasured: boolean;
 	planPriority: number;
 	secondaryUsed: number;
@@ -90,6 +100,9 @@ function compareUsageRankedCandidatePriority(
 	if (planGated && left.planPriority !== right.planPriority) {
 		return left.planPriority - right.planPriority;
 	}
+	// Paid overage (Codex credits) never renews, so an account serving past its
+	// allowance yields to any sibling whose renewable allowance is left (#13889).
+	if (left.allowanceSpent !== right.allowanceSpent) return left.allowanceSpent ? 1 : -1;
 	if (left.inReserve !== right.inReserve) return left.inReserve ? 1 : -1;
 	if (left.hasPriorityBoost !== right.hasPriorityBoost) return left.hasPriorityBoost ? -1 : 1;
 	// Short-window guard: candidates whose primary (e.g. 5h) window is
@@ -98,14 +111,16 @@ function compareUsageRankedCandidatePriority(
 	const leftHot = left.primaryUsed >= PRIMARY_WINDOW_HOT_FRACTION;
 	const rightHot = right.primaryUsed >= PRIMARY_WINDOW_HOT_FRACTION;
 	if (leftHot !== rightHot) return leftHot ? 1 : -1;
-	// Usage-backed candidates outrank unmeasured ones: required-drain
-	// scores are only comparable between measured windows, and the
-	// clockless headroom fallback (0..1) must not let an account whose
+	// Configured priority is the user's order; a failed usage fetch says nothing
+	// about it, so it ranks ahead of measurement.
+	if (left.accountPriority !== right.accountPriority) return right.accountPriority - left.accountPriority;
+	// Within a priority, usage-backed candidates outrank unmeasured ones:
+	// required-drain scores are only comparable between measured windows, and
+	// the clockless headroom fallback (0..1) must not let an account whose
 	// usage fetch failed shadow a measured sibling.
 	const leftMeasured = left.usageMeasured;
 	const rightMeasured = right.usageMeasured;
 	if (leftMeasured !== rightMeasured) return leftMeasured ? -1 : 1;
-	if (left.accountPriority !== right.accountPriority) return right.accountPriority - left.accountPriority;
 	// Required drain, descending: the account whose remaining quota must
 	// burn fastest to avoid expiring unused at its reset comes first, so
 	// staggered resets land at ~100% utilization instead of stranding
@@ -130,7 +145,7 @@ function compareUsageRankedCandidates(
 	return priority !== 0 ? priority : left.orderPos - right.orderPos;
 }
 
-/** Sort ranked candidates by blocks, plan, reserve, boost, hot window, usage and drain. */
+/** Sort ranked candidates by blocks, plan, spent allowance, reserve, boost, hot window, usage and drain. */
 export function orderUsageRankedCandidates<T extends AuthCredential>(
 	candidates: UsageRankedCandidate<T>[],
 	planGated: boolean,
@@ -142,5 +157,8 @@ export function orderUsageRankedCandidates<T extends AuthCredential>(
 		usageChecked: candidate.usageChecked,
 		inReserve: candidate.inReserve,
 		reserveMeasured: candidate.reserveMeasured,
+		allowanceSpent: candidate.allowanceSpent,
+		accountPriority: candidate.accountPriority,
+		reclaimReady: candidate.reclaimReady,
 	}));
 }

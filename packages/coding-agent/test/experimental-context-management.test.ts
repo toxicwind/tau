@@ -1,4 +1,6 @@
 import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
+<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: `import { EvalTool } from "@oh-my-pi/pi-coding-agent/tools/eval";`
 import { Agent, CompactionCancelledError, type AgentTool } from "@tau/tau-agent-core";
 import type { AssistantMessage, UserMessage } from "@tau/tau-ai";
 import { createMockModel } from "@tau/tau-ai/providers/mock";
@@ -23,11 +25,41 @@ import { BUILTIN_TOOL_NAMES } from "tau/tools/builtin-names";
 import { GrepTool } from "tau/tools/grep";
 import { EvalTool } from "tau/tools/eval";
 import { ReadTool } from "tau/tools/read";
+=======
+import * as path from "node:path";
+import { Agent, CompactionCancelledError, type AgentTool } from "@oh-my-pi/pi-agent-core";
+import type { AssistantMessage, UserMessage } from "@oh-my-pi/pi-ai";
+import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
+import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
+import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
+import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import { AgentSession, type AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
+import { CONTEXT_NOTES_ENTRY_TYPE, getContextNotes } from "@oh-my-pi/pi-coding-agent/session/context-notes";
+import {
+	createCustomMessage,
+	convertToLlm,
+	SKILL_PROMPT_MESSAGE_TYPE,
+} from "@oh-my-pi/pi-coding-agent/session/messages";
+import type { CompactionEntry } from "@oh-my-pi/pi-coding-agent/session/session-entries";
+import { ExtensionRuntime, loadExtensionFromFactory } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
+import { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
+import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
+import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
+import { TempDir } from "@oh-my-pi/pi-utils";
+import { computeNonMessageTokens } from "@oh-my-pi/pi-tui/status-line/context-usage";
+import { mnemopiBackend } from "@oh-my-pi/pi-coding-agent/mnemopi/backend";
+import type { Tool, ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
+import { ContextNotesTool, NewContextTool } from "@oh-my-pi/pi-coding-agent/tools/context-notes";
+import { BUILTIN_TOOL_NAMES } from "@oh-my-pi/pi-coding-agent/tools/builtin-names";
+import { GrepTool } from "@oh-my-pi/pi-coding-agent/tools/grep";
+import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
+>>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/experimental-context-management.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
 const authStorage = createInMemoryAuthStorage();
 authStorage.keys.setRuntime("anthropic", "test-key");
-authStorage.keys.setRuntime("openai-codex", "test-key");
+authStorage.keys.setRuntime("mock", "test-key");
 const modelRegistry = new ModelRegistry(authStorage);
 
 afterAll(() => {
@@ -58,6 +90,34 @@ function assistant(text: string): AssistantMessage {
 	};
 }
 
+const STREAMING_PARENT_ASSIGNMENT = "ASSIGNMENT_A_STREAMING_PARENT_STEER";
+const IDLE_IRC_ASSIGNMENT = "ASSIGNMENT_B_IDLE_IRC";
+
+function appendIdleIrcRolloverScenario(manager: SessionManager, fromParent: boolean): void {
+	manager.appendMessage({
+		...user(STREAMING_PARENT_ASSIGNMENT),
+		attribution: "agent",
+		steering: true,
+	});
+	manager.appendMessage(assistant("Assignment A completed."));
+	manager.appendCustomMessageEntry(
+		"irc:incoming",
+		IDLE_IRC_ASSIGNMENT,
+		true,
+		{
+			id: "idle-irc-b",
+			from: fromParent ? "Parent" : "Peer",
+			message: IDLE_IRC_ASSIGNMENT,
+			...(fromParent ? { fromParent: true } : {}),
+		},
+		"agent",
+	);
+	const firstKeptEntryId = manager.appendMessage(assistant("Assignment B work in progress."));
+	manager.appendCompaction("Context rollover", undefined, firstKeptEntryId, 100, {
+		details: { kind: "experimental-context-rollover", version: 1 },
+	});
+}
+
 describe("experimental context management", () => {
 	let session: AgentSession | undefined;
 
@@ -71,7 +131,7 @@ describe("experimental context management", () => {
 		session = undefined;
 	});
 
-	async function createCodeModeSession() {
+	async function createRolloverSession() {
 		const mock = createMockModel({
 			responses: [
 				{
@@ -87,7 +147,6 @@ describe("experimental context management", () => {
 			"compaction.experimentalContextManagement": true,
 			"compaction.keepRecentTokens": 128,
 			"compaction.midTurnEnabled": false,
-			"providers.openai-codex.codeMode": "on",
 		});
 		const toolSession: ToolSession = {
 			cwd: process.cwd(),
@@ -103,11 +162,9 @@ describe("experimental context management", () => {
 			new GrepTool(toolSession),
 			new ContextNotesTool(toolSession),
 			new NewContextTool(toolSession),
-			new EvalTool(toolSession),
 		];
-		const model = { ...mock.model, provider: "openai-codex" };
 		const agent = new Agent({
-			initialState: { model, systemPrompt: ["test"], tools, messages: history },
+			initialState: { model: mock.model, systemPrompt: ["test"], tools, messages: history },
 			getApiKey: () => "test-key",
 			streamFn: mock.stream,
 		});
@@ -123,14 +180,12 @@ describe("experimental context management", () => {
 		return { session, manager, mock };
 	}
 
-	it("exposes new_context directly in Code Mode and rolls over once below the automatic threshold", async () => {
-		const { session, manager, mock } = await createCodeModeSession();
+	it("rolls over once on new_context below the automatic threshold", async () => {
+		const { session, manager, mock } = await createRolloverSession();
 		const events: AgentSessionEvent[] = [];
 		session.subscribe(event => {
 			events.push(event);
 		});
-		expect(session.getActiveToolNames()).toContain("new_context");
-		expect(session.getActiveToolNames()).not.toContain("read");
 		const request = "Implement the task; preserve the public API and do not deploy.";
 		await session.prompt(request);
 		await session.waitForIdle();
@@ -153,7 +208,7 @@ describe("experimental context management", () => {
 	});
 
 	it("retains the latest request through successive rollovers and context reconstruction without notes", async () => {
-		const { session, manager, mock } = await createCodeModeSession();
+		const { session, manager, mock } = await createRolloverSession();
 		const request = "Keep the API compatible; implement this task without deploying.";
 		await session.prompt(request);
 		await session.waitForIdle();
@@ -174,8 +229,54 @@ describe("experimental context management", () => {
 		).toHaveLength(1);
 	});
 
+	it("retains a newer idle parent assignment instead of an older streaming parent steer", () => {
+		const manager = SessionManager.inMemory();
+		appendIdleIrcRolloverScenario(manager, true);
+
+		const rebuilt = JSON.stringify(manager.buildSessionContext().messages);
+		expect(rebuilt).toContain(IDLE_IRC_ASSIGNMENT);
+		expect(rebuilt).not.toContain(STREAMING_PARENT_ASSIGNMENT);
+	});
+
+	it("does not elevate newer peer IRC above the latest user request", () => {
+		const manager = SessionManager.inMemory();
+		appendIdleIrcRolloverScenario(manager, false);
+
+		const rebuilt = JSON.stringify(manager.buildSessionContext().messages);
+		expect(rebuilt).toContain(STREAMING_PARENT_ASSIGNMENT);
+		expect(rebuilt).not.toContain(IDLE_IRC_ASSIGNMENT);
+	});
+
+	it("retains an idle parent assignment through repeated rollover and resume from the journal", async () => {
+		using tempDir = TempDir.createSync("@pi-parent-irc-rollover-");
+		const sessionDir = path.join(tempDir.path(), "sessions");
+		const manager = SessionManager.create(tempDir.path(), sessionDir);
+		appendIdleIrcRolloverScenario(manager, true);
+		const nextFirstKeptEntryId = manager.appendMessage(assistant("More work on assignment B."));
+		manager.appendCompaction("Second context rollover", undefined, nextFirstKeptEntryId, 50, {
+			details: { kind: "experimental-context-rollover", version: 1 },
+		});
+		await manager.ensureOnDisk();
+		const sessionFile = manager.getSessionFile();
+		if (!sessionFile) throw new Error("Expected persisted rollover session");
+
+		const repeated = JSON.stringify(manager.buildSessionContext().messages);
+		expect(repeated).toContain(IDLE_IRC_ASSIGNMENT);
+		expect(repeated).not.toContain(STREAMING_PARENT_ASSIGNMENT);
+
+		const resumed = await SessionManager.open(sessionFile, sessionDir);
+		try {
+			const rebuilt = JSON.stringify(resumed.buildSessionContext().messages);
+			expect(rebuilt).toContain(IDLE_IRC_ASSIGNMENT);
+			expect(rebuilt).not.toContain(STREAMING_PARENT_ASSIGNMENT);
+		} finally {
+			await resumed.close();
+			await manager.close();
+		}
+	});
+
 	it("closes the lifecycle when cancellation occurs during awaited start dispatch", async () => {
-		const { session, manager } = await createCodeModeSession();
+		const { session, manager } = await createRolloverSession();
 		const events: AgentSessionEvent[] = [];
 		const started = Promise.withResolvers<void>();
 		const release = Promise.withResolvers<void>();
@@ -205,6 +306,67 @@ describe("experimental context management", () => {
 		expect(manager.getEntries().filter(entry => entry.type === "compaction")).toHaveLength(0);
 		expect(session.isCompacting).toBe(false);
 	});
+	it("does not repeatedly roll over a tool loop when fixed context exceeds the recovery band", async () => {
+		const mock = createMockModel({
+			contextWindow: 200_000,
+			responses: [
+				{ content: [{ type: "toolCall", name: "context_notes", arguments: {} }], usage: { input: 190_000 } },
+				{ content: [{ type: "toolCall", name: "context_notes", arguments: {} }], usage: { input: 190_000 } },
+				{ content: [{ type: "toolCall", name: "context_notes", arguments: {} }], usage: { input: 190_000 } },
+				{ content: ["done"] },
+				{ content: [{ type: "toolCall", name: "context_notes", arguments: {} }], usage: { input: 190_000 } },
+				{ content: ["done again"] },
+			],
+		});
+		vi.spyOn(modelRegistry, "getAvailable").mockReturnValue([mock.model]);
+		const fixedPrompt = "fixed context ".repeat(100_000);
+		const manager = SessionManager.inMemory();
+		const settings = Settings.isolated({
+			"compaction.experimentalContextManagement": true,
+			"compaction.thresholdTokens": 100_000,
+			"compaction.keepRecentTokens": 1,
+			"compaction.midTurnEnabled": true,
+			"compaction.autoContinue": false,
+		});
+		const { tools } = createRolloverTools(manager, settings);
+		const agent = new Agent({
+			getApiKey: () => "test-key",
+			initialState: {
+				model: mock.model,
+				systemPrompt: [fixedPrompt],
+				tools,
+				messages: [],
+			},
+			convertToLlm,
+			streamFn: mock.stream,
+		});
+		session = new AgentSession({
+			agent,
+			sessionManager: manager,
+			settings,
+			modelRegistry,
+			toolRegistry: new Map(tools.map(tool => [tool.name, tool])),
+			builtInToolNames: BUILTIN_TOOL_NAMES,
+		});
+		const notices: string[] = [];
+		session.subscribe(event => {
+			if (event.type === "notice") notices.push(event.message);
+		});
+		await session.prompt("Continue the assignment across three tool calls.");
+		expect(mock.calls).toHaveLength(4);
+		expect(manager.getEntries().filter(entry => entry.type === "compaction")).toHaveLength(0);
+		expect(notices.filter(message => message.includes("cannot create headroom"))).toHaveLength(1);
+
+		const previousSessionId = manager.getSessionId();
+		expect(await session.newSession()).toBe(true);
+		expect(manager.getSessionId()).not.toBe(previousSessionId);
+		agent.setSystemPrompt([fixedPrompt]);
+		await session.prompt("Continue the next assignment.");
+		expect(mock.calls).toHaveLength(6);
+		expect(manager.getEntries().filter(entry => entry.type === "compaction")).toHaveLength(0);
+		expect(notices.filter(message => message.includes("cannot create headroom"))).toHaveLength(2);
+	});
+
 	it("keeps exact earlier requirements and the latest notebook through three real rollover boundaries", async () => {
 		const model = getBundledModel("anthropic", "claude-sonnet-4-5");
 		if (!model) throw new Error("Expected bundled model");

@@ -1,4 +1,5 @@
 import { join } from "node:path";
+import { toError } from "@oh-my-pi/pi-utils";
 import type { Protocol } from "devtools-protocol";
 import type { CDPSession, ConsoleMessage, HTTPRequest, Page } from "puppeteer-core";
 
@@ -84,6 +85,33 @@ function boundedText(value: string, limit: number): string {
 	return value.length <= limit ? value : `${value.slice(0, limit)}…`;
 }
 
+/**
+ * Render one console argument as text without throwing.
+ *
+ * `String()` throws for objects whose `toString`/`valueOf` are not callable
+ * (e.g. JSON payloads `{ toString: "x" }`); those fall back to JSON, then to
+ * the object's `Object.prototype.toString` tag, then to a fixed marker (the tag
+ * itself throws for revoked proxies). Mirrored page-side in
+ * {@link CMUX_CONSOLE_CAPTURE_SCRIPT}.
+ */
+function consoleArgumentText(value: unknown): string {
+	try {
+		return String(value);
+	} catch {
+		try {
+			const json = JSON.stringify(value);
+			if (json !== undefined) return json;
+		} catch {
+			// Cyclic or otherwise unserializable; use the object tag below.
+		}
+		try {
+			return Object.prototype.toString.call(value);
+		} catch {
+			return "[unserializable]";
+		}
+	}
+}
+
 function consoleLevel(message: ConsoleMessage): BrowserConsoleLevel {
 	const type = message.type();
 	switch (type) {
@@ -155,6 +183,14 @@ async function serializeRemoteObject(session: CDPSession, object: Protocol.Runti
 		}
 	}
 	return boundedText(object.description ?? object.className ?? object.type, MAX_ARG_CHARS);
+}
+
+/**
+ * Text for a thrown or rejected non-Error value serialized by {@link serializeRemoteObject}.
+ * Mirrored page-side by `reasonText` in {@link CMUX_CONSOLE_CAPTURE_SCRIPT}.
+ */
+function exceptionValueText(value: unknown): string {
+	return typeof value === "string" ? value : (JSON.stringify(value) ?? consoleArgumentText(value));
 }
 
 function protocolConsoleLevel(type: Protocol.Runtime.ConsoleAPICalledEvent["type"]): BrowserConsoleLevel {
@@ -233,7 +269,7 @@ export class PageConsoleCapture {
 		};
 		this.#pageErrorHandler = error => {
 			if (this.#cdp) return;
-			const normalized = error instanceof Error ? error : new Error(String(error));
+			const normalized = toError(error);
 			this.#push({
 				seq: this.#allocateSequence(),
 				ts: Date.now(),
@@ -273,7 +309,7 @@ export class PageConsoleCapture {
 				this.#pending = this.#pending.then(async () => {
 					const args = await serializedArgs;
 					if (this.#generation !== generation) return;
-					const text = args.map(value => String(value)).join(" ");
+					const text = args.map(consoleArgumentText).join(" ");
 					this.#push({
 						seq,
 						ts: event.timestamp,
@@ -287,7 +323,28 @@ export class PageConsoleCapture {
 			};
 			this.#protocolExceptionHandler = event => {
 				const details = event.exceptionDetails;
-				const description = details.exception?.description;
+				const exception = details.exception;
+				if (exception && exception.subtype !== "error") {
+					// A non-Error value's description is only its class ("Object"); keep its fields instead,
+					// bounded like console arguments.
+					const seq = this.#allocateSequence();
+					const location = protocolExceptionLocation(details, page.url());
+					const value = serializeRemoteObject(activeSession, exception);
+					this.#pending = this.#pending.then(async () => {
+						const text = exceptionValueText(await value);
+						if (this.#generation !== generation) return;
+						this.#push({
+							seq,
+							ts: event.timestamp,
+							type: "pageerror",
+							level: "error",
+							text: boundedText(text, MAX_TEXT_CHARS),
+							location,
+						});
+					});
+					return;
+				}
+				const description = exception?.description;
 				const stack = description?.includes("\n") ? description : undefined;
 				const text = description?.split("\n", 1)[0] ?? details.text;
 				this.#push({
@@ -449,16 +506,27 @@ export const CMUX_CONSOLE_CAPTURE_SCRIPT = String.raw`(() => {
 		state.entries.push({ seq: state.nextSeq++, ts: Date.now(), ...entry });
 		while (state.entries.length > 500) { state.entries.shift(); state.dropped++; }
 	};
+	const text = value => {
+		try { return String(value); } catch {
+			try { const json = JSON.stringify(value); if (json !== undefined) return json; } catch {}
+			try { return Object.prototype.toString.call(value); } catch { return "[unserializable]"; }
+		}
+	};
 	const safe = value => {
 		try {
 			const json = JSON.stringify(value);
 			return json && json.length > 8192 ? json.slice(0, 8192) + "…" : value;
-		} catch { return String(value); }
+		} catch { return text(value); }
+	};
+	const reasonText = value => {
+		if (value instanceof Error) return text(value.message || value);
+		const bounded = safe(value);
+		return typeof bounded === "string" ? bounded : (JSON.stringify(bounded) ?? text(value));
 	};
 	for (const level of ["log", "info", "warn", "error", "debug"]) {
 		const original = console[level].bind(console);
 		console[level] = (...args) => {
-			push({ type: "console", level, text: args.map(value => String(value)).join(" ").slice(0, 16384), args: args.map(safe) });
+			push({ type: "console", level, text: args.map(text).join(" ").slice(0, 16384), args: args.map(safe) });
 			return original(...args);
 		};
 	}
@@ -469,7 +537,7 @@ export const CMUX_CONSOLE_CAPTURE_SCRIPT = String.raw`(() => {
 	}));
 	addEventListener("unhandledrejection", event => {
 		const reason = event.reason;
-		push({ type: "pageerror", level: "error", text: String(reason && reason.message || reason).slice(0, 16384), stack: reason && reason.stack ? String(reason.stack).slice(0, 32768) : undefined });
+		push({ type: "pageerror", level: "error", text: reasonText(reason).slice(0, 16384), stack: reason && reason.stack ? String(reason.stack).slice(0, 32768) : undefined });
 	});
 	globalThis.__tauConsoleCapture = state;
 	return true;

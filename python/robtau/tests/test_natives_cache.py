@@ -1,12 +1,11 @@
 """Unit tests for `robtau.natives_cache`.
 
-The module's filesystem operations (hardlink, atomic rename, flock) are
+The module's filesystem operations (independent copies, atomic rename, flock) are
 exercised against `tmp_path`; nothing here requires a running orchestrator.
 """
 
 from __future__ import annotations
 
-import errno
 import json
 import os
 import subprocess
@@ -16,10 +15,15 @@ from pathlib import Path
 
 import pytest
 
+<<<<<<< ours — imports `file_header` (T+F, confidence: medium)
+# refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 from robtau.natives_cache import (
+=======
+import robomp.natives_cache as natives_cache
+from robomp.natives_cache import (
+>>>>>>> theirs — imports `file_header` (T+F, confidence: medium) · weave: run 'weave explain python/robtau/tests/test_natives_cache.py' for per-hunk detail, 'weave check' to verify your resolution
     CACHE_KEY_PATHS,
     NativesCache,
-    _atomic_link,
     compute_key,
 )
 
@@ -42,6 +46,9 @@ def _git(args: list[str], cwd: Path) -> None:
             "GIT_AUTHOR_EMAIL": "t@t",
             "GIT_COMMITTER_NAME": "t",
             "GIT_COMMITTER_EMAIL": "t@t",
+            "GIT_CONFIG_GLOBAL": os.devnull,
+            "GIT_CONFIG_SYSTEM": os.devnull,
+            "GIT_CONFIG_NOSYSTEM": "1",
         },
     )
 
@@ -184,6 +191,8 @@ def test_populate_workspace_miss_is_noop(tmp_path: Path) -> None:
     assert before == after
 
 
+<<<<<<< ours — function `test_capture_then_populate_shares_node_inode_but_copies_companions` (S+F, confidence: low)
+# refused_by: rename_vs_edit_guard · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 def test_capture_then_populate_shares_node_inode_but_copies_companions(tmp_path: Path) -> None:
     cache = _cache(tmp_path)
     src_repo = _seed_repo(tmp_path / "src" / "repo")
@@ -214,6 +223,37 @@ def test_capture_then_populate_shares_node_inode_but_copies_companions(tmp_path:
     workspace_node = dst_native / "tau_natives.linux-arm64.node"
     assert cached_node.stat().st_ino == workspace_node.stat().st_ino
     assert cached_node.stat().st_nlink >= 2
+=======
+def test_capture_then_populate_copies_artifacts(tmp_path: Path) -> None:
+    cache = _cache(tmp_path)
+    src_repo = _seed_repo(tmp_path / "src" / "repo")
+    native_dir = _populate_built_artifacts(src_repo)
+    key = compute_key(src_repo, target="linux-arm64")
+    stored = cache.capture(REPO, key, native_dir, source_workspace="src__001")
+    assert stored is not None
+    manifest = json.loads((stored / "manifest.json").read_text())
+    assert manifest["key"] == key
+    assert "pi_natives.linux-arm64.node" in manifest["node_files"]
+
+    # Populate a fresh workspace from the same source state.
+    dst_repo = src_repo.parent.parent / "dst" / "repo"
+    dst_repo.mkdir(parents=True)
+    _git(["clone", str(src_repo), str(dst_repo)], cwd=dst_repo.parent)
+    dst_native = dst_repo / "packages" / "natives" / "native"
+    dst_native.mkdir(parents=True, exist_ok=True)
+    hit = cache.populate_workspace(REPO, key, dst_native)
+    assert hit is not None
+    assert {p.name for p in hit.files} >= {
+        "pi_natives.linux-arm64.node",
+        "index.d.ts",
+        "index.js",
+        "embedded-addon.js",
+    }
+    cached_node = stored / "pi_natives.linux-arm64.node"
+    workspace_node = dst_native / "pi_natives.linux-arm64.node"
+    workspace_node.write_bytes(b"changed")
+    assert cached_node.read_bytes() == b"\x7fELF...native"
+>>>>>>> theirs — function `test_capture_then_populate_shares_node_inode_but_copies_companions` (S+F, confidence: low)
     # Companions are COPIED (independent inodes): in-place rewrite in the
     # workspace (gen-enums.ts / installGeneratedBindings open-truncate-write)
     # MUST NOT mutate the cached copy.
@@ -224,6 +264,94 @@ def test_capture_then_populate_shares_node_inode_but_copies_companions(tmp_path:
         original = cached_companion.read_text()
         ws_companion.write_text("rewritten\n")
         assert cached_companion.read_text() == original, name
+
+
+@pytest.mark.parametrize("name", ["index.js", "pi_natives.linux-arm64.node"])
+def test_capture_rejects_symlink_sources(tmp_path: Path, name: str) -> None:
+    cache = _cache(tmp_path)
+    native = _populate_built_artifacts(_seed_repo(tmp_path / "repo"))
+    secret = tmp_path / "secret"
+    secret.write_text("private marker")
+    (native / name).unlink()
+    (native / name).symlink_to(secret)
+    with pytest.raises(OSError):
+        cache.capture(REPO, "key", native, expected_uid=os.geteuid())
+    assert cache.lookup(REPO, "key") is None
+
+
+def test_capture_rejects_source_replaced_during_capture(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    cache = _cache(tmp_path)
+    native = _populate_built_artifacts(_seed_repo(tmp_path / "repo"))
+    secret = tmp_path / "secret"
+    secret.write_text("private marker")
+    copy_file = natives_cache._copy_file
+
+    def replace_then_copy(src_dir: int, dst_dir: int, name: str, **kwargs: object) -> None:
+        if name == "index.js":
+            (native / name).unlink()
+            (native / name).symlink_to(secret)
+        copy_file(src_dir, dst_dir, name, **kwargs)
+
+    monkeypatch.setattr(natives_cache, "_copy_file", replace_then_copy)
+    with pytest.raises(OSError):
+        cache.capture(REPO, "key", native, expected_uid=os.geteuid())
+    assert cache.lookup(REPO, "key") is None
+
+
+def test_image_seed_serves_matching_source_key_across_repositories(tmp_path: Path) -> None:
+    cache = _cache(tmp_path)
+    repo = _seed_repo(tmp_path / "repo")
+    native = _populate_built_artifacts(repo)
+    proc = subprocess.run(
+        ["git", "cat-file", "--batch-check"],
+        input="".join(f"HEAD:{p}\n" for p in CACHE_KEY_PATHS),
+        cwd=repo,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    (native / "trees.txt").write_text(proc.stdout)
+    assert cache.import_image_seed(native) is not None
+    key = compute_key(repo)
+    dest = tmp_path / "consumer" / "native"
+    assert cache.populate_workspace("another/repo", key, dest) is not None
+    assert (dest / "index.js").read_text() == "export const X = 1;\n"
+    assert cache.populate_workspace(REPO, "different-key", tmp_path / "miss") is None
+
+
+def test_populate_rejects_symlinked_destination(tmp_path: Path) -> None:
+    cache = _cache(tmp_path)
+    native = _populate_built_artifacts(_seed_repo(tmp_path / "repo"))
+    cache.capture(REPO, "key", native, expected_uid=os.geteuid())
+    victim = tmp_path / "victim"
+    victim.mkdir()
+    link = tmp_path / "link"
+    link.symlink_to(victim, target_is_directory=True)
+    with pytest.raises(OSError):
+        cache.populate_workspace(REPO, "key", link)
+    assert list(victim.iterdir()) == []
+
+
+def test_populate_rejects_symlinked_cache_artifact(tmp_path: Path) -> None:
+    cache = _cache(tmp_path)
+    native = _populate_built_artifacts(_seed_repo(tmp_path / "repo"))
+    entry = cache.capture(REPO, "key", native, expected_uid=os.geteuid())
+    assert entry is not None
+    secret = tmp_path / "secret"
+    secret.write_text("private marker")
+    (entry / "index.js").unlink()
+    (entry / "index.js").symlink_to(secret)
+    with pytest.raises(OSError):
+        cache.populate_workspace(REPO, "key", tmp_path / "workspace" / "native")
+    assert not (tmp_path / "workspace" / "native" / "index.js").exists()
+
+
+def test_capture_rejects_foreign_owned_file(tmp_path: Path) -> None:
+    cache = _cache(tmp_path)
+    native = _populate_built_artifacts(_seed_repo(tmp_path / "repo"))
+    with pytest.raises(PermissionError):
+        cache.capture(REPO, "key", native, expected_uid=os.geteuid() + 1)
+    assert cache.lookup(REPO, "key") is None
 
 
 def test_capture_skips_when_artifacts_incomplete(tmp_path: Path) -> None:
@@ -264,8 +392,8 @@ def test_capture_is_idempotent_under_lock(tmp_path: Path) -> None:
     final_dirs = [p for p in repo_root.iterdir() if p.is_dir() and not p.name.startswith(".")]
     assert len(final_dirs) == 1
     assert final_dirs[0].name == key
-
-
+<<<<<<< ours — function `test_populate_cross_device_falls_back_to_copy` (S+F, confidence: low)
+# refused_by: modify_delete_guard · collision: none (no common ancestor text)
 def test_populate_cross_device_falls_back_to_copy(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     cache = _cache(tmp_path)
     src_repo = _seed_repo(tmp_path / "src" / "repo")
@@ -293,6 +421,8 @@ def test_populate_cross_device_falls_back_to_copy(tmp_path: Path, monkeypatch: p
     copied_node = dst_native / "tau_natives.linux-arm64.node"
     assert copied_node.exists()
     assert cached_node.stat().st_ino != copied_node.stat().st_ino
+=======
+>>>>>>> theirs — function `test_populate_cross_device_falls_back_to_copy` (S+F, confidence: low)
 
 
 def test_populate_replaces_existing_file_atomically(tmp_path: Path) -> None:
@@ -355,6 +485,18 @@ def test_gc_evicts_for_byte_cap(tmp_path: Path) -> None:
     assert remaining
 
 
+def test_gc_preserves_populated_workspace(tmp_path: Path) -> None:
+    cache = _cache(tmp_path, max_entries_per_repo=1, max_bytes=0)
+    now = time.time()
+    entry = _stamp_entry(cache, REPO, "k1", now - 500)
+    _stamp_entry(cache, REPO, "k2", now - 100)
+    workspace = tmp_path / "ws"
+    assert cache.populate_workspace(REPO, "k1", workspace) is not None
+    cache.gc(REPO)
+    assert not entry.exists()
+    assert (workspace / "pi_natives.linux-arm64.node").read_bytes() == b"x" * 1024
+<<<<<<< ours — function `test_gc_preserves_workspace_hardlinks` (S+F, confidence: low)
+# refused_by: modify_delete_guard · collision: none (no common ancestor text)
 def test_gc_preserves_workspace_hardlinks(tmp_path: Path) -> None:
     """Evicting a cache entry must NOT delete the file from workspaces that
     hardlinked it — kernel inode refcount keeps the data alive."""
@@ -370,6 +512,8 @@ def test_gc_preserves_workspace_hardlinks(tmp_path: Path) -> None:
     assert not entry.exists()  # cache directory swept
     assert ws_node.exists()  # workspace file survives via inode refcount
     assert ws_node.read_bytes() == b"x" * 1024
+=======
+>>>>>>> theirs — function `test_gc_preserves_workspace_hardlinks` (S+F, confidence: low)
 
 
 def test_gc_clears_stale_staging_dirs(tmp_path: Path) -> None:
@@ -399,16 +543,3 @@ def test_lookup_rejects_incomplete_entry(tmp_path: Path) -> None:
     (entry / "manifest.json").write_text("{}")
     # No .node → no hit even though manifest exists.
     assert cache.lookup(REPO, "partial") is None
-
-
-# ---- _atomic_link ----
-
-
-def test_atomic_link_replaces_existing_target(tmp_path: Path) -> None:
-    src = tmp_path / "src"
-    src.write_bytes(b"new")
-    dst = tmp_path / "dst"
-    dst.write_bytes(b"old")
-    _atomic_link(src, dst)
-    assert dst.read_bytes() == b"new"
-    assert dst.stat().st_ino == src.stat().st_ino

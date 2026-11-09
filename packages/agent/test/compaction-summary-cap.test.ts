@@ -3,14 +3,22 @@ import type { AgentMessage } from "@tau/tau-agent-core";
 import {
 	type CompactionPreparation,
 	compact,
-	createFileOps,
 	DEFAULT_COMPACTION_SETTINGS,
 	generateSummary,
 	MAX_SUMMARY_TOKENS,
+<<<<<<< ours — imports `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-agent-core/compaction";
 import type { AssistantMessage, Model } from "@tau/tau-ai";
 import * as ai from "@tau/tau-ai";
 import { getBundledModel } from "@tau/tau-catalog/models";
+=======
+} from "@oh-my-pi/pi-agent-core/compaction";
+import * as snapcompact from "@oh-my-pi/snapcompact";
+import type { AssistantMessage, Model } from "@oh-my-pi/pi-ai";
+import * as ai from "@oh-my-pi/pi-ai";
+import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+>>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/agent/test/compaction-summary-cap.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function createAssistantMessage(text: string): AssistantMessage {
 	return {
@@ -77,7 +85,7 @@ describe("compaction summary output budget", () => {
 			recentMessages: [{ role: "user", content: "recent", timestamp: 3 }],
 			isSplitTurn: true,
 			tokensBefore: 900_000,
-			fileOps: createFileOps(),
+			fileOps: snapcompact.createFileOps(),
 			settings: {
 				...DEFAULT_COMPACTION_SETTINGS,
 				reserveTokens: 150_000,
@@ -89,6 +97,32 @@ describe("compaction summary output budget", () => {
 
 		const budgets = spy.mock.calls.map(call => call[2]?.maxTokens).sort((a, b) => (a ?? 0) - (b ?? 0));
 		expect(budgets).toEqual([512, MAX_SUMMARY_TOKENS, MAX_SUMMARY_TOKENS]);
+	});
+
+	test("delivers extension context to every split-turn summary request", async () => {
+		const spy = vi.spyOn(ai, "completeSimple").mockResolvedValue(createAssistantMessage("summary"));
+		const preparation: CompactionPreparation = {
+			firstKeptEntryId: "kept",
+			messagesToSummarize: messages,
+			turnPrefixMessages: [{ role: "user", content: "continue", timestamp: 2 }],
+			recentMessages: [{ role: "user", content: "recent", timestamp: 3 }],
+			isSplitTurn: true,
+			tokensBefore: 900_000,
+			fileOps: snapcompact.createFileOps(),
+			settings: {
+				...DEFAULT_COMPACTION_SETTINGS,
+				reserveTokens: 16_384,
+				remoteEnabled: false,
+			},
+		};
+		const extraContext = "Extension note: the deploy freeze stays in place until Friday.";
+
+		await compact(preparation, getModel(), "test-key", undefined, undefined, { extraContext: [extraContext] });
+
+		expect(spy.mock.calls.length).toBe(3);
+		for (const call of spy.mock.calls) {
+			expect(JSON.stringify(call[1].messages)).toContain(extraContext);
+		}
 	});
 
 	test("leaves a reserve smaller than the cap proportional", async () => {

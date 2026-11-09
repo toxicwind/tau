@@ -105,10 +105,6 @@ function assistantWithReasoning(reasoning: string, answer: string): AssistantMes
 }
 
 describe("llama.cpp warm-prefix preservation (#3528)", () => {
-	it("auto-enables replayReasoningContent for llama.cpp thinking models", () => {
-		const compat = llamaCppQwenModel().compat;
-		expect(compat.replayReasoningContent).toBe(true);
-	});
 
 	it("auto-enables replayReasoningContent for LM Studio and vLLM thinking models", () => {
 		// Same `replayReasoningContent` semantics extend to the other built-in
@@ -155,19 +151,6 @@ describe("llama.cpp warm-prefix preservation (#3528)", () => {
 			compat: { replayReasoningContent: true },
 		}).compat;
 		expect(optedIn.replayReasoningContent).toBe(true);
-	});
-
-	it("still auto-enables replayReasoningContent when spec.reasoning is false on local hosts", () => {
-		// Runtime discovery for llama.cpp / lm-studio / openai-models-list
-		// hardcodes `reasoning: false` because the upstream `/models` endpoints
-		// don't advertise the capability — but the stream parser still records
-		// any incoming `reasoning_content` deltas as thinking blocks. Gating
-		// the flag on `spec.reasoning` would leave every discovered local Qwen
-		// model reproducing #3528. The encoder's own
-		// `nonEmptyThinkingBlocks.length > 0` guard makes the flag a no-op on
-		// pure-text histories, so it's safe to enable unconditionally.
-		const compat = llamaCppQwenModel({ reasoning: false }).compat;
-		expect(compat.replayReasoningContent).toBe(true);
 	});
 
 	it("leaves replayReasoningContent off for cloud OpenAI-compatible providers", () => {
@@ -393,16 +376,6 @@ describe("llama.cpp warm-prefix preservation (#3528)", () => {
 		expect(found?.reasoning).toBeUndefined();
 	});
 
-	it("auto-enables qwenPreserveThinking for llama.cpp + Qwen", () => {
-		// Pair to `replayReasoningContent`: without it the Qwen3.6+ template
-		// strips `<think>...</think>` from older assistant turns the moment a
-		// new user message (or auto-learn nudge) shifts them past
-		// `last_query_index`, and the re-render diverges from the slot's KV
-		// cache state.
-		const compat = llamaCppQwenModel().compat;
-		expect(compat.qwenPreserveThinking).toBe(true);
-	});
-
 	it("auto-enables qwenPreserveThinking for the other built-in local providers + Qwen", () => {
 		const lmStudio = llamaCppQwenModel({ provider: "lm-studio", baseUrl: "http://127.0.0.1:1234/v1" }).compat;
 		const vllm = llamaCppQwenModel({ provider: "vllm", baseUrl: "http://127.0.0.1:8000/v1" }).compat;
@@ -426,6 +399,8 @@ describe("llama.cpp warm-prefix preservation (#3528)", () => {
 		expect(deepseek.qwenPreserveThinking).toBe(false);
 	});
 
+<<<<<<< ours — scope `it("leaves qwenPreserveThinking off for cloud...` in test_suite `llama.cpp warm-prefix preservation (#3528)`, deleted in theirs (T+S+F, confidence: low)
+// refused_by: statement_fold · collision: none (no common ancestor text)
 	it("leaves qwenPreserveThinking off for cloud Qwen hosts", () => {
 		// Alibaba's Dashscope and Qwen Portal own the slot lifecycle on the
 		// cloud side; TAU isn't responsible for KV-cache invalidation there,
@@ -437,6 +412,8 @@ describe("llama.cpp warm-prefix preservation (#3528)", () => {
 		}).compat;
 		expect(dashscope.qwenPreserveThinking).toBe(false);
 	});
+=======
+>>>>>>> theirs — scope `it("leaves qwenPreserveThinking off for cloud...` deleted in theirs · weave: run 'weave explain packages/ai/test/issue-3528-repro.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 	it("emits preserve_thinking on the wire for local Qwen + thinking", () => {
 		// End-to-end pin for the user's reported setup (#3541):

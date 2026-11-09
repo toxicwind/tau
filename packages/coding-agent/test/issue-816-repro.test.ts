@@ -10,6 +10,7 @@ import { AuthStorage } from "tau/session/auth-storage";
 import { HistoryStorage } from "tau/session/history-storage";
 import { SessionManager } from "tau/session/session-manager";
 import { TempDir } from "@tau/tau-utils";
+import { cfgPlanEnabled } from "@oh-my-pi/pi-coding-agent/plan-mode/settings";
 
 describe("issue #816 — plan mode pendingModelSwitch leak", () => {
 	let tempDir: TempDir;
@@ -162,7 +163,7 @@ describe("issue #816 — plan mode pendingModelSwitch leak", () => {
 	});
 
 	it("does not enter plan mode when plan.enabled is false", async () => {
-		session.settings.set("plan.enabled", false);
+		cfgPlanEnabled.set(session.settings, false);
 		const warning = vi.spyOn(mode, "showWarning").mockImplementation(() => {});
 
 		await mode.handlePlanModeCommand();
@@ -175,7 +176,7 @@ describe("issue #816 — plan mode pendingModelSwitch leak", () => {
 		await mode.handlePlanModeCommand();
 		expect(mode.planModeEnabled).toBe(true);
 
-		session.settings.set("plan.enabled", false);
+		cfgPlanEnabled.set(session.settings, false);
 		vi.spyOn(mode, "showHookConfirm").mockResolvedValue(true);
 
 		await mode.handlePlanModeCommand();

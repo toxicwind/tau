@@ -4,6 +4,7 @@ import { resetSettingsForTest, Settings, settings } from "tau/config/settings";
 import { OAuthSelectorComponent } from "@tau/tau-tui/overlays/oauth-selector";
 import { initTheme } from "@tau/tau-tui/theme";
 import type { AuthStorage } from "tau/session/auth-storage";
+import { cfgDisabledProviders } from "@oh-my-pi/pi-coding-agent/config/model-settings";
 
 beforeAll(async () => {
 	await initTheme();
@@ -131,7 +132,7 @@ describe("OAuthSelectorComponent", () => {
 				authStorage,
 				() => {},
 				() => {},
-				{ disabledProviders: settings.get("disabledProviders") },
+				{ disabledProviders: cfgDisabledProviders.get(settings) },
 			);
 			for (const char of victim.id) {
 				component.handleInput(char);
@@ -157,7 +158,7 @@ describe("OAuthSelectorComponent", () => {
 				authStorage,
 				() => {},
 				() => {},
-				{ disabledProviders: settings.get("disabledProviders") },
+				{ disabledProviders: cfgDisabledProviders.get(settings) },
 			);
 			for (const char of alias.id) {
 				component.handleInput(char);
@@ -185,7 +186,7 @@ describe("OAuthSelectorComponent", () => {
 				} as unknown as AuthStorage,
 				providerId => selected.push(providerId),
 				() => {},
-				{ disabledProviders: settings.get("disabledProviders") },
+				{ disabledProviders: cfgDisabledProviders.get(settings) },
 			);
 			for (const char of "opencode-go") {
 				component.handleInput(char);

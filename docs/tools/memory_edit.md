@@ -3,11 +3,13 @@
 > Update, forget, or invalidate Mnemotau long-term memories by id.
 
 ## Source
+
 - Entry: `packages/coding-agent/src/tools/memory-edit.ts`
 - Model-facing prompt: `packages/coding-agent/src/prompts/tools/memory-edit.md`
 - Backend collaborator: `packages/coding-agent/src/mnemotau/state.ts` (`editScopedMemory(...)`)
 
 ## Registration / Visibility
+
 - Tool metadata: `approval = "read"`, `strict = true`, `loadMode = "discoverable"`, even though successful calls mutate local memory.
 - Registration requires `memory.backend = "mnemotau"`; the tool is absent for `"off"`, `"local"`, and `"hindsight"`.
 - In an unrestricted session with an explicit tool list, registration auto-includes `memory_edit` for Mnemotau. Restricted lists are not widened.
@@ -16,15 +18,16 @@
 
 ## Inputs
 
-| Field | Type | Required | Description |
-|---|---|---:|---|
-| `op` | `"update" \| "forget" \| "invalidate"` | Yes | Edit operation to apply. |
-| `id` | `string` | Yes | Memory id returned by `recall`. |
-| `content` | `string` | No | Replacement memory text for `update`. |
-| `importance` | `number` | No | Replacement importance for `update`; clamped to `0..1`. |
-| `replacement_id` | `string` | No | Superseding memory id recorded for `invalidate`. |
+| Field            | Type                                   | Required | Description                                             |
+| ---------------- | -------------------------------------- | -------: | ------------------------------------------------------- |
+| `op`             | `"update" \| "forget" \| "invalidate"` |      Yes | Edit operation to apply.                                |
+| `id`             | `string`                               |      Yes | Memory id returned by `recall`.                         |
+| `content`        | `string`                               |       No | Replacement memory text for `update`.                   |
+| `importance`     | `number`                               |       No | Replacement importance for `update`; clamped to `0..1`. |
+| `replacement_id` | `string`                               |       No | Superseding memory id recorded for `invalidate`.        |
 
 ## Outputs
+
 - `content[0].type = "text"`
 - Successful mutations render `Memory <id> updated|deleted|invalidated in bank <bank> (<store>).`
 - Unknown or operation-ineligible ids render `Memory <id> was not found...`; this is a normal result with status `not_found`.
@@ -41,7 +44,8 @@
 7. The tool renders the returned status and passes the backend result through unchanged in `details`.
 
 ## Modes / Variants
-- `update` replaces working-memory text and/or importance. Content replacement is wholesale, not a patch.
+
+- `update` replaces working-memory text and/or importance. Content replacement is wholesale, not a patch, and passes through `redactMemorySecrets(...)` before storage.
 - `forget` permanently deletes working-memory rows.
 - `invalidate` softly supersedes working or episodic rows and may record `replacement_id`.
 - Fact rows are readable but immutable; every operation returns `not_editable`.
@@ -66,6 +70,7 @@
 - `read memory://<id>` throws `Mnemotau memory <id> not found in the calling session's scoped bank` when that session's banks do not contain the row; a row held only by another live session is not reachable.
 
 ## Notes
+
 - Read the full `memory://<id>` row before every update. Copying a clipped recall preview into `content` would delete the unseen tail.
 - Prefer `invalidate` for stale working/episodic memories whose history may remain useful.
 - Use `forget` only when a working-memory row should be hard-deleted.

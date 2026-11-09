@@ -1,8 +1,16 @@
 import { beforeAll, describe, expect, it } from "bun:test";
+<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: `import type { SearchResponse } from "@oh-my-pi/pi-tui/tools/web…`
 import { getThemeByName, initTheme } from "@tau/tau-tui/theme";
 import { renderSearchResult, type SearchRenderDetails } from "@tau/tau-tui/tools/web-search";
 import type { SearchResponse } from "@tau/tau-tui/tools/web-search";
 import { sanitizeText } from "@tau/tau-utils";
+=======
+import { getThemeByName, initTheme } from "@oh-my-pi/pi-tui/theme";
+import { renderSearchResult, type SearchRenderDetails } from "@oh-my-pi/pi-tui/tools/web-search";
+import type { SearchResponse } from "@oh-my-pi/pi-tui/tools/web-search-types";
+import { sanitizeText } from "@oh-my-pi/pi-utils";
+>>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/test/web-search-render.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const ANSWER = [
 	"## Overview Heading",

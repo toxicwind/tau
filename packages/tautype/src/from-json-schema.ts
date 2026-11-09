@@ -1,6 +1,8 @@
 /**
  * JSON Schema → tautype importer.
  *
+<<<<<<< ours — interstitial `file_header` (T+F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `* `Type.toJsonSchema()` for the dialect omptype (and its Zod/Ty…` +2 more
  * Rebuilds a callable schema from JSON Schema documents — the inverse of
  * `Type.toJsonSchema()` for the dialect tautype (and its Zod/TypeBox
  * adapters) emits: draft-07 and draft-2020-12 structural keywords, string
@@ -14,21 +16,39 @@
 import { TauTypeError } from "./errors";
 import { type EmbeddableSchema, type IR, IR_BRAND, type PropIR, type TupleItemIR } from "./ir";
 import { keywordIR, patternIR } from "./keywords";
+=======
+ * Validates exactly as JSON Schema drafts 2020-12 and 7 specify: every
+ * keyword including `$dynamicRef`, `unevaluatedProperties`/`unevaluatedItems`,
+ * `$id`/`$anchor` resolution, remote references, and vocabularies declared by
+ * meta-schemas. Validation runs on an eval-free closure engine and moves to
+ * generated code once a schema is hot (see `jsonschema/`).
+ *
+ * The result is a regular omptype schema: callable, composable, emitting the
+ * source document from `toJsonSchema()`, and filling absent properties from
+ * their `default` when called (never in `allows`).
+ *
+ * # Example
+ * ```ts
+ * const read = fromJsonSchema({
+ * 	type: "object",
+ * 	properties: { path: { type: "string" }, offset: { type: "integer", minimum: 0 } },
+ * 	required: ["path"],
+ * });
+ * read.allows({ path: "a.ts" }); // true
+ * read({ offset: -1 }); // OmpErrors: path missing, offset below 0
+ * ```
+ */
+import { OmpErrors } from "./errors";
+import { type EmbeddableSchema, type IR, IR_BRAND } from "./ir";
+import type { Issue } from "./jsonschema/interpret";
+import { Validator, type ValidatorOptions } from "./jsonschema/validator";
+>>>>>>> theirs — interstitial `file_header` (T+F, confidence: medium) · weave: run 'weave explain packages/tautype/src/from-json-schema.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { type BaseType, type } from "./type";
 
-type JsonSchema = Record<string, unknown>;
-
-/** `format` values lowered to built-in keyword validators. */
-const FORMAT_KEYWORDS: Record<string, string> = {
-	email: "string.email",
-	uuid: "string.uuid",
-	"date-time": "string.date.iso",
-	date: "string.date.iso",
-	ipv4: "string.ip.v4",
-	ipv6: "string.ip.v6",
-	regex: "string.regex",
-};
-
+/** Options for {@link fromJsonSchema}. */
+export type FromJsonSchemaOptions = ValidatorOptions;
+<<<<<<< ours — class `Importer` (S+F, confidence: low)
+// refused_by: modify_delete_guard · collision: none (no common ancestor text)
 class Importer {
 	readonly #root: JsonSchema;
 	readonly #aliases = new Map<string, IR>();
@@ -210,12 +230,56 @@ class Importer {
 		return ir;
 	}
 }
+=======
+>>>>>>> theirs — class `Importer` (S+F, confidence: low)
 
 /**
  * Build a callable tautype schema from a JSON Schema document.
  *
  * # Errors
+<<<<<<< ours — scope `declaration` in function `fromJsonSchema` (T+S, confidence: medium)
+// refused_by: statement_fold · collision: `* Throws {@link OmpTypeError} on malformed nodes, unresolvable …`
  * Throws {@link TauTypeError} on malformed nodes, unresolvable `$ref`s, or
+=======
+ * Throws `OmpTypeError` when a `$ref` is malformed or names a document or
+ * location that neither `schema` nor `options.schemas` contains, when a
+ * `pattern` is not a regular expression, or when a schema node is neither a
+ * boolean nor an object.
+ */
+export function fromJsonSchema(schema: unknown, options?: FromJsonSchemaOptions): BaseType {
+>>>>>>> theirs — scope `declaration`
+	// Runs after 64 checks, long after `imported` below exists.
+	const validator = new Validator(schema, options, compiled => {
+		imported.allows = compiled;
+	});
+	const check = validator.check;
+	const node = typeof schema === "object" && schema !== null ? (schema as Record<string, unknown>) : undefined;
+	const refine: IR = {
+		k: "refine",
+		base: { k: "unknown" },
+		check,
+		pred: value => check(value) || toErrors(validator.explain(value), value),
+		expected: "a value matching the JSON Schema",
+		json: node ?? (schema === false ? { not: {} } : {}),
+	};
+	if (typeof node?.description === "string") refine.desc = node.description;
+	const ir: IR = validator.hasDefaults
+		? { k: "morph", input: refine, fn: value => validator.fillDefaults(value) }
+		: refine;
+	const embedded: EmbeddableSchema = {
+		[IR_BRAND]: true,
+		ir,
+		hasSteps: false,
+		hasDefault: false,
+		run: value => value,
+	};
+	const imported = type.raw(embedded);
+	// The engine's check is the whole boolean path; skip the generic dispatcher.
+	// Once generated code exists, `onCompile` above rebinds `allows` to it.
+	Object.defineProperty(imported, "allows", { value: check, writable: true, configurable: true });
+	return imported;
+<<<<<<< ours — scope `* types omptype cannot represent.` in function `fromJsonSchema`, deleted in theirs (S+F, confidence: low)
+// refused_by: statement_fold · collision: none (no common ancestor text)
  * types tautype cannot represent.
  */
 export function fromJsonSchema(schema: unknown): BaseType {
@@ -228,4 +292,16 @@ export function fromJsonSchema(schema: unknown): BaseType {
 		run: value => value,
 	};
 	return type.raw(embedded);
+=======
+>>>>>>> theirs — scope `* types omptype cannot represent.` deleted in theirs
+}
+
+function toErrors(issues: readonly Issue[], value: unknown): OmpErrors {
+	if (issues.length === 0) return new OmpErrors([], "a value matching the JSON Schema", value);
+	const errors = new OmpErrors(issues[0].path, issues[0].expected, issues[0].data);
+	for (let index = 1; index < issues.length; index++) {
+		const issue = issues[index];
+		errors.append(new OmpErrors(issue.path, issue.expected, issue.data));
+	}
+	return errors;
 }

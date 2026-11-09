@@ -16,10 +16,19 @@ import {
 	scratchpadRead,
 	scratchpadWrite,
 	updateWorking,
+<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-mnemotau/core/beam/store";
 import type { BeamEvent, BeamMemoryState } from "@tau/tau-mnemotau/core/beam/types";
 import { EpisodicGraph } from "@tau/tau-mnemotau/core/episodic-graph";
 import { openDatabase } from "@tau/tau-mnemotau/db";
+=======
+} from "@oh-my-pi/pi-mnemopi/core/beam/store";
+import type { BeamEvent, BeamMemoryState } from "@oh-my-pi/pi-mnemopi/core/beam/types";
+import { EpisodicGraph } from "@oh-my-pi/pi-mnemopi/core/episodic-graph";
+import { Mnemopi } from "@oh-my-pi/pi-mnemopi/core/memory";
+import { openDatabase } from "@oh-my-pi/pi-mnemopi/db";
+>>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/mnemotau/test/beam-store.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const states: BeamMemoryState[] = [];
 
@@ -122,7 +131,6 @@ describe("beam store free functions", () => {
 			],
 			{ veracity: "imported" },
 		);
-		expect(rememberBatch).toBe(rememberBatch);
 
 		expect(ids).toHaveLength(3);
 		expect(getContext(beam, 3).map(row => row.content)).toEqual([
@@ -446,5 +454,57 @@ describe("fact-id read path (issue #4725)", () => {
 		expect(forgetWorking(beam, "fact-missing")).toBe(false);
 		expect(forgetWorking(beam, "shared-id")).toBe(true);
 		expect(get(beam, "shared-id")?.memory_store).toBe("fact");
+	});
+});
+
+describe("consolidated memory retirement", () => {
+	it("keeps retired facts out of recall without retiring unrelated memories", async () => {
+		const memory = new Mnemopi({ dbPath: ":memory:", noEmbeddings: true, llm: false });
+		try {
+			const timestamp = new Date(Date.now() - 13 * 60 * 60 * 1000).toISOString();
+			const retired = memory.remember("Orchid deployment requires the violet release branch.", {
+				source: "retired",
+				timestamp,
+			});
+			const sibling = memory.remember("Jasmine releases require signed artifacts.", {
+				source: "retired",
+				timestamp,
+			});
+			const kept = memory.remember("Cobalt backup requires quarterly recovery drills.", {
+				source: "kept",
+				timestamp,
+			});
+			memory.sleep();
+			const recall = (query: string) => memory.recallEnhanced(query, 5, { includeFacts: true });
+			expect((await recall("orchid")).map(row => row.id)).toEqual([retired]);
+
+			expect(memory.beam.invalidate(retired)).toBe(true);
+
+			expect(await recall("orchid")).toEqual([]);
+			expect((await recall("cobalt")).map(row => row.id)).toEqual([kept]);
+			expect((await recall("jasmine")).map(row => row.id)).toEqual([sibling]);
+		} finally {
+			memory.close();
+		}
+	});
+
+	it("rolls back source retirement when a linked summary cannot be retired", async () => {
+		const memory = new Mnemopi({ dbPath: ":memory:", noEmbeddings: true, llm: false });
+		try {
+			const id = memory.remember("Orchid deployment requires the violet release branch.", {
+				timestamp: new Date(Date.now() - 13 * 60 * 60 * 1000).toISOString(),
+			});
+			memory.sleep();
+			memory.db.run(`
+				CREATE TEMP TRIGGER prevent_summary_retirement
+				BEFORE UPDATE OF valid_until ON episodic_memory
+				BEGIN SELECT RAISE(ABORT, 'blocked episode retirement'); END
+			`);
+
+			expect(() => memory.beam.invalidate(id)).toThrow("blocked episode retirement");
+			expect((await memory.recallEnhanced("orchid")).map(row => row.id)).toEqual([id]);
+		} finally {
+			memory.close();
+		}
 	});
 });

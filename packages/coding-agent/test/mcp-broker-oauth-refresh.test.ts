@@ -15,7 +15,7 @@
  * token has expired can rotate through the broker repeatedly while the client
  * receives freshly minted Bearer tokens.
  */
-import { afterEach, beforeEach, describe, expect, test } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -25,12 +25,22 @@ import {
 	type AuthBrokerServerHandle,
 	RemoteAuthCredentialStore,
 	startAuthBroker,
+<<<<<<< ours — interstitial `file_header` (T+F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import { refreshBrokerOAuthCredential } from "@oh-my-pi/pi-codi…`
 } from "@tau/tau-ai/auth-broker";
 import { refreshBrokerOAuthCredential } from "tau/cli/auth-broker-cli";
 import { MCPManager } from "tau/mcp/manager";
 import { mcpOAuthCredentialId } from "tau/mcp/oauth-flow";
 import type { MCPServerConfig } from "tau/mcp/types";
 import { removeWithRetries } from "@tau/tau-utils";
+=======
+} from "@oh-my-pi/pi-ai/auth-broker";
+import { createBrokerAuthStorage, refreshBrokerOAuthCredential } from "@oh-my-pi/pi-coding-agent/cli/auth-broker-cli";
+import { MCPManager } from "@oh-my-pi/pi-coding-agent/mcp/manager";
+import { mcpOAuthCredentialId } from "@oh-my-pi/pi-coding-agent/mcp/oauth-flow";
+import type { MCPServerConfig } from "@oh-my-pi/pi-coding-agent/mcp/types";
+import { removeWithRetries } from "@oh-my-pi/pi-utils";
+>>>>>>> theirs — interstitial `file_header` (T+F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/mcp-broker-oauth-refresh.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { Server } from "bun";
 
 const SERVER_URL = "https://mcp.granola.ai/mcp";
@@ -74,11 +84,7 @@ describe("broker-backed MCP OAuth refresh", () => {
 		const tokenUrl = `http://127.0.0.1:${server.port}/token`;
 
 		serverStore = await SqliteAuthCredentialStore.open(path.join(tempDir, "broker.db"));
-		// The serve process constructs AuthStorage with this exact override.
-		serverStorage = new AuthStorage(serverStore, {
-			refreshOAuthCredential: (provider, _credentialId, credential, signal) =>
-				refreshBrokerOAuthCredential(provider, credential, signal),
-		});
+		serverStorage = createBrokerAuthStorage(serverStore);
 		await serverStorage.credentials.reload();
 
 		// Expired MCP OAuth credential with embedded refresh material, as the
@@ -145,5 +151,31 @@ describe("broker-backed MCP OAuth refresh", () => {
 		await brokerClient!.refreshCredential(brokerCredentialId);
 		expect(tokenRequests).toHaveLength(2);
 		expect(tokenRequests[1].get("refresh_token")).toBe("rotated-refresh-1");
+	});
+});
+
+describe("broker provider refresh", () => {
+	afterEach(() => {
+		vi.restoreAllMocks();
+	});
+
+	test("hands the refresh signal to the provider's token request", async () => {
+		let tokenSignal: AbortSignal | undefined;
+		vi.spyOn(globalThis, "fetch").mockImplementation(
+			Object.assign(
+				async (_input: string | URL | Request, init?: RequestInit | BunFetchRequestInit) => {
+					tokenSignal = init?.signal ?? undefined;
+					return new Response("unavailable", { status: 503 });
+				},
+				{ preconnect: globalThis.fetch.preconnect },
+			),
+		);
+		const controller = new AbortController();
+		await refreshBrokerOAuthCredential(
+			"cursor",
+			{ type: "oauth", access: "a", refresh: "r", expires: 0, email: "dev@example.test" },
+			controller.signal,
+		).catch(() => {});
+		expect(tokenSignal).toBe(controller.signal);
 	});
 });

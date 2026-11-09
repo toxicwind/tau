@@ -8,7 +8,12 @@ import { $ } from "bun";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
+<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: `import { $env, $which, getPythonEnvDir } from "@oh-my-pi/pi-uti…`
 import { $env, $which, getPythonEnvDir } from "@tau/tau-utils";
+=======
+import { $env, $whichAll, getPythonEnvDir } from "@oh-my-pi/pi-utils";
+>>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/eval/py/runtime.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const DEFAULT_ENV_ALLOWLIST = new Set([
 	"PATH",
@@ -212,7 +217,14 @@ export function resolveExplicitPythonRuntime(
 			: interpreter.startsWith("~/")
 				? path.join(os.homedir(), interpreter.slice(2))
 				: interpreter;
-	const pythonPath = path.isAbsolute(expanded) ? expanded : path.resolve(cwd, expanded);
+	// Join (rather than resolve) onto an absolute cwd so the result stays anchored to
+	// exactly the cwd given — `path.resolve` would graft the process drive onto a
+	// rooted-but-driveless Windows cwd such as `\work`.
+	const pythonPath = path.isAbsolute(expanded)
+		? expanded
+		: path.isAbsolute(cwd)
+			? path.join(cwd, expanded)
+			: path.resolve(cwd, expanded);
 	const venv = detectExplicitVenv(pythonPath);
 	if (venv) {
 		return { pythonPath, env: applyVenvEnv(baseEnv, venv.venvPath, venv.binDir), venvPath: venv.venvPath };
@@ -222,10 +234,16 @@ export function resolveExplicitPythonRuntime(
 
 /**
  * Enumerate candidate Python runtimes in priority order: an active/project venv,
+<<<<<<< ours — scope `declaration` in function `enumeratePythonRuntimes` (T, confidence: high)
+// refused_by: statement_fold · collision: `* the managed `~/.omp/python-env`, then the system interpreter …`
  * the managed `~/.tau/python-env`, then the system interpreter on PATH. Every
+=======
+ * the managed `~/.omp/python-env`, then every `python` and `python3` on PATH. Every
+>>>>>>> theirs — scope `declaration`
  * candidate that physically exists is returned so callers can probe each in turn
  * rather than committing to the first — a managed env left behind by a removed
- * `uv` install no longer shadows a working system Python.
+ * `uv` install, or a version-manager shim with no version selected for the cwd,
+ * no longer shadows a working system Python.
  */
 export function enumeratePythonRuntimes(cwd: string, baseEnv: Record<string, string | undefined>): PythonRuntime[] {
 	const runtimes: PythonRuntime[] = [];
@@ -255,8 +273,7 @@ export function enumeratePythonRuntimes(cwd: string, baseEnv: Record<string, str
 		});
 	}
 
-	const systemPath = $which("python") ?? $which("python3");
-	if (systemPath) {
+	for (const systemPath of [...$whichAll("python"), ...$whichAll("python3")]) {
 		push({ pythonPath: systemPath, env: { ...baseEnv } });
 	}
 

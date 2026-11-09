@@ -3,7 +3,12 @@ import { ptree, TempDir } from "@tau/tau-utils";
 
 describe("bundled extension modules", () => {
 	it("observes active host theme changes and native default/named exports", async () => {
+<<<<<<< ours — scope `it("observes active host theme changes and na...` in test_suite `bundled extension modules` (F, confidence: medium)
+// refused_by: statement_fold · collision: `using dir = TempDir.createSync("omp-bundled-extension-");`
 		using dir = TempDir.createSync("tau-bundled-extension-");
+=======
+		using dir = TempDir.createSync("@omp-bundled-extension-");
+>>>>>>> theirs — scope `it("observes active host theme changes and na...` · weave: run 'weave explain packages/coding-agent/test/extensibility/legacy-tau-bundled-virtual.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 		const entry = dir.join("extension.ts");
 		await Bun.write(
 			entry,

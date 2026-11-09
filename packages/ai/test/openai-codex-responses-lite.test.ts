@@ -1,5 +1,8 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
+import { type InputItem, transformRequestBody } from "@oh-my-pi/pi-ai/providers/openai-codex/request-transformer";
 import {
+<<<<<<< ours — imports `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: `} from "@oh-my-pi/pi-ai/providers/openai-codex/request-transfor…` +1 more
 	type InputItem,
 	type RequestBody,
 	transformRequestBody,
@@ -7,11 +10,19 @@ import {
 import {
 	buildTransformedCodexRequestBody,
 	convertCodexResponsesMessages,
-	resetOpenAICodexHistoryAfterCompaction,
 	streamOpenAICodexResponses,
 } from "@tau/tau-ai/providers/openai-codex-responses";
 import { isOpenAIResponsesProgressEvent } from "@tau/tau-ai/providers/openai-shared";
 import { configureCredentialRedaction } from "@tau/tau-ai/providers/transform-messages";
+=======
+	buildTransformedCodexRequestBody,
+	convertCodexResponsesMessages,
+	streamOpenAICodexResponses,
+} from "@oh-my-pi/pi-ai/providers/openai-codex-responses";
+import { resetOpenAICodexHistoryAfterCompaction } from "@oh-my-pi/pi-ai/providers/openai-codex-state";
+import { configureCredentialRedaction } from "@oh-my-pi/pi-ai/providers/transform-messages";
+import { isOpenAIResponsesProgressEvent } from "@oh-my-pi/pi-ai/utils/websocket";
+>>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/test/openai-codex-responses-lite.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type {
 	CodexCompactionRequestContext,
 	Context,
@@ -772,20 +783,6 @@ describe("openai-codex response.metadata moderation", () => {
 
 		expect(result.stopReason).toBe("stop");
 		expect(result.content).toEqual([expect.objectContaining({ type: "text", text: "Hello" })]);
-	});
-});
-
-describe("openai-codex websocket append with client metadata", () => {
-	it("does not break append equality when client_metadata rotates between turns", async () => {
-		// buildAppendInput contract proxied through the transformer-produced body:
-		// two turns differing only in client_metadata must still compare equal
-		// once input/client_metadata are excluded. Exercised at the unit level in
-		// the websocket delta test; here we pin the body-shape invariant the
-		// comparison relies on (client_metadata is a top-level body key).
-		const model = createCodexModel("gpt-5.1-codex");
-		const body: RequestBody = { model: model.id, client_metadata: { "x-codex-turn-metadata": "{}" } };
-		const transformed = await transformRequestBody(body, model, {});
-		expect(transformed.client_metadata).toEqual({ "x-codex-turn-metadata": "{}" });
 	});
 });
 

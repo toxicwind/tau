@@ -2,10 +2,21 @@ import {
 	type ClipboardImage,
 	copyToClipboard as nativeCopyToClipboard,
 	readImageFromClipboard as nativeReadImageFromClipboard,
+<<<<<<< ours — imports `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-natives/clipboard";
 import { isWsl } from "@tau/tau-utils";
 import * as logger from "@tau/tau-utils/logger";
 import { SUPPORTED_IMAGE_MIME_TYPES } from "@tau/tau-utils/mime";
+=======
+	readTextFromClipboard as nativeReadTextFromClipboard,
+} from "@oh-my-pi/pi-natives/clipboard";
+import { isSshSession } from "@oh-my-pi/pi-tui/terminal-capabilities";
+import { writeTerminalSequence } from "@oh-my-pi/pi-tui/terminal";
+import { isWsl } from "@oh-my-pi/pi-utils";
+import * as logger from "@oh-my-pi/pi-utils/logger";
+import { SUPPORTED_IMAGE_MIME_TYPES } from "@oh-my-pi/pi-utils/mime";
+>>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/utils/clipboard.ts' for per-hunk detail, 'weave check' to verify your resolution
 import MAC_FILE_URL_SCRIPT from "./mac-file-urls.applescript" with { type: "text" };
 
 type SpawnCaptureOptions = { input?: string; timeoutMs?: number; env?: Record<string, string | undefined> };
@@ -65,6 +76,17 @@ function hasDisplay(): boolean {
 }
 
 /**
+ * True when the clipboard this process reads is the one the user's terminal copies into.
+ * Over SSH every backend reads a clipboard of the remote host (macOS `pbpaste`, the Windows host
+ * behind WSL, Termux, a host-side X11/Wayland desktop). Even an X11-forwarded `DISPLAY` cannot be
+ * trusted: a tmux session on the host keeps a stale `localhost:10.0` whose port a later SSH
+ * session (possibly another user's) can own, so SSH never reads the system clipboard.
+ */
+export function isClipboardTerminalLocal(env: NodeJS.ProcessEnv = process.env): boolean {
+	return !isSshSession(env);
+}
+
+/**
  * True when `pbcopy(1)` would type this text as a document instead of as text:
  * it sniffs the leading bytes and puts input opening with a PDF (`%PDF-`),
  * EPS (`%!PS`), or RTF (`{\rtf`) header on the pasteboard as that data type.
@@ -107,36 +129,13 @@ let macClipboardWrite = Promise.resolve();
  * then attempts native clipboard copy as best-effort for local sessions.
  * On Termux, tries `termux-clipboard-set` before native.
  *
+ * The OSC 52 goes through `writeTerminalSequence`, so it cannot tear a TUI
+ * frame; from a worker thread it is skipped and only the native copy runs.
+ *
  * @param text - UTF-8 text to place on the clipboard.
  */
 export async function copyToClipboard(text: string): Promise<void> {
-	if (process.stdout.isTTY) {
-		const onError = (err: unknown) => {
-			process.stdout.off("error", onError);
-			// Prevent unhandled 'error' from crashing the process when stdout is a closed pipe.
-			if ((err as NodeJS.ErrnoException | null | undefined)?.code === "EPIPE") {
-				return;
-			}
-		};
-		try {
-			const encoded = Buffer.from(text).toString("base64");
-			const osc52 = `\x1b]52;c;${encoded}\x07`;
-			process.stdout.on("error", onError);
-			process.stdout.write(osc52, err => {
-				process.stdout.off("error", onError);
-				// If stdout is closed (e.g. piped to a process that exits early),
-				// ignore EPIPE and proceed with native clipboard best-effort.
-				if ((err as NodeJS.ErrnoException | null | undefined)?.code === "EPIPE") {
-					return;
-				}
-			});
-		} catch (err) {
-			process.stdout.off("error", onError);
-			if ((err as NodeJS.ErrnoException | null | undefined)?.code !== "EPIPE") {
-				// Ignore all write failures (OSC 52 is best-effort).
-			}
-		}
-	}
+	if (process.stdout.isTTY) writeTerminalSequence(`\x1b]52;c;${Buffer.from(text).toString("base64")}\x07`);
 
 	// Keep pbcopy, document-header writes, and native fallbacks in invocation order.
 	let releaseWrite: (() => void) | undefined;
@@ -330,10 +329,12 @@ async function readTextFromX11Clipboard(): Promise<string> {
  * Read an image from the system clipboard.
  *
  * Returns null on Termux (no image clipboard support) or when no display
- * server is available (headless/SSH without forwarding). Under native Windows
- * and WSL, the Windows clipboard is also reached through `powershell.exe`
- * because terminal clipboard paths can leave image payloads invisible to the
- * native bridge.
+ * server is available (headless/SSH without forwarding). Native Windows trusts
+ * the native reader's "no image" answer — it returns null only when no bitmap
+ * format is on the clipboard, and throws when one is present but undecodable —
+ * so `powershell.exe` starts only after a throw and a text-only clipboard never
+ * waits on a cold PowerShell start. WSL reaches the host clipboard through
+ * `powershell.exe`.
  *
  * @returns A supported image payload or null when no image is available.
  */
@@ -352,12 +353,11 @@ export async function readImageFromClipboard(): Promise<ClipboardImage | null> {
 
 	if (process.platform === "win32") {
 		try {
-			const image = await nativeReadImageFromClipboard();
-			if (image) return image;
+			return (await nativeReadImageFromClipboard()) ?? null;
 		} catch (err) {
 			logger.warn("clipboard: native Windows image read failed", { error: String(err) });
+			return await readImageViaPowerShell();
 		}
-		return await readImageViaPowerShell();
 	}
 
 	if (process.platform === "linux" && process.env.WAYLAND_DISPLAY) {
@@ -392,6 +392,9 @@ export async function readImageFromClipboard(): Promise<ClipboardImage | null> {
 
 /**
  * Read plain text from the system clipboard.
+ *
+ * Native Windows reads through the native addon and only falls back to
+ * `powershell.exe` when that read throws.
  */
 export async function readTextFromClipboard(): Promise<string> {
 	try {
@@ -400,7 +403,12 @@ export async function readTextFromClipboard(): Promise<string> {
 			return await spawnCapture(["pbpaste"]);
 		}
 		if (p === "win32") {
-			return (await readTextViaPowerShell()) ?? "";
+			try {
+				return ((await nativeReadTextFromClipboard()) ?? "").replaceAll("\r\n", "\n");
+			} catch (err) {
+				logger.warn("clipboard: native Windows text read failed", { error: String(err) });
+				return (await readTextViaPowerShell()) ?? "";
+			}
 		}
 		if (process.env.TERMUX_VERSION) {
 			return await spawnCapture(["termux-clipboard-get"]);

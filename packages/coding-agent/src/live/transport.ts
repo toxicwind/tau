@@ -1,7 +1,21 @@
+<<<<<<< ours — imports `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: `import { type AuthStorage, isAuthRetryableError, type OAuthAcce…`
 import { type AuthStorage, isAuthRetryableError, type OAuthAccess, withOAuthAccess } from "@tau/tau-ai";
 import { getProxyForUrl, wrapFetchForProxy } from "@tau/tau-ai/utils/proxy";
 import { CODEX_BASE_URL, CODEX_CLIENT_VERSION, getCodexAccountId, OPENAI_HEADERS } from "@tau/tau-catalog/wire/codex";
 import { LiveWebRtcPeer } from "@tau/tau-natives";
+=======
+import { type AuthStorage, type OAuthAccess, withOAuthAccess } from "@oh-my-pi/pi-ai";
+import { getProxyForUrl, wrapFetchForProxy } from "@oh-my-pi/pi-ai/utils/proxy";
+import {
+	CODEX_BASE_URL,
+	CODEX_CLIENT_VERSION,
+	getCodexAccountId,
+	OPENAI_HEADERS,
+} from "@oh-my-pi/pi-catalog/wire/codex";
+import { LiveWebRtcPeer } from "@oh-my-pi/pi-natives";
+import { toError } from "@oh-my-pi/pi-utils";
+>>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/live/transport.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { generateCodexAttestation } from "./attestation";
 import {
 	buildLiveSessionPayload,
@@ -53,6 +67,13 @@ export interface LiveTransportOptions {
 	voice: string;
 	callbacks: LiveTransportCallbacks;
 	signal?: AbortSignal;
+	/**
+	 * SDP offer from a caller-owned WebRTC peer (one Opus audio track plus an `oai-events`
+	 * data channel). When set, no native peer is created: the caller's peer carries the audio,
+	 * {@link CodexLiveTransport.sdpAnswer} holds the answer to apply to it, and this transport
+	 * keeps only the sideband.
+	 */
+	sdpOffer?: string;
 }
 
 /** Extracts the server-assigned `rtc_*` call ID from a signaling Location header. */
@@ -100,19 +121,16 @@ function boundedErrorBody(body: string, statusText: string): string {
 	return `${normalized.slice(0, MAX_ERROR_BODY_LENGTH)}…`;
 }
 
-function isAuthError(error: unknown): boolean {
-	return isAuthRetryableError(error);
-}
-
 function abortReason(signal: AbortSignal | undefined): Error {
 	if (signal?.reason instanceof Error) return signal.reason;
 	return new DOMException("Live connection aborted", "AbortError");
 }
 
-/** Native WebRTC transport for a Codex Frameless Bidi live session. */
+/** WebRTC transport for a Codex Frameless Bidi live session, with a native or caller-owned media peer. */
 export class CodexLiveTransport {
 	readonly #options: LiveTransportOptions;
 	#peer: LiveWebRtcPeer | undefined;
+	#sdpAnswer: string | undefined;
 	readonly #realtimeSessionId = crypto.randomUUID();
 	#sideband: Bun.WebSocket | undefined;
 	#state: Lifecycle = "idle";
@@ -131,7 +149,12 @@ export class CodexLiveTransport {
 		if (!options.signal?.aborted) options.signal?.addEventListener("abort", this.#abortListener, { once: true });
 	}
 
-	/** Establish the native peer, perform Codex signaling, and wait for the data channel. */
+	/** SDP answer for the caller's peer once a {@link LiveTransportOptions.sdpOffer} call has been signaled. */
+	get sdpAnswer(): string | undefined {
+		return this.#sdpAnswer;
+	}
+
+	/** Establish the media peer, perform Codex signaling, and wait for the data channel or sideband. */
 	connect(): Promise<void> {
 		if (this.#state === "connected") return Promise.resolve();
 		if (this.#connectPromise) return this.#connectPromise;
@@ -148,34 +171,46 @@ export class CodexLiveTransport {
 	}
 
 	async #connect(): Promise<void> {
-		const peer = new LiveWebRtcPeer(
+		let offer = this.#options.sdpOffer;
+		let peer: LiveWebRtcPeer | undefined;
+		if (offer === undefined) {
+			peer = this.#createPeer();
+			this.#peer = peer;
+			offer = await peer.createOffer();
+		}
+		if (this.#state !== "connecting") throw abortReason(this.#options.signal);
+		const signaling = await this.#signal(offer);
+		if (peer) {
+			await peer.acceptAnswer(signaling.answer);
+			peer.setMuted(this.#muted);
+			await peer.waitForOpen();
+		} else {
+			this.#sdpAnswer = signaling.answer;
+		}
+		if (this.#state !== "connecting") throw abortReason(this.#options.signal);
+		await this.#connectSideband(signaling.callId, signaling.access, signaling.attestation);
+		if (this.#state !== "connecting") throw abortReason(this.#options.signal);
+		this.#state = "connected";
+	}
+
+	#createPeer(): LiveWebRtcPeer {
+		return new LiveWebRtcPeer(
 			(error, payload) => {
 				if (error) {
-					this.#handlePeerFailure(error.message);
+					this.#reportFailure(error.message);
 				} else {
 					this.#handleServerEvent(payload);
 				}
 			},
 			(error, level) => {
 				if (error) {
-					this.#handlePeerFailure(error.message);
+					this.#reportFailure(error.message);
 				} else {
 					this.#handleOutputLevel(level);
 				}
 			},
-			(error, message) => this.#handlePeerFailure(error?.message ?? message),
+			(error, message) => this.#reportFailure(error?.message ?? message),
 		);
-		this.#peer = peer;
-		const offer = await peer.createOffer();
-		if (this.#state !== "connecting") throw abortReason(this.#options.signal);
-		const signaling = await this.#signal(offer);
-		await peer.acceptAnswer(signaling.answer);
-		peer.setMuted(this.#muted);
-		await peer.waitForOpen();
-		if (this.#state !== "connecting") throw abortReason(this.#options.signal);
-		await this.#connectSideband(signaling.callId, signaling.access, signaling.attestation);
-		if (this.#state !== "connecting") throw abortReason(this.#options.signal);
-		this.#state = "connected";
 	}
 
 	async #signal(offer: string): Promise<LiveSignalingResult> {
@@ -187,7 +222,6 @@ export class CodexLiveTransport {
 			{
 				sessionId: this.#options.sessionId,
 				signal: this.#options.signal,
-				isAuthError,
 				missingAccessMessage: "No Codex OAuth credential is available for a live call.",
 			},
 		);
@@ -235,7 +269,7 @@ export class CodexLiveTransport {
 				await this.#openSideband(callId, access, attestation);
 				return;
 			} catch (cause) {
-				failure = cause instanceof Error ? cause : new Error(String(cause));
+				failure = toError(cause);
 				if (this.#options.signal?.aborted) throw abortReason(this.#options.signal);
 				if (attempt + 1 < SIDEBAND_CONNECT_ATTEMPTS) await Bun.sleep(200 * 2 ** attempt);
 			}
@@ -347,10 +381,6 @@ export class CodexLiveTransport {
 		try {
 			this.#options.callbacks.onOutputLevel(Math.min(1, Math.max(0, level)));
 		} catch {}
-	}
-
-	#handlePeerFailure(message: string): void {
-		this.#reportFailure(message);
 	}
 
 	#reportFailure(message: string): void {

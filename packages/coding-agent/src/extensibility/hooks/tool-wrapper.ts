@@ -1,8 +1,19 @@
 /**
  * Tool wrapper - wraps tools with hook callbacks for interception.
  */
+<<<<<<< ours — imports `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: `import type { AgentTool, AgentToolContext, AgentToolUpdateCallb…`
 import type { AgentTool, AgentToolContext, AgentToolUpdateCallback } from "@tau/tau-agent-core";
 import type { Static, TSchema } from "@tau/tau-ai";
+=======
+import {
+	type AgentTool,
+	type AgentToolContext,
+	type AgentToolUpdateCallback,
+	isNonBlankContext,
+} from "@oh-my-pi/pi-agent-core";
+import type { Static, TSchema } from "@oh-my-pi/pi-ai";
+>>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/extensibility/hooks/tool-wrapper.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { normalizeToolEventInput, resolveToolEventInput } from "../tool-event-input";
 import { applyToolProxy } from "../tool-proxy";
 import type { HookRunner } from "./runner";
@@ -43,6 +54,9 @@ export class HookToolWrapper<TParameters extends TSchema = TSchema, TDetails = u
 		// Emit tool_call event - hooks can block execution or revise the input the tool runs with.
 		// If hook errors/times out, block by default (fail-safe)
 		let effectiveParams = params;
+		// Forwarded only after the tool returns a non-error result, matching the
+		// extension wrapper and the agent loop.
+		let pendingAdditionalContext: string | undefined;
 		if (this.hookRunner.hasHandlers("tool_call")) {
 			try {
 				const callResult = (await this.hookRunner.emitToolCall({
@@ -58,6 +72,9 @@ export class HookToolWrapper<TParameters extends TSchema = TSchema, TDetails = u
 				if (callResult?.block) {
 					const reason = callResult.reason || "Tool execution was blocked by a hook";
 					throw new Error(reason);
+				}
+				if (isNonBlankContext(callResult?.additionalContext)) {
+					pendingAdditionalContext = callResult.additionalContext;
 				}
 				// A non-blocking handler may replace the execution input. The returned object is the raw
 				// input the tool runs with (handler-owned); it is not re-normalized. Skipped for `computer`
@@ -79,8 +96,9 @@ export class HookToolWrapper<TParameters extends TSchema = TSchema, TDetails = u
 			const result = await this.tool.execute(toolCallId, effectiveParams, signal, onUpdate, context);
 
 			// Emit tool_result event - hooks can modify the result
+			let resultResult: ToolResultEventResult | undefined;
 			if (this.hookRunner.hasHandlers("tool_result")) {
-				const resultResult = (await this.hookRunner.emit({
+				resultResult = (await this.hookRunner.emit({
 					type: "tool_result",
 					toolName: this.tool.name,
 					toolCallId,
@@ -90,23 +108,33 @@ export class HookToolWrapper<TParameters extends TSchema = TSchema, TDetails = u
 					),
 					content: result.content,
 					details: result.details,
-					isError: false,
+					isError: result.isError === true,
 				})) as ToolResultEventResult | undefined;
-
-				// Apply modifications if any
-				if (resultResult) {
-					return {
-						content: resultResult.content ?? result.content,
-						details: (resultResult.details ?? result.details) as TDetails,
-					};
+				// tool_result context precedes the call's tool_call context, as in the agent loop.
+				if (isNonBlankContext(resultResult?.additionalContext)) {
+					context?.addAdditionalContext?.(resultResult.additionalContext);
 				}
+			}
+			if (result.isError !== true && pendingAdditionalContext !== undefined) {
+				context?.addAdditionalContext?.(pendingAdditionalContext);
+			}
+
+			// Apply modifications if any
+			if (resultResult?.content !== undefined || resultResult?.details !== undefined) {
+				return {
+					content: resultResult.content ?? result.content,
+					details: (resultResult.details ?? result.details) as TDetails,
+					// A patch rewrites what the model sees; it never turns a failed call into a success.
+					...(result.isError === true ? { isError: true } : {}),
+				};
 			}
 
 			return result;
 		} catch (err) {
-			// Emit tool_result event for errors so hooks can observe failures
+			// Emit tool_result event for errors so hooks can observe failures and
+			// attach failure-specific context; the result itself stays the error.
 			if (this.hookRunner.hasHandlers("tool_result")) {
-				await this.hookRunner.emit({
+				const failure = (await this.hookRunner.emit({
 					type: "tool_result",
 					toolName: this.tool.name,
 					toolCallId,
@@ -117,7 +145,10 @@ export class HookToolWrapper<TParameters extends TSchema = TSchema, TDetails = u
 					content: [{ type: "text", text: err instanceof Error ? err.message : String(err) }],
 					details: undefined,
 					isError: true,
-				});
+				})) as ToolResultEventResult | undefined;
+				if (isNonBlankContext(failure?.additionalContext)) {
+					context?.addAdditionalContext?.(failure.additionalContext);
+				}
 			}
 			throw err; // Re-throw original error for agent-loop
 		}

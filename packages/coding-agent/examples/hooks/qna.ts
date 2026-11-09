@@ -6,9 +6,16 @@
  * 2. Shows a spinner while extracting (hides editor)
  * 3. Loads the result into the editor for user to fill in answers
  */
+<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import type { HookAPI } from "@oh-my-pi/pi-coding-agent";`
 import { complete, type UserMessage } from "@tau/tau-ai";
 import type { HookAPI } from "@tau/tau-coding-agent";
 import { BorderedLoader } from "@tau/tau-coding-agent";
+=======
+import { complete, type UserMessage } from "@oh-my-pi/pi-ai";
+import { BorderedLoader } from "@oh-my-pi/pi-coding-agent";
+import type { HookAPI } from "@oh-my-pi/pi-coding-agent/extensibility/hooks";
+>>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/examples/hooks/qna.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const SYSTEM_PROMPT = `You are a question extractor. Given text from a conversation, extract any questions that need answering and format them for the user to fill in.
 
@@ -55,6 +62,7 @@ export default function (pi: HookAPI) {
 						}
 						const textParts = msg.content
 							.filter((c): c is { type: "text"; text: string } => c.type === "text")
+							.filter((c): c is { type: "text"; text: string } => c.type === "text")
 							.map(c => c.text);
 						if (textParts.length > 0) {
 							lastAssistantText = textParts.join("\n");
@@ -70,7 +78,7 @@ export default function (pi: HookAPI) {
 			}
 
 			// Run extraction with loader UI
-			const result = await ctx.ui.custom<string | null>((tui, theme, done) => {
+			const result = await ctx.ui.custom<string | null>((tui, theme, _keybindings, done) => {
 				const loader = new BorderedLoader(tui, theme, `Extracting questions using ${ctx.model!.id}…`);
 				loader.onAbort = () => done(null);
 

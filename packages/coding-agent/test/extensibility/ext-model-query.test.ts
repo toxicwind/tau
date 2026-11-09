@@ -1,8 +1,16 @@
 import { describe, expect, test } from "bun:test";
+<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: `import type { Settings } from "@oh-my-pi/pi-coding-agent/config…`
 import type { Api, Model } from "@tau/tau-ai";
 import { buildModel } from "@tau/tau-catalog/build";
 import type { ModelRegistry } from "tau/config/model-registry";
 import type { Settings } from "tau/config/settings";
+=======
+import type { Api, Model } from "@oh-my-pi/pi-ai";
+import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import type { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
+import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+>>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/extensibility/ext-model-query.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { createExtensionModelQuery } from "../../src/extensibility/extensions/model-api";
 
 function model(id: string, name: string, provider: string): Model<"anthropic-messages"> {
@@ -50,9 +58,7 @@ describe("createExtensionModelQuery", () => {
 	});
 
 	test("resolve() honors configured role aliases via the same settings-backed path as core", () => {
-		const settings = {
-			getModelRole: (role: string) => (role === "slow" ? "anthropic/claude-opus-4-8" : undefined),
-		} as unknown as Settings;
+		const settings = Settings.isolated({ modelRoles: { slow: "anthropic/claude-opus-4-8" } });
 		const q = createExtensionModelQuery(registry(), settings, () => undefined);
 		expect(q.resolve("@slow")).toBe(claude);
 	});

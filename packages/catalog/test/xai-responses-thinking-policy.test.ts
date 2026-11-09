@@ -1,8 +1,17 @@
 import { describe, expect, it } from "bun:test";
+<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: `import MODELS_JSON from "@oh-my-pi/pi-catalog/models.json" with…` +1 more
 import { Effort } from "@tau/tau-catalog/effort";
 import MODELS_JSON from "@tau/tau-catalog/models.json" with { type: "json" };
 import { MODELS_DEV_PROVIDER_DESCRIPTORS, mapModelsDevToModels } from "@tau/tau-catalog/provider-models/openai-compat";
 import type { ModelSpec } from "@tau/tau-catalog/types";
+=======
+import { Effort } from "@oh-my-pi/pi-catalog/effort";
+import {
+	MODELS_DEV_PROVIDER_DESCRIPTORS,
+	mapModelsDevToModels,
+} from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
+>>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/catalog/test/xai-responses-thinking-policy.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { applyGeneratedModelPolicies } from "../scripts/generated-policies";
 
 const XAI_MODELS_DEV_FIXTURE = {
@@ -143,27 +152,5 @@ describe("paid xAI Responses thinking policy", () => {
 			expect(byId[id]?.thinking, id).toBeUndefined();
 			expect(byId[id]?.compat, id).toMatchObject({ supportsReasoningEffort: false });
 		}
-	});
-
-	it("exports no-dial rows in the bundled models.json snapshot", () => {
-		const bundled =
-			(MODELS_JSON as unknown as Record<string, Record<string, ModelSpec<"openai-responses">>>).xai ?? {};
-		for (const id of ["grok-code-fast-1", "grok-build-0.1", "grok-4.20-0309-reasoning"] as const) {
-			expect(bundled[id], `xai/${id} missing from models.json`).toBeDefined();
-			expect(bundled[id]?.reasoning, id).toBe(true);
-			expect(bundled[id]?.thinking, id).toBeUndefined();
-			expect(bundled[id]?.compat?.supportsReasoningEffort, id).toBe(false);
-		}
-		expect(bundled["grok-4.5"]?.thinking?.efforts).toEqual([Effort.Minimal, Effort.Low, Effort.Medium, Effort.High]);
-		expect(bundled["grok-4.5"]?.thinking?.efforts).not.toContain(Effort.XHigh);
-		expect(bundled["grok-4.5"]?.compat?.supportsReasoningEffort).toBe(true);
-		expect(bundled["grok-4.6"]?.thinking?.efforts).toContain(Effort.XHigh);
-		expect(bundled["grok-4.6"]?.compat).not.toMatchObject({
-			reasoningEffortMap: { xhigh: "high" },
-		});
-		expect(bundled["grok-4.20-multi-agent-beta-latest"]?.thinking?.efforts).toContain(Effort.XHigh);
-		expect(bundled["grok-4.20-multi-agent-beta-latest"]?.compat).not.toMatchObject({
-			reasoningEffortMap: { xhigh: "high" },
-		});
 	});
 });

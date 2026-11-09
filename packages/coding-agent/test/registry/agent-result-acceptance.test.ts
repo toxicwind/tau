@@ -5,8 +5,14 @@
  * follow-up or wake turn never reports a previous run's acceptance.
  */
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
+<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/regist…`
 import { AgentRegistry } from "tau/registry/agent-registry";
 import type { AgentSession } from "tau/session/agent-session";
+=======
+import { AgentRegistry, type AgentRegistryApi } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
+import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
+>>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/registry/agent-result-acceptance.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /** Minimal session: the registry only reads `isStreaming` for liveness corroboration. */
 function sessionStub(isStreaming: boolean): AgentSession {
@@ -14,7 +20,7 @@ function sessionStub(isStreaming: boolean): AgentSession {
 }
 
 describe("AgentRegistry final-result acceptance", () => {
-	let registry: AgentRegistry;
+	let registry: AgentRegistryApi;
 
 	beforeEach(() => {
 		AgentRegistry.resetGlobalForTests();

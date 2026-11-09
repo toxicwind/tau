@@ -1,4 +1,15 @@
+<<<<<<< ours — interstitial `file_header` (S, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import type { MCPContent, MCPImageContent, MCPResourceContent, …`
 import type { MCPContent, MCPImageContent, MCPResourceContent, MCPTextContent } from "@tau/tau-tui/tools/mcp";
+=======
+import type {
+	MCPContent,
+	MCPImageContent,
+	MCPProgress,
+	MCPResourceContent,
+	MCPTextContent,
+} from "@oh-my-pi/pi-tui/tools/mcp";
+>>>>>>> theirs — interstitial `file_header` (S, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/mcp/types.ts' for per-hunk detail, 'weave check' to verify your resolution
 /**
  * MCP (Model Context Protocol) type definitions.
  *
@@ -81,6 +92,12 @@ interface MCPServerConfigBase {
 	 * tool's config do not, since the key is not part of those formats.
 	 */
 	requestIdFormat?: MCPRequestIdFormat;
+	/**
+	 * Include server-provided instructions in the system prompt (default: true).
+	 * OMP-specific: only native config, standalone `mcp.json`, and OMP plugins
+	 * parse this option; providers for other tools' formats ignore it.
+	 */
+	instructions?: boolean;
 	/** Authentication configuration (optional) */
 	auth?: MCPAuthConfig;
 	/** OAuth configuration for servers requiring explicit client credentials */
@@ -289,6 +306,11 @@ export interface MCPToolCallResult {
 export interface MCPRequestOptions {
 	/** Abort signal (e.g. Escape-to-interrupt) */
 	signal?: AbortSignal;
+	/**
+	 * Adds `_meta.progressToken` to the request and receives only this request's
+	 * `notifications/progress` while pending. Progress never extends its deadline.
+	 */
+	onProgress?: (progress: MCPProgress) => void;
 }
 
 /** Transport interface - abstracts stdio/http */
@@ -486,6 +508,7 @@ export interface MCPGetPromptResult {
 
 /** MCP server notification method names */
 export const MCPNotificationMethods = {
+	PROGRESS: "notifications/progress",
 	TOOLS_LIST_CHANGED: "notifications/tools/list_changed",
 	RESOURCES_LIST_CHANGED: "notifications/resources/list_changed",
 	RESOURCES_UPDATED: "notifications/resources/updated",

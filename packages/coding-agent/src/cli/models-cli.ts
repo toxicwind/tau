@@ -11,12 +11,23 @@
  * `ls`/`find` use the cache when fresh (`online-if-uncached`); only `refresh`
  * forces the network (`online`).
  */
+<<<<<<< ours — interstitial `file_header` (T+F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import { modelKind, type ModelKind } from "@oh-my-pi/pi-catalog…`
 import type { Api, Effort, Model } from "@tau/tau-ai";
 import { sendsImageInputOnWire } from "@tau/tau-ai/providers/vision-guard";
 import { getSupportedEfforts } from "@tau/tau-catalog/model-thinking";
 import { modelKind, type ModelKind } from "@tau/tau-catalog/types";
 import { formatNumber, getProjectDir } from "@tau/tau-utils";
 import chalk from "@tau/tau-utils/chalk";
+=======
+import type { Api, Effort, Model } from "@oh-my-pi/pi-ai";
+import { sendsImageInputOnWire } from "@oh-my-pi/pi-ai/providers/vision-guard";
+import { getEffectiveTokenCost, getModelPricingStatus } from "@oh-my-pi/pi-catalog/models";
+import { getSupportedEfforts } from "@oh-my-pi/pi-catalog/model-thinking";
+import { type ModelKind, type ModelPricingStatus, modelKind } from "@oh-my-pi/pi-catalog/types";
+import { formatNumber, getProjectDir } from "@oh-my-pi/pi-utils";
+import chalk from "@oh-my-pi/pi-utils/chalk";
+>>>>>>> theirs — interstitial `file_header` (T+F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/cli/models-cli.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { ConfigError } from "../config/config-file";
 import { ModelRegistry } from "../config/model-registry";
 import { Settings } from "../config/settings";
@@ -24,6 +35,8 @@ import { discoverAndLoadExtensions, ExtensionRunner, emitSessionShutdownEvent } 
 import { discoverAuthStorage } from "../sdk";
 import { SessionManager } from "../session/session-manager";
 import { EventBus } from "../utils/event-bus";
+
+import { cfgDisabledExtensions, cfgExtensions } from "../extensibility/settings";
 
 export type ModelsAction = "ls" | "find" | "refresh";
 
@@ -81,6 +94,7 @@ interface ModelJson {
 	thinking: readonly Effort[] | null;
 	input: ("text" | "image")[];
 	cost: Model<Api>["cost"];
+	pricingStatus: ModelPricingStatus;
 }
 
 interface ModelsJson {
@@ -110,6 +124,8 @@ function byProviderThenId(left: Model<Api>, right: Model<Api>): number {
 }
 
 function toModelJson(model: Model<Api>): ModelJson {
+	// Scalar legs report the card in force now, not the one current when the row was built.
+	const { input, output, cacheRead, cacheWrite } = getEffectiveTokenCost(model.cost);
 	return {
 		provider: model.provider,
 		kind: modelKind(model),
@@ -121,7 +137,8 @@ function toModelJson(model: Model<Api>): ModelJson {
 		reasoning: model.reasoning,
 		thinking: model.thinking ? getSupportedEfforts(model) : null,
 		input: model.input,
-		cost: model.cost,
+		cost: { ...model.cost, input, output, cacheRead, cacheWrite },
+		pricingStatus: getModelPricingStatus(model),
 	};
 }
 
@@ -351,9 +368,7 @@ export async function runModelsListing(options: RunModelsListingOptions): Promis
 		// Mirror sdk.ts: drain pending provider registrations into the registry.
 		const activeSources = extensionsResult.extensions.map(extension => extension.path);
 		modelRegistry.syncExtensionSources(activeSources);
-		for (const sourceId of new Set(activeSources)) {
-			modelRegistry.clearSourceRegistrations(sourceId);
-		}
+		modelRegistry.clearSourceRegistrations(new Set(activeSources));
 		for (const { name, config, sourceId } of extensionsResult.runtime.pendingProviderRegistrations) {
 			modelRegistry.registerProvider(name, config, sourceId);
 		}
@@ -361,6 +376,16 @@ export async function runModelsListing(options: RunModelsListingOptions): Promis
 		// Discover runtime (extension) provider catalogs now that they are registered.
 		await modelRegistry.refreshRuntimeProviders(action === "refresh" ? "online" : "online-if-uncached");
 
+		for (const warning of modelRegistry.drainConfigWarnings()) {
+			process.stderr.write(`${chalk.yellow(`Warning: ${warning}`)}\n`);
+		}
+		// A failed fetch otherwise looks identical to a provider with no models.
+		for (const { provider, status, error } of modelRegistry.getRuntimeDiscoveryFailures()) {
+			const detail = error?.replace(/\s+/g, " ").trim();
+			process.stderr.write(
+				`${chalk.yellow(`Warning: ${provider} model discovery failed (${status}): ${detail}`)}\n`,
+			);
+		}
 		renderProviderModels(modelRegistry, action, pattern, json, kind);
 	} finally {
 		await emitSessionShutdownEvent(extensionRunner);
@@ -406,8 +431,8 @@ export async function runModelsCommand(command: ModelsCommandArgs): Promise<void
 			json,
 			kind,
 			additionalExtensionPaths: cliExtensionPaths,
-			settingsExtensions: settings.get("extensions") ?? [],
-			disabledExtensionIds: settings.get("disabledExtensions") ?? [],
+			settingsExtensions: cfgExtensions.get(settings),
+			disabledExtensionIds: cfgDisabledExtensions.get(settings),
 			disableExtensionDiscovery: Boolean(command.flags.noExtensions),
 		});
 	} finally {

@@ -6,14 +6,30 @@ export * as zod from "@tau/tautype/zod";
 export { z } from "@tau/tautype/zod";
 // Re-export TUI components for custom tool rendering
 export { Container, Markdown, Spacer, Text } from "@tau/tau-tui";
+export { Container, Markdown, Spacer, Text } from "@tau/tau-tui";
+export { Container, Markdown, Spacer, Text } from "@tau/tau-tui";
+export { Container, Markdown, Spacer, Text } from "@tau/tau-tui";
 // Logging
 export { getAgentDir, logger, VERSION } from "@tau/tau-utils";
+export { getAgentDir, logger, VERSION } from "@tau/tau-utils";
+export { getAgentDir, logger, VERSION } from "@tau/tau-utils";
+export * from "@oh-my-pi/pi-tui/app-keybindings";
+export * from "./config/model-registry";
+// Prompt templates
+export type * from "./config/prompt-templates";
+export * from "./config/prompt-templates";
+export type { SkillsSettings } from "./extensibility/settings";
+<<<<<<< ours — interstitial `between:packages/coding-agent/src/index.ts::export::VERSION:packages/coding-agent/src/index.ts::export::RetrySettings` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: `export * from "@oh-my-pi/pi-tui/app-keybindings";`
 export * from "@tau/tau-tui/app-keybindings";
 export * from "./config/model-registry";
 // Prompt templates
 export type * from "./config/prompt-templates";
 export * from "./config/prompt-templates";
-export type { RetrySettings, SkillsSettings } from "./config/settings";
+=======
+>>>>>>> theirs — interstitial `between:packages/coding-agent/src/index.ts::export::VERSION:packages/coding-agent/src/index.ts::export::RetrySettings` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/index.ts' for per-hunk detail, 'weave check' to verify your resolution
+export type { RetrySettings } from "./session/settings";
+export { Settings, settings } from "./config/settings";
 export { Settings, settings } from "./config/settings";
 // Custom commands
 export type * from "./extensibility/custom-commands/types";
@@ -26,6 +42,7 @@ export * from "./extensibility/extensions";
 // Skills
 export * from "./extensibility/skills";
 // Slash commands
+export { type FileSlashCommand, loadSlashCommands as discoverSlashCommands } from "./extensibility/slash-commands";
 export { type FileSlashCommand, loadSlashCommands as discoverSlashCommands } from "./extensibility/slash-commands";
 export type * from "./lsp";
 // Main entry point
@@ -72,6 +89,7 @@ export type {
 } from "@tau/tau-tui/tools/task";
 // Tools (detail types and utilities)
 export * from "./tools";
+export * from "./tools/hashline-header-path";
 export * from "./utils/github";
 // UI components for extensions
 export {

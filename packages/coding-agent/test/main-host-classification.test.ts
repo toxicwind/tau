@@ -1,9 +1,15 @@
-import { expect, it } from "bun:test";
+import { afterEach, expect, it } from "bun:test";
 import { discoverAuthStorage } from "tau/sdk";
 import { parseArgs } from "tau/cli/args";
 import { resetSettingsForTest } from "tau/config/settings";
 import { runRootCommand } from "tau/main";
 import { getDbBusyTimeoutMs, setInteractiveHost, TempDir } from "@tau/tau-utils";
+import { clearOmpExtensionCliRoots } from "@oh-my-pi/pi-coding-agent/discovery/omp-extension-roots";
+
+// `runRootCommand` registers the CLI's extension roots (`--no-extensions` → explicit-only) process-wide.
+afterEach(() => {
+	clearOmpExtensionCliRoots();
+});
 
 it("classifies an interactive host before opening auth storage", async () => {
 	const previous = setInteractiveHost(false);
@@ -11,6 +17,9 @@ it("classifies an interactive host before opening auth storage", async () => {
 	let observedTimeout: number | undefined;
 	const parsed = parseArgs([]);
 	parsed.noExtensions = true;
+	// An interactive launch needs a terminal on stdin; without one it exits 2.
+	const originalIsTTY = process.stdin.isTTY;
+	Object.defineProperty(process.stdin, "isTTY", { value: true, configurable: true });
 
 	try {
 		await expect(
@@ -22,6 +31,7 @@ it("classifies an interactive host before opening auth storage", async () => {
 			}),
 		).rejects.toBe(stop);
 	} finally {
+		Object.defineProperty(process.stdin, "isTTY", { value: originalIsTTY, configurable: true });
 		setInteractiveHost(previous);
 	}
 

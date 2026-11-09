@@ -4,16 +4,14 @@
 
 use std::{
 	ffi::OsString,
-	fs::File,
 	io::{self, BufRead, BufReader, Read, Write},
 };
 
 use bstr::io::BufReadExt;
-use brush_core::{ShellExtensions, builtins::Registration};
 use clap::{Arg, ArgAction, ArgMatches, Command, builder::ValueParser};
 use uucore::{display::Quotable, line_ending::LineEnding, ranges::Range};
 
-use crate::host::{Host, Utility, format_usage, matches_parser, os_bytes, util};
+use crate::host::{Host, Utility, format_usage, matches_parser, os_bytes};
 
 /// Parsed `cut` invocation.
 pub(crate) struct Cut {
@@ -744,8 +742,13 @@ where
 	let mut out = host.stdout_writer();
 
 	for (filename, path) in inputs {
+		if host.is_cancelled() {
+			break;
+		}
 		let result = if let Some(path) = path {
-			File::open(path)
+			host
+				.fs()
+				.open(path)
 				.map_err(|error| io::Error::new(error.kind(), format!("{}: {error}", filename.maybe_quote())))
 				.and_then(|file| match mode {
 					Mode::Bytes(ranges, opts) | Mode::Characters(ranges, opts) => {
@@ -1028,11 +1031,6 @@ fn app() -> Command {
 				.help("(ignored)")
 				.action(ArgAction::SetTrue),
 		)
-}
-
-/// Creates the `cut` builtin registration.
-pub(crate) fn cut_builtin<SE: ShellExtensions>() -> Registration<SE> {
-	util::<Cut, SE>()
 }
 
 #[cfg(test)]

@@ -1,15 +1,31 @@
 import * as path from "node:path";
+<<<<<<< ours — imports `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: `import { type SummaryResult, summarizeCode } from "@oh-my-pi/pi…`
 import { type SummaryResult, summarizeCode } from "@tau/tau-natives";
 import { LRUCache } from "@tau/tau-utils/lru";
 import { isMarkdownPath } from "@tau/tau-tui/theme";
+=======
+import { type SummaryResult, summarizeCodeAsync } from "@oh-my-pi/pi-natives";
+import { LRUCache } from "@oh-my-pi/pi-utils/lru";
+import { isMarkdownPath } from "@oh-my-pi/pi-tui/theme";
+>>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/read-summary.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { ClientBridge } from "../session/client-bridge";
 import type { ToolSession } from "../sdk";
 import { resolveFileDisplayMode } from "../utils/file-display-mode";
+import { ensureGrammar } from "../utils/grammars";
 import { countTextLines } from "./read-format";
 import { formatReadSummary } from "@tau/tau-tui/tools/read";
 import { throwIfAborted } from "./tool-errors";
 
-// Per-session memo for tree-sitter summaries. `summarizeCode` is a pure function
+import {
+	cfgReadSummarizeMinBodyLines,
+	cfgReadSummarizeMinCommentLines,
+	cfgReadSummarizeMinTotalLines,
+	cfgReadSummarizeUnfoldLimit,
+	cfgReadSummarizeUnfoldUntil,
+} from "./settings";
+
+// Per-session memo for tree-sitter summaries. `summarizeCodeAsync` is a pure function
 // of (code, path, fold settings) but costs ~12-18ms for a ~1500-line file, and a
 // repeat summary read of the same unchanged file re-parses from scratch. Key on
 // the content hash of the freshly-read bytes (+ path + fold settings): the file
@@ -30,8 +46,8 @@ function getSummaryParseCache(session: object): LRUCache<string, SummaryResult |
 	}
 	return cache;
 }
-const MAX_SUMMARY_BYTES = 2 * 1024 * 1024;
-const MAX_SUMMARY_LINES = 20_000;
+export const MAX_SUMMARY_BYTES = 2 * 1024 * 1024;
+export const MAX_SUMMARY_LINES = 20_000;
 /**
  * Prose files (Markdown flavors and plain text) skip code-block summarization
  * unless `read.summarize.prose` opts them in.
@@ -79,19 +95,22 @@ export async function trySummarize(
 		throwIfAborted(signal);
 		const lineCount = countTextLines(code);
 		if (lineCount > MAX_SUMMARY_LINES) return null;
-		if (lineCount < session.settings.get("read.summarize.minTotalLines")) return null;
+		if (lineCount < cfgReadSummarizeMinTotalLines.get(session.settings)) return null;
 
-		const minBodyLines = session.settings.get("read.summarize.minBodyLines");
-		const minCommentLines = session.settings.get("read.summarize.minCommentLines");
-		const unfoldUntilLines = session.settings.get("read.summarize.unfoldUntil");
-		const unfoldLimitLines = session.settings.get("read.summarize.unfoldLimit");
+		const minBodyLines = cfgReadSummarizeMinBodyLines.get(session.settings);
+		const minCommentLines = cfgReadSummarizeMinCommentLines.get(session.settings);
+		const unfoldUntilLines = cfgReadSummarizeUnfoldUntil.get(session.settings);
+		const unfoldLimitLines = cfgReadSummarizeUnfoldLimit.get(session.settings);
 		const cache = getSummaryParseCache(session);
 		const cacheKey = `${absolutePath}\0${languagePath ?? ""}\0${Bun.hash(code)}\0${minBodyLines},${minCommentLines},${unfoldUntilLines},${unfoldLimitLines}`;
 		const memoized = cache.get(cacheKey);
 		if (memoized !== undefined) return memoized || null;
-		const result = summarizeCode({
+		const summaryPath = languagePath ?? absolutePath;
+		await ensureGrammar({ path: summaryPath });
+		throwIfAborted(signal);
+		const result = await summarizeCodeAsync({
 			code,
-			path: languagePath ?? absolutePath,
+			path: summaryPath,
 			minBodyLines,
 			minCommentLines,
 			unfoldUntilLines,
@@ -105,7 +124,8 @@ export async function trySummarize(
 	}
 }
 
-/** Read session display preferences and format a structural summary. */
+/** Read session display preferences and format a structural summary; `rowPrefixes` records whether its rows carry `N:`/`N|` prefixes. */
 export function renderSummary(session: ToolSession, summary: SummaryResult) {
-	return formatReadSummary(resolveFileDisplayMode(session), summary);
+	const displayMode = resolveFileDisplayMode(session);
+	return { ...formatReadSummary(displayMode, summary), rowPrefixes: displayMode.lineNumbers };
 }

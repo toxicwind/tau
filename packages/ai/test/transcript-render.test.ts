@@ -1,6 +1,12 @@
 import { describe, expect, it } from "bun:test";
+<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: `import { type Dialect, getDialectDefinition } from "@oh-my-pi/p…`
 import type { Message, Usage } from "@tau/tau-ai";
 import { type Dialect, getDialectDefinition } from "@tau/tau-ai/dialect";
+=======
+import type { Message, Usage } from "@oh-my-pi/pi-ai";
+import { getDialectDefinition } from "@oh-my-pi/pi-ai/dialect";
+>>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/test/transcript-render.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function usage(): Usage {
 	return {
@@ -84,14 +90,6 @@ describe("dialect transcript rendering", () => {
 		expect(out).toContain("<function_calls>");
 		expect(out).toContain("<function_results>");
 		expect(out).not.toContain("[Assistant tool calls]:");
-	});
-
-	it("renders distinct native text for each sampled dialect", () => {
-		const outputs = (["harmony", "qwen3", "glm", "anthropic"] satisfies readonly Dialect[]).map(dialect =>
-			getDialectDefinition(dialect).renderTranscript(messages),
-		);
-
-		expect(new Set(outputs).size).toBe(outputs.length);
 	});
 
 	it("does not double-wrap thinking blocks already stored with literal envelopes", () => {

@@ -1,5 +1,11 @@
-import type { ToolRenderer } from "./renderer";
+import type { NativeToolView, ToolRenderer, ToolRenderResult } from "./renderer";
 import { type Component, padding, Text, visibleWidth } from "../index";
+import type { TspTone } from "@oh-my-pi/pi-wire";
+import { ansi, compact, item, list, md, node, span, text } from "../native/describe";
+import type { NativeChild, NativeNode } from "../native/node";
+import { OwnerMemo } from "../native/memo";
+import { plainText } from "../native/spans";
+import { errorView, noteText, toolHead } from "./native-view";
 import type { RenderResultOptions } from "./renderer";
 import type { Theme, ThemeColor } from "../theme/theme";
 import { outputBlockContentWidth, renderStatusLine } from "../render";
@@ -12,9 +18,9 @@ import {
 	formatStatusIcon,
 	PREVIEW_LIMITS,
 	replaceTabs,
-	type ToolUIColor,
 	type ToolUIStatus,
 	TRUNCATE_LENGTHS,
+	sanitizeDisplayWarning,
 	truncateToWidth as truncateVisualWidth,
 } from "../render/render-utils";
 
@@ -50,36 +56,41 @@ function formatOpTitle(op: string | undefined): string {
 	return "GitHub";
 }
 
-function extractIssueId(value: string | undefined): string | undefined {
+type FitText = (value: string, width: number) => string;
+
+/** Native views keep full values: the terminal truncates headers itself. */
+const KEEP_TEXT: FitText = value => value;
+
+function extractIssueId(value: string | undefined, fit: FitText = truncateVisualWidth): string | undefined {
 	if (!value) return undefined;
 	const trimmed = value.trim();
 	if (!trimmed) return undefined;
 	if (/^\d+$/.test(trimmed)) return `#${trimmed}`;
 	const match = trimmed.match(/\/(?:issues|pull)\/(\d+)/);
 	if (match) return `#${match[1]}`;
-	return truncateVisualWidth(trimmed, TRUNCATE_LENGTHS.SHORT);
+	return fit(trimmed, TRUNCATE_LENGTHS.SHORT);
 }
 
-function formatPrIdentifier(pr: string | string[] | undefined): string | undefined {
+function formatPrIdentifier(pr: string | string[] | undefined, fit: FitText = truncateVisualWidth): string | undefined {
 	if (pr === undefined) return undefined;
 	if (Array.isArray(pr)) {
-		const parts = pr.map(p => extractIssueId(p)).filter((p): p is string => p !== undefined);
+		const parts = pr.map(p => extractIssueId(p, fit)).filter((p): p is string => p !== undefined);
 		if (parts.length === 0) return undefined;
 		if (parts.length > 3) {
 			return `${parts.slice(0, 3).join(", ")}, +${parts.length - 3} more`;
 		}
 		return parts.join(", ");
 	}
-	return extractIssueId(pr);
+	return extractIssueId(pr, fit);
 }
 
-function buildOpMeta(args: GithubToolRenderArgs): string[] {
+function buildOpMeta(args: GithubToolRenderArgs, fit: FitText = truncateVisualWidth): string[] {
 	const meta: string[] = [];
 	const op = args.op;
 	switch (op) {
 		case "pr_checkout":
 		case "pr_push": {
-			const id = formatPrIdentifier(args.pr);
+			const id = formatPrIdentifier(args.pr, fit);
 			if (id) meta.push(id);
 			else if (args.branch) meta.push(args.branch);
 			if (args.repo) meta.push(args.repo);
@@ -89,12 +100,12 @@ function buildOpMeta(args: GithubToolRenderArgs): string[] {
 		case "search_prs":
 		case "search_code":
 		case "search_commits": {
-			if (args.query) meta.push(truncateVisualWidth(args.query, TRUNCATE_LENGTHS.CONTENT));
+			if (args.query) meta.push(fit(args.query, TRUNCATE_LENGTHS.CONTENT));
 			if (args.repo) meta.push(args.repo);
 			break;
 		}
 		case "search_repos": {
-			if (args.query) meta.push(truncateVisualWidth(args.query, TRUNCATE_LENGTHS.CONTENT));
+			if (args.query) meta.push(fit(args.query, TRUNCATE_LENGTHS.CONTENT));
 			break;
 		}
 		case "repo_view": {
@@ -153,52 +164,22 @@ function formatRunLine(run: GhRunWatchRunDetails, theme: Theme): string {
 	return [title, ...meta].join("  ");
 }
 
-function getJobStateVisual(
-	job: GhRunWatchJobDetails,
-	theme: Theme,
-): { iconRaw: string; iconColor: ToolUIColor; textColor: ThemeColor } {
-	if (job.conclusion && SUCCESS_CONCLUSIONS.has(job.conclusion)) {
-		return {
-			iconRaw: theme.status.success,
-			iconColor: "accent",
-			textColor: "success",
-		};
-	}
-
-	if (job.conclusion && FAILURE_CONCLUSIONS.has(job.conclusion)) {
-		return {
-			iconRaw: theme.status.error,
-			iconColor: "error",
-			textColor: "error",
-		};
-	}
-
-	if (job.status && RUNNING_STATUSES.has(job.status)) {
-		return {
-			iconRaw: theme.status.enabled,
-			iconColor: "warning",
-			textColor: "warning",
-		};
-	}
-
-	if (job.status && PENDING_STATUSES.has(job.status)) {
-		return {
-			iconRaw: theme.status.shadowed,
-			iconColor: "muted",
-			textColor: "muted",
-		};
-	}
-
-	return {
-		iconRaw: theme.status.shadowed,
-		iconColor: "muted",
-		textColor: "muted",
-	};
+function getJobStateVisual(job: GhRunWatchJobDetails, theme: Theme): { icon: string; textColor: ThemeColor } {
+	if (job.conclusion && SUCCESS_CONCLUSIONS.has(job.conclusion))
+		return { icon: formatStatusIcon("success", theme), textColor: "success" };
+	if (job.conclusion && FAILURE_CONCLUSIONS.has(job.conclusion))
+		return { icon: formatStatusIcon("error", theme), textColor: "error" };
+	if (job.status && RUNNING_STATUSES.has(job.status))
+		return { icon: formatStatusIcon("running", theme), textColor: "warning" };
+	if (job.status && PENDING_STATUSES.has(job.status))
+		return { icon: formatStatusIcon("pending", theme), textColor: "muted" };
+	// An unrecognized state (e.g. a finished job with a new conclusion) claims neither queued nor settled.
+	return { icon: theme.styledSymbol("status.shadowed", "muted"), textColor: "muted" };
 }
 
 function renderJobLine(job: GhRunWatchJobDetails, width: number, theme: Theme): string {
 	const visual = getJobStateVisual(job, theme);
-	const prefix = theme.fg(visual.iconColor, `${visual.iconRaw} `);
+	const prefix = `${visual.icon} `;
 	const durationLabel = job.durationSeconds !== undefined ? `${job.durationSeconds}s` : undefined;
 	const styledDuration = durationLabel ? theme.fg(visual.textColor, durationLabel) : undefined;
 	const reservedWidth = visibleWidth(prefix) + (styledDuration ? 1 + visibleWidth(styledDuration) : 0);
@@ -225,6 +206,11 @@ function renderRunBlock(run: GhRunWatchRunDetails, width: number, theme: Theme):
 	return lines;
 }
 
+function formatUnavailableLog(entry: GhRunWatchFailedLogDetails): string {
+	const reason = entry.unavailableReason ? sanitizeDisplayWarning(entry.unavailableReason) : "";
+	return `log tail unavailable${reason ? `: ${reason}` : ""}`;
+}
+
 function renderFailedLogs(
 	failedLogs: GhRunWatchFailedLogDetails[],
 	width: number,
@@ -238,12 +224,11 @@ function renderFailedLogs(
 	const lines: string[] = [];
 	for (const entry of failedLogs) {
 		const context = entry.workflowName ? `${entry.workflowName}  #${entry.runId}` : `run #${entry.runId}`;
-		lines.push(
-			theme.fg("error", `${theme.status.error} ${replaceTabs(entry.jobName)}  ${theme.fg("muted", context)}`),
-		);
+		const jobName = theme.fg("error", replaceTabs(entry.jobName));
+		lines.push(`${formatStatusIcon("error", theme)} ${jobName}  ${theme.fg("muted", context)}`);
 
 		if (!entry.available || !entry.tail) {
-			lines.push(theme.fg("dim", "  log tail unavailable"));
+			lines.push(theme.fg("dim", truncateVisualWidth(`  ${formatUnavailableLog(entry)}`, Math.max(8, width))));
 			continue;
 		}
 
@@ -410,6 +395,81 @@ function renderWatchCall(args: GithubToolRenderArgs, options: RenderResultOption
 	return new Text(`${header}\n${wait}`, 0, 0);
 }
 
+function jobTone(job: GhRunWatchJobDetails): TspTone {
+	if (job.conclusion && SUCCESS_CONCLUSIONS.has(job.conclusion)) return "success";
+	if (job.conclusion && FAILURE_CONCLUSIONS.has(job.conclusion)) return "error";
+	if (job.status && RUNNING_STATUSES.has(job.status)) return "warning";
+	return "muted";
+}
+
+/** One workflow run: a section headed by workflow + branch/sha + id, listing its jobs. */
+function describeRun(run: GhRunWatchRunDetails): NativeNode {
+	const metaParts = getRunMeta(run);
+	const head = [span(plainText(getRunLabel(run)), "accent")];
+	metaParts.forEach((part, index) => {
+		head.push(span("  "), span(plainText(part), index === metaParts.length - 1 ? "muted" : "text"));
+	});
+	const jobs =
+		run.jobs.length === 0
+			? noteText("waiting for workflow jobs...")
+			: list(
+					run.jobs.map(job => {
+						const tone = jobTone(job);
+						return item(`${job.id}`, {
+							label: [span(plainText(job.name), tone)],
+							tone,
+							icon: tone === "success" ? "check" : undefined,
+							value: job.durationSeconds !== undefined ? [span(`${job.durationSeconds}s`, tone)] : undefined,
+						});
+					}),
+				);
+	return node("section", { head }, [jobs], `run:${run.id}`);
+}
+
+function describeWatch(watch: GhRunWatchViewDetails, isError: boolean): NativeToolView {
+	const runs: NativeChild[] = [];
+	if (watch.mode === "run" && watch.run) runs.push(describeRun(watch.run));
+	else if (watch.mode === "commit") {
+		const commitRuns = watch.runs ?? [];
+		if (commitRuns.length === 0) runs.push(noteText("waiting for workflow runs..."));
+		for (const run of commitRuns) runs.push(describeRun(run));
+	}
+	const failed = (watch.failedLogs ?? []).flatMap((entry): NativeChild[] => {
+		const context = entry.workflowName ? `${entry.workflowName}  #${entry.runId}` : `run #${entry.runId}`;
+		const title = text([span(plainText(entry.jobName), "error"), span(`  ${plainText(context)}`, "muted")]);
+		if (!entry.available || !entry.tail) {
+			return [title, noteText(formatUnavailableLog(entry))];
+		}
+		return [title, ansi(entry.tail, { follow: true, preview: { lines: PREVIEW_LIMITS.OUTPUT_COLLAPSED } })];
+	});
+	return {
+		head: toolHead("GitHub Run Watch", getWatchHeader(watch)),
+		tone: isError ? "error" : undefined,
+		body: compact([
+			watch.note ? noteText(watch.note) : undefined,
+			...runs,
+			failed.length > 0
+				? node("section", { head: [span("failed logs", "error")], tone: "error" }, failed, "failed")
+				: undefined,
+		]),
+	};
+}
+
+function describeFallback(result: ToolRenderResult<GhToolDetails>, args: GithubToolRenderArgs): NativeToolView {
+	const output = extractText(result.content).trim();
+	const title = formatOpTitle(args.op);
+	const meta = buildOpMeta(args, KEEP_TEXT);
+	if (result.isError === true) return errorView(title, output || "request failed", ...meta);
+	if (!output) return { head: toolHead(title, ...meta), tone: "warning", body: [noteText("no output")] };
+	return {
+		head: toolHead(title, ...meta),
+		body: [md(plainText(output))],
+		preview: { lines: PREVIEW_LIMITS.OUTPUT_EXPANDED },
+	};
+}
+
+const githubResultMemo = new OwnerMemo<NativeToolView | undefined>();
+
 /** Render GitHub operations and live workflow status. */
 export const githubToolRenderer = {
 	// No animatedPendingPreview: renderCall materializes plain Text components
@@ -483,6 +543,31 @@ export const githubToolRenderer = {
 		return renderFallbackComponent(result, options, uiTheme, args ?? {});
 	},
 
+	describeCall(args: GithubToolRenderArgs): NativeToolView {
+		const op = typeof args.op === "string" && args.op.trim().length > 0 ? args.op.trim() : undefined;
+		if (op !== "run_watch") {
+			return { head: toolHead(formatOpTitle(op), ...buildOpMeta({ ...args, op }, KEEP_TEXT)) };
+		}
+		const runId = typeof args.run === "string" && args.run.trim().length > 0 ? args.run.trim() : undefined;
+		const branch = typeof args.branch === "string" && args.branch.trim().length > 0 ? args.branch.trim() : undefined;
+		return {
+			head: toolHead("GitHub Run Watch", runId ? `#${runId}` : (branch ?? "current HEAD")),
+			body: [noteText("waiting for workflow data...")],
+		};
+	},
+
+	describeResult(
+		result: ToolRenderResult<GhToolDetails>,
+		options: RenderResultOptions,
+		args?: GithubToolRenderArgs,
+	): NativeToolView | undefined {
+		const watch = result.details?.watch;
+		const deps = [args?.op, options.isPartial, watch?.state, watch?.pollCount];
+		return githubResultMemo.get(result, deps, () =>
+			watch ? describeWatch(watch, result.isError === true) : describeFallback(result, args ?? {}),
+		);
+	},
+
 	mergeCallAndResult: true,
 } satisfies ToolRenderer<GithubToolRenderArgs, GhToolDetails>;
 
@@ -550,6 +635,7 @@ export interface GhRunWatchFailedLogDetails {
 	conclusion?: string;
 	tail?: string;
 	available: boolean;
+	unavailableReason?: string;
 }
 
 /** Live workflow watcher display snapshot. */
@@ -599,6 +685,8 @@ export interface GhFailedJobLog {
 	full?: string;
 	tail?: string;
 	available: boolean;
+	unavailableReason?: string;
+	truncated?: boolean;
 }
 
 /** Choose the terminal conclusion or current job state. */
@@ -655,12 +743,21 @@ export function renderFailedJobLogs(
 		lines.push("");
 		const logText = options.mode === "full" ? entry.full : entry.tail;
 		if (entry.available && logText) {
-			lines.push(options.mode === "full" ? "Full log:" : `Last ${options.tail} log lines:`);
+			lines.push(
+				options.mode === "full"
+					? entry.truncated
+						? "Partial log (capture truncated):"
+						: "Full log:"
+					: entry.truncated
+						? `Last ${options.tail} captured log lines (log capture truncated):`
+						: `Last ${options.tail} log lines:`,
+			);
 			lines.push("```text");
 			lines.push(logText);
 			lines.push("```");
 		} else {
 			lines.push(options.mode === "full" ? "Full log unavailable." : "Log tail unavailable.");
+			if (entry.unavailableReason) pushLine(lines, "Reason", entry.unavailableReason);
 		}
 		lines.push("");
 	}

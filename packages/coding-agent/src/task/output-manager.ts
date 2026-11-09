@@ -12,7 +12,14 @@
  */
 import * as fs from "node:fs/promises";
 import { ADVISOR_TRANSCRIPT_STEM } from "../advisor/transcript-recorder";
+<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import { PINNED_HUD_TOGGLE_ID } from "@oh-my-pi/pi-tui/prompt/c…`
 import { PINNED_HUD_TOGGLE_ID } from "@tau/tau-tui/prompt/composer";
+
+=======
+>>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/task/output-manager.ts' for per-hunk detail, 'weave check' to verify your resolution
+/** HUD expander click target reserved by the allocator so it cannot name a subagent. */
+export const PINNED_HUD_TOGGLE_ID = "@omp:toggle-pinned-hud";
 
 /**
  * Manages agent output ID allocation to ensure uniqueness.

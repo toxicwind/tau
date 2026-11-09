@@ -1,7 +1,15 @@
+<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: `import type { TaskToolDetails } from "@oh-my-pi/pi-tui/tools/ta…`
 // Gallery fixtures for agentic orchestration (task, wait, goal).
 import type { Usage } from "@tau/tau-ai";
 import type { TaskToolDetails } from "@tau/tau-tui/tools/task";
 import type { CoordinationDetails } from "@tau/tau-tui/tools/wait";
+=======
+// Gallery fixtures for agentic orchestration (task, wait, goal, yield).
+import type { Usage } from "@oh-my-pi/pi-ai";
+import type { TaskToolDetails, YieldItem } from "@oh-my-pi/pi-tui/tools/task";
+import type { CoordinationDetails } from "@oh-my-pi/pi-tui/tools/wait";
+>>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/cli/gallery-fixtures/agentic.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { GalleryFixture } from "./types";
 
 /** Message/activity timestamps are offsets from load time so gallery ages stay plausible. */
@@ -16,6 +24,16 @@ const fixtureUsage = (tokens: { input: number; output: number }, costTotal: numb
 	totalTokens: tokens.input + tokens.output,
 	cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: costTotal },
 });
+
+/** A subagent's structured result, as `yield` submits it. */
+const YIELD_DATA = {
+	summary: "Two races in the session store's flush path.\nBoth need the store lock held across the read.",
+	confidence: 0.85,
+	findings: [
+		{ file: "src/session/store.ts", line: 142, issue: "flush() reads entries without holding the lock" },
+		{ file: "src/session/store.ts", line: 188, issue: "concurrent flushes can write the same batch twice" },
+	],
+};
 
 export const agenticFixtures: Record<string, GalleryFixture> = {
 	task: {
@@ -156,13 +174,15 @@ export const agenticFixtures: Record<string, GalleryFixture> = {
 			details: {
 				op: "wait",
 				from: "Main",
-				waited: {
-					id: "7181122334455667790",
-					from: "AuthLoader",
-					to: "Main",
-					body: "session-store rename is merged; auth.ts is yours.",
-					ts: FIXTURE_NOW - 30_000,
-				},
+				waited: [
+					{
+						id: "7181122334455667790",
+						from: "AuthLoader",
+						to: "Main",
+						body: "session-store rename is merged; auth.ts is yours.",
+						ts: FIXTURE_NOW - 30_000,
+					},
+				],
 			} satisfies CoordinationDetails,
 		},
 	},
@@ -274,6 +294,26 @@ export const agenticFixtures: Record<string, GalleryFixture> = {
 					},
 				],
 			},
+		},
+	},
+
+	yield: {
+		label: "Submit Result",
+		// Streaming: the payload object is still arriving.
+		streamingArgs: { data: { summary: "Two races in the session store's flush path." } },
+		args: { data: YIELD_DATA },
+		result: {
+			content: [{ type: "text", text: "Result submitted." }],
+			details: { status: "success", data: YIELD_DATA } satisfies YieldItem,
+		},
+		errorResult: {
+			isError: true,
+			content: [
+				{
+					type: "text",
+					text: "Output does not match schema: /confidence must be number. Call yield again with the corrected shape — 2 retry attempt(s) remain before the schema constraint is dropped.",
+				},
+			],
 		},
 	},
 };

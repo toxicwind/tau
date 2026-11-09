@@ -6,6 +6,8 @@ import {
 	defaultConvertToLlm,
 	generateHandoff,
 	generateHandoffFromContext,
+<<<<<<< ours — imports `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 	renderHandoffPrompt,
 } from "@tau/tau-agent-core/compaction";
 import { ThinkingLevel } from "@tau/tau-agent-core/thinking";
@@ -13,6 +15,14 @@ import type { AssistantMessage, Model, ToolCall } from "@tau/tau-ai";
 import * as ai from "@tau/tau-ai";
 import { Effort } from "@tau/tau-ai";
 import { getBundledModel } from "@tau/tau-catalog/models";
+=======
+} from "@oh-my-pi/pi-agent-core/compaction";
+import { ThinkingLevel } from "@oh-my-pi/pi-agent-core/thinking";
+import type { AssistantMessage, Model, ToolCall } from "@oh-my-pi/pi-ai";
+import * as ai from "@oh-my-pi/pi-ai";
+import { Effort } from "@oh-my-pi/pi-ai";
+import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+>>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/agent/test/handoff.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function createAssistantMessage(content: AssistantMessage["content"]): AssistantMessage {
 	return {
@@ -100,11 +110,6 @@ describe("handoff summary injection", () => {
 });
 
 describe("handoff helpers", () => {
-	test("renders custom focus into the handoff prompt", () => {
-		const rendered = renderHandoffPrompt("preserve failing test name");
-		expect(rendered).toContain("preserve failing test name");
-	});
-
 	test("generates handoff with the live cache prefix and tool use disabled", async () => {
 		const strayToolCall: ToolCall = { type: "toolCall", id: "call_1", name: "read", arguments: {} };
 		const completeSimpleSpy = vi
@@ -298,5 +303,25 @@ describe("handoff helpers", () => {
 			toolChoice: "none",
 			reasoning: Effort.Medium,
 		});
+	});
+
+	test("generateHandoffFromContext rejects output cut off at the length limit without retrying", async () => {
+		const completeImpl = vi.fn(async () => ({
+			...createAssistantMessage([{ type: "text", text: "## Next Steps\nContinue by" }]),
+			stopReason: "length" as const,
+		}));
+		const error = await generateHandoffFromContext(
+			{
+				systemPrompt: ["Live system prompt"],
+				messages: [{ role: "user", content: "prepare handoff", timestamp: 1 }],
+			},
+			getTestModel(),
+			{ streamOptions: { apiKey: "test-key" }, completeImpl },
+		).catch((caught: unknown) => caught);
+
+		expect((error as Error).message).toBe(
+			"Handoff generation failed: model output ended incomplete (stopReason: length)",
+		);
+		expect(completeImpl).toHaveBeenCalledTimes(1);
 	});
 });

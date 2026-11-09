@@ -1,22 +1,13 @@
-import { afterEach, describe, expect, test } from "bun:test";
+import { describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 
 const repoRoot = path.join(import.meta.dir, "..");
-const tempDirs: string[] = [];
 
-afterEach(async () => {
-	await Promise.all(tempDirs.splice(0).map(dir => fs.rm(dir, { recursive: true, force: true })));
-});
-
-async function run(
-	command: string[],
-	env: NodeJS.ProcessEnv = process.env,
-): Promise<{ exitCode: number; stdout: string; stderr: string }> {
+async function run(command: string[]): Promise<{ exitCode: number; stdout: string; stderr: string }> {
 	const proc = Bun.spawn(command, {
 		cwd: repoRoot,
-		env,
 		stdout: "pipe",
 		stderr: "pipe",
 	});
@@ -26,12 +17,6 @@ async function run(
 		new Response(proc.stderr).text(),
 	]);
 	return { exitCode, stdout, stderr };
-}
-
-async function writeExecutable(directory: string, name: string, content: string): Promise<void> {
-	const file = path.join(directory, name);
-	await Bun.write(file, content);
-	await fs.chmod(file, 0o755);
 }
 
 describe("musl release artifacts", () => {
@@ -53,6 +38,8 @@ describe("musl release artifacts", () => {
 		);
 	});
 
+<<<<<<< ours — scope `test("selects the musl asset when the Linux h...` in test_suite `musl release artifacts`, deleted in theirs (S+F, confidence: low)
+// refused_by: statement_fold · collision: none (no common ancestor text)
 	test("selects the musl asset when the Linux host reports musl", async () => {
 		const dir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-musl-install-"));
 		tempDirs.push(dir);
@@ -87,4 +74,6 @@ esac
 		expect(result.stdout).toContain("Downloading tau-linux-musl-x64...");
 		expect(await Bun.file(path.join(installDir, "tau")).text()).toBe('#!/bin/sh\necho "tau v1.0.0"\n');
 	});
+=======
+>>>>>>> theirs — scope `test("selects the musl asset when the Linux h...` deleted in theirs · weave: run 'weave explain scripts/musl-release.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 });

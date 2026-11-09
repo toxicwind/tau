@@ -8,6 +8,7 @@ import { AgentRegistry } from "tau/registry/agent-registry";
 import { SessionManager } from "tau/session/session-manager";
 import { TASK_SUBAGENT_LIFECYCLE_CHANNEL } from "tau/task/types";
 import { EventBus } from "tau/utils/event-bus";
+import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
 import { installInMemoryRelay, uninstallInMemoryRelay } from "./helpers/in-memory-relay";
 
 // Embedders on the previous InteractiveMode constructor signature wire only a
@@ -16,7 +17,7 @@ import { installInMemoryRelay, uninstallInMemoryRelay } from "./helpers/in-memor
 
 function makeHostContext(eventBus: EventBus): InteractiveModeContext {
 	return {
-		settings: { get: () => "" },
+		settings: Settings.isolated(),
 		sessionManager: SessionManager.inMemory(),
 		session: {
 			isStreaming: false,

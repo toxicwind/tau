@@ -24,28 +24,41 @@
   },
   "scripts": {
     "check": "oxlint . && oxfmt --check --no-error-on-unmatched-pattern 'src/**/*.{ts,tsx}' '{test,bench,examples,scripts}/**/*.ts' '*.ts' && bun run check:types",
+<<<<<<< ours — scope `"check:types": "tsgo -p tsconfig.json --noEmit",` in object `scripts` (S, confidence: medium)
+// refused_by: statement_fold · collision: `"check:types": "tsgo -p tsconfig.json --noEmit",`
     "check:types": "bun ../../scripts/typecheck.ts . --noEmit",
+=======
+    "check:types": "bun check --no-script -p tsconfig.json",
+>>>>>>> theirs — scope `"check:types": "tsgo -p tsconfig.json --noEmit",` · weave: run 'weave explain packages/typescript-edit-benchmark/package.json' for per-hunk detail, 'weave check' to verify your resolution
     "lint": "oxlint .",
     "test": "bun test --parallel",
     "fix": "oxlint --fix --fix-suggestions . && bun run fmt",
     "fmt": "oxfmt --no-error-on-unmatched-pattern 'src/**/*.{ts,tsx}' '{test,bench,examples,scripts}/**/*.ts' '*.ts'",
     "generate": "bun run src/generate.ts --typescript-dir /tmp/tau-mono-source",
     "edit-shapes": "bun run src/edit-shape-stats.ts"
-  },
+  }
   "dependencies": {
     "@babel/generator": "catalog:",
     "@babel/parser": "catalog:",
     "@babel/traverse": "catalog:",
     "@babel/types": "catalog:",
+<<<<<<< ours — object `dependencies` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
     "@tau/tau-agent-core": "catalog:",
     "@tau/tau-utils": "catalog:",
     "diff": "catalog:",
     "@tau/tau-natives": "catalog:",
+=======
+    "@oh-my-pi/pi-agent-core": "catalog:",
+    "@oh-my-pi/pi-coding-agent": "catalog:",
+    "@oh-my-pi/pi-utils": "catalog:",
+    "@oh-my-pi/pi-natives": "catalog:",
+>>>>>>> theirs — object `dependencies` (F, confidence: medium)
     "prettier": "catalog:",
     "regexp-tree": "catalog:",
     "@tau/tau-ai": "catalog:",
     "@tau/tau-tui": "catalog:"
-  },
+  }
   "devDependencies": {
     "@types/bun": "^1.4.4",
     "bun-types": "^1.4.4",
@@ -53,6 +66,6 @@
     "@types/babel__traverse": "catalog:"
   },
   "engines": {
-    "bun": ">=1.3.14"
+    "bun": ">=1.4.4"
   }
 }

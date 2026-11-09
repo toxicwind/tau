@@ -4,15 +4,18 @@ import {
 	detectKittyUnicodePlaceholdersSupport,
 	encodeKittyPlaceholderGrid,
 	encodeKittyVirtualPlacement,
-	getKittyGraphics,
 	KITTY_PLACEHOLDER,
 	KITTY_PLACEHOLDER_MAX_CELLS,
 	kittyPlaceholdersFit,
 	renderKittyPlaceholderLines,
+<<<<<<< ours — imports `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 	setKittyGraphics,
 } from "@tau/tau-tui/kitty-graphics";
+=======
+} from "@oh-my-pi/pi-tui/kitty-graphics";
+>>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/test/kitty-graphics.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
-const ORIGINAL = { ...getKittyGraphics() };
 const ORIGINAL_TMUX = Bun.env.TMUX;
 
 beforeEach(() => {
@@ -20,7 +23,6 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-	setKittyGraphics(ORIGINAL);
 	if (ORIGINAL_TMUX === undefined) delete Bun.env.TMUX;
 	else Bun.env.TMUX = ORIGINAL_TMUX;
 });
@@ -79,15 +81,6 @@ describe("kitty Unicode placeholder encoding", () => {
 	});
 });
 
-describe("kitty graphics feature state", () => {
-	it("getKittyGraphics/setKittyGraphics round-trips overrides", () => {
-		setKittyGraphics({ unicodePlaceholders: false });
-		expect(getKittyGraphics()).toEqual({ unicodePlaceholders: false });
-		setKittyGraphics({ unicodePlaceholders: true });
-		expect(getKittyGraphics().unicodePlaceholders).toBe(true);
-	});
-});
-
 describe("detectKittyUnicodePlaceholdersSupport", () => {
 	function env(extra: Record<string, string | undefined> = {}): NodeJS.ProcessEnv {
 		return extra as NodeJS.ProcessEnv;
@@ -122,6 +115,10 @@ describe("detectKittyUnicodePlaceholdersSupport", () => {
 		expect(detectKittyUnicodePlaceholdersSupport("otty", env({ HERDR_ENV: "1" }))).toBe(false);
 	});
 
+	it("enables for tern, whose Kitty implementation renders U+10EEEE virtual placement", () => {
+		expect(detectKittyUnicodePlaceholdersSupport("tern", env())).toBe(true);
+	});
+
 	it("uses scroll-aware placeholders when Kitty is explicitly forced through a multiplexer", () => {
 		const forcedTmux = env({ TMUX: "/tmp/tmux-1000/default,1,0", PI_FORCE_IMAGE_PROTOCOL: "kitty" });
 		expect(detectKittyUnicodePlaceholdersSupport("base", forcedTmux)).toBe(true);
@@ -133,6 +130,7 @@ describe("detectKittyUnicodePlaceholdersSupport", () => {
 		expect(detectKittyUnicodePlaceholdersSupport("base", env({ TMUX: "/tmp/tmux-1000/default,1,0" }))).toBe(false);
 		// A detected capable terminal still needs placeholders because direct placement cannot follow pane reflow.
 		expect(detectKittyUnicodePlaceholdersSupport("ghostty", env({ TMUX: "/tmp/tmux-1000/default,1,0" }))).toBe(true);
+		expect(detectKittyUnicodePlaceholdersSupport("monstar", env({ TMUX: "/tmp/tmux-1000/default,1,0" }))).toBe(true);
 	});
 
 	it("ignores leaked Kitty-capable terminal identities inside Herdr unless placeholders are explicitly forced", () => {
@@ -142,6 +140,9 @@ describe("detectKittyUnicodePlaceholdersSupport", () => {
 		const paneOnly = env({ HERDR_PANE_ID: "p1", GHOSTTY_RESOURCES_DIR: "/usr/share/ghostty" });
 		expect(detectKittyUnicodePlaceholdersSupport("ghostty", paneOnly)).toBe(false);
 		expect(detectKittyUnicodePlaceholdersSupport("ghostty", { ...paneOnly, PI_KITTY_PLACEHOLDERS: "1" })).toBe(true);
+		// tmux inside the pane does not restore the automatic path that tmux alone allows.
+		const nested = env({ HERDR_PANE_ID: "p1", TMUX: "/tmp/tmux-1000/default,1,0" });
+		expect(detectKittyUnicodePlaceholdersSupport("ghostty", nested)).toBe(false);
 	});
 
 	it("honors PI_NO_KITTY_PLACEHOLDERS=1 as a hard off override on supporting terminals", () => {

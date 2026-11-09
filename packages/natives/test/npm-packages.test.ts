@@ -98,8 +98,14 @@ describe("generated native npm leaf packages", () => {
 		}
 	});
 
+<<<<<<< ours — test_suite `generated native npm leaf packages` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 	it("uses the repository notice when direct generation has only package-local licenses", async () => {
 		const root = await fs.mkdtemp(path.join(os.tmpdir(), "tau-natives-npm-notice-"));
+=======
+	it("refuses to stand in another notice for the natives package's own", async () => {
+		const root = await fs.mkdtemp(path.join(os.tmpdir(), "pi-natives-npm-notice-"));
+>>>>>>> theirs — test_suite `generated native npm leaf packages` (F, confidence: medium) · weave: run 'weave explain packages/natives/test/npm-packages.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 		const packageDir = path.join(root, "packages/natives");
 		try {
 			await fs.mkdir(path.join(packageDir, "native"), { recursive: true });
@@ -110,9 +116,8 @@ describe("generated native npm leaf packages", () => {
 				Bun.write(path.join(root, "THIRD-PARTY-NOTICES.txt"), "Repository notice\n"),
 			]);
 
-			await generateNpmPackages({ packageDir, tags: ["darwin-arm64"] });
-			expect(await Bun.file(path.join(packageDir, "npm/darwin-arm64/THIRD-PARTY-NOTICES.txt")).text()).toBe(
-				"Repository notice\n",
+			await expect(generateNpmPackages({ packageDir, tags: ["darwin-arm64"] })).rejects.toThrow(
+				"Missing legal payload THIRD-PARTY-NOTICES.txt for generated native leaf darwin-arm64",
 			);
 		} finally {
 			await fs.rm(root, { recursive: true, force: true });

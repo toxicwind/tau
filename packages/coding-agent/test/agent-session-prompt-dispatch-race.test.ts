@@ -13,6 +13,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
+<<<<<<< ours — interstitial `file_header` (T+F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import { AgentSession } from "@oh-my-pi/pi-coding-agent/session…`
 import { Agent } from "@tau/tau-agent-core";
 import { createMockModel } from "@tau/tau-ai/providers/mock";
 import { getBundledModel } from "@tau/tau-catalog/models";
@@ -24,6 +26,24 @@ import { AgentSession } from "tau/session/agent-session";
 import { AuthStorage } from "tau/session/auth-storage";
 import { SessionManager } from "tau/session/session-manager";
 import { EventBus } from "tau/utils/event-bus";
+=======
+import { Agent } from "@oh-my-pi/pi-agent-core";
+import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
+import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
+import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import type { ExtensionAPI } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/types";
+import { ExtensionRuntime, loadExtensionFromFactory } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
+import { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
+import { initializeExtensions } from "@oh-my-pi/pi-coding-agent/modes/runtime-init";
+import { RpcPromptResults, reportPromptResult } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-prompt-results";
+import type { RpcPromptResultFrame } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-types";
+import { AgentSession, PromptDroppedError } from "@oh-my-pi/pi-coding-agent/session/agent-session";
+import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
+import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
+import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
+import * as imageLoading from "@oh-my-pi/pi-coding-agent/utils/image-loading";
+>>>>>>> theirs — interstitial `file_header` (T+F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/agent-session-prompt-dispatch-race.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { assistantMsg } from "./utilities";
 
 interface BtwBranchResult {
@@ -215,5 +235,158 @@ describe("AgentSession concurrent prompt dispatch", () => {
 		// turn and ran as a detached second turn (plain user message), and a
 		// first turn longer than the retry deadline dropped the prompt.
 		expect(users[secondIndex]?.steering).toBe(true);
+	});
+
+	/**
+	 * Runs `start` (which must call `session.prompt()` and attach its handlers)
+	 * and lets a tree navigation drop that prompt while usage preflight awaits
+	 * the API key.
+	 */
+	async function dropPromptByTransition(start: () => void): Promise<void> {
+		const manager = SessionManager.inMemory();
+		const retained = manager.appendMessage({ role: "user", content: "Retained", timestamp: 1 });
+		manager.appendMessage({ role: "user", content: "Abandoned", timestamp: 2 });
+		createSession(manager);
+		const reached = Promise.withResolvers<void>();
+		const release = Promise.withResolvers<void>();
+		const getApiKey = modelRegistry.getApiKey.bind(modelRegistry);
+		vi.spyOn(modelRegistry, "getApiKey").mockImplementation(async (...args) => {
+			reached.resolve();
+			await release.promise;
+			return getApiKey(...args);
+		});
+		start();
+		try {
+			await reached.promise;
+			expect((await session.navigateTree(retained)).cancelled).toBe(false);
+		} finally {
+			release.resolve();
+		}
+	}
+
+	it("reports a transition-dropped RPC prompt as aborted, not as a completed local command", async () => {
+		const frames: RpcPromptResultFrame[] = [];
+		const settled = Promise.withResolvers<void>();
+		await dropPromptByTransition(() => {
+			const results = new RpcPromptResults(session, frame => {
+				frames.push(frame);
+				settled.resolve();
+			});
+			reportPromptResult({
+				ticket: results.begin("req_dropped"),
+				prompt: session.prompt("dropped by transition"),
+				results,
+				onError: () => {},
+			});
+		});
+		await settled.promise;
+
+		expect(frames).toEqual([expect.objectContaining({ id: "req_dropped", agentInvoked: true, status: "aborted" })]);
+	});
+
+	it("rejects a transition-dropped headless prompt when throwOnDrop is set", async () => {
+		let outcome: Promise<unknown> = Promise.resolve();
+		await dropPromptByTransition(() => {
+			outcome = session
+				.prompt("dropped by transition", { attribution: "agent", synthetic: true, throwOnDrop: true })
+				.then(
+					() => "resolved",
+					(error: unknown) => error,
+				);
+		});
+
+		expect(await outcome).toBeInstanceOf(PromptDroppedError);
+		expect(session.messages.some(message => message.role === "assistant")).toBe(false);
+	});
+
+	it("returns a rejection to an extension whose idle user message is aborted during setup", async () => {
+		const manager = SessionManager.inMemory();
+		const runtime = new ExtensionRuntime();
+		let send: ExtensionAPI["sendUserMessage"] | undefined;
+		const extension = await loadExtensionFromFactory(
+			api => {
+				send = api.sendUserMessage.bind(api);
+			},
+			manager.getCwd(),
+			new EventBus(),
+			runtime,
+			"send-user-message",
+		);
+		createSession(manager, new ExtensionRunner([extension], runtime, manager.getCwd(), manager, modelRegistry));
+		await initializeExtensions(session, { reportSendError: () => {}, reportRuntimeError: () => {} });
+		if (!send) throw new Error("Extension did not load");
+
+		const reached = Promise.withResolvers<void>();
+		const release = Promise.withResolvers<void>();
+		const getApiKey = modelRegistry.getApiKey.bind(modelRegistry);
+		vi.spyOn(modelRegistry, "getApiKey").mockImplementation(async (...args) => {
+			reached.resolve();
+			await release.promise;
+			return getApiKey(...args);
+		});
+		const outcome = send("dropped extension message").then(
+			() => undefined,
+			(error: unknown) => error,
+		);
+		try {
+			await reached.promise;
+			await session.abort();
+		} finally {
+			release.resolve();
+		}
+		expect(await outcome).toBeInstanceOf(PromptDroppedError);
+		expect(manager.getEntries().some(entry => entry.type === "message" && entry.message.role === "user")).toBe(false);
+	});
+
+	it("rejects an idle user message when abort wins image normalization", async () => {
+		const manager = SessionManager.inMemory();
+		createSession(manager);
+		const reached = Promise.withResolvers<void>();
+		const release = Promise.withResolvers<void>();
+		vi.spyOn(imageLoading, "normalizeModelContextImages").mockImplementation(async images => {
+			reached.resolve();
+			await release.promise;
+			return images;
+		});
+		const outcome = session.sendUserMessage("aborted before dispatch").then(
+			() => undefined,
+			(error: unknown) => error,
+		);
+		try {
+			await reached.promise;
+			await session.abort();
+		} finally {
+			release.resolve();
+		}
+
+		expect(await outcome).toBeInstanceOf(PromptDroppedError);
+		expect(manager.getEntries().filter(entry => entry.type === "message")).toEqual([]);
+	});
+
+	it("sends a slash-prefixed prompt to the agent without running its command when commands are disabled", async () => {
+		const manager = SessionManager.inMemory();
+		const runtime = new ExtensionRuntime();
+		let commandRuns = 0;
+		const extension = await loadExtensionFromFactory(
+			api =>
+				api.registerCommand("deploy", {
+					handler: async () => {
+						commandRuns++;
+					},
+				}),
+			manager.getCwd(),
+			new EventBus(),
+			runtime,
+			"deploy-command",
+		);
+		createSession(manager, new ExtensionRunner([extension], runtime, manager.getCwd(), manager, modelRegistry));
+
+		expect(await session.prompt("/deploy staging", { attribution: "agent", runCommands: false })).toBe(true);
+		await session.waitForIdle();
+		expect(commandRuns).toBe(0);
+		expect(session.messages.some(message => message.role === "assistant")).toBe(true);
+
+		expect(await session.prompt("/deploy staging")).toBe(false);
+		expect(commandRuns).toBe(1);
 	});
 });

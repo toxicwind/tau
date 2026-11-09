@@ -6,6 +6,8 @@ export type MnemotauLlmCompletionTask = {
 	input: string;
 };
 
+<<<<<<< ours — interface `MnemopiLlmCompleteOptions` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 export interface MnemotauLlmCompleteOptions {
 	maxTokens?: number;
 	temperature?: number;
@@ -13,6 +15,15 @@ export interface MnemotauLlmCompleteOptions {
 	provider?: string | null;
 	model?: string | null;
 	task?: MnemotauLlmCompletionTask;
+=======
+export interface MnemopiLlmCompleteOptions {
+	maxTokens?: number;
+	temperature?: number;
+	timeout?: number;
+	provider?: string | null;
+	model?: string | null;
+	task?: MnemopiLlmCompletionTask;
+>>>>>>> theirs — interface `MnemopiLlmCompleteOptions` (S+F, confidence: low) · weave: run 'weave explain packages/mnemotau/src/core/runtime-options.ts' for per-hunk detail, 'weave check' to verify your resolution
 }
 
 export type MnemotauLlmCompletion = (
@@ -33,6 +44,8 @@ export interface MnemotauEmbeddingProvider {
 	available?(): boolean | Promise<boolean>;
 }
 
+<<<<<<< ours — interface `MnemopiEmbeddingRuntimeOptions` (S+F, confidence: low)
+// refused_by: rename_vs_edit_guard · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 export interface MnemotauEmbeddingRuntimeOptions {
 	disabled?: boolean;
 	model?: string;
@@ -41,8 +54,22 @@ export interface MnemotauEmbeddingRuntimeOptions {
 	provider?: MnemotauEmbeddingProvider | ((texts: readonly string[]) => EmbeddingOutput | Promise<EmbeddingOutput>);
 	/** Override `MNEMOTAU_EMBEDDING_MAX_INPUT_CHARS`. `0` disables the cap. See `config.embeddingMaxInputChars`. */
 	maxInputChars?: number;
+=======
+export interface MnemopiEmbeddingRuntimeOptions {
+	disabled?: boolean;
+	model?: string;
+	apiUrl?: string;
+	apiKey?: ApiKey;
+	provider?: MnemopiEmbeddingProvider | ((texts: readonly string[]) => EmbeddingOutput | Promise<EmbeddingOutput>);
+	/** Override `MNEMOPI_EMBEDDING_MAX_INPUT_CHARS`. `0` disables the cap. See `config.embeddingMaxInputChars`. */
+	maxInputChars?: number;
+	/** Override `MNEMOPI_EMBEDDING_BATCH_SIZE`: max texts per embedding API request. */
+	batchSize?: number;
+>>>>>>> theirs — interface `MnemopiEmbeddingRuntimeOptions` (S+F, confidence: low)
 }
 
+<<<<<<< ours — interface `MnemopiLlmRuntimeOptions` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 export interface MnemotauLlmRuntimeOptions {
 	enabled?: boolean;
 	baseUrl?: string;
@@ -50,6 +77,15 @@ export interface MnemotauLlmRuntimeOptions {
 	model?: string | Model<Api>;
 	maxTokens?: number;
 	complete?: MnemotauLlmCompletion;
+=======
+export interface MnemopiLlmRuntimeOptions {
+	enabled?: boolean;
+	baseUrl?: string;
+	apiKey?: ApiKey;
+	model?: string | Model<Api>;
+	maxTokens?: number;
+	complete?: MnemopiLlmCompletion;
+>>>>>>> theirs — interface `MnemopiLlmRuntimeOptions` (S+F, confidence: low)
 	/** Override the fact-extraction prompt template ({text}/{lang}). Used to feed small local models a friendlier format. */
 	extractionPrompt?: string;
 	/** Override the consolidation/sleep prompt template ({memories}/{source}/{memory_count}). */
@@ -63,6 +99,8 @@ export interface MnemotauRuntimeOptions {
 	debug?: boolean;
 }
 
+<<<<<<< ours — interface `ResolvedMnemopiEmbeddingRuntimeOptions` (S+F, confidence: low)
+// refused_by: rename_vs_edit_guard · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 export interface ResolvedMnemotauEmbeddingRuntimeOptions {
 	disabled?: boolean;
 	model?: string;
@@ -70,8 +108,20 @@ export interface ResolvedMnemotauEmbeddingRuntimeOptions {
 	apiKey?: ApiKey;
 	provider?: MnemotauEmbeddingProvider;
 	maxInputChars?: number;
+=======
+export interface ResolvedMnemopiEmbeddingRuntimeOptions {
+	disabled?: boolean;
+	model?: string;
+	apiUrl?: string;
+	apiKey?: ApiKey;
+	provider?: MnemopiEmbeddingProvider;
+	maxInputChars?: number;
+	batchSize?: number;
+>>>>>>> theirs — interface `ResolvedMnemopiEmbeddingRuntimeOptions` (S+F, confidence: low)
 }
 
+<<<<<<< ours — interface `ResolvedMnemopiLlmRuntimeOptions` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 export interface ResolvedMnemotauLlmRuntimeOptions {
 	enabled?: boolean;
 	baseUrl?: string;
@@ -79,6 +129,15 @@ export interface ResolvedMnemotauLlmRuntimeOptions {
 	model?: string | Model<Api>;
 	maxTokens?: number;
 	complete?: MnemotauLlmCompletion;
+=======
+export interface ResolvedMnemopiLlmRuntimeOptions {
+	enabled?: boolean;
+	baseUrl?: string;
+	apiKey?: ApiKey;
+	model?: string | Model<Api>;
+	maxTokens?: number;
+	complete?: MnemopiLlmCompletion;
+>>>>>>> theirs — interface `ResolvedMnemopiLlmRuntimeOptions` (S+F, confidence: low)
 	extractionPrompt?: string;
 	consolidationPrompt?: string;
 }

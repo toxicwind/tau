@@ -1,4 +1,6 @@
 import { afterEach, describe, expect, it } from "bun:test";
+<<<<<<< ours — imports `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 import type { FetchImpl } from "@tau/tau-ai";
 import { createMockModel, registerMockApi } from "@tau/tau-ai/providers/mock";
 import {
@@ -20,6 +22,27 @@ import {
 import { Mnemotau } from "@tau/tau-mnemotau/core/memory";
 import { withMnemotauRuntimeOptions } from "@tau/tau-mnemotau/core/runtime-options";
 import { TempDir } from "@tau/tau-utils";
+=======
+import type { FetchImpl } from "@oh-my-pi/pi-ai";
+import { createMockModel, registerMockApi } from "@oh-my-pi/pi-ai/providers/mock";
+import {
+	CallableLlmBackend,
+	resetHostLlmBackendForTests,
+	setHostLlmBackend,
+} from "@oh-my-pi/pi-mnemopi/core/llm-backends";
+import {
+	buildHostPrompt,
+	callRemoteLlm,
+	chunkMemoriesByBudget,
+	cleanOutput,
+	complete,
+	llmAvailable,
+	summarizeMemories,
+} from "@oh-my-pi/pi-mnemopi/core/local-llm";
+import { Mnemopi } from "@oh-my-pi/pi-mnemopi/core/memory";
+import { withMnemopiRuntimeOptions } from "@oh-my-pi/pi-mnemopi/core/runtime-options";
+import { TempDir } from "@oh-my-pi/pi-utils";
+>>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/mnemotau/test/local-llm.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const OLD_ENV = { ...process.env };
 
@@ -101,11 +124,6 @@ describe("local LLM TypeScript port", () => {
 
 	it("preserves a literal think tag that follows real content", () => {
 		expect(cleanOutput("The XML tag is <think>keep</think>")).toBe("The XML tag is <think>keep</think>");
-	});
-
-	it("keeps local GGUF unavailable and returns null for local completion", async () => {
-		expect(localGgufAvailable()).toBe(false);
-		expect(await callLocalLlm("prompt")).toBeNull();
 	});
 
 	it("uses host backend before remote and skips remote on host miss", async () => {

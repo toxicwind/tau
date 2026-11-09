@@ -2,10 +2,19 @@ import { Database } from "bun:sqlite";
 import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
+<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import { closeDb, getOverallStats, getRecentRequests } from "@o…`
 import { syncAllSessions } from "@tau/tau-stats/aggregator";
 import { closeDb, getOverallStats, getRecentRequests } from "@tau/tau-stats/db";
 import { parseSessionFile } from "@tau/tau-stats/parser";
 import { getSessionsDir, getStatsDbPath } from "@tau/tau-utils";
+=======
+import { syncAllSessions } from "@oh-my-pi/omp-stats/aggregator";
+import { closeDb, getRecentRequests } from "@oh-my-pi/omp-stats/db";
+import { getOverallStats } from "@oh-my-pi/omp-stats/rollup";
+import { parseSessionFile } from "@oh-my-pi/omp-stats/parser";
+import { getSessionsDir, getStatsDbPath } from "@oh-my-pi/pi-utils";
+>>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/stats/test/priority-premium-requests.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { installStatsTestIsolation } from "./helpers/temp-agent";
 
 installStatsTestIsolation("@tau-stats-priority-");
@@ -29,6 +38,7 @@ function assistantEntry(opts: {
 	provider: string;
 	api?: string;
 	premiumRequests?: number;
+	serviceTier?: string;
 }): Record<string, unknown> {
 	return {
 		type: "message",
@@ -43,6 +53,7 @@ function assistantEntry(opts: {
 			model: "gpt-5.4",
 			stopReason: "stop",
 			timestamp: Date.now(),
+			...(opts.serviceTier !== undefined ? { serviceTier: opts.serviceTier } : {}),
 			usage: {
 				input: 10,
 				output: 5,
@@ -78,6 +89,28 @@ describe("priority service-tier premium-request backfill", () => {
 		const overall = await getOverallStats();
 		expect(overall.totalRequests).toBe(4);
 		expect(overall.totalPremiumRequests).toBe(3);
+	});
+
+	it("counts a Codex ultrafast turn from the served tier recorded on the message", async () => {
+		await writeSession("--tmp--proj", "04.jsonl", {
+			lines: [
+				{ type: "session", version: 1, id: "s4", timestamp: new Date().toISOString(), cwd: "/tmp/proj" },
+				// No `service_tier_change` and no discovery metadata: the message's own
+				// served tier is the only signal, and it is proof the tier reached the
+				// wire, so the Codex advertised-tier gate must not zero it out.
+				assistantEntry({
+					id: "d1",
+					provider: "openai-codex",
+					api: "openai-codex-responses",
+					serviceTier: "ultrafast",
+				}),
+			],
+		});
+
+		await syncAllSessions();
+
+		const request = getRecentRequests(1)[0];
+		expect(request?.usage.premiumRequests).toBe(1);
 	});
 
 	it("preserves an existing non-zero premiumRequests value (Copilot multiplier) even under priority tier", async () => {
@@ -119,7 +152,7 @@ describe("priority service-tier premium-request backfill", () => {
 		const raw = new Database(getStatsDbPath());
 		raw.exec("DELETE FROM messages");
 		raw.exec("DELETE FROM file_offsets");
-		raw.exec("DELETE FROM meta WHERE key = 'premium_requests_priority_v1'");
+		raw.exec("DELETE FROM meta WHERE key = 'premium_requests_priority_v2'");
 		raw.prepare(
 			`INSERT INTO messages (
 				session_file, entry_id, folder, model, provider, api, timestamp,

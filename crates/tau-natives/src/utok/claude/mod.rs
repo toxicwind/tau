@@ -160,7 +160,30 @@ impl Family {
 /// fragments. Valid text counts flavor-invariantly; malformed units decode
 /// permissively as U+FFFD (utf.rs semantics).
 pub fn content_token_count<U: Unit>(units: &[U], family: Family) -> u32 {
+<<<<<<< ours — function `content_token_count (body partly extracted into try_content_token_count)` (F, confidence: medium)
+// refused_by: statement_fold · collision: `let stream = stream_norm(&norm, &p, head_space);` +11 more
 	try_content_token_count(units, family).unwrap_or_else(|e| panic!("{e}"))
+=======
+	let core = family.core();
+	let p = family.params();
+	let head_space = raw_head_space_units(units);
+	let mut tiler = core.tiler();
+	if p.ladder {
+		let norm = nfc_units(units, p.fold_quotes);
+		// The frame appends newline(s) and one token can span into them: read
+		// the content-final newline run before `stream_norm` strips it.
+		let n_tail = norm.bytes().rev().take_while(|&b| b == b'\n').count();
+		stream_norm(&norm, &p, head_space, |chunk| tiler.push(chunk));
+		tiler.finish() + core.ladder_tail_cost(n_tail, family.appended_newlines())
+	} else {
+		// The v5 frame absorbs raw ASCII whitespace, so strip before NFC:
+		// NFC folds NBSP etc. to U+0020, and those are not free at the end.
+		let stripped = trim_end_ws(units);
+		let norm = nfc_units(stripped, p.fold_quotes);
+		stream_norm(&norm, &p, head_space, |chunk| tiler.push(chunk));
+		tiler.finish()
+	}
+>>>>>>> theirs — function `content_token_count (body partly extracted into try_content_token_count)` (F, confidence: medium) · weave: run 'weave explain crates/tau-natives/src/utok/claude/mod.rs' for per-hunk detail, 'weave check' to verify your resolution
 }
 
 /// Fallible [`content_token_count`]: the same count, with a missing or

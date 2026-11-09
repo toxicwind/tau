@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import * as path from "node:path";
 import { isRecord, readJsonl, TempDir } from "@tau/tau-utils";
 import { selectRpcEntries } from "tau/modes/rpc/rpc-compat";
@@ -6,6 +6,8 @@ import { readRpcInputFrames } from "tau/modes/rpc/rpc-input";
 import { SessionManager } from "tau/session/session-manager";
 import { FileSessionStorage } from "tau/session/session-storage";
 import type { SessionEntry, SessionTreeNode } from "tau/session/session-entries";
+import { RpcWordPredictor } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-mode";
+import type { TextPrediction } from "@oh-my-pi/pi-coding-agent/predict/client";
 
 function customEntry(id: string, parentId: string | null): SessionEntry {
 	return { type: "custom", id, parentId, timestamp: new Date().toISOString(), customType: "probe" };
@@ -45,36 +47,14 @@ describe("RPC Tau-compatible get_entries slice", () => {
 	});
 });
 
-describe("RPC ordinary error correlation", () => {
-	// Unknown-command id preservation is covered against the live server below
-	// (`unknown-1`); the dispatcher reuses the shared error helper, so no
-	// second unit surface is kept for it.
-	test("malformed JSON remains safely uncorrelated and the reader continues", async () => {
-		const input = new Blob([
-			"this is not json\n",
-			`${JSON.stringify({ type: "get_state", id: "after-bad-line" })}\n`,
-		]).stream();
-		const frames: unknown[] = [];
-		const parseErrors: string[] = [];
-		await readRpcInputFrames(
-			input,
-			frame => frames.push(frame),
-			message => parseErrors.push(message),
-		);
-		expect(parseErrors).toHaveLength(1);
-		expect(parseErrors[0]).toContain("Failed to parse command");
-		expect(frames).toEqual([{ type: "get_state", id: "after-bad-line" }]);
-	});
-});
-
 describe("RPC durable history (persisted SessionManager)", () => {
 	// Guards the contract Orca's delta sync depends on: a regression that
 	// reorders append-history, drops branch siblings, or loses IDs/parentage
 	// across close/reopen breaks `get_entries(since)` consumers. No LLM is
 	// involved — the history is built with canonical SessionManager APIs.
 	test("linear history, branch siblings, and resume preserve IDs/parentage/tree/leaf", async () => {
-		await using cwdDir = await TempDir.create("rpc-durable-cwd-");
-		await using sessionsDir = await TempDir.create("rpc-durable-sessions-");
+		await using cwdDir = await TempDir.create("@rpc-durable-cwd-");
+		await using sessionsDir = await TempDir.create("@rpc-durable-sessions-");
 		const cwd = cwdDir.path();
 		const sessionDir = sessionsDir.path();
 
@@ -140,12 +120,24 @@ describe("RPC durable history (persisted SessionManager)", () => {
 
 type RpcFrame = Record<string, unknown>;
 
-async function withRpcServer<T>(
-	run: (send: (frame: object) => void, next: () => Promise<RpcFrame>, sendRaw: (line: string) => void) => Promise<T>,
-): Promise<T> {
+/**
+ * One RPC-mode CLI over its stdin/stdout. Only command responses correlate with `send`;
+ * unsolicited frames (ready, available_commands_update, extension_ui_request widget
+ * state, etc.) are dropped so they cannot steal another command's correlation slot.
+ */
+interface RpcServer {
+	send: (frame: object) => void;
+	sendRaw: (line: string) => void;
+	/** Resolves with the next command response in arrival order, as soon as it is read. */
+	next: () => Promise<RpcFrame>;
+	close: () => Promise<void>;
+}
+
+async function startRpcServer(): Promise<RpcServer> {
+	const temp = await TempDir.create("@rpc-compatible-primitives-");
 	const child = Bun.spawn(
 		[
-			"bun",
+			process.execPath,
 			path.join(import.meta.dir, "..", "src", "cli.ts"),
 			"--mode",
 			"rpc",
@@ -159,63 +151,122 @@ async function withRpcServer<T>(
 			"claude-sonnet-4-5",
 		],
 		{
-			cwd: path.join(import.meta.dir, ".."),
-			env: { ...Bun.env, PI_NO_TITLE: "1" } as unknown as Record<string, string | undefined>,
+			cwd: temp.path(),
+			env: {
+				PATH: Bun.env.PATH,
+				HOME: temp.join("home"),
+				PI_CODING_AGENT_DIR: temp.join("agent"),
+				XDG_CONFIG_HOME: temp.join("config"),
+				XDG_DATA_HOME: temp.join("data"),
+				XDG_CACHE_HOME: temp.join("cache"),
+				CI: "true",
+				PI_NO_TITLE: "1",
+			},
 			stdin: "pipe",
 			stdout: "pipe",
 			stderr: "pipe",
 		},
 	);
-	const stderrPromise = new Response(child.stderr).text();
-	const queue: RpcFrame[] = [];
-	let readerDone = false;
-	let readerError: unknown;
-	const lines = readJsonl<unknown>(child.stdout as ReadableStream<Uint8Array>);
+	const stderr = new Response(child.stderr).text().catch(() => "");
+	const responses: RpcFrame[] = [];
+	const waiters: PromiseWithResolvers<RpcFrame>[] = [];
+	let ended: Error | undefined;
 	const pump = (async () => {
+		let readerError: unknown;
 		try {
-			for await (const line of lines) {
-				if (isRecord(line)) queue.push(line);
+			for await (const frame of readJsonl<unknown>(child.stdout)) {
+				if (!isRecord(frame) || frame.type !== "response") continue;
+				const waiter = waiters.shift();
+				if (waiter) waiter.resolve(frame);
+				else responses.push(frame);
 			}
 		} catch (error) {
 			readerError = error;
-		} finally {
-			readerDone = true;
 		}
+		ended = new Error(`RPC stream ended early: ${await stderr} ${String(readerError ?? "")}`);
+		for (const waiter of waiters.splice(0)) waiter.reject(ended);
 	})();
-	const send = (frame: object): void => {
-		child.stdin.write(`${JSON.stringify(frame)}\n`);
-	};
-	const sendRaw = (line: string): void => {
+	const writeLine = (line: string): void => {
 		child.stdin.write(`${line}\n`);
+		void child.stdin.flush();
 	};
-	const next = async (): Promise<RpcFrame> => {
-		for (let waited = 0; waited < 300; waited++) {
-			// Only command responses correlate with `send`; unsolicited frames
-			// (ready, available_commands_update, extension_ui_request widget
-			// state, etc.) are dropped so they cannot steal another command's
-			// correlation slot.
-			const responseIndex = queue.findIndex(frame => frame.type === "response");
-			if (responseIndex !== -1) return queue.splice(responseIndex, 1)[0]!;
-			queue.length = 0;
-			if (readerDone) throw new Error(`RPC stream ended early: ${await stderrPromise} ${String(readerError ?? "")}`);
-			await Bun.sleep(100);
-		}
-		throw new Error("Timed out waiting for RPC frame");
+	return {
+		send: frame => writeLine(JSON.stringify(frame)),
+		sendRaw: writeLine,
+		next: () => {
+			const queued = responses.shift();
+			if (queued) return Promise.resolve(queued);
+			if (ended) return Promise.reject(ended);
+			const waiter = Promise.withResolvers<RpcFrame>();
+			waiters.push(waiter);
+			return waiter.promise;
+		},
+		close: async () => {
+			try {
+				child.stdin.end();
+			} catch {}
+			child.kill();
+			await child.exited.catch(() => {});
+			await pump;
+			await temp.remove();
+		},
 	};
-	try {
-		await child.stdin.flush?.();
-		return await run(send, next, sendRaw);
-	} finally {
-		try {
-			child.stdin.end();
-		} catch {}
-		child.kill();
-		await child.exited.catch(() => {});
-		await pump.catch(() => {});
-		await stderrPromise.catch(() => {});
-	}
 }
 
+describe("RpcWordPredictor", () => {
+	const answer = (suffix: string | null): TextPrediction => ({
+		engine: "ngram",
+		suggestion: suffix === null ? null : { suffix, confidence: 0.9 },
+	});
+
+	test("asks the engine for the prose word ending the line and returns its suffix", async () => {
+		const calls: unknown[][] = [];
+		const draft = "Check it\nthe weath";
+		const predictor = new RpcWordPredictor(async (...args) => {
+			calls.push(args);
+			return answer("er");
+		});
+		expect(await predictor.predict("ngram", draft, draft.length)).toBe("er");
+		expect(calls).toEqual([["ngram", "Check it\nthe ", "weath"]]);
+	});
+
+	test("never asks the engine mid-line or when completion is off", async () => {
+		const predictor = new RpcWordPredictor(async () => {
+			throw new Error("engine must not be asked");
+		});
+		expect(await predictor.predict("ngram", "the weath and more", 9)).toBeNull();
+		expect(await predictor.predict("off", "the weath", 9)).toBeNull();
+	});
+
+	test("no suggestion is null and an unreachable daemon rejects", async () => {
+		expect(await new RpcWordPredictor(async () => answer(null)).predict("ngram", "the weath", 9)).toBeNull();
+		const down = new RpcWordPredictor(async () => {
+			throw new Error("text-predict daemon unavailable");
+		});
+		await expect(down.predict("ngram", "the weath", 9)).rejects.toThrow("text-predict daemon unavailable");
+	});
+
+	test("a burst keeps one request in flight and only the newest waiting one reaches the engine", async () => {
+		const first = Promise.withResolvers<TextPrediction>();
+		const prefixes: string[] = [];
+		const predictor = new RpcWordPredictor(async (_engine, _before, prefix) => {
+			prefixes.push(prefix);
+			return prefixes.length === 1 ? first.promise : answer(`${prefix}!`);
+		});
+		const a = predictor.predict("ngram", "w", 1);
+		const b = predictor.predict("ngram", "we", 2);
+		const c = predictor.predict("ngram", "wea", 3);
+		expect(await b).toBeNull();
+		expect(prefixes).toEqual(["w"]);
+		first.resolve(answer("hat"));
+		expect(await a).toBe("hat");
+		expect(await c).toBe("wea!");
+		expect(prefixes).toEqual(["w", "wea"]);
+	});
+});
+
+<<<<<<< ours — test_suite `RPC Pi-compatible primitives (live server)` (T+S+F, confidence: low)
+// refused_by: rename_vs_edit_guard · collision: `// Pi-compatible discovery: selectable levels with `off` first.` +1 more
 describe("RPC Tau-compatible primitives (live server)", () => {
 	test("get_entries, get_tree, thinking levels, and command-discovery dialect", async () => {
 		await withRpcServer(async (send, next) => {
@@ -306,5 +357,163 @@ describe("RPC Tau-compatible primitives (live server)", () => {
 			expect(ok.id).toBe("after-malformed");
 			expect(ok.success).toBe(true);
 		});
+=======
+describe("RPC Pi-compatible primitives (live server)", () => {
+	// One server for every case: each drives independent commands and reads back only state it set
+	// itself (thinking level), so sharing the process spares a CLI cold start per case.
+	let server: RpcServer;
+	beforeAll(async () => {
+		server = await startRpcServer();
+	});
+	afterAll(() => server.close());
+
+	test("rejects invalid cache warming modes and accepts a subsequent session-scoped mode change", async () => {
+		const { send, next } = server;
+		send({ type: "set_cache_warming", id: "bad-warming", mode: "always" });
+		expect(await next()).toEqual({
+			id: "bad-warming",
+			type: "response",
+			command: "set_cache_warming",
+			success: false,
+			error: "Invalid cache warming mode: always",
+		});
+		send({ type: "set_cache_warming", id: "warming-off", mode: "off" });
+		expect(await next()).toEqual({
+			id: "warming-off",
+			type: "response",
+			command: "set_cache_warming",
+			success: true,
+			data: { mode: "off" },
+		});
+	}, 60000);
+
+	test("set_slow_mode rejects a non-boolean enabled before touching the persisted Claude setting", async () => {
+		const { send, next } = server;
+		send({ type: "get_state", id: "slow-state" });
+		const state = (await next()).data as { slowModeSupported: unknown; slowModeScope: unknown };
+		expect([state.slowModeSupported, state.slowModeScope]).toEqual([true, "global"]);
+		send({ type: "set_slow_mode", id: "slow-bad", enabled: "false" });
+		expect(await next()).toEqual({
+			id: "slow-bad",
+			type: "response",
+			command: "set_slow_mode",
+			success: false,
+			error: "set_slow_mode requires boolean enabled",
+		});
+	}, 60000);
+
+	test("get_entries, get_tree, thinking levels, and command-discovery dialect", async () => {
+		const { send, next } = server;
+		send({ type: "get_entries", id: "entries-base" });
+		const entriesBase = await next();
+		expect(entriesBase.id).toBe("entries-base");
+		expect(entriesBase.command).toBe("get_entries");
+		expect(entriesBase.success).toBe(true);
+		const baseData = entriesBase.data as { entries: unknown[]; leafId: string | null };
+		expect(Array.isArray(baseData.entries)).toBe(true);
+		expect(baseData.leafId === null || typeof baseData.leafId === "string").toBe(true);
+
+		send({ type: "get_tree", id: "tree-base" });
+		const tree = await next();
+		expect(tree.id).toBe("tree-base");
+		expect(tree.command).toBe("get_tree");
+		expect(tree.success).toBe(true);
+		const treeData = tree.data as { tree: unknown[]; leafId: string | null };
+		expect(Array.isArray(treeData.tree)).toBe(true);
+		expect(treeData.leafId).toBe(baseData.leafId);
+
+		send({ type: "get_available_thinking_levels", id: "levels" });
+		const levels = await next();
+		expect(levels.id).toBe("levels");
+		expect(levels.command).toBe("get_available_thinking_levels");
+		expect(levels.success).toBe(true);
+		const discovered = (levels.data as { levels: unknown[] }).levels;
+		// Pi-compatible discovery: selectable levels with `off` first.
+		expect(discovered.length).toBeGreaterThan(0);
+		expect(discovered[0]).toBe("off");
+		for (const level of discovered) expect(typeof level).toBe("string");
+
+		// Every discovered level must be settable: `off` round-trips.
+		send({ type: "set_thinking_level", id: "set-off", level: "off" });
+		const setOff = await next();
+		expect(setOff.id).toBe("set-off");
+		expect(setOff.success).toBe(true);
+		send({ type: "get_state", id: "state-off" });
+		const stateOff = await next();
+		expect((stateOff.data as { thinkingLevel: unknown }).thinkingLevel).toBe("off");
+
+		// Command discovery stays an OMP dialect: the Pi-spelled alias is
+		// intentionally not served (see issue #6).
+		send({ type: "get_available_commands", id: "cmds-a" });
+		const available = await next();
+		expect(available.id).toBe("cmds-a");
+		expect(available.command).toBe("get_available_commands");
+		expect(available.success).toBe(true);
+		expect(Array.isArray((available.data as { commands: unknown[] }).commands)).toBe(true);
+		send({ type: "get_commands", id: "cmds-b" });
+		const alias = await next();
+		expect(alias.id).toBe("cmds-b");
+		expect(alias.command).toBe("get_commands");
+		expect(alias.success).toBe(false);
+	}, 60000);
+
+	test("ordinary failures preserve ids; malformed JSON stays uncorrelated", async () => {
+		const { send, next, sendRaw } = server;
+		send({ type: "definitely_not_a_command", id: "unknown-1" });
+		const unknown = await next();
+		expect(unknown.id).toBe("unknown-1");
+		expect(unknown.command).toBe("definitely_not_a_command");
+		expect(unknown.success).toBe(false);
+
+		send({ type: "set_session_name", id: "bad-arg", name: "   " });
+		const invalid = await next();
+		expect(invalid.id).toBe("bad-arg");
+		expect(invalid.command).toBe("set_session_name");
+		expect(invalid.success).toBe(false);
+
+		send({ type: "get_entries", id: "unknown-since", since: "missing-entry-id" });
+		const since = await next();
+		expect(since.id).toBe("unknown-since");
+		expect(since.command).toBe("get_entries");
+		expect(since.success).toBe(false);
+
+		// Malformed line goes through the same stdin pipe; the server must
+		// report an uncorrelated parse error and keep serving later commands.
+		sendRaw("this is not json");
+		const parseError = await next();
+		expect(parseError.command).toBe("parse");
+		expect(parseError.success).toBe(false);
+		expect(parseError.id).toBeUndefined();
+
+		send({ type: "get_state", id: "after-malformed" });
+		const ok = await next();
+		expect(ok.id).toBe("after-malformed");
+		expect(ok.success).toBe(true);
+	}, 60000);
+
+	test("predict_word gates non-prose words and rejects cursors outside the text", async () => {
+		const { send, next } = server;
+		// The cursor ends a word inside a fenced block on the third line: code
+		// never gets ghost text, so the answer is null without asking an engine.
+		const fenced = "Look:\n```ts\nconst val";
+		send({ type: "predict_word", id: "fenced", text: fenced, cursor: fenced.length });
+		const gated = await next();
+		expect(gated).toMatchObject({ id: "fenced", command: "predict_word", success: true, data: { suffix: null } });
+
+		send({ type: "predict_word", id: "past-end", text: "hello", cursor: 6 });
+		const pastEnd = await next();
+		expect(pastEnd).toMatchObject({ id: "past-end", command: "predict_word", success: false });
+
+		send({
+			type: "predict_word_feedback",
+			id: "fb-bad",
+			text: "hi",
+			cursor: 1.5,
+			suggestion: "x",
+			accepted: true,
+		});
+		const badFeedback = await next();
+		expect(badFeedback).toMatchObject({ id: "fb-bad", command: "predict_word_feedback", success: false });
+>>>>>>> theirs — test_suite `RPC Pi-compatible primitives (live server)` (T+S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/rpc-compatible-primitives.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 	}, 60000);
 });

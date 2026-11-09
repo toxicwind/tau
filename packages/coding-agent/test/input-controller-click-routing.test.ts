@@ -1,4 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
+<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: `import { PINNED_HUD_TOGGLE_ID } from "@oh-my-pi/pi-tui/prompt/c…`
 import { KeybindingsManager } from "@tau/tau-tui/app-keybindings";
 import { resetSettingsForTest, Settings, settings } from "tau/config/settings";
 import { PINNED_HUD_TOGGLE_ID } from "@tau/tau-tui/prompt/composer";
@@ -6,11 +8,28 @@ import { InputController } from "tau/modes/controllers/input-controller";
 import type { InteractiveModeContext } from "tau/modes/types";
 import { AgentRegistry } from "tau/registry/agent-registry";
 import type { AgentSession } from "tau/session/agent-session";
+=======
+import { KeybindingsManager } from "@oh-my-pi/pi-tui/app-keybindings";
+import { resetSettingsForTest, Settings, settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import { PINNED_HUD_TOGGLE_ID } from "@oh-my-pi/pi-coding-agent/task/output-manager";
+import { InputController } from "@oh-my-pi/pi-coding-agent/modes/controllers/input-controller";
+import { SpaceHoldGesture } from "@oh-my-pi/pi-tui/space-hold";
+import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
+import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
+import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
+>>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/input-controller-click-routing.test.ts' for per-hunk detail, 'weave check' to verify your resolution
+
+import { cfgTuiMouse } from "@oh-my-pi/pi-coding-agent/modes/settings";
 
 const ESC = String.fromCharCode(27);
 // SGR click on viewport row 2 (1-based y=3): the pinned expander row when the
 // candidates below resolve it to the toggle sentinel.
 const EXPANDER_CLICK = `${ESC}[<0;5;3M`;
+// Wheel ticks on the same row: capture consumes them, and omp has no viewport
+// of its own to scroll (history lives in terminal scrollback), so they must not
+// reach click routing.
+const WHEEL_UP = `${ESC}[<64;5;3M`;
+const WHEEL_DOWN = `${ESC}[<65;5;3M`;
 
 function makeHarness() {
 	const listeners: Array<(data: string) => { consume?: boolean; data?: string } | undefined> = [];
@@ -33,12 +52,16 @@ function makeHarness() {
 			setActionKeys: () => {},
 			setCustomKeyHandler: () => {},
 			clearCustomKeyHandlers: () => {},
+			spaceHold: new SpaceHoldGesture(() => {}),
 		},
 		keybindings: KeybindingsManager.inMemory(),
+		settings,
+		dictationSpaceHold: () => undefined,
 		session: {
 			extensionRunner: undefined,
 		},
 		resolveViewportClickCandidates: (index: number) => (index === 2 ? [PINNED_HUD_TOGGLE_ID] : []),
+		activateViewportLink: () => false,
 		focusedAgentId: undefined,
 		focusAgentSession: async (id: string) => {
 			focused.push(id);
@@ -51,9 +74,16 @@ function makeHarness() {
 	} as unknown as InteractiveModeContext;
 	const controller = new InputController(ctx);
 	controller.setupKeyHandlers();
+	/** Bytes each registered listener received alongside the ones that consumed them. */
+	const send = (data: string) => {
+		const consumed: string[] = [];
+		for (const listener of listeners) if (listener(data)?.consume) consumed.push(data);
+		return consumed;
+	};
 	return {
+		send,
 		click: () => {
-			for (const listener of listeners) listener(EXPANDER_CLICK);
+			send(EXPANDER_CLICK);
 		},
 		focused,
 		toggled: () => toggled,
@@ -64,7 +94,7 @@ describe("InputController click routing", () => {
 	beforeEach(async () => {
 		AgentRegistry.resetGlobalForTests();
 		await Settings.init({ inMemory: true });
-		settings.set("tui.mouse", true);
+		cfgTuiMouse.set(settings, true);
 	});
 
 	afterEach(() => {
@@ -91,5 +121,22 @@ describe("InputController click routing", () => {
 		h.click();
 		expect(h.toggled()).toBe(1);
 		expect(h.focused).toEqual([]);
+	});
+
+	it("consumes wheel ticks without scrolling or clicking", () => {
+		const h = makeHarness();
+		expect(h.send(WHEEL_UP)).toEqual([WHEEL_UP]);
+		expect(h.send(WHEEL_DOWN)).toEqual([WHEEL_DOWN]);
+		// Consumed *and* inert: capture owns the terminal's wheel, and omp has no
+		// viewport of its own to scroll (history lives in terminal scrollback).
+		expect(h.toggled()).toBe(0);
+		expect(h.focused).toEqual([]);
+	});
+
+	it("leaves wheel ticks unclaimed with capture off", () => {
+		cfgTuiMouse.set(settings, false);
+		const h = makeHarness();
+		expect(h.send(WHEEL_UP)).toEqual([]);
+		expect(h.toggled()).toBe(0);
 	});
 });

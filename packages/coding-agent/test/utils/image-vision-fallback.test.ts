@@ -2,12 +2,26 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
+<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import type { Api, AssistantMessage, completeSimple, Model } from "@tau/tau-ai";
 import type { ModelSpec } from "@tau/tau-ai/types";
 import { buildModel } from "@tau/tau-catalog/build";
 import { Settings } from "tau/config/settings";
 import { type DescribeAttachedImagesDeps, describeAttachedImagesForTextModel } from "tau/utils/image-vision-fallback";
 import { removeWithRetries } from "@tau/tau-utils";
+=======
+import type { Api, AssistantMessage, completeSimple, Model } from "@oh-my-pi/pi-ai";
+import type { ModelSpec } from "@oh-my-pi/pi-ai/types";
+import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import {
+	type DescribeAttachedImagesDeps,
+	describeAttachedImagesForTextModel,
+} from "@oh-my-pi/pi-coding-agent/utils/image-vision-fallback";
+import { CostGate } from "@oh-my-pi/pi-coding-agent/session/cost-gate";
+import { removeWithRetries } from "@oh-my-pi/pi-utils";
+>>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/utils/image-vision-fallback.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 // 1x1 transparent PNG.
 const TINY_PNG_BASE64 =
@@ -27,6 +41,11 @@ const visionModel: Model<"openai-responses"> = buildModel({
 });
 
 const textModel: Model<"openai-responses"> = { ...visionModel, id: "gpt-4.1-mini", input: ["text"] };
+const cheaperVisionModel: Model<"openai-responses"> = {
+	...visionModel,
+	id: "gpt-4o-mini",
+	cost: { input: 0.15, output: 0.6, cacheRead: 0.075, cacheWrite: 0.15 },
+};
 
 function makeCompleteStub(text: string): { calls: unknown[][]; fn: typeof completeSimple } {
 	const calls: unknown[][] = [];
@@ -105,6 +124,65 @@ describe("describeAttachedImagesForTextModel", () => {
 		const fileName = match![1].slice("local://".length);
 		const saved = await fs.readFile(path.join(testDir, "local", fileName));
 		expect(saved.toString("base64")).toBe(TINY_PNG_BASE64);
+	});
+
+	it("counts each description against the session's cost cap and describes nothing at it", async () => {
+		const stub = makeCompleteStub("A man holding a red balloon.");
+		const billed = (async (...args: Parameters<typeof completeSimple>) => {
+			const message = await stub.fn(...args);
+			message.usage.cost.total = 1.2;
+			return message;
+		}) as typeof completeSimple;
+		const costGate = new CostGate(Settings.isolated({ "session.maxCost": 1 }), 0, () => {});
+		const deps = { ...makeDeps(testDir, [textModel, visionModel], billed), costGate };
+		const image = { type: "image" as const, data: TINY_PNG_BASE64, mimeType: "image/png" };
+
+		await describeAttachedImagesForTextModel([image], deps);
+		expect(costGate.spent).toBe(1.2);
+		const capped = await describeAttachedImagesForTextModel([image], deps);
+
+		expect(stub.calls).toHaveLength(1);
+		expect(capped[0]!.text).not.toContain("red balloon");
+	});
+
+	it("chooses the cheaper available vision model instead of catalog order", async () => {
+		const unpriced = {
+			...visionModel,
+			id: "unpriced-vision",
+			cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
+		};
+		const stub = makeCompleteStub("description");
+		await describeAttachedImagesForTextModel(
+			[{ type: "image", data: TINY_PNG_BASE64, mimeType: "image/png" }],
+			makeDeps(testDir, [textModel, unpriced, visionModel, cheaperVisionModel], stub.fn),
+		);
+
+		expect(stub.calls[0]?.[0]).toMatchObject({ id: "gpt-4o-mini" });
+	});
+
+	it("prefers a declared free vision model over a paid one listed after it", async () => {
+		const free = {
+			...visionModel,
+			id: "free-vision",
+			pricingStatus: "free" as const,
+			cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
+		};
+		const stub = makeCompleteStub("description");
+		await describeAttachedImagesForTextModel(
+			[{ type: "image", data: TINY_PNG_BASE64, mimeType: "image/png" }],
+			makeDeps(testDir, [textModel, free, cheaperVisionModel], stub.fn),
+		);
+
+		expect(stub.calls[0]?.[0]).toMatchObject({ id: "free-vision" });
+	});
+
+	it("keeps a configured vision role ahead of the cheaper fallback", async () => {
+		const stub = makeCompleteStub("description");
+		const deps = makeDeps(testDir, [textModel, visionModel, cheaperVisionModel], stub.fn);
+		deps.settings = Settings.isolated({ modelRoles: { vision: "openai/gpt-4o" } });
+		await describeAttachedImagesForTextModel([{ type: "image", data: TINY_PNG_BASE64, mimeType: "image/png" }], deps);
+
+		expect(stub.calls[0]?.[0]).toMatchObject({ id: "gpt-4o" });
 	});
 
 	it("saves the image but emits a no-vision note when no vision model is available", async () => {

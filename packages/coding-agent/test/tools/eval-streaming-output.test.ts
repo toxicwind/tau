@@ -15,6 +15,7 @@ import { stripOutputNotice } from "@tau/tau-tui/tools/output-meta";
 import { formatOutputNotice } from "@tau/tau-tui/tools/output-meta";
 import { wrapToolWithMetaNotice } from "tau/tools/output-meta";
 import { removeWithRetries, sanitizeText } from "@tau/tau-utils";
+import { cfgToolsOutputMaxColumns } from "@oh-my-pi/pi-coding-agent/tools/settings";
 
 function makeSession(settings = Settings.isolated()): ToolSession {
 	return {
@@ -98,7 +99,7 @@ describe("EvalTool live stdout streaming", () => {
 
 	it("preserves the column-cap notice after rebuilding the final eval summary", async () => {
 		const settings = Settings.isolated();
-		settings.set("tools.outputMaxColumns", 8);
+		cfgToolsOutputMaxColumns.set(settings, 8);
 		vi.spyOn(evalIndex.jsBackend, "execute").mockImplementation((async (
 			_code: string,
 			options: { onChunk?: (chunk: string) => void },

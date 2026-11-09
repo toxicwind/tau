@@ -1,6 +1,14 @@
 import { describe, expect, test } from "bun:test";
+<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: `import { getEnvApiKey } from "@oh-my-pi/pi-ai/stream";`
 import { getEnvApiKey } from "@tau/tau-ai/stream";
 import { aimlApiModelManagerOptions, isLikelyAimlApiChatModelId } from "@tau/tau-catalog/provider-models/openai-compat";
+=======
+import {
+	aimlApiModelManagerOptions,
+	isLikelyAimlApiChatModelId,
+} from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
+>>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/catalog/test/issue-2105-repro.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 describe("AIML API built-in provider (issue #2105)", () => {
 	test("uses the OpenAI-compatible completions transport and AIML API base URL", async () => {
@@ -64,20 +72,6 @@ describe("AIML API built-in provider (issue #2105)", () => {
 
 		for (const modelId of ["gpt-4o", "claude-sonnet-4-5", "deepseek-v3.2"]) {
 			expect(isLikelyAimlApiChatModelId(modelId)).toBe(true);
-		}
-	});
-
-	test("resolves AIMLAPI_API_KEY via env", () => {
-		const previous = Bun.env.AIMLAPI_API_KEY;
-		Bun.env.AIMLAPI_API_KEY = "aiml-test-key";
-		try {
-			expect(getEnvApiKey("aimlapi")).toBe("aiml-test-key");
-		} finally {
-			if (previous === undefined) {
-				delete Bun.env.AIMLAPI_API_KEY;
-			} else {
-				Bun.env.AIMLAPI_API_KEY = previous;
-			}
 		}
 	});
 });

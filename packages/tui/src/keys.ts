@@ -23,8 +23,14 @@ import {
 	matchesKey as matchesKeyNative,
 	parseKey as parseKeyNative,
 	parseKittySequence as parseKittySequenceNative,
+<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-natives";
 import { isInsideTerminalMultiplexer } from "./terminal-capabilities";
+=======
+} from "@oh-my-pi/pi-natives";
+import { isInsideTerminalMultiplexer, isSshSession } from "./terminal-capabilities";
+>>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/tui/src/keys.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 // =============================================================================
 // Platform Detection
@@ -32,9 +38,7 @@ import { isInsideTerminalMultiplexer } from "./terminal-capabilities";
 
 /** Whether the local process is running directly under Windows Terminal. */
 export function isWindowsTerminalSession(): boolean {
-	return (
-		Boolean(process.env.WT_SESSION) && !process.env.SSH_CONNECTION && !process.env.SSH_CLIENT && !process.env.SSH_TTY
-	);
+	return Boolean(process.env.WT_SESSION) && !isSshSession();
 }
 
 /**
@@ -177,7 +181,8 @@ type SpecialKey =
 	| "f12";
 
 type BaseKey = Letter | Digit | KeySymbol | SpecialKey;
-type ModifierName = "ctrl" | "shift" | "alt" | "super";
+/** Modifier key names as they appear in {@link KeyId} chords. */
+export type ModifierName = "ctrl" | "shift" | "alt" | "super";
 
 type ModifiedKeyId<Key extends string, RemainingModifiers extends ModifierName = ModifierName> = {
 	[M in RemainingModifiers]: `${M}+${Key}` | `${M}+${ModifiedKeyId<Key, Exclude<RemainingModifiers, M>>}`;

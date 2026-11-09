@@ -114,6 +114,8 @@ describe("SQLite recovery helpers", () => {
 		expect(existsSync(second.metadata_path)).toBe(true);
 	});
 
+<<<<<<< ours — scope `it("returns true for a valid SQLite database ...` in test_suite `SQLite recovery helpers`, deleted in theirs (S+F, confidence: low)
+// refused_by: statement_fold · collision: none (no common ancestor text)
 	it("returns true for a valid SQLite database integrity check", () => {
 		const dir = makeTempDir();
 		const dbPath = join(dir, "mnemotau.db");
@@ -121,6 +123,8 @@ describe("SQLite recovery helpers", () => {
 
 		expect(verifyIntegrity(dbPath)).toBe(true);
 	});
+=======
+>>>>>>> theirs — scope `it("returns true for a valid SQLite database ...` deleted in theirs · weave: run 'weave explain packages/mnemotau/test/recovery.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 	it("restores a backup to a new path", () => {
 		const dir = makeTempDir();

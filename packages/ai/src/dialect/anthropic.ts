@@ -1,14 +1,13 @@
+<<<<<<< ours — imports `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: `import { parseJsonWithRepair } from "@oh-my-pi/pi-utils";`
 import { parseJsonWithRepair } from "@tau/tau-utils";
+=======
+import { escapeXmlText, parseJsonWithRepair } from "@oh-my-pi/pi-utils";
+>>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/src/dialect/anthropic.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { Message, ToolCall } from "../types";
 import dialectPrompt from "./anthropic.md" with { type: "text" };
-import { buildArgShapes, buildStringArgsResolver, mintToolCallId, type ToolArgShape } from "./coercion";
-import {
-	escapeXmlAttr,
-	escapeXmlText,
-	renderDelimitedThinking,
-	renderLegacyTextTranscript,
-	stringifyJson,
-} from "./rendering";
+import { buildArgShapes, buildStringArgsResolver, mintToolCallId } from "./coercion";
+import { renderDelimitedThinking, renderInvoke, renderInvokes, renderLegacyTextTranscript } from "./rendering";
 import type {
 	DialectDefinition,
 	DialectRenderOptions,
@@ -576,22 +575,6 @@ function renderTranscript(messages: readonly Message[], options: DialectRenderOp
 		renderCalls: renderAssistantToolCalls,
 		renderResults: renderToolResults,
 	});
-}
-
-function renderInvoke(call: ToolCall, shape: ToolArgShape | undefined): string {
-	let body = `<invoke name="${escapeXmlAttr(call.name)}">`;
-	for (const key in call.arguments) {
-		const value = call.arguments[key];
-		const isString = shape?.stringArgs.has(key) === true;
-		const rendered = isString && typeof value === "string" ? value : stringifyJson(value);
-		body += `<parameter name="${escapeXmlAttr(key)}">${rendered}</parameter>`;
-	}
-	return `${body}</invoke>`;
-}
-
-function renderInvokes(calls: readonly ToolCall[], tools: NonNullable<DialectRenderOptions["tools"]>): string {
-	const shapes = buildArgShapes(tools);
-	return calls.map(call => renderInvoke(call, shapes.get(call.name))).join("\n");
 }
 
 const definition: DialectDefinition = {

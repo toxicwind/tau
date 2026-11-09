@@ -1,4 +1,6 @@
 import { describe, expect, it } from "bun:test";
+<<<<<<< ours — imports `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 import { type } from "@tau/tautype";
 import {
 	cursorEditOwnedReadPath,
@@ -7,6 +9,18 @@ import {
 	piGrepSkip,
 	piReadPath,
 } from "../src/providers/cursor-tau-args";
+=======
+import { type } from "@oh-my-pi/omptype";
+import {
+	cursorExecReadPath,
+	cursorRawReadPath,
+	isXdDevicePath,
+	omitUndefinedArgs,
+	piGrepSkip,
+	piReadDisplayPath,
+	piReadPath,
+} from "../src/providers/cursor-pi-args";
+>>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/test/cursor-tau-args.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 import type { Tool } from "../src/types";
 import { validateToolArguments } from "../src/utils/validation";
@@ -101,6 +115,10 @@ describe("cursorRawReadPath", () => {
 		expect(cursorRawReadPath("/tmp/note.txt:10-20")).toBe("/tmp/note.txt:raw:10-20");
 	});
 
+	it("keeps a bare start line open-ended when inserting raw before it", () => {
+		expect(cursorRawReadPath("/tmp/note.txt:10")).toBe("/tmp/note.txt:raw:10-");
+	});
+
 	it("leaves a path that already carries raw alone", () => {
 		expect(cursorRawReadPath("/tmp/note.txt:raw")).toBe("/tmp/note.txt:raw");
 		expect(cursorRawReadPath("/tmp/note.txt:raw:2+3")).toBe("/tmp/note.txt:raw:2+3");
@@ -108,6 +126,15 @@ describe("cursorRawReadPath", () => {
 
 	it("does not stack a second :raw when a range is composed onto a raw path", () => {
 		expect(piReadPath("/tmp/note.txt:raw", 2, 1)).toBe("/tmp/note.txt:raw:2+1");
-		expect(cursorEditOwnedReadPath("/tmp/note.txt", 2, 1)).toBe("/tmp/note.txt:raw:2+1");
+		expect(cursorExecReadPath("/tmp/note.txt", 2, 1)).toBe("/tmp/note.txt:raw:2+1");
+	});
+
+	it("does not append :raw to xd:// device URLs (selectors: none)", () => {
+		expect(isXdDevicePath("xd://wiki_observe")).toBe(true);
+		expect(cursorRawReadPath("xd://wiki_observe")).toBe("xd://wiki_observe");
+		expect(cursorExecReadPath("xd://wiki_observe")).toBe("xd://wiki_observe");
+		expect(cursorExecReadPath("xd://wiki_observe", 1, 20)).toBe("xd://wiki_observe");
+		expect(piReadPath("xd://wiki_observe", 1, 20)).toBe("xd://wiki_observe");
+		expect(piReadDisplayPath("xd://wiki_observe", 1, 0)).toBe("xd://wiki_observe");
 	});
 });

@@ -31,6 +31,44 @@ export async function loadPinnedSessionIds(agentDir: string = getAgentDir()): Pr
 }
 
 /**
+ * Set one session's pin from its current state and persist the set; returns
+ * whether it was pinned before the update.
+ *
+ * The read-modify-write runs under the shared cross-process file lock and
+ * commits via write-temp-then-atomic-replace, mirroring the MCP config
+ * writer: two omp instances changing pins concurrently can no longer lose
+ * each other's update (load-load-write-write), and a crash mid-write leaves
+ * the previous pins file intact instead of a truncated one that degrades to
+ * an empty set. The replace preserves the destination across Windows
+ * EPERM/EEXIST rename failures (`replaceFileAtomically`).
+ */
+async function updateSessionPin(
+	sessionId: string,
+	next: (pinned: boolean) => boolean,
+	agentDir: string,
+): Promise<boolean> {
+	const filePath = pinsPath(agentDir);
+	await fs.mkdir(agentDir, { recursive: true });
+	return withFileLock(filePath, async () => {
+		const pinned = await loadPinnedSessionIds(agentDir);
+		const wasPinned = pinned.has(sessionId);
+		if (next(wasPinned)) pinned.add(sessionId);
+		else pinned.delete(sessionId);
+		const tmpPath = `${filePath}.${process.pid}.${randomUUID()}.tmp`;
+		try {
+			await fs.writeFile(tmpPath, JSON.stringify([...pinned], null, "\t"), { encoding: "utf-8", mode: 0o600 });
+			await replaceFileAtomically(tmpPath, filePath);
+		} catch (error) {
+			await fs.rm(tmpPath, { force: true }).catch(() => {});
+			throw error;
+		}
+		return wasPinned;
+	});
+}
+
+<<<<<<< ours — scope `declaration` in function `toggleSessionPin` (T+S+F, confidence: low)
+// refused_by: statement_fold · collision: `* writer: two omp instances toggling pins concurrently can no l…`
+/**
  * Toggle one session's pin and persist the set; returns the new pinned state.
  *
  * The read-modify-write runs under the shared cross-process file lock and
@@ -41,22 +79,25 @@ export async function loadPinnedSessionIds(agentDir: string = getAgentDir()): Pr
  * an empty set. The replace preserves the destination across Windows
  * EPERM/EEXIST rename failures (`replaceFileAtomically`).
  */
+=======
+/** Toggle one session's pin; returns the new pinned state. */
+>>>>>>> theirs — scope `declaration` · weave: run 'weave explain packages/coding-agent/src/session/session-pins.ts' for per-hunk detail, 'weave check' to verify your resolution
 export async function toggleSessionPin(sessionId: string, agentDir: string = getAgentDir()): Promise<boolean> {
-	const filePath = pinsPath(agentDir);
-	await fs.mkdir(agentDir, { recursive: true });
-	return withFileLock(filePath, async () => {
-		const pinned = await loadPinnedSessionIds(agentDir);
-		if (!pinned.delete(sessionId)) pinned.add(sessionId);
-		const tmpPath = `${filePath}.${process.pid}.${randomUUID()}.tmp`;
-		try {
-			await fs.writeFile(tmpPath, JSON.stringify([...pinned], null, "\t"), { encoding: "utf-8", mode: 0o600 });
-			await replaceFileAtomically(tmpPath, filePath);
-		} catch (error) {
-			await fs.rm(tmpPath, { force: true }).catch(() => {});
-			throw error;
-		}
-		return pinned.has(sessionId);
-	});
+	return !(await updateSessionPin(sessionId, pinned => !pinned, agentDir));
+}
+
+/** Pin or unpin one session; a no-op when it is already in that state. */
+export async function setSessionPinned(
+	sessionId: string,
+	pinned: boolean,
+	agentDir: string = getAgentDir(),
+): Promise<void> {
+	await updateSessionPin(sessionId, () => pinned, agentDir);
+}
+
+/** Unpin one session; returns whether it was pinned. */
+export function unpinSession(sessionId: string, agentDir: string = getAgentDir()): Promise<boolean> {
+	return updateSessionPin(sessionId, () => false, agentDir);
 }
 
 /**

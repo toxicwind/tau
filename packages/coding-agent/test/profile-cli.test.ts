@@ -119,16 +119,6 @@ describe("global --profile flag", () => {
 		expect(getAgentDbPath()).toBe(path.join(os.homedir(), configDir, "profiles", "work", "agent", "agent.db"));
 	});
 
-	it("accepts the profile flag after other root flags", async () => {
-		vi.spyOn(process.stdout, "write").mockImplementation(() => true);
-
-		await runCli(["--version", "--profile", "office"]);
-
-		expect(process.exitCode).toBe(0);
-		expect(getActiveProfile()).toBe("office");
-		expect(getAgentDir()).toBe(path.join(os.homedir(), configDir, "profiles", "office", "agent"));
-	});
-
 	it("installs a shell alias and exits before command dispatch", async () => {
 		const installSpy = vi.spyOn(profileAliasCli, "installProfileAlias").mockResolvedValue({
 			shell: "bash",
@@ -154,6 +144,8 @@ describe("global --profile flag", () => {
 		expect(output).not.toContain(`${APP_NAME}/${VERSION}`);
 	});
 
+<<<<<<< ours — scope `it("installs a shell alias when launch is exp...` in test_suite `global --profile flag`, deleted in theirs (S+F, confidence: low)
+// refused_by: statement_fold · collision: none (no common ancestor text)
 	it("installs a shell alias when launch is explicit", async () => {
 		const installSpy = vi.spyOn(profileAliasCli, "installProfileAlias").mockResolvedValue({
 			shell: "bash",
@@ -178,7 +170,11 @@ describe("global --profile flag", () => {
 		expect(output).toContain("Created tau-work");
 		expect(output).not.toContain(`${APP_NAME}/${VERSION}`);
 	});
+=======
+>>>>>>> theirs — scope `it("installs a shell alias when launch is exp...` deleted in theirs · weave: run 'weave explain packages/coding-agent/test/profile-cli.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
+<<<<<<< ours — scope `it("installs a shell alias when acp is explic...` in test_suite `global --profile flag`, deleted in theirs (S+F, confidence: low)
+// refused_by: statement_fold · collision: none (no common ancestor text)
 	it("installs a shell alias when acp is explicit", async () => {
 		const installSpy = vi.spyOn(profileAliasCli, "installProfileAlias").mockResolvedValue({
 			shell: "bash",
@@ -204,6 +200,8 @@ describe("global --profile flag", () => {
 		expect(output).toContain("Created tau-work");
 		expect(output).not.toContain(`${APP_NAME}/${VERSION}`);
 	});
+=======
+>>>>>>> theirs — scope `it("installs a shell alias when acp is explic...` deleted in theirs
 
 	it("rejects missing profile values without dispatching", async () => {
 		const errSpy = vi.spyOn(process.stderr, "write").mockImplementation(() => true);
@@ -243,6 +241,8 @@ describe("global --profile flag", () => {
 			const childEnv: Record<string, string | undefined> = {
 				...process.env,
 				HOME: home,
+				// os.homedir() reads USERPROFILE on Windows, HOME elsewhere.
+				USERPROFILE: home,
 				TAU_CONFIG_DIR: configDir,
 				PI_NO_TITLE: "1",
 				NO_COLOR: "1",
@@ -296,6 +296,7 @@ describe("global --profile flag", () => {
 			const childEnv: Record<string, string | undefined> = {
 				...process.env,
 				HOME: home,
+				USERPROFILE: home,
 				TAU_CONFIG_DIR: ".tau-profile-cli-env-bad",
 				TAU_PROFILE: "..",
 				NO_COLOR: "1",

@@ -10,6 +10,9 @@ interface RunnerFrame {
 	revision?: number;
 	digest?: string;
 	admissionRejected?: boolean;
+	cancelled?: boolean;
+	ename?: string;
+	evalue?: string;
 }
 
 const pythonPath = Bun.env.PYTHON ?? ($which("python3") ? "python3" : "python");
@@ -100,9 +103,8 @@ async function collectDoneOrder(runner: Runner, ids: Set<string>): Promise<Runne
 	return dones;
 }
 
-// Eval sessions are shared across concurrent agents (subagents inherit the
-// parent's eval session id, per executor-base.ts), so multiple requests can be
-// in flight on one kernel at once. The runner must keep dispatching sibling
+// Auto-backgrounded cells, user Python shortcuts, and kernel-defined tool calls
+// from subagents can all be in flight on one kernel at once. The runner must keep dispatching sibling
 // requests while a cell is parked on a top-level await instead of blocking the
 // control channel until it finishes -- the regression that a naive fix for the
 // Windows numpy import hang (#7985) would introduce.
@@ -116,18 +118,6 @@ describe("Python runner request dispatch", () => {
 			const dones = await collectDoneOrder(runner, new Set(["slow", "fast"]));
 			expect(dones.map(frame => frame.id)).toEqual(["fast", "slow"]);
 			expect(dones.every(frame => frame.status === "ok")).toBe(true);
-		} finally {
-			await runner.dispose();
-		}
-	});
-
-	it("settles every request and exits cleanly", async () => {
-		const runner = spawnRunner();
-		try {
-			runner.send({ id: "a", code: "print(1 + 1)" });
-			runner.send({ id: "b", code: "print('two')" });
-			const dones = await collectDoneOrder(runner, new Set(["a", "b"]));
-			expect(dones.map(frame => frame.status).sort()).toEqual(["ok", "ok"]);
 		} finally {
 			await runner.dispose();
 		}
@@ -596,6 +586,96 @@ describe("Python runner request dispatch", () => {
 				operations: [],
 				barrier: expect.anything(),
 			});
+		} finally {
+			await runner.dispose();
+		}
+	});
+	it("interrupts a cell whose interrupt request arrives before its task starts", async () => {
+		if (process.platform === "win32") return; // Windows dispatches serially by design; see _serve_windows.
+		const runner = spawnRunner();
+		try {
+			runner.send({
+				id: "setup",
+				code: [
+					"import threading",
+					"from types import SimpleNamespace",
+					"seed = 41",
+					"gate = threading.Event()",
+					"__omp_tools__ = {'release': SimpleNamespace(fn=lambda: gate.set())}",
+				].join("\n"),
+			});
+			const [setup] = await collectDoneOrder(runner, new Set(["setup"]));
+			expect(setup.status).toBe("ok");
+
+			runner.send({ id: "hold", code: "print('holding', flush=True)\ngate.wait()" });
+			while (true) {
+				const frame = await runner.nextFrame();
+				if (frame.type === "stdout" && frame.id === "hold" && frame.data?.includes("holding")) break;
+			}
+
+			// A late interrupt for an already-settled cell (`setup`) must be
+			// ignored instead of sticking in `_STATE.interrupt_ids`.
+			runner.send({ id: "setup", type: "interrupt" });
+
+			// While `hold` occupies the main thread, `aborted` and `setup-err`
+			// stay queued in `queue` without a running task when the reader
+			// thread processes their `interrupt` requests and then `release`.
+			runner.send({ id: "aborted", code: "seed = 0" });
+			runner.send({ id: "aborted", type: "interrupt" });
+			runner.send({ id: "setup-err", code: "seed = 0", cwd: "/nonexistent/omp-setup-err" });
+			runner.send({ id: "setup-err", type: "interrupt" });
+			runner.send({ id: "release", type: "tool", op: "call", name: "release", args: {} });
+
+			const errors: RunnerFrame[] = [];
+			const dones = new Map<string, RunnerFrame>();
+			while (dones.size < 4) {
+				const frame = await runner.nextFrame();
+				if (frame.type === "error" && frame.id === "aborted") {
+					errors.push(frame);
+				}
+				if (
+					frame.type === "done" &&
+					frame.id &&
+					(frame.id === "hold" || frame.id === "aborted" || frame.id === "setup-err" || frame.id === "release")
+				) {
+					dones.set(frame.id, frame);
+				}
+			}
+
+			expect(dones.get("hold")).toMatchObject({ type: "done", id: "hold", status: "ok", cancelled: false });
+			expect(errors).toEqual([
+				expect.objectContaining({
+					type: "error",
+					id: "aborted",
+					ename: "KeyboardInterrupt",
+					evalue: "Execution interrupted",
+				}),
+			]);
+			expect(dones.get("aborted")).toMatchObject({
+				type: "done",
+				id: "aborted",
+				status: "error",
+				cancelled: true,
+			});
+			expect(dones.get("setup-err")).toMatchObject({
+				type: "done",
+				id: "setup-err",
+				status: "error",
+				cancelled: false,
+			});
+
+			// Neither the late interrupt for `setup` nor the early-return
+			// setup-error cell may leave its id in `_STATE.interrupt_ids`.
+			runner.send({ id: "setup", code: "seed += 1" });
+			const [reusedSetup] = await collectDoneOrder(runner, new Set(["setup"]));
+			expect(reusedSetup).toMatchObject({ type: "done", id: "setup", status: "ok", cancelled: false });
+
+			runner.send({ id: "setup-err", code: "seed += 2" });
+			const [reusedSetupErr] = await collectDoneOrder(runner, new Set(["setup-err"]));
+			expect(reusedSetupErr).toMatchObject({ type: "done", id: "setup-err", status: "ok", cancelled: false });
+			runner.send({ id: "verify", code: "assert seed == 44" });
+			const [verify] = await collectDoneOrder(runner, new Set(["verify"]));
+			expect(verify.status).toBe("ok");
 		} finally {
 			await runner.dispose();
 		}

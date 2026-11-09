@@ -2,11 +2,26 @@ import { afterEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
+<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { Settings } from "tau/config/settings";
 import { createSpeculativeToolExecutionConfig } from "tau/speculation/host";
 import type { ToolSession } from "tau/tools";
 import { ReadTool } from "tau/tools/read";
 import { removeWithRetries } from "@tau/tau-utils";
+=======
+import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import { createSpeculativeToolExecutionConfig } from "@oh-my-pi/pi-coding-agent/speculation/host";
+import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
+import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
+import { removeWithRetries } from "@oh-my-pi/pi-utils";
+import { cfgTaskSpeculativeLaunch } from "@oh-my-pi/pi-coding-agent/task/settings";
+
+import {
+	cfgToolsSpeculativeExecutionEnabled,
+	cfgToolsSpeculativeExecutionMaxInFlight,
+} from "@oh-my-pi/pi-coding-agent/tools/settings";
+>>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/speculative-live-config.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const temporaryDirectories: string[] = [];
 
@@ -29,7 +44,7 @@ function createSession(cwd: string, settings: Settings): ToolSession {
 // schema defaults so `set` — the same layer the live settings UI writes —
 // takes effect, matching production.
 describe("createSpeculativeToolExecutionConfig", () => {
-	it("reflects a mid-session enable without recreate", async () => {
+	it("stays enabled while either speculation flag is on, following live toggles", async () => {
 		const directory = await fs.mkdtemp(path.join(os.tmpdir(), "speculative-live-config-"));
 		temporaryDirectories.push(directory);
 		const settings = Settings.isolated({});
@@ -38,9 +53,14 @@ describe("createSpeculativeToolExecutionConfig", () => {
 			hasHandlers: () => false,
 		});
 
+		// `task.speculativeLaunch` defaults on and alone keeps the coordinator alive.
+		expect(config.enabled).toBe(true);
+
+		cfgTaskSpeculativeLaunch.set(settings, false);
+
 		expect(config.enabled).toBe(false);
 
-		settings.set("tools.speculativeExecution.enabled", true);
+		cfgToolsSpeculativeExecutionEnabled.set(settings, true);
 
 		expect(config.enabled).toBe(true);
 	});
@@ -56,7 +76,7 @@ describe("createSpeculativeToolExecutionConfig", () => {
 
 		expect(config.maxInFlight).toBe(2);
 
-		settings.set("tools.speculativeExecution.maxInFlight", 5);
+		cfgToolsSpeculativeExecutionMaxInFlight.set(settings, 5);
 
 		expect(config.maxInFlight).toBe(5);
 	});
@@ -94,12 +114,12 @@ describe("createSpeculativeToolExecutionConfig", () => {
 
 		expect(await host?.authorize(context)).toMatchObject({ allowed: false });
 
-		settings.set("tools.speculativeExecution.enabled", true);
+		cfgToolsSpeculativeExecutionEnabled.set(settings, true);
 
 		expect(config.host).toBe(host);
 		expect(await host?.authorize(context)).toMatchObject({ allowed: true });
 
-		settings.set("tools.speculativeExecution.enabled", false);
+		cfgToolsSpeculativeExecutionEnabled.set(settings, false);
 
 		expect(config.host).toBe(host);
 		expect(await host?.authorize(context)).toMatchObject({ allowed: false });

@@ -1,6 +1,8 @@
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import { describe, expect, it, vi } from "bun:test";
+<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import { Agent, type AgentMessage } from "@oh-my-pi/pi-agent-co…`
 import { Agent, type AgentMessage } from "@tau/tau-agent-core";
 import { DEFAULT_SHAKE_CONFIG } from "@tau/tau-agent-core/compaction";
 import { streamSimple } from "@tau/tau-ai/stream";
@@ -14,6 +16,22 @@ import { AgentSession } from "tau/session/agent-session";
 import { AuthStorage } from "tau/session/auth-storage";
 import { SessionManager } from "tau/session/session-manager";
 import { TempDir } from "@tau/tau-utils";
+=======
+import { type } from "@oh-my-pi/omptype";
+import { Agent, type AgentMessage, type AgentTool } from "@oh-my-pi/pi-agent-core";
+import { DEFAULT_SHAKE_CONFIG } from "@oh-my-pi/pi-agent-core/compaction";
+import { streamSimple } from "@oh-my-pi/pi-ai/stream";
+import { streamOpenAIResponses } from "@oh-my-pi/pi-ai/providers/openai-responses";
+import { createOpenAIResponsesHistoryPayload } from "@oh-my-pi/pi-ai/utils";
+import type { Context, Model, ModelSpec } from "@oh-my-pi/pi-ai/types";
+import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
+import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
+import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
+import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
+import { TempDir } from "@oh-my-pi/pi-utils";
+>>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/agent-session-responses-body-read-timeout.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const NATIVE_REPLAY_BULK = "NATIVE_REPLAY_BULK_SENTINEL ".repeat(1000);
 const BODY_READ_TIMEOUT = "Timed out reading request body. Try again, or use a smaller request size.";
@@ -29,6 +47,53 @@ function completeResponse(): Response {
 		].join("\n\n") + "\n\n",
 		{ status: 200, headers: { "content-type": "text/event-stream" } },
 	);
+}
+
+/** Completed Responses turn carrying optional assistant text plus one `probe` call. */
+function toolCallResponse(responseId: string, callId: string, leadingText?: string): Response {
+	const events: Array<Record<string, unknown>> = [
+		{ type: "response.created", response: { id: responseId, status: "in_progress" } },
+	];
+	let outputIndex = 0;
+	if (leadingText !== undefined) {
+		const messageItem = { type: "message", id: `msg_${responseId}`, role: "assistant" };
+		events.push(
+			{
+				type: "response.output_item.added",
+				output_index: outputIndex,
+				item: { ...messageItem, status: "in_progress", content: [] },
+			},
+			{
+				type: "response.output_text.delta",
+				output_index: outputIndex,
+				item_id: messageItem.id,
+				delta: leadingText,
+			},
+			{
+				type: "response.output_item.done",
+				output_index: outputIndex,
+				item: { ...messageItem, status: "completed", content: [{ type: "output_text", text: leadingText }] },
+			},
+		);
+		outputIndex++;
+	}
+	const callItem = { type: "function_call", id: `fc_${callId}`, call_id: callId, name: "probe" };
+	events.push(
+		{ type: "response.output_item.added", output_index: outputIndex, item: { ...callItem, arguments: "" } },
+		{ type: "response.output_item.done", output_index: outputIndex, item: { ...callItem, arguments: "{}" } },
+		{
+			type: "response.completed",
+			response: {
+				id: responseId,
+				status: "completed",
+				usage: { input_tokens: 1, output_tokens: 1, total_tokens: 2 },
+			},
+		},
+	);
+	return new Response(events.map(event => `data: ${JSON.stringify(event)}`).join("\n\n") + "\n\n", {
+		status: 200,
+		headers: { "content-type": "text/event-stream" },
+	});
 }
 
 function model(baseUrl: string): Model<"openai-responses"> {
@@ -48,6 +113,9 @@ function model(baseUrl: string): Model<"openai-responses"> {
 
 type ResponseFactory = (body: string, requestNumber: number) => Response | Promise<Response>;
 
+const probeParameters = type({});
+type HarnessTool = AgentTool<typeof probeParameters, unknown, unknown>;
+
 type SessionHarnessOptions = {
 	compactionEnabled?: boolean;
 	methodOrder?: string[];
@@ -56,6 +124,7 @@ type SessionHarnessOptions = {
 	maxRetries?: number;
 	messages?: AgentMessage[];
 	respond?: ResponseFactory;
+	tools?: HarnessTool[];
 };
 
 type SessionHarness = {
@@ -72,8 +141,10 @@ function timeoutResponse(): Response {
 	return Response.json({ error: { code: "user_request_timeout", message: BODY_READ_TIMEOUT } }, { status: 408 });
 }
 
+// A 400 the session retries (model-side NaN decode fault) but the provider-level
+// stream retry declines as a terminal 4xx, so it spends exactly one session retry.
 function ordinaryTransientErrorResponse(): Response {
-	return Response.json({ error: { message: "Provider returned error" } }, { status: 400 });
+	return Response.json({ error: { message: "Floating point NaN detected in generation" } }, { status: 400 });
 }
 
 function defaultMessages(): AgentMessage[] {
@@ -136,7 +207,7 @@ async function createSessionHarness(options: SessionHarnessOptions = {}): Promis
 	await sessionManager.ensureOnDisk();
 	const agent = new Agent({
 		getApiKey: () => "local-test-key",
-		initialState: { model: activeModel, systemPrompt: ["Test"], tools: [], messages },
+		initialState: { model: activeModel, systemPrompt: ["Test"], tools: options.tools ?? [], messages },
 		streamFn: streamSimple,
 	});
 	const settings = Settings.isolated({
@@ -510,6 +581,68 @@ describe("AgentSession Responses request-body timeout recovery", () => {
 			await harness.cleanup();
 		}
 	});
+
+	it("recovers a second full-replay timeout in the same prompt after an intervening successful turn", async () => {
+		const midPromptBulk = "MIDPROMPT_BULK_SENTINEL ".repeat(5_000);
+		// Distinct chunks: verbatim repetition would trip the thinking-loop guard
+		// and turn this turn into an unrelated retry.
+		const progressText = Array.from({ length: 3_000 }, (_, index) => `ASSISTANT_PROGRESS_SENTINEL_${index}`).join(
+			" ",
+		);
+		let probeCalls = 0;
+		const harness = await createSessionHarness({
+			tools: [
+				{
+					name: "probe",
+					label: "probe",
+					description: "probe test tool",
+					parameters: probeParameters,
+					execute: async () => {
+						probeCalls++;
+						return {
+							content: [{ type: "text", text: probeCalls === 1 ? midPromptBulk : "small follow-up result" }],
+						};
+					},
+				},
+			],
+			respond: (_body, requestNumber) => {
+				switch (requestNumber) {
+					// Two exact full-replay timeouts separated by successful turns.
+					case 1:
+					case 4:
+						return timeoutResponse();
+					case 2:
+						return toolCallResponse("resp_bulk", "call_bulk");
+					// Assistant text pushes the fresh tool-result bulk out of shake's
+					// protected recent window, so the second recovery has real material.
+					case 3:
+						return toolCallResponse("resp_progress", "call_small", progressText);
+					default:
+						return completeResponse();
+				}
+			},
+		});
+		try {
+			await runPrompt(harness);
+			expect(probeCalls).toBe(2);
+			expect(harness.requests).toHaveLength(5);
+			// First recovery elided the seeded history; the mid-prompt bulk did not exist yet.
+			expect(harness.requests[1]).toContain("artifact://");
+			expect(harness.requests[1]).not.toContain("historical tool result");
+			expect(harness.requests[3]).toContain("MIDPROMPT_BULK_SENTINEL");
+			// Second recovery elided only the new tool-result bulk.
+			expect(harness.requests[4]).not.toContain("MIDPROMPT_BULK_SENTINEL");
+			expect(harness.requests[4]).toContain("artifact://");
+			expect(harness.requests[4]).toContain("ASSISTANT_PROGRESS_SENTINEL");
+			expect(harness.session.agent.state.messages.at(-1)).toMatchObject({
+				role: "assistant",
+				stopReason: "stop",
+				content: [{ type: "text", text: "Recovered" }],
+			});
+		} finally {
+			await harness.cleanup();
+		}
+	}, 30_000);
 	it("does not rewrite when the recovery artifact cannot be saved", async () => {
 		const harness = await createSessionHarness();
 		const allocateArtifactPath = vi

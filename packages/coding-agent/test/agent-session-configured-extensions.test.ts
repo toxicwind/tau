@@ -24,6 +24,7 @@ import { convertToLlm } from "tau/session/messages";
 import { SessionManager } from "tau/session/session-manager";
 import { discoverAgents } from "tau/task/discovery";
 import { removeSyncWithRetries } from "@tau/tau-utils";
+import { cfgExtensions } from "@oh-my-pi/pi-coding-agent/extensibility/settings";
 
 interface SessionInputs {
 	additionalExtensionPaths?: readonly string[];
@@ -154,7 +155,7 @@ describe("AgentSession extension-root discovery (post-startup)", () => {
 		expect(session.skills.map(skill => skill.name)).not.toContain("configured-skill");
 
 		// The live getter reads settings per call, so the override lands on refresh.
-		session.settings.override("extensions", [configuredExt]);
+		cfgExtensions.override(session.settings, [configuredExt]);
 		await session.refreshSkills();
 		expect(session.skills.map(skill => skill.name)).toContain("configured-skill");
 	});

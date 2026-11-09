@@ -1,5 +1,16 @@
+import { compactText, styleSpans } from "../native/spans";
+import { node } from "../native/describe";
+import type { DescribeContext, NativeNode } from "../native/node";
 import type { Component } from "../tui";
-import { Ellipsis, getWidthConfigEpoch, replaceTabs, truncateToWidth, visibleWidth, wrapTextWithAnsi } from "../utils";
+import {
+	Ellipsis,
+	finiteWidth,
+	getWidthConfigEpoch,
+	singleLine,
+	truncateToWidth,
+	visibleWidth,
+	wrapTextWithAnsi,
+} from "../utils";
 
 /** One label/value entry in a {@link KeyValueList}. */
 export interface KeyValueRow {
@@ -18,19 +29,12 @@ export interface KeyValueListOptions {
 	readonly labelOverflow?: "allow" | "truncate";
 }
 
-function finiteWidth(width: number): number {
-	return Number.isFinite(width) ? Math.max(0, Math.trunc(width)) : 0;
-}
-
-function singleLine(text: string): string {
-	return replaceTabs(text).replace(/[\r\n]+/g, " ");
-}
-
 /** A bounded ANSI-aware label/value list with replaceable rows and aligned wrapped continuations. */
 export class KeyValueList implements Component {
 	#rows: readonly KeyValueRow[];
 	readonly #options: KeyValueListOptions;
 	#cache: { width: number; epoch: number; lines: readonly string[] } | undefined;
+	#native: NativeNode | undefined;
 
 	constructor(rows: readonly KeyValueRow[], options: KeyValueListOptions) {
 		this.#rows = rows;
@@ -41,11 +45,29 @@ export class KeyValueList implements Component {
 		if (this.#rows === rows) return false;
 		this.#rows = rows;
 		this.#cache = undefined;
+		this.#native = undefined;
 		return true;
 	}
 
 	invalidate(): void {
 		this.#cache = undefined;
+		this.#native = undefined;
+	}
+
+	releaseRenderCaches(): void {
+		this.#cache = undefined;
+	}
+
+	/** An aligned `kv` grid; label width and value wrapping are the terminal's. */
+	describe(_cx: DescribeContext): NativeNode {
+		this.#native ??= node("kv", {
+			layout: "grid",
+			items: this.#rows.map(row => ({
+				k: compactText(styleSpans(singleLine(row.label), row.labelStyle)),
+				v: compactText(styleSpans(singleLine(row.value), row.valueStyle)),
+			})),
+		});
+		return this.#native;
 	}
 
 	render(width: number): readonly string[] {

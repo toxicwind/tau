@@ -12,9 +12,17 @@
  * Usage:
  *   tau --hook examples/hooks/custom-compaction.ts
  */
+<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import { complete, getModel } from "@oh-my-pi/pi-ai";` +2 more
 import { complete, getModel } from "@tau/tau-ai";
 import type { HookAPI } from "@tau/tau-coding-agent";
 import { convertToLlm, serializeConversation } from "@tau/tau-coding-agent";
+=======
+import { serializeConversation } from "@oh-my-pi/pi-agent-core/compaction";
+import { complete } from "@oh-my-pi/pi-ai";
+import { convertToLlm } from "@oh-my-pi/pi-coding-agent";
+import type { HookAPI } from "@oh-my-pi/pi-coding-agent/extensibility/hooks";
+>>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/examples/hooks/custom-compaction.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 export default function (pi: HookAPI) {
 	pi.on("session_before_compact", async (event, ctx) => {
@@ -24,7 +32,7 @@ export default function (pi: HookAPI) {
 		const { messagesToSummarize, turnPrefixMessages, tokensBefore, firstKeptEntryId, previousSummary } = preparation;
 
 		// Use Gemini Flash for summarization (cheaper/faster than most conversation models)
-		const model = getModel("google", "gemini-2.5-flash");
+		const model = ctx.modelRegistry.find("google", "gemini-2.5-flash");
 		if (!model) {
 			ctx.ui.notify(`Could not find Gemini Flash model, using default compaction`, "warning");
 			return;
@@ -87,6 +95,7 @@ ${conversationText}
 			const response = await complete(model, { messages: summaryMessages }, { apiKey, maxTokens: 8192, signal });
 
 			const summary = response.content
+				.filter((c): c is { type: "text"; text: string } => c.type === "text")
 				.filter((c): c is { type: "text"; text: string } => c.type === "text")
 				.map(c => c.text)
 				.join("\n");

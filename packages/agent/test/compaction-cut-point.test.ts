@@ -1,4 +1,6 @@
 import { describe, expect, test } from "bun:test";
+import type { AssistantMessage } from "@oh-my-pi/pi-ai";
+import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
 import {
 	type BranchSummaryEntry,
 	type CustomMessageEntry,
@@ -6,9 +8,16 @@ import {
 	findCutPoint,
 	prepareCompaction,
 	type SessionMessageEntry,
+<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-agent-core/compaction";
 import { Tokenizer } from "@tau/tau-agent-core/tokenizer";
 import { createAssistantMessage } from "./helpers";
+=======
+} from "@oh-my-pi/pi-agent-core/compaction";
+import { Tokenizer } from "@oh-my-pi/pi-agent-core/tokenizer";
+import { createAssistantMessage, createUserMessage } from "./helpers";
+>>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/agent/test/compaction-cut-point.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const tokenizer = new Tokenizer();
 
@@ -94,5 +103,54 @@ describe("findCutPoint backward scan boundaries", () => {
 		expect(preparation?.messagesToSummarize).toEqual([oldAssistant.message]);
 		expect(preparation?.turnPrefixMessages).toEqual([]);
 		expect(preparation?.recentMessages).toHaveLength(2);
+	});
+
+	describe("counts the reasoning the latest turn replays when its tool calls were abandoned", () => {
+		// The replay keeps the latest assistant turn byte-for-byte, so a turn
+		// whose tool calls ended on max_tokens still sends its 30,000 tokens of
+		// signed reasoning, and the kept tail must count them.
+		const opus = getBundledModel("anthropic", "claude-opus-5-5");
+		const fromOpus = (content: AssistantMessage["content"], stop: AssistantMessage["stopReason"]) => ({
+			...createAssistantMessage(content, stop),
+			api: opus.api,
+			provider: opus.provider,
+			model: opus.id,
+		});
+		const message = (content: SessionMessageEntry["message"]): SessionMessageEntry => ({
+			...base("message"),
+			type: "message",
+			message: content,
+		});
+		const abandoned = (): SessionMessageEntry => {
+			const latest = fromOpus(
+				[
+					{ type: "thinking", thinking: "Plan the read.", thinkingSignature: "s".repeat(4000) },
+					{ type: "toolCall", id: "call-1", name: "read", arguments: { path: "a.ts" } },
+				],
+				"length",
+			);
+			latest.usage = { ...latest.usage, output: 30_000, totalTokens: 30_000 };
+			return message(latest);
+		};
+		const history = () => [
+			message(createUserMessage("x".repeat(40_000))),
+			assistantEntry("first answer"),
+			message(createUserMessage("next question")),
+		];
+
+		test("as the newest entry", () => {
+			const entries = [...history(), abandoned()];
+			const cut = findCutPoint(entries, new Tokenizer(opus), 0, entries.length, 20_000);
+			expect(cut.firstKeptEntryIndex).toBe(3);
+		});
+
+		test("behind a newer turn the replay drops for its malformed tool call", () => {
+			// The replay drops the malformed call and with it the whole turn, so
+			// the abandoned turn before it is the request's latest.
+			const malformed = fromOpus([{ type: "toolCall", id: "call-2", name: "", arguments: {} }], "toolUse");
+			const entries = [...history(), abandoned(), message(malformed)];
+			const cut = findCutPoint(entries, new Tokenizer(opus), 0, entries.length, 20_000);
+			expect(cut.firstKeptEntryIndex).toBe(4);
+		});
 	});
 });

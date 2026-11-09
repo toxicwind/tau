@@ -7,6 +7,7 @@ import type { MCPStdioServerConfig } from "tau/mcp/types";
 import { runPrintMode } from "tau/modes/print-mode";
 import type { AgentSession } from "tau/session/agent-session";
 import { TempDir } from "@tau/tau-utils";
+import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
 
 const FIXTURE = path.join(import.meta.dir, "fixtures", "readiness-mcp.ts");
 const SLOW_START_MS = 1_100;
@@ -47,7 +48,26 @@ async function startServers(): Promise<{ manager: MCPManager; elapsedMs: number 
 		},
 		{},
 	);
-	return { manager, elapsedMs: Date.now() - start };
+	const elapsedMs = Date.now() - start;
+	// The startup window (250 ms) can close before a CPU-starved runner finishes
+	// even the instant handshakes; every scenario assumes only slowstart lags.
+	await waitForTools(manager, expectedTools.slice(0, 2));
+	return { manager, elapsedMs };
+}
+
+/** Resolve once every named tool is registered, however late its server's handshake lands. */
+async function waitForTools(manager: MCPManager, names: string[]): Promise<void> {
+	const { promise, resolve } = Promise.withResolvers<void>();
+	const check = () => {
+		if (names.every(name => manager.getTools().some(tool => tool.name === name))) resolve();
+	};
+	const unsubscribe = manager.addToolsChangedListener(check);
+	check();
+	try {
+		await promise;
+	} finally {
+		unsubscribe();
+	}
 }
 
 function printSession(manager: MCPManager, refreshGate?: Promise<void>, onRefreshStarted?: () => void) {
@@ -57,13 +77,16 @@ function printSession(manager: MCPManager, refreshGate?: Promise<void>, onRefres
 	const session = {
 		extensionRunner: undefined,
 		subscribe: () => {},
-		settings: { get: () => false },
+		settings: Settings.isolated(),
 		sessionManager: {
 			buildSessionContext: () => ({ messages: [] }),
 			getHeader: () => undefined,
+			getCwd: () => import.meta.dir,
 			getEntries: () => [],
 			onPersistenceError: () => () => {},
+			onPersistenceNotice: () => () => {},
 		},
+		modelRegistry: { getApiKey: async () => "test-key" },
 		refreshMCPTools: async (tools: Array<{ name: string }>) => {
 			onRefreshStarted?.();
 			await refreshGate;
@@ -73,7 +96,9 @@ function printSession(manager: MCPManager, refreshGate?: Promise<void>, onRefres
 			prompted = [...offered];
 		},
 		getLastAssistantMessage: () => undefined,
+		disableStopTimeTodoReminders: () => {},
 		prepareForHeadlessAdvisorDrain: () => {},
+		waitForIdle: async () => {},
 		setTextOutputCommitted: () => {},
 		waitForAdvisorCatchup: async () => true,
 		dispose: async () => {
@@ -185,7 +210,14 @@ describe("headless MCP readiness", () => {
 		using tempDir = TempDir.createSync("@tau-mcp-reconnect-readiness-");
 		const manager = new MCPManager(tempDir.path());
 		managers.push(manager);
+<<<<<<< ours — scope `it("waits through a timed-out handshake's rec...` in test_suite `headless MCP readiness` (F, confidence: medium)
+// refused_by: statement_fold · collision: `Bun.env.OMP_MCP_TIMEOUT_MS = "200";`
 		Bun.env.TAU_MCP_TIMEOUT_MS = "200";
+=======
+		// The first launch never answers; the reconnect's handshake, process start included, must fit this
+		// timeout even on a CPU-starved runner.
+		Bun.env.OMP_MCP_TIMEOUT_MS = "1000";
+>>>>>>> theirs — scope `it("waits through a timed-out handshake's rec...` · weave: run 'weave explain packages/coding-agent/test/mcp-print-readiness.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 		await manager.connectServers(
 			{
 				recover: {
@@ -197,22 +229,28 @@ describe("headless MCP readiness", () => {
 			{},
 		);
 		try {
-			const status = await manager.waitForStartup(2_000);
+			const status = await manager.waitForStartup(6_000);
 			expect(status).toEqual({ connected: ["recover"], pending: [], failed: [] });
 			expect(manager.getTools().map(tool => tool.name)).toContain("mcp__recover_late_tool");
 		} finally {
 			await manager.disconnectAll();
 		}
-	}, 3_000);
+	}, 8_000);
 
 	it("lets the environment startup window override a shorter setting during discovery", async () => {
+<<<<<<< ours — scope `it("lets the environment startup window overr...` in test_suite `headless MCP readiness` (F, confidence: medium)
+// refused_by: statement_fold · collision: `Bun.env.OMP_MCP_STARTUP_TIMEOUT_MS = "1500";`
 		Bun.env.TAU_MCP_STARTUP_TIMEOUT_MS = "1500";
+=======
+		// Far above the 50 ms setting, and above slowstart's 600 ms plus a loaded runner's process start.
+		Bun.env.OMP_MCP_STARTUP_TIMEOUT_MS = "4000";
+>>>>>>> theirs — scope `it("lets the environment startup window overr...`
 		const manager = new MCPManager(import.meta.dir);
 		managers.push(manager);
 		const result = await manager.connectServers({ slowstart: server("slowstart", 600) }, {}, undefined, 50);
 		expect(result.connectedServers).toEqual(["slowstart"]);
 		expect(result.tools.map(tool => tool.name)).toEqual(["mcp__slowstart_marker"]);
-	}, 2_500);
+	}, 6_000);
 
 	it("honors environment precedence over the startup setting, including disabled timeout", () => {
 		Bun.env.TAU_MCP_STARTUP_TIMEOUT_MS = "0";
@@ -220,4 +258,54 @@ describe("headless MCP readiness", () => {
 		Bun.env.TAU_MCP_STARTUP_TIMEOUT_MS = "bad";
 		expect(resolveMCPStartupTimeoutMs(600)).toBe(600);
 	}, 1_000);
+
+	it("dispatches a recovery builtin before the strict gate so reauth can attempt the failed server", async () => {
+		// Regression: the strict readiness gate used to skip every
+		// `promptTextFor` call, so `omp -p '/mcp reauth <name>'` exited before
+		// dispatching — the one command that could repair the failed server
+		// never ran. The initial input now dispatches first, and a strict
+		// failure re-evaluates readiness after a local builtin ran.
+		const manager = new MCPManager(import.meta.dir);
+		managers.push(manager);
+		// A command that validates but cannot spawn: the config registers in
+		// the manager (so `/mcp reauth` can resolve it) while readiness fails.
+		// A source is required — the manager tail fallback in
+		// `findMcpServerForAuth` reports a server only with both.
+		await manager.connectServers(
+			{ broken: { type: "stdio", command: "/nonexistent-omp-readiness-fixture" } },
+			{
+				broken: { provider: "mcp-json", providerName: "MCP JSON", path: import.meta.path, level: "project" },
+			},
+		);
+		const capture = printSession(manager);
+		Bun.env.OMP_MCP_TIMEOUT_MS = "100";
+		Bun.env.OMP_MCP_REQUIRE_READY = "1";
+		const output: string[] = [];
+		const stderrSpy = spyOn(process.stderr, "write").mockImplementation((chunk: string | Uint8Array) => {
+			output.push(String(chunk));
+			return true;
+		});
+		try {
+			const code = await runPrintMode(capture.session, {
+				mode: "text",
+				// CLI-authored positional input (`-p`) — the path an automation
+				// recovery actually takes; the merged stdin/@file message is
+				// never dispatched.
+				messages: ["/mcp reauth broken"],
+				mcpManager: manager,
+			});
+			// The reauth itself fails (stdio transport), so the run still
+			// exits nonzero — but through the command's own refusal, not by
+			// skipping it.
+			expect(code).toBe(1);
+		} finally {
+			stderrSpy.mockRestore();
+		}
+		const joined = output.join("");
+		// The command reached the server and reported its own refusal…
+		expect(joined).toContain("stdio servers manage their own credentials");
+		// …and strict readiness was still enforced afterwards.
+		expect(joined).toContain("Error: MCP servers not ready: broken");
+		expect(capture.prompted()).toBeUndefined();
+	}, 4_000);
 });

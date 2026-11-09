@@ -398,7 +398,7 @@ function getTaskTargets(phases: TodoPhase[], entry: TodoOpEntryValue, errors: st
 	return phases.flatMap(phase => phase.tasks);
 }
 
-/** Phase name for `init` given a flat `items` list with no explicit `phase`. */
+/** Phase name for `init` with an absent or empty phase name. */
 const DEFAULT_INIT_PHASE = "Tasks";
 
 // Turn a schema item (plain string, or object with content/status/blocker/
@@ -423,12 +423,21 @@ function initPhases(entry: TodoOpEntryValue, errors: string[]): TodoPhase[] {
 	// Models routinely flatten the single-phase init into `{op:"init", items:[...]}`
 	// (optionally with a bare `phase`) instead of the canonical
 	// `list: [{phase, items}]`. Accept that shape by synthesizing a one-phase list
+<<<<<<< ours — scope `// Models routinely flatten the single-phase ...` in function `initPhases` (F, confidence: medium)
+// refused_by: statement_fold · collision: `const list =` +4 more
 	// so a common, recoverable mistake isn't a hard error.
 	//
 	// Dots (and several GLM/Qwen checkpoints) go one step further and render
 	// `list` itself as a markdown checklist string instead of JSON. Normalize
 	// that here before the flat-items recovery below.
 	let rawList: typeof entry.list = entry.list;
+=======
+	// so a common, recoverable mistake isn't a hard error. Models also fill unused
+	// params with `[]`, so an empty `list` must not shadow non-empty `items`.
+	const flat = entry.items && entry.items.length > 0 ? [{ phase: entry.phase, items: entry.items }] : undefined;
+>>>>>>> theirs — scope `// Models routinely flatten the single-phase ...` · weave: run 'weave explain packages/coding-agent/src/tools/todo.ts' for per-hunk detail, 'weave check' to verify your resolution
+<<<<<<< ours — scope `inserted statements` in function `initPhases` (S+F, confidence: low)
+// refused_by: statement_fold · collision: none (no common ancestor text)
 	if (typeof rawList === "string") {
 		// A string `list` is either a markdown checklist (Dots/GLM/Qwen dialect)
 		// or a JSON-encoded canonical `[{phase, items}]` (transport double-encode).
@@ -456,6 +465,9 @@ function initPhases(entry: TodoOpEntryValue, errors: string[]): TodoPhase[] {
 		: entry.items && entry.items.length > 0
 			? [{ phase: entry.phase ?? DEFAULT_INIT_PHASE, items: entry.items }]
 			: [];
+=======
+	const list = entry.list?.length ? entry.list : (flat ?? entry.list);
+>>>>>>> theirs — scope `inserted statements`
 	if (!list) {
 		errors.push("Missing list for init operation");
 		return [];
@@ -468,27 +480,39 @@ function initPhases(entry: TodoOpEntryValue, errors: string[]): TodoPhase[] {
 		errors.push("Missing list for init operation");
 		return [];
 	}
-	// Duplicate phase names / task contents would be permanently unaddressable
-	// (every targeting op resolves the first match), so reject them up front.
+	// An empty phase name is unaddressable (`append` requires one), so it gets
+	// the default. Duplicate phase names / task contents would be permanently
+	// unaddressable too (every targeting op resolves the first match), so reject
+	// them up front.
+	const phases: TodoPhase[] = [];
 	const seenPhases = new Set<string>();
 	const seenTasks = new Set<string>();
 	for (const listEntry of list) {
-		if (seenPhases.has(listEntry.phase)) {
-			errors.push(`Duplicate phase "${listEntry.phase}" in init list`);
+		const name = listEntry.phase || DEFAULT_INIT_PHASE;
+		if (seenPhases.has(name)) {
+			errors.push(`Duplicate phase "${name}" in init list`);
 		}
-		seenPhases.add(listEntry.phase);
+		seenPhases.add(name);
+		const tasks: TodoItem[] = [];
 		for (const item of listEntry.items) {
 			const content = typeof item === "string" ? item : item.content;
 			if (seenTasks.has(content)) {
 				errors.push(`Duplicate task "${content}" in init list`);
 			}
 			seenTasks.add(content);
+			tasks.push({ content, status: "pending" });
 		}
+		phases.push({ name, tasks });
 	}
+	return phases;
+<<<<<<< ours — scope `return list.map(listEntry => ({` in function `initPhases`, deleted in theirs (S+F, confidence: low)
+// refused_by: statement_fold · collision: none (no common ancestor text)
 	return list.map(listEntry => ({
 		name: listEntry.phase,
 		tasks: listEntry.items.map<TodoItem>(toTodoItem),
 	}));
+=======
+>>>>>>> theirs — scope `return list.map(listEntry => ({` deleted in theirs
 }
 
 function appendItems(phases: TodoPhase[], entry: TodoOpEntryValue, errors: string[]): TodoPhase[] {

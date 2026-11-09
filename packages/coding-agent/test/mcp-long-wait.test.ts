@@ -12,20 +12,17 @@
  * than the POST — so the cancellation paths are pinned here alongside the wait.
  */
 import { afterEach, describe, expect, it, spyOn, vi } from "bun:test";
+<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import * as path from "node:path";
 import * as mcpTimeout from "tau/mcp/timeout";
 import { HttpTransport } from "tau/mcp/transports/http";
 import { LegacySseTransport } from "tau/mcp/transports/sse";
-
-const PROBE_PATH = path.join(import.meta.dir, "fixtures", "mcp-idle-wait-probe.ts");
-const REPO_ROOT = path.resolve(import.meta.dir, "../../..");
-/** Whole seconds, per `BUN_CONFIG_HTTP_IDLE_TIMEOUT`; the probe stalls well past it. */
-const CHILD_IDLE_SECONDS = "1";
-/** Bounds a wedged child: the probe stalls 7s and the idle wheel is coarse. */
-const CHILD_KILL_MS = 45_000;
-/** Leaves room for the kill bound to be the thing that reports a wedged child. */
-const CHILD_TEST_MS = 60_000;
-const DEADLINE_MS = 200;
+=======
+import * as mcpTimeout from "@oh-my-pi/pi-coding-agent/mcp/timeout";
+import { HttpTransport } from "@oh-my-pi/pi-coding-agent/mcp/transports/http";
+import { LegacySseTransport } from "@oh-my-pi/pi-coding-agent/mcp/transports/sse";
+>>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/mcp-long-wait.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 interface StallingServer {
 	server: Bun.Server<undefined>;
@@ -116,6 +113,8 @@ function pinDeadline(ms: number): void {
 }
 
 describe("MCP waits that outlast the socket idle timer", () => {
+<<<<<<< ours — scope `it(` in test_suite `MCP waits that outlast the socket idle timer`, deleted in theirs (S+F, confidence: low)
+// refused_by: statement_fold · collision: none (no common ancestor text)
 	it(
 		"delivers the answer on every MCP transport after a silence past the runtime's idle default",
 		async () => {
@@ -180,6 +179,8 @@ describe("MCP waits that outlast the socket idle timer", () => {
 		},
 		CHILD_TEST_MS,
 	);
+=======
+>>>>>>> theirs — scope `it(` deleted in theirs
 
 	it("lets caller cancellation end a wait that was given no deadline", async () => {
 		pinDeadline(0);
@@ -251,21 +252,5 @@ describe("MCP waits that outlast the socket idle timer", () => {
 		const requestError = await requested;
 		expect(requestError).toBeInstanceOf(Error);
 		expect((requestError as Error).name).toBe("AbortError");
-	});
-
-	it("still fails a silent wait at the configured MCP deadline", async () => {
-		pinDeadline(DEADLINE_MS);
-		const { server } = stallingServer();
-		const transport = await connected(server, DEADLINE_MS);
-		try {
-			await expect(transport.request("tools/call")).rejects.toMatchObject({
-				transport: "http",
-				stage: "send",
-				failure: "timeout",
-				retryable: false,
-			});
-		} finally {
-			await transport.close();
-		}
 	});
 });

@@ -7,15 +7,35 @@ import type { DesktopCapabilities } from "@tau/tau-natives";
 import { once } from "@tau/tau-utils";
 import { callSessionTool } from "../eval/js/tool-bridge";
 import type { EvalPreludeContext, EvalPreludeDefinition } from "../eval/preludes";
+<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 import { enforceInlineByteCap } from "@tau/tau-tui/tools/streaming-output";
+=======
+import computerUsePrompt from "../prompts/system/computer-use.md" with { type: "text" };
+import { enforceInlineByteCap } from "@oh-my-pi/pi-tui/tools/streaming-output";
+>>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/computer.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { type ComputerCallStep, isReadOnlyComputerCall, renderComputerCall } from "./computer/call";
-import type { ComputerScreenshot, ComputerSessionSnapshot } from "./computer/protocol";
-import { type ComputerController, ComputerSupervisor, registerComputerController } from "./computer/supervisor";
+import { type ComputerScreenshot, type ComputerSessionSnapshot, screenStateNotice } from "./computer/protocol";
+import {
+	type ComputerController,
+	ComputerSupervisor,
+	computerTurnInFlight,
+	registerComputerController,
+} from "./computer/supervisor";
 import type { ToolSession } from "./index";
 import { renderCallChain, renderFunctionRun } from "./run-code";
 import { throwIfAborted } from "./tool-errors";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 import { clampTimeout } from "./tool-timeouts";
+
+import {
+	cfgComputerBackgroundFallback,
+	cfgComputerDisplay,
+	cfgComputerEnabled,
+	cfgComputerMaxHeight,
+	cfgComputerMaxWidth,
+	cfgToolsMaxTimeout,
+} from "./settings";
 
 // Image transports that cannot preserve native screenshot detail resize frames
 // without returning transformed dimensions. Keep their native coordinate frames
@@ -127,19 +147,24 @@ export function createComputerPrelude(
 			if (closed) return;
 			closed = true;
 			unregisterOwner();
+			unregisterDisposal?.();
 			await controller.close();
 		},
 	};
+	const unregisterDisposal = session.registerDisposeCallback?.(() => {
+		void lifetime.close();
+	});
 
 	return {
 		name: "computer",
 		documentation: computerPreludeAssets.documentation,
+		inlineDocumentation: true,
 		javascript: computerPreludeAssets.javascript,
 		python: computerPreludeAssets.python,
 		exports: ["computer"],
-		codeModeDeclarations: computerPreludeAssets.codeModeDeclarations,
+		guidance: computerUsePrompt,
 		approval: computerApproval,
-		enabled: () => session.settings.get("computer.enabled") === true,
+		enabled: () => cfgComputerEnabled.get(session.settings) === true,
 		invoke: async (parameters, context) => {
 			const parsed = getComputerParamsSchema()(parameters);
 			if (parsed instanceof type.errors) {
@@ -184,7 +209,7 @@ async function invokeComputer(
 		case "run":
 		case "call":
 			if (lifetime.isClosed()) throw new ToolError("Computer session is closed");
-			return await runComputer(session, controller, params, context.signal);
+			return await runComputer(session, controller, params, context);
 		case "capabilities": {
 			const capabilities = lifetime.isClosed()
 				? undefined
@@ -228,8 +253,8 @@ function resolveComputerRunCode(params: ComputerRunParams | ComputerCallParams):
 /** Freezes the current session settings into the snapshot every worker command carries. */
 function buildComputerSnapshot(session: ToolSession, readOnly: boolean): ComputerSessionSnapshot {
 	const coordinateSafe = usesCoordinateSafeImageSizing(session.getActiveModel?.());
-	const configuredMaxWidth = session.settings.get("computer.maxWidth");
-	const configuredMaxHeight = session.settings.get("computer.maxHeight");
+	const configuredMaxWidth = cfgComputerMaxWidth.get(session.settings);
+	const configuredMaxHeight = cfgComputerMaxHeight.get(session.settings);
 	return {
 		cwd: session.cwd,
 		sessionId: session.getEvalSessionId?.() ?? session.getSessionId?.() ?? "computer",
@@ -239,8 +264,10 @@ function buildComputerSnapshot(session: ToolSession, readOnly: boolean): Compute
 		captureMaxHeight: coordinateSafe
 			? Math.min(configuredMaxHeight, COORDINATE_SAFE_MAX_CAPTURE_HEIGHT)
 			: configuredMaxHeight,
-		display: session.settings.get("computer.display") ?? "all",
+		display: cfgComputerDisplay.get(session.settings),
 		readOnly,
+		backgroundFallback: cfgComputerBackgroundFallback.get(session.settings),
+		displayTurn: computerTurnInFlight(session.getEvalKernelOwnerId?.() ?? undefined),
 	};
 }
 
@@ -248,14 +275,15 @@ async function runComputer(
 	session: ToolSession,
 	controller: ComputerController,
 	params: ComputerRunParams | ComputerCallParams,
-	signal?: AbortSignal,
+	context: EvalPreludeContext,
 ): Promise<AgentToolResult<unknown>> {
+	const signal = context.signal;
 	const code = resolveComputerRunCode(params);
 	// Direct inspection calls run read-only so the desktop guard backs the read approval tier.
 	const readOnly = params.action === "call" ? isReadOnlyComputerCall(params.chain) : (params.read_only ?? false);
-	const timeoutSeconds = clampTimeout("computer", params.timeout, session.settings.get("tools.maxTimeout"));
+	const timeoutSeconds = clampTimeout("computer", params.timeout, cfgToolsMaxTimeout.get(session.settings));
 	const snapshot = buildComputerSnapshot(session, readOnly);
-	const run = await controller.run(code, timeoutSeconds * 1000, snapshot, signal);
+	const run = await controller.run(code, timeoutSeconds * 1000, snapshot, signal, context.context);
 	throwIfAborted(signal);
 
 	const details: ComputerPreludeDetails = {
@@ -274,6 +302,8 @@ async function runComputer(
 		saveArtifact: full => saveComputerOutputArtifact(session, full),
 	});
 	const content: AgentToolResult<ComputerPreludeDetails>["content"] = [];
+	const notice = screenStateNotice(run.capabilities);
+	if (notice) content.push({ type: "text", text: notice });
 	if (cappedText) content.push({ type: "text", text: cappedText });
 	for (const image of run.displays) {
 		if (image.type === "image") content.push({ ...image, detail: "original" });

@@ -135,7 +135,14 @@ export type IR = IRAnalysis &
 		| {
 				k: "refine";
 				base: IR;
+<<<<<<< ours — type `IR` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 				pred: (value: unknown) => boolean | TauErrors;
+=======
+				pred: (value: unknown) => boolean | OmpErrors;
+				/** Allocation-free equivalent of `pred(value) === true` for boolean-only paths (`allows`, unions). */
+				check?: (value: unknown) => boolean;
+>>>>>>> theirs — type `IR` (F, confidence: medium) · weave: run 'weave explain packages/tautype/src/ir.ts' for per-hunk detail, 'weave check' to verify your resolution
 				expected: string;
 				json?: Record<string, unknown>;
 				desc?: string;

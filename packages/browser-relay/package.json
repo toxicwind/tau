@@ -15,17 +15,22 @@
 	"scripts": {
 		"build": "bun scripts/build-extension.ts",
 		"check": "oxlint . && oxfmt --check --no-error-on-unmatched-pattern 'src/**/*.{ts,tsx}' '{test,bench,examples,scripts}/**/*.ts' '*.ts' && bun run check:types",
+<<<<<<< ours — scope `"check:types": "tsgo -p tsconfig.json --noEmit",` in object `scripts` (S, confidence: medium)
+// refused_by: statement_fold · collision: `"check:types": "tsgo -p tsconfig.json --noEmit",`
 		"check:types": "bun ../../scripts/typecheck.ts . --noEmit",
+=======
+		"check:types": "bun check --no-script -p tsconfig.json",
+>>>>>>> theirs — scope `"check:types": "tsgo -p tsconfig.json --noEmit",` · weave: run 'weave explain packages/browser-relay/package.json' for per-hunk detail, 'weave check' to verify your resolution
 		"lint": "oxlint .",
 		"fix": "oxlint --fix --fix-suggestions . && bun run fmt",
 		"fmt": "oxfmt --no-error-on-unmatched-pattern 'src/**/*.{ts,tsx}' '{test,bench,examples,scripts}/**/*.ts' '*.ts'"
-	},
+	}
 	"devDependencies": {
     "@types/bun": "^1.4.4",
     "bun-types": "^1.4.4",
 		"puppeteer-core": "catalog:"
 	},
 	"engines": {
-		"bun": ">=1.3.14"
+		"bun": ">=1.4.4"
 	}
 }

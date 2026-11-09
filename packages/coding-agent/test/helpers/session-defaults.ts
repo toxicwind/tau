@@ -4,15 +4,20 @@ import type { AgentSession } from "tau/session/agent-session";
 export function createSessionDefaults() {
 	return {
 		setActiveToolsByName: async (_toolNames: string[]) => {},
+		getMountedXdevToolNames: () => [],
 		waitForIdle: async () => {},
 		prepareForHeadlessAdvisorDrain: () => {},
 		waitForAdvisorCatchup: async () => true,
 		getToolByName: () => undefined,
 		getLastAssistantMessage: () => undefined,
+		hasPendingAsyncWork: () => false,
 		abort: async () => {},
 		dispose: async () => {},
 		setIrcWakeTurnObserver: () => {},
+		holdIrcWakes: () => () => {},
+		isParentIrcSteer: () => false,
 		isAdvisorActive: () => false,
 		subscribeRunState: () => () => {},
+		addDisposer: () => {},
 	} satisfies Partial<AgentSession>;
 }

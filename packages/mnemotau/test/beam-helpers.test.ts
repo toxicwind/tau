@@ -12,6 +12,8 @@ import {
 	generateId,
 	generateStableId,
 	inMemoryVecSearch,
+<<<<<<< ours — imports `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 	lexicalRelevance,
 	normalizeImportance,
 	normalizeMetadata,
@@ -22,6 +24,16 @@ import {
 	temporalBoost,
 	workingMemoryVecSearch,
 } from "@tau/tau-mnemotau/core/beam/helpers";
+=======
+	normalizeImportance,
+	normalizeMetadata,
+	normalizeWeights,
+	recallTokens,
+	recencyDecay,
+	temporalBoost,
+	workingMemoryVecSearch,
+} from "@oh-my-pi/pi-mnemopi/core/beam/helpers";
+>>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/mnemotau/test/beam-helpers.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 describe("beam helper ids, weights, and metadata", () => {
 	it("generates unique timed ids and deterministic stable ids", () => {
@@ -75,23 +87,9 @@ describe("beam lexical and FTS helpers", () => {
 		expect(buildFtsQuery('say "hello"')).toBe('"say" OR "hello"');
 	});
 
-	it("matches lexical, strict fact, and CJK queries conservatively", () => {
-		const tokens = recallTokens("telemetry api latency");
-		expect(lexicalRelevance(tokens, "telemetry_api_latency_ms should stay below 200", "telemetry api latency")).toBe(
-			1,
-		);
-		expect(
-			lexicalRelevance(recallTokens("purple quantum oatmeal"), "telemetry_api_latency_ms", "purple quantum oatmeal"),
-		).toBe(0);
-		expect(strictFactMatches("where is hermes profile", "Hermes profile URL is https://example.test/hermes")).toBe(
-			true,
-		);
-		expect(
-			strictFactMatches("where is the unrelated thing", "Hermes profile URL is https://example.test/hermes"),
-		).toBe(false);
+	it("detects spaceless CJK text and builds CJK FTS terms", () => {
 		expect(containsSpacelessCjk("東京で会う")).toBe(true);
 		expect(cjkFtsTerms("東京東京")).toEqual(["東", "京", '"東京"', '"京東"']);
-		expect(lexicalRelevance([], "明日は東京で会議", "東京")).toBe(1);
 	});
 });
 

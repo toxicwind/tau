@@ -2,6 +2,8 @@ import { afterEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
+<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import { getEnvApiKey } from "@oh-my-pi/pi-ai/stream";`
 import { getOAuthProviders } from "@tau/tau-ai/registry/oauth";
 import { getEnvApiKey } from "@tau/tau-ai/stream";
 import { Effort } from "@tau/tau-catalog/effort";
@@ -11,6 +13,17 @@ import { seedModels } from "@tau/tau-catalog/compat/providers";
 import { DEFAULT_MODEL_PER_PROVIDER, PROVIDER_DESCRIPTORS } from "@tau/tau-catalog/provider-models/descriptors";
 import { sakanaModelManagerOptions } from "@tau/tau-catalog/provider-models/openai-compat";
 import type { FetchImpl, ModelSpec, ResolvedOpenAIResponsesCompat } from "@tau/tau-catalog/types";
+=======
+import { getOAuthProviders } from "@oh-my-pi/pi-ai/registry/oauth";
+import { getEnvApiKey } from "@oh-my-pi/pi-ai/env-api-key";
+import { Effort } from "@oh-my-pi/pi-catalog/effort";
+import { resolveProviderModels } from "@oh-my-pi/pi-catalog/model-manager";
+import { getBundledModels } from "@oh-my-pi/pi-catalog/models";
+import { seedModels } from "@oh-my-pi/pi-catalog/compat/providers";
+import { DEFAULT_MODEL_PER_PROVIDER, PROVIDER_DESCRIPTORS } from "@oh-my-pi/pi-catalog/provider-models/descriptors";
+import { sakanaModelManagerOptions } from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
+import type { FetchImpl, ModelSpec, ResolvedOpenAIResponsesCompat } from "@oh-my-pi/pi-catalog/types";
+>>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/catalog/test/sakana-provider.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const ORIGINAL_ENV = {
 	SAKANA_API_KEY: Bun.env.SAKANA_API_KEY,

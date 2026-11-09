@@ -3,8 +3,8 @@
  * completions, responses, azure responses). Replaces the `openai` SDK client:
  *
  * - Retries: `fetchWithRetry` (Retry-After/quota-hint aware; 5xx/408/429 and
- *   transient network errors). Default 6 total attempts — parity with the
- *   SDK's former `maxRetries: 5`.
+ *   transient network errors; `x-should-retry: false` is terminal). Default 6
+ *   total attempts — parity with the SDK's former `maxRetries: 5`.
  * - SSE decode: `readSseJson` (spec-compliant framing, `[DONE]`-aware).
  *   `onSseEvent` observers now receive real wire frames instead of events
  *   re-synthesized from decoded SDK objects.
@@ -22,6 +22,7 @@ export { OpenAIHttpError };
 
 import type { FetchImpl } from "../types";
 import type { CapturedHttpErrorResponse } from "./http-inspector";
+import { getShouldRetryFromHeaders } from "./retry-after";
 
 /**
  * Total attempts (initial + retries). Parity with the removed SDK clients'
@@ -89,10 +90,18 @@ export interface OpenAIStreamRequestInit {
 	body: unknown;
 	signal: AbortSignal;
 	fetch?: FetchImpl;
+	/** Override the default transport attempt budget for this request. */
+	maxAttempts?: number;
 	/** Optional caller-specific gate composed with shared transport retry exclusions. */
 	shouldRetryResponse?: (response: Response, bodyText: string) => boolean | Promise<boolean>;
-	/** Raw wire-frame observer (`onSseEvent` debug pipeline). */
+	/**
+	 * Raw wire-frame observer (`onSseEvent` debug pipeline). Leave it unset
+	 * when no diagnostic listener exists: any observer turns on per-line raw
+	 * capture for every frame.
+	 */
 	onSseEvent?: SseEventObserver;
+	/** Called when the stream ends on the OpenAI `[DONE]` sentinel; independent of {@link onSseEvent}. */
+	onDoneSentinel?: () => void;
 }
 
 export interface OpenAIStreamHandle<TEvent> {
@@ -111,6 +120,8 @@ export interface OpenAIStreamHandle<TEvent> {
  * watchdog timers and abort-reason bookkeeping.
  */
 export async function postOpenAIStream<TEvent>(init: OpenAIStreamRequestInit): Promise<OpenAIStreamHandle<TEvent>> {
+<<<<<<< ours — scope `* `signal` propagate from `fetchWithRetry`/`r...` in function `postOpenAIStream` (F, confidence: medium)
+// refused_by: statement_fold · collision: `const response = await fetchWithRetry(init.url, {` +17 more
 	// Concurrency-admission 429s get an in-transport HOLD-retry on the SAME
 	// model: wait `retry-after-ms` (+ jitter) and retry the identical request,
 	// up to CONCURRENCY_HOLD_MAX_ATTEMPTS. They must never bubble to session
@@ -147,6 +158,35 @@ export async function postOpenAIStream<TEvent>(init: OpenAIStreamRequestInit): P
 		const delayMs = Math.min(Math.max(1, hintMs), 5_000) + 100 + Math.floor(Math.random() * 250);
 		if (init.signal?.aborted) break;
 		await Bun.sleep(delayMs);
+=======
+	let response: Response;
+	try {
+		response = await fetchWithRetry(init.url, {
+			method: "POST",
+			headers: { "Content-Type": "application/json", Accept: "text/event-stream", ...init.headers },
+			body: JSON.stringify(init.body),
+			signal: init.signal,
+			fetch: init.fetch,
+			maxAttempts: init.maxAttempts ?? DEFAULT_MAX_ATTEMPTS,
+			// A server/gateway `x-should-retry: false` verdict is terminal, as it was
+			// under the removed SDK client. A proxy concurrency-admission 429
+			// (`rate_limit_type: max_parallel_requests`) surfaces immediately instead of
+			// being slept-and-retried here; session recovery owns its backoff/fallback
+			// (issue #8854).
+			shouldRetryResponse: async (response, bodyText) =>
+				getShouldRetryFromHeaders(response.headers) !== false &&
+				!isConcurrencyAdmissionRejection(response, bodyText) &&
+				(init.shouldRetryResponse === undefined || (await init.shouldRetryResponse(response, bodyText))),
+			// Bun's native fetch enforces a hard ~300s pre-response timeout (issue #2422).
+			// Cold large-context streams legitimately exceed it; the caller's
+			// `firstEventTimeoutMs`/`AbortSignal` already govern stuck requests.
+			timeout: false,
+		});
+	} catch (error) {
+		// Transport rejection after the retry budget: name the host and the cause
+		// instead of surfacing the runtime's bare `getaddrinfo …` text.
+		throw AIError.networkFailureError(error, init.url);
+>>>>>>> theirs — scope `* `signal` propagate from `fetchWithRetry`/`r...` · weave: run 'weave explain packages/ai/src/utils/openai-http.ts' for per-hunk detail, 'weave check' to verify your resolution
 	}
 	if (!response.ok) {
 		throw await captureOpenAIHttpError(response);
@@ -157,7 +197,7 @@ export async function postOpenAIStream<TEvent>(init: OpenAIStreamRequestInit): P
 		});
 	}
 	return {
-		events: decodeStream<TEvent>(response.body, init.signal, init.onSseEvent),
+		events: decodeStream<TEvent>(response.body, init.signal, init.onSseEvent, init.onDoneSentinel),
 		response,
 		requestId: response.headers.get("x-request-id"),
 	};
@@ -180,8 +220,9 @@ async function* decodeStream<TEvent>(
 	body: ReadableStream<Uint8Array>,
 	signal: AbortSignal | undefined,
 	onSseEvent: SseEventObserver | undefined,
+	onDoneSentinel: (() => void) | undefined,
 ): AsyncGenerator<TEvent> {
-	for await (const frame of readSseJsonOrText<TEvent>(body, signal, onSseEvent)) {
+	for await (const frame of readSseJsonOrText<TEvent>(body, signal, onSseEvent, onDoneSentinel)) {
 		if (typeof frame === "string") {
 			const inBand = AIError.createInBandProviderErrorFromText(frame);
 			if (inBand) throw inBand;

@@ -1,5 +1,11 @@
+<<<<<<< ours — interstitial `file_header` (S, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import { logger } from "@oh-my-pi/pi-utils";`
 import { type AgentMessage, ASIDE_MESSAGE_COMMIT, ASIDE_MESSAGE_DISCARD } from "@tau/tau-agent-core";
 import { logger } from "@tau/tau-utils";
+=======
+import { type AgentMessage, ASIDE_MESSAGE_COMMIT, ASIDE_MESSAGE_DISCARD } from "@oh-my-pi/pi-agent-core";
+import { logger, toError } from "@oh-my-pi/pi-utils";
+>>>>>>> theirs — interstitial `file_header` (S, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/session/yield-queue.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 export interface YieldDispatcher<P> {
 	/** Drop entries already delivered through another path. Called per-entry at flush time. */
@@ -102,6 +108,26 @@ export class YieldQueue {
 		return false;
 	}
 
+	/**
+	 * Non-consuming check for an entry of `kind` that the drain would deliver.
+	 * Unlike {@link has}, it skips entries the dispatcher reports stale, since
+	 * the drain drops those without a message.
+	 */
+	hasDeliverable(kind: string): boolean {
+		const entries = this.#entries.get(kind);
+		if (!entries || entries.length === 0) return false;
+		const isStale = this.#dispatchers.get(kind)?.isStale;
+		if (!isStale) return true;
+		return entries.some(entry => {
+			try {
+				return !isStale(entry.value);
+			} catch {
+				// The drain rejects an entry whose stale check throws.
+				return false;
+			}
+		});
+	}
+
 	/** Arrange an idle flush for entries queued near the end of a streaming run. */
 	requestIdleFlush(): void {
 		for (const [kind, dispatcher] of this.#dispatchers) {
@@ -129,7 +155,7 @@ export class YieldQueue {
 					this.#options.injectStreaming(built.message);
 					this.#resolveEntries(built.entries);
 				} catch (error) {
-					const dispatchError = error instanceof Error ? error : new Error(String(error));
+					const dispatchError = toError(error);
 					this.#rejectEntries(built.entries, dispatchError);
 					logger.warn("Yield queue streaming dispatch failed", { kind, error: formatError(error) });
 				}
@@ -145,7 +171,7 @@ export class YieldQueue {
 					(item.message as AgentMessage & { [ASIDE_MESSAGE_COMMIT]?: () => void })[ASIDE_MESSAGE_COMMIT]?.();
 				}
 			} catch (error) {
-				const dispatchError = error instanceof Error ? error : new Error(String(error));
+				const dispatchError = toError(error);
 				for (const item of idleMessages) {
 					(item.message as AgentMessage & { [ASIDE_MESSAGE_DISCARD]?: (error: Error) => void })[
 						ASIDE_MESSAGE_DISCARD
@@ -228,7 +254,7 @@ export class YieldQueue {
 				try {
 					stale = dispatcher.isStale(entry.value);
 				} catch (error) {
-					const staleError = error instanceof Error ? error : new Error(String(error));
+					const staleError = toError(error);
 					entry.reject?.(staleError);
 					logger.warn("Yield queue stale check failed", { kind, error: formatError(error) });
 					continue;
@@ -249,7 +275,7 @@ export class YieldQueue {
 			}
 			return { message, entries: survivors };
 		} catch (error) {
-			const buildError = error instanceof Error ? error : new Error(String(error));
+			const buildError = toError(error);
 			this.#rejectEntries(survivors, buildError);
 			logger.warn("Yield queue build failed", { kind, error: formatError(error) });
 			return null;

@@ -2,11 +2,19 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } 
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
+<<<<<<< ours — imports `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import { toolWireSchema } from "@oh-my-pi/pi-ai/utils/schema";` +1 more
 import type { ToolCall } from "@tau/tau-ai";
 import { toolWireSchema } from "@tau/tau-ai/utils/schema";
 import { validateToolArguments } from "@tau/tau-ai/utils/validation";
 import { Settings } from "tau/config/settings";
 import type { ToolSession } from "tau/tools";
+=======
+import type { ToolCall } from "@oh-my-pi/pi-ai";
+import { validateToolArguments } from "@oh-my-pi/pi-ai/utils/validation";
+import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
+>>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/tools/gh.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	buildSearchDateQualifier,
 	GithubTool,
@@ -14,6 +22,8 @@ import {
 	parsePrUnifiedDiff,
 	parseSearchDateBound,
 	resolveDefaultRepoMemoized,
+<<<<<<< ours — imports `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import { toolWireSchema } from "@oh-my-pi/pi-ai/utils/schema";` +1 more
 } from "tau/tools/gh";
 import { parseIssueUrl, parsePullRequestUrl } from "tau/tools/gh-common";
 import { github } from "tau/utils/github";
@@ -22,6 +32,21 @@ import { withRepoLock } from "tau/utils/repo-lock";
 import type { VcsGitRepo } from "@tau/tau-natives";
 import * as vcs from "@tau/tau-natives/vcs";
 import { getAgentDir, hashPath, normalizePathForComparison, removeWithRetries, setAgentDir } from "@tau/tau-utils";
+=======
+} from "@oh-my-pi/pi-coding-agent/tools/gh";
+import {
+	parseIssueUrl,
+	parsePullRequestUrl,
+	tryResolveCurrentRepoFresh,
+} from "@oh-my-pi/pi-coding-agent/tools/gh-common";
+import { sanitizeRemoteName } from "@oh-my-pi/pi-coding-agent/tools/gh-pr-checkout";
+import { github } from "@oh-my-pi/pi-coding-agent/utils/github";
+import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { withRepoLock } from "@oh-my-pi/pi-coding-agent/utils/repo-lock";
+import type { VcsGitRepo } from "@oh-my-pi/pi-natives";
+import * as vcs from "@oh-my-pi/pi-natives/vcs";
+import { getAgentDir, hashPath, normalizePathForComparison, removeWithRetries, setAgentDir } from "@oh-my-pi/pi-utils";
+>>>>>>> theirs — imports `file_header` (F, confidence: medium)
 
 const TINY_PNG_BASE64 =
 	"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8DwHwAFBQIAX8jx0gAAAABJRU5ErkJggg==";
@@ -235,6 +260,13 @@ async function expectedWorktreePath(home: string, primaryRoot: string, localBran
 	const segment = `${prNumber}-${hashPath(primaryRoot)}`;
 	return fs.realpath(path.join(home, ".tau", "wt", segment));
 }
+
+describe("sanitizeRemoteName", () => {
+	it("prefixes sanitized fork owners and falls back to a bare fork remote", () => {
+		expect(sanitizeRemoteName("Octo_Cat.Org")).toBe("fork-octo-cat-org");
+		expect(sanitizeRemoteName("__")).toBe("fork");
+	});
+});
 
 describe("parsePrUnifiedDiff", () => {
 	it("parses quoted diff headers instead of falling back to unknown paths", () => {
@@ -685,14 +717,14 @@ describe("github tool", () => {
 		expect(viewArgs.slice(0, 3)).toEqual(["pr", "view", "77"]);
 		expect(viewArgs).toEqual(expect.arrayContaining(["--repo", "owner/repo"]));
 
-		// Output: PR number + summary rendered, URL surfaces, body block included.
+		// Output: PR number + summary rendered, URL surfaces, body is not echoed.
 		expect(text).toContain("# Created Pull Request #77: Add gizmo");
 		expect(text).toContain("URL: https://github.com/owner/repo/pull/77");
 		expect(text).toContain("Draft: true");
 		expect(text).toContain("Base: main");
 		expect(text).toContain("Head: feature/gizmo");
 		expect(text).toContain("Labels: enhancement");
-		expect(text).toContain("Adds a gizmo.");
+		expect(text).not.toContain("Adds a gizmo.");
 	});
 
 	it("rejects pr_create when neither title nor fill is supplied", async () => {
@@ -1201,6 +1233,8 @@ describe("github tool", () => {
 				// Existing URL is preserved — we never overwrote it.
 				expect(runGit(fixture.repoRoot, ["remote", "get-url", "forksrc"])).toBe(fixture.forkBare);
 			});
+<<<<<<< ours — scope `describe("pr_checkout (single, cross-reposito...` in test_suite `github tool` (F, confidence: medium)
+// refused_by: statement_fold · collision: `const fakeBin = await fs.mkdtemp(path.join(os.tmpdir(), "omp-fa…`
 			it("does not depend on localized git remote-add stderr for existing remotes", async () => {
 				// The shim is a bash script resolved via `which`; neither exists on Windows.
 				if (process.platform === "win32") return;
@@ -1235,6 +1269,8 @@ exec ${JSON.stringify(realGit)} "$@"
 					await removeWithRetries(fakeBin);
 				}
 			});
+=======
+>>>>>>> theirs — scope `describe("pr_checkout (single, cross-reposito...`
 		});
 	});
 
@@ -1289,7 +1325,7 @@ echo ok
 				child.exited,
 			]);
 			expect({ exitCode, stderr }).toEqual({ exitCode: 0, stderr: "" });
-			expect(JSON.parse(stdout)).toEqual({ exitCode: 0, stderr: "", stdout: "ok" });
+			expect(JSON.parse(stdout)).toEqual({ exitCode: 0, stderr: "", stdout: "ok", stdoutTruncated: false });
 		} finally {
 			await removeWithRetries(fakeBin);
 		}
@@ -1413,15 +1449,6 @@ echo ok
 				);
 			});
 		});
-	});
-
-	it("exposes a flat op-based schema without legacy run_watch parameters", () => {
-		const tool = new GithubTool(createSession());
-		const wire = toolWireSchema(tool);
-		const properties = wire.properties as Record<string, unknown>;
-		expect(properties.op).toBeDefined();
-		expect(properties.interval).toBeUndefined();
-		expect(properties.grace).toBeUndefined();
 	});
 
 	it("tails failed job logs inline and saves the full failed-job logs as an artifact", async () => {
@@ -1893,5 +1920,44 @@ describe("GitHub URL parsing", () => {
 		return expect(resolveDefaultRepoMemoized(`/tmp/gh-canonical-identity-${Date.now()}`)).resolves.toBe(
 			"acme/widgets",
 		);
+	});
+});
+
+describe("current checkout repository with an upstream remote", () => {
+	let repoDir: string;
+
+	beforeEach(async () => {
+		repoDir = await fs.mkdtemp(path.join(os.tmpdir(), "gh-upstream-remote-"));
+		runGit(repoDir, ["init", "-q"]);
+		runGit(repoDir, ["remote", "add", "origin", "git@github.com:acme/product.git"]);
+		runGit(repoDir, ["remote", "add", "upstream", "https://github.com/vendor/engine.git"]);
+		// `gh` ranks `upstream` above `origin`, so its unconfigured pick is the upstream.
+		vi.spyOn(github, "text").mockResolvedValue("https://github.com/vendor/engine\n");
+	});
+
+	afterEach(async () => {
+		vi.restoreAllMocks();
+		await removeWithRetries(repoDir);
+	});
+
+	function mockOriginView(parent: { name: string; owner: { login: string } } | null) {
+		return vi.spyOn(github, "json").mockResolvedValue({ url: "https://github.com/acme/product", parent });
+	}
+
+	it("resolves to origin when origin is not a fork of the upstream gh picked", async () => {
+		mockOriginView(null);
+		expect(await tryResolveCurrentRepoFresh(repoDir, undefined)).toBe("acme/product");
+	});
+
+	it("keeps the upstream when origin is its fork", async () => {
+		mockOriginView({ name: "engine", owner: { login: "vendor" } });
+		expect(await tryResolveCurrentRepoFresh(repoDir, undefined)).toBe("vendor/engine");
+	});
+
+	it("keeps gh's pick when `gh repo set-default` chose a remote", async () => {
+		runGit(repoDir, ["config", "remote.upstream.gh-resolved", "base"]);
+		const jsonSpy = mockOriginView(null);
+		expect(await tryResolveCurrentRepoFresh(repoDir, undefined)).toBe("vendor/engine");
+		expect(jsonSpy).not.toHaveBeenCalled();
 	});
 });

@@ -1,5 +1,7 @@
 name: "Compose bazel cache config"
 description: >
+<<<<<<< ours — property `description` (S+F, confidence: low)
+# refused_by: merge_ladder_exhausted · collision: `omp-kata jobs use the cluster remote cache. GitHub-hosted jobs …`
    Selects the CI cache backend and emits a bazelrc fragment. A shell probe
    exposes the backend through step outputs before any action condition
    uses it.
@@ -30,28 +32,62 @@ description: >
    shared 10 GB repo quota. A tag-dispatched release saved a ~5 GB darwin
    archive under refs/tags/v18.2.10 and GitHub's LRU eviction then dropped
    main's darwin archives, so the next release built cold.
-
-inputs:
-   scope:
-      description: Disk-cache key discriminator shared by compatible consumers
-      required: true
+=======
+   Emits a bazelrc fragment wiring the vmon node's Bazel HTTP cache. Every
+   Bazel job runs on a vmon `omp-ci` sandbox (VMON_CI=1), whose template bakes
+   the repository/xwin caches at /opt/bazel-repo-cache, and whose node serves
+   a per-repository Bazel cache at $VMON_CACHE_URL/bazel: written by branch
+   and tag jobs, read-only for pull requests. Elsewhere the fragment carries
+   only --config=ci and the build runs uncached.
+>>>>>>> theirs — property `description` (S+F, confidence: low) · weave: run 'weave explain .github/actions/bazel-cache/action.yml' for per-hunk detail, 'weave check' to verify your resolution
 
 outputs:
    rc:
       description: Path to the generated bazelrc fragment
       value: ${{ steps.compose.outputs.rc }}
-   cache-key:
-      description: Exact GitHub cache key for a later explicit save
-      value: ${{ steps.backend.outputs.cache-key }}
-   save-needed:
-      description: Whether this run should save a new exact-key disk-cache archive (hosted, inexact restore, on main)
-      value: ${{ steps.compose.outputs.save-needed }}
-   remote:
-      description: Whether the shell probe selected the cluster remote cache
-      value: ${{ steps.backend.outputs.remote }}
 
 runs:
    using: composite
+   steps:
+      - name: Compose cache config
+        id: compose
+        shell: bash
+        run: |
+           set -euo pipefail
+           rc="$RUNNER_TEMP/bazel-cache.rc"
+           echo "rc=$rc" >> "$GITHUB_OUTPUT"
+           if [ "${VMON_CI:-}" != 1 ]; then
+             echo "::notice title=Bazel cache::Not a vmon runner; building uncached."
+             echo "common --config=ci" > "$rc"
+             exit 0
+           fi
+
+           # Template-baked (infra/vmon/omp_ci_template.py warms both with
+           # these exact values, so repo-contents-cache keys match).
+           {
+             echo "common --config=ci"
+             echo "common --repository_cache=/opt/bazel-repo-cache"
+             echo "common --repo_env=OMP_XWIN_CACHE_DIR=/opt/bazel-repo-cache/xwin"
+           } > "$rc"
+
+           if [ -z "${VMON_CACHE_URL:-}" ]; then
+             echo "::warning title=Bazel cache::The vmon node serves no Bazel cache; building without a remote cache."
+             exit 0
+           fi
+           # The node refuses writes from pull request jobs; PRs
+           # (pull_request_target included) skip uploads instead of
+           # collecting 403 warnings.
+           case "${GITHUB_EVENT_NAME:-}" in
+             pull_request*) mode=cache-ro ;;
+             *) mode=cache-rw ;;
+           esac
+           {
+             echo "common --config=${mode}"
+             echo "common --remote_cache=${VMON_CACHE_URL}/bazel"
+           } >> "$rc"
+           echo "::notice title=Bazel cache::Using the vmon node's Bazel cache (${mode})."
+<<<<<<< ours — scope `steps:` in section `runs`, deleted in theirs (S+F, confidence: low)
+# refused_by: statement_fold · collision: none (no common ancestor text)
    steps:
       - name: Detect bazel cache backend
         id: backend
@@ -171,3 +207,5 @@ runs:
              echo "rc=$rc"
              echo "save-needed=$save_needed"
            } >> "$GITHUB_OUTPUT"
+=======
+>>>>>>> theirs — scope `steps:` deleted in theirs

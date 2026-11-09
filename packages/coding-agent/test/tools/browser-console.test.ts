@@ -8,6 +8,7 @@ import { disposeAllVmContexts } from "tau/eval/js/context-manager";
 import { createBrowserPrelude } from "tau/tools/browser";
 import { releaseAllTabs } from "tau/tools/browser/tab-supervisor";
 import type { ToolSession } from "tau/tools/index";
+import { CMUX_CONSOLE_CAPTURE_SCRIPT } from "@oh-my-pi/pi-coding-agent/tools/browser/console-capture";
 import { chromiumAvailable } from "./chromium-probe";
 
 const CHROMIUM_AVAILABLE = await chromiumAvailable();
@@ -21,6 +22,7 @@ const session: ToolSession = {
 		"browser.enabled": true,
 		"browser.headless": true,
 		"browser.cmux": false,
+		"browser.tern": false,
 		"tools.maxTimeout": 0,
 	}),
 };
@@ -123,6 +125,110 @@ await wait(5_000);`,
 				timeoutMessage = error instanceof Error ? error.message : String(error);
 			}
 			expect(timeoutMessage).toContain("1 page error(s) since run start — see tab.errors()");
+		} finally {
+			await invoke({ action: "close", name: "console" });
+		}
+	}, 30_000);
+
+	it("captures JSON objects with non-callable primitive methods without poisoning subsequent reads", async () => {
+		const html = `<!doctype html><script>
+			console.log("hostile", { toString: "x", valueOf: "y" });
+		</script>`;
+		await invoke({ action: "open", name: "console", url: `data:text/html,${encodeURIComponent(html)}` });
+		try {
+			const first = (await call("console")) as CaptureResult;
+			expect(first.entries.find(entry => entry.text === 'hostile {"toString":"x","valueOf":"y"}')).toMatchObject({
+				type: "console",
+				args: ["hostile", { toString: "x", valueOf: "y" }],
+			});
+			await call("evaluate", ['console.info("after hostile")']);
+			const next = (await call("console", [{ since: first.nextSeq }])) as CaptureResult;
+			expect(next.entries.map(entry => entry.text)).toEqual(["after hostile"]);
+			expect(((await call("errors")) as CaptureResult).entries).toEqual([]);
+		} finally {
+			await invoke({ action: "close", name: "console" });
+		}
+	}, 30_000);
+
+	it("keeps the fields of non-Error rejections in page errors, bounded like console arguments", async () => {
+		await invoke({ action: "open", name: "console", url: "data:text/html,<title>rejections</title>" });
+		try {
+			await call("evaluate", [
+				`(() => {
+					setTimeout(() => {
+						Promise.reject({ name: "ProbeObject", message: "OMP_OBJECT_DETAILS", code: "SAFE_TEST", detail: { stage: "synthetic" } });
+						Promise.reject("plain rejection reason");
+						Promise.reject({ blob: "x".repeat(20000) });
+					}, 0);
+					return true;
+				})()`,
+			]);
+			let entries: CaptureEntry[] = [];
+			for (let attempt = 0; attempt < 50 && entries.length < 3; attempt++) {
+				await Bun.sleep(20);
+				entries = ((await call("errors")) as CaptureResult).entries;
+			}
+			expect(entries.map(entry => entry.text).slice(0, 2)).toEqual([
+				'{"name":"ProbeObject","message":"OMP_OBJECT_DETAILS","code":"SAFE_TEST","detail":{"stage":"synthetic"}}',
+				"plain rejection reason",
+			]);
+			const oversized = entries[2]?.text ?? "";
+			expect(oversized.startsWith('{"blob":"xxx')).toBe(true);
+			expect(oversized.length).toBe(8_193);
+		} finally {
+			await invoke({ action: "close", name: "console" });
+		}
+	}, 30_000);
+
+	it("keeps the cmux page hook from throwing on values whose text conversion throws", async () => {
+		await invoke({ action: "open", name: "console", url: "data:text/html,<title>cmux hook</title>" });
+		try {
+			const result = await call("evaluate", [
+				`(() => {
+					${CMUX_CONSOLE_CAPTURE_SCRIPT};
+					console.log("hostile", { toString: "x", valueOf: "y" });
+					const { proxy, revoke } = Proxy.revocable({}, {});
+					revoke();
+					console.log("revoked", proxy);
+					return globalThis.__ompConsoleCapture.entries;
+				})()`,
+			]);
+			expect(result).toEqual([
+				expect.objectContaining({
+					type: "console",
+					text: 'hostile {"toString":"x","valueOf":"y"}',
+					args: ["hostile", { toString: "x", valueOf: "y" }],
+				}),
+				expect.objectContaining({
+					type: "console",
+					text: "revoked [unserializable]",
+					args: ["revoked", "[unserializable]"],
+				}),
+			]);
+		} finally {
+			await invoke({ action: "close", name: "console" });
+		}
+	}, 30_000);
+
+	it("keeps the fields of non-Error rejections in the cmux page hook", async () => {
+		await invoke({ action: "open", name: "console", url: "data:text/html,<title>cmux rejections</title>" });
+		try {
+			const result = await call("evaluate", [
+				`(async () => {
+					${CMUX_CONSOLE_CAPTURE_SCRIPT};
+					Promise.reject({ name: "ProbeObject", message: "OMP_OBJECT_DETAILS", code: "SAFE_TEST" });
+					Promise.reject(new Error("native rejection"));
+					const capture = globalThis.__ompConsoleCapture;
+					for (let attempt = 0; attempt < 100 && capture.entries.length < 2; attempt++) {
+						await new Promise(resolve => setTimeout(resolve, 10));
+					}
+					return capture.entries.map(entry => entry.text);
+				})()`,
+			]);
+			expect(result).toEqual([
+				'{"name":"ProbeObject","message":"OMP_OBJECT_DETAILS","code":"SAFE_TEST"}',
+				"native rejection",
+			]);
 		} finally {
 			await invoke({ action: "close", name: "console" });
 		}

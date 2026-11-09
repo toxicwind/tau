@@ -1,5 +1,9 @@
+import type { TspTableColumn, TspText } from "@oh-my-pi/pi-wire";
+import { compactText, styleSpans } from "../native/spans";
+import { node } from "../native/describe";
+import type { DescribeContext, NativeNode } from "../native/node";
 import type { Component } from "../tui";
-import { Ellipsis, getWidthConfigEpoch, replaceTabs, truncateToWidth, visibleWidth } from "../utils";
+import { Ellipsis, finiteWidth, getWidthConfigEpoch, singleLine, truncateToWidth, visibleWidth } from "../utils";
 
 /** One table cell. Styling is applied after alignment so padding shares the cell style. */
 export interface TableCell {
@@ -23,14 +27,6 @@ export interface TableOptions {
 	readonly gap?: string;
 	readonly indent?: string;
 	readonly fit?: boolean;
-}
-
-function finiteWidth(width: number, fallback = 0): number {
-	return Number.isFinite(width) ? Math.max(0, Math.trunc(width)) : fallback;
-}
-
-function singleLine(text: string): string {
-	return replaceTabs(text).replace(/[\r\n]+/g, " ");
 }
 
 function fitWidths(columns: readonly TableColumn[], maxWidth: number, gapWidth: number): number[] {
@@ -92,6 +88,7 @@ export class Table implements Component {
 	readonly #columns: readonly TableColumn[];
 	readonly #options: TableOptions;
 	#cache: { width: number; epoch: number; lines: readonly string[] } | undefined;
+	#native: NativeNode | undefined;
 
 	constructor(rows: readonly (readonly TableCell[])[], columns: readonly TableColumn[], options: TableOptions = {}) {
 		this.#rows = rows;
@@ -103,11 +100,44 @@ export class Table implements Component {
 		if (this.#rows === rows) return false;
 		this.#rows = rows;
 		this.#cache = undefined;
+		this.#native = undefined;
 		return true;
 	}
 
 	invalidate(): void {
 		this.#cache = undefined;
+		this.#native = undefined;
+	}
+
+	releaseRenderCaches(): void {
+		this.#cache = undefined;
+	}
+
+	/**
+	 * A native `table`. Column priorities carry over unchanged (lower gives
+	 * way first); truncating columns truncate at the end, the rest keep
+	 * their content. Widths are the terminal's.
+	 */
+	describe(_cx: DescribeContext): NativeNode {
+		if (this.#native) return this.#native;
+		const columns = this.#columns;
+		const cols: TspTableColumn[] = columns.map((column, index) => ({
+			id: `c${index}`,
+			align: column.align === "right" ? "end" : "start",
+			truncate: column.overflow === "truncate" ? "end" : undefined,
+			priority: column.priority ?? 0,
+		}));
+		const rows = this.#rows.map((row, rowIndex) => {
+			const cells: Record<string, TspText> = {};
+			const count = Math.min(row.length, columns.length);
+			for (let index = 0; index < count; index++) {
+				const cell = row[index]!;
+				cells[`c${index}`] = compactText(styleSpans(singleLine(cell.text), cell.style ?? columns[index]!.style));
+			}
+			return { id: `r${rowIndex}`, cells };
+		});
+		this.#native = node("table", { cols, rows });
+		return this.#native;
 	}
 
 	render(width: number): readonly string[] {

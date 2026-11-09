@@ -6,7 +6,20 @@
  */
 import * as fs from "node:fs";
 import * as path from "node:path";
+<<<<<<< ours — imports `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import { getPluginsDir, getPluginsLockfile, hasFsCode, isEacces…`
 import { getPluginsDir, getPluginsLockfile, hasFsCode, isEacces, isEnoent, logger } from "@tau/tau-utils";
+=======
+import {
+	getPluginsDir,
+	getPluginsLockfile,
+	hasFsCode,
+	isEacces,
+	isEnoent,
+	logger,
+	normalizePathForComparison,
+} from "@oh-my-pi/pi-utils";
+>>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/extensibility/plugins/loader.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { getConfigDirPaths } from "../../config";
 import { registerPluginCacheInvalidator, resolveActiveProjectRegistryPath } from "../../discovery/helpers";
 import { findExtensionDirectoryIndex, resolveExtensionDirectory } from "../extensions/directory-resolution";
@@ -64,7 +77,14 @@ async function loadProjectOverrides(cwd: string): Promise<ProjectPluginOverrides
 			return await Bun.file(overridesPath).json();
 		} catch (err) {
 			if (isEnoent(err)) continue;
-			// JSON parse error - continue to next path
+			// Malformed or unreadable overrides would otherwise silently act
+			// as {} — project-disabled plugins re-enable and project settings
+			// vanish without a trace. Report it, then fall through like a
+			// missing file so plugin collection still degrades gracefully.
+			logger.warn("plugins: failed to load project plugin overrides, ignoring them", {
+				path: overridesPath,
+				error: String(err),
+			});
 		}
 	}
 	return {};
@@ -254,7 +274,7 @@ async function loadEnabledPlugins(cwd: string, home?: string): Promise<ScopedIns
 	const projectRegistryPath = await resolveActiveProjectRegistryPath(cwd);
 	if (projectRegistryPath) {
 		const projectRoot = path.dirname(projectRegistryPath);
-		if (projectRoot !== userRoot) {
+		if (normalizePathForComparison(projectRoot) !== normalizePathForComparison(userRoot)) {
 			projectPlugins = await collectPluginsAtRoot(projectRoot, projectOverrides, "project");
 		}
 	}
@@ -448,20 +468,6 @@ export async function getAllPluginCommandPaths(cwd: string): Promise<string[]> {
 
 	for (const plugin of plugins) {
 		paths.push(...resolvePluginCommandPaths(plugin));
-	}
-
-	return paths;
-}
-
-/**
- * Get all extension module paths from all enabled plugins.
- */
-export async function getAllPluginExtensionPaths(cwd: string): Promise<string[]> {
-	const plugins = await getEnabledPlugins(cwd);
-	const paths: string[] = [];
-
-	for (const plugin of plugins) {
-		paths.push(...resolvePluginExtensionPaths(plugin));
 	}
 
 	return paths;

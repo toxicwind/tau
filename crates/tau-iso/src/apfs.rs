@@ -77,6 +77,8 @@ impl IsolationBackend for ApfsBackend {
 
 #[cfg(target_os = "macos")]
 mod imp {
+<<<<<<< ours — module `imp` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 	use std::{
 		ffi::CString,
 		fs,
@@ -237,6 +239,111 @@ mod imp {
 	fn to_cstring(bytes: &[u8], label: &str) -> IsoResult<CString> {
 		CString::new(bytes)
 			.map_err(|err| IsoError::other(format!("{label} path contains NUL byte: {err}")))
+=======
+	use std::{fs, path::Path};
+
+	use crate::{
+		IsoError, IsoResult,
+		cow::{self, CLONE_NOFOLLOW},
+		tree,
+	};
+
+	/// Classifies a failed `clonefile` of `src` to `dst`.
+	fn clone_error(src: &Path, dst: &Path, err: &std::io::Error) -> IsoError {
+		if cow::is_unsupported(err) {
+			return IsoError::unavailable(format!(
+				"APFS clonefile unsupported on this volume ({err}); {} -> {}",
+				src.display(),
+				dst.display()
+			));
+		}
+		IsoError::other(format!("clonefile {} -> {}: {err}", src.display(), dst.display()))
+	}
+
+	pub fn start(lower: &Path, merged: &Path) -> IsoResult<()> {
+		let lower = tree::canonical_existing_dir(lower, "clone source", IsoError::other)?;
+		if let Some(parent) = merged.parent() {
+			fs::create_dir_all(parent).map_err(|err| {
+				IsoError::other(format!("unable to create parent of {}: {err}", merged.display()))
+			})?;
+		}
+		// `clonefile` refuses to overwrite. Drop any stale tree first.
+		if merged.exists() {
+			fs::remove_dir_all(merged).map_err(|err| {
+				IsoError::other(format!("unable to clear {} before clone: {err}", merged.display()))
+			})?;
+		}
+
+		// A directory source clones the whole tree in one call.
+		cow::clonefile(&lower, merged, 0).map_err(|err| clone_error(&lower, merged, &err))
+	}
+
+	pub fn clone_tree(lower: &Path, merged: &Path, skip: &[&std::ffi::OsStr]) -> IsoResult<()> {
+		let lower = tree::canonical_existing_dir(lower, "clone source", IsoError::other)?;
+		if let Some(parent) = merged.parent() {
+			fs::create_dir_all(parent).map_err(|err| {
+				IsoError::other(format!("unable to create parent of {}: {err}", merged.display()))
+			})?;
+		}
+		if merged.exists() {
+			if fs::read_dir(merged)
+				.map_err(|err| IsoError::other(format!("read_dir {}: {err}", merged.display())))?
+				.next()
+				.is_some()
+			{
+				return Err(IsoError::other(format!(
+					"clone destination {} is not empty",
+					merged.display()
+				)));
+			}
+		} else {
+			fs::create_dir(merged)
+				.map_err(|err| IsoError::other(format!("create {}: {err}", merged.display())))?;
+		}
+
+		let result = (|| {
+			for entry in fs::read_dir(&lower)
+				.map_err(|err| IsoError::other(format!("read_dir {}: {err}", lower.display())))?
+			{
+				let entry = entry.map_err(|err| {
+					IsoError::other(format!("dir entry in {}: {err}", lower.display()))
+				})?;
+				if skip.contains(&entry.file_name().as_os_str()) {
+					continue;
+				}
+				// `clonefile` only accepts regular files, directories, and
+				// symlinks as a top-level source (EINVAL otherwise). Sockets,
+				// fifos, and devices are process-owned ephemera — skip them, as
+				// the recursive walkers on other platforms do.
+				let file_type = entry.file_type().map_err(|err| {
+					IsoError::other(format!("file_type {}: {err}", entry.path().display()))
+				})?;
+				if !(file_type.is_file() || file_type.is_dir() || file_type.is_symlink()) {
+					continue;
+				}
+				let src = entry.path();
+				let dst = merged.join(entry.file_name());
+				cow::clonefile(&src, &dst, CLONE_NOFOLLOW)
+					.map_err(|err| clone_error(&src, &dst, &err))?;
+			}
+			Ok(())
+		})();
+		if result.is_err() {
+			let _ = fs::remove_dir_all(merged);
+		}
+		result
+	}
+
+	pub fn stop(merged: &Path) -> IsoResult<()> {
+		match fs::remove_dir_all(merged) {
+			Ok(()) => Ok(()),
+			Err(err) if err.kind() == std::io::ErrorKind::NotFound => Ok(()),
+			Err(err) => Err(IsoError::other(format!(
+				"unable to remove cloned tree {}: {err}",
+				merged.display()
+			))),
+		}
+>>>>>>> theirs — module `imp` (F, confidence: medium) · weave: run 'weave explain crates/tau-iso/src/apfs.rs' for per-hunk detail, 'weave check' to verify your resolution
 	}
 }
 

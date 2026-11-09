@@ -2,10 +2,22 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
+<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import { sharedSpinnerFrame } from "@oh-my-pi/pi-tui/chat/tool-…` +1 more
 import { sharedSpinnerFrame } from "@tau/tau-tui/chat/tool-execution";
 import { SPINNER_ADVANCE_MS } from "@tau/tau-tui/components/loader";
 import { getThemeByName } from "@tau/tau-tui/theme";
 import { getConfigRootDir, getCustomThemesDir, removeWithRetries, setAgentDir } from "@tau/tau-utils";
+=======
+import {
+	DEFAULT_SPINNER_INTERVAL_MS,
+	setSpinnerInterval,
+	sharedSpinnerFrame,
+	SPINNER_INTERVAL_STATIC,
+} from "@oh-my-pi/pi-tui/spinner-clock";
+import { getThemeByName } from "@oh-my-pi/pi-tui/theme";
+import { getConfigRootDir, getCustomThemesDir, removeWithRetries, setAgentDir } from "@oh-my-pi/pi-utils";
+>>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/tui/test/theme-spinner-frames.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 // Path of the built-in dark theme JSON, used as a known-valid base we can
 // extend with custom `symbols.spinnerFrames` shapes.
@@ -78,26 +90,25 @@ describe("theme symbols.spinnerFrames", () => {
 		await expect(getThemeByName("custom-empty-object")).resolves.toBeUndefined();
 	});
 
-	it("falls through to preset frames when `spinnerFrames` is absent", async () => {
-		// `dark` ships with `symbols.preset: "unicode"`; we only assert that the
-		// default status frames match the preset table when no override is set.
-		await writeCustomTheme("custom-no-override", {});
-
-		const theme = await getThemeByName("custom-no-override");
-		expect(theme).toBeDefined();
-		const status = theme!.getSpinnerFrames("status");
-		expect(status.length).toBeGreaterThan(1);
-		expect(status).not.toContain("A");
-	});
-
-	it("derives live tool spinner frames from a shared clock", () => {
+	it("derives live tool spinner frames from the shared clock at its live interval", () => {
 		const frameCount = 4;
-		const now = SPINNER_ADVANCE_MS * 3 + 12;
+		const now = DEFAULT_SPINNER_INTERVAL_MS * 3 + 12;
 
-		expect(sharedSpinnerFrame(frameCount, now + SPINNER_ADVANCE_MS)).toBe(
+		expect(sharedSpinnerFrame(frameCount, now + DEFAULT_SPINNER_INTERVAL_MS)).toBe(
 			(sharedSpinnerFrame(frameCount, now) + 1) % frameCount,
 		);
-		expect(sharedSpinnerFrame(frameCount, SPINNER_ADVANCE_MS * frameCount)).toBe(0);
+		expect(sharedSpinnerFrame(frameCount, DEFAULT_SPINNER_INTERVAL_MS * frameCount)).toBe(0);
 		expect(sharedSpinnerFrame(0, now)).toBe(0);
+
+		try {
+			// A slower interval advances once per new period; a static one is frame 0 at any time.
+			setSpinnerInterval(1000);
+			expect(sharedSpinnerFrame(frameCount, 2999)).toBe(2);
+			expect(sharedSpinnerFrame(frameCount, 3000)).toBe(3);
+			setSpinnerInterval(SPINNER_INTERVAL_STATIC);
+			expect(sharedSpinnerFrame(frameCount, 12_345)).toBe(0);
+		} finally {
+			setSpinnerInterval(DEFAULT_SPINNER_INTERVAL_MS);
+		}
 	});
 });

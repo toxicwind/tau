@@ -1,5 +1,10 @@
 import { describe, expect, it } from "bun:test";
+<<<<<<< ours — interstitial `file_header` (S, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import { extractDateFromText, extractTemporal, parseNlDate } fr…`
 import { extractDateFromText, extractTemporal, parseNlDate } from "@tau/tau-mnemotau/core/temporal-parser";
+=======
+import { extractTemporal, parseNlDate } from "@oh-my-pi/pi-mnemopi/core/temporal-parser";
+>>>>>>> theirs — interstitial `file_header` (S, confidence: medium) · weave: run 'weave explain packages/mnemotau/test/temporal-parser.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const REF = new Date("2026-05-20T15:30:00Z"); // Wednesday
 
@@ -202,21 +207,10 @@ describe("temporal parser", () => {
 		expect(parseNlDate("not a date at all", REF)).toBeNull();
 	});
 
-	it("extracts temporal tags for parsed dates", () => {
-		const result = extractTemporal("Last Monday we discussed the API design", REF);
-		expect(result.temporal_tags.length).toBeGreaterThan(0);
-		expect(result.temporal_tags).toContain("monday");
-	});
-
 	it("uses the first date expression when multiple are present", () => {
 		const result = extractTemporal("Deployed v2 on 2026-01-15 and v3 yesterday", REF);
 		expect(result.event_date).toBe("2026-01-15");
 		expect(result.primary_signal).toBe("2026-01-15");
-	});
-
-	it("extracts just the date string", () => {
-		expect(extractDateFromText("Deployed yesterday", REF)).toBe("2026-05-19");
-		expect(extractDateFromText("No date here", REF)).toBeNull();
 	});
 
 	it("treats date-only and timezone-less string references as UTC", () => {

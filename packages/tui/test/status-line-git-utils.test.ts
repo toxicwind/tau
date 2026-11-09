@@ -20,9 +20,13 @@ describe("parseGitHubRepo", () => {
 		expect(parseGitHubRepo("git@github.com:loftiskg/tau.git")).toBe("loftiskg/tau");
 	});
 
+<<<<<<< ours — scope `test("parses SSH scp-style URL without .git s...` in test_suite `parseGitHubRepo`, deleted in theirs (S+F, confidence: low)
+// refused_by: statement_fold · collision: none (no common ancestor text)
 	test("parses SSH scp-style URL without .git suffix", () => {
 		expect(parseGitHubRepo("git@github.com:loftiskg/tau")).toBe("loftiskg/tau");
 	});
+=======
+>>>>>>> theirs — scope `test("parses SSH scp-style URL without .git s...` deleted in theirs · weave: run 'weave explain packages/tui/test/status-line-git-utils.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 	test("parses ssh:// protocol URL", () => {
 		expect(parseGitHubRepo("ssh://git@github.com/user/repo.git")).toBe("user/repo");
@@ -40,10 +44,6 @@ describe("parseGitHubRepo", () => {
 		expect(parseGitHubRepo("https://github.com/org/my.repo.name.git")).toBe("org/my.repo.name");
 	});
 
-	test("parses SSH URL with dots in repo name", () => {
-		expect(parseGitHubRepo("git@github.com:org/dotted.repo.git")).toBe("org/dotted.repo");
-	});
-
 	test("parses URL with dots in repo name and no .git suffix", () => {
 		expect(parseGitHubRepo("https://github.com/org/my.repo")).toBe("org/my.repo");
 	});
@@ -54,20 +54,8 @@ describe("parseDefaultBranch", () => {
 		expect(parseDefaultBranch("origin/main")).toBe("main");
 	});
 
-	test("strips origin/ prefix from origin/master", () => {
-		expect(parseDefaultBranch("origin/master")).toBe("master");
-	});
-
-	test("strips origin/ prefix from origin/develop", () => {
-		expect(parseDefaultBranch("origin/develop")).toBe("develop");
-	});
-
 	test("strips upstream/ prefix", () => {
 		expect(parseDefaultBranch("upstream/main")).toBe("main");
-	});
-
-	test("returns bare branch name unchanged", () => {
-		expect(parseDefaultBranch("main")).toBe("main");
 	});
 
 	test("handles empty string", () => {

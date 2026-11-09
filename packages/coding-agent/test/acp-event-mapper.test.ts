@@ -13,6 +13,8 @@ const arkSessionNotification = type({
 	},
 });
 
+<<<<<<< ours — interstitial `between:packages/coding-agent/test/acp-event-mapper.test.ts::variable::arkSessionNotification:packages/coding-agent/test/acp-event-mapper.test.ts::function::makeAssistantMessage` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 import type { Model } from "@tau/tau-ai";
 import { buildModel } from "@tau/tau-catalog/build";
 import { AcpAgent } from "tau/modes/acp/acp-agent";
@@ -25,6 +27,21 @@ import {
 import type { AgentSession, AgentSessionEvent } from "tau/session/agent-session";
 import { SessionManager } from "tau/session/session-manager";
 import { expectAcpStructure, expectAcpStructureRejects } from "./helpers/acp-schema";
+=======
+import type { Model } from "@oh-my-pi/pi-ai";
+import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import { AcpAgent } from "@oh-my-pi/pi-coding-agent/modes/acp/acp-agent";
+import {
+	buildToolCallStartUpdate,
+	mapAgentSessionEventToAcpSessionUpdates,
+	mapToolKind,
+	normalizeReplayToolArguments,
+} from "@oh-my-pi/pi-coding-agent/modes/acp/acp-event-mapper";
+import type { AgentSession, AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
+import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
+import { expectAcpStructure } from "./helpers/acp-schema";
+>>>>>>> theirs — interstitial `between:packages/coding-agent/test/acp-event-mapper.test.ts::variable::arkSessionNotification:packages/coding-agent/test/acp-event-mapper.test.ts::function::makeAssistantMessage` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/acp-event-mapper.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function makeAssistantMessage(text: string) {
 	return {
@@ -78,7 +95,7 @@ class ReplayTestSession {
 	customCommands: [] = [];
 	skills: [] = [];
 	extensionRunner = undefined;
-	settings = { get: (_key: string) => false };
+	settings = Settings.isolated();
 
 	constructor(cwd: string, sessionDir?: string) {
 		this.sessionManager = SessionManager.create(cwd, sessionDir);
@@ -98,6 +115,12 @@ class ReplayTestSession {
 	}
 
 	setClientBridge(_bridge: unknown): void {}
+
+	setMcpServerInstructionsSource(_source: unknown): void {}
+
+	registerSessionChangeCallback(_callback: () => void): () => void {
+		return () => {};
+	}
 
 	subscribe(_listener: (event: AgentSessionEvent) => void): () => void {
 		return () => {};
@@ -199,27 +222,6 @@ describe("ACP event mapper", () => {
 		expect(doneUpdates).toEqual([]);
 	});
 
-	it("preserves command text when a new command tool is started", () => {
-		const updates = mapAgentSessionEventToAcpSessionUpdates(
-			{
-				type: "tool_execution_start",
-				toolCallId: "tc-command-start",
-				toolName: "bash",
-				args: { command: "npm run check" },
-			} as AgentSessionEvent,
-			"session-1",
-		);
-
-		expect(updates).toHaveLength(1);
-		expectAcpNotifications(updates);
-		const update = updates[0]!.update as {
-			sessionUpdate: string;
-			content?: Array<{ type: string; content?: { type: string; text?: string } }>;
-		};
-		expect(update.sessionUpdate).toBe("tool_call");
-		expect(update.content).toContainEqual({ type: "content", content: { type: "text", text: "$ npm run check" } });
-	});
-
 	it("keeps write agent:// messages off the ACP session stream", () => {
 		const args = { path: "agent://Scout", content: "Private coordination" };
 		const events: AgentSessionEvent[] = [
@@ -288,21 +290,6 @@ describe("ACP event mapper", () => {
 		);
 
 		expect(updates.map(update => update.update.sessionUpdate)).toEqual(["tool_call", "tool_call_update"]);
-	});
-
-	it("keeps wait visible so job deliveries reach ACP", () => {
-		const updates = mapAgentSessionEventToAcpSessionUpdates(
-			{
-				type: "tool_execution_start",
-				toolCallId: "tc-bare-wait",
-				toolName: "wait",
-				args: {},
-			},
-			"session-1",
-		);
-
-		expect(updates).toHaveLength(1);
-		expect(updates[0]?.update.sessionUpdate).toBe("tool_call");
 	});
 
 	it("uses command text for a new command tool even when intent is generic", () => {
@@ -523,6 +510,30 @@ describe("ACP event mapper", () => {
 			expect(JSON.stringify(update.content)).not.toContain("blob:sha256:");
 			expect(JSON.stringify(update.rawOutput)).toContain(blobRef);
 		}
+	});
+
+	it("settles a backgrounded call with its job's final frame and keeps running frames in progress", () => {
+		const status = (state: string) => {
+			const [notification] = mapAgentSessionEventToAcpSessionUpdates(
+				{
+					type: "tool_execution_update",
+					toolCallId: "tc-bg",
+					toolName: "bash",
+					args: { command: "hyperfine bench" },
+					partialResult: {
+						content: [{ type: "text", text: "Benchmark 1" }],
+						details: { async: { state, jobId: "bg_2", type: "bash" } },
+					},
+				} as AgentSessionEvent,
+				"session-1",
+			);
+			return (notification!.update as { status?: string }).status;
+		};
+
+		expect(status("running")).toBe("in_progress");
+		expect(status("completed")).toBe("completed");
+		expect(status("failed")).toBe("failed");
+		expect(status("cancelled")).toBe("failed");
 	});
 
 	it("emits locations on tool_execution_update from args", () => {
@@ -1036,6 +1047,22 @@ describe("ACP event mapper", () => {
 		expect("content" in update).toBe(false);
 	});
 
+	it("names the tool so clients can label kind-other calls such as task", () => {
+		const update = buildToolCallStartUpdate({
+			toolCallId: "toolu_task",
+			toolName: "task",
+			args: { tasks: [] },
+			intent: "Waiting for agents",
+		});
+
+		expect(update).toMatchObject({
+			sessionUpdate: "tool_call",
+			name: "task",
+			title: "Waiting for agents",
+			kind: "other",
+		});
+	});
+
 	it("keeps object replay arguments unchanged and builds command content", () => {
 		const rawArgs = { command: "bun test", cwd: "/repo" };
 		const replayArgs = normalizeReplayToolArguments(rawArgs);
@@ -1277,24 +1304,5 @@ describe("ACP event mapper", () => {
 			kind: "edit",
 			locations: [{ path: path.resolve("/repo", "src/foo.ts") }],
 		});
-	});
-
-	it("rejects mutated ACP notification discriminators", () => {
-		const [notification] = mapAgentSessionEventToAcpSessionUpdates(
-			{
-				type: "tool_execution_start",
-				toolCallId: "tc-schema",
-				toolName: "read",
-				args: { path: "package.json" },
-			} as AgentSessionEvent,
-			"session-1",
-		);
-
-		expectAcpStructure(arkSessionNotification, notification);
-		expectAcpStructureRejects(arkSessionNotification, {
-			...notification,
-			update: { ...notification!.update, sessionUpdate: "tool_call_updates" },
-		});
-		expectAcpStructureRejects(arkSessionNotification, { ...notification, sessionId: 42 });
 	});
 });

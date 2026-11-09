@@ -82,7 +82,12 @@ function baseOptions(cwd: string) {
 
 describe("/tan extension auth over a shared registry", () => {
 	it("keeps the extension provider's credential resolvable after a forwarded tan-like child is created", async () => {
+<<<<<<< ours — scope `it("keeps the extension provider's credential...` in test_suite `/tan extension auth over a shared registry` (F, confidence: medium)
+// refused_by: statement_fold · collision: `using tempDir = TempDir.createSync("omp-tan-ext-auth-");`
 		using tempDir = TempDir.createSync("tau-tan-ext-auth-");
+=======
+		using tempDir = TempDir.createSync("@omp-tan-ext-auth-");
+>>>>>>> theirs — scope `it("keeps the extension provider's credential...` · weave: run 'weave explain packages/coding-agent/test/tan-extension-auth.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 		const cwd = path.resolve(tempDir.path());
 		const extPath = path.join(cwd, "provider-ext.ts");
 		await Bun.write(extPath, EXTENSION_SOURCE);
@@ -137,7 +142,12 @@ describe("/tan extension auth over a shared registry", () => {
 	}, 20_000);
 
 	it("preserves auth via the extension-paths fallback when no prepared factories are forwarded", async () => {
+<<<<<<< ours — scope `it("preserves auth via the extension-paths fa...` in test_suite `/tan extension auth over a shared registry` (F, confidence: medium)
+// refused_by: statement_fold · collision: `using tempDir = TempDir.createSync("omp-tan-ext-auth-fallback-"…`
 		using tempDir = TempDir.createSync("tau-tan-ext-auth-fallback-");
+=======
+		using tempDir = TempDir.createSync("@omp-tan-ext-auth-fallback-");
+>>>>>>> theirs — scope `it("preserves auth via the extension-paths fa...`
 		const cwd = path.resolve(tempDir.path());
 		const extPath = path.join(cwd, "provider-ext.ts");
 		await Bun.write(extPath, EXTENSION_SOURCE);

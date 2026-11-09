@@ -3,6 +3,7 @@ import { Settings } from "tau/config/settings";
 import { refreshAgentDiscovery, TaskTool } from "tau/task";
 import * as discoveryModule from "tau/task/discovery";
 import type { ToolSession } from "tau/tools";
+import { cfgExtensions } from "@oh-my-pi/pi-coding-agent/extensibility/settings";
 
 const TEST_AGENTS = [
 	{
@@ -107,7 +108,7 @@ describe("TaskTool.create discovery memo", () => {
 			effectiveExtensionRoots: () => ({
 				explicit: [],
 				mode: "merge" as const,
-				configured: settings.get("extensions") ?? [],
+				configured: cfgExtensions.get(settings) ?? [],
 				configuredLevel: "user" as const,
 			}),
 			getSessionFile: () => null,
@@ -117,7 +118,7 @@ describe("TaskTool.create discovery memo", () => {
 		const before = await TaskTool.create(session);
 		expect(before.description).toContain("General-purpose task agent");
 
-		settings.override("extensions", ["/extensions/live"]);
+		cfgExtensions.override(settings, ["/extensions/live"]);
 		const after = await TaskTool.create(session);
 		expect(after.description).toContain("Refreshed task agent");
 		expect(spy).toHaveBeenCalledTimes(2);

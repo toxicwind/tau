@@ -1,7 +1,12 @@
 /**
  * Shell CLI command handlers.
  *
+<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: `* Handles `omp shell` subcommand for testing the native brush-c…`
  * Handles `tau shell` subcommand for testing the native brush-core shell.
+=======
+ * Handles `omp shell` subcommand for testing the native embedded bash engine.
+>>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/cli/shell-cli.ts' for per-hunk detail, 'weave check' to verify your resolution
  */
 import * as path from "node:path";
 import { createInterface } from "node:readline/promises";
@@ -10,6 +15,7 @@ import { APP_NAME, getProjectDir } from "@tau/tau-utils";
 import chalk from "@tau/tau-utils/chalk";
 import { Settings } from "../config/settings";
 import { buildMinimizerOptions } from "../exec/bash-executor";
+import { cfgShellMinimizer } from "../exec/settings";
 import { getOrCreateSnapshot } from "../utils/shell-snapshot";
 
 export interface ShellCommandArgs {
@@ -52,7 +58,7 @@ export async function runShellCommand(cmd: ShellCommandArgs): Promise<void> {
 	const settings = await Settings.init({ cwd });
 	const { shell, env: shellEnv } = settings.getShellConfig();
 	const snapshotPath = cmd.noSnapshot || !shell.includes("bash") ? null : await getOrCreateSnapshot(shell, shellEnv);
-	const minimizer = buildMinimizerOptions(settings.getGroup("shellMinimizer"));
+	const minimizer = buildMinimizerOptions(cfgShellMinimizer.get(settings));
 	const shellSession = new Shell({ sessionEnv: shellEnv, snapshotPath: snapshotPath ?? undefined, minimizer });
 
 	let active = false;
@@ -78,7 +84,7 @@ export async function runShellCommand(cmd: ShellCommandArgs): Promise<void> {
 
 ` +
 				`${chalk.bold("Notes:")}
-  Runs in a persistent brush-core shell session.
+  Runs in a persistent embedded bash session.
   Variables and functions defined in one command persist for the next.
 
 `,

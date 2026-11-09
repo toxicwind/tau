@@ -16,6 +16,8 @@ import { SessionManager } from "tau/session/session-manager";
 import { EventBus } from "tau/utils/event-bus";
 import { logger, TempDir } from "@tau/tau-utils";
 
+import { cfgStartupQuiet } from "@oh-my-pi/pi-coding-agent/modes/settings";
+
 /**
  * Behavioral wiring guard for MCP startup status (mirrors
  * interactive-mode-lsp-startup.test.ts). The SDK emits connection lifecycle
@@ -69,7 +71,7 @@ describe("InteractiveMode MCP connection status", () => {
 			modelRegistry,
 		});
 		eventBus = new EventBus();
-		mode = new InteractiveMode(session, "test", undefined, () => {}, [], undefined, eventBus);
+		mode = new InteractiveMode(session, "test", () => {}, [], undefined, eventBus);
 		// This contract is the banner wiring, not git branch watching; a real
 		// fs.watch in a parallel Bun worker can trip an unrelated-worker SIGTRAP.
 		vi.spyOn(mode.statusLine, "watchBranch").mockImplementation(() => {});
@@ -91,17 +93,19 @@ describe("InteractiveMode MCP connection status", () => {
 		const event = { type: "connecting", serverNames } satisfies McpConnectionStatusEvent;
 		eventBus.emit(MCP_CONNECTION_STATUS_EVENT_CHANNEL, event);
 
+		// Kept off native terminals' toasts: one per server change is noise.
 		expect(showStatusSpy).toHaveBeenCalledWith(
 			formatMCPConnectionStatusMessage({
 				pendingServers: serverNames,
 				connectedServers: [],
 				failedServers: [],
 			}),
+			{ toast: false },
 		);
 	});
 
 	it("does not render the mcp:connection-status status when startup.quiet is enabled", () => {
-		session.settings.set("startup.quiet", true);
+		cfgStartupQuiet.set(session.settings, true);
 		const showStatusSpy = vi.spyOn(mode, "showStatus").mockImplementation(() => {});
 
 		eventBus.emit(MCP_CONNECTION_STATUS_EVENT_CHANNEL, {
@@ -170,6 +174,7 @@ describe("InteractiveMode MCP connection status", () => {
 
 		expect(showStatusSpy).toHaveBeenLastCalledWith(
 			"Connected: alpha. Failed: broken: bad config. Still connecting: retry…",
+			{ toast: false },
 		);
 	});
 

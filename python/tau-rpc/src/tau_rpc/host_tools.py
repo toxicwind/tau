@@ -4,7 +4,8 @@ import threading
 from dataclasses import dataclass
 from typing import Callable, Generic, TypeAlias, TypeVar, TypedDict, cast
 
-from .protocol import ImageContent, JsonObject, JsonValue, TextContent
+from ._wire import ImageContent, TextContent, ToolLoadMode
+from ._wire_runtime import JsonObject, JsonValue
 
 TParams = TypeVar("TParams")
 TDetails = TypeVar("TDetails")
@@ -49,6 +50,9 @@ class HostTool(Generic[TParams, TDetails]):
     label: str | None = None
     hidden: bool = False
     decode: Callable[[JsonObject], TParams] | None = None
+    load_mode: ToolLoadMode | None = None
+    reads_skill_uris: bool = False
+    """The tool can read `skill://` instruction content, so prompts include skill guidance."""
 
     def parse_params(self, payload: JsonObject) -> TParams:
         if self.decode is not None:
@@ -68,6 +72,8 @@ def host_tool(
     label: str | None = None,
     hidden: bool = False,
     decode: Callable[[JsonObject], TParams] | None = None,
+    load_mode: ToolLoadMode | None = None,
+    reads_skill_uris: bool = False,
 ) -> HostTool[TParams, TDetails]:
     return HostTool(
         name=name,
@@ -77,4 +83,6 @@ def host_tool(
         label=label,
         hidden=hidden,
         decode=decode,
+        load_mode=load_mode,
+        reads_skill_uris=reads_skill_uris,
     )

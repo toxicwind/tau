@@ -42,7 +42,7 @@ function createCtx(overrides?: {
 		session: {
 			state: {},
 			isFastModeEnabled: () => false,
-			modelRegistry: { isUsingOAuth: () => false },
+			modelRegistry: { isUsingSubscription: () => false },
 			sessionManager: hasName ? { getSessionName: () => overrides.sessionName } : undefined,
 		} as unknown as SegmentContext["session"],
 		sessionAccent: overrides?.sessionAccent,
@@ -119,7 +119,7 @@ function createStatusLineSession(sessionName: string, modelName?: string) {
 		isFastModeEnabled: () => false,
 		getContextUsage: () => ({ tokens: 0, contextWindow: 128000 }),
 		getGoalModeState: () => null,
-		modelRegistry: { isUsingOAuth: () => false },
+		modelRegistry: { isUsingSubscription: () => false },
 		sessionManager: {
 			getSessionName: () => sessionName,
 			getUsageStatistics: () => ({
@@ -290,7 +290,8 @@ describe("path segment truncation at varying maxLength", () => {
 		expect(visibleWidth(rendered.content)).toBeGreaterThan(0);
 	});
 });
-
+<<<<<<< ours — test_suite `overflow: path shrinks before git is dropped` (S+F, confidence: low)
+// refused_by: modify_delete_guard · collision: none (no common ancestor text)
 describe("overflow: path shrinks before git is dropped", () => {
 	let tmpDir: string;
 
@@ -462,6 +463,8 @@ describe("overflow: path shrinks before git is dropped", () => {
 		}
 	});
 });
+=======
+>>>>>>> theirs — test_suite `overflow: path shrinks before git is dropped` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/status-line-overflow.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 describe("overflow: path survives before model", () => {
 	it("drops the model segment before the cwd path when both cannot fit", () => {

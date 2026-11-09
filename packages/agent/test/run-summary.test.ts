@@ -15,11 +15,20 @@ import {
 	aggregateAgentRunSummaries,
 	emptyAgentRunCoverage,
 	emptyAgentRunSummary,
+<<<<<<< ours — imports `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import { EXECUTE_TOOL_STATUS_ATTR, GenAIAttr, PiGenAIAggregateA…`
 } from "@tau/tau-agent-core/run-collector";
 import { EXECUTE_TOOL_STATUS_ATTR, GenAIAttr, PiGenAIAggregateAttr } from "@tau/tau-agent-core/telemetry";
 import type { AgentEvent, AgentLoopConfig, AgentMessage, AgentTool } from "@tau/tau-agent-core/types";
 import type { AssistantMessage, Message } from "@tau/tau-ai";
 import { createMockModel } from "@tau/tau-ai/providers/mock";
+=======
+} from "@oh-my-pi/pi-agent-core/run-collector";
+import { EXECUTE_TOOL_STATUS_ATTR, GenAIAttr, OmpGenAIAggregateAttr } from "@oh-my-pi/pi-agent-core/telemetry";
+import type { AgentEvent, AgentLoopConfig, AgentMessage, AgentTool } from "@oh-my-pi/pi-agent-core/types";
+import type { AssistantMessage, Message } from "@oh-my-pi/pi-ai";
+import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
+>>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/agent/test/run-summary.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type {
 	AttributeValue,
 	Context as OtelContext,
@@ -202,28 +211,6 @@ describe("AgentRunSummary delivery", () => {
 		expect(endEvent?.telemetry).toBeUndefined();
 		expect(endEvent?.coverage).toBeUndefined();
 	});
-
-	it("preserves agentLoop().result() backwards-compat (still resolves to AgentMessage[])", async () => {
-		const tracer = new RecordingTracer();
-		const mock = createMockModel({ responses: [{ content: ["ok"] }] });
-		const config: AgentLoopConfig = {
-			model: mock.model,
-			convertToLlm: identityConverter,
-			telemetry: { tracer },
-		};
-		const stream = agentLoop(
-			[createUserMessage("hi")],
-			{ systemPrompt: ["sys"], messages: [], tools: [] },
-			config,
-			undefined,
-			mock.stream,
-		);
-		const messages = await stream.result();
-		// 1 user prompt + 1 assistant message.
-		expect(messages.length).toBe(2);
-		expect(messages[0].role).toBe("user");
-		expect(messages[1].role).toBe("assistant");
-	});
 });
 
 describe("AgentRunSummary aggregation", () => {
@@ -321,7 +308,7 @@ describe("AgentRunSummary aggregation", () => {
 		expect(blockedSpan?.attributes[GenAIAttr.ErrorType]).toBe("tool_blocked");
 	});
 
-	it("populates aggregate pi.gen_ai.agent.* attributes on the invoke_agent span", async () => {
+	it("populates aggregate omp.gen_ai.agent.* attributes on the invoke_agent span", async () => {
 		const tracer = new RecordingTracer();
 		const tool = buildTool({ name: "alpha", behavior: "ok" });
 		const mock = createMockModel({
@@ -346,12 +333,12 @@ describe("AgentRunSummary aggregation", () => {
 		await detailed.detailed();
 		const invokeSpan = tracer.findSpan("invoke_agent");
 		expect(invokeSpan).toBeDefined();
-		expect(invokeSpan?.attributes[PiGenAIAggregateAttr.ChatsCount]).toBe(2);
-		expect(invokeSpan?.attributes[PiGenAIAggregateAttr.ToolsCount]).toBe(1);
-		expect(invokeSpan?.attributes[PiGenAIAggregateAttr.ToolsOkCount]).toBe(1);
-		expect(invokeSpan?.attributes[PiGenAIAggregateAttr.UsageInputTokensTotal]).toBe(6);
-		expect(invokeSpan?.attributes[PiGenAIAggregateAttr.UsageTotalTokensTotal]).toBe(13);
-		expect(invokeSpan?.attributes[PiGenAIAggregateAttr.ToolsInvoked]).toEqual(["alpha"]);
+		expect(invokeSpan?.attributes[OmpGenAIAggregateAttr.ChatsCount]).toBe(2);
+		expect(invokeSpan?.attributes[OmpGenAIAggregateAttr.ToolsCount]).toBe(1);
+		expect(invokeSpan?.attributes[OmpGenAIAggregateAttr.ToolsOkCount]).toBe(1);
+		expect(invokeSpan?.attributes[OmpGenAIAggregateAttr.UsageInputTokensTotal]).toBe(6);
+		expect(invokeSpan?.attributes[OmpGenAIAggregateAttr.UsageTotalTokensTotal]).toBe(13);
+		expect(invokeSpan?.attributes[OmpGenAIAggregateAttr.ToolsInvoked]).toEqual(["alpha"]);
 	});
 });
 

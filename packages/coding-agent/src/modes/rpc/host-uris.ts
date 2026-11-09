@@ -5,6 +5,7 @@ import type {
 	InternalUrl,
 	ProtocolHandler,
 	ResolveContext,
+	SchemeSpec,
 	WriteContext,
 } from "../../internal-urls/types";
 import type {
@@ -15,9 +16,12 @@ import type {
 } from "./rpc-types";
 
 type RpcHostUriOutput = (frame: RpcHostUriRequest | RpcHostUriCancelRequest) => void;
-
+<<<<<<< ours — variable `RESERVED_HOST_URI_SCHEMES` (S, confidence: medium)
+// refused_by: modify_delete_guard · collision: none (no common ancestor text)
 /** TAU-owned namespaces that RPC hosts may not replace. */
 const RESERVED_HOST_URI_SCHEMES: ReadonlySet<string> = new Set(["security"]);
+=======
+>>>>>>> theirs — variable `RESERVED_HOST_URI_SCHEMES` (S, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/modes/rpc/host-uris.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 type PendingUriRequest = {
 	operation: "read" | "write";
@@ -40,15 +44,21 @@ export function isRpcHostUriResult(value: unknown): value is RpcHostUriResult {
  */
 class RpcHostUriProtocolHandler implements ProtocolHandler {
 	readonly scheme: string;
-	readonly immutable: boolean;
+	readonly spec: SchemeSpec;
 	readonly write?: (url: InternalUrl, content: string, context?: WriteContext) => Promise<void>;
 	readonly #bridge: RpcHostUriBridge;
 
 	constructor(definition: RpcHostUriSchemeDefinition, bridge: RpcHostUriBridge) {
 		this.scheme = definition.scheme;
-		this.immutable = definition.immutable === true;
 		this.#bridge = bridge;
-		if (definition.writable === true) {
+		const writable = definition.writable === true;
+		this.spec = {
+			backing: "remote",
+			selectors: "none",
+			immutable: definition.immutable === true,
+			write: writable ? { via: "handler", payload: "text", scope: "workspace", tier: () => "write" } : undefined,
+		};
+		if (writable) {
 			this.write = (url, content, context) => this.#bridge.requestWrite(this.scheme, url, content, context);
 		}
 	}
@@ -97,8 +107,16 @@ export class RpcHostUriBridge {
 			if (!/^[a-z][a-z0-9+.-]*$/.test(scheme)) {
 				throw new Error(`Host URI scheme contains invalid characters: ${raw.scheme}`);
 			}
+<<<<<<< ours — scope `setSchemes` in class `RpcHostUriBridge` (F, confidence: medium)
+// refused_by: container_member · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 			if (RESERVED_HOST_URI_SCHEMES.has(scheme)) {
 				throw new Error(`Host URI scheme is reserved by TAU: ${scheme}://`);
+=======
+			// Built-in schemes are OMP-owned: a host shadowing one would change its semantics for
+			// the whole process, and `clear()` would then delete it for later sessions.
+			if (this.#router.isBuiltin(scheme)) {
+				throw new Error(`Host URI scheme is reserved by OMP: ${scheme}://`);
+>>>>>>> theirs — scope `setSchemes`
 			}
 			normalized.set(scheme, {
 				scheme,

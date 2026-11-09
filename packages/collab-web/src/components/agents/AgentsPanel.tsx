@@ -1,6 +1,6 @@
 import type { AgentProgress, AgentSnapshot, SubagentLifecyclePayload, SubagentProgressPayload } from "@tau/tau-wire";
 import type { ReactNode } from "react";
-import { useEffect, useMemo, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { fmtCost, fmtDuration, fmtTokens, relTime } from "../../lib/format";
 import "./agents.css";
 
@@ -42,7 +42,7 @@ function activityLine(
 	return agent.status;
 }
 
-function AgentRow(props: {
+const AgentRow = memo(function AgentRow(props: {
 	agent: AgentSnapshot;
 	payload: SubagentProgressPayload | undefined;
 	lifecycle: SubagentLifecyclePayload | undefined;
@@ -71,9 +71,10 @@ function AgentRow(props: {
 			</span>
 		</button>
 	);
-}
+});
 
-export function AgentsPanel(props: {
+/** Memoized: the client replaces `progress`/`lifecycle` only when they change. */
+export const AgentsPanel = memo(function AgentsPanel(props: {
 	agents: readonly AgentSnapshot[];
 	progress: ReadonlyMap<string, SubagentProgressPayload>;
 	lifecycle: ReadonlyMap<string, SubagentLifecyclePayload>;
@@ -98,6 +99,7 @@ export function AgentsPanel(props: {
 
 	return (
 		<div className="ag-panel">
+			<div className="ag-heading">Session</div>
 			{sorted.mains.map(agent => (
 				<AgentRow
 					key={agent.id}
@@ -109,6 +111,10 @@ export function AgentsPanel(props: {
 					onSelect={onSelect}
 				/>
 			))}
+			<div className="ag-heading">
+				Subagents
+				{sorted.subs.length > 0 && <span className="ag-heading-count">{sorted.subs.length}</span>}
+			</div>
 			{sorted.subs.map(agent => (
 				<AgentRow
 					key={agent.id}
@@ -120,7 +126,7 @@ export function AgentsPanel(props: {
 					onSelect={onSelect}
 				/>
 			))}
-			{sorted.subs.length === 0 ? <div className="ag-empty">no subagents</div> : null}
+			{sorted.subs.length === 0 ? <div className="ag-empty">No subagents yet</div> : null}
 		</div>
 	);
-}
+});

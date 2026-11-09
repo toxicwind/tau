@@ -1,4 +1,8 @@
+import { Settings } from "../../src/config/settings.ts";
 import { runPrintMode } from "../../src/modes/print-mode.ts";
+import { postmortem } from "@oh-my-pi/pi-utils";
+
+postmortem.installProcessHandlers();
 
 const marker = process.argv[2];
 if (!marker) throw new Error("Missing disposal marker path");
@@ -6,13 +10,16 @@ if (!marker) throw new Error("Missing disposal marker path");
 const session = {
 	extensionRunner: undefined,
 	subscribe() {},
-	settings: { get: () => false },
+	settings: Settings.isolated(),
 	sessionManager: {
 		buildSessionContext: () => ({ messages: [] }),
 		getEntries: () => [],
 		onPersistenceError: () => () => {},
+		onPersistenceNotice: () => () => {},
 	},
+	disableStopTimeTodoReminders() {},
 	setTextOutputCommitted() {},
+	async waitForIdle() {},
 	async prompt() {
 		process.kill(process.pid, "SIGTERM");
 		await Promise.withResolvers().promise;

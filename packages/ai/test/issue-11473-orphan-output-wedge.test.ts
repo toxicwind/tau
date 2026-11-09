@@ -1,9 +1,21 @@
 import { expect, it } from "bun:test";
+<<<<<<< ours — imports `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: `import { buildResponsesInput } from "@oh-my-pi/pi-ai/providers/…`
 import type { ResponseInput } from "@tau/tau-ai/providers/openai-responses-wire";
 import { buildResponsesInput } from "@tau/tau-ai/providers/openai-shared";
 import type { AssistantMessage, Context, ToolResultMessage } from "@tau/tau-ai/types";
 import { createOpenAIResponsesHistoryPayload } from "@tau/tau-ai/utils";
 import { buildModel } from "@tau/tau-catalog/build";
+=======
+import type { ResponseInput } from "@oh-my-pi/pi-ai/providers/openai-responses-wire";
+import {
+	buildResponsesInput,
+	hoistInterleavedResponsesToolBatchMessages,
+} from "@oh-my-pi/pi-ai/providers/openai-shared";
+import type { AssistantMessage, Context, ToolResultMessage } from "@oh-my-pi/pi-ai/types";
+import { createOpenAIResponsesHistoryPayload } from "@oh-my-pi/pi-ai/utils";
+import { buildModel } from "@oh-my-pi/pi-catalog/build";
+>>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/test/issue-11473-orphan-output-wedge.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 // DeepSeek via openai-responses (#11473): its validator pairs tool calls by
 // turn, so an assistant `message` wedged between a `function_call` and its
@@ -47,6 +59,83 @@ function toolResult(callId: string, toolName: string, text: string, isError = fa
 	};
 }
 
+it("pairs a call missing from a native snapshot before sending its result (#11473)", () => {
+	// A tool call omitted from a native snapshot still has a block and a result.
+	const assistant: AssistantMessage = {
+		role: "assistant",
+		content: [
+			{ type: "toolCall", id: "call_00", name: "todo", arguments: {} },
+			{ type: "toolCall", id: "call_01", name: "bash", arguments: { command: "ls" } },
+		],
+		api: model.api,
+		provider: model.provider,
+		model: model.id,
+		usage: zeroUsage,
+		stopReason: "toolUse",
+		providerPayload: createOpenAIResponsesHistoryPayload(
+			model.provider,
+			[
+				{ type: "reasoning", id: "rs_1", summary: [], content: [] },
+				{ type: "function_call", call_id: "call_01", name: "bash", arguments: "{}" },
+			],
+			false,
+		),
+		timestamp: 1,
+	};
+	const context: Context = {
+		messages: [
+			assistant,
+			toolResult("call_00", "todo", "Invalid todo arguments: op must be operation to apply", true),
+			toolResult("call_01", "bash", "file listing"),
+			{ role: "user", content: "continue", timestamp: 5 },
+		],
+	};
+
+	const items = buildResponsesInput({
+		model,
+		context,
+		strictResponsesPairing: false,
+		supportsImageDetailOriginal: false,
+		repairOrphanOutputs: true,
+		nativeHistory: { replay: true, filterReasoning: false },
+	});
+	expect(items.map(wireType)).toEqual([
+		"reasoning",
+		"function_call",
+		"function_call",
+		"function_call_output",
+		"function_call_output",
+		"message:user",
+	]);
+	expect(JSON.stringify(items)).not.toContain("[Orphan tool result; call_id=call_00]");
+	expect(items.find(item => item.type === "function_call" && item.call_id === "call_00")).toMatchObject({
+		name: "todo",
+		arguments: "{}",
+	});
+	expect(items.find(item => item.type === "function_call_output" && item.call_id === "call_00")).toMatchObject({
+		output: "Invalid todo arguments: op must be operation to apply",
+	});
+});
+
+it("leaves commentary between completed sequential tool rounds in place (#13083)", () => {
+	// Each round's call → output pair is complete before the next round's
+	// commentary, so no message interrupts a batch and nothing may move.
+	const input = [
+		{ type: "message", role: "user", content: "go" },
+		{ type: "function_call", call_id: "call_a", name: "read", arguments: "{}" },
+		{ type: "function_call_output", call_id: "call_a", output: "a" },
+		{ type: "message", role: "assistant", content: "after a" },
+		{ type: "function_call", call_id: "call_b", name: "read", arguments: "{}" },
+		{ type: "function_call_output", call_id: "call_b", output: "b" },
+		{ type: "message", role: "assistant", content: "after b" },
+		{ type: "function_call", call_id: "call_c", name: "read", arguments: "{}" },
+		{ type: "function_call_output", call_id: "call_c", output: "c" },
+	] as ResponseInput;
+
+	expect(hoistInterleavedResponsesToolBatchMessages(input)).toEqual(input);
+});
+<<<<<<< ours — test `does not wedge a repaired orphan-output note between a call and its output (#11473)` (T+S+F, confidence: low)
+// refused_by: modify_delete_guard · collision: none (no common ancestor text)
 it("does not wedge a repaired orphan-output note between a call and its output (#11473)", () => {
 	// One turn: model issued parallel `todo` (call_00) + `bash` (call_01). `todo`
 	// failed tau-side arg validation, so the native-replay snapshot (dt:false)
@@ -113,3 +202,5 @@ it("does not wedge a repaired orphan-output note between a call and its output (
 	expect(lastCall).toBeLessThan(firstOutput);
 	expect(types.slice(lastCall + 1, firstOutput)).toEqual([]);
 });
+=======
+>>>>>>> theirs — test `does not wedge a repaired orphan-output note between a call and its output (#11473)` (T+S+F, confidence: low)

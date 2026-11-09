@@ -4,6 +4,9 @@ import { type SelectItem, SelectList } from "../../components/select-list";
 import { Text } from "../../components/text";
 import { WizardStep } from "../../components/wizard-step";
 import { getSelectListTheme, type SymbolPreset, setSymbolPreset, theme } from "../../theme/theme";
+import { col, span, text } from "../../native/describe";
+import type { NativeNode } from "../../native/node";
+import { Memo } from "../../native/memo";
 import type { SetupScene, SetupSceneController, SetupSceneHost } from "./types";
 
 const GLYPH_PRESETS = ["nerd", "unicode", "ascii"] as const satisfies readonly SymbolPreset[];
@@ -17,7 +20,7 @@ const GLYPH_LABELS: Readonly<Record<SymbolPreset, string>> = {
 const GLYPH_SAMPLES: Readonly<Record<SymbolPreset, string>> = {
 	nerd: "      󰉋  ",
 	unicode: "✔  ✖  📁  ⬢  ╭─╮  ├─  •  ⠋  →",
-	ascii: "[ok]  [x]  >  +  [D]  +-+  |--  *  ->",
+	ascii: "[+]  [-]  >  +  [D]  +-+  |-  *  ->",
 };
 
 /** One picker row per preset; the description column shows live sample glyphs instead of prose. */
@@ -34,6 +37,7 @@ class GlyphSceneController implements SetupSceneController {
 	#previewRequest = 0;
 	#committing = false;
 	#step: WizardStep | undefined;
+	#native = new Memo();
 
 	readonly #host: SetupSceneHost;
 
@@ -53,6 +57,7 @@ class GlyphSceneController implements SetupSceneController {
 	}
 
 	invalidate(): void {
+		this.#native.clear();
 		if (this.#step) this.#step.invalidate();
 		else this.#selectList.invalidate();
 	}
@@ -92,6 +97,16 @@ class GlyphSceneController implements SetupSceneController {
 		return this.#step.render(width);
 	}
 
+	/** Hint line over the preset list; the list (sample glyphs as item detail) describes itself. */
+	describe(): NativeNode {
+		return this.#native.get([this.#selectList], () =>
+			col(
+				[text([span("If a row shows boxes, tofu, or misaligned icons, pick another.", "muted")]), this.#selectList],
+				{ gap: "sm", role: "omp.setup.glyph" },
+			),
+		);
+	}
+
 	async #commit(preset: SymbolPreset): Promise<void> {
 		if (this.#committing) return;
 		this.#committing = true;
@@ -121,7 +136,9 @@ class GlyphSceneController implements SetupSceneController {
 export const glyphSetupScene: SetupScene = {
 	id: "glyph-mode",
 	title: "Choose glyph mode",
+	step: "Symbols",
 	minVersion: 1,
+	ansiOnly: true,
 	shouldRun: () => !TERMINAL.glyphProtocol,
 	mount: host => new GlyphSceneController(host),
 };

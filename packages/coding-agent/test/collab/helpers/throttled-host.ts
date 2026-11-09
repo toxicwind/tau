@@ -10,6 +10,7 @@
 import type { InteractiveModeContext } from "tau/modes/types";
 import { unpackEnvelope } from "tau/collab/protocol";
 import type { SessionEntry } from "tau/session/session-entries";
+import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
 import type { FakeWebSocket, InMemoryRelay } from "./in-memory-relay";
 
 export const HIGH_WATER_MARK = 64 * 1024;
@@ -49,7 +50,7 @@ export function makeHostContext(snapshot: Snapshot, seen: HostObservations): Int
 	// that here, or a host-level test never exercises the mirror.
 	const listeners: ((event: unknown) => void)[] = [];
 	return {
-		settings: { get: () => "" },
+		settings: Settings.isolated(),
 		sessionManager: {
 			getSessionId: () => snapshot.header.id,
 			getCwd: () => snapshot.header.cwd,

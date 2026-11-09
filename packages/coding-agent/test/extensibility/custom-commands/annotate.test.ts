@@ -1,7 +1,9 @@
-import { afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { afterEach, beforeAll, describe, expect, it, spyOn, vi } from "bun:test";
+import { mkdir, mkdtemp, realpath, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+<<<<<<< ours — imports `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: `import { TUI } from "@oh-my-pi/pi-tui";`
 import type { AgentMessage } from "@tau/tau-agent-core";
 import { KeybindingsManager } from "@tau/tau-tui/app-keybindings";
 import { TUI } from "@tau/tau-tui";
@@ -17,6 +19,38 @@ import type { SessionPick } from "tau/extensibility/custom-commands/bundled/anno
 import { AnnotateCommand, runAnnotateCommand } from "tau/extensibility/custom-commands/bundled/annotate";
 import type { CustomCommandAPI, CustomCommandContext } from "tau/extensibility/custom-commands/types";
 import type { ReviewPrRef } from "tau/extensibility/custom-commands/bundled/review";
+=======
+import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
+import type { VcsRepo } from "@oh-my-pi/pi-natives";
+import * as vcs from "@oh-my-pi/pi-natives/vcs";
+import { KeybindingsManager } from "@oh-my-pi/pi-tui/app-keybindings";
+import { getKeybindings, setKeybindings, TUI } from "@oh-my-pi/pi-tui";
+import type {
+	ExtensionCustomOptions,
+	ExtensionUIContext,
+	ExtensionUiComponent,
+} from "@oh-my-pi/pi-coding-agent/extensibility/extensions/types";
+import type { Theme } from "@oh-my-pi/pi-tui/theme";
+import { initTheme, theme } from "@oh-my-pi/pi-tui/theme";
+import { CopySelectorComponent } from "@oh-my-pi/pi-tui/overlays/copy-selector";
+import type { SessionPick } from "@oh-my-pi/pi-coding-agent/extensibility/custom-commands/bundled/annotate/text-source";
+import {
+	AnnotateCommand,
+	runAnnotateCommand,
+} from "@oh-my-pi/pi-coding-agent/extensibility/custom-commands/bundled/annotate";
+import {
+	type AnnotationOverlayContext,
+	showCodeReviewOverlay,
+	showTextReviewOverlay,
+} from "@oh-my-pi/pi-coding-agent/extensibility/custom-commands/bundled/annotate/fullscreen";
+import { loadAnnotationDrafts } from "@oh-my-pi/pi-coding-agent/extensibility/custom-commands/bundled/annotate/draft-store";
+import * as externalEditor from "@oh-my-pi/pi-coding-agent/utils/external-editor";
+import type {
+	CustomCommandAPI,
+	CustomCommandContext,
+} from "@oh-my-pi/pi-coding-agent/extensibility/custom-commands/types";
+import type { ReviewPrRef } from "@oh-my-pi/pi-coding-agent/extensibility/custom-commands/bundled/review";
+>>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/extensibility/custom-commands/annotate.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	createResolvedReviewTarget,
 	type ResolvedReviewTarget,
@@ -28,12 +62,20 @@ import type {
 	CodeReviewAnnotation,
 	TextReviewAnnotation,
 	TextReviewSource,
+<<<<<<< ours — imports `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: `import { TUI } from "@oh-my-pi/pi-tui";`
 } from "@tau/tau-tui/overlays/annotation-types";
+=======
+} from "@oh-my-pi/pi-tui/overlays/annotation-types";
+import * as gh from "@oh-my-pi/pi-coding-agent/tools/gh";
+import { github } from "@oh-my-pi/pi-coding-agent/utils/github";
+>>>>>>> theirs — imports `file_header` (S+F, confidence: low)
 import { VirtualTerminal } from "../../../../tui/test/virtual-terminal";
 
 const ENTER = "\r";
 const UP = "\x1b[A";
 const RIGHT = "\x1b[C";
+const CTRL_E = "\x05";
 
 const SAMPLE_DIFF = `diff --git a/src/value.ts b/src/value.ts
 --- a/src/value.ts
@@ -103,6 +145,7 @@ function createContext(options: ContextOptions = {}) {
 			getBranch: () => branch,
 			getCwd: () => options.cwd ?? "/workspace",
 			getSessionId: () => "session-1",
+			getArtifactsDir: () => null,
 		},
 		ui: { select, input, editor, custom, pasteToEditor, notify, setStatus },
 	} as unknown as CustomCommandContext;
@@ -168,6 +211,52 @@ function localTarget(): ResolvedReviewTarget {
 	return createResolvedReviewTarget("uncommitted", "Uncommitted changes", SAMPLE_DIFF, "No uncommitted changes");
 }
 
+/**
+ * Mounts a real annotation overlay with the external-editor key remapped to Ctrl+E, feeds
+ * `keys`, and resolves with whatever it completed. After each key it yields one macrotask so
+ * the microtask chain of an already-resolved mocked editor finishes before the next key.
+ */
+async function driveEditorOverlay<T>(
+	cwd: string,
+	keys: readonly string[],
+	show: (ctx: CustomCommandContext) => Promise<T | undefined>,
+	artifactsDir: string | null = null,
+): Promise<T | undefined> {
+	const previous = getKeybindings();
+	setKeybindings(KeybindingsManager.inMemory({ "app.editor.external": "ctrl+e" }));
+	const tui = { terminal: { rows: 40 }, requestRender() {}, stop() {}, start() {} } as unknown as TUI;
+	const ctx = {
+		cwd,
+		sessionManager: {
+			getCwd: () => cwd,
+			getSessionId: () => "session-1",
+			getArtifactsDir: () => artifactsDir,
+			ensureOnDisk: async () => {},
+		},
+		ui: {
+			notify: vi.fn(),
+			custom: async (factory: Parameters<ExtensionUIContext["custom"]>[0]) => {
+				let result: unknown;
+				const component = await factory(tui, theme, KeybindingsManager.inMemory(), value => {
+					result = value;
+				});
+				component.render(120);
+				for (const key of keys) {
+					component.handleInput?.(key);
+					await new Promise<void>(resolve => setImmediate(resolve));
+					component.render(120);
+				}
+				return result;
+			},
+		},
+	} as unknown as CustomCommandContext;
+	try {
+		return await show(ctx);
+	} finally {
+		setKeybindings(previous);
+	}
+}
+
 function countOccurrences(text: string, value: string): number {
 	return value ? text.split(value).length - 1 : 0;
 }
@@ -190,11 +279,38 @@ afterEach(() => {
 });
 
 describe("/annotate contracts", () => {
+	it("saves notes from an overlay closed with Escape, restores them on reopen, and drops them on discard", async () => {
+		await withTempDir(async artifactsDir => {
+			const source = { id: "p", kind: "prompt", label: "Prompt", text: "alpha\nbeta" } as const;
+			const session = {
+				getArtifactsDir: () => artifactsDir,
+				getSessionId: () => "session-1",
+				ensureOnDisk: async () => {},
+			};
+			const show = (ctx: CustomCommandContext) => showTextReviewOverlay(ctx, source);
+			await driveEditorOverlay("/w", ["A", "kept", ENTER, "a", "half", "\x1b"], show, artifactsDir);
+			const [saved] = await loadAnnotationDrafts(session);
+			expect(saved?.state).toMatchObject({
+				annotations: [{ annotation: { note: "kept" } }],
+				editor: { text: "half" },
+			});
+
+			// Reopened, the unfinished note is back in the editor; Enter commits it, then paste keeps the draft.
+			const result = await driveEditorOverlay("/w", [ENTER, "\t", ENTER], show, artifactsDir);
+			expect(result?.annotations.map(annotation => annotation.note)).toEqual(["kept", "half"]);
+
+			// Discard needs a second Enter; the draft is gone once it closes.
+			await driveEditorOverlay("/w", ["\t", "\x1b[B", ENTER, ENTER], show, artifactsDir);
+			expect(await loadAnnotationDrafts(session)).toEqual([]);
+		});
+	});
+
 	it("resolves the selected local target in the live session cwd and pastes code notes without submitting", async () => {
 		const { ctx, select, pasteToEditor } = createContext({
 			selectResults: ["Code review", "2. Review uncommitted changes"],
 			cwd: "/live-worktree",
 		});
+		spyOn(vcs, "repo").mockReturnValue({} as VcsRepo);
 		const target = localTarget();
 		const resolveLocalReviewTarget = vi.fn(
 			async (kind: "base-branch" | "uncommitted" | "commit", cwd: string, _ui: ReviewTargetUI) => {
@@ -223,9 +339,36 @@ describe("/annotate contracts", () => {
 		expect(select).toHaveBeenCalledTimes(2);
 		expect(resolveLocalReviewTarget).toHaveBeenCalledTimes(1);
 		expect(showCodeReviewOverlay).toHaveBeenCalledTimes(1);
-		expect(showCodeReviewOverlay).toHaveBeenCalledWith(ctx, target);
+		expect(showCodeReviewOverlay).toHaveBeenCalledWith(ctx, target, undefined, undefined);
 		expect(pasteToEditor).toHaveBeenCalledTimes(1);
 		expect(pasteToEditor.mock.calls[0]?.[0]).toContain(annotation.note);
+	});
+
+	it("resolves a PR picked from the open pull request list in the live session repo", async () => {
+		const { ctx, pasteToEditor } = createContext({
+			selectResults: ["Code review", "4. Review a specific PR/MR", "#42  Fix login  @octocat"],
+			cwd: "/live-worktree",
+		});
+		spyOn(vcs, "repo").mockReturnValue({} as VcsRepo);
+		const repoSpy = spyOn(gh, "resolveDefaultRepoMemoized").mockResolvedValue("acme/project");
+		spyOn(github, "json").mockResolvedValue([{ number: 42, title: "Fix login", author: { login: "octocat" } }]);
+		const target = createResolvedReviewTarget("pr", "PR acme/project#42", SAMPLE_DIFF, "PR has no diff");
+		const resolvePrReviewTarget = vi.fn(
+			async (_cwd: string, _ctx: CustomCommandContext, _ref: ReviewPrRef) => target,
+		);
+		const showCodeReviewOverlay = vi.fn(async () => ({
+			action: "paste" as const,
+			annotations: [{ scope: "file" as const, path: "src/value.ts", occurrence: 1, note: "picked PR note" }],
+		}));
+
+		await runAnnotateCommand(API, "", ctx, { resolvePrReviewTarget, showCodeReviewOverlay });
+
+		expect(repoSpy).toHaveBeenCalledWith("/live-worktree");
+		expect(resolvePrReviewTarget).toHaveBeenCalledTimes(1);
+		expect(resolvePrReviewTarget.mock.calls[0]?.[0]).toBe("/live-worktree");
+		expect(resolvePrReviewTarget.mock.calls[0]?.[2]).toMatchObject({ repo: "acme/project", number: 42 });
+		expect(showCodeReviewOverlay).toHaveBeenCalledWith(ctx, target, undefined, undefined);
+		expect(pasteToEditor.mock.calls[0]?.[0]).toContain("picked PR note");
 	});
 
 	it("freezes an explicit PR target before opening the overlay and keeps PR annotations and context exact", async () => {
@@ -267,7 +410,7 @@ describe("/annotate contracts", () => {
 		expect(prompt).toBeDefined();
 		expect(resolvePrReviewTarget).toHaveBeenCalledTimes(1);
 		expect(showCodeReviewOverlay).toHaveBeenCalledTimes(1);
-		expect(showCodeReviewOverlay).toHaveBeenCalledWith(ctx, target);
+		expect(showCodeReviewOverlay).toHaveBeenCalledWith(ctx, target, "focus on this line", undefined);
 		expect(prompt).toContain(contextInstruction);
 		expect(prompt).not.toContain("MAY read full file context as needed via `read`");
 		expect(countOccurrences(prompt!, "focus on this line")).toBe(1);
@@ -303,7 +446,7 @@ describe("/annotate contracts", () => {
 			customKeys: [ENTER],
 		});
 		const note = "whole-message note";
-		const showTextReviewOverlay = vi.fn(async (_ctx: CustomCommandContext, source: TextReviewSource) => {
+		const showTextReviewOverlay = vi.fn(async (_ctx: AnnotationOverlayContext, source: TextReviewSource) => {
 			expect(source.kind).toBe("message");
 			expect(source.text).toBe(wholeText);
 			return { action: "paste" as const, annotations: [{ scope: "text" as const, note }] };
@@ -330,7 +473,7 @@ describe("/annotate contracts", () => {
 		const generateTextReviewContextSummary = vi.fn(async () => {
 			throw new Error("code sources must not request a summary");
 		});
-		const showTextReviewOverlay = vi.fn(async (_ctx: CustomCommandContext, source: TextReviewSource) => {
+		const showTextReviewOverlay = vi.fn(async (_ctx: AnnotationOverlayContext, source: TextReviewSource) => {
 			expect(source.kind).toBe("code");
 			expect(source.text).toBe(code);
 			return { action: "paste" as const, annotations: [{ scope: "text" as const, note }] };
@@ -359,7 +502,7 @@ describe("/annotate contracts", () => {
 			throw new Error("command sources must not request a summary");
 		});
 		const note = "general command note";
-		const showTextReviewOverlay = vi.fn(async (_ctx: CustomCommandContext, source: TextReviewSource) => {
+		const showTextReviewOverlay = vi.fn(async (_ctx: AnnotationOverlayContext, source: TextReviewSource) => {
 			expect(source.kind).toBe("command");
 			expect(source.text).toBe(longCommand);
 			return { action: "paste" as const, annotations: [{ scope: "text" as const, note }] };
@@ -533,7 +676,7 @@ describe("/annotate contracts", () => {
 			const generateTextReviewContextSummary = vi.fn(async () => {
 				throw new Error("direct files must not request a summary");
 			});
-			const showTextReviewOverlay = vi.fn(async (_ctx: CustomCommandContext, source: TextReviewSource) => {
+			const showTextReviewOverlay = vi.fn(async (_ctx: AnnotationOverlayContext, source: TextReviewSource) => {
 				expect(source.kind).toBe("file");
 				expect(source.text).toBe(fileText);
 				return {
@@ -562,7 +705,7 @@ describe("/annotate contracts", () => {
 		const generateTextReviewContextSummary = vi.fn(async () => {
 			throw new Error("direct prompts must not request a summary");
 		});
-		const showTextReviewOverlay = vi.fn(async (_ctx: CustomCommandContext, source: TextReviewSource) => {
+		const showTextReviewOverlay = vi.fn(async (_ctx: AnnotationOverlayContext, source: TextReviewSource) => {
 			expect(source.kind).toBe("prompt");
 			expect(source.text).toBe(exactPrompt);
 			return {
@@ -655,5 +798,71 @@ describe("/annotate contracts", () => {
 			"Source summary failed; including the full source verbatim beyond the normal 999-character context limit.",
 			"warning",
 		);
+	});
+
+	it("pastes a prompt edited in the external editor with its notes", async () => {
+		spyOn(externalEditor, "getEditorCommand").mockReturnValue("vim");
+		spyOn(externalEditor, "openInEditor").mockResolvedValue("rewritten\nkept");
+		const { ctx, pasteToEditor } = createContext();
+
+		await runAnnotateCommand(API, '"original\nkept"', ctx, {
+			showTextReviewOverlay: (_ctx, source) =>
+				driveEditorOverlay("/tmp", [CTRL_E, "A", "whole note", ENTER, "\t", ENTER], editorCtx =>
+					showTextReviewOverlay(editorCtx, source),
+				),
+		});
+
+		const prompt = pasteToEditor.mock.calls[0]?.[0] as string;
+		expect(prompt).toContain("rewritten\nkept");
+		expect(prompt).not.toContain("original");
+		expect(prompt).toContain("whole note");
+	});
+
+	it("does not open the editor on a session reply the prompt would not include verbatim", async () => {
+		spyOn(externalEditor, "getEditorCommand").mockReturnValue("vim");
+		const openInEditor = spyOn(externalEditor, "openInEditor").mockResolvedValue(null);
+		const source: TextReviewSource = {
+			id: "reply",
+			kind: "message",
+			label: "Latest reply",
+			text: "assistant text",
+			provenance: { kind: "latest-assistant", entryId: "latest" },
+		};
+
+		await driveEditorOverlay("/tmp", [CTRL_E], editorCtx => showTextReviewOverlay(editorCtx, source));
+
+		expect(openInEditor).not.toHaveBeenCalled();
+	});
+
+	it("does not open the local checkout for a PR review", async () => {
+		spyOn(externalEditor, "getEditorCommand").mockReturnValue("vim");
+		const openEditorOnPath = spyOn(externalEditor, "openEditorOnPath").mockResolvedValue(0);
+		const target = createResolvedReviewTarget("pr", "PR #1", SAMPLE_DIFF, "No changes");
+
+		await driveEditorOverlay("/tmp", ["\t", CTRL_E], editorCtx => showCodeReviewOverlay(editorCtx, target));
+
+		expect(openEditorOnPath).not.toHaveBeenCalled();
+	});
+
+	it("opens the current diff file from the repository root when the session cwd is a subdirectory", async () => {
+		spyOn(externalEditor, "getEditorCommand").mockReturnValue("vim");
+		const opened = Promise.withResolvers<string>();
+		spyOn(externalEditor, "openEditorOnPath").mockImplementation(async (_editor, filePath) => {
+			opened.resolve(filePath);
+			return 0;
+		});
+		await withTempDir(async directory => {
+			const dir = await realpath(directory);
+			const cwd = join(dir, "packages");
+			await Bun.$`git init -q ${dir}`.quiet();
+			await mkdir(cwd);
+			await mkdir(join(dir, "src"));
+			await writeFile(join(dir, "src/value.ts"), "const value = 2;\n");
+
+			await driveEditorOverlay(cwd, ["\t", CTRL_E], editorCtx => showCodeReviewOverlay(editorCtx, localTarget()));
+
+			// The open follows a real filesystem check, so wait for the call rather than the key loop.
+			expect(await opened.promise).toBe(join(dir, "src/value.ts"));
+		});
 	});
 });

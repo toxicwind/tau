@@ -9,6 +9,7 @@ import { initializeWithSettings, loadCapability } from "tau/discovery";
 import { clearClaudePluginRootsCache } from "tau/discovery/helpers";
 import { discoverCustomToolPaths, loadCustomTools } from "tau/extensibility/custom-tools/loader";
 import { __resetDirsFromEnvForTests, removeWithRetries, setAgentDir } from "@tau/tau-utils";
+import { __closeExtensionParseCacheForTests } from "@oh-my-pi/pi-coding-agent/extensibility/plugins/legacy-pi-compat";
 import { restoreEnvValue } from "../helpers/settings-test-state";
 
 function toolSource(name: string): string {
@@ -64,6 +65,8 @@ describe("native executable custom tool discovery", () => {
 		restoreEnvValue("PI_PROFILE", originalPiProfileEnv);
 		restoreEnvValue("PI_CODING_AGENT_DIR", originalAgentDirEnv);
 		__resetDirsFromEnvForTests();
+		// Loading the fixtures opens the legacy extension parse cache under the temp HOME; Windows can't remove it while open.
+		__closeExtensionParseCacheForTests();
 		await removeWithRetries(root);
 	});
 

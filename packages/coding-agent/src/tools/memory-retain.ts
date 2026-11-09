@@ -1,11 +1,19 @@
 import type { MemoryRetainDetails } from "@tau/tau-tui/tools/memory";
 import { type } from "@tau/tautype";
 import type { AgentTool, AgentToolResult } from "@tau/tau-agent-core";
+import { prompt, withLoopPhase } from "@oh-my-pi/pi-utils";
 import { isHindsightConfigured, loadHindsightConfig } from "../hindsight/config";
 import retainDescription from "../prompts/tools/retain.md" with { type: "text" };
 import type { ToolSession } from ".";
+import { isGlobalMemoryScopeAvailable } from "../memory-backend/global-scope";
+import { cfgMemoryBackend } from "../memory-backend/settings";
 
+<<<<<<< ours — variable `memoryRetainSchema` (S, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 const memoryRetainSchema = type({
+=======
+const memoryRetainSchemaBase = type({
+>>>>>>> theirs — variable `memoryRetainSchema` (S, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/tools/memory-retain.ts' for per-hunk detail, 'weave check' to verify your resolution
 	items: type({
 		content: type("string").describe("information to remember"),
 		"context?": type("string").describe("source context"),
@@ -15,13 +23,35 @@ const memoryRetainSchema = type({
 		.describe("memories to retain"),
 });
 
-export type MemoryRetainParams = typeof memoryRetainSchema.infer;
-export class MemoryRetainTool implements AgentTool<typeof memoryRetainSchema, MemoryRetainDetails> {
+/** Offered only where every project recalls a global item; see {@link isGlobalMemoryScopeAvailable}. */
+const memoryRetainSchemaWithScope = type({
+	items: type({
+		content: type("string").describe("information to remember"),
+		"context?": type("string").describe("source context"),
+		"scope?": type("'project' | 'global'").describe(
+			"storage scope; defaults to project, global is for durable cross-project knowledge",
+		),
+	})
+		.array()
+		.atLeastLength(1)
+		.describe("memories to retain"),
+});
+
+type MemoryRetainSchema = typeof memoryRetainSchemaBase | typeof memoryRetainSchemaWithScope;
+
+export type MemoryRetainParams = typeof memoryRetainSchemaWithScope.infer;
+export class MemoryRetainTool implements AgentTool<MemoryRetainSchema, MemoryRetainDetails> {
 	readonly name = "retain";
-	readonly approval = "read" as const;
+	/** A global item reaches every project's recall, so it needs the same approval as a file write. */
+	readonly approval = (args: unknown) =>
+		(args as Partial<MemoryRetainParams>).items?.some(item => item.scope === "global") ? "write" : "read";
 	readonly label = "Retain";
-	readonly description = retainDescription;
-	readonly parameters = memoryRetainSchema;
+	get description(): string {
+		return prompt.render(retainDescription, { globalScope: isGlobalMemoryScopeAvailable(this.session) });
+	}
+	get parameters(): MemoryRetainSchema {
+		return isGlobalMemoryScopeAvailable(this.session) ? memoryRetainSchemaWithScope : memoryRetainSchemaBase;
+	}
 	readonly strict = true;
 	readonly loadMode = "discoverable";
 	readonly summary = "Store important facts in long-term memory";
@@ -29,58 +59,94 @@ export class MemoryRetainTool implements AgentTool<typeof memoryRetainSchema, Me
 	constructor(private readonly session: ToolSession) {}
 
 	static createIf(session: ToolSession): MemoryRetainTool | null {
-		const backend = session.settings.get("memory.backend");
+		const backend = cfgMemoryBackend.get(session.settings);
 		if (backend !== "hindsight" && backend !== "mnemotau") return null;
 		if (backend === "hindsight" && !isHindsightConfigured(loadHindsightConfig(session.settings))) return null;
 		return new MemoryRetainTool(session);
 	}
 
+<<<<<<< ours — scope `execute` in class `MemoryRetainTool` (S+F, confidence: low)
+// refused_by: container_member · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 	async execute(_id: string, params: MemoryRetainParams): Promise<AgentToolResult<MemoryRetainDetails>> {
 		const backend = this.session.settings.get("memory.backend");
 		if (backend === "mnemotau") {
 			const state = this.session.getMnemotauSessionState?.();
+=======
+	async execute(toolCallId: string, params: MemoryRetainParams): Promise<AgentToolResult<MemoryRetainDetails>> {
+		const backend = cfgMemoryBackend.get(this.session.settings);
+		if (backend === "mnemopi") {
+			const state = this.session.getMnemopiSessionState?.();
+>>>>>>> theirs — scope `execute`
 			if (!state) {
 				throw new Error("Mnemotau backend is not initialised for this session.");
 			}
+			return withLoopPhase("mnemopi.retain", () => {
+				// Resolve the global bank first, so an unsupported scoping mode rejects the batch before any item is stored.
+				const globalTarget = params.items.some(item => item.scope === "global")
+					? state.getGlobalRetainTarget()
+					: undefined;
 
-			for (const item of params.items) {
-				state.rememberScoped(item.content, {
-					source: "coding-agent-retain",
-					importance: 0.75,
-					metadata: {
-						session_id: state.sessionId,
-						cwd: state.session.sessionManager.getCwd(),
-						context: item.context ?? null,
-						tool: "retain",
-					},
-					scope: "bank",
-					extract: true,
-					extractEntities: true,
-					veracity: "tool",
-					memoryType: "fact",
-				});
-			}
+				// A failed write stored nothing. Stop there and say why, and what the batch
+				// kept, so the caller retries only what failed instead of trusting a
+				// success count.
+				const storedIds: string[] = [];
+				for (const [index, item] of params.items.entries()) {
+					let id: string;
+					try {
+						id = state.rememberScoped(
+							item.content,
+							{
+								source: "coding-agent-retain",
+								importance: 0.75,
+								metadata: {
+									session_id: state.sessionId,
+									cwd: state.session.sessionManager.getCwd(),
+									context: item.context ?? null,
+									tool: "retain",
+								},
+								scope: "bank",
+								extract: true,
+								extractEntities: true,
+								veracity: "tool",
+								memoryType: "fact",
+							},
+							item.scope === "global" ? globalTarget : undefined,
+						);
+					} catch (error) {
+						const reason = error instanceof Error ? error.message : String(error);
+						const kept =
+							storedIds.length === 0
+								? "Nothing was stored."
+								: `Stored before the failure and kept: ${storedIds.map((storedId, storedIndex) => `item ${storedIndex + 1} (id ${storedId})`).join(", ")}.`;
+						const untried = index + 1 < params.items.length ? " Later items were not attempted." : "";
+						throw new Error(
+							`Mnemopi did not store item ${index + 1} of ${params.items.length}: ${reason}. ${kept}${untried}`,
+							{ cause: error },
+						);
+					}
+					storedIds.push(id);
+				}
 
-			const count = params.items.length;
-			const noun = count === 1 ? "memory" : "memories";
-			return {
-				content: [{ type: "text", text: `${count} ${noun} stored.` }],
-				details: { count },
-			};
+				const count = params.items.length;
+				const noun = count === 1 ? "memory" : "memories";
+				return {
+					content: [{ type: "text", text: `${count} ${noun} stored.` }],
+					details: { count },
+				};
+			});
 		}
 
 		const state = this.session.getHindsightSessionState?.();
 		if (!state) {
 			throw new Error("Hindsight backend is not initialised for this session.");
 		}
-
-		// Push every item onto the session-owned queue and return immediately.
-		// The queue flushes either when it reaches its batch threshold or when
-		// its debounce timer fires. If the eventual batch fails, the queue
-		// surfaces a UI-only warning notice — the LLM is not informed.
-		for (const item of params.items) {
-			state.enqueueRetain(item.content, item.context);
+		// Check before queueing anything, so a disabled or unsupported global scope rejects the whole batch.
+		if (params.items.some(item => item.scope === "global")) {
+			state.assertGlobalRetainAvailable();
 		}
+
+		// Acknowledge only once the whole call is on disk; delivery happens on a later flush.
+		await state.enqueueRetain(toolCallId, params.items);
 
 		const count = params.items.length;
 		const noun = count === 1 ? "memory" : "memories";

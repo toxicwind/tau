@@ -1,5 +1,7 @@
 """gh-proxy FastAPI app: HMAC-gated GitHub REST + git proxy.
 
+<<<<<<< ours — imports `file_header` (S+F, confidence: low)
+# refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 Robtau calls every endpoint with HMAC headers (see `robtau.proxy_hmac`).
 Authenticated requests dispatch to a single `GitHubClient` instance holding
 the PAT, or to `robtau.git_ops` for git transport. The PAT never leaves
@@ -53,6 +55,62 @@ from robtau.github_client import GitHubClient, GitHubError
 from robtau.proxy_hmac import HEADER_SIGNATURE, HEADER_TIMESTAMP, verify
 from robtau.sandbox import _safe_directory_env, _slot_subprocess_kwargs
 from robtau.sandbox import workspace_key as compute_workspace_key
+=======
+Robomp calls every endpoint with HMAC headers (see `robomp.proxy_hmac`).
+Authenticated requests dispatch to a single `GitHubClient` instance holding
+the PAT, or to `robomp.git_ops` for git transport. The PAT never leaves
+this process.
+
+Endpoint payloads are deliberately typed (no generic GitHub passthrough):
+each one names exactly one operation robomp performs.
+"""
+
+from __future__ import annotations
+
+import asyncio
+import logging
+import os
+import re
+import subprocess
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
+from dataclasses import asdict, dataclass
+from pathlib import Path
+from typing import Any
+from urllib.parse import urlparse
+
+from fastapi import FastAPI, HTTPException, Request, status
+from fastapi.responses import JSONResponse
+
+from robomp.config import Settings
+from robomp.git_ops import (
+    GitCommandError,
+    HeadDriftError,
+    validate_fetch_ref,
+)
+from robomp.git_ops import (
+    clone as git_clone,
+)
+from robomp.git_ops import (
+    fetch_pr_head as git_fetch_pr_head,
+)
+from robomp.git_ops import (
+    fetch_prune as git_fetch_prune,
+)
+from robomp.git_ops import (
+    fetch_ref as git_fetch_ref,
+)
+from robomp.git_ops import (
+    push as git_push,
+)
+from robomp.git_ops import (
+    push_release as git_push_release,
+)
+from robomp.github_client import GitHubClient, GitHubError
+from robomp.proxy_hmac import HEADER_SIGNATURE, HEADER_TIMESTAMP, verify
+from robomp.sandbox import _safe_directory_env, _slot_subprocess_kwargs
+from robomp.sandbox import workspace_key as compute_workspace_key
+>>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain python/robtau/src/proxy/server.py' for per-hunk detail, 'weave check' to verify your resolution
 
 log = logging.getLogger(__name__)
 
@@ -116,9 +174,6 @@ def _require_int(value: Any, field: str) -> int:
     return value
 
 
-_SAFE_REF_BODY_RE = re.compile(r"[A-Za-z0-9._/-]+")
-
-
 def _require_fetch_ref(value: Any) -> str:
     """Validate the base-branch ref for `/gh/v1/git/fetch_ref`.
 
@@ -132,18 +187,10 @@ def _require_fetch_ref(value: Any) -> str:
     forms. Normal slashy branch names still pass.
     """
     ref = _require_str(value, "ref")
-    body = ref.removeprefix("refs/heads/")
-    if (
-        not body
-        or ref.startswith("-")
-        or body.startswith("/")
-        or body.endswith(("/", ".", ".lock"))
-        or "//" in body
-        or ".." in body
-        or not _SAFE_REF_BODY_RE.fullmatch(body)
-    ):
-        raise HTTPException(400, "invalid ref")
-    return ref
+    try:
+        return validate_fetch_ref(ref)
+    except ValueError as exc:
+        raise HTTPException(400, "invalid ref") from exc
 
 
 def _require_branch(value: Any) -> str:
@@ -888,6 +935,15 @@ def create_proxy_app(settings: Settings) -> FastAPI:
         data = await _json_body(request)
         repo = _require_str(data.get("repo"), "repo")
         pr_number = _require_int(data.get("pr_number"), "pr_number")
+        if pr_number <= 0:
+            raise HTTPException(400, "invalid 'pr_number'")
+        # head_ref is only validated by the same-repo branch fallback:
+        # the primary refs/pull/<n>/head fetch does not consume it.
+        head_ref = _require_str(data["head_ref"], "head_ref") if data.get("head_ref") is not None else None
+        head_sha = _require_str(data["head_sha"], "head_sha") if data.get("head_sha") is not None else None
+        same_repo = data.get("same_repo", False)
+        if not isinstance(same_repo, bool):
+            raise HTTPException(400, "invalid 'same_repo'")
         target = _pool_dir(settings, repo)
         remote = await asyncio.to_thread(_origin_remote_auth, target, repo, _resolve_token(settings))
         try:
@@ -895,12 +951,18 @@ def create_proxy_app(settings: Settings) -> FastAPI:
                 git_fetch_pr_head,
                 target,
                 pr_number,
+                head_ref=head_ref,
+                head_sha=head_sha,
+                same_repo=same_repo,
                 token=remote.token,
                 remote_url=remote.url,
                 auth_url=remote.auth_url,
             )
         except GitCommandError as exc:
             return _git_error_response(exc)
+        except ValueError as exc:
+            # Deferred ref validation in the fallback path.
+            raise HTTPException(400, "invalid ref") from exc
         return JSONResponse({"pool_dir": str(target)})
 
     @app.post("/gh/v1/git/push")

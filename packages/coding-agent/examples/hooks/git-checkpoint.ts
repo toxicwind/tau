@@ -4,7 +4,13 @@
  * Creates git stash checkpoints at each turn so /branch can restore code state.
  * When branching, offers to restore code to that point in history.
  */
+<<<<<<< ours
 import type { HookAPI } from "@tau/tau-coding-agent";
+||||||| base
+import type { HookAPI } from "@oh-my-pi/pi-coding-agent";
+=======
+import type { HookAPI } from "@oh-my-pi/pi-coding-agent/extensibility/hooks";
+>>>>>>> theirs · weave: run 'weave explain packages/coding-agent/examples/hooks/git-checkpoint.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 export default function (pi: HookAPI) {
 	const checkpoints = new Map<string, string>();

@@ -1,3 +1,5 @@
+<<<<<<< ours — heading `pi-builtins` (S+F, confidence: low)
+// refused_by: rename_vs_edit_guard · collision: none (both sides edited, nowhere the same lines)
 # tau-builtins
 
 Every builtin the embedded shell installs. Two layers:
@@ -11,6 +13,19 @@ Every builtin the embedded shell installs. Two layers:
    moreutils set, and ~50 more. One module per command, in `src/<command>.rs`.
 
 The second layer exists so the shell never has to fork: a long-lived embedded
+=======
+# pi-builtins
+
+pi's extras for the embedded shell, whose engine implements the bash builtins
+itself:
+
+1. **In-process command-line utilities** — `cat`, `grep`/`rg`, `ast-grep`/`sg`,
+   `sed`, `ls`, `find`, `sort`, `jq`, `fd`, `diff`, `xargs`, the moreutils set,
+   and ~50 more. One module per command, in `src/<command>.rs`.
+2. **Process builtins** — `ps`, `top`, `sleep`, `pgrep`, `pkill`, `pidwait`.
+
+They exist so the shell never has to fork: a long-lived embedded
+>>>>>>> theirs — heading `pi-builtins` (S+F, confidence: low) · weave: run 'weave explain crates/tau-builtins/README.md' for per-hunk detail, 'weave check' to verify your resolution
 shell resolves these names itself, on every platform, whether or not the host
 has the real binaries. They were previously ~50 separate vendored crates driven
 through a thread-local I/O shim; consolidating them here removed the shim.
@@ -24,6 +39,7 @@ argument model plus a synchronous body:
 pub(crate) trait Utility: clap::Parser + Send + Sync + 'static {
     const NAME: &'static str;
     const USAGE_ERROR: u8 = 1;
+    const RUNS_COMMANDS: bool = false;
     fn run(self, host: &mut Host) -> i32;
 }
 ```
@@ -37,13 +53,32 @@ is unrelated), the exported environment (`host.var`, `host.env`), cancellation
 (`host.child_env()`), and the accumulated exit status (`host.fail`,
 `host.exit_code`).
 
-`host::util::<U, SE>()` wraps a `Utility` into a registration that handles, once
-for all of them: process-substitution arguments (`diff <(a) <(b)`),
-`--help`/`--version` on stdout with status 0, usage errors on stderr, execution
-on a blocking thread, the shell's cancellation token, and panic containment.
+Utilities that run command lines (`env`, `xargs`, `find -exec`, `ifne`) set
+`RUNS_COMMANDS` and call `host.run_command(ShellCommand::new(argv))`; the host
+serves those through the `CommandRunner` it put in the invocation, so builtins,
+and the `scheme://` paths only builtins can open, work as they do at the prompt.
+`host.child_env()` is for helper programs that are always external
+(`sort --compress-program`).
 
-Utilities that are genuinely async — `sleep`, `timeout`, `ps`, `top`, `pgrep`,
-`kill`, `nohup` — implement `brush_core::builtins::Command` directly instead.
+The adapter (`run_utility`/`run_async_utility`) handles, once for all of them:
+descriptor paths (`diff <(a) <(b)`), `--help`/`--version` on stdout with status
+0, usage errors on stderr, execution on a blocking thread, cancellation,
+emulated SIGPIPE, and panic containment. The process builtins (`ps`, `top`,
+`sleep`, `pgrep`, `pkill`, `pidwait`) are async bodies over a `ProcContext`.
+
+## Running extras
+
+A host fills an `extras::Invocation` (argv, environment, working directory,
+descriptors as `extras::Fd`, filesystem, cancellation, command runner) and awaits
+`extras::run`, which returns the exit status. `extras::extras()` lists every
+compiled extra with its `ExtraKind`.
+
+Every command is behind a cargo feature (`util.<name>`), so a single one can be
+built and tested in isolation:
+
+```console
+$ cargo nextest run -p pi-builtins --no-default-features --features util.sed
+```
 
 ## Registration
 
@@ -65,5 +100,5 @@ $ cargo nextest run -p tau-builtins --no-default-features --features base,util.s
 ## Licensing
 
 MIT throughout, but the ported utilities carry upstream notices — uutils
-coreutils, uutils findutils, uutils sed, jaq, and rust-utf8. See `LICENSE`, which
+coreutils, uutils findutils, uutils sed, jaq, sd, and rust-utf8. See `LICENSE`, which
 reproduces each in full and lists which commands it covers.

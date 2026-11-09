@@ -1,5 +1,6 @@
-import { buildEvalUrlRoots, type LocalProtocolOptions } from "../internal-urls";
 import type { OutputArtifactError } from "@tau/tau-tui/tools/streaming-output";
+import { buildEvalUrlRoots, LocalProtocolHandler } from "../internal-urls";
+import { contextLocalProtocolOptions } from "../internal-urls/context";
 import type { ToolSession } from "../tools";
 import type { BackendProbeOptions } from "./probe";
 import type { EvalLanguage, EvalStatusEvent } from "@tau/tau-tui/tools/eval";
@@ -37,6 +38,11 @@ export interface ExecutorBackendExecOptions {
 	 * progress (e.g. `agent()` subagents) into the UI mid-execution.
 	 */
 	onStatus?: (event: EvalStatusEvent) => void;
+	/**
+	 * Shows the user what the cell's bridged tool calls send to `out://` (a `write` there, or bash
+	 * `> out://`). Throws to refuse a reply; absent, such calls fail instead of replying unseen.
+	 */
+	onReply?: (text: string) => void;
 }
 
 /** Result returned by a backend's execute(). */
@@ -46,6 +52,8 @@ export interface ExecutorBackendResult {
 	cancelled: boolean;
 	truncated: boolean;
 	artifactId: string | undefined;
+	/** Bytes the artifact cap dropped from the saved file's middle (the artifact is a head/tail sample). */
+	artifactElidedBytes?: number;
 	artifactError?: OutputArtifactError;
 	totalLines: number;
 	totalBytes: number;
@@ -54,34 +62,39 @@ export interface ExecutorBackendResult {
 	displayOutputs: EvalDisplayOutput[];
 }
 
+/** Outcome of {@link ExecutorBackend.checkAvailability}. */
+export interface BackendAvailability {
+	ok: boolean;
+	/** Why the backend cannot run (e.g. which interpreters failed to start); surfaced in the eval error. */
+	reason?: string;
+}
+
 /** Pluggable language backend for the eval tool. */
 export interface ExecutorBackend {
 	readonly id: EvalLanguage;
 	readonly label: string;
 	/** Source language identifier passed to the syntax highlighter (e.g. "python", "javascript"). */
 	readonly highlightLang: string;
-	/** Cheap availability check. Used by fallback resolution and bounded by the caller's probe options. */
-	isAvailable(session: ToolSession, opts?: BackendProbeOptions): Promise<boolean>;
+	/** Cheap availability check. Used by backend resolution and bounded by the caller's probe options. */
+	checkAvailability(session: ToolSession, opts?: BackendProbeOptions): Promise<BackendAvailability>;
 	/** Execute one cell. Caller invokes once per cell and aggregates results. */
 	execute(code: string, opts: ExecutorBackendExecOptions): Promise<ExecutorBackendResult>;
 }
 
 /**
  * Resolve the on-disk roots that the eval helpers substitute for internal-URL
- * schemes (currently `local://`). Prefers the session's own
- * {@link LocalProtocolOptions} — the exact mapping `read local://…` uses — so an
- * eval `write("local://x")` and a later `read local://x` agree on the location.
+ * schemes from {@link contextLocalProtocolOptions}, resolved the way the
+ * protocol handlers do, so an eval `write("local://x")` and a later
+ * `read local://x` agree on the location. `local://` maps to its root;
+ * `artifact://` maps to the session's artifacts dir, the dir `read artifact://<id>`
+ * searches first, so `read("artifact://<id>")` returns the artifact's text.
+ * A scheme is absent when its root does not resolve (read would fail the same way).
  */
 export function resolveEvalUrlRoots(session: ToolSession): Record<string, string> {
-	return buildEvalUrlRoots(resolveEvalLocalProtocolOptions(session));
-}
-
-/** Keep file-backed eval and prelude helpers on the calling session's local URL root. */
-export function resolveEvalLocalProtocolOptions(session: ToolSession): LocalProtocolOptions {
-	return (
-		session.localProtocolOptions ?? {
-			getArtifactsDir: () => session.getArtifactsDir?.() ?? null,
-			getSessionId: () => session.getSessionId?.() ?? null,
-		}
-	);
+	const protocolOptions = contextLocalProtocolOptions(session);
+	const options = LocalProtocolHandler.resolveOptions({ localProtocolOptions: protocolOptions });
+	const roots = options ? buildEvalUrlRoots(options) : {};
+	const artifactsDir = protocolOptions?.getArtifactsDir?.();
+	if (artifactsDir) roots.artifact = artifactsDir;
+	return roots;
 }

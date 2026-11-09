@@ -6,9 +6,19 @@ type TurndownListParent = {
 	children: ArrayLike<unknown>;
 };
 
+/** Escaped `_` runs between two letters or digits, as in `snake_case` or `DOCX_NEEDLE_1`. */
+const INTRAWORD_ESCAPED_UNDERSCORES = /(?<=[\p{L}\p{N}])(?:\\_)+(?=[\p{L}\p{N}])/gu;
+
 /**
+<<<<<<< ours — scope `declaration` in function `createTurndown` (T, confidence: high)
+// refused_by: statement_fold · collision: none (1 contested hunk(s), neither side deleted the other's lines)
  * Build a Turndown instance configured for GFM with the fixes tau relies on:
  * `~~strikethrough~~`, unescaped heading periods, and single-space list markers.
+=======
+ * Build a Turndown instance configured for GFM with the fixes omp relies on:
+ * `~~strikethrough~~`, unescaped heading periods, unescaped intraword underscores,
+ * and single-space list markers.
+>>>>>>> theirs — scope `declaration` · weave: run 'weave explain packages/coding-agent/src/utils/turndown.ts' for per-hunk detail, 'weave check' to verify your resolution
  *
  * Shared by the web scrapers (HTML → markdown) and the markit document engine
  * (`src/markit`). The rule set must stay identical across both call sites.
@@ -20,6 +30,10 @@ export function createTurndown(): TurndownService {
 		bulletListMarker: "-",
 	});
 	turndown.use(gfm);
+	// CommonMark never opens or closes `_` emphasis between two alphanumerics, so
+	// identifiers keep their underscores instead of reading as `snake\_case`.
+	const escape = turndown.escape.bind(turndown);
+	turndown.escape = text => escape(text).replace(INTRAWORD_ESCAPED_UNDERSCORES, run => run.replaceAll("\\_", "_"));
 	// GFM spec uses ~~ (double tilde), not ~ (single)
 	turndown.addRule("strikethrough", {
 		filter: ["del", "s", "strike"],
@@ -46,7 +60,7 @@ export function createTurndown(): TurndownService {
 			let prefix = `${options.bulletListMarker} `;
 			if (parent?.nodeName === "OL") {
 				const start = parent.getAttribute("start");
-				const index = Array.prototype.indexOf.call(parent.children, node);
+				const index = node.elementIndex ?? Array.prototype.indexOf.call(parent.children, node);
 				prefix = `${(start ? Number(start) : 1) + index}. `;
 			}
 			return prefix + body + (node.nextSibling ? "\n" : "");

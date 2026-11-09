@@ -1,7 +1,6 @@
 import { describe, expect, it } from "bun:test";
 import { streamBedrock } from "@tau/tau-ai/providers/amazon-bedrock";
 import { crc32 } from "@tau/tau-ai/providers/aws-eventstream";
-import { setBedrockProviderModule } from "@tau/tau-ai/providers/register-builtins";
 import { streamSimple } from "@tau/tau-ai/stream";
 import type { Context, FetchImpl, Model } from "@tau/tau-ai/types";
 import { buildModel } from "@tau/tau-catalog/build";
@@ -139,7 +138,6 @@ describe("issue #6276 — Amazon Bedrock guardrails", () => {
 		});
 	});
 	it("maps transport guardrails into the Bedrock provider options", async () => {
-		setBedrockProviderModule({ streamBedrock });
 		const { promise, resolve } = Promise.withResolvers<GuardrailPayload>();
 		const stream = streamSimple(model(), context, {
 			guardrailIdentifier: "arn:aws:bedrock:eu-west-1:123456789012:guardrail/abcd1234",

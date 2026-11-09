@@ -1,5 +1,8 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, spyOn, vi } from "bun:test";
+import * as fsp from "node:fs/promises";
 import { stripVTControlCharacters } from "node:util";
+<<<<<<< ours — imports `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: `import { stopSharedSpinnerTicker, ToolExecutionComponent } from…` +1 more
 import { generateRoomKey, importRoomKey } from "tau/collab/crypto";
 import { CollabGuestLink } from "tau/collab/guest";
 import { COLLAB_PROTO, formatCollabLink } from "tau/collab/protocol";
@@ -14,6 +17,30 @@ import type { InteractiveModeContext } from "tau/modes/types";
 import { UiHelpers } from "tau/modes/utils/ui-helpers";
 import type { AgentSessionEvent } from "tau/session/agent-session";
 import type { TUI } from "@tau/tau-tui";
+=======
+import { generateRoomKey, importRoomKey } from "@oh-my-pi/pi-coding-agent/collab/crypto";
+import { CollabGuestLink } from "@oh-my-pi/pi-coding-agent/collab/guest";
+import { COLLAB_PROTO, formatCollabLink } from "@oh-my-pi/pi-coding-agent/collab/protocol";
+import { CollabSocket } from "@oh-my-pi/pi-coding-agent/collab/relay-client";
+import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import {
+	sharedSpinnerTickerArmed,
+	stopSharedSpinnerTicker,
+	ToolExecutionComponent,
+} from "@oh-my-pi/pi-tui/chat/tool-execution";
+import { TranscriptContainer } from "@oh-my-pi/pi-tui/chrome/transcript-container";
+import {
+	DEFAULT_SPINNER_INTERVAL_MS,
+	setSpinnerInterval,
+	SPINNER_INTERVAL_STATIC,
+} from "@oh-my-pi/pi-tui/spinner-clock";
+import { EventController } from "@oh-my-pi/pi-coding-agent/modes/controllers/event-controller";
+import { initTheme } from "@oh-my-pi/pi-tui/theme";
+import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
+import { UiHelpers } from "@oh-my-pi/pi-coding-agent/modes/utils/ui-helpers";
+import type { AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
+import type { TUI } from "@oh-my-pi/pi-tui";
+>>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/modes/components/tool-execution-spinner.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { installInMemoryRelay, uninstallInMemoryRelay } from "../../collab/helpers/in-memory-relay";
 import { createInteractiveModeContext } from "../../helpers/interactive-mode-context";
 
@@ -40,7 +67,7 @@ describe("ToolExecutionComponent live preview spinners", () => {
 	});
 
 	it("animates the eval pending cell while the call is live", () => {
-		vi.useFakeTimers();
+		vi.useFakeTimers({ now: 0 });
 		const requestRender = vi.fn();
 		const requestComponentRender = vi.fn();
 		const component = new ToolExecutionComponent(
@@ -68,7 +95,7 @@ describe("ToolExecutionComponent live preview spinners", () => {
 	});
 
 	it("does not tick headerless bash pending previews", () => {
-		vi.useFakeTimers();
+		vi.useFakeTimers({ now: 0 });
 		const requestRender = vi.fn();
 		const requestComponentRender = vi.fn();
 		const component = new ToolExecutionComponent(
@@ -91,8 +118,36 @@ describe("ToolExecutionComponent live preview spinners", () => {
 		}
 	});
 
+	it("repaints a running bash call once a second so its elapsed time advances", () => {
+		vi.useFakeTimers({ now: 0 });
+		const requestRender = vi.fn();
+		const requestComponentRender = vi.fn();
+		const component = new ToolExecutionComponent(
+			"bash",
+			{ command: "sleep 600" },
+			{},
+			undefined,
+			{ requestRender, requestComponentRender } as unknown as TUI,
+			process.cwd(),
+		);
+
+		try {
+			component.setExecutionStarted();
+			requestComponentRender.mockClear();
+			vi.advanceTimersByTime(3_000);
+			// One repaint per second, not the 30fps spinner cadence.
+			expect(requestComponentRender).toHaveBeenCalledTimes(3);
+			component.seal();
+			requestComponentRender.mockClear();
+			vi.advanceTimersByTime(3_000);
+			expect(requestComponentRender).not.toHaveBeenCalled();
+		} finally {
+			component.stopAnimation();
+		}
+	});
+
 	it("does not tick detached async bash result snapshots", () => {
-		vi.useFakeTimers();
+		vi.useFakeTimers({ now: 0 });
 		const requestRender = vi.fn();
 		const requestComponentRender = vi.fn();
 		const component = new ToolExecutionComponent(
@@ -126,7 +181,7 @@ describe("ToolExecutionComponent live preview spinners", () => {
 	});
 
 	it("does not tick github pending previews whose Text is materialized per rebuild", () => {
-		vi.useFakeTimers();
+		vi.useFakeTimers({ now: 0 });
 		const requestRender = vi.fn();
 		const requestComponentRender = vi.fn();
 		const component = new ToolExecutionComponent(
@@ -150,7 +205,7 @@ describe("ToolExecutionComponent live preview spinners", () => {
 	});
 
 	it("does not tick custom tools whose pending label is a static tool-name Text", () => {
-		vi.useFakeTimers();
+		vi.useFakeTimers({ now: 0 });
 		const requestRender = vi.fn();
 		const requestComponentRender = vi.fn();
 		// A renderResult-only custom tool renders the static tool-name label
@@ -180,8 +235,8 @@ describe("ToolExecutionComponent live preview spinners", () => {
 	// subagents — must share ONE spinner timer, not one per block, or active-work
 	// CPU scales with block count.
 	it("drives every concurrent live block from a single shared spinner timer", () => {
-		vi.useFakeTimers();
-		const setIntervalSpy = vi.spyOn(globalThis, "setInterval");
+		vi.useFakeTimers({ now: 0 });
+		const setTimeoutSpy = vi.spyOn(globalThis, "setTimeout");
 		const renders = [vi.fn(), vi.fn(), vi.fn()];
 		const components = renders.map(
 			requestComponentRender =>
@@ -196,17 +251,55 @@ describe("ToolExecutionComponent live preview spinners", () => {
 		);
 
 		try {
-			const spinnerTimers = setIntervalSpy.mock.calls.filter(([, ms]) => ms === SPINNER_ADVANCE_MS).length;
-			// One shared ticker for all three live blocks, not three.
+			// One shared ticker for all three live blocks, not three: a single timer armed for the
+			// shared clock's next boundary (a full period from t=0).
+			const spinnerTimers = setTimeoutSpy.mock.calls.filter(([, ms]) => ms === DEFAULT_SPINNER_INTERVAL_MS).length;
 			expect(spinnerTimers).toBe(1);
 
 			// A single tick repaints every registered block in lockstep.
-			vi.advanceTimersByTime(SPINNER_ADVANCE_MS);
+			vi.advanceTimersByTime(DEFAULT_SPINNER_INTERVAL_MS);
 			for (const requestComponentRender of renders) {
 				expect(requestComponentRender).toHaveBeenCalledTimes(1);
 			}
 		} finally {
 			for (const component of components) component.stopAnimation();
+		}
+	});
+
+	it("follows the shared spinner clock: a slower interval spaces the ticks, static stops them until animation resumes", () => {
+		vi.useFakeTimers({ now: 0 });
+		setSpinnerInterval(1000);
+		const requestComponentRender = vi.fn();
+		const component = new ToolExecutionComponent(
+			"eval",
+			{ language: "py", code: "import time\ntime.sleep(10)" },
+			{},
+			undefined,
+			{ requestRender: vi.fn(), requestComponentRender } as unknown as TUI,
+			process.cwd(),
+		);
+		try {
+			requestComponentRender.mockClear();
+			vi.advanceTimersByTime(999);
+			expect(requestComponentRender).toHaveBeenCalledTimes(0);
+			vi.advanceTimersByTime(1);
+			expect(requestComponentRender).toHaveBeenCalledTimes(1);
+
+			// Static: the armed tick paints frame 0, then no timer runs.
+			setSpinnerInterval(SPINNER_INTERVAL_STATIC);
+			vi.advanceTimersByTime(1000);
+			expect(requestComponentRender).toHaveBeenCalledTimes(2);
+			vi.advanceTimersByTime(10_000);
+			expect(requestComponentRender).toHaveBeenCalledTimes(2);
+			expect(sharedSpinnerTickerArmed()).toBe(false);
+
+			// Animated again: the ticker restarts at the new period.
+			setSpinnerInterval(DEFAULT_SPINNER_INTERVAL_MS);
+			vi.advanceTimersByTime(DEFAULT_SPINNER_INTERVAL_MS);
+			expect(requestComponentRender).toHaveBeenCalledTimes(3);
+		} finally {
+			setSpinnerInterval(DEFAULT_SPINNER_INTERVAL_MS);
+			component.stopAnimation();
 		}
 	});
 
@@ -345,8 +438,9 @@ describe("ToolExecutionComponent live preview spinners", () => {
 	it("unregisters a live tool block from the shared ticker via the guest resync teardown", async () => {
 		installInMemoryRelay();
 		const writeSpy = spyOn(Bun, "write").mockResolvedValue(0);
+		const renameSpy = spyOn(fsp, "rename").mockResolvedValue(undefined);
 		try {
-			vi.useFakeTimers();
+			vi.useFakeTimers({ now: 0 });
 
 			const chatContainer = new TranscriptContainer();
 			const liveBlock = new ToolExecutionComponent(
@@ -358,11 +452,11 @@ describe("ToolExecutionComponent live preview spinners", () => {
 				process.cwd(),
 			);
 			chatContainer.addChild(liveBlock);
-			expect(vi.getTimerCount()).toBeGreaterThan(0);
+			expect(sharedSpinnerTickerArmed()).toBe(true);
 
 			await Settings.init({ inMemory: true });
 			const ctx = {
-				settings: { get: () => "" },
+				settings: Settings.isolated(),
 				sessionManager: { getSessionFile: () => null, getSessionName: () => "local", getCwd: () => "/local" },
 				session: {
 					messages: [],
@@ -376,7 +470,9 @@ describe("ToolExecutionComponent live preview spinners", () => {
 					},
 				},
 				statusContainer: { clear: () => {}, disposeChildren: () => {} },
+				pendingShellContainer: { clear: () => {}, disposeChildren: () => {} },
 				pendingMessagesContainer: { clear: () => {}, disposeChildren: () => {} },
+				updatePendingMessagesDisplay: () => {},
 				compactionQueuedMessages: [],
 				streamingComponent: undefined,
 				streamingMessage: undefined,
@@ -398,7 +494,7 @@ describe("ToolExecutionComponent live preview spinners", () => {
 				ui: { requestRender: () => {} },
 				chatContainer,
 				resetObserverRegistry: () => {},
-				eventController: { takeDisplaceableComponents: () => [] },
+				eventController: { takeDisplaceableComponents: () => [], resetTranscriptAnchors: () => {} },
 				// The real transcript-commit path is the contract under test: the
 				// guest resync performs no eager teardown, so the orphaned live
 				// block's ticker registration must drop exactly when
@@ -429,7 +525,7 @@ describe("ToolExecutionComponent live preview spinners", () => {
 					getToolByName: () => undefined,
 					hasBuiltInTool: () => true,
 					extensionRunner: undefined,
-					sessionManager: { getEntries: () => [], getCwd: () => "/local" },
+					sessionManager: { getEntries: () => [], getCwd: () => "/local", getConversationTip: () => undefined },
 				},
 				reloadTodos: () => Promise.resolve(),
 				showStatus: () => {},
@@ -437,6 +533,9 @@ describe("ToolExecutionComponent live preview spinners", () => {
 				updateEditorTopBorder: () => {},
 				updateEditorBorderColor: () => {},
 				syncRunningSubagentBadge: () => {},
+				setCollabGuest: (guest: InteractiveModeContext["collabGuest"]) => {
+					Object.assign(ctx, { collabGuest: guest });
+				},
 			} as unknown as InteractiveModeContext;
 			const uiHelpers = new UiHelpers(ctx);
 
@@ -478,177 +577,14 @@ describe("ToolExecutionComponent live preview spinners", () => {
 				await guest.join(link);
 
 				expect(chatContainer.children).not.toContain(liveBlock);
-				expect(vi.getTimerCount()).toBe(0);
+				expect(sharedSpinnerTickerArmed()).toBe(false);
 			} finally {
 				hostSocket.close();
 				await guest.leave("test cleanup").catch(() => {});
 			}
 		} finally {
 			writeSpy.mockRestore();
-			uninstallInMemoryRelay();
-			stopSharedSpinnerTicker();
-		}
-	});
-
-	// Regression (PR #9377 follow-up, codex review): when the staged replay
-	// inside `UiHelpers.renderInitialMessages()` throws, its own rollback only
-	// restores the untouched visible container -- it never disposes that
-	// container's children, since they were never touched. A tool block that
-	// was tracked in `pendingTools` before `#clearTransientUi()` cleared the
-	// map is now orphaned with no remaining reference, so nothing would ever
-	// call `dispose()` on it again: its shared-ticker registration must be
-	// stopped by `#finalizeSnapshot` itself on the failure path.
-	it("stops an orphaned pending tool block's ticker when guest resync staging fails", async () => {
-		installInMemoryRelay();
-		const writeSpy = spyOn(Bun, "write").mockResolvedValue(0);
-		try {
-			vi.useFakeTimers();
-
-			const chatContainer = new TranscriptContainer();
-			const liveBlock = new ToolExecutionComponent(
-				"eval",
-				{ language: "py", code: "import time\ntime.sleep(10)" },
-				{},
-				undefined,
-				{ requestRender: vi.fn(), requestComponentRender: vi.fn() } as unknown as TUI,
-				process.cwd(),
-			);
-			chatContainer.addChild(liveBlock);
-			expect(vi.getTimerCount()).toBeGreaterThan(0);
-
-			await Settings.init({ inMemory: true });
-			const ctx = {
-				settings: { get: () => "" },
-				sessionManager: { getSessionFile: () => null, getSessionName: () => "local", getCwd: () => "/local" },
-				session: {
-					messages: [],
-					switchSession: () => Promise.resolve(),
-					newSession: () => Promise.resolve(),
-					agent: {
-						state: { model: undefined },
-						setModel: () => {},
-						setThinkingLevel: () => {},
-						setDisableReasoning: () => {},
-					},
-				},
-				statusContainer: { clear: () => {}, disposeChildren: () => {} },
-				pendingMessagesContainer: { clear: () => {}, disposeChildren: () => {} },
-				compactionQueuedMessages: [],
-				streamingComponent: undefined,
-				streamingMessage: undefined,
-				transcriptMessageComponents: new WeakMap(),
-				// The block under test is tracked as a pending tool, mirroring the
-				// real state right before a resync: #clearTransientUi() clears this
-				// map without disposing the block it names.
-				pendingTools: new Map([["call-1", liveBlock]]),
-				pendingBashComponents: [],
-				pendingPythonComponents: [],
-				lastAssistantUsage: undefined,
-				initialChatRendered: true,
-				hideToolActivity: false,
-				loadingAnimation: undefined,
-				statusLine: {
-					setCollabStatus: () => {},
-					invalidate: () => {},
-					resetActiveTime: () => {},
-					markActivityStart: () => {},
-					markActivityEnd: () => {},
-				},
-				ui: { requestRender: () => {} },
-				chatContainer,
-				resetObserverRegistry: () => {},
-				eventController: { takeDisplaceableComponents: () => [] },
-				renderInitialMessages: (options?: { clearTerminalHistory?: boolean }) =>
-					uiHelpers.renderInitialMessages(options),
-				renderSessionContext: (context: unknown, options: unknown) =>
-					(uiHelpers.renderSessionContext as (c: unknown, o: unknown) => void)(context, options),
-				// Fails the staged replay itself, so renderInitialMessages()'s own
-				// rollback runs (restoring the untouched visible container) without
-				// ever reaching the success-path disposeChildren() that would
-				// otherwise unregister the orphaned block.
-				renderSessionContextIncrementally: () => Promise.reject(new Error("staged rebuild boom")),
-				viewSession: {
-					isStreaming: false,
-					buildTranscriptSessionContext: () => ({
-						messages: [],
-						thinkingLevel: "off",
-						serviceTier: undefined,
-						models: {},
-						injectedTtsrRules: [],
-						mode: "none",
-					}),
-					getToolByName: () => undefined,
-					hasBuiltInTool: () => true,
-					extensionRunner: undefined,
-					sessionManager: { getEntries: () => [], getCwd: () => "/local" },
-				},
-				reloadTodos: () => Promise.resolve(),
-				showStatus: () => {},
-				showError: () => {},
-				updateEditorTopBorder: () => {},
-				updateEditorBorderColor: () => {},
-				syncRunningSubagentBadge: () => {},
-			} as unknown as InteractiveModeContext;
-			const uiHelpers = new UiHelpers(ctx);
-
-			const roomId = "spinner-resync-failure-room";
-			const roomKey = generateRoomKey();
-			const cryptoKey = await importRoomKey(roomKey);
-			const link = formatCollabLink("ws://localhost:8788", roomId, roomKey);
-			const hostSocket = new CollabSocket({
-				wsUrl: `ws://localhost:8788/r/${roomId}`,
-				role: "host",
-				key: cryptoKey,
-			});
-			const hostOpen = Promise.withResolvers<void>();
-			hostSocket.onOpen = () => hostOpen.resolve();
-			hostSocket.onFrame = frame => {
-				if (frame.t !== "hello") return;
-				hostSocket.send({
-					t: "welcome",
-					proto: COLLAB_PROTO,
-					header: {
-						type: "session",
-						id: "resync-failure-session",
-						timestamp: "2026-06-26T00:00:00Z",
-						cwd: "/tmp",
-					},
-					state: {
-						isStreaming: false,
-						queuedMessageCount: 0,
-						sessionName: "host session",
-						cwd: "/tmp",
-						participants: [{ name: "Host", role: "host" }],
-					},
-					agents: [],
-					entryCount: 0,
-				});
-			};
-			hostSocket.connect();
-			await hostOpen.promise;
-
-			const guest = new CollabGuestLink(ctx);
-			try {
-				let joinError: unknown;
-				try {
-					await guest.join(link);
-				} catch (err) {
-					joinError = err;
-				}
-				expect(joinError).toBeInstanceOf(Error);
-				expect((joinError as Error).message).toContain("staged rebuild boom");
-
-				// The block was stopped in place, not disposed from the tree: its
-				// rendered row survives the failed resync untouched.
-				expect(chatContainer.children).toContain(liveBlock);
-				// ...but it no longer holds the shared ticker open.
-				expect(vi.getTimerCount()).toBe(0);
-			} finally {
-				hostSocket.close();
-				await guest.leave("test cleanup").catch(() => {});
-			}
-		} finally {
-			writeSpy.mockRestore();
+			renameSpy.mockRestore();
 			uninstallInMemoryRelay();
 			stopSharedSpinnerTicker();
 		}
@@ -673,8 +609,9 @@ describe("ToolExecutionComponent live preview spinners", () => {
 	it("folds a displaceable poll/todo block into orphan cleanup when guest resync staging fails", async () => {
 		installInMemoryRelay();
 		const writeSpy = spyOn(Bun, "write").mockResolvedValue(0);
+		const renameSpy = spyOn(fsp, "rename").mockResolvedValue(undefined);
 		try {
-			vi.useFakeTimers();
+			vi.useFakeTimers({ now: 0 });
 
 			const chatContainer = new TranscriptContainer();
 			await Settings.init({ inMemory: true });
@@ -713,10 +650,10 @@ describe("ToolExecutionComponent live preview spinners", () => {
 				(child): child is ToolExecutionComponent => child instanceof ToolExecutionComponent,
 			);
 			if (!displaceableBlock) throw new Error("expected the wait to render a live block");
-			expect(vi.getTimerCount()).toBeGreaterThan(0);
+			expect(sharedSpinnerTickerArmed()).toBe(true);
 
 			const ctx = {
-				settings: { get: () => "" },
+				settings: Settings.isolated(),
 				sessionManager: { getSessionFile: () => null, getSessionName: () => "local", getCwd: () => "/local" },
 				session: {
 					messages: [],
@@ -730,7 +667,9 @@ describe("ToolExecutionComponent live preview spinners", () => {
 					},
 				},
 				statusContainer: { clear: () => {}, disposeChildren: () => {} },
+				pendingShellContainer: { clear: () => {}, disposeChildren: () => {} },
 				pendingMessagesContainer: { clear: () => {}, disposeChildren: () => {} },
+				updatePendingMessagesDisplay: () => {},
 				compactionQueuedMessages: [],
 				streamingComponent: undefined,
 				streamingMessage: undefined,
@@ -785,6 +724,9 @@ describe("ToolExecutionComponent live preview spinners", () => {
 				updateEditorTopBorder: () => {},
 				updateEditorBorderColor: () => {},
 				syncRunningSubagentBadge: () => {},
+				setCollabGuest: (guest: InteractiveModeContext["collabGuest"]) => {
+					Object.assign(ctx, { collabGuest: guest });
+				},
 			} as unknown as InteractiveModeContext;
 			const uiHelpers = new UiHelpers(ctx);
 
@@ -849,13 +791,14 @@ describe("ToolExecutionComponent live preview spinners", () => {
 				// rendered row survives the failed resync untouched.
 				expect(chatContainer.children).toContain(displaceableBlock);
 				// ...but it no longer holds the shared ticker open.
-				expect(vi.getTimerCount()).toBe(0);
+				expect(sharedSpinnerTickerArmed()).toBe(false);
 			} finally {
 				hostSocket.close();
 				await guest.leave("test cleanup").catch(() => {});
 			}
 		} finally {
 			writeSpy.mockRestore();
+			renameSpy.mockRestore();
 			uninstallInMemoryRelay();
 			stopSharedSpinnerTicker();
 		}
@@ -872,8 +815,9 @@ describe("ToolExecutionComponent live preview spinners", () => {
 	it("seals rather than disposes orphaned blocks when guest resync staging fails", async () => {
 		installInMemoryRelay();
 		const writeSpy = spyOn(Bun, "write").mockResolvedValue(0);
+		const renameSpy = spyOn(fsp, "rename").mockResolvedValue(undefined);
 		try {
-			vi.useFakeTimers();
+			vi.useFakeTimers({ now: 0 });
 
 			const chatContainer = new TranscriptContainer();
 			const pendingBlock = new ToolExecutionComponent(
@@ -894,14 +838,14 @@ describe("ToolExecutionComponent live preview spinners", () => {
 				process.cwd(),
 			);
 			chatContainer.addChild(displaceableBlock);
-			expect(vi.getTimerCount()).toBeGreaterThan(0);
+			expect(sharedSpinnerTickerArmed()).toBe(true);
 
 			const pendingDisposeSpy = spyOn(pendingBlock, "dispose");
 			const displaceableDisposeSpy = spyOn(displaceableBlock, "dispose");
 
 			await Settings.init({ inMemory: true });
 			const ctx = {
-				settings: { get: () => "" },
+				settings: Settings.isolated(),
 				sessionManager: { getSessionFile: () => null, getSessionName: () => "local", getCwd: () => "/local" },
 				session: {
 					messages: [],
@@ -915,7 +859,9 @@ describe("ToolExecutionComponent live preview spinners", () => {
 					},
 				},
 				statusContainer: { clear: () => {}, disposeChildren: () => {} },
+				pendingShellContainer: { clear: () => {}, disposeChildren: () => {} },
 				pendingMessagesContainer: { clear: () => {}, disposeChildren: () => {} },
+				updatePendingMessagesDisplay: () => {},
 				compactionQueuedMessages: [],
 				streamingComponent: undefined,
 				streamingMessage: undefined,
@@ -937,7 +883,10 @@ describe("ToolExecutionComponent live preview spinners", () => {
 				ui: { requestRender: () => {} },
 				chatContainer,
 				resetObserverRegistry: () => {},
-				eventController: { takeDisplaceableComponents: () => [displaceableBlock] },
+				eventController: {
+					takeDisplaceableComponents: () => [displaceableBlock],
+					resetTranscriptAnchors: () => {},
+				},
 				renderInitialMessages: (options?: { clearTerminalHistory?: boolean }) =>
 					uiHelpers.renderInitialMessages(options),
 				renderSessionContext: (context: unknown, options: unknown) =>
@@ -968,6 +917,9 @@ describe("ToolExecutionComponent live preview spinners", () => {
 				updateEditorTopBorder: () => {},
 				updateEditorBorderColor: () => {},
 				syncRunningSubagentBadge: () => {},
+				setCollabGuest: (guest: InteractiveModeContext["collabGuest"]) => {
+					Object.assign(ctx, { collabGuest: guest });
+				},
 			} as unknown as InteractiveModeContext;
 			const uiHelpers = new UiHelpers(ctx);
 
@@ -1018,7 +970,7 @@ describe("ToolExecutionComponent live preview spinners", () => {
 				expect(chatContainer.children).toContain(pendingBlock);
 				expect(chatContainer.children).toContain(displaceableBlock);
 				// ...but neither holds the shared ticker open any longer.
-				expect(vi.getTimerCount()).toBe(0);
+				expect(sharedSpinnerTickerArmed()).toBe(false);
 				// seal(), not dispose(): a rollback-preserved row's own renderer
 				// children must not be torn down.
 				expect(pendingDisposeSpy).not.toHaveBeenCalled();
@@ -1029,6 +981,7 @@ describe("ToolExecutionComponent live preview spinners", () => {
 			}
 		} finally {
 			writeSpy.mockRestore();
+			renameSpy.mockRestore();
 			uninstallInMemoryRelay();
 			stopSharedSpinnerTicker();
 		}

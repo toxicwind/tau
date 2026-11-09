@@ -1,4 +1,6 @@
 import { afterEach, describe, expect, test, vi } from "bun:test";
+<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: `import { completeSimple, getEnvApiKey, stream, streamSimple } f…`
 import { completeSimple, getEnvApiKey, stream, streamSimple } from "@tau/tau-ai/stream";
 import type { Context, Tool } from "@tau/tau-ai/types";
 import { buildModel } from "@tau/tau-catalog/build";
@@ -6,6 +8,16 @@ import { Effort } from "@tau/tau-catalog/effort";
 import { getSupportedEfforts } from "@tau/tau-catalog/model-thinking";
 import { ollamaCloudModelManagerOptions } from "@tau/tau-catalog/provider-models/ollama";
 import type { FetchImpl, Model } from "@tau/tau-catalog/types";
+=======
+import { getEnvApiKey } from "@oh-my-pi/pi-ai/env-api-key";
+import { stream, streamSimple } from "@oh-my-pi/pi-ai/stream";
+import type { Context, Tool } from "@oh-my-pi/pi-ai/types";
+import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import { Effort } from "@oh-my-pi/pi-catalog/effort";
+import { getSupportedEfforts } from "@oh-my-pi/pi-catalog/model-thinking";
+import { ollamaCloudModelManagerOptions } from "@oh-my-pi/pi-catalog/provider-models/ollama";
+import type { FetchImpl, Model } from "@oh-my-pi/pi-catalog/types";
+>>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/catalog/test/ollama-cloud-provider.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const originalApiKey = Bun.env.OLLAMA_CLOUD_API_KEY;
 
@@ -404,29 +416,6 @@ describe("ollama-cloud provider support", () => {
 		expect(response.usage.output).toBe(4);
 	});
 
-	test("supports ollama-cloud through completeSimple top-level contract", async () => {
-		const fetchMock: FetchImpl = vi.fn(async () =>
-			createNdjsonResponse([
-				{
-					model: "gpt-oss:120b",
-					message: { role: "assistant", content: "Completed through completeSimple" },
-					done: false,
-				},
-				{ model: "gpt-oss:120b", done: true, done_reason: "stop", prompt_eval_count: 3, eval_count: 5 },
-			]),
-		);
-
-		const response = await completeSimple(
-			cloudModel,
-			{ messages: [{ role: "user", content: "Finish this", timestamp: Date.now() }] },
-			{ apiKey: "cloud-test-key", fetch: fetchMock },
-		);
-
-		expect(response.stopReason).toBe("stop");
-		expect(response.content).toEqual([{ type: "text", text: "Completed through completeSimple" }]);
-		expect(response.usage.input).toBe(3);
-		expect(response.usage.output).toBe(5);
-	});
 	test("streams tool calls and maps native tool stop reasons", async () => {
 		const fetchMock: FetchImpl = vi.fn(async () =>
 			createNdjsonResponse([

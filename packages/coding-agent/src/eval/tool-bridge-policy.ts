@@ -1,3 +1,4 @@
+<<<<<<< ours
 /**
  * Eval-bridge tool policy (upstream parity, oh-my-pi 8d1dfcd5ab).
  *
@@ -18,3 +19,12 @@ export function isEvalBridgeToolCallable(tool: { name?: string }): boolean {
 	// resolved AgentTool whose name is always set; tolerate degraded input).
 	return name === undefined || !EVAL_BRIDGE_EXCLUDED_TOOLS.has(name);
 }
+||||||| base
+=======
+import type { AgentTool } from "@oh-my-pi/pi-agent-core";
+
+/** These tools need direct toolResult events to commit their session changes. */
+export function isEvalBridgeToolCallable(tool: Pick<AgentTool, "name">): boolean {
+	return tool.name !== "checkpoint" && tool.name !== "rewind";
+}
+>>>>>>> theirs · weave: run 'weave explain packages/coding-agent/src/eval/tool-bridge-policy.ts' for per-hunk detail, 'weave check' to verify your resolution

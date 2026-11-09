@@ -2,6 +2,9 @@
 
 provider "xai" {
 	web-search "xai"
+	// api.x.ai rejects a body over 50 MiB and counts images only against the
+	// context window; 60 images at the 500 KiB resize target stay near 41 MB.
+	image-count-budget 60
 
 
 	models "grok-imagine-image" {

@@ -2,6 +2,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
+<<<<<<< ours — imports `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 import { SkillshareClient } from "tau/skillshare/client";
 import {
 	computeIntegrity,
@@ -24,6 +26,31 @@ import { writeTar } from "tau/skillshare/tar";
 import { removeWithRetries } from "@tau/tau-utils";
 import { getAgentDir, setAgentDir } from "@tau/tau-utils/dirs";
 import type { SkillPackument, SkillVersionManifest, SkillVersionSummary } from "@tau/tau-wire/skillshare";
+=======
+import { SkillshareClient } from "@oh-my-pi/pi-coding-agent/skillshare/client";
+import {
+	computeIntegrity,
+	installSkillPackages,
+	resolveSkillVersion,
+	type SkillInstallHooks,
+	uninstallSkillPackages,
+	updateSkillPackages,
+} from "@oh-my-pi/pi-coding-agent/skillshare/installer";
+import {
+	getSkillStorePath,
+	getSkillshareStoreDir,
+	getProjectSkillsInstallPaths,
+	readSkillsLock,
+	readSkillsManifest,
+	type SkillsLock,
+	writeSkillsLock,
+	writeSkillsManifest,
+} from "@oh-my-pi/pi-coding-agent/skillshare/manifest";
+import { writeTar } from "@oh-my-pi/pi-coding-agent/skillshare/tar";
+import { removeWithRetries } from "@oh-my-pi/pi-utils";
+import { getAgentDir, setAgentDir } from "@oh-my-pi/pi-utils/dirs";
+import type { SkillPackument, SkillVersionManifest, SkillVersionSummary } from "@oh-my-pi/pi-wire/skillshare";
+>>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/skillshare/installer.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const SCOPE = "alice";
 const NAME = "pdf-tools";
@@ -118,7 +145,17 @@ describe("skills manifest and lock", () => {
 		dir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-skillshare-manifest-"));
 	});
 	afterEach(async () => {
+		vi.restoreAllMocks();
 		await removeWithRetries(dir);
+	});
+
+	it("rejects a temporary ceiling as a project root without identifying it as home", async () => {
+		vi.spyOn(os, "tmpdir").mockReturnValue(dir);
+		vi.spyOn(os, "homedir").mockReturnValue(path.join(dir, "home"));
+
+		await expect(getProjectSkillsInstallPaths(dir)).rejects.toThrow(
+			"This directory is not a project root; pass --global to install for your user.",
+		);
 	});
 
 	it("round-trips entries with sorted keys", async () => {
@@ -228,7 +265,10 @@ describe("installer", () => {
 		});
 		const store = getSkillStorePath(SCOPE, NAME, "1.1.0");
 		expect(await Bun.file(path.join(store, "SKILL.md")).text()).toContain("# PDF 1.1.0");
-		expect((await fs.stat(path.join(store, "scripts", "run.sh"))).mode & 0o111).not.toBe(0);
+		// Windows file modes carry no execute bits.
+		if (process.platform !== "win32") {
+			expect((await fs.stat(path.join(store, "scripts", "run.sh"))).mode & 0o111).not.toBe(0);
+		}
 	});
 
 	it("aborts on an integrity mismatch before writing anything", async () => {

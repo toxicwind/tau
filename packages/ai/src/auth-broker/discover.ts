@@ -19,14 +19,16 @@ import {
 import { YAML } from "bun";
 import {
 	type AuthAccountPolicies,
+	type AuthCredentialStore,
 	AuthStorage,
 	type AuthStorageOptions,
 	DEFAULT_USAGE_RESERVE_PCT,
+	SqliteAuthCredentialStore,
 } from "../auth-storage";
 import * as AIError from "../error";
 import { AuthBrokerClient, AuthBrokerError } from "./client";
-import { type AuthBrokerAccountPool, RemoteAuthCredentialStore } from "./remote-store";
-import { readAuthBrokerSnapshotCache, writeAuthBrokerSnapshotCache } from "./snapshot-cache";
+import { type AuthBrokerAccountPool, type AuthBrokerProviderPool, RemoteAuthCredentialStore } from "./remote-store";
+import { readAuthBrokerSnapshotCache, scheduleAuthBrokerSnapshotCacheWrite } from "./snapshot-cache";
 import { DEFAULT_SNAPSHOT_CACHE_TTL_MS, type SnapshotResponse } from "./types";
 
 export interface AuthBrokerClientConfig {
@@ -120,7 +122,12 @@ function parseAuthAccountPolicies(value: unknown): AuthAccountPolicies {
 		}
 		const policy = entry as Record<string, unknown>;
 		const unknownPolicyFields = Object.keys(policy).filter(
-			key => key !== "provider" && key !== "account" && key !== "priority" && key !== "reservePct",
+			key =>
+				key !== "provider" &&
+				key !== "account" &&
+				key !== "priority" &&
+				key !== "reservePct" &&
+				key !== "reclaimAbovePct",
 		);
 		if (unknownPolicyFields.length > 0) {
 			throw new AIError.ConfigurationError(`${path} has unknown fields: ${unknownPolicyFields.join(", ")}`);
@@ -169,6 +176,12 @@ function parseAuthAccountPolicies(value: unknown): AuthAccountPolicies {
 		) {
 			throw new AIError.ConfigurationError(`${path}.reservePct must be between 0 and 100`);
 		}
+		if (
+			policy.reclaimAbovePct !== undefined &&
+			(typeof policy.reclaimAbovePct !== "number" || !Number.isFinite(policy.reclaimAbovePct))
+		) {
+			throw new AIError.ConfigurationError(`${path}.reclaimAbovePct must be a finite number`);
+		}
 
 		return {
 			provider,
@@ -180,6 +193,7 @@ function parseAuthAccountPolicies(value: unknown): AuthAccountPolicies {
 			},
 			...(typeof policy.priority === "number" ? { priority: policy.priority } : {}),
 			...(typeof policy.reservePct === "number" ? { reservePct: policy.reservePct } : {}),
+			...(typeof policy.reclaimAbovePct === "number" ? { reclaimAbovePct: policy.reclaimAbovePct } : {}),
 		};
 	});
 }
@@ -270,7 +284,7 @@ export async function loadAuthBrokerAccountPool(): Promise<AuthBrokerAccountPool
 		throw new AIError.ConfigurationError("TAU_AUTH_BROKER_ACCOUNT_POOL_FILE must contain a JSON object");
 	}
 
-	const accountPool = new Map<string, ReadonlySet<string>>();
+	const accountPool = new Map<string, ReadonlySet<string> | AuthBrokerProviderPool>();
 	for (const [provider, value] of Object.entries(parsed)) {
 		const normalizedProvider = provider.trim();
 		if (normalizedProvider.length === 0) {
@@ -281,6 +295,8 @@ export async function loadAuthBrokerAccountPool(): Promise<AuthBrokerAccountPool
 				"TAU_AUTH_BROKER_ACCOUNT_POOL_FILE contains a provider id with surrounding whitespace",
 			);
 		}
+<<<<<<< ours — function `loadAuthBrokerAccountPool (body partly extracted into parseAccountPoolIdentities)` (S+F, confidence: low)
+// refused_by: statement_fold · collision: ``OMP_AUTH_BROKER_ACCOUNT_POOL_FILE entry for ${provider} must b…` +2 more
 		if (!Array.isArray(value)) {
 			throw new AIError.ConfigurationError(
 				`TAU_AUTH_BROKER_ACCOUNT_POOL_FILE entry for ${provider} must be an array of identity keys`,
@@ -301,8 +317,68 @@ export async function loadAuthBrokerAccountPool(): Promise<AuthBrokerAccountPool
 			identities.add(identity);
 		}
 		accountPool.set(provider, identities);
+=======
+		accountPool.set(provider, parseAccountPoolEntry(provider, value));
+>>>>>>> theirs — function `loadAuthBrokerAccountPool (body partly extracted into parseAccountPoolIdentities)` (S+F, confidence: low) · weave: run 'weave explain packages/ai/src/auth-broker/discover.ts' for per-hunk detail, 'weave check' to verify your resolution
 	}
 	return accountPool;
+}
+
+/**
+ * One pool-file entry: an identity array (visible OAuth accounts, API keys
+ * kept), `true` (everything visible), `false` (nothing visible), or a rule
+ * object `{ "accounts"?: [...], "apiKeys"?: boolean }`.
+ */
+function parseAccountPoolEntry(provider: string, value: unknown): ReadonlySet<string> | AuthBrokerProviderPool {
+	if (Array.isArray(value)) return parseAccountPoolIdentities(provider, value);
+	if (value === true) return {};
+	if (value === false) return { accounts: new Set(), apiKeys: false };
+	if (value === null || typeof value !== "object") {
+		throw new AIError.ConfigurationError(
+			`OMP_AUTH_BROKER_ACCOUNT_POOL_FILE entry for ${provider} must be an array of identity keys, a boolean, or an object with "accounts"/"apiKeys"`,
+		);
+	}
+	const rule: { accounts?: ReadonlySet<string>; apiKeys?: boolean } = {};
+	for (const [key, field] of Object.entries(value)) {
+		if (key === "accounts") {
+			if (!Array.isArray(field)) {
+				throw new AIError.ConfigurationError(
+					`OMP_AUTH_BROKER_ACCOUNT_POOL_FILE entry for ${provider} has "accounts" that is not an array of identity keys`,
+				);
+			}
+			rule.accounts = parseAccountPoolIdentities(provider, field);
+		} else if (key === "apiKeys") {
+			if (typeof field !== "boolean") {
+				throw new AIError.ConfigurationError(
+					`OMP_AUTH_BROKER_ACCOUNT_POOL_FILE entry for ${provider} has "apiKeys" that is not a boolean`,
+				);
+			}
+			rule.apiKeys = field;
+		} else {
+			throw new AIError.ConfigurationError(
+				`OMP_AUTH_BROKER_ACCOUNT_POOL_FILE entry for ${provider} has unknown field ${JSON.stringify(key)}`,
+			);
+		}
+	}
+	return rule;
+}
+
+function parseAccountPoolIdentities(provider: string, value: unknown[]): Set<string> {
+	const identities = new Set<string>();
+	for (const identity of value) {
+		if (typeof identity !== "string" || identity.length === 0) {
+			throw new AIError.ConfigurationError(
+				`OMP_AUTH_BROKER_ACCOUNT_POOL_FILE entry for ${provider} contains an invalid identity key`,
+			);
+		}
+		if (identity !== identity.trim()) {
+			throw new AIError.ConfigurationError(
+				`OMP_AUTH_BROKER_ACCOUNT_POOL_FILE entry for ${provider} contains an identity key with surrounding whitespace`,
+			);
+		}
+		identities.add(identity);
+	}
+	return identities;
 }
 
 function resolveSnapshotTtlMs(): number {
@@ -363,38 +439,48 @@ export async function resolveAuthBrokerConfig(
 	return { url, token };
 }
 
-/**
- * Create an AuthStorage instance, using the broker when configured and falling
- * back to the local SQLite store otherwise. This is the single source of truth
- * for the TUI and the catalog generator.
- */
-export async function discoverAuthStorage(options: DiscoverAuthStorageOptions = {}): Promise<AuthStorage> {
-	const agentDir = options.agentDir ?? getAgentDir();
-	const brokerConfig = await resolveAuthBrokerConfig({
-		agentDir,
-		configValueResolver: options.configValueResolver,
-	});
-	const { accountPolicies, defaultReservePct } = await loadAuthAccountPolicyConfig({
-		agentDir,
-		accountPolicies: options.accountPolicies,
-		usageReservePct: options.authStorageOptions?.defaultReservePct,
-	});
+export interface OpenAuthCredentialStoreOptions {
+	/** Broker to connect to; `null` opens the local SQLite store under `agentDir`. */
+	brokerConfig: AuthBrokerClientConfig | null;
+	agentDir?: string;
+	cachePath?: string;
+	sourceLabel?: string;
+	/** Programmatic pool for SDK hosts. Takes precedence over the environment file. */
+	accountPool?: AuthBrokerAccountPool;
+}
 
+/** Credential store opened by {@link openAuthCredentialStore} plus its diagnostics label. */
+export interface OpenedAuthCredentialStore {
+	store: AuthCredentialStore;
+	sourceLabel: string;
+}
+
+/**
+ * Open the credential store {@link discoverAuthStorage} would use for
+ * `brokerConfig`: the remote broker store (fails fast when the broker has no
+ * usable snapshot) or the local SQLite store. Also feeds
+ * {@link AuthStorage.replaceStore} when broker settings change at runtime.
+ */
+export async function openAuthCredentialStore(
+	options: OpenAuthCredentialStoreOptions,
+): Promise<OpenedAuthCredentialStore> {
+	const brokerConfig = options.brokerConfig;
 	if (brokerConfig) {
 		const accountPool = options.accountPool ?? (await loadAuthBrokerAccountPool());
 		const client = new AuthBrokerClient({ url: brokerConfig.url, token: brokerConfig.token });
 		const cachePath = options.cachePath ?? getAuthBrokerSnapshotCachePath();
 		const ttlMs = resolveSnapshotTtlMs();
+		// Coalesced fire-and-forget: the first snapshot lands immediately (so a
+		// fresh boot seeds the cache), bursts collapse into one trailing write,
+		// and anything pending is flushed on shutdown.
 		const persist =
 			ttlMs > 0
 				? (snapshot: SnapshotResponse): void => {
-						void writeAuthBrokerSnapshotCache({
+						scheduleAuthBrokerSnapshotCacheWrite({
 							path: cachePath,
 							token: brokerConfig.token,
 							url: brokerConfig.url,
 							snapshot,
-						}).catch(error => {
-							logger.debug("auth-broker snapshot cache write failed", { error: String(error) });
 						});
 					}
 				: undefined;
@@ -437,22 +523,41 @@ export async function discoverAuthStorage(options: DiscoverAuthStorageOptions = 
 			onSnapshot: persist,
 			accountPool,
 		});
-		const storage = new AuthStorage(store, {
-			...options.authStorageOptions,
-			configValueResolver: options.configValueResolver,
-			sourceLabel: options.sourceLabel ?? `broker ${brokerConfig.url}`,
-			accountPolicies,
-			defaultReservePct,
-		});
-		await storage.credentials.reload();
-		return storage;
+		return { store, sourceLabel: options.sourceLabel ?? `broker ${brokerConfig.url}` };
 	}
 
-	const dbPath = getAgentDbPath(agentDir);
-	const storage = await AuthStorage.create(dbPath, {
+	const dbPath = getAgentDbPath(options.agentDir ?? getAgentDir());
+	const store = await SqliteAuthCredentialStore.open(dbPath);
+	return { store, sourceLabel: options.sourceLabel ?? `local ${dbPath}` };
+}
+
+/**
+ * Create an AuthStorage instance, using the broker when configured and falling
+ * back to the local SQLite store otherwise. This is the single source of truth
+ * for the TUI and the catalog generator.
+ */
+export async function discoverAuthStorage(options: DiscoverAuthStorageOptions = {}): Promise<AuthStorage> {
+	const agentDir = options.agentDir ?? getAgentDir();
+	const brokerConfig = await resolveAuthBrokerConfig({
+		agentDir,
+		configValueResolver: options.configValueResolver,
+	});
+	const { accountPolicies, defaultReservePct } = await loadAuthAccountPolicyConfig({
+		agentDir,
+		accountPolicies: options.accountPolicies,
+		usageReservePct: options.authStorageOptions?.defaultReservePct,
+	});
+	const { store, sourceLabel } = await openAuthCredentialStore({
+		brokerConfig,
+		agentDir,
+		cachePath: options.cachePath,
+		sourceLabel: options.sourceLabel,
+		accountPool: options.accountPool,
+	});
+	const storage = new AuthStorage(store, {
 		...options.authStorageOptions,
 		configValueResolver: options.configValueResolver,
-		sourceLabel: options.sourceLabel ?? `local ${dbPath}`,
+		sourceLabel,
 		accountPolicies,
 		defaultReservePct,
 	});

@@ -68,14 +68,21 @@ export function getGlobalSkillsInstallPaths(): SkillsInstallPaths {
 }
 
 /**
+<<<<<<< ours — scope `declaration` in function `getProjectSkillsInstallPaths` (T, confidence: high)
+// refused_by: statement_fold · collision: `* the home directory, whose `.omp/` is the user config root, no…`
  * Manifest + lock paths for a project: the nearest `.tau/` walking up from
  * `cwd`, else the git root's `.tau/`, else `<cwd>/.tau/`. Throws when `cwd` is
  * the home directory, whose `.tau/` is the user config root, not a project.
+=======
+ * Manifest + lock paths for a project: the nearest `.omp/` walking up from
+ * `cwd`, else the git root's `.omp/`, else `<cwd>/.omp/`. Throws when `cwd` is
+ * a discovery ceiling or a user config root rather than a project root.
+>>>>>>> theirs — scope `declaration` · weave: run 'weave explain packages/coding-agent/src/skillshare/manifest.ts' for per-hunk detail, 'weave check' to verify your resolution
  */
 export async function getProjectSkillsInstallPaths(cwd: string): Promise<SkillsInstallPaths> {
 	const registryPath = await resolveOrDefaultProjectRegistryPath(cwd);
 	if (!registryPath) {
-		throw new Error("The home directory is not a project; pass --global to install for your user.");
+		throw new Error("This directory is not a project root; pass --global to install for your user.");
 	}
 	// `<root>/.tau/plugins/installed_plugins.json` → `<root>/.tau`
 	return installPathsIn(path.dirname(path.dirname(registryPath)));

@@ -1,12 +1,21 @@
 import * as path from "node:path";
+<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: `import { CLIP_DESCRIPTION_MAX, DEFAULT_STREAM_URL, STREAM_TITLE…`
 import { CLIP_DESCRIPTION_MAX, DEFAULT_STREAM_URL, STREAM_TITLE_MAX } from "@tau/tau-wire";
 import { isEnoent } from "@tau/tau-utils";
 import { Args, CliUsageError, Command, Flags } from "@tau/tau-utils/cli";
+=======
+import { CLIP_DESCRIPTION_MAX, STREAM_TITLE_MAX } from "@oh-my-pi/pi-wire";
+import { isEnoent } from "@oh-my-pi/pi-utils";
+import { Args, CliUsageError, Command, Flags } from "@oh-my-pi/pi-utils/cli";
+>>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/commands/clip.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { clipHelp as commandHelp } from "../cli/command-help";
 import { Settings } from "../config/settings";
 import { StencilCredential } from "../stencil/credential";
 import { uploadClip } from "../stream/clip-upload";
 import { latestRecording, recordingsDir } from "../stream/recording";
+
+import { cfgStreamServerUrl } from "../stream/settings";
 
 export default class Clip extends Command {
 	static description = commandHelp.description;
@@ -55,7 +64,7 @@ export default class Clip extends Command {
 				return;
 			}
 			const clip = await uploadClip({
-				serverUrl: flags.server ?? settings.get("stream.serverUrl") ?? DEFAULT_STREAM_URL,
+				serverUrl: flags.server ?? cfgStreamServerUrl.get(settings),
 				token,
 				recording,
 				title: flags.title,

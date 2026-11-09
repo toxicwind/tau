@@ -45,13 +45,17 @@ import { executeRepoView } from "./gh-view";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 import { toolResult } from "./tool-result";
 
+import { cfgImagesAutoResize } from "../modes/settings";
+
 export { formatRepoRef, parsePositiveDecimalInt, resolveDefaultRepoMemoized } from "./gh-common";
 export {
 	getOrFetchPrDiff,
+	getPinnedPrDiff,
 	type PrDiffFile,
 	type PrDiffLookupOptions,
 	type PrDiffPayload,
 	parsePrUnifiedDiff,
+	retainPrDiffGeneration,
 } from "./gh-pr-diff";
 export { buildSearchDateQualifier, parseSearchDateBound } from "./gh-search";
 export {
@@ -260,7 +264,7 @@ async function executeFileRead(
 			image: { type: "image", data: encoded, mimeType: imageMetadata.mimeType },
 			label: filePath,
 			uri: sourceUrl,
-			autoResize: session.settings.get("images.autoResize"),
+			autoResize: cfgImagesAutoResize.get(session.settings),
 			excludeWebP: webpExclusionForModel(session.getActiveModel?.()),
 		});
 		if (image) {

@@ -1,6 +1,7 @@
 import type { ExtensionDashboardRuntime } from "@tau/tau-tui/overlays/extensions/extension-dashboard";
 import { getMCPConfigPath } from "@tau/tau-utils";
 import { parseRuleAgents, parseRuleConditionAndScope } from "../../../capability/rule";
+import type { EffectiveExtensionRoots } from "../../../capability/types";
 import type { Settings } from "../../../config/settings";
 import { getAllProvidersInfo, isForeignUserProvider, isUserSourceEnabled } from "../../../discovery";
 import type { CustomTool } from "../../../extensibility/custom-tools/types";
@@ -11,27 +12,31 @@ import type { EventBus } from "../../../utils/event-bus";
 import { toolFileHeaderDescription } from "./inspector-runtime";
 import { applyMcpToggleRuntime } from "./mcp-runtime";
 import { loadAllExtensions, toggleProvider, toggleUserSource } from "./state-manager";
+import { cfgDisabledExtensions } from "../../../extensibility/settings";
+import { cfgMcpEnableProjectConfig } from "../../../mcp/settings";
 
 /** Bind the dashboard's display-only contract to the live application. */
 export function createExtensionDashboardRuntime(options: {
 	cwd: string;
 	settings: Settings;
+	/** Session extension-package lanes, so plugin and configured-package modules are listed. */
+	extensionRoots?: () => EffectiveExtensionRoots;
 	mcpManager?: MCPManager;
 	eventBus?: EventBus;
 	onMcpToolsChanged?: (tools: CustomTool[]) => Promise<void> | void;
 	browserMcpFilterEnabled?: () => boolean;
 }): ExtensionDashboardRuntime {
-	const { cwd, settings, mcpManager, eventBus, onMcpToolsChanged, browserMcpFilterEnabled } = options;
+	const { cwd, settings, extensionRoots, mcpManager, eventBus, onMcpToolsChanged, browserMcpFilterEnabled } = options;
 	return {
-		getDisabledExtensions: () => settings.get("disabledExtensions") ?? [],
-		setDisabledExtensions: ids => settings.set("disabledExtensions", ids),
+		getDisabledExtensions: () => cfgDisabledExtensions.get(settings),
+		setDisabledExtensions: ids => cfgDisabledExtensions.set(settings, ids),
 		getProviders: () =>
 			getAllProvidersInfo().map(provider => ({
 				...provider,
 				userSourceEnabled: isUserSourceEnabled(provider.id),
 				foreignUserSource: isForeignUserProvider(provider.id),
 			})),
-		loadExtensions: disabledIds => loadAllExtensions(cwd, disabledIds),
+		loadExtensions: disabledIds => loadAllExtensions(cwd, disabledIds, extensionRoots?.()),
 		toggleProvider,
 		toggleUserSource,
 		async persistMcpToggle(name, enabled, sourcePath) {
@@ -51,7 +56,7 @@ export function createExtensionDashboardRuntime(options: {
 				manager: mcpManager,
 				session: onMcpToolsChanged ? { refreshMCPTools: onMcpToolsChanged } : undefined,
 				discovery: {
-					enableProjectConfig: settings.get("mcp.enableProjectConfig") ?? true,
+					enableProjectConfig: cfgMcpEnableProjectConfig.get(settings),
 					filterExa: true,
 					filterBrowser: browserMcpFilterEnabled?.() ?? false,
 				},

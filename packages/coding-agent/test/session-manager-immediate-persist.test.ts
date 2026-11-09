@@ -389,16 +389,24 @@ describe("SessionManager JSONL software-crash durability", () => {
 		}
 	});
 
+<<<<<<< ours — test_suite `SessionManager JSONL software-crash durability` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 	it("reparents metadata children when durably discarding an entry", async () => {
 		const cwd = makeTempDir("@tau-discard-metadata-cwd-");
+=======
+	it("reparents metadata children and keeps billed usage when durably discarding an entry", async () => {
+		const cwd = makeTempDir("@pi-discard-metadata-cwd-");
+>>>>>>> theirs — test_suite `SessionManager JSONL software-crash durability` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/session-manager-immediate-persist.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 		const sessionDir = path.join(cwd, "sessions");
 		const manager = SessionManager.create(cwd, sessionDir);
 		const sessionFile = manager.getSessionFile();
 		if (!sessionFile) throw new Error("Expected a persisted session file path");
 
 		const priorId = manager.appendMessage(assistantMessage("prior turn"));
-		const discardedId = manager.appendMessage(assistantMessage(""));
+		const discarded = assistantMessage("");
+		const discardedId = manager.appendMessage(discarded);
 		const serviceTierId = manager.appendServiceTierChange(null);
+		const usageBefore = manager.getUsageStatistics();
 		await manager.discardEntryDurably(discardedId);
 		await manager.close();
 
@@ -406,12 +414,23 @@ describe("SessionManager JSONL software-crash durability", () => {
 		const branch = reloaded.getBranch();
 		expect(branch.some(entry => entry.id === discardedId)).toBe(false);
 		expect(branch).toContainEqual(expect.objectContaining({ id: serviceTierId, parentId: priorId }));
+		expect(branch.some(entry => entry.type === "model_usage")).toBe(false);
+		expect(reloaded.getEntries()).toContainEqual(
+			expect.objectContaining({
+				type: "model_usage",
+				parentId: serviceTierId,
+				provider: discarded.provider,
+				model: discarded.model,
+				usage: discarded.usage,
+			}),
+		);
 		expect(branch.at(-1)).toMatchObject({
 			type: "branch_summary",
 			summary: "",
 			details: { kind: "discarded-entry-branch", discardedEntryId: discardedId },
 			parentId: serviceTierId,
 		});
+		expect(reloaded.getUsageStatistics()).toEqual(usageBefore);
 		await reloaded.close();
 	});
 

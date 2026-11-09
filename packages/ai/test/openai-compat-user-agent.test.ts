@@ -92,6 +92,8 @@ async function captureStreamHeaders(
 }
 
 describe("resolveOpenAIRequestSetup User-Agent", () => {
+<<<<<<< ours — scope `test("sets omp User-Agent on xAI when none is...` in test_suite `resolveOpenAIRequestSetup User-Agent`, deleted in theirs (S+F, confidence: low)
+// refused_by: statement_fold · collision: none (no common ancestor text)
 	test("sets tau User-Agent on xAI when none is provided", () => {
 		for (const provider of ["xai", "xai-oauth"] as const) {
 			const setup = resolveOpenAIRequestSetup(
@@ -102,23 +104,15 @@ describe("resolveOpenAIRequestSetup User-Agent", () => {
 			expect(setup.requestHeaders["User-Agent"]).toBe(USER_AGENT);
 		}
 	});
-
-	test("does not set User-Agent on other OpenAI-wire providers", () => {
-		for (const provider of ["openai", "deepseek"] as const) {
-			const setup = resolveOpenAIRequestSetup(
-				{ provider, id: "m", baseUrl: "https://api.example/v1" },
-				{ apiKey: "sk-test", messages: [] },
-			);
-			expect(setup.headers["User-Agent"]).toBeUndefined();
-			expect(setup.requestHeaders["User-Agent"]).toBeUndefined();
-		}
-	});
-
+=======
+>>>>>>> theirs — scope `test("sets omp User-Agent on xAI when none is...` deleted in theirs · weave: run 'weave explain packages/ai/test/openai-compat-user-agent.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 	test("does not override a caller-supplied xAI User-Agent", () => {
 		const setup = resolveOpenAIRequestSetup(
 			{
 				provider: "xai",
 				id: "grok-4.6",
+				api: "openai-responses",
+				reasoning: true,
 				baseUrl: "https://api.x.ai/v1",
 				headers: { "User-Agent": "custom-xai-client/1.0" },
 			},
@@ -132,6 +126,8 @@ describe("resolveOpenAIRequestSetup User-Agent", () => {
 			{
 				provider: "xai",
 				id: "grok-4.6",
+				api: "openai-responses",
+				reasoning: true,
 				baseUrl: "https://api.x.ai/v1",
 				headers: { "user-agent": "custom-xai-client/1.0" },
 			},
@@ -140,6 +136,21 @@ describe("resolveOpenAIRequestSetup User-Agent", () => {
 		expect(setup.headers["user-agent"]).toBe("custom-xai-client/1.0");
 		expect(setup.headers["User-Agent"]).toBeUndefined();
 	});
+});
+
+test("per-call headers replace differently cased model headers", () => {
+	const setup = resolveOpenAIRequestSetup(
+		{
+			provider: "openai",
+			id: "gpt-4o-mini",
+			api: "openai-completions",
+			reasoning: false,
+			baseUrl: "https://api.openai.com/v1",
+			headers: { "X-Client-Identity": "model-client" },
+		},
+		{ apiKey: "sk-test", messages: [], extraHeaders: { "x-client-identity": "request-client" } },
+	);
+	expect(new Headers(setup.headers).get("x-client-identity")).toBe("request-client");
 });
 
 describe("xAI stream User-Agent", () => {

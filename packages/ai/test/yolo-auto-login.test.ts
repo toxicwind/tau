@@ -1,8 +1,15 @@
 import { Database } from "bun:sqlite";
 import { afterEach, describe, expect, test, vi } from "bun:test";
+<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import { getEnvApiKey } from "@oh-my-pi/pi-ai/stream";`
 import { AuthStorage, SqliteAuthCredentialStore } from "@tau/tau-ai/auth-storage";
 import { getEnvApiKey } from "@tau/tau-ai/stream";
 import type { FetchImpl } from "@tau/tau-ai/types";
+=======
+import { AuthStorage, SqliteAuthCredentialStore } from "@oh-my-pi/pi-ai/auth-storage";
+import { getEnvApiKey } from "@oh-my-pi/pi-ai/env-api-key";
+import type { FetchImpl } from "@oh-my-pi/pi-ai/types";
+>>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/ai/test/yolo-auto-login.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const originalYoloAutoApiKey = Bun.env.YOLO_AUTO_API_KEY;
 
@@ -34,7 +41,7 @@ describe("Yolo-Auto login wiring", () => {
 			}
 			fetchCalls.push({ url, init });
 			if (url === "https://yolo-auto.com/v1/models") {
-				return new Response(JSON.stringify({ data: [{ id: "deepseek-flash-v4" }] }), {
+				return new Response(JSON.stringify({ data: [{ id: "qwen3.8-27b" }] }), {
 					status: 200,
 					headers: { "Content-Type": "application/json" },
 				});

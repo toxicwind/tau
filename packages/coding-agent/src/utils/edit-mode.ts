@@ -1,45 +1,43 @@
+<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: `import { $env, $flag } from "@oh-my-pi/pi-utils";`
 import { classifyModel } from "@tau/tau-catalog/identity";
 import { $env, $flag } from "@tau/tau-utils";
 
 import type { EditMode } from "@tau/tau-tui/tools/edit";
+=======
+import { classifyModel } from "@oh-my-pi/pi-catalog/identity";
+import { $flag } from "@oh-my-pi/pi-utils";
 
-export const DEFAULT_EDIT_MODE: EditMode = "hashline";
+import type { EditMode } from "@oh-my-pi/pi-tui/tools/edit";
+import type { Settings } from "../config/settings";
+import { cfgEditMode, type EditModeSetting, editModelVariants } from "../edit/settings";
+>>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/utils/edit-mode.ts' for per-hunk detail, 'weave check' to verify your resolution
 
-const EDIT_MODE_IDS = {
-	apply_patch: "apply_patch",
-	hashline: "hashline",
-	patch: "patch",
-	replace: "replace",
-	sloppy: "sloppy",
-} as const satisfies Record<string, EditMode>;
-
-export const EDIT_MODES = Object.keys(EDIT_MODE_IDS) as EditMode[];
-
-export function normalizeEditMode(mode?: string | null): EditMode | undefined {
-	if (!mode) return undefined;
-	return EDIT_MODE_IDS[mode as keyof typeof EDIT_MODE_IDS];
-}
-
-export interface EditModeSettingsLike {
-	get(key: "edit.mode"): unknown;
-	getEditVariantForModel?(model: string | undefined): EditMode | null;
+/** First `edit.modelVariants` entry whose pattern occurs in `model` (case-insensitive). */
+export function editVariantForModel(settings: Settings, model: string | undefined): EditMode | undefined {
+	if (!model) return undefined;
+	const modelLower = model.toLowerCase();
+	return editModelVariants.get(settings).find(variant => modelLower.includes(variant.patternLower))?.mode;
 }
 
 export interface EditModeSessionLike {
-	settings: EditModeSettingsLike;
+	settings: Settings;
 	getActiveModelString?: () => string | undefined;
 }
 
-export function resolveEditMode(session: EditModeSessionLike): EditMode {
+/**
+ * Edit tool variant for the active model, or `"none"` when `edit.mode` removes the tool.
+ * `"none"` wins over `edit.modelVariants`: tool registration follows the setting, not the model.
+ */
+export function resolveEditMode(session: EditModeSessionLike): EditModeSetting {
+	const mode = cfgEditMode.get(session.settings);
+	if (mode === "none") return mode;
+
 	const activeModel = session.getActiveModelString?.();
-	const modelVariant = session.settings.getEditVariantForModel?.(activeModel);
+	const modelVariant = editVariantForModel(session.settings, activeModel);
 	if (modelVariant) return modelVariant;
-
-	const envMode = normalizeEditMode($env.PI_EDIT_VARIANT);
-	if (envMode) return envMode;
-
-	const settingsMode = normalizeEditMode(String(session.settings.get("edit.mode") ?? ""));
-	const mode = settingsMode ?? DEFAULT_EDIT_MODE;
+	// `PI_EDIT_VARIANT` pins the mode exactly; only settings-derived hashline adapts to the model.
+	if (cfgEditMode.provenance(session.settings) === "env") return mode;
 	if (mode === "hashline" && !$flag("PI_STRICT_EDIT_MODE") && activeModel) {
 		const identity = classifyModel("", activeModel, { lenient: true });
 		if (
@@ -49,7 +47,8 @@ export function resolveEditMode(session: EditModeSessionLike): EditMode {
 			identity.class === "deepseek" ||
 			identity.class === "stepfun" ||
 			identity.family === "codex-spark" ||
-			(identity.class === "glm" && identity.family === "flash" && identity.revision === "5.3.0")
+			(identity.class === "glm" && identity.family === "flash" && identity.revision === "5.3.0") ||
+			(identity.class === "qwen" && identity.revision === "3.8.0")
 		) {
 			return "replace";
 		}

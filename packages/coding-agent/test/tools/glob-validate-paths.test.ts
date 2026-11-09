@@ -4,6 +4,7 @@ import * as os from "node:os";
 import * as path from "node:path";
 import type { RenderResultOptions } from "tau/extensibility/custom-tools/types";
 import { getThemeByName, initTheme, type Theme } from "@tau/tau-tui/theme";
+import { InternalUrlFilesystem } from "@oh-my-pi/pi-coding-agent/internal-urls/url-filesystem";
 import {
 	expandDelimitedPathEntries,
 	parseFindPattern,
@@ -145,6 +146,7 @@ describe("delimited path expansion", () => {
 			rawPaths: ["apps\\**\\*.txt"],
 			cwd: tempDir,
 			internalUrlAction: "search",
+			filesystem: new InternalUrlFilesystem({ context: {}, tier: "read" }),
 		});
 
 		expect(scope.searchPath).toBe(path.join(tempDir, "apps"));

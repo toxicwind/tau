@@ -2,6 +2,8 @@ import { afterEach, describe, expect, it, spyOn, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
+<<<<<<< ours — imports `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 import {
 	__resetProjectDirCacheForTests,
 	directoryIsMissing,
@@ -9,6 +11,19 @@ import {
 	relativePathWithinRoot,
 	setProjectDir,
 } from "@tau/tau-utils/dirs";
+=======
+import * as nativePath from "@oh-my-pi/pi-natives/path";
+import {
+	__resetProjectDirCacheForTests,
+	directoryExists,
+	directoryIsMissing,
+	getLogPath,
+	getProjectDir,
+	localDay,
+	relativePathWithinRoot,
+	setProjectDir,
+} from "@oh-my-pi/pi-utils/dirs";
+>>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/utils/test/dirs.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const originalProjectDir = fs.realpathSync(process.cwd()).replace(/^\/private(?=\/)/, "");
 
@@ -35,12 +50,29 @@ describe("project directory state", () => {
 		}
 	});
 
-	it("treats denied stat as probeable rather than missing", async () => {
+	it.skipIf(process.platform !== "win32")(
+		"surfaces a native path-expansion failure instead of relocating the process",
+		() => {
+			__resetProjectDirCacheForTests();
+			const before = process.cwd();
+			spyOn(nativePath, "expandWindowsLongPath").mockImplementation(() => {
+				throw new Error("stale addon");
+			});
+			expect(() => getProjectDir()).toThrow("stale addon");
+			expect(process.cwd()).toBe(before);
+		},
+	);
+
+	it("keeps forgiving probe defaults and propagates denied stat in strict mode", async () => {
 		const stat = spyOn(fs.promises, "stat").mockRejectedValue(
 			Object.assign(new Error("operation not permitted"), { code: "EACCES" }),
 		);
 		try {
-			expect(await directoryIsMissing(path.join(os.tmpdir(), "blocked"))).toBe(false);
+			const blocked = path.join(os.tmpdir(), "blocked");
+			for (const probe of [directoryExists, directoryIsMissing]) {
+				expect(await probe(blocked)).toBe(false);
+				await expect(probe(blocked, { strict: true })).rejects.toMatchObject({ code: "EACCES" });
+			}
 		} finally {
 			stat.mockRestore();
 		}
@@ -67,5 +99,31 @@ describe("project directory state", () => {
 		expect(() => setProjectDir("/blocked/project")).toThrow("operation not permitted");
 		expect(getProjectDir()).toBe(originalProjectDir);
 		chdir.mockRestore();
+	});
+});
+
+describe("dated log path", () => {
+	it("names log files with the local day, matching the rotating sink", () => {
+		// Local 2026-05-31 02:30: in UTC+8 the UTC day is still 2026-05-30, so a
+		// toISOString()-derived name points at a file the local-day rotating
+		// sink (logger/rotating-file.ts) never creates.
+		const date = new Date(2026, 4, 31, 2, 30);
+		expect(localDay(date)).toBe("2026-05-31");
+		expect(path.basename(getLogPath(date, 123))).toBe("omp.2026-05-31.123.log");
+	});
+
+	it("keeps the local-day key under a forced non-UTC timezone", () => {
+		// On a UTC runner `toISOString()` and the local day agree, so the
+		// in-process assertion above cannot catch a revert there. Run the probe
+		// in a UTC+8 child process, where the two days differ for this fixture.
+		const probe = path.join(import.meta.dir, "fixtures", "local-day-probe.ts");
+		const proc = Bun.spawnSync([process.execPath, probe], {
+			env: { ...process.env, TZ: "Asia/Shanghai" },
+			stdout: "pipe",
+			stderr: "pipe",
+		});
+		if (proc.exitCode === 2) return; // TZ not honored on this platform
+		if (proc.exitCode !== 0) console.error(proc.stderr.toString());
+		expect(proc.exitCode).toBe(0);
 	});
 });

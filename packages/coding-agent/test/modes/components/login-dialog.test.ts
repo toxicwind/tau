@@ -4,6 +4,7 @@ import { LoginDialogComponent } from "@tau/tau-tui/overlays/login-dialog";
 import { initTheme } from "@tau/tau-tui/theme";
 import * as openModule from "tau/utils/open";
 import type { TUI } from "@tau/tau-tui";
+import { cfgTuiHyperlinks } from "@oh-my-pi/pi-coding-agent/modes/settings";
 
 beforeAll(async () => {
 	resetSettingsForTest();
@@ -12,7 +13,7 @@ beforeAll(async () => {
 });
 
 afterEach(() => {
-	settings.clearOverride("tui.hyperlinks");
+	cfgTuiHyperlinks.clearOverride(settings);
 });
 
 afterAll(() => {
@@ -21,7 +22,7 @@ afterAll(() => {
 
 describe("LoginDialogComponent", () => {
 	it("links every wrapped authorization URL row to the complete URL", () => {
-		settings.override("tui.hyperlinks", "always");
+		cfgTuiHyperlinks.override(settings, "always");
 		const openSpy = spyOn(openModule, "openPath").mockImplementation(() => {});
 		try {
 			const tui = { requestRender() {} } as unknown as TUI;

@@ -5,9 +5,11 @@ import type { Terminal, TerminalAppearance } from "../terminal";
 import { colorLuma } from "@tau/tau-utils/color";
 import { getCustomThemesDir } from "@tau/tau-utils/dirs";
 import * as logger from "@tau/tau-utils/logger";
+import { isTerminalBackgroundQueryTrusted } from "../terminal-multiplexer";
+import { setActiveSymbolTheme } from "./active-symbols";
 import { ansi256ToHex, resolveThemeColors, resolveVarRefs } from "./color";
 import { type CreateThemeOptions, getBuiltinThemes, loadTheme, loadThemeJson, loadThemeSync } from "./loader";
-import type { ThemeColor, ThemeJson } from "./schema";
+import { type ThemeColor, type ThemeJson } from "./schema";
 import type { SymbolPreset } from "./symbols";
 import type { Theme } from "./theme-class";
 
@@ -25,10 +27,13 @@ export {
 	createHighlightStream,
 	getEditorTheme,
 	getMarkdownTheme,
+	getMarkdownThemeWithLinkTargets,
 	getSelectListTheme,
 	getSettingsListTheme,
 	getSymbolTheme,
 	highlightCode,
+	isHighlightLanguage,
+	setMarkdownColorful,
 	setMarkdownMermaidRendering,
 	warmHighlighter,
 } from "./tui-adapters";
@@ -39,16 +44,28 @@ var terminalReportedAppearance: "dark" | "light" | undefined;
 /** Appearance reported by the macOS fallback observer, or undefined if not yet available. */
 var macOSReportedAppearance: "dark" | "light" | undefined;
 
-function shouldUseMacOSAppearanceFallback(): boolean {
-	// Zellij currently breaks OSC 11 passthrough on macOS, so terminal-derived
-	// appearance cannot be trusted there. Fall back to host macOS appearance
-	// without letting it override valid terminal signals elsewhere.
-	return process.platform === "darwin" && !!Bun.env.ZELLIJ;
+const backgroundFallbackListeners = new Set<() => void>();
+
+/**
+ * Subscribe to native fallback appearance changes independently of theme changes.
+ * Consumers must re-check the effective background: COLORFGBG can override it.
+ */
+export function onTerminalBackgroundFallbackChange(callback: () => void): () => void {
+	backgroundFallbackListeners.add(callback);
+	return () => {
+		backgroundFallbackListeners.delete(callback);
+	};
 }
 
-function detectTerminalBackground(): "dark" | "light" {
+/**
+ * Detect appearance from trusted OSC 11 reports, then COLORFGBG, then native
+ * macOS appearance only on known-broken multiplexer background-query paths.
+ * Defaults to dark when none of those signals is available.
+ */
+export function detectTerminalBackground(): "dark" | "light" {
+	const backgroundQueryTrusted = isTerminalBackgroundQueryTrusted();
 	// Tier 1: terminal-reported appearance from OSC 11 luminance.
-	if (!shouldUseMacOSAppearanceFallback() && terminalReportedAppearance) {
+	if (backgroundQueryTrusted && terminalReportedAppearance) {
 		return terminalReportedAppearance;
 	}
 
@@ -63,7 +80,7 @@ function detectTerminalBackground(): "dark" | "light" {
 	}
 
 	// Tier 3: host macOS appearance for known-broken terminal paths only.
-	if (shouldUseMacOSAppearanceFallback()) {
+	if (!backgroundQueryTrusted) {
 		const macAppearance = macOSReportedAppearance ?? detectMacOSAppearance();
 		if (macAppearance) return macAppearance;
 	}
@@ -99,6 +116,7 @@ export function bindTheme(binding: ThemeBinding): () => void {
 
 function assignTheme(value: Theme): void {
 	theme = value;
+	setActiveSymbolTheme(value);
 	if (themeBindings) {
 		for (const binding of themeBindings) binding(value);
 	}
@@ -119,6 +137,9 @@ export interface ThemeChangeEvent {
 }
 
 var currentSymbolPresetOverride: SymbolPreset | undefined;
+// Process-local preset forced while a Tern Surface Protocol surface is live;
+// wins over the user's preset and is never persisted.
+var nativeSymbolPreset: SymbolPreset | undefined;
 var currentColorBlindMode: boolean = false;
 var themeWatcher: fs.FSWatcher | undefined;
 var themeReloadTimer: NodeJS.Timeout | undefined;
@@ -132,7 +153,7 @@ let themeEpoch = 0;
 
 function getCurrentThemeOptions(): CreateThemeOptions {
 	return {
-		symbolPresetOverride: currentSymbolPresetOverride,
+		symbolPresetOverride: nativeSymbolPreset ?? currentSymbolPresetOverride,
 		colorBlindMode: currentColorBlindMode,
 	};
 }
@@ -160,10 +181,7 @@ export function initThemeSync(
 	lightTheme?: string,
 ): void {
 	const name = configureTheme(symbolPreset, colorBlindMode, darkTheme, lightTheme);
-	const options: CreateThemeOptions = {
-		symbolPresetOverride: currentSymbolPresetOverride,
-		colorBlindMode: currentColorBlindMode,
-	};
+	const options = getCurrentThemeOptions();
 	try {
 		assignTheme(loadThemeSync(name, options));
 	} catch (error) {
@@ -196,14 +214,14 @@ export async function initTheme(
 		assignTheme(await loadTheme(name, getCurrentThemeOptions()));
 		if (enableWatcher) {
 			await startThemeWatcher();
-			startSigwinchListener();
 		}
 	} catch (err) {
 		logger.debug("Theme loading failed, falling back to dark theme", { error: String(err) });
 		currentThemeName = "dark";
 		assignTheme(await loadTheme("dark", getCurrentThemeOptions()));
-		// Don't start watcher for fallback theme
+		// Skip file watching for the fallback theme, not appearance tracking.
 	}
+	if (enableWatcher) startSigwinchListener();
 }
 
 export async function setTheme(
@@ -221,6 +239,14 @@ export async function setTheme(
 		assignTheme(loadedTheme);
 		if (enableWatcher) {
 			await startThemeWatcher();
+			// startThemeWatcher() calls stopThemeWatcher(), which tears down
+			// the SIGWINCH handler and the macOS appearance observer that
+			// feeds the SIXEL background fallback. Restart it like initTheme()
+			// does so a runtime theme change does not silence fallback
+			// background repaints. Without this, `setTheme(name, true)` after
+			// startup would leave the SIXEL repaint path dead until the next
+			// process restart.
+			startSigwinchListener();
 		}
 		notifyThemeChange();
 		return { success: true };
@@ -333,6 +359,30 @@ export async function setSymbolPreset(preset: SymbolPreset): Promise<void> {
  */
 export function getSymbolPresetOverride(): SymbolPreset | undefined {
 	return currentSymbolPresetOverride;
+}
+
+/**
+ * Force `preset` while a Tern Surface Protocol surface is live (the terminal's
+ * font carries every Nerd Font glyph, so icons need no Glyph Protocol
+ * registration); `undefined` restores the user's preset. Process-local and
+ * never persisted. Rebuilds the active theme synchronously so the next frame
+ * already uses it, and notifies theme listeners like a preset change. Returns
+ * whether the active theme was rebuilt (callers invalidate render caches).
+ */
+export function setNativeSymbolPreset(preset: SymbolPreset | undefined): boolean {
+	if (nativeSymbolPreset === preset) return false;
+	nativeSymbolPreset = preset;
+	if (!currentThemeName || typeof theme === "undefined") return false;
+	++themeLoadRequestId;
+	try {
+		assignTheme(loadThemeSync(currentThemeName, getCurrentThemeOptions()));
+	} catch (error) {
+		// In-memory themes can't be rebuilt by name; they keep their symbols.
+		logger.debug("Native symbol preset: theme rebuild skipped", { theme: currentThemeName, error: String(error) });
+		return false;
+	}
+	notifyThemeChange({ ephemeral: true });
+	return true;
 }
 
 /**
@@ -624,12 +674,26 @@ var macObserver: { stop(): void } | undefined;
 
 function startMacAppearanceObserver(): void {
 	stopMacAppearanceObserver();
-	if (!shouldUseMacOSAppearanceFallback()) return;
+	if (isTerminalBackgroundQueryTrusted()) return;
 	try {
 		macOSReportedAppearance = detectMacOSAppearance() ?? undefined;
 		macObserver = MacAppearanceObserver.start((err, appearance) => {
 			if (!err && (appearance === "dark" || appearance === "light")) {
+				const changed = appearance !== macOSReportedAppearance;
 				macOSReportedAppearance = appearance;
+				if (changed) {
+					// oxlint-disable-next-line unicorn/no-useless-spread -- listeners may unsubscribe while reporting
+					for (const listener of [...backgroundFallbackListeners]) {
+						try {
+							listener();
+						} catch (err) {
+							// Debug-level: a listener failure must not break sibling
+							// listeners or the appearance observer. Visible only in
+							// local debug logs, never in normal runs.
+							logger.debug("macOS appearance fallback listener failed", { err });
+						}
+					}
+				}
 				reevaluateAutoThemeForAppearance("macOS fallback");
 			}
 		});

@@ -28,7 +28,12 @@
 	const invoke = async (action, options) => {
 		const response = await globalThis.__tau_prelude__("browser", { ...options, action });
 		if (response && typeof response.text === "string" && response.text.length > 0) {
+<<<<<<< ours — scope `if (response && typeof response.text === "str...` in function `invoke` (F, confidence: medium)
+// refused_by: statement_fold · collision: `globalThis.__omp_display__(response.text);`
 			globalThis.__tau_display__(response.text);
+=======
+			globalThis.__omp_log__("log", response.text);
+>>>>>>> theirs — scope `if (response && typeof response.text === "str...` · weave: run 'weave explain packages/coding-agent/src/tools/browser/prelude.js' for per-hunk detail, 'weave check' to verify your resolution
 		}
 		return response && typeof response.details === "object" && response.details !== null ? response.details : {};
 	};
@@ -78,12 +83,26 @@
 			if (typeof fnOrCode !== "function" && typeof fnOrCode !== "string") {
 				throw new TypeError("tab.run() expects a function or code string");
 			}
+			if (typeof fnOrCode === "function" && Array.isArray(options)) {
+				throw new TypeError(
+					"tab.run() expects an options object; pass the function's arguments as { args: [...] }: tab.run(async ({ page }, url) => …, { args: [url] })",
+				);
+			}
 			const opts = validateOptions("tab.run", options);
+			const args = opts.args ?? [];
+			if (typeof fnOrCode === "string" && (!Array.isArray(args) || args.length > 0)) {
+				throw new TypeError("tab.run() passes args only to a function; a code string receives none");
+			}
+			if (!Array.isArray(args)) {
+				throw new TypeError(
+					"tab.run() args must be an array of the function's arguments after its scope: tab.run(async ({ page }, url) => …, { args: [url] })",
+				);
+			}
 			const parameters = { name };
 			if (opts.timeout !== undefined) parameters.timeout = opts.timeout;
 			if (typeof fnOrCode === "function") {
 				parameters.fn = serializeFunction("tab.run()", fnOrCode);
-				parameters.args = encodeArgs("tab helper argument", Array.isArray(opts.args) ? opts.args : []);
+				parameters.args = encodeArgs("tab helper argument", args);
 			} else {
 				parameters.code = fnOrCode;
 			}
@@ -98,6 +117,11 @@
 	};
 	globalThis.browser = Object.freeze({
 		async open(options) {
+			if (typeof options === "string") {
+				throw new TypeError(
+					"browser.open() expects an options object; pass the URL inside it: browser.open({ url, name })",
+				);
+			}
 			const opts = validateOptions("browser.open", options);
 			const details = await invoke("open", opts);
 			return makeTab(typeof details.name === "string" ? details.name : (opts.name ?? "main"));
@@ -110,6 +134,10 @@
 		},
 		async tabs() {
 			const details = await invoke("tabs", {});
+			return Array.isArray(details.value) ? details.value : [];
+		},
+		async targets(options) {
+			const details = await invoke("targets", validateOptions("browser.targets", options));
 			return Array.isArray(details.value) ? details.value : [];
 		},
 		async close(options) {

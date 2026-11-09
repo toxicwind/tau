@@ -4,7 +4,12 @@
  * Prevents session changes when there are uncommitted git changes.
  * Useful to ensure work is committed before switching context.
  */
+<<<<<<< ours — interstitial `file_header` (S, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import type { HookAPI, HookContext } from "@oh-my-pi/pi-coding-…`
 import type { HookAPI, HookContext } from "@tau/tau-coding-agent";
+=======
+import type { HookAPI, HookContext } from "@oh-my-pi/pi-coding-agent/extensibility/hooks";
+>>>>>>> theirs — interstitial `file_header` (S, confidence: medium) · weave: run 'weave explain packages/coding-agent/examples/hooks/dirty-repo-guard.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 async function checkDirtyRepo(pi: HookAPI, ctx: HookContext, action: string): Promise<{ cancel: boolean } | undefined> {
 	// Check for uncommitted changes

@@ -22,7 +22,7 @@
 #     FROM ${TAU_BASE} AS tau-base
 ###############################################################################
 
-ARG BUN_VERSION=1.4.2
+ARG BUN_VERSION=1.4.4
 
 ############################
 # 1) natives-builder — Rust + Bun → tau_natives.linux-<arch>.node (local cargo)
@@ -81,7 +81,25 @@ RUN bun install --frozen-lockfile --ignore-scripts
 # is preserved across this COPY because it's never in the build context.
 COPY . /pi/
 
+<<<<<<< HEAD
 # Layer 4 — compile tau-natives to a Linux N-API addon. Persistent caches keep
+=======
+# Hash the exact input trees in the build context before generated files change.
+# Extra untracked inputs change the key and safely result in a cache miss.
+RUN set -eux; \
+    git init --bare /tmp/native-key.git; \
+    export GIT_DIR=/tmp/native-key.git GIT_WORK_TREE=/pi; \
+    git add -f -- crates Cargo.lock Cargo.toml rust-toolchain.toml packages/natives \
+      ':(exclude)**/node_modules/**' ':(exclude)packages/natives/native/.build/**'; \
+    tree="$(git write-tree)"; \
+    mkdir -p /out/natives-seed; \
+    printf '%s\n' "$tree:crates" "$tree:Cargo.lock" "$tree:Cargo.toml" \
+      "$tree:rust-toolchain.toml" "$tree:packages/natives" \
+      | git cat-file --batch-check > /out/natives-seed/trees.txt; \
+    rm -rf /tmp/native-key.git
+
+# Layer 4 — compile pi-natives to a Linux N-API addon. Persistent caches keep
+>>>>>>> upstream/main
 # repeat builds incremental: cargo's package index + git-deps (CARGO_HOME is
 # /usr/local/cargo in the rust image, not ~/.cargo) + the workspace target dir.
 RUN --mount=type=cache,target=/usr/local/cargo/registry \
@@ -90,7 +108,14 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
     set -eux; \
     bun --cwd=packages/natives run build; \
     mkdir -p /out; \
+<<<<<<< HEAD
     cp packages/natives/native/tau_natives.linux-*.node /out/
+=======
+    cp packages/natives/native/pi_natives.linux-*.node /out/; \
+    cp packages/natives/native/pi_natives.linux-*.node \
+       packages/natives/native/index.d.ts packages/natives/native/index.js \
+       packages/natives/native/embedded-addon.js /out/natives-seed/
+>>>>>>> upstream/main
 
 ############################
 # 2) wheel-builder — tau-rpc wheel
@@ -104,7 +129,11 @@ RUN apt-get update \
 RUN pip install --upgrade pip build
 
 WORKDIR /src
+<<<<<<< HEAD
 COPY python/tau-rpc /src
+=======
+COPY sdk/python/omp-rpc /src
+>>>>>>> upstream/main
 RUN python -m build --wheel --outdir /out
 
 ############################
@@ -127,7 +156,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     CARGO_HOME=/data/cache/cargo \
     CARGO_TARGET_DIR=/data/cache/cargo-target \
     RUSTUP_HOME=/data/cache/rustup \
-    PATH=/opt/bun/bin:/usr/local/cargo/bin:/usr/local/bin:/usr/bin:/bin
+    PATH=/opt/bun/bin:/usr/local/cargo/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/bun-node-fallback-bin
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
@@ -137,6 +166,14 @@ RUN apt-get update \
 
 RUN curl -fsSL https://bun.sh/install | bash -s "bun-v${BUN_VERSION}" \
     && /opt/bun/bin/bun --version
+
+# `node` → bun, last on PATH (same layout as the oven/bun images) so
+# `#!/usr/bin/env node` package bins (oxlint, oxfmt, …) run for every uid.
+# Bun's own fallback is a /tmp/bun-node-<hash> dir created 0700 by the first
+# user that needs it; the image build runs as root, so it would bake a dir
+# no robomp slot user can enter.
+RUN mkdir -p /usr/local/bun-node-fallback-bin \
+    && ln -s /opt/bun/bin/bun /usr/local/bun-node-fallback-bin/node
 
 # Rustup launcher only — the real toolchain is fetched lazily into RUSTUP_HOME
 # on first cargo invocation, driven by pi's `rust-toolchain.toml`. Keeps the
@@ -148,15 +185,26 @@ RUN curl -fsSL https://sh.rustup.rs -o /tmp/rustup-init.sh \
     && rm -rf /usr/local/rustup-bootstrap \
     && /usr/local/cargo/bin/rustup --version
 
+<<<<<<< HEAD
 # tau-natives addon: pi's loader probes /opt/bun/bin as a fallback path.
 COPY --from=natives-builder /out/tau_natives.linux-*.node /opt/bun/bin/
+=======
+# pi-natives addon: pi's loader probes /opt/bun/bin as a fallback path.
+COPY --from=natives-builder /out/pi_natives.linux-*.node /opt/bun/bin/
+COPY --from=natives-builder /out/natives-seed/ /opt/pi-natives-seed/
+>>>>>>> upstream/main
 
 # tau-rpc Python wheel.
 COPY --from=wheel-builder /out/*.whl /tmp/wheels/
 RUN pip install /tmp/wheels/tau_rpc-*.whl && rm -rf /tmp/wheels
 
+<<<<<<< HEAD
 # Legal payload for the reusable SDKs and the TAU product installed in this image.
 COPY LICENSE  THIRD-PARTY-NOTICES.txt /usr/share/doc/tau/
+=======
+# Legal payload for the OMP license and the native addon installed above.
+COPY LICENSE packages/natives/THIRD-PARTY-NOTICES.txt /usr/share/doc/omp/
+>>>>>>> upstream/main
 
 # `tau` shim — runs the coding-agent CLI against $PI_ROOT via Bun. Derived
 # images override PI_ROOT to point at wherever their pi source lives.
@@ -201,9 +249,9 @@ RUN bun install --frozen-lockfile --ignore-scripts
 # hoisted node_modules that `bun install` just produced.
 COPY . /pi/
 
-# Regenerate the tool views that `--ignore-scripts` skipped above. The root
-# package.json's `prepare` script normally handles these on a vanilla install.
-RUN bun --cwd=packages/coding-agent run gen:tool-views
+# Generate the hosted viewer metadata that `--ignore-scripts` skipped above.
+# The root prepare script normally handles it on a vanilla install.
+RUN bun --cwd=packages/coding-agent run gen:export-viewer
 
 ENTRYPOINT ["/usr/bin/tini", "--", "/usr/local/bin/tau"]
 CMD ["--help"]

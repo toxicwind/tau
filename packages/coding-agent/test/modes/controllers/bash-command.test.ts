@@ -2,11 +2,21 @@ import { beforeAll, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
+<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import type { BashResult } from "@oh-my-pi/pi-coding-agent/exec…`
 import type { BashResult } from "tau/exec/bash-executor";
 import { BashExecutionComponent } from "@tau/tau-tui/chat/bash-execution";
 import { CommandController } from "tau/modes/controllers/command-controller";
 import { getThemeByName, setThemeInstance } from "@tau/tau-tui/theme";
 import type { InteractiveModeContext } from "tau/modes/types";
+=======
+import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import type { BashPtyOptions, BashResult } from "@oh-my-pi/pi-coding-agent/exec/bash-executor";
+import { BashExecutionComponent } from "@oh-my-pi/pi-tui/chat/bash-execution";
+import { CommandController } from "@oh-my-pi/pi-coding-agent/modes/controllers/command-controller";
+import { getThemeByName, setThemeInstance } from "@oh-my-pi/pi-tui/theme";
+import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
+>>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/modes/controllers/bash-command.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function createContainer() {
 	return {
@@ -26,21 +36,27 @@ function createCwdContext(sourceDir: string, isStreaming = false, showImages = t
 		completedBtwVisible: true,
 		gateHeld: false,
 	};
-	const executeBash = vi.fn(async (command: string): Promise<BashResult> => {
-		state.executedCwds.push(state.cwd);
-		return {
-			output: command === "pwd" ? `${state.cwd}\n` : "ok",
-			exitCode: 0,
-			cancelled: false,
-			truncated: false,
-			totalLines: 1,
-			totalBytes: state.cwd.length,
-			outputLines: 1,
-			outputBytes: state.cwd.length,
-			workingDir: state.cwd,
-		};
-	});
-	const pendingMessagesContainer = createContainer();
+	const executeBash = vi.fn(
+		async (
+			command: string,
+			_onChunk?: (chunk: string) => void,
+			_options?: { pty?: BashPtyOptions },
+		): Promise<BashResult> => {
+			state.executedCwds.push(state.cwd);
+			return {
+				output: command === "pwd" ? `${state.cwd}\n` : "ok",
+				exitCode: 0,
+				cancelled: false,
+				truncated: false,
+				totalLines: 1,
+				totalBytes: state.cwd.length,
+				outputLines: 1,
+				outputBytes: state.cwd.length,
+				workingDir: state.cwd,
+			};
+		},
+	);
+	const pendingShellContainer = createContainer();
 	const present = vi.fn();
 	const ctx = {
 		session: {
@@ -63,9 +79,9 @@ function createCwdContext(sourceDir: string, isStreaming = false, showImages = t
 			}),
 		},
 		chatContainer: createContainer(),
-		pendingMessagesContainer,
+		pendingShellContainer,
 		pendingBashComponents: [],
-		settings: { get: () => showImages, flush: vi.fn(async () => {}) },
+		settings: Settings.isolated({ "terminal.showImages": showImages }),
 		ui: { requestRender: vi.fn(), requestComponentRender: vi.fn() },
 		present,
 		showError: vi.fn(),
@@ -90,7 +106,7 @@ function createCwdContext(sourceDir: string, isStreaming = false, showImages = t
 		updateEditorBorderColor: vi.fn(),
 		reloadTodos: vi.fn(async () => {}),
 	} as unknown as InteractiveModeContext;
-	return { ctx, executeBash, pendingMessagesContainer, present, state };
+	return { ctx, executeBash, pendingShellContainer, present, state };
 }
 
 describe("bash shortcut command", () => {
@@ -98,51 +114,6 @@ describe("bash shortcut command", () => {
 		const theme = await getThemeByName("dark");
 		if (!theme) throw new Error("Expected dark theme");
 		setThemeInstance(theme);
-	});
-
-	it("runs interactive ! commands through the configured user shell", async () => {
-		const executeBash = vi.fn().mockResolvedValue({
-			output: "ok",
-			exitCode: 0,
-			cancelled: false,
-			truncated: false,
-			totalLines: 1,
-			totalBytes: 2,
-			outputLines: 1,
-			outputBytes: 2,
-		});
-		const ctx = {
-			session: {
-				isStreaming: false,
-				executeBash,
-			},
-			sessionManager: {
-				getCwd: () => "/tmp",
-			},
-			chatContainer: createContainer(),
-			pendingMessagesContainer: createContainer(),
-			pendingBashComponents: [],
-			settings: { get: () => true },
-			ui: { requestRender: vi.fn(), requestComponentRender: vi.fn() },
-			present: vi.fn(),
-			showError: vi.fn(),
-			applyCwdChange: vi.fn(async () => {}),
-			updateEditorBorderColor: vi.fn(),
-			reloadTodos: vi.fn(async () => {}),
-		} as unknown as InteractiveModeContext;
-		const controller = new CommandController(ctx);
-
-		await controller.handleBashCommand("echo hi");
-
-		expect(executeBash).toHaveBeenCalledWith("echo hi", expect.any(Function), {
-			excludeFromContext: false,
-			useUserShell: true,
-			pty: {
-				cols: expect.any(Number),
-				rows: expect.any(Number),
-				onChunk: expect.any(Function),
-			},
-		});
 	});
 
 	it("persists standalone and bare cd before the next user-shell command", async () => {
@@ -193,24 +164,6 @@ describe("bash shortcut command", () => {
 			expect(ctx.session.moveSession).toHaveBeenNthCalledWith(2, sourceDir);
 			expect(state.executedCwds).toEqual([sourceDir, childDir, sourceDir]);
 			expect(executeBash).toHaveBeenCalledTimes(3);
-			expect(executeBash).toHaveBeenNthCalledWith(1, "cd child", expect.any(Function), {
-				excludeFromContext: false,
-				useUserShell: true,
-				pty: {
-					cols: expect.any(Number),
-					rows: expect.any(Number),
-					onChunk: expect.any(Function),
-				},
-			});
-			expect(executeBash).toHaveBeenNthCalledWith(2, "cd", expect.any(Function), {
-				excludeFromContext: false,
-				useUserShell: true,
-				pty: {
-					cols: expect.any(Number),
-					rows: expect.any(Number),
-					onChunk: expect.any(Function),
-				},
-			});
 			expect(ctx.applyCwdChange).toHaveBeenNthCalledWith(1, childDir);
 			expect(ctx.applyCwdChange).toHaveBeenNthCalledWith(2, sourceDir);
 			expect(ctx.updateEditorBorderColor).toHaveBeenCalledTimes(2);
@@ -262,7 +215,7 @@ describe("bash shortcut command", () => {
 	it("rejects simple cd while streaming before queuing a bash block", async () => {
 		const sourceDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-bash-cd-streaming-"));
 		try {
-			const { ctx, executeBash, pendingMessagesContainer, present, state } = createCwdContext(sourceDir, true);
+			const { ctx, executeBash, pendingShellContainer, present, state } = createCwdContext(sourceDir, true);
 			const controller = new CommandController(ctx);
 
 			await controller.handleBashCommand("cd child");
@@ -270,7 +223,7 @@ describe("bash shortcut command", () => {
 			expect(state.cwd).toBe(sourceDir);
 			expect(executeBash).not.toHaveBeenCalled();
 			expect(present).not.toHaveBeenCalled();
-			expect(pendingMessagesContainer.children).toHaveLength(0);
+			expect(pendingShellContainer.children).toHaveLength(0);
 			expect(ctx.pendingBashComponents).toHaveLength(0);
 			expect(ctx.showWarning).toHaveBeenCalledWith(expect.stringContaining("response"));
 		} finally {
@@ -283,7 +236,7 @@ describe("bash shortcut command", () => {
 		const childDir = path.join(sourceDir, "child");
 		await fs.mkdir(childDir);
 		try {
-			const { ctx, executeBash, pendingMessagesContainer, state } = createCwdContext(sourceDir, true);
+			const { ctx, executeBash, pendingShellContainer, state } = createCwdContext(sourceDir, true);
 			executeBash.mockImplementationOnce(async () => ({
 				output: "",
 				exitCode: 0,
@@ -301,7 +254,7 @@ describe("bash shortcut command", () => {
 
 			expect(state.cwd).toBe(sourceDir);
 			expect(ctx.applyCwdChange).not.toHaveBeenCalled();
-			expect(pendingMessagesContainer.children).toHaveLength(1);
+			expect(pendingShellContainer.children).toHaveLength(1);
 			expect(ctx.pendingBashComponents).toHaveLength(1);
 			expect(ctx.showWarning).not.toHaveBeenCalled();
 		} finally {
@@ -333,13 +286,94 @@ describe("bash shortcut command", () => {
 
 		await controller.handleBashCommand("emit-image");
 
-		const component = present.mock.calls[0]?.[0];
+		const component = present.mock.calls[0]?.[0]?.inner;
 		expect(component).toBeInstanceOf(BashExecutionComponent);
 		if (!(component instanceof BashExecutionComponent)) throw new Error("Expected BashExecutionComponent");
 		const bashComponent = component;
 		expect(Bun.stripANSI(bashComponent.render(80).join("\n"))).toContain("[Image: [image/png] 1x1]");
 		bashComponent.setExpanded(true);
 		expect(Bun.stripANSI(bashComponent.render(80).join("\n"))).toContain("[Image: [image/png] 1x1]");
+	});
+
+	it("forwards composer keystrokes to a running PTY command until it exits (#17210)", async () => {
+		const { ctx, executeBash } = createCwdContext("/tmp");
+		type Listener = (data: string) => { consume?: boolean } | undefined;
+		let listeners = new Set<Listener>();
+		let globalExpansions = 0;
+		listeners.add(data => {
+			if (data !== "\x0f") return undefined;
+			globalExpansions++;
+			return { consume: true };
+		});
+		const editor = { nativeKeyPassthrough: false };
+		let focused: unknown = editor;
+		Object.assign(ctx, {
+			editor,
+			keybindings: { matches: (data: string, id: string) => id === "app.interrupt" && data === "\x1b" },
+			ui: {
+				requestRender: vi.fn(),
+				requestComponentRender: vi.fn(),
+				getFocused: () => focused,
+				addInputListener: (listener: Listener, options?: { prepend?: boolean }) => {
+					if (options?.prepend) listeners = new Set([listener, ...listeners]);
+					else listeners.add(listener);
+					return () => listeners.delete(listener);
+				},
+			},
+		});
+		const press = (data: string) => [...listeners].some(listener => listener(data)?.consume === true);
+		const written: string[] = [];
+		const pressed: Record<string, boolean> = {};
+		let onStdin: BashPtyOptions["onStdin"];
+		executeBash.mockImplementationOnce(async (_command, _onChunk, options) => {
+			onStdin = options?.pty?.onStdin;
+			onStdin?.(data => written.push(data));
+			expect(editor.nativeKeyPassthrough).toBe(true);
+			// The command is blocked on `read` while the user types in the composer.
+			pressed.answer = press("y");
+			pressed.nanoWrite = press("\x0f");
+			pressed.enter = press("\r");
+			pressed.escape = press("\x1b");
+			pressed.mouse = press("\x1b[<0;10;5M");
+			focused = {}; // a dialog took focus
+			pressed.dialog = press("n");
+			focused = editor;
+			return {
+				output: "ANSWER=y",
+				exitCode: 0,
+				cancelled: false,
+				truncated: false,
+				totalLines: 1,
+				totalBytes: 8,
+				outputLines: 1,
+				outputBytes: 8,
+			};
+		});
+		const controller = new CommandController(ctx);
+
+		await controller.handleBashCommand("read -k 1 answer");
+		expect(editor.nativeKeyPassthrough).toBe(false);
+
+		expect(written).toEqual(["y", "\x0f", "\r"]);
+		expect(globalExpansions).toBe(0);
+		// Esc stays the cancel key; mouse reports and focused dialogs keep their input.
+		expect(pressed).toEqual({
+			answer: true,
+			nanoWrite: true,
+			enter: true,
+			escape: false,
+			mouse: false,
+			dialog: false,
+		});
+		// After exit the global Ctrl+O shortcut works again.
+		expect(press("\x0f")).toBe(true);
+		expect(globalExpansions).toBe(1);
+		expect(listeners.size).toBe(1);
+		// A native start notification queued behind command completion must not
+		// reclaim the composer after the PTY has exited.
+		onStdin?.(data => written.push(data));
+		expect(editor.nativeKeyPassthrough).toBe(false);
+		expect(listeners.size).toBe(1);
 	});
 
 	it("finalizes successful output before reporting a standalone cd refresh failure", async () => {
@@ -369,7 +403,7 @@ describe("bash shortcut command", () => {
 
 			await controller.handleBashCommand("cd child");
 
-			const component = present.mock.calls[0]?.[0];
+			const component = present.mock.calls[0]?.[0]?.inner;
 			expect(component).toBeInstanceOf(BashExecutionComponent);
 			expect((component as BashExecutionComponent).getOutput()).toContain("final output");
 			expect(state.cwd).toBe(sourceDir);
@@ -403,9 +437,7 @@ describe("bash shortcut command", () => {
 
 	it("does not execute cd when saving source settings fails", async () => {
 		const { ctx, executeBash, present, state } = createCwdContext("/tmp");
-		ctx.settings.flush = vi.fn(async () => {
-			throw new Error("settings write denied");
-		});
+		vi.spyOn(ctx.settings, "flush").mockRejectedValue(new Error("settings write denied"));
 
 		await new CommandController(ctx).handleBashCommand("cd /");
 
@@ -566,7 +598,7 @@ describe("bash shortcut command", () => {
 			expect(state.completedBtwVisible).toBe(true);
 			expect(ctx.applyCwdChange).not.toHaveBeenCalled();
 			expect(ctx.showError).toHaveBeenCalledWith(expect.stringContaining("session transition rejected"));
-			const component = present.mock.calls[0]?.[0];
+			const component = present.mock.calls[0]?.[0]?.inner;
 			if (!(component instanceof BashExecutionComponent)) throw new Error("Expected shell output");
 			expect(component.getOutput()).toContain("cd output");
 		} finally {

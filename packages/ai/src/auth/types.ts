@@ -58,10 +58,12 @@ export interface AuthAccountSelector {
 export interface AuthAccountPolicy {
 	readonly provider: string;
 	readonly account: AuthAccountSelector;
-	/** Higher values win after hard, plan, reserve, hot-window, and measured-usage safety checks. */
+	/** Higher values win after hard, plan, reserve and hot-window safety checks, and ahead of a missing usage report. */
 	readonly priority?: number;
 	/** Protected remaining quota percentage for this account. */
 	readonly reservePct?: number;
+	/** Remaining quota percentage, above the reserve, at which this account takes back lower-priority warm pins. */
+	readonly reclaimAbovePct?: number;
 }
 
 /** Read-only set of per-account routing policies. */
@@ -214,6 +216,9 @@ export type CompletionProbeCredential =
 			email?: string;
 			enterpriseUrl?: string;
 			apiEndpoint?: string;
+			orgId?: string;
+			region?: string;
+			inferenceRegion?: "global" | "eu" | "us";
 	  };
 
 /**
@@ -254,6 +259,8 @@ export interface CheckCredentialsOptions {
 	completionProbe?: CompletionProbe;
 	/** Per-credential completion probe timeout (ms). Defaults to `timeoutMs`. */
 	completionTimeoutMs?: number;
+	/** Providers whose credentials are skipped entirely (not probed, not reported). */
+	excludeProviders?: ReadonlySet<string>;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -300,9 +307,11 @@ export interface AuthCredentialSnapshot {
 /**
  * Event payload describing a credential that was just soft-disabled.
  *
- * Today the only call site is OAuth refresh failures with a definitive cause
- * (`invalid_grant`, `401/403` not from a network blip, etc.) — the
- * disabled_cause string is the verbatim error captured for forensics.
+ * Fired for automatic disables: a definitive OAuth refresh failure
+ * (`invalid_grant`, `401/403` not from a network blip, etc.), an upstream
+ * token invalidation, and an auth-broker disable. The disabled_cause string is
+ * the verbatim error captured for forensics. Every emission is also logged as
+ * a warning.
  *
  * Subscribers can use this to surface a notification, banner, or auto-launch
  * a re-login flow instead of letting the credential silently disappear.
@@ -310,7 +319,23 @@ export interface AuthCredentialSnapshot {
 export interface CredentialDisabledEvent {
 	provider: string;
 	disabledCause: string;
+	/** Database row id of the disabled credential (matches {@link StoredAuthCredential.id}). */
+	credentialId?: number;
+	/** Account identity recorded on the disabled OAuth credential, when the provider supplied one. */
+	email?: string;
+	accountId?: string;
+	/** Organization/workspace the credential was scoped to (Anthropic/ChatGPT multi-subscription). */
+	orgId?: string;
+	orgName?: string;
 }
+
+/**
+ * Why an OAuth refresh was requested.
+ * - `auth-recovery`: a provider rejected the bearer with a 401.
+ * - `usage-probe`: a background usage poll; advisory, so a definitive refresh
+ *   failure never disables the credential (an interactive request decides).
+ */
+export type OAuthRefreshReason = "auth-recovery" | "usage-probe";
 
 /** Configuration supplied when constructing credential storage. */
 export type AuthStorageOptions = {
@@ -330,16 +355,19 @@ export type AuthStorageOptions = {
 	configValueResolver?: (config: string) => Promise<string | undefined>;
 	/**
 	 * Optional callback fired when AuthStorage automatically disables a
-	 * credential because something detected it as no longer usable — today
-	 * that's the OAuth refresh-failure path in `getApiKey`. NOT fired for
-	 * user-initiated `remove()` (the user already knows) or dedup of
-	 * duplicate credentials (uninteresting hygiene).
+	 * credential because something detected it as no longer usable (see
+	 * {@link CredentialDisabledEvent}). NOT fired for user-initiated `remove()`
+	 * (the user already knows) or dedup of duplicate credentials
+	 * (uninteresting hygiene).
 	 */
 	onCredentialDisabled?: (event: CredentialDisabledEvent) => void | Promise<void>;
 	/**
 	 * Override OAuth refresh. When set, `AuthStorage` calls this instead of the
 	 * per-provider local refresh function. Receives the credential id so the
 	 * implementation can address remote credentials.
+	 *
+	 * `reason` is `"auth-recovery"` only for a provider-auth retry; generic and
+	 * managed MCP force-refresh calls leave it unset.
 	 *
 	 * Must return updated {@link OAuthCredentials} with at least `access` and
 	 * `expires`. `refresh` may be an opaque sentinel (e.g. `"__remote__"`) when
@@ -350,7 +378,14 @@ export type AuthStorageOptions = {
 		credentialId: number,
 		credential: OAuthCredential,
 		signal?: AbortSignal,
+		reason?: OAuthRefreshReason,
 	) => Promise<OAuthCredentials>;
+	/**
+	 * Set when {@link refreshOAuthCredential} exchanges the refresh token with the
+	 * provider itself instead of delegating (e.g. to a broker), so its tokens count
+	 * as this process's mints for auth-recovery reuse.
+	 */
+	refreshOAuthCredentialMints?: boolean;
 	/**
 	 * Human-readable description of the credential store backing this
 	 * AuthStorage instance. Surfaced through {@link AuthStorage.keys.describe}
@@ -450,7 +485,10 @@ export interface ModelUsageHealthOptions {
 export type AuthApiKeyOptions = {
 	baseUrl?: string;
 	modelId?: string;
-	/** Provider account ids known to serve `modelId` from multi-account discovery; OAuth selection prefers them and tries other accounts only as a last resort. */
+	/**
+	 * {@link oauthAccountKey}s known to serve `modelId` from discovery.
+	 * Unblocked matches win, then other unblocked plan-eligible accounts, before blocked fallbacks.
+	 */
 	accountIds?: readonly string[];
 	/**
 	 * Caller's cancel signal. Threaded into any broker-bound OAuth refresh so
@@ -465,7 +503,41 @@ export type AuthApiKeyOptions = {
 	 * that a peer/broker rotated out from under us is replaced before retrying.
 	 */
 	forceRefresh?: boolean;
+	/** Explicit provider-401 recovery; generic force refreshes leave this unset. */
+	refreshReason?: OAuthRefreshReason;
+	/**
+	 * The access token the provider rejected with a 401, when this resolve is
+	 * that 401's recovery. A refresh adopts a stored token that differs from it
+	 * instead of exchanging the refresh token again: with single-use refresh
+	 * tokens every needless exchange revokes the token its peers are using.
+	 */
+	rejectedAccessToken?: string;
+	/** When false, select as `sessionId` would without recording the choice as that session's sticky credential. */
+	recordAffinity?: boolean;
 };
+
+/**
+ * Identity that multi-account discovery records in `Model.accountAccess` and
+ * that {@link AuthApiKeyOptions.accountIds} selection matches: the provider
+ * account id (Codex `chatgpt_account_id`), else the login email for providers
+ * whose credentials carry no account id (Antigravity), else the project id for
+ * a login whose email lookup failed. Same precedence as the credential store's
+ * identity key.
+ */
+export function oauthAccountKey(identity: {
+	accountId?: string;
+	email?: string;
+	projectId?: string;
+}): string | undefined {
+	return identity.accountId ?? identity.email ?? identity.projectId;
+}
+
+/** Non-secret identity bound to the OAuth credential selected for one request attempt. */
+export interface OAuthRequestIdentity {
+	orgId?: string;
+	region?: string;
+	inferenceRegion?: "global" | "eu" | "us";
+}
 
 /**
  * Refreshed OAuth access plus identity metadata returned by
@@ -486,6 +558,8 @@ export interface OAuthAccess {
 	/** Organization/workspace the credential is scoped to (Anthropic/ChatGPT multi-subscription). */
 	orgId?: string;
 	orgName?: string;
+	region?: string;
+	inferenceRegion?: "global" | "eu" | "us";
 }
 
 /**
@@ -550,6 +624,8 @@ export interface OAuthAccountSummary {
 	orgName?: string;
 	/** True when this account is the session-sticky OAuth credential requested by `listOAuthAccounts`. */
 	active: boolean;
+	/** Last use recorded on the session sticky; set only on the `active` account. */
+	lastUsedAtMs?: number;
 }
 /** Scope a matching-key invalidation to a session or signal. */
 export interface InvalidateCredentialMatchingOptions {
@@ -564,11 +640,18 @@ export interface StoredOAuthRefreshOptions<T extends OAuthCredential = OAuthCred
 	observedCredential?: T;
 	credentialFromRow: (credential: OAuthCredential) => T | undefined;
 	forceRefresh?: boolean;
+	/**
+	 * The access token a provider just rejected with a 401. A forced refresh
+	 * adopts a still-fresh stored row whose token differs from it: another
+	 * process rotated the row, and its token has not been rejected.
+	 */
+	rejectedAccess?: string;
 	canRefresh?: (credential: T) => boolean;
 	refreshSkewMs?: number;
 	signal?: AbortSignal;
 	keepCredentialOnRefreshFailure?: boolean | ((error: unknown) => boolean);
 	onRefreshFailure?: (error: unknown) => void;
+	/** How long the caller waits (for the lease and the exchange); the exchange itself runs on until its backstop. */
 	refreshTimeoutMs?: number;
 	refresh: (credential: T, signal?: AbortSignal) => Promise<OAuthCredentials>;
 	mergeRefreshedCredential?: (credential: T, refreshed: OAuthCredentials) => T;
@@ -622,6 +705,10 @@ export interface ResetCreditRedeemOutcome {
 /** One stored account's live saved-reset status, from {@link AuthStorage.resets.list}. */
 export interface ResetCreditAccountStatus extends UsageResetCredits {
 	provider: string;
+	/** Live quota evidence from this exact account's reset-discovery response. */
+	report?: UsageReport;
+	/** Provider-requested wait before retrying throttled reset discovery (not redemption). */
+	retryAfterMs?: number;
 	credentialId: number;
 	accountId?: string;
 	email?: string;
@@ -642,6 +729,16 @@ export interface AuthSourceOptions {
 	 * `"none"`: ignore env vars entirely.
 	 */
 	env?: "dedicated" | "aliases" | "none";
+}
+
+/** Options for {@link KeysApi.peek}. */
+export interface AuthPeekOptions {
+	/**
+	 * Fall back to an expired OAuth access token when no stored account holds an
+	 * unexpired one. Only for reads that never send the token, e.g. keying an
+	 * offline model-cache lookup on the account it names.
+	 */
+	includeExpired?: boolean;
 }
 
 /** Where a provider's auth comes from ({@link CredentialOrigin}) plus whether any leg holds a concrete key. */
@@ -689,7 +786,24 @@ export type RotateCredentialOptions = {
 	apiKey?: string;
 	credentialId?: number;
 	signal?: AbortSignal;
+	/** Whether to wait for a briefly blocked sibling; defaults to true. The failed credential is blocked either way. */
+	waitForSibling?: boolean;
 };
+
+/**
+ * Outcome of {@link LimitsApi.rotate}.
+ *
+ * `switched` is `true` when a usable same-type sibling credential is available,
+ * so the caller's next resolve hands it out. `afterSiblingWait` is `true` when
+ * no sibling was free at the failure but rotation slept out a sibling's short
+ * block (e.g. a Cloud Code Assist capacity 429 that resets in under a second);
+ * the freed credential may be one the caller already sent in this request, so
+ * attempted-bearer dedupe must let it through once.
+ */
+export interface CredentialRotation {
+	switched: boolean;
+	afterSiblingWait?: boolean;
+}
 
 /** Filter saved reset credits by provider and session. */
 export type ListResetCreditsOptions = {
@@ -776,6 +890,8 @@ export interface CredentialsApi {
 	 * Check if OAuth credentials are configured for a provider.
 	 */
 	hasOAuth(provider: string): boolean;
+	/** Check whether stored credentials use a subscription (OAuth or an opted-in login API key). */
+	hasSubscription(provider: string): boolean;
 	/**
 	 * Get OAuth credentials for a provider.
 	 */
@@ -838,9 +954,26 @@ export interface KeysApi {
 	 * 4. API key persisted by a successful `/login`
 	 * 5. Environment variable
 	 * 6. Stored API key (e.g. a broker-migrated copy) — last resort, so an explicit env var wins
+	 *
+	 * Resolves `undefined` when no permitted credential can serve, including when
+	 * OAuth refresh failed transiently (network, timeout, 5xx), so availability
+	 * probes move on to their next candidate. Request paths use
+	 * {@link KeysApi.getWithCredential}, which surfaces that failure.
 	 */
 	get(provider: string, sessionId?: string, options?: AuthApiKeyOptions): Promise<string | undefined>;
-	/** Resolve a bearer together with its durable stored credential row id, when known. */
+	/**
+	 * Warm usage needed by an unpinned OAuth selection without choosing a key,
+	 * advancing round-robin state, or pinning an account. Existing overrides,
+	 * pinned sessions, and pools that do not rank usage do no work.
+	 */
+	prefetchUsage(provider: string, sessionId?: string, options?: AuthApiKeyOptions): Promise<void>;
+	/**
+	 * Resolve a bearer together with its durable stored credential row id, when known.
+	 * Same precedence as {@link KeysApi.get}, but rejects with
+	 * `OAuthRefreshUnavailableError` (transient, retryable) when OAuth refresh failed
+	 * with a retryable error and no other permitted source could serve the request;
+	 * the stored credential is kept.
+	 */
 	getWithCredential(
 		provider: string,
 		sessionId?: string,
@@ -850,9 +983,10 @@ export interface KeysApi {
 	 * Peek at API key for a provider without refreshing OAuth tokens.
 	 * Used for model discovery where we only need to know if credentials exist
 	 * and get a best-effort token. For GitHub Copilot we preserve enterprise
-	 * routing metadata so discovery can hit the correct host.
+	 * routing metadata so discovery can hit the correct host. Repeated peeks
+	 * return the same stored credential; they never rotate accounts.
 	 */
-	peek(provider: string): Promise<string | undefined>;
+	peek(provider: string, options?: AuthPeekOptions): Promise<string | undefined>;
 	/** Resolve the first active auth source by precedence without refreshing credentials. */
 	source(provider: string, options?: AuthSourceOptions): AuthSource | undefined;
 	/**
@@ -895,10 +1029,14 @@ export interface KeysApi {
 	 *
 	 * Lower priority than {@link setRuntimeApiKey} so a CLI `--api-key`
 	 * still wins for the duration of a single invocation.
+	 *
+	 * `fallback: true` ranks the value below stored OAuth and `/login`
+	 * credentials instead, so a provider's default key reference cannot shadow
+	 * a key the user logged in with.
 	 */
-	setConfig(provider: string, apiKeyConfig: string): void;
+	setConfig(provider: string, apiKeyConfig: string, options?: { fallback?: boolean }): void;
 	/**
-	 * Remove a single config-sourced API key override.
+	 * Remove a single config-sourced API key (override or fallback).
 	 */
 	removeConfig(provider: string): void;
 	/**
@@ -939,6 +1077,25 @@ export interface KeysApi {
 	resolver(provider: string, options?: { sessionId?: string; baseUrl?: string; modelId?: string }): ApiKeyResolver;
 }
 
+/** Controls whether a row-id refresh may reuse a recently minted token. */
+export interface OAuthRefreshByIdOptions {
+	/**
+	 * Return the stored credential when it still holds a fresh access token this
+	 * refresher minted recently. Auth-recovery callers use this to avoid rotating
+	 * refresh tokens repeatedly when a provider rejects every valid bearer.
+	 */
+	reuseRecentMint?: boolean;
+	/**
+	 * Why the refresh was requested. `auth-recovery` is forwarded to a delegated
+	 * refresh (an auth broker), which may then return a token it minted in the
+	 * last five minutes; local reuse still requires {@link reuseRecentMint}.
+	 * `usage-probe` never disables the row on a definitive refresh failure.
+	 */
+	reason?: OAuthRefreshReason;
+	/** The access token a provider 401 rejected; see {@link AuthApiKeyOptions.rejectedAccessToken}. */
+	rejectedAccess?: string;
+}
+
 /** OAuth login, access, account identity, and refresh operations. */
 export interface OAuthApi {
 	/**
@@ -959,9 +1116,11 @@ export interface OAuthApi {
 	 * `enterpriseUrl`). For pure "give me the bytes for `Authorization`"
 	 * scenarios, prefer {@link AuthStorage.keys.get}.
 	 *
-	 * Returns `undefined` when no OAuth credential is available, the
-	 * credential fails to refresh, or runtime/config overrides have replaced
-	 * OAuth with an explicit API key.
+	 * Returns `undefined` when no usable OAuth credential is available (none
+	 * stored, or every one definitively failed to refresh) or runtime/config
+	 * overrides have replaced OAuth with an explicit API key. Rejects with
+	 * `OAuthRefreshUnavailableError` (transient, retryable) when a retryable
+	 * refresh failure left no usable credential.
 	 */
 	access(provider: string, sessionId?: string, options?: AuthApiKeyOptions): Promise<OAuthAccess | undefined>;
 	/**
@@ -977,9 +1136,10 @@ export interface OAuthApi {
 	 * Resolve one stored OAuth credential by its durable storage row id.
 	 *
 	 * Unlike the normal session resolver, this method never ranks, rotates, or
-	 * falls back to sibling credentials. A forced refresh re-mints only the
-	 * requested row, preserving exact-account affinity for operations whose
-	 * provenance and policy boundary are tied to one workspace.
+	 * falls back to sibling credentials. A generic forced refresh re-mints only the
+	 * requested row; with `refreshReason: "auth-recovery"` it may instead reuse a
+	 * still-usable recent mint of that row. Either way exact-account affinity holds
+	 * for operations whose provenance and policy boundary are tied to one workspace.
 	 *
 	 * Returns `undefined` when the row does not exist for `provider` or an
 	 * explicit runtime/config API-key override suppresses OAuth.
@@ -1017,9 +1177,11 @@ export interface OAuthApi {
 	 * Refresh the OAuth credential with the given id through a per-credential
 	 * single-flight. Concurrent callers for the same row await the same upstream
 	 * refresh attempt, which is required for providers that rotate refresh tokens
-	 * on every successful refresh.
+	 * on every successful refresh. Mints unless {@link OAuthRefreshByIdOptions.reuseRecentMint}
+	 * finds a recent local mint, or a delegated refresh given
+	 * {@link OAuthRefreshByIdOptions.reason} `"auth-recovery"` returns its recent mint.
 	 */
-	refresh(id: number, signal?: AbortSignal): Promise<AuthCredentialSnapshotEntry>;
+	refresh(id: number, signal?: AbortSignal, options?: OAuthRefreshByIdOptions): Promise<AuthCredentialSnapshotEntry>;
 	/**
 	 * Refresh one stored OAuth credential under durable row ownership.
 	 */
@@ -1028,6 +1190,12 @@ export interface OAuthApi {
 		options: StoredOAuthRefreshOptions<T>,
 	): Promise<StoredOAuthRefreshResult<T>>;
 }
+
+/**
+ * Handle for one {@link SessionsApi.restrict} call. {@link SessionsApi.unrestrict}
+ * lifts a restriction only with the lease of the call that installed it.
+ */
+export type SessionRestrictionLease = symbol;
 
 /** Session credential affinity operations. */
 export interface SessionsApi {
@@ -1046,14 +1214,46 @@ export interface SessionsApi {
 	 */
 	pin(provider: string, sessionId: string, credentialId: number, options?: { restoredAtMs?: number }): boolean;
 	/**
-	 * Copy every stored credential affinity from one live session to another.
+	 * Copy stored credential affinities from one live session to another.
 	 *
 	 * The target receives its own sticky entries, so request resolution, usage
 	 * blocking, credential rotation, metadata, and persisted pins all continue
 	 * through the target session id without retaining a live dependency on the
-	 * source session.
+	 * source session. `include` limits the copy to the providers it accepts,
+	 * given whether the source's affinity is an explicit user pin.
 	 */
-	inherit(sourceSessionId: string, targetSessionId: string): number;
+	inherit(
+		sourceSessionId: string,
+		targetSessionId: string,
+		include?: (provider: string, explicit: boolean) => boolean,
+	): number;
+	/**
+	 * Restrict one session's credentials for `provider` to the OAuth accounts
+	 * whose identity key (`email:<address>|org:<id>` for org-scoped providers;
+	 * otherwise `account:`, `email:`, or `project:` — the keys broker account
+	 * pools use) is listed. Selection, session pins, inherited affinity,
+	 * fallback passes, and rotation never leave the list, and runtime, config,
+	 * environment, and stored API keys are not used for that session; when no
+	 * listed account can serve, key resolution fails instead of borrowing
+	 * another account. An empty list allows no account. Replaces any earlier
+	 * restriction for the same provider and session; {@link inherit} does not
+	 * copy restrictions. Restrictions are never evicted, because that would
+	 * widen a live session; the owner passes the returned lease to
+	 * {@link unrestrict} when the session ends.
+	 */
+	restrict(provider: string, sessionId: string, identityKeys: readonly string[]): SessionRestrictionLease;
+	/**
+	 * Lift the restriction that `lease` installed. Once a later {@link restrict}
+	 * call has replaced it for the same provider and session, this does nothing,
+	 * so a stale owner never lifts the restriction a newer owner relies on.
+	 */
+	unrestrict(provider: string, sessionId: string, lease: SessionRestrictionLease): void;
+	/**
+	 * Whether stored credential `credentialId` may serve `sessionId`: always for
+	 * an unrestricted session, otherwise only an OAuth account its
+	 * {@link restrict} list names.
+	 */
+	permits(provider: string, sessionId: string, credentialId: number): boolean;
 	/**
 	 * Release a session's sticky credential so its next {@link getApiKey} call
 	 * re-runs native pool ranking. This never blocks or penalizes the released
@@ -1065,8 +1265,9 @@ export interface SessionsApi {
 
 /** Usage reporting, observation, and provider configuration. */
 export interface UsageApi {
-	/** Fetch aggregate usage reports for configured providers. */
+	/** Fetch usage reports for configured providers, optionally restricted to one provider. */
 	reports(options?: {
+		provider?: Provider;
 		baseUrlResolver?: (provider: Provider) => string | undefined;
 		signal?: AbortSignal;
 	}): Promise<UsageReport[] | null>;
@@ -1201,9 +1402,15 @@ export interface LimitsApi {
 	 *   reload when no broker hook is wired) and block it, then drop matching
 	 *   sticky state.
 	 *
-	 * Returns whether another usable credential of the same type remains.
+	 * For usage-limit and account-policy failures with no free sibling, waits
+	 * (abortable via `options.signal`) when a sibling's block expires within a
+	 * few seconds, then reports `afterSiblingWait`, unless `options.waitForSibling` is false.
 	 */
-	rotate(provider: string, sessionId: string | undefined, options?: RotateCredentialOptions): Promise<boolean>;
+	rotate(
+		provider: string,
+		sessionId: string | undefined,
+		options?: RotateCredentialOptions,
+	): Promise<CredentialRotation>;
 	/** Invalidate a credential matching an API key after authentication failure. */
 	invalidateMatching(
 		provider: string,
@@ -1234,7 +1441,7 @@ export interface BlocksApi {
 	 */
 	upsert(block: StoredCredentialBlock): void;
 	/**
-	 * Broker-server seam: clear all persisted blocks for one credential and notify snapshot waiters.
+	 * Broker-server seam: clear one exact persisted block and notify snapshot waiters.
 	 */
 	delete(credentialId: number, providerKey: string, blockScope: string): void;
 	/** Delete all persisted blocks for a credential. */

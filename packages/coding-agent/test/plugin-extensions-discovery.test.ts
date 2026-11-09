@@ -4,6 +4,7 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { discoverAndLoadExtensions } from "tau/extensibility/extensions/loader";
 import { getAgentDir, getPluginsDir, removeSyncWithRetries, setAgentDir, TempDir } from "@tau/tau-utils";
+import { __closeExtensionParseCacheForTests } from "@oh-my-pi/pi-coding-agent/extensibility/plugins/legacy-pi-compat";
 
 const currentPiCodingAgentPath = Bun.resolveSync("tau", import.meta.dir);
 const currentPiExtensionsPath = Bun.resolveSync("tau/extensibility/extensions", import.meta.dir);
@@ -81,6 +82,9 @@ describe("plugin extension discovery", () => {
 		}
 		originalXdg.clear();
 		setAgentDir(originalAgentDir);
+		// The legacy Pi parse cache db lives under the temp home's `.omp/cache`;
+		// release it so Windows can delete the directory.
+		__closeExtensionParseCacheForTests();
 		removeSyncWithRetries(tempHome);
 	});
 
@@ -101,6 +105,22 @@ describe("plugin extension discovery", () => {
 				export default function(pi) {
 					const onAny = pi.on;
 					onAny("auto_compaction_start", () => {});
+					const onEvent = pi.events.on;
+					const emitEvent = pi.events.emit;
+					const clearEvents = pi.events.clear;
+					let received;
+					onEvent("pi:model-adapter/register", payload => {
+						received = payload;
+					});
+					emitEvent("pi:model-adapter/register", { id: "gemini-acp" });
+					if (received?.id !== "gemini-acp") {
+						throw new Error("detached pi.events.emit/on did not deliver payload");
+					}
+					clearEvents();
+					emitEvent("pi:model-adapter/register", { id: "after-clear" });
+					if (received?.id !== "gemini-acp") {
+						throw new Error("detached pi.events.clear did not clear listeners");
+					}
 				}
 			`,
 		);

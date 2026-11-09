@@ -1,6 +1,6 @@
 name: "Install native addon artifacts"
 description: >
-   Downloads the native addons built once by the native_addons job and
+   Downloads the native addons built once by the native_addons jobs and
    installs exact targets without invoking Bazel. The linux-x64 pair ships as
    its own small `natives-linux-x64` artifact; the rest (`native-addons`) is
    fetched only when a requested target needs it.

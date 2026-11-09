@@ -3,6 +3,7 @@ import { acquireBrowser, releaseBrowser } from "tau/tools/browser/registry";
 import { CmuxTab } from "tau/tools/browser/cmux/cmux-tab";
 import { acquireTab, releaseTab, runInTab } from "tau/tools/browser/tab-supervisor";
 import type { ToolSession } from "tau/tools/index";
+import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
 import { chromiumAvailable } from "./chromium-probe";
 
 const CHROMIUM_AVAILABLE = await chromiumAvailable();
@@ -11,7 +12,7 @@ function makeSession(): ToolSession {
 	return {
 		cwd: process.cwd(),
 		hasUI: false,
-		settings: { get: () => undefined },
+		settings: Settings.isolated(),
 		getSessionFile: () => null,
 	} as unknown as ToolSession;
 }

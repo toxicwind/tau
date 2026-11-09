@@ -2,10 +2,18 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, type 
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
+<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import { computeBankScope, deriveBankId, ensureBankExists } fro…`
 import { computeBankScope, deriveBankId, ensureBankExists } from "tau/hindsight/bank";
 import { HindsightApi } from "tau/hindsight/client";
 import type { HindsightConfig } from "tau/hindsight/config";
 import { removeWithRetries } from "@tau/tau-utils";
+=======
+import { computeBankScope, ensureBankExists } from "@oh-my-pi/pi-coding-agent/hindsight/bank";
+import { HindsightApi } from "@oh-my-pi/pi-coding-agent/hindsight/client";
+import type { HindsightConfig } from "@oh-my-pi/pi-coding-agent/hindsight/config";
+import { removeWithRetries } from "@oh-my-pi/pi-utils";
+>>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/hindsight-bank.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 // Isolate `git` invocations in this file from the host's global config —
 // `~/.gitconfig` commit signing or template hooks would otherwise turn the
@@ -45,6 +53,7 @@ const baseConfig = (overrides: Partial<HindsightConfig> = {}): HindsightConfig =
 	bankId: null,
 	bankIdPrefix: "",
 	scoping: "global",
+	globalScope: false,
 	bankMission: "",
 	retainMission: null,
 	autoRecall: true,
@@ -87,13 +96,6 @@ describe("computeBankScope", () => {
 				bankId: "prod-team",
 			});
 		});
-
-		it("does not surface tag fields", () => {
-			const scope = computeBankScope(baseConfig(), "/work/proj");
-			expect(scope.retainTags).toBeUndefined();
-			expect(scope.recallTags).toBeUndefined();
-			expect(scope.recallTagsMatch).toBeUndefined();
-		});
 	});
 
 	describe("scoping=per-project", () => {
@@ -122,12 +124,6 @@ describe("computeBankScope", () => {
 			);
 			expect(scope.bankId).toBe("prod-team-cool-app");
 		});
-
-		it("does not surface tag fields (isolation is at the bank level)", () => {
-			const scope = computeBankScope(baseConfig({ scoping: "per-project" }), "/work/proj");
-			expect(scope.retainTags).toBeUndefined();
-			expect(scope.recallTags).toBeUndefined();
-		});
 	});
 
 	describe("scoping=per-project-tagged", () => {
@@ -138,12 +134,6 @@ describe("computeBankScope", () => {
 				recallTags: ["project:proj"],
 				recallTagsMatch: "any",
 			});
-		});
-
-		it("uses the same project label for retain and recall tags", () => {
-			const scope = computeBankScope(baseConfig({ scoping: "per-project-tagged" }), "/repo/cool-app");
-			expect(scope.retainTags).toEqual(["project:cool-app"]);
-			expect(scope.recallTags).toEqual(["project:cool-app"]);
 		});
 
 		it("falls back to project:unknown when cwd is empty", () => {
@@ -270,7 +260,8 @@ describe("computeBankScope", () => {
 		});
 	});
 });
-
+<<<<<<< ours — test_suite `deriveBankId (legacy wrapper)` (S+F, confidence: low)
+// refused_by: modify_delete_guard · collision: none (no common ancestor text)
 describe("deriveBankId (legacy wrapper)", () => {
 	it("returns the bankId field of the resolved scope", () => {
 		expect(deriveBankId(baseConfig({ bankId: "team", bankIdPrefix: "prod" }), "/cwd")).toBe("prod-team");
@@ -278,6 +269,8 @@ describe("deriveBankId (legacy wrapper)", () => {
 		expect(deriveBankId(baseConfig({ scoping: "per-project-tagged" }), "/work/proj")).toBe("tau");
 	});
 });
+=======
+>>>>>>> theirs — test_suite `deriveBankId (legacy wrapper)` (S+F, confidence: low)
 
 describe("ensureBankExists", () => {
 	let client: HindsightApi;

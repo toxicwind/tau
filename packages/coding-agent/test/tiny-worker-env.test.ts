@@ -3,6 +3,11 @@ import * as path from "node:path";
 import { nativeLibraryPathOverlay, workerEnvFromParent } from "tau/subprocess/worker-client";
 import { tinyWorkerEnvOverlay } from "tau/tiny/title-client";
 import { tinyWorkerEndpoint, tinyWorkerLogPath } from "tau/tiny/title-protocol";
+import { ipcEndpoint } from "@oh-my-pi/pi-natives";
+import { sharedWorkerLogPath } from "@oh-my-pi/pi-coding-agent/subprocess/shared-worker";
+import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import { cfgProvidersTinyModelDevice } from "@oh-my-pi/pi-coding-agent/session/settings";
+import { tinyWorkerName } from "@oh-my-pi/pi-coding-agent/tiny/title-protocol";
 
 describe("workerEnvFromParent", () => {
 	it("drops inherited git repo-location overrides but keeps an explicit overlay", () => {
@@ -25,26 +30,32 @@ describe("workerEnvFromParent", () => {
 
 describe("tinyWorkerEnvOverlay", () => {
 	it("maps non-default settings onto the worker env vars when neither is already set", () => {
-		expect(tinyWorkerEnvOverlay({}, "cuda", "fp16")).toEqual({
+		expect(tinyWorkerEnvOverlay("cuda", "fp16")).toEqual({
 			PI_TINY_DEVICE: "cuda",
 			PI_TINY_DTYPE: "fp16",
-		});
-	});
-
-	it("lets a present env var win over the persisted setting", () => {
-		expect(tinyWorkerEnvOverlay({ PI_TINY_DEVICE: "cpu" }, "cuda", "fp16")).toEqual({
-			PI_TINY_DEVICE: "cpu",
-			PI_TINY_DTYPE: "fp16",
-		});
-		expect(tinyWorkerEnvOverlay({ PI_TINY_DTYPE: "q8" }, "cuda", "fp16")).toEqual({
-			PI_TINY_DEVICE: "cuda",
-			PI_TINY_DTYPE: "q8",
 		});
 	});
 
 	it("omits a var when its setting is the default sentinel or unset", () => {
-		expect(tinyWorkerEnvOverlay({}, "default", "default")).toEqual({});
-		expect(tinyWorkerEnvOverlay({}, undefined, undefined)).toEqual({});
+		expect(tinyWorkerEnvOverlay("default", "default")).toEqual({});
+		expect(tinyWorkerEnvOverlay(undefined, undefined)).toEqual({});
+	});
+});
+
+describe("PI_TINY_DEVICE", () => {
+	it("wins over the persisted setting case-insensitively and ignores unknown devices", () => {
+		const previous = process.env.PI_TINY_DEVICE;
+		const settings = Settings.isolated();
+		cfgProvidersTinyModelDevice.set(settings, "cuda");
+		try {
+			process.env.PI_TINY_DEVICE = "CPU";
+			expect(cfgProvidersTinyModelDevice.get(settings)).toBe("cpu");
+			process.env.PI_TINY_DEVICE = "quantum";
+			expect(cfgProvidersTinyModelDevice.get(settings)).toBe("cuda");
+		} finally {
+			if (previous === undefined) delete process.env.PI_TINY_DEVICE;
+			else process.env.PI_TINY_DEVICE = previous;
+		}
 	});
 });
 
@@ -76,6 +87,8 @@ describe("nativeLibraryPathOverlay", () => {
 	});
 });
 
+<<<<<<< ours — test_suite `tinyWorkerLogPath` (T+S+F, confidence: low)
+// refused_by: rename_vs_edit_guard · collision: none (both sides edited, nowhere the same lines)
 describe("tinyWorkerLogPath", () => {
 	// Regression: the log used to be `${endpoint}.log`, which on Windows turns
 	// the named-pipe endpoint (`\\.\pipe\tau-tiny-…`) into an unopenable file
@@ -93,6 +106,26 @@ describe("tinyWorkerLogPath", () => {
 		expect(logPath.includes(".sock")).toBe(false);
 		if (process.platform === "win32") {
 			expect(tinyWorkerEndpoint("/runtime", "lfm2.5-230m", "onnx").startsWith("\\\\.\\pipe\\")).toBe(true);
+=======
+describe("sharedWorkerLogPath", () => {
+	// Regression: the log used to be `${endpoint}.log`, which on Windows turns
+	// the named-pipe endpoint (`\\.\pipe\omp-tiny-…`) into an unopenable file
+	// path and crashed `--smoke-test` with ENOENT.
+	it("stays under the runtime directory instead of deriving from the endpoint", () => {
+		const runtimeDir = "/runtime";
+		const name = tinyWorkerName("lfm2.5-230m", "onnx");
+		const logPath = sharedWorkerLogPath(runtimeDir, name);
+		// `path.join` is platform-native, so assert containment through
+		// `path.relative` rather than assuming the host's separator: on Windows
+		// the same call yields `\runtime\<name>.log`.
+		const relativeToRuntime = path.relative(runtimeDir, logPath);
+		expect(path.isAbsolute(relativeToRuntime)).toBe(false);
+		expect(relativeToRuntime.startsWith("..")).toBe(false);
+		expect(logPath.endsWith(".log")).toBe(true);
+		expect(logPath.includes(".sock")).toBe(false);
+		if (process.platform === "win32") {
+			expect(ipcEndpoint(runtimeDir, name).startsWith("\\\\.\\pipe\\")).toBe(true);
+>>>>>>> theirs — test_suite `tinyWorkerLogPath` (T+S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/tiny-worker-env.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 			expect(logPath.startsWith("\\\\.\\pipe\\")).toBe(false);
 		}
 	});

@@ -6,6 +6,7 @@ import { ThemeSelectorComponent } from "@tau/tau-tui/overlays/theme-selector";
 import { ThinkingSelectorComponent } from "@tau/tau-tui/overlays/thinking-selector";
 import { initTheme } from "@tau/tau-tui/theme";
 import type { SgrMouseEvent } from "@tau/tau-tui";
+import type { ConfiguredThinkingLevel } from "@oh-my-pi/pi-tui/thinking";
 
 beforeAll(async () => {
 	await initTheme();
@@ -43,7 +44,7 @@ describe("inline-picker wrapper routeMouse offset", () => {
 	});
 
 	it("ThinkingSelectorComponent ignores the border row and selects the first level below it", () => {
-		let selected: Effort | undefined;
+		let selected: ConfiguredThinkingLevel | undefined;
 		const levels = [Effort.Low, Effort.High];
 		const component = new ThinkingSelectorComponent(
 			Effort.Low,

@@ -91,6 +91,7 @@ function makeSession(options: SessionOptions = {}): ToolSession {
 			"async.enabled": false,
 			"task.isolation.enabled": false,
 			"task.enableLsp": true,
+			"task.perCallModel": "on",
 		});
 	const artifactsDir = options.artifactsDir ?? null;
 	const asyncJobManager = new AsyncJobManager({});
@@ -333,6 +334,9 @@ describe("runEvalAgent", () => {
 		expect(firstOptions.parentActiveModelPattern).toBe("p/current");
 		expect(firstOptions.outputSchema).toBe(schema);
 		expect(firstOptions.outputSchemaOverridesAgent).toBe(true);
+		// task.structured is off (default); eval agents keep yield + schemas regardless.
+		expect(firstOptions.structured).toBe(true);
+		expect(secondOptions.structured).toBe(true);
 		expect(firstOptions.assignment).toBe("hello");
 		expect(firstOptions.description).toBe("My Agent");
 		// No per-call override: the agent's own frontmatter model applies.
@@ -341,19 +345,37 @@ describe("runEvalAgent", () => {
 		expect(secondOptions.outputSchemaOverridesAgent).toBeUndefined();
 	});
 
-	it("drops a per-call model argument on agent() (removed, issue #6438)", async () => {
+	it("routes an agent() model above a pinned agent in eval-only mode", async () => {
 		mockAgents();
 		const runSpy = vi.spyOn(taskExecutor, "runSubprocess").mockImplementation(async options => singleResult(options));
 
-		// The schema strips unknown keys; a legacy `model` argument is silently
-		// discarded so resolution is identical to omitting it — the agent's own
-		// frontmatter model applies (issue #6438).
-		await runEvalAgentAndWait({ prompt: "work", model: "default" }, { session: makeSession() });
-		await runEvalAgentAndWait({ prompt: "work" }, { session: makeSession() });
+		await runEvalAgentAndWait(
+			{ prompt: "work", agent: "reviewer", model: "p/requested:high" },
+			{
+				session: makeSession({
+					settings: Settings.isolated({ "task.perCallModel": "eval", "task.isolation.enabled": false }),
+				}),
+			},
+		);
 
-		const withModel = runSpy.mock.calls[0]?.[0];
-		const withoutModel = runSpy.mock.calls[1]?.[0];
-		expect(withModel?.modelOverride).toEqual(withoutModel?.modelOverride);
+		expect(runSpy.mock.calls[0]?.[0]?.modelOverride).toEqual(["p/requested:high"]);
+	});
+
+	it.each([
+		// The gate wins over the selector check, so an invalid selector still reports the disabled gate.
+		{ mode: "off", model: "@smol", error: /task\.perCallModel: off/ },
+		{ mode: "on", model: "default", error: /invalid `model`/ },
+		// The argument schema accepts only a string, so a candidate array never reaches preflight.
+		{ mode: "on", model: ["p/preferred:high", "p/alternative"], error: /model must be a string/ },
+	])("rejects agent() model $model under $mode before dispatch", async ({ mode, model, error }) => {
+		mockAgents();
+		const runSpy = vi.spyOn(taskExecutor, "runSubprocess").mockImplementation(async options => singleResult(options));
+		const settings = Settings.isolated({ "task.perCallModel": mode, "task.isolation.enabled": false });
+
+		await expect(
+			runEvalAgent({ prompt: "work", agent: "reviewer", model }, { session: makeSession({ settings }) }),
+		).rejects.toThrow(error);
+		expect(runSpy).not.toHaveBeenCalled();
 	});
 	it("returns host-parsed data for caller, agent, and inherited schemas", async () => {
 		const agentSchema = { type: "object" };
@@ -400,7 +422,7 @@ describe("runEvalAgent", () => {
 		]);
 	});
 
-	it("keeps bridge kernels independent while inheriting non-plan LSP and IRC policy", async () => {
+	it("inherits non-plan LSP and IRC policy", async () => {
 		mockAgents();
 		const runSpy = vi.spyOn(taskExecutor, "runSubprocess").mockImplementation(async options => singleResult(options));
 		// makeSession() defaults to enableLsp: true and task.enableLsp: true.
@@ -413,7 +435,6 @@ describe("runEvalAgent", () => {
 		expect(options.enableLsp).toBe(true);
 		expect(options.enableIrc).toBe(true);
 		expect(options.keepAlive).toBe(true);
-		expect(options.parentEvalSessionId).toBeUndefined();
 	});
 
 	it("registers temp artifact dirs for in-memory handle results so agent URLs resolve", async () => {
@@ -1058,13 +1079,7 @@ describe("runEvalAgent isolation", () => {
 
 	function mockIsolationContext(): { repoRoot: string } {
 		const repoRoot = "/repo-root";
-		vi.spyOn(isolationRunner, "prepareIsolationContext").mockResolvedValue({
-			repoRoot,
-			baseline: {
-				root: { repoRoot, headCommit: "HEAD", staged: "", unstaged: "", untracked: [], untrackedPatch: "" },
-				nested: [],
-			},
-		});
+		vi.spyOn(isolationRunner, "prepareIsolationContext").mockResolvedValue({ repoRoot });
 		return { repoRoot };
 	}
 
@@ -1114,6 +1129,8 @@ describe("runEvalAgent isolation", () => {
 		expect(mergeSpy).toHaveBeenCalledTimes(1);
 	});
 
+<<<<<<< ours — scope `it("preserves temp artifacts for non-isolated...` in test_suite `runEvalAgent isolation`, deleted in theirs (S+F, confidence: low)
+// refused_by: statement_fold · collision: none (no common ancestor text)
 	it("preserves temp artifacts for non-isolated handle outputs", async () => {
 		mockAgents();
 		const rmSpy = vi.spyOn(fs, "rm").mockResolvedValue(undefined);
@@ -1126,6 +1143,8 @@ describe("runEvalAgent isolation", () => {
 		);
 		expect(removedArtifactsDir).toBe(false);
 	});
+=======
+>>>>>>> theirs — scope `it("preserves temp artifacts for non-isolated...` deleted in theirs · weave: run 'weave explain packages/coding-agent/test/eval/agent-bridge-policy.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 	it("forwards merge=false as patch mode and passes the worktree cwd through baseOptions", async () => {
 		mockAgents();

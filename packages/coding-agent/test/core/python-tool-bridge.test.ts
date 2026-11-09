@@ -69,14 +69,12 @@ describe("Python tool bridge HTTP server", () => {
 			const body = await res.json();
 			expect(res.status).toBe(200);
 			expect(body).toEqual({ ok: true, value: "file body" });
-			expect(calls).toHaveLength(1);
-			expect(calls[0]!.args).toEqual({ path: "foo.ts", [INTENT_FIELD]: "py prelude" });
 		} finally {
 			unregister();
 		}
 	});
 
-	it("preserves explicit caller intent for tools whose schema does not declare it", async () => {
+	it("drops explicit caller intent for tools whose schema does not declare it", async () => {
 		const calls: FakeCall[] = [];
 		const tool = makeFakeTool("inspect", calls, {
 			content: [{ type: "text", text: "done" }],
@@ -94,7 +92,7 @@ describe("Python tool bridge HTTP server", () => {
 				args: { target: "value", [INTENT_FIELD]: "caller supplied" },
 			});
 			expect(await res.json()).toEqual({ ok: true, value: "done" });
-			expect(calls[0]!.args).toEqual({ target: "value", [INTENT_FIELD]: "caller supplied" });
+			expect(calls[0]!.args).toEqual({ target: "value" });
 		} finally {
 			unregister();
 		}
@@ -124,7 +122,12 @@ describe("Python tool bridge HTTP server", () => {
 		try {
 			const prelude = PYTHON_PRELUDE.replace(
 				"from __future__ import annotations",
+<<<<<<< ours — scope `declaration` in test_suite `Python tool bridge HTTP server` (F, confidence: medium)
+// refused_by: statement_fold · collision: `"from __future__ import annotations\n__omp_display = lambda *ar…`
 				"from __future__ import annotations\n__tau_display = lambda *args, **kwargs: None",
+=======
+				"from __future__ import annotations\n__omp_emit_status = __omp_emit_image = lambda *args, **kwargs: None",
+>>>>>>> theirs — scope `declaration` · weave: run 'weave explain packages/coding-agent/test/core/python-tool-bridge.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 			);
 			const script = `${prelude}
 __tau_run_id__ = "run"
@@ -322,7 +325,12 @@ asyncio.run(check_intent())
 		try {
 			const prelude = PYTHON_PRELUDE.replace(
 				"from __future__ import annotations",
+<<<<<<< ours — scope `const prelude = PYTHON_PRELUDE.replace(` in test_suite `Python tool bridge HTTP server` (F, confidence: medium)
+// refused_by: statement_fold · collision: `"from __future__ import annotations\n__omp_display = lambda *ar…`
 				"from __future__ import annotations\n__tau_display = lambda *args, **kwargs: None",
+=======
+				"from __future__ import annotations\n__omp_emit_status = __omp_emit_image = lambda *args, **kwargs: None",
+>>>>>>> theirs — scope `const prelude = PYTHON_PRELUDE.replace(`
 			);
 			// Mirror the runner rewrite shape: `await tool.read({...})` becomes
 			// `await __tau_with_call_site__(siteId, tool.read, {...})`.

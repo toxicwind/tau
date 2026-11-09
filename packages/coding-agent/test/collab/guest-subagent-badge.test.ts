@@ -1,8 +1,23 @@
 import { afterEach, beforeEach, describe, expect, it, spyOn } from "bun:test";
+<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { generateRoomKey, importRoomKey } from "tau/collab/crypto";
 import { CollabGuestLink } from "tau/collab/guest";
 import { type AgentSnapshot, COLLAB_PROTO, type CollabFrame, formatCollabLink } from "tau/collab/protocol";
 import { CollabSocket } from "tau/collab/relay-client";
+=======
+import * as fsp from "node:fs/promises";
+import { generateRoomKey, importRoomKey } from "@oh-my-pi/pi-coding-agent/collab/crypto";
+import { CollabGuestLink } from "@oh-my-pi/pi-coding-agent/collab/guest";
+import {
+	type AgentSnapshot,
+	COLLAB_PROTO,
+	type CollabFrame,
+	formatCollabLink,
+} from "@oh-my-pi/pi-coding-agent/collab/protocol";
+import { CollabSocket } from "@oh-my-pi/pi-coding-agent/collab/relay-client";
+import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+>>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/collab/guest-subagent-badge.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	getRunningSubagentBadgeAgentIds,
 	getRunningSubagentBadgeRegistry,
@@ -41,7 +56,7 @@ function makeGuestContext(): InteractiveModeContext {
 	let statusLineCount = 0;
 	const ctx = {
 		collabGuest: undefined as CollabGuestLink | undefined,
-		settings: { get: () => "" },
+		settings: Settings.isolated(),
 		sessionManager: {
 			getSessionFile: () => null,
 			getSessionName: () => "local session",
@@ -59,6 +74,7 @@ function makeGuestContext(): InteractiveModeContext {
 			},
 		},
 		statusContainer: { clear: () => {} },
+		pendingShellContainer: { clear: () => {} },
 		pendingMessagesContainer: { clear: () => {} },
 		compactionQueuedMessages: [],
 		streamingComponent: undefined,
@@ -88,11 +104,18 @@ function makeGuestContext(): InteractiveModeContext {
 		showError: () => {},
 		updateEditorTopBorder: () => {},
 		updateEditorBorderColor: () => {},
-		eventController: { handleEvent: () => Promise.resolve(), takeDisplaceableComponents: () => [] },
+		eventController: {
+			dispatchSessionEvent: () => Promise.resolve(),
+			takeDisplaceableComponents: () => [],
+			resetTranscriptAnchors: () => {},
+		},
 		syncRunningSubagentBadge: () => {
 			const registry = getRunningSubagentBadgeRegistry(ctx.collabGuest, AgentRegistry.global());
 			const agentIds = getRunningSubagentBadgeAgentIds(registry);
 			ctx.statusLine.setRunningSubagents(agentIds);
+		},
+		setCollabGuest: (guest: InteractiveModeContext["collabGuest"]) => {
+			Object.assign(ctx, { collabGuest: guest });
 		},
 	} as unknown as InteractiveModeContext;
 	return ctx;
@@ -111,6 +134,7 @@ afterEach(() => {
 describe("collab guest running-subagents badge", () => {
 	it("uses the guest mirror registry and refreshes on join, resnapshot, and leave", async () => {
 		const writeSpy = spyOn(Bun, "write").mockResolvedValue(0);
+		const renameSpy = spyOn(fsp, "rename").mockResolvedValue(undefined);
 		const roomId = "badge-room-1";
 		const roomKey = generateRoomKey();
 		const cryptoKey = await importRoomKey(roomKey);
@@ -160,6 +184,7 @@ describe("collab guest running-subagents badge", () => {
 		} finally {
 			hostSocket.close();
 			writeSpy.mockRestore();
+			renameSpy.mockRestore();
 			await guest.leave("test cleanup").catch(() => {});
 		}
 	});

@@ -1,9 +1,15 @@
 /**
- * Antigravity OAuth flow (Gemini 3, Claude, GPT-OSS via Google Cloud)
+ * Google Antigravity OAuth flow (Gemini, Claude, GPT-OSS via Google Cloud)
  * Uses different OAuth credentials than google-gemini-cli for access to additional models.
  */
+<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: `import { getAntigravityUserAgent } from "@oh-my-pi/pi-catalog/w…`
 import { type } from "@tau/tautype";
 import { getAntigravityUserAgent } from "@tau/tau-catalog/wire/gemini-headers";
+=======
+import { type } from "@oh-my-pi/omptype";
+import { getAntigravityHeaders } from "@oh-my-pi/pi-catalog/wire/gemini-headers";
+>>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/src/registry/oauth/google-antigravity.ts' for per-hunk detail, 'weave check' to verify your resolution
 import * as AIError from "../../error";
 import { raceWithSignal } from "../../utils/abort";
 import { extractGoogleValidationUrl, formatGoogleValidationRequiredMessage } from "../../utils/google-validation";
@@ -265,7 +271,7 @@ async function discoverProject(
 		headers: {
 			Authorization: `Bearer ${accessToken}`,
 			"Content-Type": "application/json",
-			"User-Agent": getAntigravityUserAgent(),
+			...getAntigravityHeaders(),
 		},
 		signal,
 	};

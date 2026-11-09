@@ -1,3 +1,5 @@
+<<<<<<< ours — imports `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 import { buildModel } from "@tau/tau-catalog/build";
 import { apiRouteFor } from "@tau/tau-catalog/compat/behavior";
 import {
@@ -8,9 +10,40 @@ import {
 	parseCloudflareAiGatewayCredential,
 } from "@tau/tau-catalog/wire/cloudflare-ai-gateway";
 import { $env } from "@tau/tau-utils";
+=======
+import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import { apiRouteFor } from "@oh-my-pi/pi-catalog/compat/behavior";
+import { parseCloudflareCredential } from "@oh-my-pi/pi-catalog/wire/cloudflare";
+import {
+	CLOUDFLARE_AI_GATEWAY_ANTHROPIC_BASE_URL,
+	CLOUDFLARE_AI_GATEWAY_BASE_URL,
+	CLOUDFLARE_AI_GATEWAY_COMPAT_BASE_URL,
+	CLOUDFLARE_AI_GATEWAY_OPENAI_BASE_URL,
+} from "@oh-my-pi/pi-catalog/wire/cloudflare-ai-gateway";
+import { $env } from "@oh-my-pi/pi-utils";
+>>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/src/registry/cloudflare-ai-gateway.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { NO_AUTH_SENTINEL } from "../auth-retry";
 import * as AIError from "../error";
+import type { Api, Model } from "../types";
 import type { ProviderTransport } from "./build";
+
+/**
+ * `prepareModel` runs per request, and the OpenAI-compat route rebuilds the
+ * model through the full compat engine. The rebuilt route is kept per source
+ * object together with a shallow snapshot of the source's fields; any field
+ * replaced in place since (headers, compatConfig, id, baseUrl, ...) misses the
+ * snapshot check and rebuilds.
+ */
+const compatRouteModels = new WeakMap<Model<Api>, { source: Model<Api>; prepared: Model<Api> }>();
+
+function sameOwnFields(a: object, b: object): boolean {
+	const aKeys = Object.keys(a);
+	if (aKeys.length !== Object.keys(b).length) return false;
+	for (const key of aKeys) {
+		if ((a as Record<string, unknown>)[key] !== (b as Record<string, unknown>)[key]) return false;
+	}
+	return true;
+}
 
 /** Cloudflare AI Gateway model/request shaping; login lives in `oauth/cloudflare-ai-gateway.ts` + its auth rule. */
 export const cloudflareAiGatewayTransport: ProviderTransport = {
@@ -49,18 +82,22 @@ export const cloudflareAiGatewayTransport: ProviderTransport = {
 			) {
 				return model;
 			}
-			return buildModel({
+			const cached = compatRouteModels.get(model);
+			if (cached && sameOwnFields(cached.source, model)) return cached.prepared;
+			const prepared = buildModel({
 				...model,
 				api: "openai-completions",
 				baseUrl,
 				compat: model.compatConfig,
 				...(route.requestModelId !== undefined ? { requestModelId: route.requestModelId } : {}),
 			});
+			compatRouteModels.set(model, { source: { ...model }, prepared });
+			return prepared;
 		}
 		return model;
 	},
 	prepareRequest: (model, options) => {
-		const credential = parseCloudflareAiGatewayCredential(options.apiKey ?? $env.CLOUDFLARE_AI_GATEWAY_API_KEY ?? "");
+		const credential = parseCloudflareCredential(options.apiKey ?? $env.CLOUDFLARE_AI_GATEWAY_API_KEY ?? "");
 		if (!credential) return { model, options };
 		const accountId = credential.accountId ?? $env.CLOUDFLARE_ACCOUNT_ID;
 		const gatewayId = credential.gatewayId ?? $env.CLOUDFLARE_GATEWAY_ID;

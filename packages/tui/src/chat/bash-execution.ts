@@ -12,19 +12,30 @@ import { sanitizeText } from "@tau/tau-utils";
 import type { Terminal as XtermTerminalType } from "@tau/tau-utils/vterm";
 import { theme } from "../theme/theme";
 import type { OutputArtifactError } from "../tools/streaming-output";
-import type { TruncationMeta } from "../tools/output-meta";
+import type { MinimizedMeta, TruncationMeta } from "../tools/output-meta";
 import { resolveImageOptions } from "../render/render-utils";
 import { OutputPane } from "../render/output-pane";
 import { loadXtermTerminal, readTerminalRows, styleTerminalRow } from "../tools/terminal-output";
+import { normalizeInputForPty } from "../tools/bash-interactive";
 import { getSixelLineMask, isSixelPassthroughEnabled, sanitizeWithOptionalSixelPassthrough } from "../render/sixel";
 import {
 	buildExecutionFrame,
 	buildStatusFooter,
 	clampDisplayLine,
+	describeExecutionCard,
+	describeExecutionTool,
+	type ExecutionColorKey,
 	type ExecutionStatus,
+	executionStatusLabel,
 	PREVIEW_LINES,
 	resolveExecutionStatus,
 } from "./execution-shared";
+import { span, text } from "../native/describe";
+import { type DescribeContext, type NativeNode, type NativeUiEvent, rootToggleExpanded } from "../native/node";
+import { NativeImageCache } from "../native/blobs";
+import { imageLinksEnabled, linkedImageSpan, linkedImageText } from "../prompt/image-references";
+import { Memo } from "../native/memo";
+import type { DynamicBorder } from "../chrome/dynamic-border";
 
 const STREAMING_LINE_CAP = PREVIEW_LINES * 5;
 // Minimum interval between processing incoming chunks for display (ms).
@@ -50,8 +61,10 @@ export class BashExecutionComponent extends Container {
 	#status: ExecutionStatus = "running";
 	#exitCode: number | undefined = undefined;
 	#loader: Loader;
+	readonly #bottomBorder: DynamicBorder;
 	#truncation?: TruncationMeta;
 	#artifactError?: OutputArtifactError;
+	#minimized?: MinimizedMeta;
 	#expanded = false;
 	// Post-finalize mutation counter (FinalizableBlock.getTranscriptBlockVersion):
 	// a completed command's block still mutates on expansion toggles, and the
@@ -78,6 +91,13 @@ export class BashExecutionComponent extends Container {
 	#showImages = true;
 	readonly #instanceId = nextBashExecutionId++;
 	readonly #command: string;
+	readonly #colorKey: ExecutionColorKey;
+	readonly #startedAt = performance.now();
+	#endedAt: number | undefined;
+	// Bumped whenever the displayed output lines change.
+	#outputVersion = 0;
+	readonly #native = new Memo();
+	readonly #nativeImages = new NativeImageCache();
 
 	constructor(command: string, ui: TUI, excludeFromContext = false) {
 		super();
@@ -86,9 +106,11 @@ export class BashExecutionComponent extends Container {
 
 		// Use dim border for excluded-from-context commands (!! prefix)
 		const colorKey = excludeFromContext ? "dim" : "bashMode";
-		const { contentContainer, loader } = buildExecutionFrame(this, ui, colorKey);
+		this.#colorKey = colorKey;
+		const { contentContainer, loader, bottomBorder } = buildExecutionFrame(this, ui, colorKey);
 		this.#contentContainer = contentContainer;
 		this.#loader = loader;
+		this.#bottomBorder = bottomBorder;
 		this.#outputPane = new OutputPane(theme, {
 			expanded: false,
 			collapsedMaxLines: PREVIEW_LINES,
@@ -104,7 +126,6 @@ export class BashExecutionComponent extends Container {
 		// Command header
 		this.#headerText = new Text(theme.fg(colorKey, theme.bold(`$ ${command}`)), 1, 0);
 		this.#contentContainer.addChild(this.#headerText);
-		this.#contentContainer.addChild(this.#loader);
 	}
 
 	/**
@@ -136,6 +157,73 @@ export class BashExecutionComponent extends Container {
 		this.#updateDisplay();
 	}
 
+	handleNativeEvent(event: NativeUiEvent): void {
+		const expanded = rootToggleExpanded(event);
+		if (expanded !== undefined) this.setExpanded(expanded);
+	}
+
+	/**
+	 * The agent's bash `tool` frame (role `omp.bash`) with a `you` badge: the
+	 * command in the head, the output as an `ansi` mini terminal following its
+	 * tail. Terminals without the `tool` kind get a `card` headed by the
+	 * command.
+	 */
+	override describe(cx?: DescribeContext): NativeNode {
+		const dataFirst = cx?.supports("tool") === true;
+		const key = [
+			dataFirst,
+			this.#outputVersion,
+			this.#blockVersion,
+			this.#status,
+			this.#expanded,
+			this.#showImages,
+			this.#images.length,
+			// Image nodes and placeholders carry links only under an enabled policy.
+			imageLinksEnabled(),
+		];
+		return this.#native.get(key, () => {
+			const images = this.#images.map((image, index) =>
+				this.#showImages
+					? this.#nativeImages.get(`img${index}`, image.data, image.mimeType)
+					: text([
+							linkedImageSpan(
+								imageFallback(image.mimeType, getImageDimensions(image.data, image.mimeType) ?? undefined),
+								image,
+								undefined,
+								"muted",
+							),
+						]),
+			);
+			const common = {
+				role: "omp.bash",
+				status: this.#status,
+				startedAt: this.#startedAt,
+				expanded: this.#expanded,
+				output: this.#outputLines.join("\n"),
+				images,
+				exitCode: this.#exitCode,
+				truncation: this.#truncation,
+				artifactError: this.#artifactError,
+				minimized: this.#minimized,
+			};
+			return dataFirst
+				? describeExecutionTool({
+						...common,
+						name: "bash",
+						title: "Bash",
+						command: this.#command,
+						lang: "bash",
+						excluded: this.#colorKey === "dim",
+						endedAt: this.#endedAt,
+					})
+				: describeExecutionCard({
+						...common,
+						head: [span(`$ ${this.#command}`, `${this.#colorKey} strong`)],
+						muted: this.#colorKey === "dim",
+					});
+		});
+	}
+
 	appendOutput(chunk: string): void {
 		if (this.#ptyMode) return;
 		// During high-throughput output (e.g. seq 1 500M), processing every
@@ -165,12 +253,19 @@ export class BashExecutionComponent extends Container {
 		}
 
 		this.#displayDirty = true;
+		this.#outputVersion++;
 	}
 
 	/** Switch to PTY rendering and feed raw terminal bytes through the vterm replay. */
 	appendPtyChunk(chunk: string): void {
 		if (this.#status !== "running" && !this.#ptyWriting && this.#ptyQueue.length === 0) return;
-		this.#ptyMode = true;
+		if (!this.#ptyMode) {
+			this.#ptyMode = true;
+			// The pane's `styleLine` reads `#ptyMode`, so its styled rows change
+			// the moment this flips — with the rows themselves unchanged. The pane
+			// memoizes its styled output, so it has to be told.
+			this.#outputPane.invalidate();
+		}
 		this.#ptyReplayFinalized = false;
 		this.#ptyQueue.push(chunk);
 		if (this.#ptyQueue.length > MAX_PTY_QUEUE_CHUNKS) {
@@ -195,6 +290,11 @@ export class BashExecutionComponent extends Container {
 			});
 		}
 		this.#drainPtyQueue();
+	}
+
+	/** Bytes a terminal would send for a key event, honoring the command's cursor-key mode; "" for key releases. */
+	encodePtyInput(data: string): string {
+		return normalizeInputForPty(data, this.#ptyTerminal?.modes.applicationCursorKeysMode ?? false);
 	}
 
 	#drainPtyQueue(): void {
@@ -240,6 +340,7 @@ export class BashExecutionComponent extends Container {
 		const base = theme.getFgAnsi("muted");
 		this.#outputLines = rows.map(row => (row ? styleTerminalRow(row, base) : ""));
 		this.#displayDirty = true;
+		this.#outputVersion++;
 	}
 
 	/** Final full-scrollback read; the terminal is disposed once lines are snapshotted. */
@@ -262,14 +363,17 @@ export class BashExecutionComponent extends Container {
 			output?: string;
 			truncation?: TruncationMeta;
 			artifactError?: OutputArtifactError;
+			minimized?: MinimizedMeta;
 			images?: readonly ImageContent[];
 			showImages?: boolean;
 		},
 	): void {
 		this.#exitCode = exitCode;
 		this.#status = resolveExecutionStatus(exitCode, cancelled);
+		this.#endedAt ??= performance.now();
 		this.#truncation = options?.truncation;
 		this.#artifactError = options?.artifactError;
+		this.#minimized = options?.minimized;
 		this.#images = options?.images ?? [];
 		this.#showImages = options?.showImages ?? true;
 		if (options?.output !== undefined && !this.#ptyMode) {
@@ -284,6 +388,12 @@ export class BashExecutionComponent extends Container {
 		}
 
 		this.#updateDisplay();
+	}
+
+	/** The loader animates the bottom border from outside the child tree, so teardown stops it here. */
+	override dispose(): void {
+		this.#loader.dispose();
+		super.dispose();
 	}
 
 	override render(width: number): readonly string[] {
@@ -338,20 +448,18 @@ export class BashExecutionComponent extends Container {
 			} else {
 				const dimensions = getImageDimensions(image.data, image.mimeType) ?? undefined;
 				this.#contentContainer.addChild(
-					new Text(theme.fg("muted", imageFallback(image.mimeType, dimensions)), 1, 0),
+					new Text(theme.fg("muted", linkedImageText(imageFallback(image.mimeType, dimensions), image)), 1, 0),
 				);
 			}
 		}
 
-		// Loader or status
-		if (this.#status === "running") {
-			this.#contentContainer.addChild(this.#loader);
-		} else {
+		// The bottom border keeps the live loader until the run settles, then its exit/cancel marker.
+		if (this.#status !== "running") {
+			this.#bottomBorder.setLabel(executionStatusLabel(this.#status, this.#exitCode));
 			const footer = buildStatusFooter({
-				status: this.#status,
-				exitCode: this.#exitCode,
 				truncation: this.#truncation,
 				artifactError: this.#artifactError,
+				minimized: this.#minimized,
 				hiddenLineCount,
 				suppressHiddenCount: hasSixelOutput,
 			});
@@ -376,6 +484,7 @@ export class BashExecutionComponent extends Container {
 	#setOutput(output: string): void {
 		const clean = sanitizeWithOptionalSixelPassthrough(output, sanitizeText);
 		this.#outputLines = clean ? this.#clampLinesPreservingSixel(clean.split("\n")) : [];
+		this.#outputVersion++;
 	}
 
 	/**

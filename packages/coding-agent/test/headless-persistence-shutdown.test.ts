@@ -17,6 +17,7 @@ import { runRootCommand } from "tau/main";
 import type { CreateAgentSessionResult } from "tau/sdk";
 import { AuthStorage } from "tau/session/auth-storage";
 import { TempDir, postmortem } from "@tau/tau-utils";
+import { clearOmpExtensionCliRoots } from "@oh-my-pi/pi-coding-agent/discovery/omp-extension-roots";
 import type { AgentSession } from "../src/session/agent-session";
 import { SessionManager } from "../src/session/session-manager";
 
@@ -32,6 +33,9 @@ const RAW_FATAL_DUMP_RE = /(?:^|\n)\s+at [^\n]*:\d+:\d+/;
 const tempDirs: TempDir[] = [];
 
 afterEach(async () => {
+	// `runRootCommand` registers the CLI's extension roots (`--no-extensions` → explicit-only) process-wide.
+	clearOmpExtensionCliRoots();
+
 	await Promise.all(tempDirs.splice(0).map(dir => dir.remove()));
 });
 
@@ -120,12 +124,17 @@ async function createHarness(): Promise<ShutdownHarness> {
 	const session = {
 		extensionRunner: undefined,
 		model: { provider: "anthropic", id: "test-model" },
-		settings: { get: () => false },
+		settings: Settings.isolated(),
 		sessionManager: manager,
 		subscribe: () => {},
+		addDisposer: () => {},
+		setScopedModelsRefresher: () => {},
 		getAllToolNames: () => [],
+		validateRetryFallbackChains: () => {},
 		getLastAssistantMessage: () => undefined,
+		disableStopTimeTodoReminders: () => {},
 		prepareForHeadlessAdvisorDrain: () => {},
+		waitForIdle: async () => {},
 		setTextOutputCommitted: () => {},
 		waitForAdvisorCatchup: async () => true,
 		// Later writes keep failing on the real store path; the manager latches

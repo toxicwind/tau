@@ -28,6 +28,10 @@ import { VIBE_TOOL_NAMES } from "tau/tools/vibe";
 import { resetYieldTurnState } from "tau/tools/yield";
 import { logger, removeSyncWithRetries, Snowflake, untilAborted } from "@tau/tau-utils";
 
+import { cfgExternalThinking } from "@oh-my-pi/pi-coding-agent/session/settings";
+import { cfgPlanEnabled } from "@oh-my-pi/pi-coding-agent/plan-mode/settings";
+import { cfgToolsXdev } from "@oh-my-pi/pi-coding-agent/tools/settings";
+
 const toolActivationExtension: ExtensionFactory = pi => {
 	pi.registerTool({
 		name: "default_inactive_tool",
@@ -125,6 +129,8 @@ describe("createAgentSession defaultInactive tool activation", () => {
 	});
 
 	afterAll(() => {
+		// The discovered auth DB lives in registryAuthDir; Windows cannot delete it while open.
+		modelRegistry.authStorage.close();
 		removeSyncWithRetries(registryAuthDir);
 	});
 
@@ -150,8 +156,8 @@ describe("createAgentSession defaultInactive tool activation", () => {
 			expect(session.systemPrompt.join("\n")).toContain("default_active_tool");
 			expect(session.systemPrompt.join("\n")).not.toContain("default_inactive_tool");
 
-			// Presentation lookup must survive Code Mode clearing the live mount set
-			// so historical prefixed calls retain their canonical renderer.
+			// Presentation lookup must survive clearing the live mount set so
+			// historical prefixed calls retain their canonical renderer.
 			await session.setActiveToolPresentation(session.getActiveToolNames(), []);
 			expect(session.getMountedXdevToolNames()).not.toContain("default_active_tool");
 			expect(session.getToolByName("xd://default_active_tool")?.name).toBe("default_active_tool");
@@ -184,7 +190,7 @@ describe("createAgentSession defaultInactive tool activation", () => {
 			expect(write).toBeDefined();
 			await expect(
 				write!.execute("device-only-fs", { path: path.join(tempDir, "nope.txt"), content: "x" }),
-			).rejects.toThrow("Filesystem writes are not available");
+			).rejects.toThrow("Other filesystem paths are refused");
 		} finally {
 			await session.dispose();
 		}
@@ -207,7 +213,7 @@ describe("createAgentSession defaultInactive tool activation", () => {
 					path: path.join(tempDir, "before.txt"),
 					content: "x",
 				}),
-			).rejects.toThrow("Filesystem writes are not available");
+			).rejects.toThrow("Other filesystem paths are refused");
 
 			await session.setActiveToolsByName(session.getEnabledToolNames());
 
@@ -216,7 +222,7 @@ describe("createAgentSession defaultInactive tool activation", () => {
 					path: path.join(tempDir, "after.txt"),
 					content: "x",
 				}),
-			).rejects.toThrow("Filesystem writes are not available");
+			).rejects.toThrow("Other filesystem paths are refused");
 		} finally {
 			await session.dispose();
 		}
@@ -235,15 +241,19 @@ describe("createAgentSession defaultInactive tool activation", () => {
 			expect(session.getToolByName("think")).toBeUndefined();
 			expect(session.getActiveToolNames()).not.toContain("think");
 
-			settings.set("externalThinking", true);
-			await session.setThinkToolEnabled(true);
+			// The setting watch fires on the next microtask and queues the tool-registry
+			// mutation; a prompt refresh serializes behind it.
+			cfgExternalThinking.set(settings, true);
+			await Promise.resolve();
+			await session.refreshBaseSystemPrompt();
 
 			expect(session.getToolByName("think")).toBeDefined();
 			expect(session.getActiveToolNames()).toContain("think");
 			expect(session.getXdevToolEntries().map(entry => entry.name)).not.toContain("think");
 
-			settings.set("externalThinking", false);
-			await session.setThinkToolEnabled(false);
+			cfgExternalThinking.set(settings, false);
+			await Promise.resolve();
+			await session.refreshBaseSystemPrompt();
 			expect(session.getActiveToolNames()).not.toContain("think");
 		} finally {
 			await session.dispose();
@@ -504,7 +514,7 @@ describe("createAgentSession defaultInactive tool activation", () => {
 			if (!write) throw new Error("expected dormant write transport");
 			await expect(
 				write.execute("late-device-fs", { path: path.join(tempDir, "nope.txt"), content: "x" }),
-			).rejects.toThrow("Filesystem writes are not available");
+			).rejects.toThrow("Other filesystem paths are refused");
 		} finally {
 			await session.dispose();
 		}
@@ -1817,7 +1827,7 @@ describe("createAgentSession defaultInactive tool activation", () => {
 		const tempDir = makeTempDir();
 
 		const settings = Settings.isolated();
-		settings.set("plan.enabled", false);
+		cfgPlanEnabled.set(settings, false);
 
 		const { session } = await createAgentSession({
 			...baseOptions(tempDir),
@@ -1833,7 +1843,7 @@ describe("createAgentSession defaultInactive tool activation", () => {
 			expect(write).toBeDefined();
 			await expect(
 				write!.execute("device-only-fs", { path: path.join(tempDir, "nope.txt"), content: "x" }),
-			).rejects.toThrow("Filesystem writes are not available");
+			).rejects.toThrow("Other filesystem paths are refused");
 		} finally {
 			await session.dispose();
 		}
@@ -1910,6 +1920,38 @@ describe("createAgentSession defaultInactive tool activation", () => {
 				expect(session.getToolByName(name)).toBeUndefined();
 			}
 			expect(session.getActiveToolNames()).toEqual(previousActiveToolNames);
+		} finally {
+			await session.dispose();
+		}
+	});
+
+	it("keeps MCP refreshes out of the vibe director toolset and applies them on exit", async () => {
+		const tempDir = makeTempDir();
+		const { session } = await createAgentSession(baseOptions(tempDir));
+		const previousEnabledToolNames = session.getEnabledToolNames();
+		const mcpTool = {
+			name: "mcp__vibe_refresh_lookup",
+			label: "vibe_refresh/lookup",
+			description: "MCP tool connected while vibe mode is active.",
+			parameters: type({}),
+			mcpServerName: "vibe_refresh",
+			mcpToolName: "lookup",
+			async execute() {
+				return { content: [{ type: "text", text: "mcp" }] };
+			},
+		} satisfies CustomTool;
+
+		try {
+			await session.activateVibeTools(["read"]);
+			const directorToolNames = session.getEnabledToolNames();
+			await session.refreshMCPTools([mcpTool]);
+			expect(session.getToolByName(mcpTool.name)).toBeDefined();
+			expect(session.getEnabledToolNames()).toEqual(directorToolNames);
+
+			await session.deactivateVibeTools(previousEnabledToolNames);
+			expect(session.getEnabledToolNames()).toEqual(
+				expect.arrayContaining([...previousEnabledToolNames, mcpTool.name]),
+			);
 		} finally {
 			await session.dispose();
 		}
@@ -2520,7 +2562,7 @@ describe("createAgentSession defaultInactive tool activation", () => {
 		// because the absence of that state is precisely what is under test.
 		const tempDir = makeTempDir();
 		const settings = Settings.isolated();
-		settings.set("tools.xdev", false);
+		cfgToolsXdev.set(settings, false);
 
 		await withProviderAuth(["openai"], async () => {
 			const { session } = await createAgentSession({ ...baseOptions(tempDir), settings });

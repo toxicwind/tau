@@ -1,14 +1,21 @@
 import { DEFAULT_MAX_BYTES, type OutputArtifactError, OutputSink } from "@tau/tau-tui/tools/streaming-output";
 import type { ToolSession } from "../../tools";
-import { resolveOutputMaxColumns, resolveOutputSinkHeadBytes } from "../../tools/output-meta";
+import {
+	resolveOutputMaxColumns,
+	resolveOutputSinkArtifactMaxBytes,
+	resolveOutputSinkHeadBytes,
+} from "../../tools/output-meta";
 import { isEvalTimeoutControlEvent, withBridgeTimeoutPause } from "../bridge-timeout";
 import { DisplayOutputCollector } from "../executor-base";
+import type { EvalDisplayOutput } from "../types";
 import { buildDeniedToolsEnv } from "../deny-policy";
 import { Settings } from "../../config/settings";
-import { executeInVmContext, type JsDisplayOutput } from "./context-manager";
+import { executeInVmContext } from "./context-manager";
 import { installJsPackages } from "./package-installer";
 import type { JsPackageEnvironmentMode } from "./package-installer";
 import type { JsStatusEvent } from "./shared/types";
+
+import { cfgEvalAutoProvision } from "../settings";
 
 export interface JsExecutorOptions {
 	cwd?: string;
@@ -22,9 +29,11 @@ export interface JsExecutorOptions {
 	idleTimeoutMs?: number;
 	onChunk?: (chunk: string) => Promise<void> | void;
 	onStatus?: (event: JsStatusEvent) => void;
+	/** Shows the user `out://` replies of the cell's bridged tool calls; absent, those calls are refused. */
+	onReply?: (text: string) => void;
 	signal?: AbortSignal;
 	sessionId: string;
-	/** Logical owner identifier; scopes `reset` on shared contexts and retained-worker cleanup. */
+	/** Logical owner identifier; scopes retained-worker cleanup. */
 	kernelOwnerId?: string;
 	reset?: boolean;
 	sessionFile?: string;
@@ -47,12 +56,14 @@ export interface JsResult {
 	cancelled: boolean;
 	truncated: boolean;
 	artifactId?: string;
+	/** Bytes the artifact cap dropped from the saved file's middle (the artifact is a head/tail sample). */
+	artifactElidedBytes?: number;
 	artifactError?: OutputArtifactError;
 	totalLines: number;
 	totalBytes: number;
 	outputLines: number;
 	outputBytes: number;
-	displayOutputs: JsDisplayOutput[];
+	displayOutputs: EvalDisplayOutput[];
 }
 
 function getExecutionTimeoutMs(options: Pick<JsExecutorOptions, "deadlineMs" | "timeoutMs">): number | undefined {
@@ -60,13 +71,6 @@ function getExecutionTimeoutMs(options: Pick<JsExecutorOptions, "deadlineMs" | "
 		return Math.max(1, options.deadlineMs - Date.now());
 	}
 	return options.timeoutMs;
-}
-
-function isAbortError(error: unknown): boolean {
-	return (
-		(error instanceof DOMException && (error.name === "AbortError" || error.name === "TimeoutError")) ||
-		(error instanceof Error && (error.name === "AbortError" || error.name === "TimeoutError"))
-	);
 }
 
 function isTimeoutReason(reason: unknown): boolean {
@@ -99,13 +103,14 @@ function formatPackageInstallTimeoutAnnotation(installDeadlineReached: boolean):
 }
 
 export async function executeJs(code: string, options: JsExecutorOptions): Promise<JsResult> {
-	const display = new DisplayOutputCollector<JsDisplayOutput>();
+	const display = new DisplayOutputCollector();
 	const displayOutputs = display.outputs;
 	const outputSink = new OutputSink({
 		artifactPath: options.artifactPath,
 		artifactId: options.artifactId,
 		spillThreshold: DEFAULT_MAX_BYTES,
 		headBytes: resolveOutputSinkHeadBytes(options.session.settings),
+		artifactMaxBytes: resolveOutputSinkArtifactMaxBytes(options.session.settings),
 		maxColumns: resolveOutputMaxColumns(options.session.settings),
 		onChunk: chunk => options.onChunk?.(chunk),
 	});
@@ -129,7 +134,7 @@ export async function executeJs(code: string, options: JsExecutorOptions): Promi
 			cwd,
 			packages,
 			environment: options.environment,
-			autoProvision: options.session.settings.get("eval.autoProvision") ?? true,
+			autoProvision: cfgEvalAutoProvision.get(options.session.settings),
 			signal: packageSignal,
 		};
 		const install =
@@ -178,6 +183,7 @@ export async function executeJs(code: string, options: JsExecutorOptions): Promi
 			timeoutMs: runtimeTimeoutMs ?? options.idleTimeoutMs,
 			runState: {
 				signal,
+				onReply: options.onReply,
 				onText: chunk => outputSink.push(chunk),
 				onDisplay: output => {
 					if (output.type === "status") {
@@ -197,6 +203,7 @@ export async function executeJs(code: string, options: JsExecutorOptions): Promi
 			cancelled: false,
 			truncated: summary.truncated,
 			artifactId: summary.artifactId,
+			artifactElidedBytes: summary.artifactElidedBytes,
 			artifactError: summary.artifactError,
 			totalLines: summary.totalLines,
 			totalBytes: summary.totalBytes,
@@ -206,7 +213,10 @@ export async function executeJs(code: string, options: JsExecutorOptions): Promi
 		};
 	} catch (error) {
 		const activeSignal = packageWorkComplete ? signal : packageSignal;
-		if (activeSignal?.aborted || isAbortError(error)) {
+		// Every requested cancellation (the caller's signal, the cell timeout, the
+		// package-install timeout) aborts `activeSignal`. An error that merely has
+		// a cancellation-like name, thrown by the cell's own code, is a failure.
+		if (activeSignal?.aborted) {
 			const timedOut = packageWorkComplete
 				? Boolean(timeoutSignal?.aborted) || isTimeoutReason(options.signal?.reason)
 				: isTimeoutReason(packageSignal?.reason);
@@ -225,6 +235,7 @@ export async function executeJs(code: string, options: JsExecutorOptions): Promi
 				cancelled: true,
 				truncated: summary.truncated,
 				artifactId: summary.artifactId,
+				artifactElidedBytes: summary.artifactElidedBytes,
 				artifactError: summary.artifactError,
 				totalLines: summary.totalLines,
 				totalBytes: summary.totalBytes,
@@ -242,6 +253,7 @@ export async function executeJs(code: string, options: JsExecutorOptions): Promi
 			cancelled: false,
 			truncated: summary.truncated,
 			artifactId: summary.artifactId,
+			artifactElidedBytes: summary.artifactElidedBytes,
 			artifactError: summary.artifactError,
 			totalLines: summary.totalLines,
 			totalBytes: summary.totalBytes,

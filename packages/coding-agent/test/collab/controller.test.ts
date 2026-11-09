@@ -14,6 +14,8 @@ import { afterEach, beforeEach, describe, expect, it, type Mock, spyOn, vi } fro
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
+<<<<<<< ours — imports `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import { getProjectDir, setProjectDir } from "@oh-my-pi/pi-util…`
 import { CollabController } from "tau/collab/controller";
 import { importRoomKey } from "tau/collab/crypto";
 import { CollabGuestLink } from "tau/collab/guest";
@@ -35,9 +37,62 @@ import { AuthStorage } from "tau/session/auth-storage";
 import { executeBuiltinSlashCommand } from "tau/slash-commands/builtin-registry";
 import { getProjectDir, setProjectDir } from "@tau/tau-utils";
 import * as utils from "@tau/tau-utils";
+=======
+import { closeModelCache } from "@oh-my-pi/pi-catalog/model-cache";
+import { CollabController } from "@oh-my-pi/pi-coding-agent/collab/controller";
+import { importRoomKey } from "@oh-my-pi/pi-coding-agent/collab/crypto";
+import { CollabGuestLink } from "@oh-my-pi/pi-coding-agent/collab/guest";
+import { CollabHost, CollabHostStoppedError } from "@oh-my-pi/pi-coding-agent/collab/host";
+import { COLLAB_PROTO, type CollabFrame, parseCollabLink } from "@oh-my-pi/pi-coding-agent/collab/protocol";
+import * as registry from "@oh-my-pi/pi-coding-agent/collab/registry";
+import { CollabSocket } from "@oh-my-pi/pi-coding-agent/collab/relay-client";
+import { parseArgs } from "@oh-my-pi/pi-coding-agent/cli/args";
+import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
+import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import * as pluginHelpers from "@oh-my-pi/pi-coding-agent/discovery/helpers";
+import { clearOmpExtensionCliRoots } from "@oh-my-pi/pi-coding-agent/discovery/omp-extension-roots";
+import { runRootCommand } from "@oh-my-pi/pi-coding-agent/main";
+import { Composer } from "@oh-my-pi/pi-tui/prompt/composer";
+import { InteractiveMode } from "@oh-my-pi/pi-coding-agent/modes/interactive-mode";
+import { beginStartupComposer, stopPendingStartupComposer } from "@oh-my-pi/pi-coding-agent/modes/startup-composer";
+import { initTheme } from "@oh-my-pi/pi-tui/theme";
+import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
+import { AgentStorage } from "@oh-my-pi/pi-coding-agent/session/agent-storage";
+import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
+import { HistoryStorage } from "@oh-my-pi/pi-coding-agent/session/history-storage";
+import { closeSessionIndex } from "@oh-my-pi/pi-coding-agent/session/session-index";
+import { executeBuiltinSlashCommand } from "@oh-my-pi/pi-coding-agent/slash-commands/builtin-registry";
+import { getProjectDir, isInteractiveHost, setInteractiveHost, setProjectDir } from "@oh-my-pi/pi-utils";
+import * as utils from "@oh-my-pi/pi-utils";
+>>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/collab/controller.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { VirtualTerminal } from "../../../tui/test/virtual-terminal";
 import { createTestSession, type TestSessionContext } from "../utilities";
 import { FakeWebSocket, installInMemoryRelay, uninstallInMemoryRelay } from "./helpers/in-memory-relay";
+
+import { cfgCollabAutoStart } from "@oh-my-pi/pi-coding-agent/collab/settings";
+import { cfgAdvisorEnabled } from "@oh-my-pi/pi-coding-agent/advisor/settings";
+import { CfgProtocolHandler } from "@oh-my-pi/pi-coding-agent/internal-urls/cfg-protocol";
+import { parseInternalUrl } from "@oh-my-pi/pi-coding-agent/internal-urls/parse";
+import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
+import {
+	cfgMarketplaceAutoUpdate,
+	cfgStartupChangelogMode,
+	cfgStartupCheckUpdate,
+	cfgStartupSetupWizard,
+	cfgStartupShowSplash,
+} from "@oh-my-pi/pi-coding-agent/modes/settings";
+
+const originalAgentDir = process.env.PI_CODING_AGENT_DIR;
+const originalPiProfile = process.env.PI_PROFILE;
+const originalOmpProfile = process.env.OMP_PROFILE;
+
+function restoreEnv(key: string, value: string | undefined): void {
+	if (value === undefined) {
+		delete process.env[key];
+	} else {
+		process.env[key] = value;
+	}
+}
 
 const RELAY_URL = "ws://localhost:8788";
 const WEB_URL = "https://collab.example";
@@ -46,13 +101,15 @@ interface ControllerContextState {
 	sessionId: string;
 	transition?: Promise<void>;
 	transitionWaited?: () => void;
-	autoStart: "off" | "view" | "control";
-	relayUrl: string;
+	/** Real settings carrying the collab relay/web/auto-start values the controller reads. */
+	settings: Settings;
 	showStatus: string[];
 	/** Resolves with the first status message the controller shows. */
 	firstStatus: PromiseWithResolvers<string>;
 	/** Session-change callbacks registered by the controller under test. */
 	sessionChangeCallbacks: Set<() => void>;
+	/** Persistence-notice observers registered by the controller under test. */
+	sessionMoveCallbacks: Set<() => void>;
 	/** Resolves each time a host clears its status-line segment (tore down). */
 	tornDown: (() => void)[];
 	/** Guest prompts a host forwarded into the session. */
@@ -66,28 +123,27 @@ interface ControllerContextState {
  * session identity, the session-change subscription, and the observable
  * seams (status messages, status-line collab segment).
  */
-function makeControllerContext(over: Partial<Pick<ControllerContextState, "autoStart" | "relayUrl">> = {}): {
+function makeControllerContext(over: { autoStart?: "off" | "view" | "control"; relayUrl?: string } = {}): {
 	ctx: InteractiveModeContext;
 	state: ControllerContextState;
 } {
 	const state: ControllerContextState = {
 		sessionId: `sess-${crypto.randomUUID()}`,
-		autoStart: over.autoStart ?? "off",
-		relayUrl: over.relayUrl ?? RELAY_URL,
+		settings: Settings.isolated({
+			"collab.autoStart": over.autoStart ?? "off",
+			"collab.relayUrl": over.relayUrl ?? RELAY_URL,
+			"collab.webUrl": WEB_URL,
+		}),
 		showStatus: [],
 		firstStatus: Promise.withResolvers<string>(),
 		sessionChangeCallbacks: new Set(),
+		sessionMoveCallbacks: new Set(),
 		tornDown: [],
 		prompts: [],
 		prompted: [],
 	};
-	const settingValues = (): Record<string, string> => ({
-		"collab.autoStart": state.autoStart,
-		"collab.relayUrl": state.relayUrl,
-		"collab.webUrl": WEB_URL,
-	});
 	const ctx = {
-		settings: { get: (key: string) => settingValues()[key] ?? "" },
+		settings: state.settings,
 		sessionManager: {
 			getSessionId: () => state.sessionId,
 			getCwd: () => "/tmp/collab-controller-test",
@@ -101,6 +157,10 @@ function makeControllerContext(over: Partial<Pick<ControllerContextState, "autoS
 				entries: [],
 			}),
 			onEntryAppended: undefined,
+			onPersistenceNotice: (cb: () => void) => {
+				state.sessionMoveCallbacks.add(cb);
+				return () => state.sessionMoveCallbacks.delete(cb);
+			},
 		},
 		session: {
 			get isSessionTransitioning() {
@@ -153,6 +213,16 @@ function switchSession(state: ControllerContextState, sessionId: string): void {
 	for (const cb of state.sessionChangeCallbacks) cb();
 }
 
+/**
+ * Simulate SessionManager moving the session to a sibling file because the
+ * original is open in another omp process: it re-ids, then raises a
+ * persistence notice; AgentSession's session-change callbacks never run.
+ */
+function moveSessionFile(state: ControllerContextState, sessionId: string): void {
+	state.sessionId = sessionId;
+	for (const cb of state.sessionMoveCallbacks) cb();
+}
+
 /** Join `host`'s room through the relay as a writer; resolves after `welcome`. */
 async function joinAsWriter(host: CollabHost, onFrame?: (frame: CollabFrame) => void) {
 	const parsed = parseCollabLink(host.link);
@@ -192,8 +262,17 @@ const guestCleanups: (() => void)[] = [];
 const publishWaiters: (() => void)[] = [];
 let capturedSockets: FakeWebSocket[] = [];
 
+let savedInteractiveHost: boolean;
+
 beforeEach(async () => {
+<<<<<<< ours — test_hook `beforeEach` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 	tmp = await fs.mkdtemp(path.join(os.tmpdir(), "tau-collabctl-"));
+=======
+	savedInteractiveHost = isInteractiveHost();
+	tmp = await fs.mkdtemp(path.join(os.tmpdir(), "omp-collabctl-"));
+	utils.setAgentDir(path.join(tmp, "agent"));
+>>>>>>> theirs — test_hook `beforeEach` (F, confidence: medium)
 	installInMemoryRelay();
 	// Record every fake socket so a test can drive a terminal close on the host's transport.
 	capturedSockets = [];
@@ -218,6 +297,19 @@ afterEach(async () => {
 	await controller?.shutdown("test cleanup").catch(() => {});
 	uninstallInMemoryRelay();
 	publishSpy?.mockRestore();
+	// `runRootCommand` registers the CLI's extension roots (`--no-extensions` → explicit-only) process-wide.
+	setInteractiveHost(savedInteractiveHost);
+	clearOmpExtensionCliRoots();
+	restoreEnv("PI_CODING_AGENT_DIR", originalAgentDir);
+	restoreEnv("PI_PROFILE", originalPiProfile);
+	restoreEnv("OMP_PROFILE", originalOmpProfile);
+	utils.__resetDirsFromEnvForTests();
+	// InteractiveMode and the CLI open process-wide agent.db, history.db (prompt history and
+	// session index), and models.db under tmp/agent; Windows cannot delete open files.
+	AgentStorage.close();
+	HistoryStorage.close();
+	closeSessionIndex();
+	closeModelCache();
 	await fs.rm(tmp, { recursive: true, force: true });
 });
 
@@ -235,11 +327,11 @@ describe("interactive collaboration startup", () => {
 		resetSettingsForTest();
 		await initTheme();
 		activeSettings = await Settings.init({ inMemory: true, cwd: tmp });
-		activeSettings.override("startup.checkUpdate", false);
-		activeSettings.override("startup.changelogMode", "hidden");
-		activeSettings.override("startup.setupWizard", false);
-		activeSettings.override("startup.showSplash", false);
-		activeSettings.override("marketplace.autoUpdate", "off");
+		cfgStartupCheckUpdate.override(activeSettings, false);
+		cfgStartupChangelogMode.override(activeSettings, "hidden");
+		cfgStartupSetupWizard.override(activeSettings, false);
+		cfgStartupShowSplash.override(activeSettings, false);
+		cfgMarketplaceAutoUpdate.override(activeSettings, "off");
 		testSession = await createTestSession({
 			settingsOverrides: {
 				"collab.autoStart": "view",
@@ -270,7 +362,6 @@ describe("interactive collaboration startup", () => {
 			undefined,
 			undefined,
 			undefined,
-			undefined,
 			new Composer({ terminal: new VirtualTerminal() }),
 		);
 		spyOn(mode.statusLine, "watchBranch").mockImplementation(() => {});
@@ -279,7 +370,7 @@ describe("interactive collaboration startup", () => {
 
 		expect(mode.collabHost).toBeUndefined();
 		expect(await registry.listCollabHosts({ dir: tmp })).toEqual([]);
-		expect(mode.settings.get("collab.autoStart")).toBe("view");
+		expect(cfgCollabAutoStart.get(mode.settings)).toBe("view");
 		// Renderer-only initialization must not disable a later explicit start.
 		await mode.collabController.start({ access: "view" });
 		expect(await registry.listCollabHosts({ dir: tmp })).toMatchObject([{ access: "view", generation: 1 }]);
@@ -291,7 +382,6 @@ describe("interactive collaboration startup", () => {
 			mode = new InteractiveMode(
 				testSession.session,
 				"test",
-				undefined,
 				undefined,
 				undefined,
 				undefined,
@@ -334,6 +424,35 @@ describe("interactive collaboration startup", () => {
 		},
 	);
 
+	it("mirrors a cfg:// approval prompt to a writer guest and applies the guest's answer", async () => {
+		mode = new InteractiveMode(
+			testSession.session,
+			"test",
+			undefined,
+			undefined,
+			undefined,
+			undefined,
+			new Composer({ terminal: new VirtualTerminal(200, 60) }),
+		);
+		spyOn(mode.statusLine, "watchBranch").mockImplementation(() => {});
+		await mode.init({ suppressWelcomeIntro: true });
+		const host = await mode.collabController.start({ access: "control" });
+		const asked = Promise.withResolvers<CollabFrame & { t: "ui-request" }>();
+		const guest = await joinAsWriter(host, frame => {
+			if (frame.t === "ui-request") asked.resolve(frame);
+		});
+
+		const settings = testSession.session.settings;
+		const session = { settings, hasUI: true, settingsApproval: true, taskDepth: 0 } as unknown as ToolSession;
+		const write = new CfgProtocolHandler().write(parseInternalUrl("cfg://advisor/enabled"), "true", { session });
+		const { request } = await asked.promise;
+		expect(request.title).toContain("advisor.enabled");
+		guest.send({ t: "ui-response", reqId: request.reqId, value: "Allow once" });
+
+		expect((await write).details?.cfg?.outcome).toBe("applied");
+		expect(cfgAdvisorEnabled.get(settings)).toBe(true);
+	});
+
 	it("restores the local session and saved hosting policy after dedicated CLI join activation fails", async () => {
 		const finished = new Error("finished observing failed join");
 		testSession.sessionManager.appendMessage({ role: "user", content: "dedicated local transcript", timestamp: 0 });
@@ -346,12 +465,16 @@ describe("interactive collaboration startup", () => {
 		const render = InteractiveMode.prototype.renderInitialMessages;
 		spyOn(InteractiveMode.prototype, "renderInitialMessages").mockImplementation(
 			async function (this: InteractiveMode, options) {
-				if (this.sessionManager.getSessionId() === remote.sessionId)
+				if (this.sessionManager.getHeader()?.parentSession === remote.sessionId)
 					throw new Error("dedicated replica rendering failed");
 				await render.call(this, options);
 			},
 		);
-		beginStartupComposer({ terminal: new VirtualTerminal(), version: "test", cache: false });
+		beginStartupComposer({
+			terminal: new VirtualTerminal(),
+			version: "test",
+			cache: false,
+		});
 		spyOn(InteractiveMode.prototype, "getUserInput").mockImplementation(async function (this: InteractiveMode) {
 			mode = this;
 			await this.collabController.idle();
@@ -410,7 +533,6 @@ describe("interactive collaboration startup", () => {
 		mode = new InteractiveMode(
 			testSession.session,
 			"test",
-			undefined,
 			undefined,
 			undefined,
 			undefined,
@@ -479,7 +601,7 @@ describe("interactive collaboration startup", () => {
 		expect(local.sessionManager.getSessionFile()).toBe(localFile);
 		expect(local.collabGuest).toBeUndefined();
 		expect(local.collabHost?.sessionId).toBe(local.sessionManager.getSessionId());
-		expect(local.settings.get("collab.autoStart")).toBe("view");
+		expect(cfgCollabAutoStart.get(local.settings)).toBe("view");
 	});
 
 	it.each(["stop", "shutdown"] as const)(
@@ -508,7 +630,7 @@ describe("interactive collaboration startup", () => {
 			await local.collabController.idle();
 			expect(local.collabGuest).toBeUndefined();
 			expect(local.collabHost).toBeUndefined();
-			expect(local.settings.get("collab.autoStart")).toBe("view");
+			expect(cfgCollabAutoStart.get(local.settings)).toBe("view");
 			if (operation === "stop") {
 				await local.session.newSession();
 				await local.collabController.idle();
@@ -599,7 +721,7 @@ describe("interactive collaboration startup", () => {
 		const send = CollabSocket.prototype.send;
 		const capture = spyOn(CollabSocket.prototype, "send").mockImplementation(
 			function (this: CollabSocket, frame, targetPeer) {
-				if (frame.t === "hello") transport = this;
+				if (typeof frame !== "string" && frame.t === "hello") transport = this;
 				return send.call(this, frame, targetPeer);
 			},
 		);
@@ -688,7 +810,11 @@ describe("interactive collaboration startup", () => {
 					super.stop();
 				}
 			}
-			beginStartupComposer({ terminal: new StartupTerminal(), version: "test", cache: false });
+			beginStartupComposer({
+				terminal: new StartupTerminal(),
+				version: "test",
+				cache: false,
+			});
 			spyOn(InteractiveMode.prototype, "initHooksAndCustomTools").mockImplementation(
 				async function (this: InteractiveMode) {
 					mode = this;
@@ -799,7 +925,7 @@ describe("CollabController", () => {
 		state.transitionWaited = waiting.resolve;
 		controller.autoStart();
 		await waiting.promise;
-		ctx.collabGuest = new CollabGuestLink(ctx);
+		Object.assign(ctx, { collabGuest: new CollabGuestLink(ctx) });
 		state.transition = undefined;
 		gate.resolve();
 		await controller.idle();
@@ -857,7 +983,7 @@ describe("CollabController", () => {
 		expect(ctx.collabHost).toBeUndefined();
 
 		// The user flips the setting in /settings, then starts a new session.
-		state.autoStart = "control";
+		cfgCollabAutoStart.override(state.settings, "control");
 		switchSession(state, `sess-next-${crypto.randomUUID()}`);
 		await settled(publishSpy, 1);
 
@@ -914,6 +1040,31 @@ describe("CollabController", () => {
 			registry.resolveCollabHostLink(controller.instanceId, "control", { dir: tmp }).then(link => link.generation),
 		).resolves.toBe(2);
 		expect(second!.webLink).not.toBe(first.webLink);
+	});
+
+	it("rotates the room when the session moves to a new file because another omp process has it open", async () => {
+		const { ctx, state } = makeControllerContext({ autoStart: "control" });
+		controller = new CollabController(ctx);
+		controller.autoStart();
+		await settled(publishSpy, 1);
+		const first = ctx.collabHost;
+		if (!first) throw new Error("first room missing");
+		const goodbye = Promise.withResolvers<"bye">();
+		await joinAsWriter(first, frame => {
+			if (frame.t === "bye") goodbye.resolve(frame.t);
+		});
+
+		moveSessionFile(state, `sess-moved-${crypto.randomUUID()}`);
+		await settled(publishSpy, 2);
+
+		// Guests of the old room are told it closed instead of waiting forever.
+		expect(await goodbye.promise).toBe("bye");
+		expect(first.stopped).toBe(true);
+		// The moved session is shared again and the old registry entry is gone.
+		expect(ctx.collabHost?.sessionId).toBe(state.sessionId);
+		expect(await registry.listCollabHosts({ dir: tmp })).toMatchObject([
+			{ instanceId: controller.instanceId, generation: 2, sessionId: state.sessionId },
+		]);
 	});
 
 	it("stops a manually started room on session switch when auto-start is off", async () => {
@@ -1005,6 +1156,34 @@ describe("CollabController", () => {
 		expect(second.generation).toBe(2);
 		expect(ctx.collabHost).toBe(second);
 		expect(await registry.listCollabHosts({ dir: tmp })).toMatchObject([{ generation: 2 }]);
+	});
+
+	it("does not auto-restart when the relay closes during an explicit stop's goodbye drain", async () => {
+		const { ctx } = makeControllerContext({ autoStart: "control" });
+		controller = new CollabController(ctx);
+		controller.autoStart();
+		await settled(publishSpy, 1);
+		const first = ctx.collabHost;
+		if (!first) throw new Error("first room missing");
+		const hostSocket = capturedSockets.find(s => s.role === "host");
+		if (!hostSocket) throw new Error("host transport socket was never created");
+
+		const drain = Promise.withResolvers<void>();
+		const flush = spyOn(CollabSocket.prototype, "flush").mockImplementation(() => drain.promise);
+		const stopping = controller.stop("host stopped");
+		try {
+			expect(first.ending).toBe(true);
+			expect(first.stopped).toBe(false);
+			hostSocket.onclose?.({ code: 4001, reason: "room closed" });
+		} finally {
+			drain.resolve();
+			flush.mockRestore();
+		}
+		await stopping;
+		await controller.idle();
+		expect(ctx.collabHost).toBeUndefined();
+		expect(await registry.listCollabHosts({ dir: tmp })).toEqual([]);
+		expect(publishSpy).toHaveBeenCalledTimes(1);
 	});
 
 	for (const outcome of ["commit", "rollback"] as const) {
@@ -1368,6 +1547,89 @@ describe("CollabController", () => {
 			{ generation: 2, sessionId: state.sessionId },
 		]);
 		expect(state.showStatus.some(m => /discovery unavailable/.test(m))).toBe(false);
+	});
+
+	it("re-applies auto-start for the same session after its room ends on its own", async () => {
+		const { ctx, state } = makeControllerContext({ autoStart: "control" });
+		controller = new CollabController(ctx);
+		controller.autoStart();
+		await settled(publishSpy, 1);
+		const first = ctx.collabHost;
+		if (!first) throw new Error("auto-start did not install a host");
+
+		// Non-retryable relay close after open, the path `#failFatal` (send backlog) also takes.
+		const hostSocket = capturedSockets.find(s => s.role === "host");
+		if (!hostSocket) throw new Error("host transport socket was never created");
+		hostSocket.onclose?.({ code: 4001, reason: "room closed" });
+		expect(first.stopped).toBe(true);
+		await settled(publishSpy, 2);
+		await controller.idle();
+
+		const replacement = ctx.collabHost;
+		expect(replacement).toBeDefined();
+		expect(replacement).not.toBe(first);
+		expect(controller.host).toBe(replacement);
+		expect(await registry.listCollabHosts({ dir: tmp })).toMatchObject([
+			{ instanceId: controller.instanceId, generation: 2, sessionId: state.sessionId, access: "control" },
+		]);
+		await joinAsWriter(replacement!);
+	});
+
+	describe("while the relay refuses the host's connection", () => {
+		/** Host connections fail the way Bun reports a refused TCP connect; guests are unaffected. */
+		let refusals = 0;
+		let hostAttempts = 0;
+		class Refusing extends FakeWebSocket {
+			constructor(url: string) {
+				super(url);
+				if (this.role !== "host") return;
+				hostAttempts++;
+				if (refusals <= 0) return;
+				refusals--;
+				// The base class opens on a microtask unless the socket already left CONNECTING.
+				this.readyState = FakeWebSocket.CLOSED;
+				queueMicrotask(() => this.onclose?.({ code: 1006, reason: "Failed to connect" }));
+			}
+		}
+
+		beforeEach(() => {
+			refusals = 0;
+			hostAttempts = 0;
+			globalThis.WebSocket = Refusing as unknown as typeof WebSocket;
+		});
+
+		it("retries the auto-start and publishes generation 1 once the relay answers", async () => {
+			refusals = 1;
+			const { ctx, state } = makeControllerContext({ autoStart: "control" });
+			controller = new CollabController(ctx);
+			controller.autoStart();
+
+			expect(await state.firstStatus.promise).toMatch(/auto-start failed: Failed to connect/);
+			await settled(publishSpy, 1);
+			await controller.idle();
+
+			expect(hostAttempts).toBe(2);
+			expect(controller.host).toBe(ctx.collabHost);
+			expect(await registry.listCollabHosts({ dir: tmp })).toMatchObject([
+				{ instanceId: controller.instanceId, generation: 1, sessionId: state.sessionId, access: "control" },
+			]);
+		});
+	});
+
+	it("leaves a manual room ended on its own unhosted while auto-start is off", async () => {
+		const { ctx } = makeControllerContext({ autoStart: "off" });
+		controller = new CollabController(ctx);
+		const host = await controller.start({ access: "control" });
+
+		const hostSocket = capturedSockets.find(s => s.role === "host");
+		if (!hostSocket) throw new Error("host transport socket was never created");
+		hostSocket.onclose?.({ code: 4001, reason: "room closed" });
+		await host.stop("drain teardown");
+		await controller.idle();
+
+		expect(ctx.collabHost).toBeUndefined();
+		expect(publishSpy).toHaveBeenCalledTimes(1);
+		expect(await registry.listCollabHosts({ dir: tmp })).toEqual([]);
 	});
 
 	it("shutdown withdraws the room and ignores later session changes", async () => {

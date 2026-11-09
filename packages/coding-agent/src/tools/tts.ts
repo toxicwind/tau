@@ -8,6 +8,7 @@ import type { Model } from "@tau/tau-ai";
 import { MissingApiKeyError, ProviderHttpError } from "@tau/tau-ai/error";
 import { DEFAULT_XAI_VOICE_ID, synthesizeSpeech, XAI_MAX_TEXT_LENGTH } from "@tau/tau-ai/speech";
 import { prompt } from "@tau/tau-utils";
+import { assertNotHeldOpen } from "@oh-my-pi/pi-utils/held-file";
 import type { ModelRegistry } from "../config/model-registry";
 import { resolveRoleChain, type RoleChainCandidate } from "../config/model-resolver";
 import { roleCandidatePool } from "../config/model-roles";
@@ -18,6 +19,8 @@ import { DEFAULT_TTS_VOICE, KOKORO_VOICES } from "../tts/models";
 import { ttsClient } from "../tts/tts-client";
 import { encodeWav } from "../tts/wav";
 import { formatPathRelativeToCwd, resolveToCwd } from "./path-utils";
+
+import { cfgTtsLocalSpeed, cfgTtsLocalVoice } from "../tts/settings";
 
 // Built-in voices per xAI Tier-1 docs (2026-05-16). xAI also accepts custom voice IDs,
 // so the schema does NOT enum-restrict voice_id; this constant only drives the description.
@@ -35,7 +38,7 @@ const ttsSchema = type({
 	// from an omitted voice: xAI applies its own default, DeepInfra forwards
 	// the voice only when the caller actually set one.
 	"voice_id?": "string",
-	language: "string = 'en'",
+	"language?": "string",
 	output_path: "string",
 	sample_rate: "number.integer?",
 	bit_rate: "number.integer?",
@@ -85,7 +88,7 @@ export function resolveLocalWavPath(outputPath: string): { wavPath: string; subs
 
 function readLocalVoice(settingsInstance: Settings): string {
 	try {
-		const value = settingsInstance.get("tts.localVoice");
+		const value = cfgTtsLocalVoice.get(settingsInstance);
 		return typeof value === "string" && value ? value : DEFAULT_TTS_VOICE;
 	} catch {
 		return DEFAULT_TTS_VOICE;
@@ -108,6 +111,7 @@ async function synthesizeCloud(
 			text: params.text,
 			format: codec,
 			...(params.voice_id !== undefined ? { voice: params.voice_id } : {}),
+			...(params.language !== undefined ? { language: params.language } : {}),
 			...(model.api === "xai-tts" && params.sample_rate !== undefined ? { sampleRate: params.sample_rate } : {}),
 			...(model.api === "xai-tts" && params.bit_rate !== undefined ? { bitRate: params.bit_rate } : {}),
 		},
@@ -117,6 +121,8 @@ async function synthesizeCloud(
 			signal,
 		},
 	);
+	// Overwriting a live SQLite database or `-shm` destroys it (issue #15586).
+	assertNotHeldOpen(outputPath);
 	await Bun.write(outputPath, result.audio);
 	const voiceId = params.voice_id ?? (model.api === "xai-tts" ? DEFAULT_XAI_VOICE_ID : "default");
 	const backend: Exclude<TtsBackend, "local-inference"> = model.api === "xai-tts" ? "xai-tts" : "openai-speech";
@@ -140,7 +146,8 @@ async function synthesizeLocal(
 	signal: AbortSignal | undefined,
 ): Promise<AgentToolResult<TtsToolDetails, TtsSchemaType>> {
 	const voice = readLocalVoice(settingsInstance);
-	const audio = await ttsClient.synthesize(model.id, params.text, { voice, signal });
+	const speed = cfgTtsLocalSpeed.get(settingsInstance);
+	const audio = await ttsClient.synthesize(model.id, params.text, { voice, speed, signal });
 	if (!audio) {
 		return {
 			isError: true,
@@ -155,6 +162,7 @@ async function synthesizeLocal(
 
 	const { wavPath, substituted } = resolveLocalWavPath(outputPath);
 	const wav = encodeWav(audio.pcm, audio.sampleRate);
+	assertNotHeldOpen(wavPath);
 	await Bun.write(wavPath, wav);
 	const displayPath = formatPathRelativeToCwd(wavPath, cwd);
 	const note = substituted

@@ -4,7 +4,7 @@ import { ALL_SEGMENT_IDS, renderSegment } from "@tau/tau-tui/status-line/segment
 import type { SegmentContext } from "@tau/tau-tui/status-line/types";
 import { theme } from "@tau/tau-tui/theme";
 import type { GallerySessionOptions } from "./preview-session";
-import { createGallerySession, GALLERY_CONTEXT_WINDOW } from "./preview-session";
+import { createGallerySession, GALLERY_CONTEXT_WINDOW, GALLERY_PROMPT_CACHE } from "./preview-session";
 import type { GalleryPreviewEntry } from "./types";
 
 const FIXED_NOW = new Date(2026, 7, 29, 14, 7, 9);
@@ -84,6 +84,7 @@ export function createGallerySegmentContext(sessionOptions?: GallerySessionOptio
 			fiveHour: { percent: 32, resetMinutes: 71 },
 			sevenDay: { percent: 68, resetHours: 52 },
 		},
+		promptCache: sessionOptions?.promptCache,
 	};
 }
 
@@ -182,6 +183,11 @@ function variantsFor(id: StatusLineSegmentId): readonly SegmentVariantSpec[] {
 					session: { usingSubscription: true, cost: 0, premiumRequests: 0, advisorCost: 0 },
 				},
 				{
+					label: "subscription + subagents",
+					session: { usingSubscription: true, cost: 0.38, premiumRequests: 0, advisorCost: 0 },
+					context: { subagentTreeCost: 1.27 },
+				},
+				{
 					label: "premium requests",
 					session: { cost: 0, premiumRequests: 2, advisorCost: 0 },
 				},
@@ -260,6 +266,14 @@ function variantsFor(id: StatusLineSegmentId): readonly SegmentVariantSpec[] {
 					label: "icon mode",
 					context: { vim: { mode: "normal", pending: "", selectedLines: 0, display: "icon" } },
 				},
+			];
+		case "cache":
+			return [
+				{ label: "cached", session: { promptCache: GALLERY_PROMPT_CACHE.warm } },
+				{ label: "likely cached (inferred)", session: { promptCache: GALLERY_PROMPT_CACHE.likelyWarm } },
+				{ label: "not cached — expired", session: { promptCache: GALLERY_PROMPT_CACHE.coldExpired } },
+				{ label: "not cached — model changed", session: { promptCache: GALLERY_PROMPT_CACHE.coldModel } },
+				{ label: "hidden (nothing to report)" },
 			];
 		default:
 			return [{ label: "canonical" }];

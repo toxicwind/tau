@@ -49,8 +49,18 @@ mkdir -p /data/workspaces /data/workspaces/_pool /data/logs
 # so every per-issue worktree shares one cargo target/toolchain. Bun install
 # cache is workspace-private; a shared cache is unsafe across slot users
 # because bun may chmod/chown its cache root to the first writer.
+<<<<<<< ours
 mkdir -p /data/cache/cargo /data/cache/cargo-target /data/cache/rustup /data/cache/tau-natives
 chown -R root:tau /data/cache /data/workspaces/_pool
+||||||| base
+mkdir -p /data/cache/cargo /data/cache/cargo-target /data/cache/rustup /data/cache/pi-natives
+chown -R root:omp /data/cache /data/workspaces/_pool
+=======
+mkdir -p /data/cache/cargo /data/cache/cargo-target /data/cache/rustup /data/natives-cache
+chown root:root /data/natives-cache
+chmod 0700 /data/natives-cache
+chown -R root:omp /data/cache /data/workspaces/_pool
+>>>>>>> theirs · weave: run 'weave explain python/robtau/entrypoint.sh' for per-hunk detail, 'weave check' to verify your resolution
 find /data/cache /data/workspaces/_pool -type d -exec chmod 2770 {} +
 find /data/cache /data/workspaces/_pool -type f -perm /111 -exec chmod 0770 {} +
 find /data/cache /data/workspaces/_pool -type f ! -perm /111 -exec chmod 0660 {} +

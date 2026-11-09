@@ -18,6 +18,7 @@ import { COLLAB_PROTO, type CollabFrame, parseCollabLink } from "tau/collab/prot
 import { CollabSocket } from "tau/collab/relay-client";
 import type { InteractiveModeContext } from "tau/modes/types";
 import type { SessionEntry } from "tau/session/session-entries";
+import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
 import { installInMemoryRelay, uninstallInMemoryRelay } from "./helpers/in-memory-relay";
 
 // In-memory transport: shared FakeWebSocket + InMemoryRelay harness (see
@@ -56,7 +57,7 @@ function makeLargeSnapshot(): SizedSnapshot {
 
 function makeHostContext(snapshot: SizedSnapshot): InteractiveModeContext {
 	const ctx = {
-		settings: { get: () => "" },
+		settings: Settings.isolated(),
 		sessionManager: {
 			getSessionId: () => snapshot.header.id,
 			getCwd: () => snapshot.header.cwd,
@@ -89,7 +90,7 @@ function makeHostContext(snapshot: SizedSnapshot): InteractiveModeContext {
 
 function makeFailingGuestContext(failure: Error): InteractiveModeContext {
 	const ctx = {
-		settings: { get: () => "" },
+		settings: Settings.isolated(),
 		sessionManager: {
 			getSessionFile: () => null,
 			switchSession: () => Promise.reject(failure),
@@ -99,13 +100,18 @@ function makeFailingGuestContext(failure: Error): InteractiveModeContext {
 			messages: [],
 		},
 		statusContainer: { clear: () => {} },
+		pendingShellContainer: { clear: () => {} },
 		pendingMessagesContainer: { clear: () => {} },
 		compactionQueuedMessages: [],
 		streamingComponent: undefined,
 		streamingMessage: undefined,
 		transcriptMessageComponents: new WeakMap(),
 		pendingTools: new Map(),
-		eventController: { handleEvent: () => Promise.resolve(), takeDisplaceableComponents: () => [] },
+		eventController: {
+			handleEvent: () => Promise.resolve(),
+			takeDisplaceableComponents: () => [],
+			resetTranscriptAnchors: () => {},
+		},
 		loadingAnimation: undefined,
 		statusLine: {
 			setCollabStatus: () => {},
@@ -118,6 +124,9 @@ function makeFailingGuestContext(failure: Error): InteractiveModeContext {
 		renderInitialMessages: () => {},
 		reloadTodos: () => Promise.resolve(),
 		syncRunningSubagentBadge: () => {},
+		setCollabGuest: (guest: InteractiveModeContext["collabGuest"]) => {
+			Object.assign(ctx, { collabGuest: guest });
+		},
 		showStatus: () => {},
 		updateEditorTopBorder: () => {},
 		updateEditorBorderColor: () => {},
@@ -129,8 +138,8 @@ function makeCancelledSwitchGuestContext(
 	switchSession: () => Promise<boolean>,
 	events: string[],
 ): InteractiveModeContext {
-	return {
-		settings: { get: () => "" },
+	const ctx = {
+		settings: Settings.isolated(),
 		sessionManager: {
 			getSessionFile: () => null,
 			getSessionName: () => undefined,
@@ -148,13 +157,18 @@ function makeCancelledSwitchGuestContext(
 			},
 		},
 		statusContainer: { clear: () => events.push("clear-transient-ui") },
+		pendingShellContainer: { clear: () => {} },
 		pendingMessagesContainer: { clear: () => {} },
 		compactionQueuedMessages: [],
 		streamingComponent: undefined,
 		streamingMessage: undefined,
 		transcriptMessageComponents: new WeakMap(),
 		pendingTools: new Map(),
-		eventController: { handleEvent: () => Promise.resolve(), takeDisplaceableComponents: () => [] },
+		eventController: {
+			handleEvent: () => Promise.resolve(),
+			takeDisplaceableComponents: () => [],
+			resetTranscriptAnchors: () => {},
+		},
 		loadingAnimation: undefined,
 		statusLine: {
 			setCollabStatus: () => {},
@@ -167,12 +181,16 @@ function makeCancelledSwitchGuestContext(
 		resetObserverRegistry: () => {},
 		renderInitialMessages: () => {},
 		syncRunningSubagentBadge: () => {},
+		setCollabGuest: (guest: InteractiveModeContext["collabGuest"]) => {
+			Object.assign(ctx, { collabGuest: guest });
+		},
 		reloadTodos: () => Promise.resolve(),
 		showStatus: (status: string) => events.push(`status:${status}`),
 		updateEditorTopBorder: () => {},
 		updateEditorBorderColor: () => {},
 		collabGuest: undefined,
 	} as unknown as InteractiveModeContext;
+	return ctx;
 }
 
 // ── Shared host/relay ───────────────────────────────────────────────────────

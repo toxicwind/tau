@@ -8,6 +8,8 @@ import { SessionManager } from "tau/session/session-manager";
 import { executeBuiltinSlashCommand } from "tau/slash-commands/builtin-registry";
 import * as sessionColor from "@tau/tau-tui/theme/session-color";
 import { adjustHsv, TempDir } from "@tau/tau-utils";
+import { Loader, type WorkingRowSpec } from "@oh-my-pi/pi-tui";
+import { cfgStatusLineSessionAccent } from "@oh-my-pi/pi-coding-agent/modes/settings";
 
 type Harness = {
 	mode: InteractiveMode;
@@ -41,7 +43,14 @@ async function createHarness(sessionName: string): Promise<Harness> {
 		return harness;
 	}
 
+<<<<<<< ours — function `createHarness` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 	const tempDir = TempDir.createSync("@tau-working-accent-");
+=======
+	const tempDir = TempDir.createSync("@pi-working-accent-");
+	// Settings.init keeps an instance an earlier file loaded (e.g. from the user's config).
+	resetSettingsForTest();
+>>>>>>> theirs — function `createHarness` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/interactive-mode-working-accent.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 	await Settings.init({ inMemory: true, cwd: tempDir.path() });
 	await initTheme(false);
 	const sessionManager = SessionManager.inMemory(tempDir.path());
@@ -63,7 +72,8 @@ async function createHarness(sessionName: string): Promise<Harness> {
 		model: undefined,
 		thinkingLevel: undefined,
 		titleGenerationSignal: new AbortController().signal,
-		notifyTitleGenerationStart: () => undefined,
+		// No conversation to title: a bare /rename reports usage.
+		renameTitle: async () => null,
 	} as unknown as AgentSession;
 	const mode = new InteractiveMode(session, "test");
 	harness = { mode, sessionManager, tempDir };
@@ -174,12 +184,12 @@ describe("InteractiveMode working-message session accent cache", () => {
 		expect(renderLoader(mode)).toContain(accentAnsi);
 		expect(getHex).toHaveBeenCalledTimes(1);
 
-		settings.set("statusLine.sessionAccent", false);
+		cfgStatusLineSessionAccent.set(settings, false);
 		mode.loadingAnimation?.setMessage("Accent disabled");
 		expect(renderLoader(mode)).not.toContain(accentAnsi);
 		expect(getHex).toHaveBeenCalledTimes(1);
 
-		settings.set("statusLine.sessionAccent", true);
+		cfgStatusLineSessionAccent.set(settings, true);
 		mode.loadingAnimation?.setMessage("Accent enabled");
 		expect(renderLoader(mode)).toContain(accentAnsi);
 		expect(getHex).toHaveBeenCalledTimes(2);
@@ -220,5 +230,28 @@ describe("InteractiveMode working activity", () => {
 		expect(mode.statusContainer.children).toContain(loader);
 		expect(loader.debugState()).toMatchObject({ running: true });
 		loader.stop();
+	});
+
+	it("keeps the run's elapsed origin when a focus switch recreates the loader", async () => {
+		const { mode } = await createHarness("Focus round-trip session");
+		const runStartedAt = Date.now() - 90_000;
+		Object.defineProperty(mode.session, "runStartedAt", { configurable: true, value: runStartedAt });
+		const specs: (() => WorkingRowSpec)[] = [];
+		vi.spyOn(Loader.prototype, "setWorkingRow").mockImplementation(spec => {
+			specs.push(spec);
+		});
+
+		try {
+			mode.ensureLoadingAnimation();
+			// Session focus attach drops the loader, then synthesizes `agent_start`.
+			mode.clearTransientSessionUi();
+			mode.ensureLoadingAnimation();
+
+			expect(specs).toHaveLength(2);
+			expect(specs.map(spec => spec().startedAt)).toEqual([runStartedAt, runStartedAt]);
+		} finally {
+			mode.loadingAnimation?.stop();
+			Reflect.deleteProperty(mode.session, "runStartedAt");
+		}
 	});
 });

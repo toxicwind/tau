@@ -10,6 +10,7 @@ import { buildSessionOptions } from "tau/main";
 import { AuthStorage } from "tau/session/auth-storage";
 import { SessionManager } from "tau/session/session-manager";
 import { removeSyncWithRetries, Snowflake } from "@tau/tau-utils";
+import { cfgPrewalkEnabled, cfgPrewalkInto } from "@oh-my-pi/pi-coding-agent/session/settings";
 
 // Regression for #6064: prewalk is an optional, off-by-default optimization.
 // A missing key (or unresolvable target) for the prewalk hand-off model must
@@ -38,7 +39,7 @@ describe("prewalk startup degradation", () => {
 
 	test("leaves prewalk unarmed instead of crashing when the target has no configured auth", async () => {
 		const settings = Settings.isolated();
-		settings.set("prewalk.enabled", true);
+		cfgPrewalkEnabled.set(settings, true);
 		settings.setModelRole("smol", "cerebras/zai-glm-4.7");
 		// Force the no-auth condition: hasAuth() also consults $HOME/.env via
 		// getEnvApiKey (packages/utils/src/env.ts), so a CEREBRAS_API_KEY in the
@@ -55,7 +56,7 @@ describe("prewalk startup degradation", () => {
 		const model = getBundledModel("anthropic", "claude-sonnet-4-5");
 		if (!model) throw new Error("expected claude-sonnet-4-5 to be bundled");
 		const settings = Settings.isolated();
-		settings.set("prewalk.enabled", true);
+		cfgPrewalkEnabled.set(settings, true);
 		settings.setModelRole("smol", `${model.provider}/${model.id}`);
 		authStorage.keys.setRuntime(model.provider, "test-key");
 
@@ -65,11 +66,64 @@ describe("prewalk startup degradation", () => {
 		expect(options.prewalk?.target.id).toBe(model.id);
 	});
 
+	test("arms the configured prewalk.into target instead of @smol", async () => {
+		const smol = getBundledModel("anthropic", "claude-sonnet-4-5");
+		const into = getBundledModel("openai", "gpt-4o");
+		if (!smol || !into) throw new Error("expected claude-sonnet-4-5 and gpt-4o to be bundled");
+		const settings = Settings.isolated();
+		cfgPrewalkEnabled.set(settings, true);
+		cfgPrewalkInto.set(settings, `${into.provider}/${into.id}`);
+		settings.setModelRole("smol", `${smol.provider}/${smol.id}`);
+		authStorage.keys.setRuntime(smol.provider, "test-key");
+		authStorage.keys.setRuntime(into.provider, "test-key");
+
+		const options = await buildSessionOptions(parseArgs([]), [], SessionManager.inMemory(), modelRegistry, settings);
+
+		expect(options.prewalk?.target.provider).toBe(into.provider);
+		expect(options.prewalk?.target.id).toBe(into.id);
+	});
+
+	test("skips a disabled provider and arms the next enabled prewalk candidate", async () => {
+		const disabled = getBundledModel("anthropic", "claude-sonnet-4-5");
+		const enabled = getBundledModel("openai", "gpt-4o");
+		if (!disabled || !enabled) throw new Error("expected claude-sonnet-4-5 and gpt-4o to be bundled");
+		const settings = Settings.isolated({ disabledProviders: [disabled.provider] });
+		authStorage.keys.setRuntime(disabled.provider, "test-key");
+		authStorage.keys.setRuntime(enabled.provider, "test-key");
+
+		const options = await buildSessionOptions(
+			parseArgs(["--prewalk-into", `${disabled.provider}/${disabled.id},${enabled.provider}/${enabled.id}`]),
+			[],
+			SessionManager.inMemory(),
+			modelRegistry,
+			settings,
+		);
+
+		expect(options.prewalk?.target.provider).toBe(enabled.provider);
+		expect(options.prewalk?.target.id).toBe(enabled.id);
+	});
+
+	test("arms a later candidate of the configured prewalk.into role when the first is unavailable", async () => {
+		const disabled = getBundledModel("anthropic", "claude-sonnet-4-5");
+		const enabled = getBundledModel("openai", "gpt-4o");
+		if (!disabled || !enabled) throw new Error("expected claude-sonnet-4-5 and gpt-4o to be bundled");
+		const settings = Settings.isolated({ disabledProviders: [disabled.provider] });
+		cfgPrewalkEnabled.set(settings, true);
+		settings.setModelRole("smol", `${disabled.provider}/${disabled.id},${enabled.provider}/${enabled.id}`);
+		authStorage.keys.setRuntime(disabled.provider, "test-key");
+		authStorage.keys.setRuntime(enabled.provider, "test-key");
+
+		const options = await buildSessionOptions(parseArgs([]), [], SessionManager.inMemory(), modelRegistry, settings);
+
+		expect(options.prewalk?.target.provider).toBe(enabled.provider);
+		expect(options.prewalk?.target.id).toBe(enabled.id);
+	});
+
 	test("does not implicitly re-arm configured prewalk while restoring a session", async () => {
 		const model = getBundledModel("anthropic", "claude-sonnet-4-5");
 		if (!model) throw new Error("expected claude-sonnet-4-5 to be bundled");
 		const settings = Settings.isolated();
-		settings.set("prewalk.enabled", true);
+		cfgPrewalkEnabled.set(settings, true);
 		settings.setModelRole("smol", `${model.provider}/${model.id}`);
 		authStorage.keys.setRuntime(model.provider, "test-key");
 

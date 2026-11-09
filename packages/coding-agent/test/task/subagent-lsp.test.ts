@@ -82,6 +82,7 @@ function createYieldingSession(): AgentSession {
 				},
 				isError: false,
 			});
+			return true;
 		},
 		getLastAssistantMessage: () => state.messages[state.messages.length - 1],
 	} as unknown as AgentSession;
@@ -110,6 +111,7 @@ function createSession(
 		settings: Settings.isolated({
 			"async.enabled": false,
 			"task.isolation.enabled": options.isolationEnabled ?? false,
+			"isolation.backend": "rcopy",
 			...(options.taskEnableLsp !== undefined ? { "task.enableLsp": options.taskEnableLsp } : {}),
 		}),
 		getSessionFile: () => options.sessionFile ?? null,

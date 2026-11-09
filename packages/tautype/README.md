@@ -124,6 +124,116 @@ candidate was than tautype in this run. Results vary with hardware, runtime,
 thermal state, and dependency versions; use the command above for local
 measurements.
 
+<<<<<<< ours — heading `Installation` (T+F, confidence: medium)
+// refused_by: modify_delete_guard · collision: none (no common ancestor text)
+=======
+## Installation
+
+```sh
+npm install @oh-my-pi/omptype
+# or
+bun add @oh-my-pi/omptype
+```
+
+Runs on Node 20+ (published as compiled ESM with bundled type declarations)
+and Bun 1.4.4+ (which resolves the TypeScript source directly via the `bun`
+export condition). No runtime dependencies.
+
+>>>>>>> theirs — heading `Installation` (T+F, confidence: medium) · weave: run 'weave explain packages/tautype/README.md' for per-hunk detail, 'weave check' to verify your resolution
+<<<<<<< ours — heading `Usage` (S+F, confidence: low)
+// refused_by: modify_delete_guard · collision: none (no common ancestor text)
+=======
+## Usage
+
+```ts
+import { type } from "@oh-my-pi/omptype";
+
+const Config = type({
+	name: "string",
+	"retries?": "number.integer >= 0",
+	enabled: "boolean = true",
+});
+
+const config = Config.assert({ name: "worker" });
+// { name: "worker", enabled: true }
+
+const result = Config({ name: 42 });
+if (result instanceof type.errors) {
+	console.error(result.summary);
+}
+```
+
+Schemas are callable and expose composition (`.or()`, `.and()`, `.array()`,
+`.pipe()`, `.narrow()`), object transforms (`.pick()`, `.omit()`, `.partial()`,
+`.required()`, `.merge()`, `.map()`), refinements, semantic comparison, error
+configuration, and JSON Schema emission.
+
+Built-in keyword modules include `type.string.email`, `type.string.uuid.v4`,
+`type.string.date.iso.parse`, `type.string.normalize.NFKC`,
+`type.number.integer`, and the parsers under `type.parse`.
+
+>>>>>>> theirs — heading `Usage` (S+F, confidence: low)
+<<<<<<< ours — heading `Named and recursive schemas` (T+F, confidence: medium)
+// refused_by: modify_delete_guard · collision: none (no common ancestor text)
+=======
+## Named and recursive schemas
+
+```ts
+const models = type
+	.scope({
+		User: { name: "string", "manager?": "User" },
+		Users: "User[]",
+		PublicUser: "Pick<User, 'name'>",
+	})
+	.export();
+
+models.User.assert({ name: "Ada", manager: { name: "Grace" } });
+```
+
+Scopes resolve aliases lazily, including cycles. `type.module()` exports a
+scope directly, `type.define()` preserves literal definitions, and
+`type.generic("<value>", definition)` builds parameterized runtime schemas.
+
+Failed validation returns `OmpErrors`; each entry exposes `code`, `path`,
+`expected`, `actual`, `problem`, and `message`, while the aggregate exposes
+`summary` and `byPath`. `.configure()` accepts string or callback overrides for
+error text. `.toJsonSchema()` accepts `target`, `dialect`, and `fallback`
+options.
+
+>>>>>>> theirs — heading `Named and recursive schemas` (T+F, confidence: medium)
+## JSON Schema import
+
+`fromJsonSchema` turns any JSON Schema document into an omptype schema that
+validates exactly as drafts 2020-12 and 7 specify, including `$dynamicRef`,
+`unevaluatedProperties`/`unevaluatedItems`, `$id`/`$anchor` resolution, and
+meta-schema vocabularies:
+
+```ts
+import { fromJsonSchema } from "@oh-my-pi/omptype";
+
+const read = fromJsonSchema(mcpTool.inputSchema, {
+	draft: "2020-12", // semantics where a resource declares no `$schema` ("7" for draft 7)
+	schemas: { "https://example.com/defs.json": defs }, // documents `$ref`s may name
+	formats: { email: value => value.includes("@") }, // `format` only asserts with a check
+});
+read.allows(args); // boolean
+read(args); // args with absent `default`s filled in, or OmpErrors with paths
+```
+
+The first calls are interpreted from a compiled plan; hot schemas switch to
+generated code (tagged unions become a `switch`, simple patterns char-code
+checks). It passes all 1,298 draft 2020-12 and 925 draft 7 core tests of the
+JSON-Schema-Test-Suite. Hot checks from the
+[pi-schema benchmark](https://github.com/earendil-works/pi/tree/main/packages/schema)
+(Node 26, Apple M4 Max, ns per valid check):
+
+| Case                             | omptype | ata | Ajv | TypeBox | pi-schema |
+| -------------------------------- | ------: | --: | --: | ------: | --------: |
+| nested object with tagged unions |  **85** | 131 | 337 |     341 |       305 |
+| union of 5 messages              |  **11** |  24 |  48 |      75 |        60 |
+| MCP tool schema with `$ref`      |  **35** |  40 |  85 |      66 |       113 |
+| recursive `$ref` schema          | **158** | 196 | 246 |     776 |       570 |
+
 ## License
 
 MIT

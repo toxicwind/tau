@@ -8,13 +8,23 @@ import { resolveModelScope } from "tau/config/model-resolver";
 import { Settings } from "tau/config/settings";
 import {
 	buildSessionOptions,
+	rebuildScopedModels,
 	rebuildScopedModelsAfterDiscovery,
 	resolveScopedModels,
 	type ScopedModelSink,
 	toSessionScopedModels,
+<<<<<<< ours — imports `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 } from "tau/main";
 import { SessionManager } from "tau/session/session-manager";
 import { TempDir } from "@tau/tau-utils";
+=======
+} from "@oh-my-pi/pi-coding-agent/main";
+import { createSetupHost } from "@oh-my-pi/pi-coding-agent/modes/setup";
+import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
+import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
+import { TempDir } from "@oh-my-pi/pi-utils";
+>>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/main-rebuild-scoped-models.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
 function model(id: string): Model<Api> {
@@ -145,6 +155,73 @@ describe("rebuildScopedModelsAfterDiscovery", () => {
 
 		expect(session.setCalls).toBe(0);
 		expect(session.scopedModels.map(s => s.model.id)).toEqual(["a"]);
+	});
+});
+
+describe("rebuildScopedModels after login", () => {
+	it("adds a newly available allowed model to the existing scope", async () => {
+		const settings = Settings.isolated();
+		const registry = new FakeRegistry([model("a")]);
+		const session = new FakeSession(await startupScope(["prov/a", "prov/b"], registry, settings));
+
+		registry.available = [model("a"), model("b")];
+		await rebuildScopedModels(session, parseArgs(["--models", "prov/a,prov/b"]), registry, settings);
+
+		expect(session.scopedModels.map(entry => entry.model.id)).toEqual(["a", "b"]);
+	});
+
+	it("keeps a newly available model outside the explicit CLI scope", async () => {
+		const settings = Settings.isolated({ enabledModels: ["prov/*"] });
+		const registry = new FakeRegistry([model("a")]);
+		const session = new FakeSession(await startupScope(["prov/a"], registry, settings));
+
+		registry.available = [model("a"), model("b")];
+		await rebuildScopedModels(session, parseArgs(["--models", "prov/a"]), registry, settings);
+
+		expect(session.scopedModels.map(entry => entry.model.id)).toEqual(["a"]);
+	});
+
+	it("uses the current enabledModels scope when no CLI scope is provided", async () => {
+		const settings = Settings.isolated({ enabledModels: ["prov/a", "prov/b"] });
+		const registry = new FakeRegistry([model("a")]);
+		const session = new FakeSession(await startupScope(["prov/a"], registry, settings));
+
+		registry.available = [model("a"), model("b")];
+		await rebuildScopedModels(session, parseArgs([]), registry, settings);
+
+		expect(session.scopedModels.map(entry => entry.model.id)).toEqual(["a", "b"]);
+	});
+
+	it("makes setup-discovered models selectable without changing the active model", async () => {
+		const settings = Settings.isolated({ enabledModels: ["prov/*"] });
+		const active = model("a");
+		const refreshed: string[] = [];
+		const registry = Object.assign(new FakeRegistry([active]), {
+			async refreshProvider(this: FakeRegistry, provider: string) {
+				refreshed.push(provider);
+				this.available = [active, model("b")];
+			},
+		});
+		const session = new FakeSession([{ model: active }]);
+		const ctx = {
+			settings,
+			session: {
+				model: active,
+				modelRegistry: registry,
+				refreshScopedModels: async () => {
+					await rebuildScopedModels(session, parseArgs([]), registry, settings);
+				},
+			},
+		};
+
+		await createSetupHost(ctx as unknown as InteractiveModeContext).refreshProvider("prov");
+
+		expect(session.scopedModels.map(entry => entry.model.id)).toEqual(["a", "b"]);
+		expect(ctx.session.model).toBe(active);
+
+		// An OAuth alias refreshes the provider its credential is stored under.
+		await createSetupHost(ctx as unknown as InteractiveModeContext).refreshProvider("openai-codex-device");
+		expect(refreshed).toEqual(["prov", "openai-codex"]);
 	});
 });
 

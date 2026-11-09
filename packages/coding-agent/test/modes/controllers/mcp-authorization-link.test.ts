@@ -4,6 +4,7 @@ import { resetSettingsForTest, Settings, settings } from "tau/config/settings";
 import { MCPAuthorizationLinkPrompt } from "tau/modes/controllers/mcp-command-controller";
 import { initTheme } from "@tau/tau-tui/theme";
 import { visibleWidth } from "@tau/tau-tui";
+import { cfgTuiHyperlinks } from "@oh-my-pi/pi-coding-agent/modes/settings";
 
 const OSC = "\x1b]";
 const BEL = "\x07";
@@ -57,7 +58,7 @@ describe("MCPAuthorizationLinkPrompt", () => {
 	});
 
 	afterEach(() => {
-		settings.clearOverride("tui.hyperlinks");
+		cfgTuiHyperlinks.clearOverride(settings);
 		resetSettingsForTest();
 	});
 

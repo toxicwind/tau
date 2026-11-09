@@ -4,7 +4,13 @@
  * Prompts for confirmation before running potentially dangerous bash commands.
  * Patterns checked: rm -rf, sudo, chmod/chown 777
  */
+<<<<<<< ours
 import type { HookAPI } from "@tau/tau-coding-agent";
+||||||| base
+import type { HookAPI } from "@oh-my-pi/pi-coding-agent";
+=======
+import type { HookAPI } from "@oh-my-pi/pi-coding-agent/extensibility/hooks";
+>>>>>>> theirs · weave: run 'weave explain packages/coding-agent/examples/hooks/permission-gate.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 export default function (pi: HookAPI) {
 	const dangerousPatterns = [/\brm\s+(-rf?|--recursive)/i, /\bsudo\b/i, /\b(chmod|chown)\b.*777/i];

@@ -47,8 +47,6 @@ describe("advisor memory context", () => {
 	async function createAdvisedSession(
 		backend: string,
 		sessionManager = SessionManager.create(tempDir.path(), tempDir.path()),
-		skills: Skill[] = [],
-		toolNames?: string[],
 	): Promise<AgentSession> {
 		const settings = Settings.isolated({
 			"async.enabled": false,
@@ -72,8 +70,7 @@ describe("advisor memory context", () => {
 			settings,
 			model,
 			disableExtensionDiscovery: true,
-			skills,
-			toolNames,
+			skills: [],
 			contextFiles: [],
 			workspaceTree: {
 				rootPath: tempDir.path(),
@@ -127,6 +124,8 @@ describe("advisor memory context", () => {
 		expect(names).not.toContain("edit");
 	});
 
+<<<<<<< ours — scope `it("keeps the advisor read hint tracking the ...` in test_suite `advisor memory context`, deleted in theirs (S+F, confidence: low)
+// refused_by: statement_fold · collision: none (no common ancestor text)
 	it("keeps the advisor read hint tracking the primary snapshot", async () => {
 		tempDir = TempDir.createSync("@tau-advisor-hint-");
 		session = await createAdvisedSession(
@@ -157,6 +156,8 @@ describe("advisor memory context", () => {
 		await session.refreshBaseSystemPrompt();
 		expect(schema()).toContain("skill://");
 	});
+=======
+>>>>>>> theirs — scope `it("keeps the advisor read hint tracking the ...` deleted in theirs · weave: run 'weave explain packages/coding-agent/test/advisor-memory.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 	it.each(["hindsight", "mnemotau"])("keeps in-memory advisor URL tools bound to the %s session", async backend => {
 		tempDir = TempDir.createSync("@tau-advisor-memory-urls-");
@@ -184,9 +185,10 @@ describe("advisor memory context", () => {
 					pattern: "Advisor project summary marker",
 				}),
 			).rejects.toThrow(unavailableRoot);
-			for (const path of ["memory://root", "memory://root/*.md"]) {
-				await expect(glob.execute("advisor-root-glob", { path })).rejects.toThrow(unavailableRoot);
-			}
+			await expect(glob.execute("advisor-root-glob", { path: "memory://root" })).rejects.toThrow(unavailableRoot);
+			await expect(glob.execute("advisor-root-glob", { path: "memory://root/*.md" })).rejects.toThrow(
+				unavailableRoot,
+			);
 
 			if (backend === "mnemotau") {
 				for (let attempt = 0; !session.getMnemotauSessionState() && attempt < 100; attempt++) {

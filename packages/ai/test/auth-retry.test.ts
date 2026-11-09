@@ -7,8 +7,14 @@ import {
 	resolveApiKeyOnce,
 	withAuth,
 	withOAuthAccess,
+<<<<<<< ours — imports `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: `import { OAuthError, ProviderHttpError } from "@oh-my-pi/pi-ai/…`
 } from "@tau/tau-ai";
 import { OAuthError, ProviderHttpError } from "@tau/tau-ai/error";
+=======
+} from "@oh-my-pi/pi-ai";
+import { MissingApiKeyError, OAuthError, ProviderHttpError } from "@oh-my-pi/pi-ai/error";
+>>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/test/auth-retry.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function authError(status = 401): Error & { status: number } {
 	return Object.assign(new Error(`${status} authentication_error`), { status });
@@ -162,20 +168,39 @@ describe("withAuth", () => {
 		]);
 	});
 
-	it("does not exhaust every sibling on pure 401 auth failures", async () => {
+	it("rotates through every distinct sibling on pure 401 auth failures until one succeeds", async () => {
 		const keys: string[] = [];
 		const contexts: ApiKeyResolveContext[] = [];
 		const pool = ["k0", "k1", "k2", "k3"];
+		let resolveIndex = 0;
+
+		const result = await withAuth(
+			ctx => {
+				contexts.push(ctx);
+				return ctx.error === undefined ? pool[0] : pool[++resolveIndex];
+			},
+			async key => {
+				keys.push(key);
+				if (key === "k3") return "success";
+				throw authError();
+			},
+		);
+
+		expect(result).toBe("success");
+		expect(keys).toEqual(pool);
+		expect(contexts.map(ctx => ctx.lastChance)).toEqual([false, false, true, true]);
+	});
+
+	it("stops 401 rotation once the resolver cycles back to an attempted sibling", async () => {
+		const keys: string[] = [];
+		const pool = ["k0", "k1", "k2"];
 		let resolveIndex = 0;
 		let lastError: unknown;
 		let caught: unknown;
 
 		try {
 			await withAuth(
-				ctx => {
-					contexts.push(ctx);
-					return ctx.error === undefined ? pool[0] : pool[++resolveIndex];
-				},
+				ctx => (ctx.error === undefined ? pool[0] : pool[++resolveIndex % pool.length]),
 				async key => {
 					keys.push(key);
 					lastError = authError();
@@ -187,8 +212,7 @@ describe("withAuth", () => {
 		}
 
 		expect(caught).toBe(lastError);
-		expect(keys).toEqual(["k0", "k1", "k2"]);
-		expect(contexts.map(ctx => ctx.lastChance)).toEqual([false, false, true]);
+		expect(keys).toEqual(pool);
 	});
 
 	it("continues quota rotation when a refreshed 401 retry becomes a usage limit", async () => {
@@ -212,6 +236,28 @@ describe("withAuth", () => {
 		expect(result).toBe("success");
 		expect(keys).toEqual(pool);
 		expect(contexts.map(ctx => ctx.lastChance)).toEqual([false, false, true, true]);
+	});
+
+	it("retains the exhausted key's reset when every rotated API key rejects authentication", async () => {
+		const quota = usageLimitError();
+		const keys: string[] = [];
+		await expect(
+			withAuth(
+				ctx =>
+					ctx.error === undefined
+						? "exhausted"
+						: ctx.lastChance
+							? keys.length === 1
+								? "stale"
+								: undefined
+							: undefined,
+				async key => {
+					keys.push(key);
+					throw key === "exhausted" ? quota : authError();
+				},
+			),
+		).rejects.toBe(quota);
+		expect(keys).toEqual(["exhausted", "stale"]);
 	});
 
 	it("switches accounts before refreshing the same account on usage limits", async () => {
@@ -477,6 +523,63 @@ describe("withAuth", () => {
 		expect(keys).toEqual(["k0"]);
 	});
 
+	it("surfaces a thrown credential resolver instead of reporting a missing key", async () => {
+		const cause = new Error("fetch failed: ECONNRESET");
+		await expect(
+			withAuth(
+				async () => {
+					throw cause;
+				},
+				async () => "never",
+			),
+		).rejects.toMatchObject({ name: "ConfigurationError", cause });
+	});
+
+	it("keeps a MissingApiKeyError thrown by the resolver", async () => {
+		const missing = new MissingApiKeyError("openai");
+		await expect(
+			withAuth(
+				async () => {
+					throw missing;
+				},
+				async () => "never",
+			),
+		).rejects.toBe(missing);
+	});
+
+	it("still reports a missing key when the resolver resolves without a credential", async () => {
+		await expect(
+			withAuth(
+				async () => undefined,
+				async () => "never",
+			),
+		).rejects.toThrow(MissingApiKeyError);
+		await expect(
+			withAuth(
+				async () => "",
+				async () => "never",
+			),
+		).rejects.toThrow(MissingApiKeyError);
+	});
+
+	it("keeps the original auth error when the resolver throws while rotating", async () => {
+		const keys: string[] = [];
+		const original = authError();
+		await expect(
+			withAuth(
+				ctx => {
+					if (ctx.error === undefined) return "k0";
+					throw new Error("broker unreachable");
+				},
+				async key => {
+					keys.push(key);
+					throw original;
+				},
+			),
+		).rejects.toBe(original);
+		expect(keys).toEqual(["k0"]);
+	});
+
 	it("honors a custom isAuthError classifier", async () => {
 		const keys: string[] = [];
 		const result = await withAuth(
@@ -513,7 +616,7 @@ describe("withOAuthAccess", () => {
 			limits: {
 				async rotate() {
 					storage.calls.push("rotate");
-					return tokens.rotated !== undefined;
+					return { switched: tokens.rotated !== undefined };
 				},
 			},
 		};
@@ -598,7 +701,7 @@ describe("withOAuthAccess", () => {
 			limits: {
 				async rotate() {
 					calls.push("rotate");
-					return true;
+					return { switched: true };
 				},
 			},
 		};
@@ -636,13 +739,11 @@ describe("withOAuthAccess", () => {
 		expect(storage.calls).toEqual([{ forceRefresh: undefined }, { forceRefresh: true }]);
 	});
 
-	it("does not exhaust every OAuth sibling on pure 401 auth failures", async () => {
+	it("rotates through every distinct OAuth sibling on pure 401 auth failures", async () => {
 		const attempts: string[] = [];
 		const calls: Array<{ forceRefresh: boolean | undefined } | "rotate"> = [];
 		const rotated = [access("sibling-1", { credentialId: 2 }), access("sibling-2", { credentialId: 3 })];
 		let rotateIndex = 0;
-		let lastError: unknown;
-		let caught: unknown;
 		const storage: OAuthAccessSource = {
 			oauth: {
 				async access(_provider, _sessionId, options) {
@@ -656,26 +757,24 @@ describe("withOAuthAccess", () => {
 				async rotate() {
 					calls.push("rotate");
 					rotateIndex += 1;
-					return true;
+					return { switched: true };
 				},
 			},
 		};
 
-		try {
-			await withOAuthAccess(storage, "prov", async a => {
-				attempts.push(a.accessToken);
-				lastError = authError();
-				throw lastError;
-			});
-		} catch (error) {
-			caught = error;
-		}
+		const result = await withOAuthAccess(storage, "prov", async a => {
+			attempts.push(a.accessToken);
+			if (a.accessToken === "sibling-2") return "success";
+			throw authError();
+		});
 
-		expect(caught).toBe(lastError);
-		expect(attempts).toEqual(["stale", "fresh", "sibling-1"]);
+		expect(result).toBe("success");
+		expect(attempts).toEqual(["stale", "fresh", "sibling-1", "sibling-2"]);
 		expect(calls).toEqual([
 			{ forceRefresh: undefined },
 			{ forceRefresh: true },
+			"rotate",
+			{ forceRefresh: undefined },
 			"rotate",
 			{ forceRefresh: undefined },
 		]);
@@ -717,6 +816,21 @@ describe("withOAuthAccess", () => {
 		expect(attempts).toEqual(["dead", "sibling"]);
 		expect(storage.calls).toEqual([{ forceRefresh: undefined }, "rotate", { forceRefresh: undefined }]);
 	});
+	it("retains the quota reset when a rotated OAuth sibling rejects authentication", async () => {
+		const quota = usageLimitError();
+		const storage = fakeStorage({
+			initial: access("exhausted", { credentialId: 1 }),
+			rotated: access("stale", { credentialId: 2 }),
+		});
+		const attempts: string[] = [];
+		await expect(
+			withOAuthAccess(storage, "prov", async a => {
+				attempts.push(a.accessToken);
+				throw a.accessToken === "exhausted" ? quota : authError();
+			}),
+		).rejects.toBe(quota);
+		expect(attempts).toEqual(["exhausted", "stale"]);
+	});
 
 	it("passes the failed OAuth bearer to rotation", async () => {
 		const rotationTargets: Array<{ apiKey: string | undefined; credentialId: number | undefined }> = [];
@@ -731,7 +845,7 @@ describe("withOAuthAccess", () => {
 			limits: {
 				async rotate(_provider, _sessionId, options) {
 					rotationTargets.push({ apiKey: options?.apiKey, credentialId: options?.credentialId });
-					return true;
+					return { switched: true };
 				},
 			},
 		};
@@ -763,7 +877,7 @@ describe("withOAuthAccess", () => {
 			limits: {
 				async rotate() {
 					rotateCalls += 1;
-					return true;
+					return { switched: true };
 				},
 			},
 		};

@@ -1,6 +1,8 @@
 import { afterEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
+<<<<<<< ours — imports `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 import { Agent } from "@tau/tau-agent-core";
 import type { AssistantMessage } from "@tau/tau-ai";
 import { getBundledModel } from "@tau/tau-catalog/models";
@@ -20,6 +22,29 @@ import {
 import { convertToLlm } from "tau/session/messages";
 import { SessionManager } from "tau/session/session-manager";
 import { postmortem, TempDir } from "@tau/tau-utils";
+=======
+import { Agent } from "@oh-my-pi/pi-agent-core";
+import type { AssistantMessage } from "@oh-my-pi/pi-ai";
+import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
+import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import { createSessionTeardown } from "@oh-my-pi/pi-coding-agent/modes/session-teardown";
+import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
+import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
+import {
+	collectPendingToolCalls,
+	createInterruptedToolResults,
+	createInterruptedTurnAbortMessage,
+	describePendingToolCalls,
+	hasRestorableTurn,
+	SESSION_EXIT_CUSTOM_TYPE,
+	TOOL_EXECUTION_START_CUSTOM_TYPE,
+	type ToolExecutionStartData,
+} from "@oh-my-pi/pi-coding-agent/session/exit-diagnostics";
+import { convertToLlm } from "@oh-my-pi/pi-coding-agent/session/messages";
+import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
+import { postmortem, TempDir } from "@oh-my-pi/pi-utils";
+>>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/session-exit-diagnostics.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const pendingAssistant: AssistantMessage = {
 	role: "assistant",
@@ -321,6 +346,33 @@ describe("session exit diagnostics", () => {
 		).toBe(true);
 	});
 
+	it("closes a turn cut off without an exit record only when --restore assumes the exit, until a normal exit follows", () => {
+		const sessionManager = SessionManager.inMemory();
+		sessionManager.appendMessage({ role: "user", content: "inspect the file", timestamp: Date.now() });
+		sessionManager.appendMessage(pendingAssistant);
+		// SIGKILL or power loss: no session_exit was written.
+		const crashed = sessionManager.getBranch();
+		expect(createInterruptedTurnAbortMessage(crashed)).toBeUndefined();
+		expect(hasRestorableTurn(crashed)).toBe(true);
+
+		const closed = createInterruptedTurnAbortMessage(crashed, undefined, { assumeExit: true });
+		expect(closed).toMatchObject({ role: "assistant", stopReason: "aborted", model: pendingAssistant.model });
+		for (const result of createInterruptedToolResults(crashed)) sessionManager.appendMessage(result);
+		sessionManager.appendMessage(closed!);
+		expect(
+			createInterruptedTurnAbortMessage(sessionManager.getBranch(), undefined, { assumeExit: true }),
+		).toBeUndefined();
+		// Closed but never retried: a later restore still goes on with it…
+		expect(hasRestorableTurn(sessionManager.getBranch())).toBe(true);
+		// …unless the user quit normally after seeing it interrupted.
+		sessionManager.appendCustomEntry(SESSION_EXIT_CUSTOM_TYPE, {
+			reason: "manual exit",
+			kind: "normal",
+			recordedAt: "2026-07-11T02:20:08.800Z",
+		});
+		expect(hasRestorableTurn(sessionManager.getBranch())).toBe(false);
+	});
+
 	it("reconstructs a normal exit that reports pending tool calls", () => {
 		const sessionManager = SessionManager.inMemory();
 		sessionManager.appendMessage({ role: "user", content: "inspect the file", timestamp: Date.now() });
@@ -370,6 +422,68 @@ describe("session exit diagnostics", () => {
 			model: pendingAssistant.model,
 			stopReason: "aborted",
 		});
+	});
+
+	it("keeps an interrupted ask question in resumed model context without replaying completed calls", () => {
+		const sessionManager = SessionManager.inMemory();
+		const question = {
+			html: '<form><p>Deploy now?</p><label><input type="radio" name="deploy" value="yes" checked> Yes</label><label><input type="radio" name="deploy" value="no"> No</label></form>',
+		};
+		sessionManager.appendMessage({ role: "user", content: "prepare deployment", timestamp: Date.now() });
+		sessionManager.appendMessage({
+			...pendingAssistant,
+			content: [
+				{ type: "toolCall", id: "toolu_done", name: "read", arguments: { path: "deploy.md" } },
+				{ type: "toolCall", id: "toolu_ask", name: "ask", arguments: question },
+			],
+		});
+		sessionManager.appendMessage({
+			role: "toolResult",
+			toolCallId: "toolu_done",
+			toolName: "read",
+			content: [{ type: "text", text: "Deployment instructions" }],
+			isError: false,
+			timestamp: Date.now(),
+		});
+		sessionManager.appendCustomEntry(TOOL_EXECUTION_START_CUSTOM_TYPE, {
+			toolCallId: "toolu_ask",
+			toolName: "ask",
+			startedAt: "2026-09-30T00:00:00.000Z",
+		});
+		sessionManager.appendCustomEntry(SESSION_EXIT_CUSTOM_TYPE, {
+			reason: "exit",
+			kind: "process_exit",
+			recordedAt: "2026-09-30T00:00:01.000Z",
+		});
+
+		const branch = sessionManager.getBranch();
+		const aborted = createInterruptedTurnAbortMessage(branch);
+		expect(aborted).toBeDefined();
+		for (const result of createInterruptedToolResults(branch)) sessionManager.appendMessage(result);
+		sessionManager.appendMessage(aborted!);
+		const context = sessionManager.buildSessionContext().messages;
+		expect(context).toContainEqual(
+			expect.objectContaining({
+				role: "assistant",
+				content: expect.arrayContaining([
+					expect.objectContaining({
+						type: "toolCall",
+						id: "toolu_ask",
+						arguments: question,
+					}),
+				]),
+			}),
+		);
+		expect(context.filter(message => message.role === "toolResult" && message.toolCallId === "toolu_ask")).toEqual([
+			expect.objectContaining({
+				isError: true,
+				content: [expect.objectContaining({ text: expect.stringContaining("outcome is unknown") })],
+			}),
+		]);
+		expect(
+			context.filter(message => message.role === "toolResult" && message.toolCallId === "toolu_done"),
+		).toHaveLength(1);
+		expect(createInterruptedTurnAbortMessage(sessionManager.getBranch())).toBeUndefined();
 	});
 
 	it("reconstructs tool-call content even when stopReason is stop", () => {

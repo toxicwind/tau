@@ -4,6 +4,7 @@ import { toFirepassWireModelId, toFireworksWireModelId } from "@tau/tau-catalog/
 import { getSupportedEfforts } from "@tau/tau-catalog/model-thinking";
 import { calculateCost } from "@tau/tau-catalog/models";
 import type {
+	CatalogPolicyInputs,
 	OpenAICompat,
 	OpenAIReasoningDisableMode,
 	OpenAIStreamMarkupHealingPattern,
@@ -24,18 +25,18 @@ import { parseGitHubCopilotApiKey } from "@tau/tau-catalog/wire/github-copilot";
 import {
 	$env,
 	classifyJsonPrefix,
+	cloneJsonTree,
 	extractHttpStatusFromError,
 	isRecord,
 	logger,
 	parseImageMetadata,
-	parseStreamingJson,
 	parseStreamingJsonThrottled,
 	stringifyJson,
-	structuredCloneJSON,
 	USER_AGENT,
 } from "@tau/tau-utils";
 import { NO_AUTH_SENTINEL } from "../auth-retry";
 import * as AIError from "../error";
+import { parseToolCallArguments, replayableToolCallArguments } from "../utils/tool-call-arguments";
 import {
 	type Api,
 	type AssistantMessage,
@@ -47,6 +48,13 @@ import {
 	type Message,
 	type MessageAttribution,
 	type Model,
+<<<<<<< ours — imports `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
+=======
+	OPENAI_MAX_OUTPUT_TOKENS,
+	getPremiumServiceTierRequests,
+	parseServiceTier,
+>>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/src/providers/openai-shared.ts' for per-hunk detail, 'weave check' to verify your resolution
 	type ServiceTier,
 	type StopReason,
 	type StreamOptions,
@@ -59,7 +67,9 @@ import {
 	type ToolResultMessage,
 	type Usage,
 } from "../types";
+import { mergeHeaders } from "./anthropic-headers";
 import { resolveCopilotRequestIdentity } from "./github-copilot-headers";
+import { resolveXaiBaseUrl } from "./xai-base-url";
 
 export type { OpenAIPromptCacheOptions } from "../types";
 
@@ -73,9 +83,11 @@ import {
 	sanitizeOpenAIResponsesAssistantHistoryItemsForReplay,
 	sanitizeOpenAIResponsesHistoryItemsForReplay,
 	stripUnpairedOpenAIResponsesComputerReasoningIdsForReplay,
+	truncateResponseItemId,
 } from "../utils";
 import {
 	clearStreamingPartialJson,
+	isCarriedReasoning,
 	kStreamingArgumentsDone,
 	kStreamingLastParseLen,
 	kStreamingPartialJson,
@@ -98,6 +110,8 @@ import {
 	resolveGitHubCopilotBaseUrl,
 } from "./github-copilot-headers";
 import { servedModelFromOpenRouterReasoning } from "./anthropic-signature";
+import { getNativeFinishReasonError } from "./native-finish-reason";
+import { isOpenAIRequestValidationError } from "./openai-request-error";
 import type { ChatCompletionCreateParamsStreaming } from "./openai-chat-wire";
 import { type InputItem, sanitizeCodexCallId } from "./openai-codex/request-transformer";
 import type {
@@ -118,8 +132,13 @@ import type {
 	ResponseStatus,
 	ResponseStreamEvent,
 } from "./openai-responses-wire";
-import { applyInferenceHeaders, setHeaderIfAbsent } from "./inference-headers";
-import { transformMessages } from "./transform-messages";
+import {
+	applyInferenceHeaders,
+	applySessionHeader,
+	resolveOpenCodeGoCacheAffinity,
+	setHeaderIfAbsent,
+} from "./inference-headers";
+import { isMalformedToolCallName, isValidToolCallId, transformMessages } from "./transform-messages";
 import { joinTextWithImagePlaceholder, NON_VISION_IMAGE_PLACEHOLDER, partitionVisionContent } from "./vision-guard";
 
 export interface OpenAIModelIdentity {
@@ -141,10 +160,18 @@ export interface OpenAIStrictToolsState {
 	};
 }
 
-export interface OpenAIRequestSetupModel extends OpenAIModelIdentity {
+/**
+ * The model a request setup may be built from: the transport facts it reads
+ * plus every fact the catalog policy cascade reads ({@link CatalogPolicyInputs}).
+ * `api` is required — the Go sibling cache-affinity rules are all `on-api`
+ * scoped, so a reduced model that omits it used to typecheck and silently
+ * leave the family header off. Callers handing a reduced model object must
+ * pass the real policy inputs; there is no default, inference, or fallback.
+ */
+export interface OpenAIRequestSetupModel extends OpenAIModelIdentity, CatalogPolicyInputs {
 	headers?: Record<string, string>;
 	premiumMultiplier?: number;
-	compat?: Pick<ResolvedOpenAISharedCompat, "promptCacheSessionHeader">;
+	compat?: Pick<ResolvedOpenAISharedCompat, "promptCacheSessionHeader" | "sessionHeader">;
 }
 
 /** Cache identity controls shared by OpenAI-family transports. */
@@ -168,6 +195,15 @@ export interface OpenAIRequestSetupOptions {
 	};
 	sessionId?: string;
 	promptCacheSessionId?: string;
+	/**
+	 * Explicit prompt-cache identity only, never the sessionId fallback:
+	 * callers set it from the already-resolved `promptCacheSessionId` when an
+	 * explicit `promptCacheKey` was supplied, and leave it unset otherwise.
+	 * Feeds the Go sibling cache-affinity header so an ordinary conversation
+	 * id (especially one long enough to normalize to a `pc_` hash) can never
+	 * flip `x-opencode-session` on opted-in lanes.
+	 */
+	promptCacheAffinityKey?: string;
 }
 
 export interface OpenAIRequestSetup {
@@ -223,11 +259,11 @@ export function resolveOpenAIRequestSetup(
 		apiKey = $env.OPENAI_API_KEY;
 	}
 	const rawApiKey = apiKey;
-	let headers = { ...model.headers };
-	if (model.provider === "openrouter") {
-		Object.assign(headers, getOpenRouterHeaders());
-	}
-	Object.assign(headers, options.extraHeaders);
+	let headers = mergeHeaders(
+		model.headers,
+		model.provider === "openrouter" ? getOpenRouterHeaders() : undefined,
+		options.extraHeaders,
+	);
 	if (model.provider === "coreweave") {
 		applyCoreWeaveProjectHeader(headers);
 	}
@@ -254,6 +290,9 @@ export function resolveOpenAIRequestSetup(
 		if (sakanaBaseUrl) {
 			baseUrl = sakanaBaseUrl;
 		}
+	}
+	if (model.provider === "xai" || model.provider === "xai-oauth") {
+		baseUrl = resolveXaiBaseUrl(model.provider, baseUrl, rawApiKey);
 	}
 	if (model.provider === "github-copilot") {
 		const copilotApiKey = parseGitHubCopilotApiKey(rawApiKey);
@@ -312,15 +351,22 @@ export function resolveOpenAIRequestSetup(
 		query = { "api-version": options.azureChatCompletions.apiVersion };
 	}
 
+	// The conversation id stays authoritative for every native session header.
+	// On Go lanes opted into KDL `shared-prompt-cache`, `x-opencode-session`
+	// carries the explicit shared cache key instead (see
+	// resolveOpenCodeGoCacheAffinity).
 	const sessionId = options.sessionId ?? options.promptCacheSessionId;
 	applyInferenceHeaders(headers, {
 		provider: model.provider,
+		providerType: model.providerType,
 		protocol: "openai",
 		sessionId,
+		cacheAffinity: resolveOpenCodeGoCacheAffinity(model, options.promptCacheAffinityKey),
 	});
 	if (options.promptCacheSessionId && model.compat?.promptCacheSessionHeader) {
 		setHeaderIfAbsent(headers, model.compat.promptCacheSessionHeader, options.promptCacheSessionId);
 	}
+	applySessionHeader(headers, model.compat, options.sessionId);
 
 	if (options.defaultBaseUrl !== undefined) {
 		baseUrl = baseUrl ?? ($env.OPENAI_BASE_URL?.trim() || options.defaultBaseUrl);
@@ -359,14 +405,19 @@ export function applyOpenAIServiceTier(
 /**
  * Standard OpenAI Responses service-tier cost multipliers. The non-Codex
  * Responses path bills the tier it was served (or requested): Flex processing is
- * half price; Priority is a 2x premium. Codex bills the same tiers with its own
- * table (Priority is 2.5x on gpt-5.5) and applies that separately.
+ * half price; Priority (Fast mode) is a 2x premium. Codex bills the same tiers
+ * with its own table (Fast is 2.5x on every model) and applies that separately.
+ * `ultrafast` has no API-generic default — only models with a published
+ * ultrafast price carry a `serviceTierCost.ultrafast` entry (GPT-6 Astra and
+ * GPT-6.1 Sol, 6x) and everything else stays at 1x rather than an invented
+ * multiplier.
  */
 function getOpenAIResponsesServiceTierCostMultiplier(
 	model: Pick<Model, "serviceTierCost">,
 	tier: string | null | undefined,
 ): number {
-	const resolvedMultiplier = tier === "flex" || tier === "priority" ? model.serviceTierCost?.[tier] : undefined;
+	const resolvedMultiplier =
+		tier === "flex" || tier === "priority" || tier === "ultrafast" ? model.serviceTierCost?.[tier] : undefined;
 	if (resolvedMultiplier !== undefined) return resolvedMultiplier;
 	switch (tier) {
 		case "flex":
@@ -385,28 +436,39 @@ function getOpenAIResponsesServiceTierCostMultiplier(
  * resolved request tier. Scoped to `provider: "openai"` (the only standard
  * Responses biller) so an echoed `service_tier` from an Azure/OpenRouter/Copilot
  * proxy can never skew those costs.
+ *
+ * Returns the tier the turn ran on for the caller to record on the message, and
+ * counts the premium request the tier bills.
  */
 export function applyOpenAIResponsesServiceTierCost(
-	model: Pick<Model, "provider" | "serviceTierCost">,
+	model: Pick<Model, "provider" | "serviceTierCost" | "api" | "identity">,
 	usage: AssistantMessage["usage"],
 	responseServiceTier: unknown,
 	requestServiceTier: ServiceTier | null | undefined,
-): void {
-	if (model.provider !== "openai") return;
+): ServiceTier | undefined {
+	if (model.provider !== "openai") return undefined;
 	// The response echo is authoritative when present (OpenAI may downgrade a
 	// requested priority/flex turn to default under load); only fall back to the
 	// requested tier when the response omits the echo entirely.
-	const served = typeof responseServiceTier === "string" ? responseServiceTier : (requestServiceTier ?? undefined);
+	const served = parseServiceTier(responseServiceTier) ?? requestServiceTier ?? undefined;
+	usage.premiumRequests ??= getPremiumServiceTierRequests(served, model);
 	const multiplier = getOpenAIResponsesServiceTierCostMultiplier(model, served);
-	if (multiplier === 1) return;
+	if (multiplier === 1) return served;
 	usage.cost.input *= multiplier;
 	usage.cost.output *= multiplier;
 	usage.cost.cacheRead *= multiplier;
 	usage.cost.cacheWrite *= multiplier;
 	usage.cost.total = usage.cost.input + usage.cost.output + usage.cost.cacheRead + usage.cost.cacheWrite;
+	return served;
 }
 
-/** Reconcile token-price estimates with a gateway's authoritative account charge. */
+/**
+ * Reconcile token-price estimates with a gateway's authoritative account charge.
+ * BYOK turns (`is_byok: true`) price from the provider spend in
+ * `cost_details.upstream_inference_cost` plus whatever credits charge
+ * OpenRouter reports in `cost` (its BYOK fee is plan-dependent and can be $0),
+ * so both are covered.
+ */
 export function applyProviderReportedCost(model: Pick<Model, "provider">, usage: Usage, rawUsage: unknown): void {
 	if (
 		(model.provider !== "openrouter" && model.provider !== "cline-pass") ||
@@ -414,7 +476,23 @@ export function applyProviderReportedCost(model: Pick<Model, "provider">, usage:
 		rawUsage === null
 	)
 		return;
-	const reportedCost = Reflect.get(rawUsage, "cost");
+	let reportedCost = Reflect.get(rawUsage, "cost");
+	// BYOK turns run on the account's own provider key: `cost` carries only the
+	// credits charge OpenRouter bills the turn (its BYOK fee, plan-dependent and
+	// $0 inside the free allowance) while `cost_details.upstream_inference_cost`
+	// carries the provider spend. Both are real charges, so add them (verified
+	// live 2026-10-02: openrouter/openai/gpt-6.1-sol returned `cost: 0,
+	// is_byok: true, cost_details.upstream_inference_cost: 6.6e-05`).
+	if (Reflect.get(rawUsage, "is_byok") === true) {
+		const details = Reflect.get(rawUsage, "cost_details");
+		const upstreamCost =
+			typeof details === "object" && details !== null ? Reflect.get(details, "upstream_inference_cost") : undefined;
+		if (typeof upstreamCost === "number" && Number.isFinite(upstreamCost) && upstreamCost >= 0) {
+			const creditsCharge =
+				typeof reportedCost === "number" && Number.isFinite(reportedCost) && reportedCost >= 0 ? reportedCost : 0;
+			reportedCost = creditsCharge + upstreamCost;
+		}
+	}
 	if (typeof reportedCost !== "number" || !Number.isFinite(reportedCost) || reportedCost < 0) return;
 
 	const estimatedCost = usage.cost.total;
@@ -1088,7 +1166,12 @@ export function resolveOpenAICompatPolicy<TApi extends Api>(
 	if (disabled && compat.supportsReasoningEffort && !omitReasoningEffort) {
 		if (disableMode === "none-effort") {
 			wireEffort = "none";
-		} else if (disableReason === "caller" && requestedEffort === undefined && disableMode === "lowest-effort") {
+		} else if (
+			modelSupported &&
+			disableReason === "caller" &&
+			requestedEffort === undefined &&
+			disableMode === "lowest-effort"
+		) {
 			const minEffort = getSupportedEfforts(model)[0];
 			if (minEffort === undefined) {
 				throw new AIError.ConfigurationError(
@@ -1416,7 +1499,7 @@ export function isCompiledGrammarTooLargeStrictError(
 	capturedErrorResponse: CapturedHttpErrorResponse | undefined,
 ): boolean {
 	const status = extractHttpStatusFromError(error) ?? capturedErrorResponse?.status;
-	if (status !== 400) return false;
+	if (status === 422 || !isOpenAIRequestValidationError(error, capturedErrorResponse)) return false;
 	const messageParts = [error instanceof Error ? error.message : undefined, capturedErrorResponse?.bodyText]
 		.filter((value): value is string => typeof value === "string" && value.trim().length > 0)
 		.join("\n");
@@ -1433,6 +1516,36 @@ interface StrictToolsRetryContext {
 	tools: Tool[] | undefined;
 }
 
+/**
+ * Read OpenRouter's `error.metadata.raw` from a captured non-2xx body.
+ *
+ * OpenRouter routes to a different upstream per request, so its top-level
+ * `error.message` is a generic policy sentence ("Access denied by security
+ * policy") and the only place the routed provider's own words appear is
+ * `error.metadata.raw`. Providers that proxy through OpenRouter also hang the
+ * upstream provider name there.
+ *
+ * The detail lives in the decoded body captured on the thrown
+ * {@link AIError.OpenAIHttpError}, not on the error object itself: no error
+ * class in this package carries an `error` property, so reading
+ * `error.error.metadata.raw` unconditionally yielded `undefined` and the
+ * upstream detail was dropped from every surfaced message.
+ */
+export function readOpenRouterRawMetadata(
+	capturedErrorResponse: CapturedHttpErrorResponse | undefined,
+): string | undefined {
+	const body = capturedErrorResponse?.bodyJson;
+	if (!body || typeof body !== "object" || !("error" in body)) return undefined;
+	const errorBody = body.error;
+	if (!errorBody || typeof errorBody !== "object" || !("metadata" in errorBody)) return undefined;
+	const metadata = errorBody.metadata;
+	if (!metadata || typeof metadata !== "object" || !("raw" in metadata)) return undefined;
+	const raw = metadata.raw;
+	if (typeof raw !== "string") return undefined;
+	const trimmed = raw.trim();
+	return trimmed.length > 0 ? trimmed : undefined;
+}
+
 /** Decide whether an OpenAI-family request should retry once with non-strict tools. */
 export function shouldRetryWithoutStrictTools(
 	error: unknown,
@@ -1441,8 +1554,7 @@ export function shouldRetryWithoutStrictTools(
 ): boolean {
 	const { model, strictToolsApplied, tools } = context;
 	if (!tools || tools.length === 0 || !strictToolsApplied) return false;
-	const status = extractHttpStatusFromError(error) ?? capturedErrorResponse?.status;
-	if (status !== 400 && status !== 422) return false;
+	if (!isOpenAIRequestValidationError(error, capturedErrorResponse)) return false;
 	const errorMessage = error instanceof Error ? error.message.trim() : "";
 	const messageParts = [error instanceof Error ? error.message : undefined, capturedErrorResponse?.bodyText]
 		.filter((value): value is string => typeof value === "string" && value.trim().length > 0)
@@ -1475,35 +1587,6 @@ function normalizeOpenAIStableId(value: string | undefined, maxLength: number, h
 	if (wellFormed.length <= maxLength) return wellFormed;
 	return `${hashPrefix}${Bun.hash(wellFormed).toString(36)}`;
 }
-
-export const OPENAI_RESPONSES_PROGRESS_EVENT_TYPES: ReadonlySet<string> = new Set([
-	"response.created",
-	"response.output_item.added",
-	"response.reasoning_summary_part.added",
-	"response.reasoning_summary_text.delta",
-	"response.reasoning_summary_text.done",
-	"response.reasoning_summary_part.done",
-	"response.reasoning_text.delta",
-	"response.content_part.added",
-	"response.output_text.delta",
-	"response.refusal.delta",
-	"response.function_call_arguments.delta",
-	"response.function_call_arguments.done",
-	"response.custom_tool_call_input.delta",
-	"response.custom_tool_call_input.done",
-	"response.output_item.done",
-	"response.completed",
-	"response.incomplete",
-	"response.failed",
-	"error",
-]);
-
-export function isOpenAIResponsesProgressEvent(event: unknown): boolean {
-	if (!event || typeof event !== "object") return false;
-	const type = (event as { type?: unknown }).type;
-	return typeof type === "string" && OPENAI_RESPONSES_PROGRESS_EVENT_TYPES.has(type);
-}
-
 export function encodeTextSignatureV1(id: string, phase?: TextSignatureV1["phase"]): string {
 	const payload: TextSignatureV1 = { v: 1, id };
 	if (phase) payload.phase = phase;
@@ -1541,7 +1624,7 @@ export function normalizeResponsesToolCallIdForTransform(
 	source?: AssistantMessage,
 ): string {
 	const sep = id.search(/[\n|]/);
-	if (sep < 0 && id.length <= 64 && /^[a-zA-Z0-9_-]+$/.test(id)) return id;
+	if (isValidToolCallId(id)) return id;
 	const isForeignToolCall =
 		source != null && model != null && (source.provider !== model.provider || source.api !== model.api);
 	if (isForeignToolCall || sep >= 0 || id.length > 64) {
@@ -1555,21 +1638,25 @@ export function normalizeResponsesToolCallIdForTransform(
 	return `${normalized.callId}|${normalized.itemId}`;
 }
 
-type ResponsesToolCallKind = "function" | "custom" | "computer";
+/** Tool family of a Responses call/output item. */
+export type ResponsesToolCallKind = "function" | "custom" | "computer";
 
-function responsesToolCallKind(type: unknown): ResponsesToolCallKind | undefined {
+/** Tool family of a Responses call item type, or `undefined` for any other item. */
+export function responsesToolCallKind(type: unknown): ResponsesToolCallKind | undefined {
 	if (type === "function_call") return "function";
 	if (type === "custom_tool_call") return "custom";
 	if (type === "computer_call") return "computer";
 	return undefined;
 }
 
-function responsesToolOutputKind(type: unknown): ResponsesToolCallKind | undefined {
+/** Tool family of a Responses call-output item type, or `undefined` for any other item. */
+export function responsesToolOutputKind(type: unknown): ResponsesToolCallKind | undefined {
 	if (type === "function_call_output") return "function";
 	if (type === "custom_tool_call_output") return "custom";
 	if (type === "computer_call_output") return "computer";
 	return undefined;
 }
+
 function responseInputCallId(item: ResponseInput[number]): string | undefined {
 	if (!("call_id" in item)) return undefined;
 	return typeof item.call_id === "string" ? item.call_id : undefined;
@@ -1583,6 +1670,46 @@ export function collectKnownCallIds(messages: ResponseInput): Set<string> {
 		if (callId) knownCallIds.add(callId);
 	}
 	return knownCallIds;
+}
+
+/**
+ * Recover executable tool-call blocks omitted from a turn's stored native Responses items.
+ *
+ * Only calls in the final pairing window count as recorded: `call_id` is not unique across a
+ * `dt: false` snapshot, so an earlier round that reused the id must not hide this turn's cut call.
+ */
+export function pickUnrecordedResponsesToolCalls(
+	assistantMsg: AssistantMessage,
+	historyItems: readonly Record<string, unknown>[],
+): ToolCall[] {
+	let hasToolCalls = false;
+	for (const block of assistantMsg.content) {
+		if (block.type !== "toolCall") continue;
+		hasToolCalls = true;
+		break;
+	}
+	if (!hasToolCalls) return [];
+	const recordedIds = new Set<string>();
+	for (let index = historyItems.length - 1; index >= 0; index--) {
+		const item = historyItems[index];
+		if (responsesToolOutputKind(item.type) !== undefined) break;
+		const role = item.role;
+		if ((item.type === "message" || item.type === undefined) && typeof role === "string" && role !== "assistant") {
+			break;
+		}
+		if (responsesToolCallKind(item.type) === undefined || typeof item.call_id !== "string") continue;
+		recordedIds.add(sanitizeCodexCallId(item.call_id));
+	}
+	const missing: ToolCall[] = [];
+	for (const block of assistantMsg.content) {
+		if (block.type !== "toolCall") continue;
+		if (recordedIds.has(sanitizeCodexCallId(block.id))) continue;
+		if (block.providerMetadata?.type !== "computer" && isMalformedToolCallName(block.customWireName ?? block.name)) {
+			continue;
+		}
+		missing.push(block);
+	}
+	return missing;
 }
 
 /** Scan replay items for call_ids that were originally custom tool calls. */
@@ -1770,20 +1897,58 @@ function classifyResponsesBatchItem(item: object): ResponsesBatchItemKind {
  * strict validator. See #8789.
  */
 export function hoistInterleavedResponsesToolBatchMessages<T extends object>(items: readonly T[]): T[] {
-	const moved = new Set<number>();
+	const callIdOf = (item: T): string | undefined =>
+		"call_id" in item && typeof item.call_id === "string" ? item.call_id : undefined;
+	// Does a call with `callId` precede `index` within the same contiguous batch body?
+	const hasEarlierBatchCall = (index: number, callId: string): boolean => {
+		for (let probe = index - 1; probe >= 0; probe--) {
+			const kind = classifyResponsesBatchItem(items[probe]);
+			if (kind === "other") return false;
+			if (kind === "call" && callIdOf(items[probe]) === callId) return true;
+		}
+		return false;
+	};
+	const bucketOf = new Map<number, number>();
 	const insertBefore = new Map<number, number[]>();
 	for (let index = 0; index < items.length; index++) {
 		if (classifyResponsesBatchItem(items[index]) !== "output") continue;
 		// Only anchor on the first output of a run.
 		if (index > 0 && classifyResponsesBatchItem(items[index - 1]) === "output") continue;
+		// Calls the batch still owns further back: the anchor run's outputs, plus
+		// any earlier output crossed on the way.
+		const pending = new Set<string>();
+		for (let probe = index; probe < items.length; probe++) {
+			if (classifyResponsesBatchItem(items[probe]) !== "output") break;
+			const callId = callIdOf(items[probe]);
+			if (callId) pending.add(callId);
+		}
 		// Walk back over the batch body (calls interleaved with assistant messages).
+		// An earlier output is crossed only when it and a call the batch still owns
+		// both pair with calls further back — i.e. the output belongs to this same
+		// interrupted batch (#13083). Otherwise it closes a completed prior round,
+		// whose trailing messages stay put.
 		let start = index;
 		let sawCall = false;
 		const messageIndexes: number[] = [];
 		while (start > 0) {
-			const kind = classifyResponsesBatchItem(items[start - 1]);
+			const item = items[start - 1];
+			const kind = classifyResponsesBatchItem(item);
 			if (kind === "call") {
 				sawCall = true;
+				const callId = callIdOf(item);
+				if (callId) pending.delete(callId);
+			} else if (kind === "output") {
+				const callId = callIdOf(item);
+				if (!callId || !hasEarlierBatchCall(start - 1, callId)) break;
+				let ownsEarlierCall = false;
+				for (const owned of pending) {
+					if (hasEarlierBatchCall(start - 1, owned)) {
+						ownsEarlierCall = true;
+						break;
+					}
+				}
+				if (!ownsEarlierCall) break;
+				pending.add(callId);
 			} else if (kind === "assistant-message") {
 				messageIndexes.push(start - 1);
 			} else {
@@ -1796,17 +1961,25 @@ export function hoistInterleavedResponsesToolBatchMessages<T extends object>(ite
 		messageIndexes.reverse();
 		const target = insertBefore.get(start) ?? [];
 		for (const messageIndex of messageIndexes) {
-			moved.add(messageIndex);
+			// A wider batch can re-collect a message an earlier anchor already
+			// scheduled; move it rather than emitting it twice.
+			const previousStart = bucketOf.get(messageIndex);
+			if (previousStart !== undefined) {
+				const previous = insertBefore.get(previousStart);
+				const slot = previous?.indexOf(messageIndex) ?? -1;
+				if (previous && slot >= 0) previous.splice(slot, 1);
+			}
+			bucketOf.set(messageIndex, start);
 			target.push(messageIndex);
 		}
 		insertBefore.set(start, target);
 	}
-	if (moved.size === 0) return items.slice();
+	if (bucketOf.size === 0) return items.slice();
 	const result: T[] = [];
 	for (let index = 0; index < items.length; index++) {
 		const pending = insertBefore.get(index);
 		if (pending) for (const messageIndex of pending) result.push(items[messageIndex]);
-		if (moved.has(index)) continue;
+		if (bucketOf.has(index)) continue;
 		result.push(items[index]);
 	}
 	return result;
@@ -1948,6 +2121,25 @@ function adaptResponsesReplayItemsForModel(
 	return changed ? adapted : input;
 }
 
+/**
+ * Tool-name rule for a host with a `toolNamePrefix` catalog axis: the prefix,
+ * and the longest name the host accepts (`tool-call-name-max-length`).
+ */
+export interface ResponsesToolNaming {
+	prefix: string;
+	maxLength: number | undefined;
+}
+
+/**
+ * Wire name of a function tool. It carries the prefix unless the prefixed name
+ * would exceed the host's limit. Without a naming rule the name is unchanged.
+ */
+export function encodeResponsesToolName(name: string, naming: ResponsesToolNaming | undefined): string {
+	if (!naming) return name;
+	const wire = `${naming.prefix}${name}`;
+	return naming.maxLength !== undefined && wire.length > naming.maxLength ? name : wire;
+}
+
 export interface BuildResponsesInputOptions<TApi extends Api> {
 	model: Model<TApi>;
 	context: Context;
@@ -1955,6 +2147,13 @@ export interface BuildResponsesInputOptions<TApi extends Api> {
 	supportsImageDetailOriginal: boolean;
 	systemRole?: "system" | "developer";
 	nativeHistory?: {
+		/**
+		 * Replay same-provider native history. `false` marks a cold provider
+		 * session (#489): native items are withheld except remote-compaction
+		 * history and assistant turns that carry no server-issued state
+		 * ({@link isColdReplayableResponsesTurn}); other turns are rebuilt from
+		 * message content.
+		 */
 		replay: boolean;
 		filterReasoning: boolean;
 	};
@@ -1971,6 +2170,8 @@ export interface BuildResponsesInputOptions<TApi extends Api> {
 	requiresReasoningReplayForAllTurns?: boolean;
 	/** As {@link requiresReasoningReplayForAllTurns}, but only for turns that contain a tool call. */
 	requiresReasoningReplayForToolCalls?: boolean;
+	/** Naming rule for rebuilt `function_call` names; see {@link ResponsesToolNaming}. */
+	toolNaming?: ResponsesToolNaming;
 }
 
 /**
@@ -2061,6 +2262,98 @@ export function escapeReplayedControlTokens(items: ResponseInput): ResponseInput
 	});
 }
 
+/**
+ * Whether a same-provider assistant turn may replay its native items while the
+ * provider session is still cold (#489). A cold session rebuilds turns from
+ * message content because some backends bind native items to one connection
+ * (GitHub Copilot: `401 input item does not belong to this connection`, #488).
+ * Binding needs server-issued state that survives replay sanitization: an
+ * `encrypted_content` blob or an item id. A turn with neither, whose every
+ * reasoning item carries plaintext `reasoning_text`, has nothing to bind and is
+ * exactly what the server receives once the session warms; rebuilding it would
+ * drop that reasoning and change the prompt prefix the server cached.
+ * Summary-only reasoning keeps the rebuild: it is no evidence of a server that
+ * returns plaintext reasoning.
+ */
+export function isColdReplayableResponsesTurn(items: ResponseInput): boolean {
+	let hasReasoning = false;
+	for (const item of items) {
+		if ("id" in item && typeof item.id === "string") return false;
+		if ("encrypted_content" in item && typeof item.encrypted_content === "string") return false;
+		if (item.type !== "reasoning") continue;
+		if (!item.content?.some(part => part.type === "reasoning_text")) return false;
+		hasReasoning = true;
+	}
+	return hasReasoning;
+}
+
+/**
+ * The native Responses history items a request for `model` would replay from
+ * this assistant turn, or `undefined` when the turn was produced by another
+ * api, model or provider and its payload cannot go back on the wire at all.
+ */
+export function getNativeResponsesHistoryItems(
+	message: AssistantMessage,
+	model: Pick<Model, "api" | "provider" | "id"> | null | undefined,
+): Array<Record<string, unknown>> | undefined {
+	if (!model || message.api !== model.api || message.model !== model.id) return undefined;
+	return getOpenAIResponsesHistoryItems(message.providerPayload, model.provider, message.provider);
+}
+
+/**
+ * The history items a request for `model` puts back on the wire for this turn,
+ * after the payload sanitizer keeps the replayable output in them, or
+ * `undefined` when the turn is rebuilt from `content` instead: another api,
+ * model or provider, no payload at all, or a payload the sanitizer empties.
+ *
+ * This is the request builder's own input to the replay decision. It asks only
+ * that replayable assistant output survives ({@link
+ * sanitizeOpenAIResponsesAssistantHistoryItemsForReplay} returns `undefined`
+ * for a hidden-empty turn), never for the reasoning the tokenizer prices: an
+ * answer-only payload replays natively with no reasoning item in it.
+ */
+export function getReplayableNativeResponsesHistoryItems(
+	message: AssistantMessage,
+	model: Pick<Model, "api" | "provider" | "id"> | null | undefined,
+): ResponseInput | undefined {
+	const items = getNativeResponsesHistoryItems(message, model);
+	if (!items) return undefined;
+	return sanitizeOpenAIResponsesAssistantHistoryItemsForReplay(items);
+}
+
+/**
+ * Whether a request puts those items on the wire: a warm provider session
+ * always does, a cold one (`nativeHistoryReplay` false) only when nothing in
+ * them is bound to one connection ({@link isColdReplayableResponsesTurn}).
+ */
+export function replaysNativeResponsesTurn(replay: ResponseInput, nativeHistoryReplay: boolean): boolean {
+	return nativeHistoryReplay || isColdReplayableResponsesTurn(replay);
+}
+
+/**
+ * Whether a request for `model` replays this assistant turn's native Responses
+ * history, so the turn reaches the wire as `providerPayload` items and its
+ * `content` blocks are not sent at all. The one replay decision shared by
+ * request accounting (the tokenizer's local count) and context maintenance
+ * (`/shake`), mirroring `buildResponsesInput`'s assistant branch.
+ *
+ * How many tokens that replay costs is a separate question the tokenizer
+ * answers from the same items: a payload without a reasoning item replays
+ * without any reasoning to price.
+ *
+ * `buildResponsesInput` decides this inline; it can adopt these helpers once
+ * its extra concerns (rebuilding calls cut by the output limit, hidden-empty
+ * suppression) move with them.
+ */
+export function replaysNativeResponsesHistory(
+	message: AssistantMessage,
+	model: Pick<Model, "api" | "provider" | "id"> | null | undefined,
+	options: { nativeHistoryReplay?: boolean } = {},
+): boolean {
+	const replay = getReplayableNativeResponsesHistoryItems(message, model);
+	return replay !== undefined && replaysNativeResponsesTurn(replay, options.nativeHistoryReplay ?? true);
+}
+
 export function buildResponsesInput<TApi extends Api>(options: BuildResponsesInputOptions<TApi>): ResponseInput {
 	const messages: ResponseInput = [];
 	const systemPrompts = options.systemRole ? normalizeSystemPrompts(options.context.systemPrompt) : [];
@@ -2077,13 +2370,49 @@ export function buildResponsesInput<TApi extends Api>(options: BuildResponsesInp
 	const customToolWireNameMap = supportsCustomToolCalls
 		? undefined
 		: buildCustomToolWireNameMap(options.context.tools);
-	let knownCallIds = new Set<string>();
+	const knownCallIds = new Set<string>();
 	const customCallIds = new Set<string>();
 	const computerCallIds = new Set<string>();
+	// A request-level `filterReasoningHistory` override removes the reasoning
+	// slot that same-model reasoning from another host would be carried into;
+	// the transform demotes it to text instead.
+	const filteredCompat =
+		options.nativeHistory?.filterReasoning && options.model.compat && "filterReasoningHistory" in options.model.compat
+			? { ...options.model.compat, filterReasoningHistory: true }
+			: options.model.compat;
+	// Call-id bookkeeping is incremental; rescanning `messages` after every native
+	// replay made request building O(turns × items). `messageCallIds` mirrors the
+	// call ids present in `messages`. `unpushedCallIds` holds ids the assistant
+	// converter registered in `knownCallIds` whose items were then dropped: a
+	// native replay resets `knownCallIds` to exactly the ids in `messages`.
+	const messageCallIds = new Set<string>();
+	const unpushedCallIds = new Set<string>();
+	const recordPushedCallIds = (items: ResponseInput): void => {
+		for (const item of items) {
+			const kind = responsesToolCallKind(item.type);
+			if (kind === undefined) continue;
+			const callId = responseInputCallId(item);
+			if (!callId) continue;
+			knownCallIds.add(callId);
+			messageCallIds.add(callId);
+			unpushedCallIds.delete(callId);
+			if (kind === "custom") customCallIds.add(callId);
+			else if (kind === "computer") computerCallIds.add(callId);
+		}
+	};
+	const pushNativeReplayItems = (items: ResponseInput): void => {
+		messages.push(...items);
+		for (const id of unpushedCallIds) knownCallIds.delete(id);
+		unpushedCallIds.clear();
+		recordPushedCallIds(items);
+	};
 	const transformedMessages = transformMessages(
 		options.context.messages,
 		options.model,
 		normalizeResponsesToolCallIdForTransform,
+		undefined,
+		undefined,
+		filteredCompat,
 	);
 	const filterReasoning = <T extends { type?: string }>(items: T[]): T[] =>
 		options.nativeHistory?.filterReasoning ? items.filter(item => item?.type !== "reasoning") : items;
@@ -2120,10 +2449,7 @@ export function buildResponsesInput<TApi extends Api>(options: BuildResponsesInp
 					customToolWireNameMap,
 					options.model.supportsComputerUse === true,
 				);
-				messages.push(...(escapeControlTokens ? escapeReplayedControlTokens(replayItems) : replayItems));
-				knownCallIds = collectKnownCallIds(messages);
-				for (const id of collectCustomCallIds(messages)) customCallIds.add(id);
-				for (const id of collectComputerCallIds(messages)) computerCallIds.add(id);
+				pushNativeReplayItems(escapeControlTokens ? escapeReplayedControlTokens(replayItems) : replayItems);
 				msgIndex++;
 				continue;
 			}
@@ -2172,15 +2498,49 @@ export function buildResponsesInput<TApi extends Api>(options: BuildResponsesInp
 						supportsComputerUse: options.model.supportsComputerUse === true,
 					},
 				);
-				const sanitizedHistoryItems = rawSanitizedHistoryItems
-					? adaptResponsesReplayItemsForModel(
-							rawSanitizedHistoryItems,
-							supportsCustomToolCalls,
-							customToolWireNameMap,
-							options.model.supportsComputerUse === true,
-						)
-					: undefined;
-				if (nativeReplayEnabled && sanitizedHistoryItems) {
+				const replayNativeItems =
+					nativeReplayEnabled ||
+					(options.nativeHistory !== undefined &&
+						rawSanitizedHistoryItems !== undefined &&
+						isColdReplayableResponsesTurn(rawSanitizedHistoryItems));
+				if (replayNativeItems && rawSanitizedHistoryItems) {
+					const nativeItems = adaptResponsesReplayItemsForModel(
+						rawSanitizedHistoryItems,
+						supportsCustomToolCalls,
+						customToolWireNameMap,
+						options.model.supportsComputerUse === true,
+					);
+					// Calls cut by the output limit have no native item: rebuild them the way the cold path
+					// encodes calls (wire tool names included), and before the required-reasoning repair, so a
+					// turn whose only call was cut still counts as one that calls a tool.
+					const missingCalls = pickUnrecordedResponsesToolCalls(assistantMsg, historyItems);
+					const turnItems =
+						missingCalls.length > 0
+							? [
+									...nativeItems,
+									...convertResponsesAssistantMessage(
+										{ ...assistantMsg, content: missingCalls },
+										options.model,
+										msgIndex,
+										knownCallIds,
+										false,
+										customCallIds,
+										false,
+										supportsCustomToolCalls,
+										customToolWireNameMap,
+										computerCallIds,
+										false,
+										false,
+										options.toolNaming,
+									),
+								]
+							: nativeItems;
+					const sanitizedHistoryItems = ensureRequiredResponsesReasoningReplay(
+						turnItems,
+						assistantMsg.stopReason,
+						options.requiresReasoningReplayForAllTurns ?? false,
+						options.requiresReasoningReplayForToolCalls ?? false,
+					);
 					// Model-owned replay items can carry reserved control-token
 					// spellings as data (the model writing *about* Harmony); escape the
 					// transport copy just like client turns.
@@ -2188,19 +2548,20 @@ export function buildResponsesInput<TApi extends Api>(options: BuildResponsesInp
 						? escapeReplayedControlTokens(sanitizedHistoryItems)
 						: sanitizedHistoryItems;
 					if (providerPayload?.dt) {
-						messages.push(...wireItems);
+						pushNativeReplayItems(wireItems);
 					} else {
 						messages.splice(0, messages.length, ...wireItems);
+						knownCallIds.clear();
 						customCallIds.clear();
 						computerCallIds.clear();
+						messageCallIds.clear();
+						unpushedCallIds.clear();
+						recordPushedCallIds(wireItems);
 					}
-					knownCallIds = collectKnownCallIds(messages);
-					for (const id of collectCustomCallIds(messages)) customCallIds.add(id);
-					for (const id of collectComputerCallIds(messages)) computerCallIds.add(id);
 					msgIndex++;
 					continue;
 				}
-				if (!sanitizedHistoryItems) suppressHiddenEmptyFallback = true;
+				if (!rawSanitizedHistoryItems) suppressHiddenEmptyFallback = true;
 			}
 
 			const convertedOutputItems = convertResponsesAssistantMessage(
@@ -2216,12 +2577,24 @@ export function buildResponsesInput<TApi extends Api>(options: BuildResponsesInp
 				computerCallIds,
 				options.requiresReasoningReplayForAllTurns ?? false,
 				options.requiresReasoningReplayForToolCalls ?? false,
+				options.toolNaming,
 			);
 			const outputItems = suppressHiddenEmptyFallback
 				? sanitizeOpenAIResponsesAssistantFallbackItemsForReplay(convertedOutputItems)
 				: convertedOutputItems;
+			if (outputItems !== convertedOutputItems) {
+				// The converter registered every call id it emitted; remember the ones
+				// the fallback sanitizer may drop so a later native replay forgets them.
+				for (const item of convertedOutputItems) {
+					if (responsesToolCallKind(item.type) === undefined) continue;
+					const callId = responseInputCallId(item);
+					if (callId && !messageCallIds.has(callId)) unpushedCallIds.add(callId);
+				}
+			}
 			if (outputItems.length === 0) continue;
-			messages.push(...(escapeControlTokens ? escapeReplayedControlTokens(outputItems) : outputItems));
+			const pushedItems = escapeControlTokens ? escapeReplayedControlTokens(outputItems) : outputItems;
+			messages.push(...pushedItems);
+			recordPushedCallIds(pushedItems);
 		} else if (msg.role === "toolResult") {
 			appendResponsesToolResultMessages(
 				messages,
@@ -2278,6 +2651,93 @@ function parseResponseReasoningReplayItem(signature: string | undefined): Respon
  */
 export const SYNTHETIC_REASONING_REPLAY_PLACEHOLDER = "reasoning unavailable";
 
+function createSyntheticResponsesReasoningItem(
+	text = SYNTHETIC_REASONING_REPLAY_PLACEHOLDER,
+	id?: string,
+): ResponseReasoningItem {
+	const item = {
+		type: "reasoning",
+		...(id ? { id } : {}),
+		summary: [],
+		content: [{ type: "reasoning_text", text }],
+	} satisfies Omit<ResponseReasoningItem, "id"> & Partial<Pick<ResponseReasoningItem, "id">>;
+	// The vendored SDK type marks `id` required; the wire accepts its absence.
+	return item as ResponseReasoningItem;
+}
+
+/**
+ * Fill a replayed reasoning item's missing `reasoning_text` for targets that
+ * require it on every replayed turn (DeepSeek family, #10690). Servers that
+ * stream reasoning as summary text return summary-only items; a warm session
+ * replays them natively, so without this the wire carries no `reasoning_text`
+ * while the cold rebuild of the same turn does (#14288). The summary is the
+ * same text the cold path carries from the thinking block. Items carrying
+ * `encrypted_content` are the server's opaque reasoning and replay untouched:
+ * OpenRouter sets the tool-call requirement for every reasoning model, and its
+ * OpenAI-family items must not gain a summary posing as raw reasoning text.
+ */
+function withRequiredReasoningText(item: ResponseReasoningItem): ResponseReasoningItem {
+	if (typeof item.encrypted_content === "string") return item;
+	if (item.content?.some(part => part.type === "reasoning_text" && part.text.trim().length > 0)) return item;
+	const summaryText = (item.summary ?? [])
+		.map(part => part.text)
+		.filter(text => text.trim().length > 0)
+		.join("\n\n");
+	return {
+		...item,
+		content: [{ type: "reasoning_text", text: summaryText || SYNTHETIC_REASONING_REPLAY_PLACEHOLDER }],
+	};
+}
+
+function isResponsesAssistantTurnBoundary(item: ResponseInput[number]): boolean {
+	if (responsesToolOutputKind(item.type) !== undefined) return true;
+	if (item.type === "compaction") return true;
+	return "role" in item && item.role !== "assistant";
+}
+
+function ensureRequiredResponsesReasoningReplay(
+	items: ResponseInput,
+	stopReason: AssistantMessage["stopReason"],
+	requiresAllTurns: boolean,
+	requiresToolCalls: boolean,
+): ResponseInput {
+	if (stopReason === "error" || (!requiresAllTurns && !requiresToolCalls)) return items;
+
+	const repaired: ResponseInput = [];
+	let changed = false;
+	let turnStart = 0;
+	for (let index = 0; index <= items.length; index++) {
+		if (index < items.length && !isResponsesAssistantTurnBoundary(items[index])) continue;
+
+		let hasContent = false;
+		let hasReasoning = false;
+		let hasToolCall = false;
+		for (let turnIndex = turnStart; turnIndex < index; turnIndex++) {
+			const item = items[turnIndex];
+			if (item.type === "reasoning") {
+				hasReasoning = true;
+				continue;
+			}
+			hasContent = true;
+			if (classifyResponsesBatchItem(item) === "call") hasToolCall = true;
+		}
+		const required = hasContent && (requiresAllTurns || (requiresToolCalls && hasToolCall));
+		if (required && !hasReasoning) {
+			repaired.push(createSyntheticResponsesReasoningItem());
+			changed = true;
+		}
+		for (let turnIndex = turnStart; turnIndex < index; turnIndex++) {
+			const item = items[turnIndex];
+			const replayed = required && item.type === "reasoning" ? withRequiredReasoningText(item) : item;
+			if (replayed !== item) changed = true;
+			repaired.push(replayed);
+		}
+		if (index < items.length) repaired.push(items[index]);
+		turnStart = index + 1;
+	}
+	return changed ? repaired : items;
+}
+
 export function convertResponsesAssistantMessage<TApi extends Api>(
 	assistantMsg: AssistantMessage,
 	model: Model<TApi>,
@@ -2291,6 +2751,7 @@ export function convertResponsesAssistantMessage<TApi extends Api>(
 	computerCallIds?: Set<string>,
 	requiresReasoningReplayForAllTurns = false,
 	requiresReasoningReplayForToolCalls = false,
+	toolNaming?: ResponsesToolNaming,
 ): ResponseInput {
 	const outputItems: ResponseInput = [];
 	let unsignedTextBlocks = 0;
@@ -2324,12 +2785,20 @@ export function convertResponsesAssistantMessage<TApi extends Api>(
 				if (block.itemId) synthesizedReasoningItemId ??= block.itemId;
 				if (block.thinking.trim().length > 0) carriedReasoningTexts.push(block.thinking);
 			}
+			// Reasoning carried from another host of the same model has no stored
+			// item (its id belonged to that host). Its plaintext item references no
+			// server state, so it replays on a cold session too.
+			if (isCarriedReasoning(block)) {
+				outputItems.push(createSyntheticResponsesReasoningItem(block.thinking));
+				reasoningItemEmitted = true;
+				continue;
+			}
 			if (!includeThinkingSignatures) {
 				continue;
 			}
 			const reasoningItem = parseResponseReasoningReplayItem(block.thinkingSignature);
 			if (reasoningItem) {
-				outputItems.push(reasoningItem);
+				outputItems.push(requiresReasoningItem ? withRequiredReasoningText(reasoningItem) : reasoningItem);
 				reasoningItemEmitted = true;
 			}
 			continue;
@@ -2351,8 +2820,8 @@ export function convertResponsesAssistantMessage<TApi extends Api>(
 				// legacy plain-string signatures that would otherwise fall into
 				// the >64-char hash branch and fabricate a bogus msg_ id.
 				msgId = undefined;
-			} else if (msgId.length > 64) {
-				msgId = `msg_${Bun.hash(msgId).toString(36)}`;
+			} else {
+				msgId = truncateResponseItemId(msgId, "msg");
 			}
 			const messageItem: ResponsesReplayAssistantMessage = {
 				type: "message",
@@ -2387,8 +2856,8 @@ export function convertResponsesAssistantMessage<TApi extends Api>(
 				type: "computer_call",
 				id: block.providerMetadata.providerItemId,
 				call_id: normalized.callId,
-				actions: structuredCloneJSON(block.providerMetadata.actions),
-				pending_safety_checks: structuredCloneJSON(block.providerMetadata.pendingSafetyChecks),
+				actions: cloneJsonTree(block.providerMetadata.actions),
+				pending_safety_checks: cloneJsonTree(block.providerMetadata.pendingSafetyChecks),
 				status: "completed",
 			} as ResponseInput[number]);
 			continue;
@@ -2415,6 +2884,7 @@ export function convertResponsesAssistantMessage<TApi extends Api>(
 				...(itemId ? { id: itemId } : {}),
 				call_id: normalized.callId,
 				name: block.customWireName,
+				...(block.namespace ? { namespace: block.namespace } : {}),
 				input: rawInput,
 			} as ResponseInput[number]);
 			continue;
@@ -2427,7 +2897,8 @@ export function convertResponsesAssistantMessage<TApi extends Api>(
 			type: "function_call",
 			...(itemId ? { id: itemId } : {}),
 			call_id: normalized.callId,
-			name: functionName,
+			name: encodeResponsesToolName(functionName, toolNaming),
+			...(block.namespace ? { namespace: block.namespace } : {}),
 			arguments: stringifyJson(block.arguments) ?? "null",
 		});
 	}
@@ -2448,14 +2919,7 @@ export function convertResponsesAssistantMessage<TApi extends Api>(
 		const carriedReasoningText = carriedReasoningTexts.join("\n");
 		const reasoningText =
 			carriedReasoningText.length > 0 ? carriedReasoningText : SYNTHETIC_REASONING_REPLAY_PLACEHOLDER;
-		const reasoningItem = {
-			type: "reasoning",
-			...(synthesizedReasoningItemId ? { id: synthesizedReasoningItemId } : {}),
-			summary: [],
-			content: [{ type: "reasoning_text", text: reasoningText }],
-		} satisfies Omit<ResponseReasoningItem, "id"> & Partial<Pick<ResponseReasoningItem, "id">>;
-		// The vendored SDK type marks `id` required; the wire accepts its absence.
-		outputItems.unshift(reasoningItem as ResponseReasoningItem);
+		outputItems.unshift(createSyntheticResponsesReasoningItem(reasoningText, synthesizedReasoningItemId));
 	}
 
 	return outputItems;
@@ -2563,8 +3027,8 @@ export function appendResponsesToolResultMessages<TApi extends Api>(
 		messages.push({
 			type: "computer_call_output",
 			call_id: normalized.callId,
-			output: structuredCloneJSON(toolResult.providerMetadata.screenshot),
-			acknowledged_safety_checks: structuredCloneJSON(toolResult.providerMetadata.acknowledgedSafetyChecks),
+			output: cloneJsonTree(toolResult.providerMetadata.screenshot),
+			acknowledged_safety_checks: cloneJsonTree(toolResult.providerMetadata.acknowledgedSafetyChecks),
 		} as ResponseInput[number]);
 		return;
 	}
@@ -2617,12 +3081,20 @@ function optionalResponsesText(value: unknown, field: string): string | undefine
 	return value;
 }
 
+// `summary_part.done` closes a section. A proxy that omits both
+// `summary_part.added` and `summary_index` for the NEXT section must open a
+// fresh part rather than appending to the one it just closed.
+const closedSummaryParts = new WeakSet<ResponseReasoningItem["summary"][number]>();
+
 function ensureReasoningSummaryPart(
 	item: ResponseReasoningItem,
 	summaryIndex: number | undefined,
 ): ResponseReasoningItem["summary"][number] {
 	item.summary = item.summary || [];
-	if (summaryIndex === undefined) summaryIndex = Math.max(0, item.summary.length - 1);
+	if (summaryIndex === undefined) {
+		const last = item.summary[item.summary.length - 1];
+		summaryIndex = last && !closedSummaryParts.has(last) ? item.summary.length - 1 : item.summary.length;
+	}
 	if (!Number.isSafeInteger(summaryIndex) || summaryIndex < 0) {
 		throw new TypeError("Invalid Responses summary_index: expected a non-negative integer");
 	}
@@ -2691,6 +3163,19 @@ export function finalizeReasoningThinking(
 	return contentThinking || streamedThinking || "";
 }
 
+/**
+ * Records whether a finalized reasoning block holds a provider-written summary
+ * or the model's own trace, following `finalizeReasoningThinking`'s choice of
+ * text: the done item's summary wins, then its `reasoning_text` content, then
+ * the streamed deltas, which the summary handlers mark on the block as they
+ * append.
+ */
+export function settleReasoningSummary(item: ResponseReasoningItem, block: ThinkingContent): void {
+	const hasSummary = item.summary?.some(part => part.text) ?? false;
+	const hasTrace = item.content?.some(part => part.type === "reasoning_text" && part.text) ?? false;
+	block.summary = hasSummary || (!hasTrace && block.summary === true);
+}
+
 function finalizeCutoffReasoningThinking(
 	item: ResponseReasoningItem,
 	streamedThinking: string,
@@ -2730,6 +3215,7 @@ export function appendReasoningSummaryTextDelta(
 	if (!delta) return;
 	const part = ensureReasoningSummaryPart(item, summaryIndex);
 	block.thinking += delta;
+	block.summary = true;
 	part.text += delta;
 	stream.push({ type: "thinking_delta", contentIndex, delta, partial: output });
 }
@@ -2742,7 +3228,7 @@ export function applyReasoningSummaryTextDone(
 	item: ResponseReasoningItem,
 	block: ThinkingContent,
 	text: string,
-	summaryIndex: number,
+	summaryIndex: number | undefined,
 	stream: AssistantMessageEventStream,
 	output: AssistantMessage,
 	contentIndex: number,
@@ -2754,6 +3240,7 @@ export function applyReasoningSummaryTextDone(
 	const previous = part.text;
 	part.text = text;
 	if (!text || text === previous) return;
+	block.summary = true;
 	if (!block.thinking) {
 		block.thinking = text;
 		stream.push({ type: "thinking_delta", contentIndex, delta: text, partial: output });
@@ -2777,6 +3264,7 @@ export function appendReasoningSummaryPartDone(
 	item.summary = item.summary || [];
 	const lastPart = item.summary[item.summary.length - 1];
 	if (!lastPart) return;
+	closedSummaryParts.add(lastPart);
 	block.thinking += "\n\n";
 	lastPart.text += "\n\n";
 	stream.push({ type: "thinking_delta", contentIndex, delta: "\n\n", partial: output });
@@ -2915,7 +3403,8 @@ export function accumulateToolCallArgumentsDelta(
 	contentIndex: number,
 ): void {
 	delta = optionalResponsesText(delta, "function call arguments delta") ?? "";
-	if (!delta) return;
+	// A non-blank `.done` consumed the buffer; a late delta must not reopen it.
+	if (!delta || block[kStreamingPartialJson] === undefined) return;
 	block[kStreamingPartialJson] += delta;
 	const throttled = parseStreamingJsonThrottled(block[kStreamingPartialJson], block[kStreamingLastParseLen] ?? 0);
 	if (throttled) {
@@ -2929,11 +3418,16 @@ export function accumulateToolCallArgumentsDelta(
  * Finalize streamed function-call arguments from the authoritative `.done`
  * payload. The caller owns the `argumentsDone` flag (generic Responses sets it;
  * Codex's block shape has no such field), so this only rewrites `arguments` and
- * drops the transient accumulation fields.
+ * drops the transient accumulation fields. A blank payload is not authoritative:
+ * it parses the buffered deltas and keeps them so the final item can still win.
  */
 export function finalizeToolCallArgumentsDone(block: ResponsesToolCallBlock, args: string): void {
+	if (!args.trim()) {
+		block.arguments = parseToolCallArguments(block[kStreamingPartialJson]);
+		return;
+	}
 	block[kStreamingPartialJson] = args;
-	block.arguments = parseStreamingJson(block[kStreamingPartialJson]);
+	block.arguments = parseToolCallArguments(block[kStreamingPartialJson]);
 	clearStreamingPartialJson(block);
 }
 
@@ -2983,6 +3477,12 @@ export interface ProcessResponsesStreamOptions {
 	 * response omits the `service_tier` echo. Only applied for `provider: "openai"`.
 	 */
 	requestServiceTier?: ServiceTier;
+	/**
+	 * Declared tool name per wire name (`toolNamesByWire` in `utils/tool-names`). A
+	 * returned `function_call` dispatches to the tool it was offered as; a name
+	 * the map lacks passes through unchanged.
+	 */
+	toolNamesByWire?: ReadonlyMap<string, string>;
 }
 
 export function computerCallMetadata(item: ResponseComputerToolCall): ComputerToolCallMetadata {
@@ -2990,8 +3490,8 @@ export function computerCallMetadata(item: ResponseComputerToolCall): ComputerTo
 	return {
 		type: "computer",
 		providerItemId: item.id,
-		actions: structuredCloneJSON(actions) as ComputerAction[],
-		pendingSafetyChecks: structuredCloneJSON(item.pending_safety_checks ?? []),
+		actions: cloneJsonTree(actions) as ComputerAction[],
+		pendingSafetyChecks: cloneJsonTree(item.pending_safety_checks ?? []),
 	};
 }
 
@@ -3039,6 +3539,8 @@ export async function processResponsesStream<TApi extends Api>(
 
 	// Multiple items (parallel function_calls in particular) can be open at the same
 	// time. OpenAI's spec routes every per-item event by `output_index`/`item_id`;
+<<<<<<< ours — function `processResponsesStream` (T+F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 	// see https://github.com/toxicwind/tau/issues/1880 — llama.cpp emits parallel
 	// function_call deltas interleaved, and a singleton `current` reference would
 	// fold them into the wrong block and drop arguments on every call but the last.
@@ -3686,6 +4188,645 @@ export async function processResponsesStream<TApi extends Api>(
 					? `incomplete: ${details.reason}`
 					: "Unknown error (no error details in response)";
 			throw new AIError.ProviderResponseError(message, { provider: model.provider, kind: "output" });
+=======
+	// see https://github.com/can1357/oh-my-pi/issues/1880 — llama.cpp emits parallel
+	// function_call deltas interleaved, and a singleton `current` reference would
+	// fold them into the wrong block and drop arguments on every call but the last.
+	//
+	// OpenAI-compatible hosts can compound this by omitting `item.id` and
+	// `output_index` on `output_item.added` while routing later argument deltas to
+	// either the bare `call_id` or a synthesized `fc_<call_id>` item id. Register
+	// both keys so each delta reaches its own block instead of falling back to the
+	// most recently added parallel call.
+	const openItemsByOutputIndex = new Map<number, StreamingItem>();
+	const openItemsByItemId = new Map<string, StreamingItem>();
+	const openItemsByPrefixedCallId = new Map<string, StreamingItem>();
+	let lastOpenItem: StreamingItem | null = null;
+	const openItemsInOrder: StreamingItem[] = [];
+
+	const prefixedFunctionCallItemKey = (callId: string | undefined): string | undefined =>
+		callId ? `fc_${callId}` : undefined;
+
+	const registerOpenItem = (
+		outputIndex: number | undefined,
+		itemId: string | undefined,
+		entry: StreamingItem,
+		alternateItemKey?: string,
+		prefixedAlternateItemKey?: string,
+	): void => {
+		if (typeof outputIndex === "number") openItemsByOutputIndex.set(outputIndex, entry);
+		if (itemId) openItemsByItemId.set(itemId, entry);
+		if (alternateItemKey && alternateItemKey !== itemId) openItemsByItemId.set(alternateItemKey, entry);
+		if (
+			prefixedAlternateItemKey &&
+			prefixedAlternateItemKey !== itemId &&
+			prefixedAlternateItemKey !== alternateItemKey
+		) {
+			openItemsByPrefixedCallId.set(prefixedAlternateItemKey, entry);
+		}
+		openItemsInOrder.push(entry);
+		lastOpenItem = entry;
+	};
+	const lookupOpenItem = (event: { output_index?: number; item_id?: string }): StreamingItem | undefined => {
+		const hasKey = typeof event.output_index === "number" || event.item_id !== undefined;
+		if (typeof event.output_index === "number") {
+			const found = openItemsByOutputIndex.get(event.output_index);
+			if (found) return found;
+		}
+		if (event.item_id) {
+			const found = openItemsByItemId.get(event.item_id);
+			if (found) return found;
+		}
+		// Keyed events whose item already closed are stale; drop them instead of
+		// routing to a sibling. Only fully identifierless mock/proxy events use the
+		// legacy singleton fallback.
+		return hasKey ? undefined : (lastOpenItem ?? undefined);
+	};
+	const hasOpenItemKey = (event: { output_index?: number; item_id?: string }): boolean =>
+		typeof event.output_index === "number" || event.item_id !== undefined;
+	const startsJsonObjectDelta = (delta: unknown): boolean => {
+		if (typeof delta !== "string") return false;
+		for (let index = 0; index < delta.length; index++) {
+			const code = delta.charCodeAt(index);
+			if (code === 0x09 || code === 0x0a || code === 0x0d || code === 0x20) continue;
+			return code === 0x7b;
+		}
+		return false;
+	};
+	const shouldAdvanceIdentifierlessFunctionDelta = (
+		event: { output_index?: number; item_id?: string; delta?: unknown },
+		candidate: StreamingItem,
+	): boolean => {
+		const delta = event.delta;
+		if (
+			hasOpenItemKey(event) ||
+			typeof delta !== "string" ||
+			!startsJsonObjectDelta(delta) ||
+			candidate.item.type !== "function_call" ||
+			candidate.block.type !== "toolCall"
+		) {
+			return false;
+		}
+		const partial = candidate.block[kStreamingPartialJson];
+		if (partial.trim().length === 0) return false;
+		// A `{`-starting identifierless delta is ambiguous: the opening of a new
+		// sibling call, or continuation bytes inside the candidate's own argument
+		// JSON (`{"command":"echo ` + `{1..3}"}`). Advance only when the candidate
+		// cannot absorb the delta: its buffer is already one complete JSON value,
+		// already unsalvageable (lossy hosts abandon buffers mid-string, leaving
+		// raw control characters strict JSON forbids), or the concatenation would
+		// break it. Otherwise the delta is a legal continuation and must stay.
+		const state = classifyJsonPrefix(partial);
+		if (state !== "prefix") return true;
+		return classifyJsonPrefix(partial + delta) === "invalid";
+	};
+	const hasLaterUnfinishedFunctionCall = (start: number): boolean => {
+		for (let index = start + 1; index < openItemsInOrder.length; index++) {
+			const candidate = openItemsInOrder[index];
+			if (
+				candidate?.item.type === "function_call" &&
+				candidate.block.type === "toolCall" &&
+				!candidate.block[kStreamingArgumentsDone]
+			) {
+				return true;
+			}
+		}
+		return false;
+	};
+
+	let identifierlessFunctionDeltaTarget: StreamingItem | undefined;
+
+	const lookupOpenToolCallAlias = (
+		event: { output_index?: number; item_id?: string },
+		type: "function_call" | "custom_tool_call",
+	): StreamingItem | undefined => {
+		if (typeof event.output_index === "number") {
+			const byOutputIndex = openItemsByOutputIndex.get(event.output_index);
+			if (byOutputIndex) return byOutputIndex;
+			// A lossy host (llama.cpp/Ollama, issue #2015) can omit `output_index` on
+			// `output_item.added` while still stamping the spec-required field on the
+			// delta. The index was never registered, so fall through to the prefixed
+			// alias / exact item-id maps instead of dropping to `lastOpenItem`.
+		}
+		if (event.item_id) {
+			// Prefixed call-id aliases share the same wire namespace as real call ids.
+			// Argument/input events can use the prefixed form, while final
+			// output_item.done events below use exact call ids; keep aliases in a
+			// separate map so a real `call_id: "fc_x"` cannot overwrite the alias
+			// for `call_id: "x"`.
+			const alias = openItemsByPrefixedCallId.get(event.item_id);
+			if (alias?.item.type === type) return alias;
+			const exact = openItemsByItemId.get(event.item_id);
+			if (exact) return exact;
+		}
+		return lookupOpenItem(event);
+	};
+	const lookupOpenFunctionCallItem = (event: {
+		output_index?: number;
+		item_id?: string;
+		delta?: unknown;
+	}): StreamingItem | undefined => {
+		if (hasOpenItemKey(event)) return lookupOpenToolCallAlias(event, "function_call");
+		const canContinuePreviousIdentifierlessDelta = typeof event.delta === "string";
+		if (canContinuePreviousIdentifierlessDelta && identifierlessFunctionDeltaTarget) {
+			const targetIndex = openItemsInOrder.indexOf(identifierlessFunctionDeltaTarget);
+			const target = targetIndex >= 0 ? openItemsInOrder[targetIndex] : undefined;
+			if (
+				target?.item.type === "function_call" &&
+				target.block.type === "toolCall" &&
+				!target.block[kStreamingArgumentsDone]
+			) {
+				const shouldAdvanceFromTarget =
+					shouldAdvanceIdentifierlessFunctionDelta(event, target) && hasLaterUnfinishedFunctionCall(targetIndex);
+				if (!shouldAdvanceFromTarget) return target;
+			} else {
+				identifierlessFunctionDeltaTarget = undefined;
+			}
+		}
+		let skippedStartedCandidate = false;
+		for (let index = 0; index < openItemsInOrder.length; index++) {
+			const candidate = openItemsInOrder[index]!;
+			if (
+				candidate.item.type === "function_call" &&
+				candidate.block.type === "toolCall" &&
+				!candidate.block[kStreamingArgumentsDone]
+			) {
+				if (shouldAdvanceIdentifierlessFunctionDelta(event, candidate) && hasLaterUnfinishedFunctionCall(index)) {
+					skippedStartedCandidate = true;
+					continue;
+				}
+				if (canContinuePreviousIdentifierlessDelta) identifierlessFunctionDeltaTarget = candidate;
+				return candidate;
+			}
+		}
+		if (skippedStartedCandidate && startsJsonObjectDelta(event.delta)) return undefined;
+		return lastOpenItem?.item.type === "function_call" ? lastOpenItem : undefined;
+	};
+	const closeOpenItem = (
+		outputIndex: number | undefined,
+		itemId: string | undefined,
+		entry: StreamingItem | undefined,
+		alternateItemKey?: string,
+		prefixedAlternateItemKey?: string,
+	): void => {
+		if (typeof outputIndex === "number") openItemsByOutputIndex.delete(outputIndex);
+		if (itemId) openItemsByItemId.delete(itemId);
+		if (alternateItemKey && alternateItemKey !== itemId) openItemsByItemId.delete(alternateItemKey);
+		if (
+			prefixedAlternateItemKey &&
+			prefixedAlternateItemKey !== itemId &&
+			prefixedAlternateItemKey !== alternateItemKey &&
+			openItemsByPrefixedCallId.get(prefixedAlternateItemKey) === entry
+		) {
+			openItemsByPrefixedCallId.delete(prefixedAlternateItemKey);
+		}
+		if (entry) {
+			const index = openItemsInOrder.indexOf(entry);
+			if (index >= 0) openItemsInOrder.splice(index, 1);
+		}
+		if (entry && identifierlessFunctionDeltaTarget === entry) identifierlessFunctionDeltaTarget = undefined;
+		if (entry && lastOpenItem === entry) lastOpenItem = null;
+	};
+	// Content blocks are append-only for the lifetime of the stream, so each
+	// block's index is stable once pushed. Map block → index to keep the
+	// per-delta contentIndex lookup O(1); the legacy linear scan would turn a
+	// long turn (many blocks × many deltas) quadratic and is what pegs the
+	// shared JS main thread on streaming-heavy sessions (issue #10605).
+	const contentIndexByBlock = new Map<object, number>();
+	const pushContentBlock = (block: ThinkingContent | TextContent | StreamingToolCallBlock | ToolCall): void => {
+		contentIndexByBlock.set(block, output.content.length);
+		output.content.push(block);
+	};
+	const contentIndexOf = (block: ThinkingContent | TextContent | StreamingToolCallBlock): number => {
+		const index = contentIndexByBlock.get(block);
+		// Blocks appended outside this closure (e.g. images via
+		// appendResponsesImageResult) never route through contentIndexOf, but
+		// keep the fallback so an unexpected lookup stays correct.
+		return index ?? output.content.indexOf(block);
+	};
+
+	let sawFirstToken = false;
+	// Whether the current stream produced a completed native `web_search_call`
+	// output item. A provider-hosted search that finishes without yield is
+	// progress evidence: the turn should pause for continuation rather than end.
+	let sawCompletedWebSearchCall = false;
+
+	for await (const event of openaiStream) {
+		const terminalEvent = getOpenAIResponsesTerminalEvent(event);
+		if (event.type === "response.created") {
+			output.responseId = event.response.id;
+		} else if (event.type === "response.output_item.added") {
+			if (!sawFirstToken) {
+				sawFirstToken = true;
+				options?.onFirstToken?.();
+			}
+			const item = event.item;
+			if (item.type === "reasoning") {
+				const block: ThinkingContent = { type: "thinking", thinking: "", itemId: item.id };
+				pushContentBlock(block);
+				registerOpenItem(event.output_index, item.id, { item, block });
+				stream.push({ type: "thinking_start", contentIndex: contentIndexOf(block), partial: output });
+			} else if (item.type === "message") {
+				const block: TextContent = {
+					type: "text",
+					text: "",
+					textSignature: encodeTextSignatureV1(item.id, item.phase ?? undefined),
+				};
+				pushContentBlock(block);
+				registerOpenItem(event.output_index, item.id, { item, block });
+				stream.push({ type: "text_start", contentIndex: contentIndexOf(block), partial: output });
+			} else if (item.type === "function_call") {
+				const block: StreamingToolCallBlock = {
+					type: "toolCall",
+					id: encodeResponsesToolCallId(item.call_id, item.id),
+					name: options?.toolNamesByWire?.get(item.name) ?? item.name,
+					arguments: {},
+					...(item.namespace ? { namespace: item.namespace } : {}),
+					[kStreamingPartialJson]: item.arguments || "",
+				};
+				pushContentBlock(block);
+				registerOpenItem(
+					event.output_index,
+					item.id,
+					{ item, block },
+					item.call_id,
+					prefixedFunctionCallItemKey(item.call_id),
+				);
+				stream.push({ type: "toolcall_start", contentIndex: contentIndexOf(block), partial: output });
+			} else if (item.type === "computer_call") {
+				const block: StreamingToolCallBlock = {
+					type: "toolCall",
+					id: encodeResponsesToolCallId(item.call_id, item.id),
+					name: "computer",
+					arguments: {},
+					providerMetadata: computerCallMetadata(item),
+					[kStreamingPartialJson]: "",
+				};
+				pushContentBlock(block);
+				registerOpenItem(event.output_index, item.id, { item, block }, item.call_id);
+				stream.push({ type: "toolcall_start", contentIndex: contentIndexOf(block), partial: output });
+			} else if (item.type === "custom_tool_call") {
+				const block: StreamingToolCallBlock = {
+					type: "toolCall",
+					id: encodeResponsesToolCallId(item.call_id, item.id),
+					// Preserve the raw wire name (e.g. `apply_patch`). The agent-loop
+					// dispatcher matches it against both `Tool.name` and
+					// `Tool.customWireName`, so this stays wire-accurate through
+					// history replay while still routing to the right handler.
+					name: item.name,
+					arguments: { input: item.input ?? "" },
+					customWireName: item.name,
+					...(item.namespace ? { namespace: item.namespace } : {}),
+					// Custom tools stream a raw string, but we reuse `partialJson` as the
+					// accumulation buffer so later code that inspects the field still works.
+					[kStreamingPartialJson]: item.input ?? "",
+				};
+				pushContentBlock(block);
+				registerOpenItem(
+					event.output_index,
+					item.id,
+					{ item, block },
+					item.call_id,
+					prefixedFunctionCallItemKey(item.call_id),
+				);
+				stream.push({ type: "toolcall_start", contentIndex: contentIndexOf(block), partial: output });
+			}
+		} else if (event.type === "response.reasoning_summary_part.added") {
+			const entry = lookupOpenItem(event);
+			if (entry?.item.type === "reasoning") appendReasoningSummaryPart(entry.item, event.part);
+		} else if (event.type === "response.reasoning_summary_text.delta") {
+			const entry = lookupOpenItem(event);
+			if (entry?.item.type === "reasoning" && entry.block.type === "thinking") {
+				appendReasoningSummaryTextDelta(
+					entry.item,
+					entry.block,
+					event.delta,
+					stream,
+					output,
+					contentIndexOf(entry.block),
+					event.summary_index,
+				);
+			}
+		} else if (event.type === "response.reasoning_summary_text.done") {
+			const entry = lookupOpenItem(event);
+			if (entry?.item.type === "reasoning" && entry.block.type === "thinking") {
+				applyReasoningSummaryTextDone(
+					entry.item,
+					entry.block,
+					event.text,
+					event.summary_index,
+					stream,
+					output,
+					contentIndexOf(entry.block),
+				);
+			}
+		} else if (event.type === "response.reasoning_summary_part.done") {
+			const entry = lookupOpenItem(event);
+			if (entry?.item.type === "reasoning" && entry.block.type === "thinking") {
+				appendReasoningSummaryPartDone(entry.item, entry.block, stream, output, contentIndexOf(entry.block));
+			}
+		} else if (event.type === "response.reasoning_text.delta") {
+			// Raw reasoning text delta from local providers that stream thinking
+			// directly rather than via the OpenAI summary tracking protocol.
+			const entry = lookupOpenItem(event);
+			const delta = optionalResponsesText(event.delta, "reasoning delta");
+			if (entry?.item.type === "reasoning" && entry.block.type === "thinking" && delta) {
+				entry.block.thinking += delta;
+				stream.push({
+					type: "thinking_delta",
+					contentIndex: contentIndexOf(entry.block),
+					delta,
+					partial: output,
+				});
+			}
+		} else if (event.type === "response.content_part.added") {
+			const entry = lookupOpenItem(event);
+			if (entry?.item.type === "message") appendMessageContentPart(entry.item, event.part);
+		} else if (event.type === "response.output_text.delta") {
+			const entry = lookupOpenItem(event);
+			if (entry?.item.type === "message" && entry.block.type === "text") {
+				appendMessageTextDelta(
+					entry.item,
+					entry.block,
+					event.delta,
+					stream,
+					output,
+					contentIndexOf(entry.block),
+					"output_text",
+				);
+			}
+		} else if (event.type === "response.refusal.delta") {
+			const entry = lookupOpenItem(event);
+			if (entry?.item.type === "message" && entry.block.type === "text") {
+				appendMessageTextDelta(
+					entry.item,
+					entry.block,
+					event.delta,
+					stream,
+					output,
+					contentIndexOf(entry.block),
+					"refusal",
+				);
+			}
+		} else if (event.type === "response.output_text.done" || event.type === "response.refusal.done") {
+			const entry = lookupOpenItem(event);
+			if (entry?.item.type === "message" && entry.block.type === "text") {
+				applyMessageTextDone(
+					entry.item,
+					entry.block,
+					event.type === "response.output_text.done" ? event.text : event.refusal,
+					stream,
+					output,
+					contentIndexOf(entry.block),
+					event.type === "response.output_text.done" ? "output_text" : "refusal",
+				);
+			}
+		} else if (event.type === "response.function_call_arguments.delta") {
+			const entry = lookupOpenFunctionCallItem(event);
+			if (entry?.item.type === "function_call" && entry.block.type === "toolCall") {
+				accumulateToolCallArgumentsDelta(entry.block, event.delta, stream, output, contentIndexOf(entry.block));
+			}
+		} else if (event.type === "response.function_call_arguments.done") {
+			const entry = lookupOpenFunctionCallItem(event);
+			const args = optionalResponsesText(event.arguments, "function call arguments");
+			if (entry?.item.type === "function_call" && entry.block.type === "toolCall" && args !== undefined) {
+				finalizeToolCallArgumentsDone(entry.block, args);
+				entry.block[kStreamingArgumentsDone] = true;
+			}
+		} else if (event.type === "response.custom_tool_call_input.delta") {
+			const entry = lookupOpenToolCallAlias(event, "custom_tool_call");
+			if (entry?.item.type === "custom_tool_call" && entry.block.type === "toolCall") {
+				accumulateCustomToolCallInputDelta(entry.block, event.delta, stream, output, contentIndexOf(entry.block));
+			}
+		} else if (event.type === "response.custom_tool_call_input.done") {
+			const entry = lookupOpenToolCallAlias(event, "custom_tool_call");
+			const input = optionalResponsesText(event.input, "custom tool input");
+			if (entry?.item.type === "custom_tool_call" && entry.block.type === "toolCall" && input !== undefined) {
+				finalizeCustomToolCallInputDone(entry.block, input);
+				entry.block[kStreamingArgumentsDone] = true;
+			}
+		} else if (event.type === "response.output_item.done") {
+			const item = cloneJsonTree(event.item);
+			const entry =
+				item.type === "function_call" || item.type === "custom_tool_call"
+					? lookupOpenItem({ output_index: event.output_index, item_id: item.id ?? item.call_id })
+					: lookupOpenItem({ output_index: event.output_index, item_id: item.id });
+			if (item.type === "reasoning") {
+				// Prefer the routed entry; the bare itemId find misroutes when ids are
+				// absent (`undefined === undefined` matches the FIRST thinking block) and
+				// misses entirely when the done-event id drifts from the added-event id.
+				const reasoningBlock =
+					entry?.block.type === "thinking"
+						? entry.block
+						: (output.content.find(b => b.type === "thinking" && (b as ThinkingContent).itemId === item.id) as
+								| ThinkingContent
+								| undefined);
+				if (reasoningBlock) {
+					reasoningBlock.thinking = finalizeReasoningThinking(item, reasoningBlock.thinking);
+					reasoningBlock.thinkingSignature = JSON.stringify(item);
+					settleReasoningSummary(item, reasoningBlock);
+					if (!output.upstreamModel) output.upstreamModel = servedModelFromOpenRouterReasoning(item);
+					stream.push({
+						type: "thinking_end",
+						contentIndex: contentIndexOf(reasoningBlock),
+						content: reasoningBlock.thinking,
+						partial: output,
+					});
+				}
+				closeOpenItem(event.output_index, item.id, entry);
+			} else if (item.type === "message") {
+				const block = entry?.block.type === "text" ? entry.block : undefined;
+				const text = finalizeMessageText(item, block?.text ?? "");
+				const textSignature = encodeTextSignatureV1(item.id, item.phase ?? undefined);
+				let contentIndex: number;
+				if (block) {
+					block.text = text;
+					block.textSignature = textSignature;
+					contentIndex = contentIndexOf(block);
+				} else {
+					// `output_item.added` never arrived (lossy proxy) — synthesize the
+					// block so the final message still carries the authoritative text.
+					const synthesized: TextContent = { type: "text", text, textSignature };
+					pushContentBlock(synthesized);
+					contentIndex = output.content.length - 1;
+				}
+				stream.push({ type: "text_end", contentIndex, content: text, partial: output });
+				closeOpenItem(event.output_index, item.id, entry);
+			} else if (item.type === "function_call") {
+				const block = entry?.block.type === "toolCall" ? entry.block : undefined;
+				// A blank `.done` leaves the delta buffer in place, so the item's own arguments still win.
+				const args =
+					block?.[kStreamingArgumentsDone] && block[kStreamingPartialJson] === undefined
+						? block.arguments
+						: item.arguments
+							? parseToolCallArguments(item.arguments)
+							: parseToolCallArguments(block?.[kStreamingPartialJson]);
+				item.arguments = replayableToolCallArguments(item.arguments, args);
+				const toolCall: ToolCall = {
+					type: "toolCall",
+					id: encodeResponsesToolCallId(item.call_id, item.id),
+					name: options?.toolNamesByWire?.get(item.name) ?? item.name,
+					arguments: args,
+					...(item.namespace ? { namespace: item.namespace } : {}),
+				};
+				let contentIndex: number;
+				if (block) {
+					// Persist the authoritative final args on the stored block. The
+					// throttled delta parser may have skipped the last partial parse,
+					// leaving block.arguments stale (often `{}`); the emitted toolCall
+					// and the persisted block must agree.
+					block.arguments = args;
+					if (item.namespace) block.namespace = item.namespace;
+					clearStreamingPartialJson(block);
+					contentIndex = contentIndexOf(block);
+				} else {
+					// `output_item.added` never arrived (lossy proxy) — synthesize the
+					// block so the final message carries the call the consumer was told
+					// completed (the agent loop executes tools from message.content).
+					pushContentBlock(toolCall);
+					contentIndex = output.content.length - 1;
+				}
+				closeOpenItem(event.output_index, item.id, entry, item.call_id, prefixedFunctionCallItemKey(item.call_id));
+				stream.push({ type: "toolcall_end", contentIndex, toolCall, partial: output });
+			} else if (item.type === "computer_call") {
+				const block = entry?.block.type === "toolCall" ? entry.block : undefined;
+				const toolCall: ToolCall = {
+					type: "toolCall",
+					id: encodeResponsesToolCallId(item.call_id, item.id),
+					name: "computer",
+					arguments: {},
+					providerMetadata: computerCallMetadata(item),
+				};
+				let contentIndex: number;
+				if (block) {
+					block.id = toolCall.id;
+					block.providerMetadata = toolCall.providerMetadata;
+					clearStreamingPartialJson(block);
+					contentIndex = contentIndexOf(block);
+				} else {
+					pushContentBlock(toolCall);
+					contentIndex = output.content.length - 1;
+				}
+				closeOpenItem(event.output_index, item.id, entry, item.call_id);
+				stream.push({ type: "toolcall_end", contentIndex, toolCall, partial: output });
+			} else if (item.type === "custom_tool_call") {
+				const block = entry?.block.type === "toolCall" ? entry.block : undefined;
+				// A supplied null/non-string terminal input is malformed; an empty or
+				// omitted one must not wipe input already completed through
+				// `custom_tool_call_input.done` (mirrors the function-call path's
+				// completed-args precedence).
+				const terminalInput = optionalResponsesText(item.input, "custom tool input");
+				const completedInput = block?.[kStreamingArgumentsDone]
+					? optionalResponsesText(block.arguments.input, "custom tool input")
+					: undefined;
+				const streamedInput = block?.[kStreamingPartialJson];
+				const rawInput =
+					terminalInput !== undefined && terminalInput.length > 0
+						? terminalInput
+						: completedInput !== undefined && completedInput.length > 0
+							? completedInput
+							: streamedInput !== undefined && streamedInput.length > 0
+								? streamedInput
+								: "";
+				const toolCall: ToolCall = {
+					type: "toolCall",
+					id: encodeResponsesToolCallId(item.call_id, item.id),
+					name: item.name,
+					arguments: { input: rawInput },
+					customWireName: item.name,
+					...(item.namespace ? { namespace: item.namespace } : {}),
+				};
+				let contentIndex: number;
+				if (block) {
+					// Persist the final input on the stored block and drop the transient
+					// accumulation buffer, mirroring the function_call branch above.
+					block.arguments = { input: rawInput };
+					if (item.namespace) block.namespace = item.namespace;
+					clearStreamingPartialJson(block);
+					contentIndex = contentIndexOf(block);
+				} else {
+					pushContentBlock(toolCall);
+					contentIndex = output.content.length - 1;
+				}
+				closeOpenItem(event.output_index, item.id, entry, item.call_id, prefixedFunctionCallItemKey(item.call_id));
+				stream.push({ type: "toolcall_end", contentIndex, toolCall, partial: output });
+			} else if (item.type === "web_search_call" && (item.status === undefined || item.status === "completed")) {
+				// A completed provider-hosted web search is progress evidence even when
+				// the model never surfaced an answer; the agent loop continues from it.
+				sawCompletedWebSearchCall = true;
+			} else if (item.type === "image_generation_call" && item.status === "completed" && item.result) {
+				appendResponsesImageResult(output, stream, item.result);
+			}
+			// After the branches so the native history item carries any normalization above.
+			options?.onOutputItemDone?.(item);
+		} else if (terminalEvent) {
+			const response = terminalEvent.response;
+			const shouldPromoteIncompleteToolUse =
+				response?.status === "incomplete" &&
+				response.incomplete_details?.reason === "max_output_tokens" &&
+				hasExecutableIncompleteResponsesToolCalls(output);
+			finalizePendingResponsesToolCalls(output);
+			if (response?.id) {
+				output.responseId = response.id;
+			}
+			populateResponsesUsageFromResponse(output, response?.usage);
+			calculateCost(model, output.usage, output.timestamp);
+			applyProviderReportedCost(model, output.usage, response?.usage);
+			output.serviceTier = applyOpenAIResponsesServiceTierCost(
+				model,
+				output.usage,
+				(response as { service_tier?: unknown } | undefined)?.service_tier,
+				options?.requestServiceTier,
+			);
+			output.stopReason = mapOpenAIResponsesStopReason(response?.status);
+			const nativeError = getNativeFinishReasonError(
+				(response as { native_finish_reason?: unknown } | undefined)?.native_finish_reason,
+			);
+			if (nativeError) {
+				throw new AIError.ProviderResponseError(
+					response?.id ? `${nativeError}; response ID: ${response.id}` : nativeError,
+					{ provider: model.provider, kind: "output" },
+				);
+			}
+			if (response?.status === "failed" || response?.status === "cancelled") {
+				throwOpenAIResponsesEventError(event, output, model.provider);
+			}
+			if (response?.status === "incomplete" && response.incomplete_details?.reason === "content_filter") {
+				// A content-filtered turn is a failure, not a token-cap truncation —
+				// mapping it to "length" would route the agent loop into "shorten your
+				// output" recovery against a filtered prompt.
+				throw new AIError.ProviderResponseError("incomplete: content_filter", {
+					provider: model.provider,
+					kind: "content-blocked",
+				});
+			}
+			promoteResponsesToolUseStopReason(
+				output,
+				(response as { end_turn?: boolean } | undefined)?.end_turn,
+				shouldPromoteIncompleteToolUse,
+			);
+			// A completed provider-hosted web search that yielded no visible answer
+			// (no text, image, or client tool call) is progress, not a dead end:
+			// pause the turn so the agent loop re-samples with the search results
+			// instead of silently ending. Reasoning/native output items are preserved
+			// for replay. A search followed by visible output stays a normal stop.
+			if (sawCompletedWebSearchCall && output.stopReason === "stop" && !hasVisibleAssistantContent(output)) {
+				output.stopDetails = { type: "pause_turn" };
+			}
+			options?.onCompleted?.();
+			// `response.completed`/`response.incomplete`/`response.done` is the last event of a
+			// Responses stream. Stop pulling instead of waiting for the server to
+			// close the connection: misbehaving providers keep the socket open
+			// after the terminal event, which would park this loop until the idle
+			// watchdog converts an already-successful turn into a timeout error.
+			// Breaking unwinds the iterator chain (the consumer's `.return()`
+			// reaches the SDK stream), actively releasing the connection.
+			break;
+		} else if (event.type === "error") {
+			throwOpenAIResponsesEventError(event, output, model.provider);
+		} else if (event.type === "response.failed") {
+			throwOpenAIResponsesEventError(event, output, model.provider);
+>>>>>>> theirs — function `processResponsesStream` (T+F, confidence: medium)
 		}
 	}
 }
@@ -3760,7 +4901,7 @@ export function finalizePendingResponsesToolCalls(output: AssistantMessage): voi
 			pending.arguments =
 				pending.customWireName !== undefined
 					? { input: pending[kStreamingPartialJson] }
-					: parseStreamingJson(pending[kStreamingPartialJson]);
+					: parseToolCallArguments(pending[kStreamingPartialJson]);
 		}
 		clearStreamingPartialJson(pending);
 	}
@@ -4120,8 +5261,8 @@ const REPLAY_SANITIZED_ITEM_EXCLUDE_MAP = {
 };
 
 /**
- * Strict-prefix delta for stateful `previous_response_id` chaining (used by the
- * platform Responses provider and the Codex provider on both transports):
+ * Strict-prefix delta for stateful `previous_response_id` chaining, shared by
+ * standard Responses HTTP/WS and Codex WS:
  * returns the input items the current request appends beyond the previous
  * request's input plus the previous response's output items, or null when the
  * request options differ or history mutated (the chain must break). Per-turn
@@ -4129,9 +5270,9 @@ const REPLAY_SANITIZED_ITEM_EXCLUDE_MAP = {
  * comparison; codex-rs excludes it from the same check.
  */
 export function buildResponsesDeltaInput<TItem extends ResponseInputItem | InputItem>(
-	previous: { input?: TItem[] } | undefined,
+	previous: { input?: string | TItem[] | null } | undefined,
 	previousResponseItems: readonly TItem[] | undefined,
-	current: { input?: TItem[] },
+	current: { input?: string | TItem[] | null },
 	additionalTopLevelExcludeMap?: Readonly<Record<string, boolean>>,
 ): TItem[] | null {
 	if (!previous) return null;
@@ -4160,4 +5301,54 @@ export function buildResponsesDeltaInput<TItem extends ResponseInputItem | Input
 		}
 	}
 	return current.input.slice(index) as TItem[];
+}
+
+/** Stored HTTP responses and socket-local WS anchors use the same rejection vocabulary. */
+export function isOpenAIResponsesStalePreviousResponseError(error: unknown): boolean {
+	if (!error || typeof error !== "object") return false;
+	if ("code" in error && error.code === "previous_response_not_found") return true;
+	if (!("message" in error) || typeof error.message !== "string") return false;
+	return (
+		/previous[ _]?response/i.test(error.message) &&
+		/not[ _]?found|invalid|expired|stale|unsupported/i.test(error.message)
+	);
+}
+
+/** Preserve one error/usage mapping for ordinary processing and pre-generation validation negotiation. */
+export function throwOpenAIResponsesEventError(
+	event: ResponseStreamEvent,
+	output: AssistantMessage,
+	provider: string,
+): never {
+	const envelope = event as unknown as Record<string, unknown>;
+	if (event.type === "error") {
+		const error = isRecord(envelope.error) ? envelope.error : envelope;
+		const inBand = AIError.createInBandProviderError(event);
+		if (inBand) throw inBand;
+		throw new AIError.ProviderResponseError(
+			`Error Code ${error.code ?? "unknown"}: ${error.message ?? "no message"}`,
+			{ provider, kind: "output" },
+		);
+	}
+	const response = isRecord(envelope.response) ? envelope.response : undefined;
+	if (event.type === "response.failed") populateResponsesUsageFromResponse(output, event.response?.usage);
+	const statusDetails = isRecord(response?.status_details) ? response.status_details : undefined;
+	const error = isRecord(response?.error)
+		? response.error
+		: isRecord(statusDetails?.error)
+			? statusDetails.error
+			: undefined;
+	const details = isRecord(response?.incomplete_details) ? response.incomplete_details : undefined;
+	const inBand = details ? undefined : AIError.createInBandProviderError({ ...response, error });
+	if (inBand) throw inBand;
+	const message = error
+		? `${error.code || "unknown"}: ${error.message || "no message"}`
+		: details?.reason
+			? `incomplete: ${details.reason}`
+			: event.type !== "response.failed" &&
+				  typeof statusDetails?.reason === "string" &&
+				  statusDetails.reason.length > 0
+				? `status_details: ${statusDetails.reason}`
+				: "Unknown error (no error details in response)";
+	throw new AIError.ProviderResponseError(message, { provider, kind: "output" });
 }

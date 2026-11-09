@@ -7,6 +7,7 @@ export type {
 export type {
 	MnemotauMemoryEditOperation,
 	MnemotauMemoryEditOptions,
+	MnemopiSessionStateApi,
 	MnemotauMemoryEditResult,
 	MnemotauSessionState,
 	MnemotauSessionStateOptions,

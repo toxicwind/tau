@@ -30,6 +30,8 @@ import { join } from "node:path";
  * queued/planning until `tool_execution_start`, and only then delegate to the
  * wrapped tool's own renderer with the decoded inner args.
  */
+<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: `import type { AgentToolContext, AgentToolResult, AgentToolUpdat…` +1 more
 import type {
   AgentToolContext,
   AgentToolResult,
@@ -42,6 +44,16 @@ import {
   toolWireSchema,
   validateToolArguments,
 } from "@tau/tau-ai";
+=======
+import {
+	type AgentToolContext,
+	type AgentToolResult,
+	type AgentToolUpdateCallback,
+	type ToolLoadMode,
+	validateAgentToolArguments,
+} from "@oh-my-pi/pi-agent-core";
+import { type Tool as AiTool, jsonSchemaToTypeScript, toolWireSchema } from "@oh-my-pi/pi-ai";
+>>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tools/xdev.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { schemaDeclaresIntentField } from "../utils/tool-schema";
 import { stripXdUrlPrefix, XD_URL_PREFIX } from "@tau/tau-tui/tools/xd-url";
 import { truncateHeadBytes } from "@tau/tau-tui/tools/streaming-output";
@@ -101,19 +113,25 @@ export function isMountableUnderXdev(tool: {
 
 /** Dispatch metadata carried on write-tool details for renderer delegation. */
 export interface XdevDispatch {
-  tool: string;
-  mode: "help" | "execute";
-  /** Validated inner args, kept for renderer delegation on result rebuilds. */
-  args?: Record<string, unknown>;
-  /**
-   * Approval tier of the wrapped tool for {@link args} (`read` = no workspace
-   * mutation). Absent for `help` dispatches and calls whose tier could not be
-   * resolved. Consumed by the prewalk coordinator to skip read-only device
-   * calls when deciding the model hand-off (issue #7312).
-   */
-  tier?: ToolTier;
-  /** Details object returned by the wrapped tool, when executed. */
-  inner?: unknown;
+	tool: string;
+	mode: "help" | "execute";
+	/** Validated renderer args, projected where execution-only payloads are unnecessary. */
+	args?: Record<string, unknown>;
+	/**
+	 * Approval tier of the wrapped tool for {@link args} (`read` = no workspace
+	 * mutation). Absent for `help` dispatches and calls whose tier could not be
+	 * resolved. Consumed by the prewalk coordinator to skip read-only device
+	 * calls when deciding the model hand-off (issue #7312).
+	 */
+	tier?: ToolTier;
+	/**
+	 * The wrapped MCP tool declared itself read-only (`annotations.readOnlyHint`).
+	 * Captured at dispatch so the prewalk coordinator classifies the tool that ran,
+	 * not whatever a later MCP tool refresh put under its name.
+	 */
+	readOnlyHint?: true;
+	/** Details object returned by the wrapped tool, when executed. */
+	inner?: unknown;
 }
 
 function renderDocs(
@@ -143,13 +161,28 @@ function renderDocs(
  * Parse and validate a device write's JSON `content` against the wrapped
  * tool's wire schema. Strips a habitual top-level `i` (intent) unless the
  * schema declares one. Throws ToolError; schema-mismatch errors carry `docs()`
- * for repair.
+ * for repair. A device with `lenientArgValidation` receives the raw args on a
+ * schema mismatch instead — the same contract the agent loop and the eval
+ * tool bridge honor (`AgentTool.lenientArgValidation`) — so a tool that owns
+ * its own refusal/repair (e.g. `todo` inferring an omitted `op`) is never
+ * pre-empted by the host's generic wording plus the full docs. Lenience covers
+ * schema mismatch only: malformed JSON and non-object content still throw.
+ * Content is a model-written payload, so lenience strips forged
+ * `__parseError`/`__rawJson` sentinels (see `validateAgentToolArguments`).
  */
 function parseDeviceArgs(
+<<<<<<< ours — scope `declaration` in function `parseDeviceArgs` (S+F, confidence: low)
+// refused_by: statement_fold · collision: `device: AiTool,`
   device: AiTool,
   content: string,
   toolCallId: string,
   docs: () => string,
+=======
+	device: Tool,
+	content: string,
+	toolCallId: string,
+	docs: () => string,
+>>>>>>> theirs — scope `declaration`
 ): Record<string, unknown> {
   let parsed: unknown;
   try {
@@ -171,6 +204,8 @@ function parseDeviceArgs(
   };
   if ("i" in args && !schemaDeclaresIntentField(toolWireSchema(device)))
     delete args.i;
+<<<<<<< ours — scope `try {` in function `parseDeviceArgs` (S+F, confidence: low)
+// refused_by: statement_fold · collision: `return validateToolArguments(device, {` +5 more
   try {
     return validateToolArguments(device, {
       type: "toolCall",
@@ -184,6 +219,18 @@ function parseDeviceArgs(
       `Invalid args for ${XD_URL_PREFIX}${device.name}: ${message}\n\n${docs()}`,
     );
   }
+=======
+	try {
+		return validateAgentToolArguments(
+			device,
+			{ type: "toolCall", id: toolCallId, name: device.name, arguments: args },
+			"payload",
+		);
+	} catch (error) {
+		const message = error instanceof Error ? error.message : String(error);
+		throw new ToolError(`Invalid args for ${XD_URL_PREFIX}${device.name}: ${message}\n\n${docs()}`);
+	}
+>>>>>>> theirs — scope `try {`
 }
 
 /** One-line catalog summary for a mounted tool: `summary`, else first description line. */
@@ -250,16 +297,18 @@ const HELP_CONTENT_RE = /^\s*(\?|help)?\s*$/i;
 
 /** Shared tool state consumed by the `xd://` presentation layer. */
 export interface XdevState {
-  /** Canonical session tool map; direct and device dispatch read the same instances. */
-  readonly tools: Map<string, Tool>;
-  /** Ordered names currently presented as mounted devices. */
-  readonly mountedNames: Set<string>;
-  /** Names originating from built-in factories, used only for prompt presentation. */
-  readonly builtInNames: Set<string>;
-  /** Whether a name is active at the top level. */
-  readonly isActive: (name: string) => boolean;
-  /** Optional execution-only decorator, such as the ACP permission gate. */
-  decorateExecution?(tool: Tool): Tool;
+	/** Canonical session tool map; direct and device dispatch read the same instances. */
+	readonly tools: Map<string, Tool>;
+	/** Ordered names currently presented as mounted devices. */
+	readonly mountedNames: Set<string>;
+	/** Names originating from built-in factories, used only for prompt presentation. */
+	readonly builtInNames: Set<string>;
+	/** Whether a name is active at the top level. */
+	readonly isActive: (name: string) => boolean;
+	/** Canonical renderer for a dispatched device name; mirrors {@link resolveXdevTool}. */
+	readonly resolve?: (name: string) => Tool | undefined;
+	/** Optional execution-only decorator, such as the ACP permission gate. */
+	decorateExecution?(tool: Tool): Tool;
 }
 
 /** Full-doc character budget for system-prompt mounted-device sections. */
@@ -356,12 +405,69 @@ export function xdevDocs(state: XdevState, name: string): string {
   return renderDocs(resolveRequiredXdevTool(state, name));
 }
 
+/** Mounted-device placement in the system prompt: inlined docs sections, then one-line catalog entries. */
+export interface XdevPromptDocs {
+	readonly sections: readonly string[];
+	/** Catalog summary for each device listed as a one-line entry, in presentation order. */
+	readonly catalog: ReadonlyMap<string, string>;
+}
+
+/**
+ * Place mounted devices under the configured prompt-doc policy and budgets.
+ * A device the policy does not inline, or whose docs exceed a cap, becomes a
+ * catalog entry.
+ */
+export function planXdevPromptDocs(
+	state: XdevState,
+	mode: XdevDocsMode = "inline",
+	inlinePatterns: readonly string[] = [],
+): XdevPromptDocs {
+	const sections: string[] = [];
+	const catalog = new Map<string, string>();
+	const inlineGlobs = compileInlineGlobs(inlinePatterns);
+	let used = 0;
+	for (const tool of listXdevTools(state)) {
+		const descriptionCap = state.builtInNames.has(tool.name) ? undefined : XDEV_EXTERNAL_DESCRIPTION_CAP;
+		if (shouldInlineXdevTool(state, tool, mode, inlineGlobs)) {
+			const docs = renderDocs(tool, "##", descriptionCap);
+			if (docs.length <= XDEV_DOCS_PER_DEVICE_CAP && used + docs.length <= XDEV_DOCS_TOTAL_BUDGET) {
+				used += docs.length;
+				sections.push(docs);
+				continue;
+			}
+		}
+		catalog.set(tool.name, promptCatalogSummary(tool, descriptionCap));
+	}
+	return { sections, catalog };
+}
+
+/**
+ * Render planned `xd://` prompt docs. Devices in `listedElsewhere` get no
+ * catalog line: the caller lists them itself, with their catalog summary.
+ */
+export function renderXdevPromptDocs(docs: XdevPromptDocs, listedElsewhere?: ReadonlySet<string>): string {
+	const lines: string[] = [];
+	for (const [name, summary] of docs.catalog) {
+		if (!listedElsewhere?.has(name)) lines.push(`- ${XD_URL_PREFIX}${name} — ${summary}`);
+	}
+	if (lines.length === 0) return docs.sections.join("\n\n");
+	const catalogSection = [
+		"## Additional devices (docs on demand)",
+		...lines,
+		"",
+		`Read ${XD_URL_PREFIX}<tool> for full docs + JSON schema before first use.`,
+	].join("\n");
+	return [...docs.sections, catalogSection].join("\n\n");
+}
+
 /** Docs + schema for mounted devices under the configured prompt-doc policy. */
 export function xdevDocsAll(
   state: XdevState,
   mode: XdevDocsMode = "inline",
   inlinePatterns: readonly string[] = [],
 ): string {
+<<<<<<< ours — function `xdevDocsAll (body partly extracted into planXdevPromptDocs, renderXdevPromptDocs)` (S+F, confidence: low)
+// refused_by: statement_fold · collision: `const sections: string[] = [];` +31 more
   const sections: string[] = [];
   const overflow: Tool[] = [];
   const inlineGlobs = compileInlineGlobs(inlinePatterns);
@@ -401,6 +507,9 @@ export function xdevDocsAll(
     );
   }
   return sections.join("\n\n");
+=======
+	return renderXdevPromptDocs(planXdevPromptDocs(state, mode, inlinePatterns));
+>>>>>>> theirs — function `xdevDocsAll (body partly extracted into planXdevPromptDocs, renderXdevPromptDocs)` (S+F, confidence: low)
 }
 
 /** Docs for selected mounted devices under the configured prompt-doc policy. */
@@ -477,6 +586,8 @@ export async function dispatchXdevTool(
       };
     }
 
+<<<<<<< ours — scope `try {` in function `dispatchXdevTool` (S+F, confidence: low)
+// refused_by: statement_fold · collision: `const validated = parseDeviceArgs(canonical as AiTool, content,…` +1 more
     const validated = parseDeviceArgs(
       canonical as AiTool,
       content,
@@ -536,4 +647,59 @@ export async function dispatchXdevTool(
       xdev,
     };
   }
+=======
+		const validated = parseDeviceArgs(canonical, content, toolCallId, () => renderDocs(canonical));
+		// Record the wrapped tool's approval tier so the prewalk coordinator can
+		// tell a read-only device call (e.g. `lsp` navigation) from a real
+		// workspace mutation without re-decoding the payload. Best-effort: a
+		// throwing approval leaves the tier absent (prewalk then declines to
+		// switch), unlike the write gate which fails closed to `exec`.
+		let tier: ToolTier | undefined;
+		try {
+			tier = resolveToolTier(canonical, validated);
+		} catch {
+			tier = undefined;
+		}
+		// PR creation renders only its operation and repository. Keep the body
+		// in the validated execution input, not a second copy in result details.
+		const renderArgs =
+			name === "github" && validated.op === "pr_create" ? { op: validated.op, repo: validated.repo } : validated;
+		xdev = { ...xdev, args: renderArgs, tier };
+		if ("mcpReadOnlyHint" in canonical && canonical.mcpReadOnlyHint === true) xdev.readOnlyHint = true;
+		const innerOnUpdate: AgentToolUpdateCallback | undefined = onUpdate
+			? partial =>
+					onUpdate({
+						content: partial.content,
+						details: { xdev: { ...xdev, inner: partial.details } },
+						isError: partial.isError,
+					})
+			: undefined;
+		const executable = state.decorateExecution?.(canonical) ?? canonical;
+		const executionContext = context
+			? {
+					...context,
+					xdevTierResolved: (effectiveTier: ToolTier) => {
+						xdev = { ...xdev, tier: effectiveTier };
+					},
+				}
+			: undefined;
+		const result = await executable.execute(toolCallId, validated as never, signal, innerOnUpdate, executionContext);
+		return { result, xdev: { ...xdev, inner: result.details } };
+	} catch (error) {
+		if (
+			error instanceof ToolAbortError ||
+			signal?.aborted ||
+			(error instanceof Error && error.name === "AbortError")
+		) {
+			throw error;
+		}
+		return {
+			result: {
+				content: [{ type: "text", text: renderError(error) }],
+				isError: true,
+			},
+			xdev,
+		};
+	}
+>>>>>>> theirs — scope `try {`
 }

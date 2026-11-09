@@ -20,6 +20,8 @@
 //! [`TtyWriter::dead`] and drops all queued output; the JS side maps that to
 //! its terminal-disconnected teardown.
 
+#[cfg(unix)]
+use std::os::fd::{BorrowedFd, IntoRawFd};
 use std::{
 	sync::{
 		Arc,
@@ -78,16 +80,42 @@ fn write_all_with(
 }
 
 #[cfg(unix)]
+fn wait_writable(fd: i32) -> std::io::Result<()> {
+	let mut pollfd = libc::pollfd { fd, events: libc::POLLOUT, revents: 0 };
+	loop {
+		// A child can change O_NONBLOCK on a shared open file description;
+		// backpressure is not a dead terminal. SAFETY: pollfd points to one
+		// valid element; TtyWriter owns fd until the pump stops.
+		let result = unsafe { libc::poll(&mut pollfd, 1, -1) };
+		if result > 0 {
+			if pollfd.revents & libc::POLLNVAL != 0 {
+				return Err(std::io::Error::from_raw_os_error(libc::EBADF));
+			}
+			return Ok(());
+		}
+		let err = std::io::Error::last_os_error();
+		if err.kind() != std::io::ErrorKind::Interrupted {
+			return Err(err);
+		}
+	}
+}
+
+#[cfg(unix)]
 fn write_all(fd: i32, buf: &[u8], on_progress: impl FnMut(usize)) -> std::io::Result<()> {
 	write_all_with(
-		|chunk| {
+		|chunk| loop {
 			// SAFETY: `chunk` is a valid initialized slice; `fd` is owned by
 			// the writer (dup'd at construction) and stays open until drop.
 			let rc = unsafe { libc::write(fd, chunk.as_ptr().cast(), chunk.len()) };
-			if rc < 0 {
-				return Err(std::io::Error::last_os_error());
+			if rc >= 0 {
+				break Ok(rc as usize);
 			}
-			Ok(rc as usize)
+			let err = std::io::Error::last_os_error();
+			if err.kind() == std::io::ErrorKind::WouldBlock {
+				wait_writable(fd)?;
+				continue;
+			}
+			break Err(err);
 		},
 		buf,
 		on_progress,
@@ -139,9 +167,13 @@ fn pump_loop(fd: i32, inner: &Inner) {
 
 /// Dedicated writer thread for one terminal fd.
 ///
-/// Constructed by the TUI's `ProcessTerminal` around stdout. The fd is
-/// `dup(2)`'d at construction and closed on drop, so later manipulation of the
-/// original descriptor does not affect the pump.
+/// Duplicated (close-on-exec) at construction and closed on drop. The
+/// duplicate keeps the pump's fd alive if the original is closed or replaced;
+/// file-status flags such as `O_NONBLOCK` are shared and handled by polling for
+/// `POLLOUT`. Close-on-exec keeps the terminal out of every child the process
+/// spawns without explicit fd handling (`std::process::Command`, gitoxide
+/// filter drivers), which could otherwise read the user's keystrokes and
+/// terminal replies through it.
 #[napi]
 pub struct TtyWriter {
 	inner:  Arc<Inner>,
@@ -158,14 +190,12 @@ impl TtyWriter {
 	pub fn new(fd: i32) -> Result<Self> {
 		#[cfg(unix)]
 		{
-			// SAFETY: dup on a caller-provided fd; a negative result is handled.
-			let owned = unsafe { libc::dup(fd) };
-			if owned < 0 {
-				return Err(Error::from_reason(format!(
-					"dup({fd}) failed: {}",
-					std::io::Error::last_os_error()
-				)));
-			}
+			// SAFETY: the caller's fd stays open for this call; the borrow only
+			// lives long enough to duplicate it.
+			let owned = unsafe { BorrowedFd::borrow_raw(fd) }
+				.try_clone_to_owned()
+				.map_err(|err| Error::from_reason(format!("duplicating fd {fd} failed: {err}")))?
+				.into_raw_fd();
 			let inner = Arc::new(Inner {
 				back:    Mutex::new(Vec::new()),
 				pending: AtomicUsize::new(0),
@@ -343,6 +373,29 @@ mod tests {
 	}
 
 	#[test]
+	fn spawned_children_do_not_inherit_the_writer_fd() {
+		let (read_fd, write_fd) = pipe_pair();
+		let mut writer = TtyWriter::new(write_fd).unwrap();
+		let open_in_child = |fd: i32| {
+			std::process::Command::new("/bin/sh")
+				.arg("-c")
+				.arg(format!("test -e /dev/fd/{fd}"))
+				.status()
+				.unwrap()
+				.success()
+		};
+		// The caller's pipe end lacks close-on-exec, so the probe sees it.
+		assert!(open_in_child(write_fd));
+		assert!(!open_in_child(writer.fd));
+		writer.stop(1_000);
+		// SAFETY: closing test-owned fds.
+		unsafe {
+			libc::close(read_fd);
+			libc::close(write_fd);
+		}
+	}
+
+	#[test]
 	fn writes_in_order_and_drains() {
 		let (read_fd, write_fd) = pipe_pair();
 		let mut writer = TtyWriter::new(write_fd).unwrap();
@@ -360,6 +413,56 @@ mod tests {
 			libc::close(read_fd);
 			libc::close(write_fd);
 		}
+	}
+
+	#[test]
+	fn nonblocking_writer_waits_for_drain_instead_of_dying() {
+		let (read_fd, write_fd) = pipe_pair();
+		let mut writer = TtyWriter::new(write_fd).unwrap();
+		// Set the flag after construction to exercise the pump's dup of the same
+		// open file description. SAFETY: write_fd remains open until the
+		// writer stops; this only reads its flags.
+		let flags = unsafe { libc::fcntl(write_fd, libc::F_GETFL) };
+		assert!(flags >= 0);
+		// SAFETY: write_fd remains open; this simulates an inherited child
+		// changing the shared flags.
+		assert_eq!(unsafe { libc::fcntl(write_fd, libc::F_SETFL, flags | libc::O_NONBLOCK) }, 0);
+		let total = 512 * 1024;
+		push(&writer, &vec![b'x'; total]);
+
+		let deadline = Instant::now() + Duration::from_secs(2);
+		loop {
+			let pending = writer.pending();
+			assert!(!writer.dead(), "temporary backpressure killed the terminal writer");
+			if pending > 0 && pending < total as u32 {
+				break;
+			}
+			assert!(Instant::now() < deadline, "pump made no write progress");
+			std::thread::sleep(Duration::from_millis(10));
+		}
+
+		let reader = std::thread::spawn(move || {
+			let mut buf = [0u8; 64 * 1024];
+			let mut received = 0usize;
+			while received < total {
+				// SAFETY: this thread owns read_fd and buf is valid writable
+				// storage.
+				let n = unsafe { libc::read(read_fd, buf.as_mut_ptr().cast(), buf.len()) };
+				if n <= 0 {
+					break;
+				}
+				received += n as usize;
+			}
+			// SAFETY: this thread no longer accesses read_fd.
+			unsafe { libc::close(read_fd) };
+			received
+		});
+		assert!(writer.flush_sync(5_000));
+		assert!(!writer.dead());
+		writer.stop(1_000);
+		// SAFETY: the pump has stopped and no longer accesses write_fd.
+		unsafe { libc::close(write_fd) };
+		assert_eq!(reader.join().unwrap(), total);
 	}
 
 	#[test]

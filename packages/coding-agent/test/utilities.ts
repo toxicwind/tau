@@ -80,7 +80,14 @@ export function assistantMsg(text: string) {
  * Use this for e2e tests that need real LLM calls.
  */
 export async function createTestSession(options: TestSessionOptions = {}): Promise<TestSessionContext> {
+<<<<<<< ours — function `createTestSession` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 	const tempDir = path.join(os.tmpdir(), `tau-test-${Snowflake.next()}`);
+=======
+	const tempDir = path.join(os.tmpdir(), `omp-test-${Snowflake.next()}`);
+	// Interactive editor input must not contact the developer's global text-predict daemon.
+	const settingsOverrides = { "spelling.autocomplete": "off", ...options.settingsOverrides };
+>>>>>>> theirs — function `createTestSession` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/utilities.ts' for per-hunk detail, 'weave check' to verify your resolution
 	fs.mkdirSync(tempDir, { recursive: true });
 
 	const toolSession: ToolSession = {
@@ -88,7 +95,7 @@ export async function createTestSession(options: TestSessionOptions = {}): Promi
 		hasUI: false,
 		getSessionFile: () => null,
 		getSessionSpawns: () => "*",
-		settings: Settings.isolated(options.settingsOverrides),
+		settings: Settings.isolated(settingsOverrides),
 	};
 	const tools = await createTools(toolSession);
 
@@ -104,8 +111,10 @@ export async function createTestSession(options: TestSessionOptions = {}): Promi
 		},
 	});
 
-	const sessionManager = options.inMemory ? SessionManager.inMemory() : SessionManager.create(tempDir, tempDir);
-	const settings = Settings.isolated(options.settingsOverrides);
+	const sessionManager = options.inMemory
+		? SessionManager.inMemory()
+		: SessionManager.create(tempDir, SessionManager.getDefaultSessionDir(tempDir, path.join(tempDir, "agent")));
+	const settings = Settings.isolated(settingsOverrides);
 
 	const authStorage = await AuthStorage.create(path.join(tempDir, "testauth.db"));
 	const modelRegistry = new ModelRegistry(authStorage, path.join(tempDir, "models.yml"));

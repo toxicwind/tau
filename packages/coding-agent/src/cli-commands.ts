@@ -38,6 +38,11 @@ export const commands: CommandEntry[] = [
 		help: commandHelp.acpHelp,
 	},
 	{
+		name: "auth",
+		load: () => import("./commands/auth").then(m => m.default),
+		help: commandHelp.authHelp,
+	},
+	{
 		name: "auth-broker",
 		load: () => import("./commands/auth-broker").then(m => m.default),
 		help: commandHelp.authBrokerHelp,
@@ -51,6 +56,11 @@ export const commands: CommandEntry[] = [
 		name: "agents",
 		load: () => import("./commands/agents").then(m => m.default),
 		help: commandHelp.agentsHelp,
+	},
+	{
+		name: "anonymize",
+		load: () => import("./commands/anonymize").then(m => m.default),
+		help: commandHelp.anonymizeHelp,
 	},
 	{
 		name: "bench",
@@ -182,6 +192,11 @@ export const commands: CommandEntry[] = [
 		help: commandHelp.pluginHelp,
 	},
 	{
+		name: "predict",
+		load: () => import("./commands/predict").then(m => m.default),
+		help: commandHelp.predictHelp,
+	},
+	{
 		name: "ps",
 		load: () => import("./commands/ps").then(m => m.default),
 		help: commandHelp.psHelp,
@@ -207,6 +222,11 @@ export const commands: CommandEntry[] = [
 		help: commandHelp.shareHelp,
 	},
 	{
+		name: "session",
+		load: () => import("./commands/session").then(m => m.default),
+		help: commandHelp.sessionHelp,
+	},
+	{
 		name: "setup",
 		load: () => import("./commands/setup").then(m => m.default),
 		help: commandHelp.setupHelp,
@@ -215,6 +235,23 @@ export const commands: CommandEntry[] = [
 		name: "shell",
 		load: () => import("./commands/shell").then(m => m.default),
 		help: commandHelp.shellHelp,
+	},
+	// `cli.ts` runs these before the command framework (raw argv passthrough);
+	// the entries list them in `omp --help` and the completions.
+	{
+		name: "zsh",
+		load: () => import("./commands/native-shell").then(m => m.Zsh),
+		help: commandHelp.nativeShellHelp("zsh"),
+	},
+	{
+		name: "bash",
+		load: () => import("./commands/native-shell").then(m => m.Bash),
+		help: commandHelp.nativeShellHelp("bash"),
+	},
+	{
+		name: "sh",
+		load: () => import("./commands/native-shell").then(m => m.Sh),
+		help: commandHelp.nativeShellHelp("sh"),
 	},
 	{
 		name: "read",
@@ -329,7 +366,12 @@ const RESERVED_TOP_LEVEL_WORDS: Record<string, string> = {
 	discover:
 		'`tau discover` is not a top-level command. Use `tau plugin discover [marketplace]` to browse available plugins, or run `tau launch discover` if you meant to send "discover" as a prompt.',
 	upgrade:
+<<<<<<< ours — scope `upgrade` in variable `RESERVED_TOP_LEVEL_WORDS` (F, confidence: medium)
+// refused_by: container_member · collision: `'`omp upgrade` is not a top-level command. Use `omp plugin upgr…`
 		'`tau upgrade` is not a top-level command. Use `tau plugin upgrade [name@marketplace]` to upgrade plugins, or run `tau launch upgrade` if you meant to send "upgrade" as a prompt.',
+=======
+		'`omp upgrade` is not a top-level command. Use `omp plugin upgrade [name]` to upgrade plugins, or run `omp launch upgrade` if you meant to send "upgrade" as a prompt.',
+>>>>>>> theirs — scope `upgrade` · weave: run 'weave explain packages/coding-agent/src/cli-commands.ts' for per-hunk detail, 'weave check' to verify your resolution
 	enable:
 		'`tau enable` is not a top-level command. Use `tau plugin enable <name@marketplace>` to enable a plugin, or run `tau launch enable` if you meant to send "enable" as a prompt.',
 	disable:

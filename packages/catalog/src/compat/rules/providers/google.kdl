@@ -2,6 +2,7 @@
 
 provider "google" {
 	web-search "gemini"
+	image-count-budget 200
 
 	class "unknown" {
 		thinking-efforts "minimal" "low" "medium" "high"

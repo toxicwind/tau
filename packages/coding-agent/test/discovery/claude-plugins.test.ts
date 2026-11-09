@@ -2,6 +2,8 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
+<<<<<<< ours — imports `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import { __resetDirsFromEnvForTests, removeWithRetries, setAgen…`
 import { clearCache as clearFsCache } from "tau/capability/fs";
 import { disableUserSource, enableProvider, loadCapability } from "tau/capability";
 import { clearClaudePluginRootsCache, listClaudePluginRoots, parseClaudePluginsRegistry } from "tau/discovery/helpers";
@@ -10,29 +12,22 @@ import { loadSkills } from "tau/extensibility/skills";
 import { loadAllExtensions } from "tau/modes/components/extensions/state-manager";
 import { __resetDirsFromEnvForTests, removeWithRetries, setAgentDir } from "@tau/tau-utils";
 import "tau/discovery/claude-plugins";
+=======
+import { clearCache as clearFsCache } from "@oh-my-pi/pi-coding-agent/capability/fs";
+import { disableUserSource, enableProvider, loadCapability } from "@oh-my-pi/pi-coding-agent/capability";
+import {
+	clearClaudePluginRootsCache,
+	listClaudePluginRoots,
+	parseClaudePluginsRegistry,
+} from "@oh-my-pi/pi-coding-agent/discovery/helpers";
+import type { Skill } from "@oh-my-pi/pi-coding-agent/capability/skill";
+import { loadSkills } from "@oh-my-pi/pi-coding-agent/extensibility/skills";
+import { loadAllExtensions } from "@oh-my-pi/pi-coding-agent/modes/components/extensions/state-manager";
+import { __resetDirsFromEnvForTests, logger, removeWithRetries, setAgentDir } from "@oh-my-pi/pi-utils";
+import "@oh-my-pi/pi-coding-agent/discovery/claude-plugins";
+>>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/discovery/claude-plugins.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 describe("parseClaudePluginsRegistry", () => {
-	test("parses valid registry", () => {
-		const content = JSON.stringify({
-			version: 2,
-			plugins: {
-				"my-plugin@marketplace": [
-					{
-						scope: "user",
-						installPath: "/path/to/plugin",
-						version: "1.0.0",
-						installedAt: "2025-01-01T00:00:00Z",
-						lastUpdated: "2025-01-01T00:00:00Z",
-					},
-				],
-			},
-		});
-
-		const result = parseClaudePluginsRegistry(content);
-		expect(result?.version).toBe(2);
-		expect(result?.plugins["my-plugin@marketplace"]).toHaveLength(1);
-	});
-
 	test("returns null for invalid JSON", () => {
 		expect(parseClaudePluginsRegistry("not json")).toBeNull();
 	});
@@ -116,6 +111,39 @@ describe("listClaudePluginRoots", () => {
 		const result = await listClaudePluginRoots(tempDir);
 		expect(result.roots).toEqual([]);
 		expect(result.warnings).toEqual([]);
+	});
+
+	test("logs registry warnings once per cached computation", async () => {
+		const pluginsDir = path.join(tempDir, ".claude", "plugins");
+		await fs.mkdir(pluginsDir, { recursive: true });
+		const registryPath = path.join(pluginsDir, "installed_plugins.json");
+		await fs.writeFile(registryPath, "not json");
+		const warnSpy = vi.spyOn(logger, "warn").mockImplementation(() => {});
+
+		const first = await listClaudePluginRoots(tempDir);
+		const second = await listClaudePluginRoots(tempDir);
+
+		expect(first.warnings).toEqual([`Failed to parse Claude Code plugin registry: ${registryPath}`]);
+		expect(second).toBe(first);
+		expect(warnSpy.mock.calls.filter(([message]) => message === first.warnings[0])).toHaveLength(1);
+	});
+
+	test("logs registry warnings once for concurrent callers", async () => {
+		const pluginsDir = path.join(tempDir, ".claude", "plugins");
+		await fs.mkdir(pluginsDir, { recursive: true });
+		const registryPath = path.join(pluginsDir, "installed_plugins.json");
+		await fs.writeFile(registryPath, "not json");
+		const warnSpy = vi.spyOn(logger, "warn").mockImplementation(() => {});
+
+		const results = await Promise.all([
+			listClaudePluginRoots(tempDir),
+			listClaudePluginRoots(tempDir),
+			listClaudePluginRoots(tempDir),
+		]);
+
+		const message = `Failed to parse Claude Code plugin registry: ${registryPath}`;
+		for (const result of results) expect(result.warnings).toEqual([message]);
+		expect(warnSpy.mock.calls.filter(([m]) => m === message)).toHaveLength(1);
 	});
 
 	test("parses plugin with user scope", async () => {
@@ -512,8 +540,63 @@ describe("listClaudePluginRoots", () => {
 		expect(second.roots.map(root => root.id)).toEqual(["second@market"]);
 	});
 
+<<<<<<< ours — test_suite `listClaudePluginRoots` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 	test("loads TAU user skills without opting into foreign Claude skills", async () => {
 		const tauPluginPath = path.join(tempDir, "plugins", "tau-owned");
+=======
+	test("derives the namespace from the plugin name, not the Claude cache version segment (#12151)", async () => {
+		// Claude Code's own plugin cache keeps marketplace/plugin/version as
+		// three separate path segments (`.../cache/<marketplace>/<plugin>/<version>/skills/...`),
+		// unlike OMP's single joined `<marketplace>___<plugin>___<version>` cache
+		// directory. Deriving the namespace from the path segment owning `skills/`
+		// would read the shared version ("1.0.0" → "1-0-0") for both plugins here,
+		// colliding them together instead of keeping their own plugin identities.
+		const marketRoot = path.join(tempDir, ".claude", "plugins", "cache", "test-market");
+		const pluginARoot = path.join(marketRoot, "plugin-a", "1.0.0");
+		const pluginBRoot = path.join(marketRoot, "plugin-b", "1.0.0");
+		const ompRegistryPath = path.join(tempDir, ".omp", "plugins", "installed_plugins.json");
+
+		await Promise.all([
+			fs.mkdir(path.join(pluginARoot, "skills", "shared-skill"), { recursive: true }),
+			fs.mkdir(path.join(pluginBRoot, "skills", "shared-skill"), { recursive: true }),
+			fs.mkdir(path.dirname(ompRegistryPath), { recursive: true }),
+		]);
+		await Promise.all([
+			fs.writeFile(
+				path.join(pluginARoot, "skills", "shared-skill", "SKILL.md"),
+				"---\nname: shared-skill\ndescription: Plugin A's skill.\n---\nPlugin A body\n",
+			),
+			fs.writeFile(
+				path.join(pluginBRoot, "skills", "shared-skill", "SKILL.md"),
+				"---\nname: shared-skill\ndescription: Plugin B's skill.\n---\nPlugin B body\n",
+			),
+			fs.writeFile(
+				ompRegistryPath,
+				JSON.stringify({
+					version: 2,
+					plugins: {
+						"plugin-a@test-market": [{ scope: "user", installPath: pluginARoot, version: "1.0.0" }],
+						"plugin-b@test-market": [{ scope: "user", installPath: pluginBRoot, version: "1.0.0" }],
+					},
+				}),
+			),
+		]);
+
+		const { skills, warnings } = await loadSkills({ cwd: tempDir });
+		const names = skills
+			.map(skill => skill.name)
+			.filter(name => name === "shared-skill" || name.endsWith("/shared-skill"))
+			.sort();
+		// "plugin-a" is admitted first (bare); "plugin-b" is namespaced by its
+		// own plugin name, never by the version segment both share.
+		expect(names).toEqual(["plugin-b/shared-skill", "shared-skill"]);
+		expect(warnings.some(warning => warning.message.includes("1-0-0"))).toBe(false);
+	});
+
+	test("loads OMP user skills without opting into foreign Claude skills", async () => {
+		const ompPluginPath = path.join(tempDir, "plugins", "omp-owned");
+>>>>>>> theirs — test_suite `listClaudePluginRoots` (F, confidence: medium)
 		const claudePluginPath = path.join(tempDir, "plugins", "claude-owned");
 		const tauRegistryPath = path.join(tempDir, ".tau", "plugins", "installed_plugins.json");
 		const claudeRegistryPath = path.join(tempDir, ".claude", "plugins", "installed_plugins.json");

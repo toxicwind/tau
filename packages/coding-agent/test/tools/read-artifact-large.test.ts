@@ -71,8 +71,6 @@ describe("read tool large artifact handling", () => {
 		const result = await tool.execute("call-raw", { path: "artifact://0:raw" });
 		const output = getTextOutput(result);
 
-		expect(output).toContain("Unbounded raw read blocked for artifact://0");
-		expect(output).toContain("artifact://0:raw:1-3000");
 		// The notice must name the artifact file so it can be searched or copied.
 		// Only the directory prefix varies by host (a Windows temp dir sits under
 		// `%USERPROFILE%` and is displayed shortened), so match the path tail.
@@ -80,28 +78,25 @@ describe("read tool large artifact handling", () => {
 		expect(output).not.toContain("line-001");
 	});
 
-	it("streams bounded artifact reads without materializing the whole artifact", async () => {
+	it("streams bounded artifact reads and points large artifacts at paging and search workflows", async () => {
 		const result = await tool.execute("call-range", { path: "artifact://0:1-3" });
 		const output = getTextOutput(result);
 
 		expect(output).toContain("line-001");
 		expect(output).toContain("line-003");
-		expect(output).toContain("Artifact storage:");
-		expect(output).toContain("artifact://0:raw:N-M");
 		expect(output).not.toContain("line-400");
+		// A large artifact page surfaces its backing file for search/copy workflows.
+		expect(output).toMatch(/session[/\\]0\.mcp\.log/);
+		expect(result.details?.meta?.source).toEqual({ type: "internal", value: "artifact://0" });
 	});
 
 	it("keeps bounded raw artifact chunks verbatim (no workflow notice appended)", async () => {
 		const result = await tool.execute("call-raw-range", { path: "artifact://0:raw:1-2" });
 		const output = getTextOutput(result);
 
-		expect(output).toStartWith("line-001");
-		expect(output).toContain("line-002");
-		expect(output).not.toContain("line-400");
-		// Raw chunks must stay verbatim so copy/paste workflows do not eat the
-		// workflow notice into the artifact bytes.
-		expect(output).not.toContain("Artifact storage:");
-		expect(output).not.toContain("artifact://0:raw:N-M");
+		// Raw chunks stay verbatim so copy/paste workflows never absorb the notice.
+		expect(output.split("\n")).toEqual(largeArtifactText().split("\n").slice(0, 2));
+		expect(output).not.toMatch(/0\.mcp\.log/);
 	});
 
 	it("returns exactly the requested raw artifact range without context padding", async () => {
@@ -140,7 +135,12 @@ describe("read tool large artifact handling", () => {
 	it("reports an oversized selected line instead of sending a looping continuation selector", async () => {
 		await Bun.write(path.join(artifactDir, "0.mcp.log"), oversizedSelectedLineArtifact());
 
-		const result = await tool.execute("call-oversized-selected", { path: "artifact://0:2-2" });
+		// Uncapped, so the line is charged its full size rather than its column-cut display.
+		const uncapped = new ReadTool({
+			...makeSession(testDir),
+			settings: Settings.isolated({ "tools.outputMaxColumns": 0 }),
+		});
+		const result = await uncapped.execute("call-oversized-selected", { path: "artifact://0:2-2" });
 		const output = getTextOutput(result);
 
 		expect(output).toContain("leading-context");

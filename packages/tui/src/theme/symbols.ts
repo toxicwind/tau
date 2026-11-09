@@ -19,6 +19,7 @@ export type SymbolKey =
 	| "status.running"
 	| "status.shadowed"
 	| "status.aborted"
+	/** @deprecated Alias of `status.success`; kept so extensions and theme overrides that name it keep working. */
 	| "status.done"
 	// Navigation
 	| "nav.cursor"
@@ -38,6 +39,10 @@ export type SymbolKey =
 	// Context gauge boundaries
 	| "context.speculation"
 	| "context.compaction"
+	| "context.content"
+	| "context.messages"
+	| "context.buffer"
+	| "context.free"
 	// Box Drawing - Rounded
 	| "boxRound.topLeft"
 	| "boxRound.topRight"
@@ -98,13 +103,20 @@ export type SymbolKey =
 	| "icon.advisor"
 	| "icon.advisorClosed"
 	| "icon.time"
+<<<<<<< ours — scope `/**` in type `SymbolKey` (F, confidence: medium)
+// refused_by: statement_fold · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 	| "icon.tau"
 	| "icon.esc"
+=======
+	| "icon.omp"
+>>>>>>> theirs — scope `/**` · weave: run 'weave explain packages/tui/src/theme/symbols.ts' for per-hunk detail, 'weave check' to verify your resolution
 	| "icon.ghost"
 	| "icon.agents"
 	| "icon.job"
 	| "icon.cache"
 	| "icon.cacheMiss"
+	| "icon.cacheWarm"
+	| "icon.cacheCold"
 	| "icon.input"
 	| "icon.output"
 	| "icon.throughput"
@@ -130,6 +142,7 @@ export type SymbolKey =
 	| "icon.vimInsert"
 	| "icon.vimVisual"
 	| "icon.vimVisualLine"
+	| "icon.vimReplace"
 	// Slash-command type indicators (autocomplete); names without an existing
 	// icon.* equivalent — see SlashCommandIconName for the full vocabulary.
 	| "cmd.action"
@@ -208,6 +221,8 @@ export type SymbolKey =
 	| "advisor.rail"
 	// Skill callout rail (user turn that opened with a skill chip)
 	| "skill.rail"
+	// /btw steering-prompt rail (the <inject> block a side answer drafted)
+	| "btw.rail"
 	// Language/file type icons
 	| "lang.default"
 	| "lang.typescript"
@@ -285,7 +300,28 @@ export type SymbolKey =
 	| "tool.goal"
 	| "tool.irc"
 	| "tool.delete"
-	| "tool.move";
+	| "tool.move"
+	// Keyboard keys (rendered by formatKeyHint). `*Mac` variants replace the
+	// generic modifier on macOS, whose keycaps are labelled with ⌃ ⌥ ⌘.
+	| "key.ctrl"
+	| "key.ctrlMac"
+	| "key.shift"
+	| "key.alt"
+	| "key.altMac"
+	| "key.super"
+	| "key.superMac"
+	// Gap after a glyph modifier (`⌃⇧C`); nerd icons render too small to abut
+	| "key.joiner"
+	| "key.enter"
+	| "key.esc"
+	| "key.tab"
+	| "key.backspace"
+	| "key.delete"
+	| "key.space"
+	| "key.up"
+	| "key.down"
+	| "key.left"
+	| "key.right";
 
 export type SymbolMap = Record<SymbolKey, string>;
 /**
@@ -350,6 +386,7 @@ export type SlashCommandIconName =
 	| "jobs"
 	| "gauge"
 	| "context"
+	| "ghost"
 	| "agents"
 	| "branch"
 	| "tree"
@@ -378,7 +415,7 @@ const UNICODE_SYMBOLS: SymbolMap = {
 	"status.running": "⟳",
 	"status.shadowed": "○",
 	"status.aborted": "⏹",
-	"status.done": "•",
+	"status.done": "✔",
 	// Navigation
 	"nav.cursor": "❯",
 	"nav.selected": "➤",
@@ -397,6 +434,10 @@ const UNICODE_SYMBOLS: SymbolMap = {
 	// Context gauge boundaries
 	"context.speculation": "╎",
 	"context.compaction": "┃",
+	"context.content": "⛁",
+	"context.messages": "⛃",
+	"context.buffer": "⛝",
+	"context.free": "⛶",
 	// Box (rounded)
 	"boxRound.topLeft": "╭",
 	"boxRound.topRight": "╮",
@@ -459,12 +500,13 @@ const UNICODE_SYMBOLS: SymbolMap = {
 	"icon.advisorClosed": "🙈",
 	"icon.time": "⏱",
 	"icon.tau": "π",
-	"icon.esc": "⎋",
 	"icon.ghost": "👻",
 	"icon.agents": "👥",
 	"icon.job": "⚙",
 	"icon.cache": "💾",
 	"icon.cacheMiss": "⊘",
+	"icon.cacheWarm": "●",
+	"icon.cacheCold": "⊘",
 	"icon.input": "⤵",
 	"icon.output": "⤴",
 	"icon.throughput": "⚡",
@@ -492,6 +534,7 @@ const UNICODE_SYMBOLS: SymbolMap = {
 	"icon.vimInsert": "▎",
 	"icon.vimVisual": "◉",
 	"icon.vimVisualLine": "≡",
+	"icon.vimReplace": "▁",
 	// Slash-command type indicators
 	"cmd.action": "❯",
 	"cmd.prompt": "✎",
@@ -568,6 +611,7 @@ const UNICODE_SYMBOLS: SymbolMap = {
 	// Advisor note rail (heavier than md.quoteBorder so notes read as a distinct voice)
 	"advisor.rail": "▎",
 	"skill.rail": "▎",
+	"btw.rail": "▎",
 	// Language/file icons (emoji-centric, no Nerd Font required)
 	"lang.default": "⌘",
 	"lang.typescript": "🟦",
@@ -606,9 +650,11 @@ const UNICODE_SYMBOLS: SymbolMap = {
 	"lang.pdf": "📕",
 	"lang.archive": "🗜",
 	"lang.binary": "⚙",
-	// Composer attachment chips
-	"chip.image": "🖼",
-	"chip.video": "🎞",
+	// Composer attachment chips. These sit inside the editable buffer, so the caret column
+	// depends on their width: use Emoji_Presentation glyphs, which every terminal draws 2 cells
+	// wide. Text-presentation pictographs (🖼, 🎞) measure 1 cell but many terminals draw them 2.
+	"chip.image": "📷",
+	"chip.video": "🎬",
 	"chip.paste": "📄",
 	// Settings tabs
 	"tab.appearance": "🎨",
@@ -646,6 +692,25 @@ const UNICODE_SYMBOLS: SymbolMap = {
 	"tool.irc": "✉",
 	"tool.delete": "🗑",
 	"tool.move": "➜",
+	// Keys: word modifiers off macOS (⌃/⌥/⌘ name no key on a PC keyboard)
+	"key.ctrl": "Ctrl",
+	"key.ctrlMac": "⌃",
+	"key.shift": "⇧",
+	"key.alt": "Alt",
+	"key.altMac": "⌥",
+	"key.super": "Super",
+	"key.superMac": "⌘",
+	"key.joiner": "",
+	"key.enter": "⏎",
+	"key.esc": "⎋",
+	"key.tab": "⇥",
+	"key.backspace": "⌫",
+	"key.delete": "⌦",
+	"key.space": "␣",
+	"key.up": "↑",
+	"key.down": "↓",
+	"key.left": "←",
+	"key.right": "→",
 };
 
 const NERD_SYMBOLS: SymbolMap = {
@@ -670,8 +735,8 @@ const NERD_SYMBOLS: SymbolMap = {
 	"status.shadowed": "\uf10c",
 	// pick:  | alt:  
 	"status.aborted": "\uf04d",
-	// pick: • | alt: ● ·
-	"status.done": "•",
+	// alias of status.success
+	"status.done": "\uf00c",
 	// Navigation
 	// pick:  | alt:  
 	"nav.cursor": "\uf054",
@@ -702,6 +767,10 @@ const NERD_SYMBOLS: SymbolMap = {
 	// Context gauge boundaries — vector intersection starts async speculation; auto-fix applies compaction.
 	"context.speculation": "\u{f055d}",
 	"context.compaction": "\u{f0068}",
+	"context.content": "⛁",
+	"context.messages": "⛃",
+	"context.buffer": "⛝",
+	"context.free": "⛶",
 	// Box Drawing - Rounded (same as unicode)
 	// pick: ╭ | alt: ┌ ┏ ╔
 	"boxRound.topLeft": "╭",
@@ -822,8 +891,6 @@ const NERD_SYMBOLS: SymbolMap = {
 	// U+F03FF before (2ec52b8bdd) and reverted because it renders the wrong glyph;
 	// do not swap it again.
 	"icon.tau": "\u{f0d57}",
-	// pick: 󱊷 (nf-md-keyboard_esc) | alt: ⎋
-	"icon.esc": "\u{f12b7}",
 	// pick: 󰊠 (nf-md-ghost) | alt: 👻
 	"icon.ghost": "\u{f02a0}",
 	// pick:  | alt: 
@@ -834,6 +901,10 @@ const NERD_SYMBOLS: SymbolMap = {
 	"icon.cache": "\uf1c0",
 	// pick:  (fa-ban) | alt: ⊘
 	"icon.cacheMiss": "\uf05e",
+	// pick: 󱘲 (nf-md-database_outline) | alt: 
+	"icon.cacheWarm": "\u{f1632}",
+	// pick: 󱘱 (nf-md-database_off_outline): the warm glyph struck through | alt: 
+	"icon.cacheCold": "\u{f1631}",
 	// pick:  | alt:  →
 	"icon.input": "\uf090",
 	// pick:  | alt:  →
@@ -885,6 +956,8 @@ const NERD_SYMBOLS: SymbolMap = {
 	"icon.vimVisual": "\uf06e",
 	// pick:  (nf-fa-bars) | alt:  (nf-fa-align_left)
 	"icon.vimVisualLine": "\uf0c9",
+	// pick:  (nf-fa-exchange) | alt:  (nf-fa-repeat)
+	"icon.vimReplace": "\uf0ec",
 	// Slash-command type indicators
 	// pick:  (nf-cod-terminal) | alt:  (nf-fa-terminal)
 	"cmd.action": "\uea85",
@@ -1017,6 +1090,7 @@ const NERD_SYMBOLS: SymbolMap = {
 	// pick: ▎ | alt: ┃ │
 	"advisor.rail": "▎",
 	"skill.rail": "▎",
+	"btw.rail": "▎",
 	// Language icons (nerd font devicons)
 	"lang.default": "",
 	"lang.typescript": "\u{E628}",
@@ -1098,30 +1172,61 @@ const NERD_SYMBOLS: SymbolMap = {
 	"tool.irc": "\uF086",
 	"tool.delete": "\uf12d",
 	"tool.move": "\uf061",
+	// Keys: word modifiers off macOS; arrows stay Unicode (nerd arrows add nothing)
+	"key.ctrl": "Ctrl",
+	// pick: 󰘴 (nf-md-apple_keyboard_control) | alt: ⌃
+	"key.ctrlMac": "\u{f0634}",
+	// pick: 󰘶 (nf-md-apple_keyboard_shift) | alt: ⇧
+	"key.shift": "\u{f0636}",
+	"key.alt": "Alt",
+	// pick: 󰘵 (nf-md-apple_keyboard_option) | alt: ⌥
+	"key.altMac": "\u{f0635}",
+	"key.super": "Super",
+	// pick: 󰘳 (nf-md-apple_keyboard_command) | alt: ⌘
+	"key.superMac": "\u{f0633}",
+	"key.joiner": " ",
+	// pick: 󰌑 (nf-md-keyboard_return) | alt: ⏎
+	"key.enter": "\u{f0311}",
+	// pick: 󱊷 (nf-md-keyboard_esc) | alt: ⎋
+	"key.esc": "\u{f12b7}",
+	// pick: 󰌒 (nf-md-keyboard_tab) | alt: ⇥
+	"key.tab": "\u{f0312}",
+	// pick: 󰁮 (nf-md-backspace) | alt: ⌫
+	"key.backspace": "\u{f006e}",
+	// pick: 󰹾 (nf-md-backspace_reverse) | alt: ⌦
+	"key.delete": "\u{f0e7e}",
+	// pick: 󱁐 (nf-md-keyboard_space) | alt: ␣
+	"key.space": "\u{f1050}",
+	"key.up": "↑",
+	"key.down": "↓",
+	"key.left": "←",
+	"key.right": "→",
 };
 
 const ASCII_SYMBOLS: SymbolMap = {
 	// Status Indicators
-	"status.success": "[ok]",
-	"status.error": "[!!]",
+	"status.success": "[+]",
+	"status.error": "[-]",
 	"status.warning": "[!]",
 	"status.info": "[i]",
-	"status.pending": "[*]",
+	"status.pending": "[ ]",
 	"status.disabled": "[ ]",
 	"status.enabled": "[x]",
 	"status.running": "[~]",
 	"status.shadowed": "[/]",
-	"status.aborted": "[-]",
-	"status.done": "*",
+	"status.aborted": "[#]",
+	"status.done": "[+]",
 	// Navigation
 	"nav.cursor": ">",
 	"nav.selected": "->",
 	"nav.expand": "+",
 	"nav.collapse": "-",
 	"nav.back": "<-",
-	// Tree Connectors
-	"tree.branch": "|--",
-	"tree.last": "'--",
+	// Tree Connectors: branches are two columns, like the Unicode `├─`, so a
+	// branch and its space match the three-column continuation (`|  `) that
+	// child rows hang under.
+	"tree.branch": "|-",
+	"tree.last": "'-",
 	"tree.vertical": "|",
 	"tree.horizontal": "-",
 	"tree.hook": "`-",
@@ -1131,6 +1236,10 @@ const ASCII_SYMBOLS: SymbolMap = {
 	// Context gauge boundaries
 	"context.speculation": ":",
 	"context.compaction": "|",
+	"context.content": "#",
+	"context.messages": "@",
+	"context.buffer": "x",
+	"context.free": ".",
 	// Box Drawing - Rounded (ASCII fallback)
 	"boxRound.topLeft": "+",
 	"boxRound.topRight": "+",
@@ -1170,9 +1279,11 @@ const ASCII_SYMBOLS: SymbolMap = {
 	"sep.pipe": " | ",
 	// Icons
 	"icon.model": "[M]",
-	"icon.plan": "plan",
-	"icon.prewalk": "prewalk",
-	"icon.goal": "goal",
+	// Mode icons are always followed by their word label ("Plan", "Prewalk", "Goal");
+	// an ASCII word here would just repeat it, so render the label alone.
+	"icon.plan": "",
+	"icon.prewalk": "",
+	"icon.goal": "",
 	"icon.pause": "||",
 	"icon.loop": "loop",
 	"icon.folder": "[D]",
@@ -1192,7 +1303,6 @@ const ASCII_SYMBOLS: SymbolMap = {
 	"icon.advisorClosed": "(adv)",
 	"icon.time": "t:",
 	"icon.tau": "pi",
-	"icon.esc": "esc",
 	"icon.ghost": "@",
 	"icon.agents": "AG",
 	"icon.job": "bg",
@@ -1201,6 +1311,8 @@ const ASCII_SYMBOLS: SymbolMap = {
 	"icon.intelligence": "IQ",
 	"icon.cache": "cache",
 	"icon.cacheMiss": "!",
+	"icon.cacheWarm": "cache",
+	"icon.cacheCold": "!cache",
 	"icon.input": "in:",
 	"icon.host": "host",
 	"icon.session": "id",
@@ -1223,6 +1335,7 @@ const ASCII_SYMBOLS: SymbolMap = {
 	"icon.vimInsert": "I",
 	"icon.vimVisual": "V",
 	"icon.vimVisualLine": "L",
+	"icon.vimReplace": "R",
 	// Slash-command type indicators — unused; the icon column is disabled in ASCII mode
 	"cmd.action": "",
 	"cmd.prompt": "",
@@ -1296,6 +1409,7 @@ const ASCII_SYMBOLS: SymbolMap = {
 	"md.colorSwatch": "[]",
 	"advisor.rail": "|",
 	"skill.rail": "|",
+	"btw.rail": "|",
 	// Language icons (ASCII uses abbreviations)
 	"lang.default": "code",
 	"lang.typescript": "ts",
@@ -1374,6 +1488,24 @@ const ASCII_SYMBOLS: SymbolMap = {
 	"tool.irc": "#",
 	"tool.delete": "rm",
 	"tool.move": "mv",
+	"key.ctrl": "Ctrl",
+	"key.ctrlMac": "Ctrl",
+	"key.shift": "Shift",
+	"key.alt": "Alt",
+	"key.altMac": "Option",
+	"key.super": "Super",
+	"key.superMac": "Cmd",
+	"key.joiner": "+",
+	"key.enter": "Enter",
+	"key.esc": "Esc",
+	"key.tab": "Tab",
+	"key.backspace": "Backspace",
+	"key.delete": "Delete",
+	"key.space": "Space",
+	"key.up": "Up",
+	"key.down": "Down",
+	"key.left": "Left",
+	"key.right": "Right",
 };
 
 export const SYMBOL_PRESETS: Record<SymbolPreset, SymbolMap> = {
@@ -1394,7 +1526,8 @@ export const SPINNER_FRAMES: Record<SymbolPreset, Record<SpinnerType, string[]>>
 		activity: ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"],
 	},
 	ascii: {
-		status: ["|", "/", "-", "\\"],
+		// Bracketed like the `status.*` glyphs, so a settling call keeps its column width.
+		status: ["[|]", "[/]", "[-]", "[\\]"],
 		activity: ["-", "\\", "|", "/"],
 	},
 };

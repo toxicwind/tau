@@ -2,10 +2,22 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
+<<<<<<< ours
 import { getRecentSessions } from "tau/session/session-listing";
 import { SessionManager } from "tau/session/session-manager";
 import { resetSessionIndexForTests } from "tau/session/session-index";
 import { getConfigRootDir, removeSyncWithRetries, setAgentDir } from "@tau/tau-utils";
+||||||| base
+import { getRecentSessions } from "@oh-my-pi/pi-coding-agent/session/session-listing";
+import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
+import { resetSessionIndexForTests } from "@oh-my-pi/pi-coding-agent/session/session-index";
+import { getConfigRootDir, removeSyncWithRetries, setAgentDir } from "@oh-my-pi/pi-utils";
+=======
+import { getRecentSessions } from "@oh-my-pi/pi-coding-agent/session/session-listing";
+import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
+import { closeSessionIndex } from "@oh-my-pi/pi-coding-agent/session/session-index";
+import { getConfigRootDir, removeSyncWithRetries, setAgentDir } from "@oh-my-pi/pi-utils";
+>>>>>>> theirs · weave: run 'weave explain packages/coding-agent/test/session/recent-sessions-title-index.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { makeAssistantMessage } from "../session-manager/helpers";
 
 /**
@@ -25,11 +37,11 @@ describe("recent sessions title index", () => {
 		cwd = path.join(testAgentDir, "cwd");
 		fs.mkdirSync(cwd, { recursive: true });
 		setAgentDir(testAgentDir);
-		resetSessionIndexForTests();
+		closeSessionIndex();
 	});
 
 	afterEach(() => {
-		resetSessionIndexForTests();
+		closeSessionIndex();
 		if (originalAgentDir) {
 			setAgentDir(originalAgentDir);
 		} else {

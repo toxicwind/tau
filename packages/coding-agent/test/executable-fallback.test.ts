@@ -40,9 +40,19 @@ describe("executable fallback on unlinked binary", () => {
 
 	it("prefers original absolute launcher path over generic PATH match when executable", () => {
 		vi.spyOn(utils, "isCompiledBinary").mockReturnValue(true);
+<<<<<<< ours — scope `it("prefers original absolute launcher path o...` in test_suite `executable fallback on unlinked binary` (F, confidence: medium)
+// refused_by: statement_fold · collision: `const missingPath = "/opt/homebrew/Cellar/omp/18.1.8/bin/omp";` +2 more
 		const missingPath = "/opt/homebrew/Cellar/tau/18.1.8/bin/tau";
 		const originalLauncher = "/opt/homebrew/bin/tau";
 		const otherOmpInPath = "/usr/local/bin/tau";
+=======
+		// The launcher must be fully qualified on the host platform: on Windows a rooted path
+		// without a drive letter is drive-relative and intentionally not trusted.
+		const root = process.platform === "win32" ? "C:" : "";
+		const missingPath = `${root}/opt/homebrew/Cellar/omp/18.1.8/bin/omp`;
+		const originalLauncher = `${root}/opt/homebrew/bin/omp`;
+		const otherOmpInPath = `${root}/usr/local/bin/omp`;
+>>>>>>> theirs — scope `it("prefers original absolute launcher path o...` · weave: run 'weave explain packages/coding-agent/test/executable-fallback.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 		setProcessProp("execPath", missingPath);
 		setProcessProp("argv0", originalLauncher);

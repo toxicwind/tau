@@ -172,6 +172,8 @@ describe("windows native addon staging", () => {
 		}
 	});
 
+<<<<<<< ours — scope `it("falls back to the node_modules-only candi...` in test_suite `windows native addon staging`, deleted in theirs (S+F, confidence: low)
+// refused_by: statement_fold · collision: none (no common ancestor text)
 	it("falls back to the node_modules-only candidate list when staging is off", () => {
 		// Mirrors the non-Windows / workspace-dev path: same behavior as before
 		// the staging feature was introduced.
@@ -191,6 +193,8 @@ describe("windows native addon staging", () => {
 		expect(candidates).not.toContain(versionedBaseline);
 		expect(candidates).toContain(nodeModulesBaseline);
 	});
+=======
+>>>>>>> theirs — scope `it("falls back to the node_modules-only candi...` deleted in theirs · weave: run 'weave explain packages/natives/test/windows-staging.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 	it("removes only older version directories after the current native version loads", async () => {
 		const nativesDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-natives-cache-"));
@@ -221,6 +225,8 @@ describe("windows native addon staging", () => {
 	});
 });
 
+<<<<<<< ours — test_suite `pi-natives version sentinel` (S+F, confidence: low)
+// refused_by: modify_delete_guard · collision: none (no common ancestor text)
 describe("tau-natives version sentinel", () => {
 	it("Rust `js_name` matches the package version", async () => {
 		// The JS loader (`packages/natives/native/index.js`) computes its expected
@@ -234,3 +240,5 @@ describe("tau-natives version sentinel", () => {
 		expect(sentinelMatch?.[1]).toBe(expected);
 	});
 });
+=======
+>>>>>>> theirs — test_suite `pi-natives version sentinel` (S+F, confidence: low)

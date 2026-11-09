@@ -7,21 +7,27 @@
  * NAPI finalizer never runs in a shared address space.
  */
 import * as path from "node:path";
+import { getTinyModelsCacheDir, logger, setProcessName } from "@oh-my-pi/pi-utils";
 import type {
 	ProgressInfo,
 	TextGenerationPipeline,
 	TextGenerationStringOutput,
 	StoppingCriteria as TransformersStoppingCriteria,
+<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import { getTinyModelsCacheDir, logger, setProcessName } from "…`
 } from "@huggingface/transformers";
 import { getTinyModelsCacheDir, logger, setProcessName } from "@tau/tau-utils";
+=======
+} from "../subprocess/transformers-types";
+>>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/tiny/worker.ts' for per-hunk detail, 'weave check' to verify your resolution
 import {
 	errorMessage,
 	errorText,
 	formatOnnxRuntimeCudaDiagnostics,
-	getTransformersVersionSpec,
 	loadTransformersRuntime,
 	MemoizedRuntime,
 	sendProgress,
+	TRANSFORMERS_VERSION,
 	type TransformersRuntimeMetadata,
 } from "../subprocess/worker-runtime";
 import { renderTextChatTemplate } from "./completion-prompt";
@@ -81,7 +87,7 @@ function getTinyTitleRuntimeDir(): string {
 	return path.join(
 		path.dirname(getTinyModelsCacheDir()),
 		"tiny-title-runtime",
-		`transformers-${getTransformersVersionSpec().replace(/[^A-Za-z0-9._-]/g, "_")}`,
+		`transformers-${TRANSFORMERS_VERSION.replace(/[^A-Za-z0-9._-]/g, "_")}`,
 	);
 }
 

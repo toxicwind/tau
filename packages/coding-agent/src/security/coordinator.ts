@@ -1,10 +1,19 @@
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
+<<<<<<< ours — imports `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import { logger, prompt } from "@oh-my-pi/pi-utils";`
 import type { Model } from "@tau/tau-ai";
 import type { VcsGitRepo } from "@tau/tau-natives";
 import * as vcs from "@tau/tau-natives/vcs";
 import { logger, prompt } from "@tau/tau-utils";
 import type { AsyncJobManager } from "../async/job-manager";
+=======
+import type { Model } from "@oh-my-pi/pi-ai";
+import type { VcsGitRepo } from "@oh-my-pi/pi-natives";
+import * as vcs from "@oh-my-pi/pi-natives/vcs";
+import { logger, prompt, untilAborted } from "@oh-my-pi/pi-utils";
+import type { AsyncJobManagerApi } from "../async/job-manager";
+>>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/security/coordinator.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { ModelRegistry } from "../config/model-registry";
 import type { Settings } from "../config/settings";
 import type { ToolDefinition } from "../extensibility/extensions";
@@ -40,6 +49,10 @@ import {
 } from "./provenance";
 import { createSecurityPublicationTool } from "./publication";
 import { SecurityStore, writeSecurityBundleToDirectory } from "./store";
+
+import { cfgRetryFallbackChains, cfgRetryModelFallback, cfgRetryUsageAwareFallback } from "../session/settings";
+import { cfgSecurityEnabled } from "../tools/settings";
+import { cfgTaskAgentModelOverrides, cfgTaskAgentPrewalk } from "../task/settings";
 
 const SECURITY_SESSION_TOOLS = ["read", "grep", "glob", "lsp", "ast_grep", "task", "security_publish"];
 const SECURITY_WORKFLOW_FINGERPRINT = createSecurityWorkflowFingerprint([
@@ -80,7 +93,7 @@ export interface SecurityCoordinatorHost {
 	activeModel?: Model;
 	sessionId?: string;
 	agentId?: string;
-	asyncJobManager?: AsyncJobManager;
+	asyncJobManager?: AsyncJobManagerApi;
 }
 
 export interface SecurityPreflightInput {
@@ -104,6 +117,10 @@ export interface SecurityScanSession {
 		options?: { expandPromptTemplates?: boolean; synthetic?: boolean; userInitiated?: boolean },
 	): Promise<boolean>;
 	waitForIdle(): Promise<void>;
+	/** True while a background job owned by the session (e.g. a detached `task` worker) can still wake it. */
+	hasPendingAsyncWork(): boolean;
+	/** Waits for owned background jobs, delivers their results, and lets the woken turns finish. */
+	settleAsyncWork(): Promise<void>;
 	getSessionStats?(): {
 		tokens: {
 			input: number;
@@ -152,7 +169,7 @@ function toIsoTimestamp(now: () => Date): string {
 }
 
 function securityConfigSnapshot(settings: Settings): Record<string, boolean> {
-	return { securityEnabled: settings.get("security.enabled") };
+	return { securityEnabled: cfgSecurityEnabled.get(settings) };
 }
 
 function createOperationId(): string {
@@ -227,15 +244,15 @@ function initialBundle(
 async function createDefaultSecuritySession(input: SecurityScanSessionFactoryInput): Promise<AgentSession> {
 	const scanSettings = await input.host.settings.cloneForCwd(input.executionRoot);
 	const modelSelector = `${input.model.provider}/${input.model.id}`;
-	scanSettings.override("retry.modelFallback", false);
-	scanSettings.override("retry.usageAwareFallback", false);
-	scanSettings.override("retry.fallbackChains", {});
-	scanSettings.override("task.agentModelOverrides", {
-		...scanSettings.get("task.agentModelOverrides"),
+	cfgRetryModelFallback.override(scanSettings, false);
+	cfgRetryUsageAwareFallback.override(scanSettings, false);
+	cfgRetryFallbackChains.override(scanSettings, {});
+	cfgTaskAgentModelOverrides.override(scanSettings, {
+		...cfgTaskAgentModelOverrides.get(scanSettings),
 		"security-reviewer": modelSelector,
 	});
-	scanSettings.override("task.agentPrewalk", {
-		...scanSettings.get("task.agentPrewalk"),
+	cfgTaskAgentPrewalk.override(scanSettings, {
+		...cfgTaskAgentPrewalk.get(scanSettings),
 		"security-reviewer": "off",
 	});
 	const providerSessionId = `security:${input.scanId}`;
@@ -268,6 +285,8 @@ async function createDefaultSecuritySession(input: SecurityScanSessionFactoryInp
 		skipPythonPreflight: true,
 		agentId: `Security-${input.scanId.slice(-12)}`,
 		agentDisplayName: "security",
+		// A helper for the host session: the host keeps the process-wide effects and provider toggles.
+		bindProcessState: false,
 	});
 	return session;
 }
@@ -423,7 +442,7 @@ export class SecurityCoordinator {
 	}
 
 	async preflight(input: SecurityPreflightInput = {}): Promise<SecurityScanPlan> {
-		if (!this.#host.settings.get("security.enabled")) {
+		if (!cfgSecurityEnabled.get(this.#host.settings)) {
 			throw new Error("Security is disabled; enable security.enabled before planning a scan");
 		}
 		const model = input.model ?? this.#host.activeModel;
@@ -455,7 +474,7 @@ export class SecurityCoordinator {
 	}
 
 	async start(input: SecurityStartInput): Promise<SecurityOperationSnapshot> {
-		if (!this.#host.settings.get("security.enabled")) {
+		if (!cfgSecurityEnabled.get(this.#host.settings)) {
 			throw new Error("Security is disabled; enable security.enabled before starting a scan");
 		}
 		await this.#ensureRecovered();
@@ -633,6 +652,11 @@ export class SecurityCoordinator {
 					userInitiated: false,
 				});
 				await session.waitForIdle();
+				// With `async.enabled`, `task` workers run as background jobs and the coordinator
+				// may end its turn awaiting them; their delivered results wake it to publish.
+				while (!publishedBundle && session.hasPendingAsyncWork()) {
+					await untilAborted(signal, session.settleAsyncWork());
+				}
 				record.snapshot.sessionFile = session.sessionFile;
 				if (publishedBundle) {
 					const stats = session.getSessionStats?.();

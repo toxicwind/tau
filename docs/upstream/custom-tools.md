@@ -18,12 +18,14 @@ If you need the model to call code directly, use a custom tool.
 There are two active integration styles:
 
 1. **SDK-provided custom tools** (`options.customTools`)
-   - In unrestricted SDK bootstrap, converted to extension tool definitions, registered through a generated extension, and always included in the initial active tool set.
+   - Converted to extension tool definitions and adapted into the session registry.
+   - Unrestricted sessions auto-enable them unless the effective definition is hidden/default-inactive.
    - In a restricted session (`restrictToolNames: true`), SDK-provided custom tools are excluded unless `allowRestrictedCustomTools: true`; opted-in tools are active only when their names also appear in `toolNames`.
 
-2. **Filesystem-discovered modules via loader API** (`discoverAndLoadCustomTools` / `loadCustomTools`)
-   - Exposed as library APIs in `packages/coding-agent/src/extensibility/custom-tools/loader.ts`.
-   - Host code can call these to discover and load tool modules from config/provider/plugin paths.
+2. **Filesystem-discovered modules** (`discoverCustomToolPaths` / `loadCustomTools`)
+   - Unrestricted session bootstrap discovers and loads config/provider/plugin tool modules, then registers them through a generated extension.
+   - These functions and the combined `discoverAndLoadCustomTools` helper are also library APIs in `packages/coding-agent/src/extensibility/custom-tools/loader.ts`.
+   - Subagents can reuse `preloadedCustomToolPaths` to skip discovery, but factories are rebound to each session's own API.
 
 ```text
 Model tool call flow
@@ -42,21 +44,42 @@ CustomTool.execute(toolCallId, params, onUpdate, ctx, signal)
 
 ## Discovery locations (loader API)
 
-`discoverAndLoadCustomTools(configuredPaths, cwd, builtInToolNames)` merges:
+`discoverAndLoadCustomTools(configuredPaths, cwd, builtInToolNames, pushPendingAction?, agentDir?)` merges:
 
 1. Capability providers (`toolCapability`), including:
+<<<<<<< ours — scope `1. Capability providers (`toolCapability`), i...` in heading `Discovery locations (loader API)` (F, confidence: medium)
+// refused_by: statement_fold · collision: `- Native OMP config (`~/.omp/agent/tools`, `.omp/tools`)`
    - Native TAU config (`~/.tau/agent/tools`, `.tau/tools`)
    - Claude config (`~/.claude/tools`, `.claude/tools`)
+=======
+   - Native OMP config (`<agentDir>/tools`, default `~/.omp/agent/tools`; `.omp/tools`)
+   - Claude config (`<Claude config dir>/tools`, default `~/.claude/tools`; `.claude/tools`)
+>>>>>>> theirs — scope `1. Capability providers (`toolCapability`), i...` · weave: run 'weave explain docs/upstream/custom-tools.md' for per-hunk detail, 'weave check' to verify your resolution
    - Codex config (`~/.codex/tools`, `.codex/tools`)
-   - Claude marketplace plugin cache provider
+   - OMP package roots and Claude marketplace plugins
+2. Enabled installed plugin manifests (user `~/.omp/plugins` and the active project `.omp/plugins` registry via the plugin loader; project packages shadow same-named user packages)
+<<<<<<< ours — scope `2. Installed plugin manifests (`~/.omp/plugin...` in heading `Discovery locations (loader API)`, deleted in theirs (S, confidence: medium)
+// refused_by: statement_fold · collision: none (no common ancestor text)
 2. Installed plugin manifests (`~/.tau/plugins/node_modules/*` via plugin loader)
+=======
+>>>>>>> theirs — scope `2. Installed plugin manifests (`~/.omp/plugin...` deleted in theirs
 3. Explicit configured paths passed to the loader
 
 ### Important behavior
 
+<<<<<<< ours — heading `Important behavior` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 - Duplicate resolved paths are deduplicated.
 - Tool name conflicts are rejected against built-ins and already-loaded custom tools.
 - Automatic tool-directory scans discover `.ts` and `.js` modules; native TAU discovery also checks immediate subdirectories for `index.ts`. Executable discovery excludes `.d.ts` and filters out metadata and scripts before tool-name deduplication. Declarative metadata such as `.md` and `.json` remains available to capability consumers but is not loaded as executable tools.
+=======
+- Foreign user directories are opt-in via `enabledProviders` (for example `"claude"` or `"codex"`); project directories remain discoverable unless the whole provider is disabled. `CLAUDE_CONFIG_DIR` also opts in the Claude user source.
+- Native user discovery follows the active profile and the supplied `agentDir`.
+- Duplicate resolved paths are deduplicated by discovery; `loadCustomTools` itself loads the supplied path list.
+- Filesystem tool name conflicts are rejected against the supplied built-in names and already-loaded custom tools. Configured paths are appended, not name overrides.
+- Invalid factory results are reported per array entry; valid entries from the same factory can still load. Import/factory failures are collected in `errors` without stopping later modules.
+- Automatic tool-directory scans discover `.ts` and `.js` modules; native OMP discovery also checks immediate subdirectories for `index.ts`. Executable discovery excludes `.d.ts` and filters out metadata and scripts before tool-name deduplication. Declarative metadata such as `.md` and `.json` remains available to capability consumers but is not loaded as executable tools.
+>>>>>>> theirs — heading `Important behavior` (F, confidence: medium)
 - `.mjs` and `.cjs` modules can be loaded through explicitly configured paths or declared plugin tool entries, but the tool-directory scans above do not discover them automatically. Explicitly configured `.md` or `.json` paths still produce a load error.
 - Relative configured paths are resolved from `cwd`; `~` is expanded.
 
@@ -67,50 +90,53 @@ A custom tool module must export a function (default export preferred):
 ```ts
 import type { CustomToolFactory } from "@tau/tau-coding-agent";
 
-const factory: CustomToolFactory = (pi) => ({
-  name: "repo_stats",
-  label: "Repo Stats",
-  description: "Counts tracked TypeScript files",
-  parameters: pi.zod.object({
-    glob: pi.zod.string().optional(),
-  }),
+const factory: CustomToolFactory = pi => ({
+	name: "repo_stats",
+	label: "Repo Stats",
+	description: "Counts tracked TypeScript files",
+	parameters: pi.zod.object({
+		glob: pi.zod.string().optional(),
+	}),
 
-  async execute(toolCallId, params, onUpdate, ctx, signal) {
-    onUpdate?.({
-      content: [{ type: "text", text: "Scanning files..." }],
-      details: { phase: "scan" },
-    });
+	async execute(toolCallId, params, onUpdate, ctx, signal) {
+		onUpdate?.({
+			content: [{ type: "text", text: "Scanning files..." }],
+			details: { phase: "scan" },
+		});
 
-    const result = await pi.exec(
-      "git",
-      ["ls-files", params.glob ?? "**/*.ts"],
-      { signal, cwd: pi.cwd },
-    );
-    if (result.killed) {
-      throw new Error("Scan was cancelled");
-    }
-    if (result.code !== 0) {
-      throw new Error(result.stderr || "git ls-files failed");
-    }
+		const result = await pi.exec("git", ["ls-files", params.glob ?? "**/*.ts"], { signal, cwd: pi.cwd });
+		if (result.killed) {
+			throw new Error("Scan was cancelled");
+		}
+		if (result.code !== 0) {
+			throw new Error(result.stderr || "git ls-files failed");
+		}
 
-    const files = result.stdout.split("\n").filter(Boolean);
-    return {
-      content: [{ type: "text", text: `Found ${files.length} files` }],
-      details: { count: files.length, sample: files.slice(0, 10) },
-    };
-  },
+		const files = result.stdout.split("\n").filter(Boolean);
+		return {
+			content: [{ type: "text", text: `Found ${files.length} files` }],
+			details: { count: files.length, sample: files.slice(0, 10) },
+		};
+	},
 
-  onSession(event) {
-    if (event.reason === "shutdown") {
-      // cleanup resources if needed
-    }
-  },
+	onSession(event) {
+		if (event.reason === "shutdown") {
+			// cleanup resources if needed
+		}
+	},
 });
 
 export default factory;
 ```
 
+<<<<<<< ours — scope `closing` in heading `Module contract` (S, confidence: medium)
+// refused_by: statement_fold · collision: none (both sides edited, nowhere the same lines)
 Parameter schemas may use the Zod-compatible tautype builder (`pi.zod`), native tautype builder (`pi.arktype`), or legacy-compatible TypeBox shim (`pi.typebox`) and flow through the shared validation/wire pipeline.
+=======
+Value imports of `@oh-my-pi/*` host packages (and their legacy `@mariozechner/*` / `@earendil-works/*` scopes) resolve to the copy omp itself runs, including in the compiled binary; the tool's other dependencies resolve from its own location. A tool module and its relative imports are evaluated once per process; each session calls the factory again.
+
+Parameter schemas may use the Zod-compatible omptype builder (`pi.zod`), native omptype builder (`pi.arktype`), or legacy-compatible TypeBox shim (`pi.typebox`) and flow through the shared validation/wire pipeline.
+>>>>>>> theirs — scope `closing`
 
 Factory return type:
 
@@ -127,12 +153,23 @@ From `types.ts` and `loader.ts`:
 - `ui`: UI context (can be no-op in headless modes)
 - `hasUI`: `false` in non-interactive flows
 - `logger`: shared file logger
+<<<<<<< ours — heading `API surface passed to factories (`CustomToolAPI`)` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 - `arktype`: injected tautype `type(...)` builder
+=======
+- `arktype`: injected omptype `type(...)` builder
+- `zod`: injected Zod-compatible omptype builder
+>>>>>>> theirs — heading `API surface passed to factories (`CustomToolAPI`)` (F, confidence: medium)
 - `typebox`: compatibility shim for legacy TypeBox-style schemas
 - `pi`: injected `@tau/tau-coding-agent` exports
 - `pushPendingAction(action)`: stage a preview action that is finalized by writing a plain-text reason to `xd://resolve` or `xd://reject`
 
-The loader starts with a no-op UI context and requires host code to call `setUIContext(...)` when real UI is ready. If the runtime did not provide a pending-action store, calling `pushPendingAction` throws `Pending action store unavailable for custom tools in this runtime.`
+The loader starts with a no-op UI context and `hasUI: false`. Library hosts can
+call the returned `setUIContext(...)` when real UI is ready. Normal SDK
+filesystem-tool bootstrap currently does not call that setter, so the factory
+API's UI remains no-op even when the session has a TUI. If the runtime did not
+provide a pending-action store, calling `pushPendingAction` throws
+`Pending action store unavailable for custom tools in this runtime.`
 
 ## Execution contract and typing
 
@@ -145,19 +182,22 @@ execute(toolCallId, params, onUpdate, ctx, signal);
 - `params` is statically typed from its tautype or TypeBox schema via `Static<TParams>`.
 - Runtime argument validation happens before execution in the agent loop.
 - `onUpdate` emits partial results for UI streaming.
-- `ctx` includes `sessionManager`, `modelRegistry`, current `model`, `isIdle()`, `hasQueuedMessages()`, `abort()`, and optional `settings`, `fetch`, `localProtocolOptions`, and `autoApprove`.
+- `ctx` includes `sessionManager`, `modelRegistry`, current `model`, `isIdle()`, `hasQueuedMessages()`, `abort()`, and `localProtocolOptions`. The public context type also permits `settings`, `fetch`, and `autoApprove`, but the normal SDK conversion does not populate those three fields.
 - `signal` carries cancellation and may be `undefined`.
 
 The session bootstrap bridge converts custom tools to extension `ToolDefinition`s and forwards calls in the correct argument order. `CustomToolAdapter` remains available to library consumers that directly adapt a custom tool to the agent tool interface.
 
-Tool definitions may also declare `strict`, `hidden`, `loadMode`, `deferrable`, `mcpServerName`, `mcpToolName`, and `approval`. When `loadMode` is omitted, custom tool names default to `"discoverable"` except for the canonical essential built-in names (`read`, `write`, `bash`, `edit`, `glob`, `computer`, `eval`, `task`, `wait`, `learn`, and `manage_skill`), which default to `"essential"` so wrappers or re-registrations do not demote them. An explicit `loadMode` always wins; use `"essential"` to keep any other tool top-level. Although the public `CustomTool` type also declares `formatApprovalDetails`, the SDK/discovery bridge does not propagate that callback into the registered tool definition, so it cannot customize approval details on the normal integration paths.
+Tool definitions may also declare `strict`, `hidden`, `loadMode`, `deferrable`, `readsSkillUris`, `mcpServerName`, `mcpToolName`, `legacyName`, and `approval`. When `loadMode` is omitted, custom tool names default to `"discoverable"` except for the canonical essential built-in names (`read`, `write`, `bash`, `edit`, `glob`, `find`, `eval`, `task`, `wait`, `learn`, `manage_skill`, `context_notes`, and `new_context`), which default to `"essential"` so wrappers or re-registrations do not demote them. An explicit `loadMode` always wins; use `"essential"` to keep any other tool top-level.
+
+Although the public `CustomTool` type also declares `formatApprovalDetails`, `describeCall`, and `describeResult`, the SDK/discovery conversion does not propagate those callbacks into the registered definition. Direct `CustomToolAdapter` consumers retain them.
 
 ## How tools are exposed to the model
 
 - Session bootstrap wraps included SDK-provided and discovered custom tools as extension tool definitions; library consumers may instead use `CustomToolAdapter` directly.
 - They are inserted into the session tool registry by name.
-- In unrestricted SDK bootstrap, custom and extension-registered tools are force-included in the initial active set. Restricted sessions exclude SDK-provided custom tools unless `allowRestrictedCustomTools: true`, and expose an opted-in custom tool only when its name appears in `toolNames`.
-- CLI `--tools` currently validates only built-in tool names; custom tool inclusion is handled through discovery/registration paths and SDK options.
+- Unrestricted SDK bootstrap auto-enables custom and extension-registered tools unless the effective registry winner is hidden/default-inactive. Explicit `toolNames` can enable hidden tools. Restricted sessions exclude SDK-provided custom tools unless `allowRestrictedCustomTools: true`, and expose an opted-in custom tool only when its name appears in `toolNames`; ambient filesystem tool discovery is skipped.
+- With `tools.xdev` enabled and the `read`/`write` transport available, enabled discoverable tools are mounted under `xd://` rather than advertised as top-level functions. Explicitly requested tools and essential tools stay top-level.
+- CLI `--tools` validates against the fully discovered session registry, including registered custom tools. Unknown names and unavailable built-ins produce distinct errors.
 
 ## Rendering hooks
 
@@ -167,6 +207,12 @@ Optional rendering hooks:
 - `renderResult(result, options, theme)`
 
 The normal SDK and filesystem-discovery paths wrap custom tools as extensions. On those paths, `renderResult` receives only the three arguments above; the bridge does not forward the original tool arguments. The public `CustomTool` type retains an optional fourth `args` parameter for direct `CustomToolAdapter` consumers.
+
+<<<<<<< ours — scope ``renderCall`'s `options` argument additionall...` in heading `Rendering hooks`, deleted in ours (S, confidence: medium)
+// refused_by: statement_fold · collision: none (no common ancestor text)
+=======
+On extension-adapter paths, `renderCall`'s `options` argument additionally answers the `Theme` API, allowing upstream pi renderers to use their second argument for styling. The third argument remains the theme, not upstream pi's context object.
+>>>>>>> theirs — scope ``renderCall`'s `options` argument additionall...` deleted in ours
 
 Runtime behavior in TUI:
 
@@ -201,7 +247,7 @@ Use `ctx.sessionManager` to reconstruct state from history when branch/session c
 
 ### onSession errors
 
-- `onSession` errors are caught and logged as warnings; they do not crash the session.
+- Normal session integration catches and logs `onSession` errors as warnings; library consumers using their own lifecycle dispatch must supply their own error handling.
 
 ## Real constraints to design for
 

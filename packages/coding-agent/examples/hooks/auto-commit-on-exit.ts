@@ -4,7 +4,12 @@
  * Automatically commits changes when the agent exits.
  * Uses the last assistant message to generate a commit message.
  */
+<<<<<<< ours — interstitial `file_header` (S, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import type { HookAPI } from "@oh-my-pi/pi-coding-agent";`
 import type { HookAPI } from "@tau/tau-coding-agent";
+=======
+import type { HookAPI } from "@oh-my-pi/pi-coding-agent/extensibility/hooks";
+>>>>>>> theirs — interstitial `file_header` (S, confidence: medium) · weave: run 'weave explain packages/coding-agent/examples/hooks/auto-commit-on-exit.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 export default function (pi: HookAPI) {
 	pi.on("session_shutdown", async (_event, ctx) => {
@@ -25,6 +30,7 @@ export default function (pi: HookAPI) {
 				const content = entry.message.content;
 				if (Array.isArray(content)) {
 					lastAssistantText = content
+						.filter((c): c is { type: "text"; text: string } => c.type === "text")
 						.filter((c): c is { type: "text"; text: string } => c.type === "text")
 						.map(c => c.text)
 						.join("\n");

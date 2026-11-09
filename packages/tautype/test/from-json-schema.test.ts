@@ -2,6 +2,37 @@ import { describe, expect, it } from "bun:test";
 import { fromJsonSchema, TauErrors, type } from "../src";
 
 describe("fromJsonSchema", () => {
+	it("resolves URI-encoded and JSON-pointer-escaped definition names", () => {
+		const imported = fromJsonSchema({
+			$defs: {
+				"a%2Fb /~1 空\n": { type: "string" },
+				"a/b /~1 空\n": { type: "boolean" },
+			},
+			$ref: "#/$defs/a%252Fb%20~1~01%20%E7%A9%BA%0A",
+		});
+		expect(imported("valid")).toBe("valid");
+		expect(imported(false)).toBeInstanceOf(OmpErrors);
+	});
+
+	it("resolves an empty legacy definition name", () => {
+		const imported = fromJsonSchema({ definitions: { "": { type: "integer" } }, $ref: "#/definitions/" });
+		expect(imported(2)).toBe(2);
+		expect(imported(2.5)).toBeInstanceOf(OmpErrors);
+	});
+
+	it("rejects malformed fragments and references to documents it was not given", () => {
+		const defs = { "%": { type: "string" }, "%E0%A4%A": { type: "string" }, value: { type: "string" } };
+		expect(() => fromJsonSchema({ $defs: defs, $ref: "#/$defs/%E0%A4%A" })).toThrow("invalid $ref: #/$defs/%E0%A4%A");
+		const remote = "https://example.com/schema#/$defs/value";
+		expect(() => fromJsonSchema({ $defs: defs, $ref: remote })).toThrow(`unresolved $ref: ${remote}`);
+		const imported = fromJsonSchema(
+			{ $ref: remote },
+			{ schemas: { "https://example.com/schema": { $defs: { value: { type: "string" } } } } },
+		);
+		expect(imported("x")).toBe("x");
+		expect(imported(1)).toBeInstanceOf(OmpErrors);
+	});
+
 	it("round-trips schemas emitted by toJsonSchema", () => {
 		const original = type({
 			name: "1 <= string <= 32",
@@ -45,10 +76,21 @@ describe("fromJsonSchema", () => {
 		expect(fromJsonSchema(false)("anything")).toBeInstanceOf(TauErrors);
 	});
 
+<<<<<<< ours — test_suite `fromJsonSchema` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 	it("validates string formats and patterns", () => {
 		const email = fromJsonSchema({ type: "string", format: "email" });
 		expect(email("a@tau.sh")).toBe("a@tau.sh");
 		expect(email("nope")).toBeInstanceOf(TauErrors);
+=======
+	it("asserts formats only when given a check, and always validates patterns", () => {
+		const schema = { type: "string", format: "email" };
+		expect(fromJsonSchema(schema)("nope")).toBe("nope");
+		const email = fromJsonSchema(schema, { formats: { email: value => value.includes("@") } });
+		expect(email("a@omp.sh")).toBe("a@omp.sh");
+		expect(email("nope")).toBeInstanceOf(OmpErrors);
+		expect(fromJsonSchema({ format: "email" }, { formats: { email: () => false } })(42)).toBe(42);
+>>>>>>> theirs — test_suite `fromJsonSchema` (F, confidence: medium) · weave: run 'weave explain packages/tautype/test/from-json-schema.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 		const patterned = fromJsonSchema({ type: "string", pattern: "^G-[A-Z0-9]+$", minLength: 3 });
 		expect(patterned("G-X1")).toBe("G-X1");
 		expect(patterned("bad")).toBeInstanceOf(TauErrors);

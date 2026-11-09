@@ -1,6 +1,13 @@
 import { describe, expect, it, vi } from "bun:test";
+<<<<<<< ours — imports `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: `import {` +5 more
 import { dispatchScroll, normalizeSelector, resolveOpTimeouts, resolveWaitTimeout } from "tau/tools/browser/tab-worker";
 import { resolvePredicateTimeout } from "tau/tools/run-scope";
+=======
+import { resolveOpTimeouts, resolveWaitTimeout } from "@oh-my-pi/pi-coding-agent/tools/browser/op-timeouts";
+import { dispatchScroll, normalizeSelector } from "@oh-my-pi/pi-coding-agent/tools/browser/tab-worker";
+import { resolvePredicateTimeout } from "@oh-my-pi/pi-coding-agent/tools/run-scope";
+>>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/tools/browser-tab-timeouts.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 // Regression coverage for the "weird timeouts" failure mode: interactive `tab.*` helpers
 // used to run with the full cell budget as their internal puppeteer timeout, so a stalled
@@ -155,6 +162,19 @@ describe("browser selector guard", () => {
 
 	it("still rewrites legacy p- prefixes", () => {
 		expect(normalizeSelector("p-text/Continue")).toBe("text/Continue");
+	});
+
+	it("refuses a role/ selector with text it would otherwise ignore, before any op waits on it", () => {
+		expect(() =>
+			normalizeSelector('role/region[name="billing-worker" exact] >> role/combobox[name="REGION" exact]'),
+		).toThrow(/role\/ selectors do not chain/);
+		expect(() => normalizeSelector("role/button[pressed=true]")).toThrow(/role\/ selectors do not chain/);
+		expect(() => normalizeSelector("role/region>>role/combobox")).toThrow(/role\/ selectors do not chain/);
+		expect(() => normalizeSelector("role/button.foo")).toThrow(/role\/ selectors do not chain/);
+		expect(normalizeSelector('role/region[name="billing-worker" exact]')).toBe(
+			'role/region[name="billing-worker" exact]',
+		);
+		expect(normalizeSelector("role/button")).toBe("role/button");
 	});
 
 	it("rejects non-string selectors (handle/number) instead of crashing on .startsWith", () => {

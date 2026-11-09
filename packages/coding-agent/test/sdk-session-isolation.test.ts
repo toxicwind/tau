@@ -18,6 +18,7 @@ import { SessionManager } from "tau/session/session-manager";
 import { VibeSessionRegistry } from "tau/vibe/runtime";
 import { getSessionsDir, removeSyncWithRetries, Snowflake } from "@tau/tau-utils";
 import { getActiveProfile, getConfigRootDir, setProfile } from "@tau/tau-utils/dirs";
+import { closeModelCache } from "@oh-my-pi/pi-catalog/model-cache";
 
 function createTtsrRule(name: string): Rule {
 	return {
@@ -77,7 +78,10 @@ async function withTempConfigRoot<T>(run: () => Promise<T>): Promise<T> {
 			process.env.PI_CODING_AGENT_DIR = originalAgentDir;
 		}
 		setProfile(originalProfile);
-		fs.rmSync(configRoot, { recursive: true, force: true });
+		// The model registry opened the shared `<configRoot>/agent/models.db` cache while the
+		// temp root was active; release it so Windows can delete the root.
+		closeModelCache();
+		removeSyncWithRetries(configRoot);
 	}
 }
 

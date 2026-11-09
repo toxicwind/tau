@@ -36,18 +36,25 @@ pub mod edit;
 pub mod fd;
 pub mod file_lock;
 pub mod glob;
-pub mod glob_util;
+pub mod grammars;
 pub mod grep;
+pub mod held_files;
 pub mod highlight;
+/// HDiffPatch single-stream binary patch application.
+pub mod hpatch;
 pub mod html;
-pub mod iofs;
+/// Local IPC over Unix domain sockets / Windows named pipes.
+pub mod ipc;
 pub mod js;
 pub mod keys;
+pub mod line_match;
 pub mod live;
+pub mod memory;
 pub mod mermaid;
 pub mod oauth_callback;
 /// PDF inspection and Markdown conversion.
 pub mod pdf;
+pub mod predict;
 pub mod sixel;
 pub mod snapcompact;
 pub mod spelling;
@@ -252,6 +259,59 @@ fn create_windows_napi_tokio_runtime() -> Option<tokio::runtime::Runtime> {
 	})
 }
 
+/// Size of the post-link version stamp slot, including magic and NUL padding.
+const VERSION_STAMP_LEN: usize = 64;
+/// Length of the `PI_NATIVES_VERSION_STAMP:` magic prefix.
+const VERSION_STAMP_MAGIC_LEN: usize = 25;
+
+/// Build the placeholder at compile time so the magic bytes exist exactly once
+/// in the binary (inside [`VERSION_STAMP`]) — a second copy (e.g. a literal
+/// used for comparison) would make the stamp tool's search ambiguous.
+const fn version_stamp_placeholder() -> [u8; VERSION_STAMP_LEN] {
+	let magic = b"PI_NATIVES_VERSION_STAMP:";
+	assert!(magic.len() == VERSION_STAMP_MAGIC_LEN);
+	let mut out = [0u8; VERSION_STAMP_LEN];
+	let mut i = 0;
+	while i < magic.len() {
+		out[i] = magic[i];
+		i += 1;
+	}
+	out
+}
+
+/// Post-link release stamp. The build pipeline
+/// (`scripts/stamp-native-version.ts`) rewrites the zero padding after the
+/// magic with `package.json#version`, so a version bump never edits a Rust
+/// input and never recompiles this crate. `#[used]` keeps the slot in the
+/// binary; reads go through `read_volatile` so the optimizer cannot fold the
+/// compile-time (unstamped) contents.
+#[used]
+static VERSION_STAMP: [u8; VERSION_STAMP_LEN] = version_stamp_placeholder();
+
+/// Release version stamped into this `.node` after linking.
+///
+/// `None` for an unstamped build. The JS loader compares it against
+/// `package.json#version` so a `.node` from another release fails at load time
+/// with an actionable error instead of a later `<sym> is not a function` crash.
+#[napi(js_name = "__piNativesBuildVersion")]
+pub fn pi_natives_build_version() -> Option<String> {
+	let base = (&raw const VERSION_STAMP).cast::<u8>();
+	// Byte-wise volatile reads: the optimizer must not fold the compile-time
+	// (unstamped) contents, and `[u8; N]` is not volatile-compatible as a whole.
+	let payload: Vec<u8> = (VERSION_STAMP_MAGIC_LEN..VERSION_STAMP_LEN)
+		// SAFETY: `i < VERSION_STAMP_LEN`, so every read stays inside the
+		// immutable, 'static `VERSION_STAMP` array.
+		.map(|i| unsafe { core::ptr::read_volatile(base.add(i)) })
+		.take_while(|&b| b != 0)
+		.collect();
+	if payload.is_empty() {
+		return None;
+	}
+	String::from_utf8(payload).ok()
+}
+
+<<<<<<< ours — function `pi_natives_version_sentinel` (T+F, confidence: medium)
+// refused_by: modify_delete_guard · collision: none (no common ancestor text)
 /// Version sentinel — exists solely so the JS loader can prove at load time
 /// that the `.node` file on disk is from the same package release as the
 /// `index.js` ESM wrapper invoking it.
@@ -276,6 +336,8 @@ fn create_windows_napi_tokio_runtime() -> Option<tokio::runtime::Runtime> {
 /// prefix and the loader accepts it at the same version.
 #[napi(js_name = "__tauNativesV18_3_0")]
 pub const fn tau_natives_version_sentinel() {}
+=======
+>>>>>>> theirs — function `pi_natives_version_sentinel` (T+F, confidence: medium) · weave: run 'weave explain crates/tau-natives/src/lib.rs' for per-hunk detail, 'weave check' to verify your resolution
 
 /// Native module entry point: install crash diagnostics before any tool can
 /// invoke a panicking or allocating native call. This runs during `.node`

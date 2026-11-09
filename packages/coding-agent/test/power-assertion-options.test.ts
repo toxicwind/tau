@@ -1,5 +1,8 @@
-import { describe, expect, it } from "bun:test";
+import { afterEach, describe, expect, it, vi } from "bun:test";
+import { PowerAssertion } from "@oh-my-pi/pi-natives";
+import { logger } from "@oh-my-pi/pi-utils";
 import { powerAssertionOptions } from "../src/session/agent-session";
+import { resetPowerBackendUnavailableForTests, startPowerAssertion } from "../src/session/power-assertion-backend";
 
 describe("powerAssertionOptions", () => {
 	it("asks for no assertion when sleep prevention is off", () => {
@@ -12,7 +15,72 @@ describe("powerAssertionOptions", () => {
 		expect(powerAssertionOptions("system")).toMatchObject({ idle: true, display: true, system: true, user: true });
 	});
 
+<<<<<<< ours — scope `it("names the session so platform power diagn...` in test_suite `powerAssertionOptions`, deleted in theirs (S+F, confidence: low)
+// refused_by: statement_fold · collision: none (no common ancestor text)
 	it("names the session so platform power diagnostics can attribute the assertion", () => {
 		expect(powerAssertionOptions("idle")?.reason).toBe("tau agent session");
+	});
+=======
+>>>>>>> theirs — scope `it("names the session so platform power diagn...` deleted in theirs · weave: run 'weave explain packages/coding-agent/test/power-assertion-options.test.ts' for per-hunk detail, 'weave check' to verify your resolution
+});
+
+describe("startPowerAssertion", () => {
+	const options = powerAssertionOptions("idle")!;
+	const unavailable = () => {
+		throw new Error(
+			"PowerBackendUnavailable: Unable to connect to the system bus: I/O error: No such file or directory (os error 2)",
+		);
+	};
+
+	afterEach(() => {
+		vi.restoreAllMocks();
+		resetPowerBackendUnavailableForTests();
+	});
+
+	it("does not warn when the system bus is unavailable, logs debug once, and stops retrying the backend", () => {
+		resetPowerBackendUnavailableForTests();
+		const warn = vi.spyOn(logger, "warn").mockImplementation(() => {});
+		const debug = vi.spyOn(logger, "debug").mockImplementation(() => {});
+		const start = vi.fn(unavailable);
+		expect(startPowerAssertion(options, start)).toBeUndefined();
+		expect(startPowerAssertion(options, start)).toBeUndefined();
+		expect(start).toHaveBeenCalledTimes(1);
+		expect(warn).toHaveBeenCalledTimes(0);
+		expect(debug).toHaveBeenCalledTimes(1);
+	});
+
+	it("still warns when the system bus exists but refuses the connection", () => {
+		const warn = vi.spyOn(logger, "warn").mockImplementation(() => {});
+		const debug = vi.spyOn(logger, "debug").mockImplementation(() => {});
+		const refused = () => {
+			throw new Error("Unable to connect to the system bus: I/O error: Connection refused (os error 111)");
+		};
+		expect(startPowerAssertion(options, refused)).toBeUndefined();
+		expect(warn).toHaveBeenCalledTimes(1);
+		expect(debug).toHaveBeenCalledTimes(0);
+	});
+
+	it("still warns on other failures", () => {
+		const warn = vi.spyOn(logger, "warn").mockImplementation(() => {});
+		const debug = vi.spyOn(logger, "debug").mockImplementation(() => {});
+		const failing = () => {
+			throw new Error("login1 Inhibit failed: access denied");
+		};
+		expect(startPowerAssertion(options, failing)).toBeUndefined();
+		expect(warn).toHaveBeenCalledTimes(1);
+		expect(debug).toHaveBeenCalledTimes(0);
+	});
+
+	it("calls the native PowerAssertion.start with its class as the receiver by default", () => {
+		// napi class statics read their class from `this`; an unbound call throws
+		// "Failed to create instance of class `start`" and no assertion is held.
+		vi.spyOn(logger, "warn").mockImplementation(() => {});
+		let receiver: unknown;
+		vi.spyOn(PowerAssertion, "start").mockImplementation(function (this: unknown) {
+			receiver = this;
+			throw new Error("stub");
+		});
+		startPowerAssertion(options);
+		expect(receiver).toBe(PowerAssertion);
 	});
 });

@@ -1,4 +1,9 @@
+<<<<<<< ours — interstitial `file_header` (S, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import type { Message, Tool } from "@oh-my-pi/pi-ai";`
 import type { Message, Tool } from "@tau/tau-ai";
+=======
+import type { Context, Message, Tool } from "@oh-my-pi/pi-ai";
+>>>>>>> theirs — interstitial `file_header` (S, confidence: medium) · weave: run 'weave explain packages/agent/src/sent-tool-definitions.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /**
  * Last wire definition this Agent sent for each tool name, so a provider that keeps
@@ -14,11 +19,28 @@ export class SentToolDefinitions {
 	}
 
 	/**
-	 * Definitions for names the latest `requestControls.tools.declared` in `messages` holds
-	 * that are not in `active`; undefined when none. Names never sent by this Agent are
-	 * skipped: the provider drops them from the declaration.
+	 * A detached copy: an Agent that replays another's request history declares the same withdrawn tools. `keep`
+	 * leaves out a definition the copy must never declare.
 	 */
-	inactiveFor(messages: readonly Message[], active: readonly Tool[]): Tool[] | undefined {
+	copy(keep: (name: string) => boolean = () => true): SentToolDefinitions {
+		const copy = new SentToolDefinitions();
+		copy.record([...this.#byName.values()].filter(tool => keep(tool.name)));
+		return copy;
+	}
+
+	/**
+	 * `context` with {@link Context.inactiveTools} set to the definitions for names the latest
+	 * `requestControls.tools.declared` in its messages holds that are not in its `tools`; cleared when
+	 * there are none or the request declares no tools. Names never sent by this Agent are skipped: the
+	 * provider drops them from the declaration.
+	 */
+	withInactiveTools(context: Context): Context {
+		const inactiveTools = context.tools?.length ? this.#inactiveFor(context.messages, context.tools) : undefined;
+		if (!inactiveTools && !context.inactiveTools) return context;
+		return { ...context, inactiveTools };
+	}
+
+	#inactiveFor(messages: readonly Message[], active: readonly Tool[]): Tool[] | undefined {
 		let declared: readonly string[] | undefined;
 		for (let index = messages.length - 1; index >= 0; index--) {
 			const message = messages[index];

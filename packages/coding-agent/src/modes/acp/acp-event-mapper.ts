@@ -6,8 +6,16 @@ import type {
 	ToolCallContent,
 	ToolCallLocation,
 	ToolKind,
+<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import { parseXdUrl } from "@oh-my-pi/pi-tui/tools/xd-url";`
 } from "@tau/tau-utils/acp";
 import { parseXdUrl } from "@tau/tau-tui/tools/xd-url";
+=======
+} from "@oh-my-pi/pi-utils/acp";
+import { InternalUrlRouter } from "../../internal-urls/router";
+import { extractUriScheme } from "../../internal-urls/parse";
+import type { SchemeSpec } from "../../internal-urls/types";
+>>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/modes/acp/acp-event-mapper.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { AgentSessionEvent } from "../../session/agent-session";
 import { resolveToCwd, splitPathAndSelPreferringLiteralSync } from "../../tools/path-utils";
 import type { TodoStatus } from "@tau/tau-tui/tools/todo";
@@ -134,40 +142,27 @@ interface TextMessageLike {
 
 const ACP_TEXT_LIMIT = 4_000;
 
-/**
- * Device name when the call is an `xd://` device dispatch riding the
- * read/write transport (`write xd://<tool>` executes the mounted tool,
- * `read xd://` is discovery). Returns `undefined` for plain file paths.
- */
-function xdevDispatchDevice(toolName: string, args: unknown): string | undefined {
-	if (toolName !== "write" && toolName !== "read") return undefined;
+/** Declared spec of the registered scheme a `write` call targets; undefined for file paths and other tools. */
+function writeTargetSpec(toolName: string, args: unknown): SchemeSpec | undefined {
+	if (toolName !== "write") return undefined;
 	const path = extractStringProperty<PathContainer>(args, "path");
 	if (!path) return undefined;
-	return parseXdUrl(path)?.name ?? undefined;
+	const router = InternalUrlRouter.instance();
+	const scheme = extractUriScheme(path);
+	return scheme && router.canHandle(path) ? router.spec(scheme) : undefined;
 }
 
-/** Peer-to-peer messages stay off the external ACP session stream. */
+/** Peer-to-peer messages (coordination-scoped writes) stay off the external ACP session stream. */
 function isInternalAgentMessageTool(toolName: string, args: unknown): boolean {
-	return (
-		toolName === "write" &&
-		typeof args === "object" &&
-		args !== null &&
-		typeof Reflect.get(args, "path") === "string" &&
-		/^agent:\/\//i.test(Reflect.get(args, "path"))
-	);
+	return writeTargetSpec(toolName, args)?.write?.scope === "coordination";
 }
 
 export function mapToolKind(toolName: string, args?: unknown): ToolKind {
-	// An xd:// device write executes the mounted tool — "edit" would make ACP
-	// clients render it as a file modification to a nonexistent path (and
-	// auto-approve it under edit-tier policies). Reads stay "read": listing
-	// devices or fetching docs is discovery.
-	if (
-		toolName === "write" &&
-		(xdevDispatchDevice(toolName, args) ||
-			/^proc:\/\//i.test(extractStringProperty<PathContainer>(args, "path") ?? ""))
-	)
-		return "execute";
+	// A device write (xd:// tool dispatch, proc:// control) executes something —
+	// "edit" would make ACP clients render it as a file modification to a
+	// nonexistent path (and auto-approve it under edit-tier policies). Reads
+	// stay "read": listing devices or fetching docs is discovery.
+	if (writeTargetSpec(toolName, args)?.backing === "device") return "execute";
 	switch (toolName) {
 		case "read":
 			return "read";
@@ -226,7 +221,7 @@ export function mapAgentSessionEventToAcpSessionUpdates(
 			const update: SessionUpdate = {
 				sessionUpdate: "tool_call_update",
 				toolCallId: event.toolCallId,
-				status: "in_progress",
+				status: toolUpdateStatus(event.partialResult),
 				rawOutput: event.partialResult,
 			};
 			if (content.length > 0) {
@@ -316,6 +311,18 @@ function mapAssistantMessageUpdate(
 			text = event.assistantMessageEvent.delta;
 			if (text.length > 0 && progress) {
 				progress.thoughtEmitted = true;
+			}
+			break;
+		}
+		case "thinking_end": {
+			// Narration streams as thinking; once its block closes as narration,
+			// surface it as the reply it is.
+			const block = event.assistantMessageEvent.partial?.content?.[event.assistantMessageEvent.contentIndex];
+			if (block?.type !== "thinking" || !block.narration) return [];
+			sessionUpdate = "agent_message_chunk";
+			text = canonicalizeMessage(event.assistantMessageEvent.content);
+			if (text.length > 0 && progress) {
+				progress.textEmitted = true;
 			}
 			break;
 		}
@@ -474,6 +481,7 @@ export function buildToolCallStartUpdate(input: {
 	const update: ToolCall & { sessionUpdate: "tool_call" } = {
 		sessionUpdate: "tool_call",
 		toolCallId: input.toolCallId,
+		name: input.toolName,
 		title: buildToolTitle(input.toolName, input.args, input.intent),
 		kind: mapToolKind(input.toolName, input.args),
 		status: input.status ?? "pending",
@@ -746,6 +754,28 @@ function extractTerminalId(value: unknown): string | undefined {
 	if (typeof value !== "object" || value === null) return undefined;
 	const details = (value as DetailsContainer).details;
 	return extractStringProperty<TerminalIdContainer>(details, "terminalId");
+}
+
+interface AsyncJobContainer {
+	async?: unknown;
+}
+
+interface AsyncStateContainer {
+	state?: unknown;
+}
+
+/**
+ * Status of a `tool_execution_update` frame: the settled frame of a call's
+ * background job (`details.async.state` completed, failed or cancelled, sent
+ * after the call returned) settles the call; any other frame is progress.
+ */
+function toolUpdateStatus(partialResult: unknown): "in_progress" | "completed" | "failed" {
+	if (typeof partialResult !== "object" || partialResult === null) return "in_progress";
+	const details = (partialResult as DetailsContainer).details;
+	if (typeof details !== "object" || details === null) return "in_progress";
+	const state = extractStringProperty<AsyncStateContainer>((details as AsyncJobContainer).async, "state");
+	if (state === "completed") return "completed";
+	return state === "failed" || state === "cancelled" ? "failed" : "in_progress";
 }
 
 function terminalToolCallContent(terminalId: string): ToolCallContent {

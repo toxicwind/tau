@@ -1,4 +1,3 @@
-import * as path from "node:path";
 import type { TinyLocalModelKey } from "./models";
 
 /**
@@ -32,9 +31,15 @@ export const TINY_WORKER_IDLE_MS = 15 * 60 * 1_000;
 /** Inference engine a worker runs; part of the socket name so ONNX and MLX workers for one model coexist. */
 export type TinyWorkerBackend = "onnx" | "mlx";
 
-const workerName = (modelKey: TinyLocalModelKey, backend: TinyWorkerBackend): string =>
-	`${modelKey}-${backend}`.replace(/[^A-Za-z0-9._-]/g, "_");
-
+/**
+ * Shared-worker name of one (model, backend) worker under the tiny runtime dir:
+ * its socket is `<name>.sock`, its log `<name>.log` (see `shared-worker.ts`).
+ */
+export function tinyWorkerName(modelKey: TinyLocalModelKey, backend: TinyWorkerBackend): string {
+	return `${modelKey}-${backend}`;
+}
+<<<<<<< ours — function `tinyWorkerEndpoint` (S+F, confidence: low)
+// refused_by: modify_delete_guard · collision: none (no common ancestor text)
 /** Resolve the Unix socket or Windows named pipe for one (model, backend) worker. */
 export function tinyWorkerEndpoint(
 	runtimeDir: string,
@@ -48,15 +53,8 @@ export function tinyWorkerEndpoint(
 	}
 	return path.join(runtimeDir, `${name}.sock`);
 }
-
-/**
- * Stdout/stderr log file for one (model, backend) worker. Derived from
- * `runtimeDir`, not the endpoint: on Windows the endpoint is a named pipe
- * (`\\.\pipe\…`), which cannot be opened as a file.
- */
-export function tinyWorkerLogPath(runtimeDir: string, modelKey: TinyLocalModelKey, backend: TinyWorkerBackend): string {
-	return path.join(runtimeDir, `${workerName(modelKey, backend)}.log`);
-}
+=======
+>>>>>>> theirs — function `tinyWorkerEndpoint` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/tiny/title-protocol.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 export type TinyTitleProgressStatus =
 	| "initiate"

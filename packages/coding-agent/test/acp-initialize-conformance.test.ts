@@ -16,6 +16,7 @@ import type { AgentSession } from "tau/session/agent-session";
 import { SessionManager } from "tau/session/session-manager";
 import { getConfigRootDir, setAgentDir, VERSION } from "@tau/tau-utils";
 import type { AgentSideConnection, InitializeRequest } from "@tau/tau-utils/acp";
+import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
 import { expectAcpStructure } from "./helpers/acp-schema";
 
 const arkInitializeResponse = type({
@@ -53,7 +54,7 @@ class FakeAgentSession {
 	queuedMessageCount = 0;
 	systemPrompt = "system";
 	disposed = false;
-	settings = { get: (_path: string) => false };
+	settings = Settings.isolated();
 
 	constructor(cwd: string) {
 		this.sessionManager = SessionManager.create(cwd);
@@ -113,6 +114,10 @@ class FakeAgentSession {
 	}
 	setActiveToolsByName(): void {}
 	setClientBridge(): void {}
+	setMcpServerInstructionsSource(): void {}
+	registerSessionChangeCallback(): () => void {
+		return () => {};
+	}
 	getPlanModeState(): undefined {
 		return undefined;
 	}
@@ -231,8 +236,13 @@ describe("ACP initialize conformance", () => {
 		const pkg = (await Bun.file(pkgPath).json()) as { version: string };
 		expect(response.agentInfo).toEqual(
 			expect.objectContaining({
+<<<<<<< ours — test_suite `ACP initialize conformance` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `name: "oh-my-pi",`
 				name: "tau",
 				title: "tau",
+=======
+				title: "omp",
+>>>>>>> theirs — test_suite `ACP initialize conformance` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/acp-initialize-conformance.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 				version: VERSION,
 			}),
 		);
@@ -256,5 +266,15 @@ describe("ACP initialize conformance", () => {
 				}),
 			}),
 		);
+	});
+
+	it("advertises the steering extension via top-level _meta", async () => {
+		const agent = await createAgent();
+		const response = await agent.initialize(buildInitializeRequest());
+		expectAcpStructure(arkInitializeResponse, response);
+		// Top-level `_meta` (sibling of `agentCapabilities`) is the
+		// claude-agent-acp / codex-acp advertisement that gates clients'
+		// `_session/steering` calls (agent-shell, spec proposal `session/inject`).
+		expect(response._meta).toEqual({ steering: { supported: true } });
 	});
 });

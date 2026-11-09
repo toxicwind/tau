@@ -22,6 +22,7 @@ import type { SessionInfo } from "tau/session/session-listing";
 import * as sessionListingModule from "tau/session/session-listing";
 import { loadEntriesFromFile } from "tau/session/session-loader";
 import { SessionManager } from "tau/session/session-manager";
+import { clearOmpExtensionCliRoots } from "@oh-my-pi/pi-coding-agent/discovery/omp-extension-roots";
 import {
 	__resetDirsFromEnvForTests,
 	getProjectDir,
@@ -49,6 +50,8 @@ beforeEach(async () => {
 });
 
 afterEach(async () => {
+	// `runRootCommand` registers the CLI's extension roots (`--no-extensions` → explicit-only) process-wide.
+	clearOmpExtensionCliRoots();
 	restoreEnv("PI_CODING_AGENT_DIR", originalAgentDir);
 	restoreEnv("PI_PROFILE", originalPiProfile);
 	restoreEnv("TAU_PROFILE", originalOmpProfile);
@@ -66,6 +69,7 @@ function buildArgs(resume: string, sessionDir?: string): Args {
 		fileArgs: [],
 		unknownFlags: new Map(),
 		unrecognizedFlags: [],
+		invalidFlagValues: [],
 	};
 }
 
@@ -73,7 +77,7 @@ function buildGlobalMatch(cwd: string): { session: SessionInfo; scope: "global" 
 	return {
 		scope: "global",
 		session: {
-			path: `${cwd}/019e84ed-b4cc-7000-9c87-5afe6df992c1.jsonl`,
+			path: path.join(cwd, "019e84ed-b4cc-7000-9c87-5afe6df992c1.jsonl"),
 			id: "019e84ed-b4cc-7000-9c87-5afe6df992c1",
 			cwd,
 			title: "in-other-project",

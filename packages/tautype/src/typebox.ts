@@ -1,4 +1,5 @@
 import { TauTypeError } from "./errors";
+import { OmpTypeError } from "./errors";
 import type { Def, EmbeddableSchema } from "./ir";
 import { type NarrowContext, type Type as TauType, type ToJsonSchemaOptions, type } from "./type";
 
@@ -135,6 +136,8 @@ interface RuntimeType<T> extends TauType<T> {
 	atMostLength(bound: number): RuntimeType<T>;
 	atLeast(bound: number): RuntimeType<T>;
 	atMost(bound: number): RuntimeType<T>;
+	moreThan(bound: number): RuntimeType<T>;
+	lessThan(bound: number): RuntimeType<T>;
 	narrow<N extends T>(predicate: (value: T, ctx: NarrowContext) => value is N): RuntimeType<N>;
 	narrow(predicate: (value: T, ctx: NarrowContext) => boolean): RuntimeType<T>;
 }
@@ -271,19 +274,19 @@ function tNumber(opts?: NumberOpts, integer = false): TNumber {
 		upper = { value: opts.exclusiveMaximum, exclusive: true };
 	}
 	const keyword = integer ? "number.integer" : "number";
-	// The `LO <= TYPE <= HI` range spelling requires both bounds; a min-only
-	// bound must use the postfix `TYPE >= LO` form (see parseBounded in ir.ts).
-	let src: string;
-	if (lower && upper) {
-		src = `${lower.value} ${lower.exclusive ? "<" : "<="} ${keyword} ${upper.exclusive ? "<" : "<="} ${upper.value}`;
-	} else if (lower) {
-		src = `${keyword} ${lower.exclusive ? ">" : ">="} ${lower.value}`;
-	} else if (upper) {
-		src = `${keyword} ${upper.exclusive ? "<" : "<="} ${upper.value}`;
-	} else {
-		src = keyword;
+	if (
+		lower &&
+		upper &&
+		(lower.value > upper.value || (lower.value === upper.value && (lower.exclusive || upper.exclusive)))
+	) {
+		throw new OmpTypeError("numeric range is unsatisfiable");
 	}
-	let schema = asRuntime<number>(type.raw(src));
+	// Fluent bounds write min/max straight into the IR, so decimal and
+	// exponent-form bounds share one path that renders the same structured
+	// errors; the DSL's decimal-only literals cannot spell the exponent form.
+	let schema = asRuntime<number>(type.raw(keyword));
+	if (lower) schema = lower.exclusive ? schema.moreThan(lower.value) : schema.atLeast(lower.value);
+	if (upper) schema = upper.exclusive ? schema.lessThan(upper.value) : schema.atMost(upper.value);
 	if (opts?.multipleOf !== undefined) {
 		const divisor = opts.multipleOf;
 		schema = schema.narrow((value, ctx) => {
@@ -437,7 +440,7 @@ function tRecord<K extends AnySchema, V extends AnySchema>(key: K, value: V, opt
 			if (key(name) instanceof type.errors) return ctx.mustBe("an object with valid record keys");
 		return true;
 	});
-	return applyMeta(base, opts) as TRecord<K, V>;
+	return asSchema<Record<Extract<Static<K>, PropertyKey>, Static<V>>>(applyMeta(base, opts));
 }
 
 function tOptional<E extends AnySchema>(schema: E, opts?: Meta): TOptional<E> {
@@ -464,7 +467,7 @@ function tPartial<P extends Record<string, AnySchema>>(schema: TObject<P>): TTyp
 	const props: Record<string, AnySchema> = {};
 	for (const key in info.props)
 		props[key] = asRuntime<unknown>(info.props[key])[OPTIONAL_INNER] ? info.props[key] : tOptional(info.props[key]);
-	return tObject(props, { additionalProperties: info.additionalProperties }) as TTyped<Partial<ObjectStatic<P>>>;
+	return asSchema<Partial<ObjectStatic<P>>>(tObject(props, { additionalProperties: info.additionalProperties }));
 }
 
 function tRequired<P extends Record<string, AnySchema>>(schema: TObject<P>): TObject<RequiredProps<P>> {
@@ -473,7 +476,7 @@ function tRequired<P extends Record<string, AnySchema>>(schema: TObject<P>): TOb
 	for (const key in info.props) {
 		props[key] = asRuntime<unknown>(info.props[key])[OPTIONAL_INNER] ?? info.props[key];
 	}
-	return tObject(props, { additionalProperties: info.additionalProperties }) as TObject<RequiredProps<P>>;
+	return asSchema<ObjectStatic<RequiredProps<P>>>(tObject(props, { additionalProperties: info.additionalProperties }));
 }
 
 function tPick<P extends Record<string, AnySchema>, const K extends readonly (keyof P)[]>(
@@ -483,7 +486,9 @@ function tPick<P extends Record<string, AnySchema>, const K extends readonly (ke
 	const info = requireObject(schema, "Pick");
 	const props: Record<string, AnySchema> = {};
 	for (const key of keys) if (typeof key === "string" && info.props[key]) props[key] = info.props[key];
-	return tObject(props, { additionalProperties: info.additionalProperties }) as TObject<Pick<P, K[number]>>;
+	return asSchema<ObjectStatic<Pick<P, K[number]>>>(
+		tObject(props, { additionalProperties: info.additionalProperties }),
+	);
 }
 
 function tOmit<P extends Record<string, AnySchema>, const K extends readonly (keyof P)[]>(
@@ -494,7 +499,9 @@ function tOmit<P extends Record<string, AnySchema>, const K extends readonly (ke
 	const omitted = new Set<PropertyKey>(keys);
 	const props: Record<string, AnySchema> = {};
 	for (const key in info.props) if (!omitted.has(key)) props[key] = info.props[key];
-	return tObject(props, { additionalProperties: info.additionalProperties }) as TObject<Omit<P, K[number]>>;
+	return asSchema<ObjectStatic<Omit<P, K[number]>>>(
+		tObject(props, { additionalProperties: info.additionalProperties }),
+	);
 }
 
 function tComposite<const E extends readonly TObject<Record<string, AnySchema>>[]>(

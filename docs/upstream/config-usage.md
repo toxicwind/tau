@@ -9,7 +9,8 @@ Primary implementation:
 - `packages/coding-agent/src/config.ts`
 - `packages/coding-agent/src/config/config-file.ts` (re-exported from `config.ts`)
 - `packages/coding-agent/src/config/settings.ts`
-- `packages/coding-agent/src/config/settings-schema.ts`
+- `packages/coding-agent/src/config/registry.ts` (setting definitions, typed handles)
+- `packages/coding-agent/src/config/all-settings.ts` (imports every domain's `settings.ts` definitions)
 - `packages/coding-agent/src/discovery/builtin.ts`
 - `packages/coding-agent/src/discovery/helpers.ts`
 
@@ -18,7 +19,6 @@ Key integration points:
 - `packages/coding-agent/src/capability/index.ts`
 - `packages/coding-agent/src/discovery/index.ts`
 - `packages/coding-agent/src/extensibility/skills.ts`
-- `packages/coding-agent/src/extensibility/hooks/loader.ts`
 - `packages/coding-agent/src/extensibility/custom-tools/loader.ts`
 - `packages/coding-agent/src/extensibility/extensions/loader.ts`
 
@@ -59,8 +59,14 @@ Key integration points:
 
 User-level bases:
 
+<<<<<<< ours — heading `Canonical roots` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 - TAU native: `~/<TAU_CONFIG_DIR>/agent` (normally `~/.tau/agent`; a named profile changes this as described below)
 - `~/.claude`
+=======
+- OMP native: `~/<PI_CONFIG_DIR>/agent` (normally `~/.omp/agent`; a named profile changes this as described below)
+- Claude's active config directory (`~/.claude` by default; `CLAUDE_CONFIG_DIR` overrides it)
+>>>>>>> theirs — heading `Canonical roots` (F, confidence: medium) · weave: run 'weave explain docs/upstream/config-usage.md' for per-hunk detail, 'weave check' to verify your resolution
 - `~/.codex`
 - `~/.gemini`
 
@@ -77,7 +83,14 @@ Project-level bases:
 
 A named profile (`tau --profile <name>`, `TAU_PROFILE`, or the legacy fallback `PI_PROFILE`) relocates the TAU user base. `TAU_PROFILE` wins when it is defined, including when it is explicitly empty; `default`, empty, or whitespace selects the default profile. When a profile is active, every TAU-native user-level path written here as `~/.tau/agent/...` normally resolves to `~/.tau/profiles/<name>/agent/...`. `--alias <command>` does not select a profile by itself: paired with `--profile`, it creates a shell shortcut for that profile.
 
+<<<<<<< ours — heading `Profiles` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 The relocation is uniform across the native provider (`builtin.ts`) and the generic `config.ts` helpers, so it covers slash commands, rules, prompts, instructions, hooks, tools, extensions, settings, skills, and MCP, plus the top-level `SYSTEM.md` / `RULES.md` / `AGENTS.md` files and runtime state (sessions, blobs, `agent.db`). A profile sees only its own TAU config, never the default profile's agent config.
+=======
+While a named profile is active, the status line's `pi` segment tags the brand with the profile name (`π-work`, or `⠋-work 12s` while a turn runs) so sessions from different profiles are distinguishable at a glance. The default profile shows the bare glyph. Set `statusLine.segmentOptions.pi.showProfile: false` to keep the bare glyph under every profile, for example when each profile already has its own theme.
+
+The relocation is uniform across the native provider (`builtin.ts`) and the generic `config.ts` helpers, so it covers slash commands, rules, prompts, instructions, hooks, tools, extensions, settings, skills, and MCP, plus the top-level `SYSTEM.md` / `RULES.md` / `AGENTS.md` files and runtime state (sessions, blobs, `agent.db`). A profile sees only its own OMP config, never the default profile's agent config.
+>>>>>>> theirs — heading `Profiles` (S+F, confidence: low)
 
 Keybindings are the one exception: a named profile merges the default profile's `~/.tau/agent/keybindings.*` under its own `~/.tau/profiles/<name>/agent/keybindings.*`, with the profile file overriding per binding ([#4867](https://github.com/toxicwind/tau/issues/4867)). Keybindings describe the terminal/keyboard in front of the architect, which doesn't change with the active profile, so user-level remaps keep working in every profile unless the profile explicitly overrides them. The inherited file is read-only for the profile process — legacy-format migration of the default profile's file only happens when the default profile itself runs.
 
@@ -109,6 +122,8 @@ Options:
 
 This API is used for directory-based config lookups (commands, hooks, tools, agents, etc.).
 
+Disabled foreign user sources (`isUserSourceEnabled`) are omitted from the user entries; project entries are not filtered by this helper. Claude user paths honor `CLAUDE_CONFIG_DIR` (trimmed and resolved relative to the process working directory).
+
 ## `findConfigFile(subpath, options)` / `findConfigFileWithMeta(...)`
 
 Searches for the first existing file across ordered bases, returns first match (path-only or path+metadata).
@@ -132,12 +147,19 @@ Supported formats:
 
 Behavior:
 
+<<<<<<< ours — heading `3) File config wrapper (`ConfigFile<T>` in `src/config/config-file.ts`, re-exported from `src/config.ts`)` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 - Validates parsed data against a provided tautype schema.
+=======
+- Validates parsed data against a provided omptype schema.
+- A `.yml` target falls back to its sibling `.yaml` when `.yml` is absent; an existing `.yaml` also suppresses JSON migration. A `.yaml` target does not fall back to `.yml`.
+- Both `.json` and `.jsonc` are parsed as JSONC.
+>>>>>>> theirs — heading `3) File config wrapper (`ConfigFile<T>` in `src/config/config-file.ts`, re-exported from `src/config.ts`)` (F, confidence: medium)
 - Caches load result until `invalidate()`.
 - Returns tri-state result via `tryLoad()`:
-  - `ok`
-  - `not-found`
-  - `error` (`ConfigError` with schema/parse context)
+   - `ok`
+   - `not-found`
+   - `error` (`ConfigError` with schema/parse context)
 
 Legacy migration still supported:
 
@@ -147,6 +169,8 @@ Legacy migration still supported:
 
 ## 4) Settings resolution model (`src/config/settings.ts`)
 
+<<<<<<< ours — heading `4) Settings resolution model (`src/config/settings.ts`) (body partly extracted into Layers (`src/config/settings.ts`))` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: `1. Global settings: the first present file among `~/.omp/agent/…` +1 more
 The runtime settings model is layered:
 
 1. Global settings: the first present file among `~/.tau/agent/config.yml` and `config.yaml`
@@ -165,6 +189,43 @@ Write behavior:
 
 - `settings.set(...)` writes to the **global** layer (the global YAML file selected at startup) and queues a background save.
 - Project settings and config overlays are read-only from the settings API.
+=======
+>>>>>>> theirs — heading `4) Settings resolution model (`src/config/settings.ts`) (body partly extracted into Layers (`src/config/settings.ts`))` (S+F, confidence: low)
+### Definitions (`src/config/registry.ts`)
+
+Each setting is declared once with `register({ id, type, default, env?, protocolDefault?, validate?, pathScoped?, credential?, ui? })` in its domain's settings module (for example `src/tools/settings.ts`, `src/session/settings.ts`, `src/config/model-settings.ts`). `src/config/all-settings.ts` imports every domain in settings-panel order. `register` returns a typed `Setting` handle (`cfgX`); code reads and writes through it rather than by string key:
+
+- `cfgX.get(scope)` — effective value; `scope` is a `Settings` instance or anything carrying one (`AgentSession`, `ToolSession`). Reads are memoized per scope.
+- `cfgX.set(scope, v)` — writes the **global** layer and queues a background save; values the definition's type rejects throw.
+- `cfgX.unset(scope)` — removes the key from the global layer (what `omp config reset` and clearing a settings-panel text field do), so later default changes still apply.
+- `cfgX.setEntry(scope, key, v)` / `cfgX.setMember(scope, item, { member })` — write one entry of a record setting (`undefined` removes it) or add/remove one item of a list setting in the global layer; the save changes only that entry or item in `config.yml`, so entries another layer (a `--config` overlay) supplies never land there.
+- `cfgX.override(scope, v)` / `cfgX.clearOverride(scope)` — runtime-only override, never persisted.
+- `cfgX.map(fn)` / `combine({...}, fn)` — memoized derived values; `.listen(scope, cb)` observes changes of a handle or derivation.
+- `cfgX.provenance(scope)` — layer supplying the value: `"env" | "runtime" | "overlay" | "project" | "global" | "default"`.
+- `cfgX.layered(scope)` — the value from the settings layers alone, ignoring the environment variable (what the settings panel shows and edits).
+
+A configured value that does not fit the declared type (or enum values) is ignored with a warning and the default is used; a definition's `validate` rejects malformed values on load, on every reload, and before every write. A keep-last-good watcher reload, and a save that merges external edits to `config.yml`, keep only the invalid file's layer at its last good values (the warning names the file) while the other layers still refresh. A configured `null` generally counts as unset. Record entries such as model roles and model presets can use `null` in runtime or overlay layers as tombstones that hide lower-layer entries; project/global null entries remain unset.
+
+### Layers (`src/config/settings.ts`)
+
+Effective precedence, highest first:
+
+1. Environment variable declared on the definition (`env: "NAME"`), parsed by the setting's type; unparseable text counts as unset. Booleans follow `parseFlag`: empty is unset, `1`/`y`/`true`/`yes`/`on` (lower or upper case) is true, any other text is false
+2. Runtime overrides: in-memory, non-persistent
+3. Config overlays: `PI_CONFIG_FILES` (platform path-list), followed by repeated `omp --config <path>` files; all are loaded as `config.yml`-style YAML for this process only
+4. Project settings: discovered via the settings capability (`settings.json` and `config.yml` from providers)
+5. Global settings: the first present file among `~/.omp/agent/config.yml` and `config.yaml`
+6. Definition default
+
+A definition may instead declare `env: { name, fallback: true }`: that variable only replaces the default, and any layer configuring a non-null value wins over it (used by `SEARXNG_BASIC_*`). `fallback: "blank"` also lets the variable win over a configured empty or whitespace string (used by `SEARXNG_ENDPOINT`, `SEARXNG_TOKEN`, and `MNEMOPI_EMBEDDING_MODEL`).
+
+Within the overlay list, later files override earlier files (`PI_CONFIG_FILES` entries load before `--config` files). Overlay paths are resolved relative to the active project directory (after `~` expansion).
+
+Definitions with `protocolDefault: ["rpc", "acp"]` make RPC/ACP hosts start from the definition default: at startup `applyProtocolDefaults` (`src/main.ts`) pins the default as a soft runtime override unless the value is already configured. The pin is released by a `cfgX.set`/`cfgX.unset`/`cfgX.setEntry`/`cfgX.setMember` of that setting (settings panel, agents hub, `cfg://`), by a reload that finds a persisted layer configuring it (a `config.yml` edit picked up by the RPC file watcher), and by a re-scope or clone into a project that configures it (an ACP session's own project config).
+
+Subagents receive `parent.overlay(overrides)`: reads fall through to the parent live, while the overrides and any later writes stay in the child and are never persisted.
+
+Generic setting-handle writes target the global layer; config overlays are read-only. Model roles have explicit project-write APIs: `setProjectModelRole()` / `clearProjectModelRole()` update the project layer and persist only the changed roles to `<cwd>/.omp/config.yml`. If an existing runtime override would shadow the role, setting a project role temporarily replaces it; clearing removes that runtime slot. The original override is captured for restoration when changing project scope.
 
 ### Settings load failures
 
@@ -206,8 +267,8 @@ Providers are sorted by numeric priority (higher first). Full set:
 - Cline: `40`
 - GitHub Copilot: `30`
 - VS Code: `20`
-- agents-md (`AGENTS.md` files): `10`
-- mcp-json / ssh-json: `5`
+- agents-md (`AGENTS.md` files) / claude-md (standalone `CLAUDE.md` files): `10`
+- mcp-json / ssh-json / managed-skills (auto-learn): `5`
 - Built-in default rules (`builtin-defaults`): `1`
 
 ```text
@@ -225,8 +286,9 @@ cursor / windsurf       priority  50
 cline                   priority  40
 github                  priority  30
 vscode                  priority  20
-agents-md               priority  10
-mcp-json / ssh-json     priority   5
+agents-md / claude-md   priority  10
+mcp-json / ssh-json /
+  managed-skills        priority   5
 builtin-defaults        priority   1
 ```
 
@@ -280,6 +342,44 @@ Native provider (`id: native`) reads native config from:
 
 For `SYSTEM.md`, `RULES.md`, and `.tau/AGENTS.md`, the native provider walks upward to the nearest non-empty project `.tau` directory.
 
+<<<<<<< ours — heading `Directory admission rules` (T+F, confidence: medium)
+// refused_by: modify_delete_guard · collision: none (no common ancestor text)
+=======
+### Directory admission rules
+
+- Slash commands, directory rules, prompts, instructions, hooks, tools, extensions, extension modules, and settings use a project/user root only when the root directory exists and is non-empty.
+- Skills scan `<ancestor>/.omp/skills` for each ancestor from the current working directory up to the repo root/home boundary, plus `~/.omp/agent/skills`, without requiring the root `.omp` directory itself to be non-empty.
+- `SYSTEM.md`, `SYSTEM_TEMPLATE.md`, `RULES.md`, and `.omp/AGENTS.md` read user-level files directly and use the nearest non-empty ancestor `.omp` directory for project files. Project system-prompt entries load before user entries. `RULES.md` becomes an always-apply sticky rule. See [`docs/system-prompt-customization.md`](./system-prompt-customization.md) for the full `SYSTEM.md` / `APPEND_SYSTEM.md` contract.
+- MCP does not use the non-empty-root admission helper. It reads project `.omp/mcp.json` then `.omp/.mcp.json`, followed by user `mcp.json` then `.mcp.json`, directly.
+
+>>>>>>> theirs — heading `Directory admission rules` (T+F, confidence: medium)
+<<<<<<< ours — heading `Scope-specific loading` (S+F, confidence: low)
+// refused_by: modify_delete_guard · collision: none (no common ancestor text)
+=======
+### Scope-specific loading
+
+- Skills: `<ancestor>/.omp/skills/*/SKILL.md` and `~/.omp/agent/skills/*/SKILL.md`
+- Managed skills: `~/.omp/agent/managed-skills/*/SKILL.md`, through a separate priority-5 provider; authored skills from any other provider win name collisions. Discovery is unconditional; `autolearn.enabled` gates writing/nudging, not loading.
+- Slash commands: `commands/*.md`
+- Rules: `rules/*.{md,mdc}` plus top-level `RULES.md`
+- Prompts: `prompts/*.md`
+- Instructions: `instructions/*.md`
+- Hooks: `hooks/pre/*`, `hooks/post/*`
+- Tools: `tools/*.{json,md,ts,js,sh,bash,py}` and `tools/<name>/index.ts`
+- Extension modules: discovered under `extensions/` (+ legacy `settings.json.extensions` string array)
+- Extensions: `extensions/<name>/gemini-extension.json`
+- Settings capability: `settings.json`, then `config.yml`
+- Context files: `.omp/AGENTS.md`; standalone ancestor `AGENTS.md` files are loaded separately by the low-priority `agents-md` provider
+
+>>>>>>> theirs — heading `Scope-specific loading` (S+F, confidence: low)
+<<<<<<< ours — heading `Nearest-project lookup nuance` (T+F, confidence: medium)
+// refused_by: modify_delete_guard · collision: none (no common ancestor text)
+=======
+### Nearest-project lookup nuance
+
+For `SYSTEM.md`, `SYSTEM_TEMPLATE.md`, `RULES.md`, and `.omp/AGENTS.md`, the native provider walks upward to the nearest non-empty project `.omp` directory.
+
+>>>>>>> theirs — heading `Nearest-project lookup nuance` (T+F, confidence: medium)
 ## 7) How major subsystems consume config
 
 ## Settings subsystem
@@ -296,8 +396,15 @@ Create `TITLE_SYSTEM.md` in any generic config base:
 Generate a session name using lowercase `<type>:<primary-objective>`.
 ```
 
+<<<<<<< ours — heading `Session title prompt override` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 - Missing `TITLE_SYSTEM.md` keeps the bundled title prompts.
 - Discovery checks the current project directory bases first (`<cwd>/.tau`, `.claude`, `.codex`, `.gemini`), then the architect bases in the generic helper order. Unlike native `SYSTEM.md`, project title discovery does **not** walk ancestor directories.
+=======
+- Missing `TITLE_SYSTEM.md` keeps the bundled title prompts. A new session's first title then comes from a fork of its first reply: when the reply's first text or tool-call block starts, the session's own model answers `src/prompts/system/title-fork.md` as a side turn on the cached prefix, naming the title plus a card index (Nerd Fonts icon, emoji, 1-6 character code) that the window title shows as `<icon> <CODE>: <title>`. The tiny title model takes over when the fork fails, times out, declines, or the reply never starts.
+- With `TITLE_SYSTEM.md` present, the first title skips the fork and comes from the tiny title model with the override, as do replan refreshes.
+- Discovery checks the current project directory bases first (`<cwd>/.omp`, `.claude`, `.codex`, `.gemini`), then the user bases in the generic helper order. Unlike native `SYSTEM.md`, project title discovery does **not** walk ancestor directories.
+>>>>>>> theirs — heading `Session title prompt override` (F, confidence: medium)
 - The override replaces only the automatic session-title generation system prompt; normal `SYSTEM.md` / `APPEND_SYSTEM.md` prompt customization is unaffected.
 - The online path asks the title model to wrap the title in `<title>...</title>` and parses it leniently from text (a plain sentence, a truncated/unclosed tag, or a stray `{"title": "..."}` JSON echo all still work). A `TITLE_SYSTEM.md` override gets the wrap-in-`<title>` instruction appended after it. The local tiny-title path keeps the `<title>...</title>` prefill/stop wrapper and uses this file as its system turn.
 
@@ -309,8 +416,8 @@ Generate a session name using lowercase `<type>:<primary-objective>`.
 
 ## Hooks subsystem
 
-- `discoverAndLoadHooks()` resolves hook paths from hook capability + explicit configured paths.
-- Then loads modules via Bun import.
+- `discoverExtensionPaths()` (in `extensibility/extensions/loader.ts`) appends `.ts`/`.js` hook paths from the hook capability to the extension module list.
+- Those modules then load and run through the extension loader and runner, like any other extension.
 
 ## Tools subsystem
 

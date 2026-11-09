@@ -1,4 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
+<<<<<<< ours — imports `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: `import type { LocalProtocolOptions } from "@oh-my-pi/pi-coding-…` +2 more
 import { AsyncJobManager } from "tau/async";
 import { Settings } from "tau/config/settings";
 import { runEvalAgent, type EvalAgentBridgeOptions, type EvalAgentResult } from "tau/eval/agent-bridge";
@@ -13,6 +15,26 @@ import { runStructuredSubagent } from "tau/task/structured-subagent";
 import type { AgentDefinition } from "tau/task/types";
 import type { SingleResult, StructuredSubagentOutput } from "@tau/tau-tui/tools/task";
 import type { ToolSession } from "tau/tools";
+=======
+import { AsyncJobManager } from "@oh-my-pi/pi-coding-agent/async";
+import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import {
+	runEvalAgent,
+	type EvalAgentBridgeOptions,
+	type EvalAgentResult,
+} from "@oh-my-pi/pi-coding-agent/eval/agent-bridge";
+import { runEvalWait } from "@oh-my-pi/pi-coding-agent/eval/handle-bridge";
+import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
+import * as taskDiscovery from "@oh-my-pi/pi-coding-agent/task/discovery";
+import * as taskExecutor from "@oh-my-pi/pi-coding-agent/task/executor";
+import * as isolationRunner from "@oh-my-pi/pi-coding-agent/task/isolation-runner";
+import { runStructuredSubagent } from "@oh-my-pi/pi-coding-agent/task/structured-subagent";
+import type { AgentDefinition } from "@oh-my-pi/pi-coding-agent/task/types";
+import type { SingleResult } from "@oh-my-pi/pi-tui/tools/task";
+import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
+>>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/eval/agent-bridge.test.ts' for per-hunk detail, 'weave check' to verify your resolution
+
+import { cfgTaskIsolationEnabled } from "@oh-my-pi/pi-coding-agent/task/settings";
 
 const jobManagers = new Set<AsyncJobManager>();
 
@@ -31,10 +53,11 @@ function isEvalAgentResult(value: unknown): value is EvalAgentResult {
 async function runEvalAgentAndWait(args: unknown, options: EvalAgentBridgeOptions): Promise<EvalAgentResult> {
 	let manager = options.session.asyncJobManager;
 	if (!manager) {
-		manager = new AsyncJobManager({});
-		Object.assign(options.session, { asyncJobManager: manager });
+		const created = new AsyncJobManager({});
+		Object.assign(options.session, { asyncJobManager: created });
+		jobManagers.add(created);
+		manager = created;
 	}
-	jobManagers.add(manager);
 	const handle = await runEvalAgent(args, options);
 	const waited = await runEvalWait({ items: [{ kind: "agent", id: handle.id }] }, options);
 	const snapshot = waited.items[0];
@@ -94,69 +117,6 @@ describe("runEvalAgent", () => {
 		jobManagers.clear();
 	});
 
-	it("forwards session-scoped MCP and local protocol options", async () => {
-		const agent: AgentDefinition = {
-			name: "task",
-			description: "Task agent",
-			systemPrompt: "Handle task",
-			source: "bundled",
-		};
-		vi.spyOn(taskDiscovery, "discoverAgents").mockResolvedValue({ agents: [agent], projectAgentsDir: null });
-		const runSubprocessSpy = vi.spyOn(taskExecutor, "runSubprocess").mockResolvedValue(createResult());
-
-		const mcpManager = { sentinel: "mcp" } as unknown as MCPManager;
-		const localProtocolOptions: LocalProtocolOptions = {
-			getArtifactsDir: () => "/tmp/parent-artifacts",
-			getSessionId: () => "parent-session",
-		};
-		const session = {
-			cwd: "/tmp",
-			settings: Settings.isolated(),
-			getSessionSpawns: () => "*",
-			getSessionFile: () => null,
-			mcpManager,
-			localProtocolOptions,
-			getAgentId: () => "BridgeParent",
-		} as unknown as ToolSession;
-
-		await runEvalAgentAndWait({ prompt: "do work", agent: "task" }, { session });
-
-		expect(runSubprocessSpy).toHaveBeenCalledTimes(1);
-		const options = runSubprocessSpy.mock.calls[0]?.[0];
-		expect(options?.mcpManager).toBe(mcpManager);
-		expect(options?.localProtocolOptions).toBe(localProtocolOptions);
-		expect(options?.parentAgentId).toBe("BridgeParent");
-	});
-
-	it("returns executor-parsed structured data through the public eval bridge", async () => {
-		const agent: AgentDefinition = {
-			name: "task",
-			description: "Task agent",
-			systemPrompt: "Handle task",
-			source: "bundled",
-			output: { type: "object" },
-		};
-		const structuredOutput: StructuredSubagentOutput = {
-			source: "agent",
-			mode: "strict",
-			status: "valid",
-			data: { status: "ok" },
-		};
-		vi.spyOn(taskDiscovery, "discoverAgents").mockResolvedValue({ agents: [agent], projectAgentsDir: null });
-		vi.spyOn(taskExecutor, "runSubprocess").mockResolvedValue(createResult({ output: "not JSON", structuredOutput }));
-		const session = {
-			cwd: "/tmp",
-			settings: Settings.isolated(),
-			getSessionSpawns: () => "*",
-			getSessionFile: () => null,
-		} as unknown as ToolSession;
-
-		const result = await runEvalAgentAndWait({ prompt: "do work", agent: "task", schemaMode: "strict" }, { session });
-
-		expect(result.data).toEqual({ status: "ok" });
-		expect(result.details).toMatchObject({ structured: true, schemaSource: "agent", schemaMode: "strict" });
-	});
-
 	it("updates the real turn budget by output tokens only", async () => {
 		const agent: AgentDefinition = {
 			name: "task",
@@ -214,22 +174,9 @@ describe("runEvalAgent", () => {
 		const sessionManager = SessionManager.inMemory();
 		sessionManager.beginTurnBudget(100_000, true);
 		const session = createBudgetSession(sessionManager);
-		session.settings.set("task.isolation.enabled", true);
+		cfgTaskIsolationEnabled.set(session.settings, true);
 		vi.spyOn(taskDiscovery, "discoverAgents").mockResolvedValue({ agents: [agent], projectAgentsDir: null });
-		vi.spyOn(isolationRunner, "prepareIsolationContext").mockResolvedValue({
-			repoRoot: "/tmp",
-			baseline: {
-				root: {
-					repoRoot: "/tmp",
-					headCommit: "base",
-					staged: "",
-					unstaged: "",
-					untracked: [],
-					untrackedPatch: "",
-				},
-				nested: [],
-			},
-		});
+		vi.spyOn(isolationRunner, "prepareIsolationContext").mockResolvedValue({ repoRoot: "/tmp" });
 		vi.spyOn(isolationRunner, "runIsolatedSubprocess").mockImplementation(async options => {
 			options.onSubprocessResult?.(createResult({ usage: createUsage(4_567) }));
 			throw new Error("cleanup failed");

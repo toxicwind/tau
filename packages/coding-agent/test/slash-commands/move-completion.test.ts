@@ -66,6 +66,8 @@ describe("/move directory completion", () => {
 		expect(result!.map(i => i.value)).toContain("./src/");
 	});
 
+<<<<<<< ours — scope `it("completes parent directory paths", async ...` in test_suite `/move directory completion`, deleted in theirs (S+F, confidence: low)
+// refused_by: statement_fold · collision: none (no common ancestor text)
 	it("completes parent directory paths", async () => {
 		const parentDir = path.dirname(tempDir);
 		const siblingName = `tau-move-sibling-${path.basename(tempDir)}`;
@@ -79,16 +81,8 @@ describe("/move directory completion", () => {
 			await fs.rm(siblingDir, { recursive: true, force: true });
 		}
 	});
-
-	it("completes directories with spaces in names", async () => {
-		const spacedDir = path.join(tempDir, "My Project");
-		await fs.mkdir(spacedDir);
-		await fs.mkdir(path.join(spacedDir, "src"));
-
-		const result = await move!.getArgumentCompletions!("My Project/");
-		expect(result).not.toBeNull();
-		expect(result!.map(i => i.value)).toContain("My Project/src/");
-	});
+=======
+>>>>>>> theirs — scope `it("completes parent directory paths", async ...` deleted in theirs · weave: run 'weave explain packages/coding-agent/test/slash-commands/move-completion.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 	it("filters inside a space-containing directory", async () => {
 		const spacedDir = path.join(tempDir, "My Project");

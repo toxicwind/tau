@@ -2,15 +2,8 @@ import { afterEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import {
-	assertOwnerPrivateDir,
-	controlDirGuardError,
-	controlPathFitsBudget,
-	getControlDir,
-	getControlPathTemplate,
-	resolveSshControlDir,
-	sshControlFallbackDir,
-} from "../src/ssh/connection-manager";
+import { controlPathFitsBudget, resolveSshControlDir, sshControlFallbackDir } from "../src/ssh/connection-manager";
+import { assertOwnerPrivateDir, ownerPrivateDirError } from "../src/utils/owner-private-dir";
 
 // Regression coverage for #9070: named-profile roots pushed the SSH ControlPath
 // past macOS's 104-byte sun_path once OpenSSH appends its mux temp suffix.
@@ -79,6 +72,8 @@ describe("resolveSshControlDir", () => {
 		expect(controlPathFitsBudget(choice.dir, "darwin")).toBe(true);
 	});
 
+<<<<<<< ours — scope `it("keeps distinct fallback masters for the s...` in test_suite `resolveSshControlDir`, deleted in theirs (S+F, confidence: low)
+// refused_by: statement_fold · collision: none (no common ancestor text)
 	it("keeps distinct fallback masters for the same profile under different XDG state roots", () => {
 		const a = resolveSshControlDir({
 			canonicalDir: "/very/long/xdg-state-a/tau/profiles/upstream/ssh-control",
@@ -94,6 +89,8 @@ describe("resolveSshControlDir", () => {
 		expect(b.shared).toBe(true);
 		expect(a.dir).not.toBe(b.dir);
 	});
+=======
+>>>>>>> theirs — scope `it("keeps distinct fallback masters for the s...` deleted in theirs · weave: run 'weave explain packages/coding-agent/test/ssh-control-path.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 	it("never relocates on Windows (ControlMaster unused) even for a long path", () => {
 		const canonicalDir = "/Users/arthur/.tau/profiles/upstream/ssh-control";
@@ -112,22 +109,22 @@ describe("resolveSshControlDir", () => {
 	});
 });
 
-describe("controlDirGuardError", () => {
+describe("ownerPrivateDirError", () => {
 	const ok = { isSymlink: false, isDir: true, uid: 501, mode: 0o700 };
 
 	it("accepts an owner-private directory", () => {
-		expect(controlDirGuardError(ok, 501)).toBeNull();
+		expect(ownerPrivateDirError(ok, 501)).toBeNull();
 	});
 
 	it("rejects a symlink, non-directory, foreign owner, and loose mode", () => {
-		expect(controlDirGuardError({ ...ok, isSymlink: true }, 501)).toBe("is a symlink");
-		expect(controlDirGuardError({ ...ok, isDir: false }, 501)).toBe("is not a directory");
-		expect(controlDirGuardError({ ...ok, uid: 999 }, 501)).toContain("not 501");
-		expect(controlDirGuardError({ ...ok, mode: 0o755 }, 501)).toContain("0700");
+		expect(ownerPrivateDirError({ ...ok, isSymlink: true }, 501)).toBe("is a symlink");
+		expect(ownerPrivateDirError({ ...ok, isDir: false }, 501)).toBe("is not a directory");
+		expect(ownerPrivateDirError({ ...ok, uid: 999 }, 501)).toContain("not 501");
+		expect(ownerPrivateDirError({ ...ok, mode: 0o755 }, 501)).toContain("0700");
 	});
 
 	it("skips the owner check when the process has no uid", () => {
-		expect(controlDirGuardError({ ...ok, uid: 999 }, undefined)).toBeNull();
+		expect(ownerPrivateDirError({ ...ok, uid: 999 }, undefined)).toBeNull();
 	});
 });
 
@@ -143,15 +140,18 @@ describe("assertOwnerPrivateDir", () => {
 		return scratch;
 	};
 
-	it("accepts a real owner-private directory and normalizes loose perms in place", () => {
+	// POSIX mode bits and O_NOFOLLOW: Windows has neither (modes read back 0666).
+	const posixIt = it.skipIf(process.platform === "win32");
+
+	posixIt("accepts a real owner-private directory and normalizes loose perms in place", () => {
 		const dir = path.join(mkScratch(), "ctl");
 		fs.mkdirSync(dir, { mode: 0o755 });
 		fs.chmodSync(dir, 0o755);
-		expect(() => assertOwnerPrivateDir(dir)).not.toThrow();
+		expect(() => assertOwnerPrivateDir(dir, "SSH control directory")).not.toThrow();
 		expect(fs.statSync(dir).mode & 0o777).toBe(0o700);
 	});
 
-	it("refuses a symlinked final component without following it (TOCTOU swap guard)", () => {
+	posixIt("refuses a symlinked final component without following it (TOCTOU swap guard)", () => {
 		const root = mkScratch();
 		const victim = path.join(root, "victim");
 		fs.mkdirSync(victim, { mode: 0o700 });
@@ -160,20 +160,12 @@ describe("assertOwnerPrivateDir", () => {
 		// A symlink pointing at an otherwise-valid 0700 directory must still be
 		// rejected: O_NOFOLLOW refuses the link itself, so a later re-target cannot
 		// slip a foreign directory past the guard.
-		expect(() => assertOwnerPrivateDir(link)).toThrow("is a symlink");
+		expect(() => assertOwnerPrivateDir(link, "SSH control directory")).toThrow("is a symlink");
 	});
 
 	it("refuses a non-directory", () => {
 		const file = path.join(mkScratch(), "ctl");
 		fs.writeFileSync(file, "");
-		expect(() => assertOwnerPrivateDir(file)).toThrow("is not a directory");
-	});
-});
-
-describe("control template sharing", () => {
-	// sshfs-mount consumes getControlPathTemplate()/getControlDir() verbatim, so
-	// the %C.sock basename and its parent dir must stay in lockstep.
-	it("keeps %C.sock under the resolved control dir", () => {
-		expect(getControlPathTemplate()).toBe(path.join(getControlDir(), "%C.sock"));
+		expect(() => assertOwnerPrivateDir(file, "SSH control directory")).toThrow("is not a directory");
 	});
 });

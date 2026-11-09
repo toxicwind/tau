@@ -28,7 +28,7 @@ export interface ProtoMessage {
 
 /** A bidirectional codec for one protobuf message type. */
 export interface MessageCodec<T extends ProtoMessage = ProtoMessage> {
-	(value: T): Uint8Array;
+	(value: T): Uint8Array<ArrayBuffer>;
 	(value: Uint8Array): T;
 	/** Creates a message with protobuf defaults for omitted fields. */
 	create(value?: Partial<T>): T;
@@ -747,6 +747,10 @@ function assertWireType(actual: WireType, expected: WireType): void {
 	if (actual !== expected) throw new Error(`Unexpected protobuf wire type ${actual}; expected ${expected}`);
 }
 
+function isArrayBufferBacked(bytes: Uint8Array | undefined): bytes is Uint8Array<ArrayBuffer> {
+	return bytes?.buffer instanceof ArrayBuffer;
+}
+
 class Writer {
 	#chunks: Uint8Array[] = [];
 	#length = 0;
@@ -825,12 +829,20 @@ class Writer {
 		this.#length += chunk.byteLength;
 	}
 
+<<<<<<< ours — scope `finish` in class `Writer` (S+F, confidence: low)
+// refused_by: container_member · collision: `finish(): Uint8Array {` +1 more
 	finish(): Uint8Array<ArrayBuffer> {
 		// Always allocate a fresh ArrayBuffer-backed buffer so the returned view
 		// is genuinely `Uint8Array<ArrayBuffer>`, never a caller-provided view over
 		// an arbitrary backing store. (The DOM `BodyInit`/`Request` types require
 		// the concrete `ArrayBuffer` bound, so protobuf encode results are safely
 		// usable as fetch bodies.)
+=======
+	/** Wire bytes on a plain `ArrayBuffer`, so they satisfy `fetch`'s `BodyInit` as-is. */
+	finish(): Uint8Array<ArrayBuffer> {
+		const [only] = this.#chunks;
+		if (this.#chunks.length === 1 && isArrayBufferBacked(only)) return only;
+>>>>>>> theirs — scope `finish` · weave: run 'weave explain packages/catalog/src/discovery/protobuf.ts' for per-hunk detail, 'weave check' to verify your resolution
 		const result = new Uint8Array(this.#length);
 		let offset = 0;
 		for (const chunk of this.#chunks) {

@@ -1,10 +1,19 @@
 import { expect, it } from "bun:test";
 import {
 	enforceStrictSchema,
+<<<<<<< ours — imports `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 	schemaNeedsDraft202012Upgrade,
 	stripSchemaDescriptions,
 	toolWireSchema,
 } from "@tau/tau-ai/utils/schema";
+=======
+	normalizeSchemaForMCP,
+	schemaNeedsDraft202012Upgrade,
+	stripSchemaDescriptions,
+	toolWireSchema,
+} from "@oh-my-pi/pi-ai/utils/schema";
+>>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/ai/test/schema-immutability.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 it("normalizes frozen tool parameters without modifying caller-owned required fields", () => {
 	const parameters = Object.freeze({
@@ -107,4 +116,22 @@ it("keeps traversal state off caller graphs that are deep-frozen after a first v
 	deepFreeze(schema);
 	expect(schemaNeedsDraft202012Upgrade(schema)).toBe(false);
 	expect(enforceStrictSchema(schema)).toEqual(expected);
+});
+
+it("does not fold a const into the caller's own enum array", () => {
+	const parameters: Record<string, unknown> = {
+		type: "object",
+		properties: { path: { type: "string" } },
+		enum: [{ a: 1 }],
+		const: { b: 2 },
+	};
+
+	const normalized: unknown = normalizeSchemaForMCP(parameters);
+
+	// The caller keeps its own enum: folding `const` in must not append to the
+	// array the caller handed over.
+	expect(parameters["enum"]).toEqual([{ a: 1 }]);
+	expect(
+		normalized !== null && typeof normalized === "object" && "enum" in normalized ? normalized.enum : undefined,
+	).toEqual([{ a: 1 }, { b: 2 }]);
 });

@@ -1,11 +1,21 @@
 import { Database } from "bun:sqlite";
-import { describe, expect, it } from "bun:test";
+import { describe, expect, it, spyOn } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
+<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: `import { closeDb, getOverallStats, getRecentRequests, initDb, i…`
 import { syncAllSessions } from "@tau/tau-stats/aggregator";
 import { closeDb, getOverallStats, getRecentRequests, initDb, insertMessageStats } from "@tau/tau-stats/db";
 import type { MessageStats } from "@tau/tau-stats/types";
 import { getSessionsDir, getStatsDbPath } from "@tau/tau-utils";
+=======
+import { syncAllSessions } from "@oh-my-pi/omp-stats/aggregator";
+import { closeDb, getRecentRequests, initDb, insertMessageStats } from "@oh-my-pi/omp-stats/db";
+import { getOverallStats } from "@oh-my-pi/omp-stats/rollup";
+import * as parser from "@oh-my-pi/omp-stats/parser";
+import type { MessageStats } from "@oh-my-pi/omp-stats/types";
+import { getSessionsDir, getStatsDbPath } from "@oh-my-pi/pi-utils";
+>>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/stats/test/fork-dedup.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { installStatsTestIsolation } from "./helpers/temp-agent";
 
 installStatsTestIsolation("@tau-stats-fork-dedup-");
@@ -104,7 +114,7 @@ function makeStat(sessionFile: string, entryId: string, timestamp: number, premi
 }
 
 describe("stats sync deduplicates forked-session entries", () => {
-	it("counts each provider request once even when a fork copied the entries", async () => {
+	it("keeps each request attributed to its original transcript when the fork finishes parsing first", async () => {
 		const ts = new Date("2026-06-24T10:00:00.000Z").toISOString();
 		const userEntry = buildUserEntry("user01ab", ts, "hello");
 		const assistantEntry = buildAssistantEntry({ entryId: "asst01ab", parentId: "user01ab", timestamp: ts });
@@ -121,13 +131,25 @@ describe("stats sync deduplicates forked-session entries", () => {
 		// header. Earlier stats sync keyed uniqueness on (session_file,
 		// entry_id), so both files contributed the same provider request to
 		// every aggregate.
-		await writeSessionFile(
+		const forkFile = await writeSessionFile(
 			"--tmp--fork-dedup",
 			"02_fork.jsonl",
 			{ id: "fork0000", cwd: "/tmp/project", parentSession: parentFile },
 			[userEntry, assistantEntry],
 		);
-		await syncAllSessions({ workers: 1 });
+		const parse = parser.parseSessionFile;
+		const forkParsed = parse(forkFile);
+		const observer = spyOn(parser, "parseSessionFile").mockImplementation(async (file, offset, state, replay) => {
+			if (file === forkFile) return forkParsed;
+			// Finish the real fork read before allowing its parent's read to start.
+			await forkParsed;
+			return parse(file, offset, state, replay);
+		});
+		try {
+			await syncAllSessions({ workers: 1 });
+		} finally {
+			observer.mockRestore();
+		}
 
 		const assistantRequests = getRecentRequests(10).filter(r => r.entryId === "asst01ab");
 		expect(assistantRequests).toHaveLength(1);

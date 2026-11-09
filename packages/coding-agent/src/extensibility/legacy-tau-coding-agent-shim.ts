@@ -28,16 +28,35 @@ import {
 	createBranchSummaryMessage,
 	createCompactionSummaryMessage,
 	createCustomMessage,
+<<<<<<< ours — imports `file_header` (T+F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 } from "@tau/tau-agent-core/compaction/messages";
 import { type AuthCredential, SqliteAuthCredentialStore, type TSchema } from "@tau/tau-ai";
 import { piEscapeRegexLiteral, piJoinPath } from "@tau/tau-ai/providers/cursor-tau-args";
 import { getKeybindings, type Keybinding, Text } from "@tau/tau-tui";
 import { getAgentDbPath, getAgentDir, getProjectDir, isCompiledBinary, parseFrontmatter as parseOmpFrontmatter } from "@tau/tau-utils";
 import { AgentSession } from "../session/agent-session";
+=======
+} from "@oh-my-pi/pi-agent-core/compaction/messages";
+import { type AuthCredential, SqliteAuthCredentialStore, type TSchema } from "@oh-my-pi/pi-ai";
+import { piEscapeRegexLiteral, piJoinPath } from "@oh-my-pi/pi-ai/providers/cursor-pi-args";
+import { getKeybindings, type Keybinding, Text } from "@oh-my-pi/pi-tui";
+import {
+	escapeXmlText,
+	getAgentDbPath,
+	getAgentDir,
+	getProjectDir,
+	isCompiledBinary,
+	parseFrontmatter as parseOmpFrontmatter,
+	prompt,
+} from "@oh-my-pi/pi-utils";
+import legacyAvailableSkillsTemplate from "./legacy-pi-available-skills.md" with { type: "text" };
+>>>>>>> theirs — imports `file_header` (T+F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/extensibility/legacy-tau-coding-agent-shim.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { getPackageDir as getOmpPackageDir } from "../config";
 import { formatKeyHints } from "@tau/tau-tui/app-keybindings";
 import type { PromptTemplate } from "../config/prompt-templates";
-import { findScopedSettings, type SettingPath, Settings } from "../config/settings";
+import { findScopedSettings, Settings } from "../config/settings";
+import { cfgLegacyShellCommandPrefix, cfgShellPath } from "../exec/settings";
 import { EditTool } from "../edit";
 import type { CreateAgentSessionOptions, CreateAgentSessionResult, LoadExtensionsResult } from "../sdk";
 import {
@@ -61,6 +80,7 @@ import { GrepTool } from "../tools/grep";
 import { ReadTool } from "../tools/read";
 import { formatBytes } from "@tau/tau-tui/render/render-utils";
 import { WriteTool } from "../tools/write";
+import { expandTilde, resolveToCwd } from "../tools/path-utils";
 import { EventBus } from "../utils/event-bus";
 import { convertImageToPng } from "@tau/tau-tui/chat/image-loading";
 import { discoverExtensionPaths, loadExtensionFromFactory, loadExtensions } from "./extensions";
@@ -81,6 +101,8 @@ import { getEnabledPlugins, resolvePluginExtensionPaths, type ScopedInstalledPlu
 import type { Skill } from "./skills";
 import { loadSkillsFromDir } from "./skills";
 
+import { cfgDisabledExtensions, cfgExtensions, cfgSkills } from "./settings";
+
 const TOOL_DEFINITION_MARKER = "__isToolDefinition";
 const LEGACY_BUILTIN_TOOL_MARKER = "__tauLegacyBuiltinTool";
 const LEGACY_CODING_TOOL_NAMES = ["read", "bash", "edit", "write"] as const;
@@ -90,7 +112,7 @@ type LegacyCodingToolName = (typeof LEGACY_CODING_TOOL_NAMES)[number];
 type LegacyRegistryToolName = LegacyCodingToolName | "grep" | "glob";
 type LegacyBuiltinToolDefinition = ToolDefinition & { [LEGACY_BUILTIN_TOOL_MARKER]: true };
 
-type LegacySettingOverrides = Partial<Record<SettingPath, unknown>>;
+type LegacySettingOverrides = Record<string, unknown>;
 
 interface LegacyThemeLike {
 	fg(color: string, text: string): string;
@@ -465,6 +487,7 @@ export function createReadToolDefinition(cwd: string, options?: ReadToolOptions)
 		description: tool.description,
 		parameters: legacyReadSchema,
 		approval: "read",
+		approvalCacheTargets: params => tool.approvalCacheTargets?.({ path: stringField(params, "path") ?? "" }),
 		renderCall: (params, options, themeArg) => {
 			const theme = renderTheme(options, themeArg);
 			const readPath = stringField(params, "path") ?? "";
@@ -531,12 +554,15 @@ export function createBashToolDefinition(cwd: string, options?: BashToolOptions)
 					onUpdate,
 				);
 			}
+			// The registry tool takes no per-call environment: `env` is service-launch
+			// configuration and is rejected outside it. A hook's env reaches `!` user
+			// shells through `shellEnv` above and the `operations` branch through its
+			// exec options.
 			return tool.execute(
 				toolCallId,
 				{
 					command: spawn?.command ?? command,
 					cwd: spawn?.cwd ?? cwd,
-					env: spawn?.env,
 					timeout,
 				},
 				signal,
@@ -568,6 +594,7 @@ export function createGrepToolDefinition(cwd: string, options?: GrepToolOptions)
 		description: "Search file contents for a pattern.",
 		parameters: legacyGrepSchema,
 		approval: "read",
+		approvalCacheTargets: params => tool.approvalCacheTargets?.({ path: stringField(params, "path") ?? "." }),
 		renderCall: (params, optionsArg, themeArg) => {
 			const theme = renderTheme(optionsArg, themeArg);
 			const pattern = stringField(params, "pattern") ?? "";
@@ -575,11 +602,19 @@ export function createGrepToolDefinition(cwd: string, options?: GrepToolOptions)
 			return new Text(`${themedTitle(theme, "grep")} ${themedMuted(theme, `/${pattern}/ in ${searchPath}`)}`, 0, 0);
 		},
 		renderResult: legacyRenderResult,
-		execute: (toolCallId, params, signal, onUpdate) => {
+		execute: async (toolCallId, params, signal, onUpdate) => {
 			const rawPattern = stringField(params, "pattern") ?? "";
 			const pattern = booleanField(params, "literal") ? piEscapeRegexLiteral(rawPattern) : rawPattern;
 			const searchPath = stringField(params, "path") ?? ".";
 			const glob = stringField(params, "glob");
+			let isFile = false;
+			if (glob) {
+				try {
+					isFile = (await fs.promises.stat(resolveToCwd(searchPath, cwd))).isFile();
+				} catch {
+					// Leave unresolved paths and URLs to the built-in grep resolver.
+				}
+			}
 			const context = numberField(params, "context");
 			// The new grep reads context from settings fixed at construction; build a
 			// per-call tool when the model passes an explicit legacy `context`.
@@ -594,7 +629,7 @@ export function createGrepToolDefinition(cwd: string, options?: GrepToolOptions)
 				toolCallId,
 				{
 					pattern,
-					path: glob ? piJoinPath(searchPath, glob) : searchPath,
+					path: glob && !isFile ? piJoinPath(searchPath, glob) : searchPath,
 					case: booleanField(params, "ignoreCase") ? false : undefined,
 				},
 				signal,
@@ -618,6 +653,10 @@ export function createFindToolDefinition(cwd: string, options?: FindToolOptions)
 		description: "Find files by glob pattern.",
 		parameters: legacyFindSchema,
 		approval: "read",
+		approvalCacheTargets: params =>
+			tool.approvalCacheTargets?.({
+				path: piJoinPath(stringField(params, "path") ?? ".", stringField(params, "pattern") ?? "*"),
+			}),
 		renderCall: (params, optionsArg, themeArg) => {
 			const theme = renderTheme(optionsArg, themeArg);
 			const pattern = stringField(params, "pattern") ?? "";
@@ -673,6 +712,9 @@ export function createLsToolDefinition(cwd: string, options?: LsToolOptions): To
 		description: "List directory entries.",
 		parameters: legacyLsSchema,
 		approval: "read",
+		// Listing a directory reads it, so it needs the grant a `read` of that directory would.
+		approvalCacheTargets: params =>
+			createRegistryTool(cwd, "read").approvalCacheTargets?.({ path: stringField(params, "path") ?? "." }),
 		renderCall: (params, optionsArg, themeArg) => {
 			const theme = renderTheme(optionsArg, themeArg);
 			return new Text(`${themedTitle(theme, "ls")} ${themedMuted(theme, stringField(params, "path") ?? ".")}`, 0, 0);
@@ -763,6 +805,47 @@ export function createReadOnlyTools(cwd: string): ToolDefinition[] {
  * Legacy pi `SettingsManager` shim.
  *
  * Upstream Pi's `SettingsManager.create(cwd)` is **synchronous** and returns a
+ * manager exposing `getGlobalSettings()`/`getProjectSettings()`, shell
+ * accessors, and the typed `get(path)`. OMP's `Settings` backs that manager;
+ * the shim resolves the active extension session's instance first, then falls
+ * back to a live instance matching the requested `cwd`/`agentDir`, or an
+ * isolated instance when nothing matches. Returning the promise from
+ * `Settings.init()` here broke extensions that read settings synchronously —
+ * e.g. pi-vim's `session_start` handler (#10397); selecting a process-global
+ * instance would leak one session's settings into another.
+ */
+interface LegacyShellAccessors {
+	getShellPath(): string | undefined;
+	getShellCommandPrefix(): string | undefined;
+}
+
+function hasLegacyShellAccessors(settings: Settings): settings is Settings & LegacyShellAccessors {
+	return (
+		"getShellPath" in settings &&
+		typeof settings.getShellPath === "function" &&
+		"getShellCommandPrefix" in settings &&
+		typeof settings.getShellCommandPrefix === "function"
+	);
+}
+
+function withLegacyShellAccessors(settings: Settings): Settings & LegacyShellAccessors {
+	if (hasLegacyShellAccessors(settings)) return settings;
+	return Object.assign(settings, {
+		// Upstream Pi expands `~` before returning; spawn APIs take the path literally.
+		getShellPath: () => {
+			const shellPath = cfgShellPath.get(settings);
+			return shellPath ? expandTilde(shellPath) : shellPath;
+		},
+		getShellCommandPrefix: () => cfgLegacyShellCommandPrefix.get(settings),
+	});
+}
+
+<<<<<<< ours — scope `declaration` in variable `SettingsManager` (S, confidence: medium)
+// refused_by: container_member · collision: `* `get(path)`). OMP's `Settings` is that manager, so the shim r…` +1 more
+/**
+ * Legacy pi `SettingsManager` shim.
+ *
+ * Upstream Pi's `SettingsManager.create(cwd)` is **synchronous** and returns a
  * manager exposing `getGlobalSettings()`/`getProjectSettings()` (plus the typed
  * `get(path)`). TAU's `Settings` is that manager, so the shim resolves the
  * active extension session's instance first, then falls back to a live instance
@@ -772,13 +855,15 @@ export function createReadOnlyTools(cwd: string): ToolDefinition[] {
  * handler (#10397); selecting a process-global instance would leak one session's
  * settings into another.
  */
+=======
+>>>>>>> theirs — scope `declaration`
 export const SettingsManager = {
-	create(cwd?: string, agentDir?: string): Settings {
-		return findScopedSettings(cwd, agentDir) ?? Settings.isolated();
+	create(cwd?: string, agentDir?: string): Settings & LegacyShellAccessors {
+		return withLegacyShellAccessors(findScopedSettings(cwd, agentDir) ?? Settings.isolated());
 	},
 
-	inMemory(): Settings {
-		return Settings.isolated();
+	inMemory(): Settings & LegacyShellAccessors {
+		return withLegacyShellAccessors(Settings.isolated());
 	},
 } as const;
 
@@ -836,8 +921,8 @@ export class DefaultPackageManager {
 	/** Resolve enabled extension paths with their TAU plugin provenance. */
 	async resolve(_onMissing?: (source: string) => Promise<MissingSourceAction>): Promise<ResolvedPaths> {
 		const settings = await this.#settingsManager;
-		const configuredPaths = settings.get("extensions") ?? [];
-		const disabledExtensionIds = settings.get("disabledExtensions") ?? [];
+		const configuredPaths = cfgExtensions.get(settings);
+		const disabledExtensionIds = cfgDisabledExtensions.get(settings);
 		const [extensionPaths, plugins] = await Promise.all([
 			discoverExtensionPaths(configuredPaths, this.#cwd, disabledExtensionIds),
 			getEnabledPlugins(this.#cwd),
@@ -1094,8 +1179,8 @@ export class DefaultResourceLoader implements ResourceLoader {
 				options.noSkills
 					? Promise.resolve({ skills: [], warnings: [] })
 					: discoverSkills(cwd, agentDir, {
-							...settings.getGroup("skills"),
-							disabledExtensions: settings.get("disabledExtensions") ?? [],
+							...cfgSkills.get(settings),
+							disabledExtensions: cfgDisabledExtensions.get(settings),
 						}),
 				this.#loadAdditionalSkills(),
 				options.noPromptTemplates ? Promise.resolve([]) : discoverPromptTemplates(cwd, agentDir),
@@ -1495,6 +1580,10 @@ export function getPackageDir(): string {
 // export check during validation (issues #6583, #7174, #7403, #10278).
 export { calculateContextTokens, compact, serializeConversation } from "@tau/tau-agent-core/compaction";
 
+export { calculateContextTokens, compact, serializeConversation } from "@tau/tau-agent-core/compaction";
+
+export { calculateContextTokens, compact, serializeConversation } from "@tau/tau-agent-core/compaction";
+
 const legacyTokenizer = new Tokenizer();
 
 /**
@@ -1644,5 +1733,66 @@ export function isLsToolResult(e: ToolResultEvent): e is LsToolResultEvent {
 // Every runtime symbol in LEGACY_PI_ROOT_EXPORTS must appear here.
 // The conformance test enforces it.
 export { parseSkillBlock, type ParsedSkillBlock } from "./skills/parse-skill-block";
+
+export { parseSkillBlock, type ParsedSkillBlock } from "./skills/parse-skill-block";
+export { loadSkills, getAgentDir } from "./skills";
+
 export { loadSkills, getAgentDir } from "./skills";
 export { AgentSession } from "../session/agent-session";
+
+/** Upstream `ParsedSkillBlock`: the `<skill>` block parsed from a message. */
+export interface ParsedSkillBlock {
+	name: string;
+	location: string;
+	content: string;
+	userMessage: string | undefined;
+}
+
+/**
+ * Parse a skill block from message text, ported verbatim from upstream
+ * pi-coding-agent 1.0.2+ (`src/core/agent-session.ts`). omp folds skill
+ * invocation into its own hook pipeline and never exports the parser, so
+ * legacy extensions importing it from the package root fail Bun's static
+ * named-export check (observed consumer: `pi-optchat`, which matches journaled
+ * skill invocations back to their typed input).
+ *
+ * Returns null if the text doesn't contain a skill block.
+ */
+export function parseSkillBlock(text: string): ParsedSkillBlock | null {
+	const match = text.match(/^<skill name="([^"]+)" location="([^"]+)">\n([\s\S]*?)\n<\/skill>(?:\n\n([\s\S]+))?$/);
+	if (!match) return null;
+	return {
+		name: match[1],
+		location: match[2],
+		content: match[3],
+		userMessage: match[4]?.trim() || undefined,
+	};
+}
+
+/**
+ * Render the `<available_skills>` system-prompt block, ported from upstream
+ * pi-coding-agent 1.x (`src/core/skills.ts`). omp renders skills through its
+ * own prompt templates and never exports the formatter, so legacy extensions
+ * importing it from the package root fail Bun's static named-export check
+ * (observed consumer: `pi-claude-bridge`, which forwards the block to Claude
+ * Code). Skills hidden from the prompt are skipped, whether hidden through
+ * upstream's `disableModelInvocation` or omp's `hide`.
+ */
+export function formatSkillsForPrompt(
+	skills: readonly (Skill & { disableModelInvocation?: boolean })[],
+	fileReadTool: "read" | "bash" | (string & {}) = "read",
+): string {
+	const visibleSkills = skills.filter(skill => !skill.disableModelInvocation && !skill.hide);
+	if (visibleSkills.length === 0) return "";
+	const block = prompt.render(legacyAvailableSkillsTemplate, {
+		readTool: fileReadTool === "read",
+		bashTool: fileReadTool === "bash",
+		skills: visibleSkills.map(skill => ({
+			name: escapeXmlText(skill.name),
+			description: escapeXmlText(skill.description),
+			location: escapeXmlText(skill.filePath),
+		})),
+	});
+	// Upstream returns the block with two leading newlines to append to a system prompt.
+	return `\n\n${block.trimEnd()}`;
+}

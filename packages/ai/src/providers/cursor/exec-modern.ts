@@ -74,7 +74,7 @@ import type { ToolResultMessage } from "../../types";
  * and their translation are consumed together.
  */
 export {
-	cursorEditOwnedReadPath,
+	cursorExecReadPath,
 	cursorRawReadPath,
 	omitUndefinedArgs,
 	piEscapeRegexLiteral,
@@ -86,7 +86,15 @@ export {
 	piReadPath,
 	piReadPathHasRange,
 	piTimeout,
+	shellDeadlineSeconds,
+	shellTimeoutSeconds,
+<<<<<<< ours — interstitial `between:packages/ai/src/providers/cursor/exec-modern.ts::export::piTimeout:packages/ai/src/providers/cursor/exec-modern.ts::function::piOutputText` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: `} from "../cursor-pi-args";`
 } from "../cursor-tau-args";
+
+=======
+>>>>>>> theirs — interstitial `between:packages/ai/src/providers/cursor/exec-modern.ts::export::piTimeout:packages/ai/src/providers/cursor/exec-modern.ts::function::piOutputText` (S+F, confidence: low) · weave: run 'weave explain packages/ai/src/providers/cursor/exec-modern.ts' for per-hunk detail, 'weave check' to verify your resolution
+} from "../cursor-pi-args";
 
 /** Flatten a tool result's content into the single `output` string the Pi frames carry. */
 export function piOutputText(toolResult: ToolResultMessage): string {

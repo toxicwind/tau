@@ -2,6 +2,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
+<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import type { AssistantMessage } from "@oh-my-pi/pi-ai";`
 import { Agent } from "@tau/tau-agent-core";
 import type { AssistantMessage } from "@tau/tau-ai";
 import { createMockModel, type MockHandler } from "@tau/tau-ai/providers/mock";
@@ -14,6 +16,21 @@ import { AgentSession } from "tau/session/agent-session";
 import { AuthStorage } from "tau/session/auth-storage";
 import { SessionManager } from "tau/session/session-manager";
 import { Snowflake } from "@tau/tau-utils";
+=======
+import { Agent } from "@oh-my-pi/pi-agent-core";
+import type { Api, AssistantMessage, ImageContent, Model } from "@oh-my-pi/pi-ai";
+import { createMockModel, type MockHandler } from "@oh-my-pi/pi-ai/providers/mock";
+import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+import { loadAdvisorTranscriptCosts } from "@oh-my-pi/pi-coding-agent/advisor/transcript-recorder";
+import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
+import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import type { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
+import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
+import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
+import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
+import * as imageVisionFallback from "@oh-my-pi/pi-coding-agent/utils/image-vision-fallback";
+import { Snowflake } from "@oh-my-pi/pi-utils";
+>>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/agent-session-btw-branch.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function createBtwAssistant(): AssistantMessage {
 	return {
@@ -77,8 +94,9 @@ describe("AgentSession.branchFromBtw", () => {
 		persisted?: boolean;
 		extensionRunner?: ExtensionRunner;
 		handler?: MockHandler;
+		model?: Model<Api>;
 	}) {
-		const model = getBundledModel("anthropic", "claude-sonnet-4-5")!;
+		const model = options?.model ?? getBundledModel("anthropic", "claude-sonnet-4-5")!;
 		const mock = createMockModel({ handler: options?.handler ?? (() => ({ content: ["unused"] })) });
 		const agent = new Agent({
 			getApiKey: () => "test-key",
@@ -152,6 +170,36 @@ describe("AgentSession.branchFromBtw", () => {
 		if (promoted?.role !== "assistant") throw new Error("Expected promoted assistant message");
 		expectSanitizedBtwAssistant(promoted);
 	});
+
+	it.each([
+		["a vision model", ["text", "image"]],
+		["a text-only model, with a vision description", ["text"]],
+	] as const)("keeps the images of the /btw question in the branch for %s", async (_label, input) => {
+		const describe = vi
+			.spyOn(imageVisionFallback, "describeAttachedImagesForTextModel")
+			.mockResolvedValue([{ type: "text", text: "A red square." }]);
+		const activeSession = await createSession({
+			model: { ...getBundledModel("anthropic", "claude-sonnet-4-5")!, input: [...input] },
+		});
+		activeSession.sessionManager.appendMessage({ role: "user", content: "seed", timestamp: Date.now() });
+		await activeSession.sessionManager.flush();
+		const screenshot: ImageContent = { type: "image", data: "c2NyZWVuc2hvdA==", mimeType: "image/png" };
+
+		await activeSession.branchFromBtw(
+			"what is wrong here? [Image #1]",
+			createBtwAssistant(),
+			requiredLeafId(activeSession),
+			activeSession.sessionManager.getSessionId(),
+			[screenshot],
+		);
+
+		expect(activeSession.messages.at(-2)).toMatchObject({
+			role: "user",
+			content: [{ type: "text", text: "what is wrong here? [Image #1]" }, screenshot],
+		});
+		expect(JSON.stringify(activeSession.messages.at(-3)).includes("A red square.")).toBe(input.length === 1);
+		expect(describe).toHaveBeenCalledTimes(input.length === 1 ? 1 : 0);
+	});
 	it("does not record a late advisor turn into a /btw branch", async () => {
 		const activeSession = await createSession();
 		activeSession.settings.setModelRole("advisor", "anthropic/claude-sonnet-4-5");
@@ -208,6 +256,7 @@ describe("AgentSession.branchFromBtw", () => {
 		expect(activeSession.sessionFile).toBe(originalFile);
 		expect(emit).toHaveBeenCalledWith({
 			type: "session_before_branch",
+			reason: "btw",
 			entryId: activeSession.sessionManager.getLeafId(),
 		});
 	});

@@ -1,12 +1,19 @@
 import { describe, expect, it } from "bun:test";
+<<<<<<< ours — imports `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: `} from "@oh-my-pi/pi-catalog/provider-models/openai-compat";`
 import {
 	KIMI_K27_CODE_RECOMMENDED_MAX_TOKENS,
 	veniceModelManagerOptions,
 } from "@tau/tau-catalog/provider-models/openai-compat";
 import type { FetchImpl } from "@tau/tau-catalog/types";
+=======
+import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import { veniceModelManagerOptions } from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
+import type { FetchImpl } from "@oh-my-pi/pi-catalog/types";
+>>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/catalog/test/venice-provider.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 describe("Venice provider catalog", () => {
-	it("caps Kimi K2.7 Code during runtime discovery", async () => {
+	it("caps Kimi K2.7 Code discovered at its context-sized output budget", async () => {
 		const requestedUrls: string[] = [];
 		const fetchImpl: FetchImpl = async input => {
 			requestedUrls.push(input instanceof Request ? input.url : String(input));
@@ -30,7 +37,8 @@ describe("Venice provider catalog", () => {
 		const model = models?.find(candidate => candidate.id === "kimi-k2-7-code");
 
 		expect(requestedUrls).toEqual(["https://api.venice.ai/api/v1/models"]);
-		expect(model).toBeDefined();
-		expect(model?.maxTokens).toBe(KIMI_K27_CODE_RECOMMENDED_MAX_TOKENS);
+		if (!model) throw new Error("Expected the kimi-k2-7-code row");
+		// The `max-tokens-ceiling` rule in providers/venice.kdl applies at build time.
+		expect(buildModel(model).maxTokens).toBe(32_768);
 	});
 });

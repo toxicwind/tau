@@ -1,5 +1,17 @@
+<<<<<<< ours — imports `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: `import type { AgentTool, AgentToolContext, AgentToolResult, Age…`
 import { type } from "@tau/tautype";
 import type { AgentTool, AgentToolContext, AgentToolResult, AgentToolUpdateCallback } from "@tau/tau-agent-core";
+=======
+import { type } from "@oh-my-pi/omptype";
+import type {
+	AgentTool,
+	AgentToolContext,
+	AgentToolResult,
+	AgentToolUpdateCallback,
+	ToolTier,
+} from "@oh-my-pi/pi-agent-core";
+>>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/goals/tools/goal-tool.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 import { prompt } from "@tau/tau-utils";
 
@@ -55,6 +67,9 @@ function validateCreateParams(params: GoalToolInput): { objective: string; token
 
 export class GoalTool implements AgentTool<typeof goalSchema, GoalToolDetails> {
 	readonly name = "goal";
+	/** Goal ops touch only session state: `get` reads it; the rest change the goal, so `always-ask` still prompts. */
+	readonly approval = (args: unknown): ToolTier =>
+		args !== null && typeof args === "object" && "op" in args && args.op === "get" ? "read" : "write";
 	readonly label = "Goal";
 	readonly description = prompt.render(goalDescription);
 	readonly parameters = goalSchema;

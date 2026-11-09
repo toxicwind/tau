@@ -49,6 +49,9 @@ function parseChunk(sel: string, pinBare: boolean): LineRange | null {
 	return { startLine: rawStart, endLine: rawEnd };
 }
 
+/** What a bare `N` selects in a one-chunk list: lines `N` onward (`:50`), or the single line `N`. */
+export type BareLineMode = "onward" | "single";
+
 /**
  * Parse a comma-separated list of line ranges (e.g. `5-16,960-973` or `19,59`). Returns
  * the ranges in ascending order with overlapping/adjacent ranges merged so
@@ -58,11 +61,23 @@ function parseChunk(sel: string, pinBare: boolean): LineRange | null {
  * `"single"` = exactly line N (upstream raw-mode semantics: `:12:raw` extracts
  * line 12 and nothing else).
  */
+<<<<<<< ours — scope `declaration` in function `parseLineRanges` (S+F, confidence: low)
+// refused_by: statement_fold · collision: `export function parseLineRanges(sel: string): [LineRange, ...Li…`
 export function parseLineRanges(sel: string, mode: "onward" | "single" = "onward"): [LineRange, ...LineRange[]] | null {
+=======
+export function parseLineRanges(sel: string, bare: BareLineMode = "onward"): [LineRange, ...LineRange[]] | null {
+>>>>>>> theirs — scope `declaration` · weave: run 'weave explain packages/tui/src/tools/line-ranges.ts' for per-hunk detail, 'weave check' to verify your resolution
 	const chunks = sel.split(",");
+<<<<<<< ours — scope `// A lone `:50` means "from line 50". Inside ...` in function `parseLineRanges` (T+F, confidence: medium)
+// refused_by: statement_fold · collision: `// A lone `:50` means "from line 50". Inside a comma list, a ba…` +2 more
 	// A lone `:50` means "from line 50" in onward mode. Inside a comma list, a
 	// bare number is that one line; in single mode every bare number is one line.
 	const pinBare = chunks.length > 1 || mode === "single";
+=======
+	// A lone `:50` means "from line 50" unless `bare` pins it. Inside a comma list,
+	// a bare number is that one line; otherwise `:19,59` collapses to "from 19 through EOF".
+	const pinBare = bare === "single" || chunks.length > 1;
+>>>>>>> theirs — scope `// A lone `:50` means "from line 50". Inside ...`
 	const parsed: LineRange[] = [];
 	for (const chunk of chunks) {
 		const range = parseChunk(chunk, pinBare);
@@ -70,14 +85,19 @@ export function parseLineRanges(sel: string, mode: "onward" | "single" = "onward
 		parsed.push(range);
 	}
 	if (parsed.length === 0) return null;
-	parsed.sort((a, b) => a.startLine - b.startLine);
+	return mergeLineRanges(parsed);
+}
 
-	const merged: LineRange[] = [parsed[0]];
-	for (let i = 1; i < parsed.length; i++) {
-		const current = parsed[i];
+/**
+ * Sort non-empty `ranges` by start line and merge the ones that overlap or touch;
+ * an open-ended range (`endLine` undefined) reaches EOF and absorbs every later one.
+ */
+export function mergeLineRanges(ranges: readonly LineRange[]): [LineRange, ...LineRange[]] {
+	const [first, ...rest] = [...ranges].sort((a, b) => a.startLine - b.startLine);
+	const merged: [LineRange, ...LineRange[]] = [first];
+	for (const current of rest) {
 		const last = merged[merged.length - 1];
-		// Open-ended (endLine undefined) means "to EOF" — any later range is absorbed.
-		if (last.endLine === undefined) continue;
+		if (last.endLine === undefined) break;
 		// Merge when current starts within (or immediately after) the last range.
 		if (current.startLine <= last.endLine + 1) {
 			if (current.endLine === undefined || current.endLine > last.endLine) {
@@ -87,7 +107,7 @@ export function parseLineRanges(sel: string, mode: "onward" | "single" = "onward
 		}
 		merged.push(current);
 	}
-	return merged as [LineRange, ...LineRange[]];
+	return merged;
 }
 
 /**
@@ -102,10 +122,12 @@ export function parseLineRanges(sel: string, mode: "onward" | "single" = "onward
  */
 export function selectorLineRanges(sel: string | undefined): [LineRange, ...LineRange[]] | undefined {
 	if (!sel) return undefined;
-	for (const chunk of sel.split(":")) {
+	const chunks = sel.split(":");
+	const bare = chunks.some(chunk => chunk.toLowerCase() === "raw") ? "single" : "onward";
+	for (const chunk of chunks) {
 		const lower = chunk.toLowerCase();
 		if (lower === "raw" || lower === "conflicts") continue;
-		const ranges = parseLineRanges(chunk);
+		const ranges = parseLineRanges(chunk, bare);
 		if (ranges) return ranges;
 	}
 	return undefined;

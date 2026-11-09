@@ -6,10 +6,22 @@
  * Requests per-result summaries via `contents.summary` and synthesizes
  * them into a combined `answer` string on the SearchResponse.
  */
+<<<<<<< ours
 import { type ApiKey, type AuthStorage, type FetchImpl, getEnvApiKey, withAuth } from "@tau/tau-ai";
 import { isRecord } from "@tau/tau-utils";
 import { getDefault, settings } from "../../../config/settings";
 import { findApiKey, isSearchResponse } from "../../../exa/mcp-client";
+||||||| base
+import { type ApiKey, type AuthStorage, type FetchImpl, getEnvApiKey, withAuth } from "@oh-my-pi/pi-ai";
+import { isRecord } from "@oh-my-pi/pi-utils";
+import { getDefault, settings } from "../../../config/settings";
+import { findApiKey, isSearchResponse } from "../../../exa/mcp-client";
+=======
+import { type ApiKey, type AuthStorage, type FetchImpl, getEnvApiKey, withAuth } from "@oh-my-pi/pi-ai";
+import { $env, asRecord } from "@oh-my-pi/pi-utils";
+import { settings } from "../../../config/settings";
+import { normalizeMcpToolPayload } from "../../../exa/mcp-client";
+>>>>>>> theirs · weave: run 'weave explain packages/coding-agent/src/web/search/providers/exa.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { readMcpJsonRpcResponse } from "../../../mcp/json-rpc";
 import type { SearchResponse, SearchSource } from "../types";
 import { SearchProviderError } from "../../../web/search/types";
@@ -19,18 +31,20 @@ import type { SearchParams } from "./base";
 import { SearchProvider } from "./base";
 import { classifyProviderHttpError, withHardTimeout } from "./utils";
 
+import { cfgExaEnabled, cfgExaSearchDelayMs } from "../../settings";
+
 const EXA_API_URL = "https://api.exa.ai/search";
 const EXA_MCP_URL = "https://mcp.exa.ai/mcp";
 const EXA_MCP_SOURCE = "tau";
 const MAX_EXA_SNIPPET_CHARS = 500;
-const DEFAULT_EXA_SEARCH_DELAY_MS = getDefault("exa.searchDelayMs");
+const DEFAULT_EXA_SEARCH_DELAY_MS = cfgExaSearchDelayMs.default;
 
 let nextExaSearchRequestAt = 0;
 let exaSearchThrottle = Promise.resolve();
 
 function configuredExaSearchDelayMs(): number {
 	try {
-		const delayMs = settings.get("exa.searchDelayMs");
+		const delayMs = cfgExaSearchDelayMs.get(settings);
 		return Number.isFinite(delayMs) && delayMs > 0 ? Math.floor(delayMs) : 0;
 	} catch {
 		return DEFAULT_EXA_SEARCH_DELAY_MS;
@@ -146,51 +160,13 @@ interface ExaSearchResponse {
 	costDollars?: { total: number };
 	searchTime?: number;
 }
-function asRecord(value: unknown): Record<string, unknown> | null {
-	return isRecord(value) ? value : null;
-}
 
-function parseJsonContent(text: string): unknown | null {
-	try {
-		const parsed: unknown = JSON.parse(text);
-		return parsed;
-	} catch {
-		return null;
-	}
-}
-
-function normalizeExaMcpPayload(payload: unknown): unknown {
-	const candidates: unknown[] = [];
-	const root = asRecord(payload);
-
-	if (root) {
-		if (root.structuredContent !== undefined) candidates.push(root.structuredContent);
-		if (root.data !== undefined) candidates.push(root.data);
-		if (root.result !== undefined) candidates.push(root.result);
-		candidates.push(root);
-
-		const content = root.content;
-		if (Array.isArray(content)) {
-			for (const item of content) {
-				const part = asRecord(item);
-				if (!part) continue;
-				const text = part.text;
-				if (typeof text !== "string" || text.trim().length === 0) continue;
-				const parsed = parseJsonContent(text);
-				if (parsed !== null) candidates.push(parsed);
-			}
-		}
-	} else {
-		candidates.push(payload);
-	}
-
-	for (const candidate of candidates) {
-		if (isSearchResponse(candidate)) {
-			return candidate;
-		}
-	}
-
-	return payload;
+function isSearchResponse(data: unknown): data is ExaSearchResponse {
+	return (
+		typeof data === "object" &&
+		data !== null &&
+		("results" in data || "statuses" in data || "costDollars" in data || "searchTime" in data)
+	);
 }
 
 function parseOptionalField(section: string, label: string): string | null | undefined {
@@ -352,7 +328,7 @@ function buildExaMcpArgs(params: ExaSearchParams): Record<string, unknown> {
 
 async function callExaMcpSearch(params: ExaSearchParams): Promise<ExaSearchResponse> {
 	const query = new URLSearchParams();
-	const apiKey = findApiKey();
+	const apiKey = $env.EXA_API_KEY;
 	if (apiKey) query.set("exaApiKey", apiKey);
 	query.set("tools", "web_search_exa");
 	const fetchImpl = params.fetch ?? fetch;
@@ -412,7 +388,7 @@ async function callExaMcpSearch(params: ExaSearchParams): Promise<ExaSearchRespo
 		}
 		throw new SearchProviderError("exa", message || "Exa MCP returned an error");
 	}
-	const responsePayload = normalizeExaMcpPayload(mcpResponse.result);
+	const responsePayload = normalizeMcpToolPayload(mcpResponse.result);
 	if (isSearchResponse(responsePayload)) {
 		return responsePayload;
 	}
@@ -480,25 +456,13 @@ export class ExaProvider extends SearchProvider {
 	readonly id = "exa";
 	readonly label = "Exa";
 
-	isAvailable(authStorage: AuthStorage): boolean {
-		if (!this.#settingsAllowSearch()) return false;
-		return !!getEnvApiKey("exa") || authStorage.keys.source("exa") !== undefined;
-	}
-
 	/**
-	 * Exa ships an unauthenticated public MCP fallback, so an explicit
-	 * selection (programmatic or via `providers.webSearch: exa`) routes
-	 * through MCP even when no credential is configured. The auto chain
-	 * still uses {@link isAvailable} so an unrelated configured provider
-	 * keeps priority over the public fallback.
+	 * Available unless disabled in settings: without a credential, search runs
+	 * through Exa's unauthenticated public MCP.
 	 */
-	override isExplicitlyAvailable(_authStorage: AuthStorage): boolean {
-		return this.#settingsAllowSearch();
-	}
-
-	#settingsAllowSearch(): boolean {
+	isAvailable(_authStorage: AuthStorage): boolean {
 		try {
-			if (settings.get("exa.enabled") === false) {
+			if (cfgExaEnabled.get(settings) === false) {
 				return false;
 			}
 		} catch {

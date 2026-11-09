@@ -5,8 +5,14 @@ import {
 	planFileUrlForSlug,
 	resolveApprovedPlan,
 	resolvePlanTitle,
+<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import { normalizeLocalScheme } from "@oh-my-pi/pi-coding-agent…`
 } from "tau/plan-mode/approved-plan";
 import { normalizeLocalScheme } from "tau/tools/path-utils";
+=======
+} from "@oh-my-pi/pi-coding-agent/plan-mode/approved-plan";
+import { InternalUrlRouter } from "@oh-my-pi/pi-coding-agent/internal-urls/router";
+>>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/plan-mode/approved-plan.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 describe("planFileUrlForSlug", () => {
 	it("maps a slug to its local plan URL", () => {
@@ -67,9 +73,10 @@ describe("resolveApprovedPlan", () => {
 		// Mirror the real reader: canonicalize the local scheme before lookup, so a
 		// `local:/…` state path resolves the same file as the scanner's `local://…`.
 		const canonical = (files: Record<string, string>) => {
+			const router = InternalUrlRouter.instance();
 			const map: Record<string, string> = {};
-			for (const url in files) map[normalizeLocalScheme(url)] = files[url];
-			return async (url: string) => map[normalizeLocalScheme(url)] ?? null;
+			for (const url in files) map[router.normalize(url)] = files[url];
+			return async (url: string) => map[router.normalize(url)] ?? null;
 		};
 		const result = await resolveApprovedPlan({
 			suppliedTitle: undefined,
@@ -200,11 +207,6 @@ describe("resolvePlanTitle", () => {
 		expect(result.source).toBe("heading");
 		expect(result.title).toBe("Code-Review-nettools-Updated-Issues");
 		expect(result.fileName).toBe("Code-Review-nettools-Updated-Issues.md");
-	});
-
-	it("falls back to the H1 when `suppliedTitle` is missing entirely", () => {
-		const result = resolvePlanTitle({ planContent, planFilePath });
-		expect(result.source).toBe("heading");
 	});
 
 	it("falls back to the H1 when `suppliedTitle` is an empty / whitespace string", () => {

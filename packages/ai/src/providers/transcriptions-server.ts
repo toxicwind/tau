@@ -153,7 +153,7 @@ async function parseMultipart(bytes: Uint8Array, contentType: string): Promise<T
 	return {
 		modelId,
 		request: {
-			audio: new Uint8Array(await file.arrayBuffer()),
+			audio: file,
 			mimeType: mimeTypeForFile(file),
 			fileName: file.name || undefined,
 			language: stringField(form, "language"),
@@ -248,6 +248,10 @@ export function encodeResponse(result: TranscriptionResult): TranscriptionRespon
 	};
 }
 
+/** @deprecated Use `codedErrorResponse` from `auth-gateway/http`. */
+export { codedErrorResponse as formatError } from "../auth-gateway/http";
+<<<<<<< ours — function `formatError` (S+F, confidence: low)
+// refused_by: modify_delete_guard · collision: none (no common ancestor text)
 export function formatError(status: number, errorType: string, message: string): Response {
 	return new Response(JSON.stringify({ error: { code: status, type: errorType, message } }), {
 		status,
@@ -257,3 +261,5 @@ export function formatError(status: number, errorType: string, message: string):
 		},
 	});
 }
+=======
+>>>>>>> theirs — function `formatError` (S+F, confidence: low) · weave: run 'weave explain packages/ai/src/providers/transcriptions-server.ts' for per-hunk detail, 'weave check' to verify your resolution

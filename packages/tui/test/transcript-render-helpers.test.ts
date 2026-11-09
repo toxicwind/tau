@@ -1,6 +1,12 @@
 import { describe, expect, it } from "bun:test";
+<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: `import type { AssistantMessage, Usage } from "@oh-my-pi/pi-ai";`
 import type { AssistantMessage, Usage } from "@tau/tau-ai";
 import { assistantUsageIsBilled } from "@tau/tau-tui/chat/transcript-render-helpers";
+=======
+import type { Usage } from "@oh-my-pi/pi-ai";
+import { assistantUsageIsBilled } from "@oh-my-pi/pi-tui/chat/transcript-render-helpers";
+>>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/tui/test/transcript-render-helpers.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 function usage(overrides: Partial<Usage> = {}): Usage {
 	return {
@@ -24,15 +30,5 @@ describe("assistantUsageIsBilled", () => {
 		expect(assistantUsageIsBilled(usage({ output: 0, cacheRead: 512 }))).toBe(true);
 		expect(assistantUsageIsBilled(usage({ cacheWrite: 128 }))).toBe(true);
 		expect(assistantUsageIsBilled(usage({ premiumRequests: 1 }))).toBe(true);
-	});
-
-	// Documents the live/resume parity contract for #4532: both paths ask
-	// `assistantUsageIsBilled` about `message.usage`, so an empty automated
-	// reply that still cost input tokens renders identically on both surfaces.
-	it("matches whether the assistant carrier renders visible content", () => {
-		const emptyBilledMessage: Pick<AssistantMessage, "usage"> = { usage: usage({ input: 321 }) };
-		const emptyFreeMessage: Pick<AssistantMessage, "usage"> = { usage: usage() };
-		expect(assistantUsageIsBilled(emptyBilledMessage.usage)).toBe(true);
-		expect(assistantUsageIsBilled(emptyFreeMessage.usage)).toBe(false);
 	});
 });

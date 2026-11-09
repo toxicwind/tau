@@ -122,8 +122,14 @@ describe("provider all-tools parity", () => {
 		expect(validate.status).toBe("validation_attest");
 		const diagnose = await handleToolCall("mnemotau_diagnose", { bank: "ops" });
 		expect(diagnose.status).toBe("ok");
+<<<<<<< ours — scope `it("diagnose, validate, graph, and shared han...` in test_suite `provider all-tools parity` (F, confidence: medium)
+// refused_by: statement_fold · collision: `expect(diagnose.db_path).toContain("banks/ops/mnemopi.db");`
 		expect(diagnose.db_path).toContain("banks/ops/mnemotau.db");
 		const graphQuery = await handleToolCall("mnemotau_graph_query", { seed_memory_id: memoryId, bank: "ops" });
+=======
+		expect(diagnose.db_path).toContain(join("banks", "ops", "mnemopi.db"));
+		const graphQuery = await handleToolCall("mnemopi_graph_query", { seed_memory_id: memoryId, bank: "ops" });
+>>>>>>> theirs — scope `it("diagnose, validate, graph, and shared han...` · weave: run 'weave explain packages/mnemotau/test/provider-all-15-tools-parity.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 		expect(graphQuery).toMatchObject({
 			status: "ok",
 			seed_memory_id: memoryId,

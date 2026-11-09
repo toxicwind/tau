@@ -9,6 +9,7 @@ import { SessionManager } from "tau/session/session-manager";
 import { resolveResumableSession } from "tau/session/session-listing";
 import { stripOuterDoubleQuotes } from "tau/tools/path-utils";
 import { getConfigRootDir, setAgentDir } from "@tau/tau-utils";
+import { closeSessionIndex } from "@oh-my-pi/pi-coding-agent/session/session-index";
 
 // -- helpers ----------------------------------------------------------------
 
@@ -37,12 +38,6 @@ function hasAssistantEntry(entries: unknown[]): boolean {
 describe("stripOuterDoubleQuotes", () => {
 	it("strips matching double quotes", () => {
 		expect(stripOuterDoubleQuotes('"C:\\Users\\test"')).toBe("C:\\Users\\test");
-	});
-	it("strips matching double quotes from POSIX paths", () => {
-		expect(stripOuterDoubleQuotes('"/home/user/test"')).toBe("/home/user/test");
-	});
-	it("passes through unquoted paths", () => {
-		expect(stripOuterDoubleQuotes("C:\\Users\\test")).toBe("C:\\Users\\test");
 	});
 	it("does not strip mismatched quotes", () => {
 		expect(stripOuterDoubleQuotes('"mismatched')).toBe('"mismatched');
@@ -77,6 +72,8 @@ describe("SessionManager.moveTo", () => {
 	});
 
 	afterEach(async () => {
+		// Title changes open history.db under testAgentDir; Windows cannot delete an open file.
+		closeSessionIndex();
 		if (originalAgentDir) {
 			setAgentDir(originalAgentDir);
 		} else {

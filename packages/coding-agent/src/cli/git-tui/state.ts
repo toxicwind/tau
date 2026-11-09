@@ -20,7 +20,13 @@ import {
 	type FileAssetSide,
 	type FileContents,
 	type FileStreamUpdate,
+<<<<<<< ours — imports `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 } from "@tau/tau-tui/apps/git/state";
+=======
+	type MediaRef,
+} from "@oh-my-pi/pi-tui/apps/git/state";
+>>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/cli/git-tui/state.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 /** SHA of git's canonical empty tree: diff base for a root commit. */
 const EMPTY_TREE = "4b825dc642cb6eb9a060e54bf8d69288fbee4904";
@@ -425,18 +431,24 @@ export class GitModel {
 			return Promise.resolve({ kind: "empty" });
 		};
 
+		const filePath = path.join(this.cwd, file.path);
+		const oldPath = path.join(this.cwd, file.origPath ?? file.path);
 		let oldSource: Promise<FileAssetSide>;
 		let newSource: Promise<FileAssetSide>;
+		let oldRef: MediaRef | undefined;
+		let newRef: MediaRef | undefined;
 		switch (file.area) {
 			case "unstaged":
 				oldSource =
 					file.kind === "untracked"
 						? empty(DiffSide.Old)
 						: this.#streamGitSide(stream, DiffSide.Old, `:0:${file.path}`, file.path, emit, signal);
+				if (file.kind !== "untracked") oldRef = { path: filePath, rev: ":0" };
 				newSource =
 					file.kind === "deleted"
 						? empty(DiffSide.New)
-						: this.#streamFileSide(stream, DiffSide.New, path.join(this.cwd, file.path), file.path, emit, signal);
+						: this.#streamFileSide(stream, DiffSide.New, filePath, file.path, emit, signal);
+				if (file.kind !== "deleted") newRef = { path: filePath };
 				break;
 			case "staged":
 				oldSource = this.#streamGitSide(
@@ -448,6 +460,8 @@ export class GitModel {
 					signal,
 				);
 				newSource = this.#streamGitSide(stream, DiffSide.New, `:0:${file.path}`, file.path, emit, signal);
+				oldRef = { path: oldPath, rev: "HEAD" };
+				newRef = { path: filePath, rev: ":0" };
 				break;
 			case "commit": {
 				const head = this.headCommit;
@@ -465,6 +479,8 @@ export class GitModel {
 				newSource = head
 					? this.#streamGitSide(stream, DiffSide.New, `${head.sha}:${file.path}`, file.path, emit, signal)
 					: empty(DiffSide.New);
+				if (base) oldRef = { path: oldPath, rev: base };
+				if (head) newRef = { path: filePath, rev: head.sha };
 				break;
 			}
 		}
@@ -479,7 +495,13 @@ export class GitModel {
 				streamResult: await stream.finish(DIFF_CONTEXT_LINES),
 			};
 		}
-		return { kind: "asset", old: oldSide, new: newSide };
+		return {
+			kind: "asset",
+			old: oldSide,
+			new: newSide,
+			oldRef: oldSide.kind === "empty" ? undefined : oldRef,
+			newRef: newSide.kind === "empty" ? undefined : newRef,
+		};
 	}
 
 	async #streamGitSide(

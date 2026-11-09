@@ -1,3 +1,5 @@
+<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: `import { Settings } from "@oh-my-pi/pi-coding-agent/config/sett…` +4 more
 import { describe, expect, it, vi } from "bun:test";
 import { parseArgs } from "tau/cli/args";
 import { Settings } from "tau/config/settings";
@@ -5,7 +7,17 @@ import { runRootCommand } from "tau/main";
 import type { CreateAgentSessionOptions } from "tau/sdk";
 import { AuthStorage } from "tau/session/auth-storage";
 import { TempDir } from "@tau/tau-utils";
+=======
+import { afterEach, describe, expect, it, vi } from "bun:test";
+import { parseArgs } from "@oh-my-pi/pi-coding-agent/cli/args";
+import { clearOmpExtensionCliRoots } from "@oh-my-pi/pi-coding-agent/discovery/omp-extension-roots";
+>>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/cli-max-time-flag.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { runCli } from "../src/cli";
+
+// `runRootCommand` registers the CLI's extension roots (`--no-extensions` → explicit-only) process-wide.
+afterEach(() => {
+	clearOmpExtensionCliRoots();
+});
 
 describe("parseArgs — --max-time flag", () => {
 	it("parses --max-time seconds as maxTime", () => {
@@ -76,6 +88,8 @@ describe("parseArgs — --max-time flag", () => {
 		expect(stderr).not.toContain("CliUsageError");
 	});
 
+<<<<<<< ours — scope `it("converts maxTime to an absolute session d...` in test_suite `parseArgs — --max-time flag`, deleted in theirs (S+F, confidence: low)
+// refused_by: statement_fold · collision: none (no common ancestor text)
 	it("converts maxTime to an absolute session deadline", async () => {
 		using tempDir = TempDir.createSync("@tau-max-time-");
 		const authStorage = await AuthStorage.create(":memory:");
@@ -111,4 +125,6 @@ describe("parseArgs — --max-time flag", () => {
 		expect(observedOptions?.deadline).toBeGreaterThanOrEqual(beforeRun + 3_000);
 		expect(observedOptions?.deadline).toBeLessThanOrEqual(afterRun + 3_000);
 	});
+=======
+>>>>>>> theirs — scope `it("converts maxTime to an absolute session d...` deleted in theirs
 });

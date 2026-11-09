@@ -1,3 +1,5 @@
+<<<<<<< ours — imports `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: none (both sides edited, nowhere the same lines)
 import {
 	STREAM_CLOSE_BAD_CHANNEL,
 	STREAM_CLOSE_FORBIDDEN,
@@ -10,6 +12,20 @@ import {
 	type StreamPaneFrame,
 	type StreamServerToHost,
 } from "@tau/tau-wire";
+=======
+import { type } from "@oh-my-pi/omptype";
+import {
+	STREAM_CLOSE_BAD_CHANNEL,
+	STREAM_CLOSE_FORBIDDEN,
+	STREAM_CLOSE_HOST_CONFLICT,
+	STREAM_CLOSE_PROTO_MISMATCH,
+	STREAM_CLOSE_UNAUTHORIZED,
+	STREAM_PROTO,
+	type StreamHostFrame,
+	type StreamPaneFrame,
+	type StreamServerToHost,
+} from "@oh-my-pi/pi-wire";
+>>>>>>> theirs — imports `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/src/stream/server-client.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 const INITIAL_RECONNECT_MS = 1_000;
 const MAX_RECONNECT_MS = 30_000;
@@ -168,6 +184,14 @@ function fatalCloseMessage(code: number, reason: string): string | undefined {
 	return undefined;
 }
 
+const ServerFrame = type({ t: "'welcome'", proto: "number", channel: "string", url: "string" })
+	.or({ t: "'viewers'", n: "number" })
+	.or({
+		t: "'chat'",
+		msg: { id: "number", name: "string", text: "string", ts: "number", "host?": "boolean" },
+	})
+	.or({ t: "'error'", message: "string" });
+
 function parseServerFrame(data: unknown): StreamServerToHost | undefined {
 	let text: string;
 	if (typeof data === "string") {
@@ -177,37 +201,11 @@ function parseServerFrame(data: unknown): StreamServerToHost | undefined {
 	} else {
 		return undefined;
 	}
+	let value: unknown;
 	try {
-		const value: unknown = JSON.parse(text);
-		if (!value || typeof value !== "object" || !("t" in value) || typeof value.t !== "string") return undefined;
-		const frame = value as Record<string, unknown>;
-		switch (frame.t) {
-			case "welcome":
-				return typeof frame.proto === "number" && typeof frame.channel === "string" && typeof frame.url === "string"
-					? (frame as StreamServerToHost)
-					: undefined;
-			case "viewers":
-				return typeof frame.n === "number" ? (frame as StreamServerToHost) : undefined;
-			case "chat":
-				return isChatMessage(frame.msg) ? (frame as StreamServerToHost) : undefined;
-			case "error":
-				return typeof frame.message === "string" ? (frame as StreamServerToHost) : undefined;
-			default:
-				return undefined;
-		}
+		value = JSON.parse(text);
 	} catch {
 		return undefined;
 	}
-}
-
-function isChatMessage(value: unknown): value is StreamChatMessage {
-	if (!value || typeof value !== "object") return false;
-	const message = value as Record<string, unknown>;
-	return (
-		typeof message.id === "number" &&
-		typeof message.name === "string" &&
-		typeof message.text === "string" &&
-		typeof message.ts === "number" &&
-		(message.host === undefined || typeof message.host === "boolean")
-	);
+	return ServerFrame.allows(value) ? (value as StreamServerToHost) : undefined;
 }

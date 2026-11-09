@@ -1,11 +1,18 @@
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
-import { createGallerySegmentContext } from "../../../../src/cli/gallery-fixtures/segments";
 import { Settings } from "../../../../src/config/settings";
+<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: `import { renderSegment } from "@oh-my-pi/pi-tui/status-line/seg…` +1 more
 import { StatusLineComponent } from "@tau/tau-tui/status-line/component";
 import { statusLineHost } from "tau/modes/status-line-host";
 import { renderSegment } from "@tau/tau-tui/status-line/segments";
 import { loadTheme } from "@tau/tau-tui/theme/loader";
 import { getThemeByName, setThemeInstance, theme } from "@tau/tau-tui/theme";
+=======
+import { StatusLineComponent } from "@oh-my-pi/pi-tui/status-line/component";
+import { statusLineHost } from "@oh-my-pi/pi-coding-agent/modes/status-line-host";
+import { loadTheme } from "@oh-my-pi/pi-tui/theme/loader";
+import { getThemeByName, setThemeInstance } from "@oh-my-pi/pi-tui/theme";
+>>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/coding-agent/test/modes/components/status-line/component.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import type { AgentSession } from "../../../../src/session/agent-session";
 import { StatusLineTestComponents } from "../../../helpers/status-line";
 
@@ -76,9 +83,7 @@ function makeSessionWithLastMessage(
 		isAdvisorUsingSubscription: () => advisorUsingSubscription,
 		isFastModeActive: () => false,
 		configuredThinkingLevel: () => undefined,
-		modelRegistry: {
-			isUsingOAuth: () => usingSubscription,
-		},
+		modelRegistry: { isUsingSubscription: () => usingSubscription },
 	};
 }
 
@@ -128,18 +133,21 @@ describe("StatusLineComponent", () => {
 		expect(stripped).toContain("Prewalk");
 	});
 
-	it("renders startup placeholders without values from the prior session", () => {
-		const statusLine = statusLines.track(
+	it("shows the context window without a percent while usage is unknown", () => {
+		const session = makeSessionWithLastMessage(null);
+		const known = statusLines.track(new StatusLineComponent(session as unknown as AgentSession, statusLineHost));
+		const unknown = statusLines.track(
 			new StatusLineComponent(
-				makeSessionWithLastMessage(null, false, {
-					cost: 2.67,
-					modelName: "Stale Model",
-					sessionName: "stale-session",
-				}) as unknown as AgentSession,
+				{
+					...session,
+					getContextUsage: () => ({ tokens: 0, contextWindow: 128000, percent: null }),
+				} as unknown as AgentSession,
 				statusLineHost,
 			),
 		);
 
+<<<<<<< ours — scope `it("renders Prewalk annotation when prewalk i...` in test_suite `StatusLineComponent` (F, confidence: medium)
+// refused_by: statement_fold · collision: `expect(text).not.toContain("/workspace/oh-my-pi");`
 		const live = Bun.stripANSI(statusLine.getTopBorder(WIDE_ENOUGH_FOR_COST_SEGMENT).content);
 		expect(live).toContain("Stale Model");
 		expect(live).toContain("stale-session");
@@ -178,6 +186,12 @@ describe("StatusLineComponent", () => {
 		expect(model.content).toContain(theme.getFgAnsi("statusLineModel"));
 		expect(path.content).toContain(theme.getFgAnsi("statusLinePath"));
 		expect(git.content).toContain(theme.getFgAnsi("statusLineGitDirty"));
+=======
+		expect(Bun.stripANSI(known.getTopBorder(120).content)).toMatch(/\d%/);
+		const border = Bun.stripANSI(unknown.getTopBorder(120).content);
+		expect(border).toContain("128K");
+		expect(border).not.toContain("%");
+>>>>>>> theirs — scope `it("renders Prewalk annotation when prewalk i...`
 	});
 
 	it("renders primary and advisor costs separately with subscription indicator in Unicode preset", () => {
@@ -210,7 +224,7 @@ describe("StatusLineComponent", () => {
 		);
 
 		const stripped = statusLine.getTopBorder(WIDE_ENOUGH_FOR_COST_SEGMENT).content.replace(/\x1b\[[0-9;]*m/g, "");
-		expect(stripped).toContain("S2.67 + 👁 S0.41");
+		expect(stripped).toContain("S2.67 + 👁 0.41");
 	});
 
 	it("renders ASCII preset fallback with (adv) for advisor costs", async () => {
@@ -231,7 +245,7 @@ describe("StatusLineComponent", () => {
 				),
 			);
 			const stripped = statusLine.getTopBorder(WIDE_ENOUGH_FOR_COST_SEGMENT).content.replace(/\x1b\[[0-9;]*m/g, "");
-			expect(stripped).toContain("S2.67 + S0.41 (adv)");
+			expect(stripped).toContain("S2.67 + 0.41 (adv)");
 		} finally {
 			setThemeInstance(baseTheme);
 		}
@@ -271,7 +285,7 @@ describe("StatusLineComponent", () => {
 				),
 			);
 			const stripped = statusLine.getTopBorder(WIDE_ENOUGH_FOR_COST_SEGMENT).content.replace(/\x1b\[[0-9;]*m/g, "");
-			expect(stripped).toContain("\u{f067a} 2.67 + \uea70 \u{f067a} 0.41");
+			expect(stripped).toContain("\u{f067a} 2.67 + \uea70 0.41");
 		} finally {
 			setThemeInstance(baseTheme);
 		}

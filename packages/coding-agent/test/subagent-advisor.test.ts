@@ -11,6 +11,8 @@ import { AgentRegistry, MAIN_AGENT_ID } from "tau/registry/agent-registry";
 import { registerPersistedSubagents } from "tau/registry/persisted-agents";
 import { CURRENT_SESSION_VERSION } from "tau/session/session-entries";
 import { createSubagentSettings } from "tau/task/executor";
+import { cfgAdvisorEnabled } from "@oh-my-pi/pi-coding-agent/advisor/settings";
+import { cfgTaskAgentAdvisor, cfgTaskAgentPrewalk } from "@oh-my-pi/pi-coding-agent/task/settings";
 
 describe("per-agent settings migrations", () => {
 	let agentDir = "";
@@ -26,39 +28,39 @@ describe("per-agent settings migrations", () => {
 
 	it("migrates nested advisor.subagents=true to task.agentAdvisor task=on", async () => {
 		const settings = await load("advisor:\n  subagents: true\n");
-		expect(settings.get("task.agentAdvisor")).toEqual({ task: "on" });
+		expect(cfgTaskAgentAdvisor.get(settings)).toEqual({ task: "on" });
 	});
 
 	it("migrates flat advisor.subagents=true", async () => {
 		const settings = await load('"advisor.subagents": true\n');
-		expect(settings.get("task.agentAdvisor")).toEqual({ task: "on" });
+		expect(cfgTaskAgentAdvisor.get(settings)).toEqual({ task: "on" });
 	});
 
 	it("migrates advisor.subagents=false to task=off so a lower layer keeps overriding", async () => {
 		// Migration runs per config file: a project-level `false` must survive as
 		// an explicit "off" or a migrated global `true` would win the merge.
 		const settings = await load("advisor:\n  subagents: false\n");
-		expect(settings.get("task.agentAdvisor")).toEqual({ task: "off" });
+		expect(cfgTaskAgentAdvisor.get(settings)).toEqual({ task: "off" });
 	});
 
 	it("keeps an explicit task.agentAdvisor entry over the legacy toggle", async () => {
 		const settings = await load('advisor:\n  subagents: true\ntask:\n  agentAdvisor:\n    task: "off"\n');
-		expect(settings.get("task.agentAdvisor")).toEqual({ task: "off" });
+		expect(cfgTaskAgentAdvisor.get(settings)).toEqual({ task: "off" });
 	});
 
 	it("normalizes boolean per-agent prewalk and advisor overrides", async () => {
 		const settings = await load(
 			"task:\n  agentPrewalk:\n    reviewer: true\n    task: false\n  agentAdvisor:\n    reviewer: false\n    task: true\n",
 		);
-		expect(settings.get("task.agentPrewalk")).toEqual({ reviewer: "on", task: "off" });
-		expect(settings.get("task.agentAdvisor")).toEqual({ reviewer: "off", task: "on" });
+		expect(cfgTaskAgentPrewalk.get(settings)).toEqual({ reviewer: "on", task: "off" });
+		expect(cfgTaskAgentAdvisor.get(settings)).toEqual({ reviewer: "off", task: "on" });
 	});
 });
 
 describe("createSubagentSettings advisor default", () => {
 	it("forces the advisor off for subagents even when the parent has it enabled", () => {
 		const parent = Settings.isolated({ "advisor.enabled": true });
-		expect(createSubagentSettings(parent).get("advisor.enabled")).toBe(false);
+		expect(cfgAdvisorEnabled.get(createSubagentSettings(parent))).toBe(false);
 	});
 
 	it("lets a per-agent opt-in re-enable the advisor with its own advisor model role", () => {
@@ -67,7 +69,7 @@ describe("createSubagentSettings advisor default", () => {
 			"advisor.enabled": true,
 			modelRoles: { ...parent.getModelRoles(), advisor: "moonshot/k3" },
 		});
-		expect(child.get("advisor.enabled")).toBe(true);
+		expect(cfgAdvisorEnabled.get(child)).toBe(true);
 		expect(child.getModelRole("advisor")).toBe("moonshot/k3");
 		// Other roles from the parent snapshot survive the advisor override.
 		expect(child.getModelRole("smol")).toBe("openai/gpt-5-mini");

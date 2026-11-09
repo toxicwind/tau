@@ -10,6 +10,8 @@ import type { AgentSession } from "tau/session/agent-session";
 import { AuthStorage } from "tau/session/auth-storage";
 import { SessionManager } from "tau/session/session-manager";
 import { TempDir } from "@tau/tau-utils";
+import * as capabilities from "@oh-my-pi/pi-coding-agent/capability";
+import * as repoContext from "@oh-my-pi/pi-coding-agent/utils/active-repo-context";
 
 function buildLocalModel(api: string): Model<Api> {
 	return buildModel({
@@ -84,5 +86,47 @@ describe("AgentSession context-file reload on session reset", () => {
 
 	it("re-reads an edited AGENTS.md after resetSessionContext()", async () => {
 		await expectContextReload(session => session.resetSessionContext());
+	});
+
+	it("rejects a failed parallel discovery without replacing the prompt and can retry", async () => {
+		await expectContextReload(async session => {
+			const previousPrompt = [...session.systemPrompt];
+			const loadCapability = capabilities.loadCapability;
+			const discovery = vi.spyOn(capabilities, "loadCapability").mockImplementation(async (id, options) => {
+				if (id === "rules") throw new Error("Rule discovery failed");
+				return await loadCapability(id, options);
+			});
+			try {
+				await expect(session.refreshBaseSystemPrompt()).rejects.toThrow("Rule discovery failed");
+				expect(session.systemPrompt).toEqual(previousPrompt);
+			} finally {
+				discovery.mockRestore();
+			}
+			return await session.resetSessionContext();
+		});
+	});
+
+	it("starts rule discovery before the repository lookup settles", async () => {
+		await expectContextReload(async session => {
+			let rulesStarted = false;
+			const observedAtRepoCompletion: boolean[] = [];
+			const loadCapability = capabilities.loadCapability;
+			vi.spyOn(repoContext, "resolveActiveRepoContext").mockImplementation(async () => {
+				// Yield one microtask, not a wall-clock delay: independent discovery
+				// must already have started when this lookup is allowed to settle.
+				await Promise.resolve();
+				observedAtRepoCompletion.push(rulesStarted);
+				return null;
+			});
+			vi.spyOn(capabilities, "loadCapability").mockImplementation(async (id, options) => {
+				if (id === "rules") rulesStarted = true;
+				return await loadCapability(id, options);
+			});
+
+			const reset = await session.newSession();
+			expect(observedAtRepoCompletion.length).toBeGreaterThan(0);
+			expect(observedAtRepoCompletion[0]).toBe(true);
+			return reset;
+		});
 	});
 });

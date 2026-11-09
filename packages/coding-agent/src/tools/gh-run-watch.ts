@@ -18,6 +18,7 @@ import {
 	githubRepoSlugEquals,
 	normalizeBlock,
 	normalizeOptionalString,
+	normalizeText,
 	parseRepoRef,
 	requireCurrentGitBranch,
 	requireCurrentGitHead,
@@ -38,6 +39,7 @@ import type {
 	GithubInput,
 } from "./gh-types";
 import type { GhFailedJobLog, GhRunJobSnapshot, GhRunSnapshot } from "@tau/tau-tui/tools/github";
+import { truncateLineBytes } from "@oh-my-pi/pi-tui/tools/streaming-output";
 import { throwIfAborted } from "./tool-errors";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 
@@ -49,6 +51,7 @@ export const RUN_WATCH_MAX_POLL_FAILURES = 5;
 export const RUN_WATCH_GRACE_DEFAULT = 5;
 export const RUN_WATCH_TAIL_DEFAULT = 15;
 export const RUN_WATCH_TAIL_MAX = 200;
+const RUN_WATCH_LOG_ERROR_MAX_BYTES = 512;
 
 export const RUN_JOBS_PAGE_SIZE = 100;
 
@@ -252,7 +255,15 @@ export function buildFailedLogDetails(failedJobLogs: GhFailedJobLog[]): GhRunWat
 		conclusion: entry.job.conclusion,
 		tail: entry.tail,
 		available: entry.available,
+		unavailableReason: entry.unavailableReason,
 	}));
+}
+
+function failedJobLogsArtifactLabel(failedJobLogs: GhFailedJobLog[]): string {
+	if (!failedJobLogs.some(entry => entry.available && entry.full)) return "Failed-job log diagnostics";
+	return failedJobLogs.every(entry => entry.available && entry.full && !entry.truncated)
+		? "Full failed-job logs"
+		: "Partial failed-job logs";
 }
 
 export function formatRunWatchSnapshot(
@@ -659,12 +670,23 @@ export async function fetchFailedJobLogs(
 			);
 			const fullLog = result.exitCode === 0 ? normalizeBlock(result.stdout) : undefined;
 			const logTail = fullLog ? tailLogLines(fullLog, tail) : undefined;
+			const stderr = normalizeText(result.stderr);
+			const unavailableReason = fullLog
+				? undefined
+				: truncateLineBytes(
+						result.exitCode === 0
+							? "gh returned empty log content (exit code 0)."
+							: `gh failed with exit code ${result.exitCode}${stderr ? `: ${stderr}` : "."}`,
+						RUN_WATCH_LOG_ERROR_MAX_BYTES,
+					).text;
 			return {
 				run: entry.run,
 				job: entry.job,
 				full: fullLog,
 				tail: logTail,
 				available: Boolean(fullLog),
+				unavailableReason,
+				truncated: result.stdoutTruncated,
 			};
 		}),
 	);
@@ -782,7 +804,7 @@ export async function executeRunWatch(
 					formatRunWatchResult(repo, run, failedJobLogs, tail),
 					run.url,
 					{ ...finalDetails, artifactId },
-					{ artifactId, artifactLabel: "Full failed-job logs" },
+					{ artifactId, artifactLabel: failedJobLogsArtifactLabel(failedJobLogs) },
 				);
 			}
 
@@ -895,7 +917,7 @@ export async function executeRunWatch(
 				formatCommitRunWatchResult(repo, headSha, branch, runs, failedJobLogs, tail),
 				undefined,
 				{ ...finalDetails, artifactId },
-				{ artifactId, artifactLabel: "Full failed-job logs" },
+				{ artifactId, artifactLabel: failedJobLogsArtifactLabel(failedJobLogs) },
 			);
 		}
 

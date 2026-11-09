@@ -1,10 +1,25 @@
 import { describe, expect, it } from "bun:test";
+<<<<<<< ours — interstitial `file_header` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 import { createOpenAICodexAuthorizationUrl, formatOpenAICodexTokenEndpointError } from "@tau/tau-ai/oauth/openai-codex";
 import { type RequestBody, transformRequestBody } from "@tau/tau-ai/providers/openai-codex/request-transformer";
 import { CodexApiError, parseCodexError } from "@tau/tau-ai/providers/openai-codex/response-handler";
 import { convertOpenAICodexResponsesTools } from "@tau/tau-ai/providers/openai-codex-responses";
 import type { Tool } from "@tau/tau-ai/types";
 import { OPENAI_HEADER_VALUES } from "@tau/tau-catalog/wire/codex";
+=======
+import {
+	createOpenAICodexAuthorizationUrl,
+	formatOpenAICodexTokenEndpointError,
+} from "@oh-my-pi/pi-ai/oauth/openai-codex";
+import { type RequestBody, transformRequestBody } from "@oh-my-pi/pi-ai/providers/openai-codex/request-transformer";
+import { CodexApiError, parseCodexError } from "@oh-my-pi/pi-ai/providers/openai-codex/response-handler";
+import * as AIError from "@oh-my-pi/pi-ai/error";
+import { convertOpenAICodexResponsesTools } from "@oh-my-pi/pi-ai/providers/openai-codex-responses";
+import type { Tool } from "@oh-my-pi/pi-ai/types";
+import { extractProviderRetryHint } from "@oh-my-pi/pi-ai/utils/retry-after";
+import { OPENAI_HEADER_VALUES } from "@oh-my-pi/pi-catalog/wire/codex";
+>>>>>>> theirs — interstitial `file_header` (S+F, confidence: low) · weave: run 'weave explain packages/ai/test/openai-codex.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import { createCodexModel } from "./helpers";
 
 const DEFAULT_PROMPT_PREFIX =
@@ -378,5 +393,35 @@ describe("openai-codex error parsing", () => {
 		expect(error.code).toBe("rate_limit_exceeded");
 		expect(error.headers?.get("retry-after")).toBe("7");
 		expect(error.message).toContain("rate limit exceeded");
+	});
+
+	it.each([
+		// `turn_rate_limit_exceeded` is a transient capacity throttle. Borrowing a
+		// window's reset while it still has headroom made retry hints wait hours.
+		[
+			"keeps a capacity 429's Retry-After over a window with headroom",
+			{ code: "turn_rate_limit_exceeded", message: "Codex is at capacity, please try again later" },
+			{ "retry-after": "152", "x-codex-primary-used-percent": "14" },
+			152_000,
+		],
+		// With no Retry-After, an exhausted window's reset is the only timing hint.
+		[
+			"keeps an exhausted window's reset when the 429 has no Retry-After",
+			{ code: "rate_limit_exceeded", message: "slow down" },
+			{ "x-codex-primary-used-percent": "100" },
+			3 * 60 * 60 * 1000,
+		],
+	] as const)("%s", async (_label, error, headers, expectedHintMs) => {
+		const response = new Response(JSON.stringify({ error: { type: "rate_limit_error", ...error } }), {
+			status: 429,
+			headers: { ...headers, "x-codex-primary-reset-at": String(Math.floor(Date.now() / 1000) + 3 * 60 * 60) },
+		});
+
+		const result = await AIError.finalize(await CodexApiError.fromResponse(response), {
+			api: "openai-codex-responses",
+			provider: "openai-codex",
+			model: "gpt-5.6-sol",
+		});
+		expect(extractProviderRetryHint("openai-codex", result.message)).toBe(expectedHintMs);
 	});
 });

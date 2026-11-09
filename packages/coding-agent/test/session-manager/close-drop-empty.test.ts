@@ -4,6 +4,8 @@ import * as path from "node:path";
 import { FileSessionStorage } from "tau/session/session-storage";
 import { SessionManager } from "tau/session/session-manager";
 import { isEnoent, TempDir } from "@tau/tau-utils";
+import { openAnnotationDraft } from "@oh-my-pi/pi-coding-agent/extensibility/custom-commands/bundled/annotate/draft-store";
+import type { AnnotationOverlay } from "@oh-my-pi/pi-tui/overlays/annotation-overlay";
 
 async function fileExists(p: string): Promise<boolean> {
 	try {
@@ -207,6 +209,40 @@ describe("SessionManager close() drops empty metadata-only sessions", () => {
 		expect(await fileExists(draftPath)).toBe(true);
 	});
 
+	it("keeps an otherwise empty session that holds an /annotate draft", async () => {
+		using tempDir = TempDir.createSync("@pi-session-close-keep-annotation-draft-");
+		const session = SessionManager.create(tempDir.path(), tempDir.path());
+		session.appendModelChange("hai-proxy/anthropic--claude-4.6-opus");
+		await session.saveDraft("materialize session");
+		await session.saveDraft("");
+		const sessionFile = session.getSessionFile()!;
+		const drafts = path.join(session.getArtifactsDir()!, "annotation-drafts", session.getSessionId());
+		await fs.promises.mkdir(drafts, { recursive: true });
+		await Bun.write(path.join(drafts, `draft-${"a".repeat(64)}.json`), "{}");
+
+		await session.close();
+
+		expect(await fileExists(sessionFile)).toBe(true);
+	});
+
+	it("keeps an empty session while an /annotate overlay is open, before its draft is written", async () => {
+		using tempDir = TempDir.createSync("@pi-session-close-open-annotation-");
+		const session = SessionManager.create(tempDir.path(), tempDir.path());
+		session.appendModelChange("hai-proxy/anthropic--claude-4.6-opus");
+		await session.saveDraft("materialize session");
+		await session.saveDraft("");
+		const sessionFile = session.getSessionFile()!;
+		const source = { kind: "text", source: { id: "p", kind: "prompt", label: "Prompt", text: "x" } } as const;
+		const draft = await openAnnotationDraft(session, source);
+		draft.restore({ getDraft: () => ({ kind: "text", annotations: [] }) } as unknown as AnnotationOverlay);
+
+		// Shutdown runs session cleanup and the pending draft save concurrently.
+		await session.close();
+
+		expect(await fileExists(sessionFile)).toBe(true);
+		await draft.close(undefined);
+	});
+
 	// Real conversations must survive close() unconditionally.
 	it("keeps the session file when it contains a real user message", async () => {
 		using tempDir = TempDir.createSync("@tau-session-close-keep-user-");
@@ -257,6 +293,8 @@ describe("SessionManager close() drops empty metadata-only sessions", () => {
 		expect(await fileExists(sessionFile)).toBe(true);
 	});
 
+<<<<<<< ours — scope `it("keeps a handoff custom message even befor...` in test_suite `SessionManager close() drops empty metadata-only sessions`, deleted in theirs (S+F, confidence: low)
+// refused_by: statement_fold · collision: none (no common ancestor text)
 	it("keeps a handoff custom message even before the next user turn", async () => {
 		using tempDir = TempDir.createSync("@tau-session-close-keep-handoff-");
 		const session = SessionManager.create(tempDir.path(), tempDir.path());
@@ -270,6 +308,8 @@ describe("SessionManager close() drops empty metadata-only sessions", () => {
 
 		expect(await fileExists(sessionFile)).toBe(true);
 	});
+=======
+>>>>>>> theirs — scope `it("keeps a handoff custom message even befor...` deleted in theirs · weave: run 'weave explain packages/coding-agent/test/session-manager/close-drop-empty.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 	// Never-materialized sessions (no draft ever saved, no assistant reply)
 	// must not be summoned into existence by close() itself.

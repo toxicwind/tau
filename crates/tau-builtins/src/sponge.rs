@@ -6,18 +6,18 @@
 //! not opened or truncated until its former contents have reached EOF.
 
 use std::{
-	ffi::{OsStr, OsString},
-	fs::{self, File, OpenOptions},
+	ffi::OsString,
 	io::{self, Read, Write},
-	path::{Path, PathBuf},
-	sync::atomic::{AtomicU64, Ordering},
-	time::{SystemTime, UNIX_EPOCH},
+	path::Path,
 };
 
-use brush_core::{ShellExtensions, builtins::Registration};
 use clap::{Arg, ArgAction, ArgMatches, Command};
+use pi_vfs::{BlockingFs, OpenOptions};
 
-use crate::host::{Host, Utility, format_usage, matches_parser, util};
+use crate::{
+	atomic_write,
+	host::{Host, Utility, format_usage, matches_parser},
+};
 
 const OPT_APPEND: &str = "append";
 const ARG_FILE: &str = "file";
@@ -54,15 +54,16 @@ impl Utility for Sponge {
 		};
 
 		let target = host.resolve(file);
+		let fs = host.fs();
 		let result = if self.matches.get_flag(OPT_APPEND) {
-			append_to(&target, &buffer)
+			append_to(fs, &target, &buffer)
 		} else {
-			replace_atomically(&target, &buffer)
+			atomic_write::replace(fs, &target, &buffer, Self::NAME)
 		};
 		match result {
 			Ok(()) => 0,
 			Err(err) => {
-			host.error(format_args!("{}: {err}", file.to_string_lossy()), 1);
+			host.error(format_args!("{}: {err}", file.display()), 1);
 				1
 			},
 		}
@@ -120,74 +121,10 @@ fn soak_stdin(host: &mut Host) -> Result<Vec<u8>, SoakError> {
 	}
 }
 
-fn append_to(target: &Path, buffer: &[u8]) -> io::Result<()> {
-	let mut file = OpenOptions::new().append(true).create(true).open(target)?;
+fn append_to(fs: &BlockingFs, target: &Path, buffer: &[u8]) -> io::Result<()> {
+	let mut file = fs.open_with(target, OpenOptions::new().append(true).create(true))?;
 	file.write_all(buffer)?;
-	file.flush()
-}
-
-/// Writes `buffer` to a fresh temporary file beside `target`, copies the
-/// existing target's permissions onto it, then renames it over the target so
-/// readers never observe a truncated file.
-fn replace_atomically(target: &Path, buffer: &[u8]) -> io::Result<()> {
-	let (temp_path, mut temp) = create_sibling_temp(target)?;
-	let result = write_and_swap(target, &temp_path, &mut temp, buffer);
-	if result.is_err() {
-		let _ = fs::remove_file(&temp_path);
-	}
-	result
-}
-
-fn write_and_swap(
-	target: &Path,
-	temp_path: &Path,
-	temp: &mut File,
-	buffer: &[u8],
-) -> io::Result<()> {
-	temp.write_all(buffer)?;
-	temp.flush()?;
-	if let Ok(metadata) = fs::metadata(target) {
-		fs::set_permissions(temp_path, metadata.permissions())?;
-	}
-	fs::rename(temp_path, target)
-}
-
-/// Creates a uniquely named `.<basename>.sponge.<random>` file next to
-/// `target` with `create_new`, retrying on collision.
-fn create_sibling_temp(target: &Path) -> io::Result<(PathBuf, File)> {
-	static COUNTER: AtomicU64 = AtomicU64::new(0);
-	let dir = target
-		.parent()
-		.filter(|p| !p.as_os_str().is_empty())
-		.unwrap_or_else(|| Path::new("."));
-	let base = target
-		.file_name()
-		.unwrap_or_else(|| OsStr::new("sponge"))
-		.to_string_lossy();
-	for _ in 0..32 {
-		let nanos = SystemTime::now()
-			.duration_since(UNIX_EPOCH)
-			.map_or(0, |duration| duration.subsec_nanos() as u64);
-		let tag = nanos
-			.wrapping_mul(0x9e37_79b9_7f4a_7c15)
-			.wrapping_add(COUNTER.fetch_add(1, Ordering::Relaxed))
-			.wrapping_add(std::process::id() as u64);
-		let path = dir.join(format!(".{base}.sponge.{tag:016x}"));
-		match OpenOptions::new().write(true).create_new(true).open(&path) {
-			Ok(file) => return Ok((path, file)),
-			Err(err) if err.kind() == io::ErrorKind::AlreadyExists => {},
-			Err(err) => return Err(err),
-		}
-	}
-	Err(io::Error::new(
-		io::ErrorKind::AlreadyExists,
-		"could not create temporary file",
-	))
-}
-
-/// Creates the `sponge` builtin registration.
-pub(crate) fn sponge_builtin<SE: ShellExtensions>() -> Registration<SE> {
-	util::<Sponge, SE>()
+	file.close()
 }
 
 #[cfg(test)]

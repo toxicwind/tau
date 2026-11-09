@@ -5,11 +5,12 @@ import { COLLAB_PROTO, type CollabFrame, parseCollabLink } from "tau/collab/prot
 import { CollabSocket } from "tau/collab/relay-client";
 import type { InteractiveModeContext } from "tau/modes/types";
 import { SessionManager } from "tau/session/session-manager";
+import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
 import { installInMemoryRelay, uninstallInMemoryRelay } from "./helpers/in-memory-relay";
 
 function makeHostContext(manager: SessionManager): InteractiveModeContext {
 	return {
-		settings: { get: () => "" },
+		settings: Settings.isolated(),
 		sessionManager: manager,
 		session: {
 			isStreaming: false,

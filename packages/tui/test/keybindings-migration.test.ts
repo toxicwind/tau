@@ -279,6 +279,8 @@ describe("KeybindingsManager.create", () => {
 		}
 	});
 
+<<<<<<< ours — scope `it("defaults model selection to Alt+M, displa...` in test_suite `KeybindingsManager.create`, deleted in theirs (S+F, confidence: low)
+// refused_by: statement_fold · collision: none (no common ancestor text)
 	it("defaults model selection to F4, display reset to Alt+L, and live toggle to Ctrl+L", () => {
 		const manager = KeybindingsManager.inMemory();
 
@@ -286,6 +288,8 @@ describe("KeybindingsManager.create", () => {
 		expect(manager.getKeys("app.display.reset")).toEqual(["alt+l"]);
 		expect(manager.getKeys("app.live.toggle")).toEqual(["ctrl+l"]);
 	});
+=======
+>>>>>>> theirs — scope `it("defaults model selection to Alt+M, displa...` deleted in theirs · weave: run 'weave explain packages/tui/test/keybindings-migration.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 
 	it("keeps the Ctrl+L live toggle default when an old model remap still claims Ctrl+L", () => {
 		const manager = KeybindingsManager.inMemory({
@@ -305,6 +309,8 @@ describe("KeybindingsManager.create", () => {
 		expect(manager.getKeys("app.display.reset")).toEqual(["ctrl+l"]);
 	});
 
+<<<<<<< ours — scope `it("defaults the follow-up shortcut to both C...` in test_suite `KeybindingsManager.create`, deleted in theirs (S+F, confidence: low)
+// refused_by: statement_fold · collision: none (no common ancestor text)
 	it("defaults the follow-up shortcut to both Ctrl+Q and Ctrl+Enter (#1903)", async () => {
 		const agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "tau-keybindings-"));
 
@@ -319,6 +325,8 @@ describe("KeybindingsManager.create", () => {
 			await removeWithRetries(agentDir);
 		}
 	});
+=======
+>>>>>>> theirs — scope `it("defaults the follow-up shortcut to both C...` deleted in theirs
 
 	it("removes the Ctrl+Q follow-up default when a user remap already claims it (#1903)", () => {
 		const manager = KeybindingsManager.inMemory({
@@ -328,7 +336,6 @@ describe("KeybindingsManager.create", () => {
 
 		expect(manager.getKeys("app.plan.toggle")).toEqual(["ctrl+q"]);
 		expect(manager.getKeys("app.message.followUp")).toEqual(["ctrl+enter"]);
-		expect(manager.getDisplayString("app.message.followUp")).toBe("Ctrl+Enter");
 		expect(manager.getEffectiveConfig()["app.message.followUp"]).toBe("ctrl+enter");
 		expect(matchesAppFollowUp(ctrl("q"))).toBe(false);
 		expect(matchesAppFollowUp("\x1b[13;5u")).toBe(true);

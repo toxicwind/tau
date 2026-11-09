@@ -1,5 +1,7 @@
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
+<<<<<<< ours — imports `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import { isEnoent, logger } from "@oh-my-pi/pi-utils";` +1 more
 import { type } from "@tau/tautype";
 import { isEnoent, logger } from "@tau/tau-utils";
 import { YAML } from "bun";
@@ -9,13 +11,43 @@ import { applyTauvisorPrecedence, collectConfigCandidates } from "./watchdog";
 import { applySandboxToToolGrant, classifyAdvisorSandbox, type AdvisorSandbox } from "./sandbox";
 
 import type { AdvisorConfig, AdvisorConfigScope, WatchdogConfigDoc } from "@tau/tau-tui/overlays/advisor-config";
+=======
+import { type } from "@oh-my-pi/omptype";
+import { isEnoent, logger, slugify } from "@oh-my-pi/pi-utils";
+import { YAML } from "bun";
+import { expandAtImports } from "../discovery/at-imports";
+import { BUILTIN_TOOL_NAMES, normalizeToolNames } from "../tools/builtin-names";
+import { applyTauvisorPrecedence, collectConfigCandidates } from "./watchdog";
+import { applySandboxToToolGrant, classifyAdvisorSandbox, type AdvisorSandbox } from "./sandbox";
 
+import {
+	ADVISOR_SESSION_SCOPES,
+	ADVISOR_SYNC_BACKLOG_MODES,
+	type AdvisorConfig,
+	type AdvisorConfigScope,
+	type AdvisorSyncBacklog,
+	type WatchdogConfigDoc,
+} from "@oh-my-pi/pi-tui/overlays/advisor-config";
+>>>>>>> theirs — imports `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/src/advisor/config.ts' for per-hunk detail, 'weave check' to verify your resolution
+
+export {
+	ADVISOR_REVIEW_MODES,
+	ADVISOR_SESSION_SCOPES,
+	ADVISOR_SYNC_BACKLOG_MODES,
+} from "@oh-my-pi/pi-tui/overlays/advisor-config";
+export type {
+	AdvisorReviewMode,
+	AdvisorSessionScope,
+	AdvisorSyncBacklog,
+} from "@oh-my-pi/pi-tui/overlays/advisor-config";
 /**
  * Runtime health of a single advisor, surfaced in stats and the status line.
  * - `running` — actively processing primary turns
  * - `paused` — user-toggled off via per-advisor switch (runtime disposed)
- * - `quota_exhausted` — provider returned a quota/rate-limit error; the
- *   runtime auto-retries after a cooldown so it can resume without user action
+ * - `quota_exhausted` — provider returned a quota/usage-limit error that host
+ *   recovery could not absorb; the runtime stays paused, batch retained, until
+ *   it is reset or rebuilt (compaction, image drop, shake, session switch,
+ *   `/advisor` rebuild, config reload, restart). No timer resumes it.
  * - `error` — repeated transient failures; backlog dropped to prevent stall
  * - `no_model` — no model resolved for this advisor's role/explicit model
  */
@@ -38,14 +70,31 @@ export interface DiscoveredAdvisors {
 	warnings: string[];
 }
 
+const reviewIntervalSchema = type("1 <= number.integer <= 9007199254740991");
+const syncBacklogSchema = type.enumerated(...ADVISOR_SYNC_BACKLOG_MODES);
+const sessionScopeSchema = type.enumerated(...ADVISOR_SESSION_SCOPES);
+const syncBacklogEntrySchema = type.enumerated(...ADVISOR_SYNC_BACKLOG_MODES, 1, 3, 5);
+const SYNC_BACKLOG_NUMERIC_THRESHOLDS = { 1: "1", 3: "3", 5: "5" } as const;
+
+function normalizeSyncBacklog(
+	value: AdvisorSyncBacklog | keyof typeof SYNC_BACKLOG_NUMERIC_THRESHOLDS,
+): AdvisorSyncBacklog {
+	return typeof value === "number" ? SYNC_BACKLOG_NUMERIC_THRESHOLDS[value] : value;
+}
+
 const advisorEntrySchema = type({
 	name: "string",
 	"model?": "string",
 	"tools?": "string[]",
+	"reviewMode?": "'turn' | 'agent-end'",
+	"reviewInterval?": reviewIntervalSchema,
+	"syncBacklog?": syncBacklogEntrySchema,
 	"instructions?": "string",
 	"enabled?": "boolean",
 	"maxNotesPerUpdate?": "number",
 	"sandbox?": "string",
+	"scope?": sessionScopeSchema,
+	"includeReasoning?": "boolean",
 });
 
 type AdvisorYamlEntry = typeof advisorEntrySchema.infer;
@@ -102,11 +151,7 @@ function parseWatchdogDoc(
  * survives; callers dedupe collisions.
  */
 export function slugifyAdvisorName(name: string): string {
-	const slug = name
-		.toLowerCase()
-		.replace(/[^a-z0-9]+/g, "-")
-		.replace(/^-+|-+$/g, "");
-	return slug || "advisor";
+	return slugify(name) || "advisor";
 }
 
 const UUID_V7_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -242,6 +287,9 @@ export async function discoverAdvisorConfigs(cwd: string, agentDir?: string): Pr
 					toolGrant === undefined
 						? undefined
 						: filterAdvisorTools(toolGrant.length > 0 ? toolGrant : ([] as string[]), item.path),
+				reviewMode: entry.reviewMode,
+				reviewInterval: entry.reviewInterval,
+				syncBacklog: entry.syncBacklog === undefined ? undefined : normalizeSyncBacklog(entry.syncBacklog),
 				maxNotesPerUpdate:
 					typeof entry.maxNotesPerUpdate === "number" &&
 					Number.isFinite(entry.maxNotesPerUpdate) &&
@@ -249,6 +297,8 @@ export async function discoverAdvisorConfigs(cwd: string, agentDir?: string): Pr
 						? Math.trunc(entry.maxNotesPerUpdate)
 						: undefined,
 				enabled: entry.enabled,
+				scope: entry.scope,
+				includeReasoning: entry.includeReasoning,
 				instructions: entryInstructions,
 				sandbox: entry.sandbox,
 			});
@@ -338,12 +388,17 @@ export async function loadWatchdogConfigFile(filePath: string): Promise<Watchdog
 		const advisor: AdvisorConfig = { name: a.name };
 		if (a.model?.trim()) advisor.model = a.model;
 		if (a.tools !== undefined) advisor.tools = [...a.tools];
+		if (a.reviewMode !== undefined) advisor.reviewMode = a.reviewMode;
+		if (a.reviewInterval !== undefined) advisor.reviewInterval = a.reviewInterval;
+		if (a.syncBacklog !== undefined) advisor.syncBacklog = normalizeSyncBacklog(a.syncBacklog);
 		if (a.instructions?.trim()) advisor.instructions = a.instructions;
 		if (a.enabled !== undefined) advisor.enabled = a.enabled;
 		if (a.sandbox !== undefined) advisor.sandbox = a.sandbox;
 		if (typeof a.maxNotesPerUpdate === "number" && Number.isFinite(a.maxNotesPerUpdate) && a.maxNotesPerUpdate >= 1) {
 			advisor.maxNotesPerUpdate = Math.trunc(a.maxNotesPerUpdate);
 		}
+		if (a.scope !== undefined) advisor.scope = a.scope;
+		if (a.includeReasoning !== undefined) advisor.includeReasoning = a.includeReasoning;
 		return advisor;
 	});
 	const doc: WatchdogConfigDoc = { advisors };
@@ -407,6 +462,11 @@ export function serializeWatchdogConfig(doc: WatchdogConfigDoc): string {
 					}
 				}
 			}
+			if (advisor.reviewMode !== undefined) lines.push(`    reviewMode: ${YAML.stringify(advisor.reviewMode)}`);
+			if (advisor.syncBacklog !== undefined) {
+				syncBacklogSchema.assert(advisor.syncBacklog);
+				lines.push(`    syncBacklog: ${YAML.stringify(advisor.syncBacklog)}`);
+			}
 			if (advisor.instructions?.trim()) {
 				appendYamlString(lines, "    ", "instructions", advisor.instructions);
 			}
@@ -418,6 +478,17 @@ export function serializeWatchdogConfig(doc: WatchdogConfigDoc): string {
 				advisor.maxNotesPerUpdate >= 1
 			) {
 				lines.push(`    maxNotesPerUpdate: ${Math.trunc(advisor.maxNotesPerUpdate)}`);
+			}
+			if (advisor.reviewInterval !== undefined) {
+				reviewIntervalSchema.assert(advisor.reviewInterval);
+				lines.push(`    reviewInterval: ${advisor.reviewInterval}`);
+			}
+			if (advisor.scope !== undefined) {
+				sessionScopeSchema.assert(advisor.scope);
+				lines.push(`    scope: ${YAML.stringify(advisor.scope)}`);
+			}
+			if (advisor.includeReasoning !== undefined) {
+				lines.push(`    includeReasoning: ${advisor.includeReasoning}`);
 			}
 		}
 	}

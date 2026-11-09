@@ -9,6 +9,7 @@
 import { AsyncJobManager } from "tau/async";
 import type { ToolSession } from "tau/tools";
 import { BashTool } from "tau/tools/bash";
+import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
 
 const THRESHOLD_MS = 30_000;
 
@@ -24,16 +25,11 @@ const session = {
 	getSessionId: () => "autobg-probe",
 	getAgentId: () => null,
 	asyncJobManager: manager,
-	settings: {
-		get(key: string) {
-			if (key === "bash.autoBackground.enabled") return true;
-			if (key === "bash.autoBackground.thresholdMs") return THRESHOLD_MS;
-			return undefined;
-		},
-		getBashInterceptorRules() {
-			return [];
-		},
-	},
+	settings: Settings.isolated({
+		"async.enabled": false,
+		"bash.autoBackground.enabled": true,
+		"bash.autoBackground.thresholdMs": THRESHOLD_MS,
+	}),
 	getClientBridge: () => undefined,
 } as unknown as ToolSession;
 

@@ -7,6 +7,8 @@ import type { AgentSession } from "tau/session/agent-session";
 import { SessionManager } from "tau/session/session-manager";
 import { TempDir } from "@tau/tau-utils";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
+import { cfgAsyncEnabled, cfgToolsXdev } from "@oh-my-pi/pi-coding-agent/tools/settings";
+import { cfgGoalEnabled } from "@oh-my-pi/pi-coding-agent/goals/settings";
 
 describe("goal tool registration when goal mode is enabled at runtime", () => {
 	let tempDir: TempDir;
@@ -31,9 +33,9 @@ describe("goal tool registration when goal mode is enabled at runtime", () => {
 		const modelRegistry = new ModelRegistry(authStorage, tempDir.join("models.yml"));
 		const sessionManager = SessionManager.inMemory(tempDir.path());
 		const settings = Settings.instance;
-		settings.set("async.enabled", false);
-		settings.set("tools.xdev", true);
-		settings.set("goal.enabled", goalEnabledAtStartup);
+		cfgAsyncEnabled.set(settings, false);
+		cfgToolsXdev.set(settings, true);
+		cfgGoalEnabled.set(settings, goalEnabledAtStartup);
 		const { session: created } = await createAgentSession({
 			cwd: tempDir.path(),
 			agentDir: tempDir.path(),
@@ -79,7 +81,7 @@ describe("goal tool registration when goal mode is enabled at runtime", () => {
 		// reload) left the tool registry without `goal`, so entering goal mode
 		// silently dropped the name and `xd://goal` failed with "No such tool".
 		session = await makeSession(false);
-		Settings.instance.set("goal.enabled", true);
+		cfgGoalEnabled.set(Settings.instance, true);
 
 		await enterGoalMode(session);
 

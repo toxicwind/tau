@@ -1,3 +1,4 @@
+import { logger } from "@oh-my-pi/pi-utils";
 import * as AIError from "../error";
 import type {
 	AuthAccountPolicies,
@@ -22,20 +23,45 @@ export function matchesAuthAccountSelector(selector: AuthAccountSelector, identi
 /** Validated per-account routing policies (priority/reserve) plus the global reserve fallback. */
 export class AccountPolicies {
 	#accountPolicies: AuthAccountPolicies;
-	readonly defaultReservePct: number;
+	#defaultReservePct: number;
+	/** Indexes of policies already warned as unmatched; validation runs on every selection. */
+	#warnedUnmatched = new Set<number>();
 
 	constructor(policies: AuthAccountPolicies, defaultReservePct: number | undefined) {
-		this.#accountPolicies = policies;
-		this.defaultReservePct =
+		const effectiveDefaultReservePct =
 			typeof defaultReservePct === "number" && Number.isFinite(defaultReservePct)
 				? Math.max(0, Math.min(100, defaultReservePct))
 				: DEFAULT_USAGE_RESERVE_PCT;
-		this.#validateAccountPolicyConfiguration();
+		AccountPolicies.#validateAccountPolicyConfiguration(policies, effectiveDefaultReservePct);
+		this.#accountPolicies = policies;
+		this.#defaultReservePct = effectiveDefaultReservePct;
 	}
 
-	#validateAccountPolicyConfiguration(): void {
-		for (let index = 0; index < this.#accountPolicies.length; index += 1) {
-			const policy = this.#accountPolicies[index]!;
+	/** Global usage reserve (0–100) for accounts without a per-account `reservePct`. */
+	get defaultReservePct(): number {
+		return this.#defaultReservePct;
+	}
+
+	/**
+	 * Replace the policy set and global reserve in place (live settings change).
+	 * Validates the configuration and every provider in `storedCredentials` before
+	 * committing; on error the previous policies stay active.
+	 */
+	replace(
+		policies: AuthAccountPolicies,
+		defaultReservePct: number | undefined,
+		storedCredentials: ReadonlyMap<string, readonly AuthCredential[]> = new Map(),
+	): void {
+		const next = new AccountPolicies(policies, defaultReservePct);
+		for (const [provider, credentials] of storedCredentials) next.validateFor(provider, credentials);
+		this.#accountPolicies = next.#accountPolicies;
+		this.#defaultReservePct = next.#defaultReservePct;
+		this.#warnedUnmatched = next.#warnedUnmatched;
+	}
+
+	static #validateAccountPolicyConfiguration(accountPolicies: AuthAccountPolicies, defaultReservePct: number): void {
+		for (let index = 0; index < accountPolicies.length; index += 1) {
+			const policy = accountPolicies[index]!;
 			const path = `auth.accountPolicies[${index}]`;
 			if (
 				typeof policy.provider !== "string" ||
@@ -70,20 +96,36 @@ export class AccountPolicies {
 			) {
 				throw new AIError.ConfigurationError(`${path}.reservePct must be a finite number between 0 and 100`);
 			}
+			if (policy.reclaimAbovePct !== undefined) {
+				const reservePct = policy.reservePct ?? defaultReservePct;
+				if (
+					!Number.isFinite(policy.reclaimAbovePct) ||
+					policy.reclaimAbovePct <= reservePct ||
+					policy.reclaimAbovePct > 100
+				) {
+					throw new AIError.ConfigurationError(
+						`${path}.reclaimAbovePct must be a finite number above the account's reserve (${reservePct}%) and at most 100`,
+					);
+				}
+			}
 		}
 	}
 
 	validateUsageCapability(provider: string, canFetchUsage: boolean): void {
-		const policyIndex = this.#accountPolicies.findIndex(
-			policy => policy.provider === provider && policy.reservePct !== undefined,
-		);
-		if (policyIndex !== -1 && !canFetchUsage) {
-			throw new AIError.ConfigurationError(
-				`auth.accountPolicies[${policyIndex}].reservePct requires a usage provider for ${provider}`,
+		if (canFetchUsage) return;
+		for (const field of ["reservePct", "reclaimAbovePct"] as const) {
+			const policyIndex = this.#accountPolicies.findIndex(
+				policy => policy.provider === provider && policy[field] !== undefined,
 			);
+			if (policyIndex !== -1) {
+				throw new AIError.ConfigurationError(
+					`auth.accountPolicies[${policyIndex}].${field} requires a usage provider for ${provider}`,
+				);
+			}
 		}
 	}
 
+	/** Throw on ambiguous selectors for `provider`; a selector whose account is absent is inert and warns once. */
 	validateFor(provider: string, credentials: readonly AuthCredential[]): void {
 		const policies = this.#accountPolicies
 			.map((policy, index) => ({ policy, index }))
@@ -104,7 +146,11 @@ export class AccountPolicies {
 			}
 			const path = `auth.accountPolicies[${index}].account`;
 			if (matches.length === 0) {
-				throw new AIError.ConfigurationError(`${path} matches no stored OAuth account for ${provider}`);
+				if (!this.#warnedUnmatched.has(index)) {
+					this.#warnedUnmatched.add(index);
+					logger.warn("Account policy matches no stored OAuth account; ignoring it", { provider, path });
+				}
+				continue;
 			}
 			if (matches.length > 1) {
 				throw new AIError.ConfigurationError(

@@ -1,9 +1,13 @@
-import { describe, expect, it, vi } from "bun:test";
+import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as AIError from "@tau/tau-ai/error";
 import { setBedrockProviderModule, streamBedrock } from "@tau/tau-ai/providers/register-builtins";
 import type { AssistantMessage, Context, Model } from "@tau/tau-ai/types";
 import type { AssistantMessageEventStream } from "@tau/tau-ai/utils/event-stream";
 import { buildModel } from "@tau/tau-catalog/build";
+import * as BedrockProvider from "@oh-my-pi/pi-ai/providers/amazon-bedrock";
+
+// The transport override is process-global: put the built-in back so later files stream for real.
+afterEach(() => setBedrockProviderModule(BedrockProvider));
 
 async function drainMicrotasksUntil(predicate: () => boolean, errorMessage: string): Promise<void> {
 	for (let i = 0; i < 1000; i++) {

@@ -3,7 +3,13 @@ import { existsSync } from "node:fs";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
+<<<<<<< ours — interstitial `file_header` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: `import { getOrCreateSnapshot, sanitizeSnapshotForBrush } from "…`
 import { getOrCreateSnapshot, sanitizeSnapshotForBrush } from "tau/utils/shell-snapshot";
+=======
+import { procmgr } from "@oh-my-pi/pi-utils";
+import { getOrCreateSnapshot } from "@oh-my-pi/pi-coding-agent/utils/shell-snapshot";
+>>>>>>> theirs — interstitial `file_header` (F, confidence: medium) · weave: run 'weave explain packages/coding-agent/test/shell-snapshot.test.ts' for per-hunk detail, 'weave check' to verify your resolution
 import fnEnvHelper from "../src/utils/shell-snapshot-fn-env.sh" with { type: "text" };
 
 // macOS ships bash at `/bin/bash`, not `/usr/bin/bash`; resolve a real bash the
@@ -15,19 +21,18 @@ const REAL_BASH = Bun.env.SHELL?.includes("bash") ? Bun.env.SHELL : "/bin/bash";
 // function invokes): macOS has no `/usr/bin/echo`, so hard-coding it makes the
 // replay fail with `No such file or directory` even though the export landed.
 const REAL_ECHO = Bun.which("echo") ?? "/bin/echo";
+// A bare `bash` on Windows usually resolves to the WSL launcher
+// (`WindowsApps\bash.exe`), which runs inside Linux without the spawn env; use
+// the Git Bash the product itself resolves.
+const HELPER_BASH = process.platform === "win32" ? procmgr.resolveWindowsShell() : "bash";
 
 /** Mirrors the per-uid snapshot dir name computed in `getOrCreateSnapshot`. */
 function snapshotDirIn(tmpRoot: string): string {
 	const uid = process.getuid?.();
 	return path.join(tmpRoot, uid === undefined ? "tau-shell-snapshots" : `tau-shell-snapshots-${uid}`);
 }
-
-// `sanitizeSnapshotForBrush` is the snapshot-side mitigation for brush's
-// whitespace-only alias expander (`crates/vendor/brush-core/src/interp.rs:1500`,
-// brush issue reubeno/brush#57). Aliases whose body needs real shell parsing
-// must be dropped or brush turns the first whitespace piece into the command
-// name and the user sees `error: command not found: (alias;` (issue #3234).
-
+<<<<<<< ours — test_suite `sanitizeSnapshotForBrush` (S+F, confidence: low)
+// refused_by: modify_delete_guard · collision: none (no common ancestor text)
 describe("sanitizeSnapshotForBrush", () => {
 	it("drops the Fedora `which` alias and reports the dropped name", () => {
 		const snapshot = [
@@ -99,8 +104,21 @@ describe("sanitizeSnapshotForBrush", () => {
 		}
 	});
 });
+=======
+>>>>>>> theirs — test_suite `sanitizeSnapshotForBrush` (S+F, confidence: low)
+<<<<<<< ours — interstitial `between:packages/coding-agent/test/shell-snapshot.test.ts::test_suite::sanitizeSnapshotForBrush:packages/coding-agent/test/shell-snapshot.test.ts::function::readStream` (S+F, confidence: low)
+// refused_by: merge_ladder_exhausted · collision: `// `__omp_emit_referenced_exports` (shell-snapshot-fn-env.sh) r…`
 
 // `__tau_emit_referenced_exports` (shell-snapshot-fn-env.sh) re-exports env
+// vars that snapshotted functions reference. mise activates a `mise()` shell
+// function whose body expands `$__MISE_EXE`; the snapshot used to persist the
+// function but discard the sidecar var, so the replay shell ran
+// `command "" "$@"` and died with `command: command not found:` (issue #3470).
+
+=======
+>>>>>>> theirs — interstitial `between:packages/coding-agent/test/shell-snapshot.test.ts::test_suite::sanitizeSnapshotForBrush:packages/coding-agent/test/shell-snapshot.test.ts::function::readStream` (S+F, confidence: low)
+
+// `__omp_emit_referenced_exports` (shell-snapshot-fn-env.sh) re-exports env
 // vars that snapshotted functions reference. mise activates a `mise()` shell
 // function whose body expands `$__MISE_EXE`; the snapshot used to persist the
 // function but discard the sidecar var, so the replay shell ran
@@ -123,7 +141,12 @@ describe("shell-snapshot fn-env helper", () => {
 			``,
 		].join("\n");
 
+<<<<<<< ours — scope `it("emits export lines for env vars reference...` in test_suite `shell-snapshot fn-env helper` (F, confidence: medium)
+// refused_by: statement_fold · collision: `const child = Bun.spawn(["bash", "-c", `${fnEnvHelper}\n__omp_e…`
 		const child = Bun.spawn(["bash", "-c", `${fnEnvHelper}\n__tau_emit_referenced_exports`], {
+=======
+		const child = Bun.spawn([HELPER_BASH, "-c", `${fnEnvHelper}\n__omp_emit_referenced_exports`], {
+>>>>>>> theirs — scope `it("emits export lines for env vars reference...`
 			env: {
 				PATH: process.env.PATH ?? "/usr/bin:/bin",
 				__MISE_EXE: "/opt/echo",
@@ -164,7 +187,12 @@ describe("shell-snapshot fn-env helper", () => {
 			``,
 		].join("\n");
 
+<<<<<<< ours — scope `it("never emits export lines for likely-secre...` in test_suite `shell-snapshot fn-env helper` (F, confidence: medium)
+// refused_by: statement_fold · collision: `const child = Bun.spawn(["bash", "-c", `${fnEnvHelper}\n__omp_e…`
 		const child = Bun.spawn(["bash", "-c", `${fnEnvHelper}\n__tau_emit_referenced_exports`], {
+=======
+		const child = Bun.spawn([HELPER_BASH, "-c", `${fnEnvHelper}\n__omp_emit_referenced_exports`], {
+>>>>>>> theirs — scope `it("never emits export lines for likely-secre...`
 			env: {
 				PATH: process.env.PATH ?? "/usr/bin:/bin",
 				GITHUB_TOKEN: "ghp_REDACTED",
@@ -210,7 +238,12 @@ describe("shell-snapshot fn-env helper", () => {
 
 	it("single-quote-escapes values containing apostrophes and preserves newlines", async () => {
 		const funcs = `shout () { echo "$TRICKY_VAL $NL_VAL"; }\n`;
+<<<<<<< ours — scope `it("single-quote-escapes values containing ap...` in test_suite `shell-snapshot fn-env helper` (F, confidence: medium)
+// refused_by: statement_fold · collision: `const child = Bun.spawn(["bash", "-c", `${fnEnvHelper}\n__omp_e…`
 		const child = Bun.spawn(["bash", "-c", `${fnEnvHelper}\n__tau_emit_referenced_exports`], {
+=======
+		const child = Bun.spawn([HELPER_BASH, "-c", `${fnEnvHelper}\n__omp_emit_referenced_exports`], {
+>>>>>>> theirs — scope `it("single-quote-escapes values containing ap...`
 			env: {
 				PATH: process.env.PATH ?? "/usr/bin:/bin",
 				TRICKY_VAL: "it's 'tricky'",
@@ -230,7 +263,7 @@ describe("shell-snapshot fn-env helper", () => {
 
 		// Eval the emitted lines and verify the round-trip values match.
 		const round = Bun.spawn(
-			["bash", "-c", `eval "$1"; printf '%s\\n' "$TRICKY_VAL"; printf '%s\\n' "$NL_VAL"`, "_", out],
+			[HELPER_BASH, "-c", `eval "$1"; printf '%s\\n' "$TRICKY_VAL"; printf '%s\\n' "$NL_VAL"`, "_", out],
 			{ stdout: "pipe", stderr: "ignore" },
 		);
 		const echoed = await readStream(round.stdout as ReadableStream<Uint8Array> | null);
@@ -240,8 +273,18 @@ describe("shell-snapshot fn-env helper", () => {
 });
 
 describe("getOrCreateSnapshot", () => {
+<<<<<<< ours — test_suite `getOrCreateSnapshot` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 	it("re-exports env vars referenced by snapshotted functions (issue #3470)", async () => {
 		const home = await fs.mkdtemp(path.join(os.tmpdir(), "tau-snap-3470-"));
+=======
+	// `getOrCreateSnapshot` deliberately returns null on win32 (snapshotting is POSIX-only), and the
+	// assertions below pin POSIX file modes / per-uid dirs that Windows has no equivalent for.
+	const onWindows = process.platform === "win32";
+
+	it.skipIf(onWindows)("re-exports env vars referenced by snapshotted functions (issue #3470)", async () => {
+		const home = await fs.mkdtemp(path.join(os.tmpdir(), "omp-snap-3470-"));
+>>>>>>> theirs — test_suite `getOrCreateSnapshot` (F, confidence: medium)
 		await fs.writeFile(
 			path.join(home, ".bashrc"),
 			[
@@ -293,7 +336,72 @@ describe("getOrCreateSnapshot", () => {
 		expect(dirStat.mode & 0o077).toBe(0);
 	});
 
-	it("keeps the snapshot file at 0600 even when the rc file resets umask to 022", async () => {
+	it.skipIf(onWindows)(
+		"keeps private helpers referenced by snapshotted functions (mise/zoxide cd wrappers)",
+		async () => {
+			// Regression: `cd() { __zsh_like_cd cd "$@"; }` was kept without its helper, so `cd` exited 127.
+			const home = await fs.mkdtemp(path.join(os.tmpdir(), "omp-snap-closure-"));
+			await fs.writeFile(
+				path.join(home, ".bashrc"),
+				[
+					// Stand-ins for `mise activate bash` / `zoxide init bash` output.
+					`__zsh_like_cd () { builtin "$@"; }`,
+					`__zoxide_cd () { builtin cd -- "$@"; }`,
+					`cd () { __zsh_like_cd cd "$@"; }`,
+					`z () { __zoxide_cd "$@"; }`,
+					`greet () { ls -la; }`,
+					`_unrelated_private () { :; }`,
+					// Shell-valid name with a hyphen, referenced by a kept body.
+					`_hyphen-helper () { echo helper-ok; }`,
+					`use_hyphen () { _hyphen-helper; }`,
+					``,
+				].join("\n"),
+			);
+
+			const realBash = REAL_BASH;
+			if (!existsSync(realBash)) return;
+			const shellLink = path.join(home, "bash-omp-closure");
+			await fs.symlink(realBash, shellLink);
+
+			const snapshotPath = await getOrCreateSnapshot(shellLink, { ...process.env, HOME: home });
+			expect(snapshotPath).not.toBeNull();
+			const content = await fs.readFile(snapshotPath!, "utf8");
+
+			// Referenced private helpers must be captured with the wrappers —
+			// including the hyphenated one.
+			expect(content).toContain(`__zsh_like_cd ()`);
+			expect(content).toContain(`__zoxide_cd ()`);
+			expect(content).toContain(`_hyphen-helper ()`);
+			// Unreferenced private functions and core tools stay out.
+			expect(content).not.toContain(`_unrelated_private ()`);
+			expect(content).not.toMatch(/^ls \(\)$/m);
+
+			// Replay: the exact failure mode from the field — sourcing the snapshot
+			// and running `cd` used to exit 127 with `command not found`. The
+			// hyphenated helper exercises the body-scan name alphabet: a split
+			// `_hyphen`/`helper` pair drops the helper and fails the same way.
+			const replay = Bun.spawn(
+				[
+					realBash,
+					"--noprofile",
+					"--norc",
+					"-c",
+					`source "$1"; cd "$2" && pwd && z "$2" >/dev/null 2>&1; echo "z_rc=$?"; use_hyphen`,
+					"_",
+					snapshotPath!,
+					home,
+				],
+				{ stdout: "pipe", stderr: "pipe" },
+			);
+			const stdout = await readStream(replay.stdout as ReadableStream<Uint8Array> | null);
+			const stderr = await readStream(replay.stderr as ReadableStream<Uint8Array> | null);
+			await replay.exited;
+			expect({ exitCode: replay.exitCode, stderr }).toEqual({ exitCode: 0, stderr: "" });
+			expect(stdout).toBe(`${home}\nz_rc=0\nhelper-ok\n`);
+		},
+	);
+
+	it.skipIf(onWindows)("keeps the snapshot file at 0600 even when the rc file resets umask to 022", async () => {
 		// PR-review regression: previous revision ran `umask 077` BEFORE sourcing
 		// the rc, so a typical `.bashrc` with `umask 022` reopened the world-read
 		// window between the shell's first `>|` and the JS post-spawn chmod.
@@ -320,6 +428,30 @@ describe("getOrCreateSnapshot", () => {
 		expect(fileStat.mode & 0o077).toBe(0);
 		const content = await fs.readFile(snapshotPath!, "utf8");
 		expect(content).toContain(`export __MISE_EXE='${REAL_ECHO}'`);
+	});
+
+	it.skipIf(onWindows)("drops core-tool aliases so they resolve to real binaries (issue #17067)", async () => {
+		// Regression: the alias filter embedded the anchored `^(ls|...)$` regex
+		// inside `^alias (...)=`, which never matches, so `alias ls='eza --icons'`
+		// reached the bash tool and broke every `ls <path>`.
+		const home = await fs.mkdtemp(path.join(os.tmpdir(), "omp-snap-17067-"));
+		await fs.writeFile(path.join(home, ".bashrc"), [`alias ls='eza --icons'`, `alias lg='lazygit'`, ``].join("\n"));
+
+		const realBash = REAL_BASH;
+		if (!existsSync(realBash)) return;
+		const shellLink = path.join(home, "bash-omp-17067");
+		await fs.symlink(realBash, shellLink);
+
+		const snapshotPath = await getOrCreateSnapshot(shellLink, { ...process.env, HOME: home });
+		expect(snapshotPath).not.toBeNull();
+
+		const replay = Bun.spawn(
+			[realBash, "--noprofile", "--norc", "-c", `source "$1"; type -t ls; type -t lg`, "_", snapshotPath!],
+			{ stdout: "pipe", stderr: "pipe" },
+		);
+		const stdout = await readStream(replay.stdout as ReadableStream<Uint8Array> | null);
+		await replay.exited;
+		expect(stdout).toBe("file\nalias\n");
 	});
 	it("cleans up the empty snapshot file when the shell exits with a non-zero code", async () => {
 		const testRoot = await fs.mkdtemp(path.join(os.tmpdir(), "tau-snap-fail-"));
@@ -400,9 +532,62 @@ describe("getOrCreateSnapshot", () => {
 		}
 	});
 
+<<<<<<< ours — test_suite `getOrCreateSnapshot` (F, confidence: medium)
+// refused_by: merge_ladder_exhausted · collision: none (2 contested hunk(s), neither side deleted the other's lines)
 	it("keeps snapshots in a uid-scoped dir so accounts sharing /tmp cannot collide", async () => {
 		// Regression: the dir used to be a single fixed `tau-shell-snapshots` name
 		// under the shared `os.tmpdir()`, created 0700. The first account to run tau
+=======
+	it("shares one in-flight creation across concurrent callers (no orphaned snapshot files)", async () => {
+		const realBash = REAL_BASH;
+		if (process.platform === "win32" || !existsSync(realBash)) return;
+		const testRoot = await fs.mkdtemp(path.join(os.tmpdir(), "omp-snap-inflight-"));
+		const originalTmpDir = process.env.TMPDIR;
+		process.env.TMPDIR = testRoot;
+		try {
+			const shellLink = path.join(testRoot, "bash-omp-inflight");
+			await fs.symlink(realBash, shellLink);
+			const env = { ...process.env, HOME: testRoot };
+			const [first, second] = await Promise.all([
+				getOrCreateSnapshot(shellLink, env),
+				getOrCreateSnapshot(shellLink, env),
+			]);
+			expect(first).not.toBeNull();
+			expect(second).toBe(first);
+			expect(await fs.readdir(snapshotDirIn(testRoot))).toEqual([path.basename(first!)]);
+		} finally {
+			if (originalTmpDir === undefined) delete process.env.TMPDIR;
+			else process.env.TMPDIR = originalTmpDir;
+			await fs.rm(testRoot, { recursive: true, force: true });
+		}
+	});
+
+	it("remembers a failed snapshot instead of respawning the shell on every call", async () => {
+		if (process.platform === "win32") return;
+		const testRoot = await fs.mkdtemp(path.join(os.tmpdir(), "omp-snap-negative-"));
+		const originalTmpDir = process.env.TMPDIR;
+		process.env.TMPDIR = testRoot;
+		try {
+			const runs = path.join(testRoot, "runs");
+			const fakeShell = path.join(testRoot, "counting-fail-shell.sh");
+			await fs.writeFile(fakeShell, `#!/bin/sh\nprintf x >> '${runs}'\nexit 1\n`);
+			await fs.chmod(fakeShell, 0o755);
+			const env = { ...process.env, HOME: testRoot };
+
+			expect(await getOrCreateSnapshot(fakeShell, env)).toBeNull();
+			expect(await getOrCreateSnapshot(fakeShell, env)).toBeNull();
+			expect(await fs.readFile(runs, "utf8")).toBe("x");
+		} finally {
+			if (originalTmpDir === undefined) delete process.env.TMPDIR;
+			else process.env.TMPDIR = originalTmpDir;
+			await fs.rm(testRoot, { recursive: true, force: true });
+		}
+	});
+
+	it.skipIf(onWindows)("keeps snapshots in a uid-scoped dir so accounts sharing /tmp cannot collide", async () => {
+		// Regression: the dir used to be a single fixed `omp-shell-snapshots` name
+		// under the shared `os.tmpdir()`, created 0700. The first account to run omp
+>>>>>>> theirs — test_suite `getOrCreateSnapshot` (F, confidence: medium)
 		// owned it and every other account's pre-create write died with EACCES.
 		const realBash = REAL_BASH;
 		if (!existsSync(realBash)) return;
