@@ -16,7 +16,7 @@ packages/coding-agent/src/tools/computer/
 ├── prelude-definition.ts   # Prelude asset loader
 ├── prelude.js              # JavaScript facade
 ├── prelude.py              # Python facade
-└── declarations.d.ts       # Type declarations
+└── declarations.txt        # Type declarations (text asset, not a `.d.ts`)
 ```
 
 ## Hyprland Architecture

@@ -16,12 +16,10 @@ declare module "*.py" {
 // Browser prelude JS + TS declarations imported as text by the browser surface
 // macro (coding-agent src/tools/browser/prelude-definition.ts). `*.js` must be
 // a concrete relative pattern, not "*.js" (Bun's types claim that as a module).
+// The declaration text itself lives in `declarations.txt` — TS special-cases
+// `.d.ts` as type-only modules so it cannot be imported with `{ type: "text" }`
+// (TS2846) — and is covered by the `*.txt` declaration above.
 declare module "*/prelude.js" {
-	const content: string;
-	export default content;
-}
-
-declare module "*/declarations.d.ts" {
 	const content: string;
 	export default content;
 }
