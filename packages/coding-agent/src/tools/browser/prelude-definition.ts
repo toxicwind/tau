@@ -3,9 +3,11 @@ import browserDescription from "../../prompts/tools/browser.md" with { type: "te
 import type { ToolSession } from "../../sdk";
 import preludeJsTemplate from "./prelude.js" with { type: "text" };
 import preludePyTemplate from "./prelude.py" with { type: "text" };
-import { readFileSync } from "node:fs";
-// declarations.d.ts cannot be imported with `with { type: "text" }` (TS special-cases `.d.ts` as type-only modules); read it at build time like the other prelude templates.
-const declarationsTypes = readFileSync(new URL("./declarations.d.ts", import.meta.url), "utf8");
+// The declaration text lives in `declarations.txt` (not `.d.ts`): TypeScript
+// special-cases `.d.ts` as type-only modules, so it cannot be imported with
+// `with { type: "text" }` (TS2846), and `readFileSync(new URL(...))` at module
+// scope breaks inside a compiled binary where the file is absent from the bunfs.
+import declarationsTypes from "./declarations.txt" with { type: "text" };
 
 import {
 	generateDirectMethods,

@@ -270,8 +270,10 @@ describe("template marker contracts", () => {
 		expect(src).toContain("(__GENERATED_PY__)");
 	});
 
-	test("declarations.d.ts no longer carries the fake default export", async () => {
-		const src = await import("node:fs/promises").then(m => m.readFile(new URL("./declarations.d.ts", import.meta.url), "utf8"));
+	test("declarations.txt no longer carries the fake default export", async () => {
+		const src = await import("node:fs/promises").then(m =>
+			m.readFile(new URL("./declarations.txt", import.meta.url), "utf8"),
+		);
 		expect(src).not.toContain("export default declarations;");
 		expect(src).not.toContain('const declarations: string = "";');
 	});
