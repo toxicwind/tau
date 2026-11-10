@@ -4,7 +4,10 @@
       "type": "http",
       "url": "http://127.0.0.1:25127/mcp",
       "enabled": true,
-      "timeout": 120000
+      "timeout": 120000,
+      "headers": {
+        "Authorization": "Bearer b77mFSZxl9iFJKqQdjUjabqhPqdpKl2Z"
+      }
     }
   }
 }
