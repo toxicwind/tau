@@ -104,6 +104,35 @@ describe("retryTransientCompletion", () => {
 		expect(final.errorMessage).toContain("overloaded_error");
 	});
 
+	it("retries a 429 PAST maxAttempts when unlimitedOn429 (default) — a slot eventually frees", async () => {
+		// 2026-11-10 doctrine: 429 is transient capacity, not a terminal
+		// failure. The old 3-try ceiling burned real oneshots while
+		// freeinference's 2 slots were held. With the default
+		// unlimitedOn429=true, five 429s then a 200 must all be retried.
+		let calls = 0;
+		const final = await retryTransientCompletion(() => {
+			calls += 1;
+			return Promise.resolve(calls <= 5 ? rateLimited() : message());
+		}, { ...fast, maxAttempts: 3 });
+
+		expect(calls).toBe(6);
+		expect(final.stopReason).toBe("stop");
+	});
+
+	it("respects unlimitedOn429=false and exhausts the budget on 429", async () => {
+		let calls = 0;
+		const final = await retryTransientCompletion(
+			() => {
+				calls += 1;
+				return Promise.resolve(calls <= 5 ? rateLimited() : message());
+			},
+			{ ...fast, maxAttempts: 3, unlimitedOn429: false },
+		);
+
+		expect(calls).toBe(3);
+		expect(final.stopReason).toBe("error");
+	});
+
 	it("does not retry a non-transient provider error", async () => {
 		let calls = 0;
 		const final = await retryTransientCompletion(
@@ -198,7 +227,9 @@ describe("retryTransientCompletion", () => {
 			throw error;
 		}, fast);
 
-		await expect(attempt).rejects.toThrow(/overloaded_error/);
+		const err = await attempt.catch((e: unknown) => e);
+		expect(err).toBeInstanceOf(Error);
+		expect((err as Error).message).toMatch(/overloaded_error/);
 		expect(calls).toBe(3);
 	});
 
@@ -225,7 +256,9 @@ describe("retryTransientCompletion", () => {
 			throw new Error("invalid_request_error: bad tool schema");
 		}, fast);
 
-		await expect(attempt).rejects.toThrow(/invalid_request_error/);
+		const err = await attempt.catch((e: unknown) => e);
+		expect(err).toBeInstanceOf(Error);
+		expect((err as Error).message).toMatch(/invalid_request_error/);
 		expect(calls).toBe(1);
 	});
 
@@ -261,7 +294,9 @@ describe("retryTransientCompletion", () => {
 			{ maxAttempts: 3, baseDelayMs: 200, signal: controller.signal },
 		);
 
-		await expect(attempt).rejects.toThrow("user pressed escape");
+		const err = await attempt.catch((e: unknown) => e);
+		expect(err).toBeInstanceOf(Error);
+		expect((err as Error).message).toMatch("user pressed escape");
 		expect(calls).toBe(1);
 	});
 
@@ -415,7 +450,9 @@ describe("retryTransientCompletion", () => {
 			},
 		);
 
-		await expect(attempt).rejects.toThrow(/overloaded_error/);
+		const err = await attempt.catch((e: unknown) => e);
+		expect(err).toBeInstanceOf(Error);
+		expect((err as Error).message).toMatch(/overloaded_error/);
 		expect(calls).toBe(2);
 		expect(observedDelay).toBe(90);
 	});

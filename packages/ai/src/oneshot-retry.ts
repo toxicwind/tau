@@ -34,6 +34,17 @@ import {
 export interface OneshotRetryOptions {
 	/** Total attempts, including the first. Default 3. Values < 1 are treated as 1. */
 	maxAttempts?: number;
+	/**
+	 * When true (default), a 429 rate-limit/concurrency failure does NOT count
+	 * against `maxAttempts` — the loop keeps retrying (honoring retry-after /
+	 * backoff, capped at `maxDelayMs`) until a non-429 answer, a non-retryable
+	 * error, or the caller aborts. Matches the main loop's
+	 * `retry.unlimitedRetryOnConcurrency429` (2026-11-10 doctrine: 429 is
+	 * transient capacity — a slot eventually frees; the old 3-try ceiling
+	 * burned real summaries/titles/judgments while freeinference's 2 slots
+	 * were held by long generations).
+	 */
+	unlimitedOn429?: boolean;
 	/** First backoff step in ms; doubles per attempt. Default 500. */
 	baseDelayMs?: number;
 	/**
@@ -160,6 +171,7 @@ export async function retryTransientCompletion(
 	options?: OneshotRetryOptions,
 ): Promise<AssistantMessage> {
 	const maxAttempts = Math.max(1, options?.maxAttempts ?? DEFAULT_MAX_ATTEMPTS);
+	const unlimitedOn429 = options?.unlimitedOn429 ?? true;
 	const baseDelayMs = options?.baseDelayMs ?? DEFAULT_BASE_DELAY_MS;
 	const maxDelayMs = options?.maxDelayMs ?? DEFAULT_MAX_DELAY_MS;
 	const signal = options?.signal;
@@ -193,7 +205,12 @@ export async function retryTransientCompletion(
 					: String(thrown)
 				: ((message as AssistantMessage).errorMessage ?? "unknown error");
 		const errorStatus = thrown !== undefined ? AIError.status(thrown) : (message as AssistantMessage).errorStatus;
-		const lastAttempt = attempt >= maxAttempts;
+		// 429 = transient capacity (concurrency slots, rate windows). With
+		// unlimitedOn429 (default) it never exhausts the attempt budget — the
+		// loop keeps waiting until a slot frees. All other transients still
+		// honor maxAttempts.
+		const is429 = errorStatus === 429;
+		const lastAttempt = !(unlimitedOn429 && is429) && attempt >= maxAttempts;
 		if (lastAttempt || !isRetryableOneshotFailure(errorId, errorStatus, errorMessage)) {
 			if (thrown !== undefined) throw thrown;
 			return message as AssistantMessage;
