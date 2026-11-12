@@ -1290,6 +1290,9 @@ export interface EditDiffResult {
 /** Numbered unified diff between two texts (`generateDiffString`). */
 export declare function editDiffString(oldText: string, newText: string, path?: string | undefined | null): EditDiffResult
 
+/** Every `errorKind` a failed apply outcome can carry. Declared for upstream parity; the fork's older .node addon lacks the implementation (throws until the natives crate carries it). */
+export declare function editErrorKinds(): Array<string>
+
 /** A destructive file operation a payload declares. */
 export interface EditFileOpIntent {
   /** `delete` | `move`. */

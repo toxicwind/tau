@@ -1029,6 +1029,8 @@ export interface OAuthApi {
 	): Promise<StoredOAuthRefreshResult<T>>;
 }
 
+export type SessionRestrictionLease = symbol;
+
 /** Session credential affinity operations. */
 export interface SessionsApi {
 	/**
@@ -1054,6 +1056,26 @@ export interface SessionsApi {
 	 * source session.
 	 */
 	inherit(sourceSessionId: string, targetSessionId: string): number;
+	/**
+	 * Restrict one session's credentials for `provider` to the OAuth accounts
+	 * whose identity key is listed. Selection, session pins, inherited affinity,
+	 * fallback passes, and rotation never leave the list. Replaces any earlier
+	 * restriction for the same provider and session; the owner passes the
+	 * returned lease to {@link unrestrict} when the session ends. (Restored
+	 * from upstream — the fork's older interface lacked it.)
+	 */
+	restrict(provider: string, sessionId: string, identityKeys: readonly string[]): SessionRestrictionLease;
+	/**
+	 * Lift the restriction that `lease` installed. Once a later {@link restrict}
+	 * call has replaced it for the same provider and session, this does nothing.
+	 */
+	unrestrict(provider: string, sessionId: string, lease: SessionRestrictionLease): void;
+	/**
+	 * Whether stored credential `credentialId` may serve `sessionId`: always for
+	 * an unrestricted session, otherwise only an OAuth account its
+	 * {@link restrict} list names.
+	 */
+	permits(provider: string, sessionId: string, credentialId: number): boolean;
 	/**
 	 * Release a session's sticky credential so its next {@link getApiKey} call
 	 * re-runs native pool ranking. This never blocks or penalizes the released
