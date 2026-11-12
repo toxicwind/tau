@@ -670,6 +670,14 @@ export declare function appleFmAvailability(): Promise<string>
 export declare function appleFmCancel(handle: number): void
 
 /**
+ * Apply a binary patch to create the next release binary. Declared for
+ * upstream parity; the fork's older .node addon lacks the implementation, so
+ * calls throw the missing-native-export error until the natives crate carries
+ * it (canary merge).
+ */
+export declare function applyBinaryPatch(oldPath: string, patchPath: string, outPath: string): Promise<number>
+
+/**
  * Starts one model turn for a JSON request and streams JSON events to
  * `on_event` until a terminal `done` or `error` event. Returns a handle for
  * [`apple_fm_cancel`].

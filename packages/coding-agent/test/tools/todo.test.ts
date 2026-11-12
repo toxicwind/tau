@@ -1368,3 +1368,69 @@ describe("TodoTool details/notes preservation (2026-11-08 regression)", () => {
 		expect(task?.notes).toEqual(["n1"]);
 	});
 });
+
+describe("TodoTool fuzzy op repair (2026-11-11 regression)", () => {
+	// A model emitting a non-canonical `op` (semantic synonym, typo, or traiiling
+	// punctuation) used to wedge the todo list with "Invalid todo arguments: op
+	// must be ...". `resolveTodoParams` now repairs near-miss ops to the canonical
+	// token; a genuinely unknown op still errors so the model can retry.
+
+	it("aliases complete -> done and completes the task", async () => {
+		const tool = new TodoTool(createSession());
+		await tool.execute("call-1", { op: "init", list: [{ phase: "Work", items: ["a", "b"] }] });
+
+		const result = (await tool.execute("call-2", { op: "complete", task: "b" } as never)) as Awaited<
+			ReturnType<TodoTool["execute"]>
+		>;
+		expect(result.isError).toBeUndefined();
+		const tasks = result.details?.phases?.[0]?.tasks ?? [];
+		expect(tasks.find(t => t.content === "b")?.status).toBe("completed");
+	});
+
+	it("aliases remove_task -> rm and removes the task", async () => {
+		const tool = new TodoTool(createSession());
+		await tool.execute("call-1", { op: "init", list: [{ phase: "Work", items: ["a", "b"] }] });
+
+		const result = (await tool.execute("call-2", { op: "remove_task", task: "b" } as never)) as Awaited<
+			ReturnType<TodoTool["execute"]>
+		>;
+		expect(result.isError).toBeUndefined();
+		const contents = result.details?.phases?.[0]?.tasks?.map(t => t.content) ?? [];
+		expect(contents).not.toContain("b");
+	});
+
+	it("fuzzy-matches apend -> append and appends the item", async () => {
+		const tool = new TodoTool(createSession());
+		await tool.execute("call-1", { op: "init", list: [{ phase: "Work", items: ["First"] }] });
+
+		const result = (await tool.execute("call-2", { op: "apend", phase: "Work", items: ["Second"] } as never)) as Awaited<
+			ReturnType<TodoTool["execute"]>
+		>;
+		expect(result.isError).toBeUndefined();
+		const tasks = result.details?.phases?.[0]?.tasks ?? [];
+		expect(tasks.map(t => t.content)).toEqual(["First", "Second"]);
+	});
+
+	it("aliases list -> view (read-only, no error)", async () => {
+		const tool = new TodoTool(createSession());
+		await tool.execute("call-1", { op: "init", list: [{ phase: "Work", items: ["a"] }] });
+
+		const result = (await tool.execute("call-2", { op: "list" } as never)) as Awaited<
+			ReturnType<TodoTool["execute"]>
+		>;
+		expect(result.isError).toBeUndefined();
+	});
+
+	it("still errors on a genuinely unknown op (fail-safe, no silent retarget)", async () => {
+		const tool = new TodoTool(createSession());
+		await tool.execute("call-1", { op: "init", list: [{ phase: "Work", items: ["a"] }] });
+
+		const result = (await tool.execute("call-2", { op: "frobnicate", task: "a" } as never)) as Awaited<
+			ReturnType<TodoTool["execute"]>
+		>;
+		expect(result.isError).toBe(true);
+		const summary = result.content.find(part => part.type === "text");
+		if (summary?.type !== "text") throw new Error("Expected text summary");
+		expect(summary.text).toContain("Invalid todo arguments");
+	});
+});

@@ -11,6 +11,7 @@ import { type } from "@tau/tautype";
 import type { AgentTool, AgentToolContext, AgentToolResult, AgentToolUpdateCallback } from "@tau/tau-agent-core";
 
 import { isRecord, prompt } from "@tau/tau-utils";
+import { fuzzyRank } from "@tau/tau-tui";
 
 import todoDescription from "../prompts/tools/todo.md" with { type: "text" };
 import type { ToolSession } from "../sdk";
@@ -645,6 +646,53 @@ function inferTodoOp(args: Record<string, unknown>, hasExistingPhases: boolean):
 	return undefined;
 }
 
+/** Canonical `todo` op values. Keep in sync with the `TodoOp` schema string in this file. */
+const TODO_OPS = ["init", "start", "done", "rm", "drop", "block", "unblock", "append", "view"] as const;
+type TodoOpName = (typeof TODO_OPS)[number];
+
+function isValidTodoOp(value: string): value is TodoOpName {
+	return (TODO_OPS as readonly string[]).includes(value);
+}
+
+/**
+ * Semantic aliases — op spellings models routinely emit that aren't the canonical
+ * token. Keyed lowercase; maps to the canonical op. Repaired before fuzzy matching
+ * because words like `complete`/`remove` share almost no subsequence with their
+ * canonical token (`done`/`rm`), so the fuzzy engine alone would miss them.
+ */
+const TODO_OP_ALIASES: Record<string, TodoOpName> = {
+	list: "view", ls: "view", show: "view", status: "view", display: "view", current: "view", get: "view", navigate: "view", nav: "view",
+	begin: "start", progress: "start", started: "start", working: "start", "in_progress": "start",
+	complete: "done", completed: "done", finish: "done", finished: "done", check: "done", checked: "done",
+	mark: "done", mark_done: "done", resolve: "done", resolved: "done", close: "done", closing: "done", fixed: "done", done_task: "done",
+	remove: "rm", removed: "rm", delete: "rm", deleted: "rm", del: "rm", clear: "rm", uncheck: "rm", remove_task: "rm", delete_task: "rm",
+	abandon: "drop", abandoned: "drop", cancel: "drop", cancelled: "drop", abort: "drop",
+	blocked: "block", block_task: "block",
+	unblocked: "unblock", unblock_task: "unblock",
+	add: "append", added: "append", insert: "append", append_task: "append", note: "append", update: "append", create_task: "append",
+	create: "init", initialize: "init", setup: "init", reset: "init", reinit: "init", new_todo: "init",
+};
+
+/**
+ * Repair a model-supplied `op` that isn't canonical. Returns the canonical op, or
+ * undefined when there's no confident, unambiguous match, so the original schema
+ * error surfaces and the model can retry a genuinely unknown op instead of being
+ * silently re-targeted into a wrong one.
+ */
+function repairTodoOp(value: string): TodoOpName | undefined {
+	const normalized = value.trim().toLowerCase();
+	if (!normalized) return undefined;
+	const aliased = TODO_OP_ALIASES[normalized];
+	if (aliased) return aliased;
+	// Fuzzy fallback for typos/truncations ("vi"→view, "apend"→append). Subsequence
+	// matching is loose, so repair only when exactly one canonical op matches —
+	// an ambiguous short input ("ad" could be add/append/…) is left for the model.
+	if (normalized.length < 2) return undefined;
+	const ranked = fuzzyRank(TODO_OPS, normalized, op => op);
+	if (ranked.length !== 1) return undefined;
+	return ranked[0].item;
+}
+
 /**
  * Validate execute-time arguments, repairing an omitted `op`. The tool sets
  * `lenientArgValidation`, so the agent loop hands `execute()` the raw
@@ -674,6 +722,17 @@ function resolveTodoParams(raw: unknown, hasExistingPhases: boolean): TodoOpEntr
 	if (coerced) {
 		const repaired = todoSchema(coerced);
 		if (!(repaired instanceof type.errors)) return repaired;
+	}
+	// Last resort before failing: a model-supplied but non-canonical `op` near a
+	// canonical one (alias or fuzzy) is repaired rather than rejected, so a
+	// typo'd/paraphrased op no longer wedges the todo list. A genuinely unknown op
+	// with no confident match still returns the schema error for a model retry.
+	if (isRecord(raw) && typeof raw.op === "string" && !isValidTodoOp(raw.op)) {
+		const repairedOp = repairTodoOp(raw.op);
+		if (repairedOp) {
+			const repaired = todoSchema({ ...raw, op: repairedOp });
+			if (!(repaired instanceof type.errors)) return repaired;
+		}
 	}
 	return `Invalid todo arguments: ${direct.summary}`;
 }

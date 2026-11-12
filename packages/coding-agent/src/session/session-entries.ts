@@ -64,10 +64,18 @@ export interface NewSessionOptions {
 }
 
 export interface SessionEntryBase {
-	type: string;
+	type: SessionEntryType;
 	id: string;
 	parentId: string | null;
 	timestamp: string;
+	/**
+	 * Active leaf at append time, for an entry written off the active branch (late usage,
+	 * a background bash result routed back to the branch it started on). The loader replays
+	 * it instead of treating this entry as the leaf, so resume keeps the branch the live
+	 * session was on. Absence keeps the ordinary last-entry semantics; null records a
+	 * cleared leaf. (Restored from upstream — the fork's older type lacked it.)
+	 */
+	activeLeafId?: string | null;
 }
 
 export interface SessionMessageEntry extends SessionEntryBase {
@@ -310,6 +318,32 @@ export type SessionEntry =
 	| ModeChangeEntry
 	| CredentialPinEntry
 	| ResetBoundaryEntry;
+
+/** Leaf selected when replaying one entry; an off-branch entry restores the active leaf captured at append time. */
+export function sessionEntryLeafId(entry: SessionEntry): string | null {
+	return entry.activeLeafId !== undefined ? entry.activeLeafId : entry.id;
+}
+
+/** Newest entry that selects itself on replay; skips late-usage markers. */
+export function lastSelfSelectedLeafId(entries: readonly SessionEntry[]): string | null {
+	for (let index = entries.length - 1; index >= 0; index--) {
+		const entry = entries[index];
+		if (sessionEntryLeafId(entry) === entry.id) return entry.id;
+	}
+	return null;
+}
+
+/**
+ * Active leaf after replaying entries in file order; an empty or cleared session has no leaf.
+ * A captured leaf that no longer exists (rollback, rewrite) falls back to the newest self-selecting entry.
+ */
+export function resolveSessionLeafId(entries: readonly SessionEntry[]): string | null {
+	const last = entries.at(-1);
+	if (!last) return null;
+	const leafId = sessionEntryLeafId(last);
+	if (leafId === null || leafId === last.id || entries.some(entry => entry.id === leafId)) return leafId;
+	return lastSelfSelectedLeafId(entries);
+}
 
 /** Raw logical file entry after loaders strip any fixed-width title slot. */
 export type FileEntry = SessionHeader | SessionEntry;

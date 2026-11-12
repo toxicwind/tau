@@ -49,6 +49,7 @@ export const __tauNativesV18_3_0 = nativeBindings.__tauNativesV18_3_0 ?? missing
 export const appleFmAvailability = nativeBindings.appleFmAvailability ?? missingNativeExport("appleFmAvailability");
 export const appleFmCancel = nativeBindings.appleFmCancel ?? missingNativeExport("appleFmCancel");
 export const appleFmGenerate = nativeBindings.appleFmGenerate ?? missingNativeExport("appleFmGenerate");
+export const applyBinaryPatch = nativeBindings.applyBinaryPatch ?? missingNativeExport("applyBinaryPatch");
 export const astEdit = nativeBindings.astEdit ?? missingNativeExport("astEdit");
 export const astGrep = nativeBindings.astGrep ?? missingNativeExport("astGrep");
 export const astMatch = nativeBindings.astMatch ?? missingNativeExport("astMatch");

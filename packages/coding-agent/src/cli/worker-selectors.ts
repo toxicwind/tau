@@ -7,6 +7,8 @@
  */
 /** Blob-broker selector shared by the CLI dispatcher and worker launcher. */
 export const BLOB_BROKER_WORKER_ARG = "__tau_worker_blob_broker";
+/** Auto-update worker selector shared by the CLI dispatcher and worker launcher. */
+export const AUTO_UPDATE_WORKER_ARG = "__tau_worker_auto_update";
 /** Computer-worker selector shared by the CLI dispatcher and worker launcher. */
 export const COMPUTER_WORKER_ARG = "__tau_worker_computer";
 /** Daemon-broker selector shared by the CLI dispatcher and worker launcher. */

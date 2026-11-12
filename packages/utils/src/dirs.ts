@@ -639,6 +639,16 @@ export function getReportsDir(): string {
 	return dirs.rootSubdir("reports", "state");
 }
 
+/**
+ * Get the self-update state directory (~/.tau/update): the background
+ * auto-update's status file and worker log, and the lock that keeps two
+ * installs (`tau update`, auto-update) from running at once. (Restored from
+ * upstream — the fork's older file lacked it.)
+ */
+export function getUpdateStateDir(): string {
+	return dirs.rootSubdir("update", "state");
+}
+
 /** Get the logs directory (~/.tau/logs). */
 export function getLogsDir(): string {
 	return dirs.rootSubdir("logs", "state");

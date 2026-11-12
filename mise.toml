@@ -1,0 +1,31 @@
+# tau monorepo build tasks (mbx-cache / nativelink enabled).
+# `mise run build` builds the workspace; mbx-cache restores it from the
+# remote task cache at 127.0.0.1:25148 when the inputs are unchanged.
+# forge-server on :25148 is the estate nativelink remote cache endpoint.
+
+[task_config.cache]
+enabled = true
+
+[tasks.build]
+description = "Build tau workspace (nativelink remote cache at 127.0.0.1:25148)"
+run = "bun run --workspaces --if-present build"
+sources = [
+  "package.json",
+  "bun.lock",
+  "packages/*/package.json",
+  "packages/*/src/**/*.{ts,tsx}",
+  "packages/*/scripts/**/*.ts",
+  "packages/*/test/**/*.ts",
+  "packages/natives/native/*.node",
+]
+outputs = ["packages/coding-agent/dist/tau"]
+
+[tasks.install]
+description = "Install tau workspace dependencies once, richly cached"
+run = "bun install --no-progress && touch node_modules/.install-complete"
+sources = ["package.json", "bun.lock"]
+outputs = ["node_modules/.install-complete"]
+
+[tasks.dev]
+description = "Run the tau CLI locally"
+run = "bun --cwd=packages/coding-agent src/cli.ts"
