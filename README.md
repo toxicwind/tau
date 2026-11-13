@@ -1,4 +1,3 @@
-// refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 <div align="center">
 <p align="center">
   <strong>tau — a coding agent with the IDE wired in.</strong>
@@ -21,7 +20,7 @@
 
 The most capable agent surface that ships. Continuously tuned by real-world use — complete out of the box, open all the way down.
 
-**60+** providers · **31** built-in tools · **14** lsp ops · **28** dap ops · **~80k** lines of Rust core.
+**60+** providers · **31** built-in tools · **14** lsp ops · **28** dap ops · **~252k** lines of own+rebuilt Rust core.
 
 > [!NOTE]
 > Pull requests are **temporarily open to everyone** as a trial. We previously
@@ -370,7 +369,6 @@ are catalogued in `FORK_MANIFEST.tsv`. See
 <div align="center">
 <sub>Built on the ranch · estate-scripts fork of oh-my-pi</sub>
 </div>
-// refused_by: modify_delete_guard · collision: none (no common ancestor text)
 ## Install
 
 **macOS · Linux**
@@ -434,7 +432,6 @@ mise use -g github:can1357/oh-my-pi
 
 macOS · Linux · Windows · bun ≥ 1.4.4
 
-// refused_by: modify_delete_guard · collision: none (no common ancestor text)
 ### 08 · Read a pdf on arxiv, why not?
 
 web_search chains twenty-four ranked providers and hands whatever URLs it finds straight to read. Arxiv PDFs, GitHub pages, Stack Overflow threads come back as structured markdown with anchors intact — the same tool surface you use on local files. Cite, follow, quote, never lose where you came from.
@@ -442,19 +439,16 @@ web_search chains twenty-four ranked providers and hands whatever URLs it finds 
 
 
 
-// refused_by: modify_delete_guard · collision: none (no common ancestor text)
 ### 09 · Unapologetically native. Even on Windows.
 
 Other agents shell out to rg, grep, find, and bash. On many machines those binaries don't exist, and on the ones where they do, every call costs a fork-exec round-trip. omp links the real implementations into the process. ripgrep, glob, find: in-process. The bash is our own bash 5.3 engine — with sessions that survive across calls, and 58 command-line utilities (ls, sed, sort, xargs, even jq) ported into the builtins crate and run in-process, zero fork/exec. The same omp binary runs on macOS, Linux, and Windows — no WSL bridge.
 
-// refused_by: modify_delete_guard · collision: none (no common ancestor text)
 ### 10 · Code review with priorities and a verdict
 
 Get a clear verdict on whether the change ships, with every issue ranked P0 through P3 and scored for confidence. [/review](docs/slash-command-internals.md#15-bundled-command-note-review) spawns dedicated reviewer subagents that sweep branches, single commits, or uncommitted work in parallel. You tackle what blocks release first; nothing important hides in a wall of prose.
 
 Want to steer the review yourself? `/annotate code-review` opens the diff so you can pin notes to lines before the reviewers run. `/annotate` also takes the latest reply, a session message, a file, or quoted text and pastes your notes into the prompt. See [`/annotate`](docs/slash-command-internals.md#12-bundled-command-note-annotate).
 
-// refused_by: modify_delete_guard · collision: none (no common ancestor text)
 ## Whatever the task needs, _it's already in the box_.
 
 Core tools live in the same namespace as `read` and `bash`. Pin the active set with `--tools read,edit,bash,…`; rarely used discoverable tools stay behind `xd://` devices. `read xd://` lists them, and `write xd://<tool>` runs one when `tools.xdev` is enabled.
@@ -511,7 +505,6 @@ Setting-gated, off by default: `github`, `security_scan`, `generate_image`, `tts
 
 (see `packages/coding-agent/docs` for the full tool reference)
 
-// refused_by: modify_delete_guard · collision: none (no common ancestor text)
 ### Prompt controls
 
 Standalone, lowercase words opt a turn into specialized agent behavior:
@@ -523,14 +516,12 @@ Standalone, lowercase words opt a turn into specialized agent behavior:
 
 They trigger only in prose, not inside code spans, fenced code blocks, XML/HTML sections, identifiers, or paths. See [Magic keywords](docs/magic-keywords.md) for exact matching rules and configuration.
 
-// refused_by: modify_delete_guard · collision: none (no common ancestor text)
 ### Frontier APIs
 
 Direct APIs and gateways. Mix providers per role.
 
 Anthropic `oauth` · OpenAI · OpenAI Codex `oauth` · Google Gemini · Google Vertex · Google Antigravity `oauth` · xAI · SuperGrok `oauth` · DeepSeek · Mistral · Groq · Cerebras · SambaNova · Fireworks · Together · Modular · Baseten · DeepInfra · Hugging Face · NVIDIA · Meta · Inception · Amazon Bedrock · Azure OpenAI · SiliconFlow · GMI Cloud · CoreWeave · Sakana AI · Command Code · Charm Hyper · StepFun · Helmcode · OpenRouter · Synthetic · Vercel AI Gateway · Cloudflare AI Gateway · Wafer Serverless · Scaleway
 
-// refused_by: modify_delete_guard · collision: none (no common ancestor text)
 ### Custom OpenAI-compatible providers
 
 Define custom providers in `~/.omp/agent/models.yml`:
@@ -557,7 +548,6 @@ modelRoles:
    default: spark/minimax-m3
 ```
 
-// refused_by: modify_delete_guard · collision: none (no common ancestor text)
 ### Four knobs that make routing useful
 
 - **Custom providers** — Declare anything that speaks `openai-completions`, `openai-responses`, `openai-codex-responses`, `azure-openai-responses`, `anthropic-messages`, `bedrock-converse-stream`, `google-generative-ai`, `google-gemini-cli`, `google-vertex`, `typesafe`, `openrouter-decisions`, `openai-decisions`, or `workers-ai-systemone` (the judge APIs) in `~/.omp/agent/models.yml`.
@@ -567,7 +557,6 @@ modelRoles:
 
 Full provider & routing reference in `packages/coding-agent/docs`.
 
-// refused_by: modify_delete_guard · collision: none (no common ancestor text)
 ## Twenty-four backends. _One tool the agent already knows_.
 
 `web_search` is built in, not bolted on. `auto` walks a twenty-four-provider chain; pin one by name if you already pay for it. Behind every hit, site-aware extraction turns GitHub, registries, arXiv, Stack Overflow, and docs into structured markdown — anchors and link targets survive.
@@ -606,27 +595,36 @@ Twenty-four backends. Pin one, or let `auto` walk the chain in order.
 
 Exa also accepts a stored API key through `/login exa`; explicit keyless selection uses the public MCP fallback.
 
-// refused_by: modify_delete_guard · collision: none (no common ancestor text)
-## Roughly **~252,000** lines of own+rebuilt Rust, doing the work other harnesses shell out for.
+## A fork that diverges *on purpose* — not a smaller omp.
 
-Ten crates, one platform-tagged N-API addon. Search, shell, AST, highlight, PTY, desktop control, image decode, BPE counting — all in-process on the libuv pool. No fork/exec on the hot path. The shell is our own bash 5.3 engine, and 58 command-line utilities — coreutils, findutils, sed, jq, ripgrep-backed grep, fd, diff, moreutils — are ported into the builtins crate and compiled straight into the shell.
+Under the hood: **~252,000 lines of own+rebuilt Rust**, ten crates, one platform-tagged
+N-API addon. Search, shell, AST, highlight, PTY, desktop control, image decode, BPE
+counting — all in-process on the libuv pool. No fork/exec on the hot path. The shell is our
+own bash 5.3 engine, 58 command-line utilities compiled straight into it.
 
-The Rust surface is a **fork rewrite of `can1357/oh-my-pi`'s native layer**, tracked three-way by the estate's `omp-wtf` deep audit (canary ↔ fork-base ↔ ours, computed live from git). Today's crate delta, tau-* (ours) vs pi-* (canary):
+The honest picture vs upstream `can1357/oh-my-pi` (tracked live by the estate's `omp-wtf`
+audit): can1357 out-commits us on volume (≈8,400 vs ≈160 commits/30d — it is a firehose we
+deliberately do not chase). Our edge is not volume. It is **decisions upstream hasn't made**:
 
-| crate | ours files | ours lines | canary files | canary lines |
-|---|---|---|---|---|
-| ast | 7 | 4,474 | 12 | 8,239 |
-| builtins | 126 | 91,275 | 166 | 173,648 |
-| diff | 1 | 992 | 1 | 1,158 |
-| edit | 49 | 27,707 | 50 | 34,210 |
-| iso | 10 | 4,591 | 12 | 5,094 |
-| natives | 141 | 61,693 | 197 | 115,043 |
-| shell | 41 | 38,560 | 508 | 341,972 |
-| vcs | 12 | 11,958 | 14 | 14,405 |
-| voice | 8 | 3,894 | 8 | 4,083 |
-| walker | 6 | 6,859 | 34 | 14,772 |
+- **A superset tool surface, never a subset.** Our read/grep are the upstream tools PLUS the
+  virtual-resource layer the estate runs on: `artifact://`, `skill://`, sqlite, archives
+  (zip/tar/asar), line-ranges, hashlines. 106/106 grep-family contracts pinned both modes.
+- **`!glob` exclusion semantics as a choice, not a gap.** A literal `!notes.txt` on disk is
+  legal POSIX — we refuse to make it unsearchable; upstream ripgrep-style prunes it. Both
+  are runtime-selectable, pinned 9/9 by contract tests.
+- **Per-pattern sed BRE fallback** — one bad `\|` pattern never kills a multi-expression sed;
+  we degrade per-pattern, not per-call.
+- **The native walker is a full parallel rewrite** (PassState, deferred oversized passes,
+  streaming windows) — and the `exclude`/`recursive` plumbing gap that rewrite leaves is
+  papered JS-side and tracked, never hidden.
+- **Contract-test discipline:** we restored 172 upstream tool tests the fork once deleted —
+  they are the A/B oracle proving every divergence is intentional, and the 93 still missing
+  are fork-absent subsystems, not regressions.
 
-We carry ~35% of the canary's Rust LOC in rewritten, denser crates — the shell is inlined (41 files vs 508), builtins consolidated (126 vs 166) — a deliberate rewrite of the native walker, not a raw LOC race. The canary keeps the fuller surface: we do not yet ship its `predict` or `vfs` modules (upstream: 22 + 16 files). No value-judgment on either side — different size/ownership trade-offs, tracked honestly by `omp-wtf`.
+Across the 2,789 divergent files, **not one is byte-identical** upstream — and our handful
+of *ours-owned* rewrites (xdev.ts, env.ts, todo.ts, coercion.ts, the tool-call-loop guard)
+run deeper per-file than the canary's. That is the fork's thesis: not "less upstream," but
+**upstream velocity traded for deliberate, estate-specific depth.**
 
 
 ## Philosophy
@@ -652,7 +650,6 @@ Use `--no-extensions` to skip ambient extension discovery; or use `--trusted-ext
 
 ---
 
-// refused_by: modify_delete_guard · collision: none (no common ancestor text)
 ### Getting started from source
 
 Fresh clones need both workspace dependencies and the local Rust/N-API addon before the source CLI can start.
@@ -686,7 +683,6 @@ For a non-interactive smoke check:
 bun dev -- --version
 ```
 
-// refused_by: modify_delete_guard · collision: none (no common ancestor text)
 ### Rust Crates
 
 | Crate                                      | Description                                                                                              |
@@ -700,7 +696,6 @@ bun dev -- --version
 | **[pi-edit](crates/pi-edit)**              | Edit engine behind the `edit` tool: line-anchored patch/hashline modes, streaming previews, atomic apply |
 | **[pi-builtins](crates/pi-builtins)**      | 67 in-process command-line utilities plus process builtins (ps, top, pgrep, pkill, …)                    |
 
-// refused_by: modify_delete_guard · collision: none (no common ancestor text)
 ## License
 
 OMP is licensed under the [MIT License](LICENSE).
