@@ -4,7 +4,7 @@
 </p>
 
 <p align="center">
-  Language: <strong>English</strong> | <a href="README.zh-CN.md">简体中文</a>
+  Language: <strong>English</strong>
 </p>
 
 <p align="center">
@@ -21,12 +21,6 @@
 The most capable agent surface that ships. Continuously tuned by real-world use — complete out of the box, open all the way down.
 
 **60+** providers · **31** built-in tools · **14** lsp ops · **28** dap ops · **~252k** lines of own+rebuilt Rust core.
-
-> [!NOTE]
-> Pull requests are **temporarily open to everyone** as a trial. We previously
-> required a vouch before accepting PRs; that requirement is lifted for now
-> while we evaluate how open contributions go. Depending on the results, the
-> vouch system may return.
 
 # tau
 
