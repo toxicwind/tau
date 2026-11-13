@@ -20,7 +20,7 @@
 
 The most capable agent surface that ships. Continuously tuned by real-world use — complete out of the box, open all the way down.
 
-**60+** providers · **31** built-in tools · **14** lsp ops · **28** dap ops · **~252k** lines of own+rebuilt Rust core.
+**60+** providers · **31** built-in tools · **14** lsp ops · **28** dap ops · **~252k** lines of own+rebuilt Rust core (**≈35% of canary LOC** — honest, not a capability claim).
 
 # tau
 
@@ -59,6 +59,25 @@ bun --cwd=packages/coding-agent run build
 Full install, config, and architecture: [below](#table-of-contents).
 
 ---
+
+## Acknowledgements
+
+tau would not exist without the work it stands on, and we want that said plainly
+and gratefully:
+
+- **[can1357](https://github.com/can1357)** built and sustains
+  [oh-my-pi](https://github.com/can1357/oh-my-pi) — an enormous, fast-moving
+  agent codebase we fork from and absorb from. The rate and quality of what
+  can1357 ships is the reason tau's upstream is a live thing at all, and most of
+  tau's bones are oh-my-pi's.
+- **[Mario Zechner](https://github.com/mariozechner)** created
+  [pi-mono](https://github.com/badlogic/pi-mono), the foundation oh-my-pi itself
+  grew from. The agent-meets-IDE idea traces back to that work.
+
+We keep the upstream's history, license, and install paths on this page so the
+lineage stays legible, and we merge forward constantly rather than drifting
+into a silent fork. If you like tau, go thank can1357 and Mario too —
+they built the thing we keep building on.
 
 ## Table of contents
 
@@ -591,7 +610,7 @@ Exa also accepts a stored API key through `/login exa`; explicit keyless selecti
 
 ## A fork that diverges *on purpose* — not a smaller omp.
 
-Under the hood: **~252,000 lines of own+rebuilt Rust**, ten crates, one platform-tagged
+Under the hood: **~252,000 lines of own+rebuilt Rust** — **≈35% of canary's ~750k LOC** (the table below is the honest picture) — ten crates, one platform-tagged
 N-API addon. Search, shell, AST, highlight, PTY, desktop control, image decode, BPE
 counting — all in-process on the libuv pool. No fork/exec on the hot path. The shell is our
 own bash 5.3 engine, 58 command-line utilities compiled straight into it.
