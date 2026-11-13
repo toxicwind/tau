@@ -10,6 +10,31 @@ export function tryParseJson<T = unknown>(content: string): T | null {
 }
 
 /**
+ * End offset (exclusive) of the JSON container that opens at `start` — the
+ * matching `}` for `{`, `]` for `[`. String contents are skipped, respecting
+ * escapes, so brackets inside values do not count. Malformed input yields some
+ * end that a parser then rejects. (Restored from upstream.)
+ */
+export function jsonContainerEnd(text: string, start: number): number {
+	let depth = 0;
+	for (let index = start; index < text.length; index++) {
+		const code = text.charCodeAt(index);
+		if (code === 0x22) {
+			for (index++; index < text.length; index++) {
+				const inner = text.charCodeAt(index);
+				if (inner === 0x5c) index++;
+				else if (inner === 0x22) break;
+			}
+		} else if (code === 0x7b || code === 0x5b) {
+			depth++;
+		} else if ((code === 0x7d || code === 0x5d) && --depth === 0) {
+			return index + 1;
+		}
+	}
+	return text.length;
+}
+
+/**
  * Serialize JSON while preserving bigint precision as decimal strings.
  *
  * Tool arguments normally arrive from JSON providers, but extension hooks and

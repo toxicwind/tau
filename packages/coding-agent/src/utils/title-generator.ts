@@ -2,7 +2,9 @@
  * Generate session titles using a smol, fast model.
  */
 import { dlopen, FFIType, ptr } from "bun:ffi";
+import * as os from "node:os";
 import * as path from "node:path";
+import * as url from "node:url";
 
 import {
 	type Api,
@@ -13,7 +15,9 @@ import {
 	retryTransientCompletion,
 } from "@tau/tau-ai";
 import { StreamMarkupHealing } from "@tau/tau-ai/utils/stream-markup-healing";
-import { writeThroughActiveTerminal } from "@tau/tau-tui";
+import { writeTerminalSequence } from "@tau/tau-tui";
+import { isNativeRendering, onNativeRenderingChange } from "@tau/tau-tui/native/state";
+import { theme } from "@tau/tau-tui/theme";
 import { SPINNER_FRAMES } from "@tau/tau-tui/theme/symbols";
 import { $env, isTerminalHeadless, isWsl, logger, prompt } from "@tau/tau-utils";
 import type { ModelRegistry } from "../config/model-registry";
@@ -28,26 +32,29 @@ import { formatTitleUserMessage } from "../tiny/message-preproc";
 import { isLowSignalTitleInput, normalizeGeneratedTitle } from "../tiny/text";
 import { tinyTitleClient } from "../tiny/title-client";
 
+import { cfgRetryModelFallback } from "../session/settings";
+import { DEFAULT_SPINNER_INTERVAL_MS, SPINNER_INTERVAL_STATIC } from "@tau/tau-tui/spinner-clock";
+
 const TITLE_SYSTEM_PROMPT = prompt.render(titleSystemPrompt);
 const TITLE_MARKER_INSTRUCTION = prompt.render(titleMarkerInstruction);
 
-// Plain π, not the nerd-font `icon.tau` glyph: window/tab titles render in the
+// Plain π, not the nerd-font `icon.omp` glyph: window/tab titles render in the
 // OS UI font, which has no nerd-font PUA coverage.
 const DEFAULT_TERMINAL_TITLE = "π";
+/** The native tab title without a session name. */
+const NATIVE_TERMINAL_TITLE = "omp";
 const TERMINAL_TITLE_CONTROL_CHARS = /[\u0000-\u001f\u007f-\u009f]/g;
+
 /**
- * Emit a raw title escape sequence. While the TUI owns stdout its frames are
- * written by an off-thread pump, and a direct `process.stdout.write` can land
- * mid-frame — inside a torn escape sequence — making the terminal print the
- * title payload as text into the viewport. Route through the active terminal's
- * write path; fall back to stdout only when no TUI has the terminal.
+ * Console titles longer than this read back truncated, so they always count
+ * as drifted: harmless, it only re-sets the same title.
  */
-function writeTitleSequence(seq: string): void {
-	if (!writeThroughActiveTerminal(seq)) process.stdout.write(seq);
-}
+const CONSOLE_TITLE_READ_CHARS = 1024;
 
 interface WindowsConsoleTitleApi {
 	set(title: string): boolean;
+	/** The live console title, or `undefined` when it cannot be read. */
+	get(): string | undefined;
 	close(): void;
 }
 
@@ -60,11 +67,19 @@ function getWindowsConsoleTitleApi(): WindowsConsoleTitleApi | null {
 	try {
 		const kernel32 = dlopen("kernel32.dll", {
 			SetConsoleTitleW: { args: [FFIType.ptr], returns: FFIType.bool },
+			GetConsoleTitleW: { args: [FFIType.ptr, FFIType.u32], returns: FFIType.u32 },
 		});
+		const readBuffer = new Uint16Array(CONSOLE_TITLE_READ_CHARS);
 		windowsConsoleTitleApi = {
 			set(title) {
 				const wideTitle = Buffer.from(`${title}\0`, "utf16le");
 				return kernel32.symbols.SetConsoleTitleW(ptr(wideTitle));
+			},
+			get() {
+				readBuffer.fill(0);
+				if (kernel32.symbols.GetConsoleTitleW(ptr(readBuffer), readBuffer.length) === 0) return undefined;
+				const end = readBuffer.indexOf(0);
+				return Buffer.from(readBuffer.buffer, 0, (end < 0 ? readBuffer.length : end) * 2).toString("utf16le");
 			},
 			close: () => kernel32.close(),
 		};
@@ -86,6 +101,25 @@ function setWindowsConsoleTitle(title: string): boolean {
 			// Ignore cleanup failures after the native title path has already failed.
 		}
 		windowsConsoleTitleApi = null;
+		return false;
+	}
+}
+
+/**
+ * Whether the live console title differs from `title`, the one omp last set.
+ * The console title is shared by every process attached to the console, so a
+ * child (a worker, `browser-relay`, an npm `.cmd` shim's `title`) can replace
+ * it behind the dedupe cache. Unreadable titles and the latched OSC fallback
+ * report no drift, keeping the dedupe in force.
+ */
+function windowsConsoleTitleDrifted(title: string): boolean {
+	if (terminalTitleRuntime.nativeTitleFailed) return false;
+	const api = getWindowsConsoleTitleApi();
+	if (!api) return false;
+	try {
+		const live = api.get();
+		return live !== undefined && live !== title;
+	} catch {
 		return false;
 	}
 }
@@ -128,7 +162,7 @@ function getTitleModels(registry: ModelRegistry, settings: Settings, currentMode
 	);
 	if (
 		currentModel &&
-		(models.length === 0 || settings.get("retry.modelFallback") !== false) &&
+		(models.length === 0 || cfgRetryModelFallback.get(settings) !== false) &&
 		!models.some(model => formatModelStringWithRouting(model) === formatModelStringWithRouting(currentModel))
 	) {
 		// Append currentModel and expand its own chain separately — never merge it
@@ -143,6 +177,12 @@ function getTitleModels(registry: ModelRegistry, settings: Settings, currentMode
 	}
 	return models;
 }
+
+/**
+ * Receives each title request the provider billed, for the caller's usage
+ * ledger. Must not throw: accounting never fails a title.
+ */
+export type TitleUsageReporter = (message: AssistantMessage) => void;
 
 /**
  * Generate a title for a session based on the first user message.
@@ -160,6 +200,8 @@ function getTitleModels(registry: ModelRegistry, settings: Settings, currentMode
  * @param signal Session-lifecycle cancellation for background title requests
  * @param credentialSourceSessionId Optional foreground session whose selected
  *   OAuth credential should seed an isolated title-request session.
+ * @param onUsage Optional reporter for every title attempt the provider billed,
+ *   so the caller can record its usage on the session's cost ledger.
  */
 export async function generateSessionTitle(
 	firstMessage: string,
@@ -171,20 +213,21 @@ export async function generateSessionTitle(
 	customSystemPrompt?: string,
 	signal?: AbortSignal,
 	credentialSourceSessionId?: string,
+	onUsage?: TitleUsageReporter,
 ): Promise<string | null> {
 	// Defer titling for greetings / acknowledgements / empty input. The default
 	// tiny title model can't reliably decline trivial input, so this happens
 	// deterministically before any model is invoked; the caller retries on the
 	// next user message while the session stays unnamed.
 	if (isLowSignalTitleInput(firstMessage)) {
-		logger.debug("title-generator: skipped low-signal input", { sessionId, reason: "low-signal" });
+		logger.debug("title-generator: skipped low-signal input", { titleSessionId: sessionId, reason: "low-signal" });
 		return null;
 	}
 
 	const models = getTitleModels(registry, settings, currentModel);
 	const firstModel = models[0];
 	if (!firstModel) {
-		logger.warn("title-generator: no title model found", { sessionId, reason: "no-title-model" });
+		logger.warn("title-generator: no title model found", { titleSessionId: sessionId, reason: "no-title-model" });
 		return null;
 	}
 
@@ -199,6 +242,7 @@ export async function generateSessionTitle(
 			signal,
 			titleSystemPrompt,
 			credentialSourceSessionId,
+			onUsage,
 		);
 	}
 
@@ -222,7 +266,7 @@ export async function generateSessionTitle(
 		}
 		if (!localTitle) {
 			logger.warn("title-generator: local tiny model produced no title; skipping (no online fallback)", {
-				sessionId,
+				titleSessionId: sessionId,
 				model: firstModel.id,
 				reason: "local-no-output",
 			});
@@ -231,7 +275,7 @@ export async function generateSessionTitle(
 		return localTitle;
 	} catch (err) {
 		logger.warn("title-generator: local tiny model errored; skipping (no online fallback)", {
-			sessionId,
+			titleSessionId: sessionId,
 			model: firstModel.id,
 			error: err instanceof Error ? err.message : String(err),
 		});
@@ -249,10 +293,11 @@ export async function generateTitleOnline(
 	signal?: AbortSignal,
 	customSystemPrompt?: string,
 	credentialSourceSessionId?: string,
+	onUsage?: TitleUsageReporter,
 ): Promise<string | null> {
 	const models = getTitleModels(registry, settings, currentModel);
 	if (models.length === 0) {
-		logger.warn("title-generator: no title model found", { sessionId, reason: "no-title-model" });
+		logger.warn("title-generator: no title model found", { titleSessionId: sessionId, reason: "no-title-model" });
 		return null;
 	}
 	return generateTitleOnlineWithModels(
@@ -264,6 +309,7 @@ export async function generateTitleOnline(
 		signal,
 		customSystemPrompt,
 		credentialSourceSessionId,
+		onUsage,
 	);
 }
 
@@ -276,6 +322,7 @@ async function generateTitleOnlineWithModels(
 	signal?: AbortSignal,
 	customSystemPrompt?: string,
 	credentialSourceSessionId?: string,
+	onUsage?: TitleUsageReporter,
 ): Promise<string | null> {
 	const titleSystemPrompt = customSystemPrompt?.trim() || undefined;
 	// The model is always asked to wrap the title in `<title>...</title>` and
@@ -289,7 +336,7 @@ async function generateTitleOnlineWithModels(
 	for (const model of models) {
 		const modelName = `${model.provider}/${model.id}`;
 		const modelContext = {
-			sessionId,
+			titleSessionId: sessionId,
 			provider: model.provider,
 			id: model.id,
 			model: modelName,
@@ -338,61 +385,43 @@ async function generateTitleOnlineWithModels(
 			const messages: Message[] = [{ role: "user", content: userMessage, timestamp: Date.now() }];
 			if (model.supportsAssistantPrefill) messages.push(titlePrefill(model));
 
-			let response;
-			try {
-				response = await retryTransientCompletion(
-					() =>
-						completeSimple(
-							model,
-							{
-								systemPrompt,
-								messages,
-							},
-							{
-								apiKey: registry.resolver(model, sessionId),
-								sessionId,
-								maxTokens,
-								disableReasoning: true,
-								// Greedy decode: titling is extraction, not generation. Backends that
-								// default temperature high (e.g. Ollama's 0.8) otherwise garble names
-								// from the message ("hashline" → "HasHroshi"). Providers whose models
-								// reject sampling params drop this via `supportsSamplingParams`.
-								temperature: 0,
-								metadata,
-								signal,
-							},
-						),
-					{ signal, provider: model.provider },
-				);
-			} catch (err) {
-				// Some providers/models reject disableReasoning with "Reasoning is mandatory"
-				// (e.g. openrouter free models). Retry once without the flag before giving up.
-				const msg = err instanceof Error ? err.message : String(err);
-				if (/reasoning.*mandatory|reasoning.*required|cannot.*disable.*reasoning/i.test(msg)) {
-					logger.debug(
-						"title-generator: model requires reasoning, retrying without disableReasoning",
-						modelContext,
+			const response = await retryTransientCompletion(
+				async () => {
+					const message = await completeSimple(
+						model,
+						{
+							systemPrompt,
+							messages,
+						},
+						{
+							apiKey: registry.resolver(model, sessionId),
+							sessionId,
+							maxTokens,
+							disableReasoning: true,
+							// Greedy decode: titling is extraction, not generation. Backends that
+							// default temperature high (e.g. Ollama's 0.8) otherwise garble names
+							// from the message ("hashline" → "HasHroshi"). Providers whose models
+							// reject sampling params drop this via `supportsSamplingParams`.
+							temperature: 0,
+							metadata,
+							signal,
+						},
 					);
-					response = await retryTransientCompletion(
-						() =>
-							completeSimple(
-								model,
-								{ systemPrompt, messages },
-								{
-									apiKey: registry.resolver(model, sessionId),
-									sessionId,
-									maxTokens,
-									temperature: 0,
-									metadata,
-									signal,
-								},
-							),
-						{ signal, provider: model.provider },
-					);
-				} else {
-					throw err;
-				}
-			}
+					// Every attempt that reached the provider was billed, failures included,
+					// so a transient retry must not discard the attempt it replaced. Reporting
+					// is best-effort: accounting can never fail the title.
+					try {
+						onUsage?.(message);
+					} catch (err) {
+						logger.debug("title-generator: usage report failed", {
+							...modelContext,
+							error: err instanceof Error ? err.message : String(err),
+						});
+					}
+					return message;
+				},
+				{ signal, provider: model.provider },
+			);
 
 			if (response.stopReason === "aborted" || signal?.aborted) {
 				logger.debug("title-generator: aborted", {
@@ -606,7 +635,8 @@ export function formatSessionTerminalTitle(sessionName: string | undefined, cwd?
 /**
  * Set the terminal title through the native Win32 API or OSC 0.
  *
- * Repeating the same sanitized title is a no-op on every platform.
+ * Repeating the same sanitized title is a no-op on every platform, unless
+ * another process replaced the Windows console title in between.
  */
 export function setTerminalTitle(title: string): void {
 	writeTerminalTitle(title);
@@ -632,7 +662,7 @@ function writeTerminalTitle(title: string, recomposeStaticOnFailure = false): vo
 	if (terminalTitleRuntime.disposed) return;
 	if (!process.stdout.isTTY || isTerminalHeadless()) return;
 	const next = sanitizeTerminalTitlePart(title) ?? DEFAULT_TERMINAL_TITLE;
-	if (next === lastTerminalTitle) return;
+	if (next === lastTerminalTitle && !windowsConsoleTitleDrifted(next)) return;
 	if (!setWindowsConsoleTitle(next)) {
 		// Native path failed on a Windows console: every later frame would cross
 		// ConPTY as OSC and reintroduce the write-loop CPU cost the static
@@ -658,16 +688,21 @@ function writeTerminalTitle(title: string, recomposeStaticOnFailure = false): vo
 						true,
 					);
 				if (latched === lastTerminalTitle) return;
-				writeTitleSequence(`\x1b]0;${latched}\x07`);
+				writeTerminalSequence(`\x1b]0;${latched}\x07`);
 				lastTerminalTitle = latched;
 				return;
 			}
 		}
-		writeTitleSequence(`\x1b]0;${next}\x07`);
+		writeTerminalSequence(`\x1b]0;${next}\x07`);
 	}
 	lastTerminalTitle = next;
 }
 
+/**
+ * Set the session's base terminal title: the session name, which a generated
+ * title carries in the card form `<icon> <CODE>: <name>` that Tern indexes
+ * parked panes by, else the cwd.
+ */
 export function setSessionTerminalTitle(sessionName: string | undefined, cwd?: string): void {
 	// An authoritative session title (rename, new session, focus swap) supersedes
 	// any extension override so the base title tracks the real session again.
@@ -680,7 +715,87 @@ export function setSessionTerminalTitle(sessionName: string | undefined, cwd?: s
 	// write into the parent shell's tab. Only `initTerminalTitleState()`, the
 	// explicit terminal-ownership path, releases the latch.
 	terminalTitleRuntime.extensionOverride = undefined;
-	terminalTitleRuntime.label = sanitizeTerminalTitlePart(sessionName) ?? getFallbackTerminalTitle(cwd);
+	terminalTitleRuntime.sessionName = sanitizeTerminalTitlePart(sessionName);
+	terminalTitleRuntime.label = terminalTitleRuntime.sessionName ?? getFallbackTerminalTitle(cwd);
+	emitTerminalTitle();
+	reportTernSession();
+}
+
+/**
+ * Whether the effective symbol preset is `nerd`: under `nf+emoji` title icons,
+ * the title fork then asks the model for a Nerd Fonts glyph to head the title.
+ */
+export function nerdGlyphsActive(): boolean {
+	return typeof theme !== "undefined" && theme.getSymbolPreset() === "nerd";
+}
+
+/** The OSC 1337 user variable Tern reads the session file from. */
+const TERN_SESSION_FILE_VAR = "omp_session_file";
+/**
+ * The OSC 1337 user variable telling Tern this omp understands `--restore`, set to
+ * `1` before each session file report: Tern's daemon then relaunches it after a
+ * crash with `--restore <file>` instead of `--resume <file>`.
+ */
+const TERN_RESTORE_VAR = "omp_restore";
+
+/** The live session as Tern hears about it (read from the interactive session manager). */
+export interface TerminalSessionSource {
+	/** The session file, if the session persists to one. */
+	file(): string | undefined;
+	/** The session's working directory. */
+	cwd(): string;
+}
+
+/** Where the current session's file and directory are read from. */
+let sessionSource: TerminalSessionSource | undefined;
+/** The session file Tern was last told about. */
+let reportedSessionFile: string | undefined;
+/** The working directory Tern was last told about. */
+let reportedCwd: string | undefined;
+
+/**
+ * Name the live session's source. Every session title update (start, new
+ * session, resume, cwd switch) and {@link reportTernSession} re-read it and, in
+ * Tern, report what changed: the file, so Tern's daemon can relaunch
+ * `omp --resume <file>` after it restarts, and the directory, which Tern names
+ * in omp's composer bar.
+ */
+export function setTerminalSessionSource(source: TerminalSessionSource | undefined): void {
+	sessionSource = source;
+	reportTernSession();
+}
+
+/**
+ * Tell Tern (`TERM_PROGRAM=tern`, nowhere else) what changed about the session:
+ * the file as an OSC 1337 user variable holding its absolute path in base64 (no
+ * file removes the variable), preceded by {@link TERN_RESTORE_VAR}, and the working
+ * directory as OSC 7 (`file://host/path`), as a shell reports it at each prompt.
+ */
+export function reportTernSession(): void {
+	if (terminalTitleRuntime.disposed || $env.TERM_PROGRAM?.toLowerCase() !== "tern") return;
+	if (!process.stdout.isTTY || isTerminalHeadless()) return;
+	const file = sessionSource?.file();
+	const resolvedFile = file ? path.resolve(file) : undefined;
+	if (resolvedFile !== reportedSessionFile) {
+		reportedSessionFile = resolvedFile;
+		const value = resolvedFile ? `=${Buffer.from(resolvedFile).toString("base64")}` : "";
+		if (resolvedFile) writeTerminalSequence(`\x1b]1337;SetUserVar=${TERN_RESTORE_VAR}=MQ==\x07`);
+		writeTerminalSequence(`\x1b]1337;SetUserVar=${TERN_SESSION_FILE_VAR}${value}\x07`);
+	}
+	// Without a session the shell takes the directory back at its next prompt.
+	const cwd = sessionSource ? path.resolve(sessionSource.cwd()) : undefined;
+	if (cwd && cwd !== reportedCwd) {
+		writeTerminalSequence(`\x1b]7;file://${os.hostname()}${url.pathToFileURL(cwd).pathname}\x07`);
+	}
+	reportedCwd = cwd;
+}
+
+/**
+ * The branch's pull request number for the native tab title, which carries it
+ * after the session name (a TSP terminal has no status strip to show it in).
+ */
+export function setTerminalTitlePullRequest(pr: number | undefined): void {
+	terminalTitleRuntime.pullRequest = pr;
 	emitTerminalTitle();
 }
 
@@ -726,18 +841,26 @@ const isStaticTitleHost = (
 	env: NodeJS.ProcessEnv = $env as NodeJS.ProcessEnv,
 ): boolean => isWsl(platform, env);
 const STATIC_TITLE_WORKING_SEPARATOR = ":";
-const TITLE_SPINNER_INTERVAL_MS = 80;
 /** The user's turn: the title reads like a shell prompt awaiting input. */
 const TITLE_IDLE_SEPARATOR = ">";
 /** Agent blocked on the user (ask / approval prompt). */
 const TITLE_ATTENTION_SEPARATOR = "!";
 
 const terminalTitleRuntime: {
+	/** The classic title's label: the session name, else the cwd. */
 	label: string | undefined;
+	/** The session's own name, without the cwd fallback `label` uses. */
+	sessionName: string | undefined;
+	/** The branch's pull request, shown in the native title only. */
+	pullRequest: number | undefined;
+	/** Unsubscribes the native-rendering watch taken by `initTerminalTitleState()`. */
+	unwatchNative: (() => void) | undefined;
 	state: TerminalTitleState;
 	frame: number;
 	enabled: boolean;
 	style: TerminalTitleSpinnerStyle;
+	/** Spinner period in ms; `SPINNER_INTERVAL_STATIC` (0) pins the working separator to `:`. */
+	intervalMs: number;
 	timer: NodeJS.Timeout | undefined;
 	/** A title an extension set via `setTitle()`. While set, it owns the terminal
 	 *  title verbatim: the run-state separator never rewrites it. Cleared when the
@@ -750,34 +873,50 @@ const terminalTitleRuntime: {
 	 *  by `initTerminalTitleState()`, when the app takes the terminal over again. */
 	disposed: boolean;
 	/** Latched the first time the sink falls back to OSC on a Windows console.
-	 *  The 80ms spinner interval is only cheap through `SetConsoleTitleW`; once
+	 *  The spinner interval is only cheap through `SetConsoleTitleW`; once
 	 *  the native path fails, every new frame would cross ConPTY as OSC and
 	 *  reintroduce the write-loop CPU cost the static separator exists to avoid.
 	 *  While latched the working separator stays `:` and no interval is
 	 *  scheduled. */
 	nativeTitleFailed: boolean;
+	/** The console title `initTerminalTitleState()` read on a Windows console.
+	 *  The console has no title stack, so teardown puts it back through
+	 *  `SetConsoleTitleW`. */
+	initialWindowsConsoleTitle: string | undefined;
+	/** Set when teardown restored `initialWindowsConsoleTitle` natively. ConPTY
+	 *  turns OSC 0 into a console-title set, so `popTerminalTitle()` must then
+	 *  skip its clear or it blanks the title just restored. */
+	nativeTitleRestored: boolean;
 } = {
 	label: undefined,
+	sessionName: undefined,
+	pullRequest: undefined,
+	unwatchNative: undefined,
 	state: "idle",
 	frame: 0,
 	enabled: true,
 	style: "braille",
+	intervalMs: DEFAULT_SPINNER_INTERVAL_MS,
 	timer: undefined,
 	extensionOverride: undefined,
 	disposed: false,
 	nativeTitleFailed: false,
+	initialWindowsConsoleTitle: undefined,
+	nativeTitleRestored: false,
 };
 
 /**
  * Compose the terminal title from the `π` brand, a state-carrying separator, and
  * the session label. Pure (no I/O) so the state→separator contract is testable:
  *   - `idle` (user's turn):  `π > label`;
- *   - `working`:             `π ⠋ label` (static `π : label` under WSL, or on Windows once the native title path has failed);
+ *   - `working`:             `π ⠋ label` (static `π : label` under WSL, or when `staticSpinner` is set);
  *   - `attention`:           `π ! label`;
  *   - disabled:              `π: label`.
  * Without a label the separator trails the brand (`π >`) so the state stays visible.
  * The `working` separator cycles `TERMINAL_TITLE_SPINNER_STYLES[style]`; `style`
  * defaults to `braille` so existing 5-arg callers keep the historical frames.
+ * `staticSpinner` is the caller's own reasons to pin the working separator: the
+ * Windows native-title path has failed, or `tui.spinnerInterval` is `0`.
  */
 export function buildTerminalTitleWithState(
 	label: string | undefined,
@@ -787,11 +926,11 @@ export function buildTerminalTitleWithState(
 	platform: NodeJS.Platform = process.platform,
 	style: TerminalTitleSpinnerStyle = "braille",
 	env: NodeJS.ProcessEnv = $env as NodeJS.ProcessEnv,
-	nativeTitleFailed = false,
+	staticSpinner = false,
 ): string {
 	if (!enabled) return label ? `${DEFAULT_TERMINAL_TITLE}: ${label}` : DEFAULT_TERMINAL_TITLE;
 	const frames = TERMINAL_TITLE_SPINNER_STYLES[style] ?? TERMINAL_TITLE_SPINNER_STYLES.braille;
-	const staticHost = isStaticTitleHost(platform, env) || (platform === "win32" && nativeTitleFailed);
+	const staticHost = staticSpinner || isStaticTitleHost(platform, env);
 	const separator =
 		state === "working"
 			? staticHost
@@ -803,30 +942,46 @@ export function buildTerminalTitleWithState(
 	return label ? `${DEFAULT_TERMINAL_TITLE} ${separator} ${label}` : `${DEFAULT_TERMINAL_TITLE} ${separator}`;
 }
 
+/**
+ * The tab title while a TSP terminal renders: the session name (`omp` before
+ * there is one) and the branch's pull request. The terminal shows run state
+ * itself, so there is no brand or state separator.
+ */
+export function buildNativeTerminalTitle(sessionName: string | undefined, pullRequest: number | undefined): string {
+	const name = sessionName ?? NATIVE_TERMINAL_TITLE;
+	return pullRequest === undefined ? name : `${name} · #${pullRequest}`;
+}
+
 function emitTerminalTitle(): void {
 	// The teardown latch lives at the sink (`writeTerminalTitle`), so every path
 	// here is covered without a second check.
 	// An extension override owns the terminal verbatim; the terminal sink
 	// deduplicates repeated state updates.
+	const native = isNativeRendering();
 	const next =
 		terminalTitleRuntime.extensionOverride ??
-		buildTerminalTitleWithState(
-			terminalTitleRuntime.label,
-			terminalTitleRuntime.state,
-			terminalTitleRuntime.frame,
-			terminalTitleRuntime.enabled,
-			process.platform,
-			terminalTitleRuntime.style,
-			$env as NodeJS.ProcessEnv,
-			terminalTitleRuntime.nativeTitleFailed,
-		);
+		(native
+			? buildNativeTerminalTitle(terminalTitleRuntime.sessionName, terminalTitleRuntime.pullRequest)
+			: buildTerminalTitleWithState(
+					terminalTitleRuntime.label,
+					terminalTitleRuntime.state,
+					terminalTitleRuntime.frame,
+					terminalTitleRuntime.enabled,
+					process.platform,
+					terminalTitleRuntime.style,
+					$env as NodeJS.ProcessEnv,
+					(process.platform === "win32" && terminalTitleRuntime.nativeTitleFailed) ||
+						terminalTitleRuntime.intervalMs === SPINNER_INTERVAL_STATIC,
+				));
 	// The composed working title is the only write that can fail into an
 	// animated OSC frame: on native failure it re-pins static (`:`), while a
 	// direct `setTerminalTitle` preserves its caller's title verbatim.
 	const recomposeStaticOnFailure =
+		!native &&
 		terminalTitleRuntime.extensionOverride === undefined &&
 		terminalTitleRuntime.state === "working" &&
 		terminalTitleRuntime.enabled &&
+		terminalTitleRuntime.intervalMs !== SPINNER_INTERVAL_STATIC &&
 		!isStaticTitleHost();
 	writeTerminalTitle(next, recomposeStaticOnFailure);
 }
@@ -838,10 +993,12 @@ function stopTerminalTitleSpinner(): void {
 
 function startTerminalTitleSpinner(): void {
 	if (
+		isNativeRendering() ||
 		isStaticTitleHost() ||
 		terminalTitleRuntime.disposed ||
 		terminalTitleRuntime.timer ||
 		terminalTitleRuntime.nativeTitleFailed ||
+		terminalTitleRuntime.intervalMs === SPINNER_INTERVAL_STATIC ||
 		!process.stdout.isTTY
 	)
 		return;
@@ -849,8 +1006,9 @@ function startTerminalTitleSpinner(): void {
 	terminalTitleRuntime.timer = setInterval(() => {
 		terminalTitleRuntime.frame =
 			(terminalTitleRuntime.frame + 1) % TERMINAL_TITLE_SPINNER_STYLES[terminalTitleRuntime.style].length;
-		emitTerminalTitle();
-	}, TITLE_SPINNER_INTERVAL_MS);
+		// An extension override is frame-independent; the sink would dedupe it anyway.
+		if (terminalTitleRuntime.extensionOverride === undefined) emitTerminalTitle();
+	}, terminalTitleRuntime.intervalMs);
 	// Never keep the event loop alive for a cosmetic animation.
 	terminalTitleRuntime.timer.unref?.();
 }
@@ -895,6 +1053,23 @@ export function setTerminalTitleSpinnerStyle(style: string | undefined): void {
 }
 
 /**
+ * Set the working-state spinner period (driven by `tui.spinnerInterval` /
+ * `--spinner-interval`, already validated by the setting layer). `0` pins
+ * the working separator to a static `:` and schedules no interval. Re-arms a
+ * live spinner so the new cadence applies immediately.
+ */
+export function setTerminalTitleSpinnerInterval(intervalMs: number): void {
+	if (intervalMs === terminalTitleRuntime.intervalMs) return;
+	terminalTitleRuntime.intervalMs = intervalMs;
+	terminalTitleRuntime.frame = 0;
+	if (terminalTitleRuntime.state === "working" && terminalTitleRuntime.enabled) {
+		stopTerminalTitleSpinner();
+		startTerminalTitleSpinner();
+	}
+	emitTerminalTitle();
+}
+
+/**
  * Take ownership of the terminal title: the counterpart to
  * {@link disposeTerminalTitleState}, called once when the UI claims the terminal.
  * This is the ONLY release of the teardown latch. Routine updates — session
@@ -912,11 +1087,26 @@ export function initTerminalTitleState(): void {
 	// stale failure-shaped binding would otherwise survive the reset.
 	disposeWindowsConsoleTitleApi();
 	terminalTitleRuntime.nativeTitleFailed = false;
+	terminalTitleRuntime.nativeTitleRestored = false;
+	// `??=` keeps the shell's title across a repeat claim, which would otherwise
+	// read omp's own title back.
+	try {
+		terminalTitleRuntime.initialWindowsConsoleTitle ??= getWindowsConsoleTitleApi()?.get();
+	} catch {
+		// Unreadable: teardown falls back to the OSC clear in `popTerminalTitle()`.
+	}
 	// A fresh claim starts from the shell's title, not whatever the previous
 	// session last emitted: the dedupe cache must not swallow the first write.
 	// Releasing the latch alone would leave a stopped timer behind a `working`
 	// state — a frozen spinner frame. Mirror the enable path and re-arm.
 	if (terminalTitleRuntime.state === "working" && terminalTitleRuntime.enabled) startTerminalTitleSpinner();
+	// A TSP terminal takes the plain native title while it renders; the
+	// classic `π > label` (and its spinner) comes back when it stops.
+	terminalTitleRuntime.unwatchNative ??= onNativeRenderingChange(native => {
+		if (native) stopTerminalTitleSpinner();
+		else if (terminalTitleRuntime.state === "working" && terminalTitleRuntime.enabled) startTerminalTitleSpinner();
+		emitTerminalTitle();
+	});
 }
 
 /**
@@ -927,11 +1117,21 @@ export function initTerminalTitleState(): void {
  * shell's tab. Released only by {@link initTerminalTitleState}.
  */
 export function disposeTerminalTitleState(): void {
+	// The session ends with the UI: Tern must not resume it in this pane.
+	sessionSource = undefined;
+	reportTernSession();
 	terminalTitleRuntime.disposed = true;
+	terminalTitleRuntime.unwatchNative?.();
+	terminalTitleRuntime.unwatchNative = undefined;
 	// `popTerminalTitle()` hands the terminal back to the shell, so the runtime no
 	// longer knows what is on screen: the stale dedupe cache (`lastTerminalTitle`,
 	// cleared below) must not swallow the first write after the latch releases.
 	stopTerminalTitleSpinner();
+	const initialTitle = terminalTitleRuntime.initialWindowsConsoleTitle;
+	if (initialTitle !== undefined) {
+		terminalTitleRuntime.nativeTitleRestored = setWindowsConsoleTitle(initialTitle);
+		terminalTitleRuntime.initialWindowsConsoleTitle = undefined;
+	}
 	disposeWindowsConsoleTitleApi();
 	lastTerminalTitle = undefined;
 }
@@ -941,13 +1141,24 @@ export function disposeTerminalTitleState(): void {
  */
 export function pushTerminalTitle(): void {
 	if (!process.stdout.isTTY || isTerminalHeadless()) return;
-	writeTitleSequence("\x1b[22;2t");
+	writeTerminalSequence("\x1b[22;2t");
 }
 
 /**
- * Restore the previously saved terminal title on terminals that support xterm window ops.
+ * Hand the terminal title back to the shell on teardown, after
+ * {@link disposeTerminalTitleState}.
+ *
+ * Clears the title (OSC 0) before popping the one {@link pushTerminalTitle} saved
+ * (CSI 23;2t): a terminal with a title stack (xterm, iTerm2, VTE, mintty) restores
+ * the saved title over the clear, and one without a stack ignores the pop and
+ * keeps the clear instead of omp's title. Writes nothing when teardown already
+ * restored a Windows console title natively.
  */
 export function popTerminalTitle(): void {
 	if (!process.stdout.isTTY || isTerminalHeadless()) return;
-	writeTitleSequence("\x1b[23;2t");
+	if (terminalTitleRuntime.nativeTitleRestored) {
+		terminalTitleRuntime.nativeTitleRestored = false;
+		return;
+	}
+	writeTerminalSequence("\x1b]0;\x07\x1b[23;2t");
 }

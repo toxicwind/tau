@@ -6,6 +6,15 @@ export const acpHelp = {
 
 export const agentsHelp = { description: "Manage bundled task agents" } satisfies CommandMetadata;
 
+export const anonymizeHelp = {
+	description:
+		"Write a shareable copy of a session and its subagents: turn contents redacted, metadata kept, paths and literals replaced by consistent mock tokens",
+} satisfies CommandMetadata;
+
+export const authHelp = {
+	description: "Export or import stored provider credentials (API keys and OAuth logins) as JSON",
+} satisfies CommandMetadata;
+
 export const attachCommandHelp = {
 	description: "Attach to the project's session-host daemon (tau serve); Ctrl-A d detaches",
 } satisfies CommandMetadata;
@@ -124,6 +133,11 @@ export const sayHelp = {
 
 export const searchHelp = { description: "Test web search providers" } satisfies CommandMetadata;
 
+export const sessionHelp = {
+	description:
+		"Hand a session to another machine (pack, unpack, moved) or check which sessions a running tau owns (lease)",
+} satisfies CommandMetadata;
+
 export const shareHelp = {
 	description: "Share a saved session via an encrypted link (same as /share)",
 } satisfies CommandMetadata;
@@ -134,8 +148,32 @@ export const setupHelp = {
 
 export const shellHelp = { description: "Interactive shell console" } satisfies CommandMetadata;
 
+const NATIVE_SHELL_DESCRIPTIONS = {
+	zsh: "Run zsh 5.9 on the built-in tau-shell engine (all arguments go to zsh)",
+	bash: "Run bash 5.3 on the built-in tau-shell engine (all arguments go to bash)",
+	sh: "Run a POSIX sh on the built-in tau-shell engine (all arguments go to sh)",
+} as const;
+
+/** `tau zsh|bash|sh`: the whole command line after the word goes to the shell. */
+export function nativeShellHelp(name: keyof typeof NATIVE_SHELL_DESCRIPTIONS) {
+	return {
+		description: NATIVE_SHELL_DESCRIPTIONS[name],
+		args: {
+			args: {
+				kind: "string",
+				description: `Arguments passed to ${name} unchanged (options, -c COMMAND, a script and its arguments)`,
+				multiple: true,
+			},
+		},
+	} satisfies CommandMetadata;
+}
+
 export const skillHelp = {
 	description: "Install, search, publish, and manage skills on the Skillshare registry (skills.tau.sh)",
+} satisfies CommandMetadata;
+
+export const predictHelp = {
+	description: "Type a prompt and compare every word-completion engine's ghost text live",
 } satisfies CommandMetadata;
 
 export const sshHelp = { description: "Manage SSH host configurations" } satisfies CommandMetadata;

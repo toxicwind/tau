@@ -1,23 +1,9 @@
 import { prompt } from "@tau/tau-utils";
+import { markdownFenceFor } from "../../../../utils/markdown-fence";
 import textReviewTemplate from "./prompts/text-review.md" with { type: "text" };
 import type { TextReviewAnnotation, TextReviewSource } from "@tau/tau-tui/overlays/annotation-types";
 
 const SHORT_SOURCE_CHARACTER_LIMIT = 1000;
-
-/** Pick a Markdown fence that cannot occur in the supplied exact value. */
-export function markdownFenceFor(value: string): string {
-	let longestRun = 0;
-	let run = 0;
-	for (const character of value) {
-		if (character === "`") {
-			run++;
-			if (run > longestRun) longestRun = run;
-		} else {
-			run = 0;
-		}
-	}
-	return "`".repeat(Math.max(3, longestRun + 1));
-}
 
 function shouldIncludeSource(source: TextReviewSource): boolean {
 	if (source.kind === "code" || source.kind === "command" || source.kind === "file" || source.kind === "prompt") {
@@ -49,6 +35,7 @@ function sanitizePreviewLabel(value: string, maxLength = 96): string {
 interface RenderedTextAnnotation {
 	number: number;
 	isLine: boolean;
+	line?: number;
 	quote?: string;
 	note: string;
 	quoteIsInline?: boolean;
@@ -57,9 +44,9 @@ interface RenderedTextAnnotation {
 
 function exactPlaceholder(label: string, index: number, values: readonly string[]): string {
 	let suffix = 0;
-	let placeholder = `__TAU_ANNOTATE_${label}_${index}_${suffix}__`;
+	let placeholder = `__OMP_ANNOTATE_${label}_${index}_${suffix}__`;
 	while (values.some(value => value.includes(placeholder))) {
-		placeholder = `__TAU_ANNOTATE_${label}_${index}_${++suffix}__`;
+		placeholder = `__OMP_ANNOTATE_${label}_${index}_${++suffix}__`;
 	}
 	return placeholder;
 }
@@ -114,6 +101,7 @@ export function buildTextReviewPrompt(
 		return {
 			number: index + 1,
 			isLine: true,
+			line: annotation.line,
 			quote: exact("QUOTE", annotation.quote),
 			note,
 			quoteIsInline,

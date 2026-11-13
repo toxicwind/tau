@@ -3,8 +3,9 @@
  * model role. The chain is re-resolved at most every {@link CANDIDATE_TTL_MS}
  * so live catalog discovery, role edits, credential changes, and session
  * fallback all take effect without recreating feature consumers, while bulk
- * callers (`judge_batch`) do not re-scan the whole catalog per item.
+* so bulk callers (`judge_batch`) do not re-scan the whole catalog per item.
  */
+export * from "./cache";
 import {
 	type AssistantMessage,
 	chatTextBackend,

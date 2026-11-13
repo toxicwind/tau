@@ -123,7 +123,7 @@ function sanitizeStatusText(text: string): string {
 		.trim();
 }
 
-function splitTextLines(text: string): string[] {
+export function splitTextLines(text: string): string[] {
 	return text.split(/\r\n|\n|\r/);
 }
 

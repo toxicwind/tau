@@ -1,5 +1,5 @@
 import { extractHttpStatusFromError } from "@tau/tau-utils";
-import type { LimitsApi, OAuthAccess, OAuthApi } from "./auth/types";
+import type { LimitsApi, OAuthAccess, OAuthApi, OAuthRequestIdentity } from "./auth/types";
 import * as AIError from "./error";
 import { isAuthRetryableError, isInvalidatedOAuthTokenError } from "./error/auth-classify";
 import { isAccountPolicyError, isUsageLimit } from "./error/flags";
@@ -42,6 +42,21 @@ export interface ResolvedApiKey {
 	apiKey: string;
 	/** Durable row id of the credential that supplied this bearer, when known. */
 	credentialId?: number;
+	/**
+	 * The OAuth access token behind this bearer, when the bearer came from a
+	 * stored OAuth credential. A provider whose API key wraps the token in a
+	 * structured document makes the two differ, so a 401 recovery names this
+	 * one as the token the provider rejected. (Restored from upstream.)
+	 */
+	oauthAccess?: string;
+	/**
+	 * Resolved after `LimitsApi.rotate` slept out a sibling's short block
+	 * (`afterSiblingWait`): the driver accepts this bearer even if the request
+	 * already sent it before that block.
+	 */
+	afterSiblingWait?: boolean;
+	/** Non-secret request scope belonging to this bearer, replaced on account rotation. */
+	oauthIdentity?: OAuthRequestIdentity;
 }
 
 export type ApiKeyResolution = string | ResolvedApiKey | undefined;
@@ -55,6 +70,41 @@ export function resolvedApiKeyBearer(resolved: ApiKeyResolution): string | undef
 
 /** A static bearer string, or a {@link ApiKeyResolver} that mints/rotates one. */
 export type ApiKey = string | ApiKeyResolver;
+
+const OAUTH_PROVENANCE_LIMIT = 8;
+
+/**
+ * Remembers which OAuth access token produced each bearer a resolver served,
+ * so a 401 recovery can name the token of the request that actually failed.
+ * A resolver serves many requests, and they fail out of order: the last
+ * resolution is not that request's identity. Used by every resolver that
+ * serves more than one request ({@link KeyCascade.resolver}, the coding
+ * agent's `createApiKeyResolver`, the auth gateway's resolver). (Restored
+ * from upstream — the fork's older file lacked it.)
+ */
+export function createOAuthProvenance(): {
+	record: (resolved: ApiKeyResolution) => void;
+	accessFor: (bearer: string | undefined) => string | undefined;
+} {
+	const byBearer = new Map<string, string>();
+	return {
+		record(resolved) {
+			if (typeof resolved !== "object" || resolved === undefined) return;
+			const access = resolved.oauthAccess;
+			if (access === undefined) return;
+			byBearer.delete(resolved.apiKey);
+			byBearer.set(resolved.apiKey, access);
+			while (byBearer.size > OAUTH_PROVENANCE_LIMIT) {
+				const oldest = byBearer.keys().next();
+				if (oldest.done) break;
+				byBearer.delete(oldest.value);
+			}
+		},
+		accessFor(bearer) {
+			return bearer === undefined ? undefined : byBearer.get(bearer);
+		},
+	};
+}
 
 /** Keyless-provider credential marker; transports must not send it in authentication headers. */
 export const NO_AUTH_SENTINEL = "N/A";

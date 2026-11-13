@@ -467,6 +467,13 @@ export type AuthApiKeyOptions = {
 	forceRefresh?: boolean;
 };
 
+/** Non-secret identity bound to the OAuth credential selected for one request attempt. */
+export interface OAuthRequestIdentity {
+	orgId?: string;
+	region?: string;
+	inferenceRegion?: "global" | "eu" | "us";
+}
+
 /**
  * Refreshed OAuth access plus identity metadata returned by
  * {@link AuthStorage.oauth.access}. Callers that authenticate via a bearer

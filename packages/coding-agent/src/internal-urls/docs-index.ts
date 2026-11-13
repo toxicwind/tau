@@ -1,5 +1,5 @@
 /**
- * Harness documentation index for the `tau://` protocol.
+ * Harness documentation index for the `omp://` protocol.
  *
  * Compiled binaries and the prepacked npm bundle inline a compressed index of the
  * docs (injected via `process.env.PI_DOCS_EMBED` at build time). The format is two lines:
@@ -10,7 +10,7 @@
  * async `node:zlib` threadpool) lazily, once, on the first actual read. When the
  * placeholder is empty (running from TypeScript source), the index falls back to
  * the embed file shipped in the npm package (`dist/docs-index.generated.txt`,
- * written by `gen:bundle`) — so `@tau/tau-coding-agent/*` SDK consumers
+ * written by `gen:bundle`) — so `tau/*` SDK consumers
  * resolve docs and never probe the consumer's `node_modules/docs` — and then to
  * the repo `docs/` directory on disk for a monorepo checkout.
  */
@@ -22,6 +22,9 @@ import { isEnoent, logger } from "@tau/tau-utils";
 import { Glob } from "bun";
 
 const docsEmbed = process.env.PI_DOCS_EMBED ?? "";
+
+/** Repo `docs/` tree backing a monorepo checkout; unreachable from an installed package (see `getIndex`). */
+const DOCS_DIR = path.resolve(import.meta.dir, "../../../../docs");
 
 const gunzipAsync = promisify(gunzip);
 
@@ -68,7 +71,7 @@ export function decodeDocsIndex(embed: string): DocsIndex | null {
  * shipped embed instead.
  */
 function readDocsFromDisk(): DocsIndex | null {
-	const docsDir = path.resolve(import.meta.dir, "../../../../docs");
+	const docsDir = DOCS_DIR;
 	const filenames: string[] = [];
 	const bodies: Record<string, string> = {};
 	try {
@@ -88,7 +91,7 @@ function readDocsFromDisk(): DocsIndex | null {
 /**
  * Prepacked npm package: the docs embed is written to `dist/docs-index.generated.txt`
  * during `gen:bundle` (compiled binaries inline it via `PI_DOCS_EMBED` instead).
- * SDK consumers importing `@tau/tau-coding-agent/*` load TypeScript source, where
+ * SDK consumers importing `tau/*` load TypeScript source, where
  * the build-time placeholder is empty, so this shipped file is their only reachable
  * corpus. Returns `null` when the file is absent (dev tree before a bundle build).
  */
@@ -110,15 +113,17 @@ function readShippedEmbed(): DocsIndex | null {
 	return decoded;
 }
 
-/** Empty index for when no docs corpus is reachable — degrades `tau://` instead of throwing ENOENT at callers. */
+/** Empty index for when no docs corpus is reachable — degrades `omp://` instead of throwing ENOENT at callers. */
 function emptyIndex(): DocsIndex {
 	logger.warn(
-		"tau:// docs corpus unavailable: no build-time embed, on-disk docs/ directory, or shipped dist embed found",
+		"omp:// docs corpus unavailable: no build-time embed, on-disk docs/ directory, or shipped dist embed found",
 	);
 	return { filenames: [], getBody: () => Promise.resolve(undefined) };
 }
 
 let index: DocsIndex | undefined;
+/** Filesystem root backing the corpus when it was read from disk; `null` for embed/shipped/empty. */
+let diskRoot: string | null | undefined;
 function getIndex(): DocsIndex {
 	if (index !== undefined) return index;
 	// Populated embed in compiled binaries / npm bundle entrypoint. A non-empty
@@ -132,6 +137,7 @@ function getIndex(): DocsIndex {
 			);
 		}
 		index = decoded;
+		diskRoot = null;
 		return index;
 	}
 	// No build-time embed → running from TypeScript source. Prefer the shipped
@@ -142,13 +148,34 @@ function getIndex(): DocsIndex {
 	// and where a stray `docs` dir/package could shadow the real corpus. Fall back
 	// to the on-disk `docs/` corpus for a genuine monorepo checkout, then degrade
 	// to an empty index so a missing corpus never propagates ENOENT to callers.
-	index = readShippedEmbed() ?? readDocsFromDisk() ?? emptyIndex();
+	const shipped = readShippedEmbed();
+	if (shipped !== null) {
+		index = shipped;
+		diskRoot = null;
+		return index;
+	}
+	const fromDisk = readDocsFromDisk();
+	index = fromDisk ?? emptyIndex();
+	diskRoot = fromDisk !== null ? DOCS_DIR : null;
 	return index;
 }
 
 /** Sorted list of available documentation file names (relative to `docs/`). */
 export function getDocFilenames(): readonly string[] {
 	return getIndex().filenames;
+}
+
+/**
+ * Filesystem root backing the corpus when the active index was read from disk
+ * (a monorepo checkout), or `null` when it came from an embed, the shipped
+ * bundle file, or nowhere. Renderers use this to decide whether an `omp://`
+ * URL has a real file to link to: probing `docs/` unconditionally would
+ * resolve into the consumer's own tree (their project's `docs/settings.md`,
+ * `node_modules/docs`) on installs where the corpus is embedded.
+ */
+export function getDocsDiskRoot(): string | null {
+	getIndex();
+	return diskRoot ?? null;
 }
 
 /** Resolve a documentation file's content, or `undefined` when not found. */

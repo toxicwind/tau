@@ -8,7 +8,11 @@ import {
 	getConfigDirName,
 	getPluginsDir,
 	getProjectDir,
+	isEnoent,
+	logger,
+	normalizePathForComparison,
 	parseFrontmatter,
+	pathIsWithin,
 	tryParseJson,
 } from "@tau/tau-utils";
 import { isUserSourceEnabled } from "../capability";
@@ -149,6 +153,7 @@ export function createSourceMeta(
 	filePath: string,
 	level: "user" | "project",
 	origin?: string,
+	pluginName?: string,
 ): SourceMeta {
 	return {
 		provider,
@@ -156,6 +161,7 @@ export function createSourceMeta(
 		path: path.resolve(filePath),
 		level,
 		...(origin !== undefined && { origin }),
+		...(pluginName !== undefined && { pluginName }),
 	};
 }
 
@@ -296,6 +302,8 @@ export interface ParsedAgentFields {
 	autoloadSkills?: string[];
 	readSummarize?: boolean;
 	blocking?: boolean;
+	/** `true` = keep `yield` and the output schema when `task.structured` is off. */
+	structured?: boolean;
 	/** `true` = prewalk into the default target; string = prewalk into that model pattern. */
 	prewalk?: boolean | string;
 	/** `true` = advise with the default advisor-role model; string = advise with that model pattern. */
@@ -324,14 +332,17 @@ export function parseAgentFields(frontmatter: Record<string, unknown>): ParsedAg
 		return null;
 	}
 
-	let tools =
-		Array.isArray(frontmatter.tools) && frontmatter.tools.length === 0 ? [] : parseArrayOrCSV(frontmatter.tools);
-	if (tools) tools = normalizeToolNames(tools);
-
-	// Subagents with explicit tool lists always need yield
-	if (tools && !tools.includes("yield")) {
-		tools = [...tools, "yield"];
+	// Only absent or null tools select defaults; malformed restrictions must not widen access.
+	const rawTools = frontmatter.tools;
+	let tools = rawTools == null ? undefined : (parseArrayOrCSV(rawTools) ?? []);
+	if (tools?.length === 0 && !(Array.isArray(rawTools) && rawTools.length === 0)) {
+		const valueType = Array.isArray(rawTools) ? "array" : typeof rawTools;
+		logger.warn("Agent tools declaration names no tools; using an empty built-in allowlist", {
+			agent: name,
+			valueType,
+		});
 	}
+	if (tools) tools = normalizeToolNames(tools);
 
 	// Parse spawns field (array, "*", or CSV)
 	let spawns: string[] | "*" | undefined;
@@ -364,6 +375,7 @@ export function parseAgentFields(frontmatter: Record<string, unknown>): ParsedAg
 	const thinkingLevel = parseConfiguredThinkingLevel(rawThinkingLevel);
 	const model = parseModelList(frontmatter.model);
 	const blocking = parseBoolean(frontmatter.blocking);
+	const structured = parseBoolean(frontmatter.structured);
 	const readSummarize = parseBoolean(frontmatter.readSummarize);
 	// prewalk: true → hand off to the default prewalk target; "<pattern>" → custom target.
 	let prewalk: boolean | string | undefined = parseBoolean(frontmatter.prewalk);
@@ -389,6 +401,7 @@ export function parseAgentFields(frontmatter: Record<string, unknown>): ParsedAg
 		output,
 		thinkingLevel,
 		blocking,
+		structured,
 		autoloadSkills,
 		readSummarize,
 		prewalk,
@@ -425,34 +438,19 @@ export interface ScanSkillsFromDirOptions {
 	 */
 	includeSelf?: boolean;
 	/**
-	 * Discover skills at any depth below `dir` instead of only its direct children.
-	 *
-	 * The Agent Skills spec defines a skill as a directory containing `SKILL.md`, and puts
-	 * organization *inside* a skill (`scripts/`, `references/`, `assets/`) rather than between
-	 * the root and the skill. So this walk treats "contains SKILL.md" as terminal: a skill
-	 * directory's own subdirectories are that skill's bundled resources and are never rescanned.
-	 * Without that rule `references/other/SKILL.md` would be promoted to a phantom second skill.
-	 *
-	 * Collections that group skills under a category layer (a repo of `<category>/<skill>/`)
-	 * become registrable with a single directory entry instead of one entry per category.
-	 * Default `false` preserves the strict depth-1 semantics.
-	 */
-	recursive?: boolean;
-	/** Depth limit applied when `recursive` is set. Defaults to {@link DEFAULT_SKILL_SCAN_DEPTH}. */
-	maxDepth?: number;
-	/**
 	 * Registry/CLI origin of the plugin root supplying these skills, forwarded
-	 * to {@link SourceMeta.origin} so user-scope gating can tell tau's own
-	 * installs (`tau`, `plugin-dir`) from the foreign Claude tree (`claude`).
+	 * to {@link SourceMeta.origin} so user-scope gating can tell omp's own
+	 * installs (`omp`, `plugin-dir`) from the foreign Claude tree (`claude`).
 	 */
 	origin?: string;
+	/**
+	 * Plugin name supplying these skills, forwarded to {@link SourceMeta.pluginName}
+	 * so `skillNamespace` in `extensibility/skills.ts` can namespace by plugin
+	 * identity instead of parsing a path segment that may only hold a version
+	 * (Claude Code's own plugin cache layout).
+	 */
+	pluginName?: string;
 }
-
-/** How deep a `recursive` scan descends when no explicit `maxDepth` is given. */
-export const DEFAULT_SKILL_SCAN_DEPTH = 5;
-
-/** Directory names never descended into during a `recursive` scan. */
-const SKILL_SCAN_PRUNED_DIRS: Record<string, true> = { ".git": true, node_modules: true };
 
 // Stable ordering used for skill lists in prompts: name (case-insensitive), then name, then path.
 export function compareSkillOrder(aName: string, aPath: string, bName: string, bPath: string): number {
@@ -495,13 +493,19 @@ export async function scanSkillsFromDir(
 			const skillDirName = path.basename(path.dirname(skillPath));
 			const rawName = frontmatter.name;
 			const name = typeof rawName === "string" ? rawName.trim() || skillDirName : skillDirName;
+			// `/` is reserved for collision namespaces (`<namespace>/<name>`) and
+			// path resolution in skill:// URLs; a raw name must never claim one.
+			if (/[\\/]/.test(name)) {
+				warnings.push(`Skill name "${name}" contains a path separator, skipping: ${skillPath}`);
+				return;
+			}
 			items.push({
 				name,
 				path: skillPath,
 				content: body,
 				frontmatter: frontmatter as SkillFrontmatter,
 				level,
-				_source: createSourceMeta(providerId, skillPath, level, options.origin),
+				_source: createSourceMeta(providerId, skillPath, level, options.origin, options.pluginName),
 			});
 		} catch {
 			warnings.push(`Failed to read skill file: ${skillPath}`);
@@ -515,49 +519,12 @@ export async function scanSkillsFromDir(
 			work.push(loadSkill(selfSkillPath));
 		}
 	}
-	/**
-	 * Collect every `<dir>/<name>/SKILL.md`, descending past category directories but stopping
-	 * at the first ancestor that is itself a skill. Returns absolute paths in discovery order.
-	 */
-	const collectSkillPaths = async (root: string, maxDepth: number): Promise<string[]> => {
-		const found: string[] = [];
-		let frontier: Array<{ dir: string; depth: number }> = [{ dir: root, depth: 0 }];
-		while (frontier.length > 0) {
-			const next: Array<{ dir: string; depth: number }> = [];
-			for (const { dir: currentDir, depth } of frontier) {
-				if (depth > maxDepth) continue;
-				const children = await fs.promises.readdir(currentDir, { withFileTypes: true });
-				for (const child of children) {
-					if (child.name.startsWith(".") || SKILL_SCAN_PRUNED_DIRS[child.name]) continue;
-					if (!child.isDirectory() && !child.isSymbolicLink()) continue;
-					const childDir = path.join(currentDir, child.name);
-					const skillPath = path.join(childDir, "SKILL.md");
-					if (fs.existsSync(skillPath)) {
-						found.push(skillPath);
-						// A skill directory's subdirectories are its own bundled resources.
-						continue;
-					}
-					next.push({ dir: childDir, depth: depth + 1 });
-				}
-			}
-			frontier = next;
-		}
-		return found;
-	};
-
-	if (options.recursive) {
-		const maxDepth = options.maxDepth ?? DEFAULT_SKILL_SCAN_DEPTH;
-		for (const skillPath of await collectSkillPaths(dir, maxDepth)) {
+	for (const entry of entries) {
+		if (entry.name.startsWith(".")) continue;
+		if (!entry.isDirectory() && !entry.isSymbolicLink()) continue;
+		const skillPath = path.join(dir, entry.name, "SKILL.md");
+		if (fs.existsSync(skillPath)) {
 			work.push(loadSkill(skillPath));
-		}
-	} else {
-		for (const entry of entries) {
-			if (entry.name.startsWith(".")) continue;
-			if (!entry.isDirectory() && !entry.isSymbolicLink()) continue;
-			const skillPath = path.join(dir, entry.name, "SKILL.md");
-			if (fs.existsSync(skillPath)) {
-				work.push(loadSkill(skillPath));
-			}
 		}
 	}
 	await Promise.all(work);
@@ -772,43 +739,32 @@ export async function loadStandaloneContextFiles(
 	const includeBoundary = repoRoot === null ? cwdIsUnderHome : !samePath(boundary, home) || repoIsHome;
 	const excludeHome = scanToHome;
 
-	const seenCanonicalPaths = new Set<string>();
 	let current = cwd;
 	while (true) {
 		const atBoundary = samePath(current, boundary);
 		const atHome = excludeHome && samePath(current, home);
 		if (!(atHome || (atBoundary && !includeBoundary))) {
 			const candidate = path.join(current, fileName);
-			let canonical = candidate;
-			try {
-				canonical = fs.realpathSync.native(candidate);
-			} catch {
-				canonical = path.resolve(candidate);
-			}
+			const content = await readFile(candidate);
 
-			if (!seenCanonicalPaths.has(canonical)) {
-				seenCanonicalPaths.add(canonical);
-				const content = await readFile(candidate);
+			// Empty files contribute nothing and must not claim the depth scope:
+			// at a priority tie, an empty first-registered file would shadow a
+			// non-empty sibling (e.g. an empty AGENTS.md shadowing CLAUDE.md).
+			if (content !== null && content !== "") {
+				const parent = path.dirname(candidate);
+				const baseName = parent.split(path.sep).pop() ?? "";
 
-				// Empty files contribute nothing and must not claim the depth scope:
-				// at a priority tie, an empty first-registered file would shadow a
-				// non-empty sibling (e.g. an empty AGENTS.md shadowing CLAUDE.md).
-				if (content !== null && content !== "") {
-					const parent = path.dirname(candidate);
-					const baseName = parent.split(path.sep).pop() ?? "";
+				if (!baseName.startsWith(".")) {
+					const fileDir = path.dirname(candidate);
+					const calculatedDepth = calculateDepth(cwd, fileDir, path.sep);
 
-					if (!baseName.startsWith(".")) {
-						const fileDir = path.dirname(candidate);
-						const calculatedDepth = calculateDepth(cwd, fileDir, path.sep);
-
-						items.push({
-							path: candidate,
-							content,
-							level: "project",
-							depth: calculatedDepth,
-							_source: createSourceMeta(providerId, candidate, "project"),
-						});
-					}
+					items.push({
+						path: candidate,
+						content,
+						level: "project",
+						depth: calculatedDepth,
+						_source: createSourceMeta(providerId, candidate, "project"),
+					});
 				}
 			}
 		}
@@ -869,12 +825,8 @@ async function readExtensionModuleManifest(
 	const content = await readFile(packageJsonPath);
 	if (!content) return null;
 
-	const pkg = tryParseJson<{
-		tau?: ExtensionModuleManifest;
-		omp?: ExtensionModuleManifest;
-		pi?: ExtensionModuleManifest;
-	}>(content);
-	const manifest = pkg?.tau ?? pkg?.omp ?? pkg?.pi;
+	const pkg = tryParseJson<{ omp?: ExtensionModuleManifest; pi?: ExtensionModuleManifest }>(content);
+	const manifest = pkg?.omp ?? pkg?.pi;
 	if (manifest && typeof manifest === "object") {
 		return manifest;
 	}
@@ -887,7 +839,7 @@ async function readExtensionModuleManifest(
  * Discovery rules:
  * 1. Direct files: `extensions/*.ts` or `*.js` → load
  * 2. Subdirectory with index: `extensions/<ext>/index.ts` or `index.js` → load
- * 3. Subdirectory with package.json: `extensions/<ext>/package.json` with "tau"/"pi" field → load declared paths
+ * 3. Subdirectory with package.json: `extensions/<ext>/package.json` with "omp"/"pi" field → load declared paths
  *
  * No recursion beyond one level. Complex packages must use package.json manifest.
  * Uses native glob for fast filesystem scanning with gitignore support.
@@ -1064,7 +1016,7 @@ export interface ClaudePluginRoot {
 	/** Whether this is a user or project scope plugin */
 	scope: "user" | "project";
 	/** Registry or explicit CLI source that supplied this root. */
-	origin: "claude" | "tau" | "plugin-dir";
+	origin: "claude" | "omp" | "plugin-dir";
 }
 
 /**
@@ -1083,29 +1035,73 @@ export function parseClaudePluginsRegistry(content: string): ClaudePluginsRegist
 	return data;
 }
 
+/** Project discovery never examines home or shared temporary roots, or their ancestors. */
+export function getProjectDiscoveryCeilings(): ReadonlySet<string> {
+	const ceilings = new Set<string>();
+	ceilings.add(normalizePathForComparison(os.homedir()));
+	ceilings.add(normalizePathForComparison(os.tmpdir()));
+	if (process.platform !== "win32") {
+		ceilings.add(normalizePathForComparison("/tmp"));
+		ceilings.add(normalizePathForComparison("/var/tmp"));
+	}
+	return ceilings;
+}
+
+/** The current user's config roots are never project anchors. */
+export function isUserConfigRoot(root: string): boolean {
+	const configDir = normalizePathForComparison(path.join(root, getConfigDirName()));
+	return (
+		configDir === normalizePathForComparison(path.join(os.homedir(), getConfigDirName())) ||
+		configDir === normalizePathForComparison(path.dirname(getPluginsDir()))
+	);
+}
+
+/**
+ * An inactive default user layout (`<configDirName>/agent/`) is not a project anchor above a git
+ * root or without a repo. `configDirName` is the project config dir the caller would load from.
+ */
+export async function isForeignUserConfigRoot(root: string, configDirName: string): Promise<boolean> {
+	try {
+		const agentDir = path.join(root, configDirName, "agent");
+		const stat = await fs.promises.stat(agentDir);
+		return stat.isDirectory() && normalizePathForComparison(agentDir) !== normalizePathForComparison(getAgentDir());
+	} catch {
+		return false;
+	}
+}
+
 /**
  * Resolve the active project registry path by walking up from `cwd`.
  *
  * Walk order:
- * 1. Walk up from `cwd` looking for the nearest directory containing `.tau/`.
- *    The first match returns `<dir>/.tau/plugins/installed_plugins.json`.
- * 2. If no `.tau/` is found, rescan from `cwd` upward looking for `.git`.
- *    The git root is used as an anchor: `<gitRoot>/.tau/plugins/installed_plugins.json`.
- * 3. If neither is found, return `null` — no project context is active.
+ * 1. Walk up from `cwd` looking for the nearest directory containing `.omp/`.
+ *    The first match returns `<dir>/.omp/plugins/installed_plugins.json`.
+ * 2. If no `.omp/` is found, rescan from `cwd` upward looking for `.git`.
+ *    The git root is used as an anchor: `<gitRoot>/.omp/plugins/installed_plugins.json`.
+ * 3. Stop before home or a temporary root in either pass. If neither anchor is
+ *    found below that ceiling, return `null` — no project context is active.
+ * Inactive `.omp/agent/` layouts are skipped only above the nearest git root,
+ * or throughout an unanchored walk, so repo-local agent directories stay project scope.
  *
  * This is the single source of truth for "active project root" used by install,
  * uninstall, list, upgrade, discovery, and doctor. Deterministic for a given `cwd`.
  */
 export async function resolveActiveProjectRegistryPath(cwd: string): Promise<string | null> {
-	// Pass 1: walk up looking for an existing .tau/ directory (nearest wins).
-	// Stop before os.homedir() — ~/.tau/ is the user-level config dir, not a project root.
-	const homeDir = os.homedir();
+	return resolveProjectRegistryPath(cwd, getProjectDiscoveryCeilings());
+}
+
+async function resolveProjectRegistryPath(cwd: string, ceilings: ReadonlySet<string>): Promise<string | null> {
+	// Find the nearest git root once, retaining the existing user-root exclusion for fallback.
+	let nearestGitRoot: string | null = null;
+	let gitAnchor: string | null = null;
 	let dir = path.resolve(cwd);
-	while (dir !== homeDir) {
+	while (!ceilings.has(normalizePathForComparison(dir))) {
 		try {
-			const stat = await fs.promises.stat(path.join(dir, getConfigDirName()));
-			if (stat.isDirectory()) {
-				return path.join(dir, getConfigDirName(), "plugins", "installed_plugins.json");
+			await fs.promises.stat(path.join(dir, ".git"));
+			nearestGitRoot ??= dir;
+			if (!isUserConfigRoot(dir)) {
+				gitAnchor = dir;
+				break;
 			}
 		} catch {
 			// not found at this level — continue up
@@ -1115,41 +1111,54 @@ export async function resolveActiveProjectRegistryPath(cwd: string): Promise<str
 		dir = parent;
 	}
 
-	// Pass 2: walk up looking for .git as a fallback anchor.
+	// Existing .omp/ directories still win, even above the git root, except foreign user roots.
+	const configDirName = getConfigDirName();
+	let aboveGitRoot = nearestGitRoot === null;
 	dir = path.resolve(cwd);
-	while (dir !== homeDir) {
+	while (!ceilings.has(normalizePathForComparison(dir))) {
 		try {
-			await fs.promises.stat(path.join(dir, ".git"));
-			return path.join(dir, getConfigDirName(), "plugins", "installed_plugins.json");
+			const stat = await fs.promises.stat(path.join(dir, configDirName));
+			if (
+				stat.isDirectory() &&
+				!isUserConfigRoot(dir) &&
+				(!aboveGitRoot || !(await isForeignUserConfigRoot(dir, configDirName)))
+			) {
+				return path.join(dir, configDirName, "plugins", "installed_plugins.json");
+			}
 		} catch {
 			// not found at this level — continue up
 		}
+		if (dir === nearestGitRoot) aboveGitRoot = true;
 		const parent = path.dirname(dir);
 		if (parent === dir) break; // filesystem root
 		dir = parent;
 	}
 
-	return null; // not inside any project
+	return gitAnchor ? path.join(gitAnchor, getConfigDirName(), "plugins", "installed_plugins.json") : null;
 }
 
 /**
- * Like resolveActiveProjectRegistryPath, but falls back to `<cwd>/.tau/plugins/installed_plugins.json`
- * when no project anchor (.tau/ or .git/) is found.
+ * Like resolveActiveProjectRegistryPath, but falls back to `<cwd>/.omp/plugins/installed_plugins.json`
+ * when no project anchor (.omp/ or .git/) is found.
  *
  * Use this when the caller accepts an explicit --scope project so that installing into a freshly
- * bootstrapped directory (no .tau/ or .git/ yet) works: writeInstalledPluginsRegistry auto-creates
+ * bootstrapped directory (no .omp/ or .git/ yet) works: writeInstalledPluginsRegistry auto-creates
  * the directory tree on first write.
  *
- * Returns undefined when cwd is os.homedir() — that path is already the user registry and must
- * never alias as the project registry.
+ * Returns undefined when cwd is a discovery ceiling or user config root, so the
+ * fallback never creates a shared temporary registry or aliases the user registry.
  */
 export async function resolveOrDefaultProjectRegistryPath(cwd: string): Promise<string | undefined> {
-	const resolved = await resolveActiveProjectRegistryPath(cwd);
+	const ceilings = getProjectDiscoveryCeilings();
+	const resolved = await resolveProjectRegistryPath(cwd, ceilings);
 	if (resolved) return resolved;
-	// Home directory must not be treated as a project root: the fallback path would alias
-	// getInstalledPluginsRegistryPath(), causing MarketplaceManager to load the same file
-	// as both user and project registry and producing duplicates / disambiguation errors.
-	if (path.resolve(cwd) === os.homedir()) return undefined;
+	// A cwd containing .omp/ at or below a git root already resolved above.
+	if (
+		ceilings.has(normalizePathForComparison(cwd)) ||
+		isUserConfigRoot(cwd) ||
+		(await isForeignUserConfigRoot(cwd, getConfigDirName()))
+	)
+		return undefined;
 	return path.join(cwd, getConfigDirName(), "plugins", "installed_plugins.json");
 }
 
@@ -1195,7 +1204,23 @@ async function readClaudeEnabledPlugins(
 	return { enabled, sources };
 }
 
-const pluginRootsCache = new Map<string, { roots: ClaudePluginRoot[]; warnings: string[] }>();
+type PluginRootsResult = { roots: ClaudePluginRoot[]; warnings: string[] };
+
+/** A cached {@link listClaudePluginRoots} result and the registry files it was read from. */
+interface PluginRootsCacheEntry {
+	files: readonly string[];
+	/** Each file's {@link registrySignature}, taken just before the files were read. */
+	signatures: Promise<readonly string[]>;
+	result: Promise<PluginRootsResult>;
+}
+
+const pluginRootsCache = new Map<string, PluginRootsCacheEntry>();
+
+/**
+ * Plugin id of every plugin root a registry has named in this process, keyed by the root's path and
+ * by its real path (Agent Plugin skills record real paths). See {@link isSupersededPluginPath}.
+ */
+const registeredPluginRootIds = new Map<string, string>();
 
 const pluginCacheInvalidators = new Set<() => void>();
 
@@ -1204,28 +1229,155 @@ export function registerPluginCacheInvalidator(invalidator: () => void): void {
 	pluginCacheInvalidators.add(invalidator);
 }
 
+/** The registry files {@link listClaudePluginRoots} reads for `home` and `cwd`. */
+async function resolvePluginRegistryFiles(home: string, cwd: string | undefined) {
+	const claudeConfigDir = resolveClaudePaths(home).configDir;
+	const ompRegistryPath = path.join(getPluginsDir(home), "installed_plugins.json");
+	const projectPath = cwd ? await resolveActiveProjectRegistryPath(cwd) : null;
+	const resolvedProjectPath =
+		projectPath && normalizePathForComparison(projectPath) !== normalizePathForComparison(ompRegistryPath)
+			? projectPath
+			: null;
+	const files = [path.join(claudeConfigDir, "plugins", "installed_plugins.json"), ompRegistryPath];
+	if (resolvedProjectPath) files.push(resolvedProjectPath);
+	return { claudeConfigDir, ompRegistryPath, resolvedProjectPath, files };
+}
+
+/**
+ * Identity, size and modification time of a registry file; `missing`, or the error code of a path
+ * that cannot be checked (the registry read treats both as absent). Any write changes it.
+ */
+async function registrySignature(filePath: string): Promise<string> {
+	try {
+		const stats = await fs.promises.stat(filePath);
+		return `${stats.ino}:${stats.size}:${stats.mtimeMs}`;
+	} catch (error) {
+		if (isEnoent(error)) return "missing";
+		return `unreadable:${(error as NodeJS.ErrnoException).code ?? "unknown"}`;
+	}
+}
+
+/** Whether a registry file changed on disk since `entry` was read from it. */
+async function isStaleRootsEntry(entry: PluginRootsCacheEntry): Promise<boolean> {
+	const [recorded, current] = await Promise.all([entry.signatures, Promise.all(entry.files.map(registrySignature))]);
+	return recorded.some((signature, index) => signature !== current[index]);
+}
+
+async function recordRegisteredPluginRoots(roots: readonly ClaudePluginRoot[]): Promise<void> {
+	await Promise.all(
+		roots.map(async root => {
+			registeredPluginRootIds.set(root.path, root.id);
+			const realPath = await realpathIfExists(root.path);
+			if (realPath) registeredPluginRootIds.set(realPath, root.id);
+		}),
+	);
+}
+
+/** A registered plugin root (see {@link isSupersededPluginPath}) and the id of its plugin. */
+export interface RegisteredPluginRoot {
+	root: string;
+	pluginId: string;
+}
+
+/** The registered plugin root that holds `filePath`, if any. */
+export function registeredPluginRootOf(filePath: string): RegisteredPluginRoot | undefined {
+	let found: [string, string] | undefined;
+	for (const entry of registeredPluginRootIds) {
+		if (pathIsWithin(entry[0], filePath)) found = entry;
+	}
+	return found && { root: found[0], pluginId: found[1] };
+}
+
+/**
+ * Whether `filePath` lies in a plugin install that the registries, as read for `cwd`, have replaced
+ * with another install of the same plugin: an upgrade that kept the old version's directory, or a
+ * project-scope install that now shadows a user-scope one. The cached roots for `cwd` are read again
+ * first when a registry file changed on disk since they were read. A path in no registered plugin
+ * root, or in a plugin the registries no longer install at all, is not superseded.
+ */
+export async function isSupersededPluginPath(filePath: string, home: string, cwd?: string): Promise<boolean> {
+	const pluginId = registeredPluginRootOf(filePath)?.pluginId;
+	if (pluginId === undefined) return false;
+	const installs = (await readPluginRoots(home, cwd, true)).roots.filter(root => root.id === pluginId);
+	if (installs.length === 0) return false;
+	for (const install of installs) {
+		if (pathIsWithin(install.path, filePath)) return false;
+		const realPath = await realpathIfExists(install.path);
+		if (realPath && pathIsWithin(realPath, filePath)) return false;
+	}
+	return true;
+}
+
 /**
  * List all installed Claude Code plugin roots from its active plugin cache and
- * ~/.tau/plugins/installed_plugins.json, plus the nearest project registry when present.
+ * ~/.omp/plugins/installed_plugins.json, plus the nearest project registry when present.
  *
- * Results are cached per Claude and TAU config directories, project registry, and canonical active project.
+ * Results are cached per Claude and OMP config directories, project registry, and canonical active project.
  */
-export async function listClaudePluginRoots(
+export function listClaudePluginRoots(
 	home: string,
 	cwd?: string,
 ): Promise<{ roots: ClaudePluginRoot[]; warnings: string[] }> {
-	const claudeConfigDir = resolveClaudePaths(home).configDir;
-	const tauRegistryPath = path.join(getPluginsDir(home), "installed_plugins.json");
-	const resolvedProjectPath = cwd ? await resolveActiveProjectRegistryPath(cwd) : null;
+	return readPluginRoots(home, cwd, false);
+}
+
+/** {@link listClaudePluginRoots}; with `revalidate`, a cached result whose registry files changed is read again. */
+async function readPluginRoots(home: string, cwd: string | undefined, revalidate: boolean): Promise<PluginRootsResult> {
+	const { claudeConfigDir, ompRegistryPath, resolvedProjectPath, files } = await resolvePluginRegistryFiles(home, cwd);
 	const projectRoot = resolvedProjectPath ? path.dirname(path.dirname(path.dirname(resolvedProjectPath))) : cwd;
 	const activeClaudeProjectPath = projectRoot ? await canonicalClaudeProjectPath(projectRoot) : null;
 	const canonicalCwd = cwd ? await canonicalClaudeProjectPath(cwd) : null;
 	const settingsDirs = [...new Set([activeClaudeProjectPath, canonicalCwd].filter((d): d is string => !!d))];
 	const enabledOverrides = await readClaudeEnabledPlugins(claudeConfigDir, settingsDirs);
-	const cacheKey = `${claudeConfigDir}:${tauRegistryPath}:${resolvedProjectPath ?? ""}:${activeClaudeProjectPath ?? ""}:${canonicalCwd ?? ""}:${enabledOverrides.sources.join("|")}`;
+	const cacheKey = `${claudeConfigDir}:${ompRegistryPath}:${resolvedProjectPath ?? ""}:${activeClaudeProjectPath ?? ""}:${canonicalCwd ?? ""}:${enabledOverrides.sources.join("|")}`;
 	const cached = pluginRootsCache.get(cacheKey);
-	if (cached) return cached;
+	if (cached) {
+		if (!revalidate || !(await isStaleRootsEntry(cached))) return cached.result;
+		if (pluginRootsCache.get(cacheKey) === cached) pluginRootsCache.delete(cacheKey);
+		// A concurrent caller that found the same stale entry may already have replaced it.
+		const current = pluginRootsCache.get(cacheKey);
+		if (current) return current.result;
+	}
 
+	// A fresh read takes the registries from disk, not from a content cache an earlier read filled.
+	for (const file of files) invalidateFsCache(file);
+	const signatures = Promise.all(files.map(registrySignature));
+	// Cache the in-flight promise so concurrent callers share one computation.
+	const result = (async () => {
+		await signatures;
+		const loaded = await loadClaudePluginRoots({
+			claudeConfigDir,
+			ompRegistryPath,
+			resolvedProjectPath,
+			activeClaudeProjectPath,
+			enabledOverrides,
+		});
+		await recordRegisteredPluginRoots(loaded.roots);
+		return loaded;
+	})();
+	const entry: PluginRootsCacheEntry = { files, signatures, result };
+	pluginRootsCache.set(cacheKey, entry);
+	try {
+		return await result;
+	} catch (error) {
+		if (pluginRootsCache.get(cacheKey) === entry) pluginRootsCache.delete(cacheKey);
+		throw error;
+	}
+}
+
+async function loadClaudePluginRoots({
+	claudeConfigDir,
+	ompRegistryPath,
+	resolvedProjectPath,
+	activeClaudeProjectPath,
+	enabledOverrides,
+}: {
+	claudeConfigDir: string;
+	ompRegistryPath: string;
+	resolvedProjectPath: string | null;
+	activeClaudeProjectPath: string | null;
+	enabledOverrides: { enabled: Map<string, boolean>; sources: string[] };
+}): Promise<PluginRootsResult> {
 	const roots: ClaudePluginRoot[] = [];
 	const warnings: string[] = [];
 	const projectRoots: ClaudePluginRoot[] = [];
@@ -1291,17 +1443,17 @@ export async function listClaudePluginRoots(
 		}
 	}
 
-	// ── TAU installed plugins registry ───────────────────────────────────────
-	// TAU registry is authoritative: its entries replace Claude's entries for the same plugin ID.
+	// ── OMP installed plugins registry ───────────────────────────────────────
+	// OMP registry is authoritative: its entries replace Claude's entries for the same plugin ID.
 	// In production `home` is `os.homedir()`, so `getPluginsDir(home)` resolves to the
 	// same XDG-aware path the marketplace writer uses (reads and writes always agree).
 	// Tests pass a temp dir, which short-circuits the resolver for deterministic isolation.
-	// Computed before the cache lookup because isolated SDK homes select distinct TAU registries.
-	const tauContent = await readFile(tauRegistryPath);
-	if (tauContent) {
-		const tauRegistry = parseClaudePluginsRegistry(tauContent);
-		if (tauRegistry) {
-			for (const [pluginId, entries] of Object.entries(tauRegistry.plugins)) {
+	// Computed before the cache lookup because isolated SDK homes select distinct OMP registries.
+	const ompContent = await readFile(ompRegistryPath);
+	if (ompContent) {
+		const ompRegistry = parseClaudePluginsRegistry(ompContent);
+		if (ompRegistry) {
+			for (const [pluginId, entries] of Object.entries(ompRegistry.plugins)) {
 				if (!Array.isArray(entries) || entries.length === 0) continue;
 
 				const atIndex = pluginId.lastIndexOf("@");
@@ -1312,7 +1464,7 @@ export async function listClaudePluginRoots(
 				const pluginName = pluginId.slice(0, atIndex);
 				const marketplace = pluginId.slice(atIndex + 1);
 
-				// TAU is authoritative: drop all Claude-sourced entries for this plugin ID
+				// OMP is authoritative: drop all Claude-sourced entries for this plugin ID
 				const filtered = roots.filter(r => r.id !== pluginId);
 				roots.length = 0;
 				roots.push(...filtered);
@@ -1333,17 +1485,17 @@ export async function listClaudePluginRoots(
 						version: entry.version || "unknown",
 						path: entry.installPath,
 						scope: entry.scope === "local" ? "project" : entry.scope || "user",
-						origin: "tau",
+						origin: "omp",
 					});
 				}
 			}
 		} else {
-			warnings.push(`Failed to parse TAU plugin registry: ${tauRegistryPath}`);
+			warnings.push(`Failed to parse OMP plugin registry: ${ompRegistryPath}`);
 		}
 	}
 
-	// ── Project-scoped TAU registry ────────────────────────────────────────
-	// Loaded from the nearest .tau/plugins/installed_plugins.json relative to cwd.
+	// ── Project-scoped OMP registry ────────────────────────────────────────
+	// Loaded from the nearest .omp/plugins/installed_plugins.json relative to cwd.
 	// Project entries take precedence over user entries for the same plugin ID.
 	if (resolvedProjectPath) {
 		const projectContent = await readFile(resolvedProjectPath);
@@ -1372,7 +1524,7 @@ export async function listClaudePluginRoots(
 							version: entry.version || "unknown",
 							path: entry.installPath,
 							scope: "project",
-							origin: "tau",
+							origin: "omp",
 						});
 					}
 				}
@@ -1398,9 +1550,9 @@ export async function listClaudePluginRoots(
 		roots.push(...injectedPluginDirRoots, ...filtered);
 	}
 
-	const result = { roots, warnings };
-	pluginRootsCache.set(cacheKey, result);
-	return result;
+	// Runs once per cached promise, so each warning is logged once per computation.
+	for (const warning of warnings) logger.warn(warning);
+	return { roots, warnings };
 }
 
 /**
@@ -1459,7 +1611,7 @@ export function getPreloadedPluginRoots(): readonly ClaudePluginRoot[] {
 
 /**
  * Inject synthetic plugin roots from --plugin-dir paths.
- * These are prepended to the cache with highest precedence (before TAU/Claude entries).
+ * These are prepended to the cache with highest precedence (before OMP/Claude entries).
  * Must be called before any listClaudePluginRoots() access.
  */
 export async function injectPluginDirRoots(home: string, dirs: string[], cwd?: string): Promise<void> {

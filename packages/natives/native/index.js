@@ -42,6 +42,10 @@ export const TtyWriter = nativeBindings.TtyWriter;
 export const VcsGitRepo = nativeBindings.VcsGitRepo;
 export const VcsJjWorkspace = nativeBindings.VcsJjWorkspace;
 export const VcsRepo = nativeBindings.VcsRepo;
+export const RunTrace = nativeBindings.RunTrace;
+export const ShellVisualization = nativeBindings.ShellVisualization;
+export const IpcConnection = nativeBindings.IpcConnection;
+export const IpcServer = nativeBindings.IpcServer;
 
 // functions
 export const __tauInstallTokioRuntime = nativeBindings.__tauInstallTokioRuntime ?? missingNativeExport("__tauInstallTokioRuntime");
@@ -140,6 +144,9 @@ export const isoProbe = nativeBindings.isoProbe ?? missingNativeExport("isoProbe
 export const isoResolve = nativeBindings.isoResolve ?? missingNativeExport("isoResolve");
 export const isoStart = nativeBindings.isoStart ?? missingNativeExport("isoStart");
 export const isoStop = nativeBindings.isoStop ?? missingNativeExport("isoStop");
+export const ipcEndpoint = nativeBindings.ipcEndpoint ?? missingNativeExport("ipcEndpoint");
+export const installSqliteLockShim = nativeBindings.installSqliteLockShim ?? missingNativeExport("installSqliteLockShim");
+export const heldFileKind = nativeBindings.heldFileKind ?? missingNativeExport("heldFileKind");
 export const listWorkspace = nativeBindings.listWorkspace ?? missingNativeExport("listWorkspace");
 export const macOSAutocorrectWord = nativeBindings.macOSAutocorrectWord ?? missingNativeExport("macOSAutocorrectWord");
 export const macOSCheckSpelling = nativeBindings.macOSCheckSpelling ?? missingNativeExport("macOSCheckSpelling");
@@ -250,5 +257,60 @@ export const MacOSAppearance = {
 export const ProcessStatus = {
 	Running: "running",
 	Exited: "exited",
+};
+export const ShellFsFileType = {
+	File: "file",
+	Dir: "dir",
+	Symlink: "symlink",
+	Fifo: "fifo",
+	Socket: "socket",
+	Char: "char",
+	Block: "block",
+};
+export const ShellFsMissing = {
+	Existing: "existing",
+	Normal: "normal",
+	Missing: "missing",
+};
+export const ShellFsOp = {
+	Metadata: "metadata",
+	SymlinkMetadata: "symlinkMetadata",
+	ReadDir: "readDir",
+	Canonicalize: "canonicalize",
+	BackingPath: "backingPath",
+	ReadLink: "readLink",
+	Access: "access",
+	Open: "open",
+	Read: "read",
+	Write: "write",
+	Flush: "flush",
+	Close: "close",
+	FileMetadata: "fileMetadata",
+	IsLocked: "isLocked",
+	SetLen: "setLen",
+	FileSetTimes: "fileSetTimes",
+	FileSetPermissions: "fileSetPermissions",
+	Sync: "sync",
+	CreateDir: "createDir",
+	RemoveFile: "removeFile",
+	RemoveDir: "removeDir",
+	RemoveDirAll: "removeDirAll",
+	Rename: "rename",
+	HardLink: "hardLink",
+	Symlink: "symlink",
+	SetPermissions: "setPermissions",
+	SetTimes: "setTimes",
+	Chown: "chown",
+	StatFs: "statFs",
+	GetXattr: "getXattr",
+	SetXattr: "setXattr",
+	ListXattr: "listXattr",
+	RemoveXattr: "removeXattr",
+	Mknod: "mknod",
+};
+export const ShellFsResolve = {
+	Physical: "physical",
+	Logical: "logical",
+	None: "none",
 };
 // --- end generated native exports ---

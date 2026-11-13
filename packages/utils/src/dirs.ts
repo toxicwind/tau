@@ -352,6 +352,7 @@ class DirResolver {
 	// With XDG on Linux, they point to $XDG_*_HOME/tau/.
 	readonly #rootDirs: Record<XdgCategory, string>;
 	readonly #agentDirs: Record<XdgCategory, string>;
+	readonly #baseRootDirs: Record<XdgCategory, string>;
 
 	readonly #rootCache = new Map<string, string>();
 	readonly #agentCache = new Map<string, string>();
@@ -409,6 +410,11 @@ class DirResolver {
 			state: xdgState ?? this.configRoot,
 			cache: xdgCache ?? this.configRoot,
 		};
+		this.#baseRootDirs = {
+			data: xdgData ?? getBaseConfigRoot(),
+			state: xdgState ?? getBaseConfigRoot(),
+			cache: xdgCache ?? getBaseConfigRoot(),
+		};
 		// XDG flattens the agent/ prefix: ~/.tau/agent/sessions → $XDG_DATA_HOME/tau/sessions
 		this.#agentDirs = {
 			data: xdgData ?? this.agentDir,
@@ -425,6 +431,11 @@ class DirResolver {
 		const result = path.join(base, subdir);
 		this.#rootCache.set(subdir, result);
 		return result;
+	}
+
+	/** Profile-independent config-root subdirectory, with optional XDG override. Shared across profiles. (Restored from upstream.) */
+	baseRootSubdir(subdir: string, xdg?: XdgCategory): string {
+		return path.join(xdg ? this.#baseRootDirs[xdg] : getBaseConfigRoot(), subdir);
 	}
 
 	/** Agent subdirectory, with optional XDG override. */
@@ -826,6 +837,13 @@ export function getCommitCacheDbPath(): string {
 }
 
 /** Get the legacy Pi extension parse cache database path. */
+export function getJudgmentCacheDbPath(): string {
+	const override = process.env.TAU_JUDGMENT_CACHE_DB;
+	if (override) return override;
+	return dirs.rootSubdir(path.join("cache", "judgment-cache.db"), "cache");
+}
+
+/** Get the legacy Pi extension parse cache database path. */
 export function getLegacyPiExtensionCacheDbPath(): string {
 	return dirs.rootSubdir(path.join("cache", "legacy-tau-extension-cache.db"), "cache");
 }
@@ -1031,6 +1049,11 @@ export function getTinyWorkerRuntimeDir(): string {
 }
 
 /** Root directory containing every per-project daemon runtime scope (~/.tau/run/daemons; XDG default: $XDG_STATE_HOME/tau/run/daemons). */
+export function getMnemopiEmbedRuntimeDir(): string {
+	return dirs.rootSubdir(path.join("run", "mnemopi"), "state");
+}
+
+/** Root directory containing every per-project daemon runtime scope (~/.tau/run/daemons; XDG default: $XDG_STATE_HOME/tau/run/daemons). */
 export function getDaemonRuntimeRoot(): string {
 	return dirs.rootSubdir(path.join("run", "daemons"), "state");
 }
@@ -1057,6 +1080,16 @@ export function getGlobalDaemonRuntimeDir(service: string): string {
 /** Get the provider in-flight root directory (~/.tau/run/provider-inflight; XDG default: $XDG_STATE_HOME/tau/run/provider-inflight). */
 export function getProviderInFlightRoot(): string {
 	return dirs.rootSubdir(path.join("run", "provider-inflight"), "state");
+}
+
+/**
+ * Directory naming session ownership leases (~/.tau/run/session-owners; XDG
+ * default: $XDG_STATE_HOME/tau/run/session-owners). Shared across profiles:
+ * every tau process that opens a session must meet the same lease. (Restored
+ * from upstream — the fork's older file lacked it.)
+ */
+export function getSessionOwnersDir(): string {
+	return dirs.baseRootSubdir(path.join("run", "session-owners"), "state");
 }
 
 /** Get the marketplaces registry path (~/.tau/marketplaces.json; XDG default: $XDG_DATA_HOME/tau/marketplaces.json). Adopts a legacy registry on first XDG resolution. */

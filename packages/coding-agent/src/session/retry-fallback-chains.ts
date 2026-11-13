@@ -1,10 +1,12 @@
 import type { ThinkingLevel } from "@tau/tau-agent-core";
 import type { Model } from "@tau/tau-ai";
 import type { ModelRegistry } from "../config/model-registry";
+import { cfgModelRoles } from "../config/model-settings";
 import { formatModelSelectorValue, parseModelString } from "@tau/tau-tui/overlays/model-selector";
 import { formatModelString, formatModelStringWithRouting } from "../config/model-resolver";
 import type { Settings } from "../config/settings";
 import {
+	AUTO_THINKING,
 	type ConfiguredThinkingLevel,
 	concreteThinkingLevel,
 	resolveThinkingLevelForModel,
@@ -12,18 +14,24 @@ import {
 import { resolveConfiguredModelPatterns, resolveModelRoleValue } from "../config/model-resolver";
 import { getRoleInfo, isKindRole } from "../config/model-roles";
 
+import { cfgRetryFallbackChains, cfgRetryFallbackRevertPolicy, type RetrySettings } from "./settings";
+
 /** Configured fallback chains keyed by role or model selector. */
 export type RetryFallbackChains = Record<string, string[]>;
 
 /** Policy controlling restoration of a fallback chain's primary model. */
 export type RetryFallbackRevertPolicy = "never" | "cooldown-expiry";
 
-/** Parsed model selector used by retry fallback resolution. */
+/**
+ * Parsed model selector used by retry fallback resolution. `thinkingLevel`
+ * keeps the configured `auto` sentinel; `undefined` means the selector carried
+ * no suffix, so the session's configured level applies.
+ */
 export interface RetryFallbackSelector {
 	raw: string;
 	provider: string;
 	id: string;
-	thinkingLevel: ThinkingLevel | undefined;
+	thinkingLevel: ConfiguredThinkingLevel | undefined;
 }
 
 /** Minimal model lookup needed by fallback-chain resolution. */
@@ -69,6 +77,13 @@ export interface ServingModel {
 	thinkingLevel?: ThinkingLevel;
 	/** Whether fallback routing, rather than the configured primary, owns it. */
 	isFallback: boolean;
+	/**
+	 * Context window of the attributed model, carried verbatim from
+	 * {@link Model.contextWindow} (`null` when the model declares none), so
+	 * observers size context usage against the model that produced the turn
+	 * instead of the one the run started on.
+	 */
+	contextWindow?: number | null;
 }
 
 const RETRY_BACKOFF_MAX_DELAY_MS = 8_000;
@@ -98,7 +113,7 @@ export function parseRetryFallbackSelector(
 		raw: trimmed,
 		provider: parsed.provider,
 		id: parsed.id,
-		thinkingLevel: concreteThinkingLevel(parsed.thinkingLevel),
+		thinkingLevel: parsed.thinkingLevel,
 	};
 }
 
@@ -128,8 +143,8 @@ export function formatRetryFallbackSelector(model: Model, thinkingLevel: Thinkin
 	return formatModelSelectorValue(formatModelStringWithRouting(model), thinkingLevel);
 }
 
-/** Formats the model-only portion of a parsed fallback selector. */
-function formatRetryFallbackBaseSelector(selector: RetryFallbackSelector): string {
+/** Formats the model-only portion of a parsed fallback selector (`provider/id`, no thinking level). */
+export function formatRetryFallbackBaseSelector(selector: RetryFallbackSelector): string {
 	return `${selector.provider}/${selector.id}`;
 }
 
@@ -157,9 +172,55 @@ export function expandDefaultRetryFallbackChains(
 
 /** Resolves configured fallback chains, applying the default chain to named roles. */
 export function getRetryFallbackChains(settings: Settings): RetryFallbackChains {
-	const configuredChains = settings.get("retry.fallbackChains");
+	const configuredChains = cfgRetryFallbackChains.get(settings);
 	if (!configuredChains || typeof configuredChains !== "object") return {};
 	return expandDefaultRetryFallbackChains(configuredChains, Object.keys(settings.getModelRoles()));
+}
+
+/**
+ * A dynamic role pinned to one model selector with its own fallback chain.
+ * Subagents own one under `subagent:<id>`; `session_init` persists it so cold
+ * revival restores the same routing the spawn installed.
+ */
+export interface RetryFallbackRole {
+	/** Selector the role is assigned (the chain's primary). */
+	primary: string;
+	/** Fallback selectors walked after the primary; empty explicitly disables fallbacks. */
+	chain: string[];
+}
+
+/** Reads the primary and chain installed for `role`, including an explicitly empty chain. */
+export function getRetryFallbackRole(settings: Settings, role: string): RetryFallbackRole | undefined {
+	const primary = settings.getModelRole(role);
+	const chain = cfgRetryFallbackChains.get(settings)[role];
+	if (!primary || !Array.isArray(chain)) return undefined;
+	return { primary, chain };
+}
+
+/**
+ * Assigns `role` its primary and installs its chain ahead of every configured
+ * chain, so another role assigned the same model cannot capture its routing.
+ * Overrides are session-scoped: nothing is written to the user's config.
+ */
+export function installRetryFallbackRole(
+	settings: Settings,
+	role: string,
+	{ primary, chain }: RetryFallbackRole,
+): void {
+	const modelRoles: Record<string, string> = {};
+	const existingRoles = settings.getModelRoles();
+	for (const key in existingRoles) {
+		const selector = existingRoles[key];
+		if (selector) modelRoles[key] = selector;
+	}
+	modelRoles[role] = primary;
+	cfgModelRoles.override(settings, modelRoles);
+	const fallbackChains: RetryFallbackChains = { [role]: chain };
+	const existingChains = cfgRetryFallbackChains.get(settings);
+	for (const key in existingChains) {
+		if (key !== role) fallbackChains[key] = existingChains[key];
+	}
+	cfgRetryFallbackChains.override(settings, fallbackChains);
 }
 
 /**
@@ -185,11 +246,12 @@ function providerScopedPool(
  * Validates configured fallback chains and reports each warning via `warn`.
  *
  * `options.isDiscoveryPending` suppresses "unknown model" warnings for
- * selectors whose config-declared discovery provider has not yet populated the
- * registry (a cold discovery cache after `tau update` bumps the cache
- * namespace, #10048). Such selectors are re-checked once background discovery
- * settles. Logging is the caller's responsibility so a post-discovery re-run
- * does not double-log persistent warnings.
+ * selectors whose provider discovery has not settled yet: a cold discovery
+ * cache after `omp update` bumps the cache namespace (#10048), or a startup
+ * cache replay the pending online refresh may still extend. Such selectors
+ * are re-checked once background discovery settles. Logging is the caller's
+ * responsibility so a post-discovery re-run does not double-log persistent
+ * warnings.
  */
 export function validateRetryFallbackChains(
 	settings: Settings,
@@ -197,7 +259,7 @@ export function validateRetryFallbackChains(
 	warn: (message: string) => void,
 	options: { isDiscoveryPending?: (provider: string) => boolean } = {},
 ): void {
-	const configuredChains = settings.get("retry.fallbackChains");
+	const configuredChains = cfgRetryFallbackChains.get(settings);
 	if (configuredChains === undefined) return;
 	const report = warn;
 	const isDiscoveryPending = options.isDiscoveryPending ?? (() => false);
@@ -288,7 +350,19 @@ export function validateRetryFallbackChains(
 
 /** Returns the configured fallback-primary restoration policy. */
 export function getRetryFallbackRevertPolicy(settings: Settings): RetryFallbackRevertPolicy {
-	return settings.get("retry.fallbackRevertPolicy") === "never" ? "never" : "cooldown-expiry";
+	return cfgRetryFallbackRevertPolicy.get(settings) === "never" ? "never" : "cooldown-expiry";
+}
+
+/** Whether `retry.fallbackOn` lets a failure walk the fallback chain. */
+export function retryFallbackAdmits(fallbackOn: RetrySettings["fallbackOn"], usageLimit: boolean): boolean {
+	switch (fallbackOn) {
+		case "any":
+			return true;
+		case "usage-limit":
+			return usageLimit;
+		case "except-usage-limit":
+			return !usageLimit;
+	}
 }
 
 /** Resolves the primary selector represented by a fallback-chain key. */
@@ -303,7 +377,7 @@ function getRetryFallbackPrimarySelector(
 }
 
 /** How a chain key's primary selector matches the current selector. */
-type SelectorMatchKind = "exact" | "normalized" | "base" | "none";
+type SelectorMatchKind = "exact" | "normalized" | "base" | "effort" | "none";
 
 /**
  * Classify how a chain key's primary selector matches the current selector.
@@ -316,8 +390,11 @@ type SelectorMatchKind = "exact" | "normalized" | "base" | "none";
  *   model).
  * - `base` — a suffixless key naming the same provider/model, so it applies
  *   to that model at any effort.
- * - `none` — no match. Explicit efforts that remain distinct after model
- *   normalization must never masquerade as exact matches.
+ * - `effort` — same provider/model at an explicit effort that stays distinct
+ *   after model normalization. Model-selector keys treat this as no match;
+ *   role keys accept it as their weakest tier, since a role's chain follows
+ *   its assigned model across runtime effort changes.
+ * - `none` — a different model, or no primary.
  */
 function selectorMatchKind(
 	primary: RetryFallbackSelector | undefined,
@@ -337,15 +414,16 @@ function selectorMatchKind(
 	}
 	if (!matchedCurrent) return "none";
 	if (level === matchedCurrent.thinkingLevel) return "exact";
-	if (level === undefined) return "base";
+	// `auto` fixes no effort, so as a key it applies at any effort, like a suffixless key.
+	if (level === undefined || level === AUTO_THINKING) return "base";
 	if (
 		currentModel &&
 		resolveThinkingLevelForModel(currentModel, level) ===
-			resolveThinkingLevelForModel(currentModel, matchedCurrent.thinkingLevel)
+			resolveThinkingLevelForModel(currentModel, concreteThinkingLevel(matchedCurrent.thinkingLevel))
 	) {
 		return "normalized";
 	}
-	return "none";
+	return "effort";
 }
 
 /**
@@ -418,24 +496,34 @@ export function resolveRetryFallbackChainKey(
 	// 3. The hinted role, then role keys matched by their assigned model.
 	// A shared assignment (default and vision both the same model) must not
 	// let yaml insertion order steal the live role's chain. Prefer the hint,
-	// then `default` when it also matches.
+	// then `default` when it also matches. A role assigned the live model at a
+	// different explicit effort (spawn `effort`, `/thinking`) still owns it,
+	// but only after every role whose effort matches. Model-kind roles (`web`,
+	// `judge`, ...) never match by model: a shared model assignment does not
+	// mean the chat session owns the kind role (kind chains may hold chat
+	// models too), so it must not adopt that chain. They apply only through the
+	// explicit role hint above.
 	if (roleHint && Array.isArray(context.chains[roleHint])) return roleHint;
 	let matchedRole: string | undefined;
+	let effortRole: string | undefined;
 	for (const key in context.chains) {
-		if (isRetryFallbackModelKey(key)) continue;
-		if (
-			selectorMatchKind(
-				getRetryFallbackPrimarySelector(context, key),
-				parsedCurrent,
-				parsedPlainCurrent,
-				currentModel,
-			) !== "none"
-		) {
-			if (key === "default") return "default";
-			matchedRole ??= key;
+		if (isRetryFallbackModelKey(key) || isKindRole(key)) continue;
+		const kind = selectorMatchKind(
+			getRetryFallbackPrimarySelector(context, key),
+			parsedCurrent,
+			parsedPlainCurrent,
+			currentModel,
+		);
+		if (kind === "none") continue;
+		if (kind === "effort") {
+			if (key === "default" || effortRole === undefined) effortRole = key;
+			continue;
 		}
+		if (key === "default") return "default";
+		matchedRole ??= key;
 	}
 	if (matchedRole) return matchedRole;
+	if (effortRole) return effortRole;
 
 	// 4. The default chain. Use it even when `default` has an explicit role
 	//    primary that is a *different* model than the live one (#12421): a

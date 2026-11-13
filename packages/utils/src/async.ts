@@ -30,6 +30,19 @@ export async function sleepLong(delayMs: number, signal?: AbortSignal): Promise<
 }
 
 /**
+ * Wait for a wall-clock deadline, including time spent suspended. Some platforms
+ * exclude suspend from relative timers, so recheck at least once per second.
+ */
+export async function sleepUntil(deadlineMs: number, signal?: AbortSignal): Promise<void> {
+	while (true) {
+		signal?.throwIfAborted();
+		const remaining = deadlineMs - Date.now();
+		if (!(remaining > 0)) return;
+		await scheduler.wait(Math.min(remaining, 1_000), { signal });
+	}
+}
+
+/**
  * Wrap a promise with a timeout and optional abort signal.
  * Rejects with the given error or a new error containing the given message if
  * the timeout fires first. Cleans up all listeners on settlement.
@@ -91,13 +104,22 @@ export function withTimeout<T>(
  * timer (`delayMs`, or a microtask at 0), and every push before it fires joins
  * the same batch and shares the same promise. Used to keep hot paths off
  * synchronous storage (prompt history, model perf).
+ *
+ * `unref` lets a long batch window not hold the process open; the owner must
+ * then {@link flush} on shutdown or the pending batch is lost.
  */
 export class AsyncDrain<T> {
 	#queue?: T[];
 	#promise = Promise.resolve();
 	#flush?: () => void;
+	readonly #unref: boolean;
 
-	constructor(readonly delayMs: number = 0) {}
+	constructor(
+		readonly delayMs: number = 0,
+		options?: { unref?: boolean },
+	) {
+		this.#unref = options?.unref === true;
+	}
 
 	/** Queue `value`; `hnd` receives the whole batch when the window closes. */
 	push(value: T, hnd: (values: T[]) => Promise<void> | void): Promise<void> {
@@ -119,6 +141,7 @@ export class AsyncDrain<T> {
 			};
 			if (this.delayMs > 0) {
 				const timer = setTimeout(exec, this.delayMs);
+				if (this.#unref) timer.unref();
 				this.#flush = () => {
 					clearTimeout(timer);
 					exec();

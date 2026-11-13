@@ -4,7 +4,8 @@
  */
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { type Agent, AgentBusyError, type AgentMessage, EventLoopKeepalive, ThinkingLevel } from "@tau/tau-agent-core";
+import { type Agent, AgentBusyError, type AgentMessage, ThinkingLevel } from "@tau/tau-agent-core";
+import { EventLoopKeepalive } from "@tau/tau-agent-core/utils/yield";
 import type { CompactionOutcome } from "@tau/tau-agent-core/compaction";
 import type { AssistantMessage, ImageContent, Model, Usage, UsageReport } from "@tau/tau-ai";
 import { modelsAreEqual } from "@tau/tau-catalog/models";

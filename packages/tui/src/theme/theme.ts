@@ -25,10 +25,13 @@ export {
 	createHighlightStream,
 	getEditorTheme,
 	getMarkdownTheme,
+	getMarkdownThemeWithLinkTargets,
 	getSelectListTheme,
 	getSettingsListTheme,
 	getSymbolTheme,
 	highlightCode,
+	isHighlightLanguage,
+	setMarkdownColorful,
 	setMarkdownMermaidRendering,
 	warmHighlighter,
 } from "./tui-adapters";

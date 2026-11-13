@@ -19,7 +19,7 @@ import type {
 import type { CompactionResult } from "@tau/tau-agent-core/compaction";
 import type { FetchImpl, Model, Static, TSchema } from "@tau/tau-ai";
 import type { Component } from "@tau/tau-tui";
-import type { RenderResultOptions } from "@tau/tau-tui/tools/renderer";
+import type { NativeToolView, RenderResultOptions } from "@tau/tau-tui/tools/renderer";
 import type { logger as PiLogger } from "@tau/tau-utils";
 import type { Rule } from "../../capability/rule";
 import type { ModelRegistry } from "../../config/model-registry";
@@ -40,7 +40,7 @@ export type CustomToolUIContext = HookUIContext;
 export type { ExecOptions, ExecResult } from "../../exec/exec";
 /** Re-export for custom tools to use in execute signature */
 export type { AgentToolResult, AgentToolUpdateCallback, ToolApproval, ToolApprovalDecision, ToolTier };
-/** Display state handed to `renderCall`/`renderResult`; owned by tau-tui. */
+/** Display state handed to `renderCall`/`renderResult`; owned by pi-tui. */
 export type { RenderResultOptions };
 
 /** Pending action entry consumed by the hidden resolve tool */
@@ -73,9 +73,9 @@ export interface CustomToolAPI {
 	typebox: typeof TypeBox;
 	/** Injected arktype module for arktype-authored custom tools. */
 	arktype: typeof ArkType;
-	/** Injected Zod-compatible tautype builder for custom tools. */
+	/** Injected Zod-compatible omptype builder for custom tools. */
 	zod: typeof zod;
-	/** Injected tau-coding-agent exports */
+	/** Injected pi-coding-agent exports */
 	pi: typeof PiCodingAgent;
 	/** Push a preview action that can later be resolved with the hidden resolve tool */
 	pushPendingAction(action: CustomToolPendingAction): void;
@@ -102,7 +102,7 @@ export interface CustomToolContext {
 	settings?: Settings;
 	/** Fetch implementation for outbound HTTP; defaults to global fetch when omitted. */
 	fetch?: FetchImpl;
-	/** Calling session's `local://` root mapping for tools that bridge out of the TAU process. */
+	/** Calling session's `local://` root mapping for tools that bridge out of the OMP process. */
 	localProtocolOptions?: LocalProtocolOptions;
 	/** Whether to auto-approve all destructive tool operations (--auto-approve CLI flag) */
 	autoApprove?: boolean;
@@ -213,12 +213,18 @@ export interface CustomTool<TParams extends TSchema = TSchema, TDetails = any> {
 	mcpServerName?: string;
 	/** Original MCP tool name for discovery/search metadata. */
 	mcpToolName?: string;
+	/** MCP read-only annotation, independent of the approval tier. */
+	mcpReadOnlyHint?: boolean;
 	/** Previous public name when a rename changed minting (e.g. digits kept in
 	 *  MCP names). Approval resolution honors `deny`/`prompt` keyed on it. */
 	legacyName?: string;
 
 	/** Capability tier declaration used by approval gates. Omitted means "exec". */
 	approval?: ToolApproval;
+
+	/** Exact targets an approval mode may remember for this call (`always-ask-cached`), one key per
+	 *  target, derived from the call's args. Omit it and approvals are never remembered per target. */
+	approvalCacheTargets?: (args: unknown) => readonly string[] | undefined;
 
 	/** Lines appended after the standard approval prompt header. */
 	formatApprovalDetails?: (args: unknown) => string | string[] | undefined;
@@ -250,6 +256,16 @@ export interface CustomTool<TParams extends TSchema = TSchema, TDetails = any> {
 		theme: Theme,
 		args?: Static<TParams>,
 	) => Component;
+
+	/** Semantic call view for TSP terminals (the native counterpart of {@link renderCall}). */
+	describeCall?: (args: Static<TParams>, options: RenderResultOptions) => NativeToolView | undefined;
+
+	/** Semantic result view for TSP terminals (the native counterpart of {@link renderResult}). */
+	describeResult?: (
+		result: CustomToolResult<TDetails>,
+		options: RenderResultOptions,
+		args?: Static<TParams>,
+	) => NativeToolView | undefined;
 }
 
 /** Factory function that creates a custom tool or array of tools */

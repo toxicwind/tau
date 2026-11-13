@@ -18,8 +18,12 @@ export * from "./components/layout/row";
 export * from "./components/layout/split-pane";
 export * from "./components/layout/stack";
 export * from "./components/loader";
+export * from "./spinner-clock";
+export * from "./frame-rate";
+export * from "./motion-effects";
 export * from "./components/markdown";
 export * from "./components/menu-selection";
+export * from "./components/sparkline";
 export * from "./components/metric";
 export * from "./components/progress-bar";
 export * from "./components/scroll-view";
@@ -57,6 +61,12 @@ export * from "./latex-block";
 export * from "./latex-to-unicode";
 // SGR mouse report parsing
 export * from "./mouse";
+// Tern Surface Protocol: describe contract, builders, blobs, settling, render state
+export * from "./native/blobs";
+export * from "./native/describe";
+export type * from "./native/node";
+export * from "./native/settle";
+export * from "./native/state";
 // Mermaid diagram support
 // Input buffering for batch splitting
 export * from "./stdin-buffer";

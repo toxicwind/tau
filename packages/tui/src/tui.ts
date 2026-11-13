@@ -259,6 +259,16 @@ export interface Component {
 	 * Optional hook to set whether this component ignores tight layout mode.
 	 */
 	setIgnoreTight?(ignore: boolean): any;
+	/**
+	 * Optional hook to drop memoized render output (rows, parse and wrap state)
+	 * that the next `render()` can rebuild from state the component keeps.
+	 * Unlike {@link invalidate}, it must not rebuild anything eagerly: no
+	 * renderer or extension callbacks, no image conversions, and no child
+	 * replacement or disposal. The next render must return the same rows it
+	 * would have returned without the release. Components without it are
+	 * simply not released. (Restored from upstream.)
+	 */
+	releaseRenderCaches?(): void;
 
 	/**
 	 * Optional teardown. Called when the component is permanently removed from

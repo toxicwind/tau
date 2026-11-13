@@ -298,6 +298,12 @@ export function writeThroughActiveTerminal(data: string): boolean {
 	return true;
 }
 
+/** Write a raw sequence to the active terminal if one is registered; otherwise no-op. */
+export function writeTerminalSequence(data: string): void {
+	if (writeThroughActiveTerminal(data)) return;
+	if (typeof process.stdout.write === "function") process.stdout.write(data);
+}
+
 const stdoutErrorHandlers = new Set<(err: Error) => void>();
 let stdoutErrorListenerInstalled = false;
 

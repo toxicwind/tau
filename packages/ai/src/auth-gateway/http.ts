@@ -6,8 +6,9 @@
  */
 import { timingSafeEqual as nodeTimingSafeEqual } from "node:crypto";
 import * as os from "node:os";
+import type { Effort } from "@tau/tau-catalog/effort";
 import { getInstallId } from "@tau/tau-utils";
-import type { Api, Model } from "../types";
+import type { Api, Model, ServiceTier } from "../types";
 import type { ClientUsageIdentity } from "../usage";
 
 const JSON_HEADERS = {
@@ -19,6 +20,32 @@ export function json(status: number, body: unknown, headers?: Record<string, str
 	return new Response(JSON.stringify(body) ?? "null", {
 		status,
 		headers: headers ? { ...JSON_HEADERS, ...headers } : JSON_HEADERS,
+	});
+}
+
+const NO_STORE_JSON_HEADERS = {
+	"Content-Type": "application/json; charset=utf-8",
+	"Cache-Control": "no-store",
+} as const;
+
+/** Error body of the media routes (embeddings, images, rerank, speech, transcriptions, video): `{ error: { code, type, message } }`. */
+export function codedErrorResponse(status: number, type: string, message: string): Response {
+	return new Response(JSON.stringify({ error: { code: status, type, message } }), {
+		status,
+		headers: NO_STORE_JSON_HEADERS,
+	});
+}
+
+/** Error body of the pi-native and SystemOne routes: `{ error: { type, message } }`. */
+export function noStoreErrorResponse(status: number, type: string, message: string): Response {
+	return new Response(JSON.stringify({ error: { type, message } }), { status, headers: NO_STORE_JSON_HEADERS });
+}
+
+/** OpenAI wire error body: `{ error: { message, type } }`. */
+export function openAIErrorResponse(status: number, type: string, message: string): Response {
+	return new Response(JSON.stringify({ error: { message, type } }), {
+		status,
+		headers: { "Content-Type": "application/json" },
 	});
 }
 
@@ -51,10 +78,44 @@ export function gatewayResponseHeaders(
 	return headers;
 }
 
-export function resolvePeer(req: Request): string {
-	const fwd = req.headers.get("x-forwarded-for");
-	if (fwd) return fwd.split(",")[0].trim();
-	return req.headers.get("x-real-ip") ?? "unknown";
+/**
+ * Decode each run of percent-escapes on its own, so one malformed escape
+ * elsewhere in the URL cannot hide an encoded token. A run that is not valid
+ * UTF-8 still has its ASCII escapes decoded.
+ */
+function decodeUrlLeniently(location: string): string {
+	return location.replace(/(?:%[0-9A-Fa-f]{2})+/g, run => {
+		try {
+			return decodeURIComponent(run);
+		} catch {
+			return run.replace(/%([0-7][0-9A-Fa-f])/g, (_, hex: string) => String.fromCharCode(Number.parseInt(hex, 16)));
+		}
+	});
+}
+
+/** Keep configured gateway credentials out of URL and forwarded/logged request fields. */
+export function hasMisplacedBearer(req: Request, url: URL, tokens: ReadonlySet<string>): boolean {
+	if (tokens.size === 0) return false;
+	const location = url.pathname + url.search;
+	const decodedLocation = decodeUrlLeniently(location);
+	const headers = req.headers;
+	for (const token of tokens) {
+		if (location.includes(token) || decodedLocation.includes(token)) return true;
+		for (const [name, value] of headers) {
+			if (
+				(PASSTHROUGH_HEADER_NAMES[name] ||
+					name.startsWith("x-stainless-") ||
+					name.startsWith("x-omp-") ||
+					name === "x-forwarded-for" ||
+					name === "x-real-ip" ||
+					name === "forwarded") &&
+				value.includes(token)
+			) {
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 /**
@@ -79,13 +140,19 @@ export function timingSafeEqual(a: Uint8Array, b: Uint8Array): boolean {
 
 const TOKEN_ENCODER = new TextEncoder();
 
+/** The token of an `Authorization: Bearer <token>` header, trimmed; `undefined` without one. */
+export function readBearerToken(req: Request): string | undefined {
+	const header = req.headers.get("authorization");
+	if (!header) return undefined;
+	const match = header.match(/^Bearer\s+(.+)$/i);
+	return match ? match[1].trim() : undefined;
+}
+
 export function isAuthorized(req: Request, tokens: ReadonlySet<string>): boolean {
 	if (tokens.size === 0) return true;
-	const header = req.headers.get("authorization");
-	if (!header) return false;
-	const match = header.match(/^Bearer\s+(.+)$/i);
-	if (!match) return false;
-	const presented = TOKEN_ENCODER.encode(match[1].trim());
+	const token = readBearerToken(req);
+	if (token === undefined) return false;
+	const presented = TOKEN_ENCODER.encode(token);
 	// Iterate every allowed token regardless of early hits so the result
 	// timing reflects the full set, not the position of the match.
 	let ok = false;
@@ -144,8 +211,8 @@ export function captureRequestHeaders(headers: Headers): Record<string, string> 
 /**
  * Resolve the usage-attribution identity for an inbound gateway request.
  *
- * tau-native tau clients send `x-tau-install-id` / `x-tau-hostname` /
- * `x-tau-app` (see `providers/tau-native-client.ts`); any client may set them.
+ * pi-native omp clients send `x-omp-install-id` / `x-omp-hostname` /
+ * `x-omp-app` (see `providers/pi-native-client.ts`); any client may set them.
  * Requests without an install id fall back to the gateway host's identity
  * under the `gateway` app label, so unlabeled foreign-SDK traffic (llm-git,
  * openai/anthropic SDKs) still lands in per-client burn tracking instead of
@@ -158,12 +225,12 @@ export function resolveClientIdentity(headers: Headers): ClientUsageIdentity {
 		const value = headers.get(name)?.trim();
 		return value ? value : undefined;
 	};
-	const installId = read("x-tau-install-id");
-	const app = read("x-tau-app");
+	const installId = read("x-omp-install-id");
+	const app = read("x-omp-app");
 	if (!installId) {
 		return { installId: getInstallId(), hostname: os.hostname(), app: app ?? "gateway" };
 	}
-	return { installId, hostname: read("x-tau-hostname"), app: app ?? "gateway" };
+	return { installId, hostname: read("x-omp-hostname"), app: app ?? "gateway" };
 }
 
 /**
@@ -217,6 +284,23 @@ export function resolvePromptCacheKey(body: unknown, headers?: Headers): string 
 		if (v && v.length > 0) return v;
 	}
 	return undefined;
+}
+
+/** OpenAI-wire `reasoning_effort` / `reasoning.effort` values the gateway forwards. */
+export function isOpenAIReasoningEffort(value: unknown): value is Effort {
+	return (
+		value === "minimal" ||
+		value === "low" ||
+		value === "medium" ||
+		value === "high" ||
+		value === "xhigh" ||
+		value === "max"
+	);
+}
+
+/** OpenAI-wire `service_tier` values the gateway forwards. */
+export function isOpenAIServiceTier(value: unknown): value is ServiceTier {
+	return value === "auto" || value === "default" || value === "flex" || value === "scale" || value === "priority";
 }
 
 const CORS_HEADERS: Record<string, string> = {

@@ -21,7 +21,7 @@ import { type as arkType } from "@tau/tautype";
 import type { AgentTool, AgentToolContext, AgentToolResult, AgentToolUpdateCallback } from "@tau/tau-agent-core";
 import type { ToolExample } from "@tau/tau-ai";
 import { Ellipsis, replaceTabs, TERMINAL, truncateToWidth, visibleWidth } from "@tau/tau-tui";
-import { prompt, untilAborted } from "@tau/tau-utils";
+import { isRecord, prompt, untilAborted } from "@tau/tau-utils";
 
 import type { ExtensionUISelectItem } from "../extensibility/extensions";
 import { theme } from "@tau/tau-tui/theme";
@@ -85,6 +85,13 @@ export function recoverAskQuestions(toolCallArguments: unknown): AskToolInput["q
 	const parsed = askSchema(toolCallArguments);
 	if (parsed instanceof arkType.errors) return undefined;
 	return parsed.questions;
+}
+
+/** The `html` of a persisted or streamed `ask` call, for `/tree` re-answer and status lines. (Restored from upstream.) */
+export function recoverAskHtml(toolCallArguments: unknown): string | undefined {
+	if (!isRecord(toolCallArguments)) return undefined;
+	const html = toolCallArguments.html;
+	return typeof html === "string" ? html : undefined;
 }
 
 interface AskOption {

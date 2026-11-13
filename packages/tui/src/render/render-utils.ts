@@ -8,13 +8,14 @@
 import * as os from "node:os";
 import * as path from "node:path";
 import { ThinkingLevel } from "@tau/tau-agent-core";
-import type { Ellipsis } from "@tau/tau-natives";
+import { Ellipsis } from "@tau/tau-natives";
+import { expandWindowsLongPath, getWindowsShortPath } from "@tau/tau-natives/path";
 import { pluralize, sanitizeText } from "@tau/tau-utils";
-import { formatKeyHints, type KeyId } from "../app-keybindings";
+import { formatKeyHint, type KeyId } from "../app-keybindings";
 import { getKeybindings } from "../keybindings";
-import type { Theme } from "../theme/theme";
+import type { Theme, ThemeColor } from "../theme/theme";
 import type { Component } from "../tui";
-import { replaceTabs, sliceByColumn, truncateToWidth, visibleWidth } from "../utils";
+import { replaceTabs, sliceByColumn, truncateToWidth, visibleWidth, wrapTextWithAnsi } from "../utils";
 import { Hasher } from "./utils";
 
 export { Ellipsis } from "@tau/tau-natives";
@@ -102,6 +103,8 @@ export const PREVIEW_LIMITS = {
 	EXPANDED_LINES: 12,
 	/** Items (files, results) shown in collapsed view */
 	COLLAPSED_ITEMS: 8,
+	/** Definition, type-definition and implementation locations shown in collapsed view */
+	LOCATIONS_COLLAPSED: 2,
 	/** Output preview lines in collapsed view */
 	OUTPUT_COLLAPSED: 3,
 	/** Output preview lines in expanded view */
@@ -201,10 +204,10 @@ const EXPAND_ACTION = "app.tools.expand";
 /** Fallback key when no binding is resolvable (e.g. outside an interactive session). */
 const DEFAULT_EXPAND_KEY: KeyId = "ctrl+o";
 
-/** Human-readable key currently bound to tool-output expansion, e.g. `Ctrl+O`. */
+/** Human-readable primary key bound to tool-output expansion, e.g. `Ctrl+O`. */
 export function expandKeyHint(): string {
-	const keys = getKeybindings().getKeys(EXPAND_ACTION);
-	return formatKeyHints(keys.length > 0 ? keys : [DEFAULT_EXPAND_KEY]);
+	const [key = DEFAULT_EXPAND_KEY] = getKeybindings().getKeys(EXPAND_ACTION);
+	return formatKeyHint(key);
 }
 
 // =============================================================================
@@ -232,15 +235,29 @@ export function getPreviewLines(text: string, maxLines: number, maxLineLen: numb
 	return lines.slice(0, maxLines).map(l => truncateToWidth(l.trim(), maxLineLen, ellipsis));
 }
 
+/** Collapse a possibly multi-line string into one line; whitespace runs (tabs included) become one space. */
+export function flattenLine(text: string): string {
+	return text.replace(/\s+/g, " ").trim();
+}
+
 /**
  * Collapse a possibly multi-line string into a single line, then truncate it to
  * `maxWidth` display cells. {@link truncateToWidth} alone caps width but
  * newlines are zero-width, so multi-line content (markdown briefs, tool args,
  * provider errors) would otherwise spill a single status row across several
- * visual lines. Whitespace runs collapse to one space, so tabs are handled too.
+ * visual lines.
  */
 export function previewLine(text: string, maxWidth: number, ellipsis?: Ellipsis): string {
-	return truncateToWidth(text.replace(/\s+/g, " ").trim(), maxWidth, ellipsis);
+	return truncateToWidth(flattenLine(text), maxWidth, ellipsis);
+}
+
+/**
+ * Clip a result row to `maxWidth` only while collapsed. Expanded rows stay whole
+ * so the frame wraps them: the expand key ({@link formatExpandHint}) must reveal
+ * text, not re-clip it.
+ */
+export function clipCollapsed(text: string, maxWidth: number, expanded: boolean | undefined): string {
+	return expanded ? text : truncateToWidth(text, maxWidth);
 }
 
 // =============================================================================
@@ -276,9 +293,8 @@ export { formatAge, formatBytes, formatCount, formatDuration, formatNumber, plur
 export function formatStatusIcon(status: ToolUIStatus, theme: Theme, spinnerFrame?: number): string {
 	switch (status) {
 		case "success":
-			return theme.styledSymbol("status.success", "success");
 		case "done":
-			return theme.styledSymbol("status.done", "success");
+			return theme.styledSymbol("status.success", "success");
 		case "error":
 			return theme.styledSymbol("status.error", "error");
 		case "warning":
@@ -372,14 +388,14 @@ export function capPreviewLines(
 	return [`${options.prefix ?? ""}${theme.fg("dim", marker)}`, ...visible];
 }
 
-/** Join metadata with the theme separator and muted styling. */
-export function formatMeta(meta: string[], theme: Theme): string {
-	return meta.length > 0 ? ` ${theme.fg("muted", meta.join(theme.sep.dot))}` : "";
-}
-
 function sanitizeErrorText(message: string | undefined): string {
 	const clean = (message ?? "").replace(/^Error:\s*/, "").trim();
 	return clean ? replaceTabs(truncateToWidth(clean, TRUNCATE_LENGTHS.LINE)) : "Unknown error";
+}
+
+/** Join metadata with the theme separator and muted styling. (Fork addition retained across the upstream wholesale swap.) */
+export function formatMeta(meta: string[], theme: Theme): string {
+	return meta.length > 0 ? ` ${theme.fg("muted", meta.join(theme.sep.dot))}` : "";
 }
 
 /**
@@ -418,6 +434,34 @@ export function formatEmptyMessage(message: string, theme: Theme): string {
 	return `${theme.styledSymbol("status.warning", "warning")} ${theme.fg("muted", message)}`;
 }
 
+/**
+ * Color of a file's name, or a whole URL, in tool bodies: it keeps paths apart
+ * from the tool titles above them (bronze in titanium).
+ */
+export const FILE_NAME_COLOR = "customMessageLabel" satisfies ThemeColor;
+
+/**
+ * Where a display path's final segment (file or folder name) starts, past its
+ * last `/` or `\` separator; a trailing-slash directory keeps its slash on the
+ * name. Shared by the terminal ({@link formatStyledPath}) and Tern file rows.
+ */
+export function pathNameStart(filePath: string): number {
+	let end = filePath.length;
+	while (end > 0 && (filePath[end - 1] === "/" || filePath[end - 1] === "\\")) end--;
+	return end === 0 ? 0 : Math.max(filePath.lastIndexOf("/", end - 1), filePath.lastIndexOf("\\", end - 1)) + 1;
+}
+
+/**
+ * A file path in a tool body: the directory (with its trailing separator) dim,
+ * the final segment in {@link FILE_NAME_COLOR}. Tool headers keep paths in
+ * their plain subject color instead.
+ */
+export function formatStyledPath(filePath: string, theme: Theme): string {
+	const cut = pathNameStart(filePath);
+	const name = theme.fg(FILE_NAME_COLOR, filePath.slice(cut));
+	return cut > 0 ? `${theme.fg("dim", filePath.slice(0, cut))}${name}` : name;
+}
+
 // =============================================================================
 // Code Frame Formatting
 // =============================================================================
@@ -442,7 +486,10 @@ export function formatCodeFrameLine(
 // Tool UI Helpers
 // =============================================================================
 
-/** Status states supported by shared tool renderer icons. */
+/**
+ * Status states supported by shared tool renderer icons. `done` is a deprecated
+ * alias of `success`, kept for extension renderers.
+ */
 export type ToolUIStatus = "success" | "done" | "error" | "warning" | "info" | "pending" | "running" | "aborted";
 /** Semantic foreground colors used by tool renderer labels. */
 export type ToolUIColor = "success" | "error" | "warning" | "accent" | "muted";
@@ -583,7 +630,7 @@ export function formatDiagnostics(
 		const fileBranch = isLastFileNode ? theme.tree.last : theme.tree.branch;
 
 		const fileIcon = theme.fg("muted", getLangIcon(filePath));
-		output += `\n ${theme.fg("dim", fileBranch)} ${fileIcon} ${theme.fg("accent", filePath)}`;
+		output += `\n ${theme.fg("dim", fileBranch)} ${fileIcon} ${formatStyledPath(filePath, theme)}`;
 
 		for (let di = 0; di < diagnostics.length && diagsShown < maxDiags; di++) {
 			const d = diagnostics[di];
@@ -607,7 +654,7 @@ export function formatDiagnostics(
 					: d.severity === "warning"
 						? theme.styledSymbol("status.warning", "warning")
 						: theme.styledSymbol("status.info", "muted");
-			const location = theme.fg("dim", `:${d.line}:${d.col}`);
+			const location = theme.fg("muted", `:${d.line}:${d.col}`);
 			const codeTag = d.code ? theme.fg("dim", ` (${d.code})`) : "";
 			const msgColor = d.severity === "error" ? "error" : d.severity === "warning" ? "warning" : "toolOutput";
 
@@ -876,22 +923,51 @@ function defaultHomeDir(): string {
 	return cachedHomeDir;
 }
 
-const homePatternCache = new Map<string, RegExp>();
-function homePatternFor(homeDir: string, windowsStyle: boolean): RegExp {
+interface HomePattern {
+	leading: RegExp;
+	embedded: RegExp;
+}
+
+const homePatternCache = new Map<string, HomePattern>();
+function homePatternFor(homeDir: string, windowsStyle: boolean): HomePattern {
 	const key = `${windowsStyle ? 1 : 0} ${homeDir}`;
 	let pattern = homePatternCache.get(key);
 	if (pattern === undefined) {
-		const escapedHome = windowsStyle
-			? homeDir
-					.replaceAll("/", "\\")
-					.split("\\")
-					.map(part => RegExp.escape(part))
-					.join("[\\\\/]")
-			: RegExp.escape(homeDir);
-		pattern = new RegExp(
-			`[a-zA-Z][a-zA-Z0-9+.-]*://[^\\s"'<>]+|(^|[\\s"'\\x60([{=,:])(${escapedHome})(?=$|[\\\\/\\s"'\\x60)\\]},;:])`,
-			windowsStyle ? "gi" : "g",
-		);
+		// A trailing separator (`C:\Users\me\`, `/home/me/`) must still match `<home>/child`;
+		// roots such as `/` and `C:\` keep theirs.
+		const home = homeDir.replace(/(?<=[^\\/:])[\\/]+$/, "");
+		let escapedHome = RegExp.escape(home);
+		if (windowsStyle) {
+			// Query only home, once per cached pattern: descendants need not exist,
+			// and rendering must neither resolve junctions nor probe output paths.
+			const parts = home.replaceAll("/", "\\").split("\\");
+			const longHome = expandWindowsLongPath(home);
+			const aliases = [longHome, getWindowsShortPath(longHome)]
+				.map(alias => alias.replaceAll("/", "\\").split("\\"))
+				.filter(alias => alias.length === parts.length);
+			escapedHome = parts
+				.map((part, index) => {
+					// Each component may independently use its long or short spelling.
+					const names = [...new Set([part, ...aliases.map(alias => alias[index]!)])].map(name =>
+						RegExp.escape(name),
+					);
+					return names.length === 1 ? names[0]! : `(?:${names.join("|")})`;
+				})
+				.join("[\\\\/]");
+		}
+		// `*` and `_` are also identifier and glob characters (`/home/me_old`, `src/**/home/me/**`), so they
+		// bound the home directory only as Markdown emphasis: opened at start or after whitespace, and
+		// closed before end, whitespace, or punctuation.
+		const end = `[\\\\/\\s"'\\x60)\\]},;:<>&|]`;
+		pattern = {
+			leading: new RegExp(`^${escapedHome}(?=$|[\\\\/])`, windowsStyle ? "i" : ""),
+			embedded: new RegExp(
+				`[a-zA-Z][a-zA-Z0-9+.-]*://[^\\s"'<>]+` +
+					`|(^|[\\s"'\\x60([{=,:<>&|])(${escapedHome})(?=$|${end})` +
+					`|((?:^|\\s)[*_]{1,3})(${escapedHome})(?=$|${end}|[*_]{1,3}(?=$|[\\s.,;:!?)\\]}"'\\x60]))`,
+				windowsStyle ? "gi" : "g",
+			),
+		};
 		if (homePatternCache.size >= 16) homePatternCache.clear();
 		homePatternCache.set(key, pattern);
 	}
@@ -904,15 +980,12 @@ export function shortenPath(filePath: unknown, homeDir?: string): string {
 		return "";
 	}
 	const home = homeDir ?? defaultHomeDir();
+	if (!home) return filePath;
 	const windowsStyle = /^[A-Za-z]:[\\/]/.test(home) || home.startsWith("\\\\");
-	const hasHomePrefix = windowsStyle
-		? filePath.toLowerCase().startsWith(home.toLowerCase())
-		: filePath.startsWith(home);
-	if (home && hasHomePrefix) {
-		const suffix = filePath.slice(home.length);
-		if (suffix === "" || suffix.startsWith(path.posix.sep) || suffix.startsWith(path.win32.sep)) {
-			return `~${suffix.replaceAll(path.win32.sep, path.posix.sep)}`;
-		}
+	const match = homePatternFor(home, windowsStyle).leading.exec(filePath);
+	if (match) {
+		const suffix = filePath.slice(match[0].length);
+		return `~${suffix.replaceAll(path.win32.sep, path.posix.sep)}`;
 	}
 	return filePath;
 }
@@ -924,9 +997,14 @@ export function shortenEmbeddedPaths(text: string, homeDir?: string, preserveSep
 	const windowsStyle = /^[A-Za-z]:[\\/]/.test(resolvedHome) || resolvedHome.startsWith("\\\\");
 	const homePattern = homePatternFor(resolvedHome, windowsStyle);
 	const textWithShortenedHome = text.replace(
-		homePattern,
-		(match, boundary: string | undefined, candidate: string | undefined) =>
-			candidate === undefined ? match : `${boundary}~`,
+		homePattern.embedded,
+		(
+			match,
+			boundary: string | undefined,
+			candidate: string | undefined,
+			emphasis: string | undefined,
+			emphasized: string | undefined,
+		) => (candidate !== undefined ? `${boundary}~` : emphasized !== undefined ? `${emphasis}~` : match),
 	);
 	if (preserveSeparators) return textWithShortenedHome;
 	return textWithShortenedHome
@@ -943,6 +1021,43 @@ export function shortenEmbeddedPaths(text: string, homeDir?: string, preserveSep
 			return `${leading}${normalized}${trailing}`;
 		})
 		.join(" ");
+}
+
+/**
+ * Shorten filesystem and command arguments without rewriting literal search patterns. A producer that
+ * names no argument key gets the general embedded-path shortening.
+ */
+export function shortenToolArgumentPaths(text: string, key: string | undefined, homeDir?: string): string {
+	if (key === "url") {
+		try {
+			const url = new URL(text);
+			if (url.protocol === "file:") {
+				let decodedPath = url.pathname;
+				try {
+					decodedPath = decodeURIComponent(decodedPath);
+				} catch {
+					/* Retain malformed percent escapes as literal path bytes. */
+				}
+				const filePath = url.hostname
+					? `//${url.hostname}${decodedPath}`
+					: /^[A-Za-z]:$/.test(decodedPath.slice(1, 3))
+						? decodedPath.slice(1)
+						: decodedPath;
+				return shortenEmbeddedPaths(filePath, homeDir);
+			}
+		} catch {
+			// Preserve malformed and non-file URL arguments verbatim.
+		}
+		return text;
+	}
+	return key === undefined ||
+		key === "path" ||
+		key === "file_path" ||
+		key === "command" ||
+		key === "task" ||
+		key === "prompt"
+		? shortenEmbeddedPaths(text, homeDir)
+		: text;
 }
 
 /** Sanitize warning text before showing it in TUI, including embedded home paths. */
@@ -973,8 +1088,12 @@ export function formatToolWorkingDirectory(workdir: string | undefined, projectD
 		return undefined;
 	}
 	const relativePath = path.relative(resolvedProjectDir, resolvedWorkdir);
+	// On Windows, `path.relative` across drives returns the absolute target, which is not inside the project.
 	const isWithinProject =
-		relativePath.length > 0 && !relativePath.startsWith("..") && !relativePath.startsWith(`..${path.sep}`);
+		relativePath.length > 0 &&
+		!path.isAbsolute(relativePath) &&
+		!relativePath.startsWith("..") &&
+		!relativePath.startsWith(`..${path.sep}`);
 	const displayWorkdir = isWithinProject ? relativePath : shortenPath(resolvedWorkdir);
 	return replaceTabs(displayWorkdir);
 }
@@ -1055,7 +1174,19 @@ export function createCachedComponent(
 		invalidate() {
 			cached = undefined;
 		},
+		releaseRenderCaches() {
+			cached = undefined;
+		},
 	};
+}
+
+/**
+ * Fit a status header plus body rows to `width` for search-style results. The
+ * header soft-wraps so its trailing summary meta (counts, `truncated`) stays
+ * visible behind a long pattern; body rows keep single-row truncation.
+ */
+export function fitHeaderedRows(header: string, rows: readonly string[], width: number): string[] {
+	return [...wrapTextWithAnsi(header, width), ...rows.map(row => truncateToWidth(row, width, Ellipsis.Omit))];
 }
 
 /**
@@ -1066,7 +1197,7 @@ export function createCachedComponent(
  * one string value-compare (engines short-circuit on length) and a miss never
  * allocates a key. Comparing the {@link Theme} by reference is sound because
  * theme switches replace the instance wholesale (`setTheme`/`previewTheme`/
- * `setSymbolPreset` in tau-tui theme/theme.ts) — themes are never mutated in
+ * `setSymbolPreset` in pi-tui theme/theme.ts) — themes are never mutated in
  * place.
  */
 export interface RenderedStringCache {
@@ -1085,6 +1216,14 @@ export function createRenderedStringCache(): RenderedStringCache {
 /** Drop the memo so the next lookup re-renders (e.g. the render function identity changed). */
 export function invalidateRenderedStringCache(cache: RenderedStringCache): void {
 	cache.theme = null;
+}
+
+export function releaseRenderedStringCache(cache: RenderedStringCache): void {
+	cache.theme = null;
+	cache.expanded = false;
+	cache.salt = "";
+	cache.content = "";
+	cache.value = "";
 }
 
 /** Reuse a rendered string while its theme, expansion, content, and salt match. */

@@ -15,6 +15,8 @@ export const COMPUTER_WORKER_ARG = "__tau_worker_computer";
 export const DAEMON_BROKER_WORKER_ARG = "__tau_worker_daemon_broker";
 /** LSP-multiplexer selector shared by the CLI dispatcher and worker launcher. */
 export const LSP_MUX_WORKER_ARG = "__tau_worker_lsp_mux";
+export const MNEMOPI_EMBED_SERVER_WORKER_ARG = "__tau_worker_mnemopi_embed_server";
+export const SUBAGENT_WORKER_ARG = "__tau_worker_subagent";
 /** Activity-worker selector shared by the CLI dispatcher and worker launcher. */
 export const STATS_ACTIVITY_WORKER_ARG = "__tau_worker_stats_activity";
 /** Terminal-output selector shared by the CLI dispatcher and worker launcher. */

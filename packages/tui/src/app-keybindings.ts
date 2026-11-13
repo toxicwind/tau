@@ -766,4 +766,5 @@ export function formatKeyHints(keys: KeyId | KeyId[]): string {
 }
 
 export type { Keybinding, KeybindingsConfig, KeyId };
+export type { KeyName } from "./key-hint-format";
 export { migrateKeybindingsConfigFile };

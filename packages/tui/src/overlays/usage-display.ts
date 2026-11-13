@@ -1,4 +1,4 @@
-import type { UsageLimit, UsageReport, UsageResetCredits } from "@tau/tau-ai";
+import type { UsageLimit, UsageReport, UsageResetCreditDetail, UsageResetCredits } from "@tau/tau-ai";
 
 /** Include the usage tier in a limit title unless its label already names it. */
 export function formatLimitTitle(limit: UsageLimit): string {
@@ -49,6 +49,13 @@ export interface UsageResetSummary {
 	redeemableCount: number;
 	soonestExpiry?: string;
 	unavailableReason?: string;
+}
+
+/** Expiry (epoch ms) of a credit that still banks a reset, whether or not it can be spent now. (Restored from upstream.) */
+export function bankedResetCreditExpiryMs(credit: UsageResetCreditDetail): number | undefined {
+	if (!credit.expiresAt || credit.remainingCount === 0 || credit.status === "redeemed") return undefined;
+	const expiryMs = Date.parse(credit.expiresAt);
+	return Number.isFinite(expiryMs) ? expiryMs : undefined;
 }
 
 /**

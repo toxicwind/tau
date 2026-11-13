@@ -603,6 +603,119 @@ export declare class VcsRepo {
   lsFiles(others: boolean, excludeStandard: boolean, signal?: unknown | undefined | null): Promise<Array<string>>
 }
 
+/** Persisted native visualization, restored once rather than reparsed on each frame. */
+export declare class ShellVisualization {
+  constructor(snapshot: string)
+  present(options: ShellVizOptions): string
+}
+
+/** A live trace of a shell run; poll `version()` and take `snapshot()` when it changed. */
+export declare class RunTrace {
+  /** A trace of `script`, the exact command text about to run. */
+  constructor(script: string)
+  /**
+   * Revision of semantic events, assignments and visible output; unchanged
+   * means `snapshot()` is unchanged, even when adjacent output coalesces.
+   */
+  version(): number
+  /**
+   * The `ShellTrace` JSON with byte-offset layout, current node states and
+   * ordered replay `history`. The newest 20,000 records retain at most
+   * 2 MiB visible output and 8 MiB payload; `historyTruncated` explicitly
+   * reports eviction. History timestamps are measured ns since `RunStart`;
+   * output identifies its real producer (`u`, `n`, `command`) when known.
+   * Semantic entries carry their actual `vpid`; `rootVpid` distinguishes
+   * root lifecycle from owned tool children even after journal trimming.
+   * A UTF-8 scalar spanning producers has exact byte `contributors`
+   * instead of an invented primary producer. Decoding ends at capture EOF.
+   * Segmented minimizer submissions share one epoch and final status;
+   * their history carries `segment`, with `logicalEnd`/`logicalStatus`
+   * finalizing the last actual root `RunEnd` after output draining.
+   * Serialization borrows the locked model rather than cloning its history.
+   */
+  snapshot(): string
+  /**
+   * Render directly over the borrowed native state; no snapshot or syntax
+   * roundtrip.
+   */
+  present(options: ShellVizOptions): string
+}
+
+/** One accepted or dialed IPC connection. */
+export declare class IpcConnection {
+  /**
+   * Dial `endpoint`. Rejects with code ENOENT (no endpoint), ECONNREFUSED
+   * (stale socket / no listener), ETIMEDOUT, EACCES (peer owned by another
+   * user, or permission), or the OS errno name.
+   */
+  static connect(endpoint: string, options: IpcConnectOptions): Promise<IpcConnection>
+  /**
+   * Begin delivery on a `lines` connection (throws `TypeError` on a `raw`
+   * one). Call `start`/`startRaw` exactly once. Frames received before
+   * start are buffered, never dropped. `onLine` gets each non-empty line
+   * (one trailing CR stripped, invalid UTF-8 replaced lossily). `onClose`
+   * fires exactly once, after the last frame — including after local
+   * `end()`/`destroy()`: `null` for an orderly close, otherwise
+   * `"<CODE>: <message>"`.
+   */
+  start(onLine: (line: string) => void, onClose: (reason: string | null) => void): void
+  /**
+   * Same as `start()` for a `raw` connection (throws `TypeError` on a
+   * `lines` one): `onChunk` gets each received chunk.
+   */
+  startRaw(onChunk: (chunk: Uint8Array) => void, onClose: (reason: string | null) => void): void
+  /**
+   * Send one frame. lines: a string without LF (`TypeError` otherwise);
+   * LF is appended. raw: string (UTF-8) or `Uint8Array` written as-is.
+   * Frames sent during one JS task are written together when it ends (a
+   * microtask), in order; `end()` writes them first. Returns false once
+   * unwritten bytes exceed 1 MiB (await `drained()` before sending more).
+   * After close: returns false and drops the frame.
+   */
+  send(frame: string | Uint8Array): boolean
+  /** Resolves when the write queue is empty, or the connection closed. */
+  drained(): Promise<void>
+  /**
+   * Graceful: write everything queued, then shut the write half (Unix) /
+   * close the pipe (Windows); onClose follows when the read side ends.
+   */
+  end(): void
+  /**
+   * Immediate close; queued writes are dropped; onClose(null) follows.
+   * Idempotent.
+   */
+  destroy(): void
+  /** Keep the event loop alive while delivering (default). */
+  ref(): void
+  /** Let the event loop exit while this connection is open. */
+  unref(): void
+  /** Whether the connection is closed (or `destroy()` was called). */
+  get closed(): boolean
+}
+
+/** Listening IPC endpoint. */
+export declare class IpcServer {
+  /**
+   * Bind and listen.
+   *
+   * Unix: creates the parent dir (0700) if missing; under an exclusive flock
+   * on `<path>.bind.lock`, rejects EADDRINUSE when a live server answers,
+   * otherwise replaces the stale socket file; the socket is chmod 0600 before
+   * `listen()`. Windows: first pipe instance (exists → EADDRINUSE), remote
+   * clients rejected, DACL granting only the current user.
+   * `onConnection` receives each accepted, peer-verified connection (not yet
+   * started).
+   */
+  static listen(endpoint: string, options: IpcListenOptions, onConnection: (connection: IpcConnection) => void): Promise<IpcServer>
+  /** The endpoint this server listens on. */
+  get endpoint(): string
+  /**
+   * Stop accepting. Unix: unlink the socket file if it is still the inode
+   * this server bound. Accepted connections are untouched. Idempotent.
+   */
+  close(): Promise<void>
+}
+
 /**
  * Install the bounded Tokio runtime napi-rs adopts for async exports and the
  * bounded Rayon global pool used by native parallel iterators.
@@ -1999,6 +2112,64 @@ export declare function isoStart(kind: IsoBackendKind | undefined | null, lower:
 /** Tear down a previously started backend at `merged`. */
 export declare function isoStop(kind: IsoBackendKind | undefined | null, merged: string): Promise<void>
 
+/** Options for `IpcConnection.connect`. */
+export interface IpcConnectOptions {
+  /**
+   * `lines`: UTF-8 text frames delimited by LF; `raw`: byte chunks as
+   * received.
+   */
+  framing: "lines" | "raw"
+  /** Connect deadline. Default 3000 ms. Expiry rejects with code ETIMEDOUT. */
+  timeoutMs?: number
+  /** Max bytes of one received line (lines framing). Default 64 MiB. */
+  maxFrameBytes?: number
+}
+
+/**
+ * Platform endpoint for `name` scoped to directory `dir`.
+ *
+ * Unix: `<dir>/<stem>.sock`; when that path does not fit `sun_path` (104 bytes
+ * on macOS/BSD, 108 on Linux, including NUL), `/tmp/tau-<euid>/<hash16>.sock`.
+ * Windows: `\\.\pipe\tau-<stem>-<hash16(lowercase(resolve(dir)))>`.
+ * `stem` is `name` with every char outside `[A-Za-z0-9._-]` replaced by "_".
+ * Pure and deterministic: every process computes the same endpoint.
+ */
+export declare function ipcEndpoint(dir: string, name: string): string
+
+/**
+ * Move this process's SQLite record locks onto open-file-description locks;
+ * `false` outside Linux, or when Bun's SQLite is not found. Call before the
+ * process opens any SQLite database.
+ */
+export declare function installSqliteLockShim(): boolean
+
+/**
+ * Looks at the path's inode through the descriptors already open, without
+ * opening the file.
+ */
+export declare function heldFileKind(path: string): HeldFileKind | null
+
+/** What a file this process holds locked is. */
+export declare enum HeldFileKind {
+  /** A SQLite database this process has open with its locks. */
+  Database = 'database',
+  /** A SQLite WAL-index (`-shm`) file this process has open with its locks. */
+  WalIndex = 'wal-index',
+  /** Another file this process holds open with a record lock. */
+  Locked = 'locked'
+}
+
+/** Options for `IpcServer.listen`. */
+export interface IpcListenOptions {
+  /**
+   * `lines`: UTF-8 text frames delimited by LF; `raw`: byte chunks as
+   * received.
+   */
+  framing: "lines" | "raw"
+  /** Max bytes of one received line (lines framing). Default 64 MiB. */
+  maxFrameBytes?: number
+}
+
 /** Event types from Kitty keyboard protocol (flag 2). */
 export declare enum KeyEventType {
   /** Key press event. */
@@ -2404,6 +2575,116 @@ export declare enum ProcessStatus {
   Exited = 'exited'
 }
 
+/** File type on the filesystem wire. */
+export declare enum ShellFsFileType {
+  /** Regular file. */
+  File = 'file',
+  /** Directory. */
+  Dir = 'dir',
+  /** Symbolic link. */
+  Symlink = 'symlink',
+  /** Named pipe. */
+  Fifo = 'fifo',
+  /** Unix domain socket. */
+  Socket = 'socket',
+  /** Character device. */
+  Char = 'char',
+  /** Block device. */
+  Block = 'block'
+}
+
+/** Which path components `canonicalize` requires to exist. */
+export declare enum ShellFsMissing {
+  /** Every component must exist (`realpath`). */
+  Existing = 'existing',
+  /** Every component but the last must exist. */
+  Normal = 'normal',
+  /** No component needs to exist. */
+  Missing = 'missing'
+}
+
+/** Filesystem operation requested from a host `ShellFilesystem`. */
+export declare enum ShellFsOp {
+  /** Metadata of `path`, following symlinks. Answer: `metadata`. */
+  Metadata = 'metadata',
+  /** Metadata of `path` itself, not following a final symlink. Answer: `metadata`. */
+  SymlinkMetadata = 'symlinkMetadata',
+  /** Entries of directory `path`. Answer: `entries`. */
+  ReadDir = 'readDir',
+  /** Canonical spelling of `path` per `missing`/`resolve`. Answer: `path`. */
+  Canonicalize = 'canonicalize',
+  /** Backing path for a mount point. Answer: `path`. */
+  BackingPath = 'backingPath',
+  /** Read a symlink. Answer: `path`. */
+  ReadLink = 'readLink',
+  /** Access check. Answer: `metadata`. */
+  Access = 'access',
+  /** Open for read/write per flags. Answer: `handle`. */
+  Open = 'open',
+  /** Read from an open handle. Answer: `data`. */
+  Read = 'read',
+  /** Write to an open handle. Answer: `written`. */
+  Write = 'write',
+  /** Flush buffered writes. Answer: `ok`. */
+  Flush = 'flush',
+  /** Close an open handle. Answer: `ok`. */
+  Close = 'close',
+  /** Metadata of an open handle. Answer: `metadata`. */
+  FileMetadata = 'fileMetadata',
+  /** Whether an open handle holds a lock. Answer: `locked`. */
+  IsLocked = 'isLocked',
+  /** Truncate an open handle. Answer: `ok`. */
+  SetLen = 'setLen',
+  /** Set times on an open handle. Answer: `ok`. */
+  FileSetTimes = 'fileSetTimes',
+  /** Set permissions on an open handle. Answer: `ok`. */
+  FileSetPermissions = 'fileSetPermissions',
+  /** Sync an open handle. Answer: `ok`. */
+  Sync = 'sync',
+  /** Create a directory. Answer: `ok`. */
+  CreateDir = 'createDir',
+  /** Remove a file. Answer: `ok`. */
+  RemoveFile = 'removeFile',
+  /** Remove a directory. Answer: `ok`. */
+  RemoveDir = 'removeDir',
+  /** Remove a directory and its contents. Answer: `ok`. */
+  RemoveDirAll = 'removeDirAll',
+  /** Rename. Answer: `ok`. */
+  Rename = 'rename',
+  /** Hard link. Answer: `ok`. */
+  HardLink = 'hardLink',
+  /** Symbolic link. Answer: `ok`. */
+  Symlink = 'symlink',
+  /** Set permissions. Answer: `ok`. */
+  SetPermissions = 'setPermissions',
+  /** Set times. Answer: `ok`. */
+  SetTimes = 'setTimes',
+  /** Change ownership. Answer: `ok`. */
+  Chown = 'chown',
+  /** Filesystem stats. Answer: `statfs`. */
+  StatFs = 'statFs',
+  /** Get extended attribute. Answer: `xattr`. */
+  GetXattr = 'getXattr',
+  /** Set extended attribute. Answer: `ok`. */
+  SetXattr = 'setXattr',
+  /** List extended attributes. Answer: `xattrs`. */
+  ListXattr = 'listXattr',
+  /** Remove extended attribute. Answer: `ok`. */
+  RemoveXattr = 'removeXattr',
+  /** Create a device node. Answer: `ok`. */
+  Mknod = 'mknod'
+}
+
+/** How `canonicalize` treats symlinks. */
+export declare enum ShellFsResolve {
+  /** Resolve symlinks as encountered. */
+  Physical = 'physical',
+  /** Apply `..` lexically before resolving symlinks. */
+  Logical = 'logical',
+  /** Never resolve symlinks; normalize lexically only. */
+  None = 'none'
+}
+
 export interface ProcessTerminateOptions {
   /** Also signal the process group when supported by the platform. */
   group?: boolean
@@ -2666,6 +2947,28 @@ export interface SliceResult {
  * width.
  */
 export declare function sliceWithWidth(line: string, startCol: number, length: number, strict: boolean | undefined | null, tabWidth: number): SliceResult
+
+/** Native non-executing visualization transformations. */
+export interface ShellVizLayers {
+  color: boolean
+  inline: boolean
+  idioms: boolean
+  effects: boolean
+  unwrap: boolean
+}
+
+/** Native presentation controls. Node identities are opaque engine keys. */
+export interface ShellVizOptions {
+  view: 'raw' | 'pseudo'
+  layers: ShellVizLayers
+  split: boolean
+  cursor?: number
+  cursorSeq?: number
+  playing: boolean
+  speed: number
+  selectedNode?: string
+  expandedNodes: Array<string>
+}
 
 /** Shape options for one snapcompact frame. */
 export interface SnapcompactRenderOptions {
