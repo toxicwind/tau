@@ -607,90 +607,28 @@ Twenty-four backends. Pin one, or let `auto` walk the chain in order.
 Exa also accepts a stored API key through `/login exa`; explicit keyless selection uses the public MCP fallback.
 
 // refused_by: modify_delete_guard · collision: none (no common ancestor text)
-## Roughly **~80,000** lines of Rust, doing the work other harnesses shell out for.
+## Roughly **~252,000** lines of own+rebuilt Rust, doing the work other harnesses shell out for.
 
-Six crates, one platform-tagged N-API addon. Search, shell, AST, highlight, PTY, desktop control, image decode, BPE counting — all in-process on the libuv pool. No fork/exec on the hot path. The shell is our own bash 5.3 engine, and 58 command-line utilities — coreutils, findutils, sed, jq, ripgrep-backed grep, fd, diff, moreutils — are ported into the builtins crate and compiled straight into the shell.
+Ten crates, one platform-tagged N-API addon. Search, shell, AST, highlight, PTY, desktop control, image decode, BPE counting — all in-process on the libuv pool. No fork/exec on the hot path. The shell is our own bash 5.3 engine, and 58 command-line utilities — coreutils, findutils, sed, jq, ripgrep-backed grep, fd, diff, moreutils — are ported into the builtins crate and compiled straight into the shell.
 
-- Crates: `pi-natives`, `pi-shell`, `pi-ast`, `pi-iso`, `pi-voice`, `pi-walker`
-- Platforms: `linux-x64`, `linux-arm64`, `darwin-x64`, `darwin-arm64`, `win32-x64`, `win32-arm64` — x64 ships dual AVX2 and baseline binaries
+The Rust surface is a **fork rewrite of `can1357/oh-my-pi`'s native layer**, tracked three-way by the estate's `omp-wtf` deep audit (canary ↔ fork-base ↔ ours, computed live from git). Today's crate delta, tau-* (ours) vs pi-* (canary):
 
-Per crate, code lines only:
+| crate | ours files | ours lines | canary files | canary lines |
+|---|---|---|---|---|
+| ast | 7 | 4,474 | 12 | 8,239 |
+| builtins | 126 | 91,275 | 166 | 173,648 |
+| diff | 1 | 992 | 1 | 1,158 |
+| edit | 49 | 27,707 | 50 | 34,210 |
+| iso | 10 | 4,591 | 12 | 5,094 |
+| natives | 141 | 61,693 | 197 | 115,043 |
+| shell | 41 | 38,560 | 508 | 341,972 |
+| vcs | 12 | 11,958 | 14 | 14,405 |
+| voice | 8 | 3,894 | 8 | 4,083 |
+| walker | 6 | 6,859 | 34 | 14,772 |
 
-| Crate      | What it does                                                                           |   ~LoC |
-| ---------- | -------------------------------------------------------------------------------------- | -----: |
-| pi-shell   | Embedded bash engine · persistent sessions · in-process coreutils dispatch · minimizer | 38,000 |
-| pi-natives | The N-API surface — every module in the table below                                    | 25,000 |
-| pi-walker  | Parallel walker · listing cache · glob · regex search for natives and shell rg/grep/fd | 11,400 |
-| pi-iso     | Workspace isolation · apfs · btrfs · zfs · reflink · overlayfs · projfs · rcopy        |  3,300 |
-| pi-ast     | tree-sitter + ast-grep matching, block resolution, structural summaries                |  2,900 |
-| pi-voice   | Audio capture/playback · Opus · live WebRTC                                            |  1,000 |
+We carry ~35% of the canary's Rust LOC in rewritten, denser crates — the shell is inlined (41 files vs 508), builtins consolidated (126 vs 166) — a deliberate rewrite of the native walker, not a raw LOC race. The canary keeps the fuller surface: we do not yet ship its `predict` or `vfs` modules (upstream: 22 + 16 files). No value-judgment on either side — different size/ownership trade-offs, tracked honestly by `omp-wtf`.
 
-Inside `pi-natives`, the per-module breakdown (glue and tests omitted):
 
-| Module        | What it does                                                                      | Powered by                                |   ~LoC |
-| ------------- | --------------------------------------------------------------------------------- | ----------------------------------------- | -----: |
-| desktop       | Window/display enumeration · screenshot · native input · AX tree for `computer`   | xcap · enigo · OS AX FFI                  | 10,600 |
-| grep          | Regex search · parallel/sequential · glob & type filters · fuzzy find             | grep-regex · grep-searcher                |  3,280 |
-| text          | ANSI-aware width · truncation · column slicing · SGR-preserving wrap              | unicode-width · segmentation              |  2,070 |
-| snapcompact   | Bitmap-frame rasterization + PNG encode for context compression                   | image · png                               |  1,760 |
-| keys          | Kitty keyboard protocol with xterm fallback · PHF perfect-hash lookup             | phf                                       |  1,740 |
-| ast           | ast-grep pattern matching and structural rewrites                                 | ast-grep-core                             |  1,510 |
-| diff          | Structured file diffing for tools and previews                                    | in-tree                                   |  1,030 |
-| pty           | Native PTY allocation for sudo · ssh interactive prompts                          | portable-pty                              |    630 |
-| crash_handler | Native crash capture and reporting                                                | in-tree                                   |    610 |
-| highlight     | Syntax highlighting · 11 semantic categories · 30+ aliases                        | syntect                                   |    550 |
-| appearance    | Mode 2031 + native macOS dark/light via CoreFoundation FFI                        | core-foundation                           |    450 |
-| task          | Blocking work on libuv thread pool · cancellation · timeout · profiling           | tokio · napi                              |    440 |
-| glob          | Discovery with glob · type filters · mtime sort · gitignore respect               | ignore · globset                          |    430 |
-| fd            | Filesystem walker for find-tool replacement                                       | ignore                                    |    385 |
-| clipboard     | Text copy and image read from system clipboard · no xclip/pbcopy                  | arboard                                   |    370 |
-| workspace     | Workspace walker with gitignore + AGENTS.md discovery in one pass                 | ignore                                    |    275 |
-| power         | macOS power-assertion API for idle/system/display-sleep prevention                | IOKit FFI                                 |    270 |
-| prof          | Circular buffer profiler with folded-stack and SVG flamegraph output              | inferno                                   |    240 |
-| file_lock     | Cross-process advisory file locking                                               | in-tree                                   |    210 |
-| ps            | Cross-platform process-tree kill and descendant listing                           | libc · libproc · CreateToolhelp32Snapshot |    195 |
-| tokens        | O200k / Cl100k BPE token counting · both tables embedded                          | tiktoken-rs                               |     70 |
-| html          | HTML to Markdown with optional content cleaning                                   | html-to-markdown-rs                       |     60 |
-| sixel         | Terminal image rendering · decode PNG · JPEG · WebP · GIF · resize · SIXEL encode | icy_sixel · image                         |     55 |
-
-// refused_by: modify_delete_guard · collision: none (no common ancestor text)
-### SDK — embed in Node
-
-`@oh-my-pi/pi-coding-agent`
-
-Node and TypeScript hosts pull the engine in directly. The package exposes `ModelRegistry`, `SessionManager`, `createAgentSession`, and `discoverAuthStorage`; the session emits typed events you subscribe to.
-
-```ts
-import { ModelRegistry, SessionManager, createAgentSession, discoverAuthStorage } from "@oh-my-pi/pi-coding-agent";
-
-const auth = await discoverAuthStorage();
-const models = new ModelRegistry(auth);
-await models.refresh();
-
-const { session } = await createAgentSession({
-	sessionManager: SessionManager.inMemory(),
-	authStorage: auth,
-	modelRegistry: models,
-});
-await session.prompt("list .ts files");
-```
-
-// refused_by: modify_delete_guard · collision: none (no common ancestor text)
-### RPC — drive over stdio
-
-`omp --mode rpc`
-
-For non-Node embedders, or when you want process isolation. NDJSON commands in, response and event frames out; each prompt ends with its own `prompt_result`. `--mode rpc-ui` adds tool cards, selectors, and dialogs as `extension_ui_request` frames the host must answer; `--no-ui` keeps even extension dialogs off the wire for hosts with no UI.
-
-```
-$ omp --mode rpc --no-session
-> {"id":"r1","type":"prompt","message":"list .ts files"}
-< {"id":"r1","type":"response", ...}
-> {"id":"r2","type":"set_model","provider":"anthropic","modelId":"sonnet-4.5"}
-> {"id":"r3","type":"abort"}
-```
-
-// refused_by: modify_delete_guard · collision: none (no common ancestor text)
 ## Philosophy
 
 omp is a fork of [pi-mono](https://github.com/badlogic/pi-mono) by [Mario Zechner](https://github.com/mariozechner), extended with a batteries-included coding workflow.
