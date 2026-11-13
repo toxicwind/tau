@@ -129,3 +129,4 @@ cli
 # Inner product checkouts (peer repos, never tracked — submoduleless doctrine)
 geode/
 tau-extensions/
+.github/workflows/
