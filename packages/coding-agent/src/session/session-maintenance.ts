@@ -1885,6 +1885,11 @@ export class SessionMaintenance {
 	 * resume decision is open. Otherwise the caller MUST invoke the returned
 	 * `release` once the prompt settles — see {@link claimPendingResume}.
 	 */
+	async waitForMaintenanceCleanup(): Promise<((startedTurn: boolean) => void) | undefined> {
+		return await this.waitForManualCompactionCleanup();
+	}
+
+	/** Wait for manual compaction cleanup. */
 	async waitForManualCompactionCleanup(): Promise<((startedTurn: boolean) => void) | undefined> {
 		const cleanup = this.#manualCompactionCleanup;
 		// No compaction to wait for, but an earlier parked prompt is still settling:

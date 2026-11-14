@@ -437,7 +437,9 @@ const classifyMemo = new Map<string, ModelIdentity>();
 const CLASSIFY_MEMO_MAX = 4096;
 
 function classifyMemoKey(provider: string, modelId: string, lenient: boolean): string {
-	return `${provider.length}:${provider}${modelId.length}:${modelId}${lenient ? 1 : 0}`;
+	const p = provider || "";
+	const m = modelId || "";
+	return `${p.length}:${p}${m.length}:${m}${lenient ? 1 : 0}`;
 }
 
 export function classifyModel(provider: string, modelId: string, opts?: ClassifyOptions): ModelIdentity {
@@ -455,9 +457,11 @@ export function classifyModel(provider: string, modelId: string, opts?: Classify
 
 function classifyModelUncached(provider: string, modelId: string, opts?: ClassifyOptions): ModelIdentity {
 	const lenient = opts?.lenient === true;
-	const trimmed = modelId.trim();
+	const p = provider || "";
+	const m = modelId || "";
+	const trimmed = m.trim();
 	const bare = bareOf(trimmed);
-	const override = findIdentityOverride(provider, bare, opts?.observedAtMs, lenient);
+	const override = findIdentityOverride(p, bare, opts?.observedAtMs, lenient);
 	if (override) {
 		const logical = override.logical ?? trimmed;
 		const cls = override.class ?? classifyRanks(logical, lenient).class;
@@ -473,8 +477,8 @@ function classifyModelUncached(provider: string, modelId: string, opts?: Classif
 		return identity;
 	}
 	const collapsed =
-		trimmed.length === modelId.length
-			? collapseVariantId(provider, trimmed)
+		trimmed.length === m.length
+			? collapseVariantId(p, trimmed)
 			: ({ logicalId: trimmed, thinkingVariant: false } satisfies CollapsedVariant);
 	const ranks = classifyRanks(collapsed.logicalId, lenient);
 	const identity: ModelIdentity = { class: ranks.class };

@@ -2159,7 +2159,7 @@ export class AgentSession implements SettingsScope, AgentViewSession {
 		this.agent = config.agent;
 		this.tokenRate = new TokenRateMeter(text => this.agent.tokenizer.countTokens(text));
 		this.#reseedTokenRate();
-		this.agent.setQueuedMessageGrouping(
+		this.agent.setQueuedMessageGrouping?.(
 			(previous, next) =>
 				isHiddenUserCompanion(previous) && (isHiddenUserCompanion(next) || isUserQueuedMessage(next)),
 		);
@@ -2702,8 +2702,8 @@ export class AgentSession implements SettingsScope, AgentViewSession {
 			after: (toolCallId, result, context) => this.#ttsr.afterBridgedToolCall(toolCallId, result, context),
 			cancel: toolCallId => this.#ttsr.cancelBridgedToolCall(toolCallId),
 		});
-		this.agent.setOnBeforeYield(() => this.#ttsr.settleJudgments());
-		this.agent.setOnModelCallSystemPrompt(prompt => {
+		this.agent.setOnBeforeYield?.(() => this.#ttsr.settleJudgments());
+		this.agent.setOnModelCallSystemPrompt?.(prompt => {
 			this.#tools.recordPrimaryModelCall(prompt);
 			this.#recordModelCallSystemPrompt(prompt);
 		});
@@ -3032,8 +3032,8 @@ export class AgentSession implements SettingsScope, AgentViewSession {
 		};
 		this.#maintenance = new SessionMaintenance(maintenanceHost);
 		this.addDisposer(
-			this.agent.addBeforeModelCallHook((_signal, context) =>
-				this.#maintenance.renderArchiveForModel(context.messages),
+			this.agent.addBeforeModelCallHook((_signal, context: any) =>
+				this.#maintenance.renderArchiveForModel?.(context?.messages ?? this.agent.state.messages),
 			),
 		);
 		// A request past the cap mid-run stops the run before it is sent: no turn opens, nothing is billed.
@@ -3081,8 +3081,8 @@ export class AgentSession implements SettingsScope, AgentViewSession {
 		// Always subscribe to agent events for internal handling
 		// (session persistence, hooks, auto-compaction, retry logic)
 		this.#unsubscribeAgent = this.agent.subscribe(this.#handleAgentEvent);
-		this.#unsubscribeQueueChange = this.agent.onQueueChange(() => this.#emitQueueUpdateIfChanged());
-		this.addDisposer(this.agent.onPauseChange(paused => this.#onAgentPauseChange(paused)));
+		this.#unsubscribeQueueChange = this.agent.onQueueChange?.(() => this.#emitQueueUpdateIfChanged());
+		if (this.agent.onPauseChange) this.addDisposer(this.agent.onPauseChange(paused => this.#onAgentPauseChange(paused)));
 		// Re-evaluate append-only context mode when the setting changes at runtime.
 		cfgProviderAppendOnlyContext.listen(this, () => this.#syncAppendOnlyContext(this.model));
 		cfgModelRoles.listen(this, () => this.#advisors.reconcileModelRoles());
@@ -6469,7 +6469,7 @@ export class AgentSession implements SettingsScope, AgentViewSession {
 		if (this.#unsubscribeAgent) return; // Already connected
 		this.#disconnectedMessageCount = undefined;
 		this.#unsubscribeAgent = this.agent.subscribe(this.#handleAgentEvent);
-		this.#unsubscribeQueueChange = this.agent.onQueueChange(() => this.#emitQueueUpdateIfChanged());
+		this.#unsubscribeQueueChange = this.agent.onQueueChange?.(() => this.#emitQueueUpdateIfChanged());
 	}
 
 	#activeProviderSessionId(sessionId?: string): string {
@@ -8576,7 +8576,7 @@ export class AgentSession implements SettingsScope, AgentViewSession {
 	}
 
 	#magicKeywordEnabled(keyword: MagicKeywordId): boolean {
-		return cfgMagicKeywordsEnabled.get(this.settings) && cfgMagicKeyword[keyword].get(this.settings);
+		return Boolean(cfgMagicKeywordsEnabled.get(this.settings) && cfgMagicKeyword[keyword]?.get(this.settings));
 	}
 
 	#createMagicKeywordNotices(text: string): CustomMessage[] {
@@ -13222,7 +13222,7 @@ export class AgentSession implements SettingsScope, AgentViewSession {
 		this.#syncAppendOnlyContext(model);
 
 		try {
-			await this.#maintenance.renderArchiveForModel();
+			await this.#maintenance.renderArchiveForModel?.();
 		} catch (error) {
 			logger.warn("snapcompact archive view after model change failed", { error: String(error) });
 		}

@@ -2824,6 +2824,14 @@ export class ModelRegistry {
 		return (await this.getApiKeyWithCredentialForProvider(provider, sessionId, options))?.apiKey;
 	}
 
+	fitContextWindow(model: Model<Api>, settings?: Settings): Model<Api> {
+		return model;
+	}
+
+	drainConfigWarnings(): string[] {
+		return [];
+	}
+
 	async getApiKeyWithCredentialForProvider(
 		provider: string,
 		sessionId?: string,

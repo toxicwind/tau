@@ -113,6 +113,16 @@ export class PrewalkCoordinator {
 		this.#planYolo = options.planYolo;
 	}
 
+	applyAuto(_decision: any): any {
+		return undefined;
+	}
+
+	async beginAutoTask(): Promise<void> {}
+
+	async classifyAuto(_prompt: string, _signal?: AbortSignal): Promise<any> {
+		return undefined;
+	}
+
 	/** Current prewalk target, if the one-way switch remains armed. */
 	get state(): Prewalk | undefined {
 		return this.#prewalk;

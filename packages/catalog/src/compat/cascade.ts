@@ -190,7 +190,8 @@ function rankRelevantRules(index: RuleIndex, prepared: PreparedTarget): RankedRu
 }
 
 function prepareTarget(target: ResolveTarget): PreparedTarget {
-	const modelLower = target.model.toLowerCase();
+	const model = target?.model ?? "";
+	const modelLower = model.toLowerCase();
 	return {
 		target,
 		revision: target.revision === undefined ? undefined : parseRevision(target.revision),

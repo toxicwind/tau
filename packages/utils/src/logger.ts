@@ -28,6 +28,16 @@ export interface LogEvent {
 	readonly timestamp: Date;
 }
 
+const contextStorage = new AsyncLocalStorage<Record<string, unknown>>();
+
+export function withContext<T>(context: Record<string, unknown>, fn: () => T): T {
+	return contextStorage.run(context, fn);
+}
+
+export function withoutContext<T>(fn: () => T): T {
+	return contextStorage.run({}, fn);
+}
+
 /** Receives each structured log event after the local transport path runs. */
 export type LogSink = (event: LogEvent) => void;
 

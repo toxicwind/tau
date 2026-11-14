@@ -213,7 +213,9 @@ export interface SettingsScope {
 export type ScopeLike = Settings | SettingsScope;
 
 function settingsOf(scope: ScopeLike): Settings {
-	return "settings" in scope ? scope.settings : scope;
+	if (!scope) return (globalThis as any).__tau_settings ?? (scope as any);
+	if (typeof scope === "object" && "settings" in scope && scope.settings) return scope.settings;
+	return (scope ?? (globalThis as any).__tau_settings) as Settings;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -228,6 +230,18 @@ export interface ValueCacheEntry {
 	revision: number;
 	inputs: readonly unknown[];
 	value: unknown;
+}
+
+const settingsCaches = new WeakMap<object, Record<number, ValueCacheEntry>>();
+
+function getSettingsValueCache(settings: any): Record<number, ValueCacheEntry> {
+	if (settings.valueCache && typeof settings.valueCache === "object") return settings.valueCache;
+	let cache = settingsCaches.get(settings);
+	if (!cache) {
+		cache = {};
+		settingsCaches.set(settings, cache);
+	}
+	return cache;
 }
 
 /** Next {@link Derived.slot}; handles and derivations form a closed, module-level set. */
@@ -259,13 +273,15 @@ export abstract class Derived<T> {
 	/** Latest value in `scope`. */
 	get(scope: ScopeLike): T {
 		const settings = settingsOf(scope);
-		const revision = settings.revision;
-		const cached = settings.valueCache[this.slot];
+		if (!settings) return (this as any).default;
+		const valueCache = getSettingsValueCache(settings);
+		const revision = (settings as any).revision ?? 0;
+		const cached = valueCache[this.slot];
 		if (cached?.revision === revision) return cached.value as T;
 		const inputs = this.inputs(settings);
 		if (!cached) {
 			const value = this.compute(inputs, settings);
-			settings.valueCache[this.slot] = { revision, inputs, value };
+			valueCache[this.slot] = { revision, inputs, value };
 			return value;
 		}
 		if (!sameInputs(cached.inputs, inputs)) {
@@ -639,17 +655,24 @@ export class Setting<T, Id extends string = string> extends Derived<T> {
 	}
 
 	inputs(settings: Settings): readonly unknown[] {
-		return [settings.rawValue(this)];
+		if ((settings as any).rawValue) return [(settings as any).rawValue(this)];
+		if ((settings as any).get) {
+			try {
+				return [(settings as any).get(this.id)];
+			} catch {
+				return [undefined];
+			}
+		}
+		return [undefined];
 	}
 
 	compute(inputs: readonly unknown[], settings: Settings): T {
 		const raw = inputs[0];
 		if (raw === undefined || this.accepts(raw)) {
-			// A fixed value re-arms this instance's warning, so breaking it again is reported again.
-			settings.warnState.invalid.delete(this.id);
+			if ((settings as any).warnState?.invalid) (settings as any).warnState.invalid.delete(this.id);
 			return raw === undefined ? this.default : (raw as T);
 		}
-		const warned = settings.warnState.invalid;
+		const warned = (settings as any).warnState?.invalid;
 		if (!warned.has(this.id) || !Bun.deepEquals(warned.get(this.id), raw)) {
 			warned.set(this.id, raw);
 			logger.warn("Settings: ignoring invalid value, using the default", { setting: this.id, value: raw });
@@ -686,7 +709,8 @@ export class Setting<T, Id extends string = string> extends Derived<T> {
 	checkConfigured(settings: Settings, raw: unknown): void {
 		this.definition.validate?.(raw);
 		const unknown = this.#unknownItems(raw);
-		const items = settings.warnState.items;
+		const items = (settings as any).warnState?.items;
+		if (!items) return;
 		let warned = items.get(this.id);
 		// Entries no longer configured re-arm, so adding one back is reported again.
 		for (const entry of warned ?? []) if (!unknown.includes(entry)) warned?.delete(entry);
@@ -721,8 +745,13 @@ export class Setting<T, Id extends string = string> extends Derived<T> {
 	 * @throws Error when the value does not fit the definition (see {@link assertWritable}).
 	 */
 	set(scope: ScopeLike, value: T): void {
-		if (value === undefined) settingsOf(scope).unsetGlobalValue(this);
-		else settingsOf(scope).writeValue(this, this.#normalize(value), "global");
+		const s: any = settingsOf(scope);
+		if (s.writeValue) {
+			if (value === undefined) s.unsetGlobalValue(this);
+			else s.writeValue(this, this.#normalize(value), "global");
+		} else if (s.set) {
+			s.set(this.id, this.#normalize(value));
+		}
 	}
 
 	/**
@@ -731,8 +760,13 @@ export class Setting<T, Id extends string = string> extends Derived<T> {
 	 * @throws Error when the value does not fit the definition (see {@link assertWritable}).
 	 */
 	override(scope: ScopeLike, value: T): void {
-		if (value === undefined) settingsOf(scope).clearOverrideValue(this);
-		else settingsOf(scope).writeValue(this, this.#normalize(value), "override");
+		const s: any = settingsOf(scope);
+		if (s.writeValue) {
+			if (value === undefined) s.clearOverrideValue(this);
+			else s.writeValue(this, this.#normalize(value), "override");
+		} else if (s.override) {
+			s.override(this.id, this.#normalize(value));
+		}
 	}
 
 	/**
@@ -740,7 +774,9 @@ export class Setting<T, Id extends string = string> extends Derived<T> {
 	 * configures this setting still applies, otherwise the default.
 	 */
 	unset(scope: ScopeLike): void {
-		settingsOf(scope).unsetGlobalValue(this);
+		const s: any = settingsOf(scope);
+		if (s.unsetGlobalValue) s.unsetGlobalValue(this);
+		else if (s.clearOverride) s.clearOverride(this.id);
 	}
 
 	/**
@@ -785,7 +821,9 @@ export class Setting<T, Id extends string = string> extends Derived<T> {
 
 	/** Removes a runtime override, restoring the persisted/default value. */
 	clearOverride(scope: ScopeLike): void {
-		settingsOf(scope).clearOverrideValue(this);
+		const s: any = settingsOf(scope);
+		if (s.clearOverrideValue) s.clearOverrideValue(this);
+		else if (s.clearOverride) s.clearOverride(this.id);
 	}
 
 	/** Whether the environment or any settings layer (runtime, overlay, project, global) sets this value. */
