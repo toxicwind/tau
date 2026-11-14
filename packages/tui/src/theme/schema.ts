@@ -152,6 +152,27 @@ const THEME_COLOR_RECORD = {
 const VALID_THEME_COLORS: ReadonlySet<string> = new Set(Object.keys(THEME_COLOR_RECORD));
 
 /** Check if a string is a valid ThemeColor value */
+/** Raw ANSI color names used by the colorful Markdown adapter (bypasses the
+ * theme palette to guarantee hue distinction when a theme aliases md* tokens —
+ * e.g. Dracula's mdCode is its magenta). */
+export type AnsiColor =
+	| "black"
+	| "red"
+	| "green"
+	| "yellow"
+	| "blue"
+	| "magenta"
+	| "cyan"
+	| "white"
+	| "brightBlack"
+	| "brightRed"
+	| "brightGreen"
+	| "brightYellow"
+	| "brightBlue"
+	| "brightMagenta"
+	| "brightCyan"
+	| "brightWhite";
+
 export function isValidThemeColor(color: string): color is ThemeColor {
 	return VALID_THEME_COLORS.has(color);
 }

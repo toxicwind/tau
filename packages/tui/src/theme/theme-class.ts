@@ -2,7 +2,7 @@ import { colorLuma, relativeLuminance } from "@tau/tau-utils/color";
 import * as logger from "@tau/tau-utils/logger";
 import chalk from "@tau/tau-utils/chalk";
 import { bgAnsi, colorToAnsi, fgAnsi, resolveToHex } from "./color";
-import { type ColorMode, isValidThemeColor, type ThemeBg, type ThemeColor } from "./schema";
+import { type AnsiColor, type ColorMode, isValidThemeColor, type ThemeBg, type ThemeColor } from "./schema";
 import type { SessionAccentTheme } from "./session-color";
 import {
 	type SlashCommandIconName,
@@ -293,6 +293,18 @@ export class Theme {
 		const ansi = this.#fgColors[color];
 		if (!ansi) throw new Error(`Unknown theme color: ${color}`);
 		return `${ansi}${text}\x1b[39m`; // Reset only foreground color
+	}
+
+	/**
+	 * Apply a RAW ANSI color name as a foreground. Unlike `fg` (theme palette),
+	 * this bypasses the palette entirely, guaranteeing the named hue regardless
+	 * of how a theme aliases its md* tokens (Dracula's mdCode is magenta).
+	 * Converter lane for the colorful-Markdown adapter's palette slot names
+	 * (AnsiColor) — the theme class owns the only color-mode-aware ANSI
+	 * resolution, so ansi names must resolve here, not in the adapter.
+	 */
+	ansiFg(color: AnsiColor, text: string): string {
+		return `${fgAnsi(color, this.mode)}${text}\x1b[39m`;
 	}
 
 	/** Apply a foreground, replacing terminal-default tokens with the theme's contrast-safe fallback. */

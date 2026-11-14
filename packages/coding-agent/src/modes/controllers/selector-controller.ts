@@ -1874,7 +1874,12 @@ export class SelectorController {
 				SessionManager.listForPicker(this.ctx.sessionManager.getCwd(), this.ctx.sessionManager.getSessionDir()),
 				loadPinnedSessionIds(),
 			]);
-			sessions = loadedSessions;
+			// listForPicker returns a two-pass PickerListing (sessions + complete
+			// scan promise), not a bare array. Feed the immediate rows to the
+			// selector and hand the full scan to completeSessions — otherwise the
+			// listing object lands in #folderSessions and .map blows up on /resume.
+			sessions = loadedSessions.sessions;
+			const completeFolderSessions = loadedSessions.complete;
 			const historyStorage = this.ctx.historyStorage;
 			const historyMatcher = historyStorage
 				? (query: string) => historyStorage.matchingSessionIds(query)
@@ -1897,6 +1902,7 @@ export class SelectorController {
 					}
 				},
 				historyMatcher,
+				completeSessions: completeFolderSessions,
 				loadAllSessions: () => SessionManager.listAllForPicker(),
 				pinnedIds,
 				// Live getter so detach/newSession stays accurate; tolerant of partial

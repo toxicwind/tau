@@ -34,7 +34,7 @@ export interface StreamGuardsHost {
 	agent: Agent;
 	settings: Settings;
 	sessionManager: SessionManager;
-	obfuscator: SecretObfuscator | undefined;
+	obfuscator(): SecretObfuscator | undefined;
 	model(): Model | undefined;
 	isDisposed(): boolean;
 	promptGeneration(): number;

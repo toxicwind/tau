@@ -284,14 +284,15 @@ const COLORFUL_HEADING_COLORS: readonly AnsiColor[] = ["magenta", "yellow", "blu
  * Roles colorful Markdown overrides. Every hue comes from one palette so the
  * roles stay distinct; mixing in `md*` tokens collides in themes that alias
  * those tokens to the same palette entries (Dracula's `mdCode` is its magenta).
+ * Heading depth is not part of MarkdownTheme.heading's contract — the renderer
+ * calls heading(text) with a single argument, so the first palette slot is the
+ * heading hue.
  */
 const colorfulMarkdownRoles = {
-	heading: (text: string, depth: number) =>
-		theme.ansiFg(COLORFUL_HEADING_COLORS[Math.min(depth, COLORFUL_HEADING_COLORS.length) - 1], text),
+	heading: (text: string) => theme.ansiFg(COLORFUL_HEADING_COLORS[0], text),
 	code: (text: string) => theme.ansiFg("green", text),
-	strong: (text: string) => theme.ansiFg("magenta", theme.bold(text)),
-	emphasis: (text: string) => theme.ansiFg("magenta", theme.italic(text)),
-	tableHeader: (text: string) => theme.ansiFg("yellow", theme.bold(text)),
+	bold: (text: string) => theme.ansiFg("magenta", theme.bold(text)),
+	italic: (text: string) => theme.ansiFg("magenta", theme.italic(text)),
 } satisfies Partial<MarkdownTheme>;
 
 export function getMarkdownTheme(): MarkdownTheme {
@@ -319,7 +320,6 @@ export function getMarkdownTheme(): MarkdownTheme {
 	const markdownTheme: MarkdownTheme = {
 		heading: (text: string) => theme.fg("mdHeading", text),
 		code: (text: string) => theme.fg("mdCode", text),
-		...(markdownColorful ? colorfulMarkdownRoles : {}),
 		link: (text: string) => theme.fg("mdLink", text),
 		linkUrl: (text: string) => theme.fg("mdLinkUrl", text),
 		codeBlock: (text: string) => theme.fg("mdCodeBlock", text),
@@ -332,6 +332,8 @@ export function getMarkdownTheme(): MarkdownTheme {
 		italic: (text: string) => theme.italic(text),
 		underline: (text: string) => theme.underline(text),
 		strikethrough: (text: string) => chalk.strikethrough(text),
+		// Colorful overrides last so heading/code/bold/italic win when enabled.
+		...(markdownColorful ? colorfulMarkdownRoles : {}),
 		symbols: getSymbolTheme(),
 		resolveMermaidAscii: mermaid
 			? (source, maxWidth) =>

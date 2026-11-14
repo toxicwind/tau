@@ -2596,8 +2596,8 @@ export class AgentSession implements SettingsScope, AgentViewSession {
 		// consumed elsewhere since they queued (an eval cell awaiting the job)
 		// are dropped by the drain, so they must not cut a wait short.
 		this.agent.hasBackgroundCompletions = () =>
-			this.yieldQueue.hasDeliverable(LAUNCH_COMPLETION_MESSAGE_TYPE) ||
-			this.yieldQueue.hasDeliverable(ASYNC_RESULT_MESSAGE_TYPE);
+			this.yieldQueue.has(LAUNCH_COMPLETION_MESSAGE_TYPE) ||
+			this.yieldQueue.has(ASYNC_RESULT_MESSAGE_TYPE);
 		// Passive asides (`deliverAs: "aside"`) also end an interruptible `wait`
 		// instead of sitting behind it. Deferred wakes are not peeked: no
 		// boundary injection would drain them. Foreground tools are unaffected.
@@ -3641,7 +3641,7 @@ export class AgentSession implements SettingsScope, AgentViewSession {
 			// (idle-flush delay / step-boundary) handoff window would read as
 			// quiescent and the run driver would drop the queued result. An
 			// entry suppressed after it queued never injects, so it is no wake.
-			this.yieldQueue.hasDeliverable(ASYNC_RESULT_MESSAGE_TYPE)
+			this.yieldQueue.has(ASYNC_RESULT_MESSAGE_TYPE)
 		);
 	}
 
