@@ -181,3 +181,27 @@ export async function readLimitedText(
 
 	return new TextDecoder().decode(buffer.subarray(0, bytes));
 }
+
+/**
+ * Parse a provider-supplied result URL, keeping only absolute http(s) URLs.
+ * Returns the normalized string, or `undefined` for anything else.
+ */
+export function normalizeHttpUrl(value: unknown): string | undefined {
+	if (typeof value !== "string") return undefined;
+	try {
+		const url = new URL(value);
+		return url.protocol === "http:" || url.protocol === "https:" ? url.toString() : undefined;
+	} catch {
+		return undefined;
+	}
+}
+
+/** Bare hosts from `site:` values; path constraints remain centrally post-filtered. */
+export function siteHosts(sites: readonly string[]): string[] {
+	const hosts = new Set<string>();
+	for (const site of sites) {
+		const host = site.split("/", 1)[0];
+		if (host) hosts.add(host);
+	}
+	return [...hosts];
+}

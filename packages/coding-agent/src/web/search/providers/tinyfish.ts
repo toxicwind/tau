@@ -11,7 +11,7 @@ import { formatQuery, parseSearchQuery, type QuerySyntax } from "../query";
 import { clampNumResults } from "../utils";
 import type { SearchParams } from "./base";
 import { SearchProvider } from "./base";
-import { classifyProviderHttpError, normalizeSearchText, withHardTimeout } from "./utils";
+import { classifyProviderHttpError, normalizeSearchText, siteHosts, withHardTimeout } from "./utils";
 
 const TINYFISH_SEARCH_URL = "https://api.search.tinyfish.ai";
 const DEFAULT_NUM_RESULTS = 10;
@@ -134,14 +134,6 @@ function appendTinyFishSources(
 }
 
 /** Bare hosts from `site:` values; path constraints remain centrally post-filtered. */
-function siteHosts(sites: readonly string[]): string[] {
-	const hosts = new Set<string>();
-	for (const site of sites) {
-		const host = site.split("/", 1)[0];
-		if (host) hosts.add(host);
-	}
-	return [...hosts];
-}
 
 /**
  * Derive TinyFish `location` (ISO 3166-1 alpha-2, uppercase) and `language`
