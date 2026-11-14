@@ -78,7 +78,7 @@
   "type": "module",
   "scripts": {
     "setup": "bun scripts/setup.ts",
-    "dev": "bun --cwd=packages/coding-agent src/cli.ts",
+    "dev": "bash bin/tau-dev",
     "dev:timing": "PI_TIMING=x bun --cwd=packages/coding-agent --preload ../utils/src/module-timer.ts src/cli.ts",
     "stats": "bun --cwd=packages/coding-agent src/cli.ts stats",
     "collab:web:dev": "bun --cwd=packages/collab-web run dev",
@@ -168,7 +168,8 @@
     "ws:lint": "turbo run lint",
     "ws:test": "turbo run test",
     "ws:typecheck": "turbo run typecheck",
-    "postinstall": "node scripts/fix-effect-bytesize.js || true"
+    "postinstall": "node scripts/fix-effect-bytesize.js || true",
+    "dev:watch": "TAU_WATCH=1 bash bin/tau-dev"
   },
   "dependencies": {
     "@huggingface/transformers": "catalog:",

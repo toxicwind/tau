@@ -1,3 +1,54 @@
 #!/usr/bin/env bash
-cd /home/toxic/pens || exit 1
-exec /home/toxic/.bun/bin/bun /home/toxic/pens/olympus/products/tau/packages/coding-agent/src/cli.ts "$@"
+#
+# tau-dev — the ONE dev/entrypoint launcher for the tau coding agent.
+#
+# Consolidates everything that used to be spread across:
+#   - bin/tau-dev            (old: hardcoded `cd /home/toxic/pens` + absolute cli.ts)
+#   - root package.json "dev" (old: `bun --cwd=packages/coding-agent src/cli.ts`)
+#   - coding-agent package bin "tau"
+#   - the detached-keep `serve`/`attach`/`stop` daemon pair
+#
+# It is symlink-safe (resolves its own real path) and forwards every argument
+# to the single CLI entry, so subcommand dispatch (serve/attach/stop/dev/
+# version/build) lives where it belongs — in cli.ts — not duplicated here.
+# ~/.local/bin/tau -> bin/tau-dev.
+#
+# Env overrides:
+#   TAU_CHAT_ROOT  working directory the agent starts chats in (default $HOME/pens)
+#   BUN_BIN        bun binary to use (default: `bun` on PATH, else ~/.bun/bin/bun)
+#   TAU_WATCH=1    dev hot-reload (bun --watch). NOTE: restarts the process on
+#                  source edits and re-attaches to the on-disk session; running
+#                  two live tau instances concurrently is NOT safe (both write
+#                  the session). For context that survives even SIGKILL of the
+#                  TUI, use `tau-dev serve` then `tau-dev attach`.
+set -euo pipefail
+
+# Resolve this script's real path through any symlinks, so the entrypoint works
+# no matter where it is invoked or linked from.
+SCRIPT="$(readlink -f "${BASH_SOURCE[0]}")"
+BIN_DIR="$(cd "$(dirname "$SCRIPT")" && pwd)"
+REPO_DIR="$(cd "$BIN_DIR/.." && pwd)"
+CLI="$REPO_DIR/packages/coding-agent/src/cli.ts"
+
+TAU_CHAT_ROOT="${TAU_CHAT_ROOT:-$HOME/pens}"
+BUN_BIN="${BUN_BIN:-$(command -v bun || echo "$HOME/.bun/bin/bun")}"
+
+if [[ ! -f "$CLI" ]]; then
+	echo "error: tau-dev could not locate $CLI" >&2
+	echo "       expected layout: <repo>/packages/coding-agent/src/cli.ts" >&2
+	exit 1
+fi
+
+args=("$@")
+if [[ "${TAU_WATCH:-0}" == "1" ]]; then
+	args=(--watch "${args[@]}")
+fi
+
+# Historical tau-dev convention: start chats in $HOME/pens. Overridable via
+# TAU_CHAT_ROOT. Forwarding happens from there so the session lands in the
+# intended workspace, not the arbitrary invocation cwd.
+cd "$TAU_CHAT_ROOT" || {
+	echo "error: tau-dev chat root '$TAU_CHAT_ROOT' is not a directory (set TAU_CHAT_ROOT)" >&2
+	exit 1
+}
+exec "$BUN_BIN" "$CLI" "${args[@]}"
