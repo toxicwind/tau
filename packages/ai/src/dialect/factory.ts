@@ -4,6 +4,7 @@ import geminiDefinition from "./gemini";
 import gemmaDefinition from "./gemma";
 import glmDefinition from "./glm";
 import harmonyDefinition from "./harmony";
+import inceptionDefinition from "./inception";
 import hermesDefinition from "./hermes";
 import kimiDefinition from "./kimi";
 import minimaxDefinition from "./minimax";
@@ -20,6 +21,7 @@ const DIALECT_DEFINITIONS: Record<Dialect, DialectDefinition> = {
 	deepseek: deepseekDefinition,
 	minimax: minimaxDefinition,
 	harmony: harmonyDefinition,
+	inception: inceptionDefinition,
 	qwen3: qwen3Definition,
 	gemini: geminiDefinition,
 	gemma: gemmaDefinition,
