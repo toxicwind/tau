@@ -569,7 +569,7 @@ const TOOL_ENUM_VALUES: Record<string, ReadonlySet<string>> = {
 	contentType: MIME_TYPES,
 	mimeType: MIME_TYPES,
 	detail: new Set(["auto", "low", "high", "original"]),
-	errorKind: new Set(editErrorKinds()),
+	errorKind: new Set(typeof editErrorKinds === "function" ? editErrorKinds() : []),
 };
 
 /** Built-in tool argument keys holding free-form structures (env maps, schemas, structured output). */

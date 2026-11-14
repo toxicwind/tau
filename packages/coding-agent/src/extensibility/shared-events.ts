@@ -30,6 +30,37 @@ export interface SessionStartEvent {
 	type: "session_start";
 }
 
+export interface AggregatedToolCallState {
+	input?: Record<string, unknown>;
+	additionalContext: string[];
+}
+
+export function accumulateToolCallResult(
+	aggregated: AggregatedToolCallState,
+	result: { input?: Record<string, unknown>; additionalContext?: string },
+): void {
+	if (result.input !== undefined) {
+		aggregated.input = result.input;
+	}
+	if (typeof result.additionalContext === "string" && result.additionalContext.length > 0) {
+		aggregated.additionalContext.push(result.additionalContext);
+	}
+}
+
+export function buildAggregatedToolCallResult(
+	controlResult: ToolCallEventResult | undefined,
+	aggregated: AggregatedToolCallState,
+): ToolCallEventResult | undefined {
+	if (!controlResult && !aggregated.input && aggregated.additionalContext.length === 0) {
+		return undefined;
+	}
+	const out: ToolCallEventResult & { additionalContext?: string } = { ...(controlResult ?? {}) };
+	if (aggregated.input !== undefined) {
+		out.input = aggregated.input;
+	}
+	return out;
+}
+
 /** Fired before switching to another session (can be cancelled) */
 export interface SessionBeforeSwitchEvent {
 	type: "session_before_switch";

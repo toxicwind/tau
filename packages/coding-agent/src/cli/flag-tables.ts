@@ -209,6 +209,13 @@ export const STRING_SETTERS: Record<string, StringSetter> = {
 	"--export": (result, value) => {
 		result.export = value;
 	},
+	"--port": (result, value) => {
+		const port = Number.parseInt(value, 10);
+		if (!Number.isFinite(port) || port <= 0 || port > 65535) {
+			throw new CliUsageError(`Invalid --port: expected 1-65535, got "${value}"`);
+		}
+		result.port = port;
+	},
 	"--hook": (result, value) => {
 		result.hooks = result.hooks ?? [];
 		result.hooks.push(value);

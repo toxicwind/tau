@@ -1,7 +1,7 @@
 import type { CommandMetadata } from "@tau/tau-utils/cli";
 
 export const acpHelp = {
-	description: "Run tau as an ACP (Agent Client Protocol) server over stdio",
+	description: "Run tau as an ACP (Agent Client Protocol) server over stdio or TCP (--port)",
 } satisfies CommandMetadata;
 
 export const agentsHelp = { description: "Manage bundled task agents" } satisfies CommandMetadata;

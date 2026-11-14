@@ -97,3 +97,13 @@ export function matchesAppFollowUp(data: string): boolean {
 	}
 	return matchesEffectiveKeys(data, ["ctrl+enter", "ctrl+q"]);
 }
+
+export function appApproveKeys(keymap: { getKeys: (action: string) => readonly KeyId[] }): readonly KeyId[] {
+	const keys = keymap.getKeys("app.approval.approve");
+	return keys.length > 0 ? keys : ["enter", "y"];
+}
+
+export function appFollowUpKeys(keymap: { getKeys: (action: string) => readonly KeyId[] }): readonly KeyId[] {
+	const keys = keymap.getKeys("app.message.followUp");
+	return keys.length > 0 ? keys : ["ctrl+enter", "ctrl+q"];
+}

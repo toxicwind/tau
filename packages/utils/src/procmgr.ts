@@ -15,6 +15,11 @@ export interface ShellConfig {
 	prefix: string | undefined;
 }
 
+/** Clear the cached shell configuration so the next getShellConfig re-resolves. */
+export function refreshShellConfigCache(): void {
+	cachedShellConfig = null;
+}
+
 /** Identifies the settings source users should edit when shell resolution fails. */
 export interface ShellConfigOptions {
 	/** File path or runtime layer that supplied the active shell setting. */

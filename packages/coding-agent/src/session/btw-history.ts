@@ -10,9 +10,7 @@ export {
 	type BtwHistoryTurn,
 	getBtwCopyText,
 	getBtwLatestTurn,
-	getBtwRecordInject,
 	getBtwTurns,
-	getBtwTurnKey,
 } from "@tau/tau-tui/overlays/btw-history";
 
 const imageSchema = type({ type: "'image'", data: "string", mimeType: "string" });

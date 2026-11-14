@@ -270,6 +270,9 @@ export function frameBillingKey(billing: FrameBilling): string {
 	return `${billing.imageDetail ?? "auto"}:${billing.rule ? JSON.stringify(billing.rule) : "ceiling"}`;
 }
 
+/** Conservative per-frame token fallback when no image-tokenization rule matches. */
+export const FRAME_TOKEN_ESTIMATE = 5024;
+
 /** Billed-token estimate for one rendered frame of `size` under `billing`. */
 export function frameTokens(billing: FrameBilling, size: ImageSize): number {
 	return billing.rule ? imageTokens(billing.rule, size, billing.imageDetail) : FRAME_TOKEN_ESTIMATE;
@@ -513,8 +516,6 @@ export const HQ_EDGE_FRAMES = 3;
  *  across shapes: high-res Claude frames hit the 4,784 visual-token cap, billed
  *  at +5% margin (ceil(4784 * 1.05)). Keeps the overflow guard from
  *  undercounting a high-res archive at the raised {@link MAX_FRAMES_DEFAULT}. */
-export const FRAME_TOKEN_ESTIMATE = 5024;
-
 /** Conservative upper bound for one persisted frame's base64 payload. The
  *  measured high-res Anthropic `8x13`/`11on16` PNG frames sit around 159 KB;
  *  170 KB leaves margin for denser glyph pages without permitting multi-MB

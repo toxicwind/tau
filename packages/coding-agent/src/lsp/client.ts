@@ -112,6 +112,11 @@ export function isSharedLspEnabled(): boolean {
 	return sharedLspHolds.at(-1)?.enabled ?? false;
 }
 
+/** Set the process-global shared LSP enabled state. */
+export function setSharedLspEnabled(enabled: boolean): void {
+	holdSharedLsp(enabled);
+}
+
 /** Hold the shared-LSP mode at `enabled` until released; `set` follows later setting changes. */
 export function holdSharedLsp(enabled: boolean): { set(enabled: boolean): void; release(): void } {
 	const hold: SharedLspHold = { enabled };

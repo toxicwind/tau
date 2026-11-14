@@ -187,8 +187,22 @@ export function encodeModelCatalog(models: Record<string, Record<string, Model<A
 
 /** Open a parsed catalog without materializing its provider models. */
 export function openModelCatalog(value: unknown): ModelCatalog {
+	if (!value || typeof value !== "object") throw new Error("Invalid model catalog");
 	const data = value as CatalogData;
-	if (data.version !== 1) throw new Error("Unsupported model catalog version");
+	if (data.version !== 1) {
+		const providersMap = new Map<string, Record<string, Model<Api>>>();
+		for (const [provider, models] of Object.entries(value as Record<string, Record<string, Model<Api>>>)) {
+			providersMap.set(provider, models);
+		}
+		return {
+			data: { version: 1, keys: [], booleanShapes: [], nodes: [], compat: [], providers: [] },
+			values: [],
+			decoded: [],
+			providers: providersMap,
+			compatBases: new Map(),
+			compatValues: new Map(),
+		};
+	}
 	return {
 		data,
 		values: [],
@@ -239,6 +253,9 @@ function decode(catalog: ModelCatalog, value: EncodedValue): unknown {
 
 /** List catalog provider keys in deterministic order. */
 export function getCatalogProviders(catalog: ModelCatalog): string[] {
+	if (catalog.providers.size > 0 && catalog.data.providers.length === 0) {
+		return Array.from(catalog.providers.keys());
+	}
 	return catalog.data.providers.map(provider => provider[0]);
 }
 

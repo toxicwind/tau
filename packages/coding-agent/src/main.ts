@@ -122,7 +122,7 @@ import {
 import { resolveFirstLaunchPythonEvalWarning } from "./eval/startup-warning";
 import { EventBus } from "./utils/event-bus";
 
-type RunAcpMode = (createSession: AcpSessionFactory) => Promise<never>;
+type RunAcpMode = (createSession: AcpSessionFactory, initialSession?: AgentSession, options?: { port?: number }) => Promise<void>;
 type RunPrintMode = (session: AgentSession, options: PrintModeOptions) => Promise<number>;
 type RunRpcMode = (
 	session: AgentSession,
@@ -2145,7 +2145,7 @@ export async function runRootCommand(
 			// Branch-only protocol runner: keep ACP server code out of normal interactive startup.
 			const runAcpMode = deps.runAcpMode ?? (await import("./modes/acp/acp-mode")).runAcpMode;
 			stopStartupWatchdog();
-			await runAcpMode(createAcpSession);
+			await runAcpMode(createAcpSession, undefined, { port: parsedArgs.port });
 		} else {
 			// Resolve extension-registered CLI flags before creating the session so a
 			// bad `@file` fails fast WITHOUT leaving a junk session/breadcrumb

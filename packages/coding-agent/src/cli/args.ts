@@ -78,6 +78,7 @@ export interface Args {
 	print?: boolean;
 	printThoughts?: boolean;
 	export?: string;
+	port?: number;
 	noSkills?: boolean;
 	skills?: string[];
 	noRules?: boolean;

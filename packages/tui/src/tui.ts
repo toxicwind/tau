@@ -117,6 +117,13 @@ export interface RenderTimer {
 	cancel(): void;
 }
 
+/** Invoke describe() on a component if it implements it, else return null. */
+export function ownDescription(component: Component | undefined, cx: unknown): unknown {
+	if (!component) return null;
+	const candidate = component as Component & { describe?: (cx: unknown) => unknown };
+	return typeof candidate.describe === "function" ? candidate.describe(cx) : null;
+}
+
 export interface RenderScheduler {
 	now(): number;
 	scheduleImmediate(callback: () => void): void;

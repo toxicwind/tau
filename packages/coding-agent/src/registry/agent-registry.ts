@@ -17,6 +17,7 @@ import { oneLineLabel } from "@tau/tau-tui/tools/task";
 import { MAIN_AGENT_ID, type AgentStatus, type AgentMetricsSummary } from "@tau/tau-tui/overlays/agent-hub-types";
 export { MAIN_AGENT_ID };
 export type { AgentStatus, AgentMetricsSummary };
+export { getAgentTombstonePath } from "./agent-tombstone";
 
 /**
  * - `main`/`sub`: the user-facing agent tree (driving agent + task subagents).
