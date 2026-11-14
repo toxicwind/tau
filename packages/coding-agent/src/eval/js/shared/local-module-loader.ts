@@ -385,8 +385,38 @@ function resolveImportSpecifier(baseDir: string, source: string, packageRoot: st
 	throw projectError;
 }
 
+function findEnclosingWorkspaceRoot(startDir: string): string | undefined {
+	let current = path.resolve(startDir);
+	while (current !== path.dirname(current)) {
+		if (
+			fs.existsSync(path.join(current, "pnpm-workspace.yaml")) ||
+			fs.existsSync(path.join(current, "bunfig.toml")) ||
+			fs.existsSync(path.join(current, "node_modules", "@tau")) ||
+			(fs.existsSync(path.join(current, "package.json")) && fs.existsSync(path.join(current, "packages")))
+		) {
+			return current;
+		}
+		current = path.dirname(current);
+	}
+	const tauRoot = path.resolve(import.meta.dir, "../../../../../..");
+	if (fs.existsSync(path.join(tauRoot, "node_modules", "@tau"))) {
+		return tauRoot;
+	}
+	return undefined;
+}
+
 function resolveBareSpecifierWithinProject(source: string, baseDir: string): string {
-	const resolved = Bun.resolveSync(source, baseDir);
+	let resolved: string;
+	try {
+		resolved = Bun.resolveSync(source, baseDir);
+	} catch (error) {
+		const wsRoot = findEnclosingWorkspaceRoot(baseDir);
+		if (wsRoot && wsRoot !== baseDir) {
+			resolved = Bun.resolveSync(source, wsRoot);
+		} else {
+			throw error;
+		}
+	}
 	if (!path.isAbsolute(resolved)) {
 		throw new Error(
 			`Refusing non-file resolution ${JSON.stringify(resolved)} for bare package ${JSON.stringify(source)} from ${baseDir}`,
@@ -404,6 +434,10 @@ function resolveBareSpecifierWithinProject(source: string, baseDir: string): str
 		}
 		if (parent === ancestor) break;
 		ancestor = parent;
+	}
+	const wsRoot = findEnclosingWorkspaceRoot(baseDir);
+	if (wsRoot && pathIsWithin(wsRoot, target)) {
+		return resolved;
 	}
 	throw new Error(
 		`Refusing package ${JSON.stringify(source)} resolved outside the importing project's ancestry: ${resolved}`,
