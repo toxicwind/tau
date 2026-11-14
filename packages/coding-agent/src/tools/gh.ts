@@ -63,6 +63,8 @@ export {
 	type ViewLookupResult,
 } from "./gh-view";
 
+export function retainPrDiffGeneration(_args: unknown): number | null { return null; }
+
 const GITHUB_READONLY_OPS: ReadonlySet<string> = new Set([
 	"repo_view",
 	"file_read",

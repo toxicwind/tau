@@ -14,12 +14,12 @@
 import { describe, expect, test } from "bun:test";
 import { postOpenAIStream } from "../src/utils/openai-http";
 
-// Route through the rhodochrosite router (:25193) — the estate's canonical
+// Route through the mimetite router (:25193) — the estate's canonical
 // entry. Direct freeinference.org calls (the old BASE_URL) competed with the
 // router's own freeinference lane, causing "Provider is overloaded". The
 // router handles the 2-slot concurrency and backoff.
 const BASE_URL = process.env.PATCHLING_ROUTER_URL ?? "http://127.0.0.1:25193/v1";
-const MODEL = "glm-5.3-flash"; // cheapest/fastest tool-free lane for a live ping
+const MODEL = "nim-deepseek-v4-flash"; // cheapest/fastest tool-free lane for a live ping
 const KEY =
 	Bun.env.PATCHLING_ROUTER_KEY ??
 	Bun.env.RHODOCHROSITE_KEY ??

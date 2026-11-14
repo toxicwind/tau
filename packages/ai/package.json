@@ -16,7 +16,10 @@
 		"url": "https://github.com/toxicwind/tau/issues"
 	},
 	"license": "MIT",
-	"author": { "name": "Stencil Labs, Inc.", "url": "https://stencil.so" },
+	"author": {
+		"name": "Stencil Labs, Inc.",
+		"url": "https://stencil.so"
+	},
 	"contributors": [
 		"Mario Zechner"
 	],
@@ -149,15 +152,16 @@
 		"fmt": "oxfmt --no-error-on-unmatched-pattern 'src/**/*.{ts,tsx}' '{test,bench,examples,scripts}/**/*.ts' '*.ts'"
 	},
 	"dependencies": {
-		"@tau/tautype": "catalog:",
 		"@tau/tau-catalog": "catalog:",
 		"@tau/tau-natives": "catalog:",
 		"@tau/tau-utils": "catalog:",
-		"@tau/tau-wire": "catalog:"
+		"@tau/tau-wire": "catalog:",
+		"@tau/tautype": "catalog:",
+		"effect": "^4.1.4"
 	},
 	"devDependencies": {
-    "@types/bun": "^1.4.4",
-    "bun-types": "^1.4.4"
+		"@types/bun": "^1.4.4",
+		"bun-types": "^1.4.4"
 	},
 	"engines": {
 		"bun": ">=1.3.14"

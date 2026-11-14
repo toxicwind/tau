@@ -69,6 +69,7 @@ import type {
 	ToolChoice,
 } from "./types";
 import { getHeaderCaseInsensitive, resolveCacheRetention } from "./utils";
+import { Effect } from "effect";
 import { AssistantMessageEventStream } from "./utils/event-stream";
 import { isFoundryEnabled } from "./utils/foundry";
 import { applyGlyphCodec } from "./utils/glyph-codec";
@@ -692,7 +693,35 @@ export const __providerInFlightForTesting = {
 	},
 };
 
+/**
+ * Monadic stream forwarder wrapping the provider in-flight entrypoint.
+ * Evaluates in-flight limit gating as an Effect; when disabled or bypassed
+ * via config (e.g. providers.maxInFlightRequests[provider] <= 0 or
+ * $env.TAU_DISABLE_INFLIGHT_GATING === "1"), it yields a direct monadic
+ * forwarder without acquiring locks or filesystem leases, leaving the
+ * underlying lease engine 100% intact.
+ */
 function withProviderInFlightLimit<TOptions extends Pick<StreamOptions, "signal" | "maxInFlightRequests">>(
+	model: Model<Api>,
+	options: TOptions | undefined,
+	dispatch: () => AssistantMessageEventStream,
+): AssistantMessageEventStream {
+	const shouldBypass = Effect.runSync(
+		Effect.gen(function* () {
+			if ($env.TAU_DISABLE_INFLIGHT_GATING === "1") return true;
+			const limit = resolveProviderInFlightLimit(model.provider, options);
+			return limit === undefined;
+		}),
+	);
+
+	if (shouldBypass) {
+		return healLeakedThinking(model, dispatch());
+	}
+
+	return withProviderInFlightLimitInner(model, options, dispatch);
+}
+
+function withProviderInFlightLimitInner<TOptions extends Pick<StreamOptions, "signal" | "maxInFlightRequests">>(
 	model: Model<Api>,
 	options: TOptions | undefined,
 	dispatch: () => AssistantMessageEventStream,

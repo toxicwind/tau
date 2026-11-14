@@ -24,7 +24,7 @@ import {
 } from "../src/dialect/coercion";
 import { getDesktopCommander } from "./desktop-commander-mcp-shim";
 
-const COMPLETION_MODELS = ["deepseek-v4-flash", "glm-5.3-flash", "qwen3.6-35b"] as const;
+const COMPLETION_MODELS = ["deepseek-v4-flash", "qwen3.6-35b"] as const;
 const COMPLETION_MODEL = (Bun.env.COERCION_LIVE_MODEL ?? "deepseek-v4-flash") as (typeof COMPLETION_MODELS)[number];
 if (!COMPLETION_MODELS.includes(COMPLETION_MODEL)) {
 	throw new Error(
@@ -32,7 +32,7 @@ if (!COMPLETION_MODELS.includes(COMPLETION_MODEL)) {
 	);
 }
 
-// Route through the rhodochrosite router (:25193) — the estate's canonical
+// Route through the mimetite router (:25193) — the estate's canonical
 // entry. Direct freeinference.org calls competed with the router's lane,
 // causing "Provider is overloaded". The router key comes from env or
 // ~/.tau/router.key.

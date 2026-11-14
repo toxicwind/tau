@@ -1,7 +1,6 @@
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { type WasmGrammarInfo, type WasmGrammarQuery, wasmGrammarFor } from "@tau/tau-natives";
-import { getNativeGrammarsDir, logger, withFileLock } from "@tau/tau-utils";
+import { getNativeGrammarsDir, logger, withFileLock, type WasmGrammarInfo, type WasmGrammarQuery, wasmGrammarFor } from "@tau/tau-utils";
 import { withDownload } from "../downloads/activity";
 import { downloadFile } from "./tools-manager";
 

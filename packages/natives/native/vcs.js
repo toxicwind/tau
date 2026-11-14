@@ -122,3 +122,5 @@ export function watch(repo, onChange, intervalMs = HEAD_WATCH_INTERVAL_MS) {
 	fs.watchFile(target, { interval: intervalMs }, listener).unref();
 	return () => fs.unwatchFile(target, listener);
 }
+
+export async function copyGitObjects(_src, _dest) {}

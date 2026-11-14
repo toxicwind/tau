@@ -1,0 +1,302 @@
+{
+  "timestamp": "2026-11-14T00:22:27.164Z",
+  "anySuccess": false,
+  "results": [
+    {
+      "name": "Control: deepseek + deepseek simultaneous",
+      "success": false,
+      "r1": {
+        "tag": "R1-anchor",
+        "model": "deepseek-v4-flash",
+        "status": 200,
+        "startMs": 0,
+        "firstTokenMs": 222,
+        "totalMs": 522,
+        "tokensReceived": 14,
+        "headers": {
+          "cf-cache-status": "DYNAMIC",
+          "cf-ray": "a5a1dc3f1d947989-DEN",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-request-id": "9fd31ddb46da0cf719c01138"
+        }
+      },
+      "r2": {
+        "tag": "R2-woven",
+        "model": "deepseek-v4-flash",
+        "status": 429,
+        "startMs": 0,
+        "totalMs": 139,
+        "tokensReceived": 0,
+        "error": "{\"error\":{\"code\":\"concurrency_limit_exceeded\",\"message\":\"Too many concurrent requests (limit: 1)\",\"limit\":1,\"role\":\"pro\"}}",
+        "headers": {
+          "cf-cache-status": "DYNAMIC",
+          "cf-ray": "a5a1dc40b9001f25-DEN",
+          "retry-after": "1",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-request-id": "8d1a3bf62642394bb7e5e3f2"
+        }
+      }
+    },
+    {
+      "name": "Cross-Model: DeepSeek anchor (generating) + Qwen tiny context",
+      "success": false,
+      "r1": {
+        "tag": "R1-anchor",
+        "model": "deepseek-v4-flash",
+        "status": 200,
+        "startMs": 0,
+        "firstTokenMs": 228,
+        "totalMs": 1053,
+        "tokensReceived": 35,
+        "headers": {
+          "cf-cache-status": "DYNAMIC",
+          "cf-ray": "a5a1dc4bbad71f25-DEN",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-request-id": "8c8629c6fd1b4b27855345db"
+        }
+      },
+      "r2": {
+        "tag": "R2-woven",
+        "model": "qwen3.6-35b",
+        "status": 429,
+        "startMs": 0,
+        "totalMs": 85,
+        "tokensReceived": 0,
+        "error": "{\"error\":{\"code\":\"concurrency_limit_exceeded\",\"message\":\"Too many concurrent requests (limit: 1)\",\"limit\":1,\"role\":\"pro\"}}",
+        "headers": {
+          "cf-cache-status": "DYNAMIC",
+          "cf-ray": "a5a1dc4d2f017989-DEN",
+          "retry-after": "1",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-request-id": "ce4f10addf88c1e1b4ed6d56"
+        }
+      }
+    },
+    {
+      "name": "Cross-Model: Qwen anchor (generating) + DeepSeek tiny context",
+      "success": false,
+      "r1": {
+        "tag": "R1-anchor",
+        "model": "qwen3.6-35b",
+        "status": 200,
+        "startMs": 0,
+        "firstTokenMs": 166,
+        "totalMs": 515,
+        "tokensReceived": 29,
+        "headers": {
+          "cf-cache-status": "DYNAMIC",
+          "cf-ray": "a5a1dc5bb86a7989-DEN",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-request-id": "746c41558ad8b962aff11a8d"
+        }
+      },
+      "r2": {
+        "tag": "R2-woven",
+        "model": "deepseek-v4-flash",
+        "status": 429,
+        "startMs": 0,
+        "totalMs": 88,
+        "tokensReceived": 0,
+        "error": "{\"error\":{\"code\":\"concurrency_limit_exceeded\",\"message\":\"Too many concurrent requests (limit: 1)\",\"limit\":1,\"role\":\"pro\"}}",
+        "headers": {
+          "cf-cache-status": "DYNAMIC",
+          "cf-ray": "a5a1dc5cbddf1f25-DEN",
+          "retry-after": "1",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-request-id": "783b4c535d4840f2f81f0fed"
+        }
+      }
+    },
+    {
+      "name": "Cross-Model: DeepSeek anchor + Qwen medium context (500t)",
+      "success": false,
+      "r1": {
+        "tag": "R1-anchor",
+        "model": "deepseek-v4-flash",
+        "status": 200,
+        "startMs": 0,
+        "firstTokenMs": 223,
+        "totalMs": 676,
+        "tokensReceived": 17,
+        "headers": {
+          "cf-cache-status": "DYNAMIC",
+          "cf-ray": "a5a1dc685ed31f25-DEN",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-request-id": "79d12c48ea9e72d5bc64e7cf"
+        }
+      },
+      "r2": {
+        "tag": "R2-woven",
+        "model": "qwen3.6-35b",
+        "status": 429,
+        "startMs": 0,
+        "totalMs": 105,
+        "tokensReceived": 0,
+        "error": "{\"error\":{\"code\":\"concurrency_limit_exceeded\",\"message\":\"Too many concurrent requests (limit: 1)\",\"limit\":1,\"role\":\"pro\"}}",
+        "headers": {
+          "cf-cache-status": "DYNAMIC",
+          "cf-ray": "a5a1dc69c9e17989-DEN",
+          "retry-after": "1",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-request-id": "2f32283da2aac8bd2a8948f8"
+        }
+      }
+    },
+    {
+      "name": "Session Weave: Same X-Session-ID on both requests",
+      "success": false,
+      "r1": {
+        "tag": "R1-anchor",
+        "model": "deepseek-v4-flash",
+        "status": 200,
+        "startMs": 0,
+        "firstTokenMs": 481,
+        "totalMs": 874,
+        "tokensReceived": 16,
+        "headers": {
+          "cf-cache-status": "DYNAMIC",
+          "cf-ray": "a5a1dc75ea007989-DEN",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-request-id": "d1db6b3eca5a94bdee94a7c3"
+        }
+      },
+      "r2": {
+        "tag": "R2-woven",
+        "model": "qwen3.6-35b",
+        "status": 429,
+        "startMs": 0,
+        "totalMs": 100,
+        "tokensReceived": 0,
+        "error": "{\"error\":{\"code\":\"concurrency_limit_exceeded\",\"message\":\"Too many concurrent requests (limit: 1)\",\"limit\":1,\"role\":\"pro\"}}",
+        "headers": {
+          "cf-cache-status": "DYNAMIC",
+          "cf-ray": "a5a1dc790a001f25-DEN",
+          "retry-after": "1",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-request-id": "3fc40678e09bd1c6ccb743ac"
+        }
+      }
+    },
+    {
+      "name": "Session Weave: Distinct X-Session-IDs",
+      "success": false,
+      "r1": {
+        "tag": "R1-anchor",
+        "model": "deepseek-v4-flash",
+        "status": 200,
+        "startMs": 0,
+        "firstTokenMs": 241,
+        "totalMs": 639,
+        "tokensReceived": 16,
+        "headers": {
+          "cf-cache-status": "DYNAMIC",
+          "cf-ray": "a5a1dc84ccf61f25-DEN",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-request-id": "d89536a60f2de806b1fee594"
+        }
+      },
+      "r2": {
+        "tag": "R2-woven",
+        "model": "qwen3.6-35b",
+        "status": 429,
+        "startMs": 0,
+        "totalMs": 95,
+        "tokensReceived": 0,
+        "error": "{\"error\":{\"code\":\"concurrency_limit_exceeded\",\"message\":\"Too many concurrent requests (limit: 1)\",\"limit\":1,\"role\":\"pro\"}}",
+        "headers": {
+          "cf-cache-status": "DYNAMIC",
+          "cf-ray": "a5a1dc865c757989-DEN",
+          "retry-after": "1",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-request-id": "188318cae1603389d4aa5955"
+        }
+      }
+    },
+    {
+      "name": "Header Weave: X-Reasoning-Passthrough: 1",
+      "success": false,
+      "r1": {
+        "tag": "R1-anchor",
+        "model": "deepseek-v4-flash",
+        "status": 200,
+        "startMs": 0,
+        "firstTokenMs": 201,
+        "totalMs": 763,
+        "tokensReceived": 12,
+        "headers": {
+          "cf-cache-status": "DYNAMIC",
+          "cf-ray": "a5a1dc922b337989-DEN",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-request-id": "8fe89a6ff1ec6f83b71ffb21"
+        }
+      },
+      "r2": {
+        "tag": "R2-woven",
+        "model": "qwen3.6-35b",
+        "status": 429,
+        "startMs": 0,
+        "totalMs": 95,
+        "tokensReceived": 0,
+        "error": "{\"error\":{\"code\":\"concurrency_limit_exceeded\",\"message\":\"Too many concurrent requests (limit: 1)\",\"limit\":1,\"role\":\"pro\"}}",
+        "headers": {
+          "cf-cache-status": "DYNAMIC",
+          "cf-ray": "a5a1dc937acf1f25-DEN",
+          "retry-after": "1",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-request-id": "15120fe010d9ef867a0002fe"
+        }
+      }
+    },
+    {
+      "name": "Mode Weave: Stream Anchor + Non-Stream Follower",
+      "success": false,
+      "r1": {
+        "tag": "R1-anchor",
+        "model": "deepseek-v4-flash",
+        "status": 200,
+        "startMs": 0,
+        "firstTokenMs": 248,
+        "totalMs": 555,
+        "tokensReceived": 15,
+        "headers": {
+          "cf-cache-status": "DYNAMIC",
+          "cf-ray": "a5a1dca058351f25-DEN",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-request-id": "147c1f9c7d719d73483dd1f8"
+        }
+      },
+      "r2": {
+        "tag": "R2-woven",
+        "model": "qwen3.6-35b",
+        "status": 429,
+        "startMs": 0,
+        "totalMs": 114,
+        "tokensReceived": 0,
+        "error": "{\"error\":{\"code\":\"concurrency_limit_exceeded\",\"message\":\"Too many concurrent requests (limit: 1)\",\"limit\":1,\"role\":\"pro\"}}",
+        "headers": {
+          "cf-cache-status": "DYNAMIC",
+          "cf-ray": "a5a1dca1e8407989-DEN",
+          "retry-after": "1",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-request-id": "3e3f46e93e1c336e006b7220"
+        }
+      }
+    }
+  ]
+}

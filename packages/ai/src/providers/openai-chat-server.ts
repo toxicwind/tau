@@ -47,6 +47,8 @@ function isReasoningEffort(value: unknown): value is ReasoningEffort {
 	);
 }
 
+export function adoptReplayedGeminiSignatures(_context: unknown, _model?: unknown): void {}
+
 function isServiceTier(value: unknown): value is ServiceTier {
 	return value === "auto" || value === "default" || value === "flex" || value === "scale" || value === "priority";
 }

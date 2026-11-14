@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+exec /home/toxic/.bun/bin/bun /home/toxic/pens/olympus/products/tau/packages/coding-agent/src/cli.ts "$@"

@@ -528,6 +528,7 @@ export const FRAME_DATA_BYTES_ESTIMATE = 170_000;
  *  a 1M-token model can afford 70 images on paper, but not the resulting
  *  ~11 MB JSON payload on every turn. */
 export const DEFAULT_FRAME_DATA_BYTES_BUDGET = 3_000_000;
+export const FRAME_DATA_BYTES_BUDGET = DEFAULT_FRAME_DATA_BYTES_BUDGET;
 
 /** Base64 image bytes the archive frames riding every request to `model` may
  *  carry: half the deployment's inline-image byte budget, else
