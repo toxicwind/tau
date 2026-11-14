@@ -1,6 +1,6 @@
 # KAPPA SESSION ses_e9f49604effePn9yCp6SoEbPIS
 title: New session - 2026-10-21T23:05:43.601Z
-cwd: /home/toxic/estate
+cwd: /home/toxic/pens/estate
 user_messages: 329
 
 --- user message 1/329 (msg msg_160b69fbb0012w5j1a5NcTvNov, 2026-10-21T23:05:43.611Z) ---

@@ -1,6 +1,6 @@
 # KAPPA SESSION ses_ea6d488f5ffeSAmqkhRhSGioXe
 title: kappa config inspection - FreeInference and MCP tools
-cwd: /home/toxic/estate
+cwd: /home/toxic/pens/estate
 user_messages: 103
 
 --- user message 1/103 (msg msg_1592b771d00148vZYO71KPxP9H, 2026-10-20T11:56:23.198Z) ---

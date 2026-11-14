@@ -91,7 +91,7 @@ bun test
 The live audit runs from the estate-scripts root so `.secrets` is loadable.
 
 ```sh
-cd /home/toxic/estate
+cd /home/toxic/pens/estate
 set -a && . ./config/.secrets && set +a
 bun projects/tau-extensions/packages/tau-loops/scripts/run-model-audit.ts
 ```

@@ -1,6 +1,6 @@
 # KAPPA SESSION ses_e90d390fcffea5zB68iDoT1V1K
 title: Fix KRK left monitor audio issue
-cwd: /home/toxic/estate
+cwd: /home/toxic/pens/estate
 user_messages: 65
 
 --- user message 1/65 (msg msg_16f2c6f19001cHSIXtpU7JXMqd, 2026-10-24T18:29:05.433Z) ---

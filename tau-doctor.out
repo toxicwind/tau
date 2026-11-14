@@ -13,13 +13,13 @@
   pid 1238208 bash ./tau-doctor.sh: 1
   pid 1238209 tee tau-doctor.out: 1
   pid 2000710 /home/toxic/.local/share/mise/installs/pitchfork/2.25.0/pitc: 0
-  pid 2000711 node /home/toxic/estate/ranch/barn/chute/chute.mjs --port 25: 0
+  pid 2000711 node /home/toxic/pens/estate/ranch/barn/chute/chute.mjs --port 25: 0
   pid 3933097 tau: 1
   pid 3960680 /home/toxic/.local/bin/tau __tau_worker_daemon_broker: 1
   pid 3986727 tau: 1
 == flock references in tau config (values redacted)
-/home/toxic/estate/config/tau/.env:46:FLOCK_BASE_URL="http://127.0.0.1:25193/v1"
-/home/toxic/estate/config/tau/.env:47:FLOCK_API_KEY=<redacted>
+/home/toxic/pens/estate/config/tau/.env:46:FLOCK_BASE_URL="http://127.0.0.1:25193/v1"
+/home/toxic/pens/estate/config/tau/.env:47:FLOCK_API_KEY=<redacted>
 /home/toxic/.tau/agent/models.yml:14:  flock:
 /home/toxic/.tau/agent/models.yml:17:    apiKey: <redacted>
 /home/toxic/.omp/config.yml:6:- name: flock

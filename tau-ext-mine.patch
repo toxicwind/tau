@@ -758,7 +758,7 @@ index 0000000..e1fc4ba
 +
 +## 🔌 Port SSOT
 +
-+`/home/toxic/estate/config/ports.env` — all 25xxx, never invent.
++`/home/toxic/pens/estate/config/ports.env` — all 25xxx, never invent.
 +
 +---
 diff --git a/LICENSE b/LICENSE
@@ -27986,7 +27986,7 @@ index 0000000..ced2900
 +The live audit runs from the sovereign root so `.secrets` is loadable.
 +
 +```sh
-+cd /home/toxic/estate
++cd /home/toxic/pens/estate
 +set -a && . ./config/.secrets && set +a
 +bun projects/tau-extensions/packages/tau-loops/scripts/run-model-audit.ts
 +```
@@ -28056,7 +28056,7 @@ index 0000000..7dd8f6e
 +
 +if (needles.length > 0) {
 +	const hits = censusConsumers({
-+		searchRoot: resolveDir(process.env.LOOPS_SEARCH_ROOT ?? "/home/toxic/estate"),
++		searchRoot: resolveDir(process.env.LOOPS_SEARCH_ROOT ?? "/home/toxic/pens/estate"),
 +		needles,
 +		maxHitsPerNeedle: 20,
 +	});
@@ -28793,9 +28793,9 @@ index 0000000..e90d393
 +
 +/** The engine's authoritative role list, read from source rather than hardcoded. */
 +export const MODEL_BROWSER_SRC =
-+	"/home/toxic/estate/ranch/stockyard/tau/packages/tui/src/overlays/model-browser.ts";
++	"/home/toxic/pens/estate/ranch/stockyard/tau/packages/tui/src/overlays/model-browser.ts";
 +export const PRIORITY_JSON =
-+	"/home/toxic/estate/ranch/stockyard/tau/packages/coding-agent/src/priority.json";
++	"/home/toxic/pens/estate/ranch/stockyard/tau/packages/coding-agent/src/priority.json";
 +
 +function fail(message: string): never {
 +	throw new Error(`model-audit: ${message}`);

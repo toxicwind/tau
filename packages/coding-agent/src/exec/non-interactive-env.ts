@@ -142,15 +142,15 @@ export function buildNonInteractiveEnv(
 	const existingPath = overrides?.PATH ?? baseEnv.PATH ?? process.env.PATH ?? "";
 	const pathWithLocalBin = existingPath.split(":").includes(localBin) ? existingPath : `${localBin}:${existingPath}`;
 
-	// Kairos autoshim (AGENTS.md §3.2 / estate doctrine): agent bash shells are
+	// Kairos guard (AGENTS.md §3.2 / estate doctrine): agent bash shells are
 	// non-login, so `.bash_profile`'s `export BASH_ENV=…shim.sh` never reaches
 	// them. Inject BASH_ENV here so every non-interactive exec shell sources
-	// the kairos shim (DEBUG trap, head/tail/timeout guards, 4s run-fast race).
-	// Only when the shim file actually exists; the shim self-selects
-	// interactive→idle / non-interactive→enforce, so interactive shells stay
-	// unhijacked while agent shells get enforcement. Never allow an overlay to
-	// force enforcement off (KAIROS_ENFORCE=0) for agent shells.
-	const kairosShim = `${home}/pens/olympus/products/kairos/shim.sh`;
+	// the kairos shim (ban-guard DEBUG trap). Only when the shim file actually
+	// exists; the shim self-selects interactive→idle / non-interactive→enforce,
+	// so interactive shells stay unhijacked while agent shells get enforcement.
+	// Never allow an overlay to force enforcement off (KAIROS_ENFORCE=0) for
+	// agent shells.
+	const kairosShim = `${home}/pens/flux/products/kairos/shim.sh`;
 	const hasKairosShim = process.platform === "win32" ? false : existsSync(kairosShim);
 	const kairosOverrides: Record<string, string> = {};
 	if (hasKairosShim) {

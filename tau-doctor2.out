@@ -120,7 +120,7 @@
     1249516       0  4728 bash -c ps -eo pid,etimes,rss,args | grep -E '[t]au( |$)|tau_worker|tau-worker' | cut -c
     1249523       0  2968 grep -E [t]au( |$)|tau_worker|tau-worker
     2000710   77808  5668 /home/toxic/.local/share/mise/installs/pitchfork/2.25.0/pitchfork log-sink --daemon-id e
-    2000711   77808 28196 node /home/toxic/estate/ranch/barn/chute/chute.mjs --port 25111 -- /home/toxic/.local/bi
+    2000711   77808 28196 node /home/toxic/pens/estate/ranch/barn/chute/chute.mjs --port 25111 -- /home/toxic/.local/bi
     3933097   28010 372852 tau
     3960680   27424 55296 /home/toxic/.local/bin/tau __tau_worker_daemon_broker
     3986727   26861 350452 tau

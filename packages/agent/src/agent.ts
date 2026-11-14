@@ -1199,6 +1199,22 @@ export class Agent {
 		return claim ? [...claim.messages, ...this.#followUpQueue] : this.#followUpQueue;
 	}
 
+	/**
+	 * Withdraw messages the run already dequeued but never recorded (live-steered
+	 * into an aborted response, or taken for its next model call). Returns them so
+	 * the interrupt path can re-queue them ahead of the rest (they were queued
+	 * first). Non-consuming of the still-pending queues: those remain visible to
+	 * {@link peekSteeringQueue}/{@link peekFollowUpQueue}.
+	 */
+	withdrawUndeliveredQueuedMessages(): { steering: AgentMessage[]; followUp: AgentMessage[] } {
+		const steeringClaim = this.#queuedMessageClaims.steering;
+		const followUpClaim = this.#queuedMessageClaims.followUp;
+		return {
+			steering: steeringClaim ? [...steeringClaim.messages] : [],
+			followUp: followUpClaim ? [...followUpClaim.messages] : [],
+		};
+	}
+
 	/** Nonblocking snapshot of the latest results, including provisional payloads while transforms are pending. */
 	getPendingToolResults(): readonly ToolResultMessage[] {
 		const results = this.#cursorToolResultDrain?.map(({ toolResult }) => toolResult) ?? [];

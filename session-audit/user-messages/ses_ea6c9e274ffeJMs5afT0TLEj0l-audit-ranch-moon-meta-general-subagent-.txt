@@ -1,6 +1,6 @@
 # KAPPA SESSION ses_ea6c9e274ffeJMs5afT0TLEj0l
 title: Audit ranch + moon + meta (@general subagent)
-cwd: /home/toxic/estate
+cwd: /home/toxic/pens/estate
 user_messages: 2
 
 --- user message 1/2 (msg msg_159361d90001d9xmyYKCS8m8mN, 2026-10-20T12:08:01.169Z) ---

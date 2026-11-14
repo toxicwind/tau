@@ -1,6 +1,6 @@
 # KAPPA SESSION ses_ea6c9eed6ffeeedpZ8s9trrWwW
 title: Audit estate control plane (@general subagent)
-cwd: /home/toxic/estate
+cwd: /home/toxic/pens/estate
 user_messages: 2
 
 --- user message 1/2 (msg msg_159361131001kCtnjaTjiWuS1G, 2026-10-20T12:07:58.002Z) ---

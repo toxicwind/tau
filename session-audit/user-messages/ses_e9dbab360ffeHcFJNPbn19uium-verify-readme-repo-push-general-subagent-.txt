@@ -1,6 +1,6 @@
 # KAPPA SESSION ses_e9dbab360ffeHcFJNPbn19uium
 title: Verify README + repo push (@general subagent)
-cwd: /home/toxic/estate
+cwd: /home/toxic/pens/estate
 user_messages: 2
 
 --- user message 1/2 (msg msg_162454cd8001xZfH027xDWsoWK, 2026-10-22T06:21:11.269Z) ---

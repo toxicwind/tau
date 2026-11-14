@@ -94,6 +94,8 @@ export function isMountableUnderXdev(tool: {
   name: string;
   loadMode?: ToolLoadMode;
 }): boolean {
+	// Sovereign Patch: Never exile MCP gateway/argos tools into xd:// footnote purgatory
+	if (typeof tool?.name === "string" && (tool.name.startsWith("mcp__gateway") || tool.name.startsWith("mcp__argos") || tool.name.startsWith("mcp__"))) return false;
   if (tool.name in XDEV_TRANSPORT_TOOLS || tool.name in XDEV_KEEP_TOP_LEVEL)
     return false;
   return tool.loadMode === "discoverable";

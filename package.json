@@ -45,7 +45,7 @@
       "@tailwindcss/vite": "^4.3.2",
       "@types/babel__generator": "^7.27.0",
       "@types/babel__traverse": "^7.28.0",
-      "@types/bun": "^1.4.2",
+      "@types/bun": "^1.4.4",
       "@types/react": "^19.3.0",
       "@types/react-dom": "^19.3.0",
       "@typescript/native-preview": "7.0.0-dev.20260707.2",
@@ -79,6 +79,7 @@
   "scripts": {
     "setup": "bun scripts/setup.ts",
     "dev": "bash bin/tau-dev",
+    "dev:watch": "TAU_WATCH=1 bash bin/tau-dev",
     "dev:timing": "PI_TIMING=x bun --cwd=packages/coding-agent --preload ../utils/src/module-timer.ts src/cli.ts",
     "stats": "bun --cwd=packages/coding-agent src/cli.ts stats",
     "collab:web:dev": "bun --cwd=packages/collab-web run dev",
@@ -87,9 +88,8 @@
     "collab:web:build": "bun --cwd=packages/collab-web run build",
     "meta": "bun --cwd=packages/metaharness run dev",
     "claude:trace": "bun scripts/claude-trace.ts",
-    "build": "bun run --workspaces --if-present build",
-    "make:nativelink": "MISE_CACHE_REMOTE_URL=http://127.0.0.1:25148 mise run build && du -h packages/coding-agent/dist/tau",
-    "make": "bun run make:nativelink",
+    "build": "MISE_CACHE_REMOTE_URL=http://127.0.0.1:25148 mise run build && du -h packages/coding-agent/dist/tau",
+    "build:local": "bun run --workspaces --if-present build",
     "build:native": "bun --cwd=packages/natives run build",
     "test": "bun run test:ts && bun run test:rs && bun run test:py",
     "test:ts": "bun scripts/ci-test-ts.ts local-ts",
@@ -138,12 +138,12 @@
     "stats:edits": "python3 scripts/session-stats/analyze.py edits",
     "stats:followups": "python3 scripts/session-stats/analyze.py followups",
     "stats:audit": "bun scripts/session-stats/audit.ts",
-    "tau:image": "docker build -t \"${TAU_IMAGE:-tau/tau:dev}\" .",
-    "tau:run": "docker run --rm -it \"${TAU_IMAGE:-tau/tau:dev}\"",
     "lint:py": "ruff check python && ruff format --check python",
     "fix:py": "ruff check --fix python && ruff format python",
-    "prepublishOnly": "bun run check",
-    "prepare": "bun run gen:tool-views",
+    "tau:image": "docker build -t \"${TAU_IMAGE:-tau/tau:dev}\" .",
+    "tau:run": "docker run --rm -it \"${TAU_IMAGE:-tau/tau:dev}\"",
+    "prepare": "bun run gen:export-viewer",
+    "gen:export-viewer": "bun --cwd=packages/collab-web run gen:export-viewer",
     "publish": "bun run prepublishOnly && npm publish -ws --access public",
     "publish:dry": "bun run prepublishOnly && npm publish -ws --access public --dry-run",
     "release": "bun scripts/release.ts",
@@ -154,7 +154,6 @@
     "gen:stats:reset": "bun --cwd=packages/stats run gen:stats:reset",
     "gen:changelog": "bun scripts/rewrite-changelog.ts",
     "gen:nix": "bun scripts/gen-nix-bun.ts",
-    "gen:tool-views": "bun --cwd=packages/collab-web run gen:tool-views",
     "gen:bundle": "bun --cwd=packages/coding-agent run gen:bundle",
     "gen:native": "bun --cwd=packages/natives run gen:native",
     "gen:native:reset": "bun --cwd=packages/natives run gen:native:reset",
@@ -163,16 +162,11 @@
     "docker": "docker compose up -d",
     "health": "curl -sf http://127.0.0.1:25100/health",
     "install:all": "bun install",
-    "ws:build": "turbo run build",
-    "ws:dev": "turbo run dev",
-    "ws:lint": "turbo run lint",
-    "ws:test": "turbo run test",
-    "ws:typecheck": "turbo run typecheck",
-    "postinstall": "node scripts/fix-effect-bytesize.js || true",
-    "dev:watch": "TAU_WATCH=1 bash bin/tau-dev"
+    "postinstall": "node scripts/fix-effect-bytesize.js || true"
   },
   "dependencies": {
     "@huggingface/transformers": "catalog:",
+    "jaccard": "^0.4.0",
     "sherpa-onnx": "1.13.2",
     "sherpa-onnx-darwin-arm64": "1.13.3",
     "sherpa-onnx-node": "1.13.2"
@@ -186,7 +180,6 @@
     "oxlint": "catalog:",
     "prettier": "catalog:",
     "ts-morph": "catalog:",
-    "turbo": "^2.11.7",
     "typescript": "catalog:"
   },
   "overrides": {
@@ -210,12 +203,12 @@
       "oxfmt"
     ]
   },
-  "packageManager": "bun@>=1.4",
+  "packageManager": "bun@1.4.4",
   "patchedDependencies": {
     "@ark/schema@0.56.2": "patches/@ark%2Fschema@0.56.2.patch",
     "puppeteer-core@25.3.0": "patches/puppeteer-core@25.3.0.patch"
   },
-  "description": "Estate agent engine — herd, mesh, tau",
+  "description": "Estate agent engine - herd, mesh, tau",
   "engines": {
     "bun": ">=1.4.2",
     "go": ">=1.23.1",

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # tau-pin: the single pinned launcher for the tau agent engine.
 #
-# Single canonical copy — /home/toxic/estate/scripts/tau-pin is a symlink to
+# Single canonical copy — /home/toxic/pens/estate/scripts/tau-pin is a symlink to
 # this file, and ~/.local/bin/{tau,omp,pi} resolve through it.
 #
 # Resolves the tau repo root from THIS script's location (follows the whole

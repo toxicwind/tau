@@ -1,6 +1,6 @@
 # KAPPA SESSION ses_ea89ec158ffeq7AQiyhM5AAdh9
 title: Kappa config oddity investigation
-cwd: /home/toxic/estate
+cwd: /home/toxic/pens/estate
 user_messages: 102
 
 --- user message 1/102 (msg msg_157613ece0016t1r81nhKXH3LD, 2026-10-20T03:35:53.295Z) ---
