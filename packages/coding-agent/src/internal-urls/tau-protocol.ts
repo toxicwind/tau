@@ -9,7 +9,13 @@
  */
 import { getDocFilenames, getEmbeddedDoc } from "./docs-index";
 import { tauDocFilename, tauDocRel } from "./tau-scope";
-import type { InternalResource, InternalUrl, ProtocolHandler, UrlCompletion } from "./types";
+import type {
+	InternalResource,
+	InternalUrl,
+	ProtocolHandler,
+	SchemeSpec,
+	UrlCompletion,
+} from "./types";
 
 /**
  * Handler for tau:// URLs.
@@ -19,6 +25,8 @@ import type { InternalResource, InternalUrl, ProtocolHandler, UrlCompletion } fr
 export class TauProtocolHandler implements ProtocolHandler {
 	readonly scheme = "tau";
 	readonly immutable = true;
+	/** Harness documentation: rendered by the handler, never locatable. */
+	readonly spec: SchemeSpec = { backing: "virtual", selectors: "lines", immutable: true };
 
 	async resolve(url: InternalUrl): Promise<InternalResource> {
 		const filename = tauDocFilename(url);

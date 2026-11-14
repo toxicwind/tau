@@ -27,6 +27,7 @@ import type {
 	InternalUrl,
 	ProtocolHandler,
 	ResolveContext,
+	SchemeSpec,
 	UrlCompletion,
 	WriteContext,
 } from "./types";
@@ -57,6 +58,14 @@ function extractJsonPath(data: unknown, segments: string[]): unknown {
 export class AgentProtocolHandler implements ProtocolHandler {
 	readonly scheme = "agent";
 	readonly immutable = true;
+	/** Peer messaging: the handler delivers, so `write` owns the mutation. */
+	readonly spec: SchemeSpec = {
+		backing: "file",
+		selectors: "lines",
+		immutable: true,
+		linkable: true,
+		write: { via: "handler", payload: "verbatim", scope: "coordination", tier: () => "read" },
+	};
 
 	async write(url: InternalUrl, content: string, context?: WriteContext): Promise<InternalWriteResult> {
 		const session = context?.session;

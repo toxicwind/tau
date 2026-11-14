@@ -18,7 +18,8 @@ import {
 	windowsPathToWslMount,
 } from "@tau/tau-utils";
 import { InternalUrlRouter } from "../internal-urls";
-import { type InternalUrlFilesystem, joinUrlPath, UrlFsError } from "../internal-urls/url-filesystem";
+import { InternalUrlFilesystem, joinUrlPath, UrlFsError } from "../internal-urls/url-filesystem";
+import { TIER_RANK } from "./approval";
 import { ToolAbortError } from "./tool-errors";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 
@@ -1103,13 +1104,22 @@ function toScopeDisplay(items: string[], cwd: string): string {
 		.join(", ");
 }
 
+/**
+ * Filesystem for scope helpers whose caller has no run filesystem (scope probes,
+ * tests): path-only and read-tier, so a probe never materializes resource bytes.
+ */
+function scopeFilesystem(filesystem?: InternalUrlFilesystem): InternalUrlFilesystem {
+	return filesystem ?? new InternalUrlFilesystem({ context: { pathOnly: true }, tier: "read" });
+}
+
 async function resolveSearchPathItems(
 	pathItems: string[],
 	cwd: string,
-	filesystem: InternalUrlFilesystem,
+	filesystem?: InternalUrlFilesystem,
 	suffixGlob?: string,
 	fanOutFileItems = false,
 ): Promise<ResolvedMultiSearchPath | undefined> {
+	filesystem = scopeFilesystem(filesystem);
 	if (pathItems.length < 1) {
 		return undefined;
 	}
@@ -1192,7 +1202,7 @@ async function resolveSearchPathItems(
 export async function resolveExplicitSearchPaths(
 	pathItems: string[],
 	cwd: string,
-	filesystem: InternalUrlFilesystem,
+	filesystem?: InternalUrlFilesystem,
 	suffixGlob?: string,
 	fanOutFileItems = false,
 ): Promise<ResolvedMultiSearchPath | undefined> {
@@ -1267,8 +1277,9 @@ export async function partitionExistingPaths(
 	items: string[],
 	cwd: string,
 	splitter: (item: string) => { basePath: string },
-	filesystem: InternalUrlFilesystem,
+	filesystem?: InternalUrlFilesystem,
 ): Promise<PartitionedPaths> {
+	filesystem = scopeFilesystem(filesystem);
 	const settled = await Promise.all(
 		items.map(async item => {
 			const { basePath } = splitter(item);
@@ -1461,8 +1472,8 @@ export interface ToolScopeOptions {
 	cwd: string;
 	/** Verb used in the "Cannot {action} …" errors for unreachable internal URLs and external URLs. */
 	internalUrlAction: string;
-	/** Filesystem every scope path resolves through; the native search must get its `shellFilesystem()`. */
-	filesystem: InternalUrlFilesystem;
+	/** Filesystem every scope path resolves through; the native search must get its `shellFilesystem()`. Defaults to a session-less read-tier filesystem. */
+	filesystem?: InternalUrlFilesystem;
 	/** Collect absolute paths of immutable external materializations. */
 	trackImmutableSources?: boolean;
 	/** Refuse internal URLs whose files tools may not write ({@link InternalUrlRouter.fileWritable}); rewrite tools. */
@@ -1515,6 +1526,8 @@ export function searchPathTier(args: unknown): ToolTier {
  */
 export async function resolveToolSearchScope(opts: ToolScopeOptions): Promise<ToolScopeResolution> {
 	const { rawPaths: inputs, cwd, internalUrlAction } = opts;
+	// Callers that only need paths (tests, scope probes) omit the run's filesystem.
+	const filesystem = scopeFilesystem(opts.filesystem);
 	const normalizedRawPaths = inputs.map(normalizePathLikeInput);
 	if (normalizedRawPaths.some(rawPath => rawPath.length === 0)) {
 		throw new ToolError("Search scope entries must be non-empty paths or globs");
@@ -1577,7 +1590,7 @@ export async function resolveToolSearchScope(opts: ToolScopeOptions): Promise<To
 	let missingPaths: string[] = [];
 	let effectivePaths = resolvedPathInputs;
 	if (resolvedPathInputs.length > 1) {
-		const partition = await partitionExistingPaths(resolvedPathInputs, cwd, parseSearchPath, opts.filesystem);
+		const partition = await partitionExistingPaths(resolvedPathInputs, cwd, parseSearchPath, filesystem);
 		if (partition.valid.length === 0) {
 			throw new ToolError(`Path not found: ${partition.missing.join(", ")}`);
 		}
@@ -1601,7 +1614,7 @@ export async function resolveToolSearchScope(opts: ToolScopeOptions): Promise<To
 		const multiSearchPath = await resolveExplicitSearchPaths(
 			effectivePaths,
 			cwd,
-			opts.filesystem,
+			filesystem,
 			undefined,
 			opts.fanOutFileTargets === true,
 		);
@@ -1619,9 +1632,28 @@ export async function resolveToolSearchScope(opts: ToolScopeOptions): Promise<To
 		scopePath = multiSearchPath.scopePath;
 	}
 
+	// A file-backed internal URL names a real path: scope resolution (ast tools, stat)
+	// needs that path, not the URL, and must reach it without materializing content.
+	if (internalRouter.canHandle(searchPath)) {
+		const scheme = searchPath.slice(0, searchPath.indexOf("://"));
+		const spec = internalRouter.spec(scheme);
+		// Exec-tier schemes (ssh://) would open an outbound connection: search/ast tools
+		// run at read tier and must refuse before the router resolves anything.
+		const readTier = spec?.readTier ?? "read";
+		if (TIER_RANK[readTier] > TIER_RANK.read) {
+			throw new ToolError(
+				`Cannot ${internalUrlAction} ${searchPath}: ${scheme}:// needs ${readTier} approval, which this tool does not have; use \`grep\` on a specific remote file instead.`,
+			);
+		}
+		if (spec?.backing === "file") {
+			const resource = await internalRouter.resolve(searchPath, { cwd, pathOnly: true });
+			if (resource.sourcePath) searchPath = resource.sourcePath;
+		}
+	}
+
 	let isDirectory: boolean;
 	try {
-		isDirectory = (await opts.filesystem.stat(searchPath)).type === "directory";
+		isDirectory = (await filesystem.stat(searchPath)).type === "directory";
 	} catch (error) {
 		// A URL failure carries its handler's diagnosis (`Artifact 9 not found. Available: 4`).
 		if (internalRouter.canHandle(searchPath)) {

@@ -15,7 +15,14 @@ import { resolveContainedPath } from "../discovery/contained-path";
 import { getActiveSkills } from "../extensibility/skills";
 import { isMarkdownPath } from "@tau/tau-tui/lang-from-path";
 import { buildDirectoryResource } from "./filesystem-resource";
-import type { InternalResource, InternalUrl, ProtocolHandler, ResolveContext, UrlCompletion } from "./types";
+import type {
+	InternalResource,
+	InternalUrl,
+	ProtocolHandler,
+	ResolveContext,
+	SchemeSpec,
+	UrlCompletion,
+} from "./types";
 
 function getContentType(filePath: string): InternalResource["contentType"] {
 	if (isMarkdownPath(filePath)) return "text/markdown";
@@ -47,6 +54,14 @@ export function validateRelativePath(relativePath: string): void {
 export class SkillProtocolHandler implements ProtocolHandler {
 	readonly scheme = "skill";
 	readonly immutable = true;
+	/** Skill instructions are read straight off disk; the read pipeline must not truncate them. */
+	readonly spec: SchemeSpec = {
+		backing: "file",
+		selectors: "lines",
+		immutable: true,
+		unbounded: true,
+		linkable: true,
+	};
 
 	async resolve(url: InternalUrl, context?: ResolveContext): Promise<InternalResource> {
 		const skills = context?.skills ?? getActiveSkills();

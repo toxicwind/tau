@@ -42,7 +42,7 @@ function shortLocalRoot(options: LocalProtocolOptions): string {
 	// Derive the short root from the stable session id, never the artifact path,
 	// so `SessionManager.moveTo()` and the resume-after-move flow keep finding
 	// the same `local://` directory the session wrote pre-move.
-	return path.join(os.tmpdir(), "omp-local", safeSessionId(options));
+	return path.join(os.tmpdir(), "tau-local", safeSessionId(options));
 }
 
 const LOCAL_TEXT_SNIFF_BYTES = 8 * 1024;
@@ -247,7 +247,7 @@ export function resolveLocalRoot(options: LocalProtocolOptions, platform: NodeJS
 		return candidate;
 	}
 
-	return path.join(os.tmpdir(), "omp-local", safeSessionId(options));
+	return path.join(os.tmpdir(), "tau-local", safeSessionId(options));
 }
 
 export interface LocalFileEntry {
@@ -553,6 +553,21 @@ export class LocalProtocolHandler implements ProtocolHandler {
 		}
 
 		const resolved = await resolveLocalTarget(url, opts);
+		// Path-only callers (search scope, bash expansion, hyperlink materialization)
+		// never need the bytes, and the listing must not build them either.
+		if (context?.pathOnly === true) {
+			const directory = resolved.kind !== "file";
+			const sourcePath = resolved.kind === "listing" ? resolved.root : resolved.path;
+			return {
+				url: url.href,
+				content: "",
+				contentType: directory ? "text/plain" : contentTypeForPath(resolved.path),
+				size: resolved.kind === "file" ? resolved.size : 0,
+				sourcePath,
+				isDirectory: directory,
+				notes: [LOCAL_WRITE_NOTE],
+			};
+		}
 		if (resolved.kind === "listing") {
 			return buildListing(url, resolved.root);
 		}

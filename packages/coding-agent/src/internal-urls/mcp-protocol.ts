@@ -1,6 +1,13 @@
 import { MCPManager } from "../mcp/manager";
 import type { MCPResourceReadResult } from "../mcp/types";
-import type { InternalResource, InternalUrl, InternalWriteResult, ProtocolHandler, WriteContext } from "./types";
+import type {
+	InternalResource,
+	InternalUrl,
+	InternalWriteResult,
+	ProtocolHandler,
+	SchemeSpec,
+	WriteContext,
+} from "./types";
 
 function escapeRegex(text: string): string {
 	return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -135,6 +142,13 @@ function findMatchingMcpTool(mcpManager: MCPManager, uri: string) {
 export class McpProtocolHandler implements ProtocolHandler {
 	readonly scheme = "mcp";
 	readonly immutable = true;
+	/** Server-defined URIs (opaque selectors); `write` forwards a tool call. */
+	readonly spec: SchemeSpec = {
+		backing: "virtual",
+		selectors: "opaque",
+		immutable: false,
+		write: { via: "handler", payload: "verbatim", scope: "workspace", tier: () => "write" },
+	};
 
 	async resolve(url: InternalUrl): Promise<InternalResource> {
 		const mcpManager = MCPManager.instance();

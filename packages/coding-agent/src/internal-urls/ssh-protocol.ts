@@ -36,7 +36,7 @@ import type {
 	InternalUrl,
 	ProtocolHandler,
 	ResolveContext,
-	UrlCompletion,
+	SchemeSpec,
 	WriteContext,
 } from "./types";
 
@@ -257,6 +257,15 @@ function formatDirListing(entries: readonly RemoteDirEntry[]): string {
 export class SshProtocolHandler implements ProtocolHandler {
 	readonly scheme = "ssh";
 	readonly immutable = false;
+	/** Remote host: reading runs a command (exec tier) and `ssh://host:2222` is a port, not a selector. */
+	readonly spec: SchemeSpec = {
+		backing: "remote",
+		selectors: "lines",
+		portAuthority: true,
+		immutable: false,
+		readTier: "exec",
+		write: { via: "handler", payload: "text", scope: "workspace", tier: () => "exec" },
+	};
 
 	async resolve(url: InternalUrl, context?: ResolveContext): Promise<InternalResource> {
 		// Bare `ssh://` (or `ssh:///`) with no host lists the configured hosts. A

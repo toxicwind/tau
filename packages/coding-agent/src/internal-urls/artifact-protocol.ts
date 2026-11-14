@@ -13,7 +13,14 @@ import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import { isEnoent } from "@tau/tau-utils";
 import { artifactsDirsFromRegistry } from "./registry-helpers";
-import type { InternalResource, InternalUrl, ProtocolHandler, ResolveContext, UrlCompletion } from "./types";
+import type {
+	InternalResource,
+	InternalUrl,
+	ProtocolHandler,
+	ResolveContext,
+	SchemeSpec,
+	UrlCompletion,
+} from "./types";
 
 const MAX_INLINE_ARTIFACT_BYTES = 8 * 1024 * 1024;
 
@@ -98,6 +105,14 @@ export async function resolveArtifactFile(url: InternalUrl, context?: ResolveCon
 export class ArtifactProtocolHandler implements ProtocolHandler {
 	readonly scheme = "artifact";
 	readonly immutable = true;
+	/** Session artifact store: immutable, and located reads must not spill it again. */
+	readonly spec: SchemeSpec = {
+		backing: "file",
+		selectors: "lines",
+		immutable: true,
+		artifactStore: true,
+		linkable: true,
+	};
 
 	async resolve(url: InternalUrl, context?: ResolveContext): Promise<InternalResource> {
 		const artifact = await resolveArtifactFile(url, context);

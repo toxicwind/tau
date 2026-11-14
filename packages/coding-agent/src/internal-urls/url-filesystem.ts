@@ -723,7 +723,9 @@ export class InternalUrlFilesystem {
 
 	async #virtualNode(route: Route, target: UrlPath, url: string): Promise<VirtualNode> {
 		const { handler, spec } = route;
-		if (handler?.enumerate) {
+		// Path-only callers (scope probes, bash expansion) never need rendered content,
+		// and enumerating a scheme materializes every leaf it can see.
+		if (handler?.enumerate && this.#context.pathOnly !== true) {
 			const leaves = await this.#enumerated(target.scheme);
 			const content = leaves.get(url);
 			if (content !== undefined) {

@@ -5,11 +5,19 @@
  * - rule://<name> - Reads rule content
  */
 import { getActiveRules } from "../capability/rule";
-import type { InternalResource, InternalUrl, ProtocolHandler, ResolveContext, UrlCompletion } from "./types";
+import type {
+	InternalResource,
+	InternalUrl,
+	ProtocolHandler,
+	ResolveContext,
+	SchemeSpec,
+	UrlCompletion,
+} from "./types";
 
 export class RuleProtocolHandler implements ProtocolHandler {
 	readonly scheme = "rule";
 	readonly immutable = true;
+	readonly spec: SchemeSpec = { backing: "virtual", selectors: "lines", immutable: true, linkable: true };
 
 	async resolve(url: InternalUrl, context?: ResolveContext): Promise<InternalResource> {
 		const rules = context?.rules ?? getActiveRules();

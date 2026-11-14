@@ -21,6 +21,7 @@ import { AgentProtocolHandler } from "./agent-protocol";
 import { ArtifactProtocolHandler } from "./artifact-protocol";
 import { AttachmentProtocolHandler } from "./attachment-protocol";
 import { CfgProtocolHandler } from "./cfg-protocol";
+import { TauProtocolHandler } from "./tau-protocol";
 import { ConflictProtocolHandler } from "./conflict-protocol";
 import { HistoryProtocolHandler } from "./history-protocol";
 import { IssueProtocolHandler, PrProtocolHandler } from "./issue-pr-protocol";
@@ -94,6 +95,9 @@ const QUERY_START_RE = /\?[\w.-]*=/;
 // Selectors a mutating tool accepts: whole-file display modes that do not change which bytes are addressed.
 const WHOLE_FILE_SELECTOR_RE = /^(?:raw|conflicts)$/i;
 
+/** Spec installed for a handler that declares none: readable, immutable, never locatable. */
+const READ_ONLY_SPEC: SchemeSpec = { backing: "virtual", selectors: "lines", immutable: true };
+
 /** Process-global scheme registry; tools route internal URLs through its spec-driven API. */
 export class InternalUrlRouter {
 	static #instance: InternalUrlRouter | undefined;
@@ -118,6 +122,7 @@ export class InternalUrlRouter {
 		this.register(new LocalProtocolHandler());
 		this.register(new ProcProtocolHandler());
 		this.register(new CfgProtocolHandler());
+	this.register(new TauProtocolHandler());
 		this.register(new SshProtocolHandler());
 		// Reserved OMP-owned security-analysis namespace; vendor adapters normalize into its store.
 		this.register(new SecurityProtocolHandler());
@@ -149,8 +154,13 @@ export class InternalUrlRouter {
 	 * policy disagrees with the handler: `write()` exists exactly for `write.via: "handler"`;
 	 * `write.via: "file"` needs a mutable file-backed spec with `locate()`; a `sandbox` scope
 	 * needs a linkable `locateSync()` so {@link sandboxRoots} can locate its root.
+	 *
+	 * A handler that declares no spec (an extension registering at runtime) gets the
+	 * conservative read-only default instead of taking the whole router down: every tool
+	 * that resolves an internal URL — `bash` included — goes through this instance.
 	 */
 	register(handler: ProtocolHandler): void {
+		if (!handler.spec) (handler as { spec?: SchemeSpec }).spec = { ...READ_ONLY_SPEC };
 		const { scheme, spec } = handler;
 		const via = spec.write?.via;
 		if (via === "handler" && !handler.write) {

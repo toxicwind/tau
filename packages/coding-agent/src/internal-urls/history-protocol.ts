@@ -37,7 +37,14 @@ import {
 import { loadSessionMessagesReadOnly } from "../session/session-loader";
 import type { SessionEntry } from "../session/session-entries";
 import { sessionFilesFromDisk } from "./registry-helpers";
-import type { InternalResource, InternalUrl, ProtocolHandler, ResolveContext, UrlCompletion } from "./types";
+import type {
+	InternalResource,
+	InternalUrl,
+	ProtocolHandler,
+	ResolveContext,
+	SchemeSpec,
+	UrlCompletion,
+} from "./types";
 
 /** Humanize a last-activity timestamp as `Ns/Nm/Nh/Nd ago`. */
 function formatAgo(timestamp: number): string {
@@ -263,6 +270,8 @@ export function formatCurrentBranchFullHistory(entries: readonly SessionEntry[])
 export class HistoryProtocolHandler implements ProtocolHandler {
 	readonly scheme = "history";
 	readonly immutable = false;
+	/** A rendered transcript: live sessions keep growing, so resources stay mutable. */
+	readonly spec: SchemeSpec = { backing: "virtual", selectors: "lines", immutable: false, linkable: true };
 
 	#resolveCurrentFull(url: InternalUrl, context: ResolveContext | undefined): InternalResource {
 		if (!context?.experimentalContextManagement) {

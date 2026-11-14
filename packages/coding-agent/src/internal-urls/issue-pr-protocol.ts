@@ -34,7 +34,7 @@ import {
 } from "../tools/gh";
 import { type CacheStatus, formatFreshnessNote } from "../tools/github-cache";
 import { github } from "../utils/github";
-import type { InternalResource, InternalUrl, ProtocolHandler, ResolveContext } from "./types";
+import type { InternalResource, InternalUrl, ProtocolHandler, ResolveContext, SchemeSpec } from "./types";
 
 type Scheme = "issue" | "pr";
 
@@ -512,6 +512,8 @@ async function fetchAndRenderPrDiff(
 export class IssueProtocolHandler implements ProtocolHandler {
 	readonly scheme = "issue";
 	readonly immutable = true;
+	/** Forge data lives on the host: never locatable. */
+	readonly spec: SchemeSpec = { backing: "remote", selectors: "lines", immutable: true };
 
 	async resolve(url: InternalUrl, context?: ResolveContext): Promise<InternalResource> {
 		if (context?.signal?.aborted) {
@@ -561,6 +563,7 @@ export class IssueProtocolHandler implements ProtocolHandler {
 export class PrProtocolHandler implements ProtocolHandler {
 	readonly scheme = "pr";
 	readonly immutable = true;
+	readonly spec: SchemeSpec = { backing: "remote", selectors: "lines", immutable: true };
 
 	async resolve(url: InternalUrl, context?: ResolveContext): Promise<InternalResource> {
 		if (context?.signal?.aborted) {

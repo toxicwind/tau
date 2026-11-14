@@ -19,6 +19,7 @@ import type {
 	InternalWriteResult,
 	ProtocolHandler,
 	ResolveContext,
+	SchemeSpec,
 	WriteContext,
 } from "./types";
 
@@ -36,6 +37,11 @@ function target(url: InternalUrl): { id: string; action: "stdin" | "mode" | "kil
 function ownerJobs(session: ToolSession): AsyncJob[] {
 	const ownerId = session.getAgentId?.() ?? undefined;
 	return session.asyncJobManager?.getAllJobs(ownerId ? { ownerId } : undefined) ?? [];
+}
+
+/** `proc://<id>/kill`: cancels a job, agent, or service; needs no content and touches no files. */
+function isKill(url: InternalUrl): boolean {
+	return (url.rawPathname ?? url.pathname).endsWith("/kill");
 }
 
 function textResource(
@@ -60,6 +66,21 @@ function textResource(
 export class ProcProtocolHandler implements ProtocolHandler {
 	readonly scheme = "proc";
 	readonly immutable = true;
+	/** Session-bound control surface: stdin, mode changes and cancellation all go through `write`. */
+	readonly spec: SchemeSpec = {
+		backing: "device",
+		selectors: "lines",
+		immutable: true,
+		compactTranscript: true,
+		write: {
+			via: "handler",
+			payload: "verbatim",
+			scope: "workspace",
+			tier: () => "exec",
+			contentOptional: isKill,
+			cancels: isKill,
+		},
+	};
 
 	async resolve(url: InternalUrl, context?: ResolveContext): Promise<InternalResource> {
 		const session = context?.session;

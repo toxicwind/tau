@@ -252,9 +252,29 @@ export interface InternalUrl extends URL {
  * against the actual session that initiated the read, not whichever session
  * happens to be registered first in the global `AgentRegistry`.
  */
+/**
+ * Session-bound tool-device surface backing `xd://`: read a device's output,
+ * list a device's topics, or write a payload to a device. Supplied by the
+ * reading/writing tool, never by a subagent without a mounted device.
+ */
+export interface XdContext {
+	/** Device output; `null` lists the mounted devices. */
+	read(name: string | null): Promise<string>;
+	/** One topic of a mounted device. */
+	topic(name: string, topic: string): Promise<string>;
+	/** Deliver a payload to a mounted device. */
+	write(name: string, content: string): Promise<void>;
+}
+
 export interface ResolveContext {
 	/** Working directory of the calling session. */
 	cwd?: string;
+	/**
+	 * Caller only needs the resource's local backing (search scope, bash URL
+	 * expansion, hyperlink materialization): handlers return the resource shape
+	 * with empty content so arbitrarily large resources never materialize.
+	 */
+	pathOnly?: boolean;
 	/**
 	 * Calling session's session file. Handlers that resolve agent ids which may
 	 * be parked (`history://<id>`, `agent://<id>`) refresh the caller's
@@ -283,6 +303,8 @@ export interface ResolveContext {
 	settings?: Settings;
 	/** Caller's abort signal. */
 	signal?: AbortSignal;
+	/** Mounted tool devices, for `xd://` resolution. */
+	xd?: XdContext;
 	/**
 	 * Whether experimental context-management resources are enabled for this
 	 * caller. This is passed explicitly so resource resolution cannot infer a
@@ -342,6 +364,8 @@ export interface WriteContext {
 	cwd?: string;
 	/** Caller's abort signal. */
 	signal?: AbortSignal;
+	/** Mounted tool devices, for `xd://` writes. */
+	xd?: XdContext;
 	/** Calling session's `local://` root mapping — see {@link ResolveContext.localProtocolOptions}. */
 	localProtocolOptions?: LocalProtocolOptions;
 	/**

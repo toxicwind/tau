@@ -22,6 +22,8 @@ import { DEFAULT_AUTO_BACKGROUND_THRESHOLD_MS, raceJobSettlement, resolveAutoBac
 import type { Settings } from "../config/settings";
 import { applyDirenvPreflight, type BashResult, executeBash } from "../exec/bash-executor";
 import { InternalUrlRouter } from "../internal-urls";
+import type { ResolveContext } from "../internal-urls/types";
+import { InternalUrlFilesystem } from "../internal-urls/url-filesystem";
 import bashDescription from "../prompts/tools/bash.md" with { type: "text" };
 import type {
 	ClientBridgeTerminalExitStatus,
@@ -821,13 +823,14 @@ export class BashTool implements AgentTool<BashToolSchema, BashToolDetails> {
 				const tailBuffer = new TailBuffer(DEFAULT_MAX_BYTES);
 				const wallTimeStart = performance.now();
 				try {
-					const result = await executeBash(options.command, {
-						cwd: options.commandCwd,
-						sessionKey: `${this.session.getSessionId?.() ?? ""}:async:${jobId}`,
-						timeout: options.timeoutMs ?? 0,
-						signal: runSignal,
-						artifactPath,
-						artifactId,
+				const result = await executeBash(options.command, {
+					cwd: options.commandCwd,
+					sessionKey: `${this.session.getSessionId?.() ?? ""}:async:${jobId}`,
+					timeout: options.timeoutMs ?? 0,
+					signal: runSignal,
+					artifactPath,
+					artifactId,
+					filesystem: this.#urlFilesystem(runSignal),
 						onChunk: chunk => {
 							tailBuffer.append(chunk);
 							latestText = tailBuffer.text();
@@ -900,6 +903,30 @@ export class BashTool implements AgentTool<BashToolSchema, BashToolDetails> {
 				forwardUpdates = false;
 			},
 		};
+	}
+
+	/**
+	 * Shell binding that serves `scheme://` paths to the embedded shell: redirects,
+	 * arguments and a URL working directory all resolve through the router, so
+	 * `local://`, `skill://` and `out://` behave like files inside one run.
+	 */
+	#urlFilesystem(
+		signal: AbortSignal | undefined,
+		onReply?: (text: string) => void,
+	): ReturnType<InternalUrlFilesystem["shellFilesystem"]> {
+		const context: ResolveContext = {
+			cwd: this.session.cwd,
+			signal,
+			sessionFile: this.session.getSessionFile?.() ?? undefined,
+			sessionId: this.session.sessionManager?.getSessionId?.() ?? this.session.getSessionId?.() ?? undefined,
+			agentRegistry: this.session.agentRegistry,
+			localProtocolOptions: this.session.localProtocolOptions,
+			settings: this.session.settings,
+			skills: this.session.skills,
+			rules: this.session.activeRules,
+			session: this.session,
+		};
+		return new InternalUrlFilesystem({ context, tier: "exec", ...(onReply ? { onReply } : {}) }).shellFilesystem();
 	}
 
 	async execute(
@@ -980,7 +1007,7 @@ export class BashTool implements AgentTool<BashToolSchema, BashToolDetails> {
 			sessionId: this.session.sessionManager?.getSessionId?.() ?? this.session.getSessionId?.() ?? undefined,
 			agentRegistry: this.session.agentRegistry,
 			rules: this.session.activeRules,
-			localOptions: {
+			localOptions: this.session.localProtocolOptions ?? {
 				getArtifactsDir: this.session.getArtifactsDir,
 				getSessionId: this.session.getSessionId,
 			},
@@ -1442,6 +1469,8 @@ export class BashTool implements AgentTool<BashToolSchema, BashToolDetails> {
 
 		// Track output for streaming updates (tail only)
 		const tailBuffer = new TailBuffer(DEFAULT_MAX_BYTES);
+		// `out://` redirects close as replies; they are transcript text, never part of stdout.
+		const replies: string[] = [];
 
 		// Allocate artifact for truncated output storage
 		const { path: artifactPath, id: artifactId } = (await this.session.allocateOutputArtifact?.("bash")) ?? {};
@@ -1466,13 +1495,14 @@ export class BashTool implements AgentTool<BashToolSchema, BashToolDetails> {
 				})
 			: // executeBash runs its OWN direnv preflight internally — pass the RAW
 				// command here so the unset prefix is not applied twice.
-				await executeBash(command, {
-					cwd: commandCwd,
-					sessionKey: this.session.getSessionId?.() ?? undefined,
-					timeout: timeoutMs ?? 0,
-					signal,
-					artifactPath,
-					artifactId,
+			await executeBash(command, {
+				cwd: commandCwd,
+				sessionKey: this.session.getSessionId?.() ?? undefined,
+				timeout: timeoutMs ?? 0,
+				signal,
+				artifactPath,
+				artifactId,
+				filesystem: this.#urlFilesystem(signal, text => replies.push(text)),
 					onChunk: streamTailUpdates(tailBuffer, onUpdate),
 					onMinimizedSave: originalText => saveBashOriginalArtifact(this.session, originalText),
 				});
@@ -1501,10 +1531,14 @@ export class BashTool implements AgentTool<BashToolSchema, BashToolDetails> {
 				throw new ToolError(message);
 			}
 		}
-		return this.#buildCompletedResult(result, timeoutSec, {
+		const completed = await this.#buildCompletedResult(result, timeoutSec, {
 			requestedTimeoutSec,
 			notices: pendingNotices,
 			wallTimeMs,
 		});
+		// Each closed `out://` redirect is its own transcript part, after the command output.
+		return replies.length > 0
+			? { ...completed, content: [...completed.content, ...replies.map(text => ({ type: "text" as const, text }))] }
+			: completed;
 	}
 }

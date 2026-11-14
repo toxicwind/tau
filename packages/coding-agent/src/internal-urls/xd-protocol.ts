@@ -1,5 +1,12 @@
 import { parseXdTopicUrl, parseXdUrl } from "@tau/tau-tui/tools/xd-url";
-import type { InternalResource, InternalUrl, ProtocolHandler, ResolveContext, WriteContext } from "./types";
+import type {
+	InternalResource,
+	InternalUrl,
+	ProtocolHandler,
+	ResolveContext,
+	SchemeSpec,
+	WriteContext,
+} from "./types";
 
 // Re-exported so extensions can parse `xd://` targets through the module that
 // owns the protocol. `tau-semantic-policy` imports `parseXdUrl` from here to
@@ -11,6 +18,14 @@ export { parseXdTopicUrl, parseXdUrl };
 export class XdProtocolHandler implements ProtocolHandler {
 	readonly scheme = "xd";
 	readonly immutable = true;
+	/** Mounted tool devices: the device enforces its own policy, so writes clear the gates. */
+	readonly spec: SchemeSpec = {
+		backing: "device",
+		selectors: "none",
+		immutable: true,
+		compactTranscript: true,
+		write: { via: "handler", payload: "verbatim", scope: "device", tier: () => "read" },
+	};
 
 	async resolve(url: InternalUrl, context?: ResolveContext): Promise<InternalResource> {
 		if (!context?.xd) throw new Error("xd:// is not mounted in this session.");

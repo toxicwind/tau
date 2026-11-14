@@ -7,7 +7,14 @@ import { createPublicSecurityScan, redactPrivateSecurityMetadata } from "../secu
 import { createSecurityResource } from "../security/resource-output";
 import type { SecurityScanSummary } from "../security/store";
 import { SecurityStore } from "../security/store";
-import type { InternalResource, InternalUrl, ProtocolHandler, ResolveContext, UrlCompletion } from "./types";
+import type {
+	InternalResource,
+	InternalUrl,
+	ProtocolHandler,
+	ResolveContext,
+	SchemeSpec,
+	UrlCompletion,
+} from "./types";
 
 export type SecurityStoreResolver = (cwd: string, signal?: AbortSignal) => Promise<SecurityStore>;
 
@@ -101,6 +108,7 @@ function formatFinding(finding: SecurityFinding): string {
 export class SecurityProtocolHandler implements ProtocolHandler {
 	readonly scheme = "security";
 	readonly immutable = true;
+	readonly spec: SchemeSpec = { backing: "virtual", selectors: "lines", immutable: true };
 	readonly #resolveStore: SecurityStoreResolver;
 	readonly #enabled: () => boolean;
 

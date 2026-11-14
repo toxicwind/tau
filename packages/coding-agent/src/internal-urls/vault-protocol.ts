@@ -6,7 +6,14 @@ import { getDefault } from "../config/settings-schema";
 import { isMarkdownPath } from "@tau/tau-tui/lang-from-path";
 import { parseInternalUrl } from "./parse";
 import { validateRelativePath } from "./skill-protocol";
-import type { InternalResource, InternalUrl, ProtocolHandler, ResolveContext, WriteContext } from "./types";
+import type {
+	InternalResource,
+	InternalUrl,
+	ProtocolHandler,
+	ResolveContext,
+	SchemeSpec,
+	WriteContext,
+} from "./types";
 
 const DARWIN_OBSIDIAN_BINARY = "/Applications/Obsidian.app/Contents/MacOS/obsidian";
 const DEFAULT_OBSIDIAN_TIMEOUT_MS = 30_000;
@@ -656,6 +663,13 @@ export function buildObsidianCliInvocation(
 export class VaultProtocolHandler implements ProtocolHandler {
 	readonly scheme = "vault";
 	readonly immutable = false;
+	/** Obsidian vault reached through its CLI: remote content, handler-owned writes. */
+	readonly spec: SchemeSpec = {
+		backing: "remote",
+		selectors: "lines",
+		immutable: false,
+		write: { via: "handler", payload: "text", scope: "workspace", tier: () => "write" },
+	};
 
 	readonly #spawnObsidian: typeof spawnObsidian;
 	readonly #resolveObsidianBinary: () => string | null;

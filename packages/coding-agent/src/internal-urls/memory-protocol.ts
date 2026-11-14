@@ -9,7 +9,14 @@ import { isMarkdownPath } from "@tau/tau-tui/lang-from-path";
 import { buildDirectoryResource } from "./filesystem-resource";
 import { parseInternalUrl } from "./parse";
 import { validateRelativePath } from "./skill-protocol";
-import type { InternalResource, InternalUrl, ProtocolHandler, ResolveContext, UrlCompletion } from "./types";
+import type {
+	InternalResource,
+	InternalUrl,
+	ProtocolHandler,
+	ResolveContext,
+	SchemeSpec,
+	UrlCompletion,
+} from "./types";
 
 const DEFAULT_MEMORY_FILE = "memory_summary.md";
 const MEMORY_NAMESPACE = "root";
@@ -401,6 +408,7 @@ function renderMnemotauMemory(url: InternalUrl, hit: MnemotauScopedMemoryHit): I
 export class MemoryProtocolHandler implements ProtocolHandler {
 	readonly scheme = "memory";
 	readonly immutable = true;
+	readonly spec: SchemeSpec = { backing: "file", selectors: "lines", immutable: true, linkable: true };
 
 	async resolve(url: InternalUrl, context?: ResolveContext): Promise<InternalResource> {
 		const caller = resolveMemoryCaller(context);

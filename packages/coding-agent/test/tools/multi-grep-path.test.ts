@@ -190,7 +190,7 @@ describe.skipIf(isWindows)("resolveExplicitSearchPaths shared non-root ancestor"
 	});
 
 	it("fans out nested plain files when the caller opts in via fanOutFileItems", async () => {
-		const resolved = await resolveExplicitSearchPaths([".", "src/a.ts"], repo, undefined, true);
+		const resolved = await resolveExplicitSearchPaths([".", "src/a.ts"], repo, undefined, undefined, true);
 		expect(resolved).toBeDefined();
 		if (!resolved) throw new Error("expected resolveExplicitSearchPaths to resolve");
 		const targetBases = (resolved.targets ?? []).map(target => target.basePath).sort();
