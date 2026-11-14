@@ -1,7 +1,9 @@
 /** Provider-facing message, image, secret, and stream normalization for a session. */
 
 import type { Agent, AgentMessage } from "@tau/tau-agent-core";
+import { canReplayRemoteCompaction } from "@tau/tau-agent-core/compaction";
 import type { CompactionPreparation } from "@tau/tau-agent-core/compaction";
+import { getReadableCompactionEntry } from "./session-context";
 import { sendsImageInputOnWire } from "@tau/tau-ai/providers/vision-guard";
 import type { AssistantMessage, ImageContent, Message, Model, SimpleStreamOptions, TextContent } from "@tau/tau-ai";
 import { isRecord, logger } from "@tau/tau-utils";
@@ -49,6 +51,18 @@ export class SessionProviderBoundary {
 
 	constructor(host: SessionProviderBoundaryHost) {
 		this.#host = host;
+	}
+
+	/**
+	 * Whether switching from `currentModel` to `model` crosses a compaction
+	 * boundary: the session's newest provider-native compaction entry is readable
+	 * by `currentModel` but not replayable by `model` (they stand on different
+	 * compaction boundaries), so the context must be rebuilt for the new model.
+	 */
+	readsOtherCompaction(currentModel: Model, model: Model): boolean {
+		const entry = getReadableCompactionEntry(this.#host.sessionManager.getEntries(), currentModel);
+		if (!entry) return false;
+		return !canReplayRemoteCompaction(entry.preserveData, model);
 	}
 
 	/** Latest image attachments addressable by tools as `Image #N` or `attachment://N`. */

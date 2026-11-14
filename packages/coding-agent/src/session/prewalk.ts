@@ -92,6 +92,8 @@ export interface PrewalkCoordinatorHost {
 export interface PrewalkCoordinatorOptions {
 	prewalk?: Prewalk;
 	planYolo?: PlanYolo;
+	/** Start with auto-arming disabled (until {@link PrewalkCoordinator.resetForNewSession}). */
+	suppressAutoPrewalk?: boolean;
 }
 
 /** Coordinates one-way model prewalks and automatic plan-yolo handoffs. */
@@ -106,11 +108,45 @@ export class PrewalkCoordinator {
 	#planYolo: PlanYolo | undefined;
 	#planYoloPreviousNonMCPPresentation: { enabled: string[]; mounted: string[] } | undefined;
 	#planYoloArmed = false;
+	#suppressAuto = false;
 
 	constructor(host: PrewalkCoordinatorHost, options: PrewalkCoordinatorOptions = {}) {
 		this.#host = host;
 		this.#prewalk = options.prewalk;
 		this.#planYolo = options.planYolo;
+		this.#suppressAuto = options.suppressAutoPrewalk === true;
+	}
+
+	/**
+	 * Clear the armed prewalk switch and any pending handoff so a one-way prewalk
+	 * does not fire on the next edit/write.
+	 */
+	disarm(): void {
+		this.#clearPrewalkState();
+		this.#planYoloArmed = false;
+		this.#continuePending = false;
+	}
+
+	/** Disable future {@link PrewalkCoordinator.arm} calls (auto prewalk) until a session reset. */
+	suppressAuto(): void {
+		this.#suppressAuto = true;
+	}
+
+	/**
+	 * Reset prewalk state for a new session. `enabled` re-allows auto-arming
+	 * (clears the suppression) and clears any stale armed prewalk or handoff.
+	 */
+	async resetForNewSession(enabled: boolean): Promise<void> {
+		this.#suppressAuto = !enabled;
+		this.#clearPrewalkState();
+		this.#planYoloArmed = false;
+		this.#continuePending = false;
+	}
+
+	/** Release a pending plan-yolo continuation so it does not auto-fire. */
+	releaseHandoff(): void {
+		this.#continuePending = false;
+		this.#planYoloArmed = false;
 	}
 
 	applyAuto(_decision: any): any {
@@ -235,6 +271,14 @@ export class PrewalkCoordinator {
 
 	/** Arms a prewalk immediately for an explicit slash-command request. */
 	arm(target: Model, thinkingLevel?: ConfiguredThinkingLevel): boolean {
+		if (this.#suppressAuto) {
+			this.#host.emitNotice(
+				"info",
+				"Prewalk: auto-arm suppressed; not arming until the next session reset.",
+				"prewalk",
+			);
+			return false;
+		}
 		const active = this.#prewalk;
 		if (active) {
 			this.#host.emitNotice(
