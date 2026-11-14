@@ -50,6 +50,11 @@ const RENDERS_SOURCE_SUFFIX = `;
 })()`;
 
 /** Start, stop, or inspect React commit recording for the current document. */
+/** Build the in-page source snippet for a React render-recording action. */
+export function reactRendersSource(action: ReactRendersAction): string {
+	return `${RENDERS_SOURCE_PREFIX}${JSON.stringify(action)}${RENDERS_SOURCE_SUFFIX}`;
+}
+
 export async function collectReactRenders(
 	page: Page,
 	options: { action: ReactRendersAction },

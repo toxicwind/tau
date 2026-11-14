@@ -27,7 +27,7 @@ export interface VitalsResult {
 	longTasks: number;
 }
 
-const VITALS_INIT_SOURCE = `(() => {
+export const VITALS_INIT_SOURCE = `(() => {
 	const root = globalThis;
 	if (root.__tauBrowserVitals) return root.__tauBrowserVitals;
 	const round = value => Math.round(value * 100) / 100;

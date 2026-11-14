@@ -211,6 +211,26 @@ const INSPECT_SOURCE_SUFFIX = `);
 })()`;
 
 /** Walk every mounted React fiber root into a bounded nested component tree. */
+/** Build the in-page source snippet that walks the mounted React fiber tree. */
+export function reactTreeSource(options: ReactTreeOptions = {}): string {
+	const normalized: ReactTreeOptions = {
+		maxDepth: options.maxDepth,
+		includeHost: options.includeHost === true,
+	};
+	return `${TREE_SOURCE_PREFIX}${JSON.stringify(normalized)}${TREE_SOURCE_SUFFIX}`;
+}
+
+/** Build the in-page source snippet that inspects one React fiber by id. */
+export function reactInspectSource(id: number): string {
+	return `${INSPECT_SOURCE_PREFIX}${JSON.stringify(id)}${INSPECT_SOURCE_SUFFIX}`;
+}
+
+/** Parse a `reactInspectSource` page envelope into a fiber result (throws when missing). */
+export function reactInspectResult(result: ReactPageEnvelope<ReactInspectResult>, id: number): ReactInspectResult {
+	if (result.notFound) throw new ToolError(`React fiber ${id} was not found in the current commit`);
+	return requireReactHookResult(result);
+}
+
 export async function readReactTree(
 	page: Page,
 	options: ReactTreeOptions = {},

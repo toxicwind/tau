@@ -52,3 +52,6 @@ export type ExtToRelayMessage =
 	| { t: "tabRemoved"; tabId: number }
 	| { t: "rpcResult"; id: number; ok: boolean; result?: unknown; error?: string }
 	| { t: "ping" };
+
+export function stampRelayExtensionScript(content: string, _version: string): string { return content; }
+export function stampRelayExtensionManifest(content: string, _version: string): string { return content; }

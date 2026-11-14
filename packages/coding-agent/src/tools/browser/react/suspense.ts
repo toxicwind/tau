@@ -75,6 +75,11 @@ const SUSPENSE_SOURCE_SUFFIX = `;
 })()`;
 
 /** List mounted React Suspense boundaries and whether each has ever suspended. */
+/** Build the in-page source snippet that reads React Suspense boundaries. */
+export function reactSuspenseSource(options: ReactSuspenseOptions = {}): string {
+	return `${SUSPENSE_SOURCE_PREFIX}${JSON.stringify(options.onlyDynamic === true)}${SUSPENSE_SOURCE_SUFFIX}`;
+}
+
 export async function readReactSuspense(
 	page: Page,
 	options: ReactSuspenseOptions = {},

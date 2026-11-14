@@ -102,6 +102,12 @@ export function screenshotScope(opts: ScreenshotOptions): string {
 }
 
 /** Validate and normalize a changed-pixel ratio threshold. */
+/** Short human label for the capture region of a screenshot (tern tab.screenshot). */
+export function screenshotArea(opts: ScreenshotOptions): string {
+	if (opts.selector) return `selector:${opts.selector}`;
+	return opts.fullPage ? "full page" : "viewport";
+}
+
 export function screenshotThreshold(value: number | undefined): number {
 	if (value === undefined) return 0;
 	if (!Number.isFinite(value) || value < 0 || value > 1) {

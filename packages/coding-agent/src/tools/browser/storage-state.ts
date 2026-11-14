@@ -212,7 +212,7 @@ function parseCookieString(source: string): BrowserCookieInput[] {
 	return parseCookieHeader(trimmed.replace(/^cookie\s*:\s*/i, ""));
 }
 
-function normalizeCookieArguments(args: unknown[]): CookieParam[] {
+export function normalizeCookieArguments(args: unknown[]): CookieParam[] {
 	if (args.length === 0) throw new ToolError(COOKIE_PARSE_ERROR);
 	const items = [...args];
 	const trailing = items.at(-1);
@@ -224,7 +224,7 @@ function normalizeCookieArguments(args: unknown[]): CookieParam[] {
 	return parsed.map(cookie => ({ ...scope, ...cookie }));
 }
 
-function storageValue(value: unknown): string {
+export function storageValue(value: unknown): string {
 	if (typeof value === "string") return value;
 	let serialized: string | undefined;
 	try {
@@ -236,7 +236,7 @@ function storageValue(value: unknown): string {
 	return serialized;
 }
 
-function storageEntries(value: unknown): Array<[string, string]> {
+export function storageEntries(value: unknown): Array<[string, string]> {
 	if (!isRecord(value)) throw new ToolError("tab.setStorage() expects a key/value object");
 	const entries: Array<[string, string]> = [];
 	for (const key in value) {
@@ -245,10 +245,107 @@ function storageEntries(value: unknown): Array<[string, string]> {
 	return entries;
 }
 
-function assertStorageKind(kind: string): asserts kind is StorageKind {
+export function assertStorageKind(kind: string): asserts kind is StorageKind {
 	if (kind !== "local" && kind !== "session") {
 		throw new ToolError('Storage kind must be "local" or "session"');
 	}
+}
+
+/** Read one key or the whole Web Storage area of the current origin, run in-page via `#evalUser`. */
+export async function readStorageInPage(kind: string, key?: string): Promise<unknown> {
+	const scope = globalThis as unknown as {
+		localStorage: BrowserStorageArea;
+		sessionStorage: BrowserStorageArea;
+	};
+	const store = kind === "local" ? scope.localStorage : scope.sessionStorage;
+	if (key !== undefined) return store.getItem(key);
+	const result: Record<string, string> = {};
+	for (let index = 0; index < store.length; index++) {
+		const name = store.key(index);
+		if (name !== null) result[name] = store.getItem(name) ?? "";
+	}
+	return result;
+}
+
+/** Set key/value pairs on one Web Storage area, run in-page. */
+export async function writeStorageInPage(kind: string, entries: Array<[string, string]>): Promise<void> {
+	const scope = globalThis as unknown as {
+		localStorage: BrowserStorageArea;
+		sessionStorage: BrowserStorageArea;
+	};
+	const store = kind === "local" ? scope.localStorage : scope.sessionStorage;
+	for (const [key, value] of entries) store.setItem(key, value);
+}
+
+/** Clear one Web Storage area, run in-page. */
+export async function clearStorageInPage(kind: string): Promise<void> {
+	const scope = globalThis as unknown as {
+		localStorage: BrowserStorageArea;
+		sessionStorage: BrowserStorageArea;
+	};
+	(kind === "local" ? scope.localStorage : scope.sessionStorage).clear();
+}
+
+/** Read the whole current origin's Web Storage (both areas), run in-page. */
+export async function readOriginStorageInPage(): Promise<StorageStateOrigin | null> {
+	const scope = globalThis as unknown as {
+		location: { origin: string };
+		localStorage: BrowserStorageArea;
+		sessionStorage: BrowserStorageArea;
+	};
+	if (scope.location.origin === "null") return null;
+	const entries = (store: BrowserStorageArea): Array<{ name: string; value: string }> => {
+		const result: Array<{ name: string; value: string }> = [];
+		for (let index = 0; index < store.length; index++) {
+			const name = store.key(index);
+			if (name !== null) result.push({ name, value: store.getItem(name) ?? "" });
+		}
+		return result;
+	};
+	return {
+		origin: scope.location.origin,
+		localStorage: entries(scope.localStorage),
+		sessionStorage: entries(scope.sessionStorage),
+	};
+}
+
+/** Restore one origin's Web Storage (clear + set both areas), run in-page. */
+export async function restoreOriginStorageInPage(state: StorageStateOrigin): Promise<void> {
+	const scope = globalThis as unknown as {
+		localStorage: BrowserStorageArea;
+		sessionStorage: BrowserStorageArea;
+	};
+	scope.localStorage.clear();
+	for (const entry of state.localStorage) scope.localStorage.setItem(entry.name, entry.value);
+	scope.sessionStorage.clear();
+	for (const entry of state.sessionStorage ?? []) scope.sessionStorage.setItem(entry.name, entry.value);
+}
+
+/** Resolve the destination path for a named browser-state file (node side). */
+export function storageStatePath(name: string, requestedPath: string | undefined, cwd: string): string {
+	const safeName = name.replace(/[^A-Za-z0-9._-]/g, "_");
+	const fileName = safeName === "." || safeName === ".." ? "_" : safeName || "main";
+	return requestedPath
+		? resolveToCwd(requestedPath, cwd)
+		: path.join(os.homedir(), ".tau", "browser-state", `${fileName}.json`);
+}
+
+/** Read and parse a saved browser-state file (node side). */
+export async function readStorageStateFile(
+	requestedPath: string,
+	cwd: string,
+	signal?: AbortSignal,
+): Promise<BrowserStorageState> {
+	const source = resolveToCwd(requestedPath, cwd);
+	let state: BrowserStorageState;
+	try {
+		const text = await Bun.file(source).text();
+		state = parseStorageState(JSON.parse(text) as unknown);
+	} catch (error) {
+		throwIfAborted(signal);
+		throw new ToolError(STORAGE_STATE_ERROR);
+	}
+	return state;
 }
 
 async function readOriginStorage(page: Page, signal?: AbortSignal): Promise<StorageStateOrigin | null> {

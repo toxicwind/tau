@@ -11,7 +11,7 @@ export interface ReactEnableResult {
 /** Error message shared by React helpers when their required hook is absent. */
 export const REACT_HOOK_REQUIRED_MESSAGE = "React DevTools hook not installed — call tab.reactEnable() first";
 
-const REACT_HOOK_INIT_SOURCE = `(() => {
+export const REACT_HOOK_INIT_SOURCE = `(() => {
 	const existing = globalThis.__REACT_DEVTOOLS_GLOBAL_HOOK__;
 	if (existing && existing.__tauReact) return true;
 	const renderers = new Map();

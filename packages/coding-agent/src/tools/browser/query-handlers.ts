@@ -5,6 +5,9 @@ interface QueryRoot {
 	querySelectorAll(selector: string): readonly Element[];
 }
 
+export const SEMANTIC_QUERY_HANDLERS: Record<string, unknown> = {};
+export const roleRules: Record<string, unknown> = {};
+
 /** Register the browser tool's semantic selector prefixes on a worker-local Puppeteer instance. */
 export function registerSemanticQueryHandlers(puppeteer: typeof PuppeteerInstance): void {
 	const Puppeteer = puppeteer.constructor as typeof PuppeteerClass;

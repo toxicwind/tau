@@ -187,7 +187,7 @@ function recordingError(error: unknown, action: string): BrowserRecordingError {
 	return new BrowserRecordingError(`${action} failed: ${message}`);
 }
 
-function installCursorOverlay(): void {
+export function installCursorOverlay(): void {
 	const state = globalThis as unknown as CursorPageGlobal;
 	const document = state.document;
 	state.__tauRecordingCursorCleanup?.();
@@ -236,7 +236,7 @@ function installCursorOverlay(): void {
 	};
 }
 
-function removeCursorOverlay(): void {
+export function removeCursorOverlay(): void {
 	const state = globalThis as unknown as CursorPageGlobal;
 	state.__tauRecordingCursorCleanup?.();
 	state.document.getElementById("__tau_recording_cursor__")?.remove();

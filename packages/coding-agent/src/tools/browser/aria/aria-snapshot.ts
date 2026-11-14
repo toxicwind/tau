@@ -103,6 +103,9 @@ const ARIA_REF_PREFIXES = ["aria-ref=", "aria-ref/", "ariaref/"];
  * Without this the value reaches `.trim()`/`.startsWith()` and throws the opaque,
  * minified `A.trim is not a function` instead of a recovery-naming ToolError.
  */
+export const PLAYWRIGHT_ONLY_SELECTOR_RE =
+	/:has-text\(|:text\(|:text-is\(|:text-matches\(|:visible\b|:hidden\b|:nth-match\(|:near\(|:above\(|:below\(|:right-of\(|:left-of\(/;
+
 export function assertSelectorString(selector: unknown): asserts selector is string {
 	if (typeof selector === "string") return;
 	let kind: string;

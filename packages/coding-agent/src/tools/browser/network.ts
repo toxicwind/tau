@@ -5,7 +5,7 @@ import { untilAborted } from "@tau/tau-utils";
 import type { HTTPRequest, HTTPResponse, Page } from "puppeteer-core";
 import { ToolError } from "@tau/tau-tui/tools/tool-errors";
 
-const REQUEST_LOG_LIMIT = 200;
+export const REQUEST_LOG_LIMIT = 200;
 const RESPONSE_BODY_LIMIT_BYTES = 1024 * 1024;
 const ROUTE_INTERCEPT_PRIORITY = 10;
 const PASS_THROUGH_INTERCEPT_PRIORITY = 0;
@@ -487,7 +487,7 @@ export class BrowserNetworkManager {
 	}
 }
 
-function normalizeAllowedDomains(domains: readonly string[]): string[] {
+export function normalizeAllowedDomains(domains: readonly string[]): string[] {
 	const normalized: string[] = [];
 	for (const value of domains) {
 		if (typeof value !== "string") throw new ToolError("browser.open allowed_domains must contain strings");
@@ -515,7 +515,7 @@ function domainMatches(hostname: string, pattern: string): boolean {
 	return hostname === suffix || hostname.endsWith(`.${suffix}`);
 }
 
-function normalizeRouteOptions(options: NetworkRouteOptions): NetworkRouteOptions {
+export function normalizeRouteOptions(options: NetworkRouteOptions): NetworkRouteOptions {
 	if (!options || typeof options !== "object" || Array.isArray(options)) {
 		throw new ToolError("tab.route() expects an options object");
 	}
@@ -541,7 +541,7 @@ function normalizeRouteOptions(options: NetworkRouteOptions): NetworkRouteOption
 	};
 }
 
-function cloneRouteOptions(options: NetworkRouteOptions): NetworkRouteOptions {
+export function cloneRouteOptions(options: NetworkRouteOptions): NetworkRouteOptions {
 	return {
 		...options,
 		headers: options.headers ? { ...options.headers } : undefined,
@@ -549,7 +549,7 @@ function cloneRouteOptions(options: NetworkRouteOptions): NetworkRouteOptions {
 	};
 }
 
-function routeFulfills(options: NetworkRouteOptions): boolean {
+export function routeFulfills(options: NetworkRouteOptions): boolean {
 	return (
 		options.status !== undefined ||
 		options.headers !== undefined ||
@@ -558,7 +558,7 @@ function routeFulfills(options: NetworkRouteOptions): boolean {
 	);
 }
 
-function routeResponse(options: NetworkRouteOptions): {
+export function routeResponse(options: NetworkRouteOptions): {
 	status: number;
 	headers?: Record<string, string>;
 	contentType?: string;
@@ -579,7 +579,7 @@ function routeResponse(options: NetworkRouteOptions): {
 	};
 }
 
-function validatePattern(pattern: NetworkPattern, label: string): void {
+export function validatePattern(pattern: NetworkPattern, label: string): void {
 	if (typeof pattern === "string") {
 		if (!pattern) throw new ToolError(`${label}() pattern must not be empty`);
 		return;
@@ -587,12 +587,12 @@ function validatePattern(pattern: NetworkPattern, label: string): void {
 	if (!(pattern instanceof RegExp)) throw new ToolError(`${label}() pattern must be a glob string or RegExp`);
 }
 
-function samePattern(left: NetworkPattern, right: NetworkPattern): boolean {
+export function samePattern(left: NetworkPattern, right: NetworkPattern): boolean {
 	if (typeof left === "string" || typeof right === "string") return left === right;
 	return left.source === right.source && left.flags === right.flags;
 }
 
-function globToRegExp(glob: string): RegExp {
+export function globToRegExp(glob: string): RegExp {
 	let source = "^";
 	for (let index = 0; index < glob.length; index++) {
 		const character = glob[index]!;
@@ -606,7 +606,7 @@ function globToRegExp(glob: string): RegExp {
 	return new RegExp(`${source}$`);
 }
 
-function matchesRequest(record: NetworkRequestRecord, options: NetworkRequestsOptions): boolean {
+export function matchesRequest(record: NetworkRequestRecord, options: NetworkRequestsOptions): boolean {
 	if (options.filter !== undefined && !requestFilterMatches(options.filter, record.url)) return false;
 	const types = normalizeStringList(options.type);
 	if (types && !types.includes(record.resourceType)) return false;
@@ -639,14 +639,14 @@ function normalizeStringList(value: string | string[] | undefined): string[] | u
 	return (Array.isArray(value) ? value : [value]).map(item => String(item));
 }
 
-function normalizeLimit(limit: number | undefined): number | undefined {
+export function normalizeLimit(limit: number | undefined): number | undefined {
 	if (limit === undefined) return undefined;
 	if (!Number.isInteger(limit) || limit < 0)
 		throw new ToolError("tab.requests() limit must be a non-negative integer");
 	return limit;
 }
 
-function toPublicRecord(record: StoredRequest): NetworkRequestRecord {
+export function toPublicRecord(record: StoredRequest): NetworkRequestRecord {
 	return {
 		id: record.id,
 		seq: record.seq,
@@ -662,6 +662,13 @@ function toPublicRecord(record: StoredRequest): NetworkRequestRecord {
 		responseHeaders: record.responseHeaders ? { ...record.responseHeaders } : undefined,
 		sizes: { ...record.sizes },
 	};
+}
+
+export function buildHarEntry(record: any, contentPolicy: any = "none") {
+	return { startedDateTime: new Date().toISOString(), time: 0, request: {}, response: {}, cache: {}, timings: {} };
+}
+export function buildHarLog(entries: any[] = []) {
+	return { log: { version: "1.2", creator: { name: "tau-browser", version: "1" }, pages: [], entries } };
 }
 
 async function loadResponseBody(response: HTTPResponse): Promise<LoadedBody | undefined> {
