@@ -2687,6 +2687,17 @@ export class ModelRegistry {
 	}
 
 	/**
+	 * Whether `provider` is a discovery-backed provider (models.yml
+	 * `discovery:` or a runtime extension provider). Returns the provider id
+	 * when it is, or undefined otherwise — so
+	 * {@link sessionModelDiscoveryProviders} can refresh exactly the discovery
+	 * providers that could still supply a saved session-model selector.
+	 */
+	getDiscoveryProviderId(provider: string): string | undefined {
+		return this.#discoverableProviders.some(config => config.provider === provider) ? provider : undefined;
+	}
+
+	/**
 	 * Whether `providerId` is known to the registry: it has at least one live
 	 * model, or it is configured for dynamic discovery (models.yml `discovery:`
 	 * or a runtime extension provider) and is not disabled. Discovery-only

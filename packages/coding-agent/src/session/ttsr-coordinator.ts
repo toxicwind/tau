@@ -6,6 +6,11 @@ import {
 	type Agent,
 	type AgentEvent,
 	type AgentMessage,
+	type AgentTool,
+	type AgentToolContext,
+	type AgentToolResult,
+	type BeforeToolCallContext,
+	type BeforeToolCallResult,
 	createToolScopedAbortReason,
 } from "@tau/tau-agent-core";
 import type { AssistantMessage, Judge, ToolCall } from "@tau/tau-ai";
@@ -227,6 +232,61 @@ export class TtsrCoordinator {
 		const ruleNames = rules.map(rule => rule.name.trim()).filter(name => name.length > 0);
 		if (ruleNames.length > 0) this.#host.sessionManager.appendTtsrInjection(ruleNames);
 		return { content: [{ type: "text", text: reminder }, ...ctx.result.content] };
+	}
+
+	/**
+	 * Pre-flight hook before a tool call executes. TTSR interruption is
+	 * reactionary (stream matching at message time), so the coordinator does not
+	 * block tools here. Returning `undefined` keeps the default (unblocked)
+	 * path — extension/loop tool-call preflight and approval still run.
+	 */
+	async beforeToolCall(_ctx: BeforeToolCallContext): Promise<BeforeToolCallResult | undefined> {
+		return undefined;
+	}
+
+	/** Bridge preflight: same non-blocking stance as {@link beforeToolCall}. */
+	async beforeBridgedToolCall(
+		_toolCallId: string,
+		_tool: AgentTool,
+		_args: unknown,
+		_context?: AgentToolContext,
+	): Promise<{ block?: boolean; reason?: string } | undefined> {
+		return undefined;
+	}
+
+	/**
+	 * Fold per-tool reminders into a bridged (extension-dispatched) tool result.
+	 * Mirrors {@link afterToolCall} but keys on the bridged call id and returns a
+	 * full result override, which is the shape the preflight bridge expects.
+	 */
+	afterBridgedToolCall(
+		toolCallId: string,
+		result: AgentToolResult,
+		_context?: AgentToolContext,
+	): AgentToolResult | undefined {
+		const rules = this.#perToolInjections.get(toolCallId);
+		if (!rules || rules.length === 0) return undefined;
+		this.#perToolInjections.delete(toolCallId);
+		const reminder = rules
+			.map(rule =>
+				prompt.render(ttsrToolReminderTemplate, {
+					name: rule.name,
+					path: this.#displayRulePath(rule.path),
+					content: rule.content,
+				}),
+			)
+			.join("\n\n");
+		const ruleNames = rules.map(rule => rule.name.trim()).filter(name => name.length > 0);
+		if (ruleNames.length > 0) this.#host.sessionManager.appendTtsrInjection(ruleNames);
+		return {
+			...result,
+			content: [{ type: "text", text: reminder }, ...result.content],
+		} as AgentToolResult;
+	}
+
+	/** Drop any pending per-tool reminder when a bridged can call is cancelled. */
+	cancelBridgedToolCall(toolCallId: string): void {
+		this.#perToolInjections.delete(toolCallId);
 	}
 
 	/** Resolves and clears the current resume gate. */

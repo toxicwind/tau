@@ -1180,6 +1180,9 @@ export class AgentSession implements SettingsScope, AgentViewSession {
 	/** Name the session from the operator's messages (see {@link AgentSessionConfig.autoTitle}). */
 	readonly #autoTitle: boolean;
 	#titleGenerationInFlightFor: string | undefined;
+	/** Host hook invoked when an automatic title starts (interactive tiny-title
+	 *  download-progress UI); installed via {@link setTitleGenerationStart}. */
+	#titleGenerationStart: (() => (() => void) | void) | undefined;
 	/** First-message auto-title that may be retried from conversation context.
 	 *  Once the operator's message has been declined — by the title model (too
 	 *  ambiguous, e.g. a pasted image plus "help"), or before any request by the
@@ -11791,8 +11794,17 @@ export class AgentSession implements SettingsScope, AgentViewSession {
 	 * Run one title-model request for `sessionId`, applying the result unless the
 	 * session was renamed or replaced meanwhile.
 	 */
-	#startAutoTitle(text: string, sessionId: string): void {
+	#startAutoTitle(text: string, sessionId: string, onStart?: (() => (() => void) | void) | undefined): void {
 		this.#titleGenerationInFlightFor = sessionId;
+		let cleanupProgress: (() => void) | void;
+		try {
+			cleanupProgress = onStart?.();
+		} catch (error) {
+			if (this.#titleGenerationInFlightFor === sessionId) {
+				this.#titleGenerationInFlightFor = undefined;
+			}
+			throw error;
+		}
 		const signal = this.#titleGenerationAbortController.signal;
 		this.generateTitle(text)
 			.then(async title => {
@@ -11816,8 +11828,12 @@ export class AgentSession implements SettingsScope, AgentViewSession {
 				if (this.#titleGenerationInFlightFor === sessionId) {
 					this.#titleGenerationInFlightFor = undefined;
 				}
-				if (signal.aborted) this.#cancelTitle(sessionId);
-				else this.#afterTitleRequest();
+				try {
+					cleanupProgress?.();
+				} finally {
+					if (signal.aborted) this.#cancelTitle(sessionId);
+					else this.#afterTitleRequest();
+				}
 			});
 	}
 
@@ -11869,6 +11885,49 @@ export class AgentSession implements SettingsScope, AgentViewSession {
 		const context = this.#buildReplanTitleContext();
 		if (!context || isLowSignalTitleInput(context)) return;
 		this.#startAutoTitle(context, sessionId);
+	}
+
+	/**
+	 * Start automatic title generation when the session and input are eligible.
+	 * Interactive and CLI-bootstrap submissions share this gate so every first
+	 * user message persists titles with the same environment, signal, and local
+	 * extension-command policy. `onStart` (falling back to the hook installed
+	 * via {@link setTitleGenerationStart}) runs before the request so the host
+	 * can surface tiny-title model download progress.
+	 */
+	maybeStartTitleGeneration(firstMessage: string, onStart?: () => (() => void) | void): void {
+		const extensionCommandSpace = firstMessage.indexOf(" ");
+		const isLocalExtensionCommand =
+			firstMessage.startsWith("/") &&
+			this.#extensionRunner?.getCommand(
+				extensionCommandSpace === -1 ? firstMessage.slice(1) : firstMessage.slice(1, extensionCommandSpace),
+			) !== undefined;
+		const sessionId = this.sessionManager.getSessionId();
+		if (
+			isLocalExtensionCommand ||
+			this.sessionName ||
+			this.#titleGenerationInFlightFor === sessionId ||
+			$env.PI_NO_TITLE ||
+			isLowSignalTitleInput(firstMessage)
+		) {
+			return;
+		}
+		this.#deferredTitle = { sessionId, declined: false, replied: false, words: 0 };
+		this.#startAutoTitle(firstMessage, sessionId, onStart ?? this.#titleGenerationStart);
+	}
+
+	/**
+	 * Install the interactive title-download UI hook. Used when `/skill:` starts
+	 * titling from {@link promptCustomMessage} without the input-controller
+	 * callback. The hook may return cleanup to run when generation settles.
+	 */
+	setTitleGenerationStart(handler: (() => (() => void) | void) | undefined): void {
+		this.#titleGenerationStart = handler;
+	}
+
+	/** Notify the host before a user-requested title generation; return its cleanup. */
+	notifyTitleGenerationStart(): (() => void) | void {
+		return this.#titleGenerationStart?.();
 	}
 
 	#resolveTitleProviderSessionId(parentSessionId: string): string {
