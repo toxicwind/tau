@@ -925,7 +925,6 @@ function resolveAnthropicPolicy(
 		supportsSamplingParams: true,
 		requiresToolResultId: false,
 		requiresThinkingEnabled,
-		requiresThinkingPresence: false,
 		replayUnsignedThinking:
 			!signingEndpoint && (compatReasoning(spec, axes) || modelMatchesHost(spec, "deepseekFamily")),
 		escapeBuiltinToolNames: false,
@@ -940,6 +939,7 @@ function resolveAnthropicPolicy(
 		stripThinkingHistory: undefined,
 		fastMode: undefined,
 		disabledThinking: undefined,
+		allowEmptySignature: false,
 		streamIdleTimeoutMs: spec.compat?.streamIdleTimeoutMs,
 	};
 	applyWireAxes(compat, axes.wire, "anthropic-messages");

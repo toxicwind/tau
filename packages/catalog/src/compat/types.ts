@@ -703,6 +703,8 @@ export interface ResolveTarget {
 	model: string;
 	/** Whether the model exposes a reasoning control surface. */
 	reasoning: boolean;
+	/** Request routing upstream override, when the route supplies one. */
+	upstream?: string;
 }
 
 /** Wire, thinking, and catalog assignments resolved for one target. */
@@ -719,3 +721,5 @@ export interface ResolvedAxes {
 	 */
 	reasoning: boolean;
 }
+
+export type RequestPolicy = Record<string, unknown>;

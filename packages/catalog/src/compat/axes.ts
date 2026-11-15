@@ -19,7 +19,7 @@ export type AxisShape = "scalar" | "array" | "object";
 export type AxisSet = "wire" | "thinking" | "catalog";
 
 /** Resolved compat record families a wire axis may be assigned onto. */
-export type CompatRecordName = "openai" | "openai-responses" | "anthropic" | "bedrock" | "devin" | "google";
+export type CompatRecordName = "openai" | "openai-responses" | "anthropic" | "bedrock" | "devin" | "google" | "request";
 
 /** One axis definition: resolved key, namespace, shape, and applicability. */
 export interface AxisDef {

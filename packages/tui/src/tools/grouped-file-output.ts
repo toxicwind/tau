@@ -195,6 +195,8 @@ export interface GroupedLineContext {
 	 * content line belongs to; the caller resolves it (no filesystem path).
 	 */
 	url?: string;
+	/** True when the file header named a url-like target (see `url`). */
+	isUrl?: boolean;
 }
 
 function resolveGroupedPath(parent: string | undefined, name: string): string | undefined {
@@ -263,7 +265,7 @@ export function classifyGroupedLines(
 		const note = suffix?.[0].trim();
 		if (url) {
 			currentUrl = target;
-			result.push({ kind: "file", depth, url: target, displayPath: name, suffix: note });
+			result.push({ kind: "file", depth, url: target, displayPath: name, suffix: note, isUrl: true });
 			continue;
 		}
 		currentFile = name ? resolveGroupedPath(parent, name) : undefined;

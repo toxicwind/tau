@@ -131,6 +131,9 @@ export interface ThinkingConfig {
 	 * provides an explicit wire off-path.
 	 */
 	requiresEffort?: boolean;
+
+	/** Raw (unclassified) thinking surface flag from discovery. */
+	unverified?: boolean;
 }
 
 // `Provider` is any provider-id string; `KnownProvider` (re-exported above) enumerates
@@ -524,6 +527,10 @@ export interface AnthropicCompat {
 	 * Sonnet 4.6+, Fable/Mythos 5+ on supported hosts. Default: false.
 	 */
 	supportsServerCompaction?: boolean;
+	/** Whether the API accepts `supports_message_threads` style message-thread containers. */
+	supportsMessageThreads?: boolean;
+	/** Whether the upstream honors the Claude Code beta kill-switch header. */
+	honorsClaudeCodeBetaKillSwitch?: boolean;
 	/**
 	 * Whether the model is served by the first-party Anthropic provider (its
 	 * default route is the official API). Rule-owned on the provider; the
@@ -673,6 +680,7 @@ export interface BedrockCompat {
 	 * Zero means no explicit checkpoints.
 	 */
 	promptCacheMinimumTokens?: number;
+	supportsForcedToolChoice?: boolean;
 	/**
 	 * Bedrock-enforced maximum explicit cache checkpoints per request.
 	 * Capability metadata only; zero means no explicit checkpoints.
@@ -691,6 +699,9 @@ export interface ResolvedBedrockCompat {
 	promptCacheMode: NonNullable<BedrockCompat["promptCacheMode"]>;
 	/** See {@link BedrockCompat.streamRevision}. */
 	streamRevision?: BedrockCompat["streamRevision"];
+	supportsServerCompaction: boolean;
+	supportsForcedToolChoice: boolean;
+	supportsThinkingBindingControls: boolean;
 	supportsLongPromptCacheRetention: boolean;
 	promptCacheMinimumTokens: number;
 	promptCacheMaximumCheckpoints: number;
@@ -745,6 +756,10 @@ type ResolvedToolStrictMode = NonNullable<OpenAICompat["toolStrictMode"]> | "mix
  */
 export interface ResolvedOpenAISharedCompat {
 	supportsDeveloperRole: boolean;
+	/** Trust only explicit `thinking` metadata; never derive a thinking surface from identity. */
+	trustExplicitThinkingOnly?: boolean;
+	/** Fallback mode when a provider cannot emit synthetic reasoning content. */
+	syntheticReasoningContentFallback?: boolean;
 	supportsStrictMode: boolean;
 	supportsReasoningEffort: boolean;
 	reasoningEffortMap: Partial<Record<Effort, string>>;
@@ -765,6 +780,8 @@ export interface ResolvedOpenAISharedCompat {
 	supportsForcedToolChoice: boolean;
 	supportsNamedToolChoice: boolean;
 	reasoningContentField?: OpenAICompat["reasoningContentField"];
+	/** Mistral-style reasoning content parts (split reasoning_content array). */
+	mistralReasoningContentParts?: boolean;
 	requiresReasoningContentForToolCalls: boolean;
 	requiresReasoningContentForAllAssistantTurns: boolean;
 	allowsSyntheticReasoningContentForToolCalls: boolean;
@@ -895,6 +912,12 @@ export type ResolvedOpenAICompat = ResolvedOpenAISharedCompat &
 		vercelGatewayRouting?: OpenAICompat["vercelGatewayRouting"];
 		extraBody?: OpenAICompat["extraBody"];
 		cacheControlFormat?: OpenAICompat["cacheControlFormat"];
+	/** Whether outbound messages strip their thinking history. */
+	stripThinkingHistory?: boolean;
+	/** The configured endpoint is first-party OpenAI (provider === "openai" on an `api.openai.com` or unset baseUrl). */
+	officialEndpoint?: boolean;
+	/** Requests the model's advertised max output tokens ceiling. */
+	clampOutputToModelMax?: boolean;
 		thinkingKeep?: OpenAICompat["thinkingKeep"];
 		streamIdleTimeoutMs?: number;
 		toolStrictMode: ResolvedToolStrictMode;
@@ -910,6 +933,18 @@ export type ResolvedOpenAICompat = ResolvedOpenAISharedCompat &
 /** Fully-resolved Responses-API compat view (same contract as `ResolvedOpenAICompat`). */
 export interface ResolvedOpenAIResponsesCompat extends ResolvedOpenAISharedCompat {
 	supportsLongPromptCacheRetention: boolean;
+	/** Whether Responses requests may persist server-side (`store`). */
+	storeResponses: boolean;
+	/** Prefix applied to tool names on the wire (provider-specific). */
+	toolNamePrefix?: string;
+	/** Whether native history delivery is bound to the connection (not replayed). */
+	connectionBoundNativeHistory: boolean;
+	/** Whether the endpoint supports steering (per-turn behavior modification). */
+	supportsSteering: boolean;
+	/** Whether the endpoint supports stateful response chaining (previous_response_id). */
+	statefulResponses?: boolean;
+	/** Requests the model's advertised max output tokens ceiling. */
+	clampOutputToModelMax?: boolean;
 	strictResponsesPairing: boolean;
 	supportsImageDetailOriginal: boolean;
 	supportsObfuscationOptOut: boolean;
@@ -982,6 +1017,18 @@ export type ResolvedAnthropicCompat = Required<Omit<AnthropicCompat, "streamIdle
 	 * effective-URL check.
 	 */
 	firstPartyProvider: boolean;
+	/** Whether the API permits interleaved thinking between tool calls. */
+	supportsBetweenToolsThinking?: boolean;
+	/** Endpoint is Bedrock's Converse Messages API (Anthropic surface). */
+	bedrockMessagesApi?: boolean;
+	maxImageDimension?: number;
+	maxImagePayloadBytes?: number;
+	/** Whether outbound messages strip their thinking history. */
+	stripThinkingHistory?: boolean;
+	/** Fast-mode serving flag for the Anthropic endpoint. */
+	fastMode?: boolean;
+	/** Whether thinking is disabled for this model. */
+	disabledThinking?: boolean;
 };
 
 /**
@@ -1010,6 +1057,23 @@ export interface DevinCompat {
 
 /** Fully-resolved devin-agent compat view. */
 export type ResolvedDevinCompat = Required<DevinCompat>;
+
+/** Compatibility settings for the Ollama native (ollama-chat) family. */
+export interface OllamaCompat {
+	/** Strip the thinking history from outbound messages. */
+	stripThinkingHistory?: boolean;
+}
+
+/** Fully-resolved ollama-chat compat view. */
+export type ResolvedOllamaCompat = Required<OllamaCompat> & Record<string, unknown>;
+
+/**
+ * Minimal policy input surface used by the compat resolver and session prompt-
+ * cache key derivation. Narrower than the full `ModelSpec`: only the fields
+ * the resolver reads, plus an optional wire model id.
+ */
+export type CatalogPolicyInputs =
+	ModelSpec<Api> & { requestModelId?: string };
 /**
  * Compatibility settings for the Google API family (google-generative-ai,
  * google-vertex, google-gemini-cli). Class-driven defaults come from the
@@ -1044,19 +1108,34 @@ export interface GoogleCompat {
 	stripImageInput?: boolean;
 	/** Thinking-loop watchdog guard family applied to streamed reasoning. */
 	thinkingLoopGuard?: "gemini" | "deepseek" | "xai";
+	/** Max image side (px) accepted by the endpoint; unset = no image contract. */
+	maxImageDimension?: number;
+	/** Max image payload bytes accepted by the endpoint; unset = no image contract. */
+	maxImagePayloadBytes?: number;
+	/** Base64-encode the skip-thought signature (Antigravity Claude). */
+	base64SkipThoughtSignature?: boolean;
 }
 
 /** Fully-resolved google-API compat view, materialized once by `buildModel`. */
 export type ResolvedGoogleCompat = Required<
 	Omit<
 		GoogleCompat,
-		"streamFirstEventTimeoutMs" | "streamIdleTimeoutMs" | "thinkingLoopGuard" | "antigravityUsageLabel"
+		"streamFirstEventTimeoutMs"
+		| "streamIdleTimeoutMs"
+		| "thinkingLoopGuard"
+		| "antigravityUsageLabel"
+		| "maxImageDimension"
+		| "maxImagePayloadBytes"
+		| "base64SkipThoughtSignature"
 	>
 > & {
 	streamFirstEventTimeoutMs?: number;
 	streamIdleTimeoutMs?: number;
 	thinkingLoopGuard?: GoogleCompat["thinkingLoopGuard"];
 	antigravityUsageLabel?: string;
+	maxImageDimension?: number;
+	maxImagePayloadBytes?: number;
+	base64SkipThoughtSignature?: boolean;
 };
 
 /** Sparse, user-authored compat overrides for a given API (models.json / config vocabulary). */
@@ -1092,7 +1171,9 @@ export type CompatOf<TApi extends Api> = TApi extends "openrouter"
 						? ResolvedDevinCompat
 						: TApi extends "google-generative-ai" | "google-vertex" | "google-gemini-cli"
 							? ResolvedGoogleCompat
-							: undefined;
+							: TApi extends "ollama-chat"
+								? ResolvedOllamaCompat
+								: undefined;
 
 /** Provider-native compaction endpoint configuration for one model. */
 export interface RemoteCompactionConfig<TApi extends Api = Api> {
@@ -1157,6 +1238,8 @@ export interface ModelCost extends TokenCost {
 	longContext?: LongContextTokenCost;
 	timeBased?: TimeBasedCost;
 }
+/** Pricing status class for display and quota gating. */
+export type ModelPricingStatus = "free" | "fixed" | "metered" | "unknown";
 
 /**
  * Exact local content tokenizer family for a model.
@@ -1292,6 +1375,14 @@ export interface Model<TApi extends Api = Api> {
 	 */
 	accountAccess?: Readonly<Record<string, ModelAccountAccess>>;
 	cost: ModelCost;
+	/** Pricing status classification; unset defers to cost-derived display. */
+	pricingStatus?: ModelPricingStatus;
+	/** Factory Droid credit rate (credits per unit) in force. */
+	factoryDroidCredits?: number;
+	/** Dated Factory Droid credit-rate cards, ascending by effectiveFrom. */
+	factoryDroidCreditCards?: readonly { effectiveFrom: number; input?: number }[];
+	/** User override for the max images per request budget. */
+	imageCountBudget?: number;
 	/** Premium Copilot requests charged per user-initiated request (defaults to 1). */
 	premiumMultiplier?: number;
 	contextWindow: number | null;

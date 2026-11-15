@@ -102,12 +102,14 @@ export class ReplyWriteComponent extends AssistantMessageComponent implements To
 
 	setExecutionStarted(): void {}
 
+	setToolActivityVisible(visible: boolean): void {}
+
 	updateResult(result: ToolResultFrame, isPartial = false): void {
 		if (isPartial || this.isTranscriptBlockFinalized()) return;
 		this.#argsComplete = true;
 		const error = result.isError
 			? result.content
-					.filter(block => block.type === "text")
+					.filter((block): block is { type: "text"; text?: string } => block.type === "text")
 					.map(block => block.text ?? "")
 					.join("\n")
 			: undefined;

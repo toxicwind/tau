@@ -1900,6 +1900,15 @@ export class Markdown implements Component {
 		this.#cachedLines = undefined;
 	}
 
+	releaseRenderCaches(): void {
+		this.invalidate();
+		this.#streamPrefixText = undefined;
+		this.#streamPrefixTokens = undefined;
+		this.#streamPrefixLineCache = undefined;
+		this.#tailRowCache = undefined;
+		this.#fastTail = undefined;
+	}
+
 	/**
 	 * Width-independent source prefix of the last render ending at a frozen
 	 * Markdown block boundary. Only meaningful while streaming (transient

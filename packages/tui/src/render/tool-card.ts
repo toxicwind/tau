@@ -62,6 +62,7 @@ export interface ToolCardOptions {
 	ignoreTight?: boolean;
 	onInvalidate?: () => void;
 	onDispose?: () => void;
+	onReleaseRenderCaches?: () => void;
 }
 
 /** Map transcript lifecycle terminology onto the output frame's visual states. */

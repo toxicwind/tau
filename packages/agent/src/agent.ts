@@ -1200,6 +1200,24 @@ export class Agent {
 	}
 
 	/**
+	 * Non-consuming view of messages the run already dequeued into the live
+	 * streaming response but has not yet recorded in the transcript
+	 * (live-steered). They stay listed until the transcript records them, when
+	 * the model actually switches to them — see {@link appendMessage}, which
+	 * advances each delivery's `next` cursor and drops completed deliveries.
+	 */
+	peekLiveSteeredMessages(): readonly AgentMessage[] {
+		const live: AgentMessage[] = [];
+		for (const delivery of this.#queuedMessageDeliveries) {
+			if (delivery.queue !== "steering") continue;
+			for (let i = delivery.next; i < delivery.messages.length; i++) {
+				live.push(delivery.messages[i]!);
+			}
+		}
+		return live;
+	}
+
+	/**
 	 * Withdraw messages the run already dequeued but never recorded (live-steered
 	 * into an aborted response, or taken for its next model call). Returns them so
 	 * the interrupt path can re-queue them ahead of the rest (they were queued

@@ -189,6 +189,8 @@ export class AssistantMessageComponent extends Container {
 	#convertedKittyImages = new Map<string, ImageContent>();
 	#showImages = true;
 	#showToolResultImages = true;
+	/** Whether the viewed session's tables render charts (main session yes, focused subagent no). */
+	#tableChartsVisible = true;
 	#kittyConversionsInFlight = new Set<string>();
 	#transcriptBlockFinalized: boolean;
 	/** See {@link setMidStreamPublication}; the wire's `stream-revision` axis decides it. */
@@ -824,6 +826,15 @@ export class AssistantMessageComponent extends Container {
 	setToolResultImagesVisible(visible: boolean): void {
 		if (this.#showToolResultImages === visible) return;
 		this.#showToolResultImages = visible;
+		if (this.#lastMessage) {
+			this.updateContent(this.#lastMessage, { transient: this.#lastUpdateTransient });
+		}
+	}
+
+	/** Toggle table-chart rendering for assistant-native prose (main session renders charts, a focused subagent does not). */
+	setTableChartsVisible(visible: boolean): void {
+		if (this.#tableChartsVisible === visible) return;
+		this.#tableChartsVisible = visible;
 		if (this.#lastMessage) {
 			this.updateContent(this.#lastMessage, { transient: this.#lastUpdateTransient });
 		}

@@ -43,6 +43,8 @@ export interface JobSnapshot {
 	type: "bash" | "task" | "eval";
 	status: "running" | "completed" | "failed" | "cancelled";
 	label: string;
+	/** Human-readable intent/task label, shown instead of `label` when present. */
+	intent?: string;
 	durationMs: number;
 	/** Process exit status when the job reports one. */
 	exitCode?: number;
