@@ -67,9 +67,42 @@ describe("interceptor rule table (default rules)", () => {
 		}
 	});
 
-	test("rule only blocks when the suggested tool is available", () => {
+ 	test("rule only blocks when the suggested tool is available", () => {
 		// grep rule matches, but no `grep` tool in the surface → pass through.
 		expect(block(checkBashInterception("grep foo file", ["bash", "read"]))).toBe(false);
+	});
+
+	test("ssh `start http://...` GUI launch is blocked (Session 0 guard)", () => {
+		const r = checkBashInterception(
+			"ssh -o ConnectTimeout=20 beebe 'start http://127.0.0.1:53682/auth?state=xyz'",
+			["bash"],
+			DEFAULT_BASH_INTERCEPTOR_RULES,
+		);
+		expect(block(r)).toBe(true);
+		expect(r.message).toContain("Session 0");
+		expect(r.message).toContain("port forwarding");
+	});
+
+	test("ssh `start https://...` is blocked too", () => {
+		const r = checkBashInterception("ssh host 'start https://example.com'", ["bash"]);
+		expect(block(r)).toBe(true);
+	});
+
+	test("plain ssh (non-GUI) is not blocked", () => {
+		expect(block(checkBashInterception("ssh beebe 'ls /tmp'", ["bash"]))).toBe(false);
+	});
+
+	test("awk NR<= line-slicing workaround is routed to read", () => {
+		const r = checkBashInterception("awk 'NR<=15{print}' file.ts", ["read"]);
+		expect(block(r)).toBe(true);
+		expect(r.suggestedTool).toBe("read");
+		expect(r.message).toContain("read");
+	});
+
+	test("sed -n '1,Np' line-slicing workaround is routed to read", () => {
+		const r = checkBashInterception("sed -n '1,15p' file.ts", ["read"]);
+		expect(block(r)).toBe(true);
+		expect(r.suggestedTool).toBe("read");
 	});
 });
 

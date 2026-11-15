@@ -292,6 +292,23 @@ export const DEFAULT_BASH_INTERCEPTOR_RULES: BashInterceptorRule[] = [
 		tool: "bash",
 		message: "Use `bash` with `name` for watch mode so its output, input, and lifecycle stay managed.",
 	},
+	{
+		// Windows SSH sessions land in Session 0 (non-interactive desktop): a
+		// `start http://...` there opens a browser no one can see. Require a
+		// local port forward or an interactive scheduled task instead.
+		pattern: "^\\s*ssh\\s+.*\\bstart\\s+https?:\\/\\/",
+		tool: "bash",
+		message:
+			"SSH cmd.exe runs in Windows Session 0 (non-interactive desktop); `start http://...` cannot open a browser on the user desktop. Use local port forwarding (-L <port>:127.0.0.1:<port>) or an interactive scheduled task.",
+	},
+	{
+		// Line-slicing workarounds for the blocked `head`/`tail` commands.
+		// Route to the native `read` tool instead of letting awk/sed bypass.
+		pattern: "^\\s*(?:awk\\s+['\"]NR<=|sed\\s+-n\\s+['\"]?1,)",
+		tool: "read",
+		message:
+			"Detected an awk/sed line-slicing workaround for `head`/`tail`. Use the native `read` tool with `offset`/`limit` instead.",
+	},
 ];
 
 const DEFAULT_AGENT_MODEL_OVERRIDES: Record<string, string | string[]> = {};
