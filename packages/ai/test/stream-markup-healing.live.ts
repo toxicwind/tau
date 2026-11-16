@@ -38,18 +38,21 @@ const TOOLS = [
 	{ name: "glob", description: "List files matching a path glob", parameters: { type: "object", properties: { path: { type: "string" } }, required: ["path"] } },
 ];
 
-// Told the XML dialect — the WRONG dialect for mercury. No native tools are
-// sent, so mercury MUST emit the call as visible text (mangled or clean).
+// Told the MANGLED XML dialect — the WRONG dialect for mercury. No native tools
+// are sent, so mercury MUST emit the call as visible text. The prompt shows the
+// mangled `<|inc_tool_call_ml|>` prefix as the expected syntax; mercury mirrors
+// it back — the exact flail the inception scanner must heal.
 const XML_DIALECT_PROMPT = `You may call one or more functions to assist with the user query.
 Tool calls are emitted as text using the exact syntax below, not as native provider tool messages.
 
 Available functions:
 ${TOOLS.map(t => JSON.stringify(t)).join("\n")}
 
-A call is one <invoke> element whose <parameter> children carry its arguments:
-<invoke name="fn"><parameter name="arg">value</parameter></invoke>
+A call is one <invoke> element whose <parameter> children carry its arguments. Every tag is prefixed with the mangled marker <|inc_tool_call_ml|>:
 
-TASK: List files matching the path glob 'src/main.ts'. Emit the tool call now.`;
+<|inc_tool_call_ml|invoke name="fn"><|inc_tool_call_ml|parameter name="arg">value</|inc_tool_call_ml|parameter></|inc_tool_call_ml|invoke>
+
+TASK: List files matching the path glob 'src/main.ts'. Emit the tool call now using the mangled <|inc_tool_call_ml|> prefix on every tag.`;
 
 async function main() {
 	const apiKey = await resolveKey();
@@ -96,6 +99,15 @@ async function main() {
 		console.error("empty stream — no content to heal");
 		process.exit(1);
 	}
+
+	// THE TRIGGER GUARD: the live test must actually provoke the mangled form,
+	// not pass on clean XML. If mercury did not emit the mangled marker, the
+	// test is not exercising the real failure path — fail loudly.
+	if (!text.includes("<|inc_tool_call_ml|")) {
+		console.error(`LIVE FAIL — mercury did not emit the mangled <|inc_tool_call_ml|> marker; got clean output instead:\n${JSON.stringify(text.slice(0, 300))}`);
+		process.exit(1);
+	}
+	console.log("trigger guard: raw output contains mangled <|inc_tool_call_ml|> marker ✓");
 
 	// THE CONTRACT: the inception healing pattern recovers the tool call
 	// from whatever shape mercury actually emitted (mangled or clean).

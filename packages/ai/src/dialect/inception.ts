@@ -42,6 +42,58 @@ const MANGLED_PREFIX = "<|inc_tool_call_ml|";
 const MANGLED_CLOSE_PREFIX = "</|inc_tool_call_ml|";
 
 /**
+ * Shape-based recognition of the inception mangled-marker family. Like
+ * DeepSeek's DSML (issue #10556), live mercury streams leak MUTATED forms of
+ * its internal tool-call token — bars doubled, root repeated, drifted words —
+ * and each stored leak teaches the model to mimic the mutation further. So we
+ * recognize the SHAPE (a `<|inc_tool_call_ml|`-family prefix on a tag) rather
+ * than only the exact spelling, and normalize any variant to clean XML.
+ *
+ * The invariant is the `inc_tool_call_ml` body wrapped in `<|...|` bars, with
+ * an optional doubled root (the `||inc_tool_call_ml|` seam). Spelling of the
+ * envelope word (`_calls`, `oke`=invoke, `parameter`) may drift.
+ */
+const MANGLED_OPEN_RE = /<\|inc_tool_call_ml\|(?:\|inc_tool_call_ml\|)?/g;
+const MANGLED_CLOSE_RE = /<\/\|inc_tool_call_ml\|/g;
+
+/**
+ * Streams whose *prefixes* must be buffered while a chunk boundary is
+ * ambiguous. The doubled-root sentinels matter most: `<|inc_tool_call_ml|` is
+ * itself a complete single-tag prefix, so normalizing it as soon as it arrives
+ * destroys the information needed to recognize the doubled root
+ * (`<|inc_tool_call_ml||inc_tool_call_ml|_calls>`). Holding the prefix until
+ * the next chunk disambiguates single-tag vs doubled-root is what keeps the
+ * root from degrading to visible text.
+ */
+const INCEPTION_SENTINELS = [
+	MANGLED_PREFIX,
+	MANGLED_CLOSE_PREFIX,
+	`${MANGLED_PREFIX}|inc_tool_call_ml|_calls>`,
+	`${MANGLED_PREFIX}|inc_tool_call_ml|oke`,
+] as const;
+
+/**
+ * Length of the longest trailing run of `text` that is a strict prefix of a
+ * mangled marker. Such a run must be held back: `normalizeMangledMarkers` can
+ * only rewrite whole markers, and the inner Anthropic scanner only buffers
+ * partial *clean* tags (`<invoke`), so an unrewritten `<|inc_tool_` fragment
+ * degrades to visible text and the call is lost.
+ */
+function trailingPartialMarkerLength(text: string): number {
+	let longest = 0;
+	for (const sentinel of INCEPTION_SENTINELS) {
+		const max = Math.min(sentinel.length - 1, text.length);
+		for (let length = max; length > longest; length--) {
+			if (text.endsWith(sentinel.slice(0, length))) {
+				longest = length;
+				break;
+			}
+		}
+	}
+	return longest;
+}
+
+/**
  * Streaming-safe normalizer: strips the mangled `<|inc_tool_call_ml|` prefix
  * from every tag open/close, turning the mangled tree into the clean
  * Anthropic form the base scanner already understands. Because the prefix can
@@ -51,37 +103,54 @@ const MANGLED_CLOSE_PREFIX = "</|inc_tool_call_ml|";
  */
 export class InceptionInbandScanner implements InbandScanner {
 	readonly #inner: InbandScanner;
-	readonly #pending: string;
+	#pending = "";
 
 	constructor(options: InbandScannerOptions = {}) {
 		this.#inner = new AnthropicInbandScanner(options);
-		this.#pending = "";
 	}
 
 	feed(text: string): InbandScanEvent[] {
-		if (text.length === 0) return [];
-		return this.#inner.feed(normalizeMangledMarkers(text));
+		if (text.length === 0 && this.#pending.length === 0) return [];
+		// A mangled prefix can straddle a chunk boundary (`<|inc_tool_` + `call_ml|…`).
+		// Rejoin it with the held-back tail before normalizing so the marker is
+		// always whole when the normalizer and the inner scanner see it.
+		const buffered = this.#pending + text;
+		const held = trailingPartialMarkerLength(buffered);
+		this.#pending = held > 0 ? buffered.slice(buffered.length - held) : "";
+		const ready = held > 0 ? buffered.slice(0, buffered.length - held) : buffered;
+		if (ready.length === 0) return [];
+		return this.#inner.feed(normalizeMangledMarkers(ready));
 	}
 
 	flush(): InbandScanEvent[] {
-		return this.#inner.flush();
+		const pending = this.#pending;
+		this.#pending = "";
+		const drained = pending.length > 0 ? this.#inner.feed(normalizeMangledMarkers(pending)) : [];
+		return [...drained, ...this.#inner.flush()];
 	}
 }
 
 /**
  * Rewrite every occurrence of the mangled marker prefix. Handles both the
  * doubled root form (`<|inc_tool_call_ml||inc_tool_call_ml|_calls>`) and the
- * single-tag form (`<|inc_tool_call_ml|invoke>`, `</|inc_tool_call_ml|invoke>`).
+ * single-tag form (`<|inc_tool_call_ml|invoke>`, `</|inc_tool_call_ml|invoke>`),
+ * plus any bar-multiplicity mutation of the family shape (DeepSeek-style).
  */
 export function normalizeMangledMarkers(text: string): string {
 	if (!text.includes(MANGLED_PREFIX) && !text.includes(MANGLED_CLOSE_PREFIX)) return text;
-	// Doubled root: `<|inc_tool_call_ml||inc_tool_call_ml|_calls>` → `<tool_calls>`
-	let out = text.replaceAll(`${MANGLED_PREFIX}${MANGLED_PREFIX}_calls>`, "<tool_calls>");
-	out = out.replaceAll(`${MANGLED_PREFIX}${MANGLED_PREFIX}oke`, "<invoke");
-	// Single-tag close: `</|inc_tool_call_ml|invoke>` → `</invoke>`
-	out = out.replaceAll(MANGLED_CLOSE_PREFIX, "</");
-	// Single-tag open: `<|inc_tool_call_ml|invoke>` → `<invoke>`
-	out = out.replaceAll(MANGLED_PREFIX, "<");
+	// Normalize the `|<|` doubled-root seam to `||` (the real mercury form
+	// omits the second `<`). This makes both spellings equivalent before the
+	// doubled-root mapping below.
+	let out = text.replaceAll(`${MANGLED_PREFIX}<|inc_tool_call_ml|`, `${MANGLED_PREFIX}|inc_tool_call_ml|`);
+	// Doubled-root seams map to a specific clean tag, not a bare `<`:
+	// `<|inc_tool_call_ml||inc_tool_call_ml|_calls>` → `<tool_calls>`,
+	// `<|inc_tool_call_ml||inc_tool_call_ml|oke` → `<invoke`.
+	out = out.replaceAll(`${MANGLED_PREFIX}|inc_tool_call_ml|_calls>`, "<tool_calls>");
+	out = out.replaceAll(`${MANGLED_PREFIX}|inc_tool_call_ml|oke`, "<invoke");
+	// Then the generic family shape: strip the mangled open prefix (single or
+	// doubled root) and the mangled close prefix wherever they appear. This
+	// handles the exact spellings AND any bar-multiplicity mutation.
+	out = out.replace(MANGLED_OPEN_RE, "<").replace(MANGLED_CLOSE_RE, "</");
 	return out;
 }
 
