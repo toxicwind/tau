@@ -137,7 +137,8 @@ export class InceptionInbandScanner implements InbandScanner {
  * plus any bar-multiplicity mutation of the family shape (DeepSeek-style).
  */
 export function normalizeMangledMarkers(text: string): string {
-	if (!text.includes(MANGLED_PREFIX) && !text.includes(MANGLED_CLOSE_PREFIX)) return text;
+	const hasMangled = text.includes(MANGLED_PREFIX) || text.includes(MANGLED_CLOSE_PREFIX);
+	if (!hasMangled && !/<\/\s*(?![A-Za-z_])/.test(text)) return text;
 	// Normalize the `|<|` doubled-root seam to `||` (the real mercury form
 	// omits the second `<`). This makes both spellings equivalent before the
 	// doubled-root mapping below.
@@ -151,6 +152,12 @@ export function normalizeMangledMarkers(text: string): string {
 	// doubled root) and the mangled close prefix wherever they appear. This
 	// handles the exact spellings AND any bar-multiplicity mutation.
 	out = out.replace(MANGLED_OPEN_RE, "<").replace(MANGLED_CLOSE_RE, "</");
+	// Orphan `</` closer: mercury leaks a bare `</` (or `</ `) with no matching
+	// open tag — the report's "one ended in a bare `</`". Like DeepSeek's
+	// orphan-DSML stripping, remove a `</` that is not followed by a valid tag
+	// name so it never reaches visible text. A `</` followed by a real tag name
+	// (e.g. `</invoke>`) is a legitimate closer and is preserved.
+	out = out.replace(/<\/\s*(?![A-Za-z_][A-Za-z0-9_.:-]*>)/g, "");
 	return out;
 }
 

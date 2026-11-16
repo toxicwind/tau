@@ -49,3 +49,20 @@ ${MCP}tool_calls>`;
 		expect(normalizeMangledMarkers(clean)).toBe(clean);
 	});
 });
+describe("inception orphan bare-</ protection", () => {
+	test("strips bare </ after JSON (report §6.4 failure)", () => {
+		expect(normalizeMangledMarkers('{"path":"src/main.ts"}</')).toBe('{"path":"src/main.ts"}');
+	});
+	test("strips bare </ alone", () => {
+		expect(normalizeMangledMarkers("</")).toBe("");
+	});
+	test("strips stuttered </ </", () => {
+		expect(normalizeMangledMarkers("</ </")).toBe("");
+	});
+	test("preserves legitimate </invoke> closer", () => {
+		expect(normalizeMangledMarkers('<invoke name="glob"><parameter name="path">x</parameter></invoke>')).toBe('<invoke name="glob"><parameter name="path">x</parameter></invoke>');
+	});
+	test("preserves legitimate </tool_calls> closer", () => {
+		expect(normalizeMangledMarkers("<tool_calls></tool_calls>")).toBe("<tool_calls></tool_calls>");
+	});
+});
