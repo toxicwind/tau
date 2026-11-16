@@ -1,40 +1,27 @@
 /**
  * stream-markup-healing.live.ts — REAL-LIVE verification that the `inception`
  * healing pattern recovers mercury's mangled `<|inc_tool_call_ml|>` markers
- * from an actual response. Run manually (NOT part of the bun suite):
+ * from an actual response via tau's provider stack. Run manually (NOT part of
+ * the bun suite):
  *
  *   bun packages/ai/test/stream-markup-healing.live.ts
  *
- * Trigger: mercury-3 (OpenAI-compatible) is told the XML dialect (the WRONG
- * dialect for it). It emits mangled markers into the visible-text channel.
- * The `inception` healing pattern must turn them into a structured tool call
- * (not visible text) — the exact fix for the mercury flail.
+ * Routes through the mimetite router (:25193) — the estate's canonical entry —
+ * using the bundled mercury-3 model with its baseUrl overridden to the router.
+ * The router key comes from ~/.tau/router.key (or PATCHLING_ROUTER_KEY).
  *
- * Model selection: STREAM_HEALING_LIVE_MODEL overrides the completion model.
+ * Trigger: mercury-3 (OpenAI-compatible) is told the XML dialect (the WRONG
+ * dialect for it) with NO native tools in the request, so it MUST emit the
+ * tool call as visible text. It emits mangled `<|inc_tool_call_ml|>` markers (or clean XML)
+ * into the visible-text channel. The `inception` healing pattern must turn
+ * them into a structured tool call — the exact fix for the mercury flail.
  */
-import { describe, expect, test } from "bun:test";
-import { StreamMarkupHealing } from "../src/utils/stream-markup-healing";
+import { streamOpenAICompletions } from "@tau/tau-ai/providers/openai-completions";
+import type { Context, Model } from "@tau/tau-ai/types";
+import { getBundledModel } from "@tau/tau-catalog/models";
+import { StreamMarkupHealing } from "@tau/tau-ai/utils/stream-markup-healing";
 
-const COMPLETION_MODELS = ["mercury-3"] as const;
-const COMPLETION_MODEL = (Bun.env.STREAM_HEALING_LIVE_MODEL ?? "mercury-3") as (typeof COMPLETION_MODELS)[number];
-if (!COMPLETION_MODELS.includes(COMPLETION_MODEL)) {
-	throw new Error(
-		`STREAM_HEALING_LIVE_MODEL must be one of ${COMPLETION_MODELS.join(", ")} (got '${COMPLETION_MODEL}')`,
-	);
-}
-
-// Route through the mimetite router (:25193) — the estate's canonical entry.
-const BASE_URL = Bun.env.PATCHLING_ROUTER_URL ?? "http://127.0.0.1:25193/v1";
-
-const hasKey = (() => {
-	try {
-		const f = Bun.env.PATCHLING_ROUTER_KEY_FILE ?? `${Bun.env.HOME}/.tau/router.key`;
-		const key = Bun.env.PATCHLING_ROUTER_KEY ?? Bun.env.RHODOCHROSITE_KEY;
-		return Boolean(key) || Bun.file(f).exists();
-	} catch {
-		return false;
-	}
-})();
+const ROUTER_URL = Bun.env.PATCHLING_ROUTER_URL ?? "http://127.0.0.1:25193/v1";
 
 async function resolveKey(): Promise<string> {
 	const envKey = Bun.env.PATCHLING_ROUTER_KEY ?? Bun.env.RHODOCHROSITE_KEY;
@@ -51,7 +38,8 @@ const TOOLS = [
 	{ name: "glob", description: "List files matching a path glob", parameters: { type: "object", properties: { path: { type: "string" } }, required: ["path"] } },
 ];
 
-// Told the XML dialect — the WRONG dialect for mercury.
+// Told the XML dialect — the WRONG dialect for mercury. No native tools are
+// sent, so mercury MUST emit the call as visible text (mangled or clean).
 const XML_DIALECT_PROMPT = `You may call one or more functions to assist with the user query.
 Tool calls are emitted as text using the exact syntax below, not as native provider tool messages.
 
@@ -63,39 +51,69 @@ A call is one <invoke> element whose <parameter> children carry its arguments:
 
 TASK: List files matching the path glob 'src/main.ts'. Emit the tool call now.`;
 
-describe("LIVE: StreamMarkupHealing inception pattern vs real mercury", () => {
-	test.skipIf(!hasKey)(
-		`${COMPLETION_MODEL} told XML dialect: mangled markers healed by inception pattern`,
-		async () => {
-			const key = await resolveKey();
-			expect(key).toBeTruthy();
+async function main() {
+	const apiKey = await resolveKey();
+	if (!apiKey) {
+		console.error("router key required: set PATCHLING_ROUTER_KEY or ~/.tau/router.key");
+		process.exit(2);
+	}
 
-			const res = await fetch(`${BASE_URL}/chat/completions`, {
-				method: "POST",
-				headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json", "User-Agent": "curl/8.23.0" },
-				body: JSON.stringify({
-					model: COMPLETION_MODEL,
-					max_tokens: 2500,
-					messages: [{ role: "user", content: XML_DIALECT_PROMPT }],
-				}),
-			});
-			expect(res.ok).toBe(true);
-			const j: any = await res.json();
-			const raw = j.choices?.[0]?.message?.content ?? "";
-			expect(raw.length).toBeGreaterThan(0);
-			console.log(`\n=== ${COMPLETION_MODEL} ===\nraw:\n${raw.slice(0, 300)}\n`);
+	// Bundled mercury-3 (kilo provider), baseUrl overridden to the mimetite router.
+	const mercury = getBundledModel<"openai-completions">("kilo", "inception/mercury-3");
+	const routedMercury: Model<"openai-completions"> = { ...mercury, baseUrl: ROUTER_URL };
 
-			// THE CONTRACT: the inception healing pattern recovers the tool call
-			// from whatever shape mercury actually emitted (mangled or clean).
-			const healer = new StreamMarkupHealing({ pattern: "inception" });
-			const events = healer.feedEvents(raw);
-			const calls = events.filter((e) => e.type === "toolCall");
-			console.log(`healed calls: ${calls.length}`);
-			for (const c of calls) {
-				if (c.type === "toolCall") console.log(`- ${c.call.name} ${c.call.arguments}`);
-			}
-			expect(calls.length).toBeGreaterThanOrEqual(1);
-		},
-		30000,
-	);
+	// NOTE: no `tools` in context → mercury cannot use native tool calling and
+	// must emit the call as visible text (the flail scenario).
+	const context: Context = {
+		systemPrompt: [XML_DIALECT_PROMPT],
+		messages: [{ role: "user", content: "List files matching src/main.ts", timestamp: Date.now() }],
+	};
+
+	console.log(`\n=== ${routedMercury.id} via ${ROUTER_URL} (no native tools) ===`);
+	const stream = streamOpenAICompletions(routedMercury, context, {
+		apiKey,
+	});
+
+	let text = "";
+	let stopReason: string | undefined;
+	let firstError: unknown;
+	for await (const ev of stream) {
+		if (ev.type === "text_delta") text += ev.delta;
+		else if (ev.type === "done") stopReason = ev.reason;
+		else if (ev.type === "error") {
+			firstError = ev.error.errorMessage ?? ev.error;
+			stopReason = ev.reason;
+		}
+	}
+
+	console.log("raw text:", JSON.stringify(text.slice(0, 300)));
+	console.log("stopReason:", stopReason);
+	if (firstError) {
+		console.error("stream error:", firstError);
+		process.exit(1);
+	}
+	if (!text.length) {
+		console.error("empty stream — no content to heal");
+		process.exit(1);
+	}
+
+	// THE CONTRACT: the inception healing pattern recovers the tool call
+	// from whatever shape mercury actually emitted (mangled or clean).
+	const healer = new StreamMarkupHealing({ pattern: "inception" });
+	const events = healer.feedEvents(text);
+	const calls = events.filter((e) => e.type === "toolCall");
+	console.log(`healed calls: ${calls.length}`);
+	for (const c of calls) {
+		if (c.type === "toolCall") console.log(`- ${c.call.name} ${c.call.arguments}`);
+	}
+	if (calls.length < 1) {
+		console.error("inception pattern failed to heal a tool call from mercury output");
+		process.exit(1);
+	}
+	console.log("\nLIVE OK — inception pattern healed mercury tool call via tau provider stack.");
+}
+
+main().catch((err) => {
+	console.error("unhandled:", err);
+	process.exit(1);
 });

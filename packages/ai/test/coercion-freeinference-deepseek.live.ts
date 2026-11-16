@@ -1,6 +1,7 @@
 /**
  * coercion-freeinference-deepseek.live.ts — REAL-LIVE provider probe for the
- * coercion layer. Run manually (NOT part of the bun suite):
+ * coercion layer, via tau's provider stack. Run manually (NOT part of the bun
+ * suite):
  *
  *   bun packages/ai/test/coercion-freeinference-deepseek.live.ts
  *
@@ -11,11 +12,15 @@
  * shapes in coercion-freeinference-deepseek.test.ts are pinned against the
  * shapes this live probe observes.
  *
- * Model selection: COERCION_LIVE_MODEL overrides the completion model. The
- * FreeInference text family (deepseek-v4-flash, glm-5.3-flash, qwen3.6-35b)
- * all share the tool-call coercion surface; deepseek-v4-flash is the default.
+ * Routes through the mimetite router (:25193) using the bundled model with
+ * baseUrl overridden to the router. The router key comes from ~/.tau/router.key
+ * (or PATCHLING_ROUTER_KEY).
+ *
+ * Model selection: COERCION_LIVE_MODEL overrides the completion model.
  */
-import { describe, expect, test } from "bun:test";
+import { streamOpenAICompletions } from "@tau/tau-ai/providers/openai-completions";
+import type { Context, Model } from "@tau/tau-ai/types";
+import { getBundledModel } from "@tau/tau-catalog/models";
 import {
 	coerceValue,
 	isMarkdownList,
@@ -32,21 +37,7 @@ if (!COMPLETION_MODELS.includes(COMPLETION_MODEL)) {
 	);
 }
 
-// Route through the mimetite router (:25193) — the estate's canonical
-// entry. Direct freeinference.org calls competed with the router's lane,
-// causing "Provider is overloaded". The router key comes from env or
-// ~/.tau/router.key.
-const BASE_URL = Bun.env.PATCHLING_ROUTER_URL ?? "http://127.0.0.1:25193/v1";
-
-const hasKey = (() => {
-	try {
-		const f = Bun.env.PATCHLING_ROUTER_KEY_FILE ?? `${Bun.env.HOME}/.tau/router.key`;
-		const key = Bun.env.PATCHLING_ROUTER_KEY ?? Bun.env.RHODOCHROSITE_KEY;
-		return Boolean(key) || Bun.file(f).exists();
-	} catch {
-		return false;
-	}
-})();
+const ROUTER_URL = Bun.env.PATCHLING_ROUTER_URL ?? "http://127.0.0.1:25193/v1";
 
 async function resolveKey(): Promise<string> {
 	const envKey = Bun.env.PATCHLING_ROUTER_KEY ?? Bun.env.RHODOCHROSITE_KEY;
@@ -61,77 +52,101 @@ async function resolveKey(): Promise<string> {
 
 const ARRAY_SCHEMA = { type: "array", items: { type: "string" } };
 
-describe("LIVE: freeinference coercion round-trip", () => {
-	test.skipIf(!hasKey)(
-		`${COMPLETION_MODEL} emits a todo list the coercion layer recovers verbatim`,
-		async () => {
-			const key = await resolveKey();
-			expect(key).toBeTruthy();
+const ADD_TASKS_TOOL = {
+	name: "add_tasks",
+	description: "Add tasks to a todo list",
+	parameters: {
+		type: "object",
+		properties: { tasks: { type: "array", items: { type: "string" } } },
+		required: ["tasks"],
+	},
+};
 
-			const res = await fetch(`${BASE_URL}/chat/completions`, {
-				method: "POST",
-				headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json", "User-Agent": "curl/8.23.0" }, // UA needed: CF blocks default UA (anomaly #14)
-				body: JSON.stringify({
-					model: COMPLETION_MODEL,
-					max_tokens: 2500, // reasoning-budget trap rule (#1): ≥2500
-					messages: [
-						{ role: "system", content: "You must call the add_tasks tool. Use it once." },
-						{ role: "user", content: "Add three tasks: wash dishes, walk dog, write report" },
-					],
-					tools: [{
-						type: "function",
-						function: {
-							name: "add_tasks",
-							parameters: {
-								type: "object",
-								properties: { tasks: { type: "array", items: { type: "string" } } },
-								required: ["tasks"],
-							},
-						},
-					}],
-				}),
-			});
-			expect(res.ok).toBe(true);
-			const j: any = await res.json();
-			const call = j.choices?.[0]?.message?.tool_calls?.[0];
-			expect(call).toBeTruthy();
-			const rawArgs = typeof call.function.arguments === "string"
-				? call.function.arguments
-				: JSON.stringify(call.function.arguments);
-			// THE CONTRACT: whatever shape the model emitted (JSON array, prefixed
-			// items, or whole checklist), the coercion layer recovers clean strings.
-			// The tool schema wraps the array in an object (`{tasks: [...]}`), so
-			// coerce against the `tasks` field's array schema — not the wrapper.
-			const parsed = JSON.parse(rawArgs) as { tasks?: unknown };
-			const recovered = coerceValue(
-				typeof parsed.tasks === "string" ? parsed.tasks : JSON.stringify(parsed.tasks),
-				ARRAY_SCHEMA,
-			) as unknown;
-			const tasks = Array.isArray(recovered)
-				? recovered.map((t) => parseMarkdownItem(String(t)))
-				: (isMarkdownList(String(recovered)) ? parseMarkdownList(String(recovered)) : [String(recovered)]);
-			expect(tasks.length).toBeGreaterThanOrEqual(3); // model emits 3 clean tasks
-			for (const t of tasks) {
-				// no markup prefix survives — the todo-board display contract
-				expect(t.startsWith("- [")).toBe(false);
-				expect(t.startsWith("* ")).toBe(false);
-				expect(t.startsWith("1. ")).toBe(false);
-			}
+async function main() {
+	const apiKey = await resolveKey();
+	if (!apiKey) {
+		console.error("router key required: set PATCHLING_ROUTER_KEY or ~/.tau/router.key");
+		process.exit(2);
+	}
 
-			// DESKTOP COMMANDER WITNESS: the recovered tasks must LAND — write
-			// them to disk via desktop-commander MCP (local shim fallback) and
-			// read them back verbatim. Coercion that survives only in memory is
-			// not proven; the file round-trip is the receipt.
-			const dc = await getDesktopCommander();
-			const witnessPath = `/tmp/coercion-live-witness-${Date.now()}.md`;
-			const written = await dc.writeFile(witnessPath, tasks.map((t) => `- [ ] ${t}`).join("\n"));
-			expect(written.ok).toBe(true);
-			const readBack = await dc.readFile(witnessPath);
-			expect(readBack).not.toBeNull();
-			const reRecovered = (readBack as string).split("\n").map(parseMarkdownItem);
-			expect(reRecovered).toEqual(tasks); // verbatim round-trip
-			console.log(`[dc:${dc.via}] witness ${witnessPath}: ${tasks.length} tasks verbatim`);
-		},
-		30000,
-	);
+	const bundled = getBundledModel<"openai-completions">("deepseek", COMPLETION_MODEL);
+	const model: Model<"openai-completions"> = { ...bundled, baseUrl: ROUTER_URL, requestModelId: COMPLETION_MODEL };
+
+	const context: Context = {
+		systemPrompt: ["You must call the add_tasks tool. Use it once."],
+		messages: [{ role: "user", content: "Add three tasks: wash dishes, walk dog, write report", timestamp: Date.now() }],
+		tools: [ADD_TASKS_TOOL as any],
+	};
+
+	console.log(`\n=== ${COMPLETION_MODEL} via ${ROUTER_URL} ===`);
+	const stream = streamOpenAICompletions(model, context, { apiKey, maxTokens: 2500 });
+
+	let toolCall: { name: string; arguments: string } | undefined;
+	let firstError: unknown;
+	for await (const ev of stream) {
+		if (ev.type === "toolcall_end") {
+			toolCall = { name: ev.toolCall.name, arguments: JSON.stringify(ev.toolCall.arguments) };
+		} else if (ev.type === "error") {
+			firstError = ev.error.errorMessage ?? ev.error;
+		}
+	}
+	if (firstError) {
+		console.error("stream error:", firstError);
+		process.exit(1);
+	}
+	if (!toolCall) {
+		console.error("no tool call emitted by model");
+		process.exit(1);
+	}
+	console.log(`tool call: ${toolCall.name} ${toolCall.arguments.slice(0, 200)}`);
+
+	// THE CONTRACT: whatever shape the model emitted (JSON array, prefixed
+	// items, or whole checklist), the coercion layer recovers clean strings.
+	const parsed = JSON.parse(toolCall.arguments) as { tasks?: unknown };
+	const recovered = coerceValue(
+		typeof parsed.tasks === "string" ? parsed.tasks : JSON.stringify(parsed.tasks),
+		ARRAY_SCHEMA,
+	) as unknown;
+	const tasks = Array.isArray(recovered)
+		? recovered.map((t) => parseMarkdownItem(String(t)))
+		: (isMarkdownList(String(recovered)) ? parseMarkdownList(String(recovered)) : [String(recovered)]);
+	if (tasks.length < 3) {
+		console.error(`expected >=3 tasks, got ${tasks.length}`);
+		process.exit(1);
+	}
+	for (const t of tasks) {
+		if (t.startsWith("- [") || t.startsWith("* ") || t.startsWith("1. ")) {
+			console.error(`markup prefix survived: ${JSON.stringify(t)}`);
+			process.exit(1);
+		}
+	}
+
+	// DESKTOP COMMANDER WITNESS: the recovered tasks must LAND — write them to
+	// disk via desktop-commander MCP (local shim fallback) and read them back
+	// verbatim. Coercion that survives only in memory is not proven; the file
+	// round-trip is the receipt.
+	const dc = await getDesktopCommander();
+	const witnessPath = `/tmp/coercion-live-witness-${Date.now()}.md`;
+	const written = await dc.writeFile(witnessPath, tasks.map((t) => `- [ ] ${t}`).join("\n"));
+	if (!written.ok) {
+		console.error("desktop-commander write failed");
+		process.exit(1);
+	}
+	const readBack = await dc.readFile(witnessPath);
+	if (readBack === null) {
+		console.error("desktop-commander read-back failed");
+		process.exit(1);
+	}
+	const reRecovered = (readBack as string).split("\n").map(parseMarkdownItem);
+	if (JSON.stringify(reRecovered) !== JSON.stringify(tasks)) {
+		console.error("round-trip mismatch");
+		process.exit(1);
+	}
+	console.log(`[dc:${dc.via}] witness ${witnessPath}: ${tasks.length} tasks verbatim`);
+	console.log("\nLIVE OK — coercion recovered tasks verbatim via tau provider stack.");
+}
+
+main().catch((err) => {
+	console.error("unhandled:", err);
+	process.exit(1);
 });
