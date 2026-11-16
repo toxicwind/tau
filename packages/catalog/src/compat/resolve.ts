@@ -627,6 +627,7 @@ function detectStreamMarkupHealing(
 	const isKimiK2 = facts.is("kimi") && facts.identity.family?.startsWith("k2") === true;
 	if (provider === "kimi-code" || provider === "moonshot" || isKimiK2) return "kimi";
 	if (facts.is("deepseek")) return "dsml";
+	if (facts.is("inception")) return "inception";
 	if (isOfficialOpenAIEndpoint(provider, baseUrl)) return undefined;
 	return "thinking";
 }

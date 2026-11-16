@@ -73,7 +73,7 @@ export class InceptionInbandScanner implements InbandScanner {
  * doubled root form (`<|inc_tool_call_ml||inc_tool_call_ml|_calls>`) and the
  * single-tag form (`<|inc_tool_call_ml|invoke>`, `</|inc_tool_call_ml|invoke>`).
  */
-function normalizeMangledMarkers(text: string): string {
+export function normalizeMangledMarkers(text: string): string {
 	if (!text.includes(MANGLED_PREFIX) && !text.includes(MANGLED_CLOSE_PREFIX)) return text;
 	// Doubled root: `<|inc_tool_call_ml||inc_tool_call_ml|_calls>` → `<tool_calls>`
 	let out = text.replaceAll(`${MANGLED_PREFIX}${MANGLED_PREFIX}_calls>`, "<tool_calls>");

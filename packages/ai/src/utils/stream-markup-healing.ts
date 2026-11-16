@@ -23,7 +23,7 @@ export interface HealedToolCall {
 	readonly arguments: string;
 }
 
-export type StreamMarkupHealingPattern = "kimi" | "dsml" | "qwen" | "thinking";
+export type StreamMarkupHealingPattern = "kimi" | "dsml" | "qwen" | "thinking" | "inception";
 
 export interface StreamMarkupHealingOptions {
 	readonly pattern: StreamMarkupHealingPattern;
@@ -66,6 +66,8 @@ export class StreamMarkupHealing {
 					? createInbandScanner("xml", { xmlTagset: "dsml" })
 					: options.pattern === "qwen"
 						? new QwenXmlInbandScanner()
+						: options.pattern === "inception"
+							? createInbandScanner("inception")
 						: undefined;
 	}
 
@@ -161,7 +163,7 @@ export class StreamMarkupHealing {
 			this.#sectionTerminated = text.includes(KIMI_SECTION_END);
 			return;
 		}
-		if (this.#pattern === "qwen") {
+		if (this.#pattern === "qwen" || this.#pattern === "inception") {
 			this.#sectionTerminated = text.includes("</tool_calls>");
 			return;
 		}
@@ -229,5 +231,6 @@ function generateHealedToolCallId(): string {
 export function getStreamMarkupHealingPattern(model: Model<"ollama-chat">): StreamMarkupHealingPattern {
 	if (model.identity.class === "kimi") return "kimi";
 	if (model.identity.class === "deepseek") return "dsml";
+	if (model.identity.class === "inception") return "inception";
 	return "thinking";
 }

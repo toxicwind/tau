@@ -231,7 +231,7 @@ export type OpenAIReasoningDisableMode =
 	| "qwen-template-false"
 	| "chat-template-thinking-false";
 
-export type OpenAIStreamMarkupHealingPattern = "kimi" | "dsml" | "qwen" | "thinking";
+export type OpenAIStreamMarkupHealingPattern = "kimi" | "dsml" | "qwen" | "thinking" | "inception";
 
 /**
  * Compatibility settings for openai-completions API.
