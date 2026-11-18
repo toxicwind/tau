@@ -1,9 +1,0 @@
-// TypeSafe System One judgment models.
-
-provider "typesafe" {
-
-
-	models "*" {
-		kind "judge"
-	}
-}

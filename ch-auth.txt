@@ -1,3 +1,0 @@
-auth.ts
-tokens.ts
-users.ts
