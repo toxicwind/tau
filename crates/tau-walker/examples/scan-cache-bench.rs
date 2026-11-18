@@ -4,7 +4,7 @@ use std::{
 	time::{Duration, Instant},
 };
 
-use pi_walker::{CollectedEntry, WalkOptions, collect_entries_without_heartbeat, invalidate_all};
+use tau_walker::{CollectedEntry, WalkOptions, collect_entries_without_heartbeat, invalidate_all};
 
 fn main() -> Result<(), String> {
 	let root = PathBuf::from(

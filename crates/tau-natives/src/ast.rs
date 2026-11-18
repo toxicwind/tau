@@ -14,7 +14,7 @@ use tau_ast::{
 	ops::{self as shared_ops},
 };
 use pi_vfs::Fs;
-use pi_walker::{glob::Selector, walk::WalkError};
+use tau_walker::{glob::Selector, walk::WalkError};
 
 use crate::{shell::vfs::ShellFilesystem, task};
 
@@ -318,7 +318,7 @@ async fn discover(
 	ct: &task::CancelToken,
 ) -> Result<Vec<search::Candidate>> {
 	let raw = path.unwrap_or_else(|| ".".to_string());
-	let root: PathBuf = pi_walker::fs::absolute(Path::new(raw.trim()))
+	let root: PathBuf = tau_walker::fs::absolute(Path::new(raw.trim()))
 		.map_err(|err| Error::from_reason(format!("Failed to resolve cwd: {err}")))?;
 	let include = glob
 		.map(str::trim)

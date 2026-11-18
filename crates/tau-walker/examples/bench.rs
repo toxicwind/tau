@@ -16,7 +16,7 @@ use std::{
 };
 
 use futures::StreamExt;
-use pi_walker::{Detail, FileType, Fs, walk};
+use tau_walker::{Detail, FileType, Fs, walk};
 
 struct Args {
 	mode:   String,

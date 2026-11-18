@@ -15,7 +15,7 @@ use std::{
 	os::unix::ffi::{OsStrExt, OsStringExt},
 };
 
-use pi_walker::{
+use tau_walker::{
 	CompiledWalkGlob, Entry, EntryVisitor, FollowLinks, ParallelWalkControl, WalkControl, WalkError,
 	WalkFilter, WalkOptions, WalkOrder, WalkRequest, WalkStatus, walk_entries,
 };

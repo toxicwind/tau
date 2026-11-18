@@ -4,7 +4,7 @@
 //! - `search()` for in-memory content search.
 //! - `grep()` for filesystem search with glob/type filtering.
 //!
-//! `pi_walker::grep` owns compilation, scanning, walking, and result selection;
+//! `tau_walker::grep` owns compilation, scanning, walking, and result selection;
 //! this module decodes options and converts results.
 
 use std::{path::Path, sync::Arc};
@@ -17,7 +17,7 @@ use napi::{
 };
 use napi_derive::napi;
 use pi_vfs::Fs;
-use pi_walker::grep::Engine;
+use tau_walker::grep::Engine;
 use tokio::sync::mpsc;
 
 use crate::{shell::vfs::ShellFilesystem, task, utils::clamp_u32};
@@ -226,11 +226,11 @@ pub struct GrepResult {
 	pub skipped_oversized:  Option<u32>,
 }
 
-const fn to_mode(mode: Option<GrepOutputMode>) -> pi_walker::grep::Mode {
+const fn to_mode(mode: Option<GrepOutputMode>) -> tau_walker::grep::Mode {
 	match mode {
-		None | Some(GrepOutputMode::Content) => pi_walker::grep::Mode::Content,
-		Some(GrepOutputMode::Count) => pi_walker::grep::Mode::Count,
-		Some(GrepOutputMode::FilesWithMatches) => pi_walker::grep::Mode::FilesWithMatches,
+		None | Some(GrepOutputMode::Content) => tau_walker::grep::Mode::Content,
+		Some(GrepOutputMode::Count) => tau_walker::grep::Mode::Count,
+		Some(GrepOutputMode::FilesWithMatches) => tau_walker::grep::Mode::FilesWithMatches,
 	}
 }
 
@@ -250,7 +250,7 @@ fn resolve_context(
 	(before as usize, after as usize)
 }
 
-fn to_context_lines(lines: Vec<pi_walker::grep::ContextLine>) -> Option<Vec<ContextLine>> {
+fn to_context_lines(lines: Vec<tau_walker::grep::ContextLine>) -> Option<Vec<ContextLine>> {
 	(!lines.is_empty()).then(|| {
 		lines
 			.into_iter()
@@ -259,8 +259,8 @@ fn to_context_lines(lines: Vec<pi_walker::grep::ContextLine>) -> Option<Vec<Cont
 	})
 }
 
-impl From<pi_walker::grep::Match> for Match {
-	fn from(matched: pi_walker::grep::Match) -> Self {
+impl From<tau_walker::grep::Match> for Match {
+	fn from(matched: tau_walker::grep::Match) -> Self {
 		Self {
 			line_number:    clamp_u32(matched.line),
 			line:           matched.text,
@@ -272,8 +272,8 @@ impl From<pi_walker::grep::Match> for Match {
 	}
 }
 
-impl From<pi_walker::grep::Match> for GrepMatch {
-	fn from(matched: pi_walker::grep::Match) -> Self {
+impl From<tau_walker::grep::Match> for GrepMatch {
+	fn from(matched: tau_walker::grep::Match) -> Self {
 		Self {
 			path:           matched.path,
 			line_number:    clamp_u32(matched.line),
@@ -833,7 +833,7 @@ fn search_sync(content: &[u8], options: SearchOptions) -> SearchResult {
 		};
 	let (before, after) =
 		resolve_context(options.context, options.context_before, options.context_after);
-	let opts = pi_walker::grep::SearchOptions {
+	let opts = tau_walker::grep::SearchOptions {
 		multiline,
 		mode: to_mode(options.mode),
 		before,
@@ -842,7 +842,7 @@ fn search_sync(content: &[u8], options: SearchOptions) -> SearchResult {
 		offset: options.offset.map_or(0, u64::from),
 		max_count: options.max_count.map(u64::from),
 	};
-	match pi_walker::grep::search(&engine, content, &opts) {
+	match tau_walker::grep::search(&engine, content, &opts) {
 		Ok(result) => SearchResult {
 			matches:       result.matches.into_iter().map(Match::from).collect(),
 			match_count:   clamp_u32(result.match_count),
@@ -863,7 +863,7 @@ struct GrepRequest {
 	exclude:            Vec<String>,
 	recursive:          bool,
 	file_type:          Option<String>,
-	mode:               pi_walker::grep::Mode,
+	mode:               tau_walker::grep::Mode,
 	before:             usize,
 	after:              usize,
 	max_columns:        Option<usize>,
@@ -878,7 +878,7 @@ struct GrepRequest {
 /// callback's pace back-pressures the search.
 async fn forward_matches(
 	callback: GrepStreamCallback,
-	mut batches: mpsc::Receiver<Vec<pi_walker::grep::Match>>,
+	mut batches: mpsc::Receiver<Vec<tau_walker::grep::Match>>,
 ) -> Result<()> {
 	// Per-file batches already queued ride along in one call, up to
 	// `STREAM_BATCH` entries.
@@ -908,9 +908,9 @@ async fn grep_async(
 ) -> Result<GrepResult> {
 	let engine = Engine::compile(&request.pattern, request.ignore_case, request.multiline)
 		.map_err(Error::from_reason)?;
-	let root = pi_walker::fs::absolute(Path::new(&request.path))
+	let root = tau_walker::fs::absolute(Path::new(&request.path))
 		.map_err(|err| Error::from_reason(format!("Failed to resolve cwd: {err}")))?;
-	let fs = pi_walker::Fs::new(&filesystem, &root);
+	let fs = tau_walker::Fs::new(&filesystem, &root);
 	let (sink, batches) = match stream {
 		Some(callback) => {
 			let (sender, receiver) = mpsc::channel(GREP_STREAM_QUEUE);
@@ -918,7 +918,7 @@ async fn grep_async(
 		},
 		None => (None, None),
 	};
-	let opts = pi_walker::grep::GrepOptions {
+	let opts = tau_walker::grep::GrepOptions {
 		multiline: request.multiline,
 		glob: request.glob,
 		recursive: request.recursive,
@@ -931,15 +931,15 @@ async fn grep_async(
 		offset: request.offset,
 		max_count: request.max_count,
 		max_count_per_file: request.max_count_per_file,
-		walk: pi_walker::walk::Options {
+		walk: tau_walker::walk::Options {
 			hidden: request.hidden,
 			gitignore: request.gitignore,
 			..Default::default()
 		},
 		sink,
-		..pi_walker::grep::GrepOptions::new(Arc::new(engine))
+		..tau_walker::grep::GrepOptions::new(Arc::new(engine))
 	};
-	let search = pi_walker::grep::grep(&fs, &root, opts);
+	let search = tau_walker::grep::grep(&fs, &root, opts);
 	let result = match batches {
 		Some((callback, receiver)) => {
 			let (result, forwarded) = tokio::join!(search, forward_matches(callback, receiver));
@@ -951,7 +951,7 @@ async fn grep_async(
 		None => search.await,
 	}
 	.map_err(|err| match err {
-		pi_walker::grep::GrepError::Walk(err) => task::walk_failure(err),
+		tau_walker::grep::GrepError::Walk(err) => task::walk_failure(err),
 		err => Error::from_reason(err.to_string()),
 	})?;
 	let matches: Vec<GrepMatch> = result.matches.into_iter().map(GrepMatch::from).collect();
@@ -1088,7 +1088,7 @@ pub fn grep<'env>(
 	} = options;
 
 	let mode = to_mode(mode);
-	let (before, after) = if mode == pi_walker::grep::Mode::Content {
+	let (before, after) = if mode == tau_walker::grep::Mode::Content {
 		resolve_context(context, context_before, context_after)
 	} else {
 		(0, 0)

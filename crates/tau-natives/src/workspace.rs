@@ -138,20 +138,20 @@ impl WorkspaceResults {
 	}
 }
 
-fn workspace_tree_options(config: &WorkspaceConfig) -> pi_walker::walk::TreeOptions {
-	pi_walker::walk::TreeOptions {
+fn workspace_tree_options(config: &WorkspaceConfig) -> tau_walker::walk::TreeOptions {
+	tau_walker::walk::TreeOptions {
 		hidden: config.include_hidden,
 		gitignore: config.use_gitignore,
 		skip_git: config.prune_excluded_dirs,
 		skip_node_modules: config.prune_excluded_dirs,
-		follow: pi_walker::walk::Follow::Never,
-		detail: pi_walker::Detail::Full,
+		follow: tau_walker::walk::Follow::Never,
+		detail: tau_walker::Detail::Full,
 		// Entries past `max_depth` are walked only to find AGENTS.md, so they
 		// need names, not per-entry metadata syscalls.
 		detail_max_depth: Some(config.max_depth),
 		// File-level ignore rules must not hide AGENTS.md.
 		unignored_name: config.collect_agents_md.then_some(AGENTS_MD_FILENAME),
-		order: pi_walker::walk::Order::Names,
+		order: tau_walker::walk::Order::Names,
 		emit_root: false,
 		min_depth: 1,
 		max_depth: Some(config.walk_max_depth),
@@ -244,8 +244,8 @@ async fn run_list_workspace(
 	let mut results = WorkspaceResults::default();
 	let mut unreadable_directories = Vec::new();
 	let mut fatal = None;
-	let mut tree = pi_walker::walk::Tree::new(
-		&pi_walker::Fs::new(fs, &config.root),
+	let mut tree = tau_walker::walk::Tree::new(
+		&tau_walker::Fs::new(fs, &config.root),
 		&config.root,
 		&workspace_tree_options(&config),
 	)
@@ -264,7 +264,7 @@ async fn run_list_workspace(
 					return Ok(tau_walker::WalkDecision::SkipDescend);
 				}
 			},
-			pi_walker::walk::Event::Error(error) => {
+			tau_walker::walk::Event::Error(error) => {
 				if config.report_directory_errors {
 					let relative = error
 						.path

@@ -16,7 +16,7 @@ use std::{
 	path::{Component, Path, PathBuf, Prefix},
 };
 
-use pi_walker::{FileType, pattern::Glob};
+use tau_walker::{FileType, pattern::Glob};
 use regex::Regex;
 
 use crate::{

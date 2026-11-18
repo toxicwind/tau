@@ -321,7 +321,7 @@ struct FuzzyFindConfig {
 }
 
 fn score_entries(
-	entries: &pi_walker::walk::Collection,
+	entries: &tau_walker::walk::Collection,
 	query: &FuzzyQuery,
 	max_results: usize,
 	ct: &task::CancelToken,
@@ -330,7 +330,7 @@ fn score_entries(
 	let mut scratch = ScoreScratch::default();
 	for entry in entries.iter() {
 		ct.heartbeat()?;
-		let is_directory = entry.file_type == pi_walker::FileType::Dir;
+		let is_directory = entry.file_type == tau_walker::FileType::Dir;
 		let path = entry.path_lossy();
 		let score = score_fuzzy_path(&path, is_directory, query, &mut scratch);
 		if score > 0 {
@@ -345,7 +345,7 @@ async fn fuzzy_find_async(
 	config: FuzzyFindConfig,
 	ct: task::CancelToken,
 ) -> Result<FuzzyFindResult> {
-	let root = pi_walker::fs::resolve_dir(fs, std::path::Path::new(&config.path))
+	let root = tau_walker::fs::resolve_dir(fs, std::path::Path::new(&config.path))
 		.await
 		.map_err(task::walk_failure)?;
 	let max_results = config.max_results.unwrap_or(100) as usize;
@@ -358,7 +358,7 @@ async fn fuzzy_find_async(
 		return Ok(FuzzyFindResult { matches: Vec::new(), total_matches: 0 });
 	}
 
-	let opts = pi_walker::walk::Options {
+	let opts = tau_walker::walk::Options {
 		hidden: config.hidden.unwrap_or(false),
 		gitignore: config.gitignore.unwrap_or(true),
 		skip_git: true,
@@ -368,12 +368,12 @@ async fn fuzzy_find_async(
 		..Default::default()
 	};
 	let entries =
-		pi_walker::walk::collect(&pi_walker::Fs::new(fs, &root), &root, &opts, false, |_, entry| {
+		tau_walker::walk::collect(&tau_walker::Fs::new(fs, &root), &root, &opts, false, |_, entry| {
 			match entry.file_type {
-				pi_walker::FileType::File | pi_walker::FileType::Dir => {
-					pi_walker::walk::Action::Continue
+				tau_walker::FileType::File | tau_walker::FileType::Dir => {
+					tau_walker::walk::Action::Continue
 				},
-				pi_walker::FileType::Symlink => pi_walker::walk::Action::Skip,
+				tau_walker::FileType::Symlink => tau_walker::walk::Action::Skip,
 			}
 		})
 		.await

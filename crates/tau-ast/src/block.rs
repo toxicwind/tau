@@ -1135,10 +1135,10 @@ mod tests {
 	/// instead of one directory, skipping anything over 64 KiB.
 	async fn repo_files(byte_budget: Option<usize>) -> Vec<PathBuf> {
 		let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
-		let opts = pi_walker::walk::Options { gitignore: true, skip_git: true, ..Default::default() };
+		let opts = tau_walker::walk::Options { gitignore: true, skip_git: true, ..Default::default() };
 		let walked =
-			pi_walker::walk::collect(&pi_walker::Fs::native(), &root, &opts, false, |_, entry| {
-				let wanted = entry.file_type == pi_walker::FileType::File
+			tau_walker::walk::collect(&tau_walker::Fs::native(), &root, &opts, false, |_, entry| {
+				let wanted = entry.file_type == tau_walker::FileType::File
 					&& matches!(
 						entry
 							.rel_path()
@@ -1147,9 +1147,9 @@ mod tests {
 						Some("ts" | "py" | "rs")
 					);
 				if wanted {
-					pi_walker::walk::Action::Continue
+					tau_walker::walk::Action::Continue
 				} else {
-					pi_walker::walk::Action::Skip
+					tau_walker::walk::Action::Skip
 				}
 			})
 			.await

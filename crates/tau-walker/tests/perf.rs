@@ -13,7 +13,7 @@ use std::{
 	time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
 
-use pi_walker::{WalkDetail, WalkOrder, WalkRequest};
+use tau_walker::{WalkDetail, WalkOrder, WalkRequest};
 
 const DIRECTORY_FANOUT: [usize; 5] = [5, 5, 5, 4, 2];
 const CONTENT_FILE_COUNT: usize = 15_000;

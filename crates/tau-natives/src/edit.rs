@@ -51,7 +51,7 @@ use tau_edit::{
 	stream_json::snapshot_from_text,
 	text::normalize_to_lf,
 };
-use pi_walker::{
+use tau_walker::{
 	Fs,
 	walk::{self, Action, Options},
 };

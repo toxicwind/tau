@@ -1,6 +1,6 @@
 use std::{env, error::Error, time::Instant};
 
-use pi_walker::{WalkFilter, WalkOptions, WalkOrder, WalkRank, WalkRequest};
+use tau_walker::{WalkFilter, WalkOptions, WalkOrder, WalkRank, WalkRequest};
 
 fn main() -> Result<(), Box<dyn Error>> {
 	let root = env::args().nth(1).ok_or("expected tree path")?;

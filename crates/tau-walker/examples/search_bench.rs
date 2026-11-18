@@ -11,7 +11,7 @@
 
 use std::{path::PathBuf, sync::Arc, time::Instant};
 
-use pi_walker::{
+use tau_walker::{
 	Fs,
 	glob::{self, GlobOptions},
 	grep::{self, Engine, GrepOptions},

@@ -13,13 +13,16 @@ workspace = true
 [dependencies]
 flume.workspace = true
 futures.workspace = true
+globset.workspace = true
 grep-matcher.workspace = true
 grep-pcre2.workspace = true
 grep-regex.workspace = true
 grep-searcher.workspace = true
+ignore.workspace = true
 memchr = "2.7.4"
 parking_lot.workspace = true
 pi-vfs.workspace = true
+rayon.workspace = true
 regex.workspace = true
 tokio.workspace = true
 
@@ -40,5 +43,3 @@ windows-sys = { workspace = true, features = [
 
 [dev-dependencies]
 async-trait.workspace = true
-globset.workspace = true
-ignore.workspace = true

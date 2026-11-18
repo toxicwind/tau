@@ -7,7 +7,7 @@
 //! matching plus optional file-type filtering, and optionally streams each
 //! accepted match through a callback.
 //!
-//! `pi_walker::glob` never yields `.git`, and skips `node_modules` unless the
+//! `tau_walker::glob` never yields `.git`, and skips `node_modules` unless the
 //! pattern or options request it.
 //!
 //! # Example
@@ -49,17 +49,17 @@ pub struct GlobMatch {
 	pub size:      Option<f64>,
 }
 
-impl From<pi_walker::FileType> for FileType {
-	fn from(file_type: pi_walker::FileType) -> Self {
+impl From<tau_walker::FileType> for FileType {
+	fn from(file_type: tau_walker::FileType) -> Self {
 		match file_type {
-			pi_walker::FileType::File => Self::File,
-			pi_walker::FileType::Dir => Self::Dir,
-			pi_walker::FileType::Symlink => Self::Symlink,
+			tau_walker::FileType::File => Self::File,
+			tau_walker::FileType::Dir => Self::Dir,
+			tau_walker::FileType::Symlink => Self::Symlink,
 		}
 	}
 }
 
-impl From<FileType> for pi_walker::FileType {
+impl From<FileType> for tau_walker::FileType {
 	fn from(file_type: FileType) -> Self {
 		match file_type {
 			FileType::File => Self::File,
@@ -115,8 +115,8 @@ pub struct GlobResult {
 	pub total_matches: u32,
 }
 
-impl From<pi_walker::glob::GlobMatch> for GlobMatch {
-	fn from(entry: pi_walker::glob::GlobMatch) -> Self {
+impl From<tau_walker::glob::GlobMatch> for GlobMatch {
+	fn from(entry: tau_walker::glob::GlobMatch) -> Self {
 		Self {
 			path:      entry.path,
 			file_type: entry.file_type.into(),
@@ -280,14 +280,14 @@ pub fn glob<'env>(
 	} = options;
 
 	let filesystem = ShellFilesystem::resolve(filesystem);
-	let opts = pi_walker::glob::GlobOptions {
+	let opts = tau_walker::glob::GlobOptions {
 		pattern,
 		recursive: recursive.unwrap_or(true),
 		file_type: file_type.map(Into::into),
 		max_results: max_results.map(|value| value as usize),
 		sort_by_mtime: sort_by_mtime.unwrap_or(false),
 		include_node_modules,
-		walk: pi_walker::walk::Options {
+		walk: tau_walker::walk::Options {
 			hidden: hidden.unwrap_or(false),
 			gitignore: gitignore.unwrap_or(true),
 			follow_links: follow_links.unwrap_or(false),
@@ -298,15 +298,15 @@ pub fn glob<'env>(
 
 	let ct = task::CancelToken::new(timeout_ms, signal);
 	task::filesystem_future(env, "glob", ct, filesystem, move |filesystem| async move {
-		let root = pi_walker::fs::resolve_dir(&filesystem, std::path::Path::new(&path))
+		let root = tau_walker::fs::resolve_dir(&filesystem, std::path::Path::new(&path))
 			.await
 			.map_err(task::walk_failure)?;
-		let fs = pi_walker::Fs::new(&filesystem, &root);
-		let matches: Vec<GlobMatch> = pi_walker::glob::glob(&fs, &root, &opts)
+		let fs = tau_walker::Fs::new(&filesystem, &root);
+		let matches: Vec<GlobMatch> = tau_walker::glob::glob(&fs, &root, &opts)
 			.await
 			.map_err(|err| match err {
-				pi_walker::glob::GlobError::Walk(err) => task::walk_failure(err),
-				err @ pi_walker::glob::GlobError::Pattern(_) => Error::from_reason(err.to_string()),
+				tau_walker::glob::GlobError::Walk(err) => task::walk_failure(err),
+				err @ tau_walker::glob::GlobError::Pattern(_) => Error::from_reason(err.to_string()),
 			})?
 			.into_iter()
 			.map(GlobMatch::from)

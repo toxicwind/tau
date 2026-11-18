@@ -154,8 +154,8 @@ impl CancelToken {
 }
 
 /// The N-API error for a pi-walker walk whose root could not be read.
-pub fn walk_failure(err: pi_walker::walk::WalkError) -> Error {
-	let pi_walker::walk::WalkError::Root { path, error } = err;
+pub fn walk_failure(err: tau_walker::walk::WalkError) -> Error {
+	let tau_walker::walk::WalkError::Root { path, error } = err;
 	Error::from_reason(format!("Native directory scan failed for {}: {error}", path.display()))
 }
 
@@ -487,7 +487,7 @@ where
 ///
 /// Separate from the addon's scheduler pool on purpose, and the separation has
 /// to be a *runtime* rather than a thread: the walkers spawn their own tasks
-/// for directory work (`pi_walker`'s root scan and per-directory workers,
+/// for directory work (`tau_walker`'s root scan and per-directory workers,
 /// grep's executor and feeder), and a spawned task runs on the runtime it was
 /// spawned from. Driving the parent elsewhere — on a blocking thread, say —
 /// moves nothing, because `Handle::current()` inside it is still the host

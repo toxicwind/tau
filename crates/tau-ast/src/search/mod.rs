@@ -37,7 +37,7 @@ use ast_grep_core::{
 };
 use futures::{Stream, StreamExt, stream};
 use pi_vfs::Fs;
-use pi_walker::{
+use tau_walker::{
 	FileType, exec,
 	glob::Selector,
 	walk::{self, Action, WalkError},
@@ -194,7 +194,7 @@ pub struct Candidate {
 /// directory, [`Error::Root`] when it cannot be walked. Dropping the future
 /// cancels the walk.
 pub async fn discover(fs: &Fs, root: &Path, opts: &Discover) -> Result<Vec<Candidate>, Error> {
-	let root = pi_walker::fs::canonical(fs, root.to_path_buf()).await;
+	let root = tau_walker::fs::canonical(fs, root.to_path_buf()).await;
 	let metadata = fs
 		.metadata(&root)
 		.await
@@ -216,7 +216,7 @@ pub async fn discover(fs: &Fs, root: &Path, opts: &Discover) -> Result<Vec<Candi
 		)));
 	}
 
-	let walk_fs = pi_walker::Fs::new(fs, &root);
+	let walk_fs = tau_walker::Fs::new(fs, &root);
 	let walk_opts = walk::Options {
 		hidden: opts.hidden,
 		gitignore: opts.gitignore,
