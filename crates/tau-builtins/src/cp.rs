@@ -4,7 +4,7 @@
 //!
 //! Every filesystem access goes through the shell's [`BlockingFs`], so
 //! `scheme://` paths work as sources and destinations. Kernel fast paths
-//! (copy-on-write clones through [`pi_iso::cow`], `copy_file_range`,
+//! (copy-on-write clones through [`tau_iso::cow`], `copy_file_range`,
 //! `SEEK_DATA` sparse copies) only run when both ends are native host files;
 //! other pairs stream through the provider's handles. Diagnostics follow GNU
 //! cp.
@@ -100,7 +100,7 @@ enum OverwriteMode {
 }
 
 /// Possible arguments for `--reflink`; clones go through
-/// [`pi_iso::cow::clone_file`].
+/// [`tau_iso::cow::clone_file`].
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Default)]
 enum ReflinkMode {
 	Always,
@@ -2875,7 +2875,7 @@ fn copy_data(
 			ReflinkMode::Never => false,
 		};
 	if clone_by_path {
-		match pi_iso::cow::clone_file(&source_fs, &dest_fs) {
+		match tau_iso::cow::clone_file(&source_fs, &dest_fs) {
 			Ok(()) => {
 				if !matches!(options.attributes.timestamps, Preserve::Yes { .. }) {
 					filesystem
@@ -2944,9 +2944,9 @@ fn copy_data(
 			if device.is_some_and(|device| state.clone_unsupported.contains(&device)) {
 				reflink_debug = OffloadReflinkDebug::Unsupported;
 				false
-			} else if let Err(error) = pi_iso::cow::clone_open(source_native, dest_native) {
-				if pi_iso::cow::is_unsupported(&error)
-					&& !pi_iso::cow::is_cross_device(&error)
+			} else if let Err(error) = tau_iso::cow::clone_open(source_native, dest_native) {
+				if tau_iso::cow::is_unsupported(&error)
+					&& !tau_iso::cow::is_cross_device(&error)
 					&& let Some(device) = device
 				{
 					state.clone_unsupported.insert(device);

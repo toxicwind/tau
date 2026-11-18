@@ -6302,6 +6302,17 @@ fn sort_by<'a>(unsorted: &mut Vec<Line<'a>>, settings: &GlobalSettings, line_dat
 		compare_by(a, b, settings, line_data, line_data)
 	};
 	let stable = settings.stable || settings.unique;
+	// WASI has no threads (rayon's pool hits an unreachable trap there), and
+	// Windows leaves the global pool unavailable when pi-natives could not
+	// safely configure it under commit pressure; both sort sequentially.
+	#[cfg(not(target_os = "wasi"))]
+	let sort_parallel = |unsorted: &mut Vec<Line<'a>>| {
+		if stable {
+			unsorted.par_sort_by(cmp);
+		} else {
+			unsorted.par_sort_unstable_by(cmp);
+		}
+	};
 	let sort = || match &settings.parallelism {
 		#[cfg(not(target_os = "wasi"))]
 		Parallelism::Pool(pool) => pool.install(|| sort_parallel(unsorted)),
@@ -6315,19 +6326,6 @@ fn sort_by<'a>(unsorted: &mut Vec<Line<'a>>, settings: &GlobalSettings, line_dat
 		Err(payload) if payload.is::<SortCancelled>() => false,
 		Err(payload) => std::panic::resume_unwind(payload),
 	}
-// refused_by: statement_fold · collision: `// force sequential sort when pi-natives could not safely confi…`
-	// WASI does not support threads, so use non-parallel sort to avoid
-	// rayon's thread pool which triggers an unreachable trap. Windows can also
-	// force sequential sort when tau-natives could not safely configure Rayon's
-	// process-global worker pool under commit pressure.
-	if settings.stable || settings.unique {
-		#[cfg(not(target_os = "wasi"))]
-		if rayon_global_pool_available() {
-			unsorted.par_sort_by(cmp);
-		} else {
-			unsorted.par_sort_unstable_by(cmp);
-		}
-	};
 }
 
 /// Parses `--parallel`'s NUM_THREADS like GNU's `xstrtoumax`: optional

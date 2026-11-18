@@ -364,23 +364,6 @@ pub mod matchers {
 				Self { fs, path, depth, follow, meta: OnceCell::new(), known_type: None, display }
 			}
 
-			/// Record the type the directory listing reported, so `-type`,
-			/// `-prune` and the like answer without a stat. Only regular files
-			/// and directories seen without following links qualify: Windows
-			/// listings report every reparse point as a symlink, which needs the
-			/// stat to tell.
-			#[must_use]
-			pub fn with_listed_type(mut self, file_type: pi_walker::FileType) -> Self {
-				if !self.follow() {
-					self.known_type = match file_type {
-						pi_walker::FileType::File => Some(FileType::Regular),
-						pi_walker::FileType::Dir => Some(FileType::Directory),
-						pi_walker::FileType::Symlink => None,
-					};
-				}
-				self
-			}
-
 			/// Get the filesystem this entry lives on.
 			pub fn fs(&self) -> &pi_vfs::Fs {
 				&self.fs
@@ -4952,7 +4935,7 @@ use std::{
 	error::Error,
 	io::Write,
 	path::{Path, PathBuf},
-	sync::{Arc, Mutex, PoisonError},
+	sync::{Arc, Mutex, PoisonError, atomic::Ordering},
 	time::SystemTime,
 };
 
@@ -5162,59 +5145,26 @@ async fn finish_find_walk(
 	}
 }
 
-fn find_tree_options(config: &Config) -> pi_walker::walk::TreeOptions {
-	pi_walker::walk::TreeOptions {
+fn find_tree_options(config: &Config) -> tau_walker::walk::TreeOptions {
+	tau_walker::walk::TreeOptions {
 		hidden: true,
 		follow: match config.follow {
-			Follow::Never => pi_walker::walk::Follow::Never,
-			Follow::Roots => pi_walker::walk::Follow::Roots,
-			Follow::Always => pi_walker::walk::Follow::Always,
+			Follow::Never => tau_walker::walk::Follow::Never,
+			Follow::Roots => tau_walker::walk::Follow::Roots,
+			Follow::Always => tau_walker::walk::Follow::Always,
 		},
 		order: if config.sorted_output {
-			pi_walker::walk::Order::Names
+			tau_walker::walk::Order::Names
 		} else {
-			pi_walker::walk::Order::Listing
+			tau_walker::walk::Order::Listing
 		},
 		emit_root: true,
 		min_depth: config.min_depth,
 		max_depth: (config.max_depth != usize::MAX).then_some(config.max_depth),
 		contents_first: config.depth_first,
 		same_file_system: config.same_file_system,
-		..pi_walker::walk::TreeOptions::default()
+		..tau_walker::walk::TreeOptions::default()
 	}
-}
-// refused_by: modify_delete_guard · collision: none (no common ancestor text)
-fn walker_follow_links(follow: Follow) -> tau_walker::FollowLinks {
-	match follow {
-		Follow::Never => tau_walker::FollowLinks::Never,
-		Follow::Roots => tau_walker::FollowLinks::Roots,
-		Follow::Always => tau_walker::FollowLinks::Always,
-	}
-}
-// refused_by: modify_delete_guard · collision: none (no common ancestor text)
-fn build_find_walk_request(config: &Config, root: &Path) -> tau_walker::WalkRequest {
-	tau_walker::WalkRequest::new(root)
-		.hidden(true)
-		.gitignore(false)
-		.skip_git(false)
-		.skip_node_modules(false)
-		.follow_links(walker_follow_links(config.follow))
-		.detail(tau_walker::WalkDetail::Minimal)
-		.order(if config.sorted_output {
-			tau_walker::WalkOrder::Path
-		} else {
-			tau_walker::WalkOrder::Unordered
-		})
-		.emit_root(true)
-		.depth(config.min_depth, config.max_depth)
-		.visit_order(if config.depth_first {
-			tau_walker::VisitOrder::ContentsFirst
-		} else {
-			tau_walker::VisitOrder::PreOrder
-		})
-		.directory_errors(tau_walker::DirectoryErrorMode::Visit)
-		.same_file_system(config.same_file_system)
-		.cache(false)
 }
 
 async fn process_dir_walk_request(
@@ -5227,73 +5177,68 @@ async fn process_dir_walk_request(
 	operand: &Path,
 ) -> i32 {
 	let fs = Arc::new(host.vfs());
-	let layer = pi_walker::Fs::new(&fs, resolved_root);
-	let mut current_dir = None;
+	let layer = tau_walker::Fs::new(&fs, resolved_root);
 	let tree_options = find_tree_options(config);
+	let mut current_dir = None;
 	let mut ret = 0;
-	finish_find_walk(deps, host, matcher, &mut current_dir, &mut ret).await;
-	ret
-	match pi_walker::walk::Tree::new(&layer, resolved_root, &tree_options).await {
-		Err(pi_walker::walk::WalkError::Root { path, error }) => {
+	let mut tree = match tau_walker::walk::Tree::new(&layer, resolved_root, &tree_options).await {
+		Ok(tree) => tree,
+		Err(tau_walker::walk::WalkError::Root { path, error }) => {
 			ret = 1;
 			let _ = writeln!(host.stderr, "Error: {}: {error}", path.display());
+			finish_find_walk(deps, host, matcher, &mut current_dir, &mut ret).await;
+			return ret;
 		},
-// refused_by: statement_fold · collision: `|entry: pi_walker::EntryMeta<'_>| {` +5 more
-		|entry: tau_walker::EntryMeta<'_>| {
-			let walk_entry =
-				WalkEntry::new(entry.absolute_path.as_ref().to_path_buf(), entry.depth, config.follow);
-			let mut current_dir = current_dir.borrow_mut();
-			let mut ret_value = ret.get();
-			let (should_quit, should_skip_current_dir) = apply_find_entry(
-				walk_entry,
-				operand,
-				resolved_root,
-				deps,
-				host,
-				matcher,
-				&mut current_dir,
-				&mut ret_value,
-			);
-			ret.set(ret_value);
-			if host.sigpipe_hit() {
-				Ok(tau_walker::WalkDecision::Stop)
-			} else if should_quit {
-				local_quit.set(true);
-				Ok(tau_walker::WalkDecision::Stop)
-			} else if should_skip_current_dir {
-				Ok(tau_walker::WalkDecision::SkipDescend)
-			} else {
-				Ok(tau_walker::WalkDecision::Include)
-			}
-		},
-		|error| {
-			ret.set(1);
-			let _ = writeln!(walk_stderr, "Error: {}: {}", error.path.display(), error.error);
-			Ok(tau_walker::WalkDecision::Include)
-		},
-	);
-// refused_by: statement_fold · collision: none (no common ancestor text)
-	match status {
-		Ok(tau_walker::WalkStatus::Complete | tau_walker::WalkStatus::Stopped) => {
-			finish_find_walk(deps, host, matcher, &mut current_dir, &mut ret_value);
-			if local_quit.get() {
-				*quit = true;
-			}
-			ret_value
-		},
-		Err(tau_walker::WalkError::Interrupted(err)) => {
-			ret_value = 1;
-			let _ = writeln!(host.stderr, "Error: {err}");
-			finish_find_walk(deps, host, matcher, &mut current_dir, &mut ret_value);
-			ret_value
-		},
-		Err(tau_walker::WalkError::InvalidData { path, message }) => {
-			ret_value = 1;
-			let _ = writeln!(host.stderr, "Error: {}: {message}", path.display());
-			finish_find_walk(deps, host, matcher, &mut current_dir, &mut ret_value);
-			ret_value
-		},
+	};
+	let cancel = host.cancel_flag();
+	let mut walk_stderr = host.stderr_clone();
+	let mut local_quit = false;
+	while let Some(event) = tree.next().await {
+		if cancel.load(Ordering::Relaxed) {
+			ret = 1;
+			let _ = writeln!(host.stderr, "Error: cancelled");
+			break;
+		}
+		match event {
+			tau_walker::walk::Event::Entry(entry) => {
+				let walk_entry = WalkEntry::new(
+					Arc::clone(&fs),
+					entry.abs.to_path_buf(),
+					entry.depth,
+					config.follow,
+				);
+				let (should_quit, should_skip_current_dir) = apply_find_entry(
+					walk_entry,
+					entry.path,
+					operand,
+					resolved_root,
+					deps,
+					host,
+					matcher,
+					&mut current_dir,
+					&mut ret,
+				)
+				.await;
+				if host.sigpipe_hit() {
+					break;
+				} else if should_quit {
+					local_quit = true;
+					break;
+				} else if should_skip_current_dir {
+					tree.skip_dir();
+				}
+			},
+			tau_walker::walk::Event::Error(error) => {
+				ret = 1;
+				let _ = writeln!(walk_stderr, "Error: {}: {}", error.path.display(), error.error);
+			},
+		}
 	}
+	finish_find_walk(deps, host, matcher, &mut current_dir, &mut ret).await;
+	if local_quit {
+		*quit = true;
+	}
+	ret
 }
 
 async fn process_dir(

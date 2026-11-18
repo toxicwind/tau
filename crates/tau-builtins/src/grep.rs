@@ -23,7 +23,7 @@ use grep_regex::{RegexMatcher, RegexMatcherBuilder};
 use grep_searcher::{
 	BinaryDetection, Searcher, SearcherBuilder, Sink, SinkContext, SinkFinish, SinkMatch,
 };
-use pi_walker::{
+use tau_walker::{
 	FileType,
 	exec,
 	fs::FileOpener,
@@ -167,17 +167,6 @@ pub(crate) fn for_each_nonempty_match<M: Matcher>(
 		at = found.end();
 	}
 	Ok(())
-}
-
-// refused_by: modify_delete_guard · collision: none (no common ancestor text)
-/// PCRE2 JIT toggle: `TAU_PCRE2_JIT=1` forces JIT on, `0`/`false` forces it
-/// off. Unset, JIT stays on everywhere except macOS, where PCRE2's SLJIT
-/// executable allocator can fault while compiling patterns (issue #7399).
-pub(crate) fn pcre2_jit_enabled(host: &Host) -> bool {
-	match host.var("TAU_PCRE2_JIT") {
-		Some(value) if !value.is_empty() => value != "0" && !value.eq_ignore_ascii_case("false"),
-		_ => !cfg!(target_os = "macos"),
-	}
 }
 
 #[derive(Parser, Debug)]
@@ -1087,14 +1076,14 @@ impl<M: Matcher, W: Write> Sink for GrepSink<'_, M, W> {
 			}
 			if self.opts.prefix_filename {
 				self.out.write_all(self.display)?;
-				if self.opts.null_paths {
+				if self.opts.record.null_paths {
 					self.out.write_all(b"\0")?;
 				} else {
 					self.out.write_all(b":")?;
 				}
 			}
 			write!(self.out, "{}", self.match_count)?;
-			self.out.write_all(&[self.opts.record_terminator])?;
+			self.out.write_all(&[self.opts.record.terminator])?;
 			self.flush_record()?;
 		}
 		Ok(())
@@ -1166,7 +1155,7 @@ struct Worker {
 /// A file being searched.
 enum Input {
 	/// A regular file a native walk listed, opened relative to its directory.
-	Listed(pi_walker::fs::File),
+	Listed(tau_walker::fs::File),
 	Source(stdio::Source),
 }
 
@@ -1198,7 +1187,7 @@ impl Worker {
 
 /// The walked files of a directory operand, searched by index.
 struct Listed {
-	layer: pi_walker::Fs,
+	layer: tau_walker::Fs,
 	files: walk::Collection,
 }
 
@@ -1347,24 +1336,6 @@ impl<M: Matcher + Send + Sync + 'static> DirSearch<M> {
 		}
 	}
 }
-// refused_by: modify_delete_guard · collision: none (no common ancestor text)
-fn grep_walk_request(root: &Path, follow_links: tau_walker::FollowLinks) -> tau_walker::WalkRequest {
-	tau_walker::WalkRequest::new(root)
-		.hidden(true)
-		.gitignore(false)
-		.skip_git(false)
-		.skip_node_modules(false)
-		.follow_links(follow_links)
-		.detail(tau_walker::WalkDetail::Minimal)
-		.order(tau_walker::WalkOrder::Unordered)
-		.emit_root(true)
-		.depth(0, usize::MAX)
-		.visit_order(tau_walker::VisitOrder::PreOrder)
-		.directory_errors(tau_walker::DirectoryErrorMode::Visit)
-		.same_file_system(false)
-		.cache(false)
-		.filter(tau_walker::WalkFilter::all())
-}
 
 /// Recursively searches a directory operand ([`exec::adaptive`]: inline, then on parallel workers), pruning
 /// excluded directories and writing each file's output in path order.
@@ -1384,8 +1355,9 @@ async fn search_dir<M: Matcher + Clone + Send + Sync + 'static, W: Write + Send>
 ) -> io::Result<bool> {
 	let vfs = host.vfs();
 	let (_guard, scope) = HaltGuard::new();
-	let layer = pi_walker::Fs::new(&vfs, resolved);
-	let walk_opts = walk::Options { hidden: true, follow_links, ..walk::Options::default() };
+	let outer = host.cancel_flag();
+	let layer = tau_walker::Fs::new(&vfs, resolved);
+	let walk_opts = walk::Options { hidden: true, follow_links: follow_links == tau_walker::FollowLinks::Always, ..walk::Options::default() };
 	let filter_rules = Arc::new(rules.clone());
 	let collected = walk::collect(&layer, resolved, &walk_opts, true, move |_, entry| {
 		let rel = entry.rel_path();
@@ -1421,7 +1393,7 @@ async fn search_dir<M: Matcher + Clone + Send + Sync + 'static, W: Write + Send>
 	let shared = Arc::new(DirSearch {
 		fs:       vfs.clone(),
 		listed:   Some(Listed { layer, files }),
-		halt:     Halt { scope, outer: Arc::clone(outer) },
+		halt:     Halt { scope, outer: Arc::clone(&outer) },
 		operand:  operand.to_owned(),
 		resolved: resolved.to_owned(),
 		matcher:  matcher.clone(),
@@ -1440,6 +1412,7 @@ async fn search_dir<M: Matcher + Clone + Send + Sync + 'static, W: Write + Send>
 			}
 		}
 	});
+	let mut pace = host.output_pace();
 	while let Some(found) = results.next().await {
 		// Most files print nothing; their empty writes are skipped.
 		if !found.out.is_empty() {
@@ -1480,100 +1453,6 @@ async fn search_dir<M: Matcher + Clone + Send + Sync + 'static, W: Write + Send>
 		return Err(error);
 	}
 	Ok(any)
-	let mut pace = host.output_pace();
-// refused_by: statement_fold · collision: none (no common ancestor text)
-	let walk = request.for_each_entry_with_heartbeat(
-		|| {
-			if cancel.load(std::sync::atomic::Ordering::Relaxed) {
-				Err(io::Error::from(io::ErrorKind::Interrupted))
-			} else {
-				Ok::<(), io::Error>(())
-			}
-		},
-		|entry: tau_walker::EntryMeta<'_>| {
-			if opts.quiet && any {
-				return Ok(tau_walker::WalkDecision::Stop);
-			}
-			if entry.file_type == tau_walker::FileType::Dir {
-				if entry.depth > 0 && !rules.allows_dir(Path::new(entry.relative_path)) {
-					return Ok(tau_walker::WalkDecision::SkipDescend);
-				}
-				return Ok(tau_walker::WalkDecision::Include);
-			}
-			if entry.file_type != tau_walker::FileType::File
-				|| !rules.allows_file(Path::new(entry.relative_path))
-			{
-				return Ok(tau_walker::WalkDecision::Skip);
-			}
-			let mut entry_had_error = had_error_state.get();
-			let matched = search_file_path(
-				host,
-				operand,
-				resolved,
-				entry.absolute_path.as_ref(),
-				matcher,
-				searcher,
-				opts,
-				out,
-				&mut entry_had_error,
-			)?;
-			had_error_state.set(entry_had_error);
-			any |= matched;
-			if opts.quiet && any {
-				Ok(tau_walker::WalkDecision::Stop)
-			} else {
-				Ok(tau_walker::WalkDecision::Include)
-			}
-		},
-		|error: tau_walker::DirectoryError<'_>| {
-			had_error_state.set(true);
-			if !opts.no_messages {
-				let display_path = display_path_for_operand(operand, resolved, error.path);
-				let _ = writeln!(
-					walk_err,
-					"grep: {}: {}",
-					display_path.to_string_lossy(),
-					error.error
-				);
-			}
-			Ok(tau_walker::WalkDecision::Include)
-		},
-	);
-	*had_error |= had_error_state.get();
-// refused_by: statement_fold · collision: none (no common ancestor text)
-	match walk {
-		Ok(tau_walker::WalkStatus::Complete | tau_walker::WalkStatus::Stopped) => Ok(any),
-		// Propagate BrokenPipe to stop the walk; the host maps its status.
-		Err(tau_walker::WalkError::Interrupted(error))
-			if error.kind() == io::ErrorKind::BrokenPipe =>
-		{
-			Err(error)
-		},
-		Err(tau_walker::WalkError::Interrupted(_)) if host.is_cancelled() => {
-			// The shell wrapper owns the user-visible cancellation status.
-			*had_error = true;
-			Ok(any)
-		},
-		Err(tau_walker::WalkError::Interrupted(error)) => {
-			*had_error = true;
-			if !opts.no_messages {
-				let _ = writeln!(host.stderr, "grep: {error}");
-			}
-			Ok(any)
-		},
-		Err(tau_walker::WalkError::InvalidData { path, message }) => {
-			*had_error = true;
-			if !opts.no_messages {
-				let display_path = display_path_for_operand(operand, resolved, &path);
-				let _ = writeln!(
-					host.stderr,
-					"grep: {}: {message}",
-					display_path.to_string_lossy()
-				);
-			}
-			Ok(any)
-		},
-	}
 }
 
 async fn read_auxiliary_file(host: &mut Host, path: &OsStr) -> Result<Vec<u8>, String> {
@@ -1900,13 +1779,13 @@ async fn execute_search<M: Matcher + Clone + Send + Sync + 'static>(
 						operand.as_os_str(),
 						&resolved,
 						matcher,
-						&mut searcher,
+						&builder,
 						opts,
 						rules,
 						follow_links,
 						&mut out,
 						&mut had_error,
-					) {
+					).await {
 						Ok(matched) => any_match |= matched,
 						Err(_) => return crate::host::SIGPIPE_EXIT_CODE,
 					}
@@ -1923,14 +1802,14 @@ async fn execute_search<M: Matcher + Clone + Send + Sync + 'static>(
 					if opts.files_without_match {
 						let _ = out.write_all(operand.as_encoded_bytes());
 						let _ = out
-							.write_all(&[if opts.null_paths { 0 } else { opts.record_terminator }]);
+							.write_all(&[if opts.record.null_paths { 0 } else { opts.record.terminator }]);
 					} else if opts.count {
 						if opts.prefix_filename {
 							let _ = out.write_all(operand.as_encoded_bytes());
-							let _ = out.write_all(if opts.null_paths { b"\0" } else { b":" });
+							let _ = out.write_all(if opts.record.null_paths { b"\0" } else { b":" });
 						}
 						let _ = out.write_all(b"0");
-						let _ = out.write_all(&[opts.record_terminator]);
+						let _ = out.write_all(&[opts.record.terminator]);
 					}
 					let _ = writeln!(
 						host.stderr,
@@ -2006,7 +1885,7 @@ async fn execute_search<M: Matcher + Clone + Send + Sync + 'static>(
 }
 
 // refused_by: rename_vs_edit_guard · collision: none (both sides edited, nowhere the same lines)
-impl Utility for Grep {
+impl AsyncUtility for Grep {
 	const NAME: &'static str = "grep";
 	const USAGE_ERROR: u8 = 2;
 
@@ -2014,11 +1893,11 @@ impl Utility for Grep {
 		Ok(normalize_context_args(argv))
 	}
 
-	fn run(self, host: &mut Host) -> i32 {
+	async fn run(self, host: &mut Host) -> i32 {
 		let cli = self.cli;
 		let matches = self.matches;
 
-	let (mut patterns, mut files) = match resolve_patterns(host, &cli) {
+	let (mut patterns, mut files) = match resolve_patterns(host, &cli).await {
 		Ok(resolved) => resolved,
 		Err(error) => {
 			let _ = writeln!(host.stderr, "grep: {error}");
@@ -2041,7 +1920,7 @@ impl Utility for Grep {
 			return 2;
 		},
 	};
-	let rules = match build_path_rules(host, &cli, &matches) {
+	let rules = match build_path_rules(host, &cli, &matches).await {
 		Ok(rules) => rules,
 		Err(error) => {
 			let _ = writeln!(host.stderr, "grep: {error}");
@@ -2102,8 +1981,11 @@ impl Utility for Grep {
 		quiet: cli.quiet,
 		prefix_filename,
 		initial_tab: cli.initial_tab,
-		null_paths: cli.null_paths,
-		record_terminator: if cli.null_data { b'\0' } else { b'\n' },
+		record: RecordFormat {
+			path_separator: None,
+			null_paths: cli.null_paths,
+			terminator: if cli.null_data { b'\0' } else { b'\n' },
+		},
 		group_separator: resolve_group_separator(&cli, &matches),
 		line_buffered: cli.line_buffered,
 		binary_files: resolve_binary_files(&cli, &matches),
@@ -2112,7 +1994,7 @@ impl Utility for Grep {
 	let follow_links = resolve_follow_links(&cli, &matches);
 
 	match matcher {
-		CompiledMatcher::Rust(matcher) => execute_search(
+		Engine::Rust(matcher) => execute_search(
 			host,
 			&cli,
 			&matcher,
@@ -2122,8 +2004,8 @@ impl Utility for Grep {
 			&rules,
 			&opts,
 			max_count,
-		),
-		CompiledMatcher::Pcre(matcher) => execute_search(
+		).await,
+		Engine::Pcre(matcher) => execute_search(
 			host,
 			&cli,
 			&matcher,
@@ -2133,7 +2015,7 @@ impl Utility for Grep {
 			&rules,
 			&opts,
 			max_count,
-		),
+		).await,
 	}
 }
 }

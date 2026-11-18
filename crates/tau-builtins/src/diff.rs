@@ -15,7 +15,7 @@ use std::{
 };
 
 use clap::{ArgAction, Parser};
-use pi_diff::{Run, diff_line_tokens};
+use tau_diff::{Run, diff_line_tokens};
 
 use crate::host::{Host, Utility, forward_slash_display, strip_errno};
 

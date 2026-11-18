@@ -133,7 +133,7 @@ debug = false
 # pi-shell's bash engine recurses per nesting level (arithmetic, parser);
 # unoptimized frames overflow the 2 MiB test-thread stack before its recursion
 # limits hit.
-[profile.dev.package.pi-shell]
+[profile.dev.package.tau-shell]
 opt-level = 1
 
 [workspace.lints.rust]

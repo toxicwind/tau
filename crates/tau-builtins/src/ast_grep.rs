@@ -1,5 +1,5 @@
 //! `ast-grep` / `sg` builtin: ast-grep 0.50's `run` command (structural
-//! search and rewrite) as an in-process shell utility on top of the `pi_ast`
+//! search and rewrite) as an in-process shell utility on top of the `tau_ast`
 //! search engine, with ast-grep's piped (non-terminal) output: no colors and
 //! no file headings unless `--heading always`.
 
@@ -13,15 +13,15 @@ use std::{
 
 use clap::{ArgAction, Parser, ValueEnum};
 use futures::StreamExt;
-use pi_ast::{
+use tau_ast::{
 	SupportLang, ops,
 	search::{
 		self, Candidate, Captures, Change, Discover, Error as SearchError, MatchStrictness, Mode,
 		Page, Query, Rewrite, Span,
 	},
 };
-use pi_walker::glob::Selector;
-use pi_diff::{HunkLine, diff_line_tokens, line_tokens_str, structured_patch_hunk_rows};
+use tau_walker::glob::Selector;
+use tau_diff::{HunkLine, diff_line_tokens, line_tokens_str, structured_patch_hunk_rows};
 use tokio_util::sync::CancellationToken;
 
 use crate::host::{AsyncUtility, Host};
