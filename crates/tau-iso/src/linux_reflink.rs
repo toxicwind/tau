@@ -149,51 +149,6 @@ mod imp {
 		}
 	}
 
-// refused_by: container_member · collision: none (no common ancestor text)
-	fn recursive_reflink(
-		src: &Path,
-		dst: &Path,
-		skip: Option<&[&std::ffi::OsStr]>,
-	) -> IsoResult<()> {
-		let meta = fs::symlink_metadata(src)
-			.map_err(|err| IsoError::other(format!("symlink_metadata {}: {err}", src.display())))?;
-		fs::create_dir(dst)
-			.map_err(|err| IsoError::other(format!("create {}: {err}", dst.display())))?;
-
-		let entries = fs::read_dir(src)
-			.map_err(|err| IsoError::other(format!("read_dir {}: {err}", src.display())))?;
-		for entry in entries {
-			let entry = entry
-				.map_err(|err| IsoError::other(format!("dir entry in {}: {err}", src.display())))?;
-			if skip.is_some_and(|names| names.contains(&entry.file_name().as_os_str()))
-				|| crate::is_secret_filename(&entry.file_name())
-			{
-				continue;
-			}
-			let file_type = entry.file_type().map_err(|err| {
-				IsoError::other(format!("file_type {}: {err}", entry.path().display()))
-			})?;
-			let src_path = entry.path();
-			let dst_path = dst.join(entry.file_name());
-			if file_type.is_symlink() {
-				clone_symlink(&src_path, &dst_path)?;
-			} else if file_type.is_dir() {
-				recursive_reflink(&src_path, &dst_path, None)?;
-			} else if file_type.is_file() {
-				clone_file(&src_path, &dst_path)?;
-			} else {
-				return Err(IsoError::other(format!(
-					"unsupported file type in reflink source: {}",
-					src_path.display()
-				)));
-			}
-		}
-
-		preserve_permissions(dst, &meta)?;
-		let _ = set_times_nofollow(dst, &meta);
-		Ok(())
-	}
-
 	/// Clones the regular file `src` into the fresh tree, then gives the clone
 	/// `src`'s mode and timestamps through the descriptors the clone used.
 	fn clone_file(src: &Path, dst: &Path) -> IsoResult<()> {

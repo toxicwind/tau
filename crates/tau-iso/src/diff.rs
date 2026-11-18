@@ -455,7 +455,7 @@ fn render_unified(
 fn push_unified_body(out: &mut String, old: &str, new: &str, from_label: &str, to_label: &str) {
 	use std::fmt::Write;
 
-	use pi_diff::{HunkLine, diff_line_tokens, line_tokens_str, structured_patch_hunk_rows};
+	use tau_diff::{HunkLine, diff_line_tokens, line_tokens_str, structured_patch_hunk_rows};
 
 	let old_tokens = line_tokens_str(old);
 	let new_tokens = line_tokens_str(new);

@@ -189,49 +189,6 @@ mod imp {
 		}
 	}
 
-// refused_by: container_member · collision: none (no common ancestor text)
-	fn clone_dir_contents(
-		src: &Path,
-		dst: &Path,
-		skip: Option<&[&std::ffi::OsStr]>,
-	) -> IsoResult<()> {
-		let entries = fs::read_dir(src)
-			.map_err(|err| IsoError::other(format!("read_dir {}: {err}", src.display())))?;
-		for entry in entries {
-			let entry = entry
-				.map_err(|err| IsoError::other(format!("dir entry in {}: {err}", src.display())))?;
-			if skip.is_some_and(|names| names.contains(&entry.file_name().as_os_str()))
-				|| crate::is_secret_filename(&entry.file_name())
-			{
-				continue;
-			}
-			let file_type = entry.file_type().map_err(|err| {
-				IsoError::other(format!("file_type {}: {err}", entry.path().display()))
-			})?;
-			let src_path = entry.path();
-			let dst_path = dst.join(entry.file_name());
-
-			if file_type.is_symlink() {
-				clone_symlink(&src_path, &dst_path)?;
-				copy_metadata_best_effort(&src_path, &dst_path);
-			} else if file_type.is_dir() {
-				fs::create_dir_all(&dst_path)
-					.map_err(|err| IsoError::other(format!("create {}: {err}", dst_path.display())))?;
-				clone_dir_contents(&src_path, &dst_path, None)?;
-				copy_metadata_best_effort(&src_path, &dst_path);
-			} else if file_type.is_file() {
-				clone_regular_file(&src_path, &dst_path)?;
-				copy_metadata_best_effort(&src_path, &dst_path);
-			} else {
-				return Err(IsoError::other(format!(
-					"unsupported filesystem entry for block clone: {}",
-					src_path.display()
-				)));
-			}
-		}
-		Ok(())
-	}
-
 	/// Clones the regular file `src` into the fresh tree, then gives the clone
 	/// `src`'s timestamps and attributes through the handles the clone used.
 	fn clone_regular_file(src: &Path, dst: &Path) -> IsoResult<()> {
