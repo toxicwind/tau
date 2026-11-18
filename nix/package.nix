@@ -43,7 +43,6 @@ let
       withFatLto
       ;
   };
-# refused_by: modify_delete_guard · collision: none (no common ancestor text)
   platform =
     {
       aarch64-darwin = {
@@ -66,8 +65,6 @@ let
       };
     }
     .${stdenv.hostPlatform.system} or (throw "Unsupported TAU platform: ${stdenv.hostPlatform.system}");
-  inherit (nativeBuild) platform;
-# refused_by: merge_ladder_exhausted · collision: `pname = "omp-bun-runtime-template";`
   bunRuntimeTemplate = stdenvNoCC.mkDerivation {
     pname = "tau-bun-runtime-template";
     inherit (bun) version;
