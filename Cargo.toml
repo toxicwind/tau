@@ -16,6 +16,7 @@
     "crates/pi-vfs",
     "crates/tau-voice",
     "crates/tau-walker",
+    "crates/vendor/brush-core",
     "crates/vendor/cfg_aliases",
     "crates/vendor/grep-searcher",
     "crates/vendor/jaq-core",
@@ -34,6 +35,7 @@ homepage = "https://tau.sh/"
 repository = "https://github.com/toxicwind/tau"
 
 [patch.crates-io]
+brush-core = { path = "crates/vendor/brush-core" }
 # portable-pty 0.9.0 pins nix 0.28, whose cfg_aliases 0.1.1 expansion emits
 # future-incompatible trailing semicolons.
 cfg_aliases = { path = "crates/vendor/cfg_aliases" }
@@ -262,6 +264,7 @@ pi-predict = { path = "crates/pi-predict" }
 tau-voice = { path = "crates/tau-voice" }
 tau-walker = { path = "crates/tau-walker" }
 tau-vcs = { path = "crates/tau-vcs" }
+brush-core = { path = "crates/vendor/brush-core" }
 pi-vfs = { path = "crates/pi-vfs" }
 tau-builtins = { path = "crates/tau-builtins" }
 # Third-party crates of pi-shell's bash engine (`crates/pi-shell/src/bash`),
@@ -437,6 +440,11 @@ xutf = "1.5"
 zstd = "0.14"
 fancy-regex = "0.17"
 tiktoken-rs = "0.12"
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Shell Parsing
+# ──────────────────────────────────────────────────────────────────────────────
+brush-parser = "0.4"
 # ──────────────────────────────────────────────────────────────────────────────
 # Version Control (in-process git + jujutsu)
 # ──────────────────────────────────────────────────────────────────────────────
