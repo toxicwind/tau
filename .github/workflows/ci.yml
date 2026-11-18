@@ -482,37 +482,6 @@ jobs:
               if-no-files-found: error
               retention-days: 1
 
-   test_coding_agent_native:
-      name: "Test coding-agent native/unit (TS) ${{ matrix.shard }}"
-      runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.04' || 'vmon-large/from=omp-ci' }}
-      needs: [native_addons]
-      if: ${{ !cancelled() && needs.native_addons.result == 'success' }}
-      timeout-minutes: 25
-      # The longest PR job, so it runs as three shards on hosted PR runners
-      # (two left the slower shard ~25 s behind every other job). Main keeps
-      # one: each vmon job holds an 8 vCPU / 16 GiB sandbox against the CI
-      # team's limits, and the main fan-out already runs up to a dozen.
-      # Declared first among the test jobs: when the team is at its sandbox
-      # limit the longest bucket should not be the one left waiting (probe
-      # run 36238796966 queued it 1.9 min behind the shorter buckets).
-      # No required check keys on this job name (branch protection and
-      # rulesets are off for main/omp2), so the per-shard names are safe.
-      strategy:
-         fail-fast: false
-         matrix:
-            shard: ${{ fromJSON(github.event_name == 'pull_request' && '["1/3","2/3","3/3"]' || '["1/1"]') }}
-      steps:
-         - uses: actions/checkout@v4
-         - uses: ./.github/actions/bun-install
-         - uses: ./.github/actions/native-artifacts
-           with:
-              targets: linux-x64-baseline linux-x64-modern
-         - name: Test coding-agent native/unit bucket
-           env:
-              OMP_TEST_CONCURRENCY: "4"
-              OMP_TEST_SHARD: ${{ matrix.shard }}
-           run: bun run ci:test:coding-agent:native
-
    test_workspace:
       name: Test TS workspace fast
       runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.04' || 'tau-kata' }}

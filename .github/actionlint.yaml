@@ -4,5 +4,4 @@
 self-hosted-runner:
    labels:
       - vmon-large/from=omp-ci
-   labels:
       - tau-kata
