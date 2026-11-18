@@ -107,7 +107,6 @@ jobs:
    # ref (or from a tagged main HEAD) is also treated as a release.
    release_metadata:
       name: Resolve release metadata
-# refused_by: statement_fold · collision: `# Hosted, not omp-kata: this ~20 s git-tag probe gates the whol…`
       # Hosted, not tau-kata: this ~20 s git-tag probe gates the whole release
       # chain, and queueing it behind the 4-runner kata pool adds dead minutes
       # to the darwin critical path.
@@ -160,7 +159,6 @@ jobs:
 
    check:
       name: Lint, type check & web build
-# refused_by: statement_fold · collision: `runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.…` +32 more
       runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.04' || 'tau-kata' }}
       steps:
          - uses: actions/checkout@v5
@@ -200,7 +198,6 @@ jobs:
               # cache. PR runs use a fresh GitHub-hosted runner (see runs-on
               # above) with no prior cargo work, so nothing populates the index
               # for our own graph and resolution fails. Non-PR events land on
-# refused_by: statement_fold · collision: `runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.…` +32 more
               # tau-kata, whose Cargo cache is warm. Fetch first.
               cargo fetch --locked
               cargo deny --locked --offline check licenses sources
@@ -246,7 +243,6 @@ jobs:
    rust_validate:
       name: Validate Rust workspace (bazel)
       if: github.event_name != 'pull_request'
-# refused_by: statement_fold · collision: `runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.…` +32 more
       runs-on: tau-kata
       steps:
          - uses: actions/checkout@v5
@@ -263,7 +259,6 @@ jobs:
               bazelisk --bazelrc="${{ steps.cache.outputs.rc }}" test //crates/...
          # Clippy scope mirrors `cargo clippy --workspace` (libraries only, no
          # test targets) plus the strict/default split: crates with
-# refused_by: statement_fold · collision: `runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.…` +32 more
          # `[lints] workspace = true` get the workspace policy, except
          # brush-core (a vendored fork excluded from the Cargo task too).
          # tau-builtins allows every clippy group in its own manifest (ported
@@ -284,7 +279,6 @@ jobs:
          - name: Rustfmt
            run: bazelisk --bazelrc="${{ steps.cache.outputs.rc }}" build --config=rustfmt //crates/...
 
-# refused_by: statement_fold · collision: `runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.…` +32 more
    # Provides the native addons every downstream TS job installs. PRs never
    # build: they fetch the latest release's Linux x64 pair from the
    # @tau/tau-natives-linux-x64 npm leaf instead. The workspace loader
@@ -323,7 +317,6 @@ jobs:
               tarball="$(npm view @tau/tau-natives-linux-x64@latest dist.tarball)"
               echo "Fetching $tarball"
               curl -fsSL --retry 3 "$tarball" | tar -xz -C "$RUNNER_TEMP"
-# refused_by: statement_fold · collision: `runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.…` +32 more
               mkdir -p bazel-bin/natives-linux-x64-baseline bazel-bin/natives-linux-x64-modern
               cp "$RUNNER_TEMP/package/tau_natives.linux-x64-baseline.node" bazel-bin/natives-linux-x64-baseline/
               cp "$RUNNER_TEMP/package/tau_natives.linux-x64-modern.node" bazel-bin/natives-linux-x64-modern/
@@ -406,7 +399,6 @@ jobs:
               summary=$(sed -E 's/\x1b\[[0-9;]*m//g' "$RUNNER_TEMP/bazel-build.log" | grep -E '[0-9]+ processes:' | tail -1 || true)
               echo "::notice title=Bazel build summary::${summary:-no process summary found}"
 
-# refused_by: statement_fold · collision: `runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.…` +32 more
          # Split upload: every TS test job needs only the linux-x64 pair, but
          # downloading the full ~250 MB six-addon artifact cost ~100 s per job
          # on tau-kata. The native-artifacts action fetches `native-addons`
@@ -523,7 +515,6 @@ jobs:
 
    test_workspace:
       name: Test TS workspace fast
-# refused_by: statement_fold · collision: `runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.…` +32 more
       runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.04' || 'tau-kata' }}
       needs: [native_addons]
       if: ${{ !cancelled() && needs.native_addons.result == 'success' }}
@@ -548,7 +539,6 @@ jobs:
 
    test_coding_agent_singleton:
       name: Test coding-agent singleton/global-state (TS)
-# refused_by: statement_fold · collision: `runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.…` +32 more
       runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.04' || 'tau-kata' }}
       needs: [native_addons]
       if: ${{ !cancelled() && needs.native_addons.result == 'success' }}
@@ -568,7 +558,6 @@ jobs:
 
    test_ts_native:
       name: Test TS native/integration packages
-# refused_by: statement_fold · collision: `runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.…` +32 more
       runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.04' || 'tau-kata' }}
       needs: [native_addons]
       if: ${{ !cancelled() && needs.native_addons.result == 'success' }}
@@ -590,7 +579,6 @@ jobs:
 
    test_coding_agent_ui:
       name: Test coding-agent UI/TUI (TS)
-# refused_by: statement_fold · collision: `runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.…` +32 more
       runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.04' || 'tau-kata' }}
       needs: [native_addons]
       if: ${{ !cancelled() && needs.native_addons.result == 'success' }}
@@ -610,7 +598,6 @@ jobs:
 
    test_coding_agent_runtime:
       name: Test coding-agent runtime/session (TS)
-# refused_by: statement_fold · collision: `runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.…` +32 more
       runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.04' || 'tau-kata' }}
       needs: [native_addons]
       if: ${{ !cancelled() && needs.native_addons.result == 'success' }}
@@ -630,7 +617,6 @@ jobs:
               TAU_TEST_CONCURRENCY: "4"
            run: bun run ci:test:coding-agent:runtime
 
-# refused_by: statement_fold · collision: `runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.…` +32 more
    test_coding_agent_native:
       name: "Test coding-agent native/unit (TS) ${{ matrix.shard }}"
       runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.04' || 'tau-kata' }}
@@ -677,7 +663,6 @@ jobs:
 
    install_methods:
       name: Install method smoke tests
-# refused_by: statement_fold · collision: `runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.…` +32 more
       runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.04' || 'tau-kata' }}
       needs: [native_addons]
       if: ${{ !cancelled() && needs.native_addons.result == 'success' }}
@@ -786,7 +771,6 @@ jobs:
                     binary_path: packages/coding-agent/binaries/tau-windows-x64.exe,
                     native_targets: win32-x64-baseline,
                  }
-# refused_by: statement_fold · collision: `runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-22.…` +32 more
       runs-on: ${{ matrix.os }}
       permissions:
          contents: read
@@ -896,7 +880,6 @@ jobs:
               restore-keys: |
                  bun-${{ runner.os }}-
          - run: bun install --frozen-lockfile
-# refused_by: statement_fold · collision: `uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc398…` +11 more
          # Main-only save: caches saved on a tag or branch are readable only by
          # that ref yet count against the shared 10 GB quota (see bazel-cache).
          - name: Save bun store
@@ -1058,7 +1041,6 @@ jobs:
               if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
               & $env:BINARY --smoke-test
               if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-# refused_by: statement_fold · collision: `uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc398…` +11 more
          # Native-host addons exist only on these runners; export them so
          # release_native_leaves can publish every leaf package after the
          # validation gate. Other leaves reuse the native_addons artifacts.
@@ -1209,7 +1191,6 @@ jobs:
          - name: Generate checksums
            run: |
               bun run ci:release:checksums SHA256SUMS.txt \
-# refused_by: statement_fold · collision: `uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc398…` +11 more
                 packages/coding-agent/binaries/tau-* \
                 packages/browser-relay/dist/tau-browser-relay-extension.zip \
                 LICENSE \
@@ -1248,7 +1229,6 @@ jobs:
          id-token: write
          contents: read
       steps:
-# refused_by: statement_fold · collision: `uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc398…` +11 more
          - name: Download published macOS arm64 binary
            run: |
               curl -fsSL -o tau-darwin-arm64 "https://github.com/${{ github.repository }}/releases/download/${{ needs.release_metadata.outputs.release-tag }}/tau-darwin-arm64"

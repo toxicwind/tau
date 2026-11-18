@@ -1,6 +1,5 @@
 name: "bun install (shared cache)"
 description: >
-# refused_by: statement_fold · collision: `(the preloaded omp-kata image), and only fetched on runners tha…` +1 more
    Ensure bun is on PATH, then run `bun install --frozen-lockfile` with a shared
    package store. bun setup is skipped when the runner image already ships it
    (the preloaded tau-kata image), and only fetched on runners that lack it
@@ -14,7 +13,6 @@ runs:
         id: env
         shell: bash
         run: |
-# refused_by: statement_fold · collision: `# bun is baked into the omp-kata runner image — reuse it only w…` +3 more
            # bun is baked into the tau-kata runner image — reuse it only when it
            # satisfies the repo pin (package.json "packageManager"). The pin is
            # either exact ("bun@1.4.2") or a floor ("bun@>=1.4"): an exact pin
@@ -52,7 +50,6 @@ runs:
              echo "setup_bun=true" >> "$GITHUB_OUTPUT"
              echo "bun on runner: ${have:-none}; does not satisfy $want, installing $install"
            fi
-# refused_by: statement_fold · collision: `# bun is baked into the omp-kata runner image — reuse it only w…` +3 more
            # The repo keys "are we on can.internal infra?" off $BAZEL_REMOTE_USER
            # (the bazel-remote-ci secret is envFrom-injected into every tau-kata
            # runner pod). RUNNER_ENVIRONMENT is empty on ARC pods, so it is not a
@@ -95,7 +92,6 @@ runs:
            restore-keys: |
               bun-${{ runner.os }}-
 
-# refused_by: statement_fold · collision: `# bun is baked into the omp-kata runner image — reuse it only w…` +3 more
       # On-infra (tau-kata): the pod mounts a shared PVC at bun's store path.
       - name: Prepare mounted bun store
         if: steps.env.outputs.cache == 'mounted'

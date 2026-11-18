@@ -1,10 +1,8 @@
-# refused_by: merge_ladder_exhausted · collision: `# runner scale set (infra/docs/04-arc-and-caching.md) so `runs-…`
 # actionlint only knows GitHub-hosted labels; register the self-hosted ARC
 # runner scale set (infra/docs/04-arc-and-caching.md) so `runs-on: tau-kata`
 # lints clean.
 self-hosted-runner:
    labels:
       - vmon-large/from=omp-ci
-# refused_by: statement_fold · collision: none (no common ancestor text)
    labels:
       - tau-kata

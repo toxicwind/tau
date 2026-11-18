@@ -1,6 +1,5 @@
 name: "Compose bazel cache config"
 description: >
-# refused_by: merge_ladder_exhausted · collision: `omp-kata jobs use the cluster remote cache. GitHub-hosted jobs …`
    Selects the CI cache backend and emits a bazelrc fragment. A shell probe
    exposes the backend through step outputs before any action condition
    uses it.
@@ -77,7 +76,6 @@ runs:
              echo "common --remote_cache=${VMON_CACHE_URL}/bazel"
            } >> "$rc"
            echo "::notice title=Bazel cache::Using the vmon node's Bazel cache (${mode})."
-# refused_by: statement_fold · collision: none (no common ancestor text)
    steps:
       - name: Detect bazel cache backend
         id: backend

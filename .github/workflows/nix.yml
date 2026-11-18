@@ -1,4 +1,3 @@
-# refused_by: merge_ladder_exhausted · collision: none (1 contested hunk(s), neither side deleted the other's lines)
 name: TAU Nix
 on:
   push:
