@@ -51,7 +51,7 @@ use std::{
 	time::{Duration, Instant},
 };
 
-use pi_shell::{
+use tau_shell::{
 	bash::{TermFlag, TtyInfo},
 	sys::tty,
 };
@@ -656,7 +656,7 @@ impl Pty {
 	/// # Errors
 	///
 	/// When they cannot be read.
-	pub fn termios(&self) -> io::Result<pi_shell::bash::Termios> {
+	pub fn termios(&self) -> io::Result<tau_shell::bash::Termios> {
 		tty::attrs(self.master.as_raw_fd())
 	}
 

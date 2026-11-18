@@ -7,7 +7,7 @@ use std::{fmt::Write as _, fs, path::PathBuf};
 #[cfg(unix)]
 use std::{os::unix::process::CommandExt, time::UNIX_EPOCH};
 
-use pi_shell::testkit::golden;
+use tau_shell::testkit::golden;
 
 use crate::obash_support::{obash, output};
 
@@ -237,7 +237,7 @@ fn ir_flag_disassembles_without_running() {
 		text.contains(" ForIn ") && text.contains(" ForNext ") && text.contains(" Exec "),
 		"{text}"
 	);
-	assert!(pi_shell::bash::ir::asm::asm(&text).is_ok(), "the disassembly assembles back");
+	assert!(tau_shell::bash::ir::asm::asm(&text).is_ok(), "the disassembly assembles back");
 }
 
 #[test]

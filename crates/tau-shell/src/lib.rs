@@ -52,6 +52,7 @@ pub mod minimizer;
 pub mod output_decode;
 mod paths;
 pub mod process;
+pub mod procshell;
 pub mod proctree;
 pub mod shell;
 pub mod taps;

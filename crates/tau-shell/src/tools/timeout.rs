@@ -212,11 +212,11 @@ fn parse(argv: &[BString]) -> Parsed {
 		return Parsed::Fail(format!("timeout: missing operand\n{USAGE_HINT}"));
 	}
 	let duration = duration.to_str_lossy();
-	let Some(limit) = pi_builtins::parse_duration(&duration) else {
+	let Some(limit) = tau_builtins::parse_duration(&duration) else {
 		return Parsed::Fail(format!("timeout: invalid time interval '{duration}'\n"));
 	};
 	let kill_after = match kill_after {
-		Some(spec) => match pi_builtins::parse_duration(&spec) {
+		Some(spec) => match tau_builtins::parse_duration(&spec) {
 			Some(d) => Some(d),
 			None => return Parsed::Fail(format!("timeout: invalid time interval '{spec}'\n")),
 		},

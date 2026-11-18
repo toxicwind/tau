@@ -27,7 +27,7 @@
 //! ```
 //!
 //! Everything else is bash's own command line (`bash [GNU long option]
-//! [option] ...`), parsed by [`pi_shell::bash::invocation::ShellArgs`] with
+//! [option] ...`), parsed by [`tau_shell::bash::invocation::ShellArgs`] with
 //! bash's messages: `--login`, `--posix`, `--norc`, `--rcfile`,
 //! `--pretty-print`, `--help`, `--version`, `-c`, `-s`, `-i`, `-l`, set flags,
 //! `-o`/`-O`. Invoked as `sh`, the shell starts in posix mode.
@@ -57,12 +57,12 @@ use std::{
 
 use bstr::BString;
 use clap::Parser;
-use pi_shell::{
+use tau_shell::{
 	bash::{
 		Cx, Engine, EngineConfig, EventMask, EventSink, MemStore, ModeId, Origin, RestoreOpts,
 		Script, Shell, ir, syntax::Features, trace::RunTrace,
 	},
-	process::{self, Input, Launch, NativeHost, ProcessOptions, Start},
+	procshell::{self, Input, Launch, NativeHost, ProcessOptions, Start},
 };
 
 /// The system allocator with counters for measurement.
@@ -213,7 +213,7 @@ extern "C" fn main(
 }
 
 /// obash: the command line to an exit status. Without obash's own options
-/// or test modes this is [`process::main`]; otherwise the test modes run on
+/// or test modes this is [`procshell::main`]; otherwise the test modes run on
 /// the pieces it is made of.
 fn obash() -> i32 {
 	#[cfg(feature = "alloc-stats")]
@@ -235,10 +235,10 @@ fn obash() -> i32 {
 	}
 	let modes = EnvModes::from_env();
 	if !cli.testing() && modes.as_ref().is_ok_and(|m| !m.testing()) {
-		return process::main(argv, ProcessOptions::default());
+		return procshell::main(argv, ProcessOptions::default());
 	}
 	let whole_stdin = cli.print || cli.ir || cli.json.is_some();
-	let mut launch = match process::start(&argv, whole_stdin) {
+	let mut launch = match procshell::start(&argv, whole_stdin) {
 		Start::Run(launch) => launch,
 		Start::Exit(status) => return status,
 	};
@@ -256,7 +256,7 @@ fn obash() -> i32 {
 	if let Some(dialect) = cli.json {
 		return i32::from(syntax::json(&launch.input.source, dialect));
 	}
-	if let Some(status) = process::pretty_print_mode(&mut launch) {
+	if let Some(status) = procshell::pretty_print_mode(&mut launch) {
 		return status;
 	}
 	let name = launch.args.shell_name.clone();
@@ -301,7 +301,7 @@ fn run(cli: &Cli, launch: Launch, modes: EnvModes) -> Result<i32, Box<dyn std::e
 	let inherited = if resume.is_some() {
 		Vec::new()
 	} else {
-		process::inherited_fds(false)
+		procshell::inherited_fds(false)
 	};
 	let sink: Option<Box<dyn Write>> = match (cli.events, &cli.events_out) {
 		(None, _) => None,
@@ -319,7 +319,7 @@ fn run(cli: &Cli, launch: Launch, modes: EnvModes) -> Result<i32, Box<dyn std::e
 		},
 		(Some(EventsFormat::Jsonl), None) => Some(Box::new(BufWriter::new(io::stderr()))),
 	};
-	let ignored = resume.map_or_else(process::ignored_on_entry, |r| r.ignored());
+	let ignored = resume.map_or_else(procshell::ignored_on_entry, |r| r.ignored());
 	let clock_ns = resume.map_or(0, |r| r.clock_ns());
 	let mut host = NativeHost::new(sink, modes.pending_fs, inherited, ignored, clock_ns, false);
 	let cfg = EngineConfig::default();
@@ -331,7 +331,7 @@ fn run(cli: &Cli, launch: Launch, modes: EnvModes) -> Result<i32, Box<dyn std::e
 			&mut Cx { host: &mut host, store: &mut store },
 			RestoreOpts::default(),
 		)?;
-		host.bind_signals(shell.control(), pi_shell::bash::Vpid(cfg.vpid_base));
+		host.bind_signals(shell.control(), tau_shell::bash::Vpid(cfg.vpid_base));
 		let mask = resume.mask();
 		shell.set_event_mask(mask);
 		injector.resumed(resume, &report.lost)?;
@@ -349,7 +349,7 @@ fn run(cli: &Cli, launch: Launch, modes: EnvModes) -> Result<i32, Box<dyn std::e
 		.trace
 		.as_ref()
 		.map(|_| Arc::new(RunTrace::new(source.clone())));
-	let init = process::shell_init(&args, argv0, params, env, process::current_dir());
+	let init = procshell::shell_init(&args, argv0, params, env, procshell::current_dir());
 	// Without an event sink nothing observes events: skip building them (each
 	// one reads the clock).
 	let mut mask = if cli.events.is_some() {
@@ -362,7 +362,7 @@ fn run(cli: &Cli, launch: Launch, modes: EnvModes) -> Result<i32, Box<dyn std::e
 		host.set_event_sink(Some(Arc::clone(trace) as Arc<dyn EventSink>));
 	}
 	let mut shell = Shell::create(&engine, &mut Cx { host: &mut host, store: &mut store }, init)?;
-	host.bind_signals(shell.control(), pi_shell::bash::Vpid(cfg.vpid_base));
+	host.bind_signals(shell.control(), tau_shell::bash::Vpid(cfg.vpid_base));
 	shell.set_event_mask(mask);
 	let run = shell.submit(Script { origin, ..Script::command(source) });
 	let status = injector.drive(fault::Parts { cfg, host, store, shell, run, mask });

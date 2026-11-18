@@ -6,7 +6,7 @@
 
 use std::time::{Duration, Instant};
 
-use pi_shell::{Shell, ShellRunOptions, cancel::CancelToken};
+use tau_shell::{Shell, ShellRunOptions, cancel::CancelToken};
 
 /// Each `&` job had a token of its own that the run's token did not reach, so
 /// the cancelled run sat in `wait` until the host's 2 s grace aborted it.

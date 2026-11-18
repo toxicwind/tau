@@ -35,12 +35,12 @@ use std::{
 	path::PathBuf,
 };
 
-use pi_shell::{
+use tau_shell::{
 	bash::{
 		Budget, Cx, Engine, EngineConfig, EventMask, ExtError, ExternalizeReport, Lost, MemStore,
 		Platform, RestoreError, RestoreOpts, RunId, Shell, SigSet, Signal, Step, StoreError, Vpid,
 	},
-	process::{NativeHost, no_callouts, wait_runnable},
+	procshell::{NativeHost, no_callouts, wait_runnable},
 	sys::Parker,
 	testkit::Rng,
 };
@@ -759,7 +759,7 @@ impl Injector {
 			run,
 			events: mask.bits(),
 			depth: self.depth,
-			clock_ns: pi_shell::bash::Host::now_ns(&*host),
+			clock_ns: tau_shell::bash::Host::now_ns(&*host),
 			ignored: bits_of_set(host.entry_ignored()),
 			sigmask: self.held.unwrap_or(0),
 			stats: self.stats,
@@ -964,7 +964,7 @@ mod os {
 			if unsafe { libc::sigaction(n, &raw const default, ptr::null_mut()) } != 0 {
 				return Err(io::Error::last_os_error());
 			}
-			pi_shell::sys::dispositions_changed();
+			tau_shell::sys::dispositions_changed();
 		}
 		Ok(())
 	}
@@ -1049,7 +1049,7 @@ mod os {
 
 #[cfg(test)]
 mod tests {
-	use pi_shell::bash::{Lost, NativeRef, RunId, SigSet, Signal, Vpid};
+	use tau_shell::bash::{Lost, NativeRef, RunId, SigSet, Signal, Vpid};
 
 	use super::{Resume, Stats, bits_of_set, parse_fault, set_of_bits};
 
@@ -1117,7 +1117,7 @@ mod tests {
 		stats.skip(&[
 			Lost::Ext { vpid: Vpid(2), pid: 10 },
 			Lost::Ext { vpid: Vpid(3), pid: 11 },
-			Lost::Fd { vpid: Vpid(2), fd: 3, kind: pi_shell::bash::FileKind::Pipe },
+			Lost::Fd { vpid: Vpid(2), fd: 3, kind: tau_shell::bash::FileKind::Pipe },
 		]);
 		stats.skip(&[Lost::Task { vpid: Vpid(2), native: NativeRef(1) }]);
 		assert_eq!(

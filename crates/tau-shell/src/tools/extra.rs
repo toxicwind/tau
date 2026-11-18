@@ -33,7 +33,7 @@ use std::{
 };
 
 use bstr::{BString, ByteSlice};
-use pi_builtins::extras::{CommandRunner, CommandStatus, EnvChange, Fd, ShellCommand};
+use tau_builtins::extras::{CommandRunner, CommandStatus, EnvChange, Fd, ShellCommand};
 use tokio_util::sync::CancellationToken;
 
 use super::{Child, ToolConfig, Turn};

@@ -2,7 +2,7 @@
 //! are data, never shell source.
 #![cfg(unix)]
 
-use pi_shell::{
+use tau_shell::{
 	cancel::CancelToken,
 	shell::{ShellExecuteOptions, execute_shell},
 };

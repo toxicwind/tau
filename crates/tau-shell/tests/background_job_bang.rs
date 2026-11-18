@@ -3,7 +3,7 @@
 //! its parent's, not the subshell's.
 #![cfg(unix)]
 
-use pi_shell::{Shell, ShellRunOptions, cancel::CancelToken};
+use tau_shell::{Shell, ShellRunOptions, cancel::CancelToken};
 
 /// Runs each script in a fresh shell and asserts Bash's output and exit
 /// status 0, reporting every row that differs.

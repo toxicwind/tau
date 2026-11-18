@@ -8,7 +8,7 @@
 
 #![cfg(unix)]
 
-use pi_shell::{ShellExecuteOptions, cancel::CancelToken, execute_shell};
+use tau_shell::{ShellExecuteOptions, cancel::CancelToken, execute_shell};
 
 fn host_nofile() -> (libc::rlim_t, libc::rlim_t) {
 	let mut lim = libc::rlimit { rlim_cur: 0, rlim_max: 0 };

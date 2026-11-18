@@ -20,8 +20,11 @@ use anyhow::{Error, Result};
 use bstr::{BString, ByteSlice};
 use bytes::Bytes;
 use flume::Sender;
-// refused_by: merge_ladder_exhausted · collision: `use pi_builtins::{BuiltinSet, default_builtins};`
-use tau_builtins::{BuiltinSet, default_builtins};
+use brush_core::{
+	Shell as BrushShell, ShellValue, ShellVariable, SourceInfo,
+	openfiles::{OpenFile, OpenFiles},
+};
+use pi_vfs::Fs;
 #[cfg(not(unix))]
 use tokio::io::AsyncReadExt as _;
 use tokio::{sync::Mutex as TokioMutex, time};
@@ -34,6 +37,7 @@ use crate::{
 	git::is_git_repo_location_var,
 	minimizer,
 	output_decode::CaptureDecoder,
+	process,
 	session::{
 		Children, Image, LatestImage, RunOptions, RunOutcome, RunStdio, Session, SessionConfig,
 		SessionError,
@@ -825,6 +829,44 @@ fn apply_session_env(vars: &mut HashMap<String, String>, session_env: &HashMap<S
 	}
 }
 
+/// Copies the host environment into `vars`, merging duplicate `PATH`
+/// values and registering the merged `PATH` last (same skips as
+/// [`copy_env_into_shell`]).
+fn copy_env_into(
+	vars: &mut HashMap<String, String>,
+	env: impl Iterator<Item = (std::ffi::OsString, std::ffi::OsString)>,
+) {
+	let mut merged_path: Option<String> = None;
+	for (key, value) in env {
+		let (Some(key), Some(value)) = (key.to_str(), value.to_str()) else {
+			continue;
+		};
+		let normalized_key = normalize_env_key(key);
+		if should_skip_env_var(normalized_key) || is_git_repo_location_var(normalized_key) {
+			continue;
+		}
+		if normalized_key == "PATH" {
+			merged_path = Some(match merged_path {
+				Some(existing) => merge_path_values(&existing, value),
+				None => value.to_string(),
+			});
+			continue;
+		}
+		vars.insert(normalized_key.to_owned(), value.to_string());
+	}
+
+	#[cfg(windows)]
+	if merged_path.is_none()
+		&& let Some(value) = std::env::var_os("Path").or_else(|| std::env::var_os("PATH"))
+	{
+		merged_path = Some(value.to_string_lossy().into_owned());
+	}
+
+	if let Some(path_value) = merged_path {
+		vars.insert("PATH".to_owned(), path_value);
+	}
+}
+
 /// The shell's starting environment: the host's, then the session env.
 fn session_vars(config: &ShellConfig) -> HashMap<String, String> {
 	let mut vars = HashMap::new();
@@ -908,44 +950,6 @@ async fn create_session_for_run(
 		return Err(Error::msg("Shell setup was cancelled"));
 	}
 	Ok(core)
-// refused_by: statement_fold · collision: none (no common ancestor text)
-	// Process inspection and control (see `tau_builtins::process_builtins`).
-	// `nohup` is withheld when PI_DISABLE_NOHUP_BUILTIN asks for the system one;
-	// `kill` already comes from the default set, where our richer implementation
-	// replaced brush's.
-	for (name, registration) in tau_builtins::process_builtins() {
-		if name == "nohup" && nohup_builtin_disabled(config) {
-			continue;
-		}
-		shell.register_builtin(name, registration);
-	}
-// refused_by: statement_fold · collision: none (no common ancestor text)
-	// In-process command-line utility builtins (see
-	// `tau_builtins::utility_builtins`): consistent, cross-platform
-	// implementations that run without spawning a process and resolve paths
-	// against the shell working directory. The whole set can be disabled
-	// (falling back to system binaries) via PI_DISABLE_UUTILS_BUILTINS; the
-	// destructive trio additionally honors PI_DISABLE_UUTILS_DESTRUCTIVE, and
-	// `rm`/`mv` have their own switches.
-	if !uutils_env_disabled(config, "PI_DISABLE_UUTILS_BUILTINS") {
-		let destructive_disabled = uutils_env_disabled(config, "PI_DISABLE_UUTILS_DESTRUCTIVE");
-		let rm_disabled =
-			destructive_disabled || uutils_env_disabled(config, "PI_DISABLE_RM_BUILTIN");
-		let mv_disabled =
-			destructive_disabled || uutils_env_disabled(config, "PI_DISABLE_MV_BUILTIN");
-		for (name, registration) in tau_builtins::utility_builtins() {
-			let disabled = match name {
-				"rm" => rm_disabled,
-				"mv" => mv_disabled,
-				// ln can clobber existing files via -f; gate it with the destructive set.
-				"ln" => destructive_disabled,
-				_ => false,
-			};
-			if !disabled {
-				shell.register_builtin(name, registration);
-			}
-		}
-	}
 }
 
 /// Run a setup command of a new session with null stdio.
@@ -970,9 +974,9 @@ async fn source_snapshot(
 ) -> Result<()> {
 	let mut params = shell.default_exec_params();
 	let source_info = SourceInfo::from("tau-natives:snapshot");
-	params.set_fd(OpenFiles::STDIN_FD, null_file()?);
-	params.set_fd(OpenFiles::STDOUT_FD, null_file()?);
-	params.set_fd(OpenFiles::STDERR_FD, null_file()?);
+	params.set_fd(OpenFiles::STDIN_FD, OpenFile::from(null_file()?));
+	params.set_fd(OpenFiles::STDOUT_FD, OpenFile::from(null_file()?));
+	params.set_fd(OpenFiles::STDERR_FD, OpenFile::from(null_file()?));
 	if let Some(cancel_token) = cancel_token {
 		params.set_cancel_token(cancel_token);
 	}
@@ -1549,8 +1553,6 @@ async fn run_shell_command_once(
 	}
 	// Release the extra writer so the reader can reach EOF.
 	drop(diagnostics);
-// refused_by: statement_fold · collision: none (no common ancestor text)
-	let source_info = SourceInfo::from("tau-natives:command");
 
 	// The foreground command can complete while background jobs keep the
 	// stdout/stderr pipe open. Don't hang forever waiting for EOF; drain output
@@ -1620,11 +1622,9 @@ async fn run_shell_command_streams(
 ) -> Result<CommandResult> {
 	install_run_filesystem(session, options, &cancel_token);
 	restore_session_filesystem(session);
-	result
-// refused_by: statement_fold · collision: none (no common ancestor text)
-	let source_info = SourceInfo::from("tau-shell:streams");
 	let result =
 		run_shell_command_streams_in_filesystem(session, options, streams, cancel_token).await;
+	result
 }
 
 async fn run_shell_command_streams_in_filesystem(
@@ -1818,21 +1818,6 @@ async fn read_output_bytes(
 		}
 	}
 }
-// refused_by: modify_delete_guard · collision: none (no common ancestor text)
-/// Git variables that pin a repository location to the launch checkout.
-///
-/// Forwarding them into a shell makes `git` ignore the command's working
-/// directory and mutate the wrong worktree or index, so the shell rediscovers
-/// the repository from `cwd` instead. Mirrors the `env_remove` list in
-/// `crates/tau-vcs/src/git/cli.rs`.
-pub const GIT_REPO_LOCATION_ENV_VARS: [&str; 6] = [
-	"GIT_DIR",
-	"GIT_COMMON_DIR",
-	"GIT_WORK_TREE",
-	"GIT_INDEX_FILE",
-	"GIT_OBJECT_DIRECTORY",
-	"GIT_ALTERNATE_OBJECT_DIRECTORIES",
-];
 
 fn ensure_trailing_newline_for_heredoc(command: &mut String) {
 	if command.ends_with('\n')

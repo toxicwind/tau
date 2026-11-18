@@ -6,7 +6,7 @@
 //! 5.2.21 agrees on every row in this file.
 #![cfg(unix)]
 
-use pi_shell::{Shell, ShellRunOptions, cancel::CancelToken};
+use tau_shell::{Shell, ShellRunOptions, cancel::CancelToken};
 
 /// Run `script` (its diagnostics discarded) in a fresh shell: its output and
 /// exit status.

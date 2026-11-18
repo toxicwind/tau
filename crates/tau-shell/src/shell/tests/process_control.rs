@@ -240,7 +240,7 @@ async fn pidwait_returns_after_the_matching_process_exits() {
 	// the child without a wall-clock race.
 	// `-e` prints the kernel command name, which on macOS is the resolved
 	// executable rather than the symlink name `-x` matches.
-	let command_name = pi_builtins::ProcInfo::all()
+	let command_name = tau_builtins::ProcInfo::all()
 		.into_iter()
 		.find(|process| process.pid() == pid)
 		.expect("waited process info")

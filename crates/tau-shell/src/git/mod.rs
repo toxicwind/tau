@@ -9,7 +9,7 @@
 //! environment ([`GitLayers::from_env`]):
 //!
 //! - `PI_SMART_GIT`: `git worktree add` creates linked worktrees through
-//!   [`pi_vcs`], described below.
+//!   [`tau_vcs`], described below.
 //! - `PI_GIT_GUARD`: commands that discard or move work are refused in a
 //!   checkout other sessions may share, and run after saving what they discard
 //!   in a worktree of one's own; see [`guard`].
@@ -39,7 +39,7 @@ use std::{
 	path::{Path, PathBuf},
 };
 
-use pi_vcs::{WorktreeAddOptions, WorktreeClone, git::GitRepo};
+use tau_vcs::{WorktreeAddOptions, WorktreeClone, git::GitRepo};
 
 /// Exit status of a git `fatal:` error.
 pub const FATAL_EXIT: u8 = 128;
@@ -292,7 +292,7 @@ impl AddRequest {
 	}
 
 	/// Decides how pi-vcs reproduces this request; `None` hands it to git.
-	fn plan(self, cwd: &Path, native: &dyn Fn(&Path) -> bool) -> pi_vcs::Result<Option<Plan>> {
+	fn plan(self, cwd: &Path, native: &dyn Fn(&Path) -> bool) -> tau_vcs::Result<Option<Plan>> {
 		// `-` and `@{…}` name branches through reflogs, which git expands itself.
 		if self.track == Some(true)
 			|| self
@@ -480,7 +480,7 @@ struct Plan {
 
 impl Plan {
 	/// Creates and optionally locks the worktree.
-	fn add(self) -> pi_vcs::Result<Created> {
+	fn add(self) -> tau_vcs::Result<Created> {
 		self
 			.repo
 			.worktree_add(&self.path, &self.target, WorktreeAddOptions {
@@ -585,7 +585,7 @@ impl Created {
 
 /// Whether git creates a branch from `start` without upstream tracking,
 /// which is all `GitRepo::create_branch` does.
-fn creates_untracked_branch(repo: &GitRepo, start: &str) -> pi_vcs::Result<bool> {
+fn creates_untracked_branch(repo: &GitRepo, start: &str) -> tau_vcs::Result<bool> {
 	if matches!(repo.config_get("branch.autoSetupMerge")?.as_deref(), Some("always" | "inherit")) {
 		return Ok(false);
 	}
@@ -597,12 +597,12 @@ fn creates_untracked_branch(repo: &GitRepo, start: &str) -> pi_vcs::Result<bool>
 }
 
 /// A command-line switch when given, else the git boolean `key`.
-fn resolve_flag(repo: &GitRepo, flag: Option<bool>, key: &str) -> pi_vcs::Result<bool> {
+fn resolve_flag(repo: &GitRepo, flag: Option<bool>, key: &str) -> tau_vcs::Result<bool> {
 	flag.map_or_else(|| config_true(repo, key), Ok)
 }
 
 /// Reads a git boolean; valueless and unparsable entries count as unset.
-fn config_true(repo: &GitRepo, key: &str) -> pi_vcs::Result<bool> {
+fn config_true(repo: &GitRepo, key: &str) -> tau_vcs::Result<bool> {
 	Ok(repo.config_get(key)?.is_some_and(|value| {
 		matches!(value.to_ascii_lowercase().as_str(), "true" | "yes" | "on")
 			|| value.parse::<i64>().is_ok_and(|number| number != 0)

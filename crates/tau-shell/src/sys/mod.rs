@@ -1,4 +1,4 @@
-//! `pi_shell::sys`: the OS-facing pieces of the bash engine.
+//! `tau_shell::sys`: the OS-facing pieces of the bash engine.
 //!
 //! - [`NativeSpawner`]: spawns externals for a [`Host`](crate::bash::Host) and
 //!   reports them as [`ExtProc`](crate::bash::ExtProc)s. Unix: each external

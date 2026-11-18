@@ -1,4 +1,4 @@
-//! `pi_shell::bash`: a bash 5.3 engine built for hosts that need to watch,
+//! `tau_shell::bash`: a bash 5.3 engine built for hosts that need to watch,
 //! pause, cancel and snapshot what a shell runs.
 //!
 //! # Overview

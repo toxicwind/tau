@@ -11,7 +11,7 @@ use anyhow::Result;
 /// Defined in `pi-builtins` alongside the process-table snapshots its process
 /// builtins read, and re-exported here so this module — and `pi-natives`
 /// through it — keeps one status type for both concerns.
-pub use pi_builtins::ProcessStatus;
+pub use tau_builtins::ProcessStatus;
 
 use crate::cancel::CancelToken;
 
@@ -24,7 +24,7 @@ mod platform {
 		sync::Arc,
 	};
 
-	use pi_builtins::proc_sys as sys;
+	use tau_builtins::proc_sys as sys;
 
 	use super::ProcessStatus;
 
@@ -248,7 +248,7 @@ mod platform {
 		ptr,
 	};
 
-	use pi_builtins::proc_sys as sys;
+	use tau_builtins::proc_sys as sys;
 
 	use super::ProcessStatus;
 
@@ -482,7 +482,7 @@ mod platform {
 		sync::Arc,
 	};
 
-	use pi_builtins::proc_sys as sys;
+	use tau_builtins::proc_sys as sys;
 	use smallvec::SmallVec;
 
 	use super::ProcessStatus;

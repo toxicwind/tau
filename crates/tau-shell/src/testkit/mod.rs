@@ -1,4 +1,4 @@
-//! `pi_shell::testkit`: deterministic infrastructure for testing the bash
+//! `tau_shell::testkit`: deterministic infrastructure for testing the bash
 //! engine and its hosts.
 //!
 //! - [`FakeHost`]: captured output, a deterministic clock, scripted host

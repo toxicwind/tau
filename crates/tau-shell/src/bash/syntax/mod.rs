@@ -26,7 +26,7 @@
 //! # Example
 //!
 //! ```
-//! use pi_shell::bash::syntax::{CommandKind, Features, parse_all};
+//! use tau_shell::bash::syntax::{CommandKind, Features, parse_all};
 //!
 //! let prog = parse_all(b"for i in 1 2; do echo $i; done\n", Features::NONE).unwrap();
 //! let list = prog.commands[0].list();

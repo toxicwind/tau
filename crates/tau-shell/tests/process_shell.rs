@@ -1,4 +1,4 @@
-//! `pi_shell::process` command-line behavior and interactive prompts,
+//! `tau_shell::process` command-line behavior and interactive prompts,
 //! with zsh parity checked against `/bin/zsh`.
 
 #![cfg(unix)]

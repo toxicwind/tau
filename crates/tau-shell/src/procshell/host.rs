@@ -18,7 +18,7 @@ use crate::{
 		ModeId, NativeRef, ProcEvent, ResolveCtx, Resolved, Rlimit, SpawnFuture, SpawnSpec, StdFd,
 		SystemTimeLike, Task, Timer, TtyInfo, UserInfo, Verdict, Vpid,
 	},
-	process::{pending_fs::PendingFs, signals::Signals, timer::Timers},
+	procshell::{pending_fs::PendingFs, signals::Signals, timer::Timers},
 	sys::{Exits, NativeSpawner, Sessions, SpawnConfig, StdFs, std_stream},
 };
 

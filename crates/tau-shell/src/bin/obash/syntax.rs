@@ -8,11 +8,11 @@ use std::{
 	time::Instant,
 };
 
-use pi_shell::{
+use tau_shell::{
 	bash::syntax::{
 		Features, JsonDialect, NO_ALIASES, Offsets, Parser, PrintStyle, Program, print_list, to_json,
 	},
-	process::pretty::{error_text, warning_lines},
+	procshell::pretty::{error_text, warning_lines},
 };
 
 /// JSON schema selected by `--json`.

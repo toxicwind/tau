@@ -45,7 +45,7 @@
 //! # Example
 //!
 //! ```
-//! use pi_shell::bash::pattern::Regex;
+//! use tau_shell::bash::pattern::Regex;
 //!
 //! let re = Regex::new(b"([^-]+)-([0-9]+)", false).unwrap();
 //! let groups = re.captures(b"pkg-42.tgz").unwrap();

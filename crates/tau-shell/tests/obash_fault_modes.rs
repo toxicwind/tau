@@ -8,7 +8,7 @@ mod obash_support;
 
 use std::{collections::HashMap, fs, path::Path, process::Output};
 
-use pi_shell::testkit::golden;
+use tau_shell::testkit::golden;
 
 use crate::obash_support::open_fds;
 

@@ -12,7 +12,7 @@ use std::{
 
 use async_trait::async_trait;
 use bytes::Bytes;
-use pi_shell::{
+use tau_shell::{
 	ShellExecuteOptions, StreamSinks,
 	cancel::{AbortReason, CancelToken},
 	execute_shell_streams,

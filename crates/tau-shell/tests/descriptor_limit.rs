@@ -6,7 +6,7 @@
 
 use std::os::unix::process::CommandExt as _;
 
-use pi_shell::{ShellExecuteOptions, cancel::CancelToken, execute_shell};
+use tau_shell::{ShellExecuteOptions, cancel::CancelToken, execute_shell};
 
 /// Set in the child process that runs a test body.
 const CHILD: &str = "PI_SHELL_TEST_DESCRIPTOR_LIMIT_CHILD";

@@ -7,7 +7,7 @@
 //! row depends on a Bash-version split.
 #![cfg(unix)]
 
-use pi_shell::{
+use tau_shell::{
 	cancel::CancelToken,
 	shell::{ShellExecuteOptions, execute_shell},
 };

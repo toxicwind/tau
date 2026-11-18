@@ -53,7 +53,7 @@ use std::{
 
 use bstr::BString;
 use parking_lot::{Condvar, Mutex, MutexGuard};
-use pi_builtins::read_process_umask as process_umask;
+use tau_builtins::read_process_umask as process_umask;
 
 use super::{Dir, Leftover, Sessions, Shared, child_end};
 use crate::{

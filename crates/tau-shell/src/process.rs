@@ -1866,6 +1866,15 @@ impl SpawnRegistry {
 	}
 }
 
+impl brush_core::SpawnObserver for SpawnRegistry {
+	/// The spawn-observer hook [`ExecutionParameters::set_spawn_observer`]
+	/// calls: pin the child immediately so pid recycling cannot swap
+	/// the identity before termination time (see [`SpawnRegistry::record`]).
+	fn on_spawn(&self, pid: i32, pgid: Option<i32>) {
+		self.record(pgid, Process::from_pid(pid));
+	}
+}
+
 /// Drop registry entries whose pinned process, process group, and — on
 /// Windows — descendant tree are all gone. With nothing still-live the entry
 /// contributes nothing to the next termination wave and only pins an owned OS

@@ -282,8 +282,8 @@ async fn command_v_iterates_all_operands() {
 /// Every utility `pi-builtins` offers must actually be dispatchable in
 /// process, under the name it is registered as.
 ///
-/// The registry (`pi_builtins::extras::extras()`, its
-/// [`pi_builtins::extras::ExtraKind::Utility`] rows) maps a name to an
+/// The registry (`tau_builtins::extras::extras()`, its
+/// [`tau_builtins::extras::ExtraKind::Utility`] rows) maps a name to an
 /// implementation, and each renders its help from its own `clap` command.
 /// Wiring a name to the wrong module — easy to do, since the
 /// mapping is written by hand — still compiles and still runs; the only
@@ -396,8 +396,8 @@ async fn every_utility_builtin_is_registered_under_its_own_name() {
 		"xargs",
 		"yes",
 	];
-	let mut names: Vec<&'static str> = pi_builtins::extras::extras()
-		.filter(|(_, kind)| matches!(kind, pi_builtins::extras::ExtraKind::Utility { .. }))
+	let mut names: Vec<&'static str> = tau_builtins::extras::extras()
+		.filter(|(_, kind)| matches!(kind, tau_builtins::extras::ExtraKind::Utility { .. }))
 		.map(|(name, _)| name)
 		.collect();
 	names.sort_unstable();
@@ -448,7 +448,7 @@ async fn every_utility_builtin_is_registered_under_its_own_name() {
 /// process: `pi-builtins`' process extras and the engine tools `nohup` and
 /// `timeout` (`src/tools`).
 ///
-/// `pi_builtins::extras` maps each name to a struct by hand, so a mis-wire
+/// `tau_builtins::extras` maps each name to a struct by hand, so a mis-wire
 /// compiles and runs — and with `PATH` emptied there is no binary to silently
 /// fall back to, which is the failure this catches. Each command gets an
 /// invocation that is benign but must reach the builtin: exit 127 means the
@@ -498,9 +498,9 @@ async fn every_process_builtin_is_installed_and_dispatches() {
 	// `kill` is the engine's own intrinsic (with pi's refusal policy), so it
 	// is checked alongside but not listed here even when the table carries it.
 	let tools = ["nohup", "timeout"];
-	let mut registered: Vec<&'static str> = pi_builtins::extras::extras()
+	let mut registered: Vec<&'static str> = tau_builtins::extras::extras()
 		.filter(|(name, kind)| {
-			*name != "kill" && !matches!(kind, pi_builtins::extras::ExtraKind::Utility { .. })
+			*name != "kill" && !matches!(kind, tau_builtins::extras::ExtraKind::Utility { .. })
 		})
 		.map(|(name, _)| name)
 		.collect();
@@ -1393,7 +1393,7 @@ async fn sort_merge_into_the_file_on_stdin_keeps_all_input() {
 async fn umask_is_scoped_to_the_shell() {
 	use std::os::unix::fs::PermissionsExt;
 
-	let host_umask = || pi_builtins::read_process_umask().expect("read host umask");
+	let host_umask = || tau_builtins::read_process_umask().expect("read host umask");
 	let before = host_umask();
 	let dir = tempfile::tempdir().expect("temp dir");
 	let (result, output) = execute_captured(format!(

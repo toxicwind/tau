@@ -335,20 +335,20 @@ fn reconstruction_reparses_to_same_shape(reconstructed: &str, expected_stages: u
 	let Some(program) = parse(reconstructed) else {
 		return false;
 	};
-	let mut items = program.complete_commands.iter().flat_map(|cl| cl.0.iter());
-	let Some(CompoundListItem(and_or, separator)) = items.next() else {
+	let mut items = program.commands.iter().flat_map(|complete| complete.list().items());
+	let Some(item) = items.next() else {
 		return false;
 	};
 	// A second top-level item, a trailing `&` (Async), or an `&&`/`||`
 	// continuation all mean `Display` reshaped the command.
 	if items.next().is_some()
-		|| !and_or.additional.is_empty()
-		|| matches!(separator, SeparatorOperator::Async)
+		|| matches!(item.sep(), Sep::Amp | Sep::Disown)
+		|| item.and_or().rest().next().is_some()
 	{
 		return false;
 	}
-	let pipeline = &and_or.first;
-	!pipeline.bang && pipeline.timed.is_none() && pipeline.seq.len() == expected_stages
+	let pipeline = item.and_or().first();
+	!pipeline.bang() && pipeline.time().is_none() && pipeline.stages().len() == expected_stages
 }
 
 fn classify_pipeline(pipeline: Pipeline<'_>, src: &str) -> Option<CommandPlan> {

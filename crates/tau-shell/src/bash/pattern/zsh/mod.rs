@@ -36,7 +36,7 @@
 //! # Example
 //!
 //! ```
-//! use pi_shell::bash::{
+//! use tau_shell::bash::{
 //! 	pattern::zsh::{Captures, CharEnv, Opts, PatFlags, Pattern, tokenize},
 //! 	syntax::zsh::tok::metafy,
 //! };

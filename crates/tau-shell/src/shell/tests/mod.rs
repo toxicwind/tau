@@ -302,10 +302,10 @@ async fn execute_captured(command: String) -> (ShellExecuteResult, String) {
 async fn wait_for_process_name(pid: i32, expected: &str) {
 	time::timeout(Duration::from_secs(20), async {
 		loop {
-			if pi_builtins::ProcInfo::all().into_iter().any(|process| {
+			if tau_builtins::ProcInfo::all().into_iter().any(|process| {
 				process.pid() == pid
 					&& process.match_name() == expected
-					&& process.status() == pi_builtins::ProcessStatus::Running
+					&& process.status() == tau_builtins::ProcessStatus::Running
 			}) {
 				return;
 			}

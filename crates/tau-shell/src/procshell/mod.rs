@@ -1,4 +1,4 @@
-//! `pi_shell::process`: the engine as a process shell.
+//! `tau_shell::procshell`: the engine as a process shell.
 //!
 //! [`main`] takes a shell's command line (`zsh [zsh options] …`,
 //! `bash [GNU long option] [option] …`, `sh …`; `argv[0]`'s base name picks

@@ -40,7 +40,7 @@ use std::{
 	path::{Path, PathBuf},
 };
 
-use pi_vcs::git::GitRepo;
+use tau_vcs::git::GitRepo;
 
 use super::is_git_repo_location_var;
 

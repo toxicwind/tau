@@ -5,7 +5,7 @@
 
 use std::{collections::HashMap, fs};
 
-use pi_shell::{Shell, ShellOptions, ShellRunOptions, cancel::CancelToken};
+use tau_shell::{Shell, ShellOptions, ShellRunOptions, cancel::CancelToken};
 
 /// Runs each `(script, status, marker)` row in a fresh shell and a fresh
 /// directory, reporting every row whose exit status or `marker` file differs.

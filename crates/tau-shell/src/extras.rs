@@ -1,4 +1,4 @@
-//! pi's extra commands ([`pi_builtins::extras`]) as engine commands.
+//! pi's extra commands ([`tau_builtins::extras`]) as engine commands.
 //!
 //! [`PiHost::resolve`](crate::host::PiHost) looks a name up in pi's order:
 //! the engine's intrinsics (bash's builtins: `echo`, `printf`, `test`, `kill`,
@@ -9,7 +9,7 @@
 //!
 //! - Most extras (`cat`, `sort`, `grep`, `sed`, `ps`, `sleep`, …) are
 //!   [`Resolved::Native`](crate::bash::Resolved::Native): [`ExtraTask`] runs
-//!   [`pi_builtins::extras::run`] on the session's tokio runtime, and the
+//!   [`tau_builtins::extras::run`] on the session's tokio runtime, and the
 //!   engine polls it like any command, in pipelines, substitutions and
 //!   background jobs alike. A `TERM`, `INT`, `KILL`, `HUP` or `QUIT` cancels
 //!   it: pi's status 130 unless the utility owns its cancellation (`rsync`).
@@ -52,7 +52,7 @@ use std::{
 
 use bstr::{BStr, BString, ByteSlice};
 use parking_lot::Mutex;
-use pi_builtins::extras::{ExtraKind, Fd, Invocation};
+use tau_builtins::extras::{ExtraKind, Fd, Invocation};
 use tokio_util::sync::CancellationToken;
 
 use crate::{
@@ -67,7 +67,7 @@ pub const SUSPEND: NativeRef = NativeRef(u64::MAX);
 /// Names of the extras that run as [`ExtraTask`]s, sorted; a [`NativeRef`]
 /// is an index into it.
 static NATIVE: LazyLock<Vec<&'static str>> = LazyLock::new(|| {
-	let mut names: Vec<&'static str> = pi_builtins::extras::extras()
+	let mut names: Vec<&'static str> = tau_builtins::extras::extras()
 		.filter(|&(_, kind)| native_kind(kind))
 		.map(|(name, _)| name)
 		.collect();
@@ -136,7 +136,7 @@ impl ExtrasGate {
 	/// The offered extra `name` and its kind.
 	fn offered(self, name: &BStr) -> Option<(&str, ExtraKind)> {
 		let name = name.to_str().ok()?;
-		let kind = pi_builtins::extras::kind(name)?;
+		let kind = tau_builtins::extras::kind(name)?;
 		self.allows(name, kind).then_some((name, kind))
 	}
 
@@ -389,7 +389,7 @@ pub(crate) fn spawn(runtime: &tokio::runtime::Handle, invocation: Invocation) ->
 	let done = Arc::new(Done::default());
 	let finish = Finish(Arc::clone(&done));
 	drop(runtime.spawn(async move {
-		let code = pi_builtins::extras::run(invocation).await;
+		let code = tau_builtins::extras::run(invocation).await;
 		finish.0.finish(code);
 	}));
 	done

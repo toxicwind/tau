@@ -25,7 +25,7 @@
 //! # Example
 //!
 //! ```
-//! use pi_shell::bash::pattern::{PatOpts, Pattern};
+//! use tau_shell::bash::pattern::{PatOpts, Pattern};
 //!
 //! let p = Pattern::compile(b"*.r[sb]", PatOpts::default());
 //! assert!(p.matches(b"lib.rs"));
