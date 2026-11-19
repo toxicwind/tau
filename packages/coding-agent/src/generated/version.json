@@ -1,10 +1,10 @@
 {
   "base": "18.8.4",
-  "estate-scriptsMainShort": "f6baf040",
-  "estate-scriptsMainFull": "f6baf040713dedf1a9fcce5d962faef791a83e72",
-  "tauShort": "f6baf040",
-  "canonical": "18.8.4+estate-scripts.tau.f6baf040",
-  "canonicalFull": "18.8.4+estate-scripts.tau.f6baf040713dedf1a9fcce5d962faef791a83e72",
-  "npm": "18.8.4+estate-scripts.tau.f6baf040",
-  "generatedAt": "2026-10-14T09:53:29Z"
+  "estate-scriptsMainShort": "17dffcd6",
+  "estate-scriptsMainFull": "17dffcd6236e86304fbfa6644028471535f4c2b6",
+  "tauShort": "17dffcd6",
+  "canonical": "18.8.4+estate-scripts.tau.17dffcd6",
+  "canonicalFull": "18.8.4+estate-scripts.tau.17dffcd6236e86304fbfa6644028471535f4c2b6",
+  "npm": "18.8.4+estate-scripts.tau.17dffcd6",
+  "generatedAt": "2026-11-19T18:37:30Z"
 }
