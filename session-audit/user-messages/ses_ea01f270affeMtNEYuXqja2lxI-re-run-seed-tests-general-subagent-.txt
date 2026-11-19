@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_ea01f270affeMtNEYuXqja2lxI
+title: Re-run seed tests (@general subagent)
+cwd: /home/toxic/tmp
+user_messages: 1
+
+--- user message 1/1 (msg msg_15fe0d8f9001oBR54ugDLbRsMn, 2026-10-21T19:12:13.562Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

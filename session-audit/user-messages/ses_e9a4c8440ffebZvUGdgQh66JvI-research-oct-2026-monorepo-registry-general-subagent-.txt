@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e9a4c8440ffebZvUGdgQh66JvI
+title: Research Oct-2026 monorepo registry (@general subagent)
+cwd: /home/toxic/tmp
+user_messages: 1
+
+--- user message 1/1 (msg msg_165b37bf80013WCt63loAL7aNp, 2026-10-22T22:20:23.948Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

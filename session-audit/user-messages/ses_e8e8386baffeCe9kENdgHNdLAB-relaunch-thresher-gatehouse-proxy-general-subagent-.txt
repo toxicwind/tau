@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e8e8386baffeCe9kENdgHNdLAB
+title: Relaunch thresher gatehouse proxy (@general subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_1717c7980001zvra4oS8kzAidg, 2026-10-25T05:15:45.413Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

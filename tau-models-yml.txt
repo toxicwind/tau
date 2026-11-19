@@ -1,0 +1,14 @@
+17-    apiKey: "!cat /home/toxic/.tau/rhodochrosite.key"
+18-    discovery:
+19-      type: openai-models-list
+20:  rhodochrosite.chalcopyrite:
+21-    baseUrl: http://127.0.0.1:25200/v1
+22-    api: openai-completions
+23-    apiKey: CUTTINGGATE_API_KEY
+24-    discovery:
+25-      type: openai-models-list
+26-  rhodochrosite.secure-nim:
+27-    baseUrl: https://integrate.api.nvidia.com/v1
+28-    api: openai-completions
+29-    apiKey: NVIDIA_API_KEY
+30-    discovery:

@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_ea2a4f785ffe2d2c1I6xdVhKDm
+title: Audit EAP/gemini/spark markdown (@general subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_15d5b087e001rKZdlsEJRkd21X, 2026-10-21T07:26:49.472Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

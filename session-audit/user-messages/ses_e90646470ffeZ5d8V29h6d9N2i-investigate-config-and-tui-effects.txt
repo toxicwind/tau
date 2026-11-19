@@ -1,0 +1,31 @@
+# KAPPA SESSION ses_e90646470ffeZ5d8V29h6d9N2i
+title: Investigate config and TUI effects
+cwd: /home/toxic
+user_messages: 9
+
+--- user message 1/9 (msg msg_16f9b9ba5001c3aXk5F7QvPcwS, 2026-10-24T20:30:31.333Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 2/9 (msg msg_16f9deba900184cumiZN31pCLB, 2026-10-24T20:33:02.889Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 3/9 (msg msg_16f9defee001RqjEk31yHXgswu, 2026-10-24T20:33:03.982Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 4/9 (msg msg_16f9ed570001Qda16ws7KV57iT, 2026-10-24T20:34:02.736Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 5/9 (msg msg_16f9ed581001iz3epMh9xx7fr4, 2026-10-24T20:34:02.756Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 6/9 (msg msg_17156d380001ywyYhaG0DCt9oc, 2026-10-25T04:34:38.080Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 7/9 (msg msg_1715718a8001PlhGh3sG2n1cl3, 2026-10-25T04:34:55.784Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 8/9 (msg msg_1715718de001ts62W0uZCeVO84, 2026-10-25T04:34:55.841Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 9/9 (msg msg_17188639c001cH9tbWYBDTGgh6, 2026-10-25T05:28:46.239Z) ---
+[[no content field; keys: role, time, agent, model, summary]]

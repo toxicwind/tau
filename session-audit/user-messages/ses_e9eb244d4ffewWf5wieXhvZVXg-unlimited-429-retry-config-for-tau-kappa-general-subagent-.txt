@@ -1,0 +1,10 @@
+# KAPPA SESSION ses_e9eb244d4ffewWf5wieXhvZVXg
+title: Unlimited 429-retry config for Tau+Kappa (@general subagent)
+cwd: /home/toxic
+user_messages: 2
+
+--- user message 1/2 (msg msg_1614dbb60001WQiIAD2G1YbaLe, 2026-10-22T01:50:46.631Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]
+
+--- user message 2/2 (msg msg_1614e93e7001YnypbbUsf4vYyZ, 2026-10-22T01:51:42.058Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

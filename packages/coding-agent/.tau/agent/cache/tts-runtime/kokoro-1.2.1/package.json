@@ -1,0 +1,13 @@
+{
+	"private": true,
+	"type": "module",
+	"dependencies": {
+		"kokoro-js": "1.2.1"
+	},
+	"overrides": {
+		"onnxruntime-node": "1.26.0"
+	},
+	"trustedDependencies": [
+		"onnxruntime-node"
+	]
+}

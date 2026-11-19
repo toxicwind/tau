@@ -1,0 +1,13 @@
+# KAPPA SESSION ses_e98ae214fffeOfYQ2aouErsCaz
+title: Raise coverage to 90% (bg) (@general subagent)
+cwd: /home/toxic
+user_messages: 3
+
+--- user message 1/3 (msg msg_16751deda001LMyxf13AzIIEEV, 2026-10-23T05:53:01.151Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]
+
+--- user message 2/3 (msg msg_167531eec001DMCXZulKTryV8J, 2026-10-23T05:54:23.084Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 3/3 (msg msg_1675712c1001tkVLFgNMbZ4NaQ, 2026-10-23T05:58:42.115Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

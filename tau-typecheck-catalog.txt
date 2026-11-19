@@ -1,0 +1,35 @@
+../ai/src/providers/bedrock-mantle.ts(57,4): error TS2345: Argument of type '{ body?: BodyInit | null | undefined; cache?: RequestCache | undefined; credentials?: RequestCredentials | undefined; integrity?: string | undefined; ... 9 more ...; headers: Headers; } | { ...; }' is not assignable to parameter of type 'RequestInit | undefined'.
+  Type '{ cache?: RequestCache; credentials?: RequestCredentials; integrity?: string; keepalive?: boolean; mode?: RequestMode; priority?: RequestPriority; redirect?: RequestRedirect; referrer?: string; ... 5 more ...; body: Uint8Array<...>; }' is not assignable to type 'RequestInit'.
+    Types of property 'body' are incompatible.
+      Type 'Uint8Array<ArrayBufferLike>' is not assignable to type 'BodyInit | null | undefined'.
+        Type 'Uint8Array<ArrayBufferLike>' is missing the following properties from type 'URLSearchParams': size, append, delete, get, and 3 more.
+../ai/src/providers/cowork-fetch.ts(126,22): error TS2345: Argument of type 'ReadableStream<any> | null' is not assignable to parameter of type 'BodyInit | null | undefined'.
+  Type 'ReadableStream<any>' is not assignable to type 'BodyInit | null | undefined'.
+    Type 'import("node:stream/web").ReadableStream<any>' is not assignable to type 'ReadableStream<any>'.
+      Types of property 'getReader' are incompatible.
+        Type '{ (options: { mode: "byob"; }): import("node:stream/web").ReadableStreamBYOBReader; (): import("node:stream/web").ReadableStreamDefaultReader<any>; (options?: import("node:stream/web").ReadableStreamGetReaderOptions | undefined): import("node:stream/web").ReadableStreamReader<...>; }' is not assignable to type '{ (options: { mode: "byob"; }): ReadableStreamBYOBReader; (): ReadableStreamDefaultReader<any>; (options?: ReadableStreamGetReaderOptions | undefined): ReadableStreamReader<...>; }'.
+          Target signature provides too few arguments. Expected 1 or more, but got 0.
+../ai/src/providers/devin.ts(551,3): error TS2322: Type 'Uint8Array<ArrayBufferLike>' is not assignable to type 'BodyInit | null | undefined'.
+  Type 'Uint8Array<ArrayBufferLike>' is missing the following properties from type 'URLSearchParams': size, append, delete, get, and 3 more.
+../ai/src/providers/devin.ts(593,3): error TS2322: Type 'Uint8Array<ArrayBufferLike>' is not assignable to type 'BodyInit | null | undefined'.
+  Type 'Uint8Array<ArrayBufferLike>' is missing the following properties from type 'URLSearchParams': size, append, delete, get, and 3 more.
+../ai/src/providers/openai-codex-responses.ts(3844,41): error TS2339: Property 'data' does not exist on type '{ new <T>(type: string, eventInitDict?: MessageEventInit<T> | undefined): MessageEvent<T>; prototype: MessageEvent<any>; }'.
+../ai/src/providers/openai-codex-responses.ts(3846,31): error TS2339: Property 'data' does not exist on type '{ new <T>(type: string, eventInitDict?: MessageEventInit<T> | undefined): MessageEvent<T>; prototype: MessageEvent<any>; }'.
+../ai/src/providers/openai-codex-responses.ts(3846,57): error TS2339: Property 'data' does not exist on type '{ new <T>(type: string, eventInitDict?: MessageEventInit<T> | undefined): MessageEvent<T>; prototype: MessageEvent<any>; }'.
+../ai/src/providers/openai-codex-responses.ts(3846,82): error TS2339: Property 'data' does not exist on type '{ new <T>(type: string, eventInitDict?: MessageEventInit<T> | undefined): MessageEvent<T>; prototype: MessageEvent<any>; }'.
+../ai/src/providers/openai-codex-responses.ts(3861,63): error TS2339: Property 'data' does not exist on type '{ new <T>(type: string, eventInitDict?: MessageEventInit<T> | undefined): MessageEvent<T>; prototype: MessageEvent<any>; }'.
+../ai/src/providers/openai-codex-responses.ts(4407,4): error TS2322: Type 'string | Uint8Array<ArrayBufferLike>' is not assignable to type 'BodyInit | null | undefined'.
+  Type 'Uint8Array<ArrayBufferLike>' is not assignable to type 'BodyInit | null | undefined'.
+    Type 'Uint8Array<ArrayBufferLike>' is missing the following properties from type 'URLSearchParams': size, append, delete, get, and 3 more.
+../ai/src/usage/devin.ts(279,4): error TS2322: Type 'Uint8Array<ArrayBufferLike>' is not assignable to type 'BodyInit | null | undefined'.
+  Type 'Uint8Array<ArrayBufferLike>' is missing the following properties from type 'URLSearchParams': size, append, delete, get, and 3 more.
+test/codex-discovery.test.ts(14,47): error TS7016: Could not find a declaration file for module 'tau/config/model-resolver'. '/home/toxic/pens/olympus/products/tau/packages/coding-agent/index.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/tau` if it exists or add a new declaration (.d.ts) file containing `declare module 'tau/config/model-resolver';`
+test/devin-discovery.test.ts(390,23): error TS2345: Argument of type 'Uint8Array<ArrayBufferLike>' is not assignable to parameter of type 'BodyInit | null | undefined'.
+  Type 'Uint8Array<ArrayBufferLike>' is missing the following properties from type 'URLSearchParams': size, append, delete, get, and 3 more.
+test/devin-discovery.test.ts(459,24): error TS2345: Argument of type 'Uint8Array<ArrayBufferLike>' is not assignable to parameter of type 'BodyInit | null | undefined'.
+  Type 'Uint8Array<ArrayBufferLike>' is missing the following properties from type 'URLSearchParams': size, append, delete, get, and 3 more.
+test/devin-discovery.test.ts(475,17): error TS2345: Argument of type 'Uint8Array<ArrayBufferLike>' is not assignable to parameter of type 'BodyInit | null | undefined'.
+  Type 'Uint8Array<ArrayBufferLike>' is missing the following properties from type 'URLSearchParams': size, append, delete, get, and 3 more.
+test/devin-discovery.test.ts(487,17): error TS2345: Argument of type 'Uint8Array<ArrayBufferLike>' is not assignable to parameter of type 'BodyInit | null | undefined'.
+  Type 'Uint8Array<ArrayBufferLike>' is missing the following properties from type 'URLSearchParams': size, append, delete, get, and 3 more.

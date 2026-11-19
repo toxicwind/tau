@@ -1,0 +1,52 @@
+# KAPPA SESSION ses_e89c4c3ddffeJ2GwB58ONAra2x
+title: Tau session audit for libva warning
+cwd: /home/toxic
+user_messages: 16
+
+--- user message 1/16 (msg msg_1763b3e120010CKlE7WB8ZPNvL, 2026-10-26T03:22:36.434Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 2/16 (msg msg_1763bb25f001KYbrOyIMMIbk1O, 2026-10-26T03:23:06.207Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 3/16 (msg msg_1763cf6a4001zLPTxQy3jOycCy, 2026-10-26T03:24:29.220Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 4/16 (msg msg_1763d7f3d001FDbFVXdp1JEWpl, 2026-10-26T03:25:04.189Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 5/16 (msg msg_1763e7384001jwfAok8Ui7tn38, 2026-10-26T03:26:06.724Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 6/16 (msg msg_1763f25a7001ZyYbRI5cfO6Tr0, 2026-10-26T03:26:52.327Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 7/16 (msg msg_176576eb7001HRYFcZipPt48G3, 2026-10-26T03:53:23.940Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 8/16 (msg msg_17670c915001MxnKL5IO4f82ap, 2026-10-26T04:21:05.432Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 9/16 (msg msg_176723dfd001hKqdJI3HPCqmpH, 2026-10-26T04:22:40.894Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 10/16 (msg msg_1767254b5001gMz887UlwNAp5C, 2026-10-26T04:22:46.709Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 11/16 (msg msg_17676dea1001yd1zN6xAwVtyyw, 2026-10-26T04:27:44.161Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 12/16 (msg msg_176779341001w4ymBH04FgUIBk, 2026-10-26T04:28:30.401Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 13/16 (msg msg_17677dc32001aL8EGXGE0S5FIC, 2026-10-26T04:28:49.074Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 14/16 (msg msg_17679677f001f83pjdShw1NGfA, 2026-10-26T04:30:30.271Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 15/16 (msg msg_1767b2095001BeyeyzGGTffj5l, 2026-10-26T04:32:23.190Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 16/16 (msg msg_1767b5070001bucVNpnd094E6w, 2026-10-26T04:32:35.440Z) ---
+[[no content field; keys: role, time, agent, model, summary]]

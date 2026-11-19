@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e8f0017b1ffeQU9EWUso3ojZFT
+title: Phase 5 tau binary deploy (@general subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_170ffe88200157xUVo8Q3iW2lp, 2026-10-25T02:59:41.827Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

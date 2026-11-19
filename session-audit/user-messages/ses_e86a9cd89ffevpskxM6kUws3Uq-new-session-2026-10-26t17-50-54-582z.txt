@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e86a9cd89ffevpskxM6kUws3Uq
+title: New session - 2026-10-26T17:50:54.582Z
+cwd: /home/toxic/pens/olympus/products/kappa/kappa-code/packages/cli
+user_messages: 1
+
+--- user message 1/1 (msg msg_179563395001GDc3ytAZpiGRzA, 2026-10-26T17:50:54.869Z) ---
+[[no content field; keys: role, time, agent, model]]

@@ -1,0 +1,10 @@
+# KAPPA SESSION ses_e9eb61cdaffeWQEYnnfKF8CB1q
+title: Verify+route shim stdio transport (@general subagent)
+cwd: /home/toxic
+user_messages: 2
+
+--- user message 1/2 (msg msg_16149e360001zWcaYL42LwJebx, 2026-10-22T01:46:34.722Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]
+
+--- user message 2/2 (msg msg_1614a6c34001ocWSLoYG7bLyo1, 2026-10-22T01:47:09.751Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

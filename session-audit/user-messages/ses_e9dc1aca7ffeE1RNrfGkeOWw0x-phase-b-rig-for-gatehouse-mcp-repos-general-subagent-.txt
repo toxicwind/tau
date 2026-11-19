@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e9dc1aca7ffeE1RNrfGkeOWw0x
+title: Phase B rig for gatehouse-mcp repos (@general subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_1623e538e001IkZIkt8FxAm5Lq, 2026-10-22T06:13:34.227Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

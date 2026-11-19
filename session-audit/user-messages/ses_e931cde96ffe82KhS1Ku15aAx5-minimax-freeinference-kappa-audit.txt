@@ -1,0 +1,22 @@
+# KAPPA SESSION ses_e931cde96ffe82KhS1Ku15aAx5
+title: Minimax freeinference kappa audit
+cwd: /home/toxic/tmp
+user_messages: 6
+
+--- user message 1/6 (msg msg_16ce3217c001GosGMtRsl9ziV5, 2026-10-24T07:49:47.004Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 2/6 (msg msg_16ce3da94001pwzfdK9evqbFHx, 2026-10-24T07:50:34.388Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 3/6 (msg msg_16ce40b2c001fcM70UVqkrMAaL, 2026-10-24T07:50:46.828Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 4/6 (msg msg_16ce6e178001XLwh4RvzSZ4BYY, 2026-10-24T07:53:52.760Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 5/6 (msg msg_16cf06d10001BUm9oIDD20kFMb, 2026-10-24T08:04:18.320Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 6/6 (msg msg_16cf0992b001r7Rum2eOoWrcBA, 2026-10-24T08:04:29.611Z) ---
+[[no content field; keys: role, time, agent, model, summary]]

@@ -1,0 +1,19 @@
+// Provider-wire compat for "meta"; regenerated from the frozen census using deployment contract selectors.
+
+provider "meta" {
+
+	// Muse Spark revisions served by Meta's first-party Responses API. Meta's
+	// `/v1/models` lists bare ids with no capability metadata, so every revision
+	// must be seeded here or discovery yields a text-only, non-reasoning model
+	// with an unknown context window.
+
+	include-encrypted-reasoning #true
+	supports-reasoning-effort #true
+	// api.meta.ai/v1 accepts only tool_choice "auto"; "none", "required" and named
+	// choices are rejected with 400 (verified 2026-09-10), so omit the field.
+	supports-tool-choice #false
+	class "unknown" {
+		thinking-efforts "minimal" "low" "medium" "high" "xhigh"
+		thinking-mode "effort"
+	}
+}

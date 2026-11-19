@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_ea2d1c168ffevXH1n7Yizj3snl
+title: Promote chat web gateway into range (@general subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_15d2e3e9a001g4YXz3WnlIEf46, 2026-10-21T06:36:39.774Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

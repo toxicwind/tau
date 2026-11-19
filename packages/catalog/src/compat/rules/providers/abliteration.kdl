@@ -1,0 +1,16 @@
+// Provider-wire compat for "abliteration" (api.abliteration.ai): an
+// OpenAI-compatible Responses gateway that never returns encrypted reasoning
+// items and streams long reasoning turns without keepalives.
+
+provider "abliteration" {
+
+	// Documented abliteration.ai catalog (docs.abliteration.ai/models, 2026-09)
+	// bundled so the provider is usable when generation and first boot have no
+	// live key. The `/v1/models` response is authoritative once discovery runs.
+	// Rows carry only the documented limits and pricing; the per-model reasoning
+	// ladders, alias map and wire quirks are rule-owned by `rules/classes/glm.kdl`
+	// and `rules/providers/abliteration.kdl` via `buildModel`.
+
+	include-encrypted-reasoning #false
+	stream-idle-timeout-ms 0
+}

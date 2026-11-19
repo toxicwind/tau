@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_ea98f64bcffeGKvArw83oH6beR
+title: Calculate 123 * 456 (@general subagent)
+cwd: /home/toxic/tmp
+user_messages: 1
+
+--- user message 1/1 (msg msg_156709b4a0012yoHT9Npg3x3ue, 2026-10-19T23:13:02.796Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

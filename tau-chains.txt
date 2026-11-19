@@ -1,0 +1,7 @@
+383:  fallbackChains:
+384-    fallback:
+385-      - freeinference/qwen3.6-35b
+386-      - freeinference/minimax-m3
+387-      - freeinference/deepseek-v4-flash
+388-    web:
+389-      - web/tavily

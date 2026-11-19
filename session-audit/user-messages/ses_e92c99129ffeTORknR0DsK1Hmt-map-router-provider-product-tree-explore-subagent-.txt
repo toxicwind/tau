@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e92c99129ffeTORknR0DsK1Hmt
+title: Map router/provider product tree (@explore subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_16d366f08001szvOZw50cyIEpY, 2026-10-24T09:20:46.346Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

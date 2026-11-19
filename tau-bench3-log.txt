@@ -1,0 +1,6 @@
+{"timestamp":"2026-10-26T16:35:48.800-06:00","level":"warn","pid":4086533,"message":"Fallback chain for role 'fallback' references unknown model: freeinference/qwen3.6-35b"}
+{"timestamp":"2026-10-26T16:35:48.800-06:00","level":"warn","pid":4086533,"message":"Fallback chain for role 'fallback' references unknown model: freeinference/minimax-m3"}
+{"timestamp":"2026-10-26T16:35:48.800-06:00","level":"warn","pid":4086533,"message":"Fallback chain for role 'fallback' references unknown model: freeinference/deepseek-v4-flash"}
+{"timestamp":"2026-10-26T16:35:52.281-06:00","level":"warn","pid":4086533,"message":"agent turn ended with provider error","provider":"openrouter","model":"nvidia/nemotron-3-super-120b-a12b:free","errorMessage":"404 Provider returned error","errorStatus":404,"errorId":135168}
+{"timestamp":"2026-10-26T16:35:52.928-06:00","level":"warn","pid":4086533,"message":"agent turn ended with provider error","provider":"openrouter","model":"nvidia/nemotron-3-super-120b-a12b:free","errorMessage":"404 Provider returned error","errorStatus":404,"errorId":135168}
+{"timestamp":"2026-10-26T16:35:54.080-06:00","level":"warn","pid":4086533,"message":"agent turn ended with provider error","provider":"openrouter","model":"nvidia/nemotron-3-super-120b-a12b:free","errorMessage":"404 Provider returned error","errorStatus":404,"errorId":135168}

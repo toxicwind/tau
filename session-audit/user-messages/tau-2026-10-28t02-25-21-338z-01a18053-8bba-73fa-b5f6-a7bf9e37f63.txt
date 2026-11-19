@@ -1,0 +1,24 @@
+# TAU SESSION 2026-10-28T02-25-21-338Z_01a18053-8bba-73fa-b5f6-a7bf9e37f63f.jsonl
+user_messages: 1
+
+--- user message 1/1 (msg 05c574dc, 2026-10-28T02:25:30.555Z) ---
+
+AUTONOMOUS TASK - decide and act, never ask, never stop early.
+
+GOAL: select the estate swarm-10 (10 WORKING, provider-diverse models) and FIX the swarm agent config.
+
+CONTEXT: geode router = http://127.0.0.1:25193/v1 (rhodochrosite). Bearer key: read /home/toxic/.tau/rhodochrosite.key
+Step 1: GET http://127.0.0.1:25193/v1/models with the Bearer key. List every model id.
+Step 2: For EVERY model id from step 1, POST a 16-token completion ("Reply with exactly: OK", max_tokens 16, timeout 30s).
+  Record: http_code, latency_ms, finish_reason, content non-empty?
+  Classify: crystalline(200+content) / fracture(401,402,403,404) / pressure-drop(timeout,5xx,empty-content).
+  If a model 502s instantly, retry once via model id variants (with/without provider prefix).
+Step 3: Pick swarm-10: prefer crystalline; enforce provider diversity (max 2 models per provider family:
+  freeinference, nvidia, google, groq, openrouter*, bornite, mistral, cerebras); skip any model that
+  fractured. If fewer than 10 crystalline, fill with fastest pressure-drop survivors and mark them degraded.
+Step 4: Write /home/toxic/pens/ranch/geode-rig/swarm-10.json:
+  {"probed": N, "crystalline": [...], "fractured": [...ids+status], "swarm10": [{model, provider_family, latency_ms, evidence}...10]}
+Step 5: Post ONE summary line to http://127.0.0.1:25120/v1/rooms/fleet/messages
+  (Bearer token file /home/toxic/.config/estate-chat-token) from_agent "swarm-scout":
+  the swarm-10 model ids + counts crystalline/fractured.
+Do NOT edit any repo files. Output the manifest file + the one squawk line. That is all.

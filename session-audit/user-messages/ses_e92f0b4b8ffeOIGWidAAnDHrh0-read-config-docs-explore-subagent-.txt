@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e92f0b4b8ffeOIGWidAAnDHrh0
+title: Read config docs (@explore subagent)
+cwd: /home/toxic/tmp
+user_messages: 1
+
+--- user message 1/1 (msg msg_16d0f4b77001gg5p73FM2hDz83, 2026-10-24T08:38:01.340Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

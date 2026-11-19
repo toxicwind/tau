@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_ea2d1c141ffei9CoqAByz4CEGh
+title: Rebrand squawk and estate-chat repos (@general subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_15d2e3ec10018MxOSyiAZkOMIG, 2026-10-21T06:36:57.291Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

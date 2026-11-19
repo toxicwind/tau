@@ -1,0 +1,28 @@
+# KAPPA SESSION ses_e982d2abfffeajOw6e0c84aCzg
+title: Unified build/deploy/health stack plan
+cwd: /home/toxic
+user_messages: 8
+
+--- user message 1/8 (msg msg_167d2d543001FgDj3ZfkJ7mSnE, 2026-10-23T08:13:52.835Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 2/8 (msg msg_167d2e6ef001ZLyMp0Q7trfcTz, 2026-10-23T08:13:57.359Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 3/8 (msg msg_167d31086001zyaTA5eJTQSUo5, 2026-10-23T08:14:08.006Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 4/8 (msg msg_167d31d49001k9IgZoSmBSqnOI, 2026-10-23T08:14:11.273Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 5/8 (msg msg_167d3595d0016kYIILjxb0sWa0, 2026-10-23T08:14:26.653Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 6/8 (msg msg_167d52e60001IWglYgP64galyH, 2026-10-23T08:16:26.720Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 7/8 (msg msg_167d5aa59001qojGeysmX4Dvan, 2026-10-23T08:16:58.457Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 8/8 (msg msg_167d653c3001DaF6ePTA3sFIbY, 2026-10-23T08:17:41.827Z) ---
+[[no content field; keys: role, time, agent, model, summary]]

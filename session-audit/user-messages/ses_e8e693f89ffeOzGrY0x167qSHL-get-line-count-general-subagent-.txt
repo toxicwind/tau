@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e8e693f89ffeOzGrY0x167qSHL
+title: Get line count (@general subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_17196c0ad001girt377ZyWxLgf, 2026-10-25T05:44:27.569Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

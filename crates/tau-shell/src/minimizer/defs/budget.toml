@@ -1,0 +1,38 @@
+# Budget-pool output for command logs.
+#
+# The other defs cap by LINE COUNT, which keeps the head and loses the tail
+# of a long log. This one caps by CHARACTER BUDGET and reserves a slice of
+# that budget for error lines, so diagnostics survive even when the general
+# pool is spent — the same policy a "budget printer" applies to command
+# output: general lines share the remaining pool, error lines draw on a
+# reserve, and dropped lines are counted rather than silently vanishing.
+#
+# Use it for daemons whose output is a log stream (journalctl, systemctl
+# status, a service's own stdout) where the interesting line is often the
+# error near the end.
+
+[filters.budget]
+description = "Character-budget output with a reserved error pool"
+match_command = "^(journalctl|systemctl|pitchfork|docker|journalctl-persistent)$"
+strip_ansi = true
+# 8k characters of screen output, 30% of it reserved for error lines.
+budget_chars = 8000
+budget_error_pct = 30
+budget_error_pattern = "(?i)\\b(errors?|errored|failed|fatal|panic|refused|denied|eaddrinuse|not found|missing|traceback|exception|crashed|killed|timed out)\\b"
+truncate_lines_at = 250
+on_empty = "ok"
+
+[[tests.budget]]
+name = "keeps error lines when the general pool is spent"
+input = "line one\nline two\nline three\nERROR: the thing broke\n"
+expected = "line one\nline two\nline three\nERROR: the thing broke\n"
+
+[[tests.budget]]
+name = "short output passes through unchanged"
+input = "alpha\nbeta\n"
+expected = "alpha\nbeta\n"
+
+[[tests.budget]]
+name = "empty input yields the empty sentinel"
+input = ""
+expected = "ok"

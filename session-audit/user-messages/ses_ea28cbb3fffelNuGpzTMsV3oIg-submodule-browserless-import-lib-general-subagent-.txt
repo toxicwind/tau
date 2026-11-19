@@ -1,0 +1,10 @@
+# KAPPA SESSION ses_ea28cbb3fffelNuGpzTMsV3oIg
+title: Submodule browserless + import lib (@general subagent)
+cwd: /home/toxic
+user_messages: 2
+
+--- user message 1/2 (msg msg_15d7344c60016d5j8iPM1BupTc, 2026-10-21T07:53:17.768Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]
+
+--- user message 2/2 (msg msg_15d74d84d001En27xB0JV6XZJT, 2026-10-21T07:55:01.071Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

@@ -1,0 +1,8 @@
+composer
+github-cache.db
+legacy-pi-extension-cache.db
+legacy-pi-extension-cache.db-shm
+legacy-pi-extension-cache.db-wal
+legacy-tau-extension-cache.db
+legacy-tau-extension-cache.db-shm
+legacy-tau-extension-cache.db-wal

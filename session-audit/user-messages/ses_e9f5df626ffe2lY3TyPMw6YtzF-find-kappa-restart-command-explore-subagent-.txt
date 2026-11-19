@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e9f5df626ffe2lY3TyPMw6YtzF
+title: Find kappa restart command (@explore subagent)
+cwd: /home/toxic/tmp
+user_messages: 1
+
+--- user message 1/1 (msg msg_160a209dc0016l8hvHsBkJjOfz, 2026-10-21T22:43:14.526Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

@@ -1,0 +1,14 @@
+auth "freeinference" {
+	name "FreeInference"
+	login "api-key" {
+		auth-url "https://freeinference.org/"
+		instructions "Your API key is stored in the secretsmith keyring label FREEINFERENCE_API_KEY"
+		prompt "Paste your FreeInference API key" placeholder="...-..."
+		// Validate against the authenticated models listing (never a chat
+		// completion): the /v1/models endpoint is model-agnostic and 200s for
+		// any valid key. This closes the registry completeness gate — the
+		// provider was in the catalog but had no auth policy, so
+		// registry.ts's compile-time check failed.
+		validate "models-endpoint" label="freeinference" url="https://freeinference.org/v1/models"
+	}
+}

@@ -1,0 +1,18 @@
+// Provider-wire compat for "sakana"; regenerated from the frozen census using deployment contract selectors.
+
+provider "sakana" {
+
+	// Sakana's documented Fugu models, bundled so the provider is usable when
+	// catalog generation has no live API key. If live `/v1/models` succeeds,
+	// Sakana is authoritative and stale seed ids must stay out. Fugu is the free
+	// router; Fugu Ultra carries the published tariff. Output limits are not
+	// documented (null); the Responses gateway returns no encrypted reasoning and
+	// streams long reasoning turns without keepalives.
+
+	include-encrypted-reasoning #false
+	stream-idle-timeout-ms 0
+	class "unknown" {
+		thinking-efforts "high" "max"
+		thinking-mode "effort"
+	}
+}

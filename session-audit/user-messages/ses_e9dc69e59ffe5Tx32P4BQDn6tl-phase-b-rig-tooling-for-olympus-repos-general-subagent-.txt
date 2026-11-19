@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e9dc69e59ffe5Tx32P4BQDn6tl
+title: Phase B rig tooling for olympus repos (@general subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_1623961dd001h8muurk5R8GhS3, 2026-10-22T06:08:10.211Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

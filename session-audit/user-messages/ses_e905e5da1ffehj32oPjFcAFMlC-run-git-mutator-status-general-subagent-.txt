@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e905e5da1ffehj32oPjFcAFMlC
+title: Run git-mutator status (@general subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_16fa1a291001lCvKtBorDQUEFN, 2026-10-24T20:37:06.328Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_ea024d76bffe45ebTB64Gq97G2
+title: Verify estate gateway (@general subagent)
+cwd: /home/toxic/tmp
+user_messages: 1
+
+--- user message 1/1 (msg msg_15fdb2898001fj5Lew8WoKVrCN, 2026-10-21T19:06:00.729Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

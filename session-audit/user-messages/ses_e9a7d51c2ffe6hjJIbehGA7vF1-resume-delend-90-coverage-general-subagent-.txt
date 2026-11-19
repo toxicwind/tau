@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e9a7d51c2ffe6hjJIbehGA7vF1
+title: Resume delend 90% coverage (@general subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_16582ae86001pwUKjulBY3qLac, 2026-10-22T21:27:05.612Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

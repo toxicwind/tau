@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e7bc59e75ffe5mxCcc5gbn7KHa
+title: Map geode main router entrypoint (@explore subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_1843a61ba001nCL2nRsJGTtrqV, 2026-10-28T20:36:21.056Z) ---
+[[no content field; keys: role, time, tools, agent, model]]

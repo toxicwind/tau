@@ -1,0 +1,3 @@
+# Upstream pi commit whose export surface tau's legacy shim promises to honor.
+sha: 1bc035cc717d0b63b8b31c48c6ca587fba860d40
+repo: earendil-works/pi-coding-agent

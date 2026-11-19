@@ -1,0 +1,19 @@
+# KAPPA SESSION ses_e98cdb37cffedRLFwzTYOO9Z4x
+title: Coverage gate (bg, 90% required) (@general subagent)
+cwd: /home/toxic
+user_messages: 5
+
+--- user message 1/5 (msg msg_167324cbd0013bjoK6RuF8aWmx, 2026-10-23T05:18:32.131Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]
+
+--- user message 2/5 (msg msg_16735543f001Ag93c6hoIlPy55, 2026-10-23T05:21:50.655Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 3/5 (msg msg_16735ae28001ock22XCgJwSyox, 2026-10-23T05:22:13.672Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 4/5 (msg msg_167399fdb001RiOVc3Jr293cd3, 2026-10-23T05:26:32.155Z) ---
+[[no content field; keys: role, model, agent, time, summary]]
+
+--- user message 5/5 (msg msg_16739df84001IgQ293Zv3CRrno, 2026-10-23T05:26:48.452Z) ---
+[[no content field; keys: role, time, agent, model, summary]]

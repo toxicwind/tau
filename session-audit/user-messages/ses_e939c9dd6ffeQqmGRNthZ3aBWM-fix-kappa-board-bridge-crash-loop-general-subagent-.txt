@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e939c9dd6ffeQqmGRNthZ3aBWM
+title: Fix kappa board bridge crash-loop (@general subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_16c636273001MtOLMvwMlG42Xz, 2026-10-24T05:30:15.039Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

@@ -1,0 +1,10 @@
+# KAPPA SESSION ses_e9370c9c4ffeFxPJtnGEoPMqv4
+title: Map doorbell MCP bridge + tunnel (@explore subagent)
+cwd: /home/toxic/tmp
+user_messages: 2
+
+--- user message 1/2 (msg msg_16c8f36730010ek2W3A5TChmll, 2026-10-24T06:18:07.360Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]
+
+--- user message 2/2 (msg msg_16c8f8f4f001AAtnFZu1Hp2Cbx, 2026-10-24T06:18:30.098Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

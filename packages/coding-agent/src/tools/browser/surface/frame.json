@@ -1,0 +1,22 @@
+{
+  "namespace": "frame",
+  "receiver": "BrowserFrame",
+  "doc": "A child-frame handle returned by BrowserTab.frame.",
+  "methods": [
+    { "name": "click",           "args": [{"name":"selector","type":"string"}],                                                                                  "returns": "void",           "async": true, "doc": "Click a matching element inside this frame." },
+    { "name": "fill",            "args": [{"name":"selector","type":"string"},{"name":"value","type":"string"}],                                                  "returns": "void",           "async": true, "doc": "Replace a matching form control's value inside this frame." },
+    { "name": "type",            "args": [{"name":"selector","type":"string"},{"name":"text","type":"string"}],                                                   "returns": "void",           "async": true, "doc": "Type text into a matching element inside this frame." },
+    { "name": "press",           "args": [{"name":"key","type":"string"},{"name":"options","type":"BrowserPressOptions","optional":true}],                        "returns": "void",           "async": true, "doc": "Press a key, optionally after focusing a matching element." },
+    { "name": "text",            "args": [{"name":"selector","type":"string"}],                                                                                  "returns": "string",         "async": true, "doc": "Return a matching element's text content." },
+    { "name": "html",            "args": [{"name":"selector","type":"string"}],                                                                                  "returns": "string",         "async": true, "doc": "Return a matching element's inner HTML." },
+    { "name": "value",           "args": [{"name":"selector","type":"string"}],                                                                                  "returns": "string",         "async": true, "doc": "Return a matching form control's value." },
+    { "name": "attr",            "args": [{"name":"selector","type":"string"},{"name":"name","type":"string"}],                                                  "returns": "string | null",  "async": true, "doc": "Return one matching element attribute." },
+    { "name": "count",           "args": [{"name":"selector","type":"string"}],                                                                                  "returns": "number",         "async": true, "doc": "Count matching elements inside this frame." },
+    { "name": "isVisible",       "args": [{"name":"selector","type":"string"}],                                                                                  "returns": "boolean",        "async": true, "doc": "Report whether a matching element is visible." },
+    { "name": "ariaSnapshot",    "args": [{"name":"selector","type":"string","optional":true},{"name":"options","type":"BrowserAriaSnapshotOptions","optional":true}], "returns": "string",     "async": true, "doc": "Capture a Playwright-format ARIA snapshot inside this frame." },
+    { "name": "evaluate",        "args": [{"name":"fn","type":"string | ((...args: TArgs) => R | Promise<R>)"},{"name":"args","type":"TArgs","rest":true}],        "returns": "R",              "async": true, "generic": ["R","TArgs"], "doc": "Evaluate a function or source string inside this frame." },
+    { "name": "waitFor",         "args": [{"name":"selector","type":"string"},{"name":"options","type":"BrowserWaitForSelectorOptions","optional":true}],          "returns": "boolean",        "async": true, "doc": "Wait for a selector and report whether it appeared." },
+    { "name": "waitForSelector", "args": [{"name":"selector","type":"string"},{"name":"options","type":"BrowserWaitForSelectorOptions","optional":true}],          "returns": "boolean",        "async": true, "doc": "Wait for a selector and report whether it appeared." },
+    { "name": "screenshot",      "args": [{"name":"selector","type":"string"}],                                                                                  "returns": "string",         "async": true, "doc": "Capture a matching element and return the saved path." }
+  ]
+}

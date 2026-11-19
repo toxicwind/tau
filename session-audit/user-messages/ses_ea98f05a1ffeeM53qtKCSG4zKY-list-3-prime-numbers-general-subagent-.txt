@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_ea98f05a1ffeeM53qtKCSG4zKY
+title: List 3 prime numbers (@general subagent)
+cwd: /home/toxic/tmp
+user_messages: 1
+
+--- user message 1/1 (msg msg_15670fa63001fjCg14WaR2Lox1, 2026-10-19T23:13:27.140Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

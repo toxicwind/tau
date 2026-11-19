@@ -1,0 +1,10 @@
+# KAPPA SESSION ses_e9e9237faffeKhC8wWoaADB3PC
+title: Organize /tmp with intent to move (@general subagent)
+cwd: /home/toxic
+user_messages: 2
+
+--- user message 1/2 (msg msg_1616dc84c001aJ1GGwAbBhcpPS, 2026-10-22T02:25:47.093Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]
+
+--- user message 2/2 (msg msg_1616f6c07001gV5WUjG70qSFHL, 2026-10-22T02:27:34.538Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e9a76a6abffeBKbtcDpfZBwu43
+title: Write neutral agent-paradigm audit report+skill (@general subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_16589599d001lKqzB4u1VVaVRv, 2026-10-22T21:34:22.627Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

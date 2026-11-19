@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e9f5911b6ffeDAUrY22AjWVU6a
+title: Typecheck changed TUI packages (@general subagent)
+cwd: /home/toxic/tmp
+user_messages: 1
+
+--- user message 1/1 (msg msg_160a6ee4f001AcCbR3HemCKJ4E, 2026-10-21T22:48:35.153Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

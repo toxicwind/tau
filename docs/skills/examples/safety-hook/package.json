@@ -1,0 +1,13 @@
+{
+  "devDependencies": {
+    "@types/bun": "^1.4.4",
+    "bun-types": "^1.4.4"
+  },
+  "name": "safety-hook",
+  "version": "1.0.0",
+  "description": "tau extension example: block rm -rf / via tool_call hook",
+  "homepage": "https://tau.sh",
+  "tau": {
+    "extensions": ["./index.ts"]
+  }
+}

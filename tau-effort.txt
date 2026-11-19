@@ -1,0 +1,160 @@
+effort:
+  high: 0.9
+  ultrathink: 0.99
+emojiAutocomplete: true
+error:
+  notify: "on"
+eval:
+  autoBackground:
+    enabled: true
+  jl: true
+  js: false
+  py: true
+  rb: true
+  workpool:
+    freshAgents: true
+exa:
+  enabled: true
+modelRoles:
+  advisor: freeinference/qwen3.6-35b:low
+  bodybuilder: custom/bodybuilder
+  commit: freeinference/qwen3.6-35b
+  dots: custom/dots
+  fallback: freeinference/qwen3.6-35b
+  image: google-antigravity/gemini-3.1-flash-image:auto
+  judge: freeinference/qwen3.6-35b
+  memory: freeinference/qwen3.6-35b
+  plan: freeinference/qwen3.6-35b
+  slow: freeinference/qwen3.6-35b:xhigh
+  smol: freeinference/qwen3.6-35b:auto
+  task: freeinference/qwen3.6-35b
+  tiny: freeinference/qwen3.6-35b
+  verification: freeinference/qwen3.6-35b
+  vision: freeinference/minimax-m3:xhigh
+  web: web/exa
+  default: freeinference/qwen3.6-35b:off
+omitThinking: false
+paste:
+  largeMenuThreshold: 100
+personality: friendly
+plan:
+  autosave: true
+  defaultOnStartup: false
+  enabled: true
+plugins:
+  - merged: estate-swap
+    name: bornite
+    privileged: true
+    source: ./projects/range/ranch/stockyard/bornite
+  - name: rhodochrosite
+    privileged: true
+    source: ./projects/range/ranch/stockyard/rhodochrosite
+  - name: thresher
+    privileged: true
+    role: MCP federation gateway
+    source: ./ranch/barn/thresher
+  - merged:
+      - router-legacy
+      - stockyard-rhodochrosite-router
+      - estate-router
+    name: router
+    privileged: true
+    source: ./projects/range/ranch/stockyard/router-legacy
+  - name: barn-browser
+    privileged: false
+    source: ./projects/range/ranch/barn/browserless
+  - name: barn-gemini
+    privileged: false
+    source: ./projects/range/ranch/barn/gemini-mcp
+  - name: secretsmith
+    privileged: true
+    source: ./projects/range/ranch/barn/secretsmith
+power:
+  sleepPrevention: idle
+presencePenalty: -1
+prewalk:
+  enabled: false
+proseOnlyThinking: true
+provider:
+  appendOnlyContext: auto
+providers:
+  anthropic:
+    serverSideFallback: true
+  antigravityEndpoint: auto
+  autoThinkingMaxEffort: xhigh
+  cacheRetention: auto
+  fetch: auto
+  fireworksTier: standard
+  kimiApiFormat: auto
+  maxInFlightRequests:
+    freeinference: 2
+  ollama-cloud:
+    maxConcurrency: 3
+  openai-codex:
+    codeMode: "on"
+    codeModeDirectTools: []
+  openai-compatible:
+    apiKey: eyJhbGciOiAibm9uZSIsICJ0eXAiOiAiSldUIn0.eyJzdWIiOiAiZmxvY2stY2xpZW50IiwgIm5hbWUiOiAiY29ycmFsLWp3dGZtdCIsICJpYXQiOiAxNzkxOTAwMDAwfQ.d0391d5d684102b1ef80140f9920381b08aa43b417976ed1528618c7b76b60df
+    baseUrl: http://127.0.0.1:25193/v1
+  openaiWebsockets: auto
+  openrouterVariant: default
+  streamFirstEventTimeoutSeconds: 300
+  streamIdleTimeoutSeconds: 120
+  tinyModelDevice: auto
+  tinyModelDtype: auto
+  unboundedRetryAfter:
+    - opencode-go
+    - opencode-zen
+  webSearchTimeoutSeconds: 60
+python:
+  interpreter: ""
+  kernelMode: session
+read:
+  defaultLimit: 5000
+  renderMarkdown: true
+  summarize:
+    enabled: false
+    minBodyLines: 4
+    minCommentLines: 6
+    minTotalLines: 100
+    prose: false
+    unfoldLimit: 100
+    unfoldUntil: 50
+  toolResultPreview: true
+readLineNumbers: true
+recap:
+  enabled: false
+  idleSeconds: 240
+repetitionPenalty: -1
+retry:
+  fallbackChains:
+    fallback:
+      - freeinference/qwen3.6-35b
+      - freeinference/minimax-m3
+      - freeinference/deepseek-v4-flash
+    web:
+      - web/tavily
+      - web/firecrawl
+      - web/brave
+      - web/parallel
+      - web/synthetic
+      - google-antigravity/gemini-3.8-flash
+  fallbackRevertPolicy: cooldown-expiry
+  maxDelayMs: 300000
+  maxRetries: 3
+  modelFallback: true
+  usageAwareFallback: true
+  usageReservePct: 10
+  usageReservePolicy: confirm
+ruby:
+  interpreter: ""
+secrets:
+  enabled: false
+security:
+  enabled: false
+setupVersion: 2
+share:
+  redactSecrets: true
+  serverUrl: https://my.omp.sh/s
+  store: blob
+shell:

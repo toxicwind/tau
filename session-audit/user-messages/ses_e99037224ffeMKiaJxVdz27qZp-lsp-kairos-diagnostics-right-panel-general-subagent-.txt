@@ -1,0 +1,13 @@
+# KAPPA SESSION ses_e99037224ffeMKiaJxVdz27qZp
+title: LSP-kairos diagnostics + right panel (@general subagent)
+cwd: /home/toxic
+user_messages: 3
+
+--- user message 1/3 (msg msg_166fc8e12001Gvzk42eTYxn975, 2026-10-23T04:19:49.909Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]
+
+--- user message 2/3 (msg msg_167060245001B2MvM0kpMBm01V, 2026-10-23T04:30:09.480Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]
+
+--- user message 3/3 (msg msg_1670e5b50001hme1YZE1M7rbSi, 2026-10-23T04:39:16.563Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

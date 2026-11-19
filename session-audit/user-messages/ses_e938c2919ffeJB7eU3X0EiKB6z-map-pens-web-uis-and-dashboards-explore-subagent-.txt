@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e938c2919ffeJB7eU3X0EiKB6z
+title: Map estate web UIs and dashboards (@explore subagent)
+cwd: /home/toxic/tmp
+user_messages: 1
+
+--- user message 1/1 (msg msg_16c73d731001T6UpEIuB3Vlf9Q, 2026-10-24T05:48:13.499Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

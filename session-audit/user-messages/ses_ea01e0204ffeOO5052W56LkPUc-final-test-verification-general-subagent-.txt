@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_ea01e0204ffeOO5052W56LkPUc
+title: Final test verification (@general subagent)
+cwd: /home/toxic/tmp
+user_messages: 1
+
+--- user message 1/1 (msg msg_15fe1fdfe001NUtNExj9ShBM5b, 2026-10-21T19:13:28.575Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

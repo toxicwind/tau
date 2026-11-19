@@ -1,0 +1,13 @@
+# KAPPA SESSION ses_ea333fc7bffec6AOF3azeohrSA
+title: Max-aesthetic DelendAI control SPA (@general subagent)
+cwd: /home/toxic
+user_messages: 3
+
+--- user message 1/3 (msg msg_15ccc0388001AZ5GlyKTFB1MAi, 2026-10-21T04:50:36.554Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]
+
+--- user message 2/3 (msg msg_15cce6800001aMqx0KoZYk0SFj, 2026-10-21T04:53:13.346Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]
+
+--- user message 3/3 (msg msg_15cd42201001C6uW8y7mh1I0YS, 2026-10-21T04:59:28.642Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

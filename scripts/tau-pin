@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+# tau-pin: the single pinned launcher for the tau agent engine.
+#
+# Single canonical copy — /home/toxic/pens/estate/scripts/tau-pin is a symlink to
+# this file, and ~/.local/bin/{tau,omp,pi} resolve through it.
+#
+# Resolves the tau repo root from THIS script's location (follows the whole
+# symlink chain, absolute or relative targets), never from cwd, and never
+# falls through to PATH — so a stray or hostile tau on PATH can never shadow
+# the pinned install. Also pins the launch directory to the folder tau-pin
+# was invoked from (via --cwd), so the engine never auto-switches away.
+set -euo pipefail
+
+# The uutils builtins shipped in-process (pi-uu-grep, pi-uu-find) are buggy and
+# shadow the host GNU binaries. Disabled unconditionally.
+export PI_DISABLE_UUTILS_BUILTINS=1
+
+_SRC="${BASH_SOURCE[0]}"
+while [ -L "$_SRC" ]; do
+  _LINK="$(readlink "$_SRC")"
+  case "$_LINK" in
+    /*) _SRC="$_LINK" ;;
+    *)
+      _DIR="$(cd -P -- "$(dirname -- "$_SRC")" >/dev/null 2>&1 && pwd)"
+      _SRC="$_DIR/$_LINK"
+      ;;
+  esac
+done
+_SCRIPT_DIR="$(cd -P -- "$(dirname -- "$_SRC")" >/dev/null 2>&1 && pwd)"
+# scripts/ -> repo root
+FORK_ROOT="$(cd -P -- "$_SCRIPT_DIR/.." >/dev/null 2>&1 && pwd)"
+
+REAL="$FORK_ROOT/packages/coding-agent/scripts/tau"
+
+if [ ! -x "$REAL" ]; then
+  echo "tau-pin: pinned runner missing or not executable: $REAL" >&2
+  echo "tau-pin: refusing to fall through to any other tau on PATH." >&2
+  exit 127
+fi
+
+RESOLVED="$(realpath "$REAL")"
+case "$RESOLVED" in
+  "$FORK_ROOT"/*) ;;
+  *)
+    echo "tau-pin: resolved runner escapes the pinned repo root: $RESOLVED" >&2
+    exit 127
+    ;;
+esac
+
+# Pin the launch directory to the folder tau-pin was invoked from.
+# Without an explicit --cwd the engine auto-switches a $HOME launch to ~/tmp
+# (maybeAutoChdir in src/cli/startup-cwd.ts); passing --cwd explicitly keeps
+# the session in the folder the user actually ran from. A user-supplied
+# --cwd (--cwd=DIR or --cwd DIR form) always wins.
+_LAUNCH_DIR="$PWD"
+_have_cwd=0
+_expect_cwd_value=0
+for _a in "$@"; do
+  if [ "$_expect_cwd_value" = 1 ]; then _have_cwd=1; break; fi
+  case "$_a" in
+    --) break ;;
+    --cwd=*) _have_cwd=1; break ;;
+    --cwd) _expect_cwd_value=1 ;;
+  esac
+done
+[ "$_expect_cwd_value" = 1 ] && _have_cwd=1
+if [ "$_have_cwd" = 0 ]; then
+  set -- "--cwd=$_LAUNCH_DIR" "$@"
+fi
+
+exec "$RESOLVED" "$@"

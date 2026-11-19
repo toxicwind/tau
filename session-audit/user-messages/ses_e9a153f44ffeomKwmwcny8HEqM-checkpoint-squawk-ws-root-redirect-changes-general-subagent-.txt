@@ -1,0 +1,10 @@
+# KAPPA SESSION ses_e9a153f44ffeomKwmwcny8HEqM
+title: Checkpoint squawk-ws root-redirect changes (@general subagent)
+cwd: /home/toxic
+user_messages: 2
+
+--- user message 1/2 (msg msg_165eac0f2001rx11yJU3WbRKns, 2026-10-22T23:20:46.069Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]
+
+--- user message 2/2 (msg msg_1664912e6001f3jhfn1h47MZOY, 2026-10-23T01:03:47.433Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

@@ -1,0 +1,46 @@
+# KAPPA SESSION ses_e9903b9d7ffejEsSUz04LQSeE3
+title: Runtime auto-background layer + steering (@general subagent)
+cwd: /home/toxic
+user_messages: 14
+
+--- user message 1/14 (msg msg_166fc4662001j3us9HR5sixted, 2026-10-23T04:19:31.556Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]
+
+--- user message 2/14 (msg msg_16700dae2001Ec2HEaUQnhT6xG, 2026-10-23T04:24:31.714Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 3/14 (msg msg_167018865001C4duTxBnNOzRAT, 2026-10-23T04:25:16.133Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 4/14 (msg msg_16703e5dd001gQV8coSc96kvGo, 2026-10-23T04:27:51.133Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 5/14 (msg msg_16703e9f6001gGTaHGeMARcIcv, 2026-10-23T04:27:52.182Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 6/14 (msg msg_167045087001ZeAp0axQp2Y2fy, 2026-10-23T04:28:18.439Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 7/14 (msg msg_1670454fa001kCBxOgl5GjVpj3, 2026-10-23T04:28:19.578Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 8/14 (msg msg_1670459600015qUgLuwuiqkNvi, 2026-10-23T04:28:20.704Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 9/14 (msg msg_167045de9001LOMGmPf1KC2kIX, 2026-10-23T04:28:21.865Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 10/14 (msg msg_167046290001vxn9h8IMtwQueF, 2026-10-23T04:28:23.056Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 11/14 (msg msg_16704686c001bB4ahcIbgzLQ4b, 2026-10-23T04:28:24.556Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 12/14 (msg msg_167046d22001rn6ev07559A0fi, 2026-10-23T04:28:25.762Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 13/14 (msg msg_16704714d001tgKSUnO9plNaDI, 2026-10-23T04:28:26.829Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 14/14 (msg msg_16705e931001N4TybX5N8dW1ux, 2026-10-23T04:30:03.059Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

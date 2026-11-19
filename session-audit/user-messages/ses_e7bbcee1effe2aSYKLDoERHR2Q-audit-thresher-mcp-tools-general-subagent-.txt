@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e7bbcee1effe2aSYKLDoERHR2Q
+title: Audit thresher MCP tools (@general subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_18443121500184ZECnRWDycOT2, 2026-10-28T20:45:50.490Z) ---
+[[no content field; keys: role, time, tools, agent, model]]

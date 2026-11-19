@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e9f57285dffenF394OaTc91qH4
+title: Commit auto-background changes (@general subagent)
+cwd: /home/toxic/tmp
+user_messages: 1
+
+--- user message 1/1 (msg msg_160a8d7a80011XR8j58LAgVpiZ, 2026-10-21T22:50:40.425Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

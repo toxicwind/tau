@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e9a7bcbfaffe8sNaZMPOoh5PVg
+title: Add C2 UX to squawk (@general subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_16584344f001NNGk1LgKVWTqbg, 2026-10-22T21:28:45.396Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

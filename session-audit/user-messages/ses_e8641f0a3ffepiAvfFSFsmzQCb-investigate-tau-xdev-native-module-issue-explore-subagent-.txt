@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e8641f0a3ffepiAvfFSFsmzQCb
+title: Investigate tau xdev native module issue (@explore subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_179be0f8c001anIgUMOHGGN1vG, 2026-10-26T19:44:21.391Z) ---
+[[no content field; keys: role, time, tools, agent, model]]

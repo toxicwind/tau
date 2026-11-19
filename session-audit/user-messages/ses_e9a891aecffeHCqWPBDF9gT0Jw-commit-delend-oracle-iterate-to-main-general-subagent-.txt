@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e9a891aecffeHCqWPBDF9gT0Jw
+title: Commit delend-oracle + iterate to main (@general subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_16576e55c001cZH57He99t3fm0, 2026-10-22T21:14:13.217Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

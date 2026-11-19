@@ -1,0 +1,40 @@
+# KAPPA SESSION ses_e899ebb07ffeYK2zYLx0XtL8nR
+title: Investigating slow kappa startup time
+cwd: /home/toxic
+user_messages: 12
+
+--- user message 1/12 (msg msg_17661450a001sdNuGdiJEPlL8P, 2026-10-26T04:04:08.586Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 2/12 (msg msg_1766237d9001b2MvRRN41FoczF, 2026-10-26T04:05:10.745Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 3/12 (msg msg_176635aeb001gD9DL1Z0vOi96N, 2026-10-26T04:06:25.259Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 4/12 (msg msg_176639eb8001VruuTO5UilCHXE, 2026-10-26T04:06:42.616Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 5/12 (msg msg_17665ffbd00166TRplp7k8A3HD, 2026-10-26T04:09:18.525Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 6/12 (msg msg_17679260e001RA10NlKeKIAUvU, 2026-10-26T04:30:13.518Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 7/12 (msg msg_176792631001D6de5gYS9Gqb6y, 2026-10-26T04:30:13.553Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 8/12 (msg msg_1767acf05001AW10HV0GVUyBtv, 2026-10-26T04:32:02.309Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 9/12 (msg msg_1767add1b001SMzVG6YlokhpWu, 2026-10-26T04:32:05.921Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 10/12 (msg msg_1767af590001kx0s9ithxEWvh4, 2026-10-26T04:32:12.177Z) ---
+[[no content field; keys: role, time, agent, model, summary]]
+
+--- user message 11/12 (msg msg_1767c38c50010eDi6n3gQuFEhf, 2026-10-26T04:33:34.918Z) ---
+[[no content field; keys: role, time, agent, model]]
+
+--- user message 12/12 (msg msg_1767c67c00017ILhlesznfuVlz, 2026-10-26T04:33:47.873Z) ---
+[[no content field; keys: role, time, agent, model, summary]]

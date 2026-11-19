@@ -1,0 +1,6 @@
+{
+  "fires": 5,
+  "retries": 0,
+  "injections": 5,
+  "note": "success = fires>0 on real output, retry-fires==0 on reminder (storm closed)"
+}

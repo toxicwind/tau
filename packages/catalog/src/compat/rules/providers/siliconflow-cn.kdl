@@ -1,0 +1,4 @@
+// Catalog entry for "siliconflow-cn"; no deployment-contract compat rules are needed.
+
+provider "siliconflow-cn" {
+}

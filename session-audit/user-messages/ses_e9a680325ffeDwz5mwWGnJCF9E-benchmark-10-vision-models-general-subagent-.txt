@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e9a680325ffeDwz5mwWGnJCF9E
+title: Benchmark 10+ vision models (@general subagent)
+cwd: /home/toxic/tmp
+user_messages: 1
+
+--- user message 1/1 (msg msg_16597fd11001yiVUl8TrAW87dk, 2026-10-22T21:50:21.989Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

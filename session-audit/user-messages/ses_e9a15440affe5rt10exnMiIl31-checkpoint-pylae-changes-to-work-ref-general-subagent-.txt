@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_e9a15440affe5rt10exnMiIl31
+title: Checkpoint pylae changes to work-ref (@general subagent)
+cwd: /home/toxic
+user_messages: 1
+
+--- user message 1/1 (msg msg_165eabc2c001G7A4Fn2ZG6zXO0, 2026-10-22T23:20:44.847Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]

@@ -1,0 +1,7 @@
+# KAPPA SESSION ses_ea035cd2dffeJMFSdk03v7CkNV
+title: Execute lifecyle and verify daemon (@general subagent)
+cwd: /home/toxic/tmp
+user_messages: 1
+
+--- user message 1/1 (msg msg_15fca32d7001qxYmgVXWx0DWHr, 2026-10-21T18:47:29.240Z) ---
+[[no content field; keys: role, time, tools, agent, model, summary]]
